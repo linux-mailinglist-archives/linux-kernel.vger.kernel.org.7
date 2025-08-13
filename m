@@ -1,266 +1,280 @@
-Return-Path: <linux-kernel+bounces-765784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615A9B23E3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86195B23E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B616E4C70
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70ADC3A6052
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085151E3DFE;
-	Wed, 13 Aug 2025 02:27:54 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0641DEFDD
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EFF1A23A6;
+	Wed, 13 Aug 2025 02:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="fKCAel0Y"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE141DEFDD;
+	Wed, 13 Aug 2025 02:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755052073; cv=none; b=eXlcPNVVudx8cQcStWeb+Keqw9wIq21LnnPKvYqfFeXoyZbaGnbhXN/YrflCOl4R0UdE8XPbMNjIm39WelxvEyZvJmKU/ER5LHTNisYQ+wYPKpcFR+VTOp7lgi4EGFjkSUc/k05QUt/Y7zma8eEJ3QfLMmqpYPxS47VkDQnitw4=
+	t=1755052087; cv=none; b=eeBEw6o0GIl5jM3jyO663TuSgGySK6RP2vm1HOwDFXdySaQ93qKZGIAqqeruCB8B58zHwaAH2g+5D+vlepurSPld+ZoaEYJuWNOtur2RZGCsbvViFnv3Hs3aHTrHFgNb6B7o7YJcsLctJjsinP+h84vHNH3syzdnHiqWYFAJWb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755052073; c=relaxed/simple;
-	bh=vQqCnulobDtum9Nm5dEE3ld/dGdzrbZpX65x+QIw8DM=;
-	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Ie4wz7rgcdZD4X8iLjhazNihEHB54wER+4sLtDrSaohwiqjn2EI8T3vsPlt/s3X4tMQl5I89iGCFPW0AnwXDMaVeBfTJw8lojspp5Nwr/Ao/e6hwFQOEO6Sc+W5p3gMx19dM7N077UEg298dOdkd3bxVeVbNNkmAq+NCHpuIeLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.126])
-	by gateway (Coremail) with SMTP id _____8BxIK8i+JtoLi4_AQ--.51550S3;
-	Wed, 13 Aug 2025 10:27:46 +0800 (CST)
-Received: from [10.20.42.126] (unknown [10.20.42.126])
-	by front1 (Coremail) with SMTP id qMiowJAxvsEf+JtoXhNIAA--.34377S3;
-	Wed, 13 Aug 2025 10:27:45 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: time: Fix the issue of high cpu usage of vcpu
- threads in virtual machines
-From: lixianglai <lixianglai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>,
- Peter Zijlstra <peterz@infradead.org>, Bibo Mao <maobibo@loongson.cn>,
- Song Gao <gaosong@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250812090056.771379-1-lixianglai@loongson.cn>
- <CAAhV-H7pXxFR8PnAOv8CirotXUSPgbb7AEsHU0VGh_YMFFoyJA@mail.gmail.com>
- <da4311b0-7e8e-647a-260f-1733878cf394@loongson.cn>
- <CAAhV-H7uhvZeZ9L40AWuRN7t4JAFLNDj4YUOZ_K-oPrCcnpEjA@mail.gmail.com>
- <13a54d23-24c2-8e59-77ac-900a63cd38ef@loongson.cn>
-Message-ID: <61c858da-8c5e-7652-e580-fc51c211ebb0@loongson.cn>
-Date: Wed, 13 Aug 2025 10:26:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1755052087; c=relaxed/simple;
+	bh=kU34RAg4W8K5xzDq8vmD5Jrmc2Gm/kyJtVe3sPEMznY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=nsJkKUCOtd4oHsR3acZtIjL3VmD3pWZDeQp3fRnbcKWg22H0a5ajzGTfJK6/l6bY8Nn2Irb/VOWoquFEEyEjjC4eol16G2AOoXM4NmFdWMrb3WD9U1dacNS/GV1J23y2UlG7YzqbMPJGFynVW10Toru+S6YrqLegIGFXFRTkblk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=fKCAel0Y reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=O772d2vYk6HydtLZJoDKsPRRZMpzgL7L6em/qgxzz4g=; b=f
+	KCAel0YL4ixMvvVfuMMgAIXBAFtwpf7oLKM8lI4vBdW40Kg2yWxjkG/sunF+b+FD
+	/ztUWW4W3lLv7uT0JTxsHzlxT07UZp2SpjZ3dcDfV+CP+O82NCiRzIFWdJDjsvKn
+	cnp/TPNEUFhzSw/KfXxJKhy7u+wUOV22+3JMFwTWZQ=
+Received: from phoenix500526$163.com ( [120.230.124.83] ) by
+ ajax-webmail-wmsvr-40-146 (Coremail) ; Wed, 13 Aug 2025 10:27:28 +0800
+ (CST)
+Date: Wed, 13 Aug 2025 10:27:28 +0800 (CST)
+From: =?UTF-8?B?6LW15L2z54Kc?= <phoenix500526@163.com>
+To: "Yonghong Song" <yonghong.song@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v7 2/2] selftests/bpf: Force -O2 for USDT selftests
+ to cover SIB handling logic
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <2559a8cd-b439-43fc-96e4-d5f2941ca4d8@linux.dev>
+References: <20250806092458.111972-1-phoenix500526@163.com>
+ <20250806092458.111972-3-phoenix500526@163.com>
+ <f5d8d886-1de3-4521-917a-e98b645b987e@linux.dev>
+ <30d8fcac.2669.19882763de2.Coremail.phoenix500526@163.com>
+ <e7ba3f7f-38b8-4c06-8aff-ef1fb8d04d86@linux.dev>
+ <310495cd.19eb.19893314d03.Coremail.phoenix500526@163.com>
+ <0f6d16c1-0e85-4709-9846-3a993a9f041b@linux.dev>
+ <65e51538.57aa.1989d162bb8.Coremail.phoenix500526@163.com>
+ <2559a8cd-b439-43fc-96e4-d5f2941ca4d8@linux.dev>
+X-NTES-SC: AL_Qu2eB/yevUgv7ieebOkfmUsVh+o9X8K1vfsk3oZfPJp+jCzr3w07QFlMGFrRzuuOFC2qkReYSTdj1/hzcrJif4sZM5hZ3vivpU5Ecf6OaIWiMw==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <13a54d23-24c2-8e59-77ac-900a63cd38ef@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowJAxvsEf+JtoXhNIAA--.34377S3
-X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxKry8WFWkAw4DWw4kWw18CrX_yoWxAFWDpr
-	WkAF1UJrW5Grn7Xr1jqw1UXry3tr18J3W7Xr1xJF1UArsFyryFgF4jqr1qgF18JrWrJr1U
-	Xr1rXr17uF4UJrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
-	JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
-	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
-	67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
-	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
-	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8CksDUUUUU==
+Message-ID: <3fbb9319.20c8.198a1410186.Coremail.phoenix500526@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:kigvCgD3t+oR+JtogrMYAA--.662W
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFBuniGibtdS9iAAEsD
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi Huacai Chen:
->> On Tue, Aug 12, 2025 at 8:50 PM lixianglai <lixianglai@loongson.cn> 
->> wrote:
->>>
->>>
->>> Hi Huacai Chen:
->>>> Hi, Xianglai,
->>>>
->>>> There is something that can be improved.
->>>>
->>>> On Tue, Aug 12, 2025 at 5:24 PM Xianglai Li 
->>>> <lixianglai@loongson.cn> wrote:
->>>>> When the cpu is offline, the timer under loongarch is not 
->>>>> correctly closed,
->>>>> resulting in an excessively high cpu usage rate of the offline 
->>>>> vcpu thread
->>>>> in the virtual machine.
->>>>>
->>>>> To correctly close the timer, we have made the following 
->>>>> modifications:
->>>>>
->>>>> Register the cpu hotplug timer start event for loongarch.This 
->>>>> event will
->>>>> be called to close the timer when the cpu is offline.
->>>>>
->>>>> Clear the timer interrupt when the timer is turned off
->>>>>
->>>>> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
->>>>> ---
->>>>>    arch/loongarch/kernel/time.c | 20 ++++++++++++++++++++
->>>>>    include/linux/cpuhotplug.h   |  1 +
->>>>>    2 files changed, 21 insertions(+)
->>>>>
->>>>> diff --git a/arch/loongarch/kernel/time.c 
->>>>> b/arch/loongarch/kernel/time.c
->>>>> index 367906b10f81..4daa11512eba 100644
->>>>> --- a/arch/loongarch/kernel/time.c
->>>>> +++ b/arch/loongarch/kernel/time.c
->>>>> @@ -12,6 +12,7 @@
->>>>>    #include <linux/kernel.h>
->>>>>    #include <linux/sched_clock.h>
->>>>>    #include <linux/spinlock.h>
->>>>> +#include <linux/cpu.h>
->>>>>
->>>>>    #include <asm/cpu-features.h>
->>>>>    #include <asm/loongarch.h>
->>>>> @@ -86,6 +87,9 @@ static int constant_set_state_shutdown(struct 
->>>>> clock_event_device *evt)
->>>>>           timer_config &= ~CSR_TCFG_EN;
->>>>>           csr_write64(timer_config, LOONGARCH_CSR_TCFG);
->>>>>
->>>>> +       /* Clear Timer Interrupt */
->>>>> +       write_csr_tintclear(CSR_TINTCLR_TI);
->>>>> +
->>>>>           raw_spin_unlock(&state_lock);
->>>>>
->>>>>           return 0;
->>>>> @@ -208,8 +212,17 @@ int __init constant_clocksource_init(void)
->>>>>           return res;
->>>>>    }
->>>>>
->>>>> +static int arch_timer_dying_cpu(unsigned int cpu)
->>>> We can use arch_timer_dying() for short. And then add an
->>>> arch_timer_starting() like this:
->>>>
->>>> static int arch_timer_starting(unsigned int cpu)
->>>> {
->>>>           set_csr_ecfg(ECFGF_TIMER);
->>>>
->>>>           return 0;
->>>> }
->>>>
->>>> Though ECFGF_TIMER may be enabled in other places, for syntax we 
->>>> need it here.
->>>>
->>>>> +{
->>>>> +       constant_set_state_shutdown(NULL);
->>>>> +
->>>>> +       return 0;
->>>>> +}
->>>>> +
->>>>>    void __init time_init(void)
->>>>>    {
->>>>> +       int err;
->>>>> +
->>>>>           if (!cpu_has_cpucfg)
->>>>>                   const_clock_freq = cpu_clock_freq;
->>>>>           else
->>>>> @@ -220,4 +233,11 @@ void __init time_init(void)
->>>>>           constant_clockevent_init();
->>>>>           constant_clocksource_init();
->>>>>           pv_time_init();
->>>>> +
->>>>> +       err = 
->>>>> cpuhp_setup_state_nocalls(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
->>>>> + "loongarch/timer:starting",
->>>>> +                                       NULL, arch_timer_dying_cpu);
->>>> Then we need use cpuhp_setup_state() here, because we have a startup
->>>> function now.
->>>>
->>>> And "loongarch/timer:starting" should be
->>>> "clockevents/loongarch/timer:starting" like others.
->>>>
->>>> And the whole should be moved to the last of
->>>> constant_clockevent_init() because it is clockevent specific.
->>> like this?
->>>
->>> @@ -164,6 +182,10 @@ int constant_clockevent_init(void)
->>>
->>>           timer_irq_installed = 1;
->>>
->>> + cpuhp_setup_state(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
->>> + "clockevents/loongarch/timer:starting",
->>> +                         arch_timer_starting, arch_timer_dying_cpu);
->>> +
->>>           sync_counter();
->>>
->>>
->>> I was wondering whether it should be placed before or after the
->>> "timer_irq_installed" judgment
->> Should be after "timer_irq_installed" because we only need to run once.
->>
->> The best place is after pr_info("Constant clock event device 
->> register\n");
->
-> Got it!
->> And there is another question:
->> Should we move "write_csr_tintclear(CSR_TINTCLR_TI)" from
->> constant_set_state_shutdown() to arch_timer_dying()?
->
-> We may not need to do this. If the context in which the timer is
-> turned off is to disable interrupts, and the last timing period just
-> arrives during this process, when the interrupt is re-enabled,
-> an additional interrupt will be triggered and the next timing expiration
-> time will be filled. This is not in line with expectations.
-> Isn't it more reasonable to clean up the interrupt flag after turning off
-> the timer instead of just doing so cpu offline context cleaning.
->
-
-This is my personal opinion, but I just trace the process of cpu offline 
-and need to clear the timer interrupt.
-Because is not particularly proficient in of the overall system 
-architecture, I might have a one-sided view.
-Do you have a better suggestion?
-
-Thanks!
-Xianglai.
-
-> Thanks!
-> Xianglai.
->
->>
->> Huacai
->>
->>>
->>>>> +       if (err)
->>>>> +               pr_info("cpu hotplug event register failed");
->>>> This is not so useful, because the error isn't fatal.
->>>>
->>>>
->>>> Huacai
->>>>
->>>>> +
->>>>>    }
->>>>> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
->>>>> index edfa61d80702..6606c1546afc 100644
->>>>> --- a/include/linux/cpuhotplug.h
->>>>> +++ b/include/linux/cpuhotplug.h
->>>>> @@ -159,6 +159,7 @@ enum cpuhp_state {
->>>>>           CPUHP_AP_PERF_ARM_STARTING,
->>>>>           CPUHP_AP_PERF_RISCV_STARTING,
->>>>>           CPUHP_AP_ARM_L2X0_STARTING,
->>>>> +       CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
->>>>>           CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->>>>>           CPUHP_AP_ARM_ARCH_TIMER_STARTING,
->>>>>           CPUHP_AP_ARM_ARCH_TIMER_EVTSTRM_STARTING,
->>>>>
->>>>> base-commit: 53e760d8949895390e256e723e7ee46618310361
->>>>> -- 
->>>>> 2.39.1
->>>>>
->>>
->
-
+CgoKCgoKU3VyZS4gCgpUaGUgdXNkdF9yaXAuYyBzb3VyY2UgY29kZToKCmBgYEMKLy8gdGhlIHVz
+ZHRfcmlwLmMgZmlsZQojaW5jbHVkZSA8c3RkZGVmLmg+CiNpbmNsdWRlIDxzdGRpbnQuaD4KI2lu
+Y2x1ZGUgInNkdC5oIgoKc3RhdGljIHZvbGF0aWxlIGNoYXIgdGkgPSAwOwoKaW50IGFkZChpbnQg
+YSwgaW50IGIpIHsKICByZXR1cm4gYSArIGI7Cn0KaW50ICgqYWRkX3B0cikoaW50LCBpbnQpID0g
+YWRkOwoKc3RydWN0IHN0ewogIGludCBhOwogIGNoYXIgYjsKfTsKCnZvbGF0aWxlIHN0cnVjdCBz
+dCB0MSA9IHsuYSA9IDEsIC5iID0gJ2EnfTsKCnN0YXRpYyB2b2lkIF9fYWx3YXlzX2lubGluZSB0
+cmlnZ2VyX2Z1bmMoKSB7CiAgU1RBUF9QUk9CRTQodXNkdF9yaXAsIHJpcF9nbG9iYWxfdmFyLCB0
+aSwgYWRkX3B0ciwgdDEuYiwgdGkpOwp9CgppbnQgbWFpbigpIHsKICB0cmlnZ2VyX2Z1bmMoKTsK
+ICByZXR1cm4gMDsKfQpgYGAKClRoZSB0ZXN0L3VzZHRfcmlwLmMgc291cmNlIGNvZGU6CgpgYGBD
+Ci8vIFRoZSB0ZXN0L3VzZHRfcmlwLmMgZmlsZQpzdGF0aWMgdm9sYXRpbGUgY2hhciB0aSA9IDA7
+CmBgYCAKClRoZSBjb21waWxlciBvcHRpb24gaXMgYGdjYyAtTzIgLWcgdXNkdF9yaXAuYyB0ZXN0
+L3VzZHRfcmlwLmMgLW8gdXNkdF9yaXBgCgpNeSBjb21waWxlciB2ZXJzaW9uOiAKYGBgYmFzaAok
+IGdjYyAtdgpVc2luZyBidWlsdC1pbiBzcGVjcy4KQ09MTEVDVF9HQ0M9Z2NjCkNPTExFQ1RfTFRP
+X1dSQVBQRVI9L3Vzci9saWJleGVjL2djYy94ODZfNjQtbGludXgtZ251LzEzL2x0by13cmFwcGVy
+Ck9GRkxPQURfVEFSR0VUX05BTUVTPW52cHR4LW5vbmU6YW1kZ2NuLWFtZGhzYQpPRkZMT0FEX1RB
+UkdFVF9ERUZBVUxUPTEKVGFyZ2V0OiB4ODZfNjQtbGludXgtZ251CkNvbmZpZ3VyZWQgd2l0aDog
+Li4vc3JjL2NvbmZpZ3VyZSAtdiAtLXdpdGgtcGtndmVyc2lvbj0nVWJ1bnR1IDEzLjMuMC02dWJ1
+bnR1Mn4yNC4wNCcgLS13aXRoLWJ1Z3VybD1maWxlOi8vL3Vzci9zaGFyZS9kb2MvZ2NjLTEzL1JF
+QURNRS5CdWdzIC0tZW5hYmxlLWxhbmd1YWdlcz1jLGFkYSxjKyssZ28sZCxmb3J0cmFuLG9iamMs
+b2JqLWMrKyxtMiAtLXByZWZpeD0vdXNyIC0td2l0aC1nY2MtbWFqb3ItdmVyc2lvbi1vbmx5IC0t
+cHJvZ3JhbS1zdWZmaXg9LTEzIC0tcHJvZ3JhbS1wcmVmaXg9eDg2XzY0LWxpbnV4LWdudS0gLS1l
+bmFibGUtc2hhcmVkIC0tZW5hYmxlLWxpbmtlci1idWlsZC1pZCAtLWxpYmV4ZWNkaXI9L3Vzci9s
+aWJleGVjIC0td2l0aG91dC1pbmNsdWRlZC1nZXR0ZXh0IC0tZW5hYmxlLXRocmVhZHM9cG9zaXgg
+LS1saWJkaXI9L3Vzci9saWIgLS1lbmFibGUtbmxzIC0tZW5hYmxlLWJvb3RzdHJhcCAtLWVuYWJs
+ZS1jbG9jYWxlPWdudSAtLWVuYWJsZS1saWJzdGRjeHgtZGVidWcgLS1lbmFibGUtbGlic3RkY3h4
+LXRpbWU9eWVzIC0td2l0aC1kZWZhdWx0LWxpYnN0ZGN4eC1hYmk9bmV3IC0tZW5hYmxlLWxpYnN0
+ZGN4eC1iYWNrdHJhY2UgLS1lbmFibGUtZ251LXVuaXF1ZS1vYmplY3QgLS1kaXNhYmxlLXZ0YWJs
+ZS12ZXJpZnkgLS1lbmFibGUtcGx1Z2luIC0tZW5hYmxlLWRlZmF1bHQtcGllIC0td2l0aC1zeXN0
+ZW0temxpYiAtLWVuYWJsZS1saWJwaG9ib3MtY2hlY2tpbmc9cmVsZWFzZSAtLXdpdGgtdGFyZ2V0
+LXN5c3RlbS16bGliPWF1dG8gLS1lbmFibGUtb2JqYy1nYz1hdXRvIC0tZW5hYmxlLW11bHRpYXJj
+aCAtLWRpc2FibGUtd2Vycm9yIC0tZW5hYmxlLWNldCAtLXdpdGgtYXJjaC0zMj1pNjg2IC0td2l0
+aC1hYmk9bTY0IC0td2l0aC1tdWx0aWxpYi1saXN0PW0zMixtNjQsbXgzMiAtLWVuYWJsZS1tdWx0
+aWxpYiAtLXdpdGgtdHVuZT1nZW5lcmljIC0tZW5hYmxlLW9mZmxvYWQtdGFyZ2V0cz1udnB0eC1u
+b25lPS9idWlsZC9nY2MtMTMtZkc3NVJpL2djYy0xMy0xMy4zLjAvZGViaWFuL3RtcC1udnB0eC91
+c3IsYW1kZ2NuLWFtZGhzYT0vYnVpbGQvZ2NjLTEzLWZHNzVSaS9nY2MtMTMtMTMuMy4wL2RlYmlh
+bi90bXAtZ2NuL3VzciAtLWVuYWJsZS1vZmZsb2FkLWRlZmF1bHRlZCAtLXdpdGhvdXQtY3VkYS1k
+cml2ZXIgLS1lbmFibGUtY2hlY2tpbmc9cmVsZWFzZSAtLWJ1aWxkPXg4Nl82NC1saW51eC1nbnUg
+LS1ob3N0PXg4Nl82NC1saW51eC1nbnUgLS10YXJnZXQ9eDg2XzY0LWxpbnV4LWdudSAtLXdpdGgt
+YnVpbGQtY29uZmlnPWJvb3RzdHJhcC1sdG8tbGVhbiAtLWVuYWJsZS1saW5rLXNlcmlhbGl6YXRp
+b249MgpUaHJlYWQgbW9kZWw6IHBvc2l4ClN1cHBvcnRlZCBMVE8gY29tcHJlc3Npb24gYWxnb3Jp
+dGhtczogemxpYiB6c3RkCmdjYyB2ZXJzaW9uIDEzLjMuMCAoVWJ1bnR1IDEzLjMuMC02dWJ1bnR1
+Mn4yNC4wNCkgCmBgYAoKCkF0IDIwMjUtMDgtMTMgMDA6MTE6NDUsICJZb25naG9uZyBTb25nIiA8
+eW9uZ2hvbmcuc29uZ0BsaW51eC5kZXY+IHdyb3RlOgo+Cj4KPk9uIDgvMTIvMjUgMTI6MDIgQU0s
+IOi1teS9s+eCnCB3cm90ZToKPj4gWWVzLCBJJ3ZlIHRyaWVkIHRoYXQgYnV0IGl0IGRpZG4ndCBo
+ZWxwLiBGWUk6Cj4+Cj4+ICQgcmVhZGVsZiAtbnNyIHVzZHRfcmlwCj4+Cj4+Cj4+IFJlbG9jYXRp
+b24gc2VjdGlvbiAnLnJlbGEuZHluJyBhdCBvZmZzZXQgMHg1MzAgY29udGFpbnMgOSBlbnRyaWVz
+Ogo+PiAgwqAgT2Zmc2V0wqAgwqAgwqAgwqAgwqAgSW5mb8KgIMKgIMKgIMKgIMKgIMKgVHlwZcKg
+IMKgIMKgIMKgIMKgIMKgU3ltLiBWYWx1ZcKgIMKgIFN5bS4gTmFtZSArIEFkZGVuZAo+PiAwMDAw
+MDAwMDNkZjDCoCAwMDAwMDAwMDAwMDggUl9YODZfNjRfUkVMQVRJVkXCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCAxMTUwCj4+IDAwMDAwMDAwM2RmOMKgIDAwMDAwMDAwMDAwOCBSX1g4Nl82
+NF9SRUxBVElWRcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIDExMTAKPj4gMDAwMDAwMDA0
+MDA4wqAgMDAwMDAwMDAwMDA4IFJfWDg2XzY0X1JFTEFUSVZFwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgNDAwOAo+PiAwMDAwMDAwMDQwMTjCoCAwMDAwMDAwMDAwMDggUl9YODZfNjRfUkVM
+QVRJVkXCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAxMTYwCj4+IDAwMDAwMDAwM2ZkOMKg
+IDAwMDEwMDAwMDAwNiBSX1g4Nl82NF9HTE9CX0RBVCAwMDAwMDAwMDAwMDAwMDAwIF9fbGliY19z
+dGFydF9tYWluQEdMSUJDXzIuMzQgKyAwCj4+IDAwMDAwMDAwM2ZlMMKgIDAwMDIwMDAwMDAwNiBS
+X1g4Nl82NF9HTE9CX0RBVCAwMDAwMDAwMDAwMDAwMDAwIF9JVE1fZGVyZWdpc3RlclRNWy4uLl0g
+KyAwCj4+IDAwMDAwMDAwM2ZlOMKgIDAwMDMwMDAwMDAwNiBSX1g4Nl82NF9HTE9CX0RBVCAwMDAw
+MDAwMDAwMDAwMDAwIF9fZ21vbl9zdGFydF9fICsgMAo+PiAwMDAwMDAwMDNmZjDCoCAwMDA0MDAw
+MDAwMDYgUl9YODZfNjRfR0xPQl9EQVQgMDAwMDAwMDAwMDAwMDAwMCBfSVRNX3JlZ2lzdGVyVE1D
+bFsuLi5dICsgMAo+PiAwMDAwMDAwMDNmZjjCoCAwMDA1MDAwMDAwMDYgUl9YODZfNjRfR0xPQl9E
+QVQgMDAwMDAwMDAwMDAwMDAwMCBfX2N4YV9maW5hbGl6ZUBHTElCQ18yLjIuNSArIDAKPj4KPj4K
+Pj4gU3ltYm9sIHRhYmxlICcuZHluc3ltJyBjb250YWlucyA2IGVudHJpZXM6Cj4+ICDCoCDCoE51
+bTrCoCDCoCBWYWx1ZcKgIMKgIMKgIMKgIMKgIFNpemUgVHlwZcKgIMKgIEJpbmTCoCDCoFZpc8Kg
+IMKgIMKgIE5keCBOYW1lCj4+ICDCoCDCoCDCoDA6IDAwMDAwMDAwMDAwMDAwMDDCoCDCoCDCoDAg
+Tk9UWVBFwqAgTE9DQUzCoCBERUZBVUxUwqAgVU5ECj4+ICDCoCDCoCDCoDE6IDAwMDAwMDAwMDAw
+MDAwMDDCoCDCoCDCoDAgRlVOQ8KgIMKgIEdMT0JBTCBERUZBVUxUwqAgVU5EIF9bLi4uXUBHTElC
+Q18yLjM0ICgyKQo+PiAgwqAgwqAgwqAyOiAwMDAwMDAwMDAwMDAwMDAwwqAgwqAgwqAwIE5PVFlQ
+RcKgIFdFQUvCoCDCoERFRkFVTFTCoCBVTkQgX0lUTV9kZXJlZ2lzdGVyVFsuLi5dCj4+ICDCoCDC
+oCDCoDM6IDAwMDAwMDAwMDAwMDAwMDDCoCDCoCDCoDAgTk9UWVBFwqAgV0VBS8KgIMKgREVGQVVM
+VMKgIFVORCBfX2dtb25fc3RhcnRfXwo+PiAgwqAgwqAgwqA0OiAwMDAwMDAwMDAwMDAwMDAwwqAg
+wqAgwqAwIE5PVFlQRcKgIFdFQUvCoCDCoERFRkFVTFTCoCBVTkQgX0lUTV9yZWdpc3RlclRNQ1su
+Li5dCj4+ICDCoCDCoCDCoDU6IDAwMDAwMDAwMDAwMDAwMDDCoCDCoCDCoDAgRlVOQ8KgIMKgIFdF
+QUvCoCDCoERFRkFVTFTCoCBVTkQgWy4uLl1AR0xJQkNfMi4yLjUgKDMpCj4+Cj4+Cj4+IFN5bWJv
+bCB0YWJsZSAnLnN5bXRhYicgY29udGFpbnMgNDIgZW50cmllczoKPj4gIMKgIMKgTnVtOsKgIMKg
+IFZhbHVlwqAgwqAgwqAgwqAgwqAgU2l6ZSBUeXBlwqAgwqAgQmluZMKgIMKgVmlzwqAgwqAgwqAg
+TmR4IE5hbWUKPj4gIMKgIMKgIMKgMDogMDAwMDAwMDAwMDAwMDAwMMKgIMKgIMKgMCBOT1RZUEXC
+oCBMT0NBTMKgIERFRkFVTFTCoCBVTkQKPj4gIMKgIMKgIMKgMTogMDAwMDAwMDAwMDAwMDAwMMKg
+IMKgIMKgMCBGSUxFwqAgwqAgTE9DQUzCoCBERUZBVUxUwqAgQUJTIFNjcnQxLm8KPj4gIMKgIMKg
+IMKgMjogMDAwMDAwMDAwMDAwMDM4Y8KgIMKgIDMyIE9CSkVDVMKgIExPQ0FMwqAgREVGQVVMVMKg
+IMKgIDQgX19hYmlfdGFnCj4+ICDCoCDCoCDCoDM6IDAwMDAwMDAwMDAwMDAwMDDCoCDCoCDCoDAg
+RklMRcKgIMKgIExPQ0FMwqAgREVGQVVMVMKgIEFCUyB1c2R0X3JpcC5jCj4+ICDCoCDCoCDCoDQ6
+IDAwMDAwMDAwMDAwMDQwMjHCoCDCoCDCoDEgT0JKRUNUwqAgTE9DQUzCoCBERUZBVUxUwqAgwqAy
+NSB0aQo+PiAgwqAgwqAgwqA1OiAwMDAwMDAwMDAwMDAwMDAwwqAgwqAgwqAwIEZJTEXCoCDCoCBM
+T0NBTMKgIERFRkFVTFTCoCBBQlMgY3J0c3R1ZmYuYwo+PiAgwqAgwqAgwqA2OiAwMDAwMDAwMDAw
+MDAxMGEwwqAgwqAgwqAwIEZVTkPCoCDCoCBMT0NBTMKgIERFRkFVTFTCoCDCoDE0IGRlcmVnaXN0
+ZXJfdG1fY2xvbmVzCj4+ICDCoCDCoCDCoDc6IDAwMDAwMDAwMDAwMDEwZDDCoCDCoCDCoDAgRlVO
+Q8KgIMKgIExPQ0FMwqAgREVGQVVMVMKgIMKgMTQgcmVnaXN0ZXJfdG1fY2xvbmVzCj4+ICDCoCDC
+oCDCoDg6IDAwMDAwMDAwMDAwMDExMTDCoCDCoCDCoDAgRlVOQ8KgIMKgIExPQ0FMwqAgREVGQVVM
+VMKgIMKgMTQgX19kb19nbG9iYWxfZHRvcnNfYXV4Cj4+ICDCoCDCoCDCoDk6IDAwMDAwMDAwMDAw
+MDQwMjDCoCDCoCDCoDEgT0JKRUNUwqAgTE9DQUzCoCBERUZBVUxUwqAgwqAyNSBjb21wbGV0ZWQu
+MAo+PiAgwqAgwqAgMTA6IDAwMDAwMDAwMDAwMDNkZjjCoCDCoCDCoDAgT0JKRUNUwqAgTE9DQUzC
+oCBERUZBVUxUwqAgwqAyMSBfX2RvX2dsb2JhbF9kdG9yWy4uLl0KPj4gIMKgIMKgIDExOiAwMDAw
+MDAwMDAwMDAxMTUwwqAgwqAgwqAwIEZVTkPCoCDCoCBMT0NBTMKgIERFRkFVTFTCoCDCoDE0IGZy
+YW1lX2R1bW15Cj4+ICDCoCDCoCAxMjogMDAwMDAwMDAwMDAwM2RmMMKgIMKgIMKgMCBPQkpFQ1TC
+oCBMT0NBTMKgIERFRkFVTFTCoCDCoDIwIF9fZnJhbWVfZHVtbXlfaW5bLi4uXQo+PiAgwqAgwqAg
+MTM6IDAwMDAwMDAwMDAwMDAwMDDCoCDCoCDCoDAgRklMRcKgIMKgIExPQ0FMwqAgREVGQVVMVMKg
+IEFCUyBkYW1vLmMKPj4gIMKgIMKgIDE0OiAwMDAwMDAwMDAwMDA0MDIywqAgwqAgwqAxIE9CSkVD
+VMKgIExPQ0FMwqAgREVGQVVMVMKgIMKgMjUgdGkKPj4gIMKgIMKgIDE1OiAwMDAwMDAwMDAwMDAw
+MDAwwqAgwqAgwqAwIEZJTEXCoCDCoCBMT0NBTMKgIERFRkFVTFTCoCBBQlMgY3J0c3R1ZmYuYwo+
+PiAgwqAgwqAgMTY6IDAwMDAwMDAwMDAwMDIwZDjCoCDCoCDCoDAgT0JKRUNUwqAgTE9DQUzCoCBE
+RUZBVUxUwqAgwqAxOSBfX0ZSQU1FX0VORF9fCj4+ICDCoCDCoCAxNzogMDAwMDAwMDAwMDAwMDAw
+MMKgIMKgIMKgMCBGSUxFwqAgwqAgTE9DQUzCoCBERUZBVUxUwqAgQUJTCj4+ICDCoCDCoCAxODog
+MDAwMDAwMDAwMDAwM2UwMMKgIMKgIMKgMCBPQkpFQ1TCoCBMT0NBTMKgIERFRkFVTFTCoCDCoDIy
+IF9EWU5BTUlDCj4+ICDCoCDCoCAxOTogMDAwMDAwMDAwMDAwMjAwOMKgIMKgIMKgMCBOT1RZUEXC
+oCBMT0NBTMKgIERFRkFVTFTCoCDCoDE4IF9fR05VX0VIX0ZSQU1FX0hEUgo+PiAgwqAgwqAgMjA6
+IDAwMDAwMDAwMDAwMDNmYzDCoCDCoCDCoDAgT0JKRUNUwqAgTE9DQUzCoCBERUZBVUxUwqAgwqAy
+MyBfR0xPQkFMX09GRlNFVF9UQUJMRV8KPj4gIMKgIMKgIDIxOiAwMDAwMDAwMDAwMDAwMDAwwqAg
+wqAgwqAwIEZVTkPCoCDCoCBHTE9CQUwgREVGQVVMVMKgIFVORCBfX2xpYmNfc3RhcnRfbWFpWy4u
+Ll0KPj4gIMKgIMKgIDIyOiAwMDAwMDAwMDAwMDAwMDAwwqAgwqAgwqAwIE5PVFlQRcKgIFdFQUvC
+oCDCoERFRkFVTFTCoCBVTkQgX0lUTV9kZXJlZ2lzdGVyVFsuLi5dCj4+ICDCoCDCoCAyMzogMDAw
+MDAwMDAwMDAwNDAwMMKgIMKgIMKgMCBOT1RZUEXCoCBXRUFLwqAgwqBERUZBVUxUwqAgwqAyNCBk
+YXRhX3N0YXJ0Cj4+ICDCoCDCoCAyNDogMDAwMDAwMDAwMDAwMTE2MMKgIMKgIMKgOCBGVU5DwqAg
+wqAgR0xPQkFMIERFRkFVTFTCoCDCoDE0IGFkZAo+PiAgwqAgwqAgMjU6IDAwMDAwMDAwMDAwMDQw
+MjDCoCDCoCDCoDAgTk9UWVBFwqAgR0xPQkFMIERFRkFVTFTCoCDCoDI0IF9lZGF0YQo+PiAgwqAg
+wqAgMjY6IDAwMDAwMDAwMDAwMDIwMDTCoCDCoCDCoDEgTk9UWVBFwqAgV0VBS8KgIMKgSElEREVO
+wqAgwqAgMTcgXy5zdGFwc2R0LmJhc2UKPj4gIMKgIMKgIDI3OiAwMDAwMDAwMDAwMDA0MDEwwqAg
+wqAgwqA4IE9CSkVDVMKgIEdMT0JBTCBERUZBVUxUwqAgwqAyNCB0MQo+PiAgwqAgwqAgMjg6IDAw
+MDAwMDAwMDAwMDExNjjCoCDCoCDCoDAgRlVOQ8KgIMKgIEdMT0JBTCBISURERU7CoCDCoCAxNSBf
+ZmluaQo+PiAgwqAgwqAgMjk6IDAwMDAwMDAwMDAwMDQwMDDCoCDCoCDCoDAgTk9UWVBFwqAgR0xP
+QkFMIERFRkFVTFTCoCDCoDI0IF9fZGF0YV9zdGFydAo+PiAgwqAgwqAgMzA6IDAwMDAwMDAwMDAw
+MDAwMDDCoCDCoCDCoDAgTk9UWVBFwqAgV0VBS8KgIMKgREVGQVVMVMKgIFVORCBfX2dtb25fc3Rh
+cnRfXwo+PiAgwqAgwqAgMzE6IDAwMDAwMDAwMDAwMDQwMDjCoCDCoCDCoDAgT0JKRUNUwqAgR0xP
+QkFMIEhJRERFTsKgIMKgIDI0IF9fZHNvX2hhbmRsZQo+PiAgwqAgwqAgMzI6IDAwMDAwMDAwMDAw
+MDIwMDDCoCDCoCDCoDQgT0JKRUNUwqAgR0xPQkFMIERFRkFVTFTCoCDCoDE2IF9JT19zdGRpbl91
+c2VkCj4+ICDCoCDCoCAzMzogMDAwMDAwMDAwMDAwNDAyOMKgIMKgIMKgMCBOT1RZUEXCoCBHTE9C
+QUwgREVGQVVMVMKgIMKgMjUgX2VuZAo+PiAgwqAgwqAgMzQ6IDAwMDAwMDAwMDAwMDEwNzDCoCDC
+oCAzOCBGVU5DwqAgwqAgR0xPQkFMIERFRkFVTFTCoCDCoDE0IF9zdGFydAo+PiAgwqAgwqAgMzU6
+IDAwMDAwMDAwMDAwMDQwMjDCoCDCoCDCoDAgTk9UWVBFwqAgR0xPQkFMIERFRkFVTFTCoCDCoDI1
+IF9fYnNzX3N0YXJ0Cj4+ICDCoCDCoCAzNjogMDAwMDAwMDAwMDAwMTA0MMKgIMKgIDQ4IEZVTkPC
+oCDCoCBHTE9CQUwgREVGQVVMVMKgIMKgMTQgbWFpbgo+PiAgwqAgwqAgMzc6IDAwMDAwMDAwMDAw
+MDQwMTjCoCDCoCDCoDggT0JKRUNUwqAgR0xPQkFMIERFRkFVTFTCoCDCoDI0IGFkZF9wdHIKPj4g
+IMKgIMKgIDM4OiAwMDAwMDAwMDAwMDA0MDIwwqAgwqAgwqAwIE9CSkVDVMKgIEdMT0JBTCBISURE
+RU7CoCDCoCAyNCBfX1RNQ19FTkRfXwo+PiAgwqAgwqAgMzk6IDAwMDAwMDAwMDAwMDAwMDDCoCDC
+oCDCoDAgTk9UWVBFwqAgV0VBS8KgIMKgREVGQVVMVMKgIFVORCBfSVRNX3JlZ2lzdGVyVE1DWy4u
+Ll0KPj4gIMKgIMKgIDQwOiAwMDAwMDAwMDAwMDAwMDAwwqAgwqAgwqAwIEZVTkPCoCDCoCBXRUFL
+wqAgwqBERUZBVUxUwqAgVU5EIF9fY3hhX2ZpbmFsaXplQEdbLi4uXQo+PiAgwqAgwqAgNDE6IDAw
+MDAwMDAwMDAwMDEwMDDCoCDCoCDCoDAgRlVOQ8KgIMKgIEdMT0JBTCBISURERU7CoCDCoCAxMSBf
+aW5pdAo+Pgo+Pgo+PiBEaXNwbGF5aW5nIG5vdGVzIGZvdW5kIGluOiAubm90ZS5nbnUucHJvcGVy
+dHkKPj4gIMKgIE93bmVywqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgRGF0YSBzaXplwqAgwqAgwqAg
+wqAgRGVzY3JpcHRpb24KPj4gIMKgIEdOVcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIDB4MDAw
+MDAwMjDCoCDCoCDCoCDCoE5UX0dOVV9QUk9QRVJUWV9UWVBFXzAKPj4gIMKgIMKgIMKgIFByb3Bl
+cnRpZXM6IHg4NiBmZWF0dXJlOiBJQlQsIFNIU1RLCj4+ICDCoCDCoCDCoCDCoCB4ODYgSVNBIG5l
+ZWRlZDogeDg2LTY0LWJhc2VsaW5lCj4+Cj4+Cj4+IERpc3BsYXlpbmcgbm90ZXMgZm91bmQgaW46
+IC5ub3RlLmdudS5idWlsZC1pZAo+PiAgwqAgT3duZXLCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBE
+YXRhIHNpemXCoCDCoCDCoCDCoCBEZXNjcmlwdGlvbgo+PiAgwqAgR05VwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgMHgwMDAwMDAxNMKgIMKgIMKgIMKgTlRfR05VX0JVSUxEX0lEICh1bmlxdWUg
+YnVpbGQgSUQgYml0c3RyaW5nKQo+PiAgwqAgwqAgQnVpbGQgSUQ6IGViNjE1ZGFhNTc1Njg3Y2M0
+NGVkYzFkMzM5YjI3ODkwYzEyYzI3ZjEKPj4KPj4KPj4gRGlzcGxheWluZyBub3RlcyBmb3VuZCBp
+bjogLm5vdGUuQUJJLXRhZwo+PiAgwqAgT3duZXLCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBEYXRh
+IHNpemXCoCDCoCDCoCDCoCBEZXNjcmlwdGlvbgo+PiAgwqAgR05VwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgMHgwMDAwMDAxMMKgIMKgIMKgIMKgTlRfR05VX0FCSV9UQUcgKEFCSSB2ZXJzaW9u
+IHRhZykKPj4gIMKgIMKgIE9TOiBMaW51eCwgQUJJOiAzLjIuMAo+Pgo+Pgo+PiBEaXNwbGF5aW5n
+IG5vdGVzIGZvdW5kIGluOiAubm90ZS5zdGFwc2R0Cj4+ICDCoCBPd25lcsKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIERhdGEgc2l6ZcKgIMKgIMKgIMKgIERlc2NyaXB0aW9uCj4+ICDCoCBzdGFwc2R0
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgMHgwMDAwMDA2NsKgIMKgIMKgIMKgTlRfU1RBUFNEVCAoU3lz
+dGVtVGFwIHByb2JlIGRlc2NyaXB0b3JzKQo+PiAgwqAgwqAgUHJvdmlkZXI6IHVzZHRfcmlwCj4+
+ICDCoCDCoCBOYW1lOiByaXBfZ2xvYmFsX3Zhcgo+PiAgwqAgwqAgTG9jYXRpb246IDB4MDAwMDAw
+MDAwMDAwMTA1OCwgQmFzZTogMHgwMDAwMDAwMDAwMDAyMDA0LCBTZW1hcGhvcmU6IDB4MDAwMDAw
+MDAwMDAwMDAwMAo+PiAgwqAgwqAgQXJndW1lbnRzOiAtMUB0aSglcmlwKSA4QGFkZF9wdHIoJXJp
+cCkgLTFANCt0MSglcmlwKSAtMUB0aSglcmlwKQo+Cj5Db3VsZCB5b3Ugc2hhcmUgdGhlIGNvbXBs
+ZXRlIHNvdXJjZSBjb2RlcyBhbmQgY29tcGlsZXIgb3B0aW9ucyB3aGljaAo+cmVwcm9kdWNlIHRo
+ZSBhYm92ZSByZXN1bHQ/Cj4KPj4KPj4KPj4KPj4gQXQgMjAyNS0wOC0xMiAxMzowNjo0MCwgIllv
+bmdob25nIFNvbmciIDx5b25naG9uZy5zb25nQGxpbnV4LmRldj4gd3JvdGU6Cj4+Pgo+Pj4gT24g
+OC8xMC8yNSAxOjU1IEFNLCDotbXkvbPngpwgd3JvdGU6Cj4+Pj4KPj4+PiBIaSBZb25naG9uZywK
+Pj4+Pgo+Pj4+IEkgZm91bmQgYW5vdGhlciBpc3N1ZSB3aGVyZSBzeW1ib2xzIGNhbiBiZSBkdXBs
+aWNhdGVkLCBhbmQgSeKAmW0gbm90IHN1cmUgaG93IHRvIHRlbGwgdGhlbSBhcGFydC4KPj4+Pgo+
+Pj4+IEZvciBleGFtcGxlLCBJIGNyZWF0ZWQgdHdvIEMgZmlsZXMgbmFtZWQgdXNkdF9yaXAuYyBh
+bmQgaGVsbG8uYy4gQm90aCBkZWZpbmUgdGhlaXIgb3duIHN0YXRpYyB0aSB2YXJpYWJsZXMsIGxp
+a2U6YHN0YXRpYyB2b2xhdGlsZSBjaGFyIHRpID0gMDtgLgo+Pj4+Cj4+Pj4gQWZ0ZXIgY29tcGls
+aW5nLCBJIG9idGFpbmVkIGFuIEVMRiBmaWxlIHVzZHRfcmlwIHdob3NlIC5zeW10YWIgY29udGFp
+bnMgdGhlIGZvbGxvd2luZyBlbnRyaWVzOgo+Pj4+Cj4+Pj4gJCByZWFkZWxmIC1zIHVzZHRfcmlw
+Cj4+Pj4KPj4+PiBTeW1ib2wgdGFibGUgJy5zeW10YWInIGNvbnRhaW5zIDQyIGVudHJpZXM6Cj4+
+Pj4gICAgICBOdW06ICAgIFZhbHVlICAgICAgICAgIFNpemUgVHlwZSAgICBCaW5kICAgVmlzICAg
+ICAgTmR4IE5hbWUKPj4+PiAgICAgICAgMDogMDAwMDAwMDAwMDAwMDAwMCAgICAgMCBOT1RZUEUg
+IExPQ0FMICBERUZBVUxUICBVTkQKPj4+PiAgICAgICAgMTogMDAwMDAwMDAwMDAwMDAwMCAgICAg
+MCBGSUxFICAgIExPQ0FMICBERUZBVUxUICBBQlMgU2NydDEubwo+Pj4+ICAgICAgICAyOiAwMDAw
+MDAwMDAwMDAwMzhjICAgIDMyIE9CSkVDVCAgTE9DQUwgIERFRkFVTFQgICAgNCBfX2FiaV90YWcK
+Pj4+PiAgICAgICAgMzogMDAwMDAwMDAwMDAwMDAwMCAgICAgMCBGSUxFICAgIExPQ0FMICBERUZB
+VUxUICBBQlMgdXNkdF9yaXAuYwo+Pj4+ICAgICAgICA0OiAwMDAwMDAwMDAwMDA0MDIxICAgICAx
+IE9CSkVDVCAgTE9DQUwgIERFRkFVTFQgICAyNSB0aQo+Pj4+ICAgICAgICA1OiAwMDAwMDAwMDAw
+MDAwMDAwICAgICAwIEZJTEUgICAgTE9DQUwgIERFRkFVTFQgIEFCUyBjcnRzdHVmZi5jCj4+Pj4g
+ICAgICAgIDY6IDAwMDAwMDAwMDAwMDEwYTAgICAgIDAgRlVOQyAgICBMT0NBTCAgREVGQVVMVCAg
+IDE0IGRlcmVnaXN0ZXJfdG1fY2xvbmVzCj4+Pj4gICAgICAgIDc6IDAwMDAwMDAwMDAwMDEwZDAg
+ICAgIDAgRlVOQyAgICBMT0NBTCAgREVGQVVMVCAgIDE0IHJlZ2lzdGVyX3RtX2Nsb25lcwo+Pj4+
+ICAgICAgICA4OiAwMDAwMDAwMDAwMDAxMTEwICAgICAwIEZVTkMgICAgTE9DQUwgIERFRkFVTFQg
+ICAxNCBfX2RvX2dsb2JhbF9kdG9yc19hdXgKPj4+PiAgICAgICAgOTogMDAwMDAwMDAwMDAwNDAy
+MCAgICAgMSBPQkpFQ1QgIExPQ0FMICBERUZBVUxUICAgMjUgY29tcGxldGVkLjAKPj4+PiAgICAg
+ICAxMDogMDAwMDAwMDAwMDAwM2RmOCAgICAgMCBPQkpFQ1QgIExPQ0FMICBERUZBVUxUICAgMjEg
+X19kb19nbG9iYWxfZHRvclsuLi5dCj4+Pj4gICAgICAgMTE6IDAwMDAwMDAwMDAwMDExNTAgICAg
+IDAgRlVOQyAgICBMT0NBTCAgREVGQVVMVCAgIDE0IGZyYW1lX2R1bW15Cj4+Pj4gICAgICAgMTI6
+IDAwMDAwMDAwMDAwMDNkZjAgICAgIDAgT0JKRUNUICBMT0NBTCAgREVGQVVMVCAgIDIwIF9fZnJh
+bWVfZHVtbXlfaW5bLi4uXQo+Pj4+ICAgICAgIDEzOiAwMDAwMDAwMDAwMDAwMDAwICAgICAwIEZJ
+TEUgICAgTE9DQUwgIERFRkFVTFQgIEFCUyBkYW1vLmMKPj4+PiAgICAgICAxNDogMDAwMDAwMDAw
+MDAwNDAyMiAgICAgMSBPQkpFQ1QgIExPQ0FMICBERUZBVUxUICAgMjUgdGkKPj4+PiAgICAgICAx
+NTogMDAwMDAwMDAwMDAwMDAwMCAgICAgMCBGSUxFICAgIExPQ0FMICBERUZBVUxUICBBQlMgY3J0
+c3R1ZmYuYwo+Pj4+ICAgICAgIDE2OiAwMDAwMDAwMDAwMDAyMGQ4ICAgICAwIE9CSkVDVCAgTE9D
+QUwgIERFRkFVTFQgICAxOSBfX0ZSQU1FX0VORF9fCj4+Pj4KPj4+Pgo+Pj4+IEFzIHlvdSBjYW4g
+c2VlLCB0aGVyZSBhcmUgdHdvIHRpIHZhcmlhYmxlcyBpbiB0aGUgLnN5bXRhYiBzZWN0aW9uLiBU
+aGVpciB2YWx1ZXMgYXJlIHZlcnkgY2xvc2UsIG1ha2luZyB0aGVtIGhhcmQgdG8gZGlzdGluZ3Vp
+c2guCj4+Pj4KPj4+PiBJ4oCZbSB1bnN1cmUgaG93IHRvIGhhbmRsZSB0aGlzIHNpdHVhdGlvbi4g
+RG8geW91IGhhdmUgYW55IHN1Z2dlc3Rpb25zPwo+Pj4gRGlkIHlvdSBjaGVjayByZWxvY2F0aW9u
+cz8gUmVsb2NhaXRvbnMgc2hvdWxkIGJlIGFibGUgdG8gcG9pbnQgZXhhY3Qgd2hpY2ggc3ltYm9s
+Lgo+Pj4KPj4+PiBUaGFua3MsCj4+Pj4gSmlhd2VpIFpoYW8KPj4+IFsuLi5dCg==
 
