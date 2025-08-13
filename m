@@ -1,96 +1,131 @@
-Return-Path: <linux-kernel+bounces-767418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5D8EB253FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:35:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B94B253FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 059231C83964
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A0FE728912
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B3A62C21F6;
-	Wed, 13 Aug 2025 19:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDADA21254C;
+	Wed, 13 Aug 2025 19:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmOBO6JJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRboU3La"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0AD256C88;
-	Wed, 13 Aug 2025 19:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E7E15A87C;
+	Wed, 13 Aug 2025 19:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755113693; cv=none; b=MEKHxczRqiz8hgQLANTtEEs35MTTNBSQaPZmIWAYBkW2q4yTvrupxVMJsdV0ZFwHbu4GmDMECMG88vjctN/FWT0UGVOVXEpUMvroUX83/C7nXdR9svu2KTbNmSjfQi/ijWmjkZdCp9k3/JQjRWY3nLBwnDR2628M6uzdBg/crFA=
+	t=1755113712; cv=none; b=b1PnGM/GLI6HA/0NuyIFwVrWh1TEfcgCONlvvOmHnXD1adIMMpLwgVdh+1WMF1gTf7zqf5AXUKXwTBJ5Mdb8fsygUP7Qpwyea0T5SdFu6jsNnfjweV6M33a/GctSAB8E+Jh1rizSFI5f/Auu2XlPP1S7ysVk8/Zqn4cerbfA12g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755113693; c=relaxed/simple;
-	bh=ouxbFcVrUS9hvxkMdGRbOfAKnaBDJG/JEQxiQR2jMWo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Z2W/CQrNti4EPXTSooQd27eMqkGc1oxk7nHpVzsVCL7utvu4fZO8Ps+6HfEMUwCMCJpddUvO+WBzHC6deTV4ou/UDSqUst95SGvoYhJQ4Bd8eQdrCxxQ+f+ukQ9DxzwkNyZtNKnSC7dgvL0TZvflEpx3lQy1Hnl5kJSkiyTwmro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DmOBO6JJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F38C1C4CEEF;
-	Wed, 13 Aug 2025 19:34:51 +0000 (UTC)
+	s=arc-20240116; t=1755113712; c=relaxed/simple;
+	bh=UqocbTcw5EDwtib0jYrghJffrDmxf3zJ7rq/CvASetg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=jO7u0oQkH2HADsAUu/AtrWFhrG2urq2HT41nlPoAU+PXsoihvSjduHGxLyway83z7M81/9r9v//a9yfU1j4ixTMRtIERtRqrRdZC66MGBdpbDIfeywyIucXDZ5UM1dQpzP5bLPvTYoUbdBk7gAaGgEI7Pj1h5NSVIUGKquX8iHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRboU3La; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90F09C4CEEB;
+	Wed, 13 Aug 2025 19:35:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755113693;
-	bh=ouxbFcVrUS9hvxkMdGRbOfAKnaBDJG/JEQxiQR2jMWo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DmOBO6JJETxAhR0VJijHavL/SKMgHxEADMQxsONS1H1Zt09SSiRETXQfY+a7uRy1C
-	 lYPfKF4GxN/+fh0dO7ooDwiMrWBqYN9k5wiZlBcCgCgJd5XO4ilR0RGXTQK0tkr2y+
-	 JFpycRB7EGSjnmAd4AxlFDt+n4OO7b3k+wwpf+AkRp878rcps8ggcCqs5kR33ARA13
-	 +rbdKe89aJ7WGsxpm25x21zTLUGs20cOPN8kaYGCZivYi4HcbXRbAbv249J6PQLUcD
-	 t+uP+cEhZWgGZ353Sq5+2Akj5nJ1nKPqDoP+WbRPQ8RiVrgQ7FfhvYnMNPRfnZXZqS
-	 VFr7sh4pOj7IA==
-From: Mark Brown <broonie@kernel.org>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: tiwai@suse.de, andriy.shevchenko@linux.intel.com, 13916275206@139.com, 
- alsa-devel@alsa-project.org, shenghao-ding@ti.com, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250813100708.12197-1-baojun.xu@ti.com>
-References: <20250813100708.12197-1-baojun.xu@ti.com>
-Subject: Re: [PATCH v1] ASoC: tas2781: Normalize the volume kcontrol name
-Message-Id: <175511369173.254480.2972663584944434542.b4-ty@kernel.org>
-Date: Wed, 13 Aug 2025 20:34:51 +0100
+	s=k20201202; t=1755113711;
+	bh=UqocbTcw5EDwtib0jYrghJffrDmxf3zJ7rq/CvASetg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=tRboU3LajjYr7ecWWsCZW4QpYioFi4ept65n2reoXnivoH05RRaVJgS94TB/TDshj
+	 r69eSKB5y94BDHLWDNpcolPSDNXbDkgf3PykLD8SRBgEvEEZgR1XkAMJLryp9XEQCn
+	 A2uqdvusjehlEmrv5zIRUrzuJEJzZXkpHGitui5Kb4puC1bgYfGdMyuN4Wbd9v1MBe
+	 84/2+hCCFH3Qw2kOZ5g8+fz6TsTt9SWMZ4h1hTevQj6smyLBqzZ/dA+A9gNTg/Zpq4
+	 8Nn2EhRnSF1Fk9lNHw5cZwv0PrthUWYWXqMMvYuBSw+OeQ6i1OcpH6VdZzCm1MSsOp
+	 hIHvN4iljYMwg==
+Date: Wed, 13 Aug 2025 14:35:10 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2] PCI/pwrctrl: Fix double cleanup on
+ devm_add_action_or_reset() failure
+Message-ID: <20250813193510.GA287916@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7b1386e6162e70e6d631c87f6323d2ab971bc1c5.1755100324.git.geert+renesas@glider.be>
 
-On Wed, 13 Aug 2025 18:07:08 +0800, Baojun Xu wrote:
-> Change the name of the kcontrol from "Gain" to "Volume".
+On Wed, Aug 13, 2025 at 05:56:25PM +0200, Geert Uytterhoeven wrote:
+> When devm_add_action_or_reset() fails, it calls the passed cleanup
+> function.  Hence the caller must not repeat that cleanup.
 > 
+> Replace the "goto err_regulator_free" by the actual freeing, as there
+> will never be a need again for a second user of this label.
 > 
+> Fixes: 75996c92f4de309f ("PCI/pwrctrl: Add pwrctrl driver for PCI slots")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+> Tested-by: Marek Vasut <marek.vasut+renesas@mailbox.org> # V4H Sparrow Hawk
+> Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Applied to
+Applied to pci/pwrctrl for v6.18, thanks!
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: tas2781: Normalize the volume kcontrol name
-      commit: 47ed64db8c17eb16541098add865178fb7e68744
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+> ---
+> Compile-tested only.
+> 
+> v2:
+>   - Add Reviewed-by, Tested-by, Acked-by.
+> ---
+>  drivers/pci/pwrctrl/slot.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/pci/pwrctrl/slot.c b/drivers/pci/pwrctrl/slot.c
+> index 6e138310b45b9f7e..3320494b62d890ff 100644
+> --- a/drivers/pci/pwrctrl/slot.c
+> +++ b/drivers/pci/pwrctrl/slot.c
+> @@ -49,13 +49,14 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
+>  	ret = regulator_bulk_enable(slot->num_supplies, slot->supplies);
+>  	if (ret < 0) {
+>  		dev_err_probe(dev, ret, "Failed to enable slot regulators\n");
+> -		goto err_regulator_free;
+> +		regulator_bulk_free(slot->num_supplies, slot->supplies);
+> +		return ret;
+>  	}
+>  
+>  	ret = devm_add_action_or_reset(dev, devm_pci_pwrctrl_slot_power_off,
+>  				       slot);
+>  	if (ret)
+> -		goto err_regulator_disable;
+> +		return ret;
+>  
+>  	clk = devm_clk_get_optional_enabled(dev, NULL);
+>  	if (IS_ERR(clk)) {
+> @@ -70,13 +71,6 @@ static int pci_pwrctrl_slot_probe(struct platform_device *pdev)
+>  		return dev_err_probe(dev, ret, "Failed to register pwrctrl driver\n");
+>  
+>  	return 0;
+> -
+> -err_regulator_disable:
+> -	regulator_bulk_disable(slot->num_supplies, slot->supplies);
+> -err_regulator_free:
+> -	regulator_bulk_free(slot->num_supplies, slot->supplies);
+> -
+> -	return ret;
+>  }
+>  
+>  static const struct of_device_id pci_pwrctrl_slot_of_match[] = {
+> -- 
+> 2.43.0
+> 
 
