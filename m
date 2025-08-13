@@ -1,250 +1,138 @@
-Return-Path: <linux-kernel+bounces-765789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20DCB23E47
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:31:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABE8B23E44
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8410C6E4C19
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:31:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838681B6033A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ABB1F3B83;
-	Wed, 13 Aug 2025 02:31:13 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5679E8248C;
-	Wed, 13 Aug 2025 02:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD4F1A3155;
+	Wed, 13 Aug 2025 02:30:37 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BA61EA6F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755052272; cv=none; b=eMls98E0KiZHHPNM8GscMKj4VB4jKZoZfnXxOwZDfHyfgKdmc6rY+CDgob4BzdHBdyhXcRm/8vN3QN/nRoVUxDfsiJg3PEpnX6/euF/pK30WB9in9Njl4O6l481GsAN9J18s4DIt7neSNww89MnkaMBhxTncmu3gjFs3iG/ZCgQ=
+	t=1755052237; cv=none; b=iHpZMAH0xAoL82iwhCc0rBiBiio//9CFzUA/8/n5OWaQJxIOi2BxKJCIjjUudf0uvwVdwdRL1B33FTn9bQMIWja445bWUaIh7XUf2FcYoIAA0B8xal9rwcbviRFpuUuU/6xdOKrHXkRbQ9SB+J+90f8MFHVta6tPyxZm3uUEVeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755052272; c=relaxed/simple;
-	bh=xSsuCHzCrsw36yf7bTY2cHxu4/YLUNUVP1IbUqh6OiI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q0HsaaAWd5ybR+58m08MdggTsqeJvsOOYYBTXIKpMBxcGRxZK22tGllD6NJYnsTwCZ/nuaVTyb0mCavPJOonDTH/6achltKpXRqjZkvP9w+4PYEem3M9IzJxKMaArOir0Pyi5RXio2CDJsLxhlrgk3CnLtSzEygKembnu1tJ7QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c1sn66jZCzKHMqX;
-	Wed, 13 Aug 2025 10:31:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 311DE1A0899;
-	Wed, 13 Aug 2025 10:31:06 +0800 (CST)
-Received: from huawei.com (unknown [10.67.174.45])
-	by APP4 (Coremail) with SMTP id gCh0CgCXExTn+JtoJBUADg--.30982S4;
-	Wed, 13 Aug 2025 10:31:06 +0800 (CST)
-From: Tengda Wu <wutengda@huaweicloud.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tengda Wu <wutengda@huaweicloud.com>
-Subject: [PATCH -next 2/2] ftrace: Fix potential use-after-free for set_ftrace_{notrace,filter} files
-Date: Wed, 13 Aug 2025 02:30:44 +0000
-Message-Id: <20250813023044.2121943-3-wutengda@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813023044.2121943-1-wutengda@huaweicloud.com>
-References: <20250813023044.2121943-1-wutengda@huaweicloud.com>
+	s=arc-20240116; t=1755052237; c=relaxed/simple;
+	bh=rFxGt71pAfBpY4kl8ifJorZ6fJ9QuIiicyDhtCYx70c=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=P9wD0Bzwyx2yz02puA7qD0ALrRwyA0EI41d/aFGlnIRf3V9Oa6n/Qk6IR9zYPqD4hkgn0bzNK08wiaWVcv/TgBW5VTr1vgBjBr0sAbF6CsG42pczbD4O1JZK/3CHQbzt39zYTmP7vq0TXfocbM1on55VDRh3BAdPwVc4fLueHDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.239])
+	by gateway (Coremail) with SMTP id _____8AxmnHH+JtobS4_AQ--.54216S3;
+	Wed, 13 Aug 2025 10:30:31 +0800 (CST)
+Received: from [10.20.42.239] (unknown [10.20.42.239])
+	by front1 (Coremail) with SMTP id qMiowJDxQ+TD+Jto9RRIAA--.11342S3;
+	Wed, 13 Aug 2025 10:30:29 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: KVM: Use kvm_get_vcpu_by_id() instead of
+ kvm_get_vcpu()
+To: Yanteng Si <si.yanteng@linux.dev>, maobibo@loongson.cn,
+ zhaotianrui@loongson.cn, chenhuacai@kernel.org, lixianglai@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250811025544.458422-1-gaosong@loongson.cn>
+ <ed67c8bd-9e79-47c7-9186-910b530a191c@linux.dev>
+From: gaosong <gaosong@loongson.cn>
+Message-ID: <0ab5cded-c1e1-e0bc-25fb-f4f8ef9567b6@loongson.cn>
+Date: Wed, 13 Aug 2025 10:33:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <ed67c8bd-9e79-47c7-9186-910b530a191c@linux.dev>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXExTn+JtoJBUADg--.30982S4
-X-Coremail-Antispam: 1UD129KBjvJXoW3Jr1UKr1Utry7Wr1UCF43trb_yoW7Zr18pF
-	WSyFZ8Gr18AFsrKwn7W3WDtr18XryFyryxta97tw13Xr9Iqw15uFy7Zr95Xr4ft3srJr9x
-	uF429w15K3yUXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBG14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
-	x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWUAVWUtw
-	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j
-	6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64
-	vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0x
-	vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUolk3UUUUU=
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+Content-Language: en-US
+X-CM-TRANSID:qMiowJDxQ+TD+Jto9RRIAA--.11342S3
+X-CM-SenderInfo: 5jdr20tqj6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7AFyUKF15GF1UKF4rGrW5CFX_yoW8Kr4rpF
+	n7Can0vFWrKrykG34Uta4UZFyUGrs5tw1kWF40yFy5Ar47XF1jgry8Wr90gFyUCw4xGF40
+	qr1Ygr1avF4UJ3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_MaUUUU
+	U
 
-Concurrent read/write operations on the set_ftrace_{notrace,filter}
-files may probabilistically trigger the following issues:
+在 2025/8/12 上午10:06, Yanteng Si 写道:
+> 在 8/11/25 10:55 AM, Song Gao 写道:
+>> Use kvm_get_vcpu() may can't get vcpu context, use kvm_get_vcpu_by_id()
+>> instead of kvm_get_vcpu().
+> Since using kvm_get_vcpu() may fail to retrieve the vcpu context,
+> kvm_get_vcpu_by_id() should be used instead.
+>
+> Under this premise, and under the premise of making revisions
+> in accordance with Bibo's and Huacai's suggestions，pick up my tag in v2.
+>
+Got it .
+> Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cm>
+>
+> Additionally, do we need a fixes tag?
+>
+I will add a fixes tag on v2.
 
-[ 2715.745293] BUG: unable to handle page fault for address: 00000003da393970
-[ 2715.753736] CPU: 1 UID: 0 PID: 1324 Comm: read Not tainted 6.16.0-next-20250808 #1 PREEMPT(full)
-[ 2715.755292] RIP: 0010:ftrace_lookup_ip+0x40/0x70
-[ 2715.761114] Call Trace:
-[ 2715.761462]  <TASK>
-[ 2715.761705]  t_func_next.isra.0+0xaa/0xd0
-[ 2715.762049]  t_start+0xa3/0x140
-[ 2715.762207]  seq_read_iter+0xe8/0x4a0
-[ 2715.762564]  seq_read+0x101/0x140
-[ 2715.762769]  vfs_read+0xbd/0x340
-[ 2715.763014]  ? preempt_count_add+0x4b/0xa0
-[ 2715.763311]  ? do_sys_openat2+0x8c/0xd0
-[ 2715.763623]  ksys_read+0x65/0xe0
-[ 2715.763797]  do_syscall_64+0x4e/0x1c0
-[ 2715.764049]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-The issue can be reproduced with the following script (using the
-set_ftrace_notrace file as an example):
-
-  while true; do
-    echo __probestub_initcall_level > /sys/kernel/tracing/set_ftrace_notrace &
-    cat /sys/kernel/tracing/set_ftrace_notrace &
-  done
-
-The root cause is that ftrace_regex_open and ftrace_regex_release
-do not properly handle concurrent synchronization for notrace_hash.
-Consider a race scenario between a reader and a writer:
-
-1. The reader first obtains the value of notrace_hash via
-   ftrace_regex_open().
-2. The writer then updates notrace_hash via ftrace_regex_release()
-   and frees the memory pointed to by the old notrace_hash.
-3. Later, the reader accesses the old notrace_hash memory while
-   ftrace_hash_empty() and ftrace_lookup_ip(), leading to a UAF.
-
-CPU 1 (read)                                    CPU 2 (write)
-ftrace_regex_open
-  hash = ops->func_hash->notrace_hash;
-  iter->hash = hash;
-                                                ftrace_regex_open
-                                                ftrace_regex_release
-                                                  orig_hash = &iter->ops->func_hash->notrace_hash;
-                                                  old_hash = *orig_hash;
-                                                  free_ftrace_hash_rcu(old_hash);
-t_start
-  ftrace_hash_empty(iter->hash)
-  t_func_next
-    !ftrace_lookup_ip(iter->hash, rec->ip)
-
-Since the reader's hash is always tied to its file descriptor (fd),
-the writer cannot directly manage the reader's hash. To fix this,
-introduce a refcount for ftrace_hash, initialized to 1. The count
-is incremented only when a reader opens it, and decremented when
-either a reader or writer releases it, thereby controlling the timing
-of ftrace_hash deallocation.
-
-Fixes: c20489dad156 ("ftrace: Assign iter->hash to filter or notrace hashes on seq read")
-Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
----
- kernel/trace/ftrace.c | 27 ++++++++++++++++++++++++---
- kernel/trace/trace.h  |  2 ++
- 2 files changed, 26 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index cade13595b08..be4842054254 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -1060,6 +1060,7 @@ struct ftrace_func_probe {
- static const struct hlist_head empty_buckets[1];
- static const struct ftrace_hash empty_hash = {
- 	.buckets = (struct hlist_head *)empty_buckets,
-+	.refcount = REFCOUNT_INIT(1),
- };
- #define EMPTY_HASH	((struct ftrace_hash *)&empty_hash)
- 
-@@ -1282,6 +1283,22 @@ static void free_ftrace_hash_rcu(struct ftrace_hash *hash)
- 	call_rcu(&hash->rcu, __free_ftrace_hash_rcu);
- }
- 
-+static void get_ftrace_hash(struct ftrace_hash *hash)
-+{
-+	if (!hash || hash == EMPTY_HASH)
-+		return;
-+	if (!refcount_inc_not_zero(&hash->refcount))
-+		WARN_ON(1);
-+}
-+
-+static void put_ftrace_hash_rcu(struct ftrace_hash *hash)
-+{
-+	if (!hash || hash == EMPTY_HASH)
-+		return;
-+	if (refcount_dec_and_test(&hash->refcount))
-+		call_rcu(&hash->rcu, __free_ftrace_hash_rcu);
-+}
-+
- /**
-  * ftrace_free_filter - remove all filters for an ftrace_ops
-  * @ops: the ops to remove the filters from
-@@ -1316,6 +1333,7 @@ static struct ftrace_hash *alloc_ftrace_hash(int size_bits)
- 	}
- 
- 	hash->size_bits = size_bits;
-+	refcount_set(&hash->refcount, 1);
- 
- 	return hash;
- }
-@@ -3362,7 +3380,7 @@ static int __ftrace_hash_move_and_update_ops(struct ftrace_ops *ops,
- 	ret = ftrace_hash_move(ops, enable, orig_hash, hash);
- 	if (!ret) {
- 		ftrace_ops_update_code(ops, &old_hash_ops);
--		free_ftrace_hash_rcu(old_hash);
-+		put_ftrace_hash_rcu(old_hash);
- 	}
- 	return ret;
- }
-@@ -3714,7 +3732,7 @@ static int ftrace_hash_move_and_update_subops(struct ftrace_ops *subops,
- 		*orig_subhash = save_hash;
- 		free_ftrace_hash_rcu(new_hash);
- 	} else {
--		free_ftrace_hash_rcu(save_hash);
-+		put_ftrace_hash_rcu(save_hash);
- 	}
- 	return ret;
- }
-@@ -4666,8 +4684,10 @@ ftrace_regex_open(struct ftrace_ops *ops, int flag,
- 			trace_parser_put(&iter->parser);
- 			goto out_unlock;
- 		}
--	} else
-+	} else {
- 		iter->hash = hash;
-+		get_ftrace_hash(iter->hash);
-+	}
- 
- 	ret = 0;
- 
-@@ -6544,6 +6564,7 @@ int ftrace_regex_release(struct inode *inode, struct file *file)
- 		mutex_unlock(&ftrace_lock);
- 	} else {
- 		/* For read only, the hash is the ops hash */
-+		put_ftrace_hash_rcu(iter->hash);
- 		iter->hash = NULL;
- 	}
- 
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 1dbf1d3cf2f1..4936cd218c36 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -22,6 +22,7 @@
- #include <linux/ctype.h>
- #include <linux/once_lite.h>
- #include <linux/ftrace_regs.h>
-+#include <linux/refcount.h>
- 
- #include "pid_list.h"
- 
-@@ -905,6 +906,7 @@ struct ftrace_hash {
- 	unsigned long		count;
- 	unsigned long		flags;
- 	struct rcu_head		rcu;
-+	refcount_t		refcount;
- };
- 
- struct ftrace_func_entry *
--- 
-2.34.1
+Thanks.
+Song Gao
+> Thanks,
+> Yanteng
+>>
+>> Signed-off-by: Song Gao <gaosong@loongson.cn>
+>> ---
+>>   arch/loongarch/kvm/intc/eiointc.c | 5 ++++-
+>>   arch/loongarch/kvm/intc/ipi.c     | 2 +-
+>>   2 files changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/loongarch/kvm/intc/eiointc.c 
+>> b/arch/loongarch/kvm/intc/eiointc.c
+>> index a3a12af9ecbf..5180da91d2e6 100644
+>> --- a/arch/loongarch/kvm/intc/eiointc.c
+>> +++ b/arch/loongarch/kvm/intc/eiointc.c
+>> @@ -45,7 +45,10 @@ static void eiointc_update_irq(struct 
+>> loongarch_eiointc *s, int irq, int level)
+>>       }
+>>         cpu = s->sw_coremap[irq];
+>> -    vcpu = kvm_get_vcpu(s->kvm, cpu);
+>> +    vcpu = kvm_get_vcpu_by_id(s->kvm, cpu);
+>> +    if (unlikely(vcpu == NULL)) {
+>> +        return;
+>> +    }
+>>       if (level) {
+>>           /* if not enable return false */
+>>           if (!test_bit(irq, (unsigned long *)s->enable.reg_u32))
+>> diff --git a/arch/loongarch/kvm/intc/ipi.c 
+>> b/arch/loongarch/kvm/intc/ipi.c
+>> index e658d5b37c04..0348a83a7ed7 100644
+>> --- a/arch/loongarch/kvm/intc/ipi.c
+>> +++ b/arch/loongarch/kvm/intc/ipi.c
+>> @@ -298,7 +298,7 @@ static int kvm_ipi_regs_access(struct kvm_device 
+>> *dev,
+>>       cpu = (attr->attr >> 16) & 0x3ff;
+>>       addr = attr->attr & 0xff;
+>>   -    vcpu = kvm_get_vcpu(dev->kvm, cpu);
+>> +    vcpu = kvm_get_vcpu_by_id(dev->kvm, cpu);
+>>       if (unlikely(vcpu == NULL)) {
+>>           kvm_err("%s: invalid target cpu: %d\n", __func__, cpu);
+>>           return -EINVAL;
+>
 
 
