@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-766602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4FCB248E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:55:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FAEDB248EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53F915620AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96591B63BE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC6F2F90EC;
-	Wed, 13 Aug 2025 11:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6D92FABFB;
+	Wed, 13 Aug 2025 11:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vsPo1o3C"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XP+UJYgv"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A742F83A5
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DF22F8BED;
+	Wed, 13 Aug 2025 11:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086125; cv=none; b=B/UMjR31VTo4NdpMQVrTtNbWswW2x/u9q3TgSu5JKlJq3KCuIOtdX7QTVMm9Dq79VooDXydq2n1w1MoSmXB7r49XblJlN+Cv5gOK7Vt8nT5uNVNM6GiRniFxlQ4/VYt2muJZbneCASoaqBkEdGi8Ucqn95OpTRKMjDEpkkH24iM=
+	t=1755086168; cv=none; b=G/YoXMRGFx8R5HmBSS48tyS+th38varBKtrZ5aht2ykST45Wm/OMr6sDnDv4SFeKt6v6I1dg2L9INZHaQ/tuAe1PfOwd02xq7Nidm6L5gYXE9rt5d2BYg6EySxWpsw0PDk+QQCvlU24Hp+/GE32ZzmswavqEZz7D7LQTPKo/S5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086125; c=relaxed/simple;
-	bh=4zgPSyly5j+2ic+v/OEjd+JLtCPbpHrod1cPnZveUck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=af8dsTnS3glXvdM+Jp6fsvG9jw1XPHm0MGHDJqYevUc/YnyASNy9tB2Zky8qweNsTWNot/Opflvyo4y6T+C5sjxOcj5uxlmbYqFfSr844fs5D5LGIo6zlKlGj8SdCCCCkyC+fsyVUMPK8dfPlvq4Evu80TQknkgIEiQy93mGoJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vsPo1o3C; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4233d7e9-b563-4c48-beda-b00ac5b4c643@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755086110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYpkFazY9ZxpdLr2rax5brD6HKsU3F4bNK5sjQtebPs=;
-	b=vsPo1o3CtAXTJ4hAtFzoFmP5dVRt3poeUDkc/+dwCT+D5Jhbb+SJUsBWYBBgYOBQZ6dU+h
-	XohG+JW4D0XvovWnQljBb67f2HJsTcsQINK0UQBY3RaOAPRZlM8fJLoXvRp600X3Psp2AB
-	VP+wVSHIBuAa+UM7jxlUQg58og662JM=
-Date: Wed, 13 Aug 2025 19:54:52 +0800
+	s=arc-20240116; t=1755086168; c=relaxed/simple;
+	bh=quV/64NGZczI17JeNf9BZ5rmwuWqx93DwhXH7Qqhw2g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Tw6SPKbaxanwHDOKjRwnaL38tdxMI9E/1tWvbiZzxO1ZtLwNHm2TeSaDn79iRH+ku7ANE/kKnNyYNrx28uN9GyjDIj9ch9ye4JdPBnjvrRyMSZlhGiqL3xK5xZyEGS3l0g1P8RNwm55wL+pRgfWRPKLt/oz9E6ucLf3Iz89FHSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XP+UJYgv; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76bc5e68e26so6044363b3a.0;
+        Wed, 13 Aug 2025 04:56:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755086165; x=1755690965; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=etgbsIbBOnSZmFvohwhbriC8Ru0uLO2C5ab7ocfqrSQ=;
+        b=XP+UJYgvz7ogpNhL0WzTdjkqRf/VWv9h5FvmjNNjgHuY0wpQ7uuYvCcjYu9jA2/UTh
+         NEtsPEIN+rJC22ydSL7WjwCpOGW7DFoBfHqBLRi2qDRkbUdepDQhm3ov4td3HRFOwPZA
+         1i9jQfOa1zov4DfVf9BAr7lx7yR3FM61AdzTBoyTlsiipnXyvHz8JGyOW7HV/weMbjFe
+         /IwI59gEh4HuVw69fFOmhzdZrCcH9OIAfb62Dedz5q5daGgytLmEGL++uQBx6e7ewnAG
+         j9aeQ7vNms7fK/z6KqLtkhpC4ETQOxltf5D9hGEaZaI4/6bkueCps28VpeWn9pIyAwfg
+         SU5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755086165; x=1755690965;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=etgbsIbBOnSZmFvohwhbriC8Ru0uLO2C5ab7ocfqrSQ=;
+        b=BKXHtstmrLtgK1K2MGNtSfpXQjzV8bORHnc6AkUqWB6chioutYJub16/Bos8IA7SSI
+         eFAlcdexzmjgM5jHPU4R0IC/YxreyJb+hmAGuJr0DBqlq7AralAOh9Tu4ucq5WdNGxVw
+         P3n5s91yF9w7ChVBC+PBDgxtAlog27aVKviHcpOfuLinfpU7nqejdRZzCq04tJ974AK0
+         N0k07u2uMPKemDeF5xDI7Nk056IZzqhROtH01a050nHjYxd49H5SbXkYZfvUr51i8WIb
+         O+2clpRRZcDIrsmJt43BYVCIkZ1lU4yKYCJ1jyFilLkhmZ6DVv7oFoKY7scBFHp/pv6T
+         Ax1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVACrdiNFwPsx1S5IHLEzumrJVmWCImQYXxaWwbxxn4BQiwlAMZdwvCiMU02FQT19o/n+dU2/apUfk7+wJ4@vger.kernel.org, AJvYcCXgUJuXly+Ycu2t9Vln4pqUOAtzxIgmeLkNbYv1PRsxQONGXerktxpglJS8cY3/P69Igsu4VBZf+WA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCkfja84pKb/yC8oders3TAvgNnv4PfJOhtqYOPQOp3HB6hOAH
+	gzhZO8Kvbr2QEMMmxlsqDaczHp8fx7VdgPcNzhgWIxjCp+PFR29ysTtQfSFrh/uyJrg=
+X-Gm-Gg: ASbGncu/sW4CCxfEfyskTgCrFsvs63OAD8Ot/VvAe7mYqK6wm57ZH3wsNgB7f4t0P3n
+	DJdo2C9+mFjw3uAZAuY+CmtM/oI3i/pcjB2w8LK+AR47EctcQaU1aJ6OtgxJWTqQZShJ0VLXumg
+	hwWwC3+rZSFburIxIcOppRSGbzeRVtaPquLQK3vhn6bAwt0wx7PlS4d8VbQigqH81eKdaWLmw7Y
+	oW5UiL+RRhze+gKdCK9U/fuyAhGsCT8lD4cd/nbPW6ZPmWGKCWIRE8xYAaZrd495iYPAzwvZqyZ
+	8gJQA9NvLFzZvpLgBGqAdrVN3iv/80br8kONrwfRpL+ce+Tq8XmV7EDQ4iZYp+H1I/lK9gcse4v
+	DObPiC/2gOU1bcTaOWVcBcCVKIObdz5SXsM8LlwYt13AsQPo5
+X-Google-Smtp-Source: AGHT+IEqUbx2QZCO1lnqOrR8Nb6hxoGXj7FPYROLjSVP1sN6B2Zvb6IOlkA2ik+8PvTcOSR2rGc+7Q==
+X-Received: by 2002:a17:902:ccc9:b0:240:49d1:6347 with SMTP id d9443c01a7336-2430d1f84cfmr44365925ad.35.1755086164799;
+        Wed, 13 Aug 2025 04:56:04 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:8898:77ef:a09b:a8f4:7c6e:b37d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f1ececsm322985115ad.68.2025.08.13.04.55.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 04:56:04 -0700 (PDT)
+From: darshanrathod475@gmail.com
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com
+Cc: shiju.jose@huawei.com,
+	ming.li@zohomail.com,
+	peterz@infradead.org,
+	linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Darshan Rathod <darshanrathod475@gmail.com>
+Subject: [PATCH] cxl: remove assignment from if condition in cxl_mem_get_poison
+Date: Wed, 13 Aug 2025 17:25:54 +0530
+Message-Id: <20250813115554.388368-1-darshanrathod475@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v2] bpf: Remove migrate_disable in
- kprobe_multi_link_prog_run
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20250805162732.1896687-1-chen.dylane@linux.dev>
- <CAEf4BzZduEdBCzm56zwgrHpzV=CsMbzfVi5oR9w3H4vUQL6FYw@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Tao Chen <chen.dylane@linux.dev>
-In-Reply-To: <CAEf4BzZduEdBCzm56zwgrHpzV=CsMbzfVi5oR9w3H4vUQL6FYw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-在 2025/8/13 06:05, Andrii Nakryiko 写道:
-> On Tue, Aug 5, 2025 at 9:28 AM Tao Chen <chen.dylane@linux.dev> wrote:
->>
->> bpf program should run under migration disabled, kprobe_multi_link_prog_run
->> called all the way from graph tracer, which disables preemption in
->> function_graph_enter_regs, as Jiri and Yonghong suggested, there is no
->> need to use migrate_disable. As a result, some overhead maybe will be
->> reduced.
->>
->> Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
->> Acked-by: Yonghong Song <yonghong.song@linux.dev>
->> Acked-by: Jiri Olsa <jolsa@kernel.org>
->> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
->> ---
->>   kernel/trace/bpf_trace.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> Change list:
->>   v1 -> v2:
->>    - s/called the way/called all the way/.(Jiri)
->>   v1: https://lore.kernel.org/bpf/f7acfd22-bcf3-4dff-9a87-7c1e6f84ce9c@linux.dev
->>
->> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
->> index 3ae52978cae..5701791e3cb 100644
->> --- a/kernel/trace/bpf_trace.c
->> +++ b/kernel/trace/bpf_trace.c
->> @@ -2734,14 +2734,19 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
-> 
-> even though bpf_prog_run() eventually calls cant_migrate(), we should
-> add it before that __this_cpu_inc_return() call as well, because that
-> one is relying on that non-migration independently from bpf_prog_run()
-> 
+From: Darshan Rathod <darshanrathod475@gmail.com>
 
-Hi Andrii,
+Refactor cxl_mem_get_poison() to assign the return value of
+ACQUIRE_ERR() before the conditional check, instead of performing the
+assignment inside the if condition. This resolves a checkpatch.pl
+warning ("do not use assignment in if condition") and improves
+readability.
 
-There is __this_cpu_preempt_check in __this_cpu_inc_return, and the 
-judgment criteria are similar to cant_migrate, and I'm not sure if it
-is enough.
+Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
+---
+ drivers/cxl/core/mbox.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
->>                  goto out;
->>          }
->>
->> -       migrate_disable();
->> +       /*
->> +        * bpf program should run under migration disabled, kprobe_multi_link_prog_run
->> +        * called all the way from graph tracer, which disables preemption in
->> +        * function_graph_enter_regs, so there is no need to use migrate_disable.
->> +        * Accessing the above percpu data bpf_prog_active is also safe for the same
->> +        * reason.
->> +        */
-> 
-> let's shorten this a bit to something like:
-> 
-> /* graph tracer framework ensures we won't migrate */
-will change it in v3.
-
-> cant_migrate();
-> 
-> all the other stuff in the comment can become outdated way too easily
-> and/or is sort of general BPF implementation knowledge
-> 
-> pw-bot: cr
-> 
-> 
->>          rcu_read_lock();
->>          regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
->>          old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
->>          err = bpf_prog_run(link->link.prog, regs);
->>          bpf_reset_run_ctx(old_run_ctx);
->>          rcu_read_unlock();
->> -       migrate_enable();
->>
->>    out:
->>          __this_cpu_dec(bpf_prog_active);
->> --
->> 2.48.1
->>
+diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
+index fa6dd0c94656..9c5066631896 100644
+--- a/drivers/cxl/core/mbox.c
++++ b/drivers/cxl/core/mbox.c
+@@ -1426,7 +1426,9 @@ int cxl_mem_get_poison(struct cxl_memdev *cxlmd, u64 offset, u64 len,
+ 	int rc;
+ 
+ 	ACQUIRE(mutex_intr, lock)(&mds->poison.mutex);
+-	if ((rc = ACQUIRE_ERR(mutex_intr, &lock)))
++
++	rc = ACQUIRE_ERR(mutex_intr, &lock);
++	if (rc)
+ 		return rc;
+ 
+ 	po = mds->poison.list_out;
 -- 
-Best Regards
-Tao Chen
+2.25.1
+
 
