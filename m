@@ -1,219 +1,162 @@
-Return-Path: <linux-kernel+bounces-765870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0735AB23F39
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:00:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B195FB23F4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FDD17AD510
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:58:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75E327B2402
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8192BDC0B;
-	Wed, 13 Aug 2025 04:00:14 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B0329E0E5;
+	Wed, 13 Aug 2025 04:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nsTQY1ga"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E0B266584;
-	Wed, 13 Aug 2025 04:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071541B423C;
+	Wed, 13 Aug 2025 04:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755057613; cv=none; b=MEg+OuipgsuKaQr4r1YizK3f6Xc5fhXXSlADY+auKav0tpfdr3qYeX+AcV42SVIQKh0c09ai3QTmzulAvpVZ2tUJXR202OgoClAUiaTWptsDdOH/fbp8M2GkiFtEc0k2aJVvsjFwdZRbpGT8PzjKJQ4/uLyc3wzfVHXxOizkU4g=
+	t=1755057896; cv=none; b=u0W/yVUnU/9rlg1i207Spd7CYCtWdOt33w5hzIohOmE0MT9OKSpZIAIRxCwzBXrlVRj35nWrXlQxieCVbeBvJwGw+yEhlzlA7vFIOO9++daU1meIf1iF/GlryXeBjDsKEknnqIanAYWaRUfONgsh5AyUD5Zqp3giMzWaFrfHWLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755057613; c=relaxed/simple;
-	bh=YXiYZhuwjSwWOCy5usUVUT0FPbusbyLiVUqNvqyd7RI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ERnDwO9x9mqkTHZdo+itE37+TGIWKAJyfVPMGx3Cp+voGb9p1FG2kqCrScxvmyOAu9/KOzlREjQdkuNvQglv/4Ettucb4BeMe9gGSzryUPz9RKR29G464uIN90vQ4zfAUK0vPULfBGecgobOe468bOx9lTiGdhCH8ezIzU6H+9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1vls16ymzYQv3H;
-	Wed, 13 Aug 2025 12:00:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BFA5F1A0BDC;
-	Wed, 13 Aug 2025 12:00:07 +0800 (CST)
-Received: from ultra.huawei.com (unknown [10.90.53.71])
-	by APP4 (Coremail) with SMTP id gCh0CgDHkBHEDZxoZTcHDg--.42513S2;
-	Wed, 13 Aug 2025 12:00:05 +0800 (CST)
-From: Pu Lehui <pulehui@huaweicloud.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	pulehui@huawei.com
-Subject: [PATCH v3] tracing: Limit access to parser->buffer when trace_get_user failed
-Date: Wed, 13 Aug 2025 04:02:32 +0000
-Message-Id: <20250813040232.1344527-1-pulehui@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755057896; c=relaxed/simple;
+	bh=hTQXQ5POExKP44ItRkalxf4masoOAnjB4WYExq62XDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MAPrY4a6xE5cLRaiHSe0q6PzjrmEz3nNIVSpxx8JvgGlAV+eKUEm9cLVlOIh0bjjb1wlzIUOXfBajBv0IisP/lQUyPcrXqbr0dK5Z4/STviqg1PDbRNnpohH5FikcYQ98oMKm+rpC+eUyibRgFEGJA+uMaFXpougUETEY1HleCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nsTQY1ga; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2403ca0313aso51638375ad.0;
+        Tue, 12 Aug 2025 21:04:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755057894; x=1755662694; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E/a1WvCweM9wyjANyIVn1PnZJVzqlQ2vaNc6W5ZsUho=;
+        b=nsTQY1gaZQhFuAbOaRuR++dbhShjPeikNB76Wk2rYBIZT1ZydL9Cp/b0y2KwYOfuxp
+         Mz4Wkz8QyePLVzrCc+rVCNkejRGm3NYlco+ctEoAoXAhtpsvmWEgd8j7g8i1bQaKAydJ
+         MQZ0h0t75v/Ar5C4tSAtRGXW/oEO5gqiGEA+bhmJbGQSCWSTpgTLHDsFQrpDUIv3io5X
+         v5xLHaqb51Lxo8pgtbNPSDflZ9EktasKn0rapH7JUHzOlg3DNkq7jyezRXVUizOpVspK
+         U5Uky6e+8UiBYVpgfPw3jOcKH/fNKmZZ6znGv11ZVfXjGf0RCxXdD/ClPU5xolyNWWIK
+         akMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755057894; x=1755662694;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E/a1WvCweM9wyjANyIVn1PnZJVzqlQ2vaNc6W5ZsUho=;
+        b=Llxal5N0MblfsaSB2E99PjXRrbLpfQRHNBQTYxAnVCzpKEbeVD2123iUn1YubkzZ9h
+         kiiLhDI9/HtB0baWx/RgIZOApHvx7CGOfZkLpyiX/Mg+gV5VLsjHCkcF62hfim07mpv2
+         PCFFm/ucHxX5bH9oIn4V9SK9rUSQGXpWUfwM9u/+MjbOSMCWaduM0/AWvuqEKOV3VqWS
+         DeHWOF0iK3pQvIAUFrgKsq5iCiHT74BcOI8BVIgSUKcHxfuVsLPVrBYJJvk9oLrvP1fV
+         yv9YAccfCaHPzZOE/9fQIYj0AfKZWDlCWhWXxKaP6Ut6sNtXIRUSwjjb52FqdAM4jfqG
+         Vd4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW9/pSMts05qQmXDCKYZ1rT0zSGiBXS1wZpgJYbQaFM/lyQ5O3iHhIjFhoF8FPU5cZaH+1EX6YwlGUt9Sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuPV8chM74iW31Jl3KjVD6JIoUJkF1Yfy4oeqmvvCa2Kq0CWdu
+	4DgNDX1QVrbU9JgrCNjf7RbaA6EqA6moekjVqPtOd6eKe4nDen5wdb3b
+X-Gm-Gg: ASbGnctpG18num+C62o3cgQArw7Gb39sSrqB5pqYnsHVXLTAx9r22sL+HJbfWYf0bhm
+	quY0yOO8PPjbPUkVoV7490RTNFlJx4NFVcu8pHX/mqvzk/1QQs1Nb0zPYeTyrDeTTtqYFY2ZiRT
+	uLPzpNDphUQn0o+rMbFcJIWI2P57Fbf66Rzhv1dSZ2bMtLgF9tRZKqhHooRTnoduOJ2XnnM+5Z6
+	mLOxxz+I/HXIOVzoaCakTcGN/L+jsXKNDfq5hMPoB35qQvoq0zpf+VAdCGqHLZnJTixFllH3TCL
+	IBaQtMWkTGIUaTfsYAp2a+cnVFQSsYc5MAcPJBaUP4oStPYtHJ5wjso7AUFYz/HwYGajjC1xYTm
+	bal/s+YeRovD1EdlXitB4qI9XH9o=
+X-Google-Smtp-Source: AGHT+IGF/ZoPnE7X8BBJ/khsi/1/VGz3M6SXj8QnZ3kDQi44GyLMMn6XY/6ZRABzzJUvREG6PlX9mg==
+X-Received: by 2002:a17:903:1a84:b0:240:1953:f9a with SMTP id d9443c01a7336-2430d0b3239mr28261625ad.2.1755057894097;
+        Tue, 12 Aug 2025 21:04:54 -0700 (PDT)
+Received: from fedora ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef75bdsm312130625ad.11.2025.08.12.21.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 21:04:53 -0700 (PDT)
+Date: Wed, 13 Aug 2025 04:04:46 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	Liang Li <liali@redhat.com>
+Subject: Re: [PATCHv2 net] bonding: fix multicast MAC address synchronization
+Message-ID: <aJwO3vcLipougMid@fedora>
+References: <20250805080936.39830-1-liuhangbin@gmail.com>
+ <83bef808-8f50-4aaa-912e-6ccdb072918f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHkBHEDZxoZTcHDg--.42513S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJw13Xw45GFyxZw1DAFW8JFb_yoWrCFyfpF
-	W3Krs7GwsFgF4IyFs5Zr18Gas5X3s5JryUGF4rJw1Yvr9rtr1j9rWxuryDuw1fK348G3y3
-	Ar4Yvr48Kr1qvw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7UUUUU==
-X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <83bef808-8f50-4aaa-912e-6ccdb072918f@redhat.com>
 
-From: Pu Lehui <pulehui@huawei.com>
+On Tue, Aug 12, 2025 at 10:42:22AM +0200, Paolo Abeni wrote:
+> On 8/5/25 10:09 AM, Hangbin Liu wrote:
+> > There is a corner case where the NS (Neighbor Solicitation) target is set to
+> > an invalid or unreachable address. In such cases, all the slave links are
+> > marked as down and set to *backup*. This causes the bond to add multicast MAC
+> > addresses to all slaves. The ARP monitor then cycles through each slave to
+> > probe them, temporarily marking as *active*.
+> > 
+> > Later, if the NS target is changed or cleared during this probe cycle, the
+> > *active* slave will fail to remove its NS multicast address because
+> > bond_slave_ns_maddrs_del() only removes addresses from backup slaves.
+> > This leaves stale multicast MACs on the interface.
+> > 
+> > To fix this, we move the NS multicast MAC address handling into
+> > bond_set_slave_state(), so every slave state transition consistently
+> > adds/removes NS multicast addresses as needed.
+> > 
+> > We also ensure this logic is only active when arp_interval is configured,
+> > to prevent misconfiguration or accidental behavior in unsupported modes.
+> 
+> As noted by Jay in the previous revision, moving the handling into
+> bond_set_slave_state() could possibly impact a lot of scenarios, and
+> it's not obvious to me that restricting to arp_interval != 0 would be
+> sufficient.
 
-When the length of the string written to set_ftrace_filter exceeds
-FTRACE_BUFF_MAX, the following KASAN alarm will be triggered:
+I understand your concern. The bond_set_slave_state() function is called by:
+  - bond_set_slave_inactive_flags
+  - bond_set_slave_tx_disabled_flags
+  - bond_set_slave_active_flags
 
-BUG: KASAN: slab-out-of-bounds in strsep+0x18c/0x1b0
-Read of size 1 at addr ffff0000d00bd5ba by task ash/165
+These functions are mainly invoked via bond_change_active_slave, bond_enslave,
+bond_ab_arp_commit, and bond_miimon_commit.
 
-CPU: 1 UID: 0 PID: 165 Comm: ash Not tainted 6.16.0-g6bcdbd62bd56-dirty
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- show_stack+0x34/0x50 (C)
- dump_stack_lvl+0xa0/0x158
- print_address_description.constprop.0+0x88/0x398
- print_report+0xb0/0x280
- kasan_report+0xa4/0xf0
- __asan_report_load1_noabort+0x20/0x30
- strsep+0x18c/0x1b0
- ftrace_process_regex.isra.0+0x100/0x2d8
- ftrace_regex_release+0x484/0x618
- __fput+0x364/0xa58
- ____fput+0x28/0x40
- task_work_run+0x154/0x278
- do_notify_resume+0x1f0/0x220
- el0_svc+0xec/0xf0
- el0t_64_sync_handler+0xa0/0xe8
- el0t_64_sync+0x1ac/0x1b0
+To avoid misconfiguration, in slave_can_set_ns_maddr() I tried to limit
+changes to the backup slave when operating in active-backup mode with
+arp_interval enabled. I also ensured that the multicast address is only
+modified when the NS target is set.
 
-The reason is that trace_get_user will fail when processing a string
-longer than FTRACE_BUFF_MAX, but not set the end of parser->buffer to 0.
-Then an OOB access will be triggered in ftrace_regex_release->
-ftrace_process_regex->strsep->strpbrk. We can solve this problem by
-limiting access to parser->buffer when trace_get_user failed.
+> 
+> I'm wondering if the issue could/should instead addressed explicitly
+> handling the mac swap for the active slave at NS target change time. WDYT?
 
-Fixes: 8c9af478c06b ("ftrace: Handle commands when closing set_ftrace_filter file")
-Signed-off-by: Pu Lehui <pulehui@huawei.com>
----
+The problem is that bond_hw_addr_swap() is only called in bond_ab_arp_commit()
+during ARP monitoring, while the bond sets active/inactive flags in
+bond_ab_arp_probe(). These operations are called partially.
 
-v3:
-- Remove `parser->fail = false` as it will be set when the parser is initialized.
-- Add trace_parser_fail helper.
+bond_activebackup_arp_mon
+ - bond_ab_arp_commit
+   - bond_select_active_slave
+     - bond_change_active_slave
+       - bond_hw_addr_swap
+ - bond_ab_arp_probe
+   - bond_set_slave_{active/inactive}_flags
 
-v2: https://lore.kernel.org/all/20250806070109.1320165-1-pulehui@huaweicloud.com/
-- Add `fail` field to struct trace_parser to indicate parsing failed.
+On the other hand, we need to set the multicast address on the *temporary*
+active interface to ensure we can receive the replied NA message. The MAC
+swap only happens when the *actual* active interface is chosen.
 
-v1: https://lore.kernel.org/all/20250805151203.1214790-1-pulehui@huaweicloud.com/
+This is why I chose to place the multicast address configuration in
+bond_set_slave_state().
 
- kernel/trace/trace.c | 18 ++++++++++++------
- kernel/trace/trace.h |  8 +++++++-
- 2 files changed, 19 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 4283ed4e8f59..8d8935ed416d 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1816,7 +1816,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 
- 	ret = get_user(ch, ubuf++);
- 	if (ret)
--		return ret;
-+		goto fail;
- 
- 	read++;
- 	cnt--;
-@@ -1830,7 +1830,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		while (cnt && isspace(ch)) {
- 			ret = get_user(ch, ubuf++);
- 			if (ret)
--				return ret;
-+				goto fail;
- 			read++;
- 			cnt--;
- 		}
-@@ -1848,12 +1848,14 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 	while (cnt && !isspace(ch) && ch) {
- 		if (parser->idx < parser->size - 1)
- 			parser->buffer[parser->idx++] = ch;
--		else
--			return -EINVAL;
-+		else {
-+			ret = -EINVAL;
-+			goto fail;
-+		}
- 
- 		ret = get_user(ch, ubuf++);
- 		if (ret)
--			return ret;
-+			goto fail;
- 		read++;
- 		cnt--;
- 	}
-@@ -1868,11 +1870,15 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
- 		/* Make sure the parsed string always terminates with '\0'. */
- 		parser->buffer[parser->idx] = 0;
- 	} else {
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto fail;
- 	}
- 
- 	*ppos += read;
- 	return read;
-+fail:
-+	trace_parser_fail(parser);
-+	return ret;
- }
- 
- /* TODO add a seq_buf_to_buffer() */
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 1dbf1d3cf2f1..be6654899cae 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -1292,6 +1292,7 @@ bool ftrace_event_is_function(struct trace_event_call *call);
-  */
- struct trace_parser {
- 	bool		cont;
-+	bool		fail;
- 	char		*buffer;
- 	unsigned	idx;
- 	unsigned	size;
-@@ -1299,7 +1300,7 @@ struct trace_parser {
- 
- static inline bool trace_parser_loaded(struct trace_parser *parser)
- {
--	return (parser->idx != 0);
-+	return !parser->fail && parser->idx != 0;
- }
- 
- static inline bool trace_parser_cont(struct trace_parser *parser)
-@@ -1313,6 +1314,11 @@ static inline void trace_parser_clear(struct trace_parser *parser)
- 	parser->idx = 0;
- }
- 
-+static inline void trace_parser_fail(struct trace_parser *parser)
-+{
-+	parser->fail = true;
-+}
-+
- extern int trace_parser_get_init(struct trace_parser *parser, int size);
- extern void trace_parser_put(struct trace_parser *parser);
- extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
--- 
-2.34.1
-
+Thanks
+Hangbin
 
