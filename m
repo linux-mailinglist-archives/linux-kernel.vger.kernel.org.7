@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-766805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48194B24B68
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:02:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E5BEB24B72
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1764B1672A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334181894E3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10E62EB5B4;
-	Wed, 13 Aug 2025 13:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F912EBB95;
+	Wed, 13 Aug 2025 13:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DfnvEkGj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4dT1gMW"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F126727450;
-	Wed, 13 Aug 2025 13:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F3E2EAB93;
+	Wed, 13 Aug 2025 13:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755093392; cv=none; b=td36y1cLcMDnhOYvgoPb8NySCv2ndYb/2T0J7x9vbdMFBT02UKZrK1LKVPo3wybWivykzUMF/AoLaGEwBzy7d4Dqn0sQVSJ3SKnuzB1lr4sgqu6Z+kz1+/xE65NtdG7uSxsbKb+VBKAwpspY/XCtdbRJ7I0FR1Skd8DnOuxeM/g=
+	t=1755093445; cv=none; b=q6h0uVFjKlvEkVNfAzVwf3hxRMaiSETtfWBWC0gfJD0sj3hVJTV9ApddqcI3Ftno1sbfqarNurXrgLko23z3uSqoEQUtR5C91sA4KNjJzwxJl/blIHmLvWV5bzp9U1b3phLTbhUaP4eWIvay9b4zmx5WfIfLKlRiFKhRhpkZLu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755093392; c=relaxed/simple;
-	bh=PU8D4TvDAaiDVPVg+2dLpyoPg7qqnDgECUB9LA69pDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nwpa1knsM5ol170a98q1Zut9mSnoy9K8PVUghUW8VE7itoGQdDOTqpFmXu71Nej66igycULfG5rffhoYCrJwATSTLxOwuLdRIhMHY93anyUJBjj66HA4p/9WYcdsXFSehmFdz40en4mAscRAQJnsByLwl/a6e6X/t4Q99N1/SLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DfnvEkGj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE2AAC4CEED;
-	Wed, 13 Aug 2025 13:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755093391;
-	bh=PU8D4TvDAaiDVPVg+2dLpyoPg7qqnDgECUB9LA69pDQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DfnvEkGjlqlBmycupm29qobQQ7q/ILqOB43RDwKfg8vgJw0I/PreZK2XHrUgn02OR
-	 nZ4ATmmMOOLbF5jZFz8sLCRTeILdzEEpprPW1jzufXkZyxy0eKqZcrufrJyiLdlFot
-	 Y6UMyfulsdg7WJ4qEVKRlTltIxhEe7ktB3j5CjbrTcwVOvIYk0qlNzsoi2dt4AxYru
-	 LovStafbDmfrBiTV63Y6Bzr2st4W+lG0e31cPDZO4gI1wlbf2XR2ObvcgjLySXz8Y5
-	 BFkiEwdeqLSChCugFLb79vRwMrO444EVLyResNzgK6LGgVF6lgAcUlj5Ukq1k0avA0
-	 zc7n7ufOz+X/w==
-Date: Wed, 13 Aug 2025 14:56:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-Message-ID: <f8133619-cbea-4794-97ff-f6c5d457e251@sirena.org.uk>
-References: <20250812173419.303046420@linuxfoundation.org>
+	s=arc-20240116; t=1755093445; c=relaxed/simple;
+	bh=m6ExRnpHShyIYOeJg8BNk6Zgj4kKhO7CklioMmPqjc0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=purIAzo6gMUxCl8TiHeUmQVDaLO/nP0GeOi03c82s25N6i9Tpm42WiNYf4dgEiykbp02w0E8OmB6M/cy2vQ/OCXc85VAPJ0WW5/DPMv+lEZPMC/Ta625NGtZLsEozs7xT9Z6601fN2tIxnL8st440mBRfV0NAKaEvDshD1uKAgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4dT1gMW; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55b975b459aso5791287e87.3;
+        Wed, 13 Aug 2025 06:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755093442; x=1755698242; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tx/mbNPuKPuEGK23CHmWyt4whnvAbRyq8panIaj6BBY=;
+        b=C4dT1gMWJPwC8rE3ABnftyoo/XepwYXNNJbRG36vNgw7uD3IGPCtMifZTmfqbuiUFS
+         7VhsNYPSnFsOM5PIs3jFyNEtomjmyuKi+bcQNkzRtu/okiwsqwrhT5OX5qg8Vy87Zgmp
+         GhloUAXhbNpJF0+wW5vfnXYzwAmYUGXv6ajiDAelJFMVC6xgKyMHvgmorh2nr+TWh8t9
+         gZNo5vkWHgAGb75BcBXDr/CHHXLPm6A5grz3PvT6emvtzloI83h2K3G8ZVrG2DQGw6Ts
+         rVaUY2xmXV8vU1aCFV/TViarZbhnRrH3XGebTyBJAH9zGqF7sTvVqcrN3zfir2HssZXA
+         yITg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755093442; x=1755698242;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tx/mbNPuKPuEGK23CHmWyt4whnvAbRyq8panIaj6BBY=;
+        b=k/IzY+77UPnNOMOxuiErTGpo3YLd9zLD0ss2kvoJtN/ToENjme4xHSNzL9y6VZRLkm
+         fQeVF/b1FeIAIB8LEiYrtevqtZTNwG/RduPT36+POyzT9a9bDm7uh6jp5TPtYvBTChRH
+         +CXC128O1GTlR0lxO+hd4nuaEiwAsI6+p0r78NlVLpuuVPD1lYWXSNz3K1luNFI5UHJy
+         UdfaUWA5PE40CyT1GexzPlPEempCv36hawpNah8aYZUb53t8m2LbhKvCAfT6huQplvV8
+         qJ+GQw0Gr1lw/cYhxfLgr59i07inXIWbDCZIS4k/7FnZBL5ePMcUV36jZzTxI8+x0DkM
+         pnUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqDVAvQpts6lb4NSkoLpj0Ql8QFe69kwsvMmrxWqDC1/ZnHBQRh00SHex348NumT98lqV+YfpWHtU=@vger.kernel.org, AJvYcCXrBJ0B0jQAVq6iZRiOcsSyUph0astd5YNb++AXjISwxAQRuiP5gaUeQRwlEDmjIKcZjnkNbhg/dSwljwf7@vger.kernel.org
+X-Gm-Message-State: AOJu0YysyXgXEMEGi2YBLmE74UeWCKLWwtZL2q7ugemkehjIfJMK5+MA
+	LPeSIitP3JZeXdre5e9mWC3MiNJctJhUHHXcRo4fBwXv515iU5oFNqaRN8PBXdXI6rmH8QntZjq
+	Pidf93kmQ8+XoXS06M5SWA473w7+ws9Y=
+X-Gm-Gg: ASbGncuw10BOHaKPOPbKTd/O8bwGf0Xseem1oWxUQrNrIgohH/Wwo0vCI675iaxf7cr
+	7m7BYJxRNbjgsHoxvUbDctL7AJPc1mazQgPVuJMMR9wNprJINZ5TP2FrHlgaqSsLvmh+eqfIh3r
+	qWeeafzjuRjmxb6bN7eCCTyXbsIMrNoQsPElE46hUQDSLW2z/TExdFpg+3pEeH+sIjVuDhv5HLX
+	KEfOJlN
+X-Google-Smtp-Source: AGHT+IHw9EZIgDXwmtIotLZ+/JggBWw2i7AMZDQNX0Yog0kIZcsVUe7kSZrlMwy6KSdhfID1dE5tdW/xUXNvysrPHBo=
+X-Received: by 2002:a05:6512:1326:b0:55b:7cb7:f57c with SMTP id
+ 2adb3069b0e04-55ce0414bb6mr938955e87.57.1755093441686; Wed, 13 Aug 2025
+ 06:57:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="toqZ+J3Itf5R37vU"
-Content-Disposition: inline
-In-Reply-To: <20250812173419.303046420@linuxfoundation.org>
-X-Cookie: Turn the other cheek.
+References: <20250813133017.72476-1-akshayaj.lkd@gmail.com> <aJyYJLMUYAm_uqUx@smile.fi.intel.com>
+In-Reply-To: <aJyYJLMUYAm_uqUx@smile.fi.intel.com>
+From: Akshay Jindal <akshayaj.lkd@gmail.com>
+Date: Wed, 13 Aug 2025 19:27:09 +0530
+X-Gm-Features: Ac12FXyeUZ_yE6whQbBHAPCt9k9OozSgklnU7idmXRC4x8c0DcaGwLh-BiCfhJ8
+Message-ID: <CAE3SzaSNV4DMUQB5rQQSV+QsCS6Z2BjFkFD3eaXO9J=TjUbNYw@mail.gmail.com>
+Subject: Re: [PATCH v3] iio: light: ltr390: Add device powerdown functionality
+ via devm api
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 13, 2025 at 7:20=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Wed, Aug 13, 2025 at 07:00:14PM +0530, Akshay Jindal wrote:
+> > Use devm_add_action_or_reset() to do cleanup when the device is removed=
+.
+>
+> > Set client data with i2c_set_clientdata().
+>
+> This is not used anymore, correct?
+>
+> ...
+>
+> > -     data =3D iio_priv(indio_dev);
+> > +     i2c_set_clientdata(client, indio_dev);
+> >
+> > +     data =3D iio_priv(indio_dev);
+> >       data->regmap =3D devm_regmap_init_i2c(client, &ltr390_regmap_conf=
+ig);
+> >       if (IS_ERR(data->regmap))
+> >               return dev_err_probe(dev, PTR_ERR(data->regmap),
+>
+> So this hunk needs to be removed from the patch.
+I thought so, but removing i2c_set_clientdata would mean that
+dev->driver_data will NOT contain a pointer to indio_dev.
+Irrespective of usage, ideally dev->driver_data should contain legit value.
+Hence I kept it.
+If you feel otherwise, I can remove it, but I feel this should be kept.
 
---toqZ+J3Itf5R37vU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Aug 12, 2025 at 07:24:55PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.1 release.
-> There are 627 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-As mentioned elsewhere I'm seeing failures in epoll_ctl04 from LTP:
-
-  epoll_ctl04.c:59: TFAIL: epoll_ctl(..., EPOLL_CTL_ADD, ...) with number of nesting is 5 expected EINVAL: ELOOP (40)
-
-these bisect down to "eventpoll: Fix semi-unbounded recursion".  Bisect
-log and links to full console logs:
-
-# bad: [cd8771110407dfe976259483baaae2c6e62a4146] Linux 6.16.1-rc1
-# good: [038d61fd642278bab63ee8ef722c50d10ab01e8f] Linux 6.16
-git bisect start 'cd8771110407dfe976259483baaae2c6e62a4146' '038d61fd642278bab63ee8ef722c50d10ab01e8f'
-# test job: [cd8771110407dfe976259483baaae2c6e62a4146] https://lava.sirena.org.uk/scheduler/job/1664129
-# bad: [cd8771110407dfe976259483baaae2c6e62a4146] Linux 6.16.1-rc1
-git bisect bad cd8771110407dfe976259483baaae2c6e62a4146
-# test job: [7ee553aeaf6d124298f393ec5eaa219b0968e16f] https://lava.sirena.org.uk/scheduler/job/1666114
-# bad: [7ee553aeaf6d124298f393ec5eaa219b0968e16f] media: v4l2-ctrls: Fix H264 SEPARATE_COLOUR_PLANE check
-git bisect bad 7ee553aeaf6d124298f393ec5eaa219b0968e16f
-# test job: [716cab0f18aa38d77b92073dab931186c770054f] https://lava.sirena.org.uk/scheduler/job/1666908
-# bad: [716cab0f18aa38d77b92073dab931186c770054f] wifi: ath12k: Avoid accessing uninitialized arvif->ar during beacon miss
-git bisect bad 716cab0f18aa38d77b92073dab931186c770054f
-# test job: [7fac9c079ff503f261ffb49bdd7f283803beca93] https://lava.sirena.org.uk/scheduler/job/1667071
-# bad: [7fac9c079ff503f261ffb49bdd7f283803beca93] ASoC: SDCA: Add missing default in switch in entity_pde_event()
-git bisect bad 7fac9c079ff503f261ffb49bdd7f283803beca93
-# test job: [1da0a31f7c952ad518d3a91df9a9109ba3c02d73] https://lava.sirena.org.uk/scheduler/job/1667175
-# bad: [1da0a31f7c952ad518d3a91df9a9109ba3c02d73] selftests: Fix errno checking in syscall_user_dispatch test
-git bisect bad 1da0a31f7c952ad518d3a91df9a9109ba3c02d73
-# test job: [53cd2297915f5c3be56ddad54be5cefb9cbc2fb9] https://lava.sirena.org.uk/scheduler/job/1667249
-# good: [53cd2297915f5c3be56ddad54be5cefb9cbc2fb9] ublk: validate ublk server pid
-git bisect good 53cd2297915f5c3be56ddad54be5cefb9cbc2fb9
-# test job: [8aca40e2c98c5eae8da96e84caaaaec97152dbed] https://lava.sirena.org.uk/scheduler/job/1667289
-# bad: [8aca40e2c98c5eae8da96e84caaaaec97152dbed] block: restore two stage elevator switch while running nr_hw_queue update
-git bisect bad 8aca40e2c98c5eae8da96e84caaaaec97152dbed
-# test job: [9fccd15a5cdcd1d2376f96fdba97ff82d26ea8ba] https://lava.sirena.org.uk/scheduler/job/1667364
-# good: [9fccd15a5cdcd1d2376f96fdba97ff82d26ea8ba] io_uring: fix breakage in EXPERT menu
-git bisect good 9fccd15a5cdcd1d2376f96fdba97ff82d26ea8ba
-# test job: [b47ce23d38c737a2f84af2b18c5e6b6e09e4932d] https://lava.sirena.org.uk/scheduler/job/1667417
-# bad: [b47ce23d38c737a2f84af2b18c5e6b6e09e4932d] eventpoll: Fix semi-unbounded recursion
-git bisect bad b47ce23d38c737a2f84af2b18c5e6b6e09e4932d
-# test job: [cac4afc0cefeb0b4d066867aebe0b7cb6806b9ae] https://lava.sirena.org.uk/scheduler/job/1667503
-# good: [cac4afc0cefeb0b4d066867aebe0b7cb6806b9ae] btrfs: remove partial support for lowest level from btrfs_search_forward()
-git bisect good cac4afc0cefeb0b4d066867aebe0b7cb6806b9ae
-# first bad commit: [b47ce23d38c737a2f84af2b18c5e6b6e09e4932d] eventpoll: Fix semi-unbounded recursion
-
---toqZ+J3Itf5R37vU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmicmYgACgkQJNaLcl1U
-h9BWOQf/fc12VadwQyASyYC8BClCyWix8956AMY1zJq9QxO/dW3mRBj2FY7bovnc
-AZIQPMeT+6H3ecohcV2h1QDDS/afHihUw+G9GALhD9SifdSJm2tzV4gDW8HwPoSz
-sE29wYbz6VwEZro0dYIwV61Lh1k/dL4i9asiaQXLlDTPVf4ffAqo3ACM+uZufj8i
-5vCRk+vykda9wMO7bAV+5Bba70WRYUPfE8kq585F277wzurXqo48SPVQDLCkXT2m
-G/J6fKQHTIe2tmky5BbiLvWg2ffXW0KZWrHS3liZDcFXpVs5hrcMfca7NB7Q9Gss
-emggwHmz9hjWmt20YWk8Fehg43fJLw==
-=phQ8
------END PGP SIGNATURE-----
-
---toqZ+J3Itf5R37vU--
+Thanks,
+Akshay
 
