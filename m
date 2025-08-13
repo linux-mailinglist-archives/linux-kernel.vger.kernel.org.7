@@ -1,161 +1,126 @@
-Return-Path: <linux-kernel+bounces-766714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F24CB24A4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5F6B24A5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B3597B772D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:11:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 199953B59EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE3C2E7629;
-	Wed, 13 Aug 2025 13:12:25 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C982E719A;
+	Wed, 13 Aug 2025 13:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b="S6G+uz4j"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B4862E717F;
-	Wed, 13 Aug 2025 13:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE15E1A9F8D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090745; cv=none; b=H2hPCj86H2pcLiO5qrbwYFDwHPxGH8v2br2FhFVM+DyIvRUHXvJa/QBXtiHky6bvhLsQQjRm+3L3gM+W2kwj17jt0BPdUSdcyTGYxwZShGrxEp7j4rtgPSaGigbEivOhbuDPfAzhp2UTw7YX19w4QSw3wF8pboeixb56M9KWtw4=
+	t=1755090758; cv=none; b=AnbGxOVWRU2NoUQina/sZWEztOCLaDRM1fwJRZ/iseD/HIdt31c3GzK596ltoWT0a5UxLwroJWLQwEnnprJngsQ1t5eSyLzRQakIrGhYcN3/11q1cTi7NHzyD810FHLR4QST+MbYLGh3aSuBvVc7n04CUacoqCDnmB6KfH3aESw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090745; c=relaxed/simple;
-	bh=YNsjdNBFLKWTh/v73VJcx2a44VB2p4Q1HkHsczmvRtg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KmhhYNEBXaMoeunjQgVsLlJv0LsEJ3RyuEczobaq+heOe2n6V+pcf04dcVBSz9JSDI3CeYkY1clOOtVkXIHUoLEjQCmNuGnSHOiypEdRolSLxBVtMcj1kh+LyXmbKDgVxkOGoyfvFwvGYaUaziRB4zQ+xR7rgeTv11embxDvhGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c27vM3yMhz6L4yD;
-	Wed, 13 Aug 2025 21:07:27 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2E9AF140121;
-	Wed, 13 Aug 2025 21:12:20 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
- 2025 15:12:19 +0200
-Date: Wed, 13 Aug 2025 14:12:18 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
-Subject: Re: [PATCH V2 01/20] nvdimm/label: Introduce NDD_CXL_LABEL flag to
- set cxl label format
-Message-ID: <20250813141218.0000091f@huawei.com>
-In-Reply-To: <20250730121209.303202-2-s.neeraj@samsung.com>
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121223epcas5p1386bdf99a0af820dd4411fbdbd413cd5@epcas5p1.samsung.com>
-	<20250730121209.303202-2-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755090758; c=relaxed/simple;
+	bh=GgUzu6LME52TpeiHWzbrdSV93Ja1LmmwWYtxTAV0V6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UI3KJ2YiMjY/VPzd/MJiC4uAOIbNnJhvZmLLSDMt0gUPH7L/okCPbl4rSZyURfdYutsZdkt1wQGQdLktDVRLl/tzSqca4rs04UpoEzjCqc/UkrpwqL6yxWRphBp7OfMrRz8RUEOm9aWAwBSAwGe43e0LdVBCIYufCi4beuEUz7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com; spf=pass smtp.mailfrom=ciq.com; dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b=S6G+uz4j; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ciq.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e8320abfe0so501423585a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ciq.com; s=s1; t=1755090755; x=1755695555; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JtU72p9c0fOalcp8RP9DRRIkwqBXfYTQn42C9LNbTEE=;
+        b=S6G+uz4jYb3MjRBJvjzapqoHEdhXk8RDJLFLV2fyffZEpHcpdyAK4Co7vnopfLovXN
+         zH/cBJRTsbFv19iCA3aLUHetQ2tXKW1f7q4GVqkXurPNAn49CCvTM1zgSdLv9m1r3ZZC
+         fDxhPrjKM4FbLlq5m+G7aSnhGLhBoKHh6JYKTehyfq7q3Pc/w2PcKvw7mojulZF3Z1hM
+         3b0FGQu23lnZUTNaxF7nPELrkdJzqIEPD/tdt0onS5ES9Im6hpr+/kAUN0hQraTLiD90
+         pT7vOeZ+Lgp82w0G4lBSRCI6NzJb/9S9Tc36PdF2WfzADU65xWfGC50quBBV9YKggnRU
+         yhSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755090755; x=1755695555;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JtU72p9c0fOalcp8RP9DRRIkwqBXfYTQn42C9LNbTEE=;
+        b=ao/LY/dF7p1E0I/MFC0/sHZK4xXdZMHG3qdrMNBH9EH5Qz9ANLD0MYDiGLTJL6JtHU
+         lvwFFMpm5vjyn2brPakggEavrT0sN8rz6pNz1BCxkYFMSGutuHxnfJ5rGZD4GLrTEgiO
+         bk+1Tay/pOhQbd2pVF+UYrIYhh8MEnf+E1gaH+I6QKlBmwftkj4uVACP3EuqXIgEYY27
+         aHCi7gq2k4ArQjnIGbeXvpisNQIPj/olF/sFaR65rqUQFs/RvxS87l3/4KohBRTtTYMf
+         Q2a6Mj+/xE1JX8ZqK9ZSuUMU2YQzzXuPjLTJfABRfZqbninJmCpGETNjm0N0GbDB239V
+         0n6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIOKXynsXYFuWKrDFI9XAvFBKpV6nsaUpk2az/qx/UbkBj/aSdpYu45hglAn44Faib5RLz63pNuzlCAEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHePCOHtVw2UPNmW8AeNutiqhmCIUC/eZn9cipU6xbdP3K1s8e
+	G+WVC8Zr0TXKlQ6xGCueGHccb9Eq+d6pBMJ82QcPI1kk5keoFsy+Il7YmBrDpx+aHhwzvFKCI+w
+	SI7LZuVvVeGi4/t84d20cb+za2xbhWeJNr6rlSPXuTQ==
+X-Gm-Gg: ASbGncsLWUc5QFrg1fK8EW0pKsYqYp6P6rK2hzOs8k4QWv1trFqCiP77JaC8661Gtwv
+	6uQP3kZ3yoI+eLsNfRAKcrrWSUQ1guk/dHlFSWOzqJ3DYuwDkrlt8opMvOcEMMKiAdj+qRR/mBu
+	d94CWlb/mpNQJn21CPVgzFYd9uc932qsprgFnFbmif2lGLMxeUF/XE2wUvpFwnuZ1NAuv2jPWjC
+	0DxngfJ
+X-Google-Smtp-Source: AGHT+IG5QZZnM8BOlOZuuRDsxed9T4NNSIcdVy3asdv+WEHOb8IbJxfeZVezY2LY6qu6NbPDuHh/ZISvs4Hz6d9Xaoc=
+X-Received: by 2002:a05:620a:5613:b0:7e8:39da:9735 with SMTP id
+ af79cd13be357-7e86524c86cmr343807085a.14.1755090755377; Wed, 13 Aug 2025
+ 06:12:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250812173014.736537091@linuxfoundation.org>
+In-Reply-To: <20250812173014.736537091@linuxfoundation.org>
+From: Brett Mastbergen <bmastbergen@ciq.com>
+Date: Wed, 13 Aug 2025 09:12:23 -0400
+X-Gm-Features: Ac12FXxImiV90KDqFEsliS51c-s2jeKLqGC0XUvACkuiyfMmFUbXrGmqeZOS8OI
+Message-ID: <CAOBMUvjaYR2b3grBiXntb16ny_8RqVVH6NGJnjEYUFU=TmDqVQ@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/369] 6.12.42-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Jul 2025 17:41:50 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+On Tue, Aug 12, 2025 at 2:10=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.42 release.
+> There are 369 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Aug 2025 17:27:11 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.42-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-> Prior to LSA 2.1 version, LSA contain only namespace labels. LSA 2.1
-> introduced in CXL 2.0 Spec, which contain region label along with
-> namespace label.
-> 
-> NDD_LABELING flag is used for namespace. Introduced NDD_CXL_LABEL
-> flag for region label. Based on these flags nvdimm driver performs
-> operation on namespace label or region label.
-> 
-> NDD_CXL_LABEL will be utilized by cxl driver to enable LSA2.1 region
-> label support
-> 
-> Accordingly updated label index version
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-Hi Neeraj,
+Builds successfully.  Boots and works on qemu and Dell XPS 15 9520 w/
+Intel Core i7-12600H
 
-A few comments inline.
+Tested-by: Brett Mastbergen <bmastbergen@ciq.com>
 
-> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-> index 04f4a049599a..7a011ee02d79 100644
-> --- a/drivers/nvdimm/label.c
-> +++ b/drivers/nvdimm/label.c
-> @@ -688,11 +688,25 @@ static int nd_label_write_index(struct nvdimm_drvdata *ndd, int index, u32 seq,
->  		- (unsigned long) to_namespace_index(ndd, 0);
->  	nsindex->labeloff = __cpu_to_le64(offset);
->  	nsindex->nslot = __cpu_to_le32(nslot);
-> -	nsindex->major = __cpu_to_le16(1);
-> -	if (sizeof_namespace_label(ndd) < 256)
-> +
-> +	/* Set LSA Label Index Version */
-> +	if (ndd->cxl) {
-> +		/* CXL r3.2 Spec: Table 9-9 Label Index Block Layout */
-> +		nsindex->major = __cpu_to_le16(2);
->  		nsindex->minor = __cpu_to_le16(1);
-> -	else
-> -		nsindex->minor = __cpu_to_le16(2);
-> +	} else {
-> +		nsindex->major = __cpu_to_le16(1);
-> +		/*
-> +		 * NVDIMM Namespace Specification
-> +		 * Table 2: Namespace Label Index Block Fields
-> +		 */
-> +		if (sizeof_namespace_label(ndd) < 256)
-> +			nsindex->minor = __cpu_to_le16(1);
-> +		else
-> +		 /* UEFI Specification 2.7: Label Index Block Definitions */
-
-Odd comment alignment. Either put it on the else so
-		else /* UEFI 2.7: Label Index Block Defintions */
-
-or indent it an extra tab
-
-		else
-			/* UEFI 2.7: Label Index Block Definitions */
-			
-> +			nsindex->minor = __cpu_to_le16(2);
-> +	}
-> +
->  	nsindex->checksum = __cpu_to_le64(0);
->  	if (flags & ND_NSINDEX_INIT) {
->  		unsigned long *free = (unsigned long *) nsindex->free;
-
-> diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-> index e772aae71843..0a55900842c8 100644
-> --- a/include/linux/libnvdimm.h
-> +++ b/include/linux/libnvdimm.h
-> @@ -44,6 +44,9 @@ enum {
->  	/* dimm provider wants synchronous registration by __nvdimm_create() */
->  	NDD_REGISTER_SYNC = 8,
->  
-> +	/* dimm supports region labels (LSA Format 2.1) */
-> +	NDD_CXL_LABEL = 9,
-
-This enum is 'curious'.  It combined flags from a bunch of different
-flags fields and some stuff that are nothing to do with flags.
-
-Anyhow, putting that aside I'd either rename it to something like
-NDD_REGION_LABELING (similar to NDD_LABELING that is there for namespace labels
-or just have it a meaning it is LSA Format 2.1 and drop the fact htat
-also means region labels are supported.
-
-Combination of a comment that talks about one thing and a definition name
-that doesn't associate with it seems confusing to me.
-
-Jonathan
-
-
-> +
->  	/* need to set a limit somewhere, but yes, this is likely overkill */
->  	ND_IOCTL_MAX_BUFLEN = SZ_4M,
->  	ND_CMD_MAX_ELEM = 5,
-
+Thanks,
+Brett
 
