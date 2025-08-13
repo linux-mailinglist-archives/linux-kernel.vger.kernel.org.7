@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-766493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E162EB24738
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:30:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3914FB24733
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 720BF1AA1ED9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B484565968
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BCF2F49E3;
-	Wed, 13 Aug 2025 10:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9582F3C36;
+	Wed, 13 Aug 2025 10:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ZtsMR+me"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUFJxWfG"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3402F3C25;
-	Wed, 13 Aug 2025 10:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1E72F3C11
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081012; cv=none; b=J5iGhQ36LCRIZhjSBm7kdxTwuw+qigJhzz7pKb63111l3pyYmgsGiYEcfTtRYEmSI+g7dGArRhj9nRr16x/B+7EaEXtUVOVzwCPb/jFnOwkq4B88LMMmsfkAhnJeqPqbvR7F4P1QlA1qZfUbnopuRtQNjFl6EtTVT9R30srGOn8=
+	t=1755081010; cv=none; b=kQPGfjT7Y5fL8BS6lgaieaFnBRJu1KjkMYLvEp9JC0F88xhsHZ/kxnknjK075KBSDLcyIgeVVxK7yMC9l7rfp+zcj4IE95rfKDF/DCT4sNiL/f2fBAlPVY7emZ9p7aKUe6lV7n+EhfmOI174Hy9ilJBSQ4N7oSPWalzTrZGBFJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081012; c=relaxed/simple;
-	bh=b7k9zkPsDFsR6IW4Hha0aMRTPkafbCDebxekHdDEUhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HIuarLBYKXmrn+5Es+/huIEj2DFqbEa0CaWXYVM1ROBbJlgap1FxsHzjAWFdsIkaya/5eJeLUVHNCEA9ZdUG+FrPYi9WpyNI3G2aJURvlrR361d/axAMsoz/ckyY0Rq+QXKEdanMj+0NSmVCOL2N6CyeLbewCHCAxBuSnWPre08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ZtsMR+me; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=lL2N3rzy3idztlSr2gXwrwvq9ilpXSh4BwMyKlX4iZ4=; b=ZtsMR+mehPPuVmA9EzTZAgr71b
-	zRk/vrnpKSBIzuvdThdiipz3zee+0BL3gGCnjOOu87QWnyvxy/iebh6J9ZsNgEn+qfDDS2kJdDJlu
-	BdqlJhOVLps4vcTMQY8edpo8xKKOjG9SNTLhgrNq8S3dtry03dNL6LOkgUVRFkyjXdBtNHNvntsKU
-	olWbzqN+CLvtBxsLHUKArciwfJxO0HB7qYzayqQNsr4oTtmIcr2PEcVWRDy3rc8Q+KDoexLCnx8Qj
-	PvHw8l0BWnVQuaqo8vH3ZhDcPZpGzq/9OMZU5wJYncVMGYlXi/p6zOH2TwqDsvdg2r89xY8fwXayi
-	P358ykDA==;
-Received: from [223.233.74.188] (helo=[192.168.1.12])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1um8k7-00Dcki-KG; Wed, 13 Aug 2025 12:30:03 +0200
-Message-ID: <6af1a8b5-1c10-06b1-a368-a685a7e21e15@igalia.com>
-Date: Wed, 13 Aug 2025 15:59:55 +0530
+	s=arc-20240116; t=1755081010; c=relaxed/simple;
+	bh=j9nZfVw6WNDy8P2NhYDYq7yIvlQTGbMyRsqF99spDPg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=UwqyZAQJN/qGVD6P3JZyDrMatvNv0uwyJpf9eU9LuI4p3ho9/d0D6ow8zu7XCwRmc2R/dgyNr7VfKKjWFr0am3O7EVZO3bBbxoRJG0A91pB/9DJVWvziH9bB89mJh++MfaP4JyGv238sM3c4AmCzlUno9UqHCrjRnyGyJANIQuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WUFJxWfG; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6180ee20f36so460983a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:30:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755081007; x=1755685807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m/uSEHyOY8TPjXVXr20mUPgAnYEaOn2OIFqZC7pMk9s=;
+        b=WUFJxWfG4eSFGdYuIruhFLprBSs3OYy9j9FabWpGTd7q2ocK54xvxHDEJJ1dfFkvlJ
+         hfUJ61RLp3OIyhZEbcFzLm2DRUtlY6/mISgI6pBwd+ybA1+wEZJst4mMyCPvK8IScmTD
+         oaZnS4AJ6/4tNpulm0OZ6wgoG1TBNPrinTktb3mqvDIJFD4ioqQfE8FIcFTHcisfuI6a
+         9FHDWjmkdUKbu32XA5vhCw47pfv6dez5Tx9ZD7tPUfezjnxaVPEy0LqVY4QX2mZdvfmx
+         ShAzh2JXgqwyFVS/rwYZNY1uDrx9iVfw1JD3YdxkjDDQzfWN4Ub5x/Djy3f+6EKA4ntR
+         p9vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755081007; x=1755685807;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m/uSEHyOY8TPjXVXr20mUPgAnYEaOn2OIFqZC7pMk9s=;
+        b=WkJao/8I3qvFGtenoQywFmBdy+WYODcO6v5+CzIVriDVl1+h7/E7NyaaLTkYINPpuE
+         GsRob+uK35gexQw5mMXVec3n5FhroIeuLqh5ai7KDyzB3lKVN2Y7jXcU8WSTL7KmJlqo
+         wQRNLBxQH6AMLU/hm1uYm1F/k5IzcynBommhXQxrsDn5luXqm4oTCqEBayiUOhC15cpr
+         lMZouojK6UsteNkGd7Bmz5Wb4+vCr+kds6saupPXcdGXSamDarY/CW2UzRZ8IQ0WEvs0
+         DMqoevsnFWYtECOSkuOZPnxOYw9YwZILFTsRxV3m0Irr+iVRVrxnV/cY4JCmBxfGNm8w
+         Mijw==
+X-Gm-Message-State: AOJu0YyISkBQntSfiPiTLcMasY+kixGPB5lRV+EXYFDOOVqkIWpB53z8
+	hdnL7qbOkVRsSzsPSMJ3Lu/7re5aU+GH4EXEncpTxyYzb+0WugkeRDUC8xdwZTaDY3ptYraM+8Z
+	o3OT9
+X-Gm-Gg: ASbGnctAPpa2nmzV3+gqfgR3KDPwgmL1upYSedCtEVrW8H22s6R9GW9Ut6WRN2uSHZP
+	KzvW9GCUp1u9567qp9/wkOqBCd+HmaUmlfW3D8kPzzLF/g0LkAgHFdUQllGd62u0+TJaKEJ8+01
+	GL6xqaxU8lLws6BNTi9e7pcwVGXKBk/NGErmiPB3T11TBcbo8L7X6FRYTr9GA5Cx216oQ2jGOzf
+	9dQpS8fkREpKurbixznDuzxeo1Vp8MDbKBPjcdEWaf4DaWbOQu6Me3f1NzCpGDHDNhWc+AxZTtJ
+	/QJucBIEjrIvYLequyO3p+eXdaGb5u615SMYgKIXDzl9WYoda2L62B+/8ld33sbY7Isid7xUMLm
+	HwQhL81L5HBcjySjenSYzW3cHMymJUTV0XNti8jA=
+X-Google-Smtp-Source: AGHT+IF29cdNPOBhCMcj9Obj9AvGdSJsCml5B5sk74SLW18u0La5OP66JPcnqGI8eEVOZWoaJs2nkg==
+X-Received: by 2002:a05:6402:1ecc:b0:612:f2fc:2b9b with SMTP id 4fb4d7f45d1cf-6186bf79c06mr842428a12.1.1755081006695;
+        Wed, 13 Aug 2025 03:30:06 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f15d9fsm21466335a12.17.2025.08.13.03.30.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 03:30:05 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: krzk@kernel.org, alim.akhtar@samsung.com, 
+ Zhen Ni <zhen.ni@easystack.cn>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20250806025538.306593-1-zhen.ni@easystack.cn>
+References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
+ <20250806025538.306593-1-zhen.ni@easystack.cn>
+Subject: Re: [PATCH v2] memory: samsung: exynos-srom: Fix of_iomap leak in
+ exynos_srom_probe
+Message-Id: <175508100520.39785.3470511038407039138.b4-ty@linaro.org>
+Date: Wed, 13 Aug 2025 12:30:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v7 2/4] include: Set tsk->comm length to 64 bytes
-Content-Language: en-US
-To: Andy Shevchenko <andriy.shevchenko@intel.com>,
- Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
- laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
- alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
- mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
- david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
- ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
- juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, linux-trace-kernel@vger.kernel.org, kees@kernel.org,
- torvalds@linux-foundation.org
-References: <20250811064609.918593-1-bhupesh@igalia.com>
- <20250811064609.918593-3-bhupesh@igalia.com>
- <aJoHzTKO9xw2CANn@black.igk.intel.com>
-From: Bhupesh Sharma <bhsharma@igalia.com>
-In-Reply-To: <aJoHzTKO9xw2CANn@black.igk.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
+On Wed, 06 Aug 2025 10:55:38 +0800, Zhen Ni wrote:
+> The of_platform_populate() call at the end of the function has a
+> possible failure path, causing a resource leak.
+> 
+> Replace of_iomap() with devm_platform_ioremap_resource() to ensure
+> automatic cleanup of srom->reg_base.
+> 
+> This issue was detected by smatch static analysis:
+> drivers/memory/samsung/exynos-srom.c:155 exynos_srom_probe()warn:
+> 'srom->reg_base' from of_iomap() not released on lines: 155.
+> 
+> [...]
 
-On 8/11/25 8:40 PM, Andy Shevchenko wrote:
-> On Mon, Aug 11, 2025 at 12:16:07PM +0530, Bhupesh wrote:
->> Historically due to the 16-byte length of TASK_COMM_LEN, the
->> users of 'tsk->comm' are restricted to use a fixed-size target
->> buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
->>
->> To fix the same, we now use a 64-byte TASK_COMM_EXT_LEN and
->> set the comm element inside 'task_struct' to the same length:
->>         struct task_struct {
->> 	       .....
->>                 char    comm[TASK_COMM_EXT_LEN];
->> 	       .....
->>         };
->>
->>         where TASK_COMM_EXT_LEN is 64-bytes.
->>
->> Note, that the existing users have not been modified to migrate to
->> 'TASK_COMM_EXT_LEN', in case they have hard-coded expectations of
->> dealing with only a 'TASK_COMM_LEN' long 'tsk->comm'.
-> ...
->
->> -	BUILD_BUG_ON(sizeof(from) != TASK_COMM_LEN);	\
->> +	BUILD_BUG_ON(sizeof(from) < TASK_COMM_LEN);	\
-> Wondering if we may convert this to static_assert().
-> (rather in a separate patch)
+Applied, thanks!
 
-That's a fair suggestion. If others don't have an objection to the 
-suggested change, I can club it in v8 along with any other requested 
-changes.
+[1/1] memory: samsung: exynos-srom: Fix of_iomap leak in exynos_srom_probe
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/6744085079e785dae5f7a2239456135407c58b25
 
-Thanks.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
