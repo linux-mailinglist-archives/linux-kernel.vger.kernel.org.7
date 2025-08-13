@@ -1,167 +1,123 @@
-Return-Path: <linux-kernel+bounces-766237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA8AB2443B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:24:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32374B24432
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2EF4883CA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F33721C72
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D228A2EF644;
-	Wed, 13 Aug 2025 08:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eNx4LCbG"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2762ED16D;
+	Wed, 13 Aug 2025 08:20:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009FB2ECEBD;
-	Wed, 13 Aug 2025 08:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673F11E0DE2;
+	Wed, 13 Aug 2025 08:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073276; cv=none; b=SSKtiT6ULzZmw5tpC/bFRGBZ2Eac6jFiUr0C/ASXfkHo6s/drFlWz0Wv2DLyeC93TDaapYpPNlYkMBNUTb4P+5NcRfhdOPO9hA1tuCi0wdSwpbAMevEBOrFbqSO+V/nmII3NOn6oXxOsRlFeRp1f3DAcuz0N2j1RaEhrB9gZDHg=
+	t=1755073230; cv=none; b=JFu8JJbueSBsQUxbHhFmPChwJvhNwK+O+KYl8CzGBJ6+Z057qDsJr1nMatPohhrcwRdTxESggYh5nruSK8977RDAOm2XE5EE5CIkFsBxZzgLaDg8toAL+fNgTuWOWgit+9w3lw3e+RDRFrl9Q67QeaLU1sBNRAb3EAY5jTWu5ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073276; c=relaxed/simple;
-	bh=4nJfdxzcG4OcM3o0GGc0fk6bUgEPLo11b5P1eW5MSA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YYsAQwffPTegs97IfU1t5PSeE2RQvIqE7yJRpqZRRWs8Msnr6pFuylxJtgLYvLWlYDRvcVyQ8pU6Ai9gHKmfZ/j+vqnH0meFPgbwid/j2C+CRMD1TFwsEPBIeRdGjN+BXTtvorIh2cxsNdYMUbSpRt9XWrRP/DLoQKQBDZUa8pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eNx4LCbG; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57D8KGP42108025;
-	Wed, 13 Aug 2025 03:20:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755073216;
-	bh=tFefP1/yJlaAiGAZVj+v17ptcjE2g02yG+MMbCWecvo=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=eNx4LCbGOW99HXoL9WyQlZDzPGnspHO7byjmLgCVttJyvbz9GrmJf5qDtDNk/D3gr
-	 ZRfroad0I+A2LSFijVskPrkXlzf1/v05OGCighnsKm+7gfU6vbGwjHjCzzIXEXHvh3
-	 Mq5wynYxft68hDfZfx+Tde/NkBNDlnqRnOh3xX7Q=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57D8KGXd4113029
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 03:20:16 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 03:20:15 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 03:20:15 -0500
-Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57D8K8io2021639;
-	Wed, 13 Aug 2025 03:20:09 -0500
-Message-ID: <ab6e5c8c-6f91-4017-b68b-7fdf93980a17@ti.com>
-Date: Wed, 13 Aug 2025 13:50:08 +0530
+	s=arc-20240116; t=1755073230; c=relaxed/simple;
+	bh=6ayZlO2PSXhtLjxbAr30198jx2UL7fDJVteF34QqTfw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VyPJnxKp5JmkwPsCkhHHs1VZGHkv/a9MLg+eXbd89+oJqXf82EQvscXXuUo1DImQkHCdCPpEKd3udqudjAWzca9cRJ44bBDy7lo6o9JMBReHJ3PDUCEqsCRbKjtK2UhTbMK5JJ/lU0jOQfEcfUelLo8HaFUpT+2KZrXhrScGAeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2526C4CEEB;
+	Wed, 13 Aug 2025 08:20:27 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Lubomir Rintel <lkundrak@v3.sk>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: mstp: Add genpd OF provider at postcore_initcall()
+Date: Wed, 13 Aug 2025 10:20:22 +0200
+Message-ID: <81ef5f8d5d31374b7852b05453c52d2f735062a2.1755073087.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] net: rnpgbe: Add basic mbx_fw support
-To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
-        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
-        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
-        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
-        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
-        <richardcochran@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-5-dong100@mucse.com>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <20250812093937.882045-5-dong100@mucse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
 
+Genpd OF providers must now be registered after genpd bus registration.
+However, cpg_mstp_add_clk_domain() is only called from CLK_OF_DECLARE(),
+which is too early.  Hence on R-Car M1A, R-Car H1, and RZ/A1, the
+CPG/MSTP Clock Domain fails to register, and any devices residing in
+that clock domain fail to probe.
 
+Fix this by splitting initialization into two steps:
+  - The first part keeps on registering the PM domain with genpd at
+    CLK_OF_DECLARE(),
+  - The second and new part moves the registration of the genpd OF
+    provider to a postcore_initcall().
 
-On 12/08/25 3:09 pm, Dong Yibo wrote:
-> +/**
-> + * mucse_fw_get_capability - Get hw abilities from fw
-> + * @hw: pointer to the HW structure
-> + * @abil: pointer to the hw_abilities structure
-> + *
-> + * mucse_fw_get_capability tries to get hw abilities from
-> + * hw.
-> + *
-> + * @return: 0 on success, negative on failure
-> + **/
-> +static int mucse_fw_get_capability(struct mucse_hw *hw,
-> +				   struct hw_abilities *abil)
-> +{
-> +	struct mbx_fw_cmd_reply reply;
-> +	struct mbx_fw_cmd_req req;
-> +	int err;
-> +
-> +	memset(&req, 0, sizeof(req));
-> +	memset(&reply, 0, sizeof(reply));
-> +	build_phy_abalities_req(&req, &req);
+See also commit c5ae5a0c61120d0c ("pmdomain: renesas: rcar-sysc: Add
+genpd OF provider at postcore_initcall").
 
-Typo in function name. You probably meant "build_phy_abilities_req".
+Fixes: 18a3a510ecfd0e50 ("pmdomain: core: Add the genpd->dev to the genpd provider bus")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued as a fix in renesas-clk-for-v6.17.
 
-> +	err = mucse_fw_send_cmd_wait(hw, &req, &reply);
-> +	if (!err)
-> +		memcpy(abil, &reply.hw_abilities, sizeof(*abil));
-> +	return err;
-> +}
-> +
-> +/**
-> + * mucse_mbx_get_capability - Get hw abilities from fw
-> + * @hw: pointer to the HW structure
-> + *
-> + * mucse_mbx_get_capability tries to some capabities from
-> + * hw. Many retrys will do if it is failed.
-> + *
+drivers/clk/mmp/clk-of-mmp2.c:mmp2_pm_domain_init() has the same issue.
 
-Typo in comment: "tries to some capabities" should be "tries to get
-capabilities"
+Note that R-Car H1 still booted fine, as the CPG/MSTP Clock Domain is no
+longer used directly on that SoC: all devices were moved to the R-Car
+SYSC PM Domain in commits 751e29bbb64ad091 ("ARM: dts: r8a7779: Use SYSC
+"always-on" PM Domain") and commit a03fa77d85a736d3 ("ARM: dts: r8a7779:
+Use SYSC "always-on" PM Domain for HSCIF"), and use the clock domain
+only indirectly from rcar-sysc through cpg_mstp_{at,de}tach_dev()).
+---
+ drivers/clk/renesas/clk-mstp.c | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-> + * @return: 0 on success, negative on failure
-> + **/
-> +int mucse_mbx_get_capability(struct mucse_hw *hw)
-> +{
-> +	struct hw_abilities ability;
-> +	int try_cnt = 3;
-> +	int err;
-> +
-> +	memset(&ability, 0, sizeof(ability));
-> +	while (try_cnt--) {
-> +		err = mucse_fw_get_capability(hw, &ability);
-> +		if (err)
-> +			continue;
-> +		hw->pfvfnum = le16_to_cpu(ability.pfnum);
-> +		hw->fw_version = le32_to_cpu(ability.fw_version);
-> +		hw->axi_mhz = le32_to_cpu(ability.axi_mhz);
-> +		hw->bd_uid = le32_to_cpu(ability.bd_uid);
-> +		return 0;
-> +	}
-> +	return err;
-> +}
-
-
-Missing initialization of err variable before the last return, which
-could lead to undefined behavior if all attempts fail.
-
-> +
-> +/**
-> + * mbx_cookie_zalloc - Alloc a cookie structure
-> + * @priv_len: private length for this cookie
-> + *
-
-
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 6b47bb5eee45f75b..5fcc81b92a973771 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -305,6 +305,9 @@ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
+ 		pm_clk_destroy(dev);
+ }
+ 
++static struct device_node *cpg_mstp_pd_np __initdata = NULL;
++static struct generic_pm_domain *cpg_mstp_pd_genpd __initdata = NULL;
++
+ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ {
+ 	struct generic_pm_domain *pd;
+@@ -326,5 +329,20 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
+ 
+-	of_genpd_add_provider_simple(np, pd);
++	cpg_mstp_pd_np = of_node_get(np);
++	cpg_mstp_pd_genpd = pd;
++}
++
++static int __init cpg_mstp_pd_init_provider(void)
++{
++	int error;
++
++	if (!cpg_mstp_pd_np)
++		return -ENODEV;
++
++	error = of_genpd_add_provider_simple(cpg_mstp_pd_np, cpg_mstp_pd_genpd);
++
++	of_node_put(cpg_mstp_pd_np);
++	return error;
+ }
++postcore_initcall(cpg_mstp_pd_init_provider);
 -- 
-Thanks and Regards,
-Danish
+2.43.0
 
 
