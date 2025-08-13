@@ -1,236 +1,126 @@
-Return-Path: <linux-kernel+bounces-765954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85939B24087
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:46:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F827B24082
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88641AA2EE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:46:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82BAF7B9347
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E192BF3CF;
-	Wed, 13 Aug 2025 05:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B6F2BEC57;
+	Wed, 13 Aug 2025 05:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DSF/xzQ2"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ly6WycZQ"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE801E835B;
-	Wed, 13 Aug 2025 05:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E33429C325
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755063947; cv=none; b=tiJ5tdSZdOdP1uAX6HxbMeJe7O2/2sQEpd/167FauS5V6gE9urUbS8FSR1oAfxGCOeG/+XkFfEwsnw1DthCoRvUnsSMuhQrw+1+yTzAzWkbNLU2dixut81IQfucxsHaVuXjKcSnABkZfmnCF4TvLuQJHi00/vDUPu3Jg4xG5jfg=
+	t=1755063923; cv=none; b=l6eze/nNiW3P+FGfMs5iVSm3OaWFjt0SGlCDN3cdpjUwl7FePS9Zg6/02qlBRgeAZaKEJn6QdeHLLFX48Tbj2k0ld7wc4uOniBnYKB03sV25VOkwA5mdqMYNSqES6B/X1G4ckiw18xNZr77vC7XGRM8J2dM/+C3ScPlIFLTYiKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755063947; c=relaxed/simple;
-	bh=ZPLGVBS25zRlO7euIJVNlJ3x6vVqODmsvGIo7YwRq8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GH7clUGxGJlEoCSYZPtl4ge28HU/RhlhADubosTiv+wO3wcI1P8rDhtz4VJyRhfIgoUclU6zlV8GzMEjou1wRxlO4qUhEs+padguAptvKzW3qmM79tzHthxTmfhiPWaxX5vH+FR5a4Vz7ZHe60FxMsysS6avgUF94/gsIeKo8WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DSF/xzQ2; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CNQEe8025034;
-	Wed, 13 Aug 2025 05:45:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=v/khMXsjNIxOrq06K4z/fPAhMAv1P8
-	UcC6BkmouROm4=; b=DSF/xzQ2wL47J2eTsz/TEdgaxre4OiCTWgmwxf+1lH8N4N
-	nJcfYmDx+18D4G9nIw95xPQSBsjMViefk9w5GKOBnn65pbdj4KAShk5sbPGgc/Sz
-	YXmJJMbYx2s8QWbJ1XriiVDDgadQ8FrMGuAPji9XWqfLbc1BJrxJVa6yNQLBPWlv
-	TdriEEThqpNdi/RvzgQSPwf/KoSjT4oNB7BiqP5GP0pYo4AnmDGhhuUXr8vwnh0S
-	VY8hyAe22qCcFFLtbzzBoERY1ObjOxSe8MOZfKzmeWeSMBawNuRaA6DQh++5Dnr9
-	Fa/J+hbCT/dmuwZ/6odvaPVqQYblDMuKEFSLH/ig==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaa7031-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 05:45:20 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57D5jJ8X019474;
-	Wed, 13 Aug 2025 05:45:19 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaa702y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 05:45:19 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57D4NHHZ017588;
-	Wed, 13 Aug 2025 05:45:18 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ekc3nhj7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 05:45:18 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57D5jHZ217039666
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Aug 2025 05:45:17 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 03E412004B;
-	Wed, 13 Aug 2025 05:45:17 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 398C120040;
-	Wed, 13 Aug 2025 05:45:15 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.214.209])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 13 Aug 2025 05:45:15 +0000 (GMT)
-Date: Wed, 13 Aug 2025 11:15:07 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
-        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 07/11] generic: Stress fsx with atomic writes enabled
-Message-ID: <aJwmY8_RLBVuTkDk@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1754833177.git.ojaswin@linux.ibm.com>
- <50487b2e8a510598a93888c2674df7357d371da8.1754833177.git.ojaswin@linux.ibm.com>
- <20250812171855.GC7938@frogsfrogsfrogs>
+	s=arc-20240116; t=1755063923; c=relaxed/simple;
+	bh=ZYikq6ZDg+ibMQL/f6nWlqVFdcz+u4wrp9M122wgNXQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kX3blpJaFlww/hJ0hYVERBDmoUOmvbdjWZ1go1PatiXqAEg/7nFIbTsYbZg9v5JLWB9qJWR+Z4pTY/HO9vqncC/XO1DC8B8vrrPIaEmI7X86tXID9XqA06bu0X8dku97jwUHYS5fiAh2/JHkT8Pm6B+sg0I3p+7HjW5Bt/0J9ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ly6WycZQ; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b34a8f69862so4674671a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 22:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755063922; x=1755668722; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qaq36KFIzFlqF8k3WREWRlkTXlOGZc20Ijz7fxyxT5Q=;
+        b=Ly6WycZQAzkUC6rZ7ZwNu1jFJ8pYGrFcls7+QhjjJFoipmZmFQBTAd2b9PEsukzRoO
+         dSzUi4jhrOEK4W0FXnVbVbfpRdvyvcX0H7GDAIH1mFHAN97mzxg/0OuX5HzaXAa3ZLGC
+         Ti3vg5cUPABxI4s7dIVTaA55ogbmWpEmgHLa70uQSLnoB3b150le3J2FTkIFQDYbhCQm
+         WcVg0ddxdYVGa38prnKMoEfRaLJc4L5OBZaasvSVchXlv6+OZ62GVI6paUQT7C6MVS0Z
+         lKnfBUl/70kMx6icBSM1ZzqNXcPaXasooXZVKvt7bi2ZCld0/dSCEEq60o+fdFgoIBKy
+         qqvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755063922; x=1755668722;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qaq36KFIzFlqF8k3WREWRlkTXlOGZc20Ijz7fxyxT5Q=;
+        b=n763xK3Vp55UhfHPcKFpNVMuOzs18Wg0HgCz2nSpSkrSAhngnkeoDCNbLoqhBC7FJ5
+         pB1CJNW8vsO9dJNEUuJTBy+VczOVx0TXixgaU8gYwsfZ8ZZMM8YatgTgnG0LuaED0PQl
+         A6hSfHTRwNAtvJqbKZ2Nt61+gpcb2G75ZUfU+QhCTeFG5l1urezOiq4w9qHmEURrbuTz
+         Nr0J8DNSPFPLYwyVBrbz9dGOp840Pra5bMmG1I2Qj3N9eOAySHfPz2v9egjsVViDqWXq
+         QyNL2hDCIsvsYmAH5CDY49jZApbUi4NIDIGBSXCw3//r9d34iqSydos6K2w8FDKjn4Er
+         Ms1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUcoR4N3zoJ7mlNa1ClmkM6OI4OQ6kqNzRK+zXZvKDJaDhP6qwVbun+ocF1z9S9xvhLYIAGBJw59fMvz+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXnzRL7Xelgxu2IL95ghmEc4D06IhRO2E4zo67V0PfaL3Wqw2V
+	8fmXLZ5JwyZ7bGgsc0IsoQL0kBraq53MMHyIzenhArr+KWya/Gy7PcXXT0TF4T9CcRiyQPa9u/e
+	/3WPHYkiVuGHkD/g3fMt3ulUVlYJfInZxkku4BYql
+X-Gm-Gg: ASbGnctnnIQFIB0Ub2A2QI4QI3B1kmnRUjPuu+FCE/u7+7R2DvVCiFByAOTt+vNzi7+
+	9+Peg9wjFIOmggHW49cjDFLkv6OaCrI7fUHF5lzB9DcLBSmcS/tuQLbN8HLPASVXOSAMBfh1AG+
+	nEwtG4YEBeDu8LJMPqyCIMAlrtbJBTrAWC7N9h0bEG+2uztKaV1wy2QXDT9SNXO5io4var/atIx
+	mAc+MA2xgl57C/gasLdUK3yPUyANSAlsdNVMNHTR9DdGpGU3as=
+X-Google-Smtp-Source: AGHT+IG2uHnAmpipqO2dw+6rmaFjRxOwwGwijIBr0q2ylLWKUeVEMmgNwQuLFjll+r/Km/0aRMJkibnVfDWFBCU5A04=
+X-Received: by 2002:a17:903:988:b0:240:72e9:87bb with SMTP id
+ d9443c01a7336-2430d201f87mr27649015ad.42.1755063921657; Tue, 12 Aug 2025
+ 22:45:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812171855.GC7938@frogsfrogsfrogs>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=KPRaDEFo c=1 sm=1 tr=0 ts=689c2670 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
- a=VwQbUJbxAAAA:8 a=jlC_BfiipCRRyT0oD4EA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: 1AcaNN8oXjNCYzZdyV3HhzvKX1JUrX7n
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX5RZa3th2M3FD
- kwqZcEl7ECHJ8Fm7SmmQwD3yCnf6z0HPuBc3oFwYMSF/Xjm+oTZHX7CccvQ2SAh3AKse0FnP/gZ
- IpiECUfJe94XxjhASm51c5TIaS74rfEpnY/X7eMmV6F67ZDUkVyjYAtPCssli0K9LVDxXDiUy2a
- bWWLddSly9ta6nf+EevZke+0QQKjmnQBmTHFvkrjGRNhvxxcrZiceDnYqfN3hQClAaEVn4bv4us
- gcAc9n/ut1fE6Y1Wd4AaG1CIVpR/vzUZVkqUa/SrAud/clBvNQkfB5vWrpFO00Ltd5NK2YN2cZE
- TH5hBq32zKp8op3KJRlGlOz5oir0bWjv41DK+mQPj22uOC10NUId/G+zAcl9RVDLMl3Y+xB95AL
- 6j/14BXW
-X-Proofpoint-GUID: XuoKy--lu1DNLl5Qz4xqtYufTYbb4nD2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 spamscore=0 clxscore=1015 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120224
+References: <20250813005602.4330-1-hdanton@sina.com> <689be791.050a0220.51d73.00b9.GAE@google.com>
+In-Reply-To: <689be791.050a0220.51d73.00b9.GAE@google.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Tue, 12 Aug 2025 22:45:10 -0700
+X-Gm-Features: Ac12FXyf66bi4XKtwyVD-x7BvsY22TKhwNiZ5ZyHMSgOzp6HLclNMDHU6njSXSM
+Message-ID: <CAAVpQUBB7eE2LCLXSFv3wzPhmTKJxz5ZP_Hw9FPRj6y5hHtArg@mail.gmail.com>
+Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in nsim_queue_free
+To: syzbot <syzbot+8aa80c6232008f7b957d@syzkaller.appspotmail.com>
+Cc: edumazet@google.com, hdanton@sina.com, leitao@debian.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 10:18:55AM -0700, Darrick J. Wong wrote:
-> On Sun, Aug 10, 2025 at 07:11:58PM +0530, Ojaswin Mujoo wrote:
-> > Stress file with atomic writes to ensure we excercise codepaths
-> > where we are mixing different FS operations with atomic writes
-> > 
-> > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> 
-> Didn't I already tag this
-> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+On Tue, Aug 12, 2025 at 6:17=E2=80=AFPM syzbot
+<syzbot+8aa80c6232008f7b957d@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot has tested the proposed patch but the reproducer is still triggeri=
+ng an issue:
+> KASAN: slab-use-after-free Read in udp_tunnel_nic_device_sync_work
+>
+> netdevsim netdevsim3 eth3: set [1, 0] type 2 family 0 port 6081 - 0
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KASAN: slab-use-after-free in __mutex_lock_common kernel/locking/mut=
+ex.c:577 [inline]
+> BUG: KASAN: slab-use-after-free in __mutex_lock+0x147/0x1360 kernel/locki=
+ng/mutex.c:760
+> Read of size 8 at addr ffff8880434426b0 by task kworker/u4:10/1096
+>
+> CPU: 0 UID: 0 PID: 1096 Comm: kworker/u4:10 Not tainted 6.17.0-rc1-syzkal=
+ler-00016-g8742b2d8935f-dirty #0 PREEMPT(full)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
+16.3-2~bpo12+1 04/01/2014
+> Workqueue: udp_tunnel_nic udp_tunnel_nic_device_sync_work
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+>  print_address_description mm/kasan/report.c:378 [inline]
+>  print_report+0xca/0x240 mm/kasan/report.c:482
+>  kasan_report+0x118/0x150 mm/kasan/report.c:595
+>  __mutex_lock_common kernel/locking/mutex.c:577 [inline]
+>  __mutex_lock+0x147/0x1360 kernel/locking/mutex.c:760
+>  udp_tunnel_nic_device_sync_work+0x39/0xa50 net/ipv4/udp_tunnel_nic.c:737
 
-Yes you did but since I moved the fsx avoid logic from common/rc to here
-I just thought it'd be better to remove old reviews.
-
-(also fyi, i also removed the reviews from g/1227 for the same reason)
-
-Thanks for the review again! 
-
-Regards,
-ojaswin
-> 
-> --D
-> 
-> > ---
-> >  tests/generic/1229     | 68 ++++++++++++++++++++++++++++++++++++++++++
-> >  tests/generic/1229.out |  2 ++
-> >  2 files changed, 70 insertions(+)
-> >  create mode 100755 tests/generic/1229
-> >  create mode 100644 tests/generic/1229.out
-> > 
-> > diff --git a/tests/generic/1229 b/tests/generic/1229
-> > new file mode 100755
-> > index 00000000..7fa57105
-> > --- /dev/null
-> > +++ b/tests/generic/1229
-> > @@ -0,0 +1,68 @@
-> > +#! /bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-> > +#
-> > +# FS QA Test 1229
-> > +#
-> > +# fuzz fsx with atomic writes
-> > +#
-> > +. ./common/preamble
-> > +. ./common/atomicwrites
-> > +_begin_fstest rw auto quick atomicwrites
-> > +
-> > +_require_odirect
-> > +_require_scratch_write_atomic
-> > +
-> > +_scratch_mkfs >> $seqres.full 2>&1
-> > +_scratch_mount  >> $seqres.full 2>&1
-> > +
-> > +testfile=$SCRATCH_MNT/testfile
-> > +touch $testfile
-> > +
-> > +awu_max=$(_get_atomic_write_unit_max $testfile)
-> > +blksz=$(_get_block_size $SCRATCH_MNT)
-> > +bsize=`$here/src/min_dio_alignment $SCRATCH_MNT $SCRATCH_DEV`
-> > +
-> > +set_fsx_avoid() {
-> > +	local file=$1
-> > +
-> > +	case "$FSTYP" in
-> > +	"ext4")
-> > +		local dev=$(findmnt -n -o SOURCE --target $testfile)
-> > +
-> > +		# fsx insert/collpase range support for ext4+bigalloc is
-> > +		# currently broken, so disable it. Also disable incase we can't
-> > +		# detect bigalloc to be on safer side.
-> > +		if [ -z "$DUMPE2FS_PROG" ]; then
-> > +			echo "dumpe2fs not found, disabling insert/collapse range" >> $seqres.full
-> > +			FSX_AVOID+=" -I -C"
-> > +			return
-> > +		fi
-> > +
-> > +		$DUMPE2FS_PROG -h $dev 2>&1 | grep -q bigalloc && {
-> > +			echo "fsx insert/collapse range not supported with bigalloc. Disabling.." >> $seqres.full
-> > +			FSX_AVOID+=" -I -C"
-> > +		}
-> > +		;;
-> > +	*)
-> > +		;;
-> > +	esac
-> > +}
-> > +
-> > +# fsx usage:
-> > +#
-> > +# -N numops: total # operations to do
-> > +# -l flen: the upper bound on file size
-> > +# -o oplen: the upper bound on operation size (64k default)
-> > +# -Z: O_DIRECT ()
-> > +
-> > +set_fsx_avoid
-> > +_run_fsx_on_file $testfile -N 10000 -o $awu_max -A -l 500000 -r $bsize -w $bsize -Z $FSX_AVOID  >> $seqres.full
-> > +if [[ "$?" != "0" ]]
-> > +then
-> > +	_fail "fsx returned error: $?"
-> > +fi
-> > +
-> > +echo "Silence is golden"
-> > +status=0
-> > +exit
-> > diff --git a/tests/generic/1229.out b/tests/generic/1229.out
-> > new file mode 100644
-> > index 00000000..737d61c6
-> > --- /dev/null
-> > +++ b/tests/generic/1229.out
-> > @@ -0,0 +1,2 @@
-> > +QA output created by 1229
-> > +Silence is golden
-> > -- 
-> > 2.49.0
-> > 
-> > 
+This is apparently another issue that I hold in the syzbot queue.
 
