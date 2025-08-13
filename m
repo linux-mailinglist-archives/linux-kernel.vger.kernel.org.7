@@ -1,148 +1,156 @@
-Return-Path: <linux-kernel+bounces-766772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9005B24AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:46:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9055DB24AF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62BD12A16A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:42:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BDD61BC7468
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051062EBB81;
-	Wed, 13 Aug 2025 13:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B7C2EAB93;
+	Wed, 13 Aug 2025 13:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ue8xZgup"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="b2lqj+QS"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596C22EF67E;
-	Wed, 13 Aug 2025 13:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646BC2EACE3
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755092482; cv=none; b=WmWybOLTUsTubGxLsDI0A1xTUocFbc02L56oonT/NI59PASo9xEdl9ylN2Z6KkT5Md0KptwkOuRmhypGYsstZvtkZVGo61scXIrdkq5YL/O9BmWfJGKcZsqUM+NYstm7goed3Mzyb8qxuDp6JYnJF6PiNDcfxxJQIymtmML2Yr4=
+	t=1755092551; cv=none; b=XXpBDbPXD3WAQAG+yASkFL3Qsi71R6CU9drGij8y/zphDTvcmgTuJR2pjox3aoBHYrucaYwQO7W0OLmew+4Wh702eMcp6sPRDzrk4gYTTuxrBhgRv9Kegb5uoufL+2KFwGvTyxXkLv/3bZujc6EKxxEPCWmpr9Y2koR4ZOPvqaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755092482; c=relaxed/simple;
-	bh=75ouafMcM1RjH+OPfqPokKQM96pO03FrNAvY+f1w4rA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uFXNNe2DjfxIyXLEMw7hCVifEzZAphlMPx4T7e4ctePkbo41T2UvsxtDNgy1k5Pu0x489/3xgtczD1A76zUAIViIpj42F9Xyvp700GthRAPEgWkIS/s1u42f2n9cJBYyFxu0KCjPjrQ8W/n7xlII0IBYUlC4jX/ncQ6nWgDNnxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ue8xZgup; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F6D6C4CEEB;
-	Wed, 13 Aug 2025 13:41:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755092482;
-	bh=75ouafMcM1RjH+OPfqPokKQM96pO03FrNAvY+f1w4rA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ue8xZgupZ2fj4mz+/5wAFT15002hRkaONYVFAbqNeIgg8azyWa7iK/J2eodrdY1a5
-	 /a/MQAyrRYvkz4K/no/ljvc16eJDqVQ+b6uohxsmlg7cEknHiMKFvp4C4jGY5fsG6t
-	 zVjdZOVfGyIZ3U2fWicUDzzj/kN6snx+s8ormGhust17E05YXIfdA0yH0SyIxuKZ6c
-	 AM03ro2iboMqZGct4GvlFCZo407CYVP973LdclVevz0oJJf+gSJ5tWXtHKoCCzz/+Z
-	 ps0CoGp89+Tl8Y2v2YmSMPsRxjWCT42PyXQWtGblsn5yf1DKIuAFX7NIE/HD8N3QnC
-	 ymh1RqmY9fc6A==
-Date: Wed, 13 Aug 2025 08:41:19 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] dt-bindings: clock: qcom: Document the Glymur SoC
- TCSR Clock Controller
-Message-ID: <2ckimmzf6swpmckgaxw4ys4ocxhhno3pzx7fidqgzftfhww6tt@jiq2q72jgonf>
-References: <20250813-glymur-clock-controller-v4-v4-0-a408b390b22c@oss.qualcomm.com>
- <20250813-glymur-clock-controller-v4-v4-2-a408b390b22c@oss.qualcomm.com>
+	s=arc-20240116; t=1755092551; c=relaxed/simple;
+	bh=79L6nL2lVlR1vgW7gSeFO1OcMuOBtdLGT/Ddk5toK1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dQIpVqrDcGXPRHFVn8cEoi6U7LN4fTd0RapqWdubB2cd+VIQwyEB8zKrwNrDkN6pp/xy4eQshK4YL+siNJNTJhkB/Ilu9kW+SRcPtFrBpE0CQZNcEQxQW40zD+qb5uH1Dl4XYvWu4mWLl0PRcEoy/OMzUA3qnP5kCeH+TqAbGWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=b2lqj+QS; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4aeb5eb611bso65236991cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1755092548; x=1755697348; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NX7QgU4RYkpyaIY+9NdW+KbcJXzTDUdRfjFR9v7XueI=;
+        b=b2lqj+QS4h1kd0qlevn3j1+XnXmsh9SieGN33Ia8fu0zm3Gs0St7ghhxNTyh7wT0HL
+         2ECcVY1r8tPzLot215SnRzvwxu/Fr9i8oubGC3OMsnfJI6Xva1WRln0vxcmvK9CgIJ4F
+         dDnsm7lG6300bCs+1xYTr5OKpkCVg0uPtAfhHGBFvQsbIkDl03mQ6Gxv8ehjtFQ7pQ90
+         Of33C8zSKqyYQnKF9OgBC1hav2VXJKmdjEKAgny4j+QzpeLoyFlnJxc6Xw7EYWyZtUJm
+         hbYSQJ1kDrmMGfsiXzAmsMRiS8B0SS7GrgF5xC/eoPDu7ROHmJSXroFXCgwsidGSejCn
+         BSmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755092548; x=1755697348;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NX7QgU4RYkpyaIY+9NdW+KbcJXzTDUdRfjFR9v7XueI=;
+        b=vGmjZp1DhbcHMooGWrkiQRn1QxhGX361EIBpREsJueLow3ti2VwZdOE0ZlK1fHt3+0
+         Gu52gZdNCELtywvXvZ3yEgymUzcoGeFMY7PkAIWJKgAxT4Hy8Dgc7ZcDBM+LnnoGCKzl
+         XWRHa6ujP3CuEls3oq86lnzdJiSWR6MFV+9gCQIgPp4q102X6Fng2L9KuwI1l1k1f1Nr
+         hQYBfd8Ocy1RgdvnrSKipiw4ukVPNK2paONg2nMzvTtwpWYvqv/gL2qObXn+94zgSc20
+         br7BiEWFN9Odr9MT5R21cbL0IQ17FZ9SKJh7QAnymynCTSR4zSBG4gbGTAOr87AYYNPP
+         EmQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVU7Dfg/vQs0cGMR1KQJMzfpbg1cvTDoOO8wgQKciNrdxoHRhWaKt85FPPc0li35PJlRPbc/47RJp2XZJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6CTaWrx4jn18+EEUGLHegZALwYKlGQjAjBNyQ+5+LT5mytVQD
+	sM7FD54a0u/KTEtqGZtOF1ewqRSG9TZcurEMMSiDVFdnr220ddMWS5EEZm6Ed7dKAYH6nzaRvhg
+	hpkd83pFz9XZQ1mDMYj2Z6NIU/+NDL36DSmB6X6Yy8w==
+X-Gm-Gg: ASbGnctsIZiVxL0DXugyKoQTloEgYgrp8335kGM9tPVMGGJpwjBZraVttmFGaIkKojd
+	G1GY+owEoqX1j+xETBdQALFdk/3fr60u0H1MvprZ5vr9FjfIeTlxN523qcHeeRZWRTB7VXjhXzu
+	2qJaxJRmT5lUZZSCETEqq9mVWRkSXb1nOx5GIMe3aXKGyJEcaecPj8vTRxDU20art9Dps6TRsBI
+	Ft+
+X-Google-Smtp-Source: AGHT+IGLfaaQwFEY+EAD7Oyb3ssHwz9Mxecc5gc1KtJUOKANujOZKp0yfy7BpGqxCbIGhcOB/MMwQSa7HBfsw+eWd5U=
+X-Received: by 2002:a05:622a:1f09:b0:4b0:86b4:2513 with SMTP id
+ d75a77b69052e-4b0fc70ed8fmr45524721cf.26.1755092547727; Wed, 13 Aug 2025
+ 06:42:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813-glymur-clock-controller-v4-v4-2-a408b390b22c@oss.qualcomm.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250813063407.GA3182745.vipinsh@google.com>
+ <2025081310-custodian-ashamed-3104@gregkh> <mafs01ppfxwe8.fsf@kernel.org>
+ <2025081351-tinsel-sprinkler-af77@gregkh> <20250813124140.GA699432@nvidia.com>
+ <2025081334-rotten-visible-517a@gregkh> <mafs07bz7wdfk.fsf@kernel.org>
+In-Reply-To: <mafs07bz7wdfk.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 13 Aug 2025 13:41:51 +0000
+X-Gm-Features: Ac12FXxwYgoxAEMomw-_iEhgQJ-Al-xyM3lcJTz2IeukxaEHZZmWI0qPQ6BAJJ8
+Message-ID: <CA+CK2bDs9prKNSo=Ris-L7T43ZFU7ji3cBH3KD1=FxXg7hFbFA@mail.gmail.com>
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Jason Gunthorpe <jgg@nvidia.com>, 
+	Vipin Sharma <vipinsh@google.com>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, rafael@kernel.org, 
+	dakr@kernel.org, bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 01:25:18PM +0530, Taniya Das wrote:
-> The Glymur SoC TCSR block provides CLKREF clocks for EDP, PCIe, and USB. Add
-> this to the TCSR clock controller binding together with identifiers for
-> the clocks.
-> 
+On Wed, Aug 13, 2025 at 1:37=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org=
+> wrote:
+>
+> On Wed, Aug 13 2025, Greg KH wrote:
+>
+> > On Wed, Aug 13, 2025 at 09:41:40AM -0300, Jason Gunthorpe wrote:
+> [...]
+> >> Use the warn ons. Make sure they can't be triggered by userspace. Use
+> >> them to detect corruption/malfunction in the kernel.
+> >>
+> >> In this case if kho_unpreserve_folio() fails in this call chain it
+> >> means some error unwind is wrongly happening out of sequence, and we
+> >> are now forced to leak memory. Unwind is not something that userspace
+> >> should be controlling, so of course we want a WARN_ON here.
+> >
+> > "should be" is the key here.  And it's not obvious from this patch if
+> > that's true or not, which is why I mentioned it.
+> >
+> > I will keep bringing this up, given the HUGE number of CVEs I keep
+> > assigning each week for when userspace hits WARN_ON() calls until that
+> > flow starts to die out either because we don't keep adding new calls, O=
+R
+> > we finally fix them all.  Both would be good...
+>
+> Out of curiosity, why is hitting a WARN_ON() considered a vulnerability?
+> I'd guess one reason is overwhelming system console which can cause a
+> denial of service, but what about WARN_ON_ONCE() or WARN_RATELIMIT()?
 
-Very nice, thank you!
+My understanding that it is vulnerability only if it can be triggered
+from userspace, otherwise it is a preferred method to give a notice
+that something is very wrong.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Given the large number of machines that have panic_on_warn, a reliable
+kernel crash that is triggered from userspace is a vulnerability(?).
 
-Regards,
-Bjorn
+Pasha
 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  .../bindings/clock/qcom,sm8550-tcsr.yaml           |  3 +++
->  include/dt-bindings/clock/qcom,glymur-tcsr.h       | 24 ++++++++++++++++++++++
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> index 2ed7d59722fc7e1e8ccc3adbef16e26fc44bf156..2c992b3437f29b38d9c73e3c600f2c55e0b8ae98 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8550-tcsr.yaml
-> @@ -8,12 +8,14 @@ title: Qualcomm TCSR Clock Controller on SM8550
->  
->  maintainers:
->    - Bjorn Andersson <andersson@kernel.org>
-> +  - Taniya Das <taniya.das@oss.qualcomm.com>
->  
->  description: |
->    Qualcomm TCSR clock control module provides the clocks, resets and
->    power domains on SM8550
->  
->    See also:
-> +  - include/dt-bindings/clock/qcom,glymur-tcsr.h
->    - include/dt-bindings/clock/qcom,sm8550-tcsr.h
->    - include/dt-bindings/clock/qcom,sm8650-tcsr.h
->    - include/dt-bindings/clock/qcom,sm8750-tcsr.h
-> @@ -22,6 +24,7 @@ properties:
->    compatible:
->      items:
->        - enum:
-> +          - qcom,glymur-tcsr
->            - qcom,milos-tcsr
->            - qcom,sar2130p-tcsr
->            - qcom,sm8550-tcsr
-> diff --git a/include/dt-bindings/clock/qcom,glymur-tcsr.h b/include/dt-bindings/clock/qcom,glymur-tcsr.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..72614226b113bb60f1e430fc18e13c46c8b043d3
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,glymur-tcsr.h
-> @@ -0,0 +1,24 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_TCSR_CC_GLYMUR_H
-> +#define _DT_BINDINGS_CLK_QCOM_TCSR_CC_GLYMUR_H
-> +
-> +/* TCSR_CC clocks */
-> +#define TCSR_EDP_CLKREF_EN					0
-> +#define TCSR_PCIE_1_CLKREF_EN					1
-> +#define TCSR_PCIE_2_CLKREF_EN					2
-> +#define TCSR_PCIE_3_CLKREF_EN					3
-> +#define TCSR_PCIE_4_CLKREF_EN					4
-> +#define TCSR_USB2_1_CLKREF_EN					5
-> +#define TCSR_USB2_2_CLKREF_EN					6
-> +#define TCSR_USB2_3_CLKREF_EN					7
-> +#define TCSR_USB2_4_CLKREF_EN					8
-> +#define TCSR_USB3_0_CLKREF_EN					9
-> +#define TCSR_USB3_1_CLKREF_EN					10
-> +#define TCSR_USB4_1_CLKREF_EN					11
-> +#define TCSR_USB4_2_CLKREF_EN					12
-> +
-> +#endif
-> 
-> -- 
-> 2.34.1
-> 
+>
+> --
+> Regards,
+> Pratyush Yadav
 
