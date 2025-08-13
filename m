@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-765900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 750CDB23FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:41:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CEA3B23FC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E44165808E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B3171AA610E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AA1266584;
-	Wed, 13 Aug 2025 04:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD8029E116;
+	Wed, 13 Aug 2025 04:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrIzbobI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0C8322E;
-	Wed, 13 Aug 2025 04:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ExX1Pt2z"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CBA1922FB;
+	Wed, 13 Aug 2025 04:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755060103; cv=none; b=ACova7XXacSRHcHeHSkjNqHGPvIQnw2NG8mvTLZvzGO4GSiOJBjdi1Vp+mdtQ2vrbdpkFl7EdDWqgxUslPubGkhpc9FeFVX1qzLyh6cdH84jljMSWgD5Bw813iqBU7XYku1Ly2HhwlAwqhbEHyub7SmsUa+4WxNwJqZCnJvwdlU=
+	t=1755060351; cv=none; b=rj4ouCtg7jyUcUSNeFaO7f7vMr74oVf9qtxf3DJ4b0OByMvjKjwhDdk32ZpuFJSHI7VzOafTigzj4o8FEqEpVYjT62P1CRfKn7RZzJr6InyBcFvMNZceDg2kSe4zIDMKg8xV7kWAcenXzNb3f6lbm4tKVCaH4o8EImxTCLYYPUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755060103; c=relaxed/simple;
-	bh=v2d764f2ep5EHkqA3NAse77cvCy3e/Ewnulm5smU8fI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+FODy8mMk+xR/TQu+qbesAoQlb/QIwGVD4mRukAGDDBhEhp9g/mevxSR+ItH17mnsfI5VGN2CjKXF+fxZ0w1C0+hOoU2YmddmO4fJNLF3CPpnMVMWfXuRuV30HYH9ewjUvZkOSRysCBWlAfQIVjbb7TCuwdUXWfxo0GF74yTIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrIzbobI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D0DC4CEEB;
-	Wed, 13 Aug 2025 04:41:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755060103;
-	bh=v2d764f2ep5EHkqA3NAse77cvCy3e/Ewnulm5smU8fI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jrIzbobI7/iWRr7TUYEjc8/cS662o0No7nQ+qiQxgJwACUex6dwWWL6pA5JAG4cuc
-	 JekVnAeLsihOc92MG2PLvmqtia4q3WMeKWbR+Re5piWUanG0Fs14AmPa46ovfeNS86
-	 nIxnLWhxLD9hLQpbaZK0OBvwR+8RVpLK+ky4np88RPzKUehsFD8SulFE/W07hLyyyx
-	 IvrWAYCdHmVuoGrwhOZE/AprUejn/FGisXLywH5O2x3ZIDt4+uI19OZ2SUptnFMiDD
-	 OqbGybsowpArfn+p7A4GcckoAgOYAxTeCYHKszQxOemPDbTmCYc4F820VKMvOMCP2K
-	 4Rzt9BBQGUj0w==
-Date: Wed, 13 Aug 2025 10:10:24 +0530
-From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>,
-	kernel test robot <oliver.sang@intel.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-	Qi Xi <xiqi2@huawei.com>, "Paul E. McKenney" <paulmck@kernel.org>,
-	Linux Kernel Functional Testing <lkft@linaro.org>,
-	rcu@vger.kernel.org
-Subject: Re: [linus:master] [rcu]  b41642c877: BUG:kernel_hang_in_boot_stage
-Message-ID: <20250813044024.GA2872@neeraj.linux>
-References: <202508071303.c1134cce-lkp@intel.com>
- <aJY1DsIUQxzq1U1Q@localhost.localdomain>
+	s=arc-20240116; t=1755060351; c=relaxed/simple;
+	bh=4D16ckHsCI6f9VJDGaCX5efX+aFNJp2qg7K9dcx9Aho=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cjnKgHtjO9uZGiBHEthLyXKa+BSig/QSIkzsJcRtCNU4NZWiSBoRpP6sDUCkmIl3HFbwYB5DKBpeVh5d9xJlFht7K/v0pGWw9kGitdntpM7A2rPfv2TahEydYGmLtGfG1aBYQ9OptbBVe8qti9bnZPC75qOHgSQos4bpT7FijhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ExX1Pt2z; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=cC
+	x19TelBHXMpEu0YblsMsh+7ZnKxfp6szt8ia2Ykj0=; b=ExX1Pt2zy3CRdW49QW
+	Dt6FlVKMVV+gJwYPFPRWktd7FZtC9utjbFXj/aVhpcK4RfjsfzZqg+iEBrBmcGKT
+	eHhL/paO93IZM5VE4z+UFuBbd8rJ8GYp7MtHAVKypu+ScqziILSTvEUFAp3Jyj6g
+	BP8huNU8+oMA8/cwqBSKI1znk=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgA3ErhtGJxo3nYVAA--.2375S2;
+	Wed, 13 Aug 2025 12:45:34 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: lpieralisi@kernel.org,
+	bhelgaas@google.com,
+	mani@kernel.org,
+	kwilczynski@kernel.org
+Cc: robh@kernel.org,
+	jingoohan1@gmail.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>
+Subject: [PATCH v4 00/13] PCI: dwc: Refactor register access with dw_pcie_clear_and_set_dword helper
+Date: Wed, 13 Aug 2025 12:45:18 +0800
+Message-Id: <20250813044531.180411-1-18255117159@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJY1DsIUQxzq1U1Q@localhost.localdomain>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgA3ErhtGJxo3nYVAA--.2375S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGr1kJFW8ZF47Zr1rAw13urg_yoW5KF43pa
+	y5tFW2kF1xJrs093ZrXa929r1Yy3Z3AFZrGrs7K34IqFy3CFyqqryrtryrt347GrWjqF12
+	kr1Utayxuwn3JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piKLvZUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiQxyoo2icD7TgfwAAsE
 
-Hi kernel test robot,
+Register bit manipulation in DesignWare PCIe controllers currently
+uses repetitive read-modify-write sequences across multiple drivers.
+This pattern leads to code duplication and increases maintenance
+complexity as each driver implements similar logic with minor variations.
 
-> #syz test
-> 
-> >From a3cc7624264743996d2ad1295741933103a8d63b Mon Sep 17 00:00:00 2001
-> From: Frederic Weisbecker <frederic@kernel.org>
-> Date: Fri, 8 Aug 2025 19:03:22 +0200
-> Subject: [PATCH] rcu: Fix racy re-initialization of irq_work causing hangs
-> 
-> RCU re-initializes the deferred QS irq work everytime before attempting
-> to queue it. However there are situations where the irq work is
-> attempted to be queued even though it is already queued. In that case
-> re-initializing messes-up with the irq work queue that is about to be
-> handled.
-> 
-> The chances for that to happen are higher when the architecture doesn't
-> support self-IPIs and irq work are then all lazy, such as with the
-> following sequence:
-> 
-> 1) rcu_read_unlock() is called when IRQs are disabled and there is a
->    grace period involving blocked tasks on the node. The irq work
->    is then initialized and queued.
-> 
-> 2) The related tasks are unblocked and the CPU quiescent state
->    is reported. rdp->defer_qs_iw_pending is reset to DEFER_QS_IDLE,
->    allowing the irq work to be requeued in the future (note the previous
->    one hasn't fired yet).
-> 
-> 3) A new grace period starts and the node has blocked tasks.
-> 
-> 4) rcu_read_unlock() is called when IRQs are disabled again. The irq work
->    is re-initialized (but it's queued! and its node is cleared) and
->    requeued. Which means it's requeued to itself.
-> 
-> 5) The irq work finally fires with the tick. But since it was requeued
->    to itself, it loops and hangs.
-> 
-> Fix this with initializing the irq work only once before the CPU boots.
-> 
-> Fixes: b41642c87716 ("rcu: Fix rcu_read_unlock() deadloop due to IRQ work")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202508071303.c1134cce-lkp@intel.com
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
+This series introduces dw_pcie_clear_and_set_dword() to centralize atomic
+register modification. The helper performs read-clear-set-write operations
+in a single function, replacing open-coded implementations. Subsequent
+patches refactor individual drivers to use this helper, eliminating
+redundant code and ensuring consistent bit handling.
 
-Can you please update testing results with the proposed fix?
+The change reduces overall code size by ~350 lines while improving
+maintainability. Each controller driver is updated in a separate
+patch to preserve bisectability and simplify review.
+
+---
+Hi all,
+
+At the beginning, two patches were made, 0001*.patch, and the others were
+one patch. After consideration, I still split the patches. If splitting
+is not necessary, I will recombine them into two patches in future
+versions.
 
 
-- Neeraj
+Changes for v4:
+- Rebase to v6.17-rc1
+
+Changes for v3:
+- patch 0002: s/u32 val = 0;/u32 val; (pcie-designware-debugfs.c -> set_event_number())
+- patch 0013: Remove several val = 0. (Mani)
+- patch 0013: s/PCIE_PL_CHK_REG_CONTROL_STATUS/0. (Error in copying the code.) (Mani)
+
+Changes for v2:
+- Re-send it in the company environment so that the entire patch series is in the 00/13 cover letter. (Bjorn)
+- Modify the subject. (Bjorn and Frank)
+---
+
+Hans Zhang (13):
+  PCI: dwc: Add dw_pcie_clear_and_set_dword() for register bit
+    manipulation
+  PCI: dwc: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: dra7xx: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: imx6: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: meson: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: armada8k: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: bt1: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: dw-rockchip: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: fu740: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: qcom: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: qcom-ep: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: rcar-gen4: Refactor code by using dw_pcie_clear_and_set_dword()
+  PCI: tegra194: Refactor code by using dw_pcie_clear_and_set_dword()
+
+ drivers/pci/controller/dwc/pci-dra7xx.c       |  10 +-
+ drivers/pci/controller/dwc/pci-imx6.c         |  26 ++-
+ drivers/pci/controller/dwc/pci-meson.c        |  22 +--
+ drivers/pci/controller/dwc/pcie-armada8k.c    |  48 ++----
+ drivers/pci/controller/dwc/pcie-bt1.c         |   5 +-
+ .../controller/dwc/pcie-designware-debugfs.c  |  66 +++-----
+ .../pci/controller/dwc/pcie-designware-ep.c   |  20 +--
+ .../pci/controller/dwc/pcie-designware-host.c |  26 +--
+ drivers/pci/controller/dwc/pcie-designware.c  |  75 ++++-----
+ drivers/pci/controller/dwc/pcie-designware.h  |  27 +--
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c |   7 +-
+ drivers/pci/controller/dwc/pcie-fu740.c       |   5 +-
+ drivers/pci/controller/dwc/pcie-qcom-common.c |  59 ++++---
+ drivers/pci/controller/dwc/pcie-qcom-ep.c     |  14 +-
+ drivers/pci/controller/dwc/pcie-rcar-gen4.c   |  23 +--
+ drivers/pci/controller/dwc/pcie-tegra194.c    | 158 +++++++-----------
+ 16 files changed, 239 insertions(+), 352 deletions(-)
+
+
+base-commit: 53e760d8949895390e256e723e7ee46618310361
+-- 
+2.25.1
 
 
