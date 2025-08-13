@@ -1,114 +1,106 @@
-Return-Path: <linux-kernel+bounces-766925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CDFB24CCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:06:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4983BB24CD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9645872311D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:00:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB409A14FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B1C2FF16C;
-	Wed, 13 Aug 2025 14:58:07 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE8A2F291A;
+	Wed, 13 Aug 2025 14:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StbyTQ+f"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5962FE59E;
-	Wed, 13 Aug 2025 14:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9D12EE61F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097087; cv=none; b=gq/cl0sXESdyuc38Qgs1gx2IOGR2wsD3kLXhWBgKA5jvRdxn3F2jLxavpSUInLqr/9PXRs4okgvVqiClRJxBWQFlgWoSEKP58WLDeMpB6a0nrZhp5y+dGbFNhyRFoxKVSb47AJJulKj1UtUrZ2zEbXjLOv5mbpUOsgqpOFi73vo=
+	t=1755097122; cv=none; b=JvjI5aBKpDieBtEC7lGxQZO3/TIleTCSydgCyKu6gK23S3ebqJbuuaFs91Oqf0ey0aBzIkQGsN7WrGfwNyZJWT1aO+rC+fIB837DlUrjOfai7aM2QFIkCscAJd71eBzKV5NyCSqaDkZg4llx8yd3asX9mjs7zXqD9YTaATs8id0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097087; c=relaxed/simple;
-	bh=m1J3TF1MO84jIxVJ7FCYASTbO1gmPS/TD7OlvLJ5QQs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f+913Lk03WjPPpjfK3TIta9ee9nN7sg0CVc+wJHNHZ1uAgypPZDWxMFjfIAjx7REHX3Ix96cj5EXjXyC7SPcEVJsIC9FWYvvnEJBXNLLCjBISIGNWrFyJxozx1Ea59IrN2zhsKsghRqEVXa9LBzyB+3iwJQR72dWFAVZ06ANLa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2BHt69W4z6G9kQ;
-	Wed, 13 Aug 2025 22:55:22 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E82F01404C4;
-	Wed, 13 Aug 2025 22:58:03 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
- 2025 16:58:03 +0200
-Date: Wed, 13 Aug 2025 15:58:02 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
-Subject: Re: [PATCH V2 07/20] nvdimm/namespace_label: Update namespace
- init_labels and its region_uuid
-Message-ID: <20250813155802.00003f3d@huawei.com>
-In-Reply-To: <20250730121209.303202-8-s.neeraj@samsung.com>
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908@epcas5p2.samsung.com>
-	<20250730121209.303202-8-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755097122; c=relaxed/simple;
+	bh=cdj+KiCbn1oJwqYp1Ud6yUCBUGI3vXG9Hhhy6pT+YGI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q1J9JnQa0aAd4X0rFYIkRYEpHO6pZyK1DpTjhgkzwX+t75AeMzfALkj1Z/8vsMVeTnUU3M5YvRSZEN0tA5dYKYLG1NyTuAHgDBi/zbZKq0ktjlg5IVpCN6kWTXlA0v9kA35faMZKARCvD4ZTmA1luGHBhhkSsrRqRd4xBoVEseY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StbyTQ+f; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-879c737bc03so167967839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755097120; x=1755701920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cdj+KiCbn1oJwqYp1Ud6yUCBUGI3vXG9Hhhy6pT+YGI=;
+        b=StbyTQ+fIAizQnsHBGcc5Z1PFWQLOifdN5JgnxWAr2v9BBGVU4czvUSLMV49tgxzMc
+         EI++wcdoakjG5zk3xzSY/u8YiIuRZM/UTOYUffwHJShiPnxqhvPAV1awREa2P1s1uEkv
+         wSRJG/bfkPanX51jMsJ6lBogGgZlzU/tYChAdgCkBLBfwfbydkOCZNM/GovkK/kyN58a
+         0Lsex7W62fMulbNls0MUjGzDO40/Et/1qtKDN72tdKHKSHcpY07ZGL/XJ0S5ZOtoEDCP
+         ycaME/DlqpcvnpOhS4glFl5fqWnHWcOLy0u/OmCTw9XRTx0vYQhg3wLTXymKpc+txs5/
+         ovEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755097120; x=1755701920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cdj+KiCbn1oJwqYp1Ud6yUCBUGI3vXG9Hhhy6pT+YGI=;
+        b=ij0tOdzf55zJb/e6MUW0aU8kuIox4EswKpJt5S6bq40gvaSkvLsvY6vaV0yVnugXmt
+         kMviNigHRzIRfJ5o7IOdfb2THwiMmV/883+dO/yOh52LBFgJvN6GL+U+rrS3cgDGy8/+
+         2lEPpi3Qn1qs/lCkkTpNwyHlJPWd0MA8L3RZTUUEAsILcSJSK7fTAdmFo5ZT9ndbExyC
+         wpVqkUPczlabhz9b0rS1fMmRjBaKFlvOh4P9ocgVmrtYAwqyBepOMC+cuvmjru0HDXZH
+         s9F8rCXDrSHQOr5FMfehvrUXR/GehOAX8QR/xNF9SEkX3ZuSX4yoacS//PV2nafZd45Q
+         gEKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXN0w2xx00jnj9j3RSh4TlGDyVSPodTLz2uMK5g8X0DPNlsUd2zD/WpcW6SeJ7yXaYet3Lrk8y9TjUqDnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhpzqYrT2MlDSzJz5mGcpWvsATGv9eOsnUVGRePhXP3vJrV8nH
+	VUT97ntdwVPMI6eTe7zFIaWgR2o/f2Orf3PpN1g/pJ1Vk3tdAOSL2tzWqz1OSUIfyDzo3TMH8kz
+	11dHa/4MgsYLTya5+XmqbQjGIQ9IWDPk=
+X-Gm-Gg: ASbGncvx2dZy3ifcyr5uv8Wn0njaEjuDKzMj3a27z87PM6Ey5u7bR3CVTQf8kjDOXsw
+	+jJFmsyFEQ60jHVEEVnPWIXBvqN6NyXzPnV+DK6rGqUE+brilgQtHkX2nJQ2bwLl6kptg8vSGX4
+	0Sw1qXpV8baazbU9u0NJmMeZuPY7Xylx13DhsjElB5cgHWV5ZvWPYmUr6DMEpKkpFckcJ1rFPsK
+	Xn/
+X-Google-Smtp-Source: AGHT+IHLKYWoLQgeaa8lpUZkBDSOBm6JTFQBeQSvjC9Q22Wk4nofbygD4o5PAkEKh0CzR9uDm1gnj7nWtx8MBs/ueCQ=
+X-Received: by 2002:a05:6602:160d:b0:881:99eb:e212 with SMTP id
+ ca18e2360f4ac-884296893a8mr594614639f.9.1755097120122; Wed, 13 Aug 2025
+ 07:58:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250812-swap-scan-list-v3-0-6d73504d267b@kernel.org> <20250812-swap-scan-list-v3-2-6d73504d267b@kernel.org>
+In-Reply-To: <20250812-swap-scan-list-v3-2-6d73504d267b@kernel.org>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 13 Aug 2025 07:58:29 -0700
+X-Gm-Features: Ac12FXwhCZMD2zvgw16nmysoWddi5UuKHvB6gp_uCoNluS02s0CWA3dtY7J3FTM
+Message-ID: <CAKEwX=MkZ0MeedMdjczsuwWLEyj2asZsvt+2Vk5evEbRTZrh9g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mm: swap.h: Remove deleted field from comments
+To: Chris Li <chrisl@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Kairui Song <kasong@tencent.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Jul 2025 17:41:56 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+On Tue, Aug 12, 2025 at 12:11=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
+:
+>
+> The comment for struct swap_info_struct.lock incorrectly mentions fields
+> that have already been deleted from the structure.
+>
+> Updates the comments to accurately reflect the current struct
+> swap_info_struct.
+>
+> There is no functional change.
+>
+> Signed-off-by: Chris Li <chrisl@kernel.org>
 
-> nd_mapping->labels maintains the list of labels present into LSA.
-> init_labels() prepares this list while adding new label into LSA
-> and updates nd_mapping->labels accordingly. During cxl region
-> creation nd_mapping->labels list and LSA was updated with one
-> region label. Therefore during new namespace label creation
-> pre-include the previously created region label, so increase
-> num_labels count by 1.
-> 
-> Also updated nsl_set_region_uuid with region uuid with which
-> namespace is associated with.
-
-Any reason these are in the same patch?  I'd like to have
-seen a bit more on why this 'Also' change is here and a separate
-patch might make that easier to see.
-
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-> ---
->  drivers/nvdimm/label.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-> index be18278d6cea..fd02b557612e 100644
-> --- a/drivers/nvdimm/label.c
-> +++ b/drivers/nvdimm/label.c
-> @@ -957,7 +957,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
->  	nsl_set_slot(ndd, nd_label, slot);
->  	nsl_set_alignment(ndd, nd_label, 0);
->  	nsl_set_type_guid(ndd, nd_label, &nd_set->type_guid);
-> -	nsl_set_region_uuid(ndd, nd_label, NULL);
-> +	nsl_set_region_uuid(ndd, nd_label, &nd_set->uuid);
->  	nsl_set_claim_class(ndd, nd_label, ndns->claim_class);
->  	nsl_calculate_checksum(ndd, nd_label);
->  	nd_dbg_dpa(nd_region, ndd, res, "\n");
-> @@ -1129,7 +1129,8 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  				count++;
->  		WARN_ON_ONCE(!count);
->  
-> -		rc = init_labels(nd_mapping, count);
-> +		/* Adding 1 to pre include the already added region label */
-> +		rc = init_labels(nd_mapping, count + 1);
->  		if (rc < 0)
->  			return rc;
->  
-
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
