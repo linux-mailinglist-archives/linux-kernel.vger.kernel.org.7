@@ -1,376 +1,170 @@
-Return-Path: <linux-kernel+bounces-766640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1610EB24956
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4236CB2495F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1EA8807A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:16:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE47721F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9ED15539A;
-	Wed, 13 Aug 2025 12:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD2D19DFA2;
+	Wed, 13 Aug 2025 12:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MU03yWID"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JQYMQzt9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D2111CA9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F3E14386D;
+	Wed, 13 Aug 2025 12:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755087403; cv=none; b=g+CfnjjPRog1emB9RjD1rCekj6uRf8HnXi/ahAhyQKNY2HOKmErtxc3xKQ53XTMOsqwKSjgWg2VGFUws9jWOBX/Pp7ECRZ8M5PoW3/w9QjMjbHHHKHMWDI30CWuf0JP/Ow5xXaEndS1LOMDxEa0rdfQKnsdxwWdWblqicglv6xs=
+	t=1755087415; cv=none; b=Ipmm0WeJzaPiLooh+fhtj0+zQclNul2r7culac0x/TMkpjcp+foI13Xb8NfT3gW4JOP4kJ7cIOykHJfS1gaYTqi33tPxS+ME6X8hHc0QCdxsMzNxHV7qrVrpRR5R1ODjvTakjT71S8UYiGaQvEwSWJKYbDZusIf71BPTx+ots1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755087403; c=relaxed/simple;
-	bh=5/qgc59oD8soUgBaYKa9gXVnBOWyFLGpMZ+wpMO2kD4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nD3PIVQEYyiHUK18XfAz1DPYxrtxyqlHrac9ex6kZb2y3BDhqasIRlJbUANtC6mX756d5Q+peyeB9+XdMrWHTCF7vv2XZI/XBwQU4YlqQeWBtRXBw/ZUwVssUAToH122URQJMnqSO/2Gj0EQMXmE+X4lFVRDGtgKPBdEVCP5UYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MU03yWID; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7426c44e014so5596781b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755087400; x=1755692200; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=IbnSBztKB/ky+HfHfoiCEKZibcC+VHhc0U9rmRsC39Q=;
-        b=MU03yWIDeYtVHuUc80o9ZFdzCVZquy0SEmXRHmdB2xt7uom0jDg38ofZnTiGWD+xIV
-         AyDe9bJjxYpsCnbGTM5hnUkuUTVGTeJKtPHoyTgdWZdR5vqftDElzqG0kXAJn5DG1q+z
-         vQjPGJtBiAEAl8S3rViySW9d2Pp1s/8eWVx3FoacAVHBJM4p6RFCxkGWygbJzHPyqgT9
-         3KGKbGG8UQzWvingJwXKJMu4BwflIB9b3D5fIWchC3Y0mNZNYakt1kJXAd8FWdyzMApS
-         6b74hmY/9o+SMkhQJ5HE8/+iAltRy6GECe6Aj1iweM6PzC7ndR2seO0F1r4bEG/gMCT9
-         ml2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755087400; x=1755692200;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IbnSBztKB/ky+HfHfoiCEKZibcC+VHhc0U9rmRsC39Q=;
-        b=JkIApPsp5wP1NjLkkrpOGQ6UJMsP1Nff90FbudkP/dHKj6wjFJHJRWlMdd9x8hI0g7
-         sHblnbVM01NrGgiWjjADbN/nBt9kHjXkHgskfhDi5zespB5AY8zbcqkyhLnhnFYhUjGt
-         RXUzO96o4A0SXwveXaAEkxjnyq329I8r+XV71aQZ6VG5Jnq+HEeXSwf0j+QJTzNvQysY
-         dmmW3DG/xvLLvSE7OM3F9YBhLlymOCk9NOJzkjrpdnxZ9ziy5d9woCTPIcI6ZEA11DMK
-         5S0oNn9+ObPQFK/ABs3Ryx3peUbSMMgz5/laefErS2PWe3X3cYfkLxtFmVhsOAHNacZm
-         +ePg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ52W8JvokCa4xkPXP+zpUlo01IXpCQoryxB6gt0pn+rAQameQ8+/qXjHtXQBbsa8zUitUX2zsaYPQBVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQyrAKa85FtG7LHRk2C2TbK/Kxhbj6xHwUPWmfa3JxV860AuxO
-	VnS4MCDI3sf0CdcrLQWAsjww7B/FGckjFh7HWmAAFS44+SCs2nj4Ni/MEQamdjslBgg6rpMrMDC
-	x+Q8/gw92EP5rOVcGMeAzQvRuJWrleX48YG42ZxMJ0Q==
-X-Gm-Gg: ASbGncs8/enudd4dnOM34eFVQYcJSh1Sbkl5DDH0ew4srfOO83fu9/OQjBlUeIATYW2
-	qUIUWU/Vxt7ZL3BjKwRL/stlg4OjSNFsBVriciYTlhNjDoWo5//gKxEhtQ8ahqfTcrPnf5fAUew
-	Jt/pqjtyt1S+PUtrprLdjkA165FFn950oAF67b5U6j3ImsOF/wPnl8TFdbngTAOONlLFyeBNMOw
-	Q4vloJLItHENmK0QX4ixtpqRiJcxtxAlB/ndwYDxODBNARxqsY=
-X-Google-Smtp-Source: AGHT+IEqRlX1hXQvIAC8z4ap56R3F6zBfHl+FK5wqB5WBXqk2utT/Iy+dcR7aD5xv5GmvhMOoS30o/Rmi8/TkNbCz1I=
-X-Received: by 2002:a17:902:fc47:b0:242:a0b0:3c28 with SMTP id
- d9443c01a7336-2430d262dd1mr40863255ad.51.1755087400321; Wed, 13 Aug 2025
- 05:16:40 -0700 (PDT)
+	s=arc-20240116; t=1755087415; c=relaxed/simple;
+	bh=Fv8eVEK31vJSE1lNjyb59YLvkth5ttFeEr1vDRsI+cY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Rn0FKfYhB/VLQC9020o/1otf3vjT14LzNbyVwJsLilsIM1lCYvv0TdKjh028s4oeBBUlVzvfQvepFwVNWlQfnjmwSKvk7RHLLoLhbpF31RyDr36qzwN1pLi1Du5fFyN/sOBkVdRZnIdFhvTQEQ3ul6PjiSpOg1IcKVoJqjtNrAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JQYMQzt9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLelP025656;
+	Wed, 13 Aug 2025 12:16:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2f/6WNrjEZSAYk7zWzIZMZXEj+9ZM56XoGtHZQ5EXNI=; b=JQYMQzt9LmUIkqjD
+	+ISCoNHseXjcJm/Zh1VfzaBzRnNs86fL4RbyDWIa7FKAj5D9EU1sGe84HphNhJKU
+	OjHOxlYmLC23HitR/gjGER1SwwexIa6nfC43S+0WrCxCB3DQCeCFiMtoz2eKTTfk
+	P5Zdh9AKfsaivheeKACD7MTb7xMf0ZUaRrFozXx5YUMVuqxgqwrhoXNimLUukJxS
+	XfwcvLvJATy1EAgWGOrpOnrUX3qzpjUnCuKT9EHPtX9YVUx9xzUDGPSZnJCAFesf
+	BMja5pJCrjo8ko7CXCgKKMIzRQRLU7d5gJLzj1HbFFLn+2gghZph9W4liuN8sFGC
+	lykJeg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3gbpfn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 12:16:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57DCGjmP026983
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 12:16:45 GMT
+Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 13 Aug
+ 2025 05:16:41 -0700
+Message-ID: <a482d0a3-92da-998a-97a7-ccb010aa6bf9@quicinc.com>
+Date: Wed, 13 Aug 2025 17:46:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812173419.303046420@linuxfoundation.org>
-In-Reply-To: <20250812173419.303046420@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 13 Aug 2025 17:46:26 +0530
-X-Gm-Features: Ac12FXybqNMQTflDlQz__4h-ypQooKNx0q_GNsw0wCT1xS6QPkD-sG6dIOKmaWc
-Message-ID: <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, achill@achill.org, qemu-devel@nongnu.org, 
-	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
-	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>, 
-	Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org, 
-	Zhang Yi <yi.zhang@huaweicloud.com>, Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-ext4 <linux-ext4@vger.kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 02/24] media: iris: Report unreleased PERSIST buffers
+ on session close
+To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+CC: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Renjiang Han
+	<quic_renjiang@quicinc.com>,
+        Wangao Wang <quic_wangaow@quicinc.com>
+References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
+ <20250813-iris-video-encoder-v2-2-c725ff673078@quicinc.com>
+ <aJxuvm456i1PWOIM@trex>
+Content-Language: en-US
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <aJxuvm456i1PWOIM@trex>
 Content-Type: text/plain; charset="UTF-8"
-
-On Tue, 12 Aug 2025 at 23:57, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.16.1 release.
-> There are 627 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 14 Aug 2025 17:32:40 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.1-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
-
-LKFT found three regressions on stable-rc 6.16.1-rc1.
-
-Short version:
-1) Pef build regressions on x86_64 and i386
-2) LTP syscalls failures with 64k Page size on qemu-arm64
-3) Kernel warning at fs/jbd2/transaction.c start_this_handle x86, qemu-arm64
-
-Long story:
-1)
-The perf gcc-13 build failed on x86_64 and i386.
-
-Build regression: qemu-arm64 ARM64_64K_PAGES ltp syscalls swap fsync
-fallocate failed.
-
-> Ian Rogers <irogers@google.com>
->     perf topdown: Use attribute to see an event is a topdown metic or slots
-
-Build error:
-
-arch/x86/tests/topdown.c: In function 'event_cb':
-arch/x86/tests/topdown.c:53:25: error: implicit declaration of
-function 'pr_debug' [-Werror=implicit-function-declaration]
-   53 |                         pr_debug("Broken topdown information
-for '%s'\n", evsel__name(evsel));
-      |                         ^~~~~~~~
-cc1: all warnings being treated as errors
-
-2)
-
-The following list of LTP syscalls failure noticed on qemu-arm64 with
-stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
-
-Most failures report ENOSPC (28) or mkswap errors, which may be related
-to disk space handling in the 64K page configuration on qemu-arm64.
-
-The issue is reproducible on multiple runs.
-
-* qemu-arm64, ltp-syscalls - 64K page size test failures list,
-
-  - fallocate04
-  - fallocate05
-  - fdatasync03
-  - fsync01
-  - fsync04
-  - ioctl_fiemap01
-  - swapoff01
-  - swapoff02
-  - swapon01
-  - swapon02
-  - swapon03
-  - sync01
-  - sync_file_range02
-  - syncfs01
-
-Reproducibility:
- - 64K config above listed test fails
- - 4K config above listed test pass.
-
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
-
-Test regression: qemu-arm64 ARM64_64K_PAGES ltp syscalls swap fsync
-fallocate failed.
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-swapoff01:
-libswap.c:198: TINFO: create a swapfile size of 1 megabytes (MB)
-tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
-libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
-swapoff01.c:44: TINFO: create a swapfile with 65536 block numbers
-swapoff01.c:44: TCONF: Insufficient disk space to create swap file
-
-swapoff02:
-libswap.c:198: TINFO: create a swapfile size of 1 megabytes (MB)
-tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
-libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
-swapoff02.c:88: TINFO: create a swapfile size of 1 megabytes (MB)
-
-swapon01:
-libswap.c:198: TINFO: create a swapfile size of 1 megabytes (MB)
-tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
-libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
-swapon01.c:39: TINFO: create a swapfile size of 128 megabytes (MB)
-tst_cmd.c:111: TBROK: 'mkswap' exited with a non-zero code 1 at tst_cmd.c:111
-
-swapon02:
-tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
-libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
-swapon02.c:52: TINFO: create a swapfile size of 1 megabytes (MB)
-tst_cmd.c:111: TBROK: 'mkswap' exited with a non-zero code 1 at tst_cmd.c:111
-
-swapon03:
-tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
-libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
-tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-swapon03.c:51: TINFO: create a swapfile size of 1 megabytes (MB)
-tst_cmd.c:111: TBROK: 'mkswap' exited with a non-zero code 1 at tst_cmd.c:111
-
-sync01:
-sync01.c:49: TFAIL: Synced 11403264, expected 33554432
-
-syncfs01:
-syncfs01.c:53: TFAIL: Synced 4096, expected 33554432
-
-sync_file_range02:
-sync_file_range02.c:60: TFAIL: sync_file_range() failed: ENOSPC (28)
-
-fdatasync03:
-fdatasync03.c:43: TFAIL: fdatasync(fd) failed: ENOSPC (28)
-
-fsync01:
-tst_test.c:1888: TINFO: === Testing on ext4 ===
-tst_test.c:1217: TINFO: Formatting /dev/loop0 with ext4 opts='' extra opts=''
-mke2fs 1.47.2 (1-Jan-2025)
-tst_test.c:1229: TINFO: Mounting /dev/loop0 to
-/tmp/LTP_fsyX4HNML/mntpoint fstyp=ext4 flags=0
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
-
-fsync04:
-tst_test.c:1229: TINFO: Mounting /dev/loop0 to
-/tmp/LTP_fsydyQA53/mnt_point fstyp=ext4 flags=0
-fsync04.c:43: TFAIL: fsync(fd) failed: ENOSPC (28)
-
-fallocate04:
-fallocate04.c:198: TFAIL: fallocate failed: ENOSPC (28)
-
-fallocate05:
-tst_fill_fs.c:53: TBROK: fsync(4) failed: ENOSPC (28)
-
-ioctl_fiemap01
-tst_test.c:1217: TINFO: Formatting /dev/loop0 with ext4 opts='' extra opts=''
-mke2fs 1.47.2 (1-Jan-2025)
-tst_test.c:1229: TINFO: Mounting /dev/loop0 to
-/tmp/LTP_iocjRR3ot/mntpoint fstyp=ext4 flags=0
-ioctl_fiemap01.c:74: TPASS: ioctl(fd, FS_IOC_FIEMAP, fiemap) : EBADR (53)
-ioctl_fiemap01.c:77: TPASS: ioctl(fd, FS_IOC_FIEMAP, fiemap) passed
-ioctl_fiemap01.c:79: TPASS: Expect: Empty file should have 0 extends mapped
-ioctl_fiemap01.c:86: TFAIL: ioctl(fd, FS_IOC_FIEMAP, fiemap) failed: ENOSPC (28)
-ioctl_fiemap01.c:41: TFAIL: Expect: extent fm_mapped_extents is 1
-ioctl_fiemap01.c:50: TFAIL: (extent->fe_flags & fe_mask) (0) != fe_flags (1)
-ioctl_fiemap01.c:51: TPASS: Expect: fe_physical > 1
-ioctl_fiemap01.c:52: TFAIL: extent->fe_length (4702687395951105107) !=
-fe_length (1024)
-ioctl_fiemap01.c:96: TFAIL: ioctl(fd, FS_IOC_FIEMAP, fiemap) failed: ENOSPC (28)
-ioctl_fiemap01.c:41: TFAIL: Expect: extent fm_mapped_extents is 3
-ioctl_fiemap01.c:50: TPASS: (extent->fe_flags & fe_mask) == fe_flags (0)
-ioctl_fiemap01.c:51: TPASS: Expect: fe_physical > 1
-ioctl_fiemap01.c:52: TFAIL: extent->fe_length (4702687395951105107) !=
-fe_length (1024)
-ioctl_fiemap01.c:50: TPASS: (extent->fe_flags & fe_mask) == fe_flags (0)
-ioctl_fiemap01.c:51: TPASS: Expect: fe_physical > 1
-ioctl_fiemap01.c:52: TFAIL: extent->fe_length (5136714152143953955) !=
-fe_length (1024)
-ioctl_fiemap01.c:50: TFAIL: (extent->fe_flags & fe_mask) (0) != fe_flags (1)
-ioctl_fiemap01.c:51: TPASS: Expect: fe_physical > 1
-ioctl_fiemap01.c:52: TFAIL: extent->fe_length (8387236464277024288) !=
-fe_length (1024)
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689c822e cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=_0ZXF2jA_ELrfagan30A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfX032HRh1GR0KF
+ zKphtYHH/M5UoezAQj+YBFFIYNn858auImCdl/Ijcu3IpW3I19MUn9f2sirbbQRTwUdvXbqDSz2
+ 2X0viBhbg2OZThj7awiPknMmvgM/eaTT7vOHr8Kvbwpo6oPfnzZ9bK+x8mrYApPYJ5v2Ty8MeQ+
+ Tr0xa5dxf1y6BrF+8EsIXIMTg6YWogTQ14v+CzV15IkxFQRKnXHmzyPPZAJLVnrxE3qee05XJQc
+ +6YjKwUeQPEq6+x3f+QGIJLcX8YvCfUd599rhmmMvJ6PfvE9RqQ2cVpUW+JFFQoYjLQ8v1eVukn
+ McC1E6dx4NMma3ZPWZpAuvbm5lmfARzhz94vJEQgGJKO5t65xDsc1yMK+GlWQHgAA+GnDU1c5Rg
+ X7Cqes9x
+X-Proofpoint-GUID: oRlwJ8V5lr4MA6sJu3kXmuDyXjXkSz6K
+X-Proofpoint-ORIG-GUID: oRlwJ8V5lr4MA6sJu3kXmuDyXjXkSz6K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
+ spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090031
 
 
-Links,
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470711/suite/ltp-syscalls/tests/
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470720/suite/ltp-syscalls/tests/
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470711/suite/ltp-syscalls/test/sync01/log
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470720/suite/ltp-syscalls/test/fdatasync03/log
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470711/suite/ltp-syscalls/test/swapon01/details/
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29471488/suite/ltp-syscalls/tests/
 
+On 8/13/2025 4:23 PM, Jorge Ramirez wrote:
+> On 13/08/25 15:07:52, Dikshita Agarwal wrote:
+>> Add error reporting for unreleased PERSIST internal buffers in
+>> iris_check_num_queued_internal_buffers(). This ensures all buffer types
+>> are checked and logged if not freed during session close, helping to
+>> detect memory leaks and improve driver robustness. No change to buffer
+>> lifecycle or allocation logic.
+>>
+>> Fixes: d2abb1ff5a3c ("media: iris: Verify internal buffer release on close")
+>> Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>  drivers/media/platform/qcom/iris/iris_vidc.c | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> index 8285bdaf9466d4bea0f89a3b1943ed7d6c014b7d..96313856a026efaff40da97eaaa63e847172cd57 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> @@ -247,6 +247,14 @@ static void iris_check_num_queued_internal_buffers(struct iris_inst *inst, u32 p
+>>  			dev_err(inst->core->dev, "%d buffer of type %d not released",
+>>  				count, internal_buf_type[i]);
+>>  	}
+>> +
+>> +	buffers = &inst->buffers[BUF_PERSIST];
+>> +
+>> +	count = 0;
+>> +	list_for_each_entry_safe(buf, next, &buffers->list, list)
+>> +		count++;
+> 
+> I believe at this point is not safe to dereference buf
+You are right, I fixed it in later patch, but it should be fixed in this
+patch instead. Will make the change.
 
-3)
-
-Test regression: stable-rc 6.16.1-rc1 WARNING fs jbd2 transaction.c
-start_this_handle
-
-Kernel warning noticed on this stable-rc 6.16.1-rc1 this regression was
-reported last month on the Linux next,
-
-- https://lore.kernel.org/all/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
-
-Kernel warnings:
-
-------------[ cut here ]------------
-[   34.805150] WARNING: CPU: 1 PID: 627 at fs/jbd2/transaction.c:334
-start_this_handle (fs/jbd2/transaction.c:334 (discriminator 1))
-[   34.807683] Modules linked in: btrfs blake2b_generic xor xor_neon
-raid6_pq zstd_compress sm3_ce sha3_ce sha512_ce fuse drm backlight
-ip_tables x_tables
-[   34.809152] CPU: 1 UID: 0 PID: 627 Comm: io_control01 Not tainted
-6.16.1-rc1 #1 PREEMPT
-[   34.809652] Hardware name: linux,dummy-virt (DT)
-[   34.809961] pstate: 63402009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-[   34.810205] pc : start_this_handle (fs/jbd2/transaction.c:334
-(discriminator 1))
-[   34.810395] lr : start_this_handle (fs/jbd2/transaction.c:334
-(discriminator 1))
-[   34.810798] sp : ffff800080e2f7e0
-[   34.810962] x29: ffff800080e2f820 x28: fff00000c4b43000 x27: ffffa9c145dca000
-[   34.811259] x26: 0000000000000658 x25: 0000000000000629 x24: 0000000000000002
-[   34.811507] x23: 0000000000000629 x22: 0000000000000c40 x21: 0000000000000008
-[   34.811750] x20: fff00000d0800348 x19: fff00000d0800348 x18: 0000000000000000
-[   34.811992] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-[   34.812234] x14: 0000000000000000 x13: 00000000ffffffff x12: 0000000000000000
-[   34.812858] x11: 0000000000000000 x10: ffffa9c1456a8c08 x9 : ffffa9c142b54b84
-[   34.813572] x8 : ffff800080e2f408 x7 : 0000000000000000 x6 : 0000000000000001
-[   34.814462] x5 : ffffa9c145629000 x4 : ffffa9c1456293d0 x3 : 0000000000000000
-[   34.815093] x2 : 0000000000000000 x1 : fff00000c4fd0000 x0 : 0000000000000050
-[   34.815812] Call trace:
-[   34.816213] start_this_handle (fs/jbd2/transaction.c:334
-(discriminator 1)) (P)
-[   34.816719] jbd2__journal_start (fs/jbd2/transaction.c:501)
-[   34.817124] __ext4_journal_start_sb (fs/ext4/ext4_jbd2.c:117)
-[   34.817687] ext4_do_writepages (fs/ext4/ext4_jbd2.h:242 fs/ext4/inode.c:2847)
-[   34.818109] ext4_writepages (fs/ext4/inode.c:2954)
-[   34.818549] do_writepages (mm/page-writeback.c:2636)
-[   34.818983] filemap_fdatawrite_wbc (mm/filemap.c:386 mm/filemap.c:376)
-[   34.819520] __filemap_fdatawrite_range (mm/filemap.c:420)
-[   34.819942] file_write_and_wait_range (mm/filemap.c:794)
-[   34.820349] ext4_sync_file (fs/ext4/fsync.c:154)
-[   34.820486] vfs_fsync_range (fs/sync.c:188)
-[   34.820624] do_fsync (fs/sync.c:201 fs/sync.c:212)
-[   34.820743] __arm64_sys_fsync (fs/sync.c:215)
-[   34.820882] invoke_syscall.constprop.0
-(arch/arm64/include/asm/syscall.h:61 arch/arm64/kernel/syscall.c:54)
-[   34.821046] do_el0_svc (include/linux/thread_info.h:135
-(discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2)
-arch/arm64/kernel/syscall.c:151 (discriminator 2))
-[   34.821172] el0_svc (arch/arm64/include/asm/irqflags.h:82
-(discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
-1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
-arch/arm64/kernel/entry-common.c:165 (discriminator 1)
-arch/arm64/kernel/entry-common.c:178 (discriminator 1)
-arch/arm64/kernel/entry-common.c:768 (discriminator 1))
-[   34.821307] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:787)
-[   34.821460] el0t_64_sync (arch/arm64/kernel/entry.S:600)
-[   34.821712] ---[ end trace 0000000000000000 ]---
-
-Link:
- -  https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.16.y/v6.16-628-gcd8771110407/log-parser-test/exception-warning-cpu-pid-at-fsjbd2transaction-start_this_handle/
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Thanks,
+Dikshita
+> 
+>> +	if (count)
+>> +		dev_err(inst->core->dev, "%d buffer of type %d not released", count, buf->type);
+>>  }
+>>  
+>>  int iris_close(struct file *filp)
+>>
+>> -- 
+>> 2.34.1
+>>
+>>
 
