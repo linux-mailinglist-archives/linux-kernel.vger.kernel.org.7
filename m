@@ -1,91 +1,108 @@
-Return-Path: <linux-kernel+bounces-765695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A659B23CED
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:02:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836CFB23CEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250C218C02AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:01:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5963B2A31
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5278D433AC;
-	Wed, 13 Aug 2025 00:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BD31DB12E;
+	Wed, 13 Aug 2025 00:02:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cZbBypAr"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kBMx04bQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAC1163;
-	Wed, 13 Aug 2025 00:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633D31B4248;
+	Wed, 13 Aug 2025 00:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755043281; cv=none; b=mhkrT0POOITMy7Gu4PJVSFZIihL428GpZxf7fqHP1BFe1ZRHlKG+NOOl1PU3b3j/qKJIc8xgL9cC5E5D48ONBlBJTkZuDDUg4X5a86yewpb/5OEH6M9VLqjJ92rWeMwfxfPlU4D2GA8q+a5fu+hX/RpLciyDblC2MVfvK2TRBeo=
+	t=1755043329; cv=none; b=JHOUCR7KzX5btppIYIGpxFkq9BkRmdSKu5kubo+dA3uAjYouFUR46NalylUiotyMRr0Y12smajYk3chSPevvGpRvJDgjXwr2LFR183yZVtVir9TQPjF6h0iD911Bq18/2M3SNOqDTQGb/4nZMl1aFESNABuZ22g/LnWI51GHDbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755043281; c=relaxed/simple;
-	bh=j4r1hppquktqtYidrhW4W0wl7fe8offrZaopf6cG3G0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dhfPFzbd/82yY6tDiLtDkCoR7YhAWEwQrRxkDreopdzzoi0J1d4SylvlE5o7NqN3auxnljo8eqCfyHWmlhj72qisNVPuhDCpMMYThw/dyZDS0GEt7InEtiR8bjf0hsm3TXNvSlPAS4bcWMDa1WdRhGzCE0i8V3omEqwBZBEpvC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cZbBypAr; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=j4r1hppquktqtYidrhW4W0wl7fe8offrZaopf6cG3G0=; b=cZbBypArsAwEupU5gvJSbx81kI
-	Qosd5QsgwcTBqjCvjrl9+522yt1DsRHkxW3rP4QAtNBLuPkNqySvn9xNhx4W8UKAuQRjCZFER9Q+q
-	OU7f9ZV2fnoJgxNmuLvs+ROm2HQIttuS7sdzJM4TKl8JXUJt7kHFJ0HzLbIvH539ChpirDHa95hk0
-	0jIldmck0numN0slLAIZ1NO2d/wYZ2QGgElgnPrudAOXVUCPogdbljQ+lo4cAZuF/fAYQ7+h58qa0
-	Y+ivu7VmgfbRR4UATQ5PHl9u0DWkjAMVf4kUbfjIu4pzP85eSzA7U8m0V2v8gQf19C/Fc36DoyW7p
-	DX85i4rQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ulyvN-00000003Gyx-2z1h;
-	Wed, 13 Aug 2025 00:01:01 +0000
-Date: Wed, 13 Aug 2025 01:01:01 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Steve French <sfrench@samba.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] VFS: prepare for changes to directory locking
-Message-ID: <20250813000101.GW222315@ZenIV>
-References: <20250812235228.3072318-1-neil@brown.name>
+	s=arc-20240116; t=1755043329; c=relaxed/simple;
+	bh=fFWkenXhNI0YA0ZR3uSv3YEzOtHv0+yKxUhrs5e2Df0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lIQFq7MyjuClErL9uMmC+3rOnZOG8Y26uU5Pxjr8LBtGBFVu8xjjldvR4oG8vZg4XroYrb0MTK2bLSMLcODsd0p661KDTpQgacBtPAJOIG+38OIM4vmKKk8h1kgv6cMYiNsyXFbrxLdTqPiaDiA//qByeiKVMaU/Q8dmCXTIvcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kBMx04bQ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755043329; x=1786579329;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fFWkenXhNI0YA0ZR3uSv3YEzOtHv0+yKxUhrs5e2Df0=;
+  b=kBMx04bQ4Ys7uC8bj5uXbUuy6xckwuoPHhPiep+g+EobrvM67r2uZUdF
+   /OTlxBiBfSalHPE7STm75F3FSSMB5xaBk3/tQLNZqjDYLlt2rAcxZ+rsu
+   Phr2ipcwj3NBq9/wd2UdDxxS9X+fnHA8dyNd2EMtHahff3/ktE5yJYg1s
+   Ku3Ve/38jQ7T619Vv0y8eu/+L8C+JhOZszgnbR0wcy1O/rW5KBeHtkjDh
+   o651JtETJgz0qQXOGIUuqpY3rd5BSaL+t5MMRxRv9crwqqhZswmh6jT1E
+   EbaD/Kcd5q5IvNfoTGte867iKSj49m9KIUHaZC5TDYxbm/SuirQnm90sb
+   g==;
+X-CSE-ConnectionGUID: W47JAtx6Qri4gSW6Sg4pOQ==
+X-CSE-MsgGUID: NxMBtH4xTUSt0poqS6NeeQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="56538056"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="56538056"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 17:02:08 -0700
+X-CSE-ConnectionGUID: N7UT1eQsSkWulp66DhhBJw==
+X-CSE-MsgGUID: BVIbH7fRS2mqUdZTzI3Tqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="165952263"
+Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.149]) ([10.247.119.149])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 17:02:03 -0700
+Message-ID: <78ebb53e-5cb3-4a6f-b2da-dd37e952a333@intel.com>
+Date: Tue, 12 Aug 2025 17:01:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812235228.3072318-1-neil@brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cxl/hdm: Use str_plural() to simplify the code
+To: Xichao Zhao <zhao.xichao@vivo.com>, dave@stgolabs.net,
+ jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, dan.j.williams@intel.com
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250811122519.543554-1-zhao.xichao@vivo.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250811122519.543554-1-zhao.xichao@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 12:25:03PM +1000, NeilBrown wrote:
-> This is the first of 3 sets of patches which, together, allow
-> filesystems to opt-out of having the directory inode lock held over
-> directory operations (except readdir).
 
-[just a quick reply for now - I'm going to be away for about an hour,
-then will review and reply]
+
+On 8/11/25 5:25 AM, Xichao Zhao wrote:
+> Use the string choice helper function str_plural() to simplify the code.
+> 
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+applied to cxl/next
+22fb4ad89885
+
+> ---
+>  drivers/cxl/core/hdm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c
+> index e9e1d555cec6..37176c0a781f 100644
+> --- a/drivers/cxl/core/hdm.c
+> +++ b/drivers/cxl/core/hdm.c
+> @@ -197,7 +197,7 @@ struct cxl_hdm *devm_cxl_setup_hdm(struct cxl_port *port,
+>  	 */
+>  	if (should_emulate_decoders(info)) {
+>  		dev_dbg(dev, "Fallback map %d range register%s\n", info->ranges,
+> -			info->ranges > 1 ? "s" : "");
+> +			str_plural(info->ranges));
+>  		cxlhdm->decoder_count = info->ranges;
+>  	}
+>  
+
 
