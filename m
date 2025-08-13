@@ -1,188 +1,105 @@
-Return-Path: <linux-kernel+bounces-766789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86828B24B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:54:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EDEB24B27
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2733D189C7F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF47C2A1AEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFAB2EA167;
-	Wed, 13 Aug 2025 13:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08982EBDDE;
+	Wed, 13 Aug 2025 13:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="CYLpPAZK"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmXszElT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1E82E7F39
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400592EB5CD;
+	Wed, 13 Aug 2025 13:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755092988; cv=none; b=K92QYJT9/aWacHif1D8oQUS+iz4n+P6lwMhhlWHDJL4QrqX1x4bLQem2mxb4hBCITsfF3G9Hj7pcT/46+3J8V/nUBw2uah2xPSl1RWFFmG1QuQnhLX+jGFEmc3J1oasbpzwRk+WydQ97Eeq1/bgsCTLSw+StuTt+1gbzu4hwJfE=
+	t=1755092973; cv=none; b=nM7WeubdOvJNHs4MPD3WZ8Qd0YcBQuX2BrNpRp+FLVISyvwPNsBDHW+ATTkz9xbFyvVSCrIeWjbgUq7gOl9tGnB0L6RsXbTyWbimghqMVo40zGgEUcvPQ4Hwp/83Q9fQZQXaKlJYI8wr26to7KfCBrQZulJ/H2YDY2Rk1R2Tx7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755092988; c=relaxed/simple;
-	bh=tjiy6lq7zUfoy7QhTySB92H1/vQWjMoW9kYs9mRlj60=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oKrG2eSMrENi7B9eKfNGLh7ZadTGNdVHhKHXspsFJKcGIUI7H7t11lo5Mc2O2u8al8gBFvJ17Uj9V9Rv5wFyUTv7/FERNuYyCfoU9h+0JeNdrIQeWMr+40nXfI0AVEfhoQiQ/7gdyKlv8WSiQIBa16axJuqfZJ/8VsqVPQru/s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=CYLpPAZK; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b0faa6601cso9980331cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:49:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1755092985; x=1755697785; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5COPJ1bhIrlUBdoMgcmCT1dlQIxGjY3lpdJsY0vxHvo=;
-        b=CYLpPAZKQShpwEUsNee6RM4kJnUJPku1C/MQYNOe/wnPVA5nW2BKgAt1P1Qd8z89nW
-         3UtpVGFG3IKSpUYRpGP4xEOZPpe4ziX5OZepo7criuF/tePoWvlr4yv0hTFZKmgQZI4k
-         VQUSLZjp6YrmB0xiF14ed5T0A0SiZIpyA1wMp1Sds5IooxGok3m9ud2CPdLLBq6MDLhj
-         KPmeuvzKihC4FqfvrU71scgVCrIzuCp9x1FTnxYbscMeB1lss3m2+En/hx6Zuqqs+k06
-         9qhgvDn1hn6kcvSvreQ1PTIR+age4FM1u9iMaS0Vbc4R7zAXprlU4SM3S8Vb5iJdYS6j
-         GOhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755092985; x=1755697785;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5COPJ1bhIrlUBdoMgcmCT1dlQIxGjY3lpdJsY0vxHvo=;
-        b=pBjxzMvc/ma7vCUzx8uj9fMUbXsQ5T/3H9DnTQYnGkaQBg73qP9MeLbxec/eoFNfyO
-         Txm/OMXt4XUpSRWz9cmR4bmd3+PZVMqaTuDvbx3wuyBPesVE/COAd3vBH5bL9lEROlbZ
-         c1N/0059wzNswuvtnp2WBfqZK8KuNIeBH4Dwh/3YlSOu06sqw49GX5u98SfyHORFrBd0
-         u7MjDGwpKymhijaI3dM684wfDiaqJfMSK6yow19Y0rFBUWb2NRlrEGP/F3H3MQTNotL+
-         linBt60cshf3GZOAVQC2Uyw1oGyrmnIta2bt/tq0iquQ9SseMFzYzHIPPGyL220rMmmn
-         ZATg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJcEmBX5Yl3axZLifzxEOS3PxpKlZfvtxnqPoMuo1SK5RII2RUZdjxrH8Xm0/Ztz2sr5rH7y0wQkDbNrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwREzlj4Scu+Ew1/1YcqIPiVd8+ulBxo9lBJMowVs+zkTU9nJG8
-	wI2Yb1FMzyh3rQ62xNRGojQr2Ue846qvr6dARRjZf2T+EBHqSPGj7m6N5H/juJP8/j1S8aM5gZG
-	qR8ClKWX3iVETPd7OIRbDlWVKfHSyANJUbEmLt8nMvg==
-X-Gm-Gg: ASbGncv3GIsvgzdzWKPnDMqak/w1ZN4f0zXljdVXPR0bHjygzcVj9MZpovhNrn+MsNz
-	fM3yjCcqvcMHHn47fPHAYVctJBOdPskzHKgNgQf3syUS4n9SiLLGDCjpcvz03fDgcQgl72HI/Yo
-	30HgAv1eURgyvoILP49RswjlAiCCfhtVfRVnRzKeQMl63d35J24TNjJ2jOL2Xder0y2yghVVk54
-	LN+
-X-Google-Smtp-Source: AGHT+IGct8ZeidsnGi/YbFJu4oMvwbFYwPG2diux+p27hnjphdKkPPw2dpGSZ3mXdM1D29x0JXCw0Y4/KsFGm7KlPlM=
-X-Received: by 2002:ac8:5d55:0:b0:4af:4bac:e539 with SMTP id
- d75a77b69052e-4b0fdfdb678mr31989691cf.3.1755092985396; Wed, 13 Aug 2025
- 06:49:45 -0700 (PDT)
+	s=arc-20240116; t=1755092973; c=relaxed/simple;
+	bh=olxcyq3RDbovnXfIfD6NCYHtJTFx0WilAU8Drh9OdZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ArSHqL0ZOYWK3+lZCD07EPhr9eKK0ysBZoqYKxP0ZWHM9mrs+OMQdimizZtjCngQi+4RXrVreXCJpJkabj/yN62Vtr5tG1VAELQQ6SA9R/wrh6DfjEL7Y9Xd2lzGn2GlI0gL1rmHOyfBTFlflP8K7NcTEqXwXTkdUoedtRHn2N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmXszElT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1516AC4CEEF;
+	Wed, 13 Aug 2025 13:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755092972;
+	bh=olxcyq3RDbovnXfIfD6NCYHtJTFx0WilAU8Drh9OdZg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bmXszElTXraCzTa9Thri84qE6olfl7BXmuBQJJRxqfq/vnMYqTxVZ0XokuqLk6KzR
+	 Kfv/qJn7SgEw1HIjBZS1RqcBvZqT9JM20DIggF8dCdMG8lalB/GBMFKQohDipRr+qq
+	 K8YDSQPoGMUsnPJso8KO2jqhG9IjI52ASUtltLNiixxgs4Lh0RaW646uW8BnahlG92
+	 cnewSEcHyZepu0aZhWXhIcIfxEbZrOHTuWucQYSujHlf6fbSL2bRQAgAqBOGrkFw7f
+	 meC+ORzGO2+ea+H+33909e0sDLxX4FA4ucPf5fK1cK6jxEj1RDavBvkJ4RHkKTMJ9y
+	 9V5ZlMCszuo4Q==
+Message-ID: <d787ca03-a54e-46ae-828b-68fbd7b0b3a8@kernel.org>
+Date: Wed, 13 Aug 2025 16:49:27 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-30-pasha.tatashin@soleen.com> <20250813063407.GA3182745.vipinsh@google.com>
- <mafs0wm77wgjx.fsf@kernel.org>
-In-Reply-To: <mafs0wm77wgjx.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 13 Aug 2025 13:49:09 +0000
-X-Gm-Features: Ac12FXyj1CElzNmOfajT8FxAkTu6tjsBaL5e4YwqAjZVvEs1xx2b7a4U9Pkl3Fk
-Message-ID: <CA+CK2bCmQ3hY+ACnLrVZ1qwiTiVvxEBCDNFmAHn_uVRagvshhw@mail.gmail.com>
-Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Vipin Sharma <vipinsh@google.com>, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 8/9] net: ethernet: ti: am65-cpsw: add network
+ flow classification support
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ danishanwar@ti.com, srk@ti.com, linux-omap@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250514-am65-cpsw-rx-class-v4-0-5202d8119241@kernel.org>
+ <20250514-am65-cpsw-rx-class-v4-8-5202d8119241@kernel.org>
+ <20250516182902.5a5bfd98@kernel.org>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20250516182902.5a5bfd98@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 12:29=E2=80=AFPM Pratyush Yadav <pratyush@kernel.or=
-g> wrote:
->
-> Hi Vipin,
->
-> Thanks for the review.
->
-> On Tue, Aug 12 2025, Vipin Sharma wrote:
->
-> > On 2025-08-07 01:44:35, Pasha Tatashin wrote:
-> >> From: Pratyush Yadav <ptyadav@amazon.de>
-> >> +static void memfd_luo_unpreserve_folios(const struct memfd_luo_preser=
-ved_folio *pfolios,
-> >> +                                    unsigned int nr_folios)
-> >> +{
-> >> +    unsigned int i;
-> >> +
-> >> +    for (i =3D 0; i < nr_folios; i++) {
-> >> +            const struct memfd_luo_preserved_folio *pfolio =3D &pfoli=
-os[i];
-> >> +            struct folio *folio;
-> >> +
-> >> +            if (!pfolio->foliodesc)
-> >> +                    continue;
-> >> +
-> >> +            folio =3D pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodesc=
-));
-> >> +
-> >> +            kho_unpreserve_folio(folio);
-> >
-> > This one is missing WARN_ON_ONCE() similar to the one in
-> > memfd_luo_preserve_folios().
->
-> Right, will add.
->
-> >
-> >> +            unpin_folio(folio);
->
-> Looking at this code caught my eye. This can also be called from LUO's
-> finish callback if no one claimed the memfd after live update. In that
-> case, unpin_folio() is going to underflow the pincount or refcount on
-> the folio since after the kexec, the folio is no longer pinned. We
-> should only be doing folio_put().
->
-> I think this function should take a argument to specify which of these
-> cases it is dealing with.
->
-> >> +    }
-> >> +}
-> >> +
-> >> +static void *memfd_luo_create_fdt(unsigned long size)
-> >> +{
-> >> +    unsigned int order =3D get_order(size);
-> >> +    struct folio *fdt_folio;
-> >> +    int err =3D 0;
-> >> +    void *fdt;
-> >> +
-> >> +    if (order > MAX_PAGE_ORDER)
-> >> +            return NULL;
-> >> +
-> >> +    fdt_folio =3D folio_alloc(GFP_KERNEL, order);
-> >
-> > __GFP_ZERO should also be used here. Otherwise this can lead to
-> > unintentional passing of old kernel memory.
->
-> fdt_create() zeroes out the buffer so this should not be a problem.
 
-You are right, fdt_create() zeroes the whole buffer, however, I wonder
-if it could be `optimized` to only clear only the header part of FDT,
-not the rest and this could potentially lead us to send an FDT buffer
-that contains both a valid FDT and the trailing bits contain data from
-old kernel.
 
-Pasha
+On 17/05/2025 04:29, Jakub Kicinski wrote:
+> On Wed, 14 May 2025 15:04:28 +0300 Roger Quadros wrote:
+>> The TRM doesn't mention anything about order of evaluation of the
+>> classifier rules however it does mention in [1]
+>> "if multiple classifier matches occur, the highest match
+>> with thread enable bit set will be used."
+> 
+> So we're not sure how to maintain the user requested ordering?
+
+Currently we are using the user/ethtool provided location as is.
+
+> Am I reading this correctly? If so then ..
+> 
+>> +	if (fs->location == RX_CLS_LOC_ANY ||
+> 
+> .. why are we rejecting LOC_ANY? 
+
+Because driver doesn't have logic to decide the location and relies on ethtool to
+decide it if user doesn't supply it.
+
+> 
+> I'd think that, in fact, LOC_ANY should be the only loc we can support.
+> Note that ethtool hides the location logic on the CLI, if user doesn't
+> request a location and driver reports RX_CLS_LOC_SPECIAL ethtool will
+> set the location to LOC_ANY.
+> 
+>> +	    fs->location >= port->rxnfc_max)
+>> +		return -EINVAL;
+
+-- 
+cheers,
+-roger
+
 
