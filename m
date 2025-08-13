@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-766250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34395B24453
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336A9B24452
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0200F5A2596
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:28:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FFC1BC2DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D2E2F0C7B;
-	Wed, 13 Aug 2025 08:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D165B2F1FDF;
+	Wed, 13 Aug 2025 08:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ceVBx8vj"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hyd8uJxD"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C714A2F0C49
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC112F0C59
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073656; cv=none; b=bOHBqcZysTDkHMIfjRJcNezAwkIHwzW3tL++cDXrLzGT07BZnM63ONfNuAzCBBqu4ikKe5WRANKEP5R/E2SwhBFlsm3fg4ffoHD0NIBsQHtp4Syk/IEdymFz3uH0+MYxjmWG1tSByOmDmDuA8rE2jD5/2Jqz4pn2ceVYS8SC7s4=
+	t=1755073658; cv=none; b=cBniTbfGH9mQigk8+wqXG9k0UCJjhULKO+1ijYSqpxWtZJKmYYSUMu2O0O41l0cNmnpgITGvXL1FZt686qpyTIRphFBxjJixnQIN8EAGemc3ud8XlE3bm+bj4+Ik4R/GL3LBGx2jv7EqvtyGasC90DLGN8U91kBwaX3Zm7T8/oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073656; c=relaxed/simple;
-	bh=83CIG/yYVFV5oc5WpQxs7LvduOQS2arjCyxfm7bOmAQ=;
+	s=arc-20240116; t=1755073658; c=relaxed/simple;
+	bh=NvRCQIGdGJIWo6z/G2tCNyjPRInHwov/dUCUXA2+eg4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mhRSSyBYDo9tkOf9/XH3AXrluZ8SXwkRUZTRSOM7LNl7QcGxUdFlgLhub6N7f1VAdyB8/k3ItrQGGIzKQa5Cgv3vuLLrQa7Rta7B8CBoeQN24WmAbrJPmM3W/HbgqisRwF70fMhuGLOKO2gX6QlN3JEFdG/rvF7tGmWNCJ19BrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ceVBx8vj; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=LzxtXxhy4A1dS+nCOsTgG8rdVYxDhiZXZ8M2lUcQRsdYc2wp6PBYIhAQwOkXa9kiSr4QYyzVuADfWMwHKYYPc1qxLLEA3CbVZqZMbihReaJ8yqPo/cdaikbdjNXe3k3nve+Ob3m8XuB1YZ07FqjxXkY8szRyf2AdnDRANx+GLX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hyd8uJxD; arc=none smtp.client-ip=209.85.208.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-458bf93f729so32829025e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:27:34 -0700 (PDT)
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-61530559847so4695928a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:27:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755073653; x=1755678453; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755073654; x=1755678454; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qv73A+++0TWQ7mgHKwS6GFRnfK2NLUU7501mITzCcHQ=;
-        b=ceVBx8vjI7FjCAJaTtPzUca3LkTJEdKRDvpApYOgtyJvp9rn9yLY9yejjgF2XkPOAL
-         YwuhJnP/7vdSWwb3e0DFNHr8e2dlEae4T8a1ChUGsL0Z3QKJ1UFHC1bdgnewjE6ayPUm
-         FQ3YyKDhMMl1NlOB3yUMuc1NVow/UpWSveTIIUvDJh+LS/x17wyfTelgcax5z5H6jBvI
-         5nTHkjlKJigRnK6Rcya+571H6MMKbCcvnD2OypXweDqGQS/etkJJiu58UAe+QGJ33DdD
-         uYi0V8Qqu5/mHmkcvMRvwk8Y5rPfhHFmm1+M3fk7b25pbuur9WWsusMC45MvPAIylXSH
-         07ww==
+        bh=dIJ+x4zOPX38S26xHW3ogZFnx98GYdUErZ7Lc5KD+uk=;
+        b=Hyd8uJxD4wJXtBpX3Y6w8nX1ZqHtObQrXPPOwzUdI3ZxQx+oXQddFhfQnye574YRTT
+         +rnGipbDAtalXeNbqrRmplkb1UDrPLhz9u3N+lVtU1hE1zGLOcc6lkTU1Hv5W179etdn
+         o4rvL46NQGYImi9IlplxCHuiRoCyD90QwGDaIeAOpR82UpI8BjYBqqR9iVe9vpjA0/MG
+         u4uyzd8I3bN3a6wxfmafo6auCR/VA0q905jo+cYuTIZTmWldRzNfyj5a1wYxnNkifsyz
+         mbS7BXvObLZPReApsmp8x9A18WLxpqzJnufCHA7DeTEuVvznI9vW3rGptd4vy7gcBQYO
+         fK3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755073653; x=1755678453;
+        d=1e100.net; s=20230601; t=1755073655; x=1755678455;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qv73A+++0TWQ7mgHKwS6GFRnfK2NLUU7501mITzCcHQ=;
-        b=k47Jrz2PAr1uXRElIyRH2DWdXErWG17OhWspgxMT7j53MF+ZYgl3k/C6Ktuh9oDemH
-         AD1T169z6qn/V9yYb0aAvCmBrwz7WGs2iz21qZFuAw+0gIEigjJJU7LjNbZOqNVLam0q
-         l5CbMZIyy+tEMHjbgrPmezQnS92gahlUMH2Ktv6uRmuh5wT///gJgTCcCJdBew6/9ob/
-         5ro8Hi50V7gRcQ11aK7YG4v/NgV77QE1ODEGHX8I+5jI+b+P5+bVUKiwEJTcZcputiM/
-         EnFVNq7B1En/DBFs3YTDGvNMlM9+HnPM79OmRN0tFdmmMWNLBjmg3MJUiN6QVXUEWWoK
-         vSxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZurXrDjgj2eEI0DLp8tOcigF7sl5Q4UmJ1llFiWI6htnoYBtNOtGTUCsGdZC9zSdd91wSVTkhg4aM1FU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0rMmhzepLojlB2rqyhrjgbQdHVxTHl2VaNmwKOGbMcO57ivDX
-	CTl2G4gTv6Ck7sxyLBogU72O68elK+bYTU6NHJPmJcwVQWA9/NQHtsUag/pQm2QYIARgCOA+rWo
-	t61RUzF3jeH6Nh6rWqQ==
-X-Google-Smtp-Source: AGHT+IHgWah8vaIyiZQvShZ+eP/Xc8juKyVKI8pMD5CVwQu1TaUbkPB2YIy8jD1J9uT8MJfn8rasAauKIeszqX8=
-X-Received: from wmti10.prod.google.com ([2002:a05:600c:8b8a:b0:459:dede:aaea])
+        bh=dIJ+x4zOPX38S26xHW3ogZFnx98GYdUErZ7Lc5KD+uk=;
+        b=XzNOp0h5v5DnIzFct+opIifJ43t9XjB4RzBEZZRufQSPlzTQDODA3q+1IA57VE7Wwz
+         d0XalMm5gyFzI1RCm8/yEAGczA2nxntkbBuAb4BqM2ZpkiBHIR2Tjt0YzUQnTJBhDnRF
+         xoORFUXeJW8j7kVC4pCkQOqk43jAm55EyoDByTwtn8av/3bSAIGrM/P+K7hCFKzD3yzB
+         sUdD5mYxVSPXpFnZS6kyniTBdzR/ypCXoRRZb1svU0nQ9OoMtwhycWHrY7vjJ0Wt6jQ8
+         1+4SNBJ3Rt3IJ0Hzd8eOSLxtCs1Osh7g8vHq7vTHobmMNRvNHtAtE6S/ZlmLF9rnFcIn
+         cfMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWwpfB6wxqpQz+99QI4M4C4GCKW8wbcvvZCJ5MaeqCr7CyWujdgxJTFYc1Pby+rmNASD4EyLt2qxbu2SM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCv4dcCN+27x2lnhm4XhmAVFv6ZjBSS9tykhTy/x1P57qr0qRJ
+	PUmEsyLdMO3MXI4OPOG6ZydRPGDkMwrVr6ZajA0zHUBOjJxVktGabgVO9fNS+hdWlqBPHApSRwg
+	2SHzKJqbq/cUST3CWqw==
+X-Google-Smtp-Source: AGHT+IE8ydanFwGG7KesQpAN8skGF2NnY35RVGG+5pSg3DQ1udrmQq4PkLWonfAcxDhio26JiagvnS+7olbq9ac=
+X-Received: from edn14.prod.google.com ([2002:a05:6402:a0ce:b0:615:49c7:ddf6])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:19cb:b0:459:e3f8:92ec with SMTP id 5b1f17b1804b1-45a165a5acfmr21538855e9.10.1755073653092;
- Wed, 13 Aug 2025 01:27:33 -0700 (PDT)
-Date: Wed, 13 Aug 2025 08:27:19 +0000
+ 2002:a05:6402:44c9:b0:618:273b:4f51 with SMTP id 4fb4d7f45d1cf-6186bfd5757mr1340836a12.23.1755073654306;
+ Wed, 13 Aug 2025 01:27:34 -0700 (PDT)
+Date: Wed, 13 Aug 2025 08:27:20 +0000
 In-Reply-To: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,23 +73,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7253; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=83CIG/yYVFV5oc5WpQxs7LvduOQS2arjCyxfm7bOmAQ=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBonExtDx2M5QU/HAIhxb7BlCGwVBsgpWSaCovO1
- 5VlhROSc4mJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJxMbQAKCRAEWL7uWMY5
- Rl7DEACuHjq3unzYiXXF1gBZmhUGn5ZpZujbc23zRbQzccdMtRXMp0E8Pr+UP/2B66gNSLrevnT
- OtYobEWd3ZKxTNZRikw0oNOiLHq4IApLoQfZtXu3C44HSlSpNY+kdcQKYw3/625IeMVRDMvNSb2
- vVLuTICNlCy2y0TBjZnPpGs9y3F7Yy2bC23RUslHjifhizMBIZal0ivUqCxtkL+V6Dy4E+qBwgQ
- QPhXGtW9hrnP6R5v8l5K+789YKOXdcHNcRvd2PSsii3bxl1sTDRL99Y9x8Fh/oJJBhpDu6tjKda
- gcjYwHskokDXbHzBWhA1mJ9gIOUXRYz9Tf4EIy4Z+jtdvkyRCq0/DWp6ZhtLH++opF4pdnKccwM
- GUBeCKSGrJ/H/5YHRhd844addh6HilyspsL47h9c3qkXpnXa1d4ohutdBcjGxYyQvqWcXqwMX+E
- 5Yy4jwwnIk7JgsVdQ0xSRwKFLNWq1ROrKzvw2h5SH0pp0pLJBRAST40CXN2cC25ruBnVH8kV8FU
- CjG48vlV3LXATIuWSOMPoJJxXtZR8GGDKpieYm0lgSp+7ijVkKPZgYoH0EPRuMoU+F9M34xQHwG
- gBoe7Y4hbEbZbdQ7Z2U6HjbjMnHJ/1nOWfFSNxyXg3sPlmj0VgnFmzRBYRoLp8YJNGVv1YTgtKO oEJPrzLkep36aNw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3154; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=eF5bCKQbWoDK+4GDnO0XjfTUd6tLFH3Wpg7SaPmi7HE=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBonExt5tmxz5dadRkEbyP/qbVmEqwLito1TQxGa
+ v2Wm02OrvCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJxMbQAKCRAEWL7uWMY5
+ RpmfD/0SM46L161T6o/+tvWN8XkkrrDFh1/r3CbeOCqgv8y6x9N1PLE1/g48HWviJyhJ/pOqUO9
+ LD8siSkS1DgF7oZJuvPfMZN+Zh5J4hhqLsoQgvuDAe6tZa4uQjTFF4N9hcF/6ikgxBpUwZq6wBa
+ muQbThm+pD/m6TGglZIeVlIbia1tVO9LwbTMXPUlhdq3OWP9D7NQ2TaYlm1fryLb7vdC6CCb98S
+ Czw1+YvaoVVEflEX7/mMvNBE4gM6mdmthjDsDW4OdggnMjCp8OHn6GOd4FACMYbY5mHBi6vSUL0
+ Y9FRNAxJapcHlJqbfFi/r9g5hz9gIvLfRiI30G3UtlUGJ4bHP9zxsFdVR0UGzHWnzLpHAMTlKsJ
+ Z3Tis7T6h4UPTZ05WdcULNVAO/QumFEJF2xdnsjZ0fSmJ3N0HV0z5Fi1vitRQuRQ9pk3o3QdVL9
+ ALvHnfOJsLgyeaQAbClEHbXhbWxEMfzeReDhVmqTlG/pvS7MBCZMiKtzVtdqvTn0A8tbdrSQ8p1
+ kynBLZ1oNqksBSJRedldc0rDMuF2R3nqMd6ZJh0bHYAe/gegvTuiXIeoEie3M6e7jlPnjQwcQ2e
+ HA4bPUiYawyvDt+jJUzv8GdE91FRXoT9QrP1qL64/eUD2zXFuP7u+j1VL0GLfr8M6JcyonHjbjM YAyPkNAoT385bCw==
 X-Mailer: b4 0.14.2
-Message-ID: <20250813-iov-iter-v4-3-c4f1932b05ef@google.com>
-Subject: [PATCH v4 3/4] rust: miscdevice: Provide additional abstractions for
- iov_iter and kiocb structures
+Message-ID: <20250813-iov-iter-v4-4-c4f1932b05ef@google.com>
+Subject: [PATCH v4 4/4] samples: rust_misc_device: Expand the sample to
+ support read()ing from userspace
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
 	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>
@@ -98,203 +98,93 @@ Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
 	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
 	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
-	Benno Lossin <lossin@kernel.org>, Christian Brauner <brauner@kernel.org>
+	Benno Lossin <lossin@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 
-These will be used for the read_iter() and write_iter() callbacks, which
-are now the preferred back-ends for when a user operates on a char device
-with read() and write() respectively.
+From: Lee Jones <lee@kernel.org>
 
-Cc: Christian Brauner <brauner@kernel.org>
-Co-developed-by: Lee Jones <lee@kernel.org>
+A userland application can now operate on the char device with read() in
+order to consume a locally held buffer.  Memory for the buffer is to be
+provisioned and the buffer populated in its subsequently provided
+write() counterpart.
+
 Signed-off-by: Lee Jones <lee@kernel.org>
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+Co-developed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/fs.rs         |  3 +++
- rust/kernel/fs/kiocb.rs   | 68 +++++++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/miscdevice.rs | 63 ++++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 133 insertions(+), 1 deletion(-)
+ samples/rust/rust_misc_device.rs | 36 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 2 deletions(-)
 
-diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
-index 0121b38c59e63d01a89f22c8ef6983ef5c3234de..6ba6bdf143cb991c6e78215178eb585260215da0 100644
---- a/rust/kernel/fs.rs
-+++ b/rust/kernel/fs.rs
-@@ -6,3 +6,6 @@
- 
- pub mod file;
- pub use self::file::{File, LocalFile};
-+
-+mod kiocb;
-+pub use self::kiocb::Kiocb;
-diff --git a/rust/kernel/fs/kiocb.rs b/rust/kernel/fs/kiocb.rs
-new file mode 100644
-index 0000000000000000000000000000000000000000..84c936cd69b0e9b490d54c87d8c7279b27d4476a
---- /dev/null
-+++ b/rust/kernel/fs/kiocb.rs
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2024 Google LLC.
-+
-+//! Kernel IO callbacks.
-+//!
-+//! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h)
-+
-+use core::marker::PhantomData;
-+use core::ptr::NonNull;
-+use kernel::types::ForeignOwnable;
-+
-+/// Wrapper for the kernel's `struct kiocb`.
-+///
-+/// Currently this abstractions is incomplete and is essentially just a tuple containing a
-+/// reference to a file and a file position.
-+///
-+/// The type `T` represents the filesystem or driver specific data associated with the file.
-+///
-+/// # Invariants
-+///
-+/// `inner` points at a valid `struct kiocb` whose file has the type `T` as its private data.
-+pub struct Kiocb<'a, T> {
-+    inner: NonNull<bindings::kiocb>,
-+    _phantom: PhantomData<&'a T>,
-+}
-+
-+impl<'a, T: ForeignOwnable> Kiocb<'a, T> {
-+    /// Create a `Kiocb` from a raw pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The pointer must reference a valid `struct kiocb` for the duration of `'a`. The private
-+    /// data of the file must be `T`.
-+    pub unsafe fn from_raw(kiocb: *mut bindings::kiocb) -> Self {
-+        Self {
-+            // SAFETY: If a pointer is valid it is not null.
-+            inner: unsafe { NonNull::new_unchecked(kiocb) },
-+            _phantom: PhantomData,
-+        }
-+    }
-+
-+    /// Access the underlying `struct kiocb` directly.
-+    pub fn as_raw(&self) -> *mut bindings::kiocb {
-+        self.inner.as_ptr()
-+    }
-+
-+    /// Get the filesystem or driver specific data associated with the file.
-+    pub fn file(&self) -> <T as ForeignOwnable>::Borrowed<'a> {
-+        // SAFETY: We have shared access to this kiocb and hence the underlying file, so we can
-+        // read the file's private data.
-+        let private = unsafe { (*(*self.as_raw()).ki_filp).private_data };
-+        // SAFETY: The kiocb has shared access to the private data.
-+        unsafe { <T as ForeignOwnable>::borrow(private) }
-+    }
-+
-+    /// Gets the current value of `ki_pos`.
-+    pub fn ki_pos(&self) -> i64 {
-+        // SAFETY: We have shared access to the kiocb, so we can read its `ki_pos` field.
-+        unsafe { (*self.as_raw()).ki_pos }
-+    }
-+
-+    /// Gets a mutable reference to the `ki_pos` field.
-+    pub fn ki_pos_mut(&mut self) -> &mut i64 {
-+        // SAFETY: We have exclusive access to the kiocb, so we can write to `ki_pos`.
-+        unsafe { &mut (*self.as_raw()).ki_pos }
-+    }
-+}
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-index 6373fe183b2748162988b45d7ed8f563045d3b4d..35630fc638751c416d009fcf0c0ffdf0a4da1218 100644
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@ -13,7 +13,8 @@
+diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+index e7ab77448f754906615b6f89d72b51fa268f6c41..9e4005e337969af764e57a937ae5481d7710cfc9 100644
+--- a/samples/rust/rust_misc_device.rs
++++ b/samples/rust/rust_misc_device.rs
+@@ -100,8 +100,9 @@
+ use kernel::{
+     c_str,
      device::Device,
-     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-     ffi::{c_int, c_long, c_uint, c_ulong},
 -    fs::File,
 +    fs::{File, Kiocb},
+     ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
 +    iov::{IovIterDest, IovIterSource},
-     mm::virt::VmaNew,
+     miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
+     new_mutex,
      prelude::*,
-     seq_file::SeqFile,
-@@ -141,6 +142,16 @@ fn mmap(
-         build_error!(VTABLE_DEFAULT_ERROR)
+@@ -144,6 +145,7 @@ fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
+ 
+ struct Inner {
+     value: i32,
++    buffer: KVVec<u8>,
+ }
+ 
+ #[pin_data(PinnedDrop)]
+@@ -165,7 +167,10 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Self>) -> Result<Pin<KBox<Se
+         KBox::try_pin_init(
+             try_pin_init! {
+                 RustMiscDevice {
+-                    inner <- new_mutex!( Inner{ value: 0_i32 } ),
++                    inner <- new_mutex!(Inner {
++                        value: 0_i32,
++                        buffer: KVVec::new(),
++                    }),
+                     dev: dev,
+                 }
+             },
+@@ -173,6 +178,33 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Self>) -> Result<Pin<KBox<Se
+         )
      }
  
-+    /// Read from this miscdevice.
-+    fn read_iter(_kiocb: Kiocb<'_, Self::Ptr>, _iov: &mut IovIterDest<'_>) -> Result<usize> {
-+        build_error!(VTABLE_DEFAULT_ERROR)
++    fn read_iter(mut kiocb: Kiocb<'_, Self::Ptr>, iov: &mut IovIterDest<'_>) -> Result<usize> {
++        let me = kiocb.file();
++        dev_info!(me.dev, "Reading from Rust Misc Device Sample\n");
++
++        let inner = me.inner.lock();
++        // Read the buffer contents, taking the file position into account.
++        let read = iov.simple_read_from_buffer(kiocb.ki_pos_mut(), &inner.buffer)?;
++
++        Ok(read)
 +    }
 +
-+    /// Write to this miscdevice.
-+    fn write_iter(_kiocb: Kiocb<'_, Self::Ptr>, _iov: &mut IovIterSource<'_>) -> Result<usize> {
-+        build_error!(VTABLE_DEFAULT_ERROR)
++    fn write_iter(mut kiocb: Kiocb<'_, Self::Ptr>, iov: &mut IovIterSource<'_>) -> Result<usize> {
++        let me = kiocb.file();
++        dev_info!(me.dev, "Writing to Rust Misc Device Sample\n");
++
++        let mut inner = me.inner.lock();
++
++        // Replace buffer contents.
++        inner.buffer.clear();
++        let len = iov.copy_from_iter_vec(&mut inner.buffer, GFP_KERNEL)?;
++
++        // Set position to zero so that future `read` calls will see the new contents.
++        *kiocb.ki_pos_mut() = 0;
++
++        Ok(len)
 +    }
 +
-     /// Handler for ioctls.
-     ///
-     /// The `cmd` argument is usually manipulated using the utilities in [`kernel::ioctl`].
-@@ -245,6 +256,46 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-         0
-     }
+     fn ioctl(me: Pin<&RustMiscDevice>, _file: &File, cmd: u32, arg: usize) -> Result<isize> {
+         dev_info!(me.dev, "IOCTLing Rust Misc Device Sample\n");
  
-+    /// # Safety
-+    ///
-+    /// `kiocb` must be correspond to a valid file that is associated with a
-+    /// `MiscDeviceRegistration<T>`. `iter` must be a valid `struct iov_iter` for writing.
-+    unsafe extern "C" fn read_iter(
-+        kiocb: *mut bindings::kiocb,
-+        iter: *mut bindings::iov_iter,
-+    ) -> isize {
-+        // SAFETY: The caller provides a valid `struct kiocb` associated with a
-+        // `MiscDeviceRegistration<T>` file.
-+        let kiocb = unsafe { Kiocb::from_raw(kiocb) };
-+        // SAFETY: This is a valid `struct iov_iter` for writing.
-+        let iov = unsafe { IovIterDest::from_raw(iter) };
-+
-+        match T::read_iter(kiocb, iov) {
-+            Ok(res) => res as isize,
-+            Err(err) => err.to_errno() as isize,
-+        }
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// `kiocb` must be correspond to a valid file that is associated with a
-+    /// `MiscDeviceRegistration<T>`. `iter` must be a valid `struct iov_iter` for writing.
-+    unsafe extern "C" fn write_iter(
-+        kiocb: *mut bindings::kiocb,
-+        iter: *mut bindings::iov_iter,
-+    ) -> isize {
-+        // SAFETY: The caller provides a valid `struct kiocb` associated with a
-+        // `MiscDeviceRegistration<T>` file.
-+        let kiocb = unsafe { Kiocb::from_raw(kiocb) };
-+        // SAFETY: This is a valid `struct iov_iter` for reading.
-+        let iov = unsafe { IovIterSource::from_raw(iter) };
-+
-+        match T::write_iter(kiocb, iov) {
-+            Ok(res) => res as isize,
-+            Err(err) => err.to_errno() as isize,
-+        }
-+    }
-+
-     /// # Safety
-     ///
-     /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
-@@ -341,6 +392,16 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
-         open: Some(Self::open),
-         release: Some(Self::release),
-         mmap: if T::HAS_MMAP { Some(Self::mmap) } else { None },
-+        read_iter: if T::HAS_READ_ITER {
-+            Some(Self::read_iter)
-+        } else {
-+            None
-+        },
-+        write_iter: if T::HAS_WRITE_ITER {
-+            Some(Self::write_iter)
-+        } else {
-+            None
-+        },
-         unlocked_ioctl: if T::HAS_IOCTL {
-             Some(Self::ioctl)
-         } else {
 
 -- 
 2.51.0.rc0.205.g4a044479a3-goog
