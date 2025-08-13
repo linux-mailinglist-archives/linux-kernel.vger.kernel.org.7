@@ -1,140 +1,99 @@
-Return-Path: <linux-kernel+bounces-765729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63F8B23D65
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:59:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC4EB23D67
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C6E680BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:59:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16C61AA2B4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A73517A2F0;
-	Wed, 13 Aug 2025 00:59:10 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE72186295;
+	Wed, 13 Aug 2025 01:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YmtwHUx1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3A01369B4;
-	Wed, 13 Aug 2025 00:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853F92AD0C;
+	Wed, 13 Aug 2025 00:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755046749; cv=none; b=YbQNH4qtn5ulLyP5kt2CM2cdxUO6fvRaXGn/XmInu6mGDipRJMlxAcf4sYdBkyLBbIs/x8bQ+6QgFXIiWC+uVG4V92WcKDpMi6f6AfovvOwKDAGIcglbO1Drd0OCW8AH4jBlo6W73Z2si1ihUpkkBDUUKX4Y4uFPUxqH4fAYQhw=
+	t=1755046799; cv=none; b=idsTA2WmHlK+y973Zz3G6trYFcV4ukFtglKfKLCE+GtUifE4+0OkbDr6YY0OnT8JfolzteNlX4We9vAIDu7RBUod6xBqY3bLHC45+FM+SE/ud8sjKRUL5EfioosLVLxLK5JryybNsLvA5FaLKiyAEmn1Fsmg1DAKeiBVd4SZfpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755046749; c=relaxed/simple;
-	bh=KgbJjZqy3+Qc0ujKU4H4F688rCeeSnX8mFHbg43gxQ8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=uZOHnXyw6d9csUpn1jeQT570U2pgxT0XzT6o4Pq0ddL63tmdcV00C+eHeOK//FRKt3ZA7jzoHB9QzcyBsbg8qMf0utWeSPO7nlPeUbO+vyJfMuQqplXdYNSDFNRZCRG0nwFa6m3QGouLJb8dOMXOqMOb6F0PIfmE9/X19+YrLL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1qky1xLVzYQv5L;
-	Wed, 13 Aug 2025 08:59:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DADA91A0E99;
-	Wed, 13 Aug 2025 08:59:04 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgB3QBFX45toebz4DQ--.25375S3;
-	Wed, 13 Aug 2025 08:59:04 +0800 (CST)
-Subject: Re: [PATCH] md/raid1,raid10: don't broken array on failfast metadata
- write fails
-To: Kenta Akagi <k@mgml.me>, Song Liu <song@kernel.org>,
- Mariusz Tkaczyk <mtkaczyk@kernel.org>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250812090119.153697-1-k@mgml.me>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <36f78ba0-ac3b-5d97-89f3-2b09d49d1701@huaweicloud.com>
-Date: Wed, 13 Aug 2025 08:59:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1755046799; c=relaxed/simple;
+	bh=fSetQkEYt/FHJZ9y5Bd1h7hrstkaVMuQlUr6iAEhyP4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ry3ic174M1kBiGr8UXHyz1zXMBLDqvfq17CBdjerTepQd24hsOdoSjOsWZKQdmtHMO3GBr0swtUf9ihYv+L5s3OfuKKS0LdpLMCNvGC5+rSxmfdgT1GH5puW8aDKi0DxbTA3lmc9lV1a072G18LwtvYrrn9EY0hDIQVzELyJKDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YmtwHUx1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10082C4CEF0;
+	Wed, 13 Aug 2025 00:59:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755046799;
+	bh=fSetQkEYt/FHJZ9y5Bd1h7hrstkaVMuQlUr6iAEhyP4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=YmtwHUx10X9ehOsipUQtw1WgoMtHuvcVUjp/36nB4OgnvKD/c8gxLO8brcCUT+BHy
+	 sCwgSP33dxRuZb8NmcWkawY+L7t0pL9b6iBAWXEXFfwkfTZVZmdEdUNKFLCRd5wl2q
+	 1lMMKoDWXdpWI8dGkbuNfYqYQgoEJR1xat68y4QKaCG2Xlsxg+gVQUrO+uSjPtf6ax
+	 iG5tdCk61EKiYXkVU4yIs5tHSE+zYzM7QktDkI9TiJOYswJpuHCRKlrF8mSEF/FzZY
+	 bkFsL/sp/kSPDmGk+6dYHURWmkqXlloBwBIKUj7VXog+pgzjeIgvE96b2GX+0PmFDy
+	 H23nXMhX/Qt7Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B8039D0C2E;
+	Wed, 13 Aug 2025 01:00:12 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250812090119.153697-1-k@mgml.me>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgB3QBFX45toebz4DQ--.25375S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4rCF45KrWxGFW3AF4DXFb_yoW8tw4Upa
-	yIqFW5Cr90yr42y3W7ua48Way5W3W7trWUKrW3A3s7ZFy3Jry0gr4DKFyDKFyq9Fyfuw4D
-	tr15tas8Wayvqw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
-	tUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Subject: Re: [PATCH net-next v4 0/4] netconsole: reuse netpoll_parse_ip_addr
+ in
+ configfs helpers
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175504681100.2908717.15523966877694857156.git-patchwork-notify@kernel.org>
+Date: Wed, 13 Aug 2025 01:00:11 +0000
+References: <20250811-netconsole_ref-v4-0-9c510d8713a2@debian.org>
+In-Reply-To: <20250811-netconsole_ref-v4-0-9c510d8713a2@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, andrew+netdev@lunn.ch,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
 
-Hi,
+Hello:
 
-ÔÚ 2025/08/12 17:01, Kenta Akagi Ð´µÀ:
-> It is not intended for the array to fail when a metadata write with
-> MD_FAILFAST fails.
-> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
-> when md_error is called on the last device in RAID1/10,
-> the MD_BROKEN flag is set on the array.
-> Because of this, a failfast metadata write failure will
-> make the array "broken" state.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 11 Aug 2025 11:13:24 -0700 you wrote:
+> This patchset refactors the IP address parsing logic in the netconsole
+> driver to eliminate code duplication and improve maintainability. The
+> changes centralize IPv4 and IPv6 address parsing into a single function
+> (netpoll_parse_ip_addr). For that, it needs to teach
+> netpoll_parse_ip_addr() to handle strings with newlines, which is the
+> type of string coming from configfs.
 > 
-> If rdev is not Faulty even after calling md_error,
-> the rdev is the last device, and there is nothing except
-> MD_BROKEN that prevents writes to the array.
-> Therefore, by clearing MD_BROKEN, the array will not become
-> "broken" after a failfast metadata write failure.
+> [...]
 
-I don't understand here, I think MD_BROKEN is expected, the last
-rdev has IO error while updating metadata, the array is now broken
-and you can only read it afterwards. Allow using this broken array
-read-write might causing more severe problem like data loss.
+Here is the summary with links:
+  - [net-next,v4,1/4] netconsole: move netpoll_parse_ip_addr() earlier for reuse
+    https://git.kernel.org/netdev/net-next/c/fa38524ca5a7
+  - [net-next,v4,2/4] netconsole: add support for strings with new line in netpoll_parse_ip_addr
+    https://git.kernel.org/netdev/net-next/c/364213b736e3
+  - [net-next,v4,3/4] netconsole: use netpoll_parse_ip_addr in local_ip_store
+    https://git.kernel.org/netdev/net-next/c/60cb69214148
+  - [net-next,v4,4/4] netconsole: use netpoll_parse_ip_addr in local_ip_store
+    https://git.kernel.org/netdev/net-next/c/4aeb452c237a
 
-Thanks,
-Kuai
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> 
-> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
-> Signed-off-by: Kenta Akagi <k@mgml.me>
-> ---
->   drivers/md/md.c | 1 +
->   drivers/md/md.h | 2 +-
->   2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index ac85ec73a409..3ec4abf02fa0 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -1002,6 +1002,7 @@ static void super_written(struct bio *bio)
->   		md_error(mddev, rdev);
->   		if (!test_bit(Faulty, &rdev->flags)
->   		    && (bio->bi_opf & MD_FAILFAST)) {
-> +			clear_bit(MD_BROKEN, &mddev->flags);
->   			set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
->   			set_bit(LastDev, &rdev->flags);
->   		}
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 51af29a03079..2f87bcc5d834 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -332,7 +332,7 @@ struct md_cluster_operations;
->    *			       resync lock, need to release the lock.
->    * @MD_FAILFAST_SUPPORTED: Using MD_FAILFAST on metadata writes is supported as
->    *			    calls to md_error() will never cause the array to
-> - *			    become failed.
-> + *			    become failed while fail_last_dev is not set.
->    * @MD_HAS_PPL:  The raid array has PPL feature set.
->    * @MD_HAS_MULTIPLE_PPLS: The raid array has multiple PPLs feature set.
->    * @MD_NOT_READY: do_md_run() is active, so 'array_state', ust not report that
-> 
 
 
