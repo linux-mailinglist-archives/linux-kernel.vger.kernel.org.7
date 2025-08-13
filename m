@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-766969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C571B24D3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:23:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57D5B24D47
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 666E8189F8D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:19:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC91C886805
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9609C220686;
-	Wed, 13 Aug 2025 15:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77C81BCA0E;
+	Wed, 13 Aug 2025 15:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMqNVgUh"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2RJ0f4L"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318D91FBCA7;
-	Wed, 13 Aug 2025 15:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BA11F8BD6;
+	Wed, 13 Aug 2025 15:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755098351; cv=none; b=oujFmM3xkpYJxmZI7jApi2tGxaRYuD4rN+lVw4XhdNfmuyQNoLDoVi/fROZddwGop7mjQpzcvCGjfr7NzHCkcnYraJLyj3gbJuz9mNlV/nMsBafqc5P3Z7K/1/0dz+hAERK7EBIjC9KpSCqRqStyqjnfSNyclFgqjxIgam+kFtk=
+	t=1755098365; cv=none; b=EGzlBJlXoQlpb2w2Uo8mLUP5MapfBinpyDBGACCEY2jaMEzMCamnip9nnmNwrVLjkk4AYTLyKGBK5FPiaf52W8E80PJhVDbusXFXY4bCjfwd9DKIJxNyoMgSs3x0fL6zWTj+i0IQOQ4AYOXs9Z7sbJXCUtGWgyaxuoWgyr9xOtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755098351; c=relaxed/simple;
-	bh=ttHCoJ0fS9ZoBq3faibRoEWsJ197C4OXVLM3rNqnqdA=;
+	s=arc-20240116; t=1755098365; c=relaxed/simple;
+	bh=DQIKfCV7qhGOcLzNuplEtGMcxE2yoLWltZyc3B5rEgY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nvt0J+yA2TqjgMyWT2rmRZrD1TYFN7hxSPUm2TR+NgExwDlkPq4Q1Jk7bfsnU7infwbh3I6A7rvXFJEl4UdtVONMSGDYtizW4lHK6GO8r0YGx6mprq7ZAhLLOlu/8m4wfuqFEFQYzUU6G87yYxGAjwDG9jEZ4MQt19oriMeC/mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMqNVgUh; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:Content-Type; b=ZyVpKJye16Kx8xhXUl4GG1FnuY0K7na/TgDfBvxXYlb+lTwM1QiW6qOjXzpmWnbc+nQwALIK7bTBEOP8tGYDU8gTppYVxhKUeGJ4GoxfhBiZ44TzPBNIdLlGoJXiqjQnnl0P6ggYfelF+guUulAvE3yFIuAqfi/btLY2kddqhc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2RJ0f4L; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459d4d7c745so61360165e9.1;
-        Wed, 13 Aug 2025 08:19:09 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-459e20ec1d9so65108905e9.3;
+        Wed, 13 Aug 2025 08:19:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755098348; x=1755703148; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=juZ8HOUdWY43tN3quYG7enRlIPop0IESVECKo05cC+o=;
-        b=LMqNVgUhClNRBsCfmoZOYqO7XWf3jkv3TVGjxaFTPFa2HQRMmjGLihsYLKC+3dWjhI
-         uFkUaxkLU6lxHHQ2roOSDOBw4zp3pjmNqajZBqWPGCW7ekNZeYcvKSkfmkx4qtqxl37h
-         Nu64hm1yUs7v2U4BaSVOjjELhEH9VF+mijwITKrG575iviebYkke6HSi33gz045Hnwqv
-         w1gRNeEH6jpoVgC4ovvC/D5AdZWnS7UvzaZ7kueFqnnwDxVy58BqMeUi9hc9mlNpFAJD
-         M5K7JCqRUZFc5Zcto+fO0TaIt5+Urrxss6C8/HLd8ykPVScDutRx+IJ32/ludeLgY5bg
-         guVA==
+        d=gmail.com; s=20230601; t=1755098362; x=1755703162; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=htAap5fw/dg8+xLfXOlfECPNRc9i+jW0+owdWC0r+RQ=;
+        b=A2RJ0f4LUY1nM0UWIYJxvZpCsRyhGoISgkpjIymGZvNV30DR5yX9E575BrS3NdZOKP
+         3a8+7rWjALh2VXkxcVDDcTKUq8CdsWs8W7Urw3tdOpDBYteXRpsQ410WUgGVSASIVpnG
+         Sc6rY4c3JxAXmSP+dk5bIdHB5bSXkUs0xje5ZSxlb0OyHGz/5y+I8gWyDetmZ22fC1AJ
+         k1A7OKxKb3CtrgmrntlAo7T2uqlzjCXXos3lC8IPryNDWfHuNjtMHRdvMGcv4J3qMiAH
+         UljHNqdGpT+cNcc+CzosSloqtwT3Qd8kbcTGDLN3uVww3ZMLuVSDFrqjuHK9Q/bMoKeg
+         sLEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755098348; x=1755703148;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=juZ8HOUdWY43tN3quYG7enRlIPop0IESVECKo05cC+o=;
-        b=t2vDBP2TrtaMX4uHWPF7pF2CWWYuCb3OiZbOrJAl7CetmPnkOYANXgurBTjIpVHJYa
-         jL9hC/Udn97ZgYll2v3j/9R1KwNcFVoH4CbvaRJS/ohftzkcBo3FMmXHul2GF0ZPkqvZ
-         1gFFc7f7wwhVq10CbIXMIYj6nFQ2eSWbZmMpjkH2MSxTzjHTvulciP4AjGNmKIo47xtC
-         BcoO9+lN7arkuFvsWvOGU+9VoInsNEsOHJWyZl3eIhQc8VvLqmkFw41/2uLibIW+5QYT
-         9HjuOUc12DYxYAEWPIoFnhektex4Fwrs8ffIqi7IESZCC9KmkVORwKY8/j5Y/PqlWgaq
-         SUIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJX9kty4fVqHEIlzkvG0dKuLNa8x1I0yL5+12IQjTo9wAPJuMnl4LwrTZidMqp8ov0R0CC43sg62Oeo1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR3N2KTKyWTzA18q3RQ6yOV6EAEeqZzzwvHK7qr0toJBd7E9wn
-	4uYR4qwPVrNCnP1ZianTx1S+GADEk/Soy26WoZhGnBnicWJvzgBZkLrM
-X-Gm-Gg: ASbGnctk9E1ccvn67LSrcOzbSt3JaNdXPmBdHLzEVUAqOyqqT/uIvUN6XGu6OJXtR9e
-	vdPhkYMZSCydOYcIA5sGHCAigJtW7rhrkmiig/v0XLlEm5xfTCcEHGmhNzlZJ4n5SWtqzW1QCKZ
-	1rVqvLAki1yRxoZCvMk3rDtOY7sT+egCLXOMFPk/enbtGqKL9fGOpDG29xrhfFKtfIlhqyw2z0G
-	NFViG5hxvKYHbf0S7DgTWyhPDjDrvAEF87mc/ZqD/kQZMpysSwaSXSTy4UzdMexDuYJ5D3yZAYy
-	JfCKcBoCv9C7FZu09s86GdeZn/164YYgw5oebyEuYZFFMai8MAu41cR19A551+QYCYKP7Ui99M0
-	Xk5J0pnmFCTAFYmgYB+Xzr2yyTCC3mrfuKyLOpvttkQvX
-X-Google-Smtp-Source: AGHT+IHHdmlCs4XmQ1940ZGsH325xC/Fhaw/95MXYkzM5EjkhUmcuNnI94nlgW6vKFQeM1E/jrYyBQ==
-X-Received: by 2002:a05:600c:3b24:b0:459:da76:d7aa with SMTP id 5b1f17b1804b1-45a165e2ec5mr25972245e9.25.1755098348280;
-        Wed, 13 Aug 2025 08:19:08 -0700 (PDT)
-Received: from localhost ([45.10.155.14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48105csm48296954f8f.64.2025.08.13.08.19.00
+        d=1e100.net; s=20230601; t=1755098362; x=1755703162;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=htAap5fw/dg8+xLfXOlfECPNRc9i+jW0+owdWC0r+RQ=;
+        b=nP8DA1NlSOqJSQSJ4/kHPJvnIscI21Wi+3Up3oWwPXK1DaJJIdVokgWaX0i20FZ1+o
+         9Ku+v2HMrNBN6e6Q7tlmUygXuE1fW6Lvjh8fbIsqssieeNUo7gRxkPjs5pmdV4qk9fDd
+         uLLq+tdiZEGwGwtuecOGB+/6sZOl5O4jdKni7fwWf18c1yC1fpkDZ9B1bHfejSnrlZNa
+         Kg1rnjc7KofBowszC0fKjLG3/JA2TOnIh58vM7btZ6hSTt0qfOw2eBIcl4WQOtbmWxDc
+         lNsp5WoGzpaezijPuS3jkVAduE6DaElmdhXwHM92ebxnDYN5Bo0sIrY2r7FqNrUWAZoW
+         P/+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVfhMiuM0+DCeoGAYzaEU25PuN9NRgFM2JaLo9XaoIQ/YInS9Te3LQqRAo49icaQPxKGOw6YrhW@vger.kernel.org, AJvYcCVncCcy8I8zQiWZaIVR99I60S6AUknd4E4Fm82CpVB78PKmXP2Dx2PokuMjIIHh1MTBSQoyH9sF3HQ=@vger.kernel.org, AJvYcCX+Y9ayPzGx/iwsg9lJXYlF0YZ6gf+jxrUKwfKJYFJ1yAF7eY2xjVvxLNo6D2Bo8emI7QhbCCNEhd/c0dVK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+CA7nucarbCqp5jKfg2t1KrcQU2CZ7nKmP2tUQ/X6+N2opzd/
+	1jF9yS8OoCiFD2Yflwp/g84/2eSX5ixVin2/0G/Cv0vADs/iEuwSnowY
+X-Gm-Gg: ASbGncvovjuC055yUgxYIT/A63uaR2BLSdyZi40jKErJ43ldMk3nQVs9OniH+MiBDMj
+	5aCKOTGeVnLYxSg3DB0IM5qGK11QiH8WFt+asF1pO08pIiJMXjbRgeNYNusCGdk846pdQRvWpsk
+	hdtVI1OJV2w19ea6XRs76Tiv36fFJGJ2vxeKQwLduR/0VNvIw8hvrd6BloyozjSk9V96kzOpCKP
+	xsO6DCfzQN5OK+vhrv6UZvvXU6mzoZkTheeFAf4ut1ojI3fAXoc2SMyzHmTk0+m3bjdPPud8xe9
+	h1I+SOREtliqMIUVH7+bJF/GNaZEnzB4NuA+OAIVXYBbFHWaUN6nFCZroOsyLTiHNSQadMcZwQT
+	pqcUet+MszuScVK945sddU5nyzizCPmgssL3BhxggVQt1Idh9kDpx5OFTT8eL/foS3WlQ5mi/8w
+	==
+X-Google-Smtp-Source: AGHT+IGfIPb5dRAaA2WhedQJ3CbdENNLW9wcz91G+NNxprPgCPyCfh5MRUpcNjjB57ZCH9jlboc6ZQ==
+X-Received: by 2002:a05:600c:4750:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-45a165b7b22mr36901465e9.4.1755098361733;
+        Wed, 13 Aug 2025 08:19:21 -0700 (PDT)
+Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a50b99bsm6409455e9.5.2025.08.13.08.19.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 08:19:08 -0700 (PDT)
-Message-ID: <9727fba9-a238-4d0c-aa12-cb6c4cbcdea3@gmail.com>
-Date: Wed, 13 Aug 2025 17:18:57 +0200
+        Wed, 13 Aug 2025 08:19:21 -0700 (PDT)
+Message-ID: <0cddf626-5215-42d6-bd31-672e32ae293e@gmail.com>
+Date: Wed, 13 Aug 2025 17:19:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v5 3/5] net: vxlan: bind vxlan sockets to their
- local address if configured
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- donald.hunter@gmail.com, andrew+netdev@lunn.ch, dsahern@kernel.org,
- shuah@kernel.org, daniel@iogearbox.net, jacob.e.keller@intel.com,
- razor@blackwall.org, petrm@nvidia.com, menglong8.dong@gmail.com,
- martin.lau@kernel.org, linux-kernel@vger.kernel.org
-References: <20250812125155.3808-1-richardbgobert@gmail.com>
- <20250812125155.3808-4-richardbgobert@gmail.com> <aJxaYt7aPxuU9iN6@shredder>
-From: Richard Gobert <richardbgobert@gmail.com>
-In-Reply-To: <aJxaYt7aPxuU9iN6@shredder>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] i2c: pxa: handle 'Early Bus Busy' condition on
+ Armada 3700
+Content-Language: hu
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Wolfram Sang <wsa@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
+ Hanna Hawa <hhhawa@amazon.com>, Robert Marko <robert.marko@sartura.hr>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
+References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
+ <20250811-i2c-pxa-fix-i2c-communication-v2-3-ca42ea818dc9@gmail.com>
+ <aJpTHKbLbTz-Z3bo@smile.fi.intel.com>
+ <27906f7b-b137-4af2-aa87-49519495a34d@gmail.com>
+ <aJyO-5k29AAAnHdz@smile.fi.intel.com>
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <aJyO-5k29AAAnHdz@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+2025. 08. 13. 15:11 keltezéssel, Andy Shevchenko írta:
+> On Wed, Aug 13, 2025 at 12:50:35PM +0200, Gabor Juhos wrote:
+>> 2025. 08. 11. 22:31 keltezéssel, Andy Shevchenko írta:
+>>> On Mon, Aug 11, 2025 at 09:49:57PM +0200, Gabor Juhos wrote:
+> 
 
+...
 
-On 8/13/25 11:26, Ido Schimmel wrote:
-> On Tue, Aug 12, 2025 at 02:51:53PM +0200, Richard Gobert wrote:
->> Bind VXLAN sockets to the local addresses if the IFLA_VXLAN_LOCALBIND
->> option is set. This is the new default.
-> 
-> Drop the last sentence?
-> 
+>>>
+>>> Sounds to me like this one should be applied first independently on the
+>>> discussion / conclusion on the patch 1.
 >>
->> Change vxlan_find_sock to search for the socket using the listening
->> address.
->>
->> This is implemented by copying the VXLAN local address to the udp_port_cfg
->> passed to udp_sock_create. The freebind option is set because VXLAN
->> interfaces may be UP before their outgoing interface is.
->>
->> This fixes multiple VXLAN selftests that fail because of that race.
+>> Yes. At least the users would have a working although not optimal solution in
+>> the meantime.
 > 
-> This sentence is no longer relevant as well.
-> 
->>
->> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
->> ---
->>  drivers/net/vxlan/vxlan_core.c | 59 ++++++++++++++++++++++++++--------
->>  1 file changed, 46 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
->> index 15fe9d83c724..12da9595436e 100644
->> --- a/drivers/net/vxlan/vxlan_core.c
->> +++ b/drivers/net/vxlan/vxlan_core.c
->> @@ -78,18 +78,34 @@ static inline bool vxlan_collect_metadata(struct vxlan_sock *vs)
->>  }
->>  
->>  /* Find VXLAN socket based on network namespace, address family, UDP port,
->> - * enabled unshareable flags and socket device binding (see l3mdev with
->> - * non-default VRF).
->> + * bound address, enabled unshareable flags and socket device binding
->> + * (see l3mdev with non-default VRF).
->>   */
->>  static struct vxlan_sock *vxlan_find_sock(struct net *net, sa_family_t family,
->> -					  __be16 port, u32 flags, int ifindex)
->> +					  __be16 port, u32 flags, int ifindex,
->> +					  union vxlan_addr *saddr)
->>  {
->>  	struct vxlan_sock *vs;
->>  
->>  	flags &= VXLAN_F_RCV_FLAGS;
->>  
->>  	hlist_for_each_entry_rcu(vs, vs_head(net, port), hlist) {
->> -		if (inet_sk(vs->sock->sk)->inet_sport == port &&
->> +		struct sock *sk = vs->sock->sk;
->> +		struct inet_sock *inet = inet_sk(sk);
-> 
-> https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
-> 
->> +
->> +		if (flags & VXLAN_F_LOCALBIND) {
->> +			if (family == AF_INET &&
->> +			    inet->inet_rcv_saddr != saddr->sin.sin_addr.s_addr)
->> +				continue;
->> +#if IS_ENABLED(CONFIG_IPV6)
->> +			else if (family == AF_INET6 &&
->> +				 ipv6_addr_cmp(&sk->sk_v6_rcv_saddr,
->> +					       &saddr->sin6.sin6_addr) != 0)
->> +				continue;
->> +#endif
->> +		}
->> +
->> +		if (inet->inet_sport == port &&
->>  		    vxlan_get_sk_family(vs) == family &&
->>  		    vs->flags == flags &&
->>  		    vs->sock->sk->sk_bound_dev_if == ifindex)
+> Then please reorder in the next version.
 
-My bad, will fix.
+Ok.
+
+Regards,
+Gabor
 
