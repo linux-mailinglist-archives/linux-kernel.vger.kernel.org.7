@@ -1,88 +1,125 @@
-Return-Path: <linux-kernel+bounces-765973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4C7B240BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:55:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A99B240B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F57D18906D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:54:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A970F3AB2D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BF52BE7BA;
-	Wed, 13 Aug 2025 05:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5983223D7CF;
+	Wed, 13 Aug 2025 05:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vMuqXpLq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GQJFFeXg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xx0ZtEXY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C5723D7CF;
-	Wed, 13 Aug 2025 05:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5755E28B4FD;
+	Wed, 13 Aug 2025 05:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755064417; cv=none; b=s/llgCuvEa4l5wBNj2moDaAW8EWjYh98SYWfOwsGUph9o+5MQfcnlizOrMzA3IwgQ0zgGE5+clQNp6gwSNut8FA2PiCyo3KnxYDYSXy0BFTtTWHIxpIvdHz9jQInNHUxGf/3wIsuBcS/GtifMwkWf2APSBBkOae5oHoqs5gOrKY=
+	t=1755064453; cv=none; b=l/iOQgDQRZOyt4bSh/zOCy9DI7xrEGZjMB9LmXfAC4EplJIbDdUaGifJ1FQ/YyIo9NTHHwHj6dt7UWa26TeJAwpW6Xk1uYyf9fxqyEuuqqk2cnp6hp+KXjweXaYmSlyufepoEFgf0QriuZquLlaBUGDOdSgApsdppcgUG+oc0Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755064417; c=relaxed/simple;
-	bh=EReAOI9mi2vfvwMel6LQ/cNUIe+w4g4jY6+lto9NZPk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDW2wEuVdyFd3sMseoWRBuO0aEmO3KY0jLNOUgzClIBtG9Z+t3l/4A6RFZQ0IjQNJKbOJgedE3aW0BatwFQFIA8p9hpNwAmNyzDEVEYXiL0dOq3zetYWowW1fW3xwyHEPzUH6Pb1+vYQ7IErvTY+nZl/caMOYG6f+tdlVzknlSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vMuqXpLq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F8DBC4CEEB;
-	Wed, 13 Aug 2025 05:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755064415;
-	bh=EReAOI9mi2vfvwMel6LQ/cNUIe+w4g4jY6+lto9NZPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vMuqXpLqyJwCUXxGJYH52upFGI0oaqeisErNceOu6NPAbO5wVBetz8qcTjXEwH6QS
-	 Cb5Rs91kkKOO9EYkeVWMjwvM/qxMXKjfqAzKfjFfCM2DzqhzJdC+jJzPAtYf0VeY10
-	 ZiTIPft+MTAUOehLaBg4NQpQjJcBz86G5ONBjTeE=
-Date: Wed, 13 Aug 2025 07:53:32 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Samuel Wu <wusamuel@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] PM: Support aborting suspend during filesystem sync
-Message-ID: <2025081359-survey-sprinkled-e6dc@gregkh>
-References: <20250812232126.1814253-1-wusamuel@google.com>
+	s=arc-20240116; t=1755064453; c=relaxed/simple;
+	bh=I0iVGhWPggrt9AOpE5ZGVa5XTObbUGTxBM/CYcXj6v0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EDTddkOlGAad6+ZNmSpE9VOnEsb6fW81aS2bI1c7tmvZrS4dT2UZpE3hFq8wAeCdQnQwqJ3vjEdsjo2eB3zIQaww5/k6xb1KHlQRAH5ueZSLTme8CaT67BjUI8CPDYUJHwSaHXW1URdlpoL8cA8nEks5+kPeWDb5dcow/JXLheA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GQJFFeXg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xx0ZtEXY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755064443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/PL5bVIhg5YW4tmmR/+KZ4GyDkbwX5QhsYoHH2cH4cE=;
+	b=GQJFFeXgpc58dRvrm4F19IdUWWU7Cq8PzyVzCjuA1tQS4pbCr2ccGL0bNbRGJPvfCyCOw5
+	iDguNTT32DujjzvMFXLOU39kUsYH5Si2e8uy007pDgrY/iTA7bplyk8nUO0bd9fK0TY2gk
+	gJ39r5xfxGjt5bOeIQcnH33gs6r+UXFu8X0UCCKVcNBhT1dhBsug44UJQN+J0Sm+7npDnJ
+	h2nbTVtTyOYND8OYrfl/IlcB7z6X3CCrIbS8mG9y0mE/byHWEbz+iQh4W5GvfIRhnToHjo
+	mgNYvIcoPJEESX7qbzinCgt7EUn+I5x8zOvGajYsBX+p96cwfHYjK6BJPAI0VQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755064443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/PL5bVIhg5YW4tmmR/+KZ4GyDkbwX5QhsYoHH2cH4cE=;
+	b=xx0ZtEXYJSGy3JCftzmRZx4LdFVFydzh3dXfxzvmtfoGfl+nQ7O0UZYcSBfw+By/55arWT
+	D20R8POHNMEJqMDA==
+To: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-hyperv@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: [PATCH] PCI: hv: Remove unused parameter of hv_msi_free()
+Date: Wed, 13 Aug 2025 07:53:50 +0200
+Message-Id: <20250813055350.1670245-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812232126.1814253-1-wusamuel@google.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 04:21:23PM -0700, Samuel Wu wrote:
-> +static bool suspend_fs_sync_queued;
-> +DEFINE_SPINLOCK(suspend_fs_sync_lock);
-> +DECLARE_COMPLETION(suspend_fs_sync_complete);
-> +void suspend_abort_fs_sync(void)
-> +{
-> +	spin_lock(&suspend_fs_sync_lock);
-> +	complete(&suspend_fs_sync_complete);
-> +	spin_unlock(&suspend_fs_sync_lock);
-> +}
+The 'info' parameter of hv_msi_free() is unused. Delete it.
 
-Why no documentation for this public function that you added, but yet
-you added documentation for a static function that no one can call?
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+---
+ drivers/pci/controller/pci-hyperv.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-thanks,
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/p=
+ci-hyperv.c
+index d2b7e8ea710b..146b43981b27 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -1680,7 +1680,6 @@ static void hv_int_desc_free(struct hv_pci_dev *hpdev,
+ /**
+  * hv_msi_free() - Free the MSI.
+  * @domain:	The interrupt domain pointer
+- * @info:	Extra MSI-related context
+  * @irq:	Identifies the IRQ.
+  *
+  * The Hyper-V parent partition and hypervisor are tracking the
+@@ -1688,8 +1687,7 @@ static void hv_int_desc_free(struct hv_pci_dev *hpdev,
+  * table up to date.  This callback sends a message that frees
+  * the IRT entry and related tracking nonsense.
+  */
+-static void hv_msi_free(struct irq_domain *domain, struct msi_domain_info =
+*info,
+-			unsigned int irq)
++static void hv_msi_free(struct irq_domain *domain, unsigned int irq)
+ {
+ 	struct hv_pcibus_device *hbus;
+ 	struct hv_pci_dev *hpdev;
+@@ -2181,10 +2179,8 @@ static int hv_pcie_domain_alloc(struct irq_domain *d=
+, unsigned int virq, unsigne
+=20
+ static void hv_pcie_domain_free(struct irq_domain *d, unsigned int virq, u=
+nsigned int nr_irqs)
+ {
+-	struct msi_domain_info *info =3D d->host_data;
+-
+ 	for (int i =3D 0; i < nr_irqs; i++)
+-		hv_msi_free(d, info, virq + i);
++		hv_msi_free(d, virq + i);
+=20
+ 	irq_domain_free_irqs_top(d, virq, nr_irqs);
+ }
+--=20
+2.39.5
 
-greg k-h
 
