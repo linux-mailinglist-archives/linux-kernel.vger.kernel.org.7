@@ -1,237 +1,134 @@
-Return-Path: <linux-kernel+bounces-766164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F719B2431B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:49:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75BBBB2431C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C571B64533
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:49:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A406D721BF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34D42E1C56;
-	Wed, 13 Aug 2025 07:48:30 +0000 (UTC)
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008AC2E36E8;
+	Wed, 13 Aug 2025 07:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nU9JfRKf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644211E9919;
-	Wed, 13 Aug 2025 07:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317042D4B57;
+	Wed, 13 Aug 2025 07:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071310; cv=none; b=uoAOuZOOlp9F2gsBVH32f34xiUONkRVNNZbw39GIV9I6rxH/9RhLwkf+hrE53NTBw5Xf/QLYks+55op83OFBQHok0iKkZPXH9FRp1KRaRpBhR2CAVqy61uZ4BFMq0FI7bdcRYLKUGne1ovIftQkj6sKBqPu9zScVo0ZBJ0ODmKo=
+	t=1755071341; cv=none; b=d/V1cyxJlkF6a5lQZjvTgFLPfih4MEt9LHn7iRrVg/EfToR60bW7432XJ6T2T8eTfVR3dBUrxwLbj21AEuro2mdXv7SyISu4VhjIEpcegEGzBXkhqaur81gNJmCjc/Hf0xJCNw6CvVeWiRczybDOY3U/YqYIJNMXYA3sFmeFXho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071310; c=relaxed/simple;
-	bh=DftiRqH7jitH0e8YuE8soyWOX4xkevGqHNGKA7p1i80=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=MZ+bHFHYxRePrkfR8JDesjYbjdNx5V95fP8059rxZxjyGDVa98IgnsHbkj37noN03hkKwTTDhcIz/2+YYWv4PUsgoFtGIqud+dxjSpJpC3izDDg4e3VHAnFCfMer3hpsRR62UdKnXDX0yUUUJHL8+WhdAGPlRt8vBe35hh+Rc/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1um6DQ-005asy-De;
-	Wed, 13 Aug 2025 07:48:10 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1755071341; c=relaxed/simple;
+	bh=fEMmMELa9QtFEDbmmYhjc1JrFmw7HuJblDULJIeCymA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WNPD5qb1iqHyJQvB/TsBdDYDvNCZBrvUD12wbjRUxnn162pg2gVReuXLM4hGUTnUFaqbSfa+RH0GhmL8JAqdAeJ4iJj5X0cnJCAtynUdx91E9WJnlo8y7fSbjx4jl5MrQoADpT7+uSiNgO+wnmcEZTo1WxQyZLhcmNWj8YwShC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nU9JfRKf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34852C4CEEB;
+	Wed, 13 Aug 2025 07:48:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755071340;
+	bh=fEMmMELa9QtFEDbmmYhjc1JrFmw7HuJblDULJIeCymA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nU9JfRKfa94ggfkcOt6wRzey5l02pHi6SoBCCX+O7Od1y0eFO1T/tode7eiAFpGr2
+	 nRjJIZkaXYBaBFWt86jJcW6NTjrjq80fXS8Jvu0YxfWiRzcDbHYQ2L9J4gkKFdYyHD
+	 7tAs/OuMQwHTcvkjUTGFRjcjc5SU0/e9ulYKbnLZZLHf6aZ+Hj9cboRc5Ia7bMsbFi
+	 Nf8vbSbQ4mjp+BW5x5lubwgEiCK6Y6F+lf9YHDbAP8J7uENGsqDuraaZc5w3/rYt/O
+	 Eo7tzzs17V2I2reN0vz2uEawp0cjKBFLCcqv49zylBm3lZMdDHt3dgnFS3rfDNBxJk
+	 dYDmra7fL6Geg==
+Message-ID: <ec6fc483-d5a1-493e-954a-3525e38a6ed8@kernel.org>
+Date: Wed, 13 Aug 2025 09:48:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "David Howells" <dhowells@redhat.com>,
- "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Steve French" <sfrench@samba.org>,
- "Namjae Jeon" <linkinjeon@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
- netfs@lists.linux.dev, ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
- linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/11] VFS: introduce dentry_lookup() and friends
-In-reply-to: <20250813041253.GY222315@ZenIV>
-References: <>, <20250813041253.GY222315@ZenIV>
-Date: Wed, 13 Aug 2025 17:48:09 +1000
-Message-id: <175507128953.2234665.9075244835979746809@noble.neil.brown.name>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/21] nfc: marvell: convert to gpio descriptors
+To: Arnd Bergmann <arnd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Jakub Kicinski <kuba@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250808151822.536879-1-arnd@kernel.org>
+ <20250808151822.536879-18-arnd@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250808151822.536879-18-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 13 Aug 2025, Al Viro wrote:
-> On Tue, Aug 12, 2025 at 12:25:05PM +1000, NeilBrown wrote:
-> > This patch is the first step in introducing a new API for locked
-> > operation on names in directories.  It supports operations that create or
-> > remove names.  Rename operations will also be part of this new API but
-> > require different specific interfaces.
-> >=20
-> > The plan is to lock just the dentry (or dentries), not the whole
-> > directory.  dentry_lookup() combines locking the directory and
-> > performing a lookup prior to a change to the directory.  On success it
-> > returns a dentry which is consider to be locked, though at this stage
-> > the whole parent directory is actually locked.
-> >=20
-> > dentry_lookup_noperm() does the same without needing a mnt_idmap and
-> > without checking permissions.  This is useful for internal filesystem
-> > management (e.g.  creating virtual files in response to events) and in
-> > other cases similar to lookup_noperm().
->=20
-> Details, please.  I seriously hope that simple_start_creating() will
-> end up used for all of those; your variant allows passing LOOKUP_...
-> flags and I would like to understand what the usecases will be.
-
-simple_start_creating() would meet a lot of needs.
-A corresponding simple_start_deleting() would suit
-cachefiles_lookup_for_cull(), fuse_reverse_inval_entry(),
-nfsd4_unlink_clid_dir() etc.
-
-btrfs_ioctl_snap_destroy() would want a simple_start_deleting() but also
-wants killable.
-
-cachefiles_get_directory() wants a simple_start_creating() without the
-LOOKUP_EXCL so that if is already exists, it can go ahead and use the
-dentry without creating.
-
-cachefiles_commit_tmpfile() has a similar need - if it exists it will
-unlink and repeat the lookup.  Once it doesn't it it will be target of
-vfs_link()
-
-nfsd3_create_file() wants simple_start_creating without LOOKUP_EXCL.
-as do a few other nfsd functions.
-
-nfsd4_list_rec_dir() effectively wants simple_start_deleting() (i.e.
-fail if it doesn't exist) but sometimes it won't delete, it will do
-something else.
-
-All calls pass one of:
-   0
-   LOOKUP_CREATE
-   LOOKUP_CREATE | LOOKUP_EXCL
-
-The first two aren't reliably called for any particular task so a
-"simple_start_XXX" sort of name doesn't seem appropriate.
-
-
->=20
-> What's more, IME the "intent" arguments are best avoided - better have
-> separate primitives; if internally they call a common helper with some
-> flags, etc., it's their business, but exposing that to callers ends
-> up with very unpleasant audits down the road.  As soon as you get
-> callers that pass something other than explicit constants, you get
-> data flow into the mix ("which values can end up passed in this one?")
-> and that's asking for trouble.
-
-lookup_no_create, lookup_may_create, lookup_must_create ???
-
-Either as function names, or as an enum to pass to the function?
-
-If we had separate functions we would need _noperm and potentially
-_killable versions of each.  Fortunately there is no current need for
-_noperm_killable.  Maybe that combinatorial explosion isn't too bad.
-
->=20
-> > __dentry_lookup() is a VFS-internal interface which does no permissions
-> > checking and assumes that the hash of the name has already been stored
-> > in the qstr.  This is useful following filename_parentat().
-> >=20
-> > done_dentry_lookup() is provided which performs the inverse of putting
-> > the dentry and unlocking.
->=20
-> Not sure I like the name, TBH...
-
-I'm open to suggestions for alternatives.
-
->=20
-> > Like lookup_one_qstr_excl(), dentry_lookup() returns -ENOENT if
-> > LOOKUP_CREATE was NOT given and the name cannot be found,, and returns
-> > -EEXIST if LOOKUP_EXCL WAS given and the name CAN be found.
-> >=20
-> > These functions replace all uses of lookup_one_qstr_excl() in namei.c
-> > except for those used for rename.
-> >=20
-> > They also allow simple_start_creating() to be simplified into a
-> > static-inline.
->=20
-> Umm...  You've also moved it into linux/namei.h; we'd better verify that
-> it's included in all places that need that...
-
-I added includes where necessary.
-
->=20
-> > A __free() class is provided to allow done_dentry_lookup() to be called
-> > transparently on scope exit.  dget() is extended to ignore ERR_PTR()s
-> > so that "return dget(dentry);" is always safe when dentry was provided
-> > by dentry_lookup() and the variable was declared __free(dentry_lookup).
->=20
-> Please separate RAII stuff from the rest of that commit.  Deciding if
-> it's worth doing in any given case is hard to do upfront.
-
-I'd rather not - it does make a few changes much nicer.  But I can if it
-is necessary.
-
->=20
-> > lookup_noperm_common() and lookup_one_common() are moved earlier in
-> > namei.c.
->=20
-> Again, separate commit - reduce the noise in less trivial ones.
->=20
-> > +struct dentry *dentry_lookup(struct mnt_idmap *idmap,
-> > +			     struct qstr *last,
-> > +			     struct dentry *base,
-> > +			     unsigned int lookup_flags)
->=20
-> Same problem with flags, *ESPECIALLY* if your endgame involves the
-> locking of result dependent upon those.
-
-Locking the result happens precisely if a non-error is returned.  The
-lookup flags indicate which circumstances result in errors.
-
->=20
-> > -	dput(dentry);
-> > +	done_dentry_lookup(dentry);
-> >  	dentry =3D ERR_PTR(error);
-> > -unlock:
-> > -	inode_unlock(path->dentry->d_inode);
->=20
-> Incidentally, this combination (dput()+unlock+return ERR_PTR())
-> is common enough.  Might be worth a helper (taking error as argument;
-> that's one of the reasons why I'm not sure RAII is a good fit for this
-> problem space)
-
-I found RAII worked quite well in several places and very well in a few.
-I think the main reason I had for *not* using RAII is that you really
-need to use it for everything and I didn't want to change code too much.
+On 08/08/2025 17:18, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The only reason this driver seems to still use the legacy gpio
+> numbers is for the module parameter that lets users pass a different
+> reset gpio.
+> 
+> Since the fixed numbers are on their way out, and none of the platforms
+> this driver is used on would have them any more, remove the module
+> parameter and instead just use the reset information from firmware.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/nfc/nfcmrvl/main.c    | 47 +++++++++++------------------------
+>  drivers/nfc/nfcmrvl/nfcmrvl.h |  5 ++--
+>  drivers/nfc/nfcmrvl/uart.c    |  5 ----
+>  drivers/nfc/nfcmrvl/usb.c     |  1 -
+>  4 files changed, 18 insertions(+), 40 deletions(-)
+> 
 
 
->=20
-> > +/* no_free_ptr() must not be used here - use dget() */
-> > +DEFINE_FREE(dentry_lookup, struct dentry *, if (_T) done_dentry_lookup(_=
-T))
->=20
-> UGH.  Please, take that to the very end of the series.  And the comment
-> re no_free_ptr() and dget() is really insufficient - you will get a dentry
-> reference that outlives your destructor, except that locking environment wi=
-ll
-> change.  Which is subtle enough to warrant a discussion.
->=20
-> Besides, I'm not fond of mixing that with dget(); put another way, this
-> subset of dget() uses is worth being clearly marked as such.  A primitive
-> that calls dget() to do work?  Sure, no problem.
->=20
-> We have too many dget() callers with very little indication of what we are
-> doing there (besides "bump the refcount"); tree-in-dcache series will
-> at least peel off the ones that are about pinning a created object in
-> ramfs-style filesystems.  That's not going to cover everything (not even
-> close), but let's at least not add to the already messy pile...
->=20
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks for the review,
-NeilBrown
+Best regards,
+Krzysztof
 
