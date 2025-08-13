@@ -1,87 +1,150 @@
-Return-Path: <linux-kernel+bounces-766695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78067B24A17
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:03:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB90B24A61
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1152188C4C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:04:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B114721944
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AE82D9787;
-	Wed, 13 Aug 2025 13:03:43 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6BF2E717F;
+	Wed, 13 Aug 2025 13:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GI5aCqOx"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9242D12F7
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784E123D2B8;
+	Wed, 13 Aug 2025 13:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090223; cv=none; b=g8dxKAaB6JlWSQ1cEM2PvfZc3VwUTONE5NL90CRvO7DIVPAaCL4Ks1NFdOLig1KMC8ihDk8s7xl1jsm6GkVV/MXy+AQhwhI0yNoriN+bAR212I7jQwG0IpOnXlRHGID+FKdc+AkDAQ0I4WD9YGWchvzq+81zKetINg6UybHLMvA=
+	t=1755090795; cv=none; b=tTp7T+v478p0Co7Dt17BIVhNpsgOIpDql2iHK+mMmjqzsX6O32OKM/eyh8tD0PBrsi0hprmPoCbJWGsXr9tlA5d7uWQ8KDRJFvir4leLFrA6UAQAQWcuonARiq2jqsj3WDZlFa7zcuUxtiYqk5+wNbiWT6gSqsRDlVtlKPnS5zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090223; c=relaxed/simple;
-	bh=net+YE3QHogXlWlMFec/YsoynlXNSNLvWhpeUn87aUs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YTctdFCvDnb3ASneFk3WeifJZ90DzGXQ00fI65Pypdhd2R5yl76ZVJYEfiue64TAQ532BUj+m12ebrt8L2na4Je2Wpowii7xhyavgmTF49Z/GYKfdLwX0fD7LGZjYJ/7jZmwcuP0nxdMg8cq781GEy2ipCLlywxGTyLDIKW2/Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e3ee9c77beso58074695ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:03:37 -0700 (PDT)
+	s=arc-20240116; t=1755090795; c=relaxed/simple;
+	bh=xQsf6dXU9C0LhRZCky8V9fz3sqI9Jm9JjLobbEzFe3c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XB9qbAh8YTI/lCdO9pu/9Ddp9/aJ+eqbN4CPvI4amGr4n6+4y0EiTTUZ60+6C1xrUOcznQB4Mq90lNAoyfavTRnSpcchqNYjZgMmbHysVAH9VUHVxhNh+iFzSlwt0v4NLWFZnMaFNpUv/b+bJamlHl8slqqQksUMp15SdddAzgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GI5aCqOx; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-615460d9897so7441629a12.0;
+        Wed, 13 Aug 2025 06:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755090791; x=1755695591; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zFdLFCkq6BKJvmfth9X/kq+wVTjql7oBUHjNEfqADVY=;
+        b=GI5aCqOxmvaWYqDXf9KiGGmDrzvrqXJPL6aiDs6qiyauyrU3yCcW9PlosSCsgislAA
+         Iifo3YcCKK3OkvLyEV3uPl1nvqEyzoqviiozLpN8oHsCFb2SYPj8UTgFcQQbCrwmOpWp
+         5sTVETZdaOB/SRMEhhpbB8S/u7bhsZS98fntZ4rQNySb1yzs6WktDr8VOMVGDApmyNxI
+         xf9i/e1sRuVCesiHpdUYCb5JweaaGDDRQ8fAa/HxVZeFtRpZ/jTl7wz/9JWt6OsqSFHD
+         lyrpkNo0p0WDgv0crKAvZDI+967/5lmKGPFFF0jM2Cqu2WnJkkfPOrYV22gBuLYcI0oK
+         UQlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755090217; x=1755695017;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTlbQ+5lCWedkmmDM5wgqDgXpwjKjQenhY9Z1lVFSds=;
-        b=cqolMM8eHKLj30F5jbU5IZjhnUMW/NEc8u1TxBZLugGkFoyTbvwHR0jmOQkjt7YTcj
-         OEo5TQ+7k1JdOvDqLuGnLpWIGb7NXKEg/yiwV211hqeOyYYMgzV8XkfIZwf6ZuPnOHZP
-         IgPTo3Qu/Ym0pYtPIPH3iZYJM527uVsV06WgVJwtSZ8BCZVVdUokS226p3xAlHqYPYM4
-         Gl7lEdXXgMt9uo1HiCa19nkm7fOhH5o8RD8CQ5IznkkxaK+5Scc551m8qgoaMGqcJPSv
-         3mVmB+Qp+VYrYt5A2TU996umJfUM1SnwxVJRbYhYyxf7LPwvM6RQXsjoV+2qdL8tLtd5
-         BFIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAWCwCyjKOPEjY2cbUaGAeA8GPf01CYF4TCoM1UuyxHQHjYuDyUupasAPzkXMgFgBbnvOSa5LowC2qZl4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/2QOhVS43gmc1ZplJh2p61iGhU1oVYe7vz+tFbWMaOCRDAJh7
-	WCUa9J7GGi6GIRZ62YM/ndC0ioWyX3Rv+ItSw2wtjVEd/FOTkW7iqdvkQ599CuVnzO8w3izHASF
-	kkaIbPwt0ehcoZk/f3bduh8lOx/8TBci+h0QjsWg62+yS6oJCgu0vvGzDatk=
-X-Google-Smtp-Source: AGHT+IEoNILpaXFApHt3BIrf6vNHnYzECVrgkPRxUncsquk2HrblXm/Nk+BZ0Knd1pLIpK12NtT7NyEcNp6sbzhuITrihoOQiJMv
+        d=1e100.net; s=20230601; t=1755090791; x=1755695591;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zFdLFCkq6BKJvmfth9X/kq+wVTjql7oBUHjNEfqADVY=;
+        b=QHCWu/dXngNj2DvSGXSIxbtpN4fUBzUyIMR1AIqYhiYrPkYyKl4x2BEBSkgvs+wsZw
+         W3qfujIimNaBiIJFz8C0g81jh/r+ycD3ia3Rs/RHGW0gKbQw5X50z28Bzs4XTUrZdhmK
+         SknKQw4m1r5yqZNcEaLi8aE2xBHWi6qTeVkvaW0ZmxPBp2K+4ep3whD1CoKoyqn4/QjZ
+         yrwi9y5zIyHqPC5HIJqljzeybkMVtYS/p6dA9XS+SmtF/nYQMfCFmubKWav5FMF0Vt6c
+         usnwZOhjhEVwWr+r70mVsMgxaDNt29khYafsyr+1aZK3i4QJHvw3e8Rw+ElqtSNmWAqE
+         No4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVFF41km47V8EySGlVFzRUlNFZKWOyPaYLGF5yNNKjBlLpmnoUMDA945VXRZJevff3aI4GPdxZqww85bD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs422eq4Db3BbGRnCUfvnWg5CUSbHBz6P19Xzvftpopp+jH0MO
+	zEo5bsE/KfeM7nbmCsvu81qMdFMwONsvUQOIY28qOYY53or/Oj7OwJ/X5FzoTjwL
+X-Gm-Gg: ASbGncs7btts8u0PPzKnQqyc8T3UDFUGFqiPQouN+5OrNdWi+WIdyVqIysmB+KmdfPM
+	2t9/QK9sUDtLuieyFufxvIYJrQyALKY5eXuFze/VtQ6B+8XlcSuXYKB6uv6EYTKatOr1Eol6bDG
+	KF3sNrIcjAF41HWBHBSCcXxedxkxVu6mUtl7mh9OsiqNTcI77L9oDbzSy1Is/r6AhkZz22sgUa2
+	wLnRgFYrwWjXFRWHgDnKYTHf2eNw1gjapL/MRbu6oI4iLxNVvxww8B/jIUjrbzgc0NqMq/6aBDu
+	8TKzKfOnNXId8+BweqAslvHRzN6a24J4fF/Z0UOj8xKCX0lsC3oOi8WxW0U5v+vdh7ONCGWVAL5
+	s4THDCJbbCGWJUGgoFg7cU2frIJnzEBh1E2QEexBjBeDX2Q51SOP2lrXjnpi2MGUmchwQ9FqMQw
+	s=
+X-Google-Smtp-Source: AGHT+IFbOKjKDZzd6E4UUe1XMBuIL0ISjeH8uTqctsugShVQgQI4ZEs3ZUukQzl02z7akc9cs6hJXQ==
+X-Received: by 2002:a05:6402:1e8f:b0:618:1f67:ae62 with SMTP id 4fb4d7f45d1cf-6186b78c09emr2732398a12.7.1755090790546;
+        Wed, 13 Aug 2025 06:13:10 -0700 (PDT)
+Received: from [192.168.1.17] (host-79-36-162-144.retail.telecomitalia.it. [79.36.162.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f15d9fsm21681132a12.17.2025.08.13.06.13.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 06:13:10 -0700 (PDT)
+From: Antonino Maniscalco <antomani103@gmail.com>
+Date: Wed, 13 Aug 2025 15:04:44 +0200
+Subject: [PATCH] drm/msm: skip re-emitting IBs for unusable VMs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3c89:b0:3e4:ac3:ffd6 with SMTP id
- e9e14a558f8ab-3e5674a6c2dmr47859725ab.20.1755090184133; Wed, 13 Aug 2025
- 06:03:04 -0700 (PDT)
-Date: Wed, 13 Aug 2025 06:03:04 -0700
-In-Reply-To: <20250813124145.4469-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689c8d08.050a0220.7f033.014a.GAE@google.com>
-Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
-From: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250813-unusable_fix_b4-v1-1-3218d166b8a8@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGuNnGgC/x2MWwqAIBAAryL7neAjK7pKhGhttRAWihFEd0/6H
+ IaZBxJGwgQ9eyDiRYmOUEBWDKbNhRU5zYVBCWVEJzXPISfnd7QL3dbXXAo/Y7No35oGSnVGLOY
+ /DuP7fiTyvVphAAAA
+X-Change-ID: 20250813-unusable_fix_b4-10bde6f3b756
+To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Antonino Maniscalco <antomani103@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755090789; l=1446;
+ i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
+ bh=xQsf6dXU9C0LhRZCky8V9fz3sqI9Jm9JjLobbEzFe3c=;
+ b=LAy/fzSqsj0WmX2lkecW7V/9WveJcaE+t5N6j5SppkV9Ia3LRzHbmGnBG/o8CgGdj7YjYiZbc
+ VckHvI/kO1tDzpbSGTryP9xcfWank44ijGoXsmzszWpnjK5ls1Ku//7
+X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
+ pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
 
-Hello,
+When a VM is marked as an usuable we disallow new submissions from it,
+however submissions that where already scheduled on the ring would still
+be re-sent.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Since this can lead to further hangs, avoid emitting the actual IBs.
 
-Reported-by: syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com
-Tested-by: syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com
+Fixes: 6a4d287a1ae6 ("drm/msm: Mark VM as unusable on GPU hangs")
+Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+---
+ drivers/gpu/drm/msm/msm_gpu.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-Tested on:
+diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+index c317b25a8162edba0d594f61427eac4440871b73..e6cd85c810bd2314c8bba53644a622464713b7f2 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.c
++++ b/drivers/gpu/drm/msm/msm_gpu.c
+@@ -553,8 +553,15 @@ static void recover_worker(struct kthread_work *work)
+ 			unsigned long flags;
+ 
+ 			spin_lock_irqsave(&ring->submit_lock, flags);
+-			list_for_each_entry(submit, &ring->submits, node)
++			list_for_each_entry(submit, &ring->submits, node) {
++				/*
++				 * If the submit uses an unusable vm make sure
++				 * we don't actually run it
++				 */
++				if (to_msm_vm(submit->vm)->unusable)
++					submit->nr_cmds = 0;
+ 				gpu->funcs->submit(gpu, submit);
++			}
+ 			spin_unlock_irqrestore(&ring->submit_lock, flags);
+ 		}
+ 	}
 
-commit:         8742b2d8 Merge tag 'pull-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=136725a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4d960daf7a3c7c2b7b1
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c575a2580000
+---
+base-commit: 8290d37ad2b087bbcfe65fa5bcaf260e184b250a
+change-id: 20250813-unusable_fix_b4-10bde6f3b756
 
-Note: testing is done by a robot and is best-effort only.
+Best regards,
+-- 
+Antonino Maniscalco <antomani103@gmail.com>
+
 
