@@ -1,147 +1,122 @@
-Return-Path: <linux-kernel+bounces-765733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DA0B23D94
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:07:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08A0B23D98
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8180456871C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:07:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DFB5687F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE09C136E37;
-	Wed, 13 Aug 2025 01:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l2uHuSvO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF68E155CBD;
+	Wed, 13 Aug 2025 01:09:55 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F16BA42;
-	Wed, 13 Aug 2025 01:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C872C0F87;
+	Wed, 13 Aug 2025 01:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755047248; cv=none; b=a3EU/C2N/ahhg3XkFRqJ6OQG3lm7pwnYwsyeYsdG++loUjxfD/lB/7Ytx3m1xD9W6huQ4Q5NGQ1fvfGQE+cxSPZyRnGUNbvRh9pw/IYfkZF+kuGXXUV08H4lon8kJvkFMjt09ILK5ByRj7GffuIy4yUGsYimHkAXoAM0MNEZiYs=
+	t=1755047395; cv=none; b=DJM9H7cKWlN1pvkAq6NMGmOIixK02SwMBQePzIeMp34l8PYMLFHDx+tj7t/tZvHdS3rnoOFwVofCXQSxzjHgXlfS17csAR4oD7wvdcCXJXdTUEPGxkgwEwXDbvePBUbZB4ga9Bku6V19Ka5ZHmAGriYKLrD2OJrZjGnVQ9AGkQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755047248; c=relaxed/simple;
-	bh=YOqgCET3sgCMudSdk7vjfyd62U6KchjYeSESnAN8BC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=REu3YoQdsGSZIp26jYHbuV/idXQLCdC+CiZJrlqpSmALgCeQnzfr0QUKKPwvLBoCDFhyjGJlE2Bdv7jDdgDzZ5QA+5+NfLRKNg9cA8SUAkz7NwNhSGChvsF+86hOprzUa3Pq3LnahPp2FodPJf5fn34vZNBmTWEcCGsLk8LvhVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l2uHuSvO; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755047247; x=1786583247;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YOqgCET3sgCMudSdk7vjfyd62U6KchjYeSESnAN8BC0=;
-  b=l2uHuSvOLiEnfeAuRsNBG7Zu441yDxJCNiwErVkrs1iw3Ehr+6tj+ORf
-   KPqOmuKcgIxFD37Mr9cVXPTeB+VTeJKUrFxmvrysP4+EzggVbPbavlcOa
-   5iS9AqHzFoX7Dv3693vO5tPvJuJXdA1AapVj50IJgmqdW5pZ6AKjtgDqM
-   Y8zfz8XJJ0Pq7Kog0yCVDV4U9TaeiIMM69xuM3yNQdxGxJTThAUPXVWwm
-   5H6rRvB+LT73MSYl/FXX/hFLxISfhefOKMmrAU3KFm63do0I7m3IF/HO4
-   pPCO99+EYPtatFskwGgpd4/GqQkoBwPIX08pHFgBx4mLcc/dszm7NPdST
-   Q==;
-X-CSE-ConnectionGUID: U1V79hlUSuqD5Ex9lWGWPA==
-X-CSE-MsgGUID: WxfHVP6HRayN6xcD5gKmGg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57395803"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="57395803"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 18:07:26 -0700
-X-CSE-ConnectionGUID: QqUNkE64T/KB9wIQ+rDQBg==
-X-CSE-MsgGUID: rc0OWkRKTpm2ZDmsjmHVfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="170540166"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 12 Aug 2025 18:07:22 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ulzxP-0009Qi-32;
-	Wed, 13 Aug 2025 01:07:12 +0000
-Date: Wed, 13 Aug 2025 09:06:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Christian S. Lima" <christiansantoslima21@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht,
-	richard120310@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v9] rust: transmute: Add methods for FromBytes trait
-Message-ID: <202508130702.MtRUndHU-lkp@intel.com>
-References: <20250811213851.65644-1-christiansantoslima21@gmail.com>
+	s=arc-20240116; t=1755047395; c=relaxed/simple;
+	bh=Dp2TFP6knBwgB8NLhqQXcsYqaD8uvln3PQSjEoxzmkI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=vDjxQFEo3Ohm4Is0oKAXtmkCYLLUYdWRypw3Ce2A41Pi9wwOsHrbt0QFDRcuK6TJblz2cVY5IuxrLpxd8FB3ukJZ9VQLFLAf8FFiCJnTlCZxqn1vnWdTDMtWIS7Ye922ZL5Yb6y5c7uZ0Qyq0p81lRv52R9CVICEvudP7mf4iAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c1qvP6d1gz13N3g;
+	Wed, 13 Aug 2025 09:06:25 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA91814027A;
+	Wed, 13 Aug 2025 09:09:49 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 13 Aug 2025 09:09:48 +0800
+Message-ID: <3a6a930b-8d5d-4323-a71d-d7b0883a7527@huawei.com>
+Date: Wed, 13 Aug 2025 09:09:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811213851.65644-1-christiansantoslima21@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] net: bridge: fix soft lockup in
+ br_multicast_query_expired()
+To: Ido Schimmel <idosch@nvidia.com>
+CC: <razor@blackwall.org>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>,
+	<zhangchangzhong@huawei.com>
+References: <20250812091818.542238-1-wangliang74@huawei.com>
+ <aJra548HB7zGcA6K@shredder>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <aJra548HB7zGcA6K@shredder>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-Hi Christian,
 
-kernel test robot noticed the following build errors:
+在 2025/8/12 14:10, Ido Schimmel 写道:
+> On Tue, Aug 12, 2025 at 05:18:18PM +0800, Wang Liang wrote:
+>> When set multicast_query_interval to a large value, the local variable
+>> 'time' in br_multicast_send_query() may overflow. If the time is smaller
+>> than jiffies, the timer will expire immediately, and then call mod_timer()
+>> again, which creates a loop and may trigger the following soft lockup
+>> issue.
+>>
+>>    watchdog: BUG: soft lockup - CPU#1 stuck for 221s! [rb_consumer:66]
+>>    CPU: 1 UID: 0 PID: 66 Comm: rb_consumer Not tainted 6.16.0+ #259 PREEMPT(none)
+>>    Call Trace:
+>>     <IRQ>
+>>     __netdev_alloc_skb+0x2e/0x3a0
+>>     br_ip6_multicast_alloc_query+0x212/0x1b70
+>>     __br_multicast_send_query+0x376/0xac0
+>>     br_multicast_send_query+0x299/0x510
+>>     br_multicast_query_expired.constprop.0+0x16d/0x1b0
+>>     call_timer_fn+0x3b/0x2a0
+>>     __run_timers+0x619/0x950
+>>     run_timer_softirq+0x11c/0x220
+>>     handle_softirqs+0x18e/0x560
+>>     __irq_exit_rcu+0x158/0x1a0
+>>     sysvec_apic_timer_interrupt+0x76/0x90
+>>     </IRQ>
+>>
+>> This issue can be reproduced with:
+>>    ip link add br0 type bridge
+>>    echo 1 > /sys/class/net/br0/bridge/multicast_querier
+>>    echo 0xffffffffffffffff >
+>>    	/sys/class/net/br0/bridge/multicast_query_interval
+>>    ip link set dev br0 up
+>>
+>> The multicast_startup_query_interval can also cause this issue. Similar to
+>> the commit 99b40610956a("net: bridge: mcast: add and enforce query interval
+>                           ^ missing space
+>
+>> minimum"), add check for the query interval maximum to fix this issue.
+>>
+>> Link: https://lore.kernel.org/netdev/20250806094941.1285944-1-wangliang74@huawei.com/
+>> Fixes: 7e4df51eb35d ("bridge: netlink: add support for igmp's intervals")
+> Probably doesn't matter in practice given how old both commits are, but
+> I think you should blame d902eee43f19 ("bridge: Add multicast
+> count/interval sysfs entries") instead. The commit message also uses the
+> sysfs path and not the netlink one.
 
-[auto build test ERROR on rust/rust-next]
-[also build test ERROR on linus/master v6.17-rc1 next-20250812]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-S-Lima/rust-transmute-Add-methods-for-FromBytes-trait/20250812-054010
-base:   https://github.com/Rust-for-Linux/linux rust-next
-patch link:    https://lore.kernel.org/r/20250811213851.65644-1-christiansantoslima21%40gmail.com
-patch subject: [PATCH v9] rust: transmute: Add methods for FromBytes trait
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250813/202508130702.MtRUndHU-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250813/202508130702.MtRUndHU-lkp@intel.com/reproduce)
+Thanks for your suggestions!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508130702.MtRUndHU-lkp@intel.com/
+The bug fix tag is really important. I will correct it and send a new 
+patch later.
 
-All errors (new ones prefixed by >>):
-
->> error[E0046]: not all trait items implemented, missing: `from_bytes`, `from_bytes_mut`
-   --> rust/doctests_kernel_generated.rs:4749:1
-   |
-   4749 | unsafe impl kernel::transmute::FromBytes for MyStruct{};
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `from_bytes`, `from_bytes_mut` in implementation
-   |
-   = help: implement the missing item: `fn from_bytes(_: &[u8]) -> Option<&Self> { todo!() }`
-   = help: implement the missing item: `fn from_bytes_mut<Self>(_: &mut [u8]) -> Option<&mut Self> where Self: AsBytes { todo!() }`
---
->> error[E0046]: not all trait items implemented, missing: `from_bytes`, `from_bytes_mut`
-   --> rust/doctests_kernel_generated.rs:4814:1
-   |
-   4814 | unsafe impl kernel::transmute::FromBytes for MyStruct{};
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `from_bytes`, `from_bytes_mut` in implementation
-   |
-   = help: implement the missing item: `fn from_bytes(_: &[u8]) -> Option<&Self> { todo!() }`
-   = help: implement the missing item: `fn from_bytes_mut<Self>(_: &mut [u8]) -> Option<&mut Self> where Self: AsBytes { todo!() }`
---
->> error[E0046]: not all trait items implemented, missing: `from_bytes`, `from_bytes_mut`
-   --> samples/rust/rust_dma.rs:42:1
-   |
-   42 | unsafe impl kernel::transmute::FromBytes for MyStruct {}
-   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `from_bytes`, `from_bytes_mut` in implementation
-   |
-   = help: implement the missing item: `fn from_bytes(_: &[u8]) -> Option<&Self> { todo!() }`
-   = help: implement the missing item: `fn from_bytes_mut<Self>(_: &mut [u8]) -> Option<&mut Self> where Self: AsBytes { todo!() }`
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>> Suggested-by: Nikolay Aleksandrov <razor@blackwall.org>
+>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+> Code looks fine to me.
 
