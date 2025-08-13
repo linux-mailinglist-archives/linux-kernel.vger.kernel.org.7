@@ -1,140 +1,182 @@
-Return-Path: <linux-kernel+bounces-767392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09FBB253B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:11:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1FF9B253BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7D922A2223
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:09:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57F661BC20B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84314309DB3;
-	Wed, 13 Aug 2025 19:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="m7LudP5S";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DbyPZntX"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB2F2F291A;
-	Wed, 13 Aug 2025 19:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA91309DC2;
+	Wed, 13 Aug 2025 19:13:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D881CD1F;
+	Wed, 13 Aug 2025 19:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755112176; cv=none; b=DPG2+baC4Fx7GSHuw2xcObs88Oc9DnBVf/jDChqXEBERdyUxUFRvVRdai0QOeaCJS5MTc4WynNqwVvLAbioY0T5MyzI62thhjdkL//9DogeyFIbMWYs8QbSYmdfajElQ8clILrjFih4hi1D8BRZjqkOSkzlder+g7FdssUFm1cM=
+	t=1755112412; cv=none; b=j6JF7IOl1Rq/FjrLR6VESHyr69/V2gUqPYKrhdwYpV6Rmaw393LTWPr6NialQRKSeWAKn9EUkpTyQr4bzRK76ZhhCoa7zWfFQxtqXZJp6At7EYm/W4QFQW6UKzk80Mvv4pWwZZ25gznwLyrS4oZuZ1X2fOuYILJajAxKnCOPJDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755112176; c=relaxed/simple;
-	bh=//ic2nFiBCRf1x2UoLS8nXpje0IuO0EMaCXFBNgNjOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTXOsML6Ql7cPHw0/p9lPh9JxiOIYXIs5p+uVEvas99eWcyT7949Ocyb8yBtsKW91+v8WbImlhXHliIQhXCzI78lY7YS2xo6DoN78HtL0loq7tToI7aQ88G0kQGsLFwsxrLSl7yrZQOJFw5x5+uFKolgrZEekiHSbp3QVbwPRu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=m7LudP5S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DbyPZntX; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id 826B71D000DA;
-	Wed, 13 Aug 2025 15:09:32 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Wed, 13 Aug 2025 15:09:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1755112172; x=1755198572; bh=jr9Ko8fT5I
-	KARAdUzZexlb2pEFmEvxipKU3jq7TmXVA=; b=m7LudP5S1oszdsPDpeXYQ3mcad
-	1gIF1nBiEMz2G+1iBg2+uPEOt3o3r0/sB5522nS4n3BBbTArc/p/peMsMKKAMY1o
-	j/7KUCljeKqkWUGQt2972YRFAEKofuAhetz1KKmUDgW0Wi17Ty/Tj7b32rw+gHS9
-	OgrpSVrnlYs2E5X6/mhv7b+psQOHqYaX1GQJr+rUYHQqLAkquSxtUGOrJ9UxQt5t
-	Oxhe6qsD08Ilvg/TnRtnyrRMrp7f6KS2yBjN9QuMulsKXARD70922/N5v83ugft+
-	Z2/nFEI5GnCe48DHKy6tQNvkPJw97grpDg6W5bOcIgqggYlzrll9W+yx5nGA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1755112172; x=1755198572; bh=jr9Ko8fT5IKARAdUzZexlb2pEFmEvxipKU3
-	jq7TmXVA=; b=DbyPZntXLCYS++FHWhAdvVZZJq/6mlFYKWHRw5I6xoR1RINC1en
-	MXf3OHePPm6mTJcM6WbwUBv8cnZRQwqOtJHAGeF7XmgAQ7PzVF5YZ9HzXmGHEcAH
-	S6NVD3EZmieQFCyQrIaRqizkJtLXTQPdwp7z1+1g6aknXR5/C/WIDZwEfeSX685K
-	PPzv+SRPH9fzwK6XH7s4yS2is41Wtl9/Oz78loHif0Rt8ouadHu40vH3FLkLQW8T
-	7UYJUkS4voI15mc9zZuhrqNGMRs3Wd54Tp8SxZPnzA2/Vsosr3b8xTGXMiHjviJv
-	RxoyROgOSoeJA+3d5I+yCKhCfbT9bm4iBdA==
-X-ME-Sender: <xms:6-KcaIsTs_cYWX3LK3Me1sDaZZKPqCdirO41D8_qegU-kZ90dGzTsw>
-    <xme:6-KcaFL2bHJxQ5KjcEE7V2MLEGKydsYAbznrZmpquqqrSI8j6wbPk46ukrCPH8S21
-    b6LK24JiQPDe7M5Gn4>
-X-ME-Received: <xmr:6-KcaPYSwy8IzjOXLkJUSRXOjvR-E73TSa6HEECLXHLakp5sjJ4IsswpQd8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeeltdduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfihtghhohcu
-    tehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrfgrth
-    htvghrnhepueettdetgfejfeffheffffekjeeuveeifeduleegjedutdefffetkeelhfel
-    leetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepth
-    ihtghhohesthihtghhohdrphhiiiiirgdpnhgspghrtghpthhtohepledpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtohepvhhirhhoseiivghnihhvrdhlihhnuhigrdhorhhgrd
-    hukhdprhgtphhtthhopegrvhgrghhinhesghhoohhglhgvrdgtohhmpdhrtghpthhtohep
-    rghvrghgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegtrhhiuheslhhishhtshdrlhhinhhugidr
-    uggvvhdprhgtphhtthhopehlihhnuhigqdgrphhisehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:6-KcaHBaLl9llYBhKTQPLcxX4fxVMMSVrVEsX3ix97Btn26mhDl8Vw>
-    <xmx:6-KcaJb0IaJIpgnZE0BRJQnvZb1PejleE-oXI3hTCMgI6MVGjLp_vA>
-    <xmx:6-KcaPkCR-iZBrEUQXrQTuW_F__ezMfN6rD4hxAEIok8_UBBJ0T8Cw>
-    <xmx:6-KcaOpkpRsORVbp2PPfc7LqV5ucz6kENKEed79vwCVC6-5flIoF3A>
-    <xmx:7OKcaCwHBX5Vr6ORxSUqOOQZtCRppE-fykdWEFpX1y7MR6AtC-0p4Lr5>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Aug 2025 15:09:30 -0400 (EDT)
-Date: Wed, 13 Aug 2025 13:09:27 -0600
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrei Vagin <avagin@google.com>, Andrei Vagin <avagin@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, criu@lists.linux.dev,
-	Linux API <linux-api@vger.kernel.org>,
-	stable <stable@vger.kernel.org>
-Subject: Re: do_change_type(): refuse to operate on unmounted/not ours mounts
-Message-ID: <aJzi506tGJb8CzA3@tycho.pizza>
-References: <CANaxB-xXgW1FEj6ydBT2=cudTbP=fX6x8S53zNkWcw1poL=L2A@mail.gmail.com>
- <20250724230052.GW2580412@ZenIV>
- <CANaxB-xbsOMkKqfaOJ0Za7-yP2N8axO=E1XS1KufnP78H1YzsA@mail.gmail.com>
- <20250726175310.GB222315@ZenIV>
- <CAEWA0a6jgj8vQhrijSJXUHBnCTtz0HEV66tmaVKPe83ng=3feQ@mail.gmail.com>
- <20250813185601.GJ222315@ZenIV>
+	s=arc-20240116; t=1755112412; c=relaxed/simple;
+	bh=SDoJ2outeCJSC9UNYQ9AJNWOM9YgPLCuczdptsJ3k5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=USAR/9OPwO31DBPnSwBz6uThBo9BQJu0PPI1pm4s+IFHS9k5NhegQQabA3SPlhOtx+xmfm810QowfEh7kaTtuPddQOrNX9aXyT1Sdt1PtPEBc8km38fxZpB+P7IMUsAf08uy4HBNHJV7U3YoHPxuF5JNYQ+CLhGqizgG6Ix9HIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F9FE14BF;
+	Wed, 13 Aug 2025 12:13:21 -0700 (PDT)
+Received: from [10.1.31.42] (e127648.arm.com [10.1.31.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 329723F738;
+	Wed, 13 Aug 2025 12:13:27 -0700 (PDT)
+Message-ID: <0da8086f-2b6c-46e3-92ca-e156b9374a2a@arm.com>
+Date: Wed, 13 Aug 2025 20:13:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813185601.GJ222315@ZenIV>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] cpuidle: governors: menu: Avoid selecting states
+ with too much latency
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
+References: <2804546.mvXUDI8C0e@rafael.j.wysocki>
+ <5043159.31r3eYUQgx@rafael.j.wysocki>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <5043159.31r3eYUQgx@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 07:56:01PM +0100, Al Viro wrote:
-> @@ -3347,18 +3360,11 @@ static int do_set_group(struct path *from_path, struct path *to_path)
+On 8/13/25 11:25, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Occasionally, the exit latency of the idle state selected by the menu
+> governor may exceed the PM QoS CPU wakeup latency limit.  Namely, if the
+> scheduler tick has been stopped already and predicted_ns is greater than
+> the tick period length, the governor may return an idle state whose exit
+> latency exceeds latency_req because that decision is made before
+> checking the current idle state's exit latency.
+> 
+> For instance, say that there are 3 idle states, 0, 1, and 2.  For idle
+> states 0 and 1, the exit latency is equal to the target residency and
+> the values are 0 and 5 us, respectively.  State 2 is deeper and has the
+> exit latency and target residency of 200 us and 2 ms (which is greater
+> than the tick period length), respectively.
+> 
+> Say that predicted_ns is equal to TICK_NSEC and the PM QoS latency
+> limit is 20 us.  After the first two iterations of the main loop in
+> menu_select(), idx becomes 1 and in the third iteration of it the target
+Can drop "of it" here?
+
+> residency of the current state (state 2) is greater than predicted_ns.
+> State 2 is not a polling one and predicted_ns is not less than TICK_NSEC,
+> so the check on whether or not the tick has been stopped is done.  Say
+> that the tick has been stopped already and there are no imminent timers
+> (that is, delta_tick is greater than the target residency of state 2).
+> In that case, idx becomes 2 and it is returned immediately, but the exit
+> latency of state 2 exceeds the latency limit.
+> 
+> Address this issue by modifying the code to compare the exit latency of
+> the current idle state (idle state i) with the latency limit before
+> comparing its target residecy with predicted_ns, which allows one
+residency
+
+> more exit_latency_ns check that becomes redundant to be dropped.
+> 
+> However, after the above change, latency_req cannot take the predicted_ns
+> value any more, which takes place after commit 38f83090f515 ("cpuidle:
+> menu: Remove iowait influence"), because it may cause a polling state
+> to be returned prematurely.
+> 
+> In the context of the previous example say that predicted_ns is 3000 and
+> the PM QoS latency limit is still 20 us.  Additionally, say that idle
+> state 0 is a polling one.  Moving the exit_latency_ns check before the
+> target_residency_ns one causes the loop to terminate in the second
+> iteration, before the target_residency_ns check, so idle state 0 will be
+> returned even though previously state 1 would be returned if there were
+> no imminent timers.
+> 
+> For this reason, remove the assignment of the predicted_ns value to
+> latency_req from the code.
+> 
+> Fixes: 5ef499cd571c ("cpuidle: menu: Handle stopped tick more aggressively")
+> Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/cpuidle/governors/menu.c |   29 ++++++++++++-----------------
+>  1 file changed, 12 insertions(+), 17 deletions(-)
+> 
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -287,20 +287,15 @@
+>  		return 0;
+>  	}
 >  
->  	namespace_lock();
+> -	if (tick_nohz_tick_stopped()) {
+> -		/*
+> -		 * If the tick is already stopped, the cost of possible short
+> -		 * idle duration misprediction is much higher, because the CPU
+> -		 * may be stuck in a shallow idle state for a long time as a
+> -		 * result of it.  In that case say we might mispredict and use
+> -		 * the known time till the closest timer event for the idle
+> -		 * state selection.
+> -		 */
+> -		if (predicted_ns < TICK_NSEC)
+> -			predicted_ns = data->next_timer_ns;
+> -	} else if (latency_req > predicted_ns) {
+> -		latency_req = predicted_ns;
+> -	}
+> +	/*
+> +	 * If the tick is already stopped, the cost of possible short idle
+> +	 * duration misprediction is much higher, because the CPU may be stuck
+> +	 * in a shallow idle state for a long time as a result of it.  In that
+> +	 * case, say we might mispredict and use the known time till the closest
+> +	 * timer event for the idle state selection.
+> +	 */
+> +	if (tick_nohz_tick_stopped() && predicted_ns < TICK_NSEC)
+> +		predicted_ns = data->next_timer_ns;
 >  
-> -	err = -EINVAL;
-> -	/* To and From must be mounted */
-> -	if (!is_mounted(&from->mnt))
-> -		goto out;
-> -	if (!is_mounted(&to->mnt))
-> -		goto out;
-> -
-> -	err = -EPERM;
-> -	/* We should be allowed to modify mount namespaces of both mounts */
-> -	if (!ns_capable(from->mnt_ns->user_ns, CAP_SYS_ADMIN))
-> +	err = may_change_propagation(from);
-> +	if (err)
->  		goto out;
-> -	if (!ns_capable(to->mnt_ns->user_ns, CAP_SYS_ADMIN))
-> +	err = may_change_propagation(from);
+>  	/*
+>  	 * Find the idle state with the lowest power while satisfying
+> @@ -316,13 +311,15 @@
+>  		if (idx == -1)
+>  			idx = i; /* first enabled state */
+>  
+> +		if (s->exit_latency_ns > latency_req)
+> +			break;
+> +
+>  		if (s->target_residency_ns > predicted_ns) {
+>  			/*
+>  			 * Use a physical idle state, not busy polling, unless
+>  			 * a timer is going to trigger soon enough.
+>  			 */
+>  			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> -			    s->exit_latency_ns <= latency_req &&
+>  			    s->target_residency_ns <= data->next_timer_ns) {
+>  				predicted_ns = s->target_residency_ns;
+>  				idx = i;
+> @@ -354,8 +351,6 @@
+>  
+>  			return idx;
+>  		}
+> -		if (s->exit_latency_ns > latency_req)
+> -			break;
+>  
+>  		idx = i;
+>  	}
+> 
+> 
+> 
 
-Just driving by, but I guess you mean "to" here.
+Good catch!
+Reviewed-by: Christian Loehle <christian.loehle@arm.com>
 
-Tycho
 
