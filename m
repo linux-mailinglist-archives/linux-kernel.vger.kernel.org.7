@@ -1,170 +1,150 @@
-Return-Path: <linux-kernel+bounces-766548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD747B247F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:06:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21BFB247FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 694337AA617
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DCF016F9D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3259F2F657C;
-	Wed, 13 Aug 2025 11:05:53 +0000 (UTC)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724922F744B;
+	Wed, 13 Aug 2025 11:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVvBrn5L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D352212556;
-	Wed, 13 Aug 2025 11:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2892F6595
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755083152; cv=none; b=BB/WqlE4/5AaxzVaKLhd3hdseLD3XptZEIFcY+4hDv2gJhuRoHbYhH5fqVce1LMEv/T9r0yoRk+rto/v0JvKZcswjRddwv7r0zuQKjVO5gxC6hsN5Q0LaluW4yDKv/zyilqJohax0m2hOhhx1zFuVKl4VIPLVlYOYplzhdibNQw=
+	t=1755083153; cv=none; b=KQbPwizs3AaS4BP1WlLn5nzyT0dKUCrlW2MGW+Akd4bkbR19149bcGuStJ7PZIrq4IsbchBd7BkqamX7QooNdSjV+W26VCJhCs+2pnHvRyx5cWGU7ytTzF4RLA0DAY/s1ygTw8ZIwFDsV88eJsbFTAZqK/XJKgKnk4uq5G5S5SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755083152; c=relaxed/simple;
-	bh=19jXmdm6BoKJpJdC5a9g6HEo6t347g42HYUDu6mtFcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W+frOJGXWGb3VAklz9bOUnYyxAarprE9QRRLpEFunxf4DgZTASMVyFGSb79zd5xb4P3SpJtYRaa1nq/2/rQe0PUP+YkLZbWeh/XEX7k2ecSk09rlevQRu9yRe3XI43Sad1hokobCuatF0PCV1hVcWYHhiyIWGFqVcsIWm3y13n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5393776550aso5203109e0c.2;
-        Wed, 13 Aug 2025 04:05:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755083149; x=1755687949;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P8ELOPdoTkU1ViN1av56fzFnprM3B43pI8SDG5/ljkw=;
-        b=Oo8JVid2BHwTsZZ2S+6hPyEOMI85nsvrZA4ohy5RMI0wOp4cLgqwhSEUQ+rAUfhu67
-         6YfSqQGQ2zpQdIxLb789dSsRRE/b/GUSqZx1qI6UMNWjWndGu47IpO4HLeJg/cLSUPdk
-         h3JWW2zXosBJI/pk6IGDLmKiS3VO0mXacaNT1ATdD3/MnZz7FCOUMT5qy/zKlqsj1rgE
-         CTpbpiJFfKWlGQdMJ0hn7G8GC6pivhvJzJ706eD3xFGULTWJ4xs89+ND0FOsdEVKZhn8
-         PFQ1Hg2a6OX9n5jrYO42bHxbTkgUxJiSwhA3xuv9JSRodfJM8NP8UHqMXtA4NAXEvxYX
-         qTsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUN6XE4jNVrKcfjcoscHGb/OYhCfoii6CmfOJmF+VOr8teikzJ26+VLhPhrZddNrMKM95LJ2HWEG1E=@vger.kernel.org, AJvYcCUNndM+ylBLNMXLjP3QjSeNIuZ9wGu9Rbz4LjpEoSntEfrBWQsPEabWIZkj/B8lC7hFNILLgDzZ@vger.kernel.org, AJvYcCVC/wxkt8e7cSGWj+0eBwF6kbidlb6t+ht9bI5SmO/yxAcgzEcpdXJYyWqN0UmzwIBg/pXRnUBG95AZid4l@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvCikfEbx/uwpdpcA5Oe8WlpNA0/LKwIBKT3LQg78YdwcGw6LX
-	xRLU001t5bTb0UAdjkeY7EJ4VA1AIJyCTuAQdYIHQGVrxM96Eg9hnPy+tvT/1xAl
-X-Gm-Gg: ASbGnct7QdSL4H0zJC6badrvWl8ZQso7HSNFmKiZxaD8kj2u/S36Ec1eIUK0O+UncBA
-	rz0UOt6wuhL6SJr+4KOYWVFXfXQPi7Mv6siCNI8q4zeOubqLEb/3pwhSQyu+VihDR968tkLz+HA
-	U9LVsTYV0tr/Q8q1/8F4snnqLICLVOsljLiLIubBhMeWX3iHySmfOvx81WbtkMbFTWq84jw+yg5
-	55X0xMtZgN+h1F4U0ax7NmeCaYzL622Ow5MWgnF7cMe/wTTXGr5GxjwvtEfB/eNSbyNYSu69Rs2
-	HIdHQcgsQSSCkYbzjb2S1B5nXkWPFVyu979idNXekEFWKKtZVdApHkKiMNL/emOVrEYma47thGB
-	03O52ajvZTzrsuE9fUaO+y1KRVYdHWwpFZ5PWO840CMUYsNAsHzgUfdInYP40W094Rbo5PEo=
-X-Google-Smtp-Source: AGHT+IHCp9iHmw+2YssG/6jmJcp5qBG7z2xggb32mHp/vuskeqUU/2pYN1s6ZD7FjQzzn5k3uMdH1w==
-X-Received: by 2002:a05:6122:512:b0:520:61ee:c815 with SMTP id 71dfb90a1353d-53b0b6075cbmr728257e0c.10.1755083149119;
-        Wed, 13 Aug 2025 04:05:49 -0700 (PDT)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-539b0289540sm3776384e0c.18.2025.08.13.04.05.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 04:05:48 -0700 (PDT)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-506374fbecbso4053949137.0;
-        Wed, 13 Aug 2025 04:05:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIa5YKQqFqV6g9Bm9WKbupXJBDSUN3RLWBPmAtGIXWm7tSv9niygSdjb+8r+Cud/X4xZMP0L+tPRA=@vger.kernel.org, AJvYcCWSwBtuDQizZVq4hRxa6WQ+6bKaDTrcDkQqkxR65n58KDZhXcNo3UfI8GmEN2H0SCtrA9o8yLTlh+PL9RXJ@vger.kernel.org, AJvYcCXpwAtNFyYCErMV/4AfAqvd/Hnoy1gWQ1VHBVf3iuNQJgaKY2Rf6KqDVEHrsbpzyYN3Kqui5WN4@vger.kernel.org
-X-Received: by 2002:a05:6102:80aa:b0:4fa:25a2:5804 with SMTP id
- ada2fe7eead31-50e4ede1dcemr1060597137.10.1755083147792; Wed, 13 Aug 2025
- 04:05:47 -0700 (PDT)
+	s=arc-20240116; t=1755083153; c=relaxed/simple;
+	bh=Eeai9dFb+kti/XBjctJ0qi3uDnJFrbSx2nI6I5JGe/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kG9uvfxM0UzlsE5Gyp31NMYes8ROuf5uu0N/is1xFnACRXw4Va22g/NolFoxHiws7pjXtB9FMfb+nzQGZ76umQtq7iZBn44CQoKfhiD/JYg+2kk3q9jPCs/4Uy/SRAQhPmQmvZaFYtW7VOUB7bjn1UDeU4D/wL6sOKYufJuyrJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVvBrn5L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C655AC4CEF6;
+	Wed, 13 Aug 2025 11:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755083153;
+	bh=Eeai9dFb+kti/XBjctJ0qi3uDnJFrbSx2nI6I5JGe/E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CVvBrn5LFehGaYc2qO2snzxpTuN/fEwDLT0hGHkSpzQ3/ePRh7lGO4NPjOIwarFMS
+	 YgqriuEYxqTn7wP//Env4yN1cC8JPcXVaVHqlIwVUEJDbpFoWqcIHQsTFDv357ryN7
+	 aNJ90rSGYvOzfdiyIb8spetAdPpGdmUqXwfycyc/V989/Swpga1/Z7s3xHncvCzPSW
+	 Kd+qm0KVePfbRRCs4DLx8JbOdAvv6AIgXnZzyXFR1ayWVF8r8V/7R1W8NIptWM/WOM
+	 dxEDpdPz3JAkY6iDsjyzQ41LzDPYVVNRfa4U/82t942GXIU2CQvB+Krfp9s0xuVBjD
+	 XL5KIE8C5CHjQ==
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id C67FBF40066;
+	Wed, 13 Aug 2025 07:05:50 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Wed, 13 Aug 2025 07:05:50 -0400
+X-ME-Sender: <xms:jnGcaIn1p1K9MU1fRyGWzjV0QaDIUTi1zfT2zv7WE8pQiJPkWaIniw>
+    <xme:jnGcaDirxVSukN94gQyZs3OTr1Hv2zcp7-fY0tX4suwMW5O1Tc05PrOfPH8osxTk-
+    DZ_Z53N-m5mWnXpi4M>
+X-ME-Received: <xmr:jnGcaGiopsJBn_DNCn5MLY1IKyfdRiKLiB--lqw0M91wsxo3D_kQT-Rhkv4A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeektdegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
+    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
+    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
+    hnrghmvgdpnhgspghrtghpthhtohepudejvddpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepmhgrtghivghjrdifihgvtgiiohhrqdhrvghtmhgrnhesihhnthgvlhdrtghomh
+    dprhgtphhtthhopehnrghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghr
+    nhgusegrrhhnuggsrdguvgdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhr
+    tghpthhtohepuhhrvgiikhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepfihilhhlse
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehkrghlvghshhhsihhnghhhsehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehrphhptheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:jnGcaBXUyqFUPMfew4Z5OWLnQYxm0ELK4l60pGN0JZUamPnkFvEXsg>
+    <xmx:jnGcaJyWZOPfBrlyFhEBMM7Izc5tbQBmTrmwEKpAcSs1ax97Lv_30g>
+    <xmx:jnGcaCZ1SA6oP89KZrD-pcDTmqZEteJLkTO4D3FxGwNjGKkQTMcQ7w>
+    <xmx:jnGcaPdCHDN46QC0c0e8jPbv5rGJ_dGyrlROhniLqDa5XRLH8zB5wA>
+    <xmx:jnGcaK8yJwFwK7u2RhqfCBJLM8kFptKWxfpX2bimCMLEY2zof4O9jhyL>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Aug 2025 07:05:49 -0400 (EDT)
+Date: Wed, 13 Aug 2025 12:05:47 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: nathan@kernel.org, arnd@arndb.de, broonie@kernel.org,
+ 	Liam.Howlett@oracle.com, urezki@gmail.com, will@kernel.org,
+ kaleshsingh@google.com, 	rppt@kernel.org, leitao@debian.org,
+ coxu@redhat.com, surenb@google.com, 	akpm@linux-foundation.org,
+ luto@kernel.org, jpoimboe@kernel.org, changyuanl@google.com,
+ 	hpa@zytor.com, dvyukov@google.com, corbet@lwn.net,
+ vincenzo.frascino@arm.com, 	smostafa@google.com,
+ nick.desaulniers+lkml@gmail.com, morbo@google.com, 	andreyknvl@gmail.com,
+ alexander.shishkin@linux.intel.com, thiago.bauermann@linaro.org,
+ 	catalin.marinas@arm.com, ryabinin.a.a@gmail.com, jan.kiszka@siemens.com,
+ jbohac@suse.cz, 	dan.j.williams@intel.com, joel.granados@kernel.org,
+ baohua@kernel.org, 	kevin.brodsky@arm.com, nicolas.schier@linux.dev,
+ pcc@google.com, 	andriy.shevchenko@linux.intel.com, wei.liu@kernel.org,
+ bp@alien8.de, ada.coupriediaz@arm.com, 	xin@zytor.com,
+ pankaj.gupta@amd.com, vbabka@suse.cz, glider@google.com,
+ 	jgross@suse.com, kees@kernel.org, jhubbard@nvidia.com,
+ joey.gouly@arm.com, 	ardb@kernel.org, thuth@redhat.com,
+ pasha.tatashin@soleen.com, 	kristina.martsenko@arm.com,
+ bigeasy@linutronix.de, lorenzo.stoakes@oracle.com,
+ 	jason.andryuk@amd.com, david@redhat.com, graf@amazon.com,
+ wangkefeng.wang@huawei.com, 	ziy@nvidia.com, mark.rutland@arm.com,
+ dave.hansen@linux.intel.com, 	samuel.holland@sifive.com,
+ kbingham@kernel.org, trintaeoitogc@gmail.com,
+ 	scott@os.amperecomputing.com, justinstitt@google.com,
+ kuan-ying.lee@canonical.com, 	maz@kernel.org, tglx@linutronix.de,
+ samitolvanen@google.com, mhocko@suse.com,
+ 	nunodasneves@linux.microsoft.com, brgerst@gmail.com,
+ willy@infradead.org, ubizjak@gmail.com, 	peterz@infradead.org,
+ mingo@redhat.com, sohil.mehta@intel.com, linux-mm@kvack.org,
+ 	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ x86@kernel.org, 	llvm@lists.linux.dev, kasan-dev@googlegroups.com,
+ linux-doc@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/18] kasan: x86: arm64: KASAN tag-based mode for x86
+Message-ID: <ebl5meuoksen5yzpzbc5lcafcgzy3esfq7c47puz4tefeskkos@f5wzzg4fjrfz>
+References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
+ <mt3agowg6ghwhvcjqfgqgua3m3al566ewmvwvqkkenxfkbslhq@eun5r3quvcqq>
+ <rzlimi2nh4balb2zdf7cb75adoh2fb33vfpsirdtrteauhcdjm@jtzfh4zjuwgl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812093937.882045-1-dong100@mucse.com> <20250812093937.882045-5-dong100@mucse.com>
- <eafb8874-a7a3-4028-a4ad-d71fc5689813@linux.dev> <9A6132D78B40DAFD+20250813095214.GA979548@nic-Precision-5820-Tower>
-In-Reply-To: <9A6132D78B40DAFD+20250813095214.GA979548@nic-Precision-5820-Tower>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 13 Aug 2025 13:05:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWpmt2q9tVm-3HV1h2=-7D6zEs_HnBe5gfYVgvfB=01hQ@mail.gmail.com>
-X-Gm-Features: Ac12FXykxkxcBAyHi6ifzzajziMNzS1hRo0bp3BpLatMabyGlraJlaV0atHk_h0
-Message-ID: <CAMuHMdWpmt2q9tVm-3HV1h2=-7D6zEs_HnBe5gfYVgvfB=01hQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] net: rnpgbe: Add basic mbx_fw support
-To: Yibo Dong <dong100@mucse.com>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au, 
-	danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org, 
-	geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com, 
-	lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com, 
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <rzlimi2nh4balb2zdf7cb75adoh2fb33vfpsirdtrteauhcdjm@jtzfh4zjuwgl>
 
-Hi Yibo,
-
-On Wed, 13 Aug 2025 at 11:52, Yibo Dong <dong100@mucse.com> wrote:
-> On Tue, Aug 12, 2025 at 05:14:15PM +0100, Vadim Fedorenko wrote:
-> > On 12/08/2025 10:39, Dong Yibo wrote:
-> > > Initialize basic mbx_fw ops, such as get_capability, reset phy
-> > > and so on.
-> > >
-> > > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > > +static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
-> > > +                             struct mbx_fw_cmd_req *req,
-> > > +                             struct mbx_fw_cmd_reply *reply)
-> > > +{
-> > > +   int len = le16_to_cpu(req->datalen) + MBX_REQ_HDR_LEN;
-> > > +   int retry_cnt = 3;
-> > > +   int err;
-> > > +
-> > > +   err = mutex_lock_interruptible(&hw->mbx.lock);
-> > > +   if (err)
-> > > +           return err;
-> > > +   err = hw->mbx.ops->write_posted(hw, (u32 *)req,
-> > > +                                   L_WD(len));
-> > > +   if (err) {> +           mutex_unlock(&hw->mbx.lock);
-> > > +           return err;
-> > > +   }
+On Wed, Aug 13, 2025 at 12:39:35PM +0200, Maciej Wieczor-Retman wrote:
+> On 2025-08-13 at 09:16:29 +0100, Kiryl Shutsemau wrote:
+> >On Tue, Aug 12, 2025 at 03:23:36PM +0200, Maciej Wieczor-Retman wrote:
+> >> Compilation time comparison (10 cores):
+> >> * 7:27 for clean kernel
+> >> * 8:21/7:44 for generic KASAN (inline/outline)
+> >> * 8:20/7:41 for tag-based KASAN (inline/outline)
 > >
-> > it might look a bit cleaner if you add error label and have unlock code
-> > once in the end of the function...
-> >
->
-> If it is more cleaner bellow?
->
-> static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
->                                   struct mbx_fw_cmd_req *req,
->                                   struct mbx_fw_cmd_reply *reply)
-> {
->         int len = le16_to_cpu(req->datalen) + MBX_REQ_HDR_LEN;
->         int retry_cnt = 3;
->         int err;
->
->         err = mutex_lock_interruptible(&hw->mbx.lock);
->         if (err)
->                 return err;
->         err = hw->mbx.ops->write_posted(hw, (u32 *)req,
->                                         L_WD(len));
->         if (err)
->                 goto quit;
->         do {
->                 err = hw->mbx.ops->read_posted(hw, (u32 *)reply,
->                                                L_WD(sizeof(*reply)));
->                 if (err)
->                         goto quit;
->         } while (--retry_cnt >= 0 && reply->opcode != req->opcode);
->
->         mutex_unlock(&hw->mbx.lock);
->         if (retry_cnt < 0)
->                 return -ETIMEDOUT;
->         if (reply->error_code)
->                 return -EIO;
->         return 0;
-> quit:
->         mutex_unlock(&hw->mbx.lock);
->         return err;
-> }
+> >It is not clear if it is compilation time of a kernel with different
+> >config options or compilation time of the same kernel running on machine
+> >with different kernels (KASAN-off/KASAN-generic/KASAN-tagged).
+> 
+> It's the first one, I'll reword this accordingly.
+> 
+> When you said a while ago this would be a good thing to measure, did you mean
+> the first or the second thing? I thought you meant the first one but now I have
+> doubts.
 
-Or use scoped_cond_guard(mutex_intr, ...) { ... }?
-
-Gr{oetje,eeting}s,
-
-                        Geert
+I meant the second. We want to know how slow is it to run a workload
+under kernel with KASAN enabled.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  Kiryl Shutsemau / Kirill A. Shutemov
 
