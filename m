@@ -1,86 +1,90 @@
-Return-Path: <linux-kernel+bounces-767443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D896EB25441
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:08:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CFFB25450
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC4F91C84760
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:08:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 014E37B54B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC322FD7D4;
-	Wed, 13 Aug 2025 20:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5FC2C21F6;
+	Wed, 13 Aug 2025 20:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaA6/QFQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yuka.dev header.i=@yuka.dev header.b="SsWt3Rii"
+Received: from mail.cyberchaos.dev (mail.cyberchaos.dev [195.39.247.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD8C2FD7B8;
-	Wed, 13 Aug 2025 20:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0531C2FD7BC;
+	Wed, 13 Aug 2025 20:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.39.247.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755115583; cv=none; b=J/nqA8O/MvuRDWNeHl/7m3uE2J96RkkO4L/zrSF7qVPGVlxWqrSwJ8MoXx/tu1sFdDuYyRPKkxgbT+zmaBSY1ZoR8dtmAg8v8p97ELDsFeDD2G73MVFXhhtHPupZ8S5tEmbMlMIgxhwS+zYs74iaj5BwUie5ytxsIa5IhWlQcpI=
+	t=1755115766; cv=none; b=m53anDbqVkFyOXh1CZWSvM4Pp8nSJH8Ud4MEVcHZZ6L4mURnehYZKVM0nTKLVnt1TRxESHUgGP8MdGNasfXcKed3/BIP0+EmKDQbmFhkFDBNoqIEkUhsNhZhy4a8IojotEv6zZiejyVyiuAO2mRGgryx7Q065Thrn81OYqx4AWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755115583; c=relaxed/simple;
-	bh=MITMK6arStSROO99HgFrV3njjzctU3Jclr9cKBRlHwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aegQrCPHRAqZP/CHQIEXe6PVJKlG4fIT4GzkBAfs2t2GBYSXY3oJpUvvwS2WZXSRWMYNvkZTP5a/mWgYCoQMS1IE1ZHUCWmpEzrlelyZyfTrqCfGZ9+LmyYre0SISr/XMqheXnvATf+5AzJvu0WfLta+7DRVuyGC0/jV1pq5wUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaA6/QFQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DD8C4CEEB;
-	Wed, 13 Aug 2025 20:06:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755115581;
-	bh=MITMK6arStSROO99HgFrV3njjzctU3Jclr9cKBRlHwM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DaA6/QFQAY4T6096Mq+zahNS5iKjjeyEAGrHj+m7q6g6Y09qigRyJW/xruyD0IXXB
-	 Aji/yksQO+GIFWgx5GAfqeEg3ORQmUlJXcPN1f/RAis6hgMT3yjstObIw8H44uvjLn
-	 j2BV3UYC1/GCSCogaFulGWI3C9J+2okpuE2QGAipS2j5GrCenSegMvAAS6J+I06wBg
-	 C8vt0uECEh9W7xPzjlOU9tYVOF33yHZlVFwtfNSabI8h8RZBGyK0GlQRPeH3ogPFVs
-	 sN9V2NJKLTfbNuS/wbeMPb2pp90FESGj2ufz9xNC7MinyWFs4+MwZVjumcvmCbOUd7
-	 o9GIsa68I45sw==
-Date: Wed, 13 Aug 2025 14:06:19 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Keith Busch <kbusch@meta.com>
-Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, snitzer@kernel.org, axboe@kernel.dk,
-	dw@davidwei.uk, brauner@kernel.org, Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCHv2 1/7] block: check for valid bio while splitting
-Message-ID: <aJzwO9dYeBQAHnCC@kbusch-mbp>
-References: <20250805141123.332298-1-kbusch@meta.com>
- <20250805141123.332298-2-kbusch@meta.com>
+	s=arc-20240116; t=1755115766; c=relaxed/simple;
+	bh=OzJUua3I3dfZfBM409ZVp6t2ABtDZJ466Pj5V+4Me90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Aw5HcJp48FOSKJcCXXz1X0s11lbW4UBJ755+MlGTpNpBMs8bMxENgjm14nSvl5E/G2ZkewqMIrGxAcYmMzY/Gv41k/4OJkeB/e1RtMeFEuslp5y3+GZ6hXAOVX+MFvlk4gzNH6mZ6qb4D+xDESeh/ZhaNEpcTCGEbwBbXFmOdik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yuka.dev; spf=pass smtp.mailfrom=yuka.dev; dkim=pass (1024-bit key) header.d=yuka.dev header.i=@yuka.dev header.b=SsWt3Rii; arc=none smtp.client-ip=195.39.247.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yuka.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yuka.dev
+From: Yureka Lilian <yuka@yuka.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yuka.dev; s=mail;
+	t=1755115755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=9oY1i4rTziRmpYFWF7P/9IupSmWDANwMkal39AXj8XE=;
+	b=SsWt3RiiIhbHMPVSOdouFC/Vb/Npm35K+V5P7aDDvR+vLOFe6IKvNHV/9gkm9Zb1SUAR1h
+	hbEleQ4trsAUaE+q6ZaZpISm5x38oUQsmo7YT4BWSA6yOtj8s3CpPu+l43fqshvRBZUv7l
+	IprnTmfnt+TnO516um0VSeCdhNUaSpk=
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: Yureka Lilian <yuka@yuka.dev>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] bpf: fix reuse of DEVMAP
+Date: Wed, 13 Aug 2025 22:09:09 +0200
+Message-ID: <20250813200912.3523279-1-yuka@yuka.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250805141123.332298-2-kbusch@meta.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 05, 2025 at 07:11:17AM -0700, Keith Busch wrote:
->  	bio_for_each_bvec(bv, bio, iter) {
-> +		if (bv.bv_offset & lim->dma_alignment)
-> +			return -EINVAL;
+This patch series includes the previous fix to libbpf for re-using DEVMAP
+maps, but modifies it to preserve compatibility with older kernels, thanks
+to the feedback given by Martin KaFai Lau.
 
-I have a question about this part here because testing with various scsi
-is showing odd results.
+Additionally adds a basic selftest covering the re-use of DEVMAP maps, as
+requested by Eduard Zingerman.
 
-NVMe wants this check to actually be this:
 
-		if ((bv.bv_offset | bv.bv_len) & lim->dma_alignment)
+Yureka Lilian (2):
+  bpf: fix reuse of DEVMAP
+  bpf: add test for DEVMAP reuse
 
-because the dma alignment defines not only the starting address offset,
-but also the length. NVMe's default alignment is 4 bytes.
+ tools/lib/bpf/libbpf.c                        | 14 +++-
+ .../bpf/prog_tests/pinning_devmap_reuse.c     | 68 +++++++++++++++++++
+ .../selftests/bpf/progs/test_pinning_devmap.c | 20 ++++++
+ 3 files changed, 101 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/pinning_devmap_reuse.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_pinning_devmap.c
 
-But I can't make that change because many scsi devices don't set the dma
-alignment and get the default 511 value. This is fine for the memory
-address offset, but the lengths sent for various inquriy commands are
-much smaller, like 4 and 32 byte lengths. That length wouldn't pass the
-dma alignment granularity, so I think the default value is far too
-conservative. Does the address start size need to be a different limit
-than minimum length? I feel like they should be the same, but maybe
-that's just an nvme thing.
+-- 
+2.50.1
+
 
