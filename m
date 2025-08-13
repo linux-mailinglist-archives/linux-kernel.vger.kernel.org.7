@@ -1,177 +1,150 @@
-Return-Path: <linux-kernel+bounces-766977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB73FB24D56
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:28:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7FEB24D5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B8AA17634A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:25:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090CF162C4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5B4232395;
-	Wed, 13 Aug 2025 15:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC05123ABBB;
+	Wed, 13 Aug 2025 15:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WDNMMUqI"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s4wtRnQr"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B8F231839;
-	Wed, 13 Aug 2025 15:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414FA237707
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755098712; cv=none; b=AdAw9V7kLg26BAf50DAoDSN1VH4PoaWzpIwL84PBON1j81s0/TQl4Y34JvUK/5mtfwAdpUOXeRQVZH9Eo4VE8qLkN7mcl9ZVI+8KlGNyToxxLwy9K9Q8sTcGvtLZi3L9mi6SaX5cL7jTvuV9wB/g/mLPfqYskn0zgkSIZXN9pHg=
+	t=1755098795; cv=none; b=RnTZ+XiniYdSPECiEUq09nBgYVCtsESWonJ2qJHUnF31YA2l1vYyTFwf+/vf/OsH7TyzZ1OKJ/4q+0HFID4bGbrySS6HRE6Ew0D2lHEGNMyPmCoLmHoJbch1u4Z8EBAKvxa2UXBIAN1NsLPbIXscwqdF2fHDMVUHk628l4gWKbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755098712; c=relaxed/simple;
-	bh=aSZYpogVJcVF1l/xXID+mUfdRe8mg1bAaCN9UZNml/I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qISBmQLT/HIdTnW1AkZNOagVAHUWJ8w3R30LuZPqVlV4fDkxySaRRPcaDenx2KMOB9fnqFyGghzk2PSsKEJ1KGj6rf4uzL+M7mFzXQxv/A1dqmljl/0blQY0+l+j5gYOrltn5tdiYU7+fNTxfiaBw4A4y9PPVVBhhsBB2O2OmZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WDNMMUqI; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b792b0b829so6753904f8f.3;
-        Wed, 13 Aug 2025 08:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755098708; x=1755703508; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vIKzP+v10goqJv8MZ6hUQxh9iZh9GLNgEJG//KT6geg=;
-        b=WDNMMUqIj72UOuM/KvB5/7uOlhvQKYtUnSqlCukpkEhGKf9f+91kA9xoTXXupsEOLq
-         iDP79d4Cj+O283jO0BGWW7IkCzEmQ4TsbNldWIlZopnHaPLBxoht0z83N4kLO23LT3BJ
-         jfpMgbqeE/5PxvKrGip8a5/3E3l+fwLMBCG/H1vrRWELh8+taSivtHABKi1XRqHBHTxL
-         wc8ZdU4Rw7P6f78aWRdIes5uP8T2ZdDV28ZYSvDSxd10vsTTqhPCOTxtO5qdmkSXVth8
-         Sz8Ao6RgEqWN28azI3TqzYUSVSdp/FgTnmK8axzttq8r5+kfrIb5RUvo49V1yDv1AGNX
-         4+TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755098708; x=1755703508;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vIKzP+v10goqJv8MZ6hUQxh9iZh9GLNgEJG//KT6geg=;
-        b=Ajd4D6h0+xG7syHitV8rcNOQLLtEC7VUb8CRbu04In4pdZZsHd8lMKHoAWyZv+lhCa
-         6iWMOPDJE6Hw0sHdpGq2gyiaJu+NQkMhGauJK/nU6Pz9J3KbtIg9HAHeRgp11GVt//9u
-         4R+FGZJAmRLlkA/ZL2OKPGrFY+GcvUzeFHSGy5cT61cncaUDe7B3eDSKhkp4mn1FRXE/
-         7QtnktQSD0oo5leumkNI8XYJ/k4flalEAqUEwoj3T0iVZGJhk2YpENeF1+K9+smc5hjO
-         C9z/QQOI9x1eMbXGJ6LRGWyFNtdi6et+D5w1BQyc3DbtGjAviTjkdAzMcXzS47b1Qeug
-         r4gg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqSTyvW1XvGQ2x4G8qXXbCO0pW6i2NUX6Uze0UHTuJNYcmTDdk/kGV+h6tzDjCDuFAyAUNBo+hvgtKCAif@vger.kernel.org, AJvYcCXzcr6tYoIenwtFZcbo+R1cY84YO0FgvWVAlpu4B3ZqJ9hnXGeaHIGshTW+qUSZMG9bJSuPTfpsrzhe@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlUeBR7A15HZaB5gGMqtbE1MJiK9OkI4CnwtvewLfLBU6nAoTQ
-	/lyTE64UABsNRIG/m2fuRN/b0YUis/yPZPBhgRKre6LOMKKj0ZjFGHkErnxHwA==
-X-Gm-Gg: ASbGnctquke610gGNK9wLqJCBJTpZHGMfq2Io0U3uRLNKT8NfV4Ly0TodgmHb4NGcNw
-	DwoZMCkwlm3UcBkfwPrLTblYfc4doDJgU7sfxN0EPbYcEBBAQ4LF2cKrUYxpRMHp5nCPFI2pSSk
-	tvWLYP9hKbT6PXOUsLFWsWB2YW38aXkGpnHgbfmEXNbOFsp2EmQiBQYrP0w/kIkgjb2n9MpFz35
-	/FRKvoQ09n3JWvSzeVCf8jAQuG1af0Sb9SuYnApnAoYSaB/BFzNVJtBmTtSgPKILjHr2f4vwQfU
-	C8z8YF/QE9mMFh5mQyDRpEjULf9+9zU/9JIHBC2jSZKE0Hb15HnBSrY3ZLnZW/3lhaj+nyMNltS
-	Lt/yrGt8xYxVc1irlENc2vxuikbrCnpqG09MB9lWkocXI+XAX3x3B9vp3oPEl+QFGRBEeMySIhg
-	==
-X-Google-Smtp-Source: AGHT+IFDK6njZdaYiIYPO/ZMO6ujPoE/G41Mb7N255M2MT+1frSU31mMtoR+dOSJ53Ri0BsuUYgPGg==
-X-Received: by 2002:a05:6000:2c01:b0:3b8:d4ad:6af0 with SMTP id ffacd0b85a97d-3b917f14e1amr2572720f8f.40.1755098708425;
-        Wed, 13 Aug 2025 08:25:08 -0700 (PDT)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1abcd59bsm465535e9.3.2025.08.13.08.25.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 08:25:08 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>,
- Chen-Yu Tsai <wens@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>
-Subject:
- Re: [PATCH net-next v2 04/10] soc: sunxi: sram: register regmap as syscon
-Date: Wed, 13 Aug 2025 17:25:05 +0200
-Message-ID: <5910992.DvuYhMxLoT@jernej-laptop>
-In-Reply-To: <20250813145540.2577789-5-wens@kernel.org>
-References:
- <20250813145540.2577789-1-wens@kernel.org>
- <20250813145540.2577789-5-wens@kernel.org>
+	s=arc-20240116; t=1755098795; c=relaxed/simple;
+	bh=0oQi+iiyp0itqtl6RIdLSiMtpZOH1aH7EZ9BHYAb/Ts=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k5WytT3GBbzk+N+dlv6dbKwV4qQvEZh76C5nNmNggBpG4awIf389ipxJdGJhlhxU1fsrbmLDVZ9LjLcu/w0Rf6SPX8NyVNzIucmxoA4/4x0v7RzycVQyQ2crY9WUTAOGU46bnQGJzOIZLJtc0xAGD0QgKsNgFivzDWf4SInOhzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s4wtRnQr; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DFQBdF1728877;
+	Wed, 13 Aug 2025 10:26:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755098771;
+	bh=f6EBEMYOHLBS/mOMhxKpJJOh8alzp/LH8jTecCxA9Aw=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=s4wtRnQrLPtZvTOm8HT2J2f0fERCIvleTqauRAsIg8rBdOGs04emppWtMWLSehjEr
+	 BhxqgKtR7G/6gMDl9tES4wpZUnnmLFnksGeoSPXoto11DfOt+RVfDGVW7O6gaOxWqA
+	 bHdTe7Hzl4B8jkNuMAz3iEddS8Z7pTsLZKqjl4e8=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DFQBLq153772
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 13 Aug 2025 10:26:11 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
+ Aug 2025 10:26:10 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 13 Aug 2025 10:26:10 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DFQApP2503743;
+	Wed, 13 Aug 2025 10:26:10 -0500
+Date: Wed, 13 Aug 2025 10:26:10 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Guillaume La Roque <glaroque@baylibre.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, <vigneshr@ti.com>,
+        Santosh Shilimkar
+	<ssantosh@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/2] soc: ti: ti_sci_inta_msi: Enable module
+ compilation support
+Message-ID: <20250813152610.akcdxrzhev6e2kfa@unturned>
+References: <20250812-timsi-v2-0-90c8500f3f18@baylibre.com>
+ <20250812-timsi-v2-2-90c8500f3f18@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250812-timsi-v2-2-90c8500f3f18@baylibre.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Dne sreda, 13. avgust 2025 ob 16:55:34 Srednjeevropski poletni =C4=8Das je =
-Chen-Yu Tsai napisal(a):
-> From: Chen-Yu Tsai <wens@csie.org>
->=20
-> If the system controller had a ethernet controller glue layer control
-> register, a limited access regmap would be registered and tied to the
-> system controller struct device for the ethernet driver to use.
->=20
-> Until now, for the ethernet driver to acquire this regmap, it had to
-> do a of_parse_phandle() + find device + dev_get_regmap() sequence.
-> Since the syscon framework allows a provider to register a custom
-> regmap for its device node, and the ethernet driver already uses
-> syscon for one platform, this provides a much more easier way to
-> pass the regmap.
->=20
-> Use of_syscon_register_regmap() to register our regmap with the
-> syscon framework so that consumers can retrieve it that way.
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-Best regards,
-Jernej
-
->=20
+On 22:36-20250812, Guillaume La Roque wrote:
+> Add module support to the TI SCI INTA MSI driver:
+> - Change Kconfig from bool to tristate to allow module compilation
+> - Add linux/module.h include for module functionality
+> - Add MODULE_LICENSE, MODULE_DESCRIPTION, and MODULE_AUTHOR macros
+> 
+> This allows the driver to be compiled as a loadable kernel module
+> named ti_sci_inta_msi.
+> 
+> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
 > ---
-> Changes since v1:
-> - Fix check on return value
-> - Expand commit message
-> ---
->  drivers/soc/sunxi/sunxi_sram.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sra=
-m.c
-> index 4f8d510b7e1e..1837e1b5dce8 100644
-> --- a/drivers/soc/sunxi/sunxi_sram.c
-> +++ b/drivers/soc/sunxi/sunxi_sram.c
-> @@ -12,6 +12,7 @@
-> =20
->  #include <linux/debugfs.h>
->  #include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
+>  drivers/soc/ti/Kconfig           | 5 ++++-
+>  drivers/soc/ti/ti_sci_inta_msi.c | 5 +++++
+>  2 files changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
+> index 1a93001c9e36..0a9eb5ac264b 100644
+> --- a/drivers/soc/ti/Kconfig
+> +++ b/drivers/soc/ti/Kconfig
+> @@ -85,7 +85,10 @@ config TI_PRUSS
+>  endif # SOC_TI
+>  
+>  config TI_SCI_INTA_MSI_DOMAIN
+> -	bool
+> +	tristate "TI SCI INTA MSI Domain driver"
+>  	select GENERIC_MSI_IRQ
+>  	help
+>  	  Driver to enable Interrupt Aggregator specific MSI Domain.
+> +
+> +	  Say Y here to compile it into the kernel or M to compile it as a
+> +	  module. The module will be called ti_sci_inta_msi.
+> diff --git a/drivers/soc/ti/ti_sci_inta_msi.c b/drivers/soc/ti/ti_sci_inta_msi.c
+> index 193266f5e3f9..d92cab319d57 100644
+> --- a/drivers/soc/ti/ti_sci_inta_msi.c
+> +++ b/drivers/soc/ti/ti_sci_inta_msi.c
+> @@ -8,6 +8,7 @@
+>  
+>  #include <linux/irq.h>
+>  #include <linux/irqdomain.h>
+> +#include <linux/module.h>
+>  #include <linux/msi.h>
 >  #include <linux/of.h>
 >  #include <linux/of_address.h>
-> @@ -377,6 +378,7 @@ static int __init sunxi_sram_probe(struct platform_de=
-vice *pdev)
->  	const struct sunxi_sramc_variant *variant;
->  	struct device *dev =3D &pdev->dev;
->  	struct regmap *regmap;
-> +	int ret;
-> =20
->  	sram_dev =3D &pdev->dev;
-> =20
-> @@ -394,6 +396,10 @@ static int __init sunxi_sram_probe(struct platform_d=
-evice *pdev)
->  		regmap =3D devm_regmap_init_mmio(dev, base, &sunxi_sram_regmap_config);
->  		if (IS_ERR(regmap))
->  			return PTR_ERR(regmap);
+> @@ -115,3 +116,7 @@ int ti_sci_inta_msi_domain_alloc_irqs(struct device *dev,
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(ti_sci_inta_msi_domain_alloc_irqs);
 > +
-> +		ret =3D of_syscon_register_regmap(dev->of_node, regmap);
-> +		if (ret)
-> +			return ret;
->  	}
-> =20
->  	of_platform_populate(dev->of_node, NULL, NULL, dev);
->=20
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Texas Instruments K3 Interrupt Aggregator MSI bus");
+> +MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ti.com>");
+> 
+> -- 
+> 2.34.1
+> 
 
+If Thomas doesn't mind picking the full series,
 
+Acked-by: Nishanth Menon <nm@ti.com>
 
+This is probably one of the last hold outs for us to move SoC support
+into kernel modules.
 
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
