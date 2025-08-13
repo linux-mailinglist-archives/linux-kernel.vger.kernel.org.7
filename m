@@ -1,224 +1,151 @@
-Return-Path: <linux-kernel+bounces-766479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D42B24714
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CB8B24716
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5972F1887524
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:18:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CFD1885E6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4743C2D8DAA;
-	Wed, 13 Aug 2025 10:18:16 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FCB2EBDEC;
+	Wed, 13 Aug 2025 10:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2zR9KDP"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A5923D7D3;
-	Wed, 13 Aug 2025 10:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA7023D7D3;
+	Wed, 13 Aug 2025 10:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755080295; cv=none; b=XuNWTp1d7H1ugRph59wB1wpVBjxqr0QeiPTcRxqJ1BAQZSCmxNy5lHjYtgTHRjmW6kcucxqNxMEI0FZ6EsvncvrD9JejtKJdw449qSFwhRkhyztLRF4W0nd13Mv1K/AaSEwcnVU4irDwpJ7ICmI4jEGe4D780sdr08TTKDFCvAo=
+	t=1755080329; cv=none; b=g+lhg+G80wtyJ5CxWg8vfCp6R4Uvl8t2V228yl6hJXw700x5Vy7tO4sz47kwgWtnRZwn/8ACzigq1GoIm4twg7J3QLIGn3rCyxe5Q2IaolxfK+28iPuhNa2L0B4YUHsvXAgAbjFY+1omnnHwXodCwHsobIh/12r32SGG0jGFVyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755080295; c=relaxed/simple;
-	bh=YxTow1FaDcorwZ+8Tcgfnvrr1e/ojSuzQm1Eev2FX1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QYfoTeyBfAxCkjKTGeTeh+Lgczu3w68HrDalyiuM56otgUp3uf3D6YGg9pskToLbC+AeLHPL9D8brvGYb8gJIk2/VKpm4sQMJuERbhjWPtT6hlEu0RD8w1YbYjq5A60eJ6S8Yo9JgIQ0pByqF+C5+qvnvAARrD4lUBC2KGqoIn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c242m0HR2z2Cg89;
-	Wed, 13 Aug 2025 18:13:36 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9C76F1A016C;
-	Wed, 13 Aug 2025 18:17:55 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
- 2025 18:17:54 +0800
-Message-ID: <561a9474-7be6-4c8a-8a5d-40efb186b3d2@huawei.com>
-Date: Wed, 13 Aug 2025 18:17:54 +0800
+	s=arc-20240116; t=1755080329; c=relaxed/simple;
+	bh=vVOv2yI6QFHHNY2oKXlrzYxsjKpiYtnVJcrHElYK1g0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AarUlrssPkIx2ttRC6rgBig9pxbhlg1TSiZbqJQ50t+cO7j/rrU/qWhk3pUSZE+SFZwvG1SiW1CSwx+3AFqlPzHooOJL021pcwqcGkT3PYxyUnw246UsjEtxogk8LBOoq+g0Of/DIDW6F/QeOa372mJOC6rQfZmdWPhrZxtWtP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2zR9KDP; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af93c3bac8fso901052666b.2;
+        Wed, 13 Aug 2025 03:18:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755080326; x=1755685126; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xo6gUfo+Gn6ecWVrQ1TwetIpAqzbUrV2lNC8R9kTkoU=;
+        b=m2zR9KDPV+WiVqGWmqA9eHILmfHfA/nvdxz0yAmzLbdk9HdMyOL+lSOC2HLDvJIaqK
+         TFdCah0+FCgEhBcuzjXL+CT6taWbcRmc1TNfJ72s3uXuiPVQ3vcy5tTXOPspdsQyHivX
+         +GMPywNfmFAABcbnC/sfOv3LY4hi3uRg6S85l2dxuWsB1KQUStoKBScGnQ74pahx1ml6
+         kDY7MxBKOwW1sniJRcpyjAUmyzjJALnbVa/1/HJB/X8E9Z1uqpztzL1RJ2lZrPa7SUXc
+         uAIVT9iTGd3X5GGLmAmhYzmT4O4ykphrNR48A99ZBrzCE7oCuui82Crgagh8Zn4cFjEi
+         P5zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755080326; x=1755685126;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xo6gUfo+Gn6ecWVrQ1TwetIpAqzbUrV2lNC8R9kTkoU=;
+        b=h5J+/fnSSEuvN6bwFUqgeVw6zJmGS8kMGVPv036bpT/BFv72DWnO3KbBjsVxQSee8o
+         plaaL2ePhg/ZjxozsSW+mhzXHZM3C4einfczPJ2mpsbSjYQAdzhitwjb7gHSlXUsOmWq
+         q46Boss9R6QhiUvChMBEd0dix7cU6xxlPrSXeVC6QFmksAgqeGgh4UweOxeeq6Yy/TP5
+         wH+K2MzAbgzujJRuJGp4ZD5jaALUzZt9S5Y+TmjK9/cO0lnj0XWG4zKGmgCyg/HSncjI
+         byT9jHpbgrpqqORoMIPQN4wG+k/gOOYveb5qniEAX6aJBI5jc7VoD7bKILRD+qWLNSMd
+         ptiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCWwlVBK+RhuOvu9bcaTxTGiGIEMUP1/k+Lgm2PzZIaQOpbKMZuFy93cLxcREmUiUEPZFxTqqXBi2R@vger.kernel.org, AJvYcCXpoROp2r9nSxdxT0Xhxm7d1SWgNmkaMw6VUbDEc9uLODk1P8Mu1+MU6WKUG+WySvtv+5sW3atfD8hs+qLK@vger.kernel.org, AJvYcCXrRVBHsLcV4a0p04IYSKU70DQ94sBFkQpQUbsyPU7a9auphhOEZKBDzgUuqLwfLZsviEg2lpINqxFG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9oLmNTORa8HdT1a9T9wUTvpH44YNb/LiESZNCZxvDGfO1+Qz0
+	4MqoKAWr00OMy5CQz7VXNYw9wkcTh6U7wrdpkuGfNAjMqCUJir5vb/bQXMjxfLc7N1jEy01ZjkS
+	icJsLjZBSfEBHhXmfil2QvMo0qD0qHvI=
+X-Gm-Gg: ASbGncvpqA2WlYl+71nRe3Cc13GoIsCXgmVQ23miunbW9pXwzIo5c3ekcCWdYk7w0ah
+	h8F816woBBNnjliw/GR0FyizkuGwZWa4tYTumFiGxLwAY3FTLpreshmZfyOQKTo6H/AfincyaZE
+	5Fxzvl+rQBi9+JRBMhbospJnp3ZWPyIfDoqYaLXgcxSzSFdtTvbj5sH3zp/LVBHwRK91w9hMwO+
+	n9jGYrtvw==
+X-Google-Smtp-Source: AGHT+IGtOP5mjRNn489PVNmO4vxPIPDTQuikzEg1Mg84DhRNL/wstyNWuOrvAB/lXY3xmy0yJFQH+vb9BWKZDBE0wXg=
+X-Received: by 2002:a17:907:96ab:b0:af9:3341:8dd with SMTP id
+ a640c23a62f3a-afca4e0a53emr253787066b.31.1755080326385; Wed, 13 Aug 2025
+ 03:18:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] arm64: topology: Setup AMU FIE for online CPUs
- only
-To: Beata Michalska <beata.michalska@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <rafael@kernel.org>,
-	<viresh.kumar@linaro.org>, <sudeep.holla@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <vincent.guittot@linaro.org>,
-	<yangyicong@hisilicon.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
-	<yubowen8@huawei.com>, <linhongye@h-partners.com>
-References: <20250805093330.3715444-1-zhenglifeng1@huawei.com>
- <20250805093330.3715444-4-zhenglifeng1@huawei.com> <aJMmjKenJaDnRskH@arm.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <aJMmjKenJaDnRskH@arm.com>
+References: <20250812-ltc2495-v1-0-7bf4c6feec2e@gmail.com> <20250812-ltc2495-v1-2-7bf4c6feec2e@gmail.com>
+In-Reply-To: <20250812-ltc2495-v1-2-7bf4c6feec2e@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 13 Aug 2025 12:18:10 +0200
+X-Gm-Features: Ac12FXym-72-12HeDvRzb4FHkYj8rPhzeDeFEWJF6uJcrP5JI1RHyGTR48Sg9Cc
+Message-ID: <CAHp75Vc+XjiRoV42zuZDpqsWKLN+5=uv3wLFMk6LGUagmhBMMg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] iio: adc: ltc2497: add support for LTC2495
+To: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Beguin <liambeguin@gmail.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/8/6 17:55, Beata Michalska wrote:
+On Tue, Aug 12, 2025 at 7:09=E2=80=AFPM Yusuf Alper Bilgin
+<y.alperbilgin@gmail.com> wrote:
+>
+> This updates the LTC2497 driver to also support the LTC2495.
 
-> On Tue, Aug 05, 2025 at 05:33:30PM +0800, Lifeng Zheng wrote:
->> When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
->> only CPU0 will go online. The support AMU flag of CPU0 will be set but the
->> flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
->> when it shares a cpufreq policy with other CPU(s). After that, when other
->> CPUs are finally online and the support AMU flags of them are set, they'll
->> never have a chance to set up AMU FIE, even though they're eligible.
->>
->> To solve this problem, the process of setting up AMU FIE needs to be
->> modified as follows:
->>
->> 1. Set up AMU FIE only for the online CPUs.
->>
->> 2. Try to set up AMU FIE each time a CPU goes online and do the
->> freq_counters_valid() check. If this check fails, clear scale freq source
->> of all the CPUs related to the same policy, in case they use different
->> source of the freq scale.
->>
->> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
->> ---
->>  arch/arm64/kernel/topology.c | 54 ++++++++++++++++++++++++++++++++++--
->>  1 file changed, 52 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
->> index 9317a618bb87..b68621b3c071 100644
->> --- a/arch/arm64/kernel/topology.c
->> +++ b/arch/arm64/kernel/topology.c
->> @@ -385,7 +385,7 @@ static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
->>  	struct cpufreq_policy *policy = data;
->>  
->>  	if (val == CPUFREQ_CREATE_POLICY)
->> -		amu_fie_setup(policy->related_cpus);
->> +		amu_fie_setup(policy->cpus);
-> I think my previous comment still stands.
-> This will indeed set the AMU FIE support for online cpus.
-> Still, on each frequency change, arch_set_freq_scale will be called with
-> `related_cpus`, and that mask will be used to verify support for AMU counters,
-> and it will report there is none as 'related_cpus' won't be a subset of
-> `scale_freq_counters_mask`. As a consequence, new scale will be set, as seen by
-> the cpufreq. Now this will be corrected on next tick but it might cause
-> disruptions. So this change should also be applied to cpufreq - if feasible, or
-> at least be proven not to be an issue. Unless I am missing smth.
+...
 
-I know what you mean now. Yes, I think you are right, this change should
-also be applied to cpufreq too. Thanks!
+> +#define LTC2497_CONVERSION_TIME_MS     150ULL
 
->>  
->>  	/*
->>  	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
->> @@ -404,10 +404,60 @@ static struct notifier_block init_amu_fie_notifier = {
->>  	.notifier_call = init_amu_fie_callback,
->>  };
->>  
->> +static int cpuhp_topology_online(unsigned int cpu)
->> +{
->> +	struct cpufreq_policy *policy = cpufreq_cpu_get_raw_no_check(cpu);
->> +
->> +	/*
->> +	 * If the online CPUs are not all AMU FIE CPUs or the new one is already
->> +	 * an AMU FIE one, no need to set it.
->> +	 */
->> +	if (!policy || !cpumask_available(amu_fie_cpus) ||
->> +	    !cpumask_subset(policy->cpus, amu_fie_cpus) ||
->> +	    cpumask_test_cpu(cpu, amu_fie_cpus))
->> +		return 0;
-> This is getting rather cumbersome as the CPU that is coming online might belong
-> to a policy that is yet to be created. Both AMU FIE support, as well as cpufreq,
-> rely on dynamic hp state so, in theory, we cannot be certain that the cpufreq
-> callback will be fired first (although that seems to be the case).
-> If that does not happen, the policy will not exist, and as such given CPU
-> will not use AMUs for FIE. The problem might be hypothetical but it at least
-> deservers a comment I think.
+Why ULL? (Mainly why the 'L'/'LL'?)
 
-Actually, this callback will always be fired before the cpufreq one,
-because init_amu_fie() is called before any cpufreq driver init func (It
-has to be, otherwise the init_amu_fie_notifier cannot be registered before
-it is needed.). And the callback that is setup first will be called first
-when online if rely on dynamic hp state. So in your hypothetical scenario,
-yes, the policy will not exist and this funcion will do nothing. But that's
-OK because the notifier callback will do what should be done when the
-policy is being created.
+...
 
-> Second problem is cpumask_available use: this might be the very fist CPU that
-> might potentially rely on AMUs for frequency invariance so that mask may not be
-> available yet. That does not mean AMUs setup should be skipped. Not just yet,
-> at least. Again more hypothetical.
+>         if (time_elapsed < LTC2497_CONVERSION_TIME_MS) {
+> -               /* delay if conversion time not passed
+> -                * since last read or write
+> -                */
+> -               if (msleep_interruptible(
+> -                   LTC2497_CONVERSION_TIME_MS - time_elapsed))
+> +               /* delay if conversion time not passed since last read or=
+ write */
+> +               if (msleep_interruptible(LTC2497_CONVERSION_TIME_MS - tim=
+e_elapsed))
+>                         return -ERESTARTSYS;
+>
+>                 return 0;
+>         }
+>
+>         if (time_elapsed - LTC2497_CONVERSION_TIME_MS <=3D 0) {
+> -               /* We're in automatic mode -
+> -                * so the last reading is still not outdated
+> -                */
+> +               /* We're in automatic mode - so the last reading is still=
+ not outdated */
+>                 return 0;
+>         }
 
-Same, things will be done in the notifier callback when the policy is being
-created.
+AFAICS these are unrelated changes. Please, strip them and if you
+wish, create a new patch.
 
-> BTW, there should be `amu_fie_cpu_supported'.
+...
 
-Sorry, I can't see why it is needed. Could you explained further?
+> -#define LTC2497_ENABLE                 0xA0
 
->> +
->> +	/*
->> +	 * If the new online CPU cannot pass this check, all the CPUs related to
->> +	 * the same policy should be clear from amu_fie_cpus mask, otherwise they
->> +	 * may use different source of the freq scale.
->> +	 */
->> +	if (!freq_counters_valid(cpu)) {
->> +		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH,
->> +						 policy->related_cpus);
->> +		cpumask_andnot(amu_fie_cpus, amu_fie_cpus, policy->related_cpus);
-> I think it might deserve a warning as this probably should not happen.
+> +#define LTC2497_ENABLE 0xA0
 
-Yes, makes sense. Thanks!
+Why?!
 
-> 
-> ---
-> BR
-> Beata
->> +		return 0;
->> +	}
->> +
->> +	cpumask_set_cpu(cpu, amu_fie_cpus);
->> +
->> +	topology_set_scale_freq_source(&amu_sfd, cpumask_of(cpu));
->> +
->> +	pr_debug("CPU[%u]: counter will be used for FIE.", cpu);
->> +
->> +	return 0;
->> +}
->> +
->>  static int __init init_amu_fie(void)
->>  {
->> -	return cpufreq_register_notifier(&init_amu_fie_notifier,
->> +	int ret;
->> +
->> +	ret = cpufreq_register_notifier(&init_amu_fie_notifier,
->>  					CPUFREQ_POLICY_NOTIFIER);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
->> +					"arm64/topology:online",
->> +					cpuhp_topology_online,
->> +					NULL);
->> +	if (ret < 0) {
->> +		cpufreq_unregister_notifier(&init_amu_fie_notifier,
->> +					    CPUFREQ_POLICY_NOTIFIER);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->>  }
->>  core_initcall(init_amu_fie);
->>  
->> -- 
->> 2.33.0
->>
-> 
+> -#define LTC2497_CONFIG_DEFAULT         LTC2497_ENABLE
+> -#define LTC2497_CONVERSION_TIME_MS     150ULL
 
+Unrelated.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
