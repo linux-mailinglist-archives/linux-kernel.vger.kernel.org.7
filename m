@@ -1,171 +1,106 @@
-Return-Path: <linux-kernel+bounces-767553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93160B255DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:48:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B86BB255E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1DCD3ABD0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE7C1C2376A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C4C2D1931;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339D52ECD02;
 	Wed, 13 Aug 2025 21:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LCJShcCJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HyOB0rhW"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4D8286D45
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370773009D2;
+	Wed, 13 Aug 2025 21:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755121648; cv=none; b=itTJHL6iUBXrrj0BTYapnFVJTmL9FquM8/LY+LRt6qcIQZnLTGEME4rcon9myAF2cIYxLrZ6jTQGYWAMvGflm6iK60axUxjYM5H8Pommo+5WIBMxselo+8o4RCSo4sYWjzUs+/xjA7Ld59SxamcwnjrOEcBgRN5sySxRvDKLX58=
+	t=1755121647; cv=none; b=qIIw4N3lOxeGbOuQseU//gj1KxjjQZGaj7AcBg9wsIWYXy+ocD6nqGyGSLrUS/w2/HmwYhNzCWDGbprQbKNs5+TYNc+BdcZZKkWQCMIUEWlFydeshpHhj+LHMWdZ25XbOcm0nWouIeLusXe7uQK07rp9RkMGUX939lmS9rmF6Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755121648; c=relaxed/simple;
-	bh=3WEil0ehY5vXWc5kCGbGh1iNwldSAw0zKkcaT1ugWPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IHH5fFQ4mvSIPVln80jzegkUOveWqRDB4uhGN5MaN68F0v3hLBurJP1VbpFdo1Bwq6p0Ry0HYZiqdLbqSJYHAhqU78+Zo5vGi6aczVYL/T5Sxbrh3eMx+9mJcpYhQ/NnwGDL0rtNk3i/QM7hq2PWa0x++qI9rxIDdDu3cxUVzII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LCJShcCJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLkdv031982
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:47:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PoxP7tG7pCID580yMt9K2LXcQBndbjiv/lE6hcV18C4=; b=LCJShcCJqrQ7J/v4
-	GUKejkcaQxV4s9YPZgV8B6+bo/RivOwQyJyJEdjsoQF0qnCkgT7sy1D6zqHnV1vO
-	s48+BESFy59JftqMeDl8n2SDCymjYh5aSnCrr1TbCWVG7Kb8IsVjxSZcByDlSHAN
-	8IrmNbu000mwJy7GjCPp4kET5WaJXICZmjJntGnTE0eEMzog/jpTZ5T/46QLADsE
-	i+pm0N50cbRTQcgWZjzDqVKjtbuQQq4wnqRI9wswOhQOehQ0zOZXm+n7HzJlHfhZ
-	1MBWBsL0LP9EGj1Y6HMPq1rsJoFE8RUKzy8jCWnsHUV/YTgwCMYi2dS0hOqO/jCB
-	TFDVQQ==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fem4hb0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:47:25 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b47174b1ae5so147167a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:47:25 -0700 (PDT)
+	s=arc-20240116; t=1755121647; c=relaxed/simple;
+	bh=1VQIRUsprnF3Mig8oiLKRbOl5bzLLP0G72cXjJYWiyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GaYRoJXTbmb5H6vB3gnFt183FJN+9anpqbCboSuv4AqwoLexDSp/sdmzah0llSmX20lBFI0N9Uo55bqXrkblzxvpvZOETD15SmM/aJ/rLJxfseTd4Fwe9yqbV6mm+HFjALuTfP6ylNdNPgwr5yryZwoPGpahjFOloNvV9sWO6mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HyOB0rhW; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-323267bc2eeso283904a91.1;
+        Wed, 13 Aug 2025 14:47:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755121645; x=1755726445; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jONifV3SAqgTpD6n3pEouquJmVfQbYGkPJ7FQpi+OiA=;
+        b=HyOB0rhWDHWMiQiPQoNlIPH3RMGLr/zZc3Yji+yfjx9Zuuq0POGAXq+pp98cVNigwj
+         5DT9FVu5LfErEPNpNZyja/E41LY3s+gAY+ssOi82hK+myjIsTPXPyrrhFQmocWbeu+5j
+         +3vF6TFFK1QIuZgdFZQTmWrmpKWmZVjNctxt2Dw+1LoGTUXjysHgOkQCIzWSMRM1KV+h
+         ZSj71JaTWbUm4dHvHyXd3+fgSpGsKJutXQIcfJdxKUQ1Xd4M3MKyGQCH7cSEBaG02z+A
+         SkktbEgAKB1wXcnsI1uxUE3kRHN4u7iN4efwkfKy12fIYbBYY4oBa2sm0TfCX+HwWIWf
+         0aaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755121644; x=1755726444;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PoxP7tG7pCID580yMt9K2LXcQBndbjiv/lE6hcV18C4=;
-        b=NCG1GAt2iYECEjwccgHbbqkbSGUfpiYiMevVIzpKq3CbM0H4AmqvMqChUZIDaDGuiZ
-         baH+NsECMdggpqvZza9AoqXvf60vam1dkRQB34cS4J+T70brhvby8tTumkBPV8OnkDzJ
-         rsyPUkt1J8TbrPmHHoRiV8Svt3DX+zxsCxmdoqLHONUNK25It7k03F+MFYt7VuZPAbnS
-         0YfI73ILBPTXoVUm9ei3KSnDmXQtaKC8RLPnpkrguPAMzJzTepAYE3hl/i6Qnifjkr/9
-         nPNXPPkDGx/sN0eD5m/jEIQaeZt7EWzGWydq0R82u010gWEt9dlodV/z6i+jR1PDeDg8
-         1dfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBamezjJyCBJ05jdS+gOCI+qcWucE3yJgAqa0YE8IC/XZsEtkGQ6zprEo+vtF/BuuPD3IMUzpTLSywjo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn3Dyigp2a+lROH9ZfsE4/+CODYjxC/XCYe9j+hTK6WY3n13Zo
-	9Bw8b/rfY1XENn5I7tIjXeqk8yW5eyn2ftQu4rkFG3dEUTjQN5UVhseJ5J3vQPC1OGsPVecBYnr
-	arGiwTnQW/NKPWwdifXplvJUEI2ifezEcSW13qgeNXMA09a4dHXJ7YV8GLg8dSf57eQ==
-X-Gm-Gg: ASbGncvcrBFgoCMV8pyNNltmBX3v6Y2DbmNd7jnuYsop+1TKvlmKaX+HWuorhrOfDPL
-	9F6xH/20L9PjpbNj5T5F+M5h4SNIQ0wJ5qAoQkoYEo3hT8rXcclUOBHm4ClWfBmmctbwYDdZRcU
-	diTTQs+NsZUsky0E8KskyWz7ez8G3DbDqXiBVPizJkbASQMMbPErOmwszWQICuZNtwhFVq7cap+
-	Rsbt8tNzCX9rG9F8t77IED8OlMDtG4fc44Y+eW8r47baKp8Nz1P8MwSq3vOgXIwEQCX5N+ZikNG
-	+s219WeYYsggtP2pmzq5rmg3wppTMOo2wldaCu48Jv+n8hleiC8eqQtIO1RkSu6JrCl6OgnYLyo
-	sR8m4F5JF3ce1hzBg4dtDhtWBv4+Au5hs3YYEQQ==
-X-Received: by 2002:a17:902:d482:b0:242:9bc4:f1c8 with SMTP id d9443c01a7336-244586e1b69mr7940605ad.55.1755121644287;
+        d=1e100.net; s=20230601; t=1755121645; x=1755726445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jONifV3SAqgTpD6n3pEouquJmVfQbYGkPJ7FQpi+OiA=;
+        b=geiCL3cXVIxUUSea+4XvJKnxpWu30x29CkEo2iuKRfZ1yfHVe4Ajj/rUztwjOzWRwE
+         EkJpcglqAV08k+izqat2IkBYvnACLa9UUWTLJMxaqNtb/IJXspvFhCpJhf6E+HCYBw5T
+         A6gnxUemVHNHAr0F/i07Ju44dtN6xzCfQ6E310oeAQMFovh4YcaxobAJx8/jCnMPh4y8
+         RmUZMpx/mGBgkuu6I1SUBsGo2RHpiRJ9KhyVxfqqKV1MUSK6+ZCfCAr3RPZ053TSU/T3
+         43m+k17iFEI8J1bYQxDSATTir3LnwY8Tg/qisBb1d9NeWtWu7OnvrlLlomVzkKya9Smj
+         c2cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYi3TIwKO/T/3n/2qgdbPppSlLBUm6bh2wv8NqtIq9O+7fs+xOIqLqFioMrsysxSSWLKhsAzCNM0XYOA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9gSYxqbqxlSku1okj+7vKTWQEgp/WDAvWkZcoN0u/xnQQ1FwT
+	AE+VE5UurQS5SxUtAVk9wVbE8tl21BrEUIdD9SX2KMxlfejbTcHUztNY
+X-Gm-Gg: ASbGnctB2fnq7w75faQDxcPSOp4VTFypLJBV1ck23I7o9MXYpRMIg6UU4qk9jplCkff
+	w3zwg2H7Tk3SwiO9i8sfVcPwdnfpa5MOcWSFpB6rqCOrLvtb2Uf8mUeVv2p/vgnlA/LGzQvasRB
+	IesUU4GqvYfnUkXOzKYVmMGurIos7s7bv5P+fXaK4vVgk4+kw1OzHl1nF88j7vCsCQS+oecgvpa
+	VG4PQwM8KHipP3ssMusaRLs/aW3R2WHNHrkBFfYmw1UVPjdK7aRteb9Bt/mDx3onwdI9gBn4hsY
+	zWAn/z+sNwKpv1R/+Cw9QqUQLR6lGU8fwITurTDY2U+6WEs0Zcg9aJge4l83DFb6YN6sHbvqU1Q
+	tEeev1l1WhNkIcQwixYo8wlTd0kvUoGFOwQ==
+X-Google-Smtp-Source: AGHT+IFnG1VfjTfFzYy9SU6px68SStWgfbepA09Klycfgu1ndr7pAZJLu+JzXbLn9aZDNRQzy9oRlQ==
+X-Received: by 2002:a17:90b:39c7:b0:320:ff84:ceb5 with SMTP id 98e67ed59e1d1-32327a634e5mr1308738a91.16.1755121645110;
+        Wed, 13 Aug 2025 14:47:25 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:89af:72ea:c356:f3f0])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-323257c27absm1022898a91.27.2025.08.13.14.47.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 13 Aug 2025 14:47:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFgjyhLi16jIYpZ8EHZqnYQaA0dKD8mdlmwaED7WOs0d7tmfiyJiuh/7q2M1HKFCS2ese9Jpw==
-X-Received: by 2002:a17:902:d482:b0:242:9bc4:f1c8 with SMTP id d9443c01a7336-244586e1b69mr7940215ad.55.1755121643848;
-        Wed, 13 Aug 2025 14:47:23 -0700 (PDT)
-Received: from [192.168.0.74] (n1-41-240-65.bla22.nsw.optusnet.com.au. [1.41.240.65])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-323257aa89esm1010760a91.23.2025.08.13.14.47.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 14:47:23 -0700 (PDT)
-Message-ID: <0af9ac59-9b91-4a0b-92fb-b44e0e008431@oss.qualcomm.com>
-Date: Thu, 14 Aug 2025 07:47:14 +1000
+Date: Wed, 13 Aug 2025 14:47:22 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, linux-input@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 06/21] Input: remove unneeded 'fast_io' parameter in
+ regmap_config
+Message-ID: <3hjodmfpiuh3xeiwugtpfs2sqoinb2toir2v2rchhv3nd3wdwj@2uiynsb5bzlt>
+References: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
+ <20250813161517.4746-7-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 07/11] firmware: qcom: tzmem: export shm_bridge
- create/delete
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Apurupa Pattapu <quic_apurupa@quicinc.com>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com>
- <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-7-ce7a1a774803@oss.qualcomm.com>
- <f10f1602-972a-491f-9c11-95e5e7bd80f8@oss.qualcomm.com>
-Content-Language: en-US
-From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-In-Reply-To: <f10f1602-972a-491f-9c11-95e5e7bd80f8@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: KFpDGaOz0HmfUrk20SZ4YN3CJGBPUYIw
-X-Proofpoint-ORIG-GUID: KFpDGaOz0HmfUrk20SZ4YN3CJGBPUYIw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA2OCBTYWx0ZWRfX8fdudlFEt3Fs
- XSe/3gir13bPDdCSxndFeKJG0BrsCXgfAOrXjAGJraumjBzFSRANiPrjzsBt/aadi17keU1VYPV
- 5MlEnulry27bazTNgZVcRDkJcUSCeQEFJigy0IecYFyqox0qHl8+LFuhBGlIngGLLex/DgEJbkr
- tjUfxZ4H+nizirHkPKHWwoZtveH7utpCfvgBbnKLiMJTTUTMgmuzpF2rsbnlK61XbD7gRBYtC2a
- +DQf70WAvXi63XT2xJd0ZJCuGJ1aCX0MMaW+uqcaR8IlSegPm5GY34h0X7JxtwZbePb6H1p5h4F
- eZ7SXBs91qI4xiHUdp4KknP6lxs17XqieWQdculgUFkcYBGi9e8scwYsK1GcHgt+2I1czL+O5sJ
- fNkgsqFv
-X-Authority-Analysis: v=2.4 cv=YMafyQGx c=1 sm=1 tr=0 ts=689d07ed cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=hi51d+lTLNy/RbqRqnOomQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=sWKEhP36mHoA:10 a=KKAkSRfTAAAA:8
- a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=dTt1GwfqUVNo7j6m3doA:9 a=QEXdDO2ut3YA:10
- a=zZCYzV9kfG8A:10 a=x9snwWr2DeNwDh03kgHS:22 a=cvBusfyB2V15izCimMoJ:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
- adultscore=0 impostorscore=0 malwarescore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813161517.4746-7-wsa+renesas@sang-engineering.com>
 
-
-
-On 8/13/2025 8:06 PM, Konrad Dybcio wrote:
-> On 8/13/25 2:35 AM, Amirreza Zarrabi wrote:
->> Anyone with access to contiguous physical memory should be able to
->> share memory with QTEE using shm_bridge.
->>
->> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
->> Tested-by: Harshal Dev <quic_hdev@quicinc.com>
->> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
->> ---
+On Wed, Aug 13, 2025 at 06:14:52PM +0200, Wolfram Sang wrote:
+> When using MMIO with regmap, fast_io is implied. No need to set it
+> again.
 > 
-> Hm, I thought the idea for the tzmem allocator was to abstract
-> these operations to prevent users from shooting themselves in
-> the foot, and this seems to be circumventing that..
-> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Yes and no. The TEE subsystem has its own memory management code, and
-the qcomtee backed driver will utilize it. In other words, qcomtee will
-manage its own memory, and tzmem will only be used for drivers that
-communicate with QTEE without involving the TEE subsystem.
+Applied, thank you.
 
-This aligns with future extensions for FFA memory sharing.
-
-Regards,
-Amir
-
-> Konrad
-
+-- 
+Dmitry
 
