@@ -1,156 +1,113 @@
-Return-Path: <linux-kernel+bounces-767179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A90AB25015
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:48:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F32B2501A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09D1C16E140
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:43:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A82F03AF459
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46C02877EF;
-	Wed, 13 Aug 2025 16:43:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54912877C4;
-	Wed, 13 Aug 2025 16:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E0E28936D;
+	Wed, 13 Aug 2025 16:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RguiXv+U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D272DF68;
+	Wed, 13 Aug 2025 16:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755103417; cv=none; b=Rmk4zbDyxUFUGJUUzPt6Ui7yI+B5jNidvd8QVj0ZsIqTTzCKNPKIhhV7nB30oboH0SH7hDK6S91NNoEvYl2uKRAvqKB7xKT4/hhHCe61bS6QtgfZFq1eg+Y7AzPMJvf3KMeHRhUGQuSF4H9g/1gK4b1r5H7bGi7jLK+0hkbkhmQ=
+	t=1755103745; cv=none; b=GrdMyOYUXLlFeY8+R1qihVLXs/gjB86Jh+uyWe57lQlf5H/jb2k9Y4M6eRb3d9OGWZ8kWbjkfD3G19gVYxrdecX64j6yXUKb21//eVIymfEyeJgVE+w7Af8cC+nOVYZJZy+KfXsp3ZzQLRJxpYB7zC7Ru68n3njz4ase6Y8ygs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755103417; c=relaxed/simple;
-	bh=eGOtfUOzn7VJhhjgjc5OkdQcb/GSkSfB33WxAxwSZy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ecv0lhDXd8eMcn+Qy90HB3ev3WRTeXcypdi/QH4pWKmkf4Ack94oTzlrrE1zx90rSNhXb/h1B84Ax8Aij94sh6qaCLORZQ6PZKhD6Kz3jtbE706v3snu/tdDe9FKDdjHjW9R1SFUSiIg8VhiZ/k7s1IShC64jxIKhW8EGHkG8DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCEFB12FC;
-	Wed, 13 Aug 2025 09:43:25 -0700 (PDT)
-Received: from e130802.arm.com (e130802.arm.com [10.1.33.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0D923F5A1;
-	Wed, 13 Aug 2025 09:43:30 -0700 (PDT)
-Date: Wed, 13 Aug 2025 17:42:58 +0100
-From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
-	Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
-	Srinivas Kalaga <Srinivas.Kalaga2@arm.com>
-Subject: Re: [PATCH v19 2/6] remoteproc: Add TEE support
-Message-ID: <aJzAkk-k4nfXY7Ux@e130802.arm.com>
-References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
- <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1755103745; c=relaxed/simple;
+	bh=cyLrFdqxg4ZcH8nvggubxn/CxJcfjbfe1JuA4ehDYXQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=FlScgC96Krz/mlLkiN5PrpIbI99vMPHdhPs5+AJHhtMbI+jpNpIX2ty/aEuDqDUdh+mnpu2NEDfGlWQq+q0dvppP6QiQd++QT2IkqsDSxQcZaYHBbM9ynTWfBqAFXp/MA46MNqzByVjU/zettxIlOkmCci9chjDjghucjVYOq5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RguiXv+U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 382C2C4CEEF;
+	Wed, 13 Aug 2025 16:49:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755103745;
+	bh=cyLrFdqxg4ZcH8nvggubxn/CxJcfjbfe1JuA4ehDYXQ=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=RguiXv+UZoL+5Vf31csyIKrWunI2aX3ipzcjHK5Kyy9/TsmFF46g5XjoQamZStLtI
+	 eRMI0tsEpu1+rngNBb27ZSZAcg2XutpBc8Wh7jxBNkmljUEmXVrNV7nTxZSMoK4J+i
+	 VrRmXeieHSnbweU3unIIizYq7jbHTbcNxjKoBeN7shrbvGnL8aZBbtVQ4NFTimeeIJ
+	 zRWusjneQDhKYrdo5ws2NbSKAHUOSKOf6mhQjUY013m7N9hVBsoq0NBLIu8cQNJJ/5
+	 s/aISnoOB2FxjhsjNUmox3r5TF4+V+DazWKzvgD4LkIydtpFX9oV0I2KKSZsxx1o26
+	 H5IZsphCZYhBQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 18:48:59 +0200
+Message-Id: <DC1GCMZDC5GE.2IJ4JAIWRO8HZ@kernel.org>
+Subject: Re: [PATCH v7 1/3] rust: allocator: add KUnit tests for alignment
+ guarantees
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
+ <vbabka@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, "Uladzislau
+ Rezki" <urezki@gmail.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <vitaly.wool@konsulko.se>, "Hui Zhu" <zhuhui@kylinos.cn>, "Geliang Tang"
+ <geliang@kernel.org>, "Kunwu Chan" <chentao@kylinos.cn>
+To: "Hui Zhu" <hui.zhu@linux.dev>, "Andrew Morton"
+ <akpm@linux-foundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <cover.1753929369.git.zhuhui@kylinos.cn>
+ <d2e3d6454c1435713be0fe3c0dc444d2c60bba51.1753929369.git.zhuhui@kylinos.cn>
+ <DBQ4N5NCU8H5.356OH5T3KRGJ1@kernel.org>
+In-Reply-To: <DBQ4N5NCU8H5.356OH5T3KRGJ1@kernel.org>
 
-Hi Arnaud,
+On Thu Jul 31, 2025 at 11:19 AM CEST, Danilo Krummrich wrote:
+> On Thu Jul 31, 2025 at 4:50 AM CEST, Hui Zhu wrote:
+>> From: Hui Zhu <zhuhui@kylinos.cn>
+>>
+>> Add a test module to verify memory alignment guarantees for Rust kernel
+>> allocators.
+>> The tests cover `Kmalloc`, `Vmalloc` and `KVmalloc` allocators
+>> with both standard and large page-aligned allocations.
+>>
+>> Key features of the tests:
+>> 1. Creates alignment-constrained types:
+>>    - 128-byte aligned `Blob`
+>>    - 8192-byte (4-page) aligned `LargeAlignBlob`
+>> 2. Validates allocators using `TestAlign` helper which:
+>>    - Checks address alignment masks
+>>    - Supports uninitialized allocations
+>> 3. Tests all three allocators with both alignment requirements:
+>>    - Kmalloc with 128B and 8192B
+>>    - Vmalloc with 128B and 8192B
+>>    - KVmalloc with 128B and 8192B
+>>
+>> Co-developed-by: Geliang Tang <geliang@kernel.org>
+>> Signed-off-by: Geliang Tang <geliang@kernel.org>
+>> Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
+>> Reviewed-by: Kunwu Chan <chentao@kylinos.cn>
+>
+> Acked-by: Danilo Krummrich <dakr@kernel.org>
+>
+> @Andrew: Can you please pick this one up once we land Vitaly's series [1]=
+? I'll
+> take the other two patches of the series through the Rust alloc tree once=
+ -rc1
+> is out.
 
-> Add a remoteproc TEE (Trusted Execution Environment) driver that will be
-> probed by the TEE bus. If the associated Trusted application is supported
-> on the secure part, this driver offers a client interface to load firmware
-> by the secure part.
-> This firmware could be authenticated by the secure trusted application.
-> 
-> A specificity of the implementation is that the firmware has to be
-> authenticated and optionally decrypted to access the resource table.
-> 
-> Consequently, the boot sequence is:
-> 
-> 1) rproc_parse_fw --> rproc_tee_parse_fw
->    remoteproc TEE:
->    - Requests the TEE application to authenticate and load the firmware
->      in the remote processor memories.
->    - Requests the TEE application for the address of the resource table.
->    - Creates a copy of the resource table stored in rproc->cached_table.
-> 
-> 2) rproc_load_segments --> rproc_tee_load_fw
->    remoteproc TEE:
->    - Requests the TEE application to load the firmware. Nothing is done
->      at the TEE application as the firmware is already loaded.
->    - In case of recovery, the TEE application has to reload the firmware.
-> 
-> 3) rproc_tee_get_loaded_rsc_table
->    remoteproc TEE requests the TEE application for the address of the
->    resource table.
-> 
-> 4) rproc_start --> rproc_tee_start
->    - Requests the TEE application to start the remote processor.
-> 
-> The shutdown sequence is:
-> 
-> 5) rproc_stop --> rproc_tee_stop
->    - Requests the TEE application to stop the remote processor.
-> 
-> 6) rproc_tee_release_fw
->    This function is used to request the TEE application to perform actions
->    to return to the initial state on stop or on error during the boot
->    sequence.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-...
-> +
-> +static const struct tee_client_device_id rproc_tee_id_table[] = {
-> +	{UUID_INIT(0x80a4c275, 0x0a47, 0x4905, 0x82, 0x85, 0x14, 0x86, 0xa9, 0x77, 0x1a, 0x08)},
-> +	{}
-> +};
+Just a reminder for this one to be picked up; I gave it a quick shot on top=
+ of
+mm-everything and everything looks fine..
 
-Other implementations may use different UUIDs.
-What about adding a kernel configuration option which, when enabled, allows
-alternative implementations to override this table?
-
-> +/**
-> + * rproc_tee_register() - Register a remote processor controlled by the TEE application.
-...
-> +
-> +static int rproc_tee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
-> +{
-> +	/* Today we support only the OP-TEE, could be extend to other tees */
-> +	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
-> +}
-
-Could we make ver->impl_id user-configurable please ? for example, by reading
-it from the device tree since it isn’t discoverable at runtime? In our setup, we’d set
-it to TEE_IMPL_ID_TSTEE.
-
-> +
-> +static int rproc_tee_probe(struct device *dev)
-> +{
-> +	struct tee_context *tee_ctx;
-> +	int ret;
-> +
-> +	/* Open context with TEE driver */
-> +	tee_ctx = tee_client_open_context(NULL, rproc_tee_ctx_match, NULL, NULL);
-> +	if (IS_ERR(tee_ctx))
-> +		return PTR_ERR(tee_ctx);
-> +
-> +	ret = mutex_lock_interruptible(&ctx_lock);
-> +	if (ret)
-> +		return ret;
-
-In some TEEs, the client driver might need to perform extra work during probing.
-For example, when using TS TEE, calling tee_shm_alloc_kernel_buf() is required.
-Could we introduce an rproc_tee_ops and add a TEE probe operation called by the
-remoteproc driver for performing custom TEE setup ?
-
-Kind regards,
-Abdellatif
+> [1] https://lore.kernel.org/lkml/20250730191921.352591-1-vitaly.wool@kons=
+ulko.se/
 
