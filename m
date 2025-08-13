@@ -1,271 +1,232 @@
-Return-Path: <linux-kernel+bounces-766043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 177B2B24193
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:33:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D10B2418A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036403AF521
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDD01A25476
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948152D3A72;
-	Wed, 13 Aug 2025 06:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FZ9GwJy8"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF1E2BF001;
+	Wed, 13 Aug 2025 06:28:53 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1BD2D3732
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0058C256C84;
+	Wed, 13 Aug 2025 06:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755066547; cv=none; b=Zf+PPUA9s+aAXp6ePvlRD5x7RP/qZfVZKLR+M2ttfcQKSdw5CJPm/zAIZ92OydFtpttnx1+8PEUUSInQvjXCNNP++x6yBTX1+0gckNz4yUmFrZDlLhu1xnBFZ+psV0QBlB5nEPJfKsZfMRVTpNxDyUogdMp8DHqgNxFIWyHV6AY=
+	t=1755066532; cv=none; b=JLh7N5kxWSKs77QwoUb7FdXAWPBxnm9Vg4yUDl4REyLyjb/VjLPtNQLywyI2O94nRBLJtFVjJb9WZx90bCLPDQkIBsG9vowv0Ktd2rQQ+12Mb4JXkV93NZYl0IKffdXPR/qOERUD6jO9jPXqRMQyODMDuFM6EU2s1lPuHZ8HCVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755066547; c=relaxed/simple;
-	bh=Ndpd4fViX63OuSONgDNLi8/ENOZtDl+A3WRQ5RxsccA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ayHhrJDULwKFrpfx2QAwtFIERQ/ZXNyEovJAE+bEh8MKtBgxFc1w7PJdZ0rcPHGwu0KK61pfWLuVDCYB26E2ZoRU6dOAdoa5r/6HpJplJhDtomxhviNfaU4Q41/MyAeXt7yIItx8E+flXSv5KZTfL166YuxwW9mKmVJkZTi9q+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FZ9GwJy8; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3221297a302so123562a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:29:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755066545; x=1755671345; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/wtnRfrsaVbGH4q6bRkhzfYhXmUWudmJN2OG+zvJHY=;
-        b=FZ9GwJy8nRKzv3d18TPZ+WTxVW/l5jmqLnkjF8axneoVckv8fkS92WgU5QJzOTVPGw
-         YoTrYDyk4w7KuFBqESRszjT66dma84DY8Ip/gi9Uu8g+/GUtac+m5UGNBXD4nln1wWOG
-         gLKlbJZcQUhR20IK/8pUWnWO+U6lMdY8lKklJ6PAY524Wr/Ky3Ar6M1OdAyQbP3Obq3x
-         AHa4c/vVwIKHIzZUKI8G1TbebvyDGJLJLVMMjQetnhdQ7VqNoo1/EH6qoiGuVmSNdtkm
-         VAWAvE3wui9x7k2ctqE0+7zajBBVBzQshwQ6xBx2Tk+mttlP5la+I/CRQRFd2CwvBgpx
-         ON5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755066545; x=1755671345;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/wtnRfrsaVbGH4q6bRkhzfYhXmUWudmJN2OG+zvJHY=;
-        b=QGMfXVAmAgrM6QGvw+o9cWWT1ZjpSXFRRxSq9qI5Us5dwQdnrdEkwpTkEIOeyJ5M/b
-         5Cu2pDWowp0XnhiNcsWt09TWqTtKqAsNYz0VXbNVj3ZtRk/e/SCAYE8XrEtfDdiphqAQ
-         0JezE96W7RQObtpSnBkXrc4e1tpgPkEIcYl19gdVmtwdiTsTA58/O+alXgFaiKkT/vIG
-         lkXfNyBFYna5csdwFsb6bC4G3ONYAGoL+GuOzLnC15QunCbqeWPglqYPutEvOKeYIwjh
-         QXRUAwO0ppbgvav9AEvpDpX8L+3oRyG71+A6vIiZMl2H5cewL/HeaL0tnvctPWxnfDc4
-         mF2w==
-X-Forwarded-Encrypted: i=1; AJvYcCX0FozLQ8ehydQEPWY1fdW+Vdw1/fW+1FXDrAzQ2shiJ2/GvJBUvsMF8S3xs1ROQ7PBqjyM76bZlKwl7Ms=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3EqaLOGiv0//kWETszdtz+Xg07Fz34UhrQVOvP6tBhwGOH328
-	Im6kMNCLDpKGhxjb7f+BSnzCYWc1pBiDO04qSd2ZYaBr6u3NAf0aLEYKmSdzRkhhX1N6wzDbPIb
-	jM4JZTg==
-X-Google-Smtp-Source: AGHT+IE6CZ7Gl3oN1uT1uHwO8rdoLdzBO9tbII/gyYx3TLqItGm6+NetTYhvyVK5xzr8V/PFCd8SDp26a3U=
-X-Received: from pjbmf13.prod.google.com ([2002:a17:90b:184d:b0:320:e3e2:6877])
- (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5830:b0:313:352f:6620
- with SMTP id 98e67ed59e1d1-321d0d7dbacmr2741237a91.4.1755066545496; Tue, 12
- Aug 2025 23:29:05 -0700 (PDT)
-Date: Wed, 13 Aug 2025 06:28:35 +0000
-In-Reply-To: <20250812125155.3808-3-richardbgobert@gmail.com>
+	s=arc-20240116; t=1755066532; c=relaxed/simple;
+	bh=9vUEo+sj20951FghULXn+sLgKCS4GaIDQo3Vb9dzwsw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JZH4AY9CV8vM9Rgl8Bf88GK+IoYus2p6zR4KmLmj1wnPJvyV6pNf+HrI+SrlBcE0J0Y4kbZGXKODf5GcgbDrN0a1s3aglr19sUw8fcVNN0DRJ3M8dLWOzYseBOTTq0/5rX5z3TiRrrQ7qwuj+l8JqeVqTw2fk5LDQKj50IGXagk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1z3H3zjfzYQv5T;
+	Wed, 13 Aug 2025 14:28:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 2C1E41A01A4;
+	Wed, 13 Aug 2025 14:28:42 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgAX3deXMJxoMvTQDQ--.55909S2;
+	Wed, 13 Aug 2025 14:28:41 +0800 (CST)
+Message-ID: <cdef61eb-7a70-4106-b2a0-b92cac95972d@huaweicloud.com>
+Date: Wed, 13 Aug 2025 14:28:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250812125155.3808-3-richardbgobert@gmail.com>
-X-Mailer: git-send-email 2.51.0.rc0.205.g4a044479a3-goog
-Message-ID: <20250813062904.109300-1-kuniyu@google.com>
-Subject: Re: [PATCH net-next v5 2/5] net: vxlan: add netlink option to bind
- vxlan sockets to local addresses
-From: Kuniyuki Iwashima <kuniyu@google.com>
-To: richardbgobert@gmail.com
-Cc: andrew+netdev@lunn.ch, daniel@iogearbox.net, davem@davemloft.net, 
-	donald.hunter@gmail.com, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, idosch@nvidia.com, jacob.e.keller@intel.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, martin.lau@kernel.org, 
-	menglong8.dong@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	petrm@nvidia.com, razor@blackwall.org, shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 1/4] cpuset: remove redundant CS_ONLINE flag
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20250808092515.764820-1-chenridong@huaweicloud.com>
+ <20250808092515.764820-2-chenridong@huaweicloud.com>
+ <db5fdf29-43d9-4e38-a5a8-02cd711b892a@redhat.com>
+ <775ef75a-b796-4171-b208-df110a73c558@huaweicloud.com>
+ <a27c39d5-7470-475e-aefa-0841bd816675@redhat.com>
+ <95c78188-bf8d-4453-b74f-b8a7dc6ae14d@huaweicloud.com>
+ <8ed8cac1-4cf1-4880-9e7d-4e8c816797fa@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <8ed8cac1-4cf1-4880-9e7d-4e8c816797fa@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAX3deXMJxoMvTQDQ--.55909S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuw1DJw45Kw17Kw1fWFW8Crg_yoWxWFW8pF
+	1kCFyUA3y5Gw1xGF1jqrWjq348tr17J3WUWr1UKFy8AFsFyFyj9r48Xrn09F1DJr48Cryj
+	yF1Yqry3ur1DJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-From: Richard Gobert <richardbgobert@gmail.com>
-Date: Tue, 12 Aug 2025 14:51:52 +0200
-> Currently, VXLAN sockets always bind to 0.0.0.0, even when a local
-> address is defined. This commit adds a netlink option to change
-> this behavior.
+
+
+On 2025/8/13 9:33, Waiman Long wrote:
 > 
-> If two VXLAN endpoints are connected through two separate subnets,
-> they are each able to receive traffic through both subnets, regardless
-> of the local address. The new option will break this behavior.
+> On 8/12/25 9:20 PM, Chen Ridong wrote:
+>>
+>> On 2025/8/13 9:00, Waiman Long wrote:
+>>> On 8/12/25 8:54 PM, Chen Ridong wrote:
+>>>> On 2025/8/12 22:44, Waiman Long wrote:
+>>>>> On 8/8/25 5:25 AM, Chen Ridong wrote:
+>>>>>> From: Chen Ridong <chenridong@huawei.com>
+>>>>>>
+>>>>>> The CS_ONLINE flag was introduced prior to the CSS_ONLINE flag in the
+>>>>>> cpuset subsystem. Currently, the flag setting sequence is as follows:
+>>>>>>
+>>>>>> 1. cpuset_css_online() sets CS_ONLINE
+>>>>>> 2. css->flags gets CSS_ONLINE set
+>>>>>> ...
+>>>>>> 3. cgroup->kill_css sets CSS_DYING
+>>>>>> 4. cpuset_css_offline() clears CS_ONLINE
+>>>>>> 5. css->flags clears CSS_ONLINE
+>>>>>>
+>>>>>> The is_cpuset_online() check currently occurs between steps 1 and 3.
+>>>>>> However, it would be equally safe to perform this check between steps 2
+>>>>>> and 3, as CSS_ONLINE provides the same synchronization guarantee as
+>>>>>> CS_ONLINE.
+>>>>>>
+>>>>>> Since CS_ONLINE is redundant with CSS_ONLINE and provides no additional
+>>>>>> synchronization benefits, we can safely remove it to simplify the code.
+>>>>>>
+>>>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>>>>>> ---
+>>>>>>     include/linux/cgroup.h          | 5 +++++
+>>>>>>     kernel/cgroup/cpuset-internal.h | 3 +--
+>>>>>>     kernel/cgroup/cpuset.c          | 4 +---
+>>>>>>     3 files changed, 7 insertions(+), 5 deletions(-)
+>>>>>>
+>>>>>> diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+>>>>>> index b18fb5fcb38e..ae73dbb19165 100644
+>>>>>> --- a/include/linux/cgroup.h
+>>>>>> +++ b/include/linux/cgroup.h
+>>>>>> @@ -354,6 +354,11 @@ static inline bool css_is_dying(struct cgroup_subsys_state *css)
+>>>>>>         return css->flags & CSS_DYING;
+>>>>>>     }
+>>>>>>     +static inline bool css_is_online(struct cgroup_subsys_state *css)
+>>>>>> +{
+>>>>>> +    return css->flags & CSS_ONLINE;
+>>>>>> +}
+>>>>>> +
+>>>>>>     static inline bool css_is_self(struct cgroup_subsys_state *css)
+>>>>>>     {
+>>>>>>         if (css == &css->cgroup->self) {
+>>>>>> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
+>>>>>> index 383963e28ac6..75b3aef39231 100644
+>>>>>> --- a/kernel/cgroup/cpuset-internal.h
+>>>>>> +++ b/kernel/cgroup/cpuset-internal.h
+>>>>>> @@ -38,7 +38,6 @@ enum prs_errcode {
+>>>>>>       /* bits in struct cpuset flags field */
+>>>>>>     typedef enum {
+>>>>>> -    CS_ONLINE,
+>>>>>>         CS_CPU_EXCLUSIVE,
+>>>>>>         CS_MEM_EXCLUSIVE,
+>>>>>>         CS_MEM_HARDWALL,
+>>>>>> @@ -202,7 +201,7 @@ static inline struct cpuset *parent_cs(struct cpuset *cs)
+>>>>>>     /* convenient tests for these bits */
+>>>>>>     static inline bool is_cpuset_online(struct cpuset *cs)
+>>>>>>     {
+>>>>>> -    return test_bit(CS_ONLINE, &cs->flags) && !css_is_dying(&cs->css);
+>>>>>> +    return css_is_online(&cs->css) && !css_is_dying(&cs->css);
+>>>>>>     }
+>>>>>>       static inline int is_cpu_exclusive(const struct cpuset *cs)
+>>>>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>>>>>> index f74d04429a29..cf7cd2255265 100644
+>>>>>> --- a/kernel/cgroup/cpuset.c
+>>>>>> +++ b/kernel/cgroup/cpuset.c
+>>>>>> @@ -207,7 +207,7 @@ static inline void notify_partition_change(struct cpuset *cs, int old_prs)
+>>>>>>      * parallel, we may leave an offline CPU in cpu_allowed or some other masks.
+>>>>>>      */
+>>>>>>     static struct cpuset top_cpuset = {
+>>>>>> -    .flags = BIT(CS_ONLINE) | BIT(CS_CPU_EXCLUSIVE) |
+>>>>>> +    .flags = BIT(CS_CPU_EXCLUSIVE) |
+>>>>>>              BIT(CS_MEM_EXCLUSIVE) | BIT(CS_SCHED_LOAD_BALANCE),
+>>>>>>         .partition_root_state = PRS_ROOT,
+>>>>>>         .relax_domain_level = -1,
+>>>>> top_cpuset.css is not initialized like the one in the children. If you modify
+>>>>> is_cpuset_online() to
+>>>>> test the css.flags, you will probably need to set the CSS_ONLINE flag in top_cpuset.css.flags.
+>>>>> I do
+>>>>> doubt that we will apply the is_cpuset_online() test on top_cpuset. To be consistent, we should
+>>>>> support that.
+>>>>>
+>>>>> BTW, other statically allocated css'es in the cgroup root may have similar problem. If you make
+>>>>> the
+>>>>> css_is_online() helper available to all other controllers, you will have to document that
+>>>>> limitation.
+>>>>>
+>>>>> Cheers,
+>>>>> Longman
+>>>> Hi, Longman, thank you for your response.
+>>>>
+>>>> If I understand correctly, the CSS_ONLINE flag should be set in top_cpuset.css during the following
+>>>> process:
+>>>>
+>>>> css_create
+>>>>     css = ss->css_alloc(parent_css);  // cgroup root is static, unlike children
+>>>>     online_css(css);
+>>>>        ret = ss->css_online(css);     // css root may differ from children
+>>>>        css->flags |= CSS_ONLINE;      // css.flags is set with CSS_ONLINE, including the root css
+>>>>
+>>>> I think css online must be successful, and it's CSS_ONLINE flag must be set. Do I missing anything?
+>>> I am talking about just the top_cpuset which is statically allocated. It is not created by the
+>>> css_create() call and so the CSS_ONLINE will not be set.
+>>>
+>>> Cheers,
+>>> Longman
+>> Hi Longman,
+>>
+>> Apologies for the call stack earlier. Thank you for your patience in clarifying this matter.
+>>
+>> The CSS root is brought online through the following initialization flow:
+>>
+>> cgroup_init_subsys
+>>    css = ss->css_alloc(NULL);       // css root is static, unlike children
+>>    online_css(css)
+>>      ret = ss->css_online(css);     // css root may differ from children
+>>      css->flags |= CSS_ONLINE;      // css.flags is set with CSS_ONLINE, including the root css
+>>
+>> My key point is that:
+>> - The root CSS should be online by design.
+>> - Root css CSS_ONLINE flag should be properly set during initialization.
 > 
-> Disable the option by default.
+> Yes, you are right. I missed css_online() call for the root css for each controller. Thanks for the
+> clarification.
 > 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
-> ---
->  drivers/net/vxlan/vxlan_core.c     | 43 +++++++++++++++++++++++++++---
->  include/net/vxlan.h                |  1 +
->  include/uapi/linux/if_link.h       |  1 +
->  tools/include/uapi/linux/if_link.h |  1 +
->  4 files changed, 43 insertions(+), 3 deletions(-)
+> With that, I am OK with this patch. Though the other ones are not good.
 > 
-> diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-> index f32be2e301f2..15fe9d83c724 100644
-> --- a/drivers/net/vxlan/vxlan_core.c
-> +++ b/drivers/net/vxlan/vxlan_core.c
-> @@ -3406,6 +3406,7 @@ static const struct nla_policy vxlan_policy[IFLA_VXLAN_MAX + 1] = {
->  	[IFLA_VXLAN_LABEL_POLICY]       = NLA_POLICY_MAX(NLA_U32, VXLAN_LABEL_MAX),
->  	[IFLA_VXLAN_RESERVED_BITS] = NLA_POLICY_EXACT_LEN(sizeof(struct vxlanhdr)),
->  	[IFLA_VXLAN_MC_ROUTE]		= NLA_POLICY_MAX(NLA_U8, 1),
-> +	[IFLA_VXLAN_LOCALBIND]	= NLA_POLICY_MAX(NLA_U8, 1),
+> Acked-by: Waiman Long <longman@redhat.com>
 
-Flagging FREEBIND sounds rather NONLOCAL to me.
+Thank you.
 
-More specific name would be better.  NON_WILDCARD_BIND ? idk..
+I will send v2 to fix the others.
 
-$ cat include/net/inet_sock.h
-...
-static inline bool inet_can_nonlocal_bind(struct net *net,
-					  struct inet_sock *inet)
-{
-	return READ_ONCE(net->ipv4.sysctl_ip_nonlocal_bind) ||
-		test_bit(INET_FLAGS_FREEBIND, &inet->inet_flags) ||
-		test_bit(INET_FLAGS_TRANSPARENT, &inet->inet_flags);
-}
+Best regard,
+Ridong
 
-
->  };
->  
->  static int vxlan_validate(struct nlattr *tb[], struct nlattr *data[],
-> @@ -4044,15 +4045,37 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
->  		conf->vni = vni;
->  	}
->  
-> +	if (data[IFLA_VXLAN_LOCALBIND]) {
-> +		if (changelink) {
-> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCALBIND], "Cannot rebind locally");
-> +			return -EOPNOTSUPP;
-> +		}
-
-Are these two "if" necessary ?
-
-
-> +
-> +		err = vxlan_nl2flag(conf, data, IFLA_VXLAN_LOCALBIND,
-> +				    VXLAN_F_LOCALBIND, changelink,
-> +				    false, extack);
-> +		if (err)
-> +			return err;
-> +	}
-> +
->  	if (data[IFLA_VXLAN_GROUP]) {
-> +		__be32 addr = nla_get_in_addr(data[IFLA_VXLAN_GROUP]);
-> +
->  		if (changelink && (conf->remote_ip.sa.sa_family != AF_INET)) {
->  			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_GROUP], "New group address family does not match old group");
->  			return -EOPNOTSUPP;
->  		}
->  
-> -		conf->remote_ip.sin.sin_addr.s_addr = nla_get_in_addr(data[IFLA_VXLAN_GROUP]);
-> +		if ((conf->flags & VXLAN_F_LOCALBIND) && ipv4_is_multicast(addr)) {
-> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_GROUP], "Cannot add multicast group when bound locally");
-> +			return -EOPNOTSUPP;
-> +		}
-> +
-> +		conf->remote_ip.sin.sin_addr.s_addr = addr;
->  		conf->remote_ip.sa.sa_family = AF_INET;
->  	} else if (data[IFLA_VXLAN_GROUP6]) {
-> +		struct in6_addr addr = nla_get_in6_addr(data[IFLA_VXLAN_GROUP6]);
-> +
->  		if (!IS_ENABLED(CONFIG_IPV6)) {
->  			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_GROUP6], "IPv6 support not enabled in the kernel");
->  			return -EPFNOSUPPORT;
-> @@ -4063,7 +4086,12 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
->  			return -EOPNOTSUPP;
->  		}
->  
-> -		conf->remote_ip.sin6.sin6_addr = nla_get_in6_addr(data[IFLA_VXLAN_GROUP6]);
-> +		if ((conf->flags & VXLAN_F_LOCALBIND) && ipv6_addr_is_multicast(&addr)) {
-> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_GROUP6], "Cannot add multicast group when bound locally");
-> +			return -EOPNOTSUPP;
-> +		}
-> +
-> +		conf->remote_ip.sin6.sin6_addr = addr;
->  		conf->remote_ip.sa.sa_family = AF_INET6;
->  	}
->  
-> @@ -4071,6 +4099,9 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
->  		if (changelink && (conf->saddr.sa.sa_family != AF_INET)) {
->  			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCAL], "New local address family does not match old");
->  			return -EOPNOTSUPP;
-> +		} else if (changelink && (conf->flags & VXLAN_F_LOCALBIND)) {
-> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCAL], "Cannot change local address when bound locally");
-> +			return -EOPNOTSUPP;
->  		}
->  
->  		conf->saddr.sin.sin_addr.s_addr = nla_get_in_addr(data[IFLA_VXLAN_LOCAL]);
-> @@ -4084,6 +4115,9 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
->  		if (changelink && (conf->saddr.sa.sa_family != AF_INET6)) {
->  			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCAL6], "New local address family does not match old");
->  			return -EOPNOTSUPP;
-> +		} else if (changelink && (conf->flags & VXLAN_F_LOCALBIND)) {
-> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCAL6], "Cannot change local address when bound locally");
-> +			return -EOPNOTSUPP;
->  		}
->  
->  		/* TODO: respect scope id */
-> @@ -4517,6 +4551,7 @@ static size_t vxlan_get_size(const struct net_device *dev)
->  		nla_total_size(sizeof(__u8)) + /* IFLA_VXLAN_VNIFILTER */
->  		/* IFLA_VXLAN_RESERVED_BITS */
->  		nla_total_size(sizeof(struct vxlanhdr)) +
-> +		nla_total_size(sizeof(__u8)) + /* IFLA_VXLAN_LOCALBIND */
->  		0;
->  }
->  
-> @@ -4596,7 +4631,9 @@ static int vxlan_fill_info(struct sk_buff *skb, const struct net_device *dev)
->  	    nla_put_u8(skb, IFLA_VXLAN_REMCSUM_RX,
->  		       !!(vxlan->cfg.flags & VXLAN_F_REMCSUM_RX)) ||
->  	    nla_put_u8(skb, IFLA_VXLAN_LOCALBYPASS,
-> -		       !!(vxlan->cfg.flags & VXLAN_F_LOCALBYPASS)))
-> +		       !!(vxlan->cfg.flags & VXLAN_F_LOCALBYPASS)) ||
-> +	    nla_put_u8(skb, IFLA_VXLAN_LOCALBIND,
-> +		       !!(vxlan->cfg.flags & VXLAN_F_LOCALBIND)))
->  		goto nla_put_failure;
->  
->  	if (nla_put(skb, IFLA_VXLAN_PORT_RANGE, sizeof(ports), &ports))
-> diff --git a/include/net/vxlan.h b/include/net/vxlan.h
-> index 0ee50785f4f1..e356b5294535 100644
-> --- a/include/net/vxlan.h
-> +++ b/include/net/vxlan.h
-> @@ -333,6 +333,7 @@ struct vxlan_dev {
->  #define VXLAN_F_MDB			0x40000
->  #define VXLAN_F_LOCALBYPASS		0x80000
->  #define VXLAN_F_MC_ROUTE		0x100000
-> +#define VXLAN_F_LOCALBIND		0x200000
->  
->  /* Flags that are used in the receive path. These flags must match in
->   * order for a socket to be shareable
-> diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
-> index 784ace3a519c..7350129b1444 100644
-> --- a/include/uapi/linux/if_link.h
-> +++ b/include/uapi/linux/if_link.h
-> @@ -1399,6 +1399,7 @@ enum {
->  	IFLA_VXLAN_LABEL_POLICY, /* IPv6 flow label policy; ifla_vxlan_label_policy */
->  	IFLA_VXLAN_RESERVED_BITS,
->  	IFLA_VXLAN_MC_ROUTE,
-> +	IFLA_VXLAN_LOCALBIND,
->  	__IFLA_VXLAN_MAX
->  };
->  #define IFLA_VXLAN_MAX	(__IFLA_VXLAN_MAX - 1)
-> diff --git a/tools/include/uapi/linux/if_link.h b/tools/include/uapi/linux/if_link.h
-> index 7e46ca4cd31b..eee934cc2cf4 100644
-> --- a/tools/include/uapi/linux/if_link.h
-> +++ b/tools/include/uapi/linux/if_link.h
-> @@ -1396,6 +1396,7 @@ enum {
->  	IFLA_VXLAN_VNIFILTER, /* only applicable with COLLECT_METADATA mode */
->  	IFLA_VXLAN_LOCALBYPASS,
->  	IFLA_VXLAN_LABEL_POLICY, /* IPv6 flow label policy; ifla_vxlan_label_policy */
-> +	IFLA_VXLAN_LOCALBIND,
->  	__IFLA_VXLAN_MAX
->  };
->  #define IFLA_VXLAN_MAX	(__IFLA_VXLAN_MAX - 1)
-> -- 
-> 2.36.1
 
