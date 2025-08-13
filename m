@@ -1,292 +1,150 @@
-Return-Path: <linux-kernel+bounces-766149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CAE7B242DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:36:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4995B242AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9390D7217C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:34:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAEFA1AA71D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332232D2390;
-	Wed, 13 Aug 2025 07:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE9C2D6620;
+	Wed, 13 Aug 2025 07:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HMh3LFOs"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOXUdHYW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A843594E;
-	Wed, 13 Aug 2025 07:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223601448E3;
+	Wed, 13 Aug 2025 07:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070480; cv=none; b=WwWSR+gycSPaQzu+EMLoqP5deE6M0tKG6g5G4YnoXPyjRGVUS/qNjhBjSqLgkURU97PNr5dGNOPHg6fDywm+LNNwNQzyzpGm4mCTapD2dJvkdJNPh8wAISFhyFpqzxgP446wNjn82431wNlwBYrldoVX8eE4NKMjSxpH4DSx1vA=
+	t=1755070000; cv=none; b=gMvOLniKp5yEdoHeTURaSUtfRu0xRoEpHnAvDhtz1I74Dw355VZ+Cydse/93HAqRdIIpAg/wMugJzxQ08SeJrwnea3npEoVOBWvajUZo7Zml+ZS14kmgMooLgHr27SnV8dko06YblBp5cyeJYWUyfgcyUnyq95audSGKIO/ifc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070480; c=relaxed/simple;
-	bh=OJY6+omY4Q8gESjD0ydATDvH4uxYZHL/sj/tsQIBBvE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cHUH93gFvRBAMqdcvhkV7oHeW2y3NB9BU5hfOn/V408kocr8fd94XcbqWKjF5mjghLaMSmSyNsCW+YZcnV7cD4pYBBqFzGu05bcKbJsuRq31Nl7h/SNkbElfrgrm9Djbd+0G3Mnu1hzWO9kFjZQ4o5OTqhQR4ejxlCmX7a5XXsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HMh3LFOs; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755070478; x=1786606478;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=OJY6+omY4Q8gESjD0ydATDvH4uxYZHL/sj/tsQIBBvE=;
-  b=HMh3LFOsqJMZDz47/L1tz7swWlVaKwwo1mtiNH89LgryNLJGGPSHI0Fy
-   9FuYqf4KbNYlp5Cc5olpy5wumYEO1ponhH5YUoO1KCZFzUhR0IPlasJRl
-   MBCGHRdjjMwiZzFcpBuwlH2iVlMRI3fnTXWc8aO1jIX363wO0KJbtA/zZ
-   T+wMChHF/GMFfIZg7+1dVrPR/Bz96eanThOcDDB2N1fp8Twy8a97ASywK
-   0Yg+3jh1ouJJXSzLpZ4eeqOaiJ0lOoJ5RtUqioyPFYN40DHyE3paXoaYb
-   wCVgfnVoa5kpVr2h7lXNEzqrzTGOmKYacuPI3YDBk0F38YgBKYIrGWliP
-   w==;
-X-CSE-ConnectionGUID: 92Z56r3TT7eJeErfxZPskw==
-X-CSE-MsgGUID: Mt4NHuIFSZezsYLzxguyMQ==
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="44597533"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Aug 2025 00:34:28 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 13 Aug 2025 00:34:22 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 13 Aug 2025 00:34:18 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <jacob.e.keller@intel.com>,
-	<rmk+kernel@armlinux.org.uk>, <christophe.jaillet@wanadoo.fr>,
-	<rosenp@gmail.com>, <viro@zeniv.linux.org.uk>, <atenart@kernel.org>,
-	<quentin.schulz@bootlin.com>, <olteanv@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net v3] phy: mscc: Fix timestamping for vsc8584
-Date: Wed, 13 Aug 2025 09:26:05 +0200
-Message-ID: <20250813072605.444794-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755070000; c=relaxed/simple;
+	bh=SCHjay6fytNJVx6zHL3NMOmu1QsT9aQL1TIcqNXO7t4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eSWw1obwSlGit1d8QCJZ/wkH1JO0WHvQtNgp/QB96pT0iTOSUhapAh5g4C9HFVGfYiH/ZERC68qVySdcKLtPqhgmiVPIzVAbu8us+66er8CR1MNZQX9IEiR9B/u3+nyRICHkhTAMW2gx81gw783TNMYssPrd7haMZWZs3q7MzmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOXUdHYW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 327A9C4CEEB;
+	Wed, 13 Aug 2025 07:26:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755069999;
+	bh=SCHjay6fytNJVx6zHL3NMOmu1QsT9aQL1TIcqNXO7t4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=rOXUdHYWf+n2mN8L2Sqj8j8sLBl7cz6ax5d8ZuYH4e70shnS49CxIj3MKWqUdDBVN
+	 e2Yz5QYLqxhLoSak9gjx/1Zikr7CArk7va5x/KY0R0O/yTAH39fFSPoF49EBcL+Gpc
+	 qM1zVHZkUnUIc4abR3bEERyOBMzHCB1aWUswUAgJi8dyOqJ5AA1Hwft5X+7O+mF2A7
+	 P9CHMrLuyij11yp+E8db+s7Do8O2qfYkGBqyMXkms6n0j8/cLUXIGjB4/leoU4Bsvb
+	 6DL58c/JqoR1uu11kRayVmKrVmy4bdmS7MA2F1jcwp/AL5NWZaACSdxouRcFbn3+zK
+	 8oGrpS2zqCQYQ==
+Message-ID: <b98f8d3b-e45b-4889-b498-adeeb4a3e058@kernel.org>
+Date: Wed, 13 Aug 2025 09:26:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: sm8450: Fix address for usb controller
+ node
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ kernel test robot <lkp@intel.com>
+References: <20250813063840.2158792-1-krishna.kurapati@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250813063840.2158792-1-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There was a problem when we received frames and the frames were
-timestamped. The driver is configured to store the nanosecond part of
-the timestmap in the ptp reserved bits and it would take the second part
-by reading the LTC. The problem is that when reading the LTC we are in
-atomic context and to read the second part will go over mdio bus which
-might sleep, so we get an error.
-The fix consists in actually put all the frames in a queue and start the
-aux work and in that work to read the LTC and then calculate the full
-received time.
+On 13/08/2025 08:38, Krishna Kurapati wrote:
+> Correct the address in usb controller node to fix the following warning:
+> 
+> Warning (simple_bus_reg): /soc@0/usb@a6f8800: simple-bus unit address
+> format error, expected "a600000"
+> 
+> Fixes: c015f76c23ac ("arm64: dts: qcom: sm8450: Fix address for usb controller node")
 
-Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+There is no such commit in recent next... And how is that you fix commit
+WITH THE SAME title?
 
----
-v2->v3:
-- make sure to flush the rx_skbs_list when the driver is removed
+> Cc: stable@vger.kernel.org
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508121834.953Mvah2-lkp@intel.com/
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8450.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> index 2baef6869ed7..38c91c3ec787 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> @@ -5417,7 +5417,7 @@ opp-202000000 {
+>  			};
+>  		};
+>  
+> -		usb_1: usb@a6f8800 {
+> +		usb_1: usb@a600000 {
 
-v1->v2:
-- use sk_buff_head instead of a list_head and spinlock_t
-- stop allocating vsc8431_skb but put the timestamp in skb->cb
----
- drivers/net/phy/mscc/mscc.h      | 12 ++++++++
- drivers/net/phy/mscc/mscc_main.c | 12 ++++++++
- drivers/net/phy/mscc/mscc_ptp.c  | 50 ++++++++++++++++++++++++--------
- 3 files changed, 62 insertions(+), 12 deletions(-)
+There is no such code either...
 
-diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
-index 6a3d8a754eb8d..58c6d47fbe046 100644
---- a/drivers/net/phy/mscc/mscc.h
-+++ b/drivers/net/phy/mscc/mscc.h
-@@ -362,6 +362,13 @@ struct vsc85xx_hw_stat {
- 	u16 mask;
- };
- 
-+struct vsc8531_skb_cb {
-+	u32 ns;
-+};
-+
-+#define VSC8531_SKB_CB(skb) \
-+	((struct vsc8531_skb_cb *)((skb)->cb))
-+
- struct vsc8531_private {
- 	int rate_magic;
- 	u16 supp_led_modes;
-@@ -410,6 +417,11 @@ struct vsc8531_private {
- 	 */
- 	struct mutex ts_lock;
- 	struct mutex phc_lock;
-+
-+	/* list of skbs that were received and need timestamp information but it
-+	 * didn't received it yet
-+	 */
-+	struct sk_buff_head rx_skbs_list;
- };
- 
- /* Shared structure between the PHYs of the same package.
-diff --git a/drivers/net/phy/mscc/mscc_main.c b/drivers/net/phy/mscc/mscc_main.c
-index eff53e09335d4..6c8611e77a61f 100644
---- a/drivers/net/phy/mscc/mscc_main.c
-+++ b/drivers/net/phy/mscc/mscc_main.c
-@@ -2346,6 +2346,13 @@ static int vsc85xx_probe(struct phy_device *phydev)
- 	return vsc85xx_dt_led_modes_get(phydev, default_mode);
- }
- 
-+static void vsc85xx_remove(struct phy_device *phydev)
-+{
-+	struct vsc8531_private *priv = phydev->priv;
-+
-+	skb_queue_purge(&priv->rx_skbs_list);
-+}
-+
- /* Microsemi VSC85xx PHYs */
- static struct phy_driver vsc85xx_driver[] = {
- {
-@@ -2600,6 +2607,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
-+	.remove		= &vsc85xx_remove,
- 	.probe		= &vsc8574_probe,
- 	.set_wol	= &vsc85xx_wol_set,
- 	.get_wol	= &vsc85xx_wol_get,
-@@ -2625,6 +2633,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
-+	.remove		= &vsc85xx_remove,
- 	.probe		= &vsc8574_probe,
- 	.set_wol	= &vsc85xx_wol_set,
- 	.get_wol	= &vsc85xx_wol_get,
-@@ -2650,6 +2659,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
-+	.remove		= &vsc85xx_remove,
- 	.probe		= &vsc8584_probe,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-@@ -2673,6 +2683,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
-+	.remove		= &vsc85xx_remove,
- 	.probe		= &vsc8584_probe,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-@@ -2696,6 +2707,7 @@ static struct phy_driver vsc85xx_driver[] = {
- 	.config_intr    = &vsc85xx_config_intr,
- 	.suspend	= &genphy_suspend,
- 	.resume		= &genphy_resume,
-+	.remove		= &vsc85xx_remove,
- 	.probe		= &vsc8584_probe,
- 	.get_tunable	= &vsc85xx_get_tunable,
- 	.set_tunable	= &vsc85xx_set_tunable,
-diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-index 275706de5847c..d368d4fd82e17 100644
---- a/drivers/net/phy/mscc/mscc_ptp.c
-+++ b/drivers/net/phy/mscc/mscc_ptp.c
-@@ -1194,9 +1194,8 @@ static bool vsc85xx_rxtstamp(struct mii_timestamper *mii_ts,
- {
- 	struct vsc8531_private *vsc8531 =
- 		container_of(mii_ts, struct vsc8531_private, mii_ts);
--	struct skb_shared_hwtstamps *shhwtstamps = NULL;
-+
- 	struct vsc85xx_ptphdr *ptphdr;
--	struct timespec64 ts;
- 	unsigned long ns;
- 
- 	if (!vsc8531->ptp->configured)
-@@ -1206,27 +1205,52 @@ static bool vsc85xx_rxtstamp(struct mii_timestamper *mii_ts,
- 	    type == PTP_CLASS_NONE)
- 		return false;
- 
--	vsc85xx_gettime(&vsc8531->ptp->caps, &ts);
--
- 	ptphdr = get_ptp_header_rx(skb, vsc8531->ptp->rx_filter);
- 	if (!ptphdr)
- 		return false;
- 
--	shhwtstamps = skb_hwtstamps(skb);
--	memset(shhwtstamps, 0, sizeof(struct skb_shared_hwtstamps));
--
- 	ns = ntohl(ptphdr->rsrvd2);
- 
--	/* nsec is in reserved field */
--	if (ts.tv_nsec < ns)
--		ts.tv_sec--;
-+	VSC8531_SKB_CB(skb)->ns = ns;
-+	skb_queue_tail(&vsc8531->rx_skbs_list, skb);
- 
--	shhwtstamps->hwtstamp = ktime_set(ts.tv_sec, ns);
--	netif_rx(skb);
-+	ptp_schedule_worker(vsc8531->ptp->ptp_clock, 0);
- 
- 	return true;
- }
- 
-+static long vsc85xx_do_aux_work(struct ptp_clock_info *info)
-+{
-+	struct vsc85xx_ptp *ptp = container_of(info, struct vsc85xx_ptp, caps);
-+	struct skb_shared_hwtstamps *shhwtstamps = NULL;
-+	struct phy_device *phydev = ptp->phydev;
-+	struct vsc8531_private *priv = phydev->priv;
-+	struct sk_buff_head received;
-+	struct sk_buff *rx_skb;
-+	struct timespec64 ts;
-+	unsigned long flags;
-+
-+	__skb_queue_head_init(&received);
-+	spin_lock_irqsave(&priv->rx_skbs_list.lock, flags);
-+	skb_queue_splice_tail_init(&priv->rx_skbs_list, &received);
-+	spin_unlock_irqrestore(&priv->rx_skbs_list.lock, flags);
-+
-+	vsc85xx_gettime(info, &ts);
-+	while ((rx_skb = __skb_dequeue(&received)) != NULL) {
-+		shhwtstamps = skb_hwtstamps(rx_skb);
-+		memset(shhwtstamps, 0, sizeof(struct skb_shared_hwtstamps));
-+
-+		if (ts.tv_nsec < VSC8531_SKB_CB(rx_skb)->ns)
-+			ts.tv_sec--;
-+
-+		shhwtstamps->hwtstamp = ktime_set(ts.tv_sec,
-+						  VSC8531_SKB_CB(rx_skb)->ns);
-+		netif_rx(rx_skb);
-+	}
-+
-+	return -1;
-+}
-+
- static const struct ptp_clock_info vsc85xx_clk_caps = {
- 	.owner		= THIS_MODULE,
- 	.name		= "VSC85xx timer",
-@@ -1240,6 +1264,7 @@ static const struct ptp_clock_info vsc85xx_clk_caps = {
- 	.adjfine	= &vsc85xx_adjfine,
- 	.gettime64	= &vsc85xx_gettime,
- 	.settime64	= &vsc85xx_settime,
-+	.do_aux_work	= &vsc85xx_do_aux_work,
- };
- 
- static struct vsc8531_private *vsc8584_base_priv(struct phy_device *phydev)
-@@ -1567,6 +1592,7 @@ int vsc8584_ptp_probe(struct phy_device *phydev)
- 
- 	mutex_init(&vsc8531->phc_lock);
- 	mutex_init(&vsc8531->ts_lock);
-+	skb_queue_head_init(&vsc8531->rx_skbs_list);
- 
- 	/* Retrieve the shared load/save GPIO. Request it as non exclusive as
- 	 * the same GPIO can be requested by all the PHYs of the same package.
--- 
-2.34.1
+>  			compatible = "qcom,sm8450-dwc3", "qcom,snps-dwc3";
+>  			reg = <0 0x0a600000 0 0xfc100>;
+>  			status = "disabled";
 
+
+Best regards,
+Krzysztof
 
