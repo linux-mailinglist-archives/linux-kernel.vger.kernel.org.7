@@ -1,191 +1,231 @@
-Return-Path: <linux-kernel+bounces-766556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FAAB2480C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:08:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B7AB2480D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A66DB1BC3050
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:08:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6F01769E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD7F2F6570;
-	Wed, 13 Aug 2025 11:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U5uCGNiO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421502D060C;
-	Wed, 13 Aug 2025 11:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59152F6581;
+	Wed, 13 Aug 2025 11:08:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369AC223DDA;
+	Wed, 13 Aug 2025 11:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755083308; cv=none; b=ZblI5Pvx9dUj5JR3F0hv4tPuVqH9O/BQMP/zVVj3KBhaYBy7ZJV3nYPw+63DAQXZNWaW3Z5YuQ+B9gv74I1rIJvUI2zDjlxayuXZpho1d3ImJ0aH/dy7fIgPjUiQmrWa51SoqjQ+wuviIaR9WAFVLTU90o+ZyDHnHI6+8lKRMPs=
+	t=1755083333; cv=none; b=AJmHg9jeeWIBcc5/2n4wGmYWJac1uzkhFVfrmNnXn1j3TEYwxFG/I1bvAq25Rz0bqIaKVZLBcd6kJFz1EgKU7wVepq6EktZ9pfeE3KMIfV+Y/0UEygE6qGq54m97EISXSWKcM1fSoiOwUjgGP0IPUxolOyoGCe66Y7+tV8CVUp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755083308; c=relaxed/simple;
-	bh=agLW0VIDcUGVqtF+PXqlqKoUZfF/53CioVgWfMwAxpo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y6nNU1ktOTUoDaeGGklHl2Tt2N2Yrm41qwNdjPti0NZrdRM3S/bIgcy1vM5x7Bsv4oWsd6A1zRmywrgrSWw0wO2qorb8pUCdqZbaaBmIsegF3UzyKnlUkSs40J9M+t6rLhrQj5ASQ11Z5vy8/kbIyelgqvx1irxd7CZOkBwA97U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U5uCGNiO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D6mJlR008724;
-	Wed, 13 Aug 2025 11:08:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eSJS8iaPgTC+NMg4WjXp7ShROEazviRD3VPvqnJIBbA=; b=U5uCGNiO4KmIu6qv
-	+OLEsZrxQmGVFgmbBz0pWnhCnTXq2stiedu4MgSg5L9KsM/AsTXIt69WzJg8v+E5
-	E368aovOlIAw6pJppkNqUd42ubxJ/qR3G7LVGcdQnRkhSc4hEkAzJD5tFBU7W4Fv
-	KwCFTuWhPSel0qBrCgh5JMuTqLvRA2VjECARWt4bdVa6ryOrkGokSQqxXVHrhNOI
-	4x3Pbhv9Ed5KwXu91hR/wRDjT43sUYJjWuIjChUWj4oP1fHe7tDoV1MOt2RKgdZA
-	Ol7m9IBGV/UQwyC3lUxxcxp41UtrRYuXwwr4Xf0MOn5+4fXpdJuxmlbIm6DEz5A+
-	CTUBhg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fem4fg51-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 11:08:20 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57DB8JOF015501
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 11:08:19 GMT
-Received: from [10.206.107.4] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 13 Aug
- 2025 04:08:14 -0700
-Message-ID: <ab5d3811-9fbf-4749-9463-4457fbf50023@quicinc.com>
-Date: Wed, 13 Aug 2025 16:38:11 +0530
+	s=arc-20240116; t=1755083333; c=relaxed/simple;
+	bh=Tghr+izcpOpnCTi3ya2m5rAl6XyJW8sYrLp6lPffUiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZcVIB0+gXC9cGR7ho/sZauw8s5giT1TW9rR3wNuADioTvIRjgdNFBts/ST1lxNdK3uTdlZGyVdrej0WHH3IlPMVCfoA623sA4skDLDMObESU0u+AYGeO4fU6R6afWhijWPPoejBp2S06bY6OeCuTtgeZy1JhuvQ0kSsOLq0nSSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6224A12FC;
+	Wed, 13 Aug 2025 04:08:42 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C5C013F738;
+	Wed, 13 Aug 2025 04:08:46 -0700 (PDT)
+Date: Wed, 13 Aug 2025 13:08:31 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, rafael@kernel.org,
+	viresh.kumar@linaro.org, sudeep.holla@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, vincent.guittot@linaro.org,
+	yangyicong@hisilicon.com, zhanjie9@hisilicon.com,
+	lihuisong@huawei.com, yubowen8@huawei.com, linhongye@h-partners.com
+Subject: Re: [PATCH v3 3/3] arm64: topology: Setup AMU FIE for online CPUs
+ only
+Message-ID: <aJxyL1XJu-x3AFjO@arm.com>
+References: <20250805093330.3715444-1-zhenglifeng1@huawei.com>
+ <20250805093330.3715444-4-zhenglifeng1@huawei.com>
+ <aJMmjKenJaDnRskH@arm.com>
+ <561a9474-7be6-4c8a-8a5d-40efb186b3d2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50
- broken capabilities
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Adrian Hunter
-	<adrian.hunter@intel.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_pragalla@quicinc.com>,
-        <quic_sayalil@quicinc.com>, <quic_nitirawa@quicinc.com>,
-        <quic_bhaskarv@quicinc.com>, <kernel@oss.qualcomm.com>
-References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
- <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
- <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
- <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
- <8b023e56-435b-43df-8b15-c562a494e06f@kernel.org>
-Content-Language: en-US
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-In-Reply-To: <8b023e56-435b-43df-8b15-c562a494e06f@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CX22bScD_SV7lCuBYIpCB4sFzipBqTpI
-X-Proofpoint-ORIG-GUID: CX22bScD_SV7lCuBYIpCB4sFzipBqTpI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA2OCBTYWx0ZWRfX98xLFV266QbX
- m27GIrJhSGb85YleytGJ0sQtrACMSDLz2lJ9QoDSGFvL1IjUV8jzFpWDdwJ6Pf35WJ5HWUvIU7N
- yEppGUGTbYsYOFqHBCLPlynigAx0A3xSUKyh9BmYGe3ubhPVn3/mA2VFSTLtsUJYjG/WYMgteTP
- mjmuowFZxJB7ndNXUuWDGF8mi+RSurRoahyot3Pj257xkyj0Ivh8Ofq3QEkCoZX9wozlDmlwj/s
- 1zxKaTlg3P3EAg8efJvTzcx4WbHTp4whNwyfIxkvKHE8G/N+u1My3TrR5HENQsiBec/vLPB/WT9
- yrK+K6Gu8YgkEjl8vcj8z66TM71mWqDUw+iZhR35AzeDyDsA7as6whxe7UHWhi8xdrtYzzdWVtq
- xyZ6Yizv
-X-Authority-Analysis: v=2.4 cv=YMafyQGx c=1 sm=1 tr=0 ts=689c7224 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=7vkX0yn46oB1UrFKko0A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
- adultscore=0 impostorscore=0 malwarescore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <561a9474-7be6-4c8a-8a5d-40efb186b3d2@huawei.com>
 
-
-
-On 8/5/2025 2:55 PM, Krzysztof Kozlowski wrote:
-> On 05/08/2025 11:19, Sarthak Garg wrote:
->>
->>
->> On 8/1/2025 2:32 PM, Krzysztof Kozlowski wrote:
->>> On 01/08/2025 10:45, Sarthak Garg wrote:
->>>> The kernel now handles level shifter limitations affecting SD card
->>>> modes, making it unnecessary to explicitly disable SDR104 and SDR50
->>>> capabilities in the device tree.
->>>>
->>>> However, due to board-specific hardware constraints particularly related
->>>> to level shifter in this case the maximum frequency for SD High-Speed
->>>> (HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
->>>> card in HS mode. This is achieved using the max-sd-hs-frequency property
->>>> in the board DTS.
->>>>
->>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
->>>>    arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
->>>>    arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
->>>>    arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 3 ---
->>>>    4 files changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>
->>> This will break MMC for all of the users and nothing in commit msg or
->>> cover letter explains that or mentions merging strategy.
->>>
->>> Exactly this case is covered by your internal guideline, no? Please read it.
->>>
->>> Best regards,
->>> Krzysztof
->>
->> Just to make sure I’m addressing the right concern — are you primarily
->> worried about the introduction of the max-sd-hs-frequency property in
->> the board DTS files, or about the removal of the sdhci-caps-mask
->> from the common sm8550.dtsi?
+On Wed, Aug 13, 2025 at 06:17:54PM +0800, zhenglifeng (A) wrote:
+> On 2025/8/6 17:55, Beata Michalska wrote:
 > 
+> > On Tue, Aug 05, 2025 at 05:33:30PM +0800, Lifeng Zheng wrote:
+> >> When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
+> >> only CPU0 will go online. The support AMU flag of CPU0 will be set but the
+> >> flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
+> >> when it shares a cpufreq policy with other CPU(s). After that, when other
+> >> CPUs are finally online and the support AMU flags of them are set, they'll
+> >> never have a chance to set up AMU FIE, even though they're eligible.
+> >>
+> >> To solve this problem, the process of setting up AMU FIE needs to be
+> >> modified as follows:
+> >>
+> >> 1. Set up AMU FIE only for the online CPUs.
+> >>
+> >> 2. Try to set up AMU FIE each time a CPU goes online and do the
+> >> freq_counters_valid() check. If this check fails, clear scale freq source
+> >> of all the CPUs related to the same policy, in case they use different
+> >> source of the freq scale.
+> >>
+> >> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> >> ---
+> >>  arch/arm64/kernel/topology.c | 54 ++++++++++++++++++++++++++++++++++--
+> >>  1 file changed, 52 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> >> index 9317a618bb87..b68621b3c071 100644
+> >> --- a/arch/arm64/kernel/topology.c
+> >> +++ b/arch/arm64/kernel/topology.c
+> >> @@ -385,7 +385,7 @@ static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
+> >>  	struct cpufreq_policy *policy = data;
+> >>  
+> >>  	if (val == CPUFREQ_CREATE_POLICY)
+> >> -		amu_fie_setup(policy->related_cpus);
+> >> +		amu_fie_setup(policy->cpus);
+> > I think my previous comment still stands.
+> > This will indeed set the AMU FIE support for online cpus.
+> > Still, on each frequency change, arch_set_freq_scale will be called with
+> > `related_cpus`, and that mask will be used to verify support for AMU counters,
+> > and it will report there is none as 'related_cpus' won't be a subset of
+> > `scale_freq_counters_mask`. As a consequence, new scale will be set, as seen by
+> > the cpufreq. Now this will be corrected on next tick but it might cause
+> > disruptions. So this change should also be applied to cpufreq - if feasible, or
+> > at least be proven not to be an issue. Unless I am missing smth.
 > 
-> Apply this patch and test MMC. Does it work? No. Was it working? Yes.
+> I know what you mean now. Yes, I think you are right, this change should
+> also be applied to cpufreq too. Thanks!
 > 
+> >>  
+> >>  	/*
+> >>  	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
+> >> @@ -404,10 +404,60 @@ static struct notifier_block init_amu_fie_notifier = {
+> >>  	.notifier_call = init_amu_fie_callback,
+> >>  };
+> >>  
+> >> +static int cpuhp_topology_online(unsigned int cpu)
+> >> +{
+> >> +	struct cpufreq_policy *policy = cpufreq_cpu_get_raw_no_check(cpu);
+> >> +
+> >> +	/*
+> >> +	 * If the online CPUs are not all AMU FIE CPUs or the new one is already
+> >> +	 * an AMU FIE one, no need to set it.
+> >> +	 */
+> >> +	if (!policy || !cpumask_available(amu_fie_cpus) ||
+> >> +	    !cpumask_subset(policy->cpus, amu_fie_cpus) ||
+> >> +	    cpumask_test_cpu(cpu, amu_fie_cpus))
+> >> +		return 0;
+> > This is getting rather cumbersome as the CPU that is coming online might belong
+> > to a policy that is yet to be created. Both AMU FIE support, as well as cpufreq,
+> > rely on dynamic hp state so, in theory, we cannot be certain that the cpufreq
+> > callback will be fired first (although that seems to be the case).
+> > If that does not happen, the policy will not exist, and as such given CPU
+> > will not use AMUs for FIE. The problem might be hypothetical but it at least
+> > deservers a comment I think.
 > 
-> Best regards,
-> Krzysztof
+> Actually, this callback will always be fired before the cpufreq one,
+> because init_amu_fie() is called before any cpufreq driver init func (It
+> has to be, otherwise the init_amu_fie_notifier cannot be registered before
+> it is needed.). And the callback that is setup first will be called first
+> when online if rely on dynamic hp state. So in your hypothetical scenario,
+> yes, the policy will not exist and this funcion will do nothing. But that's
+> OK because the notifier callback will do what should be done when the
+> policy is being created.
+>
+You are right, I definitely drifted away too much with this one.
+> > Second problem is cpumask_available use: this might be the very fist CPU that
+> > might potentially rely on AMUs for frequency invariance so that mask may not be
+> > available yet. That does not mean AMUs setup should be skipped. Not just yet,
+> > at least. Again more hypothetical.
+> 
+> Same, things will be done in the notifier callback when the policy is being
+> created.
+> 
+> > BTW, there should be `amu_fie_cpu_supported'.
+> 
+> Sorry, I can't see why it is needed. Could you explained further?
+It covers the 'cpumask_available' and `cpumask_test_cpu` so I was thinking
+your condition could look like:
+
+	if (!policy || amu_fie_cpu_supported(cpu) ||
+	    !cpumask_subset(policy->cpus, amu_fie_cpus)
+	    	return 0
+but that one will not cover all cases so feel free to ignore me.
 
 
-You're absolutely right to raise the concern about potential breakage.
-After conducting additional testing across multiple boards, I’ve 
-confirmed that the removal of SDR104/SDR50 broken capabilities does 
-indeed affect V1 SM8550 devices.
-However, on V2 devices, all modes—including SDR104, SDR50, and HS—are 
-fully functional and have been verified to work reliably.
-
-Based on your feedback, I will revise the patch to retain the broken 
-SDR104/SDR50 capabilities in the common sm8550.dtsi, ensuring no impact 
-on current sm8550 devices already in use.
-
-We will revisit the removal of broken capabilities dt property for 
-upcoming targets after thorough validation and testing to ensure no 
-regressions from the beginning.
-
-Please let me know if this approach aligns with your expectations. I’ll 
-prepare and send out a revised patch accordingly.
-
-Best regards,
-Sarthak
+---
+BR
+Beata
+> 
+> >> +
+> >> +	/*
+> >> +	 * If the new online CPU cannot pass this check, all the CPUs related to
+> >> +	 * the same policy should be clear from amu_fie_cpus mask, otherwise they
+> >> +	 * may use different source of the freq scale.
+> >> +	 */
+> >> +	if (!freq_counters_valid(cpu)) {
+> >> +		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH,
+> >> +						 policy->related_cpus);
+> >> +		cpumask_andnot(amu_fie_cpus, amu_fie_cpus, policy->related_cpus);
+> > I think it might deserve a warning as this probably should not happen.
+> 
+> Yes, makes sense. Thanks!
+> 
+> > 
+> > ---
+> > BR
+> > Beata
+> >> +		return 0;
+> >> +	}
+> >> +
+> >> +	cpumask_set_cpu(cpu, amu_fie_cpus);
+> >> +
+> >> +	topology_set_scale_freq_source(&amu_sfd, cpumask_of(cpu));
+> >> +
+> >> +	pr_debug("CPU[%u]: counter will be used for FIE.", cpu);
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >>  static int __init init_amu_fie(void)
+> >>  {
+> >> -	return cpufreq_register_notifier(&init_amu_fie_notifier,
+> >> +	int ret;
+> >> +
+> >> +	ret = cpufreq_register_notifier(&init_amu_fie_notifier,
+> >>  					CPUFREQ_POLICY_NOTIFIER);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+> >> +					"arm64/topology:online",
+> >> +					cpuhp_topology_online,
+> >> +					NULL);
+> >> +	if (ret < 0) {
+> >> +		cpufreq_unregister_notifier(&init_amu_fie_notifier,
+> >> +					    CPUFREQ_POLICY_NOTIFIER);
+> >> +		return ret;
+> >> +	}
+> >> +
+> >> +	return 0;
+> >>  }
+> >>  core_initcall(init_amu_fie);
+> >>  
+> >> -- 
+> >> 2.33.0
+> >>
+> > 
+> 
 
