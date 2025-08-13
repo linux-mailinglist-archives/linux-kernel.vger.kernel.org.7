@@ -1,220 +1,163 @@
-Return-Path: <linux-kernel+bounces-767351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928ECB25331
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:44:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8BBB25335
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CB518845B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 005605A752D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6672E92A6;
-	Wed, 13 Aug 2025 18:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A155B29ACC2;
+	Wed, 13 Aug 2025 18:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m7ElGGFV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="HrriX0Ew"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FFC28B3F3
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 18:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B474D18DF8D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 18:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755110654; cv=none; b=Mqg1aK35ALjuKhVbJxRCpxAhhWuDyBQtBia1DCUHBkncd5nAF7EYQLWfAbp8dk8TRjIOo5k/uzlqqYy29WSI+LqP7OsibWT0aFXbx0FS8WpPTp0DTNLrjxORCFu0H6L0j/Y5aLOCJjT5+fGLR1VCwJ3y/e0oqAhfYhPaiojmKRU=
+	t=1755110830; cv=none; b=YmKKbNJGNPq2LoxJ6YfcF5yq9srfI2WDZilgtkfVXbFh/mafH48ee6Cf2lbLD8n42NfRvx+bFi8borYxVb17AiYbi4SSkT/D82ODy/Hp2wqCTVuIrdNSnyyBym6i2qxhBnWmxduFOon0hVr71HYBUEUPkCBm5ieI4hPwPc5M0NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755110654; c=relaxed/simple;
-	bh=mJD2BkbvjxgDrwFljlBtr6w24VM0830IIP3Zd1UGqAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QoyAwtwCh8+DSgB9Enm0gQEewvVMCLeYB9KzuSylA2FMFmassJ+zqGfmH2aJ0V+TuLUlGmQj26pKy+MMiztDSGPzF9hafm1fsdKAckNDm/jqWxVvqmoZP1YrHxkFPM2nwIqnKSw6lR3AzNZFTjm/+YujLOQ9AYMf/CRpE8lFZKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m7ElGGFV; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755110653; x=1786646653;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mJD2BkbvjxgDrwFljlBtr6w24VM0830IIP3Zd1UGqAk=;
-  b=m7ElGGFV6EMoQib6fix1cxVySMlPl+icIa8OdG8TbxYBMUGCb32uYWC9
-   BpXagqyrB0iabEPxjsPLaEbMgGHnfEbhrEI0H+SIe0pr3WF+EWVhQhI/o
-   b5uAs7tCiY9wAeMsiD7HzMUSYlbDjK2JuS6zipXUfJxTYZwJUSmbo2KEw
-   xrrR6IqWiItVZr/x3lsSFSOh41Sd+V9hTXLU17d5VqROxUyrY73XMWhIb
-   us4kSwiqaG+VqzBEQ5x86PZX87CXZZdrOPEXVPaEozj3D11x0uT062AgT
-   LkMDmCieEtK7z6ndy7sc6ZyDV9msiPkVI+IhfnWyrK7IeK6tUnhXBlYqq
-   g==;
-X-CSE-ConnectionGUID: FiwJMMAwTcSBub73OET8rA==
-X-CSE-MsgGUID: grKCm1HbRcmlbdXLIxLXiA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="61036321"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="61036321"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 11:44:12 -0700
-X-CSE-ConnectionGUID: nPlv+xR0QyeNLDSIv7VDtA==
-X-CSE-MsgGUID: pwdLbm0tR/uzvY8p6z/jIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="171880376"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.131]) ([10.125.111.131])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 11:44:12 -0700
-Message-ID: <002f259d-2f20-4428-add3-a02650bc728b@intel.com>
-Date: Wed, 13 Aug 2025 11:44:11 -0700
+	s=arc-20240116; t=1755110830; c=relaxed/simple;
+	bh=rRD7cCEqQsfqIWRQE+8gNwUvzHsQOHHZ6SWAdO9fsqU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AWvkn4WcaeECVyfi5/hOqKogn57kTPCs78r836WYMm/OdNh/E9Xf11/uJ/XbdlTl3Xk4C9DB2zQossdHpvKLjc6jqG5TpRgBkssCL2CL6cnO4/sxw5hOR2nFcPvZ0jTukTTsIt5hRGWdHj1ZyCI4W0u4rDATlZGHOG3703/q99c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=HrriX0Ew; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3e56ff0fa61so1696455ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755110827; x=1755715627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KXgtHtogm5A4R/WnbeHN7aFUW9InK5mQEbz2x1R9n64=;
+        b=HrriX0EwMBuR7YynIrA9SQ7aXVro+2jK0n8n8KXDMC5HGZB4R5DAbT5Hia/lx8L8hh
+         xYKY2KklD6JYpmJ4ktrbm+i31dHHoenscdBHYqlYeKhVQAMGWSSccgr2sGGHlVn8rKOu
+         w39OFDZXn29IJB6dH7MXg2WFwOlWFDX4RpRbTuVDFXLFL+pzKosPQEhvXYsgk1m7ENkC
+         RwKyGaLsjJ4eEWRme5rtMLo16KxZEF+JaqjOtkxyYQuFhucSFRB3m0KZnpnusgUXub+K
+         lKsNqa4cwGDGdhGnQOHktCETMTSmXgFFORAtZFnQ0mrNU7vDuuxmjXZt2Jstlm/zjmxk
+         zznw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755110827; x=1755715627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KXgtHtogm5A4R/WnbeHN7aFUW9InK5mQEbz2x1R9n64=;
+        b=HrsiFq3dFarhjqfhtPrToNp2qYxYzQW1kcOvx5pZXAvBSTqiXSnVz/tyiSaaQIoMR7
+         7wy5q2/paFwd0M5nh9YHFe/GM82nKP66Eq7C19uuuH+/QoFYNpEdBt8ylAC5rUeKsoB/
+         yEdnoenuK4HmZeVZCHpiBGtjpGQsonRQMSqGkDbN/+KujrO2XljcMkLoZlO0eiBgjYF6
+         De2IQkT3ZSrXGI9Lspvsk4cwmvadvzYHYok7wFxs5t6KO/LnaZsM/j9kfzuwgBXwJYN3
+         zyTJvemIVxx9z+u1lguXkv3S8LDfZkRK26oMeHJxIio9oMx58NMtAKAm2UMGGP4oHp/Y
+         M/3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrWlFz2nS6zqq0cxJSf+NFUztgYg01Pufnosb0W7/E8p9aQEy5NdM/jynP+UDS+4nQWW26EPOuK7N2iuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXeMwGBNaFobUtVgeeugyvwMeZ0yPhdOb+vpin76uYG3We2A7C
+	ap0wR4fbfDlB/VSLNQeA2oAaxAR9wUC/hlNaigJ2+E+6+rrvUTP+VY1hS7i/p4l9G9k=
+X-Gm-Gg: ASbGncvM8OLF0bFz9mvqo/hRYSyZGn3ZdOpbDuvBXFHn/Z421WwCpVC5fwqGgkDc3pj
+	CATPITobbpOm6omTO9MISF2vw2tVyoxswZYGG4vTgRX7rj7nMGfFKr/QpSGvWUGzU02wRpNXKW8
+	2gF+FyO6GIM82D1LVF7C8XGEJjVyZ8Z1gpP4veTaRCShM4whsKOhKDZXbuxM0OgV3RJKVztgCO7
+	vSuIPV2MATGWuEEuQRK5LDT5kVMyKd7UXJ5kn+734p3KGr9ZB8Apt1JQwaxqIenHCc36MXCEhnu
+	ULhXd+LX6yNCB3gGr4tirK79kW9HCjHCRdR3zDk5NFNS5HUswlR1CSyRojxSqhSkbl8pS+wyPsT
+	zoaAexgEMbuSbtexI2Tyf2roWDJYNR/r3gVYB/i0gGriSVixKFPjfFMhQ9nbCJ46JSg==
+X-Google-Smtp-Source: AGHT+IE4C3i9M8kXUz9O4UxOKjpcYn8lEZvQJ6gg/sXkMzZkGV6K8yFbp3z2/m0TNzRFI95fCD98Hg==
+X-Received: by 2002:a92:cd8f:0:b0:3e5:4002:e822 with SMTP id e9e14a558f8ab-3e57091642dmr4986915ab.12.1755110826731;
+        Wed, 13 Aug 2025 11:47:06 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae9bd89d7sm3933104173.59.2025.08.13.11.47.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 11:47:06 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	lpieralisi@kernel.org,
+	kwilczynski@kernel.org,
+	mani@kernel.org,
+	bhelgaas@google.com,
+	vkoul@kernel.org,
+	kishon@kernel.org
+Cc: dlan@gentoo.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	p.zabel@pengutronix.de,
+	tglx@linutronix.de,
+	johan+linaro@kernel.org,
+	thippeswamy.havalige@amd.com,
+	namcao@linutronix.de,
+	mayank.rana@oss.qualcomm.com,
+	shradha.t@samsung.com,
+	inochiama@gmail.com,
+	quic_schintav@quicinc.com,
+	fan.ni@samsung.com,
+	devicetree@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] Introduce SpacemiT K1 PCIe phy and host controller
+Date: Wed, 13 Aug 2025 13:46:54 -0500
+Message-ID: <20250813184701.2444372-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] x86/microcode/intel: Implement staging handler
-To: "Chang S. Bae" <chang.seok.bae@intel.com>, x86@kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, colinmitchell@google.com, chao.gao@intel.com,
- abusse@amazon.de, linux-kernel@vger.kernel.org
-References: <20250409232713.4536-1-chang.seok.bae@intel.com>
- <20250813172649.15474-1-chang.seok.bae@intel.com>
- <20250813172649.15474-5-chang.seok.bae@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250813172649.15474-5-chang.seok.bae@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-> +/*
-> + * Determine if the next data chunk can be sent. Each chunk is typically
-> + * one page unless the remaining data is smaller. If the total
-> + * transmitted data exceeds the defined limit, a timeout occurs.
-> + */
+This series introduces a PHY driver and a PCIe driver to support PCIe
+on the SpacemiT K1 SoC.  The PCIe implementation is derived from a
+Synopsys DesignWare PCIe IP.  The PHY driver supports one combination
+PCIe/USB PHY as well as two PCIe-only PHYs.  The combo PHY port uses
+one PCIe lane, and the other two ports each have two lanes.  All PCIe
+ports operate at 5 GT/second.
 
-This comment isn't really telling the whole story. It's not just
-determining if the chunk can be sent, it's calculating it and filling it in.
+The PCIe PHYs must be configured using a value that can only be
+determined using the combo PHY, operating in PCIe mode.  To allow
+that PHY to be used for USB, the calibration step is performed by
+the PHY driver automatically at probe time.  Once this step is done,
+the PHY can be used for either PCIe or USB.
 
-> +static bool can_send_next_chunk(struct staging_state *ss)
-> +{
-> +	WARN_ON_ONCE(ss->ucode_len < ss->offset);
+					-Alex
 
-Please don't WARN_ON() they can be fatal because of panic_on_warn. Also
-I think this is the wrong spot for this. We should enforce this at the
-time ss->offset is _established_ which is oddly enough in the next patch.
+Alex Elder (6):
+  dt-bindings: phy: spacemit: add SpacemiT PCIe/combo PHY
+  dt-bindings: phy: spacemit: introduce PCIe PHY
+  dt-bindings: phy: spacemit: introduce PCIe root complex
+  phy: spacemit: introduce PCIe/combo PHY
+  PCI: spacemit: introduce SpacemiT PCIe host driver
+  riscv: dts: spacemit: PCIe and PHY-related updates
 
-	ss->offset = read_mbox_dword(ss->mmio_base);
-	if (ss->offset > ss->ucode_len)
-		// error out
+ .../bindings/pci/spacemit,k1-pcie-rc.yaml     | 141 ++++
+ .../bindings/phy/spacemit,k1-combo-phy.yaml   | 110 +++
+ .../bindings/phy/spacemit,k1-pcie-phy.yaml    |  49 ++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      |  28 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |  33 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          | 169 +++++
+ drivers/pci/controller/dwc/Kconfig            |  10 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-k1.c          | 355 ++++++++++
+ drivers/phy/Kconfig                           |  11 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/phy-spacemit-k1-pcie.c            | 639 ++++++++++++++++++
+ 12 files changed, 1547 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/spacemit,k1-pcie-rc.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+ create mode 100644 Documentation/devicetree/bindings/phy/spacemit,k1-pcie-phy.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-k1.c
+ create mode 100644 drivers/phy/phy-spacemit-k1-pcie.c
 
 
-> +	ss->chunk_size = min(MBOX_XACTION_SIZE, ss->ucode_len - ss->offset);
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.48.1
 
-It's a _little_ non-obvious that "can_send_next_chunk()" is also setting
-->chunk_size. It would be easier to grok if it was something like:
-
-	ok = calc_next_chunk_size(&ss);
-	if (!ok)
-		// error out
-
-> +	if (ss->bytes_sent + ss->chunk_size > MBOX_XACTION_MAX(ss->ucode_len)) {
-> +		ss->state = UCODE_TIMEOUT;
-> +		return false;
-> +	}
-
-"TIMEOUT" seems like an odd thing to call this failure. Can you explain
-the choice of this error code a bit, please?
-
-> +/*
-> + * Handle the staging process using the mailbox MMIO interface. The
-> + * microcode image is transferred in chunks until completion. Return the
-> + * result state.
->   */
->  static enum ucode_state do_stage(u64 mmio_pa)
->  {
-> -	pr_debug_once("Staging implementation is pending.\n");
-> -	return UCODE_ERROR;
-> +	struct staging_state ss = {};
-> +
-> +	ss.mmio_base = ioremap(mmio_pa, MBOX_REG_NUM * MBOX_REG_SIZE);
-> +	if (WARN_ON_ONCE(!ss.mmio_base))
-> +		return UCODE_ERROR;
-> +
-> +	init_stage(&ss);
-> +
-> +	/* Perform the staging process while within the retry limit */
-> +	while (!is_stage_complete(ss.offset) && can_send_next_chunk(&ss)) {
-> +		/* Send a chunk of microcode each time: */
-> +		if (!send_data_chunk(&ss))
-> +			break;
-> +		/*
-> +		 * Then, ask the hardware which piece of the image it
-> +		 * needs next. The same piece may be sent more than once.
-> +		 */
-> +		if (!fetch_next_offset(&ss))
-> +			break;
-> +	}
-
-The return types here are a _bit_ wonky. The 'bool' returns make sense
-for things like is_stage_complete(). But they don't look right for:
-
-	if (!send_data_chunk(&ss))
-		break;
-
-where we'd typically use an -ERRNO and where 0 mean success. It would
-look something like this:
-
-	while (!staging_is_complete(&ss)) {
-		err = send_data_chunk(&ss);
-		if (err)
-			break;
-
-		err = fetch_next_offset(&ss);
-		if (err)
-			break;
-	}
-
-That's utterly unambiguous about the intent and what types the send and
-fetch function _must_ have.
-
-Note I also moved the can_send_next_chunk() call into
-staging_is_complete(). I think that makes sense as well for the
-top-level loop.
 
