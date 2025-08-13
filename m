@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-765794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5274B23E57
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:45:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72007B23E59
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5275C1B63003
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67216249A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42B51F12E9;
-	Wed, 13 Aug 2025 02:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72131F8BD6;
+	Wed, 13 Aug 2025 02:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="sf0B3yS1"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="BiA0sZLJ"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6306312C499
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4317C27472
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755053118; cv=none; b=SAXp4wncdjSn7EzIMfl/Bv9fyMtOT2CE0SNYbgYB6YeeQWpxhM0Eajw4ufx1bqf85ny3XySk63xeVQqvyLcKqyZsgIB5oA5enJLELSSi5D/3obLLHbAnzf2kWe1zYArxJg1nJWzQlVKSemmPpgrBJ0LoTC5UscePxTbXBLJUF0w=
+	t=1755053119; cv=none; b=nTV7ztofFaEYtCCyOBrF4VpE7jqfWPboiUW/h3izmCJ2p2N2Np/mU+h+ShQsyDQDYGk2sRN248MoP3nHRbUN0espW8t2G+BWNbuNi/Br5lZaJbH88juMMuDIT21Gr4eOV+eTUmSrEBZ8fpoYSzOnOAYpkFtQ4PYi79o1CC1fjCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755053118; c=relaxed/simple;
-	bh=f3e7VDZ5RpctNbfj+dyIcOXKfTplNtROBxfFMgGp3q0=;
+	s=arc-20240116; t=1755053119; c=relaxed/simple;
+	bh=qAyi6Z4J1VmKuMgL9UNLnXal9YSPn3d/+rrwoINafhg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dpA+w9G7OFXCY9ymWSiv2Jmy8cHBfqZV27cN0ga1XTma8qcSI0cbBd1sA/oAVOs5Xr/bch1j4Rf9ejTbChSCSFUfTfGn2ZMwaUN5WMM7uEjrdFcB2O0FUq0XA4F9f6TkQcfHYPv+alSgnnpvrJ71XnGws6rvdrsRDno3qme12ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=sf0B3yS1; arc=none smtp.client-ip=209.85.166.170
+	 MIME-Version; b=boFt6FxM4s9zGKXKDmOghWvAsfjnkMC2UxVTd34CtDPv9Z9qbb4CyZxx8jg3zivOAst4gryDevk/FXGZRKu/K9rYzTbIrGKwDdK8UYTHC18YYieKqz3XKu8ryqYM9Piv9jNu059NwM4U+DdqsEdxv+b9c7NL9zFLhu6AEwyVVxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=BiA0sZLJ; arc=none smtp.client-ip=209.85.166.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3e5684fc1edso1342235ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:45:16 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3e3f378ea68so60558325ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:45:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755053115; x=1755657915; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755053117; x=1755657917; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ek2s2DUqL/jgDZvOvv6Rjx1Dp3m/erc1mrYIyBeINSk=;
-        b=sf0B3yS1qPud7q0W3S6BWnLkjqfU+/Ju2ZJenWEd5LYeNeg+/pSFoLuBki6/pm9NGN
-         ZvPeNY8njAoqVaHrLOHzQAusHYSmAYC8etonHWddbRyG/tYcjaM2Nll3ynGj6F1g6min
-         Q7YQMxm/flHGpB+Nk/eVBYDPWa9zAEActpDiZgoo8CtqLfYsyNGVWlHW5zOZzXycBSM3
-         uUP60JNt3X3/rB8ZZiNkyz5kuf3OwzDbWthTq5aFh838vBVq3izeciEcPl5lYnXT1iu6
-         AJGdWzncJuQmNv7lOjOvgRXQntzsfck1oZWkbVPMprIbUqqsbDRwHnBml4iKm18N3Yux
-         7MEQ==
+        bh=jpWSmw9lis/Pk9ItaAyFFmK9qCXYijFo17aiCbiLfY4=;
+        b=BiA0sZLJ6U/URK/0UFd5zrj4oaDfaHTIwPs4HWDgc86XhuCszwuOEfyfJgn2KGz7w2
+         TGgNxslj5Uw2NBpY7gR7lRvEMRpNuTfHKuy5dACl6XXUcspWpfKeC78AOSf/3NXsJ6P6
+         ZdK33xaBLg/023JuOiNDWS6wBx427iyMl2PP6TKQLg/BsYiDczYc7Pf8I0KPybclYUYP
+         Wu+oW9l5SjoRacTmLPJktt1GiLNwlhdhNV8pgz6L/ga4RSSAABhfR0hiRI/JoceKLi/J
+         iaNojzS8cIYD96dog0q3L3ZeqGHM67nK/O2tkdYDeNSG4TsCAYLYqQSThkDLifuygELO
+         uYJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755053115; x=1755657915;
+        d=1e100.net; s=20230601; t=1755053117; x=1755657917;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ek2s2DUqL/jgDZvOvv6Rjx1Dp3m/erc1mrYIyBeINSk=;
-        b=rSOg5KYi9/SE4QktmzsxDNhXNaaxxVDmVWkjqKy201OokazVRIhmIuQuOGD0h8XFl8
-         O2zoGXYFlUo6XGck32Lm1ILUc2j7Z+bCOvq2gxZzCr4o/pYTT2MjjKrJ2G89tGZ/ofxG
-         i3Ncih+Q+/yKstzFtxZAvb4j0QhdPUl7ep2NYQq9yhS0n8Rth/3/jO3NWVJDP+zcyhbp
-         bEldoUJ+3YdLLTvLMpeU8dhUsbknoLKHU2IJkrBlJAQQ0gq/mCpojIT+Fnmztme0N/Ra
-         pxQYSeeA+EQ+Jf/pYz6JymvA1GzqZGmFR1znPBzAfcoE+KvNae2z6FbSiMhrT8ziKQzL
-         8FFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJHselZLG9GYgtg4S4QFYBPLnfA/Qo/Dqp4IPUZ1azNzZb21bi7QDE1YjmUTrYIAKlzYhW9FgGZm/ZRR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQJFhA6hRsS173anmamYc0uYZ2Td0HQKW1Op1PncWU9BAqzQxz
-	JMHChHoN+0ZA9dW4YQgUPEp0PKOPh/JVNbIn7nRy6SiiAQjypWWVTFrKkaCtCvnnaDU=
-X-Gm-Gg: ASbGnctBvegThw8R1dih/mnnQnBZy+7fT9jktkaUM9PIAY7hC5ugm5eteZ5IgssTC1C
-	uI+oqPpM+sMHj3ZlYIddGiqP80LKUpedbKN+BMZi7bObW4vymYicRWzsPrv69EsUuO4wAEhEs95
-	9agvk4hF6hI0aBTxvMdvdfwGb9leNPnDTn0FZwpkv5lH3q0NqG3DD8/WNGDyFbRB9LXfE5cMjlT
-	Zb0KW7oBqotKjs8YGgu+nPUV3fbAIr+e3lM3iIYm6s8wFF2MQ6cnCG/XSz+L/jCX9XZeIWhyKz5
-	319mUhypwYJo9nMgpbAb4y+l5blo6+//DUVZ7W1K6PXMe8FnRro44cwxRz60HXXtX/HAwoV96X3
-	ScvGg8hsaPqXWerGcOIx2HzE3VWV4tZGfYtNyAAsTVyfb5dCmqO4tVQ2cP8lxr/mJWQ==
-X-Google-Smtp-Source: AGHT+IEIj1vS5MVYprDokhwZ6AIsmFX7Hyk7OB0z1ohQkNDbaDoool+pCm1v0mkiT6rf8e612agvcw==
-X-Received: by 2002:a92:cd86:0:b0:3e5:40e5:bade with SMTP id e9e14a558f8ab-3e567367d43mr30922625ab.3.1755053115415;
-        Tue, 12 Aug 2025 19:45:15 -0700 (PDT)
+        bh=jpWSmw9lis/Pk9ItaAyFFmK9qCXYijFo17aiCbiLfY4=;
+        b=Q/ZVoZnCfsJbM3EKwTw6573zseKlcGVJ0u0n/3WX+16fpdXKvViXvkObtEbxvSL1Gb
+         oeh/J5VjilHxxPpzIb2coiNKQaGoRZK1lf+gw+jQSozRVOUATFtRWoN6BO5s9SoA1TNr
+         mq33D9xTapjXStXYwUDnocXLopC+t8NS2MTVcvThUQ+Dj7cf6dkWi8sjPLvPNagLYNYz
+         /Jjah9sbXUhTObV9DKVdCzDim+DXQz37Hmfe7dlE1gpqF7QxmXP8uj9UYdPt5o+6s9dA
+         HSR3bxnXkSILHAfOY4tE9BzBhmw/AoeYyKUZV5leoku3KmPytBWtxLYJFxJ45WJ1AB3o
+         cPZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQTVeAVhLf4fBTIw4KICOZjw8Z2/jokMTktjuu2/a6N4iAjAqEdu6zEPGt8dM+FXDoSwWIovxp/SyLXp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9dHMmEs787/gYUeRU8drUlAm9FlWr4sljzYkptcgYqSIkbrb/
+	iophoXYlxeoI3/TuYOTTed2dKdullfyGvWdv5lT4LeCpnsZ/sQml4YixxNlNxSqh/a8=
+X-Gm-Gg: ASbGnctbBPitv8J5cO5QL7QkQZPbO7X4qmss0ta7OO2A3/ahFO/uTeSXM+/+sUopbPb
+	SY2s5HszZYJjyq3Z2phFxpZMGyyb8qigfNy0qBpUQK+r5H5YDHnsZxwIM0ceMGGwc73Fj0Rdfb9
+	K4x+mjIshmRaI0DD84X8ZJSWqDQqE5WWZrKJx6PTmqTO8ND5PX5dhTfA810c93ddBkbmDLQwlLx
+	bloP+Lce1PDzxXt1a7bqQQxrcMBuZ0wB6TfKkxYifV7w7gi3lnNjTEefVudc3MI258qmAl0LHNP
+	qXv+vfjftYruSgeXXPlU93Nh55hBNVjjaIc1rlZ0oN4mtYRBOsf/mln5JLl6Q+n9C3/g59lY+wS
+	3yyt/KWVqSWV03AiwzP6jjE6Mn5n8uyCxBwAGfUTEXtR1ICDrKIwv+PdwhHkRfw0ovw==
+X-Google-Smtp-Source: AGHT+IF/iYJMmWmcL8yZLA7oNGcNRdI/2yJYPqEsD9FqvoMdXobCS2emz+maEDlXX84/h0VsLJTXHA==
+X-Received: by 2002:a05:6e02:380e:b0:3e5:4eb2:73d4 with SMTP id e9e14a558f8ab-3e56739943fmr24223705ab.5.1755053117425;
+        Tue, 12 Aug 2025 19:45:17 -0700 (PDT)
 Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae9bcfbf6sm3430829173.54.2025.08.12.19.45.13
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae9bcfbf6sm3430829173.54.2025.08.12.19.45.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 19:45:14 -0700 (PDT)
+        Tue, 12 Aug 2025 19:45:16 -0700 (PDT)
 From: Alex Elder <elder@riscstar.com>
 To: lee@kernel.org,
 	lgirdwood@gmail.com,
@@ -94,9 +94,9 @@ Cc: mat.jonczyk@o2.pl,
 	linux-riscv@lists.infradead.org,
 	spacemit@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v12 1/7] dt-bindings: mfd: add support the SpacemiT P1 PMIC
-Date: Tue, 12 Aug 2025 21:45:02 -0500
-Message-ID: <20250813024509.2325988-2-elder@riscstar.com>
+Subject: [PATCH v12 2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
+Date: Tue, 12 Aug 2025 21:45:03 -0500
+Message-ID: <20250813024509.2325988-3-elder@riscstar.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250813024509.2325988-1-elder@riscstar.com>
 References: <20250813024509.2325988-1-elder@riscstar.com>
@@ -108,108 +108,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable the SpacemiT P1, which is an I2C-controlled PMIC.  Initially
-only the RTC and regulators will be supported.
+Enable support for the RTC and regulators found in the SpacemiT P1
+PMIC.  Support is implemented by the simple I2C MFD driver.
+
+The P1 PMIC is normally implemented with the SpacemiT K1 SoC.  This
+PMIC provides 6 buck converters and 12 LDO regulators.  It also
+implements a switch, watchdog timer, real-time clock, and more.
+Initially its RTC and regulators are supported.
 
 Signed-off-by: Alex Elder <elder@riscstar.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- .../devicetree/bindings/mfd/spacemit,p1.yaml  | 86 +++++++++++++++++++
- 1 file changed, 86 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/spacemit,p1.yaml
+ drivers/mfd/Kconfig          | 11 +++++++++++
+ drivers/mfd/simple-mfd-i2c.c | 18 ++++++++++++++++++
+ 2 files changed, 29 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/mfd/spacemit,p1.yaml b/Documentation/devicetree/bindings/mfd/spacemit,p1.yaml
-new file mode 100644
-index 0000000000000..5cc34d4934b54
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/spacemit,p1.yaml
-@@ -0,0 +1,86 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mfd/spacemit,p1.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 425c5fba6cb1e..4d6a5a3a27220 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -1238,6 +1238,17 @@ config MFD_QCOM_RPM
+ 	  Say M here if you want to include support for the Qualcomm RPM as a
+ 	  module. This will build a module called "qcom_rpm".
+ 
++config MFD_SPACEMIT_P1
++	tristate "SpacemiT P1 PMIC"
++	depends on I2C
++	select MFD_SIMPLE_MFD_I2C
++	help
++	  This option supports the I2C-based SpacemiT P1 PMIC, which
++	  contains regulators, a power switch, GPIOs, an RTC, and more.
++	  This option is selected when any of the supported sub-devices
++	  is configured.  The basic functionality is implemented by the
++	  simple MFD I2C driver.
 +
-+title: SpacemiT P1 Power Management Integrated Circuit
+ config MFD_SPMI_PMIC
+ 	tristate "Qualcomm SPMI PMICs"
+ 	depends on ARCH_QCOM || COMPILE_TEST
+diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
+index 22159913bea03..47ffaac035cae 100644
+--- a/drivers/mfd/simple-mfd-i2c.c
++++ b/drivers/mfd/simple-mfd-i2c.c
+@@ -93,12 +93,30 @@ static const struct simple_mfd_data maxim_mon_max77705 = {
+ 	.mfd_cell_size = ARRAY_SIZE(max77705_sensor_cells),
+ };
+ 
 +
-+maintainers:
-+  - Troy Mitchell <troymitchell988@gmail.com>
++static const struct regmap_config spacemit_p1_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++};
 +
-+description:
-+  P1 is an I2C-controlled PMIC produced by SpacemiT.  It implements six
-+  constant-on-time buck converters and twelve low-dropout regulators.
-+  It also contains a load switch, watchdog timer, real-time clock, eight
-+  12-bit ADC channels, and six GPIOs.  Additional details are available
-+  in the "Power Stone/P1" section at the following link.
-+    https://developer.spacemit.com/documentation
++static const struct mfd_cell spacemit_p1_cells[] = {
++	{ .name = "spacemit-p1-regulator", },
++	{ .name = "spacemit-p1-rtc", },
++};
 +
-+properties:
-+  compatible:
-+    const: spacemit,p1
++static const struct simple_mfd_data spacemit_p1 = {
++	.regmap_config = &spacemit_p1_regmap_config,
++	.mfd_cell = spacemit_p1_cells,
++	.mfd_cell_size = ARRAY_SIZE(spacemit_p1_cells),
++};
 +
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  vin-supply:
-+    description: Input supply phandle.
-+
-+  regulators:
-+    type: object
-+
-+    patternProperties:
-+      "^(buck[1-6]|aldo[1-4]|dldo[1-7])$":
-+        type: object
-+        $ref: /schemas/regulator/regulator.yaml#
-+        unevaluatedProperties: false
-+
-+    unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        pmic@41 {
-+            compatible = "spacemit,p1";
-+            reg = <0x41>;
-+            interrupts = <64>;
-+
-+            regulators {
-+                buck1 {
-+                    regulator-name = "buck1";
-+                    regulator-min-microvolt = <500000>;
-+                    regulator-max-microvolt = <3450000>;
-+                    regulator-ramp-delay = <5000>;
-+                    regulator-always-on;
-+                };
-+
-+                aldo1 {
-+                    regulator-name = "aldo1";
-+                    regulator-min-microvolt = <500000>;
-+                    regulator-max-microvolt = <3400000>;
-+                    regulator-boot-on;
-+                };
-+
-+                dldo1 {
-+                    regulator-name = "dldo1";
-+                    regulator-min-microvolt = <500000>;
-+                    regulator-max-microvolt = <3400000>;
-+                    regulator-boot-on;
-+                };
-+            };
-+        };
-+    };
+ static const struct of_device_id simple_mfd_i2c_of_match[] = {
+ 	{ .compatible = "kontron,sl28cpld" },
+ 	{ .compatible = "silergy,sy7636a", .data = &silergy_sy7636a},
+ 	{ .compatible = "maxim,max5970", .data = &maxim_max5970},
+ 	{ .compatible = "maxim,max5978", .data = &maxim_max5970},
+ 	{ .compatible = "maxim,max77705-battery", .data = &maxim_mon_max77705},
++	{ .compatible = "spacemit,p1", .data = &spacemit_p1, },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, simple_mfd_i2c_of_match);
 -- 
 2.48.1
 
