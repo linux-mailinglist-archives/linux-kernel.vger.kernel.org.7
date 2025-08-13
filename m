@@ -1,246 +1,443 @@
-Return-Path: <linux-kernel+bounces-767497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38916B2553B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:22:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0046FB25540
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6B00567EAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:21:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C5AA7BC982
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838992F0C4D;
-	Wed, 13 Aug 2025 21:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C4E2D4B68;
+	Wed, 13 Aug 2025 21:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ApezmaRZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="asEJuap2"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234BC2C0F62;
-	Wed, 13 Aug 2025 21:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755120032; cv=fail; b=VLoA3bX1HLGhFAu6nrJbPv0tqWJRdwsncyeItEeUJFCZEhF5rG8CZLzG2+fMC+1lXoBuftZ5F3WgYNPF9vWF3pAKMH071P30rOJ6LHCOTJAQ8PzDQbDX7gG9m6AZLzQ2AOoZAMsonfgDiPfxacj7mV1vXGzZwxOU+SVHMr7qTYw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755120032; c=relaxed/simple;
-	bh=gsIXsrR3zoAsCTWZxFa/B3/ZXFXgh0QXpokBY5Cmen0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Lm8SXX4ZrQj/8fiSezIHN6O5HY7vPWeaw47MwVQ6b8QDZ72C6LcHmzaLTB8HJLMkNVu8ikzJcTRje6pJCcJ0qJucMjhhJrLFp/wxFaoVr7Cu8JY3gdpcTHSgA9+1PJfYiJnmOzFbTLnIrbe/TxJgNBZL0n99oCaM4V96/slL+e0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ApezmaRZ; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755120031; x=1786656031;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=gsIXsrR3zoAsCTWZxFa/B3/ZXFXgh0QXpokBY5Cmen0=;
-  b=ApezmaRZcIH2BhLtsOAROdU7E5VrZcJW9ckEBO6EYEeulTG7sca1zjsA
-   4ATNVroL/i4t6Ok3TAEUdahdl9T/WC4Ep6Q5hmPi1XJntsFYecNCghAsG
-   MAZAdWEfkg1DWYg27GCAOMYDBgg4Y0WWl5h+ns068PrFFdHxLXDhAblVl
-   ehrGWMegKC5sTj+Hr4P4pphfg2joOpMZhsAtdblVCqH3T38JBm3BdC6Pk
-   20DnDs0Sy7exOcXtMwPjmPi+BGhBAO61cUBQOOGJfSpArHRGM+DDPEWei
-   8FK4OkCcPjSDUtYIEbDMRS0ZHFMhijb0DYzDo+1B2ZHKAFkDn52TXjxOx
-   g==;
-X-CSE-ConnectionGUID: zyuPGuXaQzWttv8BJYMwpw==
-X-CSE-MsgGUID: U4YYi7tuS/6KMrhdkjljHg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57297754"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="57297754"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 14:20:31 -0700
-X-CSE-ConnectionGUID: UkDpQ18IRAaN3ry6W1VcRA==
-X-CSE-MsgGUID: tKidatGaQ6ea0QiJM7RtbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="171915535"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 14:20:31 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 13 Aug 2025 14:20:30 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 13 Aug 2025 14:20:30 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.88) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 13 Aug 2025 14:20:29 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KaPX4AnSE+40qV49bonEJRN8YL9lHSonWNGcZfkLNVpRypifirOpdcC1XSElM2MIcXfxOKAUpnoJOUBLZqSoT9FusVhxp0r1DzgM/yOUQ0gHQA4El8aOxloV49B1g1m9j7UfsWO+xsiSWpVgic9t9a0xWJSHTJlXQ7rTcwi0zo1SNLJvDJu7zrP9KEEcVPnF5SyhT6vytktfHPyr378rh4K+bidGARGsztpNBLx9IUQvs93UWLlbG3/vvrrvxhcc52p+h4Yva7DXnUMl3hkz1lZeKa9bRgjlvIBOID4cPzR7GXyJi5DbTvfqEXZUD18bczSK9JLoR6sDEfW6sLCW1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gZMDDe+aaTITUsVffdwJKTGFQnyDGxRI/FG3P6TsqqQ=;
- b=VlDWcZEz4CJGrSnFDZw9X7dYQ0HnL9vPlR5j4bKtzWfPvb8IJOhpd4xRGZtAfHAEXPAiccxWp8WtwYGfjuHoP/L661E5C4a23g7p/vEC1ow1VKg6o2fKMrGrizD0AhwpBljgEvRDtmYXqpl69k0OjOrathJqkJ61i97L+wQp1YJ1RoYLHjNHcCbH04G8bHdbwh2OM72TBkdC9XnIzUI6wSe1doKBf+V01RQKNlzNPYJOv5jRolOSvk77t7P5S4Wj1It+ewnCFofn7JO2Fw1L12LG54eWmgEjgEcRjXcaK9/dZywgrO2wzuvhixZVp67eiVYD0ncAIYBavDxcykomgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by SA1PR11MB6893.namprd11.prod.outlook.com (2603:10b6:806:2b4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Wed, 13 Aug
- 2025 21:20:27 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.9009.018; Wed, 13 Aug 2025
- 21:20:27 +0000
-Date: Wed, 13 Aug 2025 14:20:26 -0700
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-CC: <linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>, <avadhut.naik@amd.com>, <john.allen@amd.com>
-Subject: Re: [PATCH] x86/mce: Do away with unnecessary context quirks
-Message-ID: <aJ0Bmgx7-h1uMFG2@agluck-desk3>
-References: <20250813154455.162489-1-yazen.ghannam@amd.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250813154455.162489-1-yazen.ghannam@amd.com>
-X-ClientProxiedBy: SJ0PR05CA0076.namprd05.prod.outlook.com
- (2603:10b6:a03:332::21) To SJ1PR11MB6083.namprd11.prod.outlook.com
- (2603:10b6:a03:48a::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCC12D1309
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755120066; cv=none; b=gK2xsmsQQ7W7lO6KHquYwn04HXD9Qt7aTI1DGW41ym0jP3cadd342AMQ8OPNkv9aDTiPtarEvIhj1Mx+PNLLuUeep0ZzK1EQvqSIk91IvDWJ7IewalvJMtjfhB2n1HkGSuV82bRR6VG9XYvCVp0gs23MxgAHcNUkXR/psGm4QcA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755120066; c=relaxed/simple;
+	bh=X9U1rSN5iZDi12tqSIkpchS69oS9HZZkYkRkccT9xrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NPhS6UeGY2RJB6FtFiAWh9Wmy77bmOzS2rDTaBBdb/01H+h0l9F4wDC2UYYWBLZAZ5AyCOMCA/FnDXCqS03Jp4ZlxiVHarxqK16fhx6nH+qt+3jkg3kd15lfF2odNKaMQw5m4tHW/Eqcjg9adOuvZoihFUC3vmlYl+kcpRdhVnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=asEJuap2; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a1ac7c066so2118725e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755120062; x=1755724862; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n+4L/tCfnDisKcwTagSWW4ZOeKB0w0o7diP0uW+eLtk=;
+        b=asEJuap2Zye86ay+j//8JJqwZ7NKq7dqiWXuRG4J+SV3nAWTIr9vGKBOGXWul4H/Sj
+         IqittdIEly0snuhUCPSjFMMFkChGSeRtuR1P6Sn7qDH59YjWardEAh4Od58/abdmtybd
+         XYIFxVp5SYITYTwXP13QiiV0gTwzO9l2cR1WIJIXZjLo8Vr7zpQKvlX7uxi81nejsADm
+         naTGR7xbLRXxhdLhNg1orvQCKS6u4VBnpBPlUQCpY84/pPG9oNgJmQ5CNc1WPli+MgyD
+         tk38fdaXOXjGZ8rTut2GZWTiDLIiIawkapaWZafheZRa7VKAAwCmn54s26aDbtfx5asz
+         HEhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755120062; x=1755724862;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n+4L/tCfnDisKcwTagSWW4ZOeKB0w0o7diP0uW+eLtk=;
+        b=ig1yIhpKjHBtwZYY1zxXEinBhEWA2OrAFp1vSFyoKb3mo60JgzwG1NBHzuCeNPrVqd
+         wjb+GyVLXjhycGltXdonhJgWVElgv7FcXnPWxQRDCIYWhZU9yRueWDE5FRTJJ4deKp6S
+         YwuPboNB6t0TPnDQ1AcA7rHOeT7Aa9rEYN6qxs31JB0qMeYQDjXZ7CYLG6oomMfSNLRv
+         k0KOAlohBk7B51bi6fzqvbvK2IAaC8Nd4+xPFkmuvG1Ifxu0pm75Jnk/S9FaAjS211bA
+         NZWUUr8MV2ONog+6y86XrBHPbsA6iaYMzX0p59XfHMNLH3PeKY1yVBBtOVn5yQ6u8JDk
+         +RRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgzEIEnNmWnfepTvJNDVuQNEP8CTg46MyiXmHxMlUin6Pn0yNluRK8/dgv4sZubjtsOyKdunKu/7A9ZhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYoP7QdZDK0UuG14rzETIY+3vayLmAiYG7RzsLnKrt36ERVirG
+	NMrRwSR9nMS4sI48QD7a/n8lFTqBHlxI33ynpMyvXK4UUEFhvEuanI4ot2NpsRMZWWM=
+X-Gm-Gg: ASbGncvK0XPtwxq6YUJZK5A7nHo769YtCH4boO5+72ZwBvE2WvoyWnyzdXFxLW75aaf
+	UdOG1MHkVClhUP7ualAKEW0lBzHgAbnybaIzpNXVezAkqcaOA5cx9npu4jhCjoSqKmCQFB8NRmV
+	+9J1USF+Ep8aQReGs2M3MJ2WFGv5Xek0VSQ8WF1Ej0xXEIMN2Xzbd5rkbNxGKkDcZkES8xKwfmy
+	IlRAExxAX4weMsNHMPB9y42aaH76ZJbqRzKzi3Dclv82a3heBRoB4FvZxQ2pAZPWGe2ad3eB+Q7
+	cuX3he6ONGM+pq6zPDz9TMt0MJ94lLgAioIFes0/vJGk4cCJy6snRG80hio/aWSKXJZAQbkRXqS
+	41GSx1gREWKAccc1E2Mpllmn1eBw4QfkgA6er5iJZoMQHNaNLDfRiXnQI2Da0bntF
+X-Google-Smtp-Source: AGHT+IFGYhPMnk24xFVtUvs1bX876yJ2eaEVzyvanQgTstTce4THnmsjT/5iydRanKcWbtpnAglYKQ==
+X-Received: by 2002:a05:600c:b95:b0:456:1157:59ac with SMTP id 5b1f17b1804b1-45a1b79dc1emr1546285e9.7.1755120062385;
+        Wed, 13 Aug 2025 14:21:02 -0700 (PDT)
+Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a51902bsm15405035e9.10.2025.08.13.14.21.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 14:21:01 -0700 (PDT)
+Message-ID: <c77cb942-74b4-40d6-b965-81d0df9c7cdc@linaro.org>
+Date: Wed, 13 Aug 2025 22:21:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|SA1PR11MB6893:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ac241f1-2553-4cd3-7c0b-08dddaaf398d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ZoMsl23h87hMUbbxGOg+N2dF7ygkW5GZumOe1QJ0evILeF6mCY8YQbwlaaN+?=
- =?us-ascii?Q?tEIF2CHKmv1CPI1KySghkB+hB1PkxGqM1JvsFCSNv2OWby9KEmhI+iWzOegD?=
- =?us-ascii?Q?etf73MEjTjQJK/eY6LN6doavxl8VHv6ug1UhynP50AJzpxNxi7BStfTyrZIA?=
- =?us-ascii?Q?KgNqNfYgN9kxUKNneVLvjGaMu2x92qFdC0eWqf+wtcE/Gj33u15kXZa2RY7M?=
- =?us-ascii?Q?t25FUBz9TQi8CicOAYJ+tgragnQtQOS9Gy+pm4Z0/QJ7V4roYqr9+7y5U4nC?=
- =?us-ascii?Q?r+CUQSFkEu5/1YFuJ/i8zqHpQt+ju7TteF7/sBtFRvy0pN2lJog2o3N8U+rc?=
- =?us-ascii?Q?JYWw/APuwdsHv1dmAgNOaMfQTFAXPGmWyrwOWW4bC6etPtT33KoTOfo4fHQl?=
- =?us-ascii?Q?JXDJhECSZqAuGZ5KdFrkQUDrRvJAphapRreE130JE2UgIWmQKuSTUFxXQtYk?=
- =?us-ascii?Q?NHcEwbe1mfSpYRSJ+bMSSXUyYuwvO/rKkWbo36ji+hbDSN1eTo4g/KfnqUyJ?=
- =?us-ascii?Q?5bMKjHL484dgf7cfxxHYmPdOF2nDk17Z0aZ294QpyIiTiMwVIi6dQ79Gypn7?=
- =?us-ascii?Q?EkGjkAe5FK9YAwuzTKekYp9k5Lr1tHJv8fR8X/UWVf5XeU7UcpZsXxGcRKke?=
- =?us-ascii?Q?04lJA4jIms8ibZ9dFqKicNd9+75nYgoi6XVvsEMH/nsnUpuYaRoYvqgEcGNf?=
- =?us-ascii?Q?GfEhz5BYNlRJ6MRWvD5Jl8vKTFBfAxiqC4hpyrgkzr1XSZu0uJZpcHau31w9?=
- =?us-ascii?Q?MCzum8hShM1JUTOWKFBnhtsxvd2FRimOyNiTL0rNptw2QvqWjxOudcnocq9P?=
- =?us-ascii?Q?960d0EiDWFnvhBxBu1NkGtjR3RGdR17c7fhSfB1ZBsUN9BBfK5pgMbT4JRfs?=
- =?us-ascii?Q?eMYqS2/05m/qwuM61MWdrWkeYTV2mg1RX9gFbdxR2Ri8Ju0MsqmmLjAnHeQl?=
- =?us-ascii?Q?LLhQH0IDEmIztG+wcqV2Zq+v1qH1NxI2AXDjUm6TQ0jrHRbipwwjWrycixv5?=
- =?us-ascii?Q?JoVRsqCs1Sd8db955AgZtg1xenqXlySzbIQyx33iAEg2q45JDZ+0HgBBCdJi?=
- =?us-ascii?Q?qxa0SAuRYOxy0GtYOp0larVm/1g3YrNiT5yzbWc6mI/qTrhMPlPSzcHf7amh?=
- =?us-ascii?Q?D6BN2Y3iiGSVMQHKTwCFWY4bwfT0IYWj2jzZCxgZXP90GqzGW4o/i7JfyA1x?=
- =?us-ascii?Q?UlYqCwbn8rPEY8LwfR9++MEt9c600YfTQAkiBOaMUp1nfP1c6Wbfvq2WyfRD?=
- =?us-ascii?Q?UZ7Rsb8m515Ffg/gpRbkuZZc0LXjNfpIgI6/Mch5YPvXD+Um619BXLneKtnQ?=
- =?us-ascii?Q?LSXazp3d1BxTheIrjpvUp1Mb1PGeZNFSR5G6ovVrDC1POdsGxSZ4MAX+t7lQ?=
- =?us-ascii?Q?NoHKN9XHOMxhjPQYa0SMTL8vuyBUw6sgJ0gckxrpupy/azTlYst9NskXt8ZX?=
- =?us-ascii?Q?AAqg+m/Wju0=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3OCz3Hb+B4RZezxhCKWfkPPwjfXMIAVfpQLS9hua59IkCVnitczK3S5HHU/v?=
- =?us-ascii?Q?OBCe02wRNHRQdaJvD9VXG7zLbJX0mWhw+vO6V04L0vHijk9ca1DBF4e8rUeO?=
- =?us-ascii?Q?9ioytCTtV0uiAtkztLxzX0gnyWmR3ir/ZbQGwGiqGvPBjAAFkYM3urG2f0k7?=
- =?us-ascii?Q?l1H5353CAV1K9nqIzTxcLJly0+C3wcMK5eBtMWmpLMjuRYwn7w7w+IiVBLBc?=
- =?us-ascii?Q?Wq1WCcWnnLfX0ps3pGkh5h3ke9Mk06J/en2sbd3YGZW4QH4f+nIYOUlQ6jCM?=
- =?us-ascii?Q?DCquclw60TH5Hq549nK7JcnuuxtPF7klIrr/ylY8bU1z6176stkQSav8t8N2?=
- =?us-ascii?Q?r4+D8xSISlGrGl6/iKM08/retE3LpWKw8zV4rQWuuvwANec1DjAoJBnDOJZ/?=
- =?us-ascii?Q?HXkGdbQrJU4rFsnxb6kz8uV8ejjF0Vts1Fuv8voGv0vSARUALXDy0t58JdCC?=
- =?us-ascii?Q?tjlF3ktfmO8BKck/x13LzaCJaaR0K/BchgTkWCowpkSGuyr6xyT5AqFnBp/g?=
- =?us-ascii?Q?WozxTZsIjIX0u+2T9kTAf2GjefAjGnhAUVCILMp78chfXmuG/bZbJmpnWJUj?=
- =?us-ascii?Q?ejH7cKsp/G8j9H+3K/XlIBnEw8nqsjkB3ueQeN0QGxkkfacJKAYkEFZzQDIP?=
- =?us-ascii?Q?C0tPu2F5gBio47PDNSMgKphfVKEc1LbuOWoYBsq4juMf1r7s6nriNMWKHXmk?=
- =?us-ascii?Q?PoQTvMtzaAJnKL2TmzJmKQTQNWEgpMB0Vx9eSr7quP8Uiv4Z5qYL8xdYeacU?=
- =?us-ascii?Q?hUSh6JIjy3wIZID5Bgxc9UdwORtVV22gWQfyjwjmvRuxxY15Fj5pci4whX5i?=
- =?us-ascii?Q?GPEnv8VHmw1boedPG9qpn8mHydV4rC+LoEBj2GwbbgGENAcjpvBHjUTrChwy?=
- =?us-ascii?Q?t8wC8mgVOZn2ptjMVGXKeCdROab7g/g4zpIlmiezQSCCwyzRu1zA3soqZ83U?=
- =?us-ascii?Q?xlkGF8OsN4cyZ0ZfpiFjL0DgsXz/IkgQykon4rC+Rz68NBfBmuAB8gh6UPvA?=
- =?us-ascii?Q?YbrAn/Pcp7aoGR7KHfVEZXYYw/hikROy1VX9gc3DN7sU7OsNk19H5hcCb0Ys?=
- =?us-ascii?Q?bvwbW6g7MgpnkiSJ+VHygxjEJFX0RyZ5RSbAe4ZldKZosd+2oKoIAwfk7DpT?=
- =?us-ascii?Q?0anTEpB0NpqCHH5if1C0kQLVr9n/MHAmD1ZPRC2lIBsuFWkSjhZMrt/MBJro?=
- =?us-ascii?Q?7ZrlKm03jB9L2267n+CORzKCJ0jvsfKoms9QyOapGpv6qviczK5pBx1KP9Xd?=
- =?us-ascii?Q?pEoJIQFuMBWhQTi6XBdjblUi2Rb3QYjtzn46Ousox1W2nlDg4nPgRbQntUlJ?=
- =?us-ascii?Q?HuvOMgp8zrjxYdhJtEE0+km3vKoazO5lhpsqVRdEEQTR7Yh5H/+tBorSMIlR?=
- =?us-ascii?Q?vazaB/bCC3UTOULsyXoKcy5lBLyuQ+FAO/T7lRJO+QzRnBJD0UUm5izSNZJ/?=
- =?us-ascii?Q?+xhJHo5ADK2gu9UVdgG5ZlJMMvGdT6gM0iL9EyS73DIHA1eI2IKKqk9VMcL0?=
- =?us-ascii?Q?flMeZix13iBTqJpJVopUc8ql/BxdLfqgTu1Pfp+0105wcJyo2fb1KpjV0APh?=
- =?us-ascii?Q?G19yINoHP3U/vsKkRuDPEqfY0nXzt9XJrmQKW2Vx?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ac241f1-2553-4cd3-7c0b-08dddaaf398d
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 21:20:27.7212
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KZhiof9eOuqrztRxm3CBEjIjw3QMX9nOJvDFGfYvhgakmpN8I7lLZAh5iJQtGkiQmSh5f0s+oHt7tMHEpUF18g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6893
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 7/9] media: qcom: camss: Add support for VFE 690
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, quic_svankada@quicinc.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Wenmeng Liu <quic_wenmliu@quicinc.com>
+References: <20250807121105.710072-1-quic_vikramsa@quicinc.com>
+ <20250807121105.710072-8-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250807121105.710072-8-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 03:44:55PM +0000, Yazen Ghannam wrote:
-
-> -static noinstr void mce_gather_info(struct mce_hw_err *err, struct pt_regs *regs)
-> +static noinstr void mce_gather_info(struct mce_hw_err *err)
->  {
-> -	struct mce *m;
->  	/*
->  	 * Enable instrumentation around mce_prep_record() which calls external
->  	 * facilities.
-> @@ -467,29 +466,7 @@ static noinstr void mce_gather_info(struct mce_hw_err *err, struct pt_regs *regs
->  	mce_prep_record(err);
->  	instrumentation_end();
->  
-> -	m = &err->m;
-> -	m->mcgstatus = mce_rdmsrq(MSR_IA32_MCG_STATUS);
-> -	if (regs) {
-> -		/*
-> -		 * Get the address of the instruction at the time of
-> -		 * the machine check error.
-> -		 */
-> -		if (m->mcgstatus & (MCG_STATUS_RIPV|MCG_STATUS_EIPV)) {
-> -			m->ip = regs->ip;
-> -			m->cs = regs->cs;
-> -
-> -			/*
-> -			 * When in VM86 mode make the cs look like ring 3
-> -			 * always. This is a lie, but it's better than passing
-> -			 * the additional vm86 bit around everywhere.
-> -			 */
-> -			if (v8086_mode(regs))
-> -				m->cs |= 3;
-> -		}
-> -		/* Use accurate RIP reporting if available. */
-> -		if (mca_cfg.rip_msr)
-> -			m->ip = mce_rdmsrq(mca_cfg.rip_msr);
-> -	}
-
-You moved an abbrevated vesion of this code from mce_gather_info() ...
-
->  static noinstr int error_context(struct mce *m, struct pt_regs *regs)
->  {
->  	int fixup_type;
->  	bool copy_user;
->  
-> -	if ((m->cs & 3) == 3)
-> +	/* Without register info, assume the worst. */
-> +	if (!regs)
-> +		return IN_KERNEL;
+On 07/08/2025 13:11, Vikram Sharma wrote:
+> Add support for VFE found on SA8775P (Titan 690). This VFE is
+> different from vfe 780 w.r.t few register offsets.
+> It supports two full and five lite VFE.
+> 
+> Co-developed-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
+> Co-developed-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   .../platform/qcom/camss/camss-vfe-gen3.c      |  67 +++++--
+>   drivers/media/platform/qcom/camss/camss-vfe.c |   5 +-
+>   drivers/media/platform/qcom/camss/camss.c     | 174 ++++++++++++++++++
+>   3 files changed, 228 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe-gen3.c b/drivers/media/platform/qcom/camss/camss-vfe-gen3.c
+> index 93d16b0951e9..f2001140ead1 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe-gen3.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe-gen3.c
+> @@ -12,13 +12,43 @@
+>   #include "camss.h"
+>   #include "camss-vfe.h"
+>   
+> -#define BUS_REG_BASE			(vfe_is_lite(vfe) ? 0x200 : 0xC00)
+> +#define IS_VFE_690(vfe) \
+> +	    (vfe->camss->res->version == CAMSS_8775P)
 > +
-> +	m->ip = regs->ip;
-> +	m->cs = regs->cs;
-
-... to here in error_context().
-
-Would it work to hoist the error_context() code into mce_gather_info()
-and have it set a new mce::error_context field?
-
-I ask because mce_gather_info() is called once, while error_context()
-is called multiple times (on Intel ... not sure of flow on AMD).
-
--Tony
+> +#define BUS_REG_BASE_690 \
+> +	    (vfe_is_lite(vfe) ? 0x480 : 0x400)
+> +#define BUS_REG_BASE_780 \
+> +	    (vfe_is_lite(vfe) ? 0x200 : 0xC00)
+> +#define BUS_REG_BASE \
+> +	    (IS_VFE_690(vfe) ? BUS_REG_BASE_690 : BUS_REG_BASE_780)
+> +
+> +#define VFE_TOP_CORE_CFG (0x24)
+> +#define VFE_DISABLE_DSCALING_DS4  BIT(21)
+> +#define VFE_DISABLE_DSCALING_DS16 BIT(22)
+> +
+> +#define VFE_BUS_WM_TEST_BUS_CTRL_690 (BUS_REG_BASE + 0xFC)
+> +#define VFE_BUS_WM_TEST_BUS_CTRL_780 (BUS_REG_BASE + 0xDC)
+> +#define VFE_BUS_WM_TEST_BUS_CTRL \
+> +	    (IS_VFE_690(vfe) ? VFE_BUS_WM_TEST_BUS_CTRL_690 \
+> +	     : VFE_BUS_WM_TEST_BUS_CTRL_780)
+> +/*
+> + * Bus client mapping:
+> + *
+> + * Full VFE:
+> + * VFE_690: 16 = RDI0, 17 = RDI1, 18 = RDI2
+> + * VFE_780: 23 = RDI0, 24 = RDI1, 25 = RDI2
+> + *
+> + * VFE LITE:
+> + * VFE_690 : 0 = RDI0, 1 = RDI1, 2 = RDI2, 3 = RDI3, 4 = RDI4, 5 = RDI5
+> + * VFE_780 : 0 = RDI0, 1 = RDI1, 2 = RDI2, 3 = RDI3, 4 = RDI4
+> + */
+> +#define RDI_WM_690(n)	((vfe_is_lite(vfe) ? 0x0 : 0x10) + (n))
+> +#define RDI_WM_780(n)	((vfe_is_lite(vfe) ? 0x0 : 0x17) + (n))
+> +#define RDI_WM(n)	(IS_VFE_690(vfe) ? RDI_WM_690(n) : RDI_WM_780(n))
+>   
+>   #define VFE_BUS_WM_CGC_OVERRIDE		(BUS_REG_BASE + 0x08)
+>   #define		WM_CGC_OVERRIDE_ALL		(0x7FFFFFF)
+>   
+> -#define VFE_BUS_WM_TEST_BUS_CTRL	(BUS_REG_BASE + 0xDC)
+> -
+>   #define VFE_BUS_WM_CFG(n)		(BUS_REG_BASE + 0x200 + (n) * 0x100)
+>   #define		WM_CFG_EN			BIT(0)
+>   #define		WM_VIR_FRM_EN			BIT(1)
+> @@ -39,17 +69,6 @@
+>   #define VFE_BUS_WM_MMU_PREFETCH_CFG(n)		(BUS_REG_BASE + 0x260 + (n) * 0x100)
+>   #define VFE_BUS_WM_MMU_PREFETCH_MAX_OFFSET(n)	(BUS_REG_BASE + 0x264 + (n) * 0x100)
+>   
+> -/*
+> - * Bus client mapping:
+> - *
+> - * Full VFE:
+> - * 23 = RDI0, 24 = RDI1, 25 = RDI2
+> - *
+> - * VFE LITE:
+> - * 0 = RDI0, 1 = RDI1, 2 = RDI3, 4 = RDI4
+> - */
+> -#define RDI_WM(n)			((vfe_is_lite(vfe) ? 0x0 : 0x17) + (n))
+> -
+>   static void vfe_wm_start(struct vfe_device *vfe, u8 wm, struct vfe_line *line)
+>   {
+>   	struct v4l2_pix_format_mplane *pix =
+> @@ -62,14 +81,24 @@ static void vfe_wm_start(struct vfe_device *vfe, u8 wm, struct vfe_line *line)
+>   
+>   	writel(0x0, vfe->base + VFE_BUS_WM_TEST_BUS_CTRL);
+>   
+> -	writel(ALIGN(pix->plane_fmt[0].bytesperline, 16) * pix->height >> 8,
+> -	       vfe->base + VFE_BUS_WM_FRAME_INCR(wm));
+> +	if (IS_VFE_690(vfe))
+> +		writel(ALIGN(pix->plane_fmt[0].bytesperline, 16) * pix->height,
+> +		       vfe->base + VFE_BUS_WM_FRAME_INCR(wm));
+> +	else
+> +		writel(ALIGN(pix->plane_fmt[0].bytesperline, 16) * pix->height >> 8,
+> +		       vfe->base + VFE_BUS_WM_FRAME_INCR(wm));
+> +
+>   	writel((WM_IMAGE_CFG_0_DEFAULT_WIDTH & 0xFFFF),
+>   	       vfe->base + VFE_BUS_WM_IMAGE_CFG_0(wm));
+>   	writel(WM_IMAGE_CFG_2_DEFAULT_STRIDE,
+>   	       vfe->base + VFE_BUS_WM_IMAGE_CFG_2(wm));
+>   	writel(0, vfe->base + VFE_BUS_WM_PACKER_CFG(wm));
+>   
+> +	/* TOP CORE CFG */
+> +	if (IS_VFE_690(vfe))
+> +		writel(VFE_DISABLE_DSCALING_DS4 | VFE_DISABLE_DSCALING_DS16,
+> +			vfe->base + VFE_TOP_CORE_CFG);
+> +
+>   	/* no dropped frames, one irq per frame */
+>   	writel(0, vfe->base + VFE_BUS_WM_FRAMEDROP_PERIOD(wm));
+>   	writel(1, vfe->base + VFE_BUS_WM_FRAMEDROP_PATTERN(wm));
+> @@ -92,7 +121,11 @@ static void vfe_wm_update(struct vfe_device *vfe, u8 wm, u32 addr,
+>   			  struct vfe_line *line)
+>   {
+>   	wm = RDI_WM(wm);
+> -	writel((addr >> 8) & 0xFFFFFFFF, vfe->base + VFE_BUS_WM_IMAGE_ADDR(wm));
+> +
+> +	if (IS_VFE_690(vfe))
+> +		writel(addr, vfe->base + VFE_BUS_WM_IMAGE_ADDR(wm));
+> +	else
+> +		writel((addr >> 8), vfe->base + VFE_BUS_WM_IMAGE_ADDR(wm));
+>   
+>   	dev_dbg(vfe->camss->dev, "wm:%d, image buf addr:0x%x\n",
+>   		wm, addr);
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+> index 4bca6c3abaff..99cbe09343f2 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -346,6 +346,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   	case CAMSS_8280XP:
+>   	case CAMSS_845:
+>   	case CAMSS_8550:
+> +	case CAMSS_8775P:
+>   	case CAMSS_X1E80100:
+>   		switch (sink_code) {
+>   		case MEDIA_BUS_FMT_YUYV8_1X16:
+> @@ -910,7 +911,8 @@ static int vfe_match_clock_names(struct vfe_device *vfe,
+>   
+>   	return (!strcmp(clock->name, vfe_name) ||
+>   		!strcmp(clock->name, vfe_lite_name) ||
+> -		!strcmp(clock->name, "vfe_lite"));
+> +		!strcmp(clock->name, "vfe_lite") ||
+> +		!strcmp(clock->name, "camnoc_axi"));
+>   }
+>   
+>   /*
+> @@ -1974,6 +1976,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
+>   	case CAMSS_8280XP:
+>   	case CAMSS_845:
+>   	case CAMSS_8550:
+> +	case CAMSS_8775P:
+>   	case CAMSS_X1E80100:
+>   		ret = 16;
+>   		break;
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 5f1e267045cb..08763d92f659 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -2687,6 +2687,180 @@ static const struct camss_subdev_resources csid_res_8775p[] = {
+>   	},
+>   };
+>   
+> +static const struct camss_subdev_resources vfe_res_8775p[] = {
+> +	/* VFE0 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "cpas_vfe0", "vfe0", "vfe0_fast_ahb",
+> +			   "cpas_ahb", "gcc_axi_hf",
+> +			   "cpas_fast_ahb_clk",
+> +			   "camnoc_axi"},
+> +		.clock_rate = {
+> +			{ 0 },
+> +			{ 480000000 },
+> +			{ 300000000, 400000000 },
+> +			{ 300000000, 400000000 },
+> +			{ 0 },
+> +			{ 300000000, 400000000 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "vfe0" },
+> +		.interrupt = { "vfe0" },
+> +		.vfe = {
+> +			.line_num = 3,
+> +			.is_lite = false,
+> +			.has_pd = false,
+> +			.pd_name = NULL,
+> +			.hw_ops = &vfe_ops_gen3,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE1 */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "cpas_vfe1", "vfe1", "vfe1_fast_ahb",
+> +			   "cpas_ahb", "gcc_axi_hf",
+> +			   "cpas_fast_ahb_clk",
+> +			   "camnoc_axi"},
+> +		.clock_rate = {
+> +			{ 0 },
+> +			{ 480000000 },
+> +			{ 300000000, 400000000 },
+> +			{ 300000000, 400000000 },
+> +			{ 0 },
+> +			{ 300000000, 400000000 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "vfe1" },
+> +		.interrupt = { "vfe1" },
+> +		.vfe = {
+> +			.line_num = 3,
+> +			.is_lite = false,
+> +			.has_pd = false,
+> +			.pd_name = NULL,
+> +			.hw_ops = &vfe_ops_gen3,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE2 (lite) */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 0, 0  },
+> +			{ 300000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 480000000, 600000000, 600000000, 600000000 },
+> +		},
+> +		.reg = { "vfe_lite0" },
+> +		.interrupt = { "vfe_lite0" },
+> +		.vfe = {
+> +			.line_num = 4,
+> +			.is_lite = true,
+> +			.hw_ops = &vfe_ops_gen3,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE3 (lite) */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 0, 0  },
+> +			{ 300000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 480000000, 600000000, 600000000, 600000000 },
+> +		},
+> +		.reg = { "vfe_lite1" },
+> +		.interrupt = { "vfe_lite1" },
+> +		.vfe = {
+> +			.line_num = 4,
+> +			.is_lite = true,
+> +			.hw_ops = &vfe_ops_gen3,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE4 (lite) */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 0, 0  },
+> +			{ 300000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 480000000, 600000000, 600000000, 600000000 },
+> +		},
+> +		.reg = { "vfe_lite2" },
+> +		.interrupt = { "vfe_lite2" },
+> +		.vfe = {
+> +			.line_num = 4,
+> +			.is_lite = true,
+> +			.hw_ops = &vfe_ops_gen3,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE5 (lite) */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 0, 0  },
+> +			{ 300000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 480000000, 600000000, 600000000, 600000000 },
+> +		},
+> +		.reg = { "vfe_lite3" },
+> +		.interrupt = { "vfe_lite3" },
+> +		.vfe = {
+> +			.line_num = 4,
+> +			.is_lite = true,
+> +			.hw_ops = &vfe_ops_gen3,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +	/* VFE6 (lite) */
+> +	{
+> +		.regulators = {},
+> +		.clock = { "cpas_vfe_lite", "vfe_lite_ahb",
+> +			   "vfe_lite_csid", "vfe_lite_cphy_rx",
+> +			   "vfe_lite"},
+> +		.clock_rate = {
+> +			{ 0, 0, 0, 0  },
+> +			{ 300000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 400000000, 400000000, 400000000, 400000000 },
+> +			{ 480000000, 600000000, 600000000, 600000000 },
+> +		},
+> +		.reg = { "vfe_lite4" },
+> +		.interrupt = { "vfe_lite4" },
+> +		.vfe = {
+> +			.line_num = 4,
+> +			.is_lite = true,
+> +			.hw_ops = &vfe_ops_gen3,
+> +			.formats_rdi = &vfe_formats_rdi_845,
+> +			.formats_pix = &vfe_formats_pix_845
+> +		}
+> +	},
+> +};
+> +
+>   static const struct resources_icc icc_res_sa8775p[] = {
+>   	{
+>   		.name = "ahb",
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
