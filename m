@@ -1,197 +1,192 @@
-Return-Path: <linux-kernel+bounces-766446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7CAB24694
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:05:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0F8B246AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F1E516D82A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:03:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ACBE3ABE5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823772C159E;
-	Wed, 13 Aug 2025 10:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C315E2EFDB0;
+	Wed, 13 Aug 2025 10:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mC6CQ4Zg"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GhK9KSfU"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40EB223DDA;
-	Wed, 13 Aug 2025 10:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325832EE5F5;
+	Wed, 13 Aug 2025 10:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755079427; cv=none; b=tIfI2QSoi56Rxn+pS5BoctqhrhvfSBlVO5MLL6iYP4EZp+pcC1N7lY17Ekhc76Ovj9osdB/ayTNsy0kARHssju/52kR7R4B4czucWUhNRXM/pFra9BULd3j845e1ygTo1QnT3Uw3z25mC+Rbe/QzpOWilkh3O4bhM08friyH75Q=
+	t=1755079472; cv=none; b=R/sBQ249JNEyyCQPVk9fIVrs/tTpyuz4L0tmAjkLlovnUb4ge/KQiOD/d5UJGIVUWf96jebSWMFlKtrx3enmH5xrnwcCWCMRxbNoMQHzWKsS60lHMo5nRPu1q6xZA+JtCP+ojArcLiUhrothdkHSDFmxKgydcMpOKVaiGf+caJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755079427; c=relaxed/simple;
-	bh=L8kFq5n5DhigsqusajTj/qcpjGDaFAR2IlXT6u7ZH0k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jdjs+JjR7HfTtDj0oJcu13K7QIinwIKp+5HAkJXqVgt+NIXJ1iqmUpQljQuwGVEa0kJdshobSyQdNARPqX+zSwNQlRbp5BfeSHfiruYG7I9Wg1adU40xNB/sISyP97TIKTM+cX+DI+10KzC88q7nmTRHRivh2xjzkVKjuI9aTCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mC6CQ4Zg; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=L8kFq5n5DhigsqusajTj/qcpjGDaFAR2IlXT6u7ZH0k=; b=mC6CQ4ZgDkj+YEbFwuSQQb9MYZ
-	S1ewtVPLIjokHu5Iivy8swoE3oP1OXD6Cjh+X89s1hG5vD6ZNAgj46pkHFbVAiYuldnzq2PBgmJeI
-	atmMu65eHHQwRs0NiIOgpen5iPWUHpId9NUFYmuXaSLl2vrxl5VsDfqoblgtWNgGnbk6MXxHS66qV
-	7izHIPr048vjbOtWoK5xlEJSHLrFtUHmIJwvNDqDKlPeASABplFVkzf8vVrHwP0rjox8W/jHwGYZh
-	T/6Id8HoYFubNv2GYm6BSiHnk1PLyMVSYB3E02eSV1g7VaM4gjAE9nmnGlahAsvQ24WiBboTy3SM2
-	XM9LOIBw==;
-Received: from 54-240-197-231.amazon.com ([54.240.197.231] helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1um8KF-00000007e8Y-3MBI;
-	Wed, 13 Aug 2025 10:03:20 +0000
-Message-ID: <f009b0c5dea8e50a7fa03056b177bcedcfd21132.camel@infradead.org>
-Subject: Re: [PATCH] KVM: x86: Synchronize APIC State with QEMU when
- irqchip=split
-From: David Woodhouse <dwmw2@infradead.org>
-To: hugo lee <cs.hugolee@gmail.com>
-Cc: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, 
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com,  hpa@zytor.com, x86@kernel.org,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,  Yuguo Li
- <hugoolli@tencent.com>
-Date: Wed, 13 Aug 2025 12:03:18 +0200
-In-Reply-To: <CAAdeq_LbUkhN-tnO2zbKP9vJNznFRj+28Xxoy3Wb-utmfaW_eQ@mail.gmail.com>
-References: <20250806081051.3533470-1-hugoolli@tencent.com>
-	 <aJOc8vIkds_t3e8C@google.com>
-	 <CAAdeq_+Ppuj8PxABvCT54phuXY021HxdayYyb68G3JjkQE0WQg@mail.gmail.com>
-	 <aJTytueCqmZXtbUk@google.com>
-	 <CAAdeq_+wLaze3TVY5To8_DhE_S9jocKn4+M9KvHp0Jg8pT99KQ@mail.gmail.com>
-	 <aJobIRQ7Z4Ou1hz0@google.com>
-	 <CAAdeq_KK_eChRpPUOrw3XaKXJj+abg63rYfNc4A+dTdKKN1M6A@mail.gmail.com>
-	 <d3e44057beb8db40d90e838265df7f4a2752361a.camel@infradead.org>
-	 <CAAdeq_LmqKymD8J9tgEG5AXCXsJTQ1Z1XQan5nD-1qqUXv976w@mail.gmail.com>
-	 <e35732dfe5531e4a933cbca37f0d0b7bbaedf515.camel@infradead.org>
-	 <CAAdeq_LbUkhN-tnO2zbKP9vJNznFRj+28Xxoy3Wb-utmfaW_eQ@mail.gmail.com>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-/YFUhZ6CjRGl5DLVOFsi"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1755079472; c=relaxed/simple;
+	bh=CjipzCBLA0dk4QE580Prr8K+4dZdrKP11N9W5AAxlSw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CTVBRJ/Hx2Cp8Vz0Del2wzlyFPPFGPNNNYERFygfSfTmlj9cEDXweUyVAFMvfhtqLjmwREsrpV2aMeqzcfk0qaX6a32x1chr7X1iUX5VJxfSEcfG4xcdyQD2TbQa20ws9pHjvpVGYo/15DuwuzSGMiHy7Us96k+MVGS8QBxJJcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GhK9KSfU; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2407235722bso63433185ad.1;
+        Wed, 13 Aug 2025 03:04:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755079470; x=1755684270; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pA6OisM0xiSXM2QYlyPmLpjSFc9U7oYBc1YKa/QuGPA=;
+        b=GhK9KSfUCDeJweNLXeS/VJZ15srf62cNbQVSu7at/sWuGITzQ37nIGVXU/j2tGsKbI
+         +XGWWToSkdwBovt0wVDyk2wzxYERvm2LFgTlg1Nnvqd3CsuRG5EMBbCp4lQMN1x4mxZr
+         InxjSnJuOJljFL6CexKq0VZjO1NSOyIikvpClY3GL75v9gne3i8BZTXgd7JcyK62x3US
+         Cl7ldzNcubBLn4OKtItlBlDAsldpJxTlQWIbhAvRVE9t5rKaN8GAA1DJBW1HfNXUPAZ0
+         nILXE+0TB2T1eLO41Dv7a8l8ikIxide2CmNI6AB9YwG9waXcTVY0gllaVgPvmmkt+VAR
+         UisA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755079470; x=1755684270;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pA6OisM0xiSXM2QYlyPmLpjSFc9U7oYBc1YKa/QuGPA=;
+        b=exsPsIH3pAulCxd9em/o7klu/Gis8WByDqb7bRn+hEbdqGpXef1eRA4t1kslKT+C8r
+         ukktDEt2tF1/bjJFCVn7P9i/CR4A3ZD6el3Cq4QqFVDwQgGnjEQxNm8Qdzf9EzO9paj8
+         q2gsVhLBwMenI4wIVf7rpkgwoBZI7JFIgebNYS3gjlU2nNlDuWIp7+Hw5c7Oys6pIxA3
+         0b2UTsloZT1Ds/+o8Ppc0lVLVvCXa54Cxr65IuxQRhk82/UVNhNxGkebutzprnm8o2RG
+         r+WHvKBQY7jyGNCdECjfEK9mdt2Kcubmm7up0fqAybFdmZmT6rEBPwm8RGZjt2YUtyPz
+         pv+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUktRqgPxxECn8ph6Har7x5yK+Y0v00D3cFPcXBVC68ll3Xazdm2r4EobLOWAOyGkOKTswWNOh3hAEPHYwITr0iyXo=@vger.kernel.org, AJvYcCXddZx71RaQjW1QirtY+PWqujGcxKTzTUw10FcM1fWYr0U9sUxRw+F3Qc/TzOqYV/U8r7gXEP5UO8aFfB+QUCs=@vger.kernel.org, AJvYcCXwR5pjqN7SQiZWlCQFLvBgtZxHuZXeEO5bcHvdzmi9hTBZCPtXzs3AZWlcUb6B1k7CRiphuANQbnnmuVdp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8oq6zql0a9hXq3JXqJrGFLGf6YTfGRy17Ti/S3wFBjlsYh1Ih
+	G4bblswAo2/DVjqSUqe2PAhuC9GnDsDwKCOqym6uCbFpDBKajCADjqYU
+X-Gm-Gg: ASbGncsrMUZbw+i3hbW9nGpfhj5qmsu/OLVYzZsXQxoosqsNUMYpxbvDKyOnNIwI/FD
+	jyzgBIHls4J1O/hxPCeWHhZNQsF8z7T6k5jbkofWPQyJoXrmYELoGe2MiZg1Bx1aBGiYqo8ejXd
+	QH1NLHhOIs3pEl4ELD/VCtWAAHfssibJQzUF8dvI2VHnm+SyBooWVphkWZfopSrVTwkRldjKI5Y
+	T6rR5eSHbT9Kcs7zsNcLFpyNCxtSegkBxkYvPcAOzv5oaqs3oOi5y+uVpvRJCa3Cq+RXZ1Ho8xE
+	Hl19ZwNVoO8FQ7Bp9Hff3wsOSrW2NiECJW4VLAJEqeDJzDhqSJqLFq2if5V6Gd3z7y4z1Zz2Wss
+	jAJzZ5PDmA6AsTYcdTX7OVeLeMPTMQdN45QZdAu/GgcNDnCgQLu6OAS84NV9IVKJJcy1tBfVMQq
+	CI2w==
+X-Google-Smtp-Source: AGHT+IEGRUvzVmCw1gWq+fPL2z8gPf1Lc1jO0/qbCXCywxlp9sv7Gs9Tm2YFFW1IY+GR7t19aZAzjg==
+X-Received: by 2002:a17:902:e889:b0:240:a889:554d with SMTP id d9443c01a7336-2430d21d1d9mr41164265ad.45.1755079470435;
+        Wed, 13 Aug 2025 03:04:30 -0700 (PDT)
+Received: from [172.17.0.3] (125-227-29-20.hinet-ip.hinet.net. [125.227.29.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aabdedsm321545335ad.167.2025.08.13.03.04.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 03:04:29 -0700 (PDT)
+From: Leo Wang <leo.jt.wang@gmail.com>
+X-Google-Original-From: Leo Wang <leo.jt.wang@fii-foxconn.com>
+Subject: [PATCH v11 0/3] ARM: dts: Add support for Meta Clemente BMC
+Date: Wed, 13 Aug 2025 18:04:12 +0800
+Message-Id: <20250813-add-support-for-meta-clemente-bmc-v11-0-8970d41f88b0@fii-foxconn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABxjnGgC/5XSzWrDMAwH8FcpOc/Dn3Lc095j7GDL8mpYkpJko
+ aP03ef00sAycI8S5vcXlq7NRGOmqTkers1IS57y0JdCiJdDgyfffxLLsTQayaXhIFrmY2TT9/k
+ 8jDNLw8g6mj3DL+qon4mFDpnTwmtwAY1UTXHOI6V8uYe8f5T6lKd5GH/umYtYu8/oi2CckUEP4
+ Ii0DW8p5/L2gkPfv+LQNWvGIjeuFDWuLC6gocSNE9rhvqu2rqpxVXFRSpUSJg2Y9l29dW2Nq1e
+ XbEpSaeCo913ztGuKy1VLEZLA4P6ZFx6u5VV7g+LapMjYELlSsO/ajSugxrXFjSYEq41D4/2+2
+ 27dqn9oiytTAp+CgsBp33Ubt+4eXHGDBbKRdARs913BH3DLqw5Y8PUiBMqyEGlaFf/Kt9vtFwU
+ gvy7zAwAA
+X-Change-ID: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Kees Cook <kees@kernel.org>, 
+ Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ leo.jt.wang@fii-foxconn.com, george.kw.lee@fii-foxconn.com, 
+ bruce.jy.hung@fii-foxconn.com, Leo Wang <leo.jt.wang@gmail.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755079466; l=3316;
+ i=leo.jt.wang@fii-foxconn.com; s=20250618; h=from:subject:message-id;
+ bh=CjipzCBLA0dk4QE580Prr8K+4dZdrKP11N9W5AAxlSw=;
+ b=BJkjd0kiA5Y8obGHU+q6FUc8+QDJ1WXZD9uSxKU29Zky8R5vRxRpNK01HbH/Vk9qthXmKFUNj
+ wq0ZQ7HThYLCdP4EjcBvWj1whob5NKgQ/OA7LXugQL6ituxA13vE96/
+X-Developer-Key: i=leo.jt.wang@fii-foxconn.com; a=ed25519;
+ pk=x+DKjAtU/ZbbMkkAVdwfZzKpvNUVgiV1sLJbidVIwSQ=
 
+This series adds initial support for the Meta Clemente BMC based on the
+ASPEED AST2600 SoC.
 
---=-/YFUhZ6CjRGl5DLVOFsi
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Patch 1 documents the compatible string.
+Patch 2 Add pinctrl nodes for NCSI3 and NCSI4.
+Patch 3 adds the device tree for the board.
 
-On Wed, 2025-08-13 at 17:30 +0800, hugo lee wrote:
->=20
-> Sorry for the misleading, what I was going to say is
-> do only cpu_synchroniza_state() in this new userspace exit reason
-> and do nothing on the PIT.
-> So QEMU will ignore the PIT as the guests do.
->=20
-> The resample is great and needed, but the synchronization
-> makes more sense to me on this question.
+Signed-off-by: Leo Wang <leo.jt.wang@gmail.com>
+---
+Changes in v11:
+- Rebased on bmc/aspeed/dt as requested.
+- Link to v10: https://lore.kernel.org/r/20250801-add-support-for-meta-clemente-bmc-v10-0-c1c27082583d@fii-foxconn.com
 
-So if the guest doesn't actually quiesce the PIT, QEMU will *still*
-keep waking up to waggle the PIT output pin, it's just that QEMU won't
-bother telling the kernel about it?
+Changes in v10:
+- Reordered NCSI pinctrl patch before board DTS.
+- Dropped MAX1363 ADC nodes from the devicetree.
+- Link to v9: https://lore.kernel.org/r/20250723-add-support-for-meta-clemente-bmc-v9-0-b76e7de4d6c8@fii-foxconn.com
 
---=-/YFUhZ6CjRGl5DLVOFsi
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+Changes in v9:
+- Fix comment alignment for // PDB TEMP SENSOR.
+- Drop non-standard aspeed,enable-byte property from i2c11 node.
+- Move NCSI3 and NCSI4 pinctrl nodes into a separate patch as requested.
+- Link to v8: https://lore.kernel.org/r/20250717-add-support-for-meta-clemente-bmc-v8-0-2ff6afb36b0e@fii-foxconn.com
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgxMzEwMDMx
-OFowLwYJKoZIhvcNAQkEMSIEIEX7BsRWM/Uwa6SaI/qCI20Oaa7t5xMZq/wyDeYzh0pcMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAjQncDd/vQdY/
-G7JoAK9R9VJFWY0HmO4X9Cpss0uA0YB9WJ5apnKb1TJCBbi6VoN7G+zK7AFjfceyts2l3qOsPqT0
-MwEt/bDdAzWDROtLn1x2l3BloEHZ88Z/SpLUIqDbw+ZgXHw34aimjeoU5Doa8aF5tv0cbKasJa1l
-oS8B4Ixch1zrJkGlicdXTY7+NGunvE5jQuJLcTmiV9BcqeKLKPF6TeHn7s/Ei1mnOAhuBA2+Y+p3
-SJLRg2B2jYQgvEKdZbnNw7hKQF37tEPTylSAahaSwsCr7E5IcdiZZBX6suMBGDro8FWRE0/UegAk
-Cf4Tcj+gYug7M47AxHnspRugb4QS++ww3F4Gfgv/yFfbE9Afm3ff0IYwGYCf0ZVMwNGuZPoxwi//
-lYjQQZvEHtp7ilDQWRDR16E+a6tpHwj758c21tSw12BMwljMi6KuWNdXdr5qJJuJQGj594RNyiEM
-f3hbfCW1cKbmzdg4dNy0Wjit03Ba6Hr/N5rdBZ4KJ+GIvSD/2aBbdZ3pmPHe5C0sBhkcpqDe/+dz
-UgS5+VTMdhGUHc1hDLcZKMKpXmCIChqp1iqHXWySLCFCVAvDcp1Tc1IQb4+X3hM4v5YQRMMLxf0m
-ZcSQxeRs7RRB0PTI28FWhUe+jRymEulUisL0pG1+f9uoyDnO8y37PDOvAL0SCm0AAAAAAAA=
+Changes in v8:
+- Relocate IOBx_NICx_TEMP TMP421 sensors
+- Enable byte mode for i2c11
+- Link to v7: https://lore.kernel.org/r/20250716-add-support-for-meta-clemente-bmc-v7-0-d5bb7459c5aa@fii-foxconn.com
 
+Changes in v7:
+- Relocate CBC FRU EEPROMs from i2c13 to i2c12.
+- Link to v6: https://lore.kernel.org/r/20250708-add-support-for-meta-clemente-bmc-v6-0-7f3e57bd0336@fii-foxconn.com
 
---=-/YFUhZ6CjRGl5DLVOFsi--
+Changes in v6:
+- Correct Author email to match Signed-off-by email address.
+- Link to v5: https://lore.kernel.org/r/20250627-add-support-for-meta-clemente-bmc-v5-0-038ed6f1cb9f@fii-foxconn.com
+
+Changes in v5:
+- Remove accidentally pasted texts.
+- Link to v4: https://lore.kernel.org/r/20250627-add-support-for-meta-clemente-bmc-v4-0-ce7ff23460c4@fii-foxconn.com
+
+Changes in v4:
+- Move properties of nodes defined in the same file from label ref back to where they belong.
+- Move pinctrl default configs for ncsi3 and ncsi4 to aspeed-g6-pinctrl.dtsi.
+- Add properties to i2c10 and i2c15 to enable MCTP.
+- Link to v3: https://lore.kernel.org/r/20250623-add-support-for-meta-clemente-bmc-v3-0-c223ffcf46cf@fii-foxconn.com
+
+Changes in v3:
+- Modify leakage sensor to reflect current design.
+- Link to v2: https://lore.kernel.org/r/20250621-add-support-for-meta-clemente-bmc-v2-0-6c5ef059149c@fii-foxconn.com
+
+Changes in v2:
+- Fix patch 1/2 subject line to match dt-bindings convention.
+- Reorder device tree nodes in patch 2/2 to follow upstream DTS style.
+- Link to v1: https://lore.kernel.org/r/20250618-add-support-for-meta-clemente-bmc-v1-0-e5ca669ee47b@fii-foxconn.com
+
+---
+Leo Wang (3):
+      dt-bindings: arm: aspeed: add Meta Clemente board
+      ARM: dts: aspeed: clemente: add NCSI3 and NCSI4 pinctrl nodes
+      ARM: dts: aspeed: clemente: add Meta Clemente BMC
+
+ .../devicetree/bindings/arm/aspeed/aspeed.yaml     |    1 +
+ arch/arm/boot/dts/aspeed/Makefile                  |    1 +
+ .../dts/aspeed/aspeed-bmc-facebook-clemente.dts    | 1250 ++++++++++++++++++++
+ arch/arm/boot/dts/aspeed/aspeed-g6-pinctrl.dtsi    |   10 +
+ 4 files changed, 1262 insertions(+)
+---
+base-commit: b785b5d88cc27a521ea22b3afd85804c4c321d4a
+change-id: 20250618-add-support-for-meta-clemente-bmc-941a469bc523
+
+Best regards,
+-- 
+Leo Wang <leo.jt.wang@fii-foxconn.com>
+
 
