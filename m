@@ -1,190 +1,122 @@
-Return-Path: <linux-kernel+bounces-766131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD4CB242A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:27:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26358B242A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA3A3A7D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:24:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6983A1681ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767B52DE6E4;
-	Wed, 13 Aug 2025 07:24:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA7723D7E8;
+	Wed, 13 Aug 2025 07:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="K3RbWvwU"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB1D2D320B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFE02C21DB
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755069853; cv=none; b=abLt2dBBhLx0DrtraKYF8Lj6bbBfpTQrJqkECkTTPsBg8r9r6aqGpeWDxOESqmf1HdPUH8IT2gWOeuYuea1jh66WP2T0Ucm5mrPz1LHMcau0D6AjET4GRnePTiVC8K9//Ghkj+tY+UEYNMd93psuejEuL+1DarS9OLgaJZeLThs=
+	t=1755069827; cv=none; b=sSiQJvhXF7aNS7321IlSCxKWhs0uqJCS0TLNRiXsgd6vv+5LLjgUM7mkJ9h/t+K/tH+UG6XXEBKmuMdCeWYVUHCwnJsqRY3eW3myrYWBtMJkNekEG6+33CobrZJYhir8yLk90FiyFAsMNbkCRJe8OKbs7ujm2FioiK2X+Nl8Pow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755069853; c=relaxed/simple;
-	bh=LTp9h4E8z/4gVVB70sS+uyodcHcZqU3Ib72DtMoUEeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lomqf37Hjhb9y5awVBLCFva9ux+I/Xh9Z8qFVL6mu9A631H9dlX56LwubpfkJ5TNvu/VMscH982wkNqCLNHL9AGQY/oB8pPaxUSgacxoL9nWDiiJWv1JZkxF+qlwn97+0uigTHfcP7wxtDzBrbbBbI2wlI9EhdHfQ4XjqsbxGC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1um5pP-00031i-Bb; Wed, 13 Aug 2025 09:23:19 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1um5pN-0003LF-1a;
-	Wed, 13 Aug 2025 09:23:17 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 1C5FD4567D0;
-	Wed, 13 Aug 2025 07:23:17 +0000 (UTC)
-Date: Wed, 13 Aug 2025 09:23:16 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Vishal Mahaveer <vishalm@ti.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
-	Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
-	Simon Horman <horms@kernel.org>, Vincent MAILHOL <mailhol.vincent@wanadoo.fr>, 
-	linux-can@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/4] dt-bindings: can: m_can: Add wakeup properties
-Message-ID: <20250813-energetic-hare-of-pizza-6ad6df-mkl@pengutronix.de>
-References: <20250812-topic-mcan-wakeup-source-v6-12-v8-0-6972a810d63b@baylibre.com>
- <20250812-topic-mcan-wakeup-source-v6-12-v8-1-6972a810d63b@baylibre.com>
+	s=arc-20240116; t=1755069827; c=relaxed/simple;
+	bh=bv6DYqjwN2D0DlDYGPWLKAAmU2xcLODMCxxOZH6IMlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=I8iusFrJO2apU7LpdlM2TB7k6ekdZaI4wJTIcit86lhHXvl/GsUqKK+aEL//mESIe05484fbO4+7figKcx8YJxbe6ru5C+Dk4XKiIq+d5pfNWLlDvepRjL43reRNlvA1gwcfUL9fEr3io1HWjiQXUB1nnwW8Cp6kU9CJtuKrZK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=K3RbWvwU; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b7920354f9so5102603f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:23:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755069824; x=1755674624; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0WATivFrievb3I0TcPTJrTrvyez6QlhkHAEe8TBXKLU=;
+        b=K3RbWvwUUe8d3b1jowxjvceKbI9g+dzxeqo1pC7qbUpHA6qKtbV4FW7akwL18hmOM2
+         37jgdCdruRysdghvmPBKViC6uPdiCGzXWEj+msMcodur8LpKGr4oUOjadb0tLzU7Ma/B
+         ur8mbLxBsb+mkmmaI00J6xTZrIFXQTEOpDKkP64A+lrsJs3fYwgWeIN5r11LhnASP4vn
+         LePMpDryDPHs4XR+hFAJ0gDVlyMxB7NA/yrTzAeJbuS0ZC/jkJ3AgoyNxE9tXg/5vZkN
+         z7GkkdQDv8MljgGPAQrv47nVOQly3HSl9oS4+FC1CqE0vDzh/ozDoHRQJIVtw4LhG07f
+         ESAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755069824; x=1755674624;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0WATivFrievb3I0TcPTJrTrvyez6QlhkHAEe8TBXKLU=;
+        b=hI45jAF4neF4NfpNztgYBTk0slXNNeoTQrALdSInWoB0QdZZXuYRnwE8G9Cj9qq88I
+         uD3CikCfGeNmQR3EMx0UGExuMszkWPzoh4LmC0uvsUH04Jhm5AvzHC76Ruaut8xRDfF4
+         /7sfygnpGnB/IBplA5ZzoXTxmKAGl3zaSuuZcdBvR0svDsWVahn+FpP7YH+wybnhuPzy
+         RyA041ATgZazF6DqjqeEEEHvvTLHRCvE2Z0toqm7MUlprM0q5OzEsXnN37fSpLdv3ggL
+         dq7tlrqEBsYaC69hU2+HWTTXoyAYt6793Etf0lbjaNh44WXIFTD1qv8iWOSQ8YO5HvvQ
+         DyTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIINEclIFJIBKD6t2NW/d5SevV5zhnDKKkeQ/kW7VH4tPM+mUG3cYJwK9UmMIRIfPRKM55FCBvFHEWy8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGzv++drBkOvFvYl+vlVmaU4CUbclFdV5RBH9yhOUo9XwRkkzB
+	2r2cJ7Jl9P45IjjcTdIckNJPuLl/60jUF3bhCXQsuY926a2mtyHlGBIzOGAGcDbwGXw=
+X-Gm-Gg: ASbGncsEdRJgloenmaTOlrrhNWcTST0o53J0FMGCrWguDhPz9YeEABxEQ8xZqA+FBVq
+	gsl6YBRTzueCrvLk8KllScFaMrzZDIYVsnZrWowrcPzPJgfVMC/tMG0tVVL8w6cM7yS3g+J+Ufm
+	rXHZEsnzx2smCCwS1acwC2ZiKCUve9b282oo2DpAonEKfDmTIpqvUs/5WwdD1V38YoJtKTBHE3L
+	UUj3RplWoSS9j0eaATsBKlEfLMxzX9h4eN1PyudiyewFBV90Tmp46r7I9fHkKRtxyinJAoFthd4
+	3T52B4t8CevW4XL60SjT1sArIoyLllCnogM531qwrBwf0YLtrz4rVhpJWKXyG3tflzz883RU0Tu
+	Hu7sGbaPUJvJHwtoq/k/Xv13c
+X-Google-Smtp-Source: AGHT+IF1MjcUvwgYnjulLvHKgyfmZ4E6I3kIjMN9y8mrIIK3WlP8h9WdbRGmZ0ZNF9dbobExy36HTA==
+X-Received: by 2002:a05:6000:238a:b0:3b7:76e8:ba1e with SMTP id ffacd0b85a97d-3b917d29ae3mr1458813f8f.11.1755069824008;
+        Wed, 13 Aug 2025 00:23:44 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:74d7:9082:2b54:5348])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac51asm47740936f8f.1.2025.08.13.00.23.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 00:23:43 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Thomas Richard <thomas.richard@bootlin.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andy Shevchenko <andy@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
+Date: Wed, 13 Aug 2025 09:23:42 +0200
+Message-ID: <175506979055.8476.10658684000717777329.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <aJwk0yBSCccGCjX3@stanley.mountain>
+References: <aJwk0yBSCccGCjX3@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nfqkg2ypmiobsl4a"
-Content-Disposition: inline
-In-Reply-To: <20250812-topic-mcan-wakeup-source-v6-12-v8-1-6972a810d63b@baylibre.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
---nfqkg2ypmiobsl4a
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v8 1/4] dt-bindings: can: m_can: Add wakeup properties
-MIME-Version: 1.0
+On Wed, 13 Aug 2025 08:38:27 +0300, Dan Carpenter wrote:
+> The "> chip->ngpio" comparison here needs to be ">= chip->ngpio",
+> otherwise it leads to an out of bounds access.  The fwd->valid_mask
+> bitmap only has chip->ngpio bits and the fwd->descs[] array has that
+> same number of elements.  These values are set in
+> devm_gpiochip_fwd_alloc().
+> 
+> 
+> [...]
 
-On 12.08.2025 11:10:22, Markus Schneider-Pargmann wrote:
-> The pins associated with m_can have to have a special configuration to
-> be able to wakeup the SoC from some system states. This configuration is
-> described in the wakeup pinctrl state while the default state describes
-> the default configuration.
->=20
-> Also m_can can be a wakeup-source if capable of wakeup.
->=20
-> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> ---
->  .../devicetree/bindings/net/can/bosch,m_can.yaml   | 22 ++++++++++++++++=
-++++++
->  1 file changed, 22 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b=
-/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> index c4887522e8fe97c3947357b4dbd4ecf20ee8100a..ecba8783198fc1658fcc236d8=
-aa3c89d8c90abbd 100644
-> --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> @@ -106,6 +106,22 @@ properties:
->          maximum: 32
->      minItems: 1
-> =20
-> +  pinctrl-0:
-> +    description: Default pinctrl state
-> +
-> +  pinctrl-1:
-> +    description: Wakeup pinctrl state
-> +
-> +  pinctrl-names:
-> +    description:
-> +      When present should contain at least "default" describing the defa=
-ult pin
-> +      states. The second state called "wakeup" describes the pins in the=
-ir
-> +      wakeup configuration required to exit sleep states.
-> +    minItems: 1
-> +    items:
-> +      - const: default
-> +      - const: wakeup
-> +
+Applied, thanks!
 
-This breaks at least the stm32mp15 SoCs that define a sleep state:
+[1/1] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
+      https://git.kernel.org/brgl/linux/c/148547000cfc1ba8cec02857268333d08724b9cc
 
-&m_can1 {
-	resets =3D <&rcc FDCAN_R>;
-	pinctrl-names =3D "default", "sleep";
-	pinctrl-0 =3D <&m_can1_pins_b>;
-	pinctrl-1 =3D <&m_can1_sleep_pins_b>;
-	status =3D "okay";
-};
-
->    power-domains:
->      description:
->        Power domain provider node and an args specifier containing
-> @@ -122,6 +138,12 @@ properties:
->      minItems: 1
->      maxItems: 2
-> =20
-> +  wakeup-source:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description:
-> +      List of phandles to system idle states in which mcan can wakeup th=
-e system.
-> +
-> +
-
-One newline should be enough.
-
->  required:
->    - compatible
->    - reg
->=20
-> --=20
-> 2.50.1
->=20
->=20
->=20
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---nfqkg2ypmiobsl4a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmicPWEACgkQDHRl3/mQ
-kZxZ6ggAndbI3imPTI4yTppaCqGe0O0ugEouNouvoXOSLMDIPzSYMNem3/ug/wMQ
-RdnIkPTCILVaBDpWLamA5J8ZIJRQuaXxDUdiSHZNV+MnHAwvKQ9RTlSAX6O0EYa0
-wtz0KbvyR5MoaJ7VeQMPi3cZ4r3Z3Jkn76nLYLqk0W8ONEm79Qc/BdAsigDNP/A0
-C/taLXRROfu8IlwfXhMjGrRxjbpsdek/JOyqujbbPhAH+JdhDN+aqVxMAi72ht1d
-lHIHUkUGLlPFqGny9yAYtOZumuEJPMJQRMTG/t9ZuI9LyTKfUgalb2/bQGsYGp/5
-KG2dR4+6OGFm1HkZu3vFb6QJW5qPtQ==
-=mzQ8
------END PGP SIGNATURE-----
-
---nfqkg2ypmiobsl4a--
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
