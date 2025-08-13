@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-766232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CF9B24425
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:21:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03667B24417
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F06BB7BBF81
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA145585104
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B122EA158;
-	Wed, 13 Aug 2025 08:19:17 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9FC2EAD15;
+	Wed, 13 Aug 2025 08:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KUjDkWBb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F861A9FB0;
-	Wed, 13 Aug 2025 08:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C42B2D060C;
+	Wed, 13 Aug 2025 08:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073157; cv=none; b=HPiCttABU39jU+s4Ofw3ea/vx+n7H1Q+3yMyGfqRjGPia7FXnYGXFk+EObSc/DsFZAx7/isvUesLLyUmXs0PUEzvzROVhW1aZMpT2Mi/1G2GrKI09tSy9kN4VyToHNUooHGwUai81vegW4pv1ekSUszgWImM0sBJJvnoh+0O+6Y=
+	t=1755073119; cv=none; b=KtFn2SIlX3Qy0Vsgoz7UgEsrjEgKMDzV4xm7nApFwspVSQD3o2c9GV1rQXUYBTmb5prfSOSPA9nv6zyrK+7h7//fALzP3Xj+Utlv5QqQXiwhAVf2XgsRTIXTu1L52GjDkHpCpAFTGRI9dnlAFxw9LF/AswtpqLx4pGsVNMxnVf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073157; c=relaxed/simple;
-	bh=v7rtgWQNu/mbQ/micpT414DkETdzWVBsO6/aw191THE=;
+	s=arc-20240116; t=1755073119; c=relaxed/simple;
+	bh=fyq36rGZ1pAbVcCq/kvLp20N/s5G7qGL0YI912ZNFv0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ag6uWQ5QDOYv3tCApx+wlqsgYxkvSPeDfo6m22YVQ4DOBUeXp0KGokvg/+HdiJXk2jOdUoqwdExaYBu6WUic4ZgUdQSQCQHNrQlipM/vBYMp7HYOijUQrhHNy+8X+SVG65JUQOSzx2p8Jf38SGjHU2eli/VGjnjl8u+49YXdwvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.192] (ip5f5af7c8.dynamic.kabel-deutschland.de [95.90.247.200])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5389461E647B3;
-	Wed, 13 Aug 2025 10:18:30 +0200 (CEST)
-Message-ID: <9b44df93-acec-4416-9f32-f97d0bfaaa7b@molgen.mpg.de>
-Date: Wed, 13 Aug 2025 10:18:29 +0200
+	 In-Reply-To:Content-Type; b=ibPKWHzWnW1LGGsb/saez6mjVuHao0ibwHE/FfGpKZf/xI37EQEP55YhQYjpWu7mYN+FHguGJJ7g+z91SzRAtJGxADvPq+GI1Q+RibW4Uik1w2w+Jqstndc2UyQeR00GRT9jUrw71UEc71IUpgcMCxK+xquFFRn/J0UTWa07hJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KUjDkWBb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96845C4CEEB;
+	Wed, 13 Aug 2025 08:18:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755073115;
+	bh=fyq36rGZ1pAbVcCq/kvLp20N/s5G7qGL0YI912ZNFv0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KUjDkWBbM+1bhFlaGQObmBUSwFeFC6KQ/IJkyxL6B51Xkc7oeD5e0OIN4SkMvHEeW
+	 BeknCILn5QeK/8QbEz0LMegz7L6tjPmITYPMbtQv9nWKUzDQJjkFLZYppL2ZYI4RJD
+	 39C94Z4KCOUaIX2+/L4TFxaBzIPq+cvca9a9uldreyluhnb57N8iAGoqkMklK5TTlL
+	 e9rLEGSKIfFOyr/GlGHQq0WN+HlFyvI9RHHnMuGo54Zu5IWEoVNLqeqTC9Gj7ruB7S
+	 NK7xUBJ0RjVRNMYlfzTlSASBMocgk7rat13kxLTix7tXlccElIyElW41s3vZrDXV/N
+	 Q/mFfgn4zhMBg==
+Message-ID: <eab44630-79b8-471f-8dc1-8c191290d6cf@kernel.org>
+Date: Wed, 13 Aug 2025 10:18:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,92 +49,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH v1 iwl-next 1/2] igbvf: add lbtx_packets
- and lbtx_bytes to ethtool statistics
-To: Kohei Enju <enjuk@amazon.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- kohei.enju@gmail.com
-References: <20250813075206.70114-1-enjuk@amazon.com>
- <20250813075206.70114-2-enjuk@amazon.com>
+Subject: Re: [PATCHv2 0/3] wifi: ath9k: ahb: add OF LED support
+To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
+Cc: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+ Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:MIPS" <linux-mips@vger.kernel.org>
+References: <20250812192334.11651-1-rosenp@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250813075206.70114-2-enjuk@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250812192334.11651-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Dear Kohei,
-
-
-Thank you for your patch.
-
-Am 13.08.25 um 09:50 schrieb Kohei Enju:
-> Currently ethtool shows lbrx_packets and lbrx_bytes (Good RX
-> Packets/Octets loopback Count), but doesn't show the TX-side equivalents
-> (lbtx_packets and lbtx_bytes). Add visibility of those missing
-> statistics by adding them to ethtool statistics.
+On 12/08/2025 21:23, Rosen Penev wrote:
+> A port of the prior platform code to use OF.
 > 
-> In addition, the order of lbrx_bytes and lbrx_packets is not consistent
-> with non-loopback statistics (rx_packets, rx_bytes). Therefore, align
-> the order by swapping positions of lbrx_bytes and lbrx_packets.
-> 
-> Tested on Intel Corporation I350 Gigabit Network Connection.
-> 
-> Before:
->    # ethtool -S ens5 | grep -E "x_(bytes|packets)"
->         rx_packets: 135
->         tx_packets: 106
->         rx_bytes: 16010
->         tx_bytes: 12451
->         lbrx_bytes: 1148
->         lbrx_packets: 12
-> 
-> After:
->    # ethtool -S ens5 | grep -E "x_(bytes|packets)"
->         rx_packets: 748
->         tx_packets: 304
->         rx_bytes: 81513
->         tx_bytes: 33698
->         lbrx_packets: 97
->         lbtx_packets: 109
->         lbrx_bytes: 12090
->         lbtx_bytes: 12401
-> 
-> Tested-by: Kohei Enju <enjuk@amazon.com>
+> v2: use reg instead of led-sources
 
-No need to resend, but I believe, you only add a Tested-by: tag, if the 
-person differs from the author/Signed-off-by: tag.
+Where? Really, where? There is no reg in the binding at all. There is
+led-sources, though. Also many other things got changed, the binding is
+completely different and nothing in changelog explains that.
 
-> Signed-off-by: Kohei Enju <enjuk@amazon.com>
-> ---
->   drivers/net/ethernet/intel/igbvf/ethtool.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/igbvf/ethtool.c b/drivers/net/ethernet/intel/igbvf/ethtool.c
-> index 773895c663fd..c6defc495f13 100644
-> --- a/drivers/net/ethernet/intel/igbvf/ethtool.c
-> +++ b/drivers/net/ethernet/intel/igbvf/ethtool.c
-> @@ -30,8 +30,10 @@ static const struct igbvf_stats igbvf_gstrings_stats[] = {
->   	{ "rx_bytes", IGBVF_STAT(stats.gorc, stats.base_gorc) },
->   	{ "tx_bytes", IGBVF_STAT(stats.gotc, stats.base_gotc) },
->   	{ "multicast", IGBVF_STAT(stats.mprc, stats.base_mprc) },
-> -	{ "lbrx_bytes", IGBVF_STAT(stats.gorlbc, stats.base_gorlbc) },
->   	{ "lbrx_packets", IGBVF_STAT(stats.gprlbc, stats.base_gprlbc) },
-> +	{ "lbtx_packets", IGBVF_STAT(stats.gptlbc, stats.base_gptlbc) },
-> +	{ "lbrx_bytes", IGBVF_STAT(stats.gorlbc, stats.base_gorlbc) },
-> +	{ "lbtx_bytes", IGBVF_STAT(stats.gotlbc, stats.base_gotlbc) },
->   	{ "tx_restart_queue", IGBVF_STAT(restart_queue, zero_base) },
->   	{ "tx_timeout_count", IGBVF_STAT(tx_timeout_count, zero_base) },
->   	{ "rx_long_byte_count", IGBVF_STAT(stats.gorc, stats.base_gorc) },
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
+Best regards,
+Krzysztof
 
