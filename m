@@ -1,124 +1,126 @@
-Return-Path: <linux-kernel+bounces-766116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930BEB24272
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:20:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B18B24279
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFAC1891DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:19:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CAB56821CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C0DE2D542A;
-	Wed, 13 Aug 2025 07:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E5D2D640E;
+	Wed, 13 Aug 2025 07:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0yz68jM"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lkmuBeLu"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5ECF1D5CD4;
-	Wed, 13 Aug 2025 07:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B3B1448E3;
+	Wed, 13 Aug 2025 07:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755069535; cv=none; b=aF1WLNV/F4q4tTs/7cMPlcyPSuqJA+QiJxbFe5AvInoSVKahFy2sIw47K711SqQ2cCD6I4dxqmabRfIT2Rgc0F+5cEppDAoFd3i6UbCKNR+YEZBtKxHQGDZ5ss0UvPCsHxtAtMj3/ZxcketYgLQVbhFzPMlVcTgQu9Jsx3bbsgU=
+	t=1755069671; cv=none; b=H15M7xs5CwKgWO+6G9oaScIQueJyTu0Ds5+3y+7hpsk1/Bc30Y7Bq3xvTYRSR4z7+yd7EvZRWbE3QVRzKPS268hu1faYZ4U3lR7edG3SiJC2qtYVrF5Gi9YUUzYRUZmSy5qMoxaRTJ2WwxOvTJuSxQLdRvb4InUlpCInsdMnMS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755069535; c=relaxed/simple;
-	bh=8j2oxT6mk0yZmoWePt15+N5CrKZUEqAw4bGln0C329U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RN4W8klDS50CITMyCZrPvD680HIVzkx8a162nTjp69feM5+UNFuRLCqOXVIT7uBjfqejDihOw1PGkeKkAI/FNUrJvgDBpRNg0lPpSsRqLcH3l6kULlX0lb6Vhjp+HWzjTuCaemOb+bDC6K9L4MO5yM5FlViaPKH7mltBlfGgDYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l0yz68jM; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459ddf8acf1so52552525e9.0;
-        Wed, 13 Aug 2025 00:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755069531; x=1755674331; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hT7zNC81MFnipI/Ag5QHfvvjbScQaZ5LLk5g2Y05B+0=;
-        b=l0yz68jM8PRtbrThPSRRutroH7oQ1sny5ofGnxJX+LDTbFRxW1XBSb+QXum/COi+aF
-         y6iZIRF6Sdoemxx4GM2//l+My30UCRefEg9vFAdVEl7qfV6XtIZHXqhaqw13uYyCJaqS
-         hMr3stBOsxqq5olCyR5s1Cbt5v+YT36+p/Duc7V0sdEBnA1FPsnTirSeU3oTN+kZK3jy
-         KBhwNqVgiS0Kjp/AsY7CS2Qx0l3iQ5Z1UWDVG52ffyTpn8JjoRMSz1qNMt67l1K5a+vC
-         vkD8ykZKE31vGgJbKd57LawBQJt8nJZjkqIDGS3Vyrh6mBiSCsxbrpk0beK9a4gWoBIm
-         S7QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755069531; x=1755674331;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hT7zNC81MFnipI/Ag5QHfvvjbScQaZ5LLk5g2Y05B+0=;
-        b=QYe9NUevc7ZIc7mWQrrr7wgYH1h/D6fbJqFpi44nnNJGwT+vZC/4HL4Pr0m+FWY4Vk
-         y9CLiTHiO3n5rlsQWN6zrF2Ja+XoLrCfK8OSWV8YLgGXkP3xtg50W/WYtuaIhXcV6lYs
-         UzvRU7wHSJgf/dO1wM7htrW3a8Vw2aZDNVrlSI3uX3/shVqn/qQ6zSVnLBlrK6A22kiZ
-         tOx5LlbpMfHHYT6Mx7Poq9Y40XYjBJ1tsBiwFVvCpzAJXl/5J9YoAGPgD5wes+SZ/3dt
-         6/NlR7/GbQns8CSbUQzmukWiotpOxRtu9lM1npxb5cMx0wJywbjWN+DEuJ96oZVXbwyf
-         rA4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVfkUyPc3s1BUfTaFJU4uqzjMW8AGbHiUF3/S4e0AHEP12E9gjsyGjlmxthHSWwChkMt6kS50sPaRgC@vger.kernel.org, AJvYcCWlNTuWlQe6QiR2z9/SdhucFHvOxEWNkIwf9CcrokezSst4D1+SX2YdeRtiXkTj1WPeHUlWUnkZtrpWRPbb@vger.kernel.org, AJvYcCXjGEtOfGcft4nWYWlKPk4cm5y2So9+480TzoHZtUOlFRv+AAB4ep+CT/yh4h7TRx34gJHdMeLxNZAFoQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTLVigLTAp78a6aht6dg3RFddRnk5AvYDWMP0lbMkyhItG/pSV
-	P+XrQ6Ff2V9+adq4/N2Ad1CulEIk/QlHmTCVE9LGv5tGZYS4jS/zM8oU
-X-Gm-Gg: ASbGncvfcYFrPzjXXgCJWC+6omTpHjbmTcq69QV0Vi/8peu7rkY9quYosaGbnJDuX8Q
-	DJMGTbks8/8TNmMhwrrGCuumjX6mNroNzbyUtV2zti0vjmuVAh1ZOqx8UuEfuV7Gaf5eaRWEZQS
-	WKPKCcIa0KCbg9ZzbJqre+4AbCS595Al7Gjj+vgOc8UitH2LVPaEmtIbyumYtpoewX7ISOqH8YL
-	uG128/kHtQGUCFWblJoVhCdacjjWQCKHHJ9CUnI5fkVh07pkZqSO8RzRWFCv1FbHheZOp1BfsKQ
-	RjUCLZhF3JNgK1tLrJydt5Tl6Np2EibTsoyJdCnGanqC8C80XlZ9uPuQsF8hvlW4QiQheZl9eO8
-	v8ZsGats1lZAMDoPeYn0=
-X-Google-Smtp-Source: AGHT+IEglHcl0W/BNit8lnQzWA48TYtNNYEYIowfu0Jp/7j5jJeKFCchpl/EObW5f9/xZRNrLK5j6g==
-X-Received: by 2002:a05:600c:1d20:b0:459:db80:c2ce with SMTP id 5b1f17b1804b1-45a165fbf95mr14268835e9.7.1755069530601;
-        Wed, 13 Aug 2025 00:18:50 -0700 (PDT)
-Received: from pc.. ([102.208.164.18])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a16df1cf8sm16944565e9.24.2025.08.13.00.18.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 00:18:49 -0700 (PDT)
-From: Erick Karanja <karanja99erick@gmail.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Christoph Hellwig <hch@lst.de>,
-	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
-	linux-block@vger.kernel.org,
-	drbd-dev@lists.linbit.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Erick Karanja <karanja99erick@gmail.com>
-Subject: [PATCH] Docs: admin-guide: Correct spelling mistake
-Date: Wed, 13 Aug 2025 10:18:36 +0300
-Message-ID: <20250813071837.668613-1-karanja99erick@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755069671; c=relaxed/simple;
+	bh=ekAeD03LGT/H0bd1yQdjAK79f/ZbGNLX1qkr/VWVeYM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Z2To7B5ZtkyVlhNneVAtsXalW1Iwu+ozLUxUEbcszSBOhOtjeXlXZiZlOfL2FM34z2Chw7grnOSHMaFOcujQnNAK77lCn4IhlTwu0urw9CsLc/ohLHGFZfGeo0dzNccQD7nBFLESfn5xVuFxjpfQ/VazwHif9YCqW0CXIkKQsLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lkmuBeLu; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c66:bd1a:669e:3dcb:5a6b:a905])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 37843351;
+	Wed, 13 Aug 2025 09:20:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755069610;
+	bh=ekAeD03LGT/H0bd1yQdjAK79f/ZbGNLX1qkr/VWVeYM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=lkmuBeLu/hxO5aKu05wL4JYecX2R5z1BjeqAIiZD0F0W81mOha62j99LMJW7TWLv5
+	 DvDgUK4/QcObI0IIIvd+0F6bDHkzpVKgACvV+P3eaWUQRPuVwxA4GOjUB76N+Pm1Uz
+	 aXb0hYnYVlwiycMgrCpFL4k7cCh+y9ldupB1i+QA=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH 0/6] media: imx335: Vflip, active state and binning support
+Date: Wed, 13 Aug 2025 12:50:31 +0530
+Message-Id: <20250813-imx335_binning-v1-0-a42b687d8541@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL88nGgC/x3MTQqAIBBA4avErBP8SaGuEhGWU82iKRRCCO+et
+ PwW772QMBImGJoXIj6U6OIK1TawHp53FBSqQUttpZNO0JmNsfNCzMS7CJ0JK/ZaLdJDje6IG+V
+ /OE6lfBj+hsRgAAAA
+X-Change-ID: 20250606-imx335_binning-d43dce921b0a
+To: Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, 
+ Umang Jain <umang.jain@ideasonboard.com>, 
+ Tommaso Merciai <tomm.merciai@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1519;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=ekAeD03LGT/H0bd1yQdjAK79f/ZbGNLX1qkr/VWVeYM=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBonDzUVMyF2SIqvIdBgBUADpnJa10ckB8kwDYxK
+ N4a0vz/I0SJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaJw81AAKCRBD3pH5JJpx
+ RfYOD/9PiSLtvg89r3kSH0qLpvDdKLumSOFRP7vatOb/m2SGK0MpAqdeI1M4mOv3IQQ4P1PbctX
+ /eyYmnFDL9d2MZymusWX76IDai6ELYDVvT3Fcc16gOJSQXGgtkVsAq3fY/KRSuiUVKrcCfPPoRU
+ O+d5mFJOP9ZSIrTp96r7OOlXjSO1Xzjfk89hNBU1pR4zu0YvF/XfMQhsyLQmpSP+W18kyo1V3IA
+ PwyiQ4eI1xIYnbSfxYlvDn3f8A216XLc9e9+xHvVvmajc7C6h37265DnPevKAGdFQ9koIc5j4Il
+ 9KXuJV7OdkpwSC8y2QOdrBUPdxUDK02/8bf8csem0PFHyjiTiYLZ60yVbILZtU9vU41c3IjhnFv
+ gB17Uj9DIXPRYlRMmtBK3B7323GEMl/enPf+s6ojqQHOGm93CqI6oI8ZWLfHEaxGeDL6vOtkzh7
+ 8SV/YfOOlr5zwlI28Ua8VD5lAD8PHs2d0zVgkT3SwbDC5rNZSt148c/ZHk8ZhMFLOjlyWKUjylw
+ LRmDCbCn2dAp58U6OnGKAjdB9SansWnVNmucnifYRtHYThuPkkMDFXGTDc4vUnfTJaH3JQMZpYL
+ bdoxLX/y7DYAFM1QBsVQVd/3WCV/OcC8pHrRBfBABNq32qmhvIK5FMEirYD4+xCFVis9TU7YOcG
+ FKYd+xtt+RHtgwQ==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-Fix spelling mistake directoy to directory
+Hi,
 
-Reported-by: codespell
+This series adds support for 2x2 binning mode for Sony IMX335, along
+with some improvements like using subdev active state, and fixing the
+native pixel array width to match the datasheet.
 
-Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
+These changes are done on top of a couple of already reviewed patches
+from Umang's series from last year that added support for vertical flip [1]
+
+[1]: https://lore.kernel.org/all/20240830062639.72947-1-umang.jain@ideasonboard.com/
+
+There is some WIP to make the resolution freely configurable:
+ - [x] Add support for a cropped mode (1944x1100)
+ - [ ] Fix exposure timing limits when cropping
+ - [ ] Add support for a cropped binned mode
+ - [ ] Make it freely configurable (depends on new control for binning)
+
+Available in the branch here:
+https://github.com/jailuthra/linux/commits/imx335_binning
+
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 ---
- Documentation/admin-guide/blockdev/zoned_loop.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Jai Luthra (4):
+      media: imx335: Update the native pixel array width
+      media: imx335: Update HBLANK range on mode change
+      media: imx355: Use subdev active state
+      media: imx335: Support 2x2 binning
 
-diff --git a/Documentation/admin-guide/blockdev/zoned_loop.rst b/Documentation/admin-guide/blockdev/zoned_loop.rst
-index 9c7aa3b482f3..64dcfde7450a 100644
---- a/Documentation/admin-guide/blockdev/zoned_loop.rst
-+++ b/Documentation/admin-guide/blockdev/zoned_loop.rst
-@@ -79,7 +79,7 @@ zone_capacity_mb   Device zone capacity (must always be equal to or lower than
-                    the zone size. Default: zone size.
- conv_zones         Total number of conventioanl zones starting from sector 0.
-                    Default: 8.
--base_dir           Path to the base directoy where to create the directory
-+base_dir           Path to the base directory where to create the directory
-                    containing the zone files of the device.
-                    Default=/var/local/zloop.
-                    The device directory containing the zone files is always
+Umang Jain (2):
+      media: imx335: Rectify name of mode struct
+      media: imx335: Support vertical flip
+
+ drivers/media/i2c/imx335.c | 463 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 324 insertions(+), 139 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250606-imx335_binning-d43dce921b0a
+
+Best regards,
 -- 
-2.43.0
+Jai Luthra <jai.luthra@ideasonboard.com>
 
 
