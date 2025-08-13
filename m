@@ -1,94 +1,330 @@
-Return-Path: <linux-kernel+bounces-766892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BFEB24C5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:48:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827FBB24C6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059B63B9DE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047981BC6139
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A502ECEAC;
-	Wed, 13 Aug 2025 14:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJ+5earH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B13C1DD0C7;
+	Wed, 13 Aug 2025 14:48:24 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6971D54D8;
-	Wed, 13 Aug 2025 14:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7403F1DF751;
+	Wed, 13 Aug 2025 14:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755096484; cv=none; b=PhcV7mqAVWQwREjC+uWU3YlzVfDhxEjNZ1BpwFC+0Lz1jmAqn7mfuGFe1puDlsdtN4Vv7h17wQxxUlzbA+1DYMi8ROAPbYHn0e5U44y5boxxRmJE9t2qJHYgLYeormAZ3/9kHaaaSV44PuwdZB38By3qoQGa/pV/7zzmbOisgkY=
+	t=1755096504; cv=none; b=kWTdHn3LGLbMetowYo+7jZgC9HgYJ5IlkHVmUw+0vY0By158dt9e/7WVhJTQCpGM3tUm/5FmT77Rljb2Wl1FDffq772KxqpD9CxJhj81t0iP9ViRe62WxDM6jbFc12aG+qJVeqa5R1QiThc1mu7dckNdVp4hsREK8Chb0C5q+Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755096484; c=relaxed/simple;
-	bh=Qn8agVW9Vlcdpw9sdzCP4IVz3IhuXOJzbYXLkGDbi9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UKZd+mxVh0Bv+zeRf5KVEU2QoySCmKEm65D+wM8ixagOkTbQMTuHDBrvFqniwEOSKuWoF2HzbEBKGGidjG6bjYi9vHdlx5MtWCC0JUegCPH9l6XZ04vDalDTcxzuR1BSyOWLv/VtyeY/EUXeLpvKFJMfUuCcpFJ2drfLOFLOwXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJ+5earH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0743DC4CEF6;
-	Wed, 13 Aug 2025 14:48:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755096484;
-	bh=Qn8agVW9Vlcdpw9sdzCP4IVz3IhuXOJzbYXLkGDbi9c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WJ+5earHOqQatrSxfBJByiizZL9FAcLc+WKCq9ogrON7Wvj8KX2WLcohGJCWZa83g
-	 d15jRGcqsMGmyxjVgqkDCTM7Kjryz4pf4+qDB4qVOfjesSXDXheeZSHvl38VgKntSs
-	 0HRj0k6gbXf+CiHVL6P1+vN267NnSR2ovXNyS8A2hiz4t9UAN3p/maZJ/Lbnr1wHt9
-	 qRzvGSTsBs0VuXl6x3J5EDjZtkGyraW3dJOmBIOT8YwgyZmuIYyWeWfGF9IlS8Gjmn
-	 SblkTEKOfpRW0wgUdUH484VEiWKE8GoS7ox3HUYQxHFaNgwEN8gwYvofYsQprDCaw2
-	 M3zVOtUlw4E+w==
-Date: Wed, 13 Aug 2025 07:48:03 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
- King <linux@armlinux.org.uk>, danishanwar@ti.com, srk@ti.com,
- linux-omap@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 8/9] net: ethernet: ti: am65-cpsw: add
- network flow classification support
-Message-ID: <20250813074803.06db304a@kernel.org>
-In-Reply-To: <d787ca03-a54e-46ae-828b-68fbd7b0b3a8@kernel.org>
-References: <20250514-am65-cpsw-rx-class-v4-0-5202d8119241@kernel.org>
-	<20250514-am65-cpsw-rx-class-v4-8-5202d8119241@kernel.org>
-	<20250516182902.5a5bfd98@kernel.org>
-	<d787ca03-a54e-46ae-828b-68fbd7b0b3a8@kernel.org>
+	s=arc-20240116; t=1755096504; c=relaxed/simple;
+	bh=VGZQcknWMnrx0fAlesqHrCNEIJdNyf1Sx92w8cBhl2w=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dD6G9Mq2SE9W2woJruv8atZ+mNWTy02lKEhocJtTcFo9ZEdANHBhqKpaR/C9gwHmQ5Vk7sBO2gTKRSVT6P43SpSV8sW/zrdO8Q48AgVx6YMm9QKR1KPKx6BOmOtVvFlfbi8opbWVn8xQ91l9wyx1y1NPtrj6LS1F0TdvhLSwQds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2B4X60fRz67H47;
+	Wed, 13 Aug 2025 22:45:32 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D5F9F140121;
+	Wed, 13 Aug 2025 22:48:13 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 16:48:13 +0200
+Date: Wed, 13 Aug 2025 15:48:11 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
+Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
+ routine
+Message-ID: <20250813154811.00000257@huawei.com>
+In-Reply-To: <20250730121209.303202-6-s.neeraj@samsung.com>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
+	<20250730121209.303202-6-s.neeraj@samsung.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, 13 Aug 2025 16:49:27 +0300 Roger Quadros wrote:
-> On 17/05/2025 04:29, Jakub Kicinski wrote:
-> > On Wed, 14 May 2025 15:04:28 +0300 Roger Quadros wrote:  
-> >> The TRM doesn't mention anything about order of evaluation of the
-> >> classifier rules however it does mention in [1]
-> >> "if multiple classifier matches occur, the highest match
-> >> with thread enable bit set will be used."  
-> > 
-> > So we're not sure how to maintain the user requested ordering?  
-> 
-> Currently we are using the user/ethtool provided location as is.
-> 
-> > Am I reading this correctly? If so then ..
-> >   
-> >> +	if (fs->location == RX_CLS_LOC_ANY ||  
-> > 
-> > .. why are we rejecting LOC_ANY?   
-> 
-> Because driver doesn't have logic to decide the location and relies on ethtool to
-> decide it if user doesn't supply it.
+On Wed, 30 Jul 2025 17:41:54 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-The location supplied by the user may have semantic significance.
-IOW locations may be interpreted as priorities.
-It's better to support LOC_ANY and add the 10 lines of code to
-allocate the id in the driver..
+> Added __pmem_region_label_update region label update routine to update
+> region label.
+> 
+> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
+> mutex_unlock()
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+
+A few comments inline,
+
+Thanks,
+
+Jonathan
+
+
+>  static bool slot_valid(struct nvdimm_drvdata *ndd,
+>  		struct nd_lsa_label *lsa_label, u32 slot)
+>  {
+> @@ -960,7 +970,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  		return rc;
+>  
+>  	/* Garbage collect the previous label */
+> -	mutex_lock(&nd_mapping->lock);
+> +	guard(mutex)(&nd_mapping->lock);
+>  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+>  		if (!label_ent->label)
+>  			continue;
+> @@ -972,20 +982,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  	/* update index */
+>  	rc = nd_label_write_index(ndd, ndd->ns_next,
+>  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+> -	if (rc == 0) {
+> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> -			if (!label_ent->label) {
+> -				label_ent->label = lsa_label;
+> -				lsa_label = NULL;
+> -				break;
+> -			}
+> -		dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
+> -				"failed to track label: %d\n",
+> -				to_slot(ndd, lsa_label));
+> -		if (lsa_label)
+> -			rc = -ENXIO;
+> -	}
+> -	mutex_unlock(&nd_mapping->lock);
+> +	if (rc)
+> +		return rc;
+> +
+> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> +		if (!label_ent->label) {
+> +			label_ent->label = lsa_label;
+> +			lsa_label = NULL;
+> +			break;
+> +		}
+> +	dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
+> +			"failed to track label: %d\n",
+> +			to_slot(ndd, lsa_label));
+> +	if (lsa_label)
+> +		rc = -ENXIO;
+	if (lsa_label)
+		return -ENXIO;
+
+	return 0;
+
+is a little clearer.
+
+>  
+>  	return rc;
+>  }
+> @@ -1127,6 +1137,137 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  	return 0;
+>  }
+>  
+> +static int __pmem_region_label_update(struct nd_region *nd_region,
+> +		struct nd_mapping *nd_mapping, int pos, unsigned long flags)
+> +{
+> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
+> +	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +	struct nd_lsa_label *nd_label;
+> +	struct cxl_region_label *rg_label;
+> +	struct nd_namespace_index *nsindex;
+> +	struct nd_label_ent *label_ent;
+> +	unsigned long *free;
+> +	u32 nslot, slot;
+> +	size_t offset;
+> +	int rc;
+> +	uuid_t tmp;
+> +
+> +	if (!preamble_next(ndd, &nsindex, &free, &nslot))
+> +		return -ENXIO;
+> +
+> +	/* allocate and write the label to the staging (next) index */
+> +	slot = nd_label_alloc_slot(ndd);
+> +	if (slot == UINT_MAX)
+> +		return -ENXIO;
+> +	dev_dbg(ndd->dev, "allocated: %d\n", slot);
+> +
+> +	nd_label = to_label(ndd, slot);
+> +
+> +	memset(nd_label, 0, sizeof_namespace_label(ndd));
+> +	rg_label = &nd_label->rg_label;
+> +
+> +	/* Set Region Label Format identification UUID */
+> +	uuid_parse(CXL_REGION_UUID, &tmp);
+> +	export_uuid(nd_label->rg_label.type, &tmp);
+
+	export_uuid(rg_label->type, &tmp);
+
+> +
+> +	/* Set Current Region Label UUID */
+> +	export_uuid(nd_label->rg_label.uuid, &nd_set->uuid);
+
+	export_uuid(rg_label->uuid, &nd_set->uuid);
+
+
+> +
+> +	rg_label->flags = __cpu_to_le32(flags);
+> +	rg_label->nlabel = __cpu_to_le16(nd_region->ndr_mappings);
+> +	rg_label->position = __cpu_to_le16(pos);
+> +	rg_label->dpa = __cpu_to_le64(nd_mapping->start);
+> +	rg_label->rawsize = __cpu_to_le64(nd_mapping->size);
+> +	rg_label->hpa = __cpu_to_le64(nd_set->res->start);
+> +	rg_label->slot = __cpu_to_le32(slot);
+> +	rg_label->ig = __cpu_to_le32(nd_set->interleave_granularity);
+> +	rg_label->align = __cpu_to_le16(0);
+
+As the bot complained... It's le32
+
+> +
+> +	/* Update fletcher64 Checksum */
+> +	rgl_calculate_checksum(ndd, rg_label);
+> +
+> +	/* update label */
+> +	offset = nd_label_offset(ndd, nd_label);
+> +	rc = nvdimm_set_config_data(ndd, offset, nd_label,
+> +			sizeof_namespace_label(ndd));
+> +	if (rc < 0) {
+> +		nd_label_free_slot(ndd, slot);
+> +		return rc;
+> +	}
+> +
+> +	/* Garbage collect the previous label */
+> +	guard(mutex)(&nd_mapping->lock);
+> +	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+> +		if (!label_ent->label)
+> +			continue;
+> +		if (rgl_uuid_equal(&label_ent->label->rg_label, &nd_set->uuid))
+> +			reap_victim(nd_mapping, label_ent);
+> +	}
+> +
+> +	/* update index */
+> +	rc = nd_label_write_index(ndd, ndd->ns_next,
+> +			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
+> +	if (rc)
+> +		return rc;
+> +
+> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
+> +		if (!label_ent->label) {
+> +			label_ent->label = nd_label;
+> +			nd_label = NULL;
+> +			break;
+> +		}
+> +	dev_WARN_ONCE(&nd_region->dev, nd_label,
+> +			"failed to track label: %d\n",
+> +			to_slot(ndd, nd_label));
+> +	if (nd_label)
+> +		rc = -ENXIO;
+
+		return -ENXIO;
+
+> +
+
+	return 0;
+
+is clearer.
+
+> +	return rc;
+> +}
+> +
+> +int nd_pmem_region_label_update(struct nd_region *nd_region)
+> +{
+> +	int i, rc;
+> +
+> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +
+> +		/* No need to update region label for non cxl format */
+> +		if (!ndd->cxl)
+> +			continue;
+> +
+> +		/* Init labels to include region label */
+> +		rc = init_labels(nd_mapping, 1);
+> +
+
+No blank line here - keep the error check closely associated with the
+thing that it is checking.
+
+> +		if (rc < 0)
+> +			return rc;
+> +
+> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i,
+> +					NSLABEL_FLAG_UPDATING);
+> +
+
+Same here.
+
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	/* Clear the UPDATING flag per UEFI 2.7 expectations */
+> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +
+> +		/* No need to update region label for non cxl format */
+> +		if (!ndd->cxl)
+> +			continue;
+> +
+> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i, 0);
+> +
+
+and here.
+
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int __init nd_label_init(void)
+>  {
+>  	WARN_ON(guid_parse(NVDIMM_BTT_GUID, &nvdimm_btt_guid));
+> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
+> index 4883b3a1320f..0f428695017d 100644
+> --- a/drivers/nvdimm/label.h
+> +++ b/drivers/nvdimm/label.h
+> @@ -190,6 +190,7 @@ struct nd_namespace_label {
+>  struct nd_lsa_label {
+
+Would be better to have this explicitly as a union
+unless later patches add more elements.  That way it'll 
+be obvious at all sites where it is used that it can be one
+of several things.
+
+>  	union {
+>  		struct nd_namespace_label ns_label;
+> +		struct cxl_region_label rg_label;
+>  	};
+>  };
+>  
+> @@ -233,4 +234,5 @@ struct nd_region;
+>  struct nd_namespace_pmem;
+>  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  		struct nd_namespace_pmem *nspm, resource_size_t size);
+> +int nd_pmem_region_label_update(struct nd_region *nd_region);
+>  #endif /* __LABEL_H__ */
+
+
 
