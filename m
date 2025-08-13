@@ -1,103 +1,151 @@
-Return-Path: <linux-kernel+bounces-766597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3EEBB248CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:49:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05C6B248D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 737155A1F0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57B018919E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF26B2FF14E;
-	Wed, 13 Aug 2025 11:47:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E392D46D7;
-	Wed, 13 Aug 2025 11:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282992BDC35;
+	Wed, 13 Aug 2025 11:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiJQgE2L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E54F2F83DA;
+	Wed, 13 Aug 2025 11:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755085638; cv=none; b=VPN/uqGxR0vG2yra2BrrYeLRFXyXAEppxVxKz2TocNCazuF/fvapJW/g3EE+LbwlGv10yBb861I/h9JQkL1KDqa7yRfNo0A4nzudVrH+Ur1EvrUtITiMXY0N6G1P2jCMaTm4gVU0rD2zANlkVduKAIG+mwvUFbsnE6DiRp3sWZk=
+	t=1755085786; cv=none; b=t4Ku+cbJ/b0K+zl4KgxXPuQ/ImHE7ggKM77d+jpc/el8LeYvioUv+HoXEUOxDx3w9hVHPrfZZ7hTWF0ZTvOK5dGP9FjMjEzZl1s8Yze9o/k0xg6J3k52X+TwW61GZe5VYOlaCYy3PhO6hOf6/xxNUQ7+/JW1vTecub8Hi5R7SQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755085638; c=relaxed/simple;
-	bh=yzyxKCq8ohEEWFAOfDp9+fs8K7yk3TJK2uiyQ5chs2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gr+LMc+fc3Mm1bW2qZoZRvP1UtNGjApZOzY87gf2Ta3wuVIZsXk0h+9W0i9N9GtKbzIKvfNpoMVAgOBvTNcE9DcPYO2q9EmZV/vX7TriN2Mq/BOlHTShmWMRKuv6PlDlTG/vr5D2ePJWkytM7aGBoOpN8P8uIANIfMIK6bASpnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 895BE12FC;
-	Wed, 13 Aug 2025 04:47:08 -0700 (PDT)
-Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6DE6D3F738;
-	Wed, 13 Aug 2025 04:47:13 -0700 (PDT)
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1755085786; c=relaxed/simple;
+	bh=jbUHFRMCEJ633GL1BbQLDmJ+7eS9XZAeMgSV7aBmOmo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QvZnE7xSdzOrb2/56td9SZ/fa7zoOlygW7726oWQQx6M2VELUQRNo+T58XljOFn2QvnOxqmZ1laNF5Y7VG5z3QIPAVRqf/B5701hVnEPYsZOCWL+vuq31xt0x2fkqQp3wWM3toeImLN5GAIDCz3NbHfbQtAwFXpzOb6I8G0rLWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiJQgE2L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED93FC4CEEB;
+	Wed, 13 Aug 2025 11:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755085786;
+	bh=jbUHFRMCEJ633GL1BbQLDmJ+7eS9XZAeMgSV7aBmOmo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PiJQgE2LerNskr6vM/T/80oJLRM2vlDTXhyVo903ONQCKltOF3ZuXRT0zLwEpxZTa
+	 1uZWo1zU1D+drWqqnmb4zOWY6LaDOQB3Ft6ydJxfytCXL5cylLSREdHUIZJY7dS19n
+	 HCgVcZEFj8V5dfTgro2d600JDos1TP2h1RAuZEbKDtrLeWs73xaxSzlr/+YfaUhWsT
+	 dwjEYdpl2UNy7cVrMHvFz2ANQJzggtNGnFMMdNvyTU0y1uZG0//yWVb4Z/5lLnf09J
+	 osDe046Jm3cMrslAlUymtYzyQXBYfyS3kZibc8REgUOFCfGY20E2pvxYX03Xk5ivP3
+	 rlJa9RaSbaSmw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1um9zD-0072kI-H4;
+	Wed, 13 Aug 2025 12:49:43 +0100
+Date: Wed, 13 Aug 2025 12:49:43 +0100
+Message-ID: <86ikir8mqw.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>, Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: 	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: sudeep.holla@arm.com,
-	james.quinlan@broadcom.com,
-	f.fainelli@gmail.com,
-	vincent.guittot@linaro.org,
-	etienne.carriere@st.com,
-	peng.fan@oss.nxp.com,
-	michal.simek@amd.com,
-	quic_sibis@quicinc.com,
-	dan.carpenter@linaro.org,
-	d-gole@ti.com,
-	souvik.chakravarty@arm.com,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH 8/8] powercap: arm_scmi: Enable multiple constraints support
-Date: Wed, 13 Aug 2025 12:46:09 +0100
-Message-ID: <20250813114609.1305571-9-cristian.marussi@arm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250813114609.1305571-1-cristian.marussi@arm.com>
-References: <20250813114609.1305571-1-cristian.marussi@arm.com>
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/4] clocksource: Add standalone MMIO ARM arch timer driver
+In-Reply-To: <aJx4g8z3l438Qgnv@raptor>
+References: <20250807160243.1970533-1-maz@kernel.org>
+	<20250813-macho-snobbish-alpaca-ff07fa@sudeepholla>
+	<aJx4g8z3l438Qgnv@raptor>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sudeep.holla@arm.com, alexandru.elisei@arm.com, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lpieralisi@kernel.org, guohanjun@huawei.com, rafael@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Initialize the domains with all the discovered available constraints,
-making available multiple per-domain constraints when the platform has
-advertised support for multiple concurrent power limits.
+On Wed, 13 Aug 2025 12:35:31 +0100,
+Alexandru Elisei <alexandru.elisei@arm.com> wrote:
+> 
+> Hello,
+> 
+> On Wed, Aug 13, 2025 at 11:55:48AM +0100, Sudeep Holla wrote:
+> > +Alexandru
+> > 
+> > On Thu, Aug 07, 2025 at 05:02:39PM +0100, Marc Zyngier wrote:
+> > > For the past 10 years, both Mark and I have been lamenting about the
+> > > sorry state of the badly named "arch_timer" driver, and about the way
+> > > the MMIO part is intricately weaved into the system-register part.
+> > > 
+> > > The time has finally come to have a stab at it.
+> > > 
+> > > This small series simply creates a new timer driver for the MMIO arch
+> > > timer, and only that. It is an actual driver, and not some kludge that
+> > > has to run super early (that's what the per-CPU timers are for). This
+> > > allows, in turn, a pretty large cleanup of the per-CPU driver, though
+> > > there is more to come -- one thing at a time.
+> > > 
+> > > As an added bonus, we get a clocksource, which the original code
+> > > didn't provide. Just in case it might be useful. The end-result is far
+> > > more readable, and about 100 lines smaller.
+> > > 
+> > 
+> > (Tested it on Juno R2 and FVP in both DT and ACPI boot)
+> > 
+> > Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
-CC: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: linux-pm@vger.kernel.org
-Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
----
- drivers/powercap/arm_scmi_powercap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks!
 
-diff --git a/drivers/powercap/arm_scmi_powercap.c b/drivers/powercap/arm_scmi_powercap.c
-index de2dc1f6f2a9..559767e143b0 100644
---- a/drivers/powercap/arm_scmi_powercap.c
-+++ b/drivers/powercap/arm_scmi_powercap.c
-@@ -2,7 +2,7 @@
- /*
-  * SCMI Powercap support.
-  *
-- * Copyright (C) 2022 ARM Ltd.
-+ * Copyright (C) 2022-2025 ARM Ltd.
-  */
- 
- #include <linux/device.h>
-@@ -311,7 +311,7 @@ static int scmi_powercap_register_zone(struct scmi_powercap_root *pr,
- 
- 	z = powercap_register_zone(&spz->zone, scmi_top_pcntrl, spz->info->name,
- 				   parent ? &parent->zone : NULL,
--				   &zone_ops, 1, &constraint_ops);
-+				   &zone_ops, spz->info->num_cpli, &constraint_ops);
- 	if (!IS_ERR(z)) {
- 		spz->height = scmi_powercap_get_zone_height(spz);
- 		spz->registered = true;
+> > 
+> > Alexandru found it useful(avoids some unexpected hang IIUC) in his setup
+> > based on bootwrapper which doesn't initialise MMIO timers.
+> 
+> Just FYI, this is the testing that I did.
+> 
+> Without this series, if firmware (boot-wrapper-aarch64 in my testing) doesn't
+> configure access to the memory-mapped timer:
+> 
+> [    0.000000] arch_timer: Unable to find a suitable frame in timer @ 0x000000002a810000
+> [    0.000000] Failed to initialize '/timer@2a810000': -22
+> ..
+> [    0.528000] kvm [1]: kvm_arch_timer: uninitialized timecounter
+> ..
+
+Right, that's one of the many problems with the tight coupling between
+sysreg and MMIO timers -- if one fails, they both fail, and you're
+pretty lucky if you manage to limp along after that.
+
+> # ls /dev/kvm
+> ls: cannot access '/dev/kvm': No such file or directory
+> 
+> With this series, if firmware doesn't configure access to the memory-mapped
+> timer:
+> 
+> [    0.549399] kvm [1]: Hyp nVHE mode initialized successfully
+> ..
+> [    2.018050] arch-timer-mmio 2a810000.timer: Unable to find a suitable frame in timer @ 0x000000002a810000
+> [    2.018123] arch-timer-mmio 2a810000.timer: probe with driver arch-timer-mmio failed with error -22
+
+Ah, you have managed to test the error path. Thanks for that!
+
+	M.
+
 -- 
-2.47.0
-
+Without deviation from the norm, progress is not possible.
 
