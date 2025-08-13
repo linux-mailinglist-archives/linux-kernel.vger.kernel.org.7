@@ -1,180 +1,100 @@
-Return-Path: <linux-kernel+bounces-766496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DDEB24755
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:33:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3E45B24726
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF25416C439
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A81017D79B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7668A2F3C3B;
-	Wed, 13 Aug 2025 10:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0393B2F2916;
+	Wed, 13 Aug 2025 10:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHweK6oi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="f8mVD5J9"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FBC2F49E6;
-	Wed, 13 Aug 2025 10:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613F12E7BA5;
+	Wed, 13 Aug 2025 10:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081039; cv=none; b=EVjnlJwA+6vfy7ORJ0LyO0cYcmOnTNp1FnV2D6QPuQoNuAOSC2ykVYsI5KmGyJ2ESAQpHRNOPck3awIxJIpFSjE+hO6DnRBtA6HqIG6g1TlXuITIOoVMcvRJN7GbsPnwOa/gnM4AzRd1HXnzKcV8PJk3rnnhMT3YLmOnObs+eh8=
+	t=1755080806; cv=none; b=r1h5/Xj4dXmCKyf+p+Ey1TT8AQryrT4BkHdRZm7mkiL+X0gFpViX1yx1nLfnjPGzNzCrZdWS1IKQrzych5sE3bXc03yVvlilrCrOJFVwwf7T2NEV1W/oZUuDKGprtzUy5hMhu8WF7EPsGYjUkWalnBPfHtLOZqNrcaI7dxY+iR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081039; c=relaxed/simple;
-	bh=6z1daFfQ6eLBHSNbpnvAvJ8ClaHWK786S0pbNYdxzus=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hhd4hqvhnTHYSjz7BLle1WAWbJjjEqyn4ehL7S9GUxnW5V5vUr7tyAoapUPY7snLR/drhk40VMPBK5dgAZtg8bGu/kfNxbzzjQzROSzBfGrNf0XwVv4UZgwWtxAf3JNf/aIF/TPNGbTI55RzkcgYv95FaYP3wUYpkNLm9fVYTBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHweK6oi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8A8C4CEF7;
-	Wed, 13 Aug 2025 10:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755081039;
-	bh=6z1daFfQ6eLBHSNbpnvAvJ8ClaHWK786S0pbNYdxzus=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fHweK6oi2ROG/I/sEu0Vf2n7qpeQXJ3Q+ASmgWrR+sPTOvNJU+MgGuCds3D8Z1GuM
-	 ZvJFTx0kVeqjQqRi24+o4nDnpT4HY3ndJ07UyujIjiBfpFH79OE32ESpEXtJS+Nonf
-	 LZ94BYTJOMiu0SfFKLuapCJvatwR16BcdSv/nuhfCFKTIe8x3LI8L6FsyLAszceg//
-	 0qfjtgDiQa8di8V3X1tm1XNXRjnQodUUQIcT+5s4E4dYAlfkw2lg/MxIm+L7WxJROt
-	 wk7yJxq5Arye94rtQVKwoUXcDJX3TieF69H3JPM9DGVuxFNCuVvQEH+BLZfL2CrUee
-	 3zk9BvT3BH0PA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Christian Loehle <christian.loehle@arm.com>
-Subject:
- [PATCH v1 1/3] cpuidle: governors: menu: Avoid selecting states with too much
- latency
-Date: Wed, 13 Aug 2025 12:25:58 +0200
-Message-ID: <5043159.31r3eYUQgx@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <2804546.mvXUDI8C0e@rafael.j.wysocki>
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki>
+	s=arc-20240116; t=1755080806; c=relaxed/simple;
+	bh=cxNTLaWlz+Z+DXUaU3TccjMca52ZIUFzpc6xyx86tzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C0qKuii1NxBIsElp2PtJUm7jdBgaZvuRLHH9MITb4fFCDO31hZZRt6pUMrU5HVbymRm4Jl3PR65oeyKnsv5Lpyi3UDwB0lsU5J7RSNoONMOoVEitwvSkRCGkihyaZe4s19OywfP03nLTmDPjDWjAOQ5PT5qFkixlikJSmIjjTEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=f8mVD5J9; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/igN/4vZBSgdq1C5WsUcG5wcK51bFeRFJTKMj+Q+1cU=; b=f8mVD5J9jFpgHazX+M4wRz6VTg
+	06OffFNxGS9eeenKOyJDu31FyTLSF2oPFG2gYMRQUJFC/OhT+mcn8zZVDbPDMRomyhAe/YxPnL7Sf
+	0W+HLYiwUdZielZbVU85KOVFRN2Aw/0QikGcAjSjaob3eSRynkVLYlAVEF8MsT30StEXktETyvJAM
+	qQe6t/V5vt4x7WDanAkKUJ85fxPOuoMkUbnhaDWTI+rcIAW1fsM1nXyzYe1CEbTULhsFk7LB9/J9L
+	69Y9/UAfnomA9vmLNzdyCj4qgMBSZK9z2CSlmPAyO20izELtwz/xtiDWNxPJ+tESbn2gu4t9yQqpR
+	SYqxkeNw==;
+Received: from [223.233.74.188] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1um8gi-00Dcgg-50; Wed, 13 Aug 2025 12:26:32 +0200
+Message-ID: <5d949644-6a4a-3b94-8794-27c2b5cfd976@igalia.com>
+Date: Wed, 13 Aug 2025 15:56:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-Occasionally, the exit latency of the idle state selected by the menu
-governor may exceed the PM QoS CPU wakeup latency limit.  Namely, if the
-scheduler tick has been stopped already and predicted_ns is greater than
-the tick period length, the governor may return an idle state whose exit
-latency exceeds latency_req because that decision is made before
-checking the current idle state's exit latency.
-
-For instance, say that there are 3 idle states, 0, 1, and 2.  For idle
-states 0 and 1, the exit latency is equal to the target residency and
-the values are 0 and 5 us, respectively.  State 2 is deeper and has the
-exit latency and target residency of 200 us and 2 ms (which is greater
-than the tick period length), respectively.
-
-Say that predicted_ns is equal to TICK_NSEC and the PM QoS latency
-limit is 20 us.  After the first two iterations of the main loop in
-menu_select(), idx becomes 1 and in the third iteration of it the target
-residency of the current state (state 2) is greater than predicted_ns.
-State 2 is not a polling one and predicted_ns is not less than TICK_NSEC,
-so the check on whether or not the tick has been stopped is done.  Say
-that the tick has been stopped already and there are no imminent timers
-(that is, delta_tick is greater than the target residency of state 2).
-In that case, idx becomes 2 and it is returned immediately, but the exit
-latency of state 2 exceeds the latency limit.
-
-Address this issue by modifying the code to compare the exit latency of
-the current idle state (idle state i) with the latency limit before
-comparing its target residecy with predicted_ns, which allows one
-more exit_latency_ns check that becomes redundant to be dropped.
-
-However, after the above change, latency_req cannot take the predicted_ns
-value any more, which takes place after commit 38f83090f515 ("cpuidle:
-menu: Remove iowait influence"), because it may cause a polling state
-to be returned prematurely.
-
-In the context of the previous example say that predicted_ns is 3000 and
-the PM QoS latency limit is still 20 us.  Additionally, say that idle
-state 0 is a polling one.  Moving the exit_latency_ns check before the
-target_residency_ns one causes the loop to terminate in the second
-iteration, before the target_residency_ns check, so idle state 0 will be
-returned even though previously state 1 would be returned if there were
-no imminent timers.
-
-For this reason, remove the assignment of the predicted_ns value to
-latency_req from the code.
-
-Fixes: 5ef499cd571c ("cpuidle: menu: Handle stopped tick more aggressively")
-Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/cpuidle/governors/menu.c |   29 ++++++++++++-----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
-
---- a/drivers/cpuidle/governors/menu.c
-+++ b/drivers/cpuidle/governors/menu.c
-@@ -287,20 +287,15 @@
- 		return 0;
- 	}
- 
--	if (tick_nohz_tick_stopped()) {
--		/*
--		 * If the tick is already stopped, the cost of possible short
--		 * idle duration misprediction is much higher, because the CPU
--		 * may be stuck in a shallow idle state for a long time as a
--		 * result of it.  In that case say we might mispredict and use
--		 * the known time till the closest timer event for the idle
--		 * state selection.
--		 */
--		if (predicted_ns < TICK_NSEC)
--			predicted_ns = data->next_timer_ns;
--	} else if (latency_req > predicted_ns) {
--		latency_req = predicted_ns;
--	}
-+	/*
-+	 * If the tick is already stopped, the cost of possible short idle
-+	 * duration misprediction is much higher, because the CPU may be stuck
-+	 * in a shallow idle state for a long time as a result of it.  In that
-+	 * case, say we might mispredict and use the known time till the closest
-+	 * timer event for the idle state selection.
-+	 */
-+	if (tick_nohz_tick_stopped() && predicted_ns < TICK_NSEC)
-+		predicted_ns = data->next_timer_ns;
- 
- 	/*
- 	 * Find the idle state with the lowest power while satisfying
-@@ -316,13 +311,15 @@
- 		if (idx == -1)
- 			idx = i; /* first enabled state */
- 
-+		if (s->exit_latency_ns > latency_req)
-+			break;
-+
- 		if (s->target_residency_ns > predicted_ns) {
- 			/*
- 			 * Use a physical idle state, not busy polling, unless
- 			 * a timer is going to trigger soon enough.
- 			 */
- 			if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
--			    s->exit_latency_ns <= latency_req &&
- 			    s->target_residency_ns <= data->next_timer_ns) {
- 				predicted_ns = s->target_residency_ns;
- 				idx = i;
-@@ -354,8 +351,6 @@
- 
- 			return idx;
- 		}
--		if (s->exit_latency_ns > latency_req)
--			break;
- 
- 		idx = i;
- 	}
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with
+ 'strscpy_pad()'
+Content-Language: en-US
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: kernel test robot <lkp@intel.com>, Bhupesh <bhupesh@igalia.com>,
+ akpm@linux-foundation.org, oe-kbuild-all@lists.linux.dev,
+ kernel-dev@igalia.com, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, laoar.shao@gmail.com,
+ pmladek@suse.com, rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+ arnaldo.melo@gmail.com, alexei.starovoitov@gmail.com,
+ andrii.nakryiko@gmail.com, mirq-linux@rere.qmqm.pl, peterz@infradead.org,
+ willy@infradead.org, david@redhat.com, viro@zeniv.linux.org.uk,
+ keescook@chromium.org, ebiederm@xmission.com, brauner@kernel.org,
+ jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
+ mgorman@suse.de
+References: <20250811064609.918593-4-bhupesh@igalia.com>
+ <202508111835.JFL8DgKY-lkp@intel.com>
+ <6b5c92c4-2170-8ce9-3c9f-45c0e1893e03@igalia.com>
+ <aJoE_tzAGE4krB5y@black.igk.intel.com>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <aJoE_tzAGE4krB5y@black.igk.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+On 8/11/25 8:28 PM, Andy Shevchenko wrote:
+> On Mon, Aug 11, 2025 at 08:19:08PM +0530, Bhupesh Sharma wrote:
+>> On 8/11/25 4:55 PM, kernel test robot wrote:
+>> As mentioned in the accompanying cover letter, this patchset is based on
+>> 'linux-next/master' (the exact sha-id used for rebase is:
+>> b1549501188cc9eba732c25b033df7a53ccc341f ).
+> Instead of getting false positive reports and this rather unneeded reply from
+> you, use --base parameter when formatting patch series. It will help all,
+> including CIs and bots.
+>
 
+Sure, will include it in next version. Waiting for further reviews on 
+this v7.
+
+Thanks.
 
