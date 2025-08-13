@@ -1,351 +1,164 @@
-Return-Path: <linux-kernel+bounces-766056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D620B241A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:37:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B172B2418E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2624C582C0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:37:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B3177A9F59
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F7A2D4B5F;
-	Wed, 13 Aug 2025 06:36:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74F72D29D7;
+	Wed, 13 Aug 2025 06:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="sz0suKej"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lve0QVUU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0bRlmOQr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3CA2D3ED5;
-	Wed, 13 Aug 2025 06:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C9D256C84;
+	Wed, 13 Aug 2025 06:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755066983; cv=none; b=StqNnERh6B7PTVa6OrVtS9pud2ot/gonWFAoTxhEZQR4F335MGQxB/F8DiI1cG10FpKXCWisfmgyevzOqEOZUE32+ZbpNn6bGaqAMcl+HOl1mJb0OKhKdZV7aM3paWNrlZyOPrgCrRBDJ3vcYAg8qrMNyX9AJ7a8/cuQUVJ1rR0=
+	t=1755066743; cv=none; b=sFXyGB0ExigcMrCkJklIdKvwVkO5Od/EvIdKs12N89meCe6cdqNJjGSn5wTmRvuiJhO7YhfoWxik1MzF+/PA56tBh7YZpFlDjDV7ZASm7MxbP2i7y6GHea4npwcHd2hMNTf1D431pm8gRV9KJIM1NmrostagNWvmslk77fkL1Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755066983; c=relaxed/simple;
-	bh=3A4+zUwKZ1wnZgT0Vud6rLqyK8IqgqIFERcr7GSnEJY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VkCgWWHRsZoQ/uq4h4STbtAKd0fd5MXsw4TPBk4+z9IO/K07bhF6AUhaHr5Oq0SHcqutE8FS6XU47sBjyMALUOLMvhPTNStxDfa7AU6up1RwO4gi2Fb/eZn9zfhS/PjwQyMKIlNqcXuV3yIUTTUJjXy7f+Admbq+lXIRj08gDeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=sz0suKej; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755066982; x=1786602982;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3A4+zUwKZ1wnZgT0Vud6rLqyK8IqgqIFERcr7GSnEJY=;
-  b=sz0suKej6kXz0EDUdzF2wOhf5UtaFJPPvfbC1Yzx61OjJ3GP+X9c6VEE
-   vQR7MuPB3t1uVAkfLkDq+uQqBTeFR9Vw2X/LmZrphRQzndyA2hVnaawFn
-   bEQsizUIEBLch/t4Gt6QfNjL6jVMJb0hq0UsCK10zMP1ysfuQkOqcEjeE
-   Vd2Ae7e53v55xFQZHxsoA8A99MohhAnzbW1s3Jki9KECEvobywWKKqrPd
-   x+YUQ+ogUXWDQMWcp4IcIYKxPupmScXax6UJzbUBz2P6ELZpRs3UvdxMX
-   b/zimCLL6M6Zm/xf+IhlKAZSgb1wxy3zogpgAEziJ1wBw/aUM0TKjvxf9
-   g==;
-X-CSE-ConnectionGUID: HLS0dFJYR22/6mpwumLuLw==
-X-CSE-MsgGUID: pJIwVFI1TtuKQFYnXL4TsA==
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="276526648"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Aug 2025 23:36:12 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 12 Aug 2025 23:35:58 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Tue, 12 Aug 2025 23:35:56 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <o.rempel@pengutronix.de>,
-	<alok.a.tiwari@oracle.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net-next v3 3/3] net: phy: micrel: Add support for lan8842
-Date: Wed, 13 Aug 2025 08:30:44 +0200
-Message-ID: <20250813063044.421661-4-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813063044.421661-1-horatiu.vultur@microchip.com>
-References: <20250813063044.421661-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1755066743; c=relaxed/simple;
+	bh=5qg032v9a3VDlMiDWU0b9ctfLGVw/7YohIMQc/Hgbaw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uFdNexxvFlf9IQGm+kJCEI94DT9X5i+74dq8w05fKTDgcF2a+kDCdTtNGNR0RYRClvGfNrT0AtNWqMrcUtclzaeA7/IU2dIzfGLIUS3lCCaaSjDyLYKo/Zmj4GF1YeOUTYPWUJ2g7qfTwxbxJMJE9k/oJ9bBmgaxvkFv3PaEKkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lve0QVUU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0bRlmOQr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755066739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SRqTyhe3RKI3LCkCiYUFb5eBsIQ7LFFUOTaaEf4vnww=;
+	b=lve0QVUUx69R4nGes8O0ZOkEYnaE7NAhiUjDtUO86+yk69JnEq9FLwqdlPCPENJ17DSIt8
+	EhC+SQjMS9aeTDNFcTf8jkgM/rPQLaIjVGHonLboMcjoxkRxX8m/0Vo+KDmjwiI5PanuGM
+	+B9yqynWGSu6N1Qqov9ZyofDZUGuSUE211nZd3DFPJRlt3/x+WYK7VWxU7564BQ0Mmf9R5
+	M3W66lLk27qVTR1D0c11QD1/g6dbnblael5KoRq7HsvcMi3c6nv5yPvmrk1jUimAKumj/r
+	/TxywK7oMTRlMCC17TcynL6vEFob8ZWTtS6eY4fbYsfqkiXSvI6D43nJLwT2UA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755066739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SRqTyhe3RKI3LCkCiYUFb5eBsIQ7LFFUOTaaEf4vnww=;
+	b=0bRlmOQrarTM210wv1wND0+XTXworEuIQZTdcYChDAq++pUPjap215u2/blmqPmMatF+Ks
+	31+2AOCdpxJBmxBw==
+Date: Wed, 13 Aug 2025 08:32:13 +0200
+Subject: [PATCH] kunit: tool: Parse skipped tests from kselftest.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Message-Id: <20250813-kunit-kselftesth-skip-v1-1-57ae3de4f109@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAGwxnGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0Nj3ezSvMwS3ezi1Jy0ktTikgzd4uzMAt1UIwvLpNTkFEtzEzMloN6
+ CotS0zAqwudGxtbUAQuGMqmcAAAA=
+X-Change-ID: 20250813-kunit-kselftesth-skip-e289becd9746
+To: Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ kunit-dev@googlegroups.com, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755066737; l=3393;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=5qg032v9a3VDlMiDWU0b9ctfLGVw/7YohIMQc/Hgbaw=;
+ b=s25+IgYMvwjdHBJLxkuySfqGzpUgC10XDKa9CGQ5d8hekmUOJFVZznQ8toi90LJQvcwNqxmGF
+ 5Jy2FOghyhaAtTqFJTw4AAjFiytk0Ptl5lk9KYFg8qLV1fd1fqIihiv
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-The LAN8842 is a low-power, single port triple-speed (10BASE-T/ 100BASE-TX/
-1000BASE-T) ethernet physical layer transceiver (PHY) that supports
-transmission and reception of data on standard CAT-5, as well as CAT-5e and
-CAT-6, Unshielded Twisted Pair (UTP) cables.
+Skipped tests reported by kselftest.h use a different format than KTAP,
+there is no explicit test name. Normally the test name is part of the
+free-form string after the SKIP keyword:
 
-The LAN8842 supports industry-standard SGMII (Serial Gigabit Media
-Independent Interface) providing chip-to-chip connection to a Gigabit
-Ethernet MAC using a single serialized link (differential pair) in each
-direction.
+	ok 3 # SKIP test: some reason
 
-There are 2 variants of the lan8842. The one that supports timestamping
-(lan8842) and one that doesn't have timestamping (lan8832).
+Extend the parser to handle those correctly. Use the free-form string as
+test name instead.
 
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: David Gow <davidgow@google.com>
 ---
- drivers/net/phy/micrel.c   | 203 +++++++++++++++++++++++++++++++++++++
- include/linux/micrel_phy.h |   1 +
- 2 files changed, 204 insertions(+)
+These patches where originally part of my series "kunit: Introduce UAPI
+testing framework" [0], but that isn't going anywhere right now and the
+patches are useful on their own.
+Both series would go in through the KUnit tree in any case, so there is
+no potential for conflicts.
+    
+[0] https://lore.kernel.org/lkml/20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de/
+---
+ tools/testing/kunit/kunit_parser.py                             | 8 +++++---
+ tools/testing/kunit/test_data/test_is_test_passed-kselftest.log | 3 ++-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 968f6e724c066..cbd1b542c0ad6 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -448,6 +448,17 @@ struct kszphy_priv {
- 	struct kszphy_phy_stats phy_stats;
- };
+diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
+index c176487356e6c94882046b19ea696d750905b8d5..333cd3a4a56b6f26c10aa1a5ecec9858bc57fbd7 100644
+--- a/tools/testing/kunit/kunit_parser.py
++++ b/tools/testing/kunit/kunit_parser.py
+@@ -352,9 +352,9 @@ def parse_test_plan(lines: LineStream, test: Test) -> bool:
+ 	lines.pop()
+ 	return True
  
-+struct lan8842_phy_stats {
-+	u64 rx_packets;
-+	u64 rx_errors;
-+	u64 tx_packets;
-+	u64 tx_errors;
-+};
-+
-+struct lan8842_priv {
-+	struct lan8842_phy_stats phy_stats;
-+};
-+
- static const struct kszphy_type lan8814_type = {
- 	.led_mode_reg		= ~LAN8814_LED_CTRL_1,
- 	.cable_diag_reg		= LAN8814_CABLE_DIAG,
-@@ -5766,6 +5777,184 @@ static int ksz9131_resume(struct phy_device *phydev)
- 	return kszphy_resume(phydev);
- }
+-TEST_RESULT = re.compile(r'^\s*(ok|not ok) ([0-9]+) (- )?([^#]*)( # .*)?$')
++TEST_RESULT = re.compile(r'^\s*(ok|not ok) ([0-9]+) ?(- )?([^#]*)( # .*)?$')
  
-+#define LAN8842_SELF_TEST			14 /* 0x0e */
-+#define LAN8842_SELF_TEST_RX_CNT_ENA		BIT(8)
-+#define LAN8842_SELF_TEST_TX_CNT_ENA		BIT(4)
-+
-+static int lan8842_probe(struct phy_device *phydev)
-+{
-+	struct lan8842_priv *priv;
-+	int ret;
-+
-+	priv = devm_kzalloc(&phydev->mdio.dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	phydev->priv = priv;
-+
-+	/* Similar to lan8814 this PHY has a pin which needs to be pulled down
-+	 * to enable to pass any traffic through it. Therefore use the same
-+	 * function as lan8814
-+	 */
-+	ret = lan8814_release_coma_mode(phydev);
-+	if (ret)
-+		return ret;
-+
-+	/* Enable to count the RX and TX packets */
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_PCS_DIGITAL,
-+				    LAN8842_SELF_TEST,
-+				    LAN8842_SELF_TEST_RX_CNT_ENA |
-+				    LAN8842_SELF_TEST_TX_CNT_ENA);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+#define LAN8842_SGMII_AUTO_ANEG_ENA		69 /* 0x45 */
-+#define LAN8842_FLF				15 /* 0x0e */
-+#define LAN8842_FLF_ENA				BIT(1)
-+#define LAN8842_FLF_ENA_LINK_DOWN		BIT(0)
-+
-+static int lan8842_config_init(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Reset the PHY */
-+	ret = lanphy_modify_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+				     LAN8814_QSGMII_SOFT_RESET,
-+				     LAN8814_QSGMII_SOFT_RESET_BIT,
-+				     LAN8814_QSGMII_SOFT_RESET_BIT);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Disable ANEG with QSGMII PCS Host side
-+	 * It has the same address as lan8814
-+	 */
-+	ret = lanphy_modify_page_reg(phydev, LAN8814_PAGE_PORT_REGS,
-+				     LAN8814_QSGMII_PCS1G_ANEG_CONFIG,
-+				     LAN8814_QSGMII_PCS1G_ANEG_CONFIG_ANEG_ENA,
-+				     0);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Disable also the SGMII_AUTO_ANEG_ENA, this will determine what is the
-+	 * PHY autoneg with the other end and then will update the host side
-+	 */
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+				    LAN8842_SGMII_AUTO_ANEG_ENA, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* To allow the PHY to control the LEDs the GPIOs of the PHY should have
-+	 * a function mode and not the GPIO. Apparently by default the value is
-+	 * GPIO and not function even though the datasheet it says that it is
-+	 * function. Therefore set this value.
-+	 */
-+	return lanphy_write_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+				     LAN8814_GPIO_EN2, 0);
-+}
-+
-+#define LAN8842_INTR_CTRL_REG			52 /* 0x34 */
-+
-+static int lan8842_config_intr(struct phy_device *phydev)
-+{
-+	int err;
-+
-+	lanphy_write_page_reg(phydev, LAN8814_PAGE_COMMON_REGS,
-+			      LAN8842_INTR_CTRL_REG,
-+			      LAN8814_INTR_CTRL_REG_INTR_ENABLE);
-+
-+	/* enable / disable interrupts */
-+	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-+		err = lan8814_ack_interrupt(phydev);
-+		if (err)
-+			return err;
-+
-+		err = phy_write(phydev, LAN8814_INTC, LAN8814_INT_LINK);
-+	} else {
-+		err = phy_write(phydev, LAN8814_INTC, 0);
-+		if (err)
-+			return err;
-+
-+		err = lan8814_ack_interrupt(phydev);
-+	}
-+
-+	return err;
-+}
-+
-+static irqreturn_t lan8842_handle_interrupt(struct phy_device *phydev)
-+{
-+	int ret = IRQ_NONE;
-+	int irq_status;
-+
-+	irq_status = phy_read(phydev, LAN8814_INTS);
-+	if (irq_status < 0) {
-+		phy_error(phydev);
-+		return IRQ_NONE;
-+	}
-+
-+	if (irq_status & LAN8814_INT_LINK) {
-+		phy_trigger_machine(phydev);
-+		ret = IRQ_HANDLED;
-+	}
-+
-+	return ret;
-+}
-+
-+static u64 lan8842_get_stat(struct phy_device *phydev, int count, int *regs)
-+{
-+	int val;
-+	u64 ret = 0;
-+
-+	for (int j = 0; j < count; ++j) {
-+		val = lanphy_read_page_reg(phydev, LAN8814_PAGE_PCS_DIGITAL,
-+					   regs[j]);
-+		if (val < 0)
-+			return U64_MAX;
-+
-+		ret <<= 16;
-+		ret += val;
-+	}
-+	return ret;
-+}
-+
-+static int lan8842_update_stats(struct phy_device *phydev)
-+{
-+	struct lan8842_priv *priv = phydev->priv;
-+	int rx_packets_regs[] = {88, 61, 60};
-+	int rx_errors_regs[] = {63, 62};
-+	int tx_packets_regs[] = {89, 85, 84};
-+	int tx_errors_regs[] = {87, 86};
-+
-+	priv->phy_stats.rx_packets = lan8842_get_stat(phydev,
-+						      ARRAY_SIZE(rx_packets_regs),
-+						      rx_packets_regs);
-+	priv->phy_stats.rx_errors = lan8842_get_stat(phydev,
-+						     ARRAY_SIZE(rx_errors_regs),
-+						     rx_errors_regs);
-+	priv->phy_stats.tx_packets = lan8842_get_stat(phydev,
-+						      ARRAY_SIZE(tx_packets_regs),
-+						      tx_packets_regs);
-+	priv->phy_stats.tx_errors = lan8842_get_stat(phydev,
-+						     ARRAY_SIZE(tx_errors_regs),
-+						     tx_errors_regs);
-+
-+	return 0;
-+}
-+
-+static void lan8842_get_phy_stats(struct phy_device *phydev,
-+				  struct ethtool_eth_phy_stats *eth_stats,
-+				  struct ethtool_phy_stats *stats)
-+{
-+	struct lan8842_priv *priv = phydev->priv;
-+
-+	stats->rx_packets = priv->phy_stats.rx_packets;
-+	stats->rx_errors = priv->phy_stats.rx_errors;
-+	stats->tx_packets = priv->phy_stats.tx_packets;
-+	stats->tx_errors = priv->phy_stats.tx_errors;
-+}
-+
- static struct phy_driver ksphy_driver[] = {
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_KS8737),
-@@ -5985,6 +6174,19 @@ static struct phy_driver ksphy_driver[] = {
- 	.resume		= lan8841_resume,
- 	.cable_test_start	= lan8814_cable_test_start,
- 	.cable_test_get_status	= ksz886x_cable_test_get_status,
-+}, {
-+	PHY_ID_MATCH_MODEL(PHY_ID_LAN8842),
-+	.name		= "Microchip LAN8842 Gigabit PHY",
-+	.flags		= PHY_POLL_CABLE_TEST,
-+	.driver_data	= &lan8814_type,
-+	.probe		= lan8842_probe,
-+	.config_init	= lan8842_config_init,
-+	.config_intr	= lan8842_config_intr,
-+	.handle_interrupt = lan8842_handle_interrupt,
-+	.get_phy_stats	= lan8842_get_phy_stats,
-+	.update_stats	= lan8842_update_stats,
-+	.cable_test_start	= lan8814_cable_test_start,
-+	.cable_test_get_status	= ksz886x_cable_test_get_status,
- }, {
- 	PHY_ID_MATCH_MODEL(PHY_ID_KSZ9131),
- 	.name		= "Microchip KSZ9131 Gigabit PHY",
-@@ -6080,6 +6282,7 @@ static const struct mdio_device_id __maybe_unused micrel_tbl[] = {
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN8814) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN8804) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN8841) },
-+	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN8842) },
- 	{ }
- };
+-TEST_RESULT_SKIP = re.compile(r'^\s*(ok|not ok) ([0-9]+) (- )?(.*) # SKIP(.*)$')
++TEST_RESULT_SKIP = re.compile(r'^\s*(ok|not ok) ([0-9]+) ?(- )?(.*) # SKIP ?(.*)$')
  
-diff --git a/include/linux/micrel_phy.h b/include/linux/micrel_phy.h
-index 9af01bdd86d26..ca691641788b8 100644
---- a/include/linux/micrel_phy.h
-+++ b/include/linux/micrel_phy.h
-@@ -32,6 +32,7 @@
- #define PHY_ID_LAN8814		0x00221660
- #define PHY_ID_LAN8804		0x00221670
- #define PHY_ID_LAN8841		0x00221650
-+#define PHY_ID_LAN8842		0x002216C0
+ def peek_test_name_match(lines: LineStream, test: Test) -> bool:
+ 	"""
+@@ -379,6 +379,8 @@ def peek_test_name_match(lines: LineStream, test: Test) -> bool:
+ 	if not match:
+ 		return False
+ 	name = match.group(4)
++	if not name:
++		return False
+ 	return name == test.name
  
- #define PHY_ID_KSZ886X		0x00221430
- #define PHY_ID_KSZ8863		0x00221435
+ def parse_test_result(lines: LineStream, test: Test,
+@@ -416,7 +418,7 @@ def parse_test_result(lines: LineStream, test: Test,
+ 
+ 	# Set name of test object
+ 	if skip_match:
+-		test.name = skip_match.group(4)
++		test.name = skip_match.group(4) or skip_match.group(5)
+ 	else:
+ 		test.name = match.group(4)
+ 
+diff --git a/tools/testing/kunit/test_data/test_is_test_passed-kselftest.log b/tools/testing/kunit/test_data/test_is_test_passed-kselftest.log
+index 65d3f27feaf22a3f47ed831c4c24f6f11c625a92..30d9ef18bcec177067288d5242771236f29b7d56 100644
+--- a/tools/testing/kunit/test_data/test_is_test_passed-kselftest.log
++++ b/tools/testing/kunit/test_data/test_is_test_passed-kselftest.log
+@@ -1,5 +1,5 @@
+ TAP version 13
+-1..2
++1..3
+ # selftests: membarrier: membarrier_test_single_thread
+ # TAP version 13
+ # 1..2
+@@ -12,3 +12,4 @@ ok 1 selftests: membarrier: membarrier_test_single_thread
+ # ok 1 sys_membarrier available
+ # ok 2 sys membarrier invalid command test: command = -1, flags = 0, errno = 22. Failed as expected
+ ok 2 selftests: membarrier: membarrier_test_multi_thread
++ok 3 # SKIP selftests: membarrier: membarrier_test_multi_thread
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250813-kunit-kselftesth-skip-e289becd9746
+
+Best regards,
 -- 
-2.34.1
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
