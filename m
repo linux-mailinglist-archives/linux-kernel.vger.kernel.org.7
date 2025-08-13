@@ -1,214 +1,228 @@
-Return-Path: <linux-kernel+bounces-765750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2A8B23DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:39:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FFA0B23DC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CC5567E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:39:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A40CD3B97FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7221CAA9C;
-	Wed, 13 Aug 2025 01:39:03 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41901A5B9E;
+	Wed, 13 Aug 2025 01:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bhig4kIV"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010032.outbound.protection.outlook.com [52.101.69.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7A2249E5;
-	Wed, 13 Aug 2025 01:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755049143; cv=none; b=gFXyd9elzedE1yKJusEVsZGyNZvFI662lXWG8vurj/kq849a+3NJYN4AzV0Q4F/7cKv0psDeBd+yo4xD5X+Cv4RJ9F6Ae4SMbsTjo6GK+x51/AwyNoxPifLrGJdgyX17O0rXetWH1WeSY6CUmF+y65QRLgz6r/rP89jgEQgneLg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755049143; c=relaxed/simple;
-	bh=zebIcP0FhE9iryQbt4t5GrgcBb7UjoUQb/AunSA7xeA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=O0rHN+Nm3lGa/i9Gj0BJEYExw20/fePZR/CYUeNMWfnDr6L1bsffqjbfayDNyiwb5n3rBLuo/xaBdXln5wSxuM2AUuytZPJK54AWP0UlW9J47ptxp/5VSp3QAIaJFRvE8KTcx9T0yc3aQP5i5rZklsVC/G/8tCkSs3ka4T5OEms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1rcx1Ys2zYQv2M;
-	Wed, 13 Aug 2025 09:38:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CD8E51A0359;
-	Wed, 13 Aug 2025 09:38:55 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgC3MxSv7JtoHen7DQ--.59944S3;
-	Wed, 13 Aug 2025 09:38:55 +0800 (CST)
-Subject: Re: [PATCH v3] loop: use vfs_getattr_nosec() for accurate file size
-To: Rajeev Mishra <rajeevm@hpe.com>, axboe@kernel.dk, yukuai1@huaweicloud.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250812200707.233139-1-rajeevm@hpe.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <ddaef6bd-fbf3-0d6b-e437-6f4fd9c967d2@huaweicloud.com>
-Date: Wed, 13 Aug 2025 09:38:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D97199934;
+	Wed, 13 Aug 2025 01:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755049141; cv=fail; b=hLn/gkTkgQ/hV0PA0yI+EyQj8GJqQ1L3mgSDLfZnzS/SYIgxWGFO+0xUAzXinqLUj33/7JDCH1r2jyF7gEQKOpJA4qEzaGFLLuzmNmpYU8t7mNSuXdX014kBlcI4oFZ4yIfPHfnKVDUUVVFwfKWMJvLSdxxJpyl8AUgmTV/sAFw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755049141; c=relaxed/simple;
+	bh=BcfTrf7ON+5eTO1gaF9RzYQAUJqitbhYkPQFwOdhyP4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ka4b9lMhVOEuB3cqNqaf/IfmmzixIvz4Fdoqp4g3t3lZODotWG0miE/xgdNaT4VPoSFJ0uwd2AIXFcRsHs6a0y5TjFrdfHq53EnyiV7reuriuZmebW3Vy+Dr7MMuuicVUwnOmG5WbDIIrx2Hp13//738I4eDNX2u1lmiAleUSJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bhig4kIV; arc=fail smtp.client-ip=52.101.69.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AF7dbhhGnJ8cabs0NqBzLM9SKeeVu/XscnsmROSVE9z8kAxe/yBnduQwmJGEQC8bK5c9pJO3EbtakPc6gO25tWIFwkjjX6HSUzAsK33l0Mdf58iYnhp4AtKhCIcnwhkTfhAj3Qinquaj1O0uqAgIupWzfPX4uJ8EGXVkfc4qYr3cAkUmCwWZDS5GoLo7veEJa0KbtrxEy0QrlR+GVQ7tYVg5go7mMwdgD7/tA/FrJ8WdEA8sHy/bAKOaam7KU2sZdEHX9Jr3tb8vpwdrGhO/CAxYiw3MTGcMr4PLjs6364aiNDuQ8Ahh6c8Lzbg1adKCT2G1khFVeF3/MDxLr3zOHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b/X1YFlGdcoyJG6BpqNllgYGtQMkmULuCquKsrQnof8=;
+ b=AX2riAyKw8DDPT4QxlJ4NeWHhQhhoP5VZEIVD5Bo1LmgSjXWMD/v4oE2MhvNiTjrqVS9KORy3ZUqJjlf5l61pjkZq66kd2e2ix1+lbwv6RyI/gpBdj4k4pZdzngdpiZUbBgY+BpXrysh4ld1WNyHB3gRSHQ+s8/003eHsPiHL109jTGUWZDpcG1IA6QfkeVT/c3PelPo9b/NVXLBph9T3HBrByWbV5vpkpZcS248wiLQvMiOrPrPqEhgwkibILNAeFuha3yWBGaOr8pvdTTJP5TL7uxREaJeldvZhmrHBsYo6XhQ6DN7pAXVDcPOIYbnFD9GUhi8CrAYuoGwR1CEfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b/X1YFlGdcoyJG6BpqNllgYGtQMkmULuCquKsrQnof8=;
+ b=bhig4kIVv9k9l6QFG0miBeSU3WWiugLiBT2fXSBR+Vm2W9zGvJmR8xbRkTAOvdN5dVToxqQbWH2FA8cXbc/LDjjYMuGc/mOge3lC9SIU7afd0tuXX+95mqOrvT/FZbT6HyYOdALMrNQGX/B8iazcUKbxGz9RwpqUzRVU4dsnCzLQlLFYyqQumhxMOoYjVS2vq8DxV8T3MQlTCjGVWtejGH4YfuQgkt7jYBGI7W9GxmrCXw1czABIUSGzYSIHeTNO7ezgbwJcXescwTWPSgkWqbfrEFlrvbni8tzhAlSpr4eas5S+SMpzyX89lBPHMXwVzBNOh4F5s30FFaNySUJ4tg==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PAXPR04MB8621.eurprd04.prod.outlook.com (2603:10a6:102:218::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Wed, 13 Aug
+ 2025 01:38:55 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
+ 01:38:55 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Frank Li <frank.li@nxp.com>
+CC: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"richardcochran@gmail.com" <richardcochran@gmail.com>, Claudiu Manoil
+	<claudiu.manoil@nxp.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, Clark
+ Wang <xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
+	<s.hauer@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, "F.S.
+ Peng" <fushi.peng@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: RE: [PATCH v3 net-next 03/15] dt-bindings: net: add an example for
+ ENETC v4
+Thread-Topic: [PATCH v3 net-next 03/15] dt-bindings: net: add an example for
+ ENETC v4
+Thread-Index: AQHcC3DkGmTUNwk2xESr59nb08m5z7RfFqQAgAC3jbA=
+Date: Wed, 13 Aug 2025 01:38:55 +0000
+Message-ID:
+ <PAXPR04MB8510925387F9F72A8E99AB82882AA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250812094634.489901-1-wei.fang@nxp.com>
+ <20250812094634.489901-4-wei.fang@nxp.com>
+ <aJtR4j9+w5fVsJL4@lizhi-Precision-Tower-5810>
+In-Reply-To: <aJtR4j9+w5fVsJL4@lizhi-Precision-Tower-5810>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PAXPR04MB8621:EE_
+x-ms-office365-filtering-correlation-id: c7311795-6543-4d61-8ec9-08ddda0a2a72
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|19092799006|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?hRTx5DQadGnJE8Bu9+/lrge7eQWUV1j9xXqkVboKjwfQ2gF/lEwuCtQW0134?=
+ =?us-ascii?Q?/NfmCRvKXWIs/v7ZIMRYi58tJyJnmMQzzArVn5Bezbmb0TL5U0taXv8ziu2s?=
+ =?us-ascii?Q?sx2omLBY+kDWyk4+Rk+EkmSTxWPDYYMcSHk+1MzwZ0yEunbeq4XIgLmUuVdR?=
+ =?us-ascii?Q?7I5eOVUWjLddQ878G0hdznKctS09SzTYHhiMKEYh7/3N8eR3i3dMRZhWaG62?=
+ =?us-ascii?Q?Z1qxwWS9pn7K6bkyOLbgfFL9Hi+FbkqLf7qtFghSyfa5DZX2nYJfW+a2+bes?=
+ =?us-ascii?Q?lJf/G/EHloQhK9f2OIy+bxsKintovrDT/WKADaBsMPWMBbbZeRbq39ajyux0?=
+ =?us-ascii?Q?tuaC1/dmQ4GbKbFjPDdjlKgnfIFjoTGCKFMrEPUtZXRSUFdVnVrSnQGG+aMI?=
+ =?us-ascii?Q?417oB4y5UvUhNMqCjTqrkqnIHApObdUaJbHBsYpGlwJsY4j88wYTSIKREfj4?=
+ =?us-ascii?Q?BCDyBqSRFxXx5JpWYxyY2pwIJ6EfAv5wmqhAHlo6TN87jU1/KBFvZMOA/inl?=
+ =?us-ascii?Q?Y2El6VLGOv526tQl2ZWYoO6gJ3zQOAR/zO5VUbe8b/5qsITUh58DtLqs9ec3?=
+ =?us-ascii?Q?n9jnQHx4t6h0jMKb2ndNlDsEpHszZbAHHtxhSX0ihAjY30K0hR/cwb77fN1F?=
+ =?us-ascii?Q?x8gBY++Bai7RGcWOaDMLqce6h3PHuARdenKMx7Bf2r0meGOJG1RnsIT4F7xv?=
+ =?us-ascii?Q?9EkIz71u59wZo+3iLJQwj0PsZ6Dws+Flf+juao3kIop7urDwvd+QBhVPgIbq?=
+ =?us-ascii?Q?5GtvRXiuT3+f5sMZUDhnPgJ87Prq+ZA5FMaS9zaPqighosyORG69mNyFYFXt?=
+ =?us-ascii?Q?iINwyyRwDM28VSkwVnY6XnZtlWz2O5CXvkJMBiZzckGnm5ot88F5IdBwKzqJ?=
+ =?us-ascii?Q?va7DOHR5IR6JzQasMBih+D1FxhPOTeF88CUUSJInBNPuyIU98Mky+hmUQENa?=
+ =?us-ascii?Q?LrLkOOhdLAFRLxKudTJGSpxfQDuGeCyB/b5n1XbP7XiJuuy1rbiFErjVCY3Y?=
+ =?us-ascii?Q?uKyWd1/C7nTtERHRIUTsyAgRXw6z1qqOwsGqFkxXeVeims4vmGkVCKi8xmgU?=
+ =?us-ascii?Q?6fLm0PGcxu0mJYvH+a0YnZ7/XmkEO9NN30MD1sd+ij3TajMXOH2Jnj0hN4D4?=
+ =?us-ascii?Q?6fqcX0b5FT/CY5lgqeHvmeqPwgY2W7CckNFmXbHOESnU1avvVS3ZdnZxTgT/?=
+ =?us-ascii?Q?ryheuJWcezm4UC3XnKCsy84hBmpEfVQtz3VHDQ7MF9OQUEO7c8AdHjxYVVC1?=
+ =?us-ascii?Q?tS/8hcTD6vqRRq2h78e5E/WHRIaUQo3SINVzTsJ1tmK1rx2fHlZ7Bjn2ydKI?=
+ =?us-ascii?Q?lFaT3hE4vDLshc0MC0tYWXGbkRRdZDOFryAlLpy4cBFP4Ae4Vzq0GxWXrHNg?=
+ =?us-ascii?Q?Ty70Y+u/4cNCcLYXQphrfnXKo20cj2WZGK6yFwmRDg8jTHjVK62TE38rwa/t?=
+ =?us-ascii?Q?4dHKBbF7ihhU22P8+AdCt2KxkkkNsaPa11zU9gK/D2ujUzXHaZyGzA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(19092799006)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?DHdPZTk1RMvsX26hAm+oDAcB2uSahBxMRuGeyL3TmsL6LzZnpSpU3QefAmCE?=
+ =?us-ascii?Q?NSptwPzWf24G+iOtMFijmTXuHk3OsN72pk7WRyYO1vLhceZO1Iu0ThiT7fUg?=
+ =?us-ascii?Q?z5ucCTiAKUV/AyeiL6VvAAprywijfmmgbizoZid3ozL9j91LlqvMhNFSy2N5?=
+ =?us-ascii?Q?9sICpk1cl6/bter+GW23R2LP+OLDTOUGf91eiGcCS2uN9ei0naE5xQ5QY3xz?=
+ =?us-ascii?Q?dc2rRs4uYbtu7UvNeRrzBLbQUvsRdQ7yRV2mLlmEozT5v+OBdtKhk2TEeQCK?=
+ =?us-ascii?Q?EF0huX6vsLKxHdJVXXXoGTpvjeGJH3dSXSWQIwyz/CeQ4sM9sulhYwlSe1SK?=
+ =?us-ascii?Q?/q0IFIOWZraumqI2pm1EjKdf/9S7xarVgw20OqN7CFJiV198fkivA4UNTsOp?=
+ =?us-ascii?Q?wPiYxwMdMvvGQ7D5JJPufHFoh5cAX9FaJ7uZc713T0BYkPEd6sCM4WaJPV77?=
+ =?us-ascii?Q?SODphaoIdqYqy6tyoHcEKDimoETAF7esSWdLGCX1PoXSU0rxTSJXVPv4T+1g?=
+ =?us-ascii?Q?T+fTvskbB7PKDd/U5Y6J81SCBKT9iJfoyE+JHva2oCv4F8tCKLdarYRfnsFn?=
+ =?us-ascii?Q?gz6loyNkELaLgkAz9QcFfDWxI1WUy3WQFZFjuY0TfAF+8I5IoidiloKdooKf?=
+ =?us-ascii?Q?EqnNomW6VHMCrZC6hV2oU1Vt/mFbNLuZdX15LerPqwHa/48yy6W9FCZVQdr2?=
+ =?us-ascii?Q?Qy42UEXxlPem9C0ZIUEmrGbhPwyOjve5eDD0pdD008FuTv91UBy11amQvK/X?=
+ =?us-ascii?Q?muSiBGVzC3FLEHUW0OIU3P+eUU4FIY96atsmit+jLvvZ7cIz8P20wEmjhZJm?=
+ =?us-ascii?Q?oCvvry8dMjjRVnwd3iUXajqmRbeFJjZ51xZrf7+TN8T0PfsHwpR+PJl9/uYE?=
+ =?us-ascii?Q?2Qe1ERmgua0vpHVdlLg8NbnCp/Vh4xiV5HoFwkL9DuW/2Z7Ntl/smHe0RIcn?=
+ =?us-ascii?Q?bCs+RmSKLwzuHwJvorCHgXwhMPkMnLGN3bH7JfAq7PV2lORcsUYphpQmUzI8?=
+ =?us-ascii?Q?dodHwDorczYYuvYZlW4vNoj8u6fZ6W8svp7Rz9fNK/JqbkVbyfPe50req7hZ?=
+ =?us-ascii?Q?XALUkuTNuQTU26bQBZMKRYFvjiywE2XHrTmc6Z05qsiYLhHS70Ve+y663G0d?=
+ =?us-ascii?Q?AnRT0GayxGmts07byN//EV+Mw3JjnX5X5mIpwIeok0QMa7SX/DDsHomeP9Oy?=
+ =?us-ascii?Q?2h7Xb38JNC7xavKcir0A5twGKbbml2ypyG5Ao03pLFAjgH4Wn8NzdZoOkXMr?=
+ =?us-ascii?Q?002PdmljxrB50ap8sNBHRG4LFoV5rs4OgxXO7ZI4X8xylLBd46ISuz2LP0QY?=
+ =?us-ascii?Q?tRrGQLAWMrbi8SVrhbQaeuUSGv0NR14tQt2OZlOhtwTfbgDsDLaTWoMnnBPG?=
+ =?us-ascii?Q?Lvm1mgeY5i3rJind4wswOPppGkB+8UBX16PlHE2/hAplDNemffzjbANOgH0F?=
+ =?us-ascii?Q?9ji+PvN9Say9LcSsLFtePz/md1I3OFPZV4yZnvcgWPZQ1HPxC08EBg4VgyVF?=
+ =?us-ascii?Q?vKGNcr2Zm6EM0KyMw6vR3BYJ4Dwb3/q2vE//C1kl5GlC9rTOvW9Kq4oFSA7L?=
+ =?us-ascii?Q?hfZ359zfZHbeNkpIHwg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250812200707.233139-1-rajeevm@hpe.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3MxSv7JtoHen7DQ--.59944S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrWUZF17Zr48try8CrWfXwb_yoWruw1DpF
-	y3ua4FyrWrtF9rGFsrZws7Xr15Gw4kW347ZryUCa40kFn0qrnI9Fn5CFWF9rW7Xr98CFyF
-	qa1DJFykurnrAF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUG0PhUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7311795-6543-4d61-8ec9-08ddda0a2a72
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2025 01:38:55.2943
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uFsETJ/DiZ9zXjh9exOgNvtKiDmTaqh1bI8W206sHeNrua8SJ0hORasHUC2J0tmqtUU9Tlz+UKgz9aAkWo5Ydg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8621
 
-Hi,
+> On Tue, Aug 12, 2025 at 05:46:22PM +0800, Wei Fang wrote:
+> > Add a DT node example for ENETC v4 device.
+>=20
+> Not sure why need add examples here? Any big difference with existed
+> example?
+>=20
 
-ÔÚ 2025/08/13 4:07, Rajeev Mishra Ð´µÀ:
-> This commit includes the following changes:
->   1. Renamed get_size to lo_calculate_size.
->   2. Merged the functionality of get_size and
->      get_loop_size into lo_calculate_size.
->   3  Updated callers of the above functions
->      to use lo_calculate_size.
->   4. Replaced i_size_read with vfs_getattr_nosec()
->      to obtain a more accurate file size for
->       network filesystems where cached metadata may be stale
-> 
-Please split 1-3 to a seperate patch.
+For enetc v4, we have added clocks, and it also supports ptp-timer
+property, these are different from enetc v1, so I think it is better to
+add an example for v4.
 
-> Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
-> ---
->   drivers/block/loop.c | 53 +++++++++++++++++++++++++++++---------------
->   1 file changed, 35 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index 1b6ee91f8eb9..6bfec38275b0 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -137,20 +137,43 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
->   static int max_part;
->   static int part_shift;
->   
-> -static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
-> +/**
-> + * lo_calculate_size - calculate the effective size of a loop device
-> + * @lo: loop device
-> + * @file: backing file
-> + *
-> + * Calculate the effective size of the loop device based on backing file size,
-> + * offset, and size limit. Uses vfs_getattr_nosec() for accurate file size
-> + * information, particularly important for network filesystems where cached
-> + * metadata may be stale.
-> + *
-> + * Returns: size in 512-byte sectors, or 0 on error
-> + */
-
-I feel this internal function comment is not necessary, the name can
-explain itself, and you explain getattr below as well.
-
-Otherwise this patch LGTM.
-
-Thanks,
-Kuai
-
-> +static loff_t lo_calculate_size(struct loop_device *lo, struct file *file)
->   {
-> +	struct kstat stat;
->   	loff_t loopsize;
-> +	int ret;
->   
-> -	/* Compute loopsize in bytes */
-> -	loopsize = i_size_read(file->f_mapping->host);
-> -	if (offset > 0)
-> -		loopsize -= offset;
-> -	/* offset is beyond i_size, weird but possible */
-> +	/*
-> +	 * Get the accurate file size. This provides better results than
-> +	 * cached inode data, particularly for network filesystems where
-> +	 * metadata may be stale.
-> +	 */
-> +	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
-> +	if (ret)
-> +		return 0;
-> +
-> +	loopsize = stat.size;
-> +
-> +	if (lo->lo_offset > 0)
-> +		loopsize -= lo->lo_offset;
-> +	/* offset is beyond file size, weird but possible */
->   	if (loopsize < 0)
->   		return 0;
->   
-> -	if (sizelimit > 0 && sizelimit < loopsize)
-> -		loopsize = sizelimit;
-> +	if (lo->lo_sizelimit > 0 && lo->lo_sizelimit < loopsize)
-> +		loopsize = lo->lo_sizelimit;
->   	/*
->   	 * Unfortunately, if we want to do I/O on the device,
->   	 * the number of 512-byte sectors has to fit into a sector_t.
-> @@ -158,11 +181,6 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
->   	return loopsize >> 9;
->   }
->   
-> -static loff_t get_loop_size(struct loop_device *lo, struct file *file)
-> -{
-> -	return get_size(lo->lo_offset, lo->lo_sizelimit, file);
-> -}
-> -
->   /*
->    * We support direct I/O only if lo_offset is aligned with the logical I/O size
->    * of backing device, and the logical block size of loop is bigger than that of
-> @@ -569,7 +587,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
->   	error = -EINVAL;
->   
->   	/* size of the new backing store needs to be the same */
-> -	if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
-> +	if (lo_calculate_size(lo, file) != lo_calculate_size(lo, old_file))
->   		goto out_err;
->   
->   	/*
-> @@ -1063,7 +1081,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
->   	loop_update_dio(lo);
->   	loop_sysfs_init(lo);
->   
-> -	size = get_loop_size(lo, file);
-> +	size = lo_calculate_size(lo, file);
->   	loop_set_size(lo, size);
->   
->   	/* Order wrt reading lo_state in loop_validate_file(). */
-> @@ -1255,8 +1273,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
->   	if (partscan)
->   		clear_bit(GD_SUPPRESS_PART_SCAN, &lo->lo_disk->state);
->   	if (!err && size_changed) {
-> -		loff_t new_size = get_size(lo->lo_offset, lo->lo_sizelimit,
-> -					   lo->lo_backing_file);
-> +		loff_t new_size = lo_calculate_size(lo, lo->lo_backing_file);
->   		loop_set_size(lo, new_size);
->   	}
->   out_unlock:
-> @@ -1399,7 +1416,7 @@ static int loop_set_capacity(struct loop_device *lo)
->   	if (unlikely(lo->lo_state != Lo_bound))
->   		return -ENXIO;
->   
-> -	size = get_loop_size(lo, lo->lo_backing_file);
-> +	size = lo_calculate_size(lo, lo->lo_backing_file);
->   	loop_set_size(lo, size);
->   
->   	return 0;
-> 
-
+>=20
+> >
+> > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> >
+> > ---
+> > v2 changes:
+> > new patch
+> > v3 changes:
+> > 1. Rename the subject
+> > 2. Remove nxp,netc-timer property and use ptp-timer in the example
+> > ---
+> >  .../devicetree/bindings/net/fsl,enetc.yaml        | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > index ca70f0050171..a545b54c9e5d 100644
+> > --- a/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > +++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+> > @@ -86,3 +86,18 @@ examples:
+> >              };
+> >          };
+> >      };
+> > +  - |
+> > +    pcie {
+> > +      #address-cells =3D <3>;
+> > +      #size-cells =3D <2>;
+> > +
+> > +      ethernet@0,0 {
+> > +          compatible =3D "pci1131,e101";
+> > +          reg =3D <0x000000 0 0 0 0>;
+> > +          clocks =3D <&scmi_clk 102>;
+> > +          clock-names =3D "ref";
+> > +          phy-handle =3D <&ethphy0>;
+> > +          phy-mode =3D "rgmii-id";
+> > +          ptp-timer =3D <&netc_timer>;
+> > +      };
+> > +    };
+> > --
+> > 2.34.1
+> >
 
