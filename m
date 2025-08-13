@@ -1,124 +1,80 @@
-Return-Path: <linux-kernel+bounces-765931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA683B24031
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:29:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E408FB24036
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:33:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE59D582CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CDB625B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DEC2BE7A5;
-	Wed, 13 Aug 2025 05:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CF42BE640;
+	Wed, 13 Aug 2025 05:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KwF4uX8X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="baOC6SEs"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXWYzETY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDDA2690D9;
-	Wed, 13 Aug 2025 05:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A19242D74;
+	Wed, 13 Aug 2025 05:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755062965; cv=none; b=SSjBDPDKZJFtZWKsQXpPaSySiCUxRdAAQb68qI3L9m9JhmhJBeKcxNJ9LDBoROmBzXWijo4lrBhbWbb+itTCATQk55TpI37oYsYivZ7c4ockBsgFd4supfg5MFNYt1RjPB3dZaIZz7sL/TqEo2dCOX0u5ZOpp50n7pMY4X4iUBg=
+	t=1755063202; cv=none; b=BEipH2MPfvTmbPkn4Gcoy586fPF8LxVZ9e4a6gLkiSOq7jTRCR9+f8Y1D00iEVg2o5A0HFUAy0mW+yc/mtmJn901SG3vvQrGs+bPYeBBSFG273lH4BjWj5MU2J8O0mK9oU56PBefD92jMSmwWjpe5T9HvEOyQ571tNIYib2sVzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755062965; c=relaxed/simple;
-	bh=TIuUmolt7WOk1L1lU2W33P/4x4d+TTD+Yst8bd1sAfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MAZ+UJCxnD2SiPKYjHSTfZJbhSCzhqe8QJs/mCkCL9OYeay1GH/+Lgrkko67r8pXqEGDByRDbO/cyrxZbZaXnulSPF91m4oVf1TMjCN/GszdiL0xjMG1rPZjb9ZZVgDJwLUwqMIkks8GdYCv5+ZPumBsbn9jpIwIMyVshY+gzTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KwF4uX8X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=baOC6SEs; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Aug 2025 07:29:17 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755062961;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iIVBEpNr1x1eligfQijwGYu/XCV1uBU/bWvnD9UKsIU=;
-	b=KwF4uX8XM+J+Oed4t+n6FCP3sUng4vi0VKUBi+wvhE//8Qs1VpR509JlqA5/brxQ0OpJms
-	3Bw4pBQH1sPRibEIsQrkMMXtiq37+9fwXjUqVGJlCsLyLhA3+0H7UB/AXsIlUH2icw2xCD
-	UhsnUxuhaEyCWtjLi8F1OqzX3GgG9E9qhl9Kw//F3Unkkss2zxTX4E6EJnH7z/Gn/args4
-	UiaKeqny8uqnn9NYW9JQy/RvIpiKb/6Z8nhAXEuKTSoBHcDCsORCDoE19LMhWqHVI0lz+G
-	R1gE4p+6FljLSByz903xisuma4O3v4838O4d7jAcnfv4s/hwW6CelyFpk1d2Tw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755062961;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iIVBEpNr1x1eligfQijwGYu/XCV1uBU/bWvnD9UKsIU=;
-	b=baOC6SEs/vHlCkQ3HmjJN/gvmu59Xg0Rps1sRG2qjgP/vdbD0FE1zyhDNbIz+k9qTrmT7d
-	U578h941UV9iidAw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] kbuild: uapi: only update hdrtest output on success
-Message-ID: <20250813072751-ed791f27-41c5-4be7-9a57-cb79301da763@linutronix.de>
-References: <20250812-kbuild-hdrtest-fixes-v1-0-7ad2af66cd58@linutronix.de>
- <20250812-kbuild-hdrtest-fixes-v1-2-7ad2af66cd58@linutronix.de>
- <CAK7LNARdhx+L6VeN2Q-gykcoWMY0MtoiNyhpY+Q9v_3tYA6o-w@mail.gmail.com>
+	s=arc-20240116; t=1755063202; c=relaxed/simple;
+	bh=SQBB+QuUHQ1WK+SyPt+Tm0tHTtKC0fjHu1V5AzSo2Dc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=E7xgGY8/RxgxHctiwygzNZNQhrYA9MjTkYc1GE2PAB5n+MmGSIerfohgAqXWs3yxFsHFbclbqJd1mjPCrxDjr6A+yI+pvnkUdJdLKGMoAwJBe3gaEvi/Z64Vv/kPl64x3UtK8mBbijEGkgG78rgtEmfZPbyWnQiiTUHuWEE0AZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXWYzETY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF5A0C4CEEB;
+	Wed, 13 Aug 2025 05:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755063200;
+	bh=SQBB+QuUHQ1WK+SyPt+Tm0tHTtKC0fjHu1V5AzSo2Dc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=WXWYzETYtyVTbS+6jw3ig8Jg4izOU3AzTb1vxENfqDwjFC7caZVy1NbSDCnPFYjoF
+	 dIegtibAh7/9wIcfgd4mdvrngkSa42WlCaV1Tbri6p9VC+Fzk8w+9TFlNCRwTGO/ZH
+	 Boj+8UB/FyjvMkTYJwTl+oGKzP7Ct5oFJmqX0hueRsqjpDeackJjtfa+8sAnLcpMwG
+	 KpnSdvMMs8lbZN3Yqds11J/ukeDaxk5EpUfN2ZtDPt+qy1jzdPutW+KKatuvOaF5rb
+	 A6pTZALHITKaJYxJTE+poZ4yzTEA2rXTnJQalVfgL8bxbb5J8qo8c0KVeGLeKfO7HD
+	 5UURnsGuSl0jQ==
+From: Vinod Koul <vkoul@kernel.org>
+To: vinod.koul@linaro.org, shumingf@realtek.com
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ flove@realtek.com, oder_chiou@realtek.com, jack.yu@realtek.com, 
+ derek.fang@realtek.com
+In-Reply-To: <20250725101100.1106673-1-shumingf@realtek.com>
+References: <20250725101100.1106673-1-shumingf@realtek.com>
+Subject: Re: [PATCH] soundwire: debugfs: add SCP_SDCA_IntStatX and
+ SCP_SDCA_IntMaskX registers
+Message-Id: <175506319789.649283.14444520276823005932.b4-ty@kernel.org>
+Date: Wed, 13 Aug 2025 11:03:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNARdhx+L6VeN2Q-gykcoWMY0MtoiNyhpY+Q9v_3tYA6o-w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Wed, Aug 13, 2025 at 09:29:31AM +0900, Masahiro Yamada wrote:
-> On Tue, Aug 12, 2025 at 2:33 PM Thomas Weißschuh
-> <thomas.weissschuh@linutronix.de> wrote:
-> >
-> > If a header test fails, the output should not be updated.
-> > Otherwise the next make invocation will not rerun the test.
-> >
-> > Also headers_check.pl should only run if the syntax check invocation
-> > before succeeded.
-> >
-> > Add explicit sequencening.
+
+On Fri, 25 Jul 2025 18:11:00 +0800, shumingf@realtek.com wrote:
+> This patch added SCP_SDCA_IntStatX and SCP_SDCA_IntMaskX registers.
 > 
-> Did you test this?
-
-At least I thought so.
-
-> See scripts/Kbuild.include line 153
 > 
-> The macro 'cmd' has "set -e".
-> 
-> Any single error in a series of commands
-> bails out.
 
-Indeed, this patch is pointless. I will drop it.
+Applied, thanks!
 
-Thanks!
+[1/1] soundwire: debugfs: add SCP_SDCA_IntStatX and SCP_SDCA_IntMaskX registers
+      commit: 8b63fee9f62361a7d96394611ba05734ec21e2eb
 
-> >
-> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> > ---
-> >  usr/include/Makefile | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/usr/include/Makefile b/usr/include/Makefile
-> > index c7f164952b33acf6c7b8eb7ce91cd192bfc39ad2..6868d183f36d532cd3d4023b936c67b8a58a9ba5 100644
-> > --- a/usr/include/Makefile
-> > +++ b/usr/include/Makefile
-> > @@ -81,8 +81,8 @@ always-y := $(patsubst $(obj)/%.h,%.hdrtest, $(shell find $(obj) -name '*.h' 2>/
-> >  quiet_cmd_hdrtest = HDRTEST $<
-> >        cmd_hdrtest = \
-> >                 $(CC) $(c_flags) -fsyntax-only -x c /dev/null \
-> > -                       $(if $(filter-out $(no-header-test), $*.h), -include $< -include $<); \
-> > -               $(PERL) $(src)/headers_check.pl $(obj) $<; \
-> > +                       $(if $(filter-out $(no-header-test), $*.h), -include $< -include $<) && \
-> > +               $(PERL) $(src)/headers_check.pl $(obj) $< && \
-> >                 touch $@
-> >
-> >  $(obj)/%.hdrtest: $(obj)/%.h $(src)/headers_check.pl FORCE
+Best regards,
+-- 
+~Vinod
+
+
 
