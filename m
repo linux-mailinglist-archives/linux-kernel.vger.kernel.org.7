@@ -1,134 +1,85 @@
-Return-Path: <linux-kernel+bounces-766507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FCDB2475E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:35:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 418B1B24762
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EE717B6816
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803312A12AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4255B2F6582;
-	Wed, 13 Aug 2025 10:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D301E2F5460;
+	Wed, 13 Aug 2025 10:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kyBOcDDu"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uk+6PEHh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203582F49F3;
-	Wed, 13 Aug 2025 10:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C592F49F3;
+	Wed, 13 Aug 2025 10:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081256; cv=none; b=p6vDlcnF5f6XxwEyn4L1txykGXo4FkjK86RGf6Q5FIXmfs5+VjoHuX3ggkcmVzEs1eggZ6JYPV42vUAxwQiButEM9J3olFXHjwH6iY0mUyXuJxW8DNgmnEan8NC1gi2lTylSgjC2kXk78mjJ2+zwumTdsEkNtz1W7H3miSfrMyI=
+	t=1755081239; cv=none; b=pyW+wJLEXrtvTiEpscUGvkCeGZrqJTyusEf6ZhHlISE4bjuZXSig+54G3UoBP53DaCMU8izIx34/N6vBq4bMXCcEtYJKOFVPZR5pw0yAfxLgNk5m16zrgfNYHn0dAkdiT1ra9+zxLtVekAUzNtmAnTIF/aWjnPd401tcGbNS7Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081256; c=relaxed/simple;
-	bh=4M4WTr7aDG7m7x4izcfAcsDMik6L9YC6njBc54p0N+c=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cHbxmMQgPDVAolJJgkx5FI6vEV8jcOEgR7hohciUVUyjeBS/2WHl1b2wLKTcJQOnQha56EGtFTyIZo7hAoXvItsm7/ULvRiYD3J/iW7Yl0QHqIarNGdqgr3On3uPkS5mpaCw7/xpAQzQaq5gMTEGarUj2/XkQRI+evmpbJqKk5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kyBOcDDu; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755081255; x=1786617255;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=4M4WTr7aDG7m7x4izcfAcsDMik6L9YC6njBc54p0N+c=;
-  b=kyBOcDDufpfOiQ5JTdz4/fkb3JwioI5bxRE3Q3D1G0j9fxVEnVPcSm+D
-   dxyLrAshgfoKUGNohVK2CmSbvpYTjQFPQsDxA93Tb41UmVlXlP/Q5I872
-   zCEryMh2NXUDW2VnadsC9JjKPQspnI9+IbNWJM5AfAKH3m8/zfvS4NKa0
-   3kx1sUegh1h29CYlPvsKxqO8x1sIZHZKRzA8FLmdT2io0IHo5HUSXladd
-   KkwkbNTRfC6E1JeKQ/i79Ovqz+bwrfGsu8q3EOTkHClhUVIaRA0cWM7R8
-   M8p224FNgHfi1z9u5zujP7njz0yIpP0zqYkYQxXWIDPr4mpMU/fCsA6Uw
-   g==;
-X-CSE-ConnectionGUID: 7pl1KfoDRtWRHbFbwqg1xg==
-X-CSE-MsgGUID: IP/Mkq3KR1yKKoEIgpPfjw==
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="276535070"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Aug 2025 03:34:13 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 13 Aug 2025 03:34:10 -0700
-Received: from che-ll-i17164.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 13 Aug 2025 03:34:07 -0700
-From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Parthiban
- Veerasooran" <parthiban.veerasooran@microchip.com>
-Subject: [PATCH net 2/2] microchip: lan865x: fix missing configuration for Rev.B0/B1 as per AN1760
-Date: Wed, 13 Aug 2025 16:03:55 +0530
-Message-ID: <20250813103355.70838-3-parthiban.veerasooran@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813103355.70838-1-parthiban.veerasooran@microchip.com>
-References: <20250813103355.70838-1-parthiban.veerasooran@microchip.com>
+	s=arc-20240116; t=1755081239; c=relaxed/simple;
+	bh=ibSiAKvvLIaj4EmlHJ3kL+FP/7fp1vaX7HbyPQtMYh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=c5AnLw0VHAqEJlCGiUkrlghvp39RBlIxLbxeMvK7Wm2IAJ9VidApc4dVDOOELpg+UsTaU5Y3y5u1Ett7nsJeaGZdnpf2LxfYYeajjhTi6+xoGnM8Sws6iJsoixIA8bGm0jpC/MoeS5t1eehrvr3dN2zS8XIJ2YNInfFKN0nKuFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uk+6PEHh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 579ECC4CEEB;
+	Wed, 13 Aug 2025 10:33:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755081238;
+	bh=ibSiAKvvLIaj4EmlHJ3kL+FP/7fp1vaX7HbyPQtMYh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=uk+6PEHh5n9tFFC+PFsOGJ7ZP7bMqqtdGXtgvf/v45SPZ/38NKrTHrPXUXDxjPYSi
+	 6Jz6eFC8GnUL43BIk2BnCYg6gCwUsn8ZCKNjrItUSRvEhyQioYuINor20YMl/dJ9ZS
+	 iG46IjmtI57XColv77LPCW48ttKfG88H6WPqMngJpHKi8G1tUVBj2nrt+MpL+qoL7O
+	 JDLEjdQ/IpdLJHLCLnwgJlYOp++ZMzKkVSnLUy5KfLalat7nmDsMGlMQw8B+Uw3tqz
+	 zZBNcuOxAwiDs/LuxGRIg3H2fkiERqgYhTeraNwwD2QUwhWpcRjX/pu0umFgr4Mmsg
+	 4nRXZuMdtVbSA==
+From: Leon Romanovsky <leon@kernel.org>
+To: kotaranov@microsoft.com, longli@microsoft.com, jgg@ziepe.ca, 
+ Konstantin Taranov <kotaranov@linux.microsoft.com>
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1753779618-23629-1-git-send-email-kotaranov@linux.microsoft.com>
+References: <1753779618-23629-1-git-send-email-kotaranov@linux.microsoft.com>
+Subject: Re: [PATCH rdma-next 1/1] RDMA/mana_ib: drain send wrs of gsi qp
+Message-Id: <175508123598.198881.15976175399276226574.b4-ty@kernel.org>
+Date: Wed, 13 Aug 2025 06:33:55 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-37811
 
-Fix missing configuration required for LAN865x silicon revisions B0 and B1,
-as documented in Microchip Application Note AN1760 (Revision F, June 2024).
 
-According to the guidance in the application note, register 0x10077 must be
-programmed with the value 0x0028 to ensure correct operation on Rev.B0/B1
-devices. Without this fixup, the device may not function correctly or may
-fail to initialize.
+On Tue, 29 Jul 2025 02:00:18 -0700, Konstantin Taranov wrote:
+> Drain send WRs of the GSI QP on device removal.
+> 
+> In rare servicing scenarios, the hardware may delete the
+> state of the GSI QP, preventing it from generating CQEs
+> for pending send WRs. Since WRs submitted to the GSI QP
+> hold CM resources, the device cannot be removed until
+> those WRs are completed. This patch marks all pending
+> send WRs as failed, allowing the GSI QP to release the CM
+> resources and enabling safe device removal.
+> 
+> [...]
 
-Reference:
-https://www.microchip.com/en-us/application-notes/an1760
+Applied, thanks!
 
-Fixes: 5cd2340cb6a3 ("microchip: lan865x: add driver support for Microchip's LAN865X MAC-PHY")
-Signed-off-by: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
----
- drivers/net/ethernet/microchip/lan865x/lan865x.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+[1/1] RDMA/mana_ib: drain send wrs of gsi qp
+      https://git.kernel.org/rdma/rdma/c/44d69d3cf2e804
 
-diff --git a/drivers/net/ethernet/microchip/lan865x/lan865x.c b/drivers/net/ethernet/microchip/lan865x/lan865x.c
-index d03f5a8de58d..a55ca485062f 100644
---- a/drivers/net/ethernet/microchip/lan865x/lan865x.c
-+++ b/drivers/net/ethernet/microchip/lan865x/lan865x.c
-@@ -32,6 +32,14 @@
- /* MAC Specific Addr 1 Top Reg */
- #define LAN865X_REG_MAC_H_SADDR1	0x00010023
- 
-+/* LAN865x Rev.B0/B1 configuration parameters from AN1760
-+ * As per the Configuration Application Note AN1760 published in the below link,
-+ * https://www.microchip.com/en-us/application-notes/an1760
-+ * Revision F (DS60001760G - June 2024)
-+ */
-+#define LAN865X_REG_FIXUP		0x00010077
-+#define LAN865X_FIXUP_VALUE		0x0028
-+
- struct lan865x_priv {
- 	struct work_struct multicast_work;
- 	struct net_device *netdev;
-@@ -346,6 +354,14 @@ static int lan865x_probe(struct spi_device *spi)
- 		goto free_netdev;
- 	}
- 
-+	/* LAN8650/1 configuration fixup from AN1760 */
-+	ret = oa_tc6_write_register(priv->tc6, LAN865X_REG_FIXUP,
-+				    LAN865X_FIXUP_VALUE);
-+	if (ret) {
-+		dev_err(&spi->dev, "Failed to configure fixup: %d\n", ret);
-+		goto oa_tc6_exit;
-+	}
-+
- 	/* As per the point s3 in the below errata, SPI receive Ethernet frame
- 	 * transfer may halt when starting the next frame in the same data block
- 	 * (chunk) as the end of a previous frame. The RFA field should be
+Best regards,
 -- 
-2.34.1
+Leon Romanovsky <leon@kernel.org>
 
 
