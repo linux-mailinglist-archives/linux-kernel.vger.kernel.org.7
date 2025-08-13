@@ -1,175 +1,92 @@
-Return-Path: <linux-kernel+bounces-766286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDB4B244AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:48:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5853B244B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7B2A1887ADD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:48:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC661A250E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596C22ED15D;
-	Wed, 13 Aug 2025 08:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306DD2ECEAC;
+	Wed, 13 Aug 2025 08:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="Up8ZMfIp"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUtci6My"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DD82D5A13;
-	Wed, 13 Aug 2025 08:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAAB2C3252;
+	Wed, 13 Aug 2025 08:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755074910; cv=none; b=drFN7+IwC+Rkqg5rGEeAfHrHMeOWYDysv0gSuqpnpII6LDBrl+um9CZwsUNM50P44ys9tbkxBUSMAZH8OiwK/OtO7I/6nuZhsoTKk55XkFqxv8Gkfcrsgq5lO53LD/gP+PtJz9+PIzoepfUnxAXnN/2MnJMTq1C4Zh4q9YcuthU=
+	t=1755075015; cv=none; b=AQMrx3HYUjrXOVuQB/v6ODMkgW68STOxUJ6kc7mHsQOZxtPHuGcZyKQ05m8UkskplmxprcZzDkXVM3V9g2omni6D6yJoLDHGtwMdH2HvgxC16ljW56LV2QuM9ajTHUhzJL7/O9JkCFZfe5hjoxeUjJZYPu2H5pXPx8uPNDTlPz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755074910; c=relaxed/simple;
-	bh=U7AcBY+w23HaGZoQTSyjMhvyp/uzWVzGS7MvGLs6JTk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yki5+yncECd0avsVn0kYFJQwjEINjUU4HZz8waY6XxlirWhfkwen10nL1GKIuEWL+RjZgKuZqDS+MumD2cOftYuhNpmU+MfNMR3D9n9Y2VDZJTgZajDWOBUrekh4Dsa8/tIBO9n8DevimUaY2AjPbvP93MhI4vsLVOAAzYvM5UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=Up8ZMfIp; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1755074909; x=1786610909;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=2/smX3GHjYtBpThREVOyuPUStG2BzCbDOiAFYJYi6Kc=;
-  b=Up8ZMfIpG3XbNaKzWnqAXyK20QrS4rqHDo/sP4+Av3b+8XScWVDC08rL
-   5idTLPLelR5pknUaMsU2OCQzv7uV3y88IBHu/q91NFP7jwEii5qkhWZXy
-   OeBiE/f6qruCsBi5VqTVBLCkV0DlDbmbdWytQH4tZRl4lDkw4ZX6T5EF4
-   7Q3f42oejXXzLxXJKfpYwUhGcm52/cOLWO7s3cbMzOUfwnkQLo0+L9M1+
-   9sebloa8+AGOURFAm3jQKSL7uZDDidRooX1GLkAZOI0WL7yJOhizEa0O1
-   C1yXQVj48by+nb/llEagPrHB60rmBATQy8mDMscK2Ugd409M0vtvC8N7A
-   g==;
-X-IronPort-AV: E=Sophos;i="6.17,285,1747699200"; 
-   d="scan'208";a="515246079"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 08:48:26 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.7.35:18367]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.16.146:2525] with esmtp (Farcaster)
- id dae87910-4c18-46bd-b32e-1944f016f0ca; Wed, 13 Aug 2025 08:48:24 +0000 (UTC)
-X-Farcaster-Flow-ID: dae87910-4c18-46bd-b32e-1944f016f0ca
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 13 Aug 2025 08:48:24 +0000
-Received: from b0be8375a521.amazon.com (10.37.245.11) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.17;
- Wed, 13 Aug 2025 08:48:22 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <pmenzel@molgen.mpg.de>
-CC: <andrew+netdev@lunn.ch>, <anthony.l.nguyen@intel.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <enjuk@amazon.com>,
-	<intel-wired-lan@lists.osuosl.org>, <kohei.enju@gmail.com>,
-	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>
-Subject: Re: [Intel-wired-lan] [PATCH v1 iwl-next 1/2] igbvf: add lbtx_packets
- and lbtx_bytes to ethtool statistics
-Date: Wed, 13 Aug 2025 17:47:48 +0900
-Message-ID: <20250813084815.85188-1-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <9b44df93-acec-4416-9f32-f97d0bfaaa7b@molgen.mpg.de>
-References: <9b44df93-acec-4416-9f32-f97d0bfaaa7b@molgen.mpg.de>
+	s=arc-20240116; t=1755075015; c=relaxed/simple;
+	bh=HpSkLFEcgW7BuZHgarJdSFQxecSBz2gnVw9LpRrpxms=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=ekG0XDtaA9hVZnMoBa/NmUallg+Fdtrz/wA8YoiwzEh+337Ia1nKkRfcl5acZCoQ1HHUD/SixCzars+G8IWZdoxyPldCl6AoLcGCrfbpq86A+K1O4bD4yO8O0pnWo/JIqdXngECyYUHqOEWY5ziHIl/d32yp2bGa/PpXA+7I+HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUtci6My; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83FB9C4CEEB;
+	Wed, 13 Aug 2025 08:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755075015;
+	bh=HpSkLFEcgW7BuZHgarJdSFQxecSBz2gnVw9LpRrpxms=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=sUtci6My47KSeL+0WBRNsXEy/dU9q4UPzoGOvQexfRZxsBOArTdeR6P4DWlRS9h0i
+	 0uT5e/gSk86y/Yj7yyiy/jpAN3vNKkWWNEh1E/wMx+m2EwL9PUkINEyuR/7j0VYbYD
+	 aMrRnk04aXPt+W/bEJvv/mo6dqauVlY4hEPfxH5HpxW1ar7QNszFo8nWfQ86sxSjTs
+	 GTJ2Yfv9dy4OVZxMCX/o8zwGUdeYvw4pna0/hc/I2CTAYQSeYx/DnmpK6zkPoBXC/H
+	 eZAMOUvop2N+QczJpF9z+wfQioOwdrDpsQFhYT7dbwdRsI7J5P78A0KoANXT1AUph/
+	 sLAIxmztCY4pQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D046UWB002.ant.amazon.com (10.13.139.181) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 10:50:11 +0200
+Message-Id: <DC1661RBEB1Q.1Y748EK7YML1Y@kernel.org>
+Subject: Re: linux-next: manual merge of the mm-unstable tree with the
+ drm-misc-fixes tree
+Cc: "Andrew Morton" <akpm@linux-foundation.org>, "Simona Vetter"
+ <simona.vetter@ffwll.ch>, "Vitaly Wool" <vitaly.wool@konsulko.se>, "Intel
+ Graphics" <intel-gfx@lists.freedesktop.org>, "DRI"
+ <dri-devel@lists.freedesktop.org>, "Linux Kernel Mailing List"
+ <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
+ <linux-next@vger.kernel.org>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250813111151.6a261ca1@canb.auug.org.au>
+In-Reply-To: <20250813111151.6a261ca1@canb.auug.org.au>
 
-On Wed, 13 Aug 2025 10:18:29 +0200, Paul Menzel wrote:=0D
-=0D
-> Dear Kohei,=0D
-> =0D
-> =0D
-> Thank you for your patch.=0D
-> =0D
-> Am 13.08.25 um 09:50 schrieb Kohei Enju:=0D
-> > Currently ethtool shows lbrx_packets and lbrx_bytes (Good RX=0D
-> > Packets/Octets loopback Count), but doesn't show the TX-side equivalent=
-s=0D
-> > (lbtx_packets and lbtx_bytes). Add visibility of those missing=0D
-> > statistics by adding them to ethtool statistics.=0D
-> > =0D
-> > In addition, the order of lbrx_bytes and lbrx_packets is not consistent=
-=0D
-> > with non-loopback statistics (rx_packets, rx_bytes). Therefore, align=0D
-> > the order by swapping positions of lbrx_bytes and lbrx_packets.=0D
-> > =0D
-> > Tested on Intel Corporation I350 Gigabit Network Connection.=0D
-> > =0D
-> > Before:=0D
-> >    # ethtool -S ens5 | grep -E "x_(bytes|packets)"=0D
-> >         rx_packets: 135=0D
-> >         tx_packets: 106=0D
-> >         rx_bytes: 16010=0D
-> >         tx_bytes: 12451=0D
-> >         lbrx_bytes: 1148=0D
-> >         lbrx_packets: 12=0D
-> > =0D
-> > After:=0D
-> >    # ethtool -S ens5 | grep -E "x_(bytes|packets)"=0D
-> >         rx_packets: 748=0D
-> >         tx_packets: 304=0D
-> >         rx_bytes: 81513=0D
-> >         tx_bytes: 33698=0D
-> >         lbrx_packets: 97=0D
-> >         lbtx_packets: 109=0D
-> >         lbrx_bytes: 12090=0D
-> >         lbtx_bytes: 12401=0D
-> > =0D
-> > Tested-by: Kohei Enju <enjuk@amazon.com>=0D
-> =0D
-> No need to resend, but I believe, you only add a Tested-by: tag, if the =
-=0D
-> person differs from the author/Signed-off-by: tag.=0D
-=0D
-Oh, I didn't know that. Thank you for the feedback.=0D
-=0D
-Since I want to resend the other patch[1] after updating as you pointed=0D
-out, I'll resend this series as v2 including this patch without the=0D
-Tested-by: tag.=0D
-=0D
-[1] https://lore.kernel.org/intel-wired-lan/20250813075206.70114-3-enjuk@am=
-azon.com/=0D
-=0D
-> > Signed-off-by: Kohei Enju <enjuk@amazon.com>=0D
-> > ---=0D
-> >   drivers/net/ethernet/intel/igbvf/ethtool.c | 4 +++-=0D
-> >   1 file changed, 3 insertions(+), 1 deletion(-)=0D
-> > =0D
-> > diff --git a/drivers/net/ethernet/intel/igbvf/ethtool.c b/drivers/net/e=
-thernet/intel/igbvf/ethtool.c=0D
-> > index 773895c663fd..c6defc495f13 100644=0D
-> > --- a/drivers/net/ethernet/intel/igbvf/ethtool.c=0D
-> > +++ b/drivers/net/ethernet/intel/igbvf/ethtool.c=0D
-> > @@ -30,8 +30,10 @@ static const struct igbvf_stats igbvf_gstrings_stats=
-[] =3D {=0D
-> >   	{ "rx_bytes", IGBVF_STAT(stats.gorc, stats.base_gorc) },=0D
-> >   	{ "tx_bytes", IGBVF_STAT(stats.gotc, stats.base_gotc) },=0D
-> >   	{ "multicast", IGBVF_STAT(stats.mprc, stats.base_mprc) },=0D
-> > -	{ "lbrx_bytes", IGBVF_STAT(stats.gorlbc, stats.base_gorlbc) },=0D
-> >   	{ "lbrx_packets", IGBVF_STAT(stats.gprlbc, stats.base_gprlbc) },=0D
-> > +	{ "lbtx_packets", IGBVF_STAT(stats.gptlbc, stats.base_gptlbc) },=0D
-> > +	{ "lbrx_bytes", IGBVF_STAT(stats.gorlbc, stats.base_gorlbc) },=0D
-> > +	{ "lbtx_bytes", IGBVF_STAT(stats.gotlbc, stats.base_gotlbc) },=0D
-> >   	{ "tx_restart_queue", IGBVF_STAT(restart_queue, zero_base) },=0D
-> >   	{ "tx_timeout_count", IGBVF_STAT(tx_timeout_count, zero_base) },=0D
-> >   	{ "rx_long_byte_count", IGBVF_STAT(stats.gorc, stats.base_gorc) },=0D
-> =0D
-> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>=0D
-> =0D
-> =0D
-> Kind regards,=0D
-> =0D
-> Paul=0D
-=0D
-Thank you for reviewing!=0D
+On Wed Aug 13, 2025 at 3:11 AM CEST, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the mm-unstable tree got a conflict in:
+>
+>   rust/kernel/alloc/allocator.rs
+>
+> between commit:
+>
+>   fde578c86281 ("rust: alloc: replace aligned_size() with Kmalloc::aligne=
+d_layout()")
+>
+> from the drm-misc-fixes tree and commit:
+>
+>   cda097b07bce ("rust: support large alignments in allocations")
+>
+> from the mm-unstable tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+Thanks, the resolution looks good!
 
