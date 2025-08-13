@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-766012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7464EB2413E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:17:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE14B24140
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2436B16C82A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:16:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E5A189053B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0CB2C159F;
-	Wed, 13 Aug 2025 06:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690452C1591;
+	Wed, 13 Aug 2025 06:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MnbS1CC0"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wYMVt9FF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V08Gn3Bk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C293597B;
-	Wed, 13 Aug 2025 06:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BA02BE7C6;
+	Wed, 13 Aug 2025 06:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755065770; cv=none; b=YOhVcGvmk9mKFA5wwLQ6br2ux7tfX+x0mAERJYvvhjpOKqRA4xB+ufQiwQb7J3mYAN9hrRiQpEDRtV5bPnQYbEct/gqZjjwCJ+h7FRvewC5bazYfsVrGSHcAJnqQyV1mRCr50w/dLWODUMWrNOQX5guM0T35+afx2BtpXe867/U=
+	t=1755065854; cv=none; b=J4a3urD6ANtX/C1E16zTKp/AppKr/1hG/fWBPiZMGxb0b8HIMQth87KIMveidssYg59SCKedDgejm1/kzVd7U9TiDGrfyWGumWOvS+sFda+8XuiXBoIiAvoHKFbteOghsrRLdowWQ9PRiZCrcxK9/3ifToweaDnNJdjVTT7AU7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755065770; c=relaxed/simple;
-	bh=c+TZbzGFvRmXvp8+YzDXRVZQDNo78fe6EUXMrbYg4iM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B2q0LR9n3SyVX1+KFkc0DVZcJFRy7hxJNFXNPLsNbZfxW39t5b4PJno7QBmUd9wOiwd8HR8FLAKMmRgre59eneFs/kdcDbcmxAYSxogQmeKLpHqXcZASw22yIQ1/HslgH6HkALKCgWwhsjYtHjLY0gTC8nHW1acWfspo7t7p3xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MnbS1CC0; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71bfdb6ff81so45645407b3.2;
-        Tue, 12 Aug 2025 23:16:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755065767; x=1755670567; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qGHs+XddNJPqC55SFwg8V5Yk+L2d1CEXmOV4NbKbVaI=;
-        b=MnbS1CC0qs+B9S8tj0skMW+uNvj/KiwsepdNNyVV5B4mZCjr0w4bfnvZ09h82OwKQY
-         BiQXf3Tu2fZzQZ7XFdle7hxPERiZqliSpW8KCxmNK2cmkZZcKbC2cV3cJTf2TIjETm69
-         LPy4oVAiiP7egZlyCHgxiLgyUcp47VqvId7hRITeSnGsRzqO9SEidBBw/iHqCC8YIGhN
-         b4N1FmsWIgkQfr06hGX229gOUaI8bAL2SI/EI7H8+HTpeYEtLX6mqgP6Ny+epSFdb0PG
-         /8lLNdDtR8KS9QCbPOixkQD94O/dEEFx3sfSCF+HYjs7+9cYh3LCdQrpj62PdpJxewPO
-         Vfhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755065767; x=1755670567;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qGHs+XddNJPqC55SFwg8V5Yk+L2d1CEXmOV4NbKbVaI=;
-        b=cLDg774c0GxPJRV9pwDxnjwi3wfO0E/zh/WTOq0lZ+jjPArt9zSP0jmOWOX55Ab7pl
-         817qCwZmL7mBbLBhSVdi6wkn7eX1ZBBgE89WBY7JQsPBeGRgJ+iO1QyIoldAMJBPJKfQ
-         1kKe4lrTFp8aOyn9LZ3eSsXGjJXbeV5PDwfeJloC61pJJwp0wHCSs+yMgC4rhucl7DOy
-         4InQgQ+K7BZfuBtS1JyYrWYLNyhKbksXNdeOvngE3fFXB0y1A8JvSbvZsL9u1Gtgtr96
-         dAdY0VYmGydftyN8JjqfY0azi3cbzqdPpOwUkIg+AHs4eUg/gvbMKQrOef8w+0ytXkHB
-         CVtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUw6kpzxrmFTyQbpvHkFazALb9RqwBKuGCVmGO7BLtWsNWzuDDpfqjhy2ta57RgUNLELoMejJUNVq/7HzK3@vger.kernel.org, AJvYcCVHsCTlcbmG6jsOuw/e0/gIsnhr/rVN+vZ/QtDff3xWZyNV6Evl7HZPtwoY05WDEVdlxY0I0WJOpfWR@vger.kernel.org, AJvYcCWBmFOj9KI7HSS7PGiBKawxsp3keWj0+vRt8YqSsVROtLgy1z68DAY0ZFyz8gA3kG5cnQo7Fq8JivTuNGH8@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfZSIiBddGaBa0wWDR2OTa5Eeb+V9KndW6TKg0USZczUMLYlrS
-	GceX7aC1W3zE6qbHHyHupXBlqn1/R94zYCx5sAk2XCPYDAihqY5OTVGgTNoTrFpNaPtLRbi3YDH
-	MePv26CHiPO2mNfGegBr7VFYG9WL1D+k=
-X-Gm-Gg: ASbGncvsjIyHJL/j1yDUx+/h3nBi5cve0bYa1hLG2MoUa7+Ri9BbUDw7KUri4tCf4gh
-	zbhSgD9dOpvYNaVx/lez9m717XJvBHw4mdMf01y6sLNU9gy5za8Ar4lgAQvkEgUOc8vq4qK5R9h
-	tsqLqv6AmqL871i3zRJZ7cYBSscvTk9Nf0Bqe9KjhbZFK9rS/7c9KupxweV2A1xXN7tFfBZ61cK
-	AjlTw==
-X-Google-Smtp-Source: AGHT+IGvaTDOsSIZvcUhUIprekNfw4eqFtn3SKGv+2RTxiz9DQaG05Rg1F9rAYDGp1NHpAqlRVW3X/RQNstQZ3imKo8=
-X-Received: by 2002:a05:690c:308a:b0:71c:16b7:518e with SMTP id
- 00721157ae682-71d4e588b36mr25640677b3.28.1755065767619; Tue, 12 Aug 2025
- 23:16:07 -0700 (PDT)
+	s=arc-20240116; t=1755065854; c=relaxed/simple;
+	bh=QfpgJxt4vVfX9D+LMcaeR3KA7o8uXixB0e3tRfRG5Zc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nlFOaFBOdpQsVDdvIgfkdeiJ4c6xzH1+bE5HKKnkLQ5ZJNb7bquuULIpbqQSGPFZ2Ytkz6VyOSP+aXdvB3kXmsxNLI8ZUFudECrlYxhCPBr0Qd21Qoel4K5h8Zl2vueOWLCmPTIt5Bum2JQwGGHlrGVs2Ha0FwtIHRUOfpYfyLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wYMVt9FF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V08Gn3Bk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755065851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KtqXVv5v+JHh4hPKtb6GPn1kobYikrH7rf3LKQjhTW8=;
+	b=wYMVt9FFhDxcPgWIFLe4gjZWh3nD92Fk1GZuVYRoBEUdrYW7nFUEpZUXelhf2cZX/2ay2K
+	5zaL4M7RmmPaxtPo0x2i88hRg7qlVUia/nMFDQvI/DcY7xXQzUuXVEoaE9qPU8cZG1fyJT
+	J7YNHfm+2C4W2Lk3ygnzxh43m4MNFSYXZHlldZezGZMFBsSEI7X2H4hTBwVqOM0T6RS35l
+	M103rbHY0QrbxTJceq9ytIbDH1Y2aNY777S3q9TtFj+kG3exHlhHLmlEJBwmby8+AdelPI
+	wuI0nWcivmzpJBb32SyqqJal/cpcBPJudqn/yCHWX1aRUX9fMn1AOyOCMG+9GA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755065851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KtqXVv5v+JHh4hPKtb6GPn1kobYikrH7rf3LKQjhTW8=;
+	b=V08Gn3Bk6QVe71pSSuvjs1rWf6GRkuBe4zUelhpBPwQgFeIO6hkvSyxtWBkJOMjiEk8plz
+	NJ6Q9yFiKTuXcaCw==
+Subject: [PATCH v2 0/5] kbuild: uapi: various fixes
+Date: Wed, 13 Aug 2025 08:16:55 +0200
+Message-Id: <20250813-kbuild-hdrtest-fixes-v2-0-8a7921ca3a03@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812055542.1588528-1-krishna.kurapati@oss.qualcomm.com> <20250812055542.1588528-4-krishna.kurapati@oss.qualcomm.com>
-In-Reply-To: <20250812055542.1588528-4-krishna.kurapati@oss.qualcomm.com>
-From: Peter Chen <hzpeterchen@gmail.com>
-Date: Wed, 13 Aug 2025 14:16:21 +0800
-X-Gm-Features: Ac12FXzHVrNJ22jQgp5TTCQxddFQnye2KLkEtZEXVGLumYDMBYwBKhcv7bn2N3Q
-Message-ID: <CAL411-qmWLJ9vYTc+NHFYymsJ27ryge88nTc71NAnzDa7TrExg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] usb: xhci: plat: Facilitate using autosuspend for
- xhci plat devices
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANctnGgC/22NzQ6CMBCEX4Xs2TW0yE88+R6GA2UX2Uha0xaCI
+ by7lcSbx28m38wGgb1wgGu2gedFgjibQJ8y6MfOPhiFEoPOdZk3SuHTzDIRjuQjh4iDrBxQmUF
+ dalMQUQFJfXk+imTe28SjhOj8+3hZ1Df9Der/g4vCHOuOdDdUVU9lc5vEztE7K+uZGNp93z8rT
+ aWTvAAAAA==
+X-Change-ID: 20250811-kbuild-hdrtest-fixes-1bf147b3ddd3
+To: Nathan Chancellor <nathan@kernel.org>, 
+ Nicolas Schier <nicolas.schier@linux.dev>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nicolas Schier <nsc@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755065851; l=1215;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=QfpgJxt4vVfX9D+LMcaeR3KA7o8uXixB0e3tRfRG5Zc=;
+ b=uv1vye0jBorib/+wUdvUerGS9OsvevBn6QwlN9yMu5WVY8ZJAbs1eMOlhdjv5N4Cpq+/Tu87G
+ smOh3E6Mw+WBN2WBwNf1/5sLhwZ1xpLnDoazvSlMAoRA4x/EL0Caxus
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On Tue, Aug 12, 2025 at 1:58=E2=80=AFPM Krishna Kurapati
-<krishna.kurapati@oss.qualcomm.com> wrote:
->
-> Allow autosuspend to be used by xhci plat device. For Qualcomm SoCs,
-> when in host mode, it is intended that the controller goes to suspend
-> state to save power and wait for interrupts from connected peripheral
-> to wake it up. This is particularly used in cases where a HID or Audio
-> device is connected. In such scenarios, the usb controller can enter
-> auto suspend and resume action after getting interrupts from the
-> connected device.
->
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> ---
->  drivers/usb/host/xhci-plat.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-> index 5eb51797de32..dd57ffedcaa2 100644
-> --- a/drivers/usb/host/xhci-plat.c
-> +++ b/drivers/usb/host/xhci-plat.c
-> @@ -171,6 +171,7 @@ int xhci_plat_probe(struct platform_device *pdev, str=
-uct device *sysdev, const s
->                 return ret;
->
->         pm_runtime_set_active(&pdev->dev);
-> +       pm_runtime_use_autosuspend(&pdev->dev);
->         pm_runtime_enable(&pdev->dev);
->         pm_runtime_get_noresume(&pdev->dev);
->
+Various fixes and promotion of warnings to real errors.
 
-There is an xhci quirk XHCI_DEFAULT_PM_RUNTIME_ALLOW for it, try to use it.
+I didn't add Fixes: tags as digging up the original changes would be
+cumbersome as the code moved a lot over the years.
+Backporting this doesn't make sense anyways.
 
-Peter
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Changes in v2:
+- Drop patch "kbuild: uapi: only update hdrtest output on success"
+- Pick up review tags from Nicolas
+- Link to v1: https://lore.kernel.org/r/20250812-kbuild-hdrtest-fixes-v1-0-7ad2af66cd58@linutronix.de
+
+---
+Thomas Weißschuh (5):
+      kbuild: uapi: rerun header tests when headers_check.pl changes
+      kbuild: uapi: fail header test on compiler warnings
+      kbuild: uapi: upgrade warning on asm/types.h inclusion to error
+      kbuild: uapi: upgrade check_sizetypes() warning to error
+      kbuild: uapi: upgrade check_declarations() warning to error
+
+ usr/include/Makefile         | 4 ++--
+ usr/include/headers_check.pl | 9 ++++-----
+ 2 files changed, 6 insertions(+), 7 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250811-kbuild-hdrtest-fixes-1bf147b3ddd3
+
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
