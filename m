@@ -1,82 +1,150 @@
-Return-Path: <linux-kernel+bounces-766601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F975B248DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:53:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4FCB248E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DE13189329B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53F915620AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF4C2FD1B1;
-	Wed, 13 Aug 2025 11:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC6F2F90EC;
+	Wed, 13 Aug 2025 11:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzfVHWRT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vsPo1o3C"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1E22FAC0B;
-	Wed, 13 Aug 2025 11:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A742F83A5
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086020; cv=none; b=Kj1BqNAvG+2rKcoPPkUJENYtLTFb1BX1h2HVhinkwGBJ8/pOhKn09aS4k0JdGcJ1oUTXdkQKyS1JetFJkhVtGZh4HJnWqUBJTphygq3YQz6hWVpetO/YFwvsu+koJ9Bs8mhZIa4q1K8C/RhJJ3Bx0GOgOiyqscGvAx9UUqIePEY=
+	t=1755086125; cv=none; b=B/UMjR31VTo4NdpMQVrTtNbWswW2x/u9q3TgSu5JKlJq3KCuIOtdX7QTVMm9Dq79VooDXydq2n1w1MoSmXB7r49XblJlN+Cv5gOK7Vt8nT5uNVNM6GiRniFxlQ4/VYt2muJZbneCASoaqBkEdGi8Ucqn95OpTRKMjDEpkkH24iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086020; c=relaxed/simple;
-	bh=99v3Uwoa/nOwJ1hZoHDKKGH9HyS5tXk1KKaE58BxJAE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SzpUcRZ4SBxAj5bQ9dvBRQ86ZvGlFcRK7hLJ29Jg1Kw25TWPdyU1XfXu1VlqAvwZvSHCPsJgQNP8eYHcvbd0qI7IpsdMtim2d6i2HZ1Bi9yL8h16lhR0YGKcfvU8LkvFh8t/adG/TYhydlrvXxyMkpt5t0K2TvA2NwI+ugyjV+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzfVHWRT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 508F2C4CEF5;
-	Wed, 13 Aug 2025 11:53:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755086019;
-	bh=99v3Uwoa/nOwJ1hZoHDKKGH9HyS5tXk1KKaE58BxJAE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=tzfVHWRTIjwki9AmMkTJnGUsgE9HZOKt+TtVoK09Nsgwpuqh6rc1KIS83QBcrhRDh
-	 qXiO1tQSolkA9S63vjuRPHSnHdVY0d8ju8sOSDMOwHOv5h51GiradBkbh1C5RpxCXP
-	 SsZ3dNOjbYDhDO/81z5edEkdd89l+pgPtRo5gkQybngVFy42Be8Iw2Pjss7E0ATqbR
-	 dN+6/gzPAMbZgfdTMGBFOAqvLOc24gD5GB9qLi5ckDQnJwQeBg9SARhnxdT3YtFXQ7
-	 D1adyhMHba20PRBk/dofCQ2Mz+4pokFHt+VK4YTm94txKr4niiW6vXYhl492VMmaDn
-	 qXJZzlF5JCpnQ==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Minjong Kim <minbell.kim@samsung.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250813-hid-ntrig-page-fault-fix-v2-1-f98581f35106@samsung.com>
-References: <CGME20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2@epcas1p3.samsung.com>
- <20250813-hid-ntrig-page-fault-fix-v2-1-f98581f35106@samsung.com>
-Subject: Re: [PATCH v2] HID: hid-ntrig: fix unable to handle page fault in
- ntrig_report_version()
-Message-Id: <175508601806.12409.17351034009690656147.b4-ty@kernel.org>
-Date: Wed, 13 Aug 2025 13:53:38 +0200
+	s=arc-20240116; t=1755086125; c=relaxed/simple;
+	bh=4zgPSyly5j+2ic+v/OEjd+JLtCPbpHrod1cPnZveUck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=af8dsTnS3glXvdM+Jp6fsvG9jw1XPHm0MGHDJqYevUc/YnyASNy9tB2Zky8qweNsTWNot/Opflvyo4y6T+C5sjxOcj5uxlmbYqFfSr844fs5D5LGIo6zlKlGj8SdCCCCkyC+fsyVUMPK8dfPlvq4Evu80TQknkgIEiQy93mGoJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vsPo1o3C; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4233d7e9-b563-4c48-beda-b00ac5b4c643@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755086110;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BYpkFazY9ZxpdLr2rax5brD6HKsU3F4bNK5sjQtebPs=;
+	b=vsPo1o3CtAXTJ4hAtFzoFmP5dVRt3poeUDkc/+dwCT+D5Jhbb+SJUsBWYBBgYOBQZ6dU+h
+	XohG+JW4D0XvovWnQljBb67f2HJsTcsQINK0UQBY3RaOAPRZlM8fJLoXvRp600X3Psp2AB
+	VP+wVSHIBuAa+UM7jxlUQg58og662JM=
+Date: Wed, 13 Aug 2025 19:54:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Subject: Re: [PATCH bpf-next v2] bpf: Remove migrate_disable in
+ kprobe_multi_link_prog_run
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20250805162732.1896687-1-chen.dylane@linux.dev>
+ <CAEf4BzZduEdBCzm56zwgrHpzV=CsMbzfVi5oR9w3H4vUQL6FYw@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAEf4BzZduEdBCzm56zwgrHpzV=CsMbzfVi5oR9w3H4vUQL6FYw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 13 Aug 2025 19:30:22 +0900, Minjong Kim wrote:
-> in ntrig_report_version(), hdev parameter passed from hid_probe().
-> sending descriptor to /dev/uhid can make hdev->dev.parent->parent to null
-> if hdev->dev.parent->parent is null, usb_dev has
-> invalid address(0xffffffffffffff58) that hid_to_usb_dev(hdev) returned
-> when usb_rcvctrlpipe() use usb_dev,it trigger
-> page fault error for address(0xffffffffffffff58)
+在 2025/8/13 06:05, Andrii Nakryiko 写道:
+> On Tue, Aug 5, 2025 at 9:28 AM Tao Chen <chen.dylane@linux.dev> wrote:
+>>
+>> bpf program should run under migration disabled, kprobe_multi_link_prog_run
+>> called all the way from graph tracer, which disables preemption in
+>> function_graph_enter_regs, as Jiri and Yonghong suggested, there is no
+>> need to use migrate_disable. As a result, some overhead maybe will be
+>> reduced.
+>>
+>> Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
+>> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+>> Acked-by: Jiri Olsa <jolsa@kernel.org>
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   kernel/trace/bpf_trace.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> Change list:
+>>   v1 -> v2:
+>>    - s/called the way/called all the way/.(Jiri)
+>>   v1: https://lore.kernel.org/bpf/f7acfd22-bcf3-4dff-9a87-7c1e6f84ce9c@linux.dev
+>>
+>> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+>> index 3ae52978cae..5701791e3cb 100644
+>> --- a/kernel/trace/bpf_trace.c
+>> +++ b/kernel/trace/bpf_trace.c
+>> @@ -2734,14 +2734,19 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
 > 
-> [...]
+> even though bpf_prog_run() eventually calls cant_migrate(), we should
+> add it before that __this_cpu_inc_return() call as well, because that
+> one is relying on that non-migration independently from bpf_prog_run()
+> 
 
-Applied to hid/hid.git (for-6.17/upstream-fixes), thanks!
+Hi Andrii,
 
-[1/1] HID: hid-ntrig: fix unable to handle page fault in ntrig_report_version()
-      https://git.kernel.org/hid/hid/c/185c926283da
+There is __this_cpu_preempt_check in __this_cpu_inc_return, and the 
+judgment criteria are similar to cant_migrate, and I'm not sure if it
+is enough.
 
-Cheers,
+>>                  goto out;
+>>          }
+>>
+>> -       migrate_disable();
+>> +       /*
+>> +        * bpf program should run under migration disabled, kprobe_multi_link_prog_run
+>> +        * called all the way from graph tracer, which disables preemption in
+>> +        * function_graph_enter_regs, so there is no need to use migrate_disable.
+>> +        * Accessing the above percpu data bpf_prog_active is also safe for the same
+>> +        * reason.
+>> +        */
+> 
+> let's shorten this a bit to something like:
+> 
+> /* graph tracer framework ensures we won't migrate */
+will change it in v3.
+
+> cant_migrate();
+> 
+> all the other stuff in the comment can become outdated way too easily
+> and/or is sort of general BPF implementation knowledge
+> 
+> pw-bot: cr
+> 
+> 
+>>          rcu_read_lock();
+>>          regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
+>>          old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
+>>          err = bpf_prog_run(link->link.prog, regs);
+>>          bpf_reset_run_ctx(old_run_ctx);
+>>          rcu_read_unlock();
+>> -       migrate_enable();
+>>
+>>    out:
+>>          __this_cpu_dec(bpf_prog_active);
+>> --
+>> 2.48.1
+>>
 -- 
-Benjamin Tissoires <bentiss@kernel.org>
-
+Best Regards
+Tao Chen
 
