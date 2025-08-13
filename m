@@ -1,339 +1,227 @@
-Return-Path: <linux-kernel+bounces-766197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A67F8B2439B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:03:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B473EB243B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452AE16B0CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:00:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D5931889D27
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8362E9EDB;
-	Wed, 13 Aug 2025 08:00:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1651448E3;
-	Wed, 13 Aug 2025 08:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7884D2EA490;
+	Wed, 13 Aug 2025 08:00:41 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4462BCF67
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755072032; cv=none; b=eYLFRB2Ko9FFlAcBs91j980tKZLrT8L6K5dKQldXbVsArohPPP+XrTyPeysJVImWMaAz3R4s6L2xeENJDiVM0BcQ7Je77Ozz5+DjRD1rKXGp9KoFINSeDmK7kPs9wmZiXcp5VLlaMyGMBLCePTuex6X3iWhAZZVDyniny5BfG/Y=
+	t=1755072040; cv=none; b=XINKXXzuRzD/grH3hXFXE5E82/0cTJHlZ2ZwrWBCNKO07OV+62fuhWS8pzQlod6boXn39t7oC3WUQud80KOR/WA7MqbpxknPCNDkzr676mzURsfvBCTWZCd54ZuSr+FeOYTKaRxxAU1iqLs3CnlLj64ePWj/5EKcT8u+5fEekgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755072032; c=relaxed/simple;
-	bh=yVcmQd4KO5KVyZacgaY7/fWYZ34Yd7oXBi80xI4fIDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dCJSRrfXDpInDsFWajN7rmNiKOVFQ24JIvpi+CwOV0Jp3hwWnpxmFR6UTEKnnbZSEz+1asLqIta+z3I3IOLv67f1uVIgUcCyCGwKwGq7KD6t4gNAmn81fant2mD8ulZJ+IxLG6vxOeZaSVhbz+3EEy9SiNL5/weRQMbaYd9veLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5470C113E;
-	Wed, 13 Aug 2025 01:00:15 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AFE63F5A1;
-	Wed, 13 Aug 2025 01:00:19 -0700 (PDT)
-Date: Wed, 13 Aug 2025 10:00:04 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
-Message-ID: <aJxGBHbcCdHjTo-B@arm.com>
-References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
- <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
- <aJnojv8AWj2isnit@arm.com>
- <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
- <aJn_dtWDcoscYpgV@arm.com>
- <CAJ-ks9kECSobk0NX6SXn1US7My028POc=nLmw0AHZGiRUstP2g@mail.gmail.com>
+	s=arc-20240116; t=1755072040; c=relaxed/simple;
+	bh=Cy1GWWDMHLkePeNdZmg6sD8ncrhXRngMBR8t6TyJxqQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S+I8FxVB1ZxgVuR+Iul1oet2f0nrlrafov0cgV3YZM1lziXyxvNOPFZSMt9xFKDSV/WRToptrtrI18ODW7zPzCaX86U0/bJBPKAyDSm2GOpgFgRdm6KDGAoVwIV/ATnlj1OnneIS3CJaf1E9MicOdeXMC5UniFrEp4j8+uad2BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-88174f2d224so625977439f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:00:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755072038; x=1755676838;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9SyPMIf9WPm9Uar843pT5BCzaWI4QvvZ1WxW3gzybo=;
+        b=qxwWSuOSPzbYvKjnD3VmCt8WDnnFBVIh3mtz84giHrWTOO0P2eTyJk1lxMs1ySAORi
+         PR/U7NDUjrh+puId2VuofhJv/YhdnOwj2FEe3TkR0gCbDmys1bz70Nv4sXaxcj/IuuDX
+         uHMlUkkp3YjiLOIGmSqqgY2tffhNzsNEvLMeN0fd65AugbPla84Tl18Y1lbSyV5sXN2e
+         W4tJEVHjKVH2mWhHIn0/HO+OpYYX4RLn8VtUGHN5NxqcWgUI6X+gkOfuk4tPezqegWtl
+         nT4IMbG5JI+ZqKwNMsJAkEDYVe+m54/7EAF6Ur98ZRvTxvhEct7y3ErQh6JZ9sdw4QyU
+         nbrQ==
+X-Gm-Message-State: AOJu0Yyswpvg12TcIL8gj4K3TfEmLh9dTujICollxaTF2aYJUDsEzTNJ
+	UrJtjpGrcGxZmlxw902Ch7iGEEqayaijhYKFQcsosWK1Y6xwi6WMZ9GyuZzS58+ZkjcLQ4kKgK5
+	l68UBHLfd96Y539oRp+85uoDv9wApk7N/4jSe29Avo2lr7TY9tkJaKjxt09uRFg==
+X-Google-Smtp-Source: AGHT+IGdX9TMmhxEPvNIz33M/FJrkfOa4Q7jVayiBfHHVLr/b+W9lr7z7vpufAEqxahUoiHAhC8rsyEpxI+78FeOGD8fiMCbeujU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9kECSobk0NX6SXn1US7My028POc=nLmw0AHZGiRUstP2g@mail.gmail.com>
+X-Received: by 2002:a05:6602:4f10:b0:876:19b9:1aaa with SMTP id
+ ca18e2360f4ac-88429694fe9mr325900939f.9.1755072037972; Wed, 13 Aug 2025
+ 01:00:37 -0700 (PDT)
+Date: Wed, 13 Aug 2025 01:00:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689c4625.050a0220.51d73.00ba.GAE@google.com>
+Subject: [syzbot] [sound?] linux-next test error: general protection fault in snd_seq_oss_midi_check_new_port
+From: syzbot <syzbot+51c1105d06b79f38316d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	linux-sound@vger.kernel.org, perex@perex.cz, sfr@canb.auug.org.au, 
+	syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Aug 11, 2025 at 02:02:59PM -0400, Tamir Duberstein wrote:
-> On Mon, Aug 11, 2025 at 10:35 AM Beata Michalska
-> <beata.michalska@arm.com> wrote:
-> >
-> > On Mon, Aug 11, 2025 at 09:09:56AM -0400, Tamir Duberstein wrote:
-> > > On Mon, Aug 11, 2025 at 8:57 AM Beata Michalska <beata.michalska@arm.com> wrote:
-> > > >
-> > > > Hi Tamir,
-> > > >
-> > > > Apologies for such a late drop.
-> > >
-> > > Hi Beata, no worries, thanks for your review.
-> > >
-> > > >
-> > > > On Sun, Jul 13, 2025 at 08:05:49AM -0400, Tamir Duberstein wrote:
-> > [snip] ...
-> > > > > +/// A reserved slot in an array.
-> > > > > +///
-> > > > > +/// The slot is released when the reservation goes out of scope.
-> > > > > +///
-> > > > > +/// Note that the array lock *must not* be held when the reservation is filled or dropped as this
-> > > > > +/// will lead to deadlock. [`Reservation::fill_locked`] and [`Reservation::release_locked`] can be
-> > > > > +/// used in context where the array lock is held.
-> > > > > +#[must_use = "the reservation is released immediately when the reservation is unused"]
-> > > > > +pub struct Reservation<'a, T: ForeignOwnable> {
-> > > > > +    xa: &'a XArray<T>,
-> > > > > +    index: usize,
-> > > > > +}
-> > > > > +
-> > [snip] ...
-> > > > > +
-> > > > > +impl<T: ForeignOwnable> Drop for Reservation<'_, T> {
-> > > > > +    fn drop(&mut self) {
-> > > > > +        // NB: Errors here are possible since `Guard::store` does not honor reservations.
-> > > > > +        let _: Result = self.release_inner(None);
-> > > > This seems bit risky as one can drop the reservation while still holding the
-> > > > lock?
-> > >
-> > > Yes, that's true. The only way to avoid it would be to make the
-> > > reservation borrowed from the guard, but that would exclude usage
-> > > patterns where the caller wants to reserve and fulfill in different
-> > > critical sections.
-> > >
-> > > Do you have a specific suggestion?
-> > I guess we could try with locked vs unlocked `Reservation' types, which would
-> > have different Drop implementations, and providing a way to convert locked into
-> > unlocked. Just thinking out loud, so no, nothing specific here.
-> > At very least we could add 'rust_helper_spin_assert_is_held() ?'
-> 
-> I don't see how having two types of reservations would help.
-> 
-> Can you help me understand how you'd use `rust_helper_spin_assert_is_held` here?
+Hello,
 
-Probably smth like:
+syzbot found the following issue on:
 
---- a/rust/kernel/xarray.rs
-+++ b/rust/kernel/xarray.rs
-@@ -188,7 +188,12 @@ fn with_guard<F, U>(&self, guard: Option<&mut Guard<'_, T>>, f: F) -> U
-         F: FnOnce(&mut Guard<'_, T>) -> U,
-     {
-         match guard {
--            None => f(&mut self.lock()),
-+            None => {
-+                unsafe {
-+                    bindings::spin_assert_not_held(&(*self.xa.get()).xa_lock as *const _ as *mut _);
-+                }
-+                f(&mut self.lock())
-+            }
-             Some(guard) => {
-                 assert_eq!(guard.xa.xa.get(), self.xa.get());
-                 f(guard)
+HEAD commit:    43c3c17f0c80 Add linux-next specific files for 20250813
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c02c34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c9952dc295dad7ea
+dashboard link: https://syzkaller.appspot.com/bug?extid=51c1105d06b79f38316d
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-but that requires adding the helper for 'lockdep_assert_not_held'.
-That said, it is already too late as we will hit deadlock anyway.
-I would have to ponder on that one a bit more to come up with smth more sensible.
-> 
-> > >
-> > > > > +    }
-> > > > >  }
-> > > > >
-> > > > >  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send` iff `T` is `Send`.
-> > > > > @@ -282,3 +617,136 @@ unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
-> > > > >  // SAFETY: `XArray<T>` serialises the interior mutability it provides so it is `Sync` iff `T` is
-> > > > >  // `Send`.
-> > > > >  unsafe impl<T: ForeignOwnable + Send> Sync for XArray<T> {}
-> > > > > +
-> > > > > +#[macros::kunit_tests(rust_xarray_kunit)]
-> > > > > +mod tests {
-> > > > > +    use super::*;
-> > > > > +    use pin_init::stack_pin_init;
-> > > > > +
-> > > > > +    fn new_kbox<T>(value: T) -> Result<KBox<T>> {
-> > > > > +        KBox::new(value, GFP_KERNEL).map_err(Into::into)
-> > > > I believe this should be GFP_ATOMIC as it is being called while holding the xa
-> > > > lock.
-> > >
-> > > I'm not sure what you mean - this function can be called in any
-> > > context, and besides: it is test-only code.
-> > Actually it cannot: allocations using GFP_KERNEL can sleep so should not be
-> > called from atomic context, which is what is happening in the test cases.
-> 
-> I see. There are no threads involved in these tests, so I think it is
-> just fine to sleep with this particular lock held. Can you help me
-> understand why this is incorrect?
-Well, you won't probably see any issues with your tests, but that just seems
-like a bad practice to start with.
-Within the test, this is being called while in atomic context, and this simply
-violates the rule of not sleeping while holding a spinlock.
-The sleep might be triggered by memory reclaim which might kick in when using
-'GFP_KERNEL' flag. Which is why non-sleeping allocation should be used through
-'GFP_ATOMIC' or 'GFP_NOWAIT'. So it's either changing the flag or moving the
-allocation outside of the atomic section.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8911961a91d3/disk-43c3c17f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d2f0ab430eb7/vmlinux-43c3c17f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1a0d0d7fc76a/bzImage-43c3c17f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+51c1105d06b79f38316d@syzkaller.appspotmail.com
+
+device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+device-mapper: multipath round-robin: version 1.2.0 loaded
+device-mapper: multipath queue-length: version 0.2.0 loaded
+device-mapper: multipath service-time: version 0.3.0 loaded
+Bluetooth: HCI UART driver ver 2.3
+Bluetooth: HCI UART protocol H4 registered
+Bluetooth: HCI UART protocol BCSP registered
+Bluetooth: HCI UART protocol LL registered
+Bluetooth: HCI UART protocol Three-wire (H5) registered
+Bluetooth: HCI UART protocol QCA registered
+Bluetooth: HCI UART protocol AG6XX registered
+Bluetooth: HCI UART protocol Marvell registered
+usbcore: registered new interface driver bcm203x
+usbcore: registered new interface driver bpa10x
+usbcore: registered new interface driver bfusb
+usbcore: registered new interface driver btusb
+usbcore: registered new interface driver ath3k
+Modular ISDN core version 1.1.29
+NET: Registered PF_ISDN protocol family
+DSP module 2.0
+mISDN_dsp: DSP clocks every 80 samples. This equals 1 jiffies.
+mISDN: Layer-1-over-IP driver Rev. 2.00
+0 virtual devices registered
+usbcore: registered new interface driver HFC-S_USB
+intel_pstate: CPU model not supported
+VUB300 Driver rom wait states = 1C irqpoll timeout = 0400
+usbcore: registered new interface driver vub300
+usbcore: registered new interface driver ushc
+iscsi: registered transport (iser)
+SoftiWARP attached
+hid: raw HID events driver (C) Jiri Kosina
+usbcore: registered new interface driver usbhid
+usbhid: USB HID core driver
+usbcore: registered new interface driver es2_ap_driver
+comedi: version 0.7.76 - http://www.comedi.org
+comedi comedi4: comedi_test: 1000000 microvolt, 100000 microsecond waveform attached
+comedi comedi4: driver 'comedi_test' has successfully auto-configured 'comedi_test'.
+usbcore: registered new interface driver dt9812
+usbcore: registered new interface driver ni6501
+usbcore: registered new interface driver usbdux
+usbcore: registered new interface driver usbduxfast
+usbcore: registered new interface driver usbduxsigma
+usbcore: registered new interface driver vmk80xx
+greybus: registered new driver hid
+greybus: registered new driver gbphy
+gb_gbphy: registered new driver usb
+asus_wmi: ASUS WMI generic driver loaded
+gnss: GNSS driver registered with major 493
+usbcore: registered new interface driver gnss-usb
+usbcore: registered new interface driver hdm_usb
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc1-next-20250813-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:snd_seq_oss_midi_check_new_port+0x4a9/0x770 sound/core/seq/oss/seq_oss_midi.c:196
+Code: 2d 4c 51 d3 10 4c 8b 2c 24 4c 89 e8 48 c1 e8 03 48 bb 00 00 00 00 00 fc ff df 0f b6 04 18 84 c0 0f 85 7f 02 00 00 45 89 65 00 <0f> b6 03 84 c0 0f 85 8e 02 00 00 4c 63 3c 25 00 00 00 00 bf 20 00
+RSP: 0000:ffffc90000067038 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffff88801ce90000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000000001f
+RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff5200000cde4 R12: 0000000000000000
+R13: ffff88802e92b400 R14: 0000000000000a02 R15: ffff88802e92b438
+FS:  0000000000000000(0000) GS:ffff888125d10000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000000df36000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ receive_announce+0x22f/0x300 sound/core/seq/oss/seq_oss_init.c:132
+ __snd_seq_deliver_single_event sound/core/seq/seq_clientmgr.c:599 [inline]
+ _snd_seq_deliver_single_event sound/core/seq/seq_clientmgr.c:645 [inline]
+ snd_seq_deliver_single_event+0x8dd/0xc90 sound/core/seq/seq_clientmgr.c:660
+ __deliver_to_subscribers sound/core/seq/seq_clientmgr.c:707 [inline]
+ deliver_to_subscribers sound/core/seq/seq_clientmgr.c:735 [inline]
+ snd_seq_deliver_event+0x538/0x9c0 sound/core/seq/seq_clientmgr.c:785
+ snd_seq_kernel_client_dispatch+0x2c0/0x400 sound/core/seq/seq_clientmgr.c:2407
+ snd_seq_system_broadcast+0x11d/0x170 sound/core/seq/seq_system.c:88
+ snd_seq_ioctl_create_port+0x733/0x950 sound/core/seq/seq_clientmgr.c:1313
+ create_port+0x258/0x360 sound/core/seq/seq_dummy.c:146
+ register_client+0x5d/0x190 sound/core/seq/seq_dummy.c:198
+ do_one_initcall+0x233/0x820 init/main.c:1281
+ do_initcall_level+0x104/0x190 init/main.c:1343
+ do_initcalls+0x59/0xa0 init/main.c:1359
+ kernel_init_freeable+0x334/0x4b0 init/main.c:1591
+ kernel_init+0x1d/0x1d0 init/main.c:1481
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:snd_seq_oss_midi_check_new_port+0x4a9/0x770 sound/core/seq/oss/seq_oss_midi.c:196
+Code: 2d 4c 51 d3 10 4c 8b 2c 24 4c 89 e8 48 c1 e8 03 48 bb 00 00 00 00 00 fc ff df 0f b6 04 18 84 c0 0f 85 7f 02 00 00 45 89 65 00 <0f> b6 03 84 c0 0f 85 8e 02 00 00 4c 63 3c 25 00 00 00 00 bf 20 00
+RSP: 0000:ffffc90000067038 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: ffff88801ce90000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000000000000001f
+RBP: 0000000000000001 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffff5200000cde4 R12: 0000000000000000
+R13: ffff88802e92b400 R14: 0000000000000a02 R15: ffff88802e92b438
+FS:  0000000000000000(0000) GS:ffff888125d10000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000000df36000 CR4: 00000000003526f0
+----------------
+Code disassembly (best guess):
+   0:	2d 4c 51 d3 10       	sub    $0x10d3514c,%eax
+   5:	4c 8b 2c 24          	mov    (%rsp),%r13
+   9:	4c 89 e8             	mov    %r13,%rax
+   c:	48 c1 e8 03          	shr    $0x3,%rax
+  10:	48 bb 00 00 00 00 00 	movabs $0xdffffc0000000000,%rbx
+  17:	fc ff df
+  1a:	0f b6 04 18          	movzbl (%rax,%rbx,1),%eax
+  1e:	84 c0                	test   %al,%al
+  20:	0f 85 7f 02 00 00    	jne    0x2a5
+  26:	45 89 65 00          	mov    %r12d,0x0(%r13)
+* 2a:	0f b6 03             	movzbl (%rbx),%eax <-- trapping instruction
+  2d:	84 c0                	test   %al,%al
+  2f:	0f 85 8e 02 00 00    	jne    0x2c3
+  35:	4c 63 3c 25 00 00 00 	movslq 0x0,%r15
+  3c:	00
+  3d:	bf                   	.byte 0xbf
+  3e:	20 00                	and    %al,(%rax)
 
 
 ---
-I will be off for next week so apologies in any delays in replying.
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-BR
-Beata
-> 
-> >
-> > ---
-> > BR
-> > Beata
-> > >
-> > > >
-> > > > Otherwise:
-> > > >
-> > > > Tested-By: Beata Michalska <beata.michalska@arm.com>
-> > >
-> > > Thanks!
-> > > Tamir
-> > >
-> > > >
-> > > > ---
-> > > > BR
-> > > > Beata
-> > > > > +    }
-> > > > > +
-> > > > > +    #[test]
-> > > > > +    fn test_alloc_kind_alloc() -> Result {
-> > > > > +        test_alloc_kind(AllocKind::Alloc, 0)
-> > > > > +    }
-> > > > > +
-> > > > > +    #[test]
-> > > > > +    fn test_alloc_kind_alloc1() -> Result {
-> > > > > +        test_alloc_kind(AllocKind::Alloc1, 1)
-> > > > > +    }
-> > > > > +
-> > > > > +    fn test_alloc_kind(kind: AllocKind, expected_index: usize) -> Result {
-> > > > > +        stack_pin_init!(let xa = XArray::new(kind));
-> > > > > +        let mut guard = xa.lock();
-> > > > > +
-> > > > > +        let reservation = guard.reserve_limit(.., GFP_KERNEL)?;
-> > > > > +        assert_eq!(reservation.index(), expected_index);
-> > > > > +        reservation.release_locked(&mut guard)?;
-> > > > > +
-> > > > > +        let insertion = guard.insert_limit(.., new_kbox(0x1337)?, GFP_KERNEL);
-> > > > > +        assert!(insertion.is_ok());
-> > > > > +        let insertion_index = insertion.unwrap();
-> > > > > +        assert_eq!(insertion_index, expected_index);
-> > > > > +
-> > > > > +        Ok(())
-> > > > > +    }
-> > > > > +
-> > > > > +    #[test]
-> > > > > +    fn test_insert_and_reserve_interaction() -> Result {
-> > > > > +        const IDX: usize = 0x1337;
-> > > > > +
-> > > > > +        fn insert<T: ForeignOwnable>(
-> > > > > +            guard: &mut Guard<'_, T>,
-> > > > > +            value: T,
-> > > > > +        ) -> Result<(), StoreError<T>> {
-> > > > > +            guard.insert(IDX, value, GFP_KERNEL)
-> > > > > +        }
-> > > > > +
-> > > > > +        fn reserve<'a, T: ForeignOwnable>(guard: &mut Guard<'a, T>) -> Result<Reservation<'a, T>> {
-> > > > > +            guard.reserve(IDX, GFP_KERNEL)
-> > > > > +        }
-> > > > > +
-> > > > > +        #[track_caller]
-> > > > > +        fn check_not_vacant<'a>(guard: &mut Guard<'a, KBox<usize>>) -> Result {
-> > > > > +            // Insertion fails.
-> > > > > +            {
-> > > > > +                let beef = new_kbox(0xbeef)?;
-> > > > > +                let ret = insert(guard, beef);
-> > > > > +                assert!(ret.is_err());
-> > > > > +                let StoreError { error, value } = ret.unwrap_err();
-> > > > > +                assert_eq!(error, EBUSY);
-> > > > > +                assert_eq!(*value, 0xbeef);
-> > > > > +            }
-> > > > > +
-> > > > > +            // Reservation fails.
-> > > > > +            {
-> > > > > +                let ret = reserve(guard);
-> > > > > +                assert!(ret.is_err());
-> > > > > +                assert_eq!(ret.unwrap_err(), EBUSY);
-> > > > > +            }
-> > > > > +
-> > > > > +            Ok(())
-> > > > > +        }
-> > > > > +
-> > > > > +        stack_pin_init!(let xa = XArray::new(Default::default()));
-> > > > > +        let mut guard = xa.lock();
-> > > > > +
-> > > > > +        // Vacant.
-> > > > > +        assert_eq!(guard.get(IDX), None);
-> > > > > +
-> > > > > +        // Reservation succeeds.
-> > > > > +        let reservation = {
-> > > > > +            let ret = reserve(&mut guard);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            ret.unwrap()
-> > > > > +        };
-> > > > > +
-> > > > > +        // Reserved presents as vacant.
-> > > > > +        assert_eq!(guard.get(IDX), None);
-> > > > > +
-> > > > > +        check_not_vacant(&mut guard)?;
-> > > > > +
-> > > > > +        // Release reservation.
-> > > > > +        {
-> > > > > +            let ret = reservation.release_locked(&mut guard);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            let () = ret.unwrap();
-> > > > > +        }
-> > > > > +
-> > > > > +        // Vacant again.
-> > > > > +        assert_eq!(guard.get(IDX), None);
-> > > > > +
-> > > > > +        // Insert succeeds.
-> > > > > +        {
-> > > > > +            let dead = new_kbox(0xdead)?;
-> > > > > +            let ret = insert(&mut guard, dead);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            let () = ret.unwrap();
-> > > > > +        }
-> > > > > +
-> > > > > +        check_not_vacant(&mut guard)?;
-> > > > > +
-> > > > > +        // Remove.
-> > > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xdead));
-> > > > > +
-> > > > > +        // Reserve and fill.
-> > > > > +        {
-> > > > > +            let beef = new_kbox(0xbeef)?;
-> > > > > +            let ret = reserve(&mut guard);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            let reservation = ret.unwrap();
-> > > > > +            let ret = reservation.fill_locked(&mut guard, beef);
-> > > > > +            assert!(ret.is_ok());
-> > > > > +            let () = ret.unwrap();
-> > > > > +        };
-> > > > > +
-> > > > > +        check_not_vacant(&mut guard)?;
-> > > > > +
-> > > > > +        // Remove.
-> > > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xbeef));
-> > > > > +
-> > > > > +        Ok(())
-> > > > > +    }
-> > > > > +}
-> > > > >
-> > > > > --
-> > > > > 2.50.1
-> > > > >
-> > > > >
-> > >
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
