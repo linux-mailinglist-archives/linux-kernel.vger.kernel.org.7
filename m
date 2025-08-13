@@ -1,143 +1,153 @@
-Return-Path: <linux-kernel+bounces-766673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7380B249D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:52:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC80B249CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D595651F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:51:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21FB37AE7EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F2222E54AF;
-	Wed, 13 Aug 2025 12:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45982E5B11;
+	Wed, 13 Aug 2025 12:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q/LhzmOq"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="G/lvod9q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40D52D8DA9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D700D1547D2;
+	Wed, 13 Aug 2025 12:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089461; cv=none; b=YU9jdysle6sb93g/5hjlXkPOw4BgeziEN/s5E+Eh9cSmvNFYRlVIIHLXOFz2IZBH6ZnmgRPpIEJvXg69KVOLwepM5V+RfDSA7tb9IsG3/jFyinwd4uKmfWwODrEN8bBfchzdaADZ8J1EB6ut/Ec5a9JMLhq/ZS/1IstuLmgTO3I=
+	t=1755089453; cv=none; b=CknsgSvJgl1Zh59hOpLfYfRAuYQ8Yj5W7+EKf2yXWOrz5e8imxfb6zSuccQ2tQBFvqBeTWmzReWKClmzTMSky6SgpA8IJGIvWbWtVyCTiw6oyekgq/6qiVJvCyugJGYteJ1vkIQXGyjVVRUtG8PqUu6xsIR19d+zD2ab/ou76/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089461; c=relaxed/simple;
-	bh=1mEvOwuGqfTYDuFOmwLuUyhYUugJ+1L9vpE9h3V0eng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CQQSMb+pFMcMATn+vYbN2xI0en1pshSg/UEfo6eShd2tTFSuw7SWjo1N1HawE5xwQA6UGgKNbWWa5KxyO5Gw5/3sLnXiUFq/e8GaP28j0OB1MKfh2A9Ejq0RCjvBXW7Mm9NNbl7AcpizFxiwUNpPAm/CC7MiQt/l/XaA5sm0WzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q/LhzmOq; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <354593d1-2504-407e-98fb-235fcaf61d87@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755089448;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ON+Suyp0vdzeVZdTNkxeac41hq4WWrAXP09hCZflvbY=;
-	b=q/LhzmOqykaaTSRVE2F2sCxJbH1OwRrsg6Fq+7/6vcTBQkbqF8kOIrJ61lIHgvL/qA+q7/
-	wgAI/yICZ+7sxMuvbjo9Vuy3Koi2o497fk1NpX4Gj7jB1EuYErANawjPdlp/WN03FYEKOs
-	+cOABvN8HqJxM+BT7LPCEhAczUrKgyM=
-Date: Wed, 13 Aug 2025 13:50:34 +0100
+	s=arc-20240116; t=1755089453; c=relaxed/simple;
+	bh=1sFEp7tfTZsLqsEbQ6yN/DfqybrcqHWTfRSt7pluUnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WBMMPo6Dgs6KU48wanigWveFyU0ke3mw2WIRfJXi/Mywb36at153DHjZEIkG+6kzcYj2lurLyu3X1P3PtOxZeqOeqEzjvpyLN71JdgAnnF82zg+d0ECUUsVAapadPWOLvhYbau4YaAlmXXrz5wHh12dolrQbIE4C3mtxv7z6epw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=G/lvod9q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B4EC4CEF6;
+	Wed, 13 Aug 2025 12:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755089452;
+	bh=1sFEp7tfTZsLqsEbQ6yN/DfqybrcqHWTfRSt7pluUnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/lvod9qaNFe8MgiqMNtSrnZl6ICr4ny7PsTyyOhzVZeCv/MZyhfDLlgNxCv37Z7r
+	 GYSIKBF/pteVt/vjuJB94/MdSefsCgRAQaRxWEIW2/awDVXuZZFSfXB+5rMnnQexLI
+	 cxOX0SSrpyCPB+x6DMMiVzgiv5VergRxG6Bl2MhE=
+Date: Wed, 13 Aug 2025 14:50:49 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org, qemu-devel@nongnu.org,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
+	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org,
+	Zhang Yi <yi.zhang@huaweicloud.com>,
+	Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-ext4 <linux-ext4@vger.kernel.org>
+Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
+Message-ID: <2025081300-frown-sketch-f5bd@gregkh>
+References: <20250812173419.303046420@linuxfoundation.org>
+ <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 5/5] net: rnpgbe: Add register_netdev
-To: Yibo Dong <dong100@mucse.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
- gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
- danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
- geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
- lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-6-dong100@mucse.com>
- <e410918e-98aa-4a14-8fb4-5d9e73f7375e@linux.dev>
- <B41E833713021188+20250813090405.GC965498@nic-Precision-5820-Tower>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <B41E833713021188+20250813090405.GC965498@nic-Precision-5820-Tower>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
 
-On 13/08/2025 10:04, Yibo Dong wrote:
-> On Tue, Aug 12, 2025 at 04:32:00PM +0100, Vadim Fedorenko wrote:
->> On 12/08/2025 10:39, Dong Yibo wrote:
->>> Initialize get mac from hw, register the netdev.
->>>
->>> Signed-off-by: Dong Yibo <dong100@mucse.com>
->>> ---
->>>    drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 22 ++++++
->>>    .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 73 ++++++++++++++++++
->>>    drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  1 +
->>>    .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 76 +++++++++++++++++++
->>>    4 files changed, 172 insertions(+)
->>>
->>> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
->>> index 6cb14b79cbfe..644b8c85c29d 100644
->>> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
->>> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
->>> @@ -6,6 +6,7 @@
->>>    #include <linux/types.h>
->>>    #include <linux/mutex.h>
->>> +#include <linux/netdevice.h>
->>>    extern const struct rnpgbe_info rnpgbe_n500_info;
->>>    extern const struct rnpgbe_info rnpgbe_n210_info;
->>> @@ -86,6 +87,18 @@ struct mucse_mbx_info {
->>>    	u32 fw2pf_mbox_vec;
->>>    };
->>> +struct mucse_hw_operations {
->>> +	int (*init_hw)(struct mucse_hw *hw);
->>> +	int (*reset_hw)(struct mucse_hw *hw);
->>> +	void (*start_hw)(struct mucse_hw *hw);
->>> +	void (*init_rx_addrs)(struct mucse_hw *hw);
->>> +	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
->>> +};
->>> +
->>> +enum {
->>> +	mucse_driver_insmod,
->>> +};
->>> +
->>>    struct mucse_hw {
->>>    	void *back;
->>>    	u8 pfvfnum;
->>> @@ -96,12 +109,18 @@ struct mucse_hw {
->>>    	u32 axi_mhz;
->>>    	u32 bd_uid;
->>>    	enum rnpgbe_hw_type hw_type;
->>> +	const struct mucse_hw_operations *ops;
->>>    	struct mucse_dma_info dma;
->>>    	struct mucse_eth_info eth;
->>>    	struct mucse_mac_info mac;
->>>    	struct mucse_mbx_info mbx;
->>> +	u32 flags;
->>> +#define M_FLAGS_INIT_MAC_ADDRESS BIT(0)
->>>    	u32 driver_version;
->>>    	u16 usecstocount;
->>> +	int lane;
->>> +	u8 addr[ETH_ALEN];
->>> +	u8 perm_addr[ETH_ALEN];
->>
->> why do you need both addresses if you have this info already in netdev?
->>
+On Wed, Aug 13, 2025 at 05:46:26PM +0530, Naresh Kamboju wrote:
+> Long story:
+> 1)
+> The perf gcc-13 build failed on x86_64 and i386.
 > 
-> 'perm_addr' is address from firmware (fixed, can't be changed by user).
-> 'addr' is the current netdev address (It is Initialized the same with
-> 'perm_addr', but can be changed by user)
-> Maybe I should add 'addr' in the patch which support ndo_set_mac_address?
+> Build regression: qemu-arm64 ARM64_64K_PAGES ltp syscalls swap fsync
+> fallocate failed.
+> 
+> > Ian Rogers <irogers@google.com>
+> >     perf topdown: Use attribute to see an event is a topdown metic or slots
+> 
+> Build error:
+> 
+> arch/x86/tests/topdown.c: In function 'event_cb':
+> arch/x86/tests/topdown.c:53:25: error: implicit declaration of
+> function 'pr_debug' [-Werror=implicit-function-declaration]
+>    53 |                         pr_debug("Broken topdown information
+> for '%s'\n", evsel__name(evsel));
+>       |                         ^~~~~~~~
+> cc1: all warnings being treated as errors
 
-But why do you need 'addr' at all? Current netdev address can be
-retrieved from netdev, why do you need to store it within driver's
-structure?
+Already fixed.
 
+> 2)
+> 
+> The following list of LTP syscalls failure noticed on qemu-arm64 with
+> stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
+> 
+> Most failures report ENOSPC (28) or mkswap errors, which may be related
+> to disk space handling in the 64K page configuration on qemu-arm64.
+> 
+> The issue is reproducible on multiple runs.
+> 
+> * qemu-arm64, ltp-syscalls - 64K page size test failures list,
+> 
+>   - fallocate04
+>   - fallocate05
+>   - fdatasync03
+>   - fsync01
+>   - fsync04
+>   - ioctl_fiemap01
+>   - swapoff01
+>   - swapoff02
+>   - swapon01
+>   - swapon02
+>   - swapon03
+>   - sync01
+>   - sync_file_range02
+>   - syncfs01
+> 
+> Reproducibility:
+>  - 64K config above listed test fails
+>  - 4K config above listed test pass.
+> 
+> Regression Analysis:
+> - New regression? yes
+
+Regression from 6.16?  Or just from 6.15.y?
+
+> 3)
+> 
+> Test regression: stable-rc 6.16.1-rc1 WARNING fs jbd2 transaction.c
+> start_this_handle
+> 
+> Kernel warning noticed on this stable-rc 6.16.1-rc1 this regression was
+> reported last month on the Linux next,
+> 
+> - https://lore.kernel.org/all/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
+
+Ok, no real regression here if this was already in 6.16.
+
+Doesn't look like it got fixed in 6.17-rc1 either :(
+
+thanks,
+
+greg k-h
 
