@@ -1,56 +1,68 @@
-Return-Path: <linux-kernel+bounces-767130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79924B24FD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8214B24F97
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:25:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33E955E149B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203F29A3E0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB1729E0F5;
-	Wed, 13 Aug 2025 16:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9402BD033;
+	Wed, 13 Aug 2025 16:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SK45sVxt"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ISvYTgWh"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F6C29ACC0
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA40B1F582E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755101800; cv=none; b=mOmSTEKrW8dsdpnz5jqL1eXccSpscKUcIdXpmf2z5kpe6rC3lgEW16QevVVJgbtr1VfmJ6TvBzxhA3pVXaKEBOkXM8bw1QpBJq6qF02KP7+djoyT+T/b9ewKfX2s/BEvT1AhgY5fnF72NDpe1D39sQyJDXVdd7zECVDIU4Gus8E=
+	t=1755101801; cv=none; b=jessD/GliIPuqidGuq5A3qUvyANgSib6prXLJKJD0e3b67V/ImqLN55JN/QLHWQEquk1p00AF6HZC8COsfYZGRPmfUKh6iPQ1VyldpkcI4IcaYjykhtWnexXCzuYhtZyJ4UwZbaTQdNMCe3g8xp7iuSI1fSTjAqXy7vE+sddWss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755101800; c=relaxed/simple;
-	bh=p8MWpyF+PHQFJ6hSzygfVCYmm1+i2ZjBlY5werjyLWY=;
+	s=arc-20240116; t=1755101801; c=relaxed/simple;
+	bh=dXAFOJV0SGBUatGoNYRvGk5QTJnQjgRKttoy4t0T+eg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BdsPhuYMlwLd+JCB2zgevNL8Hm9ESllUPtOhJNH94IK4IhEhsYmWtV5QiuhqzHobiEDswIrX3S4N7QrI4T01UW3dNy8xEL0YJu+xkqvkexulHaGmmst+zDjKF2BOHq8uqyGyAF1Ls8HNV9mu8wm0hFy/Kvk89Pqe9DYxGg8JPk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SK45sVxt; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=HElOCl8sG57QZJRSNTwLMXYNB5Y+5+Xhw2ZYDQRa595N0P0/hG4WrLYdKZALb9bvYLrKOq6TBwcQEVdFsoWxDcia7KAsauUt6i44Imy+Q4ZaZVfV/kZ6ga7HIE7m/ElXwkoaFJw6cnQqKmMhcJS4efZYwP6+xnaxPNlvcXOd0bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ISvYTgWh; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=dm4NvC8GSXuhdaV/btFqQyJwzxLFYpkxbFGHw5QCyZU=; b=SK45sV
-	xt7nlwH5wnSIOQ1QOEGOrI1D60TB7eUuKp1UDyCRiOiM2jV824rcwUUqq2bd1svg
-	Epg8HB+PWDa2CCFII1ikbTOKeD/rJobi1UIHpk1IaBOjTI4FqM2g8o92xeDOS57A
-	JlXyKvmMUwZFrEqIwRQtvsj9WH2y2pL8lq/NrOSjEskTxH+afZzhaDTX5aU0iUMR
-	JMB4wFP0IDbU09xZM/lomdAcGS6zUZr0+pPNl4qsWRnkN4Ord7mPIXNmBR3Q0CHI
-	pdQHonNWtXP4LixJmmrjltHRKjydQR2PAn/kGTT4VgrIxsfipavRCv3gXqjcgwd5
-	bgLwm4g8TORkviuw==
-Received: (qmail 695769 invoked from network); 13 Aug 2025 18:16:31 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Aug 2025 18:16:31 +0200
-X-UD-Smtp-Session: l3s3148p1@JEDDekE8EL1tKLKq
+	 s=k1; bh=rSNYE0+8wGItL53UywO960XlXbzNXz6cVLTWx6ycvcQ=; b=ISvYTg
+	WhDGx+Wy35plAXwYUFhPtCCl8PJ7ohyke+YARSl/rdaBMTQW3aCYHG03tjxQ3RL5
+	lS+Qt6fczyFDZiUyiSsLcOqjcPnHweE45GquDtv3yDwOOfJeYqX+FO04280N2not
+	qNchAZ5650rZh7EQu6rRzKGoSADIcpQhBz80xUCVduS4Du5I+EMJhGuv8Yq0Z39i
+	5J72ESW08BF/zWZ9VMrTzGrzFYsdgA8xRK1ieDgD1AMY0mQvc1NIvwMO8n3wT90R
+	7v2ibIbmJc/R/xdY1JWKehrd2NVpNVmXDKcn9IwCnPHabtpqVE+Y8XbYFgnTkCz+
+	TRfrV52Gre5fOrPA==
+Received: (qmail 695845 invoked from network); 13 Aug 2025 18:16:32 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Aug 2025 18:16:32 +0200
+X-UD-Smtp-Session: l3s3148p1@1HHeekE8Er1tKLKq
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: Mark Brown <broonie@kernel.org>,
 	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-spi@vger.kernel.org
-Subject: [PATCH 19/21] spi: remove unneeded 'fast_io' parameter in regmap_config
-Date: Wed, 13 Aug 2025 18:15:05 +0200
-Message-ID: <20250813161517.4746-20-wsa+renesas@sang-engineering.com>
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Vasily Khoruzhick <anarsoul@gmail.com>,
+	Yangtao Li <tiny.windzz@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev
+Subject: [PATCH 20/21] thermal: remove unneeded 'fast_io' parameter in regmap_config
+Date: Wed, 13 Aug 2025 18:15:06 +0200
+Message-ID: <20250813161517.4746-21-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
 References: <20250813161517.4746-1-wsa+renesas@sang-engineering.com>
@@ -70,21 +82,34 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 No dependencies, can be applied directly to the subsystem tree. Buildbot is
 happy, too.
 
- drivers/spi/spi-altera-platform.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/thermal/armada_thermal.c | 1 -
+ drivers/thermal/sun8i_thermal.c  | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/drivers/spi/spi-altera-platform.c b/drivers/spi/spi-altera-platform.c
-index 585393802e9f..e163774fd65b 100644
---- a/drivers/spi/spi-altera-platform.c
-+++ b/drivers/spi/spi-altera-platform.c
-@@ -30,7 +30,6 @@ static const struct regmap_config spi_altera_config = {
+diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+index c2fbdb534f61..252d5afecea1 100644
+--- a/drivers/thermal/armada_thermal.c
++++ b/drivers/thermal/armada_thermal.c
+@@ -722,7 +722,6 @@ static const struct regmap_config armada_thermal_regmap_config = {
  	.reg_bits = 32,
  	.reg_stride = 4,
  	.val_bits = 32,
 -	.fast_io = true,
  };
  
- static int altera_spi_probe(struct platform_device *pdev)
+ static int armada_thermal_probe_legacy(struct platform_device *pdev,
+diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
+index 22674790629a..284684137c43 100644
+--- a/drivers/thermal/sun8i_thermal.c
++++ b/drivers/thermal/sun8i_thermal.c
+@@ -149,7 +149,6 @@ static const struct regmap_config config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+-	.fast_io = true,
+ 	.max_register = 0xfc,
+ };
+ 
 -- 
 2.47.2
 
