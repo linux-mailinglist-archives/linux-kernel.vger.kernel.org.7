@@ -1,224 +1,128 @@
-Return-Path: <linux-kernel+bounces-766687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2DCB249F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:58:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93334B249FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0344C7A7B4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E413AF211
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11E92E62B0;
-	Wed, 13 Aug 2025 12:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B585A2E54D8;
+	Wed, 13 Aug 2025 12:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QpaDS/l6"
-Received: from mail-yb1-f196.google.com (mail-yb1-f196.google.com [209.85.219.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6tFPUHG"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9E92D4B66;
-	Wed, 13 Aug 2025 12:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D034A2D0C60;
+	Wed, 13 Aug 2025 12:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089893; cv=none; b=jFp94oRH+1yaBLyMDLKT8ZwC2pKJBsgbEMRho4HJddnPbro87vTdKnGbPLm1i4ijIafF09W9Tv/YT+RYFtEfmnzrh5tSxitx1jXmDkS7tVmCLTEyib/lrgSmKMvo5iE9rtXKXKNbPA9mD8VwvBHE29plWSBzvNJh1iitdUp1XmQ=
+	t=1755089892; cv=none; b=CX7Jh42F96awUN0tU4FlWiZFWwjYs/4Eo/DPvkii/mvtBHbgUICPHnsSWKPAnfHUErEyBbG579oWz2ombb8Og/AG+uOgndUvnyeWnIrugGSHhvw4QmQwGhDBC/18mZlXdxhq9vHYyzpFhrIm08ZpQdhpn2isf2ufVmjdBMjiuGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089893; c=relaxed/simple;
-	bh=Ol9h+nGBCMOLYE0+Ii6+Lbkj08Z0st/zWgFlhXOqVHs=;
+	s=arc-20240116; t=1755089892; c=relaxed/simple;
+	bh=tPbvYfvEEkJ90+feIIjnsSLo4M1qFBVXPPnHurj+jCk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L43ZC6hHkt+V5mqsRBho44OecI8gOYb+lxfVPfB7p+mRwwnjBCIbLb46AattuhNJqFFwwtG/lNHw9hnRP7Kv4j53dgMGZM0x8NsohTmsZDRbAZ2RoxMj9FPzye4J23cUUBAeQL0b9rKko8K4AsyhzNGcbWd/4gC5UP2Sxlb/kmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QpaDS/l6; arc=none smtp.client-ip=209.85.219.196
+	 To:Cc:Content-Type; b=O8fOYE6PMD6Vw1lXEEn3IGP4Fs4evxso8EJUH4IBPYM9gyUNf0qbeXoEZPrHSp3KIWQ3ae7mO4z5dEmRu0TswlVg2CFslCE/sZyn4F1/IvvhQEIGIa1VDG11cBwqE7+/GOq5nIHnBfm04D+riTOhNl2FqpwztHiEry/9VyyMz6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S6tFPUHG; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f196.google.com with SMTP id 3f1490d57ef6-e75668006b9so6494348276.3;
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24286ed4505so12155575ad.3;
         Wed, 13 Aug 2025 05:58:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1755089890; x=1755694690; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TqNRsOjLtroEZv4Oe4QfFtLa60PVWLIcKwoN/xz6KB8=;
-        b=QpaDS/l6tRvby+YwUTxhpLw9uYVcLGA8dHnSYzqYjXDbR9E2sLxmoQ/A+kbwMwBC7v
-         NfFe89OeokJTNwhujVtugY/EXLIkR8fV0m1TSDxz/rQlwDO2gdcBtffhcqNLoIUpAqDx
-         2/CiH2foY3+iEaHLAVwxNrL3uSCdT9kPPtvFNVQlANBWYhOzEQtPIL0yC/CTWKkK8vsY
-         f0gxl9bjEhXkT3plRXl0iR13cPpIF8iaLszYlaKOq3UwDpvPMgtrNhItlRth5tui11Ny
-         YB/sxP23+tDXcVbQGqjz9JPyG1mzHW2OGOA2gB/wKxZ/2I+HTgersCQjKKgOJVQJ2vZk
-         jlQA==
+        bh=yhZ15xnNJ8Bsb5/U+nfBs12IH7lId86EXWsj3N0wAEw=;
+        b=S6tFPUHGbGIGW453LdibTjvxOrixs0IIUtZN4gG31KkeJwALt/UTJBSFZ4huex4YPx
+         nUzBlDjP09kBIawXpW9POAPSaehPH9zPJ4tFtDU5GfPw+ypm8HvoVRmvikCSf3NgqTtn
+         B6Slo+f4/smuKgQeflnXpQjHLBwA/nf5nYfMh6pf7QdpTDsf/Prg3pAP/zhf5+UNsFkY
+         EoLZGAgqr2Omk3s9c8apjjd1ao63eLJLkrq78QedLIF55ZrnSAqOm662iIPMfmZQ0DqV
+         9gnNyOSxQhDXLrI4ZTKhIamTTwadS4kEHJqZzo7ha8cek2i//XpPlY+EMTmy3L5epA77
+         U0yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1755089890; x=1755694690;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TqNRsOjLtroEZv4Oe4QfFtLa60PVWLIcKwoN/xz6KB8=;
-        b=IHqTqev/v0OdHd3KCYDzrRDFO+eLFWwOroGO/ZvTmFROC6Ssk36Dol7Nlchx55cx6V
-         Il+k8Gc9ADPldCw4AkjGIC7ONxeRJ4ov9I5iDtcF8iGqzbFBb0t7qP9F/b3lP4MUKQ4E
-         zGxxg12/Dto3pTllXF1nr/GA0dXhWrkSSTGMYKZQnVJuQoxv+/3+zH/bEPCSKYR4WEUu
-         w6RmDg2Ffa3b0sXtR7d63BDC4tPmHol1PSb0FDmQj84rVUCujsLZW5JaVzRJiMT6p76R
-         MDMF/eO0h/gYcFttqMc6I0eBoUBTDSviUzQCgBs3KO+gGsrujd9jy03AlXPyBaqaoZ34
-         deqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjnIXHLB7/v2AOAvGvbaWLle3XmPoplStK5O9sCQqjje9zFciEXAxcXoOWMIPc4J+fcPAa0qGTDzzlpwK8jP+P@vger.kernel.org, AJvYcCVkW5Vvnnpz58WO13BlmtbfHPHjKyDZydl8dIxOgSJahBh7dWWfjYWQioHM1wHvf3VIl9mrspKg@vger.kernel.org, AJvYcCVoW2lRJuSwrpUHSXK742ysHEGj9zUIfldZW66Zfs14chGfTdjHYGNBO1N1jAUuGmKQItqHd23cKYok4HA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8vTYDIiQCOYFNg+RwRTsT3EfPXYcf9YgY0IAH416eATgVe2Es
-	9FovWIe+pnH/uLWunqpkzPZ1+sryNI08k3UKSJTtv4Brf2TcGN/tv8dam9/9cj3YpPFvxoNa6wO
-	OFz/r52WpGYwTIfmdnj4resV7Fg34yUJlO2UMeU9ppg==
-X-Gm-Gg: ASbGncsfsiFYpFaplMgBgh4MXoyuOMb2albmtAVy8GeueyPGd1LXTOukOCXdOEGX6IA
-	jCBZOZuFVUtdz3H0hqGc75JXtxsKhCobrmItbHOTnYi3BmQhNDgJXq6pmJLY8uOy6qqMoTiaqdp
-	9zlyBG7dbRK+tzpfiH6nqPqh7QYh25ec0ts8LYr0sz35EDYcOlmYTCvkWep9UGr/xmqWXh4JaQM
-	JpUy+g=
-X-Google-Smtp-Source: AGHT+IF0/WQgcQsmP7Lpp0cHFMwoDHWDq1xvfOoXY6DiToQuz6uPEEQib8bealhu2P1sBY77o9ggpclq+KreOnrrnU8=
-X-Received: by 2002:a05:6902:3201:b0:e90:6d24:6741 with SMTP id
- 3f1490d57ef6-e930c0b28a6mr3273573276.31.1755089888473; Wed, 13 Aug 2025
- 05:58:08 -0700 (PDT)
+        bh=yhZ15xnNJ8Bsb5/U+nfBs12IH7lId86EXWsj3N0wAEw=;
+        b=EzYmdW6n2Y7XcTskYKiTdmqiJNjUtsv4t5rx1HSCxo8kC0WDzHaVwhiNKDpWE3y57E
+         4r/H7+lIPVTzp8k4/IgfKvSjFedgUJeqZI7S10w6lR8hRdpoFwy2ZtGmWF1IgJqKEhf6
+         J7DJ4+WnC5SfBUmWGaiv1BU/Zb0QiXJ0J4y1yKfJEojG7blNsrTswnkvfIi+LR09N+wo
+         w4x92OC+Ain913rAT8gcDKNAGWzBQupn//WE1GmTttyn6i1c/V5OanR5wYawY5hmz9/I
+         bWx9s90A3FfV3ZbdeZZpDHv2eqiyV6hyn2IpO+wfFCEvYsmBTiNhRRlTc+ToUzHB3nRF
+         GYfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDGAkNuqifMmQKtyCjNgIO3VDHYQ4BuwSiepC5MILYrL1PUiBHNtIXcIsY3PHsvkR6Trw5n50maEZAibiL@vger.kernel.org, AJvYcCUVGjAmymR5VtAuVVUj7ScAMiXX/66PpO4xIWlM9MD40Zqku+o7OS22bzq5tb208mAsebqYn25GPsu4yGARwe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIMjzVYCtzM1jtKhlPCxZQoD4APECEw3I/Ov/2IiCkOLHm0jWS
+	R5hpTmkGF1sttN9JWJPgxLtGSTzXMUZLPRes+dXYRbg72XiDCA1uymTqlKjmb34ZFL4pZegd6GC
+	OC2BH+T8WpxLTJT8hMU1wCrz1P7UozPI=
+X-Gm-Gg: ASbGncvloDN1d1l1e0Ft3Dy5RneiElcpRGEfbj1BAK66WMO6VEPt3d/NyQlyEDD76if
+	nRdYiNQVi8NRWvRjqxSbYHAVgVukE+jFjsI+YDuS0o2SR7kgpQLWhif/NFOWtmIO+1KOgNjqvAS
+	772wkVvVVDu3Jqmhz8SNLQiwBegp0yi7P3lOUOwyu0O3ScNYvSLYvyCNhsmX52YXIIMPp2OhKEB
+	pRx/1gsNIfzAZw4Fg==
+X-Google-Smtp-Source: AGHT+IHxKxef7KDAWgS57IBEethaxaid8oH0xBLj3YbbIW+PZKZlovPj9KRyOv5FJHyzY2EunVMbuo8q9l8uWKWf3Bg=
+X-Received: by 2002:a17:902:d487:b0:240:280a:5443 with SMTP id
+ d9443c01a7336-2430d0fb768mr20500475ad.3.1755089889907; Wed, 13 Aug 2025
+ 05:58:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250802092435.288714-1-dongml2@chinatelecom.cn>
- <20250802092435.288714-3-dongml2@chinatelecom.cn> <CAAVpQUBAk=339yyCnG+hDnHEu-O1+WPnAVqX=X9H22T=POQ3Bg@mail.gmail.com>
-In-Reply-To: <CAAVpQUBAk=339yyCnG+hDnHEu-O1+WPnAVqX=X9H22T=POQ3Bg@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 13 Aug 2025 20:57:57 +0800
-X-Gm-Features: Ac12FXwQCR5tMTH-ADrBdjohJDem4F0tNhlvz5HXZURLgMes4v5lEbOlN3hrJSg
-Message-ID: <CADxym3a1cp3kT2UTaQ7kmqEH7_xmKA_PZ7yJEoY3hLeJ05wNCA@mail.gmail.com>
-Subject: Re: [PATCH net v3 2/2] selftests/net: test TCP reuseport socket selection
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: edumazet@google.com, ncardwell@google.com, davem@davemloft.net, 
-	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	shuah@kernel.org, kraig@google.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <Z678TNhCbTk363Tw@kspp> <864c7dd5-0deb-4adb-a1cf-c8a809514d7e@embeddedor.com>
+ <217b00f5-d03d-4624-9ba9-d838199ef7b9@embeddedor.com> <CADnq5_M5Jv4A5CXAKY2Qd-dhrfmecnauRtVY_ghSsut7i=KNww@mail.gmail.com>
+ <d07b4edc-6048-4c10-b8ac-dcccd5a932d3@embeddedor.com> <d43dac3e-122d-4c16-9c1e-760eac91b8da@embeddedor.com>
+In-Reply-To: <d43dac3e-122d-4c16-9c1e-760eac91b8da@embeddedor.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 13 Aug 2025 08:57:58 -0400
+X-Gm-Features: Ac12FXwFErwxayzzgdklN7bkoaoY4WArV4IyBD4hoWJZTycIfvcToKy2nH1H0nY
+Message-ID: <CADnq5_Mqa2HWWKrAYTAfjdvEQTMUeB1MBnhtRxJZjXLWcz1nmg@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/pm: Avoid multiple -Wflex-array-member-not-at-end
+ warnings
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kenneth Feng <kenneth.feng@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 6, 2025 at 3:01=E2=80=AFAM Kuniyuki Iwashima <kuniyu@google.com=
-> wrote:
+On Wed, Aug 13, 2025 at 1:12=E2=80=AFAM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 >
-> On Sat, Aug 2, 2025 at 2:24=E2=80=AFAM Menglong Dong <menglong8.dong@gmai=
-l.com> wrote:
+> Hi!
+>
+> On 22/04/25 23:58, Gustavo A. R. Silva wrote:
 > >
-> > The test script is provided by Kuniyuki in [1], which is used to test t=
-he
-> > selection of the TCP reuseport socket problem.
 > >
-> > Link: https://lore.kernel.org/netdev/20250801040757.1599996-1-kuniyu@go=
-ogle.com/ [1]
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > ---
-> >  tools/testing/selftests/net/Makefile         |  1 +
-> >  tools/testing/selftests/net/tcp_reuseport.py | 36 ++++++++++++++++++++
-> >  2 files changed, 37 insertions(+)
-> >  create mode 100755 tools/testing/selftests/net/tcp_reuseport.py
-> >
-> > diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selft=
-ests/net/Makefile
-> > index b31a71f2b372..0f4c3eea9709 100644
-> > --- a/tools/testing/selftests/net/Makefile
-> > +++ b/tools/testing/selftests/net/Makefile
-> > @@ -117,6 +117,7 @@ TEST_GEN_FILES +=3D tfo
-> >  TEST_PROGS +=3D tfo_passive.sh
-> >  TEST_PROGS +=3D broadcast_pmtu.sh
-> >  TEST_PROGS +=3D ipv6_force_forwarding.sh
-> > +TEST_PROGS +=3D tcp_reuseport.py
-> >
-> >  # YNL files, must be before "include ..lib.mk"
-> >  YNL_GEN_FILES :=3D busy_poller netlink-dumps
-> > diff --git a/tools/testing/selftests/net/tcp_reuseport.py b/tools/testi=
-ng/selftests/net/tcp_reuseport.py
-> > new file mode 100755
-> > index 000000000000..eaeb7096382e
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/net/tcp_reuseport.py
-> > @@ -0,0 +1,36 @@
-> > +#!/usr/bin/env python3
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +import os
-> > +
-> > +from lib.py import ksft_run, ksft_exit
-> > +from socket import *
-> > +
-> > +def test_reuseport_select() -> None:
-> > +    s1 =3D socket()
-> > +    s1.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
-> > +    s1.setsockopt(SOL_SOCKET, SO_BINDTODEVICE, b'lo')
-> > +    s1.listen()
-> > +    s1.setblocking(False)
-> > +
-> > +    s2 =3D socket()
-> > +    s2.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
-> > +    s2.bind(s1.getsockname())
-> > +    s2.listen()
-> > +    s2.setblocking(False)
-> > +
-> > +    for i in range(3):
-> > +        c =3D socket()
-> > +        c.connect(s1.getsockname())
-> > +        try:
-> > +            print("SUCCESS: assigned properly:", s1.accept())
-> > +        except:
-> > +            print("FAIL: wrong assignment")
-> > +            os.sys.exit(1)
+> > On 16/04/25 09:04, Alex Deucher wrote:
+> >> Can you resend, I can't seem to find the original emails.
+> >> Additionally, all of the NISLANDS structures are unused in amdgpu, so
+> >> those could be removed.
 >
-> It seems you don't need to handle an exception with ksft.
-> You can see os.sys.exit(1) triggers another exception when
-> you run it without patch 1.
+> I'm taking a look at this, and it seems that those NISLANDS structs are a=
+ctually
+> needed in amdgpu code. For instance, `struct si_power_info` contains a me=
+mber
+> of the type of `struct ni_power_info`, and this latter struct contains a
+> member of the type of `NISLANDS_SMC_STATETABLE`, thus `NISLANDS_SMC_SWSTA=
+TE`
+> and `NISLANDS_SMC_HW_PERFORMANCE_LEVEL` are needed, and so on.
 >
-> TAP version 13
-> 1..1
-> # timeout set to 3600
-> # selftests: net: tcp_reuseport.py
-> # TAP version 13
-> # 1..1
-> # FAIL: wrong assignment
-> # # Exception| Traceback (most recent call last):
-> # # Exception|   File
-> "/root/linux/tools/testing/selftests/net/./tcp_reuseport.py", line 26,
-> in test_reuseport_select
-> # # Exception|     print("SUCCESS: assigned properly:", s1.accept())
-> # # Exception|                                          ~~~~~~~~~^^
-> # # Exception|   File "/usr/lib64/python3.13/socket.py", line 295, in acc=
-ept
-> # # Exception|     fd, addr =3D self._accept()
-> # # Exception|                ~~~~~~~~~~~~^^
-> # # Exception| BlockingIOError: [Errno 11] Resource temporarily unavailab=
-le
-> # # Exception|
-> # # Exception| During handling of the above exception, another
-> exception occurred:
-> # # Exception|
-> # # Exception| Traceback (most recent call last):
-> # # Exception|   File
-> "/root/linux/tools/testing/selftests/net/lib/py/ksft.py", line 244, in
-> ksft_run
-> # # Exception|     case(*args)
-> # # Exception|     ~~~~^^^^^^^
-> # # Exception|   File
-> "/root/linux/tools/testing/selftests/net/./tcp_reuseport.py", line 29,
-> in test_reuseport_select
-> # # Exception|     os.sys.exit(1)
-> # # Exception|     ~~~~~~~~~~~^^^
-> # # Exception| SystemExit: 1
-> # not ok 1 tcp_reuseport.test_reuseport_select
-> # # Totals: pass:0 fail:1 xfail:0 xpass:0 skip:0 error:0
-> not ok 1 selftests: net: tcp_reuseport.py # exit=3D1
->
->
-> btw, I'd write an official uAPI selftest in plain C for socket as
-> python sometimes does a tricky thing and I don't trust it.
+> So, it seems that all those structs should stay. What do you think?
 
-Yeah, sounds nice, and C has better compatibility and
-reliability for the testing.
+They are not used for programming the hardware.  They were just
+inherited from radeon.  All of the NI SMC stuff can be dropped.
+
+Alex
 
 >
-> For example, this is...
->
-> from socket import *
->
-> s =3D socket()
-> s.listen(-1)
->
-> internally translated to:
->
-> socket(AF_INET, SOCK_STREAM|SOCK_CLOEXEC, IPPROTO_IP) =3D 3
-> listen(3, 0)                            =3D 0
+> Thanks!
+> -Gustavo
 
