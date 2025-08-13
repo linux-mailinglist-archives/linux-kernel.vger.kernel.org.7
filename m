@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-766897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F604B24C88
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:54:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506F0B24C71
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BB01704A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:50:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 466A74E034B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC6DDF71;
-	Wed, 13 Aug 2025 14:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447C218CBE1;
+	Wed, 13 Aug 2025 14:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqDwJj0j"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="c6ErBi8T"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F767081C;
-	Wed, 13 Aug 2025 14:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138382D7395
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755096634; cv=none; b=jc0xJgj6RuL1/ch1tte6Z8wKQJiKQRYsGsTxfJghwRf9zuPUZSpkioMFcaf8VHAQF7UYUb5GvoPgsBQRUFQ1TPxErdWaAARUFjlCW8B0hrDJQf5Ctes1JBjpvlMe88dchHZih7p8Lp9kmyuBOyzaWgBnVgYyzYOhdkrRYgefvvI=
+	t=1755096659; cv=none; b=CQQ21vq6DM5iUpv0Mi6lBuc4GsGr0MBwz7IR6XP+lhJumKNlzu8w3w4Fg9HF++defEMQa3xE57EFI+K/F7TBiY5pNpTsQNs4XhRJVHLqygFVboEtFd+52CEJhZijevINZcbJOyMwkn8YXyy6PRa1rPy2SYAGgbkmwZe0i0L6834=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755096634; c=relaxed/simple;
-	bh=Dy54GSulf0DSb1ED+cBI/WJDS1f23xzrkgDWmnFu4Rk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WrVP9LHQpiAzetRgadL1JQv3X//0l457ThPK0oZaV+3QKH54RHEVtRa/y62h9cV5TouZl4uk0Eb5F39cH0VmshPxme07fZnF5EnYae3qdZfTqhPom1ExkUnXKeKyEpYIfaeD75PiAYqSVd/6YAP7esfGON16/gcPHwFf0sVs8ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqDwJj0j; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso44652945e9.3;
-        Wed, 13 Aug 2025 07:50:32 -0700 (PDT)
+	s=arc-20240116; t=1755096659; c=relaxed/simple;
+	bh=JLR0HDB+sugXsigzkPLR4y5+9MWTZ/84rhQ5b38TEVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EnHLJjb8MNhYg8I9ZmmHwOAp8civsCssUSMnNkkiXhXJw45UXP/C1IIuusBv0T06WU1VymNQu7YdyeJVI3czjCnbmlKHGn67yJumX1fg2hC9NlK2YZrQplLuk5SuhuID6nkO3M6zrTAWWzGSTUcvjA4dUMu/6YbNKeHCRh/MqyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=c6ErBi8T; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-435de59ddf7so2437b6e.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755096631; x=1755701431; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6ezPPApvQ2xGo1Tf2IGGI/q/jNbwVwsEJODPGA7ESnU=;
-        b=mqDwJj0jbc1Q4MVcIeiINPYsPxQwJPai52HGGtZCjwiYlWaX7USZ1YeuwkDjDcedm7
-         TMJSnYP85fumJFCOAMMUL2ZdbJ3MJ07VOxV+V3bGKI54pvLef+jHW1T1m9wUEs/XHKAw
-         tBCTT8aXEcdD9tFn4ZsI9RdOfNZKd9RLE+mpQ6lFR/RiMjy+2of9UqjsN4EvBBEww9eh
-         SoUNJDvytjDlBu0eXXra8CHiT6Wqvo1S0EA30+CPWafRr33KqHHUcjvPn+f1BWDWk8+U
-         xqkT3+mXQq5orL3spQpdtJSUNNq1MtxvP2vk5cI9JpXRjWVIb3pV8hA+wwSpBk2MuJXU
-         76+g==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755096655; x=1755701455; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C+UquFq/+wFnP6FXzNP7+1OTyftKdtGDXwqAPY/zJW0=;
+        b=c6ErBi8TNxS6xQnsQ99ktYkxpB166huH+MC4fiSMIgoE4lO7g3PYk3Nc7CC6ep36wS
+         IQs5WAS1d8GZOUGHc4A64sY491hKzyURGZWNoYT6ZZa5f6sEPJu5/8Zde1sQnx/aEAyG
+         xd6omGi5i3yFa9V6f6t89GVgMC+Knl5WQKGuiCdHNKzGIS74mnR7VkncEpDCWnJPY6GX
+         /ewcM0s3dVE3/YeLFf6oMC7ejXAD1S5iWdCAeapmf4fFKKB5xzES0D/wL3Q0h29NX2V2
+         5D297TJkUsNtRcGsbf7wignyid5PH5a3+Q5yTtP5Jy/vGWw/iw/YOURYjhyfPCYOSAsq
+         bDgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755096631; x=1755701431;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1755096655; x=1755701455;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ezPPApvQ2xGo1Tf2IGGI/q/jNbwVwsEJODPGA7ESnU=;
-        b=A5MMplQh7CQBZTgqKHRlXJEA2hAjCO48G6n0yQur47+EF/5VmkYsRuncrlqiekf6vz
-         UCh/vzQveVLkMM0yXsBx1W2/nKcz+FoxGQVCCSVjuuqdBEqvsoI2wGaHAUzo17AcY4r9
-         a55kW1eHxJ99NqwJtkkGF06MtJsBxTFffVeksr76bGlnouOBoGxMNcfIm2zIYNokrTvn
-         g3FdejpL5Ih3qWL/6EmLpA9PBkZPY94GhoKBMI9DGAEpXPnG7O2qzIvsUCmkentJ2KBW
-         GJ3O5qHi48itbU/ObyYTofs/e+2hMHJzf6rp6Djvc/Cp17v5eKtM8+UKR4ybgaa0BEVW
-         /Fdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEEL6WLJO7zF7EHnyZ/Gh4NAFlkl5bjWP3CCWWAmkjUXVkwrATBWwLLWV8mPKIsYHCb2JSg8HybEkuD0vK@vger.kernel.org, AJvYcCWfs0sbvRKYv+KRw1/3NpN2f7ZZQnwIrb78AcQByVivbZT0sFYQwOa0vUs+A4VEoRJk/js7u0PV@vger.kernel.org, AJvYcCXQR1jr4NAJOP53psBwt66r9z8vJVBuR1owzqfDW0sahAXf1BrFLBYv5T6YHy/9zMP+PdK2gCIVufU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS9oAjaGGly725hmubnK37grVWaV6Runkh8KoJQYBx1FR88knN
-	wdkbJ5TVeNP/KRSQBPL4icO6MZ4BVSotO3asO1CgsDiRJGKa+YUMxLaa
-X-Gm-Gg: ASbGnctxzfpwt+wZGe04ZIDAf82OPrg1HXWRf9LztIJfHQ82nCZfgxbMZkq+GYpu6Cb
-	crViP1mqxScCSmbhbW/hLz725uc61wF27hSCle6twfvQ9vMwiHRkgNQAO/kqDdlCU62FFCXZ/i3
-	vQg8WCyH95b6Cygw1UT0PD2FlqY26IsaaPcaUNuklQy/zkXS1jlfYGRMm41L+qyE/K8Ym+fXwIH
-	58HgAM4sRvLD95uJihQclrMOnGifP/FisD781QB0cRgKDsdYANlF5giABNYSbIhvqtmoVr/Rv6p
-	QoB1PoAV87cIxRplC7clZ8/OCwRI9PH9xwboUm1BSmXv+GjO+oSVxVXvZ9/XGu0PhuLO3GOTX/k
-	4AfspXF/N7XrV1AaqATUM1EJim4GwEibHtGKy6mRGMzgzjIyjpC7OSssWS/qf3L064sVEDceFSA
-	==
-X-Google-Smtp-Source: AGHT+IFJSSZ94OtT4ZHv+bwsJzRMHFPjwQlds7MccjDC0e78z0RxSH+Y9lq/9TY/OBkJJzrfnQpY0g==
-X-Received: by 2002:a05:600c:a41:b0:456:191b:9e8d with SMTP id 5b1f17b1804b1-45a1aa66e72mr980515e9.11.1755096630808;
-        Wed, 13 Aug 2025 07:50:30 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a50b9e6sm6265605e9.6.2025.08.13.07.50.29
+        bh=C+UquFq/+wFnP6FXzNP7+1OTyftKdtGDXwqAPY/zJW0=;
+        b=RWJ+ft0Qi2ka60rRF3N3rduSh6B+7U1tMAldhmNELivzG5fEcE741bXSREDDe7pY3G
+         BAJSgkBVVzTOYYwTMFaHs4wWypN4766souOkI7eFGjhrxoJAAK272FgDmpRYJNdgnQZF
+         2E39p48pS2j8+9Z/p38eyb2PJkOj5+Ca4wwWsCdCvNelVmPCbEOvwjf2RNeiQaEwvRFU
+         Z5UHkOaGEYS+fEVu7dBn4oeNBlyGBOs3DXAOeXMfboE13fnmNQ9JN4e2n/heVy9icxS5
+         gjsfqy8QFRpeuUCF3yu36AR+I6AJBr7Y2EX7cXUBx3ReSfMWYuLQud0r8vl9P3w7HTUM
+         UzmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuSW4v6tnIQsDnNAaAHDKs0lHPvd0IQU4gM/0LFGLxULeZ2eRIOEOAK48IbluIxIP29D9tcUGvmoSO+qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz20eTq/+wDN+LTtfxwZv8gXcTrTkx+sv+Lx07qds9uoJ5r0dEC
+	7zV6+krGhmEI1g6Mtfv8nGDHMhJ2ASPxwNm7uP/LqvAmDCO2sSCkBf3YxssXWi8jxHY=
+X-Gm-Gg: ASbGncvJgdsbaRxOSzfnKt1h9sLOJ9FFAoOS69NOLtJzY66dxXnSb3m/SOT8bBPewHu
+	fUK2WXoaL78B03faByzOIThVh9/yNualO5W1A8pGVtLU9fBRz28+z1D8cflo3L0+cLKXmg/4p2a
+	NclG90Thd8JvNDh+bd4feQUReGMHqiEchYaFJULI7eho57tc6sQH7ET82ubeZC3/Rxj0Jpx/qOK
+	/0Ni/jBCFpNCO0y+AA0krW9SU3JtVPiUzTawRppc1w9VeYt2ckxHix1Ao8zNAE7lMueuheBCToy
+	UANcXZrNn3Zr1cKqXNFPXgZrRuVksPSFDn/N9Ia6dWv+uVhCfL9n7y+OAXTT1SY7zUXZdmciVIY
+	lpEdojz4UuJcUaoyNiYs56Gt1FZdjyuDADsxXrRgKMBuCyAohyIX7WqelHwx/SRbMZA1wjUJK
+X-Google-Smtp-Source: AGHT+IHiF8MN1FZQrTnzJnSv9CNFxA7tA6Te9YnB/LJkhWovfk6NtiQn4dodjNFAsr5GNuaK5WqtRw==
+X-Received: by 2002:a05:6808:178a:b0:435:9705:86dc with SMTP id 5614622812f47-435d4276988mr2027407b6e.35.1755096654950;
+        Wed, 13 Aug 2025 07:50:54 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:ae46:dfe2:81c8:dde? ([2600:8803:e7e4:1d00:ae46:dfe2:81c8:dde])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ce74ebb0sm668253b6e.15.2025.08.13.07.50.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 07:50:30 -0700 (PDT)
-Message-ID: <2b106715-de6f-4455-a558-42eb3a95982b@gmail.com>
-Date: Wed, 13 Aug 2025 16:50:30 +0200
+        Wed, 13 Aug 2025 07:50:53 -0700 (PDT)
+Message-ID: <dc817ac9-105f-40c5-806d-93db95955628@baylibre.com>
+Date: Wed, 13 Aug 2025 09:50:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,54 +81,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Gabor Juhos <j4g8y7@gmail.com>
-Subject: Re: [PATCH v2 0/3] i2c: pxa: fix I2C communication on Armada 3700
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Wolfram Sang <wsa@kernel.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Andi Shyti <andi.shyti@kernel.org>, Russell King
- <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
- Hanna Hawa <hhhawa@amazon.com>, Robert Marko <robert.marko@sartura.hr>,
- Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
-References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
- <aJpOyWKzBt-tDWUF@smile.fi.intel.com>
- <4cd3efbd-4798-4f25-9440-879ee289d8ed@gmail.com>
- <aJyM3N9T4xI4Xo1G@smile.fi.intel.com>
-Content-Language: hu
-In-Reply-To: <aJyM3N9T4xI4Xo1G@smile.fi.intel.com>
+Subject: Re: [PATCH 3/4] iio: adc: ad7768-1: use
+ devm_regulator_get_enable_read_voltage
+To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Michael.Hennerich@analog.com, jic23@kernel.org, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ jonath4nns@gmail.com
+References: <cover.1754617360.git.Jonathan.Santos@analog.com>
+ <3b9f5a9f188af8b1df947806e1049269f3a0dfa3.1754617360.git.Jonathan.Santos@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <3b9f5a9f188af8b1df947806e1049269f3a0dfa3.1754617360.git.Jonathan.Santos@analog.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-2025. 08. 13. 15:02 keltezéssel, Andy Shevchenko írta:
-> On Wed, Aug 13, 2025 at 12:13:26PM +0200, Gabor Juhos wrote:
->> 2025. 08. 11. 22:12 keltezéssel, Andy Shevchenko írta:
->>> On Mon, Aug 11, 2025 at 09:49:54PM +0200, Gabor Juhos wrote:
+On 8/12/25 9:49 PM, Jonathan Santos wrote:
+> Use devm_regulator_get_enable_read_voltage function as a standard and
+> concise way of reading the voltage from the regulator and keep the
+> regulator enabled. Replace the regulator descriptor with the direct
+> voltage value in the device struct.
 > 
-> ...
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+>  drivers/iio/adc/ad7768-1.c | 29 +++++++----------------------
+>  1 file changed, 7 insertions(+), 22 deletions(-)
 > 
->>>> Signed-off-by: Imre Kaloz <kaloz@openwrt.org>
->>>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
->>>
->>> I didn't get this SoB chain. Who is Imre here and what is his role in all this?
->>
->> Imre reviewed the patches before publishing those, but we were unsure about that
->> the Reviewed-by tag can be used when it is offered privately before the
->> publicaton, so we decided to use the SoB tag instead.
-> 
-> It's exactly what should have been done. As a such the SoB chain is confusing
-> (taking into account the authorship of the patches).
+> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> index 36ba208fc119..d0b9764a8f92 100644
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
+> @@ -225,7 +225,7 @@ struct ad7768_state {
+>  	struct spi_device *spi;
+>  	struct regmap *regmap;
+>  	struct regmap *regmap24;
+> -	struct regulator *vref;
+> +	int vref_uv;
+>  	struct regulator_dev *vcm_rdev;
+>  	unsigned int vcm_output_sel;
+>  	struct clk *mclk;
+> @@ -809,7 +809,7 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
+>  		return IIO_VAL_INT;
+>  
+>  	case IIO_CHAN_INFO_SCALE:
+> -		scale_uv = regulator_get_voltage(st->vref);
+> +		scale_uv = st->vref_uv;
+>  		if (scale_uv < 0)
+>  			return scale_uv;
 
-Thanks for confirming!
+Can also drop the error check since we've already done that in probe.
 
-> 
->> It can be changed to the Rewieved-by tag if that is applicable in this case.
-> 
-> Please do so.
 
-Ok.
-
-Regards,
-Gabor
 
