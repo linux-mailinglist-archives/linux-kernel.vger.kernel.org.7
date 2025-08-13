@@ -1,172 +1,177 @@
-Return-Path: <linux-kernel+bounces-767036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAEAFB24E62
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:57:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751C4B24E1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:50:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A04E9A18C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:50:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53659B617D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362E6280A2C;
-	Wed, 13 Aug 2025 15:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8DD28153D;
+	Wed, 13 Aug 2025 15:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+NwJ5hq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iBXbeLBq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RlKZI+Pu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lJ9tXTRV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tLVQQgIu"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B78E276058;
-	Wed, 13 Aug 2025 15:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525FB2820B1
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099851; cv=none; b=KP/6fIwx/IneH3szRqFm4cgAN2/sz8JFOdoKgE+6Rh8ZIJdBdgSVsjdG019GHu1X+En2NGpWqRC9mZU8/o74wUy9yqmC54rv+SqVttmairpOwoQ7y7u57Nn3hlcHyuBK7YSElsq6nFWCwDsyJXR80CZ+waJiBuwytA06evhvD3k=
+	t=1755099876; cv=none; b=GOpsZFerTWzvH4qYwOupdHd39mmc2STO/QvY152AL400SXF3KOMYh1xwjdbnFUKx9V1mBw3UvUmu5xGGF+fRSPDfgtrHwXoPwt/Ou6Q3Q7QCPKU0Gp3/MmftI3NwA5UrQDB2xYVPsbZf7sH0fWJtsjxfalGbyXCOE+OVCy7kMss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099851; c=relaxed/simple;
-	bh=O2hl/hlVCOc1FdbV0cQBKJVYbqIwGltINMJ91/7CsDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hLHbi1dIcfLEBHMdJv42U61QWUHMfYgldFKy0+QH7PKNrRbsTj1bIncPhpiT3snbgUB8LDjDKNCjja8aTJi2B61ecQQ0WV1o5SxRWoefmuKJvxayjlDodXydgkVpL/Xdre4WBIkkeuz15ylG3d2F3EWZqEqb+4A577H0Q3GAqDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+NwJ5hq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 017D7C4CEEB;
-	Wed, 13 Aug 2025 15:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755099851;
-	bh=O2hl/hlVCOc1FdbV0cQBKJVYbqIwGltINMJ91/7CsDw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O+NwJ5hq6eoz0kZJJvysgjZN9eqWQYocqHLJbc++4LHC0hEKirRnUNqU/xk6Fm7vw
-	 /27BzGwp1799XXCZPxUwx12cv4y39Apt4zWq6UyjreNomnIGgtOHvm/xyC+JxuivXI
-	 K5Pxvh3gQKj/8INsYwxjNwKuZoye2GVolnonH9+cY0NLFnUl9SzR8uIeMTsH60o8oa
-	 zdCu3ij0xIHPlILeDgKOpOWqdffbQQB+vKdjMYqNOCjYdcNh2AoD9rRvGQx+FrQgMV
-	 JdGoTpBP3W32C5QdF7nWuCYlgwmEUUHmZAxOxeFdrerd4QzjK3joNwb0cUeNmW539Y
-	 bdvV7TpMHoRXQ==
-Date: Wed, 13 Aug 2025 10:44:10 -0500
-From: Rob Herring <robh@kernel.org>
-To: hans.zhang@cixtech.com
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	mani@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mpillai@cadence.com, fugang.duan@cixtech.com,
-	guoyin.chen@cixtech.com, peter.chen@cixtech.com,
-	cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 08/13] dt-bindings: PCI: Add CIX Sky1 PCIe Root
- Complex bindings
-Message-ID: <20250813154410.GB114155-robh@kernel.org>
-References: <20250813042331.1258272-1-hans.zhang@cixtech.com>
- <20250813042331.1258272-9-hans.zhang@cixtech.com>
+	s=arc-20240116; t=1755099876; c=relaxed/simple;
+	bh=DMFr7qZNG88HA+2p+BLXNrjPzdxXq4yVYSO63eN6c+8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bw98ldKqsVI/ssrVEri/6xG7suPFz3g5fwXjPkirvGPtrKYh3LaBrAk0p5vgm4v1d2pUQCiCfElaz6lCV5Isp8DnGS0CYT0TMzk7Z6+hJc+IuqEsguqQjwgouHCImIZEvAJfI5vjNO4rwXeAne4UuCvjuSp1z8FRhHFE+0FqTs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iBXbeLBq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RlKZI+Pu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lJ9tXTRV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tLVQQgIu; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 79F5E1F456;
+	Wed, 13 Aug 2025 15:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755099872; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D8Z4fiJItiCcP3TcMej2iuuTcK8fxSxhEySoeOWBwf4=;
+	b=iBXbeLBqIVLpJx9g0wGZauQQd5SezuWHXrqc/tv/UwAIDx4qo+tZZYUdkjdi7/+OtQiMRs
+	8VSC6zKwFvn1J7Ijk7TPUdioaEcnG+/1YCIMy/E1n7svwy1j0WJmhsaOHULQnidhN8Wc80
+	j7RzO/YnxZ2rNXy/TCScjFw6KtNzaHU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755099872;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D8Z4fiJItiCcP3TcMej2iuuTcK8fxSxhEySoeOWBwf4=;
+	b=RlKZI+PufIrrmfwUkUJMMXaByVQWN3rj2uEUJd+gKi5+OscECNPwHgSZa7IIfBUojaps9r
+	69xO1XRS0Zm+eGDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=lJ9tXTRV;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=tLVQQgIu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755099871; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D8Z4fiJItiCcP3TcMej2iuuTcK8fxSxhEySoeOWBwf4=;
+	b=lJ9tXTRV8xX+whybyPRZc5LiiHKGEfDdjbARql6vRpBGiDm3dcr1FmJ9ev6Md0HoUlyAVK
+	IVNsQzH24TPDtvZPHxzuaE9K1G6wLM1O+20P/KuGC0BoQVRx+aWc2QHlO7Ow07SWGYGgEx
+	/gl/Oqy2Brp7EYsubkcyy7BEc7tj8fU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755099871;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D8Z4fiJItiCcP3TcMej2iuuTcK8fxSxhEySoeOWBwf4=;
+	b=tLVQQgIuc8xXt0VJTwH6APt++clsPB+re9KlHLqUSAtntx5lXhq9TWZ7U2gZO1yGKPG8U7
+	06cAu+vKanEXcECw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3DAA113929;
+	Wed, 13 Aug 2025 15:44:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EmhuDd+ynGiCBgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 13 Aug 2025 15:44:31 +0000
+Date: Wed, 13 Aug 2025 17:44:30 +0200
+Message-ID: <87ectfw7j5.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Baojun Xu <baojun.xu@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<alsa-devel@alsa-project.org>,
+	<shenghao-ding@ti.com>,
+	<13916275206@139.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] ALSA: hda/tas2781: Normalize the volume kcontrol name
+In-Reply-To: <20250813100842.12224-1-baojun.xu@ti.com>
+References: <20250813100842.12224-1-baojun.xu@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813042331.1258272-9-hans.zhang@cixtech.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[139.com];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,alsa-project.org,ti.com,139.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim,ti.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 79F5E1F456
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-On Wed, Aug 13, 2025 at 12:23:26PM +0800, hans.zhang@cixtech.com wrote:
-> From: Hans Zhang <hans.zhang@cixtech.com>
+On Wed, 13 Aug 2025 12:08:42 +0200,
+Baojun Xu wrote:
 > 
-> Document the bindings for CIX Sky1 PCIe Controller configured in
-> root complex mode with five root port.
+> Change the name of the kcontrol from "Gain" to "Volume".
+
+Could you describe "why this change is needed"?
+
+
+thanks,
+
+Takashi
+
 > 
-> Supports 4 INTx, MSI and MSI-x interrupts from the ARM GICv3 controller.
-> 
-> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
 > ---
->  .../bindings/pci/cix,sky1-pcie-host.yaml      | 79 +++++++++++++++++++
->  1 file changed, 79 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+>  sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
-> new file mode 100644
-> index 000000000000..2bd66603ac24
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/cix,sky1-pcie-host.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: CIX Sky1 PCIe Root Complex
-> +
-> +maintainers:
-> +  - Hans Zhang <hans.zhang@cixtech.com>
-> +
-> +description:
-> +  PCIe root complex controller based on the Cadence PCIe core.
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: cix,sky1-pcie-host
-> +
-> +  reg:
-> +    items:
-> +      - description: PCIe controller registers.
-> +      - description: ECAM registers.
-> +      - description: Remote CIX System Unit registers.
-> +      - description: Region for sending messages registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: reg
-> +      - const: cfg
-> +      - const: rcsu
-> +      - const: msg
-> +
-> +  ranges:
-> +    maxItems: 3
-> +
-> +required:
-> +  - compatible
-> +  - ranges
-> +  - bus-range
-> +  - device_type
-> +  - interrupt-map
-> +  - interrupt-map-mask
-> +  - msi-map
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    / {
-
-bus {
-
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      pcie@a010000 {
-> +          compatible = "cix,sky1-pcie-host";
-> +          reg = <0x00 0x0a010000 0x00 0x10000>,
-> +                <0x00 0x2c000000 0x00 0x4000000>,
-> +                <0x00 0x0a000000 0x00 0x10000>,
-> +                <0x00 0x60000000 0x00 0x00100000>;
-> +          reg-names = "reg", "cfg", "rcsu", "msg";
-> +          ranges = <0x01000000 0x00 0x60100000 0x00 0x60100000 0x00 0x00100000>,
-> +                  <0x02000000 0x00 0x60200000 0x00 0x60200000 0x00 0x1fe00000>,
-> +                  <0x43000000 0x18 0x00000000 0x18 0x00000000 0x04 0x00000000>;
-> +          #address-cells = <3>;
-> +          #size-cells = <2>;
-> +          bus-range = <0xc0 0xff>;
-> +          device_type = "pci";
-> +          #interrupt-cells = <1>;
-> +          interrupt-map-mask = <0 0 0 0x7>;
-> +          interrupt-map = <0 0 0 1 &gic 0 0 GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                          <0 0 0 2 &gic 0 0 GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                          <0 0 0 3 &gic 0 0 GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                          <0 0 0 4 &gic 0 0 GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH 0>;
-> +          msi-map = <0xc000 &gic_its 0xc000 0x4000>;
-> +      };
-> +    };
+> diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> index 92aae19cfc8f..e4bc3bc756b0 100644
+> --- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> +++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> @@ -256,7 +256,7 @@ static const struct snd_kcontrol_new tas2770_snd_controls[] = {
+>  };
+>  
+>  static const struct snd_kcontrol_new tas2781_snd_controls[] = {
+> -	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Gain", TAS2781_AMP_LEVEL,
+> +	ACARD_SINGLE_RANGE_EXT_TLV("Speaker Analog Volume", TAS2781_AMP_LEVEL,
+>  		1, 0, 20, 0, tas2781_amp_getvol,
+>  		tas2781_amp_putvol, amp_vol_tlv),
+>  	ACARD_SINGLE_BOOL_EXT("Speaker Force Firmware Load", 0,
 > -- 
-> 2.49.0
+> 2.43.0
 > 
 
