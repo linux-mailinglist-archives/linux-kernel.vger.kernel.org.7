@@ -1,139 +1,296 @@
-Return-Path: <linux-kernel+bounces-767490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AFCB25519
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63178B25521
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8AE97B2A09
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:17:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C2D67B375B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4569C2D77E4;
-	Wed, 13 Aug 2025 21:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2602ED16F;
+	Wed, 13 Aug 2025 21:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dlEyGOU6"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Zhd1SlC8"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022130.outbound.protection.outlook.com [52.101.43.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C562877C2
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755119955; cv=none; b=q5hBIAOOr8lSukyvQhUr9IeB44l/uHaMWYvFx7Ii6mEtm0tmduXbBeiS1dM5T/T6+lQyvOQcxbmpc+DR6GGewvPpuQz6l3XeEW+g76hVV1udEQJvehfUHoUBgkgXWz825RZU4veWJytkOXqDNUMkZNplnT1pzp0GD23f+XOyHt0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755119955; c=relaxed/simple;
-	bh=5Dtc8i2j9SZ7V4cNxuQ2cMweRkAia6s3wQYOCEF0+k8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FzJHE05xPe2cXYEaDQ8lkDaxLJOmdlq8SMQD3dhtrZPmZAk6z71eB84LT30Pvd2qoS16GTFl3II0ZKrU588hmmESNB1koi4GSlP4Yb6ZFREkbdtISbwQD9TTQfCz3CWG+P/P4USjInXbODdk1+MWyrqPZuYmB3O+xPKuTavTutI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dlEyGOU6; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-435de937578so208304b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:19:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F58122F389;
+	Wed, 13 Aug 2025 21:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.130
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755119982; cv=fail; b=GwC7HWaX9DbXsKg1mSr1okWyD/ezreZG4X2KqpmYSOm9gZh1HXS2rBM8z1rPIhN7iys5+tAh3Zo1a22ufchnlSYOtMr76HMCp+DVuHarC3FmAPUsWlTyaeJ1TxtxL4vvjQ3eJ1m70QuJmmYh67O3YtTyOImOfyIJ53oPu8kSVpA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755119982; c=relaxed/simple;
+	bh=MJUaUZZOR8MU5gJdGjaD7ImMzVPJIT5zoxE16shBU5k=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=nswuoEO4j8Jt0ldpppRgvLQWT+bHghGTv6NL89ZFGvIEI8RHBD8sokdP08xPf9OBrUXdbbAl4ML9M+gyVyQg/P14iGPWQrqbaW0NJkyvHKn5J5n5cjBcYnJOYLnQaoqa2muMKw3dJqDEmZRoqR4TVA99wLWQIPEByvRKqALZqSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Zhd1SlC8; arc=fail smtp.client-ip=52.101.43.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OO+1HbazljDcz2NuGwwp7P9Mmx6T1Sy/qxvMhuTk+6teMhAHdTxL5yXJYG0kztuANJ7nmF61dksLlF8gVVQboOx3cbipTzJcbCJ9pAokXIFnsxXaygZ6A3i32JGWFW5/boY9ycgvQTos58Ivi9SUSzNuuT5Evn0xh1FhS+GY+pTGUN7wCfr14Z4lQbzVn10NkGaM/taC3tIwhwBimltMMtr1AQ73sSl4Kaqhby/53j1MX7Zy5tYCqtzPjDCEt2bbyDk8SpYgCXqqCeuBj9PCH8+9w+c3YnTSBoQxpcZve/ERc4R6md6GLTBPoWw+qAqgIh7udp3LeA0/XsDNiJ8lcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ssz/pOd+LIPTiLCapGwCl8VScqMruUB11aUKhqbX8b8=;
+ b=ydIe3ddGU9NkKRG1hX1WT3aFaccTcfoL67TztuTGZ93XgNTFdivMRuVJByLEJvLVutGWpDEmRMMLcy9OswkS/GjklLxDcr/d23MCGGccgEjjjcNvGVu+nziJpnecG54ByPqM467sP/ZM9A2WWhDSh/pPwm0uO4zmbNo527AeJBV5tEAO2MGMn3lgqwmTHVt956CkGwZD883ThEvzrRm1sxNg/eWXoQItYkLBscqX8/CgGK3phAlXJXgylKvm0gRI1hpzCaVaDysFtI6O7EfCRN5Q2LJRSsoChF3aGXjRoIl5bYl5xdtoKXv7yJ9wSROlIRN3/pjEbss0BbGTy0hjlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755119952; x=1755724752; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RAZbSGzMF2aCOavRS9phDDmLw+wZHgg5nRlBuGSNPYY=;
-        b=dlEyGOU67qauKmm0S91jJ3I/RELB+Sl7XLjlf6FWkpZciybF3rko5cU1YIFkApFSvu
-         HxuWRBZhDDBdOPJPy6qiEkF3hODoeL4xUer+5AL/Sdg8j4xiDs1JFqEc6S8fY/n7adbo
-         vwbL+6yR9csELGEVJoKiS9CYu7Btz2GeaNwUylqoQOhT73WbTD0mEb57ZxpczkUu2ww7
-         GE9F2axaXlIWpTTY28czSWeUWI8gBWPmQnygRKHylf46wzr6tUyMuG/6cC+nEDCUBQuA
-         Yp5d07RJYqv49JEcZtL0OP0ub+vMh0MmEXf0J8Cre9TaNCghGqFVSvgQ40Jx6tZksfWN
-         jotw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755119952; x=1755724752;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RAZbSGzMF2aCOavRS9phDDmLw+wZHgg5nRlBuGSNPYY=;
-        b=WVjHTCdyWh4gA95u1QNhbbLqg6T4ZmSko7AZpg9X++iF8DE1L4FBpYXfYKxXdn8uQG
-         MHxwxiRxZHoZoixVoRWu/1S54Bz+5QqzDoExpiiMW3CB6ljWZUunFRfhU7y1XNe+3STH
-         G7lZa0n0XW9JnM57HZLJ+4B73FAF/NLxNCzg41ysgDGak6Dx+F7oqB9sOsl3wRgfnsQv
-         zNBk55wlvrHKWZkwOVY86Qi5TzbgTiDTNnpdY5zVC9jscC62gBzqESffMGGZMpD1GXSt
-         EM2U3Cjldki8sgx90esRef11lLHtOTSDvSkwuMxlxrU3CM0SFePKYY1d5Kn2je7iDajt
-         GOHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWH5sZR7yJCGtNDSS1kST5eAnmNTtwho9B/nPKT/wjmfNJw8EqUQPGI6r/wS17w61mPx+sYieDLp7WoVEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7rC/TevWjJswHPoCQHl4zvnRwih8biXGOpuR26EmG1SomOfNq
-	7ltUdbWE1DqJ23kUgWQxzcLe9htRppK59Wn2SxJ7xLGadM8zhdyBQmoa60PXXb5/lVU=
-X-Gm-Gg: ASbGncuabmClnJaflRlektW4w87KcMjeDXfxXGh+fG4MCInZ1iO0CgLWIec4r28ni8+
-	Bggrp1dPjAeGUtNca6OYdcpSWnH0ZvNaCgCgG/HJAfG5Lg2O6dO3geRH2GINbseBTOlYsRMGD6V
-	yzTgSWtuYqerhBuz1cdzTQ+D8Nj6YlKM6DfNlfXK//in89MqG/YdVO6Y7VcvsyIna8xdfXnnCEj
-	vZ8iS0+gCLwiqgvipPa1l/dTMlqRzrsUvYrC3Jue0p4dorG8a5CzRlm56StqtyLbOvPN1VoQLkH
-	FLKeKbEqlwGTFwNSPq9cLKLNIOVOiyq8/HMAVvYfQeTsX2r0JEC0h3Osyr6ufdxKINew1xqXEjV
-	aeDdFdMlla4E34UdVkRLKCDcFErmY4NByQs04+K2ci0Bk5x35TLmMqb9NulztFwJIhDEqIWhm
-X-Google-Smtp-Source: AGHT+IGHPcA55SVa24yWW3URShXaLfqVASGeLPjXlijGLEddyw8GnVhiSSMBPgkVFwlHujOhRbTPHQ==
-X-Received: by 2002:a05:6808:4a41:10b0:435:8506:2263 with SMTP id 5614622812f47-435df7a7f40mr289564b6e.24.1755119952173;
-        Wed, 13 Aug 2025 14:19:12 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:ae46:dfe2:81c8:dde? ([2600:8803:e7e4:1d00:ae46:dfe2:81c8:dde])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ce856832sm844327b6e.23.2025.08.13.14.19.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 14:19:11 -0700 (PDT)
-Message-ID: <00a3c27f-34a4-4e56-8f7d-4eeaa3c19556@baylibre.com>
-Date: Wed, 13 Aug 2025 16:19:10 -0500
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ssz/pOd+LIPTiLCapGwCl8VScqMruUB11aUKhqbX8b8=;
+ b=Zhd1SlC8agbuXNbsMcmXqw/KDJGA2A1nY0jOmNQs+FvtULtO7ii3EWgzHT2PfEFMGcot2H+SRWRXYc1W0tKLAHVY2HwDXZyVKuzWf3a7k+qeNED01aJuS0s4eNm1MwxexC8Vtai0wJbTjBZYEOKTySJeDdazdBdxzfroDHoYP6A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from SA3PR01MB8473.prod.exchangelabs.com (2603:10b6:806:397::12) by
+ SN4PR01MB7423.prod.exchangelabs.com (2603:10b6:806:1ea::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.14; Wed, 13 Aug 2025 21:19:36 +0000
+Received: from SA3PR01MB8473.prod.exchangelabs.com
+ ([fe80::46d7:1d3a:dc9c:69c3]) by SA3PR01MB8473.prod.exchangelabs.com
+ ([fe80::46d7:1d3a:dc9c:69c3%6]) with mapi id 15.20.9031.014; Wed, 13 Aug 2025
+ 21:19:35 +0000
+From: Daniel Ferguson <danielf@os.amperecomputing.com>
+Subject: [PATCH v5 0/5] Fix issues with ARM Processor CPER records
+Date: Wed, 13 Aug 2025 14:19:13 -0700
+Message-Id: <20250813-mauro_v3-v6-16-rev2-v5-0-954db8ccfbe6@os.amperecomputing.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFEBnWgC/22Nyw6CMBREf4XctZcU+qCw8j8MMRWu0AWUtNBoC
+ P9uxa27OZPMmR0CeUsBmmwHT9EG6+YE8pJBN5p5ILR9YihZKVnFC5zM5t09cowKC4VpUyKvtRJ
+ a9STZA9Jy8fS0r9N6axOPNqzOv8+TKL7tz6eZ/OuLAhmSkVxXstai6K4u5GZayFPnpmVb7TzkK
+ UF7HMcHxVXbU8MAAAA=
+X-Change-ID: 20250731-mauro_v3-v6-16-rev2-3986486de50b
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
+ Borislav Petkov <bp@alien8.de>, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+ linux-efi@vger.kernel.org, linux-edac@vger.kernel.org, 
+ Jason Tian <jason@os.amperecomputing.com>, 
+ Shengwei Luo <luoshengwei@huawei.com>, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Daniel Ferguson <danielf@os.amperecomputing.com>, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Shiju Jose <shiju.jose@huawei.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: CYZPR20CA0009.namprd20.prod.outlook.com
+ (2603:10b6:930:a2::20) To SA3PR01MB8473.prod.exchangelabs.com
+ (2603:10b6:806:397::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] iio: mcp9600: Add support for dtbinding of
- thermocouple-type
-To: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250813151614.12098-1-bcollins@watter.com>
- <20250813151614.12098-5-bcollins@watter.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250813151614.12098-5-bcollins@watter.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA3PR01MB8473:EE_|SN4PR01MB7423:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3670a3ae-8883-4440-49d3-08dddaaf1a88
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Rko4c3U1UmdlZGxOMUlyUHRRWUg2WTRObG41SE5LcjVnWDRUMTR3QVFxT05w?=
+ =?utf-8?B?c3dhYW5EWW1SdE0wcXU0NGFQa3hyUTRIWllBSEdSOXVQUmtOZ2hZZ3J2YTU5?=
+ =?utf-8?B?TktyR0hRc3F6c3g2VnBodTVGUDNuT2lqd3U3WTFGemNhcVNzQzdtTW5wUHVy?=
+ =?utf-8?B?WnNNM1FsOG8zRitPVG52anYwSm95NHRySnNPc1E4cm83REwxb1BSNWZZOXRG?=
+ =?utf-8?B?Y00vVEZwcTJzNEdTMVJQci9jRWlYMDdPeWlPOS9ZN3NBOExDNkplZlVSVndj?=
+ =?utf-8?B?SEJaY0tFcU1RZkQwQmpRSjcybU9vTm1aNkNhNlpwNFRtLzZ0VzNwQ0drT1JO?=
+ =?utf-8?B?aU1sWXNKZ1J4MzdCeUhWWnRjdWkzcnphSzNFaWR3bDAxNTN0dXdxT1dpZ2Yz?=
+ =?utf-8?B?bXFoeGR5bGh6TVZscjQxZURyUFRTeGVqZSt2U1dkaFA4UnJrRzlVTTEzQjAx?=
+ =?utf-8?B?SUpnaU12V2NsSWNZNElremFPYjIzN3JtdlE0aVdiZ1BhemNrUEtIaW1Cb3Np?=
+ =?utf-8?B?MjkvL3ZyYjZuYkhyY0JzVXI4Yzh2OEJhQnoyR0F1QWxFajVJNWxua0d0WHJO?=
+ =?utf-8?B?S1hYelVJTW9PT0xNakdRUXl0bDBXV0pEYkp6NnhKZ1JHeEt0eTRHdGt2NFRr?=
+ =?utf-8?B?ejZWbmhUcVFQL09BNWJhM093RVlLTHZNZWp0ZTNVdE9QWnpSV3JIalN4ekQ4?=
+ =?utf-8?B?UHJvdnk1QU5wMFk5UU9pNGF4S2ZZUWhSU0R2UkRVekx4WkVDSHBVVDlsTTFM?=
+ =?utf-8?B?VVRxWUt3UFVUSy9lSUlIbTFtVFhZTFhaY3dRN1JWRFErOEV4ZHhKUTZnOE0v?=
+ =?utf-8?B?Ykd3c2h5Vy9razFDYXdwR2UzSVI5endBSElRbUpXbkVUM0ZuSGt4dE8rdSti?=
+ =?utf-8?B?OWdCbHJIMUV0cVVGWHY4RWN6MHlVRmIvQkRNV2FkM3RaZlR6NmpTSGFOMXk1?=
+ =?utf-8?B?alUwa1l0V3BLemp2ZXY3K3I1MlRWcEF5MDZmb2dDeDhVeFNJS243a1p3NGVq?=
+ =?utf-8?B?RURFZjRpamZPK3E5TmFkQ3BOL2dWdnpEQXZNOUFRaktzdFMwR0VJeFNnVG9W?=
+ =?utf-8?B?a2ZXY1p4UkcvaStaTjVLVTFZY3hUeHE1K1hVeDFtR21zSHBYTEZ3NmdmTUJP?=
+ =?utf-8?B?VWlmTEJsOUFKQ1g0aWpHM05Ob2R1dTNTcXBlYTdOTkpKclB1L0pmUFBkMTds?=
+ =?utf-8?B?bFdwNFBmS0lVZ1h4K2hQMDA5QmFZVTlMVUcvWHJpUkVKL3ltd2QrOVFzQXhI?=
+ =?utf-8?B?eiszN3JCc0lHdHpWZ0RGTGhiQi9JKzF5L1BFRzR2M1BsVjNtUXJJL0JPdVNV?=
+ =?utf-8?B?N2lvSkVRYzl3aG05QitUUnpYL0pzaGZXL1hMOXZuRVk5NjNKMDZnY01aMWhh?=
+ =?utf-8?B?TDRqWTVzckJjYkJqaG9ZU3dNUzhQY3YyMUlRbDN6V0xxU1pEbXFTV2JKbUZs?=
+ =?utf-8?B?bUNJT2Y3bU11WitvVDl5ZmdUVGkyYkNmcW9YMGFUNjI3ZnNydjJjWkxrelRu?=
+ =?utf-8?B?aUQrMVNvM05ad3JhNmJhc3NBYjQ0WHZFQ2t0Y1JTYXoybERVVGVadnh2WmJY?=
+ =?utf-8?B?NkNGZjVNaXFjWFFZS0kzN1g3TnFBUHY1VmwrenNhUHkrcjEzSGFRL01oM0hJ?=
+ =?utf-8?B?dDVDZDZtZ1REc0FzNGYweXZnOUZpMklBbHFZclY1ZEpYc1JoQWM5ZkpWaGhu?=
+ =?utf-8?B?Z2VxWVExQ2QxWDlOQ1BEMmY0b1RSQy93cHUrQUlVNzBDVUw5UnFNNG1uNGZW?=
+ =?utf-8?B?dDRUOTBBcUxsditEdkU4M0xkUTJFL0VkeEd6T29Hd1hLMlI4b2xGUUVYUFhQ?=
+ =?utf-8?B?RFBWZ3NiK25CVXZZT2NiWGRiSmVYYTBqb1Z3WmtaR0ViMThUVFZZQ2lvL05M?=
+ =?utf-8?B?VjFuZUFRT1FrK0pHOFVyVFhRb3dMN2NycFhadXlmclpvMjZ6OCt0OEFHTnlZ?=
+ =?utf-8?B?cnBsOU85bngrUk4xaGVJRUVHRnB3MkRic1JjUUFUUVdiVHhLL1FVZnZVZUV4?=
+ =?utf-8?Q?s24ws0i5QbQ9dA+o6QO0vF6XaE4jUA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR01MB8473.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OFdNZkErRG5RTkl4bVZ1RTU2a1JLUjBVaVRTdDVteU5zWThGc09WanRyNDVq?=
+ =?utf-8?B?N2hhVU42dVp3OGYrVzFLL2piaTdCMGxSTFZhMVFHYjNjYVhFc2tzcitmWER6?=
+ =?utf-8?B?dmE2Unk3aDBWSXErTm1MREFpN21MVDRkVXFkc2tDY3Bad29ZNFZlSmJGMUxw?=
+ =?utf-8?B?bXQ0QjFtSkFJbVVRVDFoOURmNUVySi9YMitXZVhmZUtnaVVJS3FML1dReE1O?=
+ =?utf-8?B?Q2ozWGFyV2lrSlNxeDR6ekNTYjExYjVtbW0zTURXS0d1WnhwV2FsbjlOajhX?=
+ =?utf-8?B?dzVlRUJHTXFCYi9RdXk5cnhxendHMGs0Y3ZmVXREVzllSG1PYURmZGdzTnFl?=
+ =?utf-8?B?UkxTMHl3NGRiS3FUc3ZicnhmanVvNDNkRnRYTHpnYlZORWJGaXdWV3Urekc1?=
+ =?utf-8?B?QlNaMXJzODF3dzErWFFqQktpL25Yb0IwU1BkNWYzV0N5N21CN080OTNCTEg3?=
+ =?utf-8?B?cEtLMTJ1QTN6QW5HWGxLU09TYW5PK2h5ZEtKSU1SWk51NDJWTEJiVDlHUXNK?=
+ =?utf-8?B?ZXVMV3RhOVliSkpETmpSRzdHeTU5cW5tWlUxV0VkcHRMTzhMcXVRN3gxc09X?=
+ =?utf-8?B?a3EveVpweWpSalY3MWFVSFRXZDdzTk5lUFh5SjkxZ2xSRjdUMW5wTXJWdE5G?=
+ =?utf-8?B?YWE3Wkh0U0dBMWdxVWNOTEZXNkNRYWd1VXc4UE81ZURzUURtemF0KzdwNWow?=
+ =?utf-8?B?ODQ2Vm9Nek9FVEZTYlhCV2IzZEpzcjlycldqRENIRFNmY1B5WlhGUTFnSkVB?=
+ =?utf-8?B?Z1ovVHhZVkpzVkpGWnRqYlpwRTNicDVHNWhyOWtkYkRFbGdWWTJOMmVLYlor?=
+ =?utf-8?B?ODl5MXJFbVY4cmp1R3JIdWllL1JxelJJNDNXa0dUc1lyZkk5ZFdmZk5Iamho?=
+ =?utf-8?B?VVZ0ZTNzRys3bCtjQmROMm5pYmNBQXNmR1pMZnpCb3hqMEFYblJyOHNmN1RY?=
+ =?utf-8?B?OHorbXB4QTgyRUxnQXNZR1hIR2ZFY3FTQjMrOUFvTVpjWWQvTVJKQkwwdUMy?=
+ =?utf-8?B?Qy9GQStVU29tUnMvNGtKVVRzZEFQblowUG01cDY4cnRRaDhkam1mdERRVkth?=
+ =?utf-8?B?TVJwbEFLSHFwbktsMWhGWFBKRFJjTWtVSEJsa2NaeUxKa1dZWVh0QjR2V1VW?=
+ =?utf-8?B?ZjE0UE4rdkRtdkg2RjdDNmNOMGw5YXVtcVY0QnZQZHN1WUJJVkhBVU1kUCtB?=
+ =?utf-8?B?aEJvUmtsWDZIdVhlYzVkcitvUW1zMW9NbFpxZHNFZ3Qra1p6ZGhOMVY3OEF0?=
+ =?utf-8?B?OTV2VzA5NU4vRjBqYU9Vd0RHQ1h4eExyQ3Q4ekkybVVEZ0VTbVhGQUNZeUxP?=
+ =?utf-8?B?aU16aXV0cTdGWWsxQ3g1SjFRdm4vSHF1Q3pXMXRJQ0xFS3JPVHBsdjJSU2tn?=
+ =?utf-8?B?VzVUWFZlYkkvek5sbkZvZkVpYXczakRidXlQYUZuVldiYzlDbFBkSzFQeGUz?=
+ =?utf-8?B?ZVBmdHcyY2VqYkNRKzA3dEtWNUJ2MnNPa3BSZzhuUmFGTmZ0M1JBdVRGUGl0?=
+ =?utf-8?B?dENiYTYrenU4SWdPdDRhVDI5RnlrZCtKQ2RQc0ppZkJnMjB5WXU5RzVGYkEv?=
+ =?utf-8?B?N3pJNHRSM0pNWVkyc0pxSmJLcU51aFF5ZmpsUmxuTjlBYnJzQUh3U3ZUaS9q?=
+ =?utf-8?B?UmF1VTRrRWgyc1JEVHhYMkwzczdBcW8xMytUNnpCUFdjVFI0U1RRb044aXhP?=
+ =?utf-8?B?SjRsRHRrYWd5RHhpTE0zcHZnSmxrT0lpWDhJUXZLM0RZVVBTeUtVcnRhblI0?=
+ =?utf-8?B?SkJhYy9XN2dGZ084aEliYWhsRjltVUlHK3N4K0s5RXkrWnV3blF2VDIrZGVq?=
+ =?utf-8?B?L1dmcnhSL2tZLzdoMmxxb2V6cnFZL0RwUlhySHRyaFBOQmp4VlZveDRYSm5p?=
+ =?utf-8?B?b01RYWJUdS9TejhPblUwcHd1YStMK0s2TDA2bVl2RnoyZjgyZDd3NGVLZHA1?=
+ =?utf-8?B?QWQ4MkU5c2h2MjdmYXJ3K0xBVHQ1SWJJOTFOSG9iMXpGbHIxTFlZTGp0NEFR?=
+ =?utf-8?B?TFR0cnV1ZG5tMTRDcUQwaTNHY3g2eHM5YWNjVVVWMUo1YXd3MzZkNkFZS3ht?=
+ =?utf-8?B?ZVpnN2h2d2s4RlQyNEU4c2Q4QkJaUHdwLzF5d1dKejBpdEoxT0I3Z21zR2lB?=
+ =?utf-8?B?VExFOGtWV3JtQ0lPYkpqVHRjbHVMZitpQkUzeEgyU1RUQzByZE1hNXhPaU9v?=
+ =?utf-8?Q?ae3ySEyNB7uj4pvKg8zCCxs=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3670a3ae-8883-4440-49d3-08dddaaf1a88
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR01MB8473.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 21:19:35.8378
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QCDFCPKzk64xsdTFznTEo9m0D98dkSUJ/dDPDas4kHIWVTYxxNyyG3ilPgMbikPTfcTxYc0TxcvziFxpYNpD1w/fzGnl85VMZfSSE0HpqyJU1tncITGzpp3c9El8aKLV
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR01MB7423
 
-On 8/13/25 10:15 AM, Ben Collins wrote:
-> Adds dtbinding check for thermocouple-type and sets sensor config
-> to match. Add iio info attribute to show state as well.
-> 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
-> ---
+This is needed for both kernelspace and userspace properly handle
+ARM processor CPER events.
 
-...
+Patch 1 of this series fix the UEFI 2.6+ implementation of the ARM
+trace event, as the original implementation was incomplete.
+Changeset e9279e83ad1f ("trace, ras: add ARM processor error trace event")
+added such event, but it reports only some fields of the CPER record
+defined on UEFI 2.6+ appendix N, table N.16.  Those are not enough
+actually parse such events on userspace, as not even the event type
+is exported.
 
-> @@ -447,6 +492,20 @@ static int mcp9600_probe(struct i2c_client *client)
->  	data = iio_priv(indio_dev);
->  	data->client = client;
->  
-> +	/* Accept type from dt with default of Type-K. */
-> +	data->thermocouple_type = THERMOCOUPLE_TYPE_K;
-> +	ret = device_property_read_u32(&client->dev, "thermocouple-type",
-> +				       &data->thermocouple_type);
+Patch 2 fixes a compilation breakage when W=1;
 
-ret is not checked. We should either check it or drop it and add
-a comment explaining why it is OK to ignore the return value.
+Patch 3 adds a new helper function to be used by cper and ghes drivers to
+display CPER bitmaps;
 
-Typically, for optional properties, we would ignore only -EINVAL
-meaning the property is not present and fail on other errors.
+Patch 4 fixes CPER logic according with UEFI 2.9A errata. Before it, there
+was no description about how processor type field was encoded. The errata
+defines it as a bitmask, and provides the information about how it should
+be encoded.
 
-We also need another dt-bindings patch to add the default in the
-bindings.
+Patch 5 adds CPER functions to Kernel-doc.
 
-> +	if (data->thermocouple_type >= ARRAY_SIZE(mcp9600_type_map))
-> +		return dev_err_probe(&client->dev, -EINVAL,
-> +				     "Invalid thermocouple-type property %d.\n",
-> +				     data->thermocouple_type);
-> +
-> +	/* Set initial config. */
-> +	ret = mcp9600_config(data);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	ch_sel = mcp9600_probe_alerts(indio_dev);
->  	if (ch_sel < 0)
->  		return ch_sel;
+This series was validated with the help of an ARM EINJ code for QEMU:
+
+	https://gitlab.com/mchehab_kernel/qemu/-/tree/qemu_submission
+
+$ scripts/ghes_inject.py -d arm -p 0xdeadbeef -t cache,bus,micro-arch
+
+[   11.094205] {1}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 0
+[   11.095009] {1}[Hardware Error]: event severity: recoverable
+[   11.095486] {1}[Hardware Error]:  Error 0, type: recoverable
+[   11.096090] {1}[Hardware Error]:   section_type: ARM processor error
+[   11.096399] {1}[Hardware Error]:   MIDR: 0x00000000000f0510
+[   11.097135] {1}[Hardware Error]:   Multiprocessor Affinity Register (MPIDR): 0x0000000080000000
+[   11.097811] {1}[Hardware Error]:   running state: 0x0
+[   11.098193] {1}[Hardware Error]:   Power State Coordination Interface state: 0
+[   11.098699] {1}[Hardware Error]:   Error info structure 0:
+[   11.099174] {1}[Hardware Error]:   num errors: 2
+[   11.099682] {1}[Hardware Error]:    error_type: 0x1a: cache error|bus error|micro-architectural error
+[   11.100150] {1}[Hardware Error]:    physical fault address: 0x00000000deadbeef
+[   11.111214] Memory failure: 0xdeadb: recovery action for free buddy page: Recovered
+
+- 
+
+I also tested the ghes and cper reports both with and without this
+change, using different versions of rasdaemon, with and without
+support for the extended trace event. Those are a summary of the
+test results:
+
+- adding more fields to the trace events didn't break userspace API:
+  both versions of rasdaemon handled it;
+
+- the rasdaemon patches to handle the new trace report was missing
+  a backward-compatibility logic. I fixed already. So, rasdaemon
+  can now handle both old and new trace events.
+
+Btw, rasdaemon has gained support for the extended trace since its
+version 0.5.8 (released in 2021). I didn't saw any issues there
+complain about troubles on it, so either distros used on ARM servers
+are using an old version of rasdaemon, or they're carrying on the trace
+event changes as well.
+
+---
+v5:
+ - fix a few code formatting issues
+ - remove "Co-developed-by: danielf" because his/my contribution was
+   removed in v2.
+ - adjust tag block
+ - Link to v4: https://lore.kernel.org/linux-acpi/20250805-mauro_v3-v6-16-rev2-v4-0-ea538759841c@os.amperecomputing.com
+
+v4:
+ - rebase to kernel v6.16
+ - modify commit message of patch 1, and adjust white spaces
+   per Boris' suggestions.
+ - Link to v3: https://lore.kernel.org/linux-acpi/cover.1725429659.git.mchehab+huawei@kernel.org
+
+v3:
+ - history of patch 1 improved with a chain of co-developed-by;
+ - add a better description and an example on patch 3;
+ - use BIT_ULL() on patch 3;
+ - add a missing include on patch 4.
+
+v2:
+  - removed an uneeded patch adding #ifdef for CONFIG_ARM/ARM64;
+  - cper_bits_to_str() now returns the number of chars filled at the buffer;
+  - did a cosmetic (blank lines) improvement at include/linux/ras.h;
+  - arm_event trace dynamic arrays renamed to pei_buf/ctx_buf/oem_buf.
+
+Jason Tian (1):
+      RAS: Report all ARM processor CPER information to userspace
+
+Mauro Carvalho Chehab (4):
+      efi/cper: Adjust infopfx size to accept an extra space
+      efi/cper: Add a new helper function to print bitmasks
+      efi/cper: align ARM CPER type with UEFI 2.9A/2.10 specs
+      docs: efi: add CPER functions to driver-api
+
+ Documentation/driver-api/firmware/efi/index.rst | 11 +++--
+ drivers/acpi/apei/ghes.c                        | 27 +++++------
+ drivers/firmware/efi/cper-arm.c                 | 52 ++++++++++-----------
+ drivers/firmware/efi/cper.c                     | 62 ++++++++++++++++++++++++-
+ drivers/ras/ras.c                               | 40 +++++++++++++++-
+ include/linux/cper.h                            | 12 +++--
+ include/linux/ras.h                             | 16 +++++--
+ include/ras/ras_event.h                         | 49 +++++++++++++++++--
+ 8 files changed, 210 insertions(+), 59 deletions(-)
 
 
