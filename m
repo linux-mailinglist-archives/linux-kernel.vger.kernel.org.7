@@ -1,145 +1,119 @@
-Return-Path: <linux-kernel+bounces-765833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E38B23EE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:18:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6F8B23EEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4A3068571F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:18:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEB101A28615
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311D7270555;
-	Wed, 13 Aug 2025 03:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656DD2BDC32;
+	Wed, 13 Aug 2025 03:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsgkdlnC"
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwijmR8r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F2F22338;
-	Wed, 13 Aug 2025 03:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241F529E101;
+	Wed, 13 Aug 2025 03:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755055090; cv=none; b=TJK5NTaPfdrE7iuIDXPvLUDjNqE9bni4MFICuC2+AtdjTqLsYsFlbCEGaqB7/+2WwHDyhgci5kPaFZ/YXloG1wXpfXDf/uQy7cmXhseSh/t3VgRQ0NjS+j9Ai82qCWv4Kr9ofHzKIflxL7JoAY2AiVgLZqgQp/bQWgbxtlXt9pY=
+	t=1755055303; cv=none; b=tyOVR3bM+yP0DDvNt9TH17JQGX1z4AGRDpQQdDb75yAIEgJf71i54CbMU+Gd0WIhcizf7r3bShwypGKv7GaG8mtKBfvCyfVKfdcvXTv6R4Ne+pwvNnm3wTIhKNAv0FhUsdSv3xmXHvem+8hO96mcID6zxDoCJMzIOYaBjUaSlqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755055090; c=relaxed/simple;
-	bh=ep7lK0F99GEgxWEt/eIh0MesHhIBI5SzHWocRe7DRX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MDEXtq0aKSSMDPqVYiL0pQlILACbVzy/RZv/m1BYuKBKnlORL9TJ0GfCeqb9inzFEdZUxCb3/yon2pJgpIrzrhhFKi6giIaXGkpolcB3xn11DYu/jceMeriiD9xm45DXB+mgks1ydC5Vzs0C0K8Y7xyEIpGt+8/M7p5gWMrjTL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsgkdlnC; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-3b78127c5d1so3963233f8f.3;
-        Tue, 12 Aug 2025 20:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755055087; x=1755659887; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7XCYFs1Ir8nk3KK4TBgEVy6vlzhXtWwOkAnDASfP0Oo=;
-        b=bsgkdlnCCYgKfetqx3bAnULUnWFfjqcNVsOkOUB3tRWseQgj4MVG8ifcc1c445Vlzf
-         vulqfJVyrDRfeewn4lcOgW0MOWGDSzsYAYrsWS5WOg1HWz6nl2d4RM4MdQPm9bj0szA+
-         gMp8tmGEGYxOzqxXiErmawEj+LDaT4Qgam/296NBDCCVbigEG0mQCAZ3R10oMTt5PwTX
-         CkfjcCRfvYvpqYyWPaXocEiOtM21rU3bPkuX6GH/OHCnw56NPd5EQ9emn7xbl/w7l4Qx
-         q4jqXo2J0d2zfOpeq4f4nlsBJ6Dl8H+Uxo+pHM4wJNWpB20DjS/IZEV5+C0PBO4Mf27e
-         Iwqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755055087; x=1755659887;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7XCYFs1Ir8nk3KK4TBgEVy6vlzhXtWwOkAnDASfP0Oo=;
-        b=d/JJpt/EW9hR3ggwIuKMkbXw4CczeI0w2UerYEtMvNYEbPr+K4Bk+aW4gFRONAzgQ6
-         eCarZaYSHqu+VxMdMBHyHVWhyXO+qo5Y6pm3PvxGKTdt4hSfGgzn1qSrPk9VjJFNUYKp
-         AHBa5NmR0cOZqZt3l63eXTxMIgm1jr1w+iXlL3g1VBx+hhjGay4g1FEGhtHIM6y8MHnp
-         /L6DYtOARKVWf5U6FWIEYG1SaMsFHxCS/dN8XW6MMtu6hofTZoJs2MjDDJvjkvgqB1yf
-         g6kFK/Ct9XRHW4+SNhRgxnI1xMUUd62pp8sfUjmkFmE/x7eYfNzEkV2Yvw5eG6fz3yQn
-         1g9w==
-X-Forwarded-Encrypted: i=1; AJvYcCV5PkOOdqZjxBVR5oqY35wVHgkh5ayyXxE3KlKiYK5lPTuUbHgjvkWQwyiYM7RvHj8N6Yojh5dc@vger.kernel.org, AJvYcCXb4zD/Yp5EatJOzram4aYYbtsNCzQ3rfq8x+TCZOnOm3kDSuapbph/Xxn5XKDl6JJsnFeXC37phMYQJZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS/oerijfcyr4tJwKrZMNy1Jq1NMXSI9XZndRYVICbGz0onz61
-	I4ztwNakrGHTQqtIO8fEE+Tf7NtP+ZaRTjcLMKdcxJ8zrsb+RAkTIERr
-X-Gm-Gg: ASbGncuIKyVcAwCUe6PQCW+BcWgEHnIwfklmBUvRwCg2NuleaTbCS80hcQLXNT/LOc4
-	CY4Vdm6XcVx6O8GolxEHyWbnT7eYvDFqRjs6+Tn6Ohs+OpsHANWCQOZZqaBSIdYg27j1PjkpYMT
-	GPQRdJTZd5QtBKuMUyyhRcvUU1dQycd12xEfzfPZDJlY0Y5SxClTGe4hp4K+v6AsyD7M1DVHIHx
-	ICPNoqNydn0no2BymO4i3n02B3oA48xNFkvrwwbbE1LNNyyrDNxrTGyymxvmWvgHhQzs69/9Fvg
-	qSu3Xr53z4sC/V4Krgo/EAJehnpCn6d/NfF4bowdNlGe0PptY7iW6r/tFAVtjWxziJLjaMS+LYr
-	Sj6xmhh3NXwX5eed/JxiMPu58VgccaWO9EeX3VDBHeDA1ucgVeSE3bYmPzpta3u36y1tzkxkRwI
-	ult3wiJDGS2DJi1KTUVis4
-X-Google-Smtp-Source: AGHT+IFK1DMyzcLy23ebyF7+rQb4+XbWoa8waTcmvm2yM0sRpo4qdIIwHXD6dXoIgYNTEroCcmTFnw==
-X-Received: by 2002:a05:6000:2311:b0:3b7:8268:8335 with SMTP id ffacd0b85a97d-3b917eb8171mr822011f8f.42.1755055087110;
-        Tue, 12 Aug 2025 20:18:07 -0700 (PDT)
-Received: from [26.26.26.1] (95.112.207.35.bc.googleusercontent.com. [35.207.112.95])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e04c7407sm36750215f8f.13.2025.08.12.20.18.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 20:18:05 -0700 (PDT)
-Message-ID: <33b39588-5a39-4474-ac17-bde923803600@gmail.com>
-Date: Wed, 13 Aug 2025 11:17:57 +0800
+	s=arc-20240116; t=1755055303; c=relaxed/simple;
+	bh=FJ3uPrxwG00g76QIbGSTYDKnWQuCo1IHVqFcVwiujF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GWPZFBm1SA6CS54Dm8BXbGoIIt565+bn7jeJxhMm3qAlK6A4mPYlayfwp5SSu58ocFuNfOsZNbFEqgFrGpHXYfgGEyTQZvs6/juh2iIMeshVx4BJOr4LE7kWgjb5exMXnaFZn4scYIeQvdoLxo0muTXjI0MMFUJ4P3G+uGGMNrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwijmR8r; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755055302; x=1786591302;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FJ3uPrxwG00g76QIbGSTYDKnWQuCo1IHVqFcVwiujF0=;
+  b=RwijmR8rQSza60KMbn3UCk3IKtdVBgUnobl6OAVah9czcLBgGmEPXlrb
+   f8sjLLQDD4fQEhWy7prVEmg3/NuHbSxLJuRYOX2yjwlDNlB8YcAYgNQFK
+   vBuo3DHhN8LFgMjy+JfnmjFEREFxLOLePgPEof6ANWDs6MnWCD50ZXwXW
+   s2DzysBKa+pOyz5/hJL9neHctgEPMDnYVx4WesLbZx54MnpmuShhkU+mI
+   QVUsxowWK7Q8imDrnpZsK4JpL2Rdc42eTHZtKAqhfBA82aPqgLiKwX3KQ
+   JqdF5gflzVn4mx7zBAvNIHTFaxEKpoFvhvNxEWVzGwoQ3lqXL80pmtAxM
+   w==;
+X-CSE-ConnectionGUID: YLuAJ6c/TTSAgsRbuTfmWQ==
+X-CSE-MsgGUID: pI8t850ITJexTtrjQVsKNA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="74789381"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="74789381"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 20:21:42 -0700
+X-CSE-ConnectionGUID: 84Cqx6gLT7a+m83CS2tacA==
+X-CSE-MsgGUID: AYDpHQp6RoyvGKKPg8xa/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="170565614"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 12 Aug 2025 20:21:39 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1um23E-0009Ui-38;
+	Wed, 13 Aug 2025 03:21:26 +0000
+Date: Wed, 13 Aug 2025 11:21:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: Use hashtable for global clk lookups
+Message-ID: <202508131125.ohtCwp4k-lkp@intel.com>
+References: <20250812085328.3306705-2-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] iommu/sva: Invalidate KVA range on kernel TLB
- flush
-To: Jason Gunthorpe <jgg@nvidia.com>, Baolu Lu <baolu.lu@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250806052505.3113108-1-baolu.lu@linux.intel.com>
- <d646d434-f680-47a3-b6b9-26f4538c1209@intel.com>
- <20250806155223.GV184255@nvidia.com>
- <d02cb97a-7cea-4ad3-82b3-89754c5278ad@intel.com>
- <20250806160904.GX184255@nvidia.com>
- <62d21545-9e75-41e3-89a3-f21dda15bf16@intel.com>
- <4a8df0e8-bd5a-44e4-acce-46ba75594846@linux.intel.com>
- <4ce79c80-1fc8-4684-920a-c8d82c4c3dc8@intel.com>
- <b6defa2a-164e-4c2f-ac55-fef5b4a9ba0f@linux.intel.com>
- <20250811125753.GT184255@nvidia.com>
-Content-Language: en-US
-From: Ethan Zhao <etzhao1900@gmail.com>
-In-Reply-To: <20250811125753.GT184255@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812085328.3306705-2-wenst@chromium.org>
 
+Hi Chen-Yu,
 
+kernel test robot noticed the following build warnings:
 
-On 8/11/2025 8:57 PM, Jason Gunthorpe wrote:
-> On Fri, Aug 08, 2025 at 01:15:12PM +0800, Baolu Lu wrote:
->> +static void kernel_pte_work_func(struct work_struct *work)
->> +{
->> +	struct ptdesc *ptdesc, *next;
->> +
->> +	iommu_sva_invalidate_kva_range(0, TLB_FLUSH_ALL);
->> +
->> +	guard(spinlock)(&kernel_pte_work.lock);
->> +	list_for_each_entry_safe(ptdesc, next, &kernel_pte_work.list, pt_list) {
->> +		list_del_init(&ptdesc->pt_list);
->> +		pagetable_dtor_free(ptdesc);
->> +	}
-> 
-> Do a list_move from kernel_pte_work.list to an on-stack list head and
-> then immediately release the lock. No reason to hold the spinock while
-> doing frees, also no reason to do list_del_init, that memory probably
-> gets zerod in pagetable_dtor_free() 
-Yep，using guard(spinlock)() for scope-bound lock management sacrifices
-fine-grained control over the protected area. If offers convenience at
-the cost of precision.
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.17-rc1 next-20250812]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Out of my bias, calling it sluggard(spinlock)() might be proper.
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Yu-Tsai/clk-Use-hashtable-for-global-clk-lookups/20250812-171958
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20250812085328.3306705-2-wenst%40chromium.org
+patch subject: [PATCH 2/2] clk: Use hashtable for global clk lookups
+config: microblaze-randconfig-r131-20250813 (https://download.01.org/0day-ci/archive/20250813/202508131125.ohtCwp4k-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 12.5.0
+reproduce: (https://download.01.org/0day-ci/archive/20250813/202508131125.ohtCwp4k-lkp@intel.com/reproduce)
 
-Thanks，
-Ethan
-> 
-> Jason
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508131125.ohtCwp4k-lkp@intel.com/
 
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/clk.c:40:1: sparse: sparse: symbol 'clk_hashtable' was not declared. Should it be static?
+
+vim +/clk_hashtable +40 drivers/clk/clk.c
+
+    38	
+    39	#define CLK_HASH_BITS 9
+  > 40	DEFINE_HASHTABLE(clk_hashtable, CLK_HASH_BITS);
+    41	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
