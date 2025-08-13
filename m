@@ -1,826 +1,139 @@
-Return-Path: <linux-kernel+bounces-766825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D50B24B9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:10:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2C6B24BA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5444A188D14F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:07:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C723316F091
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B89D2ECD34;
-	Wed, 13 Aug 2025 14:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9A42EB5DC;
+	Wed, 13 Aug 2025 14:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rVAwv0eO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="86zRm+0Z";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rVAwv0eO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="86zRm+0Z"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGLp84KU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C812E7BAE
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B291A2C06;
+	Wed, 13 Aug 2025 14:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755093991; cv=none; b=Cyx9sRUbaIukQq/P9P8bEw2FrI5VbBETwPwKFhVUMtUUbTcGyCRso4S7uFRfvp1mxuFNdqUHMI8EIKxNg7gs32iBr+TA/aAiiqJSzihC3eEExM24g1Dos98Ro+0b9y9KzQ2DXWm3vIZJ0+FWersVmLntyIPWpV7nmeVZy4WEDgU=
+	t=1755094066; cv=none; b=onDvSnDBn1mE3gMkqw5l/pJRyCyG3E2t/Bs08lpz2xn9RuWjBvAVB2ixjRP+g3/9YP+UjYwsFA6VnO7PFKp+ewsyQJTcGHlxbVgV0ltZJgIy0MgzAka/LLSwaWimZ5G1pknNIUYVHuBqWjade1PsKt62p4oZPZhQ+UOc6+G2ovk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755093991; c=relaxed/simple;
-	bh=0ZyoCACoNrFurPPeRvcrvqHpIr9T6gXVY7C7PPBqDI0=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=YttJFPIM7459eSGHfcV8ogdi6MPz0Zan1zNqC/nESRL57ejXKCMtUY+aIRD0GcADKpKFT4GhnfJQ7etPB9Eol92NkkrgxvLJo0YxLG0LpOFPugTxkQ2k1uc1feJ50jm/S7y8nt2E3oLxQZOSXoB9IbAHUJbj3zJocrNGqmHYIO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rVAwv0eO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=86zRm+0Z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rVAwv0eO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=86zRm+0Z; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1F01621AF5;
-	Wed, 13 Aug 2025 14:06:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755093986; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ipmwtN9rwC166S3bIRMKgAWp9pQdfucwKaRsQOJz13o=;
-	b=rVAwv0eO9CZyINtRcIJgJFb6192yna12F9zryZCdlmgjWwmg/GskCUrEJuQLfNotv5UVVC
-	5Az151TOksIxzbzQGAeva7jgi6/k/aYCTjIjoSCdw+1zhKkix/eTDzSceGbVTsADnK3/y4
-	hUz0LTlep6TULF0rK2bbfSu+iqmdCh4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755093986;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ipmwtN9rwC166S3bIRMKgAWp9pQdfucwKaRsQOJz13o=;
-	b=86zRm+0ZVZn8SXAq2gx+NlVkNvvNr9lBEIa42qpj644B/JpskGCUEGQNvq7TOsUvEnvNe9
-	PEQQ1V+KG2JMjtDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=rVAwv0eO;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=86zRm+0Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755093986; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ipmwtN9rwC166S3bIRMKgAWp9pQdfucwKaRsQOJz13o=;
-	b=rVAwv0eO9CZyINtRcIJgJFb6192yna12F9zryZCdlmgjWwmg/GskCUrEJuQLfNotv5UVVC
-	5Az151TOksIxzbzQGAeva7jgi6/k/aYCTjIjoSCdw+1zhKkix/eTDzSceGbVTsADnK3/y4
-	hUz0LTlep6TULF0rK2bbfSu+iqmdCh4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755093986;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ipmwtN9rwC166S3bIRMKgAWp9pQdfucwKaRsQOJz13o=;
-	b=86zRm+0ZVZn8SXAq2gx+NlVkNvvNr9lBEIa42qpj644B/JpskGCUEGQNvq7TOsUvEnvNe9
-	PEQQ1V+KG2JMjtDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B836513929;
-	Wed, 13 Aug 2025 14:06:25 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id g8gDK+GbnGiIZwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 13 Aug 2025 14:06:25 +0000
-Content-Type: multipart/mixed; boundary="------------CTEhC22KPMTm8lggWd6WVGu0"
-Message-ID: <d4bcf787-2bec-410c-9eb4-4621a05aa666@suse.de>
-Date: Wed, 13 Aug 2025 16:06:25 +0200
+	s=arc-20240116; t=1755094066; c=relaxed/simple;
+	bh=zcy05gnuZEZXeY7AcRHHwUP4PLtQj6zb6GUfETiaQHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iB+yOHBtFmHe0yaZh6aQ+ViduodNhPUkd174OB50QtOu41dt4v9hZm9p2cDQUFFCKK8KJMLfHlGyjMq/KTOfVIBLUWHEg9B5lfYy7bwctL0tvNhCPr9hK7WejjaJiZRgO83j/ZiDdl86swvBepHE3AYixaOfBpwbYOtaUW2q/JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGLp84KU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74674C4CEEB;
+	Wed, 13 Aug 2025 14:07:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755094065;
+	bh=zcy05gnuZEZXeY7AcRHHwUP4PLtQj6zb6GUfETiaQHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gGLp84KU+EeT4RVlZZn1mxWiEgYlbumqzXI8nKzbJxjlVREp+Zs6ALnfyvnMfFErF
+	 31fMPzmEx4EHqHpO6Wu+CvDMTmtPDQeTuasIg9iW97uzRuAkFrD3HVlkLpkJtdUC0l
+	 ISlqWHNAoicN7z74YGHwCmCT5XmgE13ppqLFcXudAJlJePhowH/MHE5zDptawuAka/
+	 PGrwr9CP1+eBvTPWXq0sof73YzBVS30gLU2D1l7w1WTv2nEV7hmDkoo9ZjYPVRVx+v
+	 Z3z3FIshqVLGS6KWgkksnaZeqt4mLN6fbPaYtpbZk+O1/boH4govioIDHsln6O521V
+	 nqV9cl+peU80A==
+Date: Wed, 13 Aug 2025 17:07:37 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Graf <graf@amazon.com>, Baoquan He <bhe@redhat.com>,
+	Changyuan Lyu <changyuanl@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Thomas Weischuh <linux@weissschuh.net>, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/3] kho: allow scratch areas with zero size
+Message-ID: <aJycKRCEqbW0pgwR@kernel.org>
+References: <20250811082510.4154080-1-rppt@kernel.org>
+ <20250811082510.4154080-2-rppt@kernel.org>
+ <mafs0349vwd1i.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 RESEND 1/3] drm/shmem-helper: Import dmabuf without
- mapping its sg_table
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Shixiong Ou <oushixiong1025@163.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sean Paul <sean@poorly.run>,
- Jocelyn Falempe <jfalempe@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250522070714.439824-1-oushixiong1025@163.com>
- <ba1bdfb8-dbf7-4372-bdcb-df7e0511c702@suse.de>
- <7d974eaa-d8a4-4430-a999-7b06c4e17a81@163.com>
- <9792c6c3-a2b8-4b2b-b5ba-fba19b153e21@suse.de>
- <f18a41f5-bf33-4e83-9cd1-59b0efd952c1@amd.com>
- <47ba5d7b-dd1c-4f19-92cb-523b60f1e876@suse.de>
- <b4a18ca4-2889-4a16-9b75-872a1fec3c19@suse.de>
- <e1be85e2-b7c2-44d4-87f5-b5966bc6d053@amd.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <e1be85e2-b7c2-44d4-87f5-b5966bc6d053@amd.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 1F01621AF5
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.41 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[multipart/mixed,text/plain,text/x-patch];
-	MIME_BASE64_TEXT(0.10)[];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[amd.com,163.com];
-	MIME_TRACE(0.00)[0:+,1:+,2:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,poorly.run,redhat.com,lists.freedesktop.org,vger.kernel.org,kylinos.cn];
-	HAS_ATTACHMENT(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,linaro.org:email]
-X-Spam-Score: -4.41
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mafs0349vwd1i.fsf@kernel.org>
 
-This is a multi-part message in MIME format.
---------------CTEhC22KPMTm8lggWd6WVGu0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+On Wed, Aug 13, 2025 at 03:45:29PM +0200, Pratyush Yadav wrote:
+> On Mon, Aug 11 2025, Mike Rapoport wrote:
+> 
+> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> >
+> > Parsing of kho_scratch parameter treats zero size as an invalid value,
+> > although it should be fine for user to request zero sized scratch area
+> > for some types if scratch memory, when for example there is no need to
+> > create scratch area in the low memory.
+> 
+> Can the system boot with 0 per-node memory? If not, then perhaps we
+> should only allow lowmem scratch to be zero?
 
-Hi
+In most cases yes because most of boot time allocations have fallback to
+"any node".
+And there's also an option to omit the "global" scratch and boot with only
+per-node scratch areas, so I'd keep the possibility of setting any of these
+to 0.
 
-Am 13.08.25 um 15:35 schrieb Christian König:
-> On 13.08.25 14:16, Thomas Zimmermann wrote:
->> In addition:
->>
->>>> Here udl just silently assumes that it got a vaddr, but that isn't necessarily the case. Drivers amdgpu (or radeon, nouveau etc...) can return an io addr as well.
->>> That's a union of the two pointer types. [1] Using them interchangeably has worked so far (*) and should work here as well. As I said in the other mail, ttm_bo_vmap() never bothers to pin the pages in place and amdgpu might relocated them shortly after.
->> AFAICT with the old code we ran dma_buf_pin_on_map() at some point. Could we do this in the new version as well?
-> Ah, yes that could be it. So basically the buffer moves and because of that the vmap is unmapped.
->
-> It would probably be a good idea to call dma_buf_pin() from drm_gem_dmabuf_vmap() before calling drm_gem_vmap_locked().
->
-> Should be trivial since we already have the dma_buf object and the necessary lock is held as well.
+> > Treat zero as a valid value for a scratch area size but reject
+> > kho_scratch parameter that defines no scratch memory at all.
+> >
+> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> > ---
+> >  kernel/kexec_handover.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+> > index e49743ae52c5..c6ac5a5e51cb 100644
+> > --- a/kernel/kexec_handover.c
+> > +++ b/kernel/kexec_handover.c
+> > @@ -385,6 +385,7 @@ static int __init kho_parse_scratch_size(char *p)
+> >  {
+> >  	size_t len;
+> >  	unsigned long sizes[3];
+> > +	size_t total_size = 0;
+> >  	int i;
+> >  
+> >  	if (!p)
+> > @@ -421,11 +422,15 @@ static int __init kho_parse_scratch_size(char *p)
+> >  		}
+> >  
+> >  		sizes[i] = memparse(p, &endp);
+> > -		if (!sizes[i] || endp == p)
+> > +		if (endp == p)
+> >  			return -EINVAL;
+> >  		p = endp;
+> > +		total_size += sizes[i];
+> >  	}
+> >  
+> > +	if (!total_size)
+> > +		return -EINVAL;
+> > +
+> 
+> Looks good. BTW, unrelated to this patch, but should we also check that
+> p == '\0' here to make sure the whole argument was consumed?
 
-The attached patch fixes the problem on my test system. It further 
-integrates well with the existing logic, so changes are minimal. Any 
-comments before I send it out for review?
-
-Best regards
-Thomas
-
->
+Care to send a patch? ;-) 
+ 
+> >  	scratch_size_lowmem = sizes[0];
+> >  	scratch_size_global = sizes[1];
+> >  	scratch_size_pernode = sizes[2];
+> 
+> -- 
 > Regards,
-> Christian.
->
->> [1] https://elixir.bootlin.com/linux/v6.16/source/drivers/dma-buf/dma-buf.c#L1115
->>
->> Best regards
->> Thomas
->>
->>> [1] https://elixir.bootlin.com/linux/v6.16/source/include/linux/iosys-map.h#L110
->>>
->>> Best regards
->>> Thomas
->>>
->>> (*) White lie: we had problems on exotic architectures, such as sparc, but never on x86.
->>>
->>>
->>>> Regards,
->>>> Christian.
->>>>
->>>>> Best regards
->>>>> Thomas
->>>>>
->>>>>> Best regards,
->>>>>> Shixiong
->>>>>>
->>>>>>
->>>>>>> [  168.785445] BUG: unable to handle page fault for address: ffffc9012b800000
->>>>>>> [  168.792311] #PF: supervisor read access in kernel mode
->>>>>>> [  168.797452] #PF: error_code(0x0000) - not-present page
->>>>>>> [  168.802586] PGD 100000067 P4D 100000067 PUD 0
->>>>>>> [  168.807042] Oops: Oops: 0000 [#1] SMP KASAN PTI
->>>>>>> [  168.811573] CPU: 2 UID: 1000 PID: 2380 Comm: KMS thread Tainted: G            E       6.16.0-rc5-1-default+ #4080 PREEMPT(voluntary)
->>>>>>> [  168.823537] Tainted: [E]=UNSIGNED_MODULE
->>>>>>> [  168.827458] Hardware name: System manufacturer System Product Name/Z170-A, BIOS 3802 03/15/2018
->>>>>>> [  168.836125] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
->>>>>>> [  168.841779] Code: 0f b6 34 28 4c 89 d8 49 d3 e5 83 e0 07 4d 01 dd 83 f9 01 0f 84 4a 03 00 00 83 c0 03 40 38 f0 7c 09 40 84 f6 0f 85 82 05 00 00 <41> 8b 03 4c 63 7c 24 78 4c 89 5c 24 08 89 c6 41 89 c4 c1 e8 08
->>>>>>> c1
->>>>>>> [  168.860476] RSP: 0018:ffff88811c7e75c0 EFLAGS: 00010246
->>>>>>> [  168.865697] RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000002
->>>>>>> [  168.872815] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000100
->>>>>>> [  168.879934] RBP: dffffc0000000000 R08: ffff8881082efe00 R09: ffff8881082e0000
->>>>>>> [  168.887046] R10: 0000000000000002 R11: ffffc9012b800000 R12: ffff88811c7e76f8
->>>>>>> [  168.894155] R13: ffffc9012b800400 R14: ffff8881082e0007 R15: 0000000000000000
->>>>>>> [  168.901266] FS:  00007f4685f3b6c0(0000) GS:ffff88846c690000(0000) knlGS:0000000000000000
->>>>>>> [  168.909330] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>> [  168.915058] CR2: ffffc9012b800000 CR3: 0000000117944004 CR4: 00000000003706f0
->>>>>>> [  168.922170] Call Trace:
->>>>>>> [  168.924616]  <TASK>
->>>>>>> [  168.926714]  ? validate_chain+0x24e/0x5e0
->>>>>>> [  168.930718]  ? __lock_acquire+0x568/0xae0
->>>>>>> [  168.934725]  udl_render_hline+0x165/0x33b [udl]
->>>>>>> [  168.939256]  ? __pfx_udl_render_hline+0x10/0x10 [udl]
->>>>>>> [  168.944297]  ? local_clock_noinstr+0xb/0x100
->>>>>>> [  168.948557]  ? __lock_release.isra.0+0x16c/0x2e0
->>>>>>> [  168.953162]  ? mark_held_locks+0x40/0x70
->>>>>>> [  168.957077]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
->>>>>>> [  168.962721] udl_primary_plane_helper_atomic_update+0x432/0x670 [udl]
->>>>>>> [  168.969145]  ? __pfx_udl_primary_plane_helper_atomic_update+0x10/0x10 [udl]
->>>>>>> [  168.976089]  ? __pfx___drm_dev_dbg+0x10/0x10
->>>>>>> [  168.980357]  ? drm_atomic_helper_calc_timestamping_constants+0x141/0x200
->>>>>>> [  168.987044]  ? drm_atomic_helper_commit_planes+0x3b6/0x1030
->>>>>>> [  168.992599] drm_atomic_helper_commit_planes+0x3b6/0x1030
->>>>>>> [  168.997987]  drm_atomic_helper_commit_tail+0x41/0xb0
->>>>>>> [  169.002943]  commit_tail+0x204/0x330
->>>>>>> [  169.006513]  drm_atomic_helper_commit+0x242/0x2e0
->>>>>>> [  169.011203]  ? __pfx_drm_atomic_helper_commit+0x10/0x10
->>>>>>> [  169.016413]  drm_atomic_commit+0x1e1/0x290
->>>>>>> [  169.020500]  ? prepare_signaling+0x355/0xda0
->>>>>>> [  169.024769]  ? __pfx_drm_atomic_commit+0x10/0x10
->>>>>>> [  169.029372]  ? __pfx___drm_printfn_info+0x10/0x10
->>>>>>> [  169.034069]  drm_mode_atomic_ioctl+0x8ff/0xe40
->>>>>>> [  169.038510]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10
->>>>>>> [  169.043466]  ? find_held_lock+0x2b/0x80
->>>>>>> [  169.047295]  ? __lock_acquire+0x568/0xae0
->>>>>>> [  169.051293]  ? mark_usage+0x65/0x180
->>>>>>> [  169.054870]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10
->>>>>>> [  169.059823]  ? do_raw_spin_unlock+0x55/0x230
->>>>>>> [  169.064081]  ? drm_is_current_master+0x26/0x30
->>>>>>> [  169.068517]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10
->>>>>>> [  169.073465]  drm_ioctl_kernel+0x141/0x2b0
->>>>>>> [  169.077468]  ? __pfx_drm_ioctl_kernel+0x10/0x10
->>>>>>> [  169.081987]  ? lock_release.part.0+0x47/0x90
->>>>>>> [  169.086249]  drm_ioctl+0x481/0xb50
->>>>>>> [  169.089653]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10
->>>>>>> [  169.094610]  ? __pfx_drm_ioctl+0x10/0x10
->>>>>>> [  169.098525]  ? find_held_lock+0x2b/0x80
->>>>>>> [  169.102356]  ? lock_release.part.0+0x47/0x90
->>>>>>> [  169.106621]  ? __fget_files+0x1aa/0x2f0
->>>>>>> [  169.110450]  ? __fget_files+0x1b4/0x2f0
->>>>>>> [  169.114281]  __x64_sys_ioctl+0x135/0x1c0
->>>>>>> [  169.118201]  do_syscall_64+0x68/0x2a0
->>>>>>> [  169.121856]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>>>> [  169.126892] RIP: 0033:0x7f469391a53f
->>>>>>> [  169.130460] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 18 48 8b 44 24 18 64 48 2b 04 25 28 00
->>>>>>> 00
->>>>>>> [  169.149151] RSP: 002b:00007f4685f39a80 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
->>>>>>> [  169.156703] RAX: ffffffffffffffda RBX: 00007f465c002da0 RCX: 00007f469391a53f
->>>>>>> [  169.163868] RDX: 00007f4685f39b20 RSI: 00000000c03864bc RDI: 0000000000000010
->>>>>>> [  169.171029] RBP: 00007f4685f39b20 R08: 0000000000001310 R09: 00007f465c044cf0
->>>>>>> [  169.178194] R10: 0000000000000002 R11: 0000000000000246 R12: 00000000c03864bc
->>>>>>> [  169.185358] R13: 0000000000000010 R14: 00007f465c0284b0 R15: 00007f45d402b110
->>>>>>> [  169.192525]  </TASK>
->>>>>>> [  169.194732] Modules linked in: udl(E) snd_seq_dummy(E) snd_hrtimer(E) snd_seq(E) snd_seq_device(E) af_packet(E) nf_tables(E) iptable_filter(E) binfmt_misc(E) intel_rapl_msr(E) nls_iso8859_1(E) eeepc_wmi(E) nls
->>>>>>> _cp437(E) intel_rapl_common(E) snd_hda_codec_realtek(E) asus_wmi(E) iTCO_wdt(E) vfat(E) ee1004(E) snd_hda_codec_generic(E) sparse_keymap(E) x86_pkg_temp_thermal(E) iTCO_vendor_support(E) snd_hda_scodec_component(
->>>>>>> E) intel_powerclamp(E) snd_hda_codec_hdmi(E) platform_profile(E) fat(E) e1000e(E) i2c_i801(E) ptp(E) battery(E) snd_hda_intel(E) i2c_smbus(E) snd_intel_dspcfg(E) mxm_wmi(E) rfkill(E) wmi_bmof(E) intel_wmi_thunder
->>>>>>> bolt(E) coretemp(E) pps_core(E) i2c_mux(E) pcspkr(E) snd_hda_codec(E) xfs(E) snd_hda_core(E) snd_hwdep(E) snd_pcm(E) snd_timer(E) snd(E) soundcore(E) mei_me(E) acpi_pad(E) button(E) mei(E) joydev(E) nvme_fabrics(
->>>>>>> E) loop(E) fuse(E) efi_pstore(E) dm_mod(E) configfs(E) nfnetlink(E) ip_tables(E) x_tables(E) amdgpu(E) amdxcp(E) i2c_algo_bit(E) drm_ttm_helper(E) ttm(E) drm_exec(E) hid_generic(E)
->>>>>>> [  169.194874]  gpu_sched(E) drm_suballoc_helper(E) ghash_clmulni_intel(E) sha512_ssse3(E) video(E) sha1_ssse3(E) aesni_intel(E) usbhid(E) drm_panel_backlight_quirks(E) drm_buddy(E) drm_display_helper(E) cec(E) w
->>>>>>> mi(E) btrfs(E) blake2b_generic(E) xor(E) raid6_pq(E) msr(E) i2c_dev(E) efivarfs(E) dmi_sysfs(E)
->>>>>>> [  169.311501] CR2: ffffc9012b800000
->>>>>>> [  169.314835] ---[ end trace 0000000000000000 ]---
->>>>>>> [  169.434549] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
->>>>>>> [  169.440237] Code: 0f b6 34 28 4c 89 d8 49 d3 e5 83 e0 07 4d 01 dd 83 f9 01 0f 84 4a 03 00 00 83 c0 03 40 38 f0 7c 09 40 84 f6 0f 85 82 05 00 00 <41> 8b 03 4c 63 7c 24 78 4c 89 5c 24 08 89 c6 41 89 c4 c1 e8 08
->>>>>>> c1
->>>>>>> [  169.459062] RSP: 0018:ffff88811c7e75c0 EFLAGS: 00010246
->>>>>>> [  169.464309] RAX: 0000000000000003 RBX: 0000000000000000 RCX: 0000000000000002
->>>>>>> [  169.471474] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000100
->>>>>>> [  169.478635] RBP: dffffc0000000000 R08: ffff8881082efe00 R09: ffff8881082e0000
->>>>>>> [  169.485800] R10: 0000000000000002 R11: ffffc9012b800000 R12: ffff88811c7e76f8
->>>>>>> [  169.492962] R13: ffffc9012b800400 R14: ffff8881082e0007 R15: 0000000000000000
->>>>>>> [  169.500126] FS:  00007f4685f3b6c0(0000) GS:ffff88846c690000(0000) knlGS:0000000000000000
->>>>>>> [  169.508246] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>> [  169.514014] CR2: ffffc9012b800000 CR3: 0000000117944004 CR4: 00000000003706f0
->>>>>>> [  169.521180] note: KMS thread[2380] exited with irqs disabled
->>>>>>> [  175.343111] ==================================================================
->>>>>>> [  175.350342] BUG: KASAN: slab-use-after-free in mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>>>> [  175.357886] Read of size 4 at addr ffff8881172daff4 by task kworker/5:0/49
->>>>>>> [  175.364738]
->>>>>>> [  175.366235] CPU: 5 UID: 0 PID: 49 Comm: kworker/5:0 Tainted: G      D     E       6.16.0-rc5-1-default+ #4080 PREEMPT(voluntary)
->>>>>>> [  175.366240] Tainted: [D]=DIE, [E]=UNSIGNED_MODULE
->>>>>>> [  175.366242] Hardware name: System manufacturer System Product Name/Z170-A, BIOS 3802 03/15/2018
->>>>>>> [  175.366244] Workqueue: events output_poll_execute
->>>>>>> [  175.366249] Call Trace:
->>>>>>> [  175.366251]  <TASK>
->>>>>>> [  175.366254]  dump_stack_lvl+0x68/0x90
->>>>>>> [  175.366259]  ? mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>>>> [  175.366261] print_address_description.constprop.0+0x88/0x380
->>>>>>> [  175.366266]  ? lock_acquire+0xf2/0x140
->>>>>>> [  175.366269]  ? mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>>>> [  175.366272]  print_report+0xf8/0x1e2
->>>>>>> [  175.366275]  ? __virt_addr_valid+0x22e/0x500
->>>>>>> [  175.366279]  ? kasan_addr_to_slab+0x9/0x90
->>>>>>> [  175.366282]  ? mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>>>> [  175.366284]  kasan_report+0xd8/0x190
->>>>>>> [  175.366288]  ? mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>>>> [  175.366294]  mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>>>> [  175.366297]  __ww_mutex_lock.constprop.0+0x2f8/0x34d0
->>>>>>> [  175.366301]  ? do_raw_spin_trylock+0xa2/0x160
->>>>>>> [  175.366304]  ? __pfx_do_raw_spin_trylock+0x10/0x10
->>>>>>> [  175.366308]  ? get_nohz_timer_target+0x28/0x3d0
->>>>>>> [  175.366311]  ? modeset_lock+0x3c6/0x640
->>>>>>> [  175.366316]  ? __pfx___ww_mutex_lock.constprop.0+0x10/0x10
->>>>>>> [  175.366320]  ? rcu_is_watching+0x11/0xb0
->>>>>>> [  175.366323]  ? timerqueue_add+0x154/0x3c0
->>>>>>> [  175.366328]  ? __hrtimer_start_range_ns+0x2e1/0x750
->>>>>>> [  175.366331]  ? rcu_is_watching+0x11/0xb0
->>>>>>> [  175.366334]  ? lock_acquired+0xb6/0xf0
->>>>>>> [  175.366337]  ? rcu_is_watching+0x11/0xb0
->>>>>>> [  175.366340]  ? rcu_is_watching+0x11/0xb0
->>>>>>> [  175.366342]  ? drm_helper_probe_detect_ctx+0x6d/0x1a0
->>>>>>> [  175.366345]  ? lock_acquire+0xf2/0x140
->>>>>>> [  175.366349]  ? ww_mutex_lock+0x27/0x150
->>>>>>> [  175.366352]  ? drm_helper_probe_detect_ctx+0x6d/0x1a0
->>>>>>> [  175.366355]  ww_mutex_lock+0x27/0x150
->>>>>>> [  175.366358]  modeset_lock+0x3c6/0x640
->>>>>>> [  175.366362]  drm_helper_probe_detect_ctx+0xa6/0x1a0
->>>>>>> [  175.366366]  ? __pfx_drm_helper_probe_detect_ctx+0x10/0x10
->>>>>>> [  175.366375]  ? __pfx_drm_connector_list_iter_next+0x10/0x10
->>>>>>> [  175.366381]  output_poll_execute+0x29b/0x760
->>>>>>> [  175.366387]  ? trace_hardirqs_on+0x14/0x150
->>>>>>> [  175.366391]  ? __pfx_output_poll_execute+0x10/0x10
->>>>>>> [  175.366396]  process_one_work+0x7b5/0x1390
->>>>>>> [  175.366404]  ? __pfx_process_one_work+0x10/0x10
->>>>>>> [  175.366409]  ? assign_work+0x156/0x390
->>>>>>> [  175.366413]  worker_thread+0x58d/0xf60
->>>>>>> [  175.366420]  ? __pfx_worker_thread+0x10/0x10
->>>>>>> [  175.366422]  kthread+0x370/0x720
->>>>>>> [  175.366425]  ? __pfx_kthread+0x10/0x10
->>>>>>> [  175.366428]  ? local_clock_noinstr+0x56/0x100
->>>>>>> [  175.366431]  ? local_clock+0x11/0x30
->>>>>>> [  175.366433]  ? __lock_release.isra.0+0x16c/0x2e0
->>>>>>> [  175.366437]  ? rcu_is_watching+0x11/0xb0
->>>>>>> [  175.366439]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
->>>>>>> [  175.366442]  ? __pfx_kthread+0x10/0x10
->>>>>>> [  175.366445]  ret_from_fork+0x1f4/0x2f0
->>>>>>> [  175.366448]  ? __pfx_kthread+0x10/0x10
->>>>>>> [  175.366450]  ret_from_fork_asm+0x1a/0x30
->>>>>>> [  175.366459]  </TASK>
->>>>>>> [  175.366460]
->>>>>>> [  175.632772] Allocated by task 2342:
->>>>>>> [  175.636282]  kasan_save_stack+0x1c/0x40
->>>>>>> [  175.640137]  kasan_save_track+0x10/0x30
->>>>>>> [  175.643992]  __kasan_slab_alloc+0x5f/0x70
->>>>>>> [  175.648023]  kmem_cache_alloc_node_noprof+0x13a/0x380
->>>>>>> [  175.653097]  dup_task_struct+0x32/0x730
->>>>>>> [  175.656952]  copy_process+0x2d8/0x5380
->>>>>>> [  175.660720]  kernel_clone+0x9f/0x5e0
->>>>>>> [  175.664318]  __do_sys_clone3+0x135/0x180
->>>>>>> [  175.668258]  do_syscall_64+0x68/0x2a0
->>>>>>> [  175.671940]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>>>> [  175.677014]
->>>>>>> [  175.678520] Freed by task 0:
->>>>>>> [  175.681418]  kasan_save_stack+0x1c/0x40
->>>>>>> [  175.685273]  kasan_save_track+0x10/0x30
->>>>>>> [  175.689130]  kasan_save_free_info+0x37/0x70
->>>>>>> [  175.693333]  __kasan_slab_free+0x33/0x40
->>>>>>> [  175.697278]  kmem_cache_free+0x10b/0x4d0
->>>>>>> [  175.701221]  delayed_put_task_struct+0x15e/0x1e0
->>>>>>> [  175.705858]  rcu_do_batch+0x2e3/0xb30
->>>>>>> [  175.709542]  rcu_core+0x51d/0xb60
->>>>>>> [  175.712873]  handle_softirqs+0x1a2/0x6b0
->>>>>>> [  175.716817]  __irq_exit_rcu+0xf7/0x160
->>>>>>> [  175.720585]  irq_exit_rcu+0xa/0x30
->>>>>>> [  175.724006]  sysvec_apic_timer_interrupt+0x9d/0xc0
->>>>>>> [  175.728820]  asm_sysvec_apic_timer_interrupt+0x16/0x20
->>>>>>> [  175.733980]
->>>>>>> [  175.735486] Last potentially related work creation:
->>>>>>> [  175.740385]  kasan_save_stack+0x1c/0x40
->>>>>>> [  175.744243]  kasan_record_aux_stack+0x88/0xa0
->>>>>>> [  175.748618]  __call_rcu_common.constprop.0+0x77/0x850
->>>>>>> [  175.753693]  __schedule+0x887/0x1d00
->>>>>>> [  175.757287]  schedule+0xd0/0x260
->>>>>>> [  175.760533]  smpboot_thread_fn+0x583/0x7a0
->>>>>>> [  175.764650]  kthread+0x370/0x720
->>>>>>> [  175.767896]  ret_from_fork+0x1f4/0x2f0
->>>>>>> [  175.771665]  ret_from_fork_asm+0x1a/0x30
->>>>>>> [  175.775608]
->>>>>>> [  175.777113] Second to last potentially related work creation:
->>>>>>> [  175.782886]  kasan_save_stack+0x1c/0x40
->>>>>>> [  175.786739]  kasan_record_aux_stack+0x88/0xa0
->>>>>>> [  175.791118]  task_work_add+0x1b1/0x270
->>>>>>> [  175.794886]  sched_tick+0x226/0x6f0
->>>>>>> [  175.798394]  update_process_times+0xe9/0x1f0
->>>>>>> [  175.802685]  tick_nohz_handler+0x1a6/0x4b0
->>>>>>> [  175.806801]  __hrtimer_run_queues+0x161/0x960
->>>>>>> [  175.811181]  hrtimer_interrupt+0x33e/0x880
->>>>>>> [  175.815295]  __sysvec_apic_timer_interrupt+0xf6/0x390
->>>>>>> [  175.820370]  sysvec_apic_timer_interrupt+0x98/0xc0
->>>>>>> [  175.825183]  asm_sysvec_apic_timer_interrupt+0x16/0x20
->>>>>>> [  175.830343]
->>>>>>> [  175.831849] The buggy address belongs to the object at ffff8881172dafc0
->>>>>>> [  175.831849]  which belongs to the cache task_struct of size 11968
->>>>>>> [  175.844582] The buggy address is located 52 bytes inside of
->>>>>>> [  175.844582]  freed 11968-byte region [ffff8881172dafc0, ffff8881172dde80)
->>>>>>> [  175.856969]
->>>>>>> [  175.858474] The buggy address belongs to the physical page:
->>>>>>> [  175.864070] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1172d8
->>>>>>> [  175.872104] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
->>>>>>> [  175.879788] memcg:ffff88811068a301
->>>>>>> [  175.883209] anon flags: 0x2ffff800000040(head|node=0|zone=2|lastcpupid=0x1ffff)
->>>>>>> [  175.890547] page_type: f5(slab)
->>>>>>> [  175.893706] raw: 002ffff800000040 ffff888100930500 0000000000000000 0000000000000001
->>>>>>> [  175.901479] raw: 0000000000000000 0000000000020002 00000000f5000000 ffff88811068a301
->>>>>>> [  175.909249] head: 002ffff800000040 ffff888100930500 0000000000000000 0000000000000001
->>>>>>> [  175.917109] head: 0000000000000000 0000000000020002 00000000f5000000 ffff88811068a301
->>>>>>> [  175.924968] head: 002ffff800000003 ffffea00045cb601 00000000ffffffff 00000000ffffffff
->>>>>>> [  175.932827] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
->>>>>>> [  175.940685] page dumped because: kasan: bad access detected
->>>>>>> [  175.946283]
->>>>>>> [  175.947787] Memory state around the buggy address:
->>>>>>> [  175.952603]  ffff8881172dae80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->>>>>>> [  175.959854]  ffff8881172daf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->>>>>>> [  175.967101] >ffff8881172daf80: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
->>>>>>> [ 175.974353] ^
->>>>>>> [  175.981256]  ffff8881172db000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>>>>>> [  175.988504]  ffff8881172db080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>>>>>> [  175.995755] ==================================================================
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Am 22.05.25 um 09:07 schrieb oushixiong1025@163.com:
->>>>>>>> From: Shixiong Ou <oushixiong@kylinos.cn>
->>>>>>>>
->>>>>>>> [WHY]
->>>>>>>> 1. Drivers using DRM_GEM_SHADOW_PLANE_HELPER_FUNCS and
->>>>>>>>       DRM_GEM_SHMEM_DRIVER_OPS (e.g., udl, ast) do not require
->>>>>>>>       sg_table import.
->>>>>>>>       They only need dma_buf_vmap() to access the shared buffer's
->>>>>>>>       kernel virtual address.
->>>>>>>>
->>>>>>>> 2. On certain Aspeed-based boards, a dma_mask of 0xffff_ffff may
->>>>>>>>       trigger SWIOTLB during dmabuf import. However, IO_TLB_SEGSIZE
->>>>>>>>       restricts the maximum DMA streaming mapping memory, resulting in
->>>>>>>>       errors like:
->>>>>>>>
->>>>>>>>       ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 bytes), total 32768 (slots), used 0 (slots)
->>>>>>>>
->>>>>>>> [HOW]
->>>>>>>> Provide a gem_prime_import implementation without sg_table mapping
->>>>>>>> to avoid issues (e.g., "swiotlb buffer is full"). Drivers that do not
->>>>>>>> require sg_table can adopt this.
->>>>>>>>
->>>>>>>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
->>>>>>>> ---
->>>>>>>> v1->v2:
->>>>>>>>       Patch rebase.
->>>>>>>> v2->v3:
->>>>>>>>       Rename the import callback function.
->>>>>>>>       Remove drm_gem_shmem_prime_export() and separate some codes
->>>>>>>>       to drm_gem_prime_import_self().
->>>>>>>> v3->v4:
->>>>>>>>       Separate the test from the policy.
->>>>>>>>       Rename the macro.
->>>>>>>> v4->v5:
->>>>>>>>       Rename some functions.
->>>>>>>>
->>>>>>>>     drivers/gpu/drm/drm_gem_shmem_helper.c | 57 ++++++++++++++++++++++++++
->>>>>>>>     drivers/gpu/drm/drm_prime.c            | 36 ++++++++++++----
->>>>>>>>     include/drm/drm_gem_shmem_helper.h     | 15 +++++++
->>>>>>>>     include/drm/drm_prime.h                |  3 ++
->>>>>>>>     4 files changed, 102 insertions(+), 9 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c b/drivers/gpu/drm/drm_gem_shmem_helper.c
->>>>>>>> index aa43265f4f4f..126aa79042ad 100644
->>>>>>>> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
->>>>>>>> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
->>>>>>>> @@ -800,6 +800,63 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
->>>>>>>>     }
->>>>>>>> EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
->>>>>>>>     +/**
->>>>>>>> + * drm_gem_shmem_prime_import_no_map - Import dmabuf without mapping its sg_table
->>>>>>>> + * @dev: Device to import into
->>>>>>>> + * @dma_buf: dma-buf object to import
->>>>>>>> + *
->>>>>>>> + * Drivers that use the shmem helpers but also wants to import dmabuf without
->>>>>>>> + * mapping its sg_table can use this as their &drm_driver.gem_prime_import
->>>>>>>> + * implementation.
->>>>>>>> + */
->>>>>>>> +struct drm_gem_object *drm_gem_shmem_prime_import_no_map(struct drm_device *dev,
->>>>>>>> +                             struct dma_buf *dma_buf)
->>>>>>>> +{
->>>>>>>> +    struct dma_buf_attachment *attach;
->>>>>>>> +    struct drm_gem_shmem_object *shmem;
->>>>>>>> +    struct drm_gem_object *obj;
->>>>>>>> +    size_t size;
->>>>>>>> +    int ret;
->>>>>>>> +
->>>>>>>> +    if (drm_gem_is_prime_exported_dma_buf(dev, dma_buf)) {
->>>>>>>> +        /*
->>>>>>>> +         * Importing dmabuf exported from our own gem increases
->>>>>>>> +         * refcount on gem itself instead of f_count of dmabuf.
->>>>>>>> +         */
->>>>>>>> +        obj = dma_buf->priv;
->>>>>>>> +        drm_gem_object_get(obj);
->>>>>>>> +        return obj;
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>> +    attach = dma_buf_attach(dma_buf, dev->dev);
->>>>>>>> +    if (IS_ERR(attach))
->>>>>>>> +        return ERR_CAST(attach);
->>>>>>>> +
->>>>>>>> +    get_dma_buf(dma_buf);
->>>>>>>> +
->>>>>>>> +    size = PAGE_ALIGN(attach->dmabuf->size);
->>>>>>>> +
->>>>>>>> +    shmem = __drm_gem_shmem_create(dev, size, true, NULL);
->>>>>>>> +    if (IS_ERR(shmem)) {
->>>>>>>> +        ret = PTR_ERR(shmem);
->>>>>>>> +        goto fail_detach;
->>>>>>>> +    }
->>>>>>>> +
->>>>>>>> +    drm_dbg_prime(dev, "size = %zu\n", size);
->>>>>>>> +
->>>>>>>> +    shmem->base.import_attach = attach;
->>>>>>>> +    shmem->base.resv = dma_buf->resv;
->>>>>>>> +
->>>>>>>> +    return &shmem->base;
->>>>>>>> +
->>>>>>>> +fail_detach:
->>>>>>>> +    dma_buf_detach(dma_buf, attach);
->>>>>>>> +    dma_buf_put(dma_buf);
->>>>>>>> +
->>>>>>>> +    return ERR_PTR(ret);
->>>>>>>> +}
->>>>>>>> +EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_no_map);
->>>>>>>> +
->>>>>>>>     MODULE_DESCRIPTION("DRM SHMEM memory-management helpers");
->>>>>>>>     MODULE_IMPORT_NS("DMA_BUF");
->>>>>>>>     MODULE_LICENSE("GPL v2");
->>>>>>>> diff --git a/drivers/gpu/drm/drm_prime.c b/drivers/gpu/drm/drm_prime.c
->>>>>>>> index d828502268b8..b825b71038d6 100644
->>>>>>>> --- a/drivers/gpu/drm/drm_prime.c
->>>>>>>> +++ b/drivers/gpu/drm/drm_prime.c
->>>>>>>> @@ -910,6 +910,26 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
->>>>>>>>     }
->>>>>>>>     EXPORT_SYMBOL(drm_gem_prime_export);
->>>>>>>>     +
->>>>>>>> +/**
->>>>>>>> + * drm_gem_is_prime_exported_dma_buf -
->>>>>>>> + * checks if the DMA-BUF was exported from a GEM object belonging to @dev.
->>>>>>>> + * @dev: drm_device to check against
->>>>>>>> + * @dma_buf: dma-buf object to import
->>>>>>>> + *
->>>>>>>> + * Return: true if the DMA-BUF was exported from a GEM object belonging
->>>>>>>> + * to @dev, false otherwise.
->>>>>>>> + */
->>>>>>>> +
->>>>>>>> +bool drm_gem_is_prime_exported_dma_buf(struct drm_device *dev,
->>>>>>>> +                       struct dma_buf *dma_buf)
->>>>>>>> +{
->>>>>>>> +    struct drm_gem_object *obj = dma_buf->priv;
->>>>>>>> +
->>>>>>>> +    return (dma_buf->ops == &drm_gem_prime_dmabuf_ops) && (obj->dev == dev);
->>>>>>>> +}
->>>>>>>> +EXPORT_SYMBOL(drm_gem_is_prime_exported_dma_buf);
->>>>>>>> +
->>>>>>>>     /**
->>>>>>>>      * drm_gem_prime_import_dev - core implementation of the import callback
->>>>>>>>      * @dev: drm_device to import into
->>>>>>>> @@ -933,16 +953,14 @@ struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
->>>>>>>>         struct drm_gem_object *obj;
->>>>>>>>         int ret;
->>>>>>>>     -    if (dma_buf->ops == &drm_gem_prime_dmabuf_ops) {
->>>>>>>> +    if (drm_gem_is_prime_exported_dma_buf(dev, dma_buf)) {
->>>>>>>> +        /*
->>>>>>>> +         * Importing dmabuf exported from our own gem increases
->>>>>>>> +         * refcount on gem itself instead of f_count of dmabuf.
->>>>>>>> +         */
->>>>>>>>             obj = dma_buf->priv;
->>>>>>>> -        if (obj->dev == dev) {
->>>>>>>> -            /*
->>>>>>>> -             * Importing dmabuf exported from our own gem increases
->>>>>>>> -             * refcount on gem itself instead of f_count of dmabuf.
->>>>>>>> -             */
->>>>>>>> -            drm_gem_object_get(obj);
->>>>>>>> -            return obj;
->>>>>>>> -        }
->>>>>>>> +        drm_gem_object_get(obj);
->>>>>>>> +        return obj;
->>>>>>>>         }
->>>>>>>>           if (!dev->driver->gem_prime_import_sg_table)
->>>>>>>> diff --git a/include/drm/drm_gem_shmem_helper.h b/include/drm/drm_gem_shmem_helper.h
->>>>>>>> index b4f993da3cae..35f7466dca84 100644
->>>>>>>> --- a/include/drm/drm_gem_shmem_helper.h
->>>>>>>> +++ b/include/drm/drm_gem_shmem_helper.h
->>>>>>>> @@ -287,6 +287,8 @@ drm_gem_shmem_prime_import_sg_table(struct drm_device *dev,
->>>>>>>>                         struct sg_table *sgt);
->>>>>>>>     int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
->>>>>>>>                       struct drm_mode_create_dumb *args);
->>>>>>>> +struct drm_gem_object *drm_gem_shmem_prime_import_no_map(struct drm_device *dev,
->>>>>>>> +                             struct dma_buf *buf);
->>>>>>>>       /**
->>>>>>>>      * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
->>>>>>>> @@ -298,4 +300,17 @@ int drm_gem_shmem_dumb_create(struct drm_file *file, struct drm_device *dev,
->>>>>>>>         .gem_prime_import_sg_table = drm_gem_shmem_prime_import_sg_table, \
->>>>>>>>         .dumb_create           = drm_gem_shmem_dumb_create
->>>>>>>>     +/**
->>>>>>>> + * DRM_GEM_SHMEM_DRIVER_OPS_NO_MAP_SGT - shmem GEM operations
->>>>>>>> + *                                       without mapping sg_table on
->>>>>>>> + *                                       imported buffer.
->>>>>>>> + *
->>>>>>>> + * This macro provides a shortcut for setting the shmem GEM operations in
->>>>>>>> + * the &drm_driver structure for drivers that do not require a sg_table on
->>>>>>>> + * imported buffers.
->>>>>>>> + */
->>>>>>>> +#define DRM_GEM_SHMEM_DRIVER_OPS_NO_MAP_SGT \
->>>>>>>> +    .gem_prime_import       = drm_gem_shmem_prime_import_no_map, \
->>>>>>>> +    .dumb_create            = drm_gem_shmem_dumb_create
->>>>>>>> +
->>>>>>>>     #endif /* __DRM_GEM_SHMEM_HELPER_H__ */
->>>>>>>> diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
->>>>>>>> index fa085c44d4ca..f50f862f0d8b 100644
->>>>>>>> --- a/include/drm/drm_prime.h
->>>>>>>> +++ b/include/drm/drm_prime.h
->>>>>>>> @@ -100,6 +100,9 @@ struct dma_buf *drm_gem_prime_export(struct drm_gem_object *obj,
->>>>>>>>     unsigned long drm_prime_get_contiguous_size(struct sg_table *sgt);
->>>>>>>>       /* helper functions for importing */
->>>>>>>> +bool drm_gem_is_prime_exported_dma_buf(struct drm_device *dev,
->>>>>>>> +                       struct dma_buf *dma_buf);
->>>>>>>> +
->>>>>>>>     struct drm_gem_object *drm_gem_prime_import_dev(struct drm_device *dev,
->>>>>>>>                             struct dma_buf *dma_buf,
->>>>>>>>                             struct device *attach_dev);
+> Pratyush Yadav
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
---------------CTEhC22KPMTm8lggWd6WVGu0
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-drm-gem-shmem-Pin-and-unpin-buffers-when-importing-w.patch"
-Content-Disposition: attachment;
- filename*0="0001-drm-gem-shmem-Pin-and-unpin-buffers-when-importing-w.pa";
- filename*1="tch"
-Content-Transfer-Encoding: base64
-
-RnJvbSBlZDA1N2FjZjM4Y2ZiOGZhZmUxZDY4ZTVkNzk2NWM0MTRlOGE5YTYwIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBUaG9tYXMgWmltbWVybWFubiA8dHppbW1lcm1hbm5A
-c3VzZS5kZT4KRGF0ZTogV2VkLCAxMyBBdWcgMjAyNSAxNDo0MDo0MyArMDIwMApTdWJqZWN0
-OiBbUEFUQ0hdIGRybS9nZW0tc2htZW06IFBpbiBhbmQgdW5waW4gYnVmZmVycyB3aGVuIGlt
-cG9ydGluZyB3L28gUy9HCiB0YWJsZQpNSU1FLVZlcnNpb246IDEuMApDb250ZW50LVR5cGU6
-IHRleHQvcGxhaW47IGNoYXJzZXQ9VVRGLTgKQ29udGVudC1UcmFuc2Zlci1FbmNvZGluZzog
-OGJpdAoKSW1wb3J0ZWQgZG1hLWJ1ZiBvYmplY3RzIG5lZWQgdG8gYmUgcGlubmVkIHdoaWxl
-IGJlaW5nIHZtYXAnZWQgaW50bwprZXJuZWwgYWRkcmVzcyBzcGFjZS4gVGhpcyB1c2VkIHRv
-IGJlIGRvbmUgYmVmb3JlIHdoaWxlIGNyZWF0aW5nIGFuClMvRyB0YWJsZS4KCkdFTS1TSE1F
-TiBjYW4gaW1wb3J0IGRtYS1idWYgb2JqZWN0cyB3aXRob3V0IGNyZWF0aW5nIHRoZSBTL0cg
-dGFibGUsCmJ1dCB0aGUgcGluL3VucGluIGlzIG5vdyBtaXNzaW5nLiBMZWFkcyB0byBwYWdl
-LW1hcHBpbmcgZXJyb3JzIHN1Y2gKYXMgdGhlIG9uZSBzaG93biBiZWxvdy4KClsgIDEwMi4x
-MDE3MjZdIEJVRzogdW5hYmxlIHRvIGhhbmRsZSBwYWdlIGZhdWx0IGZvciBhZGRyZXNzOiBm
-ZmZmYzkwMTI3MDAwMDAwClsuLi5dClsgIDEwMi4xNTcxMDJdIFJJUDogMDAxMDp1ZGxfY29t
-cHJlc3NfaGxpbmUxNisweDIxOS8weDk0MCBbdWRsXQpbLi4uXQpbICAxMDIuMjQzMjUwXSBD
-YWxsIFRyYWNlOgpbICAxMDIuMjQ1Njk1XSAgPFRBU0s+ClsgIDEwMi4yNDc3Vjk1XSAgPyB2
-YWxpZGF0ZV9jaGFpbisweDI0ZS8weDVlMApbICAxMDIuMjUxODA1XSAgPyBfX2xvY2tfYWNx
-dWlyZSsweDU2OC8weGFlMApbICAxMDIuMjU1ODA3XSAgdWRsX3JlbmRlcl9obGluZSsweDE2
-NS8weDM0MSBbdWRsXQpbICAxMDIuMjYwMzM4XSAgPyBfX3BmeF91ZGxfcmVuZGVyX2hsaW5l
-KzB4MTAvMHgxMCBbdWRsXQpbICAxMDIuMjY1Mzc5XSAgPyBsb2NhbF9jbG9ja19ub2luc3Ry
-KzB4Yi8weDEwMApbICAxMDIuMjY5NjQyXSAgPyBfX2xvY2tfcmVsZWFzZS5pc3JhLjArMHgx
-NmMvMHgyZTAKWyAgMTAyLjI3NDI0Nl0gID8gbWFya19oZWxkX2xvY2tzKzB4NDAvMHg3MApb
-ICAxMDIuMjc4MTc3XSAgdWRsX3ByaW1hcnlfcGxhbmVfaGVscGVyX2F0b21pY191cGRhdGUr
-MHg0M2UvMHg2ODAgW3VkbF0KWyAgMTAyLjI4NDYwNl0gID8gX19wZnhfdWRsX3ByaW1hcnlf
-cGxhbmVfaGVscGVyX2F0b21pY191cGRhdGUrMHgxMC8weDEwIFt1ZGxdClsgIDEwMi4yOTE1
-NTFdICA/IGxvY2tkZXBfaGFyZGlycXNfb25fcHJlcGFyZS5wYXJ0LjArMHg5Mi8weDE3MApb
-ICAxMDIuMjk3MjA4XSAgPyBsb2NrZGVwX2hhcmRpcnFzX29uKzB4ODgvMHgxMzAKWyAgMTAy
-LjMwMTU1NF0gID8gX3Jhd19zcGluX3VubG9ja19pcnErMHgyNC8weDUwClsgIDEwMi4zMDU5
-MDFdICA/IHdhaXRfZm9yX2NvbXBsZXRpb25fdGltZW91dCsweDJiYi8weDNhMApbICAxMDIu
-MzExMDI4XSAgPyBkcm1fYXRvbWljX2hlbHBlcl9jYWxjX3RpbWVzdGFtcGluZ19jb25zdGFu
-dHMrMHgxNDEvMHgyMDAKWyAgMTAyLjMxNzcxNF0gID8gZHJtX2F0b21pY19oZWxwZXJfY29t
-bWl0X3BsYW5lcysweDNiNi8weDEwMzAKWyAgMTAyLjMyMzI3OV0gIGRybV9hdG9taWNfaGVs
-cGVyX2NvbW1pdF9wbGFuZXMrMHgzYjYvMHgxMDMwClsgIDEwMi4zMjg2NjRdICBkcm1fYXRv
-bWljX2hlbHBlcl9jb21taXRfdGFpbCsweDQxLzB4YjAKWyAgMTAyLjMzMzYyMl0gIGNvbW1p
-dF90YWlsKzB4MjA0LzB4MzMwClsuLi5dClsgIDEwMi41Mjk5NDZdIC0tLVsgZW5kIHRyYWNl
-IDAwMDAwMDAwMDAwMDAwMDAgXS0tLQpbICAxMDIuNjUxOTgwXSBSSVA6IDAwMTA6dWRsX2Nv
-bXByZXNzX2hsaW5lMTYrMHgyMTkvMHg5NDAgW3VkbF0KClN1cHBvcnQgcGluL3VucGluIGlu
-IGRybV9idWZfbWFwX2F0dGFjaG1lbnQoKSB3aXRob3V0IGNyZWF0aW5nIFMvRwp0YWJsZS4g
-UGFzc2luZyBETUFfTk9ORSBmb3IgdGhlIERNQSBkaXJlY3Rpb24gd2lsbCBvbmx5IHBpbi4g
-RG8gdGhlCmludmVyc2UgZm9yIHVubWFwX2F0dGFjaG1lbnQoKS4gTW9kaWZ5IEdFTS1TSE1F
-TSBhY2NvcmRpbmdseSwgc28gdGhhdAppdCBwaW5zIHRoZSBpbXBvcnRlZCBkbWEtYnVmLgoK
-U2lnbmVkLW9mZi1ieTogVGhvbWFzIFppbW1lcm1hbm4gPHR6aW1tZXJtYW5uQHN1c2UuZGU+
-CkZpeGVzOiA2NjBjZDQ0NjU5YTAgKCJkcm0vc2htZW0taGVscGVyOiBJbXBvcnQgZG1hYnVm
-IHdpdGhvdXQgbWFwcGluZyBpdHMgc2dfdGFibGUiKQpDYzogU2hpeGlvbmcgT3UgPG91c2hp
-eGlvbmdAa3lsaW5vcy5jbj4KQ2M6IFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBz
-dXNlLmRlPgpDYzogTWFhcnRlbiBMYW5raG9yc3QgPG1hYXJ0ZW4ubGFua2hvcnN0QGxpbnV4
-LmludGVsLmNvbT4KQ2M6IE1heGltZSBSaXBhcmQgPG1yaXBhcmRAa2VybmVsLm9yZz4KQ2M6
-IERhdmlkIEFpcmxpZSA8YWlybGllZEBnbWFpbC5jb20+CkNjOiBTaW1vbmEgVmV0dGVyIDxz
-aW1vbmFAZmZ3bGwuY2g+CkNjOiBTdW1pdCBTZW13YWwgPHN1bWl0LnNlbXdhbEBsaW5hcm8u
-b3JnPgpDYzogIkNocmlzdGlhbiBLw7ZuaWciIDxjaHJpc3RpYW4ua29lbmlnQGFtZC5jb20+
-CkNjOiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCkNjOiBsaW51eC1tZWRpYUB2
-Z2VyLmtlcm5lbC5vcmcKQ2M6IGxpbmFyby1tbS1zaWdAbGlzdHMubGluYXJvLm9yZwotLS0K
-IGRyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMgICAgICAgICAgICAgIHwgMTYgKysrKysrKysr
-KysrKy0tLQogZHJpdmVycy9ncHUvZHJtL2RybV9nZW1fc2htZW1faGVscGVyLmMgfCAxMSAr
-KysrKysrKysrLQogZHJpdmVycy9ncHUvZHJtL2RybV9wcmltZS5jICAgICAgICAgICAgfCAg
-MiArKwogMyBmaWxlcyBjaGFuZ2VkLCAyNSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygt
-KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZG1hLWJ1Zi9kbWEtYnVmLmMgYi9kcml2ZXJzL2Rt
-YS1idWYvZG1hLWJ1Zi5jCmluZGV4IDJiY2Y5Y2VjYTk5Ny4uZjFlMTM4NWNlNjMwIDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2RtYS1idWYvZG1hLWJ1Zi5jCisrKyBiL2RyaXZlcnMvZG1hLWJ1
-Zi9kbWEtYnVmLmMKQEAgLTEwODYsNyArMTA4Niw4IEBAIEVYUE9SVF9TWU1CT0xfTlNfR1BM
-KGRtYV9idWZfdW5waW4sICJETUFfQlVGIik7CiAgKiBAZGlyZWN0aW9uOglbaW5dCWRpcmVj
-dGlvbiBvZiBETUEgdHJhbnNmZXIKICAqCiAgKiBSZXR1cm5zIHNnX3RhYmxlIGNvbnRhaW5p
-bmcgdGhlIHNjYXR0ZXJsaXN0IHRvIGJlIHJldHVybmVkOyByZXR1cm5zIEVSUl9QVFIKLSAq
-IG9uIGVycm9yLiBNYXkgcmV0dXJuIC1FSU5UUiBpZiBpdCBpcyBpbnRlcnJ1cHRlZCBieSBh
-IHNpZ25hbC4KKyAqIG9uIGVycm9yLiBNYXkgcmV0dXJuIC1FSU5UUiBpZiBpdCBpcyBpbnRl
-cnJ1cHRlZCBieSBhIHNpZ25hbC4gUmV0dXJucyBOVUxMCisgKiBvbiBzdWNjZXNzIGlmZiBk
-aXJlY3Rpb24gaXMgRE1BX05PTkUuCiAgKgogICogT24gc3VjY2VzcywgdGhlIERNQSBhZGRy
-ZXNzZXMgYW5kIGxlbmd0aHMgaW4gdGhlIHJldHVybmVkIHNjYXR0ZXJsaXN0IGFyZQogICog
-UEFHRV9TSVpFIGFsaWduZWQuCkBAIC0xMTIyLDYgKzExMjMsOCBAQCBzdHJ1Y3Qgc2dfdGFi
-bGUgKmRtYV9idWZfbWFwX2F0dGFjaG1lbnQoc3RydWN0IGRtYV9idWZfYXR0YWNobWVudCAq
-YXR0YWNoLAogCQlpZiAocmV0KQogCQkJcmV0dXJuIEVSUl9QVFIocmV0KTsKIAl9CisJaWYg
-KCF2YWxpZF9kbWFfZGlyZWN0aW9uKGRpcmVjdGlvbikpCisJCXJldHVybiBOVUxMOyAvKiBv
-bmx5IHBpbjsgZG9uJ3QgbWFwICovCiAKIAlzZ190YWJsZSA9IGF0dGFjaC0+ZG1hYnVmLT5v
-cHMtPm1hcF9kbWFfYnVmKGF0dGFjaCwgZGlyZWN0aW9uKTsKIAlpZiAoIXNnX3RhYmxlKQpA
-QCAtMTIxNiwxNCArMTIxOSwyMSBAQCB2b2lkIGRtYV9idWZfdW5tYXBfYXR0YWNobWVudChz
-dHJ1Y3QgZG1hX2J1Zl9hdHRhY2htZW50ICphdHRhY2gsCiB7CiAJbWlnaHRfc2xlZXAoKTsK
-IAotCWlmIChXQVJOX09OKCFhdHRhY2ggfHwgIWF0dGFjaC0+ZG1hYnVmIHx8ICFzZ190YWJs
-ZSkpCisJaWYgKFdBUk5fT04oIWF0dGFjaCB8fCAhYXR0YWNoLT5kbWFidWYpKQogCQlyZXR1
-cm47CiAKIAlkbWFfcmVzdl9hc3NlcnRfaGVsZChhdHRhY2gtPmRtYWJ1Zi0+cmVzdik7CiAK
-KwlpZiAoIXZhbGlkX2RtYV9kaXJlY3Rpb24oZGlyZWN0aW9uKSkKKwkJZ290byB1bnBpbjsK
-KworCWlmIChXQVJOX09OKCFzZ190YWJsZSkpCisJCXJldHVybjsKKwogCW1hbmdsZV9zZ190
-YWJsZShzZ190YWJsZSk7CiAJYXR0YWNoLT5kbWFidWYtPm9wcy0+dW5tYXBfZG1hX2J1Zihh
-dHRhY2gsIHNnX3RhYmxlLCBkaXJlY3Rpb24pOwogCit1bnBpbjoKIAlpZiAoZG1hX2J1Zl9w
-aW5fb25fbWFwKGF0dGFjaCkpCiAJCWF0dGFjaC0+ZG1hYnVmLT5vcHMtPnVucGluKGF0dGFj
-aCk7CiB9CkBAIC0xMjQ1LDcgKzEyNTUsNyBAQCB2b2lkIGRtYV9idWZfdW5tYXBfYXR0YWNo
-bWVudF91bmxvY2tlZChzdHJ1Y3QgZG1hX2J1Zl9hdHRhY2htZW50ICphdHRhY2gsCiB7CiAJ
-bWlnaHRfc2xlZXAoKTsKIAotCWlmIChXQVJOX09OKCFhdHRhY2ggfHwgIWF0dGFjaC0+ZG1h
-YnVmIHx8ICFzZ190YWJsZSkpCisJaWYgKFdBUk5fT04oIWF0dGFjaCB8fCAhYXR0YWNoLT5k
-bWFidWYpKQogCQlyZXR1cm47CiAKIAlkbWFfcmVzdl9sb2NrKGF0dGFjaC0+ZG1hYnVmLT5y
-ZXN2LCBOVUxMKTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZ2VtX3NobWVt
-X2hlbHBlci5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9nZW1fc2htZW1faGVscGVyLmMKaW5k
-ZXggNWQxMzQ5YzM0YWZkLi4xYjY2NTAxNDIwZDMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9kcm1fZ2VtX3NobWVtX2hlbHBlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1f
-Z2VtX3NobWVtX2hlbHBlci5jCkBAIC04MTcsNiArODE3LDcgQEAgc3RydWN0IGRybV9nZW1f
-b2JqZWN0ICpkcm1fZ2VtX3NobWVtX3ByaW1lX2ltcG9ydF9ub19tYXAoc3RydWN0IGRybV9k
-ZXZpY2UgKmRldiwKIAkJCQkJCQkgc3RydWN0IGRtYV9idWYgKmRtYV9idWYpCiB7CiAJc3Ry
-dWN0IGRtYV9idWZfYXR0YWNobWVudCAqYXR0YWNoOworCXN0cnVjdCBzZ190YWJsZSAqc2d0
-OwogCXN0cnVjdCBkcm1fZ2VtX3NobWVtX29iamVjdCAqc2htZW07CiAJc3RydWN0IGRybV9n
-ZW1fb2JqZWN0ICpvYmo7CiAJc2l6ZV90IHNpemU7CkBAIC04MzgsMTIgKzgzOSwxOCBAQCBz
-dHJ1Y3QgZHJtX2dlbV9vYmplY3QgKmRybV9nZW1fc2htZW1fcHJpbWVfaW1wb3J0X25vX21h
-cChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCiAJZ2V0X2RtYV9idWYoZG1hX2J1Zik7CiAK
-KwlzZ3QgPSBkbWFfYnVmX21hcF9hdHRhY2htZW50X3VubG9ja2VkKGF0dGFjaCwgRE1BX05P
-TkUpOworCWlmIChJU19FUlIoc2d0KSkgeworCQlyZXQgPSBQVFJfRVJSKHNndCk7CisJCWdv
-dG8gZmFpbF9kZXRhY2g7CisJfQorCiAJc2l6ZSA9IFBBR0VfQUxJR04oYXR0YWNoLT5kbWFi
-dWYtPnNpemUpOwogCiAJc2htZW0gPSBfX2RybV9nZW1fc2htZW1fY3JlYXRlKGRldiwgc2l6
-ZSwgdHJ1ZSwgTlVMTCk7CiAJaWYgKElTX0VSUihzaG1lbSkpIHsKIAkJcmV0ID0gUFRSX0VS
-UihzaG1lbSk7Ci0JCWdvdG8gZmFpbF9kZXRhY2g7CisJCWdvdG8gZmFpbF91bm1hcDsKIAl9
-CiAKIAlkcm1fZGJnX3ByaW1lKGRldiwgInNpemUgPSAlenVcbiIsIHNpemUpOwpAQCAtODUz
-LDYgKzg2MCw4IEBAIHN0cnVjdCBkcm1fZ2VtX29iamVjdCAqZHJtX2dlbV9zaG1lbV9wcmlt
-ZV9pbXBvcnRfbm9fbWFwKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAKIAlyZXR1cm4gJnNo
-bWVtLT5iYXNlOwogCitmYWlsX3VubWFwOgorCWRtYV9idWZfdW5tYXBfYXR0YWNobWVudF91
-bmxvY2tlZChhdHRhY2gsIHNndCwgRE1BX05PTkUpOwogZmFpbF9kZXRhY2g6CiAJZG1hX2J1
-Zl9kZXRhY2goZG1hX2J1ZiwgYXR0YWNoKTsKIAlkbWFfYnVmX3B1dChkbWFfYnVmKTsKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fcHJpbWUuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9kcm1fcHJpbWUuYwppbmRleCA0M2ExMGI0YWY0M2EuLmIzYjA3MDg2OGUzYiAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9wcmltZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9kcm1fcHJpbWUuYwpAQCAtMTEwOSw2ICsxMTA5LDggQEAgdm9pZCBkcm1fcHJpbWVfZ2Vt
-X2Rlc3Ryb3koc3RydWN0IGRybV9nZW1fb2JqZWN0ICpvYmosIHN0cnVjdCBzZ190YWJsZSAq
-c2cpCiAJYXR0YWNoID0gb2JqLT5pbXBvcnRfYXR0YWNoOwogCWlmIChzZykKIAkJZG1hX2J1
-Zl91bm1hcF9hdHRhY2htZW50X3VubG9ja2VkKGF0dGFjaCwgc2csIERNQV9CSURJUkVDVElP
-TkFMKTsKKwllbHNlCisJCWRtYV9idWZfdW5tYXBfYXR0YWNobWVudF91bmxvY2tlZChhdHRh
-Y2gsIE5VTEwsIERNQV9OT05FKTsKIAlkbWFfYnVmID0gYXR0YWNoLT5kbWFidWY7CiAJZG1h
-X2J1Zl9kZXRhY2goYXR0YWNoLT5kbWFidWYsIGF0dGFjaCk7CiAJLyogcmVtb3ZlIHRoZSBy
-ZWZlcmVuY2UgKi8KLS0gCjIuNTAuMQoK
-
---------------CTEhC22KPMTm8lggWd6WVGu0--
+Sincerely yours,
+Mike.
 
