@@ -1,62 +1,82 @@
-Return-Path: <linux-kernel+bounces-766245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C46DB24454
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5C0B24444
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D6E03BD22A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34738722779
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0832EF64B;
-	Wed, 13 Aug 2025 08:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052FF2D321F;
+	Wed, 13 Aug 2025 08:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E/KL4qn/"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="npiwyHt+"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AEB2ECD3C;
-	Wed, 13 Aug 2025 08:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DAB2EBDDD
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073641; cv=none; b=b1Voi1QTt/hI3xNJEy1Z1LWLD0jniImLhStgCwnLKG5b13XtLCcEoiggfFlOjDnJC2NFHYveKesD44XY+gMGxkEaZu60+K5AB88hOQvIt62byEcJ7Tu4vgGGfI6hAvWvFLewaLAdu7IzYGuFjNZEAdn1Znr7WFRMXwzhn+0UBm4=
+	t=1755073584; cv=none; b=RuZHwsOkvokQjvfenI86QtlJVq+n9x8uRXepdRYC2a3s5HeUPY99oNDTwRmQjmwWKaOroCy8dQSlvudzbfLqRCQ/IH7msse5l+ZYPOTMpHBQcJAIWTJ4uWHoLSOuFlh6S8JggAEUTGCKoqGiogmbGADNL5wqyiGJ9x4dpJC5654=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073641; c=relaxed/simple;
-	bh=EETb+mATWoalC/jIg1GxMzaFPbxxVYn4Baz6WzC73Pk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BoCvVS02QRM+FyLCFVFCB7KQrKwNHkRxKmkCu4KPUUApCcT2Y/gZe0Ef//MfKCjVHagIZybVEZd/2odG7kw6MK/pOhHNXunIVQoaZ6pVaZ2I7HTTXraauDX1yNdTERrCq/QiZUD5Y0rHyfMHZhWZtu2/lFIBrTgB3DVFhnZC4Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=E/KL4qn/; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57D8QFrq1659217;
-	Wed, 13 Aug 2025 03:26:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755073575;
-	bh=LxxC+vWL+dBv0jeH8xTa33bVZ4qWYF8YDuV31GextYQ=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=E/KL4qn/ZvseqzCjyaciE6Wvi42lnHNKpBZuHekmdtnS5MVfb7PcteyB6elY2DZ6Y
-	 X2j8RCKYqEPZKYn+lwzuDS/HWSeOgHzKz9eoDP/1ZAQ9U+39k1ttU6KWWDz5IhTF+m
-	 h64B6kZ4GqwYH3BEOIAA7XOQtCkFe+v5oiEPHzHM=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57D8QFKo257229
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 03:26:15 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 03:26:14 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 03:26:14 -0500
-Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57D8Q8Xc1721088;
-	Wed, 13 Aug 2025 03:26:08 -0500
-Message-ID: <94eeae65-0e4b-45ef-a9c0-6bc8d37ae789@ti.com>
-Date: Wed, 13 Aug 2025 13:56:07 +0530
+	s=arc-20240116; t=1755073584; c=relaxed/simple;
+	bh=ow3nCKIZJTiEJCUMKg884Dzp9UOiC9b7yUPwrBeg9sg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UEzcBprsKdyBoAHr96be1fswd5mesF2DKcLyDfVKTH7qczhzsDMNFkpz+0oT0wfmpe+/FpxAoCDW+cyzHa40eV3J/wr9ox49zEPeTpvDjmQ0BqgCbP6w8EUQ7iu8Ig54zjYC/cc6cYGo4YQkINYA+4rpL8TY0vK80fmDvUGdvMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=npiwyHt+; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45a0dc77a15so16928755e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755073580; x=1755678380; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MmVPi1TkVGoBOlA3mTfpnGt8GB15mzm46GxusQjBdHM=;
+        b=npiwyHt+QzHeZxXuJP8zhCFonrTwUXl+4tntItSAZj23eitJWcl2HY6s1LFxNdWJc/
+         Ef0fYQg7jULwSOARtpWl43DWnqAljjfXfS/MRws3pJCp1axRcFarib5/zX2cMl7GCMTQ
+         M0b8Y+Iayrz9V8ucTKjoxnwfegugcnVCj6st7DCNq2ExuTi2wuhI4OjJnyd3gzGMkJ+o
+         WpukAV9jxNG0kXbec2k2XZ5DqjW2n1ZtfucOzkHtOWrSI5koGi2VG5ca0fqnYDO1q4nx
+         a2/0DCHBCRA7dZDdTepa0lV54gn/DCvSTkxIAaIdasjxsTpmdJ1uP1b5Vk2mBBX8vo4j
+         yvDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755073580; x=1755678380;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MmVPi1TkVGoBOlA3mTfpnGt8GB15mzm46GxusQjBdHM=;
+        b=WSXHP/LPU6zvYgwUpMolJz/mF/K0f+lzA/jFurr1DjPnorxjFKzxktVGAay3Tr4fBi
+         1vUpNP87Y5rDDDv/OgOE9iFBoSRnxG6pLXovzJpTQRwUDXI6GWmMIqyMRMWV40G+koZW
+         0BEjuukCz6E2o6n297wCl1yOF26YGBlrYavFNtFOY8nwEvzUYdBwSS++1JzV04DoBoWE
+         C/SLzIPx9z6qI5WEs7fbYktteqs6JWzI7295tklKTDSmLQlnX2VYrsu/K63uY8f0AxRC
+         1HJXg42P2U/LupZtS7fiXO3iktxIXA2puYDga8auKTOutUb6gLqy1M7i479JlsI0SQSK
+         CA5A==
+X-Forwarded-Encrypted: i=1; AJvYcCU5twmnquuawSIwuv4bN4/RK7UEpbQYZ9Ruam6vcB9VDl2dKJJMK3Ftre/TxusnEnNajND2EZ8eA2vAwt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG0ZP0KUWZrss6zjyVfPLZgLKZCuDvlgN2SpPB0ST0bVE2zHXP
+	4Fq9xdlClcCnwecjUz7NGGD7EtfoOl4yajrapSYx9N/EWihcm1uUGr/pf5O6ihwjJKg=
+X-Gm-Gg: ASbGncu+tAIT7dr84ads515mrHj8RdMH4kx0JyZ3fD29u6nTawkr93JeG0AAmFwXZdb
+	Dq5RCrZtrYSV2OpDe2MEOfORrctZrH6gPtmv/sO+4og8TG4TPZoDmsORNpNDLT+9OlD4fuPhlvF
+	R5DI5uUTxTr7eypvu0v1F/xzGyDrbQvrUNuroQnp9gkbPzo8HiILJRzPPL/CnSV242G77vDk1l1
+	4iF1oXj1v1aQLhrHp8LfKhBOWe6QAiQ2iKvzfbAZ0e6Jtx6Qb8EY1T9HNDGF8Z3umCAg3KeQa+x
+	T0NUUvR7ge3T2GZXlYLcCsse91avNRRbWp4slCXcqdPEdslJlD/HbrTSwH7EWz0CHUdJSlKJWMm
+	w6/RuFS6h/ELTblank3Xa8qetkPY90n21BsUz4y3hwbZ8NqZIQFHAWym5nhyLu9YhHAT4YZwGeb
+	j+infq9ll3VA==
+X-Google-Smtp-Source: AGHT+IF2tdy5U27h5sRbKSKrBXJKY7csqOtxELBj5eXcJuYRanuSo4SwNaNC2NdVLpSSWAwN538YrA==
+X-Received: by 2002:a05:600c:3b25:b0:456:18cf:66b5 with SMTP id 5b1f17b1804b1-45a165db037mr15277265e9.22.1755073580429;
+        Wed, 13 Aug 2025 01:26:20 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:3e43:d171:89d1:18e8? ([2a01:e0a:3d9:2080:3e43:d171:89d1:18e8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abf0csm45909628f8f.14.2025.08.13.01.26.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 01:26:20 -0700 (PDT)
+Message-ID: <f1cff45e-5455-4151-b6f0-5a86859b1bd5@linaro.org>
+Date: Wed, 13 Aug 2025 10:26:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,173 +84,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] net: rnpgbe: Add register_netdev
-To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
-        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
-        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
-        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
-        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
-        <richardcochran@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-6-dong100@mucse.com>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <20250812093937.882045-6-dong100@mucse.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v2] media: iris: vpu3x: Add MNoC low power handshake
+ during hardware power-off
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250813-sm8650-power-sequence-fix-v2-1-9ed0fc2c45cb@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250813-sm8650-power-sequence-fix-v2-1-9ed0fc2c45cb@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-
-
-On 12/08/25 3:09 pm, Dong Yibo wrote:
-> Initialize get mac from hw, register the netdev.
+On 13/08/2025 09:53, Dikshita Agarwal wrote:
+> Add the missing write to AON_WRAPPER_MVP_NOC_LPI_CONTROL before
+> reading the LPI status register. Introduce a handshake loop to ensure
+> MNoC enters low power mode reliably during VPU3 hardware power-off with
+> timeout handling.
 > 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
 > ---
->  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 22 ++++++
->  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 73 ++++++++++++++++++
->  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  1 +
->  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 76 +++++++++++++++++++
->  4 files changed, 172 insertions(+)
+> Changes in v2:
+> - Restructured loop for readability (Jorge)
+> - Used defines for bits (Konrad, Jorge)
+> - Used udelay for short waits (Konrad)
+> - Link to v1: https://lore.kernel.org/r/20250812-sm8650-power-sequence-fix-v1-1-a51e7f99c56c@quicinc.com
 > 
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> index 6cb14b79cbfe..644b8c85c29d 100644
-> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> @@ -6,6 +6,7 @@
->  
->  #include <linux/types.h>
->  #include <linux/mutex.h>
-> +#include <linux/netdevice.h>
->  
->  extern const struct rnpgbe_info rnpgbe_n500_info;
->  extern const struct rnpgbe_info rnpgbe_n210_info;
-> @@ -86,6 +87,18 @@ struct mucse_mbx_info {
->  	u32 fw2pf_mbox_vec;
->  };
->  
-> +struct mucse_hw_operations {
-> +	int (*init_hw)(struct mucse_hw *hw);
-> +	int (*reset_hw)(struct mucse_hw *hw);
-> +	void (*start_hw)(struct mucse_hw *hw);
-> +	void (*init_rx_addrs)(struct mucse_hw *hw);
-> +	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
-> +};
-
-You define functions init_hw, start_hw, and init_rx_addrs in this
-structure but they aren't implemented in this patch. Either implement
-them or remove them if not needed yet.
-
-
+> Please note that I have not added "Tested-by" tag from Neil in this update,
+> as the NOC handshake loop has been restructured.
+> ---
+>   drivers/media/platform/qcom/iris/iris_vpu3x.c | 30 +++++++++++++++++++++++++--
+>   1 file changed, 28 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> index 9b7c9a1495ee2f51c60b1142b2ed4680ff798f0a..a621878f02f7196de29c9e290a6c5acea34eba8c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+> @@ -19,6 +19,9 @@
+>   #define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+>   #define REQ_POWER_DOWN_PREP			BIT(0)
+>   #define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
+> +#define NOC_LPI_STATUS_DONE			BIT(0) /* Indicates the NOC handshake is complete */
+> +#define NOC_LPI_STATUS_DENY			BIT(1) /* Indicates the NOC handshake is denied */
+> +#define NOC_LPI_STATUS_ACTIVE		BIT(2) /* Indicates the NOC is active */
+>   #define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
+>   #define CORE_CLK_RUN				0x0
+>   
+> @@ -109,7 +112,9 @@ static void iris_vpu3_power_off_hardware(struct iris_core *core)
+>   
+>   static void iris_vpu33_power_off_hardware(struct iris_core *core)
+>   {
+> +	bool handshake_done = false, handshake_busy = false;
+>   	u32 reg_val = 0, value, i;
+> +	u32 count = 0;
+>   	int ret;
+>   
+>   	if (iris_vpu3x_hw_power_collapsed(core))
+> @@ -128,13 +133,34 @@ static void iris_vpu33_power_off_hardware(struct iris_core *core)
+>   			goto disable_power;
+>   	}
+>   
+> +	/* set MNoC to low power */
+> +	writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
 > +
-> +enum {
-> +	mucse_driver_insmod,
-> +};
+> +	do {
+> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
 > +
->  struct mucse_hw {
->  	void *back;
->  	u8 pfvfnum;
-> @@ -96,12 +109,18 @@ struct mucse_hw {
->  	u32 axi_mhz;
->  	u32 bd_uid;
->  	enum rnpgbe_hw_type hw_type;
-> +	const struct mucse_hw_operations *ops;
->  	struct mucse_dma_info dma;
->  	struct mucse_eth_info eth;
->  	struct mucse_mac_info mac;
->  	struct mucse_mbx_info mbx;
-> +	u32 flags;
-> +#define M_FLAGS_INIT_MAC_ADDRESS BIT(0)
->  	u32 driver_version;
->  	u16 usecstocount;
-> +	int lane;
-> +	u8 addr[ETH_ALEN];
-> +	u8 perm_addr[ETH_ALEN];
->  };
->  
->  struct mucse {
-> @@ -123,4 +142,7 @@ struct rnpgbe_info {
->  #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
->  #define PCI_DEVICE_ID_N210 0x8208
->  #define PCI_DEVICE_ID_N210L 0x820a
+> +		handshake_done = value & NOC_LPI_STATUS_DONE;
+> +		handshake_busy = value & (NOC_LPI_STATUS_DENY | NOC_LPI_STATUS_ACTIVE);
 > +
-> +#define dma_wr32(dma, reg, val) writel((val), (dma)->dma_base_addr + (reg))
-> +#define dma_rd32(dma, reg) readl((dma)->dma_base_addr + (reg))
->  #endif /* _RNPGBE_H */
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> index 16d0a76114b5..3eaa0257f3bb 100644
-> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> @@ -2,10 +2,82 @@
->  /* Copyright(c) 2020 - 2025 Mucse Corporation. */
->  
->  #include <linux/string.h>
-> +#include <linux/etherdevice.h>
->  
->  #include "rnpgbe.h"
->  #include "rnpgbe_hw.h"
->  #include "rnpgbe_mbx.h"
-> +#include "rnpgbe_mbx_fw.h"
+> +		if (handshake_done || !handshake_busy)
+> +			break;
 > +
-> +/**
-> + * rnpgbe_get_permanent_mac - Get permanent mac
-> + * @hw: hw information structure
-> + * @mac_addr: pointer to store mac
-> + *
-> + * rnpgbe_get_permanent_mac tries to get mac from hw.
-> + * It use eth_random_addr if failed.
-> + **/
-> +static void rnpgbe_get_permanent_mac(struct mucse_hw *hw,
-> +				     u8 *mac_addr)
-> +{
-> +	if (mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->lane)) {
-> +		eth_random_addr(mac_addr);
-> +	} else {
-> +		if (!is_valid_ether_addr(mac_addr))
-> +			eth_random_addr(mac_addr);
-> +	}
+> +		writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
 > +
-
-The function should log a warning when falling back to a random MAC
-address, especially in the second case where the hardware returned an
-invalid MAC.
-
-> +	hw->flags |= M_FLAGS_INIT_MAC_ADDRESS;
-> +}
+> +		udelay(15);
 > +
-
-> +/**
-> + * rnpgbe_xmit_frame - Send a skb to driver
-> + * @skb: skb structure to be sent
-> + * @netdev: network interface device structure
-> + *
-> + * @return: NETDEV_TX_OK or NETDEV_TX_BUSY
-> + **/
-> +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
-> +				     struct net_device *netdev)
-> +{
-> +		dev_kfree_skb_any(skb);
-> +		return NETDEV_TX_OK;
-> +}
-
-Extra indentation on these two lines. Also, the function just drops all
-packets without any actual transmission. This should at least increment
-the drop counter statistics.
-
+> +		writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+> +	} while (++count < 1000);
 > +
-> +static const struct net_device_ops rnpgbe_netdev_ops = {
-> +	.ndo_open = rnpgbe_open,
-> +	.ndo_stop = rnpgbe_close,
-> +	.ndo_start_xmit = rnpgbe_xmit_frame,
-> +};
+> +	if (!handshake_done && handshake_busy)
+> +		dev_err(core->dev, "LPI handshake timeout\n");
+> +
+>   	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
+>   				 reg_val, reg_val & BIT(0), 200, 2000);
+>   	if (ret)
+>   		goto disable_power;
+>   
+> -	/* set MNoC to low power, set PD_NOC_QREQ (bit 0) */
+> -	writel(BIT(0), core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+> +	writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+>   
+>   	writel(CORE_BRIDGE_SW_RESET | CORE_BRIDGE_HW_RESET_DISABLE,
+>   	       core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
+> 
+> ---
+> base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
+> change-id: 20250812-sm8650-power-sequence-fix-ba9a92098233
+> 
+> Best regards,
 
 
--- 
-Thanks and Regards,
-Danish
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
 
+Thanks,
+Neil
 
