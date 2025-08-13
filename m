@@ -1,78 +1,145 @@
-Return-Path: <linux-kernel+bounces-767022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34249B24E22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:51:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8349B24E32
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842476831D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F722A41DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27314288C96;
-	Wed, 13 Aug 2025 15:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19C1287277;
+	Wed, 13 Aug 2025 15:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mm3RA4Cy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTXqYtgr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE6B288C17;
-	Wed, 13 Aug 2025 15:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2932A285C85;
+	Wed, 13 Aug 2025 15:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099728; cv=none; b=OwxSsmnj4cgrF8qzz6f/c7VarqXsvkCRQNUiMyGgoqBChdEE6hw6B8M9K/aOClo3uMROJsuq/X2cx5FFwJAJ3pzZzaGtsMo6zA+l9PxQWpifhfL0H6uHlJFRdwfEAf5Dc2rU17r7PsoOkdfC4ppJ4iCipBoT/Gs2bniYOwlZPCM=
+	t=1755099810; cv=none; b=ol6YlF/mMrLcEs//2z3kOEU0JJNI8Hy5LPp0KsCis7N1Azz7GZNLAAUmLUazOaTT/ZYmQM7vFSQtGnT+pQhy2jmHmUhxlBY5mHJ3Hqr8ifbwaMvYgKDlsV2k+6bRM+Z+iEyBn2L5kWkYGACtNihBKmpMjzyPUMHJUb1M8wVbEm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099728; c=relaxed/simple;
-	bh=KoILjMIrf0f+axn90tPHLT7lB7OEvJPVViVyLgwUa9I=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MQMaI3V6Skx9kdS5Hgu1BVSJ8BUAxL+GdDA8R2Q1M+ONO2MyqrbeXdBNseK6qhQrdd0geC9eaWwY7QkCrm7F6T6HTdEicIhTPdP8qUZuI19ajGDZjgqJ4qBc1B5CIK45RjJRpLpxzwyxSIDZjBKyYboxcNoADkby0IkVeTlxA2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mm3RA4Cy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D34CC4CEEB;
-	Wed, 13 Aug 2025 15:42:08 +0000 (UTC)
+	s=arc-20240116; t=1755099810; c=relaxed/simple;
+	bh=OCVS1nKCZktGk9eJd0qFRaW2McBTaTP8gAMmGlBkVBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LieJ4hmV9+DrIap7ztfYjTMnsFW3WhEEQx0mAms5Ihh9NtSVw2kg+PZDnci0H/tGSUHi2wggVotohmjd2BbIIFtXHfug6jnRQkMH8Wt9oru1e/3TAvvtobEqM/avm8B0XoPayjYTjMT9WVm/1f27kGu023+VMwbEkKYI7+RZ3LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTXqYtgr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C6E2C4CEEB;
+	Wed, 13 Aug 2025 15:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755099728;
-	bh=KoILjMIrf0f+axn90tPHLT7lB7OEvJPVViVyLgwUa9I=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=mm3RA4CyMDL3VYfRduA5zbpAYDZlAU63kivBJOaDKlbVMV0TYNHO/79OQVXJm3yi7
-	 c+tNZ3BcdM0yYMUxURFP1j9wW9hoY9adbX0Kfw6uSnEfT1PxAIum779R9lgTCkL2t2
-	 LrA0PReHLzygBTade+WMvs7y2A4yy9443u0qC2aOACHo8XZRgnbgHvl30Xx01MgjAV
-	 puAX8mnOzPeQ4q8ckgNSnzzIC4bLAY963vsyGFPLcR88jeOZMO95NDZoRINb89EL08
-	 8DQJdEGrSuj3JK8d3/VvW/xmsxsjmHuUl8ghWEBGrBBChueDixfyP6DrsRo3pjmvFo
-	 7A3KuwNdGTUTQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 044A139D0C33;
-	Wed, 13 Aug 2025 15:42:21 +0000 (UTC)
-Subject: Re: [GIT PULL] hotfixes for 6.17-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250812205256.7782e2e483a8b12774e65dcd@linux-foundation.org>
-References: <20250812205256.7782e2e483a8b12774e65dcd@linux-foundation.org>
-X-PR-Tracked-List-Id: <linux-mm.kvack.org>
-X-PR-Tracked-Message-Id: <20250812205256.7782e2e483a8b12774e65dcd@linux-foundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-08-12-20-50
-X-PR-Tracked-Commit-Id: c0e1b774f68bdbea1618e356e30672c7f1e32509
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 91325f31afc1026de28665cf1a7b6e157fa4d39d
-Message-Id: <175509973969.3638460.11919114009221754348.pr-tracker-bot@kernel.org>
-Date: Wed, 13 Aug 2025 15:42:19 +0000
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1755099809;
+	bh=OCVS1nKCZktGk9eJd0qFRaW2McBTaTP8gAMmGlBkVBo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lTXqYtgrHymg/AgcfavetFeRIi6t1/wDE/vuxDqfjs4YOmWgeFk0hf74GfTDM95OC
+	 LQFw7XNNNJzDu0qor+FdRRSnYwqa2uxCq0dNYAHa/ypyIsHib/q43+7Ucnd5gEeHrc
+	 qUmFm79ztubtjOhtbbkfJFce0/P7FEFHn4l6NWdBgflJxuquSE1kk4ghkxvlpk/PVe
+	 BAPNkE4lvKncGYxeOSKktRFWmysZ+9C4aG8J+3VIRgxCwc9Zex4ApPTj/Zn/Zzy9D+
+	 sV7VjCPAYowhmmJkbskc2fnVfAnclYfGrxLKE8EIGE+U54UiwVwbnGfDRoMpGxEm4i
+	 67iAE+Zd+v2GQ==
+Date: Wed, 13 Aug 2025 10:43:28 -0500
+From: Rob Herring <robh@kernel.org>
+To: Hans Zhang <hans.zhang@cixtech.com>
+Cc: mpillai@cadence.com, cix-kernel-upstream@cixtech.com,
+	lpieralisi@kernel.org, bhelgaas@google.com,
+	devicetree@vger.kernel.org, conor+dt@kernel.org,
+	linux-pci@vger.kernel.org, mani@kernel.org, kw@linux.com,
+	kwilczynski@kernel.org, krzk+dt@kernel.org, fugang.duan@cixtech.com,
+	guoyin.chen@cixtech.com, peter.chen@cixtech.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 08/13] dt-bindings: PCI: Add CIX Sky1 PCIe Root
+ Complex bindings
+Message-ID: <20250813154328.GA114155-robh@kernel.org>
+References: <20250813042331.1258272-1-hans.zhang@cixtech.com>
+ <20250813042331.1258272-9-hans.zhang@cixtech.com>
+ <175507391391.3310343.12670862270884103729.robh@kernel.org>
+ <cb35dfbd-2fa4-4125-bd87-9f86405983eb@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb35dfbd-2fa4-4125-bd87-9f86405983eb@cixtech.com>
 
-The pull request you sent on Tue, 12 Aug 2025 20:52:56 -0700:
+On Wed, Aug 13, 2025 at 05:12:57PM +0800, Hans Zhang wrote:
+> 
+> 
+> On 2025/8/13 16:31, Rob Herring (Arm) wrote:
+> > EXTERNAL EMAIL
+> > 
+> > On Wed, 13 Aug 2025 12:23:26 +0800, hans.zhang@cixtech.com wrote:
+> > > From: Hans Zhang <hans.zhang@cixtech.com>
+> > > 
+> > > Document the bindings for CIX Sky1 PCIe Controller configured in
+> > > root complex mode with five root port.
+> > > 
+> > > Supports 4 INTx, MSI and MSI-x interrupts from the ARM GICv3 controller.
+> > > 
+> > > Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> > > ---
+> > >   .../bindings/pci/cix,sky1-pcie-host.yaml      | 79 +++++++++++++++++++
+> > >   1 file changed, 79 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+> > > 
+> > 
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> > 
+> > yamllint warnings/errors:
+> > 
+> > dtschema/dtc warnings/errors:
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: /: 'compatible' is a required property
+> >          from schema $id: http://devicetree.org/schemas/root-node.yaml#
+> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: /: 'model' is a required property
+> >          from schema $id: http://devicetree.org/schemas/root-node.yaml#
+> > 
+> > doc reference errors (make refcheckdocs):
+> > 
+> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250813042331.1258272-9-hans.zhang@cixtech.com
+> > 
+> > The base for the series is generally the latest rc1. A different dependency
+> > should be noted in *this* patch.
+> > 
+> > If you already ran 'make dt_binding_check' and didn't see the above
+> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> > date:
+> > 
+> > pip3 install dtschema --upgrade
+> > 
+> > Please check and re-submit after running the above command yourself. Note
+> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> > your schema. However, it must be unset to test all examples with your schema.
+> > 
+> 
+> Dear Rob,
+> 
+> I'm very sorry. No errors were detected on my PC. I'll check my local
+> environment and fix this issue in the next version.
+> 
+> If I have done anything wrong, please remind me.
+> 
+> 
+> 
+> hans@hans:~/code/kernel_org/linux$ export CROSS_COMPILE=/home/hans/cix/bringup_master/tools/gcc/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+> hans@hans:~/code/kernel_org/linux$ export ARCH=arm64
+> hans@hans:~/code/kernel_org/linux$ make dt_binding_check
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+>   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>   CHKDT   ./Documentation/devicetree/bindings
+>   LINT    ./Documentation/devicetree/bindings
+>   DTEX Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dts
+>   DTC [C]
+> Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb
+> hans@hans:~/code/kernel_org/linux$ make W=1 dt_binding_check
+> DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-08-12-20-50
+DT_SCHEMA_FILES limits testing to only the matching pattern. 
+Ultimately, you have to test without it.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/91325f31afc1026de28665cf1a7b6e157fa4d39d
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Rob
 
