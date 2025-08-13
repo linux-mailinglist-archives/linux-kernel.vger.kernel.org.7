@@ -1,157 +1,103 @@
-Return-Path: <linux-kernel+bounces-767677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1169B25794
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:31:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0073B25797
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DBD5A26CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 512531BC34F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18272F60D1;
-	Wed, 13 Aug 2025 23:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5297B2F60A4;
+	Wed, 13 Aug 2025 23:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gv3tQdnR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+o/ecNp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F04C4C81;
-	Wed, 13 Aug 2025 23:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28F02F60A5;
+	Wed, 13 Aug 2025 23:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755127893; cv=none; b=qgLRLnebI48mLI3VsgUx3acjsPvNjGg6EEEt1ZVnGi8e6Iys5b571w3uAbmpjCPmgxtnZSWsr5fPIfaMGXNBhRZzMQnktZslXkxbMSjPqygJ/1PfdIq/9tq0s9kFjxMB+VgzHe3TaN8dnyCkhKLslPCKQ8VS7lxmXKqUYjbgDw8=
+	t=1755127918; cv=none; b=AbEeAuFI0dBNr8fiJrBzbRwKH1GkcRdC+l02tgSS+IQQgKu8jp9/BLLePCv64aJbsxk4vib4gDv4FI4/oVH/46B9krjx3L55t75qmdPDXXRbOeyqugcFOJU4uRY/ePMnJOk2S6/X3IEXo6LZRh6eQVQgEDB+wGS2dqTRjz+XUbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755127893; c=relaxed/simple;
-	bh=pSrk1+Pl2w0c7sZtG87RTW/5Lq01aoGnLMNs1gY4RP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qxFcj7wuLIAlnuWhyNiatPEgg+LYbXJ6xUPW8D9yEtdyTXldRpFrgGzl16B+vnTl7cR5WF9vbJQV5wAKBNOVk22NFP2I5JoOWIiBDD88e9nP4WAWPLjidYP84zDGq+WMI/kzft9/k9CN7G2P/PWf14JMESaDO3Y8JbVak4d1txE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gv3tQdnR; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755127892; x=1786663892;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=pSrk1+Pl2w0c7sZtG87RTW/5Lq01aoGnLMNs1gY4RP4=;
-  b=Gv3tQdnRPm1geHHTVonC5L28fD5ixdeftNlO8/9U0nLE29EwxmHZahuG
-   sj5wofYjnHC2FkDig/97naa3X41DsZNQkEVPA7C/IzjOGiMRZy1+pfy+V
-   mRKO/SRClLGCx78Kszk2uZTGo6HrqFsT/Fljn9skwqJla8Ps+SnX9pVfV
-   d1Tx0EzNfrq/GMX75D1/SmPEBaUQpvRUxwGg2N5KBg9i/HzCsCLPqAPgp
-   uZJ+doW6yrqM7Trc0mPHkchd0wgCoXU/qFvqfrxps7r+AwH9+iVMxIvSU
-   mq+h5YsfG4TXVL5Aw2RI0+A2VjkU/AvgEDbS6wWCXqyfBBPkq9vtaUxOv
-   w==;
-X-CSE-ConnectionGUID: WWRxtCGNS7ejAoUguL6E8Q==
-X-CSE-MsgGUID: wyKB3wZ8TY68bSQYLoWmzA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="75011009"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="75011009"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 16:31:31 -0700
-X-CSE-ConnectionGUID: bmj+/WIjR0+o8T9zxuER6A==
-X-CSE-MsgGUID: rNZxCCmtTn+AZmGC+8EyXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="166982974"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.131]) ([10.125.111.131])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 16:31:30 -0700
-Message-ID: <d21a66fe-d2ce-46cc-b89e-b60b03eae3da@intel.com>
-Date: Wed, 13 Aug 2025 16:31:29 -0700
+	s=arc-20240116; t=1755127918; c=relaxed/simple;
+	bh=nF7toL7Yj0MDeijA8jPHl59MTK7TzqVBJffEbOipCdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mz9iR0iRjbfSrJFg+YPrqB0DMfW3BTuRIs3Bdqb/1rGR1rMooeBqqwMpzlNZKzdBnnqG8YBSpX5lS6lzwC0X+8JC9CbxUnDWU9ct7v7/8iG46vNnUfHQzxlkjGP5D+kSEAfUdl37zW8p0/gc9KkxLHwITviAqowfZ9oJtZKwTHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+o/ecNp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19CE9C4CEEB;
+	Wed, 13 Aug 2025 23:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755127918;
+	bh=nF7toL7Yj0MDeijA8jPHl59MTK7TzqVBJffEbOipCdw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q+o/ecNpafpF95IK6OOv23aJF/5tP2XkfGZUCKl+gJsPndu40zqNZskJlOhmAZSjb
+	 lpr8noavNJaL5WWqoLFSXIkPnyQcx1xH8WwDvFd3KUC7Ebzcx/7P+Ys8imlfvnoy1Z
+	 lXhcFiuvQJl1s6hF6ryahiFFrwnCllh0RrTNxrU4HXWp5THcVsgoKNbOW2XmoovBLA
+	 UtGy2VjXq+fxYqv1f0iw9RNudsd36t2tMSZipB7Emt/79MM+piO1sNCTBAZEXmvlGD
+	 oJyu+QHEiGeXgixh20mj1iGb8z1XpmtgDL1trDq0hUtfrD8oysh2sCc/2Rx4dpKRUr
+	 l7/mK24/aqKVA==
+Date: Thu, 14 Aug 2025 01:31:54 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH 05/13] docs: move parallel-wrapper.sh to tools/doc/
+Message-ID: <20250814013154.623955ed@foz.lan>
+In-Reply-To: <20250813213218.198582-6-corbet@lwn.net>
+References: <20250813213218.198582-1-corbet@lwn.net>
+	<20250813213218.198582-6-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "seanjc@google.com" <seanjc@google.com>
-Cc: "Gao, Chao" <chao.gao@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>, "x86@kernel.org"
- <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
- "bp@alien8.de" <bp@alien8.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Zhao, Yan Y" <yan.y.zhao@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <d432b8b7cfc413001c743805787990fe0860e780.camel@intel.com>
- <sjhioktjzegjmyuaisde7ui7lsrhnolx6yjmikhhwlxxfba5bh@ss6igliiimas>
- <c2a62badf190717a251d269a6905872b01e8e340.camel@intel.com>
- <aJqgosNUjrCfH_WN@google.com>
- <f38f55de6f4d454d0288eb7f04c8c621fb7b9508.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <f38f55de6f4d454d0288eb7f04c8c621fb7b9508.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/13/25 15:43, Edgecombe, Rick P wrote:
-> I redid the test. Boot 10 TDs with 16GB of ram, run userspace to fault in memory
-> from 4 threads until OOM, then shutdown. TDs were split between two sockets. It
-> ended up with 1136 contentions of the global lock, 4ms waiting.
+Em Wed, 13 Aug 2025 15:32:04 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-4ms out of how much CPU time?
+> This little script was buried in Documentation/sphinx/; put it with the
+> other documentation-related tools.
 
-Also, contention is *NOT* necessarily bad here. Only _false_ contention.
+This will conflict with my series getting rid of it and touching Makefile.
 
-The whole point of the lock is to ensure that there aren't two different
-CPUs trying to do two different things to the same PAMT range at the
-same time.
+I prefer if you don't merge this one.
 
-If there are, one of them *HAS* to wait. It can wait lots of different
-ways, but it has to wait. That wait will show up as spinlock contention.
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  Documentation/Makefile                                  | 2 +-
+>  {Documentation/sphinx => tools/doc}/parallel-wrapper.sh | 0
+>  2 files changed, 1 insertion(+), 1 deletion(-)
+>  rename {Documentation/sphinx => tools/doc}/parallel-wrapper.sh (100%)
+> 
+> diff --git a/Documentation/Makefile b/Documentation/Makefile
+> index f7b8342f9666..962c4fab94b0 100644
+> --- a/Documentation/Makefile
+> +++ b/Documentation/Makefile
+> @@ -91,7 +91,7 @@ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
+>  	PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
+>  	BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(src)/$5/$(SPHINX_CONF)) \
+>  	$(PYTHON3) $(srctree)/scripts/jobserver-exec \
+> -	$(CONFIG_SHELL) $(srctree)/Documentation/sphinx/parallel-wrapper.sh \
+> +	$(CONFIG_SHELL) $(srctree)/tools/doc/parallel-wrapper.sh \
+>  	$(SPHINXBUILD) \
+>  	-b $2 \
+>  	-c $(abspath $(src)) \
+> diff --git a/Documentation/sphinx/parallel-wrapper.sh b/tools/doc/parallel-wrapper.sh
+> similarity index 100%
+> rename from Documentation/sphinx/parallel-wrapper.sh
+> rename to tools/doc/parallel-wrapper.sh
 
-Even if the global lock went away, that 4ms of spinning might still be
-there.
+
+
+Thanks,
+Mauro
 
