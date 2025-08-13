@@ -1,188 +1,203 @@
-Return-Path: <linux-kernel+bounces-766084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC318B24212
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:59:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3BEB2421D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB203B3C6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:59:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEEB45646D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8662D5C86;
-	Wed, 13 Aug 2025 06:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E822D660C;
+	Wed, 13 Aug 2025 07:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cHN/gFDO"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="a/QI2M1C"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012014.outbound.protection.outlook.com [52.101.126.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AE4271468
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755068368; cv=none; b=m0OUiRLIiGyUcwJvQct5ojD9tap+YTQL+Lx/QQ2M0+uvo0ydCe9Jhle8AAvcu8FaZi6piRVrX/Obu1w09FatwfH2SnrcNIIF4mXxwp6NUmZnaZIT+i0nH59hmhEeahN3D/6tluEyg7EbHNcfICPKkha29UaX0Bd5KpdGGmhqjM4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755068368; c=relaxed/simple;
-	bh=AvuJGqqlDBGaf++1QTwjiVlyO8wspUq8bXNzAJNClls=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=BxKrWLSm1Wrifx+M5xrLBz4uHN+y/Va79om3COf6kdqXP07EWVPfl97P3BYAzGt6sZddEo3BPEVsqZAnu/NdYFqfVgyQM6mpN2KjRwLEUAAjWC4nN9uB/V5sSXklM06TYYIKs7lH2emDivzIEG2JellcMlEruSKwNwn8NE1UIYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cHN/gFDO; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e8fdbd45e10so5063183276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755068365; x=1755673165; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4c2Exxn9N8GOxJ4EP0dbpK/kCpIo2tAYpKzr78hu7S8=;
-        b=cHN/gFDOsxaxCE+UFRawSGcAMWfyC0yyszzobvuye5ninC51IxvJ2LGtSihnrPHxwU
-         RPzqzLBFkcAbEkwG00YCkaQ/Gzt2D/RUQZwyAeVKYXl0iIdWOz+hiiBvmG+f09A9xpP7
-         e8RB4nVo5skkwS1tdDNx1cg7vUQLgNx1Iv+qcpKPmCoB1oWHPFceBXwwN1iLGTEuWKet
-         Ns0NS6662AgtLw/9bMYB4zlQo+ni8Akpv6UkOjYBXsO6k/11l9F9b3yLy2TuccxyDaod
-         mEUY2tjqn9MZl3suwtY6lSGlllPlG5sCOEvXVUruoayswdcJr02fctZUGC4ffbM0ZiDH
-         6cSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755068365; x=1755673165;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4c2Exxn9N8GOxJ4EP0dbpK/kCpIo2tAYpKzr78hu7S8=;
-        b=HWLBT7PRDTK2C6KSlMIhC8+7q7Pa9oIX8HaqKg854tYjfpmr9UT5+8zc5XIHlq2IHp
-         xQJSUaBfH+7BHrtIg33GdR/l57f1Q6vrnhAn7m68swbYIOW+Z4BAsPSCS7qz8LHu6z9N
-         ImyHi2p6pNAKUEA5OSeqysDZw11/vggxYsdGDZJ/PqT9JeFb08rdhDvyBRxSHXX9cehU
-         hgQ0jFc5HLg9wLm+17m2xdUs7Ec+aOTGouDKFjnj2iL4YHLGFkp0trDE9SINjyTJ63dG
-         XxBjTfu//hLsopac2zk3ACSqMucOJPF66HBiH0GIg5HcGxm+Ryd+HffeLgTq33qRDRn4
-         vLYw==
-X-Forwarded-Encrypted: i=1; AJvYcCXq9hYD27zrPRthrgvjhgQGye2M1IJ676P9O4oi+G0OJ02WCUtga0d8XoYrjFEXrrtWJmSaIAJdyHofMcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh86XTqLlLpIhFnvHGTfHXz1GC/owtLy3XfnT+JudX1VNeOsOk
-	X5LGZc3MhJ4hZwPLLP0Q8LfOnzoAnDWVFVcuzKu5kMi9aGkP60vKgaAdPxXUpjD3RQ==
-X-Gm-Gg: ASbGncu7ckfc/ZuOXjXmIxSZvhejqYgXowpCLlrH9mTK0nh3Ijej4aGZ3YDFcu6t0t7
-	8CJz45DgsLpKqGkx8n6CethWdLFnWHYNbKe1UfYKha2vtX/gClun45xYW4Awb+jeq9CHnpw4JWn
-	7ZcoEO2TkTF9sLNBow4rcJCa0UwcEZQRSgI8eh5dW/27m6INxDQhyKjSZ2OiV2oXwU9tjxeEt+a
-	l0XVIdA4ZJRebdiF285LUAFMGfDhoBHeplmWs4ElvScX/cahTrUoGAwX4bg660xWdNEgGEmcU1h
-	nFaIhk3sip2niYyOMnUPOh0h38yWqrboev1m7DfoMkFgyEo0a+3gMQlFqBY47d2cBfswE/T9sXc
-	aqRDmp4JadhmBmoGlYC1oRKZ8Yjrh2XX7ktLrn43gwuB5Twy2CdotlGs1NOi2jFd6Geo2k1n7tz
-	6x8lN0T0JVJnGL9dUApw==
-X-Google-Smtp-Source: AGHT+IGB8+DtY8l2es3xfQ1AnhxzKizng1sEXEebwAXM8umoPlukJ8aYL7FjuHimETfAZ2KECwCAgA==
-X-Received: by 2002:a05:6902:2a8d:b0:e90:6e1f:56b3 with SMTP id 3f1490d57ef6-e930bf3ea4emr2208666276.7.1755068365140;
-        Tue, 12 Aug 2025 23:59:25 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e905a067e86sm3927980276.7.2025.08.12.23.59.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 23:59:23 -0700 (PDT)
-Date: Tue, 12 Aug 2025 23:59:11 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org, 
-    david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com, 
-    Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
-    dev.jain@arm.com, baohua@kernel.org, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: shmem: fix the strategy for the tmpfs 'huge='
- options
-In-Reply-To: <e6898dca-d6c6-465c-a373-8298858839ab@linux.alibaba.com>
-Message-ID: <3705f034-808a-4afe-5dde-4b4e9815a8d0@google.com>
-References: <701271092af74c2d969b195321c2c22e15e3c694.1753863013.git.baolin.wang@linux.alibaba.com> <e6898dca-d6c6-465c-a373-8298858839ab@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F397269D06;
+	Wed, 13 Aug 2025 07:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755068417; cv=fail; b=DAo+SuYGZM9Ay2zESOUS3rYde6K0YYPnCkJWPlknZrx8rz3tfW9EzgiLmSpftKBgO9Kg3GM3hW8FoSCWecPgfQI/x2PV8kct7YebqHkx8ZODbXbS8PQq1ZHr6G0KGGVNnNyuIfiaO8mtrpjbaIh9yfl+LgFwRvkl0uOUFuWTtDM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755068417; c=relaxed/simple;
+	bh=G1nPXjcuk+lWT6j/TXHpkX5o46M/VLWT90YHyClSg9w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=K5zvyI8CUp+XW+KxbQEqeQ9bPrxu61aR02dE+zvtl8ppEMkpa3S3cp6KAA5RJVSZZ5cUoFclfYx17wlAmGoiyJ45LNXq4GyCihgT0nyEV7efT+xMOPiGpaU99QFkQ8lRdZYOdVdVRgNL2zM0NEXjBD8PaTwRbrK7o9Q9195lNlg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=a/QI2M1C; arc=fail smtp.client-ip=52.101.126.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jDp3ik4eLQnmnjT5dbXJYXJPEIXBFQmoktruEE8SA6YdXA+MqDKElFKn58iZFzasw6tv7pxejfP8Ku67UqAsf0AsjHKH+SPWeuvW/o2xsCmloLN2qeJOBIlO1ke0eGh3knPEw4+Pi6ihB3hbQ4HdJecwWK9HbhFJTV9zSUQIjYQG663DhokGO34YsQ0M9HzpoOAvtZ9SADtvGkstdYvC/BmQCoO3WncA3p+f/tICNOCpqMzkvVW/uOIpabMH+hvYfMwpBWGE6Q8inJCPYY9/NxJKOFVqfmHaBM2gQt5+ZIDCpQyf7oi0zfLkH3sJRVSvgHS291G2aWuffmrtWEokEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9+fm5x27WAV9urzCoXBYD+H69WceYmwFQnylzVAgTk0=;
+ b=BXNFFRuOuWArwVx/6JP2GLzHGRsxSddm91JXOaSeLCXxGjB9DRmu6VcPewsZc1hvq271j7cPYpx14LJRDDWLLp/7c0u0bo5dsW3vxQ7Z/AnVtg1kTyKy2glRIk0SWr20jOSYnFb+QgT80xczDA7sJVyX1v3diLPN10LaQnRJAfCI/5UQZzdxSM+gaE50ZVugbdyZdVUsutyJbb5SE46+cLscotM9jsmDnse7Z9P/PkKq0iqPUNE+DX9kSCPdWzmsBr7YRfwksg213DaCxrvPBYVposAFPNwhaxqXA4EZmaCbkLcFzJzHgXrHY0QhxJag503OLjWZ9pUcBkzOrg6HwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9+fm5x27WAV9urzCoXBYD+H69WceYmwFQnylzVAgTk0=;
+ b=a/QI2M1CAhyo9hKK4mvyWfCYrszFtkiJQgJgm5MQ6hUjBIPKifNX0WMILn+COeDw1hKG2BhvI7YOx6mky05vVVI0LFE7DitB1VpW82xDL08gs084E+bnIET2LW8EegZwhv24k5arIlWeRQ7w2S8x1mG/VrUfVdQN8KkWuz+54tN6Dei1Jx8avtbg+o7hVxV4iI6JcA7YlYHTbEObK8Zjjx/6pjNuGHE4rpC5TJvnSYOyOtFEYg6m2noLXl3VDfgl+Ckk6n4NJlKRulyF63xOzh0aF9Ipu0Hx/YI4xXRGv6Iju7ptCezZ2bU1y8sfgInLsW7uvx2oKFR7BWAFqfDZ9g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ JH0PR06MB6559.apcprd06.prod.outlook.com (2603:1096:990:2f::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9009.22; Wed, 13 Aug 2025 07:00:10 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.9009.018; Wed, 13 Aug 2025
+ 07:00:10 +0000
+Message-ID: <d015dc98-cacb-456e-ba31-3cd387fe1244@vivo.com>
+Date: Wed, 13 Aug 2025 15:00:04 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] ethtool: use vmalloc_array() to simplify code
+Content-Language: en-US
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@fomichev.me>,
+ "moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
+ "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)"
+ <bpf@vger.kernel.org>
+References: <20250812133226.258318-1-rongqianfeng@vivo.com>
+ <20250812133226.258318-2-rongqianfeng@vivo.com>
+ <20250812134912.6c79845e@kernel.org>
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+In-Reply-To: <20250812134912.6c79845e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: TYCPR01CA0055.jpnprd01.prod.outlook.com
+ (2603:1096:405:2::19) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|JH0PR06MB6559:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e22adfa-977b-4668-603c-08ddda370b68
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SCtNMG42aW5Hc081Y3FacGpudTZFcklmbkhnRVVsbjZHRFZQTEF5RFBQaWcx?=
+ =?utf-8?B?RXhoYzh1QnJMK25iTlVOSElrd2hObktNNFFabi8xOXBaZWdQYVBCRjl4VE10?=
+ =?utf-8?B?clV4WENTSVBUUnhmUmowZnFMNDJUb3FXeXlLckEvRDlhdGVaejg4TStMdHNq?=
+ =?utf-8?B?SVo3YkxYdjVVL0lpN3ZuTmx1TUNsdlJjK051bmhvSjdVUURaWjg0V3RaNmJo?=
+ =?utf-8?B?d3NBaDdIdCs5Y0k3T1RKWWd1RHo5QmF5RXd1Wm5obVE4MitwNmp3d1l3Y0JC?=
+ =?utf-8?B?OGtUcFBRMlNDNWpWRkJlYXNYVWltVG1OVThkSEYzM1NhWmhvSVp0N0tNSWdN?=
+ =?utf-8?B?MEdaWFdiMkE3cGlrZkh5NEE5QUF4M3ZjSFEzWGE3RmJ5aFFDckJSMG12NVNa?=
+ =?utf-8?B?YWlxRTNIMEhKQk5zVjdQa1l6UzVTS0ZpcnBtaXRXcGsrUlhITzg1bkNnckZI?=
+ =?utf-8?B?eTVKR2tDWU94NVNoc2dxWjBHYklYSEhHdHh4YjNGQlVGQ2hseGpUcGsvYk1K?=
+ =?utf-8?B?Q05BMlRVRGhaaVAwS1NTc1NhSGs5RXdvZUMrMnJuellqY0tRWG1MNENxckxP?=
+ =?utf-8?B?MGNFdThJV2NJMnE3Y1VRTUdlbXgvZnY5L3p0K1oxYVpkN0s0cGV0Wkx2Qkk2?=
+ =?utf-8?B?YmVnZmJTTnd4a0xucU9kQnE5NU15bTRLNnpwSHBJWmx4VUN3WTZSaXR2SThC?=
+ =?utf-8?B?WUFUdHBNVG1zY0s0U210TTJDVGYzZTRtMTRCeW82SHo0d21PejN1c254SVV4?=
+ =?utf-8?B?UUZ2Zk5MQ0svcWFqMnJmdk9jdEVWaVBCNTNBVHRZcmhiRmROMEFDTnRrT2E0?=
+ =?utf-8?B?YXV4dTQwTXBZTUIrV2Jkekh0WmhDVXpOejJ5MWh6aG5Tc1NrQXFzV3ZiN3Jr?=
+ =?utf-8?B?ZWNrbUtOSGJ0dzE5WkJJcWN3dHU1NjFOQjdxd0xhRUlKdlBNM3VGMnJ4WndP?=
+ =?utf-8?B?OFFIaGppTnR5QmYyaWN2YkxrQWpPR2wrU2hEeE9JMGg3T0V5RERxLzBra1lC?=
+ =?utf-8?B?UE5kMDlYRDBpWjB3WERpY3BLeWh2TmRkNlN3NkU3NkhWMmZ6eEVWOU5RNmUr?=
+ =?utf-8?B?VXNxYkRPQmlQM3hLeWFmZVhaQlh0WE8vZzR2ZmdZSGg4RGZ5bUNKOE5MQW85?=
+ =?utf-8?B?YlNpTHJCeHJkVFNnN2VFM0pTOUZMM2drSzhTSEFsVnptbDU5ckFlOWhwMXVM?=
+ =?utf-8?B?K3p3UnBNQ2oreFVpaW5PVXZJcUdBRmRLUTlzUXF6bU9sQWt5NTB3dFB3cmpT?=
+ =?utf-8?B?MFl6dGtJaGoraHZhQlhSMDdLY1hVcFBIVDlRREpJNTRoRzB2emtJRDRiZDBW?=
+ =?utf-8?B?Z25yMjh3eGwzL2VSclN5U0RBN1JGTGpjSnAxV3AzVGpqWTQ2WTVkcG1ReXcr?=
+ =?utf-8?B?QktNUWVSNno5M0RXT0pzTE5hZXFRRkVWd3dQbXVIYXd0TW9TWlBjVEw2OUg3?=
+ =?utf-8?B?c2cxMXBhc0h1NmFWcjBkWHIwTThDL3lpcWkrZm9PbHo4OEEyc1REYWxuNHA5?=
+ =?utf-8?B?S3VkengzNEV4NjlMVkNYbEt6L016RnBIaDZuVFhBMkRFam1SNDZXSVgxbDZw?=
+ =?utf-8?B?Nnp2SlByQ0kzZUhUQ2FZdVdXNU5RckE5T0VmU2o2U015NTVPZ2Qxb0ZFbE5m?=
+ =?utf-8?B?YzhNTnpuMVJoOFFsVUQ3Z3B2YW43UlpwcitWOENHakNpeUFQbjE1TGE3Z3g0?=
+ =?utf-8?B?MithbnpQUUw0S3VadXQwcnJHQ2Q3Z1hhOGdVaHJVbEc4K1VOZjhGcGFjREF0?=
+ =?utf-8?B?Nk1RNjN4Y1czZ3BRQlhRcTl0YW5Ta0lEalVKL1M0RVVMSzZQQzNzMHN0NUdo?=
+ =?utf-8?B?YkNOREJQNnJLQTZLVkZMaXBvTVZtSzY4eklxVWtBbDU1WXhUQmhtc24yY08v?=
+ =?utf-8?B?bkNnTlpRYVcxY1ZkR0wrcVpITjREL3RGOEN2Nk9ic3IxS3NHWWtWdHlxc0Jh?=
+ =?utf-8?Q?Z7fLR5puZ0c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aTNqY3FIdHNjbDhtWGQ0dFdTU0VCQ3FTYmhabEhjM1pOak9hb2RucVgwbklJ?=
+ =?utf-8?B?L25QNVlYNG95ejVXeDJwVjNWUUhQemRsUm1XQlFPR0ozUWtEN3R6MTh2d0d1?=
+ =?utf-8?B?ZGM4SXZNRDArVnMraW53QzFzcWFVbThDOFJTcXFLNW1kbFNjSEFGd3VMVDlw?=
+ =?utf-8?B?MzNwSEo4VVI2NTFqWG4wcnRwdDE0TktCSU84TFovQWc5UThHdVB5eWg5ODQr?=
+ =?utf-8?B?SnRqVWlOTlEyYlhlQzFqcUF6dFlFdzFiUU9TdU1EUlg0c2RwQWxwZnU1aDdV?=
+ =?utf-8?B?UXR1WFdOMUxsSHg0VDBBdEU5dTJOclJpbUIwTE4yaUk2MExYQkszMDB4Z3BI?=
+ =?utf-8?B?ZDNCSzV6dkRxUDhQL3UzeFJwNWliMmkzZCs1TlZ6NDRWVStYQS9YaFhEZUlo?=
+ =?utf-8?B?aE5UVXRJNXdCV0lqaFY2elNTMmd4M1ZTdnk2WEVMVTNISG5BeUFYdXNYS3FL?=
+ =?utf-8?B?ZGFpaTVxK1hHdmZqaFRtVjFjZDRSTWRnS09CcTUzRTNZREdXb0wvVXhxWjZS?=
+ =?utf-8?B?SnZUcWt2WEQ2WVlzcy9YYlNXU0RNbnZzcVg1ZkVZZFloM0tWUVlxUTQ5dXZi?=
+ =?utf-8?B?NTZWQlBndXBrR3hYWjBCbEp0SlkwbGI4SFJjN25nRytOZzZLRzBZQms2YnNv?=
+ =?utf-8?B?S1FNbU5tL0c1VFdBSW1YeStmcDh6TldoN1VlM3Z6NkJVUGF1RnhqYzVxdXlJ?=
+ =?utf-8?B?anNZN2hneFcvRkdUdWZHZnlkR1krS0tRRCtiSkJMSGxIVU5FZnpWVzl2RWxR?=
+ =?utf-8?B?SUdzNEQ3NFFuVnZPcDlrRy8zQ3V3RmFIODMrTWNCTHdaQ0lFbGcxVVVZK3F6?=
+ =?utf-8?B?dTNGbHdEbGZwN213cnh4V25pcEtIWk51SXNWTkJBQVl2NEdmTjJENTBFSEZO?=
+ =?utf-8?B?QjRVSzFMZElJbXg0SGxkTk5GbWpqSFhKWWUwSUtsaGtKS0E4MkdsUnRKc2du?=
+ =?utf-8?B?Z3dsczlOc0NabStGcTJteFUzRWhGVExGOFVBV3FRRG9xeWdzZ2FPeHVqQy9T?=
+ =?utf-8?B?OWVPY1M2akxsbUx4czRWM0Y0Sk9vYWY3TE50Q1pxUFNTTnp0QTFIajl1ZXYy?=
+ =?utf-8?B?YnFQdEd3OVNjdnB3aHluQ2NJOFNSVUlITEdkQ1BVMHBTMDF0MWNaSE5JczE5?=
+ =?utf-8?B?MjA3K0VhRlAwRDQybm9LOG45dmdURHVZY29jc0h5REphT2Jybkk1WkRvUEFp?=
+ =?utf-8?B?Rlo4VE5VS29iaVZmODQ5RTFNQXJaVjJTcVBTSWwreTFDTVJUWFNkSW9OQlhW?=
+ =?utf-8?B?aTVpd2wvNW1LV21NWmRScHBpSzllVDlDODJQYTJUN1MyVkxXdWF0U3VHNmtL?=
+ =?utf-8?B?Nm56MkJyQ0MrTW1INDg4UnczeDBKM2s4dWZGU2tMdFdMZ2dQV0ZjWC9sMFZK?=
+ =?utf-8?B?V3JtaFZWb1c3Y2ErckdJVWoxTXRIeUlkVm4rbHhFY0MzaEpPZGlISFVDZS9y?=
+ =?utf-8?B?M29VUDNOQXpzTlZnelpCMGJUd2ZuaXo0cDFXNGtOYnhpVTZleXk1THRXbVQ5?=
+ =?utf-8?B?dTFEVFNjbUhBWWVRZTdPRlAvalkwZHpzV1FTNWVPaFpEYTBCbWRQdlo2aktL?=
+ =?utf-8?B?dVE1NzkzMzBTZE5mUEk1Q2JqZ2ExYUo5cHRmV010bFFrenhHaHhab0ZwNmlr?=
+ =?utf-8?B?enZHVW9EVTNxZUgxb1V0MXVsN3YyN29BZUlBbEpXV2Z0REdzMkFBdEhpN1dy?=
+ =?utf-8?B?Q1B6aE10ZW9ueVFIMjQycitXVHNLM0oxQi9wakliSzllMzlCVVJRU0tvTytn?=
+ =?utf-8?B?alh2SGFycktTMTJ5S1pweGZrbDFEeHdnYkZHaW5mNDQ1UVVGSGgvTlFtN1Q4?=
+ =?utf-8?B?SHJEaGVjTHIyN3BzYXY3L2ZvNHVSam5qenl0dDlSRXJZeUsvbkRxWDFRTWlR?=
+ =?utf-8?B?N0hnUmh1Wk4yRVZOUWNxRUk1YjFyT1dxTy80Y1VoSU84S2dNdUNzMVh5WVFR?=
+ =?utf-8?B?UitHTi80RDdEeVdtQjkranU1K2VZd3haTWI0OTlDUVJWR1RuaGpJS1V3dTh6?=
+ =?utf-8?B?N2VoNzNUelpOVnpzZDMxSnJFNVl1b3RMWUM3a0dWM1g3TVZ0UytVc2ZzN29r?=
+ =?utf-8?B?NWpuTXZLZ0NmNHdac0k2Y0pjbHQybHdNYm02RDJVY2pBdnJXTDVjWHpsWEFJ?=
+ =?utf-8?Q?BQyeFwqxIlZCg1Uh56iKk18RG?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e22adfa-977b-4668-603c-08ddda370b68
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 07:00:10.7796
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kL0wa+4kxtx6GLDX2EQvjfOnPxMa/g5PLvFNwcd6fYWONt2Okv25l24w8tWoJ596ZqlBhmOufJcrxQOTC18bXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6559
 
-On Tue, 12 Aug 2025, Baolin Wang wrote:
-> On 2025/7/30 16:14, Baolin Wang wrote:
-> > After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"),
-> > we have extended tmpfs to allow any sized large folios, rather than just
-> > PMD-sized large folios.
-> > 
-> > The strategy discussed previously was:
-> > 
-> > "
-> > Considering that tmpfs already has the 'huge=' option to control the
-> > PMD-sized large folios allocation, we can extend the 'huge=' option to
-> > allow any sized large folios.  The semantics of the 'huge=' mount option
-> > are:
-> > 
-> >      huge=never: no any sized large folios
-> >      huge=always: any sized large folios
-> >      huge=within_size: like 'always' but respect the i_size
-> >      huge=advise: like 'always' if requested with madvise()
-> > 
-> > Note: for tmpfs mmap() faults, due to the lack of a write size hint, still
-> > allocate the PMD-sized huge folios if huge=always/within_size/advise is
-> > set.
-> > 
-> > Moreover, the 'deny' and 'force' testing options controlled by
-> > '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the same
-> > semantics.  The 'deny' can disable any sized large folios for tmpfs, while
-> > the 'force' can enable PMD sized large folios for tmpfs.
-> > "
-> > 
-> > This means that when tmpfs is mounted with 'huge=always' or
-> > 'huge=within_size',
-> > tmpfs will allow getting a highest order hint based on the size of write()
-> > and
-> > fallocate() paths. It will then try each allowable large order, rather than
-> > continually attempting to allocate PMD-sized large folios as before.
-> > 
-> > However, this might break some user scenarios for those who want to use
-> > PMD-sized large folios, such as the i915 driver which did not supply a write
-> > size hint when allocating shmem [1].
-> > 
-> > Moreover, Hugh also complained that this will cause a regression in
-> > userspace
-> > with 'huge=always' or 'huge=within_size'.
-> > 
-> > So, let's revisit the strategy for tmpfs large page allocation. A simple fix
-> > would be to always try PMD-sized large folios first, and if that fails, fall
-> > back to smaller large folios. However, this approach differs from the
-> > strategy
-> > for large folio allocation used by other file systems. Is this acceptable?
-> > 
-> > [1]
-> > https://lore.kernel.org/lkml/0d734549d5ed073c80b11601da3abdd5223e1889.1753689802.git.baolin.wang@linux.alibaba.com/
-> > Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
-> > Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> > ---
-> > Note: this is just an RFC patch. I would like to hear others' opinions or
-> > see if there is a better way to address Hugh's concern.
 
-Sorry, I am still evaluating this RFC patch.
+在 2025/8/13 4:49, Jakub Kicinski 写道:
+> On Tue, 12 Aug 2025 21:32:14 +0800 Qianfeng Rong wrote:
+>> Subject: [PATCH 1/5] ethtool: use vmalloc_array() to simplify code
+> ethtool:
+>
+> would make sense for patches which touch net/ethtool.
+> Please use
+>
+> 	eth: intel:
+>
+> as the subject prefix.
 
-Certainly I observe it taking us in the right direction, giving PMD-sized
-pages on tmpfs huge=always, as 6.13 and earlier releases did - thank you.
+Got it. Will do in the next version.
 
-But the explosion of combinations which mTHP and FS large folios bring,
-the amount that needs checking, is close to defeating me; and I've had
-to spend a lot of the time re-educating myself on the background -
-not looking to see whether this particular patch is right or not.
-Still working on it.
+Best regards,
+Qianfeng
 
-> > ---
-> 
-> Hi Hugh,
-> 
-> If we use this approach to fix the PMD large folio regression, should we also
-> change tmpfs mmap() to allow allocating any sized large folios, but always try
-> to allocate PMD-sized large folios first? What do you think? Thanks.
-
-Probably: I would like the mmap allocations to follow the same rules.
-
-But finding it a bit odd how the current implementation limits tmpfs
-large folios to when huge=notnever (is that a fair statement?), whereas
-other filesystems are now being freely given large folios - using
-different GFP flags from what MM uses (closest to defrag=always I think),
-and with no limitation - whereas MM folks are off devising ever newer
-ways to restrict access to huge pages.
-
-And (conversely) I am unhappy with the way write and fallocate (and split
-and collapse? in flight I think) are following the FS approach of allowing
-every fractal, when mTHP/shmem_enabled is (or can be) more limiting.  I
-think it less surprising (and more efficient when fragmented) for shmem
-FS operations to be restricted to the same subset as "shared anon".
-
-Hugh
 
