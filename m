@@ -1,80 +1,97 @@
-Return-Path: <linux-kernel+bounces-765932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E408FB24036
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:33:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0E4B2403D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CDB625B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:33:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC2AC583C28
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CF42BE640;
-	Wed, 13 Aug 2025 05:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B482BEFF8;
+	Wed, 13 Aug 2025 05:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXWYzETY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A19242D74;
-	Wed, 13 Aug 2025 05:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="egPHiuC/"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9062BDC3E;
+	Wed, 13 Aug 2025 05:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755063202; cv=none; b=BEipH2MPfvTmbPkn4Gcoy586fPF8LxVZ9e4a6gLkiSOq7jTRCR9+f8Y1D00iEVg2o5A0HFUAy0mW+yc/mtmJn901SG3vvQrGs+bPYeBBSFG273lH4BjWj5MU2J8O0mK9oU56PBefD92jMSmwWjpe5T9HvEOyQ571tNIYib2sVzk=
+	t=1755063289; cv=none; b=pKEfZvimQKHdLRhQ9M19R5icGFlwJ2eORG+1K3p/1hpwavC5CzKpv4eRnq4lBOybM9KR2a00qtPQN7DE2Q+vgr6PiVUvvrKeFconSbTtZqRwyMwxcK+JdgrVJW+Oiurf1tu78HfrS5CFClox521f6Z1mA4LwgDhbDltrfLpBx9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755063202; c=relaxed/simple;
-	bh=SQBB+QuUHQ1WK+SyPt+Tm0tHTtKC0fjHu1V5AzSo2Dc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=E7xgGY8/RxgxHctiwygzNZNQhrYA9MjTkYc1GE2PAB5n+MmGSIerfohgAqXWs3yxFsHFbclbqJd1mjPCrxDjr6A+yI+pvnkUdJdLKGMoAwJBe3gaEvi/Z64Vv/kPl64x3UtK8mBbijEGkgG78rgtEmfZPbyWnQiiTUHuWEE0AZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXWYzETY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF5A0C4CEEB;
-	Wed, 13 Aug 2025 05:33:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755063200;
-	bh=SQBB+QuUHQ1WK+SyPt+Tm0tHTtKC0fjHu1V5AzSo2Dc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=WXWYzETYtyVTbS+6jw3ig8Jg4izOU3AzTb1vxENfqDwjFC7caZVy1NbSDCnPFYjoF
-	 dIegtibAh7/9wIcfgd4mdvrngkSa42WlCaV1Tbri6p9VC+Fzk8w+9TFlNCRwTGO/ZH
-	 Boj+8UB/FyjvMkTYJwTl+oGKzP7Ct5oFJmqX0hueRsqjpDeackJjtfa+8sAnLcpMwG
-	 KpnSdvMMs8lbZN3Yqds11J/ukeDaxk5EpUfN2ZtDPt+qy1jzdPutW+KKatuvOaF5rb
-	 A6pTZALHITKaJYxJTE+poZ4yzTEA2rXTnJQalVfgL8bxbb5J8qo8c0KVeGLeKfO7HD
-	 5UURnsGuSl0jQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: vinod.koul@linaro.org, shumingf@realtek.com
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- flove@realtek.com, oder_chiou@realtek.com, jack.yu@realtek.com, 
- derek.fang@realtek.com
-In-Reply-To: <20250725101100.1106673-1-shumingf@realtek.com>
-References: <20250725101100.1106673-1-shumingf@realtek.com>
-Subject: Re: [PATCH] soundwire: debugfs: add SCP_SDCA_IntStatX and
- SCP_SDCA_IntMaskX registers
-Message-Id: <175506319789.649283.14444520276823005932.b4-ty@kernel.org>
-Date: Wed, 13 Aug 2025 11:03:17 +0530
+	s=arc-20240116; t=1755063289; c=relaxed/simple;
+	bh=FDQ2bMLRusEapD25iBwCb7gdZGFnPUtA5/Dgwn3dckg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s79BqjhmUI4UPooyBzt9NO3Vz8BWSEjPDECZcVBYiPKFTEoelUdU0uG4PeLLfnRVHNOzNEUPuzf4ZS7Y7j0xFepnJETmzNVVaV/NTsb0CVk7TQN1Mq0A3OIWqaz04mlc1cxSvvlAHNa4w10HGpfWdV1ys3w/0nHHQ5gEVwxleqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=egPHiuC/; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 1CB7814C2D3;
+	Wed, 13 Aug 2025 07:34:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1755063287;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XjWBHGXAcgSV563xYk+j+40WjifMEzSXGjNe9KQBgLk=;
+	b=egPHiuC/UC4UD4nFojr3h+78xh94q0eLp3Zq21uBe8/LCpwZK5VBHhPh9biDCwsjmCVJnC
+	CFyJ0T1fh3cJfPengyIw1VXIKESumJNM2n9UFWGwG0KkXgd34hp2B/yF1MQZjSAYiQ/d60
+	8PWe6PSIJFyJHf2TRZISebDIzWprvPBpvm55mgMY+d3Ib8JIirsbnKbO7ECSm+j9b5DenO
+	NJa+UHGLhlCaA8/WWL7kOYYRzgNKmLAq/YaBH5oieeCCQGoPB7YE+okWPLuEmWJhY6T4Rj
+	zmwT6YJssNSgb9Sb+7caUlK2ahGNWZaFZgv6Trd5sguwsYKpqxLITSfw0KCw1g==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 2a270480;
+	Wed, 13 Aug 2025 05:34:40 +0000 (UTC)
+Date: Wed, 13 Aug 2025 14:34:25 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: kernel test robot <lkp@intel.com>,
+	Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Maximilian Bosch <maximilian@mbosch.me>,
+	Ryan Lahfa <ryan@lahfa.xyz>, Christian Theune <ct@flyingcircus.io>,
+	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >=
+ folio size
+Message-ID: <aJwj4dQ3b599qKHn@codewreck.org>
+References: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
+ <202508120250.Eooq2ydr-lkp@intel.com>
+ <20250813051633.GA3895812@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813051633.GA3895812@ax162>
 
-
-On Fri, 25 Jul 2025 18:11:00 +0800, shumingf@realtek.com wrote:
-> This patch added SCP_SDCA_IntStatX and SCP_SDCA_IntMaskX registers.
+Nathan Chancellor wrote on Tue, Aug 12, 2025 at 10:16:33PM -0700:
+> >    1 warning generated.
 > 
-> 
+> I see this in -next now, should remain be zero initialized or is there
+> some other fix that is needed?
 
-Applied, thanks!
+A zero-initialization is fine, I sent a v2 with zero-initialization
+fixed yesterday:
+https://lkml.kernel.org/r/20250812-iot_iter_folio-v2-1-f99423309478@codewreck.org
 
-[1/1] soundwire: debugfs: add SCP_SDCA_IntStatX and SCP_SDCA_IntMaskX registers
-      commit: 8b63fee9f62361a7d96394611ba05734ec21e2eb
+(and I'll send a v3 with the goto replaced with a bigger if later today
+as per David's request)
 
-Best regards,
+I assume Andrew will pick it up eventually?
 -- 
-~Vinod
-
-
+Dominique Martinet | Asmadeus
 
