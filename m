@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-766599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375A7B248D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:51:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A330B248E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEC4A2A5580
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:51:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 118B2564017
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A05B2FABFE;
-	Wed, 13 Aug 2025 11:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FD02FAC0A;
+	Wed, 13 Aug 2025 11:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="UGPErZjh"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012034.outbound.protection.outlook.com [40.107.75.34])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="15NOOiAC"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD67A2F49E4;
-	Wed, 13 Aug 2025 11:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755085877; cv=fail; b=qlyDA5kLv95L6U5vwi8G3DwUgV0IuBvhfx0BTWQZ/M0psvajepLDX1WC2JMafmkpAkJXLCdyRdsL/tM8PuPwBo1D4K+1a5u9WICoQgxHGPgvsro8Ck5klIYg81g4KfwuSTG9nd/dmXJL/HUit/F8sBeEsgmoV29TBgiET3+6gcQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755085877; c=relaxed/simple;
-	bh=LlmBgLbTA+mZrJAYWNgpGSXHHzGtNSz4pbupX+p4Pzg=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JUPU/1WGUQIyUO97psWY+kGohXnW5NHX6j5PlV68H1yF3dy6VeXbtN6k6kaeytChEvZKVPCKpzyO2S5LNsvGNxE6ENMC+j/ZwIXt7okrZy2cny3IfhAUdjKP2hgO8oVTrbDG3WUkGbBtjxqTvDsqQdX+G+2bFnYleLFpC3I2dAI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=UGPErZjh; arc=fail smtp.client-ip=40.107.75.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VFaMYFQ7N9CmQxt8eCaCJlfpp86LxLzuFcxJv+E5rTHN+07Zca7eCbCCI58htsa/wEjLgzBFk+uL+m6sDjHD/KzLN46WcdngvERR8TFUTryxh9cBLi9ZGLMhpIYaAFXpxb/CZu51wiZorkOqGrp5dHeu2lxs1N3KcZrPO/9IwcvhfDxqAgHrADY5ZQRr2OKmkXHxNxLm8zDIZeCAKJaO75TDCtcAnClkOKyMpAa5vjm5cfpZ9ifolgCjzo5Z4+y737fi+FO7AaZTATZIbWNOudnPaGm5wcZja6jheZRGlnOYVzh7gFkiXBLK4jzK/3uLysB6Bs4iYoQFGzpx7zlPLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nXIxnLXmalRIbtxH5pDWaa0rBKxiewMWEWUDQzsrgsQ=;
- b=btFWj5IhUOYm6WHCWBKiUIXL2BU70Qw/1/gCqJTrqtyZkyezSmj7zlT9miX9Yj6lnEd7O2SJQZooA0VxuUkAdOCxLJ9qtDW5R3Wc4nQDW9ztfV7Ynv9ShHEnvasBW7nq05K4T6rI7Z+hlmrYFBRuIxUK1XwtqyS1QgkIfDi2INt8cyp4Qvysav9CUQ7RDYs5HSgzu8KVdGvmmAfj2BG6tzqhKfwjOZqQv5aq+PG5VVokz+NGKwOK98AD+5Zfo9sBOhNhqNhIfWsjko8qvvZzimV/yxXuBLRFzEW1lz2uK+6Jw7gL1jMOhIC5e3Wl8SslRV42mCi/96yALVJowUgjZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nXIxnLXmalRIbtxH5pDWaa0rBKxiewMWEWUDQzsrgsQ=;
- b=UGPErZjhP4wiU3u4fMKyq2W5kAQzhsyt0F+3d66J8rPtIDO5oB4Tbgv2J2yJ88pjxILVuQvy0vbySTrwwGRfyJnoy8397t1kgLJ4p5QpBpEci4rOWpIPdFZSY0m6pdVNk9vY9e+ypscMtiUZsoSU69Y5UZaQ/KmOA+3WkrU/pGJbATQuvdypDIL0pI0Jm8H/6wy8k2jHoka0gU+22fK8EsxJO0o5U3Thxjedwn+KxkyG3tdMOWl+UVxDs6sHtAV9TMMvhSFx4BJ4alSB3e+pCdsr1AZeh3GLwbIGmlJlSlYhAHbDb8VXQYfFR+fGfCyuBWMHs8vXPUOsEnOLI3JxAQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5)
- by SI2PR06MB5195.apcprd06.prod.outlook.com (2603:1096:4:1bf::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.20; Wed, 13 Aug
- 2025 11:51:11 +0000
-Received: from KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb]) by KL1PR06MB6020.apcprd06.prod.outlook.com
- ([fe80::4ec9:a94d:c986:2ceb%5]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
- 11:51:11 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	kees@kernel.org
-Cc: jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] binfmt_elf: Replace offsetof() with struct_size() in fill_note_info()
-Date: Wed, 13 Aug 2025 19:50:58 +0800
-Message-Id: <20250813115058.635742-1-zhao.xichao@vivo.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7029B2F8BED;
+	Wed, 13 Aug 2025 11:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755086143; cv=none; b=NR525lawoTlUtHeelf2QCie7C/AqcrV/uAe2MzWQ1pnYH9BvXYhprsTLWrJVhodBRe2d5iVmugWBJV8E/13io/uPnq7jJ0CRzfVI0C1KITZJzLAjW3Hom6MCGO20KqARvPfJ3tQVLcvoRLVaGmvRBXirTylYNy4QiGpjXge0ss0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755086143; c=relaxed/simple;
+	bh=gN1Bc0kZQonA2fSSUxvrABAaMJdLWsTnw+YGHmRaGuY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rXk2TmKKn9nxoARciQkQfxlRJLiDCQEzZUy76bzlqL0x1YAmVGS6lx1YaKdk9z6p5ecXxJW2No7QsQOTWYYayeG2D6iDiwrlw9h1kRtYYLX66JbZNPZnuOAZtzHdYeW8Yp5ualqzKCnfDW4hTv/1ljA++xYhZ4DMsJ9Y8+Mqge4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=15NOOiAC; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBn5Bn008281;
+	Wed, 13 Aug 2025 13:55:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=PFZKPQG+k1gfjsY3a1ZAOk
+	Yj+KM4A3F6NxUPB1WMPvo=; b=15NOOiACV8P2LRL/T3X7nWZjJ2DyJJTPufMbmy
+	0tVJpCRAlu0UdNJV1KWcgrIuxrzGI6HfioEEaReCJkrNEjkCyjiHPECc2r++KA1f
+	SU514XoFEogWxO9wmVEa8zAlEqrKImNsr3aYFJI4YEzC877HS4G1szBlj4X7ZiZo
+	NcBpjxyo9U86COA4KQEIwnNAwiwxhycVmn9pY9VgLlveBz1/eP1wd+yCS3zdx9oJ
+	ySJv3LqK9CoUs1UOC9Jbrnk+F9ArQ+hsR7BbO2L/24nGzHVA5VGFw9NFhO1KaxVr
+	4IwgjNz2Jm4qVL70aZGStpHmdd0Z1ehOxXhCoLd6Wm9JbN8g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48duf8xsg8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 13:55:24 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C20314002D;
+	Wed, 13 Aug 2025 13:54:19 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0A72073FE23;
+	Wed, 13 Aug 2025 13:53:32 +0200 (CEST)
+Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 13 Aug
+ 2025 13:53:31 +0200
+From: Christian Bruel <christian.bruel@foss.st.com>
+To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>,
+        <kwilczynski@kernel.org>, <mani@kernel.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@foss.st.com>, <linus.walleij@linaro.org>
+CC: <linux-pci@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, kernel test robot <lkp@intel.com>
+Subject: [PATCH v1] PCI: stm32: use pinctrl_pm_select_init_state() in stm32_pcie_resume_noirq()
+Date: Wed, 13 Aug 2025 13:53:19 +0200
+Message-ID: <20250813115319.212721-1-christian.bruel@foss.st.com>
 X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYAPR01CA0058.jpnprd01.prod.outlook.com
- (2603:1096:404:2b::22) To KL1PR06MB6020.apcprd06.prod.outlook.com
- (2603:1096:820:d8::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB6020:EE_|SI2PR06MB5195:EE_
-X-MS-Office365-Filtering-Correlation-Id: c55d695b-46f7-45eb-3334-08ddda5fb296
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8Zo0IbHVcUoUHbJ/iNn+YUbWXLWy0frbrZF8UwZRyM5o9k/Kg0lWTmyLuLNL?=
- =?us-ascii?Q?Z+t1qA2QkkKwPBpVh6PyB61/9IvU1jN3nZvnoEugCYoGZmcAQiuNfnOsVTC+?=
- =?us-ascii?Q?ANPBVFnzwxUyI5tjHM35XulNA1iwwUxvr5vyXu7qf6NAWGRh7isF8jEyr6ma?=
- =?us-ascii?Q?wGqkoUJ8aYztBFK1eOwp8BhWv/D2MtICvYMIM5asMrANRLgZq6LfWrOqtpZD?=
- =?us-ascii?Q?xtaw5LwDIO1+2A6X5SIcc2JcPS6zbsZB70aqkzclG6TqjjzEtlI5B7zbqqn3?=
- =?us-ascii?Q?Ot0UVHDegxQUsLkwZ5wZsUfNauJrYozf/A+HsHLNXbyYIugn23K0bcVY7IQ1?=
- =?us-ascii?Q?jLVX+wNjgKV5laa2RoMDVFBMdfRN9BYnoFJjsmXZR6UIHwsp5+WcxLDe/oGv?=
- =?us-ascii?Q?Pmrsnkk8aAmBZYPZgMXE+7nmPiTX8NNQrJKnFkGIhyP73Baa6fVyebTlLoSJ?=
- =?us-ascii?Q?ZKabMShwfGH71aMXrr4o5YOU+s1UzACddkXIFGBQ9MER4reizhtABnod8a1x?=
- =?us-ascii?Q?w8cZGtCH0YqYKzh1ebhemEy9Req/njmEBjDV+5gzqy70oPlT1gdWWw+ilScu?=
- =?us-ascii?Q?ZohsJRkBIc9dETUt5a/TYuQnScqPdMyllutQ9xcuN+xQ8e2NQF24u/RH0IdJ?=
- =?us-ascii?Q?s1mK095+sKXFIBuJNfqE6RoCwW6nFgRxW1kQSFlk/6bd44Ny5EwjcjrIiQoT?=
- =?us-ascii?Q?4xvpqJ4f/WILmmwW+sL1fu6aFjB7Y33KPF2IG26rxHq/3Kq6GOr0e4XlsY15?=
- =?us-ascii?Q?/js+9tCNpSYeKtzKRTBt3DfMsFhxIv4SERZyba/3UPyNAqPN08Xe4KhtHyz8?=
- =?us-ascii?Q?GxWHWQdPs+qxDfRdZyBv/fw4oEfXfC228WpUgOzzQJGC26eHXaohuWoJVMIj?=
- =?us-ascii?Q?6JbuBTQQQeso3JstWUsWrNgu9j+p0qpRHz76gUpIBA2E+Tb5iQPxt6UKiVGk?=
- =?us-ascii?Q?sg3BJfGpsrbdoaDf9I+xwYHHURwmG/AWf2hSNDG+/KPBfAjaBSmSA4y3w08z?=
- =?us-ascii?Q?4G/ZP+uti+xLYOWo/ibDZ0TGfIL+vF7j/xf9QJnx1uxmagMDr48g1ggvVrwl?=
- =?us-ascii?Q?ombApp7v7MuV0r7p1KLZ/gguqhOoWBK7FfNVKqrQhFQ+qFLXzDN0ZlCXl9PF?=
- =?us-ascii?Q?gCEuqVadvFeptJQ9qf8pEvfk6ML/fMQe4op8HHDIBTq/nq9df65oi1VP0dw1?=
- =?us-ascii?Q?78qDBgC3aB7r3SGcCesvv6O/4HmW5sw6QbLRDMQEf33iR3TvbGdeR9LMHuA7?=
- =?us-ascii?Q?T93N6KsLohKpNEpRJ2wN9t1YWFFqhphUy3yzEvwcBdyEltULMaTv7xwm84Ld?=
- =?us-ascii?Q?QS1bBIhhwNi0todfLJ2RVyalMUT7bGn+EXlyZ5YCXPicC3bSyMDgyI3RGSaY?=
- =?us-ascii?Q?urjlG2FyQjduBig8y+Cm8bTJfwzyMA5NbGMp8iaUCuv0T8KfoMOXVZkzweQl?=
- =?us-ascii?Q?rSKkD6fJi72ypusF0amDlEDP1UR2eMOJ3vVfRjtgAeDrzhUt9DJBIg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB6020.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zu0ihQA52HzCpF5n3lr11sGmsrsNh80dATjpIbNJKJAS/1ViYtvc4Q/jaCdZ?=
- =?us-ascii?Q?IUbvNYoNXqaXZHGLNaxs4AHBbpthrBuV2lk1LYBdlIeMKrrakyuV6nBKbipX?=
- =?us-ascii?Q?kykjYyysaVL+dlKlDvjxRl7ems/ksx0FzmiE/Lh5TJhaUxDmMIo8/3huRmRy?=
- =?us-ascii?Q?c9qxVUN3UIjnL3qVo/mEX40x9SJgFVdbVhTHs4UeBePnImZvnK8CtPhPALyj?=
- =?us-ascii?Q?uFB415FO/sWUGsSJGJLzkZup41DnWS58y29Ckg6qmwOy9aNR720Nl0YejMoV?=
- =?us-ascii?Q?I+1whunmEwESRxxv1/Gf5UHYGZ99/+qOL+XV9lJPM6Djm5UhEIgxHAbjwChn?=
- =?us-ascii?Q?TY1L7sKBr7IbUruClFzvnyMsGyn1vuftP2HRQy3GW1NI16fFj9POsBDyOVbx?=
- =?us-ascii?Q?FMq1+Prxz1+6Qw7maPLl3bbWaUiKc0cNMTX9mI5Ex/SS7LcOtzsDsnfEdtrZ?=
- =?us-ascii?Q?89fQd5ILQmcq9VYRWfTe/9xPAu2o09eT2GfC2Pqi/Y4gze+ZXT+WJZNBmsYr?=
- =?us-ascii?Q?GxCn+E6/ROoKn1OdBo3TldW4iWlzxEPdaQqYySGTLKRQYFn9INqd4t2IKk62?=
- =?us-ascii?Q?4jJZLT/K+3cI9VT6nDP3tjLkQvu+f10CYAd6vJdrR1CJX3goaUXGyt/Y1W1/?=
- =?us-ascii?Q?Q6sylQXQGyVfQv/JpoeA36r/Pqw4qswdvInYoylxct0CcKKNAbie6lJ+W8l7?=
- =?us-ascii?Q?s7XJm/cDedKh2lY5QtNy997XiSM6lY67ni01+WgtOKzwryMtuGR+nNp8Ajt4?=
- =?us-ascii?Q?EGqcUE2BoznNuYhN1IiikARVaUnGySVJYFX88/YrfhnTy58yIgq0xxE6DtS/?=
- =?us-ascii?Q?mZJn349paf2o+2GZmNoZ7AM5VuP2c9qEz2f4FbBFBkr+7llvXlpQMN503wVX?=
- =?us-ascii?Q?1RhhLyaR3WUGbBF2Rz3n5QrJOrEvCVRQPzw5Akh5vMTYKVPtoY03hJo1CiGG?=
- =?us-ascii?Q?EHtURI70PROMKnj+RxtObHL8UrvbwIHclgwsuUCGB/kzauFlnuzs82dpCFgg?=
- =?us-ascii?Q?lv3qX2REyDeXEGGLQKRdhPPEZxWeNa0g1LR6Uqq45L4oNy6vVvB/pJcPeBQX?=
- =?us-ascii?Q?g8oVxkoobAq+rQYhQ7Qg49Rp5YFEIAl4nEQ6JNs8dsMNotp3uEyqKRhe4hri?=
- =?us-ascii?Q?Vd95vLUsEzRHn0ootvHGJQnGWX/Q9LqAKDNP5vIak6PRxrh5SaL+DargkVV2?=
- =?us-ascii?Q?NDGabC3FTpGGcayzQB64GeYoyADd4h2Z9HMAVLms8BBUZSASeCAn6O0ZUL9m?=
- =?us-ascii?Q?TKJ9SvB7xfqypxAr1Pk3payTwKZcs+3a8EMoXhk+O1JBSeIQBHILIyXGgbOD?=
- =?us-ascii?Q?TTZNFu9HaQEhv3w6euoROLtoxu9yfMxA5soj1SXdkLc7BT9F1tVfpcPP0+wG?=
- =?us-ascii?Q?twuiy4rRE3jCsDYeJxmoNnL/N74TGQualz2RVquAxvEDpU1lSYZD7Rbu3z4d?=
- =?us-ascii?Q?N+BzSj4fPO6cQT8LJp9utG/O+TZNDbtOgsiNKfY7Tqs88HBjw1He5AmUr2/Y?=
- =?us-ascii?Q?wPNmJ3FKBelXuHtU9tCUi4rQ/vbAJNqOtIr8/3zHlkIbgvSbpVE35nQbs3Ag?=
- =?us-ascii?Q?XG1JqFfeugTOA9f8/ohMX2veAdbRADz7VNWChQ/C?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c55d695b-46f7-45eb-3334-08ddda5fb296
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB6020.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 11:51:11.2243
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: c+ddUJ4L3CGe87P8c8QvZ8ZbOfblJ4KIYiqfWF2VtT+cJCkcmLXQ/I8NjzGLAhTEMddW9PuLJWzGwikp+ld7PQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5195
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
 
-When dealing with structures containing flexible arrays, struct_size()
-provides additional compile-time checks compared to offsetof(). This
-enhances code robustness and reduces the risk of potential errors.
+Replace direct access to dev->pins->init_state with the new helper
+pinctrl_pm_select_init_state() to select the init pinctrl state.
+This fixes build issues when CONFIG_PINCTRL is not defined.
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+Depends-on: <20250813081139.93201-3-christian.bruel@foss.st.com>
+Reported-by: Bjorn Helgaas <bhelgaas@google.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202506260920.bmQ9hQ9s-lkp@intel.com/
+Fixes: 633f42f48af5 ("PCI: stm32: Add PCIe host support for STM32MP25")
+Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
 ---
- fs/binfmt_elf.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Changes in v1:
+ - pinctrl_pm_select_init_state() return 0 if the state is not defined.
+   No need to test as pinctrl_pm_select_default_state() is called.
+---
+ drivers/pci/controller/dwc/pcie-stm32.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 264fba0d44bd..4aacf9c9cc2d 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1845,16 +1845,14 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
- 	/*
- 	 * Allocate a structure for each thread.
- 	 */
--	info->thread = kzalloc(offsetof(struct elf_thread_core_info,
--				     notes[info->thread_notes]),
--			    GFP_KERNEL);
-+	info->thread = kzalloc(struct_size(info->thread, notes, info->thread_notes),
-+			       GFP_KERNEL);
- 	if (unlikely(!info->thread))
- 		return 0;
+diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
+index 50fae5f5ced2..8501b9ed0633 100644
+--- a/drivers/pci/controller/dwc/pcie-stm32.c
++++ b/drivers/pci/controller/dwc/pcie-stm32.c
+@@ -90,14 +90,10 @@ static int stm32_pcie_resume_noirq(struct device *dev)
  
- 	info->thread->task = dump_task;
- 	for (ct = dump_task->signal->core_state->dumper.next; ct; ct = ct->next) {
--		t = kzalloc(offsetof(struct elf_thread_core_info,
--				     notes[info->thread_notes]),
-+		t = kzalloc(struct_size(t, notes, info->thread_notes),
- 			    GFP_KERNEL);
- 		if (unlikely(!t))
- 			return 0;
+ 	/*
+ 	 * The core clock is gated with CLKREQ# from the COMBOPHY REFCLK,
+-	 * thus if no device is present, must force it low with an init pinmux
+-	 * to be able to access the DBI registers.
++	 * thus if no device is present, must deassert it with a GPIO from
++	 * pinctrl pinmux before accessing the DBI registers.
+ 	 */
+-	if (!IS_ERR(dev->pins->init_state))
+-		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
+-	else
+-		ret = pinctrl_pm_select_default_state(dev);
+-
++	ret = pinctrl_pm_select_init_state(dev);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to activate pinctrl pm state: %d\n", ret);
+ 		return ret;
 -- 
 2.34.1
 
