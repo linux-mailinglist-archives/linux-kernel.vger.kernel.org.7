@@ -1,65 +1,100 @@
-Return-Path: <linux-kernel+bounces-767275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C74FB2522D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:36:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379CDB25231
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DDF81C21ADF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:37:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF16288463B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC9B2882DB;
-	Wed, 13 Aug 2025 17:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AABB1F582E;
+	Wed, 13 Aug 2025 17:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxTTRcaQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WZHLL5AQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22715303C9E;
-	Wed, 13 Aug 2025 17:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34143B665
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755106593; cv=none; b=aWV0VYyS3TTPkaNJdUqn7QerYInVdBMbOVLqemiXlKBydFo3pjMmoH9qQhh70LN4EdiOWmhKttR89NqoneEvuMmEwkbKtczkpMZIxR+a1VI3wCX/4TV3sC0CRfgstwBnhPM/OZv+yfPk6d9ZSC1bmwPNYCpwla1TQ2lM4r6e9HI=
+	t=1755106831; cv=none; b=K+bfodN4ibjmAD1uuHTTatJ4KGRJ44WnBIVS4InsM4i9WFDC2Icw0dkUg8ZT+PDmMdKt/kR9E9GBxgquM8eItYjgxcW6myiHfNx5JOiwL+4L9/174xeWqKngW9+0CEZwWXMgTth6rXzO1QJ460hmvQZGImyyOQzZDhNpnNYoraY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755106593; c=relaxed/simple;
-	bh=W2jykzk9vNeNBwBx8h9jq52eg5q/V2UCf23FXsVydAQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=i/gYzrpEkwE7oP9sfubv3c0KueMysYx6WYktm+ps3BDgEiBqAIBqTmZ5dE3TaDSE0gf9B0cnigPtbokb6cfR/fkCKebuOa/8w9F98pDwBlOe9AY0BvdTYA2m0I+oF8zCGBGi32VPvo9npGq/NVXEhUBVFRjfhmCC+RgtaUv7CJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxTTRcaQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80E29C4CEF1;
-	Wed, 13 Aug 2025 17:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755106592;
-	bh=W2jykzk9vNeNBwBx8h9jq52eg5q/V2UCf23FXsVydAQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TxTTRcaQN74NBGexr3vAgCXOTDdj4soOkBd6ymoC6+sgQVPd+Uu76F6gYrMQ/ojg0
-	 VSt4TcPaLXPnG0uqIrQNu0FmrXoi1rPWst8fDVZq9auz2aG2XjOOJ+OJ8HHLsyJ8kG
-	 dp93Mt8kpc5oxYpYLHDbhYGKXJHwOXTyEfyFpbOWi9CvDHY0eaqpahdZLOERoRmA7R
-	 7DC4cXiUukVUR8UuWnQ9N071KsO8hArWkcaM0FgCu2NJcrOj/DpTmyNK0Xw/X79d55
-	 GXVsM2t/XyvjaKsaGA5Rnc6O+9i3ybYWgLcusf4IDfrbWW/manDFCSvooPmhehkNMC
-	 CzyWAkwkELztQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
- <axboe@kernel.dk>, linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 11/15] rnull: enable configuration via `configfs`
-In-Reply-To: <CAH5fLggraEP7bwzJ+4ww8-7Ku-Z+d0Em3=NDUpa7r8oTLQy81A@mail.gmail.com>
-References: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org>
- <20250812-rnull-up-v6-16-v4-11-ed801dd3ba5c@kernel.org>
- <mACGre8-fNXj9Z2EpuE3yez_o2T-TtqrdB6HB-VkO0cuvhXsqzECKWMhsz_c43NJUxpsnVpO_U0oLbaaNhXqRQ==@protonmail.internalid>
- <aJw-XWhDahVeejl3@google.com>
- <87cy8zfkw5.fsf@t14s.mail-host-address-is-not-set>
- <WporCpRrDB_e8ocWi63px_bwtPWqRjDL4kVPNNXFNoI6H-4bgk5P_n4iO0E4m-ElwkiNTyBITwgdMXjREE8VXQ==@protonmail.internalid>
- <CAH5fLggraEP7bwzJ+4ww8-7Ku-Z+d0Em3=NDUpa7r8oTLQy81A@mail.gmail.com>
-Date: Wed, 13 Aug 2025 19:36:19 +0200
-Message-ID: <877bz7f7jg.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1755106831; c=relaxed/simple;
+	bh=wOSj2Ah2UgduIpbrNuIewezDqNh/Xvc0kQlIW+94XPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SWpxwM9b2BZSfEXe1C+rM70klwCajJd6W717cP1vAblW56JpGJhZ6u1sLAQGsB/uFcmjQqMObCyL8o0fV74haUbg61j3XK6O+EUJ0BsVhFkr3NSmQTeT23JSNHq0VRdUIFBwwcqcxWQLEHgna6ZPU/MxUTSeqgi9fnzsMSOQHbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WZHLL5AQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLg6d012543
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:40:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SGOnx8wASardlLmh6F+MJ3xLLydD3abWl/e37ujFDdw=; b=WZHLL5AQnirT0KJQ
+	1IJe83vJhzUs/s44Jt9JxckEh+IY5kC5OixiGT+CLmR1z37ANq7EwwVaiUeN+4S7
+	0aCWLW4gZJkrqSdxLm1dQp7XYaWcSEvEw+vjMzimZHhiZeW2P/ZV7inhrnFo7dKI
+	G7vZgD+2LFYLvqtx0kcx5FVmksOKvN03zMDNFXecKKnLlikeQci8YdlkLyDi4SVF
+	ib7JdMiyEGZpH4tssw7jZ5qP6Vb3eb8xB2wkzCiaktGdyjDzAbdr1AV3Apocvv96
+	MRGcpOT7wjh8Aa24mo9X3wRXSdfRqUP6ue3UUQ71yiuF2Gd39D60epy5GvpZYZjT
+	zGbLKw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhxauqh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:40:28 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b109c8804dso3351141cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:40:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755106828; x=1755711628;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SGOnx8wASardlLmh6F+MJ3xLLydD3abWl/e37ujFDdw=;
+        b=CG24qg63c6wNQByQ4XbskmZMW9FnFdLGFu+UGjbtzcLVbXf/FFEr8HA1CDSJcXAw1c
+         6HoLcA2lqxVlrI+9ws0qvSmjwlJuU0tLN4PTB4gCOg4md3nFzNme31jaABaa/Ip7BInu
+         rcUwdhQY0PoyrHiqwTxfVKV8HGZRvyr6GTmyqGJ/oTUIH1SBJkOGCA3T5nqJ/KY5i2kj
+         VlvLgwKvIdetQAG74/y9o/WLBA3OGFNVrvQmRqTpA9S68Ouw3l0kqe87P3ATVcZwkcwX
+         Hh/PElC45maoFT2cuILffUjeljdI85KOWQZCeKm4t4k45lIBsvX9+GPW2chq3/fmoAOa
+         TGoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXeACWjKLNepwuPu51WNw34VzdYLh0X6bGY9/D8XYcoPoGYYSAmqEBSCzyUAGJYx/OCfmAhyMNWn1AV30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKwEPhwiQlTzNLLpSAnAwlz9dveEuyJTRHUI5TFV+DMtXkoc1P
+	usaQmYUVCNKolM7U/mFUGxWyap533W7xGkC0hl4EPrIT0HwKLI3ii8AdfPNze/xv4ahajqXedfM
+	hOAGl55bqyCQmHC4xi49JOi8HW6Gn6UUaaNrnMn360o6Ca34jRe4hWTPFru/QEfnUfgQ=
+X-Gm-Gg: ASbGncvZWF6snJou0kBj1S9LquqiAp+YBr6lTku8mcCjSLpWWb8NQ5PlgyW7+SMppKF
+	i/F0VtwtXagcrLJd/5oVenRdnkp65TZtxAjBduW6di+8AHLpNJmFRcn0aiv9RKEjdixGRWA/5Oi
+	ZttGKyRwBWeVuSd8WAzcp87Ektre7qXClN2wm+dZAGLd5czYTMDDR8W+XSpDQx2fqkQDwb9PAmi
+	q+j22ysXshzlFFhrD7v0zMqLXWznUUNUqdi2BCGXEHxvSVZ8bemcrL14GFDcMuC5VIV2MhtX/SR
+	zwG/PDqlrxWhFAt/fW9EMoNKQdZP9uiGkI+QKHJIt8eOPGeGn/Ie+ZWm9LZdnx2BkeAt/M9qmAg
+	TZwyy2lM91jCvlxZ8Ot5CJ7Y/TW0+tbNYV/KFet2H7nzO6Ijfgsa5
+X-Received: by 2002:a05:622a:1826:b0:4b0:80c7:ba32 with SMTP id d75a77b69052e-4b10aa6b551mr698491cf.38.1755106827989;
+        Wed, 13 Aug 2025 10:40:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFGSYwB2jPhXDGF7QnvYQoWrDeEZN5VgRz2fGxMg00AQDFPHwe889FhEH4ieuMEs9en12IG6Q==
+X-Received: by 2002:a05:622a:1826:b0:4b0:80c7:ba32 with SMTP id d75a77b69052e-4b10aa6b551mr697831cf.38.1755106827256;
+        Wed, 13 Aug 2025 10:40:27 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898bd63sm5375446e87.20.2025.08.13.10.40.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 10:40:26 -0700 (PDT)
+Date: Wed, 13 Aug 2025 20:40:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Chenyuan Yang <chenyuan0y@gmail.com>
+Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        jessica.zhang@oss.qualcomm.com, sean@poorly.run,
+        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
+        tglx@linutronix.de, krzysztof.kozlowski@linaro.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dpu: Add a null ptr check for
+ dpu_encoder_needs_modeset
+Message-ID: <2rtdf7azwluus757f3azwjacoiqussnoxfqqxtr3p3l4l7rkrt@dbk5pfdglugu>
+References: <20250722211740.3697191-1-chenyuan0y@gmail.com>
+ <ciawdvjevycjjuowmykfux2v25lvr66kzey4jklq7t5cjzqalj@qfcva77k2bvr>
+ <CALGdzurR2XPoai8qshTX6hzgF-zLQ-FrsWxu5NGjrkjNzWaHaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,155 +102,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALGdzurR2XPoai8qshTX6hzgF-zLQ-FrsWxu5NGjrkjNzWaHaQ@mail.gmail.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfXx0Vqa3Y662O4
+ v9ATtzw9DGtfl7vGh637NREG+IusQ4MOCkrQZihdhHN+5OStl1Cr2kDZdacYpdd8kkCisy2baWl
+ W/etdoty7GtIxculftB+h9nNhAtN4FURXAPtNqOEr1z+Qnw4K7NTCall78u/fxwgvulxn8GbD2Y
+ 2RamKo3vQXMP/7U4rRZIZvJLi16By2xOYDRUV/TCJbi6EhjmCz6GPVi0U9w2fq4TRnPnw+6PbZc
+ 36X2kzGg334RfzYxfOvYmfhquMt6verYEDrh483CrdU9oY66HjYKWlxjdRUwQeKCHZlGgcyIi9B
+ JrQspyLGcZfUK+IjNBNORgbLtwH4RTNU5Jrkd+mWsgLC66cqH2VtuOqLJzLA0kEimwGaRw1pCS7
+ +782UEz2
+X-Proofpoint-GUID: Jc_UzEcWdbqvrLDRRJpu_YJoYOr8We1l
+X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689cce0d cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=jpGDCbsBDmrldJ3tXloA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-ORIG-GUID: Jc_UzEcWdbqvrLDRRJpu_YJoYOr8We1l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+On Wed, Jul 23, 2025 at 12:43:06PM -0700, Chenyuan Yang wrote:
+> On Wed, Jul 23, 2025 at 12:05 PM Dmitry Baryshkov
+> <dmitry.baryshkov@oss.qualcomm.com> wrote:
+> >
+> > On Tue, Jul 22, 2025 at 04:17:40PM -0500, Chenyuan Yang wrote:
+> > > The drm_atomic_get_new_connector_state() can return NULL if the
+> > > connector is not part of the atomic state. Add a check to prevent
+> > > a NULL pointer dereference.
+> > >
+> > > This follows the same pattern used in dpu_encoder_update_topology()
+> > > within the same file, which checks for NULL before using conn_state.
+> > >
+> > > Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> > > Fixes: 1ce69c265a53 ("drm/msm/dpu: move resource allocation to CRTC")
+> > > ---
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > index c0ed110a7d30..4bddb9504796 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > @@ -729,6 +729,8 @@ bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_st
+> > >               return false;
+> > >
+> > >       conn_state = drm_atomic_get_new_connector_state(state, connector);
+> > > +     if (!conn_state)
+> > > +             return false;
+> >
+> > Did this happen in a real case or is it just
+> > yet-another-static-analysys?
+> 
+> This is a static-analysis detected bug.
 
-> On Wed, Aug 13, 2025 at 3:47=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>
->> "Alice Ryhl" <aliceryhl@google.com> writes:
->>
->> > On Tue, Aug 12, 2025 at 10:44:29AM +0200, Andreas Hindborg wrote:
->> >> Allow rust null block devices to be configured and instantiated via
->> >> `configfs`.
->> >>
->> >> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> >
->> > Overall LGTM, but a few comments below:
->> >
->> >> diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/co=
-nfigfs.rs
->> >> new file mode 100644
->> >> index 000000000000..8d469c046a39
->> >> --- /dev/null
->> >> +++ b/drivers/block/rnull/configfs.rs
->> >> @@ -0,0 +1,218 @@
->> >> +// SPDX-License-Identifier: GPL-2.0
->> >> +
->> >> +use super::{NullBlkDevice, THIS_MODULE};
->> >> +use core::fmt::Write;
->> >> +use kernel::{
->> >> +    block::mq::gen_disk::{GenDisk, GenDiskBuilder},
->> >> +    c_str,
->> >> +    configfs::{self, AttributeOperations},
->> >> +    configfs_attrs, new_mutex,
->> >
->> > It would be nice to add
->> >
->> >       pub use configfs_attrs;
->> >
->> > to the configfs module so that you can import the macro from the
->> > configfs module instead of the root.
->>
->> OK, I'll do that.
->>
->> >
->> >> +            try_pin_init!( DeviceConfig {
->> >> +                data <- new_mutex!( DeviceConfigInner {
->> >
->> > Extra spaces in these macros.
->>
->> Thanks. I subconsciously like the space in that location, so when
->> rustfmt is bailing, I get these things in my code.
->>
->> >> +        let power_op_str =3D core::str::from_utf8(page)?.trim();
->> >> +
->> >> +        let power_op =3D match power_op_str {
->> >> +            "0" =3D> Ok(false),
->> >> +            "1" =3D> Ok(true),
->> >> +            _ =3D> Err(EINVAL),
->> >> +        }?;
->> >
->> > We probably want kstrtobool here instead of manually parsing the
->> > boolean.
->>
->> Yea, I was debating on this a bit. I did want to consolidate this code,
->> but I don't particularly like ktostrbool. But I guess in the name of
->> consistency across the kernel it is the right choice.
->>
->> I'll add it to next spin.
->
-> For your convenience, I already wrote a safe wrapper of kstrtobool for
-> an out-of-tree driver. You're welcome to copy-paste this:
->
-> fn kstrtobool(kstr: &CStr) -> Result<bool> {
->     let mut res =3D false;
->     to_result(unsafe {
-> kernel::bindings::kstrtobool(kstr.as_char_ptr(), &mut res) })?;
->     Ok(res)
-> }
-
-Thanks, I did one as well today, accepting `&str` instead. The examples
-highlight why it is not great:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
-  /// Convert common user inputs into boolean values using the kernel's `ks=
-trtobool` function.
-  ///
-  /// This routine returns `Ok(bool)` if the first character is one of 'YyT=
-t1NnFf0', or
-  /// [oO][NnFf] for "on" and "off". Otherwise it will return `Err(EINVAL)`.
-  ///
-  /// # Examples
-  ///
-  /// ```
-  /// # use kernel::str::kstrtobool;
-  ///
-  /// // Lowercase
-  /// assert_eq!(kstrtobool("true"), Ok(true));
-  /// assert_eq!(kstrtobool("tr"), Ok(true));
-  /// assert_eq!(kstrtobool("t"), Ok(true));
-  /// assert_eq!(kstrtobool("twrong"), Ok(true)); // <-- =F0=9F=A4=B7
-  /// assert_eq!(kstrtobool("false"), Ok(false));
-  /// assert_eq!(kstrtobool("f"), Ok(false));
-  /// assert_eq!(kstrtobool("yes"), Ok(true));
-  /// assert_eq!(kstrtobool("no"), Ok(false));
-  /// assert_eq!(kstrtobool("on"), Ok(true));
-  /// assert_eq!(kstrtobool("off"), Ok(false));
-  ///
-  /// // Camel case
-  /// assert_eq!(kstrtobool("True"), Ok(true));
-  /// assert_eq!(kstrtobool("False"), Ok(false));
-  /// assert_eq!(kstrtobool("Yes"), Ok(true));
-  /// assert_eq!(kstrtobool("No"), Ok(false));
-  /// assert_eq!(kstrtobool("On"), Ok(true));
-  /// assert_eq!(kstrtobool("Off"), Ok(false));
-  ///
-  /// // All caps
-  /// assert_eq!(kstrtobool("TRUE"), Ok(true));
-  /// assert_eq!(kstrtobool("FALSE"), Ok(false));
-  /// assert_eq!(kstrtobool("YES"), Ok(true));
-  /// assert_eq!(kstrtobool("NO"), Ok(false));
-  /// assert_eq!(kstrtobool("ON"), Ok(true));
-  /// assert_eq!(kstrtobool("OFF"), Ok(false));
-  ///
-  /// // Numeric
-  /// assert_eq!(kstrtobool("1"), Ok(true));
-  /// assert_eq!(kstrtobool("0"), Ok(false));
-  ///
-  /// // Invalid input
-  /// assert_eq!(kstrtobool("invalid"), Err(EINVAL));
-  /// assert_eq!(kstrtobool("2"), Err(EINVAL));
-  /// ```
-  pub fn kstrtobool(input: &str) -> Result<bool> {
-      let mut result: bool =3D false;
-      let c_str =3D CString::try_from_fmt(fmt!("{input}"))?;
 
-      // SAFETY: `c_str` points to a valid null-terminated C string, and `r=
-esult` is a valid
-      // pointer to a bool that we own.
-      let ret =3D unsafe { bindings::kstrtobool(c_str.as_char_ptr(), &mut r=
-esult as *mut bool) };
+> 
+> > >
+> > >       /**
+> > >        * These checks are duplicated from dpu_encoder_update_topology() since
+> > > --
+> > > 2.34.1
+> > >
+> >
+> > --
+> > With best wishes
+> > Dmitry
 
-      kernel::error::to_result(ret).map(|_| result)
-  }
-
-Not sure if we should take `CStr` or `str`, what do you think?
-
-
-Best regards,
-Andreas Hindborg
-
-
+-- 
+With best wishes
+Dmitry
 
