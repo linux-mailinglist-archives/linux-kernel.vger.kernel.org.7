@@ -1,122 +1,187 @@
-Return-Path: <linux-kernel+bounces-765734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08A0B23D98
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:10:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF95B23D9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DFB5687F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:10:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939B21AA7DA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF68E155CBD;
-	Wed, 13 Aug 2025 01:09:55 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93BE16FF44;
+	Wed, 13 Aug 2025 01:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="tybRA9pJ"
+Received: from smtp153-170.sina.com.cn (smtp153-170.sina.com.cn [61.135.153.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C872C0F87;
-	Wed, 13 Aug 2025 01:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF1E8634C
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755047395; cv=none; b=DJM9H7cKWlN1pvkAq6NMGmOIixK02SwMBQePzIeMp34l8PYMLFHDx+tj7t/tZvHdS3rnoOFwVofCXQSxzjHgXlfS17csAR4oD7wvdcCXJXdTUEPGxkgwEwXDbvePBUbZB4ga9Bku6V19Ka5ZHmAGriYKLrD2OJrZjGnVQ9AGkQ8=
+	t=1755047454; cv=none; b=fu6pDCL3FGWOp60hJD4nwUZWwFGbHRqoD1Sd7zPm+7H83Y8Zpqs4OHRMAbei952Py3ttsGtaRC/i20iAh69JKjzvt/Zzv28YETqH8/chSZkqgaWmiSnQPnWwWPc3kOCd+Jekc3pG6KDGkMOP0kwg9bik/EURag/MEHe8j3zBpx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755047395; c=relaxed/simple;
-	bh=Dp2TFP6knBwgB8NLhqQXcsYqaD8uvln3PQSjEoxzmkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=vDjxQFEo3Ohm4Is0oKAXtmkCYLLUYdWRypw3Ce2A41Pi9wwOsHrbt0QFDRcuK6TJblz2cVY5IuxrLpxd8FB3ukJZ9VQLFLAf8FFiCJnTlCZxqn1vnWdTDMtWIS7Ye922ZL5Yb6y5c7uZ0Qyq0p81lRv52R9CVICEvudP7mf4iAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c1qvP6d1gz13N3g;
-	Wed, 13 Aug 2025 09:06:25 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id AA91814027A;
-	Wed, 13 Aug 2025 09:09:49 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 13 Aug 2025 09:09:48 +0800
-Message-ID: <3a6a930b-8d5d-4323-a71d-d7b0883a7527@huawei.com>
-Date: Wed, 13 Aug 2025 09:09:46 +0800
+	s=arc-20240116; t=1755047454; c=relaxed/simple;
+	bh=t6I4ozczFHLGh3H3oHM3NAMy8Ot3L6g8vxA5gIX1ne4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Jl6HRqZULU5fuTyz6AP76Kj/GQzP6uepB2FM20ExU1sQ88hrgzLxwUK1oIU2GsenSosFoP1wq2nbyP4hiAbV8Ff1V9WtdoCamnXFVue6d9JKMpIWpH1l8YwM7JhT9Z4j1mUNRUrXL1Ei7wCLV+prARloq86aL9MPmt5+0g9uMUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=tybRA9pJ; arc=none smtp.client-ip=61.135.153.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755047445;
+	bh=Vb8Ss+6aJkY35s5dpOku2pEFwVYiDG36i7D8ed8WvXw=;
+	h=From:Subject:Date:Message-ID;
+	b=tybRA9pJeCdXQybBVAx6fptJZUPzTyMQROs1qPZkzt+EDaKsglX/naabDAmbg1coo
+	 8pJmslLoiYU1WLFz+krEM3xJz4vS1Yp2W53rLh/jAg3/GoZLzsdiC1CtOMJ5yI7SO/
+	 QmOAQp9S+MNvwkzmbD+SFJJlSDok/0mQU2Yq3eBg=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 689BE608000016E3; Wed, 13 Aug 2025 09:10:34 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5552836292173
+X-SMAIL-UIID: C0287501DA404E9EBE000C5726F1E6CE-20250813-091034-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+8aa80c6232008f7b957d@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in nsim_queue_free
+Date: Wed, 13 Aug 2025 09:10:22 +0800
+Message-ID: <20250813011023.4357-1-hdanton@sina.com>
+In-Reply-To: <689b1044.050a0220.7f033.011b.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net: bridge: fix soft lockup in
- br_multicast_query_expired()
-To: Ido Schimmel <idosch@nvidia.com>
-CC: <razor@blackwall.org>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>,
-	<zhangchangzhong@huawei.com>
-References: <20250812091818.542238-1-wangliang74@huawei.com>
- <aJra548HB7zGcA6K@shredder>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <aJra548HB7zGcA6K@shredder>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500016.china.huawei.com (7.185.36.197)
 
+> Date: Tue, 12 Aug 2025 02:58:28 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    53e760d89498 Merge tag 'nfsd-6.17-1' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16c415a2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8aa80c6232008f7b957d
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151be9a2580000
 
-在 2025/8/12 14:10, Ido Schimmel 写道:
-> On Tue, Aug 12, 2025 at 05:18:18PM +0800, Wang Liang wrote:
->> When set multicast_query_interval to a large value, the local variable
->> 'time' in br_multicast_send_query() may overflow. If the time is smaller
->> than jiffies, the timer will expire immediately, and then call mod_timer()
->> again, which creates a loop and may trigger the following soft lockup
->> issue.
->>
->>    watchdog: BUG: soft lockup - CPU#1 stuck for 221s! [rb_consumer:66]
->>    CPU: 1 UID: 0 PID: 66 Comm: rb_consumer Not tainted 6.16.0+ #259 PREEMPT(none)
->>    Call Trace:
->>     <IRQ>
->>     __netdev_alloc_skb+0x2e/0x3a0
->>     br_ip6_multicast_alloc_query+0x212/0x1b70
->>     __br_multicast_send_query+0x376/0xac0
->>     br_multicast_send_query+0x299/0x510
->>     br_multicast_query_expired.constprop.0+0x16d/0x1b0
->>     call_timer_fn+0x3b/0x2a0
->>     __run_timers+0x619/0x950
->>     run_timer_softirq+0x11c/0x220
->>     handle_softirqs+0x18e/0x560
->>     __irq_exit_rcu+0x158/0x1a0
->>     sysvec_apic_timer_interrupt+0x76/0x90
->>     </IRQ>
->>
->> This issue can be reproduced with:
->>    ip link add br0 type bridge
->>    echo 1 > /sys/class/net/br0/bridge/multicast_querier
->>    echo 0xffffffffffffffff >
->>    	/sys/class/net/br0/bridge/multicast_query_interval
->>    ip link set dev br0 up
->>
->> The multicast_startup_query_interval can also cause this issue. Similar to
->> the commit 99b40610956a("net: bridge: mcast: add and enforce query interval
->                           ^ missing space
->
->> minimum"), add check for the query interval maximum to fix this issue.
->>
->> Link: https://lore.kernel.org/netdev/20250806094941.1285944-1-wangliang74@huawei.com/
->> Fixes: 7e4df51eb35d ("bridge: netlink: add support for igmp's intervals")
-> Probably doesn't matter in practice given how old both commits are, but
-> I think you should blame d902eee43f19 ("bridge: Add multicast
-> count/interval sysfs entries") instead. The commit message also uses the
-> sysfs path and not the netlink one.
+#syz test
 
-
-Thanks for your suggestions!
-
-The bug fix tag is really important. I will correct it and send a new 
-patch later.
-
->> Suggested-by: Nikolay Aleksandrov <razor@blackwall.org>
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> Code looks fine to me.
+--- x/drivers/net/netdevsim/netdev.c
++++ y/drivers/net/netdevsim/netdev.c
+@@ -709,10 +709,14 @@ static struct nsim_rq *nsim_queue_alloc(
+ 
+ static void nsim_queue_free(struct net_device *dev, struct nsim_rq *rq)
+ {
++	struct netdevsim *ns = netdev_priv(dev);
++
+ 	hrtimer_cancel(&rq->napi_timer);
+-	local_bh_disable();
+-	dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
+-	local_bh_enable();
++	if (ns->registed) {
++		local_bh_disable();
++		dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
++		local_bh_enable();
++	}
+ 	skb_queue_purge_reason(&rq->skb_queue, SKB_DROP_REASON_QUEUE_PURGE);
+ 	kfree(rq);
+ }
+@@ -981,6 +985,7 @@ err_free_prev:
+ 	while (i--)
+ 		kfree(ns->rq[i]);
+ 	kfree(ns->rq);
++	ns->rq = NULL;
+ 	return -ENOMEM;
+ }
+ 
+@@ -989,6 +994,8 @@ static void nsim_queue_uninit(struct net
+ 	struct net_device *dev = ns->netdev;
+ 	int i;
+ 
++	if (!ns->rq)
++		return;
+ 	for (i = 0; i < dev->num_rx_queues; i++)
+ 		nsim_queue_free(dev, ns->rq[i]);
+ 
+@@ -1001,6 +1008,7 @@ static int nsim_init_netdevsim(struct ne
+ 	struct mock_phc *phc;
+ 	int err;
+ 
++	ns->registed = 0;
+ 	phc = mock_phc_create(&ns->nsim_bus_dev->dev);
+ 	if (IS_ERR(phc))
+ 		return PTR_ERR(phc);
+@@ -1038,6 +1046,7 @@ static int nsim_init_netdevsim(struct ne
+ 							&ns->nn))
+ 			ns->nb.notifier_call = NULL;
+ 	}
++	ns->registed = 1;
+ 
+ 	return 0;
+ 
+--- x/drivers/net/netdevsim/netdevsim.h
++++ y/drivers/net/netdevsim/netdevsim.h
+@@ -106,6 +106,7 @@ struct netdevsim {
+ 	struct mock_phc *phc;
+ 	struct nsim_rq **rq;
+ 
++	int registed;
+ 	int rq_reset_mode;
+ 
+ 	struct nsim_bus_dev *nsim_bus_dev;
+--- x/net/ipv4/udp_tunnel_nic.c
++++ y/net/ipv4/udp_tunnel_nic.c
+@@ -733,7 +733,8 @@ static void udp_tunnel_nic_device_sync_w
+ 	struct udp_tunnel_nic *utn =
+ 		container_of(work, struct udp_tunnel_nic, work);
+ 
+-	rtnl_lock();
++	if (!rtnl_trylock())
++		return;
+ 	mutex_lock(&utn->lock);
+ 
+ 	utn->work_pending = 0;
+@@ -782,6 +783,8 @@ static void udp_tunnel_nic_free(struct u
+ 
+ 	for (i = 0; i < utn->n_tables; i++)
+ 		kfree(utn->entries[i]);
++	disable_work(&utn->work);
++	cancel_work_sync(&utn->work);
+ 	kfree(utn);
+ }
+ 
+@@ -901,12 +904,6 @@ udp_tunnel_nic_unregister(struct net_dev
+ 	udp_tunnel_nic_flush(dev, utn);
+ 	udp_tunnel_nic_unlock(dev);
+ 
+-	/* Wait for the work to be done using the state, netdev core will
+-	 * retry unregister until we give up our reference on this device.
+-	 */
+-	if (utn->work_pending)
+-		return;
+-
+ 	udp_tunnel_nic_free(utn);
+ release_dev:
+ 	dev->udp_tunnel_nic = NULL;
+@@ -940,7 +937,7 @@ udp_tunnel_nic_netdevice_event(struct no
+ 
+ 	if (event == NETDEV_UNREGISTER) {
+ 		udp_tunnel_nic_unregister(dev, utn);
+-		return NOTIFY_OK;
++		return NOTIFY_DONE;
+ 	}
+ 
+ 	/* All other events only matter if NIC has to be programmed open */
+--
 
