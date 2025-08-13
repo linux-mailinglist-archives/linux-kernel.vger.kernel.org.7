@@ -1,128 +1,216 @@
-Return-Path: <linux-kernel+bounces-767615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA62B256CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:40:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C5EB256DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 726025C1D3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D94E188BDC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48BB2F90E9;
-	Wed, 13 Aug 2025 22:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC252FCC09;
+	Wed, 13 Aug 2025 22:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="NENZjkAk"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lsCbZ1Tf"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5893002CD;
-	Wed, 13 Aug 2025 22:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2823A2FCBF8;
+	Wed, 13 Aug 2025 22:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755124671; cv=none; b=fx3lBe9AZor2RqmEBUjHCe44GfRwP/Gh35p0CskRFhA8PgRQgP4J0C357+9ZSD6uKdoOA3ltLmDa38jUrxFuDapQ0YxSNgz6WBXek2gCeuOQ/nTQdzZZBQBi7LleVD1cZPS4KLtQNuak4zFMQZJ50RyMDt+geH5Y12bMqrCwgBI=
+	t=1755124774; cv=none; b=C0OzqhyIV+SxQcshP/Ddmfny5ah7aK0EBknnFNBO7xce3/pqUhuoClb+U0whMfFhkgNvut4zif5cg4rH3HQTHiPg+7Dp11NCE8vYYF3Zl13H53ktFmujXWAAEfahYKhU7Tz4aYRH6ZMzDmyAsSUc5p5OuJ6Xojs4ECIRKs5+Yqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755124671; c=relaxed/simple;
-	bh=A+N8wnRu45k2gcVZ9YAl5PweYWKQWyAh8iCFjdwnaUw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NAZK+dZQl9GJ9x6hPUXGrdTx2RN6VaAwzmKBA2zBUjF5OlqjLn8rHB3FPe6q1srGPH1sjlUv1kETcNVoFWAib2soRskyir53GpAFI67BYHIwuinfvsV5cdS0grPAl+GcfAgJAQ8YLPhQwY+8guwuUWOnDfJ3Pzh9m5qS8do5/Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=NENZjkAk; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Cv3fcHf48DjB8ea0TBmFVJymw4b3vUHLc9r9wSKK1QU=; b=NENZjkAkg0YaCqKznsr8M1SjbV
-	xrctuqmXQ57qglbYbJnH2Bf1oqm3d1ygX6Tw1kfZDR7AfrixIH7DFML4i0aNacPPUeYsBdv1SUNP5
-	M5/8wqw2Fbx8WfbmZDHGwcSEek/855RxvZ0DPBcWHInmKrfzp2uO+KTRTKWLGoC9Ijw7O3KOzoDZ2
-	D7q+vaj2SviTgUxCb6rDnFhNrIZReIH30YqAbsYoCJz7naaQ2hYC3uVLCe04M+UB9oIio2oFrHxxp
-	1of96cxmFBzCIzzSZfiHcA07cpMWqOexgTJh7y24rh6mvmGygFX/O6bIEllwQvFa8Ok2DLqOvZDRc
-	9pPZ75Rg==;
-Received: from [152.250.7.37] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1umK6K-00Ds0c-Ic; Thu, 14 Aug 2025 00:37:44 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Wed, 13 Aug 2025 19:36:45 -0300
-Subject: [PATCH v4 9/9] ovl: Allow case-insensitive lookup
+	s=arc-20240116; t=1755124774; c=relaxed/simple;
+	bh=RSzrbNuZ/ezGEZBB5B8+3JnfSmbDh3D2Pjh9jwrpZrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l0jeD8BFZtcfsL6KKhVc3wVmFB3SnVdF8J+bXWKE3oarUIegGPVWqg810jnjpkERfgDctiVAVKrbLMbPLmdVFa5+O3vbRYp3/TkUQjiPLa0HJrwkd75WboyQBNpcnKPjYPwOwKaWcMIVmSj4mCML2KeDRfSIfPyIPa1WdAQsz4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lsCbZ1Tf; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 8B0387E0;
+	Thu, 14 Aug 2025 00:38:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755124715;
+	bh=RSzrbNuZ/ezGEZBB5B8+3JnfSmbDh3D2Pjh9jwrpZrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lsCbZ1TfT/ZSYGrS6tdKV3bjyuKkyZgskNkXTZz1Av7msvcZTLQVnPzvjnek8ekzm
+	 Tqb/7L3l623lYEhQB8f+Ng4P0g6XSuMBaACdp2E5GmhvG0EqVfDZ+bUUp8d/8H1HFN
+	 c0cOLrQyJLjh+mk106bnhM1i2OyXJaREbnud0ZR0=
+Date: Thu, 14 Aug 2025 01:39:10 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: guoniu.zhou@oss.nxp.com
+Cc: rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm, mchehab@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: nxp: imx8-isi: Add suspend/resume support for ISI
+ mem2mem
+Message-ID: <20250813223910.GA11412@pendragon.ideasonboard.com>
+References: <20250717024353.1811576-1-guoniu.zhou@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250813-tonyk-overlayfs-v4-9-357ccf2e12ad@igalia.com>
-References: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com>
-In-Reply-To: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250717024353.1811576-1-guoniu.zhou@oss.nxp.com>
 
-Drop the restriction for casefold dentries lookup to enable support for
-case-insensitive filesystems in overlayfs.
+Hi Guoniu,
 
-Support case-insensitive filesystems with the condition that they should
-be uniformly enabled across the stack and the layers (i.e. if the root
-mount dir has casefold enabled, so should all the dirs bellow for every
-layer).
+Thank you for the patch.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v3:
-- New patch, splited from the patch that creates ofs->casefold
----
- fs/overlayfs/namei.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+On Thu, Jul 17, 2025 at 10:43:54AM +0800, guoniu.zhou@oss.nxp.com wrote:
+> From: Guoniu Zhou <guoniu.zhou@nxp.com>
+> 
+> Add suspend/resume support for ISI when work at memory to memory mode.
+> 
+> Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> ---
+>  .../platform/nxp/imx8-isi/imx8-isi-core.c     |  8 ++++
+>  .../platform/nxp/imx8-isi/imx8-isi-core.h     | 11 +++++
+>  .../platform/nxp/imx8-isi/imx8-isi-m2m.c      | 48 +++++++++++++++++++
+>  3 files changed, 67 insertions(+)
+> 
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> index 981648a03113..6eef45302e6c 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
+> @@ -372,6 +372,7 @@ static int mxc_isi_pm_suspend(struct device *dev)
+>  		struct mxc_isi_pipe *pipe = &isi->pipes[i];
+>  
+>  		mxc_isi_video_suspend(pipe);
+> +		mxc_isi_m2m_suspend(pipe);
+>  	}
 
-diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-index 76d6248b625e7c58e09685e421aef616aadea40a..e93bcc5727bcafdc18a499b47a7609fd41ecaec8 100644
---- a/fs/overlayfs/namei.c
-+++ b/fs/overlayfs/namei.c
-@@ -239,13 +239,14 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
- 	char val;
- 
- 	/*
--	 * We allow filesystems that are case-folding capable but deny composing
--	 * ovl stack from case-folded directories. If someone has enabled case
--	 * folding on a directory on underlying layer, the warranty of the ovl
--	 * stack is voided.
-+	 * We allow filesystems that are case-folding capable as long as the
-+	 * layers are consistently enabled in the stack, enabled for every dir
-+	 * or disabled in all dirs. If someone has modified case folding on a
-+	 * directory on underlying layer, the warranty of the ovl stack is
-+	 * voided.
- 	 */
--	if (ovl_dentry_casefolded(base)) {
--		warn = "case folded parent";
-+	if (ofs->casefold != ovl_dentry_casefolded(base)) {
-+		warn = "parent wrong casefold";
- 		err = -ESTALE;
- 		goto out_warn;
- 	}
-@@ -259,8 +260,8 @@ static int ovl_lookup_single(struct dentry *base, struct ovl_lookup_data *d,
- 		goto out_err;
- 	}
- 
--	if (ovl_dentry_casefolded(this)) {
--		warn = "case folded child";
-+	if (ofs->casefold != ovl_dentry_casefolded(this)) {
-+		warn = "child wrong casefold";
- 		err = -EREMOTE;
- 		goto out_warn;
- 	}
+Given that only the first pipe can be used for M2M, I would move the
+mxc_isi_m2m_suspend() call after the loop, and pass it a &isi->m2m
+argument.
+
+>  
+>  	return pm_runtime_force_suspend(dev);
+> @@ -401,6 +402,13 @@ static int mxc_isi_pm_resume(struct device *dev)
+>  			 */
+>  			err = ret;
+>  		}
+> +
+> +		ret = mxc_isi_m2m_resume(pipe);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to resume ISI%u (%d) for m2m\n", i,
+> +				ret);
+> +			err = ret;
+> +		}
+
+Same here, that can be moved after the loop.
+
+>  	}
+>  
+>  	return err;
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> index 206995bedca4..b979b79b5525 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
+> @@ -343,6 +343,8 @@ int mxc_isi_video_buffer_prepare(struct mxc_isi_dev *isi, struct vb2_buffer *vb2
+>  #ifdef CONFIG_VIDEO_IMX8_ISI_M2M
+>  int mxc_isi_m2m_register(struct mxc_isi_dev *isi, struct v4l2_device *v4l2_dev);
+>  int mxc_isi_m2m_unregister(struct mxc_isi_dev *isi);
+> +void mxc_isi_m2m_suspend(struct mxc_isi_pipe *pipe);
+> +int mxc_isi_m2m_resume(struct mxc_isi_pipe *pipe);
+>  #else
+>  static inline int mxc_isi_m2m_register(struct mxc_isi_dev *isi,
+>  				       struct v4l2_device *v4l2_dev)
+> @@ -353,6 +355,15 @@ static inline int mxc_isi_m2m_unregister(struct mxc_isi_dev *isi)
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline void mxc_isi_m2m_suspend(struct mxc_isi_pipe *pipe)
+> +{
+> +}
+> +
+> +static inline int mxc_isi_m2m_resume(struct mxc_isi_pipe *pipe)
+> +{
+> +	return 0;
+> +}
+>  #endif
+>  
+>  int mxc_isi_channel_acquire(struct mxc_isi_pipe *pipe,
+> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
+> index 22e49d3a1287..fe9d85335b6c 100644
+> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
+> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-m2m.c
+> @@ -732,6 +732,54 @@ static const struct v4l2_file_operations mxc_isi_m2m_fops = {
+>  	.mmap		= v4l2_m2m_fop_mmap,
+>  };
+>  
+> +/* -----------------------------------------------------------------------------
+> + * Suspend & resume
+> + */
+> +
+> +void mxc_isi_m2m_suspend(struct mxc_isi_pipe *pipe)
+> +{
+> +	struct mxc_isi_m2m *m2m = &pipe->isi->m2m;
+> +	struct mxc_isi_m2m_ctx *ctx = m2m->last_ctx;
+> +
+> +	/*
+> +	 * Check pipe for ISI memory to memory since only
+> +	 * channel 0 support this feature.
+> +	 */
+> +	if (m2m->pipe != pipe || m2m->usage_count == 0)
+
+If we pass the mxc_isi_m2m pointer to the function, you can drop the
+comment and the first part of the condition. Same in
+mxc_isi_m2m_resume().
+
+> +		return;
+> +
+> +	v4l2_m2m_suspend(m2m->m2m_dev);
+> +
+> +	if (ctx->chained)
+
+Shouldn't you check m2m->chained_count instead ? Same in
+mxc_isi_m2m_resume().
+
+> +		mxc_isi_channel_unchain(pipe);
+> +
+> +	mxc_isi_channel_disable(pipe);
+> +	mxc_isi_channel_put(pipe);
+> +}
+> +
+> +int mxc_isi_m2m_resume(struct mxc_isi_pipe *pipe)
+> +{
+> +	struct mxc_isi_m2m *m2m = &pipe->isi->m2m;
+> +	struct mxc_isi_m2m_ctx *ctx = m2m->last_ctx;
+> +
+> +	/*
+> +	 * Check pipe for ISI memory to memory since only
+> +	 * channel 0 support this feature.
+> +	 */
+> +	if (m2m->pipe != pipe || m2m->usage_count == 0)
+> +		return 0;
+> +
+> +	mxc_isi_channel_get(pipe);
+> +
+> +	if (ctx->chained)
+> +		mxc_isi_channel_chain(pipe, false);
+> +
+> +	m2m->last_ctx = NULL;
+> +	v4l2_m2m_resume(m2m->m2m_dev);
+> +
+> +	return 0;
+> +}
+> +
+>  /* -----------------------------------------------------------------------------
+>   * Registration
+>   */
 
 -- 
-2.50.1
+Regards,
 
+Laurent Pinchart
 
