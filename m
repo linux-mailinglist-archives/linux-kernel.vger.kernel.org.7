@@ -1,60 +1,79 @@
-Return-Path: <linux-kernel+bounces-767239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A81B25165
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:10:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44312B251EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E91D57B1B8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAEE1584F07
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3030529B205;
-	Wed, 13 Aug 2025 17:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E39A29B8FE;
+	Wed, 13 Aug 2025 17:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3X3gxJN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KuAo151s"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6AB28CF47;
-	Wed, 13 Aug 2025 17:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345AC303C84;
+	Wed, 13 Aug 2025 17:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755104890; cv=none; b=NyYFeAUc69WcG6qBOxzUvVnr3lAinNyw8oO2u2KmXVnhUnfza63IDhxVu1DUd/jkwqhPvtNU+gFHA65ujTAqfzYJGMmBn5I0uGVrW4+Fy85MuUVYRhKwkZCUXVbLkCtqDPwoIC0bmus0HGAk00+pnRODCVBGO2YO5lYAjgLNetk=
+	t=1755104908; cv=none; b=VF3YvRLvwigAEzIXRcVbbV2VKxdvSXQ4wNsoVYAed7w2d14w20FYx+lvRCq62ke0/SEFuWrbwrjBO8Kh1FWbQzG7PyjS6aCBo/LDFQPHls4vFl8dBaEwx8SETTPn/8z5BxwViJNhsSCdxSmorK1tsc94S6LiLWEzFtvysybPFYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755104890; c=relaxed/simple;
-	bh=0wMHb0ikQWLuZKUXgXzxLD9DLMSFgGq3hkc4J3eh53k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OFmHQgb/WvhsxAe0/7KN6EwwW9lEvUNrD83z0wPhSYhh0kbuio8fJ29TV+gMBn5ewKbbnr4RnpqxhKZzYa+gUPRGLb2lcHgmg3sscpkvKH4tf6CSfUS7iAZ5akI4sGRG16Vsxd6yugpGGP3LylbXgFwMC2b4SAmkyyBFbNpzDtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3X3gxJN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 010EFC4CEEB;
-	Wed, 13 Aug 2025 17:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755104889;
-	bh=0wMHb0ikQWLuZKUXgXzxLD9DLMSFgGq3hkc4J3eh53k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b3X3gxJNG1yf8cWJ9B+2UL4wPC0Bh9O4ATYHfByAdIGQxRqHyoL8m2+CDxSFEoLNE
-	 WZ51s5OrrvEvCArbvDMfmla1rxY84nGex6V4iQADi8/2Qm5GurLkcA5a3WZ3haK2Ae
-	 szYA8tsootOEpcNGBI53NFt/7v5x14tCO/Umca4Mdh4fKw0kmQRC89lCeqnkM1C0yS
-	 K8nvF8OqJez2HBYoS0B1gAsNzhUqRL0hdbfTM1jLW1AVwVMH/84MMa4Kb3x9szQvVg
-	 V3tkZxAcXGNpw9yWT11s+6yjLIB2eOkaOF55Ixd+0fu6OD9NXHmgmN2Yidgd5kA2Cy
-	 CuvQ+Q531b0Yg==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [RFC PATCH -next 14/16] mm/damon/core: convert sz to byte units when updating state
-Date: Wed, 13 Aug 2025 10:08:06 -0700
-Message-Id: <20250813170806.6251-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250813050706.1564229-15-yanquanmin1@huawei.com>
-References: 
+	s=arc-20240116; t=1755104908; c=relaxed/simple;
+	bh=I5e8mnJ/49JC8VrfWPv+CxjSD5d8HPt8cMuWfqWA36o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IrJsnWO77ZWOimH2JnCHqWKVBRgOaVCx4osMXHnXAVYBhrbZCrD/xrNjfv4yk86OtWXN17sv/q/y3ygrWS3BuI5KdumjTBEcos8wuWEWelA7FZ1Vlqfl8qokBNUC6TkwHH5RUZ/vjrAZRUohuToHxLPXL2b2NhBcK8vyqpMWB4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KuAo151s; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBrY8H015979;
+	Wed, 13 Aug 2025 17:08:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=bWdZKZaD8nPGvleZj/ENN8RWCyP7zC5YaSnfHOoTL
+	TE=; b=KuAo151sYHzTETm9Q+NGWwCgx9gNKY07dL8ASjPW52zVfG5vNm8HGL+Uh
+	yUkfsrvc8r5YAWT5iDN8Ag0yqkp30hJEfjCf6/6y2wil7NQPfphv06241cMzLuKr
+	LpwSWKxxdb9yeu8P9N/FXKECqfq03/Kf076ey1VClnEhIu9TQzdr7B/ozNfE8sXz
+	O2vvQ7Q8eiIDGbZmDscZ6X79nzJdv0nEmmFAX05/q7FywjIO1wxfAamGCEYb0dWz
+	3wE4UeUYkN+wVS7/5KSLizMuENjSxhDHA/IwdMA3RQ6OFL0RQXMjLDXF9f1y2kYl
+	Jv0N8xFU9nUvdtUula0lg/YC5Qj/A==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrp5hpj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 17:08:24 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57DFhZnI026275;
+	Wed, 13 Aug 2025 17:08:24 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48eh218ehm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 17:08:24 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57DH8MJH21758542
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Aug 2025 17:08:22 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CC17C5805A;
+	Wed, 13 Aug 2025 17:08:22 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F261358054;
+	Wed, 13 Aug 2025 17:08:21 +0000 (GMT)
+Received: from IBM-D32RQW3.ibm.com (unknown [9.61.255.61])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 13 Aug 2025 17:08:21 +0000 (GMT)
+From: Farhan Ali <alifm@linux.ibm.com>
+To: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: schnelle@linux.ibm.com, mjrosato@linux.ibm.com, alifm@linux.ibm.com,
+        alex.williamson@redhat.com
+Subject: [PATCH v1 0/6] Error recovery for vfio-pci devices on s390x
+Date: Wed, 13 Aug 2025 10:08:14 -0700
+Message-ID: <20250813170821.1115-1-alifm@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,48 +81,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIxOSBTYWx0ZWRfXz++irHcUMBIU
+ /uOhY6QbJ+bkfsFhDGE5Xq+HU6C7MpGKtIKgjnPypPMMYuMU2nRnBPuRxpviX4eGdX4ig7m0amR
+ vw+SUXFJZz0plcPaGubJp4TaDVvkszGF2rPA8QFN/eXHctPMk6F5BvLeKinswv0op9iHieBN/K9
+ BCGff5BVOQZjMig1O914+Cpq+cWEuXMfi3mVo0klH/mlIfR/mave0z/pTgkNe156w96eswXlYKe
+ DIqBXqdVlUuFw8YAwW1niN4VUrdBY2ZSKA4idYJhJ0CHb70NJCs/57rRrIQvCwLGb9qpgAGRnX5
+ ibcbCDgyZPit98yIa2zRyGtQ0Tj6S/JQOLEFH2FAtWib3Wb0A0Vz5yPiB+7pDnjPs7f8jgecpdM
+ g8u44qnp
+X-Authority-Analysis: v=2.4 cv=GrpC+l1C c=1 sm=1 tr=0 ts=689cc688 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=2OwXVqhp2XgA:10 a=R0k15JvzdXSlHq7qNfMA:9
+X-Proofpoint-GUID: bukwS5M2EuzSM2V187ddcKjJ3WM3yo-w
+X-Proofpoint-ORIG-GUID: bukwS5M2EuzSM2V187ddcKjJ3WM3yo-w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
+ phishscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120219
 
-On Wed, 13 Aug 2025 13:07:04 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+Hi,
 
-> After introducing ctx->addr_unit, the unit of sz might not
-> be in bytes. However, sz_applied is returned in bytes after
-> processing by paddr.
+This Linux kernel patch series introduces support for error recovery for
+passthrough PCI devices on System Z (s390x). 
 
-This is not an intended behavior, but a bug of my code.  Let's update patches
-3-6 of this series to return sz_applied as core-layer address unit, instead of
-bytes.
+Background
+----------
+For PCI devices on s390x an operating system receives platform specific 
+error events from firmware rather than through AER.Today for
+passthrough/userspace devices, we don't attempt any error recovery
+and ignore any error events for the devices. The passthrough/userspace devices are 
+managed by the vfio-pci driver. The driver does register error handling 
+callbacks (error_detected), and on an error trigger an eventfd to userspace. 
+But we need a mechanism to notify userspace (QEMU/guest/userspace drivers) about
+the error event. 
 
-> To maintain external consistency, sz
-> is converted to byte units when updating the state.
+Proposal
+--------
+We can expose this error information (currently only the PCI Error Code) via a 
+device specific memory region for s390 vfio pci devices. Userspace can then read 
+the memory region to obtain the error information and take appropriate actions
+such as driving a device reset. The memory region provides some flexibility in 
+providing more information in the future if required.
 
-Users could keep the consistency by multiplying the addr_unit, which they set
-themselves.
+I would appreciate some feedback on this approach.
 
-> 
-> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
-> ---
->  mm/damon/core.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/damon/core.c b/mm/damon/core.c
-> index b162aa1156fc..bc764f9dc5c5 100644
-> --- a/mm/damon/core.c
-> +++ b/mm/damon/core.c
-> @@ -1889,7 +1889,9 @@ static void damos_apply_scheme(struct damon_ctx *c, struct damon_target *t,
->  		r->age = 0;
->  
->  update_stat:
-> -	damos_update_stat(s, sz, sz_applied, sz_ops_filter_passed);
-> +	damos_update_stat(s,
-> +			sz * (c->ops.id == DAMON_OPS_PADDR ? c->addr_unit : 1),
-> +			sz_applied, sz_ops_filter_passed);
->  }
->  
->  static void damon_do_apply_schemes(struct damon_ctx *c,
-> -- 
-> 2.34.1
+Thanks
+Farhan
 
+Farhan Ali (6):
+  s390/pci: Restore airq unconditionally for the zPCI device
+  s390/pci: Update the logic for detecting passthrough device
+  s390/pci: Store PCI error information for passthrough devices
+  vfio-pci/zdev: Setup a zpci memory region for error information
+  vfio-pci/zdev: Perform platform specific function reset for zPCI
+  vfio: Allow error notification and recovery for ISM device
 
-Thanks,
-SJ
+ arch/s390/include/asm/pci.h       |  29 +++++++
+ arch/s390/pci/pci.c               |   2 +
+ arch/s390/pci/pci_event.c         | 107 ++++++++++++++-----------
+ arch/s390/pci/pci_irq.c           |   3 +-
+ drivers/vfio/pci/vfio_pci_core.c  |  22 +++++-
+ drivers/vfio/pci/vfio_pci_intrs.c |   2 +-
+ drivers/vfio/pci/vfio_pci_priv.h  |   8 ++
+ drivers/vfio/pci/vfio_pci_zdev.c  | 126 +++++++++++++++++++++++++++++-
+ include/uapi/linux/vfio.h         |   2 +
+ include/uapi/linux/vfio_zdev.h    |   5 ++
+ 10 files changed, 253 insertions(+), 53 deletions(-)
+
+-- 
+2.43.0
+
 
