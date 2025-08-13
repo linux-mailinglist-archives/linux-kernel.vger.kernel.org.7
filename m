@@ -1,66 +1,79 @@
-Return-Path: <linux-kernel+bounces-767580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7424B25645
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:07:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3511DB25648
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B953B11ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:07:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8FC93B0CE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C812EBBB8;
-	Wed, 13 Aug 2025 22:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9B52F290D;
+	Wed, 13 Aug 2025 22:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="1A/2v9bi"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vkGkQIJs"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC01C19882B
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 22:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733D82F39C1
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 22:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755122828; cv=none; b=l9ljpDPPjWyForcyVKhbOuQXrbN6KLHV3g5oOmpCvi8uIzWZyOQns4SBykgzo09+UF0J2cZHbWvemeBQ6Aq4NFlRCdXPCTsl8H61D2Vx5s1luOPJIXIrANYoDpzK8dTTxOY/0PK17qByrO1ABLWS3M61EnSVE//7B3wvbeqSUO8=
+	t=1755122893; cv=none; b=Fq1slksYZZlz8A7Khqb7B0dGwmqwk3I8epXhKmhlQ/MRS7cVbffiK8oPAn5y/DJl3HTwMaYJI+JGRdlv3g8BW4pf4KYSpaN7TcWroyQJGNtytNDYLTd59+PJmQUNo2h8MLkN6SUgpR7/YWfEHUPsuqHsVPVvANp5ee55dk24Rkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755122828; c=relaxed/simple;
-	bh=uIzsmZKJwjDz2mWKOy1UhhgTLN5rtxD9iXozJmIimac=;
+	s=arc-20240116; t=1755122893; c=relaxed/simple;
+	bh=cOzIQCDUe0+XfgNsEEQjPQSKEdXLsnLnzVTF/W0TXu0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=goaQK1cFeW+XgqeQy3HP5us7XfWckjnF8wBOHH1vJFppemEUy4JiNJU2C5hZh5WyOrB4An/AgLX7U06HurRRnKE609nzoHGOAo3oSSFmbPNAYQ0H+fKEIoxm7OMYOCoZxpwuPiluiA9BxrCRRcIbxth0h02gJ4fr3z7gfp8Vgco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=1A/2v9bi; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
-	by cmsmtp with ESMTPS
-	id mGuyuyGlL5wATmJcfuTVtQ; Wed, 13 Aug 2025 22:07:05 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id mJcfuD0xArnsYmJcfuUMS7; Wed, 13 Aug 2025 22:07:05 +0000
-X-Authority-Analysis: v=2.4 cv=OLkn3TaB c=1 sm=1 tr=0 ts=689d0c89
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=JfrnYn6hAAAA:8 a=lNbMyd3QUhozLt4CxfMA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=BR/6CPBiRno1n+Md2/FA/IKXYNPIeUH6VbPcs+affiU=; b=1A/2v9biSk6earIRCNEQDPaVtH
-	v+8WNVg8qAM7Tkh8RZ9Qh4m0zsXklyrIYmOM6mWe6vGzSw/XnXdjIqp76PUXe38aOuz/uOEaT4uhc
-	pwiqB+4Y79vjw8W7rs7r5jait/liTGYXb8Ledd1Axoi0TnyigngCyt9Vo8YHmqEwb7DcJVzojCYIs
-	TLhEBZY2XZs18mQxga0LNk1LSCiDgYVBTUQyyNCxrdSqQ+u5MtRctbgziPyq94VGz6tyNMi1+r17r
-	jTPgOFGZFEFhIZIekEebFm+mkUbWEPIvpR5E3lqXwSKIaOrgCJQxDl2o7uQ6PWeKcm3ws3+K+U9DU
-	Ekao0QtQ==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:48018 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1umJcd-000000026Ve-3pLd;
-	Wed, 13 Aug 2025 16:07:03 -0600
-Message-ID: <55c94b4a-e3e8-4705-a314-f73dc33283b9@w6rz.net>
-Date: Wed, 13 Aug 2025 15:07:01 -0700
+	 In-Reply-To:Content-Type; b=WwJc6POO4d+GHPddaLJ8qjhNtY48Rx2jwXSt2jB0lqE2Rlszat/O+GjvKwQ7IxOl8uA+kEQ6VE0teitjjLZ1KHl6A/hPpmJU4SN5blndqyMoSoh+9SaKpgIbYAhrYMCZgJ7MYgCc05PCskA+b102S8+cg5sMCNJuTRvYRLDug7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vkGkQIJs; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b0990b2so1667025e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755122890; x=1755727690; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xGvnQRJXrX042hXZ7hl3cbdusCF8NvFI3WtV50e38aE=;
+        b=vkGkQIJsWqSPiZZC6YLLjsbxXjlOyAsYyT1ZQ7cVABKoyDzXDJATUU26BFiP/IFdlG
+         n/ltDr/oNkdsdLx1OpcXUyFHTSVjiK2Bpgv6fYUMDCV2ATxCu6OULjgxjlr7/6wIdNCN
+         nc43n8WuYPTHQfNHEkxXtTVKkDYNzgJWNs6DWBOOZX8JKnDMRdUK58wYHG4U6Jcet+zX
+         24Y2fyhjXvw0v3Lp6YDHvj/9TxjdkcQugSeGmFLYUibP4ikbGw34LAxko/cPLaWc3I/7
+         TpqYpDnvg3b5ABUGKjkABLOnVe3PLXmrRtKegPKzuENd3pQqinXvyelIl6yeutvEmjDd
+         fTDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755122890; x=1755727690;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xGvnQRJXrX042hXZ7hl3cbdusCF8NvFI3WtV50e38aE=;
+        b=MEdFkNaKMtUxU3lKGH/m9efgWC1Qda/4vCttnTZOjj7QKOFoYI80q/+FwWaAkgYUNY
+         ryLYfbuxKo9zfAzeZ6/d7/J8kTSeEywDL7YS1ZXwKqiZVi/UDgLfYdg0gmbcgMEbR92N
+         g0pFX1Uw5yNfddDjB6yEi3d4X6ANlRfakgn/ga3HAIdVhxNXc2dFwUqDtkQRaK7CiF1l
+         /YSJQuzfJOaEa74OSZY/BjFapTwbFaj50LrECmfIc8XtmVo199XSST8ZTWxWi19qVc5T
+         /PklfUGNAAfd+KhCDNH3OWuuAm3BPzEt4UPeKTYAuSp/jZrzqsAvply5Kv+gtPjrbSuW
+         Tisw==
+X-Forwarded-Encrypted: i=1; AJvYcCUV3MIueET/pXxWb4iuaINcIA4xbbGTDqSC7kReGiebSKXtJ+7Yaq/DoXXFU4qhq3B0jRM0Q1kUq1dxnFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyN0PI2dCBzn5i/QmLOegOlWDbSiEefHJU1C/m2XNCp3lm0HgE
+	0lvpLiviF13a5uvmSbuQ3tAQ1G5VhbDS6PBND9LFuJ5pKSq0/1dXyhyewaq4jTdTxG8=
+X-Gm-Gg: ASbGnctPeUHACVThLQLlqzFC8+bA5ssn7EbPYBmTAlTfIx1utinwwJt/ril41YZrZGI
+	5nGHUZ47ymuaB8WgYOfkA7mr+J3B5DO1yG+R/J3VSWvZmvvOEuqzf4Ry7KqyHraaun4ssq0x3f3
+	vBPZom7XJE58+mn8vwtiYHpKx+1gDarLtlDXsC2u2HVdP1ptr1SbClnCQ+cBobEZ+Th9NturgyI
+	Vq6Y1gjOQlLGliWdOWRiIKwWfMu0i0o0dIapazoHiaem86Ow735oDgl9Ze6LF67wh+y1Nv41SzZ
+	2MF72u3MoGLxMgEfJL92N3+giHLhzMajUBF8nXaQ1FiadZ8v1HcRgIZ7viiuVyTFIkk4z8FCTJd
+	5i13UB0tOPlAHHsnExiiaCUgvqXvXaLipyWUPpO8MZE8i3ptpn659myRgHIac9DTV
+X-Google-Smtp-Source: AGHT+IGAYNm27ZVowf7WspE+IzHrbkyB12Y7kx7nFsTZoij4WqyQxBHxHb7jlAy5R2YCjfPtWok4gg==
+X-Received: by 2002:a05:600c:3b93:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-45a1b605070mr2758535e9.2.1755122889639;
+        Wed, 13 Aug 2025 15:08:09 -0700 (PDT)
+Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453aeasm50861002f8f.40.2025.08.13.15.08.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 15:08:09 -0700 (PDT)
+Message-ID: <5dafef36-72bc-4958-9348-57d9ff4a10d1@linaro.org>
+Date: Wed, 13 Aug 2025 23:08:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,92 +81,212 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: achill@achill.org, akpm@linux-foundation.org, broonie@kernel.org,
- conor@kernel.org, f.fainelli@gmail.com, gregkh@linuxfoundation.org,
- hargar@microsoft.com, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux@roeck-us.net,
- lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
- pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
- stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
- torvalds@linux-foundation.org
-References: <b892ae8b-c784-4e8c-a5aa-006e0a9c9362@rnnvmail205.nvidia.com>
- <20250813172545.310023-1-jonathanh@nvidia.com>
+Subject: Re: [PATCH v2] media: Use of_reserved_mem_region_to_resource() for
+ "memory-region"
+To: "Rob Herring (Arm)" <robh@kernel.org>, Ming Qian <ming.qian@nxp.com>,
+ Zhou Peng <eagle.zhou@nxp.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>
+Cc: Ming Qian <ming.qian@oss.nxp.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20250813214949.897858-1-robh@kernel.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250813172545.310023-1-jonathanh@nvidia.com>
+In-Reply-To: <20250813214949.897858-1-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1umJcd-000000026Ve-3pLd
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:48018
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 13
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJw9rzFq0I1D9Mx65m5+fmdziOtzd5FpJ3V11XMzIamtdiWObBsCIFYzz0RMsi5dtsx8gMeCIMU5AII5N4gvbp2GqgG6vSVvgPBp9RaAEJrxe1vATu8e
- l0Ghzg28LPy4m3BqDxj1yGfw1Jt9scbzxUVYYwd3/hBo2IuCWyChsf7M/70DEXFP1DX0HV8/TaulF6H6EaSK+eHW5sjPRs7RnQY=
+Content-Transfer-Encoding: 7bit
 
-On 8/13/25 10:25, Jon Hunter wrote:
-> On Wed, Aug 13, 2025 at 08:48:28AM -0700, Jon Hunter wrote:
->> On Tue, 12 Aug 2025 19:43:28 +0200, Greg Kroah-Hartman wrote:
->>> This is the start of the stable review cycle for the 6.15.10 release.
->>> There are 480 patches in this series, all will be posted as a response
->>> to this one.  If anyone has any issues with these being applied, please
->>> let me know.
->>>
->>> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
->>> Anything received after that time might be too late.
->>>
->>> The whole patch series can be found in one patch at:
->>> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10-rc1.gz
->>> or in the git tree and branch at:
->>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
->>> and the diffstat can be found below.
->>>
->>> thanks,
->>>
->>> greg k-h
->> Failures detected for Tegra ...
->>
->> Test results for stable-v6.15:
->>      10 builds:	10 pass, 0 fail
->>      28 boots:	28 pass, 0 fail
->>      120 tests:	119 pass, 1 fail
->>
->> Linux version:	6.15.10-rc1-g2510f67e2e34
->> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->>                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
->>                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
->>                  tegra210-p2371-2180, tegra210-p3450-0000,
->>                  tegra30-cardhu-a04
->>
->> Test failures:	tegra194-p2972-0000: boot.py
-> I am seeing the following kernel warning for both linux-6.15.y and linux-6.16.y …
->
->   WARNING KERN sched: DL replenish lagged too much
->
-> I believe that this is introduced by …
->
-> Peter Zijlstra <peterz@infradead.org>
->      sched/deadline: Less agressive dl_server handling
->
-> This has been reported here: https://lore.kernel.org/all/CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com/
->
-> Jon
-
-Seeing this kernel warning on RISC-V also.
-
+On 13/08/2025 22:49, Rob Herring (Arm) wrote:
+> Use the newly added of_reserved_mem_region_to_resource() function to
+> handle "memory-region" properties.
+> 
+> Reviewed-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> Reviewed-by: Ming Qian <ming.qian@oss.nxp.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> v2:
+>   - Rebase on v6.17-rc1
+> ---
+>   drivers/media/platform/amphion/vpu_core.c     | 40 +++++--------------
+>   .../media/platform/qcom/iris/iris_firmware.c  | 18 +++------
+>   drivers/media/platform/qcom/venus/firmware.c  | 19 +++------
+>   3 files changed, 21 insertions(+), 56 deletions(-)
+> 
+> diff --git a/drivers/media/platform/amphion/vpu_core.c b/drivers/media/platform/amphion/vpu_core.c
+> index da00f5fc0e5d..168f0514851e 100644
+> --- a/drivers/media/platform/amphion/vpu_core.c
+> +++ b/drivers/media/platform/amphion/vpu_core.c
+> @@ -10,7 +10,7 @@
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+>   #include <linux/of.h>
+> -#include <linux/of_address.h>
+> +#include <linux/of_reserved_mem.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/slab.h>
+>   #include <linux/types.h>
+> @@ -542,47 +542,30 @@ const struct vpu_core_resources *vpu_get_resource(struct vpu_inst *inst)
+>   
+>   static int vpu_core_parse_dt(struct vpu_core *core, struct device_node *np)
+>   {
+> -	struct device_node *node;
+>   	struct resource res;
+>   	int ret;
+>   
+> -	if (of_count_phandle_with_args(np, "memory-region", NULL) < 2) {
+> -		dev_err(core->dev, "need 2 memory-region for boot and rpc\n");
+> -		return -ENODEV;
+> +	ret = of_reserved_mem_region_to_resource(np, 0, &res);
+> +	if (ret) {
+> +		dev_err(core->dev, "Cannot get boot-region\n");
+> +		return ret;
+>   	}
+>   
+> -	node = of_parse_phandle(np, "memory-region", 0);
+> -	if (!node) {
+> -		dev_err(core->dev, "boot-region of_parse_phandle error\n");
+> -		return -ENODEV;
+> -	}
+> -	if (of_address_to_resource(node, 0, &res)) {
+> -		dev_err(core->dev, "boot-region of_address_to_resource error\n");
+> -		of_node_put(node);
+> -		return -EINVAL;
+> -	}
+>   	core->fw.phys = res.start;
+>   	core->fw.length = resource_size(&res);
+>   
+> -	of_node_put(node);
+> -
+> -	node = of_parse_phandle(np, "memory-region", 1);
+> -	if (!node) {
+> -		dev_err(core->dev, "rpc-region of_parse_phandle error\n");
+> -		return -ENODEV;
+> -	}
+> -	if (of_address_to_resource(node, 0, &res)) {
+> -		dev_err(core->dev, "rpc-region of_address_to_resource error\n");
+> -		of_node_put(node);
+> -		return -EINVAL;
+> +	ret = of_reserved_mem_region_to_resource(np, 1, &res);
+> +	if (ret) {
+> +		dev_err(core->dev, "Cannot get rpc-region\n");
+> +		return ret;
+>   	}
+> +
+>   	core->rpc.phys = res.start;
+>   	core->rpc.length = resource_size(&res);
+>   
+>   	if (core->rpc.length < core->res->rpc_size + core->res->fwlog_size) {
+>   		dev_err(core->dev, "the rpc-region <%pad, 0x%x> is not enough\n",
+>   			&core->rpc.phys, core->rpc.length);
+> -		of_node_put(node);
+>   		return -EINVAL;
+>   	}
+>   
+> @@ -594,7 +577,6 @@ static int vpu_core_parse_dt(struct vpu_core *core, struct device_node *np)
+>   	if (ret != VPU_CORE_MEMORY_UNCACHED) {
+>   		dev_err(core->dev, "rpc region<%pad, 0x%x> isn't uncached\n",
+>   			&core->rpc.phys, core->rpc.length);
+> -		of_node_put(node);
+>   		return -EINVAL;
+>   	}
+>   
+> @@ -606,8 +588,6 @@ static int vpu_core_parse_dt(struct vpu_core *core, struct device_node *np)
+>   	core->act.length = core->rpc.length - core->res->rpc_size - core->log.length;
+>   	core->rpc.length = core->res->rpc_size;
+>   
+> -	of_node_put(node);
+> -
+>   	return 0;
+>   }
+>   
+> diff --git a/drivers/media/platform/qcom/iris/iris_firmware.c b/drivers/media/platform/qcom/iris/iris_firmware.c
+> index f1b5cd56db32..40448429ba97 100644
+> --- a/drivers/media/platform/qcom/iris/iris_firmware.c
+> +++ b/drivers/media/platform/qcom/iris/iris_firmware.c
+> @@ -19,8 +19,7 @@ static int iris_load_fw_to_memory(struct iris_core *core, const char *fw_name)
+>   	u32 pas_id = core->iris_platform_data->pas_id;
+>   	const struct firmware *firmware = NULL;
+>   	struct device *dev = core->dev;
+> -	struct reserved_mem *rmem;
+> -	struct device_node *node;
+> +	struct resource res;
+>   	phys_addr_t mem_phys;
+>   	size_t res_size;
+>   	ssize_t fw_size;
+> @@ -30,17 +29,12 @@ static int iris_load_fw_to_memory(struct iris_core *core, const char *fw_name)
+>   	if (strlen(fw_name) >= MAX_FIRMWARE_NAME_SIZE - 4)
+>   		return -EINVAL;
+>   
+> -	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+> -	if (!node)
+> -		return -EINVAL;
+> -
+> -	rmem = of_reserved_mem_lookup(node);
+> -	of_node_put(node);
+> -	if (!rmem)
+> -		return -EINVAL;
+> +	ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &res);
+> +	if (ret)
+> +		return ret;
+>   
+> -	mem_phys = rmem->base;
+> -	res_size = rmem->size;
+> +	mem_phys = res.start;
+> +	res_size = resource_size(&res);
+>   
+>   	ret = request_firmware(&firmware, fw_name, dev);
+>   	if (ret)
+> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+> index 66a18830e66d..37c0fd52333e 100644
+> --- a/drivers/media/platform/qcom/venus/firmware.c
+> +++ b/drivers/media/platform/qcom/venus/firmware.c
+> @@ -9,7 +9,6 @@
+>   #include <linux/iommu.h>
+>   #include <linux/io.h>
+>   #include <linux/of.h>
+> -#include <linux/of_address.h>
+>   #include <linux/of_reserved_mem.h>
+>   #include <linux/platform_device.h>
+>   #include <linux/of_device.h>
+> @@ -83,8 +82,7 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>   			 phys_addr_t *mem_phys, size_t *mem_size)
+>   {
+>   	const struct firmware *mdt;
+> -	struct reserved_mem *rmem;
+> -	struct device_node *node;
+> +	struct resource res;
+>   	struct device *dev;
+>   	ssize_t fw_size;
+>   	void *mem_va;
+> @@ -94,15 +92,8 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>   	*mem_size = 0;
+>   
+>   	dev = core->dev;
+> -	node = of_parse_phandle(dev->of_node, "memory-region", 0);
+> -	if (!node) {
+> -		dev_err(dev, "no memory-region specified\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	rmem = of_reserved_mem_lookup(node);
+> -	of_node_put(node);
+> -	if (!rmem) {
+> +	ret = of_reserved_mem_region_to_resource(dev->of_node, 0, &res);
+> +	if (ret) {
+>   		dev_err(dev, "failed to lookup reserved memory-region\n");
+>   		return -EINVAL;
+>   	}
+> @@ -117,8 +108,8 @@ static int venus_load_fw(struct venus_core *core, const char *fwname,
+>   		goto err_release_fw;
+>   	}
+>   
+> -	*mem_phys = rmem->base;
+> -	*mem_size = rmem->size;
+> +	*mem_phys = res.start;
+> +	*mem_size = resource_size(&res);
+>   
+>   	if (*mem_size < fw_size || fw_size > VENUS_FW_MEM_SIZE) {
+>   		ret = -EINVAL;
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
