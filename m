@@ -1,62 +1,87 @@
-Return-Path: <linux-kernel+bounces-766573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2C3B2487D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:32:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E87B24882
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC6816BA60
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4871E3AA870
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A172F7441;
-	Wed, 13 Aug 2025 11:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2332F659A;
+	Wed, 13 Aug 2025 11:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B0vGNV2z"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ifG0z+Y7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C492D5C9F;
-	Wed, 13 Aug 2025 11:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D8A2F3C05
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755084721; cv=none; b=H/X1fjQAeCSGz5IY/a84ZdG9Zu5GXnziD0Yta/LCflD60Hl5TwKT6EaV/ccbqV5NOAlE4NIyab+bU998C5JKJez+W9+B5QoLsc1/REDOesQKKK9hEznBlOalHqio4ipE0hawze+caLf7EraKqsSvGGYSEfDnVESMKYzhqBoxyjM=
+	t=1755084747; cv=none; b=Zrc1HhWEcT3JInnvZZMFpkIk6AC7KP9Gpyjg8nlouRNjlz2tszS+IucsYpPWahWlD6JNh2zkz6jeu8cqrdTzKESR56ZQF1qygxBPkgUrRkJwxak0lV+VGhNZd88o8t5sr3el67Sua1JHvbonasiAjVN1ncp0lPBWbkaR5TRVcyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755084721; c=relaxed/simple;
-	bh=nQReW5Q1N4wii3hPq5nn6aUOD6DXoAQdcxmsDr4D2KE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qlt/caKC6sMhg2h+yLFUomE1D+i5vCsdLvDVlw4kBqOO6LdCOwr8LXVwS27Q55YH2HtvHOkSxA0BduQ9ix4Csn62NqjToAAc6Y4L6MFMp37orPe+m9DZwSGG8PmZrDKp7rivw4rPpjmkhS5n+V4KUv5uvtq0VO4uI+vr1DGFcAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B0vGNV2z; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBM9d7027025;
-	Wed, 13 Aug 2025 11:31:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1755084747; c=relaxed/simple;
+	bh=kRpkUjEHh+mveb2bs3Tp9AcZmSD68sinrjNRQO2gQpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QLw0XczcExj1oL4mISGpCXgAuoO1M7qZFzKdQtqhUbcarsgNQYPDTapV5AiPre7beBsEIROBYAQkxdr7YrAVq0awV9FrjEnsx2c6znyOLLrzOltywI+IPyPqqrLQvccUNwuoSkoc3iVC3npWU/tTEnZlXVVNCJv8Dsk9WRANQSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ifG0z+Y7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLkwp020684
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:32:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZRdnKXF/5l9YDjvYj77VM/YOlA0nA1gep9VTIB6zpbw=; b=B0vGNV2zMzLmODvU
-	KDrloARmTWme1Tf3XPHodJl71tV2c5fHP2JJHqaTtBnjKf5wAlNZ4FW48pHoLHFk
-	gdhsRdaW6gQuW3mHY/4PYflvvIQC4YTdjLQIllBoxUtDuprG49Ks3vKm5Vn6XRi0
-	2989F4tl8wN9YtOvBfJR+oQlx8vFkbSSupO7736M9BvZcKfEU+OyZK6+zquqYXTj
-	cOuY5W15M1aYNrLbiG8hddiwTbUKbjBn4JfsMppkfIUl5608xgqtPWNCTtRPCmok
-	wyf51yUjO45qmjPoPG/9rEcofosQgfyCF74A+FGH4hheTzfCOQlO2LJVPe/dP/n7
-	a1+VRQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3gbjqp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 11:31:54 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57DBVrM9027677
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 11:31:53 GMT
-Received: from [10.216.47.241] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 13 Aug
- 2025 04:31:51 -0700
-Message-ID: <9caa5f38-db78-4a0a-9eea-1df2ab9f1ffa@quicinc.com>
-Date: Wed, 13 Aug 2025 17:01:48 +0530
+	rjVZidOdjDRebLgVIpzz+zvbQWyC0jDD/g5NDXaHcRc=; b=ifG0z+Y7EQjfHETx
+	wMQO6J6Ab6VYi4Yld5QZdL+gwbT9THXSLW0W/rDF8SBy2OYhz2lxxQkgTH3Q1HLv
+	ebKs85DMDWV78OrOS0WDdWyfnLG0zSsYJLVv5+nvFGtD7sjJ4SyBqyxqJjQlKNVG
+	t32VVDBc4FJbNpJGYU8DDH3RAGmFIB0XjWzYm4OYMgiflSMBXTaa4oRiA5NtOchC
+	CYo+099+xrFmDeO2KWHfMxkQ7lAMB7TulNB20a/c+rbJnkp7pqk96ltEU8jc/+Hl
+	aWpJcGZPFdsRQEdY4d5zXGkIvNYpPCRdWUAqDrFtfAli2LlV6mSjdQcgJLnLLyx9
+	j/veKg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48g5hmbhbu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:32:25 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b07b805068so14822071cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 04:32:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755084744; x=1755689544;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rjVZidOdjDRebLgVIpzz+zvbQWyC0jDD/g5NDXaHcRc=;
+        b=tA+2gBKWvj9mbu/dsQH3e45vR1H/CVvx/1g479Uhv7Xg/C4jzH4L5EWWJuwlPJzch2
+         iXKmrjEXTp7K/HfWAEfpF3mi8FdUHTPPgVUEoX52xlmis0es1zSauVBD5Uv8xjk9SQ0L
+         asLwfCGLStZXHLc35+lKIVDLTRsBYeblZjttZU6HsWwLOD73krA06RGmMCfkqtf414z3
+         mU6s1daPJMCripeWw0BBI9OVxrWUTG1bhq4Txg3QEuDsdP4yejRSky7ro9CAyNgkLenr
+         YMBYFNj9anwwyHnEJbE4hazhDAaKl7+2ZyWx8IKis+oeNYFS49nM4cgRBuPWzQnfG56i
+         dwqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtNaSmtXYFE2uRo0D3ntjHnaW8YSrWY1bJE4icJnq5PEW9i2v9rB/Pyhr4g0L/CZDCw7KpQnjOfDr2eWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgAgKHQvEcV+WtPfpaYnd0OcSrS9sL2Z6ZDoYeue24GOG5UFEM
+	MNhGo/arpMqSMYmtX5zn9tg2NWJ3+x0bPrDFH64M22JGhg8iVWh+c+c7sW7kfzK57QR5Ys9nTLp
+	nwg7fHVGrnGb6xnabjFusCxA/NzCHR81RVmM9qL6rYpwpXTnCzXcskTUOgf4TfIknnVU=
+X-Gm-Gg: ASbGnctWTbgKnlUm53ozD3MqbQTUNTu3LpjURMk+dQeknixeTzutazTXn2e0JFsXxKk
+	eq/IeVN9HIBAQdQRyq1y+CDWxpgVSBfA/rPkjWWGBzFICgLLLkf+rRRElxVGI2yHP6J9Flm0KXB
+	Zi+g/ZtKXxzMHcYbCE8zApvt4R1F8LUQILeLyF+0b5Y8ScxbOmGwFmPmZql6Z3aKM+q0eV7WcCx
+	/iVEUvaaPW3I1agiFcDBu/ZD4HDUOY+H4mx0dUTnrss/f0V/UpCx1b4LGVA3D0mE3ZCQIcPI0xQ
+	xqxGgHc9aXLtHeqhoP9/LW60eruKtkYEv99GDIAceHh1h5lxHLgiYjOTQO5BFhKmoS7d7nLBEJJ
+	V1/1BuOCyeK4yPM5i1Q==
+X-Received: by 2002:a05:622a:43:b0:4ab:5c58:bb25 with SMTP id d75a77b69052e-4b0fc68ba3amr14426471cf.1.1755084744044;
+        Wed, 13 Aug 2025 04:32:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEq0Aur4OMFrqMwkB9SaTqBRiff+d+TLLYRjRQr9B/aNZsuDsLG+6/BcDX/aVTr8EKoadGaEw==
+X-Received: by 2002:a05:622a:43:b0:4ab:5c58:bb25 with SMTP id d75a77b69052e-4b0fc68ba3amr14426271cf.1.1755084743438;
+        Wed, 13 Aug 2025 04:32:23 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0761f2sm2392951866b.11.2025.08.13.04.32.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 04:32:22 -0700 (PDT)
+Message-ID: <c48906a9-4de0-453c-a827-5b45d3a6ed0a@oss.qualcomm.com>
+Date: Wed, 13 Aug 2025 13:32:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,119 +89,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ufs: ufs-qcom: disable lane clocks during phy hibern8
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>
-References: <20250715160524.3088594-1-quic_pkambar@quicinc.com>
- <w5mkkhxhhndrqhlfomvwohssndtl2njcw7khupyh7qechsynns@kl5ykxtwqawt>
+Subject: Re: [PATCH] spi: spi-qpic-snand: handle 'use_ecc' parameter of
+ qcom_spi_config_cw_read()
+To: Gabor Juhos <j4g8y7@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: Md Sadre Alam <quic_mdalam@quicinc.com>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250808-qpic-snand-handle-use_ecc-v1-1-67289fbb5e2f@gmail.com>
+ <3e790d99-5c6c-4148-85f5-0023a621afeb@oss.qualcomm.com>
+ <e5b981f8-9b6b-42c6-b432-537d23f7fd58@gmail.com>
 Content-Language: en-US
-From: Palash Kambar <quic_pkambar@quicinc.com>
-In-Reply-To: <w5mkkhxhhndrqhlfomvwohssndtl2njcw7khupyh7qechsynns@kl5ykxtwqawt>
-Content-Type: text/plain; charset="UTF-8"
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <e5b981f8-9b6b-42c6-b432-537d23f7fd58@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689c77aa cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=J-IEUe4sd1PreNxf69YA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfX83rqCJbkABsG
- saVHulk4ofbhDXSCqpjyYMhXoYNrY0KW+fzCZDC95+i/bITd3BU/IsyFBs4xjXDzeBCEfQTJHVC
- 2nPxlNAKzW8wdBcFBCBI1hnqHEnnB69F0QsmxdY2c/HAz8f1IErANe4KguEkmIIyfWnZ6EnRuYC
- 7FqnlyvgngZJo2NOZDM5rYmNEH/VYqkcjZRWIMSfUYRvlEtfyDS+04hc8BMXUOQGNrs56Uo9XTO
- d+8FVmboaaWlRm2hrQePXm3j03sHY5jci9qOCdX+DRsMKSqg/acNUMmi3sFeMNm7VJNM/T/PO3U
- c//5y7GUdFNVFNfkuEXvk/NjjmcryKOjYpDeq3d3kLmxqgxPvbRUxb4F5Z8KOEVMLpff3j+kQnP
- H+tqGCdp
-X-Proofpoint-GUID: 8cNfn1nlnDh-aZUQowYriVj4gnv9puGb
-X-Proofpoint-ORIG-GUID: 8cNfn1nlnDh-aZUQowYriVj4gnv9puGb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDExOSBTYWx0ZWRfX/kAO4t5+2l86
+ y+dejmtFxYfN9l+84Yw7WnYP74WaUIN0/ZfsrrYu1RsJAnPu1UIghhSXrzZgywD9cwXVoQMDLSy
+ SvOootvgrpVbdGbmAWIZpGYX0mcNQgNO5bTMetzg31H+kHLRpaW/Do9ZvBG8eI1hjhamqkg+lJB
+ 42Ujyh9+7FWEG4vDrDf6NMjSgMBcINKr/n3RxjOLPuh268v9Zth6I1eC5rSZbFtN9f6480Q1TSy
+ E3326KK/Mv1s7DMhDcrbbNWaSu+4h+24GmthPPH9sU7zRJrAU1R2ro/JXOk5PIqk1vC8fZWxM81
+ Mk1onNvOQIFl5N/70BTMK/qs5kuytd2MuSrVeZpu6/gjBlVhwjCUDMx0yWQ1mC1iSSWg46nQYv9
+ Vom3eKYW
+X-Proofpoint-GUID: r8SmQgPlaAo43aQ4HCCLJnZUmRpiKhHM
+X-Proofpoint-ORIG-GUID: r8SmQgPlaAo43aQ4HCCLJnZUmRpiKhHM
+X-Authority-Analysis: v=2.4 cv=d4b1yQjE c=1 sm=1 tr=0 ts=689c77c9 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
+ a=LMlhJLrcAiEsyVNmZoIA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
- spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090031
+ clxscore=1015 malwarescore=0 spamscore=0 phishscore=0 adultscore=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120119
 
-
-
-On 8/13/2025 3:49 PM, Manivannan Sadhasivam wrote:
-> On Tue, Jul 15, 2025 at 09:35:24PM GMT, Palash Kambar wrote:
->> The UFS lane clocks ensure that the PHY is adequately powered and
->> synchronized before initiating the link. Currently, these clocks
->> remain enabled even after the link enters the Hibern8 state and
->> are only turned off during runtime or system suspend.
+On 8/12/25 1:06 PM, Gabor Juhos wrote:
+> 2025. 08. 12. 11:55 keltezéssel, Konrad Dybcio írta:
+>> On 8/8/25 7:15 PM, Gabor Juhos wrote:
+>>> During raw read, neither the status of the ECC correction nor the erased
+>>> state of the codeword gets checked by the qcom_spi_read_cw_raw() function,
+>>> so in case of raw access reading the corresponding registers via DMA is
+>>> superfluous.
+>>>
+>>> Extend the qcom_spi_config_cw_read() function to evaluate the existing
+>>> (but actually unused) 'use_ecc' parameter, and configure reading only
+>>> the flash status register when ECC is not used.
+>>>
+>>> With the change, the code gets in line with the corresponding part of
+>>> the config_nand_cw_read() function in the qcom_nandc driver.
+>>>
+>>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+>>> ---
+>>>  drivers/spi/spi-qpic-snand.c | 11 ++++++++---
+>>>  1 file changed, 8 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+>>> index 7b76d2c82a5287df13ee6fcebc4abbe58ca861ee..119003c4784890458a41c67fa8bc17d721030b0d 100644
+>>> --- a/drivers/spi/spi-qpic-snand.c
+>>> +++ b/drivers/spi/spi-qpic-snand.c
+>>> @@ -494,9 +494,14 @@ qcom_spi_config_cw_read(struct qcom_nand_controller *snandc, bool use_ecc, int c
+>>>  	qcom_write_reg_dma(snandc, &snandc->regs->cmd, NAND_FLASH_CMD, 1, NAND_BAM_NEXT_SGL);
+>>>  	qcom_write_reg_dma(snandc, &snandc->regs->exec, NAND_EXEC_CMD, 1, NAND_BAM_NEXT_SGL);
+>>>  
+>>> -	qcom_read_reg_dma(snandc, NAND_FLASH_STATUS, 2, 0);
+>>> -	qcom_read_reg_dma(snandc, NAND_ERASED_CW_DETECT_STATUS, 1,
+>>> -			  NAND_BAM_NEXT_SGL);
+>>> +	if (use_ecc) {
+>>> +		qcom_read_reg_dma(snandc, NAND_FLASH_STATUS, 2, 0);
 >>
->> Modify the behavior to disable the lane clocks immediately after
->> the link transitions to Hibern8, thereby reducing the power
->> consumption.
->>
+>> Why are we reading 2 registers (the 2 in the func call) here, ...
 > 
-> This statement is technically misleading. You are disabling lane clocks in
-> ufs_qcom_setup_clocks(), which gets called during suspend/resume/clk_gate phase.
+> Because when ECC is used, we need the status of the ECC correction from the
+> NAND_BUFFER_STATUS register which is placed right after the NAND_FLASH_STATUS.
 > 
-> But if you want to disable the clocks immediately after Hibern8, you may want to
-> add the disable/enable logic in hibern8_notify() callback.
+> Here are the relevant definitions from the 'nand-qpic-common.h' header for
+> reference:
 > 
-> If that is not a strict requirement and you want to do it in
-> ufs_qcom_setup_clocks(), you have to reword the description.
+> #define	NAND_FLASH_STATUS		0x14
+> #define	NAND_BUFFER_STATUS		0x18
 > 
+> So the two registers can be read with a single DMA operation.
+> 
+>> ... but 1 everywhere else?
+> 
+> When ECC is not used, we only need the value from the NAND_FLASH_STATUS
+> register, so we don't have to read two registers.
 
-Hi Mani,
-Hibern8 entry and exit can be initiated from various contexts, including
-clock scaling. Given this, it may not be ideal to toggle the lane clock on
-every Hibern8 transition. Moreover, since all resources related to the PHY
-and controller are managed within ufs_qcom_setup_clocks(), it seems more
-appropriate to handle this logic within that function. Additionally, since
-ufs_qcom_setup_clock() is invoked immediately after the link enters
-Hibern8 via gate work, any delay appears to be minimal.
+OK yeah I can see that
 
-I’ll ensure these points are clearly reflected in the commit message.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
--Palash K
-
-> 
->> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
->> ---
->>  drivers/ufs/host/ufs-qcom.c | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
->> index 318dca7fe3d7..50e174d9b406 100644
->> --- a/drivers/ufs/host/ufs-qcom.c
->> +++ b/drivers/ufs/host/ufs-qcom.c
->> @@ -1141,6 +1141,13 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->>  	case PRE_CHANGE:
->>  		if (on) {
->>  			ufs_qcom_icc_update_bw(host);
->> +			if (ufs_qcom_is_link_hibern8(hba)) {
->> +				err = ufs_qcom_enable_lane_clks(host);
->> +				if (err) {
->> +					dev_err(hba->dev, "enable lane clks failed, ret=%d\n", err);
->> +					return err;
->> +				}
->> +			}
->>  		} else {
->>  			if (!ufs_qcom_is_link_active(hba)) {
->>  				/* disable device ref_clk */
->> @@ -1166,6 +1173,9 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
->>  			if (ufshcd_is_hs_mode(&hba->pwr_info))
->>  				ufs_qcom_dev_ref_clk_ctrl(host, true);
->>  		} else {
->> +			if (ufs_qcom_is_link_hibern8(hba))
->> +				ufs_qcom_disable_lane_clks(host);
->> +
->>  			ufs_qcom_icc_set_bw(host, ufs_qcom_bw_table[MODE_MIN][0][0].mem_bw,
->>  					    ufs_qcom_bw_table[MODE_MIN][0][0].cfg_bw);
->>  		}
->> -- 
->> 2.34.1
->>
-> 
+Konrad
 
 
