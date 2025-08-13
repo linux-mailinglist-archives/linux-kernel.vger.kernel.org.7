@@ -1,191 +1,841 @@
-Return-Path: <linux-kernel+bounces-766524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58940B247AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D067B247AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4FDD5849C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD4116E8A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9292ED175;
-	Wed, 13 Aug 2025 10:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F0D2D8DA9;
+	Wed, 13 Aug 2025 10:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uEYqNj/p"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2044.outbound.protection.outlook.com [40.107.243.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="K3yyDAgy"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7679420D4E9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755082007; cv=fail; b=hbdXphV7VXzEU6ew+qaRt3jd5AHO0xo8Bqg7LsoCcAYWQGfGNP7jKQ9F82bQE0BxaYfh0Z3wdZnVpDyG8GyHYGz98/lWqPN4ClwKDV89JdWLGcqiMwiV/DXZDjp2yZM0g/wKpWfqvyTpZc16brTkJcKvve9Xp64tRoI2fPixWRs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755082007; c=relaxed/simple;
-	bh=AVBoUztb+NyYHgkWUQm3x5ozwhj2c/dTypMEevntx5Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uv7i5mhPZMAdzF4hwhbtNQawamBPeCRmbXzjgPim3eveoemLJi5BPvVvQg+9BiRhPL3R+AqxhnDOF/yUXba5vNCDfHuWb645gjvsKKoq9DPie8H5ctq97yU3YP4xTWMiKaNkTNrxO1nD1z/M5PXt6V14GboAH5ESiLB/aT8Gv6M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uEYqNj/p; arc=fail smtp.client-ip=40.107.243.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CkdXH6fYMwn2rshPmrI2E5gePsKHGM6A7UvFQuNvoMH5H6bnjVHHniR26ISblZkcLugLzatpYSFruyXlfC2XSW/ejrtHNwTFu/Tv2+aG8eNyq/UGCayFcU1wmQZ1yMBq8uvv+pWQQAvcVE+yIOWrUFoN0cHM4amh5G5wJIZp+TOcugjtHGNsnnSnbPSs/0KM1LczKD5xhV9e27/DEAwXTbk/7Fl3OZn8NulIENQLhWDkWDQfftid2I042fUH6JPp3pf1+UclUDczzB5/uXuSyBtT+g9eC30pCnm/tOxg+cgyMKomAwCNF7Tjo+W8Cvig2BTTEpPolMQ4iukER7uG0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wi6IbE1tsa5FQAI3D5l0OyfcvUdsv0FxooZijSMQZkU=;
- b=E2k7u4lIU/ynZ7zx2k7DAEUjOrLDHinJUBhWkogDJAXLhcS+9nCCaqhdhtfXXc0uMXzP4kl/SHYDfDxZJJLfaE0xI9zyZaTiu5GAd4QDq78P8e8F4FmoIMPTvdPotUx/8Nb09zFn/RklEXkIujt67/Y9ozryt7HyWhgAFBM+czSvw01dKJ+fSvI7tiMyzhQ7syWL9vFqv3acTrzY3KVgOyghIvbZdQEj7732WRleVkhmqra4fdcur0ED2CX8axGhvEA34pFEMhPzKq4q8/HB4Lec3jWXysZaniDGfmTZ8//qq4U0bBMPV3UcQ62PVArS+SuIsbVzS18Z2UyFOI0jcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=vivo.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wi6IbE1tsa5FQAI3D5l0OyfcvUdsv0FxooZijSMQZkU=;
- b=uEYqNj/p0jhpFHY4+qdePwmaZig2b7MY0GM0Utf3F4nKFhbRn4diBRxy8NSLJPgbo46P3Js0wjcQoYmbC23juMeXB8pldQOago2WxLuiU51NrOpuYvT5VbujVfwuUg5nr/X29Vz1QAVD3jMauhCo17VPeRjE21UQbByhnilc7WqhSoXhMHQPIj5gfSWKaEpHXKMM+9fIzUIk3WQnQuFz0AqvRpe7dnv+GZ+90sZdV4lcxiIHSIqtXUrhpt+K/HuZaoN82gC+6YqbXvbC1Xh6g/rYSvd/IosFYTeUwtg9GnQjgY49OEGtoAE7O4H27QDqCVG3N9v6qePJmrBRyaeLHg==
-Received: from IA1P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:461::15)
- by BL1PR12MB5851.namprd12.prod.outlook.com (2603:10b6:208:396::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Wed, 13 Aug
- 2025 10:46:41 +0000
-Received: from BN3PEPF0000B076.namprd04.prod.outlook.com
- (2603:10b6:208:461:cafe::3f) by IA1P220CA0001.outlook.office365.com
- (2603:10b6:208:461::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.18 via Frontend Transport; Wed,
- 13 Aug 2025 10:46:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B076.mail.protection.outlook.com (10.167.243.121) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.11 via Frontend Transport; Wed, 13 Aug 2025 10:46:41 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 13 Aug
- 2025 03:46:27 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 13 Aug
- 2025 03:46:26 -0700
-Received: from localhost (10.127.8.9) by mail.nvidia.com (10.129.68.9) with
- Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Wed, 13 Aug
- 2025 03:46:24 -0700
-Date: Wed, 13 Aug 2025 13:46:22 +0300
-From: Zhi Wang <zhiw@nvidia.com>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-CC: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, "David
- Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Dave Airlie
-	<airlied@redhat.com>, Ben Skeggs <bskeggs@nvidia.com>, Timur Tabi
-	<ttabi@nvidia.com>, <dri-devel@lists.freedesktop.org>,
-	<nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/nouveau/gsp: fix mismatched alloc/free for
- kvmalloc()
-Message-ID: <20250813134622.000069a0@nvidia.com>
-In-Reply-To: <20250811091910.404659-1-rongqianfeng@vivo.com>
-References: <20250811091910.404659-1-rongqianfeng@vivo.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.38; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACABF212558
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755082052; cv=none; b=o2t/yE9WwnKk51QkSJ7OONv1xktIqQ+8hJbj/DNduBccsHFqpEZTw2kSQbE5J4rabU0qG4zquaavlAdNagxAD1YrXpZ3OoU+J9pphj34RobTh0m2weyfqaJ6G/lXLja8XGDBSPU3pRmT3xm4GLpQHrD6N5fJxhBmmxf6uzAAg1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755082052; c=relaxed/simple;
+	bh=GR1g0PMsvgFD3/A02pJ8nDTzvgFn6n1fOS80TKBlxWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uc6cLVjiXFehUgu5e39vUNI/Cz1vBTFzeNJP8wOXIxAEOmg5mfWizdXYUucsmM+lLETrwLiTAABDmPYF0jaWJlfsrGFReMFQZ7NUbxrcXCSeQuVNYJJHPgzRGj6tlr0Tgn3hbO3ZNfAMS/8LK+8kUISwcpD9CmF6Y6QTw+6I3hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=K3yyDAgy; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b2c4331c50eso4796860a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc.com; s=google; t=1755082048; x=1755686848; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UMwiCaqujhTNBHW/YCq25i3NwMv6QDUgUPwVzr5ASRA=;
+        b=K3yyDAgy0aVkaVaM2bcle0saV6eexOER0RlPnyvl7RO5703NnfGL/6fPEYdVtfX/Nl
+         cAQ1DSCAeWJBsweRDHvJFpC/VlqvQtJ4DNWcgpn2hg+mVsDOM8Rb8rktHKkRqkrJfgLX
+         gGe+73VDL8oRWBkmftCByD4iGrxYF1iHKjZGxEpz3pGj4Ge6U6JLusQPYRt5A0DVsWOg
+         29q4/b+EVY4LmolQs3jXaYcZMa2oaKCT/c3JvVfGmD1e5kWIANL4h2FueioTDm7HcPJA
+         SXYT+NZkC+VmqXID0KC+pfpGYIBQN1RAzRp3aPamVESnhTxNkM0XQEk09LYQUDvVHP7X
+         KeNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755082048; x=1755686848;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UMwiCaqujhTNBHW/YCq25i3NwMv6QDUgUPwVzr5ASRA=;
+        b=pbrhCAGpNUAlxICgXczclpRKgPhMBj23Nalm2VGAeWO3m541VTKJiHgtM05QEE7V8p
+         HTx8j11j6XyCy9R1w/SVGZIUvvsyw8PTjkTo+A4xcZN2hdsyXKmYCdTfghKw+4hcU87K
+         HtgSStk4/BjbKcxjkgpFKl4YiXkMg/hNN70EQ9sywOmm/zskjWei2GIc9XybIrw1lrGg
+         +iUgdQahQjgoEfDRtTKdvUfSmEbUEG0LDyYSKKWOvW7rEgo8RVhbx3f+J4glf2frE8fJ
+         AQerURkLukn1cGJwGgPPM8+XHIwhqmSD6rJVJC7ddc45zGJWF91L8wBzrlG7RA7HE+DI
+         Yl1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCIpyvkUbtt6hLn/kz5bL0K//BW49LunJa1lo+lksqqH6PYUTzSLJdcFU/neFBWwbhKjabb2qL1ReRBfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy4X3ihnO/h/bobaFYDovnsbNuRQcjWzV2nxbEzTJGeP5y3sfb
+	55z/3udhuhxs+a5u1ME4VQp9o+iDUticJQ29k1lS5XdTSHBWkXq0W13Mf+/hdtyHCl8=
+X-Gm-Gg: ASbGnctwcyKFgUbl0pQG4J6S1vc/uwG9i2ZyiO+9n/Dsb1wEPOYa6+KBNYJsemoreH3
+	oPHhMSxPYrP0LskOoQgf0trmbEnhcfgLUF4T2CbgrUEab/J/WK2BebFcn5032abdKRSr5lFOo1R
+	mxVF0/NF+qBUWMdjNNsRSyw5FLE1WzwXGl6rVf3T1jvhfl5CzqS8UgBAld7QH3WP23G032h3iF9
+	usC5ih1F+q1xdHz5Sk0ooEFu4pP9yxGagtnj+WS1YDpYqIx+p5O5F2nstFaU9o1OZ9n9XPkwI30
+	j3SJRojqeuUZspAQGrtf/OcmDq0gAtduiV3HRY8oXecx99tFsF3DHJZt5ogvBpzuYoYlej//wYD
+	Yi6fkIVoW/hIEXvC1gn/Rg7+6uIBnD2ixX2XJsNP9eFDM6P4ojGRaSyDVSvrLT2brY08GCbT3hB
+	W3zQ==
+X-Google-Smtp-Source: AGHT+IEPNPTpres4zLkyLh59KK3PQ9gdsHp/n4FuebSNI5LKGErbXlt+tMP9c0msagpqbITvN2a0bQ==
+X-Received: by 2002:a17:903:2f90:b0:240:1bba:fc7d with SMTP id d9443c01a7336-2430d1f7e5emr37474125ad.33.1755082047573;
+        Wed, 13 Aug 2025 03:47:27 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a8cdsm322505145ad.121.2025.08.13.03.47.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 03:47:26 -0700 (PDT)
+Message-ID: <80e73e9c-2b16-4a6a-91b9-0100d7708fa2@rivosinc.com>
+Date: Wed, 13 Aug 2025 12:47:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B076:EE_|BL1PR12MB5851:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8bea0430-6a3e-465e-2752-08ddda56b021
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cNh3Am7leWWOzjFEyBXlwB1N9wjXpW92joBgPR7ScvVQdl2Ppp3/9CercSFk?=
- =?us-ascii?Q?kk3tyoamqMHdHZL7TVpRxlRBB3nPF1inS2BdKtgSBqnrayGEI6yZTuNZKB8a?=
- =?us-ascii?Q?AI5bT7OP4dmwk4zfPD7ERLMo1V9HyMFIbdO5yJBdSLmA5QZ26y1ULHciOzL1?=
- =?us-ascii?Q?VsMy+JqtFCG5eNEg8Hz/gA1PT/tgt6pbyFy6StANuN/uwYw33iJ3wnoEWGKG?=
- =?us-ascii?Q?zshLOgzh8s0IR9mwZ4OeORFvqrmgktnm5Y55e/t89Ul8FevVh8ddxal8WS8F?=
- =?us-ascii?Q?4O0iG51RCBJzhcEiWsoZVbAOdxjMm9MY3xuh3Uf2bHsUY+hHHl+/SKhfyLoy?=
- =?us-ascii?Q?fx78CTmgyf+dQNTw5WfG68B6oOH6OLEreo051njFzgKytq85hoBPuHe4KhGH?=
- =?us-ascii?Q?PE6JT+cKtZaoeFbdb95f+0Zf5K/IKWf53VJCTwC3cVxTzEO8P+2HWkXx+U6i?=
- =?us-ascii?Q?IU3xnTxnbvazuFJwkKxkhhCh8/Hr6kJVyIkg91c1lLTBPTV22e33HqJehW8N?=
- =?us-ascii?Q?TBznfSoOhO/ZGTsdvsOovcHQHYjQ2LnvguPB4OqZsnwbduC3kfyEby/C4IOi?=
- =?us-ascii?Q?lfB9nReP+mqFQxZqIL7GXh2b3RCyZqYuJwQeY33jfoXIDY0XT5GZS2co4Z48?=
- =?us-ascii?Q?bIWzrehCvkkwodecNd52x0sb68na3Ld+f8uPHmY1z58Yyjpy3icOTF1HSJKy?=
- =?us-ascii?Q?3Zq8X2WsR58hHCzriujL4zO44FozDoxkWp6DR5SByCwTFbwcoktg/RszbzhS?=
- =?us-ascii?Q?2V2HamRnwF/2XLyoka16B4gDrXW5cWTNfHWZzkajDNGGSQAnjQVQZy9Gp9bs?=
- =?us-ascii?Q?v0+AuDWHkiiCq3x0h1ZDFx6a0AmHN+AvMg2OdUMsuD7KRc9yMFoV8O1mdQUb?=
- =?us-ascii?Q?7SrPET/gMLtGrDEYaWgn5o77c68Cqc43IdfWeVhCNS1zj10C4qdk3g8+XywE?=
- =?us-ascii?Q?A+3liQoiPscjU6JVMkdsYO1frCTvVRx6dosLZqUN3lDFIPDsKGDLKvRL5eyO?=
- =?us-ascii?Q?bUV3aP8zncitJnXDLe04dmHA0/77xj7CTAh/49RadzcNX9DEumIylipAD5U8?=
- =?us-ascii?Q?DCtQyODv4Scm6YVsheEYpGNRmbjXIkqj+4285S61VoqKnsacVEHiL1IOcpiF?=
- =?us-ascii?Q?lMhJknsRA96OXFH2rJ2IIxqrwaAPVYogToNRLy73wKv72bVXiTkZHfW988jW?=
- =?us-ascii?Q?UTqYQEM0GS/RycVuUXex8G8VA3A/u1XUa7WnTYtToSLpYyCEOo0FzU29gQWJ?=
- =?us-ascii?Q?ZquEis+HpGNZj8W+0RyLmGzQ8SpSBIcfJQlZjPG+s+lPdLfB5Vb/NwW756j5?=
- =?us-ascii?Q?3YlKmcqkTm9llMduxHbYze960GtM+LG//XrWiqkhwuLKcq4GC2A0xhtiRZml?=
- =?us-ascii?Q?xtgIE0aDMJmfPxhJ2sizTOK6oJfHdnFPQkH1UTa4OjGVIPO7bn3KuXHm5uhz?=
- =?us-ascii?Q?5oxs3lCwEqUWcyffLUWX+9NfeDtybdRKe5Ds3PDGhY/eCUxWVpiFuSv/y0/s?=
- =?us-ascii?Q?N8Bg42TqKwhzVoRqjCtORbW+9Ijnox7CVGNF?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 10:46:41.1533
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8bea0430-6a3e-465e-2752-08ddda56b021
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B076.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5851
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/5] riscv: add support for SBI Supervisor Software
+ Events extension
+To: Alexandre Ghiti <alex@ghiti.fr>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Himanshu Chauhan <hchauhan@ventanamicro.com>,
+ Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>,
+ Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Yunhui Cui <cuiyunhui@bytedance.com>
+References: <20250808153901.2477005-1-cleger@rivosinc.com>
+ <20250808153901.2477005-3-cleger@rivosinc.com>
+ <c6488202-7721-4f08-8b27-bddbda70296a@ghiti.fr>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <c6488202-7721-4f08-8b27-bddbda70296a@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 11 Aug 2025 17:19:00 +0800
-Qianfeng Rong <rongqianfeng@vivo.com> wrote:
 
-Acked-by: Zhi Wang <zhiw@nvidia.com>
 
-Please add a Fixes: tag.
-
-> Replace kfree() with kvfree() for memory allocated by kvmalloc().
+On 13/08/2025 12:09, Alexandre Ghiti wrote:
+> On 8/8/25 17:38, Clément Léger wrote:
+>> The SBI SSE extension allows the supervisor software to be notified by
 > 
-> Compile-tested only.
 > 
-> Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
-> ---
->  drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/rpc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> I would change "notified" with "interrupted" no?
 > 
-> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/rpc.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/rpc.c
-> index 9d06ff722fea..0dc4782df8c0 100644
-> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/rpc.c
-> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/rpc.c
-> @@ -325,7 +325,7 @@ r535_gsp_msgq_recv(struct nvkm_gsp *gsp, u32 gsp_rpc_len, int *retries)
->  
->  		rpc = r535_gsp_msgq_peek(gsp, sizeof(*rpc), info.retries);
->  		if (IS_ERR_OR_NULL(rpc)) {
-> -			kfree(buf);
-> +			kvfree(buf);
->  			return rpc;
->  		}
->  
-> @@ -334,7 +334,7 @@ r535_gsp_msgq_recv(struct nvkm_gsp *gsp, u32 gsp_rpc_len, int *retries)
->  
->  		rpc = r535_gsp_msgq_recv_one_elem(gsp, &info);
->  		if (IS_ERR_OR_NULL(rpc)) {
-> -			kfree(buf);
-> +			kvfree(buf);
->  			return rpc;
->  		}
->  
+> 
+>> the SBI of specific events that are not maskable. The context switch is
+> 
+> 
+> Nit: s/the SBI/the SBI implementation
+> 
+> 
+>> handled partially by the firmware which will save registers a6 and a7.
+>> When entering kernel we can rely on these 2 registers to setup the stack
+>> and save all the registers.
+>>
+>> Since SSE events can be delivered at any time to the kernel (including
+>> during exception handling, we need a way to locate the current_task for
+> 
+> 
+> s/handling/handling)
+> 
+> 
+>> context tracking. On RISC-V, it is sotred in scratch when in user space
+> 
+> s/sotred/stored
+> 
+>> or tp when in kernel space (in which case SSCRATCH is zero). But at a
+> 
+> 
+> Remove "at a"
+> 
+> 
+>> at the beginning of exception handling, SSCRATCH is used to swap tp and
+>> check the origin of the exception. If interrupted at that point, then,
+>> there is no way to reliably know were is located the current
+> 
+> 
+> s/were/where
+> 
+> 
+>> task_struct. Even checking the interruption location won't work as SSE
+>> event can be nested on top of each other so the original interruption
+>> site might be lost at some point. In order to retrieve it reliably,
+>> store the current task in an additional __sse_entry_task per_cpu array.
+>> This array is then used to retrieve the current task based on the
+>> hart ID that is passed to the SSE event handler in a6.
+>>
+>> That being said, the way the current task struct is stored should
+>> probably be reworked to find a better reliable alternative.
+>>
+>> Since each events (and each CPU for local events) have their own
+> 
+> 
+> "Since each event has its own"
+> 
+> 
+>> context and can preempt each other, allocate a stack (and a shadow stack
+>> if needed for each of them (and for each cpu for local events).
+> 
+> 
+> s/needed/needed)
+> 
+> 
+>>
+>> When completing the event, if we were coming from kernel with interrupts
+>> disabled, simply return there. If coming from userspace or kernel with
+>> interrupts enabled, simulate an interrupt exception by setting IE_SIE in
+>> CSR_IP to allow delivery of signals to user task. For instance this can
+>> happen, when a RAS event has been generated by a user application and a
+>> SIGBUS has been sent to a task.
+>>
+>> Signed-off-by: Clément Léger <cleger@rivosinc.com>
+>> ---
+>>   arch/riscv/include/asm/asm.h         |  14 ++-
+>>   arch/riscv/include/asm/scs.h         |   7 ++
+>>   arch/riscv/include/asm/sse.h         |  47 +++++++
+>>   arch/riscv/include/asm/switch_to.h   |  14 +++
+>>   arch/riscv/include/asm/thread_info.h |   1 +
+>>   arch/riscv/kernel/Makefile           |   1 +
+>>   arch/riscv/kernel/asm-offsets.c      |  14 +++
+>>   arch/riscv/kernel/sse.c              | 154 +++++++++++++++++++++++
+>>   arch/riscv/kernel/sse_entry.S        | 180 +++++++++++++++++++++++++++
+>>   9 files changed, 429 insertions(+), 3 deletions(-)
+>>   create mode 100644 arch/riscv/include/asm/sse.h
+>>   create mode 100644 arch/riscv/kernel/sse.c
+>>   create mode 100644 arch/riscv/kernel/sse_entry.S
+>>
+>> diff --git a/arch/riscv/include/asm/asm.h b/arch/riscv/include/asm/asm.h
+>> index a8a2af6dfe9d..982c4be9a9c3 100644
+>> --- a/arch/riscv/include/asm/asm.h
+>> +++ b/arch/riscv/include/asm/asm.h
+>> @@ -90,16 +90,24 @@
+>>   #define PER_CPU_OFFSET_SHIFT 3
+>>   #endif
+>>   -.macro asm_per_cpu dst sym tmp
+>> -    REG_L \tmp, TASK_TI_CPU_NUM(tp)
+>> -    slli  \tmp, \tmp, PER_CPU_OFFSET_SHIFT
+>> +.macro asm_per_cpu_with_cpu dst sym tmp cpu
+>> +    slli  \tmp, \cpu, PER_CPU_OFFSET_SHIFT
+>>       la    \dst, __per_cpu_offset
+>>       add   \dst, \dst, \tmp
+>>       REG_L \tmp, 0(\dst)
+>>       la    \dst, \sym
+>>       add   \dst, \dst, \tmp
+>>   .endm
+>> +
+>> +.macro asm_per_cpu dst sym tmp
+>> +    REG_L \tmp, TASK_TI_CPU_NUM(tp)
+> 
+> 
+> cpu is not xlen-wide, see https://lore.kernel.org/linux-
+> riscv/20250725165410.2896641-3-rkrcmar@ventanamicro.com/. Can you rebase
+> your next version on top my fixes branch which contains this fix? Here
+> it is https://git.kernel.org/pub/scm/linux/kernel/git/alexghiti/
+> linux.git/log/?h=alex-fixes
+
+Hi Alex,
+
+Acked, I'll fix that.
+
+> 
+> 
+>> +    asm_per_cpu_with_cpu \dst \sym \tmp \tmp
+>> +.endm
+>>   #else /* CONFIG_SMP */
+>> +.macro asm_per_cpu_with_cpu dst sym tmp cpu
+>> +    la    \dst, \sym
+>> +.endm
+>> +
+>>   .macro asm_per_cpu dst sym tmp
+>>       la    \dst, \sym
+>>   .endm
+>> diff --git a/arch/riscv/include/asm/scs.h b/arch/riscv/include/asm/scs.h
+>> index 0e45db78b24b..62344daad73d 100644
+>> --- a/arch/riscv/include/asm/scs.h
+>> +++ b/arch/riscv/include/asm/scs.h
+>> @@ -18,6 +18,11 @@
+>>       load_per_cpu gp, irq_shadow_call_stack_ptr, \tmp
+>>   .endm
+>>   +/* Load the per-CPU IRQ shadow call stack to gp. */
+>> +.macro scs_load_sse_stack reg_evt
+>> +    REG_L gp, SSE_REG_EVT_SHADOW_STACK(\reg_evt)
+>> +.endm
+>> +
+>>   /* Load task_scs_sp(current) to gp. */
+>>   .macro scs_load_current
+>>       REG_L    gp, TASK_TI_SCS_SP(tp)
+>> @@ -41,6 +46,8 @@
+>>   .endm
+>>   .macro scs_load_irq_stack tmp
+>>   .endm
+>> +.macro scs_load_sse_stack reg_evt
+>> +.endm
+>>   .macro scs_load_current
+>>   .endm
+>>   .macro scs_load_current_if_task_changed prev
+>> diff --git a/arch/riscv/include/asm/sse.h b/arch/riscv/include/asm/sse.h
+>> new file mode 100644
+>> index 000000000000..8929a268462c
+>> --- /dev/null
+>> +++ b/arch/riscv/include/asm/sse.h
+>> @@ -0,0 +1,47 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2024 Rivos Inc.
+>> + */
+>> +#ifndef __ASM_SSE_H
+>> +#define __ASM_SSE_H
+>> +
+>> +#include <asm/sbi.h>
+>> +
+>> +#ifdef CONFIG_RISCV_SSE
+>> +
+>> +struct sse_event_interrupted_state {
+>> +    unsigned long a6;
+>> +    unsigned long a7;
+>> +};
+>> +
+>> +struct sse_event_arch_data {
+>> +    void *stack;
+>> +    void *shadow_stack;
+>> +    unsigned long tmp;
+>> +    struct sse_event_interrupted_state interrupted;
+>> +    unsigned long interrupted_phys;
+>> +    u32 evt_id;
+>> +    unsigned int hart_id;
+>> +    unsigned int cpu_id;
+>> +};
+>> +
+>> +static inline bool sse_event_is_global(u32 evt)
+>> +{
+>> +    return !!(evt & SBI_SSE_EVENT_GLOBAL);
+>> +}
+>> +
+>> +void arch_sse_event_update_cpu(struct sse_event_arch_data *arch_evt,
+>> int cpu);
+>> +int arch_sse_init_event(struct sse_event_arch_data *arch_evt, u32
+>> evt_id,
+>> +            int cpu);
+>> +void arch_sse_free_event(struct sse_event_arch_data *arch_evt);
+>> +int arch_sse_register_event(struct sse_event_arch_data *arch_evt);
+>> +
+>> +void sse_handle_event(struct sse_event_arch_data *arch_evt,
+>> +              struct pt_regs *regs);
+>> +asmlinkage void handle_sse(void);
+>> +asmlinkage void do_sse(struct sse_event_arch_data *arch_evt,
+>> +               struct pt_regs *reg);
+>> +
+>> +#endif
+>> +
+>> +#endif
+>> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/
+>> asm/switch_to.h
+>> index 0e71eb82f920..cd1cead0c682 100644
+>> --- a/arch/riscv/include/asm/switch_to.h
+>> +++ b/arch/riscv/include/asm/switch_to.h
+>> @@ -88,6 +88,19 @@ static inline void __switch_to_envcfg(struct
+>> task_struct *next)
+>>               :: "r" (next->thread.envcfg) : "memory");
+>>   }
+>>   +#ifdef CONFIG_RISCV_SSE
+>> +DECLARE_PER_CPU(struct task_struct *, __sse_entry_task);
+>> +
+>> +static inline void __switch_sse_entry_task(struct task_struct *next)
+>> +{
+>> +    __this_cpu_write(__sse_entry_task, next);
+>> +}
+>> +#else
+>> +static inline void __switch_sse_entry_task(struct task_struct *next)
+>> +{
+>> +}
+>> +#endif
+>> +
+>>   extern struct task_struct *__switch_to(struct task_struct *,
+>>                          struct task_struct *);
+>>   @@ -122,6 +135,7 @@ do {                            \
+>>       if (switch_to_should_flush_icache(__next))    \
+>>           local_flush_icache_all();        \
+>>       __switch_to_envcfg(__next);            \
+>> +    __switch_sse_entry_task(__next);            \
+>>       ((last) = __switch_to(__prev, __next));        \
+>>   } while (0)
+>>   diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/
+>> include/asm/thread_info.h
+>> index f5916a70879a..28e9805e61fc 100644
+>> --- a/arch/riscv/include/asm/thread_info.h
+>> +++ b/arch/riscv/include/asm/thread_info.h
+>> @@ -36,6 +36,7 @@
+>>   #define OVERFLOW_STACK_SIZE     SZ_4K
+>>     #define IRQ_STACK_SIZE        THREAD_SIZE
+>> +#define SSE_STACK_SIZE        THREAD_SIZE
+>>     #ifndef __ASSEMBLY__
+>>   diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+>> index c7b542573407..62e4490b34ee 100644
+>> --- a/arch/riscv/kernel/Makefile
+>> +++ b/arch/riscv/kernel/Makefile
+>> @@ -99,6 +99,7 @@ obj-$(CONFIG_DYNAMIC_FTRACE)    += mcount-dyn.o
+>>   obj-$(CONFIG_PERF_EVENTS)    += perf_callchain.o
+>>   obj-$(CONFIG_HAVE_PERF_REGS)    += perf_regs.o
+>>   obj-$(CONFIG_RISCV_SBI)        += sbi.o sbi_ecall.o
+>> +obj-$(CONFIG_RISCV_SSE)        += sse.o sse_entry.o
+>>   ifeq ($(CONFIG_RISCV_SBI), y)
+>>   obj-$(CONFIG_SMP)        += sbi-ipi.o
+>>   obj-$(CONFIG_SMP) += cpu_ops_sbi.o
+>> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-
+>> offsets.c
+>> index 6e8c0d6feae9..315547c3a2ef 100644
+>> --- a/arch/riscv/kernel/asm-offsets.c
+>> +++ b/arch/riscv/kernel/asm-offsets.c
+>> @@ -14,6 +14,8 @@
+>>   #include <asm/ptrace.h>
+>>   #include <asm/cpu_ops_sbi.h>
+>>   #include <asm/stacktrace.h>
+>> +#include <asm/sbi.h>
+>> +#include <asm/sse.h>
+>>   #include <asm/suspend.h>
+>>     void asm_offsets(void);
+>> @@ -528,4 +530,16 @@ void asm_offsets(void)
+>>       DEFINE(FREGS_A6,        offsetof(struct __arch_ftrace_regs, a6));
+>>       DEFINE(FREGS_A7,        offsetof(struct __arch_ftrace_regs, a7));
+>>   #endif
+>> +
+>> +#ifdef CONFIG_RISCV_SSE
+>> +    OFFSET(SSE_REG_EVT_STACK, sse_event_arch_data, stack);
+>> +    OFFSET(SSE_REG_EVT_SHADOW_STACK, sse_event_arch_data, shadow_stack);
+>> +    OFFSET(SSE_REG_EVT_TMP, sse_event_arch_data, tmp);
+>> +    OFFSET(SSE_REG_HART_ID, sse_event_arch_data, hart_id);
+>> +    OFFSET(SSE_REG_CPU_ID, sse_event_arch_data, cpu_id);
+>> +
+>> +    DEFINE(SBI_EXT_SSE, SBI_EXT_SSE);
+>> +    DEFINE(SBI_SSE_EVENT_COMPLETE, SBI_SSE_EVENT_COMPLETE);
+>> +    DEFINE(ASM_NR_CPUS, NR_CPUS);
+>> +#endif
+>>   }
+>> diff --git a/arch/riscv/kernel/sse.c b/arch/riscv/kernel/sse.c
+>> new file mode 100644
+>> index 000000000000..d2da7e23a74a
+>> --- /dev/null
+>> +++ b/arch/riscv/kernel/sse.c
+>> @@ -0,0 +1,154 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/*
+>> + * Copyright (C) 2024 Rivos Inc.
+>> + */
+>> +#include <linux/nmi.h>
+>> +#include <linux/scs.h>
+>> +#include <linux/bitfield.h>
+>> +#include <linux/riscv_sse.h>
+>> +#include <linux/percpu-defs.h>
+>> +
+>> +#include <asm/asm-prototypes.h>
+>> +#include <asm/switch_to.h>
+>> +#include <asm/irq_stack.h>
+>> +#include <asm/sbi.h>
+>> +#include <asm/sse.h>
+>> +
+>> +DEFINE_PER_CPU(struct task_struct *, __sse_entry_task);
+>> +
+>> +void __weak sse_handle_event(struct sse_event_arch_data *arch_evt,
+>> struct pt_regs *regs)
+>> +{
+>> +}
+>> +
+>> +void do_sse(struct sse_event_arch_data *arch_evt, struct pt_regs *regs)
+>> +{
+>> +    nmi_enter();
+>> +
+>> +    /* Retrieve missing GPRs from SBI */
+>> +    sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_READ, arch_evt->evt_id,
+>> +          SBI_SSE_ATTR_INTERRUPTED_A6,
+>> +          (SBI_SSE_ATTR_INTERRUPTED_A7 - SBI_SSE_ATTR_INTERRUPTED_A6)
+>> + 1,
+>> +          arch_evt->interrupted_phys, 0, 0);
+>> +
+>> +    memcpy(&regs->a6, &arch_evt->interrupted, sizeof(arch_evt-
+>> >interrupted));
+>> +
+>> +    sse_handle_event(arch_evt, regs);
+>> +
+>> +    /*
+>> +     * The SSE delivery path does not uses the "standard" exception path
+>> +     * (see sse_entry.S) and does not process any pending signal/
+>> softirqs
+>> +     * due to being similar to a NMI.
+>> +     * Some drivers (PMU, RAS) enqueue pending work that needs to be
+>> handled
+>> +     * as soon as possible by bottom halves. For that purpose, set
+>> the SIP
+>> +     * software interrupt pending bit which will force a software
+>> interrupt
+>> +     * to be serviced once interrupts are reenabled in the interrupted
+>> +     * context if they were masked or directly if unmasked.
+>> +     */
+>> +    csr_set(CSR_IP, IE_SIE);
+>> +
+>> +    nmi_exit();
+>> +}
+>> +
+>> +static void *alloc_to_stack_pointer(void *alloc)
+>> +{
+>> +    return alloc ? alloc + SSE_STACK_SIZE : NULL;
+>> +}
+>> +
+>> +static void *stack_pointer_to_alloc(void *stack)
+>> +{
+>> +    return stack - SSE_STACK_SIZE;
+>> +}
+>> +
+>> +#ifdef CONFIG_VMAP_STACK
+>> +static void *sse_stack_alloc(unsigned int cpu)
+>> +{
+>> +    void *stack = arch_alloc_vmap_stack(SSE_STACK_SIZE,
+>> cpu_to_node(cpu));
+> 
+> 
+> I'm wondering what could happen if, in case of Svvptc, we take a trap in
+> the sse path because the vmalloced stack page table entry is not yet
+> seen by the page table walker, would that be an issue?
+
+I'll take a look at that but if it trap at the beginning of the SSE
+handler, it's going to clobber anything that wasn't saved. So basically
+fatal. Should I 'touch' the stack itself after allocation to be sure
+it's mapped in the page table ?
+
+> 
+> 
+>> +
+>> +    return alloc_to_stack_pointer(stack);
+>> +}
+>> +
+>> +static void sse_stack_free(void *stack)
+>> +{
+>> +    vfree(stack_pointer_to_alloc(stack));
+>> +}
+>> +#else /* CONFIG_VMAP_STACK */
+>> +static void *sse_stack_alloc(unsigned int cpu)
+>> +{
+>> +    void *stack = kmalloc(SSE_STACK_SIZE, GFP_KERNEL);
+>> +
+>> +    return alloc_to_stack_pointer(stack);
+>> +}
+>> +
+>> +static void sse_stack_free(void *stack)
+>> +{
+>> +    kfree(stack_pointer_to_alloc(stack));
+>> +}
+>> +#endif /* CONFIG_VMAP_STACK */
+>> +
+>> +static int sse_init_scs(int cpu, struct sse_event_arch_data *arch_evt)
+>> +{
+>> +    void *stack;
+>> +
+>> +    if (!scs_is_enabled())
+>> +        return 0;
+>> +
+>> +    stack = scs_alloc(cpu_to_node(cpu));
+>> +    if (!stack)
+>> +        return -ENOMEM;
+>> +
+>> +    arch_evt->shadow_stack = stack;
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +void arch_sse_event_update_cpu(struct sse_event_arch_data *arch_evt,
+>> int cpu)
+>> +{
+>> +    arch_evt->cpu_id = cpu;
+>> +    arch_evt->hart_id = cpuid_to_hartid_map(cpu);
+>> +}
+>> +
+>> +int arch_sse_init_event(struct sse_event_arch_data *arch_evt, u32
+>> evt_id, int cpu)
+>> +{
+>> +    void *stack;
+>> +
+>> +    arch_evt->evt_id = evt_id;
+>> +    stack = sse_stack_alloc(cpu);
+>> +    if (!stack)
+>> +        return -ENOMEM;
+>> +
+>> +    arch_evt->stack = stack;
+>> +
+>> +    if (sse_init_scs(cpu, arch_evt)) {
+>> +        sse_stack_free(arch_evt->stack);
+>> +        return -ENOMEM;
+>> +    }
+>> +
+>> +    if (sse_event_is_global(evt_id)) {
+>> +        arch_evt->interrupted_phys =
+>> +                    virt_to_phys(&arch_evt->interrupted);
+> 
+> 
+> I may be missing something but I don't see why interrupted could not be
+> a userspace address?
+
+I'm not sure to follow what you are saying but arch_evt is allocated via
+kzalloc() from the driver layer (see next commit) and is passed to
+arch_sse_init_event(). There is no way for this struct to be
+allocated/passed by userspace.
+
+> 
+> 
+>> +    } else {
+>> +        arch_evt->interrupted_phys =
+>> +                per_cpu_ptr_to_phys(&arch_evt->interrupted);
+>> +    }
+>> +
+>> +    arch_sse_event_update_cpu(arch_evt, cpu);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +void arch_sse_free_event(struct sse_event_arch_data *arch_evt)
+>> +{
+>> +    scs_free(arch_evt->shadow_stack);
+>> +    sse_stack_free(arch_evt->stack);
+>> +}
+>> +
+>> +int arch_sse_register_event(struct sse_event_arch_data *arch_evt)
+>> +{
+>> +    struct sbiret sret;
+>> +
+>> +    sret = sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_REGISTER, arch_evt-
+>> >evt_id,
+>> +             (unsigned long)handle_sse, (unsigned long)arch_evt, 0,
+>> +             0, 0);
+>> +
+>> +    return sbi_err_map_linux_errno(sret.error);
+>> +}
+>> diff --git a/arch/riscv/kernel/sse_entry.S b/arch/riscv/kernel/
+>> sse_entry.S
+>> new file mode 100644
+>> index 000000000000..112bdb7d4369
+>> --- /dev/null
+>> +++ b/arch/riscv/kernel/sse_entry.S
+>> @@ -0,0 +1,180 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2024 Rivos Inc.
+>> + */
+>> +
+>> +#include <linux/init.h>
+>> +#include <linux/linkage.h>
+>> +
+>> +#include <asm/asm.h>
+>> +#include <asm/csr.h>
+>> +#include <asm/scs.h>
+>> +
+>> +/* When entering handle_sse, the following registers are set:
+>> + * a6: contains the hartid
+>> + * a7: contains a sse_event_arch_data struct pointer
+>> + */
+>> +SYM_CODE_START(handle_sse)
+>> +    /* Save stack temporarily */
+>> +    REG_S sp, SSE_REG_EVT_TMP(a7)
+>> +    /* Set entry stack */
+>> +    REG_L sp, SSE_REG_EVT_STACK(a7)
+>> +
+>> +    addi sp, sp, -(PT_SIZE_ON_STACK)
+>> +    REG_S ra, PT_RA(sp)
+>> +    REG_S s0, PT_S0(sp)
+>> +    REG_S s1, PT_S1(sp)
+>> +    REG_S s2, PT_S2(sp)
+>> +    REG_S s3, PT_S3(sp)
+>> +    REG_S s4, PT_S4(sp)
+>> +    REG_S s5, PT_S5(sp)
+>> +    REG_S s6, PT_S6(sp)
+>> +    REG_S s7, PT_S7(sp)
+>> +    REG_S s8, PT_S8(sp)
+>> +    REG_S s9, PT_S9(sp)
+>> +    REG_S s10, PT_S10(sp)
+>> +    REG_S s11, PT_S11(sp)
+>> +    REG_S tp, PT_TP(sp)
+>> +    REG_S t0, PT_T0(sp)
+>> +    REG_S t1, PT_T1(sp)
+>> +    REG_S t2, PT_T2(sp)
+>> +    REG_S t3, PT_T3(sp)
+>> +    REG_S t4, PT_T4(sp)
+>> +    REG_S t5, PT_T5(sp)
+>> +    REG_S t6, PT_T6(sp)
+>> +    REG_S gp, PT_GP(sp)
+>> +    REG_S a0, PT_A0(sp)
+>> +    REG_S a1, PT_A1(sp)
+>> +    REG_S a2, PT_A2(sp)
+>> +    REG_S a3, PT_A3(sp)
+>> +    REG_S a4, PT_A4(sp)
+>> +    REG_S a5, PT_A5(sp)
+>> +
+>> +    /* Retrieve entry sp */
+>> +    REG_L a4, SSE_REG_EVT_TMP(a7)
+>> +    /* Save CSRs */
+>> +    csrr a0, CSR_EPC
+>> +    csrr a1, CSR_SSTATUS
+>> +    csrr a2, CSR_STVAL
+>> +    csrr a3, CSR_SCAUSE
+>> +
+>> +    REG_S a0, PT_EPC(sp)
+>> +    REG_S a1, PT_STATUS(sp)
+>> +    REG_S a2, PT_BADADDR(sp)
+>> +    REG_S a3, PT_CAUSE(sp)
+>> +    REG_S a4, PT_SP(sp)
+>> +
+>> +    /* Disable user memory access and floating/vector computing */
+>> +    li t0, SR_SUM | SR_FS_VS
+>> +    csrc CSR_STATUS, t0
+>> +
+>> +    load_global_pointer
+>> +    scs_load_sse_stack a7
+>> +
+>> +    /* Restore current task struct from __sse_entry_task */
+>> +    li t1, ASM_NR_CPUS
+>> +    mv t3, zero
+> 
+> 
+> t1 is only used in find_hart_id_slowpath and shouldn't we use the real
+> number of present cpus instead of NR_CPUS?
+
+Indeed, that should be moved to the slow path which iterates over
+hart_id_to_cpu_map. This array is sized based on NR_CPUS which is why I
+use NR_CPUS rather than loading some other variable with the count opf
+onlines cpus. Moreover, the slowpath should never loop up to NR_CPUS
+since the SBI must passed a valid hartid index.
+
+> 
+> t3 is clobbered by cpu_id below, is that correct?
+
+In case of !SMP it is kept to zero. But I'll move that in a else below.
+
+> 
+> 
+>> +
+>> +#ifdef CONFIG_SMP
+>> +    REG_L t4, SSE_REG_HART_ID(a7)
+>> +    REG_L t3, SSE_REG_CPU_ID(a7)
+> 
+> 
+> hart_id and cpu_id are "unsigned int", not xlen-wide fields so you must
+> use lw here, not REG_L (a lot of bugs lately on the usage of this macro).
+
+Ouch, thanks for catching that.
+
+> 
+> 
+>> +
+>> +    bne t4, a6, .Lfind_hart_id_slowpath
+>> +
+>> +.Lcpu_id_found:
+>> +#endif
+>> +    asm_per_cpu_with_cpu t2 __sse_entry_task t1 t3
+>> +    REG_L tp, 0(t2)
+>> +
+>> +    mv a1, sp /* pt_regs on stack */
+>> +
+>> +    /*
+>> +     * Save sscratch for restoration since we might have interrupted the
+>> +     * kernel in early exception path and thus, we don't know the
+>> content of
+>> +     * sscratch.
+>> +     */
+>> +    csrr s4, CSR_SSCRATCH
+>> +    /* In-kernel scratch is 0 */
+>> +    csrw CSR_SCRATCH, x0
+> 
+> 
+> csrrw s4, CSR_SSCRATCH, x0 instead?
+
+Ah yeah.
+
+Thanks !
+
+Clément
+
+> 
+> 
+>> +
+>> +    mv a0, a7
+>> +
+>> +    call do_sse
+>> +
+>> +    csrw CSR_SSCRATCH, s4
+>> +
+>> +    REG_L a0, PT_STATUS(sp)
+>> +    REG_L a1, PT_EPC(sp)
+>> +    REG_L a2, PT_BADADDR(sp)
+>> +    REG_L a3, PT_CAUSE(sp)
+>> +    csrw CSR_SSTATUS, a0
+>> +    csrw CSR_EPC, a1
+>> +    csrw CSR_STVAL, a2
+>> +    csrw CSR_SCAUSE, a3
+>> +
+>> +    REG_L ra, PT_RA(sp)
+>> +    REG_L s0, PT_S0(sp)
+>> +    REG_L s1, PT_S1(sp)
+>> +    REG_L s2, PT_S2(sp)
+>> +    REG_L s3, PT_S3(sp)
+>> +    REG_L s4, PT_S4(sp)
+>> +    REG_L s5, PT_S5(sp)
+>> +    REG_L s6, PT_S6(sp)
+>> +    REG_L s7, PT_S7(sp)
+>> +    REG_L s8, PT_S8(sp)
+>> +    REG_L s9, PT_S9(sp)
+>> +    REG_L s10, PT_S10(sp)
+>> +    REG_L s11, PT_S11(sp)
+>> +    REG_L tp, PT_TP(sp)
+>> +    REG_L t0, PT_T0(sp)
+>> +    REG_L t1, PT_T1(sp)
+>> +    REG_L t2, PT_T2(sp)
+>> +    REG_L t3, PT_T3(sp)
+>> +    REG_L t4, PT_T4(sp)
+>> +    REG_L t5, PT_T5(sp)
+>> +    REG_L t6, PT_T6(sp)
+>> +    REG_L gp, PT_GP(sp)
+>> +    REG_L a0, PT_A0(sp)
+>> +    REG_L a1, PT_A1(sp)
+>> +    REG_L a2, PT_A2(sp)
+>> +    REG_L a3, PT_A3(sp)
+>> +    REG_L a4, PT_A4(sp)
+>> +    REG_L a5, PT_A5(sp)
+>> +
+>> +    REG_L sp, PT_SP(sp)
+>> +
+>> +    li a7, SBI_EXT_SSE
+>> +    li a6, SBI_SSE_EVENT_COMPLETE
+>> +    ecall
+>> +
+>> +#ifdef CONFIG_SMP
+>> +.Lfind_hart_id_slowpath:
+>> +
+>> +/* Slowpath to find the CPU id associated to the hart id */
+>> +la t0, __cpuid_to_hartid_map
+> 
+> 
+> ^ Missing tab
+> 
+> 
+>> +
+>> +.Lhart_id_loop:
+>> +    REG_L t2, 0(t0)
+>> +    beq t2, a6, .Lcpu_id_found
+>> +
+>> +    /* Increment pointer and CPU number */
+>> +    addi t3, t3, 1
+>> +    addi t0, t0, RISCV_SZPTR
+>> +    bltu t3, t1, .Lhart_id_loop
+>> +
+>> +    /*
+>> +     * This should never happen since we expect the hart_id to match one
+>> +     * of our CPU, but better be safe than sorry
+>> +     */
+>> +    la tp, init_task
+>> +    la a0, sse_hart_id_panic_string
+>> +    la t0, panic
+>> +    jalr t0
+>> +
+> 
+> This newline is not needed ^
+> 
+>> +#endif
+>> +
+>> +SYM_CODE_END(handle_sse)
+>> +
+>> +SYM_DATA_START_LOCAL(sse_hart_id_panic_string)
+>> +    .ascii "Unable to match hart_id with cpu\0"
+>> +SYM_DATA_END(sse_hart_id_panic_string)
+> 
+> 
+> Thanks,
+> 
+> Alex
+> 
 
 
