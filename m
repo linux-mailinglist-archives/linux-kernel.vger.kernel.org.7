@@ -1,131 +1,114 @@
-Return-Path: <linux-kernel+bounces-766924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FB9B24CCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:06:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CDFB24CCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D032E18833B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9645872311D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9972FF156;
-	Wed, 13 Aug 2025 14:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I3u5d4XV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BPoRvRPO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B1C2FF16C;
+	Wed, 13 Aug 2025 14:58:07 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4002FE583;
-	Wed, 13 Aug 2025 14:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5962FE59E;
+	Wed, 13 Aug 2025 14:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097081; cv=none; b=X2SJh83KFt3yBu8uKs72iDb1MZzmSJUcosCv8ilJkIbrXQOR3+SLL1R1SJzkcQxlk05Y+aDCEcfCQYWQ145ndTvJnCq7ygUpIaNeTNcvKv03m3mVHt5o8eo4q3kO6BH7/XwvUMDILz+B6xSzfMgtAROuHeQ3sfKXrIdGw8RW1fw=
+	t=1755097087; cv=none; b=gq/cl0sXESdyuc38Qgs1gx2IOGR2wsD3kLXhWBgKA5jvRdxn3F2jLxavpSUInLqr/9PXRs4okgvVqiClRJxBWQFlgWoSEKP58WLDeMpB6a0nrZhp5y+dGbFNhyRFoxKVSb47AJJulKj1UtUrZ2zEbXjLOv5mbpUOsgqpOFi73vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097081; c=relaxed/simple;
-	bh=I2IWMtoFl5keplxHSLJtItCr7nzwxIzEBEtLkTKoLhc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k3+e1CZGAVyTv13iG1aEhHSGGlzuskxEq0oP/gQw4smr2B8iZInxLFSw9GEwUmOdBpalRd5Cuz2MrN79mOL5EAQyShnXkRo1f/V3duuoN63zDWDxmb7fKG+QR5nNJMWoVOIyzOn4TAQ+jVauvuEET5tfwqKjUMpMqSsBGrhtPyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I3u5d4XV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BPoRvRPO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755097076;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=LK0fse9piQMDsNEawnHa17CJtTGb1+S7lgjGFKtF0tc=;
-	b=I3u5d4XVCbp9sJAiqzUxxnN8jogvVz330rmXlvPc4EIs9kOtcf3Mj8uSjIxg1fRTrbwecl
-	TMhr5g/y26FthJ72gtEwrU4u6dRhFhPmFvZEuofvCR2S34BZx0XaO71/N7GdY3Si7KdKQH
-	rRll7+2m0QLENvmItC7EZWe2cT/j1aiQ6gFxiMmD1YFmNrWvCltHacGpPwgXO0KxHf97IA
-	wynDG8BsBzIwHDNhNCP7ES+PQV4KCfRw73ymS0am7NjJRjrB20+Ua//P3TMmK8Xia9SQNY
-	/xlAJETgVH3RXlHC8LNh3uYz9R0F8OR6g5b5Bwckh4QWwwVqXxslL1lpiee33Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755097076;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=LK0fse9piQMDsNEawnHa17CJtTGb1+S7lgjGFKtF0tc=;
-	b=BPoRvRPOD4TmXUa3bcE7pvCwZh4VhvmvEvaz/Zod57Zu5kVP4MdtmFgc2nUPCdQq1DcUDv
-	jEKTQlAF2z04ZwDw==
-To: linux-mm@kvack.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko
- <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, Shakeel
- Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- cgroups@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] memcg: Optimize exit to user space
-Date: Wed, 13 Aug 2025 16:57:55 +0200
-Message-ID: <87tt2b6zgs.ffs@tglx>
+	s=arc-20240116; t=1755097087; c=relaxed/simple;
+	bh=m1J3TF1MO84jIxVJ7FCYASTbO1gmPS/TD7OlvLJ5QQs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f+913Lk03WjPPpjfK3TIta9ee9nN7sg0CVc+wJHNHZ1uAgypPZDWxMFjfIAjx7REHX3Ix96cj5EXjXyC7SPcEVJsIC9FWYvvnEJBXNLLCjBISIGNWrFyJxozx1Ea59IrN2zhsKsghRqEVXa9LBzyB+3iwJQR72dWFAVZ06ANLa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2BHt69W4z6G9kQ;
+	Wed, 13 Aug 2025 22:55:22 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E82F01404C4;
+	Wed, 13 Aug 2025 22:58:03 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 16:58:03 +0200
+Date: Wed, 13 Aug 2025 15:58:02 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
+Subject: Re: [PATCH V2 07/20] nvdimm/namespace_label: Update namespace
+ init_labels and its region_uuid
+Message-ID: <20250813155802.00003f3d@huawei.com>
+In-Reply-To: <20250730121209.303202-8-s.neeraj@samsung.com>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121231epcas5p2c12cb2b4914279d1f1c93e56a32c3908@epcas5p2.samsung.com>
+	<20250730121209.303202-8-s.neeraj@samsung.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-memcg uses TIF_NOTIFY_RESUME to handle reclaiming on exit to user
-space. TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is utilized by
-other entities as well.
+On Wed, 30 Jul 2025 17:41:56 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-This results in a unconditional mem_cgroup_handle_over_high() call for
-every invocation of resume_user_mode_work(), which is a pointless
-exercise as most of the time there is no reclaim work to do.
+> nd_mapping->labels maintains the list of labels present into LSA.
+> init_labels() prepares this list while adding new label into LSA
+> and updates nd_mapping->labels accordingly. During cxl region
+> creation nd_mapping->labels list and LSA was updated with one
+> region label. Therefore during new namespace label creation
+> pre-include the previously created region label, so increase
+> num_labels count by 1.
+> 
+> Also updated nsl_set_region_uuid with region uuid with which
+> namespace is associated with.
 
-Especially since RSEQ is used by glibc, TIF_NOTIFY_RESUME is raised
-quite frequently and the empty calls show up in exit path profiling.
+Any reason these are in the same patch?  I'd like to have
+seen a bit more on why this 'Also' change is here and a separate
+patch might make that easier to see.
 
-Optimize this by doing a quick check of the reclaim condition before
-invoking it.
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/nvdimm/label.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index be18278d6cea..fd02b557612e 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -957,7 +957,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
+>  	nsl_set_slot(ndd, nd_label, slot);
+>  	nsl_set_alignment(ndd, nd_label, 0);
+>  	nsl_set_type_guid(ndd, nd_label, &nd_set->type_guid);
+> -	nsl_set_region_uuid(ndd, nd_label, NULL);
+> +	nsl_set_region_uuid(ndd, nd_label, &nd_set->uuid);
+>  	nsl_set_claim_class(ndd, nd_label, ndns->claim_class);
+>  	nsl_calculate_checksum(ndd, nd_label);
+>  	nd_dbg_dpa(nd_region, ndd, res, "\n");
+> @@ -1129,7 +1129,8 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  				count++;
+>  		WARN_ON_ONCE(!count);
+>  
+> -		rc = init_labels(nd_mapping, count);
+> +		/* Adding 1 to pre include the already added region label */
+> +		rc = init_labels(nd_mapping, count + 1);
+>  		if (rc < 0)
+>  			return rc;
+>  
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Muchun Song <muchun.song@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- include/linux/memcontrol.h |    8 +++++++-
- mm/memcontrol.c            |    4 ++--
- 2 files changed, 9 insertions(+), 3 deletions(-)
-
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -900,7 +900,13 @@ unsigned long mem_cgroup_get_zone_lru_si
- 	return READ_ONCE(mz->lru_zone_size[zone_idx][lru]);
- }
- 
--void mem_cgroup_handle_over_high(gfp_t gfp_mask);
-+void __mem_cgroup_handle_over_high(gfp_t gfp_mask);
-+
-+static inline void mem_cgroup_handle_over_high(gfp_t gfp_mask)
-+{
-+	if (unlikely(current->memcg_nr_pages_over_high))
-+		__mem_cgroup_handle_over_high(gfp_mask);
-+}
- 
- unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
- 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2203,7 +2203,7 @@ static unsigned long calculate_high_dela
-  * try_charge() (context permitting), as well as from the userland
-  * return path where reclaim is always able to block.
-  */
--void mem_cgroup_handle_over_high(gfp_t gfp_mask)
-+void __mem_cgroup_handle_over_high(gfp_t gfp_mask)
- {
- 	unsigned long penalty_jiffies;
- 	unsigned long pflags;
-@@ -2486,7 +2486,7 @@ static int try_charge_memcg(struct mem_c
- 	if (current->memcg_nr_pages_over_high > MEMCG_CHARGE_BATCH &&
- 	    !(current->flags & PF_MEMALLOC) &&
- 	    gfpflags_allow_blocking(gfp_mask))
--		mem_cgroup_handle_over_high(gfp_mask);
-+		__mem_cgroup_handle_over_high(gfp_mask);
- 	return 0;
- }
- 
 
