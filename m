@@ -1,187 +1,215 @@
-Return-Path: <linux-kernel+bounces-765735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF95B23D9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:11:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 305D0B23DA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939B21AA7DA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406BD3B9928
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93BE16FF44;
-	Wed, 13 Aug 2025 01:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA78E188A3A;
+	Wed, 13 Aug 2025 01:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="tybRA9pJ"
-Received: from smtp153-170.sina.com.cn (smtp153-170.sina.com.cn [61.135.153.170])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lFnuuemf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF1E8634C
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92194C92;
+	Wed, 13 Aug 2025 01:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755047454; cv=none; b=fu6pDCL3FGWOp60hJD4nwUZWwFGbHRqoD1Sd7zPm+7H83Y8Zpqs4OHRMAbei952Py3ttsGtaRC/i20iAh69JKjzvt/Zzv28YETqH8/chSZkqgaWmiSnQPnWwWPc3kOCd+Jekc3pG6KDGkMOP0kwg9bik/EURag/MEHe8j3zBpx4=
+	t=1755047526; cv=none; b=JkTH8AM7hZySScDjgNumU8XaCSrmxjRrLgn3pskOhy4+IE8NL5KyP1FwhLkd8vCNqYBWxCv86PPJVFV+QMi1SQCRD5jrur5qBRnUrt8QmiC34ciNVKnvd7YTWcU3/YUbrxXicIbiUONqW9NEgfnvqOuRVE6NECBudUP1XVE+Rqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755047454; c=relaxed/simple;
-	bh=t6I4ozczFHLGh3H3oHM3NAMy8Ot3L6g8vxA5gIX1ne4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jl6HRqZULU5fuTyz6AP76Kj/GQzP6uepB2FM20ExU1sQ88hrgzLxwUK1oIU2GsenSosFoP1wq2nbyP4hiAbV8Ff1V9WtdoCamnXFVue6d9JKMpIWpH1l8YwM7JhT9Z4j1mUNRUrXL1Ei7wCLV+prARloq86aL9MPmt5+0g9uMUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=tybRA9pJ; arc=none smtp.client-ip=61.135.153.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755047445;
-	bh=Vb8Ss+6aJkY35s5dpOku2pEFwVYiDG36i7D8ed8WvXw=;
-	h=From:Subject:Date:Message-ID;
-	b=tybRA9pJeCdXQybBVAx6fptJZUPzTyMQROs1qPZkzt+EDaKsglX/naabDAmbg1coo
-	 8pJmslLoiYU1WLFz+krEM3xJz4vS1Yp2W53rLh/jAg3/GoZLzsdiC1CtOMJ5yI7SO/
-	 QmOAQp9S+MNvwkzmbD+SFJJlSDok/0mQU2Yq3eBg=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 689BE608000016E3; Wed, 13 Aug 2025 09:10:34 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5552836292173
-X-SMAIL-UIID: C0287501DA404E9EBE000C5726F1E6CE-20250813-091034-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+8aa80c6232008f7b957d@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] BUG: unable to handle kernel paging request in nsim_queue_free
-Date: Wed, 13 Aug 2025 09:10:22 +0800
-Message-ID: <20250813011023.4357-1-hdanton@sina.com>
-In-Reply-To: <689b1044.050a0220.7f033.011b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1755047526; c=relaxed/simple;
+	bh=S0gigUqmgRJCUqMvDbhteuiG2iFm4HenjGfH8xwwguw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=shdOz+9pybVgFg2BnbQ5+k2jH9opkCvy9E9G9pSkQds00H28qlhEPupUUSV0oBdoxRef4beScG3h8wU9fW7WrIpOjVshhKltEXILHCzz+zeGBiEnLvpielJlBPmMe4hgIIrsCRCev5t659ff62HPtlAjcxmSL/maeivo0uONHm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lFnuuemf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755047514;
+	bh=gAWKRyEL+/Tiia1fu4YyHdUUo9jpnANXpvBktpAOSPs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lFnuuemfleU9qAq1ZIo+LK9UL26SCpovfLckVgBFG6SctXdL7fQNLQn5NIztNxob5
+	 5WVeBsKKd4C72PKI6oPa8D5g/KOe4jA3/vO+RFADI1Hu45N4haKGQFQmuxDoRKs5CT
+	 d/EhSv73B6DQgVv482rfoxOpYzzgaSh9085oKMbe8XSAIelrIrQWWghrthkdtkk/CW
+	 AVKUy47EqT8Ozjp2zruGoDfTf6gZnvXngxFZvXacmXKPHvNtwngKziryQ7SONosLKI
+	 yYnQ5FGu9ziBqrVdKnSKxpexx4/u36GcQ77zMUQiVAhx/XCbffrjD6P3ToptAo8GYL
+	 +ByflAu6C49sw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c1r1h65Qvz4x43;
+	Wed, 13 Aug 2025 11:11:52 +1000 (AEST)
+Date: Wed, 13 Aug 2025 11:11:51 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>, Simona Vetter
+ <simona.vetter@ffwll.ch>
+Cc: Danilo Krummrich <dakr@kernel.org>, Vitaly Wool
+ <vitaly.wool@konsulko.se>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the mm-unstable tree with the
+ drm-misc-fixes tree
+Message-ID: <20250813111151.6a261ca1@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/THJw_ljfmIy6_QDMWDq2NBc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-> Date: Tue, 12 Aug 2025 02:58:28 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    53e760d89498 Merge tag 'nfsd-6.17-1' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16c415a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8aa80c6232008f7b957d
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=151be9a2580000
+--Sig_/THJw_ljfmIy6_QDMWDq2NBc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-#syz test
+Hi all,
 
---- x/drivers/net/netdevsim/netdev.c
-+++ y/drivers/net/netdevsim/netdev.c
-@@ -709,10 +709,14 @@ static struct nsim_rq *nsim_queue_alloc(
- 
- static void nsim_queue_free(struct net_device *dev, struct nsim_rq *rq)
- {
-+	struct netdevsim *ns = netdev_priv(dev);
-+
- 	hrtimer_cancel(&rq->napi_timer);
--	local_bh_disable();
--	dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
--	local_bh_enable();
-+	if (ns->registed) {
-+		local_bh_disable();
-+		dev_dstats_rx_dropped_add(dev, rq->skb_queue.qlen);
-+		local_bh_enable();
-+	}
- 	skb_queue_purge_reason(&rq->skb_queue, SKB_DROP_REASON_QUEUE_PURGE);
- 	kfree(rq);
- }
-@@ -981,6 +985,7 @@ err_free_prev:
- 	while (i--)
- 		kfree(ns->rq[i]);
- 	kfree(ns->rq);
-+	ns->rq = NULL;
- 	return -ENOMEM;
- }
- 
-@@ -989,6 +994,8 @@ static void nsim_queue_uninit(struct net
- 	struct net_device *dev = ns->netdev;
- 	int i;
- 
-+	if (!ns->rq)
-+		return;
- 	for (i = 0; i < dev->num_rx_queues; i++)
- 		nsim_queue_free(dev, ns->rq[i]);
- 
-@@ -1001,6 +1008,7 @@ static int nsim_init_netdevsim(struct ne
- 	struct mock_phc *phc;
- 	int err;
- 
-+	ns->registed = 0;
- 	phc = mock_phc_create(&ns->nsim_bus_dev->dev);
- 	if (IS_ERR(phc))
- 		return PTR_ERR(phc);
-@@ -1038,6 +1046,7 @@ static int nsim_init_netdevsim(struct ne
- 							&ns->nn))
- 			ns->nb.notifier_call = NULL;
- 	}
-+	ns->registed = 1;
- 
- 	return 0;
- 
---- x/drivers/net/netdevsim/netdevsim.h
-+++ y/drivers/net/netdevsim/netdevsim.h
-@@ -106,6 +106,7 @@ struct netdevsim {
- 	struct mock_phc *phc;
- 	struct nsim_rq **rq;
- 
-+	int registed;
- 	int rq_reset_mode;
- 
- 	struct nsim_bus_dev *nsim_bus_dev;
---- x/net/ipv4/udp_tunnel_nic.c
-+++ y/net/ipv4/udp_tunnel_nic.c
-@@ -733,7 +733,8 @@ static void udp_tunnel_nic_device_sync_w
- 	struct udp_tunnel_nic *utn =
- 		container_of(work, struct udp_tunnel_nic, work);
- 
--	rtnl_lock();
-+	if (!rtnl_trylock())
-+		return;
- 	mutex_lock(&utn->lock);
- 
- 	utn->work_pending = 0;
-@@ -782,6 +783,8 @@ static void udp_tunnel_nic_free(struct u
- 
- 	for (i = 0; i < utn->n_tables; i++)
- 		kfree(utn->entries[i]);
-+	disable_work(&utn->work);
-+	cancel_work_sync(&utn->work);
- 	kfree(utn);
- }
- 
-@@ -901,12 +904,6 @@ udp_tunnel_nic_unregister(struct net_dev
- 	udp_tunnel_nic_flush(dev, utn);
- 	udp_tunnel_nic_unlock(dev);
- 
--	/* Wait for the work to be done using the state, netdev core will
--	 * retry unregister until we give up our reference on this device.
--	 */
--	if (utn->work_pending)
--		return;
--
- 	udp_tunnel_nic_free(utn);
- release_dev:
- 	dev->udp_tunnel_nic = NULL;
-@@ -940,7 +937,7 @@ udp_tunnel_nic_netdevice_event(struct no
- 
- 	if (event == NETDEV_UNREGISTER) {
- 		udp_tunnel_nic_unregister(dev, utn);
--		return NOTIFY_OK;
-+		return NOTIFY_DONE;
- 	}
- 
- 	/* All other events only matter if NIC has to be programmed open */
---
+Today's linux-next merge of the mm-unstable tree got a conflict in:
+
+  rust/kernel/alloc/allocator.rs
+
+between commit:
+
+  fde578c86281 ("rust: alloc: replace aligned_size() with Kmalloc::aligned_=
+layout()")
+
+from the drm-misc-fixes tree and commit:
+
+  cda097b07bce ("rust: support large alignments in allocations")
+
+from the mm-unstable tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc rust/kernel/alloc/allocator.rs
+index 2692cf90c948,63f271624428..000000000000
+--- a/rust/kernel/alloc/allocator.rs
++++ b/rust/kernel/alloc/allocator.rs
+@@@ -43,11 -42,28 +42,17 @@@ pub struct Vmalloc
+  /// For more details see [self].
+  pub struct KVmalloc;
+ =20
+ -/// Returns a proper size to alloc a new object aligned to `new_layout`'s=
+ alignment.
+ -fn aligned_size(new_layout: Layout) -> usize {
+ -    // Customized layouts from `Layout::from_size_align()` can have size =
+< align, so pad first.
+ -    let layout =3D new_layout.pad_to_align();
+ -
+ -    // Note that `layout.size()` (after padding) is guaranteed to be a mu=
+ltiple of `layout.align()`
+ -    // which together with the slab guarantees means the `krealloc` will =
+return a properly aligned
+ -    // object (see comments in `kmalloc()` for more information).
+ -    layout.size()
+ -}
+ -
+  /// # Invariants
+  ///
+- /// One of the following: `krealloc`, `vrealloc`, `kvrealloc`.
++ /// One of the following: `krealloc_node_align`, `vrealloc_node_align`, `=
+kvrealloc_node_align`.
+  struct ReallocFunc(
+-     unsafe extern "C" fn(*const crate::ffi::c_void, usize, u32) -> *mut c=
+rate::ffi::c_void,
++     unsafe extern "C" fn(
++         *const crate::ffi::c_void,
++         usize,
++         crate::ffi::c_ulong,
++         u32,
++         crate::ffi::c_int,
++     ) -> *mut crate::ffi::c_void,
+  );
+ =20
+  impl ReallocFunc {
+@@@ -76,8 -92,9 +81,9 @@@
+          layout: Layout,
+          old_layout: Layout,
+          flags: Flags,
++         nid: NumaNode,
+      ) -> Result<NonNull<[u8]>, AllocError> {
+ -        let size =3D aligned_size(layout);
+ +        let size =3D layout.size();
+          let ptr =3D match ptr {
+              Some(ptr) =3D> {
+                  if old_layout.size() =3D=3D 0 {
+@@@ -134,11 -140,10 +140,12 @@@ unsafe impl Allocator for Kmalloc=20
+          layout: Layout,
+          old_layout: Layout,
+          flags: Flags,
++         nid: NumaNode,
+      ) -> Result<NonNull<[u8]>, AllocError> {
+ +        let layout =3D Kmalloc::aligned_layout(layout);
+ +
+          // SAFETY: `ReallocFunc::call` has the same safety requirements a=
+s `Allocator::realloc`.
+-         unsafe { ReallocFunc::KREALLOC.call(ptr, layout, old_layout, flag=
+s) }
++         unsafe { ReallocFunc::KREALLOC.call(ptr, layout, old_layout, flag=
+s, nid) }
+      }
+  }
+ =20
+@@@ -177,19 -177,10 +179,14 @@@ unsafe impl Allocator for KVmalloc=20
+          layout: Layout,
+          old_layout: Layout,
+          flags: Flags,
++         nid: NumaNode,
+      ) -> Result<NonNull<[u8]>, AllocError> {
+ +        // `KVmalloc` may use the `Kmalloc` backend, hence we have to enf=
+orce a `Kmalloc`
+ +        // compatible layout.
+ +        let layout =3D Kmalloc::aligned_layout(layout);
+ +
+-         // TODO: Support alignments larger than PAGE_SIZE.
+-         if layout.align() > bindings::PAGE_SIZE {
+-             pr_warn!("KVmalloc does not support alignments larger than PA=
+GE_SIZE yet.\n");
+-             return Err(AllocError);
+-         }
+-=20
+          // SAFETY: If not `None`, `ptr` is guaranteed to point to valid m=
+emory, which was previously
+          // allocated with this `Allocator`.
+-         unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, fla=
+gs) }
++         unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, fla=
+gs, nid) }
+      }
+  }
+
+--Sig_/THJw_ljfmIy6_QDMWDq2NBc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmib5lcACgkQAVBC80lX
+0Gx5mgf9EZwkGr0JW0BfDMvjOnKHi8qtoXToiSdr0Xlg9SePZp8c6Y7Nr62jhlVz
+LCQyYVUaVNrAbnRKRe1AVwAzmsRZfebSYBjMKdRBM4X+f0F0vHaNsxa6CESieLcA
+JqZDDUkmz5VNvF3t2mG8A4VojPpEhfWX9cDApxGIarnjw7BjjQv8qw7VXawnXjK4
+2vRO0JiR0DujJo+UuK3RXn+S33yBFR4utsb5BdzDrBB6W/8x7xA9mJR/oCO3V+25
+7ypqpfFOXRGmuP7EFn2+7KAIHX86Vpf0TXkPVgMqKhD6l6t2WPNYTj/UkPkZtL1g
+nsgJ9hOa14OstNPhGygEgnchEFJj1w==
+=LP5i
+-----END PGP SIGNATURE-----
+
+--Sig_/THJw_ljfmIy6_QDMWDq2NBc--
 
