@@ -1,95 +1,85 @@
-Return-Path: <linux-kernel+bounces-767187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2888FB25043
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:56:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E6AB2519A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9661B68497F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:54:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2E915C1F9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ECC2DF68;
-	Wed, 13 Aug 2025 16:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B69305E2F;
+	Wed, 13 Aug 2025 17:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3r4VVIl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="MuvLHElZ"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDCA2066CE;
-	Wed, 13 Aug 2025 16:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139F7302CDF;
+	Wed, 13 Aug 2025 17:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755104041; cv=none; b=hiaYTBZ42g3pIOA0hm0v0bDDgVwxCMDjo6Tbw9I8Z08XWztxWyNK3ciO4OViv0XZLx3Er/tS/LrD86iaMTSXZdoonYKt2tZ+dfy02nfHUzPI95jrGc9VFdj43nq++HsyHRH/JaK1JzqXMEYRnwMKU+bJE7Qr8Xv32weIsw5KJMU=
+	t=1755104544; cv=none; b=U3Wzs3cE9hIoB4WC8HpNVbmRYKY5mRfJge4EIpGtBkiMMgp2KAjzyx9ziMZU+yFyXgGeCa2qKai/UfhSY5CDsfAFIr6GyiCUtNI3omnEUlFVsa0wyEFvwkaQIrxwECjq+xkZ7cUfED581P0tbZ2ahcvUIiUC4sESV9fVHRdJnV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755104041; c=relaxed/simple;
-	bh=02NLdfKncdfClMLv2zOa1DkVPQDraLI+iMf3m2mBtUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZH8zUuNYgKFeUxn705Fyvqg+gTooZAgpUuqTeVafMqLXQffxW0bQzbuZiXPPVTKOKGTCTBqJHyPs9/tiDVkVCWW2sLjbXx/sugo0p+vMhjqa0/PLBWUVCw88rRlCm7EOt1IERUY6YJKJOU7YpMH+eiSEM2yY3eVc9AJPBs4Piu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3r4VVIl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 021C3C4CEF1;
-	Wed, 13 Aug 2025 16:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755104041;
-	bh=02NLdfKncdfClMLv2zOa1DkVPQDraLI+iMf3m2mBtUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f3r4VVIl6icleNEroFt5+iAt9CwkHstZxpWsn/UadT+gt0c1mZ62yfxdQZTZrAMmv
-	 VzWotJvJCtBCpWkmtRimU9pghSnAzYYXhFVDp5xZrmR0BJtvgkKqmlVu9vXvpwlxnD
-	 S6MwuO8z1/yzlyOnNVU+s4I3FEKX/eBH6Ie0j4QgCRBOo9qEH65viCt3lvcMR95H5G
-	 yn1x9UslrK1v9zuzwxEjWTZX3yq5xSOjKTKnHpyOoE3U0fKgb+AzH8mgBaWfFoaBMX
-	 DSfm8OOYtqYEMSl0uB0q2cEWMYZ5LTXNXdpXZfY8WwZWnlg69AVgFy435xt4UY3xGy
-	 vJ8TPtOFR5bJw==
-Date: Wed, 13 Aug 2025 06:53:59 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, Jens Axboe <axboe@kernel.dk>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH] blkcg: Optimize exit to user space
-Message-ID: <aJzDJ3DfzUK_ntZR@slm.duckdns.org>
-References: <87qzxf6zde.ffs@tglx>
+	s=arc-20240116; t=1755104544; c=relaxed/simple;
+	bh=WGrKcUl/Wvx3TiCpmjIl2Pof2fd57towgC+IHdtL1ag=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QgHRfH4lH/h3Vvjf0OdK6xdMM/K2P7G9Qg+kDE2xFaWrAJ75imp798CrTr6C0X+EK9aOBYZGTW4wOHd5ECD/oiKUM/kMHaEjJcQqpZvksOh84UNwBJShv5wmVnGfbllIAT3XYiL8lvCh20C0IOuXcSSYT5kiq2eFIj5QIU3K8IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=MuvLHElZ; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1755104052;
+	bh=WGrKcUl/Wvx3TiCpmjIl2Pof2fd57towgC+IHdtL1ag=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=MuvLHElZGRDWFnCVT+NnlI4W1mHq8Ana3HPCeK9yoKM3itBo63t8EmK9V0Gjjig4N
+	 aDnFxVINYAGe8PT4NaDbWoR7XM9bSscicq8jYUqq/EAPxHPr7sLS/oWfJ+RQScdTJO
+	 x06fSt4M4hlFa/hNyjK4d/BfPPUfKxxh6torBlDk=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 88AB9401FB; Wed, 13 Aug 2025 09:54:12 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 87A7D4010E;
+	Wed, 13 Aug 2025 09:54:12 -0700 (PDT)
+Date: Wed, 13 Aug 2025 09:54:12 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Catalin Marinas <catalin.marinas@arm.com>, 
+    Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org, 
+    Linux-Arch <linux-arch@vger.kernel.org>, 
+    linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, 
+    Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Mark Rutland <mark.rutland@arm.com>, harisokn@amazon.com, 
+    Alexei Starovoitov <ast@kernel.org>, 
+    Kumar Kartikeya Dwivedi <memxor@gmail.com>, zhenglifeng1@huawei.com, 
+    xueshuai@linux.alibaba.com, Joao Martins <joao.m.martins@oracle.com>, 
+    Boris Ostrovsky <boris.ostrovsky@oracle.com>, 
+    Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, 
+    Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v3 1/5] asm-generic: barrier: Add
+ smp_cond_load_relaxed_timewait()
+In-Reply-To: <67b6b738-0f1c-4dd4-817d-95f55ec9272b@app.fastmail.com>
+Message-ID: <e4f4cc15-194a-5203-c9a8-c9cd0334a922@gentwo.org>
+References: <20250627044805.945491-1-ankur.a.arora@oracle.com> <20250627044805.945491-2-ankur.a.arora@oracle.com> <aJXWyxzkA3x61fKA@arm.com> <877bz98sqb.fsf@oracle.com> <aJy414YufthzC1nv@arm.com> <67b6b738-0f1c-4dd4-817d-95f55ec9272b@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87qzxf6zde.ffs@tglx>
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Aug 13, 2025 at 04:59:57PM +0200, Thomas Gleixner wrote:
-> blkcg uses TIF_NOTIFY_RESUME to handle throttling on exit to user
-> space. TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is utilized by
-> other entities as well.
-> 
-> This results in a unconditional blkcg_maybe_throttle_current() call for
-> every invocation of resume_user_mode_work(), which is a pointless exercise
-> as most of the time there is no throttling work to do.
-> 
-> Optimize this by doing a quick check of the throttling condition before
-> invoking it.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Josef Bacik <josef@toxicpanda.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-...
-> -void blkcg_maybe_throttle_current(void)
-> +void __blkcg_maybe_throttle_current(void)
->  {
->  	struct gendisk *disk = current->throttle_disk;
->  	struct blkcg *blkcg;
+On Wed, 13 Aug 2025, Arnd Bergmann wrote:
 
-A nit: __blkcg_maybe_throttle_current() ends up doing another NULL check.
-Maybe drop that? Other than that,
+> I think there is a reasonable chance that in the future we may want
+> to turn the event stream off on systems that support WFET, since that
+> is better for both low-power systems and virtual machines with CPU
+> overcommit.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+WFET is coming in with V9.something I believe so its good to be prepared
+and it will simplify the logic.
 
-Thanks.
-
--- 
-tejun
 
