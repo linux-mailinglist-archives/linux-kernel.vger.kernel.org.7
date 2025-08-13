@@ -1,200 +1,175 @@
-Return-Path: <linux-kernel+bounces-767246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F3BB251E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:18:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC31DB251A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9C39A07D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:12:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E46B97B0DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1FF2FF174;
-	Wed, 13 Aug 2025 17:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F71F303CB8;
+	Wed, 13 Aug 2025 17:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b0Fp/qNT"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rt6tv1c/"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346D9303C95;
-	Wed, 13 Aug 2025 17:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEE5303CAA
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755104916; cv=none; b=BuruKfqGoKR8/aDAdPsjVRZCBQtG5WZZuveDwdDYv6G1nWc49jR13XBkJL5lqN2A5zm0QWB5c3HXQbIgLH2YKDThUVW3qLjHII3T2LitEWd2dnipqLP5UOAVVJlWgC2S8ft+5MkDINkSFK2MWMPQlICWtip2NWNgLDR41CsS1kk=
+	t=1755104996; cv=none; b=UbdCIxrkH0BS8ZrESSQsxtoGTcrNHRWZn6f9VS8S1iwreHwj9lyXs33xWyhz2C5KdpcFKE++oECezVQciU/plF+47XKlVcEGTIvyHXaXvOI7r+1GcUPyCVyKnZXCSZGukNFzcrAfnDoJRGYzD/OZgT05LwhZYvax2LQLeo+1dmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755104916; c=relaxed/simple;
-	bh=xJeRrWUQX76AoRMTTqmxE3aohZSDfsAJ1LOzJ/NRqlo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DR7FGp2dvLS+7fH7xnZV0Wdkt3hrRJcF9daTeI1gdXO3zjCfgbMuLgOE2BjvbuH0uFMtfe5HrWCSrZ4COoUw7yW11ZN+/GZ0SUCl2k2VVClrwXxXtzsa4sl6sfmsCIagm7nwhyZhgl8GWvSz/QWY3fuXyeyb6veC+cM7KV7BlLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=b0Fp/qNT; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBFb24025093;
-	Wed, 13 Aug 2025 17:08:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=++097ZMnQ+6MhsbVK
-	0nfUKxQ9lpRaw6uDyOGWFXg2r8=; b=b0Fp/qNTToGs0m1odCWdUiCE3QC3/Llo9
-	Tppp+iPCMURVyjg1CmYsvOQrpzJMccCEceOOZeOT+BQ3+tqY2mJI7B6c42rxg4Da
-	eEPVs2SgHKX2TcRbDMzWIBB6cNYBhU/NNfyBF1zuBILdJBS5CFwEi0yJdBOuzZR0
-	VwPluwZmSLg+LJBQesdaWwiw04peXYN2FwvTvKCKGbHflACp2ZRAFYmgJRSgFyyJ
-	YzOl0Bono6YR93FG/osdtyF69OAERzNaUaS4a1+WXka39h2iLeb2iWrkTZFlK7nE
-	rFpgw5srTs8xC2gfNRLV5n78ipruoH4qN7ND3qwIUz2OAwNnFqOrg==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaaa0ry-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 17:08:32 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57DGKolU028647;
-	Wed, 13 Aug 2025 17:08:31 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ej5n8720-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 17:08:31 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57DH8TFx18547278
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Aug 2025 17:08:30 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E03C75805D;
-	Wed, 13 Aug 2025 17:08:29 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 10CCD5805A;
-	Wed, 13 Aug 2025 17:08:29 +0000 (GMT)
-Received: from IBM-D32RQW3.ibm.com (unknown [9.61.255.61])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 13 Aug 2025 17:08:28 +0000 (GMT)
-From: Farhan Ali <alifm@linux.ibm.com>
-To: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: schnelle@linux.ibm.com, mjrosato@linux.ibm.com, alifm@linux.ibm.com,
-        alex.williamson@redhat.com
-Subject: [PATCH v1 6/6] vfio: Allow error notification and recovery for ISM device
-Date: Wed, 13 Aug 2025 10:08:20 -0700
-Message-ID: <20250813170821.1115-7-alifm@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250813170821.1115-1-alifm@linux.ibm.com>
-References: <20250813170821.1115-1-alifm@linux.ibm.com>
+	s=arc-20240116; t=1755104996; c=relaxed/simple;
+	bh=2w7qJu2Qv1Ydyw5zQvgxifVtZudIr0cPBV2WnRQtutE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O/MGjCq0MhyILSAEomSExo6CnkjLshfYF9hEzuQosIFmIrbxDcHPndXIIamtWRy/eIAywmE9UasE2d4yBvd0zq6M4+X1hm0nFJiL4VxxFiBZ8lK1xtwfxAeNA1WdAkQSuiRoZEgR3N0CWVrmGafzG8NzaIRc1++GM3R1ihZfXYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rt6tv1c/; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e931c8594a9so19613276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:09:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755104993; x=1755709793; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AcsTss5oLC/ljy6iAHysAb6eyZj8eVj9r8dExzYu/U0=;
+        b=Rt6tv1c/ht77Wfe/7ZxyBPYWsE+zarVC0qGe6EhOCJXksbNXmgHx9oMPHW44mhHAOg
+         eDqKYtW5SLXMqmma+tK+DCrFEHe7QyoHgTvunHEph1vppELil60nttYCOAz4HXOB6g0D
+         V8bi5Kl4kvwTd67yUEyGzQFQJ7G/TKf7u5ZcQpJsgpeUrceNuXte/mxp4zy0h8KmGcSv
+         PUrVa95s1hI6qfeyOnJBG9Gqei87C+CXhJSVnX2MaKZf2OT2oRG+VOlUAqqo6f4E0pCg
+         jy1yfGImN6iFVUElBfpSQmdH6ruxX7i81+F0x9i/cgxPjq0WP12XQz58NLEdyR/pV1qG
+         htLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755104993; x=1755709793;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AcsTss5oLC/ljy6iAHysAb6eyZj8eVj9r8dExzYu/U0=;
+        b=eseNzzCAQkJYm27yKZcjrsCkBFOlS4ifOoswAZejlKkEHmMqYE1hKeH8uNu4/O1uoV
+         ClizURwGtzuBcgtJiipLs+ikqJE180pBNuaaQa//SItkjOEiSOsSPZysc6gGLWeS6XFz
+         wtHslnLBz3GpKF37O0mzqK4rCCMzTsTzYyZsPWHHgsrXh0ZwumgPZ9oNVoTf9SE0qsr8
+         JtVoR0jxrI1tp0bVMGvA1/NUtpznTg1PnvtI5gxANlcGqkUgsVzHMlMp7EPYJY7uSdnn
+         VQPd3a3LKbSssGEWvQ6BJSQuzy0ss+8BZFCH7lPpMLmaA3ROMHWk/cWny49gMHs+BjEJ
+         gN4Q==
+X-Gm-Message-State: AOJu0YwnK/AWjjuC8qfEYcRLNklmIjNhM7+SeNqrR+yP3FS12yoE5L/P
+	z50jdah4z0pduIj1YH/SgeRcMhcErs3DJBJaMlcfXwRmP6w6fbCCa5KUP7dR15kGQ8r6Blg+UmB
+	tPqwCPdkHgaWu+Dog/oYE9XsHYFEf7jQ=
+X-Gm-Gg: ASbGncuXDnMsZFY0TIlNGoIzT7QGbi1YwUuat5UmzR3xgcy9ywKI0s+AjoHzx1In3d2
+	3geDz9GJ8XcZUI7WBywrHOJZvtkhG53d9/+8jvPVdwUbOha9Bgsz6O6x26taEKVBsdt3Kpia+Em
+	fag78VKvTjjusIfZ0ul0iokUF15YHAHxJ6k2mxuDOyPiEEBnZlNQWS4F3MYruEEqmzPHWtCfcWt
+	AfQGw==
+X-Google-Smtp-Source: AGHT+IGmKencFbOxswxXdRpsztzCwJ5AH/Th4B5DtSHjMq/d+ZVi7MSaKvTgXp67Nz9CocBaNryTAPkYWxX/xifnNYk=
+X-Received: by 2002:a05:690c:6f0f:b0:71c:20fa:7b59 with SMTP id
+ 00721157ae682-71d4e3fba2emr24082237b3.2.1755104993287; Wed, 13 Aug 2025
+ 10:09:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=KPRaDEFo c=1 sm=1 tr=0 ts=689cc690 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=J_xkUs42lnTNXtJNwgwA:9
-X-Proofpoint-ORIG-GUID: kTGjPGO53TDTmXq7EoQmN7QUWz69COI6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX18FvEKhl1O2Q
- 9oWjALYTTUhlauptBeuq/uT3sRfe/tFF2zYUOp4WgerJH7eYBZXz7A+vKBfuhSlQ61bVHfOdWaa
- ELtAwTFLId85SCqxy5C9Hs/KJmEPVBh7UyvaxbiYQyp0j5nCCWflMNk/RwgahcVANmiWBaoXTpp
- eZx7lCJIXIMN5DwrYeI/0sSJXs0CxYJdfnWdUFFSEGGKt6CnoFTDDe/16qzaF+qhMgrM0eBYWJb
- GOqLLG2IEpei40m31StbC2xHw3kjCRjkYdowZELdeYrI54iOZ7udfyvemz6rxS0avDXnXfnnhyM
- +kiOOYauStUWW2F4/kBGDXN6oSdKDqzVLNYO9t6r6MwrioDOVsUJNHiBbX0DaKP0iIcpqXIgpfb
- 2axUG9SQ
-X-Proofpoint-GUID: kTGjPGO53TDTmXq7EoQmN7QUWz69COI6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 spamscore=0 clxscore=1015 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120224
+References: <20250813155941.014821755@linutronix.de> <20250813162824.228728594@linutronix.de>
+In-Reply-To: <20250813162824.228728594@linutronix.de>
+From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
+Date: Wed, 13 Aug 2025 21:09:41 +0400
+X-Gm-Features: Ac12FXxVkaQaA9v8gzDUdKu6VdxVM6pLlRvzvD4NCfG3y4EgngmaRktwTRh90AQ
+Message-ID: <CAE7dp2pxxKWdNJkwZZDw2GmR6vH8YVMGcTm55u1pxVygaeNydw@mail.gmail.com>
+Subject: Re: [patch 07/11] entry: Cleanup header
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson <mjeanson@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Wei Liu <wei.liu@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-VFIO allows error recovery and notification for devices that
-are PCIe (and thus AER) capable. But for PCI devices on IBM
-s390 error recovery involves platform firmware and
-notification to operating system is done by architecture
-specific way. The Internal Shared Memory(ISM) device is a legacy
-PCI device (so not PCIe capable), but can still be recovered
-when notified of an error.
+Typo in kernel-doc:
+In irq-entry-common.h the doc line reads Pointer to currents pt_regs =E2=80=
+=94
+should be Pointer to current's pt_regs (or Pointer to current->pt_regs
+depending on local style).
 
-Relax the PCIe only requirement for ISM devices, so passthrough
-ISM devices can be notified and recovered on error.
 
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
----
- drivers/vfio/pci/vfio_pci_core.c  | 18 ++++++++++++++++--
- drivers/vfio/pci/vfio_pci_intrs.c |  2 +-
- drivers/vfio/pci/vfio_pci_priv.h  |  3 +++
- 3 files changed, 20 insertions(+), 3 deletions(-)
+ Stray blank/trailing whitespace:
+In entry-common.h there is an extra blank line inserted after the
+ARCH_SYSCALL_WORK_ENTER) macro continuation =E2=80=94 remove the stray blan=
+k
+to avoid style/noise.
 
-diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-index 7220a22135a9..1faab80139c6 100644
---- a/drivers/vfio/pci/vfio_pci_core.c
-+++ b/drivers/vfio/pci/vfio_pci_core.c
-@@ -723,6 +723,20 @@ void vfio_pci_core_finish_enable(struct vfio_pci_core_device *vdev)
- }
- EXPORT_SYMBOL_GPL(vfio_pci_core_finish_enable);
- 
-+bool vfio_pci_device_can_recover(struct vfio_pci_core_device *vdev)
-+{
-+	struct pci_dev *pdev = vdev->pdev;
-+
-+	if (pci_is_pcie(pdev))
-+		return true;
-+
-+	if (pdev->vendor == PCI_VENDOR_ID_IBM &&
-+			pdev->device == PCI_DEVICE_ID_IBM_ISM)
-+		return true;
-+
-+	return false;
-+}
-+
- static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_type)
- {
- 	if (irq_type == VFIO_PCI_INTX_IRQ_INDEX) {
-@@ -749,7 +763,7 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
- 			return (flags & PCI_MSIX_FLAGS_QSIZE) + 1;
- 		}
- 	} else if (irq_type == VFIO_PCI_ERR_IRQ_INDEX) {
--		if (pci_is_pcie(vdev->pdev))
-+		if (vfio_pci_device_can_recover(vdev))
- 			return 1;
- 	} else if (irq_type == VFIO_PCI_REQ_IRQ_INDEX) {
- 		return 1;
-@@ -1150,7 +1164,7 @@ static int vfio_pci_ioctl_get_irq_info(struct vfio_pci_core_device *vdev,
- 	case VFIO_PCI_REQ_IRQ_INDEX:
- 		break;
- 	case VFIO_PCI_ERR_IRQ_INDEX:
--		if (pci_is_pcie(vdev->pdev))
-+		if (vfio_pci_device_can_recover(vdev))
- 			break;
- 		fallthrough;
- 	default:
-diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-index 123298a4dc8f..f5384086ac45 100644
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -838,7 +838,7 @@ int vfio_pci_set_irqs_ioctl(struct vfio_pci_core_device *vdev, uint32_t flags,
- 	case VFIO_PCI_ERR_IRQ_INDEX:
- 		switch (flags & VFIO_IRQ_SET_ACTION_TYPE_MASK) {
- 		case VFIO_IRQ_SET_ACTION_TRIGGER:
--			if (pci_is_pcie(vdev->pdev))
-+			if (vfio_pci_device_can_recover(vdev))
- 				func = vfio_pci_set_err_trigger;
- 			break;
- 		}
-diff --git a/drivers/vfio/pci/vfio_pci_priv.h b/drivers/vfio/pci/vfio_pci_priv.h
-index 5288577b3170..93c1e29fbbbb 100644
---- a/drivers/vfio/pci/vfio_pci_priv.h
-+++ b/drivers/vfio/pci/vfio_pci_priv.h
-@@ -36,6 +36,9 @@ ssize_t vfio_pci_config_rw(struct vfio_pci_core_device *vdev, char __user *buf,
- ssize_t vfio_pci_bar_rw(struct vfio_pci_core_device *vdev, char __user *buf,
- 			size_t count, loff_t *ppos, bool iswrite);
- 
-+bool vfio_pci_device_can_recover(struct vfio_pci_core_device *vdev);
-+
-+
- #ifdef CONFIG_VFIO_PCI_VGA
- ssize_t vfio_pci_vga_rw(struct vfio_pci_core_device *vdev, char __user *buf,
- 			size_t count, loff_t *ppos, bool iswrite);
--- 
-2.43.0
-
+On Wed, Aug 13, 2025 at 8:39=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> Cleanup the include ordering, kernel-doc and other trivialities before
+> making further changes.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> ---
+>  include/linux/entry-common.h     |    8 ++++----
+>  include/linux/irq-entry-common.h |    2 ++
+>  2 files changed, 6 insertions(+), 4 deletions(-)
+>
+> --- a/include/linux/entry-common.h
+> +++ b/include/linux/entry-common.h
+> @@ -3,11 +3,11 @@
+>  #define __LINUX_ENTRYCOMMON_H
+>
+>  #include <linux/irq-entry-common.h>
+> +#include <linux/livepatch.h>
+>  #include <linux/ptrace.h>
+> +#include <linux/resume_user_mode.h>
+>  #include <linux/seccomp.h>
+>  #include <linux/sched.h>
+> -#include <linux/livepatch.h>
+> -#include <linux/resume_user_mode.h>
+>
+>  #include <asm/entry-common.h>
+>  #include <asm/syscall.h>
+> @@ -37,6 +37,7 @@
+>                                  SYSCALL_WORK_SYSCALL_AUDIT |           \
+>                                  SYSCALL_WORK_SYSCALL_USER_DISPATCH |   \
+>                                  ARCH_SYSCALL_WORK_ENTER)
+> +
+>  #define SYSCALL_WORK_EXIT      (SYSCALL_WORK_SYSCALL_TRACEPOINT |      \
+>                                  SYSCALL_WORK_SYSCALL_TRACE |           \
+>                                  SYSCALL_WORK_SYSCALL_AUDIT |           \
+> @@ -61,8 +62,7 @@
+>   */
+>  void syscall_enter_from_user_mode_prepare(struct pt_regs *regs);
+>
+> -long syscall_trace_enter(struct pt_regs *regs, long syscall,
+> -                        unsigned long work);
+> +long syscall_trace_enter(struct pt_regs *regs, long syscall, unsigned lo=
+ng work);
+>
+>  /**
+>   * syscall_enter_from_user_mode_work - Check and handle work before invo=
+king
+> --- a/include/linux/irq-entry-common.h
+> +++ b/include/linux/irq-entry-common.h
+> @@ -68,6 +68,7 @@ static __always_inline bool arch_in_rcu_
+>
+>  /**
+>   * enter_from_user_mode - Establish state when coming from user mode
+> + * @regs:      Pointer to currents pt_regs
+>   *
+>   * Syscall/interrupt entry disables interrupts, but user mode is traced =
+as
+>   * interrupts enabled. Also with NO_HZ_FULL RCU might be idle.
+> @@ -357,6 +358,7 @@ irqentry_state_t noinstr irqentry_enter(
+>   * Conditional reschedule with additional sanity checks.
+>   */
+>  void raw_irqentry_exit_cond_resched(void);
+> +
+>  #ifdef CONFIG_PREEMPT_DYNAMIC
+>  #if defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
+>  #define irqentry_exit_cond_resched_dynamic_enabled     raw_irqentry_exit=
+_cond_resched
+>
+>
 
