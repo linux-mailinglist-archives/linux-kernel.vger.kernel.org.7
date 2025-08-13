@@ -1,153 +1,485 @@
-Return-Path: <linux-kernel+bounces-767411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E27B253EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2BACB253F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79FE25A56F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:26:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D29E35A5720
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737332F9999;
-	Wed, 13 Aug 2025 19:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EBC2F99A4;
+	Wed, 13 Aug 2025 19:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KH+QN3as"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcQcJAMz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0062F998A;
-	Wed, 13 Aug 2025 19:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD122F9984;
+	Wed, 13 Aug 2025 19:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755113193; cv=none; b=bgRmePeE+i6pQpgrJfp1AoqAqJYg1QcNkgyUzvij1200N3YZ/tLWc7g693ykhXVlIoWN3xq/SBeiI4WBkV5+TTHTYyu/jN/PBKZ4vcTtG8zyRWSxN0ssNEG7yT5RpPVpRK/KGYXXu3a+OEtbZw803vqf6GXHdU5jtUGUlNL/G6A=
+	t=1755113398; cv=none; b=ZLVtQVs8L8twfJsRLCikpA4fMJJZu5qOQ1ImKLi9vr4uFSFDULFKh/bVGk/bKjW+qRC23emyGj4HEpZwIBWoXLUsQDcewg3O4NbEqAamNdHkZ2AOQZpA3YfgAHtfgrxeaZ0pww20kPEEC2fyr2ugU8NCEV80Hbbfi8R5rat3Gh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755113193; c=relaxed/simple;
-	bh=RFBBQlHRnkNYzzKSJ6hIcRMJ4NrYVoHlFmTcHfe4flg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F6946x3Ga9bYEbaESqy/KW68cSAegxnm0v1knwOhufRgOgHEh8RQCYHF0Dsum0XCn1tu6Jq/PzBUc0ExW7BbcpCzsuOVxoFbrZJZ2jzZ1M4SK7qoXm5cnrBT+aqIYBEM0zfTQSEUItvBhriAgCANp5ch23MJDD4uCHC6jUxz7S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KH+QN3as; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4717563599so75430a12.3;
-        Wed, 13 Aug 2025 12:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755113191; x=1755717991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=poj7FxUdJ2JTjxAX+M2fvgvulHtue+zz+NWRBAXK06E=;
-        b=KH+QN3asGxw4fv/CgTmri+z/bi+DUM624yH9ctpk/WV40NmAYjfLmq2ew9FIKUqG9D
-         4YPqi+272ucVtZam3IHrbcvuli+bsZuUbJjv36xFOYYfGS5Jt4htDU4cmMCBFxfW7CQb
-         cgieuAjYaNaD9UnQCe84G/0uoSjuCfJ4LLkyiVYx9lh1UqMNzDxeSvZ75rglDMH0a1KE
-         UJR0gdk7I8a0eWze73wnaXBuelSm7EzWMNGZpIPoh5xGmREolg0vBBioyHmka3QZDhCb
-         zYKYN2YzGDIxeX7SrPXLo9jAkAEtlJRPgbRJ7t3Tm0xXDrDXv4aWyFeItsRaRLGK2Q4S
-         loxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755113191; x=1755717991;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=poj7FxUdJ2JTjxAX+M2fvgvulHtue+zz+NWRBAXK06E=;
-        b=BriQOP1HPd1+xDRJRX5j85HKMa3WvmsgITKxn6foRZdPaWbd0wjmZj/H+wIngf6VzY
-         Cuf+E89v5Jw/jTcPzqTIlPcUDgNyl00FjyfvOD38Uijj6yhMzPpy5KKzNuUvlfydhT80
-         NCptzTRiFN+wiksXnhwtt1QnA1h72bY2HvBiIg7OTxov84/WhC1E2jm+Gtz+x5xXvVVF
-         IB9Gs06qkLUY4KCKDCSJFrxUZaq9e87zYrx1nbqZnBmsyxvF+hkAcd3W4gxGPyLTAkVu
-         UM5vaFuXVVKoTQ22XWDqDu6WQX7sv9XppoXOHN9LVzUjeg091DF9ALrRQ+4+oEJwYVQe
-         adTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnPhL89oQmm93XKw6oKqaRSGTz994wI59q6Pf+eg7UxLd5mB1q9l48H8ur9bPezLqcJnG+k8E80ZWscPA=@vger.kernel.org, AJvYcCX+EZdlO54pyLkyL7YHpZ1IhCkxsFsouo/Ciu8+VIe/TUW/3oCjl50oyLNhJgYoaDbOV2U6ZlXYwkaS5Vv4iSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx6lTjYkjOQHFCsc49Bx2RkwU3wsdiD/uA/0K217lpGldd3r+b
-	auhKUGVh7TRd35PSPsYbTWuXXIEhs9UhLrbmxUTr5nEbIiu5RagqT9JP
-X-Gm-Gg: ASbGnctrY/PQy/9sFNLY/lJt4l68RNjRbxTAvnKd+KgPtIHU1xZexEgoFJp+BhMNJ/9
-	1QPfRIsFV6KZXUt5NBfq1D2TvebBIrI/ovgGxZKExvqxknfAb33YY8nkCgQA7KorWqtbdH8RG01
-	i767D5f3hTGYJJoJEgwSj/JYbWNeZlOXfr4LMDnUB3ZbkXGD7inqZW64s+MMoTHW2MObm4r9RJe
-	xhNWo3drGcTEgIMnm2WVjO/EfweIJ1Lgvg+hIU31pVclcqBv8AMuYvcl6iJod9H4bT7Kz0X4hXV
-	8zefMaKlBbbsLPYVhV8/SpN84+YOfE7SpT/KZJKZURr2Xi/4zdATEenaH5ivpRGiiEZujGax93X
-	iIckcmx3GlIvjYmQfXclpFRT4+EPvuFiCRO22
-X-Google-Smtp-Source: AGHT+IEGj1Q2xRz6Xt2WVuCgpqbRCBJdrpMzyjN515raj6kZrfnWdWTXSklBiROvb9eYbWPZiQXXng==
-X-Received: by 2002:a17:902:e743:b0:242:fbc6:6a83 with SMTP id d9443c01a7336-244582ca727mr4225945ad.0.1755113190679;
-        Wed, 13 Aug 2025 12:26:30 -0700 (PDT)
-Received: from shankari-IdeaPad.. ([103.24.60.31])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2422ba1e09csm306391195ad.16.2025.08.13.12.26.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 12:26:30 -0700 (PDT)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Shankari Anand <shankari.ak0208@gmail.com>
-Subject: Re: [PATCH 4/7] rust: fs: update ARef and AlwaysRefCounted imports from sync::aref
-Date: Thu, 14 Aug 2025 00:56:21 +0530
-Message-Id: <20250813192621.25255-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250716091827.816971-1-shankari.ak0208@gmail.com>
-References: <20250716091827.816971-1-shankari.ak0208@gmail.com>
+	s=arc-20240116; t=1755113398; c=relaxed/simple;
+	bh=+KleZOfIR7Tgv+Cm5hENb583tl/maKQ6Wbwic1dx42Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=PDI7Mt3fnEo9tALw6pOUSwZO21nxVaHf93OFhJ2k/+gP3BuRBgYcnNtkEZhGAVjWBQ8/R/ugzSUqtsMOM/XgtAgrMZyat/mNA25ZIfBcgrAoCWhpUJwZUEZiO4uJR3bjIu2dJHXbOrC8xBzwg8llc0wd40/z7tC02IJyMnk2Yo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcQcJAMz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53035C4CEEB;
+	Wed, 13 Aug 2025 19:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755113398;
+	bh=+KleZOfIR7Tgv+Cm5hENb583tl/maKQ6Wbwic1dx42Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gcQcJAMz/aJU2jtU6wJXD2tC2X1kCT4tt9bQatt0b0t9UqD6izDfFKpXOZQvib0mq
+	 0wOGJ9asL/R8Pp0YgHkrKBk4jWc9n1LJTstztrVJUalEm0VJ0BVLCbwZ45aB1YzFOv
+	 hcaETsMw5eHSbIegmqtEHivoQhR/AMC5SM/RGJb6pTFmElIDZliUrT7c/xQWpwWLy4
+	 w5gFJXbHI12U17FZtykl3WDBrckMujtI+8UfEyoaCzN0EgwVMjSZRYwPCfNC/tN9Sl
+	 27GQAx8DZAa2/3PCVW1s7zox6Esj7tMoYIuU6oJ71cNQ6HTn+kPVvWOsg4K9800Rit
+	 2uOwym6XQvJSw==
+Date: Wed, 13 Aug 2025 14:29:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
+	johan+linaro@kernel.org, cassel@kernel.org, shradha.t@samsung.com,
+	thippeswamy.havalige@amd.com, quic_schintav@quicinc.com,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 2/9] PCI: stm32: Add PCIe host support for STM32MP25
+Message-ID: <20250813192957.GA286749@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250610090714.3321129-3-christian.bruel@foss.st.com>
 
-On Wed, Jul 16, 2025 at 02:48:27PM +0530, Shankari Anand wrote:
-> Update call sites in the fs subsystem to import `ARef` and
-> `AlwaysRefCounted` from `sync::aref` instead of `types`.
-> 
-> This aligns with the ongoing effort to move `ARef` and
-> `AlwaysRefCounted` to sync.
-> 
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1173
-> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
-> ---
-> It part of a subsystem-wise split series, as suggested in:
-> https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
-> This split series is intended to ease review and subsystem-level maintenance.
-> 
-> The original moving patch is here:
-> https://lore.kernel.org/rust-for-linux/20250625111133.698481-1-shankari.ak0208@gmail.com/
-> 
-> Gradually the re-export from types.rs will be eliminated in the
-> future cycle.
-> ---
->  rust/kernel/fs/file.rs | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-> index 35fd5db35c46..18cf579d3312 100644
-> --- a/rust/kernel/fs/file.rs
-> +++ b/rust/kernel/fs/file.rs
-> @@ -11,7 +11,8 @@
->      bindings,
->      cred::Credential,
->      error::{code::*, Error, Result},
-> -    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
-> +    sync::aref::{ARef, AlwaysRefCounted},
-> +    types::{NotThreadSafe, Opaque},
->  };
->  use core::ptr;
->  
+On Tue, Jun 10, 2025 at 11:07:07AM +0200, Christian Bruel wrote:
+> Add driver for the STM32MP25 SoC PCIe Gen1 2.5 GT/s and Gen2 5GT/s
+> controller based on the DesignWare PCIe core.
+> ...
+
+> +struct stm32_pcie {
+> +	struct dw_pcie pci;
+> +	struct regmap *regmap;
+> +	struct reset_control *rst;
+> +	struct phy *phy;
+> +	struct clk *clk;
+> +	struct gpio_desc *perst_gpio;
+> +	struct gpio_desc *wake_gpio;
+> +};
+> +
+> +static void stm32_pcie_deassert_perst(struct stm32_pcie *stm32_pcie)
+> +{
+> +	/* Delay PERST# de-assertion until the power stabilizes */
+> +	msleep(PCIE_T_PVPERL_MS);
+> +
+> +	gpiod_set_value(stm32_pcie->perst_gpio, 0);
+> +
+> +	/* Wait for the REFCLK to stabilize */
+> +	if (stm32_pcie->perst_gpio)
+> +		msleep(PCIE_T_RRS_READY_MS);
+
+This obviously relies on gpiod_set_value(stm32_pcie->perst_gpio, 0)
+being a no-op when perst_gpio == NULL.  Since we're testing perst_gpio
+anyway, I think it might be more readable to avoid relying on
+gpiod_set_value() being a no-op:
+
+  msleep(PCIE_T_PVPERL_MS);
+
+  if (stm32_pcie->perst_gpio) {
+    gpiod_set_value(stm32_pcie->perst_gpio, 0);
+    msleep(PCIE_T_RRS_READY_MS);
+  }
+
+(And a similar change in stm32_pcie_assert_perst())
+
+But this seems wrong because PCIE_T_PVPERL_MS is a delay before PERST#
+is deasserted, but when perst_gpio == NULL, PERST# has already *been*
+deasserted.
+
+So it seems like it would make more sense as:
+
+  if (stm32_pcie->perst_gpio) {
+    msleep(PCIE_T_PVPERL_MS);
+    gpiod_set_value(stm32_pcie->perst_gpio, 0);
+  }
+
+  msleep(PCIE_T_RRS_READY_MS);
+
+> +}
+> +
+> +static void stm32_pcie_assert_perst(struct stm32_pcie *stm32_pcie)
+> +{
+> +	gpiod_set_value(stm32_pcie->perst_gpio, 1);
+> +}
+> +
+> +static int stm32_pcie_start_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +
+> +	return regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +				  STM32MP25_PCIECR_LTSSM_EN,
+> +				  STM32MP25_PCIECR_LTSSM_EN);
+> +}
+> +
+> +static void stm32_pcie_stop_link(struct dw_pcie *pci)
+> +{
+> +	struct stm32_pcie *stm32_pcie = to_stm32_pcie(pci);
+> +
+> +	regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +			   STM32MP25_PCIECR_LTSSM_EN, 0);
+> +}
+> +
+> +static int stm32_pcie_suspend_noirq(struct device *dev)
+> +{
+> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	ret = dw_pcie_suspend_noirq(&stm32_pcie->pci);
+> +	if (ret)
+> +		return ret;
+> +
+> +	stm32_pcie_assert_perst(stm32_pcie);
+> +
+> +	clk_disable_unprepare(stm32_pcie->clk);
+> +
+> +	if (!device_wakeup_path(dev))
+> +		phy_exit(stm32_pcie->phy);
+> +
+> +	return pinctrl_pm_select_sleep_state(dev);
+> +}
+> +
+> +static int stm32_pcie_resume_noirq(struct device *dev)
+> +{
+> +	struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
+> +	int ret;
+> +
+> +	/*
+> +	 * The core clock is gated with CLKREQ# from the COMBOPHY REFCLK,
+> +	 * thus if no device is present, must force it low with an init pinmux
+> +	 * to be able to access the DBI registers.
+
+What happens on initial probe if no device is present?  I assume we
+access DBI registers in the dw_pcie_host_init() path, and it seems
+like we'd have the same issue with DBI not being accessible when no
+device is present.
+
+> +	if (!IS_ERR(dev->pins->init_state))
+> +		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
+> +	else
+> +		ret = pinctrl_pm_select_default_state(dev);
+> +
+> +	if (ret) {
+> +		dev_err(dev, "Failed to activate pinctrl pm state: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	if (!device_wakeup_path(dev)) {
+> +		ret = phy_init(stm32_pcie->phy);
+> +		if (ret) {
+> +			pinctrl_pm_select_default_state(dev);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	ret = clk_prepare_enable(stm32_pcie->clk);
+> +	if (ret)
+> +		goto err_phy_exit;
+> +
+> +	stm32_pcie_deassert_perst(stm32_pcie);
+> +
+> +	ret = dw_pcie_resume_noirq(&stm32_pcie->pci);
+> +	if (ret)
+> +		goto err_disable_clk;
+> +
+> +	pinctrl_pm_select_default_state(dev);
+> +
+> +	return 0;
+> +
+> +err_disable_clk:
+> +	stm32_pcie_assert_perst(stm32_pcie);
+> +	clk_disable_unprepare(stm32_pcie->clk);
+> +
+> +err_phy_exit:
+> +	phy_exit(stm32_pcie->phy);
+> +	pinctrl_pm_select_default_state(dev);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct dev_pm_ops stm32_pcie_pm_ops = {
+> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(stm32_pcie_suspend_noirq,
+> +				  stm32_pcie_resume_noirq)
+> +};
+> +
+> +static const struct dw_pcie_host_ops stm32_pcie_host_ops = {
+> +};
+> +
+> +static const struct dw_pcie_ops dw_pcie_ops = {
+> +	.start_link = stm32_pcie_start_link,
+> +	.stop_link = stm32_pcie_stop_link
+> +};
+> +
+> +static int stm32_add_pcie_port(struct stm32_pcie *stm32_pcie)
+> +{
+> +	struct device *dev = stm32_pcie->pci.dev;
+> +	unsigned int wake_irq;
+> +	int ret;
+> +
+> +	/* Start to enable resources with PERST# asserted */
+
+I guess if device tree doesn't describe PERST#, we assume PERST# is
+actually *deasserted* already at this point (because
+stm32_pcie_deassert_perst() does nothing other than the delay)?
+
+> +	ret = phy_set_mode(stm32_pcie->phy, PHY_MODE_PCIE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = phy_init(stm32_pcie->phy);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = regmap_update_bits(stm32_pcie->regmap, SYSCFG_PCIECR,
+> +				 STM32MP25_PCIECR_TYPE_MASK,
+> +				 STM32MP25_PCIECR_RC);
+> +	if (ret)
+> +		goto err_phy_exit;
+> +
+> +	stm32_pcie_deassert_perst(stm32_pcie);
+> +
+> +	if (stm32_pcie->wake_gpio) {
+> +		wake_irq = gpiod_to_irq(stm32_pcie->wake_gpio);
+> +		ret = dev_pm_set_dedicated_wake_irq(dev, wake_irq);
+> +		if (ret) {
+> +			dev_err(dev, "Failed to enable wakeup irq %d\n", ret);
+> +			goto err_assert_perst;
+> +		}
+> +		irq_set_irq_type(wake_irq, IRQ_TYPE_EDGE_FALLING);
+> +	}
+> +
+> +	return 0;
+> +
+> +err_assert_perst:
+> +	stm32_pcie_assert_perst(stm32_pcie);
+> +
+> +err_phy_exit:
+> +	phy_exit(stm32_pcie->phy);
+> +
+> +	return ret;
+> +}
+> +
+> +static void stm32_remove_pcie_port(struct stm32_pcie *stm32_pcie)
+> +{
+> +	dev_pm_clear_wake_irq(stm32_pcie->pci.dev);
+> +
+> +	stm32_pcie_assert_perst(stm32_pcie);
+> +
+> +	phy_exit(stm32_pcie->phy);
+> +}
+> +
+> +static int stm32_pcie_parse_port(struct stm32_pcie *stm32_pcie)
+> +{
+> +	struct device *dev = stm32_pcie->pci.dev;
+> +	struct device_node *root_port;
+> +
+> +	root_port = of_get_next_available_child(dev->of_node, NULL);
+> +
+> +	stm32_pcie->phy = devm_of_phy_get(dev, root_port, NULL);
+> +	if (IS_ERR(stm32_pcie->phy)) {
+> +		of_node_put(root_port);
+> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->phy),
+> +				     "Failed to get pcie-phy\n");
+> +	}
+> +
+> +	stm32_pcie->perst_gpio = devm_fwnode_gpiod_get(dev, of_fwnode_handle(root_port),
+> +						       "reset", GPIOD_OUT_HIGH, NULL);
+> +	if (IS_ERR(stm32_pcie->perst_gpio)) {
+> +		if (PTR_ERR(stm32_pcie->perst_gpio) != -ENOENT) {
+> +			of_node_put(root_port);
+> +			return dev_err_probe(dev, PTR_ERR(stm32_pcie->perst_gpio),
+> +					     "Failed to get reset GPIO\n");
+> +		}
+> +		stm32_pcie->perst_gpio = NULL;
+
+This looks like perst_gpio is optional in device tree?  Is that really
+the case?  It seems hard to ensure we have the PCIE_T_PVPERL_MS and
+PCIE_T_RRS_READY_MS delays in the right place if we don't have
+perst_gpio.
+
+> +	}
+> +
+> +	stm32_pcie->wake_gpio = devm_fwnode_gpiod_get(dev, of_fwnode_handle(root_port),
+> +						      "wake", GPIOD_IN, NULL);
+> +
+> +	if (IS_ERR(stm32_pcie->wake_gpio)) {
+> +		if (PTR_ERR(stm32_pcie->wake_gpio) != -ENOENT) {
+> +			of_node_put(root_port);
+> +			return dev_err_probe(dev, PTR_ERR(stm32_pcie->wake_gpio),
+> +					     "Failed to get wake GPIO\n");
+> +		}
+> +		stm32_pcie->wake_gpio = NULL;
+> +	}
+> +
+> +	of_node_put(root_port);
+> +
+> +	return 0;
+> +}
+> +
+> +static int stm32_pcie_probe(struct platform_device *pdev)
+> +{
+> +	struct stm32_pcie *stm32_pcie;
+> +	struct device *dev = &pdev->dev;
+> +	int ret;
+> +
+> +	stm32_pcie = devm_kzalloc(dev, sizeof(*stm32_pcie), GFP_KERNEL);
+> +	if (!stm32_pcie)
+> +		return -ENOMEM;
+> +
+> +	stm32_pcie->pci.dev = dev;
+> +	stm32_pcie->pci.ops = &dw_pcie_ops;
+> +	stm32_pcie->pci.pp.ops = &stm32_pcie_host_ops;
+> +
+> +	stm32_pcie->regmap = syscon_regmap_lookup_by_compatible("st,stm32mp25-syscfg");
+> +	if (IS_ERR(stm32_pcie->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->regmap),
+> +				     "No syscfg specified\n");
+> +
+> +	stm32_pcie->clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(stm32_pcie->clk))
+> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->clk),
+> +				     "Failed to get PCIe clock source\n");
+> +
+> +	stm32_pcie->rst = devm_reset_control_get_exclusive(dev, NULL);
+> +	if (IS_ERR(stm32_pcie->rst))
+> +		return dev_err_probe(dev, PTR_ERR(stm32_pcie->rst),
+> +				     "Failed to get PCIe reset\n");
+> +
+> +	ret = stm32_pcie_parse_port(stm32_pcie);
+> +	if (ret)
+> +		return ret;
+> +
+> +	platform_set_drvdata(pdev, stm32_pcie);
+> +
+> +	ret = stm32_add_pcie_port(stm32_pcie);
+> +	if (ret)
+> +		return ret;
+> +
+> +	reset_control_assert(stm32_pcie->rst);
+> +	reset_control_deassert(stm32_pcie->rst);
+> +
+> +	ret = clk_prepare_enable(stm32_pcie->clk);
+> +	if (ret) {
+> +		dev_err(dev, "Core clock enable failed %d\n", ret);
+> +		goto err_remove_port;
+> +	}
+> +
+> +	ret = pm_runtime_set_active(dev);
+> +	if (ret < 0) {
+> +		clk_disable_unprepare(stm32_pcie->clk);
+> +		stm32_remove_pcie_port(stm32_pcie);
+> +		return dev_err_probe(dev, ret, "Failed to activate runtime PM\n");
+> +	}
+> +
+> +	pm_runtime_no_callbacks(dev);
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret < 0) {
+> +		clk_disable_unprepare(stm32_pcie->clk);
+> +		stm32_remove_pcie_port(stm32_pcie);
+> +		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+> +	}
+> +
+> +	ret = dw_pcie_host_init(&stm32_pcie->pci.pp);
+> +	if (ret)
+> +		goto err_disable_clk;
+> +
+> +	if (stm32_pcie->wake_gpio)
+> +		device_init_wakeup(dev, true);
+> +
+> +	return 0;
+> +
+> +err_disable_clk:
+> +	clk_disable_unprepare(stm32_pcie->clk);
+> +
+> +err_remove_port:
+> +	stm32_remove_pcie_port(stm32_pcie);
+> +
+> +	return ret;
+> +}
+> +
+> +static void stm32_pcie_remove(struct platform_device *pdev)
+> +{
+> +	struct stm32_pcie *stm32_pcie = platform_get_drvdata(pdev);
+> +	struct dw_pcie_rp *pp = &stm32_pcie->pci.pp;
+> +
+> +	if (stm32_pcie->wake_gpio)
+> +		device_init_wakeup(&pdev->dev, false);
+> +
+> +	dw_pcie_host_deinit(pp);
+> +
+> +	clk_disable_unprepare(stm32_pcie->clk);
+> +
+> +	stm32_remove_pcie_port(stm32_pcie);
+> +
+> +	pm_runtime_put_noidle(&pdev->dev);
+> +}
+> +
+> +static const struct of_device_id stm32_pcie_of_match[] = {
+> +	{ .compatible = "st,stm32mp25-pcie-rc" },
+> +	{},
+> +};
+> +
+> +static struct platform_driver stm32_pcie_driver = {
+> +	.probe = stm32_pcie_probe,
+> +	.remove = stm32_pcie_remove,
+> +	.driver = {
+> +		.name = "stm32-pcie",
+> +		.of_match_table = stm32_pcie_of_match,
+> +		.pm = &stm32_pcie_pm_ops,
+> +		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+> +	},
+> +};
+> +
+> +module_platform_driver(stm32_pcie_driver);
+> +
+> +MODULE_AUTHOR("Christian Bruel <christian.bruel@foss.st.com>");
+> +MODULE_DESCRIPTION("STM32MP25 PCIe Controller driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_DEVICE_TABLE(of, stm32_pcie_of_match);
+> diff --git a/drivers/pci/controller/dwc/pcie-stm32.h b/drivers/pci/controller/dwc/pcie-stm32.h
+> new file mode 100644
+> index 000000000000..387112c4e42c
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pcie-stm32.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * ST PCIe driver definitions for STM32-MP25 SoC
+> + *
+> + * Copyright (C) 2025 STMicroelectronics - All Rights Reserved
+> + * Author: Christian Bruel <christian.bruel@foss.st.com>
+> + */
+> +
+> +#define to_stm32_pcie(x)	dev_get_drvdata((x)->dev)
+> +
+> +#define STM32MP25_PCIECR_TYPE_MASK	GENMASK(11, 8)
+> +#define STM32MP25_PCIECR_LTSSM_EN	BIT(2)
+> +#define STM32MP25_PCIECR_RC		BIT(10)
+> +
+> +#define SYSCFG_PCIECR			0x6000
 > -- 
 > 2.34.1
 > 
-
-Hello, can this be picked for review?
-
-The initial patch which moves ARef and AlwaysRefCounted to sync/aref.rs is upstream (commit 07dad44aa9a93) [1]
-
-Thanks,
-Shankari
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
 
