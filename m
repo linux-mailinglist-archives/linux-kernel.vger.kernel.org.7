@@ -1,197 +1,128 @@
-Return-Path: <linux-kernel+bounces-765790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B43B23E4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:37:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44076B23E4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E0431AA7B9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:37:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08496270E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34001EA7C6;
-	Wed, 13 Aug 2025 02:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DPOtYuaL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DAA1E520B;
+	Wed, 13 Aug 2025 02:39:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629CA139D0A;
-	Wed, 13 Aug 2025 02:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BF0C148
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755052645; cv=none; b=h/LwthEkpGURlKZKoYBkvitx54DJYcRwCEccYpX9I0H9cC8LQKh4NbFUWutRsrfUJsTkzk2MVOMGmY8ABWhSC24nLmasBbWYp86NdN4kzVhGimHK7Nd/zGCzFDHfE6AbbZZdPPT1dT9aifrCMHJOgwu+XolqAq6lRGS2kw9U7JU=
+	t=1755052745; cv=none; b=khb+Erh/AT6wVeh2aulVt6cgBOdtlLf57vpNwZUKSbDyZXbQ6bXO8g9+H8szbX3aTY5TROfSqsln47Bpy36j7t8VuWYmJNIHcLONqRY1z1jlTUp1rEgaDtaoGtdvkDDPvk23Ixy869k3Cb4X+A+Qo6+hU3ey2hQWDJk9JD5/MGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755052645; c=relaxed/simple;
-	bh=mZe7gpS/9sl+TjlQKK4plRQeU8GkfylF8j0ySV/dbV4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nr900UwYUEILABY5Dv0nsGumsSLvdVjocMXpC2swtmIzjiT3rLi/44Ro+HeLAA2tmI/+WOUoc0JWl39gZindoF1b8ZNLNpC9CtVhohYEyHNwYAW549XgZ2tAKez3zZHPB0+wfpHLtSGbxE+k6J3WEOMsewF+948H0mZTry7Kkv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DPOtYuaL; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755052643; x=1786588643;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mZe7gpS/9sl+TjlQKK4plRQeU8GkfylF8j0ySV/dbV4=;
-  b=DPOtYuaL2HdmZs1OiJOM9/UT9HtrJzXyL3vHZRTrwKiMdB8NoCyy6H0Q
-   x9KE5u7teq6wD36zHgV9ePuWVc/PXV6sL9sNNcCcmm75iRZsKvPhiyPiP
-   bF+rhzUFboVL6FjMBAb9tj9AzlrCqB+CREi/NU5dcne496xte+qV0tFOr
-   CVuDMo7vnPBI06eyXnjqKyjtC4/nskuEdsrylD7qKhwM5LsQ1hScavntF
-   PtlwZ/A+sSkf+p6n6/1NG9S3FrIAg2WNr5Aay/l0OlKEqv7hqrVqXgE4h
-   o7WK/TBcmgq0lBmdRXlQS6lCvwTzAHeg9v9SU+2vdhtFLqOOgd8gULGAX
-   A==;
-X-CSE-ConnectionGUID: nlFEKjqIQQW4UUKRoyDFVA==
-X-CSE-MsgGUID: CfTU10uzRqiRRdW6uk2kHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="82770119"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="82770119"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 19:37:22 -0700
-X-CSE-ConnectionGUID: SSYInxC6R0ipR4eBMymsYg==
-X-CSE-MsgGUID: iOthpAQBQnmB7/U7wdUA3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="171684930"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 12 Aug 2025 19:37:16 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1um1ME-0009TY-2a;
-	Wed, 13 Aug 2025 02:37:06 +0000
-Date: Wed, 13 Aug 2025 10:35:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wei Fang <wei.fang@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, richardcochran@gmail.com,
-	claudiu.manoil@nxp.com, vladimir.oltean@nxp.com,
-	xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	vadim.fedorenko@linux.dev, Frank.Li@nxp.com, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, fushi.peng@nxp.com,
-	devicetree@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	kernel@pengutronix.de
-Subject: Re: [PATCH v3 net-next 06/15] ptp: netc: add periodic pulse output
- support
-Message-ID: <202508131027.y3pyBEJQ-lkp@intel.com>
-References: <20250812094634.489901-7-wei.fang@nxp.com>
+	s=arc-20240116; t=1755052745; c=relaxed/simple;
+	bh=QC9OFYRv+gyz2U6H8zlN26/oPu7r6z2JEKA7cC6I2AY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VnMkIn720FLN6aDS460fYXy6iBK01ZsEji0GeQmQLcFo13Vq2oYodagHi3Ew63KQ79S78RqyrsHVRNGj22G3ta8/wBKuNfpX8Kbm8Ikpe3EKeW3bSlLZWQtIGZ2okW0hu8VN7IWLUFasM+g2CKGkCQ/XFhngiRxQ91r2OAP1hac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8817ecc1b33so1409566439f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:39:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755052743; x=1755657543;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ss6wpLZGIwri1rb7C5MMI6Ntgl6FX7+qtc7xrRSYVeY=;
+        b=C0/HwutXaEW67Thr7V8xyaC421343s2CzEt4Y5yHUcODBjnYBc4aCH44tOcfQcW+Zs
+         FCnHuyAI6AG57YxajC4/OfhxE1utx9OJ67kqmA4D14qBh2wdYZvsTJZrAUHQUvoPzR3h
+         SiP3fklcoHONu07Az54tJb2Up+p4jzbHIP7lsScUIfkkaFIdtX1dhi3Q4m0FasOlGIJV
+         BTTzSD5JyBMwxKSBNJ8pJ0Emd21IpyDrJWFg7QjgTnVE8t13w6p+oKdzuFpDC5w7QPph
+         1T6wUqd9PoiLgXKCOk5eRQDr5m+i9nI4VzNpdBBNtSreWUfjsH7XG2XMLoT/tj23DPYA
+         3/mA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmc9IvAHLMSk5IXkyei37qcoKbSqkXhlpvPNfhINEtswKHtpeziYEEWaWJo9BLq6pTD12OQ8cYAoIfr20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYfU7j3X5r7Nx74rPeI18M+a2bepUz37M3fZpmpJO7FY8MKoep
+	iolZAELi4GPWYphaYidtRnHifDox+un4u3a+4XQ/d5p2UoNQK6FZ3zNPIDGyN3c18sn6a2smRO8
+	tNHdV40/mecgRAtkh2YfVBDbQyq0eQatkbvDMKv2BRrIozce7iLvlVCCb620=
+X-Google-Smtp-Source: AGHT+IGh9twwY7VnR3k5A8uF9UQVqlPPzzsSlnOimRPJ4gV4gLlbWPUay2AGqxX5TFlo+uExg74Mxe/kGV0LW8/xFaAbJfaWYNr1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812094634.489901-7-wei.fang@nxp.com>
+X-Received: by 2002:a05:6602:164e:b0:87c:34e3:1790 with SMTP id
+ ca18e2360f4ac-884295f2c91mr286295539f.1.1755052743347; Tue, 12 Aug 2025
+ 19:39:03 -0700 (PDT)
+Date: Tue, 12 Aug 2025 19:39:03 -0700
+In-Reply-To: <20250813021941.4438-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689bfac7.a70a0220.7865.0043.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in move_page_tables
+From: syzbot <syzbot+4d9a13f0797c46a29e42@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Wei,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in move_page_tables
 
-[auto build test WARNING on net-next/main]
+R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000002
+R13: 00007f6b549b6038 R14: 00007f6b549b5fa0 R15: 00007fff55995d28
+ </TASK>
+------------[ cut here ]------------
+WARNING: CPU: 2 PID: 6580 at mm/mremap.c:357 move_normal_pmd mm/mremap.c:357 [inline]
+WARNING: CPU: 2 PID: 6580 at mm/mremap.c:357 move_pgt_entry mm/mremap.c:595 [inline]
+WARNING: CPU: 2 PID: 6580 at mm/mremap.c:357 move_page_tables+0x3752/0x4580 mm/mremap.c:851
+Modules linked in:
+CPU: 2 UID: 0 PID: 6580 Comm: syz.0.19 Not tainted 6.17.0-rc1-syzkaller-g8742b2d8935f-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:move_normal_pmd mm/mremap.c:357 [inline]
+RIP: 0010:move_pgt_entry mm/mremap.c:595 [inline]
+RIP: 0010:move_page_tables+0x3752/0x4580 mm/mremap.c:851
+Code: 00 48 8b 04 24 31 ff 0f b6 58 30 89 de e8 f6 1c af ff 84 db 0f 85 0d 01 00 00 e8 09 22 af ff e9 19 d7 ff ff e8 ff 21 af ff 90 <0f> 0b 90 48 8b 44 24 50 48 8d 78 40 48 b8 00 00 00 00 00 fc ff df
+RSP: 0018:ffffc9000367f6f8 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 00000000343ec007 RCX: ffffffff820c64bc
+RDX: ffff8880251d2440 RSI: ffffffff820c6fc1 RDI: 0000000000000007
+RBP: ffff888034426700 R08: 0000000000000007 R09: 0000000000000000
+R10: 00000000343ec007 R11: 0000000000000000 R12: dffffc0000000000
+R13: 0000000000000000 R14: ffff88802a726030 R15: ffffffff8df55480
+FS:  00007f6b53df66c0(0000) GS:ffff8880d68bc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffde7257210 CR3: 000000005332e000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ copy_vma_and_data+0x468/0x790 mm/mremap.c:1215
+ move_vma+0x548/0x1780 mm/mremap.c:1282
+ mremap_to+0x1b7/0x450 mm/mremap.c:1406
+ do_mremap+0xfad/0x1f80 mm/mremap.c:1921
+ __do_sys_mremap+0x119/0x170 mm/mremap.c:1977
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6b5478ebe9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6b53df6038 EFLAGS: 00000246 ORIG_RAX: 0000000000000019
+RAX: ffffffffffffffda RBX: 00007f6b549b5fa0 RCX: 00007f6b5478ebe9
+RDX: 0000000000400000 RSI: 0000000000c00000 RDI: 0000200000000000
+RBP: 00007f6b53df6090 R08: 0000200000c00000 R09: 0000000000000000
+R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000002
+R13: 00007f6b549b6038 R14: 00007f6b549b5fa0 R15: 00007fff55995d28
+ </TASK>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-ptp-add-NETC-Timer-PTP-clock/20250812-181510
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20250812094634.489901-7-wei.fang%40nxp.com
-patch subject: [PATCH v3 net-next 06/15] ptp: netc: add periodic pulse output support
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250813/202508131027.y3pyBEJQ-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 3769ce013be2879bf0b329c14a16f5cb766f26ce)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250813/202508131027.y3pyBEJQ-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508131027.y3pyBEJQ-lkp@intel.com/
+Tested on:
 
-All warnings (new ones prefixed by >>):
+commit:         8742b2d8 Merge tag 'pull-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10b86842580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f9319a42cfb3bf57
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d9a13f0797c46a29e42
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=152825a2580000
 
->> drivers/ptp/ptp_netc.c:394:33: warning: variable 'pp' is uninitialized when used here [-Wuninitialized]
-     394 |                 priv->fs_alarm_bitmap &= ~BIT(pp->alarm_id);
-         |                                               ^~
-   drivers/ptp/ptp_netc.c:348:20: note: initialize the variable 'pp' to silence this warning
-     348 |         struct netc_pp *pp;
-         |                           ^
-         |                            = NULL
-   1 warning generated.
-
-
-vim +/pp +394 drivers/ptp/ptp_netc.c
-
-   337	
-   338	/* Note that users should not use this API to output PPS signal on
-   339	 * external pins, because PTP_CLK_REQ_PPS trigger internal PPS event
-   340	 * for input into kernel PPS subsystem. See:
-   341	 * https://lore.kernel.org/r/20201117213826.18235-1-a.fatoum@pengutronix.de
-   342	 */
-   343	static int netc_timer_enable_pps(struct netc_timer *priv,
-   344					 struct ptp_clock_request *rq, int on)
-   345	{
-   346		struct device *dev = &priv->pdev->dev;
-   347		unsigned long flags;
-   348		struct netc_pp *pp;
-   349		int err = 0;
-   350	
-   351		spin_lock_irqsave(&priv->lock, flags);
-   352	
-   353		if (on) {
-   354			int alarm_id;
-   355			u8 channel;
-   356	
-   357			if (priv->pps_channel < NETC_TMR_FIPER_NUM) {
-   358				channel = priv->pps_channel;
-   359			} else {
-   360				channel = netc_timer_select_pps_channel(priv);
-   361				if (channel == NETC_TMR_INVALID_CHANNEL) {
-   362					dev_err(dev, "No available FIPERs\n");
-   363					err = -EBUSY;
-   364					goto unlock_spinlock;
-   365				}
-   366			}
-   367	
-   368			pp = &priv->pp[channel];
-   369			if (pp->enabled)
-   370				goto unlock_spinlock;
-   371	
-   372			alarm_id = netc_timer_get_alarm_id(priv);
-   373			if (alarm_id == priv->fs_alarm_num) {
-   374				dev_err(dev, "No available ALARMs\n");
-   375				err = -EBUSY;
-   376				goto unlock_spinlock;
-   377			}
-   378	
-   379			pp->enabled = true;
-   380			pp->type = NETC_PP_PPS;
-   381			pp->alarm_id = alarm_id;
-   382			pp->period = NSEC_PER_SEC;
-   383			priv->pps_channel = channel;
-   384	
-   385			netc_timer_enable_periodic_pulse(priv, channel);
-   386		} else {
-   387			/* pps_channel is invalid if PPS is not enabled, so no
-   388			 * processing is needed.
-   389			 */
-   390			if (priv->pps_channel >= NETC_TMR_FIPER_NUM)
-   391				goto unlock_spinlock;
-   392	
-   393			netc_timer_disable_periodic_pulse(priv, priv->pps_channel);
- > 394			priv->fs_alarm_bitmap &= ~BIT(pp->alarm_id);
-   395			pp = &priv->pp[priv->pps_channel];
-   396			memset(pp, 0, sizeof(*pp));
-   397			priv->pps_channel = NETC_TMR_INVALID_CHANNEL;
-   398		}
-   399	
-   400	unlock_spinlock:
-   401		spin_unlock_irqrestore(&priv->lock, flags);
-   402	
-   403		return err;
-   404	}
-   405	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
