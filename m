@@ -1,276 +1,101 @@
-Return-Path: <linux-kernel+bounces-766276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1CEB24494
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6E8B24458
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8F6580ACE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:43:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DE4158571B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96232F0C52;
-	Wed, 13 Aug 2025 08:43:33 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDE02690D9;
+	Wed, 13 Aug 2025 08:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="E5tytUhX"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DE52F0692;
-	Wed, 13 Aug 2025 08:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E2E2C21C8;
+	Wed, 13 Aug 2025 08:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755074613; cv=none; b=PfW8H1GFva67t9wJNYEHHcYF+YdLbus7E+Mx81Z3VnXuQv582bzwMirLc8p08uqBF9wPZbe40D7tj2F5lRtJVXYGnl4YOCObj0Or71vyv2iZdAwstFmZCHHQ0ONIYdcXlQmtdEH57VvMYjIstU308by38MIshZw5RlE71fUENu4=
+	t=1755073768; cv=none; b=R9CL0V1eKvLKZ6HLW2q4LEQs9JsleT098cBj28xOo/i0MrSTLcumj6ZbSsLkCuAzB8itgYqwJU23hBMIWumKOv0ugUOoUpcPmdN5T+zStDuFeeZGjPRC2kJqgPAoEHzLJXMScyZOOTHsN8tSil6oBiTwA5sorsXamP+NAG8/BEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755074613; c=relaxed/simple;
-	bh=OdgxX4Rn7gFH8ZsT0xUJqucClnQOuiA6GibA7838GO4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AX2x7Biqpmb8RKu8O3Qa21vMw3P61c+3KOIvY+/uVJGLydMcg7luIhuEcTRNZoopFcnwFbZSQKHFVgCjXMhZ6DpV8Ggocc9htpQq6mcxfKVjOTQvmsYmzvhhx32r9cvP6POvQS5erVWdXD+2zPxPBhH7gW+BKct4CdCrevWTWec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c222n2JtDzKHMx3;
-	Wed, 13 Aug 2025 16:43:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 933361A1BA6;
-	Wed, 13 Aug 2025 16:43:28 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgBHDg8qUJxoaYwdDg--.28644S6;
-	Wed, 13 Aug 2025 16:43:28 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: tj@kernel.org,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	longman@redhat.com
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lujialin4@huawei.com,
-	chenridong@huawei.com,
-	christophe.jaillet@wanadoo.fr
-Subject: [-next v2 4/4] cpuset: add helpers for cpus read and cpuset_mutex locks
-Date: Wed, 13 Aug 2025 08:29:04 +0000
-Message-Id: <20250813082904.1091651-5-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813082904.1091651-1-chenridong@huaweicloud.com>
-References: <20250813082904.1091651-1-chenridong@huaweicloud.com>
+	s=arc-20240116; t=1755073768; c=relaxed/simple;
+	bh=U9SP2g+1o5HuQsjOdWWsXoBuSvpDRttSOJq85x+A4CI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=WD/cnEJ9yN8kjpSe9RUo8eBoRLRxkQJ+Jk8ZG/KAnIgeyW+idktvGYimb4hE/FAkUSkuPzK+3LiK7u1cJsLw2ubbEkGFUMOJ+L3pZ2rGiFv8md9eF0VdHtS/oW8S5ESffLY442n8MzVPqspR9pgHNnHLl3JqXe+pgH6hBq0M6So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=E5tytUhX; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 823A8A024B;
+	Wed, 13 Aug 2025 10:29:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=kVMjeVimj9bigs3Ft2HZ
+	zQg53xmlBKzfvvopzZb05O0=; b=E5tytUhXXMptxH2U2Z5HK9cD5DDwOqB7OZuA
+	8Ygm0pG+3d782Fv89BRFsm8NkmD7QbU/u/3kvdhQqzduShzMMjvvZNOEOv/fV2gp
+	4afRxcHV7UN68ndSGmlPYAQymy0uwyeLf/bBXyBTEiyrtC2tjKiXr6u7XcY52We9
+	L7sh6wQNJIWw/HIZrdCI2A8Mcqsx/mlUFvC5L4UxEmqicv359Ny3LN5maWsezGR2
+	yF6LYNebXletH93zeqoigFtnNTJkGrJRNnRA1P4dQkiUilVBItfLNTyOZnm28S6g
+	CmMZ5+Mpla0H7r1FKoiSxcVI2DXtbDBzeadP8jgGzA2/CdgjZ7ASsfOhnGxHz5av
+	7DY2DOY56lXRTumCOJ4qFj3H6ET62QN6oacTOzWLy+CSTtLl5VUd2oGMS/8ZAIzf
+	jjM8WiuxexfXJW68Ace1O4xNFTJiU1kqU+YoiRt4E4qYcvuNP2PRIHJZbPbnNPRf
+	RNwvL1x9oWH0F320FQE62Mi+OhDFe8RwxHsX1deMRvyeRg03xeiKLRYnlZqybeqW
+	JDEQVur9QKioq/TaELXoN/qjPGE6xdNFmKmoH8xk9xczCw3b5E/825u2NLiDoqiN
+	teOBNoUYQ9swJ05cgU6x/OzIuE0w74I5KqWYL7gk0ZV2I+gKIgrYgCHCx2+YfXnD
+	G1eC+g0=
+Message-ID: <d9e81ff2-5621-49db-92a1-acf304b225f8@prolan.hu>
+Date: Wed, 13 Aug 2025 10:29:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+Subject: Re: [PATCH] ARM: dts: imx6-display5: Replace license text comment
+ with SPDX identifier
+To: Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	"Pengutronix Kernel Team" <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>
+CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250709-display5-dts-lic-v1-1-81e46a650d3d@prolan.hu>
+Content-Language: en-US
+In-Reply-To: <20250709-display5-dts-lic-v1-1-81e46a650d3d@prolan.hu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHDg8qUJxoaYwdDg--.28644S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFWfuryftF47Kr4rXF48tFb_yoW7CrWDpF
-	yq9rW7trWUtrs7uw13G34Dur18Kw1jgF4UGF1kJ3WrZFy7AFsI9FyDCasxWr1Ygry7Crn8
-	W3Zruws0vayDJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUoo7KUUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E617761
 
-From: Chen Ridong <chenridong@huawei.com>
+Hi,
 
-cpuset: add helpers for cpus_read_lock and cpuset_mutex
+On 2025. 07. 09. 9:32, Bence Csókás wrote:
+> Replace verbatim license text with a `SPDX-License-Identifier`.
+> 
+> The comment header mis-attributes this license to be "X11", but the
+> license text does not include the last line "Except as contained in this
+> notice, the name of the X Consortium shall not be used in advertising or
+> otherwise to promote the sale, use or other dealings in this Software
+> without prior written authorization from the X Consortium.". Therefore,
+> this license is actually equivalent to the SPDX "MIT" license (confirmed
+> by text diffing).
+> 
+> Cc: Lukasz Majewski <lukma@denx.de>
+> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
 
-Replace repetitive locking patterns with new helpers:
-- cpus_read_cpuset_lock()
-- cpus_read_cpuset_unlock()
+So, what do you all think, is this patch acceptable?
 
-This makes the code cleaner and ensures consistent lock ordering.
-
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- kernel/cgroup/cpuset-internal.h |  2 ++
- kernel/cgroup/cpuset-v1.c       | 12 +++------
- kernel/cgroup/cpuset.c          | 48 +++++++++++++++------------------
- 3 files changed, 28 insertions(+), 34 deletions(-)
-
-diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
-index 75b3aef39231..6fb00c96044d 100644
---- a/kernel/cgroup/cpuset-internal.h
-+++ b/kernel/cgroup/cpuset-internal.h
-@@ -276,6 +276,8 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs, int turning_on)
- ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
- 				    char *buf, size_t nbytes, loff_t off);
- int cpuset_common_seq_show(struct seq_file *sf, void *v);
-+void cpus_read_cpuset_lock(void);
-+void cpus_read_cpuset_unlock(void);
- 
- /*
-  * cpuset-v1.c
-diff --git a/kernel/cgroup/cpuset-v1.c b/kernel/cgroup/cpuset-v1.c
-index b69a7db67090..f3d2d116c842 100644
---- a/kernel/cgroup/cpuset-v1.c
-+++ b/kernel/cgroup/cpuset-v1.c
-@@ -169,8 +169,7 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
- 	cpuset_filetype_t type = cft->private;
- 	int retval = -ENODEV;
- 
--	cpus_read_lock();
--	cpuset_lock();
-+	cpus_read_cpuset_lock();
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
- 
-@@ -184,8 +183,7 @@ static int cpuset_write_s64(struct cgroup_subsys_state *css, struct cftype *cft,
- 		break;
- 	}
- out_unlock:
--	cpuset_unlock();
--	cpus_read_unlock();
-+	cpus_read_cpuset_unlock();
- 	return retval;
- }
- 
-@@ -454,8 +452,7 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
- 	cpuset_filetype_t type = cft->private;
- 	int retval = 0;
- 
--	cpus_read_lock();
--	cpuset_lock();
-+	cpus_read_cpuset_lock();
- 	if (!is_cpuset_online(cs)) {
- 		retval = -ENODEV;
- 		goto out_unlock;
-@@ -498,8 +495,7 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
- 		break;
- 	}
- out_unlock:
--	cpuset_unlock();
--	cpus_read_unlock();
-+	cpus_read_cpuset_unlock();
- 	return retval;
- }
- 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 3c5e44f824d1..9c0e8f297aaf 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -260,6 +260,18 @@ void cpuset_unlock(void)
- 	mutex_unlock(&cpuset_mutex);
- }
- 
-+void cpus_read_cpuset_lock(void)
-+{
-+	cpus_read_lock();
-+	mutex_lock(&cpuset_mutex);
-+}
-+
-+void cpus_read_cpuset_unlock(void)
-+{
-+	mutex_unlock(&cpuset_mutex);
-+	cpus_read_unlock();
-+}
-+
- static DEFINE_SPINLOCK(callback_lock);
- 
- void cpuset_callback_lock_irq(void)
-@@ -3233,8 +3245,7 @@ ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
- 	int retval = -ENODEV;
- 
- 	buf = strstrip(buf);
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
-+	cpus_read_cpuset_lock();
- 	if (!is_cpuset_online(cs))
- 		goto out_unlock;
- 
-@@ -3263,8 +3274,7 @@ ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
- 	if (force_sd_rebuild)
- 		rebuild_sched_domains_locked();
- out_unlock:
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
-+	cpus_read_cpuset_unlock();
- 	flush_workqueue(cpuset_migrate_mm_wq);
- 	return retval ?: nbytes;
- }
-@@ -3367,12 +3377,10 @@ static ssize_t cpuset_partition_write(struct kernfs_open_file *of, char *buf,
- 	else
- 		return -EINVAL;
- 
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
-+	cpus_read_cpuset_lock();
- 	if (is_cpuset_online(cs))
- 		retval = update_prstate(cs, val);
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
-+	cpus_read_cpuset_unlock();
- 	return retval ?: nbytes;
- }
- 
-@@ -3497,9 +3505,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 	if (!parent)
- 		return 0;
- 
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
--
-+	cpus_read_cpuset_lock();
- 	if (is_spread_page(parent))
- 		set_bit(CS_SPREAD_PAGE, &cs->flags);
- 	if (is_spread_slab(parent))
-@@ -3551,8 +3557,7 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
- 	cpumask_copy(cs->effective_cpus, parent->cpus_allowed);
- 	spin_unlock_irq(&callback_lock);
- out_unlock:
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
-+	cpus_read_cpuset_unlock();
- 	return 0;
- }
- 
-@@ -3567,16 +3572,12 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
- {
- 	struct cpuset *cs = css_cs(css);
- 
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
--
-+	cpus_read_cpuset_lock();
- 	if (!cpuset_v2() && is_sched_load_balance(cs))
- 		cpuset_update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
- 
- 	cpuset_dec();
--
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
-+	cpus_read_cpuset_unlock();
- }
- 
- /*
-@@ -3588,16 +3589,11 @@ static void cpuset_css_killed(struct cgroup_subsys_state *css)
- {
- 	struct cpuset *cs = css_cs(css);
- 
--	cpus_read_lock();
--	mutex_lock(&cpuset_mutex);
--
-+	cpus_read_cpuset_lock();
- 	/* Reset valid partition back to member */
- 	if (is_partition_valid(cs))
- 		update_prstate(cs, PRS_MEMBER);
--
--	mutex_unlock(&cpuset_mutex);
--	cpus_read_unlock();
--
-+	cpus_read_cpuset_unlock();
- }
- 
- static void cpuset_css_free(struct cgroup_subsys_state *css)
--- 
-2.34.1
+Bence
 
 
