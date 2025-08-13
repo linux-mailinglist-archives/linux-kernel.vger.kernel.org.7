@@ -1,93 +1,150 @@
-Return-Path: <linux-kernel+bounces-766480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0B6B24717
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:22:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA391B2470E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883393BF1A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:18:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86B9F1643CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944372F1FFE;
-	Wed, 13 Aug 2025 10:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6CE2EBB91;
+	Wed, 13 Aug 2025 10:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bIpT6YGJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXa7pfH+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F55D23D7D3;
-	Wed, 13 Aug 2025 10:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9252D1F7E;
+	Wed, 13 Aug 2025 10:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755080302; cv=none; b=RTELDtNkAz2RtrtGfw/AmBV3jjhoRDVkrY43A9H0hMbUTZyz125WSMQBc8MA8kw0j4bKfyBuRAuiJ+Xjbiz0LS3gpvZ1rQqSz2V7/PoA570OBIUBMF/6efpvTab5J9Hsn7yT91YcgV4SM4l4ZRah3NoqkLTsPqaNYEwh2f7ZbBQ=
+	t=1755080371; cv=none; b=BDF8qNQtNb9/s4ngDWh74oWPxBMm1k+XGpXtPJuiD0JWmO0MdKYkK2MDnrlDqP2xzjFMkJiBOscWX1D84kKetzMacYqWngXzJTI/SPHaGpF7urhmaxlhCmalykHbSPU3Mv/IDP/IVbYeMXrYWX1tkaG/8zcmPbSUh/SYooVA9Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755080302; c=relaxed/simple;
-	bh=IwFhHUafpP4zZE/ofefxf99dwR5vkpPWQjUI+AKcMHI=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=BUS7f4tg3Lrx2fPpWKmBFB28/x2iSAoUpGOw2RbbzGiLBjSQGLaSbWXt0z0WPmwwu83d7W2+8/PeX8DP40KHUrsC3MMiROxb2DC2ogAWz6hWQRMU9Pk3kauTm1Io8+lD8fYw+VAGdGFJwse/a8J13AqOA8mrx76Uy1EN8jyuq70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bIpT6YGJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D42452EC;
-	Wed, 13 Aug 2025 12:17:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755080245;
-	bh=IwFhHUafpP4zZE/ofefxf99dwR5vkpPWQjUI+AKcMHI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=bIpT6YGJ08SUPeWFtmWrcEeZMomlm1hbRsVna/NhAc7Hsv9N8b09NJWkXpnSX/NrT
-	 ZrFcaZkbjumK4WT/OKbDZI8gQFF2LJwJCiURiIy2vcIgaup1RjaHST7Wq7fRAIFe6G
-	 /XvxAm1hEb2Bscn8bksgLWz2bkV4AlzDx1wHLHnI=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1755080371; c=relaxed/simple;
+	bh=qW9SWoWX6A53AFhzzT38jehPPUJjNU69Tw+gWAuHO48=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=gaW6ZPj/rDbZkAUWpGRrgfzv65ie3kLcT+ELs4KB/x/anN6eQQzma1UgLuM2bcKEhC1ugJodjm5hVOQga7d5yzrv6OXIwruYyCyBy0GBDuIQZ0nWyJX34bG2BtnHYwfw5X3IHBn8Z+P4x91A2Gs8MRHaHwAtgYQSTcS07G1qnaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXa7pfH+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F519C4CEEB;
+	Wed, 13 Aug 2025 10:19:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755080370;
+	bh=qW9SWoWX6A53AFhzzT38jehPPUJjNU69Tw+gWAuHO48=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=fXa7pfH+WHcRrIEQTszchLdqLCY1ttHuNL0sPo1YvUXnQLfMGmX6a1e0j9Hiu73Kh
+	 A4Se8wYGmsx+9XO2QWPrr6zDMoVWsCH5CmLB+f3l/8WvNQyWBiTjpCWnPY1H/N78c5
+	 L5r7+wBDRF/AC/zvx/JOxLAECcN88fYijNDmt7Q75zyc0qnN1HehKPsYEv4clPZwRS
+	 dUutqdh/ZIq2f2ykr3GdtwgNMU2QzOA8VpHKwo7t8TO57GuYemALsKywPDxxlpUlEm
+	 iOQ5MKjnh/X4q2+nhwzHUxa0jN7c0wihdky9ohKIe5s0/D+C76KuJFPogUV9fLkldD
+	 jTdrx+qbeILYw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250813094746.557013-1-liaoyuanhong@vivo.com>
-References: <20250813094746.557013-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] media: imx296: Remove redundant semicolons
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Liao Yuanhong <liaoyuanhong@vivo.com>, Manivannan Sadhasivam <mani@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Date: Wed, 13 Aug 2025 11:18:16 +0100
-Message-ID: <175508029630.560048.7835285687538106544@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 12:19:25 +0200
+Message-Id: <DC182DB9HNS9.21ZVBYT6DXHDE@kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: alloc: specify the minimum alignment of
+ each allocator
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, "Andrew Morton" <akpm@linux-foundation.org>,
+ "Matthew Wilcox" <willy@infradead.org>, "Tamir Duberstein"
+ <tamird@gmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Trevor
+ Gross" <tmgross@umich.edu>, <linux-mm@kvack.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
+ <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com>
+ <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org> <aJxESG0l4-kyUHXg@google.com>
+ <DC16OLU29VX3.16T0QDJF7Q18P@kernel.org>
+ <CAH5fLgj0kjGBwZFHjErsa7MCV1fz4xTWwrZAcFzHHnkbvS=OMg@mail.gmail.com>
+In-Reply-To: <CAH5fLgj0kjGBwZFHjErsa7MCV1fz4xTWwrZAcFzHHnkbvS=OMg@mail.gmail.com>
 
-Quoting Liao Yuanhong (2025-08-13 10:47:46)
-> Remove unnecessary semicolons.
-
-Well ... there's only one so it's not plural ;-) but indeed this is very
-redundant!
-
-
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
->=20
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
->  drivers/media/i2c/imx296.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
-> index f3bec16b527c..cbbe0e7a37a9 100644
-> --- a/drivers/media/i2c/imx296.c
-> +++ b/drivers/media/i2c/imx296.c
-> @@ -922,7 +922,7 @@ static int imx296_read_temperature(struct imx296 *sen=
-sor, int *temp)
-> =20
->         tmdout &=3D IMX296_TMDOUT_MASK;
-> =20
-> -       /* T(=EF=BF=BD=EF=BF=BDC) =3D 246.312 - 0.304 * TMDOUT */;
-> +       /* T(=EF=BF=BD=EF=BF=BDC) =3D 246.312 - 0.304 * TMDOUT */
->         *temp =3D 246312 - 304 * tmdout;
-> =20
->         return imx296_write(sensor, IMX296_TMDCTRL, 0, NULL);
-> --=20
-> 2.34.1
+On Wed Aug 13, 2025 at 11:32 AM CEST, Alice Ryhl wrote:
+> On Wed, Aug 13, 2025 at 11:14=E2=80=AFAM Danilo Krummrich <dakr@kernel.or=
+g> wrote:
+>>
+>> On Wed Aug 13, 2025 at 9:52 AM CEST, Alice Ryhl wrote:
+>> > On Tue, Aug 12, 2025 at 07:52:35PM +0200, Danilo Krummrich wrote:
+>> >> On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
+>> >> > diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/all=
+ocator.rs
+>> >> > index aa2dfa9dca4c309e5a9eafc7da6a8a9bd7b54b11..25fc9f9ae3b4e471a08=
+d77130b374bd1397f7384 100644
+>> >> > --- a/rust/kernel/alloc/allocator.rs
+>> >> > +++ b/rust/kernel/alloc/allocator.rs
+>> >> > @@ -17,6 +17,8 @@
+>> >> >  use crate::bindings;
+>> >> >  use crate::pr_warn;
+>> >> >
+>> >> > +const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINA=
+LIGN as usize;
+>> >>
+>> >> I think this needs the following diff:
+>> >>
+>> >> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings=
+_helper.h
+>> >> index 84d60635e8a9..4ad9add117ea 100644
+>> >> --- a/rust/bindings/bindings_helper.h
+>> >> +++ b/rust/bindings/bindings_helper.h
+>> >> @@ -84,6 +84,7 @@
+>> >>
+>> >>  /* `bindgen` gets confused at certain things. */
+>> >>  const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINA=
+LIGN;
+>> >> +const size_t RUST_CONST_HELPER_ARCH_KMALLOC_MINALIGN =3D ARCH_KMALLO=
+C_MINALIGN;
+>> >>  const size_t RUST_CONST_HELPER_PAGE_SIZE =3D PAGE_SIZE;
+>> >>  const gfp_t RUST_CONST_HELPER_GFP_ATOMIC =3D GFP_ATOMIC;
+>> >>  const gfp_t RUST_CONST_HELPER_GFP_KERNEL =3D GFP_KERNEL;
+>> >> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/alloc=
+ator.rs
+>> >> index 25fc9f9ae3b4..5003907f0240 100644
+>> >> --- a/rust/kernel/alloc/allocator.rs
+>> >> +++ b/rust/kernel/alloc/allocator.rs
+>> >> @@ -17,7 +17,7 @@
+>> >>  use crate::bindings;
+>> >>  use crate::pr_warn;
+>> >>
+>> >> -const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALI=
+GN as usize;
+>> >> +const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALI=
+GN;
+>> >>
+>> >>  /// The contiguous kernel allocator.
+>> >>  ///
+>> >>
+>> >>
+>> >> No need to resend I can fix it up when applying the patch.
+>> >
+>> > Hmm. Maybe that depends on the configuration? The constant was generat=
+ed
+>> > for me. Either way, happy with the suggested change.
+>>
+>> That is a bit odd, I'd like to understand this before merging.
+>>
+>> All of the definitions in the kernel are defines that shouldn't be picke=
+d up by
+>> bindgen.
 >
+> It is possible for bindgen to pick up a #define in some cases. The
+> main case where bindgen fails is when the macro is defined in terms of
+> a function-like macro. This is why we see so many failures with _IO*
+> macros.
+
+I think I see it now, ARCH_KMALLOC_MINALIGN seems to be either a literal or
+__alignof__(unsigned long long), either directly or indirecty through
+ARCH_DMA_MINALIGN. bindgen doesn't like the __alignof__() extension.
+
+So, I assume you were on arm64? :)
 
