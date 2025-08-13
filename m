@@ -1,167 +1,144 @@
-Return-Path: <linux-kernel+bounces-766039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1350B24181
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:30:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E627B24186
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0A357BB164
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:28:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 176A77BA7F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15832D6408;
-	Wed, 13 Aug 2025 06:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862F52D781B;
+	Wed, 13 Aug 2025 06:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HEM1V3A4"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PozzU8Tn";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MwlOunu5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB93F2D5C86
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0872D29C3;
+	Wed, 13 Aug 2025 06:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755066508; cv=none; b=MB3Iodk9WFY8V7kXISd7jYUrd04DAPgm2qQGUarRfspPnoLKVXBop+PU+0MJtvK1t3SBxxXw4H+IH0D0f//J7VPZYaOXQ8RHh65/uxsiHWTNN4uCEPq7ivvvIHV82EJ28yOcDzKOzUn9iZTs5ysCfRn9UVrNPbw6q2pcrvBOIUo=
+	t=1755066517; cv=none; b=WY9+AFjpF2bmWIQAB5rXK2YohWjLe7gzEGoY+82hSCsk9eDo9f3k8SgddZdCAqK6rabheop2obHZVgQsZhXOMIv9SBaisRxC/jVzvOt/eJSIEm7Cu1BcEGL4wx2qE11IdRfVl9DZ1kpmeGEToXjR1XyRdKiUws9MyNXTHdRlHn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755066508; c=relaxed/simple;
-	bh=ruSc1og0k+neVyIZpEtyljRVj11cTbE4xBOWaKErHVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VgJgrwWi17qUENUADy03GDkdjgKOuKrMo5vZIVLLUqWGC97tXWFzHzjha568Exj3bziZYdlV8in1mxhMYYPHBQL/yFGZm9t5HXIvd8vJoxwasNH7gX0lgYe/Vc5abjThX1YxBUNf7sUwd5ysmCd3/pU1Wh9zZgI3WWhkRGsnwrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HEM1V3A4; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2407235722bso62159875ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:28:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755066506; x=1755671306; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=hkkOFNG1twvUB4ikm7yQwDp0IAPOj20d67SV/lZx5C0=;
-        b=HEM1V3A49qCvcgXmqP7snlpX991MXWf0ktgiOKCnWTQS9nRNAIktxj7fkMYpuTOUpy
-         YRrclnlkwmsW3iYNayjPClLV0ngxtrbZduRvnAnvCvG5F27sBBETWIh0U8sqFDLgHoe0
-         e40w9dKUlznzBVLVITeBlXZpPRQ26Z3CnkIP1o6dAXbpkIpFJiMmtFhP4vq58dtyo6mc
-         xSfrsgb4ICFaLJC8ANCjOB3uZP9NNKePIB0hDPfBn7Bsd0W/4NOavcUenugulaFPofC+
-         IkawKXCrQ4XmXL+a1JcGntlygJ/qZfkCD2773P3Fc9PO1CHGpTV+apqNLccSaKtkL4Sx
-         W/Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755066506; x=1755671306;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hkkOFNG1twvUB4ikm7yQwDp0IAPOj20d67SV/lZx5C0=;
-        b=ehrZP6dzX/3yyKsrlET9JT+7I78Ak/P5hYYMyH0b9rRcsf9PxIMvXYqbNGYUFUKEFb
-         Q8NW5yQRKeXN3rcAu6uMteuzwVUOlIsqT+LSt+KsCOcyV5botMu8muC48Lb+Osbi7OzU
-         XqWWFDdowOjkvaIVei8g45GMHR1qOEElgkx7Y7txqSKjjs2EVOlGlnccDZmDJuAgeGYk
-         PaIkAVrDRST/N74Eow6Y8+ennnCXqAGuPRPFyBwsbRbTiZ9yPOy89RPToP/34ZUoz7NV
-         bY865MRDG4XMxbFY+GzXnXEsVKN0FfiRSVYuO2Lpg/qTdQmHoPeK4PhYYYrhZ2O0mWtn
-         sMwQ==
-X-Gm-Message-State: AOJu0YywNtFoabTIGbtLo0Q0b50vEO9lDIfTwiFifOf5q5T1poXyoNOE
-	8uDMg42LoXyvHO73FwQ+tvf6MrvVg+SFOJiH9B7or3SrPfJ+QlFUYSHrQvMtbDlA3/g=
-X-Gm-Gg: ASbGnctrxgDD+2eH8G3C5cyGwrP0Ra1DecA3/CMSq3YUOId6MTUD+20hZwGA5krQ+Bz
-	2hpU67paewiIIBehh34rwc/hwIK8jRvKE7ZUnPxxDs/dAapV8Y6+3Z44dGjfE2rNh0NHWOtEdfk
-	kdiJCG4ZxDeMFnkfPL9GSjshNPXDQWIBBrsUv6KIWGL08PAeSsZoqu/u3WKwo/ir3jA/I+JKoBW
-	KDch7PpWQQbQvTyxaugV9a4eG6uffm1KPbMIx4bZypfkcvV07wUg+/kQCsggDyCq+WbtEkElINw
-	HBEbP85ZTg9p4ALFJWfnB7gfJ2ZEMAf8zjsuihxm6shTZ84pSzj2ZtPC2Qart5nlXVOl6Vana3+
-	nPm+vSbH4fzjBWDP+/ywJqKR9
-X-Google-Smtp-Source: AGHT+IFYTVLKZy1oWyOc6hnM/pMXzM/G8sghp8UldVXVga+3t7fJRL5dFPBL8RVz5xsAnY8qYxh7aA==
-X-Received: by 2002:a17:903:18e:b0:23c:7c59:c74e with SMTP id d9443c01a7336-2430cf2d4bdmr32205525ad.0.1755066506029;
-        Tue, 12 Aug 2025 23:28:26 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-243017dd480sm32575855ad.33.2025.08.12.23.28.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 23:28:25 -0700 (PDT)
-Date: Wed, 13 Aug 2025 11:58:22 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Bill Mills <bill.mills@linaro.org>, devicetree@vger.kernel.org,
-	virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>,
-	Bertrand Marquis <bertrand.marquis@arm.com>,
-	"Edgar E . Iglesias" <edgar.iglesias@amd.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [RFC PATCH 0/6] virtio: Add support for Virtio message transport
-Message-ID: <20250813062822.3rsgdx5fmefzslc2@vireshk-i7>
-References: <cover.1753865268.git.viresh.kumar@linaro.org>
- <CAL_JsqJn2XtvWaDBSqYPUe2ZVxE7t4EbAt8OPncbQaKjh1jY5w@mail.gmail.com>
- <20250812094955.fdyil4cbxr3bx4bo@vireshk-i7>
- <CAL_JsqKHGFPF-2d-cH4KhxFQ-KA1WO+TuDn722vYbs4Jyx8iYw@mail.gmail.com>
+	s=arc-20240116; t=1755066517; c=relaxed/simple;
+	bh=/QBKFj04E0wLKqCYCfxHnknbQqtSSJTjVtaBdYn4nAg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=h0idVKESFKXELHqSVPBw+ENlMfElyJXMPazEtgfCHqGVa3wEHqW69B1oT7XZWNKIoDV7ormBL7/4QoZMyc0XtIJA3zlBGZ5ulmT3tH7Z2CHuZIOrfEKek02QpmuTK/gYWovUjhKG1XL0GN4ECNYGSFI1aH93KAk1jqAGqf4wDiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PozzU8Tn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MwlOunu5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755066513;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mptAofYf1fHnXCj4lf2XrfrxrCV++6Ygk82lhhc9fPc=;
+	b=PozzU8TnhMzaf0pTaB+OA2nR0YX3CNwEoLUSnBWN5dhxSzhLQIptZjAppRP7k1og/DNSIt
+	BYu+ezU/Vv8V49LxTroRRaXTV9GIhG7AcnhLFsGAaRvZwFkRVPwFa0JGsmBrUEN3N3W9NO
+	OZZxMDlKKssWLLls9+EjEPdKbHA6bzkCVxKs7BlHQBWdEO22Ly2nXadxOw7afkfioMk58L
+	CK8vZb5OBMf1odzRIJa9v+I+KtK9e8hdXFQGgeLaEQ5tl0Ebbd8vdLIWe7CDCjJHVqViDR
+	EJ4PcmEG96Fcs7bTIbkoFkhKAkv4xqFW1d3Uk0XJr084eD0pTU4WcA9K5KA3VA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755066513;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mptAofYf1fHnXCj4lf2XrfrxrCV++6Ygk82lhhc9fPc=;
+	b=MwlOunu5uO/iw2XIroZQcjHRyZMETuZxWdNcLNOxxqoZ1A/N72sNJIkEnkkoIGvPbiCfJO
+	6i6hRFK/qfynGlBg==
+Date: Wed, 13 Aug 2025 08:28:30 +0200
+Subject: [PATCH] kunit: Always descend into kunit directory during build
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqKHGFPF-2d-cH4KhxFQ-KA1WO+TuDn722vYbs4Jyx8iYw@mail.gmail.com>
+Message-Id: <20250813-kunit-always-descend-v1-1-7bbd387ff13b@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAI0wnGgC/x3MTQ5AMBBA4avIrE1SbSS4iliUDiakpOM34u4ay
+ 2/x3gNCgUmgSh4IdLDw4iOyNIFutH4gZBcNWulcFZnBafe8oZ1Pews6ko68Q1NSrrQtWt2WENM
+ 1UM/Xv62b9/0Af8E+DGYAAAA=
+X-Change-ID: 20250813-kunit-always-descend-39e502a8b2b9
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Brendan Higgins <brendan.higgins@linux.dev>, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ kunit-dev@googlegroups.com, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755066513; l=2171;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=/QBKFj04E0wLKqCYCfxHnknbQqtSSJTjVtaBdYn4nAg=;
+ b=gSnEBKFLfxTTMVAW2PgCUTcUev6b3EHUOzCHNc1Cqla18nJxjrNZnUfj62J8Dil9MEaPh597W
+ AZtBTrg9RseAeX+7ox2t+I+Ee6go7qJr1XjO4MNdKiOrfakaM7jTmku
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-On 12-08-25, 08:28, Rob Herring wrote:
-> On Tue, Aug 12, 2025 at 4:50 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > I tried something like this now:
-> >
-> >       reserved-memory {
-> >         #address-cells = <2>;
-> >         #size-cells   = <2>;
-> >         ranges;
-> >
-> >         rmem@100000000 {
-> >           compatible = "restricted-dma-pool", "virtio-msg,loopback";
-> 
-> The order is wrong here. The 2nd one seems more specific to me.
+For kbuild to properly clean up these build artifacts in the subdirectory,
+even after CONFIG_KUNIT changed do disabled, the directory needs to be
+processed always.
 
-Right.
+Pushing the special logic for hook.o into the kunit Makefile also makes the
+logic easier to understand.
 
-> But is "restricted-dma-pool" useful?
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: David Gow <davidgow@google.com>
+---
+This patch was originally part of my series "kunit: Introduce UAPI
+testing framework" [0], but that isn't going anywhere right now and the
+patch is useful on its own.
 
-I need this to call kernel/dma/swiotlb.c: rmem_swiotlb_setup(), which
-makes all the memory allocation for the device happen from that area.
+Changes to the original series:
+* Make the commit message more general, the same issue affects all build
+  artifacts.
+    
+[0] https://lore.kernel.org/lkml/20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de/
+---
+ lib/Makefile       | 4 ----
+ lib/kunit/Makefile | 2 +-
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-> Should an OS that only understands that and not
-> "virtio-msg,loopback" use it?
+diff --git a/lib/Makefile b/lib/Makefile
+index 392ff808c9b90210849e397356d1aa435a47bd07..15a03f4c16e2cd6c75297005e71fa2108c1f41f2 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -109,11 +109,7 @@ test_fpu-y := test_fpu_glue.o test_fpu_impl.o
+ CFLAGS_test_fpu_impl.o += $(CC_FLAGS_FPU)
+ CFLAGS_REMOVE_test_fpu_impl.o += $(CC_FLAGS_NO_FPU)
+ 
+-# Some KUnit files (hooks.o) need to be built-in even when KUnit is a module,
+-# so we can't just use obj-$(CONFIG_KUNIT).
+-ifdef CONFIG_KUNIT
+ obj-y += kunit/
+-endif
+ 
+ ifeq ($(CONFIG_DEBUG_KOBJECT),y)
+ CFLAGS_kobject.o += -DDEBUG
+diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
+index 5aa51978e456ab3bb60c12071a26cf2bdcb1b508..656f1fa35abcc635e67d5b4cb1bc586b48415ac5 100644
+--- a/lib/kunit/Makefile
++++ b/lib/kunit/Makefile
+@@ -17,7 +17,7 @@ kunit-objs +=				debugfs.o
+ endif
+ 
+ # KUnit 'hooks' are built-in even when KUnit is built as a module.
+-obj-y +=				hooks.o
++obj-$(if $(CONFIG_KUNIT),y) +=		hooks.o
+ 
+ obj-$(CONFIG_KUNIT_TEST) +=		kunit-test.o
+ obj-$(CONFIG_KUNIT_TEST) +=		platform-test.o
 
-Since the reserved memory isn't linked to a device in the DT (via the
-"memory-region" property), I don't expect an OS to use it without
-virtio-msg.
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250813-kunit-always-descend-39e502a8b2b9
 
-> The format of compatibles is <vendor>,<device/block/interface> and
-> "virtio-msg" is not a vendor.
-
-"virtio,msg" is fine then I guess ? Just like "virtio,mmio".
-
-> >           reg = <0x00000001 0x00000000  0x0 0x00400000>; /* 4 MiB */
-> >         };
-> >       };
-> >
-> > and this works fine. I am adding two compatibles for virtio-msg:
-> > "virtio-msg,loopback" and "virtio-msg,ffa". Yes I will properly
-> > document them in the next version.
-> 
-> Why do you need 2 compatibles? Can't you discover what the remote end
-> is with some message? We only define "virtio-mmio" in DT for example,
-> not that the device is a console, rng, etc.
-
-In case of virtio-mmio, the reg-range is trapped by the other side and
-meaningful MMIO messages are exchanged. And so the OS knows the kind
-of device the DT node is related to.
-
-In this case however, this memory is going to be used for virtqueues
-and buffers and I don't see a way of communicating the device type
-here. Maybe I can get rid of two compatibles and add a property that
-links to a device type ? The memory is otherwise exactly same in both
-the cases, it is just about which device is using it eventually.
-
+Best regards,
 -- 
-viresh
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+
 
