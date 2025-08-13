@@ -1,314 +1,153 @@
-Return-Path: <linux-kernel+bounces-767486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D0DB25504
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:12:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27AEDB25510
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E97E67BC4AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767221C27001
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A645C2E7BD4;
-	Wed, 13 Aug 2025 21:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F402F0C49;
+	Wed, 13 Aug 2025 21:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DC90g/hh"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEBG+XJo"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2930D2FD7B1;
-	Wed, 13 Aug 2025 21:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237F12BF3F4
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755119568; cv=none; b=HbrAzZZjBNcrD/4sUv5AyPzCF7Ke2GrDbbmv+8r95H3wSWmLB0tUgVbNveGsa5IoxF30Z7aryMKHXaOT9AKJA0yLaA15r/nFWlKlq02qAHQDl5/ssOK4X5tr9LxHhx3nl6hR8aJPLmc2Hk6JkvJ1S3b7u9EWa+N56uYGOh0+Zs4=
+	t=1755119717; cv=none; b=a2Iiy+MtPoOztwrbLhYdGFTCE3O9630UvxN/LMEZt1MjWy8EzO1cMtN3hkPvVx+4b2R1wBIplOFSntqxR7eASMlN569xUeQv9zDAigWnPNZ5j4YTRDys2iJKOh7BtOs2vsQbpVyifj446cG8ox64+A+GUitSRr6r4ceNfflP4hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755119568; c=relaxed/simple;
-	bh=EeQx5dVNwrm1Nj5Pid8VwtIMnMsJ3VVlgSwZSJJi97o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LpQfTCAQ5qKyVJn4sS1goiW6iNNGA9KSha2JUhlVbvuCpa4XX4LW7ZIc/X2Z9OQB3b6sbVTo8xjMF7ZFa+y5vkfJGcvd98P//JNnnNKFrzaEDFWhQz7kc2zSnuFrCdEMeGxmIv1WmVf2AlA2fwzMNCT8EpIVIjBRpp4Hh4q3kV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DC90g/hh; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7ace3baso42935066b.3;
-        Wed, 13 Aug 2025 14:12:46 -0700 (PDT)
+	s=arc-20240116; t=1755119717; c=relaxed/simple;
+	bh=f0mOh5zW36wEzOojcDIcMa7UEWLFOqZuK/fsupPNmY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWmu8ulyvgl8S9mYT9KWcvd1XymX3w7sqY+ji50T4HHTbgRhXfe3vO52HO/Kw+tEM1XAHlUm2DT96wGyM8TEn7q/MPLc7Os066yZCM+5q/fF3RILk2g1tMXoK70yNScaSXd3lLtDzu0gQ7wQ3rYEQtjzOgKUaDn5fgn4DEp/QHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iEBG+XJo; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9d41d2a5cso205323f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:15:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755119565; x=1755724365; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6R+FsQ2hbhcp1JFqDm2g0PdnGeoxdv4HV80v5lSsu3w=;
-        b=DC90g/hhzfCtko58lrw/wVMDFkrni4B9EpRVfS38EFC4dQ2TUhC6RTLXsICwBU8OAr
-         F0sIXF14OOhThwctHdFWk5XlWkBiW13fk6F2ijHq9FM+WahmotGxriylrSPX4Q8v2cF7
-         QCLXNUOVKe6asEfXcK9llLI+adCCp0qN2H8JbsIPPsg0uyyDpTToFfb5LVoMAHxHNGpA
-         TVvf8z9VQ20UZ508gUIbkOFDzqhQ5QPncJ5mmpHVW7zo387UpUF3/QgM/gbjUCvk5nYy
-         mHXXt9b9XGR2P61BMgwTcvlQBLyid7ZDGeVRk6OeOvEdgG/LvglcgfiPK72hA564KEr5
-         R1Yg==
+        d=linaro.org; s=google; t=1755119713; x=1755724513; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ewofpmx2u2AWLuh72EpS+Kxy8uzpjMF+7SbnHvsYlc4=;
+        b=iEBG+XJoLFsnrn6dm5Fsa2J/ukEKZdfxok99/Qz+ZSBT/ocPZbg0cyOtkO8wFB1KxC
+         V3oC2YQBwEQUo2hGLlfssLsSgzJJV2AI0N1RT/sXR4WfEFRmX/hA8VvttnVRe032Y+N2
+         zzgGyQ5h0GwZWuNI70flYcztveCpUA8hhA9ql+CCz5tFCVMfipttR+S+z7bfKHcpQguk
+         D9rK2uXZtl461kj3WFMQ7hKMksw5q8UJ7Ya9vVG3BquGU1Cx5mYhGhJ9Iyc7ZV0Zjj21
+         UpUlgmAxmXwh1WFYYQlopN+fXiKFIkHwVvdOP0ahGMk6YPSfSG3bxu66eiNgMC4EiTHo
+         G53A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755119565; x=1755724365;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=6R+FsQ2hbhcp1JFqDm2g0PdnGeoxdv4HV80v5lSsu3w=;
-        b=C0Kilgo92ONPGiL9KN0hpdcIfakiOtMyYY8ZgyT0WrJHCNpZtHpD7XIu4gSKzUZ4c0
-         ig7o5aCPf1qvbpfmk6mYdvrHyrW2BTq+nhlbSF7y2qQ6rGckQfk1pF6/83ULqaz7gkBC
-         5ArJPPXZJ83itbwjXnYIfyhEZDumRQHI/Zl2vO6n79V2gDdYoTjbLGui5wP8314lEU16
-         Pk1eC4o02C0nxhX0XdJ5NAWXn+KdtuZw5mKuQe2kr2GkqnUCVThB9IPEKXH9JEx1JswI
-         9O62nfas8PMmvPl8w52mhy397qGDSkRG9IZwDBfUY05gsaGQHPRymuiZP/ezoXit2fcI
-         jlcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUuT3iGTjlTnJCsLgTqN1bH5FGLQENoHbnVwuf1qDVc2/NFEhIK5dVSGC/6Nodzh4cuIpiy4omWz15n7HQ=@vger.kernel.org, AJvYcCV/wXyL4O7R/Sd2yutUbzXs8wH5e0LPrvWfXEnRX2zizu5vXy8jbBnaXS1rxyBf9qrbVsGnxeOA1hxxTv+SKzNw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVPEJ/LwmrXgmHRS/itxZf1xYsC39PFODfPzv3LmfkrO8qG6Ky
-	pTH4HWjJlScWqNy9xUPN0ygVB1zo5ecmbMYoV1oYT0Jfi7L6WA11H3LM
-X-Gm-Gg: ASbGnct870uMARLegZK16bNfBoEOHlQEVEVWzHy289mJInlYvcjqPXCGR/vd78ETVh0
-	lbXq90QQZFyCNRqWpZaQ5YYWIa/lreaT9HyRjrl/aGSkFNsD4utr8++7c0xAKCyzluduKikeXcQ
-	90LhkVAggbQppaYp2GuGzK2oejVytmG+CIta3wRpyZ402T9+QUEqsXH1yGM+JQoo+S2IRnj5vl2
-	zht38uJihyOwP4xe15cgYU4IC4yN/JbWjOJZN0Ey1dZWC4ZDRL+6ye03dJMesSCbkK/gKBhcvTn
-	VaDZy+ddO4qVFLv2VmkVcj2oX4wSZHHOqxaBfpmMK088SOROzKE3GsEDsC8wnTw9LR3c3i5rpgX
-	nd7OY5XXzwmjCGAQ89zy6Hs2rANiZ+GF7
-X-Google-Smtp-Source: AGHT+IEQx3+dF5FhXYRCJA2jGhnWmcvHp7LT+bA3JCWJ/ZghpN0pfgTNFHkTyAH3O3lXS3R8AV+/GQ==
-X-Received: by 2002:a17:907:1c89:b0:af9:d863:5ce4 with SMTP id a640c23a62f3a-afcbe075846mr21721666b.15.1755119565076;
-        Wed, 13 Aug 2025 14:12:45 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a078afbsm2455007166b.4.2025.08.13.14.12.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Aug 2025 14:12:44 -0700 (PDT)
-Date: Wed, 13 Aug 2025 21:12:44 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] selftests/mm: add check_folio_orders() helper.
-Message-ID: <20250813211244.ikequq4kvgs65mpp@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250812155512.926011-1-ziy@nvidia.com>
- <20250812155512.926011-3-ziy@nvidia.com>
+        d=1e100.net; s=20230601; t=1755119713; x=1755724513;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ewofpmx2u2AWLuh72EpS+Kxy8uzpjMF+7SbnHvsYlc4=;
+        b=dAciwrIwTjatWuzjW/ZwO2KVAmFg6O4C+NVZ15UWoAWSlQOQ6tPsUWU69S7uPm/duc
+         2GmCLjhfy99ipI0qGiHEoMdehZ5P4Y5KaQzipQpHgzm7HwYJR0PtOhjD7iCGGXW1WuS2
+         A2JOvaTu66swbZDkufbFR8nahDlwZfPckwAW/dAqOEfLSSVKpfcKpJiRBDdhvlThxy6u
+         9FUKJc6l4u1BQVRH+Er0eEV1UlqBIiridAetcoAeNj+sIFSLAuZbdBXygPTWxReZ6CDT
+         V3BF7nz5fLDqC+1KaCv91Whk2DtcFYmqZZqtcjqyLuSBqsSORNr2G1s9WAYUeH7p+4GR
+         KEnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnNNzoGvccT4EXGc0tVoaYhUQZw3soMrPdkBAi7IxfDNIPM4uTTh+YgFy9brSTi1k3bPflFeU/vSjsLwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNvXSf0ttc/VRhs43jDYdYQ5TW+wq65FsFgVU/n2/rRzt8GQz7
+	Q54S8cGi8zS+vLPoLrxakHgJnAdKr00huxhxycJFPwDxo5pxhTpBcFzuc43iP2m1ds0=
+X-Gm-Gg: ASbGncvQGSgXw9wF170u8eif5zgLrFXWNdWUEoW0f3EvEH0QYheJGyBhV92HkGlk38e
+	MegCfSgmtg37Xt+aIBLwaOJlABQlK4H8Gb2XkcebrEH8DHci0PWamI/4Gd6DoGDdRwlLFXebyPx
+	DJVlgolRTJVt2spNIyD5l4gz31UcqZT0/AWV25tulGEi6ANfwjnpsk4xM525PWBw88Vgc1C2Gd7
+	+Eygq5lOUo+K3zJT/OwORc+GMydQr4GS+oBXXMcGjB9S0n3yccGopHeL6Qfskjv+plvhw+0cqTD
+	1Rez8+WZbuuI8E0u90+jqFILWzVEWLJ4UX8fz4A8Ii61Ycd0ieAjTC7fcG2g0YgecWdNW3/vUcT
+	TLUVYm2UrO2YhimzqnZdwLqDpIRxYdi+KjAxu6IK5lYz42HXVypcdvQ2n7OGrL4p+
+X-Google-Smtp-Source: AGHT+IESt7Dqns9DwMc5t6p93qJ/wntgnWbJwzl+NSSOoNpJ0QKJzEMjsB+Jf37ThCfpJRFyEsk/pw==
+X-Received: by 2002:a05:6000:4283:b0:3b9:8224:d3cf with SMTP id ffacd0b85a97d-3b9fc2f813bmr578094f8f.54.1755119712975;
+        Wed, 13 Aug 2025 14:15:12 -0700 (PDT)
+Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b91b05b28fsm2527911f8f.21.2025.08.13.14.15.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 14:15:12 -0700 (PDT)
+Message-ID: <93e35282-52a3-4c3e-8065-b2a6c363c974@linaro.org>
+Date: Wed, 13 Aug 2025 22:15:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812155512.926011-3-ziy@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
+ video codec
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
+ <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
+ <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
+ <8d8dcaef-eb96-4e7b-9a0a-8b3836cb284c@kernel.org>
+ <e33a22ba-f82a-412a-b1fd-d1cd50f6b21d@kernel.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <e33a22ba-f82a-412a-b1fd-d1cd50f6b21d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 11:55:10AM -0400, Zi Yan wrote:
-[...]
->+/*
->+ * gather_folio_orders - scan through [vaddr_start, len) and record folio orders
->+ * @vaddr_start: start vaddr
->+ * @len: range length
->+ * @pagemap_fd: file descriptor to /proc/<pid>/pagemap
->+ * @kpageflags_fd: file descriptor to /proc/kpageflags
->+ * @orders: output folio order array
->+ * @nr_orders: folio order array size
->+ *
->+ * gather_folio_orders() scan through [vaddr_start, len) and check all folios
->+ * within the range and record their orders. All order-0 pages will be recorded.
+On 12/08/2025 09:04, Krzysztof Kozlowski wrote:
+> On 12/08/2025 10:00, Krzysztof Kozlowski wrote:
+>> On 12/08/2025 09:54, Dikshita Agarwal wrote:
+>>>
+>>>
+>>> On 8/4/2025 7:07 PM, Krzysztof Kozlowski wrote:
+>>>> Add binding for Qualcom SM8750 Iris video codec, which comes with
+>>>> significantly different powering up sequence than previous SM8650, thus
+>>>> different clocks and resets.  For consistency keep existing clock and
+>>>> clock-names naming, so the list shares common part.
+>>>>
+>>>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>> ---
+>>>>   .../bindings/media/qcom,sm8750-iris.yaml           | 186 +++++++++++++++++++++
+>>>>   1 file changed, 186 insertions(+)
+>>>>
+>>>
+>>> Query:
+>>> Can the additional reset and clocks be accommodated in existing 8550-iris
+>>
+>> No, different hardware. Although it is hardware from your domain and
+>> your company, so I would assume you know the answer.
+> I guess I misread - I thought you want to re-use existing properties or
+> something like that, but you just want to create one huge binding?
+> 
+> No. Don't grow these unmaintainable patterns. We have been changing this
+> for some time already :/
+> 
+> Best regards,
+> Krzysztof
 
-I feel a little confused about the description here. Especially on the
-behavior when the range is not aligned on folio boundary. 
+@Dikshita can you revert here are you happy with a new binding or 
+requesting in-line changes in Iris - my reading here is a binding is 
+justified.
 
-See following code at 1) and 2).
+@Krzysztof 
+https://lore.kernel.org/linux-arm-msm/fb8f154b-3da4-4bee-82e1-3a1597a35c46@kernel.org/
 
->+ * Non-present vaddr is skipped.
->+ *
->+ *
->+ * Return: 0 - no error, -1 - unhandled cases
->+ */
->+static int gather_folio_orders(char *vaddr_start, size_t len,
->+			       int pagemap_fd, int kpageflags_fd,
->+			       int orders[], int nr_orders)
->+{
->+	uint64_t page_flags = 0;
->+	int cur_order = -1;
->+	char *vaddr;
->+
->+	if (!pagemap_fd || !kpageflags_fd)
->+		return -1;
+Are you sending a v3 here ?
 
-If my understanding is correct, we use open() to get a file descriptor.
+I can also just add the OPP when applying this patch.
 
-On error it returns -1. And 0 is a possible valid value, but usually used by
-stdin. The code may work in most cases, but seems not right.
+---
+bod
 
->+	if (nr_orders <= 0)
->+		return -1;
->+
-
-Maybe we want to check orders[] here too?
-
->+	for (vaddr = vaddr_start; vaddr < vaddr_start + len;) {
->+		char *next_folio_vaddr;
->+		int status;
->+
->+		status = get_page_flags(vaddr, pagemap_fd, kpageflags_fd,
->+					&page_flags);
->+		if (status < 0)
->+			return -1;
->+
->+		/* skip non present vaddr */
->+		if (status == 1) {
->+			vaddr += psize();
->+			continue;
->+		}
->+
->+		/* all order-0 pages with possible false postive (non folio) */
-
-Do we still false positive case? Non-present page returns 1, which is handled
-above.
-
->+		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
->+			orders[0]++;
->+			vaddr += psize();
->+			continue;
->+		}
->+
->+		/* skip non thp compound pages */
->+		if (!(page_flags & KPF_THP)) {
->+			vaddr += psize();
->+			continue;
->+		}
->+
->+		/* vpn points to part of a THP at this point */
->+		if (page_flags & KPF_COMPOUND_HEAD)
->+			cur_order = 1;
->+		else {
->+			/* not a head nor a tail in a THP? */
->+			if (!(page_flags & KPF_COMPOUND_TAIL))
->+				return -1;
-
-When reaches here, we know (page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL)).
-So we have at least one of it set.
-
-Looks not possible to hit it?
-
->+
->+			vaddr += psize();
->+			continue;
-
-1)
-
-In case vaddr points to the middle of a large folio, this will skip this folio
-and count from next one.
-
->+		}
->+
->+		next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
->+
->+		if (next_folio_vaddr >= vaddr_start + len)
->+			break;
->+
->+		while ((status = get_page_flags(next_folio_vaddr, pagemap_fd,
->+						 kpageflags_fd,
->+						 &page_flags)) >= 0) {
->+			/*
->+			 * non present vaddr, next compound head page, or
->+			 * order-0 page
->+			 */
->+			if (status == 1 ||
->+			    (page_flags & KPF_COMPOUND_HEAD) ||
->+			    !(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
->+				if (cur_order < nr_orders) {
->+					orders[cur_order]++;
->+					cur_order = -1;
->+					vaddr = next_folio_vaddr;
->+				}
->+				break;
->+			}
->+
->+			/* not a head nor a tail in a THP? */
->+			if (!(page_flags & KPF_COMPOUND_TAIL))
->+				return -1;
->+
->+			cur_order++;
->+			next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
-
-2)
-
-If (vaddr_start + len) points to the middle of a large folio and folio is more
-than order 1 size, we may continue the loop and still count this last folio.
-Because we don't check next_folio_vaddr and (vaddr_start + len).
-
-A simple chart of these case.
-
-          vaddr_start                   +     len
-               |                               |
-               v                               v
-     +---------------------+              +-----------------+
-     |folio 1              |              |folio 2          |
-     +---------------------+              +-----------------+
-
-folio 1 is not counted, but folio 2 is counted.
-
-So at 1) and 2) handles the boundary differently. Not sure this is designed
-behavior. If so I think it would be better to record in document, otherwise
-the behavior is not obvious to user.
-
->+		}
->+
->+		if (status < 0)
->+			return status;
->+	}
->+	if (cur_order > 0 && cur_order < nr_orders)
->+		orders[cur_order]++;
-
-Another boundary case here.
-
-If we come here because (next_folio_vaddr >= vaddr_start + len) in the for
-loop instead of the while loop. This means we found the folio head at vaddr,
-but the left range (vaddr_start + len - vaddr) is less than or equal to order
-1 page size.
-
-But we haven't detected the real end of this folio. If this folio is more than
-order 1 size, we still count it an order 1 folio.
-
->+	return 0;
->+}
->+
->+int check_folio_orders(char *vaddr_start, size_t len, int pagemap_fd,
->+			int kpageflags_fd, int orders[], int nr_orders)
->+{
->+	int *vaddr_orders;
->+	int status;
->+	int i;
->+
->+	vaddr_orders = (int *)malloc(sizeof(int) * nr_orders);
->+
->+	if (!vaddr_orders)
->+		ksft_exit_fail_msg("Cannot allocate memory for vaddr_orders");
->+
->+	memset(vaddr_orders, 0, sizeof(int) * nr_orders);
->+	status = gather_folio_orders(vaddr_start, len, pagemap_fd,
->+				     kpageflags_fd, vaddr_orders, nr_orders);
->+	if (status)
->+		goto out;
->+
->+	status = 0;
->+	for (i = 0; i < nr_orders; i++)
->+		if (vaddr_orders[i] != orders[i]) {
->+			ksft_print_msg("order %d: expected: %d got %d\n", i,
->+				       orders[i], vaddr_orders[i]);
->+			status = -1;
->+		}
->+
->+out:
->+	free(vaddr_orders);
->+	return status;
->+}
-
--- 
-Wei Yang
-Help you, Help me
 
