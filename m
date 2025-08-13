@@ -1,134 +1,95 @@
-Return-Path: <linux-kernel+bounces-766498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF10DB24748
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AED7B24749
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACFC71AA79DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191C01AA182F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E6E2F533C;
-	Wed, 13 Aug 2025 10:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA232C15B7;
+	Wed, 13 Aug 2025 10:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FEk74iKb"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M7ij0xoP"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A380C2F3C36
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A8B2F2918
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081058; cv=none; b=DTnUZOly+BknMRGacA1SAXIpzO1rHYPiAswMLdo40Wc2YGDQIkp2HGF3bZyXFARNOggHba5AxNiJC4XFLyiA3mlcYGtJzZo1hmcBt5/IZn/6IvYRCzjQ5KH4bKcEHedd00EqglaZxtGaLbJXIBFeyDTHCGN7c72YjRzZuUbxwSI=
+	t=1755081152; cv=none; b=qzTjpGuWMLIykwJYdW2zHZ3UDfjsalwNAm+rC+CZtCAljd3TlNiSIyRJFPAxfUeJL6GiLoai7mjilLr91hugI52f22ad5Mp72RXib0t4W2VcZ3kSTYq35HlAxa4iLQ+3CXxqJ3BBAmHgrvw3OKluvJvTYWpfrdw9KUrROh7sEl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081058; c=relaxed/simple;
-	bh=88L1CJbf9J5QYs1PCbsDjO/XEPjvFmRO+j6a788D7XM=;
-	h=From:Date:Subject:MIME-Version:Message-Id:To:Cc:Content-Type:
-	 References; b=Cr7tZEFjRcabek7E/ZlUZ9Zo1qiEUPDZLfivvkKtvHxsg7UHM7j6pWhJyVo6pc7oiL81iZptF8KpwEQpgyCk4gikctQnC6Ic1OcnMfPcHoc5sxDp2ZmreqD88w90F5n/zco5ayOAeoucdK11IMTCo7k+0k95HPhR4++av6At648=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FEk74iKb; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250813103053epoutp01eb398ff51fc56a237c92d5498d7ad283~bTOthaiYQ1536715367epoutp01v
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:30:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250813103053epoutp01eb398ff51fc56a237c92d5498d7ad283~bTOthaiYQ1536715367epoutp01v
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755081053;
-	bh=0ByLM1B2U+T0XpDIvRDmM2xeFlGFmAEMmQAwzKw/9jM=;
-	h=From:Date:Subject:To:Cc:References:From;
-	b=FEk74iKbm08dHapnSWxIJAQQrrrhulG+ICWe9VtczXKFv1cbiY1T43r2ZI+EuKHM6
-	 Uy1fazOs69miPGrN2a+OpFKQbWj9XXWMDH7gKLXnpqMyhZwPF/u8JrHOkp2WeK84b5
-	 3es/nWXt0AVDrBq0Uwax48TDjcR5kOElDoF7XVfc=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250813103052epcas1p481e94a2a01ca32381def3ed0153e7fdd~bTOsaOnNZ1233412334epcas1p4I;
-	Wed, 13 Aug 2025 10:30:52 +0000 (GMT)
-Received: from epcas1p4.samsung.com (unknown [182.195.38.250]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4c24Qh2SGZz2SSKZ; Wed, 13 Aug
-	2025 10:30:52 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2~bTOrtCpbi0772707727epcas1p3G;
-	Wed, 13 Aug 2025 10:30:51 +0000 (GMT)
-Received: from [127.0.1.1] (unknown [10.252.69.135]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250813103051epsmtip1aa51be842b3d4948e368acd5c3ba3905~bTOrq-PID2477424774epsmtip1N;
-	Wed, 13 Aug 2025 10:30:51 +0000 (GMT)
-From: Minjong Kim <minbell.kim@samsung.com>
-Date: Wed, 13 Aug 2025 19:30:22 +0900
-Subject: [PATCH v2] HID: hid-ntrig: fix unable to handle page fault in
- ntrig_report_version()
+	s=arc-20240116; t=1755081152; c=relaxed/simple;
+	bh=NIIZPc0sY912C1m9icYTUlAu6CHaAo3ThTuiUKfZGXA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PoSmGRpAeASfy8PvoO92qISvR9sAngrd+qXAEnmTxuNgJjb+Hj7RTc4miyE5b18yBb9ArCaPWYuLw1AcWf1Sn9xC1UgzlvlsV7bMKYZDw0Yk2BWTT8wU8Rfw7pRhX3nR3hIn0BD8J7B24Z+tPAaAmGnJ54BGwMgGfvTuUg6KLsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M7ij0xoP; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755081138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=yRug7LQyvFONu46jBMGRmPeIFE9+yuqhOdPPzW6dSeU=;
+	b=M7ij0xoPfeD2CH1dQLA/0tV34M+LYKhKQFovdoB6gCYrIzbVZxdkMWBds9fseU3RgqQ6d/
+	vcTf3us3Ri+Jqeh6OoTjfaXWQgQSlOU+nNVEZU1l3/sHwIUuHjDiVoMYcRW4fcg6KRqYoB
+	CXvjEr+YP97xor1iZ3smZ8jn8bzzXWA=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] powerpc/rtas: Replace one-element array with flexible array member
+Date: Wed, 13 Aug 2025 12:30:59 +0200
+Message-ID: <20250813103101.163698-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250813-hid-ntrig-page-fault-fix-v2-1-f98581f35106@samsung.com>
-X-B4-Tracking: v=1; b=H4sIAD1pnGgC/42NTQ6CMBCFr0Jm7RimFCquvIdh0fQHJpFCWiAaw
-	t2tnMDl972893ZILrJLcC92iG7jxFPIIC4FmEGH3iHbzCBKUZeKFA5sMSyRe5x1Tr1eXwt6fqO
-	lysjW3BqpKsj1Obqsz+lnl3ngtEzxcz5t9LN/jG6EhG3jNclaU6X8I+kxraG/mmmE7jiOL4DLy
-	h/CAAAA
-X-Change-ID: 20250717-hid-ntrig-page-fault-fix-d13c49c86473
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,  Minjong Kim
-	<minbell.kim@samsung.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755081051; l=1243;
-	i=minbell.kim@samsung.com; s=20250717; h=from:subject:message-id;
-	bh=88L1CJbf9J5QYs1PCbsDjO/XEPjvFmRO+j6a788D7XM=;
-	b=jMHjWJxU86Xc94TU6HK6OHNbaxiZxZs6SE7jElNqp6dKdYJMLMocwviTFht8i3xWF6XzJGX5r
-	6+TKp264I7nDk1mexrwlaMiE46ci/urpbwETiPS0/XjFVfe4++M6ow3
-X-Developer-Key: i=minbell.kim@samsung.com; a=ed25519;
-	pk=Uz8SoYyLUgGaB/6pPi6XMhiR2WD14yYYdQ57KyXYtBY=
-X-CMS-MailID: 20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-cpgsPolicy: CPGSC10-711,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2
-References: <CGME20250813103051epcas1p39a9dacf48770020ca234e0c648bb01d2@epcas1p3.samsung.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-in ntrig_report_version(), hdev parameter passed from hid_probe().
-sending descriptor to /dev/uhid can make hdev->dev.parent->parent to null
-if hdev->dev.parent->parent is null, usb_dev has
-invalid address(0xffffffffffffff58) that hid_to_usb_dev(hdev) returned
-when usb_rcvctrlpipe() use usb_dev,it trigger
-page fault error for address(0xffffffffffffff58)
+Replace the deprecated one-element array with a modern flexible array
+member in the struct rtas_error_log and add the __counted_by_be()
+compiler attribute to improve access bounds-checking via
+CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE.
 
-add null check logic to ntrig_report_version()
-before calling hid_to_usb_dev()
-
-Signed-off-by: Minjong Kim <minbell.kim@samsung.com>
+Link: https://github.com/KSPP/linux/issues/79
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/hid/hid-ntrig.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/include/asm/rtas-types.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
-index 2738ce947434f904f32e9a1979b1681c66972ff9..0f76e241e0afb4adb38885a008a05edb24169ea9 100644
---- a/drivers/hid/hid-ntrig.c
-+++ b/drivers/hid/hid-ntrig.c
-@@ -144,6 +144,9 @@ static void ntrig_report_version(struct hid_device *hdev)
- 	struct usb_device *usb_dev = hid_to_usb_dev(hdev);
- 	unsigned char *data = kmalloc(8, GFP_KERNEL);
- 
-+	if (!hid_is_usb(hdev))
-+		return;
+diff --git a/arch/powerpc/include/asm/rtas-types.h b/arch/powerpc/include/asm/rtas-types.h
+index 9d5b16803cbb..5d40d187b965 100644
+--- a/arch/powerpc/include/asm/rtas-types.h
++++ b/arch/powerpc/include/asm/rtas-types.h
+@@ -42,8 +42,9 @@ struct rtas_error_log {
+ 	 */
+ 	u8		byte3;			/* General event or error*/
+ 	__be32		extended_log_length;	/* length in bytes */
+-	unsigned char	buffer[1];		/* Start of extended log */
+-						/* Variable length.      */
 +
- 	if (!data)
- 		goto err_free;
++	/* Start of extended log, variable length */
++	unsigned char	buffer[] __counted_by_be(extended_log_length);
+ };
  
-
----
-base-commit: 347e9f5043c89695b01e66b3ed111755afcf1911
-change-id: 20250717-hid-ntrig-page-fault-fix-d13c49c86473
-
-Best regards,
+ /* RTAS general extended event log, Version 6. The extended log starts
 -- 
-Minjong Kim <minbell.kim@samsung.com>
+2.50.1
 
 
