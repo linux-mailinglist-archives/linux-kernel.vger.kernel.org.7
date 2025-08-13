@@ -1,91 +1,120 @@
-Return-Path: <linux-kernel+bounces-767057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC145B24EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:03:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6AAAB24E94
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31FBD9A42E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:56:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A56626393
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BD027B516;
-	Wed, 13 Aug 2025 15:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0153D2737F2;
+	Wed, 13 Aug 2025 15:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/qMCFrf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EFC27A917;
-	Wed, 13 Aug 2025 15:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FDFC148;
+	Wed, 13 Aug 2025 15:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100221; cv=none; b=Eg4YSNrHhC/Gf+QeYjAd573rd05yJCHJawbU7PDta/FAvn5A9ukzBsNq5W199eZF0zm/PtYJEb/11AKzSW14NnM/Y+OfLRsdGUuOBYNb9g2McgH8u76X8zo5j60SudvjGf+Pq8SZd3ATo6qSAvXdtiFDvEC7ew6hjFUUDO0nqUk=
+	t=1755100294; cv=none; b=um/aISNO80biGrDqFffwm4yfGpJZKLClJ0GyrCgBScy/3nHbXHpJL36zXMyPS+iGMiEq0GhcjQByCRVviM52ovoffRTQ6AABLs2BYx+aw1uRcZNSGHCinoIdYjX3S+OAHAXUEnM+kAchLXEzmKVAp4BD7NvX98im1IjDwO27MWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100221; c=relaxed/simple;
-	bh=INO0e+95m814MiMb9A8+q4AgvnEWYksO78DocadJanc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jmvgjcrYlUk2jW3QNnbcpXeW2NCg658hWs/fhiDt3qg2f2KSV0Ijnt+/vwKo3y63vQh4lFtiJwIwawpeMWrlcA5l3NFvdWXdGVwlM1bmh2RzCPEPl7dZKn4TmmLizLa1Vq9h2ofeRwG4l78fOupxDlAqQarnjjbAzVpzd/nLrQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C136C4CEEB;
-	Wed, 13 Aug 2025 15:50:18 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Dominik Brodowski <linux@dominikbrodowski.net>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 resend] pcmcia: omap_cf: Mark driver struct with __refdata to prevent section mismatch
-Date: Wed, 13 Aug 2025 17:50:14 +0200
-Message-ID: <4937807c9d70644fae705459f36574bd24846d31.1755099931.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755100294; c=relaxed/simple;
+	bh=Nned+2OXLAR4zbMBIAOqe5xsNi80BA2aVmJkwOizo/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IKkKMNM92gvEoO3E2qzk6/2aTQEep3zJt5rTwSJ4zOgT8H+kTH8OMqRmtmm1KKMnN5+YxtKdWaGmJka/Y+lz34n6I9enah+wmuqQFi1iyi0Zhd50JobfEZpGH25WwpBV26KmSvkmBrS3x/IqzWAcxBvRcgR379t+J2ak5gtGLRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/qMCFrf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D53BFC4CEEB;
+	Wed, 13 Aug 2025 15:51:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755100293;
+	bh=Nned+2OXLAR4zbMBIAOqe5xsNi80BA2aVmJkwOizo/A=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z/qMCFrfEERYFA8IES6JygMml11nsuNkVSY1quWx7F+D7wF31X8MlEECLSfwkwWAn
+	 XErYabNXdin0znaccplF3O+tR9VQwLTZ7tbcFMgCaPHbmTlekDNr8uaiqJDUl51Stq
+	 py/Y0N+K8xtfU7tu3lHaGwJQw+Cl+U2m1o+SmO5zwJymG4DpqJpdeunaRdDBRELiO/
+	 hDV4EEZJuckxK5esHLkCxNzFlfvLsiAnIQjZf2qklf5/5AjrJK02kqvWogeNKO5K3R
+	 azAjg6YNxRQaeHDvwIJ3+T9GFckD7cK0J68bsFfelMdoMfSULnW259sdUXODJg7lyX
+	 MVjkXTUcS3Yag==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-333a17be4e0so47496971fa.1;
+        Wed, 13 Aug 2025 08:51:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUhtqrQDwZ+weBfrllBIOHac2fBJd5SSG8NvZr5pZiNPN1vgjR1P9l1sm+y6QfKZiE82VK0f5c@vger.kernel.org, AJvYcCW2nn5LFvMGxLSQhSxQQ/D/ECUz9pfLX7EiKjDKyR/Fj2KEdsjvu57xIwapg7QTCG8H69LKHugbR04Nhe+U@vger.kernel.org, AJvYcCXDsrbHuMsMo2S+DEOeLDqgHbB9+irc9vikE3PmRz7CasE2LA/nz/qq1Qq7k78my2TRernSQalMi5KZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYQYG8C58lpIVng9OCR3D3ND4dqldoom3/rCuaUYoP6/D7arGT
+	k4f2gRREXYwZuFy57lUqZn1MbOP+nRPVg7Mux/egJJpvHUBG2OtsZ4MBTxdq19XxKtCh2BvfuuJ
+	g+zja4BrKtuOpBBActRNF3dg6dMtj9Do=
+X-Google-Smtp-Source: AGHT+IF/AlFvjXg9axEmXPnPSPFeb7xCGFHKQ17NbUjRATjXnSeff8Hv94XSiaaI3kXUimdVd3Yinhj/CTkIyHUENJo=
+X-Received: by 2002:a05:651c:20cf:20b0:332:6304:3076 with SMTP id
+ 38308e7fff4ca-333e9548740mr7131671fa.1.1755100292240; Wed, 13 Aug 2025
+ 08:51:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250813145540.2577789-1-wens@kernel.org> <20250813145540.2577789-7-wens@kernel.org>
+ <aJyraGJ3JbvfGfEw@shell.armlinux.org.uk>
+In-Reply-To: <aJyraGJ3JbvfGfEw@shell.armlinux.org.uk>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Wed, 13 Aug 2025 23:51:18 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67cKrQygew2CVaq5GCGvzcpkSdU_12Gjq9KR7tFFBow0Q@mail.gmail.com>
+X-Gm-Features: Ac12FXym9NQN41ia2Vqvuf9FmKIFWMrTnliSDOIAEvwEtKHt0VT0y1bsZEx7Lbg
+Message-ID: <CAGb2v67cKrQygew2CVaq5GCGvzcpkSdU_12Gjq9KR7tFFBow0Q@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 06/10] arm64: dts: allwinner: a527: cubie-a5e:
+ Add ethernet PHY reset setting
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As described in the added code comment, a reference to .exit.text is ok
-for drivers registered via platform_driver_probe().  Make this explicit
-to prevent the following section mismatch warning
+On Wed, Aug 13, 2025 at 11:12=E2=80=AFPM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+>
+> On Wed, Aug 13, 2025 at 10:55:36PM +0800, Chen-Yu Tsai wrote:
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts b/=
+arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> > index 70d439bc845c..d4cee2222104 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> > +++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> > @@ -94,6 +94,9 @@ &mdio0 {
+> >       ext_rgmii_phy: ethernet-phy@1 {
+> >               compatible =3D "ethernet-phy-ieee802.3-c22";
+> >               reg =3D <1>;
+> > +             reset-gpios =3D <&pio 7 8 GPIO_ACTIVE_LOW>; /* PH8 */
+> > +             reset-assert-us =3D <10000>;
+> > +             reset-deassert-us =3D <150000>;
+>
+> Please verify that kexec works with this, as if the calling kernel
+> places the PHY in reset and then kexec's, and the reset remains
+> asserted, the PHY will not be detected.
 
-    WARNING: modpost: drivers/pcmcia/omap_cf: section mismatch in reference: omap_cf_driver+0x4 (section: .data) -> omap_cf_remove (section: .exit.text)
+I found this to be a bit confusing to be honest.
 
-that triggers on an omap1_defconfig + CONFIG_OMAP_CF=m build.
+If I put the reset description in the PHY (where I think it belongs),
+then it wouldn't work if the reset isn't by default deasserted (through
+some pull-up). This would be similar to the kexec scenario.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
----
-v2:
-  - Add Acked-by.
----
- drivers/pcmcia/omap_cf.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Whereas if I put the reset under the MDIO bus, then the core would
+deassert the reset before scanning the bus.
 
-diff --git a/drivers/pcmcia/omap_cf.c b/drivers/pcmcia/omap_cf.c
-index 1b1dff56ec7b11f3..733777367c3b4505 100644
---- a/drivers/pcmcia/omap_cf.c
-+++ b/drivers/pcmcia/omap_cf.c
-@@ -302,7 +302,13 @@ static void __exit omap_cf_remove(struct platform_device *pdev)
- 	kfree(cf);
- }
- 
--static struct platform_driver omap_cf_driver = {
-+/*
-+ * omap_cf_remove() lives in .exit.text. For drivers registered via
-+ * platform_driver_probe() this is ok because they cannot get unbound at
-+ * runtime. So mark the driver struct with __refdata to prevent modpost
-+ * triggering a section mismatch warning.
-+ */
-+static struct platform_driver omap_cf_driver __refdata = {
- 	.driver = {
- 		.name	= driver_name,
- 	},
--- 
-2.43.0
+It's confusing to me because the code already goes through the MDIO bus
+device tree node and *knows* that there are PHYs under it, and that the
+PHYs might have a reset. And it can even handle them _after_ the initial
+bus scan.
 
+Describing the PHY reset as a bus reset IMHO isn't correct.
+
+
+ChenYu
 
