@@ -1,157 +1,119 @@
-Return-Path: <linux-kernel+bounces-766274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA079B2448F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:43:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB4FB2449A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:45:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F2991B60ED7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:43:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738FF17F1DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F80C2EF656;
-	Wed, 13 Aug 2025 08:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rvw6PHrP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B9keNU7P";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rvw6PHrP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B9keNU7P"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F4A2EF644;
+	Wed, 13 Aug 2025 08:44:32 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ED02D12EF
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9941B2EF672
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755074604; cv=none; b=myUHPLu3hJmD0wcSZHAemaclEClsWSIjUfMFFWEfKvttuRqZaMgbeKcHqPOKmy/Vd5kuekmxbRUOwwS6Bti51QIqyjmfwd3aj9GOYRyup4uXlWLHJ3nKw59pQ6k2UxNo9iLFx5zpV7V/7BNoXTutcyAKEUvuUq7zopcOYZaDgtY=
+	t=1755074672; cv=none; b=afAby6nHPNc4dY9pr+5v49b9YVw8ARD+X/qGW7a4fBil5hEviFvm3JByaVW3BAOE/a/AEYReMom2Rh8JOc7swE0fwNvaIXtdOdYMCmBZ/CHyYD2lMarEnyQGbqwlUh8MoSEjtf2i5986obZz4AJobbtTUtWlGcEQFyyI9f+jfjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755074604; c=relaxed/simple;
-	bh=Y2E2mn9mO1evzeXdp+tUIQyLhvGbKGtSDcnozSPBWwg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qLC07+Rc5pFyzLM5/VSHtIj6e522fzy+Zeqt/EzC5fNbi3d3zIpTB+lrfsKuEsrfv0Nid7pJd76t9ASrZESUve4iiHeXECeHurJTBrX0Ejz/NGcg7jgqch+s8QAK44bxrVLEjEC47fiOAq8lyLmhM7wgpIlThYHntauHpBosFyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rvw6PHrP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B9keNU7P; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rvw6PHrP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B9keNU7P; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1755074672; c=relaxed/simple;
+	bh=mS6kt8/x9Qd9WNbJzNv95A7uomDrcagr7m+4yrBGo/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ET8F/D33P9lK1QhwT4+jVJ+kJhF/Noi3wocPzs/D798u5bt+QZXw6kAZrmnz+e5hhOpNnbpGxhHk5LU//Wo4zBhhesJbF/EhN2Ao0scnvEalJDJIGmw5DsdKeT/NMOzYV1xnCOuztLuat1HqRnJ2fYhuub6Pu0stFCPkbKQm4yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1um75q-00070c-HK; Wed, 13 Aug 2025 10:44:22 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1um75n-0003vK-0O;
+	Wed, 13 Aug 2025 10:44:19 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D04E81F455;
-	Wed, 13 Aug 2025 08:43:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755074601; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgAF2JcilgOIJ+nIikpdqF5jAmEIpEe8oKeqRxVmOs8=;
-	b=rvw6PHrPSHXQ4zq9T5rdXA18MOmfhdi3v0k9pYlcjDPuoMJxJizBC2nUm5isiy73pyX83C
-	gTOyKrZ6aSM86eU0xV95KayAL3DK/bFsylH5Tn3Lwk1jMNThw9cYI6+TSAibrV05vexMR5
-	KHHvyOvSfWPMiuIxMns4DP7LXCqGQ5Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755074601;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgAF2JcilgOIJ+nIikpdqF5jAmEIpEe8oKeqRxVmOs8=;
-	b=B9keNU7PMuDtnAzFYca1D4LPHyr7nJbozerp7CJDSeV6e2JjECgpkVzxU2S6AziRSjcBwH
-	YdVAijGoS8i1MtDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755074601; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgAF2JcilgOIJ+nIikpdqF5jAmEIpEe8oKeqRxVmOs8=;
-	b=rvw6PHrPSHXQ4zq9T5rdXA18MOmfhdi3v0k9pYlcjDPuoMJxJizBC2nUm5isiy73pyX83C
-	gTOyKrZ6aSM86eU0xV95KayAL3DK/bFsylH5Tn3Lwk1jMNThw9cYI6+TSAibrV05vexMR5
-	KHHvyOvSfWPMiuIxMns4DP7LXCqGQ5Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755074601;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jgAF2JcilgOIJ+nIikpdqF5jAmEIpEe8oKeqRxVmOs8=;
-	b=B9keNU7PMuDtnAzFYca1D4LPHyr7nJbozerp7CJDSeV6e2JjECgpkVzxU2S6AziRSjcBwH
-	YdVAijGoS8i1MtDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A68BC13479;
-	Wed, 13 Aug 2025 08:43:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EBF0JylQnGgIDgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 13 Aug 2025 08:43:21 +0000
-Date: Wed, 13 Aug 2025 10:43:21 +0200
-Message-ID: <87ikiry5li.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] ALSA: usb-audio: Add driver for TASCAM US-144MKII
-In-Reply-To: <20250812132209.83728-1-ramiserifpersia@gmail.com>
-References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
-	<20250812132209.83728-1-ramiserifpersia@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id B7D2F45691E;
+	Wed, 13 Aug 2025 08:44:18 +0000 (UTC)
+Date: Wed, 13 Aug 2025 10:44:18 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
+	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
+	Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
+	Markus Schneider-Pargmann <msp@baylibre.com>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@pengutronix.de
+Subject: Re: [PATCH 7/7] can: m_can: add optional support for reset
+Message-ID: <20250813-noisy-psychedelic-bear-350e15-mkl@pengutronix.de>
+References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
+ <20250812-m_can-fix-state-handling-v1-7-b739e06c0a3b@pengutronix.de>
+ <6f138742fe92b6d26f0cd87d3c57e141d63c6f3b.camel@pengutronix.de>
+ <20250813-important-wisteria-toucan-35763e-mkl@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
-
-On Tue, 12 Aug 2025 15:22:02 +0200,
-©erif Rami wrote:
-> 
-> Hi there,
-> 
-> I'm sorry if if this is inproper way to submit new version of the patches.
-> The v2 submission got mixed up with unusable patches.
-> Hopefully this isn't an issue for the verification of the changes and further
-> review.
-
-The patches look mostly OK, but there are a few remaining issues.
-Looking forward to seeing v4.
-
-Also, at the submission of v4, please don't hang on the previous
-thread, but rather open a new thread.  It'll make easier to follow the
-new series.
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hid6feltxh72w5ja"
+Content-Disposition: inline
+In-Reply-To: <20250813-important-wisteria-toucan-35763e-mkl@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-Thanks!
+--hid6feltxh72w5ja
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 7/7] can: m_can: add optional support for reset
+MIME-Version: 1.0
 
-Takashi
+On 13.08.2025 10:34:12, Marc Kleine-Budde wrote:
+> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>=20
+> Thanks, hmmm, why doesn't b4 pick that up?
+
+Ahh, that's intentional. b4 will only apply the trailer if the patch is
+unchanged to the posted one.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--hid6feltxh72w5ja
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmicUF8ACgkQDHRl3/mQ
+kZy14gf+LmZO1LxZ1KLXCzB93eOXujjezBuNe/6C51ijD6tgHlBspKjmpsXFUtzM
+I7hkCDIlcbdw6thA6ux8GATK2fE56Xx/n4zRJ0g4X+8zzzT1bPhS9uwXbsemNSK8
+0zMTY8+1VkCTkp1fiCbWbSAU3nGO/qLvtg1OqWDjDXew+KxEsKS75vbaLj2Zphm8
+hXlVgWte54yEDQ0OVG3H7VJ3gvIm1ybYSXqb1vgYccVcqsd01irBNEFCzu0sm458
+8qzGMddXuV2GYFai2z/YadESvz0yBDvWSi26ZYs7//LF5dE0gP5YsOEzYA4i4F3a
+LLSyQpEeY/DiG2pFO2iMz56ygMtCGQ==
+=TIcv
+-----END PGP SIGNATURE-----
+
+--hid6feltxh72w5ja--
 
