@@ -1,96 +1,79 @@
-Return-Path: <linux-kernel+bounces-767661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25498B2575A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:18:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CEBB2575E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DED31C247CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:18:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 010767A5A2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BE22FB98A;
-	Wed, 13 Aug 2025 23:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB892FB96F;
+	Wed, 13 Aug 2025 23:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="nqVXzWar"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clM17nEV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDEA301462;
-	Wed, 13 Aug 2025 23:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0847301490;
+	Wed, 13 Aug 2025 23:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755127086; cv=none; b=ltdpxXMdbyv42ce46nIH+tq5QOy/clR5WpqKZ5gufSyiz3r13s0VxkLGcL6uKrNHIGs8waJVlGCGUaWPerHnaEpKFBS0FrPAPsFO1Uqyytws/h8/J6Hem5YOgKuAD6q+aRGDnBqF2Vl/bynrZS75kzD+DTr8y4/IBc3jUxpwWoo=
+	t=1755127123; cv=none; b=tz1ktKgbBQ36UcPIKFTAMXRgVu2A2e/39VJhhkf2hq5Q9v9R/HL13B7A45XmYAVmRPVmgsRObBdBHTq9h1VrEftBVRxMYLBhAtD8Vhlz01NY6WWMuqcmUDzQW6F9Ja2cf8gvKBAqezZiYncObQRfkX9Z3WMm1tceKuRioHs7zQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755127086; c=relaxed/simple;
-	bh=XcpIxI3Kza+KlS7nav08N2XpPAC2+IEz61rOMpvZXxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vCKTfocF85+rk6dcrftoAq11J4QJRdzqBdZrGOzi6PbSJZwz1bfBG92UlSZBTnAQQU/CiIDZXJhMOdAxjBCyhWCfXNmAVw6GrnDcShmGxqTZs4S2vbyOswK4F9BYb5+4mi7J9n//Got37FQrNbvNDTAug7DH5F2CFJf1/Dpih8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=nqVXzWar; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4c2PRv0lpQzlvX7x;
-	Wed, 13 Aug 2025 23:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1755127081; x=1757719082; bh=AEV57I4CJV4Mttizx6a8pEEt
-	tPypHfB0/YPycEt6mc4=; b=nqVXzWarOX4zMSFucbW7ffFZxP9HO34B9aWBnKKA
-	Zm32DijgAgoCKh8LlL25ZxnKuHqjo51nYlgYYtjVc1TfyKLQIiB2xjbtHf/+dFTr
-	Q3dViL6GZtDFQKDmx3NwOxt1zpAhvspLViCJ3c5A8Odbi5285cUhVv1wG3rBpuM0
-	ry2QttQIgR5bVnkXxidmgHOxyoCchz34oSKbcF6mDgjtcjxH/43vN/jXJEZVfcgp
-	dsrLy7oQo5BCFlP7rvuazuU/d7YnBGfhV3yfN7DvpCgLIpRForgeQlpePgGcBs9E
-	qCG0SSXtbAdQ90mOSmKtCjAJgn7EcuiL1ur9Nk8GlADJRA==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id SH6xn7L3igvD; Wed, 13 Aug 2025 23:18:01 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4c2PRj11tVzlvbmy;
-	Wed, 13 Aug 2025 23:17:51 +0000 (UTC)
-Message-ID: <279bdc31-ee29-4156-ab5b-9592e8297ebb@acm.org>
-Date: Wed, 13 Aug 2025 16:17:49 -0700
+	s=arc-20240116; t=1755127123; c=relaxed/simple;
+	bh=lhIQxzr3DuEkga2iHGADkHZ7fFBhMHQcFKPR3xyRtN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jh8ux1w7tFY+6qx5KLySXPp4r0d/ugiAUcX4P283S+eLKyQ0FrzoO6OXug9ib74gpzbOamHi2qH9ui+K8QGAAfJtfeW/eW/OZ8k07i7fI/Qu8GFhJVxNNJmmE1LyIuR2e4q7V8bV3JOcBYDreyKIBBKsIwjp75IviZ5g0O8nxcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clM17nEV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A90B1C4CEEB;
+	Wed, 13 Aug 2025 23:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755127123;
+	bh=lhIQxzr3DuEkga2iHGADkHZ7fFBhMHQcFKPR3xyRtN8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=clM17nEV7nTHsfRaLcq+fHq8MfMT9FYqgVgmEJYTkXn0qMtkRcOgGh94JEJR8y/JX
+	 zOAdS9iNrVv9yfc0HNhvitIvdaNKx3bSReyDGYK+/VGYK6GW9gGX+Y059mP35h65Fu
+	 B0iWp5WaUcVMbHU/ryyrwCouG10Gdn3W6TGTuFurKWN5ScHsxZnu/q1OtbUAynZYqr
+	 +6n8W5P6UU+jDcXZvyjdaRd/0EU+nM6OwjNJL2cwBCAvIW+FPE0xob8fnErZNXwnQy
+	 UGOOedsZbHstbNa6qdpq4gFlmz6oqq1BIveEecNi+9K2G34uiFjbpLiMJtBDJxqcUo
+	 J9GeGHi4LMBhA==
+Date: Wed, 13 Aug 2025 16:18:41 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre
+ Torgue <alexandre.torgue@foss.st.com>, "Russell King (Oracle)"
+ <rmk+kernel@armlinux.org.uk>, Jonas Karlman <jonas@kwiboo.se>, David Wu
+ <david.wu@rock-chips.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Chaoyi Chen
+ <chaoyi.chen@rock-chips.com>
+Subject: Re: [PATCH net-next v2] net: ethernet: stmmac: dwmac-rk: Make the
+ clk_phy could be used for external phy
+Message-ID: <20250813161841.04f5ff73@kernel.org>
+In-Reply-To: <20250812012127.197-1-kernel@airkyi.com>
+References: <20250812012127.197-1-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 1/7] block: check for valid bio while splitting
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
- Hannes Reinecke <hare@suse.de>
-References: <20250805141123.332298-1-kbusch@meta.com>
- <20250805141123.332298-2-kbusch@meta.com> <aJzwO9dYeBQAHnCC@kbusch-mbp>
- <d9116c88-4098-46a7-8cbc-c900576a5da3@acm.org> <aJz9EUxTutWLxQmk@kbusch-mbp>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <aJz9EUxTutWLxQmk@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/13/25 2:01 PM, Keith Busch wrote:
-> I'm using the AHCI driver. It looks like ata_scsi_dev_config() overrides
-> the dma_alignment to sector_size - 1, and that pattern goes way back,
-> almost 20 years ago, so maybe I can't change it.
+On Tue, 12 Aug 2025 09:21:27 +0800 Chaoyi Chen wrote:
+> For external phy, clk_phy should be optional, and some external phy
+> need the clock input from clk_phy. This patch adds support for setting
+> clk_phy for external phy.
 
- From an AHCI specification
-(https://www.intel.com/content/dam/www/public/us/en/documents/technical-specifications/serial-ata-ahci-spec-rev1-3-1.pdf):
-"Data Base Address (DBA): Indicates the 32-bit physical address of the 
-data block. The block must be word aligned, indicated by bit 0 being 
-reserved."
-
-Please note that I have no experience with programming AHCI controllers.
-
-Bart.
+This patch doesn't seem to apply to net-next/main, please rebase &
+repost.
+-- 
+pw-bot: cr
 
