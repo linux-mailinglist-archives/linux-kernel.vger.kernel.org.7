@@ -1,272 +1,357 @@
-Return-Path: <linux-kernel+bounces-766465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB94B246CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:14:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F72BB246F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81C50166AB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:12:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71690189D3C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9C92D6E7C;
-	Wed, 13 Aug 2025 10:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F082D0C9D;
+	Wed, 13 Aug 2025 10:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tdk.com header.i=@tdk.com header.b="ATwekXrC"
-Received: from mx0a-00549402.pphosted.com (mx0a-00549402.pphosted.com [205.220.166.134])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z5kTGVS6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5A9212541;
-	Wed, 13 Aug 2025 10:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.166.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755079918; cv=fail; b=mQ6f/CBDOo19SsCLXwv/f7yoPOgUbGqo6x9Nme5JNobGJzrHok27QXVMQuWQfLmsjAdsfF28IfyffzLClgiq3oxr92tLo1t50BCaWcx70o0ks3x0Ujnq+KAysOpwXj9PufAq/TLwAYUiPjYth97gErrQ1jhNUanO3ENhcAN5AAE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755079918; c=relaxed/simple;
-	bh=gGbER7ZBkcC/OR9P0mZupb8Lr2EaTd4k8V48flvKfZ8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aGeNx3JrQ4FN5h6+55fF4ewxHI68mHbCT9NNzvF/2IGFrBvFEXnyW1V5AMJCTug3bdK1CeCn8qLEO0RhPoqgN6DK29k6gjtXlU9SHTS6O0zY3p2CzIScmOEYOMwZ1Vhetjt36RVRyByOaBCl1qu67QHFLj/qkSeYXVkK0Tewio8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tdk.com; spf=pass smtp.mailfrom=tdk.com; dkim=pass (2048-bit key) header.d=tdk.com header.i=@tdk.com header.b=ATwekXrC; arc=fail smtp.client-ip=205.220.166.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tdk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tdk.com
-Received: from pps.filterd (m0233778.ppops.net [127.0.0.1])
-	by mx0b-00549402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D9pjU1032468;
-	Wed, 13 Aug 2025 10:11:51 GMT
-Received: from beup281cu002.outbound.protection.outlook.com (mail-germanynorthazon11010031.outbound.protection.outlook.com [52.101.169.31])
-	by mx0b-00549402.pphosted.com (PPS) with ESMTPS id 48dvq0jn5u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 10:11:50 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SeYNhrlBWBSew6bEeTOWky4ntAxSaIpK8f+bja++N5zHE6BKh12xl7h5YEqFRnWZYUk/4dtY8tRasd280MXfdG1/BIhWk1bTkhq7LpcVu4wogYSpeP/OnFiPiGPKZ1fNirD9GFf3T6WQduBNAOpenlvYVqK98I4QsUkEu50Lhn/AkMshIibVcexn7QxVQ7wKUzV6XBkdD+Kv8mS1I1XclRUAR6QD26XLIQd7uHu41LYhty3WZzggfiBK6LBGg97kQSv5Sn0VEHLiPfJRRIG2SoBNYk/Ch1QO2AuhD15IxK2FSsYG7ksV5cv2gIrEKI+b7x2jlunEjY0tF7ycU+/7qA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gGbER7ZBkcC/OR9P0mZupb8Lr2EaTd4k8V48flvKfZ8=;
- b=Jv6B2oPSmYi31M7liu/7605ntei/Ze6JfSUBkg4RwjVx+r4DUty9AJGHfWYwq1slLOQ69uPpiC1c+6U7siAdI0pFJUCKm/OBXPRNt6SrJwgIgCGr9rP9NBRkY1zt3l13Ejw52gMeDEs/2cEDk5Js96aEXnU8+moLhVhFJF7B5PYbbzgxWkBWOumU3YPk5qCf4+0Uh516pSQXsKgQAW87A/D9yNPpP5aSnO3hyYlHLpb/jiYiGwYPo/OTAeeP7T0oZKIovIrgYnP1jfTHaVKh0OGL0X7EVr5Hn5UAb6uZ3ZAkfQQhnhytlDmxcPCHjDqky8ldeqnYQuU3zmxx2SxhoA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=tdk.com; dmarc=pass action=none header.from=tdk.com; dkim=pass
- header.d=tdk.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tdk.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gGbER7ZBkcC/OR9P0mZupb8Lr2EaTd4k8V48flvKfZ8=;
- b=ATwekXrC5bqo3G3ogpO3SWTxEe9VnfWlbyFAT6v0xrp4vw0VEGXgjVGQYtJ7U9PKfxn5MTuhu7rjPxl5COiA58WeRkI8Y66mbar8leEYf0XXkWk8owjX/mOYbn9qsAxWVxWChj0vCarnjyaSBlHM5Bi0jKviAK5uk2vjJ/WfuvTYxflPXhQ/36PopYAkwFEiDqXX98TXTU9FiUunwvdOjRX7gV/xfU1mglSp294biqnJn3F/p+smQkEhuIrEagCwxjfSvny6K2pFDX6p9dEhfx0iJOEGRrLla7zpmmC6mxZhZT9r3FmZzczuEuxaJheEczZLiI3DqP/07E6BZ6NxQg==
-Received: from FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d18:2::2d)
- by FR2P281MB1735.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:8b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Wed, 13 Aug
- 2025 10:11:45 +0000
-Received: from FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM
- ([fe80::903d:f362:450:c7bf]) by FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM
- ([fe80::903d:f362:450:c7bf%3]) with mapi id 15.20.9031.014; Wed, 13 Aug 2025
- 10:11:44 +0000
-From: Remi Buisson <Remi.Buisson@tdk.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-        Remi Buisson via B4 Relay
-	<devnull+remi.buisson.tdk.com@kernel.org>
-CC: David Lechner <dlechner@baylibre.com>,
-        =?utf-8?B?TnVubyBTw6E=?=
-	<nuno.sa@analog.com>,
-        Andy Shevchenko <andy@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH v3 7/8] iio: imu: inv_icm45600: add I3C driver for
- inv_icm45600 driver
-Thread-Topic: [PATCH v3 7/8] iio: imu: inv_icm45600: add I3C driver for
- inv_icm45600 driver
-Thread-Index: AQHb9x5gsltPjGhTv02UGY0aUH3GQrRBftyAgB8IBVA=
-Date: Wed, 13 Aug 2025 10:11:44 +0000
-Message-ID:
- <FR2PPF4571F02BC2D65FAC64CCAF6F3F1798C2AA@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
-References: <20250717-add_newport_driver-v3-0-c6099e02c562@tdk.com>
-	<20250717-add_newport_driver-v3-7-c6099e02c562@tdk.com>
- <20250724171811.55b0bc0b@jic23-huawei>
-In-Reply-To: <20250724171811.55b0bc0b@jic23-huawei>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: FR2PPF4571F02BC:EE_|FR2P281MB1735:EE_
-x-ms-office365-filtering-correlation-id: 57971f84-1d25-4cdc-86b7-08ddda51ce92
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|19092799006|376014|7416014|1800799024|366016|3613699012|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?dXcrZFVXZy9RVU1RTkVlOVlseU5Vb0RLeHFENDBuZ2Zvb3lXaUJDMm1DTFZh?=
- =?utf-8?B?RVF1bnJPelJMMm1PU2QzSG5MelNEQTVvNDZUeFBEUkV5MkY2VEpmaXR5elhi?=
- =?utf-8?B?ODFHNGZWZWlKVmhsUHNGSDlCclhCZzBTSzRHSkJKUDFRVGdjYW9VLzA2Y20r?=
- =?utf-8?B?MWttMlVaeWQ2dFNhdC9PaW9yVCs1ZFJSay9Ma3AySGV5c1ZCQUxCKzNlZVZq?=
- =?utf-8?B?aER2SURsSk12YmRmK25jcXNvQXkxVkFJZzJscFdxbE93enQrVUROdDNwYkpr?=
- =?utf-8?B?azE0NWJ0ZW0vSnZmd0NsMzdNbEUzbHE0WFJTelc4NG45aWU2N0xHU0twQ1hQ?=
- =?utf-8?B?VDM4Nzc2Mkt2MWJhUTZTV29RcllFb3VKYTQramJWRDh4OVJITkNJMXBBWGt2?=
- =?utf-8?B?V2tpRFlVaUlsVm1KdDZmTlZRU2FHR1lOOVRaZWswNFlqaGE0bzlVTGc3QVVT?=
- =?utf-8?B?cGxtQUN4UklaNDdraVM5TkpqVXRwc1NQOGYyRks3TGNreEFhQnB0cFcwNUNL?=
- =?utf-8?B?bUdrK1FOcHFiY2ttWUU5QVlzWGZtTHRhTDNnNnVqRjk4YWtyVHNMVVdLYjJp?=
- =?utf-8?B?WXN2eTRXOTFibHQrOEgxN1UzL0haRFJPY0pkcFpEMUt1QjBkNm5wVEg2cy9k?=
- =?utf-8?B?eTlDT2M5cFQvdHVMRExhS0tVakRDRUJiWHhSTDJ0SHY3NzZzSE5hUHJEQUds?=
- =?utf-8?B?QTNiRHVjY1htQVpSdVc0NWIzc2M0dFR1NWc5OStZQkYrY0dXRnMxSXh0aU1D?=
- =?utf-8?B?ZXlKMVRpYWdMZjI1blJEVWNiNmJ2bGc3MEk4Q0JtQXNKYUxVNlJocVZieHhO?=
- =?utf-8?B?aGc3VmIvTVdFYjcyVkVUU1ozcW1vNmFhR253Uk93YVdxT1dWM0w5RC9KaUUv?=
- =?utf-8?B?QWJqc3E0bEgwY2NlRlZ2MXZ1Sk5vZkhMNThQeWJXOTFPbFNmWUhuWHlZT3FJ?=
- =?utf-8?B?RWlNZytMLy9qdXBMR3VJdnZzOTJBT0daSWZUaVNBRm0rT0pDSVhqU1ZZR3JU?=
- =?utf-8?B?Y3Q3aXRTUk5IQjhpbG5LVnZGbmFXY3VNSW5JZTJ1eUZ1U0pYaytGblMvVW1j?=
- =?utf-8?B?UVg0OWxJQjk4Rmd0SWpSVlA0dGFScFEwSzU3TUhJSzFoUkNzNy9UbHduaGo5?=
- =?utf-8?B?UzBmTzdPb1Nkckswa1MwMFBlVGFzejhhUkVNVTFGd2xIZjBrRC8yZWRIVVZr?=
- =?utf-8?B?eFJ0dzhkTUxTTmJnODF2UjJzWTdYNGdFNmN4NFhRZ2FsblNoRmJTRTlleEla?=
- =?utf-8?B?dUdNb2Z5cmR1SDhBekY5aVZ6MjVNZTdDWmJwc0hic0cycnFDNHlQNStxcDhF?=
- =?utf-8?B?L2dmc1BaNEtDbHJNSmM3OEFEU1QxclBlNURUb213Uzc3VWlhU1dHUGk0R3pj?=
- =?utf-8?B?cG5GLzRyWkJSRmlQaVBldkVqNmtyOFZBWTZ6YTA4MUhTWGtiWHJrSkNQb0Rr?=
- =?utf-8?B?Uy9BbHovK0VlZkhaYmRNWHBXeXhOZ2gzTTRTK3hvZFEzeG5mOVJoY1NIVk8v?=
- =?utf-8?B?dXUwT1ZpWVErSTdyVWZDS1l1RUxrNmF6RXdtUXBKdVdXeWVjZm9QMWk3eHBV?=
- =?utf-8?B?eTc5eWQ3Rk5Obzh1NWMyQWd2NHpOZDQ2dE4ydVljcTFtNm1iRmxtcld2aVJo?=
- =?utf-8?B?Mm90a1A0cFdTbVhwZGpWVmVYVmdpRHFQOVY1dmdpYTBCSkNxV2hGYVVQZFhp?=
- =?utf-8?B?MjJxTnFMZHQycjYzU29KZXlLRS8rSXdveVYvaG1Rd1AvVnN0U241aVJIWnVJ?=
- =?utf-8?B?WG1id2FsMWFaN1htai9YaWdtU2p3RDVDR3VDeWFRaHUvN2FGTUUyK2pGT2c5?=
- =?utf-8?B?QXh3T21ZSnk1anRFQWgvNjhlU3VaMVp1allNdDNPLzRTWXBXTnNwMmNPb3VB?=
- =?utf-8?B?UUhQL21vbXRxcFVsSkVuS0N2RE5sWlY4Q0xWOHNoZVJjdVZMUlhtSC82VkFr?=
- =?utf-8?B?NjVidWM5bE5oc3pscWNmTXNLVGRCbzVCMWhkYklOQUZtSzczeVR6SUxWMmMy?=
- =?utf-8?B?c2xVVGw0YldFWTdJSDZ0aXdhaldHVWdoT2tqNVQxTW5VSkJBeWY0bVRUa3NJ?=
- =?utf-8?Q?qU6NV1?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(19092799006)(376014)(7416014)(1800799024)(366016)(3613699012)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?RG1GelRyZ2RCKy9tS1Fuc0wxSWJ2OW9PYkdiT29IKzEvTFdodno4TSt4djk4?=
- =?utf-8?B?cU84Q0hlOCtISUpwTWk1K1RSUytYMEVWSis2UkRheFVXRHNVcFZ2YVErMkpk?=
- =?utf-8?B?TlNEQ21yakVycGJGYnJpWmtiOWJvdUxRZTBvOE5aOUFSK25uWEFQMG5HbTN6?=
- =?utf-8?B?RE5leGFCaitpS21CTFd4eEJDL1lld2dCZmcvc2dIS05rR0ZjaG9xOGxJNjFC?=
- =?utf-8?B?SWRrOHAzNFZyby9IZkxBbkU4dlg0dG1DTm5wdFlZTFlKWm50ZHZCRGZpbm04?=
- =?utf-8?B?dGp1a013NGwwMzh2UnQ3TkR6WXhydzhxUmZCTkRmYm52TCtaYlREMUxJcXUv?=
- =?utf-8?B?THRiRUdsNWw2TlYvUk9ubW9GWFl1c2Z1LzhYWForUVpVK3lKRjlQN2FQMllH?=
- =?utf-8?B?OHlHQ1pZUE00S21qN2ZDc3hTL0ZrR3BjQVFnTm5GSkRHVnVuL29jckhQQlN1?=
- =?utf-8?B?Wkg4YnA3RkxvVkh6alF5N0JhTmE5eDRJa1UrZXN0L1lkdWVIYjJXZWFpYStN?=
- =?utf-8?B?dDNOSGE4cTR2ZjkzUmxDVnEyeVQ1Rk5wQys1ZElYVHdWNk8vWENGUFU2cnN6?=
- =?utf-8?B?a2xubnpFQlpUZHlrb2hpMEtGTFJMWnpMSlltMWdueXJkQ2UvNlNIc210dUo0?=
- =?utf-8?B?Nzg2ajlTKzhFcHBmNUpzcmhPYlpZTlFZUXhFZjZUZ0xkbWZRZHRlS215eTlP?=
- =?utf-8?B?YVFzVUpZQmprZXFYei9uRHpXVENmSkpDSzlpVHJ5MTVKbDkyQjVkbm9rdllD?=
- =?utf-8?B?WlV6WUJDV2NUdVd2OGlTMERSY2hmYytiTUJPS1M5bnZTN09TQlcyWWFrUEZI?=
- =?utf-8?B?Q1JrWnBNNERCSjh3WlE4dUJGMUZNNTlMakltS2J4bVpSMGYwY1MrUFRyN2dW?=
- =?utf-8?B?Qjd1UFRjM1ZXSFFhZ2wwUUxaRlJOZ1h3SnIvL2xEN29CNkhtS1lwU2tkczVC?=
- =?utf-8?B?NUwvU3ZXWlZQS2E1K2tPN0Nqbjh0WUZGY3RyZDAxK2xxQXB1czZVYW1OZWVM?=
- =?utf-8?B?TUNIVkhKOEVlR0JVOEd3N1VYUHJQS2dzY2pHMXRUbktQaVZDam1VWjY1Szg2?=
- =?utf-8?B?Znk4TERoYzN4U0kvSE5aeUthNldsaHVHQUJFKzJ1enJsSHczcGJLdlhPTUY1?=
- =?utf-8?B?eG41ZzhJdlpxODhYcnFwbmRIYWxWbU51VkcybTQ2V0krZ25xQXFlbExuODRC?=
- =?utf-8?B?NzBHTmJFUU1TdVFva2U1WklrMGc5Tmt0OGZXNXBaT3A0eGlxc010anR1R3Z3?=
- =?utf-8?B?K0h2VmxabWJ3Z0NCZXRqdHFaT3BrZmRPb25LZ3dTd2dzeThHaVU0MUw5WXVt?=
- =?utf-8?B?VGM5RzVoR0k0ZnBWcmJ3ZnAzc2tZNHN2T3NyRHVOMndIZVpCNnVZNnZ0dEor?=
- =?utf-8?B?cVB1RnBUSjRXSlEzUGFGQlZ1K3RXcithQmZxenFWVzIwTWZUZ1dnUVJ6UER5?=
- =?utf-8?B?d01ETjd3WmFZT0ZiQ04yelRIU01uVHdUL1BROUhQUG0yajVMUWJFUGwyaURi?=
- =?utf-8?B?TUgxaVJ1WllhdWNmMC9lSElZUGgyQnZUbFpGYk9ybEY4eWdCclU0ZXhidWFW?=
- =?utf-8?B?R1EzSjYxbXJHS3lIeTlBWlQ5a2c0RDJiazdQSy85Z2haQ1gxNGVDN3lsUUY3?=
- =?utf-8?B?Nlo0b0JCM0FtNVJGcFMyME9vbEhybXE4aWVhTFAwKzJPQ3ZUVWMzbFF6VlRT?=
- =?utf-8?B?b29zM3p4T1NSdTB2ZUg4Q0JtZHBSRVc5WlU2THVEWjc4VjBUb2phQnJHa3Rx?=
- =?utf-8?B?dW1vUnhoWS9kSlppMUx0a2JKMkJZK2VkR01FenRYWGpCUy9mYzMvandPQTRh?=
- =?utf-8?B?Vm90VzU0TU1OWmlRVE9jcGcrYURTY0VvRTRuVVNBSGVvV2xxSko3bTU4K0Fv?=
- =?utf-8?B?SmZPUWE3NVUwcGJlS3BOOU9wNHU0KzUzU2FYbjJPT0RDWUYzZU9XaXFTbnhH?=
- =?utf-8?B?bmNVVFdXazBEemhiRzZxV2VzSUNVQmJsaEpPU2VXRm53aDV4OXRtblI4VVdI?=
- =?utf-8?B?MnIxWElTTWpwMWJyYkFoYkRaM1kyNjlLbm5Zc1pXV1NVR2VhYlptTCtKUGNH?=
- =?utf-8?B?VHRWV29NU3JCczN3UWdaVXF2Sm9Pa21meWhZYTVCVDh3bVlHYjRUbk1ZZnly?=
- =?utf-8?B?WnVZK2N2QmhKeWcyRnh5RUJvWU5wbFIxa2NnOXFoeVcrcktteG9tUXY1Zncy?=
- =?utf-8?Q?EFp0FDmLBJU5mOcE40ulWMNW+3uY1TimXZKueneOOxye?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6AF21256E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755079954; cv=none; b=c3v802qXBTMor6vouk6xzTCLsl8O+eafvGaTLamZ+qIOZqmkZhDr9aYLCt4J1Q1FgxJ+o9xONnGukkrMNdlp7wlYZR+NR9AiDxRS4dLOquXA+0XkcvXcOAYnJ+gKucpa0Knu+YyRbLYMNIPUJ0URpP1oyvmc6uW9AtZWNIJ2iis=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755079954; c=relaxed/simple;
+	bh=DSepXi7+wgxrvRLcEEpk7COlGGzMzmwUYw+2mA16qJI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qGxfDTa7/lcrhQIae8jOkE9penRq1CXB5uDuRpovWIbXb23w6aw1v/Zm+UpHpdaCUKFTQwrwsnsKlaTK45JsFNW1vspSWOr4O3y65VglIRT1PV3hbo6Er1cPcLuA9+w9G+eAgA5xG8JgDxCb/Yxy2JAXDc1PdVTIomzePJNeHkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z5kTGVS6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755079951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IHixBqtVWa3TXGCBa7l2LROeCBnEtW1Ef55PxSt8KWM=;
+	b=Z5kTGVS6ONwrjWIjGDg69unaSqN/QmVpNAD+s/WTF+xe0Gr0op01cc+aPecuNZ8yJPY1O3
+	4FOzGxuRBYohPeRvudUf+eSEWg8/XAXz5/4XTjBj695UEJQ5wV2cb3l4D16nynu9S7vqfa
+	Jue5nJN6nGBr6im4u7jSod+Krd/Ejr8=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-504-9fElDqR7PBO1X-3MKllFMQ-1; Wed, 13 Aug 2025 06:12:30 -0400
+X-MC-Unique: 9fElDqR7PBO1X-3MKllFMQ-1
+X-Mimecast-MFC-AGG-ID: 9fElDqR7PBO1X-3MKllFMQ_1755079949
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2400117dd80so48512175ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:12:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755079949; x=1755684749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IHixBqtVWa3TXGCBa7l2LROeCBnEtW1Ef55PxSt8KWM=;
+        b=r0rZRcDkKAwwirLw7k3tJE2Y7VfjWZaY6gTlrrSYtPOXqV/xPJi2uDc0c+koFrxBc+
+         QdnzUcEfxq5qsAMI4TosF1RfDEXvAo9w5KBRJyqIUadzCDU351InJTn6MFMrEYkRDO9m
+         S4cnEhuSuzeJ8kfv9NuPh4dYCpkNRzg/8LPQlg9lm2CDpOrtqBbBJpjyLJRXqwr6UveW
+         cdbPIOfycX5i6SaMzbEISg55QoKE5qWuYqHbOU/kYCPaU4bju/GG2Sx6snyvBbGU1iF8
+         beFQobB4GFulHVGjbEVGR7YoqpQ51fwhWvR2MAPBcArVT4hgjEmaih4cZb6Q8OSh1Gxq
+         3LZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWf1vvqPAFogWGTIag1znGkr5F3Wro1U8XWbuljQkucTVgk8B7oKSxNW9y2gRV0HjMCOQwWQ25PTnHisEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJloxGoJN8KA5261b41BTfdtqDBIaX5qUDB48b+dbg9Uxb/cUv
+	rS0uCgUWCtHXm/C9R8WN5GRehvscwBYuXOq3RKxjw/i59oDVBNYsC6k83yVJ8U/NWlfAoB8+bOk
+	Q1JaJZUvYnOg6jzKNBy3rAr+fLgs3WPOx0A92mT/Kc2qy03w3pp5Ft0f3nCvauaWz2fEg2lkzuD
+	lyYwlAaE1rvRUuHaRXGBkbU+Irg7KMCkooJWzVEqT7
+X-Gm-Gg: ASbGncuMGO4lBpixCRY0bQvUpHcwy/wOtzO78D5UJgS//jFKFytiFYCOinr1VsGbD3B
+	y1KOA2X0pUtS1PvtGLeom0BBO7dElUqsTybPys6jiTm1JRCHk25cCzDul+QAnUVYG4iBhXLNpYp
+	iO1JgqOlxwA9wWkzdUFJ8NjgNOQlO/7hrEs8o2Yn/W5v0Tk6MUHgVWH0g=
+X-Received: by 2002:a17:903:22c3:b0:240:763d:e999 with SMTP id d9443c01a7336-2430d2240fbmr35242695ad.29.1755079948989;
+        Wed, 13 Aug 2025 03:12:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKzaQylKARSlIDWyBCSLUNt17OsJJBw0HSyy1Q001ndr62TtyS4PIe+aETqHAl+HIv9I9mY6Cg7F2MRsnofy4=
+X-Received: by 2002:a17:903:22c3:b0:240:763d:e999 with SMTP id
+ d9443c01a7336-2430d2240fbmr35242435ad.29.1755079948503; Wed, 13 Aug 2025
+ 03:12:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: tdk.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57971f84-1d25-4cdc-86b7-08ddda51ce92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2025 10:11:44.8998
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7e452255-946f-4f17-800a-a0fb6835dc6c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pfEZxNa6c6V3CqETcK5/CKP24KimUSzQYx46daI9lSK0pxyhPZw3+Yl8W09tfjWcJxz+Nc5Uj0U4vJD4PSlBww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR2P281MB1735
-X-Proofpoint-GUID: mBZv2Ea_JU1HWZtiZu2Xg_IARHSJyJwc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAwOSBTYWx0ZWRfXz+wvVIrsmhLE
- K6ITzlitNBr2gKg7l5pVXokkMs1Nqr5cWCkZsOZyHQ1yYzNSfkAnIo+W5NHgOcfI29QhMqXXAeK
- FPuZUTp6iPdNr2GXm9Zy4cB+gM2SEtZnA7wcCNtcxZgSRRFQq1wS+18IZmYnsKyfByVvdaoDzW4
- xQyTUHEHw9NvRg1QzDDblbF9mUbxfBmjPRcqJtYjC7RbgghWzqxHUVvvH5pIPSGpop+Hk8xw1Xp
- u1Mcs9L5UC7mzEsIEgECJTGAHf3S0BFFX0m5kTO47Xtl00rvW/y8GpKnZNZ4TC0XuEqBZuXdI/9
- V9p5qk6xjO8r6882YNq6HRQO6YH1vv/fMIJ904b5Tkt/A5/YyPlC6vPtqn49JCGCaK4W2zVQMxY
- q92m+cR/
-X-Proofpoint-ORIG-GUID: mBZv2Ea_JU1HWZtiZu2Xg_IARHSJyJwc
-X-Authority-Analysis: v=2.4 cv=AO34vM+d c=1 sm=1 tr=0 ts=689c64e6 cx=c_pps
- a=QSVwdLPRPe6INsZHI1N3Cw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=Uwzcpa5oeQwA:10 a=VwQbUJbxAAAA:8 a=In8RU02eAAAA:8
- a=IpJZQVW2AAAA:8 a=gAnH3GRIAAAA:8 a=hvUzREidl6GFh8qIeioA:9 a=QEXdDO2ut3YA:10
- a=EFfWL0t1EGez1ldKSZgj:22 a=IawgGOuG5U0WyFbmm1f5:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
- phishscore=0 suspectscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- adultscore=0 malwarescore=0 clxscore=1015 classifier=typeunknown authscore=0
- authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090009
+References: <20250807115752.1663383-1-eperezma@redhat.com> <20250807115752.1663383-3-eperezma@redhat.com>
+ <CACGkMEsMcnBnVPMWD7fxrnXzT+rsUppAxNkoSC4Zy=HiodOvZw@mail.gmail.com>
+ <CAJaqyWfDVioqnprsER2r3yCpgdK4cTO8cxEMndf+-HLUxQtSOA@mail.gmail.com> <CACGkMEuZq2NaS9icynhrgZtXQ26fDFFpFrP3bUwDXLCR6uN4qw@mail.gmail.com>
+In-Reply-To: <CACGkMEuZq2NaS9icynhrgZtXQ26fDFFpFrP3bUwDXLCR6uN4qw@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Wed, 13 Aug 2025 12:11:52 +0200
+X-Gm-Features: Ac12FXycNx9KHVG8siXjBVSykHaY3kyogXA38fKEKaMS0Ey8sg-AajQbZJtJYh8
+Message-ID: <CAJaqyWfB-nxpdtv+HRPB=7oc-MmquZ=7-mDqdVi42Mwf28CX7A@mail.gmail.com>
+Subject: Re: [RFC v2 2/7] vduse: add vq group support
+To: Jason Wang <jasowang@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
+	Yongji Xie <xieyongji@bytedance.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>, 
+	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Maxime Coquelin <mcoqueli@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Pg0KPg0KPkZyb206IEpvbmF0aGFuIENhbWVyb24gPGppYzIzQGtlcm5lbC5vcmc+IA0KPlNlbnQ6
-IFRodXJzZGF5LCBKdWx5IDI0LCAyMDI1IDY6MTggUE0NCj5UbzogUmVtaSBCdWlzc29uIHZpYSBC
-NCBSZWxheSA8ZGV2bnVsbCtyZW1pLmJ1aXNzb24udGRrLmNvbUBrZXJuZWwub3JnPg0KPkNjOiBS
-ZW1pIEJ1aXNzb24gPFJlbWkuQnVpc3NvbkB0ZGsuY29tPjsgRGF2aWQgTGVjaG5lciA8ZGxlY2hu
-ZXJAYmF5bGlicmUuY29tPjsgTnVubyBTw6EgPG51bm8uc2FAYW5hbG9nLmNvbT47IEFuZHkgU2hl
-dmNoZW5rbyA8YW5keUBrZXJuZWwub3JnPjsgUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVsLm9yZz47
-IEtyenlzenRvZiBLb3psb3dza2kgPGtyemsrZHRAa2VybmVsLm9yZz47IENvbm9yIERvb2xleSA8
-Y29ub3IrZHRAa2VybmVsLm9yZz47IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4
-LWlpb0B2Z2VyLmtlcm5lbC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnDQo+U3ViamVj
-dDogUmU6IFtQQVRDSCB2MyA3LzhdIGlpbzogaW11OiBpbnZfaWNtNDU2MDA6IGFkZCBJM0MgZHJp
-dmVyIGZvciBpbnZfaWNtNDU2MDAgZHJpdmVyDQo+DQo+T24gVGh1LCAxNyBKdWwgMjAyNSAxMzoy
-NTo1OSArMDAwMA0KPlJlbWkgQnVpc3NvbiB2aWEgQjQgUmVsYXkgPGRldm51bGwrcmVtaS5idWlz
-c29uLnRkay5jb21Aa2VybmVsLm9yZz4gd3JvdGU6DQo+DQo+PiBGcm9tOiBSZW1pIEJ1aXNzb24g
-PHJlbWkuYnVpc3NvbkB0ZGsuY29tPg0KPj4gDQo+PiBBZGQgSTNDIGRyaXZlciBmb3IgSW52ZW5T
-ZW5zZSBJQ00tNDU2MDAgZGV2aWNlcy4NCj4+IA0KPj4gU2lnbmVkLW9mZi1ieTogUmVtaSBCdWlz
-c29uIDxyZW1pLmJ1aXNzb25AdGRrLmNvbT4NCj5BIGZldyBtb3JlIHRyaXZpYWwgdGhpbmdzIGlu
-IGhlcmUuDQo+DQo+VGhhbmtzLA0KPg0KPkpvbmF0aGFuDQpUaGFua3MgZm9yIHRoZSByZXZpZXcs
-IGFsbCBhZ3JlZWQuDQo+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9paW8vaW11L2ludl9pY200
-NTYwMC9pbnZfaWNtNDU2MDBfaTNjLmMgYi9kcml2ZXJzL2lpby9pbXUvaW52X2ljbTQ1NjAwL2lu
-dl9pY200NTYwMF9pM2MuYw0KPj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAw
-MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAuLjlkYjI0OWNhNTNlYzNmZWNiMGY4
-NTc5MmEzNTNkMDU0NjNmNTJhY2INCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL2RyaXZlcnMv
-aWlvL2ltdS9pbnZfaWNtNDU2MDAvaW52X2ljbTQ1NjAwX2kzYy5jDQo+PiBAQCAtMCwwICsxLDgy
-IEBADQo+DQo+PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGkzY19kZXZpY2Vf
-aWQgaW52X2ljbTQ1NjAwX2kzY19pZHNbXSA9IHsNCj4+ICsJSTNDX0RFVklDRV9FWFRSQV9JTkZP
-KDB4MDIzNSwgMHgwMDAwLCAweDAwMTEsICh2b2lkICopTlVMTCksDQo+PiArCUkzQ19ERVZJQ0Vf
-RVhUUkFfSU5GTygweDAyMzUsIDB4MDAwMCwgMHgwMDg0LCAodm9pZCAqKU5VTEwpLA0KPj4gKwl7
-IC8qIHNlbnRpbmVsICovIH0sDQo+DQo+bm8gY29tbWEgb24gc2VudGluZWxzLg0KPg0KWWVzLg0K
-Pg0KPj4gK3N0YXRpYyBpbnQgaW52X2ljbTQ1NjAwX2kzY19wcm9iZShzdHJ1Y3QgaTNjX2Rldmlj
-ZSAqaTNjZGV2KQ0KPj4gK3sNCj4+ICsJaW50IHJldDsNCj4+ICsJdW5zaWduZWQgaW50IHdob2Ft
-aTsNCj4+ICsJc3RydWN0IHJlZ21hcCAqcmVnbWFwOw0KPj4gKwljb25zdCBpbnQgbmJfY2hpcCA9
-IEFSUkFZX1NJWkUoaTNjX2NoaXBfaW5mbyk7DQo+PiArCWludCBjaGlwOw0KPj4gKw0KPj4gKwly
-ZWdtYXAgPSBkZXZtX3JlZ21hcF9pbml0X2kzYyhpM2NkZXYsICZpbnZfaWNtNDU2MDBfcmVnbWFw
-X2NvbmZpZyk7DQo+PiArCWlmIChJU19FUlIocmVnbWFwKSkgew0KPj4gKwkJZGV2X2VycigmaTNj
-ZGV2LT5kZXYsICJGYWlsZWQgdG8gcmVnaXN0ZXIgaTNjIHJlZ21hcCAlbGRcbiIsIFBUUl9FUlIo
-cmVnbWFwKSk7DQo+PiArCQlyZXR1cm4gUFRSX0VSUihyZWdtYXApOw0KPlVzZSByZXR1cm4gZGV2
-X2Vycl9wcm9iZSgpIGZvciBhbGwgZXJyb3IgbWVzc2FnZXMgaW4gcHJvYmUuDQpPay4NCj4NCj4+
-ICsJfQ0KPj4gKw0KPj4gKwlyZXQgPSByZWdtYXBfcmVhZChyZWdtYXAsIElOVl9JQ000NTYwMF9S
-RUdfV0hPQU1JLCAmd2hvYW1pKTsNCj4+ICsJaWYgKHJldCkgew0KPj4gKwkJZGV2X2VycigmaTNj
-ZGV2LT5kZXYsICJGYWlsZWQgdG8gcmVhZCBwYXJ0IGlkICVkXG4iLCB3aG9hbWkpOw0KPj4gKwkJ
-cmV0dXJuIHJldDsNCj4+ICsJfQ0KPj4gKw0KPj4gKwlmb3IgKGNoaXAgPSAwOyBjaGlwIDwgbmJf
-Y2hpcDsgY2hpcCsrKSB7DQo+PiArCQlpZiAod2hvYW1pID09IGkzY19jaGlwX2luZm9bY2hpcF0t
-Pndob2FtaSkNCj4+ICsJCQlicmVhazsNCj4+ICsJfQ0KPj4gKw0KPj4gKwlpZiAoY2hpcCA9PSBu
-Yl9jaGlwKSB7DQo+PiArCQlkZXZfZXJyKCZpM2NkZXYtPmRldiwgIkZhaWxlZCB0byBtYXRjaCBw
-YXJ0IGlkICVkXG4iLCB3aG9hbWkpOw0KPj4gKwkJcmV0dXJuIC1FTk9ERVY7DQo+PiArCX0NCj4+
-ICsNCj4+ICsJcmV0dXJuIGludl9pY200NTYwMF9jb3JlX3Byb2JlKHJlZ21hcCwgaTNjX2NoaXBf
-aW5mb1tjaGlwXSwgZmFsc2UsIE5VTEwpOw0KPj4gK30NCj4NCj4+IA0KPg0KPg0K
+On Tue, Aug 12, 2025 at 5:01=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> On Mon, Aug 11, 2025 at 5:52=E2=80=AFPM Eugenio Perez Martin
+> <eperezma@redhat.com> wrote:
+> >
+> > On Mon, Aug 11, 2025 at 5:10=E2=80=AFAM Jason Wang <jasowang@redhat.com=
+> wrote:
+> > >
+> > > On Thu, Aug 7, 2025 at 7:58=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@r=
+edhat.com> wrote:
+> > > >
+> > > > This allows sepparate the different virtqueues in groups that share=
+s the
+> > > > same address space.  Asking the VDUSE device for the groups of the =
+vq at
+> > > > the beginning as they're needed for the DMA API.
+> > > >
+> > > > Allocating 3 vq groups as net is the device that need the most grou=
+ps:
+> > > > * Dataplane (guest passthrough)
+> > > > * CVQ
+> > > > * Shadowed vrings.
+> > > >
+> > > > Future versions of the series can include dynamic allocation of the
+> > > > groups array so VDUSE can declare more groups.
+> > > >
+> > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > > > ---
+> > > > v2:
+> > > > * Cache group information in kernel, as we need to provide the vq m=
+ap
+> > > >   tokens properly.
+> > > > * Add descs vq group to optimize SVQ forwarding and support indirec=
+t
+> > > >   descriptors out of the box.
+> > > > ---
+> > > >  drivers/vdpa/vdpa_user/vduse_dev.c | 71 ++++++++++++++++++++++++++=
++++-
+> > > >  include/uapi/linux/vduse.h         | 19 +++++++-
+> > > >  2 files changed, 88 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa=
+_user/vduse_dev.c
+> > > > index d858c4389cc1..d1f6d00a9c71 100644
+> > > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > > > @@ -46,6 +46,11 @@
+> > > >  #define VDUSE_IOVA_SIZE (VDUSE_MAX_BOUNCE_SIZE + 128 * 1024 * 1024=
+)
+> > > >  #define VDUSE_MSG_DEFAULT_TIMEOUT 30
+> > > >
+> > > > +/*
+> > > > + * Let's make it 3 for simplicity.
+> > > > + */
+> > > > +#define VDUSE_MAX_VQ_GROUPS 3
+> > >
+> > > I think we can release this to something like 64. Otherwise we might
+> > > bump the version again just to increase the limitation? Or having a
+> > > sysfs entry like bounce_size?
+> > >
+> >
+> > I think it should not be linked to the version, but it is true there
+> > is no way for VDUSE devices to check the maximum VQ groups / ASID that
+> > the kernel supports.
+> >
+> > To handle as bounce_size seems the best option, good point. I'll send
+> > a new version with that!
+> >
+> > > > +
+> > > >  #define IRQ_UNBOUND -1
+> > > >
+> > > >  struct vduse_virtqueue {
+> > > > @@ -58,6 +63,8 @@ struct vduse_virtqueue {
+> > > >         struct vdpa_vq_state state;
+> > > >         bool ready;
+> > > >         bool kicked;
+> > > > +       u32 vq_group;
+> > > > +       u32 vq_desc_group;
+> > > >         spinlock_t kick_lock;
+> > > >         spinlock_t irq_lock;
+> > > >         struct eventfd_ctx *kickfd;
+> > > > @@ -114,6 +121,7 @@ struct vduse_dev {
+> > > >         u8 status;
+> > > >         u32 vq_num;
+> > > >         u32 vq_align;
+> > > > +       u32 ngroups;
+> > > >         struct vduse_umem *umem;
+> > > >         struct mutex mem_lock;
+> > > >         unsigned int bounce_size;
+> > > > @@ -592,6 +600,20 @@ static int vduse_vdpa_set_vq_state(struct vdpa=
+_device *vdpa, u16 idx,
+> > > >         return 0;
+> > > >  }
+> > > >
+> > > > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
+> > > > +{
+> > > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > > > +
+> > > > +       return dev->vqs[idx]->vq_group;
+> > > > +}
+> > > > +
+> > > > +static u32 vduse_get_vq_desc_group(struct vdpa_device *vdpa, u16 i=
+dx)
+> > > > +{
+> > > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > > > +
+> > > > +       return dev->vqs[idx]->vq_desc_group;
+> > > > +}
+> > > > +
+> > > >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 i=
+dx,
+> > > >                                 struct vdpa_vq_state *state)
+> > > >  {
+> > > > @@ -678,13 +700,48 @@ static u8 vduse_vdpa_get_status(struct vdpa_d=
+evice *vdpa)
+> > > >         return dev->status;
+> > > >  }
+> > > >
+> > > > +static int vduse_fill_vq_groups(struct vduse_dev *dev)
+> > > > +{
+> > > > +       if (dev->api_version < VDUSE_API_VERSION_1)
+> > > > +               return 0;
+> > > > +
+> > > > +       for (int i =3D 0; i < dev->vdev->vdpa.nvqs; ++i) {
+> > > > +               struct vduse_dev_msg msg =3D { 0 };
+> > > > +               int ret;
+> > > > +
+> > > > +               msg.req.type =3D VDUSE_GET_VQ_GROUP;
+> > > > +               msg.req.vq_group.index =3D i;
+> > > > +               ret =3D vduse_dev_msg_sync(dev, &msg);
+> > >
+> > > I fail to understand why the default group mapping is not done during
+> > > device creation.
+> > >
+> >
+> > Because it changes depending on the features.
+> >
+> > If a new device has 5 virtqueues and the device wants to isolate the
+> > CVQ, the CVQ position depends on the features that the guest's acks:
+> > * If MQ is acked the isolated vq is #5
+> > * If MQ is not acked the isolated vq is #3.
+>
+> I see we are still damaged by the design of the cvq index. But this is
+> just a static branch not a dynamic one. If we can find ways to make it
+> static it would be better.
+>
+> >
+> > > > +               if (ret)
+> > > > +                       return ret;
+> > > > +
+> > > > +               dev->vqs[i]->vq_group =3D msg.resp.vq_group.num;
+> > > > +
+> > > > +               msg.req.type =3D VDUSE_GET_VRING_DESC_GROUP;
+> > > > +               ret =3D vduse_dev_msg_sync(dev, &msg);
+> > > > +               if (ret)
+> > > > +                       return ret;
+> > > > +
+> > > > +               dev->vqs[i]->vq_desc_group =3D msg.resp.vq_group.nu=
+m;
+> > > > +       }
+> > > > +
+> > > > +       return 0;
+> > > > +}
+> > > > +
+> > > >  static void vduse_vdpa_set_status(struct vdpa_device *vdpa, u8 sta=
+tus)
+> > > >  {
+> > > >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
+> > > > +       u8 previous_status =3D dev->status;
+> > > >
+> > > >         if (vduse_dev_set_status(dev, status))
+> > > >                 return;
+> > > >
+> > > > +       if ((dev->status ^ previous_status) &
+> > > > +            BIT_ULL(VIRTIO_CONFIG_S_FEATURES_OK) &&
+> > > > +           status & (1ULL << VIRTIO_CONFIG_S_FEATURES_OK))
+> > > > +               if (vduse_fill_vq_groups(dev))
+> > >
+> > > Can we merge the two messages into a single one? Or can we use a
+> > > shared memory for storing such mapping?
+> > >
+> > > For example, if we have 256 queues it would be very slow.
+> > >
+> >
+> > To merge it in the same message is good to me, sure.
+>
+> We can start from this if we can't find a way to provision vq to group
+> mapping during device creation.
+>
+
+Note that I don't think it is worth implementing these in this series,
+but to add them on top in another one. Because I don't think we will
+find devices with a lot of virtqueues for now. But here are some ideas
+to mitigate the startup time cost:
+
+1) Support more than one virtqueue in the same vduse request / reply
+Something like:
+vduse_dev_response{
+  u32 req_id;
+  u32 result;
+  union {
+    ...
+    struct vduse_vq_group {
+      u32 num_vqs_requested;
+      struct {
+        u32 vq_idx;
+        u32 vq_group;
+      } vqs[15];
+    }
+    u32 padding[32];
+  }
+}
+
+Choosing 15 to fill the current size of vduse_dev_response struct.
+
+2) Pointer chasing in the struct written
+
+Same as previous, but the vqs struct is actually a pointer in
+userspace. This way it can be arbitrarily big.
+
+vduse_dev_response{
+  u32 req_id;
+  u32 result;
+  union {
+    ...
+    struct vduse_vq_group {
+      u32 num_vqs_requested;
+      struct {
+        u32 vq_idx;
+        u32 vq_group;
+      } *vqs;
+    }
+    u32 padding[32];
+  }
+}
+
+I cannot locate any use of this in write() data, but it is more or
+less common in ioctl.
+
+3) Allow VQ_GROUP_BATCH_BEGIN and _END, similar to how memory map
+works in vhost_vdpa. As many vq_group response as needed in between.
+
++) Assume that any vq not mentioned in the reply is vq group 0.
+
+
+> > To make it a
+> > table in shm seems more complicated, unless we accept a void * in the
+> > reply and VDUSE uses copy_from_user. If that is ok here, then sure.
+> >
+>
+> This looks tricky indeed.
+>
+> Thanks
+>
+
 
