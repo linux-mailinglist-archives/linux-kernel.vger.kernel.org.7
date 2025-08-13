@@ -1,375 +1,111 @@
-Return-Path: <linux-kernel+bounces-767001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019ECB24DAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:40:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAB53B24D9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1DCC1895F95
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:37:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C14DA7AE2F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D014327A446;
-	Wed, 13 Aug 2025 15:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AD7276054;
+	Wed, 13 Aug 2025 15:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uyq5xvXp"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkqdIE/H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8054027876E
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02E2269AFB;
+	Wed, 13 Aug 2025 15:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099362; cv=none; b=lP3tvWCLGQXSxxBTtP0Bb6WsgxzM8gi2DpIo7ne5ZBn2bnzHbxT/qMuYQuyo4QpZixxNa/NveEDot2YJymBV9JKyUO4UulnRmh5HKGoDOrZ8OJv1oemt6CSaB72t19rTx8xnEo8gX6HZsT+ICCc1KwO89/8x3PtgTgu/t2YdIIs=
+	t=1755099453; cv=none; b=Ae+lS1df21PNWB1SjNmYVweoxTT3su8FEbERXqDHQPgmyNHBqDXWrKDjdV9vXyCD/LaDGBR3Hz2QX/gyA4qBVIocINgTwoxh+jwR3WdAv2k2JKkbxLctukr6IX2MvZT1AzTM7vmgpnqkz2XkH5WRJ8HHGvBCsj+xUT6o0r2Lw+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099362; c=relaxed/simple;
-	bh=F5kXql9KZ2X4USku+sOKmVRv0Iqmm+ZJUglBQyfyi/Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Bq/ktYZefy2tBObRH0ngNFOGvenRDVTrpEEt1hlIHefNzP1QpGwXmLtdpCjoLBmJfL6B77Xv+n3iC2gvtOI9NZixYR8mzDcu2nQoBWm4mDg7FO9qynRNBU9fNQhj3FkTVGICAhdp3DEJsakTqHvPCjwbHZb2XyhGxUCCqNpvqOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uyq5xvXp; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--bqe.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b7961b3c82so3281312f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755099359; x=1755704159; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WCnniwx/eqVo4rkrzyGEOkcRV4/yTE/g13esoeTQj24=;
-        b=uyq5xvXpXWwkDtMaBMuWp3VF+DNb5nn9mcmeM+ZaFEk6qXXlQOkXmyOMqEcoX9zTfM
-         X73SNN5XXxl2JtW+L4GxdoR7WId3iusYBQ16dgo/fwU9qDUJw+jln64BLP0neK+CDq15
-         5Vwrb5l6R+p9zFkHEp+151WXK2befE+CXK9EYO3QrrrZw3Z5Wb6lkUv38teXS6cRUrGs
-         iPV4uDDxzV4oaMjnKcidmYqFkZmasGZ0wHN2AhqBjPL9o2LJbviGUWCBIOSlw17L3w2C
-         cBXpDKOimtw2DuIKsbbPOWLO8F5EDpFv5wpM+JYnAnXPMDCAaMKFNPlhVn2vwdyyPEbX
-         1KBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755099359; x=1755704159;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WCnniwx/eqVo4rkrzyGEOkcRV4/yTE/g13esoeTQj24=;
-        b=m3/M/bScb/6LbtSO9AD1Qp9UUzOudmN23sqm3IeNFMq+UQzssKd1WcNlmfUhdCRM3J
-         ySh0bEgv0uLxSFjitTKa3bHLSfnTrFzJChR34bZx6uPZsRJtjQ1vRA6ssciUA3NAyJDY
-         uUjSTXRhaZiBJ4dkE5X0UGzteIfKFf0L9Rap4308kEu5valSWAFl4VUmvAjeAcmbT83+
-         K08riGDDkHsN1DZy4MRuak8Z5uX1C2TpQrlx0Gu0bzz5dJxWQRdfzB5p0N4hIwzbsnYL
-         Rw1GTsUjkJ0YW8APUASgJ34vg6tZsuxJTaYsJbZOKUA3D7oBk5zNigdLhlBC6R3JbB4P
-         aT7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWlG+Y+zjKY7no4bQxG7hlpNGf3U9iXlLNYScMGA1pW7nS//btipbOL2FbB/ECKhtNzuMDyxIZnK5MtJB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyfdezgn2kRAh+1LrSbwo4kXfoHk8xdgQFkUK/pBo+HmMcDGOWA
-	AljOmn2Hc43bYJvfCiYqC9WJGGPemCV8/HJqlCQm+lediJv3kBhUdCsmgLNHtOSeo7rDNA==
-X-Google-Smtp-Source: AGHT+IEHPzq6y4J4pJvIHhMiUq2CFDTTFGiDrKu9ZaRgdB2JgJm0ylY+MzAx9WvcsZVuurEQGVFvtT8=
-X-Received: from wmby25-n1.prod.google.com ([2002:a05:600c:c059:10b0:459:d776:c35d])
- (user=bqe job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:2501:b0:3a4:df80:7284
- with SMTP id ffacd0b85a97d-3b917d2aa74mr2917052f8f.1.1755099358779; Wed, 13
- Aug 2025 08:35:58 -0700 (PDT)
-Date: Wed, 13 Aug 2025 15:35:46 +0000
-In-Reply-To: <20250813153548.1650533-1-bqe@google.com>
+	s=arc-20240116; t=1755099453; c=relaxed/simple;
+	bh=PQhq5rWxBSi6wo5Tnnh0V92zapg7M+UyVJSAH0kCd/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFt4cTn3RHVs3V/ong6dsm69eVJSW+DIFuf21Z64O4REfL6eCKN+kpjhj/PW54NLbmTJzAjmdDCIlfbZtW8+t9YueF0TsJEebhFq5sF3cpZp8CpVOAnjo+yIJruCHt2OxAbFA880qaAjI4wpRq0qIkhyCrWhqXo/F9xk45auUhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkqdIE/H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A911EC4CEEB;
+	Wed, 13 Aug 2025 15:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755099452;
+	bh=PQhq5rWxBSi6wo5Tnnh0V92zapg7M+UyVJSAH0kCd/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kkqdIE/HRQ5cedE1zyuMfMRaAZJeqzpFBH0/fLyOJbOpD7Q9Y6fUKKVCUSYg6Iu9+
+	 +0lhPpaogX+zo7DE625PlBBN7tO+nQtx0LA2aKRv5GqYQcf/TD8I++3mIddUS1oGuS
+	 2Xu0FGRyeN7MRl5kxApDBRYf8dHZhW8fLMu9BCMo8fTZeDkfiJH03TaTo8MCeUS3wk
+	 Q3N2kSeVd08IYz9d3sNubS0p0XfPjY2fnOy5IU5HLL6nAdg88Wdvo9IzmX54CnrqWQ
+	 dCVsQbDhz8GqQ+nB2+l0260S3CZs7QJe8H773Ex1NmDTheYUl2t1VYx6TqiJOtited
+	 Jw1XTt4Q0BCbw==
+Date: Wed, 13 Aug 2025 18:37:28 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v1 16/16] nvme-pci: unmap MMIO pages with appropriate
+ interface
+Message-ID: <20250813153728.GC310013@unreal>
+References: <cover.1754292567.git.leon@kernel.org>
+ <5b0131f82a3d14acaa85f0d1dd608d2913af84e2.1754292567.git.leon@kernel.org>
+ <20250807134533.GM184255@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250813153548.1650533-1-bqe@google.com>
-X-Mailer: git-send-email 2.51.0.rc0.205.g4a044479a3-goog
-Message-ID: <20250813153548.1650533-6-bqe@google.com>
-Subject: [PATCH v14 5/5] rust: add dynamic ID pool abstraction for bitmap
-From: Burak Emir <bqe@google.com>
-To: Yury Norov <yury.norov@gmail.com>, Kees Cook <kees@kernel.org>
-Cc: Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, "Gustavo A . R . Silva" <gustavoars@kernel.org>, 
-	Carlos LLama <cmllamas@google.com>, Pekka Ristola <pekkarr@protonmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807134533.GM184255@nvidia.com>
 
-This is a port of the Binder data structure introduced in commit
-15d9da3f818c ("binder: use bitmap for faster descriptor lookup") to
-Rust.
+On Thu, Aug 07, 2025 at 10:45:33AM -0300, Jason Gunthorpe wrote:
+> On Mon, Aug 04, 2025 at 03:42:50PM +0300, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Block layer maps MMIO memory through dma_map_phys() interface
+> > with help of DMA_ATTR_MMIO attribute. There is a need to unmap
+> > that memory with the appropriate unmap function.
+> 
+> Be specific, AFIACT the issue is that on dma_ops platforms the map
+> will call ops->map_resource for ATTR_MMIO so we must have the unmap
+> call ops->unmap_resournce
+> 
+> Maybe these patches should be swapped then, as adding ATTR_MMIO seems
+> like it created this issue?
 
-Like drivers/android/dbitmap.h, the ID pool abstraction lets
-clients acquire and release IDs. The implementation uses a bitmap to
-know what IDs are in use, and gives clients fine-grained control over
-the time of allocation. This fine-grained control is needed in the
-Android Binder. We provide an example that release a spinlock for
-allocation and unit tests (rustdoc examples).
+The best variant will be to squash previous patch "block-dma: properly
+take MMIO path", but I don't want to mix them as they for different
+kernel areas.
 
-The implementation does not permit shrinking below capacity below
-BITS_PER_LONG.
+Thanks
 
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
-Suggested-by: Yury Norov <yury.norov@gmail.com>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Burak Emir <bqe@google.com>
----
- MAINTAINERS            |   1 +
- rust/kernel/id_pool.rs | 226 +++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs     |   1 +
- 3 files changed, 228 insertions(+)
- create mode 100644 rust/kernel/id_pool.rs
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f99e7f4eb4ca..e62bebfffa9c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4308,6 +4308,7 @@ R:	Yury Norov <yury.norov@gmail.com>
- S:	Maintained
- F:	lib/find_bit_benchmark_rust.rs
- F:	rust/kernel/bitmap.rs
-+F:	rust/kernel/id_pool.rs
- 
- BITOPS API
- M:	Yury Norov <yury.norov@gmail.com>
-diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
-new file mode 100644
-index 000000000000..a41a3404213c
---- /dev/null
-+++ b/rust/kernel/id_pool.rs
-@@ -0,0 +1,226 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+// Copyright (C) 2025 Google LLC.
-+
-+//! Rust API for an ID pool backed by a [`BitmapVec`].
-+
-+use crate::alloc::{AllocError, Flags};
-+use crate::bitmap::BitmapVec;
-+
-+const BITS_PER_LONG: usize = bindings::BITS_PER_LONG as usize;
-+
-+/// Represents a dynamic ID pool backed by a [`BitmapVec`].
-+///
-+/// Clients acquire and release IDs from unset bits in a bitmap.
-+///
-+/// The capacity of the ID pool may be adjusted by users as
-+/// needed. The API supports the scenario where users need precise control
-+/// over the time of allocation of a new backing bitmap, which may require
-+/// release of spinlock.
-+/// Due to concurrent updates, all operations are re-verified to determine
-+/// if the grow or shrink is sill valid.
-+///
-+/// # Examples
-+///
-+/// Basic usage
-+///
-+/// ```
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// let mut pool = IdPool::new(64, GFP_KERNEL)?;
-+/// for i in 0..64 {
-+///     assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
-+/// }
-+///
-+/// pool.release_id(23);
-+/// assert_eq!(23, pool.acquire_next_id(0).ok_or(ENOSPC)?);
-+///
-+/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
-+/// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
-+/// pool.grow(resizer);
-+///
-+/// assert_eq!(pool.acquire_next_id(0), Some(64));
-+/// # Ok::<(), Error>(())
-+/// ```
-+///
-+/// Releasing spinlock to grow the pool
-+///
-+/// ```no_run
-+/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+/// use kernel::sync::{new_spinlock, SpinLock};
-+/// use kernel::id_pool::IdPool;
-+///
-+/// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
-+///     let mut pool = guarded_pool.lock();
-+///     loop {
-+///         match pool.acquire_next_id(0) {
-+///             Some(index) => return Ok(index),
-+///             None => {
-+///                 let alloc_request = pool.grow_request();
-+///                 drop(pool);
-+///                 let resizer = alloc_request.ok_or(AllocError)?.realloc(GFP_KERNEL)?;
-+///                 pool = guarded_pool.lock();
-+///                 pool.grow(resizer)
-+///             }
-+///         }
-+///     }
-+/// }
-+/// ```
-+pub struct IdPool {
-+    map: BitmapVec,
-+}
-+
-+/// Indicates that an [`IdPool`] should change to a new target size.
-+pub struct ReallocRequest {
-+    num_ids: usize,
-+}
-+
-+/// Contains a [`BitmapVec`] of a size suitable for reallocating [`IdPool`].
-+pub struct PoolResizer {
-+    new: BitmapVec,
-+}
-+
-+impl ReallocRequest {
-+    /// Allocates a new backing [`BitmapVec`] for [`IdPool`].
-+    ///
-+    /// This method only prepares reallocation and does not complete it.
-+    /// Reallocation will complete after passing the [`PoolResizer`] to the
-+    /// [`IdPool::grow`] or [`IdPool::shrink`] operation, which will check
-+    /// that reallocation still makes sense.
-+    pub fn realloc(&self, flags: Flags) -> Result<PoolResizer, AllocError> {
-+        let new = BitmapVec::new(self.num_ids, flags)?;
-+        Ok(PoolResizer { new })
-+    }
-+}
-+
-+impl IdPool {
-+    /// Constructs a new [`IdPool`].
-+    ///
-+    /// A capacity below [`BITS_PER_LONG`] is adjusted to
-+    /// [`BITS_PER_LONG`].
-+    ///
-+    /// [`BITS_PER_LONG`]: srctree/include/asm-generic/bitsperlong.h
-+    #[inline]
-+    pub fn new(num_ids: usize, flags: Flags) -> Result<Self, AllocError> {
-+        let num_ids = core::cmp::max(num_ids, BITS_PER_LONG);
-+        let map = BitmapVec::new(num_ids, flags)?;
-+        Ok(Self { map })
-+    }
-+
-+    /// Returns how many IDs this pool can currently have.
-+    #[inline]
-+    pub fn capacity(&self) -> usize {
-+        self.map.len()
-+    }
-+
-+    /// Returns a [`ReallocRequest`] if the [`IdPool`] can be shrunk, [`None`] otherwise.
-+    ///
-+    /// The capacity of an [`IdPool`] cannot be shrunk below [`BITS_PER_LONG`].
-+    ///
-+    /// [`BITS_PER_LONG`]: srctree/include/asm-generic/bitsperlong.h
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-+    /// use kernel::id_pool::{ReallocRequest, IdPool};
-+    ///
-+    /// let mut pool = IdPool::new(1024, GFP_KERNEL)?;
-+    /// let alloc_request = pool.shrink_request().ok_or(AllocError)?;
-+    /// let resizer = alloc_request.realloc(GFP_KERNEL)?;
-+    /// pool.shrink(resizer);
-+    /// assert_eq!(pool.capacity(), kernel::bindings::BITS_PER_LONG as usize);
-+    /// # Ok::<(), AllocError>(())
-+    /// ```
-+    #[inline]
-+    pub fn shrink_request(&self) -> Option<ReallocRequest> {
-+        let cap = self.capacity();
-+        // Shrinking below [`BITS_PER_LONG`] is never possible.
-+        if cap <= BITS_PER_LONG {
-+            return None;
-+        }
-+        // Determine if the bitmap can shrink based on the position of
-+        // its last set bit. If the bit is within the first quarter of
-+        // the bitmap then shrinking is possible. In this case, the
-+        // bitmap should shrink to half its current size.
-+        let Some(bit) = self.map.last_bit() else {
-+            return Some(ReallocRequest {
-+                num_ids: BITS_PER_LONG,
-+            });
-+        };
-+        if bit >= (cap / 4) {
-+            return None;
-+        }
-+        let num_ids = usize::max(BITS_PER_LONG, cap / 2);
-+        Some(ReallocRequest { num_ids })
-+    }
-+
-+    /// Shrinks pool by using a new [`BitmapVec`], if still possible.
-+    #[inline]
-+    pub fn shrink(&mut self, mut resizer: PoolResizer) {
-+        // Between request to shrink that led to allocation of `resizer` and now,
-+        // bits may have changed.
-+        // Verify that shrinking is still possible. In case shrinking to
-+        // the size of `resizer` is no longer possible, do nothing,
-+        // drop `resizer` and move on.
-+        let Some(updated) = self.shrink_request() else {
-+            return;
-+        };
-+        if updated.num_ids > resizer.new.len() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Returns a [`ReallocRequest`] for growing this [`IdPool`], if possible.
-+    ///
-+    /// The capacity of an [`IdPool`] cannot be grown above [`i32::MAX`].
-+    #[inline]
-+    pub fn grow_request(&self) -> Option<ReallocRequest> {
-+        let num_ids = self.capacity() * 2;
-+        if num_ids > i32::MAX.try_into().unwrap() {
-+            return None;
-+        }
-+        Some(ReallocRequest { num_ids })
-+    }
-+
-+    /// Grows pool by using a new [`BitmapVec`], if still necessary.
-+    ///
-+    /// The `resizer` arguments has to be obtained by calling [`Self::grow_request`]
-+    /// on this object and performing a [`ReallocRequest::realloc`].
-+    #[inline]
-+    pub fn grow(&mut self, mut resizer: PoolResizer) {
-+        // Between request to grow that led to allocation of `resizer` and now,
-+        // another thread may have already grown the capacity.
-+        // In this case, do nothing, drop `resizer` and move on.
-+        if resizer.new.len() <= self.capacity() {
-+            return;
-+        }
-+
-+        resizer.new.copy_and_extend(&self.map);
-+        self.map = resizer.new;
-+    }
-+
-+    /// Acquires a new ID by finding and setting the next zero bit in the
-+    /// bitmap.
-+    ///
-+    /// Upon success, returns its index. Otherwise, returns [`None`]
-+    /// to indicate that a [`Self::grow_request`] is needed.
-+    #[inline]
-+    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
-+        let next_zero_bit = self.map.next_zero_bit(offset);
-+        if let Some(nr) = next_zero_bit {
-+            self.map.set_bit(nr);
-+        }
-+        next_zero_bit
-+    }
-+
-+    /// Releases an ID.
-+    #[inline]
-+    pub fn release_id(&mut self, id: usize) {
-+        self.map.clear_bit(id);
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 586be7f246eb..9b8a6c386c52 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -90,6 +90,7 @@
- pub mod firmware;
- pub mod fmt;
- pub mod fs;
-+pub mod id_pool;
- pub mod init;
- pub mod io;
- pub mod ioctl;
--- 
-2.51.0.rc0.205.g4a044479a3-goog
-
+> 
+> Jason
+> 
 
