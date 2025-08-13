@@ -1,83 +1,134 @@
-Return-Path: <linux-kernel+bounces-766654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A81B2497D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:28:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481E1B24986
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1EC07A6225
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:26:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59DF3566D44
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE81E1C549F;
-	Wed, 13 Aug 2025 12:28:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547471DA61B;
+	Wed, 13 Aug 2025 12:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lQy8FSxk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD21136347;
-	Wed, 13 Aug 2025 12:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37191C8FE;
+	Wed, 13 Aug 2025 12:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755088080; cv=none; b=OfDYes1q7z5WniR3YvoAqud2U6uJn+pXedJPgPAjpPc55SvSAN+7yontymmWnPM3+fsnmyZBkDjb0I6xAPswmNixeMO6rdhpDTn5JAurhYmUZS/sRbO5MBVbDn1axacYTL56BYXKayr7SE3UsCj72/kL3kVLNV82hQas6JgYePw=
+	t=1755088249; cv=none; b=aiXLkgYWgurgn+8EHoSCdamWBI/9D+F0Xhhrvt2OeBuWWK2unA5zZzJF2N5HmqIZkYmWPHw04BRCLxfc1DSi8xyuUgfhSBr5apfHueAOGuwNULF/O2gKG2jXbwFbxT7eyOdK7bnv5KFn6nEO3drOyh2rIev2hj1fFf+/fe/bTHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755088080; c=relaxed/simple;
-	bh=WVI7u46lb9RHFhVR+adg6ooJk/Oubo9mQASG5pRCIV8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bJyA3Lxece8VKRNdp3/AzS7AeAAmcKQxToyCADjEJxCyTFPg7zz2+qRJ3AfL9nzIvIN9+lnWiEA51UF9BdBrze+MD5Leo7njZ5s73lnOfW29nQM6f7z/zaaVqvkFI97vtAkSxRzwNjP0Dv/BXeUbljIT7AlqrsiioU1Kzu13JWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c26yd2GZgz6L55p;
-	Wed, 13 Aug 2025 20:25:13 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E0AF71402C8;
-	Wed, 13 Aug 2025 20:27:53 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
- 2025 14:27:53 +0200
-Date: Wed, 13 Aug 2025 13:27:51 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-CC: <linux-cxl@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
- Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Robert Richter <rrichter@amd.com>,
-	<ming.li@zohomail.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4 v4] cxl/core: Change match_*_by_range() signatures
-Message-ID: <20250813132751.00000e97@huawei.com>
-In-Reply-To: <20250724142144.776992-2-fabio.m.de.francesco@linux.intel.com>
-References: <20250724142144.776992-1-fabio.m.de.francesco@linux.intel.com>
-	<20250724142144.776992-2-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755088249; c=relaxed/simple;
+	bh=PFsHEezheqBXV0CEB4gSCHIuBI44jNyRudJNTTgils8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XhSBfyie21urObQBXainXCr8Ao/NjqPk4pN95oseyVWeUxDWzfXmkVGxo/OItM0tVA84RvZR+XfvpMFQAuTI2FnOxRhkKchQs61koOh5ZQStViMMaSX7U82nKRSvgMG/I6ArzhYB80sIpq5EFTuVLwvM/mleDh8bgJj7m1D+Uq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lQy8FSxk; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755088248; x=1786624248;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=PFsHEezheqBXV0CEB4gSCHIuBI44jNyRudJNTTgils8=;
+  b=lQy8FSxkIIDHME3R5YeLjj2iAfP57wbdy2+Cog3J3WQiyUsUyDrx9XlF
+   9nrdzwuWfIoUHOqVU+IFvz1sZx9N5ZP9sn4bp0Smx38oK1dcfv6FSF5jf
+   D92mnQ6Yh+HO+g88YtW2a5aERvLw7tJ+7UsgvijuyECkw8PEoHxl0g4xg
+   JnD3KCAWaIYb1wTkLKceue9V3/a3LJsEfkp+O5NvZdubW3jej9aTmWxjh
+   HCBn52KnIPp0/K+fEmCro38kYi9Nc2ugr3nYkNMfG7Lu2Z+6ym5p82ikJ
+   9ardNHJmPG8KkqkVonCEp6/anVjqupEOugMGXXm0jNqM2MMfufYCm4mg4
+   w==;
+X-CSE-ConnectionGUID: pfbwCUsJRUWxpxuNzNj5dA==
+X-CSE-MsgGUID: RYc+9gttQpOTemUlnGspRw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="44956846"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="44956846"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 05:28:05 -0700
+X-CSE-ConnectionGUID: dRG6x7AhToCZ6Bd0MqrZQg==
+X-CSE-MsgGUID: c1Q3Q1JSQUmUM+/Gc7jVTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="170666905"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 05:28:01 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1umAaE-00000005R0Z-1F3W;
+	Wed, 13 Aug 2025 15:27:58 +0300
+Date: Wed, 13 Aug 2025 15:27:58 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Tobias Sperling <tobias.sperling@softing.com>,
+	Antoniu Miclaus <antoniu.miclaus@analog.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Esteban Blanc <eblanc@baylibre.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Subject: Re: [PATCH] iio: adc: bd79124: Add GPIOLIB dependency
+Message-ID: <aJyEzsbYrwwzCdcL@smile.fi.intel.com>
+References: <6837249bddf358924e67566293944506206d2d62.1755076369.git.mazziesaccount@gmail.com>
+ <CAMRc=Mf75cangdeg7T4E0nAhJs_BTdLyCu6GcrCL8vJzzAkFWg@mail.gmail.com>
+ <CAHp75VcY9JWGH3+HmmJQQtLLTLPvaZ1RJzmPZ1wFBM+gqRiTHw@mail.gmail.com>
+ <CAMRc=McL04Sk9YRmimKAALyuDJc75vSJJuZQGWOP87Jv=o7cyw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McL04Sk9YRmimKAALyuDJc75vSJJuZQGWOP87Jv=o7cyw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, 24 Jul 2025 16:20:31 +0200
-"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
+On Wed, Aug 13, 2025 at 02:17:44PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Aug 13, 2025 at 12:07 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Wed, Aug 13, 2025 at 11:40 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> > > On Wed, 13 Aug 2025 11:16:06 +0200, Matti Vaittinen
+> > > <mazziesaccount@gmail.com> said:
 
-> Replace struct range parameter with struct cxl_endpoint_decoder of
-> which range is a member in the match_*_by_range() functions and rename
-> them according to their semantics.
+...
+
+> > > As for the former: it seems it's
+> > > a common pattern for the headers containing the "provider" part of the
+> > > subystem API, you'd get the same issue with regulators or pinctrl.
+> > >
+> > > I don't have a good answer, I'd just apply this as it's not a common issue
+> > > from what I can tell.
+> >
+> > If the GPIO functionality is optional (not the main one), the user
+> > should be able to compile it conditionally, in such a case it's either
+> > an ifdeffery in the code, or separate module with its own stubs.
 > 
-> This is in preparation for expanding these helpers to perform arch
-> specific Root Decoders and Region matchings with
-> cxl_endpoint_decoder(s).
-> 
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Honestly, it makes much more sense to factor out that optional
+> functionality into its own compilation unit that can be left out
+> completely for !CONFIG_GPIOLIB with a single internal registration
+> function being stubbed within the driver.
+
+That's what I suggested under "separate module with its own stubs" above.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
