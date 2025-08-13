@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-766617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD3DB2490D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:02:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C98ABB24916
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06C921B65F00
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:02:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396C95A5575
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942CC3074A6;
-	Wed, 13 Aug 2025 12:01:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05382FE59E;
-	Wed, 13 Aug 2025 12:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E977B2F83B7;
+	Wed, 13 Aug 2025 12:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnfY5pRA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410882FE567;
+	Wed, 13 Aug 2025 12:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086504; cv=none; b=UaD0SHUTMdwkH1d8GbZE3EykxLVVkoitpoYblZm3YvDH6o2v4N8O9s6ED8w0hAdLXz1eAgT3RYIEOR1VVUVyCcK0SFKyufJexzzNy4PABvd8rYv9Yv+zqMRRU1i+DSPpB3Mlf1KMVadFoACI3mi1KfBzbgeswY8VVgghkJpbA70=
+	t=1755086539; cv=none; b=UtGdqVvohwY9npjBx+LA6g/fef5iYzBaU/4WoquUvTLyVSihtu7JOGa/l2n0Y1JzRGItrtLI0AWCBWjZTWwzAGYJXvzcAWMMU3ptGKs+HCFPVu65LRUB3w+eD36XcUMZDeEBswy+A5EvBS62q3SQ8BGjFkjMnm3tWKZii7gU9ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086504; c=relaxed/simple;
-	bh=jvrnSFo2RTnrxOsEOCw0HxS3H2GPEPcK5sDoiCpspPI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DCO+u0sKhm4O/deW+5m/gzPy28/vCnuuF7LUf+DbgodhdfVPy7HhgyQ/YXbfuUprni2sSuuRfGiaIXL2oPnRcO2PpML3UvhZoCmYjQuUY4fXYrJ116o4prPm5JlGwPbhv3tBzDO+j86dwErVLYkHG/Ves43nP7jfS6pdryNko0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5758312FC;
-	Wed, 13 Aug 2025 05:01:34 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 204DA3F5A1;
-	Wed, 13 Aug 2025 05:01:39 -0700 (PDT)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	anshuman.khandual@arm.com,
-	robh@kernel.org,
-	james.morse@arm.com,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	Dave.Martin@arm.com,
-	ahmed.genidi@arm.com,
-	kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com,
-	mbenes@suse.cz,
-	james.clark@linaro.org,
-	frederic@kernel.org,
-	rafael@kernel.org,
-	pavel@kernel.org,
-	ryan.roberts@arm.com,
-	suzuki.poulose@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v3 5/5] arm64: make the per-task SCTLR2_EL1
-Date: Wed, 13 Aug 2025 13:01:18 +0100
-Message-Id: <20250813120118.3953541-6-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813120118.3953541-1-yeoreum.yun@arm.com>
-References: <20250813120118.3953541-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1755086539; c=relaxed/simple;
+	bh=2xrd0/GoUYp9e9PgBchb2nv0RPDgefUTlMhBngu3vas=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hMTm3/4KVOH0wXFkxYluO4ML5+xIqSotv7SfLz4fHgL8g8sG24WKQ2Sw+G89vBHM7lzB+EKK3/48wfOSwssl/o29tf+qz+DMbS/ALCT1ZWfuubcIXZkg9xPW0kII+3x09RtMr6finIPHrIV3bx/vYLCUpG2+n8L+ogPrcQnwiZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnfY5pRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC76EC4CEF7;
+	Wed, 13 Aug 2025 12:02:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755086537;
+	bh=2xrd0/GoUYp9e9PgBchb2nv0RPDgefUTlMhBngu3vas=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=dnfY5pRAIGrV1WNGoDYcWXmuVbKeJ+WGHuyKJSOYb0WR11KrcWMswcDa6njQ1BRXL
+	 s7/bqbGvvZZRBV1zjeK2PNoR4QLlBDZpWjwMk2TSqqcxt05s82Hge6O51FtWov3Y0i
+	 0pIabEjTiX0LpHmntrSA+leDJCveu03POPi2MdkewQIKlTV66P1ftiaNbfRstdbPz1
+	 xlOnAwnBw6cy5PMhQryQAJiJ9vbEugKl1sCeF2QckqZRZ6JJF3GgNXvMbr7eP0yND8
+	 9G5FstSlZHqd+f/eI6QaOVmB3tcLaRQwBCB1ikBMh5xdbz9ygUZoyZAnA8WulqYY3X
+	 NGGCfKkcLxUng==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Vipin Sharma <vipinsh@google.com>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  pratyush@kernel.org,  jasonmiu@google.com,
+  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
+  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
+  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  tglx@linutronix.de,  mingo@redhat.com,
+  bp@alien8.de,  dave.hansen@linux.intel.com,  x86@kernel.org,
+  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <2025081310-custodian-ashamed-3104@gregkh>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250813063407.GA3182745.vipinsh@google.com>
+	<2025081310-custodian-ashamed-3104@gregkh>
+Date: Wed, 13 Aug 2025 14:02:07 +0200
+Message-ID: <mafs01ppfxwe8.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-SCTLR2_EL1 register is optional starting from ARMv8.8/ARMv9.3,
-and becomes mandatory from ARMv8.9/ARMv9.4
-and serveral architectural feature are controled by bits in
-these registers and some of bits could be configurable per task
-not globally -- i.e) FEAT_CPA2 related field and etc.
+On Wed, Aug 13 2025, Greg KH wrote:
 
-For future usage of these fields, make the per-task SCTLR2_EL1.
+> On Tue, Aug 12, 2025 at 11:34:37PM -0700, Vipin Sharma wrote:
+>> On 2025-08-07 01:44:35, Pasha Tatashin wrote:
+>> > From: Pratyush Yadav <ptyadav@amazon.de>
+>> > +static void memfd_luo_unpreserve_folios(const struct memfd_luo_preserved_folio *pfolios,
+>> > +					unsigned int nr_folios)
+>> > +{
+>> > +	unsigned int i;
+>> > +
+>> > +	for (i = 0; i < nr_folios; i++) {
+>> > +		const struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
+>> > +		struct folio *folio;
+>> > +
+>> > +		if (!pfolio->foliodesc)
+>> > +			continue;
+>> > +
+>> > +		folio = pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodesc));
+>> > +
+>> > +		kho_unpreserve_folio(folio);
+>> 
+>> This one is missing WARN_ON_ONCE() similar to the one in
+>> memfd_luo_preserve_folios().
+>
+> So you really want to cause a machine to reboot and get a CVE issued for
+> this, if it could be triggered?  That's bold :)
+>
+> Please don't.  If that can happen, handle the issue and move on, don't
+> crash boxes.
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/include/asm/processor.h | 5 +++++
- arch/arm64/kernel/process.c        | 9 +++++++++
- 2 files changed, 14 insertions(+)
+Why would a WARN() crash the machine? That is what BUG() does, not
+WARN().
 
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 61d62bfd5a7b..2c962816de70 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -184,6 +184,7 @@ struct thread_struct {
- 	u64			mte_ctrl;
- #endif
- 	u64			sctlr_user;
-+	u64			sctlr2_user;
- 	u64			svcr;
- 	u64			tpidr2_el0;
- 	u64			por_el0;
-@@ -258,6 +259,9 @@ static inline void task_set_sve_vl_onexec(struct task_struct *task,
- 	(SCTLR_ELx_ENIA | SCTLR_ELx_ENIB | SCTLR_ELx_ENDA | SCTLR_ELx_ENDB |   \
- 	 SCTLR_EL1_TCF0_MASK)
- 
-+#define SCTLR2_USER_MASK	\
-+	(SCTLR2_EL1_EnPACM0 | SCTLR2_EL1_CPTA0 | SCTLR2_EL1_CPTM0)
-+
- static inline void arch_thread_struct_whitelist(unsigned long *offset,
- 						unsigned long *size)
- {
-@@ -370,6 +374,7 @@ struct task_struct;
- unsigned long __get_wchan(struct task_struct *p);
- 
- void update_sctlr_el1(u64 sctlr);
-+void update_sctlr2_el1(u64 sctlr2);
- 
- /* Thread switching */
- extern struct task_struct *cpu_switch_to(struct task_struct *prev,
-diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-index 96482a1412c6..9191180c4875 100644
---- a/arch/arm64/kernel/process.c
-+++ b/arch/arm64/kernel/process.c
-@@ -698,6 +698,11 @@ void update_sctlr_el1(u64 sctlr)
- 	isb();
- }
- 
-+void update_sctlr2_el1(u64 sctlr2)
-+{
-+	sysreg_clear_set_s(SYS_SCTLR2_EL1, SCTLR2_USER_MASK, sctlr2);
-+}
-+
- /*
-  * Thread switching.
-  */
-@@ -737,6 +742,10 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 	if (prev->thread.sctlr_user != next->thread.sctlr_user)
- 		update_sctlr_el1(next->thread.sctlr_user);
- 
-+	if (alternative_has_cap_unlikely(ARM64_HAS_SCTLR2) &&
-+	    prev->thread.sctlr2_user != next->thread.sctlr2_user)
-+		update_sctlr2_el1(next->thread.sctlr2_user);
-+
- 	/* the actual thread switch */
- 	last = cpu_switch_to(prev, next);
- 
 -- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Regards,
+Pratyush Yadav
 
