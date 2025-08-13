@@ -1,120 +1,167 @@
-Return-Path: <linux-kernel+bounces-767450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D929B25472
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:15:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45223B25479
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03CB59A1476
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 335E7188FCFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F962E1C63;
-	Wed, 13 Aug 2025 20:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0812AE90;
+	Wed, 13 Aug 2025 20:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="Ai90iJ9f"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pPr8ULQQ"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACBA1494CC
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C413B1F4C87
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755116116; cv=none; b=bKfbEs5AVyWQsvx/zOsUtwT30kYYyu22YVfk6RNYNR4isG0EM0GYNrnLTBSG35UNzhzuGa0iOW3Ct2o2Bp0bZgYCq7KItwv8+7JOgxl0mPTbEabl8kAAVDsQpEClJgOX09VB2dqs5thuKJ8yt2uvrqKtjKPTnidNpq+KLuy7TKM=
+	t=1755116440; cv=none; b=C+hlK1RNRKzFmQ/o1tIqkn2qjl0gU0O3t1MNTpXDQIuCyATRcOYUWVbNgJBBEijKIUr1xplQxdmsxPZ2vaJICmR4LgYadj1E6zeJfmIPns4HMuGORZg0aYznZnDwA9kTrhSVMD+aYPv74hvaUDQrxFaoneePswVkfNEGGSH0MJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755116116; c=relaxed/simple;
-	bh=/DpqAeslv8bRmsN2sfqbbHvqAKqaJvH3JKfHsdO27s4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=av5b+n9799jqPX8sR2UM8Pn77n5dHo/u1RTvktYC/5iJdvyii8aIcqiLe4zfiJV0Sd6JZnPDPTVfGXXlp0ya5S8G/N6EoUIxSqYdtBWoKx008vgxzbZBsA69bVcfPU4W+XKnYSqn6pTnvbrdFGdeT3hREvv+XJxDbh8BqU4qbFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=Ai90iJ9f; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-88428b19ea9so41704539f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:15:13 -0700 (PDT)
+	s=arc-20240116; t=1755116440; c=relaxed/simple;
+	bh=rR+D3tBr5Y7TWuY2UOSpzkXUuslrs0FnyhVARRKHYQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=quhwLKqv3uqpu+VvH0qG4foeeKkzoL/mx7L4g0hH4jApky5BaIZKa41dxe5nkuE9fHzsB53JKxaexHG+rzOJ+dfbO478oF8LzbkTU1z8sVTQAL0gLNTWYoEw6JFCKVhgWSgZZ023ix6h27dlOJShueUnq7+p2+Odlk1xa6OIKh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pPr8ULQQ; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1ac7c066so1773475e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:20:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google; t=1755116113; x=1755720913; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HcgwJo67fSdIwhf/Y1kaVkQkpR61CWnlebZ6dKIeM1Y=;
-        b=Ai90iJ9fJ1yHbEda6tGc0tAtrZrca/fRRhz5yGL3SypnGDFVkmY6wsehiNEioyeK++
-         AKSdnreJai/Xs7SOwIIwgKfbe8QAXJ09fyWKg7gautqyvdQl9SAuZAFn+L8NAHor6LT4
-         lT1WO+/MV59UgaVZUdYIFWSOgXT8BLb2mTTzs=
+        d=linaro.org; s=google; t=1755116437; x=1755721237; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=F/1t3EFEgXHUBAHB72RnZ06wSpjDj+54/Frk/ThDsww=;
+        b=pPr8ULQQFQFl7vanrN6bHhHRWjrHy2Kga2slWZ+ikhD8zspOIiKIgD/6M8YEl29Tek
+         yjBNHJU7GqDsfpPU7gE/mKP5oZM3IZNkjm2w6M/APudhBp4qp61Fy6tLiddDdltFrL0Z
+         s2Z5z45BK0p2c3JYdv+CwwtAO8T3DO+VLVynnjUGI0trR0NvZvHDxymyfBrqjkS1nRhq
+         S3AeOMSca7UsNMV532vvEWOYzZX7XWbLPBuynyPC18J4VHFWV84G2P4G1Y/q4xm4pmp+
+         GKJSPFT9l9CsLwERm8+vsp6DVQmxVLU4RHy5eNTtJxBo1zNP3BmJJB1uhW1hm4gN6fAG
+         GVdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755116113; x=1755720913;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HcgwJo67fSdIwhf/Y1kaVkQkpR61CWnlebZ6dKIeM1Y=;
-        b=wCDIcWx3/ne7dl0oO4IbBrc1U5RbJtMoN9gr5zBml5dfXC02lAPa7BznaIL/Bif6LP
-         YgDddAovdehsO2lSWJclwlDoHO13vMC+NGbgXkLnGBh3sh0L5iFHhChUO+Af6FyuhvEW
-         k2LUIf5TKVSOvMlibbRasvhIwfmpG4EXUzg7Ukm1X7FGd+/Pw9lK4Eu+hmmV6agrU1TN
-         R70Yvqy8MYIkvpfKueXksYkvmo8zDeSb2A/l8QHiwJS6HUKgownWHsvDM41+fLmglD+Y
-         hXk6uTZymkbKBNnxRK/FqZE8foX/D8AFeDO86GvSP658gGl4GPChltqqUaberg0tWnmR
-         hvkg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+hTBb0kpjamhBmIT/eFc2qWpPa+6o7HBEPhRVjQoPSdZ+EzVsHz/CG2w/QhEVDcNi0KUUBuPIBr3FQZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsRlhgO9Ymb6otA9I5NAlCHo4Tx1yGAVxc5/9/e9F/1pKf1gJP
-	1DfkAUEh0dqVdh9iWdxPy8T2t2o2vgqMObfyNyBs1NN9ylVdn92Avgpzy8l32OF7bQ==
-X-Gm-Gg: ASbGncvbJ2AOHadrQUfb38D2GNs28IlI/EauKwLObbJGYKwEE3+jK2UmHOfVNbwRnti
-	5eY1mRc5S9EYTsuobwUmeKvZpwNaD8WiaQLX9g6XMs3wXimstDK3XuX+dZSZbR+0L1Imgyq5Hn6
-	/ZfFdb5O5rHtUekVOYgTUqcoJdfgKWymMty9qPLwQG6S0x1f7cJKN73zRRLtfIOT1x5JhyHg1jD
-	QmdF/H2f1NM/3lr0aiaVrhQQREwogv3dGbWvwZyEo4mRy+OQWTXE8nskSo+Zu9AllmcPbfsWH5Q
-	QCXMfnMR0MukJ7xVhkn6wlaVQgdalUlk/KDnGFMBRPy984LahqZleP8I8oRlqg0lWHkIjCYsGv9
-	Us2Plt9qn8BPnA4kSpK/9rJPWywLncwoKoIoZcv0=
-X-Google-Smtp-Source: AGHT+IFIT83RK1BgW71T/A/tIXZmBd0yTKosCWQhpckCX2xdMMMQJzk4nn/G4EkvLEe5LUihAUVh8w==
-X-Received: by 2002:a05:6602:7184:b0:881:8957:d55e with SMTP id ca18e2360f4ac-8843446d220mr16540339f.3.1755116112915;
-        Wed, 13 Aug 2025 13:15:12 -0700 (PDT)
-Received: from fedora64.linuxtx.org ([72.42.103.70])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae99cd268sm3906199173.22.2025.08.13.13.15.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 13:15:12 -0700 (PDT)
-Sender: Justin Forbes <jmforbes@linuxtx.org>
-Date: Wed, 13 Aug 2025 14:15:10 -0600
-From: Justin Forbes <jforbes@fedoraproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org
-Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
-Message-ID: <aJzyTmxsakkQ0SCB@fedora64.linuxtx.org>
-References: <20250812174357.281828096@linuxfoundation.org>
+        d=1e100.net; s=20230601; t=1755116437; x=1755721237;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F/1t3EFEgXHUBAHB72RnZ06wSpjDj+54/Frk/ThDsww=;
+        b=Y3GnqkmXJ5BkF5WIXttO4A/FsYhXlOFhtG0QO7KQmjOn9p468uDI42FYIvRe+Sh6bd
+         cHOayJsIiCoP6Xh4YcJiTIeTMVcsLN2PUANBC9eddJy8fAmq5Rf4C61HSYbEtX0w0dBa
+         Sv1S2ULL8aKPwFZguaHfy9JaVqgXjnK+bjsrurGF7KOOPx0fSG+NJKSGJLQ6tKuxymcX
+         jTHMC0LrDwrWRXiDBtBk4kDsdPzj+jLdHrXtOYpQR++i6WgxxdLR5UoW0Z9vL/Khm8l0
+         v3rwnmsVraR97AEMYHc/AAXGqd9lIB14yzcNomAoPzo0NSwcj6ZSZhAji9VxuOkXR/M0
+         YKlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcRCNrOqpylTTHBqfFtMfjiGevOYZxLtTxm5CDRFu1knLsNoEH6QHJ4M7H3My2g8mGdEIQJyG7xiBgrWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUY41s6tbFYB/LGvkfOXlv62cCiFcPhBJJ4H2l1Ezomj7210qa
+	8hLLBQil572b5CGa1NbPa6ABOWUHBkV5Pm6rjn1OhiTl9NWpOQ4iMf+NgT1iqD/xwDM=
+X-Gm-Gg: ASbGncvUmOUaTnvGiODZu2KPex2qmbnrz4VYXrw0C8Q71fGdzPKvNvoTADOloqqrZ1k
+	oyCrkeIbazLdMUZFIp4uvD51CMLpIV6/PZSwLUpXVazL82Mc+EeIIy7+eDOrqEkoIGy2dgqkugU
+	Dvx4mLiYBZ2F8n+iDW62Jij36h3FmD25jQE2yxiKopA4wusjgLUM23hQ5A0WPfcQJk2U6CQbFzE
+	2ZRmAGXDmgqb/bEDvoorCuFHXSgd1Nou1tZCClc0RL59orqRRJum6HvJvS4n51WtINhYK2f0ijd
+	km7T0E/9dHEUjF3iWe6MnUtCFiVY5XRC4kZxIn6q4/TTNf40Oc6UevhYib+8cVMleIxWT+wx7W2
+	wiTmhdaG7wcuKilhJ6J0048vJZNglvrjTE5TNaznitrjmRy5NS8SXGpnHkCNR0oU=
+X-Google-Smtp-Source: AGHT+IElNKXelLAOHt8GQdvDS1nqHvpRfu2/IblCpP/yU0lQ3cWvxbEeQ3xIecHM4pnAO9YWIbdQzQ==
+X-Received: by 2002:a05:600c:8283:b0:459:d9d5:7f2b with SMTP id 5b1f17b1804b1-45a1b7bf687mr343085e9.16.1755116436947;
+        Wed, 13 Aug 2025 13:20:36 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b915deec6bsm4945531f8f.7.2025.08.13.13.20.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 13:20:36 -0700 (PDT)
+Message-ID: <bb919b4f-b51f-41c5-aed8-a3809316f7fb@linaro.org>
+Date: Wed, 13 Aug 2025 21:20:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812174357.281828096@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] media: iris: vpu3x: Add MNoC low power handshake
+ during hardware power-off
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20250813-sm8650-power-sequence-fix-v2-1-9ed0fc2c45cb@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250813-sm8650-power-sequence-fix-v2-1-9ed0fc2c45cb@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 07:43:28PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.10 release.
-> There are 480 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On 13/08/2025 08:53, Dikshita Agarwal wrote:
+> +	/* set MNoC to low power */
+> +	writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+> +
+> +	do {
+> +		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
+> +
+> +		handshake_done = value & NOC_LPI_STATUS_DONE;
+> +		handshake_busy = value & (NOC_LPI_STATUS_DENY | NOC_LPI_STATUS_ACTIVE);
+> +
+> +		if (handshake_done || !handshake_busy)
+> +			break;
+> +
+> +		writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+> +
+> +		udelay(15);
+> +
+> +		writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+> +	} while (++count < 1000);
 
-Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
-x86_64), and boot tested x86_64. No regressions noted.
+So if this loop executes 999 times but succeeds on the 1000th try, your 
+test would fail because your final write never gets evaluated in a 
+subsequent loop.
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+Wouldn't this be more logical like this
+
+do {
+	/* issue command */
+	writel(REQ_POWER_DOWN_PREP, core->reg_base +
+	       AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+
+	/* wait for command to take effect */
+	udelay(15);
+
+	/* read back status */
+	value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
+
+	handshake_done = value & NOC_LPI_STATUS_DONE;
+	handshake_busy = value & (NOC_LPI_STATUS_DENY |
+				  NOC_LPI_STATUS_ACTIVE);
+
+	if (handshake_done || !handshake_busy)
+		break;
+
+	/* power down? the mnoc */
+	writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+
+	/* Let that command take effect ? */
+	udelay(15);
+
+} while (++count < 1000);
+
+That way you exit the loop with the mnoc state in a known state, instead 
+of as your loop currently is perhaps having succeeded but incorrectly 
+signalling failure.
+
+Also why 1000 ? Thats 1000 x 1.5 microseconds - 1.5 milliseconds 
+potentially in your submitted patch now nearly 3 milliseconds assuming 
+the power-down command similarly requires a grace period.
+
+Please at least fix the loop so that the last power-on command should it 
+succeed at the termination of your loop can be captured.
+
+> +	if (!handshake_done && handshake_busy)
+> +		dev_err(core->dev, "LPI handshake timeout\n");
+
+---
+bod
 
