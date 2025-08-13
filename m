@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-766862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B021B24C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8013B24C10
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCDBD7BAE01
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:32:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D45677BB1EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25901DE8B5;
-	Wed, 13 Aug 2025 14:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229DF2F0C62;
+	Wed, 13 Aug 2025 14:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZiAeBJYc"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jtn0YPtS"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C4B1DE896;
-	Wed, 13 Aug 2025 14:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16C7302CD7;
+	Wed, 13 Aug 2025 14:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755095542; cv=none; b=RKX2IZJvYfl3xef55u72KXWYwqyoSDinr4i1yEjNg81g3CPO1m/G5baPB2GaYSoaHrBgxvgi/+7fRxdG7LUTgISmc3xs9BFGZgDmtAfdVRMTWuw2IZRL9drVb2UI/q62TVnj6Ly8KTvvfTMgEhAg1GmyCGm5p+eIz1196k9Iaz8=
+	t=1755095562; cv=none; b=JrrGgP7ZIj6moLLvsujx3xDn3fqW9P+9+u7u3ylSxoOKFDRT1pN2nck920XFfb0HlrnppVDz34aDtMVq5T2vnLezImC18ldvGhPHibOE/L2v8lyQm0CeynOJ1Gn5xiap2byT8Gp5SrEUAttEoBFVihbT9dWMyheMdQ3b0hSmUiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755095542; c=relaxed/simple;
-	bh=/EhEWG9EO9qtvc4CfChN1MldpWaQ//ZskyMXUA+S+UA=;
+	s=arc-20240116; t=1755095562; c=relaxed/simple;
+	bh=ZuprsWVy9JbWYxbiQaWGYd36YeuyxqS4SvjMCZYEwDs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=msokv4iSYFWn0hhycxLTrjSR+Z7EfADPedBwMaSEmoCRPaCjLM+nzcXDwVyGwIbFhvWJIE/hfoF1zuz32rsdKOUDgXZ+bm7g4I+42iMXyFnYcq/vJDAYMUl12T4GhGj7ZmYz0qCG1dh/BPzCIp2GeOdxFfbuvkLfblhNn+72lxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZiAeBJYc; arc=none smtp.client-ip=198.47.19.246
+	 MIME-Version:Content-Type; b=KBNmbtPOW4gIdDhq21l3QIc+Xay3E6oAHOWnkiP8jS15/fVMTPOVKCzS3IN2r/4NcEvvTzKGX5rXOlJw3SVbjBXngGKhwVqjDm9qowbrqShIDssMka5GkGoMC+8XAXKAVOcuRi8MXC+InOcOna5xXljOd7aLe4Wz6pI4RBY4nAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jtn0YPtS; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DEW9wU2093149;
-	Wed, 13 Aug 2025 09:32:09 -0500
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DEWTrN1718718;
+	Wed, 13 Aug 2025 09:32:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755095529;
-	bh=XimLamn4Mz+6hg6tinLd+SKZfD3TGjk59OoPPjemj7E=;
+	s=ti-com-17Q1; t=1755095549;
+	bh=iB0oG4jCZar+MlBWg1xIuSPYx68EeANpTAsftMM0gM4=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ZiAeBJYcGeXF0blL7GEu+qezR4zKyDyG0liZ8Q2gEdU28tOdE0EGbXjdNQH2h1rKr
-	 a4NlX2rUY6kTny2zdqzQyDrxlwHz+vM3x6+MIedtQeynskZQNRV4/ZwHayHszfZGQA
-	 8saQ+zCMVTHfqqmpC9k9HN8IbHDs04qZkD00h8zo=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DEW92Z1036690
+	b=jtn0YPtS0sv9JQ4EvXOhP04JPA1WSKMCJf0Jbhvxy6Ea1yvYMwK2knaDZIaNYZzfG
+	 c9lJdlH0EbFjvZjO4jhwhCmKH9LJXPBVtAKIIspCseiXnY9A/VVzJiSIaFPdJMMg2C
+	 B0jeBb3sqnmMBfFzJsYShZs674OyjihfqvaV7C3g=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DEWTVI1036777
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 09:32:09 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 13 Aug 2025 09:32:29 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 09:32:09 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2025 09:32:28 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 09:32:08 -0500
+ Frontend Transport; Wed, 13 Aug 2025 09:32:29 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DEW9pp2440532;
-	Wed, 13 Aug 2025 09:32:09 -0500
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DEWT9A2134792;
+	Wed, 13 Aug 2025 09:32:29 -0500
 From: Nishanth Menon <nm@ti.com>
-To: <vigneshr@ti.com>, <kristo@kernel.org>, <obh@kernel.org>,
+To: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
         Wadim Egorov
 	<w.egorov@phytec.de>
 CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <upstream@lists.phytec.de>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am642-phyboard-electra: Add ti,pa-stats property
-Date: Wed, 13 Aug 2025 09:32:07 -0500
-Message-ID: <175509551721.157835.6025291111862070229.b4-ty@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62a-phycore-som: Add 1.4GHz opp entry
+Date: Wed, 13 Aug 2025 09:32:27 -0500
+Message-ID: <175509553406.158007.6562770238537192028.b4-ty@ti.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250804105450.2322647-1-w.egorov@phytec.de>
-References: <20250804105450.2322647-1-w.egorov@phytec.de>
+In-Reply-To: <20250805090021.1407753-2-w.egorov@phytec.de>
+References: <20250805090021.1407753-1-w.egorov@phytec.de> <20250805090021.1407753-2-w.egorov@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,17 +81,21 @@ X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 Hi Wadim Egorov,
 
-On Mon, 04 Aug 2025 12:54:50 +0200, Wadim Egorov wrote:
-> Add ti,pa-stats phandles. This is a phandle to PA_STATS syscon regmap
-> and will be used to dump IET related statistics for ICSSG Driver.
+On Tue, 05 Aug 2025 11:00:21 +0200, Wadim Egorov wrote:
+> The phyCORE-AM62Ax is capable of supplying 0v85 to the VDD_CORE
+> which allows the Cortex-A53s to operate at 1.4GHz according to chapter
+> 7.5 of the SoC's data sheet[0]. Append the 1.4Ghz entry to the OPP table
+> to enable this OPP
 > 
+> [0] https://www.ti.com/lit/ds/symlink/am62a3.pdf
 > 
+> [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/1] arm64: dts: ti: k3-am642-phyboard-electra: Add ti,pa-stats property
-      commit: 6aa4c1a38cf10c9760f81d456b7f92ff157e5f83
+[1/1] arm64: dts: ti: k3-am62a-phycore-som: Add 1.4GHz opp entry
+      commit: f13db4f77d54a6db644f09a168919ad1b3432f52
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
