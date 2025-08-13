@@ -1,215 +1,163 @@
-Return-Path: <linux-kernel+bounces-767097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BC5B24F48
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD852B24F4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83F09A37BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B119A2333
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED43286D45;
-	Wed, 13 Aug 2025 16:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1933286417;
+	Wed, 13 Aug 2025 16:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HciJ1eXc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="GdfsDXKR"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FC627F011;
-	Wed, 13 Aug 2025 16:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF8023ABB0
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100935; cv=none; b=PaPdjHqqCnFJr/wWBWtq9omE6UXOjxZDSBWfxR+aAvKoXCWTmSgHOy5KipiC/L8PWvAIJqEQAyhaCkLi/BsA9FVIWVV7NE4a8wsriH4u1K/Vi2Gka5jBht2S43ByslbWH01ogHmZwAizZ09TwMlUq5NGUIwEXFyeSURgNTAPs8M=
+	t=1755100968; cv=none; b=GXqXucKOtYCPlamoVkWADuhfphphk+VGkFmC9YIGeR4Rn2bOWI0Y+lLdeul1DTMoh7eoh61YMHI16NPCm2pQzfN1GZVEqWQn1m/zI018u58N8KJEvaQ3vw8Szq+ahtBw5BqJVIyn2kCg/qZnPMTIGZdElt6tz6Itt7p2UAC3deI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100935; c=relaxed/simple;
-	bh=/IInu1GSbHtzTPZpYgApvUKxtuzp3AMbxp5bRS+CSKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DLy0Z9e/W35dk8UUBOU4zWFoX8OrAHxDmvvookorLHn09kUwuPySZmZhiieBGSfGySR7OlX46TUTyV1NJ/qobxAi3Inmk5sm0g4kpOMqLGaAuQnHT3/TjP0vK95G5ZhOHbpc2xfOcL1ftLXr2v38KufUACchtz40CO4etUkWsU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HciJ1eXc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLtgL012998;
-	Wed, 13 Aug 2025 16:02:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tOU6SdsJCLYdXKqlaVp+vUFgj1ZmLPafp6bUHKPnOgU=; b=HciJ1eXc4aRksPmt
-	Jc8vdM9ipLuQKYcy8P5hkSZIQ6xc7XLvYxIMpbeom658YqF0sFIrFfTqXimTyR/S
-	LDrexqLzVKGiv6eALosS1VA4ndUFrjIs9EGkbPRWS4pjvNErhKuabX1zq/XiS/TS
-	cu477Sz40q3gta1tShS8ADvzr25+9tP8/IqbDDkBJx6sWWPHSZexg4MTMYqNNw4F
-	NIuSwBt4QIX4OglJnOVCDEpN+nbOUTSt5v2DQd2FVN8WTPSSB6AFOAjHTHPiNpI2
-	0tlKLvrtHq/CseoJvPJbl01T/oVEbzTrrvUxBQH/VOT5GYX3AY2T/3fqmnHLep4S
-	dugjJA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhxagtf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 16:02:04 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57DG23tN012748
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 16:02:03 GMT
-Received: from [10.216.60.81] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 13 Aug
- 2025 09:02:00 -0700
-Message-ID: <4c70139e-2026-4221-88d8-b64f675ad78e@quicinc.com>
-Date: Wed, 13 Aug 2025 21:31:57 +0530
+	s=arc-20240116; t=1755100968; c=relaxed/simple;
+	bh=zkeMszwcEY2/Nw1AqB8rOo2CFjNX+nyhvu/+Et85Vww=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=E1JFUWforfzER+r3ooQYmVJKm7Z8kFMsHQYHYtkmOpaTtOoiWjCM753sswEJBnmkSV56HH34AmEl+3QTkp2YDsVA0rk5SHhpa3kwfsWWJCYxBu3vYYChq48ZSD1obFT/2BBgW6ED9a5Jcy2RVq5ICZFUyTc7hHg3EappeFFygvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=GdfsDXKR; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2401b855635so52857635ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brighamcampbell.com; s=google; t=1755100965; x=1755705765; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vU1iojt0gD3FI1ZhQ2ngoLEMSZI8uX8uMw4yAJKUm0w=;
+        b=GdfsDXKRKQ8pEF/5R6IY33yr3SreRHUlK9p/PP/3I3VCquinPi/L/DgLm3u1QtTec2
+         Ynl1NBGDFgMXVt44bv9ZRohefan4DlxKguAGi4W8C1IwYWrDg5euAof24Pes8QC8RRru
+         deld/AfbzeWycjBqZeVdUfZqh35vWFxVAtppre193CDfviqX4zbHXrZY2naTxODUOoUv
+         TDJHVdF1RhGOzYByvpE3KhfeBquqGeAuhn8SzoQKJg6dz61X4WyvKEn8lM0CsHMGTcHK
+         wApnkFTtq5qddLqPcGbntw9ICcHxeZTfX96QQkpK8iLf/47NDMiQKZRL3GJ9WPTLOxRz
+         Pt8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755100965; x=1755705765;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vU1iojt0gD3FI1ZhQ2ngoLEMSZI8uX8uMw4yAJKUm0w=;
+        b=YlZfvyJHna1P3UiIeqEGviKv/QPuyAB46uIcZT9uyLBdleuZOiRQdiPmkKOisJHTXV
+         RGMgX+xAumw6RliFiThEBg0hnVrjoLuUBUf8y2wLJp4rEJUtPjhwr4h9sj7gT06YXCR4
+         /kQc7S1/d3+gRDS8aUOEtkco+N/lcn/nkmVGoyqCz5zpYWLzkX7SxANCsD6RIJnL/veG
+         USdHZNquw8iqStetHfVH5Q5mH1R5f/7RZccQwYcFOYGUOatW3efhcZk4fyGcK68OcULx
+         RiqBXqDapxZr31PTpAJeENXCd7/9zWVaIgnf7w3+89e3qqdcSVTK/dzZDm6vKYP5Om2O
+         A80Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXC2+8pOdtBF9MIJAST+m/Ewj5MNRZKt+p60FZtGAsxAbfn7rxomqRg0zcLG5r9rhWTwC+Ni1VK7UHDtYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7b3S/tFHh3MOMtm0vLeKejQC4pO82mqBrGKDYKSdPhTCKjf/A
+	dxfGYe1nwM+8ml1qm1Tcq0N3ot2kT7RkX3f0d+tLBvxJ7UNYgxyyaxwlrMdnaQaEUX1Ku4zBiun
+	82dA/
+X-Gm-Gg: ASbGncvD4+i7FsC7W87rMOtHdjGPLjVwFxLnvfPLvyF9cSzppGB6jBb38Skmn5LjK0Q
+	bzXdUxK61aSV8hi6YcEljwRJK90S3FvUOXaoiuM3cNG7+5D36WJHMmy0qCKJhMyCriXJbntE6Fz
+	eUtOXngKu9E3UWabcfZYlcBMfRC9KcoXSJKSe0jFHwuSO+pPLrP4hpUGeKem7iuDCwFix6rcRhj
+	md2nijw9l91DoXe8DKhERaYsLvXV8ghpqi2b/aansC1ywH6v6ho5Cw+e6eCsx73kTPK/Ls63hGF
+	wKo9uH/rElhRaw6+bLPBIJA8/Vs4i+UPa11O4HB56kWJPDq/8Jvl4PcU9af/U179K/Z0wyozWde
+	M1UegwVFTsRMIFxEn9433u9SYpAJDheWJENHdkBGIPA==
+X-Google-Smtp-Source: AGHT+IHckUEfl6Sm+2L9KD4HithUZ+Iig/EWOybXb8wce/skeyx454O7qL/9XNBxODe4Za4Yq2h7OQ==
+X-Received: by 2002:a17:903:2d1:b0:242:fc4f:9fe3 with SMTP id d9443c01a7336-2430d2243d0mr56569415ad.37.1755100965055;
+        Wed, 13 Aug 2025 09:02:45 -0700 (PDT)
+Received: from [192.168.1.100] ([2605:fb40:0:c09:323a:5679:3782:80b8])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976a06sm329750985ad.81.2025.08.13.09.02.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 09:02:44 -0700 (PDT)
+From: Brigham Campbell <me@brighamcampbell.com>
+Date: Wed, 13 Aug 2025 10:02:37 -0600
+Subject: [PATCH] accel/rocket: Fix usages of kfree() and sizeof()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ufs: ufs-qcom: Align programming sequence of Shared
- ICE for UFS controller v5
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>
-References: <20250812091714.774868-1-quic_pkambar@quicinc.com>
- <x5pkfdxwnpqv66d4y3bucpd6vpxbsahdt2mdj6mdlb43emfkxn@dktn4wpuosgr>
-Content-Language: en-US
-From: Palash Kambar <quic_pkambar@quicinc.com>
-In-Reply-To: <x5pkfdxwnpqv66d4y3bucpd6vpxbsahdt2mdj6mdlb43emfkxn@dktn4wpuosgr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfX25yngnbUoLE1
- IYj5Ds1okxAwSVEX1P0ZDB+8g8kmXVuPrmahmBREVwk2K6TPLMaut+eDKD82IAjxP0PNHtIGKRN
- eENLp/wLxofNyKcPgHyAaR76Vc7ATMwZj58xpy/Qy7oyegkXuUtJNB8rlVdZX/iZQ9sgPBkouHY
- 0rwajmcLXoIPDKTCdBWMBWyhvKDoGzOOhgRQliNr2Kb+/WctkIN6Y9m+DjH/172iJMCNYfS+lWb
- YS5DDDbPZ4yJpXfV1s+2KDWPc4PdvFjsn+qDMr62YUWeE1Eng3mXusW9RSdNDStykF+1Ms9k3Cm
- iDwE5A9/HU5xaaaPZ1qrzoin/tpxshEXsYyKfTv0SwrNtT7zRy59D31uJZAmNhHaAafp9CfOOMo
- GZegczhy
-X-Proofpoint-GUID: ZAK3Cs5ebEjQLy8SDZYd8uuD6eL4VohX
-X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689cb6fc cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=bFtwN0H5KFSSgKAYKl4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: ZAK3Cs5ebEjQLy8SDZYd8uuD6eL4VohX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
+Message-Id: <20250813-rocket-free-fix-v1-1-51f00a7a1271@brighamcampbell.com>
+X-B4-Tracking: v=1; b=H4sIAB23nGgC/x2MWwqAIBAArxL73YIp9rpK9CG21hJUrBGBePekz
+ xmYSRBJmCKMVQKhhyOfR4GmrsBv7lgJeSkMWmmr+sagnH6nG4MQYeAXjXet6+zg9KCgVJdQ0f9
+ xmnP+AEYAqHFhAAAA
+X-Change-ID: 20250813-rocket-free-fix-3ca6a759a290
+To: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Oded Gabbay <ogabbay@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>, Julia Lawall <julia.lawall@inria.fr>, 
+ Brigham Campbell <me@brighamcampbell.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2090;
+ i=me@brighamcampbell.com; h=from:subject:message-id;
+ bh=zkeMszwcEY2/Nw1AqB8rOo2CFjNX+nyhvu/+Et85Vww=;
+ b=owGbwMvMwCUWLsWS0KCyxZPxtFoSQ8ac7crzGIQYNx/WXxTx4oKswQm3/zJrfZfPmv4w3cj2M
+ YOyeZxyRykLgxgXg6yYIovKrVnqFydbPzoYwT8BZg4rE8gQBi5OAZiI7klGhs4lqezaUk/enbv0
+ p9rwWWNAKSNr9oKHjnvMYrNXnClwM2H4K7jwFa9erMPXAqNZmffbvLr85/82Oada9r3TO9ZhToY
+ GIwA=
+X-Developer-Key: i=me@brighamcampbell.com; a=openpgp;
+ fpr=24DA9A27D1933BE2C1580F90571A04608024B449
 
+Replace usages of kfree() with kvfree() for pointers which were
+allocated using kvmalloc(), as required by the kernel memory management
+API.
 
+Use sizeof() on the type that a pointer references instead of the
+pointer itself. In this case, scheds and *scheds both happen to be
+pointers, so sizeof() will expand to the same value in either case, but
+using *scheds is more technically correct since scheds is an array of
+drm_gpu_scheduler *.
 
-On 8/13/2025 3:25 PM, Manivannan Sadhasivam wrote:
-> On Tue, Aug 12, 2025 at 02:47:14PM GMT, Palash Kambar wrote:
->> Disable of AES core in Shared ICE is not supported during power
->> collapse for UFS Host Controller V5.0.
->>
-> 
-> Could you please add more info on the issue observed?
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@inria.fr>
+Closes: https://lore.kernel.org/r/202508120730.PLbjlKbI-lkp@intel.com/
+Signed-off-by: Brigham Campbell <me@brighamcampbell.com>
+---
+ drivers/accel/rocket/rocket_job.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Sure Mani.
+diff --git a/drivers/accel/rocket/rocket_job.c b/drivers/accel/rocket/rocket_job.c
+index 5d4afd69230623215e3105da7153d2d010636d52..f6fe1a6d9264b7508a3adc03248e5a704c68c4f0 100644
+--- a/drivers/accel/rocket/rocket_job.c
++++ b/drivers/accel/rocket/rocket_job.c
+@@ -222,7 +222,7 @@ static int rocket_job_push(struct rocket_job *job)
+ err_unlock:
+ 	drm_gem_unlock_reservations(bos, job->in_bo_count + job->out_bo_count, &acquire_ctx);
+ err:
+-	kfree(bos);
++	kvfree(bos);
+ 
+ 	return ret;
+ }
+@@ -496,7 +496,8 @@ void rocket_job_fini(struct rocket_core *core)
+ int rocket_job_open(struct rocket_file_priv *rocket_priv)
+ {
+ 	struct rocket_device *rdev = rocket_priv->rdev;
+-	struct drm_gpu_scheduler **scheds = kmalloc_array(rdev->num_cores, sizeof(scheds),
++	struct drm_gpu_scheduler **scheds = kmalloc_array(rdev->num_cores,
++							  sizeof(*scheds),
+ 							  GFP_KERNEL);
+ 	unsigned int core;
+ 	int ret;
+@@ -630,7 +631,7 @@ int rocket_ioctl_submit(struct drm_device *dev, void *data, struct drm_file *fil
+ 		rocket_ioctl_submit_job(dev, file, &jobs[i]);
+ 
+ exit:
+-	kfree(jobs);
++	kvfree(jobs);
+ 
+ 	return ret;
+ }
 
-> 
->> Hence follow below steps to reset the ICE upon exiting power collapse
->> and align with Hw programming guide.
->>
->> a. Write 0x18 to UFS_MEM_ICE_CFG
->> b. Write 0x0 to UFS_MEM_ICE_CFG
->>
-> 
-> Please be explicit about the fields you are writing to.
-> 
->> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
->>
->> ---
->> changes from V1:
->> 1) Incorporated feedback from Konrad and Manivannan by adding a delay
->>    between ICE reset assertion and deassertion.
->> 2) Removed magic numbers and replaced them with meaningful constants.
->>
->> changes from V2:
->> 1) Addressed Manivannan's comment and moved change to ufs_qcom_resume.
->> ---
->>  drivers/ufs/host/ufs-qcom.c | 14 ++++++++++++++
->>  drivers/ufs/host/ufs-qcom.h |  2 +-
->>  2 files changed, 15 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
->> index 444a09265ded..60bf5e60b747 100644
->> --- a/drivers/ufs/host/ufs-qcom.c
->> +++ b/drivers/ufs/host/ufs-qcom.c
->> @@ -38,6 +38,9 @@
->>  #define DEEMPHASIS_3_5_dB	0x04
->>  #define NO_DEEMPHASIS		0x0
->>  
->> +#define UFS_ICE_RESET_ASSERT_VALUE	0x18
->> +#define UFS_ICE_RESET_DEASSERT_VALUE	0x00
-> 
-> Please define the actual bits as per the documentation, not the value you are
-> writing. Here, you are changing two fields:
-> 
-> ICE_SYNC_RST_SEL BIT(3)
-> ICE_SYNC_RST_SW BIT(4)
+---
+base-commit: a3daf184bd85d7c08ce948a79bb0e4cac2203923
+change-id: 20250813-rocket-free-fix-3ca6a759a290
 
-ok Mani.
-
->> +
->>  enum {
->>  	TSTBUS_UAWM,
->>  	TSTBUS_UARM,
->> @@ -756,6 +759,17 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
->>  	if (err)
->>  		return err;
->>  
->> +	if ((!ufs_qcom_is_link_active(hba)) &&
->> +	    host->hw_ver.major == 5 &&
->> +	    host->hw_ver.minor == 0 &&
->> +	    host->hw_ver.step == 0) {
->> +		ufshcd_writel(hba, UFS_ICE_RESET_ASSERT_VALUE, UFS_MEM_ICE);
->> +		ufshcd_readl(hba, UFS_MEM_ICE);
->> +		usleep_range(50, 100);
-> 
-> Please add a comment above the delay to make it clear that the delay is not as
-> per the doc:
-
-Sure.
-
-> 		/*
-> 		 * HW documentation doesn't recommend any delay between the
-> 		 * reset set and clear. But we are enforcing an arbitrary delay
-> 		 * to give flops enough time to settle in.
-> 		 */
-> 
->> +		ufshcd_writel(hba, UFS_ICE_RESET_DEASSERT_VALUE, UFS_MEM_ICE);
->> +		ufshcd_readl(hba, UFS_MEM_ICE);
->> +	}
->> +
->>  	return ufs_qcom_ice_resume(host);
->>  }
->>  
->> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
->> index 6840b7526cf5..cc1324ce05c7 100644
->> --- a/drivers/ufs/host/ufs-qcom.h
->> +++ b/drivers/ufs/host/ufs-qcom.h
->> @@ -60,7 +60,7 @@ enum {
->>  	UFS_AH8_CFG				= 0xFC,
->>  
->>  	UFS_RD_REG_MCQ				= 0xD00,
->> -
->> +	UFS_MEM_ICE				= 0x2600,
-> 
-> As the internal doc, this register is called UFS_MEM_ICE_CFG.
-
-Ok will update the register name.
-
-
-> - Mani
-> 
+Thanks!
+Brigham Campbell <me@brighamcampbell.com>
 
 
