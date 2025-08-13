@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-767436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00806B25434
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 432FAB25437
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8771C849C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D8E1C84C95
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A2F30AAB7;
-	Wed, 13 Aug 2025 20:05:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9966828FFD2;
+	Wed, 13 Aug 2025 20:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNAChL/P"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZukYOpH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B2F303CBD;
-	Wed, 13 Aug 2025 20:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95C42741CD;
+	Wed, 13 Aug 2025 20:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755115541; cv=none; b=Uvu8j/xN5uIzIUyEq9nRBSWASLotRJNNtd2vhX80fH8TD/waUyCNelw/vM5obncnKqqBXK4Le4d9MngBYgeKzYvtA6of3mF77DqP/iAnhZXg1xG4ko41mA8gP9j52B097I+qOlH1z1aBMrOW3E8V5L3eDn2bQiAInzFD+omRtpE=
+	t=1755115542; cv=none; b=pzG/kCUYUazIckrtUqCADV5k/X0JeuuzLR7zvvgs5TC4otEdKgr880eGJ9+6nt192My7Lzi75IVH9p3rhSfOkuRJEL6Ipou8lAlrHcxswqDWJ0GyKCexXE1FeLj8z5UneT/pLTPrMBpn00TCJrHefGo/XtRLNvgZB+Ah0hT6UkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755115541; c=relaxed/simple;
-	bh=UtXtqsV7yy9RZvZK6gJ9GFr0A5C3WyJeuo6UmPO0CBY=;
+	s=arc-20240116; t=1755115542; c=relaxed/simple;
+	bh=k1+6XJbQmJAorDgceaYJHUu/WClXZOLjnrpNKYfsUUk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SkAuof1zPQCORQLJ3FMfcCIYe72oqpAePp5JWaCoFERfUmDzLNIK7qq1RNycjMdytYXmtWvfsONjG+d4VsuyazatC8an2sC0oQ1Yu5Y0+Jgny7u1CxYMPS3+qEBvR8K3xRCLfGxO1nfc2F4MgiYVKEztloJi9oZTLfRfVTxv5pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNAChL/P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4EAC4CEEF;
-	Wed, 13 Aug 2025 20:05:40 +0000 (UTC)
+	 MIME-Version; b=rzrphc/w8uQ7QMDAeHhW7+ewYt6Y9Hw7AYE7tmswCrGEzmdjHhzJhK1hSiQMfn0JdQIjroUtgMVjFYlPFEpUaHOfzzSxhDbDFQDEnP1fJ7X5G1uuuL6OUpxfooP7/UrE7mpAlWIgjJQ+1W0n5/bX4jpoYRQLl4ifrJtz/pjueOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZukYOpH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B195C4CEEB;
+	Wed, 13 Aug 2025 20:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755115540;
-	bh=UtXtqsV7yy9RZvZK6gJ9GFr0A5C3WyJeuo6UmPO0CBY=;
+	s=k20201202; t=1755115542;
+	bh=k1+6XJbQmJAorDgceaYJHUu/WClXZOLjnrpNKYfsUUk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vNAChL/PQ3X7JpTzvjYHqcmUpgAcv/UcNDqOx30B4+4GzQf7jaNczAaQvoDYltliW
-	 bSJJLc3d/l2rvVlPhVy5gcLBi9Gt4uAi3XaAleTorfAykSl8p2XwgvJE4NBoRO2SgU
-	 egEHwpOPtNtiKnSRzgKZYjAUu7IZ66b6yUMiTJx5YUYcxsaze1F4q2RndYuvjKmfqf
-	 wsap99mMkSDIXEkgt1lQ1gUQpRpD1PrFPjAZ/qq83VVNET6fJm8OazOyM5jaKl2O6M
-	 hG1WLZROvytkIlvhq0JMqnWlgafh7fekhprwFjV9P8grNL0DCdmwEQABQUd53CZ3s9
-	 UbH36W0aUMaBw==
+	b=WZukYOpH3OzoYg5InRaitr+FIOnb1HyBWQNfCwUccBFJ9ETKMjx6kbJs0h1/WxfBg
+	 tvppHGOKYO+Vt5ozKxE2LMXy8NevzBS9y4ICqOmRdWbmjjdvGOoU8UCFtixCMdHuiP
+	 napN9BpQxnPZ4h0tUGUPupqNkBHDhDKTC0abnm+pFy0F/wAct1CJUPe2cOXYbnLWaW
+	 MoWGcN0t7J0nKfiq4hAjJvMZfQiejuZc5VnCxPxZO4WpxY6w6O6TEgXsmKAbhDsrHq
+	 PEZ79J8I4n6v3sPcsUaV4wOa5Ez3THHb5bzB44PoPft+U6c8wDe0e9MUa5/xeD6TTi
+	 79QULbrRm7G8Q==
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: Randy Dunlap <rdunlap@infradead.org>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 3/9] Documentation: Fix admin-guide typos
-Date: Wed, 13 Aug 2025 15:04:59 -0500
-Message-ID: <20250813200526.290420-4-helgaas@kernel.org>
+Subject: [PATCH 4/9] Documentation: Fix core-api typos
+Date: Wed, 13 Aug 2025 15:05:00 -0500
+Message-ID: <20250813200526.290420-5-helgaas@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250813200526.290420-1-helgaas@kernel.org>
 References: <20250813200526.290420-1-helgaas@kernel.org>
@@ -67,290 +67,165 @@ Fix typos.
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- Documentation/admin-guide/LSM/SafeSetID.rst          |  2 +-
- Documentation/admin-guide/RAS/main.rst               |  2 +-
- Documentation/admin-guide/blockdev/paride.rst        |  2 +-
- .../admin-guide/device-mapper/vdo-design.rst         |  2 +-
- Documentation/admin-guide/hw-vuln/mds.rst            |  2 +-
- Documentation/admin-guide/kdump/kdump.rst            |  2 +-
- Documentation/admin-guide/kernel-parameters.txt      | 12 ++++++------
- Documentation/admin-guide/laptops/sonypi.rst         |  2 +-
- Documentation/admin-guide/media/imx.rst              |  2 +-
- Documentation/admin-guide/media/si4713.rst           |  6 +++---
- Documentation/admin-guide/mm/damon/usage.rst         |  2 +-
- Documentation/admin-guide/perf/hisi-pmu.rst          |  4 ++--
- .../admin-guide/quickly-build-trimmed-linux.rst      |  4 ++--
- Documentation/admin-guide/reporting-issues.rst       |  4 ++--
- .../verify-bugs-and-bisect-regressions.rst           |  2 +-
- 15 files changed, 25 insertions(+), 25 deletions(-)
+ Documentation/core-api/irq/irq-affinity.rst |  6 ++--
+ Documentation/core-api/irq/irq-domain.rst   | 38 ++++++++++-----------
+ 2 files changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/Documentation/admin-guide/LSM/SafeSetID.rst b/Documentation/admin-guide/LSM/SafeSetID.rst
-index 0ec34863c674..6d439c987563 100644
---- a/Documentation/admin-guide/LSM/SafeSetID.rst
-+++ b/Documentation/admin-guide/LSM/SafeSetID.rst
-@@ -41,7 +41,7 @@ namespace). The higher level goal is to allow for uid-based sandboxing of system
- services without having to give out CAP_SETUID all over the place just so that
- non-root programs can drop to even-lesser-privileged uids. This is especially
- relevant when one non-root daemon on the system should be allowed to spawn other
--processes as different uids, but its undesirable to give the daemon a
-+processes as different uids, but it's undesirable to give the daemon a
- basically-root-equivalent CAP_SETUID.
+diff --git a/Documentation/core-api/irq/irq-affinity.rst b/Documentation/core-api/irq/irq-affinity.rst
+index 29da5000836a..9cb460cf60b6 100644
+--- a/Documentation/core-api/irq/irq-affinity.rst
++++ b/Documentation/core-api/irq/irq-affinity.rst
+@@ -9,9 +9,9 @@ ChangeLog:
  
+ /proc/irq/IRQ#/smp_affinity and /proc/irq/IRQ#/smp_affinity_list specify
+ which target CPUs are permitted for a given IRQ source.  It's a bitmask
+-(smp_affinity) or cpu list (smp_affinity_list) of allowed CPUs.  It's not
++(smp_affinity) or CPU list (smp_affinity_list) of allowed CPUs.  It's not
+ allowed to turn off all CPUs, and if an IRQ controller does not support
+-IRQ affinity then the value will not change from the default of all cpus.
++IRQ affinity then the value will not change from the default of all CPUs.
  
-diff --git a/Documentation/admin-guide/RAS/main.rst b/Documentation/admin-guide/RAS/main.rst
-index 7ac1d4ccc509..447bfde509fb 100644
---- a/Documentation/admin-guide/RAS/main.rst
-+++ b/Documentation/admin-guide/RAS/main.rst
-@@ -253,7 +253,7 @@ interface.
- Some architectures have ECC detectors for L1, L2 and L3 caches,
- along with DMA engines, fabric switches, main data path switches,
- interconnections, and various other hardware data paths. If the hardware
--reports it, then a edac_device device probably can be constructed to
-+reports it, then an edac_device device probably can be constructed to
- harvest and present that to userspace.
+ /proc/irq/default_smp_affinity specifies default affinity mask that applies
+ to all non-active IRQs. Once IRQ is allocated/activated its affinity bitmask
+@@ -60,7 +60,7 @@ Now lets restrict that IRQ to CPU(4-7).
+ This time around IRQ44 was delivered only to the last four processors.
+ i.e counters for the CPU0-3 did not change.
  
+-Here is an example of limiting that same irq (44) to cpus 1024 to 1031::
++Here is an example of limiting that same IRQ (44) to CPUs 1024 to 1031::
  
-diff --git a/Documentation/admin-guide/blockdev/paride.rst b/Documentation/admin-guide/blockdev/paride.rst
-index e85ad37cc0e5..b2f627d4c2f8 100644
---- a/Documentation/admin-guide/blockdev/paride.rst
-+++ b/Documentation/admin-guide/blockdev/paride.rst
-@@ -118,7 +118,7 @@ and high-level drivers that you would use:
- 	================	============	========
+ 	[root@moon 44]# echo 1024-1031 > smp_affinity_list
+ 	[root@moon 44]# cat smp_affinity_list
+diff --git a/Documentation/core-api/irq/irq-domain.rst b/Documentation/core-api/irq/irq-domain.rst
+index a01c6ead1bc0..68eb2612e8a4 100644
+--- a/Documentation/core-api/irq/irq-domain.rst
++++ b/Documentation/core-api/irq/irq-domain.rst
+@@ -18,8 +18,8 @@ handlers as irqchips. I.e. in effect cascading interrupt controllers.
+ So in the past, IRQ numbers could be chosen so that they match the
+ hardware IRQ line into the root interrupt controller (i.e. the
+ component actually firing the interrupt line to the CPU). Nowadays,
+-this number is just a number and the number loose all kind of
+-correspondence to hardware interrupt numbers.
++this number is just a number and the number has no
++relationship to hardware interrupt numbers.
  
- All parports and all protocol drivers are probed automatically unless probe=0
--parameter is used. So just "modprobe epat" is enough for a Imation SuperDisk
-+parameter is used. So just "modprobe epat" is enough for an Imation SuperDisk
- drive to work.
+ For this reason, we need a mechanism to separate controller-local
+ interrupt numbers, called hardware IRQs, from Linux IRQ numbers.
+@@ -77,15 +77,15 @@ Once a mapping has been established, it can be retrieved or used via a
+ variety of methods:
  
- Manual device creation::
-diff --git a/Documentation/admin-guide/device-mapper/vdo-design.rst b/Documentation/admin-guide/device-mapper/vdo-design.rst
-index 3cd59decbec0..faa0ecd4a5ae 100644
---- a/Documentation/admin-guide/device-mapper/vdo-design.rst
-+++ b/Documentation/admin-guide/device-mapper/vdo-design.rst
-@@ -600,7 +600,7 @@ lock and return itself to the pool.
- All storage within vdo is managed as 4KB blocks, but it can accept writes
- as small as 512 bytes. Processing a write that is smaller than 4K requires
- a read-modify-write operation that reads the relevant 4K block, copies the
--new data over the approriate sectors of the block, and then launches a
-+new data over the appropriate sectors of the block, and then launches a
- write operation for the modified data block. The read and write stages of
- this operation are nearly identical to the normal read and write
- operations, and a single data_vio is used throughout this operation.
-diff --git a/Documentation/admin-guide/hw-vuln/mds.rst b/Documentation/admin-guide/hw-vuln/mds.rst
-index 48c7b0b72aed..754679db0ce8 100644
---- a/Documentation/admin-guide/hw-vuln/mds.rst
-+++ b/Documentation/admin-guide/hw-vuln/mds.rst
-@@ -214,7 +214,7 @@ XEON PHI specific considerations
-   command line with the 'ring3mwait=disable' command line option.
+ - irq_resolve_mapping() returns a pointer to the irq_desc structure
+-  for a given domain and hwirq number, and NULL if there was no
++  for a given domain and hwirq number, or NULL if there was no
+   mapping.
+ - irq_find_mapping() returns a Linux IRQ number for a given domain and
+-  hwirq number, and 0 if there was no mapping
++  hwirq number, or 0 if there was no mapping
+ - generic_handle_domain_irq() handles an interrupt described by a
+   domain and a hwirq number
  
-   XEON PHI is not affected by the other MDS variants and MSBDS is mitigated
--  before the CPU enters a idle state. As XEON PHI is not affected by L1TF
-+  before the CPU enters an idle state. As XEON PHI is not affected by L1TF
-   either disabling SMT is not required for full protection.
+-Note that irq domain lookups must happen in contexts that are
+-compatible with a RCU read-side critical section.
++Note that irq_domain lookups must happen in contexts that are
++compatible with an RCU read-side critical section.
  
- .. _mds_smt_control:
-diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
-index 9c6cd52f69cf..7b011eb116a7 100644
---- a/Documentation/admin-guide/kdump/kdump.rst
-+++ b/Documentation/admin-guide/kdump/kdump.rst
-@@ -471,7 +471,7 @@ Notes on loading the dump-capture kernel:
-   performance degradation. To enable multi-cpu support, you should bring up an
-   SMP dump-capture kernel and specify maxcpus/nr_cpus options while loading it.
+ The irq_create_mapping() function must be called *at least once*
+ before any call to irq_find_mapping(), lest the descriptor will not
+@@ -100,7 +100,7 @@ Types of irq_domain Mappings
+ ============================
  
--* For s390x there are two kdump modes: If a ELF header is specified with
-+* For s390x there are two kdump modes: If an ELF header is specified with
-   the elfcorehdr= kernel parameter, it is used by the kdump kernel as it
-   is done on all other architectures. If no elfcorehdr= kernel parameter is
-   specified, the s390x kdump kernel dynamically creates the header. The
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 747a55abf494..d4a91dec20b8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3700,7 +3700,7 @@
- 			looking for corruption.  Enabling this will
- 			both detect corruption and prevent the kernel
- 			from using the memory being corrupted.
--			However, its intended as a diagnostic tool; if
-+			However, it's intended as a diagnostic tool; if
- 			repeatable BIOS-originated corruption always
- 			affects the same memory, you can use memmap=
- 			to prevent the kernel from using that memory.
-@@ -7382,7 +7382,7 @@
- 				(converted into nanoseconds). Fast, but
- 				depending on the architecture, may not be
- 				in sync between CPUs.
--			global - Event time stamps are synchronize across
-+			global - Event time stamps are synchronized across
- 				CPUs. May be slower than the local clock,
- 				but better for some race conditions.
- 			counter - Simple counting of events (1, 2, ..)
-@@ -7502,12 +7502,12 @@
- 			section.
+ There are several mechanisms available for reverse mapping from hwirq
+-to Linux irq, and each mechanism uses a different allocation function.
++to Linux IRQ, and each mechanism uses a different allocation function.
+ Which reverse map type should be used depends on the use case.  Each
+ of the reverse map types are described below:
  
- 	trace_trigger=[trigger-list]
--			[FTRACE] Add a event trigger on specific events.
-+			[FTRACE] Add an event trigger on specific events.
- 			Set a trigger on top of a specific event, with an optional
- 			filter.
+@@ -111,13 +111,13 @@ Linear
  
--			The format is is "trace_trigger=<event>.<trigger>[ if <filter>],..."
--			Where more than one trigger may be specified that are comma deliminated.
-+			The format is "trace_trigger=<event>.<trigger>[ if <filter>],..."
-+			Where more than one trigger may be specified that are comma delimited.
+ 	irq_domain_create_linear()
  
- 			For example:
+-The linear reverse map maintains a fixed size table indexed by the
++The linear reverse map maintains a fixed-size table indexed by the
+ hwirq number.  When a hwirq is mapped, an irq_desc is allocated for
+ the hwirq, and the IRQ number is stored in the table.
  
-@@ -7515,7 +7515,7 @@
+ The Linear map is a good choice when the maximum number of hwirqs is
+ fixed and a relatively small number (~ < 256).  The advantages of this
+-map are fixed time lookup for IRQ numbers, and irq_descs are only
++map are fixed-time lookup for IRQ numbers, and irq_descs are only
+ allocated for in-use IRQs.  The disadvantage is that the table must be
+ as large as the largest possible hwirq number.
  
- 			The above will enable the "stacktrace" trigger on the "sched_switch"
- 			event but only trigger it if the "prev_state" of the "sched_switch"
--			event is "2" (TASK_UNINTERUPTIBLE).
-+			event is "2" (TASK_UNINTERRUPTIBLE).
+@@ -134,7 +134,7 @@ The irq_domain maintains a radix tree map from hwirq numbers to Linux
+ IRQs.  When an hwirq is mapped, an irq_desc is allocated and the
+ hwirq is used as the lookup key for the radix tree.
  
- 			See also "Event triggers" in Documentation/trace/events.rst
+-The tree map is a good choice if the hwirq number can be very large
++The Tree map is a good choice if the hwirq number can be very large
+ since it doesn't need to allocate a table as large as the largest
+ hwirq number.  The disadvantage is that hwirq to IRQ number lookup is
+ dependent on how many entries are in the table.
+@@ -169,10 +169,10 @@ Legacy
  
-diff --git a/Documentation/admin-guide/laptops/sonypi.rst b/Documentation/admin-guide/laptops/sonypi.rst
-index 190da1234314..7541f56e0007 100644
---- a/Documentation/admin-guide/laptops/sonypi.rst
-+++ b/Documentation/admin-guide/laptops/sonypi.rst
-@@ -25,7 +25,7 @@ generate, like:
- 	  (when available)
+ The Legacy mapping is a special case for drivers that already have a
+ range of irq_descs allocated for the hwirqs.  It is used when the
+-driver cannot be immediately converted to use the linear mapping.  For
++driver cannot be immediately converted to use the Linear mapping.  For
+ example, many embedded system board support files use a set of #defines
+ for IRQ numbers that are passed to struct device registrations.  In that
+-case the Linux IRQ numbers cannot be dynamically assigned and the legacy
++case the Linux IRQ numbers cannot be dynamically assigned and the Legacy
+ mapping should be used.
  
- Those events (see linux/sonypi.h) can be polled using the character device node
--/dev/sonypi (major 10, minor auto allocated or specified as a option).
-+/dev/sonypi (major 10, minor auto allocated or specified as an option).
- A simple daemon which translates the jogdial movements into mouse wheel events
- can be downloaded at: <http://popies.net/sonypi/>
+ As the name implies, the \*_legacy() functions are deprecated and only
+@@ -180,15 +180,15 @@ exist to ease the support of ancient platforms. No new users should be
+ added. Same goes for the \*_simple() functions when their use results
+ in the legacy behaviour.
  
-diff --git a/Documentation/admin-guide/media/imx.rst b/Documentation/admin-guide/media/imx.rst
-index b8fa70f854fd..bb68100d8acb 100644
---- a/Documentation/admin-guide/media/imx.rst
-+++ b/Documentation/admin-guide/media/imx.rst
-@@ -96,7 +96,7 @@ Some of the features of this driver include:
-   motion compensation modes: low, medium, and high motion. Pipelines are
-   defined that allow sending frames to the VDIC subdev directly from the
-   CSI. There is also support in the future for sending frames to the
--  VDIC from memory buffers via a output/mem2mem devices.
-+  VDIC from memory buffers via output/mem2mem devices.
+-The legacy map assumes a contiguous range of IRQ numbers has already
++The Legacy map assumes a contiguous range of IRQ numbers has already
+ been allocated for the controller and that the IRQ number can be
+ calculated by adding a fixed offset to the hwirq number, and
+ visa-versa.  The disadvantage is that it requires the interrupt
+ controller to manage IRQ allocations and it requires an irq_desc to be
+ allocated for every hwirq, even if it is unused.
  
- - Includes a Frame Interval Monitor (FIM) that can correct vertical sync
-   problems with the ADV718x video decoders.
-diff --git a/Documentation/admin-guide/media/si4713.rst b/Documentation/admin-guide/media/si4713.rst
-index be8e6b49b7b4..85dcf1cd2df8 100644
---- a/Documentation/admin-guide/media/si4713.rst
-+++ b/Documentation/admin-guide/media/si4713.rst
-@@ -13,7 +13,7 @@ Contact: Eduardo Valentin <eduardo.valentin@nokia.com>
- Information about the Device
- ----------------------------
+-The legacy map should only be used if fixed IRQ mappings must be
+-supported.  For example, ISA controllers would use the legacy map for
++The Legacy map should only be used if fixed IRQ mappings must be
++supported.  For example, ISA controllers would use the Legacy map for
+ mapping Linux IRQs 0-15 so that existing ISA drivers get the correct IRQ
+ numbers.
  
--This chip is a Silicon Labs product. It is a I2C device, currently on 0x63 address.
-+This chip is a Silicon Labs product. It is an I2C device, currently on 0x63 address.
- Basically, it has transmission and signal noise level measurement features.
+@@ -197,7 +197,7 @@ which will use a legacy domain only if an IRQ range is supplied by the
+ system and will otherwise use a linear domain mapping. The semantics of
+ this call are such that if an IRQ range is specified then descriptors
+ will be allocated on-the-fly for it, and if no range is specified it
+-will fall through to irq_domain_create_linear() which means *no* irq
++will fall through to irq_domain_create_linear() which means *no* IRQ
+ descriptors will be allocated.
  
- The Si4713 integrates transmit functions for FM broadcast stereo transmission.
-@@ -28,7 +28,7 @@ Users must comply with local regulations on radio frequency (RF) transmission.
- Device driver description
- -------------------------
+ A typical use case for simple domains is where an irqchip provider
+@@ -214,7 +214,7 @@ Hierarchy IRQ Domain
  
--There are two modules to handle this device. One is a I2C device driver
-+There are two modules to handle this device. One is an I2C device driver
- and the other is a platform driver.
+ On some architectures, there may be multiple interrupt controllers
+ involved in delivering an interrupt from the device to the target CPU.
+-Let's look at a typical interrupt delivering path on x86 platforms::
++Let's look at a typical interrupt delivery path on x86 platforms::
  
- The I2C device driver exports a v4l2-subdev interface to the kernel.
-@@ -113,7 +113,7 @@ Here is a summary of them:
- - acomp_attack_time - Sets the attack time for audio dynamic range control.
- - acomp_release_time - Sets the release time for audio dynamic range control.
+   Device --> IOAPIC -> Interrupt remapping Controller -> Local APIC -> CPU
  
--* Limiter setups audio deviation limiter feature. Once a over deviation occurs,
-+* Limiter sets up the audio deviation limiter feature. Once an over deviation occurs,
-   it is possible to adjust the front-end gain of the audio input and always
-   prevent over deviation.
+@@ -227,8 +227,8 @@ There are three interrupt controllers involved:
+ To support such a hardware topology and make software architecture match
+ hardware architecture, an irq_domain data structure is built for each
+ interrupt controller and those irq_domains are organized into hierarchy.
+-When building irq_domain hierarchy, the irq_domain near to the device is
+-child and the irq_domain near to CPU is parent. So a hierarchy structure
++When building irq_domain hierarchy, the irq_domain nearest the device is
++child and the irq_domain nearest the CPU is parent. So a hierarchy structure
+ as below will be built for the example above::
  
-diff --git a/Documentation/admin-guide/mm/damon/usage.rst b/Documentation/admin-guide/mm/damon/usage.rst
-index ff3a2dda1f02..5cd42d428c89 100644
---- a/Documentation/admin-guide/mm/damon/usage.rst
-+++ b/Documentation/admin-guide/mm/damon/usage.rst
-@@ -357,7 +357,7 @@ The directory for the :ref:`quotas <damon_design_damos_quotas>` of the given
- DAMON-based operation scheme.
- 
- Under ``quotas`` directory, four files (``ms``, ``bytes``,
--``reset_interval_ms``, ``effective_bytes``) and two directores (``weights`` and
-+``reset_interval_ms``, ``effective_bytes``) and two directories (``weights`` and
- ``goals``) exist.
- 
- You can set the ``time quota`` in milliseconds, ``size quota`` in bytes, and
-diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
-index 48992a0b8e94..721eb1623ca7 100644
---- a/Documentation/admin-guide/perf/hisi-pmu.rst
-+++ b/Documentation/admin-guide/perf/hisi-pmu.rst
-@@ -109,8 +109,8 @@ uring channel. It is 2 bits. Some important codes are as follows:
- - 2'b11: count the events which sent to the uring_ext (MATA) channel;
- - 2'b01: is the same as 2'b11;
- - 2'b10: count the events which sent to the uring (non-MATA) channel;
--- 2'b00: default value, count the events which sent to the both uring and
--  uring_ext channel;
-+- 2'b00: default value, count the events which sent to both uring and
-+  uring_ext channels;
- 
- Users could configure IDs to count data come from specific CCL/ICL, by setting
- srcid_cmd & srcid_msk, and data desitined for specific CCL/ICL by setting
-diff --git a/Documentation/admin-guide/quickly-build-trimmed-linux.rst b/Documentation/admin-guide/quickly-build-trimmed-linux.rst
-index 4a5ffb0996a3..cb4b78468a93 100644
---- a/Documentation/admin-guide/quickly-build-trimmed-linux.rst
-+++ b/Documentation/admin-guide/quickly-build-trimmed-linux.rst
-@@ -273,7 +273,7 @@ again.
-    does nothing at all; in that case you have to manually install your kernel,
-    as outlined in the reference section.
- 
--   If you are running a immutable Linux distribution, check its documentation
-+   If you are running an immutable Linux distribution, check its documentation
-    and the web to find out how to install your own kernel there.
- 
-    [:ref:`details<install>`]
-@@ -884,7 +884,7 @@ When a build error occurs, it might be caused by some aspect of your machine's
- setup that often can be fixed quickly; other times though the problem lies in
- the code and can only be fixed by a developer. A close examination of the
- failure messages coupled with some research on the internet will often tell you
--which of the two it is. To perform such a investigation, restart the build
-+which of the two it is. To perform such an investigation, restart the build
- process like this::
- 
-     make V=1
-diff --git a/Documentation/admin-guide/reporting-issues.rst b/Documentation/admin-guide/reporting-issues.rst
-index 9a847506f6ec..a68e6d909274 100644
---- a/Documentation/admin-guide/reporting-issues.rst
-+++ b/Documentation/admin-guide/reporting-issues.rst
-@@ -611,7 +611,7 @@ better place.
- 
- How to read the MAINTAINERS file
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--To illustrate how to use the :ref:`MAINTAINERS <maintainers>` file, lets assume
-+To illustrate how to use the :ref:`MAINTAINERS <maintainers>` file, let's assume
- the WiFi in your Laptop suddenly misbehaves after updating the kernel. In that
- case it's likely an issue in the WiFi driver. Obviously it could also be some
- code it builds upon, but unless you suspect something like that stick to the
-@@ -1543,7 +1543,7 @@ as well, because that will speed things up.
- 
- And note, it helps developers a great deal if you can specify the exact version
- that introduced the problem. Hence if possible within a reasonable time frame,
--try to find that version using vanilla kernels. Lets assume something broke when
-+try to find that version using vanilla kernels. Let's assume something broke when
- your distributor released a update from Linux kernel 5.10.5 to 5.10.8. Then as
- instructed above go and check the latest kernel from that version line, say
- 5.10.9. If it shows the problem, try a vanilla 5.10.5 to ensure that no patches
-diff --git a/Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst b/Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst
-index d8946b084b1e..d83601f2a459 100644
---- a/Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst
-+++ b/Documentation/admin-guide/verify-bugs-and-bisect-regressions.rst
-@@ -1757,7 +1757,7 @@ or all of these tasks:
-   to your bootloader's configuration.
- 
- You have to take care of some or all of the tasks yourself, if your
--distribution lacks a installkernel script or does only handle part of them.
-+distribution lacks an installkernel script or does only handle part of them.
- Consult the distribution's documentation for details. If in doubt, install the
- kernel manually::
- 
+ 	CPU Vector irq_domain (root irq_domain to manage CPU vectors)
 -- 
 2.43.0
 
