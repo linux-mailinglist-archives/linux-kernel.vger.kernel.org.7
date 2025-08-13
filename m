@@ -1,180 +1,321 @@
-Return-Path: <linux-kernel+bounces-767616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439F3B256DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 862E2B256E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D7A9E0A5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:40:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A05879E135C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C512F39DD;
-	Wed, 13 Aug 2025 22:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28B32F9995;
+	Wed, 13 Aug 2025 22:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJ0vQxBz"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bjLtzth2"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C87F21257E;
-	Wed, 13 Aug 2025 22:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A832F39D1
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 22:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755124765; cv=none; b=ksHQAwSStdrtWR5IJHkOrehZj85QVnOodYmu9JyORknRPWW+p3VRLVJpuCHd/CCVqM6WsueRkxyItgfEgs6JJ68d86iaPEKwFfcBBazhwn1ED1lu++kJPqEP6I79pV8PchPE9R00QDxcfh//gjyMp3fvGj6pokHNQJEdArB7idI=
+	t=1755124812; cv=none; b=E1KyD0skFUarATvS5eIm/v6YnwgVCRnRAgmJXMVF2NgXdXUDXVRH7aCCVWf/Ud8jITl7xYdMxF2Y2IXVkNsD41XMj1jbjuN9OtJKJObOzEX296IfGNxfTx+fZB0uyUBpE1fpVkYJTaJ4wlBdb3f/dotAHsL8S09ZBcFT/XmtP04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755124765; c=relaxed/simple;
-	bh=e3D/RVjYhFjtnEQ+KTEqSanCLTiM0h1saYQ3wtMZYgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RMaoh8Hbk0gkU9BfUSRENwmG2AH43i8R7OPEuXN7hWrgkeubFtmePs5Sg/zFcjW/t08NDzQ/ncM84BsJ0Ckb1Ctsl1hjWzvsmhFlx8YG1KB+Dw5nWY/8EZgFbwZrALUV6vT6r3ncnKuXPgytHN1NgMvhpVeVT1EApx2aG7bDd4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJ0vQxBz; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1755124812; c=relaxed/simple;
+	bh=q1rqTlvL5W1hHG6HS8s34aHs5XP/loCVCsEiSXeN3UY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=upN+nWM0CVJVtyNJwdXRgFfUfH0dvZ070h5A8EenIM57CVByp+ut1VYifHe8iHVIIlroxL2QjTFF9a3XjwfnWe9dduFbRlo+yOhE/HehsOltRi97zCAoW/3C9ldzh82VT/UhoB6IrgDDns5Fx3jQ90kNboiq/p1+Q6G2fYtswUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bjLtzth2; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b9dc52c0bfso34070f8f.0;
-        Wed, 13 Aug 2025 15:39:21 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b0bde14so1261035e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:40:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755124760; x=1755729560; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OlFov5VVAGyPXif8j4DcuOjAK/mA5lVh4XRxLzIxvJg=;
-        b=MJ0vQxBzk4UjuxbyhIlFOuKHMWCvCD2QI6r9Yo2XFdAx4IQKTYLQzsxLozAhG8+J4U
-         TOmFBn7yNjpyVl7iXM/PymRCRQuN5awqDO4S+1m9SXhA8PUrOFNlBpr1UcaOojuNejVB
-         JSVRNWh0jEbWODqE7buNQMtMAAZtp3zpBu/0b58ntE6X80lDQ61z+EcAO9d2EE8moPj0
-         V6+Omk6wOlmoKDOIpKJ4wFJKs6an/Au/qIIyd3Zk+bb3H+ls8ny/BF5KSl7fsbCTI0Yg
-         rPL8BH4HvJLrOw95/3C+LSBwE+TU7utCTiD8aPNcydOdZ+4CWpMoExkHLTLLiz0lpuyP
-         ZfLA==
+        d=gmail.com; s=20230601; t=1755124808; x=1755729608; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LJ0jpiugHLgI/5Z1g0NOk55lz83PPv65RbA/jaeoNyA=;
+        b=bjLtzth2WUoFJ5yILxqlpCOW5haZoeU1UVzaxTkwWm2Q71gQzVpA+rz+c0eQ+65OrB
+         3XvK08Z2IDJJLvwm9kcIR1/h0luEfpHLzpZPa9bfjfCdCZ+a97y6pwAUELZ7hOW+H3r2
+         7KwjSnq2H5FqO2vZkyp8a7QTZ78twAGDvEa4M2bPBYj4AzlcyU+Oz/aMypXsU2BQe74I
+         tzcfwtEMTuysCxboPkMwmUBzBcEicu9/VdiJiWNBcHmGeBjesqusd7+iBrHeJK1QnoUs
+         6JOWQa6rnMZVwIEvzf9/HptW75FgFYoLsvGSg/QuIoRB0VEEAL5npf+fS+/TKwPk/zST
+         Xbrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755124760; x=1755729560;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OlFov5VVAGyPXif8j4DcuOjAK/mA5lVh4XRxLzIxvJg=;
-        b=FeZYSQWrOwkaZqDLWKsnv9JGYUlScE/UXhJnWFc2y/ml8bQu9T7YJWGDLQBPdysDJ3
-         3FgcVsaIq7G/3ZraFeGAga4OnEwxWuBkep960HJ5PKCaI+zz5iuhMQmyxZ5Aaed6C9N8
-         CDo4B8TH25TxGWR1lLlWxe+NfDb3sJKcwDpchEOtX/kJZmq7dS7NxLIgkdBYfx/uvabl
-         TAeJ/+6aAwSV0vlV4jbH2wEXW/5QhXDAC+txYSZxGmfcASuURjIWAwR/Ol58hlsa4/Tx
-         P0HU42Z4p+zJ5glC/QA+XONtZ/IKlfS33IFmiU6B1fQG8mekNzoZz1AAP/30VemzfqJl
-         Iqlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKATjNJy2IE9xSYC6b9QOfrFMXhSGJBZMD+qEb1PRtDf/318EG9o3wzWyYPKUJ/DuuYrvejPfQ01+h@vger.kernel.org, AJvYcCWoBKJwrPeRLTSarlyeNl/oXs+23k99+4sUzrckMioX84fy0Er58tNmPfWz9XEVT0u/+ii3Dx9wnHmY@vger.kernel.org, AJvYcCXDPiTw1AeiEz9Nal4HMCWvkLkXfp2WxVJfr4KFytklp6Dcx/O1u6lxmyOvIEyQ8JSPhRmdNMF8fV6eis3z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2mzW9M0NMlrN829um8x+aP8Ukb5vKF7ufyuQBNbxdILeR43V5
-	IAcbKS38pM1dZwTS6ArejZc+0hboeOazpMdNsQkdvgqxFkY/EPvr0x1r
-X-Gm-Gg: ASbGncthEKR69UKjy7VZvgSD75VoOnloR/ghiRtwP3bcUPPRpeD3y6Zyo4xdOodzMh6
-	orfEP28PL7q9eINuT5CBInE337jyhdSFxd8SKn7SK1fpzGQdWpKXdo87O8oiYBfpgXr+BRLanvN
-	etj3YLSFwZk+aSFLH0PECpelH7N70T0epDHx6nbkSSDiRc/6YdNjUk2XuaBewaft/0CgDdQ1UEj
-	L+NfEtE22PRuWtC9gt7C0fW7rQm/o8RsS3P8shfntqlX9rbdWMT8bjn9+tKGk6o+zUlTHInKZ8s
-	fAAyGVsERJGqLmkO6ycRdM858oSw93oXBY6RleA4Mm/UbHTM895fdq68q8OnFk5Nomb23fBiSoT
-	DyeM2IPYNxc6LX7HkZLcw+PlhcLirB3abyANxCaf9e7ygMNYjqVU=
-X-Google-Smtp-Source: AGHT+IEy35Qbld+uNsrWNezbKbUR5c3avaJGDSwRcRjeN+RvRY5QydlzE5iVFGgqs2uD0727jErYdQ==
-X-Received: by 2002:a05:6000:2289:b0:3b7:8d0b:3261 with SMTP id ffacd0b85a97d-3b917ef5d71mr1759295f8f.12.1755124760088;
-        Wed, 13 Aug 2025 15:39:20 -0700 (PDT)
-Received: from JSANTO12-L01.ad.analog.com ([189.79.20.14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453333sm50620455f8f.45.2025.08.13.15.39.16
+        d=1e100.net; s=20230601; t=1755124808; x=1755729608;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LJ0jpiugHLgI/5Z1g0NOk55lz83PPv65RbA/jaeoNyA=;
+        b=X0CLHW41js0kHTWXGbBwK4H4brH9XO95o/myeDG4FV9lbE7mJIw4uikh4iiBFRyJND
+         szDLgQK7pPcWoo1t3dqz3ypWpp/w8oGeNIVlc2yUp7C1PUXUdUN3dXR0kR1zql9obrvS
+         FSKoplzFrmXH+UtwnoULv+gOZJAvbB/pp2QGy87QKtb7ZfQ7DcPnFVzT1vN2liR4y8jl
+         K75ajL49SZPpywrneuZKRoVB5Jj44ead9k9+MWUuX1D+iRYTkrXI0pYN5K+Wc5SIEDlT
+         HOYdjfIAD6bAuOeb6zGXo1QXm8geXAltZ2ebNMPpATue/vBeZV4bS2jJCjIPKeSsJZ8M
+         hiog==
+X-Forwarded-Encrypted: i=1; AJvYcCVoYIqJxWxON8atK/kS6S4yKfZbpIhdn3eRiOE/zyo2QKZrwlwjci9qTGOmslsQ6SWOpxkgfr8/n5W+M1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqAwCdn3KRrwCfsPw79IukFyjeJOaeASt1Lb/4PnkZgjUHB+2t
+	vw2XhERcaL/3MAz9KfMwWQBtkSLjrO/DanVMG43gzGO8AH6fZrH0aB9+
+X-Gm-Gg: ASbGnctn2DQHaGTIEJQrFXy2+DqQJyYXjgoIHptXL2HNbFrqHuk25N442P9uJNNCpC3
+	4ar5Ns3b7UU3XbPT10ejy0y2XfWp0YJY2y+Xdz9U982+sFMG19hQtWR8L5UHjeijxcxo7AZiN5d
+	DeGuesNfwbNT2O0TiS8wkz6GSG3c1UwbESEoCDuTOJ+BYf13mWjYVsH2Hk6uImQaD3bVyk7zqnw
+	4bE0QHIcl9PHHk4eWTE3Qn6yhJlHlureHseDhdnVLeogYh2OHRP1bBTms1Dq98fKn8k3pxY9DyN
+	TOQT2otAoDZ+PyRuLY46MrTJEpkcpNsZsGCfTxtu+lFeTaMBPJazMwiXw4iZvl24uKt0ugGNnjF
+	s1syi7aE6fu6MLtV21VAtbttW3TF9BDTaN5KnYcN3b4MVfBXpCuie1rULoXttjMd8ZKWUgL45eY
+	+tQSt6RjfY
+X-Google-Smtp-Source: AGHT+IHoUgJngPB4year933qgBkg1hDcTIbk0ko+wffW2kEKlhvVPX96a6fiNTTXlbNSCzCTKhjEOA==
+X-Received: by 2002:a05:6000:2311:b0:3a3:7593:818b with SMTP id ffacd0b85a97d-3b9edfb6e7dmr643402f8f.21.1755124808309;
+        Wed, 13 Aug 2025 15:40:08 -0700 (PDT)
+Received: from ekhafagy-ROG-Zephyrus-M16-GU603HR-GU603HR.. ([156.204.193.65])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a541c3bsm16550085e9.29.2025.08.13.15.40.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 15:39:19 -0700 (PDT)
-Date: Wed, 13 Aug 2025 19:39:13 -0300
-From: Jonathan Santos <jonath4nns@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael.Hennerich@analog.com, jic23@kernel.org,
-	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
- parts
-Message-ID: <aJ0UEUVmIH94Nuwi@JSANTO12-L01.ad.analog.com>
-Reply-To: c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org
-References: <cover.1754617360.git.Jonathan.Santos@analog.com>
- <ecb7406f54938658b51b4469034d87a57086bd1e.1754617360.git.Jonathan.Santos@analog.com>
- <c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org>
+        Wed, 13 Aug 2025 15:40:07 -0700 (PDT)
+From: Eslam Khafagy <eslam.medhat1993@gmail.com>
+To: Manikandan Muralidharan <manikandan.m@microchip.com>,
+	Dharma Balasubiramani <dharma.b@microchip.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.com,
+	eslam.medhat1993@gmail.com
+Subject: [PATCH v4] drm: atmel-hlcdc: replace dev_* print functions with drm_* variants
+Date: Thu, 14 Aug 2025 01:39:52 +0300
+Message-ID: <20250813224000.130292-1-eslam.medhat1993@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org>
 
-On 08/13, Krzysztof Kozlowski wrote:
-> On 13/08/2025 04:48, Jonathan Santos wrote:
-> > Add compatibles for supported parts in the ad7768-1 family:
-> > 	ADAQ7767-1, ADAQ7768-1 and ADAQ7769-1
-> > 
-> > Add property and checks for AFF gain, supported by ADAQ7767-1
-> > and ADAQ7769-1 parts:
-> > 	adi,aaf-gain
-> > 
-> > Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> > ---
-> >  .../bindings/iio/adc/adi,ad7768-1.yaml        | 48 +++++++++++++++++--
-> >  1 file changed, 44 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> > index c06d0fc791d3..568a85e0d052 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-> > @@ -4,18 +4,26 @@
-> >  $id: http://devicetree.org/schemas/iio/adc/adi,ad7768-1.yaml#
-> >  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> >  
-> > -title: Analog Devices AD7768-1 ADC device driver
-> > +title: Analog Devices AD7768-1 ADC family device driver
-> 
-> If doing this, drop device driver. It should not be here in the first place.
-> 
+Update the Atmel HLCDC code to use DRM print macros drm_*() instead of
+dev_warn() and dev_err(). This change ensures consistency with DRM
+subsystem logging conventions [1].
 
-Noted.
+[1]
+Link: https://docs.kernel.org/gpu/todo.html#convert-logging-to-drm-functions-with-drm-device-parameter
 
-> >  
-> >  maintainers:
-> >    - Michael Hennerich <michael.hennerich@analog.com>
-> >  
-> >  description: |
-> > -  Datasheet at:
-> > -    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
-> > +  Analog Devices AD7768-1 24-Bit Single Channel Low Power sigma-delta ADC family
-> > +
-> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
-> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7767-1.pdf
-> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7768-1.pdf
-> > +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7769-1.pdf
-> >  
-> >  properties:
-> >    compatible:
-> > -    const: adi,ad7768-1
-> > +    enum:
-> > +      - adi,ad7768-1
-> > +      - adi,adaq7767-1
-> > +      - adi,adaq7768-1
-> > +      - adi,adaq7769-1
-> >  
-> >    reg:
-> >      maxItems: 1
-> > @@ -58,6 +66,23 @@ properties:
-> >      description:
-> >        ADC reference voltage supply
-> >  
-> > +  adi,aaf-gain:
-> > +    description: |
-> > +      Specifies the gain of the Analog Anti-Aliasing Filter (AAF) applied to the
-> > +      ADC input, measured in milli-units. The AAF provides additional signal
-> 
-> What is milli unit? Isn't gain in dB, so maybe you want mB? Quite
-> unpopular to see mB, but we cannot use 1/100 of dB, so I could
-> understand it.
->
+Signed-off-by: Eslam Khafagy <eslam.medhat1993@gmail.com>
+---
+ .../gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c    | 21 ++++++++++---------
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c  | 14 ++++++-------
+ .../gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c  |  3 ++-
+ .../gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c   |  6 +++---
+ 4 files changed, 23 insertions(+), 21 deletions(-)
 
-Actually, the gain is expressed in V/V, not in dB. I may have phrased it poorly, but since
-there are fractional values like 0.364 and 0.143, I chose to represent it
-in milli-units.
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+index 0f7ffb3ced20..e0efc7309b1b 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+@@ -20,6 +20,7 @@
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_modeset_helper_vtables.h>
++#include <drm/drm_print.h>
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_vblank.h>
+ 
+@@ -215,32 +216,32 @@ static void atmel_hlcdc_crtc_atomic_disable(struct drm_crtc *c,
+ 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 					     !(status & ATMEL_XLCDC_CM),
+ 					     10, 1000))
+-			dev_warn(dev->dev, "Atmel LCDC status register CMSTS timeout\n");
++			drm_warn(dev, "Atmel LCDC status register CMSTS timeout\n");
+ 
+ 		regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_XLCDC_SD);
+ 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 					     status & ATMEL_XLCDC_SD,
+ 					     10, 1000))
+-			dev_warn(dev->dev, "Atmel LCDC status register SDSTS timeout\n");
++			drm_warn(dev, "Atmel LCDC status register SDSTS timeout\n");
+ 	}
+ 
+ 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_DISP);
+ 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 				     !(status & ATMEL_HLCDC_DISP),
+ 				    10, 1000))
+-		dev_warn(dev->dev, "Atmel LCDC status register DISPSTS timeout\n");
++		drm_warn(dev, "Atmel LCDC status register DISPSTS timeout\n");
+ 
+ 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_SYNC);
+ 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 				     !(status & ATMEL_HLCDC_SYNC),
+ 				    10, 1000))
+-		dev_warn(dev->dev, "Atmel LCDC status register LCDSTS timeout\n");
++		drm_warn(dev, "Atmel LCDC status register LCDSTS timeout\n");
+ 
+ 	regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_PIXEL_CLK);
+ 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 				     !(status & ATMEL_HLCDC_PIXEL_CLK),
+ 				    10, 1000))
+-		dev_warn(dev->dev, "Atmel LCDC status register CLKSTS timeout\n");
++		drm_warn(dev, "Atmel LCDC status register CLKSTS timeout\n");
+ 
+ 	clk_disable_unprepare(crtc->dc->hlcdc->sys_clk);
+ 	pinctrl_pm_select_sleep_state(dev->dev);
+@@ -269,32 +270,32 @@ static void atmel_hlcdc_crtc_atomic_enable(struct drm_crtc *c,
+ 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 				     status & ATMEL_HLCDC_PIXEL_CLK,
+ 				     10, 1000))
+-		dev_warn(dev->dev, "Atmel LCDC status register CLKSTS timeout\n");
++		drm_warn(dev, "Atmel LCDC status register CLKSTS timeout\n");
+ 
+ 	regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_HLCDC_SYNC);
+ 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 				     status & ATMEL_HLCDC_SYNC,
+ 				     10, 1000))
+-		dev_warn(dev->dev, "Atmel LCDC status register LCDSTS timeout\n");
++		drm_warn(dev, "Atmel LCDC status register LCDSTS timeout\n");
+ 
+ 	regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_HLCDC_DISP);
+ 	if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 				     status & ATMEL_HLCDC_DISP,
+ 				     10, 1000))
+-		dev_warn(dev->dev, "Atmel LCDC status register DISPSTS timeout\n");
++		drm_warn(dev, "Atmel LCDC status register DISPSTS timeout\n");
+ 
+ 	if (crtc->dc->desc->is_xlcdc) {
+ 		regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_XLCDC_CM);
+ 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 					     status & ATMEL_XLCDC_CM,
+ 					     10, 1000))
+-			dev_warn(dev->dev, "Atmel LCDC status register CMSTS timeout\n");
++			drm_warn(dev, "Atmel LCDC status register CMSTS timeout\n");
+ 
+ 		regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_XLCDC_SD);
+ 		if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+ 					     !(status & ATMEL_XLCDC_SD),
+ 					     10, 1000))
+-			dev_warn(dev->dev, "Atmel LCDC status register SDSTS timeout\n");
++			drm_warn(dev, "Atmel LCDC status register SDSTS timeout\n");
+ 	}
+ 
+ 	pm_runtime_put_sync(dev->dev);
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+index fa8ad94e431a..acb017a2486b 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+@@ -724,19 +724,19 @@ static int atmel_hlcdc_dc_modeset_init(struct drm_device *dev)
+ 
+ 	ret = atmel_hlcdc_create_outputs(dev);
+ 	if (ret) {
+-		dev_err(dev->dev, "failed to create HLCDC outputs: %d\n", ret);
++		drm_err(dev, "failed to create HLCDC outputs: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	ret = atmel_hlcdc_create_planes(dev);
+ 	if (ret) {
+-		dev_err(dev->dev, "failed to create planes: %d\n", ret);
++		drm_err(dev, "failed to create planes: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	ret = atmel_hlcdc_crtc_create(dev);
+ 	if (ret) {
+-		dev_err(dev->dev, "failed to create crtc\n");
++		drm_err(dev, "failed to create crtc\n");
+ 		return ret;
+ 	}
+ 
+@@ -778,7 +778,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
+ 
+ 	ret = clk_prepare_enable(dc->hlcdc->periph_clk);
+ 	if (ret) {
+-		dev_err(dev->dev, "failed to enable periph_clk\n");
++		drm_err(dev, "failed to enable periph_clk\n");
+ 		return ret;
+ 	}
+ 
+@@ -786,13 +786,13 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
+ 
+ 	ret = drm_vblank_init(dev, 1);
+ 	if (ret < 0) {
+-		dev_err(dev->dev, "failed to initialize vblank\n");
++		drm_err(dev, "failed to initialize vblank\n");
+ 		goto err_periph_clk_disable;
+ 	}
+ 
+ 	ret = atmel_hlcdc_dc_modeset_init(dev);
+ 	if (ret < 0) {
+-		dev_err(dev->dev, "failed to initialize mode setting\n");
++		drm_err(dev, "failed to initialize mode setting\n");
+ 		goto err_periph_clk_disable;
+ 	}
+ 
+@@ -802,7 +802,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
+ 	ret = atmel_hlcdc_dc_irq_install(dev, dc->hlcdc->irq);
+ 	pm_runtime_put_sync(dev->dev);
+ 	if (ret < 0) {
+-		dev_err(dev->dev, "failed to install IRQ handler\n");
++		drm_err(dev, "failed to install IRQ handler\n");
+ 		goto err_periph_clk_disable;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+index 50fee6a93964..0b8a86afb096 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+@@ -15,6 +15,7 @@
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_of.h>
++#include <drm/drm_print.h>
+ #include <drm/drm_simple_kms_helper.h>
+ 
+ #include "atmel_hlcdc_dc.h"
+@@ -92,7 +93,7 @@ static int atmel_hlcdc_attach_endpoint(struct drm_device *dev, int endpoint)
+ 	output->bus_fmt = atmel_hlcdc_of_bus_fmt(ep);
+ 	of_node_put(ep);
+ 	if (output->bus_fmt < 0) {
+-		dev_err(dev->dev, "endpoint %d: invalid bus width\n", endpoint);
++		drm_err(dev, "endpoint %d: invalid bus width\n", endpoint);
+ 		return -EINVAL;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+index 4a7ba0918eca..817284509b57 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+@@ -1034,7 +1034,7 @@ static void atmel_hlcdc_irq_dbg(struct atmel_hlcdc_plane *plane,
+ 	if (isr &
+ 	    (ATMEL_HLCDC_LAYER_OVR_IRQ(0) | ATMEL_HLCDC_LAYER_OVR_IRQ(1) |
+ 	     ATMEL_HLCDC_LAYER_OVR_IRQ(2)))
+-		dev_dbg(plane->base.dev->dev, "overrun on plane %s\n",
++		drm_dbg(plane->base.dev, "overrun on plane %s\n",
+ 			desc->name);
+ }
+ 
+@@ -1051,7 +1051,7 @@ static void atmel_xlcdc_irq_dbg(struct atmel_hlcdc_plane *plane,
+ 	if (isr &
+ 	    (ATMEL_XLCDC_LAYER_OVR_IRQ(0) | ATMEL_XLCDC_LAYER_OVR_IRQ(1) |
+ 	     ATMEL_XLCDC_LAYER_OVR_IRQ(2)))
+-		dev_dbg(plane->base.dev->dev, "overrun on plane %s\n",
++		drm_dbg(plane->base.dev, "overrun on plane %s\n",
+ 			desc->name);
+ }
+ 
+@@ -1140,7 +1140,7 @@ static void atmel_hlcdc_plane_reset(struct drm_plane *p)
+ 	if (state) {
+ 		if (atmel_hlcdc_plane_alloc_dscrs(p, state)) {
+ 			kfree(state);
+-			dev_err(p->dev->dev,
++			drm_err(p->dev,
+ 				"Failed to allocate initial plane state\n");
+ 			return;
+ 		}
+-- 
+2.43.0
 
-> > +      rejection within the frequency range of fs ± f3dB, where fs is the sampling
-> > +      frequency, and f3dB is the -3dB cutoff frequency. The specific values of
-> > +      fs and f3dB, as well as the rejection intensity, depend on the digital
-> > +      filter configuration.
-> Best regards,
-> Krzysztof
 
