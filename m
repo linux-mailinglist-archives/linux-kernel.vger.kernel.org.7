@@ -1,143 +1,137 @@
-Return-Path: <linux-kernel+bounces-766263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E730DB2446D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:36:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73B8B24463
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6E456034E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:34:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FFD31AA4F1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CF82F066B;
-	Wed, 13 Aug 2025 08:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A862EE614;
+	Wed, 13 Aug 2025 08:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwpGmFVT"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnhNB5mI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8912EF64A;
-	Wed, 13 Aug 2025 08:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DEE2EF66B;
+	Wed, 13 Aug 2025 08:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755074048; cv=none; b=CR3csBML1nZJAm5U5/ZUgfqVMsY+om+fJ+uZfQ7KlbbB0TG9KzdaCmzIEhxsVDpUlH0jKHj0ybmiRjdbhT/bbDT9ZsvQzyEcBHkOdyUQZY9w44TYZdnc7yzNlCj0REosljr44cucHzwclvuq5CC79/dsG1uWp01EudDoFtpr2Sk=
+	t=1755074018; cv=none; b=u+Rcr2gnROjnfH2fbyS9t6hZR4/zcEEzO4pvUhs9XEcEdtPxwU8EcgB5C2wLtaGqemEt4rCwUuja6Wa0/g31+ZkcFzFpjtpr7bUI3FWd22EXQTL8IsODPfEgk0iRLIJhTMLpWdjIABX3PD7VtuyrPVtnaUyHuVWhs0sGi7mXsM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755074048; c=relaxed/simple;
-	bh=QR9rt1dx8wRY8ZK0TwZiHfOAeokIcX0oUcFGhOLvmKU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aMgeODANe7XO7gNseuBboEs4lMAxAHgcCFfteRN+kw3JUb7bGc4Hy+/uqJEYsEvwDe8itrvlGl00LQoeNtkGO5RdXWjA8RlhiiBDK4EAdSijOdZn74rN6qMgY/PfyoyOOyDqrWfedj3W+8G7GKxTzkDoNVf8eN0nWgTRTFIU/iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PwpGmFVT; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2430439c05aso13437035ad.2;
-        Wed, 13 Aug 2025 01:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755074046; x=1755678846; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fLh7Kk4OYjALVNhIIaD4wUDlSppRWWz8p4xTrDTK0VU=;
-        b=PwpGmFVTzsLG+bq1teYaDCk5JKu+l3zhEyIo7bIWJrKYAfr4+4N+1DJyHp74gpK0e2
-         /uRIM4RIrn0J8G0vCkz8yc+pDgTpLknUc1p/W7teo/7wzD4LLhVo+C9E0qy76aKKIvR8
-         k3Qm4lObaGyBtJevPAMWhEvCnOv0h86xUKqJP67rXHp9LBPfwM8/ZNnJkVohu8uHb5e/
-         gaVGikg8P4DqC4y+OqyY3EeDCX2GrSMDmn3vhKWx5uaPc+B+lkvNOrgqKcnUC9sodd6x
-         8uaqSn9S3/lcM0eXSINVUD8PYgTrH5+/x0fL+WTsv7neLVwcKt90OIZ0AxEmG8SxlZec
-         9h2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755074046; x=1755678846;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fLh7Kk4OYjALVNhIIaD4wUDlSppRWWz8p4xTrDTK0VU=;
-        b=XkzHJ98bFC5lNMvFbT0AwiXq+LGoK6TQZEO86IjoWMPgAAxaPRH23D/PVcFVjynL2R
-         WYv/uJLBKJ393TQ4o42L+qUFDj0W1JchXkAquzRgMg7F22oEK0UOg4E2ZsOrWFZMV5B2
-         UUKrZ0+l/tovD1LXhuzeGxHPgHRxX0aT8lUizMeW+GBV9xZ/MGkGxsUuBxCrDsErJm9P
-         Hr2TJjSDvf9wOpJwgyfoYsSFpyv5CJvPIQ1wbmefjlvrNjGda/w24l0y7XbHoktlZTGc
-         +AT7NIq5OycGIFRWA/ecSX93uodClLUTmJvbwsX8rY8JfPmIE+OTAu6Njn76Tn8JF8QW
-         eegA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMT0UXQw7u/IOq/yUCP4+4bakgmSabiyFPeuapXtCpJwoiwOjsPQTuoztZfZ3MyUDsAp24z84T6Ptp8Ro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGRCEJV0tdDUdW4CoGNv4qDPQ68Tz8Pnl3+rLGDq3wdbUiAule
-	6y2hal7upGG7nprWlpFneFU6yzj+MLa4mHNQz8ygHEbScvlYsTK//dRQ
-X-Gm-Gg: ASbGnctS4UAMJtJy/dWcvdXPviK+qcmYvJOm7pmgv4Qfvrcvri/zO3+mmNV4TUlcd0O
-	7/mli1SosGwaa2WKSMaucQ3418m+sVnXb7/ZwkOscKuk8amtTKFM4aoCMUu8Ee+kog939F2wvgi
-	UEZuU2p10bVwtvBHFqgWDEm9+9Cx03y4TIUgvdX36W/vG5StmLYYldcWSZ72sIaEWVZvlPx/5xo
-	Eu/uFpKjhFiuraLJxiuyDvNmIPdDTn2oy/l3yzZJ3WhiiD7tWi2vkjblkAcJvihQYvwbj/ZCy3U
-	Fn11M/JuKhbFhvnM9GYqgAGpv4DWHarypOhc9qoCflGpu9Ba1R/kXIFt5W+LsniQ+LoieMpZPDo
-	ar4qeDF8gFBeet+PRxvVvwtYN04e4j3wA
-X-Google-Smtp-Source: AGHT+IEEUcjPWyW3+EqWvnD5E8+0bREKP1ea0Z5KKh4lSYDKYOfsw0ft79JZxtY8fSAzLb94o+PTcg==
-X-Received: by 2002:a17:902:ce8e:b0:23d:dd04:28e2 with SMTP id d9443c01a7336-2430d1ab47dmr33684355ad.35.1755074046271;
-        Wed, 13 Aug 2025 01:34:06 -0700 (PDT)
-Received: from [127.0.0.1] ([36.255.193.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfe50c8sm31307814b3a.120.2025.08.13.01.33.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 01:34:05 -0700 (PDT)
-From: Zixian Zeng <sycamoremoon376@gmail.com>
-Date: Wed, 13 Aug 2025 16:33:20 +0800
-Subject: [PATCH 4/4] riscv: dts: sophgo: Enable SPI NOR node for
- SG2042_EVB_V2
+	s=arc-20240116; t=1755074018; c=relaxed/simple;
+	bh=aNX693JpdEi3jkK/KscxbmLH3dske+t5Muwetmm1v7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cGk788v+XGzIjIjL6t1MpFJYueq0rWDesSnyIqPqwtGSk8797BtF2Z/Bs+djgZWkt++z4jZOlO98sGugGre9UseAnsxTBgZs2Pi3yQk5LWe5cOe9IFg575wDf1rRgJ+XTGq2FIdKWBLOe6u9t9I4dlJh4G3uEcX8aHRK2Esz948=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnhNB5mI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC7FDC4CEEB;
+	Wed, 13 Aug 2025 08:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755074017;
+	bh=aNX693JpdEi3jkK/KscxbmLH3dske+t5Muwetmm1v7U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pnhNB5mIJgNsi/3cJw8WKIqONcc+6C8gLx6Qaxe6jbP1PzrKsLib1PCr8u8UdDW7Y
+	 iK1PDECLq6juszO1/Tf9eOgTG8hA8nkmOmHWA2LbDR+KTL/6KXeirxkM3ielkmy+xY
+	 Z2djvCLRjzx6DOb+5996ZH9rLp0GI5Jwl0fOQBwhndXNMzh0EgLusxZ9rETXCL9wTX
+	 DcZGpRnUunrUTxc0AQ+ci2gBQmKrUNrXv4UnltKB9MKAig50ZzEv6QIZAxmFH2qfu8
+	 xHrICZMVhtq0m/QwDaIuI/g8jPQcuG4n60Xba4c5S2eILrBJkdZKD92Olj5d+jeFDV
+	 ypye6Xra+/7qA==
+Message-ID: <eac01571-13cb-44a8-b724-76e1b2af4c0b@kernel.org>
+Date: Wed, 13 Aug 2025 10:33:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250813-sfg-spidts-v1-4-99b7e2be89d9@gmail.com>
-References: <20250813-sfg-spidts-v1-0-99b7e2be89d9@gmail.com>
-In-Reply-To: <20250813-sfg-spidts-v1-0-99b7e2be89d9@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
- Inochi Amaoto <inochiama@gmail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: devicetree@vger.kernel.org, sophgo@lists.linux.dev, 
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Han Gao <rabenda.cn@gmail.com>, Zixian Zeng <sycamoremoon376@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755074006; l=916;
- i=sycamoremoon376@gmail.com; s=20250113; h=from:subject:message-id;
- bh=QR9rt1dx8wRY8ZK0TwZiHfOAeokIcX0oUcFGhOLvmKU=;
- b=Uus7GJwPp8hyacJ983Bo8pDUNcIFyjii86Yas9FPuyQSkIFFV67tvExpI9nc3thUzuBPLdj6T
- 1EGrsJin13jDKhinFEmR0uA+IEAu/ygtsCjvUbhfQ/hJiUnN+AuWnom
-X-Developer-Key: i=sycamoremoon376@gmail.com; a=ed25519;
- pk=OYfH6Z2Nx3aU1r0UZdvhskmddV6KC6V1nyFjsQQt4J8=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: dts: imx6-display5: Replace license text comment
+ with SPDX identifier
+To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>,
+ Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250709-display5-dts-lic-v1-1-81e46a650d3d@prolan.hu>
+ <d9e81ff2-5621-49db-92a1-acf304b225f8@prolan.hu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <d9e81ff2-5621-49db-92a1-acf304b225f8@prolan.hu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Enable SPI NOR node for SG2042_EVB_V2 device tree
+On 13/08/2025 10:29, Csókás Bence wrote:
+> Hi,
+> 
+> On 2025. 07. 09. 9:32, Bence Csókás wrote:
+>> Replace verbatim license text with a `SPDX-License-Identifier`.
+>>
+>> The comment header mis-attributes this license to be "X11", but the
+>> license text does not include the last line "Except as contained in this
+>> notice, the name of the X Consortium shall not be used in advertising or
+>> otherwise to promote the sale, use or other dealings in this Software
+>> without prior written authorization from the X Consortium.". Therefore,
+>> this license is actually equivalent to the SPDX "MIT" license (confirmed
+>> by text diffing).
+>>
+>> Cc: Lukasz Majewski <lukma@denx.de>
+>> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+> 
+> So, what do you all think, is this patch acceptable?
 
-Signed-off-by: Han Gao <rabenda.cn@gmail.com>
-Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
----
- arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Yes, you just need Acks from all contributors there.
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-index 46980e41b886ce17dacce791fa5f2cef14cfa214..7001d8ffdc3e04c5a5cd5da85a4fb1c0351eb9a5 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts
-@@ -226,6 +226,18 @@ &sd {
- 	status = "okay";
- };
- 
-+&spifmc1 {
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0>;
-+		spi-max-frequency = <100000000>;
-+		spi-tx-bus-width = <4>;
-+		spi-rx-bus-width = <4>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-0 = <&uart0_cfg>;
- 	pinctrl-names = "default";
-
--- 
-2.50.1
-
+Best regards,
+Krzysztof
 
