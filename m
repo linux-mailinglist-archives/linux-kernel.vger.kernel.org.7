@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-767460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79973B25495
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCE8B2549D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629DA5A4F3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7BAF5A52CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A901A2D0617;
-	Wed, 13 Aug 2025 20:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07E12D46D4;
+	Wed, 13 Aug 2025 20:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="dR34cAxp"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ll/6m25Q"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B71A2C0F90
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C5A2FD7DF;
+	Wed, 13 Aug 2025 20:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755117593; cv=none; b=B4cUeTP6yuaEb79xEcEQWjuwJKwjIk17Qx0yhD301VYnxFgQq4fuHuMPiPpBbRFCpAF1X58pHcYvzG0jXcMeaBiQFZErJgkVf7vxEA4T91p3X3yYi6FdOvKuENZ6AqD4WBoKQvJoZX5mwbXgzR8hgm5tt7Bi848AWwYqp1O4OXA=
+	t=1755117680; cv=none; b=dvdpVcrfSjXCUsI2MnSLDA3vuZs+Hop6OKSXYHU/+wARjuAFBVy6yjJDytz0BEzGKzN1oweIpqq9mf+/ZK9oaj6yiqMCEOu6oVv/WPGXtYhzorDUvp4vm5iNvrLP7ORTby+vE2Ce2ll3wIZ+uBcEIol9hW38ass0fNyuIZvFtnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755117593; c=relaxed/simple;
-	bh=AXffZ9dyioE6nOqSGA3Jy2oI5Z20yBGFwOs8nynpzPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aWoRwWON7goPc4K97nNdBmT7PX3pFagsaruv7uC8QatvS1xXhEP9TB3JCagPwmlkX7rn1ic8vBeWYMhuHlzC/JUYd/aVDOJZeJOugFhTiQJeTIcOSb6OVQul/ehiWcFIt4Rg53cjp6MzVZHyI0vSGb8Qxbso1TiwVtfykT7L620=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=dR34cAxp; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3e56fc0f337so2469245ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:39:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1755117591; x=1755722391; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lP0QH6bmUQ+2Acs8+Imh9XZZLiBHsh0NRGzPgFU6eoo=;
-        b=dR34cAxpfjkdqNi00u1SayjSu6D3QJVGRvDkez4iGJyTdpwNsfSnpEvPYwR/bkkGH8
-         bmaF2H3smnrV8IF5gVz8ckv4kqXrNfgSJAVQw/q/guhxrXYFgwM5a4DR34ipn+nlGB4L
-         fSsXNnZhO1iYH8WP/t03Y1/SChz5tQH+rstUERX7bgWuk1VvEDeg+eOPHOQs2zg/0R3u
-         Ze/ym8Jom2p8Cd/QNAMwQwRaLBYcF0lmN0LUhoaxNxQF9iyQz4sRIiqWEggNREraBZEF
-         oR6q74QpAnM+PA4dkKcbTHabvs3ebv9mROBP7wVv1LoXmKIIjMcReCP0tL5pBGy5RNG0
-         QGBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755117591; x=1755722391;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lP0QH6bmUQ+2Acs8+Imh9XZZLiBHsh0NRGzPgFU6eoo=;
-        b=ud2a/jLlxVqfEb2AiMd0P1I2VWdf50OWfJvCN5hWqSrYPj7AEkrAIcVtbPcXngqE4u
-         v+oJpRDgE7fYNzh8sH7JpBjIl+p8kDqwmTT0VTY25djPKcvXA5KIGMY35+K/nDjCdsEG
-         XQseVxiRI1IGI/pLsqMZnksaJ1c9GdH2Fr20s45aJFoJ8j62tBB8A/AD/m/rEKRY9Tgg
-         FFuofn+kj42Wly20eggts9NSqMa+CooEduCA5pHNJm6Tq7qUppViUVcOnQhX3c+XTR86
-         znNu5b136Ho8EVxtIJ7hiYtLPX5sc1Qs7odBm7MH3pHrTjPpiHLZ9Tmob9Jc8MMX+V3C
-         xxpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVg68gYD5g9kV8JOjl04dtMcg2j3BuRcXdGkzFGbvxTUeI+fi8HZxgfllCXri3rpJd15KW34YrVSf3QkPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxX+XDc5SxJ79p12REArAcbWOw9fWpZ23vvmFL15SjeqjVRq+G
-	N84bsHsCtR/SLOTv3Kzi+QZRAlxv+ISIqpupLQI4nwjyzUgcy43/kksI/CnPqXSJFkE=
-X-Gm-Gg: ASbGncu4iQPMH1EREImRAvwv9uL3QlYrYED8Xn2VzuWI4+K8dVtsL5kYKyhmaaS93Bi
-	cRotT2FDIQcg6wRismcVhfjruRkM8uHrPO84FKPEhWO5B4wtD8XVA7KyJ5s5k4foOafmACl7PWZ
-	5sl965BKRNs0ZujHP+dcc+uN+0I/c0PbL/5j1FcEw7NlIg6ekSVa208lxlyOlPQS49fTxapYyo0
-	jCFH2ll8WasTCuplKSuwEy4osyqTFfTPa7nEtNdS71OO3XxKw2qyfKuLOsqlgYYlD4CUot1A8y5
-	NLr0pfH7Xbu0md7FQh+z41afZaAICbOF6rupiloa6IIsfBQAm6LC5ckud6ub2f5sdxneiR6M6VR
-	Hy8U=
-X-Google-Smtp-Source: AGHT+IF33uU6G1tdISaoHujqKFCv7GAhmf5MtVqMPZeo70bmBvi9Ma2tNnrW3cr8EJyPXQvpDlIPHA==
-X-Received: by 2002:a05:6e02:b4f:b0:3de:e74:be13 with SMTP id e9e14a558f8ab-3e571530619mr5127105ab.0.1755117590530;
-        Wed, 13 Aug 2025 13:39:50 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:8255:1b37::2b6:1])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae99cd268sm3918681173.22.2025.08.13.13.39.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 13:39:50 -0700 (PDT)
-Date: Wed, 13 Aug 2025 15:39:48 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>, audit@vger.kernel.org,
-	kernel-team@cloudflare.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] audit: make ADUITSYSCALL optional again
-Message-ID: <aJz4FOOy8eYO6OTN@CMGLRV3>
-References: <20250808194034.3559323-1-fred@cloudflare.com>
- <b7fae70a87b4fe937607e5e3215397bc@paul-moore.com>
+	s=arc-20240116; t=1755117680; c=relaxed/simple;
+	bh=/hVnjGurG+wRx78ATz1Xr5RkDjhzM+9y3No+kd5SbZ8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eHcx6RL2FPnE6dIFM22ajur4h+x+8TteLfKhIJSaraoGzNc/rG5FKKhjXTJtGfQcV+t2ijYgqxV3AjIdG66Xmem4mKO9QdkdFLWxB1sycEBavoc7kfT/O85KwbaotQFQLlYMRfCap3OP992HyZk/g+Yz+5Sm6fSd3fS/oduiGe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ll/6m25Q; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DKfAQu2154325;
+	Wed, 13 Aug 2025 15:41:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755117670;
+	bh=Wdvf/jNhiHmkxjIEZx3swrAG0Wn7qiN5MEB1zX7qGEY=;
+	h=From:To:CC:Subject:Date;
+	b=ll/6m25QMS4TjdFp35YDDcLZTp3XyH2Z81YAe75gG2palTt5f0IS1JHddm7zpDCQS
+	 F3oFkkoOyytR8sNnVWAv1iH+ls1kFtoZwqgRjZqLY1H833Z81joZ8cxmPOZ4JscaOt
+	 sOp71q32S4BelEJk7H0MkE36DA6U2uwG3Tm8lf08=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DKfAC71329210
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 13 Aug 2025 15:41:10 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
+ Aug 2025 15:41:09 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 13 Aug 2025 15:41:09 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DKf9AM2853509;
+	Wed, 13 Aug 2025 15:41:09 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, David Airlie
+	<airlied@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Jason Kridner <jkridner@beagleboard.org>, <afd@ti.com>,
+        Nishanth Menon
+	<nm@ti.com>
+Subject: [PATCH V2 0/3] drm/bridge: it66121: Add it66122 support
+Date: Wed, 13 Aug 2025 15:41:03 -0500
+Message-ID: <20250813204106.580141-1-nm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7fae70a87b4fe937607e5e3215397bc@paul-moore.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Paul,
+Hi,
 
-On Wed, Aug 13, 2025 at 12:01:42PM -0400, Paul Moore wrote:
-> On Aug  8, 2025 Frederick Lawler <fred@cloudflare.com> wrote:
-> > 
-> > Since the introduction of commit cb74ed278f80 ("audit: always enable
-> > syscall auditing when supported and audit is enabled"), eBPF
-> > technologies are being adopted to track syscalls for auditing purposes.
-> > Those technologies add an additional overhead ontop of AUDITSYSCALL.
-> > Additionally, AUDIT infrastructure has expanded to include INTEGRITY which
-> > offers some advantages over eBPF technologies, such as early-init/boot
-> > integrity logs with. Therefore, make ADUITSYSCALL optional
-> > again, but keep it default y.
-> > 
-> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> > ---
-> >  init/Kconfig | 11 ++++++++---
-> >  1 file changed, 8 insertions(+), 3 deletions(-)
->  
-> Generally speaking the less Kconfig knobs the better; it tends to
-> complicate things and for those that rely on distro kernels, there is
-> always at least one group that is going to be upset about the Kconfig
-> knob being set "wrong".  In my ideal world, CONFIG_AUDITSYSCALL wouldn't
-> exist at all, but sadly not all arches have the necessary support to
-> do that at the moment, so CONFIG_AUDITSYSCALL remains a necessary evil.
-> 
-> Thank you for the patch, but IMO this is not the direction we want to
-> go with audit.
-> 
+Add support for IT66122, which for all practical purposes is
+drop in replacement for IT66121 except for the ID register
+definition.
 
-Thanks for the response. I think setting the filters to never would be
-OK, but doesn't hurt to try to see if it's worth squeezing out the
-remaining usages.
+BeagleY-AI uses this new part as the old part is no longer in production
+as far as I understand.
 
-> --
-> paul-moore.com
+Now, BeaglePlay uses it66121 at the moment, but at some point, it might
+end up flipping over to the new part.
 
-PS. I'll be sure to use b4 next time for a
-submission. 
+Quick boot log on BeaglePlay for compatibility check:
+https://gist.github.com/nmenon/6cb8b8a00bcce1755628d131df878840
 
-Best, Fred
+Changes since V1:
+* Picked up Krystoff's binding ack
+* Switched over to a vid/pid list
+
+V1: https://lore.kernel.org/all/20250813190835.344563-1-nm@ti.com/
+
+Nishanth Menon (3):
+  dt-bindings: display: bridge: it66121: Add compatible string for
+    IT66122
+  drm/bridge: it66121: Convert the vid/pid entries into a list
+  drm/bridge: it66121: Add it66122 support
+
+ .../bindings/display/bridge/ite,it66121.yaml  |  1 +
+ drivers/gpu/drm/bridge/ite-it66121.c          | 32 ++++++++++++++-----
+ 2 files changed, 25 insertions(+), 8 deletions(-)
+
+-- 
+2.47.0
+
 
