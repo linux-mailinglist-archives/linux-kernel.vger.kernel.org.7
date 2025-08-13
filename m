@@ -1,156 +1,165 @@
-Return-Path: <linux-kernel+bounces-767702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1373B257E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:54:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEDB4B257E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D130E2A61CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C6569A6127
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408092FE058;
-	Wed, 13 Aug 2025 23:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9442FC89F;
+	Wed, 13 Aug 2025 23:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlZ8Ccbb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="CGZN+wLh"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06CB27462
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2902FC881
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755129282; cv=none; b=cDXGpbELvQR7jMosOBA2aH3DTDkOdKzU3G2Ggsx/HtK7RXhAuRKFfiVTU34xJqbaYZIOulztB9nuCQGbbDANLftBKcvyWXXFVA02bXmomSpr4qGrpQvQNMOTgUjDhwoE80YT/OEtE5TPSrS13juo032WC+g6Wn0sqVmgiyRgLeU=
+	t=1755129344; cv=none; b=cHH4UhPcw7/NASrkb911C3fv1zunhDbOMpIs8Q6PetOPx65YHgidGm3zlhTlh0ImIqC0fcjDTVGTF0o7HOEQkIVSw8W/nwhzqN/fIeeOR6Yf054RnWwxIUeZHR7a0ZPY325hLv9aL7MhvuEqOCHBPJFby5e3D8Em2OUDiY6CbXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755129282; c=relaxed/simple;
-	bh=u7JygzuN8O8D9Rm9/+E7Tyu1Q+aQCD/m/GsaOd0yKUg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=toZg6uL5NEsVSqGLqfUoHwK37rCLyr0gk8haQep93nVG/VSLcH66sGY59D2WnYqu25edx9KN0lrz/rC6LOshwBllkGIyOZhDGg5fHvlSC7taAqA9Ku4xvjkz8jt10hKXLDn+NH3HoQI0szCb5pmszI0oC5TV4/ETniwZcZpzisE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlZ8Ccbb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27144C4CEF8
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755129282;
-	bh=u7JygzuN8O8D9Rm9/+E7Tyu1Q+aQCD/m/GsaOd0yKUg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rlZ8Ccbb6VUoUGfu/EFix+UrZ9kX80W7WiW0o1I/r1cafDGGM52C+f2DxHF/L3Z9k
-	 i+Ib01Kl9v5B+akHUontZbZ1at+tTC93SZGc9R8M6ESV+gUZ8k25/n05d2DY5QTupP
-	 xuP+u9Gd5fd/ccUvqZUE9Ac5thM89XPoIREFaHN0LCCI4hYo9zg7RcSVYkUsbOmIkJ
-	 2fkjebPMVYRVhYQhq52C6/gPC5fPjEHwKhC4hG1XTXDZ1JGsHoAMzfIzde7C4uKZPB
-	 r8ZnU2Tr+O4wYcAwz2A7Qkx4jnOLiDTMA1EeJnGcu1TCvo45HOdfx08+o+FBvKyu8x
-	 XT0GJD9E6/JRg==
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b6f7f15so524750a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:54:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVL2Zr85/bhfJjqHn5xPd/+UAYpihjWT9qeAfJMwHxmifBd8F7X2KAoGMD+xrLrXBSCpLj5PppG8iEMJt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx19kZlsJzoW3LRLXS3qxjoVs3Q5xb2Tfw3eD8ac+vW65zGXqO+
-	w9zBaUGWnkrhyeYZY1eqssvD27izfHaaD7j6oPae0AixP0aRI36uW1FsKTjIokgVMvrE1wwL+tO
-	Byt05/D826xTfBQI99ebXch7uZH2+JA==
-X-Google-Smtp-Source: AGHT+IHm7/NHMvFJOaYv1HmU01izKx3/cE5F9xQuEpkBuNLuBLekf5TgPhxAshBp58S3bzeaHhOG3dAFIaXjCX26dM0=
-X-Received: by 2002:a05:6402:a0d2:b0:618:6a0:69be with SMTP id
- 4fb4d7f45d1cf-6188ba072bamr807292a12.25.1755129280432; Wed, 13 Aug 2025
- 16:54:40 -0700 (PDT)
+	s=arc-20240116; t=1755129344; c=relaxed/simple;
+	bh=ID/XhcsZ1I9A4MuqTcwii6NkisXSNXT4PxssY0Mn0+c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p720wzoBEfQzqNKzeZ5afc11CK85WzlhQQqGg8Agg572of+Ir2+eqmZmpCz5KQLhorEFgBNNmkwgvL7CM+44YQKvHBVePvmES4m82YeZ4Wbu96Lx3X4REPM8Fu6CbzoKL007xFNMTFrs4aTNR31AzP1JIPGcC6rdRPi+BodgHMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=CGZN+wLh; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id BEB86240027
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:55:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
+	s=1984.ea087b; t=1755129340;
+	bh=IYHIn5JSU8VSd8NOfCAC/zA9MrgSiWojfu5wlTp5OM8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-Id:To:Cc:From;
+	b=CGZN+wLhF/1CoNyu5CkBaE5nYQRH8dY/Pb/6ygSZY+UbRbZUDvv/WL4oj3IKjnZc5
+	 x4y6d9lftGqmNUB7pNoIR4zQ2d96PHsGf3UuWI+OuTaK1e05BwNMu98AjWQDjb00eJ
+	 h5+FiD9G6Z9M5GQv20jhx7UxcXUdjPf5nKupItrTi5NZaziR3Ssz3hcCpTO9ZwwJ0u
+	 YoyHb5fihVQGEMixMlOEKBW88siexNrt1QZjoXQHubuaExvM404wese4cGNnr0mU4X
+	 Xi5hwzRcATq552ZlEqlgOTxqpRQtKZNkzW0YwKuB67boPH5o6KpBWsyHvKTdqusjC3
+	 I2It8BR3fROTyDkkkgdH8U0j3eJvbNvOK5DTXsyaOU4TZbqFavuqBToodhYU/OvZqf
+	 vkG8hUB9nYf1Vge+P+04UaO9fS7BZvbzfZ/bLFofoPIl26AQHPYN3jMMWOuWH6Ffcz
+	 UePc6A6rhUKnKhW4rbYEzBQfNl8xFnZaYbtKOIS/Ym+zv8AK0Ld
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4c2QHH6HMgz9rxB;
+	Thu, 14 Aug 2025 01:55:39 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+Date: Wed, 13 Aug 2025 23:55:40 +0000
+Subject: [PATCH v2] debugfs: fix mount options not being applied
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728025036.24953-1-jason-jh.lin@mediatek.com>
-In-Reply-To: <20250728025036.24953-1-jason-jh.lin@mediatek.com>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Thu, 14 Aug 2025 07:55:21 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_-7wQd_m0G4+gvpH2O5HoWZQKViwZH_x9vqMiyZ9VT8Xg@mail.gmail.com>
-X-Gm-Features: Ac12FXzBCmzgimD0vx3iwG8xjWCCWq9Wg_h9jQK1PZ8gDSIT0nXra8B7oMcHVZ8
-Message-ID: <CAAOTY_-7wQd_m0G4+gvpH2O5HoWZQKViwZH_x9vqMiyZ9VT8Xg@mail.gmail.com>
-Subject: Re: [RESEND PATCH] drm/mediatek: Add error handling for old state
- CRTC in atomic_disable
-To: Jason-JH Lin <jason-jh.lin@mediatek.com>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, David Airlie <airlied@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Daniel Vetter <daniel@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Nancy Lin <nancy.lin@mediatek.com>, 
-	Singo Chang <singo.chang@mediatek.com>, Paul-PL Chen <paul-pl.chen@mediatek.com>, 
-	Yongqiang Niu <yongqiang.niu@mediatek.com>, Zhenxing Qin <zhenxing.qin@mediatek.com>, 
-	Xiandong Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>, 
-	Xavier Chang <xavier.chang@mediatek.com>, Jarried Lin <jarried.lin@mediatek.com>, 
-	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250813-debugfs-mount-opts-v2-1-0ca79720edc6@posteo.net>
+X-B4-Tracking: v=1; b=H4sIAPAlnWgC/32NTQ6DIBBGr2Jm3WmASLFdeY/GhT+DsigYBk0bw
+ 91LPUCX7yXf+w5gio4YHtUBkXbHLvgC6lLBuPR+JnRTYVBCadGIGicattkyvsLmE4Y1Mar+1kz
+ G1NIKDWW4RrLufUafXeHFcQrxc37s8mf/5naJEodR6Htt+kYMul0DJwpXTwm6nPMXX9NVN7UAA
+ AA=
+X-Change-ID: 20250804-debugfs-mount-opts-2a68d7741f05
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+ Eric Sandeen <sandeen@redhat.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Charalampos Mitrodimas <charmitro@posteo.net>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755129339; l=2895;
+ i=charmitro@posteo.net; s=20250727; h=from:subject:message-id;
+ bh=ID/XhcsZ1I9A4MuqTcwii6NkisXSNXT4PxssY0Mn0+c=;
+ b=dZJVD0srAHdSEDZDm3EWOOOs5F4h9CiKbhDcW5oNz7T3pf4qAoMFbiFKMGiOpVeesWmcaNWE2
+ EBuMvHrR/JIDt1gzwNH21NNB8XfuJZEj3kIHGuwr7sLD0+0tiAn4TDt
+X-Developer-Key: i=charmitro@posteo.net; a=ed25519;
+ pk=/tpM70o3uGkbo2oePEdVimUYLyVTgpnPq4nwoG0pFsM=
 
-Hi, Jason:
+Mount options (uid, gid, mode) are silently ignored when debugfs is
+mounted. This is a regression introduced during the conversion to the
+new mount API.
 
-Jason-JH Lin <jason-jh.lin@mediatek.com> =E6=96=BC 2025=E5=B9=B47=E6=9C=882=
-8=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8A=E5=8D=8810:50=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> Introduce error handling to address an issue where, after a hotplug
-> event, the cursor continues to update. This situation can lead to a
-> kernel panic due to accessing the NULL `old_state->crtc`.
->
-> E,g.
-> Unable to handle kernel NULL pointer dereference at virtual address
-> Call trace:
->  mtk_crtc_plane_disable+0x24/0x140
->  mtk_plane_atomic_update+0x8c/0xa8
->  drm_atomic_helper_commit_planes+0x114/0x2c8
->  drm_atomic_helper_commit_tail_rpm+0x4c/0x158
->  commit_tail+0xa0/0x168
->  drm_atomic_helper_commit+0x110/0x120
->  drm_atomic_commit+0x8c/0xe0
->  drm_atomic_helper_update_plane+0xd4/0x128
->  __setplane_atomic+0xcc/0x110
->  drm_mode_cursor_common+0x250/0x440
->  drm_mode_cursor_ioctl+0x44/0x70
->  drm_ioctl+0x264/0x5d8
->  __arm64_sys_ioctl+0xd8/0x510
->  invoke_syscall+0x6c/0xe0
->  do_el0_svc+0x68/0xe8
->  el0_svc+0x34/0x60
->  el0t_64_sync_handler+0x1c/0xf8
->  el0t_64_sync+0x180/0x188
->
-> Adding NULL pointer checks to ensure stability by preventing operations
-> on an invalid CRTC state.
+When the mount API conversion was done, the line that sets
+sb->s_fs_info to the parsed options was removed. This causes
+debugfs_apply_options() to operate on a NULL pointer.
 
-Applied to mediatek-drm-fixes [1], thanks.
+Fix this by following the same pattern as the tracefs fix in commit
+e4d32142d1de ("tracing: Fix tracefs mount options"). Call
+debugfs_reconfigure() in debugfs_get_tree() to apply the mount options
+to the superblock after it has been created or reused.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-log/?h=3Dmediatek-drm-fixes
+As an example, with the bug the "mode" mount option is ignored:
 
-Regards,
-Chun-Kuang.
+  $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
+  $ mount | grep debugfs_test
+  debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
+  $ ls -ld /tmp/debugfs_test
+  drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
 
->
-> Fixes: d208261e9f7c ("drm/mediatek: Add wait_event_timeout when disabling=
- plane")
-> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
-> ---
-> RESEND change:
-> - Update author and Signed-off-by name.
-> ---
->  drivers/gpu/drm/mediatek/mtk_plane.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_plane.c b/drivers/gpu/drm/media=
-tek/mtk_plane.c
-> index cbc4f37da8ba..02349bd44001 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_plane.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_plane.c
-> @@ -292,7 +292,8 @@ static void mtk_plane_atomic_disable(struct drm_plane=
- *plane,
->         wmb(); /* Make sure the above parameter is set before update */
->         mtk_plane_state->pending.dirty =3D true;
->
-> -       mtk_crtc_plane_disable(old_state->crtc, plane);
-> +       if (old_state && old_state->crtc)
-> +               mtk_crtc_plane_disable(old_state->crtc, plane);
->  }
->
->  static void mtk_plane_atomic_update(struct drm_plane *plane,
-> --
-> 2.43.0
->
+With the fix applied, it works as expected:
+
+  $ mount -o mode=0666 -t debugfs debugfs /tmp/debugfs_test
+  $ mount | grep debugfs_test
+  debugfs on /tmp/debugfs_test type debugfs (rw,relatime,mode=666)
+  $ ls -ld /tmp/debugfs_test
+  drw-rw-rw- 37 root root 0 Aug  2 17:28 /tmp/debugfs_test
+
+Fixes: a20971c18752 ("vfs: Convert debugfs to use the new mount API")
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220406
+Cc: stable@vger.kernel.org
+Signed-off-by: Charalampos Mitrodimas <charmitro@posteo.net>
+---
+Changes in v2:
+- Follow the same pattern as e4d32142d1de ("tracing: Fix tracefs mount options")
+- Add Cc: stable tag
+- Link to v1: https://lore.kernel.org/r/20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net
+---
+ fs/debugfs/inode.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+index a0357b0cf362d8ac47ff810e162402d6a8ae2cb9..c12d649df6a5435050f606c2828a9a7cc61922e4 100644
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -183,6 +183,9 @@ static int debugfs_reconfigure(struct fs_context *fc)
+ 	struct debugfs_fs_info *sb_opts = sb->s_fs_info;
+ 	struct debugfs_fs_info *new_opts = fc->s_fs_info;
+ 
++	if (!new_opts)
++		return 0;
++
+ 	sync_filesystem(sb);
+ 
+ 	/* structure copy of new mount options to sb */
+@@ -282,10 +285,16 @@ static int debugfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 
+ static int debugfs_get_tree(struct fs_context *fc)
+ {
++	int err;
++
+ 	if (!(debugfs_allow & DEBUGFS_ALLOW_API))
+ 		return -EPERM;
+ 
+-	return get_tree_single(fc, debugfs_fill_super);
++	err = get_tree_single(fc, debugfs_fill_super);
++	if (err)
++		return err;
++
++	return debugfs_reconfigure(fc);
+ }
+ 
+ static void debugfs_free_fc(struct fs_context *fc)
+
+---
+base-commit: 3c4a063b1f8ab71352df1421d9668521acb63cd9
+change-id: 20250804-debugfs-mount-opts-2a68d7741f05
+
+Best regards,
+-- 
+Charalampos Mitrodimas <charmitro@posteo.net>
+
 
