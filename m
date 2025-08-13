@@ -1,144 +1,238 @@
-Return-Path: <linux-kernel+bounces-767308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4734CB252B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:00:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830F8B252B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:00:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEF493AE55E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:57:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968A6170A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE262989BD;
-	Wed, 13 Aug 2025 17:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7046429BD9A;
+	Wed, 13 Aug 2025 17:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="AQ2BoV+Y"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cB3zKZOY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A351B665
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E929B8CC
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755107822; cv=none; b=MPjinzbYYXKI4XB1avlx39dPq6lwhMXxGeSzlqs0YIbUOTSPTvrRCzsaahXe9PMvDhXP6ACKMnMYH31DNROmYh3Ln4+I03Glpy7dfgINMZHkvX8vNOWGyDXEbGc8pQLMCq1qzIBU6OY2f4LOQs0CgHs9NmbMBFNvfJiQHKqnvzg=
+	t=1755107948; cv=none; b=J0hHXEPEIugqYbfiBYzkRIN2GRrhqciSSoIu9ce/8XHRIDW3fTCd2b9lkykXzh7+YB5VtU7HO6+0oGz0Fd56UHG74yQ3tsIH7yRnVQA1NucqfdSpW56FRqGR1F12S1BWz3eYrbCsJ2oFMwagTD4mMn31HQ8sdusfSHNUlCy/wiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755107822; c=relaxed/simple;
-	bh=6A6owKl0e8HWDp37m50TwvyylqFVijy9Z30GbhwAZb8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=l64oupKHFZzW/IPpmAnIkM/d1n2fRikfKpcNRLt5IU2GSX5qVN/3gnXe1bke1T7KwVPwbBHuxStcMtnvHvtEWD+Z1iN7+clBZs045sq5y+pXk++4bLeXZuWf4ICyDB4yPe5CkwrIquq0Mel/GcbNBYmunBwe6aHkEFyGruI0iLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=AQ2BoV+Y; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755107798; x=1755712598; i=markus.elfring@web.de;
-	bh=6A6owKl0e8HWDp37m50TwvyylqFVijy9Z30GbhwAZb8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AQ2BoV+YykwYv0odO6vRbs9iYehYqcDoeeO9ZIlEzp/OoF6HV2tm+Y0AqwcGwIV0
-	 pE+fg1WxuTwzKUzaXcUVt2fJBiJgFOGoIx7tYCd54Pq4ozJLSWb6BYUgdiWBySe5j
-	 bq9FVHR+t8w1+oYh1jWrkqM0MuGFHnGwLHROxVdbCmGijOdOIDWXWPKa2S8wwZw2A
-	 8c2iL+FXAHgqMMzx+KnAgty+EXXNvgLiKNhySbsG73jM8zEpSoeafwIVcynfW8Imh
-	 09AQfRaUWkyfymMzp16tC1qpp/1fu1qgG96JmxBWnvJzRYw0TWsKEwRwUPAAg29JM
-	 ravbKxL9gRSM6g80Vg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.246]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Myv70-1uQa7r44eo-00tYwd; Wed, 13
- Aug 2025 19:56:38 +0200
-Message-ID: <65769f0a-af9f-4e96-93d4-8594e76d8e73@web.de>
-Date: Wed, 13 Aug 2025 19:56:35 +0200
+	s=arc-20240116; t=1755107948; c=relaxed/simple;
+	bh=vOeA+IRs2WkICsEroFKXn3XPbpj/6Pk8zU4tiVJa5iU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gX3CPy+xnc+HfQxW7uQgURnJXLZPUFzFRa6T2CLO79DwLVyFDicX3zYJBe6Ivi4La5EyE3NtPE5wDJ73NrbMZNpttyyGxZ/YXq3ltIlU1aDIOnxy+vuEZtHi2Z5zMIxliH9pRdlQM2pRS8vs8+2tKgqYq/xmWysfuyFn1P9NKWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cB3zKZOY; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755107947; x=1786643947;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=vOeA+IRs2WkICsEroFKXn3XPbpj/6Pk8zU4tiVJa5iU=;
+  b=cB3zKZOYSHvFE1VG7kEwO2FybY/POFdNuUfbAhXfv2rq2uEwCH4oQfaO
+   SQEyj63L3pe2AWHBdOdN2mDeJgLr6Iysd18WPkGsiOnenDf1J90yu14Ri
+   Tt4dFDzCt7+aOgoN+gdaUF/SWvwJTahfZGXBNv9PRHBStebEDKynquHd+
+   YEp7aLruZWw7UjPm+QB8EMi7NmCArKHMf1St7cvdU2i6o6kBGbJkybbEV
+   beagO1jNZYAJeCr78fsvtKY9OOwTfE9BIVGOKQJV3mQT1RwWQgs+YsO+e
+   wW8v9LvoOVUkj/2fkEYQ1ubjRtlf+tRh3nN7YYRvbKS61IBb5jzhxbG1L
+   w==;
+X-CSE-ConnectionGUID: 45MriYx0SxeonWtNVumsGw==
+X-CSE-MsgGUID: +28IR4bUS/u1qtN9xJeKRA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68793437"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="68793437"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 10:59:06 -0700
+X-CSE-ConnectionGUID: j7xmGq33RKipnwWnaM0fLA==
+X-CSE-MsgGUID: Pc5yatR4SMKg9zBTxgi/Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166033963"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 13 Aug 2025 10:59:04 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umFkc-000ABW-1V;
+	Wed, 13 Aug 2025 17:59:02 +0000
+Date: Thu, 14 Aug 2025 01:57:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: arch/arm/include/asm/stacktrace.h:48:21: error: call to undeclared
+ function 'in_entry_text'; ISO C99 and later do not support implicit function
+ declarations
+Message-ID: <202508140127.RW2381Lq-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Brigham Campbell <me@brighamcampbell.com>,
- dri-devel@lists.freedesktop.org, lkp@intel.com
-Cc: LKML <linux-kernel@vger.kernel.org>, Julia Lawall
- <julia.lawall@inria.fr>, Oded Gabbay <ogabbay@kernel.org>,
- Tomeu Vizoso <tomeu@tomeuvizoso.net>
-References: <20250813-rocket-free-fix-v1-1-51f00a7a1271@brighamcampbell.com>
-Subject: Re: [PATCH] accel/rocket: Fix usages of kfree() and sizeof()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250813-rocket-free-fix-v1-1-51f00a7a1271@brighamcampbell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mRvjSfon63yuuB/07VHtw2H1/p8sOLnrIfgzT18KftjfuzYvOtK
- Qc67yoFo8LZ68Bzyt3TxqpVMSPVDIBxmdmaxrBvU971gzpzMkA81w8uZ0Xt6X32hZSKftBk
- RxhdcuHqYPJ9CF5yAKxobSnpym7N4NtTCn50G5bqlm1skpe8SDZU0mNDAOUGDNzZNY7aT3G
- mK/1afhl9MeIAw0MowcsA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LjSYrUWW7Ac=;lpTIpvNzL+AYk1dUMlMj5NtlhEP
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Replace usages of kfree() with kvfree() for pointers which were
-> allocated using kvmalloc(), as required by the kernel memory management
-> API.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   91325f31afc1026de28665cf1a7b6e157fa4d39d
+commit: a8f0b1f8ef628bd1003eed650862836e97b89fdd kstack_erase: Support Clang stack depth tracking
+date:   3 weeks ago
+config: arm-randconfig-002-20250814 (https://download.01.org/0day-ci/archive/20250814/202508140127.RW2381Lq-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 3769ce013be2879bf0b329c14a16f5cb766f26ce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508140127.RW2381Lq-lkp@intel.com/reproduce)
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.17-rc1#n145
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508140127.RW2381Lq-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/kstack_erase.c:13:
+   In file included from include/linux/kstack_erase.h:16:
+>> arch/arm/include/asm/stacktrace.h:48:21: error: call to undeclared function 'in_entry_text'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      48 |                 frame->ex_frame = in_entry_text(frame->pc);
+         |                                   ^
+   In file included from kernel/kstack_erase.c:14:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:10:
+   In file included from include/linux/trace_recursion.h:5:
+   In file included from include/linux/interrupt.h:22:
+>> arch/arm/include/asm/sections.h:14:20: error: static declaration of 'in_entry_text' follows non-static declaration
+      14 | static inline bool in_entry_text(unsigned long addr)
+         |                    ^
+   arch/arm/include/asm/stacktrace.h:48:21: note: previous implicit declaration is here
+      48 |                 frame->ex_frame = in_entry_text(frame->pc);
+         |                                   ^
+   In file included from kernel/kstack_erase.c:14:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:36:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                         ^        ~
+   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
+      17 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/kstack_erase.c:14:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:36:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:98:25: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
+      98 |                 return (set->sig[3] | set->sig[2] |
+         |                                       ^        ~
+   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
+      17 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/kstack_erase.c:14:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:36:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:114:11: warning: array index 3 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
+     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
+         |                          ^         ~
+   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
+      17 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/kstack_erase.c:14:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:36:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:114:27: warning: array index 3 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
+     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
+         |                                          ^         ~
+   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
+      17 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/kstack_erase.c:14:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:36:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:115:5: warning: array index 2 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
+     115 |                         (set1->sig[2] == set2->sig[2]) &&
+         |                          ^         ~
+   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
+      17 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/kstack_erase.c:14:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:36:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:115:21: warning: array index 2 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
+     115 |                         (set1->sig[2] == set2->sig[2]) &&
+         |                                          ^         ~
+   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
+      17 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/kstack_erase.c:14:
+   In file included from include/linux/kprobes.h:28:
+   In file included from include/linux/ftrace.h:13:
+   In file included from include/linux/kallsyms.h:13:
+   In file included from include/linux/mm.h:36:
+   In file included from include/linux/rcuwait.h:6:
+   In file included from include/linux/sched/signal.h:6:
+   include/linux/signal.h:157:1: warning: array index 3 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
+     157 | _SIG_SET_BINOP(sigorsets, _sig_or)
+         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/signal.h:138:8: note: expanded from macro '_SIG_SET_BINOP'
+     138 |                 a3 = a->sig[3]; a2 = a->sig[2];                         \
+         |                      ^      ~
+   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
+      17 |         unsigned long sig[_NSIG_WORDS];
+         |         ^
+   In file included from kernel/kstack_erase.c:14:
 
 
-> Use sizeof() on the type that a pointer references instead of =E2=80=A6
+vim +/in_entry_text +48 arch/arm/include/asm/stacktrace.h
 
-Would it be helpful to offer desirable changes by separate update steps?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.17-rc1#n81
+2335c9cb831faba Jinjie Ruan      2024-06-27  35  
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  36  static __always_inline
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  37  void arm_get_current_stackframe(struct pt_regs *regs, struct stackframe *frame)
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  38  {
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  39  		frame->fp = frame_pointer(regs);
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  40  		frame->sp = regs->ARM_sp;
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  41  		frame->lr = regs->ARM_lr;
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  42  		frame->pc = regs->ARM_pc;
+fed240d9c974381 Masami Hiramatsu 2021-10-21  43  #ifdef CONFIG_KRETPROBES
+fed240d9c974381 Masami Hiramatsu 2021-10-21  44  		frame->kr_cur = NULL;
+fed240d9c974381 Masami Hiramatsu 2021-10-21  45  		frame->tsk = current;
+fed240d9c974381 Masami Hiramatsu 2021-10-21  46  #endif
+752ec621ef5c307 Li Huafei        2022-08-26  47  #ifdef CONFIG_UNWINDER_FRAME_POINTER
+752ec621ef5c307 Li Huafei        2022-08-26 @48  		frame->ex_frame = in_entry_text(frame->pc);
+752ec621ef5c307 Li Huafei        2022-08-26  49  #endif
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  50  }
+9865f1d46a68a5f Nikolay Borisov  2014-06-03  51  
 
-Regards,
-Markus
+:::::: The code at line 48 was first introduced by commit
+:::::: 752ec621ef5c30777958cc5eb5f1cf394f7733f4 ARM: 9234/1: stacktrace: Avoid duplicate saving of exception PC value
+
+:::::: TO: Li Huafei <lihuafei1@huawei.com>
+:::::: CC: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
