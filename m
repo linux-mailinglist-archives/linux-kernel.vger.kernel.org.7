@@ -1,218 +1,83 @@
-Return-Path: <linux-kernel+bounces-766653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EBBB2497C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:25:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A81B2497D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2496A17715C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:25:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1EC07A6225
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF3A1C549F;
-	Wed, 13 Aug 2025 12:25:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE81E1C549F;
+	Wed, 13 Aug 2025 12:28:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726EB161302
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD21136347;
+	Wed, 13 Aug 2025 12:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755087947; cv=none; b=md9IiJctH8C2vEEB6PwwDvq3w6XBbpQHfS7VOAqBNrFl5QMUhCES6WK0jZgZgIBjWT0RhGeJ75aJrhsDhJoGp+ATH2e1YZAkTmlYCsG0t/vxAGJLaKDaK1Sss6TzySC001prqKLNxB90wZ1PjfVXfAq7gQUFdYm7cfBFe9uqVkk=
+	t=1755088080; cv=none; b=OfDYes1q7z5WniR3YvoAqud2U6uJn+pXedJPgPAjpPc55SvSAN+7yontymmWnPM3+fsnmyZBkDjb0I6xAPswmNixeMO6rdhpDTn5JAurhYmUZS/sRbO5MBVbDn1axacYTL56BYXKayr7SE3UsCj72/kL3kVLNV82hQas6JgYePw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755087947; c=relaxed/simple;
-	bh=0HkpxNl44NrVp+5qb4BCrOTLkmwwz7dBkNDx3u1z8lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lZXAP+dTC7pPdos/TEpgZsE9mTVSz2yfNLSsy/ErwYLpDwO+HE0jU43RVeDq/HP+BmzlCseZhK35jOuA+xyZ+gDZ/Hwz5SSp4ebM/tbOcCclst6wItnFefnoHWj7D7ernC+0w3+24S8QrsnMbmxprTJpW9Y9q2lN/kec/1hBJuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umAXk-00048k-MG; Wed, 13 Aug 2025 14:25:24 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umAXj-0005VI-08;
-	Wed, 13 Aug 2025 14:25:23 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umAXi-0094sZ-30;
-	Wed, 13 Aug 2025 14:25:22 +0200
-Date: Wed, 13 Aug 2025 14:25:22 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	Kyle Swenson <kyle.swenson@est.tech>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH ethtool v2 2/3] ethtool: pse-pd: Add PSE priority support
-Message-ID: <aJyEMob8kFAvD-HU@pengutronix.de>
-References: <20250813-b4-feature_poe_pw_budget-v2-0-0bef6bfcc708@bootlin.com>
- <20250813-b4-feature_poe_pw_budget-v2-2-0bef6bfcc708@bootlin.com>
+	s=arc-20240116; t=1755088080; c=relaxed/simple;
+	bh=WVI7u46lb9RHFhVR+adg6ooJk/Oubo9mQASG5pRCIV8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bJyA3Lxece8VKRNdp3/AzS7AeAAmcKQxToyCADjEJxCyTFPg7zz2+qRJ3AfL9nzIvIN9+lnWiEA51UF9BdBrze+MD5Leo7njZ5s73lnOfW29nQM6f7z/zaaVqvkFI97vtAkSxRzwNjP0Dv/BXeUbljIT7AlqrsiioU1Kzu13JWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c26yd2GZgz6L55p;
+	Wed, 13 Aug 2025 20:25:13 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E0AF71402C8;
+	Wed, 13 Aug 2025 20:27:53 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 14:27:53 +0200
+Date: Wed, 13 Aug 2025 13:27:51 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+CC: <linux-cxl@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
+ Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>, Robert Richter <rrichter@amd.com>,
+	<ming.li@zohomail.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4 v4] cxl/core: Change match_*_by_range() signatures
+Message-ID: <20250813132751.00000e97@huawei.com>
+In-Reply-To: <20250724142144.776992-2-fabio.m.de.francesco@linux.intel.com>
+References: <20250724142144.776992-1-fabio.m.de.francesco@linux.intel.com>
+	<20250724142144.776992-2-fabio.m.de.francesco@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250813-b4-feature_poe_pw_budget-v2-2-0bef6bfcc708@bootlin.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Kory,
+On Thu, 24 Jul 2025 16:20:31 +0200
+"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
 
-Thank you for your work! Here are some review comments...
-
-On Wed, Aug 13, 2025 at 10:57:51AM +0200, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> Replace struct range parameter with struct cxl_endpoint_decoder of
+> which range is a member in the match_*_by_range() functions and rename
+> them according to their semantics.
 > 
-> Add support for PSE (Power Sourcing Equipment) priority management:
-> - Add priority configuration parameter (prio) for port priority management
-> - Display power domain index, maximum priority, and current priority
+> This is in preparation for expanding these helpers to perform arch
+> specific Root Decoders and Region matchings with
+> cxl_endpoint_decoder(s).
 > 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
->  ethtool.8.in     | 13 +++++++++++++
->  ethtool.c        |  1 +
->  netlink/pse-pd.c | 29 +++++++++++++++++++++++++++++
->  3 files changed, 43 insertions(+)
-> 
-> diff --git a/ethtool.8.in b/ethtool.8.in
-> index 29b8a8c..163b2b0 100644
-> --- a/ethtool.8.in
-> +++ b/ethtool.8.in
-> @@ -561,6 +561,7 @@ ethtool \- query or control network driver and hardware settings
->  .RB [ c33\-pse\-admin\-control
->  .BR enable | disable ]
->  .BN c33\-pse\-avail\-pw\-limit N
-> +.BN prio N
->  .HP
->  .B ethtool \-\-flash\-module\-firmware
->  .I devname
-> @@ -1911,6 +1912,15 @@ This attribute specifies the allowed power limit ranges in mW for
->  configuring the c33-pse-avail-pw-limit parameter. It defines the valid
->  power levels that can be assigned to the c33 PSE in compliance with the
->  c33 standard.
-> +.TP
-> +.B power-domain-index
-> +This attribute defines the index of the PSE Power Domain.
-
-May be:
-
-Reports the index of the PSE power domain the port belongs to. Every
-port belongs to exactly one power domain. Port priorities are defined
-within that power domain.
-
-Each power domain may have its own maximum budget (e.g., 100 W per
-domain) in addition to a system-wide budget (e.g., 200 W overall).
-Domain limits are enforced first: if a single domain reaches its budget,
-only ports in that domain are affected. The system-wide budget is
-enforced across all domains; only when it is exceeded do cross-domain
-priorities apply.
-
-> +.TP
-> +.B priority-max
-> +This attribute defines the maximum priority available for the PSE.
-
-Reports the maximum configurable port priority value within the reported
-power domain. The valid range for prio is 0 to priority-max (inclusive).
-
-> +.TP
-> +.B priority
-> +This attribute defines the currently configured priority for the PSE.
-
-Reports the currently configured port priority within the reported power
-domain. Lower numeric values indicate higher priority: 0 is the highest
-priority.
-
->  .RE
->  .TP
-> @@ -1930,6 +1940,9 @@ This parameter manages c33 PSE Admin operations in accordance with the IEEE
->  This parameter manages c33 PSE Available Power Limit in mW, in accordance
->  with the IEEE 802.3-2022 33.2.4.4 Variables (pse_available_power)
->  specification.
-> +.TP
-> +.B prio \ N
-> +This parameter manages port priority.
-
-Set the port priority, scoped to the port's power domain
-as reported by power-domain-index. Lower values indicate higher
-priority; 0 is the highest. The valid range is 0 to the
-priority-max reported by --show-pse.
-
-When a single domain exceeds its budget, ports in that domain are
-powered up/down by priority (highest first for power-up; lowest shed
-first).  When the system-wide budget is exceeded, priority ordering is
-applied across domains.
-
->  .RE
->  .TP
-> diff --git a/ethtool.c b/ethtool.c
-> index 215f566..948d551 100644
-> --- a/ethtool.c
-> +++ b/ethtool.c
-> @@ -6339,6 +6339,7 @@ static const struct option args[] = {
->  		.xhelp	= "		[ podl-pse-admin-control enable|disable ]\n"
->  			  "		[ c33-pse-admin-control enable|disable ]\n"
->  			  "		[ c33-pse-avail-pw-limit N ]\n"
-> +			  "		[ prio N ]\n"
->  	},
->  	{
->  		.opts	= "--flash-module-firmware",
-> diff --git a/netlink/pse-pd.c b/netlink/pse-pd.c
-> index fd1fc4d..5bde176 100644
-> --- a/netlink/pse-pd.c
-> +++ b/netlink/pse-pd.c
-> @@ -420,6 +420,29 @@ int pse_reply_cb(const struct nlmsghdr *nlhdr, void *data)
->  		}
->  	}
->  
-> +	if (tb[ETHTOOL_A_PSE_PW_D_ID]) {
-> +		u32 val;
-> +
-> +		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PW_D_ID]);
-> +		print_uint(PRINT_ANY, "power-domain-index",
-> +			   "Power domain index: %u\n", val);
-> +	}
-> +
-> +	if (tb[ETHTOOL_A_PSE_PRIO_MAX]) {
-> +		u32 val;
-> +
-> +		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PRIO_MAX]);
-> +		print_uint(PRINT_ANY, "priority-max",
-> +			   "Max allowed priority: %u\n", val);
-> +	}
-> +
-> +	if (tb[ETHTOOL_A_PSE_PRIO]) {
-> +		u32 val;
-> +
-> +		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PRIO]);
-> +		print_uint(PRINT_ANY, "priority", "Priority %u\n", val);
-
-missing colon
-		print_uint(PRINT_ANY, "priority", "Priority: %u\n", val);
- 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
