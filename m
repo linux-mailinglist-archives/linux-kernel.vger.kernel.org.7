@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-767322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42964B252D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:13:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C13A3B252D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66C87627EF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECEE31C27576
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF152C0F76;
-	Wed, 13 Aug 2025 18:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4862B2C178D;
+	Wed, 13 Aug 2025 18:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HEUvkxYP"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BiMgzoAG"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27244242909;
-	Wed, 13 Aug 2025 18:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BC4F2BF00B;
+	Wed, 13 Aug 2025 18:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755108792; cv=none; b=a7biaA8q5satU7vWQurErY/CwsoGdwH+SQMC8ao7LfpLgjoc8dJrRuX40dJBArpI4u8dYxV154XOKJCIzwS3Rpx0uqiO3/2Q6WtWExtGwZxJJ2i/nV5uWYxHcwV9HuupDsm7vuPaazJOBg0gFoUh3trhbJFUeTrVJY471dNJ2sc=
+	t=1755108804; cv=none; b=YU/coVcpEZgL9DqETr8c3WK7d+E7YMThJVtSmYyTTuhI3X0XPJOMBiGh8/jxXvlr2YfJKnlFiQsjZUhh74Uh+uAbCM4G7y+bFmE0DKb7g9TVFnUqjqy/89pHPfb1rGyGnhVLIgtPj2dtIS/MFvLC+Ttw2GWWgNj59lyjZZw43N8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755108792; c=relaxed/simple;
-	bh=OzaOo9DC/ZsDSAFEyajzdZJ/+x8UmuZD6g+aohosgr4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TbNJ2v4C4n2iNtpqe6RT5P1VzDsvHx9H87AGd1JP67rLHvlq/3vugUFKU/Y4Sk/oL23g4STbnzLPBbyAXeZ4FsgsD87N1Od8zvoBN2Sr+4FKZv9TpaOJ8YtsbEn0pFQeicfHYVJhegposgS5tL3N3pO5j3jgApm5xpPHQ0Uw5oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HEUvkxYP; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DID1bQ2205285;
-	Wed, 13 Aug 2025 13:13:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755108781;
-	bh=7IebP5jPLEOV9y5xfdECM/kbLF/W1XSjQ1/QWle3e8U=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=HEUvkxYPYVFUykPkuwuYTvUtj4Hd8WtVAkZcURzvpJdBrV+Y+oiRnD0s55+p0ZZqQ
-	 NfvXJiL8UfvH+g/ZgsCa0Ll3Y8pTX18yTtlcFTqh0xt8Th5Ovu2RsvFzDpHOGVchj/
-	 xkSXqsP4QBwVm9AVuQtXn2bXc9BlJw4SQddnz0ao=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DID1DW1152224
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 13:13:01 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 13:13:00 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 13:13:00 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DID0Oa2390456;
-	Wed, 13 Aug 2025 13:13:00 -0500
-Date: Wed, 13 Aug 2025 13:13:00 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Randolph Sapp <rs@ti.com>
-CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <d-gole@ti.com>,
-        <afd@ti.com>, <bb@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <detheridge@ti.com>, <matt.coster@imgtec.com>
-Subject: Re: [PATCH 3/3] arm64: dts: ti: k3-j784s4-j742s2: enable the bxs-4-64
-Message-ID: <20250813181300.xfpsu23arx7xy4fy@anointer>
-References: <20250808232522.1296240-1-rs@ti.com>
- <20250808232522.1296240-3-rs@ti.com>
- <20250813151819.5rthljjrpryfwezz@skinning>
- <DC1HU458W3QA.YLONSMYKK0C4@ti.com>
+	s=arc-20240116; t=1755108804; c=relaxed/simple;
+	bh=bS0H2a+QAnDqgl3hZ+WnRx3C46I3JDmj81787eAk5+s=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=fvKoLIN4FLwEDL95iQbcYajy/EMVen1zMH681ASi95AY1c/q6nMETWE2O8ClylFGol7L1/KCwpGqPrTKTtff511kSBTSkZ6f6Uq5q/PZkjvHp3uSre42iNeVx5ibgI+/I7mfFFbYP3I+UdTIap0NptLY/RflvIVEBDo3r0mKQio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BiMgzoAG; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9e4110df6so9082f8f.2;
+        Wed, 13 Aug 2025 11:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755108801; x=1755713601; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CFKm3y9YxdU6tj7GHV2bPw1IK0NzyIQ7DL6lw+pupXM=;
+        b=BiMgzoAGZ1bzVmlfviNX6YwbS7747B+pFSmD1DGQpVKMa3AG7vcZkoueLt2L+5mQkf
+         ZHogTkBEzjZWVmlWMvbIBtVxIjtAs6s77ToDXekRgEsoR9JpBmeueo7LfHAV9zIi6nI5
+         SZZpV669wzBMw0Yfr/5ptXhhxC8p54hQcqOb2B5rgahugymGf7VZ/vSe77obL9Q5guRN
+         5M9+tFloy6U0aC7njkgX8/hDrn4tZnp8RsCRgTzpqv3u4mHGMU3/39k/JNZl5GEDUuG8
+         6vL40X5ypz7dX5U0Rff35NNJxURv4f4J4l8z3VuEZ7SlkRaB0LyCjA02UTLvPJn/wqpZ
+         1aCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755108801; x=1755713601;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CFKm3y9YxdU6tj7GHV2bPw1IK0NzyIQ7DL6lw+pupXM=;
+        b=nQ3WMSk7dgNaFl0aOhXjNSYeg7WamlreHJCcC4LtpL9sI70W5gKd+Cgqrx6XvQFalH
+         IJ4UTLx0VJ8lBKHNbtHrS7VLXgxtToktKhuIuhYqjokyUNNffKEnuMP9DMQMbuGcy510
+         PZdYkoy8AGiPNf4dmJoJQ+gOCuykjVbc5ffXMOkb1cB7TUfWa3WqsAI4jz2GCpYG2c/q
+         Hp/ZhB6+3A/SqOk0frJn+OGrFp9ebNmzyJCqhlsg2/feAxd2nURdgeXwax9+DC1TH6zZ
+         bhNAun2WQA1sDZaD3YqUEDQ/5RJFVYb6RSfYvUwdLhYZvE79sZggTJC9h72TFEzzTmgF
+         NxzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHF9BzwLXmk2YIs7N03Pa0GrKKxweFQxcrgrhSYECWM7CNBAEh0RHRHkCgLL19rUgRvudrFE5B@vger.kernel.org, AJvYcCXcVVH2NDgKwzfV1oSULaU/6kTThU+XdFpF+t7LC8SeycJ9IMkFsKALhxMNbDf8RjdEqYGrQFZkDQ8nyvQ=@vger.kernel.org, AJvYcCXngXj5FZU/B6QyJniWJY4jywWu7WTpZKwjoMEqLuYaiix95Drt+afadRXiBb2sYDlgNQqSYIrMUaDH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSuiH7el6npvPUxuyfZGy7EMSk1ue/8Faaxzu2RSEX+Br7t0lg
+	BFPzmOWQDdHjSaySf6rWL+McekXPMX+fYKB5OY8uOsJwNzySiqKKUzip
+X-Gm-Gg: ASbGncsMpZb4jzKgEAd6mIPfoXWglTPffCo/lYZJ8WYW4uozK6T4QhdeYO2tgJFuSH8
+	TiYMlEQWEN3jV4M8eKqeP0CUEfiOSyrFSR2Wp1xImcYK6GOMyqYt2PqGQJ2ydWIbxkuO4HahGLj
+	aQH+S+o+JcJMsuUeaDm6phHw97xl0Om9KLieJQbiZX8V0LVEGYHt4pmexBwGccDF8/Cv9Y3sHkj
+	BOat7CchsUNja2MvwnHN4RZZ13FqBmCZB04nzAQKEcmbv/bX2Pu1KL33Xva2E95klrrQ+OfMJR2
+	CNZ9fcxqiWgoC+2o/HxXF1s5UcsrXusxFlgBfn8xRyxWenmC34CrWV25GAm8hidIfJsWKwD1HjW
+	BEh1oR7vIqextT8R9idRqlF1bKLHZxYcXBOXoMw==
+X-Google-Smtp-Source: AGHT+IGhKvZwl0to1Oo4/pwCJw1lBPPHJZC5G0h6a0/mKBazrrc9aWQ5GrOz4lZ42Gtxfp8bRDeQvA==
+X-Received: by 2002:a05:6000:2586:b0:3a4:f8a9:a03e with SMTP id ffacd0b85a97d-3b9edf84e33mr85213f8f.3.1755108801153;
+        Wed, 13 Aug 2025 11:13:21 -0700 (PDT)
+Received: from [127.0.0.1] ([185.115.6.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8ff860acbsm22133742f8f.51.2025.08.13.11.13.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 11:13:20 -0700 (PDT)
+Date: Wed, 13 Aug 2025 22:13:18 +0400
+From: Giorgi <giorgitchankvetadze1997@gmail.com>
+To: Zenm Chen <zenmchen@gmail.com>, stern@rowland.harvard.edu
+CC: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, pkshih@realtek.com, rtl8821cerfe2@gmail.com,
+ stable@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+ usbwifi2024@gmail.com, zenmchen@gmail.com
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_USB=3A_storage=3A_Ignore_driver_CD?=
+ =?US-ASCII?Q?_mode_for_Realtek_multi-mode_Wi-Fi_dongles?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <8560A878-1EAE-4FE3-B96E-2916E27F90F5@gmail.com>
+References: <ff043574-e479-4a56-86a4-feaa35877d1a@rowland.harvard.edu> <20250813175313.2585-1-zenmchen@gmail.com> <8560A878-1EAE-4FE3-B96E-2916E27F90F5@gmail.com>
+Message-ID: <A54117AB-2BFD-4864-AEA3-4F1AF977A869@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <DC1HU458W3QA.YLONSMYKK0C4@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 12:58-20250813, Randolph Sapp wrote:
-> On Wed Aug 13, 2025 at 10:18 AM CDT, Nishanth Menon wrote:
-> > On 18:25-20250808, rs@ti.com wrote:
-> >> From: Randolph Sapp <rs@ti.com>
-> >> 
-> >> Add the relevant device tree node for Imagination's BXS-4-64 GPU.
-> >> 
-> >> These devices uses a similar MSMC configuration to the J721S2. As such,
-> >> they also require the use of the dma-coherent attribute.
-> >> 
-> >> Signed-off-by: Randolph Sapp <rs@ti.com>
-> >> ---
-> >>  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 14 ++++++++++++++
-> >>  1 file changed, 14 insertions(+)
-> >> 
-> >> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> >> index 7c5b0c69897d..a44ca34dda62 100644
-> >> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> >> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-> >> @@ -2691,4 +2691,18 @@ bist_main14: bist@33c0000 {
-> >>  		bootph-pre-ram;
-> >>  		ti,sci-dev-id = <234>;
-> >>  	};
-> >> +
-> >> +	gpu: gpu@4e20000000 {
-> >> +		compatible = "ti,j721s2-gpu", "img,img-bxs-4-64", "img,img-rogue";
-> >
-> > Following  https://lore.kernel.org/linux-arm-kernel/DBE4UO2RGAYX.17V1DAF8MQYJM@kernel.org/
-> > Is it worth having ti,j784s4-gpu here? Are there any SoC specific quirks
-> > that driver will need to handle?
-> 
-> No SoC specific quirks, aside from those already being tracked through the
-> dma-coherent attribute. If we actually want to register SoC specific
-> compatibility entries as advised by the kernel docs, just let me know. I've seen
-> this opinion toggle a few times.
-> 
+Maybe we could only add US_FL_IGNORE_DEVICE for the exact Realtek-based mod=
+els (Mercury MW310UH, D-Link AX9U, etc=2E) that fail with usb_modeswitch=2E
 
-Please provide bootlogs on linux-next with just this series applied.
-IMHO, based on what I see at the moment on GPU, it might be a good idea
-to have SoC specific compatibility entries.
+This avoids disabling access to the emulated CD for unrelated devices=2E
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+
+>On August 13, 2025 9:53:12 PM GMT+04:00, Zenm Chen <zenmchen@gmail=2Ecom>=
+ wrote:
+>>Alan Stern <stern@rowland=2Eharvard=2Eedu> =E6=96=BC 2025=E5=B9=B48=E6=
+=9C=8814=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8812:58=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+>>>
+>>> On Thu, Aug 14, 2025 at 12:24:15AM +0800, Zenm Chen wrote:
+>>> > Many Realtek USB Wi-Fi dongles released in recent years have two mod=
+es:
+>>> > one is driver CD mode which has Windows driver onboard, another one =
+is
+>>> > Wi-Fi mode=2E Add the US_FL_IGNORE_DEVICE quirk for these multi-mode=
+ devices=2E
+>>> > Otherwise, usb_modeswitch may fail to switch them to Wi-Fi mode=2E
+>>>
+>>> There are several other entries like this already in the unusual_devs=
+=2Eh
+>>> file=2E  But I wonder if we really still need them=2E  Shouldn't the
+>>> usb_modeswitch program be smart enough by now to know how to handle
+>>> these things?
+>>
+>>Hi Alan,
+>>
+>>Thanks for your review and reply=2E
+>>
+>>Without this patch applied, usb_modeswitch cannot switch my Mercury MW31=
+0UH
+>>into Wi-Fi mode [1]=2E I also ran into a similar problem like [2] with D=
+-Link
+>>AX9U, so I believe this patch is needed=2E
+>>
+>>>
+>>> In theory, someone might want to access the Windows driver on the
+>>> emulated CD=2E  With this quirk, they wouldn't be able to=2E
+>>>
+>>
+>>Actually an emulated CD doesn't appear when I insert these 2 Wi-Fi dongl=
+es into
+>>my Linux PC, so users cannot access that Windows driver even if this pat=
+ch is not=20
+>>applied=2E
+>>
+>>> Alan Stern
+>>
+>>[1] https://drive=2Egoogle=2Ecom/file/d/1YfWUTxKnvSeu1egMSwcF-memu3Kis8M=
+g/view?usp=3Ddrive_link
+>>
+>>[2] https://github=2Ecom/morrownr/rtw89/issues/10
+>>
 
