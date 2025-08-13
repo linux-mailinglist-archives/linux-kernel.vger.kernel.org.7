@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-766622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C88A1B24924
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:07:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D07BFB24927
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10C062A4C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:06:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68FD47A7E68
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926382FE585;
-	Wed, 13 Aug 2025 12:06:34 +0000 (UTC)
-Received: from mail.gtsys.com.hk (web.xit.com.hk [111.91.236.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E58F2F83C3;
+	Wed, 13 Aug 2025 12:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oK7BQKZC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A362F5320
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.91.236.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4811B2F6571
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086794; cv=none; b=fLmDZLBw0uqQohMyFmbtESUXSt+zZm5pGwqAhVT59y//g6kZVDu8t1plwYvN8WUL+9n8BW1tEbGFr3YWtQHKwUPcaO7UymUUkCG0ZXXvJnL0O5WgxSy3pkKYJ39SHnIMWpgVlWVWioHl/9IQEcNHLQYCbt9Zi3jh+OuPsjdWTo4=
+	t=1755086842; cv=none; b=ciIxQdlTYfOhhDbI6/mLGXllffezd7bQw7ZC7LIrKdGBfswlSeaqGF1+S06zHRxolY6FcxL7tH0Sb9bnBP5XvZ4XVo7GaS3KaZKv+fqlYEQ3GAWtN5wI7Xd4VZCwsCpFnA4A69Vld7UTIAbRIfxNXSqTOejzA8WIl95ENmjC5Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086794; c=relaxed/simple;
-	bh=cednGyxZpUVDqxI6V1VfrPBqeI40G0d+sK9oUx8jiu4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=WIBi/DMY4wZpRu7nbfyIvqOj9qbv1TzhKg8e7eZt0sJl1VhSxrkLnfHaPpBPPpq8X7hABQEc7TFG3cEdFw7Fl2esl+0mYCmA7VKd8hicZbh8oTnGMtR+zA8DnNV3Q3Ite3yWpfX+1GuAqdgr/+OhyzbygZ3k7Ah731rjJMHituI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtsys.com.hk; spf=pass smtp.mailfrom=gtsys.com.hk; arc=none smtp.client-ip=111.91.236.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gtsys.com.hk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gtsys.com.hk
-Received: from localhost (localhost [127.0.0.1])
-	by mail.gtsys.com.hk (Postfix) with ESMTP id DE0081C7B;
-	Wed, 13 Aug 2025 20:06:22 +0800 (HKT)
-X-Virus-Scanned: Debian amavis at gtsys.com.hk
-Received: from mail.gtsys.com.hk ([127.0.0.1])
- by localhost (mail.gtsys.com.hk [127.0.0.1]) (amavis, port 10024) with ESMTP
- id tWlbPsbfXnGd; Wed, 13 Aug 2025 20:06:22 +0800 (HKT)
-Received: from gtsnode.virtual.gtsys.com.hk (gtsnode.virtual.gtsys.com.hk [10.128.4.2])
-	by mail.gtsys.com.hk (Postfix) with ESMTP id 9298B289;
-	Wed, 13 Aug 2025 20:06:22 +0800 (HKT)
-Received: from [192.168.0.125] (ip-037-201-119-101.um10.pools.vodafone-ip.de [37.201.119.101])
-	by gtsnode.virtual.gtsys.com.hk (Postfix) with ESMTPSA id 822D31FC30;
-	Wed, 13 Aug 2025 20:06:20 +0800 (HKT)
-Message-ID: <1817e111-42b1-4352-be82-34d373db4f9d@gtsys.com.hk>
-Date: Wed, 13 Aug 2025 14:06:15 +0200
+	s=arc-20240116; t=1755086842; c=relaxed/simple;
+	bh=9qGcsLi3E1UFO4Ta3jTChcqEtx0TcY4Yl7Ij76foFms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rttZkaecldOvCOegBzyP+Z56fk0gQv52N1/MRzpezPc0lbHLlHJPmbK/e7Z/nEn074VJfHQ9eEbvAI4JIzXrXAAWPZy6B42mjaL/HXCPU0PG7o/01EQbGEJcY1KBT1RD70vNiMmSFR6R6NTPrysJ6mATsQrLOnT0yyNU6llbxmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oK7BQKZC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLf49030083
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:07:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	cpMBrmFukhU4y6bCKMTKHpHZgNaPXxJRJsX95Y0wvlM=; b=oK7BQKZCKX+/NDhf
+	Hb1HOr8MuTn1j7LRuc2YfW+CSOtw/441t6C9VDYNYRpDAONHxCLalD0V2LDM8KY7
+	X3MBSEM2Vz3+YDZ1eNnTsFH5H4KTW/UZI0e4aU2kslBnFTUKkQszKbXkg07OW5+N
+	u7o7ss87Kv51zhOsuNse5CNFUhcLa9XCYkliJw/I+ML4rSQiy/jLnJN34nfxKB3v
+	q6QYKwZb8ab7ASLcKj4a1WH34yLsJTRnnWTxW5VWjwz7JoLdaSGeZqetfIcnU1YR
+	E1QdW4QTVnDoY6obToK5RpMGp2ZJ2tsNKR2plS8608R9L/v9zQHoc8tPDvZyB1su
+	O/WmjA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vpm42-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:07:19 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b0c502e87bso5366001cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:07:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755086839; x=1755691639;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cpMBrmFukhU4y6bCKMTKHpHZgNaPXxJRJsX95Y0wvlM=;
+        b=HLHESvUJNmHY+B1fg1Tkd49B+ba98h8/Jvv/vFiNDsGIod0jhx3nGEUUHGXUm0d5zV
+         q6byw1Y7aXCoVKQB9umosf5mhippPq7xk53PJeCE4I+8odIaz7Vhjp09eImwgAk3HRbz
+         SxcC3MoM4cQLlo9i6C/L4+9lHwxk5CnkL0uyM6HvXy6tkB3f2mc9yCnMeHkduiQB06Pa
+         +x91NF8+0KHRV6HmLfEYX20SDEpxTSE99sNpQhBpP2IgMl65FK8pcVLIyrwApTNeHyIS
+         cc8tjJQu0IKW6MeoUz7rUmVvbkbQSmhGqhY40ea2GWd/DfvT6XygIAfi2cTAubT1MUJK
+         XWaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUcxSeiUDdhs0Ks8sN63YAbd0ioxLtZROzfIj/lm5i0neXkSF72KOx82ENTvTOS12XP+CuI86R+Iam/c6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHW6/dhSTkAsMG9KbwegCqlxFgbPctzTvP3JiZhmgtlbY+5GkV
+	APo+7V9hhn3UcKNT91g8DL6gzUR6qYpiqfwwHJU4k5hoNee68NDz7r3hdMk2v2/R4gxesu8/GjR
+	RCMtCQLrITKzZBmzExBT7A3lVka5VG2SpGDAcDLVP91nJgn3BckL1hu709DoCySI0FQc=
+X-Gm-Gg: ASbGncu9qHOrDod0rw83w5dr6g30ddMmUo7IDQauvOr1SzHiKftscpUXUEDS5Di7g0l
+	XJK05ZYxAeL6/T6b3lc8BRyGFIXl4y2GmcZjINTFr+MEP6Uf/HKlENwJ2z7NEE4zRYPAgAxM/lG
+	eGrV7Po8sP9TVm47mMWvv3FANiBPld4AKXo+gFHw/mIZNtLex4Z9goBO50GoGO8cR4lfDJD0V4d
+	SApTBtkKzFr0JdGMf4j16Wujop2pCbt31+9DWlWGi9zXUqxF1gsElrdbP5vwWLcixWjkBUB5fu8
+	aSyiSD9Cjh4NIVVt52e8jeWmti9TVE25dYJzczZNRypXoVDl3RIxOlhBcdStH/6ZkPmk4iUa8Ne
+	RSmdXaLbMSodppuEEuA==
+X-Received: by 2002:a05:622a:11c9:b0:4a5:aaeb:dce2 with SMTP id d75a77b69052e-4b0fc7bd280mr17927671cf.10.1755086838446;
+        Wed, 13 Aug 2025 05:07:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGZpdI3hsMO67WfmjVMZeVxcjGlR3cg/Z3J/5n/B10NtxW+duZ0gzDzWCXUZ//zNILeSnGbFw==
+X-Received: by 2002:a05:622a:11c9:b0:4a5:aaeb:dce2 with SMTP id d75a77b69052e-4b0fc7bd280mr17927091cf.10.1755086837804;
+        Wed, 13 Aug 2025 05:07:17 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6187d96a320sm385968a12.4.2025.08.13.05.07.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 05:07:17 -0700 (PDT)
+Message-ID: <f2f13082-20d6-4f22-8dfb-f11b01cd6706@oss.qualcomm.com>
+Date: Wed, 13 Aug 2025 14:07:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,108 +89,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50
+ broken capabilities
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Sarthak Garg <quic_sartgarg@quicinc.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
+        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+        quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
+References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
+ <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
+ <69f2807c-9a28-4b31-97cc-2756f0ab9fd4@kernel.org>
+ <c7e36755-9255-4209-9d53-20077bd1d3ba@quicinc.com>
+ <8b023e56-435b-43df-8b15-c562a494e06f@kernel.org>
+ <ab5d3811-9fbf-4749-9463-4457fbf50023@quicinc.com>
+ <4091c488-996c-4318-82ad-c054a9ef5a22@oss.qualcomm.com>
+ <a93fb5bf-1fd5-4e00-8338-b8608a9ba8fa@kernel.org>
 Content-Language: en-US
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
- linux-kernel@vger.kernel.org
-From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
-Subject: kernel: locking: warning triggered mutex.c +713
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <a93fb5bf-1fd5-4e00-8338-b8608a9ba8fa@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfX5IHU4tGh+hoA
+ wV+SM9ncnkF5zJtroLvOl/JUSovaFBRrlMs+tuUZqlj+RAmxgSU660zFR25HwMA3W3ap7GtHvJO
+ AmYxXp3nhmTtENGAMn6auSxOQjuaP56lTPgnnFSmPXdkKKI48w4kRMc+ENHvpePzkjO1pFMJxzn
+ Ma5HA5Usmr136JC/7gU9iqdI6MSYwf+CZCjAxkT7pMJkmjx6mg8VTT/f14g6t+OFgAs//Gz/OND
+ ZG1b1DawMU2tQ5IcSsC0sZDm2GHkElztNe6sP3rH0YPhbngEEstb/e2IMhAnYWoz0cRjfUZV3hs
+ Xgs2i3uObnMsWzU8dJHpSwZWijTQzJbyvfP6QYsDe6SqRazh92R2eWQt5sl4pq+IE+UcTXKRE28
+ RGmohM29
+X-Proofpoint-GUID: 4Tr11oHk28xa29TXz4JJtGQy5Wdc5P31
+X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689c7ff7 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=RWzb36qre9bUkXLxNJYA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 4Tr11oHk28xa29TXz4JJtGQy5Wdc5P31
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110107
 
-Hello Peter,
+On 8/13/25 1:56 PM, Krzysztof Kozlowski wrote:
+> On 13/08/2025 13:21, Konrad Dybcio wrote:
+>> On 8/13/25 1:08 PM, Sarthak Garg wrote:
+>>>
+>>>
+>>> On 8/5/2025 2:55 PM, Krzysztof Kozlowski wrote:
+>>>> On 05/08/2025 11:19, Sarthak Garg wrote:
+>>>>>
+>>>>>
+>>>>> On 8/1/2025 2:32 PM, Krzysztof Kozlowski wrote:
+>>>>>> On 01/08/2025 10:45, Sarthak Garg wrote:
+>>>>>>> The kernel now handles level shifter limitations affecting SD card
+>>>>>>> modes, making it unnecessary to explicitly disable SDR104 and SDR50
+>>>>>>> capabilities in the device tree.
+>>>>>>>
+>>>>>>> However, due to board-specific hardware constraints particularly related
+>>>>>>> to level shifter in this case the maximum frequency for SD High-Speed
+>>>>>>> (HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
+>>>>>>> card in HS mode. This is achieved using the max-sd-hs-frequency property
+>>>>>>> in the board DTS.
+>>>>>>>
+>>>>>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+>>>>>>> ---
+>>>>>>>    arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
+>>>>>>>    arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
+>>>>>>>    arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
+>>>>>>>    arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 3 ---
+>>>>>>>    4 files changed, 3 insertions(+), 3 deletions(-)
+>>>>>>>
+>>>>>>
+>>>>>> This will break MMC for all of the users and nothing in commit msg or
+>>>>>> cover letter explains that or mentions merging strategy.
+>>>>>>
+>>>>>> Exactly this case is covered by your internal guideline, no? Please read it.
+>>>>>>
+>>>>>> Best regards,
+>>>>>> Krzysztof
+>>>>>
+>>>>> Just to make sure I’m addressing the right concern — are you primarily
+>>>>> worried about the introduction of the max-sd-hs-frequency property in
+>>>>> the board DTS files, or about the removal of the sdhci-caps-mask
+>>>>> from the common sm8550.dtsi?
+>>>>
+>>>>
+>>>> Apply this patch and test MMC. Does it work? No. Was it working? Yes.
+>>>>
+>>>>
+>>>> Best regards,
+>>>> Krzysztof
+>>>
+>>>
+>>> You're absolutely right to raise the concern about potential breakage.
+>>> After conducting additional testing across multiple boards, I’ve confirmed that the removal of SDR104/SDR50 broken capabilities does indeed affect V1 SM8550 devices.
+>>
+>> v1 is a prototype revision, please forget it exists, we most definitely
+>> do not support it upstream
+> 
+> 
+> You should double check. SM8450 (not v1!) needed it, so either it was
+> copied to SM8550 (v2!) by mistake or was also needed.
 
-On my ASUS xElite S15 Qualcomm it hit a warn_once introduced with commit
-Commit : a4f0b6fef4b08e9928449206390133e48ac185a7
+I believe that the speed capabilities are indeed restricted on 8550-final
+and that's why this patchset exists in the first place
 
-kernel/locking/mutex.c :+713
-acquired:
-         __clear_task_blocked_on(current, lock);  << line introduced
-         __set_current_state(TASK_RUNNING);
-
-[ 2048.385039] ------------[ cut here ]------------
-[ 2048.385050] WARNING: CPU: 8 PID: 1292 at ./include/linux/sched.h:2185 
-__ww_mutex_lock.constprop.0+0xbb4/0xff0
-[ 2048.385070] Modules linked in: michael_mic snd_soc_wsa884x 
-q6prm_clocks q6apm_lpass_dais q6apm_dai snd_q6dsp_common q6prm uhid 
-rfcomm aes_ce_ccm algif_aead cbc des_generic libdes algif_skcipher md5 
-algif_hash af_alg bnep qrtr_mhi ath12k mac80211 libarc4 cfg80211 mhi 
-aes_ce_blk aes_ce_cipher polyval_ce ghash_ce gf128mul sm4_ce_gcm 
-sm4_ce_ccm sm4_ce sm4_ce_cipher hci_uart sm4 btqca sm3_ce sha3_ce 
-bluetooth snd_soc_x1e80100 snd_soc_qcom_common qcom_spmi_temp_alarm 
-ecdh_generic snd_soc_qcom_sdw rfkill ecc snd_q6apm snd_soc_hdmi_codec 
-fastrpc snd_soc_lpass_va_macro snd_soc_lpass_tx_macro pci_pwrctrl_pwrseq 
-soundwire_qcom pci_pwrctrl_core snd_soc_lpass_wsa_macro 
-snd_soc_lpass_rx_macro snd_soc_lpass_macro_common snd_soc_wcd938x 
-snd_soc_wcd938x_sdw regmap_sdw snd_soc_wcd_mbhc coresight_stm 
-snd_soc_wcd_classh coresight_cti coresight_tmc soundwire_bus stm_core 
-coresight_replicator coresight_funnel coresight fuse ipv6 hid_multitouch 
-dm_mod i2c_hid_of xhci_plat_hcd xhci_hcd panel_samsung_atna33xc20 
-phy_nxp_ptn3222 ps883x i2c_hid
-[ 2048.385271]  nvme apr nvme_core rpmsg_ctrl rpmsg_char qrtr_smd 
-qcom_pd_mapper i2c_qcom_geni qcom_geni_serial dwc3 msm ubwc_config ocmem 
-pmic_glink_altmode qcom_rpmh_regulator drm_gpuvm drm_exec aux_hpd_bridge 
-gpu_sched rpmhpd ucsi_glink drm_client_lib qcom_battmgr typec_ucsi 
-clk_rpmh drm_display_helper cec phy_qcom_qmp_combo drm_dp_aux_bus 
-aux_bridge drm_kms_helper socinfo pwrseq_qcom_wcn nvmem_qcom_spmi_sdam 
-pwrseq_core qcom_pon drm qcom_q6v5_pas phy_qcom_eusb2_repeater typec 
-qcom_pil_info backlight phy_snps_eusb2 phy_qcom_edp dispcc_x1e80100 
-qcom_stats pinctrl_sm8550_lpass_lpi phy_qcom_qmp_usb qcom_geni_se 
-qnoc_x1e80100 dwc3_qcom_legacy qcom_common pinctrl_lpass_lpi 
-lpasscc_sc8280xp qcom_glink_smem icc_rpmh qcom_glink icc_bcm_voter 
-qcom_q6v5 qcom_sysmon mdt_loader qcom_aoss llcc_qcom icc_bwmon qcom_smd 
-qrtr gpucc_x1e80100 phy_qcom_qmp_pcie smp2p pmic_glink rpmsg_core 
-qcom_rpmh pdr_interface qcom_pdr_msg qmi_helpers cmd_db smem
-[ 2048.385437] CPU: 8 UID: 1000 PID: 1292 Comm: eDP-1 Not tainted 
-6.17.0-rc1-00001-g362e4b516317-dirty #24 PREEMPT
-[ 2048.385445] Hardware name: ASUSTeK COMPUTER INC. ASUS Vivobook S 15 
-S5507QA_S5507QAD/S5507QAD, BIOS S5507QAD.366 04/11/2025
-[ 2048.385449] pstate: 814000c5 (Nzcv daIF +PAN -UAO -TCO +DIT -SSBS 
-BTYPE=--)
-[ 2048.385455] pc : __ww_mutex_lock.constprop.0+0xbb4/0xff0
-[ 2048.385461] lr : __ww_mutex_lock.constprop.0+0xb4c/0xff0
-[ 2048.385467] sp : ffff80009105b930
-[ 2048.385469] x29: ffff80009105b990 x28: ffff00081bea60b0 x27: 
-0000000000000000
-[ 2048.385479] x26: ffff80009105b940 x25: 0000000000000001 x24: 
-ffff80009105b960
-[ 2048.385487] x23: ffff00081bea60b0 x22: ffff00081bea60a8 x21: 
-ffff00080e7b1180
-[ 2048.385496] x20: ffff80009105bbb8 x19: ffff00081bea60a0 x18: 
-0000000000000000
-[ 2048.385504] x17: 0000000000000000 x16: ffffb9fe28dc8e10 x15: 
-0000ffff88002ff8
-[ 2048.385512] x14: 0b40000000000000 x13: 0000000100000654 x12: 
-00000b4000000000
-[ 2048.385520] x11: 0000000000000040 x10: ffff00081bea1200 x9 : 
-ffffb9fe28dc8934
-[ 2048.385529] x8 : ffff0008006616f8 x7 : 0000000000000000 x6 : 
-ffff00080e7b1180
-[ 2048.385537] x5 : 0000000000000000 x4 : ffff80009100bbb8 x3 : 
-0000000000074248
-[ 2048.385545] x2 : 0000000000000001 x1 : ffff00080890c600 x0 : 
-ffff00081c1f60a8
-[ 2048.385553] Call trace:
-[ 2048.385557]  __ww_mutex_lock.constprop.0+0xbb4/0xff0 (P)
-[ 2048.385564]  __ww_mutex_lock_interruptible_slowpath+0x20/0x38
-[ 2048.385572]  ww_mutex_lock_interruptible+0xc4/0x158
-[ 2048.385578]  drm_modeset_lock+0xd8/0x110 [drm]
-[ 2048.385641]  drm_atomic_get_plane_state+0x80/0x170 [drm]
-[ 2048.385688]  drm_atomic_set_property+0x2b0/0xd48 [drm]
-[ 2048.385726]  drm_mode_atomic_ioctl+0x4d0/0xe18 [drm]
-[ 2048.385764]  drm_ioctl_kernel+0xc8/0x140 [drm]
-[ 2048.385803]  drm_ioctl+0x368/0x4e8 [drm]
-[ 2048.385842]  __arm64_sys_ioctl+0xb4/0x120
-[ 2048.385852]  invoke_syscall+0x50/0x120
-[ 2048.385862]  el0_svc_common.constprop.0+0x48/0xf0
-[ 2048.385870]  do_el0_svc+0x24/0x38
-[ 2048.385876]  el0_svc+0x34/0xf0
-[ 2048.385884]  el0t_64_sync_handler+0xa0/0xe8
-[ 2048.385891]  el0t_64_sync+0x198/0x1a0
-[ 2048.385897] ---[ end trace 0000000000000000 ]---
-
-with kind regards
-Chris
-
+Konrad
 
