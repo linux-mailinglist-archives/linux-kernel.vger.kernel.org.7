@@ -1,161 +1,130 @@
-Return-Path: <linux-kernel+bounces-767547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B73AB255CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:46:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E546B255C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3C988442A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:43:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C97F1B600F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DC91ADFFB;
-	Wed, 13 Aug 2025 21:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729FE309DB7;
+	Wed, 13 Aug 2025 21:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EnBw2Suq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="an0ghj6e"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86513009F7
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6153B1DA61B
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755121367; cv=none; b=eVloWgW/dB1AduD43B/zGguLKkOSKkZvvMdi8Q3yHgPMr0Jigw3WC/i0I0Ak9Yt2lOV/itThHPeLiHEO7DQJfAgSjFFR1CFQ+Zhf1doYKf/HpexIo/iuQb3r1bzTSlhP0wne6Ad7taYXWLc6SQ0c8yH2o+QbBn1dvhHTz47lqHI=
+	t=1755121370; cv=none; b=Uc8jZHPaRs3ulyKYl8L0ELtu39f/9XeJ2ChgcFahYzqUKb0OgYC4iwPnyhmuNkodWR/8jmZ0p03JyWRsQKH1Vhv3cA29LSmuxK11l/svZDHPyHzje7FX18sJdf/md/9iBLntOwb/k5O4P+Ez6Lra46KexmWYKnuv2zuTWLJz5hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755121367; c=relaxed/simple;
-	bh=tZkeNJG/k4HgzLYqAar3VskqfPv4lb2PhM0I5jaFVro=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fucOYZ4blND/MYZvgZav6rJFk9PGm3YyhaPOe2uWgF6hstu9ZpJaqIABWNZ3TCQWn+iqdNdA8tiirL2z5WL5/qjR3QaANbfpaBR4nJ0yxes6mW56yqz/JT77MxbBdVL+HShOW/GZUzRibIaDFKae2/HzOXAdIS5qPgdpVp9zneg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EnBw2Suq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755121364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HTAMoi7NWHH5SP+IGuvihL6yckezTSZsu/o/az3fetk=;
-	b=EnBw2Suq6KM4W8lgBe8I1D0WhPyJZD00JenfCux3y4YL7Z2+zU+snwLrsmUrRR7Xr3maFm
-	FELyG3uOMYhHyjN7CFlMmpC1iay20lONRNUn6pk8efzA3pj5FcWcOnxPJm+yCOvO7z48k9
-	wfIwXckq0TZW8AatxJ4DX4MglA70GU4=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-228-rtz11dMnOAOeajZyCkgiEg-1; Wed, 13 Aug 2025 17:42:43 -0400
-X-MC-Unique: rtz11dMnOAOeajZyCkgiEg-1
-X-Mimecast-MFC-AGG-ID: rtz11dMnOAOeajZyCkgiEg_1755121362
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e56ff18e4cso720265ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:42:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755121362; x=1755726162;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HTAMoi7NWHH5SP+IGuvihL6yckezTSZsu/o/az3fetk=;
-        b=C4rPBwXbhbttpwk3yu23RqHSq5Uwe+DEzZWuM9P+v+TRyt8E3aPoUvC4YqtaB3e9BX
-         3W+wq6pTDloSCQIXO5yOm/Xv0hWjgiP8olsQi0e9jvLiKP2l/F0/8wr4NqY8Q0vXjTMl
-         3sJrdqGoLp8LgVxaSWFN5Jq+Pj6lpf3ARfGGAMnuBI9I8Ag8hzJfJbTXbz8ibhU3LsoG
-         x96rZ2Mvw7HBj59S/VYPvUkt0qng75izHsTxoD3oXrcbu+pEEy1w7JTeDRSJ6VJ1IF6q
-         C8KzqDVQz+G5BxvKoOkAl9GrZwfu5vPBvUgVO+u+gI1HyAmPbuK2pK2tylm3Iugvg4Fe
-         3dsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeASZrhlM7OiwOe9lBG9zvXlrdi6yUWaKSkgDb2XEC4nw//r6OpNg4TW8aLdNwnFeRYxGKO9bpIJlFQMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyremmF+Lk66dn2QGtSK4ScnpTmPHM8nnm0JmUPfbU1SZLLSh9a
-	GS+sVUgmsBf0qvdpDwXi+9XHlv6/BJLkYuUy1h6lIBk0jmIDrBHgeXBVWAFYHbHJJSlA/IIdLgb
-	9X4Y/iViT+QqjME3Jaaap5XsL5oXAqAABO3GdyqkfjhlM88mGedndeCaCANPJRt5VBw==
-X-Gm-Gg: ASbGncuYIIxVMQGqdEENOfIGP1xSx5SEOVSqNZQZkGE0AIxtkueeUJ+7T3mV7AjwEuL
-	Y0++6GURp9cV2o/i+YorW696TZOpyiVRJCtz894NZjBZkQHkj+G4neH/4EkJIJagIZSR18SC99i
-	4AAXxjNCTmJUeayRMOVLlWiiBrMP9OglniQfRjYvd+8OO5PU4FxcDH04ekOqtSbXuE8wk2F+v/0
-	kfsx/H/hghWDc2jT+LYT4QQWLbmktfIfDofZmkocCvDl5ll9N6AXyfCQ5+zGpuvwn0Jvv3yA+JW
-	qjEikdenZkWy96eBA2STIFyjGQlUMCDfHTnrCOEd47g=
-X-Received: by 2002:a05:6e02:2584:b0:3e5:4844:4288 with SMTP id e9e14a558f8ab-3e5674d49f8mr22044895ab.6.1755121362410;
-        Wed, 13 Aug 2025 14:42:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDHHohC14gyeTWmYipxt4qFzm7xDJM1ET5AJFLlN2JDY03n+D1PVe+fB7ttkokcVWM8OBRFA==
-X-Received: by 2002:a05:6e02:2584:b0:3e5:4844:4288 with SMTP id e9e14a558f8ab-3e5674d49f8mr22044765ab.6.1755121361989;
-        Wed, 13 Aug 2025 14:42:41 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e53e6f9c4fsm48989665ab.41.2025.08.13.14.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 14:42:41 -0700 (PDT)
-Date: Wed, 13 Aug 2025 15:42:38 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Farhan Ali <alifm@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, schnelle@linux.ibm.com,
- mjrosato@linux.ibm.com
-Subject: Re: [PATCH v1 4/6] vfio-pci/zdev: Setup a zpci memory region for
- error information
-Message-ID: <20250813154238.78794b31.alex.williamson@redhat.com>
-In-Reply-To: <f18e339f-0eb6-4270-9107-58bb70ef0d08@linux.ibm.com>
-References: <20250813170821.1115-1-alifm@linux.ibm.com>
-	<20250813170821.1115-5-alifm@linux.ibm.com>
-	<20250813143028.1eb08bea.alex.williamson@redhat.com>
-	<f18e339f-0eb6-4270-9107-58bb70ef0d08@linux.ibm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755121370; c=relaxed/simple;
+	bh=RfbEu1S5VlAKyTJtB9cdwTIqJVPcs/984wHpUxeOi/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YbhNSHJd/UPbRWZBHKZg9j5MkNx51t48gyJEmcHlFBcOaDY4EnmNlnIY87LSx8FtKzTMozkRT26VSkkE/K18B+qZAbjNWR/T+3fg5vru5tLEnO/7KlkLQMtAE2vpFVyrfwBLEi4cwQTRMgOS8XjIkCvwQllKaN9A9iDgJQCVgoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=an0ghj6e; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
+	by cmsmtp with ESMTPS
+	id mA9Fuq7gXcOgkmJF9uceLq; Wed, 13 Aug 2025 21:42:47 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id mJF8ujzDCwYTkmJF8ub1hA; Wed, 13 Aug 2025 21:42:46 +0000
+X-Authority-Analysis: v=2.4 cv=fYCty1QF c=1 sm=1 tr=0 ts=689d06d7
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=aHXbAQ7li1hnrysWXWcA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=c9aJeW6YrzXpNnexgXqHFdglcRnHTJkzDF0HfgTpJcc=; b=an0ghj6e+l+Zzgb7XOL/sPRCCm
+	bYik69S0w1kR1rYbdaU78sTDYy3JHocLrGbtDS++hgavUShCwgH7Bc8Y3i8FHwwSalzNIct5XCLCK
+	aWyieuRTINRX+gWCRa954UMxHbxFIfsDsEeEOXSRG1Ie4s2j0FRvZWt/TU/hafrr2oaNhxq9Itoef
+	XlZWOy5NbVhX1E8r58qINh2mAMNEqeJM+T7NEaTU6lXTL6ZnBSNhC0wSMJN87vqAZk7W0prfqBmZe
+	ici3+ZIopB25HCVKnvulTgfJfTOkLt8DNBxiqT1gWPHbxkBzdsHo85yOa7Wm5psggazKGiu2n7aVs
+	Ofcepjsw==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:49402 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1umJF7-00000001xuF-1pCt;
+	Wed, 13 Aug 2025 15:42:45 -0600
+Message-ID: <c0deea93-0c85-4bef-af36-763f60648c6d@w6rz.net>
+Date: Wed, 13 Aug 2025 14:42:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/369] 6.12.42-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250812173014.736537091@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250812173014.736537091@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1umJF7-00000001xuF-1pCt
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:49402
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 57
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOHbgIakp0wie1bfoYRnkswtnHZ+ADkptEKNTK/dgSy9Kl+yHfzX2TXg9UBhCNe83+fsGNrRRYgH3t0Dp8CkVfwgNx/rAZuPLmj77/5mUDZzVKu7oeCv
+ WDW+i7/oGv2Wr1Gk61iMYfIphmgFPIW72kN9ACmYgOedU+sy6yCGnG9DCeeqo+MWSIo8Pyer3+tmzoS39KqN1NNfx4SKL45si5c=
 
-On Wed, 13 Aug 2025 14:25:59 -0700
-Farhan Ali <alifm@linux.ibm.com> wrote:
+On 8/12/25 10:24, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.42 release.
+> There are 369 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Aug 2025 17:27:11 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.42-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-> On 8/13/2025 1:30 PM, Alex Williamson wrote:
-> > On Wed, 13 Aug 2025 10:08:18 -0700
-> > Farhan Ali <alifm@linux.ibm.com> wrote:  
-> >> diff --git a/include/uapi/linux/vfio_zdev.h b/include/uapi/linux/vfio_zdev.h
-> >> index 77f2aff1f27e..bcd06f334a42 100644
-> >> --- a/include/uapi/linux/vfio_zdev.h
-> >> +++ b/include/uapi/linux/vfio_zdev.h
-> >> @@ -82,4 +82,9 @@ struct vfio_device_info_cap_zpci_pfip {
-> >>   	__u8 pfip[];
-> >>   };
-> >>   
-> >> +struct vfio_device_zpci_err_region {
-> >> +	__u16 pec;
-> >> +	int pending_errors;
-> >> +};
-> >> +
-> >>   #endif  
-> > If this is uapi it would hopefully include some description, but if
-> > this is the extent of what can be read from the device specific region,
-> > why not just return it via a DEVICE_FEATURE ioctl?  Thanks,
-> >
-> > Alex
-> >  
-> Yes, will add more details about the uapi. My thinking was based on how 
-> we expose some other vfio device information on s390x, such as SCHIB for 
-> vfio-ccw device.
-> 
-> I didn't think about the DEVICE_FEATURE ioctl. But looking into it, it 
-> looks like we would have to define a device feature (for eg: 
-> VFIO_DEVICE_FEATURE_ZPCI_ERROR), and expose this information via 
-> GET_FEATURE?
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Yes, and there's a probe capability built-in to determine support.
-
-> If the preference is to use the DEVICE_FEATURE ioctl I can 
-> try that. Curious, any specific reason you prefer the DEVICE_FEATURE 
-> ioctl to the memory region?
-
-Given our current segmenting of the vfio device fd, we're using 40-bits
-of address space for a 6-byte structure.  We're returning structured
-data that has no requirement to be read at arbitrary offsets and
-lengths.  For example, does this series really even handle a short
-read?  We adjust counters for any read, it's more prone to those sorts
-of errors.
-
-Maybe if you actually wanted to allow the user to mmap the error array
-buffer and move the head as they read data while the kernel
-asynchronously fills from the tail, it might make sense to use a
-region, but as used here I don't think it's the right interface.
-Thanks,
-
-Alex
+Tested-by: Ron Economos <re@w6rz.net>
 
 
