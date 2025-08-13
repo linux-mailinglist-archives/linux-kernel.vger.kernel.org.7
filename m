@@ -1,104 +1,166 @@
-Return-Path: <linux-kernel+bounces-767405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8F0B253E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:23:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74DFB253E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF821C25FF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:23:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FEC47BD4D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42D22F999F;
-	Wed, 13 Aug 2025 19:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E492F999F;
+	Wed, 13 Aug 2025 19:23:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IheAlBBI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PiyqJclG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2482F9982;
-	Wed, 13 Aug 2025 19:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F284C2F9986
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 19:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755112958; cv=none; b=sMJ0+YV+HjlhfFDmefpuDjQzBa8vRByoa5U2YdLWixPh2mJei/7twtgQFl33Lmw5rjoR/vUBu0TFbmY2V2q4OtzyiPZbPxuWXE2r8e9TMErNYs8195XBSUrhYU3PTqub6dWIN+pr89FQQAAvhU3fK6WleTBXlVNPBc4AUrEbU50=
+	t=1755113005; cv=none; b=lOa2BHSTJKk90UMOzUjlaaL44GRfEGXzvnP7w8FFH8CxeENud1OcYj1Qwdgmuqv7M/DdcO1n0zm76QDlbdS43w6EmLfNXxQVdj7R7eNdXjgQtB7ErHOTuPdMpI9Zx3MiMeRkRVdsCuFS4fif4K8cUuiYKdTRW/Y3MU6RCF4H3zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755112958; c=relaxed/simple;
-	bh=N477yPAUgF8MFDSi5oZ2xy5+NriyaZW/5Ft0lXfFS6Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Tr4WAUzFhfoJinsmIOntj2KjwKyzFphWT24v2WFxZwDxMC5dCjoNA6Ji7UpANOVI5ri7Om8kjbYgLywkERfmaAZIjZr1lZOnh2f+hAAWxdWccPIOnKQrUdMabK3vgt6ZDTQ65A3WdGeRIkcxFe5D8qEryaBxC6YHmO/Qvvwi2ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IheAlBBI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 577B0C4CEEB;
-	Wed, 13 Aug 2025 19:22:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755112957;
-	bh=N477yPAUgF8MFDSi5oZ2xy5+NriyaZW/5Ft0lXfFS6Y=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IheAlBBIQ2Bt+CcdnxUFDJSj2gXEDefMs+XsgEE9N6Y7yBu0Nv5mj9qbxNsshF6QQ
-	 Y1vQB3DWs+KMaZnajrrrq2CzT6s40dejdd7D9ok5zgISoO7dOBqAlKHY5WArlFW8Mn
-	 Rb4xQESpYfHP+rUhzQjpScWPSkgmoaC571N4HTfNCBYaaXn3EqCrRwCEiGcSdpu1Tf
-	 akFZy6tccfWufnGlQvXMmfWkIsatrUjjjh/JlFUTUThMpEXzfyOoQUPq1bqI6/p4YI
-	 wJVkE8y/Oke8jyVdAfTBBYslChMgHuPBRgCpWNStuJuFgzKykTqzT3q56hRM3fp6DZ
-	 mmOdd0TYoKq4Q==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250812203356.735234-1-robh@kernel.org>
-References: <20250812203356.735234-1-robh@kernel.org>
-Subject: Re: [PATCH] ASoC: dt-bindings: Convert brcm,bcm2835-i2s to DT
- schema
-Message-Id: <175511295510.250237.5224980225208974771.b4-ty@kernel.org>
-Date: Wed, 13 Aug 2025 20:22:35 +0100
+	s=arc-20240116; t=1755113005; c=relaxed/simple;
+	bh=bSP3P4V24tn4KcG0Nw0Z2wfH2aQUWEYV0CgxGwiP3iE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=AywcOutVqwzGfM7wbrCUtCNCcN07IP9EwTOgDULBG0AY7uuD20N0XrrneE/AeMezHHZe5gKidCok8KNzxmGovVqHdKtvlNf3egR0UZlZt3Vk3DMntVq+4Prb3gr1SHZXqo2jqC78U6SgkR55qC6aeeRgBzWB1V2WMio/3qwdcvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PiyqJclG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755113001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SnR77o+L9Hoq0KQ6/wmhxOdoD87eXVsKChc66n7iRr4=;
+	b=PiyqJclGZK/JJuusYv0mS4aTxLZUY9c0AGZHGAGkWrAY6s56a9IVQC0L5LCuEw/VxS7sBy
+	zS2gogyWciBYFGRUlxPhaegSh1gTt+P1K+NHx1md1auYoNp5asslXJt/Y862jNBYoY4QNg
+	jdDZrmwMFXDnPa2ryCZwhKYGI3xe08M=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-47-8to2zE1PPyqhRQnmY5ATiw-1; Wed,
+ 13 Aug 2025 15:23:18 -0400
+X-MC-Unique: 8to2zE1PPyqhRQnmY5ATiw-1
+X-Mimecast-MFC-AGG-ID: 8to2zE1PPyqhRQnmY5ATiw_1755112997
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B8AE1800561;
+	Wed, 13 Aug 2025 19:23:16 +0000 (UTC)
+Received: from intellaptop.redhat.com (unknown [10.22.81.148])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1ACC7195608F;
+	Wed, 13 Aug 2025 19:23:13 +0000 (UTC)
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	linux-kernel@vger.kernel.org,
+	Maxim Levitsky <mlevitsk@redhat.com>
+Subject: [PATCH 0/3] Fix a lost async pagefault notification when the guest is using SMM
+Date: Wed, 13 Aug 2025 15:23:10 -0400
+Message-ID: <20250813192313.132431-1-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, 12 Aug 2025 15:33:55 -0500, Rob Herring (Arm) wrote:
-> Convert the Broadcom BCM2835 I2S/PCM binding to DT schema format. It's a
-> straightforward conversion.
-> 
-> 
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: dt-bindings: Convert brcm,bcm2835-i2s to DT schema
-      commit: bab4ab484a6ca170847da9bffe86f1fa90df4bbe
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Recently we debugged a customer case in which the guest VM was showing=0D
+tasks permanently stuck in the kvm_async_pf_task_wait_schedule.=0D
+=0D
+This was traced to the incorrect flushing of the async pagefault queue,=0D
+which was done during the real mode entry by the kvm_post_set_cr0.=0D
+=0D
+This code, the kvm_clear_async_pf_completion_queue does wait for all #APF=0D
+tasks to complete but then it proceeds to wipe the 'done' queue without=0D
+notifying the guest.=0D
+=0D
+Such approach is acceptable if the guest is being rebooted or if=0D
+it decided to disable APF, but it leads to failures if the entry to real=0D
+mode was caused by SMM, because in this case the guest intends to continue=
+=0D
+using APF after returning from the SMM handler.=0D
+=0D
+Amusingly, and on top of this, the SMM entry code doesn't call=0D
+the kvm_set_cr0 (and subsequently neither it calls kvm_post_set_cr0),=0D
+but rather only the SMM mode exit code does.=0D
+=0D
+During SMM entry, the SMM code calls .set_cr0 instead, with an intention=0D
+to bypass various architectural checks that can otherwise fail.=0D
+=0D
+One example of such check is a #GP check on an attempt to disable paging=0D
+while the long mode is active.=0D
+To do this, the user must first exit to the compatibility mode and only the=
+n=0D
+disable paging.=0D
+=0D
+The question of the possiblity of eliminating this bypass, is a side topic=
+=0D
+that is probably worth discussing separately.=0D
+=0D
+Back to the topic, the kvm_set_cr0 is still called during SMM handling,=0D
+more particularly during the exit from SMM, by emulator_leave_smm:=0D
+=0D
+It is called once with CR0.PE =3D=3D off, to setup a baseline real-mode=0D
+environment, and then a second time, with the original CR0 value.=0D
+=0D
+Even more amusingly, usually both mentioned calls result in APF queue being=
+=0D
+flushed, because the code in kvm_post_set_cr0 doesn't distinguish between=0D
+entry and exit from protected mode, and SMM mode usually enables protection=
+=0D
+and paging, and exits itself without bothering first to exit back to=0D
+the real mode.=0D
+=0D
+To fix this problem, I think the best solution is to drop the call to=0D
+kvm_clear_async_pf_completion_queue in kvm_post_set_cr0 code altogether,=0D
+and instead raise the KVM_REQ_APF_READY, when the protected mode=0D
+is re-established.=0D
+=0D
+Existing APF requests should have no problem to complete while the guest is=
+=0D
+in SMM and the APF completion event injection should work too,=0D
+because SMM handler *ought* to not enable interrupts because otherwise=0D
+things would go south very quickly.=0D
+=0D
+This change also brings the logic to be up to date with logic that KVM=0D
+follows when the guest disables APIC.=0D
+KVM also raises KVM_REQ_APF_READY when the APIC is re-enabled.=0D
+=0D
+In addition to this, I also included few fixes for few semi-theortical=0D
+bugs I found while debugging this.=0D
+=0D
+Best regards,=0D
+        Maxim Levitsky=0D
+=0D
+Maxim Levitsky (3):=0D
+  KVM: x86: Warn if KVM tries to deliver an #APF completion when APF is=0D
+    not enabled=0D
+  KVM: x86: Fix a semi theoretical bug in=0D
+    kvm_arch_async_page_present_queued=0D
+  KVM: x86: Fix the interaction between SMM and the asynchronous=0D
+    pagefault=0D
+=0D
+ arch/x86/kvm/x86.c | 22 +++++++++++++++-------=0D
+ arch/x86/kvm/x86.h |  1 +=0D
+ 2 files changed, 16 insertions(+), 7 deletions(-)=0D
+=0D
+-- =0D
+2.49.0=0D
+=0D
 
 
