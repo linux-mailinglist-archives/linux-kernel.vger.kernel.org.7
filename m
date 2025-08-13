@@ -1,143 +1,224 @@
-Return-Path: <linux-kernel+bounces-765838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF1BB23EF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:23:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BFCCB23EFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2341C3B4318
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:23:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60F056844B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC53929C32F;
-	Wed, 13 Aug 2025 03:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3B82690D9;
+	Wed, 13 Aug 2025 03:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="J+9U38FI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="T503ZE5K"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58DF1C860B;
-	Wed, 13 Aug 2025 03:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2851D1EDA1A
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755055390; cv=none; b=blsbpSxfGzpg8HQZVp++xaDog6ptjzKcsSCtAt7/zPVC30iDUQ8g0AvmUWLb6V6JLNZru7WuINhnqQB8bCGcoKZpg5D3USroN4WzaFMBsqvRzofGJlUkodVERyW++SQop+O232uWARNvvF2T67tkccyX57cHKhY5wdE3khcC3n0=
+	t=1755055433; cv=none; b=P/DroD2AG9kVyJZaK6Xd/6XpTN/ipgh0HV9LlCxwNlyzX4K8vlQXa3KUiTAsd183TA2moeCKEw4jHR9KMGjp/mPjFLQtGzjR3uDcQggjpnsKLlmnUV92HN+N06WyeCmtkXSsIi/M/kCqX7g4+tRkgitnvM61O62HX6XaorsFPGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755055390; c=relaxed/simple;
-	bh=Q3CAbHLCBVDyiOb5ExsJtxT9sJ3zARgcXcaVYKZzXvU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S6mVhLWUu20afFUdagbglXsgnsXQ7pN1H6zf79NqrGL9oXArbilKtDXSkud2bzEwv1ZquUrs2pz7tl6BIIRix70f5Ly5sVaiscz1RJkK8EPxVJQ0bUl7C6KHFvIkMRbEMq4lnUd5IRqbDhcF1pxj3LJpMHQ5ie2hvmFqQy0qB4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=J+9U38FI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CK5NoU032275;
-	Wed, 13 Aug 2025 03:23:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=TyQ8V+iTVg28IwajxsYPxQLlMjOJohRSq+X
-	yP8tZTpk=; b=J+9U38FIW9SGG4+TCub6yS+fbqFTJPbT92bCicBRu+6EcCo8CCZ
-	cdqFZRu1ftg4gtOnPEFMpjQYQThUlzZQxs3JKiYGPbt/QEtMaSfHOH6PTPA8zr9C
-	g+GXVdst2nzv8dqEb8bPTkzEc7gO6Wlz5KmbPrt+CNcdxAuJW/pnLL7tNrasgBuV
-	w2xXh2LKXjO5f/8YeVGjPJoC6TU6fNatnp4NJYQitAjXvs9FfREYu0FGaT4N/nqA
-	HBBZ4SpPv7WDaJt8ld9hvKCbD8uaO4kSGqjQK3OFAQJ4b9oo3jy4wkLOq5iqf0Oa
-	NGeUidxwPi1SPa6Qbv/lyaa1M90/0af1WEg==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vn6jm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 03:23:07 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57D3N430030140;
-	Wed, 13 Aug 2025 03:23:04 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 48dydm0e1b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 03:23:04 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57D3N4t6030133;
-	Wed, 13 Aug 2025 03:23:04 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 57D3N471030127
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 03:23:04 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id 9611221D7A; Wed, 13 Aug 2025 11:23:03 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: quic_shuaz@quicinc.com
-Cc: linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/4] Fix SSR(SubSystem Restart) issues caused by BT_EN being pulled up by hardware
-Date: Wed, 13 Aug 2025 11:22:58 +0800
-Message-Id: <20250813032302.3852504-1-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755055433; c=relaxed/simple;
+	bh=+b/rHlzlrnJFBTqdVOQ82H2x9LikxRlFuUDVTUewGjs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LfyC/AIqA/a0Vo9Pkxn70mFJs25c4FCGxQtWnENBNIBdUYnQhVIa46+rTGFrJ/Djpz2D1DBRVvjz6dXaRB402wx3rkC+eklJz/B5ogUX6zqq8ypoSaigBGUqbNGCNIUv5HEuZBshC0Z4B0kzTniwLI2cOdvzqBy6/SUwlnOJWRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=T503ZE5K; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-433f1cc2719so4058075b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 20:23:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1755055430; x=1755660230; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2VCV0IcKQbeDysFZNp7fgDy2mqwBozQbq8Iq9HYJ1rc=;
+        b=T503ZE5KB/l1AjE9a2PuXkGbPV2jSQgyCabxy2OSJoqkQWd5hsImByoZWXwgqH324l
+         7/mQKHst1/AoHXe8JsPOYhJi/8qOe/cY77N6u9ZQcdKwt+sm0pMlZjNn0tZNzd6x3t2z
+         Ao7Pcy1qjTvvOyiMVrKR5C3BI0VQgoLa0rZFeWiEFj4J1I5gOfbHH0R12C9Wy0xyrpeF
+         Qufx87IpDbR+mzuwt2pBY9kvUVXYoz7mGfnZ8Mlnv+zTEJhawiEJspQwuyZbCdNXiWr/
+         gvPUK40BR8d6wHrGbamf0+BNuvGP8UJFtMMV8NxiBhTubwCBcijKu5gav/Ht04tIJeCc
+         efnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755055430; x=1755660230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2VCV0IcKQbeDysFZNp7fgDy2mqwBozQbq8Iq9HYJ1rc=;
+        b=HW9kYbl6oN7Oo+6v4GbmQJL6g8VeBqWHx39kl0KhsySRoPk9AxzWaEQIIFwax7YKxE
+         rlAsGdzheRiq75PVEdqVh3scJPeIa7xDVQM5xZn0XpI2tOnU2qgWycxe4jeGzuJfk3LC
+         dbQAvAdvU4WlXreMhQtGTl7rGzFOuSR19lkzFCwvFQbyH3mzQD9+Yy3d1Ass+gJWnyDY
+         LS2art7gflLq/JBFD1ypTVBboWpuKir7TPHh8bNNLV3R1hPBIHE6c+5hZwX4NcB7UtBc
+         mqJ0BpjZ2ZVcxtlJMsOh21z51/4X1qoMMBGt2zmYQVqQ+KNWZxey8wqtiYe1jZutKTrF
+         +gXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHj5VWtBqzlacmc8Bh2rx1Fj/E2pe1YU1DLhAZQClzWv+Brh5nA2DY6vkuVndyR1R4RpUCC1OUzYTW6vM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1MoFsUHR2sBvjH+LQAV45G2K/R0m/Z4thPd3Br9arB2dvbzYE
+	2v+9B8HHdGjdFyXD0x2Ulv240O5c25w5pcpZH5tApJMyKIN61Qe0D7soyL+Bo0pzta6oxluDRTT
+	zebQ1u2LQ/4KEkAKJ5hIebZRv3TgwsmHSJk5j9pi9OA==
+X-Gm-Gg: ASbGncth1fBLejughlFU15xaAk2h5UKkukOgmF9Qp2yvxiXi8hDKIEAX3aq7A922V6g
+	mBffXOCeyY5ntIv8dqYmtwlZVqAG/0yTuvEtoSpeASvlvmST4Unrxk678mD9k5nLbsO8isIBvDo
+	nN5zZ44ALcM22rHczVLC12dOltdPVqbCa4fL88yyPfbxn6cXa8CPGxOtlf1uoDh1qAHnKschlio
+	fV1aoVODtm9ZV5bzvvEEDsM
+X-Google-Smtp-Source: AGHT+IHToQLYwLq1/teWU7qsFi7+iFfC6eraS42g9mMDfypdyNKK18baY/bFJ+yAHRyJKFNY0FsEqDTEhE8C509h41k=
+X-Received: by 2002:a05:6808:1889:b0:433:ef4c:6d85 with SMTP id
+ 5614622812f47-435d4142142mr973085b6e.14.1755055430087; Tue, 12 Aug 2025
+ 20:23:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfX/xpktq+3L8Kz
- ogtQrEg5UTg31R0dki0gruhvN5pnAqYiZPXX3flPFodDAva9F6ZiR/YGEHQL6RkGYyFp5+v26HG
- TXfLzW82C5QaGYof1KftA2LY7dguHxo8yjI248Ksqst3N+ww8caP+z39kKrV6HEfCe6+sjUc1IL
- lvo4yZ/b3uWyqY/gGYYBP1+MK73SKRrS7cOMs2HMlxsJVCb5T7E2T8oKPF6dFGf8ak3qPtKHvW1
- qcd2hgA2/imf6eQoE49ucvYyMlulu6hslI2U0jrjR9HAU4LWH1sGtItWe8Shhj5iYL8tkR316xr
- Z3tVhxgJA3Wg99Lvsf1zrr3beBgenxnGOnYp/ibW6rD0csQrI5ERsTSxHX5oOjoWXf9bBk8enu1
- vWOfSVba
-X-Proofpoint-GUID: BGwhBGTieBD4JzWt1hfNc_w2wckpcOge
-X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689c051b cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Dei6p5SHAAAA:8
- a=pGLkceISAAAA:8 a=CVKY41Y29sSDTK7O-P4A:9 a=TjNXssC_j7lpFel5tvFf:22
- a=M-Yerj1wOn-OpK7r_3ei:22
-X-Proofpoint-ORIG-GUID: BGwhBGTieBD4JzWt1hfNc_w2wckpcOge
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
- phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508110107
+References: <20250515094301.40016-1-cuiyunhui@bytedance.com>
+ <CAEEQ3w=XqoKmVu1kvc5XUbGbQJsHVkRx=T65tXvYEYo0HCTcnQ@mail.gmail.com>
+ <aJs-aPH32OxpzR3G@sunil-laptop> <CAEEQ3wnHFPBPC0U59rDBJaZYxJ24uJzJ7NDQO0gfmVqoiQwNOw@mail.gmail.com>
+ <aJtKZhvNX0p3obFw@sunil-laptop>
+In-Reply-To: <aJtKZhvNX0p3obFw@sunil-laptop>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Wed, 13 Aug 2025 11:23:39 +0800
+X-Gm-Features: Ac12FXwhM6-MmscWbyq1ralTrqKIU7ifLVg5RHi-3fR206-epo7nHbTF62cmctI
+Message-ID: <CAEEQ3wmomscuAzuiRyJu4ha8tiM=s1Y-ytQROPTWr1DScMNL3g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] ACPI: RISC-V: CPPC: Add CSR_CYCLE for CPPC FFH
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: rafael@kernel.org, lenb@kernel.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Anup Patel <apatel@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, juwenlong@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch series addresses issues encountered during SSR when
-the BT_EN pin is pulled up by hardware. The main issues fixed are:
+Hi Sunil,
 
-1. Timeout when sending reset command.
-2. IBS state of host and controller not being synchronized.
-3. Multiple triggers of SSR generating only one coredump file.
-4. SSR process failed due to tx_idle_timer timeout
+On Tue, Aug 12, 2025 at 10:06=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.co=
+m> wrote:
+>
+> On Tue, Aug 12, 2025 at 09:32:10PM +0800, yunhui cui wrote:
+> > Hi Sunil,
+> >
+> >
+> > On Tue, Aug 12, 2025 at 9:15=E2=80=AFPM Sunil V L <sunilvl@ventanamicro=
+.com> wrote:
+> > >
+> > > On Tue, Aug 12, 2025 at 07:25:44PM +0800, yunhui cui wrote:
+> > > > Hi Sunil,
+> > > >
+> > > > On Thu, May 15, 2025 at 5:44=E2=80=AFPM Yunhui Cui <cuiyunhui@byted=
+ance.com> wrote:
+> > > > >
+> > > > > Add the read of CSR_CYCLE to cppc_ffh_csr_read() to fix the
+> > > > > warning message: "CPPC Cpufreq: cppc_scale_freq_wokrfn: failed
+> > > > > to read perf counters".
+> > > > >
+> > > > > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> > > > > ---
+> > > > >  drivers/acpi/riscv/cppc.c | 5 ++++-
+> > > > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > > > >
+> > > > > diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.=
+c
+> > > > > index 4cdff387deff6..c1acaeb18eac3 100644
+> > > > > --- a/drivers/acpi/riscv/cppc.c
+> > > > > +++ b/drivers/acpi/riscv/cppc.c
+> > > > > @@ -69,11 +69,14 @@ static void cppc_ffh_csr_read(void *read_data=
+)
+> > > > >         struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)re=
+ad_data;
+> > > > >
+> > > > >         switch (data->reg) {
+> > > > > -       /* Support only TIME CSR for now */
+> > > > >         case CSR_TIME:
+> > > > >                 data->ret.value =3D csr_read(CSR_TIME);
+> > > > >                 data->ret.error =3D 0;
+> > > > >                 break;
+> > > > > +       case CSR_CYCLE:
+> > > > > +               data->ret.value =3D csr_read(CSR_CYCLE);
+> > > > > +               data->ret.error =3D 0;
+> > > > > +               break;
+> > > > >         default:
+> > > > >                 data->ret.error =3D -EINVAL;
+> > > > >                 break;
+> > > > > --
+> > > > > 2.39.2
+> > > > >
+> > > >
+> > > > The purpose of cppc_ffh_csr_read() is to calculate the actual
+> > > > frequency of the CPU, which is delta_CSR_CYCLE/delta_CSR_XXX.
+> > > >
+> > > > CSR_XXX should be a reference clock and does not count during WFI
+> > > > (Wait For Interrupt).
+> > > >
+> > > > Similar solutions include: x86's aperf/mperf, and ARM64's AMU with
+> > > > registers SYS_AMEVCNTR0_CORE_EL0/SYS_AMEVCNTR0_CONST_EL0.
+> > > >
+> > > > However, we know that CSR_TIME in the current code does count durin=
+g
+> > > > WFI. So, is this design unreasonable?
+> > > >
+> > > > Should we consider proposing an extension to support such a dedicat=
+ed
+> > > > counter (a reference clock that does not count during WFI)? This wa=
+y,
+> > > > the value can be obtained directly in S-mode without trapping to
+> > > > M-mode, especially since reading this counter is very frequent.
+> > > >
+> > > Hi Yunhui,
+> > >
+> > > Yes, but we anticipated that vendors might define their own custom CS=
+Rs.
+> > > So, we introduced FFH encoding to accommodate such cases.
+> > >
+> > > Thanks,
+> > > Sunil
+> >
+> > As mentioned earlier, it is best to directly read CSR_XXX (a reference
+> > clock that does not count during WFI) and CSR_CYCLE in S-mode, rather
+> > than trapping to SBI.
+> >
+> No. I meant direct CSR access itself not SBI. Please take a look at
+> Table 6 of RISC-V FFH spec.
+>
+> > drivers/acpi/riscv/cppc.c is a generic driver that is not specific to
+> > any vendor. Currently, the upstream code already uses CSR_TIME, and
+> > the logic of CSR_TIME is incorrect.
+> >
+> CSR_TIME is just an example. It is upto the vendor how _CPC objects are
+> encoded using FFH. The linux code doesn't mean one should use CSR_TIME
+> always.
 
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
----
-To: Marcel Holtmann <marcel@holtmann.org>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+First, the example of CSR_TIME is incorrect. What is needed is a
+CSR_XXX (a reference clock that does not count during WFI).
 
----
-Changes in v2:
-- Update commit messages.
-- Add new change to fix Idle_timer timeout.
-- Link to v1: https://lore.kernel.org/all/20250715051618.724475-1-quic_shuaz@quicinc.com/
----
+Second, you mentioned that each vendor can customize their own
+implementations. But should all vendors' CSR_XXX/YYY/... be added to
+drivers/acpi/riscv/cppc.c? Shouldn=E2=80=99t drivers/acpi/riscv/cppc.c fall
+under the scope defined by the RISC-V architecture?
 
-Shuai Zhang (4):
-  driver: bluetooth: hci_qca: fix ssr fail when BT_EN is pulled up by hw
-  driver: bluetooth: hci_qca: fix host IBS state after SSR
-  driver: bluetooth: hci_qca: Multiple triggers of SSR only generate one
-    coredump file
-  driver: bluetooth: hci_qca: SSR(SubSystem Restart)process failed due
-    to tx_idle_timer timeout
+>
+> > It would be best to promote a specification to support CSR_XXX, just
+> > like what has been done for x86 and arm64. What do you think?
+> >
+> Wouldn't above work? For a standard extension, you may have to provide
+> more data with actual HW.
 
- drivers/bluetooth/hci_qca.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+This won=E2=80=99t work. May I ask how the current upstream code can calcul=
+ate
+the actual CPU frequency using CSR_TIME without trapping to SBI?
+This is a theoretical logical issue. Why is data needed here?
 
--- 
-2.34.1
+Could you take a look at the "AMU events and event numbers" chapter in
+the ARM64 manual?
 
+
+>
+> Thanks,
+> Sunil
+
+Thanks,
+Yunhui
 
