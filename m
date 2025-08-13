@@ -1,323 +1,466 @@
-Return-Path: <linux-kernel+bounces-765876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD23FB23F6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:20:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E1CB23F6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D9951889B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:20:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79B0E722406
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B833129C35A;
-	Wed, 13 Aug 2025 04:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pN7x/fNf";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="XVIxr6Oc"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAFE256C84;
+	Wed, 13 Aug 2025 04:20:42 +0000 (UTC)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5AD1A9F94;
-	Wed, 13 Aug 2025 04:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755058769; cv=fail; b=gBoXuUUexEWQ1dntVXceYT0ipjrr6hnua9VOBYR+r3C0fpJd5+dmt3FXm0onc10Os1BysP2LJ0h+X5OT/iXcxpe5S39AxRLZFt2GNMln9J9chiV0sBv5otFDsUktdaqUSNOwk5hfhbcAkajIA26rVsbEWr7zF6/y/HbGcAjAL3U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755058769; c=relaxed/simple;
-	bh=/TEAiX4hqOsUNmjHlLjMYLgHNL+7k7gNinaTphfgJPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pv9nnVlUpYWXtE2D0QmAPCvzGzrYFoOPXrDI7l0L2t53vTJ/g9HpRftyeVQu7KJi2fAPasufLmWgcuQtRawa1nRLl/GIZbLhn6uWNYZ9TyS+khw4XzemrslAP6ZwKMEJl6qy6wHUPmG02wNupbS93LY6hH/TnHYSk/OSMw1o8Os=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=pN7x/fNf; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=XVIxr6Oc; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CLQqfw025465;
-	Wed, 13 Aug 2025 04:18:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=yAFb4O9gCBsZ7O8n+y
-	cCAGMnpWOpQVnMKu38kePo8JU=; b=pN7x/fNf2Un+SV0810f39vf2vPRqYkbd2I
-	tBubg/0hAG77B63i6wAfGVS3wI7EHYY++qnD7z0oJoS+YTiNo/uoUTVOhloQdsH5
-	jb8t4OtYZAjpkeUwFwzIlLcFoKgiXWWx1j0IEZlVQeEDqdRvjGrVtY7f8LjYi6Q8
-	evZShkk9B66qEpNNaKXLGiyHrFKeYIGh12us0G2OG07kpHndIVdciPCfyoD9pneE
-	uN6q5n9na+Ly2RdgWcjnJe0N0i+gr9vIhdaSQFJaK486d20JwV/5Y0I86AnCd5fe
-	OK4CyIRGfSIn43i4aXbTBvELayLbZBcNyQxoyIbGJaKVzAz/NsbA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48dvx4ecn1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Aug 2025 04:18:42 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57D40mJd016848;
-	Wed, 13 Aug 2025 04:18:41 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48dvsaueh0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Aug 2025 04:18:41 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N6sygIJsTaoS1czWCkxUGBLUAMRkR9zR4fnYrUeWg3YxN1SVaHBy5fdhr2Mc9F+0f5ZTesxl32qUXh+FDwgg/fywP2j3eN2ozxc0scgsNpEBsK8fPH9desmajckA6BG1trkb8IZJLQyIgPs/6qZhgWIM09fhv/tC321D7mtk/BefzeqMxw7Ny0m7njXRRJpUTAQLWlXQJT0A50M8m0kyNt7wLTKS57ghoS0Oww2YxRdY/vmD+coPDAesvnWYDMPsgEnsOlOax/aWHHDrrg5NmBNkonehKHQr0ZTjSJDWYjjvtMuG0B5FR6ySEHQYyJmKE9G9qq+a9NuC/5c7e0q8sA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yAFb4O9gCBsZ7O8n+ycCAGMnpWOpQVnMKu38kePo8JU=;
- b=Ydi65EyVqUfPVH+2CXqKy3E1lnjSTQG52YFxA8Gsj0gPOEgoH6QWoFnChRQTcmu8huAMbS1c+ToTGymjAT+FgA14gmIqPE3OXff4qUlk1lkeIWx4bvM7zxlUId79U1dmGSO+1/Rx6XJyqZR/Qgp96jviwQzgAMaFIYq0Cus8K3TIWz4RLX2OeUSbjsSl8QoareP6EVoogyFOQrWUealBWEbpQYa1qxd1nayBaYAF31wu08+uOWlDUFmJqQ7ciT5Bsa++YOXGjbiUJFImAdmrRnirHierrmXurHThDPN5N20TTBHSD9q8Q9RtD/BQ1vCAL9NWsIJezuHtIZtl/2I2oQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yAFb4O9gCBsZ7O8n+ycCAGMnpWOpQVnMKu38kePo8JU=;
- b=XVIxr6OcFsex9lVtnIm47ybPDY4VxgqbF4UgTzwrEw9QIjVaRIiJk4e4pXBzTA8y5KJ52v1ED8X8LwbTYuo795ydZxS+0pH6nWSi25NbDyrN6BK/9GEcUmuuf3f1jQoGr/QL6rF2NgIcFCOxP+WMpWFjd5TjkSazJzPuT332H+I=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DM6PR10MB4265.namprd10.prod.outlook.com (2603:10b6:5:217::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Wed, 13 Aug
- 2025 04:18:34 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
- 04:18:34 +0000
-Date: Wed, 13 Aug 2025 05:18:31 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
-        Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Shakeel Butt <shakeel.butt@linux.dev>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
-        Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 00/10] mm: make mm->flags a bitmap and 64-bit on all
- arches
-Message-ID: <af5492d4-f8dc-4270-a4c6-73d76f098942@lucifer.local>
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <20250812201326.60843-1-sj@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812201326.60843-1-sj@kernel.org>
-X-ClientProxiedBy: AM0PR01CA0109.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:168::14) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69621A9F94;
+	Wed, 13 Aug 2025 04:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755058841; cv=none; b=A5wS/qRwlWcl/0AtQJe8DChFg9vvYvGxj93rU87praAk5UnpYpXaDCTePOqruNmrepHI/FjaMZ7hKzdPwg2p8UeoeFoNP7POUDLfPCYwLFjHVFTBku530bi5jCttyWIpzyT90H3v3EL1KUCbQUgzq10bh2HlmsbVxVIn5jRq4aw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755058841; c=relaxed/simple;
+	bh=UB6xyrpDHos3cdB+GZ21fhtRTjvKz3yyndgjuTccWOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OdghzVHlnCXbz/WzwTftsXiWndKgbZvUtLfl+H2sjPa0Blwihz8yqIHddjDf+T5cH2TRRUgLdqYBDl6nXkxuC1KcwSdgu0NWAUWKvk2ct6n9NLfzCvZ4T0Zz6jJhEc8N3rHA3Pzvn7s1NN6vS6UpvRr+RqlJo/hERR7z3Ww0cwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=willwhang.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6180b9e4e74so7786157a12.2;
+        Tue, 12 Aug 2025 21:20:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755058837; x=1755663637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WiFuJht5ARBGIGVBRsBNGCQ9IzHhOcOqgth3Zl6diyk=;
+        b=aD59YrZrODTVnjiIL8viMD6ADF1J4wGvWSrttQ6351lMM0zgnFg4hdN826eu9FXDEK
+         P1xqJrH/hupwypXO1iym57GtNb7hDUKuYtNItDkbDglcG1ipNr9IDUOidmUA0kbBLaKV
+         pXM+Fly6XfIFsYuOG9DCcAsOET/j8SS8/sw3awiB2H1F8Uchdl2N+sxkt/LvIzaacPoq
+         PtT+kvN5LZVRkoNxTf8jHzZyqEcqkvI9dVYzg+/JHhoCHr60VxrdO3R8rHmxXZ3sXrsE
+         uU1LLH8tigGn9b1VnwNey0mtswIui7FRLFg0j99G9275pt2rkYQnZleOQbSnq42x1xYr
+         zVcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSYfWb7M16kupLuQk9wURFO6aSlIjMAViw+mi2eK6D0F/pR1aBIOuih4TUypDTVo5wVdn9zmI8mklP@vger.kernel.org, AJvYcCUcKlagd9lofaO2NJNrrIXW5tXiWD0tKyNZub6xbAiSGnKHy50B2dCcQ9lHCK2PsQ/kBXEPb+4EnXxV6Do=@vger.kernel.org, AJvYcCVfuPtsvCk7f+MkW1idMbYiSYW3Fi/q5aJdZcRyQOgAT3Y0i/fY1SKwZbYo6fDDXHvM6VgUsXkXy4ylwYHu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuqwmjTTtOAT3ipiJAgk0/yW1Py3W7eKDOzEPWVIjqTbptyS0C
+	HIywZPGHGTrVDhXmDbPONkindBVkJKAKGPYoiciwsUeiJ7l+e+NgDeq1vpKz8wiKLGY=
+X-Gm-Gg: ASbGnctG0jqs1qmZgzXULLR2USwsBK7ADxWkN9RLwp57mD1YQjx1jx98NDCauBixztY
+	NkfWJ+Q0mP0Hn8jBrqjd/nKYqjk9T1Mezf8YYI9KNNfZi7BbeF1nB6TF1hZb79ilvh9l75AE479
+	vP+UY8bX8tzWywgU81of3PINEGcxUrHfkCZ9+cYznNCTFlpUA+WKgRoERTXcjVH6LXysIYYCHIP
+	GG+sI+U0Qir/UgdDVqeWuy2GhoQANsUWT0G1EYg4H/CI0oVCIqS5dRDbfFQaKEz8jIZXiEe37w6
+	PpPmVhSdBwiYb/kVX3QpRKVJqUn+/oxEZCMcMuSxHMcbYBQP7xs54Swjgtvo8wxXv4ktwQ+Azhz
+	dLpgGYJVkidv9TgjuoMl9dHTHxTlDba/ai6hiSrBxk73tQ31QCxRJTd3ydA==
+X-Google-Smtp-Source: AGHT+IEWuy6d5bYfkYF98ZaehTpuqSlYa+zkxDsWowh+SP3YP/XeUuiEyxQ73vtqIhhAVfsC3+3ExQ==
+X-Received: by 2002:a17:907:86a3:b0:afa:2672:8c49 with SMTP id a640c23a62f3a-afca4d795bemr160567866b.18.1755058836500;
+        Tue, 12 Aug 2025 21:20:36 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0ccsm2313645166b.111.2025.08.12.21.20.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 12 Aug 2025 21:20:36 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61867b0238bso1176283a12.3;
+        Tue, 12 Aug 2025 21:20:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6vfiemJtSWoOGSwUwGhvBClR/X9KtmxGdjEeMu9vWe+NaXbiaHs6WaYdTS4iTeHsqEolFoMb2pa79Y3U=@vger.kernel.org, AJvYcCUoK1Cxzy0OA0194KRlCwbMM25/tBN8rBC6XCohX5UPUK2J6CdFdqtCoUbUFOrCkiWRPM1Twy3Ta8B4@vger.kernel.org, AJvYcCV6d8R+2MH9HvUyl4M0P1dHuY9gxZi1Z3oU2nIAbYwOmLWLLVugJ2t69LQaxDfaquQT7gYc8d8N9vVOnC/K@vger.kernel.org
+X-Received: by 2002:a05:6402:2105:b0:617:9bff:be16 with SMTP id
+ 4fb4d7f45d1cf-6186bfd2ca8mr1202681a12.22.1755058835436; Tue, 12 Aug 2025
+ 21:20:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM6PR10MB4265:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6832ace3-4b8c-415a-1918-08ddda2077aa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ftu3FEiNoUMkyrILPbB10HFUlNa46pnvU/0cvdYfg1tC7f9BdoQlaZQtROPH?=
- =?us-ascii?Q?vHWd+rjhJAE0E/yyNnLYqGQc4IEF7c+W6uVZSW6hphCCpjd4MMJFTkDXVvKX?=
- =?us-ascii?Q?B6DP8SUkI3oN/rEbLl+mp38LcZ5ZroTmKnMAuzVRTEMG+m16PpUm7ZcZHNIs?=
- =?us-ascii?Q?9xLzw7/1RVLVFMLa9EXjg6raueBrlhGq5zQod2BJpHwAnF+qpkDaxAz9Vl1Y?=
- =?us-ascii?Q?2vRCga88r+vCkxk7UwUZTPj8+l2mav7H2uKgFwafMwhV1hwyLW/64I/rEDTw?=
- =?us-ascii?Q?aOwZMXDDv6QEdfCiYXPzaO4lsNKaxg0jceZG7sIlPHLugX0o8vKJlJSsA6yJ?=
- =?us-ascii?Q?v2D5HcYP0H9vXsVL6xN9C4O3zDo9r40IOEt7G1n5W7zMibBQs03xB78BAKEf?=
- =?us-ascii?Q?2vA5dn0VdzR/w9Osa0wTjlbhJR0ShWUGuVHPVX1Wnb+QPGzWB1gLn7o4D/bv?=
- =?us-ascii?Q?Y6ymZVygh8jsTTtmpyu6pucnHHB/RgXj9F82tfXXXs/ZEmK3nRx17Ve4b7AX?=
- =?us-ascii?Q?aCbiXFVJnXx2ZdQwD5fJCQm7XsSy4Se1/0lXhhljmlBfaGdNjFriaky6ePPv?=
- =?us-ascii?Q?feCa562c1UQ+GkManWg7xybk/cxYdDYsW63Ld3JtFBjrumAzkb4hsYx7LwcE?=
- =?us-ascii?Q?ZsKzLVnegDI2aedw/ZcCOhRcbU8QuWwFUHNJvYkKb2UMDyf9+K5///kVvZd2?=
- =?us-ascii?Q?Xx30qaYAdzmIqa+vkWmvHSXgXxSQvs+DsSQ7ytwNzU9WcErscO1RK61yT1zm?=
- =?us-ascii?Q?rg6HSvTuqE/YHXWi7AU21kyWzdmueRSlIailY03qAhjY4QprJXBAMQ+Kiq1u?=
- =?us-ascii?Q?Iv+pj5+wWqNZQBQRwkZg5eMX4K9o2Z8YRPnA27X9hOhcpVlNVsI8IuWpWkSI?=
- =?us-ascii?Q?dCfie8Q8PNJnGZoJhI4pLsljx2ex92NNL6S8nWmKG2J5VmTWeLodpA1pxoop?=
- =?us-ascii?Q?PNHzb9CAIvXYBhRQ64gMfIg9fA+7OW/hFLIlVhpdi75wGwYwsG8WArydXwA/?=
- =?us-ascii?Q?cidDnoDEIRctPIhQNj2+0RkiNdnpwyj2Tx8YMtcjWhuntIk1TCv9IoIkLwHy?=
- =?us-ascii?Q?hM2UsQAtK4eW9+0y2xcyyqvf6Jml65EF9846Bv5wHwP2DZJECNssZCaXCURk?=
- =?us-ascii?Q?dMRR+2Ev/Du1pTj3DFcSq4Jlq3rNHY10nWKtcAArkZS7DgijAtqhY6N7qt5P?=
- =?us-ascii?Q?+rYwJBnalwZnkCJaSOGXfKbwGSQxTLRKCYI4AdqAo4z2OGLsKYGoqo/02AI3?=
- =?us-ascii?Q?2awErhjy16kiI9ScKBpePVJtyWAbJv7sXlmbEdQSMmaMUjCzco9l1C1942xL?=
- =?us-ascii?Q?Yhu8c6ueRDLWn9AB1BZVQvaA/+rQq1O0YFppdnR3zjuMgo3Eqc260PWshNLE?=
- =?us-ascii?Q?76oZylg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?a2Uh6NLuwYoIyTh2V0woH9y5Wcjvbi2nCyecoIWp+zt9LT+8IgDsNnaNDriV?=
- =?us-ascii?Q?+0UvteRCjXquLqYIgGXpXwtOMTS9TwT7GHXFjEuNl6tLbaHGZdww5ime6FA8?=
- =?us-ascii?Q?bJ5ZTz5tInr1CTkjKtqfN7dpqwJcZ+2tIihLHC8GMs7s+K/r59b01JSepiNS?=
- =?us-ascii?Q?LI+dNveZ+aNSOU7Jhkphj9AcI19jLe821wCNkNF67JTOC/l04dj1Bds3jP8s?=
- =?us-ascii?Q?O7NCqZkdJ4G/Fn62B87+DFGVqxIIYgrBpvM+gcZ3TSyJ2GgCBO5dTQS+9+GQ?=
- =?us-ascii?Q?Ok+VwU8QKnPbTRqE4GzAcI3CVRSmKwL2T7BhCXcW6s9jVOdeESwphyDv6Lyb?=
- =?us-ascii?Q?m5OZ/Az30Mc675uWuBUXy178W3fyUL7SZFm4BbyAyTXePxgMdFzi5AhLLSMV?=
- =?us-ascii?Q?bo3D8kur7Hi63XvPOmYsVrcvhq/iF1bpoUMEX8/MRxGH7lx3Fbyul1NG2x2R?=
- =?us-ascii?Q?93i/ZB1Fm1M4gYpC59uxUvWEQK9JJR1VlsXDtkceinAv7wEtEHSBZVSTYjel?=
- =?us-ascii?Q?mDM52wluLLIGlvZdRToxQHjueOR5eXQo1kANF2h21ybFVoRaQ0kkt5928uij?=
- =?us-ascii?Q?4+oNoaDF0Sbm1am1mgMTxshHBl4oz0m6z+bAxXSIbj6HuwvJtlk089Qg8Bns?=
- =?us-ascii?Q?PtHzWcgeYfUnoR0XznOq0nBtnIx4Ox4/IjPUQT2Pz56hZ+e3u3XFngpjqn+y?=
- =?us-ascii?Q?kSsn+2X2dakMEGHEGIt3lONd9NkNTEgmrpIWtAy4iDHu3Dr9asmzWF6OPNfh?=
- =?us-ascii?Q?low/vCQFWmSEHWbXgrxFDCL4Q5tU0tplRyZslumbkG4EFbEp87NiLFRIO7jL?=
- =?us-ascii?Q?dMlDdxmZGCfKTAaq2GiJDZQo97ZlcdPmst9Dd8ny7cADj1k1o46K2PL4pX9Z?=
- =?us-ascii?Q?8b/r9eFPQyXQSzpK24gkBLfThvCDbtt++PVPOLuX91sWkKMRFL/1MqnHYUKw?=
- =?us-ascii?Q?o4amhBXksCrKsM1Gwtex2syGQAmH1XTFXMy6TXS0ISTDIJltbRnJPQ/xKcX4?=
- =?us-ascii?Q?Mpjy3R6EMhb9XqcJrF8HFrnb2Aq9ux4uVFLpMTDcMhln6b2VRsr3qalFpJF6?=
- =?us-ascii?Q?XbipFpgvN9nKpNbP9NZ8XZYMxnAbFDZYC/8Ri/yZ0TMUzXDr+dKrD9sTFDB0?=
- =?us-ascii?Q?nzhXUX0C6eta9OYjQ4y1mduwbAXqE1tDgKyMO4bf+lZBGxqV4QnHIah8NJK5?=
- =?us-ascii?Q?N1m7hBiUBEARRmvBiWfGvApIRDjM66RRt+h99EM3drWWL47UOI3AomSimzOD?=
- =?us-ascii?Q?YKFapTe37Km1Z5ib+UVu4/IkqeB2cRjB31rLQgbx1V1sbwFbLBJBPic/UQXt?=
- =?us-ascii?Q?A/BC51bv3tZJSRMNj5dAbh8/y9eic2Jio7SLuhZlbyL4n7FJ3HQGf2q822V2?=
- =?us-ascii?Q?DCDiJ+e9MnYnjhZ/aSjb6QoEp9JEDbrxh40nFoaNxCtCpGIJ8ghvXZT1s2YO?=
- =?us-ascii?Q?qSF6PHYdp04vxVzD0t7DEEI6+e9IdIGJIePFCKBveyIWC17op8TcGUJ/QKXc?=
- =?us-ascii?Q?/wPKfO0uBeA/OJOBj3NiFcjkSWNQJkAxvEp77FXyUBfLFlf066xab6MG/1dy?=
- =?us-ascii?Q?8T5uKjwWdf89yMQyNOUZVKLw66T3ViDR05BUnybYsqWY5DEWgo2SGhyShLxb?=
- =?us-ascii?Q?2w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	r31RXHcsoMf+JdfyP+V9hcLj2SfEOPfkKkKq3SP/CY01zBz836wy2Wylz4Os+hZD3r7b5PEJbRluzVE94Sv15Waoc1z3A15kyWrYbTWeiqvbZTO9kNojylVwrIGd5JwGNJzuDUXXaskIRtufETff3muC6LjuQu4YP4qHETlEz31nXSk4C7J73GttVnAgzlZEEPB0la6gaIbJ+XK6grYMYeAlAdURxRVg6IUXQyKbFJVn1+Z2oGWm2X/5EGlNKV+VgFgrX1rCzzJeJcN9dspjUEAXSej4lDQTsb83pYXV64N0djtWtHhgvteH7PzK3KKKGycaVOVcPqQqdWVMxgOkOWeK9giNmwkFr4Rpj6LZm6XRYUfSLOlsSl0maCQ6KcX7u9D/PxqR4aXNA/kLcPqUiQbFFatV21z+jAr7FEAGaYhrrhgZqXePnv3cDxbiGS4BZj143cF7mrbMJKcZuAeJhhATcSFEu9K/sf+54TFFs/0Bkt6FZKzD3Gtr/g9k36ji80jg/d53o0dgFTn1becSYmZUW/YVyWk/YLGLoqsgBVeCYRUw2DOZ0Ey1P0QYlT15Ofzl4Py4mmrgBWxaPJS9KjsdMFZIPwUgVilwtXa/s9Q=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6832ace3-4b8c-415a-1918-08ddda2077aa
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 04:18:33.9720
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: s9wh1EpkDmg3pUcuZ1YZ0JXid/kuOT/CH55Tbv/aC/kwxcN/V8gNLTKIoA44NazUYc9ZPEmNgfyGp1FDHXKOIoaxrwjSRnjNQjcgf7bhuuI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4265
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
- phishscore=0 suspectscore=0 mlxlogscore=918 adultscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2507300000
- definitions=main-2508130039
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDAzOSBTYWx0ZWRfXyv5L3+I7kY/g
- RvFSs1E2D+XiPaR7zQvBXPRPKRmnWhJUyOJZhOZNNhaIxDiuJf6FpptVRjslTAd0IZyDH1OShd1
- 8k1NwaADvGBG8DsnaYLr5exavg/+DsIYFRibkufeS7CNhyfDsgsk8TCiER4UWZK6duZUjmdQSsh
- oiglK3R9JIMNGPDZrsFQa16bsS3uXKzCdCNh0GOIe+4bORNRk1qnpVa1P4g6pNs9DhjHUK1962I
- ChC00SeqyqiI/yd2nPSKgbup1zNijTxTFFkBMV93lnWU3aADPuMVzuUI3wrrt/EGxrq+7az02Ik
- e85w90o377jrEBaTUyg+w9XmE3xkQtnEhdIop53pQ+y6ww4dA7BU1k/b3F4HByD43mziRn9bYGE
- TRiUdSkEJBZJ4E7MIycwtIn5kHQF9q/6jub5tFhzAknlBd9R7ryukqMbWdozgjEqLCFQW4+x
-X-Authority-Analysis: v=2.4 cv=eIsTjGp1 c=1 sm=1 tr=0 ts=689c1222 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
- a=62kRN-2s6hhlVKekPs4A:9 a=CjuIK1q_8ugA:10 a=mDVER0IZTAoA:10
-X-Proofpoint-GUID: nSXNLEnfb3uAk47VeQeDgRoMnrHWqEAr
-X-Proofpoint-ORIG-GUID: nSXNLEnfb3uAk47VeQeDgRoMnrHWqEAr
+References: <20250810220921.14307-1-will@willwhang.com> <20250810220921.14307-5-will@willwhang.com>
+ <CAPY8ntATfq=yqoYkpuD5Ga-7yUb8C-_k=wSZJBpz0p9PLjVk0w@mail.gmail.com>
+ <CAFoNnrzHhJVbR1yQrr6o1+1JhyDB6y0NNfyJkK=by9YOJRGusQ@mail.gmail.com> <20250812112817.GM30054@pendragon.ideasonboard.com>
+In-Reply-To: <20250812112817.GM30054@pendragon.ideasonboard.com>
+From: Will Whang <will@willwhang.com>
+Date: Tue, 12 Aug 2025 21:20:24 -0700
+X-Gmail-Original-Message-ID: <CAFoNnrxonvqzszYKEh5Sh3xx1dnMrqYA==378vbFLLniSBjQ+w@mail.gmail.com>
+X-Gm-Features: Ac12FXzTCOMqByKsE0wmQhJWPn6s_h89Xv-W4iONcQBHU9aJfaobHOmfpO4eiuc
+Message-ID: <CAFoNnrxonvqzszYKEh5Sh3xx1dnMrqYA==378vbFLLniSBjQ+w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] media: docs: Add userspace-API guide for the
+ IMX585 driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 01:13:26PM -0700, SeongJae Park wrote:
-> On Tue, 12 Aug 2025 16:44:09 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+Hi Laurent,
+Reply inline.
+
+Thanks,
+Will Whang
+
+On Tue, Aug 12, 2025 at 4:28=E2=80=AFAM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
 >
-> > We are currently in the bizarre situation where we are constrained on the
-> > number of flags we can set in an mm_struct based on whether this is a
-> > 32-bit or 64-bit kernel.
+> Hi Will,
+>
+> On Mon, Aug 11, 2025 at 07:31:13PM -0700, Will Whang wrote:
+> > On Mon, Aug 11, 2025 at 7:24=E2=80=AFAM Dave Stevenson wrote:
+> > > On Sun, 10 Aug 2025 at 23:11, Will Whang wrote:
+> > > >
+> > > > The new IMX585 V4L2 sub-device driver introduces several
+> > > > driver-specific controls for configuring Clear-HDR blending,
+> > > > gradation compression thresholds, and HCG enabling.  This patch add=
+s
+> > > > an rst document under Documentation/userspace-api/media/drivers/
+> > > > that details each control, allowed values, and their effects.
+> > > >
+> > > > Signed-off-by: Will Whang <will@willwhang.com>
+> > > > ---
+> > > >  .../userspace-api/media/drivers/imx585.rst    | 122 ++++++++++++++=
+++++
+> > > >  .../userspace-api/media/drivers/index.rst     |   1 +
+> > > >  MAINTAINERS                                   |   1 +
+> > > >  3 files changed, 124 insertions(+)
+> > > >  create mode 100644 Documentation/userspace-api/media/drivers/imx58=
+5.rst
+> > > >
+> > > > diff --git a/Documentation/userspace-api/media/drivers/imx585.rst b=
+/Documentation/userspace-api/media/drivers/imx585.rst
+> > > > new file mode 100644
+> > > > index 000000000..9f7c16f30
+> > > > --- /dev/null
+> > > > +++ b/Documentation/userspace-api/media/drivers/imx585.rst
+> > > > @@ -0,0 +1,122 @@
+> > > > +.. SPDX-License-Identifier: GPL-2.0-only
+> > > > +
+> > > > +Sony IMX585 driver
+> > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > +
+> > > > +The IMX585 image-sensor driver provides the following *driver-spec=
+ific*
+> > > > +V4L2 controls.  They are visible only when the IMX585 driver is lo=
+aded
+> > > > +and sit in the sensor-private control class.
+> > > > +
+> > > > +HDR data blending
+> > > > +-----------------
+> > > > +
+> > > > +``V4L2_CID_IMX585_HDR_DATASEL_TH``  (``U16[2]``)
+> > > > +    Lower/upper **thresholds** (0 =E2=80=93 4095) that decide whic=
+h exposure is
+> > > > +    chosen=E2=80=94or blended=E2=80=94for each pixel in Clear-HDR =
+mode.
+> > > > +
+> > > > +``V4L2_CID_IMX585_HDR_DATASEL_BK``  (menu)
+> > > > +    **Blending ratio** between the long-gain (LG) and
+> > > > +    high-gain (HG) read-outs.
+> > > > +
+> > > > +    .. flat-table::
+> > > > +       :stub-columns: 0
+> > > > +       :widths: 1 5
+> > > > +
+> > > > +       * - ``0``
+> > > > +         - HG =C2=BD, LG =C2=BD
+> > > > +       * - ``1``
+> > > > +         - HG =C2=BE, LG =C2=BC
+> > > > +       * - ``2``     # duplicate ratio present in the datasheet
+> > > > +         - HG =C2=BD, LG =C2=BD
+> > > > +       * - ``3``
+> > > > +         - HG =E2=85=9E, LG =E2=85=9B
+> > > > +       * - ``4``
+> > > > +         - HG 15=E2=81=8416, LG 1=E2=81=8416
+> > > > +       * - ``5``     # second 50/50 entry as documented
+> > > > +         - **2=E2=81=BF=E1=B5=88** HG =C2=BD, LG =C2=BD
+> > > > +       * - ``6``
+> > > > +         - HG 1=E2=81=8416, LG 15=E2=81=8416
+> > > > +       * - ``7``
+> > > > +         - HG =E2=85=9B, LG =E2=85=9E
+> > > > +       * - ``8``
+> > > > +         - HG =C2=BC, LG =C2=BE
+> > > > +
+> > > > +Gradation compression
+> > > > +---------------------
+> > > > +
+> > > > +``V4L2_CID_IMX585_HDR_GRAD_TH``  (``U32[2]``)
+> > > > +    17-bit **break-points** (0 =E2=80=93 0x1ffff) that shape the 1=
+6-bit
+> > > > +    gradation-compression curve.
+> > > > +
+> > > > +``V4L2_CID_IMX585_HDR_GRAD_COMP_L``  (menu)
+> > > > +    See V4L2_CID_IMX585_HDR_GRAD_COMP_H
+> > > > +
+> > > > +``V4L2_CID_IMX585_HDR_GRAD_COMP_H``  (menu)
+> > > > +    **Compression ratios** below the first break-point and between=
+ the
+> > > > +    two break-points, respectively.
+> > > > +
+> > > > +    .. flat-table::
+> > > > +        :stub-columns: 0
+> > > > +        :widths: 1 4
+> > > > +
+> > > > +        * - ``0``
+> > > > +          - 1 : 1
+> > > > +        * - ``1``
+> > > > +          - 1 : 2
+> > > > +        * - ``2``
+> > > > +          - 1 : 4   *(default for COMP_L)*
+> > > > +        * - ``3``
+> > > > +          - 1 : 8
+> > > > +        * - ``4``
+> > > > +          - 1 : 16
+> > > > +        * - ``5``
+> > > > +          - 1 : 32
+> > > > +        * - ``6``
+> > > > +          - 1 : 64  *(default for COMP_H)*
+> > > > +        * - ``7``
+> > > > +          - 1 : 128
+> > > > +        * - ``8``
+> > > > +          - 1 : 256
+> > > > +        * - ``9``
+> > > > +          - 1 : 512
+> > > > +        * - ``10``
+> > > > +          - 1 : 1024
+> > > > +        * - ``11``
+> > > > +          - 1 : 2048
+> > > > +
+> > > > +Gain settings
+> > > > +-------------
+> > > > +
+> > > > +``V4L2_CID_IMX585_HDR_GAIN``  (menu)
+> > > > +    **Additional gain** (in dB) applied to the high-gain path when
+> > > > +    Clear-HDR is active.
+> > > > +
+> > > > +    .. flat-table::
+> > > > +        :stub-columns: 0
+> > > > +        :widths: 1 3
+> > > > +
+> > > > +        * - ``0``
+> > > > +          - +0 dB
+> > > > +        * - ``1``
+> > > > +          - +6 dB
+> > > > +        * - ``2``
+> > > > +          - +12 dB *(default)*
+> > > > +        * - ``3``
+> > > > +          - +18 dB
+> > > > +        * - ``4``
+> > > > +          - +24 dB
+> > > > +        * - ``5``
+> > > > +          - +29.1 dB
+> > > > +
+> > > > +``V4L2_CID_IMX585_HCG_GAIN``  (boolean)
+> > >
+> > > HCG stands for High Conversion Gain, so we've got Gain repeated in th=
+e name.
+> > >
+> > > Spell it out as V4L2_CID_IMX585_HIGH_CONV_GAIN, or call it
+> > > CONVERSION_GAIN and use an enum control?
+> > >
+> > > > +    Toggle **High-Conversion-Gain** mode.
+> > > > +
+> > > > +    *0 =3D LCG (default), 1 =3D HCG.*
+> > >
+> > > An HCG / LCG control would also be applicable for IMX290 [1], so it
+> > > would be nice if this could be a generic control instead of imx585
+> > > specific.
+> > >
+> > > I never got a good description as to the benefit HCG was meant to
+> > > give. The datasheet for IMX290 says the conversion efficiency ratio
+> > > between HCG and LCG is 2, but not why that is any better than adding
+> > > 6dB of analog gain.
 > >
-> > This is because mm->flags is an unsigned long field, which is 32-bits on a
-> > 32-bit system and 64-bits on a 64-bit system.
+> > What I've learned is that HCG is actually a 2nd stage amplifier, so
+> > instead of using one for high gain, you can split it into two lower
+> > gain stages that lower the noise.
+>
+> DCG as a term is a bit confusing. It was initially used to describe an
+> inter-frame HDR technique, where two different conversion gains are
+> applied to separate frames by switching on and off an extra capacitor on
+> the pixel's floating diffusion node. I don't know how it evolved from
+> there, but just adding a second amplifier doesn't seem to be a very
+> effective way to lower noise.
+>
+> If anyone does some research on the topic and finds clear information,
+> please share them.
+>
+From my understanding, DOL-HDR (Digital Overlapping), multi-frame HDR
+or stagger HDR are all using different exposure times to separate
+high/low brightness image frames. DCG with multiframe HDR is kinda
+weird because the main reason to have DCG is that you can have two
+gains with one exposure/charge so both high/low gain images are
+exactly from the same sample and not time delayed. If multi-frame HDR
+is acceptable then using two exposure times is way easier to implement
+then DCG just for multi-frame HDR.
+
+Now that I think about it and see the register naming, I think HCG
+control is for a DCG enabled sensor to select between high/low
+conversion gain channels to use for the SDR result.
+
+> > This is also why ClearHDR and HCG have the conflict, because it is
+> > basically sampling after the 1st gain stage and 2nd gain stage as
+> > High/Low gain images.
 > >
-> > In order to keep things functional across both architectures, we do not
-> > permit mm flag bits to be set above flag 31 (i.e. the 32nd bit).
+> > I have thought about making it more generic because IMX662 and IMX678
+> > are going to be the next patch once this one passes that also has this
+> > function (the two are basically stripped down versions from IMX585
+> > that the driver can be adapted to easily). I intended for the upcoming
+> > IMX662/IMX678 driver to use IMX585's V4L2 HCG control also.
 > >
-> > This is a silly situation, especially given how profligate we are in
-> > storing metadata in mm_struct, so let's convert mm->flags into a bitmap and
-> > allow ourselves as many bits as we like.
+> > But given that I'm new to Linux kernel developments, or more
+> > specifically, V4L2, I really don't have an idea how to do so in a way
+> > the patch will be accepted.
+> > Or I can make this more generic name to replace IMX585 for STARVIS2,
+> > for example: V4L2_CID_STARVIS2_HIGH_CONV_GAIN
 >
-> I like this conversion.
-
-Thanks!
-
+> We should really try to standardize V4L2 controls for HDR support in
+> sensors. See https://lore.kernel.org/linux-media/20250710220544.89066-1-m=
+irela.rabulea@nxp.com
+> for an attempt at doing so (for some of the controls at least). Could
+> you share your feedback in that mail thread ?
 >
-> [...]
+
+My counter argument will be that HDR controls are way too diverse
+vendor to vendor and even sensor to sensor that having a sensor-series
+based HDR controls would suit better.
+
+I think it might be better to focus on how to handle multiple image
+channels from one sensor because what makes this (IMX585) sensor
+unique (and thus, the implementations will be somewhat unique) is the
+capability to merge the image on the sensor directly and output as a
+12bit compressed or 16bit linear image. Without the ability to handle
+multiple MIPI virtual channels for far more common DOL-HDR or
+multi-frame based HDR sensors, there isn't a lot of need to
+standardize V4L2 HDR controls.
+
+> The proposal doesn't address the sensor-side blending controls. For
+> those, I recommend considering how they should be handled from
+> userspace. We don't want to have per-sensor code there if we can avoid
+> it, and that should drive the API design.
+>
+
+Can you recommend a way to handle the blending controls from userspace?
+I will be glad to move these controls to module parameters then V4L2
+controls if we don't want per-sensor code. In the worst case I'll
+remove the ClearHDR functions and HCG controls for this driver so the
+patches go through.
+
+> As for what you call gradation above, that's not strictly speaking
+> limited to HDR, right ? If my understanding is right, this is about
+> applying a compression curve to lower the bandwidth by lowering the
+> number of bits per pixel while preserving more dynamic range in the
+> lower and middle parts of the pixel value range. Is that correct ? If
+> so, the term "companding" is also often used for this feature. I think
+> we have three needs:
+>
+> - Enable/disable companding (which includes configuring the bit depth of
+>   the output format)
+>
+> - Obtaining the companding curve applied by the sensor (as the host will
+>   have to apply the inverse expansion curve)
+>
+> - Optionally, modifying the companing curve.
+>
+> I'd like standard controls for those.
+>
+
+Let me describe the data flow here:
+
+           +-----------+              +-----------+
+           | High gain |              | Low  gain |
+           +-----------+              +-----------+
+              [12b]  |                   [12b]  |
+                     v                           v
+         +-----------------------------------------------+
+         |              Linear merging stage          |
+         |           ( DATA_SEL, DATA_BK)        |
+         +-----------------------------------------------+
+                                   |
+                         (16bit output)
+                                   |
+                                   v
+         +-----------------------------------------------+
+         |       Gradient Compression stage      |
+         |        (GRAD_TH, GRAD_COMP)      |
+         +-----------------------------------------------+
+                                   |
+                         (12bit output)
+                                   |
+                                   v
+
+So both 12 bit compressed and 16 bit linear are all based on the HDR
+result and even though this is exactly the same as companding, I still
+think we need sensor dependent control here.
+From what I can see from the public datasheets, OX03C10 has a similar
+data compression algorithm called piecewise linear (PWL), which acts
+on 24bit(!) 3-frame HDR results with 32(!) curves.
+On the Sony side I don't see this capability on any sensor other than IMX58=
+5.
+
+> > > Sony's website [2] states
+> > > "Sony=E2=80=99s Super High Conversion Gain technology is designed to =
+amplify
+> > > electrical signals immediately after the conversion from photons, whe=
+n
+> > > the noise levels are relatively low. In this way, it reduces the
+> > > overall noise after amplification. As a result, lower-noise images,
+> > > compared to conventional technology, can be captured even in a
+> > > low-illuminance environment. Lower noise levels in images also help t=
+o
+> > > enhance the accuracy in visual or AI-assisted image recognition."
+> > > From that one would presume you'd always want it on (lower noise =3D
+> > > good), unless needing the minimum exposure time and the image was
+> > > already over-exposed.
+> > > I'm guessing you have no additional information based on your descrip=
+tion text.
+> > >
+> > >   Dave
+> > >
+> > > [1] Also IMX327, IMX462, and IMX662 which are in the same family,
+> > > IMX678 (ratio of 2.6), and quite probably most of the Sony Starvis or
+> > > Starvis 2 ranges.
+> > > [2] https://www.sony-semicon.com/en/technology/security/index.html
 > >
-> > In order to execute this change, we introduce a new opaque type -
-> > mm_flags_t - which wraps a bitmap.
+> > Yeah I think Starvis 2 series all have this capability.
+> >
+> > > > +
+> > > > +Notes
+> > > > +-----
+> > > > +
+> > > > +* Controls are writable while streaming; changes take effect from =
+the
+> > > > +  next frame.
+> > > > +* HDR-specific controls are hidden when HDR is disabled.
+> > > > +* Inter-control dependencies are enforced by the driver.
+> > > > diff --git a/Documentation/userspace-api/media/drivers/index.rst b/=
+Documentation/userspace-api/media/drivers/index.rst
+> > > > index d706cb47b..87912acfb 100644
+> > > > --- a/Documentation/userspace-api/media/drivers/index.rst
+> > > > +++ b/Documentation/userspace-api/media/drivers/index.rst
+> > > > @@ -32,6 +32,7 @@ For more details see the file COPYING in the sour=
+ce distribution of Linux.
+> > > >         cx2341x-uapi
+> > > >         dw100
+> > > >         imx-uapi
+> > > > +       imx585
+> > > >         max2175
+> > > >         npcm-video
+> > > >         omap3isp-uapi
+> > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > index 175f5236a..42e32b6ba 100644
+> > > > --- a/MAINTAINERS
+> > > > +++ b/MAINTAINERS
+> > > > @@ -23183,6 +23183,7 @@ M:      Will Whang <will@willwhang.com>
+> > > >  L:     linux-media@vger.kernel.org
+> > > >  S:     Maintained
+> > > >  F:     Documentation/devicetree/bindings/media/i2c/sony,imx585.yam=
+l
+> > > > +F:     Documentation/userspace-api/media/drivers/imx585.rst
+> > > >  F:     drivers/media/i2c/imx585.c
+> > > >  F:     include/uapi/linux/imx585.h
+> > > >
 >
-> I have no strong opinion here, but I think coding-style.rst[1] has one?  To
-> quote,
+> --
+> Regards,
 >
->     Please don't use things like ``vps_t``.
->     It's a **mistake** to use typedef for structures and pointers.
-
-You stopped reading the relevant section in [1] :) Keep going and you see:
-
-	Lots of people think that typedefs help readability. Not so. They
-	are useful only for: totally opaque objects (where the typedef is
-	actively used to hide what the object is).  Example: pte_t
-	etc. opaque objects that you can only access using the proper
-	accessor functions.
-
-So this is what this is.
-
-The point is that it's opaque, that is you aren't supposed to know about or
-care about what's inside, you use the accessors.
-
-This means we can extend the size of this thing as we like, and can enforce
-atomicity through the accessors.
-
-We further highlight the opaqueness through the use of the __private.
-
->
-> checkpatch.pl also complains similarly.
->
-> Again, I have no strong opinion, but I think adding a clarification about why
-> we use typedef despite of the documented recommendation here might be nice?
-
-I already gave one, I clearly indicate it's opaque.
-
->
-> [...]
-> > For mm->flags initialisation on fork, we adjust the logic to ensure all
-> > bits are cleared correctly, and then adjust the existing intialisation
->
-> Nit.  s/intialisation/initialisation/ ?
-
-Ack thanks!
-
->
-> [...]
->
-> [1] https://docs.kernel.org/process/coding-style.html#typedefs
->
->
-> Thanks,
-> SJ
+> Laurent Pinchart
 
