@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-766950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8932FB24D13
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:18:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7334B24CEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:13:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2D49E0085
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:12:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBB877B0215
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:11:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5352FE59F;
-	Wed, 13 Aug 2025 15:11:57 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CEE2F5335;
+	Wed, 13 Aug 2025 15:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IFofw7na"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9778F2FA0F9;
-	Wed, 13 Aug 2025 15:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5253780B
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097917; cv=none; b=Yf631rZqrSu1NzzGsF9w9R6oiUy1Fevo6BWBRXvJLQ1HANZaojkv/SQ5GMqfUvUuO5VmcWtXgGAsZIrfLEljbmqCflrrf5qEd8hBslC5EryAvmEgyfmbu5iiO5JueeqCRj4nNAsO6AfZVpmhbWAwYqcwhBlFUh2TtsxEEA4nuYg=
+	t=1755097965; cv=none; b=pT/nD+7qPWVq6rYJ/P5h4AdEwLDblFx98RRbHbDfr/XpoH3HG3QyALzq6Gytn3D0tsdvrg6hE/+3YGq+coyt36obgHAisGGIGuaeaFk5aUvx6gBNqKC/MFN9+yY0390ta6DxbI4eVGN0mVUfN+OAU/+569lsWGy3wptgK3ln0O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097917; c=relaxed/simple;
-	bh=egebn/Z7HfdZN+dJPK5iK0KCklzEXZlmgN5eWex9MhU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p9BDUMshjosInL0BWBQyow91nS/t7aTg84IBrsL9+qLTr5QZ3FSwf0xXI4H7UGEeWCMfBa5NX6Lb5W7BV3pvTe4aIWhwcdvtP7TymbkgNRZwuhcbUFMcGgtlnkfsp35fVOOk7gSscUqQEa9djA5B9q/G8whG9YGrz7H0J3T3lTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2Bbr3D8mz6L53R;
-	Wed, 13 Aug 2025 23:09:12 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8F22B1404C4;
-	Wed, 13 Aug 2025 23:11:53 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
- 2025 17:11:53 +0200
-Date: Wed, 13 Aug 2025 16:11:51 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
-Subject: Re: [PATCH V2 10/20] nvdimm/region_label: Preserve cxl region
- information from region label
-Message-ID: <20250813161151.00006d59@huawei.com>
-In-Reply-To: <20250730121209.303202-11-s.neeraj@samsung.com>
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121235epcas5p4494147524e77e99bc16d9b510e8971a4@epcas5p4.samsung.com>
-	<20250730121209.303202-11-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755097965; c=relaxed/simple;
+	bh=zVsSFbrvhm9BJ3DbBCbm+xy2MVqqV7KykKxHCqqt4KM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UmabZlPQJ6WIzBzKlCRLFET7dvhUX0KmcowgXdARTd1Z0WgVIch91p4BFiZxJe5GJtfjrxMQhOyIrk479kU/zTea2VYsJB0Y8MauTzIvjkpHlX+pz34HstfXbUam2NyiIn/w7qMy/8ss3M3y5EJeIxCy9Fjwyx/f0rhNwqDtaVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IFofw7na; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-88428cb5dfdso15256039f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:12:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1755097962; x=1755702762; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n42jFcBE2gpeQ/vI096ladjtP3+BqKDXgfUhoLDuD1Q=;
+        b=IFofw7naSaDt7ClkuDxCq5Dg9crClItBMVTyW75rPVSYP295pK3/QTe+osvspfsuPv
+         xEHCCag2PQ4NriDQSVwFhcAXQUN7hLVyTQTGgUZBNAzjJzSiyf2KccSfD1rLprrLo3yS
+         XjJJotuK6cUDvtUKoZf0wcfaweMPnm3F7A+WQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755097962; x=1755702762;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n42jFcBE2gpeQ/vI096ladjtP3+BqKDXgfUhoLDuD1Q=;
+        b=RDoj4oLBDKQmdd+6aQ1WcTjm1R/VKoqMEJBLbLdElCTgr9PxgdBOVq4GyKMJ0HQPHq
+         qbH06ptlu8ctUKc9aRB986al++u7CXAoTlFzixrQPV+iQmecQuZBcW5m1czbtRmBJAhF
+         /yM2Mowb8KDl4xni/jg87YsWtlZPzSbC7EHQK0s26E5TYb14qE5pJ3FaCLApNqaw3AiI
+         fn70O2QGGkaq6EF5QgkWIOLDRAv1XiPAACK0IbUw80oPpDM3urwMLUSrWGCoHMl5eoAp
+         H071o8wIKWQmDaYnoUkcs1GcTyS9bNRz3vsKrN0GfMqV5VdZxID5DxcApGRdUHceip2P
+         9nNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNJyh7NITrtJnvtLbT+dCKFWMic6IAloM6yUUDNAb1JrQpQWsR453MYgD/9Kpgb0RTWPyh1H3y1r7CiY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBWbVzVTG0qmKGKct7DfVhW5P8ZMuV2xq2fTc7smXg4H+owc/i
+	CjcIzhShCL4x8FX6HtHl3yY+/xf0HIm3AZImqIp9p5vuzhZoLWqlqbjmiMPhB8Roaj8=
+X-Gm-Gg: ASbGncul+8I/n8Z+LkBDeJos/0RocyRN60YSWrU6tcqkG5tM7toeqyJN9MjSp1qurVJ
+	7u+Hm89SW/yfHufMCTpDmjXYXfv7HlJy9K9fzZSn8PDrKjgMFGbR72hIBjDAiJpIHLYwKFgs9Qk
+	mwCDnY6hTzjXwPM/hDVvAdZz+PgU/OPleIV3mTaZ0Aixrz2qn7c0WGm6zPc0wqOEFw7naYsUOJ8
+	p9XfNMIyn+4baAX9nuxrja2s36SD7LUJw6sEV4HaiPARxYtzQHjWKp2AHYuBY/5POytRt5CPjJW
+	jrCMftW/8eRMEJBC6Wq7TEU6h99nIcCRVhKSzQ4nQBoV69ifvp/mZJNdnOJLrJ3Z+L6veZ3dTqs
+	1L0i6QHSIL/4cFxQG9rTTjHY6oq74PCdqHg==
+X-Google-Smtp-Source: AGHT+IG7OVrd+2DrUYOqB1Ip+rADtsN4EW9RyHicJM+g0CKieqgcluHwZyyU3hrd1BkUduuItJ8C3A==
+X-Received: by 2002:a05:6e02:19cd:b0:3e3:b3d0:26cf with SMTP id e9e14a558f8ab-3e5685aa5bcmr45056125ab.10.1755097962142;
+        Wed, 13 Aug 2025 08:12:42 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae99cfb72sm3840508173.33.2025.08.13.08.12.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 08:12:41 -0700 (PDT)
+Message-ID: <9a55a42d-353b-47c5-bf9c-1b55bf67ec04@linuxfoundation.org>
+Date: Wed, 13 Aug 2025 09:12:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/262] 6.6.102-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250812172952.959106058@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250812172952.959106058@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, 30 Jul 2025 17:41:59 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
-
-> Preserve region information from region label during nvdimm_probe. This
-> preserved region information is used for creating cxl region to achieve
-> region persistency across reboot.
+On 8/12/25 11:26, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.102 release.
+> There are 262 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> Responses should be made by Thu, 14 Aug 2025 17:27:08 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.102-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-See below.
+Compiled and booted on my test system. No dmesg regressions.
 
-> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-> index 064a945dcdd1..bcac05371f87 100644
-> --- a/drivers/nvdimm/label.c
-> +++ b/drivers/nvdimm/label.c
-> @@ -473,6 +473,47 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
->  	return 0;
->  }
->  
-> +int nvdimm_cxl_region_preserve(struct nvdimm_drvdata *ndd)
-> +{
-> +	struct nvdimm *nvdimm = to_nvdimm(ndd->dev);
-> +	struct cxl_pmem_region_params *params = &nvdimm->cxl_region_params;
-> +	struct nd_namespace_index *nsindex;
-> +	unsigned long *free;
-> +	u32 nslot, slot;
-> +
-> +	if (!preamble_current(ndd, &nsindex, &free, &nslot))
-> +		return 0; /* no label, nothing to preserve */
-> +
-> +	for_each_clear_bit_le(slot, free, nslot) {
-> +		struct nd_lsa_label *nd_label;
-> +		struct cxl_region_label *rg_label;
-> +		uuid_t rg_type, region_type;
-> +
-> +		nd_label = to_label(ndd, slot);
-> +		rg_label = &nd_label->rg_label;
-> +		uuid_parse(CXL_REGION_UUID, &region_type);
-> +		import_uuid(&rg_type, nd_label->rg_label.type);
-> +
-> +		/* REVISIT: Currently preserving only one region */
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-In practice, is this a significant issue or not?  I.e. should we not
-merge this series until this has been revisited?
-
-> +		if (uuid_equal(&region_type, &rg_type)) {
-> +			nvdimm->is_region_label = true;
-> +			import_uuid(&params->uuid, rg_label->uuid);
-> +			params->flags = __le32_to_cpu(rg_label->flags);
-> +			params->nlabel = __le16_to_cpu(rg_label->nlabel);
-> +			params->position = __le16_to_cpu(rg_label->position);
-> +			params->dpa = __le64_to_cpu(rg_label->dpa);
-> +			params->rawsize = __le64_to_cpu(rg_label->rawsize);
-> +			params->hpa = __le64_to_cpu(rg_label->hpa);
-> +			params->slot = __le32_to_cpu(rg_label->slot);
-> +			params->ig = __le32_to_cpu(rg_label->ig);
-> +			params->align = __le32_to_cpu(rg_label->align);
-> +			break;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
+thanks,
+-- Shuah
 
