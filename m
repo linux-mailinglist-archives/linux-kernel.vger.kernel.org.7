@@ -1,79 +1,93 @@
-Return-Path: <linux-kernel+bounces-766529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6770B247C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:54:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDD9B247C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD472628AF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD00727BEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E972F549A;
-	Wed, 13 Aug 2025 10:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HoNf2dZT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B122F5322;
-	Wed, 13 Aug 2025 10:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA7E2F5499;
+	Wed, 13 Aug 2025 10:55:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA45221277;
+	Wed, 13 Aug 2025 10:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755082450; cv=none; b=hYa9XBCTDInoKCaF3AlDDqzG+HuWEEXmS5syAYmwAFd8RANqaDUk9oTRWIBIf45mUR2p4sLRzkfwQqioxMiPCXhXUucMNo6euEVmpWRwiU6IeSOSaifSSABLgXoeMObCQ+JJTcl3vF/Z4ktR2sAbn2S2zunOwfLgR7txozmPiog=
+	t=1755082556; cv=none; b=PYG2l/cUyI+JC4SAlD9pnFoslg7/07KyBVa59nPbgAWqhIIx3EyxvIWY0g5dDTfuoNiAZvsXoITVcpcaqPreJ/ZVWvscjbRntpJrgszbNuVXnoQDrPJV4RgeAmbRlELneQnFV2hF3KSty5i8TLmQqdZygIK/L1ikPZ8SUmwSeKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755082450; c=relaxed/simple;
-	bh=IA30e12EnWb/a4zorjCkw/sI2jug3qphKMlYO7PiwcI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rvBOOlOK9+W0Dqj0+Rxc2P9kVk2tCNYvhSxOzHKuXSVlLOiDuVb6e0GG+zdwY903NsyZ1JoFNzWtTNn2lJ3cs9paVB7StuRJd8P8ScUWj6LqsldbJAjpYcO7qA6FOFoEOlufDaMs72pLt9QVwbvinaE2EyyQV4wleQnb/PaRxAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HoNf2dZT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A227C4CEEB;
-	Wed, 13 Aug 2025 10:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755082449;
-	bh=IA30e12EnWb/a4zorjCkw/sI2jug3qphKMlYO7PiwcI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=HoNf2dZTWlD6t4UslGDzYL6HQVadeIp3pBgW2RNENbgFVTJSqRsVe1Ri1MCcOmcRd
-	 veNueKZ+NA8lVOXwC1LL82K+PAlALoGYxAe9jPb350JedxlxRKwcsRTL1CiT+Bd5qO
-	 PTUxJ3GAtzDDs3ldU81xJlg/ySZIOapCLLi34/t1RwIue0ob84MJ2uS/XeOILNXcyA
-	 qzKtAfei/qbBbsHP2Ccod1uzcUfGZGjv7LXdiQwVD2WrsNs61Gi9OwsNWF613i+Xm8
-	 7YXNPlJ5+p0hFJPZRkXMk5xETACovf9Txqj/MWoVpnJRu2Wsg/3oc7gopF5AhYGlGj
-	 izVeLdHl6OKwA==
-From: Leon Romanovsky <leon@kernel.org>
-To: linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-rdma@vger.kernel.org, 
- Tatyana Nikolova <tatyana.e.nikolova@intel.com>
-In-Reply-To: <20250808175601.EF0AF767@davehans-spike.ostc.intel.com>
-References: <20250808175601.EF0AF767@davehans-spike.ostc.intel.com>
-Subject: Re: [PATCH] MAINTAINERS: Remove bouncing irdma maintainer
-Message-Id: <175508244543.199624.12082806444245569887.b4-ty@kernel.org>
-Date: Wed, 13 Aug 2025 06:54:05 -0400
+	s=arc-20240116; t=1755082556; c=relaxed/simple;
+	bh=aAOWSyLd3a+OefNauWnbfg+j1F9KxO967PQXIBalszw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gHfR+uPMMP5D1kFKvV0PXc8LLFPsCk6SEGIeWKbVKwpePpcmCH84yCrnvixpA7S+mBOsuWD6DQvMZzSSZZv+CziHIThfuEvzRM1fgt9JbGKD65FaHNwOrSuyDNWiOjA0xVhBCwOB73vY1eGd1H0N+9a21p9fwaeoR6p7Rk5/lt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F78512FC;
+	Wed, 13 Aug 2025 03:55:45 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BE9C03F63F;
+	Wed, 13 Aug 2025 03:55:51 -0700 (PDT)
+Date: Wed, 13 Aug 2025 11:55:48 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 0/4] clocksource: Add standalone MMIO ARM arch timer
+ driver
+Message-ID: <20250813-macho-snobbish-alpaca-ff07fa@sudeepholla>
+References: <20250807160243.1970533-1-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807160243.1970533-1-maz@kernel.org>
 
++Alexandru
 
-On Fri, 08 Aug 2025 10:56:01 -0700, Dave Hansen wrote:
-> This maintainer's email no longer works. Remove it from MAINTAINERS.
+On Thu, Aug 07, 2025 at 05:02:39PM +0100, Marc Zyngier wrote:
+> For the past 10 years, both Mark and I have been lamenting about the
+> sorry state of the badly named "arch_timer" driver, and about the way
+> the MMIO part is intricately weaved into the system-register part.
 > 
-> This still leaves one maintainer for the driver.
+> The time has finally come to have a stab at it.
 > 
+> This small series simply creates a new timer driver for the MMIO arch
+> timer, and only that. It is an actual driver, and not some kludge that
+> has to run super early (that's what the per-CPU timers are for). This
+> allows, in turn, a pretty large cleanup of the per-CPU driver, though
+> there is more to come -- one thing at a time.
+> 
+> As an added bonus, we get a clocksource, which the original code
+> didn't provide. Just in case it might be useful. The end-result is far
+> more readable, and about 100 lines smaller.
 > 
 
-Applied, thanks!
+(Tested it on Juno R2 and FVP in both DT and ACPI boot)
 
-[1/1] MAINTAINERS: Remove bouncing irdma maintainer
-      https://git.kernel.org/rdma/rdma/c/2186e8c39eb156
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Best regards,
+Alexandru found it useful(avoids some unexpected hang IIUC) in his setup
+based on bootwrapper which doesn't initialise MMIO timers.
+
 -- 
-Leon Romanovsky <leon@kernel.org>
-
+Regards,
+Sudeep
 
