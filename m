@@ -1,150 +1,173 @@
-Return-Path: <linux-kernel+bounces-766979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7FEB24D5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:29:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B49B24DBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090CF162C4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:26:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7525810E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC05123ABBB;
-	Wed, 13 Aug 2025 15:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9682820B9;
+	Wed, 13 Aug 2025 15:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s4wtRnQr"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="VMIojZs5"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414FA237707
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD331281372;
+	Wed, 13 Aug 2025 15:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755098795; cv=none; b=RnTZ+XiniYdSPECiEUq09nBgYVCtsESWonJ2qJHUnF31YA2l1vYyTFwf+/vf/OsH7TyzZ1OKJ/4q+0HFID4bGbrySS6HRE6Ew0D2lHEGNMyPmCoLmHoJbch1u4Z8EBAKvxa2UXBIAN1NsLPbIXscwqdF2fHDMVUHk628l4gWKbk=
+	t=1755099371; cv=none; b=CL7rhQflcB+31MB3T1WrN5j19DJom8WdFouhcfcrnJrGm2QdeaNEdn9wogEZJbfKBTjnOdvKImTyPYn6RleuSKuITPlvWT4QS7ZW6sCtmiIQEEkfEkKWmw3gcudQgmJRShcSPE4vQGIcZOoDljQibmMDuXdyBQdekkTNHceAi9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755098795; c=relaxed/simple;
-	bh=0oQi+iiyp0itqtl6RIdLSiMtpZOH1aH7EZ9BHYAb/Ts=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k5WytT3GBbzk+N+dlv6dbKwV4qQvEZh76C5nNmNggBpG4awIf389ipxJdGJhlhxU1fsrbmLDVZ9LjLcu/w0Rf6SPX8NyVNzIucmxoA4/4x0v7RzycVQyQ2crY9WUTAOGU46bnQGJzOIZLJtc0xAGD0QgKsNgFivzDWf4SInOhzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s4wtRnQr; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DFQBdF1728877;
-	Wed, 13 Aug 2025 10:26:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755098771;
-	bh=f6EBEMYOHLBS/mOMhxKpJJOh8alzp/LH8jTecCxA9Aw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=s4wtRnQrLPtZvTOm8HT2J2f0fERCIvleTqauRAsIg8rBdOGs04emppWtMWLSehjEr
-	 BhxqgKtR7G/6gMDl9tES4wpZUnnmLFnksGeoSPXoto11DfOt+RVfDGVW7O6gaOxWqA
-	 bHdTe7Hzl4B8jkNuMAz3iEddS8Z7pTsLZKqjl4e8=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DFQBLq153772
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 10:26:11 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 10:26:10 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 10:26:10 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DFQApP2503743;
-	Wed, 13 Aug 2025 10:26:10 -0500
-Date: Wed, 13 Aug 2025 10:26:10 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Guillaume La Roque <glaroque@baylibre.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, <vigneshr@ti.com>,
-        Santosh Shilimkar
-	<ssantosh@kernel.org>,
-        Tero Kristo <kristo@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/2] soc: ti: ti_sci_inta_msi: Enable module
- compilation support
-Message-ID: <20250813152610.akcdxrzhev6e2kfa@unturned>
-References: <20250812-timsi-v2-0-90c8500f3f18@baylibre.com>
- <20250812-timsi-v2-2-90c8500f3f18@baylibre.com>
+	s=arc-20240116; t=1755099371; c=relaxed/simple;
+	bh=0yB4yPxqFUcfgr4tTHPeG4JoznlOadq31ynbw69xH1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gae5cELfoPlIx6dO9B9kXxbiTIQx7HuSfYL/Fq+VT0z6NOU+I1zvDnEzLwXEMhzDMNpssPIKLprFME5LvlIqWUCBi9CHOLlCPzysau1qVAv9fL1fRJ73cDR8L2G8YPK0Ll3l1X4LDIn6hKBgQmRkpbigR6crF5srY/VN68N2DLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=pass smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=VMIojZs5; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C90D0C981B;
+	Wed, 13 Aug 2025 17:28:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1755098907; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=Lf7hoXo1qTojSQ5GerYUNJtoP2pgymrfHmOK4+PmZ7c=;
+	b=VMIojZs5JA9aS9O3gcpK+RTWtYShv47B/EX2AtYf1Ba9/0eD73cUwPpM2heUT3xcKik52j
+	o5SY/+7D/2Jtvv5W4MAYiYrCUevtgdVwKL7jhoh6Fn2yB0CiGKExFoi4vFIHWSHW+k+tlx
+	XzExX34iAkYhkvTcoP4jrFveiw6r90Sz+0c+aC3Nn6DCJbG9yR0I3RcwVkhwXLfKg8I7Jo
+	TUxmxpOfzLHKxK4bkM3Vl88R5skOQQP9tSr6tn8poV/VNHM29ildSqlZQB14B84gBxripn
+	EH8T2lwY4sis0RoVkOdbn1t8Efvq8VG6F8JDA29yYLSmkasHQ9UiaM7LRtm1nA==
+From: Frieder Schrempf <frieder@fris.de>
+To: netdev@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	UNGLinuxDriver@microchip.com,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jesse Van Gavere <jesseevg@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Pieter Van Trappen <pieter.van.trappen@cern.ch>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	Tristram Ha <tristram.ha@microchip.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Subject: [RFC PATCH] net: dsa: microchip: Prevent overriding of HSR port forwarding
+Date: Wed, 13 Aug 2025 17:26:12 +0200
+Message-ID: <20250813152615.856532-1-frieder@fris.de>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250812-timsi-v2-2-90c8500f3f18@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 22:36-20250812, Guillaume La Roque wrote:
-> Add module support to the TI SCI INTA MSI driver:
-> - Change Kconfig from bool to tristate to allow module compilation
-> - Add linux/module.h include for module functionality
-> - Add MODULE_LICENSE, MODULE_DESCRIPTION, and MODULE_AUTHOR macros
-> 
-> This allows the driver to be compiled as a loadable kernel module
-> named ti_sci_inta_msi.
-> 
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> ---
->  drivers/soc/ti/Kconfig           | 5 ++++-
->  drivers/soc/ti/ti_sci_inta_msi.c | 5 +++++
->  2 files changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-> index 1a93001c9e36..0a9eb5ac264b 100644
-> --- a/drivers/soc/ti/Kconfig
-> +++ b/drivers/soc/ti/Kconfig
-> @@ -85,7 +85,10 @@ config TI_PRUSS
->  endif # SOC_TI
->  
->  config TI_SCI_INTA_MSI_DOMAIN
-> -	bool
-> +	tristate "TI SCI INTA MSI Domain driver"
->  	select GENERIC_MSI_IRQ
->  	help
->  	  Driver to enable Interrupt Aggregator specific MSI Domain.
-> +
-> +	  Say Y here to compile it into the kernel or M to compile it as a
-> +	  module. The module will be called ti_sci_inta_msi.
-> diff --git a/drivers/soc/ti/ti_sci_inta_msi.c b/drivers/soc/ti/ti_sci_inta_msi.c
-> index 193266f5e3f9..d92cab319d57 100644
-> --- a/drivers/soc/ti/ti_sci_inta_msi.c
-> +++ b/drivers/soc/ti/ti_sci_inta_msi.c
-> @@ -8,6 +8,7 @@
->  
->  #include <linux/irq.h>
->  #include <linux/irqdomain.h>
-> +#include <linux/module.h>
->  #include <linux/msi.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> @@ -115,3 +116,7 @@ int ti_sci_inta_msi_domain_alloc_irqs(struct device *dev,
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(ti_sci_inta_msi_domain_alloc_irqs);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Texas Instruments K3 Interrupt Aggregator MSI bus");
-> +MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ti.com>");
-> 
-> -- 
-> 2.34.1
-> 
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-If Thomas doesn't mind picking the full series,
+The KSZ9477 supports NETIF_F_HW_HSR_FWD to forward packets between
+HSR ports. This is set up when creating the HSR interface via
+ksz9477_hsr_join() and ksz9477_cfg_port_member().
 
-Acked-by: Nishanth Menon <nm@ti.com>
+At the same time ksz_update_port_member() is called on every
+state change of a port and reconfiguring the forwarding to the
+default state which means packets get only forwarded to the CPU
+port.
 
-This is probably one of the last hold outs for us to move SoC support
-into kernel modules.
+If the ports are brought up before setting up the HSR interface
+and then the port state is not changed afterwards, everything works
+as intended:
 
+  ip link set lan1 up
+  ip link set lan2 up
+  ip link add name hsr type hsr slave1 lan1 slave2 lan2 supervision 45 version 1
+  ip addr add dev hsr 10.0.0.10/24
+  ip link set hsr up
+
+If the port state is changed after creating the HSR interface, this results
+in a non-working HSR setup:
+
+  ip link add name hsr type hsr slave1 lan1 slave2 lan2 supervision 45 version 1
+  ip addr add dev hsr 10.0.0.10/24
+  ip link set lan1 up
+  ip link set lan2 up
+  ip link set hsr up
+
+In this state, packets will not get forwarded between the HSR ports and
+communication between HSR nodes that are not direct neighbours in the
+topology fails.
+
+To avoid this, we prevent all forwarding reconfiguration requests for ports
+that are part of a HSR setup with NETIF_F_HW_HSR_FWD enabled.
+
+Fixes: 2d61298fdd7b ("net: dsa: microchip: Enable HSR offloading for KSZ9477")
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+---
+I'm posting this as RFC as my knowledge of the driver and the stack in
+general is very limited. Please review thoroughly and provide feedback.
+Thanks!
+---
+---
+ drivers/net/dsa/microchip/ksz_common.c | 11 +++++++++++
+ include/net/dsa.h                      | 12 ++++++++++++
+ 2 files changed, 23 insertions(+)
+
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 7c142c17b3f69..56370ecdfe4ee 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -2286,6 +2286,17 @@ static void ksz_update_port_member(struct ksz_device *dev, int port)
+ 		return;
+ 
+ 	dp = dsa_to_port(ds, port);
++
++	/*
++	 * HSR ports might use forwarding configured during setup. Prevent any
++	 * modifications as long as the port is part of a HSR setup with
++	 * NETIF_F_HW_HSR_FWD enabled.
++	 */
++	if (dev->hsr_dev && dp->user &&
++	    (dp->user->features & NETIF_F_HW_HSR_FWD) &&
++	    dsa_is_hsr_port(ds, dev->hsr_dev, port))
++		return;
++
+ 	cpu_port = BIT(dsa_upstream_port(ds, port));
+ 
+ 	for (i = 0; i < ds->num_ports; i++) {
+diff --git a/include/net/dsa.h b/include/net/dsa.h
+index 55e2d97f247eb..846a2cc2f2fc3 100644
+--- a/include/net/dsa.h
++++ b/include/net/dsa.h
+@@ -565,6 +565,18 @@ static inline bool dsa_is_user_port(struct dsa_switch *ds, int p)
+ 	return dsa_to_port(ds, p)->type == DSA_PORT_TYPE_USER;
+ }
+ 
++static inline bool dsa_is_hsr_port(struct dsa_switch *ds, struct net_device *hsr, int p)
++{
++	struct dsa_port *hsr_dp;
++
++	dsa_hsr_foreach_port(hsr_dp, ds, hsr) {
++		if (hsr_dp->index == p)
++			return true;
++	}
++
++	return false;
++}
++
+ #define dsa_tree_for_each_user_port(_dp, _dst) \
+ 	list_for_each_entry((_dp), &(_dst)->ports, list) \
+ 		if (dsa_port_is_user((_dp)))
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+2.50.1
+
 
