@@ -1,205 +1,117 @@
-Return-Path: <linux-kernel+bounces-766624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753D3B2492B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6C1B2492E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7633583487
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:08:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDDE61B6797F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229512FE593;
-	Wed, 13 Aug 2025 12:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08902FE59D;
+	Wed, 13 Aug 2025 12:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ATDUyWH3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Escbfkaz"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCF22F6571
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C902D542A;
+	Wed, 13 Aug 2025 12:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086883; cv=none; b=cqjNSaBh2Vx4HIz1p3QhbFccr7Zdiw4Pvu4mF6nkLCr3FFUoJQT7zhkHG/zIMiuQJkaLXdLTzk4WAf3Rf30ZlfZhT1k5hh8RDl6dR4Bg5LXiou8CBTxxR1D8gpC9LUoi8hxlmpst2oB7s7NLQ5j+3FqXiCet2h+VXQd/K9H5XvU=
+	t=1755086927; cv=none; b=cdvHcvYZ81EvIBX3ZpOFpik8Kybu6Ap/8ItdUDQNKMPV3LR8hsd1mIYwMUafAVg7jujxpfphCrHMM4Mvo/JnEUNipb0mSLFUV2tyOV+5770+X8u93oWCo2wwRjcRHAiJqJYxN4LHuK6UN6U27JL/Vxv0BSAMtJMqvZQS/jHQj6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086883; c=relaxed/simple;
-	bh=ZS6H/U2iVvTT4oqkdcvirLtWbkeN2nTPuzUh5AfAwbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HMXDOU98H0EcGB7VOR5DNVHIKLMBAU4vdLzeiZdXRv7/BqYI+4xpycNYd9xROtsPlS4VKbPITa89hfCdzioYaku+oQIvxe86Wn32AFqNW5BVo1wK1lr/upruJvetLO0h6OEu8BOxkjyYKa1/WeYPWvK1/SRXjZfPSMCw/qV9ayo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ATDUyWH3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLfoK027030
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:08:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MYuk5iUWeR2SGqulBnQ8ep9aCOz5ejprTcm8gj33WEM=; b=ATDUyWH3/asPohwk
-	JlYKEMfgF9tDUQkDHOdgtOHJUBPvGZDlokp810W6KwmX8G4lXnsDH7Kn1PVsto27
-	ZI5c7g8NFP/7dgsIK+M7/G8l+fc3Nv5JmFIpeU2zVAMDUdSyk20R4HhA80jmF+ts
-	99lmUQa6knjZAt2pLCz8/YoKVIf9kR58Fc5FCRSqb6Ok0mXdi2KE16lygQ/ZQj3L
-	HsE4Njey0HImOaDkvVxaOukG3tb51yvz47wSVUjborALpKFhiQuDQ2AKMWNjoC90
-	xy6+XakTCVzPTrwhLlJDhz8VhZZ1cSP0uVMiRGIaIOQNgEPBqmJAUSjwIKRhUApQ
-	oFsGog==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffhjqh12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:08:00 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f539358795so22982056d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:08:00 -0700 (PDT)
+	s=arc-20240116; t=1755086927; c=relaxed/simple;
+	bh=HDj31UMnmpn+jUQQIsCYn+G/LNwtojgdTHaEeJB50+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uwU9+ffxjMwgItNA5AMyTojoCdlNT1O22lpbcC0POZT5Jj9yCOXQSGn9xaC5Vm0NZh9/AiNmsgXDCP6SLqPCvCkduC3O8tMO6upTlTWMAx1MHv1xlnBaTXhYv0RsvPEfrNb8yKp4D91BXC8kjHWnmpKj4UmCd058PTdOcNtQQLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Escbfkaz; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32106b0930eso6795136a91.0;
+        Wed, 13 Aug 2025 05:08:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755086925; x=1755691725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PWGK8ZVm+zLmOeXTeLHrigp8WDDEd3OtJiB5dxz3uO8=;
+        b=EscbfkazOA2OWudjz5D96dJ7LU/WKbBU4UeGMJgY+DDHehNh//iOBuvf+lFoc/GiOg
+         MG9FHQ83va0cAGW3ceaE7vGIpYI43mcJAFcfJhNPDFWnH0crYx92nA9p5WeJEwa5O8pW
+         YlnMcwouUmw6CRqm1Yfc+8JzoQEyIPW4L0vLoJEGs95n43T/S/Hx0+87ZpbqIyXDqfDW
+         moW6WVhVp7KHIchourywCWnAAAAa4QjqumwwPmZ1KuW0buYpV7Z0Fn8TXbVkAd/zgswj
+         UeL6dcCUo4DGoxJb6uCCMsQgZpG0RCh09NtSSMQS+neJ1hoAOogcY6N4mLJO5N9p0muz
+         Kwkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755086879; x=1755691679;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MYuk5iUWeR2SGqulBnQ8ep9aCOz5ejprTcm8gj33WEM=;
-        b=csf1l02WTFuDfP1CjA3j0KwZALWFjuZpe/V7Er0yMrTR4Yyis1ZnsmMunXX3ebWPoy
-         C+MrC/DKD2Us+pyUSlZVceAG/b0ffG3jzx/4n1BW9qcTYSvSxHpFFFHtNKiA1HJueqiV
-         t8CwGVDtCijWqaFUqtPYiPO+Xvo/wuThJbqV/bAtDL3ZHlFcT5giScDJ4eEW/29jQ18D
-         1HFGxj1awxt5aNLh+0UttZDzkWOnlIZqYqm9tBsDEIZEqrurvrF5kxC002BkjCFgH6Po
-         phZDHZBdlHgWusQk4gSs1fTmSFHtxXlTO+uLVKhjamGpU0FDOljFpHE/owz1aSedy8UD
-         V7cw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+09dn6WUnXLo6v6BMbISZFAz2HAYh9GGKq1uy2sGJ9HUgpE3Ey8sma5UuzW0Q9Xmx1TjkjgCsPatGEyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlenhi3Y5buQcj6A3fdXh5KIK2QIlYuBUd0MXn/l6LE65rMWHe
-	Jzf52mKpagZmmT9s63NamdWjqiuaBx8aPf0JQcvqEMglBQfLDOZth8KY1fF3pRwFmKitcPOv5C4
-	w8Si3TZD2FDSc/PZvzcAqsk7PK3ndzao6Gon2IG4b/6M4qp/RI3H3TNrFUV+DuWVLZjU=
-X-Gm-Gg: ASbGncuRPI5FLMILt10iJMIu7uRi9NgCqCjRaxJ3iYvaa41GA6rJpRbkVQF4J0ccSMo
-	xp9Z/P+BeSn5/SmVf7DQVhHfBIvnq0eQIYuWNkNdhaZYV4MvM9ryZsFnQtx87lQ/1NmW9NSrgwg
-	5fI49/jvlV0be1lDiskLVCmS7oIagD3I1VCdEsgqiy0yIsfp7JLsWAgy4aTO/nWSAOZdOHNWQE7
-	OmzuwG+c4ROtQqi4ubHRp1TYP2iAK1J1teL/mXni582GQ5oLC2ii53MB6Uqy27wDy5zozdE8Yk2
-	v/LPMej7nRmpqCq2I3r8hy3yoD5I77Gv1JcNSWWJ9bPsNkUu6+moFA0j/thYdxuVYLH8sTOJ4/L
-	dVc+KdU5bLUzjJp/0nQ==
-X-Received: by 2002:a05:620a:7114:b0:7e8:deb:2b88 with SMTP id af79cd13be357-7e8652610cdmr181571685a.5.1755086879152;
-        Wed, 13 Aug 2025 05:07:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGeo3D6ZsWLZnPQmHQAdZlqxDwmN73bz1qqHROe9TiS+lFeRiG0UWTDISGp7c/KcY3g6+XW/A==
-X-Received: by 2002:a05:620a:7114:b0:7e8:deb:2b88 with SMTP id af79cd13be357-7e8652610cdmr181567185a.5.1755086878508;
-        Wed, 13 Aug 2025 05:07:58 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af93ddf5b48sm2115023066b.49.2025.08.13.05.07.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 05:07:57 -0700 (PDT)
-Message-ID: <3ad5abef-9fcd-4dbd-babd-3820f6915a52@oss.qualcomm.com>
-Date: Wed, 13 Aug 2025 14:07:56 +0200
+        d=1e100.net; s=20230601; t=1755086925; x=1755691725;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PWGK8ZVm+zLmOeXTeLHrigp8WDDEd3OtJiB5dxz3uO8=;
+        b=QwjIOHFED2/3JQmmRoWSfYlhnheinkTIeWEoPt5Ht9+d9TeA7olItq1+3kiliXTyiu
+         h4oxqeN/hhqJyiVAD99QnISSbsKe/no096CjLus1MMQa1IOWvd34rO3MnKUfwok1zqW3
+         ENBsnHpCWys3KXoIGCzcN//rs/LXWGPixcww7RlYoR1nozQlUrXQ4SJ68nXn5SpIhHsv
+         J/dHc5yKwMFaeeEp5qJBiqb20o/ApLwEW/y+7FfYLOb2Mz1tjKV+mdia13jLbpqQoLjg
+         pUh8YZH0UM3hfmfkA4sU1ullXL8TbQFFmnkivd2T4zCP3xlrehuaXfBSk/kXZ2lPn73A
+         hKZg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6McQiqPFhQZt/F+WjOkp5NQs11w4ccML9VAYXHJ3z42DDo6q8N9NoPp+HbTvj/WK34Nw1nzDkBlfV@vger.kernel.org, AJvYcCWPNC32qrarnig0A1pJDDr3npZcG4Y8c/I+WvcVzIg8po9DpJuGs/FA1KXQAdd98OQoJUEVLEw+h4FYIarC@vger.kernel.org, AJvYcCXv4siUYgK0V/+Q5adgMlMgn7EIWWvh3buNT0hYtvHTdU+JNfjK1XfHcXbJR/AeG0qnwAhQGqgqkKZu5PtS@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZwkyx6CTZxBLpJS0LC5EngYyBWASn/zjRY7AUQ6NTP1DQcn8u
+	KwvRg7ERLPvvZNsV+cWCmp/d9HuGV2+gpID5pHQHk5VLt72Msj/vz6KF/54DSSknPjW+XGgE1AR
+	zbgojvnLfdDKXRGqCkhZ7vumpwVMTMQk=
+X-Gm-Gg: ASbGncvasNLgC/3NzH0xeNo5BFKUwfMn6o7KFHUMfMJLr7akSz6GznCnoWkc7w86xbD
+	F+qNcC27k9mcBOdPmTSAZQqlqrsJjszSG2sEywfgsiXfix+zMEpnEHfvaL+d8+Rnza3X0OHrpA9
+	IxkCQjZZuBtu89gUwvlHyN80uiPOwXSfZ/hnllOaEOBaVADRu/MV6uUDN4wi3U+LPtJ7F6O8TU0
+	1Zt1QvQJkeNfdI=
+X-Google-Smtp-Source: AGHT+IHYBG7HtSYlV/7tSd61CBVNaArOemBmZZcJHliPBDKvdLaYm3tgeApOzZgOm8dRsQoLhVMdh3JSSNoVw9ADwoY=
+X-Received: by 2002:a17:90a:d44f:b0:321:2160:bf76 with SMTP id
+ 98e67ed59e1d1-321d0ea3936mr3036567a91.25.1755086925166; Wed, 13 Aug 2025
+ 05:08:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: qcom: qmp-pcie: Fix PHY initialization when powered
- down by firmware
-To: Stephan Gerhold <stephan.gerhold@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>,
-        Wenbin Yao <quic_wenbyao@quicinc.com>,
-        Qiang Yu <qiang.yu@oss.qualcomm.com>,
-        Manivannan Sadhasivam
- <mani@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
-References: <20250812-phy-qcom-qmp-pcie-nocsr-fix-v1-1-9a7d0a5d2b46@linaro.org>
- <f44beed6-72c3-4e86-834b-ac522c786bc7@oss.qualcomm.com>
- <aJx_KjWFxeYE5U81@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <aJx_KjWFxeYE5U81@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NCBTYWx0ZWRfX6cB4T1u06Sgm
- ua8FCw/MT63uf19AHyDOXY6lUptDFxbRCAtNJglUEoLcSidHfL0F2avvd5a0B7mqgVH7s115TYI
- t+87iwoUI+FXaQ0paxpi3HfgAjd+iZZggMhrSxpN6bk8hlwuG5rvA/Pe9PDdN9OO9EDCGhPbwI7
- vQkYK9tzxXHH+HXnC2wzHUZTM5bQ7OmjNN/u1tdsGLi5zj8GoexW2UmzYgfFqQc1VkZ8FYhkTVp
- Jf8POm8azL9YnlBjd5L3POZZNQVYHBiPOZOTnOewoCJB6W15HvVOBnBJzE0pge/dSz9PHpzQWc9
- waitpPsXuy89dBfpIYBv5grdhRo+TXzFiVVsHCVdyfohmAzCre+nFFiN6aotWVQl7NO5ftII0NK
- x/dwFuW9
-X-Proofpoint-GUID: o6SdO59trpucDV-5W61DrPsqK4CLw5Kj
-X-Authority-Analysis: v=2.4 cv=TJFFS0la c=1 sm=1 tr=0 ts=689c8020 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=dMwzMeVDXUTiNa__XesA:9 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: o6SdO59trpucDV-5W61DrPsqK4CLw5Kj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 clxscore=1015 spamscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508110074
+References: <20250806121855.442103-1-ltykernel@gmail.com> <aJvSfmmArKeEsD01@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
+In-Reply-To: <aJvSfmmArKeEsD01@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Wed, 13 Aug 2025 20:08:08 +0800
+X-Gm-Features: Ac12FXx0aKtcaxYvaGq78870E9obBGMfgQQXueqm3fgWy6WKq47Kn4PVuMXAhI0
+Message-ID: <CAMvTesCWxM+VVZhT-AO7x9c=oFWpb7zCtAU23oF95AW5BZnBaw@mail.gmail.com>
+Subject: Re: [RFC PATCH V6 0/4 Resend] x86/Hyper-V: Add AMD Secure AVIC for
+ Hyper-V platform
+To: Wei Liu <wei.liu@kernel.org>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, arnd@arndb.de, 
+	Neeraj.Upadhyay@amd.com, kvijayab@amd.com, Tianyu Lan <tiala@microsoft.com>, 
+	linux-arch@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/13/25 2:04 PM, Stephan Gerhold wrote:
-> On Wed, Aug 13, 2025 at 12:13:31PM +0200, Konrad Dybcio wrote:
->> On 8/12/25 6:30 PM, Stephan Gerhold wrote:
->>> Commit 0cc22f5a861c ("phy: qcom: qmp-pcie: Add PHY register retention
->>> support") added support for using the "no_csr" reset to skip configuration
->>> of the PHY if the init sequence was already applied by the boot firmware.
->>> The expectation is that the PHY is only turned on/off by using the "no_csr"
->>> reset, instead of powering it down and re-programming it after a full
->>> reset.
->>>
->>> The boot firmware on X1E does not fully conform to this expectation: If the
->>> PCIe3 link fails to come up (e.g. because no PCIe card is inserted), the
->>> firmware powers down the PHY using the QPHY_PCS_POWER_DOWN_CONTROL
->>> register. The QPHY_START_CTRL register is kept as-is, so the driver assumes
->>> the PHY is already initialized and skips the configuration/power up
->>> sequence. The PHY won't come up again without clearing the
->>> QPHY_PCS_POWER_DOWN_CONTROL, so eventually initialization fails:
->>>
->>>   qcom-qmp-pcie-phy 1be0000.phy: phy initialization timed-out
->>>   phy phy-1be0000.phy.0: phy poweron failed --> -110
->>>   qcom-pcie 1bd0000.pcie: cannot initialize host
->>>   qcom-pcie 1bd0000.pcie: probe with driver qcom-pcie failed with error -110
->>>
->>> This can be reliably reproduced on the X1E CRD, QCP and Devkit when no card
->>> is inserted for PCIe3.
->>>
->>> Fix this by checking the QPHY_PCS_POWER_DOWN_CONTROL register in addition
->>> to QPHY_START_CTRL. If the PHY is powered down with the register, it
->>> doesn't conform to the expectations for using the "no_csr" reset, so we
->>> fully re-initialize with the normal reset sequence.
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: 0cc22f5a861c ("phy: qcom: qmp-pcie: Add PHY register retention support")
->>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
->>> ---
->>>  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 6 ++++--
->>>  1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->>> index 95830dcfdec9b1f68fd55d1cc3c102985cfafcc1..6a469a8f5ae7eba6e4d1d702efaae1c658c4321e 100644
->>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
->>> @@ -4339,10 +4339,12 @@ static int qmp_pcie_init(struct phy *phy)
->>>  	struct qmp_pcie *qmp = phy_get_drvdata(phy);
->>>  	const struct qmp_phy_cfg *cfg = qmp->cfg;
->>>  	void __iomem *pcs = qmp->pcs;
->>> -	bool phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
->>>  	int ret;
->>>  
->>> -	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
->>> +	qmp->skip_init = qmp->nocsr_reset &&
->>> +		readl(pcs + cfg->regs[QPHY_START_CTRL]) &&
->>> +		readl(pcs + cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL]);
->>
->> I think it would be good to ensure the value matches platform config
->> expectations, i.e. !(val & cfg->pwrdn_ctrl)
->>
-> 
-> I think ((val & cfg->pwrdn_ctrl) == cfg->pwrdn_ctrl) is what you want,
-> to check if all the bits we would set are actually set? That sounds
-> reasonable, I'll send a v2 with that soon.
-
-We can do that, currently the register (at least on 8750 that I randomly
-checked) doesn't have any other bits..
-
-> I'll make the same change for QPHY_START_CTRL, to have it consistent
-> (checking for SERDES_START | PCS_START, which is what we would set).
-
-Sounds reasonable
-
-Konrad
+On Wed, Aug 13, 2025 at 7:47=E2=80=AFAM Wei Liu <wei.liu@kernel.org> wrote:
+>
+> On Wed, Aug 06, 2025 at 08:18:51PM +0800, Tianyu Lan wrote:
+> > From: Tianyu Lan <tiala@microsoft.com>
+> [...]
+> > Tianyu Lan (4):
+> >   x86/hyperv: Don't use hv apic driver when Secure AVIC is available
+> >   Drivers: hv: Allow vmbus message synic interrupt injected from Hyper-=
+V
+> >   x86/hyperv: Don't use auto-eoi when Secure AVIC is available
+> >   x86/hyperv: Allow Hyper-V to inject STIMER0 interrupts
+>
+> Are they still RFC? They look like ready to be merged.
+>
+> Wei
+Hi Wei:
+        Please ignore my previous email. I always ignore something.
+AMD Secure AVIC patchset is still in the RFC stage. Is it possible to
+accept my patchset before AMD Secure AVIC patchset to be merged?
+--=20
+Thanks
+Tianyu Lan
 
