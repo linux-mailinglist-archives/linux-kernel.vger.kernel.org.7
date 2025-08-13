@@ -1,190 +1,465 @@
-Return-Path: <linux-kernel+bounces-766335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F8EB2454F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:24:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D086B24546
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D4E5722EB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:24:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5E417B663A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225A82F2915;
-	Wed, 13 Aug 2025 09:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0732F1FD7;
+	Wed, 13 Aug 2025 09:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b="jNQArNSe"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q9izWOhO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA1A2F1FEC
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE4527280E;
+	Wed, 13 Aug 2025 09:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755077020; cv=none; b=YBAzFGaSArEGTfwIA+6/5iooo2akMrqiV2SStPIKYHytNHKmNZ1GwccHgxG14i15aQuFPhKInzsXcj5UFQgvSpqcLVQdAzDrINkqU/0ubrZuKtj9j3cnTU2j5PzvFfsOUepf1qR6ABM9ORSNzwDRIL0nncFKgOAz00NKcxKj/ig=
+	t=1755076971; cv=none; b=S5HZu4VKXkyL2Uyj2ieHJ1suPj2S2PpYykPWDd58mlPj2yoP9UtnheZRjHfz4xbxjoYx4mKO5dgbzweLPVKjcBPd+s6CL/8pTBmnIhnNKGVkmKgviAhVNFlpto8p++Ge1hqL7wO4pBXU7bupX6+BIGuFo7RZmqoGSB7xHsHr12I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755077020; c=relaxed/simple;
-	bh=YgCbgenFVOzNh67wJb83oSCGyPXaTZ71l6QIJbUP6yE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WOxWJ0QwjQvxK7dJbvh1OkHVcyrdMUTvlhuFBMD4lCaS9yDA0GedUGhQ+/9Rx+MJFCd5qF1vgt4fp4jFSWsaxM5hUzi3PbfA3L/4Ow5xOVU31jaKLgtn5pEq8G9Gxs0895dTqkeGX9OMEpvKNmduuec6ZVAyPB7StyrV2Lqt8Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be; spf=fail smtp.mailfrom=hammernet.be; dkim=pass (2048-bit key) header.d=hammernet-be.20230601.gappssmtp.com header.i=@hammernet-be.20230601.gappssmtp.com header.b=jNQArNSe; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hammernet.be
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=hammernet.be
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b9141866dcso910163f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hammernet-be.20230601.gappssmtp.com; s=20230601; t=1755077017; x=1755681817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S1TU+Xl0n1RhqfO3nfZOueztwfTTkM2m62EBReINxsY=;
-        b=jNQArNSe1+MXXA51jaUb/nrNYwSdt8uuMBzP+kDR9TU6NNyHnGqopw3vGweTJhI65x
-         T8DMM/474GBzvxMXX8AIYGa7hSS13qfsCRuiaMEz32o9PTJumyOFll6+jPsem/bdpPue
-         7LXd2P9MlVMzDD09fneRU08H1t8rJUhbmLXEEPNqiJD8blW5LHBABheOgMbRrUo5ELPl
-         Vx3LYLzakNAGGhEDUBuCx9+tJ9ARn/dm6DlHuXSrS+5Yt1KPFiwFsOTt5Y0LVV/W/ZUN
-         gGB3CFz7uYZF6sQruj/+vGSn+PFeQCPo1usZKuBMdKapP1pz4pCy0Nnl4mD3RU3mCCMP
-         a2Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755077017; x=1755681817;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S1TU+Xl0n1RhqfO3nfZOueztwfTTkM2m62EBReINxsY=;
-        b=DJ/oAlakHPVygm0uvAwWdGqvkwaZOt9JgDySOAxcXxd++ezc+NWBVZAv1V/CjtoaTm
-         9fJSKjy727jZqLW5bqFd9LozZkOlZxuJU5binC/NyyUOlynW+TIvlqoro5PFOHowZIzN
-         5BuLMha0M2lz95hvnE44+YNJ41UpHbj3eDfJNHik0R/95SEvxdw4aApO9flUkGm2Ob02
-         sJhSDgw0sdYsnhK8CmzXImq3FL5LVzWfyMDO8Ad0/1WofTkNmo//N8qTQ+wcG175fjux
-         nrlstts0bL1UDnXWS+vGRpL0sEsLf4n9+gNpDpNjnRKy10zfj9gEDCNaqybs3RFeHjez
-         qD8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXr7lUglPNioZC25yPFZhT8ZjFiSDgxmvcBkzD6E3eqwKfwoP8BdZ40SE5FH/gnRe3bwpsIQYmw1h0ZSzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1cEmU2l2RQ/vyGP9P/MisbxSykbtl9EiPEOHlbzlXJjfM6Zu5
-	8Vdc6p9u72J/Fvcx3YclnlLdt5CGUUnc0FJlvh7B+wBUunmnZokUWsOqBsCxzWeZbiA=
-X-Gm-Gg: ASbGncscJYTlzQw8YZ4YlXQw1FJ2brg5pczmffmTAXXKqLFP10fBe4kr35+WPrjuHbd
-	Qv+L2ICVtBrGJG0UiezKbIR4aXREc2tUV4KiAE44TqMeQ2WbuIirE5Lg5hiES9w7+J8vsDi3F8r
-	Qg9GTRGbhpNC/8uFxyO87ejFFGEQN38VroJTzFFj0rSA4uI3ne4RwRso5u98+ZuLaHppW0sNFU/
-	CfND6yMn5ogwUdoY0dTjeWlgB6iUqhCEJkCTzPyLyrF8EYGAQlkyMKZGyChsMRbBf52sH0F/D9X
-	vfhipQ7ah+uitdZl7WQu5flBwIpKNOJoo/el5BkOhvGC4lVRdqGzptqKNQ8wqHg6u8L4pHTM0fW
-	RqW/W8rS/zIXr2HPtTauQSbtwaazy0fz8dNQwyHbBqAaSgpvvAg==
-X-Google-Smtp-Source: AGHT+IE3vtz1ELNgTuw1NVDgwEF012pagU0/e5TxjB4oj/3WIMChqDWH9mXGzW1B/LaUDhfksyi79w==
-X-Received: by 2002:a05:6000:2087:b0:3b7:905e:2a32 with SMTP id ffacd0b85a97d-3b917d2a92dmr1794493f8f.12.1755077016260;
-        Wed, 13 Aug 2025 02:23:36 -0700 (PDT)
-Received: from pop-os.telenet.be ([2a02:1807:2a00:3400:d33c:e682:2af6:3c3d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3ac158sm47966077f8f.4.2025.08.13.02.23.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 02:23:35 -0700 (PDT)
-From: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-To: dlan@gentoo.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	paul.walmsley@sifive.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	palmer@dabbelt.com
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Subject: [PATCH v3 2/2] riscv: dts: spacemit: Add OrangePi RV2 board device tree
-Date: Wed, 13 Aug 2025 11:22:40 +0200
-Message-ID: <20250813092240.180333-3-hendrik.hamerlinck@hammernet.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250813092240.180333-1-hendrik.hamerlinck@hammernet.be>
-References: <20250813092240.180333-1-hendrik.hamerlinck@hammernet.be>
+	s=arc-20240116; t=1755076971; c=relaxed/simple;
+	bh=UJ6PoPZKaB+wc7QI6U+4j6Wr1WwoxnR96ZaPlG0tLxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVSx5pGzERB2yZjPRN2fpxFlcWpJSj64JdJY4V17vuqbe224JMM0Skq4MTjn9pUk17rzdG7HHAIKm+vZy5j09S/Gm1oJlrdLPPTQVVGbL+THjj7Cx9gM7bdp7uNzYgYsojzzXYDwk5zSm1R/R3YIvme4jjwyX4yNZUV03WRPCeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q9izWOhO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2DC9C4CEEB;
+	Wed, 13 Aug 2025 09:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755076970;
+	bh=UJ6PoPZKaB+wc7QI6U+4j6Wr1WwoxnR96ZaPlG0tLxY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Q9izWOhO7HOrikGGJXYcZrFPSrQ5AZNNjbzkUg3M+JFcXQvuGAHZDuLio060JUf68
+	 gfV/vM3pkhH4I7+gVacu2Rfe+QQTm2g5BXeOGRI+pItzUzsO3uy1uqdtZAYtJKcyXn
+	 YkWDXayaKfQqEEstxs2kcI6hcrRglU2OW0H29lk0SShHt2ro/Xio7KFjI0OoOHZpw+
+	 lEr/SSzQxxyksWEGkxBIAihDX+peDZPZlxy2W3uhhN1nClgOr0O/Zos/GvPyrWxBT3
+	 ijNGLeXUVSSqdms4VGGglzi501bzU5c+iwy8kxVlrrIv/xCZFXWw0Mc11uTH4eu/C2
+	 Lrjz+pfTFH6Hg==
+Date: Wed, 13 Aug 2025 11:22:45 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jonathan Denose <jdenose@google.com>
+Cc: Jiri Kosina <jikos@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
+	Sean O'Brien <seobrien@google.com>
+Subject: Re: [PATCH v2 11/11] HID: multitouch: add haptic multitouch support
+Message-ID: <kmjgxgsdh26okjvhbezl7uskedv3ybio2v6qk3zynlswkxaw4e@dhb43oyrxp44>
+References: <20250804-support-forcepads-v2-0-138ca980261d@google.com>
+ <20250804-support-forcepads-v2-11-138ca980261d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804-support-forcepads-v2-11-138ca980261d@google.com>
 
-Add initial device tree support for the OrangePi RV2 board [1]. The board
-is described as using the Ky X1 SoC, which, based on available downstream
-sources and testing, appears to be identical or very closely related to
-the SpacemiT K1 SoC [2].
+On Aug 04 2025, Jonathan Denose wrote:
+> From: Angela Czubak <aczubak@google.com>
+> 
+> Add new option (MULTITOUCH_HAPTIC) to mark whether hid-multitouch
+> should try and configure simple haptic device.
+> Once this option is configured, and the device is recognized to have simple
+> haptic capabilities, check input frames for pressure and handle it using
+> hid_haptic_* API.
 
-The device tree is adapted from the OrangePi vendor tree [3], and similar
-integration can be found in the Banana Pi kernel tree [4], confirming SoC
-compatibility. The main difference with the current Banana Pi BPI-F3 tree
-is that status led is using GPIO_ACTIVE_LOW.
+Why creating a new option? It seems it'll add unwanted work from
+distributions when we should have something that "just works" no?
 
-This minimal device tree enables booting into a serial console with UART
-output and a blinking LED.
+It makes sense to depend on FF, but adding a new option is probably
+useless IMO.
 
-Link: http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/details/Orange-Pi-RV2.html [1]
-Link: https://www.spacemit.com/en/key-stone-k1 [2]
-Link: https://github.com/BPI-SINOVOIP/pi-linux/blob/linux-6.6.63-k1/arch/riscv/boot/dts/spacemit/k1-x_orangepi-rv2.dts [3]
-Link: https://github.com/orangepi-xunlong/linux-orangepi/tree/orange-pi-6.6-ky [4]
-Signed-off-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
----
-Changes since v2: improved changelog
----
- arch/riscv/boot/dts/spacemit/Makefile         |  1 +
- .../boot/dts/spacemit/k1-orangepi-rv2.dts     | 40 +++++++++++++++++++
- 2 files changed, 41 insertions(+)
- create mode 100644 arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
 
-diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/spacemit/Makefile
-index 92e13ce1c16d..152832644870 100644
---- a/arch/riscv/boot/dts/spacemit/Makefile
-+++ b/arch/riscv/boot/dts/spacemit/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_SPACEMIT) += k1-bananapi-f3.dtb
- dtb-$(CONFIG_ARCH_SPACEMIT) += k1-milkv-jupiter.dtb
-+dtb-$(CONFIG_ARCH_SPACEMIT) += k1-orangepi-rv2.dtb
-diff --git a/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts b/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
-new file mode 100644
-index 000000000000..337240ebb7b7
---- /dev/null
-+++ b/arch/riscv/boot/dts/spacemit/k1-orangepi-rv2.dts
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-+ * Copyright (C) 2025 Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-+ */
-+
-+/dts-v1/;
-+
-+#include "k1.dtsi"
-+#include "k1-pinctrl.dtsi"
-+
-+/ {
-+	model = "OrangePi RV2";
-+	compatible = "xunlong,orangepi-rv2", "spacemit,k1";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			label = "sys-led";
-+			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "on";
-+		};
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_2_cfg>;
-+	status = "okay";
-+};
--- 
-2.43.0
+> 
+> Signed-off-by: Angela Czubak <aczubak@google.com>
+> Co-developed-by: Jonathan Denose <jdenose@google.com>
+> Signed-off-by: Jonathan Denose <jdenose@google.com>
+> ---
+>  drivers/hid/Kconfig          |  11 ++++
+>  drivers/hid/Makefile         |   2 +-
+>  drivers/hid/hid-haptic.h     |  52 +++++++++++++++++
+>  drivers/hid/hid-multitouch.c | 136 ++++++++++++++++++++++++++++++++++++++++++-
+>  4 files changed, 199 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/Kconfig b/drivers/hid/Kconfig
+> index ad6bcc4248cc111705d7cfde2b1481b46353e2d7..b7452f11a4f914f92af582ed054d42ecbcd6cb9e 100644
+> --- a/drivers/hid/Kconfig
+> +++ b/drivers/hid/Kconfig
+> @@ -817,6 +817,17 @@ config HID_MULTITOUCH
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called hid-multitouch.
+>  
+> +config MULTITOUCH_HAPTIC
+> +	bool "Simple haptic multitouch support"
+> +	depends on HID_MULTITOUCH
+> +	select HID_HAPTIC
+> +	default n
+> +	help
+> +	Support for simple multitouch haptic devices.
+> +	Adds extra parsing and FF device for the hid multitouch driver.
+> +	It can be used for Elan 2703 haptic touchpad.
+> +	To enable, say Y.
+> +
+>  config HID_NINTENDO
+>  	tristate "Nintendo Joy-Con, NSO, and Pro Controller support"
+>  	depends on NEW_LEDS
+> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> index 361a7daedeb85454114def8afb5f58caeab58a00..be09b4f13b2058a0a1d7eab79f35def758120fc4 100644
+> --- a/drivers/hid/Makefile
+> +++ b/drivers/hid/Makefile
+> @@ -4,7 +4,7 @@
+>  #
+>  hid-y			:= hid-core.o hid-input.o hid-quirks.o
+>  hid-$(CONFIG_DEBUG_FS)		+= hid-debug.o
+> -hid-$(CONFIG_HID_HAPTIC)	+= hid-haptic.o
+> +hid-$(CONFIG_MULTITOUCH_HAPTIC)	+= hid-haptic.o
+>  
+>  obj-$(CONFIG_HID_BPF)		+= bpf/
+>  
+> diff --git a/drivers/hid/hid-haptic.h b/drivers/hid/hid-haptic.h
+> index 0a34b0c6d706a985630962acc41f7a8eb73cd343..808cec0b4e51eba1f58b839f3e552493655b7899 100644
+> --- a/drivers/hid/hid-haptic.h
+> +++ b/drivers/hid/hid-haptic.h
+> @@ -58,6 +58,7 @@ struct hid_haptic_device {
+>  	struct hid_haptic_effect stop_effect;
+>  };
+>  
+> +#ifdef CONFIG_MULTITOUCH_HAPTIC
 
+There is something wrong with your ifdef usages:
+- here, you define the functions below conditionally to
+	CONFIG_MULTITOUCH_HAPTIC, which is fine
+- but in hid-multitouch, you also check for CONFIG_MULTITOUCH_HAPTIC
+	before calling the same set of functions.
+
+Either only define the haptic functions when CONFIG_MULTITOUCH_HAPTIC is
+set, and in multitouch check for that define, or define it conditionally
+and remove the checks in hid-multitouch (but probably add a comment).
+
+>  void hid_haptic_feature_mapping(struct hid_device *hdev,
+>  				struct hid_haptic_device *haptic,
+>  				struct hid_field *field, struct hid_usage
+> @@ -77,3 +78,54 @@ void hid_haptic_handle_press_release(struct hid_haptic_device *haptic);
+>  void hid_haptic_pressure_reset(struct hid_haptic_device *haptic);
+>  void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
+>  				  __s32 pressure);
+> +#else
+> +static inline
+> +void hid_haptic_feature_mapping(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_field *field, struct hid_usage
+> +				*usage)
+> +{}
+> +static inline
+> +bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+> +				    struct hid_input *hi, struct hid_field *field)
+> +{
+> +	return false;
+> +}
+> +static inline
+> +int hid_haptic_input_mapping(struct hid_device *hdev,
+> +			     struct hid_haptic_device *haptic,
+> +			     struct hid_input *hi,
+> +			     struct hid_field *field, struct hid_usage *usage,
+> +			     unsigned long **bit, int *max)
+> +{
+> +	return 0;
+> +}
+> +static inline
+> +int hid_haptic_input_configured(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_input *hi)
+> +{
+> +	return 0;
+> +}
+> +static inline
+> +void hid_haptic_reset(struct hid_device *hdev, struct hid_haptic_device *haptic)
+> +{}
+> +static inline
+> +int hid_haptic_init(struct hid_device *hdev, struct hid_haptic_device **haptic_ptr)
+> +{
+> +	return 0;
+> +}
+> +static inline
+> +void hid_haptic_handle_press_release(struct hid_haptic_device *haptic) {}
+> +static inline
+> +bool hid_haptic_handle_input(struct hid_haptic_device *haptic)
+> +{
+> +	return false;
+> +}
+> +static inline
+> +void hid_haptic_pressure_reset(struct hid_haptic_device *haptic) {}
+> +static inline
+> +void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
+> +				  __s32 pressure)
+> +{}
+> +#endif
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index b41001e02da7e02d492bd85743b359ed7ec16e7f..4ff9ac5022b13a0739dbc7ae5f6ebd84f0114a73 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -49,6 +49,8 @@ MODULE_LICENSE("GPL");
+>  
+>  #include "hid-ids.h"
+>  
+> +#include "hid-haptic.h"
+> +
+>  /* quirks to control the device */
+>  #define MT_QUIRK_NOT_SEEN_MEANS_UP	BIT(0)
+>  #define MT_QUIRK_SLOT_IS_CONTACTID	BIT(1)
+> @@ -167,11 +169,13 @@ struct mt_report_data {
+>  struct mt_device {
+>  	struct mt_class mtclass;	/* our mt device class */
+>  	struct timer_list release_timer;	/* to release sticky fingers */
+> +	struct hid_haptic_device *haptic;	/* haptic related configuration */
+>  	struct hid_device *hdev;	/* hid_device we're attached to */
+>  	unsigned long mt_io_flags;	/* mt flags (MT_IO_FLAGS_*) */
+>  	__u8 inputmode_value;	/* InputMode HID feature value */
+>  	__u8 maxcontacts;
+>  	bool is_buttonpad;	/* is this device a button pad? */
+> +	bool is_haptic_touchpad;	/* is this device a haptic touchpad? */
+>  	bool serial_maybe;	/* need to check for serial protocol */
+>  
+>  	struct list_head applications;
+> @@ -490,6 +494,95 @@ static void mt_get_feature(struct hid_device *hdev, struct hid_report *report)
+>  	kfree(buf);
+>  }
+>  
+> +#if defined(CONFIG_MULTITOUCH_HAPTIC)
+> +static int mt_haptic_init(struct hid_device *hdev,
+> +				struct hid_haptic_device **haptic_ptr)
+> +{
+> +	return hid_haptic_init(hdev, haptic_ptr);
+> +}
+> +
+> +static void mt_haptic_feature_mapping(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_field *field, struct hid_usage *usage)
+> +{
+> +	return hid_haptic_feature_mapping(hdev, haptic, field, usage);
+> +}
+> +
+> +static bool mt_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+> +				    struct hid_input *hi, struct hid_field *field)
+> +{
+> +	return hid_haptic_check_pressure_unit(haptic, hi, field);
+> +}
+> +
+> +static void mt_haptic_pressure_reset(struct hid_haptic_device *haptic)
+> +{
+> +	return hid_haptic_pressure_reset(haptic);
+> +}
+> +
+> +static void mt_haptic_pressure_increase(struct hid_haptic_device *haptic,
+> +				 __s32 pressure)
+> +{
+> +	return hid_haptic_pressure_increase(haptic, pressure);
+> +}
+> +
+> +static int mt_haptic_input_mapping(struct hid_device *hdev,
+> +			     struct hid_haptic_device *haptic,
+> +			     struct hid_input *hi,
+> +			     struct hid_field *field, struct hid_usage *usage,
+> +			     unsigned long **bit, int *max)
+> +{
+> +	return hid_haptic_input_mapping(hdev, haptic, hi, field, usage, bit, max);
+> +}
+> +
+> +static int mt_haptic_input_configured(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_input *hi)
+> +{
+> +	return hid_haptic_input_configured(hdev, haptic, hi);
+> +}
+> +#else
+> +static int mt_haptic_init(struct hid_device *hdev,
+> +				struct hid_haptic_device **haptic_ptr)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void mt_haptic_feature_mapping(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_field *field, struct hid_usage *usage)
+> +{}
+> +
+> +static bool mt_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+> +				    struct hid_input *hi, struct hid_field *field)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void mt_haptic_pressure_reset(struct hid_haptic_device *haptic)
+> +{}
+> +
+> +static void mt_haptic_pressure_increase(struct hid_haptic_device *haptic,
+> +				 __s32 pressure)
+> +{}
+> +
+> +static int mt_haptic_input_mapping(struct hid_device *hdev,
+> +			     struct hid_haptic_device *haptic,
+> +			     struct hid_input *hi,
+> +			     struct hid_field *field, struct hid_usage *usage,
+> +			     unsigned long **bit, int *max)
+> +{
+> +	return 0;
+> +}
+> +
+> +static int mt_haptic_input_configured(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_input *hi)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+> +
+>  static void mt_feature_mapping(struct hid_device *hdev,
+>  		struct hid_field *field, struct hid_usage *usage)
+>  {
+> @@ -525,6 +618,8 @@ static void mt_feature_mapping(struct hid_device *hdev,
+>  			mt_get_feature(hdev, field->report);
+>  		break;
+>  	}
+> +
+> +	mt_haptic_feature_mapping(hdev, td->haptic, field, usage);
+>  }
+>  
+>  static void set_abs(struct input_dev *input, unsigned int code,
+> @@ -856,6 +951,9 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+>  		case HID_DG_TIPPRESSURE:
+>  			set_abs(hi->input, ABS_MT_PRESSURE, field,
+>  				cls->sn_pressure);
+> +			td->is_haptic_touchpad =
+> +				mt_haptic_check_pressure_unit(td->haptic,
+> +							       hi, field);
+>  			MT_STORE_FIELD(p);
+>  			return 1;
+>  		case HID_DG_SCANTIME:
+> @@ -980,6 +1078,8 @@ static void mt_sync_frame(struct mt_device *td, struct mt_application *app,
+>  
+>  	app->num_received = 0;
+>  	app->left_button_state = 0;
+> +	if (td->is_haptic_touchpad)
+> +		mt_haptic_pressure_reset(td->haptic);
+>  
+>  	if (test_bit(MT_IO_FLAGS_ACTIVE_SLOTS, &td->mt_io_flags))
+>  		set_bit(MT_IO_FLAGS_PENDING_SLOTS, &td->mt_io_flags);
+> @@ -1137,6 +1237,9 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
+>  			minor = minor >> 1;
+>  		}
+>  
+> +		if (td->is_haptic_touchpad)
+> +			mt_haptic_pressure_increase(td->haptic, *slot->p);
+> +
+>  		x = hdev->quirks & HID_QUIRK_X_INVERT ?
+>  			input_abs_get_max(input, ABS_MT_POSITION_X) - *slot->x :
+>  			*slot->x;
+> @@ -1324,6 +1427,9 @@ static int mt_touch_input_configured(struct hid_device *hdev,
+>  	if (cls->is_indirect)
+>  		app->mt_flags |= INPUT_MT_POINTER;
+>  
+> +	if (td->is_haptic_touchpad)
+> +		app->mt_flags |= INPUT_MT_TOTAL_FORCE;
+> +
+>  	if (app->quirks & MT_QUIRK_NOT_SEEN_MEANS_UP)
+>  		app->mt_flags |= INPUT_MT_DROP_UNUSED;
+>  
+> @@ -1359,6 +1465,7 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+>  	struct mt_device *td = hid_get_drvdata(hdev);
+>  	struct mt_application *application;
+>  	struct mt_report_data *rdata;
+> +	int ret;
+>  
+>  	rdata = mt_find_report_data(td, field->report);
+>  	if (!rdata) {
+> @@ -1421,6 +1528,11 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+>  	if (field->physical == HID_DG_STYLUS)
+>  		hi->application = HID_DG_STYLUS;
+>  
+> +	ret = mt_haptic_input_mapping(hdev, td->haptic, hi, field, usage, bit,
+> +				       max);
+> +	if (ret != 0)
+> +		return ret;
+> +
+>  	/* let hid-core decide for the others */
+>  	return 0;
+>  }
+> @@ -1635,6 +1747,14 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
+>  	struct hid_report *report;
+>  	int ret;
+>  
+> +	if (td->is_haptic_touchpad && (td->mtclass.name == MT_CLS_WIN_8 ||
+> +	    td->mtclass.name == MT_CLS_WIN_8_FORCE_MULTI_INPUT)) {
+> +		if (mt_haptic_input_configured(hdev, td->haptic, hi) == 0)
+> +			td->is_haptic_touchpad = false;
+> +	} else {
+> +		td->is_haptic_touchpad = false;
+> +	}
+> +
+>  	list_for_each_entry(report, &hi->reports, hidinput_list) {
+>  		rdata = mt_find_report_data(td, report);
+>  		if (!rdata) {
+> @@ -1764,7 +1884,6 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  	int ret, i;
+>  	struct mt_device *td;
+>  	const struct mt_class *mtclass = mt_classes; /* MT_CLS_DEFAULT */
+> -
+
+unrelated change (line removed).
+
+>  	for (i = 0; mt_classes[i].name ; i++) {
+>  		if (id->driver_data == mt_classes[i].name) {
+>  			mtclass = &(mt_classes[i]);
+> @@ -1777,6 +1896,10 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  		dev_err(&hdev->dev, "cannot allocate multitouch data\n");
+>  		return -ENOMEM;
+>  	}
+> +	td->haptic = kzalloc(sizeof(*(td->haptic)), GFP_KERNEL);
+
+Please make use of the devm api, you are leaking the allocated memory in
+the regular case (AFAICT).
+
+> +	if (!td->haptic)
+> +		return -ENOMEM;
+
+One extra blank line wouldn't hurt here :)
+
+> +	td->haptic->hdev = hdev;
+>  	td->hdev = hdev;
+>  	td->mtclass = *mtclass;
+>  	td->inputmode_value = MT_INPUTMODE_TOUCHSCREEN;
+> @@ -1840,6 +1963,17 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  
+>  	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+>  
+> +	if (td->is_haptic_touchpad) {
+> +		if (mt_haptic_init(hdev, &td->haptic)) {
+> +			dev_warn(&hdev->dev, "Cannot allocate haptic for %s\n",
+> +				 hdev->name);
+> +			td->is_haptic_touchpad = false;
+> +			kfree(td->haptic);
+> +		}
+> +	} else {
+> +		kfree(td->haptic);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> 
+> -- 
+> 2.50.1.565.gc32cd1483b-goog
+> 
+
+Cheers,
+Benjamin
 
