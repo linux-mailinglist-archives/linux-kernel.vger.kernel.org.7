@@ -1,268 +1,107 @@
-Return-Path: <linux-kernel+bounces-766105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF43BB24260
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:16:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FCBB24263
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321BA188E581
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:15:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0A091890BA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551122C21C8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03AE2D541E;
 	Wed, 13 Aug 2025 07:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NtXVXtoQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F7F2BD01A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C582D3A72;
+	Wed, 13 Aug 2025 07:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755069320; cv=none; b=SIZ5O/ABnG27D/kmDr9Rway7qKlxEcg6jpoZgpvsLHid08uWfTy/PoN6GmaNXbMWDBNEdbZwQfIjvCBjJNHi3vBm95wCS+ZRgAIQKqRKfEH6JX+9tsk276Y1Dgh2WOFtc5plar7sLJ+JjM5Ya1cvrw4H4W5KDVdKKDp0GW+k5ms=
+	t=1755069321; cv=none; b=CzYhb4Lsh1NBBLogPYvBcVSBCrjU5B5xij2JKT9Ldg+mP/v8OIFLquih2YiW5z3zO3HWKYlQAgHx+77j2XeurkBs4ZoSqCRP8ceyaNLftfLCN62/sCPJ3VNjix3Hi1BfNVD0sFkR5M9BxuZ7wpGWxy3jq//kU1QV1VFxplQpsFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755069320; c=relaxed/simple;
-	bh=y26v0V7s3iGAuBSrKXUAstUvcTB+s5bChxCunkbC0r4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m43Z6ID4Rgs6KtxjXUpACkaNosYaqzdvXQ5AS4fkUMIPXRyPtT4TYYVYEcXKM1bjahGBtMhY9C2xNWyNI+gw9l3boPnYAgy5GXemDhSqmb+zMn+WlyqvFho7QX/lq8NGPVZ/emuWC4uCj4NGFJmtSsaK8UnikwqR1itsz2cN/0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NtXVXtoQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755069315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j22/vlxbgZewQq+2BkVTztlbPB3/Pt1Gm8og/omOcJs=;
-	b=NtXVXtoQakYeQqqzJ6mkG4BgrODL6zsqzvXO6z7/GknIyblguiqyWlVqUdbc8EMGjgQq9y
-	Jujid25A2O/8ce7GdNlynLNLP7X1rcIHqIxvjTjh+46EG99DiJeG/a+eXAlkYEVwcd5bK9
-	xUi08lMgxKywyTdxX+nsf3j5vja3p4I=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-422-UxOhbivZOVOw3g3efgM78Q-1; Wed, 13 Aug 2025 03:15:14 -0400
-X-MC-Unique: UxOhbivZOVOw3g3efgM78Q-1
-X-Mimecast-MFC-AGG-ID: UxOhbivZOVOw3g3efgM78Q_1755069313
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2403e4c82dbso51686315ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:15:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755069313; x=1755674113;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j22/vlxbgZewQq+2BkVTztlbPB3/Pt1Gm8og/omOcJs=;
-        b=K93qNK6gl8kpiIIQnXdo+m/wwfIutx6P8NC2V55LcTNj7gSOfqE/LSc1xNzsioueL7
-         dgKNYN5lhl7TNRvQs10rBJcKLmbiOhFkBA7ZH1MT4bWQ33QTRUQoieMhXSIWl6yGwtwR
-         4+tRfIzl2KKpmw2oR1adDjt2AkMdj5a+RVitPI0n76jrJGlkSVCfz22aU+jmAO+akAHs
-         ZOwf6Tmwc+0oNY3zYyf4k0+Dm5qOskpIST2v+4SXDDYqgRFPgWKauhAj+rln5u2CW/ts
-         BA/Nq/lYshw8a7UrcNyRWy69xSHXSMq60w7df/r91vZormWWyTqr+ggUGJ7AH189vQie
-         GN8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVydPHDWfzps5BDWh6eBQMkXAI7m3u2oENlmbfmYrqHgsHQWpfzpuO7XUtS4w0yPOKnlfGENP8iAY3OciI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2DXYAurv42VvVj4Oheq0uUL4IZJvfxjgaObejIKNyRQWDTglC
-	PbyO6ytPenAFyyqQkGF13YQvvgAIAD3/9MqtNpEiA9UVegRxu6Via6EcrP9e/6ahq7b+tWS091Y
-	CwuX/XCmbS83CR1sYKPTAcu8+Pk0DkHw6tNFBPdOO/uwH09tsrRn55sb6SWqGTqwxHVLqqcCQsM
-	8dBogF+Pg0v4W7uOsdcCx5tuxrOEuyPWU/fpTEpx6hNYLp4byL5aJ2jQ==
-X-Gm-Gg: ASbGncuFO+X7thVD+kRK5R/PZQa1UgPTTHb0KUkhBZWiCjoc7Oi4v8FgUQIBxZ8+CwA
-	3wKNOpPGzMQ0ziZutaxL9doqQhjtu4tMoPgdWsbHqEfl1sykYKsXfjrji0/zAvcHkJMYKvc2VCC
-	d7heO5aEH8VqJY2M5Qg1UF6du3qfUfw+rShfMnoEKwS6HopxARLNcO/1U=
-X-Received: by 2002:a17:902:ec85:b0:23f:ecf6:463b with SMTP id d9443c01a7336-2430d224901mr35063765ad.45.1755069312924;
-        Wed, 13 Aug 2025 00:15:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF48cGlFDnLEX9VoOq+NnLcpHQcDjQviYJ0rwpDN3nUccZ4JSexKB+sW1cyJ9IoDV1jj64zMumFmb3K72xCJSc=
-X-Received: by 2002:a17:902:ec85:b0:23f:ecf6:463b with SMTP id
- d9443c01a7336-2430d224901mr35063355ad.45.1755069312478; Wed, 13 Aug 2025
- 00:15:12 -0700 (PDT)
+	s=arc-20240116; t=1755069321; c=relaxed/simple;
+	bh=ZO4uXaV0NI/Fp2cMH1ZgqG/dmqdn8Lgy2YSgXofQT9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lbthLDWG9zhGCYGG28T2lHAFi72QGyXSyYXrM0PVHDbeg7F9cVWYZTxFDGauFUN4gL+ai11Hfs8woNOX8XGQis6mWdiEOZNi39+omAnBhsGtJmFgMgmuJpALfQOUMamHDEHyTtClWyFQK7S7j4o8apHEKfB2YNc9MpNt50WR9II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c20121PTTz13N7N;
+	Wed, 13 Aug 2025 15:11:50 +0800 (CST)
+Received: from kwepemo100006.china.huawei.com (unknown [7.202.195.47])
+	by mail.maildlp.com (Postfix) with ESMTPS id 41C7E1401F1;
+	Wed, 13 Aug 2025 15:15:14 +0800 (CST)
+Received: from [10.67.121.58] (10.67.121.58) by kwepemo100006.china.huawei.com
+ (7.202.195.47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
+ 2025 15:15:13 +0800
+Message-ID: <8aa1efad-8f30-9548-259a-09fccb9da48a@hisilicon.com>
+Date: Wed, 13 Aug 2025 15:15:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813054831.25865-1-jasowang@redhat.com> <20250813054831.25865-2-jasowang@redhat.com>
-In-Reply-To: <20250813054831.25865-2-jasowang@redhat.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Wed, 13 Aug 2025 09:14:36 +0200
-X-Gm-Features: Ac12FXz2yP8POKqHq5p9pzviM2xNHLsxaW7X3Xm17rGiZUFa5EQ7EQVenYKJjm4
-Message-ID: <CAJaqyWcuMVz6eTbwcCDd=F1gqyXmQOZRD=1ronWAqke5xa01Mw@mail.gmail.com>
-Subject: Re: [PATCH V5 1/9] virtio_ring: constify virtqueue pointer for DMA helpers
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, hch@infradead.org, 
-	Christoph Hellwig <hch@lst.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH 2/2] cpufreq: CPPC: Fix error handling in
+ cppc_scale_freq_workfn()
+To: Prashant Malani <pmalani@google.com>
+CC: Viresh Kumar <viresh.kumar@linaro.org>, Bowen Yu <yubowen8@huawei.com>,
+	<rafael@kernel.org>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<jonathan.cameron@huawei.com>, <lihuisong@huawei.com>,
+	<zhenglifeng1@huawei.com>, Beata Michalska <beata.michalska@arm.com>, Ionela
+ Voinescu <ionela.voinescu@arm.com>
+References: <20250730032312.167062-1-yubowen8@huawei.com>
+ <20250730032312.167062-3-yubowen8@huawei.com>
+ <20250730063930.cercfcpjwnfbnskj@vireshk-i7>
+ <CAFivqmLkLn-92rMow+c7iEADCdh3-DEapVmtB_Qwk1a2JrwwWw@mail.gmail.com>
+ <9041c44e-b81a-879d-90cd-3ad0e8992c6c@hisilicon.com>
+ <CAFivqmLr_0BDkMhD4o6box3k9ouKek8pnY7aHX36h1Q9TaT_HA@mail.gmail.com>
+ <7a9030d0-e758-4d11-11aa-d694edaa79a0@hisilicon.com>
+ <CAFivqmJyYJ+d+TH4qYBKf_5t-AqWZuzgk2H_4nHmynTjoUHnYQ@mail.gmail.com>
+ <CAFivqm+4Mir8hgGw-HMLdW=dBYuUw1wJ4xG4a+WAtqfG1vYKXQ@mail.gmail.com>
+From: Jie Zhan <zhanjie9@hisilicon.com>
+In-Reply-To: <CAFivqm+4Mir8hgGw-HMLdW=dBYuUw1wJ4xG4a+WAtqfG1vYKXQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemo100006.china.huawei.com (7.202.195.47)
 
-On Wed, Aug 13, 2025 at 7:48=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> This patch consities virtqueue point for DMA helpers.
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 
-Reviewed-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
 
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->  drivers/virtio/virtio_ring.c | 25 +++++++++++++------------
->  include/linux/virtio.h       | 12 ++++++------
->  2 files changed, 19 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index f5062061c408..103bad8cffff 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -3149,12 +3149,12 @@ EXPORT_SYMBOL_GPL(virtqueue_get_vring);
->   *
->   * return DMA address. Caller should check that by virtqueue_dma_mapping=
-_error().
->   */
-> -dma_addr_t virtqueue_dma_map_single_attrs(struct virtqueue *_vq, void *p=
-tr,
-> +dma_addr_t virtqueue_dma_map_single_attrs(const struct virtqueue *_vq, v=
-oid *ptr,
->                                           size_t size,
->                                           enum dma_data_direction dir,
->                                           unsigned long attrs)
->  {
-> -       struct vring_virtqueue *vq =3D to_vvq(_vq);
-> +       const struct vring_virtqueue *vq =3D to_vvq(_vq);
->
->         if (!vq->use_dma_api) {
->                 kmsan_handle_dma(virt_to_page(ptr), offset_in_page(ptr), =
-size, dir);
-> @@ -3176,11 +3176,12 @@ EXPORT_SYMBOL_GPL(virtqueue_dma_map_single_attrs)=
-;
->   * Unmap the address that is mapped by the virtqueue_dma_map_* APIs.
->   *
->   */
-> -void virtqueue_dma_unmap_single_attrs(struct virtqueue *_vq, dma_addr_t =
-addr,
-> +void virtqueue_dma_unmap_single_attrs(const struct virtqueue *_vq,
-> +                                     dma_addr_t addr,
->                                       size_t size, enum dma_data_directio=
-n dir,
->                                       unsigned long attrs)
->  {
-> -       struct vring_virtqueue *vq =3D to_vvq(_vq);
-> +       const struct vring_virtqueue *vq =3D to_vvq(_vq);
->
->         if (!vq->use_dma_api)
->                 return;
-> @@ -3196,9 +3197,9 @@ EXPORT_SYMBOL_GPL(virtqueue_dma_unmap_single_attrs)=
-;
->   *
->   * Returns 0 means dma valid. Other means invalid dma address.
->   */
-> -int virtqueue_dma_mapping_error(struct virtqueue *_vq, dma_addr_t addr)
-> +int virtqueue_dma_mapping_error(const struct virtqueue *_vq, dma_addr_t =
-addr)
->  {
-> -       struct vring_virtqueue *vq =3D to_vvq(_vq);
-> +       const struct vring_virtqueue *vq =3D to_vvq(_vq);
->
->         if (!vq->use_dma_api)
->                 return 0;
-> @@ -3217,9 +3218,9 @@ EXPORT_SYMBOL_GPL(virtqueue_dma_mapping_error);
->   *
->   * return bool
->   */
-> -bool virtqueue_dma_need_sync(struct virtqueue *_vq, dma_addr_t addr)
-> +bool virtqueue_dma_need_sync(const struct virtqueue *_vq, dma_addr_t add=
-r)
->  {
-> -       struct vring_virtqueue *vq =3D to_vvq(_vq);
-> +       const struct vring_virtqueue *vq =3D to_vvq(_vq);
->
->         if (!vq->use_dma_api)
->                 return false;
-> @@ -3240,12 +3241,12 @@ EXPORT_SYMBOL_GPL(virtqueue_dma_need_sync);
->   * the DMA address really needs to be synchronized
->   *
->   */
-> -void virtqueue_dma_sync_single_range_for_cpu(struct virtqueue *_vq,
-> +void virtqueue_dma_sync_single_range_for_cpu(const struct virtqueue *_vq=
-,
->                                              dma_addr_t addr,
->                                              unsigned long offset, size_t=
- size,
->                                              enum dma_data_direction dir)
->  {
-> -       struct vring_virtqueue *vq =3D to_vvq(_vq);
-> +       const struct vring_virtqueue *vq =3D to_vvq(_vq);
->         struct device *dev =3D vring_dma_dev(vq);
->
->         if (!vq->use_dma_api)
-> @@ -3266,12 +3267,12 @@ EXPORT_SYMBOL_GPL(virtqueue_dma_sync_single_range=
-_for_cpu);
->   * Before calling this function, use virtqueue_dma_need_sync() to confir=
-m that
->   * the DMA address really needs to be synchronized
->   */
-> -void virtqueue_dma_sync_single_range_for_device(struct virtqueue *_vq,
-> +void virtqueue_dma_sync_single_range_for_device(const struct virtqueue *=
-_vq,
->                                                 dma_addr_t addr,
->                                                 unsigned long offset, siz=
-e_t size,
->                                                 enum dma_data_direction d=
-ir)
->  {
-> -       struct vring_virtqueue *vq =3D to_vvq(_vq);
-> +       const struct vring_virtqueue *vq =3D to_vvq(_vq);
->         struct device *dev =3D vring_dma_dev(vq);
->
->         if (!vq->use_dma_api)
-> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-> index 8b745ce0cf5f..cf8def717dfd 100644
-> --- a/include/linux/virtio.h
-> +++ b/include/linux/virtio.h
-> @@ -259,18 +259,18 @@ void unregister_virtio_driver(struct virtio_driver =
-*drv);
->         module_driver(__virtio_driver, register_virtio_driver, \
->                         unregister_virtio_driver)
->
-> -dma_addr_t virtqueue_dma_map_single_attrs(struct virtqueue *_vq, void *p=
-tr, size_t size,
-> +dma_addr_t virtqueue_dma_map_single_attrs(const struct virtqueue *_vq, v=
-oid *ptr, size_t size,
->                                           enum dma_data_direction dir, un=
-signed long attrs);
-> -void virtqueue_dma_unmap_single_attrs(struct virtqueue *_vq, dma_addr_t =
-addr,
-> +void virtqueue_dma_unmap_single_attrs(const struct virtqueue *_vq, dma_a=
-ddr_t addr,
->                                       size_t size, enum dma_data_directio=
-n dir,
->                                       unsigned long attrs);
-> -int virtqueue_dma_mapping_error(struct virtqueue *_vq, dma_addr_t addr);
-> +int virtqueue_dma_mapping_error(const struct virtqueue *_vq, dma_addr_t =
-addr);
->
-> -bool virtqueue_dma_need_sync(struct virtqueue *_vq, dma_addr_t addr);
-> -void virtqueue_dma_sync_single_range_for_cpu(struct virtqueue *_vq, dma_=
-addr_t addr,
-> +bool virtqueue_dma_need_sync(const struct virtqueue *_vq, dma_addr_t add=
-r);
-> +void virtqueue_dma_sync_single_range_for_cpu(const struct virtqueue *_vq=
-, dma_addr_t addr,
->                                              unsigned long offset, size_t=
- size,
->                                              enum dma_data_direction dir)=
-;
-> -void virtqueue_dma_sync_single_range_for_device(struct virtqueue *_vq, d=
-ma_addr_t addr,
-> +void virtqueue_dma_sync_single_range_for_device(const struct virtqueue *=
-_vq, dma_addr_t addr,
->                                                 unsigned long offset, siz=
-e_t size,
->                                                 enum dma_data_direction d=
-ir);
->
-> --
-> 2.31.1
->
+On 05/08/2025 12:58, Prashant Malani wrote:
+> On Mon, 4 Aug 2025 at 18:12, Prashant Malani <pmalani@google.com> wrote:
+>>
+>> On Sun, 3 Aug 2025 at 23:21, Jie Zhan <zhanjie9@hisilicon.com> wrote
+>>> On 01/08/2025 16:58, Prashant Malani wrote:
+>>>> This begs the question: why is this work function being scheduled
+>>>> for CPUs that are in reset or offline/powered-down at all?
+>>>> IANAE but it sounds like it would be better to add logic to ensure this
+>>>> work function doesn't get scheduled/executed for CPUs that
+>>>> are truly offline/powered-down or in reset.
+>>> Yeah good question.  We may discuss that on your thread.
+>>
+>> OK.
+>> Quickly looking around, it sounds having in the CPPC tick function [1]
+>> might be a better option (one probably doesn't want to lift it beyond the
+>> CPPC layer, since other drivers might have different behaviour).
+>> One can add a cpu_online/cpu_enabled check there.
+> 
+> Fixed link:
+> [1] https://elixir.bootlin.com/linux/v6.13/source/drivers/cpufreq/cppc_cpufreq.c#L125
+I don't think a cpu_online/cpu_enabled check there would help.
 
+Offlined CPUs don't make cppc_scale_freq_workfn() fail because they won't
+have FIE triggered.  It fails from accessing perf counters on powered-down
+CPUs.
+
+Perhaps the CPPC FIE needs a bit rework.  AFAICS, FIE is meant to run in
+ticks, but currently the CPPC FIE eventually runs in a thread due to the
+possible PCC path when reading CPC regs I guess.
 
