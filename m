@@ -1,282 +1,189 @@
-Return-Path: <linux-kernel+bounces-766931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EF2B24CE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:12:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E45EB24CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 533BA3A5302
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA53316DAEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7372FE57D;
-	Wed, 13 Aug 2025 15:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDB42F659E;
+	Wed, 13 Aug 2025 15:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tGmCig6Y"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="XGmuhegS"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B5A2F2906
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9A52E8DEC
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097310; cv=none; b=ScmUV357dpgxTJRZoQ/l8Ccy+yjIgth9EaG1MmC3AeAjNlpMPcx8vWQX2edb4KfgVBru62cThUNMprkmZQyhxQGidolSSJlYUB3VszNqwQgAzUcDxTtWBCeI8muduDOluwA2y+4uK5/U/0rmMaCvJzXjCds58xry+d/9f1Z6KJo=
+	t=1755097297; cv=none; b=HEOFgopEga3lu0WrflUwu2yDJGQTQLvmMoXHhB5KsOTW28d3OV411+iC1sLDABIkKrToudW5mt/PzxlsqImzU6UVWap2IVCFgWBm56wG36Qf6yN9qEKULziCXTQq7TM8b5UwE69wZNZwsarM9FXd0jZEt7Mj3HNOzsAr4VmRKLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097310; c=relaxed/simple;
-	bh=e96e2uriLNE/91D1xcujNN0wWodE6fkJhlYuU4bmmm4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R9fOQZdSLBX9RIhaHVCBqp1IJIfqeRKxT2DA3MuZnAvU9K7JuMv/mTYalgxRFmYsViOLVMJKIiq8HJ0cramBiW5tFr2sj/stpfROehp5VlCFFh9do2RTS6ZNrFa6CEd60sTYWxKDrmapxm20Wt1ADUBHTLS/WVxGKI2H3RZ1nHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tGmCig6Y; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b78d13bf10so6889070f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:01:47 -0700 (PDT)
+	s=arc-20240116; t=1755097297; c=relaxed/simple;
+	bh=17p7MwBRCSHE64fa1D2KRWGLUNsrWBqS0NAwyjoJ49k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hcdo4gV4McQhwBPY7BndFZV4PvkiWHHHvMtJC0wkNcBcHKG/q8jPoUzGOBUnzXUcyqD0syD37LwzJcPKhx/Dq6MPxbYPzl5+L13+zpoNzklR2aBCaIwbDy+FvWc6eNRkjhbja/YHJbX8ih5ghpS1KL50Tq6L1njsl9e3w8dkvu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=XGmuhegS; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-455fdfb5d04so34615865e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:01:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755097306; x=1755702106; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RUnS6lFW/OouGAuKaDZ/jOVoVg2OpPkl5Y2+4hJYcHY=;
-        b=tGmCig6Y2BFhIpvCUxqb1yikxnJ8yFjziGcOrFr6/gHLgy18odQkzcXWKjuZXUkFYc
-         RboZ5rPrxchEv21Ybc2H3ZpHEHWzIpjxBC0gHDU2IYiYipJAjdWNDZ2PWezu2XjJGi9p
-         FI6z+9ne/veBR9WwoBILHZ/8qTlzq2SQjVfTmYKutkBRC85yOeWynqZw2InWw0YgbEbH
-         TiqNoUruIjvs3csb29MioOAJ3IE83WxNzcxDAZ2Uu0+oru9UZKt8Lmz0Y510wBkfFj6S
-         9BkrLJVAExj7lxOcfsp/RECGfrPCp113d7JskbO2Fjqn8nr++SF2nbUG80R16b2Q1A8R
-         zSPQ==
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1755097294; x=1755702094; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=je12YbuZgJ4qovK2aDqAlKj+xBOV5nZtHN1wMIqYxUE=;
+        b=XGmuhegSWmR0z1eD5VfGaLK4lsnGhjzImb+ike8bZO4hDvXI4lxDj0MYcYeRbgDJ98
+         cGvhu/pcDGZ1TrqSZwCOsSLXPyqv2DvpvpUqmIl3cfBYmVgZrNfNGfqKYxOqMGJgK/qv
+         kveyeammzwRrx+FoAVBkeByWUssccEkqp0JUI2DboMCsLgJ3VaotKsvn2xa3bI/ic16Y
+         lGZdo62M+ofV2pe+3UnRdhCSoV+BBNnd85VkrBRope7gXuuuQCivuD0Zy0znlgIEwhV7
+         zDlalYb+XGWJMJkpxRy0NbuKBV3LwXMs/NyAASDE1V1NTkugEeOYI27uFigiSkfywa6X
+         0CrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755097306; x=1755702106;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755097294; x=1755702094;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RUnS6lFW/OouGAuKaDZ/jOVoVg2OpPkl5Y2+4hJYcHY=;
-        b=Hh2Vu6CI8UxNXBCao/dP4NEo98Xp5gCQJpsZKGk7JtfC+uBTQ+2HXEE96jaY2NV1x/
-         nJEN2AV7b82PMrpSFV1F2TrZ3ESeCUHvZLcPM4g0+mfIfykxeTX1RadlKlUqBSwSCKHN
-         Zgmn5wBu1h17lQ1jFiBsb7GzKufhiP3d0es32Bh86LwMy/FDkLIhQbVec6ZXUm1Wkrys
-         BB2uQqaC3BgJpIeORRX/2qO29kw1NcumEMH5WiS1zlvJJkZ89nYawV+kzbOLshrKXSDk
-         fgvO5MMhH+RR/WgAQnWRcKmbct6cn85vM+yo+cDeKOliDK5GXrDeFcWAU5zTaLLzApFD
-         UnTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjSlc/+8Ud64/k0D+z1O131FcF2uGgARnZzkKkh78TfbyrWbNffSmjJ9vkdmG/fp6hJDqeACjn9jRhYAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpNY8EeRYw2xd8npRDqDMuvZ8Dsg2BuBv6tWseGbFF/t61vtgN
-	OdovJ83qURxdnUobLXXwliBTVPUyJac3vYOj65nxQLXT1IIfhV6O1rrfvPn2mQcMsPY=
-X-Gm-Gg: ASbGnctR94sZVtjHtk4GMS7J/T3qkRq6+4HjQtkzFGfUDhyi7On/ikKpB62h0fauV6e
-	vW+5ptBT5o3Bmdt2H7mdHY8sM0l18O070828TpP1INqICCoTLpjZgjoChDw2RdP3soIpNdjx3Jg
-	PLXvg9Qrt+B+ZabxksqlT4cRsEJU3IuNI9xEeozXQ/vywB1I3wcoQi29dStXmB0Lao6Lcs+gnYA
-	2SobNGqSRuA9z/xe99kanSwG3de1yXIADA37MQH8USAek4tHS370hICgMdoErKT6jI03nLQT1va
-	LvV6M11r9uATDBxZSjfRNdfTE8u63gAcpnapG1wR0X+biW3Af9k2azrWzHrH3NH4OkZSslDAf+J
-	BItVUeyBYznu6cMetri2sQty8FLhbwR4qft9FugZDYt9RZxtf1SRy
-X-Google-Smtp-Source: AGHT+IHZf4R4qw8eeL2FWMX6E8ZtRfYmJiDx05re8iiNDmAHE0O5lU+KTt0U3hhJsJjVNN/RPYez2A==
-X-Received: by 2002:a05:6000:1aca:b0:3b8:d082:41e with SMTP id ffacd0b85a97d-3b917edec2bmr2870312f8f.57.1755097306293;
-        Wed, 13 Aug 2025 08:01:46 -0700 (PDT)
-Received: from gpeter-l.roam.corp.google.com ([145.224.66.191])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4533f1sm48402964f8f.42.2025.08.13.08.01.44
+        bh=je12YbuZgJ4qovK2aDqAlKj+xBOV5nZtHN1wMIqYxUE=;
+        b=kVReJxQ/CPW3YeB3S2AU6o0x6AcCZ/hSeIX82Bq+ro2DVb9yZOmLH3tiRB33LNXans
+         B4HVJ9q/YL/e23kjwj+fshIUaEp225RIfReFtvk2oIuf6HE9aBDGS0rY2em5MJHWzICd
+         J1aiIOfCntyelwd/zguqv4NBAPFDbW+5oqHCDnyMmfzFzk66phaG0wpSboCtuRHCKHDd
+         Wal74mrZTQMy2SWtXsymgKcnGMa1RwxmVUb1+bHA/L9Svb8KIiD76fhuX9VcfaTJaJ81
+         eR3G1IdibR1mEWkD6QJsSmVee+UMs+c2jc/zNWI+SbWsX72oGg8h9Yg6a62n7Sk/mL5v
+         G6Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXtg9yfwJJ6KJJ/7hlQbqjqX03j3cYTpkACHyHcHiBVFSJhRJnZGLZ8K9pk9/4KCtEe6IuAVZqvfmQNT0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOr63l5qKDyNP570hYR3LvIh+hiWl8xLsUW6om+uidvC61Om3g
+	APxL8lcfDfrB7Cvl8HMP+zEnYSfgqbL0rbmMnu1Rvsp0if/DikKRm2wXE/kcvXEsgf8PUMyWOpf
+	GD9lJ
+X-Gm-Gg: ASbGnctcTYoLj25RlTKSz2qXpid8Zww5Mw7+NW+Ah9x02sXIBHjMysPKObIzwSMazkJ
+	MOzkYLGyHkQ/KyVlMIAXz9MQ1Y1GznayCwQTlDkB9RbfD0qJyFfYdmCQM6cbDxQPs4QhgFQhV/D
+	3uBH23+0n52y/68ng8Ue6HSAyPrl9WMc6W1s0V75fo1suT0/oxiAngQ6bj5jiCNCL6glTSfkMCx
+	PO2yg1VC2HrbIxwHEMTQY8z17Pk1e9oetikH4cyAUqyj1kBDQyLXEJnCPcKnhOCtglEaYwo7ajZ
+	fK3Udk7I/1DgUgtmDCl4HtdqIK0vpU51boWCSCVQ83Rm1ZUAWRoqRgJNAqQSNqwy1j8+aCSGHus
+	rL0XN2Ytgx3++NV9alVgXJ0KDQv8Ckm0mYjmPIlqWvpd/kQFbS0eVUoDONTPON/teMhgHOycjXo
+	roJQ0+F/7t4g==
+X-Google-Smtp-Source: AGHT+IFXqt5LPuOlEXVdf/zo4i2yFRbcmo4lW7SxAHZ3nqQPMO3z7dPVL58xg/gcGFrW+KBzQ2iajg==
+X-Received: by 2002:a05:600c:4f48:b0:456:29da:bb25 with SMTP id 5b1f17b1804b1-45a165e41c0mr29476455e9.19.1755097293990;
+        Wed, 13 Aug 2025 08:01:33 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1ab24d1dsm343015e9.0.2025.08.13.08.01.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 08:01:45 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Wed, 13 Aug 2025 16:00:47 +0100
-Subject: [PATCH v3 2/2] phy: samsung: gs101-ufs: Add .notify_phystate() &
- hibern8 enter/exit values
+        Wed, 13 Aug 2025 08:01:33 -0700 (PDT)
+Date: Wed, 13 Aug 2025 08:01:28 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Simon Schippers <simon.schippers@tu-dortmund.de>
+Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Tim Gebauer
+ <tim.gebauer@tu-dortmund.de>
+Subject: Re: [PATCH net v2] TUN/TAP: Improving throughput and latency by
+ avoiding SKB drops
+Message-ID: <20250813080128.5c024489@hermes.local>
+In-Reply-To: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
+References: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250813-phy-notify-pmstate-v3-2-3bda59055dd3@linaro.org>
-References: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
-In-Reply-To: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- kernel-team@android.com, William Mcvicker <willmcvicker@google.com>, 
- Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5773;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=e96e2uriLNE/91D1xcujNN0wWodE6fkJhlYuU4bmmm4=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBonKjU3CQtLVFx27U59LnCkpBH9YabXSmsjLPrN
- KW1+UIG8c2JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaJyo1AAKCRDO6LjWAjRy
- ugP9D/9Zn4QpP77Upl4GTzZubiAEAWj7Qfp3gZqZq+elDTLue08D6g8EEvGmP5Rq2Ty0HHM4fw9
- XU4aNfHCfG72rtzgO4ORaSiPg/DLRRM8maAYqwXFImgMEfmq1hmHBDPmo+kJ7KWU81Xxd0+YKmR
- FbVQQscwmZ16PqYXfQBTxVRqOBuHH4CAqKuv9c4owuCsX6oQN1NcnIDMJzOZx7VkQeOJmZJo42X
- qvdux3cl+SZNDivkmQs36gRu2fNKwyHJqoI8+Sis0bl4eIqoRL9EDNw+B7vfQTfsasLGM/9AKuJ
- /XiyoRQW51eXBF32fnfHDfW6DpLJOEE8ZXjAT3J0L3hCCcaKp9m/ZKsFz5Gc2CXMoOQP0Mq9jrr
- zaSELrGgVFtPn8CZSU7HzhQi6TWoj7efg+cAOvvR4+cw2KtEmox5h2SdaSRPA+P+WtQi77u9NLw
- k8IrNLH/oE3Wul/VujbBsdYbHE8blT/v4gKpAsABTWslhMOTMP3igPVvXTf3PWAFK6oiz54ogA3
- 7DBxvH6mhG0sXZ96FXsUh1seX1JyetLR+qWsYTPD73qu7pMuTDdJSH3de9eYAWQIMu5gKxDW3b+
- oJA7/QwxPGrsPv6x00YVmOzqSWaeQS+EjbfpIN1R5+XfukR80gxocZgGP2smhleUecGpXbzEoIZ
- yUMnyKRfWubBZhA==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-Implement the .notify_phystate() callback and provide the gs101 specific
-phy values that need to be programmed when entering and exiting the hibern8
-state.
+On Tue, 12 Aug 2025 00:03:48 +0200
+Simon Schippers <simon.schippers@tu-dortmund.de> wrote:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/phy/samsung/phy-gs101-ufs.c   | 28 ++++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.c | 38 +++++++++++++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.h |  7 +++++++
- 3 files changed, 73 insertions(+)
+> This patch is the result of our paper with the title "The NODROP Patch:
+> Hardening Secure Networking for Real-time Teleoperation by Preventing
+> Packet Drops in the Linux TUN Driver" [1].
+> It deals with the tun_net_xmit function which drops SKB's with the reason
+> SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
+> resulting in reduced TCP performance and packet loss for bursty video
+> streams when used over VPN's.
+> 
+> The abstract reads as follows:
+> "Throughput-critical teleoperation requires robust and low-latency
+> communication to ensure safety and performance. Often, these kinds of
+> applications are implemented in Linux-based operating systems and transmit
+> over virtual private networks, which ensure encryption and ease of use by
+> providing a dedicated tunneling interface (TUN) to user space
+> applications. In this work, we identified a specific behavior in the Linux
+> TUN driver, which results in significant performance degradation due to
+> the sender stack silently dropping packets. This design issue drastically
+> impacts real-time video streaming, inducing up to 29 % packet loss with
+> noticeable video artifacts when the internal queue of the TUN driver is
+> reduced to 25 packets to minimize latency. Furthermore, a small queue
+> length also drastically reduces the throughput of TCP traffic due to many
+> retransmissions. Instead, with our open-source NODROP Patch, we propose
+> generating backpressure in case of burst traffic or network congestion.
+> The patch effectively addresses the packet-dropping behavior, hardening
+> real-time video streaming and improving TCP throughput by 36 % in high
+> latency scenarios."
+> 
+> In addition to the mentioned performance and latency improvements for VPN
+> applications, this patch also allows the proper usage of qdisc's. For
+> example a fq_codel can not control the queuing delay when packets are
+> already dropped in the TUN driver. This issue is also described in [2].
+> 
+> The performance evaluation of the paper (see Fig. 4) showed a 4%
+> performance hit for a single queue TUN with the default TUN queue size of
+> 500 packets. However it is important to notice that with the proposed
+> patch no packet drop ever occurred even with a TUN queue size of 1 packet.
+> The utilized validation pipeline is available under [3].
+> 
+> As the reduction of the TUN queue to a size of down to 5 packets showed no
+> further performance hit in the paper, a reduction of the default TUN queue
+> size might be desirable accompanying this patch. A reduction would
+> obviously reduce buffer bloat and memory requirements.
+> 
+> Implementation details:
+> - The netdev queue start/stop flow control is utilized.
+> - Compatible with multi-queue by only stopping/waking the specific
+> netdevice subqueue.
+> - No additional locking is used.
+> 
+> In the tun_net_xmit function:
+> - Stopping the subqueue is done when the tx_ring gets full after inserting
+> the SKB into the tx_ring.
+> - In the unlikely case when the insertion with ptr_ring_produce fails, the
+> old dropping behavior is used for this SKB.
+> 
+> In the tun_ring_recv function:
+> - Waking the subqueue is done after consuming a SKB from the tx_ring when
+> the tx_ring is empty. Waking the subqueue when the tx_ring has any
+> available space, so when it is not full, showed crashes in our testing. We
+> are open to suggestions.
+> - When the tx_ring is configured to be small (for example to hold 1 SKB),
+> queuing might be stopped in the tun_net_xmit function while at the same
+> time, ptr_ring_consume is not able to grab a SKB. This prevents
+> tun_net_xmit from being called again and causes tun_ring_recv to wait
+> indefinitely for a SKB in the blocking wait queue. Therefore, the netdev
+> queue is woken in the wait queue if it has stopped.
+> - Because the tun_struct is required to get the tx_queue into the new txq
+> pointer, the tun_struct is passed in tun_do_read aswell. This is likely
+> faster then trying to get it via the tun_file tfile because it utilizes a
+> rcu lock.
+> 
+> We are open to suggestions regarding the implementation :)
+> Thank you for your work!
+> 
+> [1] Link:
+> https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publications/2025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
+> [2] Link:
+> https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffective-on-tun-device
+> [3] Link: https://github.com/tudo-cni/nodrop
+> 
+> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
 
-diff --git a/drivers/phy/samsung/phy-gs101-ufs.c b/drivers/phy/samsung/phy-gs101-ufs.c
-index 17b798da5b5761f8e367599517d2d97bf0bb6b74..a15e1f453f7f3cecd6d3aa75217633ac4b6085d0 100644
---- a/drivers/phy/samsung/phy-gs101-ufs.c
-+++ b/drivers/phy/samsung/phy-gs101-ufs.c
-@@ -108,12 +108,39 @@ static const struct samsung_ufs_phy_cfg tensor_gs101_post_pwr_hs_config[] = {
- 	END_UFS_PHY_CFG,
- };
- 
-+static const struct samsung_ufs_phy_cfg tensor_gs101_post_h8_enter[] = {
-+	PHY_TRSV_REG_CFG_GS101(0x262, 0x08, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x265, 0x0A, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x1, 0x8,  PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x0, 0x86,  PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x8, 0x60,  PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x222, 0x08, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x246, 0x01, PWR_MODE_HS_ANY),
-+	END_UFS_PHY_CFG,
-+};
-+
-+static const struct samsung_ufs_phy_cfg tensor_gs101_pre_h8_exit[] = {
-+	PHY_COMN_REG_CFG(0x0, 0xC6,  PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x1, 0x0C,  PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x262, 0x00, PWR_MODE_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x265, 0x00, PWR_MODE_ANY),
-+	PHY_COMN_REG_CFG(0x8, 0xE0,  PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x246, 0x03, PWR_MODE_HS_ANY),
-+	PHY_TRSV_REG_CFG_GS101(0x222, 0x18, PWR_MODE_HS_ANY),
-+	END_UFS_PHY_CFG,
-+};
-+
- static const struct samsung_ufs_phy_cfg *tensor_gs101_ufs_phy_cfgs[CFG_TAG_MAX] = {
- 	[CFG_PRE_INIT]		= tensor_gs101_pre_init_cfg,
- 	[CFG_PRE_PWR_HS]	= tensor_gs101_pre_pwr_hs_config,
- 	[CFG_POST_PWR_HS]	= tensor_gs101_post_pwr_hs_config,
- };
- 
-+static const struct samsung_ufs_phy_cfg *tensor_gs101_hibern8_cfgs[] = {
-+	[CFG_POST_HIBERN8_ENTER]	= tensor_gs101_post_h8_enter,
-+	[CFG_PRE_HIBERN8_EXIT]		= tensor_gs101_pre_h8_exit,
-+};
-+
- static const char * const tensor_gs101_ufs_phy_clks[] = {
- 	"ref_clk",
- };
-@@ -170,6 +197,7 @@ static int gs101_phy_wait_for_cdr_lock(struct phy *phy, u8 lane)
- 
- const struct samsung_ufs_phy_drvdata tensor_gs101_ufs_phy = {
- 	.cfgs = tensor_gs101_ufs_phy_cfgs,
-+	.cfgs_hibern8 = tensor_gs101_hibern8_cfgs,
- 	.isol = {
- 		.offset = TENSOR_GS101_PHY_CTRL,
- 		.mask = TENSOR_GS101_PHY_CTRL_MASK,
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
-index f3cbe6b17b235bb181b3fae628d75822f0c9183a..192ea408f787bb31912a2c7dd90cc1b61c4237c4 100644
---- a/drivers/phy/samsung/phy-samsung-ufs.c
-+++ b/drivers/phy/samsung/phy-samsung-ufs.c
-@@ -217,6 +217,42 @@ static int samsung_ufs_phy_set_mode(struct phy *generic_phy,
- 	return 0;
- }
- 
-+static int samsung_ufs_phy_notify_state(struct phy *phy,
-+					union phy_notify state)
-+{
-+	struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-+	const struct samsung_ufs_phy_cfg *cfg;
-+	int i, err;
-+
-+	if (!ufs_phy->cfgs_hibern8)
-+		return 0;
-+
-+	if (state.ufs_state == PHY_UFS_HIBERN8_ENTER)
-+		cfg = ufs_phy->cfgs_hibern8[CFG_POST_HIBERN8_ENTER];
-+	else if (state.ufs_state == PHY_UFS_HIBERN8_EXIT)
-+		cfg = ufs_phy->cfgs_hibern8[CFG_PRE_HIBERN8_EXIT];
-+
-+	for_each_phy_cfg(cfg) {
-+		for_each_phy_lane(ufs_phy, i) {
-+			samsung_ufs_phy_config(ufs_phy, cfg, i);
-+		}
-+	}
-+
-+	if (state.ufs_state == PHY_UFS_HIBERN8_EXIT) {
-+		for_each_phy_lane(ufs_phy, i) {
-+			if (ufs_phy->drvdata->wait_for_cdr) {
-+				err = ufs_phy->drvdata->wait_for_cdr(phy, i);
-+				if (err)
-+					goto err_out;
-+			}
-+		}
-+	}
-+
-+	return 0;
-+err_out:
-+	return err;
-+}
-+
- static int samsung_ufs_phy_exit(struct phy *phy)
- {
- 	struct samsung_ufs_phy *ss_phy = get_samsung_ufs_phy(phy);
-@@ -233,6 +269,7 @@ static const struct phy_ops samsung_ufs_phy_ops = {
- 	.power_off	= samsung_ufs_phy_power_off,
- 	.calibrate	= samsung_ufs_phy_calibrate,
- 	.set_mode	= samsung_ufs_phy_set_mode,
-+	.notify_phystate = samsung_ufs_phy_notify_state,
- 	.owner          = THIS_MODULE,
- };
- 
-@@ -287,6 +324,7 @@ static int samsung_ufs_phy_probe(struct platform_device *pdev)
- 	phy->dev = dev;
- 	phy->drvdata = drvdata;
- 	phy->cfgs = drvdata->cfgs;
-+	phy->cfgs_hibern8 = drvdata->cfgs_hibern8;
- 	memcpy(&phy->isol, &drvdata->isol, sizeof(phy->isol));
- 
- 	if (!of_property_read_u32_index(dev->of_node, "samsung,pmu-syscon", 1,
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.h b/drivers/phy/samsung/phy-samsung-ufs.h
-index a28f148081d168344b47f2798b00cb098f0a8574..f2c2e744e5bae87c9cfcaa17f4a09456f134966a 100644
---- a/drivers/phy/samsung/phy-samsung-ufs.h
-+++ b/drivers/phy/samsung/phy-samsung-ufs.h
-@@ -92,6 +92,11 @@ enum {
- 	CFG_TAG_MAX,
- };
- 
-+enum {
-+	CFG_POST_HIBERN8_ENTER,
-+	CFG_PRE_HIBERN8_EXIT,
-+};
-+
- struct samsung_ufs_phy_cfg {
- 	u32 off_0;
- 	u32 off_1;
-@@ -108,6 +113,7 @@ struct samsung_ufs_phy_pmu_isol {
- 
- struct samsung_ufs_phy_drvdata {
- 	const struct samsung_ufs_phy_cfg **cfgs;
-+	const struct samsung_ufs_phy_cfg **cfgs_hibern8;
- 	struct samsung_ufs_phy_pmu_isol isol;
- 	const char * const *clk_list;
- 	int num_clks;
-@@ -124,6 +130,7 @@ struct samsung_ufs_phy {
- 	struct clk_bulk_data *clks;
- 	const struct samsung_ufs_phy_drvdata *drvdata;
- 	const struct samsung_ufs_phy_cfg * const *cfgs;
-+	const struct samsung_ufs_phy_cfg * const *cfgs_hibern8;
- 	struct samsung_ufs_phy_pmu_isol isol;
- 	u8 lane_cnt;
- 	int ufs_phy_state;
+I wonder if it would be possible to implement BQL in TUN/TAP?
 
--- 
-2.51.0.rc0.205.g4a044479a3-goog
+https://lwn.net/Articles/454390/
 
+BQL provides a feedback mechanism to application when queue fills.
 
