@@ -1,166 +1,261 @@
-Return-Path: <linux-kernel+bounces-766441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3571B24668
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:02:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F36B2468A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D24C07BCDBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F56C167E14
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E6228C02D;
-	Wed, 13 Aug 2025 10:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08342F1FF3;
+	Wed, 13 Aug 2025 10:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="N9CaoIbL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="u5/WqcO2";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="u5/WqcO2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D5D7E105
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2542BEFFF
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755079256; cv=none; b=jcwJPy0UYOkzboTD3UKuh0C4UBpVuqc2p8aU3xLB5ojW2xTzMLiTT0VnaYMre3r+MBpbrUPs/xZmIOJK/4rE2uYoeSDcogys6JoZzR8J9ouf0zkENsI6DksahI+TwqYfn3aGLvaHvc8X4eYRfO8G5lS9a5enhLhZjSSjDght2YM=
+	t=1755079259; cv=none; b=Iu1KnZdw77fmtK+axgf6hfYOxUSDo3Ll/zM/hl2OUDMaLgYsAwWwcVXAMIZShJM0CZe471miQgoWXiv59XfG+SvVlvxOpsKC9hWGth2yecDHW7XEh3IFNgJa/fE3yisEx+tA4/yQlF88y/amFPGn72iRaDHcbJC7m27YvniocAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755079256; c=relaxed/simple;
-	bh=cBywqYQ571JjXH/CFVXtPZFVBnz+yE4lfUMvOMd0qMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CAL4pm1j07ovOAQbqY3OoJOygimZQ/n3FOaNHb4FA43C1XOIHHB9v718kgSbfUVvwcurdVarsaexKwiYMAF5sd0WcvZJUt7jo/qmaBGpYdnufRKI6NQ9urZNACHMp8gKTyKC71Uason/h192PdAHvRIdn9Du9buoKHPMEhmUFos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=N9CaoIbL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D9ewU7022115
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:00:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wiBWcdk24yow8RF3k9D1Z3F3r9BgHRGCWV7I+lbiN7E=; b=N9CaoIbLvjII5iGW
-	91H0wJPvVuZVgOQHfDedopcJWkBiXmu0ICOQy8BWlNAMtuIFn76O9zsijrMcXWaR
-	nGy1Lc3PT43fWeQIRxtPT/wUiLltdupUp3wNKpr4D6+EAXiXh4Y8inhd+D0CROS+
-	QvyvLgiKqlvKBtRTXqbV1cO5t0dB9S9+v8yPwFXbTTPA6MgYB2fzMCuUCJvhmITS
-	jVdz6J9Z8oSnKORIzJeeMhKraWxKcjqxlBdua9wfi2YinhduTNdaOnw1ZsZxFm7E
-	EXQIckRprZ49SAJVNw7MUW0hmGfMqL2vtakcjWUxi7WJVzJI3YEFLDrBS1JssXgF
-	zzOp1A==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48gr9rr1yy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:00:52 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b06ad8dadeso16288231cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:00:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755079251; x=1755684051;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wiBWcdk24yow8RF3k9D1Z3F3r9BgHRGCWV7I+lbiN7E=;
-        b=M/7ChQRFFyDcmFOtvoq+NP3kqi3JQlOOISRL/pdlXnnNsVogxTA7Vu1Z84yi61Vc0e
-         ZUNX++OmT+AgHtSd1HE72iQSmdoGp7oa6AQvjoJJoHeNo9yMzXaoeXtQ7eb/rvauODTb
-         edEx+VI1u7s2XjQTHRXU9DhCsZdpypfLzsX21gTxiSqsgMKIqvEXV2lrcd2nAeVt0daI
-         zvv+094K/TlsFrrWQhww9M0DOqYdhB5Wu1Jc1BFmFuKUu5Txtq0nKKbzClUNjHxRKceh
-         AO23DgqWe88xpESG8I+LxCtLzsbRk8eJsA+RzN7MEvJGfVSDsi3AI0qBQMIwOKhw3s1Q
-         2Qfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuymE5U66YmFIgUzLrvVwPHvEuWjMmE7RwVRcjW+TdK/lQgrODJQk7VC1F35N5VTjFdulQY+At4fk5vmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2VvN+sDo3bVEtC1HhQYfDVddkfjR5W+/S2n6X9rLvFN7yLeFl
-	dyf3G9pDA1wUjf1M475VQH7SWZ1NnWYtoKvCTM7HjcXloDR3y8g5W/7aJ3n9VTG4gzd1vrEiF1p
-	2FOMjqKvG0WkBdiLrc3bIt7973yxftGuvWGCTnxObY77B51uToYc8vKbkWsqjtbL7KDE=
-X-Gm-Gg: ASbGncty1x3RuGN1lfeQBeUjHkjuKRlpCt9NeIXNb25w+h0K+uu7xDXF6nUrx9Qf8mA
-	39oIUHp6KgcOtG3O4Mh7vguiIUiyxZWT7mqrvsBtQUdb+psJTwko5d/o566I/5Z5vKp/Bvz6C/d
-	SeZl5HrAUX27l7d9s7znnh3XVXOSKxOaJnhiffqOstYfvXsXEaZHND4plAljvI9AmTUFPgn/AgR
-	waa4YeHLykL91QMYbA6umvFmJ43NpixF2ybSBqVFVvhpc4U7DHvxM/IzZfQuesmFalc4gtleQKl
-	toiu+RMyO2bWtZBFjMmxXN9rhMR++wxBXgvnQT/BanQGuecwu7GpaeWHN3tmnXC02cmcBzmSP8Y
-	5e6ojhnGeFK700R60IQ==
-X-Received: by 2002:ac8:7f06:0:b0:472:2122:5a37 with SMTP id d75a77b69052e-4b0fc6c46d3mr13966841cf.4.1755079251117;
-        Wed, 13 Aug 2025 03:00:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmTrD4ySjMqSbwhalzXJcsozDXyEzKvaYMIjrNiNP0RSpO0suJx9JL31ZtBXBXWoPTlWVUaw==
-X-Received: by 2002:ac8:7f06:0:b0:472:2122:5a37 with SMTP id d75a77b69052e-4b0fc6c46d3mr13966501cf.4.1755079250541;
-        Wed, 13 Aug 2025 03:00:50 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3375sm2366142566b.41.2025.08.13.03.00.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 03:00:50 -0700 (PDT)
-Message-ID: <3ec0a8d0-7900-45bd-b0d3-90ee8ca7730c@oss.qualcomm.com>
-Date: Wed, 13 Aug 2025 12:00:46 +0200
+	s=arc-20240116; t=1755079259; c=relaxed/simple;
+	bh=lPbDKB+k3lVOg0NIqRZqCdG2ByUO9olATiDAqVwQH64=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZxrVmHt7gWiOhO+f2xZ7FCcpMdhFuLYfJfO1bFCkSBiY9DNhxtNYuxcQchZcPIuG+d2IltbQboY5/XNv823VLJrVDHzYWXup3YFpEtbR0h6Q7NRszkOUWiyW8aPMwStEa2GsBXXRSG0d8pvi8Nekw8DckmeW/UIVc+JJ6OVuRCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=u5/WqcO2; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=u5/WqcO2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5FCB91F455;
+	Wed, 13 Aug 2025 10:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1755079255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5UhIUEj2H0HZtJwL7CC3eT7YVhReTUM/dByrOfvrPPE=;
+	b=u5/WqcO2Uv1NDP40/A6xjiDIpQkWZHygrA5J5mcApuysq8OZJ0ludDnKcT+Tt0HsjSlTRm
+	ablbkn9wZZiTVR66cOY+OvXGAxeRmIwstLr+o1iSFXQZiecHadUpoa1oRYtzseWBcl7Btq
+	rmqzn1Yud0PYLLV8YPNxe7ZMyIEdCgA=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1755079255; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5UhIUEj2H0HZtJwL7CC3eT7YVhReTUM/dByrOfvrPPE=;
+	b=u5/WqcO2Uv1NDP40/A6xjiDIpQkWZHygrA5J5mcApuysq8OZJ0ludDnKcT+Tt0HsjSlTRm
+	ablbkn9wZZiTVR66cOY+OvXGAxeRmIwstLr+o1iSFXQZiecHadUpoa1oRYtzseWBcl7Btq
+	rmqzn1Yud0PYLLV8YPNxe7ZMyIEdCgA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 58B3F13929;
+	Wed, 13 Aug 2025 10:00:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id M5GhFVdinGj1IgAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Wed, 13 Aug 2025 10:00:55 +0000
+From: David Sterba <dsterba@suse.com>
+To: linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	selinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH] docs: Remove remainders of reiserfs
+Date: Wed, 13 Aug 2025 12:00:52 +0200
+Message-ID: <20250813100053.1291961-1-dsterba@suse.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/11] qcomtee: enable TEE_IOC_SHM_ALLOC ioctl
-To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Apurupa Pattapu <quic_apurupa@quicinc.com>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Sumit Garg <sumit.garg@oss.qualcomm.com>
-References: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com>
- <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-10-ce7a1a774803@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-10-ce7a1a774803@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDA5NCBTYWx0ZWRfXyco6F6cz7/UP
- DlNkbPZWj9hGchCW9rdcC0wpYUl6Ak1bAcXlZZZRr2uxKOheLZVM1ckmzH/vyZA5QC27c92Xk/U
- fNooxXZ+eiiVUNMdSfzMh2YSShlKWJ9H9q5rhoZ2eVhqcnioSdGIGr8gQcClp5xXaUORYM1J5Ez
- GQ0Mf50hfZRfpX7EWxHtj81QBua6JPYCAbG482kJEtNFuxuzM6WFY7KReGUEV3bjEKPNIC09Xb7
- vHg+oCFQHMDgVizhveKAlVMwaIO5aIa3q4MY5SoyMnXp3cEn/ucQkT66aRnowtasGIYjtuatHWM
- IQQ/7gwCsSIzCJ7EVAhOft+eGSX3SvkHU3vn5+6hgPittvOGnpGKEK6kuoJE7jcZ7lGJ581W/am
- nqU4uNyF
-X-Authority-Analysis: v=2.4 cv=NIrV+16g c=1 sm=1 tr=0 ts=689c6254 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=WNCivIMphfMWkbBb3CYA:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: o9skYh91u36xqWtkpOydZvFpEddGJjhq
-X-Proofpoint-GUID: o9skYh91u36xqWtkpOydZvFpEddGJjhq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0
- spamscore=0 malwarescore=0 phishscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508130094
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.30
 
-On 8/13/25 2:35 AM, Amirreza Zarrabi wrote:
-> Enable userspace to allocate shared memory with QTEE. Since
-> QTEE handles shared memory as object, a wrapper is implemented
-> to represent tee_shm as an object. The shared memory identifier,
-> obtained through TEE_IOC_SHM_ALLOC, is transferred to the driver using
-> TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_INPUT/OUTPUT.
-> 
-> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Acked-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> Tested-by: Harshal Dev <quic_hdev@quicinc.com>
-> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-> ---
+Reiserfs has been removed in 6.13, there are still some mentions in the
+documentation about it and the tools. Remove those that don't seem
+relevant anymore but keep references to reiserfs' r5 hash used by some
+code.
 
-[...]
+There's one change in a script scripts/selinux/install_policy.sh but it
+does not seem to be relevant either.
 
-> +/* Mapping information format as expected by QTEE. */
-> +struct qcomtee_mapping_info {
-> +	u64 paddr;
-> +	u64 len;
-> +	u32 perms;
-> +} __packed;
+Signed-off-by: David Sterba <dsterba@suse.com>
+---
+ Documentation/admin-guide/ext4.rst                 |  2 +-
+ Documentation/admin-guide/laptops/laptop-mode.rst  |  8 ++++----
+ .../arch/powerpc/eeh-pci-error-recovery.rst        |  1 -
+ .../translations/it_IT/process/changes.rst         | 14 --------------
+ fs/btrfs/tree-log.c                                |  2 +-
+ scripts/selinux/install_policy.sh                  |  2 +-
+ 6 files changed, 7 insertions(+), 22 deletions(-)
 
-Please use types with explicit endianness, e.g. __le32. I'm assuming
-TZ will always be little-endian, regardless of the host OS
+diff --git a/Documentation/admin-guide/ext4.rst b/Documentation/admin-guide/ext4.rst
+index b857eb6ca1b620..ac0c709ea9e7c1 100644
+--- a/Documentation/admin-guide/ext4.rst
++++ b/Documentation/admin-guide/ext4.rst
+@@ -398,7 +398,7 @@ There are 3 different data modes:
+ * writeback mode
+ 
+   In data=writeback mode, ext4 does not journal data at all.  This mode provides
+-  a similar level of journaling as that of XFS, JFS, and ReiserFS in its default
++  a similar level of journaling as that of XFS and JFS in its default
+   mode - metadata journaling.  A crash+recovery can cause incorrect data to
+   appear in files which were written shortly before the crash.  This mode will
+   typically provide the best ext4 performance.
+diff --git a/Documentation/admin-guide/laptops/laptop-mode.rst b/Documentation/admin-guide/laptops/laptop-mode.rst
+index b61cc601d298a8..66eb9cd918b56d 100644
+--- a/Documentation/admin-guide/laptops/laptop-mode.rst
++++ b/Documentation/admin-guide/laptops/laptop-mode.rst
+@@ -61,7 +61,7 @@ Caveats
+   Check your drive's rating, and don't wear down your drive's lifetime if you
+   don't need to.
+ 
+-* If you mount some of your ext3/reiserfs filesystems with the -n option, then
++* If you mount some of your ext3 filesystems with the -n option, then
+   the control script will not be able to remount them correctly. You must set
+   DO_REMOUNTS=0 in the control script, otherwise it will remount them with the
+   wrong options -- or it will fail because it cannot write to /etc/mtab.
+@@ -96,7 +96,7 @@ control script increases dirty_expire_centisecs and dirty_writeback_centisecs in
+ dirtied are not forced to be written to disk as often. The control script also
+ changes the dirty background ratio, so that background writeback of dirty pages
+ is not done anymore. Combined with a higher commit value (also 10 minutes) for
+-ext3 or ReiserFS filesystems (also done automatically by the control script),
++ext3 filesystem (also done automatically by the control script),
+ this results in concentration of disk activity in a small time interval which
+ occurs only once every 10 minutes, or whenever the disk is forced to spin up by
+ a cache miss. The disk can then be spun down in the periods of inactivity.
+@@ -587,7 +587,7 @@ Control script::
+ 					FST=$(deduce_fstype $MP)
+ 				fi
+ 				case "$FST" in
+-					"ext3"|"reiserfs")
++					"ext3")
+ 						PARSEDOPTS="$(parse_mount_opts commit "$OPTS")"
+ 						mount $DEV -t $FST $MP -o remount,$PARSEDOPTS,commit=$MAX_AGE$NOATIME_OPT
+ 						;;
+@@ -647,7 +647,7 @@ Control script::
+ 					FST=$(deduce_fstype $MP)
+ 				fi
+ 				case "$FST" in
+-					"ext3"|"reiserfs")
++					"ext3")
+ 						PARSEDOPTS="$(parse_mount_opts_wfstab $DEV commit $OPTS)"
+ 						PARSEDOPTS="$(parse_yesno_opts_wfstab $DEV atime atime $PARSEDOPTS)"
+ 						mount $DEV -t $FST $MP -o remount,$PARSEDOPTS
+diff --git a/Documentation/arch/powerpc/eeh-pci-error-recovery.rst b/Documentation/arch/powerpc/eeh-pci-error-recovery.rst
+index d6643a91bdf871..153d0af055b6da 100644
+--- a/Documentation/arch/powerpc/eeh-pci-error-recovery.rst
++++ b/Documentation/arch/powerpc/eeh-pci-error-recovery.rst
+@@ -315,7 +315,6 @@ network daemons and file systems that didn't need to be disturbed.
+    ideally, the reset should happen at or below the block layer,
+    so that the file systems are not disturbed.
+ 
+-   Reiserfs does not tolerate errors returned from the block device.
+    Ext3fs seems to be tolerant, retrying reads/writes until it does
+    succeed. Both have been only lightly tested in this scenario.
+ 
+diff --git a/Documentation/translations/it_IT/process/changes.rst b/Documentation/translations/it_IT/process/changes.rst
+index 77db13c4022b46..7e93833b4511c0 100644
+--- a/Documentation/translations/it_IT/process/changes.rst
++++ b/Documentation/translations/it_IT/process/changes.rst
+@@ -46,7 +46,6 @@ util-linux             2.10o              mount --version
+ kmod                   13                 depmod -V
+ e2fsprogs              1.41.4             e2fsck -V
+ jfsutils               1.1.3              fsck.jfs -V
+-reiserfsprogs          3.6.3              reiserfsck -V
+ xfsprogs               2.6.0              xfs_db -V
+ squashfs-tools         4.0                mksquashfs -version
+ btrfs-progs            0.18               btrfsck
+@@ -260,14 +259,6 @@ Sono disponibili i seguenti strumenti:
+ 
+ - sono disponibili altri strumenti per il file-system.
+ 
+-Reiserfsprogs
+--------------
+-
+-Il pacchetto reiserfsprogs dovrebbe essere usato con reiserfs-3.6.x (Linux
+-kernel 2.4.x).  Questo è un pacchetto combinato che contiene versioni
+-funzionanti di ``mkreiserfs``, ``resize_reiserfs``, ``debugreiserfs`` e
+-``reiserfsck``.  Questi programmi funzionano sulle piattaforme i386 e alpha.
+-
+ Xfsprogs
+ --------
+ 
+@@ -479,11 +470,6 @@ JFSutils
+ 
+ - <https://jfs.sourceforge.net/>
+ 
+-Reiserfsprogs
+--------------
+-
+-- <https://git.kernel.org/pub/scm/linux/kernel/git/jeffm/reiserfsprogs.git/>
+-
+ Xfsprogs
+ --------
+ 
+diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
+index 69e11557fd13d8..b1a7cbc4fc73df 100644
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -5455,7 +5455,7 @@ struct btrfs_dir_list {
+  * See process_dir_items_leaf() for details about why it is needed.
+  * This is a recursive operation - if an existing dentry corresponds to a
+  * directory, that directory's new entries are logged too (same behaviour as
+- * ext3/4, xfs, f2fs, reiserfs, nilfs2). Note that when logging the inodes
++ * ext3/4, xfs, f2fs, nilfs2). Note that when logging the inodes
+  * the dentries point to we do not acquire their VFS lock, otherwise lockdep
+  * complains about the following circular lock dependency / possible deadlock:
+  *
+diff --git a/scripts/selinux/install_policy.sh b/scripts/selinux/install_policy.sh
+index db40237e60ce7e..77368a73f11171 100755
+--- a/scripts/selinux/install_policy.sh
++++ b/scripts/selinux/install_policy.sh
+@@ -74,7 +74,7 @@ cd /etc/selinux/dummy/contexts/files
+ $SF -F file_contexts /
+ 
+ mounts=`cat /proc/$$/mounts | \
+-	grep -E "ext[234]|jfs|xfs|reiserfs|jffs2|gfs2|btrfs|f2fs|ocfs2" | \
++	grep -E "ext[234]|jfs|xfs|jffs2|gfs2|btrfs|f2fs|ocfs2" | \
+ 	awk '{ print $2 '}`
+ $SF -F file_contexts $mounts
+ 
+-- 
+2.50.1
 
-Konrad
 
