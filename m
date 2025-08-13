@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-765858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC91B23F29
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:55:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DB6B23F2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E11205823C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11B6F189187F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F56B2C15BF;
-	Wed, 13 Aug 2025 03:52:44 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10372D028F;
+	Wed, 13 Aug 2025 03:52:45 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F682BE05F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2772BE7CF
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755057163; cv=none; b=Rqm2o8zFKipXvCHuVsU2BDNag1fKmZY7bvHFKYrjSqNBB0gxNw0LV2WeMCdkpTWakeYImaUv/UeXUxw+OADnUWJI9kshM0yI2jdZYeGgGMtacIWydZDaZobSJt1LIGBsTJJCOnpP98ujE0KOmSrW1+SAt8UdqvjUWkYOe8F4JSU=
+	t=1755057165; cv=none; b=crFQxvtcW5Qc6QxtvqGluKjqDYcz5Nop+ZwJuhUnWRzXlIxyKf+4Zp03DKxM5VypFbMw0+RaNW2CtdrJIks3R4yZ1fHqbLjxwa0wvbLJYSIWCRPId8Qw3shopk+SlbVTc2/cnKOSy1u8593t5QWyqTKX/wssdlBCzrr9jR7TcK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755057163; c=relaxed/simple;
-	bh=NPl6Roqme+Eca9XUDIdnx22Kx5TjGaW/ZJ+9UNI8550=;
+	s=arc-20240116; t=1755057165; c=relaxed/simple;
+	bh=K8zueaRJo3gNUjC+lIEOH6g3TS9WguEf58BxphKiDew=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UEg1OhqTIIpNdLlKTsVx+G/Cq8TSuvzk5N4VnjX5rn+3ydDl+sUcuLfzU+WpAarz0MvoChto6v2Scq3aNxqK8jetEQeIzQJRg2iZL87O+38bbVS8dWXUbXNLKT8GRio5SkFctqoizDSZpDCvDU1w9sKSTDlgG9iRNIZ2FQMhgHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=CZqpqh800qTtVnGaypPvF8dy9xYMXumyyP9tNcLIFYQEKmINMfWkP/tR7SZdRP8OdOR66zOextlJQ3rrjKXy8GnedrpIyoNOCYtxsFpoMb0WX2EVYOb+tI8s2CluEXMdNhAK+27jS5xVWgqeJ3UlvkKR++rbw67o+mkVyKY99t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c1vWv5tP6z1R902;
-	Wed, 13 Aug 2025 11:49:47 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c1vZ21RvTztTBG;
+	Wed, 13 Aug 2025 11:51:38 +0800 (CST)
 Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id AB8D114027A;
-	Wed, 13 Aug 2025 11:52:37 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 70073180064;
+	Wed, 13 Aug 2025 11:52:38 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by dggpemf200018.china.huawei.com
  (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
- 2025 11:52:36 +0800
+ 2025 11:52:37 +0800
 From: Quanmin Yan <yanquanmin1@huawei.com>
 To: <sj@kernel.org>
 CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
 	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
 	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-Subject: [RFC PATCH -next 11/16] mm/damon: add addr_unit for DAMON_RECLAIM and LRU_SORT
-Date: Wed, 13 Aug 2025 13:07:01 +0800
-Message-ID: <20250813050706.1564229-12-yanquanmin1@huawei.com>
+Subject: [RFC PATCH -next 12/16] mm/damon: add damon_ctx->min_region and damon_target->min_region
+Date: Wed, 13 Aug 2025 13:07:02 +0800
+Message-ID: <20250813050706.1564229-13-yanquanmin1@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250813050706.1564229-1-yanquanmin1@huawei.com>
 References: <20250813050706.1564229-1-yanquanmin1@huawei.com>
@@ -60,221 +60,198 @@ Content-Type: text/plain
 X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
  dggpemf200018.china.huawei.com (7.185.36.31)
 
-In module DAMON_RECLAIM and DAMON_LRU_SORT, the damon_ctx is
-independent of the core, necessitating dedicated addr_unit
-integration for these features.
-Additionally, if the input monitor_region_start and monitor_region_end
-are both 0 while addr_unit is set to a non-zero valuethe default
-system RAM range should be divided by addr_unit.
+Adopting addr_unit would make DAMON_MINREGION 'addr_unit * 4096'
+bytes and cause data alignment issues[1].
+
+Add damon_ctx->min_region to change DAMON_MIN_REGION from a global
+macro value to per-context variable, let target inherit the min_region
+from its associated ctx to avoid excessive passing of ctx.
+
+[1] https://lore.kernel.org/all/527714dd-0e33-43ab-bbbd-d89670ba79e7@huawei.com
 
 Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
 ---
- include/linux/damon.h     |  4 +++-
- mm/damon/core.c           | 14 ++++++++++----
- mm/damon/lru_sort.c       | 16 +++++++++++++---
- mm/damon/modules-common.c |  5 ++++-
- mm/damon/modules-common.h |  2 +-
- mm/damon/reclaim.c        | 16 +++++++++++++---
- mm/damon/stat.c           |  2 +-
- 7 files changed, 45 insertions(+), 14 deletions(-)
+ include/linux/damon.h |  7 ++++++-
+ mm/damon/core.c       | 41 +++++++++++++++++++++++++++--------------
+ 2 files changed, 33 insertions(+), 15 deletions(-)
 
 diff --git a/include/linux/damon.h b/include/linux/damon.h
-index b85c6c669cd0..1b7b4cf1a3c5 100644
+index 1b7b4cf1a3c5..aa045dcb5b5d 100644
 --- a/include/linux/damon.h
 +++ b/include/linux/damon.h
-@@ -942,7 +942,9 @@ int damon_call(struct damon_ctx *ctx, struct damon_call_control *control);
- int damos_walk(struct damon_ctx *ctx, struct damos_walk_control *control);
+@@ -88,6 +88,7 @@ struct damon_region {
+ /**
+  * struct damon_target - Represents a monitoring target.
+  * @pid:		The PID of the virtual address space to monitor.
++ * @min_region:		Minimum Region Size.
+  * @nr_regions:		Number of monitoring target regions of this target.
+  * @regions_list:	Head of the monitoring target regions of this target.
+  * @list:		List head for siblings.
+@@ -95,10 +96,12 @@ struct damon_region {
+  * Each monitoring context could have multiple targets.  For example, a context
+  * for virtual memory address spaces could have multiple target processes.  The
+  * @pid should be set for appropriate &struct damon_operations including the
+- * virtual address spaces monitoring operations.
++ * virtual address spaces monitoring operations. The @min_region Keeps consistent
++ * with the associated monitoring context.
+  */
+ struct damon_target {
+ 	struct pid *pid;
++	unsigned long min_region;
+ 	unsigned int nr_regions;
+ 	struct list_head regions_list;
+ 	struct list_head list;
+@@ -747,6 +750,7 @@ struct damon_attrs {
+  *
+  * @ops:	Set of monitoring operations for given use cases.
+  * @addr_unit:	Scale factor for core to ops address conversion.
++ * @min_region:		Minimum Region Size.
+  * @adaptive_targets:	Head of monitoring targets (&damon_target) list.
+  * @schemes:		Head of schemes (&damos) list.
+  */
+@@ -789,6 +793,7 @@ struct damon_ctx {
  
- int damon_set_region_biggest_system_ram_default(struct damon_target *t,
--				unsigned long *start, unsigned long *end);
-+						unsigned long *start,
-+						unsigned long *end,
-+						unsigned long addr_unit);
+ 	struct damon_operations ops;
+ 	unsigned long addr_unit;
++	unsigned long min_region;
  
- #endif	/* CONFIG_DAMON */
- 
+ 	struct list_head adaptive_targets;
+ 	struct list_head schemes;
 diff --git a/mm/damon/core.c b/mm/damon/core.c
-index 1a8d3009d606..803c30f64b94 100644
+index 803c30f64b94..b162aa1156fc 100644
 --- a/mm/damon/core.c
 +++ b/mm/damon/core.c
-@@ -2714,6 +2714,7 @@ static bool damon_find_biggest_system_ram(unsigned long *start,
-  * @t:		The monitoring target to set the region.
-  * @start:	The pointer to the start address of the region.
-  * @end:	The pointer to the end address of the region.
-+ * @addr_unit:	Scale factor for core to ops address conversion.
-  *
-  * This function sets the region of @t as requested by @start and @end.  If the
-  * values of @start and @end are zero, however, this function finds the biggest
-@@ -2724,16 +2725,21 @@ static bool damon_find_biggest_system_ram(unsigned long *start,
-  * Return: 0 on success, negative error code otherwise.
-  */
- int damon_set_region_biggest_system_ram_default(struct damon_target *t,
--			unsigned long *start, unsigned long *end)
-+						unsigned long *start,
-+						unsigned long *end,
-+						unsigned long addr_unit)
+@@ -245,16 +245,16 @@ int damon_set_regions(struct damon_target *t, struct damon_addr_range *ranges,
+ 			/* no region intersects with this range */
+ 			newr = damon_new_region(
+ 					ALIGN_DOWN(range->start,
+-						DAMON_MIN_REGION),
+-					ALIGN(range->end, DAMON_MIN_REGION));
++						t->min_region),
++					ALIGN(range->end, t->min_region));
+ 			if (!newr)
+ 				return -ENOMEM;
+ 			damon_insert_region(newr, damon_prev_region(r), r, t);
+ 		} else {
+ 			/* resize intersecting regions to fit in this range */
+ 			first->ar.start = ALIGN_DOWN(range->start,
+-					DAMON_MIN_REGION);
+-			last->ar.end = ALIGN(range->end, DAMON_MIN_REGION);
++					t->min_region);
++			last->ar.end = ALIGN(range->end, t->min_region);
+ 
+ 			/* fill possible holes in the range */
+ 			err = damon_fill_regions_holes(first, last, t);
+@@ -472,6 +472,7 @@ struct damon_target *damon_new_target(void)
+ 
+ 	t->pid = NULL;
+ 	t->nr_regions = 0;
++	t->min_region = DAMON_MIN_REGION;
+ 	INIT_LIST_HEAD(&t->regions_list);
+ 	INIT_LIST_HEAD(&t->list);
+ 
+@@ -480,6 +481,7 @@ struct damon_target *damon_new_target(void)
+ 
+ void damon_add_target(struct damon_ctx *ctx, struct damon_target *t)
  {
- 	struct damon_addr_range addr_range;
++	t->min_region = ctx->min_region;
+ 	list_add_tail(&t->list, &ctx->adaptive_targets);
+ }
  
- 	if (*start > *end)
- 		return -EINVAL;
+@@ -545,6 +547,7 @@ struct damon_ctx *damon_new_ctx(void)
+ 	ctx->attrs.max_nr_regions = 1000;
  
--	if (!*start && !*end &&
--		!damon_find_biggest_system_ram(start, end))
--		return -EINVAL;
-+	if (!*start && !*end) {
-+		if (!damon_find_biggest_system_ram(start, end) || !addr_unit)
-+			return -EINVAL;
-+		*start /= addr_unit;
-+		*end /= addr_unit;
-+	}
+ 	ctx->addr_unit = 1;
++	ctx->min_region = DAMON_MIN_REGION;
  
- 	addr_range.start = *start;
- 	addr_range.end = *end;
-diff --git a/mm/damon/lru_sort.c b/mm/damon/lru_sort.c
-index 151a9de5ad8b..8107d08c5e4b 100644
---- a/mm/damon/lru_sort.c
-+++ b/mm/damon/lru_sort.c
-@@ -111,6 +111,14 @@ module_param(monitor_region_start, ulong, 0600);
- static unsigned long monitor_region_end __read_mostly;
- module_param(monitor_region_end, ulong, 0600);
+ 	INIT_LIST_HEAD(&ctx->adaptive_targets);
+ 	INIT_LIST_HEAD(&ctx->schemes);
+@@ -1181,6 +1184,14 @@ static int damon_commit_targets(
+ 	return 0;
+ }
  
-+/*
-+ * Scale factor for DAMON_LRU_SORT to ops address conversion.
-+ *
-+ * This parameter is used to convert to the actual physical address.
-+ */
-+static unsigned long addr_unit __read_mostly = 1;
-+module_param(addr_unit, ulong, 0600);
++static void damon_sync_target_min_region(struct damon_ctx *ctx)
++{
++	struct damon_target *t;
 +
- /*
-  * PID of the DAMON thread
-  *
-@@ -194,7 +202,8 @@ static int damon_lru_sort_apply_parameters(void)
- 	unsigned int hot_thres, cold_thres;
- 	int err;
- 
--	err = damon_modules_new_paddr_ctx_target(&param_ctx, &param_target);
-+	err = damon_modules_new_paddr_ctx_target(&param_ctx, &param_target,
-+			addr_unit);
- 	if (err)
++	damon_for_each_target(t, ctx)
++		t->min_region = ctx->min_region;
++}
++
+ /**
+  * damon_commit_ctx() - Commit parameters of a DAMON context to another.
+  * @dst:	The commit destination DAMON context.
+@@ -1216,6 +1227,8 @@ int damon_commit_ctx(struct damon_ctx *dst, struct damon_ctx *src)
  		return err;
+ 	dst->ops = src->ops;
+ 	dst->addr_unit = src->addr_unit ? : 1;
++	dst->min_region = max(DAMON_MIN_REGION / dst->addr_unit, 1);
++	damon_sync_target_min_region(dst);
  
-@@ -221,7 +230,8 @@ static int damon_lru_sort_apply_parameters(void)
+ 	return 0;
+ }
+@@ -1248,8 +1261,8 @@ static unsigned long damon_region_sz_limit(struct damon_ctx *ctx)
  
- 	err = damon_set_region_biggest_system_ram_default(param_target,
- 					&monitor_region_start,
--					&monitor_region_end);
-+					&monitor_region_end,
-+					addr_unit);
- 	if (err)
- 		goto out;
- 	err = damon_commit_ctx(ctx, param_ctx);
-@@ -323,7 +333,7 @@ MODULE_PARM_DESC(enabled,
+ 	if (ctx->attrs.min_nr_regions)
+ 		sz /= ctx->attrs.min_nr_regions;
+-	if (sz < DAMON_MIN_REGION)
+-		sz = DAMON_MIN_REGION;
++	if (sz < ctx->min_region)
++		sz = ctx->min_region;
  
- static int __init damon_lru_sort_init(void)
- {
--	int err = damon_modules_new_paddr_ctx_target(&ctx, &target);
-+	int err = damon_modules_new_paddr_ctx_target(&ctx, &target, 1);
+ 	return sz;
+ }
+@@ -1632,11 +1645,11 @@ static bool damos_skip_charged_region(struct damon_target *t,
+ 		if (quota->charge_addr_from && r->ar.start <
+ 				quota->charge_addr_from) {
+ 			sz_to_skip = ALIGN_DOWN(quota->charge_addr_from -
+-					r->ar.start, DAMON_MIN_REGION);
++					r->ar.start, t->min_region);
+ 			if (!sz_to_skip) {
+-				if (damon_sz_region(r) <= DAMON_MIN_REGION)
++				if (damon_sz_region(r) <= t->min_region)
+ 					return true;
+-				sz_to_skip = DAMON_MIN_REGION;
++				sz_to_skip = t->min_region;
+ 			}
+ 			damon_split_region_at(t, r, sz_to_skip);
+ 			r = damon_next_region(r);
+@@ -1678,8 +1691,8 @@ static bool damos_filter_match(struct damon_ctx *ctx, struct damon_target *t,
+ 		matched = target_idx == filter->target_idx;
+ 		break;
+ 	case DAMOS_FILTER_TYPE_ADDR:
+-		start = ALIGN_DOWN(filter->addr_range.start, DAMON_MIN_REGION);
+-		end = ALIGN_DOWN(filter->addr_range.end, DAMON_MIN_REGION);
++		start = ALIGN_DOWN(filter->addr_range.start, t->min_region);
++		end = ALIGN_DOWN(filter->addr_range.end, t->min_region);
  
- 	if (err)
- 		goto out;
-diff --git a/mm/damon/modules-common.c b/mm/damon/modules-common.c
-index 86d58f8c4f63..613b7cc99368 100644
---- a/mm/damon/modules-common.c
-+++ b/mm/damon/modules-common.c
-@@ -13,9 +13,10 @@
-  * Allocate, set, and return a DAMON context for the physical address space.
-  * @ctxp:	Pointer to save the point to the newly created context
-  * @targetp:	Pointer to save the point to the newly created target
-+ * @addr_unit:	Scale factor for modules to ops address conversion.
-  */
- int damon_modules_new_paddr_ctx_target(struct damon_ctx **ctxp,
--		struct damon_target **targetp)
-+		struct damon_target **targetp, unsigned long addr_unit)
- {
- 	struct damon_ctx *ctx;
- 	struct damon_target *target;
-@@ -24,6 +25,8 @@ int damon_modules_new_paddr_ctx_target(struct damon_ctx **ctxp,
- 	if (!ctx)
- 		return -ENOMEM;
+ 		/* inside the range */
+ 		if (start <= r->ar.start && r->ar.end <= end) {
+@@ -1850,7 +1863,7 @@ static void damos_apply_scheme(struct damon_ctx *c, struct damon_target *t,
+ 	if (c->ops.apply_scheme) {
+ 		if (quota->esz && quota->charged_sz + sz > quota->esz) {
+ 			sz = ALIGN_DOWN(quota->esz - quota->charged_sz,
+-					DAMON_MIN_REGION);
++					c->min_region);
+ 			if (!sz)
+ 				goto update_stat;
+ 			damon_split_region_at(t, r, sz);
+@@ -2302,13 +2315,13 @@ static void damon_split_regions_of(struct damon_target *t, int nr_subs)
+ 		sz_region = damon_sz_region(r);
  
-+	ctx->addr_unit = addr_unit;
-+
- 	if (damon_select_ops(ctx, DAMON_OPS_PADDR)) {
- 		damon_destroy_ctx(ctx);
- 		return -EINVAL;
-diff --git a/mm/damon/modules-common.h b/mm/damon/modules-common.h
-index f103ad556368..c7048a449321 100644
---- a/mm/damon/modules-common.h
-+++ b/mm/damon/modules-common.h
-@@ -46,4 +46,4 @@
- 			0400);
- 
- int damon_modules_new_paddr_ctx_target(struct damon_ctx **ctxp,
--		struct damon_target **targetp);
-+		struct damon_target **targetp, unsigned long addr_unit);
-diff --git a/mm/damon/reclaim.c b/mm/damon/reclaim.c
-index 3c71b4596676..0e11b121d693 100644
---- a/mm/damon/reclaim.c
-+++ b/mm/damon/reclaim.c
-@@ -128,6 +128,14 @@ module_param(monitor_region_start, ulong, 0600);
- static unsigned long monitor_region_end __read_mostly;
- module_param(monitor_region_end, ulong, 0600);
- 
-+/*
-+ * Scale factor for DAMON_RECLAIM to ops address conversion.
-+ *
-+ * This parameter is used to convert to the actual physical address.
-+ */
-+static unsigned long addr_unit __read_mostly = 1;
-+module_param(addr_unit, ulong, 0600);
-+
- /*
-  * Skip anonymous pages reclamation.
-  *
-@@ -190,7 +198,8 @@ static int damon_reclaim_apply_parameters(void)
- 	struct damos_filter *filter;
- 	int err;
- 
--	err = damon_modules_new_paddr_ctx_target(&param_ctx, &param_target);
-+	err = damon_modules_new_paddr_ctx_target(&param_ctx, &param_target,
-+			addr_unit);
- 	if (err)
- 		return err;
- 
-@@ -229,7 +238,8 @@ static int damon_reclaim_apply_parameters(void)
- 
- 	err = damon_set_region_biggest_system_ram_default(param_target,
- 					&monitor_region_start,
--					&monitor_region_end);
-+					&monitor_region_end,
-+					addr_unit);
- 	if (err)
- 		goto out;
- 	err = damon_commit_ctx(ctx, param_ctx);
-@@ -327,7 +337,7 @@ MODULE_PARM_DESC(enabled,
- 
- static int __init damon_reclaim_init(void)
- {
--	int err = damon_modules_new_paddr_ctx_target(&ctx, &target);
-+	int err = damon_modules_new_paddr_ctx_target(&ctx, &target, 1);
- 
- 	if (err)
- 		goto out;
-diff --git a/mm/damon/stat.c b/mm/damon/stat.c
-index 87bcd8866d4b..ae7377e7409f 100644
---- a/mm/damon/stat.c
-+++ b/mm/damon/stat.c
-@@ -181,7 +181,7 @@ static struct damon_ctx *damon_stat_build_ctx(void)
- 	if (!target)
- 		goto free_out;
- 	damon_add_target(ctx, target);
--	if (damon_set_region_biggest_system_ram_default(target, &start, &end))
-+	if (damon_set_region_biggest_system_ram_default(target, &start, &end, ctx->addr_unit))
- 		goto free_out;
- 	return ctx;
- free_out:
+ 		for (i = 0; i < nr_subs - 1 &&
+-				sz_region > 2 * DAMON_MIN_REGION; i++) {
++				sz_region > 2 * t->min_region; i++) {
+ 			/*
+ 			 * Randomly select size of left sub-region to be at
+ 			 * least 10 percent and at most 90% of original region
+ 			 */
+ 			sz_sub = ALIGN_DOWN(damon_rand(1, 10) *
+-					sz_region / 10, DAMON_MIN_REGION);
++					sz_region / 10, t->min_region);
+ 			/* Do not allow blank region */
+ 			if (sz_sub == 0 || sz_sub >= sz_region)
+ 				continue;
 -- 
 2.34.1
 
