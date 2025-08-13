@@ -1,200 +1,141 @@
-Return-Path: <linux-kernel+bounces-767158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B984EB24FF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:39:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C699B25004
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D13C1BC5F97
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:33:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A643B4D35
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40422877E3;
-	Wed, 13 Aug 2025 16:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E55928936D;
+	Wed, 13 Aug 2025 16:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ONHD7JLB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+qlJPQSL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="aJCV0ycE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jf2QT+uw"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE2E299948
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D24288CBA;
+	Wed, 13 Aug 2025 16:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755102583; cv=none; b=Y/UkundntD9MjsDnkYhx4QZyvw7jO30BNxIcYipXupWkKKq8bNieZS2kv0ArzIqNNicuqvNtBKCaMab9zPeZb8f9Sy/bcqoM12qwBjES6N5JqZvcK896nS9OdXf04mrFjX76fUGYQtAovJPF+ItYGG51XDY8ur2CeLfiVgzfoxs=
+	t=1755102623; cv=none; b=hrZFnSObxEnxOMbTyKg+r0/Nk/I1PLLu/V+Pnhf9umiouufkikmEXZMdlqmo1Wq0Cb/7170MykDFayKf1lHRbzc0AJLCPSJdylSQfobDSZwFXjiyHOHTmgm6nfBSIW/4KfsAb2yzAqXIUfM7QmE2vHW704pRSRYHMfGLxRF0K7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755102583; c=relaxed/simple;
-	bh=e++jtXx1AVP8PYbK2GIyL33zMqQDaIpLZ87iJxg+IGs=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=bs7FWEMcn5HnH0iE+XQZLcgiib2F61Ocrt0nQprRlo8CuWYu9Y4zdmeLPtQmRNAyZgblE7RivGtZKFsfuM6hMAeQJzrTucYCgpDEWc0AvPv5722bS+MnKTYdQFHsm9MnsaWja1ZpZTisSYvUI3vZpeoGsksD2Vgi0CRwtlKGn8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ONHD7JLB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+qlJPQSL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250813162824.420583910@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755102578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=0UA6AfVfDpisXE6yID1nZmppuD1kF4OtUvT17obAfwI=;
-	b=ONHD7JLBTZq02oCQ0B5e4tqUJzwls6ViJ83dahpsPy7fEX5y7V6qyVapNMcxoTSTyv0bCV
-	HqgF2LxacgsvHJbu8K87u+tO2YYH+NYymM8UYnzY0OsV+killjtmPlNOEhqQAGt7D2LoD/
-	EidY4RT6YJ65czpgbVwnAsHCPCCfDoQsxAjee37KAWdbpc8wYkScqpIUetDe2BuCKqWv0r
-	YBsMOgwlpQAnD3RdHoWhGtvyr0UJSdCUfIofBsO1/xrtSkalmOgw8n/e6MN02iZeqWZGRm
-	1WBCUxCEWnVmbdFQMILLImmQ3rnsf7yw3zT6ycx4ulBWX0Ne6OE+tBO5olhf/g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755102578;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=0UA6AfVfDpisXE6yID1nZmppuD1kF4OtUvT17obAfwI=;
-	b=+qlJPQSLuRF33XC8WEySzbXKOe0sRbmXf0cYPjXrtvIsSY07p4O+s+pJ1UJ7d31G4NkXuo
-	6r42Mx7lHST8N1Dw==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Wei Liu <wei.liu@kernel.org>,
- Jens Axboe <axboe@kernel.dk>
-Subject: [patch 10/11] rseq: Skip fixup when returning from a syscall
-References: <20250813155941.014821755@linutronix.de>
+	s=arc-20240116; t=1755102623; c=relaxed/simple;
+	bh=rIVetnmj5BGlUvq1abB6LKm1vAzyyAHS0GNloMbbwI8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=bQmT2lze5zzlc6kFWofg/UQ0fmV2HXShHg7shuFj8DZ0TVyGwL/mvmQx/z6yyrsoESX2XZpkmDp2pNuBoh3PsjQhoeeCwL5yi9TR2hXNwqbxeRwHehBQmKbUmb/i697FBGe+il/mg+/bTztZukRWUpoqdYUJa8AIQ5GIKJvkFkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=aJCV0ycE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jf2QT+uw; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 13EE314000F9;
+	Wed, 13 Aug 2025 12:30:19 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 13 Aug 2025 12:30:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1755102619;
+	 x=1755189019; bh=vjAX2/LhHjkP4rTS8b1FppYeRZTcGybCFtXL4zZ0x3E=; b=
+	aJCV0ycEe4E/b3iJZLFGdEdPwf9zKYu5wPBV6/lYmnmHnXLqkzURwWDhQqhcar+k
+	0up0qu66Lq0ssSgF4qdUDzmGyBkOIboI7dzaxYwKXscSRnTS/DHQE+HCTjX6RC/2
+	w8dWciQKLWngikuOpwYzn6i5UOytqREebA5WW8z2t/a0zlCvQ60pbWtni6j2MPCY
+	9r9mtAPBIEhhlS5H7LkD21mluvvlKNym6++s/hlVA5Tn70haUKgGIg5XzscvRdNL
+	UA5a8rW8BoK0QGpzQ/d1gZqPp1dVR0ZX0mIBwhB0W86CngPdcwW+jLIuLKdME/L+
+	X3TI8/69BPwGpN1c/0xtag==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755102619; x=
+	1755189019; bh=vjAX2/LhHjkP4rTS8b1FppYeRZTcGybCFtXL4zZ0x3E=; b=j
+	f2QT+uwbg4ma5rRkOjbVDAMjhL3GNTO/HJLRKmT27dDW46cYweMgIAkn3x/uYxKX
+	uV5QOhuU5f6a/k3j1MzMehMcl+kfPvyw7xBOos94SbYsvsvXZ0idy/2wAudsbXI+
+	0GjgoIoN7XgUn3kHENC3Lr2jncSPkc9T1XXm1iETAVHmUksAedJkvBNTvFxRVcEW
+	1OxNga5lvIpJVk6a6zgmQW7mxeJubgs/rZkgOAovSkQY3PxH+AeomqHKzmejC9eS
+	qOtGguMzoAtXjbTymQFXuDULLrau9gHwyANF8YJHq7cORrVdOZPntEJ6jShzZwMT
+	YtgdPmfFAfApGy06gZL/g==
+X-ME-Sender: <xms:mb2caFvCbGaTtUkUQE7kJ9XzlyfC0jQl2wjl22xJk3l1Fs-tf287gA>
+    <xme:mb2caOeexrCh9D_2r5I5S3EXCmwpQBd6wyy4b9Je0IupWt2z00to3iYFq4RLseR92
+    r2l9_KN68w_2bkrZuE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeekjedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddupdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehhrghrihhsohhknhesrghmrgiiohhnrdgtohhmpdhrtghpthhtoh
+    eptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopehmrghr
+    khdrrhhuthhlrghnugesrghrmhdrtghomhdprhgtphhtthhopegtlhesghgvnhhtfihord
+    horhhgpdhrtghpthhtohepmhgvmhigohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohep
+    iihhvghnghhlihhfvghnghdusehhuhgrfigvihdrtghomhdprhgtphhtthhopehpvghtvg
+    hriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrshhtsehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:mb2caPqPzvcl5q4h1-36ODgbpQZ_uLkeb7SMfQ40uYxH1Jcjtqa6Hg>
+    <xmx:mb2caKGwMrqbZvjZpMGOqrjzw3XCehG5617fvvVFWBmA3se_3nyZ5g>
+    <xmx:mb2caBoecBnN6iAjMGu80iWahRWxyQt1TGHMMhiNUKuGy9LsCXnwmA>
+    <xmx:mb2caA2E-PFvuHi_ugtJ1Up5bnSy-_UrWFsmoMTg-WwJpU6coxWOmA>
+    <xmx:m72caGyCugxt8xU_oZbvTtN6yTgbZBFZo1n6I8P7cKKy0CEGgapGRhf6>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 67320700068; Wed, 13 Aug 2025 12:30:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 13 Aug 2025 18:29:37 +0200 (CEST)
+X-ThreadId: Tf2626a88c2a27380
+Date: Wed, 13 Aug 2025 18:29:37 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Ankur Arora" <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+ "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Mark Rutland" <mark.rutland@arm.com>, harisokn@amazon.com, cl@gentwo.org,
+ "Alexei Starovoitov" <ast@kernel.org>,
+ "Kumar Kartikeya Dwivedi" <memxor@gmail.com>, zhenglifeng1@huawei.com,
+ xueshuai@linux.alibaba.com, "Joao Martins" <joao.m.martins@oracle.com>,
+ "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+ "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>
+Message-Id: <67b6b738-0f1c-4dd4-817d-95f55ec9272b@app.fastmail.com>
+In-Reply-To: <aJy414YufthzC1nv@arm.com>
+References: <20250627044805.945491-1-ankur.a.arora@oracle.com>
+ <20250627044805.945491-2-ankur.a.arora@oracle.com> <aJXWyxzkA3x61fKA@arm.com>
+ <877bz98sqb.fsf@oracle.com> <aJy414YufthzC1nv@arm.com>
+Subject: Re: [PATCH v3 1/5] asm-generic: barrier: Add smp_cond_load_relaxed_timewait()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The TIF_NOTIFY_RESUME handler of restartable sequences is invoked as all
-other functionality unconditionally when TIF_NOTIFY_RESUME is set for
-what ever reason.
+On Wed, Aug 13, 2025, at 18:09, Catalin Marinas wrote:
+> On Mon, Aug 11, 2025 at 02:15:56PM -0700, Ankur Arora wrote:
+>
+>> This also gives the WFET a clear end time (though it would still need
+>> to be converted to timer cycles) but the WFE path could stay simple
+>> by allowing an overshoot instead of falling back to polling.
+>
+> For arm64, both WFE and WFET would be woken up by the event stream
+> (which is enabled on all production systems). The only reason to use
+> WFET is if you need smaller granularity than the event stream period
+> (100us). In this case, we should probably also add a fallback from WFE
+> to a busy loop.
 
-The invocation is already conditional on the rseq_event_pending bit being
-set, but there is further room for improvement.
+I think there is a reasonable chance that in the future we may want
+to turn the event stream off on systems that support WFET, since that
+is better for both low-power systems and virtual machines with CPU
+overcommit.
 
-The heavy lifting of critical section fixup can be completely avoided, when
-the exit to user mode loop is from a syscall unless it's a debug
-kernel. There was no way for the RSEQ code to distinguish that case so far.
-
-On architectures, which enable CONFIG_GENERIC_ENTRY, the information is now
-available through a function argument to exit_to_user_notify_resume(),
-which tells whether the invocation comes from return from syscall or return
-from interrupt.
-
-Let the RSEQ code utilize this 'from_irq' argument when
-
-    - CONFIG_GENERIC_ENTRY is enabled
-    - CONFIG_DEBUG_RSEQ is disabled
-
-and skip the critical section fixup when the invocation comes from a
-syscall return. The update of CPU and node ID has to happen in both cases,
-so the out of line call has always to happen, when a event is pending
-whether it's a syscall return or not.
-
-This changes the current behaviour, which just blindly fixes up the
-critical section unconditionally in the syscall case. But that's a user
-space problem when it invokes a syscall from within a critical section and
-expects it to work. That code was clearly never tested on a debug kernel
-and user space can keep the pieces.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
----
- include/linux/resume_user_mode.h |    2 +-
- include/linux/rseq.h             |   12 ++++++------
- kernel/rseq.c                    |   22 +++++++++++++++++++++-
- 3 files changed, 28 insertions(+), 8 deletions(-)
-
---- a/include/linux/resume_user_mode.h
-+++ b/include/linux/resume_user_mode.h
-@@ -60,7 +60,7 @@ static inline void exit_to_user_notify_r
- 	mem_cgroup_handle_over_high(GFP_KERNEL);
- 	blkcg_maybe_throttle_current();
- 
--	rseq_handle_notify_resume(regs);
-+	rseq_handle_notify_resume(regs, from_irq);
- }
- 
- #ifndef CONFIG_GENERIC_ENTRY
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -13,19 +13,19 @@ static inline void rseq_set_notify_resum
- 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
- }
- 
--void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
-+void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs,
-+				 bool from_irq);
- 
--static inline void rseq_handle_notify_resume(struct pt_regs *regs)
-+static inline void rseq_handle_notify_resume(struct pt_regs *regs, bool from_irq)
- {
- 	if (IS_ENABLED(CONFIG_DEBUG_RESQ) || READ_ONCE(current->rseq_event_pending))
--		__rseq_handle_notify_resume(NULL, regs);
-+		__rseq_handle_notify_resume(NULL, regs, from_irq);
- }
- 
--static inline void rseq_signal_deliver(struct ksignal *ksig,
--				       struct pt_regs *regs)
-+static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs *regs)
- {
- 	if (current->rseq)
--		__rseq_handle_notify_resume(ksig, regs);
-+		__rseq_handle_notify_resume(ksig, regs, false);
- }
- 
- static inline void rseq_notify_event(struct task_struct *t)
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -408,6 +408,22 @@ static int rseq_ip_fixup(struct pt_regs
- 	return 0;
- }
- 
-+static inline bool rseq_ignore_event(bool from_irq, bool ksig)
-+{
-+	/*
-+	 * On architectures which do not select_GENERIC_ENTRY
-+	 * @from_irq is not usable.
-+	 */
-+	if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || !IS_ENABLED(CONFIG_GENERIC_ENTRY))
-+		return false;
-+
-+	/*
-+	 * Avoid the heavy lifting when this is a return from syscall,
-+	 * i.e. not from interrupt and not from signal delivery.
-+	 */
-+	return !from_irq && !ksig;
-+}
-+
- /*
-  * This resume handler must always be executed between any of:
-  * - preemption,
-@@ -419,7 +435,8 @@ static int rseq_ip_fixup(struct pt_regs
-  * respect to other threads scheduled on the same CPU, and with respect
-  * to signal handlers.
-  */
--void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
-+void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs,
-+				 bool from_irq)
- {
- 	struct task_struct *t = current;
- 	int ret, sig;
-@@ -467,6 +484,9 @@ void __rseq_handle_notify_resume(struct
- 			t->rseq_event_pending = false;
- 		}
- 
-+		if (rseq_ignore_event(from_irq, !!ksig))
-+			event = false;
-+
- 		if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event) {
- 			ret = rseq_ip_fixup(regs, event);
- 			if (unlikely(ret < 0))
-
+    Arnd
 
