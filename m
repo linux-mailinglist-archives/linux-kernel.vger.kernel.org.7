@@ -1,213 +1,507 @@
-Return-Path: <linux-kernel+bounces-766762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46295B24AC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:39:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14293B24ADA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA7393B87B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D51016BA73
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13582EBDDE;
-	Wed, 13 Aug 2025 13:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C692EA49B;
+	Wed, 13 Aug 2025 13:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YUKwEYU2"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LS253VEX";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wMQd8Iwg"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A202EAB94
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755092327; cv=none; b=GCEpqswPMSLlQbe03zzmqjoE/RL7wM26xVmjRdJUZJmZHjSDkvauwvOl7UtVOnEZeJ+9AYwal95SKZ6OR6uMKXo1YqTo1Goaw+oFW6VtPs+gDG99CvVAOffbIKCGusDwVu7XwK6yc2F1kju+QbeTyuSBEgHGmIkVE0TMhtjZk4M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755092327; c=relaxed/simple;
-	bh=ATCeCXY9ExH+Cvg4r15EUaOEE6ibGwuLUwDitn12MTQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RE0bgK6o7wiCG436EtK9kV+m1PgHpS5aFwva02qiY88L0gELyRIcLNXk/1swr6IQIMJ8lNOZ/sYkde1gdFv4hJV95ufA5v1psDkdo0EAkmZKoBpHS5SS0hwzsWeFhVjpfEYlADYIykfTlgHRLNTLFj9+TqjtdiwxdfBm6YqbXmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YUKwEYU2; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b8de193b60so3761880f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:38:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C502B2E9728;
+	Wed, 13 Aug 2025 13:39:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755092377; cv=fail; b=IBT0W+YlP1yduXWmYGvMHxGTeWdlRCBL+Uw92Ol7sAvvxNjTBX5du1iFXXwsEalR6PkvHkW3xvGM4QoADgfOsZ2kD2GxcdqvKBP7yN75LA3sUoxw6KCVTwmE+FofcUAjmwT/2WfnZTPtJoFADaR72kolaUCv/C6vW1QZ//pvY2s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755092377; c=relaxed/simple;
+	bh=86UOf8nrGPS42FLOBES7pGObFRIENKAetFsO2NOJ/Og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GvcYqiOyTo9+DmOW0TYHMN6f2hjuCGJeEOuKS8QsXhsC6YQlU+r4Q8OIQPq2QUECZFp3ijc5uECQqURQWxKiY/rrMRIidVX9wV4VxFj+tEz6wMBfkZzV7aiKCcDI06n26cJcXS9Q/zQqTyUPGBVLxycxthC3M9BNz8kvZwzqRFk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LS253VEX; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wMQd8Iwg; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DDNBdM023013;
+	Wed, 13 Aug 2025 13:38:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=1UuZ7KxfqxqOMu2byI
+	NrQu2EY16zw3bxaxwX/3i5LjY=; b=LS253VEXOckOlJLaoOc99/cJTM2MBs+OHS
+	q7NJHrM35Cz/d24rwHVba/56rSfQywjcdlIbaHkUVkH6//tbp9TxeHOwhOPlny+A
+	Uc1Yln92XToS8bir1TL6k7ngthlWaaMAwzmKb4UImS7KbaMajKW7Jnh70EV43MRE
+	ehxGB70XMYxb7Gj0bNBwxTtFQMB3qiGZhM496iFIlT/L71dTzzd39SmMCIha3DIk
+	ifGtqLpnB6uyglPH/jyyKh7eFISED1ik3DITSBSd+04hLNGONzGJMjg0NNUtefAg
+	+3hP4lviyFGFhyYFwJKdCoaQBVGjxDtlel9XkLO8FYAZ84A5SvMA==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48dvrfygs0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Aug 2025 13:38:58 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57DCXnlo017390;
+	Wed, 13 Aug 2025 13:38:57 GMT
+Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012067.outbound.protection.outlook.com [40.107.209.67])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48dvsbdtg9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Aug 2025 13:38:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R0EQSv8YoPlGvrScodgXSfZMpSqbVlJ8xrTVCYWKZvYmOtxA2XV51fJPXZTdi+e38ZpwWKLtEMbiq6K/uV2B5prxoEqU0Az9gcMWgZRG3+UFcnXlLlCd0QxbHT9PUcwJMNzLdkyC54z0TFc9wtAynLVUeiR/Kp27B2+vuv15YaQRRUXY0aLJOAhhUDUz1Lv8x1O5efh4HQ8/D0xoSUdN38lVHtCTUpQrciyHnQdMhY05dag7OLB5Kig9HBV8Yx5oY35Tc8vazHYrYnFpeLVlcp1NJirkXI9PMD4+kIieY6r/ilrGM/HoXF7wTFpqh4tfJUDEiBvmT0oJ4yPDLbbLmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1UuZ7KxfqxqOMu2byINrQu2EY16zw3bxaxwX/3i5LjY=;
+ b=pYK/W3eTW32nB7vTzRidmodC8lH7Y5MO1V+YRYwV2efVyS04/Nwy3RN9kZyF5Ql5JLorOTiUpTBs6iBKe+k/p+KUy76do9UVOZ4JJ85cfqeuDxfT6DXz2fdGXX6N8L5dy5Hg/dZdIkz6PuJXfyKb5HcdngIFhAFkXYR8KAMxdDJv0jUXQfH6mpiC5lmuxRcREte00CFNq2KNrIGo1q9CALm8yRFxtRIVeeZEo5D2bBuXxRwQdIFZB2NKZTxoQUFvpAxhDTNaBlapfbF+9yhFSa0vKhaYRgQVoeV8Yn98rZXQLn843HpdLvnrldNllKnbbwWE0NN+8o0TI5AbqAzRZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755092324; x=1755697124; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WCmoTAq+24iKRI4CSHEBG8UaeJTBmRNFmOmZvFaISJE=;
-        b=YUKwEYU2bWSnjxDaEz1aMAlUu8zoOnjXj30O2SYSndjx2luwz/SE6LlhbUv4zRi0q0
-         u61l8KCbDfl8hwIOztdOHXLUzd5L6/xRfUk1TqdTjKM6CGSe7MEofL/XPZoZCVu9TOxR
-         4syxXtlkpOPNgN2zOCz0MU1FZaKjEf62ntp9c1cKBk6R9qmArWzan9KYKmWkw8B34Fcd
-         J/DfTtQ8WRBwm6h7hEn1nY6DLJxj80NGqb43zMtxc4HrPkUHhXKtW/zkQVJQKS+Mciho
-         CRdmbiqWdSOVSqEMZZ1XXWLqp+aZj0Ido85HDti5hURqhwvH95LBMhv1jmKCCkSP6AQW
-         iH4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755092324; x=1755697124;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WCmoTAq+24iKRI4CSHEBG8UaeJTBmRNFmOmZvFaISJE=;
-        b=qdecpOWnTFfpmxA0aE2mUzP0m2YD6pFOm9hRQ5hopgAEQkO3QTSt5yV9cTx2VLY2Bk
-         cld2vqr18+4kjxgeixqS0pEa6W9n01lzpM8Vw+Rmen4GS+NWZSAOG+2YMlgs5FbsRIh8
-         8DNkVizhT2vtBLxBSoDroYEeFq7MUYu55/qDKWiEpGVq4Zcg3IMYWg4WZBzA9aIiF3XU
-         qudQ0z5ejPjy9eF42DjQFrcMY5Zr2RHG8U40Vgkt4hCdlt3CGoXfQ0mEExBJAEjjQN//
-         z5yns/5C/0AAkDJF2FmvPJnw8ufLmkdKDCMJy/atyCQXkOdPOWlddPie737N2hcCiOVP
-         7Sxg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5OspCam+2hTzYm9ALcT1bgAT5dMtpR4/KvRqw9pjO69u64mQG4DoqzNicUIpLd/adWOOf0dKQJDh/kPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXE41IdysLY5uq6Da2XMKNxjyA7mDWp3AlObIg+9X5YeHWBXok
-	BAaTotlcYMk3YG0jhChl/Nd8ZHBZ51j/2nyOn1OgtMjXVaoN1FwXODTS
-X-Gm-Gg: ASbGncuHL3uPShJKm3hiR8Fmp/2XktVLK+vECHcgk6QOW8xerHnHHUXqAW1sdLFA/Ru
-	Yxa3AazGLCdyvztRWqvU1985Es17k7zv4dCSxa4sm6L0SNArN1uIVFqvTvfFjSIQmPTMZASlrVz
-	GrH4pfK4v4jls9TLNQDL2vjXtLyrlwV9zWccHaODBYU7+evRoXzAqx7TngeyV+x2zmKcbWpsZIr
-	LkyaLMyZ7fmodzVZuqzDUmp9vIr03G8PrMNXRn/0X0IIJsf18MD2oaFYbdsJqE/74QWBgnUM4BM
-	Ol32ugEdb8A6ktxTZ6M8Hfp735fQM/WpxOWGh9piPOJI+13swbWf7DQL5K+9OSLZD79GwhxjNyD
-	8aUR/WgNDJPiWOKNtBD0GEHtDd+2Qh0e2OI1qG9yKFDaMB7PZ/0+Weyr8sx4iLYJwtEqX2equ/m
-	m+SzrWokcDCDfvwQcQD/SaeXcjPA==
-X-Google-Smtp-Source: AGHT+IHW7Qd1SAbOSY879BbiErQpR32SX8ht+p3w2HKrir466M04lOt+huUQxcKj+6by6JWF/cRHzQ==
-X-Received: by 2002:a05:6000:4308:b0:3b7:84fc:ef4c with SMTP id ffacd0b85a97d-3b917d2d303mr2420863f8f.6.1755092323832;
-        Wed, 13 Aug 2025 06:38:43 -0700 (PDT)
-Received: from xl-nested.c.googlers.com.com (87.220.76.34.bc.googleusercontent.com. [34.76.220.87])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8f8b1bc81sm25677444f8f.69.2025.08.13.06.38.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 06:38:43 -0700 (PDT)
-From: Ethan Graham <ethan.w.s.graham@gmail.com>
-To: ethangraham@google.com,
-	glider@google.com
-Cc: andreyknvl@gmail.com,
-	brendan.higgins@linux.dev,
-	davidgow@google.com,
-	dvyukov@google.com,
-	jannh@google.com,
-	elver@google.com,
-	rmoar@google.com,
-	shuah@kernel.org,
-	tarasmadan@google.com,
-	kasan-dev@googlegroups.com,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH v1 RFC 6/6] crypto: implement KFuzzTest targets for PKCS7 and RSA parsing
-Date: Wed, 13 Aug 2025 13:38:12 +0000
-Message-ID: <20250813133812.926145-7-ethan.w.s.graham@gmail.com>
-X-Mailer: git-send-email 2.51.0.rc0.205.g4a044479a3-goog
-In-Reply-To: <20250813133812.926145-1-ethan.w.s.graham@gmail.com>
-References: <20250813133812.926145-1-ethan.w.s.graham@gmail.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1UuZ7KxfqxqOMu2byINrQu2EY16zw3bxaxwX/3i5LjY=;
+ b=wMQd8Iwg07Q1yUQgghYU/7NNa6M4bgjwcPL8jsVfZ7hh7pcom/BWZ8idLfcsovS2grzLZxt7NwPpJ3PNTUHBCZna7h8MQ79Pdm/8Qwuoz0wLtjUscsfsMiP+JN1IU7Jieezenm83T5AE8IPLBO8cQYrFwQkOG+6IOHFl1Of8qhU=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DS7PR10MB5200.namprd10.prod.outlook.com (2603:10b6:5:3a6::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Wed, 13 Aug
+ 2025 13:38:54 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
+ 13:38:54 +0000
+Date: Wed, 13 Aug 2025 14:38:47 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com,
+        vbabka@suse.cz, peterx@redhat.com, jannh@google.com,
+        hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org,
+        shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org,
+        josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net,
+        willy@infradead.org, osalvador@suse.de, andrii@kernel.org,
+        ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
+        tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        SeongJae Park <sj@kernel.org>
+Subject: Re: [PATCH v4 1/3] selftests/proc: test PROCMAP_QUERY ioctl while
+ vma is concurrently modified
+Message-ID: <7d3b4b0c-f905-4622-95a8-e4d076dc71d4@lucifer.local>
+References: <20250808152850.2580887-1-surenb@google.com>
+ <20250808152850.2580887-2-surenb@google.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808152850.2580887-2-surenb@google.com>
+X-ClientProxiedBy: LO4P123CA0117.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:192::14) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DS7PR10MB5200:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7050e0c5-5077-46a2-fe78-08ddda6ebecf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1dpE/JjXyC37w1jjCXWMbf7HE8KGreMz6hWXMgvtGFTTcnzcSu920CqXJX/J?=
+ =?us-ascii?Q?MAeoC+MQ6V/JBdm8d1DCABnhCy2u/6v6LqKeSj0XrCHSK0P0brOB8nuVETrg?=
+ =?us-ascii?Q?6X10v4u/8lOXsNnkRFcQLYQQoYAREPn+qR2lf58zA2U2e1F/xPaaKOREGMSd?=
+ =?us-ascii?Q?jySGZVzEPKYkbE0Um4qycyk1sOqTRK7ygH1BtDS150eGbpmRv5jxMS+xSfmg?=
+ =?us-ascii?Q?To2See5knuNL9p8xxPzh1RxXHSPdUV4aNW4QROqQ6xnOtQn+XhAsyFUmyPGn?=
+ =?us-ascii?Q?xyeQFUSeAncCY5PSe8gktngvtv4qOoyGNq6bucmv8kGMdBe/AuqgcQ3ZOpzK?=
+ =?us-ascii?Q?354Zaqs1XQ9t3CGlQ0UcaAD35B7IvMprJGik46mK8S8qqrxo8Rc2pgDuoUUm?=
+ =?us-ascii?Q?f7zkLsBMKUNYrg7ncY7FLh76kVyHheD2snj6zhKJK0FEeoskYFvbf18iYJtF?=
+ =?us-ascii?Q?prnwcKOtCCju8VKQrloS+W6pxqnlLAJf6nUcKJig+PnbY/6nS1QmezahP/X2?=
+ =?us-ascii?Q?Nk4KRS4aygcDhHkocj5zSYcYAwHETjq9h2riQ6d/w193swjRfpWX7FHlO+Pq?=
+ =?us-ascii?Q?6JX4X76GGNMdh/QsdarNfw4XQFF5rZlRX5O+2YUvnyZInGlQesnganPppCeN?=
+ =?us-ascii?Q?ilv8+F5qIVprQtQGIWe8RceFyyE/WPdjY1raudmu98TiQrTxFZy/6R7VwH0e?=
+ =?us-ascii?Q?QqKyK4EFAODeu84ySPkGVLAN3Un6r1UQveXFqnSJSptpfNObIg/MMqbnePWt?=
+ =?us-ascii?Q?svkE/EnOirLyFNWt3cToQPKtyB3hSEHhXuarWfUZN5elNbSdW3J7Uz+m9kpP?=
+ =?us-ascii?Q?boQBwP1BJDgmDmDWNHZqBPNb8gXJ3dl1HpRE/k7sprSOTfIoaHpEGG7e5EMp?=
+ =?us-ascii?Q?AbIYq25/Y5e3OnusfftAwkLrPhTjpB6iMu9zwf29VSbi/C3e2BIFeYulm95b?=
+ =?us-ascii?Q?BwgXzhwGnfSQW2XBgR1GEKbW1TKz7goU4iLDkLUoRV6wyMY5FQ9Oj3+xJGd3?=
+ =?us-ascii?Q?lXlQ14A9mjCmOR2hCLDKKQ1fByGMHxkkTBXHMvqJwVsesWV3zNIl7GExwMKI?=
+ =?us-ascii?Q?GsUGfAwkDz5mFHkDOvyKKNm46QS7bA8EnMUTGoLIoTphRixK6QnBFKKjvlQS?=
+ =?us-ascii?Q?hpB8hX3mCumxQ1yMuEV0PLFjDcW/hCBsp0Os8EaxvODYAiNr0KFaCchXNMD8?=
+ =?us-ascii?Q?beP8c1q9jxnw91KZd/sAoZ2nrIBsE+DNTWz/b2xGwtabsf8k44wlFsc7A7qe?=
+ =?us-ascii?Q?kIe+3JQF1xvzPsySLYzk3cFUHcDvhAIlKWpAjhDGdfSNWDtyNiY0rskZ+Okq?=
+ =?us-ascii?Q?8KiW5XF9teBGGvaJSUncFtpCkdQ6K4l1FDNgYHBSz8f6hv8KhmartFmfhJye?=
+ =?us-ascii?Q?tad5MRq95Oy9ioxzkVNXOeFf+4CURErSFtnnywlsh2klgWERObRrFvDfpAks?=
+ =?us-ascii?Q?mYdGhFycMwo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8My9l9oqvw6G0fab8FMBgiViwbiwKYQfbXbnfRUhZCBgR3Eanzfa9Z0IZe/3?=
+ =?us-ascii?Q?z7HEEDYFRCPw2yivrhfIjJFHfs87IR+d9Kz2WkiSUCVtuB8DNeaqSgNV63jr?=
+ =?us-ascii?Q?neSc4i1LZtSFZvft5I+3cDku3srtbVZ66sO09s6A5NiyBtleP7n3am6lHmvs?=
+ =?us-ascii?Q?unY9XF/bexI70S1vyvlvjW99kL6g82LVPqBavB9hFlwwQmXsmbmt8O1TJ8Ph?=
+ =?us-ascii?Q?6DaZ8LQgQWIrO7eBw2GOT+5dpWaXDsMOIAx52KvkFp7FOJLI5SJWWhwcv8++?=
+ =?us-ascii?Q?O2MCI/pimXGvkpaiClWSilLfVhadV8Y57mDlZV79m8TI+nPeYFYrZLNwB5lh?=
+ =?us-ascii?Q?Vf+ysid7R5+TASaAQzmvyjrteyN9taCQqUv7qCkFptoUnGoMWhFEG7iss3wv?=
+ =?us-ascii?Q?nfqKmuFJWViZf4uhz9yF1zr9xCemDr7VG7+9+falPExVdQr/To5R1IkguaGg?=
+ =?us-ascii?Q?f4pWXUb0Q2aRzXXX0MwmaFpJMElIaEpS83OcJdgDlQLLnHWbks9OrpkRl+Ey?=
+ =?us-ascii?Q?fpj/G/a6XIC1zZgjx4pdzISGBmcSfU+InUcr8rcpsAeiV/jxkYKhz0bZtWkP?=
+ =?us-ascii?Q?VMDwRDJugCEoXVEguo6WPnreVZkzqptQlO4+A6k1SWhrOqvkfRE70rHVAJSe?=
+ =?us-ascii?Q?hfRlLpB2aUYmRVUHQqUJtYe9Ed1gVDScy2BF38BWAPt69MQPLOxxPgEo5SE5?=
+ =?us-ascii?Q?y7C+C+wRczNk6j0jC5u3w9vAXXCDQJgur7IdELLALBzmjRbIwe0+KSmeA4qe?=
+ =?us-ascii?Q?sIO14vbjFD/E8uT2tx+3bgFr5kQLeyQa4VBaWR8jJuvMBD+QTjAeCiXwD5o+?=
+ =?us-ascii?Q?kXh8/MrjxBQiuSOV19bYOhCut6ZzyLy/sN8hepA2FL0At1mhx5pg87R9H06q?=
+ =?us-ascii?Q?F0TPDA1+UAC3LuGX5ljfTJg6RSecV5i6XQlFKFKSRmRBu/j9022yCT9am+zm?=
+ =?us-ascii?Q?dmo3Y8v5FNo3qmcQ1EHZAtzDeU6WZd1MFnNINwRRqZN23CESrg+sNSx7DeOU?=
+ =?us-ascii?Q?cJHdVvSQxwQHrKCEeWWwhvJp0ja9zVeXgOmK13uUemqOoD4l1HO7H+2VPVIR?=
+ =?us-ascii?Q?sLa5bU6pAxD7dojO3+F0AXPVtjP+K1b8o1AF/ailDzr4YkN0SvTbt55fZrJO?=
+ =?us-ascii?Q?jr7Dr9GtAYFt+0mwNsiU1PH1/k8oYTU6YPWy3U81q/xGslVx27tg81WEuJ8K?=
+ =?us-ascii?Q?CiOe450TdQL6js8PINVDyiFMDrfq9Hp02vHaGyYt7/C8xxWX0xIiNuj3TdgD?=
+ =?us-ascii?Q?9TTp46e73PYFtfu+Z5PsAdFhBrrEwMC1MrQ5GZCRCjl0jYas1WTlV3VDXI9w?=
+ =?us-ascii?Q?6Bs1BvQhLtiRz3+/G1cJiSXVgm3dJFi1+Cl/p8U6of1zifsc8FLv82hbs5Yy?=
+ =?us-ascii?Q?3LWSF6ZH2S7BkGiWDiLVOPBgOTS8Y1MSFlG/8PbSCp8TVPu8rlvIp129FsXb?=
+ =?us-ascii?Q?O7lyhBlhppgEpc5YcMAz8MnTuMLbdwTQmfu1R1gGri8CCt6H7LH4gTcxwFst?=
+ =?us-ascii?Q?n6xnHtMCxIZSIamBncpWSNAqsNfYMP1OD9w5kg3IGJOp5nPueDdmaslwad0N?=
+ =?us-ascii?Q?Wp9+uQandhMVn2agXCfRKcsyGZ3/OOUI+YoMcREBrl1P3pinHxt1NGQe4xYa?=
+ =?us-ascii?Q?IA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	o3zfsaWmvk4axLA9CjZqyzPUktxd7Yb96Kwu804+q/RSdtkR+NjeilOVcCZe82EF0CjnJBDosyJ3Mj2KssMliwNhtluysqawg86UYsEvI5cvZyySNvDTXnFDLJNkQyX6LymjwO6Bd7BJ8mc2FxL1RKwBjbi35BHYXe+z12nMfLfiQBEd198CVEFUrTwN4S7ehfCojVeu4+fmG1QO3yMoupRzCQvpGG8UMEJYleiitE0dAnuPMf34JTShXuXZx6INncRRWBgNoSgMRYOWO/27CwP1o9g3vcaHm+MbuhhRRmpSZgannhI0/Ma9Z4RGhPRIJgq1YEwcpn7RQvnN/2wrbEyPpSrMUyH0bsetEIyg97HZh2U67aQ+bucTLOY3avuc9FsBDGtWvIi6j+YU0cJh8L9Ciq5raRIWxCRA3onV4dGiR+oOKP4EySDFH8F0DIau5J87LRJkj6tgxv22bsPLevOB2bm01gHgsFf1hPNh3f3wXUaTdKGzXbNFPp2Vcpz9493oomGACQf9u1TuvynlZNbfKna4YhxzXVD5/Yf3zf5XY1d2r3ijEul3UvbwjbJ2fhW/3N1n/UBQ/YD+RWvJb9gTI/a2Re4DLx+5B4wp4YY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7050e0c5-5077-46a2-fe78-08ddda6ebecf
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 13:38:54.0037
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aGlZtt4dHoorrLewUSjxcfGC7xe9Hwo5NvmvPEpbapD0PhN1qnrraDpWZYWfNuAX1nzta4hOMlsCHarjC9rqT5NLeIjrImkNBQBMQT1Ch6w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5200
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 bulkscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 adultscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2507300000
+ definitions=main-2508130128
+X-Authority-Analysis: v=2.4 cv=B/S50PtM c=1 sm=1 tr=0 ts=689c9572 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8
+ a=yPCof4ZbAAAA:8 a=-xGtGpdhqmp0rC1n79sA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: wnxQMEIqqHwTxAS96HyXhZ3zyxgJ1CrH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDEyOCBTYWx0ZWRfX/xDIp63dKCL6
+ 2g32WYAC1pqFpPUl06NYTYD0xiCXTew0vQi70HmuTYnLKEciCOI3u0sngWh1y0CBu+28NZGhU+O
+ hFVlqbS+BzG0hM6XvH7+/jiwuUGFoFzIVXCoe2EX1IxxDGkc3mErNwkDrK9856cNIzeAWK41Rbn
+ rOXFWm9bddeB/ZKTNG9nvNPpewIR30pmpF3yiQod0jWgaY+aMw6oV71riJAqWWrvArawJoVunV3
+ IF6KNKQ9stPgc1b4PtXLhFZktkOOe5kuL8eS78kziBoV+8+nIlCHd05P4DpkPAWCrb+2+v31g0U
+ Qr438F2AmNKxPxApbogNDMsYMk7FzgPNHf56imWUwTfrHELr5ANwwtysHwZ+bSR91zc08MIiYH7
+ e9Nbxcctfxly46IxBgnViSbcxxZPOpxnYZlhQzeuQUdtUuN9P6Q8i2fsCMslrAB37kynB1Z1
+X-Proofpoint-GUID: wnxQMEIqqHwTxAS96HyXhZ3zyxgJ1CrH
 
-From: Ethan Graham <ethangraham@google.com>
+On Fri, Aug 08, 2025 at 08:28:47AM -0700, Suren Baghdasaryan wrote:
+> Extend /proc/pid/maps tearing tests to verify PROCMAP_QUERY ioctl operation
+> correctness while the vma is being concurrently modified.
+>
 
-Add KFuzzTest targets for pkcs7_parse_message, rsa_parse_pub_key, and
-rsa_parse_priv_key to serve as real-world examples of how the framework is used.
+General comment, but I really feel like this stuff is mm-specific. Yes it uses
+proc, but it's using it to check for mm functionality.
 
-These functions are ideal candidates for KFuzzTest as they perform complex
-parsing of user-controlled data but are not directly exposed at the syscall
-boundary. This makes them difficult to exercise with traditional fuzzing tools
-and showcases the primary strength of the KFuzzTest framework: providing an
-interface to fuzz internal, non-exported kernel functions.
+I mean I'd love for these to be in the mm self tests but I get obviously why
+they're in the proc ones...
 
-The targets are defined directly within the source files of the functions they
-test, demonstrating how to colocate fuzz tests with the code under test.
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Tested-by: SeongJae Park <sj@kernel.org>
+> Acked-by: SeongJae Park <sj@kernel.org>
 
-Signed-off-by: Ethan Graham <ethangraham@google.com>
----
- crypto/asymmetric_keys/pkcs7_parser.c | 15 ++++++++++++++
- crypto/rsa_helper.c                   | 29 +++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+The tests themselves look good, had a good look through. But I've given you
+some nice ASCII diagrams to sprinkle liberally around :)
 
-diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
-index 423d13c47545..e8477f8b0eaf 100644
---- a/crypto/asymmetric_keys/pkcs7_parser.c
-+++ b/crypto/asymmetric_keys/pkcs7_parser.c
-@@ -13,6 +13,7 @@
- #include <linux/err.h>
- #include <linux/oid_registry.h>
- #include <crypto/public_key.h>
-+#include <linux/kfuzztest.h>
- #include "pkcs7_parser.h"
- #include "pkcs7.asn1.h"
- 
-@@ -169,6 +170,20 @@ struct pkcs7_message *pkcs7_parse_message(const void *data, size_t datalen)
- }
- EXPORT_SYMBOL_GPL(pkcs7_parse_message);
- 
-+struct pkcs7_parse_message_arg {
-+	const void *data;
-+	size_t datalen;
-+};
-+
-+FUZZ_TEST(test_pkcs7_parse_message, struct pkcs7_parse_message_arg)
-+{
-+	KFUZZTEST_EXPECT_NOT_NULL(pkcs7_parse_message_arg, data);
-+	KFUZZTEST_ANNOTATE_LEN(pkcs7_parse_message_arg, datalen, data);
-+	KFUZZTEST_EXPECT_LE(pkcs7_parse_message_arg, datalen, 16 * PAGE_SIZE);
-+
-+	pkcs7_parse_message(arg->data, arg->datalen);
-+}
-+
- /**
-  * pkcs7_get_content_data - Get access to the PKCS#7 content
-  * @pkcs7: The preparsed PKCS#7 message to access
-diff --git a/crypto/rsa_helper.c b/crypto/rsa_helper.c
-index 94266f29049c..79b7ddc7c48d 100644
---- a/crypto/rsa_helper.c
-+++ b/crypto/rsa_helper.c
-@@ -9,6 +9,7 @@
- #include <linux/export.h>
- #include <linux/err.h>
- #include <linux/fips.h>
-+#include <linux/kfuzztest.h>
- #include <crypto/internal/rsa.h>
- #include "rsapubkey.asn1.h"
- #include "rsaprivkey.asn1.h"
-@@ -166,6 +167,20 @@ int rsa_parse_pub_key(struct rsa_key *rsa_key, const void *key,
- }
- EXPORT_SYMBOL_GPL(rsa_parse_pub_key);
- 
-+struct rsa_parse_pub_key_arg {
-+	const void *key;
-+	size_t key_len;
-+};
-+
-+FUZZ_TEST(test_rsa_parse_pub_key, struct rsa_parse_pub_key_arg)
-+{
-+	KFUZZTEST_EXPECT_NOT_NULL(rsa_parse_pub_key_arg, key);
-+	KFUZZTEST_EXPECT_LE(rsa_parse_pub_key_arg, key_len, 16 * PAGE_SIZE);
-+
-+	struct rsa_key out;
-+	rsa_parse_pub_key(&out, arg->key, arg->key_len);
-+}
-+
- /**
-  * rsa_parse_priv_key() - decodes the BER encoded buffer and stores in the
-  *                        provided struct rsa_key, pointers to the raw key
-@@ -184,3 +199,17 @@ int rsa_parse_priv_key(struct rsa_key *rsa_key, const void *key,
- 	return asn1_ber_decoder(&rsaprivkey_decoder, rsa_key, key, key_len);
- }
- EXPORT_SYMBOL_GPL(rsa_parse_priv_key);
-+
-+struct rsa_parse_priv_key_arg {
-+	const void *key;
-+	size_t key_len;
-+};
-+
-+FUZZ_TEST(test_rsa_parse_priv_key, struct rsa_parse_priv_key_arg)
-+{
-+	KFUZZTEST_EXPECT_NOT_NULL(rsa_parse_priv_key_arg, key);
-+	KFUZZTEST_EXPECT_LE(rsa_parse_priv_key_arg, key_len, 16 * PAGE_SIZE);
-+
-+	struct rsa_key out;
-+	rsa_parse_priv_key(&out, arg->key, arg->key_len);
-+}
--- 
-2.51.0.rc0.205.g4a044479a3-goog
+Anyway for tests themselves:
 
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+> ---
+>  tools/testing/selftests/proc/proc-maps-race.c | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>
+> diff --git a/tools/testing/selftests/proc/proc-maps-race.c b/tools/testing/selftests/proc/proc-maps-race.c
+> index 94bba4553130..a546475db550 100644
+> --- a/tools/testing/selftests/proc/proc-maps-race.c
+> +++ b/tools/testing/selftests/proc/proc-maps-race.c
+> @@ -32,6 +32,8 @@
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <unistd.h>
+> +#include <linux/fs.h>
+> +#include <sys/ioctl.h>
+>  #include <sys/mman.h>
+>  #include <sys/stat.h>
+>  #include <sys/types.h>
+> @@ -317,6 +319,25 @@ static bool capture_mod_pattern(FIXTURE_DATA(proc_maps_race) *self,
+>  	       strcmp(restored_first_line->text, self->first_line.text) == 0;
+>  }
+>
+> +static bool query_addr_at(int maps_fd, void *addr,
+> +			  unsigned long *vma_start, unsigned long *vma_end)
+> +{
+> +	struct procmap_query q;
+> +
+> +	memset(&q, 0, sizeof(q));
+> +	q.size = sizeof(q);
+> +	/* Find the VMA at the split address */
+> +	q.query_addr = (unsigned long long)addr;
+> +	q.query_flags = 0;
+> +	if (ioctl(maps_fd, PROCMAP_QUERY, &q))
+> +		return false;
+> +
+> +	*vma_start = q.vma_start;
+> +	*vma_end = q.vma_end;
+> +
+> +	return true;
+> +}
+> +
+>  static inline bool split_vma(FIXTURE_DATA(proc_maps_race) *self)
+>  {
+>  	return mmap(self->mod_info->addr, self->page_size, self->mod_info->prot | PROT_EXEC,
+> @@ -559,6 +580,8 @@ TEST_F(proc_maps_race, test_maps_tearing_from_split)
+>  	do {
+>  		bool last_line_changed;
+>  		bool first_line_changed;
+> +		unsigned long vma_start;
+> +		unsigned long vma_end;
+>
+>  		ASSERT_TRUE(read_boundary_lines(self, &new_last_line, &new_first_line));
+>
+> @@ -595,6 +618,19 @@ TEST_F(proc_maps_race, test_maps_tearing_from_split)
+>  		first_line_changed = strcmp(new_first_line.text, self->first_line.text) != 0;
+>  		ASSERT_EQ(last_line_changed, first_line_changed);
+>
+> +		/* Check if PROCMAP_QUERY ioclt() finds the right VMA */
+
+Typo ioclt -> ioctl.
+
+I think a little misleading, we're just testing whether we find a VMA at
+mod_info->addr + self->page_size.
+
+
+> +		ASSERT_TRUE(query_addr_at(self->maps_fd, mod_info->addr + self->page_size,
+> +					  &vma_start, &vma_end));
+> +		/*
+> +		 * The vma at the split address can be either the same as
+> +		 * original one (if read before the split) or the same as the
+> +		 * first line in the second page (if read after the split).
+> +		 */
+> +		ASSERT_TRUE((vma_start == self->last_line.start_addr &&
+> +			     vma_end == self->last_line.end_addr) ||
+> +			    (vma_start == split_first_line.start_addr &&
+> +			     vma_end == split_first_line.end_addr));
+> +
+
+So I'd make things clearer here with a comment like:
+
+	We are mmap()'ing a distinct VMA over the start of a 3 page
+	mapping, which will cause the first page to be unmapped, and we can
+	observe two states:
+
+                read
+                  |
+                  v
+	|---------|------------------|
+	|         |                  |
+	|    A    |         B        | or:
+	|         |                  |
+	|---------|------------------|
+
+                  |
+                  v
+	|----------------------------|
+	|                            |
+	|              A             |
+	|                            |
+	|----------------------------|
+
+	If we see entries in /proc/$pid/maps it'll be:
+
+	7fa86aa15000-7fa86aa16000 rw-p 00000000 00:00 0  (A)
+	7fa86aa16000-7fa86aa18000 rw-p 00000000 00:00 0  (B)
+
+	Or:
+
+	7fa86aa15000-7fa86aa18000 rw-p 00000000 00:00 0  (A)
+
+	So we assert that the reported range is equivalent to one of these.
+
+Obviously you can mix this in where you feel it makes sense.
+
+>  		clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
+>  		end_test_iteration(&end_ts, self->verbose);
+>  	} while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
+> @@ -636,6 +672,9 @@ TEST_F(proc_maps_race, test_maps_tearing_from_resize)
+>  	clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
+>  	start_test_loop(&start_ts, self->verbose);
+>  	do {
+> +		unsigned long vma_start;
+> +		unsigned long vma_end;
+> +
+>  		ASSERT_TRUE(read_boundary_lines(self, &new_last_line, &new_first_line));
+>
+>  		/* Check if we read vmas after shrinking it */
+> @@ -662,6 +701,16 @@ TEST_F(proc_maps_race, test_maps_tearing_from_resize)
+>  					"Expand result invalid", self));
+>  		}
+>
+> +		/* Check if PROCMAP_QUERY ioclt() finds the right VMA */
+> +		ASSERT_TRUE(query_addr_at(self->maps_fd, mod_info->addr, &vma_start, &vma_end));
+
+Same comments as above.
+
+> +		/*
+> +		 * The vma should stay at the same address and have either the
+> +		 * original size of 3 pages or 1 page if read after shrinking.
+> +		 */
+> +		ASSERT_TRUE(vma_start == self->last_line.start_addr &&
+> +			    (vma_end - vma_start == self->page_size * 3 ||
+> +			     vma_end - vma_start == self->page_size));
+
+
+So I'd make things clearer here with a comment like:
+
+	We are shrinking and expanding a VMA from 1 page to 3 pages:
+
+       read
+        |
+        v
+	|---------|
+	|         |
+	|    A    |
+	|         |
+	|---------|
+
+        |
+        v
+	|----------------------------|
+	|                            |
+	|              A             |
+	|                            |
+	|----------------------------|
+
+	If we see entries in /proc/$pid/maps it'll be:
+
+	7fa86aa15000-7fa86aa16000 rw-p 00000000 00:00 0  (A)
+
+	Or:
+
+	7fa86aa15000-7fa86aa18000 rw-p 00000000 00:00 0  (A)
+
+	So we assert that the reported range is equivalent to one of these.
+
+
+> +
+>  		clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
+>  		end_test_iteration(&end_ts, self->verbose);
+>  	} while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
+> @@ -703,6 +752,9 @@ TEST_F(proc_maps_race, test_maps_tearing_from_remap)
+>  	clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
+>  	start_test_loop(&start_ts, self->verbose);
+>  	do {
+> +		unsigned long vma_start;
+> +		unsigned long vma_end;
+> +
+>  		ASSERT_TRUE(read_boundary_lines(self, &new_last_line, &new_first_line));
+>
+>  		/* Check if we read vmas after remapping it */
+> @@ -729,6 +781,19 @@ TEST_F(proc_maps_race, test_maps_tearing_from_remap)
+>  					"Remap restore result invalid", self));
+>  		}
+>
+> +		/* Check if PROCMAP_QUERY ioclt() finds the right VMA */
+> +		ASSERT_TRUE(query_addr_at(self->maps_fd, mod_info->addr + self->page_size,
+> +					  &vma_start, &vma_end));
+
+Same comments as above.
+
+
+> +		/*
+> +		 * The vma should either stay at the same address and have the
+> +		 * original size of 3 pages or we should find the remapped vma
+> +		 * at the remap destination address with size of 1 page.
+> +		 */
+> +		ASSERT_TRUE((vma_start == self->last_line.start_addr &&
+> +			     vma_end - vma_start == self->page_size * 3) ||
+> +			    (vma_start == self->last_line.start_addr + self->page_size &&
+> +			     vma_end - vma_start == self->page_size));
+> +
+
+Again be good to have more explanation here, similar comments to abov.
+
+	We are mremap()'ing the last page of the next VMA (B) into the
+	midle of the current one (A) (using MREMAP_DONTUNMAP leaving the
+	last page of the original VMA zapped but in place:
+
+      read
+        |
+        v             R/W                            R/O
+	|----------------------------| |------------------.---------|
+	|                            | |                  .         |
+	|              A             | |              B   .         |
+	|                            | |                  .         |
+	|----------------------------| |------------------.---------|
+
+	This will unmap the middle of A, splitting it in two, before
+	placing a copy of B there (Which has different prot bits than A):
+
+        |
+	v   R/W       R/O      R/W                   R/O
+	|---------|---------|--------| |----------------------------|
+	|         |         |        | |                            |
+	|    A1   |    B2   |   A2   | |              B             |
+	|         |         |        | |                            |
+	|---------|---------|--------| |----------------------------|
+
+	But then we 'patch' B2 back to R/W prot bits, causing B2 to get
+	merged:
+
+	|
+	v             R/W                            R/O
+	|----------------------------| |----------------------------|
+	|                            | |                            |
+	|              A             | |              B             |
+	|                            | |                            |
+	|----------------------------| |----------------------------|
+
+	If we see entries in /proc/$pid/maps it'll be:
+
+	7fa86aa15000-7fa86aa18000 rw-p 00000000 00:00 0  (A)
+	7fa86aa19000-7fa86aa20000 r--p 00000000 00:00 0  (B)
+
+	Or:
+
+	7fa86aa15000-7fa86aa16000 rw-p 00000000 00:00 0  (A1)
+	7fa86aa16000-7fa86aa17000 r--p 00000000 00:00 0  (B2)
+	7fa86aa17000-7fa86aa18000 rw-p 00000000 00:00 0  (A3)
+	7fa86aa19000-7fa86aa20000 r--p 00000000 00:00 0  (B)
+
+	We are always examining the first line, so we simply assert that
+	this remains in place and we observe 1 page or 3 pages.
+
+>  		clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
+>  		end_test_iteration(&end_ts, self->verbose);
+>  	} while (end_ts.tv_sec - start_ts.tv_sec < self->duration_sec);
+> --
+> 2.50.1.703.g449372360f-goog
+>
 
