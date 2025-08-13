@@ -1,191 +1,133 @@
-Return-Path: <linux-kernel+bounces-766865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8BFB24C15
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:38:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17629B24C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1505887BEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:35:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA1771A20915
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B831145C0B;
-	Wed, 13 Aug 2025 14:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD9D2F6584;
+	Wed, 13 Aug 2025 14:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ZVIq3Ojb"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UE9QDjau"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C9A2EE5FC
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FA62EACEB;
+	Wed, 13 Aug 2025 14:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755095558; cv=none; b=HbZJTnmB1ttn99H33Jo3AX7aKtY12gSpYi32kwBP05WY0Xxdbei7320uCaynrJxfSH69tvTORmMepGCXSYo4AOjFpego/pkQnFzkQ0Jah1EOPyWKKd5cc/IcYRgZkIszbq4MM6w+q9sZ+tGQsTwmDHW0DQ/xF80VJSFQXwXxiBk=
+	t=1755095583; cv=none; b=bEeWc5xz+W6LVkM7WhoX3vkCtRCCbj+jyXNK23IySgiEpdfUrls56+pMfRa3CkHqXf96pzXjU7M8v3mSdbw6ua3cP2SKs10kCYZljteXOm78ahIK+c2n+I5yg/CV531uE8z0tyXOsZnhIU0X9F7+xFlrsRdAgHhBDvmHuegjzPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755095558; c=relaxed/simple;
-	bh=Exf4btHuprNxpDW6oisd/Rf9kU0o5gUUgwDICx6yXuU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TkKqfaZP/NZFMHPvg5B74HVjPFcF/gKw11v52WBFZz62g5RNV41d/cuLZAPC5HCokbbwX+TLACfucem25hrikChGf4C2wLHt5DqQkSuA4HIHtpWZ+LtZfl8Y7NKU3ATePvrHihj9V3eytEjWHvRKJ1L/D9Me7xXGn3KxMoz1PHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ZVIq3Ojb; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76bfd457607so6509236b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755095555; x=1755700355; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vonMbyN3zuj6Ng851sh/21UsclUyhq+uD32xK3WNSvc=;
-        b=ZVIq3Ojbj4G4Fy0Q/ZOA9boXeF+IvF8N5JKN3pz4to7pIDKPuWVfmVp5iMtN9aRlkm
-         Q5OF1nNLFNZjGeU4Q2WR54auuNej9E/PDavp96PFS9xq7JKXfiCJ5OVfYwqCa7am+ibX
-         8ZxtybOQwQZg/+rspguK1mURoR7eeue5yNho9ZkgfhKKo9DCPpgrWpFRjiQVqzD2uBFt
-         +wsKli1hdGosBApjBKrvhDNJndjF2BIR9fT6bUytUej2eJimFtGV0NmtWA1h4Y1VCchP
-         zRU/zeTth3VBjEQWAXDyjPD6yq5JVd2XxlVQkQIRDyq1u7ivKl5axPK9KucbSUyTygRp
-         vhng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755095555; x=1755700355;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vonMbyN3zuj6Ng851sh/21UsclUyhq+uD32xK3WNSvc=;
-        b=AHEJ2JZuMh1epw72SNmH8RLOdoAQWRtHrMwK1VD+l7owVFn+dDxsHF7IfogJ/hb+zH
-         XJdMb73VFAaAufeOYhVazysSDS5EUHakEl1xoNff3wLz0UvKzOsK36jQvzXpAFJgNQQN
-         xlb0X0lmpnx3GxNpjRnw91ANH5Z1258cZy36rOCq/PINPKJmHJIieDBwkLiliswsN/9J
-         yYOAfcQmdGQtgm2RATyEYfxDLhwbMKKs9LlT+Pnee0EZH0bLzlxROlvq789aCO06J6cZ
-         BGe1eg5B5jV35lHgNq3Q4wbFMTmxXnmm9up06Di5Hcnvzqt7BKaL+jX03+9lipinCAPp
-         EH1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVMUfXeQbhNeKLTfXhyTXbgX1Cu7NTeTSHRJ7eH3vGKBds0KM4x6Q9XNzimS26IMItZ2F50pp5xt1dOGQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxePcF6dofHNXZVwLz4G7T+p7RSSK/bOn2eLvnLLEwS8uUYz9Yx
-	pMNj1LmsfK4bYiH2jxOvQZIEnqBloTJyqu5AU2URFKP9OQVnhOQuY6u6fwnAIbyai20=
-X-Gm-Gg: ASbGncuwuIMOwqc4J5+J2bKR8DGTlXeI3BNRV/41UFGbkLnr4I35PyRCw/byCOvgMGY
-	Fpgzcd82slGpxChELecGiLSdYZQedlDpm/VwivmJ5K3qFrz430eNyVRzSkiIQREbNiXFrgUP2cp
-	KAZ/QGl8dx+8j0IsAGdcYOVtMvIygw1NdmE4xbxk29dD+LLENWefOH5Uu27xBEeZ90RE8vSIDnA
-	Pb7zpeD0HR6j76/bNhjd50ZaLf4jaSx/u9yjJ2zND2vJHe7NXbVqGQkcmcQJEC+m5S2yO5Weo8z
-	obn0rYxXMcWIZ6Uv47tYMM9cutLK7G1VP00TX04HCH8Dl4HSWi/ynSLxx60sxr3LkQRmduYwL0+
-	tTgB8m5OCdCM6D6KdEbnQAZfX/TKLTXo=
-X-Google-Smtp-Source: AGHT+IEKVGksUTn/P4PCbTZE2Q3bQNd/qyDqB+7cmLKbmowflZwZJQ0cWv0AHk7rWBSOOeKrHN6jUg==
-X-Received: by 2002:a05:6a00:2d88:b0:76b:ef44:1fa4 with SMTP id d2e1a72fcca58-76e20f77be0mr4770773b3a.14.1755095555141;
-        Wed, 13 Aug 2025 07:32:35 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f319sm32219338b3a.18.2025.08.13.07.32.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 07:32:34 -0700 (PDT)
-Message-ID: <4a32f6c1-8d81-4a51-beed-caf8bc52fcc2@kernel.dk>
-Date: Wed, 13 Aug 2025 08:32:33 -0600
+	s=arc-20240116; t=1755095583; c=relaxed/simple;
+	bh=NUfBYx7mBigJSWTgOx/JznOlmaxdF0MVTSpGgqXcZm4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HkfYIRvVQVAmK4wD8VPHAxVRlhpAWTTAosszyerUpD9EhHnNldDxGMs/FcLCHRLDupuUDQi4StgL8DyTXm2csbVYo4IrJUC0tjtasOoinvndr+SeNJTylqFTx57iOXccsd1xzisld+1+ux+C1iq2mZ2EK+yfoafpvqDXHJ4TOSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UE9QDjau; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DEWuho1666946;
+	Wed, 13 Aug 2025 09:32:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755095576;
+	bh=OkMcffknhH0plsKNwHSL+7lnnw/2npQ9Z/QcYbws7mc=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=UE9QDjauVlJnN9agNwVAf69XPR8UMMbKkiImnww1nvWgYsERpBKYLNKz5a6vb0zlP
+	 5LNhf1jplkisclGi2KtPNBc3vAzpk/Wsu7Kw3OddsGxN776NCvZOMnVl61tKAIgmHv
+	 /j1Vy/cXMuDbj9QCKEjUY3i5C8hhyHi802Xc9Tjc=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DEWtCu124821
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 13 Aug 2025 09:32:56 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
+ Aug 2025 09:32:55 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 13 Aug 2025 09:32:55 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DEWtYi2441154;
+	Wed, 13 Aug 2025 09:32:55 -0500
+From: Nishanth Menon <nm@ti.com>
+To: <vigneshr@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <devarsht@ti.com>
+Subject: Re: [PATCH v3 0/7] Add DSI display support for TI's Jacinto platforms
+Date: Wed, 13 Aug 2025 09:32:53 -0500
+Message-ID: <175509556140.158218.9231249933519133970.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250716060114.52122-1-j-choudhary@ti.com>
+References: <20250716060114.52122-1-j-choudhary@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [syzbot] [input?] [usb?] [io-uring?] INFO: task hung in
- io_wq_put_and_exit (5)
-To: syzbot <syzbot+e328767eafd849df0a78@syzkaller.appspotmail.com>
-Cc: anna-maria@linutronix.de, asml.silence@gmail.com, frederic@kernel.org,
- io-uring@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-References: <6880f54c.050a0220.248954.0000.GAE@google.com>
-Content-Language: en-US
-In-Reply-To: <6880f54c.050a0220.248954.0000.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Jul 23, 2025 at 8:44?AM syzbot <syzbot+e328767eafd849df0a78@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    bf61759db409 Merge tag 'sched_ext-for-6.16-rc6-fixes' of g..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=12b877d4580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=415e83411fefd73f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e328767eafd849df0a78
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=110b938c580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1622a38c580000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/22c5f1286a72/disk-bf61759d.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/cc79af4d966c/vmlinux-bf61759d.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b2e6d621f424/bzImage-bf61759d.xz
->
-> The issue was bisected to:
->
-> commit e5598d6ae62626d261b046a2f19347c38681ff51
-> Author: Pavel Begunkov <asml.silence@gmail.com>
-> Date:   Thu Aug 24 22:53:31 2023 +0000
->
->     io_uring: compact SQ/CQ heads/tails
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c92b82580000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=11c92b82580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16c92b82580000
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e328767eafd849df0a78@syzkaller.appspotmail.com
-> Fixes: e5598d6ae626 ("io_uring: compact SQ/CQ heads/tails")
->
-> INFO: task syz-executor971:5849 blocked for more than 143 seconds.
->       Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
->       Blocked by coredump.
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor971 state:D stack:26488 pid:5849  tgid:5849  ppid:5844   task_flags:0x400148 flags:0x00024002
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5397 [inline]
->  __schedule+0x116a/0x5de0 kernel/sched/core.c:6786
->  __schedule_loop kernel/sched/core.c:6864 [inline]
->  schedule+0xe7/0x3a0 kernel/sched/core.c:6879
->  schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
->  do_wait_for_common kernel/sched/completion.c:95 [inline]
->  __wait_for_common+0x2ff/0x4e0 kernel/sched/completion.c:116
->  io_wq_exit_workers io_uring/io-wq.c:1319 [inline]
->  io_wq_put_and_exit+0x271/0x8d0 io_uring/io-wq.c:1347
->  io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
->  io_uring_cancel_generic+0x69c/0x9a0 io_uring/io_uring.c:3212
->  io_uring_files_cancel include/linux/io_uring.h:19 [inline]
->  do_exit+0x2ce/0x2bd0 kernel/exit.c:911
->  do_group_exit+0xd3/0x2a0 kernel/exit.c:1105
->  __do_sys_exit_group kernel/exit.c:1116 [inline]
->  __se_sys_exit_group kernel/exit.c:1114 [inline]
->  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1114
->  x64_sys_call+0x1530/0x1730 arch/x86/include/generated/asm/syscalls_64.h:232
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f141ec08e39
-> RSP: 002b:00007ffcd1b0b6e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f141ec08e39
-> RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-> RBP: 00007f141ec843b0 R08: ffffffffffffffb8 R09: 0000000000000000
-> R10: 000000000000000e R11: 0000000000000246 R12: 00007f141ec843b0
-> R13: 0000000000000000 R14: 00007f141ec880c0 R15: 00007f141ebd7020
->  </TASK>
-> INFO: task syz-executor971:5850 blocked for more than 143 seconds.
->       Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
->       Blocked by coredump.
+Hi Jayesh Choudhary,
 
-I took a look at this one, and it's simply waiting on nullb0 timeouts
-that it's flooded the queue with. Since it's flooding the nullb0 device
-which has been configured to time out IO, we'll have a lot of io-wq
-workers that are sitting blocked waiting on making progress. That can
-obviously take a long time, which then in turn triggers the io_uring
-cancelation/exit warning because of that. It all seems to be working as
-it should.
+On Wed, 16 Jul 2025 11:31:07 +0530, Jayesh Choudhary wrote:
+> This series adds the dts support to enable DSI on 3 platforms for TI SoCs:
+> - J784S4-EVM
+> - J721S2-EVM
+> - AM68-SK
+> 
+> SN65DSI86 driver fix that was essential for display is now merged.
+> 
+> [...]
 
-I don't think there's a bug here because of that, the only thing that's
-"stuck" is because each timeout takes 30s to trigger and there are tons
-of them.
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-#syz invalid
+[1/7] arm64: dts: ti: k3-j784s4-j742s2-main-common: add DSI & DSI PHY
+      commit: 09449e48be7390ebc53812ab898d669e3832c704
+[2/7] arm64: dts: ti: k3-j784s4-j742s2-evm-common: Enable DisplayPort-1
+      commit: a5ed774877a38f2feeb45f0c2cd16184b47b476b
+[3/7] arm64: dts: ti: k3-j721s2-main: add DSI & DSI PHY
+      commit: 19a4472e591d9945f4983d052adf7d7fa67efcce
+[4/7] arm64: dts: ti: k3-j721s2-common-proc-board: Add main_i2c4 instance
+      commit: 722a128adaf97fc2ecb64610a482f1399b3f4c2a
+[5/7] arm64: dts: ti: k3-j721s2-som-p0: add DSI to eDP
+      commit: 3c29300dcef587df697750e99f6375e2ca8907fb
+[6/7] arm64: dts: ti: k3-j721s2-common-proc-board: Enable DisplayPort-1
+      commit: 2bca9f69225e8c6e3c270f20c69a1460761f9bd2
+[7/7] arm64: dts: ti: k3-am68-sk: Enable DSI on DisplayPort-0
+      commit: 11b9e4517bfa8edecbef0acfcad1bdca4f4a4192
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-Jens Axboe
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
 
