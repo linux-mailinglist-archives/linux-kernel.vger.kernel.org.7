@@ -1,168 +1,100 @@
-Return-Path: <linux-kernel+bounces-766225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35399B2441F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:21:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB03B2440D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02E947240CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69EA8582622
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BD82F0677;
-	Wed, 13 Aug 2025 08:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1D62D060C;
+	Wed, 13 Aug 2025 08:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KBMdV8wx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="iML7KfC+"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5742EFD9A;
-	Wed, 13 Aug 2025 08:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073014; cv=none; b=D54RWzmydB6MtLeyAe+OvbYYzc+F+6Kyv6x2JGmoVqkGO1eQqXGYClAFxgXLuaaiJr1wCfFB4vZ62Ez1xI9XO7rq+t06w+mB4AEqtwkS8L3dqW87Ejvcsi46P/oGnBnDxDlxAlvhLCglqbDi2Eqs0l3Bn6lupbRCubBLhPxQw8c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073014; c=relaxed/simple;
-	bh=0hQarWGUv4kXBkAuD2fr8zp4l4oUpUPDha61vydcCo8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NqlHCrcIxqKACZ5dg+msU7QI3qZhd21OAhErMze9gboI089cbD4cTCLLkGctMZABfQ7uyGcwRDb2KKAWzBQXuwhPHY1OWEnIRVAIgoTi8UkmLTk47htamsguj/aNsjaJ+qv+SkOoRtLYzp4DGbBJUzNM1vc+e/sFuXLzftisMys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KBMdV8wx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A81AC4CEEB;
-	Wed, 13 Aug 2025 08:16:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755073014;
-	bh=0hQarWGUv4kXBkAuD2fr8zp4l4oUpUPDha61vydcCo8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KBMdV8wxVxw8iS0k4/iphEt9ffndrFnD/bHhDuGUvUbCsoo4o/ytG2YYgtIsUoE6L
-	 8Uci78zqLVBp7ajrsGnvRH9wYtbZmY3NZaEfpqPRmyYl66f72o771jgHJmXIj6FLJH
-	 aKlu59FGmhUxaplXh9+8u1feYDGj13CjOUHeCQ30ILaBKbdQbSyVbrHKlco+6AU0Um
-	 Yq9qk+LCy7Jm2Pd/G2oVQnPIJCIW2DMdfnuilgY6XFV5mFZn6ZE5IEcyjdKp1sLOeg
-	 DPqMTyVhdNH8dw1lTGh4jx1J+cPXoXkza8wLMaGFORUUbPKcrIQeJ6bzeY3rRGC/yK
-	 4+UXKPFeiyCkA==
-Message-ID: <14f0cb76-1694-4330-899a-7565af0dfdfc@kernel.org>
-Date: Wed, 13 Aug 2025 10:16:49 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5CA22425B;
+	Wed, 13 Aug 2025 08:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755073074; cv=pass; b=kwAIqhxLoTGCDHmhSFkQV/pNgHyckatXLmVQCpU6rW0CjkNUpn7hSGL9hFVl8jPVVDymqub76FQtUxs3lf1Zz6+qn1WHjcS54XvnSFrUD43eR3Dm4uHXtrebEUH7v9OMJOh1I2iYkYF7MeyY7YsYw/vNeCy0OqlgjnzjevDI8z8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755073074; c=relaxed/simple;
+	bh=fbnIz5WqvIslNpuNx243zLlNppaPSRl20XGKIkRZa8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dapJz7BfRsLXqKKEhHVb4uF59GbSATuYWEjs/Qt4293H6hEsWft1i3qSZcivddkZzZYhRuqUc3kHo8LPIDCVl8Sa38FDYkF9IuopxAXuQMmQAIZm314qqjLIu6Wl1tJGGXDIqsIH1iwWQ1Oq67dPelwzmdza8TyZz+nAMs5ST4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=iML7KfC+; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755073053; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=mEL0yh+bEfgqikWWXY9mC8WYz2uRK84v9xsmZs/PXsJdzW3S7UDHRkWOkfiWltPNjsgCuAi6xX/+wRUBdZchyvTmAaEwm5wXPgZjDdHk5PyJik5TITWgEJe+VEwQpYST7qDH2PVloHJWqTWFuwwi55pa3H64If6fryCOoQzciqI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755073053; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1WswQYdXHZ0BCocJhmpFSpiydZ4q8u4ZkyEkExktUjQ=; 
+	b=b5J4lCmOa1pJxnEi3AhfBBrigszbXDS64PRitU+yfQ+zVPiGR53rbzEo3mtwBi1q+IMw/zJw9PckxY9aRK676t73OBFHiDIl2k2R5HJanFPchesr9rpvmgk6SxHPzC1apw7DHNfM2N5cFpecX0Pasj7jc65trUZkelilM2mey3g=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755073053;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=1WswQYdXHZ0BCocJhmpFSpiydZ4q8u4ZkyEkExktUjQ=;
+	b=iML7KfC+47Z7J9ajIZhKyEAZfozxfPT8wvbXyrkSFdSt1IKwIk0o80Nb+YPUd9ib
+	KhA5EkqX6mw3wFAWtP9mpV/OYvwmhI26irpwCfL6GRe/1IaQtDn45KIVQcVuDCS3vMt
+	JNmJvYqApJooZvEy/nf2MDa5nJG77XfGOef1R5wOwpcvrjx4Obouj3jr+xhymEs7Dxl
+	P3tAwyJmvs9ihFx7inM8O/ECQYcH0s737hI6venN5NHEhT+bWoPsPiN4Xzr0me0WLSF
+	3sjHDofIXQ9c5ShF5hx7A1z2Rs3af5wZzENb4K4gZJ+Qh0WHkfsr6k1uRa6/oDW/5ig
+	0StLx1nIeg==
+Received: by mx.zohomail.com with SMTPS id 175507305115343.15769947711442;
+	Wed, 13 Aug 2025 01:17:31 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>,
+	Yao Zi <ziyao@disroot.org>,
+	Han Gao <rabenda.cn@gmail.com>,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 0/2] reset: th1520: add VOSYS resets for DPU/HDMI/DSI
+Date: Wed, 13 Aug 2025 16:17:14 +0800
+Message-ID: <20250813081716.2181843-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 1/3] dt-bindings: net: wireless: ath9k: add led bindings
-To: Rosen Penev <rosenp@gmail.com>, linux-wireless@vger.kernel.org
-Cc: =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
- Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:MIPS" <linux-mips@vger.kernel.org>
-References: <20250812192334.11651-1-rosenp@gmail.com>
- <20250812192334.11651-2-rosenp@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250812192334.11651-2-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On 12/08/2025 21:23, Rosen Penev wrote:
-> The ath9k driver has various pin GPIO numbers for different chipsets
-> which are not always correct for every device.
-> 
-> Add bindings to specify the correct number and if it should be
-> active-low.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  .../bindings/net/wireless/qca,ath9k.yaml           | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> index d16ca8e0a25d..e701046146f2 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> @@ -50,6 +50,17 @@ properties:
->  
->    ieee80211-freq-limit: true
->  
-> +  led:
-> +    type: object
+The VOSYS subsystem of T-Head TH1520 SoC contains a set of display
+pipeline in addition to the GPU. The display pipeline contains a DPU
+(display controller), a HDMI controller and 2 DSI controllers.
 
-Each node must end with additional/unevaluatedProperties: false. See
-example schema and writing schema.
+This patchset adds reset controls for these devices.
 
-That will probably lead you to missing LED common binding.
+Icenowy Zheng (2):
+  dt-bindings: reset: thead,th1520-reset: add more VOSYS resets
+  reset: th1520: add resets for display pipeline
 
-> +    properties:
-> +      reg:
-> +        maxItems: 1
-> +
-> +      led-active-low:
-> +        description:
-> +          LED is enabled with ground signal.
+ drivers/reset/reset-th1520.c                  | 40 ++++++++++++++++++-
+ .../dt-bindings/reset/thead,th1520-reset.h    |  7 ++++
+ 2 files changed, 46 insertions(+), 1 deletion(-)
 
-Aren't you redefining existing properties?
+-- 
+2.50.1
 
-> +        type: boolean
-> +
->    qca,no-eeprom:
->      $ref: /schemas/types.yaml#/definitions/flag
->      description:
-> @@ -102,5 +113,8 @@ examples:
->          compatible = "qca,ar9130-wifi";
->          reg = <0x180c0000 0x230000>;
->          interrupts = <2>;
-> +        led {
-> +          led-sources = <0>;
-
-Totally confusing with schema. active-low in one place, different
-property in the example and no source for that property at all :/
-
-
-Best regards,
-Krzysztof
 
