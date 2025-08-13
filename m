@@ -1,168 +1,163 @@
-Return-Path: <linux-kernel+bounces-766214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09D9B243E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:15:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDE1B243D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFF437B717E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77D41A2057E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A252D3725;
-	Wed, 13 Aug 2025 08:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="gWkZP3gY"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36CD2ED171;
+	Wed, 13 Aug 2025 08:13:30 +0000 (UTC)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B662EB5A5;
-	Wed, 13 Aug 2025 08:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A220C2D540B;
+	Wed, 13 Aug 2025 08:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755072841; cv=none; b=KOHwGKmXVBd++kcFcTAgKteunYVQHEFSAjq4TCiiUfnlQn+ZNnT/al6mFbRNOy7IJVTDGeagDhQU7HTvOpW/OTvZfNr+pdw2OEMZ9vjudf4Ue9w7SHaZd14LYfDWTw0p6IYWhDyO1gvdtia82DU14KeT0b1O0s43e2vFdj9kltE=
+	t=1755072810; cv=none; b=GNdcE+XCV5mtItOH9OFLNr2/U94ivExkwiS2fBja5CsY7flpYqIZDVksbJwll1QjDVEIhqdiBRaad8Ga29dDsk4t3sVZee+CCOv/2zMGoyZwwm+IiRGHLc8ZXLc/hx9/zPmvCdVqBI+CLY6aNBfYomP+B7VTsP59GwPdSEFWCX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755072841; c=relaxed/simple;
-	bh=RxOaCxFqgyJ4fXjs5iPEqg2DD5QwzRYvxDwX5dxrW+0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hHNabaMS5nG3IJr4V126ozSN3hQFrtB1NtF5GWORdne62vRwn6jPn76FY8CSb7PFFrRQgNLJMQkaR/tdo313pAMber+F8MAuEVjkhgO7meO8nyl1ZC3CQFWtnX1Nir01ri3htku+UDAxw9umBwOwe5G5hD2HKLVUUEBXlEvKSzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=gWkZP3gY; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D6lVXJ017818;
-	Wed, 13 Aug 2025 10:13:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	exY+dHY+552wwN9moAQa2Zyi0HlOu7i3su6LGv7Ws/I=; b=gWkZP3gYVzONerz6
-	IgQd9CEWe/EMflOxQkEToT65P27vHjIFs5J8aNOMw6nNiK8MbbaZ4KA8z1c/shPY
-	JrCq6V7g7jklus7nGtnD8Jz8VSYfr14yRK5VMvOfRK6gWvmA5Q4xOXvCLUwSsAIR
-	6gwCee6zAoroVte36C7du4pVAlIxDWaXEzQj+Z3rzfMUuDELKLApZiZkznU/4X8z
-	2iMFgTYQCdyd2nN081ljNiVhUooWGsaKj/99grC3/Ch+KdhsdFgYxJqpQnEPaske
-	CL3ud1Qc1BIOl3mZKchjBYqSpT96Ski6Pe307WaID9ijjV2r8y3Kj09lIlWmoTax
-	1sPaxg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 48eh9nbkrc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 10:13:38 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 357A64004B;
-	Wed, 13 Aug 2025 10:12:34 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9E0C27206D5;
-	Wed, 13 Aug 2025 10:12:00 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 13 Aug
- 2025 10:12:00 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <linus.walleij@linaro.org>, <corbet@lwn.net>, <bhelgaas@google.com>,
-        <mani@kernel.org>
-CC: <linux-gpio@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Christian Bruel <christian.bruel@foss.st.com>
-Subject: [PATCH v1 2/2] pinctrl: Add pinctrl_pm_select_init_state helper function
-Date: Wed, 13 Aug 2025 10:11:39 +0200
-Message-ID: <20250813081139.93201-3-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813081139.93201-1-christian.bruel@foss.st.com>
-References: <20250813081139.93201-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1755072810; c=relaxed/simple;
+	bh=6+7jJZ3HhTmLYJo9sruLtdjHZVI54SZ6HNZmAF5DWM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzirCO7vem7X1T6+rVCskG8XaPX28mo8yJOshqnSQc5Agm2/2AvtFZFncUXB5H6YiOKHwDbtlpOlYVxzoPg65fzLWCF85fu0yjgGQ3fHr4zWpuB7mVVR1cuscrii3rfUZROdnz+m0UYbl6Nz9tLCKlNvoonnr3Ogmglasg3GZCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz4t1755072724t6817de95
+X-QQ-Originating-IP: +icP6DoFFNymN8R74c7afLzyc/7lvOHbSeRS8oPVEgw=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 13 Aug 2025 16:12:02 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1664480856713457679
+Date: Wed, 13 Aug 2025 16:12:02 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <211A876E5960B039+20250813081202.GB965498@nic-Precision-5820-Tower>
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-5-dong100@mucse.com>
+ <eafb8874-a7a3-4028-a4ad-d71fc5689813@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eafb8874-a7a3-4028-a4ad-d71fc5689813@linux.dev>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N3l5ASPewLWqYR3azMlZEiI6nfFXBz1FR6v3zkKFwZJOmkNMYtY5MC05
+	w5AJs/OXVEnt0MolHUVxnXj4HukzRudKq2eH7LdEPPDyareSStT191dBTH4kOxOcglEja9v
+	PhI7/dR40k/W4wVcp+tlCh8p+LYQCJTbfdH9rradN1DQTj79mWlFT1nK3U6jX70sqoDFkkW
+	WNFAH5RMrBXRwTEwEvRg9Lka3hfn+2YQosoidoaN8SXIowV3fMxxvzuaalWRYbi7MC9nUqW
+	UVXLqcXL0efhmAnW1Tl85oASi6KX6NMnwzQUGggp0G57bWx9Nun8Nwk6wLqlciPQrJHlaVv
+	J+iNWzMSiecoNrWsmqRMoSEjM7pK/sajt9XMpKQIXTQcTNQ++GJyVKOCrRDsCeOPpioWcI3
+	15tOEXTnMQBzqbKjK9TRKHODGXd08x3U/kaoXj2mzIDCaKWdfcttxoeuyOrl/H7BiNx3bR6
+	gwqlVpqVjEgsO2kSBgtrmpETSvQsNnrfRR5+bpr8aMKm6104G6DjsQK08suOogJ5TzrTW85
+	GLGjlmzbvRyMScgfzDK7JMyCrMgDoU1UtmUAp4y9cKKcpBO0uhM9C2Ay5Mb4emn/XB1HLs/
+	yW5zQsBLhsprGC1LfdwZnbdD7sd2fXy6wvUzlj5fapImXZWhbMuMS+vhzVlN0FnLWEwk+7y
+	PNuijB4HOkKkQ9ZHXMq1OVUA+sYsiPdmSo1E6mzCQdXnhOkdb5Z+lDeOqcm/vBtRKnnJzgO
+	Ojtb/wyJvaAN+x27JsuuNATH9n3zRuviY/OATzaoiW+m/BbrBl3gKGVXfm76C2+txmUtTm7
+	ony1Akxdqflo1Nnm07FFq8hq6o1/0FkGYbuen8DRhrJlJUGrw7R+/aoMXDnD3jAEqggc1C+
+	Gf0kuyiYyNzBu1QpzdwQj8LbYAQQKr1FdzegbtVYzcg1Y9rW5j+tipduD8/fx/sQQdjV9Ib
+	mRaGpHCnbkPNyBJpgp8fxd8+8ScQB6KoR0hsRzxWV8egCQl08VYQOOMLNOL1iLb3YynpNLR
+	Sc5AV+Xkf3V7XlgEcrJUS62+d9FeuU05/TEvHk7Q==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-If a platformm requires an initial pinctrl state during probing, this
-helper function provides the client with access to the same initial
-state.
+On Tue, Aug 12, 2025 at 05:14:15PM +0100, Vadim Fedorenko wrote:
+> On 12/08/2025 10:39, Dong Yibo wrote:
+> > Initialize basic mbx_fw ops, such as get_capability, reset phy
+> > and so on.
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
+> > +static int mucse_fw_send_cmd_wait(struct mucse_hw *hw,
+> > +				  struct mbx_fw_cmd_req *req,
+> > +				  struct mbx_fw_cmd_reply *reply)
+> > +{
+> > +	int len = le16_to_cpu(req->datalen) + MBX_REQ_HDR_LEN;
+> > +	int retry_cnt = 3;
+> > +	int err;
+> > +
+> > +	err = mutex_lock_interruptible(&hw->mbx.lock);
+> > +	if (err)
+> > +		return err;
+> > +	err = hw->mbx.ops->write_posted(hw, (u32 *)req,
+> > +					L_WD(len));
+> > +	if (err) {> +		mutex_unlock(&hw->mbx.lock);
+> > +		return err;
+> > +	}
+> 
+> it might look a bit cleaner if you add error label and have unlock code
+> once in the end of the function...
+> 
 
-eg:
- xxx_suspend_noirq
-    ...
-    pinctrl_pm_select_sleep_state
+Ok, I will try to update this.
 
- xxx resume_noirq
-    pinctrl_pm_select_init_state
-    ...
-    pinctrl_pm_select_default_state
+> > +	do {
+> > +		err = hw->mbx.ops->read_posted(hw, (u32 *)reply,
+> > +					       L_WD(sizeof(*reply)));
+> > +		if (err) {
+> > +			mutex_unlock(&hw->mbx.lock);
+> > +			return err;
+> > +		}
+> > +	} while (--retry_cnt >= 0 && reply->opcode != req->opcode);
+> > +	mutex_unlock(&hw->mbx.lock);
+> > +	if (retry_cnt < 0 || reply->error_code)
+> > +		return -EIO;
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * mucse_fw_get_capability - Get hw abilities from fw
+> > + * @hw: pointer to the HW structure
+> > + * @abil: pointer to the hw_abilities structure
+> > + *
+> > + * mucse_fw_get_capability tries to get hw abilities from
+> > + * hw.
+> > + *
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +static int mucse_fw_get_capability(struct mucse_hw *hw,
+> > +				   struct hw_abilities *abil)
+> > +{
+> > +	struct mbx_fw_cmd_reply reply;
+> > +	struct mbx_fw_cmd_req req;
+> > +	int err;
+> > +
+> > +	memset(&req, 0, sizeof(req));
+> > +	memset(&reply, 0, sizeof(reply));
+> 
+> probably
+> 
+> 	struct mbx_fw_cmd_reply reply = {};
+> 	struct mbx_fw_cmd_req req = {};
+> 
+> will look better. in the other functions as well..
+> 
+> 
+> 
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- drivers/pinctrl/core.c           | 13 +++++++++++++
- include/linux/pinctrl/consumer.h | 10 ++++++++++
- 2 files changed, 23 insertions(+)
+Got it, I will update it.
 
-diff --git a/drivers/pinctrl/core.c b/drivers/pinctrl/core.c
-index 73b78d6eac67..c5dbf4e9db84 100644
---- a/drivers/pinctrl/core.c
-+++ b/drivers/pinctrl/core.c
-@@ -1655,6 +1655,19 @@ int pinctrl_pm_select_default_state(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(pinctrl_pm_select_default_state);
- 
-+/**
-+ * pinctrl_pm_select_init_state() - select init pinctrl state for PM
-+ * @dev: device to select init state for
-+ */
-+int pinctrl_pm_select_init_state(struct device *dev)
-+{
-+	if (!dev->pins)
-+		return 0;
-+
-+	return pinctrl_select_bound_state(dev, dev->pins->init_state);
-+}
-+EXPORT_SYMBOL_GPL(pinctrl_pm_select_init_state);
-+
- /**
-  * pinctrl_pm_select_sleep_state() - select sleep pinctrl state for PM
-  * @dev: device to select sleep state for
-diff --git a/include/linux/pinctrl/consumer.h b/include/linux/pinctrl/consumer.h
-index 73de70362b98..63ce16191eb9 100644
---- a/include/linux/pinctrl/consumer.h
-+++ b/include/linux/pinctrl/consumer.h
-@@ -48,6 +48,7 @@ int pinctrl_select_default_state(struct device *dev);
- 
- #ifdef CONFIG_PM
- int pinctrl_pm_select_default_state(struct device *dev);
-+int pinctrl_pm_select_init_state(struct device *dev);
- int pinctrl_pm_select_sleep_state(struct device *dev);
- int pinctrl_pm_select_idle_state(struct device *dev);
- #else
-@@ -55,6 +56,10 @@ static inline int pinctrl_pm_select_default_state(struct device *dev)
- {
- 	return 0;
- }
-+static inline int pinctrl_pm_select_init_state(struct device *dev)
-+{
-+	return 0;
-+}
- static inline int pinctrl_pm_select_sleep_state(struct device *dev)
- {
- 	return 0;
-@@ -143,6 +148,11 @@ static inline int pinctrl_pm_select_default_state(struct device *dev)
- 	return 0;
- }
- 
-+static inline int pinctrl_pm_select_init_state(struct device *dev)
-+{
-+	return 0;
-+}
-+
- static inline int pinctrl_pm_select_sleep_state(struct device *dev)
- {
- 	return 0;
--- 
-2.34.1
+Thanks for your feedback.
 
 
