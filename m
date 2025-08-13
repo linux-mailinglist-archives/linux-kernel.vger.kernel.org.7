@@ -1,243 +1,228 @@
-Return-Path: <linux-kernel+bounces-765752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578DDB23DCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:41:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01EAB23DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9562A77E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:41:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EEC57B30F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58191199934;
-	Wed, 13 Aug 2025 01:41:23 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D10E2C0F6F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755049282; cv=none; b=oUuKbLAcVt3NqXfUaV/ihneTR/xNvNCW2r8PXCCRNN68+F0at8QGxLg44Av0eaBoHf7zqsFp6LDD6bHMMZ35PIuF12Wu7c4qIfmWxUA2+j/oo1EjXvabbHRXXLBQ/lh1TwuVO+TyeC7AE8G3NM/IjxLvlRrkMXznHwWUUMXdIFA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755049282; c=relaxed/simple;
-	bh=kw8408HuwYLqZ5Gs1QhHwXIggsYHzqYnO5HxaEkSCAo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=uZojXKdMLQzfvHB3PvknHz7E2Z03pa7yaD745KGh7HCSH0zPmU0/ZO9a7QdM54HVjMmXbFuBI4v3oppNs6++ugcrW3pSGeqPMTvfAJug2J9wd+0gz2ChOair4WPF6my3+PmFvQA/COwGFFtC4pkAAbFGs8bxW5yXBxC6RUC09sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.126])
-	by gateway (Coremail) with SMTP id _____8AxlnA57Ztobys_AQ--.53782S3;
-	Wed, 13 Aug 2025 09:41:13 +0800 (CST)
-Received: from [10.20.42.126] (unknown [10.20.42.126])
-	by front1 (Coremail) with SMTP id qMiowJCxdOQv7ZtoCf5HAA--.11751S3;
-	Wed, 13 Aug 2025 09:41:11 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: time: Fix the issue of high cpu usage of vcpu
- threads in virtual machines
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>,
- Peter Zijlstra <peterz@infradead.org>, Bibo Mao <maobibo@loongson.cn>,
- Song Gao <gaosong@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250812090056.771379-1-lixianglai@loongson.cn>
- <CAAhV-H7pXxFR8PnAOv8CirotXUSPgbb7AEsHU0VGh_YMFFoyJA@mail.gmail.com>
- <da4311b0-7e8e-647a-260f-1733878cf394@loongson.cn>
- <CAAhV-H7uhvZeZ9L40AWuRN7t4JAFLNDj4YUOZ_K-oPrCcnpEjA@mail.gmail.com>
-From: lixianglai <lixianglai@loongson.cn>
-Message-ID: <13a54d23-24c2-8e59-77ac-900a63cd38ef@loongson.cn>
-Date: Wed, 13 Aug 2025 09:39:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32F31A841C;
+	Wed, 13 Aug 2025 01:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="bkH297w6"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011004.outbound.protection.outlook.com [40.107.130.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C7B249E5;
+	Wed, 13 Aug 2025 01:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755049384; cv=fail; b=QSMlI9H8A2m7KGWX+XFkZVeEKz7sv2vh/aOxo0ah/oJu8CrR1JqUwhd+8gGRUWPkWBMZdIEbeBWsbAM2gq8RvyolPIEpfXBBPQitA40T6isrMkt9kSiNUgDs3IVnWdy2c/wM75l+6pxP0NlWwjMm830LEdlcDkaScUhdpSwTSek=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755049384; c=relaxed/simple;
+	bh=zC/PmfYPJSKsVqxhhkVawQzscAyO6ZFlI7EXGxLSiKI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=X7mQdXIOxkGTDKRhWFKzWz0ImOGnULNDZJfr+jyQ4Tnfo9QK4EfnBDKXu4zAdBVW98rlJ8bmzQivOu2RjKzMbgAmfOIjRhx2UJVqV8qhcmKJUeu5L4JHpXUDYXjzeQG9440RbqnImeN/kxTq7mI7TJ0efnmwXC2WxKSVQ4xPPAc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=bkH297w6; arc=fail smtp.client-ip=40.107.130.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d/gZ+/CrcBASglka52cVizSWC/nIhrD05riozkULzITipqIDn9N3RNwBcekzFvJ/8pnunqzlzFCZXvr65XqgyEYzTbl00FYZz77OI90KTplQaTWxvN61qvkikZTgVm0BqW4YSy9NXU/VirbKqX/CHd1GOuKg2MUafGsuDJFmj8uuT3beVEutp5bi7X3W11Nywi0AaV9TDCXurZ5JDGzhLZVoCtdHHz2pTVogLx1bd199GXyWoIeZlHDFhiKt1fgMZXlCp0tN8m71Q8YGlg5HnvS8jaeXCgoTy9l6zAS2cTK4Fle780p99OoeiG65iz3RrRPa+nbZekGnbckY0sJqZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9drZ54etuaPqYX0W053UzAaPZcvdHMqJWBXct4IORWM=;
+ b=qoO8iFDQbEDjJ7Br+yUlY6IVrfZEUzilIrI8Fiq7ZMa2XNrq4OZDv7AppLnZ4HfgiQ9u+K9LF3mJocYip90ZgDvKInB0tIayXF7kq1xNpeMMd6oGOkDPpQ0kabA9KiF7HiuvHn7euCS+iP7OcOh3L3uOXWVNTYpkAaYN0EfzsOVfpnXrlabh1RnKgQkkWIT3BvUHaantN7sI6ss4QHPRoMAOiyRZKNF2cu8VOQCZVltGxk+9dEbyk3CGebNe8d+GASH/xXaK38cuPH6UZGHPxXqcAj85E4wmoKqrHZuF37kOdPjiPuBNoBeHrFD9kZGHdiiwfGJEORj2kNFIpy8hXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9drZ54etuaPqYX0W053UzAaPZcvdHMqJWBXct4IORWM=;
+ b=bkH297w6hZm7yAv8TPMxNLufXoA6KAwJgMMpOna9li1+KVI9R4WvUPE32rdHbivdVcxesmf/vNiRkFvmZdnynaWlMDq48aWF/HrJnpS7MEODtpN/rpIZL1C3WhRPf/XYphfYcYB5VdyenNsf0Z+Xqgkpk0FGQVH0OtPwTY6d4c2IkLlipLthuXqWH+ef3zRgTrWeDpb7En1KcSgYnQ1Xz2PZ6WLpiSG1TD2AsJKrIKxwuP+06eiA8ENqntaXQsFEZezlWznMGRUwTrWgGgoN0V6XNkyBtD6xN6cjCdDUDCcl0ef6zciPnQ2f0tbemrK1C1rkl5QVmluDIs7TnGqb6g==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PAXPR04MB8621.eurprd04.prod.outlook.com (2603:10a6:102:218::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Wed, 13 Aug
+ 2025 01:42:58 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
+ 01:42:58 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+CC: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"richardcochran@gmail.com" <richardcochran@gmail.com>, Claudiu Manoil
+	<claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>, Frank Li
+	<frank.li@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com"
+	<festevam@gmail.com>, "F.S. Peng" <fushi.peng@nxp.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>
+Subject: RE: [PATCH v3 net-next 06/15] ptp: netc: add periodic pulse output
+ support
+Thread-Topic: [PATCH v3 net-next 06/15] ptp: netc: add periodic pulse output
+ support
+Thread-Index: AQHcC3Dwa6c+/SXDskmAIfeEvfOrWbRe632AgADjtoA=
+Date: Wed, 13 Aug 2025 01:42:58 +0000
+Message-ID:
+ <PAXPR04MB85108318D1AEB3B4AC615D33882AA@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20250812094634.489901-1-wei.fang@nxp.com>
+ <20250812094634.489901-7-wei.fang@nxp.com>
+ <20250812120359.5yceb6xcauq3jkqi@skbuf>
+In-Reply-To: <20250812120359.5yceb6xcauq3jkqi@skbuf>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PAXPR04MB8621:EE_
+x-ms-office365-filtering-correlation-id: 2f8e54f3-9205-4cda-8689-08ddda0abb6e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|19092799006|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?fBCVeBW3h6O+bQyFJ+24yUaErvQrwu6RI3QkYb8yz8TBJxB/6bTEtAaVq3Av?=
+ =?us-ascii?Q?vORSHgKwkoQpMPf3E5TiDocQVyoqaPsg3qz1qj1xNuO4mucrCzSPBK1iej5a?=
+ =?us-ascii?Q?ai7nbuofOuulO0T+icUE31tItV4FJlP9023DWHadNkHZ05eitGNcZvQhU2Ap?=
+ =?us-ascii?Q?GJ0yY/ZilbfOoYYvEUO57IZjDAMWJQg5rPlUNxkz+ekgdrA0VoKsLE8m6PL7?=
+ =?us-ascii?Q?iP94m/KpO72WJX9jvdgOc02sBOm+yyOk+/DTmWSjH/WrBQvhtR8KqxlVFRtu?=
+ =?us-ascii?Q?UxCdP2uFWR1cRtjVEEuyYRTgTpyP/4ebq7qLRTOhHLFa85sl5JqNb5DIBcCZ?=
+ =?us-ascii?Q?up+Y4LGqrGKEzoiVpPK4i0HJgRd6EZAyWLzMFUV2Owrv8E+L5lOPFOCo1byz?=
+ =?us-ascii?Q?sfq6IIIkBnicTrOd9Z3wv1fFQ7sxux3zVxfpL5x7/TFAriJ5ecPPslYg/RiA?=
+ =?us-ascii?Q?Yt9xWbGDY2XDJClfvRAuxnyaKwjLSVkaVYuwU0D8cOYneRg3hiRgpiGfjJ95?=
+ =?us-ascii?Q?zxRoV1y8vCc/y9tUx1Dvl3OWh8eZ3oUaturNlRF52W7WK0kFEo34LBd7a0+/?=
+ =?us-ascii?Q?ky79y0rfdrXzZgXJqWIg/qeo6zppe39rUmEdMmsSB/lZVFcZps3ILGMjvMse?=
+ =?us-ascii?Q?VIAR8PezcyTXjsjNXAJZSluT58pPORYkDsBxUKaPf3jDOvHo+DmR6iyuiu49?=
+ =?us-ascii?Q?MQR8Z/nIbYVqDv4bbRcMyrgwSRVzz/BsCq77ba37uPx5/MuHCSagJua4pJi2?=
+ =?us-ascii?Q?nGlXM5T1NTiQznkJ//pzP5aCXhWcuRDPB4c1L7tqanmXuBV6mm7zSD26kXZ8?=
+ =?us-ascii?Q?G8J7W7b/1HdsUhq6xa3gLUpkLptZAVZihH2xXXEMZA+wQRnbJ378L7CCrXuZ?=
+ =?us-ascii?Q?MvWsNAf0Wq51W7bKXh3fdUD5WrBlObSDR+Ull4bd4TpNM7SjsNuVPPC97/e8?=
+ =?us-ascii?Q?+dMYZkLyIDGc1ZzUYCmw3CjdNpx5q8yxrQQ/8SUgSK6adSddOF4WL2KGLT5n?=
+ =?us-ascii?Q?v67CU7ULI872wrGj3ABN+w5x5tSqJkcGWVdYpc+RBsruFVLm6JJeGx76WU0Q?=
+ =?us-ascii?Q?Z1aQ/B5LCPhUv56B3hdYh9hUp3jFOu6YIi4ku73AaOjOJYevSIQUotwYWMg+?=
+ =?us-ascii?Q?N/PLa4ZbqGAliVJ747H+vJ6/2z4hnU9AkXXGssF/5XCvJQLphDyS+iyojJ10?=
+ =?us-ascii?Q?v7eNATJ2DeCn4m+gVO5/vFL5x06VzDEQLRtWczOe/eiTqx9vPY56bPCOj2Jn?=
+ =?us-ascii?Q?/VwyMb+UvzP+hHPM1YZaMyq42ZYa5ShSxAkWzs0xfUidpKXfpe12FgIG2xaz?=
+ =?us-ascii?Q?eyfnu8lO3NdeQmJxl5vwz/KwLPDGx+4QtJgUR0PgDmZTWH1ta+XZXkAto71z?=
+ =?us-ascii?Q?ZmzpoRE/GAry4Iaq9yAbze2imeWzGvDPVnSz2bradHn8450YhuOBKtPjNh+g?=
+ =?us-ascii?Q?ux6Dy9fbbYndAFyule1vgO9ktIBtwsjx08agYmAnBuxigUjCgaUKdA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(19092799006)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?EVimF9+w7PcxwMosFTHGJUJmN2qA3Mo0++Gky+E3PWO524gvvavZLvwn0xfC?=
+ =?us-ascii?Q?jALzZ8mygIzneAKeBJvoju56kb3NzHrwzRF/JpwzSG29SN6NHnwrCq4gdRlA?=
+ =?us-ascii?Q?hCY0sdgK+H1Bz20z2PB+qBXxx37n3vGIzrqF99d6r/bnrgyb6Sk8zD2uWp9Y?=
+ =?us-ascii?Q?ZX5HWorMdJ4I2VwZjct2gugRNzv7JVGivPk05lIcCvSdFdLzJcWI7n40rc8Z?=
+ =?us-ascii?Q?M9cQENhHZWEfD3kvmvAQjz8ZJTOA8aW9E4LLHJVYti+Et+LuyVPi1tA1FFcm?=
+ =?us-ascii?Q?FrkwlAH5fkjoEZ3FVieia123tdeRm8W+WTHagror8PvBU8LzxHQlEVgHnB86?=
+ =?us-ascii?Q?8IxONSmnTb3n/2GHFLndNOJVPZyyJV7h46lk1b7jyZ0EotOgF8tUcTMpU45W?=
+ =?us-ascii?Q?km/no9/sE4OX7//P5lyRpKDvrRbT1JffU1grO9f0Fc9W4DGfTBtL5+NXYCaN?=
+ =?us-ascii?Q?TtOMaG8s9J9cfKHNSgno+bmnfY1qSwcrxa9N8La3iQs4cSJEPQyPRV4wtOST?=
+ =?us-ascii?Q?nd9jI23c+j+n5UvIKzBgC2fO37YLPdXdnnO/L43Lr8hmBeZGuGo8PZr+CSfQ?=
+ =?us-ascii?Q?+m2y/sN1KrBmTU+ZU6QOnrzrC9SeNLUXK52MIHV1+ocLZS1jJpIo8CVWRDav?=
+ =?us-ascii?Q?CHix0IMzRZ5faT2IS5Ju37wiBJLKMMl8t8NOOWHWrzsCS4A//EsyN7l2y+LG?=
+ =?us-ascii?Q?P3P1cyXn4yPuPpqDPdvzgdrN6UdOgVAws41oLt3gQmxkMRRcNdpx65vUnvso?=
+ =?us-ascii?Q?rO4mt0J43Ko9u6tZaxdbUlV99rhoUW9Y8bDX7y3uFBq+5t69KxG4SCwRoVDT?=
+ =?us-ascii?Q?2PMdSF/t02pgUCWah2Em1xBIJRzznu7P/fxthZUsWiFO+84LjomaZnwUWahX?=
+ =?us-ascii?Q?jzQDpJR6MS0rEC0RF3sZei90vMZjARqaDu7sVroF6x7QbNm6V7KYLhKUaGwY?=
+ =?us-ascii?Q?yOs0otRu9Sm9V3HpRQPd9DHc6Tidouo7CydEec4O6Bmz6wToqHhxmg5AX9qV?=
+ =?us-ascii?Q?0dQAYGuVnEvvVmrzC+zWu29RAFd6gfnqBtqZHk4cMXKlu+5hDlxwJoakW7BR?=
+ =?us-ascii?Q?tUzU8TBL5wf+Ld2NtpLLQYBmBW0Cc7qJkSkKy3W6bP3Obi4eBXh5FTs6RUx0?=
+ =?us-ascii?Q?s1HjTNhMiB6GDvE9Arn+AxX0GZHEwdfmb4wTXUtmKjfL++o5b8tNYRh6CBHJ?=
+ =?us-ascii?Q?hYKqfa4TNt3Xl/0UrfBgcx7SjWNVAU5Sw9CepOhxPXGWkc4NG3efEx/ZfsrZ?=
+ =?us-ascii?Q?Wa4HTCzhpP79dPVWjwYrl0EggnnDgbqOmk3RIFyccPwZk50Bv+izblDK9v/p?=
+ =?us-ascii?Q?GNgGd+KZhi4uqkr0oJI6EES/HLI+H2s15z58SgCLWdJmtNWOR/+sXGJ1xg3i?=
+ =?us-ascii?Q?F3op0tIhaHJ0ldhShQ3JLDLN7KF0NHjxpJ/iddjth2hlaiiFDOY+FUe+Hi/g?=
+ =?us-ascii?Q?rDHC6esTgMorNkYdXWxvfoiarx9NIeQ7RG5Y+wJjhpC1hslKzSlHsF61exJm?=
+ =?us-ascii?Q?3uEiaTGkJO3RrxKi3rUjDsdgCGE5kB4Ash+qwimbjLoeqOcLZrXxbDZcWoh4?=
+ =?us-ascii?Q?KTrkPoysXCqdM393QEE=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H7uhvZeZ9L40AWuRN7t4JAFLNDj4YUOZ_K-oPrCcnpEjA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qMiowJCxdOQv7ZtoCf5HAA--.11751S3
-X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxKrWUXr45uw13Jr1xKr45Jwc_yoW7WF1Dpr
-	WDCFs8Krs5Kr1avw1aq3sFvF9xKw4kGr12vF93Gr17Ar9FvF93WF48tryq9FyrGFWDuF40
-	vw10qws3uFWDtrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
-	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
-	JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
-	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
-	67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
-	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
-	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8hiSPUUUUU==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f8e54f3-9205-4cda-8689-08ddda0abb6e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2025 01:42:58.5304
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8vKL6tP6ucT6wokUx4OGhkEWLRisYDN+3z3Y+liakapMDSXZDjDoQP4cJ8aU4v6RmZvP9qyd5874a8vYQ1NVFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8621
 
-Hi Huacai Chen:
-> On Tue, Aug 12, 2025 at 8:50 PM lixianglai <lixianglai@loongson.cn> wrote:
->>
->>
->> Hi Huacai Chen:
->>> Hi, Xianglai,
->>>
->>> There is something that can be improved.
->>>
->>> On Tue, Aug 12, 2025 at 5:24 PM Xianglai Li <lixianglai@loongson.cn> wrote:
->>>> When the cpu is offline, the timer under loongarch is not correctly closed,
->>>> resulting in an excessively high cpu usage rate of the offline vcpu thread
->>>> in the virtual machine.
->>>>
->>>> To correctly close the timer, we have made the following modifications:
->>>>
->>>> Register the cpu hotplug timer start event for loongarch.This event will
->>>> be called to close the timer when the cpu is offline.
->>>>
->>>> Clear the timer interrupt when the timer is turned off
->>>>
->>>> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
->>>> ---
->>>>    arch/loongarch/kernel/time.c | 20 ++++++++++++++++++++
->>>>    include/linux/cpuhotplug.h   |  1 +
->>>>    2 files changed, 21 insertions(+)
->>>>
->>>> diff --git a/arch/loongarch/kernel/time.c b/arch/loongarch/kernel/time.c
->>>> index 367906b10f81..4daa11512eba 100644
->>>> --- a/arch/loongarch/kernel/time.c
->>>> +++ b/arch/loongarch/kernel/time.c
->>>> @@ -12,6 +12,7 @@
->>>>    #include <linux/kernel.h>
->>>>    #include <linux/sched_clock.h>
->>>>    #include <linux/spinlock.h>
->>>> +#include <linux/cpu.h>
->>>>
->>>>    #include <asm/cpu-features.h>
->>>>    #include <asm/loongarch.h>
->>>> @@ -86,6 +87,9 @@ static int constant_set_state_shutdown(struct clock_event_device *evt)
->>>>           timer_config &= ~CSR_TCFG_EN;
->>>>           csr_write64(timer_config, LOONGARCH_CSR_TCFG);
->>>>
->>>> +       /* Clear Timer Interrupt */
->>>> +       write_csr_tintclear(CSR_TINTCLR_TI);
->>>> +
->>>>           raw_spin_unlock(&state_lock);
->>>>
->>>>           return 0;
->>>> @@ -208,8 +212,17 @@ int __init constant_clocksource_init(void)
->>>>           return res;
->>>>    }
->>>>
->>>> +static int arch_timer_dying_cpu(unsigned int cpu)
->>> We can use arch_timer_dying() for short. And then add an
->>> arch_timer_starting() like this:
->>>
->>> static int arch_timer_starting(unsigned int cpu)
->>> {
->>>           set_csr_ecfg(ECFGF_TIMER);
->>>
->>>           return 0;
->>> }
->>>
->>> Though ECFGF_TIMER may be enabled in other places, for syntax we need it here.
->>>
->>>> +{
->>>> +       constant_set_state_shutdown(NULL);
->>>> +
->>>> +       return 0;
->>>> +}
->>>> +
->>>>    void __init time_init(void)
->>>>    {
->>>> +       int err;
->>>> +
->>>>           if (!cpu_has_cpucfg)
->>>>                   const_clock_freq = cpu_clock_freq;
->>>>           else
->>>> @@ -220,4 +233,11 @@ void __init time_init(void)
->>>>           constant_clockevent_init();
->>>>           constant_clocksource_init();
->>>>           pv_time_init();
->>>> +
->>>> +       err = cpuhp_setup_state_nocalls(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
->>>> +                                       "loongarch/timer:starting",
->>>> +                                       NULL, arch_timer_dying_cpu);
->>> Then we need use cpuhp_setup_state() here, because we have a startup
->>> function now.
->>>
->>> And "loongarch/timer:starting" should be
->>> "clockevents/loongarch/timer:starting" like others.
->>>
->>> And the whole should be moved to the last of
->>> constant_clockevent_init() because it is clockevent specific.
->> like this?
->>
->> @@ -164,6 +182,10 @@ int constant_clockevent_init(void)
->>
->>           timer_irq_installed = 1;
->>
->> +       cpuhp_setup_state(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
->> +                         "clockevents/loongarch/timer:starting",
->> +                         arch_timer_starting, arch_timer_dying_cpu);
->> +
->>           sync_counter();
->>
->>
->> I was wondering whether it should be placed before or after the
->> "timer_irq_installed" judgment
-> Should be after "timer_irq_installed" because we only need to run once.
->
-> The best place is after pr_info("Constant clock event device register\n");
+> On Tue, Aug 12, 2025 at 05:46:25PM +0800, Wei Fang wrote:
+> > @@ -210,77 +343,178 @@ static void netc_timer_set_pps_alarm(struct
+> > netc_timer *priv, int channel,  static int netc_timer_enable_pps(struct
+> netc_timer *priv,
+> >  				 struct ptp_clock_request *rq, int on)  {
+> > -	u32 fiper, fiper_ctrl;
+> > +	struct device *dev =3D &priv->pdev->dev;
+> >  	unsigned long flags;
+> > +	struct netc_pp *pp;
+> > +	int err =3D 0;
+> >
+> >  	spin_lock_irqsave(&priv->lock, flags);
+> >
+> > -	fiper_ctrl =3D netc_timer_rd(priv, NETC_TMR_FIPER_CTRL);
+> > -
+> >  	if (on) {
+> 		...
+> >  	} else {
+> > -		if (!priv->pps_enabled)
+> > +		/* pps_channel is invalid if PPS is not enabled, so no
+> > +		 * processing is needed.
+> > +		 */
+> > +		if (priv->pps_channel >=3D NETC_TMR_FIPER_NUM)
+> >  			goto unlock_spinlock;
+> >
+> > -		fiper =3D NETC_TMR_DEFAULT_FIPER;
+> > -		priv->tmr_emask &=3D ~(TMR_TEVNET_PPEN(0) |
+> > -				     TMR_TEVENT_ALMEN(0));
+> > -		fiper_ctrl |=3D FIPER_CTRL_DIS(0);
+> > -		priv->pps_enabled =3D false;
+> > -		netc_timer_alarm_write(priv, NETC_TMR_DEFAULT_ALARM, 0);
+> > +		netc_timer_disable_periodic_pulse(priv, priv->pps_channel);
+> > +		priv->fs_alarm_bitmap &=3D ~BIT(pp->alarm_id);
+>=20
+> You dereference "pp"->alarm_id before assigning "pp" one line below.
 
-Got it!
-> And there is another question:
-> Should we move "write_csr_tintclear(CSR_TINTCLR_TI)" from
-> constant_set_state_shutdown() to arch_timer_dying()?
+oh, sorry, I will fix it in next version.
 
-We may not need to do this. If the context in which the timer is
-turned off is to disable interrupts, and the last timing period just
-arrives during this process, when the interrupt is re-enabled,
-an additional interrupt will be triggered and the next timing expiration
-time will be filled. This is not in line with expectations.
-Isn't it more reasonable to clean up the interrupt flag after turning off
-the timer instead of just doing so cpu offline context cleaning.
-
-Thanks!
-Xianglai.
-
->
-> Huacai
->
->>
->>>> +       if (err)
->>>> +               pr_info("cpu hotplug event register failed");
->>> This is not so useful, because the error isn't fatal.
->>>
->>>
->>> Huacai
->>>
->>>> +
->>>>    }
->>>> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
->>>> index edfa61d80702..6606c1546afc 100644
->>>> --- a/include/linux/cpuhotplug.h
->>>> +++ b/include/linux/cpuhotplug.h
->>>> @@ -159,6 +159,7 @@ enum cpuhp_state {
->>>>           CPUHP_AP_PERF_ARM_STARTING,
->>>>           CPUHP_AP_PERF_RISCV_STARTING,
->>>>           CPUHP_AP_ARM_L2X0_STARTING,
->>>> +       CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
->>>>           CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
->>>>           CPUHP_AP_ARM_ARCH_TIMER_STARTING,
->>>>           CPUHP_AP_ARM_ARCH_TIMER_EVTSTRM_STARTING,
->>>>
->>>> base-commit: 53e760d8949895390e256e723e7ee46618310361
->>>> --
->>>> 2.39.1
->>>>
->>
-
+>=20
+> > +		pp =3D &priv->pp[priv->pps_channel];
+> > +		memset(pp, 0, sizeof(*pp));
+> > +		priv->pps_channel =3D NETC_TMR_INVALID_CHANNEL;
+> >  	}
+> >
+> > -	netc_timer_wr(priv, NETC_TMR_TEMASK, priv->tmr_emask);
+> > -	netc_timer_wr(priv, NETC_TMR_FIPER(0), fiper);
+> > -	netc_timer_wr(priv, NETC_TMR_FIPER_CTRL, fiper_ctrl);
+> > +unlock_spinlock:
+> > +	spin_unlock_irqrestore(&priv->lock, flags);
+> > +
+> > +	return err;
+> > +}
 
