@@ -1,257 +1,218 @@
-Return-Path: <linux-kernel+bounces-766650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24D66B24976
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EBBB2497C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27AE316B6C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:23:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2496A17715C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B0D18BBAE;
-	Wed, 13 Aug 2025 12:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="meRUGL14";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="764ghwun";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="meRUGL14";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="764ghwun"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF3A1C549F;
+	Wed, 13 Aug 2025 12:25:47 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7247D17D2
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726EB161302
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755087810; cv=none; b=VqcMZ53kZWDQwn+DOn/0nPsVkcxvNizj0KJyHhOqg6IGp3eLMix8EVTHKGJxh3IKapWP7XS72NfQXJ926z9IUwxUXJocEi2+GaZTNiKelFp2YT37fa8SqrSduQI4jQDxv5DqKxKoIl7hsrEztp9/myjLbkwiBJuNSQe1ER6dLdU=
+	t=1755087947; cv=none; b=md9IiJctH8C2vEEB6PwwDvq3w6XBbpQHfS7VOAqBNrFl5QMUhCES6WK0jZgZgIBjWT0RhGeJ75aJrhsDhJoGp+ATH2e1YZAkTmlYCsG0t/vxAGJLaKDaK1Sss6TzySC001prqKLNxB90wZ1PjfVXfAq7gQUFdYm7cfBFe9uqVkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755087810; c=relaxed/simple;
-	bh=Bx6nE2SpXz4k91GUnfM0lxXGL4AOe5+8PY+tMN32M3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skascxYuZmiR1f2byRGg8uRecJLxRsCr87QBYILOoy8qYxaN0+7UrqHx9gYVPQC7wVyIVWlv4pJZK1+cCrZfEAMrkru0op40U/qhLm1sWnczhCH9GenwqF2aA+Lz1cA64q3xpd4MpuBjwmwzlEYGE28FU1t05Wu/g/wwB4+1/tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=meRUGL14; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=764ghwun; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=meRUGL14; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=764ghwun; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 66A4E1F79B;
-	Wed, 13 Aug 2025 12:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755087806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T47lQkBQudh/1+nauiwrmmybdCCCmve5uwO1TCs1X7A=;
-	b=meRUGL14Q7uPT76X79l3jd/e7EPfUvxMjQbLypEDO8sAcQbNqwiKWzUaPhvzPafU4g7P11
-	uhfzT22mzLRp8ulbmTgxAP4fNep5vXjqRM7CaV0+Qrn5/GXnmS63i5bL29UgzZIkarmRro
-	Pp2P9vFP6ReVbpqeOEmgLQOt/U6z1O4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755087806;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T47lQkBQudh/1+nauiwrmmybdCCCmve5uwO1TCs1X7A=;
-	b=764ghwunmo5aETTO8YoXPy94p6fDQyeLIdE0Ch5Mrv/V0K/NWQTMl2r3/uoCPMJVU3MrJu
-	GmhC6/OcknVVzkBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=meRUGL14;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=764ghwun
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755087806; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T47lQkBQudh/1+nauiwrmmybdCCCmve5uwO1TCs1X7A=;
-	b=meRUGL14Q7uPT76X79l3jd/e7EPfUvxMjQbLypEDO8sAcQbNqwiKWzUaPhvzPafU4g7P11
-	uhfzT22mzLRp8ulbmTgxAP4fNep5vXjqRM7CaV0+Qrn5/GXnmS63i5bL29UgzZIkarmRro
-	Pp2P9vFP6ReVbpqeOEmgLQOt/U6z1O4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755087806;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=T47lQkBQudh/1+nauiwrmmybdCCCmve5uwO1TCs1X7A=;
-	b=764ghwunmo5aETTO8YoXPy94p6fDQyeLIdE0Ch5Mrv/V0K/NWQTMl2r3/uoCPMJVU3MrJu
-	GmhC6/OcknVVzkBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1282913929;
-	Wed, 13 Aug 2025 12:23:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xqoOA76DnGhWSQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 13 Aug 2025 12:23:26 +0000
-Message-ID: <91990b9d-99c2-4476-a1ac-54aaec026f3c@suse.de>
-Date: Wed, 13 Aug 2025 14:23:25 +0200
+	s=arc-20240116; t=1755087947; c=relaxed/simple;
+	bh=0HkpxNl44NrVp+5qb4BCrOTLkmwwz7dBkNDx3u1z8lg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZXAP+dTC7pPdos/TEpgZsE9mTVSz2yfNLSsy/ErwYLpDwO+HE0jU43RVeDq/HP+BmzlCseZhK35jOuA+xyZ+gDZ/Hwz5SSp4ebM/tbOcCclst6wItnFefnoHWj7D7ernC+0w3+24S8QrsnMbmxprTJpW9Y9q2lN/kec/1hBJuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umAXk-00048k-MG; Wed, 13 Aug 2025 14:25:24 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umAXj-0005VI-08;
+	Wed, 13 Aug 2025 14:25:23 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umAXi-0094sZ-30;
+	Wed, 13 Aug 2025 14:25:22 +0200
+Date: Wed, 13 Aug 2025 14:25:22 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>,
+	Dent Project <dentproject@linuxfoundation.org>,
+	Kyle Swenson <kyle.swenson@est.tech>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH ethtool v2 2/3] ethtool: pse-pd: Add PSE priority support
+Message-ID: <aJyEMob8kFAvD-HU@pengutronix.de>
+References: <20250813-b4-feature_poe_pw_budget-v2-0-0bef6bfcc708@bootlin.com>
+ <20250813-b4-feature_poe_pw_budget-v2-2-0bef6bfcc708@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/lsdc: Use drm_gem_dumb_map_offset() helper
-To: 15620332615@163.com, suijingfeng@loongson.cn,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Zhuoheng Li <lizhuoheng@kylinos.cn>
-References: <20250812124418.30914-1-15620332615@163.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250812124418.30914-1-15620332615@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[163.com,loongson.cn,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,suse.de:mid,suse.de:dkim,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 66A4E1F79B
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813-b4-feature_poe_pw_budget-v2-2-0bef6bfcc708@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+Hi Kory,
 
+Thank you for your work! Here are some review comments...
 
-Am 12.08.25 um 14:44 schrieb 15620332615@163.com:
-> From: Zhuoheng Li <lizhuoheng@kylinos.cn>
->
-> Replace the open-coded mmap offset calculation in the LSDC
-> driver with the drm_gem_dumb_map_offset() helper. This avoids
-> code duplication and ensures consistency with other DRM
-> drivers.
->
-> No functional changes intended.
->
-> Signed-off-by: Zhuoheng Li <lizhuoheng@kylinos.cn>
-
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-
+On Wed, Aug 13, 2025 at 10:57:51AM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> 
+> Add support for PSE (Power Sourcing Equipment) priority management:
+> - Add priority configuration parameter (prio) for port priority management
+> - Display power domain index, maximum priority, and current priority
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 > ---
->   drivers/gpu/drm/loongson/lsdc_drv.c |  2 +-
->   drivers/gpu/drm/loongson/lsdc_gem.c | 16 ----------------
->   drivers/gpu/drm/loongson/lsdc_gem.h |  5 -----
->   3 files changed, 1 insertion(+), 22 deletions(-)
->
-> diff --git a/drivers/gpu/drm/loongson/lsdc_drv.c b/drivers/gpu/drm/loongson/lsdc_drv.c
-> index 12193d2a301a..7638cb6dd9b2 100644
-> --- a/drivers/gpu/drm/loongson/lsdc_drv.c
-> +++ b/drivers/gpu/drm/loongson/lsdc_drv.c
-> @@ -44,7 +44,7 @@ static const struct drm_driver lsdc_drm_driver = {
->   
->   	.debugfs_init = lsdc_debugfs_init,
->   	.dumb_create = lsdc_dumb_create,
-> -	.dumb_map_offset = lsdc_dumb_map_offset,
-> +	.dumb_map_offset = drm_gem_dumb_map_offset,
->   	.gem_prime_import_sg_table = lsdc_prime_import_sg_table,
->   	DRM_FBDEV_TTM_DRIVER_OPS,
->   };
-> diff --git a/drivers/gpu/drm/loongson/lsdc_gem.c b/drivers/gpu/drm/loongson/lsdc_gem.c
-> index a720d8f53209..107efd240756 100644
-> --- a/drivers/gpu/drm/loongson/lsdc_gem.c
-> +++ b/drivers/gpu/drm/loongson/lsdc_gem.c
-> @@ -246,22 +246,6 @@ int lsdc_dumb_create(struct drm_file *file, struct drm_device *ddev,
->   	return 0;
->   }
->   
-> -int lsdc_dumb_map_offset(struct drm_file *filp, struct drm_device *ddev,
-> -			 u32 handle, uint64_t *offset)
-> -{
-> -	struct drm_gem_object *gobj;
-> -
-> -	gobj = drm_gem_object_lookup(filp, handle);
-> -	if (!gobj)
-> -		return -ENOENT;
-> -
-> -	*offset = drm_vma_node_offset_addr(&gobj->vma_node);
-> -
-> -	drm_gem_object_put(gobj);
-> -
-> -	return 0;
-> -}
-> -
->   void lsdc_gem_init(struct drm_device *ddev)
->   {
->   	struct lsdc_device *ldev = to_lsdc(ddev);
-> diff --git a/drivers/gpu/drm/loongson/lsdc_gem.h b/drivers/gpu/drm/loongson/lsdc_gem.h
-> index 92cbb10e6e13..f79f06874286 100644
-> --- a/drivers/gpu/drm/loongson/lsdc_gem.h
-> +++ b/drivers/gpu/drm/loongson/lsdc_gem.h
-> @@ -14,11 +14,6 @@ lsdc_prime_import_sg_table(struct drm_device *ddev,
->   			   struct dma_buf_attachment *attach,
->   			   struct sg_table *sg);
->   
-> -int lsdc_dumb_map_offset(struct drm_file *file,
-> -			 struct drm_device *dev,
-> -			 u32 handle,
-> -			 uint64_t *offset);
-> -
->   int lsdc_dumb_create(struct drm_file *file,
->   		     struct drm_device *ddev,
->   		     struct drm_mode_create_dumb *args);
+>  ethtool.8.in     | 13 +++++++++++++
+>  ethtool.c        |  1 +
+>  netlink/pse-pd.c | 29 +++++++++++++++++++++++++++++
+>  3 files changed, 43 insertions(+)
+> 
+> diff --git a/ethtool.8.in b/ethtool.8.in
+> index 29b8a8c..163b2b0 100644
+> --- a/ethtool.8.in
+> +++ b/ethtool.8.in
+> @@ -561,6 +561,7 @@ ethtool \- query or control network driver and hardware settings
+>  .RB [ c33\-pse\-admin\-control
+>  .BR enable | disable ]
+>  .BN c33\-pse\-avail\-pw\-limit N
+> +.BN prio N
+>  .HP
+>  .B ethtool \-\-flash\-module\-firmware
+>  .I devname
+> @@ -1911,6 +1912,15 @@ This attribute specifies the allowed power limit ranges in mW for
+>  configuring the c33-pse-avail-pw-limit parameter. It defines the valid
+>  power levels that can be assigned to the c33 PSE in compliance with the
+>  c33 standard.
+> +.TP
+> +.B power-domain-index
+> +This attribute defines the index of the PSE Power Domain.
+
+May be:
+
+Reports the index of the PSE power domain the port belongs to. Every
+port belongs to exactly one power domain. Port priorities are defined
+within that power domain.
+
+Each power domain may have its own maximum budget (e.g., 100 W per
+domain) in addition to a system-wide budget (e.g., 200 W overall).
+Domain limits are enforced first: if a single domain reaches its budget,
+only ports in that domain are affected. The system-wide budget is
+enforced across all domains; only when it is exceeded do cross-domain
+priorities apply.
+
+> +.TP
+> +.B priority-max
+> +This attribute defines the maximum priority available for the PSE.
+
+Reports the maximum configurable port priority value within the reported
+power domain. The valid range for prio is 0 to priority-max (inclusive).
+
+> +.TP
+> +.B priority
+> +This attribute defines the currently configured priority for the PSE.
+
+Reports the currently configured port priority within the reported power
+domain. Lower numeric values indicate higher priority: 0 is the highest
+priority.
+
+>  .RE
+>  .TP
+> @@ -1930,6 +1940,9 @@ This parameter manages c33 PSE Admin operations in accordance with the IEEE
+>  This parameter manages c33 PSE Available Power Limit in mW, in accordance
+>  with the IEEE 802.3-2022 33.2.4.4 Variables (pse_available_power)
+>  specification.
+> +.TP
+> +.B prio \ N
+> +This parameter manages port priority.
+
+Set the port priority, scoped to the port's power domain
+as reported by power-domain-index. Lower values indicate higher
+priority; 0 is the highest. The valid range is 0 to the
+priority-max reported by --show-pse.
+
+When a single domain exceeds its budget, ports in that domain are
+powered up/down by priority (highest first for power-up; lowest shed
+first).  When the system-wide budget is exceeded, priority ordering is
+applied across domains.
+
+>  .RE
+>  .TP
+> diff --git a/ethtool.c b/ethtool.c
+> index 215f566..948d551 100644
+> --- a/ethtool.c
+> +++ b/ethtool.c
+> @@ -6339,6 +6339,7 @@ static const struct option args[] = {
+>  		.xhelp	= "		[ podl-pse-admin-control enable|disable ]\n"
+>  			  "		[ c33-pse-admin-control enable|disable ]\n"
+>  			  "		[ c33-pse-avail-pw-limit N ]\n"
+> +			  "		[ prio N ]\n"
+>  	},
+>  	{
+>  		.opts	= "--flash-module-firmware",
+> diff --git a/netlink/pse-pd.c b/netlink/pse-pd.c
+> index fd1fc4d..5bde176 100644
+> --- a/netlink/pse-pd.c
+> +++ b/netlink/pse-pd.c
+> @@ -420,6 +420,29 @@ int pse_reply_cb(const struct nlmsghdr *nlhdr, void *data)
+>  		}
+>  	}
+>  
+> +	if (tb[ETHTOOL_A_PSE_PW_D_ID]) {
+> +		u32 val;
+> +
+> +		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PW_D_ID]);
+> +		print_uint(PRINT_ANY, "power-domain-index",
+> +			   "Power domain index: %u\n", val);
+> +	}
+> +
+> +	if (tb[ETHTOOL_A_PSE_PRIO_MAX]) {
+> +		u32 val;
+> +
+> +		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PRIO_MAX]);
+> +		print_uint(PRINT_ANY, "priority-max",
+> +			   "Max allowed priority: %u\n", val);
+> +	}
+> +
+> +	if (tb[ETHTOOL_A_PSE_PRIO]) {
+> +		u32 val;
+> +
+> +		val = mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PRIO]);
+> +		print_uint(PRINT_ANY, "priority", "Priority %u\n", val);
+
+missing colon
+		print_uint(PRINT_ANY, "priority", "Priority: %u\n", val);
+ 
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
