@@ -1,160 +1,195 @@
-Return-Path: <linux-kernel+bounces-766268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD35B2447E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 730C3B2447F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F271640BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22DE167596
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DBB23D7D3;
-	Wed, 13 Aug 2025 08:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1F02EFD88;
+	Wed, 13 Aug 2025 08:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUsBu5C3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="puErx3WZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kS+fo+w0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="U7im+hNh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="14jvDW+e"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1CE2EE5FE;
-	Wed, 13 Aug 2025 08:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0B02ECD3C
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755074321; cv=none; b=jsawF0Ve1sXik+ILxesPxDyE+0IrrLd/2Wxo2XqUM1bay4g2HwtREJGUSiqeCBsp+ByRlkQb+p410CZLCsJZvt8u3xxatzC2s+IP9KBWWyfn3ZO/4TRorGjo3zk1shakBRzuhgdJoJ9QyTFeBhmGXXqgoXcPfJLEtosPO9Mrpp8=
+	t=1755074329; cv=none; b=f000w90E/wFz9DQxDQBuQwBBNwijMtTbJizIbIOeXlRdCcFyglF4leU6gUtbzGfppJsEcodo35cqcROuvCf8HC2QXinJc6212FXSC6sFOBMmIAJgJHW/axdE9Z9LkRJtXLGCNICTwxXBB7b+xLxq2P4h7FHP6/wxFBA3MXNchfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755074321; c=relaxed/simple;
-	bh=4WeOZe+tHXrZMy0vTgIJaEZ2Y1n1zvWM5wBmDGw54R8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgDdMuOb5lI+gdzUwJXvSdebnAIdB8yu8l/JYKv6sUPUKJROujrKGfjqxtHhquXNd6ePpjuechQeWuqDE0aBfGKcNTW3/N9UJVhPOVjFRd42QHo+HreT6mAdAiZI3dYhEvYv+nKZvZldAGzu4IKpfC3BKDn/WgMWlZ4+hSnnTgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUsBu5C3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A58A3C4CEEB;
-	Wed, 13 Aug 2025 08:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755074320;
-	bh=4WeOZe+tHXrZMy0vTgIJaEZ2Y1n1zvWM5wBmDGw54R8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qUsBu5C38WwPIg4WA4oIhQREHRrReyj8jf3LQR3k4c4sqReEFPa9C13yMLqUdYlOq
-	 ogsyVOrHLE3oQ9cueLxsRiTTl9itk3hAOgH/6f5D1mIeWyF340qT9zXyFZq7ImYGbZ
-	 ITcK5P4Dl38M0Sh7sCRsOtP93JZVIQnfycXnilyttTmMgB6jPpmIfr8UpKlWHBRQUO
-	 5AROKgybXxZSefSjLmNutHY789sj2stpMnUw9z67gunpprgciIAyUK3Wd83pr1rEQT
-	 t8+TDkFGVUN3SVLiLVpnPtuahABRmbBippk1usaQfZVh1L2lXMT0yT2c2ELh0MoW8D
-	 A900Oo1wYL/gQ==
-Date: Wed, 13 Aug 2025 10:38:36 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Lizhi Hou <lizhi.hou@amd.com>, maz@kernel.org,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Issues with OF_DYNAMIC PCI bridge node generation
- (kmemleak/interrupt-map IC reg property)
-Message-ID: <aJxPDH6Sx0Ur01ER@lpieralisi>
-References: <aJms+YT8TnpzpCY8@lpieralisi>
- <c627564a-ccc3-9404-ba87-078fb8d10fea@amd.com>
- <aJrwgKUNh68Dx1Fo@lpieralisi>
- <e15ebb26-15ac-ef7a-c91b-28112f44db55@amd.com>
- <CAL_JsqJF6s8GsGe1w6KEkeECab956YiBSFbdbHOiiCv2+v3MAA@mail.gmail.com>
+	s=arc-20240116; t=1755074329; c=relaxed/simple;
+	bh=844aZHkvxDRAWVuu/Wdd+pTXJlQtzDS/3c/thWOMJwY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EA6hhLN6Q7Jn3ek2axuNFpcXjbPUvCs82jei4Qq5AckfBUXhFzIANSTaM76UJOZ8YQWfl45/y4tPT5ONXimTM2NEzVZ3FTU8e4TMi302Pbxpq7bjzVQGD7RaOu6MjX7FXyxzFX+o0dD4TMvQN5JsHeCQEdTj2JTVDnvuQvLCPiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=puErx3WZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kS+fo+w0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=U7im+hNh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=14jvDW+e; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EF83A1F74B;
+	Wed, 13 Aug 2025 08:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755074326; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8UCShqX79ChNicLLpMjsUElajc/V/Ezvn5/JnTOEYVA=;
+	b=puErx3WZIziaTLbU+A/iHst4YGOsnnmOgHWrclFl7lP8CHTftYhNOcpP1KN59D5B/FeSam
+	hslO4bP+g+9N7w+20VjQjh0dAVOL7yGhipsyTvSkr7fJumneIezao4PulUS9CNqcxcUS/Y
+	AaBCfl8RVTmZ1gXpbmTUafFpVKsrUfU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755074326;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8UCShqX79ChNicLLpMjsUElajc/V/Ezvn5/JnTOEYVA=;
+	b=kS+fo+w0VabBagvF8gIFpRkbRAKMoMzPHCln6uubXRwxkVCAlv36MxCpL4EULs7dr5ow2B
+	nZ0p2FnDi5MTUAAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=U7im+hNh;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=14jvDW+e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755074325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8UCShqX79ChNicLLpMjsUElajc/V/Ezvn5/JnTOEYVA=;
+	b=U7im+hNhS0aP6rprqCiZuPpzxTzywzW5xBpHmnRKm2QNlSCztZucsXX6J7ACkd8hc0i5J/
+	R9UseQf6hZFeRq/8efThGE3rhkNj7eieQqtIKLI3m1h2g13KNu85YNTjthw0llGxBwqmSE
+	qBVGKpQT0AV/YCPpZ6FX4TaNLwvxJGs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755074325;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8UCShqX79ChNicLLpMjsUElajc/V/Ezvn5/JnTOEYVA=;
+	b=14jvDW+e6ZBmFDdDurNvzmP78I/QXADCvN/TzUgTmUdpIqO01VOpc1P4uGlxxMpkCNBhWG
+	4TR7jW9WSbs4tvCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C21B413479;
+	Wed, 13 Aug 2025 08:38:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ha9jLRVPnGj2DAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 13 Aug 2025 08:38:45 +0000
+Date: Wed, 13 Aug 2025 10:38:45 +0200
+Message-ID: <87jz37y5t6.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH v3 3/7] ALSA: usb-audio: us144mkii: Implement audio playback and feedback
+In-Reply-To: <20250812132209.83728-4-ramiserifpersia@gmail.com>
+References: <20250810124958.25309-1-ramiserifpersia@gmail.com>
+	<20250812132209.83728-1-ramiserifpersia@gmail.com>
+	<20250812132209.83728-4-ramiserifpersia@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqJF6s8GsGe1w6KEkeECab956YiBSFbdbHOiiCv2+v3MAA@mail.gmail.com>
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: EF83A1F74B
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
 
-On Tue, Aug 12, 2025 at 11:59:06AM -0500, Rob Herring wrote:
-> On Tue, Aug 12, 2025 at 10:53â€¯AM Lizhi Hou <lizhi.hou@amd.com> wrote:
-> >
-> >
-> > On 8/12/25 00:42, Lorenzo Pieralisi wrote:
-> > > On Mon, Aug 11, 2025 at 08:26:11PM -0700, Lizhi Hou wrote:
-> > >> On 8/11/25 01:42, Lorenzo Pieralisi wrote:
-> > >>
-> > >>> Hi Lizhi, Rob,
-> > >>>
-> > >>> while debugging something unrelated I noticed two issues
-> > >>> (related) caused by the automatic generation of device nodes
-> > >>> for PCI bridges.
-> > >>>
-> > >>> GICv5 interrupt controller DT top level node [1] does not have a "reg"
-> > >>> property, because it represents the top level node, children (IRSes and ITSs)
-> > >>> are nested.
-> > >>>
-> > >>> It does provide #address-cells since it has child nodes, so it has to
-> > >>> have a "ranges" property as well.
-> > >>>
-> > >>> You have added code to automatically generate properties for PCI bridges
-> > >>> and in particular this code [2] creates an interrupt-map property for
-> > >>> the PCI bridges (other than the host bridge if it has got an OF node
-> > >>> already).
-> > >>>
-> > >>> That code fails on GICv5, because the interrupt controller node does not
-> > >>> have a "reg" property (and AFAIU it does not have to - as a matter of
-> > >>> fact, INTx mapping works on GICv5 with the interrupt-map in the
-> > >>> host bridge node containing zeros in the parent unit interrupt
-> > >>> specifier #address-cells).
-> > >> Does GICv5 have 'interrupt-controller' but not 'interrupt-map'? I think
-> > >> of_irq_parse_raw will not check its parent in this case.
-> > > But that's not the problem. GICv5 does not have an interrupt-map,
-> > > the issue here is that GICv5 _is_ the parent and does not have
-> > > a "reg" property. Why does the code in [2] check the reg property
-> > > for the parent node while building the interrupt-map property for
-> > > the PCI bridge ?
-> >
-> > Based on the document, if #address-cells is not zero, it needs to get
-> > parent unit address. Maybe there is way to get the parent unit address
-> > other than read 'reg'?  Or maybe zero should be used as parent unit
-> > address if 'reg' does not exist?
-> >
-> > Rob, Could you give us some advise on this?
+On Tue, 12 Aug 2025 15:22:05 +0200,
+©erif Rami wrote:
 > 
-> If there's no 'reg', then 'ranges' parent address can be used. If
-> 'ranges' is boolean (i.e. 1:1), then shrug. Just use 0. Probably, 0
-> should just always be used because I don't think it ever matters.
-> 
-> From my read of the kernel's interrupt parsing code, only the original
-> device's node (i.e. the one with 'interrupts') address is ever used in
-> the parsing and matching. So the values in the parent's address cells
-> don't matter. If a subsequent 'interrupt-map' is the parent, then the
-> code would compare the original address with the parent's
-> interrupt-map entries (if not masked). That kind of seems wrong to me,
-> but also unlikely to ever occur if it hasn't already. And that code is
-> something I don't want to touch because we tend to break platforms
-> when we do. The addresses are intertwined with the interrupt
-> translating because interrupts used to be part of the buses (e.g ISA).
-> That hasn't been the case for any h/w in the last 20 years.
+> +/**
+> + * fpoInitPattern() - Generates a packet distribution pattern.
 
-If the parent address values don't matter I think we can just leave
-them as zeroes and be done with it (explaining why obviously).
+You forgot to correct the name here :)
 
-Something like this (with a big fat comment added summarizing this
-thread):
+> +int us144mkii_configure_device_for_rate(struct tascam_card *tascam, int rate)
+> +{
+> +	struct usb_device *dev = tascam->dev;
+> +
 
-Lizhi are you able to test it please at least to check it does not break
-anything before I make it a patch for the MLs ?
+Drop a blank line here.
 
-Any concerns ?
+> +	u8 *rate_payload_buf __free(kfree) = NULL;
 
--- >8 --
-diff --git i/drivers/pci/of_property.c w/drivers/pci/of_property.c
-index 506fcd507113..dd12691fe43c 100644
---- i/drivers/pci/of_property.c
-+++ w/drivers/pci/of_property.c
-@@ -279,13 +279,6 @@ static int of_pci_prop_intr_map(struct pci_dev *pdev, struct of_changeset *ocs,
- 			mapp++;
- 			*mapp = out_irq[i].np->phandle;
- 			mapp++;
--			if (addr_sz[i]) {
--				ret = of_property_read_u32_array(out_irq[i].np,
--								 "reg", mapp,
--								 addr_sz[i]);
--				if (ret)
--					goto failed;
--			}
- 			mapp += addr_sz[i];
- 			memcpy(mapp, out_irq[i].args,
- 			       out_irq[i].args_count * sizeof(u32));
+So you're using __free(kfree), then...
+
+
+> +	if (err < 0)
+> +		goto fail;
+> +
+> +	kfree(rate_payload_buf);
+
+You shouldn't use kfree(), otherwise it results in the double-free.
+
+> +	return 0;
+> +
+> +fail:
+> +	dev_err(&dev->dev,
+> +		"Device configuration failed at rate %d with error %d\n", rate,
+> +		err);
+> +	kfree(rate_payload_buf);
+
+Here, too.  Just drop kfree() calls, and that's the advantage of
+__free(kfree), after all.
+
+> +void playback_urb_complete(struct urb *urb)
+....
+> +	{
+> +		guard(spinlock_irqsave)(&tascam->lock);
+
+Use scoped_guard() instead.  I think a similar pattern is seen in a
+few other places in patches, too.
+
+
+thanks,
+
+Takashi
 
