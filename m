@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-767033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8349B24E32
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:52:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E5AEB24E38
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69F722A41DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEC97176FE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19C1287277;
-	Wed, 13 Aug 2025 15:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0B127FB3E;
+	Wed, 13 Aug 2025 15:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lTXqYtgr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F2hSx1rA"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2932A285C85;
-	Wed, 13 Aug 2025 15:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3D62777FC;
+	Wed, 13 Aug 2025 15:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099810; cv=none; b=ol6YlF/mMrLcEs//2z3kOEU0JJNI8Hy5LPp0KsCis7N1Azz7GZNLAAUmLUazOaTT/ZYmQM7vFSQtGnT+pQhy2jmHmUhxlBY5mHJ3Hqr8ifbwaMvYgKDlsV2k+6bRM+Z+iEyBn2L5kWkYGACtNihBKmpMjzyPUMHJUb1M8wVbEm8=
+	t=1755099827; cv=none; b=Th27lrXIH9lsYprByQnTkmxGQm0Mh8NgmdVoOKk7LPzVxVdF2aqwiDIs6UY8hv8g34PDSmjID2luUeEIQxUpUOb+qH5udO7FC7w0K50jxXL0rqosw8c4mHIPqC2KkHIDgCsJoKWqpjDRqgvEqpDYJhO8ob9QEX0+pzvdaHTgKno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099810; c=relaxed/simple;
-	bh=OCVS1nKCZktGk9eJd0qFRaW2McBTaTP8gAMmGlBkVBo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LieJ4hmV9+DrIap7ztfYjTMnsFW3WhEEQx0mAms5Ihh9NtSVw2kg+PZDnci0H/tGSUHi2wggVotohmjd2BbIIFtXHfug6jnRQkMH8Wt9oru1e/3TAvvtobEqM/avm8B0XoPayjYTjMT9WVm/1f27kGu023+VMwbEkKYI7+RZ3LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lTXqYtgr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C6E2C4CEEB;
-	Wed, 13 Aug 2025 15:43:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755099809;
-	bh=OCVS1nKCZktGk9eJd0qFRaW2McBTaTP8gAMmGlBkVBo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lTXqYtgrHymg/AgcfavetFeRIi6t1/wDE/vuxDqfjs4YOmWgeFk0hf74GfTDM95OC
-	 LQFw7XNNNJzDu0qor+FdRRSnYwqa2uxCq0dNYAHa/ypyIsHib/q43+7Ucnd5gEeHrc
-	 qUmFm79ztubtjOhtbbkfJFce0/P7FEFHn4l6NWdBgflJxuquSE1kk4ghkxvlpk/PVe
-	 BAPNkE4lvKncGYxeOSKktRFWmysZ+9C4aG8J+3VIRgxCwc9Zex4ApPTj/Zn/Zzy9D+
-	 sV7VjCPAYowhmmJkbskc2fnVfAnclYfGrxLKE8EIGE+U54UiwVwbnGfDRoMpGxEm4i
-	 67iAE+Zd+v2GQ==
-Date: Wed, 13 Aug 2025 10:43:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Hans Zhang <hans.zhang@cixtech.com>
-Cc: mpillai@cadence.com, cix-kernel-upstream@cixtech.com,
-	lpieralisi@kernel.org, bhelgaas@google.com,
-	devicetree@vger.kernel.org, conor+dt@kernel.org,
-	linux-pci@vger.kernel.org, mani@kernel.org, kw@linux.com,
-	kwilczynski@kernel.org, krzk+dt@kernel.org, fugang.duan@cixtech.com,
-	guoyin.chen@cixtech.com, peter.chen@cixtech.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 08/13] dt-bindings: PCI: Add CIX Sky1 PCIe Root
- Complex bindings
-Message-ID: <20250813154328.GA114155-robh@kernel.org>
-References: <20250813042331.1258272-1-hans.zhang@cixtech.com>
- <20250813042331.1258272-9-hans.zhang@cixtech.com>
- <175507391391.3310343.12670862270884103729.robh@kernel.org>
- <cb35dfbd-2fa4-4125-bd87-9f86405983eb@cixtech.com>
+	s=arc-20240116; t=1755099827; c=relaxed/simple;
+	bh=Yu2TGz0V7huH3B+dopXezRr84noOuCa0qaA8uSjwg3g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PYi/38q40dpDBGpmPXtC7qjlwjH9ZOXAG3uc/P+XMxm/rJazCOZZxKKSuiir02jC5709GFWD7kyhKUmw0zaCpWQ6nDdQtmZt7ZZUw+TRZwNVSGrY0WUlp/nQHNTBsMyBAQOWsNvNgifXUOwmuExLRUuM8+jXXlzU+EMX0AGmNOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F2hSx1rA; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2eb3726cso26942b3a.3;
+        Wed, 13 Aug 2025 08:43:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755099825; x=1755704625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kLJY9WChfSG8Mbw42w6HBv80pOousbyrGLdvMJa51U0=;
+        b=F2hSx1rAQkm72Yk4mP/GIq+1hmbR7FnghdWGLkrp6Z4hKF1TnYuWDaQXnOuj7DPlUn
+         cCo6dh0UscFFfJFkGfFzY3u0tOpLOs8QkTVFK70Bds4B5yxTWL2cAOdCLtwXuPTEt30D
+         2gKjCtcw7D2lmP3Y6JzNkLzL28aAdQ3CVfWrK2YlBrgXCIhr4/ScgfnXFHhJkXgJc3se
+         1/icTVMFWGWUs0ZtvyMmg/ZLTjmrmPBX5kZ6ITEttxO2SZz9/Fwl+1GtLAtXMVE2x0NM
+         IiHpj73Bvnc6d1HDmYyhkySFoHvvkdvPGVuqwciZeRZyM1PhCoHX+2lxo/xWqSyYxwsm
+         UnMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755099825; x=1755704625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kLJY9WChfSG8Mbw42w6HBv80pOousbyrGLdvMJa51U0=;
+        b=sNIgOWMmd8zuigY9PKCFjY0CMGGIIpg/L4QWHcpCeRwyNhYQsZiXSUqAKniEC2RKkh
+         MNSKkXmfw+GCmQnZhVsfb2lBk/5D6ndaefWNyVynZj6ZvjkQ7oBBWTHGRsNr7GdtHek5
+         GFWsC7sOZf8x1Ipg8qtPCf0ELYfrSNgX0uN0mjIL1JJsIYNPVewcPw7f8sNlfyaMZgK0
+         QtP/ZUoPkqT+MFcobOsaDYQXIUx/p5Xo1evbVIbeEqJCKDyd7yxICObemsyPejAp/qX8
+         +7yUwGNeoBLJkWLynyCvz++fH1cz7wsrO+9jis/yY6S37fCwNqLYb7UhFkQMUP63AfJ/
+         0KGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJB3Y8N/e1L+2V188lUn5oWkbPXTPVb3/tU2/Fv9Ce8NKvaezzKOm9eh4GkYj1xgL+SttfnwIrRucD9mk=@vger.kernel.org, AJvYcCVMkbUIHGldRKChtR6JQtSCV12dbpyHF5mU7kLSpa8EE7Ohv829QcRD9sl2xzXPH8lo35g9KYsHUQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgAn8k+4zB/uZWRgE3OuWDs0wIyYpAIR/ureVkUJ8pfe8DCm98
+	kmT8AXgiSVnsspgHQqrsR6cGzExfmezQhx2Ky6SOVJkFyHEgyw5J87mUlNj6uYxTEyzGWKrAKYH
+	U8OnT2EVURuQRPiCKYOkvlYuhwlpNcwGhHQ==
+X-Gm-Gg: ASbGncsXbrN+dDysvztyxR9xVdEubE3NaKFeHixshXjf6Qekvp0FYgwIwdv3fEZLfIZ
+	TApBy8RErptlKCEEPm2Wsav9fp0lhuTGlhFDZjDl5XThJK+Swv2NwcQ9Wo5/hKOD+nmEDuBHSFO
+	quOJ/NIoFX/zPn0s5uITSxL7fXvZNXgreP7XFHadHJx8nRoQnRc/Q/9XHRajb5FOZXMA9hfbYSQ
+	/ZbmHE=
+X-Google-Smtp-Source: AGHT+IF0tYy6+sdAda4bu4ePagsub7dBCKp7O9diUO7ecnaT2ixsWT94QXnnnmjcNqd3yM6qh1F2eCUhYa4CQOAkBws=
+X-Received: by 2002:a17:903:1b08:b0:234:a139:11fb with SMTP id
+ d9443c01a7336-2430d1f8072mr41150655ad.27.1755099824625; Wed, 13 Aug 2025
+ 08:43:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cb35dfbd-2fa4-4125-bd87-9f86405983eb@cixtech.com>
+References: <20250813100053.1291961-1-dsterba@suse.com>
+In-Reply-To: <20250813100053.1291961-1-dsterba@suse.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Wed, 13 Aug 2025 11:43:31 -0400
+X-Gm-Features: Ac12FXwGxLoVhTfBgkQj0xCO3LwjKiT_AVVp6j0dFtjbt_4ekDZCkBAOcErN92Q
+Message-ID: <CAEjxPJ75Nwb2AGbT2uDe1WACjxiL5hcg0q+WHfu1T3YFN2_UAg@mail.gmail.com>
+Subject: Re: [PATCH] docs: Remove remainders of reiserfs
+To: David Sterba <dsterba@suse.com>
+Cc: linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 05:12:57PM +0800, Hans Zhang wrote:
-> 
-> 
-> On 2025/8/13 16:31, Rob Herring (Arm) wrote:
-> > EXTERNAL EMAIL
-> > 
-> > On Wed, 13 Aug 2025 12:23:26 +0800, hans.zhang@cixtech.com wrote:
-> > > From: Hans Zhang <hans.zhang@cixtech.com>
-> > > 
-> > > Document the bindings for CIX Sky1 PCIe Controller configured in
-> > > root complex mode with five root port.
-> > > 
-> > > Supports 4 INTx, MSI and MSI-x interrupts from the ARM GICv3 controller.
-> > > 
-> > > Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
-> > > ---
-> > >   .../bindings/pci/cix,sky1-pcie-host.yaml      | 79 +++++++++++++++++++
-> > >   1 file changed, 79 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
-> > > 
-> > 
-> > My bot found errors running 'make dt_binding_check' on your patch:
-> > 
-> > yamllint warnings/errors:
-> > 
-> > dtschema/dtc warnings/errors:
-> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: /: 'compatible' is a required property
-> >          from schema $id: http://devicetree.org/schemas/root-node.yaml#
-> > /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: /: 'model' is a required property
-> >          from schema $id: http://devicetree.org/schemas/root-node.yaml#
-> > 
-> > doc reference errors (make refcheckdocs):
-> > 
-> > See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250813042331.1258272-9-hans.zhang@cixtech.com
-> > 
-> > The base for the series is generally the latest rc1. A different dependency
-> > should be noted in *this* patch.
-> > 
-> > If you already ran 'make dt_binding_check' and didn't see the above
-> > error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> > date:
-> > 
-> > pip3 install dtschema --upgrade
-> > 
-> > Please check and re-submit after running the above command yourself. Note
-> > that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> > your schema. However, it must be unset to test all examples with your schema.
-> > 
-> 
-> Dear Rob,
-> 
-> I'm very sorry. No errors were detected on my PC. I'll check my local
-> environment and fix this issue in the next version.
-> 
-> If I have done anything wrong, please remind me.
-> 
-> 
-> 
-> hans@hans:~/code/kernel_org/linux$ export CROSS_COMPILE=/home/hans/cix/bringup_master/tools/gcc/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
-> hans@hans:~/code/kernel_org/linux$ export ARCH=arm64
-> hans@hans:~/code/kernel_org/linux$ make dt_binding_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
->   SCHEMA  Documentation/devicetree/bindings/processed-schema.json
->   CHKDT   ./Documentation/devicetree/bindings
->   LINT    ./Documentation/devicetree/bindings
->   DTEX Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dts
->   DTC [C]
-> Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb
-> hans@hans:~/code/kernel_org/linux$ make W=1 dt_binding_check
-> DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+On Wed, Aug 13, 2025 at 6:04=E2=80=AFAM David Sterba <dsterba@suse.com> wro=
+te:
+>
+> Reiserfs has been removed in 6.13, there are still some mentions in the
+> documentation about it and the tools. Remove those that don't seem
+> relevant anymore but keep references to reiserfs' r5 hash used by some
+> code.
+>
+> There's one change in a script scripts/selinux/install_policy.sh but it
+> does not seem to be relevant either.
+>
+> Signed-off-by: David Sterba <dsterba@suse.com>
+> ---
 
-DT_SCHEMA_FILES limits testing to only the matching pattern. 
-Ultimately, you have to test without it.
+> diff --git a/scripts/selinux/install_policy.sh b/scripts/selinux/install_=
+policy.sh
+> index db40237e60ce7e..77368a73f11171 100755
+> --- a/scripts/selinux/install_policy.sh
+> +++ b/scripts/selinux/install_policy.sh
+> @@ -74,7 +74,7 @@ cd /etc/selinux/dummy/contexts/files
+>  $SF -F file_contexts /
+>
+>  mounts=3D`cat /proc/$$/mounts | \
+> -       grep -E "ext[234]|jfs|xfs|reiserfs|jffs2|gfs2|btrfs|f2fs|ocfs2" |=
+ \
+> +       grep -E "ext[234]|jfs|xfs|jffs2|gfs2|btrfs|f2fs|ocfs2" | \
+>         awk '{ print $2 '}`
+>  $SF -F file_contexts $mounts
+>
 
-Rob
+Just commenting on the selinux part, this entire list of filesystem
+types could likely be removed and replaced by just running "fixfiles
+relabel" instead, which on modern kernels (>=3D 2.6.30) will check for
+the "seclabel" option in /proc/self/mounts entries to determine which
+filesystems support security labeling.
 
