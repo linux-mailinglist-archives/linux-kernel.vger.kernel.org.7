@@ -1,114 +1,156 @@
-Return-Path: <linux-kernel+bounces-766206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3F8CB243C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E596B243C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A1F7685D47
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183706854BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0332D46D9;
-	Wed, 13 Aug 2025 08:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C432C158B;
+	Wed, 13 Aug 2025 08:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qvEVLffK"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVIkcAqV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84742C3268;
-	Wed, 13 Aug 2025 08:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D8D2D46B5
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755072526; cv=none; b=TrXBT+4rBMRhOfvdVmAZAecNQnZ86DO77g7MxFCb13aKlpiBoxcunZQlOkEPAB4tnB1MAy59S12BbfPaXLxGIPirmb87VXd452uLuJW+CYJYioWKMe0d9ywd+kAdBRz4QJNf8jzsSNftfAJBDSB4eJ6M/Uq7nJp5IuqY5sGOfxk=
+	t=1755072549; cv=none; b=r5BrGTjcToCX2S/IoM0m310yXXfiQNHOldZVpNiI0K8sciKo61uTpR2FyojuOfo3XkLUgweeDYNgtid15tCf3EqE0glpNH8XT1tUnYsEEWkOcYSdVzg+fJOexXyyiSByMhklCG8JHnPMz/qcP6/eSAIeHaqFClprovUX+qdcnfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755072526; c=relaxed/simple;
-	bh=vaucs20DHT6wlv+ARvrCLrPPPCeOCotKuM4lREnEwns=;
+	s=arc-20240116; t=1755072549; c=relaxed/simple;
+	bh=D4bJE6P03e+uFhDUw6XmDkecF0BUGB3Fvqqa4yo9gc0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1dV8+jZ+6fxLoAv+c7sRUH2Ha8d83ujT2TPebMTODocN2IW3/LYQt1dHVSPTab2i0NinRXq7TF/SvbaQ56lrj8/pxjMt1Usw/LJjtRt9HRJ86iO7+DsYUgrdBimjltCUfqTSlRCXeg9gmgUROgm1WwtkYecoD0YB2Jt3+5j5FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qvEVLffK; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=STLtWuYl5s2P41qz0wsBRnT+ZM/m5Vpc2FENZgMZYM4=; b=qvEVLffKos24IxnxmuxamMpweO
-	TKanjqAMhjo8IBa6Fe6bLuA5p4IrsHGKq10SOXBTdDURDywDcF7RK3lnxe7MQaAYIy0IV6+HyxJCo
-	3/9PXgkifhDrKsDiMmZQYMFip7QaJi5iwZFGh9OL8TDdGuJgHymkUUWvhKTATdxntxxWwLMvnP5a9
-	NDUt7j+cYV7TyBgwFTc10t3E8twhagmBxdhTJgDyaWWp1R6bVJfLNkiT7hmia86MjfSDk0Rt/DeKd
-	5bgTKV9nd0KIb2PIbe2+7WsWbmkJ/8Sg+OdQ1BZ1wmebaG2cj69OHagh3pzWkhcJemx1espaUmQuM
-	u9chcaMQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42636)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1um6XA-0006FB-1b;
-	Wed, 13 Aug 2025 09:08:32 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1um6X7-0005ai-2A;
-	Wed, 13 Aug 2025 09:08:29 +0100
-Date: Wed, 13 Aug 2025 09:08:29 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: mscc: report and configure in-band
- auto-negotiation for SGMII/QSGMII
-Message-ID: <aJxH_SJvte8BpFfa@shell.armlinux.org.uk>
-References: <20250813074454.63224-1-vladimir.oltean@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MaXMpk7OU96lhAarc+9YDs6N5NUn2gGW9J797TMmLDvya22OrNbzEniPVlV3yO20xHD48n1adW9UkhyqoO6SFc37Q+JKXmxygELNkBy0hCvLpr/5qfY8d7eifJmUGZap8/vZA5M/3r8IIffFcRWWgCHhHc6PhsCiXv6v3zv6SEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVIkcAqV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27DCDC4CEF1;
+	Wed, 13 Aug 2025 08:09:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755072548;
+	bh=D4bJE6P03e+uFhDUw6XmDkecF0BUGB3Fvqqa4yo9gc0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DVIkcAqV4K0miVwbj5IYu40KXxM7uDUzFKWos3OpzeT+hQ0psGJ1Byo993+3sRI8J
+	 NXh016HLBFtDl9HygPioxYjqouQeBYRAzvbaEhYTBC5G9Q4kH/StikPNlvTeqslYkY
+	 0X0uEapf5mKNt+8KyRd0TeotpqXbcnQAzcAmzAAOKfLNIsDUvvr9oA9DvThKYEA8Pv
+	 OSODJbNBsWvDmNTqnPqaTPt5TyNGY7BMjFiiJBoRme2LALAr1o/oCr9pXZ7jFQT+Ip
+	 t1f7yB69Mw+lBayniBUBHXx7RSIIrT68mnTtCFnfFTt6e71YGgpOfMQwG73anJgp9+
+	 H5nK/LJsNv7Mg==
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 6AF58F40066;
+	Wed, 13 Aug 2025 04:09:07 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Wed, 13 Aug 2025 04:09:07 -0400
+X-ME-Sender: <xms:I0icaDBL2KW65_N0lBYkcRVsvu4GGPxDYH-MauUdeusdDH_tKIYP7A>
+    <xme:I0icaD4LVn9htfOlPe1j3znj3QUrJh_SA08CdDUJ3c_NeHscnTK9fNMdU9D-d0WAK
+    5MPiGMA5lo1-QAqJ7g>
+X-ME-Received: <xmr:I0icaKL-vULmVlhmMQBbvnpf_umMo30IfttuOU4zEZlcaB5uDF3AeodXqKuX>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeejieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkefstddttddunecuhfhrohhmpefmihhrhihl
+    ucfuhhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtth
+    gvrhhnpedtieetueehudeluedvffeguedvfffgueehfeelueejhffhudegtdetfeeiledv
+    geenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkih
+    hrihhllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieeh
+    hedqvdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovh
+    drnhgrmhgvpdhnsggprhgtphhtthhopeefvddpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepshgvrghnjhgtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehrihgtkhdrph
+    drvggughgvtghomhgsvgesihhnthgvlhdrtghomhdprhgtphhtthhopehvrghnnhgrphhu
+    rhhvvgesghhoohhglhgvrdgtohhmpdhrtghpthhtoheptghhrghordhgrghosehinhhtvg
+    hlrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    sghpsegrlhhivghnkedruggvpdhrtghpthhtohepkhgrihdrhhhurghnghesihhnthgvlh
+    drtghomhdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthho
+    peihrghnrdihrdiihhgrohesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:I0icaPyxoqQ98Dlt1btIJm7FgOVMrhttz_1RHb6auAPMJZwyX1VXrQ>
+    <xmx:I0icaCHCtrDK_1K14tW3lnbfukGDp2yOmBOZEklWC6Iu7EG5wRHpIQ>
+    <xmx:I0icaHkaztaf_AmAcMbGogOkGJ7pnoexGEvFwQfe9xPVfxiV3EAbhQ>
+    <xmx:I0icaJGz_QDy5D7AE85BFgom4hIo-pVFqdU78-sfuHsoaR24rGoQpw>
+    <xmx:I0icaKw7lYYzBSrYJXR_FxTXznawLuniisUjDLtHgnOM1dnwFerMuQ5Q>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 13 Aug 2025 04:09:06 -0400 (EDT)
+Date: Wed, 13 Aug 2025 09:09:04 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Chao Gao <chao.gao@intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"bp@alien8.de" <bp@alien8.de>, Kai Huang <kai.huang@intel.com>, 
+	"mingo@redhat.com" <mingo@redhat.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>
+Subject: Re: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
+Message-ID: <sd5jir2s5vr2z7xetdatbffndtjx2f5qn2kixyuappals4mzi4@yfxzqg6eeuvm>
+References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
+ <d432b8b7cfc413001c743805787990fe0860e780.camel@intel.com>
+ <sjhioktjzegjmyuaisde7ui7lsrhnolx6yjmikhhwlxxfba5bh@ss6igliiimas>
+ <c2a62badf190717a251d269a6905872b01e8e340.camel@intel.com>
+ <aJqgosNUjrCfH_WN@google.com>
+ <CAGtprH9TX4s6jQTq0YbiohXs9jyHGOFvQTZD9ph8nELhxb3tgA@mail.gmail.com>
+ <itbtox4nck665paycb5kpu3k54bfzxavtvgrxwj26xlhqfarsu@tjlm2ddtuzp3>
+ <57755acf553c79d0b337736eb4d6295e61be722f.camel@intel.com>
+ <aJtolM_59M5xVxcY@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250813074454.63224-1-vladimir.oltean@nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJtolM_59M5xVxcY@google.com>
 
-On Wed, Aug 13, 2025 at 10:44:54AM +0300, Vladimir Oltean wrote:
-> The following Vitesse/Microsemi/Microchip PHYs, among those supported by
-> this driver, have the host interface configurable as SGMII or QSGMII:
-> - VSC8504
-> - VSC8514
-> - VSC8552
-> - VSC8562
-> - VSC8572
-> - VSC8574
-> - VSC8575
-> - VSC8582
-> - VSC8584
+On Tue, Aug 12, 2025 at 09:15:16AM -0700, Sean Christopherson wrote:
+> On Tue, Aug 12, 2025, Rick P Edgecombe wrote:
+> > On Tue, 2025-08-12 at 09:04 +0100, kas@kernel.org wrote:
+> > > > > E.g. for things like TDCS pages and to some extent non-leaf S-EPT
+> > > > > pages, on-demand PAMT management seems reasonable.  But for PAMTs that
+> > > > > are used to track guest-assigned memory, which is the vaaast majority
+> > > > > of PAMT memory, why not hook guest_memfd?
+> > > > 
+> > > > This seems fine for 4K page backing. But when TDX VMs have huge page
+> > > > backing, the vast majority of private memory memory wouldn't need PAMT
+> > > > allocation for 4K granularity.
+> > > > 
+> > > > IIUC guest_memfd allocation happening at 2M granularity doesn't
+> > > > necessarily translate to 2M mapping in guest EPT entries. If the DPAMT
+> > > > support is to be properly utilized for huge page backings, there is a
+> > > > value in not attaching PAMT allocation with guest_memfd allocation.
 > 
-> All these PHYs are documented to have bit 7 of "MAC SerDes PCS Control"
-> as "MAC SerDes ANEG enable".
+> I don't disagree, but the host needs to plan for the worst, especially since the
+> guest can effectively dictate the max page size of S-EPT mappings.  AFAIK, there
+> are no plans to support memory overcommit for TDX guests, so unless a deployment
+> wants to roll the dice and hope TDX guests will use hugepages for N% of their
+> memory, the host will want to reserve 0.4% of guest memory for PAMTs to ensure
+> it doesn't unintentionally DoS the guest with an OOM condition.
 > 
-> Out of these, I could test the VSC8514 quad PHY in QSGMII. This works
-> both with the in-band autoneg on and off, on the NXP LS1028A-RDB and
-> T1040-RDB boards.
+> Ditto for any use case that wants to support dirty logging (ugh), because dirty
+> logging will require demoting all of guest memory to 4KiB mappings.
 > 
-> Notably, the bit is sticky (survives soft resets), so giving Linux the
-> tools to read and modify this settings makes it robust to changes made
-> to it by previous boot layers (U-Boot).
+> > > Right.
+> > > 
+> > > It also requires special handling in many places in core-mm. Like, what
+> > > happens if THP in guest memfd got split. Who would allocate PAMT for it?
 > 
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> guest_memfd?  I don't see why core-mm would need to get involved.  And I definitely
+> don't see how handling page splits in guest_memfd would be more complicated than
+> handling them in KVM's MMU.
+> 
+> > > Migration will be more complicated too (when we get there).
+> 
+> Which type of migration?  Live migration or page migration?
 
-Looks sensible.
+Page migration.
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-
-Thanks!
+But I think after some reading, it can be manageable.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+  Kiryl Shutsemau / Kirill A. Shutemov
 
