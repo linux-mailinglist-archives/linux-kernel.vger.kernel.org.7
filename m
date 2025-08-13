@@ -1,225 +1,120 @@
-Return-Path: <linux-kernel+bounces-766050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C417BB241A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9941B2419F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A028188FF7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA3A1A20D03
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC942D6620;
-	Wed, 13 Aug 2025 06:33:17 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F592D641A;
+	Wed, 13 Aug 2025 06:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hJ0fiqxB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kSpRXcCN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1192D542F;
-	Wed, 13 Aug 2025 06:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53A82D59E5
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755066796; cv=none; b=SHfb1fh1Ossv8xPD2xgZzyWkGcAd/m3C6FYRJbMgIdJpN4gVKBawilIgb7TjWMZGVidKBXMSnJtXrJHAaTOAftsAQBWAmd51qd9lFoxE/21oEZ7wV0rU3lnrUxRjOAcl6FxLgQofbo5G7ylkrENoiHkuMT6JYio4X36bvhVTOQ0=
+	t=1755066796; cv=none; b=CtDir6Nr93twM3h3goPEQo9Dj9Nal5n+6dGpodHCWgxfOAqXcNZ0PHTr8mv5c5cQYrs39J9LoBu8ZiA1BbT5FKBMquGJhb7g7o/1DmVRM3v7JuEbPpELlDwGOwFLODUijlS2UFnGANljjmPfeKMFEs7hfWR+hFr0UoYdl4sauEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755066796; c=relaxed/simple;
-	bh=8gjWsXm0VlB8Wbugiu6rvJc3y4PeQEm4UtIZEPaOnlw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lriTe2julegY/4hzw5h1P8FEUe+c45IuchnAlmrYUpzK4cyd5HH29iygJnAYIPigiFOWHcNVcegXdis84es6bNneBDmJADGAbJuJnrQPcdrnEWGrQcLLJvxXS9P31Y2ue2fa4v9ainLBH9wC4Ck9zCaz+SgazVTGndfQfWnT+7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 13 Aug
- 2025 14:33:01 +0800
-Received: from mail.aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Wed, 13 Aug 2025 14:33:01 +0800
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
-	<andrew@codeconstruct.com.au>
-CC: Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Po-Yu
- Chuang <ratbert@faraday-tech.com>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<taoren@meta.com>, <bmc-sw2@aspeedtech.com>
-Subject: [net-next v2 4/4] net: ftgmac100: Add RGMII delay configuration for AST2600
-Date: Wed, 13 Aug 2025 14:33:01 +0800
-Message-ID: <20250813063301.338851-5-jacky_chou@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813063301.338851-1-jacky_chou@aspeedtech.com>
-References: <20250813063301.338851-1-jacky_chou@aspeedtech.com>
+	bh=55ZW5bke38OmBG0oc9mkB85Mz8oOmbQJs2DkHfThiJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kBUL1ePLs1e8Xib+7ZG2sky2HyhLZ3kjmam1vRhjKoWBqUSXl+8Qrqnyn9Lyou5rStsjDaVql9uuvm0nYP/P2hnqQt6mouQRNzZWFFJdQXl80ov5Mg91V3tBbmZW2Ij+E+hsqPAMt/PWnNF3W3kGLG+UUTaMM227ih3Nq2oHyb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hJ0fiqxB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kSpRXcCN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 13 Aug 2025 08:33:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755066793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1sKdF4g8Z9W+EtXDMssCPla5erR9/85cWMLD/uZGyTc=;
+	b=hJ0fiqxB0IgPvsMep9Xhr8cplfCzGvKGFa6cSysGnLhtfF2rKEWLYlPmpliwZglMNPH4HT
+	fi/80wDf3ga7vA46xJ1ADpVx2f4JPkRkZxOViSU1mjukEcDtPAsIfmr9HivR8Lqml7sHWl
+	Jbft2KH8YYwnu92RD2pJKEXimXc6ZOYihBTa1c5EB3ihI6vU3Govi5zsiaVq+2GB+C0yeu
+	Jn5eDvD7Hp7sFMlBYM2oSkm9dsSWNv+VLPhqAMD+/iGpQTrge5X0xW5eUOijf5hb+udb2W
+	xRdjrW3ciS085LELsi3I6vvawhltF23RH3noXSvxI329JXeNmb3ZK92u95Q7Og==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755066793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1sKdF4g8Z9W+EtXDMssCPla5erR9/85cWMLD/uZGyTc=;
+	b=kSpRXcCNsDxe30Sl8LJOMqfCVI1y1WubrTjIbuwBjTXYTXubEWltpnevdnOLHGbFbro2Yw
+	MBCcB+oftkhiX6Bw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
+ polling on PREEMPT_RT
+Message-ID: <20250813063311.33m0TDKl@linutronix.de>
+References: <20250812143930.22RBn5BW@linutronix.de>
+ <20250812145359.QMcaYh9g@linutronix.de>
+ <aJuYStGVBjyfVmZM@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aJuYStGVBjyfVmZM@slm.duckdns.org>
 
-In AST2600, the RGMII delay is configured in SCU register.
-The MAC0/1 and the MAC2/3 on AST2600 have different delay unit with
-their delay chain.
-These MACs all have the 32 stage to configure delay chain.
-      |Delay Unit|Delay Stage|TX Edge Stage|RX Edge Stage|
-------+----------+-----------+-------------+-------------+
-MAC0/1|     45 ps|        32 |           0 |           0 |
-------+----------+-----------+-------------+-------------+
-MAC2/3|    250 ps|        32 |           0 |          26 |
-------+----------+-----------+-------------+-------------+
-The RX edge stage of MAC2 and MAC3 are strating from 26.
-We calculate the delay stage from the rx-internal-delay-ps of MAC2/3 to
-add 26. If the stage is equel to or bigger than 32, the delay stage will
-be mask 0x1f to get the correct setting. The delay chain is like a ring
-for configuration.
-So, the rx-internal-delay-ps of MAC2/3 is 2000 ps, we will get the delay
-stage is 2.
+On 2025-08-12 09:38:50 [-1000], Tejun Heo wrote:
+> Hello,
+Hi Tejun,
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
- drivers/net/ethernet/faraday/ftgmac100.c | 86 ++++++++++++++++++++++++
- drivers/net/ethernet/faraday/ftgmac100.h | 12 ++++
- 2 files changed, 98 insertions(+)
+> On Tue, Aug 12, 2025 at 04:53:59PM +0200, Sebastian Andrzej Siewior wrote:
+> > Does the workqueue-BH code require the canceling from atomic context or
+> > was this just added because the API for BH and non-BH work items is the
+> > same and __cancel_work_sync() allows it?
+> > Could we avoid the busy-waiting for BH work items and rely on the
+> > wait_for_completion() below or do we need something similar to what I
+> > added here for the tasklet API?
+> 
+> The intention is to convert all BH users to workqueue-BH and remove BH
+> (that's what Linus wants and why workqueue-BH came to be), so the APIs
+> should be able to match up, I'm afraid. There were some attempts at pushing
+> the conversion but we've only made minimal progress. If you're looking at BH
+> users anyway and feel like it, please feel free to convert them.
 
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-index a98d5af3f9e3..02f49558bed8 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -25,6 +25,9 @@
- #include <linux/if_vlan.h>
- #include <linux/of_net.h>
- #include <linux/phy_fixed.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <linux/bitfield.h>
- #include <net/ip.h>
- #include <net/ncsi.h>
- 
-@@ -1812,6 +1815,86 @@ static bool ftgmac100_has_child_node(struct device_node *np, const char *name)
- 	return ret;
- }
- 
-+static void ftgmac100_set_internal_delay(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct regmap *scu;
-+	u32 rgmii_tx_delay;
-+	u32 rgmii_rx_delay;
-+	int dly_mask;
-+	int dly_reg;
-+	int id;
-+
-+	if (!(of_device_is_compatible(np, "aspeed,ast2600-mac01") ||
-+	      of_device_is_compatible(np, "aspeed,ast2600-mac23")))
-+		return;
-+
-+	/* If lack one of them, do not configure anything */
-+	if (of_property_read_u32(np, "tx-internal-delay-ps", &rgmii_tx_delay)) {
-+		dev_warn(&pdev->dev, "failed to get tx-internal-delay-ps\n");
-+		return;
-+	}
-+	if (of_property_read_u32(np, "rx-internal-delay-ps", &rgmii_rx_delay)) {
-+		dev_warn(&pdev->dev, "failed to get tx-internal-delay-ps\n");
-+		return;
-+	}
-+	id = of_alias_get_id(np, "ethernet");
-+	if (id < 0 || id > 3) {
-+		/* If lack alias or out of range, do not configure anything */
-+		dev_warn(&pdev->dev, "get wrong alise id %d\n", id);
-+		return;
-+	}
-+
-+	if (of_device_is_compatible(np, "aspeed,ast2600-mac01")) {
-+		dly_reg = AST2600_MAC01_CLK_DLY;
-+		if (rgmii_tx_delay > AST2600_MAC01_CLK_DLY_MAX) {
-+			dev_warn(&pdev->dev, "tx-internal-delay-ps %u is out of range\n",
-+				 rgmii_tx_delay);
-+			return;
-+		}
-+		if (rgmii_rx_delay > AST2600_MAC01_CLK_DLY_MAX) {
-+			dev_warn(&pdev->dev, "rx-internal-delay-ps %u is out of range\n",
-+				 rgmii_rx_delay);
-+			return;
-+		}
-+		rgmii_tx_delay /= AST2600_MAC01_CLK_DLY_UNIT;
-+		rgmii_rx_delay /= AST2600_MAC01_CLK_DLY_UNIT;
-+	} else if (of_device_is_compatible(np, "aspeed,ast2600-mac23")) {
-+		dly_reg = AST2600_MAC23_CLK_DLY;
-+		if (rgmii_tx_delay > AST2600_MAC23_CLK_DLY_MAX) {
-+			dev_warn(&pdev->dev, "tx-internal-delay-ps %u is out of range\n",
-+				 rgmii_tx_delay);
-+			return;
-+		}
-+		if (rgmii_rx_delay > AST2600_MAC23_CLK_DLY_MAX) {
-+			dev_warn(&pdev->dev, "rx-internal-delay-ps %u is out of range\n",
-+				 rgmii_rx_delay);
-+			return;
-+		}
-+		rgmii_tx_delay /= AST2600_MAC23_CLK_DLY_UNIT;
-+		/* The index of rx edge delay is started from 0x1a */
-+		rgmii_rx_delay = (0x1a + (rgmii_rx_delay / AST2600_MAC23_CLK_DLY_UNIT)) & 0x1f;
-+	}
-+
-+	if (id == 0 || id == 2) {
-+		dly_mask = ASPEED_MAC0_2_TX_DLY | ASPEED_MAC0_2_RX_DLY;
-+		rgmii_tx_delay = FIELD_PREP(ASPEED_MAC0_2_TX_DLY, rgmii_tx_delay);
-+		rgmii_rx_delay = FIELD_PREP(ASPEED_MAC0_2_RX_DLY, rgmii_rx_delay);
-+	} else {
-+		dly_mask = ASPEED_MAC1_3_TX_DLY | ASPEED_MAC1_3_RX_DLY;
-+		rgmii_tx_delay = FIELD_PREP(ASPEED_MAC1_3_TX_DLY, rgmii_tx_delay);
-+		rgmii_rx_delay = FIELD_PREP(ASPEED_MAC1_3_RX_DLY, rgmii_rx_delay);
-+	}
-+
-+	scu = syscon_regmap_lookup_by_phandle(np, "scu");
-+	if (IS_ERR(scu)) {
-+		dev_warn(&pdev->dev, "failed to map scu base");
-+		return;
-+	}
-+
-+	regmap_update_bits(scu, dly_reg, dly_mask, rgmii_tx_delay | rgmii_rx_delay);
-+}
-+
- static int ftgmac100_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
-@@ -1977,6 +2060,9 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 		if (of_device_is_compatible(np, "aspeed,ast2600-mac"))
- 			iowrite32(FTGMAC100_TM_DEFAULT,
- 				  priv->base + FTGMAC100_OFFSET_TM);
-+
-+		/* Configure RGMII delay if there are the corresponding compatibles */
-+		ftgmac100_set_internal_delay(pdev);
- 	}
- 
- 	/* Default ring sizes */
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.h b/drivers/net/ethernet/faraday/ftgmac100.h
-index 4968f6f0bdbc..a9f0f00ac784 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.h
-+++ b/drivers/net/ethernet/faraday/ftgmac100.h
-@@ -271,4 +271,16 @@ struct ftgmac100_rxdes {
- #define FTGMAC100_RXDES1_UDP_CHKSUM_ERR	(1 << 26)
- #define FTGMAC100_RXDES1_IP_CHKSUM_ERR	(1 << 27)
- 
-+/* Aspeed SCU */
-+#define AST2600_MAC01_CLK_DLY	0x340
-+#define AST2600_MAC23_CLK_DLY	0x350
-+#define AST2600_MAC01_CLK_DLY_MAX	1395	/* ps */
-+#define AST2600_MAC01_CLK_DLY_UNIT	45	/* ps */
-+#define AST2600_MAC23_CLK_DLY_MAX	7750	/* ps */
-+#define AST2600_MAC23_CLK_DLY_UNIT	250	/* ps */
-+#define ASPEED_MAC0_2_TX_DLY		GENMASK(5, 0)
-+#define ASPEED_MAC0_2_RX_DLY		GENMASK(17, 12)
-+#define ASPEED_MAC1_3_TX_DLY		GENMASK(11, 6)
-+#define ASPEED_MAC1_3_RX_DLY		GENMASK(23, 18)
-+
- #endif /* __FTGMAC100_H */
--- 
-2.43.0
+I understand this but I am talking about legacy users:
 
+| drivers/atm/eni.c:      tasklet_disable_in_atomic(&ENI_DEV(vcc->dev)->task);
+| drivers/net/wireless/ath/ath9k/beacon.c:        tasklet_disable_in_atomic(&sc->bcon_tasklet);
+| drivers/pci/controller/pci-hyperv.c:    tasklet_disable_in_atomic(&channel->callback_event);
+
+This is what is left. (There is also i915 but this is "special").
+So we are talking about establishing an API and behaviour for those here
+after we painfully managed converting everyone else away:
+
+| git grep 'tasklet_unlock_wait([^s]' | wc -l
+| 5
+| git grep 'tasklet_disable([^s]' | wc -l
+| 97
+| git grep 'tasklet_kill([^s]' | wc -l
+| 304
+
+While I think it could be possible with upstream's help to avoid the
+in-atomic bits for atk9k and hyperv I lost all hope ) for the ATM
+driver.
+
+> Thanks.
+
+Sebastian
 
