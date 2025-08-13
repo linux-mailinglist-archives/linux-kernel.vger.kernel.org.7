@@ -1,164 +1,78 @@
-Return-Path: <linux-kernel+bounces-767371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10794B25376
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:58:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D28CB25360
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1671C858FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:56:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15C1F9A1FC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538C8307ADC;
-	Wed, 13 Aug 2025 18:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB702FF16E;
+	Wed, 13 Aug 2025 18:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D+oSBxtp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdlaPt5O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AC7305E1E;
-	Wed, 13 Aug 2025 18:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD062C032E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 18:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755111340; cv=none; b=eNCqVohTHY29hE4gdrWI8sxoVRyybW2JKgWQuIXecAPy0ejjZLN/WLO2MDa6sSF9HKZ8Wr/bH0diyTZPPu4xJe5ZfD1tr0W4zp9X2o+s0Gm1Mbax2wLrK6ltr94o/nzrxI6wOSA20uEnlkRXAD9OhvqufMR+GrHSVJbngBzy3ic=
+	t=1755111324; cv=none; b=IjwA9UsjKQeSb9G9uaFPY5DCYm7szpiAbfJHmS5cNKa6SbfDkaCEHY3TweZoSpAmLt/GCpbgwod0BAXaYsZJkrKC2i2vWljAuQRzLrhdVJmi+oeVUj+nUCyGyPkWoicMUlzcEcwAUHIdTeRky6WI4cTHgQQtXLJWZwhG2/rW7ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755111340; c=relaxed/simple;
-	bh=ch/o4xVd8lIYnBl2yT/WfH6wbEpaFaYG6SCxK0C0vl8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gdXcQ7s8AALNv2JIeuKdHOWYiXv8D5qqlpu8JqownqWdEbFG92H+ftCs6F1hYA4xJCR81XfTgyyTFs3sWWUBl3R6xTLgGxbozjwXokZj6nygbXh6i+Dz6tiTSiqfHHf/3uqkQajMISuEmbhMjGc2e7Mcbc3GilLph/IFEK/BHAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D+oSBxtp; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755111339; x=1786647339;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ch/o4xVd8lIYnBl2yT/WfH6wbEpaFaYG6SCxK0C0vl8=;
-  b=D+oSBxtpGnjmYd+Xmm5RkDDjoMflcpaEBPuoWyXvkOpjUdR9VCB8Y7WY
-   YupZAR0WL0s8jBcj2LsJLeN3VMp5WPlPP0yxOuAfL74J1i2whbetNrncn
-   2sydmeI7EhHlI5qxsdgPcxQc2EKVNWR2GK9kSHIP9FprqympluQ0FhdcG
-   17eWQIQKosRfORlDSP5QPpsF7LsKRtDQyFAB3ZU2+vt9kS+mUic9jI7K1
-   vbQ9U+OJaggX64vHXYl9np8TaQRUWERmOgLPJejto/6+Vz+ZFm00iciav
-   VD/V6yoDAsuqyLQdi7bJMEhYe4CtZKBHvmj76J+D3a5gQJMT7Ig0rSqY3
-   w==;
-X-CSE-ConnectionGUID: 16Z5I1g/Qn2qgutRdSe1Tw==
-X-CSE-MsgGUID: UvKg+hZVSIC+7RXTOG4k9w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="56631248"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="56631248"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 11:55:35 -0700
-X-CSE-ConnectionGUID: 5McULt/1R8uzckTiEDCrKw==
-X-CSE-MsgGUID: qX/1ACUpQOaNhZoe4fa5yQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="170755040"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.16])
-  by fmviesa005.fm.intel.com with ESMTP; 13 Aug 2025 11:55:35 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	lukasz.luba@arm.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 5/5] thermal: intel: int340x: Add suspend and resume callbacks
-Date: Wed, 13 Aug 2025 11:55:30 -0700
-Message-ID: <20250813185530.635096-6-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250813185530.635096-1-srinivas.pandruvada@linux.intel.com>
-References: <20250813185530.635096-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1755111324; c=relaxed/simple;
+	bh=pTGCk3bS3OknouKmVzlKeIj5BTjrRJrgUL/s3EauJ3k=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=BiPMr1jdX4J1PZMpApFcLVMXn9340wyAa02JqFbTqTek9W7u0Ld2YZeNs3uEvv9thiFFdbXeC6GRMmztqeD7kr1HhLMQ9udur3Ofy845NwjSH6z0LP3n/A22Ompb+atc5TBrNh7ak4+EXcX+YfAahOAs3buTdzHcLtDmVQJ9B0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdlaPt5O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8179C4CEEB;
+	Wed, 13 Aug 2025 18:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755111323;
+	bh=pTGCk3bS3OknouKmVzlKeIj5BTjrRJrgUL/s3EauJ3k=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=tdlaPt5OM+sM5GH+5ANMMX4JoAc6fO0/98FtNY8di9SFHIoG8to71rvF2Gr25OQLh
+	 sVb8P4vGTALh8MWP6O/muLL/QcjNnOobOM6sUmkEGZNHjoYoaVB0759TRJcsHY775C
+	 w2ZVCrHVjFJ8QFqZerC5IO7niO31hsZ+rXEryhnl9g61r6eOAIEBPkl5sfkTU+OB19
+	 ua3Ov1h+97a7UyrV3sYBqcvCP3blNbkzEpqI7txSpvIggKnLyRSC3qFpnp9xztTBa0
+	 MiV25g10nuXBIKkmZSvWLbeFvSztNqdGVD1ur5xghogGoQV9t3SQTjEsdsqp6FKNsX
+	 8r3CW/e0GiRmQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id B3C4139D0C37;
+	Wed, 13 Aug 2025 18:55:36 +0000 (UTC)
+Subject: Re: [GIT PULL] erofs fixes for 6.17-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aJzUQt58S0ZEv0zn@debian>
+References: <aJzUQt58S0ZEv0zn@debian>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aJzUQt58S0ZEv0zn@debian>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.17-rc2-fixes
+X-PR-Tracked-Commit-Id: 0b96d9bed324a1c1b7d02bfb9596351ef178428d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: dfc0f6373094dd88e1eaf76c44f2ff01b65db851
+Message-Id: <175511133541.3709535.13181225643804638997.pr-tracker-bot@kernel.org>
+Date: Wed, 13 Aug 2025 18:55:35 +0000
+To: Gao Xiang <xiang@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>, Yuezhang Mo <Yuezhang.Mo@sony.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Junli Liu <liujunli@lixiang.com>, Chao Yu <chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-During system suspend callback save slider register and restore during
-resume callback.
+The pull request you sent on Thu, 14 Aug 2025 02:06:58 +0800:
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../int340x_thermal/processor_thermal_device.c    | 10 ++++++++++
- .../int340x_thermal/processor_thermal_device.h    |  2 ++
- .../processor_thermal_soc_slider.c                | 15 +++++++++++++++
- 3 files changed, 27 insertions(+)
+> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.17-rc2-fixes
 
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-index 4aea5c9baae9..a772c187bedb 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.c
-@@ -338,10 +338,17 @@ static int tcc_offset_save = -1;
- 
- int proc_thermal_suspend(struct device *dev)
- {
-+	struct proc_thermal_device *proc_dev;
-+
- 	tcc_offset_save = intel_tcc_get_offset(-1);
- 	if (tcc_offset_save < 0)
- 		dev_warn(dev, "failed to save offset (%d)\n", tcc_offset_save);
- 
-+	proc_dev = dev_get_drvdata(dev);
-+
-+	if (proc_dev->mmio_feature_mask & PROC_THERMAL_FEATURE_SOC_POWER_SLIDER)
-+		proc_thermal_soc_power_slider_suspend(proc_dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(proc_thermal_suspend);
-@@ -357,6 +364,9 @@ int proc_thermal_resume(struct device *dev)
- 	if (tcc_offset_save >= 0)
- 		intel_tcc_set_offset(-1, tcc_offset_save);
- 
-+	if (proc_dev->mmio_feature_mask & PROC_THERMAL_FEATURE_SOC_POWER_SLIDER)
-+		proc_thermal_soc_power_slider_resume(proc_dev);
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(proc_thermal_resume);
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-index ba3f64742f2f..30760475102f 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device.h
-@@ -130,5 +130,7 @@ int proc_thermal_ptc_add(struct pci_dev *pdev, struct proc_thermal_device *proc_
- void proc_thermal_ptc_remove(struct pci_dev *pdev);
- 
- int proc_thermal_soc_power_slider_add(struct pci_dev *pdev, struct proc_thermal_device *proc_priv);
-+void proc_thermal_soc_power_slider_suspend(struct proc_thermal_device *proc_priv);
-+void proc_thermal_soc_power_slider_resume(struct proc_thermal_device *proc_priv);
- 
- #endif
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.c
-index bd4ff26a488b..268bf9124d95 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_soc_slider.c
-@@ -248,6 +248,21 @@ int proc_thermal_soc_power_slider_add(struct pci_dev *pdev, struct proc_thermal_
- }
- EXPORT_SYMBOL_NS_GPL(proc_thermal_soc_power_slider_add, "INT340X_THERMAL");
- 
-+static u64 soc_slider_save;
-+
-+void proc_thermal_soc_power_slider_suspend(struct proc_thermal_device *proc_priv)
-+{
-+	soc_slider_save = readq(proc_priv->mmio_base + SOC_POWER_SLIDER_OFFSET);
-+
-+}
-+EXPORT_SYMBOL_NS_GPL(proc_thermal_soc_power_slider_suspend, "INT340X_THERMAL");
-+
-+void proc_thermal_soc_power_slider_resume(struct proc_thermal_device *proc_priv)
-+{
-+	writeq(soc_slider_save, proc_priv->mmio_base + SOC_POWER_SLIDER_OFFSET);
-+}
-+EXPORT_SYMBOL_NS_GPL(proc_thermal_soc_power_slider_resume, "INT340X_THERMAL");
-+
- MODULE_IMPORT_NS("INT340X_THERMAL");
- MODULE_LICENSE("GPL");
- MODULE_DESCRIPTION("Processor Thermal Power Slider Interface");
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/dfc0f6373094dd88e1eaf76c44f2ff01b65db851
+
+Thank you!
+
 -- 
-2.43.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
