@@ -1,171 +1,148 @@
-Return-Path: <linux-kernel+bounces-766729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F306BB24A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:22:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F87B24A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 623292A134C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:17:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2A83B1759
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9822E92A6;
-	Wed, 13 Aug 2025 13:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7107D8F58;
+	Wed, 13 Aug 2025 13:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZdA7pXl"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CbJPAx9a"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEA62A8C1;
-	Wed, 13 Aug 2025 13:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB21374040;
+	Wed, 13 Aug 2025 13:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090995; cv=none; b=fVH5m6lSAfSHVO/VB8eibTXMYLJsoR0GhR2xemsTYNlwFcpYK2R7oNJaAXFUor41+rtb/Q3R0VCi+Ela/9AogqY33W0HUL9rQPqyMz5xXznXrj0VM2ubKsl+7nWrBG+lCMkH/9OoIFebPfrshVAMmeIy/8tZneyz0k8VyWkgycc=
+	t=1755090940; cv=none; b=HlttxnzkgXNer0gsiTPIex2AtRz2pbzDNo4cfWuVCw+9PYQP7qYBMoVB60RJ9596Uy/tDpL1GyvFiiKu68wzEH/HHCQJqP+GjiZMD5h1NniECoTtZmucA3bF1ufLgl+UbZ2GhBBewvvubl1UxCJRJFRNXRy9omQAClSaYZofN9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090995; c=relaxed/simple;
-	bh=XXEWb42qJiWZo4Du0CRE6Yam0gPdSTS3/b8BYir1sbk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HiJQVgj11JkfKb6VqtS8setPhNAwMiaiGyx3yC3pr69nm7BAGBpDy6/gSBDulfjHHf8kUabeF2n+RgePqWuUXnQM1bYbsMdwnYbXUFSyT971emP+4bLwAvFFeNhl5qKC6OQ8poVQDVxRi8o/Mpl2r0/Rs9A1cWhNoz1ScmMK5xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZdA7pXl; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af93381a1d2so1032665166b.3;
-        Wed, 13 Aug 2025 06:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755090992; x=1755695792; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SewnEnAKmtNzuvxDsbzRVoc3jMFrgs3azT7RAG1IenM=;
-        b=LZdA7pXl18nFn4+aN+dUFIFu1avnx/gi8LlnzB17wX/SoTV07ZEBzo4jRsv6HsyIkR
-         TYXBYxzbNtaoWLl01fKCWjFdWNtazA9BdAM3gOBsAI8KkJflUD635+5QjjTc1MsgqlLD
-         xbfNvTyOeW5ob/FpW+IQ0rx09um+7B8O505YVOcoVBz6WBGysi/tARnv2JesE099/ZNo
-         ft2Mu4n2mOrQhbKm8k6wFa3PM6Aq4OAbiB0qeVx3BpSqQXTMTOght86Q2Aem7967uZjQ
-         ma1vsCaqVi4FCfkAz9MoLi4DigvaMKNeur1BPlEDZZbj2CjAbmuJXgOJ0Wk+i6jr8clW
-         EBSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755090992; x=1755695792;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SewnEnAKmtNzuvxDsbzRVoc3jMFrgs3azT7RAG1IenM=;
-        b=olnqnxnlhsqWTGramHW/dbb5SyfhCcbCZ5ZgneMv7h6COqWz3SaTWipkzb+pSb80pV
-         z3j9jvlJ/+fWe4a/Lfa6CFJP4z3wRyMFLRWAB2Hy0RP1f+HiOmxjcVbSjUbLAXFoAGvU
-         NNbrhzP+zvotBL7Abw4KOalojC6LagooFf1URI8Kb3wCI0PMmHVxTx8uDrWfJhaLzqSH
-         mfWei6rxR3SpJOdTyRJROblz5PFbs6knqympUc/vbCJ+rqc+wKk0s9ebyy7nz8acKinF
-         djRcQH9VPmjosSgPJipZBSBt4m5L0DH3QHFwQUQwMLZMLY6FNXkbNsLtHjAGYJEMtHMk
-         Zdzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDM5GAHygseUIWmfX1O/S3q57IHFif32Pz/3d12l7tHPEenIjPgwMB5PzaAu3sxqQ55AzXCwwcGk9lsA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsEqn7mkISjRK2qjtDGdXmd45YgZ/z+olkaTgTnlZa75J2iQOw
-	mzv7yIm1w7Qs/IH1RwA/5CmlC+goJl+Go1YSmBb12lgyM3PSbq61u5fcVYOnY7IXwUg=
-X-Gm-Gg: ASbGncuvNzQQVL5OmKA/TviNI5/HbZlbIKi7GVoyShk1m5a/PY0KBA6QCTDYME5E8Np
-	rYkUQze97GieVoqfSwTmlfSA6tJybZIZ2JTPsTJUovbj/hlfg1deae52isyA7vuh8uszuAWDo6F
-	xhoApDRMQ+/ZNbXS7nM3s/KP1egEjDiQhuR5qi8tp+NL64yoCpLqAyFnSrVjnR0XvLqrnLJao8S
-	ji62Fho3LW1EM6TnLA2C+YGz7O+uhDoX6SjwHtNdPf54xi7TH61rYvZB87qA9cGnoUq81eYPq1S
-	vpgVnQ8/VQmbDU0zKgvrST+a7k5CIH0wtatL4gJVpNtgo0vicgJfD3UETGypW09YGmFNyIqX+oZ
-	2eJrndo7jUJUKoRVvZU45klon5cQdqFtI1DYNSX+ax2LdI6Un/wqls9o3VO/+u4el/bnsOH/KGe
-	uF+ubQHg==
-X-Google-Smtp-Source: AGHT+IGdLD/mKtGs2SkWWjKvBnLfzmPtLtyxho1PiIq52Q6gLppnFZOBfW+IJASiduJuJkBjSpTDlA==
-X-Received: by 2002:a17:907:2d26:b0:af9:a2cb:f1a1 with SMTP id a640c23a62f3a-afca4dff3d1mr329785666b.38.1755090992256;
-        Wed, 13 Aug 2025 06:16:32 -0700 (PDT)
-Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e88desm2420481266b.71.2025.08.13.06.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 06:16:31 -0700 (PDT)
-From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-Subject: [PATCH v4 7/7] ALSA: usb-audio: Add infrastructure for TASCAM US-144MKII
-Date: Wed, 13 Aug 2025 15:15:18 +0200
-Message-Id: <20250813131518.18985-8-ramiserifpersia@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250813131518.18985-1-ramiserifpersia@gmail.com>
-References: <20250813131518.18985-1-ramiserifpersia@gmail.com>
+	s=arc-20240116; t=1755090940; c=relaxed/simple;
+	bh=bV71xf+f9QJOsVohDQLije+nacy+gxH0Wf4/5ROh5JU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h+sLfkRcjkbv2kz2WVRVFojl+lODSvXE0OIIEfnP6PG+8AJVpUBgFpVT8mmY90i0wLaO/69yw/2IBTJZrvifoMRqdJ9SdKiR5AKO5Yj4FUnckQW9tkH3ppGGxVdfKOyaYE/vvVI2A0YfqmgLQUlxyYox8rKaD/XYjBEguLzhfOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CbJPAx9a; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DDFWtc1705331;
+	Wed, 13 Aug 2025 08:15:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755090932;
+	bh=wOw2qc5uTTadm+FwJMr/jc3sueTsMi+eiVewiY1neSo=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=CbJPAx9ayLZOjdJf6yfzZo0UwzCQHJiQwhBoB8OjZtQ7JyEe55r6YOIVsjjZQcqw2
+	 Uf3oZ/cxo1bxKjRgETND4Uqjr41Nc0HsYxVspcI+c+0l4bku5Ybl9NhIZhjNZ0gXvT
+	 cjTXAOPlerOZxe9tr0pRXN9f7t6nwTGgthwqrs/c=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DDFWR31097033
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 13 Aug 2025 08:15:32 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
+ Aug 2025 08:15:31 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 13 Aug 2025 08:15:31 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DDFUfV2039114;
+	Wed, 13 Aug 2025 08:15:31 -0500
+Date: Wed, 13 Aug 2025 18:45:30 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Akashdeep Kaur <a-kaur@ti.com>
+CC: <vigneshr@ti.com>, <praneeth@ti.com>, <nm@ti.com>, <afd@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <vishalm@ti.com>, <sebin.francis@ti.com>
+Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62x-sk-common: Remove the
+ unused config from USB1_DRVVBUS
+Message-ID: <20250813131530.apibc4p6t2uo5bkr@lcpd911>
+References: <20250731115631.3263798-1-a-kaur@ti.com>
+ <20250731115631.3263798-3-a-kaur@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250731115631.3263798-3-a-kaur@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This commit adds Kconfig and Makefile entries for TASCAM US-144MKII
-USB audio/MIDI interface support. It includes the configuration option
-and links new driver files.
+On Jul 31, 2025 at 17:26:30 +0530, Akashdeep Kaur wrote:
+> After the SoC has entered the Deep Sleep mode, USB1 can be used to wakeup
 
-The Kconfig entry for US-144MKII is added. The Makefile is updated to
-compile new driver components.
+Just leaving my comments on the commit message here since 1st patch
+seems to be pretty much the same commit message.
 
-The US-122L driver's device ID table is adjusted to remove the US-144MKII
-entry, as it will now be handled by its dedicated driver.
+Let's reword this as --> Deep Sleep low power mode.
+Makes it a bit more clear.
 
-Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
----
- sound/usb/Kconfig        | 12 ++++++++++++
- sound/usb/usx2y/Makefile |  2 ++
- sound/usb/usx2y/us122l.c |  6 ------
- 3 files changed, 14 insertions(+), 6 deletions(-)
+> the SoC based on USB events triggered by USB devices. This requires that
+> the pin corresponding to the Type-A connector remains pulled up even after
+> the SoC has entered the Deep Sleep mode.
+> For that, either deep Sleep pullup can be selected or the pin can have the
 
-diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
-index 41c47301bc19..9b890abd96d3 100644
---- a/sound/usb/Kconfig
-+++ b/sound/usb/Kconfig
-@@ -117,6 +117,18 @@ config SND_USB_US122L
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called snd-usb-us122l.
- 
-+config SND_USB_US144MKII
-+	tristate "Tascam US-144MKII USB driver"
-+	depends on X86 || COMPILE_TEST
-+	select SND_RAWMIDI
-+	select SND_PCM
-+	help
-+	  Say Y here to include support for Tascam US-144MKII USB Audio/MIDI
-+	  interface.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called snd-usb-us144mkii.
-+
- config SND_USB_6FIRE
- 	tristate "TerraTec DMX 6Fire USB"
- 	select FW_LOADER
-diff --git a/sound/usb/usx2y/Makefile b/sound/usb/usx2y/Makefile
-index fc033aba03a4..9db87ae39ee9 100644
---- a/sound/usb/usx2y/Makefile
-+++ b/sound/usb/usx2y/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- snd-usb-usx2y-y := usbusx2y.o usX2Yhwdep.o usx2yhwdeppcm.o
- snd-usb-us122l-y := us122l.o
-+snd-usb-us144mkii-y := us144mkii.o us144mkii_pcm.o us144mkii_playback.o us144mkii_capture.o us144mkii_midi.o us144mkii_controls.o
- 
- obj-$(CONFIG_SND_USB_USX2Y) += snd-usb-usx2y.o
- obj-$(CONFIG_SND_USB_US122L) += snd-usb-us122l.o
-+obj-$(CONFIG_SND_USB_US144MKII) += snd-usb-us144mkii.o
-\ No newline at end of file
-diff --git a/sound/usb/usx2y/us122l.c b/sound/usb/usx2y/us122l.c
-index 2ace3ba46091..8dbbefe3e730 100644
---- a/sound/usb/usx2y/us122l.c
-+++ b/sound/usb/usx2y/us122l.c
-@@ -686,12 +686,6 @@ static const struct usb_device_id snd_us122l_usb_id_table[] = {
- 		.idVendor =	0x0644,
- 		.idProduct =	USB_ID_US122MKII
- 	},
--	{
--		.match_flags =	USB_DEVICE_ID_MATCH_DEVICE,
--		.idVendor =	0x0644,
--		.idProduct =	USB_ID_US144MKII,
--		.driver_info =	US122L_FLAG_US144
--	},
- 	{ /* terminator */ }
- };
- MODULE_DEVICE_TABLE(usb, snd_us122l_usb_id_table);
+Nit: Be consistent with either deep sleep, or Deep Sleep, don't mix case.
+Also, please can we talk here in terms of exactly which macros we're
+talking about? For eg. if deep sleep pullup == PIN_DS_PULLUD_ENABLE, then
+please mention that in a bracket or something for people who may not
+necessarily be aware of all these terms.
+
+
+> same configuration that it had when SoC was in active mode.
+> In order for deep sleep configuration to take effect, the deep sleep
+> control bit has to be enabled.
+
+Please talk with some references, because not everyone will be able to
+follow what we mean by deep sleep control bit/ deep sleep configuration.
+
+> Remove the deep sleep state configuration from USB1_DRVBUS pin as it is
+> anyways not taking effect (deep sleep control bit is not set).
+> 
+> This reverts commit 527f884d2d94981016e181dcbd4c4b5bf597c0ad.
+
+And so are you in conclusion saying that this patch is just unnecessary/
+useless? The bracket message feels to me that you are saying that if we set
+the deep sleep control bit this patch will start working as expected?
+Please can you clarify a bit on that end?
+
+> 
+> Signed-off-by: Akashdeep Kaur <a-kaur@ti.com>
+> ---
+>  arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+> index 13e1d36123d5..d3bed23134ca 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+> @@ -249,7 +249,7 @@ AM62X_IOPAD(0x12c, PIN_OUTPUT, 0) /* (AD19/V15) RGMII1_TX_CTL */
+>  
+>  	main_usb1_pins_default: main-usb1-default-pins {
+>  		pinctrl-single,pins = <
+> -			AM62X_IOPAD(0x0258, PIN_OUTPUT | PIN_DS_PULLUD_ENABLE | PIN_DS_PULL_UP, 0) /* (F18/E16) USB1_DRVVBUS */
+> +			AM62X_IOPAD(0x0258, PIN_OUTPUT, 0) /* (F18/E16) USB1_DRVVBUS */
+>  		>;
+>  	};
+>  
+
+Sorry for the long review on the commit message, but context feels like
+everything when it comes to small patches. Hence trying to make sure
+everyone understands what's being done here... :)
+
 -- 
-2.39.5
-
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
