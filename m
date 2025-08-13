@@ -1,614 +1,158 @@
-Return-Path: <linux-kernel+bounces-766643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA9EB24969
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:19:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B083AB24966
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F391BC4E97
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:18:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893995A3D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195C91D54E3;
-	Wed, 13 Aug 2025 12:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BF3185B67;
+	Wed, 13 Aug 2025 12:18:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gTtS2iPI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FodqAVTp"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C4C19ABC3
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A9C13A244
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:17:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755087448; cv=none; b=MNZZsK4BIPVT75lJqR8n+sRkwx7wIJ2W4mkUsjvATLweDO4Gd4uLmNdDQ6YIvBwUMoTrkDax4qbBeidsYwmZZQRCYqy4Q80LNZswR8ieI8trpzSEN0x/quwWpUwFBPbFzFE5e8p38TtdLDl13vtcssgBFG9fpnE75ZbFt/iXriw=
+	t=1755087479; cv=none; b=Hw0mnGB7OMVLG8cpVyfXGxLFggJwW796zsgszgx4B5c95xX2/Cd/OqsJhF8XuQ1KXzqPv8f0135w4XDDBXkp4OFHVzdHTryAhsIyDn8xamw4VLi3/hNr5ffTB3TJydJFSwjXDiA57Fb8KseHPNpNg7j1k29eXXeyO7xnDa2itgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755087448; c=relaxed/simple;
-	bh=AB3b/IJrnwByef2+fUJBem4P2v40DCn77/MIDvn5vAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PXDDKzHfZOjYdVBwI3l0ZMafhp3sVp4uM75bOKzC4VAl4mmK2ASrbEAvSjyf3HzN+QSTCE7vuGlW4GsohHUtFqZB+OrPKgIBEjQsGM/ODkm5hDK133lvu+51OaYtw/JXFSPCdx6+NvWSocA2veX/+HNdrqjD6AuCEarxP2uEhPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gTtS2iPI; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755087445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OJo43ARqBGKCJmg/KNKcWAfUf5mkCGD/7g4cQgmBAnA=;
-	b=gTtS2iPIKqnku7BZ+UiVGIJfM/n4orn47uoovU7E1qrgC6lqBfhC9/wwotU8EGEgpAumEe
-	cDhy7D5i+WPjfoYpga2N0ffBjNUAGJvPkSibiNb4WrP7S/OkEqT0U5NOADtrIdqHOquQkh
-	+sutOULC9Z7+kQ6BvLSx2TzIbM0Uz9k=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-Ei8cfAujPIu5PSFZAcsHFA-1; Wed,
- 13 Aug 2025 08:17:20 -0400
-X-MC-Unique: Ei8cfAujPIu5PSFZAcsHFA-1
-X-Mimecast-MFC-AGG-ID: Ei8cfAujPIu5PSFZAcsHFA_1755087438
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC0831956089;
-	Wed, 13 Aug 2025 12:17:17 +0000 (UTC)
-Received: from [10.45.224.146] (unknown [10.45.224.146])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 427BF1800280;
-	Wed, 13 Aug 2025 12:17:13 +0000 (UTC)
-Message-ID: <26fa02f7-c2e3-4890-887d-90aa2040d461@redhat.com>
-Date: Wed, 13 Aug 2025 14:17:11 +0200
+	s=arc-20240116; t=1755087479; c=relaxed/simple;
+	bh=1cH04e2Oc/QH+aCdf7w5ZRGldfu2U5FseIBrJdftp88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oFcjnw232sCRtsL1A4JeuKpv7xWfLxFelFu2CTZO+vRKI8X78r1dX/RMGSLVhhCx1Gmxj7kw9/pPaWIbZ7tzKLBICGs1m11zIE5ol1Sz+dNuqc353PwZMGcLVhJJxHLDM666qXvniIzy/ICgOAGSV3EoBxIuHtJp9TNGCA9cbYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FodqAVTp; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-556fd896c99so5512988e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755087476; x=1755692276; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1cH04e2Oc/QH+aCdf7w5ZRGldfu2U5FseIBrJdftp88=;
+        b=FodqAVTpFHPGgW7t+m1Ha//QDYdjOJpNPk0lRDsUhRyjGELC9645FP83xVvJ6HpCtr
+         j/VOcXa7Hd5RoXisuDYz/vuCs68CN+CY5v3pH4LqgqPkUeBZ8wsI7Zf0jWljPdcmy8Db
+         8uLmXiTiy84t/BYeptW6vPuGWah6HidhHBSE8yfbrJAVFzqJj7vK8fpViL1U+d/QpXYg
+         UHAZ2i4pqg+uE2U8xkiYvr7tE0pxbT0CiBjwG5TeWra65NL7cuFapLQ4Y7T9UCg7ktIn
+         hpDbT/gT28VGLLW3sgABCfXIEs6EpS3G+ZjLn4X/L4inlsTjVOXtOCrs5KlWZk+ZJwld
+         wK2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755087476; x=1755692276;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1cH04e2Oc/QH+aCdf7w5ZRGldfu2U5FseIBrJdftp88=;
+        b=c5TVsNiYarbFlwMGIMctB2QCsn0HLbLORR1BnG3f2XzNQ6hsKU0NsFXO8wwRTiaNVR
+         enwMlg72HVSZwQ/lgtmaJaP8Jiwv1dbNsN/6MQEtBU6MsVvSNvwL8V4orBlf5hpnyA0p
+         2epd7balgnxWh0jOqA/P7vI3W/1eaVLVyYK1ttTiLb0uVv6gxHeQ3DydRqXDTG5H0AZ/
+         j2yywMmWLq8DntVOMxPqG61a/pB8SYCgdKdnMR6cB72n98gTLs0EPZdUJKWnA/0pY4EU
+         TU6ObUS86KZ/l6yW2H2RmjRiIxdL604OihMVtHWsRlO5q5tklzLUd6rVf6r1akdmPol0
+         pCFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBwwMOqpXkghXCbemHQMPnDLhKa4J736s61ISAkXm9gco/ApL+mlQWr0Sk2Yw8FqGCDnU8101yZv8V9ec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWZWxEoInXf1ZAPKKA2V3/0NUXqwiBVYRcNjX59pahL3aiRjL8
+	Tp9wcZRpLCT9Lo3qeFWEfFdi8MJ8BiL5NfC1GFztTnTog9McSYJ2qAqZduj2+En9zoWLyDQwBXQ
+	h6a5RpvXChNqvSLWPXVObOYns1qNSW352Runvvqg/2w==
+X-Gm-Gg: ASbGnctrNaqCtWOTtqv3Vq4D6l/2CdksKxBNdFsWWCbSpcmo4VEdINFPMnUdis4Wv7A
+	3S48+6h28UbJ9B2zfUcfmQ3Da1xsOpUpm+1PfK0BWxhZF18AW00Vpz6ZdsRL2gCcEG/gyOjVFBD
+	CdfnynDX7HP5GhLCVktq215pxOsILCndaDK9yiaGQf9J5+/O5qEMjeMKI9g98M1ilYeKCmbW0U4
+	OW8UwN8r4TcvaQmL3c+CPxgGfRZ/UUc10qvNQk=
+X-Google-Smtp-Source: AGHT+IH3C9U0eYsCFvI8kkfdfssnyrzdUjfVfc6a15px5VWt6D8qUZOfCj6ffdEyh3jqcXWbSWrzSRsy9kJOIF/gB3k=
+X-Received: by 2002:a05:6512:238e:b0:55b:95a1:9734 with SMTP id
+ 2adb3069b0e04-55ce03827a5mr918796e87.26.1755087476045; Wed, 13 Aug 2025
+ 05:17:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/5] dpll: zl3073x: Add low-level flash
- functions
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
- Petr Oros <poros@redhat.com>
-References: <20250811144009.2408337-1-ivecera@redhat.com>
- <20250811144009.2408337-3-ivecera@redhat.com>
- <168315c3-48c2-40ca-be70-8967f65f1343@intel.com>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <168315c3-48c2-40ca-be70-8967f65f1343@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <6837249bddf358924e67566293944506206d2d62.1755076369.git.mazziesaccount@gmail.com>
+ <CAMRc=Mf75cangdeg7T4E0nAhJs_BTdLyCu6GcrCL8vJzzAkFWg@mail.gmail.com> <CAHp75VcY9JWGH3+HmmJQQtLLTLPvaZ1RJzmPZ1wFBM+gqRiTHw@mail.gmail.com>
+In-Reply-To: <CAHp75VcY9JWGH3+HmmJQQtLLTLPvaZ1RJzmPZ1wFBM+gqRiTHw@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 13 Aug 2025 14:17:44 +0200
+X-Gm-Features: Ac12FXyVAFRO6OystSFRGo57RJwsOc4Fo0dBwvlnVDvDepxqo_CYSYRRGPnekck
+Message-ID: <CAMRc=McL04Sk9YRmimKAALyuDJc75vSJJuZQGWOP87Jv=o7cyw@mail.gmail.com>
+Subject: Re: [PATCH] iio: adc: bd79124: Add GPIOLIB dependency
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+	Tobias Sperling <tobias.sperling@softing.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 13, 2025 at 12:07=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Wed, Aug 13, 2025 at 11:40=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.=
+pl> wrote:
+> > On Wed, 13 Aug 2025 11:16:06 +0200, Matti Vaittinen
+> > <mazziesaccount@gmail.com> said:
+> > > The bd79124 has ADC inputs which can be muxed to be GPIOs. The driver
+> > > supports this by registering a GPIO-chip for channels which aren't us=
+ed
+> > > as ADC.
+> > >
+> > > The Kconfig entry does not handle the dependency to GPIOLIB, which
+> > > causes errors:
+> > >
+> > > ERROR: modpost: "devm_gpiochip_add_data_with_key" [drivers/iio/adc/ro=
+hm-bd79124.ko] undefined!
+> > > ERROR: modpost: "gpiochip_get_data" [drivers/iio/adc/rohm-bd79124.ko]=
+ undefined!
+> > >
+> > > at linking phase if GPIOLIB is not configured to be used.
+> > >
+> > > Fix this by adding dependency to the GPIOLIB.
+>
+> ...
+>
+> > > I am somewhat curious why the failure occurs only at the linking phas=
+e?
+> > > Wouldn't it either be better to have these functions
+> > > devm_gpiochip_add_data_with_key() and gpiochip_get_data() only declar=
+ed
+> > > when the CONFIG_GPIOLIB is y/m, to get errors already during
+> > > compilation, or provide stubs?
+> >
+> > Providing stubs is not correct for sure - a GPIO provider must always p=
+ull
+> > in the relevant infrastructure over Kconfig.
+>
+> I disagree with this statement. The (provided) resource can be
+> optional and hence the stubs are a way to go.
+>
+> > As for the former: it seems it's
+> > a common pattern for the headers containing the "provider" part of the
+> > subystem API, you'd get the same issue with regulators or pinctrl.
+> >
+> > I don't have a good answer, I'd just apply this as it's not a common is=
+sue
+> > from what I can tell.
+>
+> If the GPIO functionality is optional (not the main one), the user
+> should be able to compile it conditionally, in such a case it's either
+> an ifdeffery in the code, or separate module with its own stubs.
+>
 
+Honestly, it makes much more sense to factor out that optional
+functionality into its own compilation unit that can be left out
+completely for !CONFIG_GPIOLIB with a single internal registration
+function being stubbed within the driver.
 
-On 12. 08. 25 12:29 dop., Przemek Kitszel wrote:
-> On 8/11/25 16:40, Ivan Vecera wrote:
->> To implement the devlink device flash functionality, the driver needs
->> to access both the device memory and the internal flash memory. The flash
->> memory is accessed using a device-specific program (called the flash
->> utility). This flash utility must be downloaded by the driver into
->> the device memory and then executed by the device CPU. Once running,
->> the flash utility provides a flash API to access the flash memory itself.
->>
->> During this operation, the normal functionality provided by the standard
->> firmware is not available. Therefore, the driver must ensure that DPLL
->> callbacks and monitoring functions are not executed during the flash
->> operation.
->>
->> Add all necessary functions for downloading the utility to device memory,
->> entering and exiting flash mode, and performing flash operations.
->>
->> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
->> ---
->> v2:
->> * extended 'comp_str' to 32 chars to avoid warnings related to snprintf
->> * added additional includes
->> ---
->>   drivers/dpll/zl3073x/Makefile  |   2 +-
->>   drivers/dpll/zl3073x/devlink.c |   9 +
->>   drivers/dpll/zl3073x/devlink.h |   3 +
->>   drivers/dpll/zl3073x/flash.c   | 684 +++++++++++++++++++++++++++++++++
->>   drivers/dpll/zl3073x/flash.h   |  29 ++
->>   drivers/dpll/zl3073x/regs.h    |  39 ++
->>   6 files changed, 765 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/dpll/zl3073x/flash.c
->>   create mode 100644 drivers/dpll/zl3073x/flash.h
-> 
-> 
->> +static int
->> +zl3073x_flash_download(struct zl3073x_dev *zldev, const char *component,
->> +               u32 addr, const void *data, size_t size,
->> +               struct netlink_ext_ack *extack)
->> +{
->> +#define CHECK_DELAY    5000 /* Check for interrupt each 5 seconds */
-> 
-> nit: please add ZL_ prefix
-
-Ack, will fix.
-
->> +    unsigned long timeout;
->> +    const void *ptr, *end;
->> +    int rc = 0;
->> +
->> +    dev_dbg(zldev->dev, "Downloading %zu bytes to device memory at 
->> 0x%0x\n",
->> +        size, addr);
->> +
->> +    timeout = jiffies + msecs_to_jiffies(CHECK_DELAY);
->> +
->> +    for (ptr = data, end = data + size; ptr < end; ptr += 4, addr += 
->> 4) {
->> +        /* Write current word to HW memory */
->> +        rc = zl3073x_write_hwreg(zldev, addr, *(const u32 *)ptr);
->> +        if (rc) {
->> +            ZL_FLASH_ERR_MSG(zldev, extack,
->> +                     "failed to write to memory at 0x%0x",
->> +                     addr);
->> +            return rc;
->> +        }
->> +
->> +        /* Check for pending interrupt each 5 seconds */
-> 
-> nit: comment seems too trivial (and ~repeats the above one)
-
-Ack, will remove
-
->> +        if (time_after(jiffies, timeout)) {
->> +            if (signal_pending(current)) {
->> +                ZL_FLASH_ERR_MSG(zldev, extack,
->> +                         "Flashing interrupted");
->> +                return -EINTR;
->> +            }
->> +
->> +            timeout = jiffies + msecs_to_jiffies(CHECK_DELAY);
->> +        }
->> +
->> +        /* Report status each 1 kB block */
->> +        if ((ptr - data) % 1024 == 0)
->> +            zl3073x_devlink_flash_notify(zldev, "Downloading image",
->> +                             component, ptr - data,
->> +                             size);
->> +    }
->> +
->> +    zl3073x_devlink_flash_notify(zldev, "Downloading image", component,
->> +                     ptr - data, size);
->> +
->> +    dev_dbg(zldev->dev, "%zu bytes downloaded to device memory\n", 
->> size);
->> +
->> +    return rc;
->> +}
->> +
-> 
-> 
->> +/**
->> + * zl3073x_flash_wait_ready - Check or wait for utility to be ready 
->> to flash
->> + * @zldev: zl3073x device structure
->> + * @timeout_ms: timeout for the waiting
->> + *
->> + * Return: 0 on success, <0 on error
->> + */
->> +static int
->> +zl3073x_flash_wait_ready(struct zl3073x_dev *zldev, unsigned int 
->> timeout_ms)
->> +{
->> +#define ZL_FLASH_POLL_DELAY_MS    100
->> +    unsigned long timeout;
->> +    int rc, i;
->> +
->> +    dev_dbg(zldev->dev, "Waiting for flashing to be ready\n");
->> +
->> +    timeout = jiffies + msecs_to_jiffies(timeout_ms);
-> 
-> this is duplicated in the loop init below
-
-Ack, will remove this dup.
-
->> +
->> +    for (i = 0, timeout = jiffies + msecs_to_jiffies(timeout_ms);
->> +         time_before(jiffies, timeout);
->> +         i++) {
->> +        u8 value;
->> +
->> +        /* Check for interrupt each 1s */
->> +        if (i > 9) {
->> +            if (signal_pending(current))
->> +                return -EINTR;
->> +            i = 0;
->> +        }
->> +
->> +        /* Read write_flash register value */
->> +        rc = zl3073x_read_u8(zldev, ZL_REG_WRITE_FLASH, &value);
->> +        if (rc)
->> +            return rc;
->> +
->> +        value = FIELD_GET(ZL_WRITE_FLASH_OP, value);
->> +
->> +        /* Check if the current operation was done */
->> +        if (value == ZL_WRITE_FLASH_OP_DONE)
->> +            return 0; /* Operation was successfully done */
->> +
->> +        msleep(ZL_FLASH_POLL_DELAY_MS);
-> 
-> nit: needless sleep in the very last iteration step
-> (a very minor issue with timeouts in range of minutes ;P)
-
-Yes, I would not take care of 100ms delay in a minute timeout.
-
->> +    }
->> +
->> +    return -ETIMEDOUT;
->> +}
->> +
->> +/**
->> + * zl3073x_flash_cmd_wait - Perform flash operation and wait for finish
->> + * @zldev: zl3073x device structure
->> + * @operation: operation to perform
->> + * @extack: netlink extack pointer to report errors
->> + *
->> + * Return: 0 on success, <0 on error
->> + */
->> +static int
->> +zl3073x_flash_cmd_wait(struct zl3073x_dev *zldev, u32 operation,
->> +               struct netlink_ext_ack *extack)
->> +{
->> +#define FLASH_PHASE1_TIMEOUT_MS 60000    /* up to 1 minute */
->> +#define FLASH_PHASE2_TIMEOUT_MS 120000    /* up to 2 minutes */
-> 
-> nit: missing prefixes
-
-Will fix
-
->> +    u8 value;
->> +    int rc;
->> +
->> +    dev_dbg(zldev->dev, "Sending flash command: 0x%x\n", operation);
->> +
->> +    /* Wait for access */
->> +    rc = zl3073x_flash_wait_ready(zldev, FLASH_PHASE1_TIMEOUT_MS);
->> +    if (rc)
->> +        return rc;
->> +
->> +    /* Issue the requested operation */
->> +    rc = zl3073x_read_u8(zldev, ZL_REG_WRITE_FLASH, &value);
->> +    if (rc)
->> +        return rc;
->> +
->> +    value &= ~ZL_WRITE_FLASH_OP;
->> +    value |= FIELD_PREP(ZL_WRITE_FLASH_OP, operation);
->> +
->> +    rc = zl3073x_write_u8(zldev, ZL_REG_WRITE_FLASH, value);
->> +    if (rc)
->> +        return rc;
->> +
->> +    /* Wait for command completion */
->> +    rc = zl3073x_flash_wait_ready(zldev, FLASH_PHASE2_TIMEOUT_MS);
->> +    if (rc)
->> +        return rc;
->> +
->> +    /* Check for utility errors */
->> +    return zl3073x_flash_error_check(zldev, extack);
->> +}
->> +
->> +/**
->> + * zl3073x_flash_get_sector_size - Get flash sector size
->> + * @zldev: zl3073x device structure
->> + * @sector_size: sector size returned by the function
->> + *
->> + * The function reads the flash sector size detected by flash utility 
->> and
->> + * stores it into @sector_size.
->> + *
->> + * Return: 0 on success, <0 on error
->> + */
->> +static int
->> +zl3073x_flash_get_sector_size(struct zl3073x_dev *zldev, size_t 
->> *sector_size)
->> +{
->> +    u8 flash_info;
->> +    int rc;
->> +
->> +    rc = zl3073x_read_u8(zldev, ZL_REG_FLASH_INFO, &flash_info);
->> +    if (rc)
->> +        return rc;
->> +
->> +    switch (FIELD_GET(ZL_FLASH_INFO_SECTOR_SIZE, flash_info)) {
->> +    case ZL_FLASH_INFO_SECTOR_4K:
->> +        *sector_size = 0x1000;
->> +        break;
->> +    case ZL_FLASH_INFO_SECTOR_64K:
->> +        *sector_size = 0x10000;
-> 
-> nit: up to you, but I would like to see SZ_64K instead
-> (and don't count zeroes), if so, SZ_4K for the above too
-
-Will fix.
-
->> +        break;
->> +    default:
->> +        rc = -EINVAL;
->> +        break;
->> +    }
->> +
->> +    return rc;
->> +}
->> +
->> +/**
->> + * zl3073x_flash_sectors - Flash sectors
->> + * @zldev: zl3073x device structure
->> + * @component: component name
->> + * @page: destination flash page
->> + * @addr: device memory address to load data
->> + * @data: pointer to data to be flashed
->> + * @size: size of data
->> + * @extack: netlink extack pointer to report errors
->> + *
->> + * The function flashes given @data with size of @size to the 
->> internal flash
->> + * memory block starting from page @page. The function uses sector flash
->> + * method and has to take into account the flash sector size reported by
->> + * flashing utility. Input data are spliced into blocks according this
->> + * sector size and each block is flashed separately.
->> + *
->> + * Return: 0 on success, <0 on error
->> + */
->> +int zl3073x_flash_sectors(struct zl3073x_dev *zldev, const char 
->> *component,
->> +              u32 page, u32 addr, const void *data, size_t size,
->> +              struct netlink_ext_ack *extack)
->> +{
->> +#define ZL_FLASH_MAX_BLOCK_SIZE    0x0001E000
->> +#define ZL_FLASH_PAGE_SIZE    256
->> +    size_t max_block_size, block_size, sector_size;
->> +    const void *ptr, *end;
->> +    int rc;
->> +
->> +    /* Get flash sector size */
->> +    rc = zl3073x_flash_get_sector_size(zldev, &sector_size);
->> +    if (rc) {
->> +        ZL_FLASH_ERR_MSG(zldev, extack,
->> +                 "Failed to get flash sector size");
->> +        return rc;
->> +    }
->> +
->> +    /* Determine max block size depending on sector size */
->> +    max_block_size = ALIGN_DOWN(ZL_FLASH_MAX_BLOCK_SIZE, sector_size);
->> +
->> +    for (ptr = data, end = data + size; ptr < end; ptr += block_size) {
-> 
-> block_size is uninitialized on the first loop iteration
-
-The block_size here is used after 1st loop iteration...
-> 
->> +        char comp_str[32];
->> +
->> +        block_size = min_t(size_t, max_block_size, end - ptr);
-
-...and it is initialized here.
-
->> +
->> +        /* Add suffix '-partN' if the requested component size is
->> +         * greater than max_block_size.
->> +         */
->> +        if (max_block_size < size)
->> +            snprintf(comp_str, sizeof(comp_str), "%s-part%zu",
->> +                 component, (ptr - data) / max_block_size + 1);
->> +        else
->> +            strscpy(comp_str, component);
->> +
->> +        /* Download block to device memory */
->> +        rc = zl3073x_flash_download(zldev, comp_str, addr, ptr,
->> +                        block_size, extack);
->> +        if (rc)
->> +            goto finish;
->> +
->> +        /* Set address to flash from */
->> +        rc = zl3073x_write_u32(zldev, ZL_REG_IMAGE_START_ADDR, addr);
->> +        if (rc)
->> +            goto finish;
->> +
->> +        /* Set size of block to flash */
->> +        rc = zl3073x_write_u32(zldev, ZL_REG_IMAGE_SIZE, block_size);
->> +        if (rc)
->> +            goto finish;
->> +
->> +        /* Set destination page to flash */
->> +        rc = zl3073x_write_u32(zldev, ZL_REG_FLASH_INDEX_WRITE, page);
->> +        if (rc)
->> +            goto finish;
->> +
->> +        /* Set filling pattern */
->> +        rc = zl3073x_write_u32(zldev, ZL_REG_FILL_PATTERN, U32_MAX);
->> +        if (rc)
->> +            goto finish;
->> +
->> +        zl3073x_devlink_flash_notify(zldev, "Flashing image", comp_str,
->> +                         0, 0);
->> +
->> +        dev_dbg(zldev->dev, "Flashing %zu bytes to page %u\n",
->> +            block_size, page);
->> +
->> +        /* Execute sectors flash operation */
->> +        rc = zl3073x_flash_cmd_wait(zldev, ZL_WRITE_FLASH_OP_SECTORS,
->> +                        extack);
->> +        if (rc)
->> +            goto finish;
->> +
->> +        /* Move to next page */
->> +        page += block_size / ZL_FLASH_PAGE_SIZE;
->> +    }
->> +
->> +finish:
->> +    zl3073x_devlink_flash_notify(zldev,
->> +                     rc ?  "Flashing failed" : "Flashing done",
->> +                     component, 0, 0);
->> +
->> +    return rc;
->> +}
->> +
->> +/**
->> + * zl3073x_flash_page - Flash page
->> + * @zldev: zl3073x device structure
->> + * @component: component name
->> + * @page: destination flash page
->> + * @addr: device memory address to load data
->> + * @data: pointer to data to be flashed
->> + * @size: size of data
->> + * @extack: netlink extack pointer to report errors
->> + *
->> + * The function flashes given @data with size of @size to the 
->> internal flash
->> + * memory block starting with page @page.
->> + *
->> + * Return: 0 on success, <0 on error
->> + */
->> +int zl3073x_flash_page(struct zl3073x_dev *zldev, const char *component,
->> +               u32 page, u32 addr, const void *data, size_t size,
->> +               struct netlink_ext_ack *extack)
->> +{
-> 
-> looks like a canditate to use zl3073x_flash_sectors(), or make
-> a higher-level helper that will do heavy-lifting for
-> zl3073x_flash_sectors() and zl3073x_flash_page()
-> (especially that you did such great job with low-level helpers)
-
-Will refactor the common code to separate function that will be called
-by both zl3073x_flash_page() and zl3073x_flash_sectors().
-
->> +    int rc;
->> +
->> +    /* Download component to device memory */
->> +    rc = zl3073x_flash_download(zldev, component, addr, data, size, 
->> extack);
->> +    if (rc)
->> +        goto finish;
->> +
->> +    /* Set address to flash from */
->> +    rc = zl3073x_write_u32(zldev, ZL_REG_IMAGE_START_ADDR, addr);
->> +    if (rc)
->> +        goto finish;
->> +
->> +    /* Set size of block to flash */
->> +    rc = zl3073x_write_u32(zldev, ZL_REG_IMAGE_SIZE, size);
->> +    if (rc)
->> +        goto finish;
->> +
->> +    /* Set destination page to flash */
->> +    rc = zl3073x_write_u32(zldev, ZL_REG_FLASH_INDEX_WRITE, page);
->> +    if (rc)
->> +        goto finish;
->> +
->> +    /* Set filling pattern */
->> +    rc = zl3073x_write_u32(zldev, ZL_REG_FILL_PATTERN, U32_MAX);
->> +    if (rc)
->> +        goto finish;
->> +
->> +    zl3073x_devlink_flash_notify(zldev, "Flashing image", component, 0,
->> +                     size);
->> +
->> +    /* Execute sectors flash operation */
->> +    rc = zl3073x_flash_cmd_wait(zldev, ZL_WRITE_FLASH_OP_PAGE, extack);
->> +    if (rc)
->> +        goto finish;
->> +
->> +    zl3073x_devlink_flash_notify(zldev, "Flashing image", component, 
->> size,
->> +                     size);
->> +
->> +finish:
->> +    zl3073x_devlink_flash_notify(zldev,
->> +                     rc ?  "Flashing failed" : "Flashing done",
->> +                     component, 0, 0);
->> +
->> +    return rc;
->> +}
-> 
-> 
->> +
->> +static int
->> +zl3073x_flash_host_ctrl_enable(struct zl3073x_dev *zldev)
->> +{
->> +    u8 host_ctrl;
->> +    int rc;
->> +
->> +    /* Read host control register */
->> +    rc = zl3073x_read_u8(zldev, ZL_REG_HOST_CONTROL, &host_ctrl);
->> +    if (rc)
->> +        return rc;
->> +
->> +    /* Enable host control */
->> +    host_ctrl &= ~ZL_HOST_CONTROL_ENABLE;
-> 
-> suspicious, as this line does nothing (in the context of the next one)
-
-Will remove.
-
->> +    host_ctrl |= ZL_HOST_CONTROL_ENABLE;
->> +
->> +    /* Update host control register */
->> +    return zl3073x_write_u8(zldev, ZL_REG_HOST_CONTROL, host_ctrl);
->> +}
->> +
->> +/**
->> + * zl3073x_flash_mode_enter - Switch the device to flash mode
->> + * @zldev: zl3073x device structure
->> + * @util_ptr: buffer with flash utility
->> + * @util_size: size of buffer with flash utility
->> + * @extack: netlink extack pointer to report errors
->> + *
->> + * The function prepares and switches the device into flash mode.
->> + *
->> + * The procedure:
->> + * 1) Stop device CPU by specific HW register sequence
->> + * 2) Download flash utility to device memory
->> + * 3) Resume device CPU by specific HW register sequence
->> + * 4) Check communication with flash utility
->> + * 5) Enable host control necessary to access flash API
->> + * 6) Check for potential error detected by the utility
->> + *
->> + * The API provided by normal firmware is not available in flash mode
->> + * so the caller has to ensure that this API is not used in this mode.
->> + *
->> + * After performing flash operation the caller should call
->> + * @zl3073x_flash_mode_leave to return back to normal operation.
->> + *
->> + * Return: 0 on success, <0 on error.
->> + */
->> +int zl3073x_flash_mode_enter(struct zl3073x_dev *zldev, const void 
->> *util_ptr,
->> +                 size_t util_size, struct netlink_ext_ack *extack)
->> +{
->> +    /* Sequence to be written prior utility download */
->> +    static const struct zl3073x_hwreg_seq_item pre_seq[] = {
->> +        HWREG_SEQ_ITEM(0x80000400, 1, BIT(0), 0),
->> +        HWREG_SEQ_ITEM(0x80206340, 1, BIT(4), 0),
->> +        HWREG_SEQ_ITEM(0x10000000, 1, BIT(2), 0),
->> +        HWREG_SEQ_ITEM(0x10000024, 0x00000001, U32_MAX, 0),
->> +        HWREG_SEQ_ITEM(0x10000020, 0x00000001, U32_MAX, 0),
->> +        HWREG_SEQ_ITEM(0x10000000, 1, BIT(10), 1000),
->> +    };
->> +    /* Sequence to be written after utility download */
->> +    static const struct zl3073x_hwreg_seq_item post_seq[] = {
->> +        HWREG_SEQ_ITEM(0x10400004, 0x000000C0, U32_MAX, 0),
->> +        HWREG_SEQ_ITEM(0x10400008, 0x00000000, U32_MAX, 0),
->> +        HWREG_SEQ_ITEM(0x10400010, 0x20000000, U32_MAX, 0),
->> +        HWREG_SEQ_ITEM(0x10400014, 0x20000004, U32_MAX, 0),
->> +        HWREG_SEQ_ITEM(0x10000000, 1, GENMASK(10, 9), 0),
->> +        HWREG_SEQ_ITEM(0x10000020, 0x00000000, U32_MAX, 0),
->> +        HWREG_SEQ_ITEM(0x10000000, 0, BIT(0), 1000),
->> +    };
-> very nice code
-> 
-
-Thanks for the review and advices.
-
-Ivan
-
+Bartosz
 
