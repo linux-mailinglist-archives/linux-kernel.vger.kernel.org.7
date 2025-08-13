@@ -1,77 +1,58 @@
-Return-Path: <linux-kernel+bounces-766064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C672B241D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:45:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96533B241D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7DED7A5D79
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E531F621C22
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D252D46B3;
-	Wed, 13 Aug 2025 06:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vt6VckGn"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B554B2D0C6C;
+	Wed, 13 Aug 2025 06:45:50 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89DF2D2397;
-	Wed, 13 Aug 2025 06:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D543B2C3240;
+	Wed, 13 Aug 2025 06:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755067487; cv=none; b=RzY8CcZHBdqH5x3KwZTb8S3DtNRPn6zJFsRr6xnQQpjMQ4X2maxuzhT8H9eAzIO1giOFFJz+y5OcrfBDFjgN8JrjTu1r+sQ3GxtYmUYk72PrR54y5A42GwI1tmZOiEmVePZdQSaxemKizJrI8R7b5AayzUZtp/MqzE09zeEFmGM=
+	t=1755067550; cv=none; b=JWHd2z6U17DVPbDEH/2u65j/TqsBAjqsYelHHFBuGccGybWQgW72zSwLDTNnvypUd45qN3nRdT82q01yihMqdb6Mo6N2Xz23ZP8obIkSJuuA67QSBtb6Bl2eweMOX6ukRDwIDNq7S8fC94ED4khgT0UxZ74xx7Sy7rWjkfN4BoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755067487; c=relaxed/simple;
-	bh=bquKFG0kbBHJUv82BQCZOUnkm2velApg2/ANEduHk8Y=;
+	s=arc-20240116; t=1755067550; c=relaxed/simple;
+	bh=X1iAxCzkC0UTn04Af07aTWJbu6jdxrV+7YWDNaiy9Eo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsBYi47RM2dIaJiEGr4coIsATYTSPfCVkQTIKylt3iFNdzgt8+AHJnJ3AKYd64SDqv3qWC43EHT5EK74zI8pzPyT+JvPs3qkQYJfm1AlGfQtkRLsGaWJm6qA30BDa076BoxpSMw6G+/qutpOlX1t3CG+MK2gQ+ECuM9VEjuzQBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vt6VckGn; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0SNIdZiTJR/nPW1SdNBX7/DJYyYBUtTTIadH/4Y1HCg=; b=vt6VckGnfO/bRRiyFxmXG9ogQn
-	sU3C5xi4iIp5tuRc34S9kxl5tNaRl9AtTgEm+7SWGAGEbW4/p/dK1U9ns6ca+6XQpjKnsL6WwqfPv
-	IiWYMQMqYj6y3NQs1sn1zJub+2HYiOP4yyFS8U9o0DSMHmZUwO0/Xd42zILkkvfEL7P/0vayh8GHw
-	tQcul4hTNmy+uZj/vdV/WA6o58XjgJCGKYJTITnQenOcJRPIwOFEIqfpTy/8WEpgr1Hp+0+EilJ92
-	68d+GTcpetaDTVjn8KbX7NpVPzyNwIFk0u7npkiQcDSDEbOy7Xsl3S+yIvv1gjeukl5q9naab7Bqn
-	xPYjpGFw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1um5Dr-00000006iOl-1FbN;
-	Wed, 13 Aug 2025 06:44:31 +0000
-Date: Wed, 13 Aug 2025 07:44:31 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Steve French <sfrench@samba.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] VFS: use global wait-queue table for
- d_alloc_parallel()
-Message-ID: <20250813064431.GF222315@ZenIV>
-References: <20250812235228.3072318-1-neil@brown.name>
- <20250812235228.3072318-10-neil@brown.name>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lHE9ZB9qDYrF6iE3+PIpDaq4ouZ6ZhTiQS7A5Ij9h/ZXnSLWYJoX/MtzIyA7TEYuGZ8mzsjuBngGgaYJKhYPmWOmb6rp8qrrTQNB7U89AEivQtepz5zBGsESMYW3kmrm7PYCuva6LWu1byNghiG0oRP4djX+2zj0j0Me62QTZ4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz11t1755067483t4b22c6e6
+X-QQ-Originating-IP: atNYv484Sc0LnNQn6B0BdZHBN2Wh7P8+LL0ZD0kuURs=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 13 Aug 2025 14:44:41 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1883357001402126137
+Date: Wed, 13 Aug 2025 14:44:41 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: "Anwar, Md Danish" <a0501179@ti.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] net: rnpgbe: Add build support for rnpgbe
+Message-ID: <F9D5358C994A229C+20250813064441.GB944516@nic-Precision-5820-Tower>
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-2-dong100@mucse.com>
+ <5528c38b-0405-4d3b-924a-2bed769f314d@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,109 +61,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250812235228.3072318-10-neil@brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <5528c38b-0405-4d3b-924a-2bed769f314d@ti.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NKfj2Wq2UxkCMsCw1IBd6tlCIxUPVXwDv1tSRFqaAx+AuSu4aeRiHTLO
+	J37q4RFSY3pW8o0D9ZD3VgwRafPrmSGTZJ2ZY75mJ/QY7JGdglOICIBEbtdW1ZfJdv0tE9P
+	9O1meq9FBi7nPc8Uu5jSJwZ6XvDic7tCXK+Fu4pCBadEF51xQzaTA2ttT/tdYabkaAtKanV
+	Wwfs8Cw7XBYEYi/X7L3j/gmFOA3JYMbF8cHtUZInOT4DkM0ddAvaoJjFT0+oR3S7WH/tZd5
+	OvbkCXcEx7TrRCVBkEMJnDZtIYYHCB6SWIPSjnkbTGgHfs97GfEutV+T1RJHDPJNUa4PSq4
+	l2bSCure1YnhNkOxBGDJLm+EeMskP0A7fzxR8P/jpDMpsaJ+LwG5q4x977DR0HHsv7uUPh4
+	3MNBgaozP3fux7eciJVbSfy71fitFbYRe6MTLsiNc2NChpzoFcA5CxSHz+Qp0tPT8J6r3kQ
+	zsjEIQLzzA81DVMlsi4MADumrjrkXo3RtnULmmyQKmusPb5JnqpASwtbRDknOZIyKwm3joQ
+	7h56u5R5C6dXsEXYTUtcIELz0MrXufiXHnRJcr4hCNCHBkJvI5uOqf/OBrOzszFwy3h+BOF
+	91HYrvh9+AH94rpJ816Tzse67cRaE2SQYX+fbL84FmwRaSTyWSw7zQw9qwKWHTTuYvSgXUl
+	i8nqjzUhZCxZGCRtMRxFQr0TNXIwMQDHD/oYLdK0gqh5kkzb/yzJoxasdWJ+H3lCvS+JN7k
+	tsP3kwOGAvjXvu9EjFDXoeduAEGK0Gc44ykCsckq+gpJAg8N+hMJczhSyGsRK5+OUa4xm9E
+	M8oVbHuvyTn9pgZS2k9j5LG6Xt7OUhQrRBb1ndmpzyqhTpeLNMrNX5kcBJ5LOngu4BHJEap
+	tSBBFCHkpVwR4pXMPV0YefqXmDvK/mtXh/sLOOD7dFsj9zb3qv5o6XWpxhssV9/AWrhsS1a
+	QQDuQQn7B449tiiczyMYvPETsItYSyk4n6Utb5jwGZINmSvnbFo+FcuLPejMgpbXYxmdvnC
+	s2NmQL8w==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Aug 12, 2025 at 12:25:12PM +1000, NeilBrown wrote:
+On Tue, Aug 12, 2025 at 09:48:07PM +0530, Anwar, Md Danish wrote:
+> On 8/12/2025 3:09 PM, Dong Yibo wrote:
+> > Add build options and doc for mucse.
+> > Initialize pci device access for MUCSE devices.
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
+> > ---
+> >  .../device_drivers/ethernet/index.rst         |   1 +
+> >  .../device_drivers/ethernet/mucse/rnpgbe.rst  |  21 +++
+> >  MAINTAINERS                                   |   8 +
+> >  drivers/net/ethernet/Kconfig                  |   1 +
+> >  drivers/net/ethernet/Makefile                 |   1 +
+> >  drivers/net/ethernet/mucse/Kconfig            |  34 ++++
+> >  drivers/net/ethernet/mucse/Makefile           |   7 +
+> >  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   8 +
+> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  25 +++
+> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 161 ++++++++++++++++++
+> >  10 files changed, 267 insertions(+)
+> >  create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+> >  create mode 100644 drivers/net/ethernet/mucse/Kconfig
+> >  create mode 100644 drivers/net/ethernet/mucse/Makefile
+> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
+> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> 
+> [ ... ]
+> 
+> > + **/
+> > +static int __init rnpgbe_init_module(void)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = pci_register_driver(&rnpgbe_driver);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return 0;
+> > +}
+> 
+> Unnecessary code - can be simplified to just `return
+> pci_register_driver(&rnpgbe_driver);`
+> 
 
-> +** mandatory**
-> +
-> +d_alloc_parallel() no longer requires a waitqueue_head.  It uses one
-> +from an internal table when needed.
+Yes, but if I add some new codes which need some free after
+pci_register_driver failed, the new patch will be like this:
 
-Misleading, IMO - that sounds like "giving it a wq is optional, it will
-pick one if needed" when reality is "calling conventions have changed,
-no more passing it a waitqueue at all".
+-return pci_register_driver(&rnpgbe_driver);
++int ret:
++wq = create_singlethread_workqueue(rnpgbe_driver_name);
++ret = pci_register_driver(&rnpgbe_driver);
++if (ret) {
++	destroy_workqueue(wq);
++	return ret;
++}
++return 0;
 
-> +#define	PAR_LOOKUP_WQ_BITS	8
-> +#define PAR_LOOKUP_WQS (1 << PAR_LOOKUP_WQ_BITS)
-> +static wait_queue_head_t par_wait_table[PAR_LOOKUP_WQS] __cacheline_aligned;
+Is this ok? Maybe not good to delete code for adding new feature?
+This is what Andrew suggested not to do.
 
-I wonder how hot these cachelines will be...
+> > +
+> > +module_init(rnpgbe_init_module);
+> > +
+> > +/**
+> > + * rnpgbe_exit_module - Driver remove routine
+> > + *
+> > + * rnpgbe_exit_module is called when driver is removed
+> > + **/
+> > +static void __exit rnpgbe_exit_module(void)
+> > +{
+> > +	pci_unregister_driver(&rnpgbe_driver);
+> > +}
+> > +
+> > +module_exit(rnpgbe_exit_module);
+> > +
+> > +MODULE_DEVICE_TABLE(pci, rnpgbe_pci_tbl);
+> > +MODULE_AUTHOR("Mucse Corporation, <techsupport@mucse.com>");
+> > +MODULE_DESCRIPTION("Mucse(R) 1 Gigabit PCI Express Network Driver");
+> > +MODULE_LICENSE("GPL");
+> 
+> -- 
+> Thanks and Regards,
+> Md Danish Anwar
+> 
+> 
 
-> +static int __init par_wait_init(void)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < PAR_LOOKUP_WQS; i++)
-> +		init_waitqueue_head(&par_wait_table[i]);
-> +	return 0;
-> +}
-> +fs_initcall(par_wait_init);
-
-Let's not open _that_ can of worms; just call it from dcache_init().
-
-> +static inline void d_wake_waiters(struct wait_queue_head *d_wait,
-> +				  struct dentry *dentry)
-> +{
-> +	/* ->d_wait is only set if some thread is actually waiting.
-> +	 * If we find it is NULL - the common case - then there was no
-> +	 * contention and there are no waiters to be woken.
-> +	 */
-> +	if (d_wait)
-> +		__wake_up(d_wait, TASK_NORMAL, 0, dentry);
-
-Might be worth a note re "this is wake_up_all(), except that key is dentry
-rather than NULL" - or a helper in wait.h to that effect, for that matter.
-I see several other places where we have the same thing (do_notify_pidfd(),
-nfs4_callback_notify_lock(), etc.), so...
-
-
-> +		struct wait_queue_head *wq;
-> +		if (!dentry->d_wait)
-> +			dentry->d_wait = &par_wait_table[hash_ptr(dentry,
-> +								  PAR_LOOKUP_WQ_BITS)];
-> +		wq = dentry->d_wait;
-
-Yecchhh...  Cosmetic change: take
-	&par_wait_table[hash_ptr(dentry, PAR_LOOKUP_WQ_BITS)];
-into an inlined helper, please.
-
-BTW, while we are at it - one change I have for that function is
-(in the current form)
-static bool d_wait_lookup(struct dentry *dentry,
-			  struct dentry *parent,
-			  const struct qstr *name)
-{
-	bool valid = true;
-	spin_lock(&dentry->d_lock);
-        if (d_in_lookup(dentry)) {
-		DECLARE_WAITQUEUE(wait, current);
-		add_wait_queue(dentry->d_wait, &wait);
-		do {   
-			set_current_state(TASK_UNINTERRUPTIBLE);
-			spin_unlock(&dentry->d_lock);
-			schedule();
-			spin_lock(&dentry->d_lock);
-		} while (d_in_lookup(dentry));
-	}
-	/*
-	 * it's not in-lookup anymore; in principle the caller should repeat
-	 * everything from dcache lookup, but it's likely to be what
-	 * d_lookup() would've found anyway.  If so, they can use it as-is.
-	 */
-	if (unlikely(dentry->d_name.hash != name->hash ||
-		     dentry->d_parent != parent ||
-		     d_unhashed(dentry) ||
-		     !d_same_name(dentry, parent, name)))
-		valid = false;
-	spin_unlock(&dentry->d_lock);
-	return valid;
-}
-
-with
-	if (unlikely(d_wait_lookup(dentry, parent, name))) {
-                dput(dentry);
-		goto retry;
-	}
-	dput(new);
-	return dentry;
-in the caller (d_alloc_parallel()).  Caller easier to follow and fewer functions
-that are not neutral wrt ->d_lock...  I'm not suggesting to fold that with
-yours - just a heads-up on needing to coordinate.
-
-Anyway, modulo fs_initcall() thing it's all cosmetical; I certainly like
-the simplified callers, if nothing else.
-
-That's another patch I'd like to see pulled in front of the queue.
+Thanks for your feedback.
 
