@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-766013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE14B24140
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:17:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DACEB24143
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E5A189053B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:18:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD5B17B6982
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690452C1591;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00942C3244;
 	Wed, 13 Aug 2025 06:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wYMVt9FF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V08Gn3Bk"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f1CThKoQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+pa+McNR"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74BA02BE7C6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EA126ACC;
 	Wed, 13 Aug 2025 06:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755065854; cv=none; b=J4a3urD6ANtX/C1E16zTKp/AppKr/1hG/fWBPiZMGxb0b8HIMQth87KIMveidssYg59SCKedDgejm1/kzVd7U9TiDGrfyWGumWOvS+sFda+8XuiXBoIiAvoHKFbteOghsrRLdowWQ9PRiZCrcxK9/3ifToweaDnNJdjVTT7AU7o=
+	t=1755065855; cv=none; b=S7C3wg3MoKblY3oi5D75Cic1VR8KwGc02YjC0EtZQO8nW4FN4qukBnhYMvoNxx9MPW/gXDIYaxzppogSa6/7ljk9PSJG/VIZy0i3s/rnNKjiaYYinkIN1kSuzY0MUkbtKIJ4MIWsx46oLUorhWmwLOUWHtMH8fXJ6JrfxlT3CGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755065854; c=relaxed/simple;
-	bh=QfpgJxt4vVfX9D+LMcaeR3KA7o8uXixB0e3tRfRG5Zc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nlFOaFBOdpQsVDdvIgfkdeiJ4c6xzH1+bE5HKKnkLQ5ZJNb7bquuULIpbqQSGPFZ2Ytkz6VyOSP+aXdvB3kXmsxNLI8ZUFudECrlYxhCPBr0Qd21Qoel4K5h8Zl2vueOWLCmPTIt5Bum2JQwGGHlrGVs2Ha0FwtIHRUOfpYfyLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wYMVt9FF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V08Gn3Bk; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1755065855; c=relaxed/simple;
+	bh=Yzg7dfy7CQAoGxLwFJjO21Ljc6p003nQfc1CW+UxjyQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=m5jr39maF2wcBrO2vg2CkZk71jtUEXTj3UbmAef1iLmxbJObYZ7FNm3rcw8Mn+ores1oRzjtIQ/Yfl9Vm4byeLLNsT0cksUHrPVp+nuFp/Me5uJATs04BhNxfpU9a2P+M6PlB69j7ylS6fBX5GFmafmAPpDOThiPrDXbhkUHVAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f1CThKoQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+pa+McNR; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755065851;
+	s=2020; t=1755065852;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KtqXVv5v+JHh4hPKtb6GPn1kobYikrH7rf3LKQjhTW8=;
-	b=wYMVt9FFhDxcPgWIFLe4gjZWh3nD92Fk1GZuVYRoBEUdrYW7nFUEpZUXelhf2cZX/2ay2K
-	5zaL4M7RmmPaxtPo0x2i88hRg7qlVUia/nMFDQvI/DcY7xXQzUuXVEoaE9qPU8cZG1fyJT
-	J7YNHfm+2C4W2Lk3ygnzxh43m4MNFSYXZHlldZezGZMFBsSEI7X2H4hTBwVqOM0T6RS35l
-	M103rbHY0QrbxTJceq9ytIbDH1Y2aNY777S3q9TtFj+kG3exHlhHLmlEJBwmby8+AdelPI
-	wuI0nWcivmzpJBb32SyqqJal/cpcBPJudqn/yCHWX1aRUX9fMn1AOyOCMG+9GA==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PkkDmhl/ZG+aA8mJZf277zrEFMKi1oBSEnkBnGz+tAs=;
+	b=f1CThKoQjsiytGs/1iCVK4Yza7qlssLZonszuQF2SRcmQmM7QYWp8xh+4u2ckOqkQkox7n
+	9QG08+N0fExjfsGmHum8AuCQomKRAfAzySxjXnRDl72RgKpSzIPjAZfK85jVVsi/slQMIb
+	rZrK/6D9QdC6t0JVdNbnC7YsXjCyCz8xHYj5cIleTYZ5TOOQ18ShKPme3F3/X2Bob0ZPTL
+	gPOBGe77nD8f5UZJM4xSF7BZAaFp5Z+p/Fx6+OyUxIepYgiP3uUyyS12brhoISN3TsBvEm
+	anzjMgWhTjANSRgSg+aGmIGvKF0+c6hR+d7N+XEk3iXrOUJ15qQdwANv+XGXtw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755065851;
+	s=2020e; t=1755065852;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KtqXVv5v+JHh4hPKtb6GPn1kobYikrH7rf3LKQjhTW8=;
-	b=V08Gn3Bk6QVe71pSSuvjs1rWf6GRkuBe4zUelhpBPwQgFeIO6hkvSyxtWBkJOMjiEk8plz
-	NJ6Q9yFiKTuXcaCw==
-Subject: [PATCH v2 0/5] kbuild: uapi: various fixes
-Date: Wed, 13 Aug 2025 08:16:55 +0200
-Message-Id: <20250813-kbuild-hdrtest-fixes-v2-0-8a7921ca3a03@linutronix.de>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PkkDmhl/ZG+aA8mJZf277zrEFMKi1oBSEnkBnGz+tAs=;
+	b=+pa+McNREJd0sgpcUOZq43hl73u9/4Zh2Lk0n9p1qykkHKiiWwTDoaDn45KwQXMkJnpSOd
+	zDBE0DQYzVvmnZAA==
+Date: Wed, 13 Aug 2025 08:16:56 +0200
+Subject: [PATCH v2 1/5] kbuild: uapi: rerun header tests when
+ headers_check.pl changes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,54 +64,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIANctnGgC/22NzQ6CMBCEX4Xs2TW0yE88+R6GA2UX2Uha0xaCI
- by7lcSbx28m38wGgb1wgGu2gedFgjibQJ8y6MfOPhiFEoPOdZk3SuHTzDIRjuQjh4iDrBxQmUF
- dalMQUQFJfXk+imTe28SjhOj8+3hZ1Df9Der/g4vCHOuOdDdUVU9lc5vEztE7K+uZGNp93z8rT
- aWTvAAAAA==
-X-Change-ID: 20250811-kbuild-hdrtest-fixes-1bf147b3ddd3
+Message-Id: <20250813-kbuild-hdrtest-fixes-v2-1-8a7921ca3a03@linutronix.de>
+References: <20250813-kbuild-hdrtest-fixes-v2-0-8a7921ca3a03@linutronix.de>
+In-Reply-To: <20250813-kbuild-hdrtest-fixes-v2-0-8a7921ca3a03@linutronix.de>
 To: Nathan Chancellor <nathan@kernel.org>, 
  Nicolas Schier <nicolas.schier@linux.dev>
 Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Nicolas Schier <nsc@kernel.org>, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755065851; l=1215;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755065851; l=845;
  i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=QfpgJxt4vVfX9D+LMcaeR3KA7o8uXixB0e3tRfRG5Zc=;
- b=uv1vye0jBorib/+wUdvUerGS9OsvevBn6QwlN9yMu5WVY8ZJAbs1eMOlhdjv5N4Cpq+/Tu87G
- smOh3E6Mw+WBN2WBwNf1/5sLhwZ1xpLnDoazvSlMAoRA4x/EL0Caxus
+ bh=Yzg7dfy7CQAoGxLwFJjO21Ljc6p003nQfc1CW+UxjyQ=;
+ b=dN6LqYmq8ZKHF7fIPY4kO1X7jfH0sepzTfhLZqLAGCtRbdLm7N4+L+qIQDyOoifRzFXP596lj
+ cT9tk6p87/FDbCHX704dRNJmnp8fHta5jxKJMzZznVMcPBMzfMG6tmM
 X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
  pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Various fixes and promotion of warnings to real errors.
+If the checks change they need to be rerun.
 
-I didn't add Fixes: tags as digging up the original changes would be
-cumbersome as the code moved a lot over the years.
-Backporting this doesn't make sense anyways.
+Add a Makefile dependency so this happens.
 
 Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Reviewed-by: Nicolas Schier <nsc@kernel.org>
 ---
-Changes in v2:
-- Drop patch "kbuild: uapi: only update hdrtest output on success"
-- Pick up review tags from Nicolas
-- Link to v1: https://lore.kernel.org/r/20250812-kbuild-hdrtest-fixes-v1-0-7ad2af66cd58@linutronix.de
+ usr/include/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
-Thomas Weißschuh (5):
-      kbuild: uapi: rerun header tests when headers_check.pl changes
-      kbuild: uapi: fail header test on compiler warnings
-      kbuild: uapi: upgrade warning on asm/types.h inclusion to error
-      kbuild: uapi: upgrade check_sizetypes() warning to error
-      kbuild: uapi: upgrade check_declarations() warning to error
+diff --git a/usr/include/Makefile b/usr/include/Makefile
+index f02f41941b60c88d921da2b955076bbff7884c1c..c7f164952b33acf6c7b8eb7ce91cd192bfc39ad2 100644
+--- a/usr/include/Makefile
++++ b/usr/include/Makefile
+@@ -85,7 +85,7 @@ quiet_cmd_hdrtest = HDRTEST $<
+ 		$(PERL) $(src)/headers_check.pl $(obj) $<; \
+ 		touch $@
+ 
+-$(obj)/%.hdrtest: $(obj)/%.h FORCE
++$(obj)/%.hdrtest: $(obj)/%.h $(src)/headers_check.pl FORCE
+ 	$(call if_changed_dep,hdrtest)
+ 
+ # Since GNU Make 4.3, $(patsubst $(obj)/%/,%,$(wildcard $(obj)/*/)) works.
 
- usr/include/Makefile         | 4 ++--
- usr/include/headers_check.pl | 9 ++++-----
- 2 files changed, 6 insertions(+), 7 deletions(-)
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250811-kbuild-hdrtest-fixes-1bf147b3ddd3
-
-Best regards,
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.50.1
 
 
