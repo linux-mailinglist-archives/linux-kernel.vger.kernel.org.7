@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-766298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C46B244C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C68BB244CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943FE188D5CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43BFA3B5CAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9002ED165;
-	Wed, 13 Aug 2025 08:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763D82EFD9B;
+	Wed, 13 Aug 2025 08:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fih5kiHO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Oc5+H8V1"
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D252BE020
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794742D061E;
+	Wed, 13 Aug 2025 08:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755075435; cv=none; b=Dgunznvr2tUhuQ4PNnpczZW49QZsd5/FvlrfO0/ZdGV9Js+4QGrTP745seTiyQLcoUknWMUVMH4QtZfjPQQkKwpal4yFdZUJ04rBJES4vtUs4GSMdqcQ7Y88RjntypynuMcXruQHiWqR9oO9mzrZds0FzeABa/x/Hqz66BOROaI=
+	t=1755075502; cv=none; b=FupDyBuPfnHr9aqrsHNlQ/8kwrMHJO4A6+Fhmu9hHu/dhc7qPhtrECnvQNZui42nF8MdW9wYzZyiDsomhfsphhCuDROPErk7cqHNX/vcJPE9vjRSlpff6RAjcpV1CDLpvLzm3rwxOb9c+R3ELA6K4NBVhssveEU54kvKHQzYkZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755075435; c=relaxed/simple;
-	bh=tPv65mDfdZ0llyoTq/yFclRsFjMwzVQQFJKFvnEN1BY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=at9353R53xFIME+jQI76i1k7zz/H+eN3tkbIGX7n2wQV0is/5UDkVJpQAmk95zQWy+2xkQwnb8muc3zpR6P+FAaru+TYELjIBfz4L07rnxU9p+yi9l+ch5gf8t4N2p7/J5+f3EEIEuTVlkRKX8zVCgEI568Vi8g1MKoF8pl8jFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fih5kiHO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67C3BC4CEFD;
-	Wed, 13 Aug 2025 08:57:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755075435;
-	bh=tPv65mDfdZ0llyoTq/yFclRsFjMwzVQQFJKFvnEN1BY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fih5kiHO4WkIyfwJXWpF18b7qsVzfXDW7l8SYOmBRrHZBnKEA7vHlL7ITh6iwyFYv
-	 FZgfIPaKtlNafDg2xRR/RH2G3knrSxljuC92QnxENgXDzCi+kLa2p1spt7XqskWkrx
-	 czoG6ckmHHqeEabTd5Qv4DnBdZcIFqA4JRsi/5Zz3ogWInwnhVBjnblg96qLfOOMN7
-	 05LvmMBtMVnh8WsEBh3disiYIQCu51Bm2Tay7Kej/6kHghFv+EnbwxM6FDA6Y2ucxP
-	 0rx2IttgRxtkXPXGQcOFFf6/8hSSnxJqoOztZBLX7OZEf4p/lqmA/vEn+CL9rUzjCO
-	 NklAy7kbPnE6g==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	James Flowers <bold.zone2373@fastmail.com>
-Subject: [PATCH v2] drm/sched: Document race condition in drm_sched_fini()
-Date: Wed, 13 Aug 2025 10:56:55 +0200
-Message-ID: <20250813085654.102504-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1755075502; c=relaxed/simple;
+	bh=o9sBv3uWVhgNJc2jzb/XTDzr77JaC5G3nW4je6txHZM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HT5+28L6dG4jtl6th+bO9ahxpgoBEpAQrW/e7G6dWtu2DXPC2xzI58mVLOYs970UhcGNJgUL8yiY9lptC1toJ/q+WnQzIAri0yKuGEUZCrw/BrYdElkrkotmERPxjAwxWIBtIs65oDYGS28Ih9fI0DFQTG+p7L2H77GCoKRF1Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Oc5+H8V1; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E271843888;
+	Wed, 13 Aug 2025 08:58:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755075498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bcnlfncs0tTOrnBAv8lWMTl1GGwu4KPhepL66SNxFiA=;
+	b=Oc5+H8V1glgn99KdP55+X/h8lTK8eD59sr/Zl8z8FdrwbYIH5oi3wvjfPdyOTBjMJzFJBC
+	6B+v7BtcZRyEtSwOqEgmNicTMr6FbsDKXEdIYD8Af8FihkUw9m8hoa1ttu4nwqz6R+Yoik
+	EepwsnlEAXxBS6L2EjO/oSLIngoVuujo7EEqpNYOXJhOj6zbwmz6McNINan7G1mkV1zSv3
+	9vDOekvx4URCcJo4s4VC5IUy9Lp+mMmM3939cEtka5Ez3/OT3Bg4Umj0TT938IIDLrHHjQ
+	/WqBX8/vfZAIUpOv+MBx7Wwu+/Wyt/4iiqg7OaapicKMBsuPLO9Mn6reNQfwdg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH ethtool v2 0/3] Add support for PSE priority feature and
+ PSE event monitoring
+Date: Wed, 13 Aug 2025 10:57:49 +0200
+Message-Id: <20250813-b4-feature_poe_pw_budget-v2-0-0bef6bfcc708@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAI1TnGgC/3WNwQqDMBBEf6XsuSlriNb21P8oIibZaMC6kkTbI
+ v57g/ce5vAY5s0GkYKnCPfTBoFWHz1PGeT5BGbopp6Et5lBolSFRCW0Eo66tARqZ855t3qxPSW
+ BHVFdSeVMWUKez4Gc/xzqJ1AaEvMITS4GHxOH73G5Fked7SVWEv/b10KgQG311Up9M7V7aOY0+
+ uli+AXNvu8/lJRMn8sAAAA=
+To: Oleksij Rempel <o.rempel@pengutronix.de>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Michal Kubecek <mkubecek@suse.cz>
+Cc: Dent Project <dentproject@linuxfoundation.org>, 
+ Kyle Swenson <kyle.swenson@est.tech>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeejjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeduhfevudetfffgkedvhfevheeghedtleeghfffudeiffefvdehfeegieeivdekteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegluddvjedrtddruddrudgnpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmkhhusggvtggvkhesshhushgvrdgtiidprhgtphhtthhopehordhrvghmphgvlhesphgvn
+ hhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhihlhgvrdhsfigvnhhsohhnsegvshhtrdhtvggthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepuggvnhhtphhrohhjvggttheslhhinhhugihfohhunhgurghtihhonhdrohhrgh
 
-In drm_sched_fini() all entities are marked as stopped - without taking
-the appropriate lock, because that would deadlock. That means that
-drm_sched_fini() and drm_sched_entity_push_job() can race against each
-other.
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-This should most likely be fixed by establishing the rule that all
-entities associated with a scheduler must be torn down first. Then,
-however, the locking should be removed from drm_sched_fini() alltogether
-with an appropriate comment.
+Add support for PSE (Power Sourcing Equipment) priority management and
+event monitoring capabilities.
 
-Reported-by: James Flowers <bold.zone2373@fastmail.com>
-Link: https://lore.kernel.org/dri-devel/20250720235748.2798-1-bold.zone2373@fastmail.com/
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
 Changes in v2:
-  - Fix typo.
----
- drivers/gpu/drm/scheduler/sched_main.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+- Split the second patch in two to separate the PSE priority feature and
+  the PSE event feature support.
+- Regenerate the "update UAPI header copies" patch.
+- Link to v1: https://lore.kernel.org/r/20250620-b4-feature_poe_pw_budget-v1-0-0bdb7d2b9c8f@bootlin.com
 
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index 5a550fd76bf0..46119aacb809 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -1424,6 +1424,22 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
- 			 * Prevents reinsertion and marks job_queue as idle,
- 			 * it will be removed from the rq in drm_sched_entity_fini()
- 			 * eventually
-+			 *
-+			 * FIXME:
-+			 * This lacks the proper spin_lock(&s_entity->lock) and
-+			 * is, therefore, a race condition. Most notably, it
-+			 * can race with drm_sched_entity_push_job(). The lock
-+			 * cannot be taken here, however, because this would
-+			 * lead to lock inversion -> deadlock.
-+			 *
-+			 * The best solution probably is to enforce the life
-+			 * time rule of all entities having to be torn down
-+			 * before their scheduler. Then, however, locking could
-+			 * be dropped alltogether from this function.
-+			 *
-+			 * For now, this remains a potential race in all
-+			 * drivers that keep entities alive for longer than
-+			 * the scheduler.
- 			 */
- 			s_entity->stopped = true;
- 		spin_unlock(&rq->lock);
+---
+Kory Maincent (3):
+      update UAPI header copies
+      ethtool: pse-pd: Add PSE priority support
+      ethtool: pse-pd: Add PSE event monitoring support
+
+ ethtool.8.in                           | 13 +++++
+ ethtool.c                              |  1 +
+ netlink/monitor.c                      |  9 +++-
+ netlink/netlink.h                      |  1 +
+ netlink/pse-pd.c                       | 87 ++++++++++++++++++++++++++++++++++
+ uapi/linux/ethtool.h                   |  4 +-
+ uapi/linux/ethtool_netlink.h           |  2 -
+ uapi/linux/ethtool_netlink_generated.h | 83 ++++++++++++++++++++++++++++++++
+ uapi/linux/if_link.h                   |  2 +
+ uapi/linux/neighbour.h                 |  5 ++
+ 10 files changed, 202 insertions(+), 5 deletions(-)
+---
+base-commit: 755f5d758e7a365d13140a130a748283b67f756e
+change-id: 20241204-b4-feature_poe_pw_budget-0aee8624fc55
+
+Best regards,
 -- 
-2.49.0
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
 
