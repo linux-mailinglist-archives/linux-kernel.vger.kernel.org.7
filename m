@@ -1,399 +1,244 @@
-Return-Path: <linux-kernel+bounces-767429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 346F3B25422
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:56:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73507B25425
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2E65A6C2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:56:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D031624D43
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45372C2ACE;
-	Wed, 13 Aug 2025 19:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D953E2F99B4;
+	Wed, 13 Aug 2025 20:02:29 +0000 (UTC)
 Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DA11A9F89
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 19:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B166136349
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755114994; cv=none; b=iqdHEL9bvwqLacGHJ8Vbims7yUjrJk70rZ9XFSTnQKJXhPI6DIjeITcqTZ1j/woUrYv8u7IYJgV8CqcK/QFb7pba3hVU+qDSuf/krxF5M+Yz1gmFX0BrshACpPrAR/50XRKINqsqVrjp2nC1uxiVXBoi/NjhFCc2JpXkLXXyyDI=
+	t=1755115349; cv=none; b=VZ2/egEhEZhNXmGWoQQXX2z2LoTO3RDSi9sPZer4PC3KBT0X07L0V74NmoBNZNp12sdGQGgP0zc4zEx/3UldmP/Zu4/7Z1mfn1cf8DINsbkCZuZ5viO7Sksn084ArO8yuuSCYK7/nrKEEhzQunJyhT9mXzm7xbGFTsycR2y8R3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755114994; c=relaxed/simple;
-	bh=9fj49A+2eb7KOsAljGVmiXL6DOU4uQi30GgB8LevqwI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hr3m7kZUEBzHaxGzmW9zwjNf4yiWaj6PKIMeOqAaJYVO3fGP0/OR6uBdl3RLKX285rcCCw+YHWcGGCkgsfq8JITWURBugjzeyIKY88E8IVjZJpH8ZrvqAKhxPDhzKfQoYYnODfPsBHFyp2KlriWaes2JsxlJdH01aKWyoKbduVQ=
+	s=arc-20240116; t=1755115349; c=relaxed/simple;
+	bh=FAWNJnHpFs04BGWXP2cFHQ3CKFKAb1CSTmcfl/1FK44=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hmfv/abHS0Nk20svZrQ5ganpTJra8vNR19k7THeCMGjhgGgRlmEQOLx0YB46De+Bo3vhqGMxQ82iHJyg7uSUtwVVRvePe1Gkd7A36TrpxhyJWE0vaSdMkunf+F6315WUHYPWr1+V4lrr9s61kZl27xBQ22ABxCSSGEVlTue4kT0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88432e1f068so27834839f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:56:32 -0700 (PDT)
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88432ccc4f9so48540839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:02:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755114992; x=1755719792;
+        d=1e100.net; s=20230601; t=1755115347; x=1755720147;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vJxiQLV/sV8tZa4aMmkrgIRqw9Q26jw6TU8InBUTCsk=;
-        b=lI8i7Gr5LZYsK3RrEEob5u20arO4AaE+d9vy1ZpDLyGVstqftcW4TxVsO5TVOIZxKu
-         O37JrDiitepOTRmc0OP9rQg7gLTk0pISJ/6Toi2HEdvNmNXQBQrjtQi73YKb0yHuEDIr
-         pJeDOiKEToCYvHU1ScfLa0epsxG3gYp737J0CPvlN1zB4QdXnfLDfN2GsN0pmdNEIeMf
-         2384YoM5snlrf5baFSlEVTtyX6L3k2G82YlZoZriD9NYkCVI+mhIglbGmilyHew1y8SV
-         VguK4LvwTzDXSuiXW2hyrlDnv2KPryB6SIg/qCyGkyaRZSdw/TXdFyeu4knmxSWDKiWt
-         ej3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU0PdLheewGB4HK79EA/lzD/ioPhQxct3o95MtSAUUUvLE+3KRH/tyURPM1LxguQNDPxd6s49eKtB/lqA0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFIN7dKKyuQpM8IJbyfvTyTZc/uYnkSPjfH2ZvaZae8vlSUhC5
-	K/GkwL8yDHFsg2X2IOAIUUEnkjVL/KNuFTGlSzk0AIoRmR/RTNXOMUQQBn+XRt+Geq2gKh5ajXA
-	4cevW3mQC6n2Vc2ZR2G5AFQfYeustqvRZSJp/kIfiC0QQAO/40ANjScusOEo=
-X-Google-Smtp-Source: AGHT+IFLMDC1E23T4zrPqSbO2CAX1Y68ZOMDSd8vNH6j0MVrthHPMkoXA4p6D8kFPvNR7aDTnS6SKrYRkp5otFhTUE8TA+1yPZ+1
+        bh=9QNRM1KyLnIG8pcT6H30bEhCq+dJOlyHPpfKCNHwrQE=;
+        b=TobkGViTYhUX2HcRNNDA2xZB7bxysA40jj0QzpT3VlkRvAUs5WosPYDcd3tUe9PPLU
+         VywESHSENxEUg1pWBdM3iAqZBrd5ApQ4C1QwpRa2cPmp61G/icaEak8rOz3P5Ug1XZ8R
+         reTM62Zh8RwIVoLHneGRuRkvjC71OonezP8zHqnJGwabrgfAOOUzH2q2ZmWyEL2B/mFd
+         S+cgexVDQaSV+jnMAe1yUmN7RKUss6QqM9pDC5rTRDL00jvJvNV35Ti+uepc/T53Z7bf
+         Vj+n6pj9fWSonaJaZoNzuIamri5O5zmkAW7QUfKsSquWPjOt7qlbz4DfCGS7myJanO17
+         gC3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVx2rOdIzyCWRoYQOgyoKet7ultZAhEjUO8Qx6j2tv8eX+reOf1AGG3c93Zq7CzMYODeqa8QDA8yRzULj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEHJh7gWOK1yDXYkmFpxh96nkcRRzsPN0PfB/DC9RuDAMPUIbX
+	xsNgMQ7iI+ChwdCESs5pmqNmDyx8ziWuItMQBYAADOPRVjwEskp59XNASRYTgYRgYoBrVvulqYx
+	jnb+LbBf+hpy4K9Nfy4yZffP2X1TKEp7xHZ+tX7Id4+4zCJKEXg6FaBKQ8xE=
+X-Google-Smtp-Source: AGHT+IEwCzbdLGuT3itGlKYWRnzUmuuDF7DP0HfniJteADae+M7HM5sdGQvnTR8yfp8HehT39PmXOW+JYv8FCSQ9z/PxMTnQEoXm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:140b:b0:87c:5a38:45e9 with SMTP id
- ca18e2360f4ac-884337d6412mr67094239f.3.1755114991996; Wed, 13 Aug 2025
- 12:56:31 -0700 (PDT)
-Date: Wed, 13 Aug 2025 12:56:31 -0700
+X-Received: by 2002:a05:6602:1553:b0:864:a228:92b4 with SMTP id
+ ca18e2360f4ac-8843382d729mr70750539f.7.1755115346828; Wed, 13 Aug 2025
+ 13:02:26 -0700 (PDT)
+Date: Wed, 13 Aug 2025 13:02:26 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689cedef.050a0220.7f033.015c.GAE@google.com>
-Subject: [syzbot] [cgroups?] BUG: unable to handle kernel paging request in
- bpf_prog_ADDR (4)
-From: syzbot <syzbot+f0efdf3dc4fade355f17@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
-	mkoutny@suse.com, syzkaller-bugs@googlegroups.com, tj@kernel.org
+Message-ID: <689cef52.050a0220.7f033.015e.GAE@google.com>
+Subject: [syzbot] [block?] KASAN: slab-use-after-free Read in update_io_ticks (3)
+From: syzbot <syzbot+64b38a1abee64ab9246e@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    7b388bf7a9d9 Merge patch series "Linux SBI MPXY and RPMI d..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git for-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11098842580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=486f4d7dd4dcbb24
-dashboard link: https://syzkaller.appspot.com/bug?extid=f0efdf3dc4fade355f17
-compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: riscv64
+HEAD commit:    c30a13538d9f Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1044d434580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e143c1cd9dadd720
+dashboard link: https://syzkaller.appspot.com/bug?extid=64b38a1abee64ab9246e
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-7b388bf7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dc41eb358030/vmlinux-7b388bf7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d9b169ef31a4/Image-7b388bf7.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-c30a1353.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8cefa7e1536e/vmlinux-c30a1353.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/68b8ee3da77f/bzImage-c30a1353.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f0efdf3dc4fade355f17@syzkaller.appspotmail.com
+Reported-by: syzbot+64b38a1abee64ab9246e@syzkaller.appspotmail.com
 
-Unable to handle kernel paging request at virtual address 235ba17f9123a408
+I/O error, dev loop0, sector 2424 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 2
+==================================================================
+BUG: KASAN: slab-use-after-free in update_io_ticks+0x9a/0x260 block/blk-core.c:1018
+Read of size 8 at addr ffff88803215e7a8 by task kworker/u4:11/3027
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-rc7-syzkaller-g7b388bf7a9d9 #0 Not tainted
-------------------------------------------------------
-syz.1.16/4027 is trying to acquire lock:
-ffffffff884e8200 (console_owner){....}-{0:0}, at: console_lock_spinning_enable+0x9a/0xd6 kernel/printk/printk.c:1920
-
-but task is already holding lock:
-ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:606 [inline]
-ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1532 [inline]
-ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1856 [inline]
-ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x314/0x4088 kernel/sched/core.c:6710
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (&rq->__lock){-.-.}-{2:2}:
-       lock_acquire kernel/locking/lockdep.c:5871 [inline]
-       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
-       _raw_spin_lock_nested+0x36/0x4e kernel/locking/spinlock.c:378
-       raw_spin_rq_lock_nested kernel/sched/core.c:606 [inline]
-       raw_spin_rq_lock kernel/sched/sched.h:1532 [inline]
-       task_rq_lock+0xea/0x3be kernel/sched/core.c:708
-       cgroup_move_task+0x86/0x1f4 kernel/sched/psi.c:1161
-       css_set_move_task+0x1da/0x446 kernel/cgroup/cgroup.c:918
-       cgroup_post_fork+0x16c/0x816 kernel/cgroup/cgroup.c:6754
-       copy_process+0x51ae/0x62e4 kernel/fork.c:2413
-       kernel_clone+0x128/0xe1e kernel/fork.c:2599
-       user_mode_thread+0xd4/0x110 kernel/fork.c:2677
-       rest_init+0x34/0x2e6 init/main.c:710
-       console_on_rootfs+0x0/0x96 init/main.c:1102
-
--> #3 (&p->pi_lock){-.-.}-{2:2}:
-       lock_acquire kernel/locking/lockdep.c:5871 [inline]
-       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0x3e/0x62 kernel/locking/spinlock.c:162
-       class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:557 [inline]
-       try_to_wake_up+0xb8/0xfcc kernel/sched/core.c:4227
-       default_wake_function+0x30/0x58 kernel/sched/core.c:7121
-       woken_wake_function+0x38/0x64 kernel/sched/wait.c:444
-       __wake_up_common+0x106/0x184 kernel/sched/wait.c:89
-       __wake_up_common_lock kernel/sched/wait.c:106 [inline]
-       __wake_up+0x32/0x58 kernel/sched/wait.c:127
-       tty_wakeup+0x60/0xfc drivers/tty/tty_io.c:519
-       tty_port_default_wakeup+0x2c/0x44 drivers/tty/tty_port.c:69
-       tty_port_tty_wakeup+0x52/0x72 drivers/tty/tty_port.c:415
-       uart_write_wakeup+0x40/0x5e drivers/tty/serial/serial_core.c:121
-       serial8250_tx_chars+0x5f8/0x7a6 drivers/tty/serial/8250/8250_port.c:1838
-       serial8250_handle_irq+0x648/0x938 drivers/tty/serial/8250/8250_port.c:1946
-       serial8250_default_handle_irq+0x80/0xe4 drivers/tty/serial/8250/8250_port.c:1966
-       serial8250_interrupt+0xda/0x1ee drivers/tty/serial/8250/8250_core.c:86
-       __handle_irq_event_percpu+0x268/0xb38 kernel/irq/handle.c:158
-       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
-       handle_irq_event+0xb4/0x1ee kernel/irq/handle.c:210
-       handle_fasteoi_irq+0x32c/0xd5a kernel/irq/chip.c:706
-       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
-       handle_irq_desc+0xfc/0x140 kernel/irq/irqdesc.c:676
-       generic_handle_domain_irq+0x2a/0x36 kernel/irq/irqdesc.c:732
-       plic_handle_irq+0x17a/0x3c8 drivers/irqchip/irq-sifive-plic.c:386
-       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
-       handle_irq_desc+0xfc/0x140 kernel/irq/irqdesc.c:676
-       generic_handle_domain_irq+0x2a/0x36 kernel/irq/irqdesc.c:732
-       riscv_intc_irq+0x4a/0xcc drivers/irqchip/irq-riscv-intc.c:33
-       handle_riscv_irq+0x2e/0x4c arch/riscv/kernel/traps.c:442
-       call_on_irq_stack+0x32/0x40 arch/riscv/kernel/entry.S:395
-
--> #2 (&tty->write_wait){-.-.}-{3:3}:
-       lock_acquire kernel/locking/lockdep.c:5871 [inline]
-       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0x3e/0x62 kernel/locking/spinlock.c:162
-       __wake_up_common_lock kernel/sched/wait.c:105 [inline]
-       __wake_up+0x22/0x58 kernel/sched/wait.c:127
-       tty_wakeup+0x60/0xfc drivers/tty/tty_io.c:519
-       tty_port_default_wakeup+0x2c/0x44 drivers/tty/tty_port.c:69
-       tty_port_tty_wakeup+0x52/0x72 drivers/tty/tty_port.c:415
-       uart_write_wakeup+0x40/0x5e drivers/tty/serial/serial_core.c:121
-       serial8250_tx_chars+0x5f8/0x7a6 drivers/tty/serial/8250/8250_port.c:1838
-       serial8250_handle_irq+0x648/0x938 drivers/tty/serial/8250/8250_port.c:1946
-       serial8250_default_handle_irq+0x80/0xe4 drivers/tty/serial/8250/8250_port.c:1966
-       serial8250_interrupt+0xda/0x1ee drivers/tty/serial/8250/8250_core.c:86
-       __handle_irq_event_percpu+0x268/0xb38 kernel/irq/handle.c:158
-       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
-       handle_irq_event+0xb4/0x1ee kernel/irq/handle.c:210
-       handle_fasteoi_irq+0x32c/0xd5a kernel/irq/chip.c:706
-       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
-       handle_irq_desc+0xfc/0x140 kernel/irq/irqdesc.c:676
-       generic_handle_domain_irq+0x2a/0x36 kernel/irq/irqdesc.c:732
-       plic_handle_irq+0x17a/0x3c8 drivers/irqchip/irq-sifive-plic.c:386
-       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
-       handle_irq_desc+0xfc/0x140 kernel/irq/irqdesc.c:676
-       generic_handle_domain_irq+0x2a/0x36 kernel/irq/irqdesc.c:732
-       riscv_intc_irq+0x4a/0xcc drivers/irqchip/irq-riscv-intc.c:33
-       handle_riscv_irq+0x2e/0x4c arch/riscv/kernel/traps.c:442
-       call_on_irq_stack+0x32/0x40 arch/riscv/kernel/entry.S:395
-
--> #1 (&port_lock_key){-.-.}-{3:3}:
-       lock_acquire kernel/locking/lockdep.c:5871 [inline]
-       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
-       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-       _raw_spin_lock_irqsave+0x3e/0x62 kernel/locking/spinlock.c:162
-       uart_port_lock_irqsave+0x2a/0x2b6 include/linux/serial_core.h:717
-       serial8250_console_write+0x1ae/0x15d4 drivers/tty/serial/8250/8250_port.c:3415
-       univ8250_console_write+0x70/0x9c drivers/tty/serial/8250/8250_core.c:396
-       console_emit_next_record kernel/printk/printk.c:3138 [inline]
-       console_flush_all+0x7bc/0xb70 kernel/printk/printk.c:3226
-       __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
-       console_unlock+0x108/0x22e kernel/printk/printk.c:3325
-       vprintk_emit+0x476/0x784 kernel/printk/printk.c:2450
-       vprintk_default+0x26/0x32 kernel/printk/printk.c:2465
-       vprintk+0x20/0x2c kernel/printk/printk_safe.c:82
-       _printk+0x98/0xc4 kernel/printk/printk.c:2475
-       register_console+0x9a2/0xf30 kernel/printk/printk.c:4125
-       uart_configure_port drivers/tty/serial/serial_core.c:2637 [inline]
-       serial_core_add_one_port drivers/tty/serial/serial_core.c:3157 [inline]
-       serial_core_register_port+0x1f6e/0x2058 drivers/tty/serial/serial_core.c:3388
-       serial_ctrl_register_port+0x20/0x2c drivers/tty/serial/serial_ctrl.c:41
-       uart_add_one_port+0x20/0x2c drivers/tty/serial/serial_port.c:143
-       serial8250_register_8250_port+0x12cc/0x2072 drivers/tty/serial/8250/8250_core.c:822
-       of_platform_serial_probe+0x724/0xb42 drivers/tty/serial/8250/8250_of.c:246
-       platform_probe+0xfa/0x1e8 drivers/base/platform.c:1404
-       call_driver_probe drivers/base/dd.c:579 [inline]
-       really_probe+0x236/0x9c2 drivers/base/dd.c:657
-       __driver_probe_device+0x1d4/0x3f2 drivers/base/dd.c:799
-       driver_probe_device+0x60/0x1ce drivers/base/dd.c:829
-       __driver_attach+0x250/0x4ee drivers/base/dd.c:1215
-       bus_for_each_dev+0x124/0x1ba drivers/base/bus.c:370
-       driver_attach+0x3e/0x52 drivers/base/dd.c:1233
-       bus_add_driver+0x29e/0x5e6 drivers/base/bus.c:678
-       driver_register+0x18e/0x3ee drivers/base/driver.c:249
-       __platform_driver_register+0x5e/0x7e drivers/base/platform.c:867
-       of_platform_serial_driver_init+0x22/0x2a drivers/tty/serial/8250/8250_of.c:370
-       do_one_initcall+0x1b0/0xb76 init/main.c:1274
-       do_initcall_level init/main.c:1336 [inline]
-       do_initcalls init/main.c:1352 [inline]
-       do_basic_setup init/main.c:1371 [inline]
-       kernel_init_freeable+0x6e4/0x790 init/main.c:1584
-       kernel_init+0x28/0x24c init/main.c:1474
-       ret_from_fork_kernel+0x2a/0xbec arch/riscv/kernel/process.c:228
-       ret_from_fork_kernel_asm+0x16/0x18 arch/riscv/kernel/entry.S:362
-
--> #0 (console_owner){....}-{0:0}:
-       check_noncircular+0x132/0x146 kernel/locking/lockdep.c:2178
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain kernel/locking/lockdep.c:3911 [inline]
-       __lock_acquire+0x12a0/0x24d8 kernel/locking/lockdep.c:5240
-       lock_acquire kernel/locking/lockdep.c:5871 [inline]
-       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
-       console_lock_spinning_enable+0xc0/0xd6 kernel/printk/printk.c:1924
-       console_emit_next_record kernel/printk/printk.c:3132 [inline]
-       console_flush_all+0x772/0xb70 kernel/printk/printk.c:3226
-       __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
-       console_unlock+0x108/0x22e kernel/printk/printk.c:3325
-       vprintk_emit+0x476/0x784 kernel/printk/printk.c:2450
-       vprintk_default+0x26/0x32 kernel/printk/printk.c:2465
-       vprintk+0x20/0x2c kernel/printk/printk_safe.c:82
-       _printk+0x98/0xc4 kernel/printk/printk.c:2475
-       die_kernel_fault+0x3e/0x7f0 arch/riscv/mm/fault.c:81
-       no_context arch/riscv/mm/fault.c:111 [inline]
-       no_context arch/riscv/mm/fault.c:90 [inline]
-       mm_fault_error arch/riscv/mm/fault.c:117 [inline]
-       handle_page_fault+0x9dc/0x1388 arch/riscv/mm/fault.c:431
-       do_page_fault+0x20/0x56 arch/riscv/kernel/traps.c:428
-       handle_exception+0x15e/0x16a arch/riscv/kernel/entry.S:231
-       bpf_prog_67a7f92a6a5e5f13+0x62/0x7c
-
-other info that might help us debug this:
-
-Chain exists of:
-  console_owner --> &p->pi_lock --> &rq->__lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&rq->__lock);
-                               lock(&p->pi_lock);
-                               lock(&rq->__lock);
-  lock(console_owner);
-
- *** DEADLOCK ***
-
-8 locks held by syz.1.16/4027:
- #0: ffffffff88660188 (tracepoints_mutex){+.+.}-{4:4}, at: tracepoint_probe_register_prio_may_exist+0xa6/0x10a kernel/tracepoint.c:431
- #1: ffffffff8847d590 (cpu_hotplug_lock){++++}-{0:0}, at: percpu_down_read include/linux/percpu-rwsem.h:77 [inline]
- #1: ffffffff8847d590 (cpu_hotplug_lock){++++}-{0:0}, at: cpus_read_lock+0x14/0x1c kernel/cpu.c:490
- #2: ffffffff88705b28 (jump_label_mutex){+.+.}-{4:4}, at: jump_label_lock kernel/jump_label.c:27 [inline]
- #2: ffffffff88705b28 (jump_label_mutex){+.+.}-{4:4}, at: static_key_enable_cpuslocked+0xd4/0x28e kernel/jump_label.c:207
- #3: ffffffff8849b8a8 (text_mutex){+.+.}-{4:4}, at: arch_jump_label_transform_queue+0x192/0x312 arch/riscv/kernel/jump_label.c:44
- #4: ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:606 [inline]
- #4: ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1532 [inline]
- #4: ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1856 [inline]
- #4: ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x314/0x4088 kernel/sched/core.c:6710
- #5: ffffffff885dbd80 (rcu_read_lock){....}-{1:3}, at: bpf_set_run_ctx include/linux/bpf.h:2193 [inline]
- #5: ffffffff885dbd80 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2255 [inline]
- #5: ffffffff885dbd80 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run4+0x20a/0x70c kernel/trace/bpf_trace.c:2301
- #6: ffffffff884e7e00 (console_lock){+.+.}-{0:0}, at: vprintk_default+0x26/0x32 kernel/printk/printk.c:2465
- #7: ffffffff884e8050 (console_srcu){....}-{0:0}, at: console_flush_all+0x114/0xb70 kernel/printk/printk.c:3234
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 4027 Comm: syz.1.16 Not tainted 6.16.0-rc7-syzkaller-g7b388bf7a9d9 #0 PREEMPT 
-Hardware name: riscv-virtio,qemu (DT)
+CPU: 0 UID: 0 PID: 3027 Comm: kworker/u4:11 Not tainted 6.16.0-syzkaller-12250-gc30a13538d9f #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: loop0 loop_workfn
 Call Trace:
-[<ffffffff8007b6f0>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:132
-[<ffffffff80003298>] show_stack+0x30/0x3c arch/riscv/kernel/stacktrace.c:138
-[<ffffffff80062c2c>] __dump_stack lib/dump_stack.c:94 [inline]
-[<ffffffff80062c2c>] dump_stack_lvl+0x12e/0x1a6 lib/dump_stack.c:120
-[<ffffffff80062cc0>] dump_stack+0x1c/0x24 lib/dump_stack.c:129
-[<ffffffff802d7c98>] print_circular_bug+0x254/0x29a kernel/locking/lockdep.c:2046
-[<ffffffff802d7e10>] check_noncircular+0x132/0x146 kernel/locking/lockdep.c:2178
-[<ffffffff802dafd8>] check_prev_add kernel/locking/lockdep.c:3168 [inline]
-[<ffffffff802dafd8>] check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-[<ffffffff802dafd8>] validate_chain kernel/locking/lockdep.c:3911 [inline]
-[<ffffffff802dafd8>] __lock_acquire+0x12a0/0x24d8 kernel/locking/lockdep.c:5240
-[<ffffffff802dce4e>] lock_acquire kernel/locking/lockdep.c:5871 [inline]
-[<ffffffff802dce4e>] lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
-[<ffffffff80307d9e>] console_lock_spinning_enable+0xc0/0xd6 kernel/printk/printk.c:1924
-[<ffffffff8030a62e>] console_emit_next_record kernel/printk/printk.c:3132 [inline]
-[<ffffffff8030a62e>] console_flush_all+0x772/0xb70 kernel/printk/printk.c:3226
-[<ffffffff8030ab34>] __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
-[<ffffffff8030ab34>] console_unlock+0x108/0x22e kernel/printk/printk.c:3325
-[<ffffffff8030d2ae>] vprintk_emit+0x476/0x784 kernel/printk/printk.c:2450
-[<ffffffff8030d5e2>] vprintk_default+0x26/0x32 kernel/printk/printk.c:2465
-[<ffffffff8030f884>] vprintk+0x20/0x2c kernel/printk/printk_safe.c:82
-[<ffffffff80008dea>] _printk+0x98/0xc4 kernel/printk/printk.c:2475
-[<ffffffff800995be>] die_kernel_fault+0x3e/0x7f0 arch/riscv/mm/fault.c:81
-[<ffffffff8009a74c>] no_context arch/riscv/mm/fault.c:111 [inline]
-[<ffffffff8009a74c>] no_context arch/riscv/mm/fault.c:90 [inline]
-[<ffffffff8009a74c>] mm_fault_error arch/riscv/mm/fault.c:117 [inline]
-[<ffffffff8009a74c>] handle_page_fault+0x9dc/0x1388 arch/riscv/mm/fault.c:431
-[<ffffffff863fdd78>] do_page_fault+0x20/0x56 arch/riscv/kernel/traps.c:428
-[<ffffffff864262fe>] handle_exception+0x15e/0x16a arch/riscv/kernel/entry.S:231
-[<ffffffff78000076>] bpf_prog_67a7f92a6a5e5f13+0x62/0x7c
-Current syz.1.16 pgtable: 4K pagesize, 48-bit VAs, pgdp=0x00000000a1a90000
-[235ba17f9123a408] pgd=000000002460b401, p4d=000000002460b401, pud=0000000000000000
-Oops [#1]
-Modules linked in:
-CPU: 1 UID: 0 PID: 4027 Comm: syz.1.16 Not tainted 6.16.0-rc7-syzkaller-g7b388bf7a9d9 #0 PREEMPT 
-Hardware name: riscv-virtio,qemu (DT)
-epc : bpf_prog_67a7f92a6a5e5f13+0x62/0x7c
- ra : bpf_dispatcher_nop_func include/linux/bpf.h:1322 [inline]
- ra : __bpf_prog_run include/linux/filter.h:718 [inline]
- ra : bpf_prog_run include/linux/filter.h:725 [inline]
- ra : __bpf_trace_run kernel/trace/bpf_trace.c:2258 [inline]
- ra : bpf_trace_run4+0x2a6/0x70c kernel/trace/bpf_trace.c:2301
-epc : ffffffff78000076 ra : ffffffff80595fb0 sp : ffff8f80046b7180
- gp : ffffffff89e816e0 tp : ffffaf8011991a40 t0 : 0000000000000000
- t1 : 235ba17f9123a408 t2 : ffffffff9123a400 s0 : ffff8f80046b71b0
- s1 : ffff8f80046b7280 a0 : ffffaf80123179d8 a1 : ffff8f80046b7188
- a2 : 0000000000000008 a3 : 0000000000000000 a4 : 1ffff1f0001bf206
- a5 : ffffffff17b0a000 a6 : 0000000000000021 a7 : ffffffff80595f14
- s2 : 1ffff1f0008d6e3c s3 : 0000000000000000 s4 : ffffffff9123a400
- s5 : ffff8f80046b7190 s6 : 0000000000000001 s7 : 1ffff1f0001bf205
- s8 : ffff8f8000df9028 s9 : ffff8f80046b7200 s10: 0000000000000001
- s11: 0000000000000000 t3 : ca76b45d00000000 t4 : 0000000000001fff
- t5 : 00000000000000c8 t6 : 0000000000000002 ssp : 0000000000000000
-status: 0000000200000100 badaddr: 235ba17f9123a408 cause: 000000000000000d
-[<ffffffff78000076>] bpf_prog_67a7f92a6a5e5f13+0x62/0x7c
-[<ffffffff80595fb0>] bpf_dispatcher_nop_func include/linux/bpf.h:1322 [inline]
-[<ffffffff80595fb0>] __bpf_prog_run include/linux/filter.h:718 [inline]
-[<ffffffff80595fb0>] bpf_prog_run include/linux/filter.h:725 [inline]
-[<ffffffff80595fb0>] __bpf_trace_run kernel/trace/bpf_trace.c:2258 [inline]
-[<ffffffff80595fb0>] bpf_trace_run4+0x2a6/0x70c kernel/trace/bpf_trace.c:2301
-[<ffffffff80211c92>] __bpf_trace_sched_switch+0x14/0x1c include/trace/events/sched.h:220
-[<ffffffff8640899c>] __traceiter_sched_switch include/trace/events/sched.h:220 [inline]
-[<ffffffff8640899c>] __do_trace_sched_switch include/trace/events/sched.h:220 [inline]
-[<ffffffff8640899c>] trace_sched_switch include/trace/events/sched.h:220 [inline]
-[<ffffffff8640899c>] __schedule+0x1372/0x4088 kernel/sched/core.c:6783
-[<ffffffff8640bbb6>] preempt_schedule_common kernel/sched/core.c:6966 [inline]
-[<ffffffff8640bbb6>] preempt_schedule+0xd2/0x1e2 kernel/sched/core.c:6990
-[<ffffffff8007d968>] __patch_insn_write+0xb7c/0xd88 arch/riscv/kernel/patch.c:159
-[<ffffffff8007ecae>] patch_insn_write+0x78/0xb4 arch/riscv/kernel/patch.c:226
-[<ffffffff80094424>] arch_jump_label_transform_queue+0x19e/0x312 arch/riscv/kernel/jump_label.c:45
-[<ffffffff8081aff8>] __jump_label_update+0x11c/0x3ee kernel/jump_label.c:513
-[<ffffffff8081b5ec>] jump_label_update+0x322/0x52c kernel/jump_label.c:919
-[<ffffffff8081bc44>] static_key_enable_cpuslocked+0x1e4/0x28e kernel/jump_label.c:210
-[<ffffffff8081bd10>] static_key_enable+0x22/0x34 kernel/jump_label.c:223
-[<ffffffff8050ae10>] tracepoint_add_func+0x812/0xa26 kernel/tracepoint.c:315
-[<ffffffff8050b0e2>] tracepoint_probe_register_prio_may_exist+0xbe/0x10a kernel/tracepoint.c:435
-[<ffffffff8059dfd8>] tracepoint_probe_register_may_exist include/linux/tracepoint.h:50 [inline]
-[<ffffffff8059dfd8>] bpf_probe_register+0x150/0x1c2 kernel/trace/bpf_trace.c:2326
-[<ffffffff805ef294>] bpf_raw_tp_link_attach+0x27c/0x538 kernel/bpf/syscall.c:4007
-[<ffffffff805f0dfe>] bpf_raw_tracepoint_open kernel/bpf/syscall.c:4038 [inline]
-[<ffffffff805f0dfe>] __sys_bpf+0x14ba/0x419e kernel/bpf/syscall.c:5878
-[<ffffffff805f4846>] __do_sys_bpf kernel/bpf/syscall.c:5943 [inline]
-[<ffffffff805f4846>] __se_sys_bpf kernel/bpf/syscall.c:5941 [inline]
-[<ffffffff805f4846>] __riscv_sys_bpf+0x6c/0xc6 kernel/bpf/syscall.c:5941
-[<ffffffff8007937a>] syscall_handler+0x94/0x118 arch/riscv/include/asm/syscall.h:112
-[<ffffffff863fdb66>] do_trap_ecall_u+0x396/0x530 arch/riscv/kernel/traps.c:343
-[<ffffffff864262fe>] handle_exception+0x15e/0x16a arch/riscv/kernel/entry.S:231
-Code: 97aa 639c 3303 00c2 a397 1923 8393 3963 6333 2073 (3303) 0003 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	97aa                	add	a5,a5,a0
-   2:	639c                	flw	fa5,0(a5)
-   4:	00c23303          	.4byte	0xc23303
-   8:	1923a397          	auipc	t2,0x1923a
-   c:	39638393          	add	t2,t2,918 # 0x1923a39e
-  10:	20736333          	.4byte	0x20736333
-* 14:	00033303          	.4byte	0x33303 <-- trapping instruction
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xca/0x240 mm/kasan/report.c:482
+ kasan_report+0x118/0x150 mm/kasan/report.c:595
+ update_io_ticks+0x9a/0x260 block/blk-core.c:1018
+ blk_account_io_done+0x19b/0x780 block/blk-mq.c:1055
+ __blk_mq_end_request_acct block/blk-mq.c:1129 [inline]
+ __blk_mq_end_request+0x2af/0x600 block/blk-mq.c:1135
+ lo_rw_aio_complete drivers/block/loop.c:327 [inline]
+ lo_rw_aio+0xd75/0xfa0 drivers/block/loop.c:401
+ do_req_filebacked drivers/block/loop.c:-1 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x835/0xf90 drivers/block/loop.c:1945
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 5362:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:330 [inline]
+ __kasan_slab_alloc+0x6c/0x80 mm/kasan/common.c:356
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4180 [inline]
+ slab_alloc_node mm/slub.c:4229 [inline]
+ kmem_cache_alloc_lru_noprof+0x1c6/0x3d0 mm/slub.c:4248
+ bdev_alloc_inode+0x29/0x90 block/bdev.c:364
+ alloc_inode+0x67/0x1b0 fs/inode.c:346
+ new_inode+0x22/0x170 fs/inode.c:1145
+ bdev_alloc+0x26/0x380 block/bdev.c:461
+ add_partition+0x1c3/0x8e0 block/partitions/core.c:326
+ blk_add_partition block/partitions/core.c:564 [inline]
+ blk_add_partitions block/partitions/core.c:633 [inline]
+ bdev_disk_changed+0xb50/0x14b0 block/partitions/core.c:693
+ loop_reread_partitions drivers/block/loop.c:439 [inline]
+ loop_set_status+0x85a/0xb40 drivers/block/loop.c:1265
+ lo_ioctl+0x9af/0x1d00 drivers/block/loop.c:-1
+ blkdev_ioctl+0x5a8/0x6d0 block/ioctl.c:705
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:598 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:584
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 15:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x46/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x5b/0x80 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2417 [inline]
+ slab_free mm/slub.c:4680 [inline]
+ kmem_cache_free+0x18f/0x400 mm/slub.c:4782
+ rcu_do_batch kernel/rcu/tree.c:2605 [inline]
+ rcu_core+0xca8/0x1770 kernel/rcu/tree.c:2861
+ handle_softirqs+0x283/0x870 kernel/softirq.c:579
+ run_ksoftirqd+0x9b/0x100 kernel/softirq.c:968
+ smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Last potentially related work creation:
+ kasan_save_stack+0x3e/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xbd/0xd0 mm/kasan/generic.c:548
+ __call_rcu_common kernel/rcu/tree.c:3123 [inline]
+ call_rcu+0x157/0x9c0 kernel/rcu/tree.c:3243
+ destroy_inode fs/inode.c:401 [inline]
+ evict+0x847/0x9c0 fs/inode.c:834
+ device_release+0x99/0x1c0 drivers/base/core.c:-1
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22b/0x480 lib/kobject.c:737
+ blkdev_release+0x15/0x20 block/fops.c:699
+ __fput+0x449/0xa70 fs/file_table.c:468
+ task_work_run+0x1d4/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88803215e780
+ which belongs to the cache bdev_cache of size 2792
+The buggy address is located 40 bytes inside of
+ freed 2792-byte region [ffff88803215e780, ffff88803215f268)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x32158
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff888052e26701
+flags: 0x4fff00000000040(head|node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000040 ffff88801bed7280 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000800b000b 00000000f5000000 ffff888052e26701
+head: 04fff00000000040 ffff88801bed7280 dead000000000122 0000000000000000
+head: 0000000000000000 00000000800b000b 00000000f5000000 ffff888052e26701
+head: 04fff00000000003 ffffea0000c85601 00000000ffffffff 00000000ffffffff
+head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0xd20d0(__GFP_RECLAIMABLE|__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 11814848371, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1851
+ prep_new_page mm/page_alloc.c:1859 [inline]
+ get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3858
+ __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:5148
+ alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2416
+ alloc_slab_page mm/slub.c:2487 [inline]
+ allocate_slab+0x8a/0x370 mm/slub.c:2655
+ new_slab mm/slub.c:2709 [inline]
+ ___slab_alloc+0xbeb/0x1410 mm/slub.c:3891
+ __slab_alloc mm/slub.c:3981 [inline]
+ __slab_alloc_node mm/slub.c:4056 [inline]
+ slab_alloc_node mm/slub.c:4217 [inline]
+ kmem_cache_alloc_lru_noprof+0x288/0x3d0 mm/slub.c:4248
+ bdev_alloc_inode+0x29/0x90 block/bdev.c:364
+ alloc_inode+0x67/0x1b0 fs/inode.c:346
+ new_inode+0x22/0x170 fs/inode.c:1145
+ bdev_alloc+0x26/0x380 block/bdev.c:461
+ __alloc_disk_node+0x11c/0x540 block/genhd.c:1464
+ __blk_mq_alloc_disk+0x196/0x340 block/blk-mq.c:4451
+ nbd_dev_add+0x46c/0xae0 drivers/block/nbd.c:1943
+ nbd_init+0x168/0x1f0 drivers/block/nbd.c:2680
+ do_one_initcall+0x233/0x820 init/main.c:1269
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88803215e680: fb fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc
+ ffff88803215e700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88803215e780: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                  ^
+ ffff88803215e800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88803215e880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
 ---
