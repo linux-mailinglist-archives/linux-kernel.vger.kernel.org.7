@@ -1,137 +1,97 @@
-Return-Path: <linux-kernel+bounces-767383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE36FB2539D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF3EB253AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3BE888373
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:06:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD573A89BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4035D3093AD;
-	Wed, 13 Aug 2025 19:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8602FFDCA;
+	Wed, 13 Aug 2025 19:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBlNzSvR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="OavCC8Ll"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990822BD5BC;
-	Wed, 13 Aug 2025 19:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619892BF016
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 19:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755111996; cv=none; b=gV3O81n51+GfEt92K3DXswcE/xAXB2qim4w7zQqMP+25J1Uvbr0tf4OcuAOnQGGFwlsgDDs6XOQWcv5cg9EGOfUvmWvEtgWQPQwXVRXTlk1REOzPXdWBozSFpdiyCvRsSlGfJcOKcogS03nkKAdoAbm6Do8jMLHGdjyYjGRcwRk=
+	t=1755112028; cv=none; b=kTPD+kvNw/APXtD9I8sIVswFk65o33LmzFwGGZiZjD0IzEOGVZjr632sAALp9GPB1++/pSRGZqS4crynht2fdwqAYoTKRUm9JfyFgxTdz7xT+HsFjkwzxTenYh07PVtH+Ed2Jgymc5LdA+9FDO3KFS3cvBTsnjVbhQkJi2pT6I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755111996; c=relaxed/simple;
-	bh=wBSCYvD6eI/0TlyZhgU8cG9wLNrFJkRgE09i4a9qP58=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kHgpb/5ePaFm0E1Xzjf3WzG7gyQ9XEL1vft0mU3RQRPnaEdPgZikILFsVmvbKSHoyeBbT6nLnCQsMkAY1p/2k1VAF6e2rfMLtHu7UKUh2Wl/pVLqBfIDQyV1ugWebdB7NxTRLJ2ntGHUrCmdVO9ZAd2vGEQtQkEY5Spvtnk6XaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBlNzSvR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBF5FC4CEEB;
-	Wed, 13 Aug 2025 19:06:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755111995;
-	bh=wBSCYvD6eI/0TlyZhgU8cG9wLNrFJkRgE09i4a9qP58=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OBlNzSvRjYqb41fYPkb3XtEcTVzUOCIp4pAPjdUcdNq5BEF6bkAtQusOWZ8qpO1rh
-	 dECUANL8UKjbFMWY19cFtNLzPNbTB70lFZeDmR4GG9SXmuKvsKGka9J9bOXBE9CmUI
-	 xI8Sun32XfDsGo1XAwxxItZ/b+3r+cZ1S6/tl8VXVgPt4NOugGilQkaYmyRrNtUcCe
-	 8Bb81m1ZPt/nngE+7NgXcWBZZFQh857JxRS0+0Zl32NvbnBXl901oGQFPQwccwT9bE
-	 j/huJWTJgU7/LqTKJuLWIm0LCCXuC7+S/NVFmHOaTmwI5BIkBJlKY+AJjamr5py9Rr
-	 QQet0O7smwECw==
-Date: Wed, 13 Aug 2025 14:06:33 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linus.walleij@linaro.org,
-	linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v1] PCI: stm32: use pinctrl_pm_select_init_state() in
- stm32_pcie_resume_noirq()
-Message-ID: <20250813190633.GA284987@bhelgaas>
+	s=arc-20240116; t=1755112028; c=relaxed/simple;
+	bh=SXOksErSWrCg3g7862V1L2s5ZhMbzgX1mzW405r3WH8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BdQ71fhpZl4oVv/AdTsRuiOVd/PUiSxhcr5zrxzpodr/sbEgTXZIqhu6K06/Tk3j0NBqUDmLUPBzQ2E+2691hNoGXddMCDsp63sjDDHybid+YyBfIWAYPCyixskLTG9XVZgq2MEwseOVDgs1qEVJcgeQxOhy512bk+WMfXRGaBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=OavCC8Ll; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=Ejth9SW7Cq2Pib
+	I98quiVFxWB9ohLsN0xTesctVUDq8=; b=OavCC8LlExNbi7VBkXN2LRJpHN4KXN
+	TWQUfxTFnqQ3Iu/XA35fbo1EBAD4+AzRsL9F6srcgYJvdt9LbH7JJ8wtNce5tpa0
+	PRZl901oaQQ1osKFGMoQXczmYHTqbr6g2eUXA3U3uxnLC/1wYB5Cq0WZbjBZnqxi
+	SaeRKOvq/Iu0v2L20vnP3uogCytumt1/ZWPJ3H4so+I+hkPVFUbBEku1TBq5nFbQ
+	GhNRuJSbq2rTifK7Yn3ucbJRglus8DzqDKexuaA1hb+qNc9EKIr+Suxf244o4zPF
+	kSrvKSQIRl5Yjws50bNAu3d+nf1UJoBcOCn1cjDgypfkS7NGPRbvS1dg==
+Received: (qmail 733111 invoked from network); 13 Aug 2025 21:07:04 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Aug 2025 21:07:04 +0200
+X-UD-Smtp-Session: l3s3148p1@AXO03EM8tO1tKDDX
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-kernel@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] clocksource/drivers/timer-tegra186: don't print superfluous errors
+Date: Wed, 13 Aug 2025 21:06:58 +0200
+Message-ID: <20250813190657.3628-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813115319.212721-1-christian.bruel@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13, 2025 at 01:53:19PM +0200, Christian Bruel wrote:
-> Replace direct access to dev->pins->init_state with the new helper
-> pinctrl_pm_select_init_state() to select the init pinctrl state.
-> This fixes build issues when CONFIG_PINCTRL is not defined.
-> 
-> Depends-on: <20250813081139.93201-3-christian.bruel@foss.st.com>
-> Reported-by: Bjorn Helgaas <bhelgaas@google.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506260920.bmQ9hQ9s-lkp@intel.com/
-> Fixes: 633f42f48af5 ("PCI: stm32: Add PCIe host support for STM32MP25")
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+The watchdog core will handle error messages already.
 
-I can't merge 633f42f48af5 as-is because of the build issue.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/clocksource/timer-tegra186.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-Pinctrl provides stubs for the non-CONFIG_PINCTRL case; the issue is
-that 633f42f48af5 uses dev->pins, which only exists when
-CONFIG_PINCTRL is enabled.  
+diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
+index e5394f98a02e..b40d7ed37936 100644
+--- a/drivers/clocksource/timer-tegra186.c
++++ b/drivers/clocksource/timer-tegra186.c
+@@ -328,16 +328,12 @@ static struct tegra186_wdt *tegra186_wdt_create(struct tegra186_timer *tegra,
+ 	wdt->base.parent = tegra->dev;
+ 
+ 	err = watchdog_init_timeout(&wdt->base, 5, tegra->dev);
+-	if (err < 0) {
+-		dev_err(tegra->dev, "failed to initialize timeout: %d\n", err);
++	if (err < 0)
+ 		return ERR_PTR(err);
+-	}
+ 
+ 	err = devm_watchdog_register_device(tegra->dev, &wdt->base);
+-	if (err < 0) {
+-		dev_err(tegra->dev, "failed to register WDT: %d\n", err);
++	if (err < 0)
+ 		return ERR_PTR(err);
+-	}
+ 
+ 	return wdt;
+ }
+-- 
+2.47.2
 
-The possibilities I see are:
-
-  1) Merge initial stm32 without suspend/resume support via PCI, merge
-     pinctrl_pm_select_init_state() via pinctrl, then add stm32
-     suspend/resume support.  pinctrl_pm_select_init_state() and stm32
-     (without suspend/resume) would appear in v6.18, and stm32
-     suspend/resume would be added in v6.19.
-
-  2) Temporarily #ifdef the dev->pins use.  pinctrl_pm_select_init_state()
-     and stm32 (with #ifdef) would appear in v6.18, follow-on patch to
-     replace #ifdef with pinctrl_pm_select_init_state() would appear
-     in v6.19.
-
-  3) Merge your [1] to add pinctrl_pm_select_init_state() via PCI with
-     Linus's ack, followed by the stm32 series with the change below
-     squashed in.  Everything would appear in v6.18.
-
-I'm OK with any of these.
-
-[1] https://lore.kernel.org/r/20250813081139.93201-1-christian.bruel@foss.st.com
-
-> ---
-> Changes in v1:
->  - pinctrl_pm_select_init_state() return 0 if the state is not defined.
->    No need to test as pinctrl_pm_select_default_state() is called.
-> ---
->  drivers/pci/controller/dwc/pcie-stm32.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-stm32.c b/drivers/pci/controller/dwc/pcie-stm32.c
-> index 50fae5f5ced2..8501b9ed0633 100644
-> --- a/drivers/pci/controller/dwc/pcie-stm32.c
-> +++ b/drivers/pci/controller/dwc/pcie-stm32.c
-> @@ -90,14 +90,10 @@ static int stm32_pcie_resume_noirq(struct device *dev)
->  
->  	/*
->  	 * The core clock is gated with CLKREQ# from the COMBOPHY REFCLK,
-> -	 * thus if no device is present, must force it low with an init pinmux
-> -	 * to be able to access the DBI registers.
-> +	 * thus if no device is present, must deassert it with a GPIO from
-> +	 * pinctrl pinmux before accessing the DBI registers.
->  	 */
-> -	if (!IS_ERR(dev->pins->init_state))
-> -		ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
-> -	else
-> -		ret = pinctrl_pm_select_default_state(dev);
-> -
-> +	ret = pinctrl_pm_select_init_state(dev);
->  	if (ret) {
->  		dev_err(dev, "Failed to activate pinctrl pm state: %d\n", ret);
->  		return ret;
-> -- 
-> 2.34.1
-> 
 
