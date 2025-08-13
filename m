@@ -1,142 +1,199 @@
-Return-Path: <linux-kernel+bounces-767303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB7AB2529F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:56:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DD2B252A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF481881D5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:56:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A17F721F16
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E16298CDE;
-	Wed, 13 Aug 2025 17:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D58299A85;
+	Wed, 13 Aug 2025 17:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b/WITrVl"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TmbJA6Gs"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C91F2957B6
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4C129B205
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755107768; cv=none; b=DHiSDbtRYjMtUKJs5fY8qtYoWmPO3I5L5niepEXvwpnv8kVlkxKMwldRg9wBUMyDS0snnYevtNdAMvY6IfQZvmoNGBPCY4gMSd6m7QqXr4XRMp13weEEpD+zUGfXaFvyZgbW5Kjw0drK2NxFafbLX37ZWkg9rWAV22BuRqbrUQY=
+	t=1755107780; cv=none; b=T5x3/hvzWCkeBc9tGqtMam+Ge1Bi1f8z/EwzFmv1l/WIOkNlOMz6o26WKCWvvA21aOCNj4BMlxS8uFgtMdgFgIqTmQkw3nD3EToyyVJVSXd+mar/tUzAeopCjWvt6BThoc5/mZmsmK3LqKqAk1Sg0bO+FSg2mqN9lQmco9OoRpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755107768; c=relaxed/simple;
-	bh=V51uJT4A0r7hr5YTUOsZNBFHeS8Uo5cK1ak9EIJDOR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T1DuRwhhjtTi1OpGPNXk9J7OufcELqIyLBFcQxHKSnVggpb7cok1j6AJLCm5OXe6HguCtnueyHHZE9L06YLuv3dJ8Og4wA/iN9tvETJuMsPhQ7scWCkipFu4vWKpNvYv1dxHKwnAc3WXMRr4h673BWh9xbEzVERAnVtpjWKEIm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b/WITrVl; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e2e613e90so162269b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:56:06 -0700 (PDT)
+	s=arc-20240116; t=1755107780; c=relaxed/simple;
+	bh=nl2yBpZRvTfmVxRWdsIQVBAvauFmBGisrTQMortALrI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=GU1T6gh0tA7d8S9ZVMJtGQK7Y2KRlTaWKzvw4+G2F53NGyslhkKPW1lOxMDv+ypV+0SfdlO91DyUJevPTXZtFlDHwRH7xg3HOJUEifBqTwCDygPqrNFhzv2Phmc7SankWu1OW1rK/z//Vysy7lXoOa+6WLymPgou7EOqVeVfsKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TmbJA6Gs; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24457f581aeso379815ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:56:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755107766; x=1755712566; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R9QMxHu3t+iVo775MrexW0tJfli2gyhC4QZtnbpfiQo=;
-        b=b/WITrVlxvJNWOeRCTDycowpZVW8XWPAITxFnhD7Hzyjt42kHYlhsHmd4ky6vFjKJ9
-         t9D1vgWAyT+2y2v4oi5DJ+WMooJXzNALsZ13IxQg/nAFkhOUEdd+Atm1lMl0l6PRfVr7
-         7bY8VOOuVFST4mdgyrNYXMnBG9vG9up5ieaSmH3ULIY4+hCzBibe9DFaKKyg3EU/Zhjy
-         4EwKb4QsuIsjMSbRKJK/597GQzPtU2i/sxhcfb3XHH4EMNd/2fTsM4Elf9ozGfIvcJqS
-         +jTBCHFXaSzcc9GrXM2COHzc15/FLu5zOdZKdKT9u1Q5dbJwfZiMeY1uY8kAAXfzhg90
-         X4rw==
+        d=linaro.org; s=google; t=1755107776; x=1755712576; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XoIq2ubOlyxbtRkYBP/TzvBun/sOOkbTC4CyxYULUYc=;
+        b=TmbJA6GsiVIs2SumeH5hEovkr5pUXWzAMSjmTnDZG9VIK9JvIpZOUQvoUq4LYWXyXA
+         xIQjAgNqzJwL1u5tO4fcHEojDEO5dwLEqXjxD6sUM74zhu/h9rQUvpYoQ4MSIylapyE2
+         DA/m3TBetmucpbKINOhcB/6yhG0J1jbq69+/D8DQeCQEwc5q+OtLU7xpm86qudgZtkTX
+         zkiFtqsxGW5CPbGL2dAvpVjeR/X4aUmVY9ZpTlJ44DR4BmsiZQtrajmCOuGRtKA9VHLp
+         kb5uRJ7SpUPT5TpT8TuMURksA8cAw96T3/gCathA11RA6YepZAm2gjXlW9wTOS6bwpes
+         kwmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755107766; x=1755712566;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R9QMxHu3t+iVo775MrexW0tJfli2gyhC4QZtnbpfiQo=;
-        b=xB0kd4fMxcs9F5RiezNq2UBso5kGOCqGLHufPogxMjuLNTHopc6T/uhnH0+Pg2nbo6
-         rqk+8S87TyV14t/gOcMlp6EAVHRvEOTr0HeVUHtdvwBg3hg99Lz792kcBiPHHnK9TlP2
-         9XdNSw593phHZx1zZ62vyHUE6DGG5WjXo0DrP/ZhsVVCBOnd9TouANHqdy8VqZjj3wNn
-         Uf8QWX4zzpPKmvLqZS62FqS5D48XVrzRgMd1slwcW4+dpndah9kWalHSFhKUAkt8jKZu
-         QWWTlQYLs6DF259w/VNqxOgoTK9Mc2Wimu8V8HJsWtBrCvjehZxFdHBu1RGVwiiCXOnk
-         cRDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbN6dcXckJuCLtuvNJZMKP0HKdZsvmnEcH/zDM9UNXOowurW8LrwrtdV1jHz5ox/56Jc9VB07C1jNYOZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC6v8d6PtDbEjfGQ/ZceKLF8WsDZ/2QQnyO9QN5PfIb/JJFebl
-	iynU6E8WcdrcTatUwgnDatE6cP7NdEU2NMfXE55FYLrXqJKuswXzP4RR9C0UvcPBI+NyQoauXOl
-	nw1/3HVyNsAnx1qS5A/q+D/L+HJr6jtIeUWmgeL9A
-X-Gm-Gg: ASbGncu6u557/5KDCU5d+ootRDpvGqbLUmvejmRH3ZdDIOd5NEfSed7LSYXMl2R9rgn
-	7VfsgwSC6xhcFj5aNe5KdVsbSDM4O5N2RrdbpZrjgsZx3lnmLJn90I6y3Hz07vyL3AdXJUEm5f7
-	cZzLj0HbWPqSoQH3rN/rO+kCys/MKNapKWDP5MrjajDv8e/9II/EmtBRh6R8XU8TeDWLD3MUp3X
-	mRjJWx94Z0pT1VBZ+QyZ9Did1+MNa61jT8BoroiV4otD86cLDc=
-X-Google-Smtp-Source: AGHT+IGs3FKzRr3oj4hqhoLmP3i10WnkmREI+GoYHnTSGNrLjIuVPInPJfZTAnaddEHUgl4hb24A0JuE74xwTlpCXr0=
-X-Received: by 2002:a17:902:d486:b0:240:9ff:d546 with SMTP id
- d9443c01a7336-244584af9ccmr94195ad.6.1755107766091; Wed, 13 Aug 2025 10:56:06
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755107776; x=1755712576;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XoIq2ubOlyxbtRkYBP/TzvBun/sOOkbTC4CyxYULUYc=;
+        b=J8LBO3HlfDx0vD4HifchDF6xSHPKyPY5Cm395ZXzg1exLB9f0IWOUc/3NZhLp5t+ic
+         MfJ5dOf5J+XSpUPFAjqnFIWk0l/fuXGP0sl8nSgvjINyqqmD6jNrAjpmxHgFsdyxCJnb
+         27xD9bD/NzyEl32VcUbVFx+yMvBMUEnZeOcyvGRYpNzOHlmsJz9PrO2EXL81Gpuf4nYA
+         KW+huYO99fXx/n0DtHMZ4bOnQfooS0OEKreJFhxsIV08zPhqZtFnrdDM8mElQCaFJHYO
+         crYt8LknKg/Gq/c30SNtVY8SUkETdzQ+hKyjAeeEaFG6b1PK5HXTN3rVJrXWm9IGpUh/
+         7thA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9OGwBBdGK8gNb8oN3bgJgd/yoVOovvshvxjrnf2Jgzgzfl+U9wDTZVH9We8O6bqKo+f7Tbvdm+2K6ReE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXLRYMKswCb9aJo47BPH6Y8Gvdh618zhT3NcdZQXGSt8d9NY8v
+	I3VOJEskd6VktgL3EyKRlzzWHOl3A9/MMdrtzTd5ylsjF4GkThpaBG5QiYTiw1wj2hFckQrYQN+
+	8cCW7GdJKv71KP/jV0mqnGPxL5nAQTGmTaBfl6AOGPA==
+X-Gm-Gg: ASbGnctKy2bKoEo2FzwBifHy3psVmGTXxmD691a7hNEgUAex3X1zw6/7K2h5++WYkqG
+	yq8EmRcoLBKuDsV/Vqi3kH3qb+keYY2IMk2VBEw5Gh4gq72cCG2TlD9fo7TVcua9z2ZQMXWxC1R
+	id1Y2tMy/Me/c7Bz/O1UCa9VVNjAvuWLFDxT8KpY9OMirFHvAMwMxVHl9e0jkTh6eucCpgcjhl0
+	trhnpSDMJe00o3wVaytGffd3FSIBGxt9Xrogqg=
+X-Google-Smtp-Source: AGHT+IEkiAGoLbMGkvXnlFSqPQ+NERPuNoFrCDcPTgVm2ojJsZrVhHUi72yNXNyT4cDONEDGhe3E10OKGjZiy9tS3ck=
+X-Received: by 2002:a17:902:e5c1:b0:242:a0b0:3c1f with SMTP id
+ d9443c01a7336-244584af50amr128565ad.7.1755107776617; Wed, 13 Aug 2025
+ 10:56:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812125155.3808-3-richardbgobert@gmail.com>
- <20250813062904.109300-1-kuniyu@google.com> <799c2171-7b41-4202-9ea4-e28952f81a65@gmail.com>
- <aJy3la53tn3mS3Jc@shredder>
-In-Reply-To: <aJy3la53tn3mS3Jc@shredder>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Wed, 13 Aug 2025 10:55:54 -0700
-X-Gm-Features: Ac12FXx6A6P3y10zhXnAjRuFnvi2QA9wi78ESybO_RVdBQRYKwugQpUGoKV9YAw
-Message-ID: <CAAVpQUD4Z-UrANUtdrt5v8xwB5-Qfi+hVUcFr=FZc1eohYU7QA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 2/5] net: vxlan: add netlink option to bind
- vxlan sockets to local addresses
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: Richard Gobert <richardbgobert@gmail.com>, andrew+netdev@lunn.ch, daniel@iogearbox.net, 
-	davem@davemloft.net, donald.hunter@gmail.com, dsahern@kernel.org, 
-	edumazet@google.com, horms@kernel.org, jacob.e.keller@intel.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, martin.lau@kernel.org, 
-	menglong8.dong@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	petrm@nvidia.com, razor@blackwall.org, shuah@kernel.org
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 13 Aug 2025 23:26:05 +0530
+X-Gm-Features: Ac12FXyG0YWZ_N3cTY6hqEM4R9dYMT1co-eY8G4uUHRenE8ObEitphecfPJYjck
+Message-ID: <CA+G9fYtJPqkugHFbgs8vNK5jNGivX1yO1ZiL2q97c_dazUiArA@mail.gmail.com>
+Subject: next-20250813: x86_64 iov_iter.h:171:7: error: variable 'remain' is
+ used uninitialized whenever 'if'
+To: clang-built-linux <llvm@lists.linux.dev>, lkft-triage@lists.linaro.org, 
+	open list <linux-kernel@vger.kernel.org>, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Ben Copeland <benjamin.copeland@linaro.org>, 
+	Nathan Chancellor <nathan@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 9:04=E2=80=AFAM Ido Schimmel <idosch@nvidia.com> wr=
-ote:
->
-> On Wed, Aug 13, 2025 at 05:46:44PM +0200, Richard Gobert wrote:
-> > Kuniyuki Iwashima wrote:
-> > > From: Richard Gobert <richardbgobert@gmail.com>
-> > >> @@ -4044,15 +4045,37 @@ static int vxlan_nl2conf(struct nlattr *tb[]=
-, struct nlattr *data[],
-> > >>            conf->vni =3D vni;
-> > >>    }
-> > >>
-> > >> +  if (data[IFLA_VXLAN_LOCALBIND]) {
-> > >> +          if (changelink) {
-> > >> +                  NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCALBI=
-ND], "Cannot rebind locally");
-> > >> +                  return -EOPNOTSUPP;
-> > >> +          }
-> > >
-> > > Are these two "if" necessary ?
-> >
-> > Creating a vxlan interface without localbind then adding localbind won'=
-t
-> > result in the socket being rebound. I might implement this in the futur=
-e,
-> > but for simplicity, I didn't implement this yet.
->
-> I think Kuniyuki meant that you can just call vxlan_nl2flag() without
-> those two "if"s because the function is a NO-OP when the attribute is
-> not present and it will also fail the changelink operation.
+Regressions noticed while building x86_64 and i386 builds with clang-nightly
+and clang-20 toolchains on the Linux next-20250813 tag.
 
-Yes, I don't know why other places were not converted as such
-when vxlan_nl2flag() was introduced in 70fb0828800b.
+First seen on the Linux next-20250813
+Good: next-20250812
+Bad:  next-20250813
 
->
-> >
-> > >
-> > >
-> > >> +
-> > >> +          err =3D vxlan_nl2flag(conf, data, IFLA_VXLAN_LOCALBIND,
-> > >> +                              VXLAN_F_LOCALBIND, changelink,
-> > >> +                              false, extack);
-> > >> +          if (err)
-> > >> +                  return err;
-> > >> +  }
-> > >> +
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Yes
+
+## Build regressions
+* x86_64, build
+  - clang-20-lkftconfig-compat
+
+Build regression: next-20250813 x86_64 iov_iter.h:171:7: error:
+variable 'remain' is used uninitialized whenever 'if'
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+In file included from net/core/skbuff.c:66:
+include/linux/iov_iter.h:171:7: error: variable 'remain' is used
+uninitialized whenever 'if' condition is true
+[-Werror,-Wsometimes-uninitialized]
+  171 |                 if (skip >= fsize)
+      |                     ^~~~~~~~~~~~~
+include/linux/iov_iter.h:190:7: note: uninitialized use occurs here
+  190 |                 if (remain)
+      |                     ^~~~~~
+include/linux/iov_iter.h:171:3: note: remove the 'if' if its condition
+is always false
+  171 |                 if (skip >= fsize)
+      |                 ^~~~~~~~~~~~~~~~~~
+  172 |                         goto next;
+      |                         ~~~~~~~~~
+include/linux/iov_iter.h:163:22: note: initialize the variable
+'remain' to silence this warning
+  163 |                 size_t part, remain, consumed;
+      |                                    ^
+      |                                     = 0
+1 error generated.
+make[5]: *** [scripts/Makefile.build:287: net/core/skbuff.o] Error 1
+In file included from net/core/datagram.c:53:
+include/linux/iov_iter.h:171:7: error: variable 'remain' is used
+uninitialized whenever 'if' condition is true
+[-Werror,-Wsometimes-uninitialized]
+  171 |                 if (skip >= fsize)
+      |                     ^~~~~~~~~~~~~
+include/linux/iov_iter.h:190:7: note: uninitialized use occurs here
+  190 |                 if (remain)
+      |                     ^~~~~~
+include/linux/iov_iter.h:171:3: note: remove the 'if' if its condition
+is always false
+  171 |                 if (skip >= fsize)
+      |                 ^~~~~~~~~~~~~~~~~~
+  172 |                         goto next;
+      |                         ~~~~~~~~~
+include/linux/iov_iter.h:163:22: note: initialize the variable
+'remain' to silence this warning
+  163 |                 size_t part, remain, consumed;
+      |                                    ^
+      |                                     = 0
+1 error generated.
+make[5]: *** [scripts/Makefile.build:287: net/core/datagram.o] Error 1
+In file included from lib/iov_iter.c:14:
+include/linux/iov_iter.h:171:7: error: variable 'remain' is used
+uninitialized whenever 'if' condition is true
+[-Werror,-Wsometimes-uninitialized]
+  171 |                 if (skip >= fsize)
+      |                     ^~~~~~~~~~~~~
+include/linux/iov_iter.h:190:7: note: uninitialized use occurs here
+  190 |                 if (remain)
+      |                     ^~~~~~
+include/linux/iov_iter.h:171:3: note: remove the 'if' if its condition
+is always false
+  171 |                 if (skip >= fsize)
+      |                 ^~~~~~~~~~~~~~~~~~
+  172 |                         goto next;
+      |                         ~~~~~~~~~
+include/linux/iov_iter.h:163:22: note: initialize the variable
+'remain' to silence this warning
+  163 |                 size_t part, remain, consumed;
+      |                                    ^
+      |                                     = 0
+1 error generated.
+
+## Source
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Project: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250813/
+* kernel version: next-20250813
+* Architectures: x86_64, i386
+* Toolchains: clang-20
+* Kconfigs: defconfig
+
+## Test
+* Test log: https://qa-reports.linaro.org/api/testruns/29479215/log_file/
+* Test details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250813/log-parser-build-clang/clang-compiler-include_linux_iov_iter_h-error-variable-remain-is-used-uninitialized-whenever-if-condition-is-true/
+* Test plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/31DcGmmPgATtnxuFKXwu6DM9bZu/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/31DcGmmPgATtnxuFKXwu6DM9bZu/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/31DcGmmPgATtnxuFKXwu6DM9bZu/config
+
+## steps to reproduce
+ * tuxmake --runtime podman --target-arch x86_64 --toolchain clang-20
+--kconfig x86_64_defconfig LLVM=1 LLVM_IAS=1
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
