@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-767195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDDAB25060
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E0CB2506F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E320D1C2093E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:56:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB7D883747
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBABB28C5B1;
-	Wed, 13 Aug 2025 16:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E80281352;
+	Wed, 13 Aug 2025 16:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXniqFu7"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Feps1IAr"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD80287510;
-	Wed, 13 Aug 2025 16:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F3E28B40A;
+	Wed, 13 Aug 2025 16:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755104190; cv=none; b=imTrvcFojlh/1RjC2U3gFI3O2CiLDNHeXA71UfHaqiWhqJ0Ykw4UAeeXz5Jfw5/IVnKiMxiGDiL7ZyBWMnZ5jn7OgWazCiN+sRgKbZ/gG9oIfdihbo8k3EbG/Wg1uMczNoj+XD1l9E1BkxYBRmOwqGs0nhaq+F1pETc9MkPQXh8=
+	t=1755104190; cv=none; b=i289exUnFkoVzbE+uKm23aQFJflzKX0ELHl4hr4pnhsIY9BTjk5dMdwbJa5RLxICDrdabdEbXH7/D2V4TYn9qvVovq7Mqzhz6lQzY73hFiBQoSVkP8VWoPOrnqSK7fKwNqRC4Qc6o/4dx5Sk6jR2N5XIFNwOSDQ0L3ckaAy44AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755104190; c=relaxed/simple;
-	bh=cDZQ03cVnTPpzRfyqUzlSr90Hr4NFUtBugpQqyj73nI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n1Okr77792qiK3jUKaPiSjvAqUdjRDU9x20tYW/qm9E8jwhCAzDikpCJzC43SoWcEmNYsoIyT5IIogVtPa3bzW2JiOjccn82/9OPEw/OAcKVW1gSWvjDDDoDtfi4SZOGcv6XVgizjdS8cjhtjy01J+jq1q3RTkOIyyn+0Ip5iBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXniqFu7; arc=none smtp.client-ip=209.85.221.51
+	bh=nzALyxIVz+Odu4JvpiWZy/GRnI5447kXU2zpU8VXgjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OqLDEoOKoPJ42DVmV58nURnkS3G2lBzFMtLqfy5b9hnePnQ7+rHy8VAs8vcboTmJ/cIXCpoUOPktjEWY1BCwqKzDrbTNi+6G++nIRdFvrr7yDa+x3St8hfhSiSP/Uk6kDmBEA4O2u1jSWcbItoO4c92iG+i+MpmRgJCFh/fsibk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Feps1IAr; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b9e4148134so11796f8f.2;
-        Wed, 13 Aug 2025 09:56:27 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9e411c820so19383f8f.1;
+        Wed, 13 Aug 2025 09:56:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755104186; x=1755708986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6vspPggjf6bubnMbRlZ+WsSEeGAjNQXmQ3Io8O2p1g0=;
-        b=WXniqFu7bA41485RzIoIzn1laTKuwJ+8mZ0Btku1fvQHhuoR6gl/VNSHByisV+Nsyi
-         F5L5Tg4iSlUM1xyytNIONLzwQAnaml3xekY4K4/y/VQRGSLkaYj+uVse8qCRp5k8M3fS
-         ISbbSYLEvU4CgyXmAjH8M+1FXpMhdQAMyitpACGjjopRGbHXpSlv7fTH/mVQ1h2Y4HBv
-         YygXr7jkzVt5PvL4r/GydJP/MiLijqxVUbURdiQgrdc/Jtr5NN7fDC6lu7VcdlFfSDtM
-         iY0wFdDgqxVcGC2n2bDLjJYyP6lcbw/Csfqyiek42Q+wa8uEtoh0dBSpF/2QwBzIPLDQ
-         j6cA==
+        d=gmail.com; s=20230601; t=1755104187; x=1755708987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=43XZwmGErlF6psigpkLMw9Zshu8YZJdDdWVr/aXLWM8=;
+        b=Feps1IArX2jDN4pIrKj7AXAuxELKqobv2z1h053U2DvSlC8JPhMa8Prr+2FtpakXF2
+         EBkX2PG/lmw/Povp5B9fzDfx7Cf0g4SvGonea+JIQAFzUudVoXq9YHWxNvuG5Qoaspep
+         NsFfmN7z1IAkiI4CDK+LiBQT/dvlhcbEJvjZjXkGDvM5y49eQY5lV/s24U+w2IDSnv9f
+         7SpZXwOXQFKdsRCUtatFytun6QuUouoa8R6COmyrgr2VyihuHLccYFklCNrUyqqNQn90
+         uro6rSwgojmWNt6ozq/5gKLLK+GXhiBeWHzJStDTwvBoQeEuPt+Y+vei1/QiMk8nkdXv
+         6yiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755104186; x=1755708986;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6vspPggjf6bubnMbRlZ+WsSEeGAjNQXmQ3Io8O2p1g0=;
-        b=uWtUq3Grn6hGEZl4nWJYaEf6iBRN/rNZljJ2oeYP7itrMu7I2ob1kl6ZsvFFBQOfCU
-         IQyPpVX2ZAOdgd7ZlDP3Hnw+fD8fvVGJH69jOoMUtlAfU9mUSLf8d3LY8Z790dStZPqh
-         E0J0B5OFUAJ53kXJHCZHB+/XItDyozZ1JjjSeNIT1dmj0IT8fSc5bNCYzl0wg/9woRf6
-         4AWYNqyHZvLvW0laWo9OJ9GghN9b7p8mnHE+nJiUfg2OuekvsJTh3jLamNu+z1kOWUQN
-         rcJUu751dG1ggWFluIgqWnvnMfqFZOuxg/8AHqqZoCdaUZPht3eCZW98GfCv6IzWSCsz
-         lBvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXTV9VbYJgakooYsgqpp26F11flHDssCrL0q+2qE74WTiD7I5tGCesn8qQJVIHe+iXqhnIcTjXKbSUZEYTLXc8khIhr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnG1KM20f2fSohjxWWjmhp/xhwggVa4CgXROM5OOPXIDEqe7tb
-	sbv0pHdtqkVm7pH2EQzJY/VKKa+m6rZ0fmw+QOpM4t2guABWA2CwfKfckYo2cw==
-X-Gm-Gg: ASbGncsoGe+FGhYBSKTe4udM6EpVRcDdnW+Dk1MDdjgwEAG9OdCtAJXa2FYHVT0rmC0
-	XfZBSIs+sOcfQ30DI53DdZ68O6GnL5swTJzQYKjW5VgRtCcSsBdYKfCBDg4XmyGLG+TAFfMJ7bP
-	vAf9qHqI/Qzw6f2JV6vFUgTw2ACXGDvXFg7hcL85/FnHTuEph0ba/faZqapEmhJSV6APi2cMQk1
-	S4LwNKYs9NqZq3B+gY+cvM/1av3Dvp+AlE59IZ21mnGhXipkhHFyS0priH4lFBb3Unjy79PX6qx
-	NIJsx1U9XSbQL0KXCLjujZajRGEyk1gSXKU2GWAnjbyf0djVAJBcMzIm7ZkG4hzyDVnnSHqfszG
-	iwFcgTxSTiIQag2SQFUMRbq4=
-X-Google-Smtp-Source: AGHT+IExaDRQamESqI7WrrCVloOBLd7avpvA6Fee7Zn3GKcybQvl3WvVhSW1yWyYijTdLt7QCP2ugg==
-X-Received: by 2002:a05:6000:24c7:b0:3a3:7ba5:93a5 with SMTP id ffacd0b85a97d-3b9edfcef3emr28090f8f.26.1755104186041;
+        d=1e100.net; s=20230601; t=1755104187; x=1755708987;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=43XZwmGErlF6psigpkLMw9Zshu8YZJdDdWVr/aXLWM8=;
+        b=ZRi1wgvUev/6S0P1Ic+glF9WYdmJdVEF7ICuVhp/jJeVG/9hLqIefLPhjjbCef9TD/
+         wY/J2ESXvuHor7QfRA+lUozlC8tdFIt+1Mct5xhddb0r265Fu3xjJFoAvn+Bu+ZBpp74
+         46UvhzrxYJL/YaDixl/Bi8/O7JUbozx4IRa+PzWK2qe+Nn+LIlb51kWggqsIjDx2tE1h
+         oeWnRJKd1k3xBNiZReFdPmjj7y3xE2sQ8kOi+Sc6XDfzmUR7/9+kMixvpyiS/HKUsk07
+         1XsQJ99df/OtKxswfr0yznPY/yai913ZrMVkHzsBIL3Cvc4htG8hWTQNxGIkO4d69zga
+         qmBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW02g5/Tw3jppqWsLdA1xb6WSpZGdmdmLQr2zeaBEYemp/33WaY11uGOpBW5PtRYgL9YRjqc+IrZ9uazmQYxtCYD1tz@vger.kernel.org
+X-Gm-Message-State: AOJu0YycFF2oxoyBdubrtHPIbj6Vf2cyttsv2z4BgA8GkPKL1CxZE1qT
+	W7gUBtsTvwohSklBfzraeOqCJ4iwVhrwckF3wEwTtf2suDAVYtQZQEDrcf96IA==
+X-Gm-Gg: ASbGncuRjArS/yGaxSm0u6sBjja+hUndd1lEEOzYngcFRyCySnt9KsulTgKSxQq4zwx
+	W8WIzsuIILt+gNSEVlHALWQAFBTqrwuPoLUNuaiazmHAb+Tb+mPqaFi++WG7BBiQjUXSb57zj1b
+	BzEPAzZ6GFeBLY9eCgGtHDPt8rDFkhx6UCeGWKEfq41WRBw2fzMRLaAkeKfoFDRFEqKwj2wwBug
+	bOxogWdPoHM26AVvG9/wNQWbQEjuhiuJf20nyTg41lY350dRd2hBCrmJ+t0VZjo6C1N7ACmfaEC
+	/bdBeBxgyKs26oHM4LFm6YX4AizZNnY8PwQrgkH4gGYf9EJxs0SzSbh2BZDpPNPAhWSO6moGMKh
+	eVmcbFUSN5AfrTDvrN4qqn68=
+X-Google-Smtp-Source: AGHT+IGGxaMihTDb3PQS6/1V76v1zpCuEaPu5jyF0yhcMdXvSaxNSUJeRajV+pCB1WzdQgNbTlOwow==
+X-Received: by 2002:a05:6000:1889:b0:3b9:1108:e6f with SMTP id ffacd0b85a97d-3b9edfd3877mr27186f8f.25.1755104186821;
         Wed, 13 Aug 2025 09:56:26 -0700 (PDT)
 Received: from denis-pc ([176.206.95.68])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48de68sm48600399f8f.67.2025.08.13.09.56.25
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48de68sm48600399f8f.67.2025.08.13.09.56.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 09:56:25 -0700 (PDT)
+        Wed, 13 Aug 2025 09:56:26 -0700 (PDT)
 From: Denis Benato <benato.denis96@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: Hans de Goede <hdegoede@redhat.com>,
@@ -80,166 +82,125 @@ Cc: Hans de Goede <hdegoede@redhat.com>,
 	Alok Tiwari <alok.a.tiwari@oracle.com>,
 	Derek John Clark <derekjohn.clark@gmail.com>,
 	Denis Benato <benato.denis96@gmail.com>
-Subject: [PATCH v11 0/8] platform/x86: Add asus-armoury driver
-Date: Wed, 13 Aug 2025 18:56:12 +0200
-Message-ID: <20250813165620.1131127-1-benato.denis96@gmail.com>
+Subject: [PATCH v11 1/8] platform/x86: asus-wmi: export symbols used for read/write WMI
+Date: Wed, 13 Aug 2025 18:56:13 +0200
+Message-ID: <20250813165620.1131127-2-benato.denis96@gmail.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250813165620.1131127-1-benato.denis96@gmail.com>
+References: <20250813165620.1131127-1-benato.denis96@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+From: "Luke D. Jones" <luke@ljones.dev>
 
-the TL;DR:
-1. Introduce new module to contain bios attributes, using fw_attributes_class
-2. Deprecate all possible attributes from asus-wmi that were added ad-hoc
-3. Remove those in the next LTS cycle
+Export symbols for reading/writing WMI symbols using a namespace.
+Existing functions:
+- asus_wmi_evaluate_method
+- asus_wmi_set_devstate
+New function:
+- asus_wmi_get_devstate_dsts
 
-The idea for this originates from a conversation with Mario Limonciello
-https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
+The new function is intended for use with DSTS WMI method only and
+avoids requiring the asus_wmi driver data to select the WMI method.
 
-It is without a doubt much cleaner to use, easier to discover, and the
-API is well defined as opposed to the random clutter of attributes I had
-been placing in the platform sysfs. Given that Derek is also working on a
-similar approach to Lenovo in part based on my initial work I'd like to think
-that the overall approach is good and may become standardised for these types
-of things.
+Signed-off-by: Denis Benato <benato.denis96@gmail.com>
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/platform/x86/asus-wmi.c            | 40 ++++++++++++++++++++--
+ include/linux/platform_data/x86/asus-wmi.h |  5 +++
+ 2 files changed, 42 insertions(+), 3 deletions(-)
 
-Regarding PPT: it is intended to add support for "custom" platform profile
-soon. If it's a blocker for this patch series being accepted I will drop the 
-platform-x86-asus-armoury-add-ppt_-and-nv_-tuning.patch and get that done
-separately to avoid holding the bulk of the series up. Ideally I would like
-to get the safe limits in so users don't fully lose functionality or continue
-to be exposed to potential instability from setting too low, or be mislead
-in to thinking they can set limits higher than actual limit.
-
-The bulk of the PPT patch is data, the actual functional part is relatively
-small and similar to the last version.
-
-Unfortunately I've been rather busy over the months and may not cover
-everything in the v7 changelog but I've tried to be as comprehensive as I can.
-
-Regards,
-Luke
-
-Changelog:
-- v1
-  - Initial submission
-- v2
-  - Too many changes to list, but all concerns raised in previous submission addressed.
-  - History: https://lore.kernel.org/platform-driver-x86/20240716051612.64842-1-luke@ljones.dev/
-- v3
-  - All concerns addressed.
-  - History: https://lore.kernel.org/platform-driver-x86/20240806020747.365042-1-luke@ljones.dev/
-- v4
-  - Use EXPORT_SYMBOL_NS_GPL() for the symbols required in this patch series
-  - Add patch for hid-asus due to the use of EXPORT_SYMBOL_NS_GPL()
-  - Split the PPT knobs out to a separate patch
-  - Split the hd_panel setting out to a new patch
-  - Clarify some of APU MEM configuration and convert int to hex
-  - Rename deprecated Kconfig option to ASUS_WMI_DEPRECATED_ATTRS
-  - Fixup cyclic dependency in Kconfig
-- v5
-  - deprecate patch: cleanup ``#if`, ``#endif` statements, edit kconfig detail, edit commit msg
-  - cleanup ppt* tuning patch
-  - proper error handling in module init, plus pr_err()
-  - ppt tunables have a notice if there is no match to get defaults
-  - better error handling in cpu core handling
-    - don't continue if failure
-  - use the mutex to gate WMI writes
-- V6
-  - correctly cleanup/unwind if module init fails
-- V7
-  - Remove review tags where the code changed significantly
-  - Add auto_screen_brightness WMI attribute support
-  - Move PPT patch to end
-  - Add support min/max PPT values for 36 laptops (and two handhelds)
-  - reword commit for "asus-wmi: export symbols used for read/write WMI"
-  - asus-armoury: move existing tunings to asus-armoury
-    - Correction to license header
-    - Remove the (initial) mutex use (added for core count only in that patch)
-    - Clarify some doc comments (attr_int_store)
-    - Cleanup pr_warn in dgpu/egpu/mux functions
-    - Restructure logic in asus_fw_attr_add()
-    - Check gpu_mux_dev_id and mini_led_dev_id before remove attrs
-  - asus-armoury: add core count control:
-    - add mutex to prevent possible concurrent write to the core
-      count WMI due to separated bit/little attributes
-  - asus-armoury: add ppt_* and nv_* tuning knobs:
-    - Move to end of series
-    - Refactor to use a table of allowed min/max values to
-      ensure safe settings
-    - General code cleanup
-  - Ensure checkpatch.pl returns clean for all
-- V8
-  - asus-armoury: move existing tunings to asus-armoury module
-    - Further cleanup: https://lore.kernel.org/platform-driver-x86/20250316230724.100165-2-luke@ljones.dev/T/#m72e203f64a5a28c9c21672406b2e9f554a8a8e38
-  - asus-armoury: add ppt_* and nv_* tuning knobs
-    - Address concerns in https://lore.kernel.org/platform-driver-x86/20250316230724.100165-2-luke@ljones.dev/T/#m77971b5c1e7f018954c16354e623fc06522c5e41
-    - Refactor struct asus_armoury_priv to record both AC and DC settings
-    - Tidy macros and functions affected by the above to be clearer as a result
-    - Move repeated strings such as "ppt_pl1_spl" to #defines
-    - Split should_create_tunable_attr() in to two functions to better clarify:
-      - is_power_tunable_attr()
-      - has_valid_limit()
-    - Restructure init_rog_tunables() to initialise AC and DC in a
-      way that makes more sense.
-    - Ensure that if DC setting table is not available then attributes
-      return -ENODEV only if on DC mode.
-- V9
-  - asus-armoury: move existing tunings to asus-armoury module
-    - return -EBUSY when eGPU/dGPU cannot be deactivated
-  - asus-armoury: add apu-mem control support
-    - discard the WMI presence bit fixing the functionality
-  - asus-armoury: add core count control
-    - replace mutex lock/unlock with guard
-    - move core count alloc for initialization in init_max_cpu_cores()
-- v10
-  - platform/x86: asus-wmi: export symbols used for read/write WMI
-    - fix error with redefinition of asus_wmi_set_devstate
-  - asus-armoury: move existing tunings to asus-armoury module
-    - hwmon or other -> hwmon or others
-    - fix wrong function name in documentation (attr_uint_store)
-    - use kstrtouint where appropriate
-    - (*) fix unreachable code warning: the fix turned out to be partial
-    - improve return values in case of error in egpu_enable_current_value_store
-  - asus-armoury: asus-armoury: add screen auto-brightness toggle
-    - actually register screen_auto_brightness attribute
-- v11
-  - cover-letter:
-    - reorganize the changelog of v10
-  - asus-armoury: move existing tunings to asus-armoury module
-    - move the DMIs list in its own include, fixing (*) for good
-  - asus-armoury: add ppt_* and nv_* tuning knobs
-    - fix warning about redefinition of ppt_pl2_sppt_def for GV601R
-
-Luke D. Jones (8):
-  platform/x86: asus-wmi: export symbols used for read/write WMI
-  platform/x86: asus-armoury: move existing tunings to asus-armoury
-    module
-  platform/x86: asus-armoury: add panel_hd_mode attribute
-  platform/x86: asus-armoury: add apu-mem control support
-  platform/x86: asus-armoury: add core count control
-  platform/x86: asus-armoury: add screen auto-brightness toggle
-  platform/x86: asus-wmi: deprecate bios features
-  platform/x86: asus-armoury: add ppt_* and nv_* tuning knobs
-
- .../ABI/testing/sysfs-platform-asus-wmi       |   17 +
- drivers/platform/x86/Kconfig                  |   23 +
- drivers/platform/x86/Makefile                 |    1 +
- drivers/platform/x86/asus-armoury.c           | 1174 +++++++++++++++
- drivers/platform/x86/asus-armoury.h           | 1277 +++++++++++++++++
- drivers/platform/x86/asus-wmi.c               |  165 ++-
- include/linux/platform_data/x86/asus-wmi.h    |   24 +-
- 7 files changed, 2648 insertions(+), 33 deletions(-)
- create mode 100644 drivers/platform/x86/asus-armoury.c
- create mode 100644 drivers/platform/x86/asus-armoury.h
-
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index f7191fdded14..e31e0264a160 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -390,7 +390,7 @@ int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval)
+ {
+ 	return asus_wmi_evaluate_method3(method_id, arg0, arg1, 0, retval);
+ }
+-EXPORT_SYMBOL_GPL(asus_wmi_evaluate_method);
++EXPORT_SYMBOL_NS_GPL(asus_wmi_evaluate_method, "ASUS_WMI");
+ 
+ static int asus_wmi_evaluate_method5(u32 method_id,
+ 		u32 arg0, u32 arg1, u32 arg2, u32 arg3, u32 arg4, u32 *retval)
+@@ -554,12 +554,46 @@ static int asus_wmi_get_devstate(struct asus_wmi *asus, u32 dev_id, u32 *retval)
+ 	return 0;
+ }
+ 
+-int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param,
+-				 u32 *retval)
++/**
++ * asus_wmi_get_devstate_dsts() - Get the WMI function state.
++ * @dev_id: The WMI method ID to call.
++ * @retval: A pointer to where to store the value returned from WMI.
++ * @return: 0 on success and retval is filled.
++ * @return: -ENODEV if the method ID is unsupported.
++ * @return: everything else is an error from WMI call.
++ */
++int asus_wmi_get_devstate_dsts(u32 dev_id, u32 *retval)
++{
++	int err;
++
++	err = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS, dev_id, 0, retval);
++	if (err)
++		return err;
++
++	if (*retval == ASUS_WMI_UNSUPPORTED_METHOD)
++		return -ENODEV;
++
++	return 0;
++}
++EXPORT_SYMBOL_NS_GPL(asus_wmi_get_devstate_dsts, "ASUS_WMI");
++
++/**
++ * asus_wmi_set_devstate() - Set the WMI function state.
++ * @dev_id: The WMI function to call.
++ * @ctrl_param: The argument to be used for this WMI function.
++ * @retval: A pointer to where to store the value returned from WMI.
++ * @return: 0 on success and retval is filled.
++ * @return: everything else is an error from WMI call.
++ *
++ * A asus_wmi_set_devstate() call must be paired with a
++ * asus_wmi_get_devstate_dsts() to check if the WMI function is supported.
++ */
++int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval)
+ {
+ 	return asus_wmi_evaluate_method(ASUS_WMI_METHODID_DEVS, dev_id,
+ 					ctrl_param, retval);
+ }
++EXPORT_SYMBOL_NS_GPL(asus_wmi_set_devstate, "ASUS_WMI");
+ 
+ /* Helper for special devices with magic return codes */
+ static int asus_wmi_get_devstate_bits(struct asus_wmi *asus,
+diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+index 8a515179113d..dbd44d9fbb6f 100644
+--- a/include/linux/platform_data/x86/asus-wmi.h
++++ b/include/linux/platform_data/x86/asus-wmi.h
+@@ -166,6 +166,7 @@ enum asus_ally_mcu_hack {
+ #if IS_REACHABLE(CONFIG_ASUS_WMI)
+ void set_ally_mcu_hack(enum asus_ally_mcu_hack status);
+ void set_ally_mcu_powersave(bool enabled);
++int asus_wmi_get_devstate_dsts(u32 dev_id, u32 *retval);
+ int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval);
+ int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1, u32 *retval);
+ #else
+@@ -179,6 +180,10 @@ static inline int asus_wmi_set_devstate(u32 dev_id, u32 ctrl_param, u32 *retval)
+ {
+ 	return -ENODEV;
+ }
++static inline int asus_wmi_get_devstate_dsts(u32 dev_id, u32 *retval)
++{
++	return -ENODEV;
++}
+ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+ 					   u32 *retval)
+ {
 -- 
 2.39.5
 
