@@ -1,109 +1,131 @@
-Return-Path: <linux-kernel+bounces-766923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C01CB24CC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:05:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FB9B24CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 839AB188E4F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:00:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D032E18833B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2492FE598;
-	Wed, 13 Aug 2025 14:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9972FF156;
+	Wed, 13 Aug 2025 14:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2Xi6Jk3"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I3u5d4XV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BPoRvRPO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953A42FE578
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4002FE583;
+	Wed, 13 Aug 2025 14:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097081; cv=none; b=og5FoIps09vpOsoKX3yNLEOvJxHanFc4QV7p/KXZ04UAjvCIGrKqObQRSDOdYZcyu/3yhVVhNp7TvMAAS1JFYi8H+UEImCfWwZGCZBWXrQDfo8i9JqMqyKP8Srb7V3jq0XTH67zE9bSsj6cinzHhkNkfo/ofNROa/ObOF+37XNE=
+	t=1755097081; cv=none; b=X2SJh83KFt3yBu8uKs72iDb1MZzmSJUcosCv8ilJkIbrXQOR3+SLL1R1SJzkcQxlk05Y+aDCEcfCQYWQ145ndTvJnCq7ygUpIaNeTNcvKv03m3mVHt5o8eo4q3kO6BH7/XwvUMDILz+B6xSzfMgtAROuHeQ3sfKXrIdGw8RW1fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755097081; c=relaxed/simple;
-	bh=C1C6C68HSvqMhSJKPvSTlY3JwFucLAkfJ49Gr2TvVhM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fvj2RrBHkW3aDU3o/g/dLpXAq+GHdnPkcnDsh6WOq06JgqkN4YJEZ7cWipgGu8KGwlcbfKAot4eCRj4tzquQjEhoPN87a+sKvbyS1awen3BAmP6O2mXkqxdESgOzriDqNuB1M1XjCqgxqMvc907fuGnLkAQvvNMnTdAF1hEq26w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O2Xi6Jk3; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e52146df5cso69255005ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755097078; x=1755701878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C1C6C68HSvqMhSJKPvSTlY3JwFucLAkfJ49Gr2TvVhM=;
-        b=O2Xi6Jk3UHU94SS1YSZuwGdR+OFeo8objUJx8ONErCYBFf8jPo9mRoqnk6TsAPuRbr
-         tV00Z7pBtIA0E6xleFDWax7azwHEzcKuqpADLfVfCrkOOYVOidQ3rjpjp5tJOlQSyZo2
-         Oq40Y69IkijhZF0oqhzlvkoPg91Z/nnZyCVwhOsK5S3orIivjwYIowD9vdNTbshAGwB4
-         /BVm922cZLlDB0Uvzjt/skdHpa3veX+qkgTdsxDKSvhLvJ7954ehrimNLkxuhbh+Id3G
-         1eMNbRfD8zMlBSjaXYW2askAazqvzRgws8idCUQ+gs0IROT/nH92XesnYBsmlRaJHtn+
-         TNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755097078; x=1755701878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C1C6C68HSvqMhSJKPvSTlY3JwFucLAkfJ49Gr2TvVhM=;
-        b=WEa4Ruk2S4n0UZQUtlUtAKrCqpNICXKG6EJZ1hAGQXu6yHkWKuNuSO4ehY19AJBeII
-         AM/KXP2Z1l3OlKiaDkhU9GueBJoGpJQw5gKfoYt6/eSKyDu1INNoNaJxXNzY2T9teDqD
-         6u1VasEKAXSb/pavPVY9G0OYE8mxCJCT3CSkI+5W1Tc1ggyyXQK2V8NHVBzJxpTcSmwJ
-         z317Gs1JL5yuqL+x4l/qMkoQrW8z1SmoMshiE98pE2AkBL3BO7I0eLrDQ5G5Ej8OMiyC
-         NII9vyClC/uk72OSor5wJD6UwDpqHw1ZdzV9zC5yyS67rE2nvIyGKGvIZ8POtUc//pWN
-         d0xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMK19ozxWkZgDaJGjYa4rcWDVjmwpFnz1JIaXjJK3fiYWJZrgfGeXh7nVoTsg94ON+c8PpyOrCLC0WsPg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHpx6CADFfmOkXFeleBVgogGPFp6wKjJV7SllvUmsqWJ7uiWfW
-	F5FqgsNAJBNEu6RAF9+WCX9v0J1fxsTH2XlSFTf8Vt9Yb3dI4I7/vJW2owr/Cv+NFnwokzsfA7a
-	V+lfSQa2rOZJIbLWyksR54uHO28A9O9w=
-X-Gm-Gg: ASbGnctIHovSJkZB0wvZBcTzxs0RU4KIIMCYZ5Uf2ABXyTq1Ktv4QC/qRwvKWwB2g75
-	I52pu1/q2Xne4CnSMsfC01CcbfU6IZ+GMQHtJu2dEIT2YQtJVqW6UTTQHokJ0YwfUkN36GXkM3Q
-	0VHMUXU/F5mRbqg+bYebUdV16kuyHGQpWune3MSYJTlGYwrPPfDpsE0X3d+/Ei4Q16xPGT5NR3J
-	jWI
-X-Google-Smtp-Source: AGHT+IECvEcJAuqVNJem8cC/P9L8/n38xX1d+UqWESMmOlqWmSGR4aIX3qh8ME36Q5WCmNIge5FX7QjVdwbrPlUpz8k=
-X-Received: by 2002:a05:6e02:3e8e:b0:3e5:261c:bac0 with SMTP id
- e9e14a558f8ab-3e5674de9f9mr44704905ab.22.1755097078469; Wed, 13 Aug 2025
- 07:57:58 -0700 (PDT)
+	bh=I2IWMtoFl5keplxHSLJtItCr7nzwxIzEBEtLkTKoLhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k3+e1CZGAVyTv13iG1aEhHSGGlzuskxEq0oP/gQw4smr2B8iZInxLFSw9GEwUmOdBpalRd5Cuz2MrN79mOL5EAQyShnXkRo1f/V3duuoN63zDWDxmb7fKG+QR5nNJMWoVOIyzOn4TAQ+jVauvuEET5tfwqKjUMpMqSsBGrhtPyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I3u5d4XV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BPoRvRPO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755097076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=LK0fse9piQMDsNEawnHa17CJtTGb1+S7lgjGFKtF0tc=;
+	b=I3u5d4XVCbp9sJAiqzUxxnN8jogvVz330rmXlvPc4EIs9kOtcf3Mj8uSjIxg1fRTrbwecl
+	TMhr5g/y26FthJ72gtEwrU4u6dRhFhPmFvZEuofvCR2S34BZx0XaO71/N7GdY3Si7KdKQH
+	rRll7+2m0QLENvmItC7EZWe2cT/j1aiQ6gFxiMmD1YFmNrWvCltHacGpPwgXO0KxHf97IA
+	wynDG8BsBzIwHDNhNCP7ES+PQV4KCfRw73ymS0am7NjJRjrB20+Ua//P3TMmK8Xia9SQNY
+	/xlAJETgVH3RXlHC8LNh3uYz9R0F8OR6g5b5Bwckh4QWwwVqXxslL1lpiee33Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755097076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=LK0fse9piQMDsNEawnHa17CJtTGb1+S7lgjGFKtF0tc=;
+	b=BPoRvRPOD4TmXUa3bcE7pvCwZh4VhvmvEvaz/Zod57Zu5kVP4MdtmFgc2nUPCdQq1DcUDv
+	jEKTQlAF2z04ZwDw==
+To: linux-mm@kvack.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko
+ <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, Shakeel
+ Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ cgroups@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] memcg: Optimize exit to user space
+Date: Wed, 13 Aug 2025 16:57:55 +0200
+Message-ID: <87tt2b6zgs.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-swap-scan-list-v3-0-6d73504d267b@kernel.org> <20250812-swap-scan-list-v3-1-6d73504d267b@kernel.org>
-In-Reply-To: <20250812-swap-scan-list-v3-1-6d73504d267b@kernel.org>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 13 Aug 2025 07:57:47 -0700
-X-Gm-Features: Ac12FXxiCEZcTx71SB2-7N7mbjmYWUdvD_vXmcG4ydTw8c3TixlbKAnHTrnitkA
-Message-ID: <CAKEwX=NLG_MBvwqMuoLwRmD_EBSJoc1w=-u7mj62YpG9BAFbig@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] mm/swapfile.c: introduce function alloc_swap_scan_list()
-To: Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Kairui Song <kasong@tencent.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Aug 12, 2025 at 12:10=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
-:
->
-> alloc_swap_scan_list() will scan the whole list or the first cluster.
->
-> This reduces the repeat patterns of isolating a cluster then scanning tha=
-t
-> cluster. As a result, cluster_alloc_swap_entry() is shorter and shallower=
-.
->
-> No functional change.
->
-> Signed-off-by: Chris Li <chrisl@kernel.org>
+memcg uses TIF_NOTIFY_RESUME to handle reclaiming on exit to user
+space. TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is utilized by
+other entities as well.
 
-Code seems more readable now, IMO. Thanks, Chris!
+This results in a unconditional mem_cgroup_handle_over_high() call for
+every invocation of resume_user_mode_work(), which is a pointless
+exercise as most of the time there is no reclaim work to do.
 
-Acked-by: Nhat Pham <nphamcs@gmail.com>
+Especially since RSEQ is used by glibc, TIF_NOTIFY_RESUME is raised
+quite frequently and the empty calls show up in exit path profiling.
+
+Optimize this by doing a quick check of the reclaim condition before
+invoking it.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ include/linux/memcontrol.h |    8 +++++++-
+ mm/memcontrol.c            |    4 ++--
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -900,7 +900,13 @@ unsigned long mem_cgroup_get_zone_lru_si
+ 	return READ_ONCE(mz->lru_zone_size[zone_idx][lru]);
+ }
+ 
+-void mem_cgroup_handle_over_high(gfp_t gfp_mask);
++void __mem_cgroup_handle_over_high(gfp_t gfp_mask);
++
++static inline void mem_cgroup_handle_over_high(gfp_t gfp_mask)
++{
++	if (unlikely(current->memcg_nr_pages_over_high))
++		__mem_cgroup_handle_over_high(gfp_mask);
++}
+ 
+ unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
+ 
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2203,7 +2203,7 @@ static unsigned long calculate_high_dela
+  * try_charge() (context permitting), as well as from the userland
+  * return path where reclaim is always able to block.
+  */
+-void mem_cgroup_handle_over_high(gfp_t gfp_mask)
++void __mem_cgroup_handle_over_high(gfp_t gfp_mask)
+ {
+ 	unsigned long penalty_jiffies;
+ 	unsigned long pflags;
+@@ -2486,7 +2486,7 @@ static int try_charge_memcg(struct mem_c
+ 	if (current->memcg_nr_pages_over_high > MEMCG_CHARGE_BATCH &&
+ 	    !(current->flags & PF_MEMALLOC) &&
+ 	    gfpflags_allow_blocking(gfp_mask))
+-		mem_cgroup_handle_over_high(gfp_mask);
++		__mem_cgroup_handle_over_high(gfp_mask);
+ 	return 0;
+ }
+ 
 
