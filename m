@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-767701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9D1B257E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:54:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1373B257E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F05F21BC2075
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:54:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D130E2A61CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE022FE058;
-	Wed, 13 Aug 2025 23:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408092FE058;
+	Wed, 13 Aug 2025 23:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYHv8VTK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rlZ8Ccbb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F5B2F60DD
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06CB27462
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755129253; cv=none; b=pYVDclFsYqDheKa7WUUI5eQgz1o7Yy0mkg9gRxaBF/JvgZZXnhRcRri9gEYnSaYR4kvpn/TuuSSrzdhq7txQRD+tz3C4SF6ahSfVKpK5/ftmlRN8jLqcUmGywgmxJn5mrIeDO+4SaREdOJDE4Vj+mHEsmZhgO0R+tfiNZGDzqR8=
+	t=1755129282; cv=none; b=cDXGpbELvQR7jMosOBA2aH3DTDkOdKzU3G2Ggsx/HtK7RXhAuRKFfiVTU34xJqbaYZIOulztB9nuCQGbbDANLftBKcvyWXXFVA02bXmomSpr4qGrpQvQNMOTgUjDhwoE80YT/OEtE5TPSrS13juo032WC+g6Wn0sqVmgiyRgLeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755129253; c=relaxed/simple;
+	s=arc-20240116; t=1755129282; c=relaxed/simple;
 	bh=u7JygzuN8O8D9Rm9/+E7Tyu1Q+aQCD/m/GsaOd0yKUg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cXFYI/5PTyuw640zIQvFQVqDWKVX5tA9cnwK03NcxPdheqRBjSuptLCjnUuwzNLaeClelKHEkcf+TGMz6ChWh5z2eqGATd7YeEE4jdECHzi8tXSHo94OR3eEddPBLYccDUnUsKfqo8aN40xcwwsrkEdSzH6t8ZZKyC++EGBsYes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYHv8VTK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E124C4CEF8
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:54:13 +0000 (UTC)
+	 To:Cc:Content-Type; b=toZg6uL5NEsVSqGLqfUoHwK37rCLyr0gk8haQep93nVG/VSLcH66sGY59D2WnYqu25edx9KN0lrz/rC6LOshwBllkGIyOZhDGg5fHvlSC7taAqA9Ku4xvjkz8jt10hKXLDn+NH3HoQI0szCb5pmszI0oC5TV4/ETniwZcZpzisE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rlZ8Ccbb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27144C4CEF8
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:54:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755129253;
+	s=k20201202; t=1755129282;
 	bh=u7JygzuN8O8D9Rm9/+E7Tyu1Q+aQCD/m/GsaOd0yKUg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CYHv8VTKo8CuWcLGz1WzmMaS+9tWfXuo2af2jk1sNinHWzn50hjztoI/wVCkpJOms
-	 v2kzASz5wx30tEpRfQcLWG67YoeIvb2kYiCQKH6gepHIGPY942pjL8zJ6UDqwMxgiv
-	 kq3rveto+ELOK69LN4b/9gdFM5II3uzU1SdvTRVlm5+lfiawM4XRUBGWEhMjwMzvu4
-	 Nn1FxUr/KKrhWGohZ0bJu0K4b+VA8WePkrYHQbd/npPiIbbA+9mw35ONsUDV9NFIJS
-	 BrA4lLKDoyvzC0DZfECDNxO9o6mZ1dumc34y4BjXHtAT6LsGyrWn2sSB6+Jjab1kTL
-	 YkHjkoxnKHBpA==
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b47156b3b79so354593a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:54:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2fj2rop3J9QzSeDSDCrcnRGKND9r8CGxJgdn8f2zbS7VMFnOOl/Qv6eJ42NxjPGJXDpV0GrkLnXLbRfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCQXqAv0V774i7TL0ExFwc9xvw5r1SNoqHH6oGCnTKB2PiUNc8
-	ZGzcqSSYGM3Kx3HRmt/zdjvBTR2TfJ62asCFiCmCdXjpHFtxM/1IiH2fm21fsAp2qJ6lC9deTyB
-	y1sQUF8Ce8d1nWkEPllDjLXETira05A==
-X-Google-Smtp-Source: AGHT+IGUT/OTIlNyxqe+nQr1qgyFIqgi0Olr7Sv6oTs4ZZrhXaxRN4cOyFxc2NIPsjn1MOi8/uF1Gmy97sX5D5owImA=
-X-Received: by 2002:a17:903:2b0b:b0:23f:b00a:d4c with SMTP id
- d9443c01a7336-2445c152e0cmr2701635ad.2.1755129252780; Wed, 13 Aug 2025
- 16:54:12 -0700 (PDT)
+	b=rlZ8Ccbb6VUoUGfu/EFix+UrZ9kX80W7WiW0o1I/r1cafDGGM52C+f2DxHF/L3Z9k
+	 i+Ib01Kl9v5B+akHUontZbZ1at+tTC93SZGc9R8M6ESV+gUZ8k25/n05d2DY5QTupP
+	 xuP+u9Gd5fd/ccUvqZUE9Ac5thM89XPoIREFaHN0LCCI4hYo9zg7RcSVYkUsbOmIkJ
+	 2fkjebPMVYRVhYQhq52C6/gPC5fPjEHwKhC4hG1XTXDZ1JGsHoAMzfIzde7C4uKZPB
+	 r8ZnU2Tr+O4wYcAwz2A7Qkx4jnOLiDTMA1EeJnGcu1TCvo45HOdfx08+o+FBvKyu8x
+	 XT0GJD9E6/JRg==
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6188b6f7f15so524750a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:54:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVL2Zr85/bhfJjqHn5xPd/+UAYpihjWT9qeAfJMwHxmifBd8F7X2KAoGMD+xrLrXBSCpLj5PppG8iEMJt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx19kZlsJzoW3LRLXS3qxjoVs3Q5xb2Tfw3eD8ac+vW65zGXqO+
+	w9zBaUGWnkrhyeYZY1eqssvD27izfHaaD7j6oPae0AixP0aRI36uW1FsKTjIokgVMvrE1wwL+tO
+	Byt05/D826xTfBQI99ebXch7uZH2+JA==
+X-Google-Smtp-Source: AGHT+IHm7/NHMvFJOaYv1HmU01izKx3/cE5F9xQuEpkBuNLuBLekf5TgPhxAshBp58S3bzeaHhOG3dAFIaXjCX26dM0=
+X-Received: by 2002:a05:6402:a0d2:b0:618:6a0:69be with SMTP id
+ 4fb4d7f45d1cf-6188ba072bamr807292a12.25.1755129280432; Wed, 13 Aug 2025
+ 16:54:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,7 +61,7 @@ In-Reply-To: <20250728025036.24953-1-jason-jh.lin@mediatek.com>
 From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
 Date: Thu, 14 Aug 2025 07:55:21 +0800
 X-Gmail-Original-Message-ID: <CAAOTY_-7wQd_m0G4+gvpH2O5HoWZQKViwZH_x9vqMiyZ9VT8Xg@mail.gmail.com>
-X-Gm-Features: Ac12FXyMVcTmpTQFQCgTgXBiMkbJFCMScrI8wGKO9rqUMaeAJeCiroFGQigsTVY
+X-Gm-Features: Ac12FXzBCmzgimD0vx3iwG8xjWCCWq9Wg_h9jQK1PZ8gDSIT0nXra8B7oMcHVZ8
 Message-ID: <CAAOTY_-7wQd_m0G4+gvpH2O5HoWZQKViwZH_x9vqMiyZ9VT8Xg@mail.gmail.com>
 Subject: Re: [RESEND PATCH] drm/mediatek: Add error handling for old state
  CRTC in atomic_disable
