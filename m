@@ -1,192 +1,180 @@
-Return-Path: <linux-kernel+bounces-766251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336A9B24452
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585F4B24459
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FFC1BC2DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519A3727339
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D165B2F1FDF;
-	Wed, 13 Aug 2025 08:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C662EFDA9;
+	Wed, 13 Aug 2025 08:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hyd8uJxD"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRk/y4Uz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC112F0C59
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52DA2ED85F;
+	Wed, 13 Aug 2025 08:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073658; cv=none; b=cBniTbfGH9mQigk8+wqXG9k0UCJjhULKO+1ijYSqpxWtZJKmYYSUMu2O0O41l0cNmnpgITGvXL1FZt686qpyTIRphFBxjJixnQIN8EAGemc3ud8XlE3bm+bj4+Ik4R/GL3LBGx2jv7EqvtyGasC90DLGN8U91kBwaX3Zm7T8/oA=
+	t=1755073667; cv=none; b=ZECYSg0QkxdIOQGgU0sqZFY+E7EtjoAXyBz9QnB3BdLWuiZ0vdsbLazw2yo6vFNQ1+Z0LBTM7Rzq/6jkkeSxm6CEeVvVYuX1v/ZlD9WB0dG96aBYeqpgj0p7mZTV27TAnXPZyzo9LEtdDTm3yrSqQT811SPVyP9qbh2vM1JsOnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073658; c=relaxed/simple;
-	bh=NvRCQIGdGJIWo6z/G2tCNyjPRInHwov/dUCUXA2+eg4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LzxtXxhy4A1dS+nCOsTgG8rdVYxDhiZXZ8M2lUcQRsdYc2wp6PBYIhAQwOkXa9kiSr4QYyzVuADfWMwHKYYPc1qxLLEA3CbVZqZMbihReaJ8yqPo/cdaikbdjNXe3k3nve+Ob3m8XuB1YZ07FqjxXkY8szRyf2AdnDRANx+GLX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hyd8uJxD; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-61530559847so4695928a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755073654; x=1755678454; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dIJ+x4zOPX38S26xHW3ogZFnx98GYdUErZ7Lc5KD+uk=;
-        b=Hyd8uJxD4wJXtBpX3Y6w8nX1ZqHtObQrXPPOwzUdI3ZxQx+oXQddFhfQnye574YRTT
-         +rnGipbDAtalXeNbqrRmplkb1UDrPLhz9u3N+lVtU1hE1zGLOcc6lkTU1Hv5W179etdn
-         o4rvL46NQGYImi9IlplxCHuiRoCyD90QwGDaIeAOpR82UpI8BjYBqqR9iVe9vpjA0/MG
-         u4uyzd8I3bN3a6wxfmafo6auCR/VA0q905jo+cYuTIZTmWldRzNfyj5a1wYxnNkifsyz
-         mbS7BXvObLZPReApsmp8x9A18WLxpqzJnufCHA7DeTEuVvznI9vW3rGptd4vy7gcBQYO
-         fK3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755073655; x=1755678455;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dIJ+x4zOPX38S26xHW3ogZFnx98GYdUErZ7Lc5KD+uk=;
-        b=XzNOp0h5v5DnIzFct+opIifJ43t9XjB4RzBEZZRufQSPlzTQDODA3q+1IA57VE7Wwz
-         d0XalMm5gyFzI1RCm8/yEAGczA2nxntkbBuAb4BqM2ZpkiBHIR2Tjt0YzUQnTJBhDnRF
-         xoORFUXeJW8j7kVC4pCkQOqk43jAm55EyoDByTwtn8av/3bSAIGrM/P+K7hCFKzD3yzB
-         sUdD5mYxVSPXpFnZS6kyniTBdzR/ypCXoRRZb1svU0nQ9OoMtwhycWHrY7vjJ0Wt6jQ8
-         1+4SNBJ3Rt3IJ0Hzd8eOSLxtCs1Osh7g8vHq7vTHobmMNRvNHtAtE6S/ZlmLF9rnFcIn
-         cfMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWwpfB6wxqpQz+99QI4M4C4GCKW8wbcvvZCJ5MaeqCr7CyWujdgxJTFYc1Pby+rmNASD4EyLt2qxbu2SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCv4dcCN+27x2lnhm4XhmAVFv6ZjBSS9tykhTy/x1P57qr0qRJ
-	PUmEsyLdMO3MXI4OPOG6ZydRPGDkMwrVr6ZajA0zHUBOjJxVktGabgVO9fNS+hdWlqBPHApSRwg
-	2SHzKJqbq/cUST3CWqw==
-X-Google-Smtp-Source: AGHT+IE8ydanFwGG7KesQpAN8skGF2NnY35RVGG+5pSg3DQ1udrmQq4PkLWonfAcxDhio26JiagvnS+7olbq9ac=
-X-Received: from edn14.prod.google.com ([2002:a05:6402:a0ce:b0:615:49c7:ddf6])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:44c9:b0:618:273b:4f51 with SMTP id 4fb4d7f45d1cf-6186bfd5757mr1340836a12.23.1755073654306;
- Wed, 13 Aug 2025 01:27:34 -0700 (PDT)
-Date: Wed, 13 Aug 2025 08:27:20 +0000
-In-Reply-To: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com>
+	s=arc-20240116; t=1755073667; c=relaxed/simple;
+	bh=oEWD46vDy9z48drINkgK+NrICiqVXzJRKRKE95sUsUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DAK/TtwkOUny3nEFaPdSLJSi0GwRO71Wi8qvm2dRj+C+4bCG6krsoEb7ZCDcIf6+zI5eIs84RNR1pFTZZMszIh2pCg+lflQXNdTN2OeQQXYoZ0wbZ5AFOhgm1BB2saBh5/rvtOFzmKXNPc4kawmrA5bsoqU3jrqPNGfpTk8Pkrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pRk/y4Uz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B037C4CEEB;
+	Wed, 13 Aug 2025 08:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755073667;
+	bh=oEWD46vDy9z48drINkgK+NrICiqVXzJRKRKE95sUsUs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pRk/y4UzDZ+EtlkFst7bXN5++uMaluUTW59uizh4+TKxO49bW5PxisxOs8UAUkGfm
+	 HNyO/HZIzliD/3pnmZJToE+0WnzA4vgqgajdXgSufqONXFd45i2CHR/BNTz/q2BTfI
+	 AblwcTwi0TxsvG71Zgqg/JQHIx3ErIG41+nNz2x1k5R7VKUK/P+3GWLiU+IS6pRwn5
+	 icOOHQiaIM+wdWo3eKApc154+xJAsTw1LEx3dGlH9GQJIcrZwDlotgiaXPPSpFLC+U
+	 GXrcYpkLwWSuThw2F3QgnICE6dVU6eVHjTfdmcsRLBZl0bi66P3xWMjwYzrLW9Somd
+	 H8AxBv7UTGzuw==
+Message-ID: <c3cf9b97-3883-4ebb-a2ed-0033adebda87@kernel.org>
+Date: Wed, 13 Aug 2025 10:27:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3154; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=eF5bCKQbWoDK+4GDnO0XjfTUd6tLFH3Wpg7SaPmi7HE=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBonExt5tmxz5dadRkEbyP/qbVmEqwLito1TQxGa
- v2Wm02OrvCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJxMbQAKCRAEWL7uWMY5
- RpmfD/0SM46L161T6o/+tvWN8XkkrrDFh1/r3CbeOCqgv8y6x9N1PLE1/g48HWviJyhJ/pOqUO9
- LD8siSkS1DgF7oZJuvPfMZN+Zh5J4hhqLsoQgvuDAe6tZa4uQjTFF4N9hcF/6ikgxBpUwZq6wBa
- muQbThm+pD/m6TGglZIeVlIbia1tVO9LwbTMXPUlhdq3OWP9D7NQ2TaYlm1fryLb7vdC6CCb98S
- Czw1+YvaoVVEflEX7/mMvNBE4gM6mdmthjDsDW4OdggnMjCp8OHn6GOd4FACMYbY5mHBi6vSUL0
- Y9FRNAxJapcHlJqbfFi/r9g5hz9gIvLfRiI30G3UtlUGJ4bHP9zxsFdVR0UGzHWnzLpHAMTlKsJ
- Z3Tis7T6h4UPTZ05WdcULNVAO/QumFEJF2xdnsjZ0fSmJ3N0HV0z5Fi1vitRQuRQ9pk3o3QdVL9
- ALvHnfOJsLgyeaQAbClEHbXhbWxEMfzeReDhVmqTlG/pvS7MBCZMiKtzVtdqvTn0A8tbdrSQ8p1
- kynBLZ1oNqksBSJRedldc0rDMuF2R3nqMd6ZJh0bHYAe/gegvTuiXIeoEie3M6e7jlPnjQwcQ2e
- HA4bPUiYawyvDt+jJUzv8GdE91FRXoT9QrP1qL64/eUD2zXFuP7u+j1VL0GLfr8M6JcyonHjbjM YAyPkNAoT385bCw==
-X-Mailer: b4 0.14.2
-Message-ID: <20250813-iov-iter-v4-4-c4f1932b05ef@google.com>
-Subject: [PATCH v4 4/4] samples: rust_misc_device: Expand the sample to
- support read()ing from userspace
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
-	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
-	Benno Lossin <lossin@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: ad7768-1: add new supported
+ parts
+To: Jonathan Santos <Jonathan.Santos@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Michael.Hennerich@analog.com, jic23@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jonath4nns@gmail.com
+References: <cover.1754617360.git.Jonathan.Santos@analog.com>
+ <ecb7406f54938658b51b4469034d87a57086bd1e.1754617360.git.Jonathan.Santos@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <ecb7406f54938658b51b4469034d87a57086bd1e.1754617360.git.Jonathan.Santos@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Lee Jones <lee@kernel.org>
+On 13/08/2025 04:48, Jonathan Santos wrote:
+> Add compatibles for supported parts in the ad7768-1 family:
+> 	ADAQ7767-1, ADAQ7768-1 and ADAQ7769-1
+> 
+> Add property and checks for AFF gain, supported by ADAQ7767-1
+> and ADAQ7769-1 parts:
+> 	adi,aaf-gain
+> 
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+>  .../bindings/iio/adc/adi,ad7768-1.yaml        | 48 +++++++++++++++++--
+>  1 file changed, 44 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> index c06d0fc791d3..568a85e0d052 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
+> @@ -4,18 +4,26 @@
+>  $id: http://devicetree.org/schemas/iio/adc/adi,ad7768-1.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Analog Devices AD7768-1 ADC device driver
+> +title: Analog Devices AD7768-1 ADC family device driver
 
-A userland application can now operate on the char device with read() in
-order to consume a locally held buffer.  Memory for the buffer is to be
-provisioned and the buffer populated in its subsequently provided
-write() counterpart.
+If doing this, drop device driver. It should not be here in the first place.
 
-Signed-off-by: Lee Jones <lee@kernel.org>
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- samples/rust/rust_misc_device.rs | 36 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
+>  
+>  maintainers:
+>    - Michael Hennerich <michael.hennerich@analog.com>
+>  
+>  description: |
+> -  Datasheet at:
+> -    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
+> +  Analog Devices AD7768-1 24-Bit Single Channel Low Power sigma-delta ADC family
+> +
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7767-1.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7768-1.pdf
+> +  https://www.analog.com/media/en/technical-documentation/data-sheets/adaq7769-1.pdf
+>  
+>  properties:
+>    compatible:
+> -    const: adi,ad7768-1
+> +    enum:
+> +      - adi,ad7768-1
+> +      - adi,adaq7767-1
+> +      - adi,adaq7768-1
+> +      - adi,adaq7769-1
+>  
+>    reg:
+>      maxItems: 1
+> @@ -58,6 +66,23 @@ properties:
+>      description:
+>        ADC reference voltage supply
+>  
+> +  adi,aaf-gain:
+> +    description: |
+> +      Specifies the gain of the Analog Anti-Aliasing Filter (AAF) applied to the
+> +      ADC input, measured in milli-units. The AAF provides additional signal
 
-diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-index e7ab77448f754906615b6f89d72b51fa268f6c41..9e4005e337969af764e57a937ae5481d7710cfc9 100644
---- a/samples/rust/rust_misc_device.rs
-+++ b/samples/rust/rust_misc_device.rs
-@@ -100,8 +100,9 @@
- use kernel::{
-     c_str,
-     device::Device,
--    fs::File,
-+    fs::{File, Kiocb},
-     ioctl::{_IO, _IOC_SIZE, _IOR, _IOW},
-+    iov::{IovIterDest, IovIterSource},
-     miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
-     new_mutex,
-     prelude::*,
-@@ -144,6 +145,7 @@ fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
- 
- struct Inner {
-     value: i32,
-+    buffer: KVVec<u8>,
- }
- 
- #[pin_data(PinnedDrop)]
-@@ -165,7 +167,10 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Self>) -> Result<Pin<KBox<Se
-         KBox::try_pin_init(
-             try_pin_init! {
-                 RustMiscDevice {
--                    inner <- new_mutex!( Inner{ value: 0_i32 } ),
-+                    inner <- new_mutex!(Inner {
-+                        value: 0_i32,
-+                        buffer: KVVec::new(),
-+                    }),
-                     dev: dev,
-                 }
-             },
-@@ -173,6 +178,33 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Self>) -> Result<Pin<KBox<Se
-         )
-     }
- 
-+    fn read_iter(mut kiocb: Kiocb<'_, Self::Ptr>, iov: &mut IovIterDest<'_>) -> Result<usize> {
-+        let me = kiocb.file();
-+        dev_info!(me.dev, "Reading from Rust Misc Device Sample\n");
-+
-+        let inner = me.inner.lock();
-+        // Read the buffer contents, taking the file position into account.
-+        let read = iov.simple_read_from_buffer(kiocb.ki_pos_mut(), &inner.buffer)?;
-+
-+        Ok(read)
-+    }
-+
-+    fn write_iter(mut kiocb: Kiocb<'_, Self::Ptr>, iov: &mut IovIterSource<'_>) -> Result<usize> {
-+        let me = kiocb.file();
-+        dev_info!(me.dev, "Writing to Rust Misc Device Sample\n");
-+
-+        let mut inner = me.inner.lock();
-+
-+        // Replace buffer contents.
-+        inner.buffer.clear();
-+        let len = iov.copy_from_iter_vec(&mut inner.buffer, GFP_KERNEL)?;
-+
-+        // Set position to zero so that future `read` calls will see the new contents.
-+        *kiocb.ki_pos_mut() = 0;
-+
-+        Ok(len)
-+    }
-+
-     fn ioctl(me: Pin<&RustMiscDevice>, _file: &File, cmd: u32, arg: usize) -> Result<isize> {
-         dev_info!(me.dev, "IOCTLing Rust Misc Device Sample\n");
- 
+What is milli unit? Isn't gain in dB, so maybe you want mB? Quite
+unpopular to see mB, but we cannot use 1/100 of dB, so I could
+understand it.
 
--- 
-2.51.0.rc0.205.g4a044479a3-goog
-
+> +      rejection within the frequency range of fs ± f3dB, where fs is the sampling
+> +      frequency, and f3dB is the -3dB cutoff frequency. The specific values of
+> +      fs and f3dB, as well as the rejection intensity, depend on the digital
+> +      filter configuration.
+Best regards,
+Krzysztof
 
