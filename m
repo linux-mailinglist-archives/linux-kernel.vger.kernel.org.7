@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-765815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72C4B23EA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:55:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490F0B23EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03CEA188E936
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:54:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE9C563C0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF3A26FD9A;
-	Wed, 13 Aug 2025 02:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF1D26E140;
+	Wed, 13 Aug 2025 02:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="E8RHMQwV"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KzVCQYIX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA1E26E711;
-	Wed, 13 Aug 2025 02:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D0826C3AE;
+	Wed, 13 Aug 2025 02:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755053575; cv=none; b=NPD1zLJrMsFELbf1jHjZ5B3tzWvzYweG489kT5YRCPePySuawECKfSfMHNSFUwo5Tx1TPynQ22oDNsTMA3rbPA5a0p6bzcqBqBi2lgHdPMhaaOqgvzPMgd38ivTGagTTCvHOJiiM8zQj98tXyKHpmv0LXiEL4NZGt4K2WNL4yhg=
+	t=1755053719; cv=none; b=CsgmsDhvkiHS3OZfCEQHQfk/ENQU61+i3WV3ebDTF8acs/U5rGHM2Qca4DzfoOAgvMiL4u8RtH590Qb6/k2rMzew4qwQSAUF0QOf1QNSAZV531oX4do42mwhTddo455Bow2HtqjVs5rw2H2uZtK3Dy62kScyuYv1hrdxtqYqEWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755053575; c=relaxed/simple;
-	bh=KLXZBaq3TLieISROhyU6yYpBnfJhCu9c5EIrzguDWzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jVvI0El0h8QxqZLof0tdgqzkvk4yawPAbrH2ARVSwOJnLy2yjVL5iX4S/tCb4GE5roHX4HQurX8LqazWvRvwHbECrwY0rH7ExW1s2ibpYw5+Ji81OyN1U8iExNuFLOQp3AdqVbusFEJIOXkrAFm8XrSd4gqYIlZMhU9fYHq0V/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=E8RHMQwV; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-af66d49daffso1025330166b.1;
-        Tue, 12 Aug 2025 19:52:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1755053572; x=1755658372; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=042+Laf4ikzkSiUo+Q4PSZALoUrhwG9sdAkdg18fh0c=;
-        b=E8RHMQwV7qUQ9hFvJ8ritr1o1FKMaXcq1Bt1fc1krjUHjrZ2jyu+dNqwz6/DKT4Mp5
-         Zb497cnboj5zs77Dioil6xvZpmVcQOF2093HxQlmuY7CfN8UuTaZ3DjxiiKz46coOkuC
-         t9UXTnReMGA6SffUOSk9f6Zj9+NSPKPjQ+qWXT/Sk1nw0P5mokTQzdXuBmnmerWVxO73
-         WJKhc6sNLs6E4riXeEIJ3J8qNZ5wYXZOL2u7FBsC1DaGLOMYX7emfNC5jXuUcWFLckEa
-         vYvitA0wCjg0bFfcvQlC+cRnTxx9hCoqIaKCHvn/Y1T8r9EdaolvWxmDL6MDJRccFI0O
-         rkqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755053572; x=1755658372;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=042+Laf4ikzkSiUo+Q4PSZALoUrhwG9sdAkdg18fh0c=;
-        b=L7KXIi2RaYEj+WbH4wuRWBThfpmyOiYfG56qEIXRuGloazlgN6rkgdlRTdN2/SBn7p
-         PJAojzyLrPaGbRLHYP0yOIx5hZaPUX55xeivtHYFGgB2KxEKZr+nyW5gIOSVQl3t4/0s
-         IXipEPOLzM9+zTGiaLX3Eo5GcsAVpLlCDz8SkuK/xur6suApzvQ6+UWLW8KOf7X+hfQR
-         PmYRiAFGId0IJtkPkNnGJL/B5idEbXIBM1DzRr3eGvGsKMFzZT5ipflM9qSOv5/vB/ge
-         8owJF0/+nfh0X/g/NQw/ROgTwCDJKJNHWUvA5q/CXug2QkEs2lGnn1VnQv/2VANw4WU2
-         ik4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5GCt9ufwf4Nuri+aavbeyZyt5w5Y5ijflm8R1iS9OD1B08M1KokQPOs453AEUJ2nQW6GQ2qDdIBiGtxw=@vger.kernel.org, AJvYcCWcOMJhz4ihxhLhdSmiFFxcP8APa8KeQE74Lg2x1PvYve5Fxf/p8NbuKL4dsD7vgWmBopLRBbob@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO66KdbYXtKUnSICVFoWniG5AlYqsaW0xveSpVcTiCyYlI3OQx
-	/YXyWljk0ytCfbwRuC133/+5pRQG0MHVZw5vJJOr/cMue+CVAf4LMo0=
-X-Gm-Gg: ASbGncs7MJgq7VJ4hzFXyehC4xCFAKi7Cr8rT5xVHFLvNwLQH7GYKm4dm9d3WTev2aY
-	f9GoSI+xc25Mq12ILUUk0G00V/i+NfbYBRbw1Y7dCY+bcoTqN68VskFTKjl93J/eHgxYSXLQspE
-	AkdOd4O04jGCvTmItB0iQrDvVURouAyYAHYQhNYsX0674c9pkMbxPHo9z3szBdkwsC+SyjSITbp
-	LQS4xW68Lk6bMnFGqfuhI1NbsGmIp+riLeAgWFWsp8tB7+JNDDXhkJYwua1K2zgW8RL2l1Ek+kh
-	OSRxGkmgN3+WMdf8avByqb/kVIhlwJBUwCiBLCumNWnDtpGnk+UvpMlebjS3hg51SFM83A0DHv2
-	UYCraKto1aqVcwdLy7uR3kJC8doX4OLnt/5Ne0Xr7pu6D36iuSe7XcC6H7GmYuWVPPMbdgmStzt
-	t7fVVzpgHYRA==
-X-Google-Smtp-Source: AGHT+IGinuV3BWJsLOw3BMnIVMFnFkk+/iO2HAJYyI+8AQMIZAXSxQDGcKdQj7k2sochfOFf0alZQg==
-X-Received: by 2002:a17:907:da9:b0:ade:79c5:21dc with SMTP id a640c23a62f3a-afca4d47d82mr148548166b.25.1755053571338;
-        Tue, 12 Aug 2025 19:52:51 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b48db.dip0.t-ipconnect.de. [91.43.72.219])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af99518bfacsm1339330866b.72.2025.08.12.19.52.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 19:52:50 -0700 (PDT)
-Message-ID: <0e4b2e44-30b5-4907-8ad1-5890d53bf854@googlemail.com>
-Date: Wed, 13 Aug 2025 04:52:49 +0200
+	s=arc-20240116; t=1755053719; c=relaxed/simple;
+	bh=ZGV2zci4zRjrcowgKXj4nNCeXLKgarUld5xg9ej0dys=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WbL4PKFGHoryAZ557O0Ll4mem2SkTtJw5TEZ1F+kUGWq+uKJLjiRPJKqqbiZEb02BvREDIiqU5+lavWdX4o5S5cXdqYu8U5ZqsCNFeb47fbx1llXkKAi+u/vEKz1d+XWKat46E8HM6whsEx571rhOfuTtKlyYs7fUPzANm/43Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KzVCQYIX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1755053712;
+	bh=Kdl3Rl/BaIdak6TzJZ0nJvfRK+mxProty+p73AdGBnk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KzVCQYIXMG+3L/5YT11wLTojGF9UunRJZlK5VIR3MUaHlpJ5NLpMtg+3ZdXaZ5U3w
+	 I14c5JQy6bMYu72uem5WsjbU4hEFjIplj7vvz4h4sRMN6hUCK8bvDEl4PzV3AYAbA2
+	 JK5pKTAXhONHJxW/zSfe7b30W4Fg4/OyVydW8B4V4XFM70IvyY5ZVR/uGWutQyC5e7
+	 GT/mx1e6hC7qh+kygamfd0Cd8Hn40BC2E2Mxs898oMcOoaZLwzvH+pK59uWjNPQZyZ
+	 N7MxyapKCINrCk/5zX9AKHUuznOrn0k4QHi7nfCgeTlX1Zs2e602yA4DUT38qFk2WT
+	 uz6Qgw57N6sRQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c1tJv6bw9z4wcd;
+	Wed, 13 Aug 2025 12:55:10 +1000 (AEST)
+Date: Wed, 13 Aug 2025 12:55:10 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul
+ <vkoul@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the phy-next tree
+Message-ID: <20250813125510.186a1636@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.12 000/369] 6.12.42-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250812173014.736537091@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250812173014.736537091@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/11YQherIumL9DCLC29Qyjhg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Am 12.08.2025 um 19:24 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.12.42 release.
-> There are 369 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+--Sig_/11YQherIumL9DCLC29Qyjhg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. Built with GCC 14.2 on Debian Trixie.
-No dmesg oddities or regressions found. I did not see any of the Python warning messages here which I did see in the 
-6.1.148-rc1 build.
+Hi all,
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+The following commit is also in the phy tree as a different commit
+(but the same patch):
 
+  bc9c59c46b35 ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie =
+phy bindings")
 
-Beste Grüße,
-Peter Schneider
+This is commit
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+  aac1256a41cf ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie =
+phy bindings")
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+in the phy tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/11YQherIumL9DCLC29Qyjhg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmib/o4ACgkQAVBC80lX
+0GzORgf/c/7tmDvzOIO0XhVcst82qByKB51gmBYHLZo0BjTiSOKWYngbVsgM0Ued
+nCdvS0qe4d3plWoF7dKabTiWeVzZjhF428SaCOsAs4hWkYyTSJn9nUHFuDCgkIye
+oqdEXgr+i+OApzeHRvViY/FiLIDI1wApKtr+JBY8mCEeXjeeM4sYVYaYaBtdtOmF
+dmR/j21DnpMLyW2Si6sGIguBGZ/bjYV1sgKOxJbO10yGb/W6itgtA1qgQ48rCsOL
+XZ/GCD2QnYJmVyiJz8cv6vnWk3onqdy+qOXHd/W8N0Wqs+Y5H59F25nAr/8ndNBw
+3NrXa05LhnZd/MVEoqDNbIjzoYNHUA==
+=WxlX
+-----END PGP SIGNATURE-----
+
+--Sig_/11YQherIumL9DCLC29Qyjhg--
 
