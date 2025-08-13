@@ -1,241 +1,364 @@
-Return-Path: <linux-kernel+bounces-767652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2DDB25745
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:08:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65986B25749
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41228626B1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A593E886DC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3202F5322;
-	Wed, 13 Aug 2025 23:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0252FC868;
+	Wed, 13 Aug 2025 23:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kk6ofFEG"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpTjru7i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B282FB98E
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1792C08BE;
+	Wed, 13 Aug 2025 23:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755126441; cv=none; b=HFfK5g1HB0IhahdA/GOwWrs/teOq18vDF+YkCD38+ShM+p1yaCE2Ozm3/ptg/deKZcdX7uQ65pQTxWiQL95a5jPH50vinAsvteau735p3nvMa7IOtREsgSx3fCqA+UwcIFfjGY/VyAQUDWdKrkPWvmD12SjUc3bOVarQdkaRD8g=
+	t=1755126455; cv=none; b=ERlshxFq6lxkIC6jjeydu8Oni497t2flFOnauK+EkDEyrcxwqnU2eSB1roYfIZrOJSaLy3xG8Vdrj+E5O37xWLSWOIsYcTrv+1CQcqhkB0/tC0cxldgxKaiTlE6/9f3J2La/RhpXKm+IFVheo/JZ7RcAscId/s3Ip4vGtZySHl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755126441; c=relaxed/simple;
-	bh=/qpjGm0i7AdI98kp/Vvxql5u9hFiHNoiTyqr2D7TQGo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=dWa2CxsxQrAjJPiefhjYLGXTREX2j3S7MK8fJMbdj5ac/reWBckxdVpvCs6CJFb/rsLgFZtacT7Ex2I+0lbOY5efv0NoCXERdV1uoA2XxomuAXfAyZJIyiD1thxs7wr3t5Ku9Gj0zOxa8Vangx1vQl+02Lzz4STSvPdRGXny6M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kk6ofFEG; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso1955725e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755126437; x=1755731237; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t1w1jD5uAhWjkLk2dF1OZgC9h1u3edFNggTts1awcIQ=;
-        b=kk6ofFEGAQbqV2f9QfuvY1fOYFszjFBJrY7z+D3RZuqFVUHW7hVKITWNl1l5Cb4qHW
-         qmqsd8H43xaAZ7BBrFA7tqd8mb6yllhFdN9oEOZysNa03Eyz0DOU84FFEHW9a2xR5nbs
-         5w3ctgof0ow81fziQBf4xMTmE+7LStTySFToDLjGpeLzU5Mi9bdQ19otpba8jVqGFsIi
-         m5DArBnd5hkLd8ie2nR90+srsZz9EXKCQJZ67OImSNLodl+vtaI0m9P8351cBBzZWd1u
-         UXwl1r6e66jC9DUyeLm9P50VQ3go4nM6QWiRwhB04TP84LuRrUdwfN8l2QmS16UGzBJ8
-         UY2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755126437; x=1755731237;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=t1w1jD5uAhWjkLk2dF1OZgC9h1u3edFNggTts1awcIQ=;
-        b=WEm/czgKrXwwtR7aiZn/HitVqQ/20icwG5Dj6uDSxU0WExn1CABDq4ef7FEVe7/Pmt
-         M01THlF3qn3rjkP4u+SeRyuLMalLWj1QJrhivq80csNt99r+/MrTp7JQD8yhS6CsRMDU
-         9lWEXq7O6b3PTZoj29h/Pcn3uyHCrCaTsJ+XkyJgMDfmg7a9Oyk2uDeOK1Cr/aW/GA9v
-         4A0JbB1KOIB0a2NwBeWqSeXdrX1D4/kBpZa6d3VyKIBYA6wM9yNrWMECQjq5etQinlHO
-         2YjwHDg9OBu178GT5HqSKsnePyH96WqnIjlNpBegevK17IrpH7m8sqWZhnOItVaBS1WW
-         LnXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgFu4U0akZlFky/fc68JNbbkIZ3H7H0yvVoUPicMWFpfDvLnv6+cE9a6ekOFpsR3EnAVuO64M6AzYdV5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCsA5M+7JHZ3cQeN0FdwgWB3jI9/PTQKJW1CxxR+kmnuPT5AOR
-	qmhB2h62V/Dv++FPtP8NGL0OGfO0izoDDfgMSsb9j81lrBF4j48FCxS4bmrZkM+hzkM=
-X-Gm-Gg: ASbGncu0E1kqmOrljTUOaGLj3bxiIQ3uIUMXa8k41rNLuL01YJRgtoRGfynFiSwl2VW
-	cOtMxxtQO3nVsR1xlnKHkaE1q3J8htC6RIA2iEiXcC3FUuFdP+zIVyoW5yR6kSIymTfYzfUV37i
-	QWe/toiJPWkhFINQ+vaXF7w7dZhpGt2UUrrC9M/IkdITuEmpUlZKccJ24lsG0rHEqH9CwJwfnqv
-	DLhMDVRL3TDb1nr73dSZbcl5dtAUMDMfTTNm4934SeAQmidS7rpKwvQi1DlKAS/Nem+WydWigQ0
-	inZbt6Begfs+UE6ENnpPIYS4SSN6WE8qJCdK3GrUtBfz7b6iX3X+OJ4gJjVvSjBSmGCsNwgAINF
-	SN84WQ9wPl1swLPcS4/bEKN6Zdls=
-X-Google-Smtp-Source: AGHT+IHLYhRGc4JYIFTUPFhdxnROSBPBG4POVhF8NCo8fac7mqIyrnBrDgT2tDgDmUZXysWtmKuWyQ==
-X-Received: by 2002:a05:600c:354e:b0:456:1442:86e with SMTP id 5b1f17b1804b1-45a1b66929dmr3241165e9.21.1755126437430;
-        Wed, 13 Aug 2025 16:07:17 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:7f3a:5ab2:26aa:831f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a541788sm17732825e9.30.2025.08.13.16.07.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 16:07:16 -0700 (PDT)
+	s=arc-20240116; t=1755126455; c=relaxed/simple;
+	bh=RQj7R/jUfcb1J1MF9Yb8oU2r7g6moV6/qYad+4ZXOe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=X+TVHPIA3sFtmC5Xh68mMD+OHDojxgm9uKQleb6lTlTdZZFCSNf2ZO6i4FJ7csERB2ZRXw+Pa6kZTIP2g81+/SCG7I9iXwsCpZDhwkFxW7KQiSPhnoFr4UBVlX4OyLYF5nWBS6JrMTXiKBfgN/GwKaJNJaEpcRA+/e3wHvv3k1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpTjru7i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF59C4CEEB;
+	Wed, 13 Aug 2025 23:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755126454;
+	bh=RQj7R/jUfcb1J1MF9Yb8oU2r7g6moV6/qYad+4ZXOe4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=gpTjru7i4m4RoZ4EYlG4lFGBOruosmV4U/17OhCTtwc+ykzNjEe3rqSxnfDIYHzlD
+	 G9XuNJcVxwlaC6A+75nCAaf7zKVwbp/3S50yhzQdWy06TltL8KoOE4wruyWkOH5Sbb
+	 SJtXMVB5WUas49uX21yhB13ir/9JnOmaZ7O8Y9Hu5TUuDTHaJs7STOqKbNfIM5JcEp
+	 x5JWQUaanvYepl7WByJCFtY0DbsIdImDNv4fL6hex6xdmRErwx3c/KbAZH+3FLeDc0
+	 I4YTaUOVAjyiIkJ827QL863oHECSlTcaTX9dDLcutLc+5uBW/ef2RwO3tyxoUTcKpU
+	 vfJcISNe5BuiQ==
+Date: Wed, 13 Aug 2025 18:07:33 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, mani@kernel.org,
+	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alim.akhtar@samsung.com, vkoul@kernel.org,
+	kishon@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com,
+	jh80.chung@samsung.com, pankaj.dubey@samsung.com
+Subject: Re: [PATCH v3 05/12] PCI: exynos: Add resource ops, soc variant and
+ device mode
+Message-ID: <20250813230733.GA299608@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 14 Aug 2025 00:07:16 +0100
-Message-Id: <DC1OE9UIUPON.2DOURP7NEQS54@linaro.org>
-Subject: Re: [PATCH v2 2/3] ASoC: codecs: add new pm4125 audio codec driver
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>, "Srinivas
- Kandagatla" <srini@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>
-Cc: "Lee Jones" <lee@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>,
- "Takashi Iwai" <tiwai@suse.com>, <linux-arm-msm@vger.kernel.org>,
- <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: aerc 0.20.0
-References: <20250711-pm4125_audio_codec_v1-v2-0-13e6f835677a@linaro.org>
- <20250711-pm4125_audio_codec_v1-v2-2-13e6f835677a@linaro.org>
- <87a56d1e-2bbd-4abf-91c8-5129835d8d87@oss.qualcomm.com>
-In-Reply-To: <87a56d1e-2bbd-4abf-91c8-5129835d8d87@oss.qualcomm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811154638.95732-6-shradha.t@samsung.com>
 
-On Fri Jul 11, 2025 at 2:32 PM BST, Srinivas Kandagatla wrote:
-> On 7/11/25 4:00 AM, Alexey Klimov wrote:
->> The audio codec is found in Qualcomm PM2250/PM4125 PMICs and is used on
->> platforms like Qualcomm QCM2290. It has soundwire interface and
->> corresponding RX and TX slave devices.
->>=20
->> It has only two input channels: HPH left and right. The line output (LO)
->> is linked to HPHL so the hardware has some limitations regarding concurr=
-ent
->> playback via HPH and LO for instance.
->>=20
->> The codec driver also uses WCD MBCH framework. The MBHC functionality is
->> implemented in a minimalistic way to enable IRQs and avoid different
->> issues with IRQs.
->>=20
->> Co-developed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.c=
-om>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com=
->
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->
-> Thanks for doing this Alexey,
->
-> I have tested Headset playback, headset recording and Lineout.
->
-> While testing I have noticed one issue with the places where enable_irq
-> is being used, there is a possiblity of things going wrong in some cases.
->
->
->> ---
->>  sound/soc/codecs/Kconfig      |   18 +
->>  sound/soc/codecs/Makefile     |    8 +
->>  sound/soc/codecs/pm4125-sdw.c |  546 +++++++++++++
->>  sound/soc/codecs/pm4125.c     | 1767 ++++++++++++++++++++++++++++++++++=
-+++++++
->>  sound/soc/codecs/pm4125.h     |  314 ++++++++
->>  5 files changed, 2653 insertions(+)
->>=20
->
-> ...
->> +static int pm4125_codec_enable_lo_pa(struct snd_soc_dapm_widget *w,
->> +				     struct snd_kcontrol *kcontrol, int event)
->> +{
->> +	struct snd_soc_component *component =3D snd_soc_dapm_to_component(w->d=
-apm);
->> +	struct pm4125_priv *pm4125 =3D snd_soc_component_get_drvdata(component=
-);
->> +
->> +	switch (event) {
->> +	case SND_SOC_DAPM_PRE_PMU:
->> +		snd_soc_component_update_bits(component, PM4125_ANA_COMBOPA_CTL_5, 0x=
-04, 0x00);
->> +		usleep_range(1000, 1010);
->> +		snd_soc_component_update_bits(component, PM4125_ANA_COMBOPA_CTL_4, 0x=
-0F, 0x0F);
->> +		usleep_range(1000, 1010);
->> +		snd_soc_component_write_field(component, PM4125_ANA_COMBOPA_CTL,
->> +					      PM4125_ANA_COMBO_PA_SELECT_MASK,
->> +					      PM4125_ANA_COMBO_PA_SELECT_LO);
->> +		snd_soc_component_write_field(component, PM4125_DIG_SWR_PDM_WD_CTL0,
->> +					      PM4125_WDT_ENABLE_MASK,
->> +					      (PM4125_WDT_ENABLE_RX0_M | PM4125_WDT_ENABLE_RX0_L));
->> +		break;
->> +	case SND_SOC_DAPM_POST_PMU:
->> +		usleep_range(5000, 5010);
->> +		snd_soc_component_update_bits(component, PM4125_ANA_COMBOPA_CTL_4, 0x=
-0F, 0x04);
->> +		enable_irq(pm4125->hphl_pdm_wd_int);
->
-> if headset playback dapm widgets are powered up or active and you try to
-> play on lineout you would get below splat:
->
-> [ 1181.352762] ------------[ cut here ]------------
-> [ 1181.357435] Unbalanced enable for IRQ 156
-> [ 1181.361489] WARNING: CPU: 1 PID: 877 at kernel/irq/manage.c:753
-> __enable_irq+0x4c/0x7c
-> ...
->
-> [ 1181.483541] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS
-> BTYPE=3D--)
-> [ 1181.490534] pc : __enable_irq+0x4c/0x7c
-> [ 1181.494405] lr : __enable_irq+0x4c/0x7c
-> [ 1181.498278] sp : ffff8000840ab8a0
-> [ 1181.501618] x29: ffff8000840ab8a0 x28: ffffd79b9725d588 x27:
-> ffff8000840ab948
-> [ 1181.508796] x26: 000000000000309b x25: 0000000000000080 x24:
-> 0000000000000080
-> [ 1181.515980] x23: ffffd79b9698f250 x22: 0000000000000000 x21:
-> 0000000000000000
-> [ 1181.523153] x20: 000000000000009c x19: ffff23c347fd9400 x18:
-> 0000000000000006
-> [ 1181.530335] x17: 0000000000000001 x16: ffffd79b94dbcce8 x15:
-> ffff8000840ab46f
-> [ 1181.537508] x14: 0000000000000000 x13: 3635312051524920 x12:
-> ffffd79b96d96768
-> [ 1181.544691] x11: 0000000000000058 x10: 0000000000000018 x9 :
-> ffffd79b96d96768
-> [ 1181.551862] x8 : 000000000000024f x7 : ffffd79b96dee768 x6 :
-> ffffd79b96dee768
-> [ 1181.559044] x5 : ffff23c3bbbb8508 x4 : 0000000000000000 x3 :
-> 0000000000000027
-> [ 1181.566217] x2 : 0000000000000000 x1 : 0000000000000000 x0 :
-> ffff23c35a0a4600
-> [ 1181.573392] Call trace:
-> [ 1181.575871]  __enable_irq+0x4c/0x7c (P)
-> [ 1181.579748]  enable_irq+0x60/0xd8
-> [ 1181.583098]  pm4125_codec_enable_lo_pa+0x6c/0x1a0 [snd_soc_pm4125]
-> [ 1181.589319]  dapm_seq_check_event+0x11c/0x144
-> [ 1181.593720]  dapm_seq_run_coalesced+0x130/0x1d0
-> [ 1181.598286]  dapm_seq_run+0x264/0x374
-> [ 1181.601991]  dapm_power_widgets+0x664/0x900
-> [ 1181.606212]  snd_soc_dapm_stream_event+0xf4/0x178
-> [ 1181.610957]  __soc_pcm_prepare+0x64/0x120
-> [ 1181.614998]  dpcm_be_dai_prepare+0x120/0x168
-> [ 1181.619299]  dpcm_fe_dai_prepare+0x94/0x178
-> [ 1181.623517]  snd_pcm_do_prepare+0x30/0x50
-> [ 1181.627567]  snd_pcm_action_single+0x48/0xa4
-> [ 1181.631872]  snd_pcm_action_nonatomic+0x94/0xb0
-> [ 1181.636435]  snd_pcm_prepare+0x7c/0xe0
-> [ 1181.640222]  snd_pcm_common_ioctl+0xca4/0x16e0
-> [ 1181.644705]  snd_pcm_ioctl+0x34/0x4c
-> [ 1181.648315]  __arm64_sys_ioctl+0xac/0x104
-> [ 1181.652355]  invoke_syscall+0x48/0x104
-> [ 1181.656147]  el0_svc_common.constprop.0+0x40/0xe0
-> [ 1181.660892]  do_el0_svc+0x1c/0x28
-> [ 1181.664242]  el0_svc+0x30/0xcc
-> [ 1181.667340]  el0t_64_sync_handler+0x10c/0x138
-> [ 1181.671737]  el0t_64_sync+0x198/0x19c
-> [ 1181.675430] ---[ end trace 0000000000000000 ]---
+On Mon, Aug 11, 2025 at 09:16:31PM +0530, Shradha Todi wrote:
+> Some resources might differ based on platforms and we need platform
+> specific functions to initialize or alter them. For better code
+> re-usability, making a separate res_ops which will hold all such
+> function pointers or other resource specific data. Include ops like
+>  - init_regulator (initialize the regulator data)
+>  - pcie_irq_handler (interrupt handler for PCIe)
+>  - set_device_mode (set device mode to EP or RC)
+> 
+> Some operations maybe specific to certain SoCs and not applicable
+> to others. For such use cases, adding an SoC variant data field
+> which can be used to distinguish between the variants.
+> 
+> Some SoCs may have dual-role PCIe controller which can work as
+> RC or EP. Add device_mode to store the role and take decisions
+> accordingly.
+> 
+> Make enable/disable of regulator and initialization of IRQ as
+> common functions to be used by all Samsung SoCs.
 
+As hinted above, this patch ends up being a mixture of several things
+that makes this kind of hard to review.  Separating these into their
+own patches would make it easier.
 
-Yep, I noticed that one time only but was puzzled how to reproduce.
-As you suggested during out of email list discussion I will move handling
-of IRQs into separate widget.
+> Suggested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
+> ---
+>  drivers/pci/controller/dwc/pci-exynos.c | 143 +++++++++++++++++++-----
+>  1 file changed, 116 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
+> index c830b20d54f0..ef1f42236575 100644
+> --- a/drivers/pci/controller/dwc/pci-exynos.c
+> +++ b/drivers/pci/controller/dwc/pci-exynos.c
+> @@ -49,10 +49,18 @@
+>  #define EXYNOS_PCIE_ELBI_SLV_ARMISC		0x120
+>  #define EXYNOS_PCIE_ELBI_SLV_DBI_ENABLE		BIT(21)
+>  
+> +/* to store different SoC variants of Samsung */
+> +enum samsung_pcie_variants {
+> +	EXYNOS_5433,
+> +};
+> +
+>  struct samsung_pcie_pdata {
+>  	struct pci_ops				*pci_ops;
+>  	const struct dw_pcie_ops		*dwc_ops;
+>  	const struct dw_pcie_host_ops		*host_ops;
+> +	const struct samsung_res_ops		*res_ops;
+> +	unsigned int				soc_variant;
+> +	enum dw_pcie_device_mode		device_mode;
+>  };
+>  
+>  struct exynos_pcie {
+> @@ -61,7 +69,14 @@ struct exynos_pcie {
+>  	const struct samsung_pcie_pdata	*pdata;
+>  	struct clk_bulk_data		*clks;
+>  	struct phy			*phy;
+> -	struct regulator_bulk_data	supplies[2];
+> +	struct regulator_bulk_data	*supplies;
+> +	int				supplies_cnt;
+> +};
+> +
+> +struct samsung_res_ops {
+> +	int (*init_regulator)(struct exynos_pcie *ep);
+> +	irqreturn_t (*pcie_irq_handler)(int irq, void *arg);
+> +	void (*set_device_mode)(struct exynos_pcie *ep);
+>  };
+>  
+>  static void exynos_pcie_writel(void __iomem *base, u32 val, u32 reg)
+> @@ -74,6 +89,31 @@ static u32 exynos_pcie_readl(void __iomem *base, u32 reg)
+>  	return readl(base + reg);
+>  }
+>  
+> +static int samsung_regulator_enable(struct exynos_pcie *ep)
+> +{
+> +	int ret;
+> +
+> +	if (ep->supplies_cnt == 0)
+> +		return 0;
+> +
+> +	ret = regulator_bulk_enable(ep->supplies_cnt, ep->supplies);
+> +
+> +	return ret;
 
-Thank you,
-Alexey
+Unless you want a warning here, there's no need for "ret":
 
+  return regulator_bulk_enable(ep->supplies_cnt, ep->supplies);
+
+> +}
+> +
+> +static void samsung_regulator_disable(struct exynos_pcie *ep)
+> +{
+> +	struct device *dev = ep->pci.dev;
+> +	int ret;
+> +
+> +	if (ep->supplies_cnt == 0)
+> +		return;
+> +
+> +	ret = regulator_bulk_disable(ep->supplies_cnt, ep->supplies);
+> +	if (ret)
+> +		dev_warn(dev, "failed to disable regulators: %d\n", ret);
+> +}
+> +
+>  static void exynos_pcie_sideband_dbi_w_mode(struct exynos_pcie *ep, bool on)
+>  {
+>  	u32 val;
+> @@ -244,7 +284,26 @@ static const struct dw_pcie_host_ops exynos_pcie_host_ops = {
+>  	.init = exynos_pcie_host_init,
+>  };
+>  
+> -static int exynos_add_pcie_port(struct exynos_pcie *ep,
+> +static int exynos_init_regulator(struct exynos_pcie *ep)
+> +{
+> +	struct device *dev = ep->pci.dev;
+> +	int ret = 0;
+> +
+> +	ep->supplies_cnt = 2;
+> +
+> +	ep->supplies = devm_kcalloc(dev, ep->supplies_cnt, sizeof(*ep->supplies), GFP_KERNEL);
+> +	if (!ep->supplies)
+> +		return -ENOMEM;
+> +
+> +	ep->supplies[0].supply = "vdd18";
+> +	ep->supplies[1].supply = "vdd10";
+> +
+> +	ret = devm_regulator_bulk_get(dev, ep->supplies_cnt, ep->supplies);
+> +
+> +	return ret;
+
+No need for ret.
+
+> +}
+> +
+> +static int samsung_irq_init(struct exynos_pcie *ep,
+>  				       struct platform_device *pdev)
+>  {
+>  	struct dw_pcie *pci = &ep->pci;
+> @@ -256,22 +315,15 @@ static int exynos_add_pcie_port(struct exynos_pcie *ep,
+>  	if (pp->irq < 0)
+>  		return pp->irq;
+>  
+> -	ret = devm_request_irq(dev, pp->irq, exynos_pcie_irq_handler,
+> +	ret = devm_request_irq(dev, pp->irq, ep->pdata->res_ops->pcie_irq_handler,
+>  			       IRQF_SHARED, "exynos-pcie", ep);
+>  	if (ret) {
+>  		dev_err(dev, "failed to request irq\n");
+>  		return ret;
+>  	}
+>  
+> -	pp->ops = &exynos_pcie_host_ops;
+>  	pp->msi_irq[0] = -ENODEV;
+>  
+> -	ret = dw_pcie_host_init(pp);
+> -	if (ret) {
+> -		dev_err(dev, "failed to initialize host\n");
+> -		return ret;
+> -	}
+> -
+>  	return 0;
+>  }
+>  
+> @@ -282,6 +334,11 @@ static const struct dw_pcie_ops exynos_dw_pcie_ops = {
+>  	.start_link = exynos_pcie_start_link,
+>  };
+>  
+> +static const struct samsung_res_ops exynos_res_ops_data = {
+> +	.init_regulator		= exynos_init_regulator,
+> +	.pcie_irq_handler	= exynos_pcie_irq_handler,
+> +};
+> +
+>  static int exynos_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -313,28 +370,46 @@ static int exynos_pcie_probe(struct platform_device *pdev)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	ep->supplies[0].supply = "vdd18";
+> -	ep->supplies[1].supply = "vdd10";
+> -	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ep->supplies),
+> -				      ep->supplies);
+> -	if (ret)
+> -		return ret;
+> +	if (pdata->res_ops && pdata->res_ops->init_regulator) {
+> +		ret = ep->pdata->res_ops->init_regulator(ep);
+> +		if (ret)
+> +			return ret;
+> +	}
+>  
+> -	ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
+> +	ret = samsung_regulator_enable(ep);
+>  	if (ret)
+>  		return ret;
+>  
+>  	platform_set_drvdata(pdev, ep);
+>  
+> -	ret = exynos_add_pcie_port(ep, pdev);
+> -	if (ret < 0)
+> -		goto fail_probe;
+> +	if (pdata->res_ops && pdata->res_ops->set_device_mode)
+> +		pdata->res_ops->set_device_mode(ep);
+> +
+> +	switch (ep->pdata->device_mode) {
+> +	case DW_PCIE_RC_TYPE:
+> +		ret = samsung_irq_init(ep, pdev);
+> +		if (ret)
+> +			goto fail_regulator;
+> +
+> +		ep->pci.pp.ops = pdata->host_ops;
+> +
+> +		ret = dw_pcie_host_init(&ep->pci.pp);
+> +		if (ret < 0)
+> +			goto fail_phy_init;
+> +
+> +		break;
+> +	default:
+> +		dev_err(dev, "invalid device type\n");
+> +		ret = -EINVAL;
+> +		goto fail_regulator;
+> +	}
+>  
+>  	return 0;
+>  
+> -fail_probe:
+> +fail_phy_init:
+>  	phy_exit(ep->phy);
+> -	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
+> +fail_regulator:
+> +	samsung_regulator_disable(ep);
+>  
+>  	return ret;
+>  }
+> @@ -343,21 +418,29 @@ static void exynos_pcie_remove(struct platform_device *pdev)
+>  {
+>  	struct exynos_pcie *ep = platform_get_drvdata(pdev);
+>  
+> +	if (ep->pdata->device_mode == DW_PCIE_EP_TYPE)
+> +		return;
+>  	dw_pcie_host_deinit(&ep->pci.pp);
+> -	exynos_pcie_assert_core_reset(ep);
+> +	if (ep->pdata->soc_variant == EXYNOS_5433)
+> +		exynos_pcie_assert_core_reset(ep);
+
+I think it's a mistake to test for specific soc_variants.  Better to
+test a *property* (or use a function pointer than can be SoC-specific)
+because it's likely that several SoCs will share the same property.
+
+>  	phy_power_off(ep->phy);
+>  	phy_exit(ep->phy);
+> -	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
+> +	samsung_regulator_disable(ep);
+>  }
+>  
+>  static int exynos_pcie_suspend_noirq(struct device *dev)
+>  {
+>  	struct exynos_pcie *ep = dev_get_drvdata(dev);
+> +	struct dw_pcie *pci = &ep->pci;
+>  
+> -	exynos_pcie_assert_core_reset(ep);
+> +	if (ep->pdata->device_mode == DW_PCIE_EP_TYPE)
+> +		return 0;
+> +
+> +	if (ep->pdata->soc_variant == EXYNOS_5433)
+> +		exynos_pcie_assert_core_reset(ep);
+>  	phy_power_off(ep->phy);
+>  	phy_exit(ep->phy);
+> -	regulator_bulk_disable(ARRAY_SIZE(ep->supplies), ep->supplies);
+> +	samsung_regulator_disable(ep);
+>  
+>  	return 0;
+>  }
+> @@ -369,7 +452,10 @@ static int exynos_pcie_resume_noirq(struct device *dev)
+>  	struct dw_pcie_rp *pp = &pci->pp;
+>  	int ret;
+>  
+> -	ret = regulator_bulk_enable(ARRAY_SIZE(ep->supplies), ep->supplies);
+> +	if (ep->pdata->device_mode == DW_PCIE_EP_TYPE)
+> +		return 0;
+> +
+> +	ret = samsung_regulator_enable(ep);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -389,6 +475,9 @@ static const struct samsung_pcie_pdata exynos_5433_pcie_rc_pdata = {
+>  	.dwc_ops		= &exynos_dw_pcie_ops,
+>  	.pci_ops		= &exynos_pci_ops,
+>  	.host_ops		= &exynos_pcie_host_ops,
+> +	.res_ops		= &exynos_res_ops_data,
+> +	.soc_variant		= EXYNOS_5433,
+> +	.device_mode		= DW_PCIE_RC_TYPE,
+>  };
+>  
+>  static const struct of_device_id exynos_pcie_of_match[] = {
+> -- 
+> 2.49.0
+> 
 
