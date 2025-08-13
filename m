@@ -1,150 +1,91 @@
-Return-Path: <linux-kernel+bounces-766938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D00DB24CF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:13:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B534DB24CFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37F71891F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:08:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14ADB3BEB5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3229A2FF143;
-	Wed, 13 Aug 2025 15:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YENt6LTm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E482FA0F9;
+	Wed, 13 Aug 2025 15:07:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0A42F83CE;
-	Wed, 13 Aug 2025 15:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386B11D5CC6;
+	Wed, 13 Aug 2025 15:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097643; cv=none; b=Qvg8Cqxo5WLA2wRy7JEgnG9rKc2IP+qoj3CF5ZmSlJFGHMCFFpoAJASGk6fDWBunY6ZJrz4IehTAAFfBhIn5DOSh40MPq2M5KRN/U/Nuu1KxYfNKsWdqRyj6ahKHSTrqz0XVodJqP58UyLyWZ3F7Z0jnleczWizuFwSz525CZf4=
+	t=1755097667; cv=none; b=N5mvbQVoMU9UXWGJcIxBUqX9ziSmOWna6wmaU5l2wqrIPQo9I90kaz0BPFOpmHNfXOivf77yXbaBk1LywUQbg1RTOxdkSq2FK07NF3yCODt1gxRHqIXUjXLzfe2sngQYj3ZbUZbf8b//iKjRzpMstYY8OStY07W+rDiwAAevo/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097643; c=relaxed/simple;
-	bh=AgCFVr8B6NzxkSuzvPEJMB9AhjM0iYqJptnGya/8rdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7m1svZiFDaZ0nHci6ZaIBKn9a+n+G40+lKu17ez50jptc+4LcdkE9drO3UZ/8nUpRwspBbABorq8IPDeSVYD9q+1WEj1+gq3H6fyE0S0N13lswcJh8AhUNmosGVapOsqANzgQ6YCTISJy1CvqV63nURmwKWhnEa7Cpa60Z8p4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YENt6LTm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B711C4CEF1;
-	Wed, 13 Aug 2025 15:07:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755097642;
-	bh=AgCFVr8B6NzxkSuzvPEJMB9AhjM0iYqJptnGya/8rdo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YENt6LTmzTF5MtD2CCE/V13VNj4PuphZirCcbsVboFbdWpo5pbDoM+O1RwGND9hHA
-	 WetmjCRKzL7pVzJCuB6ANhgpmI5NnCbOUKiA98JWJtIXOH8N50EVLmuQyuay6zm6ky
-	 Onvhe46hQosw9HCamdkdEFdjBFc8sAKkHOvcvhEwHpJ12ST8cc+74GQ77yCDPQN8yP
-	 6Wv7nBFsNIocmJw6FI3A2Sw+oIhMT6YNdwdLIq5MhleD6VLBx07CKPNCPkvEmssek+
-	 ZjeG2ZowZ0nIKyT2jMky93WoiZsWFLORbU579a0ityJsLq0oaeKqLOOi+Bq4oEc02a
-	 vNc66YhlSs8qQ==
-Date: Wed, 13 Aug 2025 18:07:18 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v1 08/16] kmsan: convert kmsan_handle_dma to use physical
- addresses
-Message-ID: <20250813150718.GB310013@unreal>
-References: <cover.1754292567.git.leon@kernel.org>
- <5b40377b621e49ff4107fa10646c828ccc94e53e.1754292567.git.leon@kernel.org>
- <20250807122115.GH184255@nvidia.com>
+	s=arc-20240116; t=1755097667; c=relaxed/simple;
+	bh=aXjzebbFddO40YILFT5Z8xiBxG3ZpokNri+BjawRbDM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PRfrl43k91gUusnzM4y6KftTrERcO6uwi9fg4l9cbWwLEB9SOYhcOTKoOOm0qt9fB90rgrT99Mi/x/pc0+xI/iaoirkIM032Wfa7W258LFYj4276KWzZ4tg1bh4geDNWTDbIGLL2v2i6l1AXT5qHWvRDg9gGSwfiSl0AcID8nns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2BST25n0z6L54Z;
+	Wed, 13 Aug 2025 23:02:49 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2B4681400D4;
+	Wed, 13 Aug 2025 23:07:42 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 17:07:41 +0200
+Date: Wed, 13 Aug 2025 16:07:40 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
+Subject: Re: [PATCH V2 08/20] nvdimm/label: Include region label in slot
+ validation
+Message-ID: <20250813160740.00001ed2@huawei.com>
+In-Reply-To: <20250730121209.303202-9-s.neeraj@samsung.com>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121232epcas5p4cd632fe09d1bc51499d9e3ac3c2633b3@epcas5p4.samsung.com>
+	<20250730121209.303202-9-s.neeraj@samsung.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807122115.GH184255@nvidia.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Aug 07, 2025 at 09:21:15AM -0300, Jason Gunthorpe wrote:
-> On Mon, Aug 04, 2025 at 03:42:42PM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > Convert the KMSAN DMA handling function from page-based to physical
-> > address-based interface.
-> > 
-> > The refactoring renames kmsan_handle_dma() parameters from accepting
-> > (struct page *page, size_t offset, size_t size) to (phys_addr_t phys,
-> > size_t size). A PFN_VALID check is added to prevent KMSAN operations
-> > on non-page memory, preventing from non struct page backed address,
-> > 
-> > As part of this change, support for highmem addresses is implemented
-> > using kmap_local_page() to handle both lowmem and highmem regions
-> > properly. All callers throughout the codebase are updated to use the
-> > new phys_addr_t based interface.
-> 
-> Use the function Matthew pointed at kmap_local_pfn()
-> 
-> Maybe introduce the kmap_local_phys() he suggested too.
+On Wed, 30 Jul 2025 17:41:57 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-At this point it gives nothing.
+> slot validation routine validates label slot by calculating label
+
+Slot validation ... or
+The slot validation routing ...
+
+
+> checksum. It was only validating namespace label. This changeset also
+> validates region label if present.
+> 
+> Also validate and calculate lsa v2.1 namespace label checksum
+
+LSA v2.1 ...
+
 
 > 
-> >  /* Helper function to handle DMA data transfers. */
-> > -void kmsan_handle_dma(struct page *page, size_t offset, size_t size,
-> > +void kmsan_handle_dma(phys_addr_t phys, size_t size,
-> >  		      enum dma_data_direction dir)
-> >  {
-> >  	u64 page_offset, to_go, addr;
-> > +	struct page *page;
-> > +	void *kaddr;
-> >  
-> > -	if (PageHighMem(page))
-> > +	if (!pfn_valid(PHYS_PFN(phys)))
-> >  		return;
-> 
-> Not needed, the caller must pass in a phys that is kmap
-> compatible. Maybe just leave a comment. FWIW today this is also not
-> checking for P2P or DEVICE non-kmap struct pages either, so it should
-> be fine without checks.
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+Otherwise LGTM
 
-It is not true as we will call to kmsan_handle_dma() unconditionally in
-dma_map_phys(). The reason to it is that kmsan_handle_dma() is guarded
-with debug kconfig options and cost of pfn_valid() can be accommodated
-in that case. It gives more clean DMA code.
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-   155 dma_addr_t dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
-   156                 enum dma_data_direction dir, unsigned long attrs)
-   157 {
-   <...>
-   187
-   188         kmsan_handle_dma(phys, size, dir);
-   189         trace_dma_map_phys(dev, phys, addr, size, dir, attrs);
-   190         debug_dma_map_phys(dev, phys, size, dir, addr, attrs);
-   191
-   192         return addr;
-   193 }
-   194 EXPORT_SYMBOL_GPL(dma_map_phys);
 
-So let's keep this patch as is.
 
-Thanks
 
