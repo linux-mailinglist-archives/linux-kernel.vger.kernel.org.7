@@ -1,106 +1,132 @@
-Return-Path: <linux-kernel+bounces-766926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4983BB24CD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:07:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71079B24CD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB409A14FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06B4918959C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE8A2F291A;
-	Wed, 13 Aug 2025 14:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3AA2F83BF;
+	Wed, 13 Aug 2025 15:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StbyTQ+f"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j9Pb+KuX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KNKAacWJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9D12EE61F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023022BE7C3;
+	Wed, 13 Aug 2025 15:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097122; cv=none; b=JvjI5aBKpDieBtEC7lGxQZO3/TIleTCSydgCyKu6gK23S3ebqJbuuaFs91Oqf0ey0aBzIkQGsN7WrGfwNyZJWT1aO+rC+fIB837DlUrjOfai7aM2QFIkCscAJd71eBzKV5NyCSqaDkZg4llx8yd3asX9mjs7zXqD9YTaATs8id0=
+	t=1755097202; cv=none; b=mNarCyaNdBSfF8P5vg01cxqkv7Ald4fECuz5ViMyxcmObQKtTRR8/ovSfkh3R2/pYwSnlYmiQGceNGEED0tyPlhHgukBZXweSvAfme7RcfXnGKVcjL+MQ+XB6gTUp0dR8DEqJZAqc9LE/0xzhPURP1Mp0xYieBbVE7jqM7y2bjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097122; c=relaxed/simple;
-	bh=cdj+KiCbn1oJwqYp1Ud6yUCBUGI3vXG9Hhhy6pT+YGI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q1J9JnQa0aAd4X0rFYIkRYEpHO6pZyK1DpTjhgkzwX+t75AeMzfALkj1Z/8vsMVeTnUU3M5YvRSZEN0tA5dYKYLG1NyTuAHgDBi/zbZKq0ktjlg5IVpCN6kWTXlA0v9kA35faMZKARCvD4ZTmA1luGHBhhkSsrRqRd4xBoVEseY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StbyTQ+f; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-879c737bc03so167967839f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755097120; x=1755701920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cdj+KiCbn1oJwqYp1Ud6yUCBUGI3vXG9Hhhy6pT+YGI=;
-        b=StbyTQ+fIAizQnsHBGcc5Z1PFWQLOifdN5JgnxWAr2v9BBGVU4czvUSLMV49tgxzMc
-         EI++wcdoakjG5zk3xzSY/u8YiIuRZM/UTOYUffwHJShiPnxqhvPAV1awREa2P1s1uEkv
-         wSRJG/bfkPanX51jMsJ6lBogGgZlzU/tYChAdgCkBLBfwfbydkOCZNM/GovkK/kyN58a
-         0Lsex7W62fMulbNls0MUjGzDO40/Et/1qtKDN72tdKHKSHcpY07ZGL/XJ0S5ZOtoEDCP
-         ycaME/DlqpcvnpOhS4glFl5fqWnHWcOLy0u/OmCTw9XRTx0vYQhg3wLTXymKpc+txs5/
-         ovEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755097120; x=1755701920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cdj+KiCbn1oJwqYp1Ud6yUCBUGI3vXG9Hhhy6pT+YGI=;
-        b=ij0tOdzf55zJb/e6MUW0aU8kuIox4EswKpJt5S6bq40gvaSkvLsvY6vaV0yVnugXmt
-         kMviNigHRzIRfJ5o7IOdfb2THwiMmV/883+dO/yOh52LBFgJvN6GL+U+rrS3cgDGy8/+
-         2lEPpi3Qn1qs/lCkkTpNwyHlJPWd0MA8L3RZTUUEAsILcSJSK7fTAdmFo5ZT9ndbExyC
-         wpVqkUPczlabhz9b0rS1fMmRjBaKFlvOh4P9ocgVmrtYAwqyBepOMC+cuvmjru0HDXZH
-         s9F8rCXDrSHQOr5FMfehvrUXR/GehOAX8QR/xNF9SEkX3ZuSX4yoacS//PV2nafZd45Q
-         gEKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXN0w2xx00jnj9j3RSh4TlGDyVSPodTLz2uMK5g8X0DPNlsUd2zD/WpcW6SeJ7yXaYet3Lrk8y9TjUqDnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhpzqYrT2MlDSzJz5mGcpWvsATGv9eOsnUVGRePhXP3vJrV8nH
-	VUT97ntdwVPMI6eTe7zFIaWgR2o/f2Orf3PpN1g/pJ1Vk3tdAOSL2tzWqz1OSUIfyDzo3TMH8kz
-	11dHa/4MgsYLTya5+XmqbQjGIQ9IWDPk=
-X-Gm-Gg: ASbGncvx2dZy3ifcyr5uv8Wn0njaEjuDKzMj3a27z87PM6Ey5u7bR3CVTQf8kjDOXsw
-	+jJFmsyFEQ60jHVEEVnPWIXBvqN6NyXzPnV+DK6rGqUE+brilgQtHkX2nJQ2bwLl6kptg8vSGX4
-	0Sw1qXpV8baazbU9u0NJmMeZuPY7Xylx13DhsjElB5cgHWV5ZvWPYmUr6DMEpKkpFckcJ1rFPsK
-	Xn/
-X-Google-Smtp-Source: AGHT+IHLKYWoLQgeaa8lpUZkBDSOBm6JTFQBeQSvjC9Q22Wk4nofbygD4o5PAkEKh0CzR9uDm1gnj7nWtx8MBs/ueCQ=
-X-Received: by 2002:a05:6602:160d:b0:881:99eb:e212 with SMTP id
- ca18e2360f4ac-884296893a8mr594614639f.9.1755097120122; Wed, 13 Aug 2025
- 07:58:40 -0700 (PDT)
+	s=arc-20240116; t=1755097202; c=relaxed/simple;
+	bh=pTQBWOxYgQhk+BoQkUAnH1/ZqKl3sqMQ/v7cximXOZA=;
+	h=From:To:Cc:MIME-Version:Content-Type:Subject:Date:Message-ID; b=fnBDjfmqkHJDq83NUD74flfuJxOOqGHQSQaCPP1iTzjo5D1TrYJIoGGI6ZkvaN2ofC/RE4wm+tPQ/NFOnRaZa3D3vfPhSzas1hk9liWDDfBkRkTbJZd+XG3ssnNN9VgMQ5LbzqmI7TGO96REmac+wYpi02NnwNSZvSJXPkOSLdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j9Pb+KuX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KNKAacWJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755097199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=T/3FzEqj+EkRwMgr2W3oWcr9lCLmwSumjvYhh8G4h60=;
+	b=j9Pb+KuXctvY2lTxSCAZnaN4GQGoc1+BorFUwisZCOVzGCJIL2lkY+/JlG6rj030lweA2R
+	I8lUZqa0pzyNWRZL8oEsH4R29wTs7YGJ3dOW5ehZ81wxWqCVHQZAGpdrmbBNzs2oo4qMGm
+	F/v0Xe67JW8iSDO4LuIBr6C2s5lIz6OfPIc0FA7LB42aC6AhO0ob30q1BkOZESlPl4lsXB
+	RGCLsNCbdBhpTkimmsYfLBtKWA0oYq+2ELtMhLlxUnAuDJ/kzxqoi8v35gJH4pJVZAYGvU
+	ZUsB8OQvIcS1cvqhY+QNe57CkicGan252Xq355yJN/lrxQlkF/L1MrEENzbHVQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755097199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=T/3FzEqj+EkRwMgr2W3oWcr9lCLmwSumjvYhh8G4h60=;
+	b=KNKAacWJ3+kT0844y5pZPtxbMDnzPfZo9nw/QM51NcL89DgDuuuk38wDtt4IiO2u1tS8X2
+	eMSOTqiYPOfrjOCg==
+To:linux-block@vger.kernel.org
+Cc: cgroups@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Jens Axboe <axboe@kernel.dk>, Josef Bacik
+ <josef@toxicpanda.com>, Tejun Heo <tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-swap-scan-list-v3-0-6d73504d267b@kernel.org> <20250812-swap-scan-list-v3-2-6d73504d267b@kernel.org>
-In-Reply-To: <20250812-swap-scan-list-v3-2-6d73504d267b@kernel.org>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 13 Aug 2025 07:58:29 -0700
-X-Gm-Features: Ac12FXwhCZMD2zvgw16nmysoWddi5UuKHvB6gp_uCoNluS02s0CWA3dtY7J3FTM
-Message-ID: <CAKEwX=MkZ0MeedMdjczsuwWLEyj2asZsvt+2Vk5evEbRTZrh9g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mm: swap.h: Remove deleted field from comments
-To: Chris Li <chrisl@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Kairui Song <kasong@tencent.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+Subject: [PATCH] blkcg: Optimize exit to user space
+Date: Wed, 13 Aug 2025 16:59:57 +0200
+Message-ID: <87qzxf6zde.ffs@tglx>
 
-On Tue, Aug 12, 2025 at 12:11=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
-:
->
-> The comment for struct swap_info_struct.lock incorrectly mentions fields
-> that have already been deleted from the structure.
->
-> Updates the comments to accurately reflect the current struct
-> swap_info_struct.
->
-> There is no functional change.
->
-> Signed-off-by: Chris Li <chrisl@kernel.org>
+blkcg uses TIF_NOTIFY_RESUME to handle throttling on exit to user
+space. TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is utilized by
+other entities as well.
 
-Acked-by: Nhat Pham <nphamcs@gmail.com>
+This results in a unconditional blkcg_maybe_throttle_current() call for
+every invocation of resume_user_mode_work(), which is a pointless exercise
+as most of the time there is no throttling work to do.
+
+Optimize this by doing a quick check of the throttling condition before
+invoking it.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+---
+ block/blk-cgroup.c         |    4 ++--
+ include/linux/blk-cgroup.h |   10 +++++++++-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -2001,7 +2001,7 @@ static void blkcg_maybe_throttle_blkg(st
+ }
+ 
+ /**
+- * blkcg_maybe_throttle_current - throttle the current task if it has been marked
++ * __blkcg_maybe_throttle_current - throttle the current task if it has been marked
+  *
+  * This is only called if we've been marked with set_notify_resume().  Obviously
+  * we can be set_notify_resume() for reasons other than blkcg throttling, so we
+@@ -2010,7 +2010,7 @@ static void blkcg_maybe_throttle_blkg(st
+  * to be called by people willy-nilly as it will actually do the work to
+  * throttle the task if it is setup for throttling.
+  */
+-void blkcg_maybe_throttle_current(void)
++void __blkcg_maybe_throttle_current(void)
+ {
+ 	struct gendisk *disk = current->throttle_disk;
+ 	struct blkcg *blkcg;
+--- a/include/linux/blk-cgroup.h
++++ b/include/linux/blk-cgroup.h
+@@ -14,6 +14,7 @@
+  * 	              Nauman Rafique <nauman@google.com>
+  */
+ 
++#include <linux/sched.h>
+ #include <linux/types.h>
+ 
+ struct bio;
+@@ -26,7 +27,14 @@ struct gendisk;
+ extern struct cgroup_subsys_state * const blkcg_root_css;
+ 
+ void blkcg_schedule_throttle(struct gendisk *disk, bool use_memdelay);
+-void blkcg_maybe_throttle_current(void);
++void __blkcg_maybe_throttle_current(void);
++
++static inline void blkcg_maybe_throttle_current(void)
++{
++	if (unlikely(current->throttle_disk))
++		__blkcg_maybe_throttle_current();
++}
++
+ bool blk_cgroup_congested(void);
+ void blkcg_pin_online(struct cgroup_subsys_state *blkcg_css);
+ void blkcg_unpin_online(struct cgroup_subsys_state *blkcg_css);
 
