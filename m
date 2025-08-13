@@ -1,118 +1,137 @@
-Return-Path: <linux-kernel+bounces-766963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA40B24D18
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:18:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 304ABB24D1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A0507B75FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:16:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C52177BA73E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E81E1F5437;
-	Wed, 13 Aug 2025 15:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3401FDA89;
+	Wed, 13 Aug 2025 15:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WxLyCH8i"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WGZ4Cklv"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A341F4CB2;
-	Wed, 13 Aug 2025 15:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0066C1FDE19;
+	Wed, 13 Aug 2025 15:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755098233; cv=none; b=Y+BCzHWOOIhq1jLUM9boEUXcsY2vopCsrhJvGEUxqFvjlM7BA/BBRld7/tjGDFkE/hKnivOaGord6DySweF9zpT9yfOZUp1vWSOl+jRQXr5YTQk66jHzpZu0unxBOcT6FcMHlWev/bZjgur6TQ3y0zDsmDvuX0ltV1vAdyZcuPE=
+	t=1755098253; cv=none; b=iaFlQGZfvb1pLBHYx2sXKg3+iyCMw31re+vR8ArTRC2W0N9KX8j3/sX6oh9th5u+mbRvRlzlXumA6oMB42z+EVKjRZ3dw5XLdmznfCwMLjyrf5aPdwEIWyejOkdbuIZpMl2EsyiDwAirPtx3aWWkPZP1WyRx8gQmhYGWTScGs6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755098233; c=relaxed/simple;
-	bh=0UvE3D33DbMuFPY6dxrR8vwFv0Cc+jwGirlm+m7m8h8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGzfbyrMMlG2ZM7qJBnK1XHvYaZZLgrWa7evifDTRCjQtAN88a5sKbUONGbLIYbf6YkneEGQk5Vm2jqyAnBviPvDfIAo+sMo5Pd4DwVGrdQLMsiKkZeX+i7flwus1whf6NWbw2yPOAZVvG+m/DUiWjFDbBhmhg/8wpzRAL5ZGvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WxLyCH8i; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=pNSPGI3nahSLz3vSSHU/GM73uUfkJwp5wjG48WP8eNs=; b=WxLyCH8iH69E9BH7UtMzH7H17H
-	t6Ml0vI1fI2OOdNxOGP+5iq+poupLQ2GZTl8Qbg+GLZRMfJhbheIFXwQRw1fAo5vR3jjnVWGALbDA
-	GF76KZXk/18EMG+E2DoKUem8UcWsq4kimbAVigd1E9VJbGvY6eMOx/aSv7+4PZZXOjQZExeGyi9kM
-	hKX2INP+qOiw68z+tMFED9Du70a0VZMniilClGrYQN98aaHcaPJwhLCTFus3IDJnpPe0eJIJBCBdh
-	hGIx2Rn6domoKnDI7gda9nml2xVHmkJ45p9qHFrGca4GFufzKdq8T/KWcgwMoXA06x8qBnyuwj/3g
-	Q99O5ANA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umDDr-00000009rE6-0f1W;
-	Wed, 13 Aug 2025 15:17:03 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C17623001D6; Wed, 13 Aug 2025 17:17:02 +0200 (CEST)
-Date: Wed, 13 Aug 2025 17:17:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: nathan@kernel.org, arnd@arndb.de, broonie@kernel.org,
-	Liam.Howlett@oracle.com, urezki@gmail.com, will@kernel.org,
-	kaleshsingh@google.com, rppt@kernel.org, leitao@debian.org,
-	coxu@redhat.com, surenb@google.com, akpm@linux-foundation.org,
-	luto@kernel.org, jpoimboe@kernel.org, changyuanl@google.com,
-	hpa@zytor.com, dvyukov@google.com, kas@kernel.org, corbet@lwn.net,
-	vincenzo.frascino@arm.com, smostafa@google.com,
-	nick.desaulniers+lkml@gmail.com, morbo@google.com,
-	andreyknvl@gmail.com, alexander.shishkin@linux.intel.com,
-	thiago.bauermann@linaro.org, catalin.marinas@arm.com,
-	ryabinin.a.a@gmail.com, jan.kiszka@siemens.com, jbohac@suse.cz,
-	dan.j.williams@intel.com, joel.granados@kernel.org,
-	baohua@kernel.org, kevin.brodsky@arm.com, nicolas.schier@linux.dev,
-	pcc@google.com, andriy.shevchenko@linux.intel.com,
-	wei.liu@kernel.org, bp@alien8.de, ada.coupriediaz@arm.com,
-	xin@zytor.com, pankaj.gupta@amd.com, vbabka@suse.cz,
-	glider@google.com, jgross@suse.com, kees@kernel.org,
-	jhubbard@nvidia.com, joey.gouly@arm.com, ardb@kernel.org,
-	thuth@redhat.com, pasha.tatashin@soleen.com,
-	kristina.martsenko@arm.com, bigeasy@linutronix.de,
-	lorenzo.stoakes@oracle.com, jason.andryuk@amd.com, david@redhat.com,
-	graf@amazon.com, wangkefeng.wang@huawei.com, ziy@nvidia.com,
-	mark.rutland@arm.com, dave.hansen@linux.intel.com,
-	samuel.holland@sifive.com, kbingham@kernel.org,
-	trintaeoitogc@gmail.com, scott@os.amperecomputing.com,
-	justinstitt@google.com, kuan-ying.lee@canonical.com, maz@kernel.org,
-	tglx@linutronix.de, samitolvanen@google.com, mhocko@suse.com,
-	nunodasneves@linux.microsoft.com, brgerst@gmail.com,
-	willy@infradead.org, ubizjak@gmail.com, mingo@redhat.com,
-	sohil.mehta@intel.com, linux-mm@kvack.org,
-	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	x86@kernel.org, llvm@lists.linux.dev, kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 13/18] kasan: arm64: x86: Handle int3 for inline KASAN
- reports
-Message-ID: <20250813151702.GO4067720@noisy.programming.kicks-ass.net>
-References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
- <9030d5a35eb5a3831319881cb8cb040aad65b7b6.1755004923.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1755098253; c=relaxed/simple;
+	bh=X55BNW/lvLuP0M1N8mH4Vvk/thi99V61e54O86PhtzQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mfwIRgusSGttC1KAs7txkiqODmIqX3i5Bkru2USLJuVBmApqqlypWUclVBf+36lWphrPcw0Yenq2paiWWCwMV97WbhzoUaXn0O0ilQbsiivQWpaz28eEesx24pWxq6Ln2ckWRS731qAJ7NAczl3h+N4cN3MYlyAW+I2+i4SF59s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=WGZ4Cklv; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DFHMuB2101625;
+	Wed, 13 Aug 2025 10:17:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755098242;
+	bh=mcAdqGklcRo+qLa2crMGRiBhEAbVfeREEGf0sW1Z/G0=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=WGZ4CklvI+zkUPaV54K6b5MBk2b0LdxHQn6wRWSdTpCWUbISrFyXxONBmoFMl4Wis
+	 LKnMpVp9w+xfMK6VkCyY1vftwgJP0HIaxJAyW2aLpviANW9WekVM84gqHmGWQ29zT+
+	 Rw/SrjmDADK1TiRRiT3S3PNmOKZf2/LHFy7QYYhE=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DFHMVc479317
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 13 Aug 2025 10:17:22 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
+ Aug 2025 10:17:21 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 13 Aug 2025 10:17:21 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DFHLeO2494680;
+	Wed, 13 Aug 2025 10:17:21 -0500
+Date: Wed, 13 Aug 2025 10:17:21 -0500
+From: Nishanth Menon <nm@ti.com>
+To: <rs@ti.com>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <d-gole@ti.com>,
+        <afd@ti.com>, <bb@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <detheridge@ti.com>, <matt.coster@imgtec.com>,
+        Michael Walle
+	<mwalle@kernel.org>
+Subject: Re: [PATCH 2/3] arm64: dts: ti: k3-am62p-j722s: enable the bxs-4-64
+Message-ID: <20250813151721.nc5fr3qmro5grlda@steam>
+References: <20250808232522.1296240-1-rs@ti.com>
+ <20250808232522.1296240-2-rs@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <9030d5a35eb5a3831319881cb8cb040aad65b7b6.1755004923.git.maciej.wieczor-retman@intel.com>
+In-Reply-To: <20250808232522.1296240-2-rs@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Aug 12, 2025 at 03:23:49PM +0200, Maciej Wieczor-Retman wrote:
-> Inline KASAN on x86 does tag mismatch reports by passing the faulty
-> address and metadata through the INT3 instruction - scheme that's setup
-> in the LLVM's compiler code (specifically HWAddressSanitizer.cpp).
+On 18:25-20250808, rs@ti.com wrote:
+> From: Randolph Sapp <rs@ti.com>
 > 
-> Add a kasan hook to the INT3 handling function.
+> Add the relevant device tree node for Imagination's BXS-4-64 GPU.
 > 
-> Disable KASAN in an INT3 core kernel selftest function since it can raise
-> a false tag mismatch report and potentially panic the kernel.
+> These devices specifically do not set the dma-coherent bit because they
+> do not use the same MSMC configuration as other BXS-4-64 enabled TI
+> platforms.
 > 
-> Make part of that hook - which decides whether to die or recover from a
-> tag mismatch - arch independent to avoid duplicating a long comment on
-> both x86 and arm64 architectures.
+> Signed-off-by: Randolph Sapp <rs@ti.com>
+> ---
+>  .../boot/dts/ti/k3-am62p-j722s-common-main.dtsi     | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 > 
-> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> index 2e5e25a8ca86..a51db8f9dff8 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
+> @@ -690,6 +690,19 @@ ospi0: spi@fc40000 {
+>  		};
+>  	};
+>  
+> +	gpu: gpu@fd80000 {
+> +		compatible = "ti,j721s2-gpu", "img,img-bxs-4-64", "img,img-rogue";
 
-Can we please split this into an arm64 and x86 patch. Also, why use int3
-here rather than a #UD trap, which we use for all other such cases?
+Note the discussion in https://lore.kernel.org/linux-arm-kernel/DBE4UO2RGAYX.17V1DAF8MQYJM@kernel.org/
+
+> +		reg = <0x00 0x0fd80000 0x00 0x80000>;
+> +		clocks = <&k3_clks 237 1>;
+> +		clock-names = "core";
+> +		assigned-clocks = <&k3_clks 237 1>;
+> +		assigned-clock-rates = <800000000>;
+> +		interrupts = <GIC_SPI 241 IRQ_TYPE_LEVEL_HIGH>;
+> +		power-domains = <&k3_pds 237 TI_SCI_PD_EXCLUSIVE>,
+> +				<&k3_pds 242 TI_SCI_PD_EXCLUSIVE>;
+> +		power-domain-names = "a", "b";
+> +	};
+> +
+>  	cpsw3g: ethernet@8000000 {
+>  		compatible = "ti,am642-cpsw-nuss";
+>  		#address-cells = <2>;
+> -- 
+> 2.50.1
+> 
+
+Is the issue that Michael reported
+https://lore.kernel.org/linux-arm-kernel/20250716134717.4085567-3-mwalle@kernel.org/
+resolved?
+
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
