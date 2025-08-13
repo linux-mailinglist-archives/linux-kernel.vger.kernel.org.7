@@ -1,486 +1,193 @@
-Return-Path: <linux-kernel+bounces-767654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDD5B2573D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:08:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E529B25746
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BA997B39EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D0C15A752D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241DA2FC875;
-	Wed, 13 Aug 2025 23:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB152F4A06;
+	Wed, 13 Aug 2025 23:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADgpGAYO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U8zOzJHE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3DF2F656D;
-	Wed, 13 Aug 2025 23:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8894E2F5322
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755126466; cv=none; b=UW2n5xZvlbejvWFxmnd8bxXd7Ef2FeUUDrDm10d5SOftOM0fvTqaDmyil6GKUTT9Bx1O6VKiLW3N4rtRf9wI2f+RZurm23Hmb7nJ3d0YU7tzOZxNxC02N+g4P+DMlrsrjAUQRzIPfwCSW4gFDcyx528PUr75Bvezk7sP4nZcwUU=
+	t=1755126491; cv=none; b=eJ6UCEFriI7XBF71FjfpdPQs5nKhmY4z8qWmJJx2rYueREhJN1NRChI1ImyRwoh8v6lGdhhXldB3Z9ZSl0A5pw78b1tIkmTTlBwsb6LnsuqMtvK5o5GRnBTgUN09bHLDnWdC3Z4kjeghJk5NyotTrKpcnCVpHkufq1vVkgu9E7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755126466; c=relaxed/simple;
-	bh=sAl2E1YmCIttRqa3R2EDMWfrF2/E5z2pxSqFYJ9C574=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=VYyBgzQ8YtqfwC4fzcuA8iu3zLg3jk3tQsSzTtqc5kqyw7mQ9Y2cvctNaf7gvevAkj6Zs0ft6ZNBn1kcc2bxF9QObHbU3qB6LGdMH4FMMVw33jEwP+KLvftiSl3MlNwbdo91i645NH9bTo0cAIvos8eml8rlaJ2+EcJriZRmUfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADgpGAYO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9CC5C4CEEB;
-	Wed, 13 Aug 2025 23:07:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755126465;
-	bh=sAl2E1YmCIttRqa3R2EDMWfrF2/E5z2pxSqFYJ9C574=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ADgpGAYO90FH7j0Jog+v5yAD0PcxKe3FyvE3x1kpJbjyP+CbAYEigEmyLgE3TNH7O
-	 z/cdTZs8XycnvBdn+LVSNTNDU+l6WDKwVlbS66ketRY1BmWsSFPUC8w6yNEC0OQnW5
-	 ibMu+NM3wrQiCWiYduur1E6uaPq4IlZX0IuWqUdzw1hCQ9w0BJ3/BaNl2ESTnlYnSL
-	 v2yxbehFoUyZAK2fiGVBIggwPAKFYRKiYmau/RDACy3KbJvhwd5l5zqGqhHbyu4a+n
-	 dHooCAn6tbQRwMTnqOaaW4JCg8sRekJxRNRMua+eui+bw+hGRKc/Dwa0TI/S0w7UCC
-	 ozWHMAx1wh5LA==
-Date: Wed, 13 Aug 2025 18:07:44 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, mani@kernel.org,
-	lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, alim.akhtar@samsung.com, vkoul@kernel.org,
-	kishon@kernel.org, arnd@arndb.de, m.szyprowski@samsung.com,
-	jh80.chung@samsung.com, pankaj.dubey@samsung.com
-Subject: Re: [PATCH v3 11/12] PCI: exynos: Add support for Tesla FSD SoC
-Message-ID: <20250813230744.GA299971@bhelgaas>
+	s=arc-20240116; t=1755126491; c=relaxed/simple;
+	bh=dZUMsPsqmDcein2OBiKoR7Gxr/AXiObKpVab7TXGqdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=orEyR/AQjD96LpqBxPWDE7uIhiKLoMvpEoUzxp23zq5atXMxBOB7pWh9Oma7zhejx2btDuradAdiV8I+Ms0wq6qdMp5lB61YlpVQqJRaTG8708hYVOml7xCXucaxgF4PRb8nfHZS+ELeJWAhijTlDU+cPSPzdKlyly250eS5APk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U8zOzJHE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DMUBx3000898
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:08:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rcBAK8eEeC3gYozyTRH3zfy0KnL/G+SterUWthRRl60=; b=U8zOzJHEoKmIQoET
+	t4wcKyCFI4yA7ChPpRqtIZQQBQYhyHrWSjqOlZWfYSpUyY5Whw7jdUvGQ4uwLXz5
+	m6tZJLWSeSkAZNn0z3M6uztHqlpsjd/4NqB8zlSEz65n3qqfkYMPMset8EKCxqOK
+	4iOUP5Vu1pT75vbH8gxV1pP4tJhOfyYzY65iJ+XX5JbsXtXIuXwqyAKx77lfnqoN
+	6mNNV3auWxk7Qx+aESf/UqpEybNFf83IBGLkWIknnFkCaAK6787ixCAXyPDPfB4l
+	QdQZnybKpgRUJUJDa123Glpx5gwFmI/fNh1vPNXdpRBH+Yo3orQ6+VnyQROj/uPX
+	ceGGyQ==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fem4hg6v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:08:08 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-323266c83f6so400717a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:08:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755126487; x=1755731287;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rcBAK8eEeC3gYozyTRH3zfy0KnL/G+SterUWthRRl60=;
+        b=uQsIueMPhUY2J/jFBn24b1DHqV5xEC4JrGW8V83tyQHxkRySzWLtEnFaI1K7uOur83
+         PQAf2SNe7bJ/dk37W2vfiwBaaNJpCNOY8fTJGIWYndN9hS2o2gPJoodUVNsfEu/L5M9U
+         7fzsGxu1liCNy5mlmD2kVi9K2UogPzZ+u5ZJQCbxtfVOdm+Y5DzUgaiqiZ/QH6iEi0Z1
+         qz/ifH41RBfIhWbcHIbF7n0BVjOlO4tMo0m4UglcxMJbDF8B3zl3Uz2Il0pCRgiqS5xB
+         vBLl/hwcjaPpDZ4WI1lTbm4EdjmvMbNUPqjUrmIJb+FWaj8l1HB5Q6VCHWOUsaO9zxoL
+         pmRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmFWaXSyGIJAbQGQSx/2PaVFDOW4Zv3c5ECJAEbPijU1XZupfc3lGj64lwhIRw6gSINUXnTibnTQ5GnEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywEDX1sd6oNqzeLgU9UvIOJVzwmPaFeydNaRXT3jgJtVNVCy75
+	Jm6i76s6q8PDYHnE9ErLFE2e7pDM8dNB+edMsyZlxJfzXZyoWY3vhqQuvxtd/QgUV83nfoRsdwT
+	e2z/AGxap0PzjhI/2RL3Yz7kxK0gV5luThSRY7WvxYx4nPnqZjBqZPtlZ8qAebg/a1g==
+X-Gm-Gg: ASbGncv1FSO1Wr9B2Avp0ppWPZRAUFq/bIeYKPoxqwB+uvyGXra8alDOVLGg3HYNKZ6
+	QNyaZE365WNrP+LjFFiONcdu2VYv/0zjiwD1O9P1X6n6GWH/+laGsOPAJ2xjY3JxEPQadY3goVf
+	cuDrhlrgPXAyGUqE1Wp66vTJoR1by69EkHSiYKOkcm2aTOy/U+fY5mEyz//nN7aGamyzxOm9PUU
+	0quSTPFW8UV9qqPjtf/4+0NSRuUFzPmL4HXvCLuA1x2C3vC/TIvGEM1pRm5o1/OdrzLJW/58XyW
+	nswhtLRwp9QHB8myucKGdMqRSwzRALPC0YK3ZqfAm/WFlCPEBnuAsfvl0xtuyjsj7QhYnK700sC
+	hLzL0Df2xCdWEeq5Yt/po6Qy7GiQt5LcXSxEDDA==
+X-Received: by 2002:a17:90b:580e:b0:313:d361:73d7 with SMTP id 98e67ed59e1d1-32329ae3857mr664188a91.13.1755126487068;
+        Wed, 13 Aug 2025 16:08:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAb97Pa0qtCkny2T4Bm3SgwY7hxlZeUaAqrAvqEuROtklAwf8KwhQzp8LvQNNm/xytIym38g==
+X-Received: by 2002:a17:90b:580e:b0:313:d361:73d7 with SMTP id 98e67ed59e1d1-32329ae3857mr664147a91.13.1755126486585;
+        Wed, 13 Aug 2025 16:08:06 -0700 (PDT)
+Received: from [192.168.0.74] (n1-41-240-65.bla22.nsw.optusnet.com.au. [1.41.240.65])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422babfbbdsm28366124a12.35.2025.08.13.16.07.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 16:08:06 -0700 (PDT)
+Message-ID: <7aa7035f-d2c4-4c00-bc46-2e98d4c2641f@oss.qualcomm.com>
+Date: Thu, 14 Aug 2025 09:07:58 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811154638.95732-12-shradha.t@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/11] qcomtee: enable TEE_IOC_SHM_ALLOC ioctl
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Apurupa Pattapu <quic_apurupa@quicinc.com>,
+        Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Sumit Garg <sumit.garg@oss.qualcomm.com>
+References: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com>
+ <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-10-ce7a1a774803@oss.qualcomm.com>
+ <3ec0a8d0-7900-45bd-b0d3-90ee8ca7730c@oss.qualcomm.com>
+ <d81abdef-18fa-496d-8493-e8f336c43800@oss.qualcomm.com>
+ <d74404ec-44ad-412f-98ef-eed288ecf1bf@oss.qualcomm.com>
+Content-Language: en-US
+From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+In-Reply-To: <d74404ec-44ad-412f-98ef-eed288ecf1bf@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: yz9OTh774Qb-AHWU_l8ppiMsHPkRCSpe
+X-Proofpoint-ORIG-GUID: yz9OTh774Qb-AHWU_l8ppiMsHPkRCSpe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA2OCBTYWx0ZWRfX3tJ3EW20eyvg
+ 3BMgfjGM5tE7x8Nu0ELm54y/7JfJIR5ygZd29ROH4tqWcL7qLoz3793hxSkys4b8emQXYxInv7S
+ 3Fge9+3MNp4YJCVpSLLhyiQQPcP/Zrv+tt9IOPVXgAttxzBLa0fnDKHlZMKCLwRTfaUyUO5mVsT
+ 9pegLm7yeWHD6IiBBrEUuk4gtwMliitjJv4t3FsjUFZoD9+AdRBVP6hueF8aHDpN3r285A7GmCJ
+ QFGkFXdAN2BNc2sbxBrZnrqVpvtH6RMz/lclC4R6hlHXKIka3mVpQpuVsvH6XKf3gBKKRQiDGsf
+ xS3oBO9qsEb7ceHr/4XLWL9E0c+Lwh9cWe5G/okDkogDkOptO2bLVzIbEts7sY0ythVkI6IuLCS
+ FsTl3PEW
+X-Authority-Analysis: v=2.4 cv=YMafyQGx c=1 sm=1 tr=0 ts=689d1ad8 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=hi51d+lTLNy/RbqRqnOomQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=COk6AnOGAAAA:8 a=AwBIn8DhAZiLWRgty54A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 clxscore=1015 priorityscore=1501 spamscore=0 suspectscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110068
 
-On Mon, Aug 11, 2025 at 09:16:37PM +0530, Shradha Todi wrote:
-> Add host and endpoint controller driver support for FSD SoC.
 
-I think this might be easier if you added host mode first, then added
-endpoint mode with a separate patch.
 
-It's kind of unfortunate that the driver uses "ep" everywhere for
-struct exynos_pcie pointers.  It's going to be confusing because "ep"
-is also commonly used for endpoint-related things, e.g., struct
-dw_pcie_ep pointers.  Maybe it's not worth changing; I dunno.
-
-> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
-> ---
->  drivers/pci/controller/dwc/pci-exynos.c | 278 ++++++++++++++++++++++++
->  1 file changed, 278 insertions(+)
+On 8/14/2025 8:49 AM, Konrad Dybcio wrote:
+> On 8/14/25 12:24 AM, Amirreza Zarrabi wrote:
+>>
+>>
+>> On 8/13/2025 8:00 PM, Konrad Dybcio wrote:
+>>> On 8/13/25 2:35 AM, Amirreza Zarrabi wrote:
+>>>> Enable userspace to allocate shared memory with QTEE. Since
+>>>> QTEE handles shared memory as object, a wrapper is implemented
+>>>> to represent tee_shm as an object. The shared memory identifier,
+>>>> obtained through TEE_IOC_SHM_ALLOC, is transferred to the driver using
+>>>> TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_INPUT/OUTPUT.
+>>>>
+>>>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>> Acked-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+>>>> Tested-by: Harshal Dev <quic_hdev@quicinc.com>
+>>>> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+>>>> ---
+>>>
+>>> [...]
+>>>
+>>>> +/* Mapping information format as expected by QTEE. */
+>>>> +struct qcomtee_mapping_info {
+>>>> +	u64 paddr;
+>>>> +	u64 len;
+>>>> +	u32 perms;
+>>>> +} __packed;
+>>>
+>>> Please use types with explicit endianness, e.g. __le32. I'm assuming
+>>> TZ will always be little-endian, regardless of the host OS
+>>>
+>>
+>> I'm not entirely sure how this point is relevant. As I understand it,
+>> the core that populates this struct is the same one that accesses it in TZ.
+>> Your argument would absolutely make sense if the host and TZ were operating
+>> on different cores with distinct architectures -- such as one being
+>> little-endian and the other big-endian, which is not the case.
 > 
-> diff --git a/drivers/pci/controller/dwc/pci-exynos.c b/drivers/pci/controller/dwc/pci-exynos.c
-> index ef1f42236575..9aabfecdc147 100644
-> --- a/drivers/pci/controller/dwc/pci-exynos.c
-> +++ b/drivers/pci/controller/dwc/pci-exynos.c
-> @@ -18,6 +18,8 @@
->  #include <linux/platform_device.h>
->  #include <linux/phy/phy.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/regmap.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
->  
-> @@ -49,15 +51,35 @@
->  #define EXYNOS_PCIE_ELBI_SLV_ARMISC		0x120
->  #define EXYNOS_PCIE_ELBI_SLV_DBI_ENABLE		BIT(21)
->  
-> +#define FSD_IRQ2_STS				0x008
-> +#define FSD_IRQ_MSI_ENABLE			BIT(17)
-> +#define FSD_IRQ2_EN				0x018
-> +#define FSD_PCIE_APP_LTSSM_ENABLE		0x054
-> +#define FSD_PCIE_LTSSM_ENABLE			0x1
-> +#define FSD_PCIE_DEVICE_TYPE			0x080
-> +#define FSD_DEVICE_TYPE_RC			0x4
-> +#define FSD_DEVICE_TYPE_EP			0x0
-> +#define FSD_PCIE_CXPL_DEBUG_00_31		0x2c8
-> +
->  /* to store different SoC variants of Samsung */
->  enum samsung_pcie_variants {
-> +	FSD,
->  	EXYNOS_5433,
->  };
->  
-> +/* Values to be written to SYSREG to view DBI space as CDM/DBI2/IATU/DMA */
-> +enum fsd_pcie_addr_type {
-> +	ADDR_TYPE_DBI = 0x0,
-> +	ADDR_TYPE_DBI2 = 0x12,
-> +	ADDR_TYPE_ATU = 0x36,
-> +	ADDR_TYPE_DMA = 0x3f,
-> +};
-> +
->  struct samsung_pcie_pdata {
->  	struct pci_ops				*pci_ops;
->  	const struct dw_pcie_ops		*dwc_ops;
->  	const struct dw_pcie_host_ops		*host_ops;
-> +	const struct dw_pcie_ep_ops		*ep_ops;
->  	const struct samsung_res_ops		*res_ops;
->  	unsigned int				soc_variant;
->  	enum dw_pcie_device_mode		device_mode;
-> @@ -67,6 +89,8 @@ struct exynos_pcie {
->  	struct dw_pcie			pci;
->  	void __iomem			*elbi_base;
->  	const struct samsung_pcie_pdata	*pdata;
-> +	struct regmap			*sysreg;
-> +	unsigned int			sysreg_offset;
->  	struct clk_bulk_data		*clks;
->  	struct phy			*phy;
->  	struct regulator_bulk_data	*supplies;
-> @@ -334,11 +358,201 @@ static const struct dw_pcie_ops exynos_dw_pcie_ops = {
->  	.start_link = exynos_pcie_start_link,
->  };
->  
-> +static void fsd_pcie_stop_link(struct dw_pcie *pci)
-> +{
-> +	u32 val;
-> +	struct exynos_pcie *ep = to_exynos_pcie(pci);
-> +
-> +	val = readl(ep->elbi_base + FSD_PCIE_APP_LTSSM_ENABLE);
-> +	val &= ~FSD_PCIE_LTSSM_ENABLE;
-> +	writel(val, ep->elbi_base + FSD_PCIE_APP_LTSSM_ENABLE);
-> +}
-> +
-> +static int fsd_pcie_start_link(struct dw_pcie *pci)
-> +{
-> +	struct exynos_pcie *ep = to_exynos_pcie(pci);
-> +	struct dw_pcie_ep *dw_ep = &pci->ep;
-> +
-> +	if (dw_pcie_link_up(pci))
-> +		return 0;
-> +
-> +	writel(FSD_PCIE_LTSSM_ENABLE, ep->elbi_base + FSD_PCIE_APP_LTSSM_ENABLE);
-> +
-> +	/* no need to wait for link in case of host as core files take care */
-> +	if (ep->pdata->device_mode == DW_PCIE_RC_TYPE)
-> +		return 0;
-> +
-> +	/* check if the link is up or not in case of EP */
-> +	if (!dw_pcie_wait_for_link(pci)) {
-> +		dw_pcie_ep_linkup(dw_ep);
-> +		return 0;
-> +	}
-> +
-> +	return -ETIMEDOUT;
-> +}
-> +
-> +static irqreturn_t fsd_pcie_irq_handler(int irq, void *arg)
-> +{
-> +	u32 val;
-> +	struct exynos_pcie *ep = arg;
-> +	struct dw_pcie *pci = &ep->pci;
-> +	struct dw_pcie_rp *pp = &pci->pp;
-> +
-> +	val = readl(ep->elbi_base + FSD_IRQ2_STS);
-> +	if ((val & FSD_IRQ_MSI_ENABLE) == FSD_IRQ_MSI_ENABLE) {
-> +		val &= FSD_IRQ_MSI_ENABLE;
-> +		writel(val, ep->elbi_base + FSD_IRQ2_STS);
-
-This looks weird because FSD_IRQ_MSI_ENABLE sounds like an *enable*
-bit, but here you're treating it as a *status* bit.
-
-As far as I can tell, you set FSD_IRQ_MSI_ENABLE once at probe-time in
-fsd_pcie_msi_init(), then you clear it here in an IRQ handler, and it
-will never be set again.  That seems wrong; am I missing something?
-
-> +		dw_handle_msi_irq(pp);
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static void fsd_pcie_msi_init(struct exynos_pcie *ep)
-> +{
-> +	int val;
-> +
-> +	val = readl(ep->elbi_base + FSD_IRQ2_EN);
-> +	val |= FSD_IRQ_MSI_ENABLE;
-> +	writel(val, ep->elbi_base + FSD_IRQ2_EN);
-> +}
-> +
-> +static void __iomem *fsd_atu_setting(struct dw_pcie *pci, void __iomem *base)
-
-The "setting" name suggests that this merely returns an address
-without side effects, but in fact it actively *sets* the view.
-
-In this case there's no locking around:
-
-  addr = fsd_atu_setting(pci, base);
-  dw_pcie_read(addr + reg, size, &val);
-
-even though concurrent calls would cause issues, but I think that's OK
-because we only get there via the driver, and I assume multiple DBI or
-DBI2 accesses never happen because they're not used in asynchronous
-paths like interrupt handlers.
-
-But I think a name that hints at the fact that this does have side
-effects would be helpful as a reminder in the callers that they must
-not be used concurrently.
-
-> +{
-> +	struct exynos_pcie *ep = to_exynos_pcie(pci);
-> +
-> +	if (base >= pci->atu_base) {
-> +		regmap_write(ep->sysreg, ep->sysreg_offset, ADDR_TYPE_ATU);
-> +		return (base - DEFAULT_DBI_ATU_OFFSET);
-> +	} else if (base == pci->dbi_base) {
-> +		regmap_write(ep->sysreg, ep->sysreg_offset, ADDR_TYPE_DBI);
-> +	} else if (base == pci->dbi_base2) {
-> +		regmap_write(ep->sysreg, ep->sysreg_offset, ADDR_TYPE_DBI2);
-> +	}
-> +
-> +	return base;
-> +}
-> +
-> +static u32 fsd_pcie_read_dbi(struct dw_pcie *pci, void __iomem *base,
-> +				u32 reg, size_t size)
-> +{
-> +	void __iomem *addr;
-> +	u32 val;
-> +
-> +	addr = fsd_atu_setting(pci, base);
-> +	dw_pcie_read(addr + reg, size, &val);
-> +
-> +	return val;
-> +}
-> +
-> +static void fsd_pcie_write_dbi(struct dw_pcie *pci, void __iomem *base,
-> +				u32 reg, size_t size, u32 val)
-> +{
-> +	void __iomem *addr;
-> +
-> +	addr = fsd_atu_setting(pci, base);
-> +	dw_pcie_write(addr + reg, size, val);
-> +}
-> +
-> +static void fsd_pcie_write_dbi2(struct dw_pcie *pci, void __iomem *base,
-> +				u32 reg, size_t size, u32 val)
-> +{
-> +	struct exynos_pcie *ep = to_exynos_pcie(pci);
-> +
-> +	fsd_atu_setting(pci, base);
-> +	dw_pcie_write(pci->dbi_base + reg, size, val);
-> +	regmap_write(ep->sysreg, ep->sysreg_offset, ADDR_TYPE_DBI);
-> +}
-> +
-> +static bool fsd_pcie_link_up(struct dw_pcie *pci)
-> +{
-> +	u32 val;
-> +	struct exynos_pcie *ep = to_exynos_pcie(pci);
-> +
-> +	val = readl(ep->elbi_base + FSD_PCIE_CXPL_DEBUG_00_31);
-> +	val &= PORT_LOGIC_LTSSM_STATE_MASK;
-> +
-> +	return (val == PORT_LOGIC_LTSSM_STATE_L0);
-> +}
-> +
-> +static int fsd_pcie_host_init(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct exynos_pcie *ep = to_exynos_pcie(pci);
-> +
-> +	phy_init(ep->phy);
-> +	fsd_pcie_msi_init(ep);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dw_pcie_host_ops fsd_pcie_host_ops = {
-> +	.init = fsd_pcie_host_init,
-> +};
-> +
-> +static int fsd_pcie_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-> +				 unsigned int type, u16 interrupt_num)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +
-> +	switch (type) {
-> +	case PCI_IRQ_INTX:
-> +		return dw_pcie_ep_raise_intx_irq(ep, func_no);
-> +	case PCI_IRQ_MSIX:
-> +		dev_err(pci->dev, "EP does not support MSI-X\n");
-> +		return -EINVAL;
-> +	case PCI_IRQ_MSI:
-> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-> +	default:
-> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct pci_epc_features fsd_pcie_epc_features = {
-> +	.linkup_notifier = false,
-> +	.msi_capable = true,
-> +	.msix_capable = false,
-
-I think we should omit features we do *not* support instead of calling
-them out explicitly, e.g., we don't need .linkup_notifier or
-.msix_capable.
-
-We've added them in the past, but they're unnecessary and they lead to
-either pervasive changes (adding ".new_feature = false" to all
-existing drivers when adding the feature) or inconsistency (new
-drivers include ".new_feature = false" but existing drivers do not).
-
-> +};
-> +
-> +static const struct pci_epc_features *fsd_pcie_get_features(struct dw_pcie_ep *ep)
-> +{
-> +	return &fsd_pcie_epc_features;
-> +}
-> +
-> +static const struct dw_pcie_ep_ops fsd_ep_ops = {
-> +	.raise_irq	= fsd_pcie_raise_irq,
-> +	.get_features	= fsd_pcie_get_features,
-> +};
-> +
-> +static void fsd_set_device_mode(struct exynos_pcie *ep)
-> +{
-> +	if (ep->pdata->device_mode == DW_PCIE_RC_TYPE)
-> +		writel(FSD_DEVICE_TYPE_RC, ep->elbi_base + FSD_PCIE_DEVICE_TYPE);
-> +	else
-> +		writel(FSD_DEVICE_TYPE_EP, ep->elbi_base + FSD_PCIE_DEVICE_TYPE);
-> +}
-> +
-> +static const struct dw_pcie_ops fsd_dw_pcie_ops = {
-> +	.read_dbi	= fsd_pcie_read_dbi,
-> +	.write_dbi	= fsd_pcie_write_dbi,
-> +	.write_dbi2	= fsd_pcie_write_dbi2,
-> +	.start_link	= fsd_pcie_start_link,
-> +	.stop_link	= fsd_pcie_stop_link,
-> +	.link_up	= fsd_pcie_link_up,
-> +};
-> +
->  static const struct samsung_res_ops exynos_res_ops_data = {
->  	.init_regulator		= exynos_init_regulator,
->  	.pcie_irq_handler	= exynos_pcie_irq_handler,
->  };
->  
-> +static const struct samsung_res_ops fsd_res_ops_data = {
-> +	.pcie_irq_handler	= fsd_pcie_irq_handler,
-> +	.set_device_mode	= fsd_set_device_mode,
-> +};
-> +
->  static int exynos_pcie_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -361,6 +575,26 @@ static int exynos_pcie_probe(struct platform_device *pdev)
->  	if (IS_ERR(ep->phy))
->  		return PTR_ERR(ep->phy);
->  
-> +	if (ep->pdata->soc_variant == FSD) {
-> +		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(36));
-> +		if (ret)
-> +			return ret;
-> +
-> +		ep->sysreg = syscon_regmap_lookup_by_phandle(dev->of_node,
-> +				"samsung,syscon-pcie");
-> +		if (IS_ERR(ep->sysreg)) {
-> +			dev_err(dev, "sysreg regmap lookup failed.\n");
-> +			return PTR_ERR(ep->sysreg);
-> +		}
-> +
-> +		ret = of_property_read_u32_index(dev->of_node, "samsung,syscon-pcie", 1,
-> +						 &ep->sysreg_offset);
-> +		if (ret) {
-> +			dev_err(dev, "couldn't get the register offset for syscon!\n");
-> +			return ret;
-> +		}
-> +	}
-
-This is a good example of a complicated set of things where I think
-you should either add a SoC-specific function pointer to do this or
-test a property, e.g., "DMA width", instead of testing for a specific
-SoC.
-
->  	/* External Local Bus interface (ELBI) registers */
->  	ep->elbi_base = devm_platform_ioremap_resource_byname(pdev, "elbi");
->  	if (IS_ERR(ep->elbi_base))
-> @@ -397,6 +631,22 @@ static int exynos_pcie_probe(struct platform_device *pdev)
->  		if (ret < 0)
->  			goto fail_phy_init;
->  
-> +		break;
-> +	case DW_PCIE_EP_TYPE:
-> +		phy_init(ep->phy);
-> +
-> +		ep->pci.ep.ops = pdata->ep_ops;
-> +
-> +		ret = dw_pcie_ep_init(&ep->pci.ep);
-> +		if (ret < 0)
-> +			goto fail_phy_init;
-> +
-> +		ret = dw_pcie_ep_init_registers(&ep->pci.ep);
-> +		if (ret)
-> +			goto fail_phy_init;
-> +
-> +		pci_epc_init_notify(ep->pci.ep.epc);
-> +
->  		break;
->  	default:
->  		dev_err(dev, "invalid device type\n");
-> @@ -436,6 +686,9 @@ static int exynos_pcie_suspend_noirq(struct device *dev)
->  	if (ep->pdata->device_mode == DW_PCIE_EP_TYPE)
->  		return 0;
->  
-> +	if (ep->pdata->dwc_ops->stop_link)
-> +		ep->pdata->dwc_ops->stop_link(pci);
-> +
->  	if (ep->pdata->soc_variant == EXYNOS_5433)
->  		exynos_pcie_assert_core_reset(ep);
->  	phy_power_off(ep->phy);
-> @@ -471,6 +724,23 @@ static const struct dev_pm_ops exynos_pcie_pm_ops = {
->  				  exynos_pcie_resume_noirq)
->  };
->  
-> +
-> +static const struct samsung_pcie_pdata fsd_hw3_pcie_rc_pdata = {
-> +	.dwc_ops		= &fsd_dw_pcie_ops,
-> +	.host_ops		= &fsd_pcie_host_ops,
-> +	.res_ops		= &fsd_res_ops_data,
-> +	.soc_variant		= FSD,
-> +	.device_mode		= DW_PCIE_RC_TYPE,
-> +};
-> +
-> +static const struct samsung_pcie_pdata fsd_hw3_pcie_ep_pdata = {
-> +	.dwc_ops		= &fsd_dw_pcie_ops,
-> +	.ep_ops			= &fsd_ep_ops,
-> +	.res_ops		= &fsd_res_ops_data,
-> +	.soc_variant		= FSD,
-> +	.device_mode		= DW_PCIE_EP_TYPE,
-> +};
-> +
->  static const struct samsung_pcie_pdata exynos_5433_pcie_rc_pdata = {
->  	.dwc_ops		= &exynos_dw_pcie_ops,
->  	.pci_ops		= &exynos_pci_ops,
-> @@ -485,6 +755,14 @@ static const struct of_device_id exynos_pcie_of_match[] = {
->  		.compatible = "samsung,exynos5433-pcie",
->  		.data = (void *) &exynos_5433_pcie_rc_pdata,
->  	},
-> +	{
-> +		.compatible = "tesla,fsd-pcie",
-> +		.data = (void *) &fsd_hw3_pcie_rc_pdata,
-> +	},
-> +	{
-> +		.compatible = "tesla,fsd-pcie-ep",
-> +		.data = (void *) &fsd_hw3_pcie_ep_pdata,
-> +	},
->  	{ },
->  };
->  
-> -- 
-> 2.49.0
+> CONFIG_CPU_BIG_ENDIAN=y exists on arm64
 > 
+> Konrad
+
+That’s not what I meant. I understand we have this config value,
+but the argument is whether, in an SMP system, we expect one core to
+operate in little-endian mode while another operates in big-endian mode.
+I do not believe that is the case. Then it becomes irrelevant.
+
+Amir
+
 
