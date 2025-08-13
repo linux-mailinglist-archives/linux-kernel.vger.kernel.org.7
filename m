@@ -1,189 +1,176 @@
-Return-Path: <linux-kernel+bounces-765725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710B3B23D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:54:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E01B23D5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6502F173F74
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:54:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEC581AA67F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 00:55:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D114C7261E;
-	Wed, 13 Aug 2025 00:54:36 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CE31519A0;
+	Wed, 13 Aug 2025 00:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="TNtK1W5T"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EA8F50F;
-	Wed, 13 Aug 2025 00:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0A03A8F7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755046476; cv=none; b=pOuSBCiYEevLB7eTBkyzG7wRvoehIBdDdO+0DZObsKHxknhpfXS1LHZwkwDWa0lgxG6LCGSlhNRNQUwg4Baz33Hl/GOng+sD0xOAYEYvEhYfup1LEKbnmAoWk+VP/vA8HixJbi/ukxjPV7ElBDjXidoakMhVijbJd75SpUN5b8Y=
+	t=1755046490; cv=none; b=YWGc7CDSJTI0GKI5d/94/nCpLbHgqTDJUzsOtwYEk/UugXJiI+bW+Yegld6vtU/w+K5I4WgKi8AaSLHNTyCP6L0NOvxGTPtfOfMz6YZAb5Wya0MY93ZcV1ESEYtwmv1ZWbTbkFAe8Iju/rDrO87Lv8FmsAua4x+PSSeg3h5qsrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755046476; c=relaxed/simple;
-	bh=YyKlomfw0E3fDy8WWGYhYNZHc3Vf5ss/Lk0fAYYVbRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBab1LYFZvm7Qqz2kOacMdCq6hJjjVUoss/vdxxcRUkd4o/92EWzr7eeSuF+NLh6p0JC1GLYcTiJGqPGt0eEbFl9q0LIFGx9OrI5gJp2qlxyCFtBx3SJ5STwDoL02p0XfoJZcIj5QkhLdcatlxsomSbaf1ZGWT9bZUjkx8FbTKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c1qdd5KyrzKHMnd;
-	Wed, 13 Aug 2025 08:54:29 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 009B91A0A22;
-	Wed, 13 Aug 2025 08:54:28 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgCXYBFC4pto_F_4DQ--.14246S2;
-	Wed, 13 Aug 2025 08:54:28 +0800 (CST)
-Message-ID: <775ef75a-b796-4171-b208-df110a73c558@huaweicloud.com>
-Date: Wed, 13 Aug 2025 08:54:26 +0800
+	s=arc-20240116; t=1755046490; c=relaxed/simple;
+	bh=ZAK0iu2nam4TRzSPQ+RT8lQPoKAFlyGFpIFTAuhS/Js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HCuYOlIanFPvaRUYVQe2iKbyAjleQgskyx5QMPFKl8dqpwRIcRQm0ntBXmlCV3lfJwOwMmESJ4jaCudNrp9kA3bm8KDKV/ZzepSjD4Gv69PVxxZUuPYneI+/IKoVKWBYFiSTwL00DkB9j/yAYuv/Fc46BMC7oGLfWYPtgZI1BMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=TNtK1W5T; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b271f3ae786so4980258a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 17:54:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1755046488; x=1755651288; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6NpFBcxoc04uyrK8/s01LPPrR4PakN3UQlJaijfjW20=;
+        b=TNtK1W5TlTn7jtoFNeZaElo4Vz8Q+ZqaQg/AAemruxmBgdGWDXrjHwSt76FvkKhih0
+         8Y5XMVf4aLsB9QMPr0PjaDPqpqV+TaazjZcDD8DE557XG1eWpNxLRRzVqggLit2oFT6p
+         tjuVhjWF8yVUicW76Zm9CWvvMQdXStPubPF+U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755046488; x=1755651288;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6NpFBcxoc04uyrK8/s01LPPrR4PakN3UQlJaijfjW20=;
+        b=MfiySawVjeyuOFZ/YgR/HDcLE7sWH5ZiQPG9ZTYxVZEZ8LzIOoW11jfKjqilv0JJCO
+         UYKR4ICZGnVtm15+PFrFIubo76dAX523Qg4XC6GZKdy22040cc4D1bMyccoSrx9MCSne
+         K4ZnXZD8HmvRjFLhzVA9ErQHpf2JhAr/O3RwJggp7q48DtQWtAiMcpPMCefehTflDSch
+         epZr6YsiY6WZkUw+KMyidadDZIWy0f6hZLkeLiJED7qWqYKOe5xWell4BnWnrEQ2/v6C
+         w1bYmyvhGZVwRRbq8Spq7NfvV+5+HfuWofXZ61CUGdYN527oDjjsM7FH6C02jC7+G/cJ
+         4UYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPzhPcZeCi5kIVoinbhDszAoZvqTOXzIuodPWlk1YaLyGxGOLUu5xD4PpVnJpWA8pRqcyKvNSTtxU+q5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMW/ajHfj85Y8nNBviiUhKvP7INM31mBmdz6BFCSJ8urWDazfP
+	LV20eql/BDzleK69vHoTTTnQXT+LsED5eGmujKS9lctdAfpjpZRrcmajxMfmSKVf1rsjW/3CX+6
+	8NQrZ
+X-Gm-Gg: ASbGncvqsiCnuH94sT8JGEQhqQi3ih3H+vdwPbJqH2bKgitJOHz6hccVnXdHpgwObj4
+	AZGUjE9EWJMLKqqWJ3ZYO5sMthSkFFkhBewSt6+O05y/hqLxzpflAynqAZKWf4E5KGPbkwWibNB
+	G0MSmKnEZayoMgzKAc+Z3KEpamyM1/piVq2CH4pmiaHCiJX/k16EjE8gubfTKW1cpeEgs4IW/fQ
+	POZNwPbVZqgDLpst0hQytvMldOJwXYdEqME42zjpR3LmLHOfYjp8IYV0st0IJlTJXzFxqhUSR3X
+	6Yat+ld4HdRr+ntS2nv6QB3+Nhe3PSAb2VEHvxJLQ4NI6r9kLeEVjOL6IjWsB+3Lifcphq+nNSR
+	eIo/UhvcS/jef0ZwgflrmM3JH4qz/nJDXfXhMLKamRajZTZ90sfiINppns6ecqJ5+
+X-Google-Smtp-Source: AGHT+IHA/9Hoe2WUXGmM827/WBBWCmDTjLeBDQa+8tvMPHlD5EOr8tpNby6jVzEanoAxA3ONDgWNew==
+X-Received: by 2002:a17:902:c94b:b0:243:43a:fa2b with SMTP id d9443c01a7336-2430d299051mr17789945ad.56.1755046488174;
+        Tue, 12 Aug 2025 17:54:48 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24309cd3e2bsm15232115ad.62.2025.08.12.17.54.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 17:54:47 -0700 (PDT)
+Date: Wed, 13 Aug 2025 09:54:42 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Benno Lossin <lossin@kernel.org>,
+	Caleb Sander Mateos <csander@purestorage.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Jens Axboe <axboe@kernel.dk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
+ for io-uring cmd
+Message-ID: <aJviUiNhTwCsMbaX@sidongui-MacBookPro.local>
+References: <DBY6DMQYZ2CL.2P0LZO2HF13MJ@kernel.org>
+ <aJijj4kiMV9yxOrM@sidongui-MacBookPro.local>
+ <81C84BD8-D99C-4103-A280-CFC71DF58E3B@collabora.com>
+ <aJiwrcq9nz0mUqKh@sidongui-MacBookPro.local>
+ <DBZ0O49ME4BF.2JFHBZQVPJ4TK@kernel.org>
+ <aJnjYPAqA6vtn9YH@sidongui-MacBookPro.local>
+ <8416C381-A654-41D4-A731-323CEDE58BB1@collabora.com>
+ <aJoDTDwkoj50eKBX@sidongui-MacBookPro.local>
+ <DC0B7TRVRFMY.29LDRJOU3WJY2@kernel.org>
+ <06EA9E60-9BED-4275-9ED3-DA54CF3A8451@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/4] cpuset: remove redundant CS_ONLINE flag
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com, mingo@redhat.com, peterz@infradead.org,
- juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20250808092515.764820-1-chenridong@huaweicloud.com>
- <20250808092515.764820-2-chenridong@huaweicloud.com>
- <db5fdf29-43d9-4e38-a5a8-02cd711b892a@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <db5fdf29-43d9-4e38-a5a8-02cd711b892a@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXYBFC4pto_F_4DQ--.14246S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWr45ury7Jw4ruFWDJw48Crg_yoWrur45pF
-	1kCFyUA398Ca4xGayDt3yjga4rKwsIy3WUGr1kKa4rAF12yFyj9r10q34YgFyUAFW8Cryj
-	yF4SvrWa9FnrJrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+In-Reply-To: <06EA9E60-9BED-4275-9ED3-DA54CF3A8451@collabora.com>
 
-
-
-On 2025/8/12 22:44, Waiman Long wrote:
-> On 8/8/25 5:25 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> The CS_ONLINE flag was introduced prior to the CSS_ONLINE flag in the
->> cpuset subsystem. Currently, the flag setting sequence is as follows:
->>
->> 1. cpuset_css_online() sets CS_ONLINE
->> 2. css->flags gets CSS_ONLINE set
->> ...
->> 3. cgroup->kill_css sets CSS_DYING
->> 4. cpuset_css_offline() clears CS_ONLINE
->> 5. css->flags clears CSS_ONLINE
->>
->> The is_cpuset_online() check currently occurs between steps 1 and 3.
->> However, it would be equally safe to perform this check between steps 2
->> and 3, as CSS_ONLINE provides the same synchronization guarantee as
->> CS_ONLINE.
->>
->> Since CS_ONLINE is redundant with CSS_ONLINE and provides no additional
->> synchronization benefits, we can safely remove it to simplify the code.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   include/linux/cgroup.h          | 5 +++++
->>   kernel/cgroup/cpuset-internal.h | 3 +--
->>   kernel/cgroup/cpuset.c          | 4 +---
->>   3 files changed, 7 insertions(+), 5 deletions(-)
->>
->> diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
->> index b18fb5fcb38e..ae73dbb19165 100644
->> --- a/include/linux/cgroup.h
->> +++ b/include/linux/cgroup.h
->> @@ -354,6 +354,11 @@ static inline bool css_is_dying(struct cgroup_subsys_state *css)
->>       return css->flags & CSS_DYING;
->>   }
->>   +static inline bool css_is_online(struct cgroup_subsys_state *css)
->> +{
->> +    return css->flags & CSS_ONLINE;
->> +}
->> +
->>   static inline bool css_is_self(struct cgroup_subsys_state *css)
->>   {
->>       if (css == &css->cgroup->self) {
->> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
->> index 383963e28ac6..75b3aef39231 100644
->> --- a/kernel/cgroup/cpuset-internal.h
->> +++ b/kernel/cgroup/cpuset-internal.h
->> @@ -38,7 +38,6 @@ enum prs_errcode {
->>     /* bits in struct cpuset flags field */
->>   typedef enum {
->> -    CS_ONLINE,
->>       CS_CPU_EXCLUSIVE,
->>       CS_MEM_EXCLUSIVE,
->>       CS_MEM_HARDWALL,
->> @@ -202,7 +201,7 @@ static inline struct cpuset *parent_cs(struct cpuset *cs)
->>   /* convenient tests for these bits */
->>   static inline bool is_cpuset_online(struct cpuset *cs)
->>   {
->> -    return test_bit(CS_ONLINE, &cs->flags) && !css_is_dying(&cs->css);
->> +    return css_is_online(&cs->css) && !css_is_dying(&cs->css);
->>   }
->>     static inline int is_cpu_exclusive(const struct cpuset *cs)
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index f74d04429a29..cf7cd2255265 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -207,7 +207,7 @@ static inline void notify_partition_change(struct cpuset *cs, int old_prs)
->>    * parallel, we may leave an offline CPU in cpu_allowed or some other masks.
->>    */
->>   static struct cpuset top_cpuset = {
->> -    .flags = BIT(CS_ONLINE) | BIT(CS_CPU_EXCLUSIVE) |
->> +    .flags = BIT(CS_CPU_EXCLUSIVE) |
->>            BIT(CS_MEM_EXCLUSIVE) | BIT(CS_SCHED_LOAD_BALANCE),
->>       .partition_root_state = PRS_ROOT,
->>       .relax_domain_level = -1,
+On Tue, Aug 12, 2025 at 11:38:51AM -0300, Daniel Almeida wrote:
 > 
-> top_cpuset.css is not initialized like the one in the children. If you modify is_cpuset_online() to
-> test the css.flags, you will probably need to set the CSS_ONLINE flag in top_cpuset.css.flags. I do
-> doubt that we will apply the is_cpuset_online() test on top_cpuset. To be consistent, we should
-> support that.
 > 
-> BTW, other statically allocated css'es in the cgroup root may have similar problem. If you make the
-> css_is_online() helper available to all other controllers, you will have to document that limitation.
+> > On 12 Aug 2025, at 05:34, Benno Lossin <lossin@kernel.org> wrote:
+> > 
+> > On Mon Aug 11, 2025 at 4:50 PM CEST, Sidong Yang wrote:
+> >> On Mon, Aug 11, 2025 at 09:44:22AM -0300, Daniel Almeida wrote:
+> >>>> There is `uring_cmd` callback in `file_operation` at c side. `Pin<&mut IoUringCmd>`
+> >>>> would be create in the callback function. But the callback function could be
+> >>>> called repeatedly with same `io_uring_cmd` instance as far as I know.
+> >>>> 
+> >>>> But in c side, there is initialization step `io_uring_cmd_prep()`.
+> >>>> How about fill zero pdu in `io_uring_cmd_prep()`? And we could assign a byte
+> >>>> as flag in pdu for checking initialized also we should provide 31 bytes except
+> >>>> a byte for the flag.
+> >>>> 
+> >>> 
+> >>> That was a follow-up question of mine. Can�t we enforce zero-initialization
+> >>> in C to get rid of this MaybeUninit? Uninitialized data is just bad in general.
+> >>> 
+> >>> Hopefully this can be done as you've described above, but I don't want to over
+> >>> extend my opinion on something I know nothing about.
+> >> 
+> >> I need to add a commit that initialize pdu in prep step in next version. 
+> >> I'd like to get a comment from io_uring maintainer Jens. Thanks.
+> >> 
+> >> If we could initialize (filling zero) in prep step, How about casting issue?
+> >> Driver still needs to cast array to its private struct in unsafe?
+> > 
+> > We still would have the casting issue.
+> > 
+> > Can't we do the following:
+> > 
+> > * Add a new associated type to `MiscDevice` called `IoUringPdu` that
+> >  has to implement `Default` and have a size of at most 32 bytes.
+> > * make `IoUringCmd` generic
+> > * make `MiscDevice::uring_cmd` take `Pin<&mut IoUringCmd<Self::IoUringPdu>>`
+> > * initialize the private data to be `IoUringPdu::default()` when we
+> >  create the `IoUringCmd` object.
+> > * provide a `fn pdu(&mut self) -> &mut Pdu` on `IoUringPdu<Pdu>`.
+> > 
+> > Any thoughts? If we don't want to add a new associated type to
+> > `MiscDevice` (because not everyone has to declare the `IoUringCmd`
+> > data), I have a small trait dance that we can do to avoid that:
 > 
-> Cheers,
-> Longman
+> 
+> Benno,
+> 
+> IIUC, and note that I'm not proficient with io_uring in general:
+> 
+> I think we have to accept that we will need to parse types from and to byte
+> arrays, and that is inherently unsafe. It is no different from what is going on
+> in UserSliceReader/UserSliceWriter, and IMHO, we should copy that in as much as
+> it makes sense.
+> 
+> I think that the only difference is that all uAPI types de-facto satisfy all
+> the requirements for FromBytes/AsBytes, as we've discussed previously, whereas
+> here, drivers have to prove that their types can implement the trait.
+> 
+> 
+> By the way, Sidong, is this byte array shared with userspace? i.e.: is there
+> any copy_to/from_user() taking place here?
 
-Hi, Longman, thank you for your response.
+No. pdu array allocated from kernel. I'll use `core::ptr::copy_nonoverlapping`.
 
-If I understand correctly, the CSS_ONLINE flag should be set in top_cpuset.css during the following
-process:
-
-css_create
-  css = ss->css_alloc(parent_css);  // cgroup root is static, unlike children
-  online_css(css);
-     ret = ss->css_online(css);     // css root may differ from children
-     css->flags |= CSS_ONLINE;      // css.flags is set with CSS_ONLINE, including the root css
-
-I think css online must be successful, and it's CSS_ONLINE flag must be set. Do I missing anything?
-
-Best regards,
-Ridong
-
+Thanks,
+Sidong
+> 
+> -- Daniel
 
