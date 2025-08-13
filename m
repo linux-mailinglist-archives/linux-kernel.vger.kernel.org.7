@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-765864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C108B23F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:55:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97686B23F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090935616E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3337682BBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5262D0C82;
-	Wed, 13 Aug 2025 03:52:46 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9C12BE63C;
+	Wed, 13 Aug 2025 03:52:40 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8576E1DF725
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585851DF725
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755057165; cv=none; b=Rf4/U13kgvqCs/dPJ31BWOzElXV41aauitxxp9LHE5eVsFuqMkheu3uYjDx3O4gid8K1Czp+XHLjdvW7NsvTFG8B0TK7JLdNvDzNc6M2OatQCUCsM1vvTuk6IvCD/KcVwSgdi4m+eI14GYMY7msvK9jJAqC66kUc+l6UmhjfkrY=
+	t=1755057159; cv=none; b=INrbXcQCe08o6UJ4ZWznOzEGSKDSXd75aBa4/bi0aWrVGq7jwytEZGN1reJ9M+z5w6oW7TBvgNhZ38vu7HIZL9+IBNk618qESY3fKnEoTcZ2rX7wK6Dat4Ftbdf5O+hnvZG+vakcbkK6gMsriF5cTIbSTqs3/Oznhz2gPoCbKBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755057165; c=relaxed/simple;
-	bh=tmw0EN1T6liUtcRnaAKtCndgxrlNAmg8cwMNDr+GtwI=;
+	s=arc-20240116; t=1755057159; c=relaxed/simple;
+	bh=HvU3E/EZrYOQm87rtAfpaxHK5Sj8XoCon38Ydsvh/0o=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qq+Ffb5Gby0Yv8H3N40IKcfhhsYBJfR9h6Ih560an+c1+DgsNJgyG2arqik69SDo56YrLhAshk9wIVjqzBMTe8P+c1pH3GEPwJ4gcHcNq3HaSKHneenTTK0jGejH4kszRNUUApS+3I90y+JkEvZ5Jd0ZlmEefazSTw1n1+iOEJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=pTnMZ1xdNC038bWA4P3fffyHECeixn07uJwpQ01QaOF9WZHF/rnABskBaWYLcyJh1bifDH6by1MiFdTECE0LLMH+SqzX0GrWwIWyy4EWtvq/nLvlZMijJJaV1Ey/KN3L94KkCnkyvxoD4lsFtOgwqYB0eskr5WOro9QTlT3iZaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c1vX30h4Zz2Dc11;
-	Wed, 13 Aug 2025 11:49:55 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c1vTN04kPz14MTY;
+	Wed, 13 Aug 2025 11:47:36 +0800 (CST)
 Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7EFDF180044;
-	Wed, 13 Aug 2025 11:52:34 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 4F63818048D;
+	Wed, 13 Aug 2025 11:52:35 +0800 (CST)
 Received: from huawei.com (10.175.113.32) by dggpemf200018.china.huawei.com
  (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
- 2025 11:52:33 +0800
+ 2025 11:52:34 +0800
 From: Quanmin Yan <yanquanmin1@huawei.com>
 To: <sj@kernel.org>
 CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
 	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
 	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-Subject: [RFC PATCH -next 07/16] mm/damon/sysfs: implement addr_unit file under context dir
-Date: Wed, 13 Aug 2025 13:06:57 +0800
-Message-ID: <20250813050706.1564229-8-yanquanmin1@huawei.com>
+Subject: [RFC PATCH -next 08/16] Docs/mm/damon/design: document 'address unit' parameter
+Date: Wed, 13 Aug 2025 13:06:58 +0800
+Message-ID: <20250813050706.1564229-9-yanquanmin1@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250813050706.1564229-1-yanquanmin1@huawei.com>
 References: <20250813050706.1564229-1-yanquanmin1@huawei.com>
@@ -62,82 +62,45 @@ X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
 
 From: SeongJae Park <sj@kernel.org>
 
-Only DAMON kernel API callers can use addr_unit parameter.  Implement a
-sysfs file to let DAMON sysfs ABI users use it.
+Add 'addr_unit' parameter description on DAMON design document.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/damon/sysfs.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ Documentation/mm/damon/design.rst | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/mm/damon/sysfs.c b/mm/damon/sysfs.c
-index 6d2b0dab50cb..bea782b0a711 100644
---- a/mm/damon/sysfs.c
-+++ b/mm/damon/sysfs.c
-@@ -834,6 +834,7 @@ static const struct damon_sysfs_ops_name damon_sysfs_ops_names[] = {
- struct damon_sysfs_context {
- 	struct kobject kobj;
- 	enum damon_ops_id ops_id;
-+	unsigned long addr_unit;
- 	struct damon_sysfs_attrs *attrs;
- 	struct damon_sysfs_targets *targets;
- 	struct damon_sysfs_schemes *schemes;
-@@ -849,6 +850,7 @@ static struct damon_sysfs_context *damon_sysfs_context_alloc(
- 		return NULL;
- 	context->kobj = (struct kobject){};
- 	context->ops_id = ops_id;
-+	context->addr_unit = 1;
- 	return context;
- }
+diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
+index 03f8137256f5..cffa320ead88 100644
+--- a/Documentation/mm/damon/design.rst
++++ b/Documentation/mm/damon/design.rst
+@@ -67,7 +67,7 @@ processes, NUMA nodes, files, and backing memory devices would be supportable.
+ Also, if some architectures or devices support special optimized access check
+ features, those will be easily configurable.
  
-@@ -997,6 +999,25 @@ static ssize_t operations_store(struct kobject *kobj,
- 	return -EINVAL;
- }
+-DAMON currently provides below three operation sets.  Below two subsections
++DAMON currently provides below three operation sets.  Below three subsections
+ describe how those work.
  
-+static ssize_t addr_unit_show(struct kobject *kobj,
-+		struct kobj_attribute *attr, char *buf)
-+{
-+	struct damon_sysfs_context *context = container_of(kobj,
-+			struct damon_sysfs_context, kobj);
-+
-+	return sysfs_emit(buf, "%lu\n", context->addr_unit);
-+}
-+
-+static ssize_t addr_unit_store(struct kobject *kobj,
-+		struct kobj_attribute *attr, const char *buf, size_t count)
-+{
-+	struct damon_sysfs_context *context = container_of(kobj,
-+			struct damon_sysfs_context, kobj);
-+	int err = kstrtoul(buf, 0, &context->addr_unit);
-+
-+	return err ? err : count;
-+}
-+
- static void damon_sysfs_context_release(struct kobject *kobj)
- {
- 	kfree(container_of(kobj, struct damon_sysfs_context, kobj));
-@@ -1008,9 +1029,13 @@ static struct kobj_attribute damon_sysfs_context_avail_operations_attr =
- static struct kobj_attribute damon_sysfs_context_operations_attr =
- 		__ATTR_RW_MODE(operations, 0600);
+  - vaddr: Monitor virtual address spaces of specific processes
+@@ -135,6 +135,18 @@ the interference is the responsibility of sysadmins.  However, it solves the
+ conflict with the reclaim logic using ``PG_idle`` and ``PG_young`` page flags,
+ as Idle page tracking does.
  
-+static struct kobj_attribute damon_sysfs_context_addr_unit_attr =
-+		__ATTR_RW_MODE(addr_unit, 0600);
++Address Unit
++------------
 +
- static struct attribute *damon_sysfs_context_attrs[] = {
- 	&damon_sysfs_context_avail_operations_attr.attr,
- 	&damon_sysfs_context_operations_attr.attr,
-+	&damon_sysfs_context_addr_unit_attr.attr,
- 	NULL,
- };
- ATTRIBUTE_GROUPS(damon_sysfs_context);
-@@ -1397,6 +1422,7 @@ static int damon_sysfs_apply_inputs(struct damon_ctx *ctx,
- 	err = damon_select_ops(ctx, sys_ctx->ops_id);
- 	if (err)
- 		return err;
-+	ctx->addr_unit = sys_ctx->addr_unit;
- 	err = damon_sysfs_set_attrs(ctx, sys_ctx->attrs);
- 	if (err)
- 		return err;
++DAMON core layer uses ``unsinged long`` type for monitoring target address
++ranges.  In some cases, the address space for a given operations set could be
++too large to be handled with the type.  ARM (32-bit) with large physical
++address extension is an example.  For such cases, a per-operations set
++parameter called ``address unit`` is provided.  It represents the scale factor
++that need to be multiplied to the core layer's address for calculating real
++address on the given address space.  Support of ``address unit`` parameter is
++up to each operations set implementation.  ``paddr`` is the only operations set
++implementation that supports the parameter.
+ 
+ .. _damon_core_logic:
+ 
 -- 
 2.34.1
 
