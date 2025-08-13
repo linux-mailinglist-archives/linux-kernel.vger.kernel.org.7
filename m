@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-766154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFACB242F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:41:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AF8B242F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5EF4165FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:41:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6212E1B62BE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAA92DCF5F;
-	Wed, 13 Aug 2025 07:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6112DCF5F;
+	Wed, 13 Aug 2025 07:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oYNS9sMr"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LMVjau4J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721B92D73B7
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF9B1D5CD4;
+	Wed, 13 Aug 2025 07:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070859; cv=none; b=I7yXgoulRQaZYpB8dz+wsogxUTHvN1JNGOO80iyJ8p3dBHYqy/qVI4aDRhXaXKdqto+UyJdD01YCE79/5HSz9Jpl6OP3h6fX3fJeIMPgt65N3RIxA2WLLXBdaKaBuxHkPc1IZ56dAyq54u3g+FHnAgP/uEiulelAjeFcTKo9GS0=
+	t=1755070929; cv=none; b=gce2k2D/Vo2GYgQqeslgT2eSZBk1VR/hzU2dy6FpRiwIid4D5EHf9NR8Qcj70BIR0/kHDSgMOIIz1vTxL9BB8gYCBBWIcU8f2V7HENfgI56RP/qXrvkh/Ug17bCeGsZKIve/Li4vFtNzvdqXphditUFAWAfgnfJ1BUnVseNVkHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070859; c=relaxed/simple;
-	bh=c9Ccc4FdRlKahKVue2t027gTXn3WFY4nUn/bdTfbFWk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rsUdTjB0MYzffJDqkvWBMfEEsWITCV9PXnHud8BIFuf1fm+XkeBpzuoTQMGcXTORKUtqbzZSirblCumLMfoUKr57lsgnCUaJXLJw9E88wRaYfWto/RFqf8mavj4EwtaQZezZO0lI5AeEvPA73qI4YNacvFZ82W+ujjvS8AYpE6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oYNS9sMr; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b79bd3b1f7so3025503f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755070856; x=1755675656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c9Ccc4FdRlKahKVue2t027gTXn3WFY4nUn/bdTfbFWk=;
-        b=oYNS9sMr6a1jozHeEjf+SffWX8dSDvJxiFp8QIjNJr1EF9wwdkZQsblYzf+SIU/YY2
-         4bxlhy3CpnZy/s2efNbWCnwrZeR2q9Ut1aWWoZ+TKwEgxVjN83WTgir9MozdhVEiopO8
-         rf9S8FV5MgkKwSUp6zIo0999djvYEhsmEUvJUj65Zyp7aG323LL5AfelEN8METZ2t7P7
-         WLruAOqR46oDWgVfGl78cbp1WyLUOmcVEUcSbk6wd7uBNflOO5KpmTezRTFid0QCFlha
-         XyeLFPxICKNonexgxUOSBWkUURyLDjbiBFzhTyp3Bqeu067/Sy+3wqs/4veTwsL6dE/h
-         LYRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755070856; x=1755675656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c9Ccc4FdRlKahKVue2t027gTXn3WFY4nUn/bdTfbFWk=;
-        b=KXyqJRClAs25XqgyjrV3/PSlfPS6NE95mBAl8B4wl6ExZWrmBjVfC8IWtoz6RjSS2g
-         fkvG5lOGNH9Kp9GpL5WcfWXw3Q4gHzKObizrOzWq1oEagE+PaOkuH3Y0nkD3ucMYIcEM
-         bMenDJqzgo7Lo4Q7VITpuN6XjD37RnROSRtQuQ7MgrJMUZShh+HpX59bQkm+96gkr7RK
-         5uwIKjpCcPYYyN9QojwKkxaSGI0ybOt4oWAFUm65xXJFoHaI7uhnjU/Ulmntt2Bbga9L
-         6IyK4KJbNTGr+H37cyJbuoYy08B8smd/jlCr+aKa+Be4wz0hiKwLboESLOQAlEYkof5v
-         41bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlT6Ev5c7gbx83GbriWrOpyQ1sD4ATGEdvNoi2vCd+3S5ivstTAPx4OxS00c/D9ShsB5CjxY2VOo27P+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzdi5f03eg1rwZ1i1Iol1foYmRtHN8jgN0upyvcez3iYAja913
-	YhgZTH8AHYG16rT11/z4AyRUYIsfzKpkPfmzr1UYqW1Adj35BbI7ZG9NUs2h3WYCWUemyt2TIy6
-	7yt8I7uOGSEOT1982vsdPc/YSYyGI7MqjzLkYd7jv
-X-Gm-Gg: ASbGncvUABJBhIOOw7wJ1MDr1guifV9GwFErsR3Nvj0pZUhp6C53xTwi88MNxE3tiOj
-	5jeafSaarAUxTpNX7Wy4yTIPcRYYxE76l89tFeNDm+6yEx5fxAwBb4GTjVmYMZCoAv8C1W4rNH8
-	p5xyWMDJkc3EhtMQUzkUc7PCILEcExyvY6nZMYVxz7zhTfW/aXU8wCA00rPat48nNGbk4PahOW3
-	uNluAQ8FPzMRCXGFys8J/doECDU+cfucVG7ImH3JvaLvOuqdAXdfeK+FDo=
-X-Google-Smtp-Source: AGHT+IGGtpaH+it538UfR2iaRDBz9X7fJpT1gAY6RgW0EDKE5fzEZ79ezay15oRdLHx3Xf5OdtuQ3FdbihxaglEAAsY=
-X-Received: by 2002:a5d:64ca:0:b0:3b7:8fc4:2f4c with SMTP id
- ffacd0b85a97d-3b917d2b0f8mr1196666f8f.1.1755070855659; Wed, 13 Aug 2025
- 00:40:55 -0700 (PDT)
+	s=arc-20240116; t=1755070929; c=relaxed/simple;
+	bh=Pl2Iufjhn6TyKymAyspu0j4XsMb2q8F63c5yODSEHts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mny7Y/uxvt5KJTbCI0KmvzFf6kmOTiyKJjAVdAjmZCnrBd4n4EBAqAcOpvqpJkLBjx46PwjkPNMCdu1UoVokOx8IorSabW4fyraWhoMnHinN7lLXDhAcdqruhM+9OjWPomO/WgKpZMb6H6Dn5BUrjTw5oJmzUAtzzbR/iTf1PFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LMVjau4J; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755070929; x=1786606929;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Pl2Iufjhn6TyKymAyspu0j4XsMb2q8F63c5yODSEHts=;
+  b=LMVjau4JWU+Onep3zJBWtIJX/VtdVVTPItaUP3M5jr0Kgl+Od46xWkO6
+   jiz9Uyn3vah1CWn7NZbeyiXSzsDBZvbMZF/EKR7vcPYJVLWxFtLnMJwSN
+   0r9zBwo9Q6wCF2Mg5k8WUmMFxXKgIwFbPIbjCGagl0DGTtnpOWQ18JXdU
+   nmfgRUOC+9YysGyIJ1OB49cx9h2UTgSH5AuiIr+zsac0kD4kTfVOozq39
+   LnplmwUbIHhcZ2XEZOyLcNa5pigACb6aVs5EUQlTPZGvSWu0SjhCQOmBw
+   f9yr6LmhUFIR3fTPjP3OIiAlJIXLjNB7WtWBaSnD/esKw/9mqwETDB2EV
+   Q==;
+X-CSE-ConnectionGUID: 5IP7jq/HTT2DcB0lA3ON5g==
+X-CSE-MsgGUID: sEUKkwchQg2W7kN3OzlZ9w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57223914"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="57223914"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 00:42:07 -0700
+X-CSE-ConnectionGUID: bREfrc+3RqGcKFxyAT7YNw==
+X-CSE-MsgGUID: 3uCK9oXDQoedGW7Lgm1QHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="170854106"
+Received: from unknown (HELO [10.238.11.25]) ([10.238.11.25])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 00:42:02 -0700
+Message-ID: <2217214c-c4ec-43b5-9940-01139a0eba81@linux.intel.com>
+Date: Wed, 13 Aug 2025 15:41:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812144215.64809-1-baptiste.lepers@gmail.com>
-In-Reply-To: <20250812144215.64809-1-baptiste.lepers@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 13 Aug 2025 09:40:42 +0200
-X-Gm-Features: Ac12FXx8h4Xky-40CstbMiW32Dc7_qYQSYrfMREs0zT_bsEsb1sqx3OupPHpEcM
-Message-ID: <CAH5fLgg6eFYZ906GPFev_nha0axsUR71yC+En4X_fMjSn85UiA@mail.gmail.com>
-Subject: Re: [PATCH] rust: cpumask: Mark CpumaskVar as transparent
-To: Baptiste Lepers <baptiste.lepers@gmail.com>
-Cc: stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Yury Norov <yury.norov@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 06/30] KVM: selftests: Add helper functions to create
+ TDX VMs
+To: Sean Christopherson <seanjc@google.com>, Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>,
+ Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-7-sagis@google.com> <aJpO_zN3buvaQoAW@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aJpO_zN3buvaQoAW@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 4:42=E2=80=AFPM Baptiste Lepers
-<baptiste.lepers@gmail.com> wrote:
+
+
+On 8/12/2025 4:13 AM, Sean Christopherson wrote:
+[...]
+>> +void __tdx_mask_cpuid_features(struct kvm_cpuid_entry2 *entry)
+>> +{
+>> +	/*
+>> +	 * Only entries with sub-leaf zero need to be masked, but some of these
+>> +	 * leaves have other sub-leaves defined. Bail on any non-zero sub-leaf,
+>> +	 * so they don't get unintentionally modified.
+>> +	 */
+>> +	if (entry->index)
+>> +		return;
+>> +
+>> +	switch (entry->function) {
+>> +	case 0x1:
+>> +		entry->ecx &= ~(CPUID_EXT_VMX | CPUID_EXT_SMX);
+>> +		entry->edx &= ~CPUID_PSE36;
+> vcpu_clear_cpuid_feature()
 >
-> Unsafe code in CpumaskVar's methods assumes that the type has the same
-> layout as `bindings::cpumask_var_t`. This is not guaranteed by
-> the default struct representation in Rust, but requires specifying the
-> `transparent` representation.
->
-> Fixes: 8961b8cb3099a ("rust: cpumask: Add initial abstractions")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Baptiste Lepers <baptiste.lepers@gmail.com>
+>> +		break;
+>> +	case 0x7:
+>> +		entry->ebx &= ~(CPUID_7_0_EBX_TSC_ADJUST | CPUID_7_0_EBX_SGX);
+>> +		entry->ebx &= ~CPUID_7_0_EBX_INTEL_PT;
+>> +		entry->ecx &= ~CPUID_7_0_ECX_SGX_LC;
+>> +		break;
+>> +	case 0x40000001:
+>> +		entry->eax &= TDX_SUPPORTED_KVM_FEATURES;
+>> +		break;
+>> +	case 0x80000007:
+>> +		entry->edx |= CPUID_APM_INVTSC;
+> Quite obviously isn't "masking" anything".
 
-Only during CONFIG_CPUMASK_OFFSTACK=3Dn, but yes.
+Beside that, I guess this is handling fixed1 bit. But why only this bit is
+treated specially?
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
