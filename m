@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-767462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA6EB2549E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:41:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E422B254A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0DCE5A5321
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A37E888472
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39902D4B52;
-	Wed, 13 Aug 2025 20:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299662F1FDC;
+	Wed, 13 Aug 2025 20:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="josAV5V+"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MzRIwLaL"
 Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C483C1448E3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0429C27FD5A;
 	Wed, 13 Aug 2025 20:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755117680; cv=none; b=XNpgQSS3BfGtF2/WeohDDJjDz+gN3ixet7b+sNWIh6rjr+ws4IQvZGufvjiem3G7Gve5VM/o/6/C6BbM8VIFYwFC4/WIJFDOlbJk2eiF/rnqUkOiGfFQSqMDkn3WVKZVYfdQaZezZNGCZq3qyeAvfwaIOb9WsZ9B7E+9xMs9q6E=
+	t=1755117681; cv=none; b=E7mdDqga039TmEQ3Ajd//5DTiIGKVfYAlk4Lq4h2l9fyUPab7j2A7DFi2dSVWOO74FqggI0MnXPhVsDvNqjly6qwF0z9DRT8PcGf6uI6ZJ7wE/Syv91wI4bYymPYxG35YlCUxTlGIerbvkX0mdBswpZDgNeVcVt8ZMy8qCQ4yBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755117680; c=relaxed/simple;
-	bh=NeBbyRnZie0q319O4DDijVTtJ1mZTkpTBbFjKgPG9sM=;
+	s=arc-20240116; t=1755117681; c=relaxed/simple;
+	bh=2XCWO6zWLpe0sjyKpO4Be31bONHGTSDKMtzQATZxQ60=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oXfTekg247bWVwPcviEBaKr/gmrreY2gpqPzTUhsWmAuUcNCAZaoXLXq2rL2W5tUh/ph4dhoZA1mH1MkNM8Yg9JtPaCT/LS1PM/0hY74dhv4ImmoE56oTjb8+OmvUg9dnTrM9QQ10ch5zNHOyU/VOphRKFo/14tEOuKKioZz1Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=josAV5V+; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=XfnvnR0+vQluY4TZPJ02SRoysLlneiCEO+ZYam9MsXidn1S25aAZrM5FlVKqznJdJ2rcyuaTfoxnyiWy2YaVX6TwjRcUw7mIhu6GJiYRbX6sTRxKcOoPlu1482nUYkncNnIaDMrv0RGFmo2l3TopTGWZra2dE2+EuU7r2/aLcPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MzRIwLaL; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DKfAug1727465;
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DKfAqH1727473;
 	Wed, 13 Aug 2025 15:41:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1755117670;
-	bh=YvY2zqgbbBu3s3Ni5wKqg9ZepY9/dAkBQmrqNc6i5cM=;
+	bh=q+RaU6D8oPKsUsYlVoY8FLrYVu26TKlqINYhTvQ8xaQ=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=josAV5V+WfoNZbp3TeqHkog0buvVF3N6Cnjfppe0fGgXP55GPT8KUXyUUSyMV3LCE
-	 U7JcUQPCtd1NXlcBam66UWipq+F/fZxL0Pfg+qp6KSNXfABjrPig1TxX6iDMXnVTwb
-	 IZQXu8j5jigh6FTNXirAKZTCNrQEX0zedSy5y9sE=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DKfA8b1220072
+	b=MzRIwLaLu7fwRmK/D5xZFlRTJqKkcaGxVMU9rZ7/iAHc0kaLEHp+iCsYBCcGehyXZ
+	 vxmUyAB6a7pMFRNd2Ec14dC03AEm8Zr2ZjVj8/D9i4luChKPq/A8u56l+5Q7b73Np6
+	 oDKNATpNOK+Cx/tAoIdRrm3eU/Zws040bBOJRAOc=
+Received: from DFLE110.ent.ti.com (dfle110.ent.ti.com [10.64.6.31])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DKfA0H644858
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
 	Wed, 13 Aug 2025 15:41:10 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
  Aug 2025 15:41:09 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
  Frontend Transport; Wed, 13 Aug 2025 15:41:09 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DKf9MY2853512;
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DKf9iR2853518;
 	Wed, 13 Aug 2025 15:41:09 -0500
 From: Nishanth Menon <nm@ti.com>
 To: Conor Dooley <conor+dt@kernel.org>,
@@ -71,11 +71,10 @@ CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Robert Nelson <robertcnelson@gmail.com>,
         Jason Kridner <jkridner@beagleboard.org>, <afd@ti.com>,
         Nishanth Menon
-	<nm@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH V2 1/3] dt-bindings: display: bridge: it66121: Add compatible string for IT66122
-Date: Wed, 13 Aug 2025 15:41:04 -0500
-Message-ID: <20250813204106.580141-2-nm@ti.com>
+	<nm@ti.com>
+Subject: [PATCH V2 2/3] drm/bridge: it66121: Convert the vid/pid entries into a list
+Date: Wed, 13 Aug 2025 15:41:05 -0500
+Message-ID: <20250813204106.580141-3-nm@ti.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250813204106.580141-1-nm@ti.com>
 References: <20250813204106.580141-1-nm@ti.com>
@@ -89,32 +88,92 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Add a new ite,it66122 compatible string to the IT66121 binding
-documentation, since the two chips are practically same except for id
-register difference.
+The IT66122 is a drop in replacement for the IT66122. The part is
+register compatible with what we use of the IT66121. The only relevant
+change being the PID is now 0x0622 vs 0x0612. Add this extra PID so
+probe does not fail during the PID check with these new parts.
+
+Since production flow can result in multiple devices as the part gets
+replaced, prepare for a match list that allows introducing additional
+vid/pid matches for the same device profile.
 
 Signed-off-by: Nishanth Menon <nm@ti.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Changes Since v1:
-* just picked up Krzysztof's Ack
+New Patch
+- This sets up the stage for introducing it66122 support
 
-V1: https://lore.kernel.org/all/f75e0372-6a45-4d27-a74a-0a41c5674987@kernel.org/
- .../devicetree/bindings/display/bridge/ite,it66121.yaml          | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/bridge/ite-it66121.c | 29 ++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it66121.yaml b/Documentation/devicetree/bindings/display/bridge/ite,it66121.yaml
-index a7eb2603691f..c99b67f0bb73 100644
---- a/Documentation/devicetree/bindings/display/bridge/ite,it66121.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/ite,it66121.yaml
-@@ -19,6 +19,7 @@ properties:
-   compatible:
-     enum:
-       - ite,it66121
-+      - ite,it66122
-       - ite,it6610
+diff --git a/drivers/gpu/drm/bridge/ite-it66121.c b/drivers/gpu/drm/bridge/ite-it66121.c
+index aa7b1dcc5d70..208e118df0e2 100644
+--- a/drivers/gpu/drm/bridge/ite-it66121.c
++++ b/drivers/gpu/drm/bridge/ite-it66121.c
+@@ -289,9 +289,13 @@ enum chip_id {
+ 	ID_IT66121,
+ };
  
-   reg:
++struct it66121_device_id {
++	u16 vid, pid;
++};
++
+ struct it66121_chip_info {
+ 	enum chip_id id;
+-	u16 vid, pid;
++	struct it66121_device_id device_id[]; /* NULL terminated List */
+ };
+ 
+ struct it66121_ctx {
+@@ -1511,6 +1515,7 @@ static int it66121_probe(struct i2c_client *client)
+ 	int ret;
+ 	struct it66121_ctx *ctx;
+ 	struct device *dev = &client->dev;
++	const struct it66121_device_id *device_id;
+ 
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+ 		dev_err(dev, "I2C check functionality failed.\n");
+@@ -1574,11 +1579,15 @@ static int it66121_probe(struct i2c_client *client)
+ 	revision_id = FIELD_GET(IT66121_REVISION_MASK, device_ids[1]);
+ 	device_ids[1] &= IT66121_DEVICE_ID1_MASK;
+ 
+-	if ((vendor_ids[1] << 8 | vendor_ids[0]) != ctx->info->vid ||
+-	    (device_ids[1] << 8 | device_ids[0]) != ctx->info->pid) {
+-		return -ENODEV;
++	for (device_id = ctx->info->device_id; device_id->vid; device_id++) {
++		if ((vendor_ids[1] << 8 | vendor_ids[0]) == device_id->vid &&
++		    (device_ids[1] << 8 | device_ids[0]) == device_id->pid)
++			break;
+ 	}
+ 
++	if (!device_id->vid)
++		return -ENODEV;
++
+ 	ctx->bridge.of_node = dev->of_node;
+ 	ctx->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
+ 	ctx->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID;
+@@ -1614,14 +1623,18 @@ static void it66121_remove(struct i2c_client *client)
+ 
+ static const struct it66121_chip_info it66121_chip_info = {
+ 	.id = ID_IT66121,
+-	.vid = 0x4954,
+-	.pid = 0x0612,
++	.device_id = {
++		{.vid = 0x4954, .pid = 0x0612 },
++		{ }
++	},
+ };
+ 
+ static const struct it66121_chip_info it6610_chip_info = {
+ 	.id = ID_IT6610,
+-	.vid = 0xca00,
+-	.pid = 0x0611,
++	.device_id = {
++		{ .vid = 0xca00, .pid = 0x0611},
++		{ }
++	},
+ };
+ 
+ static const struct of_device_id it66121_dt_match[] = {
 -- 
 2.47.0
 
