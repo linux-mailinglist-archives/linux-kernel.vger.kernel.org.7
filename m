@@ -1,125 +1,156 @@
-Return-Path: <linux-kernel+bounces-766076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE7BB241F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 002C9B241FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0290F1707F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA9D6582C12
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F162D6419;
-	Wed, 13 Aug 2025 06:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0172D5C9E;
+	Wed, 13 Aug 2025 06:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Wiz2DxV1"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GxQbe5gb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064E21FDE39;
-	Wed, 13 Aug 2025 06:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83CE2BE021
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755068026; cv=none; b=SzYWYpUOfcDt8FrOOUo1O8pbXkIqqvcSIOCs4wT28uE86gYttXDuH1rV5BHOUjJqx8ZOBfRabUZNlxyf2O20196zg4X6KsjPXJNz8Loe0drGxELdXx7KgvhzUdcO6atGlKRPyYeIBCC8WiCBUeyrdJjsfxSnHeAdPFBnkpro3xg=
+	t=1755068145; cv=none; b=uInrNLeNUUXdCLiXY4u7/Gz+ms1c7CuZ6S1aUI5ewHnZM0c3Cl0uk5Sq7hGO7Gu/HoxIGH6zYOQSD86Mn6IuPE59Iyy5A9/2s3HGs8a0PiwznSthzcxYbq3o30kC9yV8aTP9B5X/uEnVKAfOf8p/f8N4bMrrk24Qh8+xGAdRtwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755068026; c=relaxed/simple;
-	bh=rDW+t1UVopUdYO3K7v4ygjbrDYxS9M/67RhudSEQ5QU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GjpBhfs2Db8EOYAMIUkEiqJO4Sh7MMtqaGXEDbcils0eTIQBc0d4A+UPnXIswJNYeZpA6GuRcGaVuv9yaApZNlrKb3OmlCkhkoRw8v3gyZly+WkcEY0ZJQ6GvkwGZh40cK4ngSw98AJ+7G21duxcJrnu8V0Trfq6q3PFcF6y7Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Wiz2DxV1; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Hm2PPtsNJuhxIDGNuJHriEQn1/qO4cQcfmhS7NNUXJg=; b=Wiz2DxV1z9TM0lkmOxo+TJ4Vyd
-	qaiPgAgUlzH3xCeLVoqdhjk7kJp8cMmXYoXTwPYofwtXHrSvl9ppyTshskwHpMRPhlYCPhUJMpTsW
-	+vVSXhupFsOFNuR4VbYt3owuewFlVzfQcb1JsbZ7Jiusct2xvleX1CdDxxTvJ8BJ1TnX+j6e+Ku7s
-	y56pYVKPdxxRHSymM6lmpFG4sirXoAdBByGwJP5wHvqMg3ug2hH7dgBGlDuYBWTuO7R6N29I3aSAW
-	+sDrkOErZO7FCVjKQYxCFBUQuHjT2Z9MS7ggd9RMaGQLx4GQeZLgzzsSedW2k5IyAZs9+AnXrvVq1
-	8O4crq/Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1um5Mb-00000006n9D-1KiH;
-	Wed, 13 Aug 2025 06:53:33 +0000
-Date: Wed, 13 Aug 2025 07:53:33 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Steve French <sfrench@samba.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/11] VFS: introduce d_alloc_noblock() and
- d_alloc_locked()
-Message-ID: <20250813065333.GG222315@ZenIV>
-References: <20250812235228.3072318-1-neil@brown.name>
- <20250812235228.3072318-12-neil@brown.name>
+	s=arc-20240116; t=1755068145; c=relaxed/simple;
+	bh=NT3OXZ+6VFZb8CMe4L1nzdruLP5ekCY4F22ZMO9+lwc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cw22z7FtRDjz8GCdHp9CGlFW9gG3S5lwPPAeF/+1hZ3ot6OEfionpy2mClHq2rcWdeccILd2FcYc7ZqSqebHW3hMQ4MN/M0YqSkKfc8mBXh4IShyf1bkG5bLwW5n0Y/PDlJCtFRhx98vRoLN44pSvdkzHfvnsvMdPLBN7HW6qfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GxQbe5gb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D6mGTv027019
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:55:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=v89RUCwFdyomRq93Seq/cCar3eyic7DgZed
+	XTAI4uzg=; b=GxQbe5gbpLOK9bhiBmB5lyEEGQEQ7ItuzcZg167xiPgvg67eGwy
+	1O+dSkpAak+F8DwahEiDpb/Qybc4Db8uRnWUcAvuQrcMZ/2OZKPvUhH42BT6sSRT
+	6qCTP0N2KjJAHJskku51iFXTp9S+WA7H0hKwCaS2jw6TcPen6AU1T//u0Jq3riSi
+	AIVQj21tsOLWyxxGd4e8Da3etLVjEnGw0t1WHbcKzk5pCPKWEjUYA+B3fnv2E4X2
+	d7r4QQJPCbP43xdCAykfowvXRW/TUuHNLxqOb6yjMSVdGh71TjGTKyYRKfPu+dn5
+	xy0D4psnMDm6VXneJsaIjXn5fTUXgfPnChg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48g5hmaqwj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:55:41 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23fe28867b7so85450345ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:55:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755068140; x=1755672940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v89RUCwFdyomRq93Seq/cCar3eyic7DgZedXTAI4uzg=;
+        b=sVQD82JjFwBKwLsp0UBQcW4SqSL2pwhNtsQDBGuwM9t6c0dTn4Sa4U9DscypWrplkQ
+         21ew92c2mau4r15fDOBzUk7pd5WntD9T+NeVTTSDGka8+tV8bitYUKTlcQOfundV7nU4
+         m3zpljCcfTjEopODkbeVa7j1whQ7QK0HaG+PTXcPvu/J07Xp9YgRl6L/LhE+67IUaEzs
+         2J3ICU/398Y6ydmBEALEaprwrb/EBiDWXGeVeDubagNRAvkeeP74G8PNIhwPkpWfkj4t
+         KwWnwD6GAWVrgtobu4Royn2FucBFZHNmeGqmuy4PlOWCAu+07Eu2NzszhAxP7bAW/C7S
+         WA/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXLpYWs7L58emk/HRJTxrv6ojd2iUwAg4xBsvbPN6Vy9CSBTC6Cdnno98d1MaoNhN3Pu56GEEMbnMR/7iU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/mudrHa5lUxf0YiaV7N0AtPUTDhNRsCA5bUD4BxwxSjsIxJUq
+	iL6QTmGjX84NijA1WrrioWRj9z6JEIYUc2sC0VKz3B/zHpnb2+Z7+Brbf3Q17fsCHeLtvEoqaHC
+	TbEPWx3KLJkku6AxmPktMq1F1J18PFOqpseXnwt0XKhOqsdBLWuoRw1dQjZ+/duNduRo=
+X-Gm-Gg: ASbGncsfA2+UcPqSuH+HsjXTzvRP+wu50s3hZijSUrm2krMvrXRfnkoiiZfAlct2LHb
+	QXWjE+xbHJUI+WpN6T78U3IAu6P9+HpFjixlv/VdLRk0bqz1goo9BoR0gtC9+PgbW6H/lEIkc8V
+	IuOe/1/9DG8RGCf93UsZzJcOBhwpYH5TofSedJOscAhpd20vilrR69rR6LeM+H5/TcwFNh/+Du9
+	Oges5qsL10TILj9GelEGVoAqIIsu+n7chOR+ia0Qb7HDVDxjrk2D5fcoGHryp3WBD1xDjZelLX1
+	LeToKbqIN9MlK998D+BLkrmryiWmIrSGZ8GZNUSYvTwuG5Y1vN8Jmp2DOAfYI0U8upg63lEa4x1
+	/vrTpdbnbfoLc5aNge+W+KpxZKhpAfAXNQABBuAWQljJdXTkIx/gkktWVlwzW
+X-Received: by 2002:a17:903:b8d:b0:242:9bbc:c773 with SMTP id d9443c01a7336-2430d21de4cmr30253785ad.54.1755068140555;
+        Tue, 12 Aug 2025 23:55:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjoz7s/dXHcA7mFMizX3dudhJwmJQlObOlwhL9SP3pNoUbNrgFVCMigCH22Xet8aYtZ6XYew==
+X-Received: by 2002:a17:903:b8d:b0:242:9bbc:c773 with SMTP id d9443c01a7336-2430d21de4cmr30253325ad.54.1755068140008;
+        Tue, 12 Aug 2025 23:55:40 -0700 (PDT)
+Received: from hu-pankpati-blr.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899aa1asm315958875ad.122.2025.08.12.23.55.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 23:55:39 -0700 (PDT)
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+To: andersson@kernel.org, linus.walleij@linaro.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org,
+        rajendra.nayak@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] pinctrl: qcom: Introduce Pinctrl for Glymur
+Date: Wed, 13 Aug 2025 12:25:31 +0530
+Message-Id: <20250813065533.3959018-1-pankaj.patil@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812235228.3072318-12-neil@brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDExOSBTYWx0ZWRfX7jK2t1ffs7cz
+ Pz1ynO8IcRn6iH52W773gPLc8sZ0QbpJbaFT0cqZju28HU+VcgCYIUu107mku0zjPSzxYQZf629
+ YKtv948j9WgnRdJLVN1kvPn7OeYRW+EHCSfKMCENOcMjcw+p6g3kSIPbmsUoIhwWr4dRvJAw6eh
+ xNLLB76c7CGfYSFaHMyaO+a2QET+rn6DQp9F7JDlyblxVuWDVUfQaJSQm9qwX05cQzNT2l5qnVu
+ pFkHVwKNc5JdRBKgJFDtvS8bhtG6Q9wvcfPmsAk+qK2+MtyMAV+nrmNF2rTyrppevl6yqtc7ZlS
+ Ci5xBR6tV/b/87qKrSiahchpMuqYBBapLDYEkE9hzeAYSOvuiFOp+iFfTMJwFNXlANR4c1/UMfF
+ W28vJB91
+X-Proofpoint-GUID: NCo8p-HK33VOkU7Ts5uzccAUSZjW6X7z
+X-Proofpoint-ORIG-GUID: NCo8p-HK33VOkU7Ts5uzccAUSZjW6X7z
+X-Authority-Analysis: v=2.4 cv=d4b1yQjE c=1 sm=1 tr=0 ts=689c36ed cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=2OwXVqhp2XgA:10 a=ne6LWfaJPpk26Hbpmm8A:9 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 spamscore=0 phishscore=0 adultscore=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120119
 
-On Tue, Aug 12, 2025 at 12:25:14PM +1000, NeilBrown wrote:
-> Several filesystems use the results of readdir to prime the dcache.
-> These filesystems use d_alloc_parallel() which can block if there is a
-> concurrent lookup.  Blocking in that case is pointless as the lookup
-> will add info to the dcache and there is no value in the readdir waiting
-> to see if it should add the info too.
-> 
-> Also these calls to d_alloc_parallel() are made while the parent
-> directory is locked.  A proposed change to locking will lock the parent
-> later, after d_alloc_parallel().  This means it won't be safe to wait in
-> d_alloc_parallel() while holding the directory lock.
-> 
-> So this patch introduces d_alloc_noblock() which doesn't block
-> but instead returns ERR_PTR(-EWOULDBLOCK).  Filesystems that prime the
-> dcache now use that and ignore -EWOULDBLOCK errors as harmless.
-> 
-> A few filesystems need more than -EWOULDBLOCK - they need to be able to
-> create the missing dentry within the readdir.  procfs is a good example
-> as the inode number is not known until the lookup completes, so readdir
-> must perform a full lookup.
-> 
-> For these filesystems d_alloc_locked() is provided.  It will return a
-> dentry which is already d_in_lookup() but will also lock it against
-> concurrent lookup.  The filesystem's ->lookup function must co-operate
-> by calling lock_lookup() before proceeding with the lookup.  This way we
-> can ensure exclusion between a lookup performed in ->iterate_shared and
-> a lookup performed in ->lookup.  Currently this exclusion is provided by
-> waiting in d_wait_lookup().  The proposed changed to dir locking will
-> mean that calling d_wait_lookup() (in readdir) while already holding
-> i_rwsem could deadlock.
+Introduce Top Level Mode Multiplexer dt-binding and driver for
+Qualcomm's next gen compute SoC - Glymur.
+Device tree changes aren't part of this series and will be posted separately after the official announcement of the Glymur SoC
 
-The last one is playing fast and loose with one assertion that is used
-in quite a few places in correctness proofs - that the only thing other
-threads do to in-lookup dentries is waiting on them (and that - only
-in d_wait_lookup()).  I can't tell whether it will be a problem without
-seeing what you do in the users of that thing, but that creates an
-unpleasant areas to watch out for in the future ;-/
+Changes in v5:
+Rebased on top of v6.17-rc1
+RESOUT_GPIO_N changed to lowercase in bindings and driver
 
-Which filesystems are those, aside of procfs?
+Changes in v4:
+Updated bindings to column length of 80 char
+
+Changes in v3:
+Fixed indentation for example tlmm node in bindings file
+Fixed s-o-b and review comments in the driver
+
+Changes in v2:
+Fixed dt-bindings error from example node's reg propery
+Fixed gpio-line-name maxItems
+Driver UFS_RESET macro updated
+Removed obsolete comment for pingroups
+Updated ngpio to include ufs_reset pin
+
+Pankaj Patil (2):
+  dt-bindings: pinctrl: qcom: Add Glymur pinctrl bindings
+  pinctrl: qcom: Add glymur pinctrl driver
+
+ .../bindings/pinctrl/qcom,glymur-tlmm.yaml    |  133 ++
+ drivers/pinctrl/qcom/Kconfig.msm              |   10 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-glymur.c         | 1777 +++++++++++++++++
+ 4 files changed, 1921 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,glymur-tlmm.yaml
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-glymur.c
+
+-- 
+2.34.1
+
 
