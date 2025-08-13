@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-766141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31ABB242B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8989B242CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D5337BAD75
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:28:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EDA0166103
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E4B2D8382;
-	Wed, 13 Aug 2025 07:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AAF2D5C9F;
+	Wed, 13 Aug 2025 07:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUDg6u1k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cK1niy61"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454182D0C9B;
-	Wed, 13 Aug 2025 07:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDD32C3248
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070191; cv=none; b=i4jbu7Z5FRVtrH6OJAsPwdHAlm//HlIqERaIoiAYBasZ6yoMDk9j1L62G/7V+1z7NEdsTxwcQFz8+NA4PH8qHgaq/kP+2itIHkUEL1TKJReY98oIWs6K/vFA4cFQAJU/neoE/A5XYhHVhtDYsyRt4lpXh5saD5aKDi9RJ3JKNAI=
+	t=1755070254; cv=none; b=X+x+OMKgkmiGYwlrXQNuES30sYT+WtZPHM2Sblrd7TIdB79zL/pEq7RaCvYH5coPSSnmMHrh1qo4beI9BpubhbsrvU8fvlF18v58/ayeMBChxMPPcMFP/ZQw408/52teBNK3ZL3IETsytPbUAhcuJ89Qoj5LrvhwTq5l1TZ+jXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070191; c=relaxed/simple;
-	bh=saY+wgT/qb8l8l5eN/tBvLjaCSu9tJjgQ9MfbbvDoq4=;
+	s=arc-20240116; t=1755070254; c=relaxed/simple;
+	bh=Krs/1EOnnSDk8SYhKTWe0TtedIiWccyCLriWdmm4g60=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RocffWAYBDeT3dKR3Ie7qumdUfFX/teVIwFSBH761kKprVxve1gwkH2mEshVqVBBGrtZGWptHXOiX5ob5nB/xmmaLGEqA5Dc1B2HoHe0YPToiHcZxIv/m6optOHoX654Fblo2ZDqDuJYfl17MK0QpY1dG5nm0YrzmHguC0LbJ5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUDg6u1k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AABAC4CEEB;
-	Wed, 13 Aug 2025 07:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755070190;
-	bh=saY+wgT/qb8l8l5eN/tBvLjaCSu9tJjgQ9MfbbvDoq4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GUDg6u1kJ24lRLJgMGrJYC38ECBKZBOTeY5IvwNKY2pYgXvvNVRSRs+YrN7TnYNPR
-	 akMh9sCSPsxMr9wi1OU5BoODFyu4W/2Yd83x7vTxXy6DoPDNYluop30/braRNO1B5G
-	 2c8r3gLgI6i7dpELqhsYbNrekObMfJ68JmzWSPKNuhBAaXPdE87sy8s53Xg8NEbyVu
-	 AL2eM06ezaj5ja/lrqCILGC4SiPLbePLUK+kOKQGOfGboP8Utmt9HXmecurRZsjHMw
-	 u3xwmKNg3mkGM3UmHfzBsOTEyJpF5YURlbOHc4DZwLQjOzFEfQ06W2ElU/kBpcbCIa
-	 bX5WeS9fdk7Og==
-Message-ID: <dcd42e01-d14c-4e52-97f7-c1aedc81653b@kernel.org>
-Date: Wed, 13 Aug 2025 09:29:46 +0200
+	 In-Reply-To:Content-Type; b=RKwgF/zicYTLm/oreIzQbQfucCSgiKW6QUFp3m8exKcQIF+pSByzSpb+cXuASreIbcGN6MeQ54UyqulYxCzdzjqLArDOJqjLtrpuFUTybUihAf+5MsoOhHxMoUURBaBnKr8Tsq3wLvQQDZ0N+cuzI22D3TsibNx5a1BdgyyqmKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cK1niy61; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CNQKXR008652;
+	Wed, 13 Aug 2025 07:30:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=vKoM3A
+	RpLg//NBYrYR5Q/HBPv28+6Hp3kWSaS7QESiE=; b=cK1niy61QNWe2lFpphHU73
+	s/b2lKpBRNpeeIPMAgLfeEuou3EZrf0QQaW59sl6Nu7IZza+zF7mMHHWWckeZJ2T
+	qDjIdG0VuyObYr9YKwoQGj2Dz9KoeNa+8jXkMy/Xlso11L2glRHrjYpvONahf9c1
+	lIF7uRW8n+jEPRYPVB9TRF/JCCeaNK3Xutl3m3MLTMekDX1XA4brDloGNm3T8JiJ
+	aAPlyE8Qb1wpkC7L/mNauYqbH/tRTe3H6nxoKusXV40iZzRji4nNIgKuUAqaRhf2
+	1UhQnbLZGyBPshOtnTxYuy+9CFOq+w2lyN5h5+K/mHCvYEwJJQvqgmYb1Wpdsv3Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48durub4dc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 07:30:38 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57D7JWGe024621;
+	Wed, 13 Aug 2025 07:30:37 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48durub4d9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 07:30:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57D398eK028658;
+	Wed, 13 Aug 2025 07:30:37 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ej5n64v2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 07:30:37 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57D7UaCA33489502
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Aug 2025 07:30:36 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 67A8058059;
+	Wed, 13 Aug 2025 07:30:36 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1DB7E58061;
+	Wed, 13 Aug 2025 07:30:32 +0000 (GMT)
+Received: from [9.43.45.243] (unknown [9.43.45.243])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 13 Aug 2025 07:30:31 +0000 (GMT)
+Message-ID: <affdc6b1-9980-44d1-89db-d90730c1e384@linux.ibm.com>
+Date: Wed, 13 Aug 2025 13:00:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,80 +83,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] arm64: dts: qcom: sc7280: Flatten usb controller nodes
-To: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250728035812.2762957-1-krishna.kurapati@oss.qualcomm.com>
- <175496788918.165980.17430518825409421820.b4-ty@kernel.org>
+Subject: Re: [PATCH v2] Reorder some fields in struct rq.
+To: Blake Jones <blakejones@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Josh Don <joshdon@google.com>,
+        Dietmar Eggemann
+ <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        linux-kernel@vger.kernel.org,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20250730205644.2595052-1-blakejones@google.com>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <175496788918.165980.17430518825409421820.b4-ty@kernel.org>
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20250730205644.2595052-1-blakejones@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 0_Y0BHuQjeSgVHDflaUloukmNvgML8Wa
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX7hJ+9bfPbeZM
+ ucBkBMzXkVFg0dtna8VkXBW9iqsuu5eneQAm3BhoO/WJ2X9ZXV97+Mw2itwSGoT+2c8DbxT9CpJ
+ 4NWrrcdrgX8vYSmoJ4XOTwC8E1EmPbdruor+Xt4VXri+jvFBTx7vWhIIk0QjL2BDl2nQpDorJzr
+ cEcpPSHDCTlSa5/h9Nb9tXDCzFOGqHB0BEqrEAE69dt3vSK5vsdENsPUMU6RkdMYqpYcNLr0xaz
+ au65pl/52gvJGD+swi+skWZoB8ZUetkEPwlpMTDLA9QELkHGWhRQNBl2lcIzQRcE/69gcLAMJwr
+ ktrNgs64OJV9+pfJaCoThF/CwJlUEwEV4BwRcAGDt9+ZVRXe0nCq5TvOwOdikonPJfsUUlhQldb
+ N0nFLaUq
+X-Authority-Analysis: v=2.4 cv=QtNe3Uyd c=1 sm=1 tr=0 ts=689c3f1e cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=y3VEHs0CwlllnRbVHRsA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: zNad-4G03UJwIQ7OQ2nbR2S6EkHu0-BZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0
+ spamscore=0 suspectscore=0 impostorscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508120224
 
-On 12/08/2025 05:04, Bjorn Andersson wrote:
-> 
-> On Mon, 28 Jul 2025 09:28:12 +0530, Krishna Kurapati wrote:
->> Flatten usb controller nodes and update to using latest bindings
->> and flattened driver approach.
->>
->>
-> 
-> Applied, thanks!
-> 
-> [1/1] arm64: dts: qcom: sc7280: Flatten usb controller nodes
->       commit: d72cb0551d113a0a42e12dcdfdad78ade2c63f50
+Hi Blake,
 
-Was this patch ever checked against bindings?
+On 31/07/25 02:26, Blake Jones wrote:
+> This colocates some hot fields in "struct rq" to be on the same cache line
+> as others that are often accessed at the same time or in similar ways.
+> 
 
-Best regards,
-Krzysztof
+[..snip..]
+
+> 
+> This patch does not change the size of "struct rq" on machines with 64-byte
+> cache lines. The additional "____cacheline_aligned" to put the runqueue
+> lock on the next cache line will add an additional 64 bytes of padding on
+> machines with 128-byte cache lines; although this is unfortunate, it seemed
+> more likely to lead to stably good performance than e.g. by just putting
+> the runqueue lock somewhere in the middle of the structure and hoping it
+> wasn't on an otherwise busy cache line.
+
+This change introduced an 88 byte hole due to having __lock in a different
+cache line on Power11 which is 128 byte architecture which led to one cacheline
+more than before.
+
+Tested with your custom test case (thanks for sharing) and observed around
+~5% decrease in the number of cycles, along with a slight increase in user
+time — both are positive indicators.
+
+Also ran ebizzy, which doesn’t seem to be impacted. I think it would be good
+to run a set of standard benchmarks like schbench, ebizzy, hackbench, and
+stress-ng, along with a real-life workload, to ensure there’s no negative
+impact. I saw that hackbench was tried, but including those numbers would
+be helpful.
+
+Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+
+Thanks,
+Madadi Vineeth Reddy
+
+> 
+> I ran "hackbench" to test this change, but it didn't show very conclusive
+> results.  Looking at a profile of the hackbench run, it was spending 95% of
+> its cycles inside __alloc_skb(), __kfree_skb(), or kmem_cache_free() -
+> almost all of which was spent updating memcg counters or contending on the
+> list_lock in kmem_cache_node. In contrast, it spent less than 0.5% of its
+> cycles inside either schedule() or try_to_wake_up(). So it's not surprising
+> that it didn't show useful results here.
+> 
+
+[..snip..]
+
+> @@ -1182,8 +1199,6 @@ struct rq {
+>  	struct root_domain		*rd;
+>  	struct sched_domain __rcu	*sd;
+>  
+> -	unsigned long		cpu_capacity;
+> -
+>  	struct balance_callback *balance_callback;
+>  
+>  	unsigned char		nohz_idle_balance;
+
 
