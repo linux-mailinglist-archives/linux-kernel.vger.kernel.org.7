@@ -1,105 +1,86 @@
-Return-Path: <linux-kernel+bounces-766788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19EDEB24B27
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:52:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8325DB24B36
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF47C2A1AEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5793F886704
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08982EBDDE;
-	Wed, 13 Aug 2025 13:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD662EBDDB;
+	Wed, 13 Aug 2025 13:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmXszElT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1jN/zVu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400592EB5CD;
-	Wed, 13 Aug 2025 13:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0AE18FC80;
+	Wed, 13 Aug 2025 13:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755092973; cv=none; b=nM7WeubdOvJNHs4MPD3WZ8Qd0YcBQuX2BrNpRp+FLVISyvwPNsBDHW+ATTkz9xbFyvVSCrIeWjbgUq7gOl9tGnB0L6RsXbTyWbimghqMVo40zGgEUcvPQ4Hwp/83Q9fQZQXaKlJYI8wr26to7KfCBrQZulJ/H2YDY2Rk1R2Tx7E=
+	t=1755093027; cv=none; b=PoOZXmpOgHvVH9WzDsZfLTzt6NHOajp2lRRrHGPfpkrC599ipjoZauT4Rt+ZF8LLCuVoeGctAFjWpEHkwyLlp8+cXkYYwcA+vAChj40rFoLXMRA39HOeHdU9+rVQGJ7I10GXR2n3dGMrd9+cidUnlItmdLl1jEyZuNASpHUnVVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755092973; c=relaxed/simple;
-	bh=olxcyq3RDbovnXfIfD6NCYHtJTFx0WilAU8Drh9OdZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ArSHqL0ZOYWK3+lZCD07EPhr9eKK0ysBZoqYKxP0ZWHM9mrs+OMQdimizZtjCngQi+4RXrVreXCJpJkabj/yN62Vtr5tG1VAELQQ6SA9R/wrh6DfjEL7Y9Xd2lzGn2GlI0gL1rmHOyfBTFlflP8K7NcTEqXwXTkdUoedtRHn2N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmXszElT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1516AC4CEEF;
-	Wed, 13 Aug 2025 13:49:29 +0000 (UTC)
+	s=arc-20240116; t=1755093027; c=relaxed/simple;
+	bh=kgmkNi4FyNWpSQEulVVTL5fLq/GrDqNglBvivi4oPyI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Uxvn1NUzwy/sD3RSbLEmEEgwkCzGLoJFlBeTnf3UAFUMTNI/WH6OpyZWzGPb0FnJHmfaTvRieFhxDyaCpCuX3Y3SRw8GJXSFsumrozxJqzIj99j1bZylXmQb6izDxyE+u5j1p3OArGrbJleXn50hkgR5ht+4LRTf02ccTrw0i0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1jN/zVu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55C5C4CEEB;
+	Wed, 13 Aug 2025 13:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755092972;
-	bh=olxcyq3RDbovnXfIfD6NCYHtJTFx0WilAU8Drh9OdZg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bmXszElTXraCzTa9Thri84qE6olfl7BXmuBQJJRxqfq/vnMYqTxVZ0XokuqLk6KzR
-	 Kfv/qJn7SgEw1HIjBZS1RqcBvZqT9JM20DIggF8dCdMG8lalB/GBMFKQohDipRr+qq
-	 K8YDSQPoGMUsnPJso8KO2jqhG9IjI52ASUtltLNiixxgs4Lh0RaW646uW8BnahlG92
-	 cnewSEcHyZepu0aZhWXhIcIfxEbZrOHTuWucQYSujHlf6fbSL2bRQAgAqBOGrkFw7f
-	 meC+ORzGO2+ea+H+33909e0sDLxX4FA4ucPf5fK1cK6jxEj1RDavBvkJ4RHkKTMJ9y
-	 9V5ZlMCszuo4Q==
-Message-ID: <d787ca03-a54e-46ae-828b-68fbd7b0b3a8@kernel.org>
-Date: Wed, 13 Aug 2025 16:49:27 +0300
+	s=k20201202; t=1755093027;
+	bh=kgmkNi4FyNWpSQEulVVTL5fLq/GrDqNglBvivi4oPyI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Q1jN/zVuEQN2ad0P6Qcr4DZUk0jFORaWGUNrolSM5KKUqK63TaPvDhJVtIVYe0D1w
+	 qCq8wEOB4s/uDY+53Pfn1RZrIx6V9QRLiidfV5Px7squI22fCWtmzueIZq2oUVcrOC
+	 tsFHaGFK//++3BHNyUpKyw11Q6V7kGH4aywuYJ+2Ytw70Dn7Jbb99ItrBO5uRekayL
+	 J7WqRF5gUpjt0Fq2NaoTWwLEFETn46ES66Gv39ippaXcz04SyOd4+YyAaFGjlIz/xk
+	 MBthNFb0RZcrhkNGJOHtCF40JG5hew93XfGeXYK58xszMcQaefiEgTpiYUqc5Vsa2d
+	 RijdHjK4FLGuA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Alexander Graf
+ <graf@amazon.com>,  Baoquan He <bhe@redhat.com>,  Changyuan Lyu
+ <changyuanl@google.com>,  Pasha Tatashin <pasha.tatashin@soleen.com>,
+  Pratyush Yadav <pratyush@kernel.org>,  Shuah Khan <shuah@kernel.org>,
+  Thomas Weischuh <linux@weissschuh.net>,  kexec@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,
+  linux-mm@kvack.org
+Subject: Re: [PATCH 2/3] lib/test_kho: fixes for error handling
+In-Reply-To: <20250811082510.4154080-3-rppt@kernel.org>
+References: <20250811082510.4154080-1-rppt@kernel.org>
+	<20250811082510.4154080-3-rppt@kernel.org>
+Date: Wed, 13 Aug 2025 15:50:24 +0200
+Message-ID: <mafs0y0rnuy8v.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 8/9] net: ethernet: ti: am65-cpsw: add network
- flow classification support
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- danishanwar@ti.com, srk@ti.com, linux-omap@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250514-am65-cpsw-rx-class-v4-0-5202d8119241@kernel.org>
- <20250514-am65-cpsw-rx-class-v4-8-5202d8119241@kernel.org>
- <20250516182902.5a5bfd98@kernel.org>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20250516182902.5a5bfd98@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+On Mon, Aug 11 2025, Mike Rapoport wrote:
 
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> * Update kho_test_save() so that folios array won't be freed when
+>   returning from the function and the fdt will be freed on error
+> * Reset state->nr_folios to 0 in  kho_test_generate_data() on error
+> * Simplify allocation of folios info in fdt.
+>
+> Reported-by: Pratyush Yadav <pratyush@kernel.org>
+> Closes: https://lore.kernel.org/all/mafs0zfcjcepf.fsf@kernel.org
+> Fixes: b753522bed0b ("kho: add test for kexec handover")
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-On 17/05/2025 04:29, Jakub Kicinski wrote:
-> On Wed, 14 May 2025 15:04:28 +0300 Roger Quadros wrote:
->> The TRM doesn't mention anything about order of evaluation of the
->> classifier rules however it does mention in [1]
->> "if multiple classifier matches occur, the highest match
->> with thread enable bit set will be used."
-> 
-> So we're not sure how to maintain the user requested ordering?
-
-Currently we are using the user/ethtool provided location as is.
-
-> Am I reading this correctly? If so then ..
-> 
->> +	if (fs->location == RX_CLS_LOC_ANY ||
-> 
-> .. why are we rejecting LOC_ANY? 
-
-Because driver doesn't have logic to decide the location and relies on ethtool to
-decide it if user doesn't supply it.
-
-> 
-> I'd think that, in fact, LOC_ANY should be the only loc we can support.
-> Note that ethtool hides the location logic on the CLI, if user doesn't
-> request a location and driver reports RX_CLS_LOC_SPECIAL ethtool will
-> set the location to LOC_ANY.
-> 
->> +	    fs->location >= port->rxnfc_max)
->> +		return -EINVAL;
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
 -- 
-cheers,
--roger
-
+Regards,
+Pratyush Yadav
 
