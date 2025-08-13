@@ -1,60 +1,74 @@
-Return-Path: <linux-kernel+bounces-767248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858B8B251DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:17:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27895B251F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976C11C283E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2D83A9A47
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCCF28B7DF;
-	Wed, 13 Aug 2025 17:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB13298CB1;
+	Wed, 13 Aug 2025 17:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTlViCzK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="A1s8g9WQ"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7722874ED;
-	Wed, 13 Aug 2025 17:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755105002; cv=none; b=F4xZQgco5mm3eukkTX6w/5iRZMSUltJPAVtZHYiDW3Fvs3nvZHLfibmwlTnVPhvFAYQLx8U+5aQjtYq2IdHiFdXEN0cSGjI6jOmRWZ/Hxsus9Z8uWjzEHaFmcSBzb2vlEHo7UqJmHsCtpdvNMOQh+3Um/bmew15jzVksKLkFpgs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755105002; c=relaxed/simple;
-	bh=AIWgF14roG2s1lL3N6s+OU/JIDgn+6qzvLO1PUr65lE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LHy2WEzmDtXAwQ/PbxaxE/NWc8GH7pyp3nc5tJBMSd7cd8uYr3/1btmPKNJReNdc6lFP5ERERKnT6tFReYpLIWo3iYZkBIGesuOp8C/uqD6gY/9aCOtbHeQjE/NKwImO54zh8rcHiia3UjKfuXOZKTaxEzGoGtU2nAHopKXIMyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTlViCzK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1832C4CEEB;
-	Wed, 13 Aug 2025 17:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755105002;
-	bh=AIWgF14roG2s1lL3N6s+OU/JIDgn+6qzvLO1PUr65lE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BTlViCzKJ6oNXqiiP+yf5NnjgQaXzeC5n6P9xOPggqWpoRaHlwaDI1mvW60w31f7z
-	 Nk4wYDNWeQJqTf13oWXlarIYS4G7HXdpOctnUB5iWisAC9T5iXxijFqW5GDfRGiyln
-	 0aar22OgoB+SxaiV6DVGdHOrsuCSOKwnlhkkWCTlavbdrKC+1E7kS8qppE0a4h+kfL
-	 h396yxnoXzknUv6pnRL70DK2zY7o4hxelhQfm4s71BW2VoykC6HcM0DB7+QZ0KvKJH
-	 YWjrJ/xKIpVm2cugUJElax/DsAw1ksJ5mjDQdz+mXtGuc4c0PUVtl+M00Dzoj2+q7T
-	 qSWYD33zElEoA==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD2303C82;
+	Wed, 13 Aug 2025 17:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755105129; cv=pass; b=Wk6zO7zktdfDKO7r7xMGjE/z/36jdQdmx+GS3z8v9LofpSzlYCOFy7sqwEyzZtKmC+VNV5gg08s7EH5pxdTySwJg8caa3ag8i2jqjnz9nLdvs+mUDkQDD4KTA78/a82t35oSYxBEQeNkJRU71pHHaVhjfpcaTAljuzh75dHQg6c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755105129; c=relaxed/simple;
+	bh=i7fid87W70fK4CzBn3krAYPVNQU2X1jSAX4qIn4Q3hs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JT9h12cpcmXgXNjhZEql9DU9b/SrBrJr4URkNUXEoiGqPfZcSlRr1d8J6OeEoDCsnThCloxL02DVvxJHAjLXg6jr5O1gpC2MKspHzUqYP9INnmMJz6uqTfIaE15fTKeMAtOylJKDMuy/L4oDhznlYTHti81P3mj+qiRRw3i7yOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=A1s8g9WQ; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755105111; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ez9de+bl1zbWJs25nq3JZ+PtT03BosVR4OIDayRTfmi8+diJ1oe31vO8jF/ePc0C2UFtd+Fq1fbpSG3aIXBaosQKEyqJPeRX03Qqu4aMkGw6h3P7c+GBiOlPCu+iV7fo2eEBrrcdd6hELybG6TzJfM9DQOGgajCnJLapx6RRFNc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755105111; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hwMVPhatoPN6SXxmbJBqlOp2xrUdMJia+ktm5ztecWo=; 
+	b=OrqD72pgxpAJdMPt1nAIHSU7IKPw2XihMYbpWW6XiKfU9/ENS8kdtUc8KllpsMZX3DZSdnJnid1z6QClzLzn1pz43fXCklCKpfVYNHWHLNbL1TVfrRIuuBWfvnTVpyfWXxE6CveVfGN2IFN4/9caPDW+R3ll5qmwToIzm0U2/00=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755105111;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=hwMVPhatoPN6SXxmbJBqlOp2xrUdMJia+ktm5ztecWo=;
+	b=A1s8g9WQ5FaONit9656PyKMlEZfJRVfNUS+0mEac9WcIRKcXY7Ub6p1Plbj9nU8r
+	KkYOBhfMd/AMKwfjiS/R5jTHi6u6+xKtnV6wsEH2fgUZ5RLIxtXZqyl+AYZsaNcxDA/
+	yzjGiO8YTaq7IWSohDnPvg45ogAhEBwDu7+Le21IFUbgoxfTp5pObIBiW9jHj5qca5Z
+	OZfoVc0iXS7hgVSy8/3Y27wEABNtY+HuH6fuWQWDA85bb38C3kTbmV7/eY3RHFGQ4ld
+	TBmBTaFSrIkssYP/czipSU6KM7BrwRbFEbwrO2n16uf9VMm+vGsAt9xs8c1feFgTcM6
+	z7NE/FpIvQ==
+Received: by mx.zohomail.com with SMTPS id 1755105109586432.8546456456073;
+	Wed, 13 Aug 2025 10:11:49 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>,
+	Yao Zi <ziyao@disroot.org>,
+	Han Gao <rabenda.cn@gmail.com>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [RFC PATCH -next 15/16] mm/damon: the byte statistics data type in damos_stat uses unsigned long long
-Date: Wed, 13 Aug 2025 10:10:00 -0700
-Message-Id: <20250813171000.6345-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250813050706.1564229-16-yanquanmin1@huawei.com>
-References: 
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 0/2] clk: thead: th1520-ap: allow gate cascade and fix padctrl0
+Date: Thu, 14 Aug 2025 01:11:34 +0800
+Message-ID: <20250813171136.2213309-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,106 +76,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, 13 Aug 2025 13:07:05 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+Current ccu_gate implementation does not easily allow gates to be clock
+parents because of the waste of struct clk_hw in struct ccu_gate;
+however it's found that the padctrl0 apb clock gate seems to be
+downstream of perisys-apb4-hclk, gating the latter w/o gating the former
+makes the padctrl0 registers inaccessible too.
 
-> For 32-bit systems, damos_stat now uses unsigned long long for byte
-> statistics data to avoid integer overflow risks inherent in the
-> previous design.
+Fix this by refactor ccu_gate code, mimicing what Yao Zi did on
+ccu_mux; and then assign perisys-apb4-hclk as parent of padctrl0 bus
+gate.
 
-I suggested using the core-layer address unit on stat, and ask users to
-multiply the addr_unit value to stat values if they want bytes value.  If we
-agree on it, I think this patch wouldn't really be required.
+This patchset depends on the display clock patchset at [1], although a
+rebasing to get rid of this dependency is possible.
 
-> 
-> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
-> ---
->  include/linux/damon.h     |  6 +++---
->  mm/damon/modules-common.h |  4 ++--
->  mm/damon/sysfs-schemes.c  | 12 ++++++------
->  3 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/damon.h b/include/linux/damon.h
-> index aa045dcb5b5d..d85850cf06c5 100644
-> --- a/include/linux/damon.h
-> +++ b/include/linux/damon.h
-> @@ -333,10 +333,10 @@ struct damos_watermarks {
->   */
->  struct damos_stat {
->  	unsigned long nr_tried;
-> -	unsigned long sz_tried;
-> +	unsigned long long sz_tried;
->  	unsigned long nr_applied;
-> -	unsigned long sz_applied;
-> -	unsigned long sz_ops_filter_passed;
-> +	unsigned long long sz_applied;
-> +	unsigned long long sz_ops_filter_passed;
->  	unsigned long qt_exceeds;
->  };
->  
-> diff --git a/mm/damon/modules-common.h b/mm/damon/modules-common.h
-> index c7048a449321..ae45d0eb960e 100644
-> --- a/mm/damon/modules-common.h
-> +++ b/mm/damon/modules-common.h
-> @@ -36,11 +36,11 @@
->  #define DEFINE_DAMON_MODULES_DAMOS_STATS_PARAMS(stat, try_name,		\
->  		succ_name, qt_exceed_name)				\
->  	module_param_named(nr_##try_name, stat.nr_tried, ulong, 0400);	\
-> -	module_param_named(bytes_##try_name, stat.sz_tried, ulong,	\
-> +	module_param_named(bytes_##try_name, stat.sz_tried, ullong,	\
->  			0400);						\
->  	module_param_named(nr_##succ_name, stat.nr_applied, ulong,	\
->  			0400);						\
-> -	module_param_named(bytes_##succ_name, stat.sz_applied, ulong,	\
-> +	module_param_named(bytes_##succ_name, stat.sz_applied, ullong,	\
->  			0400);						\
->  	module_param_named(nr_##qt_exceed_name, stat.qt_exceeds, ulong,	\
->  			0400);
-> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
-> index 74056bcd6a2c..3c4882549a28 100644
-> --- a/mm/damon/sysfs-schemes.c
-> +++ b/mm/damon/sysfs-schemes.c
-> @@ -199,10 +199,10 @@ static const struct kobj_type damon_sysfs_scheme_regions_ktype = {
->  struct damon_sysfs_stats {
->  	struct kobject kobj;
->  	unsigned long nr_tried;
-> -	unsigned long sz_tried;
-> +	unsigned long long sz_tried;
->  	unsigned long nr_applied;
-> -	unsigned long sz_applied;
-> -	unsigned long sz_ops_filter_passed;
-> +	unsigned long long sz_applied;
-> +	unsigned long long sz_ops_filter_passed;
->  	unsigned long qt_exceeds;
->  };
->  
-> @@ -226,7 +226,7 @@ static ssize_t sz_tried_show(struct kobject *kobj, struct kobj_attribute *attr,
->  	struct damon_sysfs_stats *stats = container_of(kobj,
->  			struct damon_sysfs_stats, kobj);
->  
-> -	return sysfs_emit(buf, "%lu\n", stats->sz_tried);
-> +	return sysfs_emit(buf, "%llu\n", stats->sz_tried);
->  }
->  
->  static ssize_t nr_applied_show(struct kobject *kobj,
-> @@ -244,7 +244,7 @@ static ssize_t sz_applied_show(struct kobject *kobj,
->  	struct damon_sysfs_stats *stats = container_of(kobj,
->  			struct damon_sysfs_stats, kobj);
->  
-> -	return sysfs_emit(buf, "%lu\n", stats->sz_applied);
-> +	return sysfs_emit(buf, "%llu\n", stats->sz_applied);
->  }
->  
->  static ssize_t sz_ops_filter_passed_show(struct kobject *kobj,
-> @@ -253,7 +253,7 @@ static ssize_t sz_ops_filter_passed_show(struct kobject *kobj,
->  	struct damon_sysfs_stats *stats = container_of(kobj,
->  			struct damon_sysfs_stats, kobj);
->  
-> -	return sysfs_emit(buf, "%lu\n", stats->sz_ops_filter_passed);
-> +	return sysfs_emit(buf, "%llu\n", stats->sz_ops_filter_passed);
->  }
->  
->  static ssize_t qt_exceeds_show(struct kobject *kobj,
-> -- 
-> 2.34.1
+[1] https://lore.kernel.org/linux-riscv/20250813072702.2176993-1-uwu@icenowy.me/
+
+Icenowy Zheng (2):
+  clk: thead: th1520-ap: describe gate clocks with clk_gate
+  clk: thead: th1520-ap: fix parent of padctrl0 clock
+
+ drivers/clk/thead/clk-th1520-ap.c | 385 +++++++++++++++---------------
+ 1 file changed, 188 insertions(+), 197 deletions(-)
+
+-- 
+2.50.1
+
 
