@@ -1,116 +1,122 @@
-Return-Path: <linux-kernel+bounces-767256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFB1B251E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:17:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0512B251DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:17:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E97C7BF856
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:15:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AA127BDFC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84A1287249;
-	Wed, 13 Aug 2025 17:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505FA1F5413;
+	Wed, 13 Aug 2025 17:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jh3KJ4mX"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="hRsC4Ts2"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEAF28641D;
-	Wed, 13 Aug 2025 17:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755105408; cv=none; b=j4cytlo5Cz2gD8EBouMTT89b8pMKNyTNKXefoDw2/ejanyGGfNJtOXb8g6rzRt3CP65RdRJIvHJTM+KVleuPGSKvbg1qUI1MLluR8Xj6w2k2kR5ZzCRC1oV/l2LQyvk26AjDgnbZQcYsmiF+nU9ijVUwpNcRrcf7+PlfbTxyqXg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755105408; c=relaxed/simple;
-	bh=Xv4lAhvsjWNntHfL4yOmUuWkw5uGL4uuqNIXApvCdug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dz+wz8gmWaJOKT+bw3euL2FzMkKaMa3xO5bcHBXvbdVeH0S5UdnC+zw5kBgG+usaKN2vlaWD28zEXIBQPuY9L/WqjSkADvI/MaM/Xp23cJ/5wmEZ3jARJr5j7Ur/yt7yy8TU5cJhLmddP2cJU5TJ+9jPAlmcS7zp5zPTxtqmDEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jh3KJ4mX; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb731caaaso13784666b.0;
-        Wed, 13 Aug 2025 10:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755105404; x=1755710204; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xv4lAhvsjWNntHfL4yOmUuWkw5uGL4uuqNIXApvCdug=;
-        b=Jh3KJ4mXB+5e/JBYkVMxDaPq2U8FiWyAaQXIFAyzV5MmYnlloflRA2uUq6r5fUUFzN
-         wjVvTJMB6xeU98fdRb3FPBKQFp4PSH4rwnpBLJi36iOly6JRxjZnlsmbpqx7jPmVvi+O
-         rPAqn0g1rf5T5tNRbCv8qk9vCgtb8D8c4pmWlCT1LDURUhk96xha11RxMY/9iTTOEpWb
-         eb3NdpcAAqB5yEyJj5qWxNRF1H/jxUhiLR/x+hrLHEEmHGk/N270pYIRLYqfScbvXpz0
-         UkTZmqIhHni5mZQMd/ptDeQHo6uRx/XYNAc/Ah14cD/s4SH9J5XtCY7AaNSpSpHXP5mP
-         nt8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755105404; x=1755710204;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xv4lAhvsjWNntHfL4yOmUuWkw5uGL4uuqNIXApvCdug=;
-        b=Zg0qdO3UIZhL8Pqzd55s8yAp4hcPP5MW1nz3MuAk9P9QEIMy5FcX4Wr7gRQbSPgO9i
-         OEzwOlq+rcKLz3lW11MlvUXkMzu3UnrUFAufUafKC/JSc8UeZGSDWgZy77Mg4f4yG1B9
-         ncrb2DJRhH419nNEQ+bUHZ8nOq1tvt2JqhA+57OhOo/o8npA3CaCH0k39Q1pXFGfNXhs
-         tNEpW2Afyd0lXVnmOm8q3LXGxtjQlFn5YWw5kjipTnU0CY14zXKSoDVN7AQz8dSPkzaF
-         NbBA0u3zmdBVmJz2Qcy0KpsPvuDotJbQV/J6SyS9F59+vnCXu6zgrUm6cwwp3SAYaNYn
-         TKDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCF4Wx1NSN2nqWQ909ofEYMbXWNZqY4JtXCQOv/pkajm2/4EUOFUVBwVr3JBaudz5bn7JjjCiFvu2k@vger.kernel.org, AJvYcCUGxlOCZEM5vukZgZbzCM6aXmxDjp4DzTSPx0szebL0pk0uirLbmOAarwYjrpGwrBQLP7Z3LppJQ3lX@vger.kernel.org, AJvYcCVpnaT3CYmRUXIv20hsQMOkTf8+G4B5orUXiSNM5mzNz91qdYV+dUtoS1W9fwVZRTh3IOwmmeXEDdzfoXFX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUqpgrpto0WveLkfzGKiCiLjwSkJWwiAXgTHLce0l8OIAiGvef
-	QqwEvcnY9SaYzkVSNMCkCh4Ij1P55TCwwugZis+a+Yn3ypHKCLZw2F5ixU/wlSjv/ppGGzDMi+x
-	FnN0PjpprBX9ZmPWd7sVDBcf6+s1cYD2s2Vp/Sp4=
-X-Gm-Gg: ASbGncsWZVfh1gwenSR6ieq9ZtP3p7fl/m0ZZdkZVOHxjCcN+tc/fBVY7UuPnRQFWiY
-	T4NvWj/g9B3cex/Shf+vAI1V/0P2iOlFtKdum6iggYnvo2o/Nv2Xg70dWlyHv9cjJPPYVGSyMH9
-	hBCc3APmCCrlSZHk/v2fk3WCB2Icl8AopcTSYLyTZduqOuL/edTbc2/mhN5riVZrero1gVX2OlP
-	H0UQUoLkw==
-X-Google-Smtp-Source: AGHT+IE2HFkNraf8NLnIgm+Xgi9eZrbgou0iOQhNRh1GSug05eSszGDqkCYkEk+arnxCWdfXYER/BxIpZinKRkfmhpM=
-X-Received: by 2002:a17:907:989:b0:ae3:7c8c:351d with SMTP id
- a640c23a62f3a-afca4e92836mr349253166b.56.1755105403462; Wed, 13 Aug 2025
- 10:16:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36715303C89;
+	Wed, 13 Aug 2025 17:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755105400; cv=pass; b=boWJ6g2IiGZqerBS90+hEmy8hz5DTgGeD9BE/2NelzPI9v7tL6yf1xeIwlOTYVwW6exe5Oxd9aU3eCAKkjPniwz++xBwYVRF6o86u5rtVfnVZRj8EgMWi1cn/UH+dCqH1W7s0+7K9Y8+qfWIjIOBIwHZq4uKOWVTXyfhsG00suI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755105400; c=relaxed/simple;
+	bh=/vzN8wPcA9iD7oRNZZjvZq9B0/vfABdMxfyd+edq4jg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DE8Mz3/kkeQRcZ+deFRj1C2zfBlt1NuPt4R0ex4uHOhqvRH73biF04kFNzfLN4MOwYPHnxwS5oLcgly/rBoc9dBGvxxI5yBWvUsoDMMqYwz0EBYgK6Nyq2BADV9/tXpaebaUOwUixKfIhmrz05BoywZJXp5Th3QGQhaaV1g2hnI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=hRsC4Ts2; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755105383; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=jCQPNJr6Utb/IlNo0c8yh/wBg6V3a4jV4YOu499PaP5V9JNEo+37DQdj1L8DDWz6x9MtSmbbSkcvgdXVSXYhbrLavEUw+9QqHBcEZ7hR8aZ9VOd643rMtBnKa4P4UPiI+d//GI8cP5rNSDQzk9kqaunePIashDXg/JWkXjWWeBA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755105383; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=/vzN8wPcA9iD7oRNZZjvZq9B0/vfABdMxfyd+edq4jg=; 
+	b=fzIOjNerQkYl18WMmAC95Xva0mnqlL85u99Fb2jQn5i4MUfbGEbfZzFART+YdTWbL63X8R1zaRMKziXHIZZlXjr09fUGsFTEj5VXChsJS0SNNYc0zQwPKwoyej/HkEsTethv8vCv+03hYFYGXBmE8IsvEboYLYivWrhixtG9XGU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755105383;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=/vzN8wPcA9iD7oRNZZjvZq9B0/vfABdMxfyd+edq4jg=;
+	b=hRsC4Ts2ejnqno6bRuz+O9Q/ODtnrI0mKpm0GFsGLwoZHtwuVM+pe5GydElQxCgM
+	17N169BmTmgSC0N0gGho9RSnrg8cwH3cIfQI9H4HIXiTsfDFziFaYOZowCyW6SaS0Pl
+	AQdQI3VJ3vsBnmEsMt1WWESs69+Yv6GysbI3W6GqvhbZIYC+8vcDHcfTUbNaGkDQdQS
+	ewG9cCUxSrO36kQuIpb+BqZjBicn3q64ybDiSObDyk7sYdOTcQ+T1EqBAz/+RewdvKw
+	qrLdtmJl+ZFdoW7SSygBQ2DpLay8Nz9kxEXAxdPLguJQbTFuwBYsIGANNoCYEKwRA90
+	TGWvmJh+6w==
+Received: by mx.zohomail.com with SMTPS id 1755105381384154.6661811070984;
+	Wed, 13 Aug 2025 10:16:21 -0700 (PDT)
+Message-ID: <eedd44480a76840e1fec73d4433c772c5bdc7011.camel@icenowy.me>
+Subject: Re: [PATCH 0/2] clk: thead: th1520-ap: allow gate cascade and fix
+ padctrl0
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>, Yao Zi
+ <ziyao@disroot.org>,  Han Gao <rabenda.cn@gmail.com>,
+ linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Date: Thu, 14 Aug 2025 01:16:16 +0800
+In-Reply-To: <20250813171136.2213309-1-uwu@icenowy.me>
+References: <20250813171136.2213309-1-uwu@icenowy.me>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813-ltc2495-v2-0-bbaf20f6ba07@gmail.com> <20250813-ltc2495-v2-4-bbaf20f6ba07@gmail.com>
-In-Reply-To: <20250813-ltc2495-v2-4-bbaf20f6ba07@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 13 Aug 2025 19:16:06 +0200
-X-Gm-Features: Ac12FXwB2pfLJ3_CfCqa3_o4aGFcjsVTGB0AxYFsExVGDXl30AzmaBcEAb5oWQE
-Message-ID: <CAHp75Vdi8yjFoiDgtq_wSH4LWWzVdT2+Wm-S-W9Dh2jbrs+KLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] iio: adc: ltc2497: reorder ltc2497core_driverdata
- members to remove hole
-To: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Beguin <liambeguin@gmail.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-On Wed, Aug 13, 2025 at 6:54=E2=80=AFPM Yusuf Alper Bilgin
-<y.alperbilgin@gmail.com> wrote:
->
-> Reorder struct members from largest to smallest to eliminate a 7-byte
-> hole identified by the pahole tool, making the layout memory-optimal.
+=E5=9C=A8 2025-08-14=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 01:11 +0800=EF=BC=
+=8CIcenowy Zheng=E5=86=99=E9=81=93=EF=BC=9A
+> Current ccu_gate implementation does not easily allow gates to be
+> clock
+> parents because of the waste of struct clk_hw in struct ccu_gate;
+> however it's found that the padctrl0 apb clock gate seems to be
+> downstream of perisys-apb4-hclk, gating the latter w/o gating the
+> former
+> makes the padctrl0 registers inaccessible too.
+>=20
+> Fix this by refactor ccu_gate code, mimicing what Yao Zi did on
+> ccu_mux; and then assign perisys-apb4-hclk as parent of padctrl0 bus
+> gate.
 
-`pahole`
+Forgot to mention a easy test of this patchset:
 
-...
+Just install `gpioset` from `libgpiod` on a Lichee Pi 4A, plug a fan to
+its fan port, and run `gpioset 3 3=3D1`. The expected behavior is the fan
+starts to spin (because GPIO3_3 is the pin controlling the fan),
+however without this patchset Linux will fail to switch that pin.
 
-Cool, have you also checked the generated code with bloat-o-meter,
-i.e. does the new object file is bigger/smaller/the same size as the
-old one?
+>=20
+> This patchset depends on the display clock patchset at [1], although
+> a
+> rebasing to get rid of this dependency is possible.
+>=20
+> [1]
+> https://lore.kernel.org/linux-riscv/20250813072702.2176993-1-uwu@icenowy.=
+me/
+>=20
+> Icenowy Zheng (2):
+> =C2=A0 clk: thead: th1520-ap: describe gate clocks with clk_gate
+> =C2=A0 clk: thead: th1520-ap: fix parent of padctrl0 clock
+>=20
+> =C2=A0drivers/clk/thead/clk-th1520-ap.c | 385 +++++++++++++++------------=
+-
+> --
+> =C2=A01 file changed, 188 insertions(+), 197 deletions(-)
+>=20
 
-And make this patch with the one member shuffling from the previous one.
-
-
---=20
-With Best Regards,
-Andy Shevchenko
 
