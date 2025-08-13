@@ -1,100 +1,85 @@
-Return-Path: <linux-kernel+bounces-766632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B7AB24949
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:14:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE72AB24946
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBEE788061C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:13:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 383DB1BC10F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75ABC2FE59E;
-	Wed, 13 Aug 2025 12:13:26 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D172FE59D;
+	Wed, 13 Aug 2025 12:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ffRGwOX0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D1B2EA46D;
-	Wed, 13 Aug 2025 12:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B062EA46D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755087206; cv=none; b=clNzvcfZTbi5uZs3s/ZZITJilgoOKVjGIUuJW+Y8m2E2ZUibV9gXCqcltj+oQsZlqB2tegOvPmUmsH4LyXKFUITsJ48SjOxSALk1RRLqE7WBiE+vhV/RynTRyrhrRI0qCxJnqo1vw+wYdzkOO0NRuT27+8FLb+RqZH8L2CEOZT4=
+	t=1755087229; cv=none; b=oSHmsDx3OlklFn+bXmpllmsYLJ4mIE58ouoyA6X4zRwbvsNpaViFHDhIl7RRWQyxecx6SKVb4wpqdy7lb/jvWjykYgnAo2zcYlfXf16ZFQPxSohEZZxm/kxOSsSILz0Pk0jkR12+S7dMIfrTYVFAADys38uYbs5m+As2y+yA4WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755087206; c=relaxed/simple;
-	bh=MEsok+D521P7EFylUtWQLvUhqEWC0ipeQtwcspQ/WzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JSbaJewdvWh8VZzWiP9ztjcUE3nxuoKW4lrwdGAW3ZPbG4g64MqaqxjDDiNGY4ZAkgBOLiHsD390xZt7OioUkt830M4tN6UE+ZiOGuB0eo8d1SHQjbiQbQftiTp9xYgqaRai/C1I7bMeL9ZuvsmGGkWSu+hcIh6qr6lMveUGBsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E5E95443C9;
-	Wed, 13 Aug 2025 12:13:16 +0000 (UTC)
-Message-ID: <95d0aa18-0c09-4b00-824d-3078548ddfcd@ghiti.fr>
-Date: Wed, 13 Aug 2025 14:13:16 +0200
+	s=arc-20240116; t=1755087229; c=relaxed/simple;
+	bh=YRMUZMdrCI81xQhP38eNlaRhIFU7sGuS/mHAU4lyajc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cdD7eMk0yvKFbjcapmnrQ7CmGIWfOTHlUmetAcW76LJC2N275fFWSFxb59aSnrO5XkSJkgbHnJ5WSD493cX6+z/Mh9u7dvb5KplYcZgZhSWZ9i07zLSGVVaNeKL7uoITXzAC29NAol08Nqsn4X7J10jZe0qPDNwqM3WM4/cLQW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ffRGwOX0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE0CC4CEEB;
+	Wed, 13 Aug 2025 12:13:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755087228;
+	bh=YRMUZMdrCI81xQhP38eNlaRhIFU7sGuS/mHAU4lyajc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ffRGwOX0TD4yG5vj6NulVxBtbSeY6X+Bvb+sEgzMZG22pu8ZRpzLgnZ/d6j+08wXM
+	 H4lhClcV1AUW6Nk+Szf+irIaKOVkTWkR8z5Q3mTku2AeGFYPiiGAyyWuHtB0kHfWGq
+	 UMhdavpW86dCHzkCdvh1/ifFSRZ6gJLHlGrg8bc0=
+Date: Wed, 13 Aug 2025 14:13:45 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Nilawar, Badal" <badal.nilawar@intel.com>
+Cc: "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+	"Vivi, Rodrigo" <rodrigo.vivi@intel.com>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Ceraolo Spurio, Daniele" <daniele.ceraolospurio@intel.com>,
+	"Gupta, Anshuman" <anshuman.gupta@intel.com>
+Subject: Re: [PATCH 2/9] mei: late_bind: add late binding component driver
+Message-ID: <2025081346-shrank-wish-e85d@gregkh>
+References: <20250710150831.3018674-11-rodrigo.vivi@intel.com>
+ <20250710150831.3018674-13-rodrigo.vivi@intel.com>
+ <2025071611-decode-hastiness-df63@gregkh>
+ <CY5PR11MB63666310C54B48FB3624D9E0ED56A@CY5PR11MB6366.namprd11.prod.outlook.com>
+ <2025071603-guide-definite-70e3@gregkh>
+ <CY5PR11MB636646E936C800D689BFBEEBED56A@CY5PR11MB6366.namprd11.prod.outlook.com>
+ <2025071619-sterile-skiing-e64b@gregkh>
+ <CY5PR11MB6366AF03A73910CED71C7E37ED5BA@CY5PR11MB6366.namprd11.prod.outlook.com>
+ <7aa74159-a9a8-4ca7-9635-a806c57bf7f4@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] riscv, bpf: fix reads of thread_info.cpu
-To: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>,
- bpf@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@kernel.org>, Pu Lehui <pulehui@huawei.com>,
- Puranjay Mohan <puranjay@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250812090256.757273-2-rkrcmar@ventanamicro.com>
- <1fdaa939-d26c-454a-a722-7d0a590557b7@ghiti.fr>
- <DC0H1RZKZ3QR.82P8JXIL5NBJ@ventanamicro.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <DC0H1RZKZ3QR.82P8JXIL5NBJ@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeekudekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpeeuffefvdelteelteejhfejhedujeetteevtddvvddthfeiteffledvffeggfeiieenucffohhmrghinhepihhnfhhrrgguvggrugdrohhrghenucfkphepudelfedrfeefrdehjedrudelleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleefrdeffedrheejrdduleelpdhhvghloheplgduledvrdduieekrddvvddruddtudgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepvdefpdhrtghpthhtoheprhhkrhgtmhgrrhesvhgvnhhtrghnrghmihgtrhhordgtohhmpdhrtghpthhtohepsghpfhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepm
- hgrrhhtihhnrdhlrghusehlihhnuhigrdguvghvpdhrtghpthhtohepvgguugihiiekjeesghhmrghilhdrtghomhdprhgtphhtthhopehsohhngheskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7aa74159-a9a8-4ca7-9635-a806c57bf7f4@intel.com>
 
-Hi Radim,
+On Wed, Aug 13, 2025 at 03:21:09PM +0530, Nilawar, Badal wrote:
+> Hi Greg,
 
-On 8/12/25 15:09, Radim Krčmář wrote:
-> 2025-08-12T13:37:16+02:00, Alexandre Ghiti <alex@ghiti.fr>:
->> @Radim: This is the third similar bug, did you check all assembly code
->> (and bpf) to make sure we don't have anymore left or should I?
-> I looked at load/store instructions, including bpf, and focussed on
-> patterns where we access non-xlen sized data through an offset.
->
-> (Nothing else popped up, but I mostly used grep and cscope as I don't
->   know of any semantic tool, so my confidence levels are low.)
+<snip>
 
+For some reason this was in html format :(
 
-Ok thanks, I don't have any better idea than eye scrubbing so I'll take 
-another look to improve our confidence. One good thing is that now I 
-don't let them pass in reviews :)
+Also, please follow the rules that Intel kernel developers must follow,
+which means not using me as your first-line of review.  Please work with
+your internal developers on this first, before resubmitting.
 
-Thanks for noticing this class of bugs!
+thanks,
 
-Alex
-
-
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+greg k-h
 
