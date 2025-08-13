@@ -1,146 +1,87 @@
-Return-Path: <linux-kernel+bounces-766168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91707B24330
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:51:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F111B2432B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4EE558150B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:50:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F2A721D93
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1322DEA7D;
-	Wed, 13 Aug 2025 07:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="McGU4oFR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A2E2E9725;
+	Wed, 13 Aug 2025 07:50:22 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAA82D4B6F;
-	Wed, 13 Aug 2025 07:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824872D59E3;
+	Wed, 13 Aug 2025 07:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071407; cv=none; b=cZO3XlFu8uwL1LDNmMR0JG9Mq5G/qENsEMPUnVzm3kq2gLXN6iu9i/cbDAUxFoznsbeDT/0zfZij4pvZ7mHBRbLUgxeFr/eM+YtccoO9QuEg87tOGq4AOPLoKr9mVsrKozDtyGo0oe1FjH75OT9G2mRLbYMSHENQMGxW1gJonaY=
+	t=1755071422; cv=none; b=Ky0nOm+5FhTSUIHaa7dH+yXbd4A3g+94i2qISqf5rC198+tYYO+I3WAFhkHAdeJWIFNCZ5J8czvRLy7PHaH2v8Rw97noK5a40rokaQ/3Uy6IFOAkE9btkQTAniq2dUe9qBngDrTsA/ehy4M4gtQ90e16ylPdHDWMwfiRDBDl7xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071407; c=relaxed/simple;
-	bh=qflKKzsxeh62DKmEZ0kFSloy6cvOENKAOLB7/nti7tE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b34Wpk+DvqtqQn/kSAFpk0QwWmRk8w9h+PWsm9ycJqdXRead4Q+t5+Wpwq4RAMpwQvR4JgFvSjbm9Wyd7uBRkCSnAEj8/0lhYC8tCQ4Wf1B55ZYVSUysT5QMnK2kDVmP74zB8U0cRkQnPWiLVAJaBGn/Cutt+SEd7n5ZIvGC/u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=McGU4oFR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9B4C4AF0B;
-	Wed, 13 Aug 2025 07:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755071405;
-	bh=qflKKzsxeh62DKmEZ0kFSloy6cvOENKAOLB7/nti7tE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=McGU4oFROenBDz8M3ormS6YmSF463XidneJBObfJ/rDQUE5A3kZk4qAvoTbQR9RqA
-	 LG/Ts8b25T3QjMZIXefhBCl9tz+KX85U72Hiyhw/6/D1pBAlxrLznEUdQPLWQLQtNq
-	 sW9FIhlvbBfFVzVI/ESEJw++jpRi8vFWzHbOLn9SQTb9C6nAG49Jsaxd7cC9G2w5N6
-	 GVNKz/TIwUeC0KPpO4XSx+P+9Kw0VjnxXzN2vReCxYjVbk18gmFB7XyoIYLM3oL/Jz
-	 Vsgavig0yS+bt9LyyE3BX04b9KSYknFuFhrRAybnIByBCKHNg1CRuoH/GwO/E7gmTl
-	 bsqA9Oe2BbLLw==
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 1B596F40066;
-	Wed, 13 Aug 2025 03:50:04 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 13 Aug 2025 03:50:04 -0400
-X-ME-Sender: <xms:rEOcaPwpH6jsxg4WmH4rcN4nwc8q371Z1Dty_L9HTzcg9_OcaXmIzw>
-    <xme:rEOcaEZewtsXU9O0pEjLsCfeZflK3RZ73QHacRDd8aE7-52m3pvePvUSrJbTRjZ3v
-    wAgshGUGanS2h2Y-n4>
-X-ME-Received: <xmr:rEOcaJzvbW257D_ZcZc6zMiCcgZ-brsobVBFtULdCx1VaxeHlFkw0ABRpUlb>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeejieeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkefstddttddunecuhfhrohhmpefmihhrhihl
-    ucfuhhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtth
-    gvrhhnpedtieetueehudeluedvffeguedvfffgueehfeelueejhffhudegtdetfeeiledv
-    geenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkih
-    hrihhllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieeh
-    hedqvdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovh
-    drnhgrmhgvpdhnsggprhgtphhtthhopeefvddpmhhouggvpehsmhhtphhouhhtpdhrtghp
-    thhtoheprhhitghkrdhprdgvughgvggtohhmsggvsehinhhtvghlrdgtohhmpdhrtghpth
-    htohepvhgrnhhnrghpuhhrvhgvsehgohhoghhlvgdrtghomhdprhgtphhtthhopegthhgr
-    ohdrghgrohesihhnthgvlhdrtghomhdprhgtphhtthhopehsvggrnhhjtgesghhoohhglh
-    gvrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    sghpsegrlhhivghnkedruggvpdhrtghpthhtohepkhgrihdrhhhurghnghesihhnthgvlh
-    drtghomhdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthho
-    peihrghnrdihrdiihhgrohesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:rEOcaKiuviTk7n1zq0wJGw7BIqQfNvLfkF4dHRuC-qux6OGfzj36Uw>
-    <xmx:rEOcaIoIm_Yixx5yZv5E652V24rIQUz9Q7KxPaa9HEBRSzo877ogbQ>
-    <xmx:rEOcaJcwH6Q3OlyZh8HAvqXQEio1DeFOP1tSUEELwtg2qTj2Y6ylxg>
-    <xmx:rEOcaLcmS3ZVu7IFnSwVMXlqQC-xg11JTA2CAYirOwptq29rdiC-vA>
-    <xmx:rEOcaPedY08DOYOLtSuzjmWc5ZnQugGWfzrOtKG3lM8olODaWt6a6q2S>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 13 Aug 2025 03:50:02 -0400 (EDT)
-Date: Wed, 13 Aug 2025 08:49:59 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "Annapurve, Vishal" <vannapurve@google.com>, 
-	"Gao, Chao" <chao.gao@intel.com>, "seanjc@google.com" <seanjc@google.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>, 
-	"Huang, Kai" <kai.huang@intel.com>, "mingo@redhat.com" <mingo@redhat.com>, 
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, "Yamahata, Isaku" <isaku.yamahata@intel.com>
-Subject: Re: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
-Message-ID: <z6itjtzwv6pelozn6f2kp6k4s5baeodjlptrsccbvipbfzifuh@4opoeluu6anb>
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <d432b8b7cfc413001c743805787990fe0860e780.camel@intel.com>
- <sjhioktjzegjmyuaisde7ui7lsrhnolx6yjmikhhwlxxfba5bh@ss6igliiimas>
- <c2a62badf190717a251d269a6905872b01e8e340.camel@intel.com>
- <aJqgosNUjrCfH_WN@google.com>
- <CAGtprH9TX4s6jQTq0YbiohXs9jyHGOFvQTZD9ph8nELhxb3tgA@mail.gmail.com>
- <itbtox4nck665paycb5kpu3k54bfzxavtvgrxwj26xlhqfarsu@tjlm2ddtuzp3>
- <57755acf553c79d0b337736eb4d6295e61be722f.camel@intel.com>
+	s=arc-20240116; t=1755071422; c=relaxed/simple;
+	bh=jlkW2DR8frGKjTWGtgJ6wMVaeLTO3MJZ9rkIDe5MetU=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=U6Ou6VD1p0QTSkTw7Lr6EHcgAQxzsZhav8VYLxGeCC7yc2rXIXKIglR5+kBAVdtRH4sZ7Eq8g8AP9OdfOZ1VUS1IoISagRRkdSbjv7rDNtKNNJiG+KTgQahVPH//kYheqlFBL6eqQbFJ9Fk+ThNigIVIZ4/mv5HtQjAzWkOzQeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1um6FT-005auZ-1H;
+	Wed, 13 Aug 2025 07:50:16 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <57755acf553c79d0b337736eb4d6295e61be722f.camel@intel.com>
+From: "NeilBrown" <neil@brown.name>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "David Howells" <dhowells@redhat.com>,
+ "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Steve French" <sfrench@samba.org>,
+ "Namjae Jeon" <linkinjeon@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+ netfs@lists.linux.dev, ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/11] VFS: add dentry_lookup_killable()
+In-reply-to: <20250813041506.GZ222315@ZenIV>
+References: <>, <20250813041506.GZ222315@ZenIV>
+Date: Wed, 13 Aug 2025 17:50:16 +1000
+Message-id: <175507141618.2234665.4849620982329749562@noble.neil.brown.name>
 
-On Tue, Aug 12, 2025 at 03:12:52PM +0000, Edgecombe, Rick P wrote:
-> On Tue, 2025-08-12 at 09:04 +0100, kas@kernel.org wrote:
-> > > > E.g. for things like TDCS pages and to some extent non-leaf S-EPT pages,
-> > > > on-demand
-> > > > PAMT management seems reasonable.  But for PAMTs that are used to track
-> > > > guest-assigned
-> > > > memory, which is the vaaast majority of PAMT memory, why not hook
-> > > > guest_memfd?
-> > > 
-> > > This seems fine for 4K page backing. But when TDX VMs have huge page
-> > > backing, the vast majority of private memory memory wouldn't need PAMT
-> > > allocation for 4K granularity.
-> > > 
-> > > IIUC guest_memfd allocation happening at 2M granularity doesn't
-> > > necessarily translate to 2M mapping in guest EPT entries. If the DPAMT
-> > > support is to be properly utilized for huge page backings, there is a
-> > > value in not attaching PAMT allocation with guest_memfd allocation.
+On Wed, 13 Aug 2025, Al Viro wrote:
+> On Tue, Aug 12, 2025 at 12:25:06PM +1000, NeilBrown wrote:
+> > btrfs/ioctl.c uses a "killable" lock on the directory when creating an
+> > destroying subvols.  overlayfs also does this.
 > > 
-> > Right.
+> > This patch adds dentry_lookup_killable() for these users.
 > > 
-> > It also requires special handling in many places in core-mm. Like, what
-> > happens if THP in guest memfd got split. Who would allocate PAMT for it?
-> > Migration will be more complicated too (when we get there).
+> > Possibly all dentry_lookup should be killable as there is no down-side,
+> > but that can come in a later patch.
 > 
-> I actually went down this path too, but the problem I hit was that TDX module
-> wants the PAMT page size to match the S-EPT page size. And the S-EPT size will
-> recall.
+> Same objections re lookup_flags and it would be better to do that
+> at the same point where you convert the (btrfs and overlayfs?) callers.
+> 
 
-With DPAMT, when you pass page pair to PAMT.ADD they will be stored in the
-PAMT_2M entry. So PAMT_2M entry cannot be used as a leaf entry anymore.
+I had trouble deciding whether it would be better to merge the patches
+for easy review, or keep them separate in case they needed to go through
+different trees.. I guess I decided wrongly.
 
-In theory, TDX module could stash them somewhere else, like generic memory
-pool to be used for PAMT_4K when needed. But it is significantly different
-design to what we have now with different set of problems.
-
--- 
-Kiryl Shutsemau / Kirill A. Shutemov
+NeiBrown
 
