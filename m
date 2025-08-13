@@ -1,67 +1,70 @@
-Return-Path: <linux-kernel+bounces-766502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86ECB2475D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:34:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 654EFB2476C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6649F587D5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E47FD587F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A202F6575;
-	Wed, 13 Aug 2025 10:33:18 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18C92F6572;
+	Wed, 13 Aug 2025 10:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ZYzT0yNr"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433A12F3C19
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897EB2F4A1F;
+	Wed, 13 Aug 2025 10:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755081198; cv=none; b=kUAVNAvxO2K8z4qrA6OKIIaa7PDRAcwRZ3Scw6sH1i97z8qHcsQ8D9pNIFukX/PclNZ2asblJNj0DUN5JVJpmv5tzPANwZDhQYuvrbftVIOYKw2ylVWDDh6giduKPaDl/xuCxIPU+MMHH2EdIBpt3a9XPJQ0tyGy4m0etldqB4k=
+	t=1755081277; cv=none; b=n70dH+a6ZhxoiKGYTxZe55sMPBV03/euQHHMXYusf8Ymt6w5L2Jl56ZdABzQALqgtI5y5AgP7JAU4qvfo/EdRnCYqS42cLsIk6kvRN1ON1ITlRP9TvzZs3JU/ZBgheqFa6B+LHlAn0WluzCKSoDsu2Fl9TRmi0i59/5Aygx8ufY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755081198; c=relaxed/simple;
-	bh=IycRZzbtPjcoBJRiQajt7RaNrbxPeE1qygAH2mM/dr0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dK8v/eE/ftA740/wb3kHLB+s+2ZnP9RJ+pzK9gatgnwItg/nr3DPqk1rQL+orAYF38qYqYJFXqscjQ1wWVfrVovut/N1XQFrHeTULQZ5thE/3YSwdhphVFPUK+DE/TQrVSe4Iacljly5ElxlAOGfMxDWaU9VD7vK79NRlIkeHbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1um8nA-0005sv-BR; Wed, 13 Aug 2025 12:33:12 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1um8n9-0004gi-0X;
-	Wed, 13 Aug 2025 12:33:11 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1um8n9-00FzM9-0I;
-	Wed, 13 Aug 2025 12:33:11 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Avri Altman <Avri.Altman@sandisk.com>
-Subject: [PATCH v7 2/2] mmc: core: add undervoltage handler for MMC/eMMC devices
-Date: Wed, 13 Aug 2025 12:33:08 +0200
-Message-Id: <20250813103309.3810728-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250813103309.3810728-1-o.rempel@pengutronix.de>
-References: <20250813103309.3810728-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1755081277; c=relaxed/simple;
+	bh=iRbkjK7yfKoB6p9YpxYiCHv3PRSbvUknBU0PCEu5ziA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ldko+C9y1JVbNdzOwzI5kc4N+lRJ2qm7KNu2hAi0Du1gM4g2SnflGC/CDSESgG8OeNfxXyFcw4yPUG2cp/1ZlSwjJYecLOL6JG917OKOyWlAwDRU88MUShuIZ5dtFtZizQkU8ZoR+wn8wwFdY/F8MVy4fSReJvwHYuot1U4idyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ZYzT0yNr; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755081275; x=1786617275;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iRbkjK7yfKoB6p9YpxYiCHv3PRSbvUknBU0PCEu5ziA=;
+  b=ZYzT0yNr8QBUrR90GS84EqYPfbWXbtzLXQ//G8mJJ4zJ1xj7FYahljol
+   GvBOVn+OnhaLO3h5l8p3UhL+okG29k4HQbihTF1WwZdFndlDBZ8at4lUH
+   RsTxA3yHoEsP2bvVRZQqaqA4jr/KP239+cFPRIgaoEzY7Bkzd9M0W3+63
+   55pvt5hLYW1f8VvFdTA1b4yM5zs5YZ7bHZM2YPxwNlOfALeZEIYJD04K6
+   8PBhrEuViIc0M+/JpJQhBU1kU3Bx4A/6/WroKcAlLK1jXNBTaL49KgT/B
+   FSD6W63g5xs5ZnHpn1j/yHXB1q99N/YQ3sGUAJpjoYPbJEhemFMTYiCq/
+   w==;
+X-CSE-ConnectionGUID: hStUVHZhSPyX69GTAUHirw==
+X-CSE-MsgGUID: obYHH2/DQh2crVmfHQgXRA==
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="44602921"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Aug 2025 03:34:34 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 13 Aug 2025 03:34:03 -0700
+Received: from che-ll-i17164.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Wed, 13 Aug 2025 03:34:01 -0700
+From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Parthiban
+ Veerasooran" <parthiban.veerasooran@microchip.com>
+Subject: [PATCH net 0/2] Fixes on the Microchip's LAN865x driver
+Date: Wed, 13 Aug 2025 16:03:53 +0530
+Message-ID: <20250813103355.70838-1-parthiban.veerasooran@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,165 +72,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
-Add infrastructure to handle regulator undervoltage events for MMC/eMMC
-cards. When an undervoltage is detected, the new handler performs a
-controlled emergency suspend using a short power-off notification,
-skipping the cache flush to maximize the chance of a safe shutdown.
-After the operation, the card is marked as removed to prevent further
-I/O and possible data corruption.
+This patch series includes two bug fixes for the LAN865x Ethernet MAC-PHY
+driver:
 
-This is implemented by introducing MMC_POWEROFF_UNDERVOLTAGE to the
-mmc_poweroff_type enum and refactoring the suspend logic into an
-internal __mmc_suspend() helper that allows the caller to skip the cache
-flush if required. The undervoltage handler is registered as a bus
-operation and invoked from the core undervoltage path.
+1. Fix missing transmit queue restart on device reopen
+   This patch addresses an issue where the transmit queue is not restarted
+   when the network interface is brought back up after being taken down
+   (e.g., via ip or ifconfig). As a result, packet transmission hangs
+   after the first down/up cycle. The fix ensures netif_start_queue() is
+   explicitly called in lan865x_net_open() to properly restart the queue
+   on every reopen.
 
-If power-off notification is not supported by the card, the handler
-falls back to sleep or deselecting the card.
+2. Fix missing configuration for LAN865x Rev.B0/B1 hardware
+   This patch applies a required configuration for LAN865x silicon
+   revisions B0 and B1, as specified in Microchip Application Note AN1760.
+   Without this fix, affected hardware may not initialize or function
+   correctly. The patch programs register 0x10077 with the value 0x0028
+   during initialization, ensuring compatibility with these hardware
+   revisions.
 
-Additionally, update the shutdown path to avoid redundant shutdown
-steps if the card is already removed
+Both patches address issues introduced with the initial driver support and
+are marked with the appropriate Fixes: tag.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v7:
-- Squash undervoltage suspend preparation and handler into one patch.
-- Use mmc_card_removed() in shutdown path instead of host->undervoltage.
-- Remove redundant card presence check in undervoltage handler.
-changes v6:
-- Refactor suspend logic: move cache flush skipping during undervoltage
-  to a separate, preceding commit.
-- update commit message
-changes v5:
-- Rebased on top of patch introducing enum mmc_poweroff_type
-- Updated call to __mmc_suspend() to use MMC_POWEROFF_UNDERVOLTAGE
-- Dropped __mmc_resume() helper, as it is no longer needed
-- Updated commit message to reflect API change and code removal
-changes v4:
-- Drop HPI step.
-changes v3:
-- reword commit message.
-- add comments in the code
-- do not try to resume sleeping device
----
- drivers/mmc/core/mmc.c | 70 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 7dc0a9339c5e..03b9a5acafd1 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -36,6 +36,7 @@
- enum mmc_poweroff_type {
- 	MMC_POWEROFF_SUSPEND,
- 	MMC_POWEROFF_SHUTDOWN,
-+	MMC_POWEROFF_UNDERVOLTAGE,
- 	MMC_POWEROFF_UNBIND,
- };
- 
-@@ -2132,9 +2133,15 @@ static int _mmc_suspend(struct mmc_host *host, enum mmc_poweroff_type pm_type)
- 	if (mmc_card_suspended(host->card))
- 		goto out;
- 
--	err = _mmc_flush_cache(host);
--	if (err)
--		goto out;
-+	/*
-+	 * For the undervoltage case, we care more about device integrity.
-+	 * Avoid cache flush and notify the device to power off quickly.
-+	 */
-+	if (pm_type != MMC_POWEROFF_UNDERVOLTAGE) {
-+		err = _mmc_flush_cache(host);
-+		if (err)
-+			goto out;
-+	}
- 
- 	if (mmc_card_can_poweroff_notify(host->card) &&
- 	    mmc_host_can_poweroff_notify(host, pm_type))
-@@ -2212,6 +2219,13 @@ static int mmc_shutdown(struct mmc_host *host)
- {
- 	int err = 0;
- 
-+	/*
-+	 * In case of undervoltage, the card will be powered off (removed) by
-+	 * _mmc_handle_undervoltage()
-+	 */
-+	if (!host->card || mmc_card_removed(host->card))
-+		return 0;
-+
- 	/*
- 	 * If the card remains suspended at this point and it was done by using
- 	 * the sleep-cmd (CMD5), we may need to re-initialize it first, to allow
-@@ -2302,6 +2316,55 @@ static int _mmc_hw_reset(struct mmc_host *host)
- 	return mmc_init_card(host, card->ocr, card);
- }
- 
-+/**
-+ * _mmc_handle_undervoltage - Handle an undervoltage event for MMC/eMMC devices
-+ * @host: MMC host structure
-+ *
-+ * This function is triggered when an undervoltage condition is detected.
-+ * It attempts to transition the device into a low-power or safe state to
-+ * prevent data corruption.
-+ *
-+ * Steps performed:
-+ * - Perform an emergency suspend using EXT_CSD_POWER_OFF_SHORT if possible.
-+ *    - If power-off notify is not supported, fallback mechanisms like sleep or
-+ *      deselecting the card are attempted.
-+ *    - Cache flushing is skipped to reduce execution time.
-+ * - Mark the card as removed to prevent further interactions after
-+ *    undervoltage.
-+ *
-+ * Note: This function does not handle host claiming or releasing. The caller
-+ *	 must ensure that the host is properly claimed before calling this
-+ *	 function and released afterward.
-+ *
-+ * Returns: 0 on success, or a negative error code if any step fails.
-+ */
-+static int _mmc_handle_undervoltage(struct mmc_host *host)
-+{
-+	struct mmc_card *card = host->card;
-+	int err;
-+
-+	/*
-+	 * Perform an emergency suspend to power off the eMMC quickly.
-+	 * This ensures the device enters a safe state before power is lost.
-+	 * We first attempt EXT_CSD_POWER_OFF_SHORT, but if power-off notify
-+	 * is not supported, we fall back to sleep mode or deselecting the card.
-+	 * Cache flushing is skipped to minimize delay.
-+	 */
-+	err = _mmc_suspend(host, MMC_POWEROFF_UNDERVOLTAGE);
-+	if (err)
-+		pr_err("%s: undervoltage suspend failed: %pe\n",
-+		       mmc_hostname(host), ERR_PTR(err));
-+
-+	/*
-+	 * Mark the card as removed to prevent further operations.
-+	 * This ensures the system does not attempt to access the device
-+	 * after an undervoltage event, avoiding potential corruption.
-+	 */
-+	mmc_card_set_removed(card);
-+
-+	return err;
-+}
-+
- static const struct mmc_bus_ops mmc_ops = {
- 	.remove = mmc_remove,
- 	.detect = mmc_detect,
-@@ -2314,6 +2377,7 @@ static const struct mmc_bus_ops mmc_ops = {
- 	.hw_reset = _mmc_hw_reset,
- 	.cache_enabled = _mmc_cache_enabled,
- 	.flush_cache = _mmc_flush_cache,
-+	.handle_undervoltage = _mmc_handle_undervoltage,
- };
- 
- /*
+Parthiban Veerasooran (2):
+  microchip: lan865x: fix missing netif_start_queue() call on device
+    open
+  microchip: lan865x: fix missing configuration for Rev.B0/B1 as per
+    AN1760
+
+ .../net/ethernet/microchip/lan865x/lan865x.c   | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+
+base-commit: fdbe93b7f0f86c943351ceab26c8fad548869f91
 -- 
-2.39.5
+2.34.1
 
 
