@@ -1,117 +1,136 @@
-Return-Path: <linux-kernel+bounces-766670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB92BB249C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:50:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BBDB24B21
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7AA43B8702
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:47:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EB1816EE98
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015412E542B;
-	Wed, 13 Aug 2025 12:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433662EE294;
+	Wed, 13 Aug 2025 13:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AtzNDVBj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M18xxNYe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB78778F3E;
-	Wed, 13 Aug 2025 12:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBE472612;
+	Wed, 13 Aug 2025 13:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089270; cv=none; b=YfxKEH1ohSpYmAGH8+42uea9vRxIeuWzeK+6vavhOrp4Ifjr4B5dZ/oLwuC+UOt7FsdAIX83aXuUbsHnWKTRUiObcquMejlX//UrRq7doTEv7tTB8nQJ5LxdXv4wHFLCkJruCG2kFTXve7BsuQF3DzBIfvSRh00O5IQywI4LNFQ=
+	t=1755092824; cv=none; b=kJpylb+WQLP5103vgoCsB58i0Jl6os8Pe2LJda3Rn8CGELSZylSFnBEnOmO6UjCHlfITpQrbqNfXpUpVPZRh4lvcM8aHR1ikli1fLyekLMzZ3dN33WTIDehHFll2ZiNcKxV+89fgg28xwf7/LGYWG2EqhNfZDDSws50QdJXGato=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089270; c=relaxed/simple;
-	bh=dPsVq0VpMR/3HvlCxmqumTs5UZtt/X4uN6+C0RcD/Pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pVWMkl5r0SPUoIwixKRvfo74gpERO31MAMpHZyLl1psBiYudoyEZKBXw7AkFqbINjEU5oFH43eQ+GF/PH0Fy6Eum17+9OB3aQyxcHcupw8UvFrR8pXIH9pzvqvcrS/OqsIMdxEvTIB7A2dMydxxIn6dJUwffzFAcQroEB+Libus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AtzNDVBj; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755089269; x=1786625269;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dPsVq0VpMR/3HvlCxmqumTs5UZtt/X4uN6+C0RcD/Pk=;
-  b=AtzNDVBjCGV5pDNTBGXzyO8xF0ZgUBYnbONO56lRv2BkYgScMYe6VfA+
-   89PcXljvcSyXgVgOC4l6hvj4S/fnNtaETLsDYtDNd17jKFlkpVd4GGNxR
-   L/nJzR2orjsdm3Lf8t6MZ/mPfTCCNP5dADrFAQxewvPuGh63WOoVUKugx
-   xTM24KP6Ez7PlU11M+Z3tRkr4jADd/r5ezR6bsoX8/hHYVBbaFS5QTWiN
-   gr2T/83f3oa5iN5rJUI3Gj/D6MhzZR/fb5ZPM8gfhCTalEZz6aONHh/My
-   2tMc+4CbmeBrB/Kd4yA2geGpfUJYVLxRGqy10pk3NVIA0rJbd95bY8sQ1
-   w==;
-X-CSE-ConnectionGUID: /ZwfJHnUSXekwxDKwQSzaQ==
-X-CSE-MsgGUID: KvUwrgqxRUqRQBY83+V1/g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="67983849"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="67983849"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 05:47:48 -0700
-X-CSE-ConnectionGUID: Q7t7L81FT92tTi0mGLpNJw==
-X-CSE-MsgGUID: 0gYCDJ+tSAG8832oxYL6hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="190172181"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 05:47:45 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1umAtL-00000005RDE-0azf;
-	Wed, 13 Aug 2025 15:47:43 +0300
-Date: Wed, 13 Aug 2025 15:47:42 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@kernel.org>,
-	Hans de Goede <hansg@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: gpio: add documentation about using
- software nodes
-Message-ID: <aJyJbmNY_21_PMU0@smile.fi.intel.com>
-References: <b52lpk2vqr4asp5iaqwcvcac3b6gen52rbu4cwy5kcnxszc3fj@6i77jr53kzje>
- <5cd1c94c-e122-45e6-8333-9eff3ae6303e@infradead.org>
- <csgmuaw2ret5qamcuwyenhw3sgb7hbso5dei7lshrz4pdga2tp@5mbv4an3q5cu>
- <b666c4ec-3aee-4917-86ed-bd65b5b7e051@infradead.org>
- <mztcugybpsp47mmw4253djjuw5bpqlrvyb57youx2jt7gqkyj3@tifd34ke76i5>
+	s=arc-20240116; t=1755092824; c=relaxed/simple;
+	bh=skTD0SI9AspNlQ8bU333//dSbcnveCgVWNlXOLVrO7c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BnrNzdLcQb6ZjK/gjHWnaLjrc5Fg/uWeSsQoAgmXdWH9GStEg2Xzgs+8OIpU0xSByrC2B1OzJKPZXyq1FaWri5JvgQVu/JkWxhRDWiUVy3UB4BmxT+8UXp8v9G/ZO+ewI34nv/fE+ktGjNm/AszNskIN4170OW9IhA1JReUOBjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M18xxNYe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87871C4CEF5;
+	Wed, 13 Aug 2025 13:47:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755092824;
+	bh=skTD0SI9AspNlQ8bU333//dSbcnveCgVWNlXOLVrO7c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=M18xxNYePA2ppj61JQedKnSEcULx0Cbsb6JDG4xh6cNaw077TVzJgecCyFohttpHj
+	 1tPTL5MS9fQYth99e+6CXxPlLpgA/0jiskAJrzIcMFEruapXaSMwb/Y1oXNdFwiSb1
+	 j07UINH4E6YUZFwuRAYyizwo1GtaRIMttrupNVEFOot+hm8FmRSAjeu1Wan/mrVlU9
+	 YqHRPpNiRb/xzR8qmIkB+p0SujAnXbfRzVlxzIdLBAOVCqUmxcRAzv4jm1P9OJU8Fs
+	 ehF9OE/OMdJ7riJOxadaIU/NksaVWKJl0qXeV1aZKAQPBnFjTkaz9u67muFDWOv4ms
+	 +8+MV+bUznEFw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
+ <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 11/15] rnull: enable configuration via `configfs`
+In-Reply-To: <aJw-XWhDahVeejl3@google.com>
+References: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org>
+ <20250812-rnull-up-v6-16-v4-11-ed801dd3ba5c@kernel.org>
+ <mACGre8-fNXj9Z2EpuE3yez_o2T-TtqrdB6HB-VkO0cuvhXsqzECKWMhsz_c43NJUxpsnVpO_U0oLbaaNhXqRQ==@protonmail.internalid>
+ <aJw-XWhDahVeejl3@google.com>
+Date: Wed, 13 Aug 2025 14:47:54 +0200
+Message-ID: <87cy8zfkw5.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mztcugybpsp47mmw4253djjuw5bpqlrvyb57youx2jt7gqkyj3@tifd34ke76i5>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain
 
-On Tue, Aug 12, 2025 at 09:10:23AM -0700, Dmitry Torokhov wrote:
-> On Mon, Aug 11, 2025 at 10:37:04PM -0700, Randy Dunlap wrote:
-> > On 8/11/25 10:17 PM, Dmitry Torokhov wrote:
-> > > On Mon, Aug 11, 2025 at 05:46:02PM -0700, Randy Dunlap wrote:
-> > >> On 8/11/25 2:30 PM, Dmitry Torokhov wrote:
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-...
+> On Tue, Aug 12, 2025 at 10:44:29AM +0200, Andreas Hindborg wrote:
+>> Allow rust null block devices to be configured and instantiated via
+>> `configfs`.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>
+> Overall LGTM, but a few comments below:
+>
+>> diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/configfs.rs
+>> new file mode 100644
+>> index 000000000000..8d469c046a39
+>> --- /dev/null
+>> +++ b/drivers/block/rnull/configfs.rs
+>> @@ -0,0 +1,218 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +use super::{NullBlkDevice, THIS_MODULE};
+>> +use core::fmt::Write;
+>> +use kernel::{
+>> +    block::mq::gen_disk::{GenDisk, GenDiskBuilder},
+>> +    c_str,
+>> +    configfs::{self, AttributeOperations},
+>> +    configfs_attrs, new_mutex,
+>
+> It would be nice to add
+>
+> 	pub use configfs_attrs;
+>
+> to the configfs module so that you can import the macro from the
+> configfs module instead of the root.
 
-> > >> Thanks for the additional documentation.
+OK, I'll do that.
 
-+1, thank you for this, it's really helpful to avoid mistakes and confusion during reviews.
+>
+>> +            try_pin_init!( DeviceConfig {
+>> +                data <- new_mutex!( DeviceConfigInner {
+>
+> Extra spaces in these macros.
 
-...
+Thanks. I subconsciously like the space in that location, so when
+rustfmt is bailing, I get these things in my code.
 
-> OK, I  was trying to make html output look pretty. If we want to favor
-> .rst readability that is fine, I'll drop the :c:*: annotations.
+>> +        let power_op_str = core::str::from_utf8(page)?.trim();
+>> +
+>> +        let power_op = match power_op_str {
+>> +            "0" => Ok(false),
+>> +            "1" => Ok(true),
+>> +            _ => Err(EINVAL),
+>> +        }?;
+>
+> We probably want kstrtobool here instead of manually parsing the
+> boolean.
 
-I'm with Randy on this, let's try to make the text (source reST file) less noisy.
+Yea, I was debating on this a bit. I did want to consolidate this code,
+but I don't particularly like ktostrbool. But I guess in the name of
+consistency across the kernel it is the right choice.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I'll add it to next spin.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
 
 
