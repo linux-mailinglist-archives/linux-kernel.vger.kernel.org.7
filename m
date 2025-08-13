@@ -1,102 +1,130 @@
-Return-Path: <linux-kernel+bounces-766948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43E1AB24D1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:19:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8932FB24D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45393A4940
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2D49E0085
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0472F6591;
-	Wed, 13 Aug 2025 15:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="GhwELWec"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5352FE59F;
+	Wed, 13 Aug 2025 15:11:57 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0162E62B0;
-	Wed, 13 Aug 2025 15:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9778F2FA0F9;
+	Wed, 13 Aug 2025 15:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097900; cv=none; b=YDmJE1XoBYRJni05+1/ZJdoA8lOOy2uBR1fKz397vkN5y1/TLULd2KOqHPhXTJzbdgFijykpZu85h9barl98MojQ+xIPW9sUksCv0qtL0oJmQjMPmul7Y0oB4YnkaMBHRLhhjJZGSzDiCphNAbhcTXUrWTawUOPiv1NmQrtPwF8=
+	t=1755097917; cv=none; b=Yf631rZqrSu1NzzGsF9w9R6oiUy1Fevo6BWBRXvJLQ1HANZaojkv/SQ5GMqfUvUuO5VmcWtXgGAsZIrfLEljbmqCflrrf5qEd8hBslC5EryAvmEgyfmbu5iiO5JueeqCRj4nNAsO6AfZVpmhbWAwYqcwhBlFUh2TtsxEEA4nuYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097900; c=relaxed/simple;
-	bh=Ye8Jm7fIId7BXsl1A0b32tlcCGzocCJI2em4ZIJ0umU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CX+asvFryyTSd4T5Jj+4mMD2njhDySZD/sLidtIuv09mEDoC7BY/vNvu4z8CrznHnwbGEOFtAnV2xGD7LhBzEdypuohSuazsIv2YYZgSq7NRFXqGx9IhtYBdsyl0pEZEA9geF8tUj+YQP6I9D8SSKrd4X3Mkz4ra0D3d+hfEHxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=GhwELWec; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 63AD7A061F;
-	Wed, 13 Aug 2025 17:11:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=rNKKXxK3P24jwoIEtT+P
-	8L73dlGuPGKm5hmRD8zmlCs=; b=GhwELWec6dChTfssS6ZlxRQM/JsDcZG2MQAz
-	3LqA3VnhCkgYaxF8VI3uZLy5zBLXdZY2WbIn5ehRc76dVH3QaB30Kf1sxnJz4JB/
-	0OjOkod2zRuBAF66hEQj0CPrvisnCdS3XBEh1wRCbRThtUIVR/EIgCW1sZdHNXNQ
-	VICPbcwIkTaE4ePoxvlB/VroUPyvhj7AmPeAfgNOTSpnks4hRRv1kqG0TklOVb1O
-	yXODS6Keq1L5q1yGcnuTVexr/tLU2Q1y7ou00av8G0L5ul4qdxvLJH2WOgOoINih
-	44yEDbIhiKIgI9eUWDSZsxl8pvpbyHEGDiLQ6NxVsKVrVh8ewSr5zO5WinMltcLv
-	P2ubxLeumsokN6iVjwc5SlaCUkFPr3YGrxR0imLKDn4dZ8VT+GRudc/5QRTCLj7H
-	/GCCy6F3wmxDP03pDiQoiZV84H8/R4uUMQtUyQOt1FaFxzdpLINUqOAhPf4vSxKd
-	Z2g8dOO0G8efXcmgYzjiSVvIVMP4dd/4AyRxNwNknauaoOa45aW9cypveDMnlcvy
-	scKFVA1gXA729gBxFddEA4oMX8PbkYUynn9/lDC6jE4OvWPdrXDUA/V8wjULe0Yc
-	/MekLncNFC7niwoeJGWg2RAJ1cQRnvt9PuU9s52PQzKvJZ9frLT3msiysDRQVXpO
-	vECn6GQ=
-Message-ID: <58709258-9154-4ec1-b64c-5be161b061e8@prolan.hu>
-Date: Wed, 13 Aug 2025 17:11:32 +0200
+	s=arc-20240116; t=1755097917; c=relaxed/simple;
+	bh=egebn/Z7HfdZN+dJPK5iK0KCklzEXZlmgN5eWex9MhU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p9BDUMshjosInL0BWBQyow91nS/t7aTg84IBrsL9+qLTr5QZ3FSwf0xXI4H7UGEeWCMfBa5NX6Lb5W7BV3pvTe4aIWhwcdvtP7TymbkgNRZwuhcbUFMcGgtlnkfsp35fVOOk7gSscUqQEa9djA5B9q/G8whG9YGrz7H0J3T3lTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2Bbr3D8mz6L53R;
+	Wed, 13 Aug 2025 23:09:12 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8F22B1404C4;
+	Wed, 13 Aug 2025 23:11:53 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 17:11:53 +0200
+Date: Wed, 13 Aug 2025 16:11:51 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
+Subject: Re: [PATCH V2 10/20] nvdimm/region_label: Preserve cxl region
+ information from region label
+Message-ID: <20250813161151.00006d59@huawei.com>
+In-Reply-To: <20250730121209.303202-11-s.neeraj@samsung.com>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121235epcas5p4494147524e77e99bc16d9b510e8971a4@epcas5p4.samsung.com>
+	<20250730121209.303202-11-s.neeraj@samsung.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ARM: dts: imx6-aristainetos2: Replace license text
- comment with SPDX identifier
-To: Heiko Schocher <hs@denx.de>, Rob Herring <robh@kernel.org>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	"Pengutronix Kernel Team" <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>
-CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	"Erika Unter" <e.unter@denx.de>
-References: <20250709-abb-dts-lic-v2-1-adc5e4781f65@prolan.hu>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20250709-abb-dts-lic-v2-1-adc5e4781f65@prolan.hu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E617765
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Heiko,
+On Wed, 30 Jul 2025 17:41:59 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-On 2025. 07. 09. 9:28, Bence Csókás wrote:
-> Replace verbatim license text with a `SPDX-License-Identifier`.
+> Preserve region information from region label during nvdimm_probe. This
+> preserved region information is used for creating cxl region to achieve
+> region persistency across reboot.
 > 
-> The comment header mis-attributes this license to be "X11", but the
-> license text does not include the last line "Except as contained in this
-> notice, the name of the X Consortium shall not be used in advertising or
-> otherwise to promote the sale, use or other dealings in this Software
-> without prior written authorization from the X Consortium.". Therefore,
-> this license is actually equivalent to the SPDX "MIT" license (confirmed
-> by text diffing).
-> 
-> Cc: Heiko Schocher <hs@denx.de>
-> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
 
-Do you agree with this change?
+See below.
 
-Bence
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 064a945dcdd1..bcac05371f87 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -473,6 +473,47 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
+>  	return 0;
+>  }
+>  
+> +int nvdimm_cxl_region_preserve(struct nvdimm_drvdata *ndd)
+> +{
+> +	struct nvdimm *nvdimm = to_nvdimm(ndd->dev);
+> +	struct cxl_pmem_region_params *params = &nvdimm->cxl_region_params;
+> +	struct nd_namespace_index *nsindex;
+> +	unsigned long *free;
+> +	u32 nslot, slot;
+> +
+> +	if (!preamble_current(ndd, &nsindex, &free, &nslot))
+> +		return 0; /* no label, nothing to preserve */
+> +
+> +	for_each_clear_bit_le(slot, free, nslot) {
+> +		struct nd_lsa_label *nd_label;
+> +		struct cxl_region_label *rg_label;
+> +		uuid_t rg_type, region_type;
+> +
+> +		nd_label = to_label(ndd, slot);
+> +		rg_label = &nd_label->rg_label;
+> +		uuid_parse(CXL_REGION_UUID, &region_type);
+> +		import_uuid(&rg_type, nd_label->rg_label.type);
+> +
+> +		/* REVISIT: Currently preserving only one region */
+
+In practice, is this a significant issue or not?  I.e. should we not
+merge this series until this has been revisited?
+
+> +		if (uuid_equal(&region_type, &rg_type)) {
+> +			nvdimm->is_region_label = true;
+> +			import_uuid(&params->uuid, rg_label->uuid);
+> +			params->flags = __le32_to_cpu(rg_label->flags);
+> +			params->nlabel = __le16_to_cpu(rg_label->nlabel);
+> +			params->position = __le16_to_cpu(rg_label->position);
+> +			params->dpa = __le64_to_cpu(rg_label->dpa);
+> +			params->rawsize = __le64_to_cpu(rg_label->rawsize);
+> +			params->hpa = __le64_to_cpu(rg_label->hpa);
+> +			params->slot = __le32_to_cpu(rg_label->slot);
+> +			params->ig = __le32_to_cpu(rg_label->ig);
+> +			params->align = __le32_to_cpu(rg_label->align);
+> +			break;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
 
 
