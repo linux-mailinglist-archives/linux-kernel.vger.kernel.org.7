@@ -1,231 +1,229 @@
-Return-Path: <linux-kernel+bounces-766308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55993B244E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:03:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D074B244E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC697188F822
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:03:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11633AED54
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B512D2D5A14;
-	Wed, 13 Aug 2025 09:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA0D2F068A;
+	Wed, 13 Aug 2025 09:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IG37BMA3"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fdNaJdSH"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EC72ECEAC
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755075797; cv=none; b=glpKFc0oualXTBtXnr9lC+gyNbNoY972S1dI9mdzC5i0LavR2tPd/2JklWHFcPL1ZPxm+FtXlIY/XevvxncPl9whooI3jVLKh7bAXQjMRDY+FKzzSoCkJjmyI1tkP1/FTpHWo7wJLJE57UoE7QWZ/UmI20G7t9x3+Sh8sgKWN+4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755075797; c=relaxed/simple;
-	bh=EUZaSgDMayOYr2r4e5x/jKd00oZtPeRfPNvfJXgc+34=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BJLvwyvNPR1/RUEV+5/ggvNtdsklt8UQq8JnhpFQ3RoelWGWsa1g9Xp6My4m1F9p5QnTLX5FHpxELlERFEDDOYi2HSVABzSVhQPFMIaogUWPrL8qPh7wWVPrtgf9XlygUmnbvn0IGC2U3hTtl7ulGo6AL+5NhALDnc8KYn6Zd8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IG37BMA3; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-53949f3ed30so2558590e0c.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:03:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755075794; x=1755680594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=voNOIsNIDIOSY89DvHxjFqypSpnZL2H3uOxQi9alac4=;
-        b=IG37BMA32iKPMIr0385mz5qbaXWqdehbpEOnNyn6Y+h3eS2kz8JBg5q15DZ/GwRYsP
-         huYsWE9AsayMjDeXtmpwEdxMd4c0dkEkc/QiX+JwkqNG+eaTzhArR9pYVlgoPH2EIGJn
-         +JDgf0oU5mmusuBzZXEmjraOkKqNDh6exsAzrJB7uDQH8y/gyE5aXLucD9vQnMGSZxPr
-         +bt5lz/A6dveXSXXuXoL7D1tOykNNtwZK1bU5xvbZxMLPj19dyLRlqot4EG7nWpFC990
-         JLFh3xxIVIKUj+EWvOp/Z9SJ22AD5+kdur9hhP29x81cb2JMUX8ghgarNINIKFzyxdCW
-         CtJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755075794; x=1755680594;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=voNOIsNIDIOSY89DvHxjFqypSpnZL2H3uOxQi9alac4=;
-        b=SFS14vIz1SHsWD0Tygp8MlHPOnA0il/d6bU1SOwaR2W0baX3SmIq66rBWyYTzsA6Z2
-         BMAczyss5t0CHdvycMRrMAzec7/YcJlE8+VLt6Oh+VHJ6Lc2IToHX8jsom/r9Gt2Nzc+
-         744WfKbHFEn4Qj4Gq6NUZaI/ezyGos8txhJL4ZtcGKbidrmCvoYgRAkNDeIvBYzrvPZo
-         MlvBWF9O6plCN0W+nlPwG514O5QzajlM92BjpS/uc1A3/zPzAImMCf/y5BQh/gUz8N+7
-         qXS+NvLC2NEDysU9xeNTCo1hqO0L8j4ogCkSwlxqRlpmT6IPll5/6ueojMH3wI816Fmd
-         4dhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3BvQ5/Qn2jd9Tg6P97HkwH3dJ2TuZ806+DadUMZy6QZR1Qk3dj+j0K1YrsCJ2t2fqKgsfizWVGkxaPbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3k6Bv/kX57PggWL5xilnjutGO2LZMpJy7Pme6H64Mg8xh2FND
-	KDx8Z878PcGMu3BMsvgUemgytu7nbBwUYN+fZyKOFhNV2p6HY/QTQ/lJ9y7ahAdGLMdsuwhzR1W
-	GwWqSpXSBKorpf2UtjMeQ5yc3bfJ3bYAY8zKH
-X-Gm-Gg: ASbGncsAtZAnaOt/Y/zoPnxagIv1qtCwQR0/2aKEJxDnzs/I3yE8YEGqYPaagH38STk
-	0wNr40HcnXbBF1IQMmbesK7XtxWC/ffXwsMU2hDObOh3tGlZauotFU6kTH2hBN8qHI8oZ1wNWty
-	WeiKgC87Uw9UO/cXMPLSOh7maeea/aridR2OQDNn1msdc5EUOHz77wZ/UQW7yvCLFlXk5k6m8nL
-	zIbaEoPTE5mmABedQ==
-X-Google-Smtp-Source: AGHT+IGuh9iHJ1JWc3gYcYGVmBmp0xY+JZbyoVk+K1ITPktWKiItf2ByWP4lQ9Mmtl//A68HDXzuauOSj81kR2pdG5o=
-X-Received: by 2002:a05:6122:2090:b0:539:4097:794a with SMTP id
- 71dfb90a1353d-53b0b66e1dfmr619879e0c.12.1755075793795; Wed, 13 Aug 2025
- 02:03:13 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6EF2EBB99
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755075799; cv=fail; b=E91oF7jl3c1bMH3jQU+99FmpKySUuleraD5cHfxVy6W5ZVwEQzz/LPRlbKeOe6BPPK28BBBX06xmQvKk7YbBhpMu3R4O7goVz46Ot4JIte5GMiC4cf8r5RTyDH6wcE3B5D+xSBLHLag92heJ201Y6LLK8VurTmyxq9nCqBMXP2Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755075799; c=relaxed/simple;
+	bh=MbldZlEHVtr6BizdxuXelUxwbxIq/vymGENBl2+VIrg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Pb2NSkopOtypGqPBsGryRwJYDiDl7Qoo8kJWwfr8xbBdEiu590PdM9kUOzpCWAMaSmwg4QRD9J9zPIDBfXL5jd2he2GtPnj+oOb+2ENgC/MQ1mAEWMOQMLB66vf2q0T3Yk/ucl4YCJQilaXft4dx+8O6uxz/YVjf9PE2LVe0dsQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fdNaJdSH; arc=fail smtp.client-ip=40.107.243.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Rpl5/WQ/8oZyoaApxBwEWGW+d/f48OcjnImg2CFMHXV9tTeTouNcNi/8cSHlT7X9Dfzcdw2tmLkwo12PRIeYDAUA2MgjT/9OaIv58NdB9uyPENl51AoBFX7OEOvFW581MbsqdQ21FcvZXy3YEAdit2Pc1RodMnVpkHQk1f1YkrKO43px4S9jYtkaD6KC4BaF3kdKkoyKRIPbbvLrdm8XvvDEJYc1I2VWgFV1N7Dcrx1j1qFBLlyEBduUDZLpwv9zgExnrzlGH6kErJ1VvInBd5j9uzN/e0FvEq4gx71x7fru2NHwSNYy5HgcsFBMJ+Li5y9vbi+OCQBBNMYC8HxLMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3fKkahLt9C6Vt16hydKrtz6PkxghzWq2t9ExZ7HM/ZQ=;
+ b=jSrvIU7qQdSPqoIfVjdszTLkeXAKMfG6tSnx3S4pVYSjKhOKfTPjiMpkMoDziUOzN6iNSYTBrKMkceZrZ82DySxno0mRnLGvgEgfmWsLPsU1jO5REyMxC3xZfRBZOSsLuN7FAjT8uqEJwFqzmQTdPCDNXEK9OssxBmOY3iqh129J1/2zkCQEuYJnvnTvaL2kIFUNwtqHOSxV53thZDN3WoI/PAfYSlKq8oXAuwdKNNOc3PkmAG1QA7Qc4Vrku5mKSn1DITQqcGODKDfCH9hYYwpeiMTcTLY2iDqRyBJwPpkHrFELvu/zKVynpu9bgibMrACraRRTT/vAbQW8SKwXpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3fKkahLt9C6Vt16hydKrtz6PkxghzWq2t9ExZ7HM/ZQ=;
+ b=fdNaJdSH8noisQymIPQZe1v51dFmg8DT0jDl86arEsdylc9YSFGldxf56N7TDBS4MJp2TYoiiWYQqS8RQu5P1K6tQxa/KgrOJEx9i0mpH2vb1edZ87LOSg3zDlMFMBWkutxtBIMlzDlZIf4sRvWLwyK1eS9vj8I7ITqAbh78sV4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DS0PR12MB8787.namprd12.prod.outlook.com (2603:10b6:8:14e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Wed, 13 Aug
+ 2025 09:03:15 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9031.014; Wed, 13 Aug 2025
+ 09:03:15 +0000
+Message-ID: <36f76e46-580f-43d9-8726-fe13e0c1bba1@amd.com>
+Date: Wed, 13 Aug 2025 11:03:09 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/sched: Document race condition in drm_sched_fini()
+To: Philipp Stanner <phasta@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ James Flowers <bold.zone2373@fastmail.com>
+References: <20250813085654.102504-2-phasta@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20250813085654.102504-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BLAPR03CA0070.namprd03.prod.outlook.com
+ (2603:10b6:208:329::15) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250810062912.1096815-1-lokeshgidra@google.com>
- <CAGsJ_4wbXkfaAn+79g20SfE-0Ak4QACVP+Mw2vAvMnxBCcLAsQ@mail.gmail.com>
- <aJtTPkenKeFuFFNQ@x1.local> <CA+EESO763JtY3jjmgGGbJjSQcnJJFNpDs2iPaUwjP44VpyyzdQ@mail.gmail.com>
-In-Reply-To: <CA+EESO763JtY3jjmgGGbJjSQcnJJFNpDs2iPaUwjP44VpyyzdQ@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Wed, 13 Aug 2025 17:03:02 +0800
-X-Gm-Features: Ac12FXxub7pbHdwNO3uqCxu946h-k9RRK50QHzhG6uYyQAeU83e_ljmwtaOwEXY
-Message-ID: <CAGsJ_4y98H-8aK9r_5YrSPV=SCU=-rZf7YPMz32K0C8oFnUCNA@mail.gmail.com>
-Subject: Re: [PATCH v4] userfaultfd: opportunistic TLB-flush batching for
- present pages in MOVE
-To: Lokesh Gidra <lokeshgidra@google.com>
-Cc: Peter Xu <peterx@redhat.com>, akpm@linux-foundation.org, aarcange@redhat.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, ngeoffray@google.com, 
-	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS0PR12MB8787:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe01e5a7-9ae2-4eac-c62e-08ddda483caa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M1NsKzVCWGpNOU1Oc0JnZTdNNGJjZnhrT0cwZ2ZNZXZ1Ui9TNURPYmI3K3hz?=
+ =?utf-8?B?TVdZd2RxanR2K2Z6TGZOeFpxcThFQVl0bTdDeHpBK2ZpYjczU0duMEpFdEl0?=
+ =?utf-8?B?UWRySThZZGtTNnEydFVRS1V0UUg0cFc2Q3o4YXc4MUhmZXppblVOZm91dmxl?=
+ =?utf-8?B?YTU5aklWbUwzTDJnRWxWUDAvbmFkK3JYamR3MS9yMzljNHR6RUR2bzQreXdV?=
+ =?utf-8?B?emlxZmtGSmhNa29rejFIWkpTMWhIaTZ2cmt4a01UQ0plNnVIeEYvdmhJSDFw?=
+ =?utf-8?B?RW5mMk9pamYranIzdTlKVjJjVjJmZzhGb2hmR3RvM1lneXlEUFpDU1hHNVh1?=
+ =?utf-8?B?OVZwZDhLWEp0WXpqZ2NCaUQ5VmdOc2hTM3Mzc1VJcUZjVjZFZzdEUzNvQWdK?=
+ =?utf-8?B?bUgxTGEzUlhETVBXQ2Q5cllublREYTk5NHp5ZkRSb0hhNDA5YXc2NUNYNCtv?=
+ =?utf-8?B?R3cwaWR0YmtFVWd0azc3K3B6Q2NzYVJ3ZDc0SVZONVI2MHc0bUpYNElSdER3?=
+ =?utf-8?B?Zlh0ODIrcVBSd1RqRnJTSEdQN2l6MllJRG9JVHBqa2IxZWw2eU9hK0NQczJE?=
+ =?utf-8?B?SGluekdEcFVPYmdMLzhLcUdIS252TXRjVktGSWFTQWZxUlRlcUVqeENhRlNV?=
+ =?utf-8?B?UlUzc3pHdk5BcVlLVW5vck54SXhFeGdHZGk1S3JaL2M5R1BSbnEzbUF5SHdp?=
+ =?utf-8?B?TXRJV3FkNC9VVzFSWmw2dGJEbXZLTVdNTWNJbDFlZEp4QWNBbC9maFhCOUYy?=
+ =?utf-8?B?K3hTbFBzZEN0b1hCQUlYemFIN3FCa3Q3VzhzL0YrSVZyaTJDOFJuMnN3dzV2?=
+ =?utf-8?B?VklXeWZrQ2lyOE9JSTJyK3pRNWxrU0xyVU1XZjVxU0d1M3NuWTFtQVRTcVpt?=
+ =?utf-8?B?L3dwNDFIRWZnNW9hRmxadGpPNjB2dXUrMXR4QlRTQ211NmJBbXVOQWZ3dUxB?=
+ =?utf-8?B?MkxJQmpOSzlMQXJZL1NMVURWM2pnS0lOWmVGR3ZRUWYreENEcGk1Mk8vL08x?=
+ =?utf-8?B?eDY4NjI5MENkV2F5TEdjVzI0aEJHaHZCN0lGRDhKN2tyUnlHWmNQOWVCOXZZ?=
+ =?utf-8?B?MFprbFBMTDUybndoME96VjFpUXg3WUtDelF4Z2gyWEFNcGRHWmM5MUVHdjVT?=
+ =?utf-8?B?TWQybWlLbk5iNjA5eGhXYkFoVlR0d0dJR3djUGVhQUZ1S0hGa2FUMFdWalJS?=
+ =?utf-8?B?TS9VYU1aeUJEQ1lCVWxHdG94SXkyTlZISCtHQ0ZGMk9vbFRLNEVCOEFoZDl4?=
+ =?utf-8?B?TldpSzZjNWNzc05MYnA3Q09Idi93YkEwalQzdHZHTURvMEc0Y3lrS1Q3U1VM?=
+ =?utf-8?B?aUxnRi9ET2QySTVnSVRWZmNQOWFtVzhzMjNEeU1vczRjVGZweXBXSXc0aHZV?=
+ =?utf-8?B?ckcyVmd2b0R2TXJoUTZ4YjU4SFlqaWpHNWRYcm1MTU5ZM0JqVDI4aVVYMDJR?=
+ =?utf-8?B?SW9sT284Y2QwYUJ3VCtKS0tIYlFYVCtMUkhvY0cxMGk4K2x0bGFWSGk3cFN0?=
+ =?utf-8?B?Q2szVWhycjk0WEFQN2FJRmJhVnNDK0F1RFJzMWVwUTNIR2lUcWxOYWhCUExQ?=
+ =?utf-8?B?cHgyYkVKclowMHo4dk8wUHhCWG92a0dHbUpiRC8rQ2FUK0NYUU4xV3FSVlJp?=
+ =?utf-8?B?UGpiZDJuTlk2RGNYRWRyMEJvOGRBd2NYWlFRMjRzT0Y3RVhSY0FnYXdaT0ph?=
+ =?utf-8?B?RndPcGpxczFyNkF2RHhpZzdMUHdHeW82UXlIbWMzRlBOa20xOHJwc3BscG91?=
+ =?utf-8?B?SVZheGVpM2YrM1lVenF4aDRlZ3I1U0kvdklVZGd0WjNieVFIZU5iOGlrQUNm?=
+ =?utf-8?B?N1pUY3B3RDZocEE1YWZ1cUJPeE8xTVVnZTdWN2dXMzBTc0NtcHJKNnFGbzJx?=
+ =?utf-8?B?aS9ERVlSVmJnWHdJSmpBcmFNc1Q5ZjBlRVlTMm8xNFprU3NoSlA4YkhCMStz?=
+ =?utf-8?Q?uBPS33mPlG8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aVUyWGF5N0p1TFY3K2lWWllxSzZYUlRDbmFaTERCODVKcXk5a0I4a2hWS0RD?=
+ =?utf-8?B?MDRMYVQ4RVZYQ1RycE0wRWhRODBuWWpJQ2YyM2w5TXp4M2RDS2R0WDdpMC9a?=
+ =?utf-8?B?ZXhDbXh2Qy9pZUJLY2wzY29VQ0lpUGFSdFFnR1NSWFB3MVowYXdOSGRRd2Fa?=
+ =?utf-8?B?bzJIQVRvTUp6MTJURW1wN00rWEhEK0M3TG5ZY1lDRjhDeExKUEJ5a2xzeFBE?=
+ =?utf-8?B?SDlDNVdNT085eG1FejNmTzdzSnFDTmNCQUY1SGFVejN2ZDVRV3Y3dmM0c3lp?=
+ =?utf-8?B?Y29ubVJndUxDTTJoZ3VoRHJxMkVYeUVBam9LTE4ybjR4dE90aVY1QU0xenNx?=
+ =?utf-8?B?bmdxUURYMEtpOGtaWDNkY00wS0kwc2lmUUxvbVdTR2w3RkJaRW9jelAxdmF3?=
+ =?utf-8?B?WDRBeG9vMnZrWUtJUmRxK21WUEwwVElJcjMxS2cxWWgzMjlJVHdESy9QaFBs?=
+ =?utf-8?B?YXltL3pTVkVMb3BabmVya2F3RFh2c252NndRalplZlBtTXl4TE1Bc1FVWjJI?=
+ =?utf-8?B?SEdvWHFzQTQ2MitwdldkNlFIKyt4bXc2Zk1MY2h6QUxaMlN4eUtOUU1jSFd4?=
+ =?utf-8?B?TnY3U0trenVPeXlMZDN6NHZYS0xhbW5jSnNIK0xUS1R6RGZDZnhMMlNrUlFY?=
+ =?utf-8?B?VEp1ZmFUYUdDTFByMXNZQ1dCd1FQRkM5Y09DZnVDa3BVZExpdHZzMmlFSjlE?=
+ =?utf-8?B?YU9wSjQyOHJURE1lVEZna1psTitvbFJudUg4elF5OEsxYU9EME9IV2NxeGZt?=
+ =?utf-8?B?VXVPakVGNU91R3pmTlVpNGI2bDlROC8yT3N5a28yNmpzVkpGMlorZ0JoaXo1?=
+ =?utf-8?B?TDF6K3VYS2NZRmdGYzlpdFp4NllMRVE0UVRaWmFQdmJxQnp1WjRWOFdMeGF2?=
+ =?utf-8?B?OFNPdE9XSjhJdk1xMDM2d1BQVGFZRWhIV3AremFPekhDSEFsVEh6M1VRblRp?=
+ =?utf-8?B?Z1RGTGZFQ1VHYTQ0aUpQSHJRWHdzUGJNbmxLWjgwejBvTG5pZmEyOUQ5RTE0?=
+ =?utf-8?B?MzJZRDdEbXVOL0h1YTBtSVdNVnc5OGdRNlE3ajNyOThFKzFUOCtOWkx5WWhy?=
+ =?utf-8?B?Y0laSTI5NDJPWE0yRnRhVjBRWmRHbTVNdTNrZEh4cFhiYTJXc1kzMzVGZzYz?=
+ =?utf-8?B?dlcrc1VGZDVoUnIwTXNlTGNVMWh5TW1FTlhYdmh2dlp6Z1NmK1l3ZXhFTHp3?=
+ =?utf-8?B?anFGQzlKN0RCbUtjWE9sRGEyTHJFdjJkbk9aWkh4czlETnRuT2xlaUxRbGxl?=
+ =?utf-8?B?YllQVDdrYnA1Z0lrbXpBUjBKN2RNd0xsWU1xT2YzWXRMUlU3ZkhEcUx6WW4x?=
+ =?utf-8?B?enBWaDdWNDd3UDQ5MlE1RDJrQXlJTkF0cTNHTFBwRXNBWkdadlZreWZxcnJx?=
+ =?utf-8?B?bHV5UVpybUwyVWdRdjBPNVlTdnp4ZllzTXJ2aXhaQUkxeFB6OHFCbWFHdGxV?=
+ =?utf-8?B?eXJaZXVHVkVUTEFHVVdnRVVzeVd3UmFiMkVoeWtJVXFtUFVoSEpieERRM0ZQ?=
+ =?utf-8?B?SEZhcXFXaExwRDZZRERjNU9QS2hyWCtXTXZrSnVmUHh4aW9ld1JwY3h5aHE1?=
+ =?utf-8?B?RjBJWUhRU2w2MERGejluWEI5dG0vMzQ1Y3h3c1hUdmo0WjVZYVB2MTdXa3Jh?=
+ =?utf-8?B?QXlVQTBpWVludlpYeVRRUVhJdzNRc0dlK0JmYWh6dlU0Z2FQRjRVdkxLMWh1?=
+ =?utf-8?B?MkFSVGp5bk5kUVZCQUxVVW4vODVzQ2xDTXRrb1k3Nm9GeUNGa25DZzBJUDVN?=
+ =?utf-8?B?Nitsc3lUTlBoeHozRUMvYUNuWXpXNnNQNTRMVjRFZmRPMittUm9Pd2cweG1Y?=
+ =?utf-8?B?UDdzRG9oWktIRHZERmFVeEswM2ErU3gzdUt1YnkyZzF5Vlo4VEF2QnJ2aWZP?=
+ =?utf-8?B?YklERytuYit3cnBaVEFyaGJkbTM5L2VQVTNrTFJzaHQ3TytTY2VERnhuUHhy?=
+ =?utf-8?B?L2twZnE5Q3FqM0FJclRTek5VV0dEWXZwcjQvaGRyVHRhU3hNSXdJZHFNQzZU?=
+ =?utf-8?B?U1FyYUs0WU5PNGNnQ0lGVWQ4eG9jM2lnMldiYVhYVnVCZHg0ZDBHanQrV2JW?=
+ =?utf-8?B?a3YrNmhGREs4UktpelcxY25IYXM1dnhPRWZMNDd1dFA2VTBHSjJMRkkvVXVL?=
+ =?utf-8?Q?/Pi+9CxCV5lXbUdS1OesLYnfP?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe01e5a7-9ae2-4eac-c62e-08ddda483caa
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 09:03:14.9603
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6zWtctjQZxspwUITfmUZPILoCQ/aHZaPa/q0NUf/BcrJWaMgrzY4wXKa4hwhrxvn
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8787
 
-On Tue, Aug 12, 2025 at 11:44=E2=80=AFPM Lokesh Gidra <lokeshgidra@google.c=
-om> wrote:
->
-> On Tue, Aug 12, 2025 at 7:44=E2=80=AFAM Peter Xu <peterx@redhat.com> wrot=
-e:
-> >
-> > On Mon, Aug 11, 2025 at 11:55:36AM +0800, Barry Song wrote:
-> > > Hi Lokesh,
-[...]
-> > > >
-> > > >  mm/userfaultfd.c | 178 +++++++++++++++++++++++++++++++++----------=
-----
-> > > >  1 file changed, 127 insertions(+), 51 deletions(-)
-> > > >
-> > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > index cbed91b09640..39d81d2972db 100644
-> > > > --- a/mm/userfaultfd.c
-> > > > +++ b/mm/userfaultfd.c
-> > > > @@ -1026,18 +1026,64 @@ static inline bool is_pte_pages_stable(pte_=
-t *dst_pte, pte_t *src_pte,
-> > > >                pmd_same(dst_pmdval, pmdp_get_lockless(dst_pmd));
-> > > >  }
-> > > >
-> > > > -static int move_present_pte(struct mm_struct *mm,
-> > > > -                           struct vm_area_struct *dst_vma,
-> > > > -                           struct vm_area_struct *src_vma,
-> > > > -                           unsigned long dst_addr, unsigned long s=
-rc_addr,
-> > > > -                           pte_t *dst_pte, pte_t *src_pte,
-> > > > -                           pte_t orig_dst_pte, pte_t orig_src_pte,
-> > > > -                           pmd_t *dst_pmd, pmd_t dst_pmdval,
-> > > > -                           spinlock_t *dst_ptl, spinlock_t *src_pt=
-l,
-> > > > -                           struct folio *src_folio)
-> > > > +/*
-> > > > + * Checks if the two ptes and the corresponding folio are eligible=
- for batched
-> > > > + * move. If so, then returns pointer to the locked folio. Otherwis=
-e, returns NULL.
-> > > > + *
-> > > > + * NOTE: folio's reference is not required as the whole operation =
-is within
-> > > > + * PTL's critical section.
-> > > > + */
-> > > > +static struct folio *check_ptes_for_batched_move(struct vm_area_st=
-ruct *src_vma,
-> > > > +                                                unsigned long src_=
-addr,
-> > > > +                                                pte_t *src_pte, pt=
-e_t *dst_pte,
-> > > > +                                                struct anon_vma *s=
-rc_anon_vma)
-> > > > +{
-> > > > +       pte_t orig_dst_pte, orig_src_pte;
-> > > > +       struct folio *folio;
-> > > > +
-> > > > +       orig_dst_pte =3D ptep_get(dst_pte);
-> > > > +       if (!pte_none(orig_dst_pte))
-> > > > +               return NULL;
-> > > > +
-> > > > +       orig_src_pte =3D ptep_get(src_pte);
-> > > > +       if (!pte_present(orig_src_pte) || is_zero_pfn(pte_pfn(orig_=
-src_pte)))
-> > > > +               return NULL;
-> > > > +
-> > > > +       folio =3D vm_normal_folio(src_vma, src_addr, orig_src_pte);
-> > > > +       if (!folio || !folio_trylock(folio))
-> > > > +               return NULL;
-> > > > +       if (!PageAnonExclusive(&folio->page) || folio_test_large(fo=
-lio) ||
-> > > > +           folio_anon_vma(folio) !=3D src_anon_vma) {
-> > > > +               folio_unlock(folio);
-> > > > +               return NULL;
-> > > > +       }
-> > > > +       return folio;
-> > > > +}
-> > > > +
-> > >
-> > > I=E2=80=99m still quite confused by the code. Before move_present_pte=
-s(), we=E2=80=99ve
-> > > already performed all the checks=E2=80=94pte_same(), vm_normal_folio(=
-),
-> > > folio_trylock(), folio_test_large(), folio_get_anon_vma(),
-> > > and anon_vma_lock_write()=E2=80=94at least for the first PTE. Now we=
-=E2=80=99re
-> > > duplicating them again for all PTEs. Does this mean we=E2=80=99re doi=
-ng those
-> > > operations for the first PTE twice? It feels like the old non-batch c=
-heck
-> > > code should be removed?
-> >
-> > This function should only start to work on the 2nd (or more) continuous
-> > ptes to move within the same pgtable lock held.  We'll still need the
-> > original path because that was sleepable, this one isn't, and it's only
-> > best-effort fast path only. E.g. if trylock() fails above, it would
-> > fallback to the slow path.
-> >
-> Thanks Peter. I was about to give exactly the same reasoning :)
+On 13.08.25 10:56, Philipp Stanner wrote:
+> In drm_sched_fini() all entities are marked as stopped - without taking
+> the appropriate lock, because that would deadlock. That means that
+> drm_sched_fini() and drm_sched_entity_push_job() can race against each
+> other.
+> 
+> This should most likely be fixed by establishing the rule that all
+> entities associated with a scheduler must be torn down first. Then,
+> however, the locking should be removed from drm_sched_fini() alltogether
+> with an appropriate comment.
+> 
+> Reported-by: James Flowers <bold.zone2373@fastmail.com>
+> Link: https://lore.kernel.org/dri-devel/20250720235748.2798-1-bold.zone2373@fastmail.com/
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Apologies, I overlooked this part:
-                src_addr +=3D PAGE_SIZE;
-                if (src_addr =3D=3D addr_end)
-                        break;
-                dst_addr +=3D PAGE_SIZE;
-                dst_pte++;
-                src_pte++;
-                folio_unlock(src_folio);
-                src_folio =3D check_ptes_for_batched_move(src_vma,
-src_addr, src_pte,
-                                                        dst_pte, src_anon_v=
-ma);
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
-I still find this a little tricky to follow =E2=80=94 couldn=E2=80=99t we j=
-ust handle it
-like the other batched cases:
+> ---
+> Changes in v2:
+>   - Fix typo.
+> ---
+>  drivers/gpu/drm/scheduler/sched_main.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index 5a550fd76bf0..46119aacb809 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1424,6 +1424,22 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
+>  			 * Prevents reinsertion and marks job_queue as idle,
+>  			 * it will be removed from the rq in drm_sched_entity_fini()
+>  			 * eventually
+> +			 *
+> +			 * FIXME:
+> +			 * This lacks the proper spin_lock(&s_entity->lock) and
+> +			 * is, therefore, a race condition. Most notably, it
+> +			 * can race with drm_sched_entity_push_job(). The lock
+> +			 * cannot be taken here, however, because this would
+> +			 * lead to lock inversion -> deadlock.
+> +			 *
+> +			 * The best solution probably is to enforce the life
+> +			 * time rule of all entities having to be torn down
+> +			 * before their scheduler. Then, however, locking could
+> +			 * be dropped alltogether from this function.
+> +			 *
+> +			 * For now, this remains a potential race in all
+> +			 * drivers that keep entities alive for longer than
+> +			 * the scheduler.
+>  			 */
+>  			s_entity->stopped = true;
+>  		spin_unlock(&rq->lock);
 
-static inline unsigned int folio_unmap_pte_batch(struct folio *folio,
-                        struct page_vma_mapped_walk *pvmw,
-                        enum ttu_flags flags, pte_t pte)
-
-We pass the first PTE and use a function to determine how many PTEs we
-can batch together. That way, we don=E2=80=99t need a special path for the =
-first
-PTE.
-
-I guess the challenge is that the first PTE needs to handle
-split_folio(), folio_trylock() with -EAGAIN, and
-anon_vma_trylock_write(), while the other PTEs don=E2=80=99t?
-
-If so, could we add a clear comment explaining that move_present_ptes()
-moves PTEs that share the same anon_vma as the first PTE, are not large
-folios, and can successfully take folio_trylock()?
-If this condition isn=E2=80=99t met, the batch stops.
-
-Thanks
-Barry
 
