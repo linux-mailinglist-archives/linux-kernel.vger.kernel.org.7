@@ -1,320 +1,216 @@
-Return-Path: <linux-kernel+bounces-767107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F54B24FC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:30:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9623FB24F95
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC8695659CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:14:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B69DA5A37B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99A928D8ED;
-	Wed, 13 Aug 2025 16:10:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFAB280CFB;
+	Wed, 13 Aug 2025 16:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A2EHyacx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3878B23A9BB;
-	Wed, 13 Aug 2025 16:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755101408; cv=none; b=T6Ftc9rPGQjEZpCztS4h7uymGLtLROdmtQIT7FHolgWuCiKZZvqBMlo2Y0pLWpv59BNsDnWWAKuX4qThQGSsbuWgyqjvKoqQZ2Oi5g3o7gPVMhs523upgtQcSgngIRn60J6od7Ug4gxdBMPgQdZK0e8N7xKghEiKo017Y6/nhko=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755101408; c=relaxed/simple;
-	bh=7EUD+30GOOiF0HQRy00RHvsbBxoJiqxPdGiWSNqyz7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jCbKrfDb90s4OD0jsoy87dryw4r07No/Qb5o6bI1Y4ZWL64mAG1AUkeZlxGyCJoFaWLtw0jWxDoUHaMs0fweAXb/+JpcrU5GC0bDaa9KVMpeZLGidaFwXcmC676EoimJWnTkOUJ+ZYbsvyGWO4jy5kUCjGpr4lr3vTqDcZa5HFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39C8CC4CEEB;
-	Wed, 13 Aug 2025 16:10:02 +0000 (UTC)
-Date: Wed, 13 Aug 2025 17:09:59 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
-	arnd@arndb.de, will@kernel.org, peterz@infradead.org,
-	akpm@linux-foundation.org, mark.rutland@arm.com,
-	harisokn@amazon.com, cl@gentwo.org, ast@kernel.org,
-	memxor@gmail.com, zhenglifeng1@huawei.com,
-	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
-	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-	rafael@kernel.org, daniel.lezcano@linaro.org
-Subject: Re: [PATCH v3 1/5] asm-generic: barrier: Add
- smp_cond_load_relaxed_timewait()
-Message-ID: <aJy414YufthzC1nv@arm.com>
-References: <20250627044805.945491-1-ankur.a.arora@oracle.com>
- <20250627044805.945491-2-ankur.a.arora@oracle.com>
- <aJXWyxzkA3x61fKA@arm.com>
- <877bz98sqb.fsf@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E291D54E3;
+	Wed, 13 Aug 2025 16:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755101309; cv=fail; b=lOe1Oz3q6sM3VkJkomsSQBaxs4DCew/xoXmYEdmBUUOW0/tKM6G5TIeWYo4HIfJGCV0wS5yDp8pKGcvuyXEKQDk7dDGPCpy9coYpKpIaWKEajtZArxgx56T+YAqByx8WKhEEqrxMosZThNeKVY+w72fbRlbhbBEfCeHuAg0oSE8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755101309; c=relaxed/simple;
+	bh=t6hmh7zxvkzkafh4e6ATAi7S1kluGHoS2+YFh9jlqHk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=J9nGXiXsC4zWr2lnpzdY+PhL/c6fkfaV76EAcMgFvzfTjpPa0oYbdY2vlD2ebQ/O1JSYxC9r0XcRQSiWM5sL6XSfR6LhMcTdEVww3RwEGnhUjS6skjFWr3gEO1NYSxloZmEfnc+S5VylxYzJQooO2OhcZgCh970hALOgp0wjwXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A2EHyacx; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755101308; x=1786637308;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=t6hmh7zxvkzkafh4e6ATAi7S1kluGHoS2+YFh9jlqHk=;
+  b=A2EHyacxZsNyvGqLSChcSiddNK5tu2lMOBkMCKqRahLtf3et6V5rvN+7
+   6nHN6cB9J1NO5jbtQxcoB8VxVhveeigIKWOHzhJ/k1ktGO9vo3qmvPwqJ
+   uyIJQ9031u137Ctgkzti2U3J04naz8d8hfXUaGefljh0hlZLbRVL2Mj+8
+   qxrHTePzXUdMfwg9YdpTg6q4xVM+TtjcaBEnK07fEzAMHwHXaozI5vf7o
+   cCqgOOHB1c8Z97DRh7BzAor5SRwM8vG9R3bsJ1AJ4tZQIFbQHRAaw98HP
+   lE7o+ZfvUUfOGf0UPRC1UV2v0Z80OVBbiKa4aLFhN2ylTVBKiy9P2/bPN
+   A==;
+X-CSE-ConnectionGUID: S8wruGkqSKSgtGvyDY/iSg==
+X-CSE-MsgGUID: 76iqcQFYS8+gjDt8bLCx3w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="56426350"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="56426350"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 09:08:28 -0700
+X-CSE-ConnectionGUID: K8FOunc/Sp+l/+3v90Ejqg==
+X-CSE-MsgGUID: TxmOnqhGQiCf2KpcAIf+hA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="165732526"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 09:08:27 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 13 Aug 2025 09:08:27 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 13 Aug 2025 09:08:27 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.44)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 13 Aug 2025 09:08:27 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rLMGZP5OzHJQO/RYrQSrqi0GaQTKib7ekGhsXKBVQz4Ze1OnjXGts86VE+p2xeXkvEzg659dH3oFrC3QgE2k3RmySWgZ2AjH1d0YujFuHd8op89EAqlM6InIuxDqrl3ipJtVsieayxnXTsDlz5+qv/x1yELw8XTqDZNkdYvz/rFBToWZqDLyqovSMsTzC8FLPcBs805uodJJyu22+p9arP7wUe6rruUKJPyWe3W50Na3lHg8KEJzqEQshgTPtTstfWh/YCDmOuGUc/nbtcNxdRR0G9MVlAEqx8vAsU3n+QFUeIu+g+7NajoQm14MllIYdPXbtwd3ywKy0jEurG8MXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qcn/hZc8OvrbF4JolnfeRZsI5Kk7T1C9y/zuzgdeYQI=;
+ b=SXpkq+ny+JUoU5cdiH4p6IOFSWIuEF/BtYzU8k4/dMWxK7JyOLWIi/vM8upXlmQMPMe9LMY06fiZ1sudAhGE4BbYCtL4TUWPdkqzNmxElAW5FdnAKGpOlNlSD2AbMqZQT6ucCwa2QhhC3BbrbC80NxCsL4KHiyGuKk1ilHiyB2GPPN0psX8z0Z703ds3cAabazv3EH1P12c32NOA5wmI7vgVy2QXll2F+Yx6aVNlGveyJhndTJapWLL6muY9A64HtjlNBx+Alv2thlwn7VrQQ0UHLR+teJ5n8UX2pvYHdPkcfkAmMneodmCn3i5GuMuAmkMNSy5CgUYFWhKTPkebzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c) by MN2PR11MB4710.namprd11.prod.outlook.com
+ (2603:10b6:208:262::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.14; Wed, 13 Aug
+ 2025 16:08:24 +0000
+Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa]) by PH3PPF9E162731D.namprd11.prod.outlook.com
+ ([fe80::bbd5:541c:86ba:3efa%7]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
+ 16:08:24 +0000
+Date: Wed, 13 Aug 2025 11:10:03 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Sagi Shahar <sagis@google.com>, <linux-kselftest@vger.kernel.org>, "Paolo
+ Bonzini" <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, "Sean
+ Christopherson" <seanjc@google.com>, Ackerley Tng <ackerleytng@google.com>,
+	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>,
+	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas
+	<erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, "Roger
+ Wang" <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, "Oliver
+ Upton" <oliver.upton@linux.dev>, "Pratik R. Sampat"
+	<pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Yan Zhao
+	<yan.y.zhao@intel.com>
+Subject: Re: [PATCH v8 30/30] KVM: selftests: TDX: Test LOG_DIRTY_PAGES flag
+ to a non-GUEST_MEMFD memslot
+Message-ID: <689cb8db46492_20a6d929493@iweiny-mobl.notmuch>
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-31-sagis@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250807201628.1185915-31-sagis@google.com>
+X-ClientProxiedBy: MW4PR04CA0313.namprd04.prod.outlook.com
+ (2603:10b6:303:82::18) To PH3PPF9E162731D.namprd11.prod.outlook.com
+ (2603:10b6:518:1::d3c)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877bz98sqb.fsf@oracle.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|MN2PR11MB4710:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d41b146-9436-4a18-8717-08ddda83a19b
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?tXdQLTXZvOxiqfHbvdQnUVxZ5CQk/TlHEmnG3URkdP23Y4ng/8cbevSRHob4?=
+ =?us-ascii?Q?oiNz06Krb1cGjiM3htM7wHsxEQPOQ9rGoh1IckLPNY6KIgDDSSJGNFHWrZWQ?=
+ =?us-ascii?Q?08kUWSGS4fo+5CCAvUEBJ8xNAqc8KFBuKvMMzT0Sky0zhtBDCW84oMBcboXq?=
+ =?us-ascii?Q?/4X29ymBJpd9uLUCK3a+Kmg2Boo7SZs2ZqO16/ITDq3cwCgTWqTuADJuvw/P?=
+ =?us-ascii?Q?/e40Ln5QEbEYaW38v/YtWpM7FOy2lBa/2TD6cQWQSIG4eR1OvWbWhKaPAokQ?=
+ =?us-ascii?Q?ZeDTuHxVvVY+9qpftF/8Zx7uZygN6dfC2MAj/srgAdIsvxg9n9R9d1mAeGkS?=
+ =?us-ascii?Q?d8nCZpNqivAJPwA8P1p/0sCaPHwbS5AimM1zole69BL4wUXfE675m2NG9knU?=
+ =?us-ascii?Q?fKnugxSZsdckPYqSI+OsDq1V5wA1hF6QjjcD8f0CFSntUPkLXBI+RrfA1j1O?=
+ =?us-ascii?Q?mlpVNW6v51LYs6bei/MLqYIZ6w8K4QzjCu9PkuiA70+GGpt/uU1A3TG6YTR+?=
+ =?us-ascii?Q?ZmX3KzP3l6Z2ZwkCodwbym48P5LRk2vLUZs7eLapE+5tgGyE63tirbfEQVgy?=
+ =?us-ascii?Q?6APHhH+WS1vrjY4nmKaR6JDDAF/jZCtxQx+WdSrzQ9WJdEiLTcut1Ux4pCH4?=
+ =?us-ascii?Q?hJu/4V4VY12gRNhKXmLY9ijPqEcPSrbUfoAADIWQFEHO2PAIi48CwpH4Lkr7?=
+ =?us-ascii?Q?MvIvLvJ5rMHMyqAp5GObn3Kt0cyzuiRp9NlrmKbVxS77LAgQIKQh2XVc34L7?=
+ =?us-ascii?Q?Q7OGeOOK6/Maoml036RdWk40mPKaLBcj4QUNQDcO1VTYfCNKZmpucofrCMwE?=
+ =?us-ascii?Q?uysx5rVemVA1gBg6rfA/BUcqNY5MNNsL/mn+X6DmltsBRnJ1ePlIOzSRttiA?=
+ =?us-ascii?Q?SPU99s1kOCau5UDVFrYSY/DZJP7XR2Cte/YjN/u7L/rcKHC1I6ogHJUSn/gl?=
+ =?us-ascii?Q?/kNZdt6phZcHMjRRwnw82fL24tqLtm6w/vT9Ev30JOzXjKfoGjncqeD6QOdV?=
+ =?us-ascii?Q?l57kHAGCOA+5pjHfqEDnOhFOHcf4XRyNwIQLVpKsoAtJArXitmTrR9z/VCtG?=
+ =?us-ascii?Q?90UEbJU0corxvK0SubYo7C54vTNXmKcrIktarW7aNQ+Ywym45gEmSU7Vg+W9?=
+ =?us-ascii?Q?4uxjGLTuexxHwnQBDnzLpXynZG5fMkSr0TPVORw23U7Wp8vvlxvof769fynz?=
+ =?us-ascii?Q?fxMxrbTgB4tmdX9eT4Ktc4/kD4Jzco149rD0g6Ku26qadDuMFC4wMRPIOSUC?=
+ =?us-ascii?Q?pkeFHQm8LbReCqWxlNYFs5FtfJwPwE28tRhSyT0HM2QtaTnMyGOuOHJwf5c7?=
+ =?us-ascii?Q?IR5YL1P4VN5upq3yI9pnvBA8RIPrtPLwjqzKgO86JZdC7+fvmk6qlE7SNmYE?=
+ =?us-ascii?Q?5MLvjTWpQbSl2erzhBWQPpVmriIw/mX5+6wtTbCZKppJBeILe5BGrOfv5mvg?=
+ =?us-ascii?Q?EeLYCtYfFnOS9KFqDdgHBS4zi2Fclx4PBAUCTodJyRJV9Tr1Xzywmg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?IAW55toQsjQD5dVVICGzd1LAecooObug4QFwpLcgd63cMaOGjviTKTxAtPhf?=
+ =?us-ascii?Q?237LvkfBDv34Yh/86FZBeYtYDx0rxoQbh7tYgKfqT/66K325Qpbt328UxaBx?=
+ =?us-ascii?Q?Ew/Hrfk+h7JEEs6iPaL2yCdNOd0jcBsM5V6uN1CXy+1AFn6xESh4lWaVKWJE?=
+ =?us-ascii?Q?WqxWJgQvKgOFZj4MsMPUKPWKrfqQYQR1bpUpm6VvMwBXFjaU6l9jULSXbiCi?=
+ =?us-ascii?Q?0UQ6DYSVUgVaY0L5zVYA3DoavAhPsRqWRgAPme0SXl4FnzXW9c9+j5fWG08Y?=
+ =?us-ascii?Q?Z/GfYmbBbnGPoGx8tMY+Z7zUK15VkHvxh+6VMIqec+7Sc+noNdnq2V8Vasfp?=
+ =?us-ascii?Q?cuuVhidpZIAzEpqd5tkmnnZH0uWOv7faLY6Qm+LN0U8qb+R+qxtraWfcheS+?=
+ =?us-ascii?Q?UoIP1ODxtHfRzAXC2vM6mFXB8MCvbEK77lnBIg6xQnHu5eV2zJnaxh04FCea?=
+ =?us-ascii?Q?jqD9gI8bQQwnN3x1tSlmqLLhHGeGHbkXz1w4tIWgbbCOEXSOpUXXuPcRLyUm?=
+ =?us-ascii?Q?NHklxge3wSsSj++V3Q8+JWy9hPkPWztfFJD0UhW22wNn/HAi80Yct2A6MatQ?=
+ =?us-ascii?Q?JWauPkssqIckv41h9q6Wtxwn2Hvl6Koi5Uibz0tMO9VrT3KF5rBWV3bZKOKi?=
+ =?us-ascii?Q?Ny7fV4pLQtYM+h0E5cmXW2I+ljrswX/rEjZEK1+RivOgDOAc5FGQy183Gz66?=
+ =?us-ascii?Q?Yh/xYuAKho7MGBRp7At/KFKpseihF6TaNzsSmriqk4gu+DjpKbxeTyzaIeBl?=
+ =?us-ascii?Q?cRvx0GqB+OVexLIikOE7QIyHAsnTfhHg8RkyxM/gBOcPSgHjWZOics2FJtJH?=
+ =?us-ascii?Q?mBVJHHIvZYeHstyXTIAjD9VjqrL1lB5lDCMiPk/5JXdiw2/VeHv61hD8RKmQ?=
+ =?us-ascii?Q?jlLTkA/rPPi4JgmbrLg7DEnN9X1Es7o5WboYL50ba2ojG1HI+SjoumomcIEJ?=
+ =?us-ascii?Q?sy8chMy8DYdfBOjzP1ifvKzje7Owb51Yue0v/+24iJF3EfZmy8AaMtnsIE5e?=
+ =?us-ascii?Q?+01JZkPxB0yuvO75nJVWN89Do2sCZt9wP0ArUNLQNmlojN2JrLyXM2bdFELr?=
+ =?us-ascii?Q?sn84jP4qTFRLdQARoquGcPT9ylNGXyxsDhjsIojRlq+Jax+gPVN19I9KfJm2?=
+ =?us-ascii?Q?oBO28ZXfNZwPArSIcwq9/XIadj/YW2KEBEd0E7JPZRJysl+ejaRCt7x/HSAo?=
+ =?us-ascii?Q?4mrTELY4MJwbnaz5nBT92qss1XtpJe7E8+NbWkBJkgW9u6Fq4TsUEQuTzXFk?=
+ =?us-ascii?Q?VwMyGRWE/Lx9iYxZJXmo9m0pFftNhira+rusVvzRqMcpFwcPAefwOq4gsGQB?=
+ =?us-ascii?Q?kT3GiW4Io6egnFJ/5mSYAAqKE4Q2K4UXcnlpdN5Xt1bfrbL3g3VbPfkj6i/J?=
+ =?us-ascii?Q?3s6tffzc+k7Evq3awa1v8+3ttvjrzeSmAhEV31kuttM06GbkUdk9B5JiKLly?=
+ =?us-ascii?Q?3NJ0wOzjbpXt2ngrKKAkR8FhdLdgB11GjjgsfbQkqBDaNWA+l+dOMWTOaLbu?=
+ =?us-ascii?Q?8b01nrxjg+rdyzt7tWI7cJ3Gc75hOyeGJWA2VSMbZ0JiQEYZhYGDkRbLvN5N?=
+ =?us-ascii?Q?n8yQEv3YDbIZbLNivtY5PXAsjKaMFXw+7c2SCwMT?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d41b146-9436-4a18-8717-08ddda83a19b
+X-MS-Exchange-CrossTenant-AuthSource: PH3PPF9E162731D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 16:08:24.4863
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zCBHez4ui83LD5D2EE+c7AfTY4xogJOufPgtxjHUevbMCMqDg+I2i32M/TzQC3L42OCSc4T5pjh1ToKmBbkY4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4710
+X-OriginatorOrg: intel.com
 
-On Mon, Aug 11, 2025 at 02:15:56PM -0700, Ankur Arora wrote:
-> Catalin Marinas <catalin.marinas@arm.com> writes:
-> > On Thu, Jun 26, 2025 at 09:48:01PM -0700, Ankur Arora wrote:
-> >> +#ifndef __smp_cond_load_relaxed_timewait
-> >> +#define __smp_cond_load_relaxed_timewait(ptr, cond_expr, policy,	\
-> >> +					 time_expr, time_end,		\
-> >> +					 slack) ({			\
-> >> +	typeof(ptr) __PTR = (ptr);					\
-> >> +	__unqual_scalar_typeof(*ptr) VAL;				\
-> >> +	u32 __n = 0, __spin = SMP_TIMEWAIT_SPIN_BASE;			\
-> >> +	u64 __prev = 0, __end = (time_end);				\
-> >> +	u64 __slack = slack;						\
-> >> +	bool __wait = false;						\
-> >> +									\
-> >> +	for (;;) {							\
-> >> +		VAL = READ_ONCE(*__PTR);				\
-> >> +		if (cond_expr)						\
-> >> +			break;						\
-> >> +		cpu_relax();						\
-> >> +		if (++__n < __spin)					\
-> >> +			continue;					\
-> >> +		if (!(__prev = policy((time_expr), __prev, __end,	\
-> >> +					  &__spin, &__wait, __slack)))	\
-> >> +			break;						\
-> >> +		if (__wait)						\
-> >> +			__smp_timewait_store(__PTR, VAL);		\
-> >> +		__n = 0;						\
-> >> +	}								\
-> >> +	(typeof(*ptr))VAL;						\
-> >> +})
-> >> +#endif
-> >
-> > TBH, this still looks over-engineered to me, especially with the second
-> > patch trying to reduce the spin loops based on the remaining time. Does
-> > any of the current users of this interface need it to get more precise?
+Sagi Shahar wrote:
+> From: Yan Zhao <yan.y.zhao@intel.com>
 > 
-> No, neither of rqspinlock nor poll_idle() really care about precision.
-> And, the slack even in this series is only useful for the waiting
-> implementation.
+> Add a selftest to verify that adding flag KVM_MEM_LOG_DIRTY_PAGES to a
+> !KVM_MEM_GUEST_MEMFD memslot does not produce host errors in TDX.
 
-I pretty much came to the same conclusion. I guess it depends on how we
-implement it. With WFET, the precision depends on the hardware clock.
-For WFE, we could use the 100us event stream only or we could do like
-__delay() and fall back to busy spinning for smaller (or end of)
-intervals.
+I'll pick on this patch for a general comment in for the series.
 
-The spinning variant may have some random slack depending on how long it
-loops before checking the clock.
+Most of the commit messages are light on the 'why' a patch exists.  It may
+seem obvious that adding a test is to test some functionality.  But that
+is not always the full story.
 
-> > Also I feel the spinning added to poll_idle() is more of an architecture
-> > choice as some CPUs could not cope with local_clock() being called too
-> > frequently.
-> 
-> Just on the frequency point -- I think it might be a more general
-> problem that just on specific architectures.
-> 
-> Architectures with GENERIC_SCHED_CLOCK could use a multitude of
-> clocksources and from a quick look some of them do iomem reads.
-> (AFAICT GENERIC_SCHED_CLOCK could also be selected by the clocksource
-> itself, so an architecture header might not need to be an arch choice
-> at  all.)
-> 
-> Even for something like x86 which doesn't use GENERIC_SCHED_CLOCK,
-> we might be using tsc or jiffies or paravirt-clock all of which would
-> have very different performance characteristics. Or, just using a
-> clock more expensive than local_clock(); rqspinlock uses
-> ktime_get_mono_fast_ns().
-> 
-> So, I feel we do need a generic rate limiter.
+For example, here it would be nice for folks in the future to see what bug
+fix this was testing.  Then if it starts failing we all know where to
+start looking for the regression.
 
-That's a good point but the rate limiting is highly dependent on the
-architecture, what a CPU does in the loop, how fast a loop iteration is.
-That's why I'd keep it hidden in the arch code.
+Ira
 
-> > The above generic implementation takes a spin into
-> > consideration even if an arch implementation doesn't need it (e.g. WFET
-> > or WFE). Yes, the arch policy could set a spin of 0 but it feels overly
-> > complicated for the generic implementation.
-> 
-> Agree with the last point. My thought was that it might be okay to always
-> optimistically spin a little, just because WFE*/MWAITX etc might (?)
-> have a entry/exit cost even when the wakeup is immediate.
-
-They key is whether the cost is more expensive than some spinning. On
-arm64, cpu_relax() doesn't do anything, so WFE is not any worse even if
-it exits immediately (e.g. a SEVL+WFE loop). The only benefit would be
-if the cost of local_clock() is more expensive than some busy spinning.
-The arch code is better placed to know what kind of spinning is best.
-
-> Though the code is wrong in that it always waits right after evaluating
-> the policy. I should have done something like this instead:
-> 
-> +#define __smp_cond_load_relaxed_timewait(ptr, cond_expr, policy,       \
-> +                                        time_expr, time_end,           \
-> +                                        slack) ({                      \
-> +       typeof(ptr) __PTR = (ptr);                                      \
-> +       __unqual_scalar_typeof(*ptr) VAL;                               \
-> +       u32 __n = 0, __spin = SMP_TIMEWAIT_SPIN_BASE;                   \
-> +       u64 __prev = 0, __end = (time_end);                             \
-> +       u64 __slack = slack;                                            \
-> +       bool __wait = false;                                            \
-> +                                                                       \
-> +       for (;;) {                                                      \
-> +               VAL = READ_ONCE(*__PTR);                                \
-> +               if (cond_expr)                                          \
-> +                       break;                                          \
-> +               cpu_relax();                                            \
-> +               if (++__n < __spin)                                     \
-> +                       continue;                                       \
-> +               if (__wait)                                             \
-> +                       __smp_timewait_store(__PTR, VAL);               \
-> +               if (!(__prev = policy((time_expr), __prev, __end,       \
-> +                                         &__spin, &__wait, __slack)))  \
-> +                       break;                                          \
-> +               __n = 0;                                                \
-> +       }                                                               \
-> +       (typeof(*ptr))VAL;                                              \
-> +})
-
-I think both variants work just fine. The original one made more sense
-with waiting immediately after the policy decided that it is needed.
-With the above, you go through the loop one more time before detecting
-__wait == true.
-
-I thought the current __smp_cond_load_acquire_timewait() is not doing
-the right thing but it does check cond_expr immediately after exiting
-__cmpwait_relaxed() (if no timeout), so no unnecessary waiting.
-
-> >> +#define __check_time_types(type, a, b)			\
-> >> +		(__same_type(typeof(a), type) &&	\
-> >> +		 __same_type(typeof(b), type))
-> >> +
-> >> +/**
-> >> + * smp_cond_load_relaxed_timewait() - (Spin) wait for cond with no ordering
-> >> + * guarantees until a timeout expires.
-> >> + * @ptr: pointer to the variable to wait on
-> >> + * @cond: boolean expression to wait for
-> >> + * @time_expr: monotonic expression that evaluates to the current time
-> >> + * @time_end: end time, compared against time_expr
-> >> + * @slack: how much timer overshoot can the caller tolerate?
-> >> + * Useful for when we go into wait states. A value of 0 indicates a high
-> >> + * tolerance.
-> >> + *
-> >> + * Note that all times (time_expr, time_end, and slack) are in microseconds,
-> >> + * with no mandated precision.
-> >> + *
-> >> + * Equivalent to using READ_ONCE() on the condition variable.
-> >> + */
-> >> +#define smp_cond_load_relaxed_timewait(ptr, cond_expr, time_expr,	\
-> >> +				       time_end, slack) ({		\
-> >> +	__unqual_scalar_typeof(*ptr) _val;				\
-> >> +	BUILD_BUG_ON_MSG(!__check_time_types(u64, time_expr, time_end),	\
-> >> +			 "incompatible time units");			\
-> >> +	_val = __smp_cond_load_relaxed_timewait(ptr, cond_expr,		\
-> >> +						__smp_cond_policy,	\
-> >> +						time_expr, time_end,	\
-> >> +						slack);			\
-> >> +	(typeof(*ptr))_val;						\
-> >> +})
-> >
-> > Looking at the current user of the acquire variant - rqspinlock, it does
-> > not even bother with a time_expr but rather added the time condition to
-> > cond_expr. I don't think it has any "slack" requirements, only that
-> > there's no deadlock eventually.
-> 
-> So, that code only uses smp_cond_load_*_timewait() on arm64. Everywhere
-> else it just uses smp_cond_load_acquire() and because it jams both
-> of these interfaces together, it doesn't really use time_expr.
-> 
-> But, it needs more extensive rework so all platforms can use
-> __smp_cond_load_acquire_timewait with the deadlock check folded
-> inside its own policy handler.
-
-We can have a generic:
-
-#define smp_cond_load_acquire_timewait(ptr, cond_expr, time_expr) \
-	smp_cond_load_acquire(ptr, (cond_expr) || (time_expr))
-
-with some big comment that it may deadlock if an architecture does not
-regularly check timer_expr in the absence of a *ptr update.
-
-Alternatively, just define res_smp_cond_load_acquire() in the bpf code
-to take separate cond_expr and time_expr and do an 'or' between them in
-the default implementation.
-
-> > About poll_idle(), are there any slack requirement or we get away
-> > without?
-> 
-> I don't believe there are any slack requirements. Definitely not for
-> rqspinlock (given that it has a large timeout) and I believe also
-> not for poll_idle() since a timeout delay only leads to a slightly
-> delayed deeper sleep.
-> 
-> Question for Rafael, Daniel: With smp_cond_load_relaxed_timewait(), when
-> used in waiting mode instead of via the usual cpu_relax() spin, we
-> could overshoot by an architecturally defined granularity.
-> On arm64, that could be ~100us in the worst case. Do we have hard
-> requirements about timer overshoot in poll_idle()?
-
-I can see a CPUIDLE_POLL_MIN and MAX defined as 10us and 250us
-respectively (for a HZ of 250). Not sure it matters if we overshoot by
-100us. If it does, we should do like the __delay() implementation with a
-fall-back to a busy loop.
-
-> > I think we have two ways forward (well, at least):
-> >
-> > 1. Clearly define what time_end is and we won't need a time_expr at all.
-> >    This may work for poll_idle(), not sure about rqspinlock. The
-> >    advantage is that we can drop the 'slack' argument since none of the
-> >    current users seem to need it. The downside is that we need to know
-> >    exactly what this time_end is to convert it to timer cycles for a
-> >    WFET implementation on arm64.
-> >
-> > 2. Drop time_end and only leave time_expr as a bool (we don't care
-> >    whether it uses ns, jiffies or whatever underneath, it's just a
-> >    bool). In this case, we could use a 'slack' argument mostly to make a
-> >    decision on whether we use WFET, WFE or just polling with
-> >    cpu_relax(). For WFET, the wait time would be based on the slack
-> >    value rather than some absolute end time which we won't have.
-> >
-> > I'd go with (2), it looks simpler. Maybe even drop the 'slack' argument
-> > for the time being until we have a clear user. The fallback on arm64
-> > would be from wfe (if event streaming available), wfet with the same
-> > period as the event stream (in the absence of a slack argument) or
-> > cpu_relax().
-> 
-> So I like the approach with (2) quite a bit. It'll simplify the time
-> handling quite nicely. And, I think it is also good to drop slack
-> unless there's a use for it.
-> 
-> There's just one problem, which is that a notion of time-remaining
-> still seems quite important to me. Without it, it's difficult to know
-> how often to do the time-check etc. I could use an arbitrary
-> parameter, say evaluate time_expr once every N cpu_relax() loops etc
-> but that seems worse than the current approach.
-> 
-> So, how about replacing the bool time_expr, with a time_remaining_expr
-> (s32) which evaluates to a fixed time unit (ns).
-
-I'd use ktime_t instead of s32. It is already signed and can represent
-(negative) time deltas. The downside is that we need to use
-ns_to_ktime() etc. for conversion.
-
-However, in the absence of some precision requirement for the potential
-two users of this interface, I think we complicate things unnecessarily.
-The only advantage is if you want to make it future proof, in case we
-ever need more precision.
-
-> This also gives the WFET a clear end time (though it would still need
-> to be converted to timer cycles) but the WFE path could stay simple
-> by allowing an overshoot instead of falling back to polling.
-
-For arm64, both WFE and WFET would be woken up by the event stream
-(which is enabled on all production systems). The only reason to use
-WFET is if you need smaller granularity than the event stream period
-(100us). In this case, we should probably also add a fallback from WFE
-to a busy loop.
-
--- 
-Catalin
+[snip]
 
