@@ -1,193 +1,354 @@
-Return-Path: <linux-kernel+bounces-766321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3C8B2451C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:17:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9445FB24523
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B2C17C5D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46DC1896976
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6A72EFDA9;
-	Wed, 13 Aug 2025 09:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79B92F0C54;
+	Wed, 13 Aug 2025 09:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="CUBybRtf"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011031.outbound.protection.outlook.com [52.103.68.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4zQCNdnf"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3B61A9F94;
-	Wed, 13 Aug 2025 09:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755076594; cv=fail; b=TeM32bBkIzzMmf6uaUj72wc/OrZ2d+b/sKUZKwTDYNCXYCnzMTW2bLjnfQlV4rhel+pMhg8t8nwJYUiKcm62V13VaAAYh6WnGM+EVcquP5N782lHUq3EsrD9/3a7it5UWqQhTXGcDlixIzPpsshGtoePs41waORS2nTSrhNCkEc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755076594; c=relaxed/simple;
-	bh=GrAofSermi3SPZ/+MJrlP2uMysXPCFWaCTyjVlMog0Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DFptm+Er3+SACKZJjX0JqDoAF336D2v2jvi/YO3gnfxUr+ms5RiIN3oa+n219Po6i1CWYvcDuAXK+p6kICIkkIApnjMr/Xa8sCVIUNHJXS1zfXlnApJ0pdSn2I8+3IIRH274Wx96Tf05PBRYR1QeSy+p70yuNDFRf8WTsh3TIZ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=CUBybRtf; arc=fail smtp.client-ip=52.103.68.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T1AX7udw+aLTPRXLRwk+ingch8x/iBT9dpl2+OupIcJ7ZsT8E01PDKrwxTdmL1aLlebY0XPHjbESCjlohbkLqmsix1ECYN0hKTZ5+DQJYx/2sFG8dOEyJwP+Q0Aqw6KrWETRw2YEr/7Ef7kCBAH3RAn17Ue4oxQbeeuW9A85wqLxbdfU2H5GdtOxB39uxQcr9UkCI8ESaLpmzZL6tRvjRnRvMKkjzGM8Ha4AmsyMCjpE2QNfgrocNXmCHHPUv0NaNI/B8gHjped39zcCUj37McVU8GJs7yKtrfvz9mx1PMm648AuHXH/KZ1ZPu7yXIo2x8uDG32KqZu9rMdq8kNcgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Or+ckiNZBYwkgRTfUWZRJUm31d4RsPNf/DCV2UEajU=;
- b=EfortgpwNnCVx2lWvUEBEi2yS8srpuOjS3KmeFZH7JDgUGqUEyWBf5KfOlxeFv8FIE8soQ/NVKNiYXflG2b+cnr8nXmItjoFGl/juoUMtV8PFzlYSD+1UPgN1RjlV74B36bxR3DWbsMek9H4DDFYuci6ewpcW3Y/NsxSFeX9r6/vJSXQ83Sl5Wr5S+Ok+Y+MiYyX82jD+TVSVZA3vpwAZ5hJZnYYBnKgEtv4dwqufvRdrO2WS7qIczjYlMY8oRvxFriaxlj07Z4tiYpeREMEjnYVD1w7Vny2Pchjpj3/tpCI0mwpMpnqgtVAi82tGxQm5RqHJlyWGrovgdjIAWT1vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Or+ckiNZBYwkgRTfUWZRJUm31d4RsPNf/DCV2UEajU=;
- b=CUBybRtft3RTd1AmOTI2c2fXU9tm/AwSxctMmvq5I1p3KrOBqhX48ZZUEeyp0V/cf5qjVOZA4i8GEj0W7EVtG3YB35W2nxgv+Rkf11puCA2m31o5wQpZNpYP5qxAui5xnaaC3HN6gos+ufaJee1PFssavLcqaFNYAVAnA5sBq100A5V3al3onLlEO45s3PgaqhY4sO+vHQ2KzoyKDP/jxu8knbkiLmeMl0Gg7CprGjGkJYbRNQkLoQVs7B5KyH6Gtuca1KdKIgIyZS5pachl9d9xTjYh7Ai0GVzUg6f9bv/jgJs/QGwUjd0v1tesvh3pi0HKLbALO/7ttmD+W1THCQ==
-Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:16f::16) by MAXPR01MB4422.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:2::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Wed, 13 Aug
- 2025 09:16:26 +0000
-Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::5dff:3ee7:86ee:6e4b]) by MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::5dff:3ee7:86ee:6e4b%4]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
- 09:16:25 +0000
-Message-ID:
- <MAUPR01MB110727C208BC6E8E94821982BFE2AA@MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM>
-Date: Wed, 13 Aug 2025 17:16:21 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Add SPI NOR DTS node for SG2042 SoC and boards using
- it
-To: Zixian Zeng <sycamoremoon376@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: devicetree@vger.kernel.org, sophgo@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Han Gao <rabenda.cn@gmail.com>
-References: <20250813-sfg-spidts-v1-0-99b7e2be89d9@gmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250813-sfg-spidts-v1-0-99b7e2be89d9@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR04CA0018.apcprd04.prod.outlook.com
- (2603:1096:4:197::9) To MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:16f::16)
-X-Microsoft-Original-Message-ID:
- <61bf0288-699a-42ed-b5e6-db53a75d5f04@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA1B28640A
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755076686; cv=none; b=aOrM70rbqXWTM4HeN1/rEciPuArl6PpWxDE//ryrXnhqgwcepdKkrpAUh6/+7akS0iCK8DE44A+YU9DY7aqdOuzNGSfMTv+6+YJ7lYvlbfLbd4KOAvjDE2kMztBtm5E13kzwDHCjrLxugA/LuKc7Vdd+5Ek5qghlyWnfy5D+B/M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755076686; c=relaxed/simple;
+	bh=edqXA279nb+6pKqJGvsnQ01RvKrqzE/wyte6n+n5Nh8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZtTrs2hNyy43lM3ECQbCUjEyQxwuk8ennBFQj+zcKQAxoUtXVRPYUvYm+FMUvQMydk0UAqDn81SD4Zm/JzZm+UJNhYbJxrpsOHditgRfIMAYUWb+Goj9Q02GythIcRuBzGKt+0D6txVwVO5pZDsqr68KUOeTxpHb5qhXmlP9Juw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4zQCNdnf; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-70756dc2c00so82307636d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755076684; x=1755681484; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lEIrY78WsjNYmXzuAWnHNbTgOyWqLJXMsp6X6KLifAc=;
+        b=4zQCNdnfWwXP0LZnxIeGiX5Dsp8ZYCaNmKUDbWiuL5zaC3R9xPEJ/ooqFGhFJHv2Xu
+         Pr0IyH+9G9F2OGaHLYXAg0vNtxZAvFmVzkpkxpR+FO1YRrFnLuF+zjFd8qMLq4cf5Wjb
+         6UOus9DwPVnZ73xsLJLoamQlGO0dpp7wyMH59xOv7bXvDwHhCjI0BVyWQoguUQOu8ILq
+         znPMUUvQgeXO4NXz3gqiOxTbzWkWh0eGFUKP7sR9ExaY2004noRaH+qILS1dj8/8LKuI
+         0StmUXs2GMIqVkOs5sSUAsGnCbHqLURan+h50Y34x7ab36AxBjywSFEE6KMPgb4CkxiD
+         QDiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755076684; x=1755681484;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lEIrY78WsjNYmXzuAWnHNbTgOyWqLJXMsp6X6KLifAc=;
+        b=QUF0Cphx20zWFBayQ5mTDTWO13YZnM2dG39Dvk0zmfDkE4cRUapdyysBPmx5nolE2V
+         iE1k+BFgQgliSG6k2sR1ph05+KCkBF3kZeWyCllKx/KKp5/p0oMNc767yU7bP+ry3EQ/
+         t3g6XFJ9P1vUsudAKY+5Fksmm9hiuByUlav1Fl/7LpmFOFzDCsR5A50neILIDtWedaFI
+         xuWk6o5VeYQu649KpTnsxgioJ2xvIDv9wAR/0B5f8o0ZwPjLheXygS0yt/a/wfjxXrBP
+         H9nsv901C6izZg9lkU8SF5hatZZ4OHyqegDmw5tTlfzIldV52ceWM2RgQjSbb+qj+o0P
+         ztjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhc+5VyV4q8KzIZiVxECMnOCcmRrBeRlQLtJtesZBp3+BoZvqJy8rh9XpzWNOxUu0GPmHnn/jq0iGOq1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSLbhbrZkPDIbYoEpn/rYJ6gKxtuTv5pjnQXaaKqHCTAQ+PMRq
+	P98i1p51GYOC1Wee0Up0srn+6ReKDaflOrBwMyVqy54AhbV2dj94yrlC4+zbhtKMtEaqMQbRsk/
+	tNWI9IiTMBtNi4Ie/0WDOoZkoGDWvYtg0XpWBVoKH
+X-Gm-Gg: ASbGncuEkgUy2Fpn86Z1UPlzfdsUA/jB46X1vwpcj52B+LOv6UuV9iQnuVBBzixmiLu
+	7cwWcUU1INbMGPbe6QXdyl3UHCDYUULTX22ZvzrVIaDXno6JOGE9E7qCyZHugfJeOdtpZvfB46h
+	s+lA9Ff7mM0rvxdsWyRfcI/xBnJrETcrEXSJcQzZ/4m66shdDE5tvblU/UeyuWUpfPwV1q/bN5S
+	xVzLN5mRglgrGyNBXY=
+X-Google-Smtp-Source: AGHT+IEBBgaLdSr0hsOUapHm8ACP4jtCUk6pLogMCNjtj4jsJz1Gu6zE4lVcT92uxRMBQ2KiXZEaPJkhLP6+fG/Txzk=
+X-Received: by 2002:ad4:5969:0:b0:707:14d5:ee7a with SMTP id
+ 6a1803df08f44-709e89589f1mr29205596d6.36.1755076683316; Wed, 13 Aug 2025
+ 02:18:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MAUPR01MB11072:EE_|MAXPR01MB4422:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31e2f0a8-94a1-4123-895f-08ddda4a13f1
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799015|19110799012|6090799003|5072599009|15080799012|10035399007|40105399003|4302099013|440099028|3412199025|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VEozcFY4bmJGS1ZTeXVld0hjT2xaOVRQWkRYWFQ1QUZ5bnMrdkJoMGlkbGdy?=
- =?utf-8?B?NlBGdzIzUFFoR29lemdWaE1OSDhySERXU2IxUG43OXY0cXRKOVVNTXlCQlRp?=
- =?utf-8?B?T1E3OXJIcUxMVXQ4QUtNYjR3VFVXZFpTcDBuM0F2UjhIa2xQYlRGRjV6Qk5H?=
- =?utf-8?B?eEVXTmc1ampXNDE5aUJnakw2V29tQ0JlV1V1QWw5Sy9zalNHeVFjSlVqUS82?=
- =?utf-8?B?c0NVaDNCZldWMXB3aXJuM2xkeENvK1F1ZHdac2ExZ3BPd0lBZXFzRDFzT25l?=
- =?utf-8?B?OTZybFJ2RGE3M2g4bTlGdE42UEw5SVpBMTJMUlBWeGpmTTFJcllRQ25RSmZJ?=
- =?utf-8?B?d0IvbTZuMlJkMzZjMmwxZ3VtNmZuNmhUTGRnYjhsbmxKOURrT1ZNR0VxaEov?=
- =?utf-8?B?WEZUNUVnWm9vSDQ3TVRvMlpJZ0VCdGVLNmJYSGlOZGdHRGhDWVdlQWpQRmNE?=
- =?utf-8?B?eWZ1TmpLb3FZYWROWEZwTGdRZ2RvT2tMRFlvOFllQW5JbEhJNFFDWFZweCs3?=
- =?utf-8?B?WDZ0bVUvdVJKUkF2NUxVenV6a3VmTFA2cEVuRmM1VHJ3UjAraGwrdmg0cFFv?=
- =?utf-8?B?VnlWSm03d2I3S0swQXV3WVdHcXR0RG1JVGttRlZkQUQwYUl1Qms0dFNGTi9F?=
- =?utf-8?B?WTBkK2dUNnJQbkN4MU9Ud2JlamwxbUZSWnE2VDlNUXIwRDlCQ0lZZ1ZsNGVN?=
- =?utf-8?B?N2hXNkFWcnpha2NNaFRLWlVBaVdxRTFwemJZejVYNTgyYXc1SGFaNTYrMkRw?=
- =?utf-8?B?UklrWU01WkxhU04ra1lhQUZCcmhDVVlvTEhZaXZQbTZsTXV2STBDcHRWazB1?=
- =?utf-8?B?M1Q4V0FXV1Vjb0duclVjMFpCVkpBTXE2VkdaNUtvc0ZTQzFzNzlnZ2xvS09R?=
- =?utf-8?B?c1RIVXhTdmY5N2J5UlhWQ2JIRVlIR2lVdXFCRkZhSnJsMEVzQ0xTd00wRzk2?=
- =?utf-8?B?MU1naWM2RE16a1c1d21NVEhaVG14dTJSbUVVaTJmQ3M3aHVaNS9oOFdaUitO?=
- =?utf-8?B?b3IvK1VFTE0zM1lRSzdQdnlocFlkaCt5Vmh6eFVDZDNrdEt3YnpwV01LbDBx?=
- =?utf-8?B?Mk5TVHhZTklPdzc4eWxNWm1LTUtEV2YrN2dvbGVFSVBFQXhDb3FmQXE5Mlhx?=
- =?utf-8?B?emhYeENleFl2dFVkTncrWmNwU1ErY3o4VklxWVhvMU9BWHFkSGJoNS9wV2lH?=
- =?utf-8?B?ZWZsR3dYRlZxaWhFMHRWU3R6a1A1NDdRVk90eHZIRXF6eCtkNGV3dnZWWEpj?=
- =?utf-8?B?Y053cEgzQ0J2bXpxNi9ZUmlpdmdIUUdra1VreWxOamlaZ2cxWDJBN2d1Zmwz?=
- =?utf-8?B?YlNRUml6dSt1QWV4VTNGdTd6VllHVkV6MS9FYWdaejQxZngvc2Z0UHBHSzlx?=
- =?utf-8?B?VnNlTHRmK2psYy9qa0ozdmFHQi8zQVo3SFZzelRYbnRpQ1IydGt1RFVPTFdz?=
- =?utf-8?B?bmw2TlY5VHdaUGY3ekhkS2xCZndwRnE5WVdEWmZxV3lUTU1jMXl4Yi9lQ3Ju?=
- =?utf-8?B?NDFuL0NqUWVtZHBZUkt1WU9FczMzN2FuZzliRzFFLzkwdVR5NDlhNExSNkhX?=
- =?utf-8?B?cXREY29FZjdZSE9qUXVwVUNNbS9UOS9qSzd3SVR6N0V0dmNlWG9vdUpJS2pZ?=
- =?utf-8?B?OFZLbEtWSWlzRWdZbDdGcENqL2x2NkkzUVJIUGg0YWMrV3lCSXdxcHd2YjJ2?=
- =?utf-8?B?ZUsxWGhESzdEcHREM0xkeXNML1BNdUpYbWVneFF1QTN4UlJNNTB1dzRBPT0=?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SmxGalpFbGR6NHFXN24zclBJeERiamZMVm1PdlVGeDNjZWFBTEpKZEFxZStB?=
- =?utf-8?B?NmREU1EyK21XQ0N6akJWYmJXMUczdlpNUjRVeTBKVWRFelZWYnhRdUFsZ3hH?=
- =?utf-8?B?QkY5QVU4ZWtzT0w1eEdGV2k0enU3RlFjS2pPa1cwRit3WGpKOVMvRXpPU3RR?=
- =?utf-8?B?dm1WNlZFMEM0MnI3L3cvejczc0JWUVpnN0o5SnVSeEdxbWVVenE0bTZDWmdz?=
- =?utf-8?B?VUl2ZmFhdHN4NDVQaXB6UGhVdGFxdGZLbXVmSG5JZnhoR2l3MXBvbUNsWEF2?=
- =?utf-8?B?aU1DUE1OK1htVWRzbHdrYjRTeE1xc29PT0t1c0MzOUVkWm5MbDQ5eks2UWdV?=
- =?utf-8?B?aEdzc3d2aXNlQXdNUmJmSU5SdFVGS2I2ZkE4a0M2WjRRZ25DS1I2MDFuMmZE?=
- =?utf-8?B?STlkL1dRQjBOMExvYkYvVXprZW9jTEQzNnkzTkJVWDVVam5mTm9GT0RwclYz?=
- =?utf-8?B?L0xjdDJ5aERiUkkwVmRTR1loenBmTnJ5WG1CY01UQkJSbFVxTk1DQmNibVUy?=
- =?utf-8?B?TnZ5QlVvL2RkUUZPUnBhbkQ4M2RjYWtkS2huYVBLSFZnV2p1RU9HVmJPWE5N?=
- =?utf-8?B?THhyd1g2R0I0VUhFb0QzZmhJbmxxR1gzM1BCdEFkOWJrKzlHcllCTVhYU2o5?=
- =?utf-8?B?ZmM2ZWUzN096WTRzU08yZmZ4dGdVQXh4cFQ2TjI4ZGRTNjlvNGsyVTdWeFNY?=
- =?utf-8?B?QXFtb09FQSsxMXJqU0dVVUZTWk40eXdvRk9KM28xUHcxc1NTWFc1Yk1vTHpw?=
- =?utf-8?B?eU50WDhnWkdYdlRER0lLMi9ReXF5c3J4b01qRWJzSnJzNjBsaXdUVkJ4MU9t?=
- =?utf-8?B?TUxXRFhYc1IxcFl3Ty8va2xVc0ZEOG0vUnZFeG1qdlY4L0VLZ0F5Q1dQME5H?=
- =?utf-8?B?aDJaZjZlRWNMK2h1Uk1ZeUx3T1MyK1VnTnB4NmdHcVZkYlY2QXhCUndXeEdS?=
- =?utf-8?B?MUVxcHZKZlF4d0RQTHU3aFpJY0FURmQ2YUVjQnlJVlFqR1hLVStZc2plUldM?=
- =?utf-8?B?V3pZT2VqdExTVFlaWFNxL3QxdUlMUnRLanVGT3o1aUFJMEwwZk8wOC9qdWtk?=
- =?utf-8?B?bjRsQW9iOTAxZVFSUjZoRDZNVldubmtGM21wTW9SeDZPVW5mZUUxOUYyQ002?=
- =?utf-8?B?S2NnMG9sektCRlFPbzU5YWNOT2drSnFpQ0ptZ1dyMS9vY3ZmZkQva2I1T0dD?=
- =?utf-8?B?bERhcFV4M2xINFRZT3h0OS9mRTZaYVRMMmcybDZucFBlclRKSFQwZ2ViSU55?=
- =?utf-8?B?TVFrWlRHaS9wNWZXb3RHdEpYbU9CYXprdE5BSFQweFU5NGw2UUE4K0Q5ZHVy?=
- =?utf-8?B?RDhmM0hUWENFQnlRYjVsUUxTRXE0MUpkSitaNnkvenZzRWhwNVdhWVpiSFBU?=
- =?utf-8?B?L1A0QklyN05GRUlwT2FzS1BDdCs3TldZbkVsb3NQeitNVEFmUUlUM0VsSm9u?=
- =?utf-8?B?cEdCVHMxYUQ3STFpUkpZZnkzNnlYMFIvZlo0WGM4alRaZUdWeUJERW9IMTJ6?=
- =?utf-8?B?dWtSeWdmZSthM2Y4eUd1NnAvVFFoMWo4MXY2V0RrOE1xMnlFVE5wTnRLMk1Y?=
- =?utf-8?B?QWpibnNyL3BOQXdiV012V1JQelFnT2dqRXBkdFdzOEFxRlBiNXFUV2F2ejFG?=
- =?utf-8?B?RVpnc3ppdHpvNlRFOGJpRUFWdmUxeUExY2dkazJ0N0E3K1ZJUlJaeVo3L1k4?=
- =?utf-8?B?eDgzdTUxZ244dmxsL1VDd3ozMFhIdTRaR0dGOFh4UUhpVkJIU3F5Ky8rVW00?=
- =?utf-8?Q?a2YIJL11Xq7evw+wjH+aVcuKDOdJ3B1cirlZwD9?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31e2f0a8-94a1-4123-895f-08ddda4a13f1
-X-MS-Exchange-CrossTenant-AuthSource: MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 09:16:25.8263
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAXPR01MB4422
+References: <20250811221739.2694336-1-marievic@google.com> <20250811221739.2694336-2-marievic@google.com>
+In-Reply-To: <20250811221739.2694336-2-marievic@google.com>
+From: David Gow <davidgow@google.com>
+Date: Wed, 13 Aug 2025 17:17:50 +0800
+X-Gm-Features: Ac12FXwKclyKURhGUPeqD7q1-1Zy-xJEuYt-xIEpE9fLIlLMtHAftwqee4-Dzoo
+Message-ID: <CABVgOSkhkwgoO8oUHRgzw5Env48vQ8JoGp=sx8-NRAT+my9xfg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] kunit: Add parent kunit for parameterized test context
+To: Marie Zhussupova <marievic@google.com>
+Cc: rmoar@google.com, shuah@kernel.org, brendan.higgins@linux.dev, 
+	mark.rutland@arm.com, elver@google.com, dvyukov@google.com, 
+	lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com, 
+	rodrigo.vivi@intel.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, kasan-dev@googlegroups.com, 
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000005139ad063c3ba2a0"
+
+--0000000000005139ad063c3ba2a0
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, 12 Aug 2025 at 06:17, Marie Zhussupova <marievic@google.com> wrote:
+>
+> Currently, KUnit parameterized tests lack a mechanism
+> to share resources across parameter runs because the
+> same `struct kunit` instance is cleaned up and
+> reused for each run.
+>
+> This patch introduces parameterized test context,
+> enabling test users to share resources between
+> parameter runs. It also allows setting up resources
+> that need to be available for all parameter runs only once,
+> which is helpful in cases where setup is expensive.
+>
+> To establish a parameterized test context, this
+> patch adds a parent pointer field to `struct kunit`.
+> This allows resources added to the parent `struct kunit`
+> to be shared and accessible across all parameter runs.
+>
+> In kunit_run_tests(), the default `struct kunit`
+> created is now designated to act as the parameterized
+> test context whenever a test is parameterized.
+>
+> Subsequently, a new `struct kunit` is made
+> for each parameter run, and its parent pointer is
+> set to the `struct kunit` that holds the
+> parameterized test context.
+>
+> Signed-off-by: Marie Zhussupova <marievic@google.com>
+> ---
+
+Thanks, this looks good to me.
+
+Reviewed-by: David Gow <davidgow@google.com>
+
+Cheers,
+-- David
 
 
-On 8/13/2025 4:33 PM, Zixian Zeng wrote:
-> [PATCH 1/4] and [PATCH 2/4] are copied from patch set [1]
-> [PATCH v4 4/4] without content changes.
 >
-> Link: https://lore.kernel.org/linux-riscv/20250720-sfg-spifmc-v4-0-033188ad801e@gmail.com/ [1]
+> Changes in v2:
 >
-> Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
-Need not SOB in cover letter.
+> - Descriptions of the parent pointer in `struct kunit`
+>   were changed to be more general, as it could be
+>   used to share resources not only between parameter
+>   runs but also between test cases in the future.
+> - When printing parameter descriptions using
+>   test.param_index was changed to param_test.param_index.
+> - kunit_cleanup(&test) in kunit_run_tests() was moved
+>   inside the parameterized test check.
+> - The comments and the commit message were changed to
+>   reflect the parameterized testing terminology. See
+>   the patch series cover letter change log for the
+>   definitions.
+>
 > ---
-> Zixian Zeng (4):
->        riscv: dts: sophgo: Add SPI NOR node for SG2042
->        riscv: dts: sophgo: Enable SPI NOR node for PioneerBox
->        riscv: dts: sophgo: Enable SPI NOR node for SG2042_EVB_V1
->        riscv: dts: sophgo: Enable SPI NOR node for SG2042_EVB_V2
+>  include/kunit/test.h |  8 ++++++--
+>  lib/kunit/test.c     | 34 ++++++++++++++++++++--------------
+>  2 files changed, 26 insertions(+), 16 deletions(-)
 >
->   arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts       | 24 ++++++++++++++++++++++
->   arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts       | 12 +++++++++++
->   .../riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts | 24 ++++++++++++++++++++++
->   arch/riscv/boot/dts/sophgo/sg2042.dtsi             | 24 ++++++++++++++++++++++
->   4 files changed, 84 insertions(+)
-> ---
-> base-commit: 8a4fdd09c96f6713e6cb47d36e9f9dd6f6694215
-> change-id: 20250813-sfg-spidts-ee56044969fe
+> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> index 39c768f87dc9..b47b9a3102f3 100644
+> --- a/include/kunit/test.h
+> +++ b/include/kunit/test.h
+> @@ -268,14 +268,18 @@ struct kunit_suite_set {
+>   *
+>   * @priv: for user to store arbitrary data. Commonly used to pass data
+>   *       created in the init function (see &struct kunit_suite).
+> + * @parent: reference to the parent context of type struct kunit that can
+> + *         be used for storing shared resources.
+>   *
+>   * Used to store information about the current context under which the test
+>   * is running. Most of this data is private and should only be accessed
+> - * indirectly via public functions; the one exception is @priv which can be
+> - * used by the test writer to store arbitrary data.
+> + * indirectly via public functions; the two exceptions are @priv and @parent
+> + * which can be used by the test writer to store arbitrary data and access the
+> + * parent context, respectively.
+>   */
+>  struct kunit {
+>         void *priv;
+> +       struct kunit *parent;
 >
-> Best regards,
+>         /* private: internal use only. */
+>         const char *name; /* Read only after initialization! */
+> diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+> index f3c6b11f12b8..14a8bd846939 100644
+> --- a/lib/kunit/test.c
+> +++ b/lib/kunit/test.c
+> @@ -647,6 +647,7 @@ int kunit_run_tests(struct kunit_suite *suite)
+>         struct kunit_case *test_case;
+>         struct kunit_result_stats suite_stats = { 0 };
+>         struct kunit_result_stats total_stats = { 0 };
+> +       const void *curr_param;
+>
+>         /* Taint the kernel so we know we've run tests. */
+>         add_taint(TAINT_TEST, LOCKDEP_STILL_OK);
+> @@ -679,37 +680,42 @@ int kunit_run_tests(struct kunit_suite *suite)
+>                 } else {
+>                         /* Get initial param. */
+>                         param_desc[0] = '\0';
+> -                       test.param_value = test_case->generate_params(NULL, param_desc);
+> +                       /* TODO: Make generate_params try-catch */
+> +                       curr_param = test_case->generate_params(NULL, param_desc);
+>                         test_case->status = KUNIT_SKIPPED;
+>                         kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
+>                                   "KTAP version 1\n");
+>                         kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
+>                                   "# Subtest: %s", test_case->name);
+>
+> -                       while (test.param_value) {
+> -                               kunit_run_case_catch_errors(suite, test_case, &test);
+> +                       while (curr_param) {
+> +                               struct kunit param_test = {
+> +                                       .param_value = curr_param,
+> +                                       .param_index = ++test.param_index,
+> +                                       .parent = &test,
+> +                               };
+> +                               kunit_init_test(&param_test, test_case->name, test_case->log);
+> +                               kunit_run_case_catch_errors(suite, test_case, &param_test);
+>
+>                                 if (param_desc[0] == '\0') {
+>                                         snprintf(param_desc, sizeof(param_desc),
+> -                                                "param-%d", test.param_index);
+> +                                                "param-%d", param_test.param_index);
+>                                 }
+>
+> -                               kunit_print_ok_not_ok(&test, KUNIT_LEVEL_CASE_PARAM,
+> -                                                     test.status,
+> -                                                     test.param_index + 1,
+> +                               kunit_print_ok_not_ok(&param_test, KUNIT_LEVEL_CASE_PARAM,
+> +                                                     param_test.status,
+> +                                                     param_test.param_index,
+>                                                       param_desc,
+> -                                                     test.status_comment);
+> +                                                     param_test.status_comment);
+>
+> -                               kunit_update_stats(&param_stats, test.status);
+> +                               kunit_update_stats(&param_stats, param_test.status);
+>
+>                                 /* Get next param. */
+>                                 param_desc[0] = '\0';
+> -                               test.param_value = test_case->generate_params(test.param_value, param_desc);
+> -                               test.param_index++;
+> -                               test.status = KUNIT_SUCCESS;
+> -                               test.status_comment[0] = '\0';
+> -                               test.priv = NULL;
+> +                               curr_param = test_case->generate_params(curr_param, param_desc);
+>                         }
+> +                       /* TODO: Put this kunit_cleanup into a try-catch. */
+> +                       kunit_cleanup(&test);
+>                 }
+>
+>                 kunit_print_attr((void *)test_case, true, KUNIT_LEVEL_CASE);
+> --
+> 2.51.0.rc0.205.g4a044479a3-goog
+>
+
+--0000000000005139ad063c3ba2a0
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+jmkLAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFBp5bTxrTm/d
+WMmRETO8lNkA4c7fMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBF
+tO3/N2l9hTaij/K0xCpLwIlrqpNo0nMAvvG5LPQQjSeHnTh06tWTgsPCOJ65GX+bqWRDwGTu8WTq
+c5ihCNOikBs25j82yeLkfdbeN/tzRGUb2RD+8n9I3CnyMSG49U2s0ZdncsrIVFh47KW2TpHTF7R8
+N1dri01wPg8hw4u0+XoczR2TiBrBOISKmAlkAi+P9ivT31gSHdbopoL4x0V2Ow9IOp0chrQQUZtP
+KBytLhzUzd9wIsE0QMNDbw6jeG8+a4sd17zpXSbBywIGw7sEvPtnBjMaf5ib3kznlOne6tuDVx4y
+QFExTCSrP3OTMUkNbpIdgzg2CHQ2aB8i8YsTZ8Q8Q8ztPJ+xDNsqBUeYxILLjTjxQQovToqipB3f
+6IMyk+lWCdDS+iCLYZULV1BTHSdwp1NM3t4jZ8TMlV+JzAyRqz4lzSl8ptkFhKBJ7w2tDrZ3BEXB
+8ASUByRxeh+pC1Z5/HhqfiWMVPjaWmlRRJVlRk+ObKIv2CblwxMYlo2Mn8rrbEDyfum1RTMW55Z6
+Vumvw5QTHe29TYxSiusovM6OD5y0I+4zaIaYDx/AtF0mMOFXb1MDyynf1CDxhtkgnrBUseHSOU2e
+MYs7IqzRap5xsgpJS+t7cp/P8fdlCNvsXss9zZa279tKwaxR0U2IzGxRGsWKGxDysn1HT6pqMDGC
+Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAUXA7LnOuRz2DvkWTeMc
+0TANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQgj6AkrMeuWraXBi4BKuUZg+ibPtcw
+6s37R786zGw6MiEwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
+ODEzMDkxODA0WjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
+AQEBBQAEggEAhQFlCAgfqW0ZFpM1dzXMuhsHoXAgaZMpIJbbLVhCWktOP3wLrvQcer4XhArfYH7b
+JwgB3ZemYeCWklQ8WDgPDZn8hRp2ZZ4NeqO8/1n0uKx24QspmwpzFq4Oq+hVb5V2PDz5XenwOtd6
+M1Gwm837hIRK21aL0wRcC7BzZA90jeFGSZR/i8qGLX2z8UlKkLYcccSfHWxdK2VKnVXhlKsx4YQ4
+ZIjK7f4FZvyvMn/srxcblk2aD0Qb7yVUp95JYd4yHyVmQZSOPNgdeVWLiYtVdjzYHD1AXtPbpPM6
+nFXADoj8QCeADATqAieDruIi92KzoxLNXoQBvJhraKUJOgAerw==
+--0000000000005139ad063c3ba2a0--
 
