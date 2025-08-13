@@ -1,128 +1,93 @@
-Return-Path: <linux-kernel+bounces-766658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DF4B24993
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A06B24B23
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09C2488046B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:33:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773C718989FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C531F4617;
-	Wed, 13 Aug 2025 12:33:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9242B1B4236;
-	Wed, 13 Aug 2025 12:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C912EB5D6;
+	Wed, 13 Aug 2025 13:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/cHBPZk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CC62EACE0;
+	Wed, 13 Aug 2025 13:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755088381; cv=none; b=RakkTHOZ/a0h48xk3JBp4SVgZX+Okd/kfIVaq/lUQDloPoBK0NBJbAf2HdQEs75sEZFeRC7QOEASDxJ3zrJtR9EMxEcKLOESiHKmy1XTnfYZt91IvwTGzQhnZfCUqXL2a+JQrwsz0DuYc2J/PgIJzxPRXj51R7FMjBZuqZ/L9Qc=
+	t=1755092818; cv=none; b=Y6axaw5iot/dumr7cHQQ5egPffo7TK58BH0HBdAA2zZick0yXGwk+i5uOb7n3Xu2tjZiJzFd7jza2mR9zxfbFwtvw96vD3fYjrh0cSEA14UX9kh7DMRHe9/n9W2nUHov/746fw11G19orvaXpIUlAXc9RDLncbY8XsRwQQXnaiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755088381; c=relaxed/simple;
-	bh=+ZNQIw8M0+f5NajXwAHDWtW/B4MytlS1SyEPlS2kXSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3RmSmR9h7nKE5zuFNBVvJRoq9mBfBsUjnb0aRuVE4ifcJnxjd8gJWZcgy3GyOQHyfEPJUrgI6+dfgcx5VeEZy1LGY1rxxec855bC3bd8Us8HG3s57cQ4mFWqGqHtteXlm9LDqSh2Wgccij7y0iZwPOgoHAbYII0mazGdF7pQyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6AF212FC;
-	Wed, 13 Aug 2025 05:32:50 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D37813F5A1;
-	Wed, 13 Aug 2025 05:32:56 -0700 (PDT)
-Date: Wed, 13 Aug 2025 13:32:54 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: Marc Zyngier <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 0/4] clocksource: Add standalone MMIO ARM arch timer
- driver
-Message-ID: <20250813-opalescent-boisterous-viper-d0061d@sudeepholla>
-References: <20250807160243.1970533-1-maz@kernel.org>
- <20250813-macho-snobbish-alpaca-ff07fa@sudeepholla>
- <aJx4g8z3l438Qgnv@raptor>
+	s=arc-20240116; t=1755092818; c=relaxed/simple;
+	bh=UAO9FvzDnoYfoDrmrGeQdcrb/Ul+p/dFDaH44bIxgT4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=S0LZbyXNgn6ls5T+0VaGRyLgl10oImRpDcDR72wHhkQ4ewfWCo98EzZuTKDkwj7A+d76e2RVLsrnuM2RSEqQEir+wPgOPbU5iENHSgaLr7QKp/ndXI9FpfNqZmvLQ17yYCc1FuCTLBwR3VWWhnK2YfGEpwjDArK/L9U9K3Pv0ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/cHBPZk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 332B3C4CEEB;
+	Wed, 13 Aug 2025 13:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755092817;
+	bh=UAO9FvzDnoYfoDrmrGeQdcrb/Ul+p/dFDaH44bIxgT4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=d/cHBPZkrPeHH4eUrpq8GM07OApm1BfM5L1mK27jh1X4278IaHMdpzE+qr9TxzjTr
+	 L8TpgaEWHxcihTfRbBhMCHTeejJpHafcq6GmksAxlvVxNDOfQNMCbY+q47pPRgjXTE
+	 nd//EOi/PQptWdkO5j94smJX5ErkSpXfzSLTlbYgmiPLZ761Inb4cLWFp9+s8GdufM
+	 I8oPYBUDhY7ZbObOZ+KcogQyYqcuKw52tTp13O0RwVUes+VU5Z4/5p+jP7gVow7u/g
+	 Pn8EDU6iVOIhfZpp4qCbugMY7BvERMdVmT9S7LtLSXmQ5hRnc+SZ0CpAS91CpzPR+6
+	 3q+7Q+iQzUF5A==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
+ Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
+ <axboe@kernel.dk>, linux-block@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 04/15] rust: str: introduce `NullTerminatedFormatter`
+In-Reply-To: <aJw88P7K_6GFmWvW@google.com>
+References: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org>
+ <20250812-rnull-up-v6-16-v4-4-ed801dd3ba5c@kernel.org>
+ <vtPB4JcsqY753m500Pb4NVZEAxlKfEEzsrWBWUcEJcxqmhWrWYNqJDH8PFVm03IUm9nEweDNcYeaY2SbKHUOOA==@protonmail.internalid>
+ <aJw88P7K_6GFmWvW@google.com>
+Date: Wed, 13 Aug 2025 14:34:20 +0200
+Message-ID: <87frdvflir.fsf@t14s.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJx4g8z3l438Qgnv@raptor>
+Content-Type: text/plain
 
-On Wed, Aug 13, 2025 at 12:35:31PM +0100, Alexandru Elisei wrote:
-> Hello,
-> 
-> On Wed, Aug 13, 2025 at 11:55:48AM +0100, Sudeep Holla wrote:
-> > +Alexandru
-> > 
-> > On Thu, Aug 07, 2025 at 05:02:39PM +0100, Marc Zyngier wrote:
-> > > For the past 10 years, both Mark and I have been lamenting about the
-> > > sorry state of the badly named "arch_timer" driver, and about the way
-> > > the MMIO part is intricately weaved into the system-register part.
-> > > 
-> > > The time has finally come to have a stab at it.
-> > > 
-> > > This small series simply creates a new timer driver for the MMIO arch
-> > > timer, and only that. It is an actual driver, and not some kludge that
-> > > has to run super early (that's what the per-CPU timers are for). This
-> > > allows, in turn, a pretty large cleanup of the per-CPU driver, though
-> > > there is more to come -- one thing at a time.
-> > > 
-> > > As an added bonus, we get a clocksource, which the original code
-> > > didn't provide. Just in case it might be useful. The end-result is far
-> > > more readable, and about 100 lines smaller.
-> > > 
-> > 
-> > (Tested it on Juno R2 and FVP in both DT and ACPI boot)
-> > 
-> > Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > 
-> > Alexandru found it useful(avoids some unexpected hang IIUC) in his setup
-> > based on bootwrapper which doesn't initialise MMIO timers.
-> 
-> Just FYI, this is the testing that I did.
-> 
-> Without this series, if firmware (boot-wrapper-aarch64 in my testing) doesn't
-> configure access to the memory-mapped timer:
-> 
-> [    0.000000] arch_timer: Unable to find a suitable frame in timer @ 0x000000002a810000
-> [    0.000000] Failed to initialize '/timer@2a810000': -22
-> ..
-> [    0.528000] kvm [1]: kvm_arch_timer: uninitialized timecounter
-> ..
-> # ls /dev/kvm
-> ls: cannot access '/dev/kvm': No such file or directory
-> 
-> With this series, if firmware doesn't configure access to the memory-mapped
-> timer:
-> 
-> [    0.549399] kvm [1]: Hyp nVHE mode initialized successfully
-> ..
-> [    2.018050] arch-timer-mmio 2a810000.timer: Unable to find a suitable frame in timer @ 0x000000002a810000
-> [    2.018123] arch-timer-mmio 2a810000.timer: probe with driver arch-timer-mmio failed with error -22
-> ..
-> # ls /dev/kvm
-> /dev/kvm
-> 
+"Alice Ryhl" <aliceryhl@google.com> writes:
 
-Thanks for the details. I misunderstood as some VM boot hang and was wondering
-why I couldn't reproduce it(was failing gracefully though no KVM and hence
-VM fails to launch).
+> On Tue, Aug 12, 2025 at 10:44:22AM +0200, Andreas Hindborg wrote:
+>> Add `NullTerminatedFormatter`, a formatter that writes a null terminated
+>> string to an array or slice buffer. Because this type needs to manage the
+>> trailing null marker, the existing formatters cannot be used to implement
+>> this type.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>
+>> +    #[expect(dead_code)]
+>> +    pub(crate) fn from_array<const N: usize>(
+>
+> Don't you delete this function in the next patch?
 
--- 
-Regards,
-Sudeep
+It slipped through the cracks. I'll remove it and respin. Thanks.
+
+
+Best regards,
+Andreas Hindborg
+
+
+
 
