@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-766234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32374B24432
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:23:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B89EB24430
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90F33721C72
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 829D3168E12
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2762ED16D;
-	Wed, 13 Aug 2025 08:20:30 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800522A1E6;
+	Wed, 13 Aug 2025 08:21:08 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673F11E0DE2;
-	Wed, 13 Aug 2025 08:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867322690D9;
+	Wed, 13 Aug 2025 08:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073230; cv=none; b=JFu8JJbueSBsQUxbHhFmPChwJvhNwK+O+KYl8CzGBJ6+Z057qDsJr1nMatPohhrcwRdTxESggYh5nruSK8977RDAOm2XE5EE5CIkFsBxZzgLaDg8toAL+fNgTuWOWgit+9w3lw3e+RDRFrl9Q67QeaLU1sBNRAb3EAY5jTWu5ys=
+	t=1755073268; cv=none; b=NRNeXq1nZJ7nTen5q9mUU45JpJrqdGhYVTqs9T7eTLNU1rnE9mxpnXlGKMKqXAzfsRjwXJ8S0q5Pojs49cCK2a2VdwUt5faUi1gKfPg6RzUK+4MFvWC64hn5ZdRBnYTWYlfOFAg1APqS6PgEyikgX8wdyqRGsYSaX042EHWUWhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073230; c=relaxed/simple;
-	bh=6ayZlO2PSXhtLjxbAr30198jx2UL7fDJVteF34QqTfw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VyPJnxKp5JmkwPsCkhHHs1VZGHkv/a9MLg+eXbd89+oJqXf82EQvscXXuUo1DImQkHCdCPpEKd3udqudjAWzca9cRJ44bBDy7lo6o9JMBReHJ3PDUCEqsCRbKjtK2UhTbMK5JJ/lU0jOQfEcfUelLo8HaFUpT+2KZrXhrScGAeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2526C4CEEB;
-	Wed, 13 Aug 2025 08:20:27 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Lubomir Rintel <lkundrak@v3.sk>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: mstp: Add genpd OF provider at postcore_initcall()
-Date: Wed, 13 Aug 2025 10:20:22 +0200
-Message-ID: <81ef5f8d5d31374b7852b05453c52d2f735062a2.1755073087.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755073268; c=relaxed/simple;
+	bh=y/s7wwOlYPVkyXx5nbRs5KaAJ0ZEjjOZjp/AnDFDD50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=quRq4epl7FRYSpLXD5F82qDlCfaMkGCluF1bEWOYG6fWsiW+Dg0QYTlXwQ49T4G6qZYKtCIsOVM2hVwbEdlJ4pO9UXw4y7E5iLW3BV7x4eNggqYSQO3OFfKZFurN63cyGHngKBAx+G7BvriFI9aTG98HqyyOho6tSjX4bdWhJGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af7c8.dynamic.kabel-deutschland.de [95.90.247.200])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id A4D2C61E647BA;
+	Wed, 13 Aug 2025 10:20:33 +0200 (CEST)
+Message-ID: <785b380c-d4ba-423c-93ed-059d0aebc6be@molgen.mpg.de>
+Date: Wed, 13 Aug 2025 10:20:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH v1 iwl-next 2/2] igbvf: remove
+ duplicated counter rx_long_byte_count from ethtool statistics
+To: Kohei Enju <enjuk@amazon.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ kohei.enju@gmail.com
+References: <20250813075206.70114-1-enjuk@amazon.com>
+ <20250813075206.70114-3-enjuk@amazon.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250813075206.70114-3-enjuk@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Genpd OF providers must now be registered after genpd bus registration.
-However, cpg_mstp_add_clk_domain() is only called from CLK_OF_DECLARE(),
-which is too early.  Hence on R-Car M1A, R-Car H1, and RZ/A1, the
-CPG/MSTP Clock Domain fails to register, and any devices residing in
-that clock domain fail to probe.
+Dear Kohei,
 
-Fix this by splitting initialization into two steps:
-  - The first part keeps on registering the PM domain with genpd at
-    CLK_OF_DECLARE(),
-  - The second and new part moves the registration of the genpd OF
-    provider to a postcore_initcall().
 
-See also commit c5ae5a0c61120d0c ("pmdomain: renesas: rcar-sysc: Add
-genpd OF provider at postcore_initcall").
+Thank you for your patch.
 
-Fixes: 18a3a510ecfd0e50 ("pmdomain: core: Add the genpd->dev to the genpd provider bus")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued as a fix in renesas-clk-for-v6.17.
+Am 13.08.25 um 09:50 schrieb Kohei Enju:
+> rx_long_byte_count shows the value of the GORC (Good Octets Received
+> Count) register. However, the register value is already shown as
+> rx_bytes and they always show the same value.
+> 
+> Remove rx_long_byte_count as the Intel ethernet driver e1000e did in
+> commit 0a939912cf9c ("e1000e: cleanup redundant statistics counter").
+> 
+> Tested on Intel Corporation I350 Gigabit Network Connection.
+> 
+> Tested-by: Kohei Enju <enjuk@amazon.com>
+> Signed-off-by: Kohei Enju <enjuk@amazon.com>
+> ---
+>   drivers/net/ethernet/intel/igbvf/ethtool.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/igbvf/ethtool.c b/drivers/net/ethernet/intel/igbvf/ethtool.c
+> index c6defc495f13..9c08ebfad804 100644
+> --- a/drivers/net/ethernet/intel/igbvf/ethtool.c
+> +++ b/drivers/net/ethernet/intel/igbvf/ethtool.c
+> @@ -36,7 +36,6 @@ static const struct igbvf_stats igbvf_gstrings_stats[] = {
+>   	{ "lbtx_bytes", IGBVF_STAT(stats.gotlbc, stats.base_gotlbc) },
+>   	{ "tx_restart_queue", IGBVF_STAT(restart_queue, zero_base) },
+>   	{ "tx_timeout_count", IGBVF_STAT(tx_timeout_count, zero_base) },
+> -	{ "rx_long_byte_count", IGBVF_STAT(stats.gorc, stats.base_gorc) },
+>   	{ "rx_csum_offload_good", IGBVF_STAT(hw_csum_good, zero_base) },
+>   	{ "rx_csum_offload_errors", IGBVF_STAT(hw_csum_err, zero_base) },
+>   	{ "rx_header_split", IGBVF_STAT(rx_hdr_split, zero_base) },
 
-drivers/clk/mmp/clk-of-mmp2.c:mmp2_pm_domain_init() has the same issue.
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
-Note that R-Car H1 still booted fine, as the CPG/MSTP Clock Domain is no
-longer used directly on that SoC: all devices were moved to the R-Car
-SYSC PM Domain in commits 751e29bbb64ad091 ("ARM: dts: r8a7779: Use SYSC
-"always-on" PM Domain") and commit a03fa77d85a736d3 ("ARM: dts: r8a7779:
-Use SYSC "always-on" PM Domain for HSCIF"), and use the clock domain
-only indirectly from rcar-sysc through cpg_mstp_{at,de}tach_dev()).
----
- drivers/clk/renesas/clk-mstp.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 6b47bb5eee45f75b..5fcc81b92a973771 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -305,6 +305,9 @@ void cpg_mstp_detach_dev(struct generic_pm_domain *unused, struct device *dev)
- 		pm_clk_destroy(dev);
- }
- 
-+static struct device_node *cpg_mstp_pd_np __initdata = NULL;
-+static struct generic_pm_domain *cpg_mstp_pd_genpd __initdata = NULL;
-+
- void __init cpg_mstp_add_clk_domain(struct device_node *np)
- {
- 	struct generic_pm_domain *pd;
-@@ -326,5 +329,20 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
- 	pd->detach_dev = cpg_mstp_detach_dev;
- 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
- 
--	of_genpd_add_provider_simple(np, pd);
-+	cpg_mstp_pd_np = of_node_get(np);
-+	cpg_mstp_pd_genpd = pd;
-+}
-+
-+static int __init cpg_mstp_pd_init_provider(void)
-+{
-+	int error;
-+
-+	if (!cpg_mstp_pd_np)
-+		return -ENODEV;
-+
-+	error = of_genpd_add_provider_simple(cpg_mstp_pd_np, cpg_mstp_pd_genpd);
-+
-+	of_node_put(cpg_mstp_pd_np);
-+	return error;
- }
-+postcore_initcall(cpg_mstp_pd_init_provider);
--- 
-2.43.0
+Kind regards,
 
+Paul
+
+
+PS: Should you resend, *redundant* instead of *duplicated* might better 
+describe the removed counter.
 
