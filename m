@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-767579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7F0B25642
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:05:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7424B25645
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2D53B3402
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:05:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B953B11ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BB92EE29B;
-	Wed, 13 Aug 2025 22:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C812EBBB8;
+	Wed, 13 Aug 2025 22:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElBSNsNv"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="1A/2v9bi"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9865A2BDC2B;
-	Wed, 13 Aug 2025 22:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC01C19882B
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 22:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755122736; cv=none; b=Sx/xGUwzFweJnqnODBtWJbnE0xRtr+3VK8yFgRglsDw04mZuhmQQ33w8G8l8nr8LckYrdfBCsatHLkpb229iAudpXrIT459yRpRggKcg6PwbPN5I7f9P4cBcfbzEpdQttWlEHWsyBElMW6BKH/ogqMuyiXEJYbEZX14Z+Ro/y60=
+	t=1755122828; cv=none; b=l9ljpDPPjWyForcyVKhbOuQXrbN6KLHV3g5oOmpCvi8uIzWZyOQns4SBykgzo09+UF0J2cZHbWvemeBQ6Aq4NFlRCdXPCTsl8H61D2Vx5s1luOPJIXIrANYoDpzK8dTTxOY/0PK17qByrO1ABLWS3M61EnSVE//7B3wvbeqSUO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755122736; c=relaxed/simple;
-	bh=MUaFUoPulFgG8/a1da/RApFMWDCXyyeVhMjgI13XPrY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GnEcTCXl0eXb2WKzRRhFEulrGTozlpRH4AASV9d6usjjgYz741Gm4W73CrI24v3zJQXrd6EU9ARsHo7XQa0mKOXiWF+RsfxyFdxBObGLFcoHBm/F5JV/Jhh/7HRP+SLK7ohpAm1Wxoh786jCk8oz/FAPn3b02RNwUYAggdzWLt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElBSNsNv; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b47174aec0eso153593a12.2;
-        Wed, 13 Aug 2025 15:05:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755122734; x=1755727534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7JBfKkj+UGQ1ABwj7O02ZtdTt4/duiO+Dl+5JziUpEA=;
-        b=ElBSNsNvLQDLNjwZiy4a1NtjXe78HlRWQD+CnVE4JC/zL8GRio/rAdzHmnzESP1UBe
-         GelLG4Yj8tZHctL2fu8n1LC0ZjprHpf6lDpLqvkkUvuIA0TmL5PvvNq5Z8zq3Movq3WO
-         iFgPIE/49TmdqPULfamQeHbwfAhas5esvUHVeVp0CkAnJ9uHCjsX2bZFSwj0Dxgjhk3E
-         HIkkgZ6n94CC6spLaoPEqzIFEsjRpdzwL0PZPwyBQLMF0pc92WG3bS721KMCLceMeSxd
-         LVX5W37f3jWeWxTMQprbK1rK/0nz6Hf7B0K86271mrx8TwBJlpdOunrl9qRrjJuMbkLr
-         W5ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755122734; x=1755727534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7JBfKkj+UGQ1ABwj7O02ZtdTt4/duiO+Dl+5JziUpEA=;
-        b=Zak/KDkic5AoZCX72d0A74GFwggPc1W6MVEflvCpAUct7f3S06B8GJ+S/OjVau8F18
-         0zIPDDfW9D+Olac7UmHgCK4sMrzcARzu3JVyuhhfvAs6ykZj2KjqLJ/yyZWsS5QJ0QXb
-         hHo6bUQA4U0nFQGvIR+fyJIBC9lE09MyfeZ3qE/gFYLAfngMvcIpLoFZyG/BZ1i6wS9V
-         aPGU99gJVHgvbQVINthHY3vxSl4TPD1eFmY5D+F0Is83Q/L9PoDNbzHl6IDpFF5hXgZS
-         X8R0x97e9+w14aFOl2OxSM6M3bbyU/HqVNE2rwtqJD1uD1nuQNYpn118rO2zwK5EItr9
-         DiKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqmYKxGTcpqZb4LJzZloc2auoZtWmyaCylw20FJ3kMiivbP/8AYwYHlwnx629ppPCbBwE=@vger.kernel.org, AJvYcCV25xv7znKkAoSlHjNiM6GQGTAfnEIjtJGbPXtP+2B6utZZEmCucOmNlaJOHMvA/8zFnke8sMFxfHeodcWO6TtA@vger.kernel.org, AJvYcCXYwLyKvdvqNM6LahKlVoB0TU+cLEgYfsFXKkcJyd3ZGw73EZsrkBK25KQUK2/DkdG6rrlyiAXCjcoyDIbY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvkRNUzMEQ/4zP+BCAilhfl13L60ia8JpgATZJEOj6kOdbih6N
-	gQthudsh/5DmP+qC9UkipEt0Y91owCGtZxuWKF+EXwzsm18F6FyhW/wb1JmxNQotBAoNA20f2lE
-	LOrpRQkqsMGaHFFGP1v6fALmFNvIhY+4=
-X-Gm-Gg: ASbGncsvPhDggGvl2n9w0Rk9M/XnJckavYadBXqNVZ7NiZBNaPQkNr/p+IBQWuPs1he
-	sX1ybpgAydYfWzR+7KhunC/x6FuPjxNY3Vm/YX9iW2aMa0qs01XI7YI0bHL+zAWZz8nTdrc2ifk
-	yPkz/tg7GDWqIrIz/3bfm0ZgM8xmb6tpsdpp+ZQwpXZx6d5LZWt56mJyDo8LmiQOPqgly2hYPt0
-	9HQ08uRb62I4lCFG30UwNagsjiK+YbrqA==
-X-Google-Smtp-Source: AGHT+IE4ZnX5NFOSNqXjPfzUTcPCZGSi6O/jb/0tQEcr2gXu4GvmAgY2dkXipKjIM3yroVrHul1Wq1khKdFjWD1ObFA=
-X-Received: by 2002:a17:90b:17cc:b0:321:4182:2b9e with SMTP id
- 98e67ed59e1d1-32327ab2df2mr1263041a91.12.1755122733609; Wed, 13 Aug 2025
- 15:05:33 -0700 (PDT)
+	s=arc-20240116; t=1755122828; c=relaxed/simple;
+	bh=uIzsmZKJwjDz2mWKOy1UhhgTLN5rtxD9iXozJmIimac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=goaQK1cFeW+XgqeQy3HP5us7XfWckjnF8wBOHH1vJFppemEUy4JiNJU2C5hZh5WyOrB4An/AgLX7U06HurRRnKE609nzoHGOAo3oSSFmbPNAYQ0H+fKEIoxm7OMYOCoZxpwuPiluiA9BxrCRRcIbxth0h02gJ4fr3z7gfp8Vgco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=1A/2v9bi; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
+	by cmsmtp with ESMTPS
+	id mGuyuyGlL5wATmJcfuTVtQ; Wed, 13 Aug 2025 22:07:05 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id mJcfuD0xArnsYmJcfuUMS7; Wed, 13 Aug 2025 22:07:05 +0000
+X-Authority-Analysis: v=2.4 cv=OLkn3TaB c=1 sm=1 tr=0 ts=689d0c89
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=pGLkceISAAAA:8 a=JfrnYn6hAAAA:8 a=lNbMyd3QUhozLt4CxfMA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=BR/6CPBiRno1n+Md2/FA/IKXYNPIeUH6VbPcs+affiU=; b=1A/2v9biSk6earIRCNEQDPaVtH
+	v+8WNVg8qAM7Tkh8RZ9Qh4m0zsXklyrIYmOM6mWe6vGzSw/XnXdjIqp76PUXe38aOuz/uOEaT4uhc
+	pwiqB+4Y79vjw8W7rs7r5jait/liTGYXb8Ledd1Axoi0TnyigngCyt9Vo8YHmqEwb7DcJVzojCYIs
+	TLhEBZY2XZs18mQxga0LNk1LSCiDgYVBTUQyyNCxrdSqQ+u5MtRctbgziPyq94VGz6tyNMi1+r17r
+	jTPgOFGZFEFhIZIekEebFm+mkUbWEPIvpR5E3lqXwSKIaOrgCJQxDl2o7uQ6PWeKcm3ws3+K+U9DU
+	Ekao0QtQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:48018 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1umJcd-000000026Ve-3pLd;
+	Wed, 13 Aug 2025 16:07:03 -0600
+Message-ID: <55c94b4a-e3e8-4705-a314-f73dc33283b9@w6rz.net>
+Date: Wed, 13 Aug 2025 15:07:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812153719.36465-1-slopixelz@gmail.com>
-In-Reply-To: <20250812153719.36465-1-slopixelz@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 13 Aug 2025 15:05:19 -0700
-X-Gm-Features: Ac12FXw15X9NSzx_eHUQdPC-I5W_By2TvHBRCp0SbsCBCqcQUekSEXkrWtkohrI
-Message-ID: <CAEf4Bzb47GuSPEjbA_dJON94Dw4JKzpWvR+qm4QQW2p+0z1rSA@mail.gmail.com>
-Subject: Re: [PATCH] selftests/bpf: Fix typo in kprobe_multi_test.c
-To: Shubham Sharma <slopixelz@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, 
-	shuah@kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: achill@achill.org, akpm@linux-foundation.org, broonie@kernel.org,
+ conor@kernel.org, f.fainelli@gmail.com, gregkh@linuxfoundation.org,
+ hargar@microsoft.com, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux@roeck-us.net,
+ lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
+ pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
+ stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
+ torvalds@linux-foundation.org
+References: <b892ae8b-c784-4e8c-a5aa-006e0a9c9362@rnnvmail205.nvidia.com>
+ <20250813172545.310023-1-jonathanh@nvidia.com>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250813172545.310023-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1umJcd-000000026Ve-3pLd
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:48018
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 13
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfJw9rzFq0I1D9Mx65m5+fmdziOtzd5FpJ3V11XMzIamtdiWObBsCIFYzz0RMsi5dtsx8gMeCIMU5AII5N4gvbp2GqgG6vSVvgPBp9RaAEJrxe1vATu8e
+ l0Ghzg28LPy4m3BqDxj1yGfw1Jt9scbzxUVYYwd3/hBo2IuCWyChsf7M/70DEXFP1DX0HV8/TaulF6H6EaSK+eHW5sjPRs7RnQY=
 
-On Tue, Aug 12, 2025 at 8:37=E2=80=AFAM Shubham Sharma <slopixelz@gmail.com=
-> wrote:
+On 8/13/25 10:25, Jon Hunter wrote:
+> On Wed, Aug 13, 2025 at 08:48:28AM -0700, Jon Hunter wrote:
+>> On Tue, 12 Aug 2025 19:43:28 +0200, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 6.15.10 release.
+>>> There are 480 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10-rc1.gz
+>>> or in the git tree and branch at:
+>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>> Failures detected for Tegra ...
+>>
+>> Test results for stable-v6.15:
+>>      10 builds:	10 pass, 0 fail
+>>      28 boots:	28 pass, 0 fail
+>>      120 tests:	119 pass, 1 fail
+>>
+>> Linux version:	6.15.10-rc1-g2510f67e2e34
+>> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>>                  tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
+>>                  tegra194-p3509-0000+p3668-0000, tegra20-ventana,
+>>                  tegra210-p2371-2180, tegra210-p3450-0000,
+>>                  tegra30-cardhu-a04
+>>
+>> Test failures:	tegra194-p2972-0000: boot.py
+> I am seeing the following kernel warning for both linux-6.15.y and linux-6.16.y …
 >
-> Fixed a spelling mistake:
-> - comparision -> comparison
+>   WARNING KERN sched: DL replenish lagged too much
 >
-> Signed-off-by: Shubham Sharma <slopixelz@gmail.com>
-> ---
->  tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> I believe that this is introduced by …
 >
-> diff --git a/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c b=
-/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-> index e19ef509ebf8..f377bea0b82d 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c
-> @@ -463,7 +463,7 @@ static bool skip_entry(char *name)
->         return false;
->  }
+> Peter Zijlstra <peterz@infradead.org>
+>      sched/deadline: Less agressive dl_server handling
 >
-> -/* Do comparision by ignoring '.llvm.<hash>' suffixes. */
-> +/* Do comparison by ignoring '.llvm.<hash>' suffixes. */
+> This has been reported here: https://lore.kernel.org/all/CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com/
+>
+> Jon
 
-Is this the only typo in the entire BPF selftests? If we are doing
-single character comment fixes, let's do it as one bigger pass,
-instead of tons of tiny patches?
+Seeing this kernel warning on RISC-V also.
 
-pw-bot: cr
-
-
->  static int compare_name(const char *name1, const char *name2)
->  {
->         const char *res1, *res2;
-> --
-> 2.43.0
->
 
