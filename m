@@ -1,155 +1,314 @@
-Return-Path: <linux-kernel+bounces-767485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7B48B25502
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:12:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D0DB25504
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D64F3AE769
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:12:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E97E67BC4AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792762EB5DB;
-	Wed, 13 Aug 2025 21:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A645C2E7BD4;
+	Wed, 13 Aug 2025 21:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="d6OTku5E"
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DC90g/hh"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA322FD7B1
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2930D2FD7B1;
+	Wed, 13 Aug 2025 21:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755119524; cv=none; b=H7QbTuZJXw6zt8bx7bhZz4Oh5ejgP/WwzGxt8gN8fON4OT6SY0w1kiZ93T7DoN6yji0SyOApyIz2ARS+s0H1tCpBiwwEN7t/l6CroyNIqv5RHnkGd1JtFfS5oIS2NMwGei1u/N3OhMKHbsV1CEeD1gWMUUvhLhGhXm2jVUoyExM=
+	t=1755119568; cv=none; b=HbrAzZZjBNcrD/4sUv5AyPzCF7Ke2GrDbbmv+8r95H3wSWmLB0tUgVbNveGsa5IoxF30Z7aryMKHXaOT9AKJA0yLaA15r/nFWlKlq02qAHQDl5/ssOK4X5tr9LxHhx3nl6hR8aJPLmc2Hk6JkvJ1S3b7u9EWa+N56uYGOh0+Zs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755119524; c=relaxed/simple;
-	bh=27dZsSSc1FtLXlHOWPlo1du2AL2+YgSkzTVnQqxIWgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FNn1hYCAFQoycSQepuc+hp1dinpslZJ9Bb92fGD8IWy47AzfgnHFwjRVt04bdrmbsvfWAb33cdzM+WJz6qP5EICzmeBhHcI2GUFA/xVrCBX3wsy55yxJck6EAMmAaGzv4gKAAEZasQVqiJg2e/NVmzd0cb1uT3RUMgOnNWhjG+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=d6OTku5E; arc=none smtp.client-ip=209.85.210.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-74381f06578so123000a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:12:01 -0700 (PDT)
+	s=arc-20240116; t=1755119568; c=relaxed/simple;
+	bh=EeQx5dVNwrm1Nj5Pid8VwtIMnMsJ3VVlgSwZSJJi97o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LpQfTCAQ5qKyVJn4sS1goiW6iNNGA9KSha2JUhlVbvuCpa4XX4LW7ZIc/X2Z9OQB3b6sbVTo8xjMF7ZFa+y5vkfJGcvd98P//JNnnNKFrzaEDFWhQz7kc2zSnuFrCdEMeGxmIv1WmVf2AlA2fwzMNCT8EpIVIjBRpp4Hh4q3kV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DC90g/hh; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7ace3baso42935066b.3;
+        Wed, 13 Aug 2025 14:12:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755119521; x=1755724321; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xf3//GLvnzT9i6WfKITOLt4ui/tLiyvxxLpHItWn5zc=;
-        b=d6OTku5EfpvZOZvCDJTaH0fK6IFEjDOXJfxOdWGVJ1S6f5B1yAFp53KrV1d4WxIQqD
-         D9aR4j5PZgeMZyI1MMryu+iHlZZAv0UZSMbSse32lRDZpfo3tXc232UbuMpjy+5Mio5B
-         DxjVPlsjnOzdRjtYt9K0TQ0WfmNmWNqiROFpS3eKLTncTgB4Owg45lXVNgZFlJoPIexu
-         DfiOiaRy9qG+7OfPkDpE6RlMcmrAFWIDDJQPI22qmiRdz44aTSpOsgeTfp40bNhK0Jtk
-         1BHoIYQQzTCF4q2yWc15p31RDZlu/WrkdR8ij4dhzSmSostqMQXtDFbvNhO+rrRJbj17
-         tOSg==
+        d=gmail.com; s=20230601; t=1755119565; x=1755724365; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6R+FsQ2hbhcp1JFqDm2g0PdnGeoxdv4HV80v5lSsu3w=;
+        b=DC90g/hhzfCtko58lrw/wVMDFkrni4B9EpRVfS38EFC4dQ2TUhC6RTLXsICwBU8OAr
+         F0sIXF14OOhThwctHdFWk5XlWkBiW13fk6F2ijHq9FM+WahmotGxriylrSPX4Q8v2cF7
+         QCLXNUOVKe6asEfXcK9llLI+adCCp0qN2H8JbsIPPsg0uyyDpTToFfb5LVoMAHxHNGpA
+         TVvf8z9VQ20UZ508gUIbkOFDzqhQ5QPncJ5mmpHVW7zo387UpUF3/QgM/gbjUCvk5nYy
+         mHXXt9b9XGR2P61BMgwTcvlQBLyid7ZDGeVRk6OeOvEdgG/LvglcgfiPK72hA564KEr5
+         R1Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755119521; x=1755724321;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xf3//GLvnzT9i6WfKITOLt4ui/tLiyvxxLpHItWn5zc=;
-        b=Q9JD+CNYQQlavrIgmYus4JAjmpowzvfEGRKCrXffZN7DfPvl+6rL+TagNp+d6KdlTW
-         JAJxBL0V7lMeZ7XPhTowLmQ1N5CHfH1k/WMm//MHC3YrBu8qp4mW+DYOWGkYvYau7sSD
-         P0BQOJjbUK9tOzdrfxXtdWQqpXEVgwMxpE7CqbcWrmOk6713JSeGgNTH8qA+b/QitNgO
-         yFcGVIoCCJC5U1IYxd+LqCS7or/6PrpvIvfCsTS+bkjyOitTcKKEP88WcXTSmlZ3umfe
-         rE5vodjRJ4oygVvDysfbiwtLdEcFvgXUAUNkOLDRIPrcmsp/k9Ou3GqFCdjjXdFf2Rb4
-         t48w==
-X-Forwarded-Encrypted: i=1; AJvYcCXp3Np+DTYLpMTTckcAEJeBMpigFiptw+xy9phNhrETr10qkC9FCqz1ggnxctHshYrbbmd8HS2lnRXfETE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8JNg5EZPUNYPmRgyaztggugmYQL6G0KJUmsyIUgN+d8HbchXk
-	qWWcwuWYnNPbjjlMCXKzafSqvwkkssTS7hUSkKG+HQ9VJ5yepc/WQjI3j5QMe2L3LDg=
-X-Gm-Gg: ASbGncsb7SDeqOR3fWXUyCyhlgSWOZAxsLSttJ6epShdQkJLLnbmuJVftHk4VY5U9KC
-	g0GSfzGUNYYFXFEgwzu42M3yi8AWUujbV8bnNsD4sRvwCFKvItIaj0ZcPfLliyjzoMcGqUrdSWT
-	D4ZmpzNxuR51N+dfXFPAcA9SHxlC8Qh1dmhBw/mVhXg80bdVdbFQxvbKUdA5Qy6F5UpDExocr3V
-	4Hr8oCaCcoMwxfxC1efY6yWCNEIqfzQnjCSUk/0vK3VhvX5BIdiSnUXuZVlzp2Uzb+GBduHCkmh
-	si36q05ogmL2JhAOhdv25yhEHwCrbsVYCKfxJBwj2Vd/00Sfxf/+FDlWhZI5XKq7jb4KKEdc4It
-	YqILSYuz2zIzEAyUklM0eEiDKVss+XgHhYerJkT786iCt8IRkS8+hARZoJpIAgBZdH1Rdl2wP8Z
-	F+cKVmeWo=
-X-Google-Smtp-Source: AGHT+IF9n+F8e1mm/IyBfw7ePpfBTnEUME8yX6HA27qwsIWM/khGHlIzwyYXURZx3W+3vhm1Xj1CzQ==
-X-Received: by 2002:a05:6830:60db:20b0:742:f93c:194c with SMTP id 46e09a7af769-74382c06774mr157158a34.27.1755119520991;
-        Wed, 13 Aug 2025 14:12:00 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:ae46:dfe2:81c8:dde? ([2600:8803:e7e4:1d00:ae46:dfe2:81c8:dde])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30ccfdf5075sm180592fac.1.2025.08.13.14.11.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 14:12:00 -0700 (PDT)
-Message-ID: <623c0ef4-98c0-410c-abf3-fa9563f52688@baylibre.com>
-Date: Wed, 13 Aug 2025 16:11:59 -0500
+        d=1e100.net; s=20230601; t=1755119565; x=1755724365;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=6R+FsQ2hbhcp1JFqDm2g0PdnGeoxdv4HV80v5lSsu3w=;
+        b=C0Kilgo92ONPGiL9KN0hpdcIfakiOtMyYY8ZgyT0WrJHCNpZtHpD7XIu4gSKzUZ4c0
+         ig7o5aCPf1qvbpfmk6mYdvrHyrW2BTq+nhlbSF7y2qQ6rGckQfk1pF6/83ULqaz7gkBC
+         5ArJPPXZJ83itbwjXnYIfyhEZDumRQHI/Zl2vO6n79V2gDdYoTjbLGui5wP8314lEU16
+         Pk1eC4o02C0nxhX0XdJ5NAWXn+KdtuZw5mKuQe2kr2GkqnUCVThB9IPEKXH9JEx1JswI
+         9O62nfas8PMmvPl8w52mhy397qGDSkRG9IZwDBfUY05gsaGQHPRymuiZP/ezoXit2fcI
+         jlcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUuT3iGTjlTnJCsLgTqN1bH5FGLQENoHbnVwuf1qDVc2/NFEhIK5dVSGC/6Nodzh4cuIpiy4omWz15n7HQ=@vger.kernel.org, AJvYcCV/wXyL4O7R/Sd2yutUbzXs8wH5e0LPrvWfXEnRX2zizu5vXy8jbBnaXS1rxyBf9qrbVsGnxeOA1hxxTv+SKzNw@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVPEJ/LwmrXgmHRS/itxZf1xYsC39PFODfPzv3LmfkrO8qG6Ky
+	pTH4HWjJlScWqNy9xUPN0ygVB1zo5ecmbMYoV1oYT0Jfi7L6WA11H3LM
+X-Gm-Gg: ASbGnct870uMARLegZK16bNfBoEOHlQEVEVWzHy289mJInlYvcjqPXCGR/vd78ETVh0
+	lbXq90QQZFyCNRqWpZaQ5YYWIa/lreaT9HyRjrl/aGSkFNsD4utr8++7c0xAKCyzluduKikeXcQ
+	90LhkVAggbQppaYp2GuGzK2oejVytmG+CIta3wRpyZ402T9+QUEqsXH1yGM+JQoo+S2IRnj5vl2
+	zht38uJihyOwP4xe15cgYU4IC4yN/JbWjOJZN0Ey1dZWC4ZDRL+6ye03dJMesSCbkK/gKBhcvTn
+	VaDZy+ddO4qVFLv2VmkVcj2oX4wSZHHOqxaBfpmMK088SOROzKE3GsEDsC8wnTw9LR3c3i5rpgX
+	nd7OY5XXzwmjCGAQ89zy6Hs2rANiZ+GF7
+X-Google-Smtp-Source: AGHT+IEQx3+dF5FhXYRCJA2jGhnWmcvHp7LT+bA3JCWJ/ZghpN0pfgTNFHkTyAH3O3lXS3R8AV+/GQ==
+X-Received: by 2002:a17:907:1c89:b0:af9:d863:5ce4 with SMTP id a640c23a62f3a-afcbe075846mr21721666b.15.1755119565076;
+        Wed, 13 Aug 2025 14:12:45 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a078afbsm2455007166b.4.2025.08.13.14.12.44
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Aug 2025 14:12:44 -0700 (PDT)
+Date: Wed, 13 Aug 2025 21:12:44 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] selftests/mm: add check_folio_orders() helper.
+Message-ID: <20250813211244.ikequq4kvgs65mpp@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250812155512.926011-1-ziy@nvidia.com>
+ <20250812155512.926011-3-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: iio: mcp9600: Add compatible for
- microchip,mcp9601
-To: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250813151614.12098-1-bcollins@watter.com>
- <20250813151614.12098-2-bcollins@watter.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250813151614.12098-2-bcollins@watter.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812155512.926011-3-ziy@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On 8/13/25 10:15 AM, Ben Collins wrote:
-> MCP9601 is a superset of MCP9600 and is supported by the driver.
-> 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
-> ---
+On Tue, Aug 12, 2025 at 11:55:10AM -0400, Zi Yan wrote:
+[...]
+>+/*
+>+ * gather_folio_orders - scan through [vaddr_start, len) and record folio orders
+>+ * @vaddr_start: start vaddr
+>+ * @len: range length
+>+ * @pagemap_fd: file descriptor to /proc/<pid>/pagemap
+>+ * @kpageflags_fd: file descriptor to /proc/kpageflags
+>+ * @orders: output folio order array
+>+ * @nr_orders: folio order array size
+>+ *
+>+ * gather_folio_orders() scan through [vaddr_start, len) and check all folios
+>+ * within the range and record their orders. All order-0 pages will be recorded.
 
+I feel a little confused about the description here. Especially on the
+behavior when the range is not aligned on folio boundary. 
 
-Please include a cover letter with a changelog in v3.
+See following code at 1) and 2).
 
+>+ * Non-present vaddr is skipped.
+>+ *
+>+ *
+>+ * Return: 0 - no error, -1 - unhandled cases
+>+ */
+>+static int gather_folio_orders(char *vaddr_start, size_t len,
+>+			       int pagemap_fd, int kpageflags_fd,
+>+			       int orders[], int nr_orders)
+>+{
+>+	uint64_t page_flags = 0;
+>+	int cur_order = -1;
+>+	char *vaddr;
+>+
+>+	if (!pagemap_fd || !kpageflags_fd)
+>+		return -1;
 
->  .../bindings/iio/temperature/microchip,mcp9600.yaml         | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> index d2cafa38a5442..d8af0912ce886 100644
-> --- a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> +++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9600.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Microchip MCP9600 thermocouple EMF converter
-> +title: Microchip MCP9600 and similar thermocouple EMF converters
->  
->  maintainers:
->    - Andrew Hepp <andrew.hepp@ahepp.dev>
-> @@ -14,7 +14,9 @@ description:
->  
->  properties:
->    compatible:
-> -    const: microchip,mcp9600
-> +    enum:
-> +      - microchip,mcp9600
-> +      - microchip,mcp9601
->  
+If my understanding is correct, we use open() to get a file descriptor.
 
-It sounds like it would be useful to have a fallback in this case:
+On error it returns -1. And 0 is a possible valid value, but usually used by
+stdin. The code may work in most cases, but seems not right.
 
-properties:
-  compatible:
-    oneOf:
-      - const: microchip,mcp9600
-      - items:
-          - - microchip,mcp9600
-          - microchip,mcp9600
+>+	if (nr_orders <= 0)
+>+		return -1;
+>+
 
->    reg:
->      maxItems: 1
+Maybe we want to check orders[] here too?
 
-Usage would then be:
+>+	for (vaddr = vaddr_start; vaddr < vaddr_start + len;) {
+>+		char *next_folio_vaddr;
+>+		int status;
+>+
+>+		status = get_page_flags(vaddr, pagemap_fd, kpageflags_fd,
+>+					&page_flags);
+>+		if (status < 0)
+>+			return -1;
+>+
+>+		/* skip non present vaddr */
+>+		if (status == 1) {
+>+			vaddr += psize();
+>+			continue;
+>+		}
+>+
+>+		/* all order-0 pages with possible false postive (non folio) */
 
-	compatible = "microchip,mcp9601", "microchip,mcp9600";
+Do we still false positive case? Non-present page returns 1, which is handled
+above.
 
+>+		if (!(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
+>+			orders[0]++;
+>+			vaddr += psize();
+>+			continue;
+>+		}
+>+
+>+		/* skip non thp compound pages */
+>+		if (!(page_flags & KPF_THP)) {
+>+			vaddr += psize();
+>+			continue;
+>+		}
+>+
+>+		/* vpn points to part of a THP at this point */
+>+		if (page_flags & KPF_COMPOUND_HEAD)
+>+			cur_order = 1;
+>+		else {
+>+			/* not a head nor a tail in a THP? */
+>+			if (!(page_flags & KPF_COMPOUND_TAIL))
+>+				return -1;
+
+When reaches here, we know (page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL)).
+So we have at least one of it set.
+
+Looks not possible to hit it?
+
+>+
+>+			vaddr += psize();
+>+			continue;
+
+1)
+
+In case vaddr points to the middle of a large folio, this will skip this folio
+and count from next one.
+
+>+		}
+>+
+>+		next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
+>+
+>+		if (next_folio_vaddr >= vaddr_start + len)
+>+			break;
+>+
+>+		while ((status = get_page_flags(next_folio_vaddr, pagemap_fd,
+>+						 kpageflags_fd,
+>+						 &page_flags)) >= 0) {
+>+			/*
+>+			 * non present vaddr, next compound head page, or
+>+			 * order-0 page
+>+			 */
+>+			if (status == 1 ||
+>+			    (page_flags & KPF_COMPOUND_HEAD) ||
+>+			    !(page_flags & (KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))) {
+>+				if (cur_order < nr_orders) {
+>+					orders[cur_order]++;
+>+					cur_order = -1;
+>+					vaddr = next_folio_vaddr;
+>+				}
+>+				break;
+>+			}
+>+
+>+			/* not a head nor a tail in a THP? */
+>+			if (!(page_flags & KPF_COMPOUND_TAIL))
+>+				return -1;
+>+
+>+			cur_order++;
+>+			next_folio_vaddr = vaddr + (1UL << (cur_order + pshift()));
+
+2)
+
+If (vaddr_start + len) points to the middle of a large folio and folio is more
+than order 1 size, we may continue the loop and still count this last folio.
+Because we don't check next_folio_vaddr and (vaddr_start + len).
+
+A simple chart of these case.
+
+          vaddr_start                   +     len
+               |                               |
+               v                               v
+     +---------------------+              +-----------------+
+     |folio 1              |              |folio 2          |
+     +---------------------+              +-----------------+
+
+folio 1 is not counted, but folio 2 is counted.
+
+So at 1) and 2) handles the boundary differently. Not sure this is designed
+behavior. If so I think it would be better to record in document, otherwise
+the behavior is not obvious to user.
+
+>+		}
+>+
+>+		if (status < 0)
+>+			return status;
+>+	}
+>+	if (cur_order > 0 && cur_order < nr_orders)
+>+		orders[cur_order]++;
+
+Another boundary case here.
+
+If we come here because (next_folio_vaddr >= vaddr_start + len) in the for
+loop instead of the while loop. This means we found the folio head at vaddr,
+but the left range (vaddr_start + len - vaddr) is less than or equal to order
+1 page size.
+
+But we haven't detected the real end of this folio. If this folio is more than
+order 1 size, we still count it an order 1 folio.
+
+>+	return 0;
+>+}
+>+
+>+int check_folio_orders(char *vaddr_start, size_t len, int pagemap_fd,
+>+			int kpageflags_fd, int orders[], int nr_orders)
+>+{
+>+	int *vaddr_orders;
+>+	int status;
+>+	int i;
+>+
+>+	vaddr_orders = (int *)malloc(sizeof(int) * nr_orders);
+>+
+>+	if (!vaddr_orders)
+>+		ksft_exit_fail_msg("Cannot allocate memory for vaddr_orders");
+>+
+>+	memset(vaddr_orders, 0, sizeof(int) * nr_orders);
+>+	status = gather_folio_orders(vaddr_start, len, pagemap_fd,
+>+				     kpageflags_fd, vaddr_orders, nr_orders);
+>+	if (status)
+>+		goto out;
+>+
+>+	status = 0;
+>+	for (i = 0; i < nr_orders; i++)
+>+		if (vaddr_orders[i] != orders[i]) {
+>+			ksft_print_msg("order %d: expected: %d got %d\n", i,
+>+				       orders[i], vaddr_orders[i]);
+>+			status = -1;
+>+		}
+>+
+>+out:
+>+	free(vaddr_orders);
+>+	return status;
+>+}
+
+-- 
+Wei Yang
+Help you, Help me
 
