@@ -1,129 +1,141 @@
-Return-Path: <linux-kernel+bounces-766199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C927B243A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3626CB243AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A67781652D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:01:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94E816C1EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF8D2E7BD4;
-	Wed, 13 Aug 2025 08:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48CB2E9EDB;
+	Wed, 13 Aug 2025 08:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t83xbZU6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dX9KlHD2"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3894B27FB15;
-	Wed, 13 Aug 2025 08:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A37283FE4;
+	Wed, 13 Aug 2025 08:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755072069; cv=none; b=lSD2NXNfcbQYqrzvMZeQuFDMPdnPGfLQwEEozMW3wMTRxaEndAas6n7KIb59IK8VUXcETn0E9B0AAJXdNsY4Yuoi6kY1qSn7cJuQcEUmTNtaE9bjblP28YaNwBXdEiz8xkHdH8UvWIYE/VDk92n1OQUxpW0BDzvjlAc9oAIdjWk=
+	t=1755072159; cv=none; b=TApnEmdoej2MTa6dYpX06F+TRe1k2wTpO66jREJ3V/GsHOQ948opWBybrSjoV81IT+m//QbohL5sbPREtNp9O6ck+Bu7Ovs1h0bo0zFoaXWXUkKTtnG4r9SBtJ5Q/vbtUxR3Ml8hjirzSRv92e34uEZNEYImgNtyCzTfwNtwtA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755072069; c=relaxed/simple;
-	bh=ik3RRtJNXNQz3MHEcfgevkOsyPm9dZmKKxQvnQGEwKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RuV18t3/8vuVrzbEjJcEnVKXryx23Y3axyWzn5iWqYu/UaZCxNXlmHyXH6GWyG2uHPq2LVFiZ1fF3HV3oUgk8Otkw6ByFpF8u8F5wf8QIIX3G1+fttmfO1Cap/9teHG58p8ZcM1g/AlQqcWS3XdyWzyi3LWhqAEGpelo8RJy6W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t83xbZU6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 480C7C4CEEB;
-	Wed, 13 Aug 2025 08:01:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755072068;
-	bh=ik3RRtJNXNQz3MHEcfgevkOsyPm9dZmKKxQvnQGEwKw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t83xbZU6jvSLu4cvvrf+c+Qg1DzqBKCNvl+j3mMg/8FMgCuCbfYqwY3b+MUohZnwH
-	 taLYlaMHQNZPk/TJ+tFNpcqnyYN3D/gvy1OpbNq5M43TGDz98nz0BuNiNm/PBkePeL
-	 MKF9Hy76P8YQcDuNrho4oLbx8zxkry5tUeINgxTvBgKy3Q6in6YqWytWb+5lp3xeoJ
-	 8Gj4unrcrPZ/0YPKZRbr8It/uxsnM1OLZe0QFFuORsuba0ues++gvURHvw/QwsalPh
-	 0ODFA0TiIB7UYHOpi0Z6d4nuUxgs3a5hdu8zCAh0Qzjt/IdqfW8PRYWyIn3XGkCdOu
-	 vlCiw2zJjNhBQ==
-Message-ID: <c2e3aa26-7d9e-4423-9209-c882143310ce@kernel.org>
-Date: Wed, 13 Aug 2025 10:01:04 +0200
+	s=arc-20240116; t=1755072159; c=relaxed/simple;
+	bh=nQvMo01i5zzawzSDp3kh0vDqtAYbjljpoQbinuOFPq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n5iqwfa8b5znLE/jwUufIyEVn4SxwsiQRH5gIpIZkwxBS28sOgQMAp9LKacr8YR5tQgojJ4mwghAIYVRjZPp1rd0uXm1HIZhyVUw2aokiIW+GpHaV+tT6+c5maqk+JJEs5Teb5uFA1q/x0HMDcfH/neAGa4L0u4R0u0AAcBsThE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dX9KlHD2; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b7825e2775so5705600f8f.2;
+        Wed, 13 Aug 2025 01:02:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755072156; x=1755676956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XVe0idgYx1J+jUFo1Pbaqi+aQhg27OfKm5O0YenTYzE=;
+        b=dX9KlHD27fcm5mVtNCU5M4dTxgJ6o7wNfuazAw7SUUPAZu30PlOzFipywPTVfpMjFy
+         PRr5wWA97mzGjphskk6KsXQ9uhktenzS7wmRHkMp7E9m91XQj9PZpooYp0Rw4hLada4Q
+         cdROrpL9+DstpS3cLGK9+LhDZK7nR5vX6ftBAiezQLjsGXO7nbefoNUnTkBsVhsqjXe2
+         EVLwjgq17I60xiLg9zYA29TwxabocDie3K3tb43zJ6eS3dui5iqaSvDPjz7BXpbvZdfO
+         EGRBIjhfTHtBe93ha2So4OgZC9B5GWPYiDgsVtWLWWqGXcsa5ZgSvP32XRBoLJ7bHYU0
+         7JsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755072156; x=1755676956;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XVe0idgYx1J+jUFo1Pbaqi+aQhg27OfKm5O0YenTYzE=;
+        b=Yf937yM8aJkAaespV6/mHwo7czcgfOJqwNQAFUz9Lw/4RF+rTZumOEfeOM7aARHDWB
+         LuDeTT1Pe0xOXtHInbBg5TjfT8DUqRgwfI8ifRD+NY/m3nJN+E6XgbKeiEe49TXtb1ao
+         z2xvbDcOii4R5FgiG/b7AJlLQQOWb5rwFz6IuOpEjAMnYiVpwbih9E12owmpRNoLFP5U
+         7FzAJKXm/rNEIA98ZBgstEzZJGlMKKXkkCXc4tZ9cFWRkjINkmfV49lOxJGLP5ZYBQfb
+         j3KuEOmT/5e4FhyD3Y5eMyckRgd91FXsjo5zd5zylORVZWaBSlUzIKOjM65lVWVduyiV
+         ASGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1aAp9S8W5WhyQVgMIgqi7lavkA/5GcfkE9JPvAhtKTaejASEiOzF5jdmaGV7kF+bc6nEnKyM7nWVnd8Q=@vger.kernel.org, AJvYcCXWOytSdEbu/T2uPZQjFLoKvkBoKQwNO82FMZaopWPF20KrCStmaL8hjd15XKLFBStw09Ly/KzbcDllla0/H5zh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX00nnq3CUnN6wmL6dPKafJSl2B3EwPFNQtuH7SnhoBPS1n1wI
+	68ypXNItSFzVNmck3hvfdNDV3CnKZJwBXc8V3uqVYv0tQzfXK+S0GP/2
+X-Gm-Gg: ASbGnctUPm39+XRyB5P879Glcy5da8cGiITGfmyBW9xwePm2lJAuy2eAxlnrKcLvkGs
+	XccG4XEpjtVWc/iOja3b5uLfwCwH1ZysecXaqniKZRkHLwhw14AD6lHylYnH2fSMpQzazT96v8A
+	pRvrt5wnQEtUMQiJMh0i9MLcOc42WPRB2vjdu1lYFkjuKn04Qk4n0haW2HljStMrPadue7EpN5+
+	BU4wAx7Zf9fyc+DBfvRlKWEzvcQE15bzB2l0aF3PnPZ8vxeNdfauZbEYCVv52nxSfSwUmMqYaKY
+	JYm5EnpDNlfaEE8thfXOe1+SCIZpOfAoM5cei5IyF8DFmSxtPn8nWHHjlQvuxaTILmPzF69xZ01
+	iIclINOskz27Q07fNMwih
+X-Google-Smtp-Source: AGHT+IF2JGABNVx7BZux6MpyAVD1R1nKdKMygCmpURXyXIjOojtcxVvm42vK3OiP0B8MvRjzDo8c+g==
+X-Received: by 2002:a05:6000:240c:b0:3b7:8af8:b91d with SMTP id ffacd0b85a97d-3b917eae69emr1631360f8f.35.1755072155716;
+        Wed, 13 Aug 2025 01:02:35 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45a16de760fsm18991555e9.17.2025.08.13.01.02.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 01:02:35 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] selftests/mm: Fix spelling mistake "mrmeap" -> "mremap"
+Date: Wed, 13 Aug 2025 09:01:56 +0100
+Message-ID: <20250813080156.1977375-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/1] Enable CMU_HSI1 for Exynos990
-To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250528105821.158140-1-umer.uddin@mentallysanemainliners.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250528105821.158140-1-umer.uddin@mentallysanemainliners.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 28/05/2025 12:58, Umer Uddin wrote:
-> Hi all.
-> 
-> This series enables a new clock block (CMU_HSI1) for the Exynos990
-> SoC. This clock block provides clocks for the DesignWare MMC
-> Controller, PCIE subsystem and UFS subsystem.
-> 
-> This patch depends on the following series:
-> 
-> [CMU_HSI1] https://lore.kernel.org/linux-samsung-soc/20250528105252.157533-1-umer.uddin@mentallysanemainliners.org/
-> 
-I think dependency was not merged (received comments), so I will drop
-this from my queue. If that is not accurate, anyway please resend once
-dependency is ready/merged. Patch itself looked ok.
+There are spelling mistakes in perror message. Fix these.
 
-BTW, I take clock and SoC changes, so it is fine to send DTS with clock
-dependency together. DTS should not be mixed with driver code for Greg's
-subsystems, preferred not to mix for netdev.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/testing/selftests/mm/mremap_test.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
+index 5bd52a951cbd..e289bb1112db 100644
+--- a/tools/testing/selftests/mm/mremap_test.c
++++ b/tools/testing/selftests/mm/mremap_test.c
+@@ -846,7 +846,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp,
+ 	}
+ 	if (err != EFAULT) {
+ 		errno = err;
+-		perror("mrmeap() unexpected error");
++		perror("mremap() unexpected error");
+ 		success = false;
+ 		goto out_unmap;
+ 	}
+@@ -899,7 +899,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp,
+ 	}
+ 	if (err != EFAULT) {
+ 		errno = err;
+-		perror("mrmeap() unexpected error");
++		perror("remapp() unexpected error");
+ 		success = false;
+ 		goto out_unmap;
+ 	}
+@@ -948,7 +948,7 @@ static void mremap_move_multi_invalid_vmas(FILE *maps_fp,
+ 	}
+ 	if (err != EFAULT) {
+ 		errno = err;
+-		perror("mrmeap() unexpected error");
++		perror("remapp() unexpected error");
+ 		success = false;
+ 		goto out_unmap;
+ 	}
+-- 
+2.50.1
+
 
