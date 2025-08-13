@@ -1,171 +1,135 @@
-Return-Path: <linux-kernel+bounces-766142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC19B242C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:34:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF489B242C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3F68188E4B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:31:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187853AC5AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF9E2DA778;
-	Wed, 13 Aug 2025 07:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4245E2264A5;
+	Wed, 13 Aug 2025 07:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H8s3rm4y"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4qp8j40"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C682C3248
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B812BDC26;
+	Wed, 13 Aug 2025 07:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070248; cv=none; b=cBLZLoGgxB4ylOfnYEyoGJAareQppcwQRWoQXH2hdbepAIU7/4Rf7FGTrKzaob9kU1FCdC1WilQez8zAY6WY23kHrQEmTwfC0aUr7t28+HispTmgzETA4YGgJjNraf1dfANtTMB4hDhBFjK6gePUZQsl7toS75yiu4rFwAa6nNI=
+	t=1755070296; cv=none; b=k/r6v4BbIxWudFAAfny1hBk7URtt3QQFhehgRijGdhoSifhY5OFSqIJV5hdYJ9JGMMsOyTMQmiaKef6n+x2EImohPnkM852Uv3j0+XsCzSnfrhri3GT2UsX56WQ89IiNMi6KJBlUNBgG8QOxXZUy075ywtJrm1I/5ZTllfv5yOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070248; c=relaxed/simple;
-	bh=xFiWYf6vm77n+FxmlLtopRR841nq8GvnS98l1p0hoP4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OGdQ39nvjIQFt1TuUCX6Fb8NKVXrOwUHO6yJuQxjvSeBuBzI0LTpynx1YaAOTGRYAapaZnxSIcAZs23sazkK+1diVZctr1b3Z5+V627mFoo/nxsMUhYhUgG4q9k5/3JobRmUeSCecxXu5yDm5SamEhQF7exhva4sPZb87vQ941c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H8s3rm4y; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b8d5fc4f94so884173f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:30:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755070246; x=1755675046; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I9E4czyKyrtOFU4GSVFspn06u33hT1ZkBVcdtezrkgQ=;
-        b=H8s3rm4yEQ8hRnqUGBhHfc9lBf/KbWZoDRnL7lFAUKJSrieeGQIQFIBMLEuOPk+Gnq
-         uIKZ/npSz8lEsEEiB+pzpgYn/VOx1fnqlXBOa2m2zwpceULZxhohAKa5VIyeB5GanIpB
-         zFQm04yutDLfs0WOcfsRZW1qMKVkBTCbt5MZ6P0418vrvzQXs3NFDN3hvHIyz0YfrAgH
-         QMhRnq0ZX5ihjlPzK5btfFvHx1DxNgQ2606TMxHy/ruXWwkydo7RnYgOXMIICPt9WbU2
-         CcFguxXmR1ZGnL07FveCIuEgyBK+0Ik8siKemLMRQPMY5wClc/1sAZgnoPb4svrZuU0R
-         Onmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755070246; x=1755675046;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I9E4czyKyrtOFU4GSVFspn06u33hT1ZkBVcdtezrkgQ=;
-        b=GnQri6Y8yczL/4vWtmMlp/0084CYs8H1fvqUKqnhDyk3iVDCFg7i5ICQZd03/BOkDb
-         Qz3Oy8XtzEOGrHSPxhNpafWoMpDz/i8BHeFwYB2MD6b+rAfm4ubPiBl2TczSi4BAA2ps
-         O1ySRmSnlkocc/XjO55bxJ36hpDTpD2Z9LGnW7akmDtcad8D05bMD8u8MrXHHiJsh4A3
-         j2GZH9FWaZ73IC/meCsP8JxAJrcsz61rtCzYmTpX78eLYiEl+U0r+YGc/RjfPEBc655D
-         YxOkdUtMu98pyqha362ByigKaFTnE/7IA+5ms+30JH5PhL7SzV7ZDE0yPzKRoBt/bcl6
-         RIbw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXOnpRcdzINGdB0NWS0iH7ib3FkGFXt0BGtlUPhzHSkNGJ6vkAuVDlF/MfS6Lbn8WrNY5R6jutSMkRTKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXjtqIXCf37ujCaPWgiR39UxoEdErKrs6RvUQ/5OGXu7VzGYZV
-	kmwB60dRBG/XVVbXGkF0XRetqivMe8g9S8miedJBD2kpij+J1rnGhpMJFonQWKcmgp/pNfWt+Zf
-	/YkTQqNADhN912IiyhQ==
-X-Google-Smtp-Source: AGHT+IHo652ghTmRZRdcMehtLxMpYB3nmtn0BGPYwzhYi+iVXFrTKYXDm2Ct2IcY8FiWrF3mc/zYizwObHRd2AA=
-X-Received: from wre18.prod.google.com ([2002:a05:6000:4b12:b0:3b9:95c:a591])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:402a:b0:3b7:8fcd:d145 with SMTP id ffacd0b85a97d-3b917d2b1b8mr1298903f8f.5.1755070245509;
- Wed, 13 Aug 2025 00:30:45 -0700 (PDT)
-Date: Wed, 13 Aug 2025 07:30:43 +0000
-In-Reply-To: <20250812-rnull-up-v6-16-v4-12-ed801dd3ba5c@kernel.org>
+	s=arc-20240116; t=1755070296; c=relaxed/simple;
+	bh=OdSR0i8Mi33zK1F01A5u8CnaWsyAunhbK9iCNvR7S1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EGzFfMRxfK/xAcLsouCxREkHTDPHffyZwsqFNCzoFcTkb3t9Y1akX5aT7Lc57IS2lJeopJcbcjCwno5gmVS2GNefDJYymb/WOxfEWwZ6tRvhoJJkpA6Lkn/qa4D6Z+SZU8YBlaI57rC5wx70i/oqeu17ELuIn7MkQQplCPCEYn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4qp8j40; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52253C4CEED;
+	Wed, 13 Aug 2025 07:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755070295;
+	bh=OdSR0i8Mi33zK1F01A5u8CnaWsyAunhbK9iCNvR7S1A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M4qp8j40sUo7KdPoQ26wAhG97vwHMqBdoAhtNrXnFuoYWtjIUpyfkjwxOdOOGohUf
+	 +zDGbSPhhD+bZEDKG5HU310ghOqbtsMxdZpxA637xDJUdOMWyzCEFRgO72Keypn2Nl
+	 27fPl6X9YDTW8hcsbSKz7hnQkzCsmakujpT1E2xq5FttYGf6zTApcWMdIiso5xa3br
+	 ZLRUJzkEWmIiZxmExt2r4t07maEhdgNzq3bS/Je8I1Pn4I9QNGJmxXiRaSC4JC285g
+	 3oE7EbIEDktwj8TfV0Wht9avzEo5HepmF500kpJR3/rHKaeVV/B0cssjZfWZ3/sgFO
+	 /Oy5ry8W4HzpA==
+Message-ID: <17b90fbc-ccce-4eb1-b334-5fdef82c094c@kernel.org>
+Date: Wed, 13 Aug 2025 09:31:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org> <20250812-rnull-up-v6-16-v4-12-ed801dd3ba5c@kernel.org>
-Message-ID: <aJw_I-YQUfupWCXL@google.com>
-Subject: Re: [PATCH v4 12/15] rust: block: add `GenDisk` private data support
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/2] pinctrl: qcom: Introduce Pinctrl for Glymur
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, andersson@kernel.org,
+ linus.walleij@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, rajendra.nayak@oss.qualcomm.com
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250813065533.3959018-1-pankaj.patil@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250813065533.3959018-1-pankaj.patil@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 10:44:30AM +0200, Andreas Hindborg wrote:
-> Allow users of the rust block device driver API to install private data in
-> the `GenDisk` structure.
+On 13/08/2025 08:55, Pankaj Patil wrote:
+> Introduce Top Level Mode Multiplexer dt-binding and driver for
+> Qualcomm's next gen compute SoC - Glymur.
+> Device tree changes aren't part of this series and will be posted separately after the official announcement of the Glymur SoC
 > 
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Changes in v5:
+> Rebased on top of v6.17-rc1
+> RESOUT_GPIO_N changed to lowercase in bindings and driver
+> 
+> Changes in v4:
+> Updated bindings to column length of 80 char
+> 
+> Changes in v3:
+> Fixed indentation for example tlmm node in bindings file
+> Fixed s-o-b and review comments in the driver
+> 
+> Changes in v2:
+> Fixed dt-bindings error from example node's reg propery
+> Fixed gpio-line-name maxItems
+> Driver UFS_RESET macro updated
+> Removed obsolete comment for pingroups
+> Updated ngpio to include ufs_reset pin
 
-Overall LGTM.
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Where are lore links? Why aren't you using b4?
 
->          self,
->          name: fmt::Arguments<'_>,
->          tagset: Arc<TagSet<T>>,
-> +        queue_data: T::QueueData,
->      ) -> Result<GenDisk<T>> {
-> +        let data = queue_data.into_foreign();
-> +        let recover_data = ScopeGuard::new(|| {
-> +            drop(
-> +                // SAFETY: T::QueueData was created by the call to `into_foreign()` above
-> +                unsafe { T::QueueData::from_foreign(data) },
-> +            );
-
-This is usually formatted as:
-
-// SAFETY: T::QueueData was created by the call to `into_foreign()` above
-drop(unsafe { T::QueueData::from_foreign(data) });
-
->  impl<T: Operations> Drop for GenDisk<T> {
->      fn drop(&mut self) {
-> +        // SAFETY: By type invariant of `Self`, `self.gendisk` points to a valid
-> +        // and initialized instance of `struct gendisk`, and, `queuedata` was
-> +        // initialized with the result of a call to
-> +        // `ForeignOwnable::into_foreign`.
-> +        let queue_data = unsafe { (*(*self.gendisk).queue).queuedata };
-> +
->          // SAFETY: By type invariant, `self.gendisk` points to a valid and
->          // initialized instance of `struct gendisk`, and it was previously added
->          // to the VFS.
->          unsafe { bindings::del_gendisk(self.gendisk) };
-> +
-> +        drop(
-> +            // SAFETY: `queue.queuedata` was created by `GenDiskBuilder::build` with
-> +            // a call to `ForeignOwnable::into_foreign` to create `queuedata`.
-> +            // `ForeignOwnable::from_foreign` is only called here.
-> +            unsafe { T::QueueData::from_foreign(queue_data) },
-> +        );
-
-Ditto here.
-
->          //    reference counted by `ARef` until then.
->          let rq = unsafe { Request::aref_from_raw((*bd).rq) };
->  
-> +        // SAFETY: `hctx` is valid as required by this function.
-> +        let queue_data = unsafe { (*(*hctx).queue).queuedata };
-> +
-> +        // SAFETY: `queue.queuedata` was created by `GenDisk::try_new()` with a
-> +        // call to `ForeignOwnable::into_pointer()` to create `queuedata`.
-> +        // `ForeignOwnable::from_foreign()` is only called when the tagset is
-> +        // dropped, which happens after we are dropped.
-> +        let queue_data = unsafe { T::QueueData::borrow(queue_data.cast()) };
-
-Is this cast necessary? Is it not a void pointer?
-
-> @@ -110,9 +129,18 @@ impl<T: Operations> OperationsVTable<T> {
->      ///
->      /// # Safety
->      ///
-> -    /// This function may only be called by blk-mq C infrastructure.
-> -    unsafe extern "C" fn commit_rqs_callback(_hctx: *mut bindings::blk_mq_hw_ctx) {
-> -        T::commit_rqs()
-> +    /// This function may only be called by blk-mq C infrastructure. The caller
-> +    /// must ensure that `hctx` is valid.
-> +    unsafe extern "C" fn commit_rqs_callback(hctx: *mut bindings::blk_mq_hw_ctx) {
-> +        // SAFETY: `hctx` is valid as required by this function.
-> +        let queue_data = unsafe { (*(*hctx).queue).queuedata };
-> +
-> +        // SAFETY: `queue.queuedata` was created by `GenDisk::try_new()` with a
-> +        // call to `ForeignOwnable::into_pointer()` to create `queuedata`.
-> +        // `ForeignOwnable::from_foreign()` is only called when the tagset is
-> +        // dropped, which happens after we are dropped.
-> +        let queue_data = unsafe { T::QueueData::borrow(queue_data.cast()) };
-
-Ditto here.
-
-Alice
+Best regards,
+Krzysztof
 
