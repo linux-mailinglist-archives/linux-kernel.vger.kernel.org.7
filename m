@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-766470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5C6B24700
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:19:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F50B246E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CA9D720D86
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:14:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63F94168DEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD6F2D7395;
-	Wed, 13 Aug 2025 10:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387C42E285E;
+	Wed, 13 Aug 2025 10:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGRLKJQR"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BkxYup6+"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16BF2F2912;
-	Wed, 13 Aug 2025 10:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3675212541;
+	Wed, 13 Aug 2025 10:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755080022; cv=none; b=ef8vaK2uKEKpfV44D5I1z3IM6RyI8mzePfXEdpOzuK2MmNdjIwVDqCvuw+AzurbMZOVyJhk9hkrhGP6LOXjGZJuDgY7WMqFSThUxk8YxyQA+e2JknKPUhDHyjgh9nlM+VUbAfmZSHVgaCl55ICxrE3HkaDqcgwsCkI5eUlcFk88=
+	t=1755080012; cv=none; b=fHmPuhhps05Wa1XJfz0361Jp/xq2mpruFjckWLcHUL/d8cQrgV3n8VV2tkK/knBQ5azcZpc2W+iKhYnbmuR6pIldytlFzpZBTPi+dAr/vdmj4YFaU7Z+Vj7BcrslBfRB+15deoZzUXRg/i/zcdu981+lZDQVwaEvMIE4hZDwJqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755080022; c=relaxed/simple;
-	bh=thsBLOQirP9wL6/Ks3ioce6aQ9TbWFoSdll2cAVk/L4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D3L8X8bNRXkqmqKjk6xfnHHzd6fZ7UmoBdD8EtCaloR6O8DzlOfBu0SKlAwGiO0b71cITYk4MFNGVHOKjkNMYRjoWNdGAWBMRTM76yMCYNtWrdaVCihml9rwkkoPZr0JSr2+JKQlyMb8kGL+sH0+zMyS+u/JaFTa/0kHCRS5StU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGRLKJQR; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1755080012; c=relaxed/simple;
+	bh=sGxZPnVNmyGd9Yceizyonkkt+eUWuxv8w3ZCTJZxXzo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pcjyge1eJyRmtkasJ1ZtMcegpeHJAx/z/cTScJchzp3jmyv8dkkPjji3JMDp5mJ7jQfAWLpus71Q2y7e/+igOdA4SM2R3S3LWG+Y2Ujjqs0m/kzA79tPoiqBDbYv6FhuSO5stod+Jy9OOg7Ak3Y8PIuBeVfPGSCnPOnsZfkRtz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BkxYup6+; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afca523e810so91270666b.1;
-        Wed, 13 Aug 2025 03:13:40 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b7825e2775so5851872f8f.2;
+        Wed, 13 Aug 2025 03:13:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755080019; x=1755684819; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tjYjnf2fuX+3VMHJAYD7iG9oAQNrcJfG3PgnKn920PQ=;
-        b=fGRLKJQR/YTGr8VkCwRWiK6pSOCxf03OaMs1mYAkXXkJmmwfvQkOdykEQ8WWqzNqOw
-         5P+KryTFQS97xTtYMolgAsWpVqf+KdmuXsfE+TSUkT5R6RDlwuVOf9H+7XTuIuqqHSWp
-         +KQbaQjzC/BaH2wyRBcnDIyH4oaFh5lfA9kSm46OK4TaGZ+xt3MLgcG12qgU7aIUjtvW
-         8z7+f73dXEBWjBnf7b/sLm31DW47ZGgCsfl//akwTjhw5c+VxIFjpVnbqkSSPmR7xlI6
-         ZegVl7d5pjYyJbTmk94VTEENc+tMkIyGvNrkf9bcfVaL89aD7ZqCiE0SG16beeFs8S2A
-         MYQg==
+        d=gmail.com; s=20230601; t=1755080009; x=1755684809; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3VcXeU7Q/RhQLvXFV/p9dr4CD3d9sQhgHJ+B5N3rmuM=;
+        b=BkxYup6+hojoDR5eg4s7mEAsiTC/PceUN+RSRudFgZFa2PIKyV+v0U/UxTi4eYv9Jq
+         /Y2+U5JcmQEJgYlH5f9StesIi4Z2rJUjtRpRk2wRysegTi6l1AaEmpeLJHB+sFJSO7U0
+         5b5n629pTZAxgQhDjuG3lFBbUT8iyZ38n5KpqJmTBfLk59b28Z1tocxGLyCPuzkc+CWr
+         +vdZM983NZW9MXUte1+/G8cTBw0d67DoNhHHWt2ohDcjZR3hwRoFHgG5EzX/sd5j1Pfe
+         kjrtTBcWXuVtf7t53q4u7aQt2EFC26rsMSOE5iJGsiQvE4TrWhSse9GXmwTQ9hbuIgWd
+         mnbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755080019; x=1755684819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tjYjnf2fuX+3VMHJAYD7iG9oAQNrcJfG3PgnKn920PQ=;
-        b=fox9Z/WyGdLAWnF5cyHOF52qtemgcNAk4iDjzIerERXOz1gALu7DjHmJCof8cr9BbO
-         4N9jV+6bEy6v7wQu663YC6nO8Nj8TYoMypYnQW6n0yRq+qjpk/l6jt2GcJaCoo/2OQaG
-         PAtvk/SZPULyu0rEHslfGVVpTSqBYbm6ZPRCI8PFRsi4kRMr8mIQNIdsj/m+ipEUWfhx
-         Ta1Ufwf8GkgRuh/sPWO1a2ddss/6+cpTI6GK/7rLEl41h0wzLUuybyor6sYZZGxhdCmH
-         aUbGw2OU7nigt87RWH4x0zpISuwF3Be0lyIyCTfW1CVKjHh+shNvqL4atd+IAqxP8lp7
-         w/FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBPEO3FPD0DJnFyzpFg3J2LVBPctJKJG6sO0b3DumX3ZKWPhTEI9bZSHNCFr3LlVFWeUPq73XhB3L1soV5@vger.kernel.org, AJvYcCWYcHybY+f/i6jvq4Q4aJvWlur5H8zY8j8Ckr+NTkceKtav3DAj3Ji1Fm8OHz4C468Gr+oNPjZytAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcSkywFDVlbDdFkVXyL+a7lo7bKJY7VKpR+RViIOjY8TS2CGb5
-	A2gWiqorX2F1YEPKmYAkqWL9kL6ytD7fbmTO3N7hvMUnbi8RN3DFWB/WrbHolORrYi4npvxFJpA
-	AjQipNSJ7soYs5vuMJcsNCYEf+S2iG08=
-X-Gm-Gg: ASbGnct95JyXWTzaCxBpMRDkMnAPDHDMUq0f9li0D1MOw1lzDZx0A2503ZIHV+apfFp
-	aRcmgIEV/P/GVux77BgLB9tdYKel5r+OrBgym2+4Qn0vzDW+L2h4ojwdYTEion/PXWHPMFq0hV4
-	11RKe552PZ7WxD+f7w3C/FmySm6uY3sN5UxiuWks/dS8WAkBN7mEGtewU6nLuqMYqZMDLv2HhOS
-	Bzej7tb3g==
-X-Google-Smtp-Source: AGHT+IH9xaJP4XAID/Z3bbXkFtCnolBhpSbXg7PBsVuI+q6aZK/FJ2vls42yjpRhMLyiAXL28NxOmcDGoF2/HLOvtD4=
-X-Received: by 2002:a17:907:86a2:b0:ae3:60fb:1b3b with SMTP id
- a640c23a62f3a-afca4ea01cfmr240038466b.58.1755080018525; Wed, 13 Aug 2025
- 03:13:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755080009; x=1755684809;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3VcXeU7Q/RhQLvXFV/p9dr4CD3d9sQhgHJ+B5N3rmuM=;
+        b=hUMfvh3N1K5oFKGb38O2E9K7AOrfnXfb2bjgHIZYnRGfQwJ3CrZsMv6n4eLxhkJz5p
+         1C2HhZRbgbUpseXGwpSiPzKZgFJbP/T6dHBuuND6ISVb9YVKuxkbeZmeX1V7RINQlZsR
+         /8sTsS4WvuYigTE7xgJonjhLg0CvFFQaaCvrCRPo0FDQqTYQfqSU4QxIlBxr52fV5+8j
+         lSM2DCjXAROQGOn8PQotktdQ+KTugOP/rXucUdvVc+mAMuQNZFnfoLIgzj3uwz8DYpuI
+         g2xXB0RoS80HWI22UMoKakEw7aF2we06ZJ5Hg6s4Ag/c4GthmpLEAWMSa3FpV2A7OuT0
+         vUvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHD+7Oa38xCSLwJgByUDQYMM0nOdLecMDpBWS8tdX51Bsur8CBEIdDLjjb1y5yR6eufwNLg1oFA3M=@vger.kernel.org, AJvYcCW5N0k9Ro4FGRZxy+EtL/v72wC/Ik6mlHhjYQWVvTrfqON/8VJrwzBxeLh3berIz3WlN0C06yF4PFybSgxj@vger.kernel.org, AJvYcCWR9Bh73kttCxsPirZAKLZeIMhwKiHTCQB2KEctcWLnDsNwzGD65ui8iHwToWjK49wexrZiOZ/X@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzzzj3oYhj7mkez6g1a8vtavHh4th2xvIKL4KIMwSqt+Ql9XSv
+	AnHbFl9zaZk+Hh8mvGDYqUWLSWeTjIfAD9dx2W/rkxoSnJJaY2YBF1bX
+X-Gm-Gg: ASbGncv0pR3E77/kFLq80yfyfUDNYFeRjVxkuyUT/p7p96P8VgbkvBege9HkuDGIE6T
+	ti9awKGq6VUN0O7W7/iPbt1l284RB6VcJ9UK3SI+XAALm2NczUkX8MwN3ndWDsaC4FVh1wVLs4p
+	zmJ5ekcN2SvCujs4u5XaJARwekaDHbFRp6f53QXXBv8npUCYsh0EVdyCmvFYM/CXaU3Qf954XlW
+	QsgftjCxiRmgoI9jCdmuwQOuB1bw12R0g+4kAe2pxuFNK2t1ywGY6Td0NYpYEopB9GOVepF1YY5
+	DQ1YxoYswVTWPPXotDBUuGvtMvIgzaEjLQwRVFcSoBCF76bLv0ztoMu+dj0ReduyRaEPgjL7w9i
+	HBJ/DgN2RD6p+w9u932zdRowui2OctMry6YqDKFas4EySqvQl0HktxyWD7AesH1B/GlKHQeie1A
+	==
+X-Google-Smtp-Source: AGHT+IHTH7wQ/DM1riP8mGfCNOOY6mu29ZxIpOrfWgcTJfETBDY8IpnmMP++rI1zrIhW2rRbIJTrow==
+X-Received: by 2002:a5d:588b:0:b0:3b8:d2e1:7889 with SMTP id ffacd0b85a97d-3b917e2d98fmr2092073f8f.12.1755080008825;
+        Wed, 13 Aug 2025 03:13:28 -0700 (PDT)
+Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abf0csm46216026f8f.14.2025.08.13.03.13.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 03:13:28 -0700 (PDT)
+Message-ID: <4cd3efbd-4798-4f25-9440-879ee289d8ed@gmail.com>
+Date: Wed, 13 Aug 2025 12:13:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812170723.51639-1-akshayaj.lkd@gmail.com>
-In-Reply-To: <20250812170723.51639-1-akshayaj.lkd@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 13 Aug 2025 12:13:02 +0200
-X-Gm-Features: Ac12FXyTkkbKzJf7vV0cX8xD6E3qt0fhFM545c6AAzp-9eXMrj3oxHTNzwcK3i0
-Message-ID: <CAHp75VfPNDzvxu8znHn45iS9Db_=E7A9nf2xmtVnY8cAi1HnfA@mail.gmail.com>
-Subject: Re: [PATCH v2] iio: light: ltr390: Add device powerdown functionality
- via devm api
-To: Akshay Jindal <akshayaj.lkd@gmail.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: Re: [PATCH v2 0/3] i2c: pxa: fix I2C communication on Armada 3700
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Wolfram Sang <wsa@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
+ Hanna Hawa <hhhawa@amazon.com>, Robert Marko <robert.marko@sartura.hr>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
+References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
+ <aJpOyWKzBt-tDWUF@smile.fi.intel.com>
+Content-Language: hu
+In-Reply-To: <aJpOyWKzBt-tDWUF@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 12, 2025 at 7:07=E2=80=AFPM Akshay Jindal <akshayaj.lkd@gmail.c=
-om> wrote:
->
-> Use devm_add_action_or_reset to do cleanup when the device is removed.
+2025. 08. 11. 22:12 keltezéssel, Andy Shevchenko írta:
+> On Mon, Aug 11, 2025 at 09:49:54PM +0200, Gabor Juhos wrote:
+>> There is a long standing bug which causes I2C communication not to
+>> work on the Armada 3700 based boards. This small series restores
+>> that functionality.
+>>
+>> Signed-off-by: Imre Kaloz <kaloz@openwrt.org>
+>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> 
+> I didn't get this SoB chain. Who is Imre here and what is his role in all this?
+> 
+> 
 
-devm_add_action_or_reset()
+Imre reviewed the patches before publishing those, but we were unsure about that
+the Reviewed-by tag can be used when it is offered privately before the
+publicaton, so we decided to use the SoB tag instead.
 
-> Set client data with i2c_set_clientdata() to ensure indio_dev is accessib=
-le
-> in powerdown function.
+It can be changed to the Rewieved-by tag if that is applicable in this case.
 
-...
-
-> +static void ltr390_powerdown(void *client)
-> +{
-> +       struct i2c_client *i2c_clnt =3D client;
-> +       struct iio_dev *indio_dev =3D i2c_get_clientdata(i2c_clnt);
-
-Why? I mean why can't you simply provide a data pointer directly as a
-parameter to this function?
-
-> +       struct ltr390_data *data =3D iio_priv(indio_dev);
-> +
-> +       guard(mutex)(&data->lock);
-> +
-> +       /* Ensure that power off and interrupts are disabled */
-> +       if (regmap_clear_bits(data->regmap, LTR390_INT_CFG,
-> +                               LTR390_LS_INT_EN) < 0)
-> +               dev_err(&i2c_clnt->dev, "failed to disable interrupts\n")=
-;
-> +
-> +       if (regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL,
-> +                       LTR390_SENSOR_ENABLE) < 0)
-> +               dev_err(&i2c_clnt->dev, "failed to disable sensor\n");
-> +}
-
-...
-
-> @@ -693,7 +711,7 @@ static int ltr390_probe(struct i2c_client *client)
->                 return -ENOMEM;
->
->         data =3D iio_priv(indio_dev);
-
-> -
-
-Stray change.
-
-> +       i2c_set_clientdata(client, indio_dev);
-
-I would suggest moving this to be before data =3D ... line above. And
-add a blank line after it. BUT, read above first.
-
->         data->regmap =3D devm_regmap_init_i2c(client, &ltr390_regmap_conf=
-ig);
->         if (IS_ERR(data->regmap))
->                 return dev_err_probe(dev, PTR_ERR(data->regmap),
-
---=20
-With Best Regards,
-Andy Shevchenko
+Regards,
+Gabor
 
