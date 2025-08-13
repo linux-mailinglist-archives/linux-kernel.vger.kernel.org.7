@@ -1,124 +1,110 @@
-Return-Path: <linux-kernel+bounces-766153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B993B242EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:40:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FFACB242F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65891B63135
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5EF4165FE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66F12E36EB;
-	Wed, 13 Aug 2025 07:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAA92DCF5F;
+	Wed, 13 Aug 2025 07:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0wD0hsjb"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oYNS9sMr"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4822DE709
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721B92D73B7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070830; cv=none; b=syZE9jPr+tRnBXBb2I8jdyPv6IY5pJS3Hiu+zkT06lV3hpFvln1zO8cyz5n6SrbD1l7Jl0b9YfmZibJgIGI6l6eg334L7X7fSI92P/LsEQONGqxYK2ZOWg1f01ymLXlj1qPGIAtfCsHosV62L3vI4ZB7pzBxKtAZ4Oz/ZmXc7D4=
+	t=1755070859; cv=none; b=I7yXgoulRQaZYpB8dz+wsogxUTHvN1JNGOO80iyJ8p3dBHYqy/qVI4aDRhXaXKdqto+UyJdD01YCE79/5HSz9Jpl6OP3h6fX3fJeIMPgt65N3RIxA2WLLXBdaKaBuxHkPc1IZ56dAyq54u3g+FHnAgP/uEiulelAjeFcTKo9GS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070830; c=relaxed/simple;
-	bh=sCnEx5761AElVItBdhLveYN321t9Jlst6UmQyhNbyvc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tC8PfIMMJgkNeYAB3JLTX/Xz1+s/cBhJ9Dvt/DLEXj/vwavyjGGz8fXaz9K8CnXj+jiLNhLwlDxJTe2C0iOGnp9kyD+LaN6gKYdfBJ0pqolJCIBKv3UktR8zxnpbgvZYKeryxasUDxII2JIdqzvtUD8eEf6RUbz2FAPyWRA4FX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--maze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0wD0hsjb; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1755070859; c=relaxed/simple;
+	bh=c9Ccc4FdRlKahKVue2t027gTXn3WFY4nUn/bdTfbFWk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rsUdTjB0MYzffJDqkvWBMfEEsWITCV9PXnHud8BIFuf1fm+XkeBpzuoTQMGcXTORKUtqbzZSirblCumLMfoUKr57lsgnCUaJXLJw9E88wRaYfWto/RFqf8mavj4EwtaQZezZO0lI5AeEvPA73qI4YNacvFZ82W+ujjvS8AYpE6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oYNS9sMr; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--maze.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b44fdfe7b8dso2492852a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:40:28 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b79bd3b1f7so3025503f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755070828; x=1755675628; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pp49dS5+lV1sQl/6tgxifknga+Oygf66Wdoq0OTUz/4=;
-        b=0wD0hsjbLX3FwrhHoVmDdJBvz3z+5X9oJ5Hq3mlNuej/lFpHuguyCjcXuB0x2QE4hi
-         MowJF4JfhRBPv4S96W7fCpvK1ccTgajpjK/miSRS1JuiMN7BAwSYFsxEx8h2+5vPy4xw
-         o1Yq1N7ddATblwxzW6o5N/DnCwJZ+5vD3lqjQ7TwcjEUleLlbxyN6dM8AfNjrfHRnOgt
-         KoYEq0pfSQJhQPZX154j+5qqvafSlUzkuXKbRcsJtgXXAVv8KPTG8Wf1RzcWeZ96voY7
-         Tdy8Okvq2aNkK8LIbrmjLqZrmmeOt1E4rJD2PHeImdWrb8RRL/ALXXbWFu1Z28ZLVN+K
-         CjEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755070828; x=1755675628;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1755070856; x=1755675656; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Pp49dS5+lV1sQl/6tgxifknga+Oygf66Wdoq0OTUz/4=;
-        b=SUOEqjmsHFDEsZy8VSSqzJN9wYK+InSd8NgZOoGhF3nINxb0oyXOt7iBU8+BXGjfQ+
-         F6FPBe+wNVoWnaatV1QV3YWFtDUfqMaG81khp/DnVTzKlvtGFRvh6abJmTq2coZyGB5Q
-         Aqchh8+hOadVXGdvmdn+zW4X/ND8YreqjJZDIwWm+9kilZHhbk0aSSlHm55uGBbYnY1T
-         1eEnwQyBB117M2erhgg0C4erGMQDj3ergYIVEqVXttFn3tzOqvWPEHSBMRgsgF5PTA4P
-         JJdqfnBEPdvDRlyLDdvnLh6Uag9iitDmhy8KMlchaH5W5dJTjWXOhZpuG395IXhLxFDc
-         +M8g==
-X-Forwarded-Encrypted: i=1; AJvYcCW7uPi5imeCmy3tNAMPh4Lkg3BjeiFsHsKYT/e+kDUPql8AzXbX5HEDmA7uVvLtqeeOwA8VrN8VxLt1+Aw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQrZje4w4qm27VhOYLoRcvcwyFhmW7b4McuowQ3qUVFw7KcS1y
-	Wqi0A5SDA7556lx4WYraKuf9np4uXRjSmcVFYaPhdg9p1yoBoPy35Gcwt3nkpD3TnsDnslTSbg=
-	=
-X-Google-Smtp-Source: AGHT+IHL3hixZQwLVi27pXeiL4huS+wC9o2l4Q6jqQo5VnnAnaUPedzTkKL+Ezbxk46oWK0muukHVbbV
-X-Received: from plhu3.prod.google.com ([2002:a17:903:1243:b0:234:bca4:b7b3])
- (user=maze job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce0b:b0:240:640a:c57b
- with SMTP id d9443c01a7336-2430d1f7829mr33241755ad.37.1755070827983; Wed, 13
- Aug 2025 00:40:27 -0700 (PDT)
-Date: Wed, 13 Aug 2025 00:39:55 -0700
+        bh=c9Ccc4FdRlKahKVue2t027gTXn3WFY4nUn/bdTfbFWk=;
+        b=oYNS9sMr6a1jozHeEjf+SffWX8dSDvJxiFp8QIjNJr1EF9wwdkZQsblYzf+SIU/YY2
+         4bxlhy3CpnZy/s2efNbWCnwrZeR2q9Ut1aWWoZ+TKwEgxVjN83WTgir9MozdhVEiopO8
+         rf9S8FV5MgkKwSUp6zIo0999djvYEhsmEUvJUj65Zyp7aG323LL5AfelEN8METZ2t7P7
+         WLruAOqR46oDWgVfGl78cbp1WyLUOmcVEUcSbk6wd7uBNflOO5KpmTezRTFid0QCFlha
+         XyeLFPxICKNonexgxUOSBWkUURyLDjbiBFzhTyp3Bqeu067/Sy+3wqs/4veTwsL6dE/h
+         LYRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755070856; x=1755675656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c9Ccc4FdRlKahKVue2t027gTXn3WFY4nUn/bdTfbFWk=;
+        b=KXyqJRClAs25XqgyjrV3/PSlfPS6NE95mBAl8B4wl6ExZWrmBjVfC8IWtoz6RjSS2g
+         fkvG5lOGNH9Kp9GpL5WcfWXw3Q4gHzKObizrOzWq1oEagE+PaOkuH3Y0nkD3ucMYIcEM
+         bMenDJqzgo7Lo4Q7VITpuN6XjD37RnROSRtQuQ7MgrJMUZShh+HpX59bQkm+96gkr7RK
+         5uwIKjpCcPYYyN9QojwKkxaSGI0ybOt4oWAFUm65xXJFoHaI7uhnjU/Ulmntt2Bbga9L
+         6IyK4KJbNTGr+H37cyJbuoYy08B8smd/jlCr+aKa+Be4wz0hiKwLboESLOQAlEYkof5v
+         41bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlT6Ev5c7gbx83GbriWrOpyQ1sD4ATGEdvNoi2vCd+3S5ivstTAPx4OxS00c/D9ShsB5CjxY2VOo27P+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzdi5f03eg1rwZ1i1Iol1foYmRtHN8jgN0upyvcez3iYAja913
+	YhgZTH8AHYG16rT11/z4AyRUYIsfzKpkPfmzr1UYqW1Adj35BbI7ZG9NUs2h3WYCWUemyt2TIy6
+	7yt8I7uOGSEOT1982vsdPc/YSYyGI7MqjzLkYd7jv
+X-Gm-Gg: ASbGncvUABJBhIOOw7wJ1MDr1guifV9GwFErsR3Nvj0pZUhp6C53xTwi88MNxE3tiOj
+	5jeafSaarAUxTpNX7Wy4yTIPcRYYxE76l89tFeNDm+6yEx5fxAwBb4GTjVmYMZCoAv8C1W4rNH8
+	p5xyWMDJkc3EhtMQUzkUc7PCILEcExyvY6nZMYVxz7zhTfW/aXU8wCA00rPat48nNGbk4PahOW3
+	uNluAQ8FPzMRCXGFys8J/doECDU+cfucVG7ImH3JvaLvOuqdAXdfeK+FDo=
+X-Google-Smtp-Source: AGHT+IGGtpaH+it538UfR2iaRDBz9X7fJpT1gAY6RgW0EDKE5fzEZ79ezay15oRdLHx3Xf5OdtuQ3FdbihxaglEAAsY=
+X-Received: by 2002:a5d:64ca:0:b0:3b7:8fc4:2f4c with SMTP id
+ ffacd0b85a97d-3b917d2b0f8mr1196666f8f.1.1755070855659; Wed, 13 Aug 2025
+ 00:40:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
-Message-ID: <20250813073955.1775315-1-maze@google.com>
-Subject: [PATCH bpf-next] bpf: hashtab - allow BPF_MAP_LOOKUP{,_AND_DELETE}_BATCH
- with NULL keys/values.
-From: "=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <maze@google.com>
-To: "=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <zenczykowski@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>
-Cc: Linux Network Development Mailing List <netdev@vger.kernel.org>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, BPF Mailing List <bpf@vger.kernel.org>, 
-	"=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <maze@google.com>, Stanislav Fomichev <sdf@fomichev.me>
+MIME-Version: 1.0
+References: <20250812144215.64809-1-baptiste.lepers@gmail.com>
+In-Reply-To: <20250812144215.64809-1-baptiste.lepers@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 13 Aug 2025 09:40:42 +0200
+X-Gm-Features: Ac12FXx8h4Xky-40CstbMiW32Dc7_qYQSYrfMREs0zT_bsEsb1sqx3OupPHpEcM
+Message-ID: <CAH5fLgg6eFYZ906GPFev_nha0axsUR71yC+En4X_fMjSn85UiA@mail.gmail.com>
+Subject: Re: [PATCH] rust: cpumask: Mark CpumaskVar as transparent
+To: Baptiste Lepers <baptiste.lepers@gmail.com>
+Cc: stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Yury Norov <yury.norov@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-BPF_MAP_LOOKUP_AND_DELETE_BATCH keys & values =3D=3D NULL
-seems like a nice way to simply quickly clear a map.
+On Tue, Aug 12, 2025 at 4:42=E2=80=AFPM Baptiste Lepers
+<baptiste.lepers@gmail.com> wrote:
+>
+> Unsafe code in CpumaskVar's methods assumes that the type has the same
+> layout as `bindings::cpumask_var_t`. This is not guaranteed by
+> the default struct representation in Rust, but requires specifying the
+> `transparent` representation.
+>
+> Fixes: 8961b8cb3099a ("rust: cpumask: Add initial abstractions")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Baptiste Lepers <baptiste.lepers@gmail.com>
 
-BPF_MAP_LOOKUP keys/values =3D=3D NULL might be useful if we just want
-the values/keys and don't want to bother copying the keys/values...
+Only during CONFIG_CPUMASK_OFFSTACK=3Dn, but yes.
 
-BPF_MAP_LOOKUP keys & values =3D=3D NULL might be useful to count
-the number of populated entries.
-
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Stanislav Fomichev <sdf@fomichev.me>
-Signed-off-by: Maciej =C5=BBenczykowski <maze@google.com>
----
- kernel/bpf/hashtab.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
-index 5001131598e5..8fbdd000d9e0 100644
---- a/kernel/bpf/hashtab.c
-+++ b/kernel/bpf/hashtab.c
-@@ -1873,9 +1873,9 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *ma=
-p,
-=20
- 	rcu_read_unlock();
- 	bpf_enable_instrumentation();
--	if (bucket_cnt && (copy_to_user(ukeys + total * key_size, keys,
-+	if (bucket_cnt && (ukeys && copy_to_user(ukeys + total * key_size, keys,
- 	    key_size * bucket_cnt) ||
--	    copy_to_user(uvalues + total * value_size, values,
-+	    uvalues && copy_to_user(uvalues + total * value_size, values,
- 	    value_size * bucket_cnt))) {
- 		ret =3D -EFAULT;
- 		goto after_loop;
---=20
-2.51.0.rc1.163.g2494970778-goog
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
