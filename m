@@ -1,165 +1,102 @@
-Return-Path: <linux-kernel+bounces-767593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199CAB2567A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:17:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B69B25681
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C0D5C1434
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943805A2079
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481762E9EAF;
-	Wed, 13 Aug 2025 22:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6570330274A;
+	Wed, 13 Aug 2025 22:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f7rPsOib";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7SMwQFQ6"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15ED42FCBE7;
-	Wed, 13 Aug 2025 22:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YvU3cY4E"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B0930274F;
+	Wed, 13 Aug 2025 22:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755123311; cv=none; b=A1dqvZLhjqMMh5EBSoWybf/pVl3C0x69V6cjrnaJiBx8uKGxlAPwvRBGW+mFNyFIRi6Wv5/QBGnU/oizgbEPaipNNvWQkMiJ+02y49QQbclvfOxIAWeFRqZOyasShN3CsTd/gIb5T+3lJZqmFgrMv7y5EIphAj1WZRamUjSlx6k=
+	t=1755123485; cv=none; b=bwHS8AQnv5YNR2adk0ucPgiLng4PuzWXcjtjGP+TuBfSRY4oJ/bz098C3pCc+vhmSbQJtmsigXen5O/HrG5zW9T5u/JwUOeE/qCCGWIdqreWOKPBKKsejiKT1qeWuQ9OY9rlWBN13MHEBW2c3tJuBfvVnJClki3KEFOwtuzl7gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755123311; c=relaxed/simple;
-	bh=G+mmBFJESpPz0yH5bKgn2HavzjDfjgjvfOyxf574VvY=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=RJE2UY9sC3bl17jGjLlKW2jnj9bOW6rNoCM1Rl2OVKRy2yyGy4h/ZPzuBZuKEmi3FhiN6aG/Co6a6amu0JIVpDppMpu7IZ1UurVjfQdeUJRxsqRd/Nt4+qxbyyJK/8uaqQA2wXkA5VYBJm9EgZ5EUOlJFBIJGr6GHzSRA8nUCIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f7rPsOib; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7SMwQFQ6; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Aug 2025 22:15:06 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755123307;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z2xFOl9pKB9fowXhN5zH36UGHK1nQkMtc1Iy7X3OFXo=;
-	b=f7rPsOibTLo8uSOe1aTA30SWQ7fEty/jvDeCAUSCK5abkIMPXc6yh5dpMJRfKPhCL4aDyv
-	OVTm+8JcmygjiZvwnUAZeZUnJF5Xf01tqwEDoreMRQP7oBdw8M0Fx9fSEM6SA8SzMy9miS
-	mdXKxa9lR5cZQb3KYa7ro1P2xFoQx4M0KRhVlmiE85C/nzefaMp8nqQBt/3IOnXoMfY5JD
-	1DCwf5YnAXxbmowoPLVrzVmFXZrZLefXHWwvAl8pD/x9lh3CsZWDczps/oWZAlDsLCmSjn
-	Dgty5hbnP+k3ZmfxhiFQRqAn3yHNFnuG4U3i2ARk0IURO/31j/vwpSI2hvveBw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755123307;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z2xFOl9pKB9fowXhN5zH36UGHK1nQkMtc1Iy7X3OFXo=;
-	b=7SMwQFQ6OBmpFReKBMHxPAVwbpVhFdrzyXr49ybNpd4SAWtZbjDHxbxahJGCpazZOndAsg
-	2FR7EZE3aLjmtfDg==
-From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/entry] x86/vsyscall: Do not require X86_PF_INSTR to emulate
- vsyscall
-Cc: Dave Hansen <dave.hansen@intel.com>,
- Andrew Cooper <andrew.cooper3@citrix.com>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <bd81a98b-f8d4-4304-ac55-d4151a1a77ab@intel.com>
-References: <bd81a98b-f8d4-4304-ac55-d4151a1a77ab@intel.com>
+	s=arc-20240116; t=1755123485; c=relaxed/simple;
+	bh=FWYO5qFDEHpc55EEN1ES7XCG0hi6VCbY8b9+s/QUobI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UpafArTfWYbwAIEXwjVwv25gxZmW23Pw+7KF/naEKEjonlKjYMz+BYGukb6QQsnb38JsC8r157W7hTO2dr4wKp/gWREz6c1tBHE2qbkaX/yhKmhn/1j9r45m+cbFumQ/LM4mo7Xbf84ceS2vP/WFPspWrBp9v83qDR7ITNhyDS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YvU3cY4E; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.233.210] (unknown [20.236.10.206])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 07E2D2015E58;
+	Wed, 13 Aug 2025 15:18:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 07E2D2015E58
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1755123483;
+	bh=8v7jEOmY3YGAoOqFZDtdYxrkJwpuSQuHvKiM5joCVS4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YvU3cY4EQKhJZ/dI5oCRV5AmsN1pllOoT1tQByZXZiykvmb+raVZ+qI/SaPzn2+LN
+	 P66+AzoERz5m0c7eWUrf1Yv7sGPIDRLWihg5JNv6QFrQ+Z67yUJV1fPmqGKGvt7DSq
+	 wxPpFX23YE8c18rDJ+9lXfHUlZSErsXATJ5HUXUg=
+Message-ID: <28e81f65-0d0d-4868-9435-8a1bb0ace412@linux.microsoft.com>
+Date: Wed, 13 Aug 2025 15:18:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175512330621.1420.4357100927779312673.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 6/7] Drivers: hv: Use hv_setup_*() to set up hypercall
+ arguments for mshv code
+To: mhklinux@outlook.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ lpieralisi@kernel.org, kw@linux.com, mani@kernel.org, robh@kernel.org,
+ bhelgaas@google.com, arnd@arndb.de
+Cc: x86@kernel.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arch@vger.kernel.org
+References: <20250718045545.517620-1-mhklinux@outlook.com>
+ <20250718045545.517620-7-mhklinux@outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20250718045545.517620-7-mhklinux@outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/entry branch of tip:
+On 7/17/2025 11:55 PM, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+> 
+> Update hypercall call sites to use the new hv_setup_*() functions
+> to set up hypercall arguments. Since these functions zero the
+> fixed portion of input memory, remove now redundant calls to memset()
+> and explicit zero'ing of input fields. Where feasible use batch size
+> returned by hv_setup_inout_array() instead of separate #define value.
+> 
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+> 
+> Notes:
+>     Changes in v4:
+>     * Rename hv_hvcall_*() functions to hv_setup_*() [Easwar Hariharan]
+>     * Rename hv_hvcall_in_batch_size() to hv_get_input_batch_size()
+>       [Easwar Hariharan]
+>     
+>     Changes in v3:
+>     * This patch is new in v3 due to rebasing on 6.15-rc1, which has new
+>       mshv-related hypercalls.
+> 
+>  drivers/hv/mshv_common.c       |  31 +++------
+>  drivers/hv/mshv_root_hv_call.c | 121 +++++++++++++--------------------
+>  drivers/hv/mshv_root_main.c    |   5 +-
+>  3 files changed, 60 insertions(+), 97 deletions(-)
 
-Commit-ID:     8ba38a7a9a699905b84fa97578a8291010dec273
-Gitweb:        https://git.kernel.org/tip/8ba38a7a9a699905b84fa97578a8291010d=
-ec273
-Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate:    Tue, 24 Jun 2025 17:59:18 +03:00
-Committer:     Dave Hansen <dave.hansen@linux.intel.com>
-CommitterDate: Wed, 13 Aug 2025 15:02:12 -07:00
+<snip>
+I tested most of the modified call sites (about 75%), and the rest look
+correct to me.
 
-x86/vsyscall: Do not require X86_PF_INSTR to emulate vsyscall
-
-emulate_vsyscall() expects to see X86_PF_INSTR in PFEC on a vsyscall
-page fault, but the CPU does not report X86_PF_INSTR if neither
-X86_FEATURE_NX nor X86_FEATURE_SMEP are enabled.
-
-X86_FEATURE_NX should be enabled on nearly all 64-bit CPUs, except for
-early P4 processors that did not support this feature.
-
-Instead of explicitly checking for X86_PF_INSTR, compare the fault
-address to RIP.
-
-On machines with X86_FEATURE_NX enabled, issue a warning if RIP is equal
-to fault address but X86_PF_INSTR is absent.
-
-[ dhansen: flesh out code comments ]
-
-Originally-by: Dave Hansen <dave.hansen@intel.com>
-Reported-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Link: https://lore.kernel.org/all/bd81a98b-f8d4-4304-ac55-d4151a1a77ab@intel.=
-com
-Link: https://lore.kernel.org/all/20250624145918.2720487-1-kirill.shutemov%40=
-linux.intel.com
----
- arch/x86/entry/vsyscall/vsyscall_64.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/=
-vsyscall_64.c
-index c9103a6..6e6c0a7 100644
---- a/arch/x86/entry/vsyscall/vsyscall_64.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-@@ -124,7 +124,12 @@ bool emulate_vsyscall(unsigned long error_code,
- 	if ((error_code & (X86_PF_WRITE | X86_PF_USER)) !=3D X86_PF_USER)
- 		return false;
-=20
--	if (!(error_code & X86_PF_INSTR)) {
-+	/*
-+	 * Assume that faults at regs->ip are because of an
-+	 * instruction fetch. Return early and avoid
-+	 * emulation for faults during data accesses:
-+	 */
-+	if (address !=3D regs->ip) {
- 		/* Failed vsyscall read */
- 		if (vsyscall_mode =3D=3D EMULATE)
- 			return false;
-@@ -137,12 +142,18 @@ bool emulate_vsyscall(unsigned long error_code,
- 	}
-=20
- 	/*
-+	 * X86_PF_INSTR is only set when NX is supported.  When
-+	 * available, use it to double-check that the emulation code
-+	 * is only being used for instruction fetches:
-+	 */
-+	if (cpu_feature_enabled(X86_FEATURE_NX))
-+		WARN_ON_ONCE(!(error_code & X86_PF_INSTR));
-+
-+	/*
- 	 * No point in checking CS -- the only way to get here is a user mode
- 	 * trap to a high address, which means that we're in 64-bit user code.
- 	 */
-=20
--	WARN_ON_ONCE(address !=3D regs->ip);
--
- 	if (vsyscall_mode =3D=3D NONE) {
- 		warn_bad_vsyscall(KERN_INFO, regs,
- 				  "vsyscall attempted with vsyscall=3Dnone");
+Tested-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
