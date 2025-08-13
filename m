@@ -1,225 +1,214 @@
-Return-Path: <linux-kernel+bounces-765749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC11B23DC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:39:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2A8B23DC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE476E508F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CC5567E41
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF631AB6F1;
-	Wed, 13 Aug 2025 01:39:02 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7221CAA9C;
+	Wed, 13 Aug 2025 01:39:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E11191F66
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7A2249E5;
+	Wed, 13 Aug 2025 01:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755049142; cv=none; b=HTc7xKtxtg7pa/I5HEs9YJY3Vq488nGn2u28jR5HFlDJ8C/SKkljlu4D3y4CiFP7J/t+xS9PGJtOn6L82dR+U3E+ScJkkfYR2TfLwqRk1AvJ4fCwCW3cyHOEMaEu1dvjCdJotDsWY8G8weDdENiKH9JmYRmtAu3zP3pi4gkR/vw=
+	t=1755049143; cv=none; b=gFXyd9elzedE1yKJusEVsZGyNZvFI662lXWG8vurj/kq849a+3NJYN4AzV0Q4F/7cKv0psDeBd+yo4xD5X+Cv4RJ9F6Ae4SMbsTjo6GK+x51/AwyNoxPifLrGJdgyX17O0rXetWH1WeSY6CUmF+y65QRLgz6r/rP89jgEQgneLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755049142; c=relaxed/simple;
-	bh=Y5IwKFwYGjT0dM9YrX+SCTAyH2sBl4iyQskxbsC0O3k=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gO5XVFALQ7CKt89T1SjS0lX/GxJ0MOhUAZ9Dyjy/bC8iYJwOonbU4nwBBFVcKoOyjXFxW+aJKOgQobE2iEpCm0zv/xkGKNcFnBEGvlV7tCjuDYV5LuJFvEkvErLjlmtllxh4TXDYhF+mgi5guvGIlDJZWnCEUc8QYuYOscLQOcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201614.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202508130938445172;
-        Wed, 13 Aug 2025 09:38:44 +0800
-Received: from Jtjnmail201618.home.langchao.com (10.100.2.18) by
- Jtjnmail201614.home.langchao.com (10.100.2.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Wed, 13 Aug 2025 09:38:44 +0800
-Received: from Jtjnmail201618.home.langchao.com ([fe80::e8a5:9069:4c1e:2304])
- by Jtjnmail201618.home.langchao.com ([fe80::e8a5:9069:4c1e:2304%10]) with
- mapi id 15.01.2507.057; Wed, 13 Aug 2025 09:38:44 +0800
-From: =?utf-8?B?R2FyeSBDaHUo5qWa5YWJ5bqGKQ==?= <chuguangqing@inspur.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?R2FyeSBDaHUo5qWa5YWJ5bqGKQ==?= <chuguangqing@inspur.com>
-Subject: Re: [PATCH 1/1] gpu: drm: fix compilation errors in drm_vram_helper
-Thread-Topic: [PATCH 1/1] gpu: drm: fix compilation errors in drm_vram_helper
-Thread-Index: AdwL8vDUZJsVsPvWGUG6xf+62139XQ==
-Date: Wed, 13 Aug 2025 01:38:44 +0000
-Message-ID: <5863c61a424545119df8ccb28dc1dbf8@inspur.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
-	micalg=SHA1; boundary="----=_NextPart_000_005F_01DC0C36.0DD98A00"
+	s=arc-20240116; t=1755049143; c=relaxed/simple;
+	bh=zebIcP0FhE9iryQbt4t5GrgcBb7UjoUQb/AunSA7xeA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=O0rHN+Nm3lGa/i9Gj0BJEYExw20/fePZR/CYUeNMWfnDr6L1bsffqjbfayDNyiwb5n3rBLuo/xaBdXln5wSxuM2AUuytZPJK54AWP0UlW9J47ptxp/5VSp3QAIaJFRvE8KTcx9T0yc3aQP5i5rZklsVC/G/8tCkSs3ka4T5OEms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1rcx1Ys2zYQv2M;
+	Wed, 13 Aug 2025 09:38:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id CD8E51A0359;
+	Wed, 13 Aug 2025 09:38:55 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgC3MxSv7JtoHen7DQ--.59944S3;
+	Wed, 13 Aug 2025 09:38:55 +0800 (CST)
+Subject: Re: [PATCH v3] loop: use vfs_getattr_nosec() for accurate file size
+To: Rajeev Mishra <rajeevm@hpe.com>, axboe@kernel.dk, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250812200707.233139-1-rajeevm@hpe.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <ddaef6bd-fbf3-0d6b-e437-6f4fd9c967d2@huaweicloud.com>
+Date: Wed, 13 Aug 2025 09:38:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-tUid: 2025813093844534e90f04f7dbd728239cde6c5e78c56
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+In-Reply-To: <20250812200707.233139-1-rajeevm@hpe.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgC3MxSv7JtoHen7DQ--.59944S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrWUZF17Zr48try8CrWfXwb_yoWruw1DpF
+	y3ua4FyrWrtF9rGFsrZws7Xr15Gw4kW347ZryUCa40kFn0qrnI9Fn5CFWF9rW7Xr98CFyF
+	qa1DJFykurnrAF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUG0PhUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-------=_NextPart_000_005F_01DC0C36.0DD98A00
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Hi,
 
-Hi Thomas
+ÔÚ 2025/08/13 4:07, Rajeev Mishra Ð´µÀ:
+> This commit includes the following changes:
+>   1. Renamed get_size to lo_calculate_size.
+>   2. Merged the functionality of get_size and
+>      get_loop_size into lo_calculate_size.
+>   3  Updated callers of the above functions
+>      to use lo_calculate_size.
+>   4. Replaced i_size_read with vfs_getattr_nosec()
+>      to obtain a more accurate file size for
+>       network filesystems where cached metadata may be stale
+> 
+Please split 1-3 to a seperate patch.
 
-This is what I've done in the yhgch_drm driver.
-See the link below:
-https://lore.kernel.org/all/20250808053508.52202-1-chuguangqing@inspur.com/T/#t
+> Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
+> ---
+>   drivers/block/loop.c | 53 +++++++++++++++++++++++++++++---------------
+>   1 file changed, 35 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 1b6ee91f8eb9..6bfec38275b0 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -137,20 +137,43 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
+>   static int max_part;
+>   static int part_shift;
+>   
+> -static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+> +/**
+> + * lo_calculate_size - calculate the effective size of a loop device
+> + * @lo: loop device
+> + * @file: backing file
+> + *
+> + * Calculate the effective size of the loop device based on backing file size,
+> + * offset, and size limit. Uses vfs_getattr_nosec() for accurate file size
+> + * information, particularly important for network filesystems where cached
+> + * metadata may be stale.
+> + *
+> + * Returns: size in 512-byte sectors, or 0 on error
+> + */
 
-In fact, through modifications in Patch v2, it allows only the selection of 
-DRM_VRAM_HELPER in the driver.
-See the link below:
-https://lore.kernel.org/all/20250729060728.82402-1-chuguangqing@inspur.com/T/#m3e33f8e155275ea548223c21777c191ecd392159
+I feel this internal function comment is not necessary, the name can
+explain itself, and you explain getattr below as well.
 
-Best regards
-Chuguangqing
+Otherwise this patch LGTM.
 
-> From: Thomas Zimmermann <tzimmermann@suse.de>
-> To:chuguangqing <chuguangqing@inspur.com>; Maarten Lankhorst
-> <maarten.lankhorst@linux.intel.com>; Maxime Ripard <mripard@kernel.org>;
-> David Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>
-> Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/1] gpu: drm: fix compilation errors in drm_vram_helper
->
-> Hi
->
-> Am 29.07.25 um 08:07 schrieb chuguangqing:
-> > We encountered the following errors while compiling drm_vram_helper.ko
-> >
-> > ERROR: modpost: "drm_gem_ttm_print_info"
-> [drivers/gpu/drm/drm_vram_helper.ko] undefined!
-> > ERROR: modpost: "drm_gem_ttm_mmap"
-> [drivers/gpu/drm/drm_vram_helper.ko] undefined!
-> >
-> > The functions drm_gem_ttm_mmap and drm_gem_ttm_print_info are
-> defined in drm_gem_ttm_helper.c. This patch adds drm_gem_ttm_helper.o to
-> DRM_VRAM_HELPER to resolve the undefined symbol errors.
->
-> You need to select DRM_TTM_HELPER for your driver.
->
-> Best regards
-> Thomas
->
-> >
-> > Signed-off-by: chuguangqing <chuguangqing@inspur.com>
-> > ---
-> >   drivers/gpu/drm/Makefile | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile index
-> > 4dafbdc8f86a..abbe32ddf6d0 100644
-> > --- a/drivers/gpu/drm/Makefile
-> > +++ b/drivers/gpu/drm/Makefile
-> > @@ -125,7 +125,7 @@ drm_suballoc_helper-y := drm_suballoc.o
-> >   obj-$(CONFIG_DRM_SUBALLOC_HELPER) += drm_suballoc_helper.o
-> >
-> >   drm_vram_helper-y := drm_gem_vram_helper.o
-> > -obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o
-> > +obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o
-> > +drm_gem_ttm_helper.o
-> >
-> >   drm_ttm_helper-y := drm_gem_ttm_helper.o
-> >   drm_ttm_helper-$(CONFIG_DRM_FBDEV_EMULATION) +=
-> drm_fbdev_ttm.o
->
-> --
-> --
-> Thomas Zimmermann
-> Graphics Driver Developer
-> SUSE Software Solutions Germany GmbH
-> Frankenstrasse 146, 90461 Nuernberg, Germany
-> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman HRB
-> 36809 (AG Nuernberg)
->
+Thanks,
+Kuai
 
+> +static loff_t lo_calculate_size(struct loop_device *lo, struct file *file)
+>   {
+> +	struct kstat stat;
+>   	loff_t loopsize;
+> +	int ret;
+>   
+> -	/* Compute loopsize in bytes */
+> -	loopsize = i_size_read(file->f_mapping->host);
+> -	if (offset > 0)
+> -		loopsize -= offset;
+> -	/* offset is beyond i_size, weird but possible */
+> +	/*
+> +	 * Get the accurate file size. This provides better results than
+> +	 * cached inode data, particularly for network filesystems where
+> +	 * metadata may be stale.
+> +	 */
+> +	ret = vfs_getattr_nosec(&file->f_path, &stat, STATX_SIZE, 0);
+> +	if (ret)
+> +		return 0;
+> +
+> +	loopsize = stat.size;
+> +
+> +	if (lo->lo_offset > 0)
+> +		loopsize -= lo->lo_offset;
+> +	/* offset is beyond file size, weird but possible */
+>   	if (loopsize < 0)
+>   		return 0;
+>   
+> -	if (sizelimit > 0 && sizelimit < loopsize)
+> -		loopsize = sizelimit;
+> +	if (lo->lo_sizelimit > 0 && lo->lo_sizelimit < loopsize)
+> +		loopsize = lo->lo_sizelimit;
+>   	/*
+>   	 * Unfortunately, if we want to do I/O on the device,
+>   	 * the number of 512-byte sectors has to fit into a sector_t.
+> @@ -158,11 +181,6 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+>   	return loopsize >> 9;
+>   }
+>   
+> -static loff_t get_loop_size(struct loop_device *lo, struct file *file)
+> -{
+> -	return get_size(lo->lo_offset, lo->lo_sizelimit, file);
+> -}
+> -
+>   /*
+>    * We support direct I/O only if lo_offset is aligned with the logical I/O size
+>    * of backing device, and the logical block size of loop is bigger than that of
+> @@ -569,7 +587,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+>   	error = -EINVAL;
+>   
+>   	/* size of the new backing store needs to be the same */
+> -	if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
+> +	if (lo_calculate_size(lo, file) != lo_calculate_size(lo, old_file))
+>   		goto out_err;
+>   
+>   	/*
+> @@ -1063,7 +1081,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
+>   	loop_update_dio(lo);
+>   	loop_sysfs_init(lo);
+>   
+> -	size = get_loop_size(lo, file);
+> +	size = lo_calculate_size(lo, file);
+>   	loop_set_size(lo, size);
+>   
+>   	/* Order wrt reading lo_state in loop_validate_file(). */
+> @@ -1255,8 +1273,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+>   	if (partscan)
+>   		clear_bit(GD_SUPPRESS_PART_SCAN, &lo->lo_disk->state);
+>   	if (!err && size_changed) {
+> -		loff_t new_size = get_size(lo->lo_offset, lo->lo_sizelimit,
+> -					   lo->lo_backing_file);
+> +		loff_t new_size = lo_calculate_size(lo, lo->lo_backing_file);
+>   		loop_set_size(lo, new_size);
+>   	}
+>   out_unlock:
+> @@ -1399,7 +1416,7 @@ static int loop_set_capacity(struct loop_device *lo)
+>   	if (unlikely(lo->lo_state != Lo_bound))
+>   		return -ENXIO;
+>   
+> -	size = get_loop_size(lo, lo->lo_backing_file);
+> +	size = lo_calculate_size(lo, lo->lo_backing_file);
+>   	loop_set_size(lo, size);
+>   
+>   	return 0;
+> 
 
-------=_NextPart_000_005F_01DC0C36.0DD98A00
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-
-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
-SIb3DQMHMB0GA1UdDgQWBBQRC/IegXfBTn5cZmp9COa0bolxUDAfBgNVHSMEGDAWgBReWQOmtExY
-YJFO9h61pTmmMsE1ajCCAQ8GA1UdHwSCAQYwggECMIH/oIH8oIH5hoG6bGRhcDovLy9DTj1JTlNQ
-VVItQ0EsQ049SlRDQTIwMTIsQ049Q0RQLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNl
-cnZpY2VzLENOPUNvbmZpZ3VyYXRpb24sREM9aG9tZSxEQz1sYW5nY2hhbyxEQz1jb20/Y2VydGlm
-aWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlP29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50
-hjpodHRwOi8vSlRDQTIwMTIuaG9tZS5sYW5nY2hhby5jb20vQ2VydEVucm9sbC9JTlNQVVItQ0Eu
-Y3JsMIIBLAYIKwYBBQUHAQEEggEeMIIBGjCBsQYIKwYBBQUHMAKGgaRsZGFwOi8vL0NOPUlOU1BV
-Ui1DQSxDTj1BSUEsQ049UHVibGljJTIwS2V5JTIwU2VydmljZXMsQ049U2VydmljZXMsQ049Q29u
-ZmlndXJhdGlvbixEQz1ob21lLERDPWxhbmdjaGFvLERDPWNvbT9jQUNlcnRpZmljYXRlP2Jhc2U/
-b2JqZWN0Q2xhc3M9Y2VydGlmaWNhdGlvbkF1dGhvcml0eTBkBggrBgEFBQcwAoZYaHR0cDovL0pU
-Q0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwvSlRDQTIwMTIuaG9tZS5sYW5nY2hh
-by5jb21fSU5TUFVSLUNBKDEpLmNydDApBgNVHSUEIjAgBggrBgEFBQcDAgYIKwYBBQUHAwQGCisG
-AQQBgjcKAwQwNQYJKwYBBAGCNxUKBCgwJjAKBggrBgEFBQcDAjAKBggrBgEFBQcDBDAMBgorBgEE
-AYI3CgMEMEsGA1UdEQREMEKgJwYKKwYBBAGCNxQCA6AZDBdjaHVndWFuZ3FpbmdAaW5zcHVyLmNv
-bYEXY2h1Z3VhbmdxaW5nQGluc3B1ci5jb20wUAYJKwYBBAGCNxkCBEMwQaA/BgorBgEEAYI3GQIB
-oDEEL1MtMS01LTIxLTE2MDY5ODA4NDgtNzA2Njk5ODI2LTE4MDE2NzQ1MzEtNTYwNDA2MA0GCSqG
-SIb3DQEBCwUAA4IBAQBDRhwc9Cfe5n65yxddOeEDQbNITPIjt/Q+Mf0KqzH+d4IcHt7HNA8ZhrOp
-YQJiFgjJY9eOo4+lABBfQTWVK3MrIiBTzf1MB8MRXnLKR1+FhZkDj+NRQdKDV6L1rcO+RsCJrLM2
-1MGkhqFlpXCHxlyPt+T18YSXSD0ceJ5QpQ3A+/N2p+OTxezHL5GqPSJT051H43ikZC5xCpZMWafu
-B0GyyrLlvvzet4Ko76Y4jWDL61EEakexUR9RgPcPhYFHiNf9f3wi3fc1AW0J1smh+3rm9INI+6Xx
-/g6gEHmIeBWZfODTrhP6FGMlMMJlLQoSAZbPBadhUnssKKTWgy5rT4qUMYIDkzCCA48CAQEwcDBZ
-MRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJ
-k/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AAkSWdsZNK1EPE5IAAQACRJYwCQYF
-Kw4DAhoFAKCCAfgwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-ODEzMDEzODQxWjAjBgkqhkiG9w0BCQQxFgQUM9r+5oFD35dAisBthhT+2JHCSxowfwYJKwYBBAGC
-NxAEMXIwcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8x
-FDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AAkSWdsZNK1EPE5IA
-AQACRJYwgYEGCyqGSIb3DQEJEAILMXKgcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZIm
-iZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVIt
-Q0ECE34AAkSWdsZNK1EPE5IAAQACRJYwgZMGCSqGSIb3DQEJDzGBhTCBgjALBglghkgBZQMEASow
-CwYJYIZIAWUDBAEWMAoGCCqGSIb3DQMHMAsGCWCGSAFlAwQBAjAOBggqhkiG9w0DAgICAIAwDQYI
-KoZIhvcNAwICAUAwBwYFKw4DAhowCwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQCAjALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAKfH83KW4U5/TTcAoGnATJ1CnmrFGn4kxlekMGC5t+ezGjXam
-+hT5NSIIXckxtdB5V6mGamsLOa7qCXORSQ5ALn095U6R3VhiexCkV1XOU/kenXqATGad3mcbcdNG
-A/m32ECtPA+ZB8gqV1QbHvUqZvKQG6jH7Z4FC6gQ3tWLlliBFxs2xU3+e1JxZs8JQLbWmuJa7clq
-R+LJFv9Xu90ZpLXMPTISCQtNlAUG0BdSfE8Y9Fv6KKXcEDycaCTHOtSX6nwMVWIg5CSvmdh74X6J
-FoW3n1tDN6aeZJQpBuw6qsKlO8LPRUH5yoDXcYm9SmwtI1JMsyRLEpzULH0rM3y9mQAAAAAAAA==
-
-------=_NextPart_000_005F_01DC0C36.0DD98A00--
 
