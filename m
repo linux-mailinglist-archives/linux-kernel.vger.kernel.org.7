@@ -1,238 +1,138 @@
-Return-Path: <linux-kernel+bounces-767310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830F8B252B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:00:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7517DB252A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968A6170A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:59:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9A771892FE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7046429BD9A;
-	Wed, 13 Aug 2025 17:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEA829B78E;
+	Wed, 13 Aug 2025 17:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cB3zKZOY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e2Hz9dNH"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E929B8CC
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E2129ACFD;
+	Wed, 13 Aug 2025 17:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755107948; cv=none; b=J0hHXEPEIugqYbfiBYzkRIN2GRrhqciSSoIu9ce/8XHRIDW3fTCd2b9lkykXzh7+YB5VtU7HO6+0oGz0Fd56UHG74yQ3tsIH7yRnVQA1NucqfdSpW56FRqGR1F12S1BWz3eYrbCsJ2oFMwagTD4mMn31HQ8sdusfSHNUlCy/wiE=
+	t=1755107943; cv=none; b=iPjoALgVj9tfDB9GW35kKoO0UymHYUMKJxYbYo1KQaxsc9UVKCHi8Glxc4BfAUsCYg5sdiMaNI+D4NBv+PAZaybqt2EDntWM4Bb/94As0VOjjVe7ThqASRt+cxAcnmSlvldutil8m1kJwzIB+aLZ2nRu6ZI+5sLkpDQL1yOwvTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755107948; c=relaxed/simple;
-	bh=vOeA+IRs2WkICsEroFKXn3XPbpj/6Pk8zU4tiVJa5iU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gX3CPy+xnc+HfQxW7uQgURnJXLZPUFzFRa6T2CLO79DwLVyFDicX3zYJBe6Ivi4La5EyE3NtPE5wDJ73NrbMZNpttyyGxZ/YXq3ltIlU1aDIOnxy+vuEZtHi2Z5zMIxliH9pRdlQM2pRS8vs8+2tKgqYq/xmWysfuyFn1P9NKWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cB3zKZOY; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755107947; x=1786643947;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=vOeA+IRs2WkICsEroFKXn3XPbpj/6Pk8zU4tiVJa5iU=;
-  b=cB3zKZOYSHvFE1VG7kEwO2FybY/POFdNuUfbAhXfv2rq2uEwCH4oQfaO
-   SQEyj63L3pe2AWHBdOdN2mDeJgLr6Iysd18WPkGsiOnenDf1J90yu14Ri
-   Tt4dFDzCt7+aOgoN+gdaUF/SWvwJTahfZGXBNv9PRHBStebEDKynquHd+
-   YEp7aLruZWw7UjPm+QB8EMi7NmCArKHMf1St7cvdU2i6o6kBGbJkybbEV
-   beagO1jNZYAJeCr78fsvtKY9OOwTfE9BIVGOKQJV3mQT1RwWQgs+YsO+e
-   wW8v9LvoOVUkj/2fkEYQ1ubjRtlf+tRh3nN7YYRvbKS61IBb5jzhxbG1L
-   w==;
-X-CSE-ConnectionGUID: 45MriYx0SxeonWtNVumsGw==
-X-CSE-MsgGUID: +28IR4bUS/u1qtN9xJeKRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68793437"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="68793437"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 10:59:06 -0700
-X-CSE-ConnectionGUID: j7xmGq33RKipnwWnaM0fLA==
-X-CSE-MsgGUID: Pc5yatR4SMKg9zBTxgi/Ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="166033963"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Aug 2025 10:59:04 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umFkc-000ABW-1V;
-	Wed, 13 Aug 2025 17:59:02 +0000
-Date: Thu, 14 Aug 2025 01:57:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kees Cook <kees@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: arch/arm/include/asm/stacktrace.h:48:21: error: call to undeclared
- function 'in_entry_text'; ISO C99 and later do not support implicit function
- declarations
-Message-ID: <202508140127.RW2381Lq-lkp@intel.com>
+	s=arc-20240116; t=1755107943; c=relaxed/simple;
+	bh=A0uWMSBoshWApXjMZxa0BZajr8RlMKNAHuKmTd/nBJ8=;
+	h=MIME-Version:Content-Type:Date:Message-ID:From:To:CC:Subject:
+	 References:In-Reply-To; b=AOcZiy/nDW8KGwq9Q7RQxswyLD6Bd5gskun3cg36Z5IP9/rD/hTr6D7P8ScOV7RF7SNcQq/150brUaFQpH+JOBL2cF10fihl03y4xlXbbzlvdY4l6abkc0VK9stS9g32w5Z+dhH64nxikdSzxzyw+ufgCoDprUcv0Vy4p7ZjGWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=e2Hz9dNH; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DHwoNs2128852;
+	Wed, 13 Aug 2025 12:58:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755107930;
+	bh=lL/86upWP/+8sXqyxr7nH0Vq0QlFJa/4K+UatKQhu1c=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=e2Hz9dNHPEhPLQ0CnK8fClA+7gQy4WdM9Uadnl7xfSxkx1LHu6ASr6nKgjcZVpnK2
+	 eUwUkhd/R2AY/tKQI2Z32IpG69pGrKxIgZxbFoIYu4+RBBQtqm2QSfstGxg/wVT9is
+	 FXfMvnW/bsfUa8LGrENMQlR3d6NK6BhtKKkcU+Cg=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DHwoJp239179
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 13 Aug 2025 12:58:50 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
+ Aug 2025 12:58:50 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 13 Aug 2025 12:58:50 -0500
+Received: from localhost (rs-desk.dhcp.ti.com [128.247.81.144])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DHwo7Z2676660;
+	Wed, 13 Aug 2025 12:58:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Wed, 13 Aug 2025 12:58:50 -0500
+Message-ID: <DC1HU458W3QA.YLONSMYKK0C4@ti.com>
+From: Randolph Sapp <rs@ti.com>
+To: Nishanth Menon <nm@ti.com>
+CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <d-gole@ti.com>,
+        <afd@ti.com>, <bb@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <detheridge@ti.com>, <matt.coster@imgtec.com>
+Subject: Re: [PATCH 3/3] arm64: dts: ti: k3-j784s4-j742s2: enable the
+ bxs-4-64
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250808232522.1296240-1-rs@ti.com>
+ <20250808232522.1296240-3-rs@ti.com>
+ <20250813151819.5rthljjrpryfwezz@skinning>
+In-Reply-To: <20250813151819.5rthljjrpryfwezz@skinning>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   91325f31afc1026de28665cf1a7b6e157fa4d39d
-commit: a8f0b1f8ef628bd1003eed650862836e97b89fdd kstack_erase: Support Clang stack depth tracking
-date:   3 weeks ago
-config: arm-randconfig-002-20250814 (https://download.01.org/0day-ci/archive/20250814/202508140127.RW2381Lq-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 3769ce013be2879bf0b329c14a16f5cb766f26ce)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508140127.RW2381Lq-lkp@intel.com/reproduce)
+On Wed Aug 13, 2025 at 10:18 AM CDT, Nishanth Menon wrote:
+> On 18:25-20250808, rs@ti.com wrote:
+>> From: Randolph Sapp <rs@ti.com>
+>>=20
+>> Add the relevant device tree node for Imagination's BXS-4-64 GPU.
+>>=20
+>> These devices uses a similar MSMC configuration to the J721S2. As such,
+>> they also require the use of the dma-coherent attribute.
+>>=20
+>> Signed-off-by: Randolph Sapp <rs@ti.com>
+>> ---
+>>  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>=20
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/=
+arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+>> index 7c5b0c69897d..a44ca34dda62 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
+>> @@ -2691,4 +2691,18 @@ bist_main14: bist@33c0000 {
+>>  		bootph-pre-ram;
+>>  		ti,sci-dev-id =3D <234>;
+>>  	};
+>> +
+>> +	gpu: gpu@4e20000000 {
+>> +		compatible =3D "ti,j721s2-gpu", "img,img-bxs-4-64", "img,img-rogue";
+>
+> Following  https://lore.kernel.org/linux-arm-kernel/DBE4UO2RGAYX.17V1DAF8=
+MQYJM@kernel.org/
+> Is it worth having ti,j784s4-gpu here? Are there any SoC specific quirks
+> that driver will need to handle?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508140127.RW2381Lq-lkp@intel.com/
+No SoC specific quirks, aside from those already being tracked through the
+dma-coherent attribute. If we actually want to register SoC specific
+compatibility entries as advised by the kernel docs, just let me know. I've=
+ seen
+this opinion toggle a few times.
 
-All errors (new ones prefixed by >>):
+>> +		reg =3D <0x4e 0x20000000 0x00 0x80000>;
+>> +		clocks =3D <&k3_clks 181 1>;
+>> +		clock-names =3D "core";
+>> +		assigned-clocks =3D <&k3_clks 181 1>;
+>> +		assigned-clock-rates =3D <800000000>;
+>> +		interrupts =3D <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+>> +		power-domains =3D <&k3_pds 181 TI_SCI_PD_EXCLUSIVE>,
+>> +				<&k3_pds 182 TI_SCI_PD_EXCLUSIVE>;
+>> +		power-domain-names =3D "a", "b";
+>> +		dma-coherent;
+>> +	};
+>>  };
+>> --=20
+>> 2.50.1
+>>=20
 
-   In file included from kernel/kstack_erase.c:13:
-   In file included from include/linux/kstack_erase.h:16:
->> arch/arm/include/asm/stacktrace.h:48:21: error: call to undeclared function 'in_entry_text'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      48 |                 frame->ex_frame = in_entry_text(frame->pc);
-         |                                   ^
-   In file included from kernel/kstack_erase.c:14:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:10:
-   In file included from include/linux/trace_recursion.h:5:
-   In file included from include/linux/interrupt.h:22:
->> arch/arm/include/asm/sections.h:14:20: error: static declaration of 'in_entry_text' follows non-static declaration
-      14 | static inline bool in_entry_text(unsigned long addr)
-         |                    ^
-   arch/arm/include/asm/stacktrace.h:48:21: note: previous implicit declaration is here
-      48 |                 frame->ex_frame = in_entry_text(frame->pc);
-         |                                   ^
-   In file included from kernel/kstack_erase.c:14:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:36:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:98:11: warning: array index 3 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
-      98 |                 return (set->sig[3] | set->sig[2] |
-         |                         ^        ~
-   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
-      17 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from kernel/kstack_erase.c:14:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:36:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:98:25: warning: array index 2 is past the end of the array (that has type 'unsigned long[2]') [-Warray-bounds]
-      98 |                 return (set->sig[3] | set->sig[2] |
-         |                                       ^        ~
-   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
-      17 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from kernel/kstack_erase.c:14:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:36:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:114:11: warning: array index 3 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
-     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
-         |                          ^         ~
-   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
-      17 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from kernel/kstack_erase.c:14:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:36:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:114:27: warning: array index 3 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
-     114 |                 return  (set1->sig[3] == set2->sig[3]) &&
-         |                                          ^         ~
-   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
-      17 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from kernel/kstack_erase.c:14:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:36:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:115:5: warning: array index 2 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
-     115 |                         (set1->sig[2] == set2->sig[2]) &&
-         |                          ^         ~
-   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
-      17 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from kernel/kstack_erase.c:14:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:36:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:115:21: warning: array index 2 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
-     115 |                         (set1->sig[2] == set2->sig[2]) &&
-         |                                          ^         ~
-   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
-      17 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from kernel/kstack_erase.c:14:
-   In file included from include/linux/kprobes.h:28:
-   In file included from include/linux/ftrace.h:13:
-   In file included from include/linux/kallsyms.h:13:
-   In file included from include/linux/mm.h:36:
-   In file included from include/linux/rcuwait.h:6:
-   In file included from include/linux/sched/signal.h:6:
-   include/linux/signal.h:157:1: warning: array index 3 is past the end of the array (that has type 'const unsigned long[2]') [-Warray-bounds]
-     157 | _SIG_SET_BINOP(sigorsets, _sig_or)
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/signal.h:138:8: note: expanded from macro '_SIG_SET_BINOP'
-     138 |                 a3 = a->sig[3]; a2 = a->sig[2];                         \
-         |                      ^      ~
-   arch/arm/include/asm/signal.h:17:2: note: array 'sig' declared here
-      17 |         unsigned long sig[_NSIG_WORDS];
-         |         ^
-   In file included from kernel/kstack_erase.c:14:
-
-
-vim +/in_entry_text +48 arch/arm/include/asm/stacktrace.h
-
-2335c9cb831faba Jinjie Ruan      2024-06-27  35  
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  36  static __always_inline
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  37  void arm_get_current_stackframe(struct pt_regs *regs, struct stackframe *frame)
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  38  {
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  39  		frame->fp = frame_pointer(regs);
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  40  		frame->sp = regs->ARM_sp;
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  41  		frame->lr = regs->ARM_lr;
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  42  		frame->pc = regs->ARM_pc;
-fed240d9c974381 Masami Hiramatsu 2021-10-21  43  #ifdef CONFIG_KRETPROBES
-fed240d9c974381 Masami Hiramatsu 2021-10-21  44  		frame->kr_cur = NULL;
-fed240d9c974381 Masami Hiramatsu 2021-10-21  45  		frame->tsk = current;
-fed240d9c974381 Masami Hiramatsu 2021-10-21  46  #endif
-752ec621ef5c307 Li Huafei        2022-08-26  47  #ifdef CONFIG_UNWINDER_FRAME_POINTER
-752ec621ef5c307 Li Huafei        2022-08-26 @48  		frame->ex_frame = in_entry_text(frame->pc);
-752ec621ef5c307 Li Huafei        2022-08-26  49  #endif
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  50  }
-9865f1d46a68a5f Nikolay Borisov  2014-06-03  51  
-
-:::::: The code at line 48 was first introduced by commit
-:::::: 752ec621ef5c30777958cc5eb5f1cf394f7733f4 ARM: 9234/1: stacktrace: Avoid duplicate saving of exception PC value
-
-:::::: TO: Li Huafei <lihuafei1@huawei.com>
-:::::: CC: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
