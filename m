@@ -1,117 +1,88 @@
-Return-Path: <linux-kernel+bounces-765923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9431B24007
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:07:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6176FB24009
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E101B63EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:08:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0ED1B6546E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7862BE63A;
-	Wed, 13 Aug 2025 05:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="un83pMT3"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F0F2BD5BC;
+	Wed, 13 Aug 2025 05:08:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F513A1D2;
-	Wed, 13 Aug 2025 05:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B4F26E71D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755061650; cv=none; b=hPTLbHo48C8WgKX0TlwlgHf/e2+v34N2UXAnSwH0Vp+X7Stqx37fwxTUV6ZXboQeB8XfiDopqD77Th6q95x0+T8Iz9kTGY50qq1zT0nFh7UFnUsDuZGlqq/fYZP6uw9JO4APdkEQ1lyWEGrCPEXQ2xEU0sVbRDj5F4u7/mdYFOo=
+	t=1755061685; cv=none; b=FPwLrupOCFGweFIT4bhmnmdPLX48PHy6UIHCs44hPT7DDVh2HcJITxd3UuAsC2mzpOsHO5q31b+0J9X1AsC+3lj7h3jX5lRsOoVYh4OY/8IUWyIGTws3jxG9yoMe09AhJ41ygVkYawNhMgC+7430Jhub8Lz/VZCNfn0JLi91dQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755061650; c=relaxed/simple;
-	bh=JKTQA9qH82HV2H1Eq1113FuCQKbjc3L96FALVs8Fb0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mdbma1CS1Fe5XFSpWy4Z4jzWNAQOxHawTTyks6BuAfW1caQ+Ddt1T9EWN58lJRFLo48Ns9iS4fVViVNWznbrbptVNl8myrGvhT1Chdn/UhZoFMwawCiaXYkhmkH0s3q1o9bc1e7WS0fGC+PTrYdFZVLjo52G/gRdLOjFgjtbgWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=un83pMT3; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e5U3Jru4QvSh+gZ04F1oAlS7nb9ho9LY7nJhfMe2Y4U=; b=un83pMT3ThYrtWrTPu0bibcpbE
-	BhUC6V5s+qnM99OgBU47KW2hMWIdhipx/U9SZn/PdD5iZY3ahTAcXwq0aIxkt/cJakChWWNFTKPg4
-	KUV08pYtA3kYj7Qi54yRbxc1ShhWm0mwXMUg8spwnTkBA2O2czkBvvncj4SlMtbpXBh8ZbIJnzhaV
-	t3TqAeoDG9jd597x8lKORHvF0/SM6VIUE3IYa0LtNhsmUiE7+0UUNaiBptlPyw+SYYRdhm7rHe2x4
-	clE/Z7F1jUQIcL3U0LQCMV7ZGPCCaw1nVh4wbA+er1lwdT2MMj5YKE8J7LmoK82NbdHuiQOaxtcEk
-	RoN1I42w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1um3hl-00000005txc-0wPb;
-	Wed, 13 Aug 2025 05:07:17 +0000
-Date: Wed, 13 Aug 2025 06:07:17 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Steve French <sfrench@samba.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/11] VFS: allow d_splice_alias() and d_add() to work on
- hashed dentries.
-Message-ID: <20250813050717.GD222315@ZenIV>
-References: <20250812235228.3072318-1-neil@brown.name>
- <20250812235228.3072318-9-neil@brown.name>
+	s=arc-20240116; t=1755061685; c=relaxed/simple;
+	bh=aFM6iib2vgGtHxB6cD1SQTMGskii00gutxGizR5KPdw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uC1El712l7VTXxVKbNg1rA3Br0mCCNupmiCADW6dff2GDdny4npOtAr4CgXq7U4hy4kFYOa0yWvfA/6H/4fkSutwo6YOWjV6BU5UG2cleSk7PVT8qTk2D1PR50j6BMD7xtvwL50ORcwCii2dPZMyyDeZGEomJY9P6EAz1iPnVl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-881a05b0846so600316539f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 22:08:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755061683; x=1755666483;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5aRgnC8pdaqi1WtoctxrdtHCiSuRrurqcXKWjYUn/gQ=;
+        b=af1syO2w9qG2H9LfLjQCrjXydlWcml9W5ZPfdm6BXtee+m4SGcG5FeRVk6kYN0MYr6
+         PSCXT0Ku8p+rOodFoJSfT21edMNVOXGiyTDPiz2k0d7Rs4vl/mYLR0ktQNPocM63q5PX
+         Q51ZsD/8nlg9oHdcGo5sJAG1lMpvmftZIQ0/VWlgGdFLM+dUulF2n1U/Lf5GBaq7BU6j
+         UM0wezNkxBO6qRDhiZjAun0dIJVvM1hfTdqGsFJasUQSuMUIvY5TXxU61fKupT169Ky7
+         YH14pVCqexMbnpTykf7ogdYHIU+8EchrBkj9MhOI7P4gQEi0MesTtUNb01urbNbxGCXI
+         nBPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXA7KXpOFqyEQZN/IaPBXvqPS9e+9tXkEBvddo0snfkVSifXO14tSH3rugF1W8ktX9PfTwADcBCiBolrzU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVBPBdje0ffM+1XFEzI5fAlimXdTlML3nBGZzuPQHsP6Kf75lE
+	D5s/0+dOAQZ3wiAXjkQ41Wpqe7erEjw0SuWPz8wQeS5bIlXvM+Weq3XyTsZebqOAz4ELfP+SEiW
+	PSwyt6xfGVAi1vyxe5eIkzAVuUDuD83n52137W636Koa1MybLHfiG/JfuhT4=
+X-Google-Smtp-Source: AGHT+IFdU16hTe+3rTRLdmhnvw9e/HlyKqPC9f3x1xVy47/8w1RwlLxU0GFUaP4N329O77Izh/5Qii96T9yfgP56raMbWWyjaUlr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812235228.3072318-9-neil@brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6602:2c0e:b0:879:674e:2c73 with SMTP id
+ ca18e2360f4ac-8842963a8f9mr303580839f.4.1755061682744; Tue, 12 Aug 2025
+ 22:08:02 -0700 (PDT)
+Date: Tue, 12 Aug 2025 22:08:02 -0700
+In-Reply-To: <664ea661-081a-4040-96c4-26307ba020ed@lucifer.local>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689c1db2.a70a0220.7865.0047.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in move_page_tables
+From: syzbot <syzbot+4d9a13f0797c46a29e42@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, jannh@google.com, liam.howlett@oracle.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	pfalcato@suse.de, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 12, 2025 at 12:25:11PM +1000, NeilBrown wrote:
-> Proposed locking changes will require a dentry to remain hashed during
-> all directory operations which are currently protected by i_rwsem, or
-> for there to be a controlled transition from one hashed dentry to
-> another which maintains the lock - which will then be on the dentry.
-> 
-> The current practice of dropping (unhashing) a dentry before calling
-> d_splice_alias() and d_add() defeats this need.
-> 
-> This patch changes d_splice_alias() and d_add() to accept a hashed
-> dentry and to only drop it when necessary immediately before an
-> alternate dentry is hashed.  These functions will, in a subsequent patch,
-> transfer the dentry locking across so that the name remains locked in
-> the directory.
+Hello,
 
-The problem I have with that is the loss of information.  That is to
-say, "is it hashed here" is hard to deduce from code.  I would rather
-add d_splice_alias_hashed() and d_add_hashed(), and then see what's
-going on in specific callers.  
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-And yes, it requires analysis of places where we have d_drop()+d_add() -
-better have it done upfront than repeat it on every code audit *for*
-*each* *single* *call* *of* d_add(), including the ones that are currently
-obviously meant to be called for unhashed dentries.
+Reported-by: syzbot+4d9a13f0797c46a29e42@syzkaller.appspotmail.com
+Tested-by: syzbot+4d9a13f0797c46a29e42@syzkaller.appspotmail.com
 
-I realize that it's no fun at all - in particular, I'd never been able
-to get ceph folks to explain what is and what is not possible there.
+Tested on:
 
-I would really hate to have that expand by order of magnitude - in
-effect, you make *all* calls of d_splice_alias() and d_add() similar
-mysteries.
+commit:         0db9b72d mm/userfaultfd: fix kmap_local LIFO ordering ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-hotfixes-unstable
+console output: https://syzkaller.appspot.com/x/log.txt?x=128fb5a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2323b2d6038203a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d9a13f0797c46a29e42
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
