@@ -1,165 +1,95 @@
-Return-Path: <linux-kernel+bounces-767188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5A7B25045
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:56:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2888FB25043
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F048A5A0ABE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9661B68497F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B759F2397AA;
-	Wed, 13 Aug 2025 16:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ECC2DF68;
+	Wed, 13 Aug 2025 16:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ggYDlJjV"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f3r4VVIl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9610C1F582E;
-	Wed, 13 Aug 2025 16:54:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDCA2066CE;
+	Wed, 13 Aug 2025 16:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755104070; cv=none; b=UZgiPyJIQ6BY/qmZtfsj4GFCDD8q9Fz3R5tmwDdPN3N0eGsenqXCeFwjQd2wS6iP71Lp7k54Mto2ABEHvETbcPoSINfEJuGbksxkOgCw0KcbKlxX4YPeN3Se/tU5lxXRlX830qFYf+K2hJW1hsfI1fcOb++bse4DTPBC8qmkNB4=
+	t=1755104041; cv=none; b=hiaYTBZ42g3pIOA0hm0v0bDDgVwxCMDjo6Tbw9I8Z08XWztxWyNK3ciO4OViv0XZLx3Er/tS/LrD86iaMTSXZdoonYKt2tZ+dfy02nfHUzPI95jrGc9VFdj43nq++HsyHRH/JaK1JzqXMEYRnwMKU+bJE7Qr8Xv32weIsw5KJMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755104070; c=relaxed/simple;
-	bh=vQgrbIyhxn0faYGZQQaZ25U3Nm+uaCoDaB89CFoYQH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ulGRXf2trmvvX8eodWgOU6Exb+N5OKsZEdeqU+n7oVXLLWRoYYISSsophFCWetSDunm2NtBSYDbyzEvFIjDUZKWFqaEhWVcm9sxlOt70Ox+hAVBBfJU0ViR66k9u/CNtqzs2RGB/q5e+E+rdtDOLGq+fYQsjODHjpl0XqDoe3Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ggYDlJjV; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb7ace3baso5838466b.3;
-        Wed, 13 Aug 2025 09:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755104067; x=1755708867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Fia+C4F/2ia0vnb0y/F4g4iaD6+fLDHe4xFz/p6aSjo=;
-        b=ggYDlJjV2sjY67zDe2fZzrkz6zqQNOKi3vJ15rKksm9upLgUawAeHh8BofaVYfQahb
-         mchMBrE205npCnXPw5v2OgmEy952YPlRy4YtzTQw0Xin5lV3Scw9xCY1E/6Zilie4/bQ
-         pEDo7/mt8qLViN7EOE/g10BiJLaJBuZ4U+95rxH/bXSNPVa3tN3KRY7f/ovsq1zWWI4l
-         eNTKyxQPMNoFDn9NB5gXpajlzTCLKG8u0HeAunBaukCSZ/jL9ClxFUQvPcy4cIqIuH0V
-         skngiQ+I1O7nbOggOvHVmq3GcvZR+QwdNidaO3a5FQITqUmLhuJ/9thQiJHmjNl0teyD
-         GWWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755104067; x=1755708867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fia+C4F/2ia0vnb0y/F4g4iaD6+fLDHe4xFz/p6aSjo=;
-        b=c5JkdaDnJzXamjOEBnXHH3UGwzkIAs6FHP4bUHsQlOjHZ6OFFX2rMAZTC2CtTxyLIv
-         ZY4YhlLbtDhqInRDLqkFf74Fr7GN0NrQ7CTbqBZJNBAAHmbFaH/VXpcu+p2lTVGRTh82
-         ND7urelWrN92fPtuI5mzBC1ayUBgw72iXB4v9V8scQwY0DNK6e5mQEndaR3RKTTT/9Hx
-         Ti5crQUaZqR8zHBRNJ7PWsYD/YvV1VKw9kyoRgoxslaGawYcU2OyIaub/iC4FdMVlANX
-         Cbg9/Ucr4Xxe2Cy1EEmxNSFnZTmw9XHN/EUmvEYnFOx4G/NrJ6DfbpCYZJNgt5v8UfaY
-         jQrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlnW+C6TCIMz16Ns+ZRXmrmWIIijfGVni7gZQ7qom3C1nAw0NtLzQ5+7HRABvrxRRxZG+BaxJSyd8=@vger.kernel.org, AJvYcCXuy2QVcxSoNdtYIgjgWuV02VLdnoBF0F41ANGDX61Y7yyt2Kw3/sHpD2qdLkEJmRwsJ8DnXUfDfXbK4Y7+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDDnwbfY58HtppGiUptgY7ZOOiV4Xb1581rlILu4mvyfWqcOZJ
-	1ltzhOV5pQS6KMlI8LPGT7EBSwFeLQxG7Fm+1C9DHjKMxNIgrc2Ss7cbEzoe7kaKwbayZdAeF2C
-	H7uXTTe6v/e+H5T/ZwQwzaqVJcJwhfIlFZ9/sKck=
-X-Gm-Gg: ASbGncurFWRspe/R6oEhJejAgLOQ8X0HyAnhKzDoLnmchKtO8MJK5Kfg1QkUoqNdtUP
-	feVniXbbG8kTUNM7ECQlgojMYBDGE4vtC+wbBbICWXlfr1BHazmheYCdQZVfJWaOVbLZMKM0uRm
-	oCkJB3Wdxy2PG3jXT/sF4Q68E/Oh5AYQbtrhjuOac2Ca0c9KG6IK3FgR9/wKLZX2/dk8JxCtFZx
-	+I5LDe1Dw==
-X-Google-Smtp-Source: AGHT+IGGHB7f9jYfS/efNI6IxhOGxiEwSgkVfaRSpN9fABBvCiN6/wyzNMS9n7z4AGdDkYfnQmaVtROclJfOh7ZObK4=
-X-Received: by 2002:a17:907:3c94:b0:af9:8064:21e3 with SMTP id
- a640c23a62f3a-afca4e6c5d9mr339922466b.56.1755104066655; Wed, 13 Aug 2025
- 09:54:26 -0700 (PDT)
+	s=arc-20240116; t=1755104041; c=relaxed/simple;
+	bh=02NLdfKncdfClMLv2zOa1DkVPQDraLI+iMf3m2mBtUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZH8zUuNYgKFeUxn705Fyvqg+gTooZAgpUuqTeVafMqLXQffxW0bQzbuZiXPPVTKOKGTCTBqJHyPs9/tiDVkVCWW2sLjbXx/sugo0p+vMhjqa0/PLBWUVCw88rRlCm7EOt1IERUY6YJKJOU7YpMH+eiSEM2yY3eVc9AJPBs4Piu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f3r4VVIl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 021C3C4CEF1;
+	Wed, 13 Aug 2025 16:54:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755104041;
+	bh=02NLdfKncdfClMLv2zOa1DkVPQDraLI+iMf3m2mBtUI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f3r4VVIl6icleNEroFt5+iAt9CwkHstZxpWsn/UadT+gt0c1mZ62yfxdQZTZrAMmv
+	 VzWotJvJCtBCpWkmtRimU9pghSnAzYYXhFVDp5xZrmR0BJtvgkKqmlVu9vXvpwlxnD
+	 S6MwuO8z1/yzlyOnNVU+s4I3FEKX/eBH6Ie0j4QgCRBOo9qEH65viCt3lvcMR95H5G
+	 yn1x9UslrK1v9zuzwxEjWTZX3yq5xSOjKTKnHpyOoE3U0fKgb+AzH8mgBaWfFoaBMX
+	 DSfm8OOYtqYEMSl0uB0q2cEWMYZ5LTXNXdpXZfY8WwZWnlg69AVgFy435xt4UY3xGy
+	 vJ8TPtOFR5bJw==
+Date: Wed, 13 Aug 2025 06:53:59 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH] blkcg: Optimize exit to user space
+Message-ID: <aJzDJ3DfzUK_ntZR@slm.duckdns.org>
+References: <87qzxf6zde.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813151614.12098-1-bcollins@watter.com> <20250813151614.12098-6-bcollins@watter.com>
-In-Reply-To: <20250813151614.12098-6-bcollins@watter.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 13 Aug 2025 18:53:48 +0200
-X-Gm-Features: Ac12FXyRjHkHIq-CuScRsFVbUQR_icnw_15XSooc7i2HDcZbDus8J2Gr20bVkE8
-Message-ID: <CAHp75Venj0SEYKBwHcXD+sPgmX85P+Adw=T1wmGwERK0AzQ=Bw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] iio: mcp9600: Add support for IIR filter
-To: Ben Collins <bcollins@watter.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87qzxf6zde.ffs@tglx>
 
-On Wed, Aug 13, 2025 at 5:17=E2=80=AFPM Ben Collins <bcollins@watter.com> w=
-rote:
->
-> MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
-> to allow get/set of this value.
->
-
+On Wed, Aug 13, 2025 at 04:59:57PM +0200, Thomas Gleixner wrote:
+> blkcg uses TIF_NOTIFY_RESUME to handle throttling on exit to user
+> space. TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is utilized by
+> other entities as well.
+> 
+> This results in a unconditional blkcg_maybe_throttle_current() call for
+> every invocation of resume_user_mode_work(), which is a pointless exercise
+> as most of the time there is no throttling work to do.
+> 
+> Optimize this by doing a quick check of the throttling condition before
+> invoking it.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: Jens Axboe <axboe@kernel.dk>
 ...
+> -void blkcg_maybe_throttle_current(void)
+> +void __blkcg_maybe_throttle_current(void)
+>  {
+>  	struct gendisk *disk = current->throttle_disk;
+>  	struct blkcg *blkcg;
 
->         case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
->                 *val =3D mcp9600_tc_types[data->thermocouple_type];
->                 return IIO_VAL_CHAR;
+A nit: __blkcg_maybe_throttle_current() ends up doing another NULL check.
+Maybe drop that? Other than that,
 
-Again, either here + blank line, or as already mentioned, remove a
-stray one below.
+Acked-by: Tejun Heo <tj@kernel.org>
 
-> +       case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +               *val =3D data->filter_level;
-> +               return IIO_VAL_INT;
->
->         default:
->                 return -EINVAL;
+Thanks.
 
-...
-
->         cfg  =3D FIELD_PREP(MCP9600_SENSOR_TYPE_MASK,
->                           mcp9600_type_map[data->thermocouple_type]);
-> +       cfg |=3D FIELD_PREP(MCP9600_FILTER_MASK, data->filter_level);
-
-FIELD_MODIFY() ?
-
-...
-
-> +static int mcp9600_write_raw(struct iio_dev *indio_dev,
-> +                            struct iio_chan_spec const *chan,
-> +                            int val, int val2, long mask)
-> +{
-> +       struct mcp9600_data *data =3D iio_priv(indio_dev);
-> +
-> +       switch (mask) {
-> +       case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-
-> +               if (val < 0 || val > 7)
-
-in_range() ?
-Where 8 will be an ARRAY_SIZE() ?
-
-> +                       return -EINVAL;
-> +
-> +               data->filter_level =3D val;
-> +               return mcp9600_config(data);
-
-> +
-
-So, make sure these blank lines in the switch-cases are all consistent
-all over the code.
-
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +}
-
-...
-
-> +       /* Default filter level of the chip is 0 (off) */
-> +       data->filter_level =3D 0;
-
-Why do we need an explicit assignment? If you want to have a comment
-(which seems somehow valuable), find a better place for it without
-likely unneeded assignment.
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+tejun
 
