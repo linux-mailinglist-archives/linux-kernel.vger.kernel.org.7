@@ -1,140 +1,178 @@
-Return-Path: <linux-kernel+bounces-766337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033AFB24556
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:25:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF963B24566
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD7975A244F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:25:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A32307BB9F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2010C2F1FC7;
-	Wed, 13 Aug 2025 09:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vaz9F8bh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3DD2F1FFE;
+	Wed, 13 Aug 2025 09:26:11 +0000 (UTC)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6292C2D63FD;
-	Wed, 13 Aug 2025 09:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612772EFD88;
+	Wed, 13 Aug 2025 09:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755077095; cv=none; b=j7X/kx0ZOWWVqi4S0ZQJIrzIK9Tw8KQVJppJsQB7xIbW1LGS6qa+MhyFyU9S4Ia4bZvO596Q34JIGT5hywY+tUmDSYQay2zBltHO6w93x1Zsl5bHe3vK/qyZxot2r/ynRZY8//bF74QF1tmGY5doOCIB8FGCYngr4en5qkOjtbc=
+	t=1755077170; cv=none; b=JIiKLRYCZH1pmCir043qHWFtavXz145QeBMkQxZkLW3TNosPsmdyYSq2NVS8VepKihc5A107EPiOx41uuOUneysQ12K2v7mteiioQj7f+Wz+bNSbWvbKRuhk7Y/Zg/lmrOb60JQU2Uz2V80fwgNjtffTy9C4Hpj+xFsUsNUnAho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755077095; c=relaxed/simple;
-	bh=dEq2v0ZCpNIs5td2cA6gDe4/GDNQNaqolm18AtqYml8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ea7WFpKDItuKMuTX85Y36NkAHwNz3Igwrx70s/pZHwKGHDVS6U3esuAdYvGHPyndaBlmELCfw7aSI2Fv4O/11JzST3Ca7pjHph9CPFEx0NPrj5hmxW05W+rMLBlWookJ0j9/rqRCBeY/EX34zjbQCs/vT89NNioRp+vkWZhLkUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vaz9F8bh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94CF7C4CEEB;
-	Wed, 13 Aug 2025 09:24:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755077094;
-	bh=dEq2v0ZCpNIs5td2cA6gDe4/GDNQNaqolm18AtqYml8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Vaz9F8bh5RZMk0r/cBS8TxN5aZlGsYli30GzvtwzjUhaNKOcTXQuF2Ux/SaxHx5j6
-	 fkpKAvn/ojKoI02sPMchw2KDwX1C7q02hAG+UVIxZVR4iU0iVcZYLquZ6GOorIVFns
-	 yWL1T3uXC3yaVi5+gl52R2V8s490JSg3LxNUUasQuqL3XqfjN4UAivBeK1yUy3m9em
-	 BziXSiEgwwrxnYkK6iU7yJLqDD+isqjvoU2LVICKpIpmtXzZwbFEDKcrs3xzaSh7AJ
-	 FnRvabzooJYISBDHugSTOl4LGqCYuhJbPC+78FRODCrnzX+P0fsVX03+uZ4t/c1XuF
-	 YI/8OgMM5WosA==
-Message-ID: <6f46e420-832a-4c6e-b1e9-d797b0425834@kernel.org>
-Date: Wed, 13 Aug 2025 11:24:50 +0200
+	s=arc-20240116; t=1755077170; c=relaxed/simple;
+	bh=W0fDeH3owiTJmJEu38Nsuox8tXL/1QJYakS3THLxyr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ird0/b47v5lGztK7tZFOxIcXIXPQJgkxwjOlxU8m2VfHjmTDYY5UpRGUsaaj9K8MnOw4c3g7E0w8RtG2umlJyYZzKywQl3DvZGizmwI/r1LlLeZJ5KlTGKPSE21KULk3D7xubaaXDWQ3bFooBWrEterRuVLfZCMXn3QponZWw10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz7t1755077099t6929a8c0
+X-QQ-Originating-IP: qX5Zu+msax9MombwIM22WgfZgxWtcqcwdj7qeK0v1bQ=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 13 Aug 2025 17:24:57 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2005654415926057517
+Date: Wed, 13 Aug 2025 17:24:57 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <3F4725F9F2582F05+20250813092457.GA972027@nic-Precision-5820-Tower>
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-5-dong100@mucse.com>
+ <ab6e5c8c-6f91-4017-b68b-7fdf93980a17@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: hwmon: convert lantiq-cputemp to yaml
-To: Aleksander Jan Bajkowski <olek2@wp.pl>, jdelvare@suse.com,
- linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, fe@dev.tdt.de, linux-hwmon@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250813091924.1075488-1-olek2@wp.pl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250813091924.1075488-1-olek2@wp.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ab6e5c8c-6f91-4017-b68b-7fdf93980a17@ti.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MdoRYM9mYrydKvT79W+P8unt2r8jfFFecPzf+nWWC6A2P8JMZujryXbC
+	Ppy66kmUaNY+hZNR0My8j4QLu3AmMydjiBFz9VoTL9uvRUfvRro0PZeparnBr+gQoNkvvbT
+	gQTA+9Pi3RvrC0mka48oCpsus4DTkCkaejQzRQPWbjqz9JR3K6WRDrLlHNUKEZ7HaGLbVej
+	8BV5Smbqff5sTjP5T2Clsbo3gPVdo50wdN4778py/TCRXYqw1ByD7SbvoRwS+yKYI4MWy1u
+	r7gX5r5Hj8sBPyTLhSWl6BNShNKJrEEJb1cLTnuUYySGw3OFln6ZVEHoKGUsL6qwww5GtLr
+	XZwJEz4pKBCOwYdtVElrhQ9z+w65EndHU/xgBIq5jE8zpRLUmJDLb2vAH/mKKbf6jCWExbI
+	iiyCnk9dnGBs3AL1AXnNxH5bEdFO2ey1Cqaoc71EpqCfVdmIzEw+VTBktYCgawvGgN5qXk4
+	wgqwyAF6dbMJNoXQdjOBCamDnD6Erot34GTUra8kUiAecg4qf9crGeqzxjFo2tPQPnYr1S/
+	nY4YIfZN3YntF86D5dJD0/PYRhW9Rx7y7tqI3T/YptWXyb6wvmbRaQ9390Y7kA20Q7mZKEq
+	uMYlS43eHRMLrZS6fhldFZNl/OgzX+uk8OVY6uFFUryVsoIJijPAvN/+TFRiLwU+a55/4Nl
+	Ql5ZX3n/ZV21r71+sSgnzDiA9o/hSE+nna9Hb6FZAtfZIfVF9E33K6spks0FLWDSWAzb37s
+	ICLF+XDtBBONTc3nm7AfOQBIay2uQnAb9k67E7wA/BKvg4D0MNqkR+jIzMESHXSDeIxMOY1
+	7775lrp00p8UbtS2V+vLYAR/jxIdYx0yDhGV9yW5MdAdKvv34ptDmtMcuAP7rZVXHaXpw/l
+	C55b44lBsxxp17rJszgPwJ8vaXoVArWGYgcLAzyUhkzXMJ8ZpxpSxjyGmHuo7UtNMXKNnDg
+	lYohgb5cIDYVYlce0D16YghkGtyN3ZrPbJk6m09PJr45kbcK0Ib/Wy+6nBTREBVUxOUuVkj
+	3qliK0gw==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On 13/08/2025 11:19, Aleksander Jan Bajkowski wrote:
-> +---
-> +$id: http://devicetree.org/schemas/hwmon/lantiq,cputemp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Lantiq cpu temperature sensor
-> +
-> +maintainers:
-> +  - Florian Eckert <fe@dev.tdt.de>
-> +
-> +properties:
-> +  compatible:
-> +    const: lantiq,cputemp
-> +
-> +required:
-> +  - compatible
-> +
+On Wed, Aug 13, 2025 at 01:50:08PM +0530, MD Danish Anwar wrote:
+> On 12/08/25 3:09 pm, Dong Yibo wrote:
+> > +/**
+> > + * mucse_fw_get_capability - Get hw abilities from fw
+> > + * @hw: pointer to the HW structure
+> > + * @abil: pointer to the hw_abilities structure
+> > + *
+> > + * mucse_fw_get_capability tries to get hw abilities from
+> > + * hw.
+> > + *
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +static int mucse_fw_get_capability(struct mucse_hw *hw,
+> > +				   struct hw_abilities *abil)
+> > +{
+> > +	struct mbx_fw_cmd_reply reply;
+> > +	struct mbx_fw_cmd_req req;
+> > +	int err;
+> > +
+> > +	memset(&req, 0, sizeof(req));
+> > +	memset(&reply, 0, sizeof(reply));
+> > +	build_phy_abalities_req(&req, &req);
+> 
+> Typo in function name. You probably meant "build_phy_abilities_req".
+> 
 
-I think this reads and writs to some IOMEM space, so you really need
-here 'reg'. That's the problem with such old bindings... binding is
-broken, DTS is half-baked or non-existing, driver has 20 years.
+You are right, I will update it.
 
-BTW, why converting this old binding? Do you have any interest in
-actually running MIPS?
+> > +	err = mucse_fw_send_cmd_wait(hw, &req, &reply);
+> > +	if (!err)
+> > +		memcpy(abil, &reply.hw_abilities, sizeof(*abil));
+> > +	return err;
+> > +}
+> > +
+> > +/**
+> > + * mucse_mbx_get_capability - Get hw abilities from fw
+> > + * @hw: pointer to the HW structure
+> > + *
+> > + * mucse_mbx_get_capability tries to some capabities from
+> > + * hw. Many retrys will do if it is failed.
+> > + *
+> 
+> Typo in comment: "tries to some capabities" should be "tries to get
+> capabilities"
+> 
 
-I assume you did not check Rob's dt-convert branch to avoid
-duplicated... because he did convert EXACTLY this binding. And more from
-Lantiq.
+Got it, I will fix it.
 
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +int mucse_mbx_get_capability(struct mucse_hw *hw)
+> > +{
+> > +	struct hw_abilities ability;
+> > +	int try_cnt = 3;
+> > +	int err;
+> > +
+> > +	memset(&ability, 0, sizeof(ability));
+> > +	while (try_cnt--) {
+> > +		err = mucse_fw_get_capability(hw, &ability);
+> > +		if (err)
+> > +			continue;
+> > +		hw->pfvfnum = le16_to_cpu(ability.pfnum);
+> > +		hw->fw_version = le32_to_cpu(ability.fw_version);
+> > +		hw->axi_mhz = le32_to_cpu(ability.axi_mhz);
+> > +		hw->bd_uid = le32_to_cpu(ability.bd_uid);
+> > +		return 0;
+> > +	}
+> > +	return err;
+> > +}
+> 
+> 
+> Missing initialization of err variable before the last return, which
+> could lead to undefined behavior if all attempts fail.
+> 
 
+Got it, I will init it by 'int err = -EIO'.
 
-Best regards,
-Krzysztof
+> > +
+> > +/**
+> > + * mbx_cookie_zalloc - Alloc a cookie structure
+> > + * @priv_len: private length for this cookie
+> > + *
+> 
+> 
+> -- 
+> Thanks and Regards,
+> Danish
+> 
+> 
+
+Thanks for your feedback.
+
 
