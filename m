@@ -1,132 +1,181 @@
-Return-Path: <linux-kernel+bounces-766088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50E0B24226
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:05:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C02DB24011
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E410F586170
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17C821A2592C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7882D542F;
-	Wed, 13 Aug 2025 07:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE97A2BE657;
+	Wed, 13 Aug 2025 05:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="I3ZFenF/"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJ8kdtSm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AFA2D47EB;
-	Wed, 13 Aug 2025 07:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8579322A;
+	Wed, 13 Aug 2025 05:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755068726; cv=none; b=DaY7B4DkDbZaKTbo+r0J2qdVqz37WWo6kan4OPmGyiHvuEcbPhjyFxd7CtFqtzZcwyF3WHqUI5/Td559Tq6PbhIiAcVZxNBewWEGzUOHyvMF8PF92xfnspuHzqb+p6TgwcUTZ6Ww6RreiNkQvkhWeePrt58OUXQJY+1HMSJ/szI=
+	t=1755062200; cv=none; b=lEVFX6uF2deMs5mairvZ0xllAnIU0qp5rgS19gmHuEzrUvKgfO1IxepOSg5/i0r1g4qdKTrV7DQaI0rmkOkJoRKsvcEEe29AYeM9YnGCRLvhZ1w1B/TRS3K/f3FRscgMGDB0JzzQ7nXU1Uo0Rh7AOsObjUBGCXGQsWWF0K48yYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755068726; c=relaxed/simple;
-	bh=Blj+rAkGaR1Tv69tNIKtlIhVlfPFKhegYi6Zanh+HSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Z/3W7ZJ4jghP5DpIdtydUbzRodJbxQTol29210UcXOqWqdg9xwv315Z3PbExpQPRL4m4s+jWk3g7pSv+IEZW46Xw5/6oZnAPTPfG5OPYoI8qcNTg6W+RZiImfzqFft6HPjCSEgNqFi41Zk9/lOnfE1ZbRGkc0bvfvzO4DAhl2bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=I3ZFenF/; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6004b.ext.cloudfilter.net ([10.0.30.210])
-	by cmsmtp with ESMTPS
-	id lzZouumiX5wATm5XyuMkI2; Wed, 13 Aug 2025 07:05:18 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id m5XxuPIicwYTkm5XxuHNIO; Wed, 13 Aug 2025 07:05:17 +0000
-X-Authority-Analysis: v=2.4 cv=fYCty1QF c=1 sm=1 tr=0 ts=689c392d
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=R1XpmoYe2GHAZdAE2O7VqQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
- a=1ml3npyrcYbOIoRaIsMA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=8CHxB1Wtr3Lygs//ada2Fd8yg7mcVvvMNOvlWGSBdN4=; b=I3ZFenF/oSKFdznfXcmVkwDLWH
-	jpYuyLFZB/s3kjtkIinOMc6T0qePM+SdCTNDr4vrY9+ffKlxUYYZYaLdOCzNtMF4/brQeOpXIRPuN
-	AdZPXWP84dS1Mrhx77NS1c4wmAq8E4QkbwtdzmE/C9692L6HjslLXtKGgJD4FVTjWFxnxgmPYIN+k
-	k3LEoWTAbLtowaHrayu2E2gmh/kUS2tYFR+ATad0/BzNOjp5JWrtYUD0Cd1fY6vymUoq7rlrV8O6c
-	5Jvfu4fif+ZZYkfJc9N80vKfl7BOm3eAOeJxe7vkMSYrfPMdGmnEbn/ZQ18gzJdHV3SunW4eDbIsD
-	5WHOj5Hg==;
-Received: from oni-27.109.98-104.oninet.ne.jp ([27.109.98.104]:38110 helo=[192.168.0.175])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1um3n1-00000002TtW-1RYw;
-	Wed, 13 Aug 2025 00:12:43 -0500
-Message-ID: <d43dac3e-122d-4c16-9c1e-760eac91b8da@embeddedor.com>
-Date: Wed, 13 Aug 2025 14:12:30 +0900
+	s=arc-20240116; t=1755062200; c=relaxed/simple;
+	bh=QHGINcBtgZyN5lwSuC4ihOdgAfkWxrXCvNILJWMOBVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oRAr/liuJBgbCWoTtOzh6VmszzSvvCVb84t4bQFInCSAfRN3xJWlvlwCx65xLqUc99E2Wij1b6A7Dq5v47XAabHwJwU1++GBl0Jg05enz9JR4+aN0HTZjlHMAO5NHdfEzCdQuQw9A9ZR3b4u12RX18X8qdaRXiDSJh/HWLTB5Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJ8kdtSm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6485C4CEEB;
+	Wed, 13 Aug 2025 05:16:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755062199;
+	bh=QHGINcBtgZyN5lwSuC4ihOdgAfkWxrXCvNILJWMOBVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJ8kdtSmVYuDmZ9UTC9uyVZDWkHKpE44JmKlAUuCa7NZxop2ZK8q7CC++ZZVKGYqf
+	 2FtFO5vBHtDjYhIFJTJjQSsJRbxUaf0a5k9GCO/vI0kEc2Amu0RlAFK5LI+90qUwE8
+	 Wt/HmHsp350LKxT3V5edx5EIk5k5/dHroc1gWPsZBPQTy3e4Ep/IgKDgKWQmnFs0sw
+	 6cqFtidy2jtFeD3RQfgLFaCCGVcqzgmOXefeTkU64Ioo3+VbGhOKm4ArnHUoBv87xd
+	 3Pvm2U1X+nJMrmwtp/okmHBkuSQR3Yb1oCRfS+C3ip0SypefYd4i8fT0xp5j3V9lPt
+	 9tySUkpa34FBg==
+Date: Tue, 12 Aug 2025 22:16:33 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Maximilian Bosch <maximilian@mbosch.me>,
+	Ryan Lahfa <ryan@lahfa.xyz>, Christian Theune <ct@flyingcircus.io>,
+	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Dominique Martinet <asmadeus@codewreck.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >=
+ folio size
+Message-ID: <20250813051633.GA3895812@ax162>
+References: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
+ <202508120250.Eooq2ydr-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/amd/pm: Avoid multiple
- -Wflex-array-member-not-at-end warnings
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Kenneth Feng <kenneth.feng@amd.com>, Alex Deucher
- <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?=
- <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <Z678TNhCbTk363Tw@kspp>
- <864c7dd5-0deb-4adb-a1cf-c8a809514d7e@embeddedor.com>
- <217b00f5-d03d-4624-9ba9-d838199ef7b9@embeddedor.com>
- <CADnq5_M5Jv4A5CXAKY2Qd-dhrfmecnauRtVY_ghSsut7i=KNww@mail.gmail.com>
- <d07b4edc-6048-4c10-b8ac-dcccd5a932d3@embeddedor.com>
-Content-Language: en-US
-In-Reply-To: <d07b4edc-6048-4c10-b8ac-dcccd5a932d3@embeddedor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 27.109.98.104
-X-Source-L: No
-X-Exim-ID: 1um3n1-00000002TtW-1RYw
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: oni-27.109.98-104.oninet.ne.jp ([192.168.0.175]) [27.109.98.104]:38110
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 0
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfLKAMFhgpPdujCh/bDfZnwZkmVzdv2KvaLkUlxLNbkEnBIAlkACvXGYJRseIZgTBjIn6+sJR2wiFlUww7wV18+/fC1eiXa3icq30Kyr7niEixUI4OhG0
- 36uhZpFLHVpQJ+Red5t7nNhsXKgqRNgYsWw+xMHbP1Z4sYLBvWnsSh4RHQWQqkfwRuFBiqJfwrWILJ/rp+kW03B5uqumXp2TOFykgxwRgzy4yp+sYvsAuvtK
- Mx7+F3DR5LzLZaLQHDQtFtU2TLuaiF3vgTsGxkS+YUk=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508120250.Eooq2ydr-lkp@intel.com>
 
-Hi!
-
-On 22/04/25 23:58, Gustavo A. R. Silva wrote:
+On Tue, Aug 12, 2025 at 02:55:55AM +0800, kernel test robot wrote:
+> Hi Dominique,
 > 
+> kernel test robot noticed the following build warnings:
 > 
-> On 16/04/25 09:04, Alex Deucher wrote:
->> Can you resend, I can't seem to find the original emails.
->> Additionally, all of the NISLANDS structures are unused in amdgpu, so
->> those could be removed.
+> [auto build test WARNING on 8f5ae30d69d7543eee0d70083daf4de8fe15d585]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Dominique-Martinet-via-B4-Relay/iov_iter-iterate_folioq-fix-handling-of-offset-folio-size/20250811-154319
+> base:   8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> patch link:    https://lore.kernel.org/r/20250811-iot_iter_folio-v1-1-d9c223adf93c%40codewreck.org
+> patch subject: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >= folio size
+> config: i386-buildonly-randconfig-002-20250811 (https://download.01.org/0day-ci/archive/20250812/202508120250.Eooq2ydr-lkp@intel.com/config)
+> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250812/202508120250.Eooq2ydr-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202508120250.Eooq2ydr-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    In file included from lib/iov_iter.c:14:
+> >> include/linux/iov_iter.h:171:7: warning: variable 'remain' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+>      171 |                 if (skip >= fsize)
+>          |                     ^~~~~~~~~~~~~
+>    include/linux/iov_iter.h:190:7: note: uninitialized use occurs here
+>      190 |                 if (remain)
+>          |                     ^~~~~~
+>    include/linux/iov_iter.h:171:3: note: remove the 'if' if its condition is always false
+>      171 |                 if (skip >= fsize)
+>          |                 ^~~~~~~~~~~~~~~~~~
+>      172 |                         goto next;
+>          |                         ~~~~~~~~~
+>    include/linux/iov_iter.h:163:22: note: initialize the variable 'remain' to silence this warning
+>      163 |                 size_t part, remain, consumed;
+>          |                                    ^
+>          |                                     = 0
+>    1 warning generated.
 
-I'm taking a look at this, and it seems that those NISLANDS structs are actually
-needed in amdgpu code. For instance, `struct si_power_info` contains a member
-of the type of `struct ni_power_info`, and this latter struct contains a
-member of the type of `NISLANDS_SMC_STATETABLE`, thus `NISLANDS_SMC_SWSTATE`
-and `NISLANDS_SMC_HW_PERFORMANCE_LEVEL` are needed, and so on.
+I see this in -next now, should remain be zero initialized or is there
+some other fix that is needed?
 
-So, it seems that all those structs should stay. What do you think?
-
-Thanks!
--Gustavo
+> vim +171 include/linux/iov_iter.h
+> 
+>    143	
+>    144	/*
+>    145	 * Handle ITER_FOLIOQ.
+>    146	 */
+>    147	static __always_inline
+>    148	size_t iterate_folioq(struct iov_iter *iter, size_t len, void *priv, void *priv2,
+>    149			      iov_step_f step)
+>    150	{
+>    151		const struct folio_queue *folioq = iter->folioq;
+>    152		unsigned int slot = iter->folioq_slot;
+>    153		size_t progress = 0, skip = iter->iov_offset;
+>    154	
+>    155		if (slot == folioq_nr_slots(folioq)) {
+>    156			/* The iterator may have been extended. */
+>    157			folioq = folioq->next;
+>    158			slot = 0;
+>    159		}
+>    160	
+>    161		do {
+>    162			struct folio *folio = folioq_folio(folioq, slot);
+>    163			size_t part, remain, consumed;
+>    164			size_t fsize;
+>    165			void *base;
+>    166	
+>    167			if (!folio)
+>    168				break;
+>    169	
+>    170			fsize = folioq_folio_size(folioq, slot);
+>  > 171			if (skip >= fsize)
+>    172				goto next;
+>    173			base = kmap_local_folio(folio, skip);
+>    174			part = umin(len, PAGE_SIZE - skip % PAGE_SIZE);
+>    175			remain = step(base, progress, part, priv, priv2);
+>    176			kunmap_local(base);
+>    177			consumed = part - remain;
+>    178			len -= consumed;
+>    179			progress += consumed;
+>    180			skip += consumed;
+>    181			if (skip >= fsize) {
+>    182	next:
+>    183				skip = 0;
+>    184				slot++;
+>    185				if (slot == folioq_nr_slots(folioq) && folioq->next) {
+>    186					folioq = folioq->next;
+>    187					slot = 0;
+>    188				}
+>    189			}
+>    190			if (remain)
+>    191				break;
+>    192		} while (len);
+>    193	
+>    194		iter->folioq_slot = slot;
+>    195		iter->folioq = folioq;
+>    196		iter->iov_offset = skip;
+>    197		iter->count -= progress;
+>    198		return progress;
+>    199	}
+>    200	
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
