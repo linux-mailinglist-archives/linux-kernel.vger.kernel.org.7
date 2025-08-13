@@ -1,141 +1,246 @@
-Return-Path: <linux-kernel+bounces-767193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B29FB2505B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:58:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FDDAB25060
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15907881856
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:55:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E320D1C2093E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6015328CF5F;
-	Wed, 13 Aug 2025 16:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBABB28C5B1;
+	Wed, 13 Aug 2025 16:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKNzH+lU"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXniqFu7"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F6428CF79;
-	Wed, 13 Aug 2025 16:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD80287510;
+	Wed, 13 Aug 2025 16:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755104092; cv=none; b=AX4cj0qzrYRAcKbQlX17NUDmLMeI/v+HgRnSm4oJCGFOwI319+GUEMWX1wq1yhBOaoJjKdLje6Whk5K3IVrKUulxeORnDZkNBped/ZTfD0tptVAPNRN1ApK+TnpYzPBcszZ0Jxcd00nfP8+3n+M12M5R1GxKZ6fiW0+LQuns/8w=
+	t=1755104190; cv=none; b=imTrvcFojlh/1RjC2U3gFI3O2CiLDNHeXA71UfHaqiWhqJ0Ykw4UAeeXz5Jfw5/IVnKiMxiGDiL7ZyBWMnZ5jn7OgWazCiN+sRgKbZ/gG9oIfdihbo8k3EbG/Wg1uMczNoj+XD1l9E1BkxYBRmOwqGs0nhaq+F1pETc9MkPQXh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755104092; c=relaxed/simple;
-	bh=CZw4GixnfHPXRK/UfOutcE7yqF1wjDJYoGAF9qyUGZQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mw+RATT45CCC7KXOimjzrZThEK8aoP83+n/30TpW+Zeh5AaDUKJQtUxk/3YkHKXFaAYljvwdfonNkUGGVUx4IHJU0H3UgUk1dnLxVwuZ+qPRt57keDeCFV5xPQ/ZOP+oV5aOi5t+xzXgKLeWjYLlXLnANcTiXERygBzhyz+yJCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKNzH+lU; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1755104190; c=relaxed/simple;
+	bh=cDZQ03cVnTPpzRfyqUzlSr90Hr4NFUtBugpQqyj73nI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n1Okr77792qiK3jUKaPiSjvAqUdjRDU9x20tYW/qm9E8jwhCAzDikpCJzC43SoWcEmNYsoIyT5IIogVtPa3bzW2JiOjccn82/9OPEw/OAcKVW1gSWvjDDDoDtfi4SZOGcv6XVgizjdS8cjhtjy01J+jq1q3RTkOIyyn+0Ip5iBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WXniqFu7; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-afcb79f659aso6218166b.2;
-        Wed, 13 Aug 2025 09:54:50 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b9e4148134so11796f8f.2;
+        Wed, 13 Aug 2025 09:56:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755104089; x=1755708889; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Tq3HEWYIpGIBcVWQoH8ungeMgw62nNqiay/iNYB/g28=;
-        b=JKNzH+lU6vJ6bmSspcTcJJ2IUO7DbotTZBghbLv2Hx0Jcw8oLmZQkM9jXpL5lobTNj
-         Alfp3HSidfZXx/SQuPodIPFdKKWLz7G9FkoJXNw+5oWAukLnXWed1ZOYZCtkEu6N0cxB
-         5YhUY2rOxdrhzWzEhM8w6S5oEGx1XcCVmkBViLXhvnl5PRcmnpkwwuFxkPSm/WHKdsSI
-         AVKS7E3Tc1CVz6z9iqq551gkPw0rwEpoycgQ+l9weHAg/e01HjKr0fwBPL7b/dMJUctp
-         /oOaBnW6e5HeEAS8pntMNqRmh9FyHoJSCXoBmoFqqzvc060+/Lh++lwb7vcILUDgv/m0
-         5GOQ==
+        d=gmail.com; s=20230601; t=1755104186; x=1755708986; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6vspPggjf6bubnMbRlZ+WsSEeGAjNQXmQ3Io8O2p1g0=;
+        b=WXniqFu7bA41485RzIoIzn1laTKuwJ+8mZ0Btku1fvQHhuoR6gl/VNSHByisV+Nsyi
+         F5L5Tg4iSlUM1xyytNIONLzwQAnaml3xekY4K4/y/VQRGSLkaYj+uVse8qCRp5k8M3fS
+         ISbbSYLEvU4CgyXmAjH8M+1FXpMhdQAMyitpACGjjopRGbHXpSlv7fTH/mVQ1h2Y4HBv
+         YygXr7jkzVt5PvL4r/GydJP/MiLijqxVUbURdiQgrdc/Jtr5NN7fDC6lu7VcdlFfSDtM
+         iY0wFdDgqxVcGC2n2bDLjJYyP6lcbw/Csfqyiek42Q+wa8uEtoh0dBSpF/2QwBzIPLDQ
+         j6cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755104089; x=1755708889;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tq3HEWYIpGIBcVWQoH8ungeMgw62nNqiay/iNYB/g28=;
-        b=LYt2n0nm5KifX1JXU+s8jjfyrHN/ut45F6LqVf/fe2TBq3eHZHVuyilaBtLrXasp1h
-         SUcunFA7IWiqTgvpteisXZG2RSoNiT9fDJiL5kWy91XRq0X+I9Ycy1aA8PDFDC6sSgQo
-         skDkzVzSwKsKStAw2CGTOYGjEMxp1vUAA9TgkHZ/7fXmzHFcWVl++r1kmRoUKYydy1uW
-         vnJeJOarL31MyyEjG4ZDUMr4Z2dHErCrRcP8REqZwIBynwlVfk7J26gNQu0HxFJyAckx
-         hSc72SNWuA4Qo7BuXU2uBmPZkYjY4uRpwaqGGRRi8CfLp2J/gjLCLhTwqZQPgcdZGmV1
-         ia3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmtAZWqGrwJxlZESxoiJDIMrn8YVCaGtaohVLnwSlFOn+e3/1VffMM/G5o32v6lwgkbrGQ9NMyLDdq@vger.kernel.org, AJvYcCX+CCv+dCa/PrRtkHfAtVX7gaDbHifmRFqC4yhRjkEIpQrKnYTLcY7x0I1dUl21eYC9XTaLl4nOOobyo6D0@vger.kernel.org, AJvYcCX+V0dGHQmpBFkuP5PgZ7GCFk1CM58yavfyX78uXwjVxREJYBK9jcK2AHrXY4W2BCYxFZZAoCUBSkd7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9Qu3UUGb9Q0ne/O/ixd+NM68cinqiJGM1kJhK//TxHCzsMFoZ
-	1smI+E8D34nBK8v8CDXDj9ksVayl/qT2cFLod7RbH5kH5dglFbD6vA+zDsroDQXm
-X-Gm-Gg: ASbGnctfVjy9c7s+1Z4MtZDQpOMvKgxmh83Xq5xjlutTPbKWxg4VTLFNxSA2vp7czP0
-	lVOfD2HGl6xXq/8SMjG7179VRsmo5KVZcM8rUrKS2YeH7w4XcwqthmTpz33mCjWvDCYvPdXCENh
-	pC3FoSG3qzqIuYN5JOhtNXSGSQygqrnmGw3swgBIi5+ZRbbWYJt8FAFuN/rlCucye2WHKjnStDw
-	VHOhJIJVTUroPH+KjR6RYLn8cOEQp7udrhWm2pWDqmAqJBtTn3yQ4vLJZPbxoewc0JUXfkij+Aq
-	NpVv9XmiQlmGyZAev+SysbP0ffMgcmOduYlhr0t/b2Sd3fe6HRL0xbeIgCu88X1zwsWNZ3imrkQ
-	+AHoU03Xve4eMST+49Nt6a0YZBaay
-X-Google-Smtp-Source: AGHT+IGlA0y1/joQa4p3Sj2YnLVCr8yTrUFupxVTWZxxiSZya8P/pMzOoU4nYr2zSk0FwloEYs03Dw==
-X-Received: by 2002:a17:907:7e9f:b0:afa:2772:68fd with SMTP id a640c23a62f3a-afca4e4a6ffmr314286866b.44.1755104089244;
-        Wed, 13 Aug 2025 09:54:49 -0700 (PDT)
-Received: from [127.0.1.1] ([185.177.137.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e82a5sm2428573766b.82.2025.08.13.09.54.48
+        d=1e100.net; s=20230601; t=1755104186; x=1755708986;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6vspPggjf6bubnMbRlZ+WsSEeGAjNQXmQ3Io8O2p1g0=;
+        b=uWtUq3Grn6hGEZl4nWJYaEf6iBRN/rNZljJ2oeYP7itrMu7I2ob1kl6ZsvFFBQOfCU
+         IQyPpVX2ZAOdgd7ZlDP3Hnw+fD8fvVGJH69jOoMUtlAfU9mUSLf8d3LY8Z790dStZPqh
+         E0J0B5OFUAJ53kXJHCZHB+/XItDyozZ1JjjSeNIT1dmj0IT8fSc5bNCYzl0wg/9woRf6
+         4AWYNqyHZvLvW0laWo9OJ9GghN9b7p8mnHE+nJiUfg2OuekvsJTh3jLamNu+z1kOWUQN
+         rcJUu751dG1ggWFluIgqWnvnMfqFZOuxg/8AHqqZoCdaUZPht3eCZW98GfCv6IzWSCsz
+         lBvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTV9VbYJgakooYsgqpp26F11flHDssCrL0q+2qE74WTiD7I5tGCesn8qQJVIHe+iXqhnIcTjXKbSUZEYTLXc8khIhr@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnG1KM20f2fSohjxWWjmhp/xhwggVa4CgXROM5OOPXIDEqe7tb
+	sbv0pHdtqkVm7pH2EQzJY/VKKa+m6rZ0fmw+QOpM4t2guABWA2CwfKfckYo2cw==
+X-Gm-Gg: ASbGncsoGe+FGhYBSKTe4udM6EpVRcDdnW+Dk1MDdjgwEAG9OdCtAJXa2FYHVT0rmC0
+	XfZBSIs+sOcfQ30DI53DdZ68O6GnL5swTJzQYKjW5VgRtCcSsBdYKfCBDg4XmyGLG+TAFfMJ7bP
+	vAf9qHqI/Qzw6f2JV6vFUgTw2ACXGDvXFg7hcL85/FnHTuEph0ba/faZqapEmhJSV6APi2cMQk1
+	S4LwNKYs9NqZq3B+gY+cvM/1av3Dvp+AlE59IZ21mnGhXipkhHFyS0priH4lFBb3Unjy79PX6qx
+	NIJsx1U9XSbQL0KXCLjujZajRGEyk1gSXKU2GWAnjbyf0djVAJBcMzIm7ZkG4hzyDVnnSHqfszG
+	iwFcgTxSTiIQag2SQFUMRbq4=
+X-Google-Smtp-Source: AGHT+IExaDRQamESqI7WrrCVloOBLd7avpvA6Fee7Zn3GKcybQvl3WvVhSW1yWyYijTdLt7QCP2ugg==
+X-Received: by 2002:a05:6000:24c7:b0:3a3:7ba5:93a5 with SMTP id ffacd0b85a97d-3b9edfcef3emr28090f8f.26.1755104186041;
+        Wed, 13 Aug 2025 09:56:26 -0700 (PDT)
+Received: from denis-pc ([176.206.95.68])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48de68sm48600399f8f.67.2025.08.13.09.56.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 09:54:48 -0700 (PDT)
-From: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-Date: Wed, 13 Aug 2025 18:54:32 +0200
-Subject: [PATCH v2 4/4] iio: adc: ltc2497: reorder ltc2497core_driverdata
- members to remove hole
+        Wed, 13 Aug 2025 09:56:25 -0700 (PDT)
+From: Denis Benato <benato.denis96@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org,
+	"Limonciello, Mario" <mario.limonciello@amd.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Alok Tiwari <alok.a.tiwari@oracle.com>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	Denis Benato <benato.denis96@gmail.com>
+Subject: [PATCH v11 0/8] platform/x86: Add asus-armoury driver
+Date: Wed, 13 Aug 2025 18:56:12 +0200
+Message-ID: <20250813165620.1131127-1-benato.denis96@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250813-ltc2495-v2-4-bbaf20f6ba07@gmail.com>
-References: <20250813-ltc2495-v2-0-bbaf20f6ba07@gmail.com>
-In-Reply-To: <20250813-ltc2495-v2-0-bbaf20f6ba07@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Beguin <liambeguin@gmail.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755104084; l=1105;
- i=y.alperbilgin@gmail.com; s=20250811; h=from:subject:message-id;
- bh=CZw4GixnfHPXRK/UfOutcE7yqF1wjDJYoGAF9qyUGZQ=;
- b=C3vf+mOXfNf6r4q+oZtOpNnT6SL77d7lBwRiTccFjbBReSQcg9wS5dKzlwbjhpUdEEvVTYg8+
- 9Qe0j3ESwKnBA3JHUZmBDkqOG9Mx1uHyLLedSRN6DB+VOPtJ/XgtRkL
-X-Developer-Key: i=y.alperbilgin@gmail.com; a=ed25519;
- pk=FtW2oyQ0+xlYU0XmhYiJYC3lNPtPrgeE6i4WXPwaFnY=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Reorder struct members from largest to smallest to eliminate a 7-byte
-hole identified by the pahole tool, making the layout memory-optimal.
+Hi all,
 
-Signed-off-by: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
----
- drivers/iio/adc/ltc2497.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+the TL;DR:
+1. Introduce new module to contain bios attributes, using fw_attributes_class
+2. Deprecate all possible attributes from asus-wmi that were added ad-hoc
+3. Remove those in the next LTS cycle
 
-diff --git a/drivers/iio/adc/ltc2497.h b/drivers/iio/adc/ltc2497.h
-index 7f53bf8b8469d2371bb7ae64ce90a61beadba9ba..578f55efc5c400980fe8bbd2b220aafb222d6f33 100644
---- a/drivers/iio/adc/ltc2497.h
-+++ b/drivers/iio/adc/ltc2497.h
-@@ -27,12 +27,12 @@ struct ltc2497_chip_info {
- struct ltc2497core_driverdata {
- 	struct regulator *ref;
- 	ktime_t	time_prev;
--	/* lock to protect against multiple access to the device */
--	struct mutex lock;
- 	const struct ltc2497_chip_info	*chip_info;
--	u8 addr_prev;
- 	int (*result_and_measure)(struct ltc2497core_driverdata *ddata,
- 				  u8 address, int *val);
-+	/* lock to protect against multiple access to the device */
-+	struct mutex lock;
-+	u8 addr_prev;
- };
- 
- int ltc2497core_probe(struct device *dev, struct iio_dev *indio_dev);
+The idea for this originates from a conversation with Mario Limonciello
+https://lore.kernel.org/platform-driver-x86/371d4109-a3bb-4c3b-802f-4ec27a945c99@amd.com/
+
+It is without a doubt much cleaner to use, easier to discover, and the
+API is well defined as opposed to the random clutter of attributes I had
+been placing in the platform sysfs. Given that Derek is also working on a
+similar approach to Lenovo in part based on my initial work I'd like to think
+that the overall approach is good and may become standardised for these types
+of things.
+
+Regarding PPT: it is intended to add support for "custom" platform profile
+soon. If it's a blocker for this patch series being accepted I will drop the 
+platform-x86-asus-armoury-add-ppt_-and-nv_-tuning.patch and get that done
+separately to avoid holding the bulk of the series up. Ideally I would like
+to get the safe limits in so users don't fully lose functionality or continue
+to be exposed to potential instability from setting too low, or be mislead
+in to thinking they can set limits higher than actual limit.
+
+The bulk of the PPT patch is data, the actual functional part is relatively
+small and similar to the last version.
+
+Unfortunately I've been rather busy over the months and may not cover
+everything in the v7 changelog but I've tried to be as comprehensive as I can.
+
+Regards,
+Luke
+
+Changelog:
+- v1
+  - Initial submission
+- v2
+  - Too many changes to list, but all concerns raised in previous submission addressed.
+  - History: https://lore.kernel.org/platform-driver-x86/20240716051612.64842-1-luke@ljones.dev/
+- v3
+  - All concerns addressed.
+  - History: https://lore.kernel.org/platform-driver-x86/20240806020747.365042-1-luke@ljones.dev/
+- v4
+  - Use EXPORT_SYMBOL_NS_GPL() for the symbols required in this patch series
+  - Add patch for hid-asus due to the use of EXPORT_SYMBOL_NS_GPL()
+  - Split the PPT knobs out to a separate patch
+  - Split the hd_panel setting out to a new patch
+  - Clarify some of APU MEM configuration and convert int to hex
+  - Rename deprecated Kconfig option to ASUS_WMI_DEPRECATED_ATTRS
+  - Fixup cyclic dependency in Kconfig
+- v5
+  - deprecate patch: cleanup ``#if`, ``#endif` statements, edit kconfig detail, edit commit msg
+  - cleanup ppt* tuning patch
+  - proper error handling in module init, plus pr_err()
+  - ppt tunables have a notice if there is no match to get defaults
+  - better error handling in cpu core handling
+    - don't continue if failure
+  - use the mutex to gate WMI writes
+- V6
+  - correctly cleanup/unwind if module init fails
+- V7
+  - Remove review tags where the code changed significantly
+  - Add auto_screen_brightness WMI attribute support
+  - Move PPT patch to end
+  - Add support min/max PPT values for 36 laptops (and two handhelds)
+  - reword commit for "asus-wmi: export symbols used for read/write WMI"
+  - asus-armoury: move existing tunings to asus-armoury
+    - Correction to license header
+    - Remove the (initial) mutex use (added for core count only in that patch)
+    - Clarify some doc comments (attr_int_store)
+    - Cleanup pr_warn in dgpu/egpu/mux functions
+    - Restructure logic in asus_fw_attr_add()
+    - Check gpu_mux_dev_id and mini_led_dev_id before remove attrs
+  - asus-armoury: add core count control:
+    - add mutex to prevent possible concurrent write to the core
+      count WMI due to separated bit/little attributes
+  - asus-armoury: add ppt_* and nv_* tuning knobs:
+    - Move to end of series
+    - Refactor to use a table of allowed min/max values to
+      ensure safe settings
+    - General code cleanup
+  - Ensure checkpatch.pl returns clean for all
+- V8
+  - asus-armoury: move existing tunings to asus-armoury module
+    - Further cleanup: https://lore.kernel.org/platform-driver-x86/20250316230724.100165-2-luke@ljones.dev/T/#m72e203f64a5a28c9c21672406b2e9f554a8a8e38
+  - asus-armoury: add ppt_* and nv_* tuning knobs
+    - Address concerns in https://lore.kernel.org/platform-driver-x86/20250316230724.100165-2-luke@ljones.dev/T/#m77971b5c1e7f018954c16354e623fc06522c5e41
+    - Refactor struct asus_armoury_priv to record both AC and DC settings
+    - Tidy macros and functions affected by the above to be clearer as a result
+    - Move repeated strings such as "ppt_pl1_spl" to #defines
+    - Split should_create_tunable_attr() in to two functions to better clarify:
+      - is_power_tunable_attr()
+      - has_valid_limit()
+    - Restructure init_rog_tunables() to initialise AC and DC in a
+      way that makes more sense.
+    - Ensure that if DC setting table is not available then attributes
+      return -ENODEV only if on DC mode.
+- V9
+  - asus-armoury: move existing tunings to asus-armoury module
+    - return -EBUSY when eGPU/dGPU cannot be deactivated
+  - asus-armoury: add apu-mem control support
+    - discard the WMI presence bit fixing the functionality
+  - asus-armoury: add core count control
+    - replace mutex lock/unlock with guard
+    - move core count alloc for initialization in init_max_cpu_cores()
+- v10
+  - platform/x86: asus-wmi: export symbols used for read/write WMI
+    - fix error with redefinition of asus_wmi_set_devstate
+  - asus-armoury: move existing tunings to asus-armoury module
+    - hwmon or other -> hwmon or others
+    - fix wrong function name in documentation (attr_uint_store)
+    - use kstrtouint where appropriate
+    - (*) fix unreachable code warning: the fix turned out to be partial
+    - improve return values in case of error in egpu_enable_current_value_store
+  - asus-armoury: asus-armoury: add screen auto-brightness toggle
+    - actually register screen_auto_brightness attribute
+- v11
+  - cover-letter:
+    - reorganize the changelog of v10
+  - asus-armoury: move existing tunings to asus-armoury module
+    - move the DMIs list in its own include, fixing (*) for good
+  - asus-armoury: add ppt_* and nv_* tuning knobs
+    - fix warning about redefinition of ppt_pl2_sppt_def for GV601R
+
+Luke D. Jones (8):
+  platform/x86: asus-wmi: export symbols used for read/write WMI
+  platform/x86: asus-armoury: move existing tunings to asus-armoury
+    module
+  platform/x86: asus-armoury: add panel_hd_mode attribute
+  platform/x86: asus-armoury: add apu-mem control support
+  platform/x86: asus-armoury: add core count control
+  platform/x86: asus-armoury: add screen auto-brightness toggle
+  platform/x86: asus-wmi: deprecate bios features
+  platform/x86: asus-armoury: add ppt_* and nv_* tuning knobs
+
+ .../ABI/testing/sysfs-platform-asus-wmi       |   17 +
+ drivers/platform/x86/Kconfig                  |   23 +
+ drivers/platform/x86/Makefile                 |    1 +
+ drivers/platform/x86/asus-armoury.c           | 1174 +++++++++++++++
+ drivers/platform/x86/asus-armoury.h           | 1277 +++++++++++++++++
+ drivers/platform/x86/asus-wmi.c               |  165 ++-
+ include/linux/platform_data/x86/asus-wmi.h    |   24 +-
+ 7 files changed, 2648 insertions(+), 33 deletions(-)
+ create mode 100644 drivers/platform/x86/asus-armoury.c
+ create mode 100644 drivers/platform/x86/asus-armoury.h
 
 -- 
-2.43.0
+2.39.5
 
 
