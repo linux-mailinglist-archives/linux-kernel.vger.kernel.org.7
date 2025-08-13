@@ -1,90 +1,155 @@
-Return-Path: <linux-kernel+bounces-767503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4D2B25550
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:27:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08692B2554F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58B7F1C84A01
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:26:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66989A5AEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696302F998C;
-	Wed, 13 Aug 2025 21:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30D82F99B1;
+	Wed, 13 Aug 2025 21:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iBz4Rpi9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FkoYUBMO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z5U9Q98+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B775188715;
-	Wed, 13 Aug 2025 21:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4831188715;
+	Wed, 13 Aug 2025 21:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755120357; cv=none; b=Yuk2ZXwRMxFmCb53iU+ZrI/LhNFIBcAF0GmDQDpW9pqb11eSaVOC5GGo9oc+uVg8jeChW+tI65w1NemP64d45YmH4b2iT2dhUw5Ehzi04aQSKeM3w00FWuOuZ5M9MtomaqdVf/ah54MHH9RBfsapT+0BV7wq8JJa/oBmQBnqqAI=
+	t=1755120368; cv=none; b=VsUofCcKN8Nh+Zh07Z+IRH59M7+F2c9f85GH2hX3/ppi/vUjD3csCm8pJ68ZRG0gKkVzIL7EBpdN1HzXVh+f+byqi6EBF0QHeRsjQTT1rfVlyUOfKB/i4HhE3bBZwisfgL3EbtNtu27Ej2QJgUjl1g6t2gTcsAxrkwJYThIzwf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755120357; c=relaxed/simple;
-	bh=slBihtdC0DP7pZeorIPrck2EAMxr5n4/nnJlNQuTyy0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=o6y8bM8yDMPBwkiKuHtOfoNuHa3zYVMCBxupeDeQblT8ifBcpghLkzbSvTQ37g2qec3EWqbto8HLongEHDrPglMANJXPyh7ZftCaIKnb3hqZJT/Kr/a2cMLuE2z82r6/XKWzGu0M3fOpEyiP8bBSVWp3EpW113TNBgmQ1/QLgSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iBz4Rpi9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FkoYUBMO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755120353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sPsZZeB7DGQldN6iG3Vx6k5qI8fxoARth9f1NUHSsSI=;
-	b=iBz4Rpi9WxTcQAgz21mRaJiXzGL0/voS7kE5lCyKIjSMewsaO/3ERnZxXIW82FckHBL1U/
-	6bwe3ZiWDSa4u4KShETl99Jo2mhrHLHIPz1d8IOUGULcW009YpmeVAHe51C40XxRm+0Y8e
-	p61sz3v271nRvXg8vD0GHdS/nun0rXYTev7bM/iyi3BbBqCK7LtQLntxgx4gNj8tTaiib3
-	Y8cbNxj1XEmYmjulAd9klpfoZPjo8M7HJTudFf96eFNPTFIIQyMe8LJkwABeJ2OE3lSSH8
-	xxHzXvSRhRt731NLqmY2sOK5/SyeeqkyHf3wxqyOlQ0z5LVAG2lOP6OjJQAMyw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755120353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sPsZZeB7DGQldN6iG3Vx6k5qI8fxoARth9f1NUHSsSI=;
-	b=FkoYUBMOpck4thkYzrkH4Wn7bCKCkLVeeTC4Jc07kZMkjCMQCzbH85q3pzneGDLR2PhfLq
-	Mig88eUXbmL7fsBg==
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko
- <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, Muchun
- Song <muchun.song@linux.dev>, cgroups@vger.kernel.org, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH] memcg: Optimize exit to user space
-In-Reply-To: <hzvjjgzf4cdvj56zeysosb7otkvplbbozzcpij2yeka4a4kakl@4l26obz3karf>
-References: <87tt2b6zgs.ffs@tglx>
- <hzvjjgzf4cdvj56zeysosb7otkvplbbozzcpij2yeka4a4kakl@4l26obz3karf>
-Date: Wed, 13 Aug 2025 23:25:52 +0200
-Message-ID: <87h5ya7w2n.ffs@tglx>
+	s=arc-20240116; t=1755120368; c=relaxed/simple;
+	bh=3M/RF2aGHkoup3HiZLfX6Prv5nuggoZBOZrL0M2s5zo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NoXNmyKf/1vNsFDoj88gjhl4fAa1gRCMBTE8BIooeFz9JMlatU8a24wMosj3LG1Ga99DtM1sG5nWiD/QYDiKhIOqPaN2ggQ/KTiBeITbOkmeMfIQi0l7i88G9sef+lAlMJdEqCw2lPtd8tdk8hkha07vJ95uHinIG/0Msf4zmGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z5U9Q98+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DI6hVu015579;
+	Wed, 13 Aug 2025 21:26:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=irPx7z
+	Rt+uwD8Prdvyw1kLkzpVu9k7TMDafiojlNDUY=; b=Z5U9Q98+UwWzz0T9HE45lN
+	jqZLsl7/KZhco+efLqD3Bg8Wvm51UQOnFhlw4fGmw7rHKdjiXNT/frjYELuyt+QK
+	dV0e2eY4xeuK1Gl9AnTWck6cOQjnbhl872caosBkH0MaFL5FJaH7Pfdvi3hE2dOl
+	70N5DBLz1hQmFeMYYttewDsxM0WsmEXcrdnwNfHTfXNY0LHF9lKx0V/FhlcBkbB5
+	7jEzo3DHaGQE4oJvMF8PUfqKyLeKBSmm2nybsvBFe3sRDK2t25N7mz3iSZkt6wzQ
+	65p3eoErSe4q5JNHbSvYF6EhBzkwsL9k8OPFxgLHFVXVumKYtPAKvm9t/uXeOQaA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48gype8ud2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 21:26:04 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57DJxPSh028572;
+	Wed, 13 Aug 2025 21:26:03 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ej5n96st-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 21:26:03 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57DLQ1hw16515752
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Aug 2025 21:26:01 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 617965805A;
+	Wed, 13 Aug 2025 21:26:01 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A389958054;
+	Wed, 13 Aug 2025 21:26:00 +0000 (GMT)
+Received: from [9.61.254.249] (unknown [9.61.254.249])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 13 Aug 2025 21:26:00 +0000 (GMT)
+Message-ID: <f18e339f-0eb6-4270-9107-58bb70ef0d08@linux.ibm.com>
+Date: Wed, 13 Aug 2025 14:25:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/6] vfio-pci/zdev: Setup a zpci memory region for
+ error information
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, schnelle@linux.ibm.com,
+        mjrosato@linux.ibm.com
+References: <20250813170821.1115-1-alifm@linux.ibm.com>
+ <20250813170821.1115-5-alifm@linux.ibm.com>
+ <20250813143028.1eb08bea.alex.williamson@redhat.com>
+Content-Language: en-US
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <20250813143028.1eb08bea.alex.williamson@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=eaU9f6EH c=1 sm=1 tr=0 ts=689d02ec cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=4VSETjsjW--cN9yHaHoA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: P_BUkS1dP5RKXz-0XlCt4FVcvjr8vMly
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDE2NyBTYWx0ZWRfX7VQD4ycnngwe
+ WwT8WRV1t5I+0AvJz2Ztv3LCklq5GPV+qo5y0px/lNlnKVnEnMTVC8t7ATR4K256kOVumy0miKk
+ G9XPsXXnp1a51cXLtF1IL3+7WzArypgc/oNub4DInY4Nf97TvMPZUjmQE8kh+Ed5f/sUEE2Rj90
+ HJqsnOqGjXp8fVY/0r9CT/fjhn5LvnV+mO36KNrTEv+3prBJioJaIuam8XS9x0iUya6nXdoMnSy
+ CsyAB5pmsAeoIycAhttCYiGae3R9IghrU4oi1SSjPCZHW3TcpmzxHamcAvfqBPEktzEVg/4STXt
+ Vt/55QnfAw+hfS/lGXaBz/Ni5eN3/FdhZuFOYny7neBJKKy9UJwBQcP1TCnMCp5WbTway4FD40B
+ wrvDy833
+X-Proofpoint-ORIG-GUID: P_BUkS1dP5RKXz-0XlCt4FVcvjr8vMly
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508130167
 
-On Wed, Aug 13 2025 at 10:19, Shakeel Butt wrote:
-> On Wed, Aug 13, 2025 at 04:57:55PM +0200, Thomas Gleixner wrote:
-> Since this is seen in profiling data and it is simple enough, I think it
-> is worth backporting to stable trees as well.
 
-Your call.
+On 8/13/2025 1:30 PM, Alex Williamson wrote:
+> On Wed, 13 Aug 2025 10:08:18 -0700
+> Farhan Ali <alifm@linux.ibm.com> wrote:
+>> diff --git a/include/uapi/linux/vfio_zdev.h b/include/uapi/linux/vfio_zdev.h
+>> index 77f2aff1f27e..bcd06f334a42 100644
+>> --- a/include/uapi/linux/vfio_zdev.h
+>> +++ b/include/uapi/linux/vfio_zdev.h
+>> @@ -82,4 +82,9 @@ struct vfio_device_info_cap_zpci_pfip {
+>>   	__u8 pfip[];
+>>   };
+>>   
+>> +struct vfio_device_zpci_err_region {
+>> +	__u16 pec;
+>> +	int pending_errors;
+>> +};
+>> +
+>>   #endif
+> If this is uapi it would hopefully include some description, but if
+> this is the extent of what can be read from the device specific region,
+> why not just return it via a DEVICE_FEATURE ioctl?  Thanks,
+>
+> Alex
+>
+Yes, will add more details about the uapi. My thinking was based on how 
+we expose some other vfio device information on s390x, such as SCHIB for 
+vfio-ccw device.
 
-> In the followup cleanup, we can remove the (!nr_pages) check inside
-> __mem_cgroup_handle_over_high() as well.
+I didn't think about the DEVICE_FEATURE ioctl. But looking into it, it 
+looks like we would have to define a device feature (for eg: 
+VFIO_DEVICE_FEATURE_ZPCI_ERROR), and expose this information via 
+GET_FEATURE? If the preference is to use the DEVICE_FEATURE ioctl I can 
+try that. Curious, any specific reason you prefer the DEVICE_FEATURE 
+ioctl to the memory region?
 
-Yes. I did not want to do that in one go, but that's an obvious follow
-up.
+Thanks
+Farhan
 
-Thanks,
 
-        tglx
 
