@@ -1,121 +1,93 @@
-Return-Path: <linux-kernel+bounces-766956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5940EB24D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:21:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63CFB24D27
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B1A3B613D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F265316062E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD92E1DD889;
-	Wed, 13 Aug 2025 15:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Qwj3yOtW"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BF7B1F12E0;
+	Wed, 13 Aug 2025 15:17:00 +0000 (UTC)
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14ECB212544
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5230A930
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755098122; cv=none; b=lU+M5SQzCUMIe4vYjtjj//GR08Znu3qXIsVGYBOlO/CKxT2sZHxA02YYQda5g/ikFghIVUpjITRNAaufiIV0ix8r7hnGteAbmV6/KTAarrW3uu++59vLdD4AkFdq9fI0aYUOFrqqw1QpW0zSmFKt90WxRh/FnN8Q78RMTG1Jc7g=
+	t=1755098219; cv=none; b=iWQ/1jI9jBZIjxOfXhOllEfeyV58+deV1wrsyebdHvr7OcZtMIL8hXBRUH62WfyFXX3RitlkonV/Io2Nyjq9GdEMu6v0Jh+43xRz/mBdjdupcfMA7myM3sKbDcBYpiWFfJlr+6Wa+3hUJuyG8QTkbBIOxzqKi59eCPQ7CAG/In0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755098122; c=relaxed/simple;
-	bh=0EDMq5cSTxuCUaLadjW8Gyiwo1w0ECv/iUAH72LIgqo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iNc5LcGIep/72IcQyKoKslyspSjeAH3kHPxOd63OECVLnEKc+ctKTN4sqqne474MiIHRcx/ZqLNY5HD7mKw3uGQsQbXgJDMU8zrz0UFkdrbdOJ9qr6mOC1vv64q3furVFYCZBR9crCsgQjlJUYZ7Ppb9+nwwTOjzG+qnR+eg7Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Qwj3yOtW; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so1284480566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1755098118; x=1755702918; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2L57A8estrxMJoxB1LxgVIY26536p4EpnNTQos21VK0=;
-        b=Qwj3yOtWb9cKrT5VNlFp1eQbZzCvSI6oHT00gP41JJohPb29vlxX+koY53CZTZE9tC
-         OVe4XQM8Ey0lVtQ/ZWj5O1e+Kwed5RMCEmEYM3mcwH1yqNJk71sr8UFK/c+ZCm9QUaVy
-         9i70kre3nu+f/NZW9wYA19f0HEwr3Yt7ye64M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755098118; x=1755702918;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2L57A8estrxMJoxB1LxgVIY26536p4EpnNTQos21VK0=;
-        b=t1yYqZzsccNdndW/slAE4fwC8UgWB3qdS9hiNLAHnVbm0fEWrkR4QXCOfu3aZ+PukC
-         a8v8NqEAYQmJImpKSP+rLUXvpxiM7NT/iboyMp2TjMnQj5edeuMZcE7LvXWbJe/RTFbT
-         hbadW011t7NmelG1cQs9YQfMEKBsbMCkwdTrDSZaAPdRkGEvuThz+jl/CF/MlSFvGTrk
-         l7n6Gj/nAhUs40kNs7vl5ab1RFWizObHykjE63w6ImSRG6oz4NGfS/N3UuNa+RoISGQE
-         gcS2FSf8DPGA7AtCBVDKUTjh/ZIb1QxT4c337SrpDlGpr7TmOyG3Z/HV74DKNIZZlk+U
-         rOMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+qMjU5JwoSgunMU/nP4vSxbj9OKjKjAdIB/sSl0xnytdiRf3YuEobpOztngioUJb+fDmkPUbnAkypwpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQddL4pmWeFkNBjpFdhFiUUlBucuJn/J5Gv0s9BjLHjh730Unt
-	Zjzed8OziBYUAacigTcP/SNRIpFr93hUaeoUmFTO6yEM/WQUuO6AmvbaNsyJTUTqevIotfGu2Ek
-	S1A4gwIs=
-X-Gm-Gg: ASbGncu9xcADYniEfTwzd6bjA4RoGGgVpKRFXRuVqbAdR6A61OTLSNMHQhFwrlBmsR1
-	YNEcy3GJfG2fh1UMCTmSpH+HMe/WOJpqDlCMLjZG2GU8OLM77OSQx3cirvGKRLys4iavchwNzy5
-	53wTHFXxIxVya8w+mPPfD7/OrwXegKsS7MqkBj+FKbiE34aQ+kaWP5/QXQfW4/iwyzR/tEjcC4S
-	KOyFJsMgu7fVWvloM+1hg7XHD3fjkwDtgcovssdLKzkOrmUiwHEn2xGreoRr9AcC6PyIVcxCVrE
-	k7/hjGnNuwDOhf9azmQUGmsHHY6BxByVq5I3extQXE9W3bwWJ70fzRbtJ6omS/L9CjxJaOhnkbp
-	6q/8NWDd8jSt5lXCCmWGvnH7K1ws0bbDGJf6paNrfy8gknL/sfAEFLdIBoIMHsEfz8rroE10l4f
-	1SCnEHBWoh8GO5y8dwFw==
-X-Google-Smtp-Source: AGHT+IEzMJkblPkXncp67TK9UO4EYgSgApjrUo2Eah5gJ02Roq+Y/+GjaMu4fQ2DMkCGMdf3uDcDKA==
-X-Received: by 2002:a17:907:97c4:b0:af5:98b2:e098 with SMTP id a640c23a62f3a-afca4ebe85cmr334720166b.51.1755098118022;
-        Wed, 13 Aug 2025 08:15:18 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a23bedcsm2417258566b.120.2025.08.13.08.15.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 08:15:16 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61813e2fc73so6826732a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:15:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUTr53DbrRj4jwKTjhAdaC36a+R1ra+9HklFKKm30e2XlS+ul5PXVPhJcUp/UdLmYUSKuEjTxYr/OWRXDQ=@vger.kernel.org
-X-Received: by 2002:a05:6402:849:b0:615:5563:548e with SMTP id
- 4fb4d7f45d1cf-6186bf89e1amr3186956a12.7.1755098116142; Wed, 13 Aug 2025
- 08:15:16 -0700 (PDT)
+	s=arc-20240116; t=1755098219; c=relaxed/simple;
+	bh=oKp2lZiQ3oJCMCm9FxULdr589AuLvdQ0SykmCkbL7OI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P5AoQp/MBXzz52fKFE0F6ngL2v+F4dZzKoTxe8dEdOsKTbwdMP64Y2V4nShip91aTWWbPnZU4YRHGB5jjEfrmcA8mnfYnHroz9KhD15sAhiHPst6B0eMiLe4bDFuuX2BbSZEq1G3ed4uxT6MdC5QDiZMGeSzy/nE9u/juIYGVn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=watter.com; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=watter.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <bcollins@watter.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Hepp <andrew.hepp@ahepp.dev>
+Cc: Ben Collins <bcollins@watter.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] dt-bindings: iio: mcp9600: Add compatible for microchip,mcp9601
+Date: Wed, 13 Aug 2025 15:15:51 +0000
+Message-ID: <20250813151614.12098-2-bcollins@watter.com>
+In-Reply-To: <20250813151614.12098-1-bcollins@watter.com>
+References: <20250813151614.12098-1-bcollins@watter.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804220955.1453135-1-dan.j.williams@intel.com> <20250813141346.GM4067720@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250813141346.GM4067720@noisy.programming.kicks-ass.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 13 Aug 2025 08:14:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whiz9EY5CCHPtRkAuX0wMHwqwa4=GhKUee83mMsU9R0rA@mail.gmail.com>
-X-Gm-Features: Ac12FXyf2H9rUW__r5AJukVyI2fsUB2Hnh8Hl0cQ4hvvDCB_hIfhAbGduc9KWBM
-Message-ID: <CAHk-=whiz9EY5CCHPtRkAuX0wMHwqwa4=GhKUee83mMsU9R0rA@mail.gmail.com>
-Subject: Re: [PATCH] cleanup: Fix unused guard error function with DEFINE_CLASS_IS_COND_GUARD
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Dan Williams <dan.j.williams@intel.com>, dave.jiang@intel.com, 
-	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Jonathan Cameron <jonathan.cameron@huawei.com>, Andy Shevchenko <andriy.shevchenko@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 13 Aug 2025 at 07:13, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Mon, Aug 04, 2025 at 03:09:54PM -0700, Dan Williams wrote:
-> >
-> > ...with a clang W=1 build. Per Nathan, clang catches unused "static inline"
-> > functions in C files since commit 6863f5643dd7 ("kbuild: allow Clang to
-> > find unused static inline functions for W=1 build").
->
-> I so loathe that warning :/
+MCP9601 is a superset of MCP9600 and is supported by the driver.
 
-So I entirely ignore W=1 issues, because I think so many of the extra
-warnings are bogus.
+Signed-off-by: Ben Collins <bcollins@watter.com>
+---
+ .../bindings/iio/temperature/microchip,mcp9600.yaml         | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-But if this one in particular is causing more problems than most -
-some teams do seem to use W=1 as part of their test builds - it's fine
-to send me a patch that just moves bad warnings to W=2.
+diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
+index d2cafa38a5442..d8af0912ce886 100644
+--- a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
++++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
+@@ -4,7 +4,7 @@
+ $id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9600.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+-title: Microchip MCP9600 thermocouple EMF converter
++title: Microchip MCP9600 and similar thermocouple EMF converters
+ 
+ maintainers:
+   - Andrew Hepp <andrew.hepp@ahepp.dev>
+@@ -14,7 +14,9 @@ description:
+ 
+ properties:
+   compatible:
+-    const: microchip,mcp9600
++    enum:
++      - microchip,mcp9600
++      - microchip,mcp9601
+ 
+   reg:
+     maxItems: 1
+-- 
+2.50.1
 
-And if anybody uses W=2 for their test builds, that's THEIR problem..
-
-          Linus
 
