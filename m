@@ -1,328 +1,196 @@
-Return-Path: <linux-kernel+bounces-766531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCAE4B247C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:58:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D04DB247CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0671AA8015
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:58:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F09951BC1AF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D246B2F6571;
-	Wed, 13 Aug 2025 10:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0473F2F6572;
+	Wed, 13 Aug 2025 11:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P38m1KXr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OvOADzl6"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E192D12E7;
-	Wed, 13 Aug 2025 10:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9826F197A76;
+	Wed, 13 Aug 2025 11:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755082704; cv=none; b=iE1JYR8LeDP71NQzaGx0UKuzZ+BVQznqHBsy6EYHXfdpQUbZsLXe/uDgOWhymXENmPwl4NGa/ercr6XUqQJnZ82aTgzRrOnHhB/AlDjvpeKB11G8C+UvKLTav85ijYgEXAB3O//2MGXWXVfmwIFYh7Fiklbh3A1NuUbQoagJA3c=
+	t=1755082820; cv=none; b=B+rC7ybGJbpVOjgbPqNnkYD2vo6CrkFpczhkAc+a7x7dLBxt5cCK3JLxMwA2lwbXvITTgXnmTguDSIMaWGOfdCDINCvVxdwW0deB/Cjk4ez1fHgwSyZjslRnMI8JBVzq7NE+FCraoP66MSLDOmMoathqM8tDzhZ6EYp9OW1/UVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755082704; c=relaxed/simple;
-	bh=bWP5Ub5r0IQfPymsY+FHOTe4vBqnjir1TntxCYnqjj4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sqIyTwPD4G+t1Iip9FMbKEQR239NvSLsk2wRlXFz0Eekbso/dHaLoddcjbkUTxARwb/oaQKwXdlOVhPmiDxR0ve/Go4RVDLkp/zXt27EJnSXtz0F3KiJI/YiugNtemLj99sPGmyArY9cKUsGRLIcP7rV0m9uLV96V3gyJZ5/Xv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P38m1KXr; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755082702; x=1786618702;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bWP5Ub5r0IQfPymsY+FHOTe4vBqnjir1TntxCYnqjj4=;
-  b=P38m1KXrpSAO03vIKRKgOwqteMm+g84pPfCA4D8WH8D/G2mvE6MXVRi4
-   UJceLAdgSv7++ZG7aJoamLVA6aXcbBaz5MwZy9lEZZIK6UaYkIamCv3zX
-   FZM2ioWcH1/pJjPsvTohbIunfG0JeabVletFVW+X3tdoynqpTEaSvxTat
-   MzAMLEvbhGhfj3mvJZY6uIOihx8ykquCmF6W7phbUPWhjKP4Qzw5B6u4t
-   cvrME+MFo8BmPI+m/QyF6+NMFqgfHj3mx3DLfX3q1pJ3pKmbIL26O2hBA
-   zZa3MwDnRIvgm8zqO5CO4jFHvOKl3zZNoZIbHZy/MflsnrUzhv3S3djt8
-   g==;
-X-CSE-ConnectionGUID: AtleROW5Tnu+2uMS3UtJbA==
-X-CSE-MsgGUID: R3N9hso6SZG6yBMofTE6YA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57450603"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="57450603"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 03:58:22 -0700
-X-CSE-ConnectionGUID: xK4cDpJYRsmEjHvBC9B8Dg==
-X-CSE-MsgGUID: g3XgIGcGTSKoqAUgnV6ljw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="166070360"
-Received: from unknown (HELO [10.238.11.25]) ([10.238.11.25])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 03:58:18 -0700
-Message-ID: <ef499c6e-d62c-450e-982b-82c53054ea53@linux.intel.com>
-Date: Wed, 13 Aug 2025 18:58:15 +0800
+	s=arc-20240116; t=1755082820; c=relaxed/simple;
+	bh=me8EWh422YPo3cERqnPRxnV9qzRXPkVz2TeOOkHXTbc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YwQ7k79ogFdm/W0QkwEE+QSgvA0wLmRE/bCgJKLy67C/Y4ozsP/0alDVBIPlQ+q4Sc9crePStIEW3V1nNhUp3Vk44stnlJfnTNawpIHxBVgr0mzXdOiuPtfys9FqDF1nYSdKIaXhzhWjKYgUUin5BXWGPrQejgTnXg78E8oehwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OvOADzl6; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae6f8d3bcd4so1123323966b.1;
+        Wed, 13 Aug 2025 04:00:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755082817; x=1755687617; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3kL1xnjqe2uzC0tVKSkm6SdseVayTEiArpVj+WQ0yDk=;
+        b=OvOADzl6FAyxJ2ornGMtIl0cgTdvnn5BWTxnpNvF9Rj1EQZZd3/BXdReFQTNxIOgwo
+         3LhConio/LbBLGxiHjLCbNy41o5G4apiGWAbj4NR44VaQtITk1mZ5WZHD0FjQDrYr6mY
+         F1CtgOORdIuv8DzJcU3k6LfL3Hayb9rPyH34tflb5SdyXXwcBpI3Dvmfd/YLdlpLhMpp
+         zi0kTPeoT44UHIW8dIt8GB6IVkc061lM7efbKMd/1eFcRnY8AL2aFNROX7uqNGyX7Ykc
+         /vsq57gpk6jvvCVps+IPFgpK2LtVbjrbG1VqQwMgTdmN2m14v+LxYMeVnf72fAQ9TeqW
+         CuQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755082817; x=1755687617;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3kL1xnjqe2uzC0tVKSkm6SdseVayTEiArpVj+WQ0yDk=;
+        b=YEkwga2Zxco7kHbUm4KLlkEiR1LYOEiUcogMexsow2Aq19P21NXXMtGMxEwgA6IJXy
+         OUiFM+Oq8hEvV2VpRzTyaAxDKsPYMEJ8rfIie/929fnadEM5TKRaswhyH4NfYEDy3d1C
+         h+fjDaxG7UVbq4TJfyjllGIQrQAXSkes07RdN4ltHJRq3VYzCirihG5HObceEDgEQVH9
+         x2KR564CYLWMOZZ8Id7fVsttU1F03hDXtAaABN/bfuViKc+u+vy2bw7xa3/oMRmioTab
+         z2N9kpctc+nVMYd2hLcwNMBDgtGJV+AQrAE9o40i3uz8+OCTnG/sxJNInpuElpHeWFZ1
+         mohg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8pUo24n4SV1gv46V5p5c+sFHtTCklyLCrBu018mGC6PJyMbi9uxHL/WRpOxEimUHUhmbSnGqYQ75m@vger.kernel.org, AJvYcCWfCFYzlwArmfy4nuecC3L1HaAtUefFApDa69fqd1DD+Sc3YlyAl2GVSQHEh8PL8aXBx9yn1EweJit1vy9u@vger.kernel.org, AJvYcCXpzj6h8h5pd3EEFQXX0qNVWgiwfbs//B3Ae8SjjWAD620HqR/UWbkxAw+/BCSvpwv2M1Yq81ZDHki1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yznf7VrUyhhacXGWdXpZqpXmYvcxSl6TNRAutH526hNCcMtZWJw
+	lZtOhe3czQvSagBDtCdqeTguzkChDtHeILQ22MGVMtFx8Xpr6zjvoooB
+X-Gm-Gg: ASbGncsoV9/1lnTrCnLvJ8oiVSrBCMTVoR9RcSNIPzZXA0nzAgG51lVZ7M/CJs4Htma
+	UMBzVBoY4bioyYMQ8/gAPEBom3D+q5hHUmrk7EBflLstljE6gu8JJfvCvp7Og7G962w+UnPbQDf
+	XDqmR0xPq3jl8WL/Fq36/K/v67qayayQxYtSOl3rVkZCoa48eG4/SkESr/xwUImilFElT4R72DN
+	dwX2cxWpHq4Tr5b5rORKqyYCg/YlgnOm3pqubTEdac7ynVzFwsJzA9ykVxoOr3t33698Bg0Z9Kj
+	yTnMzWLHPMa4B3cPf5CaZUEBCIzs2t0TIUdHyDt9bAziCGoAUvYQBnoM9DAOwzEBnKwLQtCZis/
+	qXJpHKXnNglL/55UEz70A9Y9oMMDdrHEg8WMdtnk33HOrvPpi7fZP1TQBpSyCPoo74iCH8MStvR
+	MgPT2Q
+X-Google-Smtp-Source: AGHT+IFoEKaitmZozrkaIV2lMO9akto5+yC9M/iP5+uw8oBSm22duN29iN/S3y04sK2bfwHVNKAamQ==
+X-Received: by 2002:a17:907:7f9f:b0:ae0:df46:abd1 with SMTP id a640c23a62f3a-afca4e3f98amr247549266b.45.1755082816613;
+        Wed, 13 Aug 2025 04:00:16 -0700 (PDT)
+Received: from tablet.my.domain (ip-31-0-121-4.multi.internet.cyfrowypolsat.pl. [31.0.121.4])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0df10asm2377046966b.59.2025.08.13.04.00.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 04:00:16 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v6 0/9] clk: bcm: kona: Add bus clock support, bus clocks
+ for BCM21664/BCM281xx
+Date: Wed, 13 Aug 2025 13:00:06 +0200
+Message-Id: <20250813-kona-bus-clock-v6-0-f5a63d4920a4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 10/30] KVM: selftests: TDX: Add report_fatal_error test
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250807201628.1185915-1-sagis@google.com>
- <20250807201628.1185915-11-sagis@google.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250807201628.1185915-11-sagis@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADZwnGgC/2XMQW7DIBCF4atErEMFAx5wV71H1AXgIUFJTGUaq
+ 5Hlu4dEqmLZy/ek759YoSFRYZ+7iQ00ppJyXwfudyycXH8knrq6GQhoBEjg59w77m+Fh0sOZ66
+ hNUTRUasFq+hnoJj+XsHDd92nVH7zcH/1R/l8/1O4To2SC07WmLYzxmGEr+PVpctHyFf2TI3w5
+ kqoDYfKnUIV0KE3rV1zteR2w1XlHUbf+BiUR7PmesHlluvKY6O1RLIKbFzyeZ4f3wH9YGkBAAA
+ =
+X-Change-ID: 20250212-kona-bus-clock-4297eefae940
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alex Elder <elder@riscstar.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3153;
+ i=aweber.kernel@gmail.com; h=from:subject:message-id;
+ bh=me8EWh422YPo3cERqnPRxnV9qzRXPkVz2TeOOkHXTbc=;
+ b=owEBbQKS/ZANAwAKAbO7+KEToFFoAcsmYgBonHA8O6A2pkp8j9hGUKYkuQ/MG/naw+/K46WAl
+ 1fvHeefl62JAjMEAAEKAB0WIQTmYwAOrB3szWrSiQ2zu/ihE6BRaAUCaJxwPAAKCRCzu/ihE6BR
+ aI2AD/9prGAajhmB12IaeM+1QVgtX+yglvCsBau0vEnAQZdHlXUv1rS9vdQOhk/Gfx7Pm+TWoKT
+ k4Rwe3nRoOsdxUaPq6c2RqcY6J/5RmzT7op4pzH+5Blkv93ttFD/Mng0aje/OnZfJU/k9KUDyE4
+ 0Blgk8xkO+4RporUvcQ7LGtwooYt5XoMpsraUYRQ3NvIwyGB+dV1PayawYcGX4PgseRl81q5E5H
+ 3cRvvr4ttwj+Wsc2Ac1bBUojXx4kVSz+rEYg3smTHviam/TJaaKx9fz+2ogpX/rfBDkUa9i9yIM
+ lu5hDAQwLdXpSxexuUTiUXqKsWHPiWfZqWGSCsQkTX+5FWibZCo8taGrnJ2QyED5n4B6necBJab
+ cjT2nukhlODxEigxQ0AP2AGL6JAck3KKJ8k+7vk7l4Nvq67e466DpDZqrDIyEQuZGrgEv4BRm6+
+ HRMuKkPoxx8RT5gFeIsN2DiF1f4YMrvOdbqg/tP0lPovNi9ebQXpR3txft4PXuPSj9IS6DXb6S8
+ 0FjEISVa4q6P56CfRsED6gwO+envY6oUO+YgsxUPTuJ+nW8IfuS+rsKhFVE6BeucnwjH/hEhM89
+ 8KFLWHywA4Fd0FvByEaIJtsRCOQjFXrO5KFJOLAi/M4nQaLqZ+qJnAoET5OKCEZgdVuM5tDwBGD
+ VPHGgP9jEZpU7ww==
+X-Developer-Key: i=aweber.kernel@gmail.com; a=openpgp;
+ fpr=E663000EAC1DECCD6AD2890DB3BBF8A113A05168
 
+This patchset does the following:
 
+- Introduce support for bus clocks. These are fairly similar to
+  peripheral clocks, but only implement policy, gate and hyst.
 
-On 8/8/2025 4:16 AM, Sagi Shahar wrote:
-> The test checks report_fatal_error functionality.
->
-> TD guest can use TDG.VP.VMCALL<ReportFatalError> to report the fatal error
-> it has experienced. TD guest is requesting a termination with the error
-> information that include 16 general-purpose registers.
+- Add matching bus clocks for BCM21664 and BCM281xx peripheral clocks
+  and update device tree bindings to match.
 
-I think it's worth to mention that KVM converts TDG.VP.VMCALL<ReportFatalError>
-to KVM_EXIT_SYSTEM_EVENT with the type KVM_SYSTEM_EVENT_TDX_FATAL.
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Changes in v6:
+- Rebase on v6.16
+- Make kona_bus_clk_ops const, add a new commit to make kona_peri_clk_ops const as well
+- Link to v5: https://lore.kernel.org/r/20250430-kona-bus-clock-v5-0-46766b28b93a@gmail.com/
 
->
-> Co-developed-by: Binbin Wu <binbin.wu@linux.intel.com>
-> Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
-> ---
->   .../selftests/kvm/include/x86/tdx/tdx.h       |  6 ++-
->   .../selftests/kvm/include/x86/tdx/tdx_util.h  |  1 +
->   .../selftests/kvm/include/x86/tdx/test_util.h | 19 +++++++
->   tools/testing/selftests/kvm/lib/x86/tdx/tdx.c | 18 +++++++
->   .../selftests/kvm/lib/x86/tdx/tdx_util.c      |  6 +++
->   .../selftests/kvm/lib/x86/tdx/test_util.c     | 10 ++++
->   tools/testing/selftests/kvm/x86/tdx_vm_test.c | 51 ++++++++++++++++++-
->   7 files changed, 108 insertions(+), 3 deletions(-)
->
-> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
-> index a7161efe4ee2..2acccc9dccf9 100644
-> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
-> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx.h
-> @@ -4,9 +4,13 @@
->   
->   #include <stdint.h>
->   
-> +#include "kvm_util.h"
-> +
-> +#define TDG_VP_VMCALL_REPORT_FATAL_ERROR 0x10003
-> +
->   #define TDG_VP_VMCALL_INSTRUCTION_IO 30
->   
->   uint64_t tdg_vp_vmcall_instruction_io(uint64_t port, uint64_t size,
->   				      uint64_t write, uint64_t *data);
-> -
-> +void tdg_vp_vmcall_report_fatal_error(uint64_t error_code, uint64_t data_gpa);
->   #endif // SELFTEST_TDX_TDX_H
-> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> index 57a2f5893ffe..d66cf17f03ea 100644
-> --- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> +++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-> @@ -15,5 +15,6 @@ struct kvm_vm *td_create(void);
->   void td_initialize(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
->   		   uint64_t attributes);
->   void td_finalize(struct kvm_vm *vm);
-> +void td_vcpu_run(struct kvm_vcpu *vcpu);
->   
->   #endif // SELFTESTS_TDX_KVM_UTIL_H
-> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-> index 07d63bf1ffe1..dafeee9af1dc 100644
-> --- a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-> +++ b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-> @@ -38,4 +38,23 @@ bool is_tdx_enabled(void);
->   void tdx_test_success(void);
->   void tdx_test_assert_success(struct kvm_vcpu *vcpu);
->   
-> +/*
-> + * Report an error with @error_code to userspace.
-> + *
-> + * Return value from tdg_vp_vmcall_report_fatal_error() is ignored since
-> + * execution is not expected to continue beyond this point.
-> + */
-> +void tdx_test_fatal(uint64_t error_code);
-> +
-> +/*
-> + * Report an error with @error_code to userspace.
-> + *
-> + * @data_gpa may point to an optional shared guest memory holding the error
-> + * string.
+Changes in v5:
+- Pick up Reviewed-by trailer from Krzysztof on patch 3
+- Rebase on v6.14
+- No code changes since v4
+- Link to v4: https://lore.kernel.org/r/20250318-kona-bus-clock-v4-0-f54416e8328f@gmail.com
 
-A according to the GHCI spec, this is the optional GPA pointing to a shared guest memory, but in these TDX KVM selftest cases, it may not used that way. It may need some clarification about it. And based on the usage in this patch series, the name data_gpa may be misleading.
+Changes in v4:
+- Rename moved CLOCK_COUNT defines to CLK_COUNT to avoid redefinition
+- Squash BCM21664/BCM281xx bus clock DT bindings commits together
+- Link to v3: https://lore.kernel.org/r/20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com
 
+Changes in v3:
+- Fix DT schema example in BCM281xx bus clock bindings
+- Move CLOCK_COUNT defines from dt-bindings header to the driver
+- Fix BCM21664 UARTBx_APB IDs being out of order compared to clock
+  driver
+- Link to v2: https://lore.kernel.org/r/20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com
 
-> + *
-> + * Return value from tdg_vp_vmcall_report_fatal_error() is ignored since
-> + * execution is not expected to continue beyond this point.
-> + */
-> +void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa);
-> +
->   #endif // SELFTEST_TDX_TEST_UTIL_H
-> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
-> index f417ee75bee2..ba088bfc1e62 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx.c
-> @@ -1,5 +1,7 @@
->   // SPDX-License-Identifier: GPL-2.0-only
->   
-> +#include <string.h>
-> +
->   #include "tdx/tdcall.h"
->   #include "tdx/tdx.h"
->   
-> @@ -25,3 +27,19 @@ uint64_t tdg_vp_vmcall_instruction_io(uint64_t port, uint64_t size,
->   
->   	return ret;
->   }
-> +
-> +void tdg_vp_vmcall_report_fatal_error(uint64_t error_code, uint64_t data_gpa)
-> +{
-> +	struct tdx_hypercall_args args;
-> +
-> +	memset(&args, 0, sizeof(struct tdx_hypercall_args));
-> +
-> +	if (data_gpa)
-> +		error_code |= 0x8000000000000000;
-> +
-> +	args.r11 = TDG_VP_VMCALL_REPORT_FATAL_ERROR;
-> +	args.r12 = error_code;
-> +	args.r13 = data_gpa;
-> +
-> +	__tdx_hypercall(&args, 0);
-> +}
-> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> index e2bf9766dc03..5e4455be828a 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/tdx_util.c
-> @@ -9,6 +9,7 @@
->   #include "kvm_util.h"
->   #include "processor.h"
->   #include "tdx/td_boot.h"
-> +#include "tdx/tdx.h"
->   #include "test_util.h"
->   
->   uint64_t tdx_s_bit;
-> @@ -603,3 +604,8 @@ void td_finalize(struct kvm_vm *vm)
->   
->   	tdx_td_finalize_mr(vm);
->   }
-> +
-> +void td_vcpu_run(struct kvm_vcpu *vcpu)
-> +{
-> +	vcpu_run(vcpu);
-> +}
-> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> index 7355b213c344..6c82a0c3bd37 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> @@ -59,3 +59,13 @@ void tdx_test_assert_success(struct kvm_vcpu *vcpu)
->   		    vcpu->run->io.port, vcpu->run->io.size,
->   		    vcpu->run->io.direction);
->   }
-> +
-> +void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa)
-> +{
-> +	tdg_vp_vmcall_report_fatal_error(error_code, data_gpa);
-> +}
-> +
-> +void tdx_test_fatal(uint64_t error_code)
-> +{
-> +	tdx_test_fatal_with_data(error_code, 0);
-> +}
-> diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> index fdb7c40065a6..7d6d71602761 100644
-> --- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> +++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> @@ -3,6 +3,7 @@
->   #include <signal.h>
->   
->   #include "kvm_util.h"
-> +#include "tdx/tdx.h"
->   #include "tdx/tdx_util.h"
->   #include "tdx/test_util.h"
->   #include "test_util.h"
-> @@ -24,7 +25,51 @@ static void verify_td_lifecycle(void)
->   
->   	printf("Verifying TD lifecycle:\n");
->   
-> -	vcpu_run(vcpu);
-> +	td_vcpu_run(vcpu);
-> +	tdx_test_assert_success(vcpu);
-> +
-> +	kvm_vm_free(vm);
-> +	printf("\t ... PASSED\n");
-> +}
-> +
-> +void guest_code_report_fatal_error(void)
-> +{
-> +	uint64_t err;
-> +
-> +	/*
-> +	 * Note: err should follow the GHCI spec definition:
-> +	 * bits 31:0 should be set to 0.
-> +	 * bits 62:32 are used for TD-specific extended error code.
-> +	 * bit 63 is used to mark additional information in shared memory.
-> +	 */
-> +	err = 0x0BAAAAAD00000000;
-> +	tdx_test_fatal(err);
-> +
-> +	tdx_test_success();
-> +}
-> +
-> +void verify_report_fatal_error(void)
-> +{
-> +	struct kvm_vcpu *vcpu;
-> +	struct kvm_vm *vm;
-> +
-> +	vm = td_create();
-> +	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
-> +	vcpu = td_vcpu_add(vm, 0, guest_code_report_fatal_error);
-> +	td_finalize(vm);
-> +
-> +	printf("Verifying report_fatal_error:\n");
-> +
-> +	td_vcpu_run(vcpu);
-> +
-> +	TEST_ASSERT_EQ(vcpu->run->exit_reason, KVM_EXIT_SYSTEM_EVENT);
-> +	TEST_ASSERT_EQ(vcpu->run->system_event.type, KVM_SYSTEM_EVENT_TDX_FATAL);
-> +	TEST_ASSERT_EQ(vcpu->run->system_event.ndata, 16);
-> +
-> +	TEST_ASSERT_EQ(vcpu->run->system_event.data[12], 0x0BAAAAAD00000000);
-> +	TEST_ASSERT_EQ(vcpu->run->system_event.data[13], 0);
-> +
-> +	td_vcpu_run(vcpu);
->   	tdx_test_assert_success(vcpu);
->   
->   	kvm_vm_free(vm);
-> @@ -38,9 +83,11 @@ int main(int argc, char **argv)
->   	if (!is_tdx_enabled())
->   		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
->   
-> -	ksft_set_plan(1);
-> +	ksft_set_plan(2);
->   	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
->   			 "verify_td_lifecycle\n");
-> +	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
-> +			 "verify_report_fatal_error\n");
->   
->   	ksft_finished();
->   	return 0;
+Changes in v2:
+- Drop prerequisite clock patch
+- Move clock/bcm21664.h dt-bindings header change to dt-bindings patch
+- Add BCM281xx bus clocks
+- Link to v1: https://lore.kernel.org/r/20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com
+
+---
+Artur Weber (9):
+      clk: bcm: kona: Move CLOCK_COUNT defines into the driver
+      dt-bindings: clock: brcm,kona-ccu: Drop CLOCK_COUNT defines from DT headers
+      dt-bindings: clock: brcm,kona-ccu: Add BCM21664 and BCM281xx bus clocks
+      clk: bcm: kona: Make kona_peri_clk_ops const
+      clk: bcm: kona: Add support for bus clocks
+      clk: bcm21664: Add corresponding bus clocks for peripheral clocks
+      clk: bcm281xx: Add corresponding bus clocks for peripheral clocks
+      ARM: dts: bcm2166x-common: Add matching bus clocks for peripheral clocks
+      ARM: dts: bcm11351: Add corresponding bus clocks for peripheral clocks
+
+ .../devicetree/bindings/clock/brcm,kona-ccu.yaml   |  49 ++++++-
+ arch/arm/boot/dts/broadcom/bcm11351.dtsi           |  33 +++--
+ arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |  28 ++--
+ drivers/clk/bcm/clk-bcm21664.c                     |  99 ++++++++++++++-
+ drivers/clk/bcm/clk-bcm281xx.c                     | 141 ++++++++++++++++++++-
+ drivers/clk/bcm/clk-kona-setup.c                   | 116 +++++++++++++++++
+ drivers/clk/bcm/clk-kona.c                         |  64 +++++++++-
+ drivers/clk/bcm/clk-kona.h                         |  14 +-
+ include/dt-bindings/clock/bcm21664.h               |  17 ++-
+ include/dt-bindings/clock/bcm281xx.h               |  24 +++-
+ 10 files changed, 540 insertions(+), 45 deletions(-)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250212-kona-bus-clock-4297eefae940
+
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
 
 
