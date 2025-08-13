@@ -1,253 +1,144 @@
-Return-Path: <linux-kernel+bounces-766559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F04B2481A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:12:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC707B24826
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EADF564C1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:12:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D39F1BC3C5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1C52F7454;
-	Wed, 13 Aug 2025 11:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B8E2F6578;
+	Wed, 13 Aug 2025 11:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ZcORFi1n"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CEOLR16n"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0ED2F658E
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0601E1A9F9E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755083529; cv=none; b=Jdw1mHsBr+PiYF1o8zh96TB+rAZAJBGFfahEQR7tYMKhO75kFjsdf4nLcVwgRJbdRTKPjxXLL+nvSx1+rLYM5dGgbXnP8CYxbobJWrE/LSXiQ12B4EDzQVz0I9kkzG+oVnwOet8wDYPEjh70NR1BUNlQamGEdJiE5wWUcTsZ94A=
+	t=1755083661; cv=none; b=KyfZoDoTDcK2YYVEzIbOOM2CO7LBYLvVXcXbLIodjUJbTLc/iX7RtIw2jUMF3OpuUn5BDoVI99/qSgw0vV+3PErMTUBWfAjB5Rf7Jv2zFVqubFJJ5s0NjPWG+WMExZPrTyFRtnSE2T+Bb7pCTV9/INDZJJsx2+vEI6hfTZkvJE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755083529; c=relaxed/simple;
-	bh=RumpcH5saDr5rkkWY4Eh5pUdJgJSDjmpI3Loqz8eqTo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZbvlckcvRBDDBo7G3jhpnD8+uupENe/hJmTAARBkauMgrylgiNmWwUO9qh7pWHAUQObgm+w2OdnCqmqbmM/CPsH+Fk9H99FP8svbxigy6OuOyx9Dyo7RBdmhMW41O085hVdLnmyFA8ajtuzBN+JYgoQi1ZCN7ymA3f9AkkVc8zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ZcORFi1n; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-33245e653bbso42041451fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 04:12:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755083525; x=1755688325; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bmXBa8hN6ZqYSD6brjbzokdUq7mqfbKeLxh7E9vySvQ=;
-        b=ZcORFi1nTclepfN8dNuXpHBnGHeidqazTFAH/xxKUkFhzZBTVERRzuqpNz0wiN2RqG
-         AyNjugQoJyZ8DJz4mcw2B9WO3/XqRiZgEljCwwS/MyVSRhuH4ivb2d3sQLiFvuRa5SP2
-         gyRCvZuj6loipHtuMemWNDu7fufnBV1PhYLa2mj7wQXq469zu0evjLKVaIjZ98p8nCJc
-         XMhDhTSO/8AJZiBc6leu7lD+/c94Z5gQDJqsIyZPyFOxfyFnePbhDhx4kXS4ys8798FA
-         BL8mEleUaDZihhhUTu4oWUZ2UlNai/eZsXAYgLImJ/OqXwtOfb8ycgkiNi2m5/dARFb5
-         2xRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755083525; x=1755688325;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bmXBa8hN6ZqYSD6brjbzokdUq7mqfbKeLxh7E9vySvQ=;
-        b=Yw52ErYHpuucJb7tHqxuNVQ4oWdDRGs5xjeY8cS9VUX1JUFQCIJCyAEbXusR6SGXV/
-         cCAb6fjZ6njbA3j0RYEbRXJLDrEQYQGZD6cc/z5gx5sZ78hyDdZbyTKU2VIODYw8dvhj
-         4uIXT9NJ1zHxy1SI2zp23nLuPADjRXeGs9qbs7e8094gsCMrlzVs8LfTXvD5O1RKnvMN
-         kGG1xwqCj7CnoXHmlK05Qh+wzw7DV5jzt2F5sRVGvG15s+iOt71c+qMF6KANl14HJbjL
-         TyPl2KYw7zIHLhWVwZt+2yfMmlQ5wpMrQIBH4Ahxc5JGLdkNGuNRveAjF3gHxG+mkgAw
-         yoVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5oU+FUIXBoT/ngk2QaCasLwmC5kFTe1J86HnjG7b3YlEjqpleUk6m+sw9rNHRUmgnkRhADC8M92mH2Z0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyweZPEOEvwz1PcWvHlWlMbnBh2Fo4PiN04k1XLDDZNZasTwwVx
-	L4lLZp7ILyVrQ4sG7oYD+bbJdCeuchBZ99HnklhGYKEEhBbTpJqMdD3VxOnCxUUrODSYTR2r/UI
-	aMy49YOlOlfo0fSwQPsOoGQNL7qdHfVpl0+9cjWAOKw==
-X-Gm-Gg: ASbGncuGUMN2J/pExcxAGBF4y2IpSjakHfDWhdosClUytKIYZJ0aiyr9JMo3ZVj9Gt2
-	AXDFWHD9HLlWW93+oJcmopp+H6KoP5Y4FkYgo+Nmp6k2r12jP9OuoF4qaLZD6wrhghwTbhyzQmt
-	E3KfeG3ACpIe7MpVppXgQpDbHEWfIA6YFWBL0pEbmX3WdYIBqIMEUDCUJe8z74Ju4UefvzeUS52
-	kpv+VPC/JAHKzdowlg=
-X-Google-Smtp-Source: AGHT+IGEd6r2waO01iAvkk51fhRlxRdDrqcSDTW7/vuRbJY8YjAVRsk+nLOcZIVIYul5gLr7NlHXTJZ+irwpMk0V3Qs=
-X-Received: by 2002:a2e:a987:0:b0:32b:3cf5:7358 with SMTP id
- 38308e7fff4ca-333e9b56166mr8243791fa.28.1755083525285; Wed, 13 Aug 2025
- 04:12:05 -0700 (PDT)
+	s=arc-20240116; t=1755083661; c=relaxed/simple;
+	bh=jJ8Z6o7SASBnxW1/g8l1fDZr1YOffQeae3dgbacleoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S94i2TUOlwJjYoUmZlSYYUfj6/jdUxwXCncCvS6Nzqkbg0KyDTnEURYdJgNRPkBq1elaGPQLCI/haYIGGdOHEkruB9wOrx5q91uuRrtilpldmmyh/hDAUSeU2ojmXORVP5ipsbQOonzhRijVJRdARGu8sBX4I8jl14fSWcV7CRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CEOLR16n; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755083658;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yNVE6wsMC8x7hacYqMkArJqlP3u73DUjInfZebo80YI=;
+	b=CEOLR16nXv4mgE6fBUEAJaRWek/R/JjWq9rf9IDDV1KSxcPUM0fXyxdMMw1VqWaGopK0CD
+	pe3x6DWDkXm/DUZKSEhKg362crVYxHXn9/qNXISUX5GrynzXOwV3ErYfKBtNKDhf+LeXkm
+	4ets82YC404NkZ1Tt8GMVk+NEtqShrE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-4Pp8IIsdO9WiKTWHKKqYIA-1; Wed,
+ 13 Aug 2025 07:14:12 -0400
+X-MC-Unique: 4Pp8IIsdO9WiKTWHKKqYIA-1
+X-Mimecast-MFC-AGG-ID: 4Pp8IIsdO9WiKTWHKKqYIA_1755083650
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F1FC61800291;
+	Wed, 13 Aug 2025 11:14:09 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.177])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0043630001A1;
+	Wed, 13 Aug 2025 11:14:07 +0000 (UTC)
+Date: Wed, 13 Aug 2025 19:14:02 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com,
+	dvyukov@google.com, vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+	sj@kernel.org, lorenzo.stoakes@oracle.com, elver@google.com,
+	snovitoll@gmail.com
+Subject: Re: [PATCH v2 00/12] mm/kasan: make kasan=on|off work for all three
+ modes
+Message-ID: <aJxzehJYKez5Q1v2@MiWiFi-R3L-srv>
+References: <20250812124941.69508-1-bhe@redhat.com>
+ <CA+fCnZcAa62uXqnUwxFmDYh1xPqKBOQqOT55kU8iY_pgQg2+NA@mail.gmail.com>
+ <CA+fCnZdKy-AQr+L3w=gfaw9EnFvKd0Gz4LtAZciYDP_SiWrL2A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515094301.40016-1-cuiyunhui@bytedance.com>
- <CAEEQ3w=XqoKmVu1kvc5XUbGbQJsHVkRx=T65tXvYEYo0HCTcnQ@mail.gmail.com>
- <aJs-aPH32OxpzR3G@sunil-laptop> <CAEEQ3wnHFPBPC0U59rDBJaZYxJ24uJzJ7NDQO0gfmVqoiQwNOw@mail.gmail.com>
- <aJtKZhvNX0p3obFw@sunil-laptop> <CAEEQ3wmomscuAzuiRyJu4ha8tiM=s1Y-ytQROPTWr1DScMNL3g@mail.gmail.com>
- <aJwiXKWXik8BmpL8@sunil-laptop> <CAEEQ3wky3LXK=ge1wBkHD0ZWtwUF-aBn44EK0Uxa+_2DB1Giqw@mail.gmail.com>
-In-Reply-To: <CAEEQ3wky3LXK=ge1wBkHD0ZWtwUF-aBn44EK0Uxa+_2DB1Giqw@mail.gmail.com>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Wed, 13 Aug 2025 16:41:51 +0530
-X-Gm-Features: Ac12FXwij-HOOV9nmq9qu8pUNs3gWFC5Oqu4FRciyKhMhr0sOhIZGTI0U05OUcI
-Message-ID: <CAK9=C2VOaAJZxCeM-5QPj5B-ie68LivJyQcM8KwKjdL9u00RJg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] ACPI: RISC-V: CPPC: Add CSR_CYCLE for CPPC FFH
-To: yunhui cui <cuiyunhui@bytedance.com>
-Cc: Sunil V L <sunilvl@ventanamicro.com>, rafael@kernel.org, lenb@kernel.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	alex@ghiti.fr, linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Rahul Pathak <rpathak@ventanamicro.com>, 
-	juwenlong@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+fCnZdKy-AQr+L3w=gfaw9EnFvKd0Gz4LtAZciYDP_SiWrL2A@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Aug 13, 2025 at 12:14=E2=80=AFPM yunhui cui <cuiyunhui@bytedance.co=
-m> wrote:
->
-> Hi Sunil,
->
-> On Wed, Aug 13, 2025 at 1:28=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.c=
-om> wrote:
+On 08/12/25 at 07:14pm, Andrey Konovalov wrote:
+> On Tue, Aug 12, 2025 at 6:57 PM Andrey Konovalov <andreyknvl@gmail.com> wrote:
 > >
-> > Hi Yunhui,
+> > On Tue, Aug 12, 2025 at 2:49 PM Baoquan He <bhe@redhat.com> wrote:
+> > >
+> > > Currently only hw_tags mode of kasan can be enabled or disabled with
+> > > kernel parameter kasan=on|off for built kernel. For kasan generic and
+> > > sw_tags mode, there's no way to disable them once kernel is built.
+> > > This is not convenient sometime, e.g in system kdump is configured.
+> > > When the 1st kernel has KASAN enabled and crash triggered to switch to
+> > > kdump kernel, the generic or sw_tags mode will cost much extra memory
+> > > for kasan shadow while in fact it's meaningless to have kasan in kdump
+> > > kernel.
+> > >
+> > > So this patchset moves the kasan=on|off out of hw_tags scope and into
+> > > common code to make it visible in generic and sw_tags mode too. Then we
+> > > can add kasan=off in kdump kernel to reduce the unneeded meomry cost for
+> > > kasan.
 > >
-> > On Wed, Aug 13, 2025 at 11:23:39AM +0800, yunhui cui wrote:
-> > > Hi Sunil,
-> > >
-> > > On Tue, Aug 12, 2025 at 10:06=E2=80=AFPM Sunil V L <sunilvl@ventanami=
-cro.com> wrote:
-> > > >
-> > [...]
-> > > > > > >
-> > > > > > > The purpose of cppc_ffh_csr_read() is to calculate the actual
-> > > > > > > frequency of the CPU, which is delta_CSR_CYCLE/delta_CSR_XXX.
-> > > > > > >
-> > > > > > > CSR_XXX should be a reference clock and does not count during=
- WFI
-> > > > > > > (Wait For Interrupt).
-> > > > > > >
-> > > > > > > Similar solutions include: x86's aperf/mperf, and ARM64's AMU=
- with
-> > > > > > > registers SYS_AMEVCNTR0_CORE_EL0/SYS_AMEVCNTR0_CONST_EL0.
-> > > > > > >
-> > > > > > > However, we know that CSR_TIME in the current code does count=
- during
-> > > > > > > WFI. So, is this design unreasonable?
-> > > > > > >
-> > > > > > > Should we consider proposing an extension to support such a d=
-edicated
-> > > > > > > counter (a reference clock that does not count during WFI)? T=
-his way,
-> > > > > > > the value can be obtained directly in S-mode without trapping=
- to
-> > > > > > > M-mode, especially since reading this counter is very frequen=
-t.
-> > > > > > >
-> > > > > > Hi Yunhui,
-> > > > > >
-> > > > > > Yes, but we anticipated that vendors might define their own cus=
-tom CSRs.
-> > > > > > So, we introduced FFH encoding to accommodate such cases.
-> > > > > >
-> > > > > > Thanks,
-> > > > > > Sunil
-> > > > >
-> > > > > As mentioned earlier, it is best to directly read CSR_XXX (a refe=
-rence
-> > > > > clock that does not count during WFI) and CSR_CYCLE in S-mode, ra=
-ther
-> > > > > than trapping to SBI.
-> > > > >
-> > > > No. I meant direct CSR access itself not SBI. Please take a look at
-> > > > Table 6 of RISC-V FFH spec.
-> > > >
-> > > > > drivers/acpi/riscv/cppc.c is a generic driver that is not specifi=
-c to
-> > > > > any vendor. Currently, the upstream code already uses CSR_TIME, a=
-nd
-> > > > > the logic of CSR_TIME is incorrect.
-> > > > >
-> > ACPI spec for "Reference Performance Register" says,
+> > Hi Baoquan,
 > >
-> > "The Reference Performance Counter Register counts at a fixed rate any
-> > time the processor is active. It is not affected by changes to Desired
-> > Performance, processor throttling, etc."
+> > Could you clarify what are you trying to achieve by disabling
+> > Generic/SW_TAGS KASAN via command-line? Do you want not to see any
+> > KASAN reports produced? Or gain back the performance?
 > >
-> > > > CSR_TIME is just an example. It is upto the vendor how _CPC objects=
- are
-> > > > encoded using FFH. The linux code doesn't mean one should use CSR_T=
-IME
-> > > > always.
-> > >
-> > > First, the example of CSR_TIME is incorrect. What is needed is a
-> > > CSR_XXX (a reference clock that does not count during WFI).
-> > >
-> > > Second, you mentioned that each vendor can customize their own
-> > > implementations. But should all vendors' CSR_XXX/YYY/... be added to
-> > > drivers/acpi/riscv/cppc.c? Shouldn=E2=80=99t drivers/acpi/riscv/cppc.=
-c fall
-> > > under the scope defined by the RISC-V architecture?
-> > >
-> > No. One can implement similar to csr_read_num() in opensbi. We didn't
-> > add it since there was no HW implementing such thing. What I am
-> > saying is we have FFH encoding to support such case.
+> > Because for the no reports goal, it would be much easier to add a
+> > command-line parameter to silent the reports.
 > >
-> > > >
-> > > > > It would be best to promote a specification to support CSR_XXX, j=
-ust
-> > > > > like what has been done for x86 and arm64. What do you think?
-> > > > >
-> > > > Wouldn't above work? For a standard extension, you may have to prov=
-ide
-> > > > more data with actual HW.
-> > >
-> > > This won=E2=80=99t work. May I ask how the current upstream code can =
-calculate
-> > > the actual CPU frequency using CSR_TIME without trapping to SBI?
-> > > This is a theoretical logical issue. Why is data needed here?
-> > >
-> > As I mentioned above, one can implement a generic CSR read without
-> > trapping to SBI.
+> > And the performance goal can only be partially achieved, as you cannot
+> > remove the compiler instrumentation without rebuilding the kernel.
+> > (What are the boot times for KASAN_GENERIC=n vs KASAN_GENERIC=y +
+> > kasan=off vs KASAN_GENERIC=y btw?)
 > >
-> > > Could you take a look at the "AMU events and event numbers" chapter i=
-n
-> > > the ARM64 manual?
-> > >
-> > As-per ACPI spec reference performance counter is not affected by CPU
-> > state. The RISC-V FFH encoding is sufficiently generic to support this
-> > requirement, even if the standard CSR_TIME cannot be used. In such
-> > cases, an alternative CSR can be encodeded, accessed via an OS-level
-> > abstraction such as csr_read_num().
->
-> So what you're saying is that we should submit a patch like this, right?
->
-> diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
-> index 440cf9fb91aab..953c259d46c69 100644
-> --- a/drivers/acpi/riscv/cppc.c
-> +++ b/drivers/acpi/riscv/cppc.c
-> @@ -66,16 +66,8 @@ static void cppc_ffh_csr_read(void *read_data)
->  {
->         struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)read_data;
->
-> -       switch (data->reg) {
-> -       /* Support only TIME CSR for now */
-> -       case CSR_TIME:
-> -               data->ret.value =3D csr_read(CSR_TIME);
-> -               data->ret.error =3D 0;
-> -               break;
-> -       default:
-> -               data->ret.error =3D -EINVAL;
-> -               break;
-> -       }
-> +       data->ret.value =3D csr_read_num(data->reg);
-> +       data->ret.error =3D 0;
->  }
->
-> If that's the case, the robustness of the code cannot be guaranteed,
-> because the range of CSRs from different vendors is unknown.
 
-ACPI FFH is allows mapping to any CSR.
+Thanks a lot for checking this.
 
->
-> Since each vendor will define their own CSRs, why not formalize them
-> into a specification?
+> 
+> Ah, you don't want the shadow memory for kdump, sorry, I somehow missed that.
 
-The _CPC objects in the ACPI table point to platform specific mechanisms
-of accessing CPPC CSR so it can point to a vendor specific CSR.
+Yeah, for kdump kernel, the shadow is a heavy burden, and most
+importantly kasan is useless for kdump. We don't want to capture a
+kernel memory bug through kdump kernel running becuase kdump is a
+debugging mechanism.
 
-Regards,
-Anup
+> 
+> I'm not familiar with the internals of kdump, but would it be
+> possible/reasonable to teach kdump to ignore the KASAN shadow region?
+
+Yes, we can teach kdump to do that. Then people may hate those conditional
+check "if (is_kdump_kernel())" being added in kasan code. E.g even
+though we skip kasan_init(), we still need to check is_kdump_kernel()
+in kasan_populate_vmalloc(), right? 
+
+Combined with the existing kasan_arch_is_ready(), it will make kasan code
+ugly. I planned to add kasan_enabled() via static key
+kasan_flag_enabled, then it can also easily remove kasan_arch_is_ready()
+cleanly.
+
 
