@@ -1,81 +1,160 @@
-Return-Path: <linux-kernel+bounces-765763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E89EB23DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:51:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25767B23DF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9E03AEB3A
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6AE07B5169
 	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1941B87E8;
-	Wed, 13 Aug 2025 01:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50DA189F43;
+	Wed, 13 Aug 2025 01:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8ojr8Jl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B6K/66g3"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711D1249E5;
-	Wed, 13 Aug 2025 01:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A117F1A23A6
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755049846; cv=none; b=pK634+/xubnnOkmrYr7psLKl5tx+Zkgt8VahpdBT8UUAZ5Sc7zCW4/MLhauuAJCFHGbcLKkxzTkgQsewN3/uZNAup3s+6Tg7KCNkoD9JD+qxBqKQF7+R4hyB5qyAJU6h798RuQnLtzi3UVJjBaQUskpYK4uQ4Mo/cHIAR7eYM30=
+	t=1755049935; cv=none; b=jrjw9MjW6ISWD9tPs7tylfnZGtCEa1l6GZCWX5HOHCRLwRYhcy119rXXQMGq8GFf7D81dlC123885yoPKu7O/HdpMNXq8X9L0TdWm4y/inMu3sDS5IBkTAJ9S461BBonn8FScZI/pBC6WdGDLWsuw2xuL07efhJhLqGcL0geR58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755049846; c=relaxed/simple;
-	bh=/TWbFKiAUS4Hv5UjHzTDgLkD5NVzeVFAuOyarw2xwAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Eo7L/emRp1Y1gupZrUDW+eXony5TqBzqhCcZO4DBpud+jPpfqrLyXEnSdFzJUDlV1K7iCZpq7w4btF2ifFl87izTavb9UTv7bIewg3gGIZJoU5C138P1Y5biMj2gr/1eeV3WXtkjLAPFHAUun+YXKkcaWb2XkqMo8x+mKnV8fnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8ojr8Jl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B7CBC4CEF0;
-	Wed, 13 Aug 2025 01:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755049846;
-	bh=/TWbFKiAUS4Hv5UjHzTDgLkD5NVzeVFAuOyarw2xwAI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=t8ojr8Jlh97iNz7e1ejsuaKeo4Ov2eO5+NqayT8QoCHQrJ9ynNZ3b7MNw53h1bYT/
-	 kg5bmr7wGeQYvGw4sinOCFr76tNnpYfYdedCrZh1rqYrOhjZ0J8SWml9+2kBEpHMs2
-	 UU71oRqiedIXSi7FzlXcswk+Ci3cLVNlYBolS12bm8JEOpArqbE67/Y9hr+RoPSZ0Q
-	 srTwO5wkiV49t48aCWu3OBv4gctHOK4wlv24ncskC4u5ndBGP4BaZ74083bhaOe4PM
-	 B+y2oxoDUuV3PQap7zHpSnHYrtBdwSIg9mpzdZmaPQBNW2PKiPivWRvnohmOvq+qL0
-	 9fgiWB4x59f8g==
-Date: Tue, 12 Aug 2025 18:50:44 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Lukasz Majewski <lukasz.majewski@mailbox.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Richard Cochran
- <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
-Subject: Re: [net-next RESEND v17 00/12] net: mtip: Add support for MTIP
- imx287 L2 switch driver
-Message-ID: <20250812185044.4381fae8@kernel.org>
-In-Reply-To: <20250812082939.541733-1-lukasz.majewski@mailbox.org>
-References: <20250812082939.541733-1-lukasz.majewski@mailbox.org>
+	s=arc-20240116; t=1755049935; c=relaxed/simple;
+	bh=Ll38zC0TgNNSiE/fnE9zoGdtVW9LNB6w2+NMjU+NjC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sj0xdK42Glz+sEfhmVchZwE+yJuiFcsW+wawRVL5NQ7UvXPCJkp6e437Y80ljxlIwW2d8kUJllyawe3GCyOuLsIIqO3lpZQo0f2ZhqzQ0JxbU7dx0IO3gmMb3RXOFEQkFfr1tzQylUCmbm7sHm+O8sHRQ9r7toLit8TdyWsqt+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B6K/66g3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CM6l5E032241
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:52:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=
+	qcppdkim1; bh=azzIjnnFrhGZepf8cF63On31tVI6l+R0n7SE8DktVtY=; b=B6
+	K/66g3ltbZTioLlekcBRWaDkXKx5FaDf29+mwd6bhANi2CiCGfU/pSSR0t1FwC+p
+	/iEKACkRvSPcaiJVxDDu/SPP+qLBEp5+AMSbbXX4sldx6dqBLx/lgwIpVEcunWOQ
+	4Tti/eM8A9U/rqgDs9cBWNgzx4qvIVFYPlxWvZeOK6Ck1qfR/2Z/C72SPPNDJIl7
+	m5BVknnQhhKkwz+82zvQ3Bwmht0Yq3ci2NIIMJ/8RGgI6jgUJ4KtLUfGU2te+jha
+	YQ2161nV9Z1wFmmaSQpvez/7MQ6k3qgPbM+cdUedVBrdTtr1PNEqasPezSRk2hfr
+	f7UQIuTY4HYiHLgx/bMw==
+Received: from mail-ot1-f69.google.com (mail-ot1-f69.google.com [209.85.210.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vmynv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:52:12 +0000 (GMT)
+Received: by mail-ot1-f69.google.com with SMTP id 46e09a7af769-74194815b75so1606726a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 18:52:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755049932; x=1755654732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=azzIjnnFrhGZepf8cF63On31tVI6l+R0n7SE8DktVtY=;
+        b=QV3aM0DCrFZQZSrjdJxq1fE2tu7lL6j6Nprs5atWb8PPInbyY4Ph5LV7odEjsJRqEW
+         n9arN04PoFkuJqKCRN0jOyipC4vMq7xTf8aQ8EDmEzzlSxhhJvqEUFWXg8L9bPkREpfH
+         bsTnW+kKvOHAAvVG0+AwGs4N4H3PUPur2FVw5Wp4GVcYpmfG+8zHnCTwUx+4VDYmW3K9
+         WcuFZDv9U7KX6+gOg/gAcpmCjEqrpyc9kvBkLZvdaLSFi59vVjbyVvsIYDYFRIlng+I8
+         JPm5gW9sD8/Rf+63lc7h0sCWFAvmn+SH1DAWd/VGh2E1npwO/l00TucHekEiZoFOK5MH
+         cnXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXd1hvcyIMpoAIstZKq04cnHHPdmr8Cj/JhwWVPQAfms+RvkHK1SlS2fr7qh+NKkTPAEAfW32i3D3nwiio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVQ03Y/Z9lSnCR9LcUBWgrtyjaXHzVW9+pPG3O7Z9WV9b9luZW
+	Cfy0VUBaPgIseOmoPo3/rS/tKqemN1/Ns786eGNqPX9CWR0s3spULos8unONfbNwEalIdhdsgWO
+	ld/+MQpzGlFuZNWi6GNZBI1sKvlnHpnAqbBmbKg3B3Jio5REzCQQxBAE9tJFYlFhZCXhDZrhgCU
+	3f/Hw7bR0ghYFF7/w+JNIXx1bwcDHVsbDr1SvlJmiQLg==
+X-Gm-Gg: ASbGncsOr+Pp/Itu+lQgi/m8OpwW20FpEJiizYPMUefNgD6Z+3oqLU6gJ1BgMENP7UA
+	f7B65sVhwc+Sr9Lfnn+FRhV/Mz6f2Fu429y9oUaQJtgTu/pdGQlP3p+5pq7yTmkOz9++XOIC3nV
+	X5cWQVdmJPd4PccQ7Wr7I=
+X-Received: by 2002:a05:6808:22a9:b0:435:7090:b652 with SMTP id 5614622812f47-435d42a2575mr1191294b6e.34.1755049931465;
+        Tue, 12 Aug 2025 18:52:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+oxwqW5ocHWrqoj/uh9nhQTzkltL6bf5O3y495PvLUQY65I8XhC+SpjSkN+0X4azk5mUzEknXbe5Iorw4nT8=
+X-Received: by 2002:a05:6808:22a9:b0:435:7090:b652 with SMTP id
+ 5614622812f47-435d42a2575mr1191273b6e.34.1755049931074; Tue, 12 Aug 2025
+ 18:52:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250629201530.25775-1-robin.clark@oss.qualcomm.com>
+ <20250629201530.25775-15-robin.clark@oss.qualcomm.com> <b0a36f3d-706a-4622-89a1-f88c6255e4fb@dakr.org>
+In-Reply-To: <b0a36f3d-706a-4622-89a1-f88c6255e4fb@dakr.org>
+Reply-To: rob.clark@oss.qualcomm.com
+From: Rob Clark <rob.clark@oss.qualcomm.com>
+Date: Tue, 12 Aug 2025 18:52:00 -0700
+X-Gm-Features: Ac12FXxxd6WCPyXXb8MbyAX1gkPmIUnWgdFOtYCj3v3CcVsNgXCk29Md82IFzps
+Message-ID: <CACSVV02+hE1j9vN_BU5pwz_4cnJjj==j-L5oPeFWCvEr+1HiFQ@mail.gmail.com>
+Subject: Re: [PATCH v9 14/42] drm/msm: Convert vm locking
+To: Danilo Krummrich <kernel@dakr.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, Connor Abbott <cwabbott0@gmail.com>,
+        Antonino Maniscalco <antomani103@gmail.com>,
+        Danilo Krummrich <dakr@redhat.com>, Rob Clark <robdclark@chromium.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linux-media@vger.kernel.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:bdma_(?:buf|fence|resv)b" <linaro-mm-sig@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfX3xYqGP7j6UY1
+ lXeAAKtEDYJdSEx6JtzBDSkK7hLpCE1j3gb2/2Cw4mTHOlrd5LCaNrAM5Y/8bhsdz6jWKH1UJyb
+ AHU9RsOTlllrvtT+e0J6ofoJZ0eKuR5t7Tl89POUsL2amh9XQeUjsmD4I44O/IL2+m5LfVEDuda
+ qtGnULO9L5YpdLms5NCp+2wsiGkaDzwc1pXz0yXDXqRdE7vgcK4RwnL5gy79LH8bI9jpiUwPu7X
+ ZzcTL1teREIrdb9Vemn8Dh6moXcfdwvoJo3OVHhIgHDJ7Epscdq/1M1Jv5DhAxR6/hN2gY7uWKx
+ i57fmLs4CItsIR8irbDHaGSzsfWaSqpYrAVD7oTz3/dyLYB/+70puYZtIwPGjqaxM/bLX/MhQh/
+ 5bIlFqQM
+X-Proofpoint-GUID: a789vhA9IYdeIRNGttmJB9oD4-3JvTEc
+X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689befcc cx=c_pps
+ a=z9lCQkyTxNhZyzAvolXo/A==:117 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=P-IC7800AAAA:8 a=pbUkqq1XAAAA:8 a=Dc8E7AEoan46jiKjpnQA:9 a=QEXdDO2ut3YA:10
+ a=EyFUmsFV_t8cxB2kMr4A:22 a=d3PnA9EDa4IxuAV0gXij:22 a=F7rrpbw-2xKc1p48v2RB:22
+X-Proofpoint-ORIG-GUID: a789vhA9IYdeIRNGttmJB9oD4-3JvTEc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110107
 
-On Tue, 12 Aug 2025 10:29:27 +0200 Lukasz Majewski wrote:
-> This patch series adds support for More Than IP's L2 switch driver embedded
-> in some NXP's SoCs. This one has been tested on imx287, but is also available
-> in the vf610.
+On Tue, Aug 12, 2025 at 1:58=E2=80=AFAM Danilo Krummrich <kernel@dakr.org> =
+wrote:
+>
+> On 6/29/25 10:12 PM, Rob Clark wrote:
+> > +     /*
+> > +      * We mostly want to use DRM_GPUVM_RESV_PROTECTED, except that
+> > +      * makes drm_gpuvm_bo_evict() a no-op for extobjs (ie. we loose
+> > +      * tracking that an extobj is evicted) :facepalm:
+> > +      */
+>
+> Yeah, it's a consequence of this locking scheme and I really hate it. How=
+ever,
+> you don't entirely loose tracking:
+>
+> The next time you call drm_gpuvm_prepare_objects() it will be added to th=
+e list
+> [1] and hence picked up by subsequent validation through drm_gpuvm_valida=
+te().
+>
+> [1] https://elixir.bootlin.com/linux/v6.16/source/drivers/gpu/drm/drm_gpu=
+vm.c#L1154
 
-The arch/arm patches don't apply to net-next any more.
-Perhaps we should take this opportunity to drop them?
-We will really only apply the bindings and the driver code.
-dts and arch/ code need to go to the appropriate arch maintainer..
--- 
-pw-bot: cr
+Hmm, maybe the issue was with legacy (non-vm_bind) contexts, which use
+drm_exec directly for locking?  I guess I can try to revisit that..
+
+BR,
+-R
 
