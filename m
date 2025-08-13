@@ -1,97 +1,219 @@
-Return-Path: <linux-kernel+bounces-765869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4051CB23F3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:02:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0735AB23F39
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238DE1896096
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:00:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FDD17AD510
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEA327056E;
-	Wed, 13 Aug 2025 03:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1ZYzsHXe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8192BDC0B;
+	Wed, 13 Aug 2025 04:00:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C88872635;
-	Wed, 13 Aug 2025 03:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E0B266584;
+	Wed, 13 Aug 2025 04:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755057588; cv=none; b=QVtl7t8jDBTQvd5nBLsBgQEQVPCdoS8FdgVnnB9Pc6Lkp/+NChF11ytZbrBoQpj8UmzGsInWutLnZRc+HISQe8w9nvKOjuEgO5iL2XqarqdU4vCPwlUh1duKZk7fJwBwysFK1hVXDsUl0Tb83/UiU0AdFpUtX0BFp2O8OVoyVYs=
+	t=1755057613; cv=none; b=MEg+OuipgsuKaQr4r1YizK3f6Xc5fhXXSlADY+auKav0tpfdr3qYeX+AcV42SVIQKh0c09ai3QTmzulAvpVZ2tUJXR202OgoClAUiaTWptsDdOH/fbp8M2GkiFtEc0k2aJVvsjFwdZRbpGT8PzjKJQ4/uLyc3wzfVHXxOizkU4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755057588; c=relaxed/simple;
-	bh=cKL8BAtdMqV5kt+LIJadzP5n5LeED7bbZLiniWO6akw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CI0e/hT0ZjZahx823OPcyGao5yp0QPJX8ToAq+xyFLLxuT+phosQtO/TG1K3DeG5mgYuiy71K7HuXc3dbrjZb88yhTM/tbTO1EQy5HgD+gdwSwYvGwIowxjFgohkWYPjusGKsOCYzGaq+8e7+h9uIjS38WvKlSqar396nWQFHDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1ZYzsHXe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C47C4CEEB;
-	Wed, 13 Aug 2025 03:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755057587;
-	bh=cKL8BAtdMqV5kt+LIJadzP5n5LeED7bbZLiniWO6akw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=1ZYzsHXeOtmXkgg3TckMkh5Oj7HFP2eA4jUZOmIGKPQjblUcDC+qteMFKIoMrXqA5
-	 gmN8CMY+nUYbT0P9+vNSRffkY30ftCh+QcjSMttpZCp268b3Dt7PjhpkLkAaMpRUkF
-	 FQM+bc1aquIJzawJRf3tP9LN9NB3vTzT4cfhQX2Y=
-Date: Tue, 12 Aug 2025 20:59:46 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, Danilo Krummrich
- <dakr@kernel.org>, Vitaly Wool <vitaly.wool@konsulko.se>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the mm-unstable tree with the
- drm-misc-fixes tree
-Message-Id: <20250812205946.2db0d8645f3c2ed6c8828ae2@linux-foundation.org>
-In-Reply-To: <20250813111151.6a261ca1@canb.auug.org.au>
-References: <20250813111151.6a261ca1@canb.auug.org.au>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755057613; c=relaxed/simple;
+	bh=YXiYZhuwjSwWOCy5usUVUT0FPbusbyLiVUqNvqyd7RI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ERnDwO9x9mqkTHZdo+itE37+TGIWKAJyfVPMGx3Cp+voGb9p1FG2kqCrScxvmyOAu9/KOzlREjQdkuNvQglv/4Ettucb4BeMe9gGSzryUPz9RKR29G464uIN90vQ4zfAUK0vPULfBGecgobOe468bOx9lTiGdhCH8ezIzU6H+9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1vls16ymzYQv3H;
+	Wed, 13 Aug 2025 12:00:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id BFA5F1A0BDC;
+	Wed, 13 Aug 2025 12:00:07 +0800 (CST)
+Received: from ultra.huawei.com (unknown [10.90.53.71])
+	by APP4 (Coremail) with SMTP id gCh0CgDHkBHEDZxoZTcHDg--.42513S2;
+	Wed, 13 Aug 2025 12:00:05 +0800 (CST)
+From: Pu Lehui <pulehui@huaweicloud.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	pulehui@huawei.com
+Subject: [PATCH v3] tracing: Limit access to parser->buffer when trace_get_user failed
+Date: Wed, 13 Aug 2025 04:02:32 +0000
+Message-Id: <20250813040232.1344527-1-pulehui@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHkBHEDZxoZTcHDg--.42513S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw13Xw45GFyxZw1DAFW8JFb_yoWrCFyfpF
+	W3Krs7GwsFgF4IyFs5Zr18Gas5X3s5JryUGF4rJw1Yvr9rtr1j9rWxuryDuw1fK348G3y3
+	Ar4Yvr48Kr1qvw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7UUUUU==
+X-CM-SenderInfo: psxovxtxl6x35dzhxuhorxvhhfrp/
 
-On Wed, 13 Aug 2025 11:11:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+From: Pu Lehui <pulehui@huawei.com>
 
-> Hi all,
-> 
-> Today's linux-next merge of the mm-unstable tree got a conflict in:
-> 
->   rust/kernel/alloc/allocator.rs
-> 
-> between commit:
-> 
->   fde578c86281 ("rust: alloc: replace aligned_size() with Kmalloc::aligned_layout()")
-> 
-> from the drm-misc-fixes tree and commit:
-> 
->   cda097b07bce ("rust: support large alignments in allocations")
-> 
-> from the mm-unstable tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+When the length of the string written to set_ftrace_filter exceeds
+FTRACE_BUFF_MAX, the following KASAN alarm will be triggered:
 
-Thanks.
+BUG: KASAN: slab-out-of-bounds in strsep+0x18c/0x1b0
+Read of size 1 at addr ffff0000d00bd5ba by task ash/165
 
-Well that's messy.
+CPU: 1 UID: 0 PID: 165 Comm: ash Not tainted 6.16.0-g6bcdbd62bd56-dirty
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ show_stack+0x34/0x50 (C)
+ dump_stack_lvl+0xa0/0x158
+ print_address_description.constprop.0+0x88/0x398
+ print_report+0xb0/0x280
+ kasan_report+0xa4/0xf0
+ __asan_report_load1_noabort+0x20/0x30
+ strsep+0x18c/0x1b0
+ ftrace_process_regex.isra.0+0x100/0x2d8
+ ftrace_regex_release+0x484/0x618
+ __fput+0x364/0xa58
+ ____fput+0x28/0x40
+ task_work_run+0x154/0x278
+ do_notify_resume+0x1f0/0x220
+ el0_svc+0xec/0xf0
+ el0t_64_sync_handler+0xa0/0xe8
+ el0t_64_sync+0x1ac/0x1b0
 
-Is it intended that the containing series ("Alloc and drm::Device
-fixes") be merged into 6.17-rcX?
+The reason is that trace_get_user will fail when processing a string
+longer than FTRACE_BUFF_MAX, but not set the end of parser->buffer to 0.
+Then an OOB access will be triggered in ftrace_regex_release->
+ftrace_process_regex->strsep->strpbrk. We can solve this problem by
+limiting access to parser->buffer when trace_get_user failed.
 
+Fixes: 8c9af478c06b ("ftrace: Handle commands when closing set_ftrace_filter file")
+Signed-off-by: Pu Lehui <pulehui@huawei.com>
+---
+
+v3:
+- Remove `parser->fail = false` as it will be set when the parser is initialized.
+- Add trace_parser_fail helper.
+
+v2: https://lore.kernel.org/all/20250806070109.1320165-1-pulehui@huaweicloud.com/
+- Add `fail` field to struct trace_parser to indicate parsing failed.
+
+v1: https://lore.kernel.org/all/20250805151203.1214790-1-pulehui@huaweicloud.com/
+
+ kernel/trace/trace.c | 18 ++++++++++++------
+ kernel/trace/trace.h |  8 +++++++-
+ 2 files changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 4283ed4e8f59..8d8935ed416d 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1816,7 +1816,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 
+ 	ret = get_user(ch, ubuf++);
+ 	if (ret)
+-		return ret;
++		goto fail;
+ 
+ 	read++;
+ 	cnt--;
+@@ -1830,7 +1830,7 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		while (cnt && isspace(ch)) {
+ 			ret = get_user(ch, ubuf++);
+ 			if (ret)
+-				return ret;
++				goto fail;
+ 			read++;
+ 			cnt--;
+ 		}
+@@ -1848,12 +1848,14 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 	while (cnt && !isspace(ch) && ch) {
+ 		if (parser->idx < parser->size - 1)
+ 			parser->buffer[parser->idx++] = ch;
+-		else
+-			return -EINVAL;
++		else {
++			ret = -EINVAL;
++			goto fail;
++		}
+ 
+ 		ret = get_user(ch, ubuf++);
+ 		if (ret)
+-			return ret;
++			goto fail;
+ 		read++;
+ 		cnt--;
+ 	}
+@@ -1868,11 +1870,15 @@ int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+ 		/* Make sure the parsed string always terminates with '\0'. */
+ 		parser->buffer[parser->idx] = 0;
+ 	} else {
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto fail;
+ 	}
+ 
+ 	*ppos += read;
+ 	return read;
++fail:
++	trace_parser_fail(parser);
++	return ret;
+ }
+ 
+ /* TODO add a seq_buf_to_buffer() */
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 1dbf1d3cf2f1..be6654899cae 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -1292,6 +1292,7 @@ bool ftrace_event_is_function(struct trace_event_call *call);
+  */
+ struct trace_parser {
+ 	bool		cont;
++	bool		fail;
+ 	char		*buffer;
+ 	unsigned	idx;
+ 	unsigned	size;
+@@ -1299,7 +1300,7 @@ struct trace_parser {
+ 
+ static inline bool trace_parser_loaded(struct trace_parser *parser)
+ {
+-	return (parser->idx != 0);
++	return !parser->fail && parser->idx != 0;
+ }
+ 
+ static inline bool trace_parser_cont(struct trace_parser *parser)
+@@ -1313,6 +1314,11 @@ static inline void trace_parser_clear(struct trace_parser *parser)
+ 	parser->idx = 0;
+ }
+ 
++static inline void trace_parser_fail(struct trace_parser *parser)
++{
++	parser->fail = true;
++}
++
+ extern int trace_parser_get_init(struct trace_parser *parser, int size);
+ extern void trace_parser_put(struct trace_parser *parser);
+ extern int trace_get_user(struct trace_parser *parser, const char __user *ubuf,
+-- 
+2.34.1
 
 
