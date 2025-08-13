@@ -1,198 +1,115 @@
-Return-Path: <linux-kernel+bounces-767506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6965B25551
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:27:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E962EB25561
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F71B1C8317C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:27:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050CA1C848F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939652FE57C;
-	Wed, 13 Aug 2025 21:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9827D188715;
+	Wed, 13 Aug 2025 21:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="jX9MmZ7X"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fsIhCYHX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471282DE216
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F882EFDAC;
+	Wed, 13 Aug 2025 21:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755120447; cv=none; b=OMxkpuSXdWIwQF+ENbEnhZOMJsO6Twk3WtVmfPHecq9BVaL1/486FWiUCMYohZJWLRz/K+CdKoXQvQSM4wKV0UTpTufqo+HgD9G0xdWcin0/r8n5rmvHc5uojNfPxbT4351Y95+KE/5u8+Q/dQLpR7LEc8ICPnJ7jpX9X0+Z/3E=
+	t=1755120536; cv=none; b=u5FHxX8VxDT2WeEkH1QGQm3JabmM0RebvpWBkNIuoXl3wRSX5c6jJWuOICLL1CaORwsD2V3e2ekDpCmP1/24jwie88GxFCn6tToSfNDKLI5+TAmjF1W9i4/p0QTYfnZuJf9hR31Q4CIqA/VEJHr27Vn3EA5CvDoF3IcYYUL7sZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755120447; c=relaxed/simple;
-	bh=Id+QsQELyg+pEjz6bWvXIyl5zJr/tcJ4oL7E4R2FyZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D7hJUGWcj42U9zCoNGFotuo5EjHlc3PaHbjrcGT9X8gE1Szyq0cbEsdyOtaZ0eDUj6w5g67MvLVaB0DBsOm72PMC4s/KW9y90CDdcXsesi12aF0hVKDsGYskxxJ+bJbtM43RCjIWKMkH9ZDIoMr9nDMywyQsayksGuOp0PXhQCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=jX9MmZ7X; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e56fe7a3d6so2741605ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:27:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755120445; x=1755725245; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HrFzekosij5RO32ErAHxgIo8Kdw6RXeQrtvQE1dGiUY=;
-        b=jX9MmZ7XBqH9fcrDEALVWSkpjxaHLhVzFCvKqRw6GHr7y98cToOnz/6PUGvpWCMsLj
-         Vd3GrnuWV7wB/J+l34LUX0pby+NWaarYgTGK9dZT/g8WfnniIt1qRm8swyvjgAhZho3Y
-         xKdswnj/J2J51seAr2vxAulnmPT8Ip3tEI0Q6zm1KLfcDJghaKlOvZBuMcDivz92yvn/
-         ABJMBnk6XYwI666Jbt1GjELLJfYxoXxx6lz+ySJ1wZw0XbEBYvjL/p25dkLzpz7nx7TS
-         k86kIykwrhjOsSRB65oGu6qPrI1IwBnIFoVIEZA9E6QhVMP1U26olLRw/czq0HZJEcsL
-         DvWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755120445; x=1755725245;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HrFzekosij5RO32ErAHxgIo8Kdw6RXeQrtvQE1dGiUY=;
-        b=HTQvDwFjsxfgzwKiOIVmgEeR1IZhshdS8hHmbvcyfwLQ+Ot8KnvNSyZFEJP/ZNl11R
-         c+t51c2xFQnjCLDc2qsnmpOeHXoDftuj3k8aogdC8Rwn+NB1X6dGSpl8iewqKWB8mxfv
-         +TTo6brh12gemNFarXIyKazC7pcru8PrzTmfj45FItsyOBzq1WCB/CQzG0sMprsE1qGD
-         r9uaHWaS0g8lEW3qvpLtupNBTQAjJg8aK2JzLl4F08/8B2GvqIbI5/F5O4GRdL6SOUks
-         7/YCGkY0NIBgWKQubAWaTnC8KYi4KGmVZtAIJXmnRdlYP3W8HkBxnhp9TXdNSJs74Y12
-         iqSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBTgFMHmcT97nwUR6/cKiDz5cQXHY1KozoQ110kmo6dOWqOCARVkqOXiswKwp+pfBxGX9jd/Js/olju4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj4iGIMBFfG6yavoINr+7IYbQHrBSf3S5NBLwNnF1cZrsLRjWB
-	fwlg+CMAWL+fnfx2wdAgimueOctcTHtjEezI5RWdPUp1n50FyEmKg6eqzimApWgNWcA=
-X-Gm-Gg: ASbGnctjCqA4EPFTwzZRVXJIEA0YwMvQiFV/9Wqnqh9vqpnQxd0eb8rw8gJsrfXE1y2
-	cYFUgxaX+L4G46Y7bUf9wvuX4dDnE9YK1SC2T+B7yYoD3dvgqLw15Q89RhZv5eY7SyZga/sd2uj
-	3J/Y4eETtFXBJvtw8SY56WXzrnE5a8jsIFf5blAsf8X8yoEsAWzRkCcl5T1WBxscoqWN5kxlH6M
-	lNbIk4AX/nFnMqdxfMFF7KfL10b33Or1t9qCZNNm7MWBzaSia2yj7+t21BdPhlX27IUuxqEqXrO
-	Xd18MypsPFznovhHGaTVcqqPU5nR1oTw0eIxZEGPCt0wDme32AODM/FrKoKJcqNf5w/h7MD2oPH
-	cGUapcBeFZP1QWiKyzBIHwINAAtaUD3hCRungzyFmUixfwhdYlq/MrjPFWE66qK4JDs3eIgxh
-X-Google-Smtp-Source: AGHT+IHhxOnH0kTjTpaPF32KB8bFgpsjlYZNdzvmJrAc6sUo4I9UVSc/FXuQewT8WYi7PJE6uX0raQ==
-X-Received: by 2002:a05:6e02:b27:b0:3e5:4869:fdd3 with SMTP id e9e14a558f8ab-3e570810a71mr11947605ab.7.1755120445360;
-        Wed, 13 Aug 2025 14:27:25 -0700 (PDT)
-Received: from [172.22.22.28] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e56ddf9ad0sm4921475ab.34.2025.08.13.14.27.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 14:27:25 -0700 (PDT)
-Message-ID: <5d5eacff-4c32-4df4-8da0-3b55974b74aa@riscstar.com>
-Date: Wed, 13 Aug 2025 16:27:22 -0500
+	s=arc-20240116; t=1755120536; c=relaxed/simple;
+	bh=zzqiWB87FyQa0pN6w8XPlzfV0xfLBOYTNruWpuHpnm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HbxtktRQkJa5nu+rZQDhEOR3o6d52hH2UzJVeCEG1w04KFyefXazC7314k0T53gl7+3B5hIknjW3OOFgNPnpGtRUR09MPIgwo3NZdNEu7o6pYKGj/P92M5ziWdop+ct3hPbZCgVtj8xzNq+DHrYWGUKVZDBSVtB51Vrun+CXiXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fsIhCYHX; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755120534; x=1786656534;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zzqiWB87FyQa0pN6w8XPlzfV0xfLBOYTNruWpuHpnm4=;
+  b=fsIhCYHXKpiIknupzkZavnLHR572kF93e7Wv93wPlmSdztExAV2cpEmW
+   v2yqEo7wCq5qpowc2I2Q8l/q+diNO1zTUd/Y11Kw+YW1WnYO78UEx3zC8
+   HY/j7lGnfUMyfdJ+lg0JJYooIfb3lgbrwIkvkCQvoDfSKMOKorr2ONtfK
+   0End21sParbx+LZk08gBGyHwkV/EtkwhBfSuCwD3GTgWlTuuHS3LWrYtg
+   FZZ7sVWNtIc0p7E8HIPCFSCD99E/LnxhbxYNfewcV6/7g4arL4Kh/ud5x
+   9C92ur9fCBT0DQ0fuLH7J04JLTmbdgGoeoHI9eaTonQ2fg9dmIgK3JKM/
+   Q==;
+X-CSE-ConnectionGUID: +uHgcBtETkyH/tHL/X/4zA==
+X-CSE-MsgGUID: lb834kxUSgKwKuFxMjwojg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="56642689"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="56642689"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 14:28:54 -0700
+X-CSE-ConnectionGUID: 48PBhMurSmOLe5EQRyQu2g==
+X-CSE-MsgGUID: +Ffc00+5TZuZ8Q0pPlYbdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166957056"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 13 Aug 2025 14:28:51 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umJ1d-000AKe-0f;
+	Wed, 13 Aug 2025 21:28:49 +0000
+Date: Thu, 14 Aug 2025 05:28:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+	hannes@cmpxchg.org, mkoutny@suse.com, longman@redhat.com
+Cc: oe-kbuild-all@lists.linux.dev, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, lujialin4@huawei.com,
+	chenridong@huawei.com, christophe.jaillet@wanadoo.fr
+Subject: Re: [-next v2 3/4] cpuset: separate tmpmasks and cpuset allocation
+ logic
+Message-ID: <202508140524.S2O4D57k-lkp@intel.com>
+References: <20250813082904.1091651-4-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] PCI: spacemit: introduce SpacemiT PCIe host driver
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
- robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, vkoul@kernel.org, kishon@kernel.org, dlan@gentoo.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, p.zabel@pengutronix.de, tglx@linutronix.de,
- johan+linaro@kernel.org, thippeswamy.havalige@amd.com, namcao@linutronix.de,
- mayank.rana@oss.qualcomm.com, shradha.t@samsung.com, inochiama@gmail.com,
- quic_schintav@quicinc.com, fan.ni@samsung.com, devicetree@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pci@vger.kernel.org,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250813212219.GA294849@bhelgaas>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250813212219.GA294849@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813082904.1091651-4-chenridong@huaweicloud.com>
 
-On 8/13/25 4:22 PM, Bjorn Helgaas wrote:
-> On Wed, Aug 13, 2025 at 01:46:59PM -0500, Alex Elder wrote:
->> Introduce a driver for the PCIe root complex found in the SpacemiT
->> K1 SoC.  The hardware is derived from the Synopsys DesignWare PCIe IP.
->> The driver supports three PCIe ports that operate at PCIe v2 transfer
->> rates (5 GT/sec).  The first port uses a combo PHY, which may be
->> configured for use for USB 3 instead.
-> 
-> I assume "PCIe v2" means what most people call "PCIe gen2", but the
-> spec encourages avoidance "genX" because it's ambiguous.
+Hi Chen,
 
-Yes, that's what I meant, but I did try to clarify with the
-transfer rate.
+kernel test robot noticed the following build warnings:
 
->> +config PCIE_K1
->> +	bool "SpacemiT K1 host mode PCIe controller"
-> 
-> Style of nearby entries is:
-> 
->    "SpacemiT K1 PCIe controller (host mode)"
+[auto build test WARNING on tj-cgroup/for-next]
+[also build test WARNING on linus/master v6.17-rc1 next-20250813]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-OK I'll fix that.
+url:    https://github.com/intel-lab-lkp/linux/commits/Chen-Ridong/cpuset-remove-redundant-CS_ONLINE-flag/20250813-164651
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
+patch link:    https://lore.kernel.org/r/20250813082904.1091651-4-chenridong%40huaweicloud.com
+patch subject: [-next v2 3/4] cpuset: separate tmpmasks and cpuset allocation logic
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250814/202508140524.S2O4D57k-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508140524.S2O4D57k-lkp@intel.com/reproduce)
 
-> Please alphabetize by the company name ("SpacemiT") in the menu entry.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508140524.S2O4D57k-lkp@intel.com/
 
-OK.
+All warnings (new ones prefixed by >>):
 
->> +#define K1_PCIE_VENDOR_ID	0x201f
->> +#define K1_PCIE_DEVICE_ID	0x0001
-> 
-> I assume this (0x201f) has been reserved by the PCI-SIG?  I don't see
-> it at:
-> 
->    https://pcisig.com/membership/member-companies?combine=0x201f
+>> Warning: kernel/cgroup/cpuset.c:422 function parameter 'pmasks' not described in 'alloc_cpumasks'
 
-I hadn't even thought to check that.  I will follow up.  Thanks
-for pointing this out.
-
-> Possibly rename this to PCI_VENDOR_ID_K1 (or maybe
-> PCI_VENDOR_ID_SPACEMIT?) to match the usual format in
-> include/linux/pci_ids.h, since it seems likely to end up there
-> eventually.
-
-OK.
-
->> +#define PCIE_RC_PERST			BIT(12)	/* 0: PERST# high; 1: low */
-> 
-> Maybe avoid confusion by describing as "1: assert PERST#" or similar?
-
-OK.  I struggled with how to express this to avoid confusion.
-But I do think "assert PERST#" is better.
-
->> +	/* Wait the PCIe-mandated 100 msec before deasserting PERST# */
->> +	mdelay(100);
-> 
-> I think this is PCIE_T_PVPERL_MS.  Comment is superfluous then.
-
-Excellent, thank you, I'll use that.
-
->> +static int k1_pcie_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct dw_pcie_rp *pp;
->> +	struct dw_pcie *pci;
->> +	struct k1_pcie *k1;
->> +	int ret;
->> +
->> +	k1 = devm_kzalloc(dev, sizeof(*k1), GFP_KERNEL);
->> +	if (!k1)
->> +		return -ENOMEM;
->> +	dev_set_drvdata(dev, k1);
-> 
-> Most neighboring drivers use platform_set_drvdata().  Personally, I
-> would set drvdata after initializing k1 because I don't like to
-> advertise pointers to uninitialized things.
-
-OK, I understand that and will do it the way you suggest.
-
->> +static void k1_pcie_remove(struct platform_device *pdev)
->> +{
->> +	struct k1_pcie *k1 = dev_get_drvdata(&pdev->dev);
-> 
-> Neighbors use platform_get_drvdata().
-
-Yes, that goes with platform_set_drvdata().
-
->> +	struct dw_pcie_rp *pp = &k1->pci.pp;
->> +
->> +	dw_pcie_host_deinit(pp);
->> +}
-
-Thank you very much for your review.
-
-					-Alex
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
