@@ -1,175 +1,167 @@
-Return-Path: <linux-kernel+bounces-767247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC31DB251A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:13:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 858B8B251DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E46B97B0DC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:11:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976C11C283E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F71F303CB8;
-	Wed, 13 Aug 2025 17:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCCF28B7DF;
+	Wed, 13 Aug 2025 17:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rt6tv1c/"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BTlViCzK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEE5303CAA
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7722874ED;
+	Wed, 13 Aug 2025 17:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755104996; cv=none; b=UbdCIxrkH0BS8ZrESSQsxtoGTcrNHRWZn6f9VS8S1iwreHwj9lyXs33xWyhz2C5KdpcFKE++oECezVQciU/plF+47XKlVcEGTIvyHXaXvOI7r+1GcUPyCVyKnZXCSZGukNFzcrAfnDoJRGYzD/OZgT05LwhZYvax2LQLeo+1dmw=
+	t=1755105002; cv=none; b=F4xZQgco5mm3eukkTX6w/5iRZMSUltJPAVtZHYiDW3Fvs3nvZHLfibmwlTnVPhvFAYQLx8U+5aQjtYq2IdHiFdXEN0cSGjI6jOmRWZ/Hxsus9Z8uWjzEHaFmcSBzb2vlEHo7UqJmHsCtpdvNMOQh+3Um/bmew15jzVksKLkFpgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755104996; c=relaxed/simple;
-	bh=2w7qJu2Qv1Ydyw5zQvgxifVtZudIr0cPBV2WnRQtutE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O/MGjCq0MhyILSAEomSExo6CnkjLshfYF9hEzuQosIFmIrbxDcHPndXIIamtWRy/eIAywmE9UasE2d4yBvd0zq6M4+X1hm0nFJiL4VxxFiBZ8lK1xtwfxAeNA1WdAkQSuiRoZEgR3N0CWVrmGafzG8NzaIRc1++GM3R1ihZfXYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rt6tv1c/; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e931c8594a9so19613276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:09:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755104993; x=1755709793; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AcsTss5oLC/ljy6iAHysAb6eyZj8eVj9r8dExzYu/U0=;
-        b=Rt6tv1c/ht77Wfe/7ZxyBPYWsE+zarVC0qGe6EhOCJXksbNXmgHx9oMPHW44mhHAOg
-         eDqKYtW5SLXMqmma+tK+DCrFEHe7QyoHgTvunHEph1vppELil60nttYCOAz4HXOB6g0D
-         V8bi5Kl4kvwTd67yUEyGzQFQJ7G/TKf7u5ZcQpJsgpeUrceNuXte/mxp4zy0h8KmGcSv
-         PUrVa95s1hI6qfeyOnJBG9Gqei87C+CXhJSVnX2MaKZf2OT2oRG+VOlUAqqo6f4E0pCg
-         jy1yfGImN6iFVUElBfpSQmdH6ruxX7i81+F0x9i/cgxPjq0WP12XQz58NLEdyR/pV1qG
-         htLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755104993; x=1755709793;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AcsTss5oLC/ljy6iAHysAb6eyZj8eVj9r8dExzYu/U0=;
-        b=eseNzzCAQkJYm27yKZcjrsCkBFOlS4ifOoswAZejlKkEHmMqYE1hKeH8uNu4/O1uoV
-         ClizURwGtzuBcgtJiipLs+ikqJE180pBNuaaQa//SItkjOEiSOsSPZysc6gGLWeS6XFz
-         wtHslnLBz3GpKF37O0mzqK4rCCMzTsTzYyZsPWHHgsrXh0ZwumgPZ9oNVoTf9SE0qsr8
-         JtVoR0jxrI1tp0bVMGvA1/NUtpznTg1PnvtI5gxANlcGqkUgsVzHMlMp7EPYJY7uSdnn
-         VQPd3a3LKbSssGEWvQ6BJSQuzy0ss+8BZFCH7lPpMLmaA3ROMHWk/cWny49gMHs+BjEJ
-         gN4Q==
-X-Gm-Message-State: AOJu0YwnK/AWjjuC8qfEYcRLNklmIjNhM7+SeNqrR+yP3FS12yoE5L/P
-	z50jdah4z0pduIj1YH/SgeRcMhcErs3DJBJaMlcfXwRmP6w6fbCCa5KUP7dR15kGQ8r6Blg+UmB
-	tPqwCPdkHgaWu+Dog/oYE9XsHYFEf7jQ=
-X-Gm-Gg: ASbGncuXDnMsZFY0TIlNGoIzT7QGbi1YwUuat5UmzR3xgcy9ywKI0s+AjoHzx1In3d2
-	3geDz9GJ8XcZUI7WBywrHOJZvtkhG53d9/+8jvPVdwUbOha9Bgsz6O6x26taEKVBsdt3Kpia+Em
-	fag78VKvTjjusIfZ0ul0iokUF15YHAHxJ6k2mxuDOyPiEEBnZlNQWS4F3MYruEEqmzPHWtCfcWt
-	AfQGw==
-X-Google-Smtp-Source: AGHT+IGmKencFbOxswxXdRpsztzCwJ5AH/Th4B5DtSHjMq/d+ZVi7MSaKvTgXp67Nz9CocBaNryTAPkYWxX/xifnNYk=
-X-Received: by 2002:a05:690c:6f0f:b0:71c:20fa:7b59 with SMTP id
- 00721157ae682-71d4e3fba2emr24082237b3.2.1755104993287; Wed, 13 Aug 2025
- 10:09:53 -0700 (PDT)
+	s=arc-20240116; t=1755105002; c=relaxed/simple;
+	bh=AIWgF14roG2s1lL3N6s+OU/JIDgn+6qzvLO1PUr65lE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LHy2WEzmDtXAwQ/PbxaxE/NWc8GH7pyp3nc5tJBMSd7cd8uYr3/1btmPKNJReNdc6lFP5ERERKnT6tFReYpLIWo3iYZkBIGesuOp8C/uqD6gY/9aCOtbHeQjE/NKwImO54zh8rcHiia3UjKfuXOZKTaxEzGoGtU2nAHopKXIMyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BTlViCzK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1832C4CEEB;
+	Wed, 13 Aug 2025 17:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755105002;
+	bh=AIWgF14roG2s1lL3N6s+OU/JIDgn+6qzvLO1PUr65lE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=BTlViCzKJ6oNXqiiP+yf5NnjgQaXzeC5n6P9xOPggqWpoRaHlwaDI1mvW60w31f7z
+	 Nk4wYDNWeQJqTf13oWXlarIYS4G7HXdpOctnUB5iWisAC9T5iXxijFqW5GDfRGiyln
+	 0aar22OgoB+SxaiV6DVGdHOrsuCSOKwnlhkkWCTlavbdrKC+1E7kS8qppE0a4h+kfL
+	 h396yxnoXzknUv6pnRL70DK2zY7o4hxelhQfm4s71BW2VoykC6HcM0DB7+QZ0KvKJH
+	 YWjrJ/xKIpVm2cugUJElax/DsAw1ksJ5mjDQdz+mXtGuc4c0PUVtl+M00Dzoj2+q7T
+	 qSWYD33zElEoA==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [RFC PATCH -next 15/16] mm/damon: the byte statistics data type in damos_stat uses unsigned long long
+Date: Wed, 13 Aug 2025 10:10:00 -0700
+Message-Id: <20250813171000.6345-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250813050706.1564229-16-yanquanmin1@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813155941.014821755@linutronix.de> <20250813162824.228728594@linutronix.de>
-In-Reply-To: <20250813162824.228728594@linutronix.de>
-From: Giorgi Tchankvetadze <giorgitchankvetadze1997@gmail.com>
-Date: Wed, 13 Aug 2025 21:09:41 +0400
-X-Gm-Features: Ac12FXxVkaQaA9v8gzDUdKu6VdxVM6pLlRvzvD4NCfG3y4EgngmaRktwTRh90AQ
-Message-ID: <CAE7dp2pxxKWdNJkwZZDw2GmR6vH8YVMGcTm55u1pxVygaeNydw@mail.gmail.com>
-Subject: Re: [patch 07/11] entry: Cleanup header
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson <mjeanson@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Wei Liu <wei.liu@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Typo in kernel-doc:
-In irq-entry-common.h the doc line reads Pointer to currents pt_regs =E2=80=
-=94
-should be Pointer to current's pt_regs (or Pointer to current->pt_regs
-depending on local style).
+On Wed, 13 Aug 2025 13:07:05 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
+> For 32-bit systems, damos_stat now uses unsigned long long for byte
+> statistics data to avoid integer overflow risks inherent in the
+> previous design.
 
- Stray blank/trailing whitespace:
-In entry-common.h there is an extra blank line inserted after the
-ARCH_SYSCALL_WORK_ENTER) macro continuation =E2=80=94 remove the stray blan=
-k
-to avoid style/noise.
+I suggested using the core-layer address unit on stat, and ask users to
+multiply the addr_unit value to stat values if they want bytes value.  If we
+agree on it, I think this patch wouldn't really be required.
 
-On Wed, Aug 13, 2025 at 8:39=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> Cleanup the include ordering, kernel-doc and other trivialities before
-> making further changes.
->
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
+> 
+> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
 > ---
->  include/linux/entry-common.h     |    8 ++++----
->  include/linux/irq-entry-common.h |    2 ++
->  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> --- a/include/linux/entry-common.h
-> +++ b/include/linux/entry-common.h
-> @@ -3,11 +3,11 @@
->  #define __LINUX_ENTRYCOMMON_H
->
->  #include <linux/irq-entry-common.h>
-> +#include <linux/livepatch.h>
->  #include <linux/ptrace.h>
-> +#include <linux/resume_user_mode.h>
->  #include <linux/seccomp.h>
->  #include <linux/sched.h>
-> -#include <linux/livepatch.h>
-> -#include <linux/resume_user_mode.h>
->
->  #include <asm/entry-common.h>
->  #include <asm/syscall.h>
-> @@ -37,6 +37,7 @@
->                                  SYSCALL_WORK_SYSCALL_AUDIT |           \
->                                  SYSCALL_WORK_SYSCALL_USER_DISPATCH |   \
->                                  ARCH_SYSCALL_WORK_ENTER)
-> +
->  #define SYSCALL_WORK_EXIT      (SYSCALL_WORK_SYSCALL_TRACEPOINT |      \
->                                  SYSCALL_WORK_SYSCALL_TRACE |           \
->                                  SYSCALL_WORK_SYSCALL_AUDIT |           \
-> @@ -61,8 +62,7 @@
+>  include/linux/damon.h     |  6 +++---
+>  mm/damon/modules-common.h |  4 ++--
+>  mm/damon/sysfs-schemes.c  | 12 ++++++------
+>  3 files changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/damon.h b/include/linux/damon.h
+> index aa045dcb5b5d..d85850cf06c5 100644
+> --- a/include/linux/damon.h
+> +++ b/include/linux/damon.h
+> @@ -333,10 +333,10 @@ struct damos_watermarks {
 >   */
->  void syscall_enter_from_user_mode_prepare(struct pt_regs *regs);
->
-> -long syscall_trace_enter(struct pt_regs *regs, long syscall,
-> -                        unsigned long work);
-> +long syscall_trace_enter(struct pt_regs *regs, long syscall, unsigned lo=
-ng work);
->
->  /**
->   * syscall_enter_from_user_mode_work - Check and handle work before invo=
-king
-> --- a/include/linux/irq-entry-common.h
-> +++ b/include/linux/irq-entry-common.h
-> @@ -68,6 +68,7 @@ static __always_inline bool arch_in_rcu_
->
->  /**
->   * enter_from_user_mode - Establish state when coming from user mode
-> + * @regs:      Pointer to currents pt_regs
->   *
->   * Syscall/interrupt entry disables interrupts, but user mode is traced =
-as
->   * interrupts enabled. Also with NO_HZ_FULL RCU might be idle.
-> @@ -357,6 +358,7 @@ irqentry_state_t noinstr irqentry_enter(
->   * Conditional reschedule with additional sanity checks.
->   */
->  void raw_irqentry_exit_cond_resched(void);
-> +
->  #ifdef CONFIG_PREEMPT_DYNAMIC
->  #if defined(CONFIG_HAVE_PREEMPT_DYNAMIC_CALL)
->  #define irqentry_exit_cond_resched_dynamic_enabled     raw_irqentry_exit=
-_cond_resched
->
->
+>  struct damos_stat {
+>  	unsigned long nr_tried;
+> -	unsigned long sz_tried;
+> +	unsigned long long sz_tried;
+>  	unsigned long nr_applied;
+> -	unsigned long sz_applied;
+> -	unsigned long sz_ops_filter_passed;
+> +	unsigned long long sz_applied;
+> +	unsigned long long sz_ops_filter_passed;
+>  	unsigned long qt_exceeds;
+>  };
+>  
+> diff --git a/mm/damon/modules-common.h b/mm/damon/modules-common.h
+> index c7048a449321..ae45d0eb960e 100644
+> --- a/mm/damon/modules-common.h
+> +++ b/mm/damon/modules-common.h
+> @@ -36,11 +36,11 @@
+>  #define DEFINE_DAMON_MODULES_DAMOS_STATS_PARAMS(stat, try_name,		\
+>  		succ_name, qt_exceed_name)				\
+>  	module_param_named(nr_##try_name, stat.nr_tried, ulong, 0400);	\
+> -	module_param_named(bytes_##try_name, stat.sz_tried, ulong,	\
+> +	module_param_named(bytes_##try_name, stat.sz_tried, ullong,	\
+>  			0400);						\
+>  	module_param_named(nr_##succ_name, stat.nr_applied, ulong,	\
+>  			0400);						\
+> -	module_param_named(bytes_##succ_name, stat.sz_applied, ulong,	\
+> +	module_param_named(bytes_##succ_name, stat.sz_applied, ullong,	\
+>  			0400);						\
+>  	module_param_named(nr_##qt_exceed_name, stat.qt_exceeds, ulong,	\
+>  			0400);
+> diff --git a/mm/damon/sysfs-schemes.c b/mm/damon/sysfs-schemes.c
+> index 74056bcd6a2c..3c4882549a28 100644
+> --- a/mm/damon/sysfs-schemes.c
+> +++ b/mm/damon/sysfs-schemes.c
+> @@ -199,10 +199,10 @@ static const struct kobj_type damon_sysfs_scheme_regions_ktype = {
+>  struct damon_sysfs_stats {
+>  	struct kobject kobj;
+>  	unsigned long nr_tried;
+> -	unsigned long sz_tried;
+> +	unsigned long long sz_tried;
+>  	unsigned long nr_applied;
+> -	unsigned long sz_applied;
+> -	unsigned long sz_ops_filter_passed;
+> +	unsigned long long sz_applied;
+> +	unsigned long long sz_ops_filter_passed;
+>  	unsigned long qt_exceeds;
+>  };
+>  
+> @@ -226,7 +226,7 @@ static ssize_t sz_tried_show(struct kobject *kobj, struct kobj_attribute *attr,
+>  	struct damon_sysfs_stats *stats = container_of(kobj,
+>  			struct damon_sysfs_stats, kobj);
+>  
+> -	return sysfs_emit(buf, "%lu\n", stats->sz_tried);
+> +	return sysfs_emit(buf, "%llu\n", stats->sz_tried);
+>  }
+>  
+>  static ssize_t nr_applied_show(struct kobject *kobj,
+> @@ -244,7 +244,7 @@ static ssize_t sz_applied_show(struct kobject *kobj,
+>  	struct damon_sysfs_stats *stats = container_of(kobj,
+>  			struct damon_sysfs_stats, kobj);
+>  
+> -	return sysfs_emit(buf, "%lu\n", stats->sz_applied);
+> +	return sysfs_emit(buf, "%llu\n", stats->sz_applied);
+>  }
+>  
+>  static ssize_t sz_ops_filter_passed_show(struct kobject *kobj,
+> @@ -253,7 +253,7 @@ static ssize_t sz_ops_filter_passed_show(struct kobject *kobj,
+>  	struct damon_sysfs_stats *stats = container_of(kobj,
+>  			struct damon_sysfs_stats, kobj);
+>  
+> -	return sysfs_emit(buf, "%lu\n", stats->sz_ops_filter_passed);
+> +	return sysfs_emit(buf, "%llu\n", stats->sz_ops_filter_passed);
+>  }
+>  
+>  static ssize_t qt_exceeds_show(struct kobject *kobj,
+> -- 
+> 2.34.1
 
