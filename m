@@ -1,124 +1,141 @@
-Return-Path: <linux-kernel+bounces-767359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67EFBB2534A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:49:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7018EB25350
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E189A0F4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:48:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F3E1C8487F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460F52EB5D3;
-	Wed, 13 Aug 2025 18:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06992FF15E;
+	Wed, 13 Aug 2025 18:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZlohB5i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLABF9lm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994552E1C56;
-	Wed, 13 Aug 2025 18:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C24F19F424;
+	Wed, 13 Aug 2025 18:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755110924; cv=none; b=rNR12TVqkgqqKhnroLx/pr4331w1weZcSzUCFfwubaFx4WX/I+Dh0PW4qJyQA8+olxHC3jGqTof8eRGVmQF1Yt3pfYN/gMJeqs9vmhIgOiVYgvrl7aelck2Sj5fDBSBpcc4oJfcdnruPx6oWNv3YS9dzxUl3T8ZPjAY1qyeUOUk=
+	t=1755111001; cv=none; b=XBPTWjN1KpZ4Dhof4oyAh0DXqMu93VsYoHm10FW/2Ey2pmEjnEzIsZFsD8MtYljbnGGMED2qyxaXNiT3tW6NuDGMbeAAg7gMBxFySyAivTWlIp5iJTTBqWWvl5zA85IJ5b8lsicyTc0fpq72aNgpGeaA5V+IU91CdB/KyhXi7FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755110924; c=relaxed/simple;
-	bh=h9+TOUuSmuwiGeeFq/t+i5nPgsw7wfFmCtzB/voaBMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hZ+i4Y4ViXvp48h8JQ6iKODvouo3DxZjTiA/m+wqHg+/BrQ7f/jV5zc36PywauIv8Hw28fSY+tyLiQZVzZi1/1v0jeXRY4f4T+S9uQit1+/eLeAvF1fumpY1Z7bHvoNhWw05qkovO+yF3GRUrhQG+6hxTGQ/cBGIYHMhtfxkwrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZlohB5i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8DA4C4CEEB;
-	Wed, 13 Aug 2025 18:48:42 +0000 (UTC)
+	s=arc-20240116; t=1755111001; c=relaxed/simple;
+	bh=6NdsD61bTOfCurNri0RvHdL+4iZxW9ysSAUi7LLEMgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QYSD92K37qWb1HlM4FXuRqzlwwS1/sZvUuHS/K1XHZdrB4/586j91G/CuYBITfsWsaOZDXDwbDOIPcqAonB9/YKDr6ovem4LRI8nGlFQgs71/ReYZJWXKwsCWddoO2iUBR1lewYiRQf2XpzEf5zMbI427EfZ1jqaNZNKI8hBHXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLABF9lm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35BC6C4CEEB;
+	Wed, 13 Aug 2025 18:49:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755110923;
-	bh=h9+TOUuSmuwiGeeFq/t+i5nPgsw7wfFmCtzB/voaBMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DZlohB5ixOlaz45evaXnl7qDy32fDEOZ6BGbTSFAhliWdtw+dZVDpifkSuuPhDxJe
-	 qE79KLFwqPMsz/kEyNXXYVLKpdGbpvayf3zBw2YGtzhQFc6od2+os7ZR2eBNfGTwDJ
-	 na5LyNI6j3CJw+NUGqoK4nAsWBAmwRoUuW78MxkzKT5OnVNPo7swvjGlQ8i49M0wgG
-	 lcCEPQ8qrjCWoLfwcycPTKi6gjkiS+1BZejCq4nNlwOUlpr55JdRdgsM93vk3jHzMC
-	 gSQ/5iCyG5+2TAmkgqM33xcPgOp+/KWxvPl+qAhlnYirYAAhGE4KSoYPszSX7ne3S1
-	 nxjTiH7GJV3Qg==
-Date: Wed, 13 Aug 2025 11:48:41 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>
-Subject: Re: [PATCH] reset: thead: Scope TH1520 reset driver to VO subsystem
-Message-ID: <aJzeCbARIRltiYE1@x1>
-References: <CGME20250810211419eucas1p173e5fefcfaae437d8b5531d1406ff6a6@eucas1p1.samsung.com>
- <20250810-fix_reset_2-v1-1-b0d1900ba578@samsung.com>
- <aJrTq775sXTrsepl@x1>
- <aJxGnnwlE1sWarXa@pie>
+	s=k20201202; t=1755111000;
+	bh=6NdsD61bTOfCurNri0RvHdL+4iZxW9ysSAUi7LLEMgI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GLABF9lmHWMW8DfrZ/PNRKiLkqw2Z5KF+uQ5O9BigBbaQmpbnVxmtflNeTpSgHgWX
+	 9qoLuOW1OcFUlFmRj7pN0rt4naNKr9lhYTMW2jMFRQN/hMtBCfwnkIqsW0XDVhNPdi
+	 APnMHM5CAMeDpCAv1SBbYWwlkLyTdDRS4R+QW4F01cKB2GLuDN6dERK4piceJGgr53
+	 IoYd7b0z2Ypl14CbXjKdO7wdgJmy4cSu5PcCe1Bgq2NjN3+rO6XuawAdnnINORL8Vj
+	 kU2dyEhXYqULJBGFLbhvr3fB58Pb56lqTy20ydGQcnVMyfr5SSDmgiQFisVXE1Ilpc
+	 sscEg3Xrw+W5Q==
+Message-ID: <8fc497df-116e-4df2-a33f-bd71476ce065@kernel.org>
+Date: Wed, 13 Aug 2025 20:49:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJxGnnwlE1sWarXa@pie>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2] arm64: dts: qcom: sm8750-mtp: Add WiFi and
+ Bluetooth
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250811131055.154233-2-krzysztof.kozlowski@linaro.org>
+ <l6u4y3suv3dpylexbiiznhcuyanlc4ouizhzj2cchblaf6o4wg@fe4laxrioaj5>
+ <481985cb-fa84-4b09-9b95-948ee70b557a@linaro.org>
+ <k7mw7rj7cno3con2t57nps23y7evd3da6gahyl5gnrxss7e3s4@qncnuekxr7lb>
+ <f7704cc1-95b4-4860-86ea-96ec18f61c8a@linaro.org>
+ <ibitgekdjsktpvr6zmouuhgzcbfjfeuv4l4zsl6vszv4hauug5@one6zo6gdykb>
+ <3239685a-97af-4d56-a0cc-984f26db5f76@linaro.org>
+ <3jrs5gkxzjgrjmfbd65qr3uzblzzz5ae4apo5qwpxb63jm4i23@jzpaxp3dxais>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <3jrs5gkxzjgrjmfbd65qr3uzblzzz5ae4apo5qwpxb63jm4i23@jzpaxp3dxais>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 08:04:40AM +0000, Yao Zi wrote:
-> On Mon, Aug 11, 2025 at 10:39:55PM -0700, Drew Fustini wrote:
-> > On Sun, Aug 10, 2025 at 11:14:19PM +0200, Michal Wilczynski wrote:
-> > > The reset controller driver for the TH1520 was using the generic
-> > > compatible string "thead,th1520-reset". However, the current
-> > > implementation only manages the resets for the Video Output (VO)
-> > > subsystem.
-> > 
-> > Looking at Section 5.4 on Page 451 of the TH1520 System User Manual [1],
-> > it does seem like we would ultimately need 6 separate nodes for reset
-> > controllers:
+On 12/08/2025 14:45, Dmitry Baryshkov wrote:
 > 
-> Yes, this is true. And another six nodes for clock controllers (there's
-> already one).
+>> Devices will be different, they will have different compatibles, thus
+>> you CANNOT have one DTS for both. What else - not my task, not my
+>> expertise, not relevant to this submission.
 > 
-> >  0xFF_EF01_4000: AP_SUBSYS
-> >  0xFF_EC02_C000: MISC_SUBSYS
-> >  0xFF_E404_0000: VI_SUBSYS
-> >  0xFF_EF52_8000: VO_SUBSYS
-> >  0xFF_ECC3_0000: VP_SUBSYS
-> >  0xFF_EF04_0000: DSP_SUBSYS
-> > 
-> > Maybe we should take this opportunity to document the bindings for all
-> > the resets that the REE (e.g. Linux) can control?
-> 
-> It's worth noting that with either mainline U-Boot or vendor U-Boot, no
-> core is configured to run as REE. IOW, AON_SUBSYS could be accessed by
-> AP cores as well.
+> Them having different compatibles is exactly my question. It's not
+> obvious if they are compatible or not.
 
-Interesting, I didn't know that the AP cores could access TEE resources.
-> 
-> I think introducing read-only clock support to Linux could help us to
-> correctly describe pvt clocks which are now replaced with a aonsys
-> placeholder and resolve issues like what is described in 0370395d45ca
-> ("clk: thead: Mark essential bus clocks as CLK_IGNORE_UNUSED").
-> 
-> Futhermore, there may be downstream projects, e.g. U-Boot, make use of
-> these TEE-only devices, which could benefit if we have these devices
-> documented and described in devicetree, too. Thus I think the AON clock
-> and reset controllers should be documented as well if we're going to
-> document every reset/clock controller in a batch.
 
-I think that does make sense to document the AONSYS clock and reset
-controllers in the DT bindings as they are part of the hardware and
-described in the t-head documentation. It would be great to be able to
-make use of more functionality in the t-head sdk like the ability to
-reboot the board.
+So we talk about basics now... even if devices are compatible, they will
+have different "compatible" property, so your question about
+compatibility does not matter. They could be compatible or could be not.
+Different DTS in both cases, so this is just bikeschedding this patch.
 
-Thanks,
-Drew
+> 
+> We've discussed this offline and I hope that the next iteration will
+> cover all these details.
+> 
+
+
+Best regards,
+Krzysztof
 
