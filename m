@@ -1,139 +1,166 @@
-Return-Path: <linux-kernel+bounces-766475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC02B2470C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:20:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B452B246FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A0061894F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1434716255B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB692D8DAA;
-	Wed, 13 Aug 2025 10:15:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6085623D7D3;
-	Wed, 13 Aug 2025 10:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C3F2DA75B;
+	Wed, 13 Aug 2025 10:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="c632ckEl"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611672D6E4A;
+	Wed, 13 Aug 2025 10:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755080145; cv=none; b=Xd1LuKAXTPBMAqwbU9jOE+DmKu4pwv6fUHmTZiy63CXoMHhOBNA/28Eq6F5o9y8pQHk+nP4P0HqobXexXYBCWhRm3Mxz5/bllF/CRHZtnyYcFpD81GxN++4HlEWHmLVAuA1TBbNOcbjxtg4J/2qvF+1SS5/eu5ueq2NwnjbdUQo=
+	t=1755080166; cv=none; b=YQRuDjmGBXXRnmjttyemZOiMQXzQ5VJtkw8G17XEy4qSmbWMeE3pyQGbRa1DUoIkcVyioV9EhFfHMVx3+krK7fRm+cQxiyT7xb7hddp6EgrMhpP1sSLnsKAg0oeGUJVMpe9HNeGkVU5wZ6RmOVnvgC6XNWdZccLNyiT564qWt9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755080145; c=relaxed/simple;
-	bh=ZluH6uhX2B/02Winvt1DG5yfLXuMX01kxN6jfx2fzOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t/GOcw6igeXMJ594cYKnvNBoHxL/H3SZMzbQks7F8dDKOAQkNPyAJ/QcVYH8Q4vBlff4Yxvc/zFgCucov3PA72IyiIGox9dDhUnYByxwCvY7S9qeozU84my+G7M6enqO2Sf/SIb1YvzEhs8RKfL5ilAzqu/gTo5DL9T93eXQvOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C21B12FC;
-	Wed, 13 Aug 2025 03:15:35 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D59D93F5A1;
-	Wed, 13 Aug 2025 03:15:39 -0700 (PDT)
-Date: Wed, 13 Aug 2025 12:15:24 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Prashant Malani <pmalani@google.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Jie Zhan <zhanjie9@hisilicon.com>,
-	Ionela Voinescu <ionela.voinescu@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
-Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
-Message-ID: <aJxlvMFD2hHaKdoK@arm.com>
-References: <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
- <aIso4kLtChiQkBjH@arm.com>
- <CAFivqm+kbRbJsJ_Obb4bV6fgxbqAwOndLUCDwHvWWnpMYoNoNw@mail.gmail.com>
- <aIvSe9VtZ-zlYfbQ@arm.com>
- <CAFivqmKR1dqVqTsoznH2-n8cyAM1=5zEGcEvmESU8RNGac-0sA@mail.gmail.com>
- <CAFivqmKgiVEWMQ90Lh6T+Y44E6m4jmdF5sUFfVNTmgVHOMtZsw@mail.gmail.com>
- <aJMCgGt5zu5Dhrd5@arm.com>
- <CAFivqmLSp6RwfsPBK0d=zvRd6M_5GoeU4jHb-0OM9BpaDeSrzA@mail.gmail.com>
- <aJR-4J-sTpLaNIJB@arm.com>
- <aJVdjwU-qkdDIXaD@google.com>
+	s=arc-20240116; t=1755080166; c=relaxed/simple;
+	bh=CfWL7rN1Qc5unQz3vGJmOT7xDk62DnANT+vxThseTQA=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=DQlOAfDZU4nolNhVTNX5LKC0LjmOLjuHcKZmDLQew71UzRU4oOkV598eZmTaQtyTmfuN3Riv2IiyOPY5C6k2vAPD2+wFNa5CUa6LUqTl42ExEQPNUNqGxyiVB0+nWnZH/9ATJD0on3Hq0TQPOK0hxW5Z2WTZx+ClkJtkpRCF5BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=c632ckEl; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 345252EC;
+	Wed, 13 Aug 2025 12:15:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1755080109;
+	bh=CfWL7rN1Qc5unQz3vGJmOT7xDk62DnANT+vxThseTQA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=c632ckEl1nFq0XxeNqRyZP1st5GoEjYrFbhMLPp+9i28VHGmATzZGoVqh4cgp1e0b
+	 CEyI+R9T9Zd69uQKZmDWBCGY5dbyF9RMOyy+izeqME548PIBaKt8G08qHo8W55LCRa
+	 gsOPH/308FD2uJtmKYKkiJRlNhB9RTKbuHUVpt8c=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJVdjwU-qkdDIXaD@google.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250813-imx335_binning-v1-3-a42b687d8541@ideasonboard.com>
+References: <20250813-imx335_binning-v1-0-a42b687d8541@ideasonboard.com> <20250813-imx335_binning-v1-3-a42b687d8541@ideasonboard.com>
+Subject: Re: [PATCH 3/6] media: imx335: Update the native pixel array width
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Jai Luthra <jai.luthra@ideasonboard.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
+Date: Wed, 13 Aug 2025 11:15:59 +0100
+Message-ID: <175508015948.560048.7430206645162546917@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On Fri, Aug 08, 2025 at 02:14:39AM +0000, Prashant Malani wrote:
-> Hi Beata,
-> 
-> On Aug 07 12:24, Beata Michalska wrote:
-> > Right .... that's what happens when you are (I am) making last minute clean up.
-> > That should fix it. Would you mind giving it another go ? Would appreciate it.
-> > 
-> > ---
-> > BR
-> > Beata
-> > 
-> > diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> > index 65adb78a9a87..2a51e93fcd6c 100644
-> > --- a/arch/arm64/kernel/topology.c
-> > +++ b/arch/arm64/kernel/topology.c
-> > @@ -543,7 +543,7 @@ void counters_burst_read_on_cpu(void *arg)
-> >  
-> >  static inline bool cpc_reg_supported(struct cpc_reg *reg)
-> >  {
-> > -       return !((u64)reg->address != 0x0 || (u64)reg->address != 0x1);
-> > +       return !((u64)reg->address != 0x0 && (u64)reg->address != 0x1);
-> >  }
-> 
-> Here are the measurements with the fix:
-> 
-> The readings are less accurate. There are some which report
-> 3.4 GHz (as earlier) but many are off:
-> 
-> t0: del:77500009084, ref:22804739600
-> t1: del:77500020316, ref:22804743100
-> ref_perf:10
-> delivered_perf:32
-> 
-> t0: del:77910203848, ref:22941794740
-> t1: del:77910215594, ref:22941798070
-> ref_perf:10
-> delivered_perf:35
-> 
-> t0: del:77354782419, ref:22762276000
-> t1: del:77354793991, ref:22762279400
-> ref_perf:10
-> delivered_perf:34
-> 
-> t0: del:64470686034, ref:22998377620
-> t1: del:64470695313, ref:22998380880
-> ref_perf:10
-> delivered_perf:28
-> 
-> t0: del:78019898424, ref:22957940640
-> t1: del:78019912872, ref:22957944590
-> ref_perf:10
-> delivered_perf:36
-> 
-> Best regards,
-> 
-> -Prashant
-Ok, that's not really good.
-Any chances on sharing which platform are you using ?
-Remote debugging tends to be rather painful.
+Quoting Jai Luthra (2025-08-13 08:20:34)
+> The sensor datasheet reports actual total number of pixels as 2696x2044.
 
----
-(Note: I will be off for couple of days so please bear with me)
+Err ...
 
-BR
-Beata
+Page 2 of the IMX335LQN-D datasheet I have says:
+
+Total number of pixels: 2704 (H) x 2104 (V) approx 5.69 M pixels
+Number of Effective Pixels: 2616 (H) x 1964 (V) approx 5.14 M pixels
+Number of Active Pixels: 2616 (H) x 1964 (V) approx 5.04 M pixels
+
+Where does 2696x2044 come from ?
+
+
+Argh - then on page 8 - indeed it says
+Total Number of pixels 2696(H) x 2044(V) =3D 5.51M
+
+
+In imx283.c I've moved to defining these windows as a v4l2_rect. I find
+that's a nicer way to convey the rectangles specifically instead of
+through #defines and then they can be directly used to report crop
+rectangles:
+
+i.e.:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/dr=
+ivers/media/i2c/imx283.c:
+
+/* IMX283 native and active pixel array size. */
+static const struct v4l2_rect imx283_native_area =3D {
+	.top =3D 0,
+	.left =3D 0,
+	.width =3D 5592,
+	.height =3D 3710,
+};
+
+static const struct v4l2_rect imx283_active_area =3D {
+	.top =3D 40,
+	.left =3D 108,
+	.width =3D 5472,
+	.height =3D 3648,
+};
+
+Not required - but just an idea (that obviously I like :D)
+
+
+>=20
+> This becomes important for supporting 2x2 binning modes that can go
+> beyond the current maximum pixel array width set here.
+>=20
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> ---
+>  drivers/media/i2c/imx335.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
+> index 6369bdbd2b09ba1f89c143cdf6be061820f2d051..dbf2db4bf9cbfd792ff586526=
+4c6f465eb79a43b 100644
+> --- a/drivers/media/i2c/imx335.c
+> +++ b/drivers/media/i2c/imx335.c
+> @@ -124,10 +124,10 @@
+>  #define IMX335_NUM_DATA_LANES  4
+> =20
+>  /* IMX335 native and active pixel array size. */
+> -#define IMX335_NATIVE_WIDTH            2616U
+> -#define IMX335_NATIVE_HEIGHT           1964U
+> -#define IMX335_PIXEL_ARRAY_LEFT                12U
+> -#define IMX335_PIXEL_ARRAY_TOP         12U
+> +#define IMX335_NATIVE_WIDTH            2696U
+
+The all scan mode on page 56 doesn't show these at all.
+Just 12 + 2592 + 12
+
+But I think that's the datasheet being inconsistent/restrictive about
+what it says an all scan mode could be.
+
+It would be interesting to make a 'super resolution' output mode that
+can transmit every pixel possible but not required for this series
+development just for fun tests.
+
+I'm torn here - as the datasheet changes it's points of reference to
+make it's "all scan mode" essentially start at 0 which is clearly not
+correct against the 'native' positions.
+
+So ... I think I'm just going to say I think we don't believe the
+datasheet as we *know* there are more pixels and we are using them so :
+
+
+> +#define IMX335_NATIVE_HEIGHT           2044U
+> +#define IMX335_PIXEL_ARRAY_LEFT                52U
+> +#define IMX335_PIXEL_ARRAY_TOP         50U
+
+I see you have taken the '80' extra pixels on both width and height and
+divided half before and half after centering the window. I have no
+information to say if it's position is otherwise so I think this is all
+we can do:
+
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+
+>  #define IMX335_PIXEL_ARRAY_WIDTH       2592U
+>  #define IMX335_PIXEL_ARRAY_HEIGHT      1944U
+> =20
+>=20
+> --=20
+> 2.50.1
+>
 
