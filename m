@@ -1,160 +1,121 @@
-Return-Path: <linux-kernel+bounces-766454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D2DB246B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:10:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E24EB246B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C50A188C2BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:07:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51C42189D4A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E672F1FF1;
-	Wed, 13 Aug 2025 10:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318D72D46C8;
+	Wed, 13 Aug 2025 10:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3/RNGQc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Lx0+IBzy"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A6C2EFDAF;
-	Wed, 13 Aug 2025 10:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF752F3C37;
+	Wed, 13 Aug 2025 10:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755079623; cv=none; b=tRXBBr1QpoqsrpLvN6hCwMpADGy4O73HV1a27Ceh7MJwUJdncH1RRWfUro8fUh4apOGDRV3qcpR33Rfg4s2HBlLxUOwT3j2MTReYVBTO7/DPoYVJUetwe8qSYTQfUagupL73VcIvErTXJ85vJhSdB7DpbU5m7FnG0UYwVnJPoTc=
+	t=1755079628; cv=none; b=C+Rwwyw2DaFG3Jv7u15oCMdHEdxD54JmzMUEuWE9Ddeqjw+2Il7FQF+j/Y39iDA+BS82pb9FxkJq5YpZyqFYUAzuJveMNSH31KKmSSfszWqoYvzwckUIoTcx5OB0ScW0ra0WWjT+L492SitGmkctmfmpSWpszpmvKgBgYNZukJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755079623; c=relaxed/simple;
-	bh=Lc/hlDKzA1IIBbbdHxhP3s10pkz9axIThbIQfHUGsfk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uf47VjzN3DP72ViPKSpvd/1Kjjj7SzTaDRGAYUKOpbVAC6zp9fKhgx+qDyF7wjKNnZqhhYVg6wqHZ+UZZpjUimKNFtA5H5NOL7rv+/NvpN5q2TJeX6iz2+Julc5vdoIKjtcXewu13YHXyMoVFb6Mr3OIXQJ9/tGxCvi0/Yf9YK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3/RNGQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D80C4CEF6;
-	Wed, 13 Aug 2025 10:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755079622;
-	bh=Lc/hlDKzA1IIBbbdHxhP3s10pkz9axIThbIQfHUGsfk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e3/RNGQcioCzbtSJtQZlKc0wTgIjL2zSfAu3SpZrlPUW0jtXKHdTeXREm8+4eTJPn
-	 +D4tSn0X4/a4CL9yddjLsVIr0//ZzvMcR5ZWe7hVsg/eXbbY2SxqBFYdHBCEDZnR/j
-	 W0YYxjl3mv57wajCsfNfx5tkLXRXc3ERR3RsZmB++CTNqWDI658IcnVsGJU4zjLjms
-	 4cVO5EREF+1YCLFLSnvrDWU7RcPBrp0LW1dFZVZgcl02Mh608fpqxItSe76BnKtnY4
-	 sA+aBysx1lblV2lrbA2FNYq7tr8lHUrcDkcv/oC+dt65yxv84V68z2k2/Mq4yd4tUG
-	 WV2Jq1Njf8ngQ==
-Date: Wed, 13 Aug 2025 12:06:59 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Minjong Kim <minbell.kim@samsung.com>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] HID: hid-ntrig: fix unable to handle page fault in
- ntrig_report_version()
-Message-ID: <p3rs7zuac4femnpe65afxpdrvturg4tx64t5r2xpmmyorzodgp@fyn2v2z6pe76>
-References: <CGME20250717061154epcas1p329022ab54ed143d2a8d5b3f8b7554b38@epcas1p3.samsung.com>
- <20250717-hid-ntrig-page-fault-fix-v1-1-96fa145a137f@samsung.com>
- <rqo85n88-82s2-30s6-qn80-r4r943p4q59o@xreary.bet>
- <20250813051751.z6vxd6tvrfelmxou@minbellkim-500TGA-500SGA>
- <elszhqc5knv2o4mvq2frul6vglqxsdyrjepzgmda45lmrh4ylp@qvdvsgumuigx>
- <20250813092234.ja5qfpvkxocfnchd@minbellkim-500TGA-500SGA>
+	s=arc-20240116; t=1755079628; c=relaxed/simple;
+	bh=4ulasoKPZMXPmZEIp5uymNNW6xSMts5D6ARyYhoHWCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QK1O5nWWE1+xq1rvhizDQyIg+pJ013rs0ANNWxYwLKOorV5+CxfYZpmiPN/4ST84RSIgf0iIDPGBN2OSKhFR1o/ONO8GpkBlhErDsFd5Tzn9l6GBoyBl2cbflgNm08va+/Uyqnb9SwEaw+f5qnSUw9p+PiL6zldo6C53dAZx9Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Lx0+IBzy; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 010A943A0E;
+	Wed, 13 Aug 2025 10:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755079624;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92PIXEVT8Ixzby8qIvoqZV3y8yASO5P1j9bblpffSDI=;
+	b=Lx0+IBzyJDg5esoCFnwqsP2JW9x31tMSRoSLDz7BcU+YI+doD+qy6tqzxdbFQATuZpzIfU
+	Yfy7+yt96LT5AcQ8eq/UDwR3GhDFAWNz5noQFA7aUuay/RFWrMbPlzb+BpZAcH9ypNcb1W
+	IhZEabkj2nITM+Tgu5l7jFyOpcOdkj9uk3nq4CHkf3AxAYJaotHVZbDMU3p2eOIAwssMkh
+	QHWUnqNyX56qzHLIn3YzSJLhv4mj5lWcVupbf/UEubRv5rfYXlILE21tsIkj8J3jo3Cdh6
+	bacpjidH0UHPx3/8yDWeLdkGmGnAApfuxued2TIDSrh0K0Oz4dJPlt5GFvLZRA==
+Date: Wed, 13 Aug 2025 12:07:03 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Qiang Zhao <qiang.zhao@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam
+ <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] ASoC: fsl: fsl_qmc_audio: Only request
+ completion on last channel
+Message-ID: <20250813120703.6e8eed30@bootlin.com>
+In-Reply-To: <21eb89cc03a1c2135bdaba6a4dd1d0c2e624ce29.1754993232.git.christophe.leroy@csgroup.eu>
+References: <cover.1754993232.git.christophe.leroy@csgroup.eu>
+ <21eb89cc03a1c2135bdaba6a4dd1d0c2e624ce29.1754993232.git.christophe.leroy@csgroup.eu>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813092234.ja5qfpvkxocfnchd@minbellkim-500TGA-500SGA>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeejleefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepjefflefhieduteegffeifeeggfffvdeuvdeutddvfeduudeukeffleehheffkeetnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggstdekmeelkeeltgemkedttddtmehfugekudemleehgegvmedvudehrgemfeeluddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdtkeemleeklegtmeektddttdemfhgukedumeelheegvgemvdduhegrmeefledutddphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtohepqhhirghnghdriihhrghosehngihprdgtohhmpdhrtghpthhtohepshhhvghnghhjihhurdifr
+ ghnghesghhmrghilhdrtghomhdprhgtphhtthhopegiihhusghordfnvggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhhitgholhgvohhtshhukhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Aug 13 2025, Minjong Kim wrote:
-> On Wed, Aug 13, 2025 at 10:39:37AM +0200, Benjamin Tissoires wrote:
-> > On Aug 13 2025, Minjong Kim wrote:
-> > > 
-> > > From 75e52defd4b2fd138285c5ad953942e2e6cf2fbb Mon Sep 17 00:00:00 2001
-> > > From: Minjong Kim <minbell.kim@samsung.com>
-> > > Date: Thu, 17 Jul 2025 14:37:47 +0900
-> > > Subject: [PATCH v2] HID: hid-ntrig: fix unable to handle page fault in
-> > >  ntrig_report_version()
-> > > 
-> > > in ntrig_report_version(), hdev parameter passed from hid_probe().
-> > > sending descriptor to /dev/uhid can make hdev->dev.parent->parent to null
-> > > if hdev->dev.parent->parent is null, usb_dev has
-> > > invalid address(0xffffffffffffff58) that hid_to_usb_dev(hdev) returned
-> > > when usb_rcvctrlpipe() use usb_dev,it trigger
-> > > page fault error for address(0xffffffffffffff58)
-> > > 
-> > > add null check logic to ntrig_report_version()
-> > > before calling hid_to_usb_dev()
-> > > 
-> > > Signed-off-by: Minjong Kim <minbell.kim@samsung.com>
-> > > ---
-> > >  drivers/hid/hid-ntrig.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
-> > > index 2738ce947434..fa948d9e236c 100644
-> > > --- a/drivers/hid/hid-ntrig.c
-> > > +++ b/drivers/hid/hid-ntrig.c
-> > > @@ -144,6 +144,9 @@ static void ntrig_report_version(struct hid_device *hdev)
-> > >  	struct usb_device *usb_dev = hid_to_usb_dev(hdev);
-> > >  	unsigned char *data = kmalloc(8, GFP_KERNEL);
-> > > 
-> > > +	if (!hdev->dev.parent->parent)
-> > 
-> > Why simply not use if(!hid_is_usb(hdev)) instead?
-> > 
-> > Cheers,
-> > Benjamin
-> >
+On Tue, 12 Aug 2025 12:50:57 +0200
+Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+
+> In non-interleaved mode, several QMC channels are used in sync.
+> More details can be found in commit 188d9cae5438 ("ASoC: fsl:
+> fsl_qmc_audio: Add support for non-interleaved mode.")
+> At the time being, an interrupt is requested on each channel to
+> perform capture/playback completion, allthough the completion is
+> really performed only once all channels have completed their work.
 > 
-> From 61818c85614ad40beab53cee421272814576836d Mon Sep 17 00:00:00 2001
-> From: Minjong Kim <minbell.kim@samsung.com>
-> Date: Thu, 17 Jul 2025 14:37:47 +0900
-> Subject: [PATCH v3] HID: hid-ntrig: fix unable to handle page fault in
->  ntrig_report_version()
+> This leads to a lot more interrupts than really needed. Looking at
+> /proc/interrupts shows ~3800 interrupts per second when using
+> 4 capture and 4 playback devices with 5ms periods while
+> only 1600 (200 x 4 + 200 x 4) periods are processed during one second.
 > 
-> in ntrig_report_version(), hdev parameter passed from hid_probe().
-> sending descriptor to /dev/uhid can make hdev->dev.parent->parent to null
-> if hdev->dev.parent->parent is null, usb_dev has
-> invalid address(0xffffffffffffff58) that hid_to_usb_dev(hdev) returned
-> when usb_rcvctrlpipe() use usb_dev,it trigger
-> page fault error for address(0xffffffffffffff58)
+> The QMC channels work in sync, the one started first is the one
+> finishing first and the one started last is the one finishing last,
+> so when the last one finishes it is guaranteed that the other ones are
+> finished as well. Therefore only request completion processing on the
+> last QMC channel.
 > 
-> add null check logic to ntrig_report_version()
-> before calling hid_to_usb_dev()
+> On my board with the above exemple, on a kernel started with
+> 'threadirqs' option, the QMC irq thread uses 16% CPU time with this
+> patch while it uses 26% CPU time without this patch.
 > 
-> Signed-off-by: Minjong Kim <minbell.kim@samsung.com>
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 > ---
->  drivers/hid/hid-ntrig.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  sound/soc/fsl/fsl_qmc_audio.c | 46 +++++------------------------------
+>  1 file changed, 6 insertions(+), 40 deletions(-)
 > 
-> diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
-> index 2738ce947434..0f76e241e0af 100644
-> --- a/drivers/hid/hid-ntrig.c
-> +++ b/drivers/hid/hid-ntrig.c
-> @@ -144,6 +144,9 @@ static void ntrig_report_version(struct hid_device *hdev)
->  	struct usb_device *usb_dev = hid_to_usb_dev(hdev);
->  	unsigned char *data = kmalloc(8, GFP_KERNEL);
->  
-> +	if (!hid_is_usb(hdev))
-> +		return;
-> +
->  	if (!data)
->  		goto err_free;
->  
-> -- 
-> 2.34.1
-> 
-> 
-> I checked that crashes didn't occuered this patch
-> then, I'm just wondering why it is effective?
-> could you explain me about this?
-> 
-> Best regards,
 
-Could you please properly resend the patch, without replying to the
-thread? I can't seem to make b4 happy to apply the patch directly so
-there is something wrong with your submission here.
+Acked-by: Herve Codina <herve.codina@bootlin.com>
 
-Cheers,
-Benjamin
+Best regards,
+Hervé
 
+
+
+-- 
+Hervé Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
