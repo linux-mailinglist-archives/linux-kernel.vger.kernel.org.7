@@ -1,116 +1,125 @@
-Return-Path: <linux-kernel+bounces-767403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1279B253D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:22:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76969B253D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B1A04E51D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:22:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 638BD4E15DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5387B2F9993;
-	Wed, 13 Aug 2025 19:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC03F2FFDF1;
+	Wed, 13 Aug 2025 19:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hcgpzNzH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlRhIYmT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AE12F9986
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 19:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23FBF10785;
+	Wed, 13 Aug 2025 19:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755112916; cv=none; b=S8e8MThU7xgyLB3P69PNMoDi3KCUcPVqGdxXojX5c/HGK9raof5hCV/WW9A++q9bhRm6zq0TQGkDOg9HLUBGaZpFZaZ1u/5SBAnCHD9M22l2VMu5hVtDW3nz2Pf8hBfI5hkFhAuYiFuAQZbjNLbpmo+QHWwHC7cb11tLDOL4wLw=
+	t=1755112841; cv=none; b=uYpg8BThYB2lpqdgJ7wo/af41GChynPKv5kR7dSUjVZULm2WOuw8f02q9b+RxDrjDSR1K5V0zfHn9pWuzk1OFAHwExuDog71XOCLSucfaZ+kKRwD0lj2SMT2Amyd44uPowDQLJSeNba3jdFyxwf83RbZAD5B3ygFoBNsromwkaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755112916; c=relaxed/simple;
-	bh=BHOszFTrjm90xlq4+PIldcY0J2ERSxGLFgHVK8Li9VA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCXKzsRDCkFyA5DIEQzAhF5CAANvURPG2gCSELQ4pA3dKIyBVSPZ2Q6cCs+1UYuvW5+VP/oyPwzfYCQVflz2RQuV8pB8ngC4aWPI6ly6CE8bq9vjd3POZOP85mf4f4L3CASo0jvLnSmuRGjzl7evPXK+MvXTgZyXZqYDL9ckU+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hcgpzNzH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755112914;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BHOszFTrjm90xlq4+PIldcY0J2ERSxGLFgHVK8Li9VA=;
-	b=hcgpzNzH5qmCLvc42PZHlUgWiyNhQfJMf0OecMdweadnQv+SIWsJY2JcSrCZuYI5qR14J/
-	7KayvxkH6+0FPIgQOgeBuAIMqjZeQufeplSuYf11oNprD9KNQESDVjCtrlcZEnEE5bVfvN
-	DQlhmLc/DdPYQwpvXThM/OHgdSB4kDI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-127-BxAj-qyePDihndlXyVqSVA-1; Wed,
- 13 Aug 2025 15:21:50 -0400
-X-MC-Unique: BxAj-qyePDihndlXyVqSVA-1
-X-Mimecast-MFC-AGG-ID: BxAj-qyePDihndlXyVqSVA_1755112908
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 88D9E180035B;
-	Wed, 13 Aug 2025 19:21:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.62])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 16C49180029B;
-	Wed, 13 Aug 2025 19:21:42 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 13 Aug 2025 21:20:31 +0200 (CEST)
-Date: Wed, 13 Aug 2025 21:20:26 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: PF_USER_WORKERs and shadow stack
-Message-ID: <20250813192025.GB26754@redhat.com>
-References: <20250813162824.GA15234@redhat.com>
- <a4cb5e3e-717e-4a86-9e15-5b14ef322314@intel.com>
- <20250813191441.GA26754@redhat.com>
+	s=arc-20240116; t=1755112841; c=relaxed/simple;
+	bh=PDJhFh9NikHx+GpD7oqdM9qqfwvz5lGAeM1nGy+Joxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UwY1SlV+VXUn+tZwqL8Sgs+EIV0KrBKnDuYLdgtq6VR4V47qc7USS9+4tkHnc30VzcsyMPiCvv1QQiCMys7Y1hreNN17DkbMnDQoFuj1JPgoaEnSNX8gIQRkze5dhwpL20OkihkyvysZoJBLpKN//3vW04QcF9AnA/hvQ9fwi6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlRhIYmT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3351C4CEEB;
+	Wed, 13 Aug 2025 19:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755112840;
+	bh=PDJhFh9NikHx+GpD7oqdM9qqfwvz5lGAeM1nGy+Joxw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mlRhIYmTqsa5EcAr2zLpLh7xylDnD4OGM/ur8Au3jnZnmB2LYquRTKtvGjQo5W5z+
+	 x4fGOA8i6sJ10HdaUdOjkKHG87Y1tSB14CKKjP0nljzvJH2ysF1mcARoHn64Y1n7jk
+	 DGcfcYfW3nMS8i5VbauMNzS0PtebyH3Mp4PVMelwFp0WpISiYVbnF1pQFPaN+yNMTw
+	 53c/LlYagb1OcDXvSHog9DTyoycNYzI4ViC13WLg/7Z6BVbrgs6BvSqDplP4b9YYpg
+	 hT3S5ItQ8uICc/z1TUjz6cd34VO9xnSTmO2272Oxu/w6xQykdsarhEO3Yl8JwMlzR3
+	 6nqfZn5hD/tSw==
+Message-ID: <f75e0372-6a45-4d27-a74a-0a41c5674987@kernel.org>
+Date: Wed, 13 Aug 2025 21:20:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813191441.GA26754@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: display: bridge: it66121: Add compatible
+ string for IT66122
+To: Nishanth Menon <nm@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ David Airlie <airlied@gmail.com>, Maxime Ripard <mripard@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Robert Nelson <robertcnelson@gmail.com>,
+ Jason Kridner <jkridner@beagleboard.org>
+References: <20250813190835.344563-1-nm@ti.com>
+ <20250813190835.344563-2-nm@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250813190835.344563-2-nm@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 08/13, Oleg Nesterov wrote:
->
-> On 08/13, Dave Hansen wrote:
-> >
-> > On 8/13/25 09:28, Oleg Nesterov wrote:
-> > > But it seems that if a features_enabled(ARCH_SHSTK_SHSTK) thread creates a
-> > > PF_USER_WORKER thread, shstk_alloc_thread_stack() will allocate the shadow
-> > > stack for no reason.
-> >
-> > Is this costing us anything other than some CPU cycles and 160 bytes of
-> > memory for a VMA?
->
-> Well, I guess no, but I do have another reason for "something-like-this" cleanup.
-> I am working on other changes which should eliminate x86_task_fpu(PF_USER_WORKER).
-> Hopefully I'll send the patches tomorrow. To remind, see
-> https://lore.kernel.org/all/20250812125700.GA11290@redhat.com/
->
-> So I'd like to ensure that ssp_active() can't return T in ssp_get().
+On 13/08/2025 21:08, Nishanth Menon wrote:
+> Add a new ite,it66122 compatible string to the IT66121 binding
+> documentation, since the two chips are practically same except for id
+> register difference.
+> 
+> Signed-off-by: Nishanth Menon <nm@ti.com>
+> ---
 
-Sorry for noise, in case I wasn't clear...
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I meant, can't return T if target->flags & PF_USER_WORKER
-
-Oleg.
-
-> And... Dave, I understand that it is very easy to criticize someone else's code ;)
-> But - if I am right - the current logic doesn't look clean to me. Regardless.
->
-> Oleg.
-
+Best regards,
+Krzysztof
 
