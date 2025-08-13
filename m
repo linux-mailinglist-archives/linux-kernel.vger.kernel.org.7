@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-767534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FFCB255AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:40:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59FCFB255B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0D86561F34
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248583AD548
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126693009C0;
-	Wed, 13 Aug 2025 21:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255563009D2;
+	Wed, 13 Aug 2025 21:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NOLbygg8"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cf01cekL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CC13009C6
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5C63009F7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755121060; cv=none; b=JvJ4NUJAXKzRFa+QxIBilHMDme4edWGMKbQPyWlYDZgEVWoPUwdMGkifBOpaT1lZTZPc79eaO3sQffiDTgpq/Nz2qmO96Klg3ltLyIc0v/iovHlIMmokTSXqPzCBtZ5o4xiArk0edWmcHo5NlMGZHhiECo+GOmztMQQOnrEKpHA=
+	t=1755121070; cv=none; b=YU4GAHJxccyQ3ipBl5by/qq1nDKWpTJldp63KzS/PvUJpOgi+F7wwAvZhlvWvs3UWHat4xaCaCLJExkvsaJaeWgOoDLTwmna7zIKHCMRzS4PZqhsGdMCPBMbcees0Lqaxdgx8vQIa79Ct8j1Gr2mZbqxu5X/62JVgc+iSL9hF2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755121060; c=relaxed/simple;
-	bh=OIHFNFGpI3Nnr1laP8Tk/ZYcGpLTmB4+VLlc5+ifYaE=;
+	s=arc-20240116; t=1755121070; c=relaxed/simple;
+	bh=ccjfO4/u/lWDNF3S1R9u3rjC6s7tA1lPQElrO9joQz8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LgSg+Sq0gmt/hJE63q90kAByoR6KXUv5VkoIVTBH40KR3ouECL8z+8UnlG/770BBTAGdWDXuJ1yhNiNN4zK8+m1dfQpnu+eL4HSfop/tpqaibH1m8+2ip1xjQhmeIoExU2lzbSZHllUXvY0uoC5dc/iNyKZX8w2iFOn2g2ufkAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NOLbygg8; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9a342e8ffso229625f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:37:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755121056; x=1755725856; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/R0PLr1UJ15LH0yUiipvHzrelupSAOLxlwfOAUkKpZE=;
-        b=NOLbygg8wCZ7xDS8sY6/8XVxhJIdZ/UyZHh5Rk+mxXuE2sGvyvcgxK4gSBj+gUJrNg
-         Mfy6CDfSnfDisC7Ay48wHY55NwBLsyN+LuEfZNJqyZtlNwBzyQhgN88KY6nzAHmjq/8Q
-         4TMmf3pmFu7Y7AzqpLhTS+PtvENEPjWnb2UN1Q9p7H3kLxQQmFW7dq3wwu+f9ShjwKxf
-         9l8xeFWW6SLzvOnHZgOhSzt7jAsCkEU60DfVtMpzNzzEBkD229b6LBUAwGTeIBkH2naJ
-         ah/Ejnf+gyZlBqTuK5fsJ9WX6rU/N094XaevnXaucRsuWP5NJsQMLLsmJxOrqKrCeMgW
-         vM7g==
+	 In-Reply-To:Content-Type; b=bMudWb+G4+LvBENrEcyQVk6w+WnMiJ7c/w1DRnvp3lT2UiSw9cbj6rHn873Msxx/tGLLYgVPj5RtFRg1kWdEVyZ4PxtWJWKt/rne1P0PGUEeZiMomnmZg9HvkG+JHDffm7XGtTn2+QjnBS5dLSOJy0oyREmZj6jkdVOoa/47xwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cf01cekL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLfqw012236
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:37:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+SndjKr0RXE6OvRgCGGjccbf8K/ICQkhBHCI3TArlkI=; b=cf01cekLIKKmp6W9
+	Q/KiEcVSMrq8AYF3X5UAHRYpvTK1X1DUORA9hux8y9uPE16/4CYrPgxKaBlLS7Yt
+	nu4uuJGy4uEe0ZJA+FxLoQaRnAxi+rROX43B20wRy5W/TI7G92K0GbK4nPxZSO7h
+	88vZpNMTG9DLSNeD6RzLLu6goYg2RtxJIrvIzGZIS8aZzL36z56spkA+iJy9APXr
+	pdUvD1/tM+pL076SnTHA0TS58l0s+JVc+wkln+ka4tX8MCVy0dsINtixHmJUvP0C
+	OlxTaUoYFDF27xosid1bq4nfJT02CtZEulMGareqAO0apCpLC1Rs4LUgsAyWMnKY
+	mSGE0Q==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhxbfv9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:37:46 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b47175064beso143457a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:37:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755121056; x=1755725856;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1755121065; x=1755725865;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/R0PLr1UJ15LH0yUiipvHzrelupSAOLxlwfOAUkKpZE=;
-        b=icMIJzbpEIJLNpPNtLqTkk7Kw3ibW8V9T7trsabqEPE7VPbKZop2BRSdUUuQiyePKK
-         gF/FitbhNDmMse3jkfH7ucUuo55DW3SufomVf5Rd0RxeEWRGZGeprnlXnkTQ/XtPGlFK
-         2/MRAfEuHKJHk671uwcVYGcXLje7sIjwiktOtfrdjHge112GYqKCDOWCnw2jP53g3ovz
-         1P0mu1AqbBYHZ7BU5+vp2zoc3U3pvSj1PN3ZK4M9cGLoLbkd0HkWAZBdaaKrwtpwDuSn
-         d10ATeuSFZjRZt+Lt+1RMj04Xo1a+E2wG6MoNBkX+YUikK7JbMk+JLKayKrRqyhrewoM
-         c3lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRPU4mhDLmHmRXs8RN9bgOp3Ht/VLMJJPHkceu5+ooaA+991sdOHVuZ1NEggXZLZ2RRQNO1PoUk3A5IHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQIzseOzqMxBbcQYsqFLNIsusT3j6uhFh5l1fJghX4y02vgYOu
-	qI/c3EiyxOBMxmn4UAYONWEsGzioJYy4sl5J+T6WZzD1tyMr5kh1kswaaC6KCrWSXII=
-X-Gm-Gg: ASbGnctz4VuRHXyUR8PxHHfXNBD9GLyEkzo0YoTJR/GQ4wMOyF/r8O+cyP6m3XtBW5A
-	TIkqV54ji5be3Km3YitoBzcNiu4dFGuPP95KGg9xMZEBqjRKCzlsMxVyNGejUhBJqUHTGt5wRrh
-	PBz4S2zw7hA55ECZUzHKE4kn3RiCEpNERDa80lwXlALebflx1aEVCXhTvXxQSAiP/ONXAQxsdAH
-	PAH4jsyiqFdvcV6DxGNKqsnw/SCorJ+JIk8ELfPNRjgKPyG56NuOalm/10li0aVWkbGybSwR+bz
-	TSkKHklERbPP81Dqz/KiHWEolnbZKZsQoWW31jA673PlBFHi/RbuIMBYD5yJi6egXsgebUkcWrX
-	O0658GPwENr5RvBwTfZaIxVLzUseTvwWwJ4DSp/gqrsdI7sPUZEp7jQ1L2I17D+wU
-X-Google-Smtp-Source: AGHT+IHDgkAiDoUCfIGsD1JHcyl15RLIs40KyXWWTRPJ8npwc6pR4KZc9S2TTnaRFinIsu9wVY/smQ==
-X-Received: by 2002:a05:6000:400b:b0:3b7:775d:e923 with SMTP id ffacd0b85a97d-3ba506624edmr206323f8f.4.1755121056198;
-        Wed, 13 Aug 2025 14:37:36 -0700 (PDT)
-Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a540945sm15247815e9.26.2025.08.13.14.37.34
+        bh=+SndjKr0RXE6OvRgCGGjccbf8K/ICQkhBHCI3TArlkI=;
+        b=HiLa/GUaL7M0WOf/kWO23T1OPudU8sV0aU5Tzu8jqjEHAX36f8NAYrGc010KYJcNLR
+         QCknOU5j39DYiNsWbPZ0rtJFBZaNpQD83sLDNurboyDIv/uROysXErvLg19F/TNip1Ra
+         Qae3+af7QLb7RFgSdhxk5UKGmmDe8wvcSL5PmMAW+3alFsmsdNOdocykJW+gTg536Dao
+         7tNSEJjS2R1JeLBxT/qzBFSY9jBzxIsEpXwlB0v2VER3VNRsL6hGAyqHyHvn8c+Q8Gxj
+         KM8Z0cGFG1KuMK2NA483uHvpZwoiJnjNixk1CD/mC3V1df+/uJtWgd9vDfxm7G6ZjSPg
+         HYHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJwzIbLsT6YwWdAPuQAo7Rj+GUSIGLTeFxKxLKXtfZeY7Sf4Xg2UpSzVw2DOl8MbnR83ENEht6Jj+gEYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9rssvsSvvu6glfTOMQW583kmAi0pPa5ftcUF+dIyjrUIG+nRv
+	WwiQ4MWZhlsfz/QK19UTdO0sOuOcl4hrj6cyThD8fNDO2q4PsSosATlJtWANRqaxtzJKqIyu6HM
+	S5tBIico+xBeRdiEWfXJRDoS/Ab7t6fnKux+JlY+Fku5BFQAzUVZhqqiZzBYuCjVozg==
+X-Gm-Gg: ASbGnctpyQutybeHKLCLEU+nfYFYRvceG501ZBQiYhu9Ny7SjLIJUyP9+6zOcIA+uUc
+	SyWZDDhHCNHmo3X+iHLOK1uf/R63vM/uq+9CRwnQpkJ0mSbctygi3NqmA6NnGk/CD8nCdmBKOaz
+	ytrkj49XcwFWWTLLmuuEY7H529fOs87RiMG4UMncT5VIIgVretEefCEqwXdq88GqslOL5N6nYbd
+	Vj1DSr9NLZxMBNk+hx22misOvc4LK0PpGEHlq21tDkLH2A8JFjiZhn7D1hGdG529G4wpAkM5so3
+	5JS+2ryCHl3XQAAzrUuhfmWZZsEDUX7Ty6Mr9+yyUzqgWWYO0Oo0L7WFdIYAgoMuybvve3e4V+t
+	fo3B8ouK1kcY5Ln5WxTePGKNGnl9utmjxZiTpPw==
+X-Received: by 2002:a17:902:f68f:b0:234:a734:4ab1 with SMTP id d9443c01a7336-244584af4ffmr8494845ad.3.1755121065295;
+        Wed, 13 Aug 2025 14:37:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHuzWbzDav9fzDkocxmSvr5IQCdvgg5HSGiPWY/6Um64YBLDMk04VNr0wYVwa0mHQaKsHAjBA==
+X-Received: by 2002:a17:902:f68f:b0:234:a734:4ab1 with SMTP id d9443c01a7336-244584af4ffmr8494365ad.3.1755121064760;
+        Wed, 13 Aug 2025 14:37:44 -0700 (PDT)
+Received: from [192.168.0.74] (n1-41-240-65.bla22.nsw.optusnet.com.au. [1.41.240.65])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3232578248dsm983697a91.16.2025.08.13.14.37.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 14:37:35 -0700 (PDT)
-Message-ID: <03947c1c-1d60-472b-883f-c9875df20245@linaro.org>
-Date: Wed, 13 Aug 2025 22:37:33 +0100
+        Wed, 13 Aug 2025 14:37:44 -0700 (PDT)
+Message-ID: <a93b9788-92ef-4b5a-89ca-7e7733697eed@oss.qualcomm.com>
+Date: Thu, 14 Aug 2025 07:37:35 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,216 +89,205 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] arm64: dts: qcom: qcs8300: Add support for camss
-To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250813053724.232494-1-quic_vikramsa@quicinc.com>
- <20250813053724.232494-8-quic_vikramsa@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v7 06/11] firmware: qcom: scm: add support for object
+ invocation
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Sumit Garg <sumit.garg@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Apurupa Pattapu <quic_apurupa@quicinc.com>,
+        Kees Cook <kees@kernel.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>
+References: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com>
+ <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-6-ce7a1a774803@oss.qualcomm.com>
+ <f015c644-1176-47b3-8ce2-2567e529081e@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <20250813053724.232494-8-quic_vikramsa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+In-Reply-To: <f015c644-1176-47b3-8ce2-2567e529081e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfX9nF+aVglIfuO
+ 0RXua9pBkYBk58WV8xsNaozNMuVBr4Km6LzMuLi8zlrrZMElC6FuxehP0DmD1vMARyXygC8nKq/
+ 4PUdmgCNQSzv0ZKJMpumcp9jfi2C/VmzKuoraWIkCqa/sCHqMJYXHk2acFPytKeTPruOm0K04kg
+ T13nZtWSsTDRChV0Oq8FYkES0ZDLpqm9C9aSDGmLmg+EfEPBD9L57bYxaTZTnaXVp88m9MlX7TL
+ Hj+QmyDnbVBQb0gHLuWXMJOzgjWFzaV9vsYibl3a7eCByjtlWygr0r87/CHXPTDb4UusXBHgMW4
+ nipwV25SMBLp1SsMUb0Ten00RSlYAL/RHYAyeU6jNrB358FiVRfkgPk/r191F1BrrMzbOYI/JBx
+ JVhIAlDw
+X-Proofpoint-GUID: NcMpW4JQACE3gOw3_k3HkZXEVgHAdyIj
+X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689d05aa cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=hi51d+lTLNy/RbqRqnOomQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=nTCLsnt1AoGLxjTXAKEA:9 a=QEXdDO2ut3YA:10
+ a=3WC7DwWrALyhR5TkjVHa:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: NcMpW4JQACE3gOw3_k3HkZXEVgHAdyIj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
 
-On 13/08/2025 06:37, Vikram Sharma wrote:
-> Add changes to support the camera subsystem on the QCS8300.
+
+
+On 8/13/2025 7:53 PM, Konrad Dybcio wrote:
+> On 8/13/25 2:35 AM, Amirreza Zarrabi wrote:
+>> Qualcomm TEE (QTEE) hosts Trusted Applications (TAs) and services in
+>> the secure world, accessed via objects. A QTEE client can invoke these
+>> objects to request services. Similarly, QTEE can request services from
+>> the nonsecure world using objects exported to the secure world.
+>>
+>> Add low-level primitives to facilitate the invocation of objects hosted
+>> in QTEE, as well as those hosted in the nonsecure world.
+>>
+>> If support for object invocation is available, the qcom_scm allocates
+>> a dedicated child platform device. The driver for this device communicates
+>> with QTEE using low-level primitives.
+>>
+>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> Tested-by: Harshal Dev <quic_hdev@quicinc.com>
+>> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
+>> ---
 > 
-> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 171 ++++++++++++++++++++++++++
->   1 file changed, 171 insertions(+)
+> [...]
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> index 3cf1d4bc7e4a..538b55a89f28 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
-> @@ -4641,6 +4641,177 @@ videocc: clock-controller@abf0000 {
->   			#power-domain-cells = <1>;
->   		};
->   
-> +		camss: isp@ac78000 {
-> +			compatible = "qcom,qcs8300-camss";
-> +
-> +			reg = <0x0 0xac78000 0x0 0x1000>,
-> +			      <0x0 0xac7a000 0x0 0x0f00>,
-> +			      <0x0 0xac7c000 0x0 0x0f00>,
-> +			      <0x0 0xac84000 0x0 0x0f00>,
-> +			      <0x0 0xac88000 0x0 0x0f00>,
-> +			      <0x0 0xac8c000 0x0 0x0f00>,
-> +			      <0x0 0xac90000 0x0 0x0f00>,
-> +			      <0x0 0xac94000 0x0 0x0f00>,
-> +			      <0x0 0xac9c000 0x0 0x2000>,
-> +			      <0x0 0xac9e000 0x0 0x2000>,
-> +			      <0x0 0xaca0000 0x0 0x2000>,
-> +			      <0x0 0xacac000 0x0 0x0400>,
-> +			      <0x0 0xacad000 0x0 0x0400>,
-> +			      <0x0 0xacae000 0x0 0x0400>,
-> +			      <0x0 0xac4d000 0x0 0xf000>,
-> +			      <0x0 0xac60000 0x0 0xf000>,
-> +			      <0x0 0xac85000 0x0 0x0d00>,
-> +			      <0x0 0xac89000 0x0 0x0d00>,
-> +			      <0x0 0xac8d000 0x0 0x0d00>,
-> +			      <0x0 0xac91000 0x0 0x0d00>,
-> +			      <0x0 0xac95000 0x0 0x0d00>;
-> +			reg-names = "csid_wrapper",
-> +				    "csid0",
-> +				    "csid1",
-> +				    "csid_lite0",
-> +				    "csid_lite1",
-> +				    "csid_lite2",
-> +				    "csid_lite3",
-> +				    "csid_lite4",
-> +				    "csiphy0",
-> +				    "csiphy1",
-> +				    "csiphy2",
-> +				    "tpg0",
-> +				    "tpg1",
-> +				    "tpg2",
-> +				    "vfe0",
-> +				    "vfe1",
-> +				    "vfe_lite0",
-> +				    "vfe_lite1",
-> +				    "vfe_lite2",
-> +				    "vfe_lite3",
-> +				    "vfe_lite4";
-> +
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-> +				 <&camcc CAM_CC_CORE_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_0_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_1_CLK>,
-> +				 <&camcc CAM_CC_CSID_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY0_CLK>,
-> +				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY1_CLK>,
-> +				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY2_CLK>,
-> +				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
-> +				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
-> +				 <&gcc GCC_CAMERA_SF_AXI_CLK>,
-> +				 <&camcc CAM_CC_ICP_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
-> +			clock-names = "camnoc_axi",
-> +				      "core_ahb",
-> +				      "cpas_ahb",
-> +				      "cpas_fast_ahb_clk",
-> +				      "cpas_vfe_lite",
-> +				      "cpas_vfe0",
-> +				      "cpas_vfe1",
-> +				      "csid",
-> +				      "csiphy0",
-> +				      "csiphy0_timer",
-> +				      "csiphy1",
-> +				      "csiphy1_timer",
-> +				      "csiphy2",
-> +				      "csiphy2_timer",
-> +				      "csiphy_rx",
-> +				      "gcc_axi_hf",
-> +				      "gcc_axi_sf",
-> +				      "icp_ahb",
-> +				      "vfe0",
-> +				      "vfe0_fast_ahb",
-> +				      "vfe1",
-> +				      "vfe1_fast_ahb",
-> +				      "vfe_lite",
-> +				      "vfe_lite_ahb",
-> +				      "vfe_lite_cphy_rx",
-> +				      "vfe_lite_csid";
-> +
-> +			interrupts = <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 759 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 758 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 761 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 760 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 605 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names = "csid0",
-> +					  "csid1",
-> +					  "csid_lite0",
-> +					  "csid_lite1",
-> +					  "csid_lite2",
-> +					  "csid_lite3",
-> +					  "csid_lite4",
-> +					  "csiphy0",
-> +					  "csiphy1",
-> +					  "csiphy2",
-> +					  "tpg0",
-> +					  "tpg1",
-> +					  "tpg2",
-> +					  "vfe0",
-> +					  "vfe1",
-> +					  "vfe_lite0",
-> +					  "vfe_lite1",
-> +					  "vfe_lite2",
-> +					  "vfe_lite3",
-> +					  "vfe_lite4";
-> +
-> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +					 &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +					<&mmss_noc MASTER_CAMNOC_HF QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "ahb",
-> +					     "hf_0";
-> +
-> +			iommus = <&apps_smmu 0x2400 0x20>;
-> +
-> +			power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +			power-domain-names = "top";
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +				port@0 {
-> +					reg = <0>;
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +				};
-> +			};
-> +		};
-> +
->   		camcc: clock-controller@ade0000 {
->   			compatible = "qcom,qcs8300-camcc";
->   			reg = <0x0 0x0ade0000 0x0 0x20000>;
+>> +int qcom_scm_qtee_invoke_smc(phys_addr_t inbuf, size_t inbuf_size,
+>> +			     phys_addr_t outbuf, size_t outbuf_size,
+>> +			     u64 *result, u64 *response_type)
+>> +{
+>> +	struct qcom_scm_desc desc = {
+>> +		.svc = QCOM_SCM_SVC_SMCINVOKE,
+>> +		.cmd = QCOM_SCM_SMCINVOKE_INVOKE,
+>> +		.owner = ARM_SMCCC_OWNER_TRUSTED_OS,
+>> +		.args[0] = inbuf,
+>> +		.args[1] = inbuf_size,
+>> +		.args[2] = outbuf,
+>> +		.args[3] = outbuf_size,
+>> +		.arginfo = QCOM_SCM_ARGS(4, QCOM_SCM_RW, QCOM_SCM_VAL,
+>> +					 QCOM_SCM_RW, QCOM_SCM_VAL),
+>> +	};
+>> +	struct qcom_scm_res res;
+>> +	int ret;
+>> +
+>> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	*response_type = res.result[0];
+>> +	*result = res.result[1];
+> 
+> These are dereferenced without checking, which will surely upset static
+> checkers (and users)
+> 
+
+There is no consistency in qcom_scm.c; I see multiple instances where
+similar dereferencing is already happening in this file. However, I'll
+add the if (...) check to be sure. The reason I initially skipped it
+is that this API has a single user -- the TEE subsystem.
+
+> I see that res.result[2] should also return some (aptly named) "data"
+> which you handled in v1, but dropped in v2 (without a comment AFAICT)
+> 
+> Looking at it, we could probably wrap it in qcom_scm_qseecom_call()
+> which this seems to be fit for
+> 
+
+I cannot use qcom_scm_qseecom_call() because this is not a qseecom
+transport. It's a new transport called smcinvoke, which, for instance,
+does not require a lock.
+
+The data field is intended for qseecom over smcinvoke, which we will
+never support -- so there's no reason to return it.
+
+>> +
+>> +	return 0;
+>> +}
+>> +EXPORT_SYMBOL(qcom_scm_qtee_invoke_smc);
+>> +
+>> +/**
+>> + * qcom_scm_qtee_callback_response() - Submit response for callback request.
+>> + * @buf: start address of memory area used for outbound buffer.
+>> + * @buf_size: size of the memory area used for outbound buffer.
+>> + * @result: Result of QTEE object invocation.
+>> + * @response_type: Response type returned by QTEE.
+>> + *
+>> + * @response_type determines how the contents of @buf should be processed.
+>> + *
+>> + * Return: On success, return 0 or <0 on failure.
+>> + */
+>> +int qcom_scm_qtee_callback_response(phys_addr_t buf, size_t buf_size,
+>> +				    u64 *result, u64 *response_type)
+> 
+> These should be aligned
+
+Ack.
+
+> 
+>> +{
+>> +	struct qcom_scm_desc desc = {
+>> +		.svc = QCOM_SCM_SVC_SMCINVOKE,
+>> +		.cmd = QCOM_SCM_SMCINVOKE_CB_RSP,
+>> +		.owner = ARM_SMCCC_OWNER_TRUSTED_OS,
+>> +		.args[0] = buf,
+>> +		.args[1] = buf_size,
+>> +		.arginfo = QCOM_SCM_ARGS(2, QCOM_SCM_RW, QCOM_SCM_VAL),
+>> +	};
+>> +	struct qcom_scm_res res;
+>> +	int ret;
+>> +
+>> +	ret = qcom_scm_call(__scm->dev, &desc, &res);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	*response_type = res.result[0];
+>> +	*result = res.result[1];
+> 
+> this also seems like a good candidate for qcom_scm_qseecom_call()
+> 
+
+ditto.
+
+> [...]
+> 
+>>  /**
+>>   * qcom_scm_is_available() - Checks if SCM is available
+>>   */
+>> @@ -2326,6 +2444,16 @@ static int qcom_scm_probe(struct platform_device *pdev)
+>>  	ret = qcom_scm_qseecom_init(scm);
+>>  	WARN(ret < 0, "failed to initialize qseecom: %d\n", ret);
+>>  
+>> +	/*
+>> +	 * Initialize the QTEE object interface.
+>> +	 *
+>> +	 * This only represents the availability for QTEE object invocation
+>> +	 * and callback support. On failure, ignore the result. Any subsystem
+>> +	 * depending on it may fail if it tries to access this interface.
+>> +	 */
+>> +	ret = qcom_scm_qtee_init(scm);
+>> +	WARN(ret < 0, "failed to initialize qcomtee: %d\n", ret);
+> 
+> This will throw a WARN on *a lot* of platforms, ranging from
+> Chromebooks running TF-A (with a reduced SMC handler), through
+> platforms requiring QCOM_SCM_SMCINVOKE_INVOKE_LEGACY (0x00) cmd
+> 
+
+Are you suggesting I remove the WARN? If so, how should the user be notified?
+Should the error simply be ignored?
+
+> Konrad
+
+Thanks,
+Amir
 
 
-"Eat recycled food, it's good for the environment and okay for you"
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
