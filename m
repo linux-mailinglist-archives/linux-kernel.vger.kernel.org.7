@@ -1,57 +1,64 @@
-Return-Path: <linux-kernel+bounces-767475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0888CB254E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:59:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D10B254C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15DBB5A1FBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43AD39A46DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4EE2F9996;
-	Wed, 13 Aug 2025 20:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PFCsQaSo"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313A72E3707;
+	Wed, 13 Aug 2025 20:55:21 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B762D8364
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36D62FD7AB;
+	Wed, 13 Aug 2025 20:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755118571; cv=none; b=BFTV2mVdAIwFiMt0J8Q1p3XUlW5CoIXHujofV1dLDX1NRCR2afhWSJiEHYi/wFzl8MDHaJYV8Lw4R+W+c6GwheVjgGmIQGffhNavLkEMRAAyWKJOsMv+Hqw7zOkOdV2k2uHFPnNtQ7HmYaI6BgMN0hknmuaeSnN2YWYr8U3QTC4=
+	t=1755118520; cv=none; b=cqFau2mq/nlY0+qzbhYV7qEpEQGUHGFgUmrK+iX7wq1fm6JCEOHSh63THciXS20U6mWjMjYO7gix9b8oBXeuPfEI5qmMvMWtlaYu1KTb2mIsj1DxoGSJxcsUoTvye1i4Q/VTWty20tZ/xhuxIpQ4jjBIk0paTrKzcgOVnjnNdeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755118571; c=relaxed/simple;
-	bh=JSLDnzUEROhn9DqEvlIOVti7KBHDKlVXMUvzgA4iXuc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FgJTVoYSrtCZHIYTekUU+E0kiOFTZTJnMgOlnGqo+A3pxqNmhDMHhsKzgDsZy1o3EcoGGrErPpdFLICgpd7Y4qhmKbnQiaggTdW4RIOBn06lfUapQIQWj9/86FIu9wrpGBSOKWe5Yh58o6W25Fj/p8FKvE8utT7v3b1oUYs74dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PFCsQaSo; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755118567;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zis8OIa6L0oQE6Xe1X36zgq5KrCMHrQD4UX7YdcdMJY=;
-	b=PFCsQaSoMaFbsgdinKL6q9BkxnaNqfZ2Ubz3t0896tRmUPzYMV1OO1Xo7TdU/vQ39lUvU+
-	NZ5TvB1OO2IBnmypqWBH5IvGAUuPBBkPNkney16/iwe2Q8HzRTgqFrACVW4G7YpvVk3U5Z
-	PORunNfd3Ao3clwJHccfIz8EBhWacE4=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Wentao Liang <vulab@iscas.ac.cn>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] ALSA: hda: Use min() to simplify snd_hda_get_devices()
-Date: Wed, 13 Aug 2025 22:55:02 +0200
-Message-ID: <20250813205507.215658-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1755118520; c=relaxed/simple;
+	bh=mmKEliEz08ZU6AKwRXZkn5xNu5Oaqg1/xcPdosg31bw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WhzFvfpZWTYvwZxcELkbyLAycsdIpI+PqjpaquJ9vC0vGOjHlp2njxMNwkyhmxFacFCahfUgjlNMXR96QUN7NsD0KdHr/IBZLv0ClVXX26m1oN7HeDZyDQvJdIQAHOAzIvmBGT0+NXt6mOiRy09hX+NOMYwbCKUkAohDmdoYAJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:c54d:a88a:ec30:aa38])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id D2CF5423D2;
+	Wed, 13 Aug 2025 20:55:14 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:c54d:a88a:ec30:aa38) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: yonghong.song@linux.dev
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	contact@arnaud-lcm.com,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	sdf@fomichev.me,
+	song@kernel.org,
+	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH bpf-next v4 2/2] bpf: fix stackmap overflow check in
+ __bpf_get_stackid()
+Date: Wed, 13 Aug 2025 21:55:06 +0100
+Message-ID: <20250813205506.168069-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250813204606.167019-1-contact@arnaud-lcm.com>
+References: <20250813204606.167019-1-contact@arnaud-lcm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,73 +66,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-PPP-Message-ID: <175511851573.21342.5061621153040207200@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Use min() to simplify snd_hda_get_devices() and improve its readability.
+Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
+when copying stack trace data. The issue occurs when the perf trace
+ contains more stack entries than the stack map bucket can hold,
+ leading to an out-of-bounds write in the bucket's data array.
 
-Change the function parameter 'max_devices' from 'int' to 'unsigned int'
-to avoid a min() signedness error. Update all related local variables
-and the function's return type to 'unsigned int' accordingly.
+Changes in v2:
+ - Fixed max_depth names across get stack id
 
-No functional changes intended.
+Changes in v4:
+ - Removed unnecessary empty line in __bpf_get_stackid
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
 ---
- include/sound/hda_codec.h |  4 ++--
- sound/hda/common/codec.c  | 11 +++++------
- 2 files changed, 7 insertions(+), 8 deletions(-)
+ kernel/bpf/stackmap.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-diff --git a/include/sound/hda_codec.h b/include/sound/hda_codec.h
-index ddc9c392f93f..006d4e4a8195 100644
---- a/include/sound/hda_codec.h
-+++ b/include/sound/hda_codec.h
-@@ -360,8 +360,8 @@ int snd_hda_override_conn_list(struct hda_codec *codec, hda_nid_t nid, int nums,
- int snd_hda_get_conn_index(struct hda_codec *codec, hda_nid_t mux,
- 			   hda_nid_t nid, int recursive);
- unsigned int snd_hda_get_num_devices(struct hda_codec *codec, hda_nid_t nid);
--int snd_hda_get_devices(struct hda_codec *codec, hda_nid_t nid,
--			u8 *dev_list, int max_devices);
-+unsigned int snd_hda_get_devices(struct hda_codec *codec, hda_nid_t nid,
-+				u8 *dev_list, unsigned int max_devices);
- int snd_hda_get_dev_select(struct hda_codec *codec, hda_nid_t nid);
- int snd_hda_set_dev_select(struct hda_codec *codec, hda_nid_t nid, int dev_id);
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index b9cc6c72a2a5..318f150460bb 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -246,7 +246,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
+ }
  
-diff --git a/sound/hda/common/codec.c b/sound/hda/common/codec.c
-index eb268d442201..ce25608beff5 100644
---- a/sound/hda/common/codec.c
-+++ b/sound/hda/common/codec.c
-@@ -8,6 +8,7 @@
- #include <linux/init.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
-+#include <linux/minmax.h>
- #include <linux/mutex.h>
- #include <linux/module.h>
- #include <linux/pm.h>
-@@ -323,18 +324,16 @@ EXPORT_SYMBOL_GPL(snd_hda_get_num_devices);
-  * Copy the device list. This info is dynamic and so not cached.
-  * Currently called only from hda_proc.c, so not exported.
-  */
--int snd_hda_get_devices(struct hda_codec *codec, hda_nid_t nid,
--			u8 *dev_list, int max_devices)
-+unsigned int snd_hda_get_devices(struct hda_codec *codec, hda_nid_t nid,
-+				u8 *dev_list, unsigned int max_devices)
+ static long __bpf_get_stackid(struct bpf_map *map,
+-			      struct perf_callchain_entry *trace, u64 flags)
++			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
  {
--	unsigned int parm;
--	int i, dev_len, devices;
-+	unsigned int parm, i, dev_len, devices;
+ 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+ 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+@@ -262,6 +262,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
  
- 	parm = snd_hda_get_num_devices(codec, nid);
- 	if (!parm)	/* not multi-stream capable */
- 		return 0;
+ 	trace_nr = trace->nr - skip;
+ 	trace_len = trace_nr * sizeof(u64);
++	trace_nr = min(trace_nr, max_depth - skip);
++
+ 	ips = trace->ip + skip;
+ 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+ 	id = hash & (smap->n_buckets - 1);
+@@ -321,19 +323,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 	   u64, flags)
+ {
+-	u32 max_depth = map->value_size / stack_map_data_size(map);
+-	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
++	u32 elem_size = stack_map_data_size(map);
+ 	bool user = flags & BPF_F_USER_STACK;
+ 	struct perf_callchain_entry *trace;
+ 	bool kernel = !user;
++	u32 max_depth;
  
--	dev_len = parm + 1;
--	dev_len = dev_len < max_devices ? dev_len : max_devices;
-+	dev_len = min(parm + 1, max_devices);
+ 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
+ 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
+ 		return -EINVAL;
  
- 	devices = 0;
- 	while (devices < dev_len) {
+-	max_depth += skip;
+-	if (max_depth > sysctl_perf_event_max_stack)
+-		max_depth = sysctl_perf_event_max_stack;
++	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
+ 
+ 	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
+ 				   false, false);
+@@ -342,7 +342,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
+ 		/* couldn't fetch the stack trace */
+ 		return -EFAULT;
+ 
+-	return __bpf_get_stackid(map, trace, flags);
++	return __bpf_get_stackid(map, trace, flags, max_depth);
+ }
+ 
+ const struct bpf_func_proto bpf_get_stackid_proto = {
+@@ -374,6 +374,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 	bool kernel, user;
+ 	__u64 nr_kernel;
+ 	int ret;
++	u32 elem_size, max_depth;
+ 
+ 	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
+ 	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
+@@ -392,12 +393,13 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 		return -EFAULT;
+ 
+ 	nr_kernel = count_kernel_ip(trace);
+-
++	elem_size = stack_map_data_size(map);
+ 	if (kernel) {
+ 		__u64 nr = trace->nr;
+ 
+ 		trace->nr = nr_kernel;
+-		ret = __bpf_get_stackid(map, trace, flags);
++		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		ret = __bpf_get_stackid(map, trace, flags, max_depth);
+ 
+ 		/* restore nr */
+ 		trace->nr = nr;
+@@ -409,7 +411,8 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
+ 			return -EFAULT;
+ 
+ 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
+-		ret = __bpf_get_stackid(map, trace, flags);
++		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
++		ret = __bpf_get_stackid(map, trace, flags, max_depth);
+ 	}
+ 	return ret;
+ }
 -- 
-2.50.1
+2.43.0
 
 
