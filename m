@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-766929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED18B24CD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:08:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7687BB24CD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916961897F23
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:02:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C57A1740D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CAD2F6593;
-	Wed, 13 Aug 2025 15:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8637D2FE571;
+	Wed, 13 Aug 2025 15:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o19woiQF"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IC+0ENJG"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923A52F6576
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3852F0680
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097306; cv=none; b=kx1Mbesx1tmMcwHzSw44RWUGDFq95QASiHP+iV+iaebYuRSN+opC/hdz0xEIrB+7CqAG0b/JcJ4qKkQnZ3GTcil/nsI3CEvQntSVX0HFC05mS/HIvV0pX5ns7zhlv8gdt98qhBWUIGBG7L837tALH2tOqFZdcI6YaJh3hmJTQ9s=
+	t=1755097307; cv=none; b=YoqHGSIQXYFYWKawaRp71l1NvLbyoxhBnx2shtf9e96duZBDmE8BBu5cWb2bv6VCWWz0ngNmjDaBN4TYUYFEn01GnXhHcZi0TrIXhYS4XCwUpn85WdlBe9w30nQalSWAk2U14vCRHvV1bLfwiUJlB5Bd+Tcs6hMUA/3DJ6GWu9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097306; c=relaxed/simple;
-	bh=W5C4Jb/87TEkHjxZzTAhHGOUm7nNwtwZIRnVcZUesz4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Dp+0haqy5dJUnlC4BtU/nNgzk7uaoDbWZZ6d+hkWDBOXOPPLUR0WIYPmUZ6jMdZVpn98tpnbr9L6gr/kNd1hz0tgFkRswR4z3Cq/1X4PGWC08NjjfZjFgLfmURJ8tc1pZIq/iGtySiq3UDR/onTRE4h1yhcZDm7iV13dnN2BneA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o19woiQF; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1755097307; c=relaxed/simple;
+	bh=ou1YbcmDAQuFZIQSBFO3cs4ywO/Xw4Ff3K2ot6JDrmM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=i+CBHmrDzE8bcNrsIDCmWtXOBB0I7JLifrqA+g/PWluLORbOvxcLB70gOHxUfAX71pmA4q0+MKwz8QSNcQqM7i1VnB4ZV4jI74PoZb/J28BH8x3Cd4rKEYFfNhvRNZwqwFHP970mlzAErEl8ucM4m4vBjgfVG/IR+KA+4A3JiTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IC+0ENJG; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b783ea502eso742461f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:01:44 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b7886bee77so4790371f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:01:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755097303; x=1755702103; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+ZjYg8bYZKeQRQQcTg3Cp0VfZeqh6q0mPFPEWR4Ir4Y=;
-        b=o19woiQFJH5/yTf8WTZL16j5a8s5PIZOy1EhRpFHlVcrU7XzeVCB+vejDU2fdG9B5o
-         Wce+ZRMwNoOmPcHZQo+G0/c4kbF5sWzLG06yk4lxET6FeuRY9Dxt+fqR2vWCTooCWfAF
-         7t7xHiLzycLo6ZKZnG/KT6HBc/lzj2jMhN6Uai+MtjCfn+BklgMeEYU+1mhz3A4dYIGC
-         iZdfD0O+QiAMeZSVhsQOFbeuQVfKCvRYvPR6Y3PDr5GH9lrLPuRAFMz+wpetnS23mA9H
-         Q9qLfNZSf/NHzRMZ+7zOhPI5+GSRyYGS4SEu5+qNPvQ2aUY4RDLUpvzIOnyAqTgP4N4z
-         Gi5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755097303; x=1755702103;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1755097304; x=1755702104; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+ZjYg8bYZKeQRQQcTg3Cp0VfZeqh6q0mPFPEWR4Ir4Y=;
-        b=I5vkQqJl3RHYMC/Kdea+cqeL7DCDTZwFeb7oYeFsP1+yccdWCNMaCI/1NFfGiTOOGR
-         l0gX3cGKgnTtUINHZBDmfkPWfU9uEqJ3xJxRsCvsEH4TfX7MerS4YkDG1P0k0h4Z0QRz
-         a4HZ7g9LV0ecg+E2ERKbE+HHo3jDqiPs9kP3IGSaS8gKKDuvNij8naesdUkYFhuBqBlf
-         4SwcyeiufB9Kocc5Qd02DeF61KCLEySRHF8xDN1Zcxz4w4Ashw+U+lxCgijXWnhzdNZe
-         EvJqDA46O69pf9OdOhv+AsOsEy9oKVW+Z3oS97QA7EsAAaRv3dJM6Xf81SebyzcFrHJA
-         RcNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVih6aqKW4gkg6vqVCWXrpIDndNtP8+LO3n0+9tINKtkPgW6TMwEilFg+gjdBNaDWfFsodifREqMOSuKk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6slW9Fm3ujeSudgSCmAxoVCLkoJ4sGYQSzFrsTraPQouypIS2
-	OWD+2+XCtVoY2Sa8rFUgsNCJ7iNJMGMRqxf+1PlmXH0h5d+xPWaye2CzLNCAeZ8iqD0=
-X-Gm-Gg: ASbGncvELhS3/h/O4QklNnmK2KBJ3xthWhrV2kwInacjegLtzntoJBltxCpogb2j9/Q
-	qdxN5K+iO7P3zZolYhyVn0H2Eb5yTCaT2ILKScMkvDNvIfe33yn3oSr7JDcIJbT2qSo2UQEBSYD
-	99Sp+Rlrh+SMYTHtkmjDX3ED3b5y0Yktunap5BrHib7OPHV1kIy8XdodeymvXLc4agEkEJxoWWM
-	IdsaIoRcBDy865nZx1folCmYgHZjrMtTpk95B2b6dBNjYINTc2MpdRPRRC+0gjQeOKSgwUFY8sA
-	7dB+cmSgKaw/CHHk8qczYkuhrzSLKSuqvid7hfcCAR5VtPBlqEGLItz0cREsEKLvIS5fmny4GQ1
-	EZEq1nZEfzdlWR9DlzyNbAjXGTMNZZ2RHAp/L0X+qS799s6oVGGt1
-X-Google-Smtp-Source: AGHT+IHGvynWNGnvSA7OYlBBf/7gl/Nh7E2z9kJEbRhnGw3Vbg8mnkSNWKEci8XTra92+d3/1Aer7w==
-X-Received: by 2002:a5d:64e8:0:b0:3b8:de54:6e64 with SMTP id ffacd0b85a97d-3b918cf9b79mr2657354f8f.26.1755097302446;
-        Wed, 13 Aug 2025 08:01:42 -0700 (PDT)
+        bh=Fx9XFYSygafEf4R96ceqLm11HUcCM+e6rJw7J3OQnS8=;
+        b=IC+0ENJG99tfIYfJM8DZZ8Ty3oS8+HhgiVa18naSqrg00zGKB/w6WQj/8rrR0gpOm9
+         xZGnP2zFWfteCQHXWFG7jkI+WjNDCUvAI+KWoMwRtuv+nJFtza+Hutw0WIzRchrmTXwu
+         cMo+LzCua607aoGy/7jpAb9AXj/uhtHvHsteFcjwqC8TkPz1k7Ol7dXwOPP4QzZOa7ry
+         PACOrkxRErMkLlTyAx8RIU93dGNLYbPvSEgUrbZxZKaULw9QZQlpY99AjCmkWnxNjMdx
+         d17GSNV48f9GstRyQX4+m1xYGcIbjgJF+hk2B+YU5WLzRCyJ2pdfKkRkMn7/9p/zE5Ou
+         KRJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755097304; x=1755702104;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fx9XFYSygafEf4R96ceqLm11HUcCM+e6rJw7J3OQnS8=;
+        b=Z6mkvyyOpNZLGanoTHJTbM8wATG0nqOmdJZ1onHETuyGOtQqVmOaE5NOeeSSss5U7V
+         qwzOomEmZ/PbDYKqFd7iuv/wxDAAuT555wmKy/rnCYQ9MKAdUN0VezVBWXvRtegOZ5fZ
+         eDnDOKw2lTQyqoS69JdTXCJm67V4nufImNL7fV8ls5HNXdnVYyHgs3kVZh6OxNEHsTQ1
+         iqbFa4F4sLgfEqhpYf611LSaA8csa2jJfZWYi7HXVQoaIUKvjxvr8nmx7noF6LsAst0D
+         2xfbwFB6jkYGfczxTZXvTRCdquQmN7JCCX8amNdfcHaib/Yb27FYjk7GzseLHgskWV7n
+         0T1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXj5DrDxThGxDSLJTCkqOteDIS5iYL1aGhKPnS4e9+Xjxvy8uAP13MKHjILHL4QM9vPhDDoUbmrPI4QIng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNN62zpRYbKXC+VfAJgq4+u1m7B7nR5HqPM5hJwNGN97DFo81B
+	yEPlNxYvQojOdVbIzydGqs17vfRi7zWazGqaISTK52salUYUlrQXn/pRD97+392VDFI=
+X-Gm-Gg: ASbGncupBwiU0RUNSrPneWRXjKvwSz91RuKsc6igrniXcaXoaTwbEUvueX+LjN2zxrg
+	tu+jS+F5/y84zxUJANVIA7Ca08oi3k1RELNJMKXy080FUp+9hiWvgqbJkliPUVqUEJIn5E6miaZ
+	9Yf8Zee1if6VP9JRMKGnLjh0GeugvVe6whKNhfVVt8OVuYz3YaePDxOCuF0fM/J/THAb5I2ecb3
+	K2hN/L688A4V9b5wopG1WrFUA9Qm2jHoOpx8cO47I4pPhUPIO8Ty/6aqHlLA1FG11VNdDHIGOBq
+	haLp8Pt8ORuPGPfy0HtGprFogrNjNPt5mW0UeApBElZA9jtk4HhhEsm7V8sAoIhFrrf46baLOz4
+	EYvFOQ3KW/AQo03jMDVnooKg3btG/g98f67hsZtxEuBG2UeDLv5WO
+X-Google-Smtp-Source: AGHT+IHHEppE5c1msSWpvPNGDeJ0L2gbES2G8NQv75tbQblsBVY/pnBdDlsIUFyhes455RLdzsw2Ag==
+X-Received: by 2002:a05:6000:430a:b0:3b8:d8cc:dcf3 with SMTP id ffacd0b85a97d-3b917ea1891mr2665904f8f.29.1755097303966;
+        Wed, 13 Aug 2025 08:01:43 -0700 (PDT)
 Received: from gpeter-l.roam.corp.google.com ([145.224.66.191])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4533f1sm48402964f8f.42.2025.08.13.08.01.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4533f1sm48402964f8f.42.2025.08.13.08.01.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 08:01:41 -0700 (PDT)
+        Wed, 13 Aug 2025 08:01:43 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH v3 0/2] Add new phy_notify_state() api
-Date: Wed, 13 Aug 2025 16:00:45 +0100
-Message-Id: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
+Date: Wed, 13 Aug 2025 16:00:46 +0100
+Subject: [PATCH v3 1/2] phy: add new phy_notify_state() api
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,11 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAJ2onGgC/3WOzQqDMBCEX0Vy7spmY/zpqe9RerA20YU2kSRIR
- Xz3qtBDDz1+A/PNLCKawCaKc7aIYCaO7N0G6pSJbmhdb4AfGwtC0lihgnGYwfnEdobxFVObDFi
- ke6t1TbbUYiuOwVh+H9LrbeOBY/JhPjYmuae7rpCIRCi11rlSiqSqgWA0yYS8D2wtu8uTXRt87
- kMvdtFE3/LfLxMBgu1k2WChGimrH8e6rh8u7y8B8gAAAA==
-X-Change-ID: 20250703-phy-notify-pmstate-f02ba5582f65
+Message-Id: <20250813-phy-notify-pmstate-v3-1-3bda59055dd3@linaro.org>
+References: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
+In-Reply-To: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
 To: Vinod Koul <vkoul@kernel.org>, 
  Kishon Vijay Abraham I <kishon@kernel.org>, 
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
@@ -99,67 +98,136 @@ Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
  Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org, 
  Peter Griffin <peter.griffin@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1778;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3574;
  i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=W5C4Jb/87TEkHjxZzTAhHGOUm7nNwtwZIRnVcZUesz4=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBonKjT7hPpRY5qXZZedoet2Il5XVhKZC/pOtbKi
- +0CtwW2VqqJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaJyo0wAKCRDO6LjWAjRy
- ut5TD/0TOzju4DzjH2y3pvzRzJijBdv5apB8VHPYifqqj7MLn86Izngf41KZwGwKbazWnZUQsbO
- 1EnJFS0eECeObLYmtsuyAvCeTZpzp76buX55s0arQgnrFia742gUzSFLTMckgDZ2kQe7ZfdcB/7
- mVi9suq05k1eFJPKUQJoYbj2L5i7akr6TBQIeZ1XqJnp2OOFr009CI7pRF35hRcQrx4x3TmG5+z
- d4Qwz92t5VIRUB5dJqSJjplMQOthKYpdfc0SdwnGWgJtRtTDvyQdxUprh1rlWzdtbZPhnkFt4pW
- Dd00kxzySCvu8neFuSdVAsC0tSfQXN/eQrTToqzxuWtv8ZCt7zehCBKZbuQOZHMtvYHR3EqmSYZ
- oKn4GhUnCWUWXw/TZ9OAXM1VppLz+XqjeTgHaL/Bj7ewnO1jEe0UaTpa6I9KRHwXjHpiLmqBAG3
- 5Bt0FU6QTDoPKejfGLE0nUgNb+5glAK/GASaA/lnyoHYz0fYWIa297yHH08FwXrzf8F7fGcMiui
- jGATUZDHuI6qi2yQ2bgjT7f0OvjDDNWnFEXKjkZfs7uvy2m3N2g6lkmntTC9weJ0WGnCJrtgrRA
- dTbHzxY0pC+tAMc8nkWDbxryoEHc7AqGCwt8o1NUMY4ZPoEquzQHAsq1vHQTuwQXSdm6p79g2ed
- rioz0wrkgrHVGQQ==
+ bh=ou1YbcmDAQuFZIQSBFO3cs4ywO/Xw4Ff3K2ot6JDrmM=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBonKjTcQVvzkl99cRpsmbJthiLrWXqqpZ2pxhxv
+ E6xgE2WypqJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaJyo0wAKCRDO6LjWAjRy
+ umEtD/9UveN/e7FZ+RSrEZJd+b8j0lGAUqmY+jZ9y05oOB8e3q2cqotrhoIU+LbL6x4ZHG5z5bD
+ 3JJ2SauGDAapti/Q+7EysYF8Vmhu0+HJqPJRWkAz6dzz9WMZbJ2aSqfUjRFaDpHcbZIJ1apcK+Y
+ g/NCg6OwtMMbX5H1lbDCS8MWSukPZktcPe1XQdoeZDD3qFaKFByXjxEpRij+8XPkcvhxe7fKNke
+ AKbJ+srnQJ+7gnW/cV01WfCBBo67RbG4TqS+XYEfzGViWHNtdaC9Z8PvTsFBO3IWKYu1XO5jzPG
+ yPY1PUwdpSqyozBLT5s/VoHgPtLMBXar106HEAMUsKJ7ca8EPfFsHdCzteIqVmDr5vtY7nidFXQ
+ sbK7GeP9izVmlpAJLRrNTsyEdo5qtmCK6bwqkqag2Fjvp30SwdVgEZfGyrUs1TaFIVgWbya+Hn7
+ XERWhT+iw3P9oSOnCOnwwOObe/y1m+VswfWshErI/NJAVaZflBcmBVZnOlhdxS7jxTa84VStNOd
+ fSnkO0Mpa+/lrw+kmjIffhHmJAd2TRocp7abCIXuHEj6RpoBX+D0OXJXDrGUEWbMu62kSdX4TW9
+ DVpEfqNaoFHVjomg2QOWFi2Rc+5uo5NKu+ymiO0FHkkJEST19SRYq9LuKkgmFl9TpK5K/Ybxr3/
+ Lb48nF9k7EhW+8A==
 X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
  fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-This series adds a new phy_notify_state() API to the phy subsystem. It is
-designed to be used when some specific runtime configuration parameters
-need to be changed when transitioning to the desired state which can't be
-handled by phy_calibrate()or phy_power_{on|off}().
+Add a new phy_notify_state() api that notifies and configures a phy for a
+given state transition.
 
-The first user of the new API is phy-samsung-ufs and phy-gs101-ufs which
-need to issue some register writes when entering and exiting the hibern8
-link state.
+This is intended to be by phy drivers which need to do some runtime
+configuration of parameters that can't be handled by phy_calibrate() or
+phy_power_{on|off}().
 
-A separate patch will be sent for ufs-exynos driver to make use of this new
-API in the hibern8 callbacks.
+The first usage of this API is in the Samsung UFS phy that needs to issue
+some register writes when entering and exiting the hibernate link state.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-Changes in v3:
-- Rename API to phy_notify_state(). (Mani/Neil)
-- Remove inline kerneldoc comment (Mani)
-- s/phy/PHY (Mani)
-- peripheral specific enums in phy.h (Vinod)
+ drivers/phy/phy-core.c  | 25 +++++++++++++++++++++++++
+ include/linux/phy/phy.h | 19 +++++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
-- Link to v2: https://lore.kernel.org/r/20250703-phy-notify-pmstate-v2-0-fc1690439117@linaro.org
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 04a5a34e7a950ae94fae915673c25d476fc071c1..60be8af984bf06649ef00e695d0ed4ced597cdb9 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -520,6 +520,31 @@ int phy_notify_disconnect(struct phy *phy, int port)
+ }
+ EXPORT_SYMBOL_GPL(phy_notify_disconnect);
+ 
++/**
++ * phy_notify_state() - phy state notification
++ * @phy: the PHY returned by phy_get()
++ * @state: the PHY state
++ *
++ * Notify the PHY of a state transition. Used to notify and
++ * configure the PHY accordingly.
++ *
++ * Returns: %0 if successful, a negative error code otherwise
++ */
++int phy_notify_state(struct phy *phy, union phy_notify state)
++{
++	int ret;
++
++	if (!phy || !phy->ops->notify_phystate)
++		return 0;
++
++	mutex_lock(&phy->mutex);
++	ret = phy->ops->notify_phystate(phy, state);
++	mutex_unlock(&phy->mutex);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(phy_notify_state);
++
+ /**
+  * phy_configure() - Changes the phy parameters
+  * @phy: the phy returned by phy_get()
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 13add0c2c40721fe9ca3f0350d13c035cd25af45..664d0864c3a5042949cb121e982368fe0a97827f 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -53,6 +53,15 @@ enum phy_media {
+ 	PHY_MEDIA_DAC,
+ };
+ 
++enum phy_ufs_state {
++	PHY_UFS_HIBERN8_ENTER,
++	PHY_UFS_HIBERN8_EXIT,
++};
++
++union phy_notify {
++	enum phy_ufs_state ufs_state;
++};
++
+ /**
+  * union phy_configure_opts - Opaque generic phy configuration
+  *
+@@ -83,6 +92,7 @@ union phy_configure_opts {
+  * @set_speed: set the speed of the phy (optional)
+  * @reset: resetting the phy
+  * @calibrate: calibrate the phy
++ * @notify_phystate: notify and configure the phy for a particular state
+  * @release: ops to be performed while the consumer relinquishes the PHY
+  * @owner: the module owner containing the ops
+  */
+@@ -132,6 +142,7 @@ struct phy_ops {
+ 	int	(*connect)(struct phy *phy, int port);
+ 	int	(*disconnect)(struct phy *phy, int port);
+ 
++	int	(*notify_phystate)(struct phy *phy, union phy_notify state);
+ 	void	(*release)(struct phy *phy);
+ 	struct module *owner;
+ };
+@@ -255,6 +266,7 @@ int phy_reset(struct phy *phy);
+ int phy_calibrate(struct phy *phy);
+ int phy_notify_connect(struct phy *phy, int port);
+ int phy_notify_disconnect(struct phy *phy, int port);
++int phy_notify_state(struct phy *phy, union phy_notify state);
+ static inline int phy_get_bus_width(struct phy *phy)
+ {
+ 	return phy->attrs.bus_width;
+@@ -412,6 +424,13 @@ static inline int phy_notify_disconnect(struct phy *phy, int index)
+ 	return -ENOSYS;
+ }
+ 
++static inline int phy_notify_phystate(struct phy *phy, union phy_notify state)
++{
++	if (!phy)
++		return 0;
++	return -ENOSYS;
++}
++
+ static inline int phy_configure(struct phy *phy,
+ 				union phy_configure_opts *opts)
+ {
 
-Changes in v2:
-- Add new phy_notify_pmstate API() instead of using phy_set_mode() (Vinod)
-- Link to v1: https://lore.kernel.org/r/20241002201555.3332138-1-peter.griffin@linaro.org
-
----
-Peter Griffin (2):
-      phy: add new phy_notify_state() api
-      phy: samsung: gs101-ufs: Add .notify_phystate() & hibern8 enter/exit values
-
- drivers/phy/phy-core.c                | 25 +++++++++++++++++++++++
- drivers/phy/samsung/phy-gs101-ufs.c   | 28 ++++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.c | 38 +++++++++++++++++++++++++++++++++++
- drivers/phy/samsung/phy-samsung-ufs.h |  7 +++++++
- include/linux/phy/phy.h               | 19 ++++++++++++++++++
- 5 files changed, 117 insertions(+)
----
-base-commit: 43c3c17f0c805882d1b48818b1085747a68c80ec
-change-id: 20250703-phy-notify-pmstate-f02ba5582f65
-
-Best regards,
 -- 
-Peter Griffin <peter.griffin@linaro.org>
+2.51.0.rc0.205.g4a044479a3-goog
 
 
