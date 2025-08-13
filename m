@@ -1,197 +1,174 @@
-Return-Path: <linux-kernel+bounces-765776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896FEB23E22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:19:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38912B23E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D0DB583930
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1DE668585F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9FD1C9DE5;
-	Wed, 13 Aug 2025 02:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB851DD0C7;
+	Wed, 13 Aug 2025 02:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IVFGGoMY"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="X9cMFHo+"
+Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E57273FD
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DC0273FD
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755051560; cv=none; b=lsEG7RYoO6uuDrn+iEgZPqcJooRP8On6sn7T/8uAKU3Bwui/cmKtbnrO12sfn43URx1XhR6yXb1NnN4+8kWOJ8bYwsBCh0bCSkJu43/Ft5Sn5bd+YdGUWPpgDFBChM0BDYwPMxNVP3V5xOLrMoeQ/dEivS/cnqub0nXPM1F9pSs=
+	t=1755051600; cv=none; b=OwdZsQc8qckn54YDY7/624ZpWZKPz/BC6UzcJAu/mryx4DAeLS4X9P9qra3qyEjTDVc6XFF0gmEBGAttpWdDYzC2Gk+9psBPwyJ8m8wpAfu2MutQm8pgnY3x5pZ/xnEAPlvcLd9NF98/47GoiFS6FSFr3XK++QsPceP56tgqjZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755051560; c=relaxed/simple;
-	bh=dRM+6DqjoWj7xIway7qOT3MeBBrgzJLjy6gwSB8nqGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mpi8+NdW3j+EkwcnhrTeyr0MudfZYo/8qkdgOhIpK4diJKsT4/9qn8k8LOv3OIlKk4xt1UG+1rty6fhZWv0aCP4gq4CDwBrSM1BC6PzG1sjFPx+QByXMw0yxrrHJNcXRr4TdMtq6nmwsvpjDZnUrowjcA357EjjG1erbFwnst3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IVFGGoMY; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <27513334-3086-4353-bf6c-fdee082a8ce8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755051545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nMss20SDGbXY1dMDpG7fyXCbHMpQ4bsQAbINwnsqRUk=;
-	b=IVFGGoMYVDBJ/itT32notwts4Tsq6ydD6JQ45HSQ6xmLgXBPG7MeIB3uTKEfv9N2Ag/SSM
-	lg2gL/PtD4wdZt5iJpBJrVUYMvifKRpR9ShWuG0MAm+niPM0J4Mngr7ak7Uguoq7FoH+Ck
-	IQqfivki9GyuYP6E7H++OwkL5+w/m68=
-Date: Wed, 13 Aug 2025 10:18:12 +0800
+	s=arc-20240116; t=1755051600; c=relaxed/simple;
+	bh=Tmcf38SAMuWRTp5/pG4zyOpadieUZ3W94t2I1RDBk4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dnv7y0GHhw5IQJvUafiL9SFYnt9wdAi+v2lkEd4aLrBHizyCLhmdEeUk3WPRfS4aC/D+MSAHvYmXRlyfBXptqpg5Sz0oAWUGxDfqF+KrcybA2r8Ktgp+BrxCjAG17Z2ry8tyVd+n2KU7fc3IYcIx4TI2kiaQsLF+ctsF42Wjrb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=X9cMFHo+; arc=none smtp.client-ip=202.108.3.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755051595;
+	bh=XGubnkrj1lRcpkjQTJL5eHoPcMY+ufdMMxJjIprqyoM=;
+	h=From:Subject:Date:Message-ID;
+	b=X9cMFHo+kXXS89qBKBGcICCUo3rtyH+rsfZqSCGBsTvyA2mOa/OcpXQVPVBoKCulh
+	 76BDSbOUHCQ+npaLntPCfeAVkRgQY5tGUgHFbv/Bb2kpY3cSs/Q8rT5/ea5trh4HGu
+	 rD2UHR5eCqld1e+/ULZmTXhDoyfmx+7qtrqzsEXM=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 689BF64600003B28; Wed, 13 Aug 2025 10:19:51 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7484284456953
+X-SMAIL-UIID: FACDE02A821D4C56B555776F5ACC773F-20250813-101951-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+4d9a13f0797c46a29e42@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [mm?] WARNING in move_page_tables
+Date: Wed, 13 Aug 2025 10:19:40 +0800
+Message-ID: <20250813021941.4438-1-hdanton@sina.com>
+In-Reply-To: <689bb893.050a0220.7f033.013a.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
-To: Yao Zi <ziyao@disroot.org>, Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
- kexec@lists.infradead.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
-References: <20250811092659.14903-1-youling.tang@linux.dev>
- <20250811092659.14903-3-youling.tang@linux.dev> <aJojDiHWi8cgvA2W@pie>
- <6de97571-7ef0-4bbd-b55f-5ad41898a6ec@linux.dev>
- <af866071-81c1-44d5-ae02-273d6e9c04d4@linux.dev> <aJsGg8__ppyBrkfL@pie>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <aJsGg8__ppyBrkfL@pie>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi, Yao
-On 2025/8/12 17:43, Yao Zi wrote:
-> On Tue, Aug 12, 2025 at 03:06:23PM +0800, Youling Tang wrote:
->> On 2025/8/12 14:15, Youling Tang wrote:
->>> Hi, Yao
->>> On 2025/8/12 01:06, Yao Zi wrote:
->>>> On Mon, Aug 11, 2025 at 05:26:55PM +0800, Youling Tang wrote:
->>>>> From: Youling Tang <tangyouling@kylinos.cn>
->>>>>
->>>>> This patch adds support for kexec_file on LoongArch.
->>>>>
->>>>> The image_load() as two parts:
->>>>> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
->>>>> - the second part loads other segments (eg: initrd, cmdline)
->>>>>
->>>>> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images
->>>>> are supported,
->>>>> but ELF format is not supported.
->>>>>
->>>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->>>>> ---
->>>>>    arch/loongarch/Kconfig                     |   8 ++
->>>>>    arch/loongarch/include/asm/image.h         |  18 ++++
->>>>>    arch/loongarch/include/asm/kexec.h         |  12 +++
->>>>>    arch/loongarch/kernel/Makefile             |   1 +
->>>>>    arch/loongarch/kernel/kexec_image.c        | 112
->>>>> +++++++++++++++++++++
->>>>>    arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
->>>>>    arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
->>>>>    7 files changed, 219 insertions(+), 11 deletions(-)
->>>>>    create mode 100644 arch/loongarch/kernel/kexec_image.c
->>>>>    create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
-> ...
->
->>>>> diff --git a/arch/loongarch/kernel/kexec_image.c
->>>>> b/arch/loongarch/kernel/kexec_image.c
->>>>> new file mode 100644
->>>>> index 000000000000..fdd1845b4e2e
->>>>> --- /dev/null
->>>>> +++ b/arch/loongarch/kernel/kexec_image.c
-> ...
->
->>>>> +    /*
->>>>> +     * The location of the kernel segment may make it
->>>>> impossible to satisfy
->>>>> +     * the other segment requirements, so we try repeatedly to find a
->>>>> +     * location that will work.
->>>>> +     */
->>>>> +    while ((ret = kexec_add_buffer(&kbuf)) == 0) {
->>>>> +        /* Try to load additional data */
->>>>> +        kernel_segment = &image->segment[kernel_segment_number];
->>>>> +        ret = load_other_segments(image, kernel_segment->mem,
->>>>> +                      kernel_segment->memsz, initrd,
->>>>> +                      initrd_len, cmdline, cmdline_len);
->>>>> +        if (!ret)
->>>>> +            break;
->>>>> +
->>>>> +        /*
->>>>> +         * We couldn't find space for the other segments; erase the
->>>>> +         * kernel segment and try the next available hole.
->>>>> +         */
->>>>> +        image->nr_segments -= 1;
->>>>> +        kbuf.buf_min = kernel_segment->mem + kernel_segment->memsz;
->>>>> +        kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->>>>> +    }
->>>>> +
->>>>> +    if (ret) {
->>>>> +        pr_err("Could not find any suitable kernel location!");
->>>>> +        return ERR_PTR(ret);
->>>>> +    }
->>>>> +
->>>>> +    kernel_segment = &image->segment[kernel_segment_number];
->>>>> +
->>>>> +    /* Make sure the second kernel jumps to the correct
->>>>> "kernel_entry". */
->>>>> +    image->start = kernel_segment->mem + h->kernel_entry -
->>>>> text_offset;
->>>> A non-relocatable loongarch kernel cannot be loaded to arbitrary
->>>> address. Thus this loading function seems to only work for relocatable
->>>> kernels, maybe it's better to leave a comment indicating the limitation.
->>>>
->>>> For now, we don't seem to have a way to find out whether the kernel is
->>>> relocatable (for example, a flag in kernel image header), so it's
->>>> impossible to point out whether the loaded kernel boots fine with
->>>> arbitrary loading address...
->>> LoongArch enables the relocation of the kernel when the kdump
->>> feature is enabled.
->>>
->>> config ARCH_SELECTS_CRASH_DUMP
->>>          def_bool y
->>>          depends on CRASH_DUMP
->>>          select RELOCATABLE
->>>
-> This only means the currently-running kernel is relocatable, not the one
-> being exec'ed, right?
-No.
->> When enabling KEXEC_FILE, the RELOCATABLE configuration should
->> also be enabled. Both kexec and kdump require this.
-> I'm not sure whether you're talking about the running kernel or the one
-> that is going to be exec'ed. This method of kernel loading requires the
-> exec'ed kernel being relocatable, not the currently running one.
->
-> And I think it's totally reasonable to use KEXEC_FILE for non-crash-dump
-> purpose, for example, linuxboot. It'll be confusing to the user if the
-> system just hangs after booting a non-relocatable kernel, which is hard
-> to debug.
->
-> Thus IMHO we should ideally refuse to load non-relocatable kernels, or
-> add a FIXME comment to indicate the situation that it's impossible to
-> determine whether the exec'ed image is relocatable.
-The first kernel and the second kernel are generally the same kernel
-(the same image). When KEXEC_FILE is enabled and RELOCATEABLE
-is enabled by default, it has been forcibly guaranteed that both the
-first kernel and the second kernel are relocatable kernels regardless
-of kexec/kdump operations.
+> Date: Tue, 12 Aug 2025 14:56:35 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    53e760d89498 Merge tag 'nfsd-6.17-1' of git://git.kernel.o..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=165fe9a2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=f9319a42cfb3bf57
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4d9a13f0797c46a29e42
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14172842580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b04c34580000
 
-Unless the second kernel it loads is an older version of the kernel (the
-older version of the kernel does not use the default configuration, with
-CONFIG_KEXEC enabled but CONFIG_CRASH_DUMP disabled, this is not acorrect
-usage).
+#syz test
 
-Thanks,
-Youling.
->> Youling.
->>> After enabling the relocation, LoongArch is the PIE kernel. For
->>> more details, please refer to commit d8da19fbdedd ("LoongArch:
->>> Add support for kernel relocation")
-> Best regards.
-> Yao Zi
+--- x/mm/mremap.c
++++ y/mm/mremap.c
+@@ -837,7 +837,6 @@ unsigned long move_page_tables(struct pa
+ 		new_pmd = alloc_new_pmd(mm, pmc->new_addr);
+ 		if (!new_pmd)
+ 			break;
+-again:
+ 		if (is_swap_pmd(*old_pmd) || pmd_trans_huge(*old_pmd)) {
+ 			if (extent == HPAGE_PMD_SIZE &&
+ 			    move_pgt_entry(pmc, HPAGE_PMD, old_pmd, new_pmd))
+@@ -856,8 +855,9 @@ again:
+ 			continue;
+ 		if (pte_alloc(pmc->new->vm_mm, new_pmd))
+ 			break;
++		/* bail out to avoid clearing new_pmd */
+ 		if (move_ptes(pmc, extent, old_pmd, new_pmd) < 0)
+-			goto again;
++			break;
+ 	}
+ 
+ 	mmu_notifier_invalidate_range_end(&range);
+--- x/include/linux/sched.h
++++ y/include/linux/sched.h
+@@ -2152,6 +2152,8 @@ static inline struct mutex *__get_task_b
+ 
+ static inline void __set_task_blocked_on(struct task_struct *p, struct mutex *m)
+ {
++	struct mutex *blocked_on = READ_ONCE(p->blocked_on);
++
+ 	WARN_ON_ONCE(!m);
+ 	/* The task should only be setting itself as blocked */
+ 	WARN_ON_ONCE(p != current);
+@@ -2162,8 +2164,8 @@ static inline void __set_task_blocked_on
+ 	 * with a different mutex. Note, setting it to the same
+ 	 * lock repeatedly is ok.
+ 	 */
+-	WARN_ON_ONCE(p->blocked_on && p->blocked_on != m);
+-	p->blocked_on = m;
++	WARN_ON_ONCE(blocked_on && blocked_on != m);
++	WRITE_ONCE(p->blocked_on, m);
+ }
+ 
+ static inline void set_task_blocked_on(struct task_struct *p, struct mutex *m)
+@@ -2174,16 +2176,19 @@ static inline void set_task_blocked_on(s
+ 
+ static inline void __clear_task_blocked_on(struct task_struct *p, struct mutex *m)
+ {
+-	WARN_ON_ONCE(!m);
+-	/* Currently we serialize blocked_on under the mutex::wait_lock */
+-	lockdep_assert_held_once(&m->wait_lock);
+-	/*
+-	 * There may be cases where we re-clear already cleared
+-	 * blocked_on relationships, but make sure we are not
+-	 * clearing the relationship with a different lock.
+-	 */
+-	WARN_ON_ONCE(m && p->blocked_on && p->blocked_on != m);
+-	p->blocked_on = NULL;
++	if (m) {
++		struct mutex *blocked_on = READ_ONCE(p->blocked_on);
++
++		/* Currently we serialize blocked_on under the mutex::wait_lock */
++		lockdep_assert_held_once(&m->wait_lock);
++		/*
++		 * There may be cases where we re-clear already cleared
++		 * blocked_on relationships, but make sure we are not
++		 * clearing the relationship with a different lock.
++		 */
++		WARN_ON_ONCE(blocked_on && blocked_on != m);
++	}
++	WRITE_ONCE(p->blocked_on, NULL);
+ }
+ 
+ static inline void clear_task_blocked_on(struct task_struct *p, struct mutex *m)
+--- x/kernel/locking/ww_mutex.h
++++ y/kernel/locking/ww_mutex.h
+@@ -342,8 +342,12 @@ static bool __ww_mutex_wound(struct MUTE
+ 			 * When waking up the task to wound, be sure to clear the
+ 			 * blocked_on pointer. Otherwise we can see circular
+ 			 * blocked_on relationships that can't resolve.
++			 *
++			 * NOTE: We pass NULL here instead of lock, because we
++			 * are waking the mutex owner, who may be currently
++			 * blocked on a different mutex.
+ 			 */
+-			__clear_task_blocked_on(owner, lock);
++			__clear_task_blocked_on(owner, NULL);
+ 			wake_q_add(wake_q, owner);
+ 		}
+ 		return true;
+--
 
