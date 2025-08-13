@@ -1,97 +1,76 @@
-Return-Path: <linux-kernel+bounces-767518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C4EB2558A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:35:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69FC8B25578
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A131B61858
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A706E171C82
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 182E230E82C;
-	Wed, 13 Aug 2025 21:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4282F0C66;
+	Wed, 13 Aug 2025 21:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="bFpG3rQm"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDKFw9rR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D490F2EE5FD;
-	Wed, 13 Aug 2025 21:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C762BF3F3;
+	Wed, 13 Aug 2025 21:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755120757; cv=none; b=uaNWLKJkg3ZxC7AiB8ctKWpEIRTyLZtWrOjK2Xt8EJ7ipBKguFIyxxKtLvq7g7jhmRz5iD0OyULM5cgcCwwCXEMZ21jqCHdUED0NnN7ru4Tu0yNkWjcQPMyPnbXwDdiyG1miJeQ/lnXe3Kuf+BKP5lnwg0plyUiih0gQqkt6I2I=
+	t=1755120727; cv=none; b=ap4nW0DNOxP5a+6oHrmiucHdZZ67HIUKL+GdLpHKXyv0pG7zzW5VJ0gkifGEfy2yoDCp1gBKTAQxS54eKgP5j+KjjQPnNw1ZAEyPtjp96p2zPNaiLpeX0o8urIqV6iu90lKtuBML77vloVVswBWj6X7WFmvcWyBUUSnQTrKKNXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755120757; c=relaxed/simple;
-	bh=LTmqyp1/ibDp2tcqxUewokyf5alWURxLCwluqirhyC0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fmrdr2lyIMJ9kxZ5hbpm2b4pp9+NRebrU/ZTgeXq7D9xni7LmfdamDPO7fyTgIXWXHCHVLJCnI//VAhD3s4NXYzuhv0vdX0MRYOqhA8B9EfQ7gPMxwTmf2E0m3X7IvatQXgKxNKF5OPQbJpat/PQVYcN+yL68G6RZn1KlONfkls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=bFpG3rQm; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3A1F940AF8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755120750; bh=EMIkJCSFEzX4JDPJfUNMvF3Fqzv6hrJlDW3m1/cGsBE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bFpG3rQmfysW1PQMFQxVj1u0aAHu7Pepzw+ope22rFpIG3m7HVceHL1zkEMSjNKBZ
-	 eYFje5JFwpD792uE48brZljMs4pPgKPck+Uytk5vLMitlEaZxGNnfTGlEoI4UtYq88
-	 UWWIhPmrSu9MCF7Ux5nQ8nW55afCtlBU0S9uf+GfTzzQooxhlXibt0gPa41UhHqy2h
-	 Vr2TA6ZaZif5fFW+vq+dtOyVeBNdQRT3veGmwEWvIe5upvKaRW9boCMjvIUrQ/Gdxe
-	 6WAC7lckHH2Dord1YKNX8Fax39IZ3GZ2uXI14Dtfi6Ug2IQnJ1NV4Qo/G5JQNOBHq8
-	 s5ZxQgcKSJFbg==
-Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id 3A1F940AF8;
-	Wed, 13 Aug 2025 21:32:30 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 05/13] docs: move parallel-wrapper.sh to tools/doc/
-Date: Wed, 13 Aug 2025 15:32:04 -0600
-Message-ID: <20250813213218.198582-6-corbet@lwn.net>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250813213218.198582-1-corbet@lwn.net>
-References: <20250813213218.198582-1-corbet@lwn.net>
+	s=arc-20240116; t=1755120727; c=relaxed/simple;
+	bh=zAxzRiVLqsjw7sByOm1NLMZiSLothxFD7dx5ZQ0UQBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=srGV1UlxLX71bn5dJuZPpa38tWgs6b1WhpNpunKZKOsUwbzGz/o70NWqlMyQyLhv7URsVmB8DJuqOYp5EqqFClrfyp6T2MgHu6q+T4R/I7oOAXiTXeDgrB3upYevNmm4Y+ETBUV27+js0nZVyIN1x1xkV9Vb088hpZpI6aHBLK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDKFw9rR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F5BDC4CEEB;
+	Wed, 13 Aug 2025 21:32:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755120727;
+	bh=zAxzRiVLqsjw7sByOm1NLMZiSLothxFD7dx5ZQ0UQBM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TDKFw9rRlXVNuYwo+mt0yzsAgImn2acbIfF+M0Gh+QQjxHq7eV2vz6P3z4VBU5Cdc
+	 68qDKuV0KSBMEsvBSUaZPeqTBF71E5QeVca+2mBEi/wQAsyAHTMZulmm+1o4LciEGd
+	 ldIZHzJscxTa5jQGa7X0h+1WM98LADBzuPpZPfSJhm0/sbwB67JKFshKgoSqqwvyjT
+	 1UKKjwVMS0+cs5IwFJ9zFAIG6Rm8G47YIeEx+sVhVYTFaWeIBWibWonx2lAlPIQmXg
+	 lsk/W2k8L/cgGT/6P2PMO6Mwkwv5EoIKiYXQoPErnRYy8W85pHumfFJB2rl1+vX1xa
+	 iUQrynxKbLLDA==
+Date: Wed, 13 Aug 2025 14:32:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Yibo Dong <dong100@mucse.com>, Vadim Fedorenko
+ <vadim.fedorenko@linux.dev>, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, horms@kernel.org, corbet@lwn.net,
+ gur.stavi@huawei.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
+ danishanwar@ti.com, lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
+ geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
+ lukas.bulwahn@redhat.com, alexanderduyck@fb.com, richardcochran@gmail.com,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <20250813143205.1c0bfafa@kernel.org>
+In-Reply-To: <CAMuHMdWpmt2q9tVm-3HV1h2=-7D6zEs_HnBe5gfYVgvfB=01hQ@mail.gmail.com>
+References: <20250812093937.882045-1-dong100@mucse.com>
+	<20250812093937.882045-5-dong100@mucse.com>
+	<eafb8874-a7a3-4028-a4ad-d71fc5689813@linux.dev>
+	<9A6132D78B40DAFD+20250813095214.GA979548@nic-Precision-5820-Tower>
+	<CAMuHMdWpmt2q9tVm-3HV1h2=-7D6zEs_HnBe5gfYVgvfB=01hQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This little script was buried in Documentation/sphinx/; put it with the
-other documentation-related tools.
+On Wed, 13 Aug 2025 13:05:36 +0200 Geert Uytterhoeven wrote:
+> Or use scoped_cond_guard(mutex_intr, ...) { ... }?
 
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/Makefile                                  | 2 +-
- {Documentation/sphinx => tools/doc}/parallel-wrapper.sh | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename {Documentation/sphinx => tools/doc}/parallel-wrapper.sh (100%)
-
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index f7b8342f9666..962c4fab94b0 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -91,7 +91,7 @@ quiet_cmd_sphinx = SPHINX  $@ --> file://$(abspath $(BUILDDIR)/$3/$4)
- 	PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
- 	BUILDDIR=$(abspath $(BUILDDIR)) SPHINX_CONF=$(abspath $(src)/$5/$(SPHINX_CONF)) \
- 	$(PYTHON3) $(srctree)/scripts/jobserver-exec \
--	$(CONFIG_SHELL) $(srctree)/Documentation/sphinx/parallel-wrapper.sh \
-+	$(CONFIG_SHELL) $(srctree)/tools/doc/parallel-wrapper.sh \
- 	$(SPHINXBUILD) \
- 	-b $2 \
- 	-c $(abspath $(src)) \
-diff --git a/Documentation/sphinx/parallel-wrapper.sh b/tools/doc/parallel-wrapper.sh
-similarity index 100%
-rename from Documentation/sphinx/parallel-wrapper.sh
-rename to tools/doc/parallel-wrapper.sh
--- 
-2.50.1
-
+Hard no on that in networking.
 
