@@ -1,170 +1,134 @@
-Return-Path: <linux-kernel+bounces-767459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279F9B25494
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:39:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79973B25495
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D4EA1C22D15
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629DA5A4F3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A202D0C62;
-	Wed, 13 Aug 2025 20:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A901A2D0617;
+	Wed, 13 Aug 2025 20:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dk7QgSt+"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="dR34cAxp"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D0827EFE1;
-	Wed, 13 Aug 2025 20:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B71A2C0F90
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755117548; cv=none; b=At+7+mMbysf0kjvBiXaqODBgMt2mroyB/rcJ94L0S4kbNqtCRiv3BZN87k8nueUFdm0G+a72bE9klWl0sNlHRXDMITSH4iXHpDd4cqi2pcbuhPGQpEWCeFxYBK4B1kAglOcJsx4LKMYWY5cf2bpP9zWrfBRv36GibtBP+tGQbXs=
+	t=1755117593; cv=none; b=B4cUeTP6yuaEb79xEcEQWjuwJKwjIk17Qx0yhD301VYnxFgQq4fuHuMPiPpBbRFCpAF1X58pHcYvzG0jXcMeaBiQFZErJgkVf7vxEA4T91p3X3yYi6FdOvKuENZ6AqD4WBoKQvJoZX5mwbXgzR8hgm5tt7Bi848AWwYqp1O4OXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755117548; c=relaxed/simple;
-	bh=CjCb5b3c3XVR0SKfAN3cTznTc5gFjabIUuOSBKsePX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nvuMcIZh84dHG91NLa4TTUFWyc8KGyUi9F2G/sQWDf1y6R0ZztrQxpJwRAY/dTyYsroybDXYardxt82ULfJ3n7R66aaUoXASrj2s5xzJwKL0cMqJBRG/fFcX6my/vnKpgScjB/SU1QWbjjzWN8OqwnK7rAuov2Gy3E8+Ep1MerI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dk7QgSt+; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b0bd237so1481855e9.2;
-        Wed, 13 Aug 2025 13:39:05 -0700 (PDT)
+	s=arc-20240116; t=1755117593; c=relaxed/simple;
+	bh=AXffZ9dyioE6nOqSGA3Jy2oI5Z20yBGFwOs8nynpzPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWoRwWON7goPc4K97nNdBmT7PX3pFagsaruv7uC8QatvS1xXhEP9TB3JCagPwmlkX7rn1ic8vBeWYMhuHlzC/JUYd/aVDOJZeJOugFhTiQJeTIcOSb6OVQul/ehiWcFIt4Rg53cjp6MzVZHyI0vSGb8Qxbso1TiwVtfykT7L620=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=dR34cAxp; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3e56fc0f337so2469245ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:39:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755117544; x=1755722344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PBx+aI2GZUNjzRZKCiUKPus1NJlwpPhIvyJpPhFBon8=;
-        b=dk7QgSt+6tJnQ5SN4nC+qNzQKjqyJEW/NqhvB1JebGNnAfG7FQ3sP4NPH6PYOW0pHg
-         66sQcUyGWTGQjFJuY07zP4A5t0kn8x+K5qI9y7CrGRupTYngGYla/oG9Wmd2Y08mSGkJ
-         fdkeoqTgS7c2n+PL8R0y98SSihRy7NP9yBhvuATcm07HrlE/cvarsf03GPdcfbQn0Pjw
-         +zuJ4Vuy8vGM8Ub6COEoCtA922nTBB739zxI47KPulOvHftkYQKBLR2jNyemI7A2GrRS
-         0Wd0RZPtcMMOim4rKhQybMHECa/IwwHFheRAlmguuPYeHl3QlTgq2/KE2f4/R/zimajv
-         Rr8Q==
+        d=cloudflare.com; s=google09082023; t=1755117591; x=1755722391; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lP0QH6bmUQ+2Acs8+Imh9XZZLiBHsh0NRGzPgFU6eoo=;
+        b=dR34cAxpfjkdqNi00u1SayjSu6D3QJVGRvDkez4iGJyTdpwNsfSnpEvPYwR/bkkGH8
+         bmaF2H3smnrV8IF5gVz8ckv4kqXrNfgSJAVQw/q/guhxrXYFgwM5a4DR34ipn+nlGB4L
+         fSsXNnZhO1iYH8WP/t03Y1/SChz5tQH+rstUERX7bgWuk1VvEDeg+eOPHOQs2zg/0R3u
+         Ze/ym8Jom2p8Cd/QNAMwQwRaLBYcF0lmN0LUhoaxNxQF9iyQz4sRIiqWEggNREraBZEF
+         oR6q74QpAnM+PA4dkKcbTHabvs3ebv9mROBP7wVv1LoXmKIIjMcReCP0tL5pBGy5RNG0
+         QGBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755117544; x=1755722344;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PBx+aI2GZUNjzRZKCiUKPus1NJlwpPhIvyJpPhFBon8=;
-        b=lx4rnJw1+HAEjDddMgvu5HsvNjfrM7MZbpTsLK4yyJe0ZgyGAMQF6F+kQX/Ec5gRuC
-         Ftq4tbkQL7lFmyyxjHP9ux/liRj55Km5lKerIHMzLQAHvtY5vWdb7SdvBapFveIH80vO
-         iSysMkoNeErRquySWqb005m7fsCbJcna4SorkHfNUgAlGNimutNBCjcmhMIDhDcEoSUx
-         KgxeofAX2TOQ2rhsLitRIzMWT+06oyDJch+6rIyMEG50bLRrYwFoKhyp5DKpJN6u2sTe
-         5JETSUVs2+T9FrUkN0RdeQLhEAMLS66778KAwrHw6gbLJr0MOrSnwVMr28C/49WqyQiO
-         ZxTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjbSQ/ZCtPiPaFrBXc6S7X4qurCxTVJ+tEKtqaP6WK/YsI1PsAYYSWJUIYo+8rBLBTxxUx+I9W0dgBSQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz1nnaqd4uxbzKfQHRI+O3qhGBnwsMiHUN266FKcKcu5V//Gfx
-	a4KVJ9Eylmbi9g4rxW1qAPe5x7JrcMZiCcF8Tk3t/7WBVbZg131z5ZdZsRmZo52XIJtUig==
-X-Gm-Gg: ASbGncuIGLzdbk+3+YSjlwQfjT7e2+Y7HQhPKFLPySGNpermwQfp8+LEv6OmEE2yI7x
-	/iOn9s5mj2EoAkQ8KlHbrNrgssicNxtjlBpbcCwVB146oBDmxCTJjvdHkW0pNS/9V4s29zgikvU
-	41QMw+2IQvBPJW6cH7Qo2+9GAN+1JneDAFRxpe9Wr2iBa8gjCObQt3YMbgVj290JrBVkDipNJCA
-	YbV6GTdA2fPHlih3E8xBJDmqx2Z+0tbIFrZlwoAbj5PWprZKsMRVvtCuYdI4la/+4zWQPuwf4Ay
-	e8Z8Hvw4fWw9/DiDHfcpb7X+BNlJLOL/VO4fXy58VKdmUInOX1qDOxxqrdk2lRIyDdBI8e3jkLs
-	rezB868q6juBE5AbTSsHJc7hPe30j0lGwGNn+VsY=
-X-Google-Smtp-Source: AGHT+IESLZ8kjjL1lvI2Mv+vn42VzZmwiuHVYUI0mGlwY35FF32aMQH+TZzu0vD93GA8PseijNSLCg==
-X-Received: by 2002:a05:6000:26c9:b0:3b7:9589:1fd1 with SMTP id ffacd0b85a97d-3b9fc36b38emr490839f8f.44.1755117543720;
-        Wed, 13 Aug 2025 13:39:03 -0700 (PDT)
-Received: from PC.. ([2407:d000:a:88a6:5d81:9c3b:954d:498b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3bf93dsm48867283f8f.27.2025.08.13.13.38.59
+        d=1e100.net; s=20230601; t=1755117591; x=1755722391;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lP0QH6bmUQ+2Acs8+Imh9XZZLiBHsh0NRGzPgFU6eoo=;
+        b=ud2a/jLlxVqfEb2AiMd0P1I2VWdf50OWfJvCN5hWqSrYPj7AEkrAIcVtbPcXngqE4u
+         v+oJpRDgE7fYNzh8sH7JpBjIl+p8kDqwmTT0VTY25djPKcvXA5KIGMY35+K/nDjCdsEG
+         XQseVxiRI1IGI/pLsqMZnksaJ1c9GdH2Fr20s45aJFoJ8j62tBB8A/AD/m/rEKRY9Tgg
+         FFuofn+kj42Wly20eggts9NSqMa+CooEduCA5pHNJm6Tq7qUppViUVcOnQhX3c+XTR86
+         znNu5b136Ho8EVxtIJ7hiYtLPX5sc1Qs7odBm7MH3pHrTjPpiHLZ9Tmob9Jc8MMX+V3C
+         xxpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVg68gYD5g9kV8JOjl04dtMcg2j3BuRcXdGkzFGbvxTUeI+fi8HZxgfllCXri3rpJd15KW34YrVSf3QkPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxX+XDc5SxJ79p12REArAcbWOw9fWpZ23vvmFL15SjeqjVRq+G
+	N84bsHsCtR/SLOTv3Kzi+QZRAlxv+ISIqpupLQI4nwjyzUgcy43/kksI/CnPqXSJFkE=
+X-Gm-Gg: ASbGncu4iQPMH1EREImRAvwv9uL3QlYrYED8Xn2VzuWI4+K8dVtsL5kYKyhmaaS93Bi
+	cRotT2FDIQcg6wRismcVhfjruRkM8uHrPO84FKPEhWO5B4wtD8XVA7KyJ5s5k4foOafmACl7PWZ
+	5sl965BKRNs0ZujHP+dcc+uN+0I/c0PbL/5j1FcEw7NlIg6ekSVa208lxlyOlPQS49fTxapYyo0
+	jCFH2ll8WasTCuplKSuwEy4osyqTFfTPa7nEtNdS71OO3XxKw2qyfKuLOsqlgYYlD4CUot1A8y5
+	NLr0pfH7Xbu0md7FQh+z41afZaAICbOF6rupiloa6IIsfBQAm6LC5ckud6ub2f5sdxneiR6M6VR
+	Hy8U=
+X-Google-Smtp-Source: AGHT+IF33uU6G1tdISaoHujqKFCv7GAhmf5MtVqMPZeo70bmBvi9Ma2tNnrW3cr8EJyPXQvpDlIPHA==
+X-Received: by 2002:a05:6e02:b4f:b0:3de:e74:be13 with SMTP id e9e14a558f8ab-3e571530619mr5127105ab.0.1755117590530;
+        Wed, 13 Aug 2025 13:39:50 -0700 (PDT)
+Received: from CMGLRV3 ([2a09:bac5:8255:1b37::2b6:1])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae99cd268sm3918681173.22.2025.08.13.13.39.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 13:39:03 -0700 (PDT)
-From: Areej <areejhamid8560@gmail.com>
-To: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	Areej <areejhamid8560@gmail.com>
-Subject: [PATCH] rust: lib: add if_cfg! macro for conditional compilation
-Date: Thu, 14 Aug 2025 01:38:26 +0500
-Message-ID: <20250813203826.3145553-1-areejhamid8560@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Wed, 13 Aug 2025 13:39:50 -0700 (PDT)
+Date: Wed, 13 Aug 2025 15:39:48 -0500
+From: Frederick Lawler <fred@cloudflare.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>, audit@vger.kernel.org,
+	kernel-team@cloudflare.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] audit: make ADUITSYSCALL optional again
+Message-ID: <aJz4FOOy8eYO6OTN@CMGLRV3>
+References: <20250808194034.3559323-1-fred@cloudflare.com>
+ <b7fae70a87b4fe937607e5e3215397bc@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7fae70a87b4fe937607e5e3215397bc@paul-moore.com>
 
-Add a new if_cfg! macro to simplify conditional compilation using
-cfg attributes. This macro expands to paired #[cfg(cond)] and 
-#[cfg(not(cond))] blocks, allowing compile-time selection between 
-code branches in both expression and statement contexts.
+Hi Paul,
 
-Suggested-by: Benno Lossin <lossin@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1183
-Signed-off-by: Areej Hamid <areejhamid8560@gmail.com>
----
- rust/kernel/lib.rs | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+On Wed, Aug 13, 2025 at 12:01:42PM -0400, Paul Moore wrote:
+> On Aug  8, 2025 Frederick Lawler <fred@cloudflare.com> wrote:
+> > 
+> > Since the introduction of commit cb74ed278f80 ("audit: always enable
+> > syscall auditing when supported and audit is enabled"), eBPF
+> > technologies are being adopted to track syscalls for auditing purposes.
+> > Those technologies add an additional overhead ontop of AUDITSYSCALL.
+> > Additionally, AUDIT infrastructure has expanded to include INTEGRITY which
+> > offers some advantages over eBPF technologies, such as early-init/boot
+> > integrity logs with. Therefore, make ADUITSYSCALL optional
+> > again, but keep it default y.
+> > 
+> > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
+> > ---
+> >  init/Kconfig | 11 ++++++++---
+> >  1 file changed, 8 insertions(+), 3 deletions(-)
+>  
+> Generally speaking the less Kconfig knobs the better; it tends to
+> complicate things and for those that rely on distro kernels, there is
+> always at least one group that is going to be upset about the Kconfig
+> knob being set "wrong".  In my ideal world, CONFIG_AUDITSYSCALL wouldn't
+> exist at all, but sadly not all arches have the necessary support to
+> do that at the moment, so CONFIG_AUDITSYSCALL remains a necessary evil.
+> 
+> Thank you for the patch, but IMO this is not the direction we want to
+> go with audit.
+> 
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index ed53169e795c..47e73949392d 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -294,6 +294,42 @@ macro_rules! asm {
-     };
- }
- 
-+/// Conditionally compiles and executes code based on a `#[cfg]` condition.
-+///
-+/// Expands to `#[cfg(cond)] { ... }` and `#[cfg(not(cond))] { ... }`,
-+/// allowing conditional compilation in both expression and statement positions.
-+///
-+/// This macro is useful when both branches must be valid Rust code and the
-+/// selection between them is done at compile time via a config option.
-+/// # Examples
-+/// ```
-+/// # use kernel::if_cfg;
-+/// // Select a value depending on CONFIG_64BIT.
-+/// let x = if_cfg!(if CONFIG_64BIT {
-+///     64
-+/// } else {
-+///     32
-+/// });
-+///
-+/// // `x` will be 64 if CONFIG_64BIT is enabled, otherwise 32.
-+/// assert!(x == 64 || x == 32);
-+/// ```
-+#[macro_export]
-+macro_rules! if_cfg {
-+    (if $cond:tt { $($then:tt)* } else { $($else:tt)* }) => {{
-+        #[cfg($cond)]
-+        { $($then)* }
-+        #[cfg(not($cond))]
-+        { $($else)* }
-+    }};
-+    (if $cond:tt { $($then:tt)* }) => {{
-+        #[cfg($cond)]
-+        { $($then)* }
-+        #[cfg(not($cond))]
-+        { () }
-+    }};
-+}
-+
- /// Gets the C string file name of a [`Location`].
- ///
- /// If `file_with_nul()` is not available, returns a string that warns about it.
-@@ -337,3 +373,4 @@ pub fn file_from_location<'a>(loc: &'a core::panic::Location<'a>) -> &'a core::f
-         c"<Location::file_with_nul() not supported>"
-     }
- }
-+
--- 
-2.43.0
+Thanks for the response. I think setting the filters to never would be
+OK, but doesn't hurt to try to see if it's worth squeezing out the
+remaining usages.
 
+> --
+> paul-moore.com
+
+PS. I'll be sure to use b4 next time for a
+submission. 
+
+Best, Fred
 
