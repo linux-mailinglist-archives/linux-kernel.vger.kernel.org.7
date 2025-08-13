@@ -1,136 +1,171 @@
-Return-Path: <linux-kernel+bounces-766174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B67F6B2434B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:54:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E112B24345
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C771893750
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7FD727F64
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1352EA155;
-	Wed, 13 Aug 2025 07:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28312BE020;
+	Wed, 13 Aug 2025 07:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z6rea7jY"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nn3s1VqG"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFCA2E8DF8
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DF42E3703
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071565; cv=none; b=j92rCCfhc+kiT38SKdpZPt6oBbjsIKMoohRPALkTwotqFpgkqRGKx0nnnWPejD25hwfXcNByjtAuexZOo0JOGEDLT2rfoQSoPKRbFnxtrnz+fdt5g1zmYpeDHyqrPS7SsQDPOQl3cn5I3Bn9yY9PK6TykQpeJFhwLhoZ+jCF6Zs=
+	t=1755071582; cv=none; b=T/sMrW9mTWe+6JlE7E3W0IwerI9xpY3VceFHMzgUEf2cXz2AMmb8yM2cVZ/MUud2OxKGpvg2pyURLk7nyHSR0ME17E9JM4RjBybCvzvJ9GJtUUCQ6WJqMNv06owk8MEYR8zrDRuj8XK6NVMgXFk5a+w61eaaJl6JHkHRHNwP5Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071565; c=relaxed/simple;
-	bh=wTHkbolkWVsr/NVVpXeCQCswoJSODOIqqyaUV2Gnosc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=k/mFjOvdJy05y2Pb0l4LRG24tlRm51mgedMTNYZ6N0iysndduiRS1jxcK8NdCrF7PsQQL6zmLeDqFgauzeNYuTzsSRhlLOcRvty0QCUVZoYnuJNqcDbWk+/h19968mfx+ns1jVlud1R+23hJK5KJ+8Q0u+24+IA7ricCB05jd9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z6rea7jY; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b78a034d25so3233582f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:52:42 -0700 (PDT)
+	s=arc-20240116; t=1755071582; c=relaxed/simple;
+	bh=f+S3gOFqwImEsJEICH99lenwE5M99OUKlgRH1xjj/Co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=osFybTqVyX3USfIGHu6qYz3Z9UG/CXjkhjvVc/sW863rvLz0FbimWZUcqvYknaezrJIVnJy8fQtZ79hVgYF5tnv+yJc+97GeS8IMnt7UcMHawVMA+/1Ejm+A0H0DkzHMmkEX/vMJV24LXeW9/O3xfPk0MK8hUpP06wuJKCMhxbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nn3s1VqG; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3322a34e84fso53990791fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:53:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755071561; x=1755676361; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=02qDuB/EcGaJVS8+Q8TL27euIcDkVRhwVcM5c3itE0g=;
-        b=Z6rea7jYeCtyCSFwOyVUAQIaHXdyS0VCOlSr3MtzNu9Ypcd4ywiMu6dsxcp0n5pOgZ
-         nXpKZ4I1T/ERUEBULOdifeV3JwtOTnXLKRyar86NkCfW2q2Pk3ZNKvxaCaFUNnaWmxgp
-         2IQLbW28wSCax7DqjUwyF48ZuAlsm3+kSGs/+szAZpfB57PIEPOwk7re6nrX52rdC2Sn
-         82EIr2hLkGVnVIWkqgmhCHG1iz3OA5C/HhOaggfDlHfkjkEuecEW1247fROHZdIAaxQd
-         KS4dewOSWkS0VcTdyjTJK+xkNcNVRqpN/A9XQCeHiBKgZMRd17j+hP2ApmtsTZzUP9z1
-         fjng==
+        d=gmail.com; s=20230601; t=1755071578; x=1755676378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iuNYhnn6aytC/r+EF2G2jA7FOCcxkDKpQ1Ff1dFxDJo=;
+        b=nn3s1VqG0m2LPHVuGLCiM3dEvoeTR6UTZCmVqZ66EhnHtaaIhjrYEPsgc49lE3/XB5
+         Bxctl5X9BzzhL5CPJOhes2gSlRe3Llnu1HnKUdPVJPiYoBJcxSY8Ox5u5XU7B5vcjXZs
+         hg22JL08XS34RT8ZMMAOdnAls/X/1Hb53ls2pMEfKWfpStHtY4QkMEdJB3A9h3h/zQpx
+         tIDFQzaesfIKO8v2STyali03Eiqxzu7FIjJErYVL/PHiMMMiYJm4tdbim3MnDQcsO+qp
+         usg7hYCPNfpZ1nrz+7Jhy2tUFMYsAa3uRHxDYqP4fAb/ZsYi+mxiIdNYLqYJ1uHR0axm
+         7mnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755071561; x=1755676361;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=02qDuB/EcGaJVS8+Q8TL27euIcDkVRhwVcM5c3itE0g=;
-        b=CBL+qTVdIEuQFNPzk42NmksPFDqWnQHM9sPK8AWU/Sn4Hg6SbIAQONRP91DBMUAvhg
-         zoFXKFCgxLes8N/Ohu8Hcdn/JKkYb79Sw9jJPKd9fQ6oJSa6Q/WCkuQuX08Xd5lBiyEo
-         Ntdhaz8+qoqVH2Cq+BuUau5v9svBVv7gAqrLOaix1LIvVysVco0AfNIDbbKTI/ptMdBI
-         t8xlIuI7FBmEURWLmTtI4rVQ+0wHZAfHWKZIsb+RXtz0laKcMh3slBUdkibFIveRKn3u
-         vUpqbVKNKkyZjQwpRMQRxYGxknr1K6NaDndE/lqPj1dKaBHBn2818jKQtU1pfA8iwaUF
-         OrxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuCjagQ4ThXG2WED5nyQcJ4zz7CFTKFxvJvSHkl+Vp4SVMuLtrqKODh5yICr1o84SSwKq9oGcoBqQ9ops=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsM5NYXbOBAq25LS3yofWo/1pPNEpSyyE7UGPDY2KzWAzzXWHX
-	FQUEk4763s7C8FxzugNwWiGBv/UqrCQQdRuStghMtc9vQ+moEetcHwfMLnQrAwM2G+vMQhVNRs0
-	drdKNIzjR2vFWMGEIzQ==
-X-Google-Smtp-Source: AGHT+IFQOnB3WTKhyHtvWJmH83iA6/rYttG73Tf1N82jwPFXufEqb0tOp/a1EyEQXFyeHLXn1qK53ixfr0QTKsU=
-X-Received: from wmbjg12.prod.google.com ([2002:a05:600c:a00c:b0:458:a7ae:4acf])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5d85:0:b0:3b7:61e5:a8a5 with SMTP id ffacd0b85a97d-3b917eb5b43mr1445076f8f.47.1755071560984;
- Wed, 13 Aug 2025 00:52:40 -0700 (PDT)
-Date: Wed, 13 Aug 2025 07:52:40 +0000
-In-Reply-To: <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org>
+        d=1e100.net; s=20230601; t=1755071578; x=1755676378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iuNYhnn6aytC/r+EF2G2jA7FOCcxkDKpQ1Ff1dFxDJo=;
+        b=EUx8Zv+w5rhwKIbHV+zxo2l/ck8OfT3ziw6/qVMf4OC2oHfmS5zf75KJdqGZlJ1hvm
+         MIJ/IGCiaAQKKeDwdyq5ls3xiqfPsEiymc4NkpQuqsZCT9yVo+2npqf8qx/TcMXFj+TM
+         i2kqHmZ9FmuvQAQYccRz7sJI0+WbeWCDdMZlIHhyBZAxc9vCJDljBuRd7yk5PktsBxlI
+         mOyfq8I9Y7By8FrhEftL+kRk4FP784y2Cq4ny3+CnbTbH9S1X3hTfCaB6L3/Dlo9Bqbq
+         xgDg12DGd5cHiHY8YVhv0HBKdqqRu8sn7nvC1lQIFslv9UN0ldMLHQR7GsKf18qhxmiH
+         YcAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5UdSfMGmMEJMy6WKjDRysApw78g13uzWTI8IkuYW7A0w7uulyUiuqx9mP5oDpz1VrCtfOMnMiz1D7uGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWvZBL6gJxhT7cCo73bX4PulFHUynxUeN1TdLfWmQ+9mJTefnf
+	5SvH7BeCdoXtKJNBVrkT/nuYlhFndNvjGkYlshZ9chY9QnpjyvIcdU4NDSx1atrvvqcYEI7/mED
+	20l/nf2UtMwqQv17YyHLiD3YqfJTOVMU=
+X-Gm-Gg: ASbGncuVZ4j/sooZ1I1mCNnxyUYyQlyh9W9q9cn1wg4IwId1HIkReuKyV5MhDZuHaHy
+	qIatBTDp4IA8fYvVPoIS5uXNitFF7eBu/ZMSqKJt1rQ0LBbidDvDMhFRXm7A5+ZOKUCzCgonJW3
+	IHsyi66t+YApNBIV+Khw4VmhOdiTv7ybE/6V9Fh5htXI7u3Q1e1QF+FT+63biRNr54PCN45qi/B
+	6+FBRsCUnVW+3pH80xmzeKwsqPFyT0+bdMtliiT9Q==
+X-Google-Smtp-Source: AGHT+IGFeq7PPC0eDOedQvgcpVbMujIUP3t7+BvdzV2tK5S5ebK463DvsDG3mCmLv5tGlRuKsDUgiKS8yfPokoH4RbQ=
+X-Received: by 2002:a05:6512:b2a:b0:55c:ad2a:aa85 with SMTP id
+ 2adb3069b0e04-55ce03ee417mr558298e87.42.1755071578069; Wed, 13 Aug 2025
+ 00:52:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
- <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com> <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org>
-Message-ID: <aJxESG0l4-kyUHXg@google.com>
-Subject: Re: [PATCH v2 1/2] rust: alloc: specify the minimum alignment of each allocator
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	Tamir Duberstein <tamird@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-mm@kvack.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250805154725.22031-1-pranav.tyagi03@gmail.com> <871pppfnjy.ffs@tglx>
+In-Reply-To: <871pppfnjy.ffs@tglx>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Wed, 13 Aug 2025 13:22:46 +0530
+X-Gm-Features: Ac12FXzxt4da2HYC4FFx3-Q0XE9aXKct1tIAwbLc7mv9ge5_lOj4D9vnXeJrQjY
+Message-ID: <CAH4c4jKEx4w3LobdSbixXBK4NaSdfa993YjNF_j_pZoqjieBOQ@mail.gmail.com>
+Subject: Re: [PATCH v3] futex: don't leak robust_list pointer on exec race
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org, 
+	dave@stgolabs.net, andrealmeid@igalia.com, linux-kernel@vger.kernel.org, 
+	jann@thejh.net, keescook@chromium.org, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 07:52:35PM +0200, Danilo Krummrich wrote:
-> On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
-> > diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-> > index aa2dfa9dca4c309e5a9eafc7da6a8a9bd7b54b11..25fc9f9ae3b4e471a08d77130b374bd1397f7384 100644
-> > --- a/rust/kernel/alloc/allocator.rs
-> > +++ b/rust/kernel/alloc/allocator.rs
-> > @@ -17,6 +17,8 @@
-> >  use crate::bindings;
-> >  use crate::pr_warn;
-> >  
-> > +const ARCH_KMALLOC_MINALIGN: usize = bindings::ARCH_KMALLOC_MINALIGN as usize;
-> 
-> I think this needs the following diff:
-> 
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index 84d60635e8a9..4ad9add117ea 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -84,6 +84,7 @@
-> 
->  /* `bindgen` gets confused at certain things. */
->  const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN = ARCH_SLAB_MINALIGN;
-> +const size_t RUST_CONST_HELPER_ARCH_KMALLOC_MINALIGN = ARCH_KMALLOC_MINALIGN;
->  const size_t RUST_CONST_HELPER_PAGE_SIZE = PAGE_SIZE;
->  const gfp_t RUST_CONST_HELPER_GFP_ATOMIC = GFP_ATOMIC;
->  const gfp_t RUST_CONST_HELPER_GFP_KERNEL = GFP_KERNEL;
-> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-> index 25fc9f9ae3b4..5003907f0240 100644
-> --- a/rust/kernel/alloc/allocator.rs
-> +++ b/rust/kernel/alloc/allocator.rs
-> @@ -17,7 +17,7 @@
->  use crate::bindings;
->  use crate::pr_warn;
-> 
-> -const ARCH_KMALLOC_MINALIGN: usize = bindings::ARCH_KMALLOC_MINALIGN as usize;
-> +const ARCH_KMALLOC_MINALIGN: usize = bindings::ARCH_KMALLOC_MINALIGN;
-> 
->  /// The contiguous kernel allocator.
->  ///
-> 
-> 
-> No need to resend I can fix it up when applying the patch.
+On Wed, Aug 6, 2025 at 3:17=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de>=
+ wrote:
+>
+> On Tue, Aug 05 2025 at 21:17, Pranav Tyagi wrote:
+> > +
+> > +     if (IS_ENABLED(CONFIG_COMPAT) && compat)
+> > +             head =3D p->compat_robust_list;
+>
+> This still does not compile because the dead code elimination comes
+> _after_ the compiler decodes this line. I don't even need to fire up a
+> compiler to predict the error emitted when CONFIG_COMPAT=3Dn:
+>
+>   error: =E2=80=98struct task_struct=E2=80=99 has no member named =E2=80=
+=98compat_robust_list=E2=80=99
+>
+> No?
+>
+> There is a reason why I suggested you to use that helper function.
+>
+> You are obviously free to ignore me, but then please make sure that the
+> stuff you submit compiles _AND_ works. Otherwise if you are not sure,
+> why I told you, ask.
+>
+> Please take your time and stop rushing out half baken crap, which wastes
+> everybodys time. I don't care about your time wasted, but I pretty much
+> care about mine.
+>
+> To be clear: I don't want to see this in my inbox again before next week
+> and then it better be correct.
+>
+> Thanks,
+>
+>         tglx
+>
+>
+>
 
-Hmm. Maybe that depends on the configuration? The constant was generated
-for me. Either way, happy with the suggested change.
+Hello Sir,
 
-Alice
+There is no question of ignoring you. It is my privilege to be
+communicating with you.
+Your guidance in the course of this specific patch has only enhanced
+my understanding.
+I always try to respect everyone's time and agree that I hurried the last o=
+ne as
+time of my mentorship program is closing fast. My apologies.
+
+I have again sent the reworked patch (v4) duly corrected based on your
+observations.
+I have compiled and checked it with CONFIG_COMPAT=3Dn. And to the extent
+my little wisdom
+allowed, I have tested it using the following custom testing code on a
+virtual machine:
+
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <linux/futex.h>
+#include <linux/unistd.h>
+#include <stdio.h>
+
+int main() {
+    pid_t pid =3D 0;  // 0 =3D self
+    struct robust_list_head *head;
+    size_t len;
+    long ret;
+
+    ret =3D syscall(SYS_get_robust_list, pid, &head, &len);
+    if (ret =3D=3D -1) {
+        perror("get_robust_list");
+        return 1;
+    }
+
+    printf("Robust list head: %p, length: %zu\n", head, len);
+    return 0;
+}
+
+Regards
+Pranav Tyagi
 
