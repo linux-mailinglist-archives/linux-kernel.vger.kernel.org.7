@@ -1,134 +1,123 @@
-Return-Path: <linux-kernel+bounces-765962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D65B2409C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:50:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2033AB240AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924F8587CAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:49:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78871BC0E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2E02BF005;
-	Wed, 13 Aug 2025 05:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8452C08CA;
+	Wed, 13 Aug 2025 05:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n34bRQWW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MmliNpgi"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E582C15A8;
-	Wed, 13 Aug 2025 05:48:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BB12D0C84
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755064139; cv=none; b=ERh3ZYFsvMT6GLb3MRLPf6JD/xYcANTqpswXD5NYcnEUNlK7YcRW99WcAstkvXPQN5ON3G5mI0PUyWKFbR/DQHE1Rt738nhxSc5taEaZ2r6Mh7pOd5ISd/O1LHUpY/lyWArWdjtHdwPGfSc12HOHg+VElqW3CY6yRMZdIdscZ3o=
+	t=1755064156; cv=none; b=d2wvW0ichqhhcbQKubdRstT+KhpMEpfL/wxiEXQtGT9IorLHP8G24oIcm8+oPUtjgV8e1s9E76vhx1fdaiW1OQ10S7QEmkcYRiktrZSbkqKrN6G/RuUfwAUdE/9Va//BuOOnkp/4OLC9P4uVCAACiK7rjAWroGmbDzZsyH8teIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755064139; c=relaxed/simple;
-	bh=v2+LzP/RyNnvQJuTwqwFxbLgkZQ+Z0N2Fi1NJHc3CJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hDZz5rUzCKS76WAvT4SRssyuBe21d9jamH9gFZ9R5P0xh6mJfNWdLLOdOv5TbkaLe7bFTfEUDzFIpqaYAFGtJCJ7e7z6K7MKVEEDJiKiJOyqWzJRbGvUQywEqVHI7IWlFhKZkYvBjvVzOyNM6ApY0nP/YL9e17BERr9dkj+kBc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n34bRQWW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B63EAC4CEEB;
-	Wed, 13 Aug 2025 05:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755064139;
-	bh=v2+LzP/RyNnvQJuTwqwFxbLgkZQ+Z0N2Fi1NJHc3CJc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n34bRQWW4RLNeD6jzsHxfmTji0RZ0OVe78j2gn3FozZCqKkANBr0DVOjNxW/v6c+u
-	 7t/CddAM/l9sQKXyDJgU9mITDum+ylBbNuZkd99ztAbhvy0zHhzzw0/XwaQn7dIu6w
-	 Ik14621Yvn3cBnxqXRqqFgrb5tR5KpS7GXcuc3/FkTsooVX8q4msB2xASneDdQ84O3
-	 rxcQJtKc+W7y8XuwIzdwTLY9JmiBC7ggQBeTAo2C554EO11uoLOuGyFHm3sYyBY1Qh
-	 O/SBkr+QmuZUzS+gUYdqcOsVBaVKLu5FrTik6aa6QuQyZKelduA0+1oLIqQGbQnMGc
-	 2Jy8z3DQbcQuA==
-Message-ID: <4f0ec956-d796-4c62-995b-f8a879b444f0@kernel.org>
-Date: Wed, 13 Aug 2025 07:48:55 +0200
+	s=arc-20240116; t=1755064156; c=relaxed/simple;
+	bh=5XEzjMGKnaeMJFhQb3Nwzbat+idzevLzr/emeLMFnok=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Sxlb9C01IvvDxJvREx+FfGoxzssZCoT6YSQXBCHolrIkwxmn7sT9fanKtKa0FWGGNKrn23PEiGZpzgzbNYI1x9asNMVNaPUDIexUviEb2mtxX4meG2MR72rnrslFBG1/MnN+7nnXKKK5QjwrKEsQ7LSfId1h2X9k5ECq3MacIQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MmliNpgi; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-458baf449cbso59712935e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 22:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755064152; x=1755668952; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1NATFWYnL9FpvCQHaSEVWqiysmgBFz5wmTJhKI3JDuA=;
+        b=MmliNpgiE/VmRLHxzAL0+iYkaLFqIm9XMYYpGoXkcCzDp1VE3K+5MqRTwqY2MKT0Q9
+         UYnD9ZkOVjPAp4HTLJhXxtFsHVPDPteUtVL/XEwK3O76gkIdu9eIPT8chZnbMMee3UDe
+         kgfaTZBLJdvKhFVU6dosQTRlRlIFc912tK4LVFnWyAw6pZtbi0yQDPY1v1ISCAOfI7qI
+         c53Ibvhg6ZSTjr9Rh/495y5pbY4h6pNnxfBCweBdFFFAXJgmYckQe62/un09B3tv8zBJ
+         TV+9qAhEu1s+WIJTCdJkixR601r0p2yuSpfkuLxbJuhRu6RFSnVIe+O+Zd+YqWP+xh4I
+         38fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755064152; x=1755668952;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1NATFWYnL9FpvCQHaSEVWqiysmgBFz5wmTJhKI3JDuA=;
+        b=ahh4GCUDXN4TA4yVrL3ybhTqSqosS9Oy41ywNTAxcLEINyN1F2ASpAZO5gJ1Xahm74
+         yiUETk2+jDX/55XYFtaw/hPmi/HTY1IguDJaGbgl/C8qE1OAoxkWmW+Xh8UdbUwKnqD+
+         PdX2wOIWKdhInKMo8ka8I1w2QQPUER+6K8ayeXZiksI4hjw/xUUW/tPwj3dBz+Khy1eK
+         tCLqvoRe4fk5fKFoCkXCXRs7j237YKRjxAIA1DeRQ8yMgvJeYcBp98a0fl4qn2tbT/XY
+         6yqk97nLZYJCxz7Qp9TetbN0BaZLq/W/6aM2ayR3Ug5Iz9b4qb726tYwxgudLFwDj7Gv
+         zCNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVo29/OMWslYuQeDSEpXSd+JXuCafY06hWsz/oGu6LCDEwL4G2pJk6m0l1naXBhVSGeQ01PI4mVn45doMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIus/8Crg+DlzFobaCpg7kb7Cdh6lnG0Xb8r2Z7hlO2v7jnYW7
+	tb4FnH8RlY8iMe5Z/HKNpDxN4p7kh9Acqgqrrj8QOjkUk0DpQvA07Su6HWnQcEOj4FI=
+X-Gm-Gg: ASbGnctpd+Lw0nPn9vjLL2b99ygOrRwIHViVc+svONS/+QIoPGtwCKsVXxInyof8Qnp
+	Y+X9xPLUEv356J4VkQkrRqVSxxDKT37VZjScrKXsny9sHKXduSsfkDiCOzqhCH1Joi/xqzXVdXw
+	Z5F3VXoiCkEhqp/me9seOMxKFqZXUUdgRXXPkBITMBi3/dzLGdrGM8wUo1vIAy4q/MjqfjXLnmL
+	ebaOhZJCCWoE45JqSTdbYDnhWPJFakY0n+xHLc3OBJgXsTeIA4UvOX0qR48MM8qx0mB4+hohr4x
+	EEbJCyFIf6Az0t05L4tmgssZb3lK757avPWaC6DnzwneYHwv94Zr/qE8VtIbzr/2x5TLWStlpto
+	RRrt/SBaBRrzmoCeRdOIW46r04Tdk7MXe8MmU8g==
+X-Google-Smtp-Source: AGHT+IFDvLxnIU17Hp8mu8s/hfxqo91PU/ydIDKmiqnIJjDK4g9R/0BJmMQ3yTeiQ09ZscNds3uIlA==
+X-Received: by 2002:a05:6000:4205:b0:3b8:d493:31f4 with SMTP id ffacd0b85a97d-3b917eb6c5bmr1136780f8f.48.1755064151797;
+        Tue, 12 Aug 2025 22:49:11 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4696c8sm45376480f8f.55.2025.08.12.22.49.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 22:49:11 -0700 (PDT)
+Date: Wed, 13 Aug 2025 08:49:08 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mike Christie <michaelc@cs.wisc.edu>
+Cc: Nilesh Javali <njavali@marvell.com>,
+	Manish Rangankar <mrangankar@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	James Bottomley <JBottomley@parallels.com>,
+	Ravi Anand <ravi.anand@qlogic.com>, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] scsi: qla4xxx: Prevent a potential error pointer dereference
+Message-ID: <aJwnVKS9tHsw1tEu@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: "complete" dt-bindings for new SoC
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <82c09e95-9856-42ec-b7a5-858fd06b888a@alliedtelesis.co.nz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <82c09e95-9856-42ec-b7a5-858fd06b888a@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 13/08/2025 06:56, Chris Packham wrote:
-> Hi Devicetree Enthusiasts,
-> 
-> A few times now I've been told that things would have been easier had I 
-> submitted a complete binding in the first place. I find myself looking 
-> at another new SoC (a Realtek Switch with and integrated ARM64 core this 
-> time). I'm also waiting on hardware so I figured I could probably get 
-> the ball rolling on a devicetree and I wanted to do a better job of 
-> writing the binding.
-> 
-> Which brings be to the question. What does a "complete" binding mean to 
-> the devicetree maintainers? Are we talking about an overall binding for 
-> the chip that calls out peripherals (some which already exist) with a 
-> ref: ? Or a full binding in one document that covers everything in the 
-> chip? Does it need to be accompanied by an actual dts(i) for the chip?
+The qla4xxx_get_ep_fwdb() function is supposed to return NULL on error,
+but qla4xxx_ep_connect() returns error pointers.  Propagating the error
+pointers will lead to an Oops in the caller, so change the error
+pointers to NULL.
 
+Fixes: 13483730a13b ("[SCSI] qla4xxx: fix flash/ddb support")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/scsi/qla4xxx/ql4_os.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Writing bindings doc describes that. I would add on top - if SoC has
-multiple devices of same class, like multiple clock controllers or
-resets, this should be taken into account if not sending all of them.
-And by taking account I mean think how complete picture will look like.
-One SoC for RISV-V is example of that...
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index a39f1da4ce47..a761c0aa5127 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -6606,6 +6606,8 @@ static struct iscsi_endpoint *qla4xxx_get_ep_fwdb(struct scsi_qla_host *ha,
+ 
+ 	ep = qla4xxx_ep_connect(ha->host, (struct sockaddr *)dst_addr, 0);
+ 	vfree(dst_addr);
++	if (IS_ERR(ep))
++		return NULL;
+ 	return ep;
+ }
+ 
+-- 
+2.47.2
 
-Best regards,
-Krzysztof
 
