@@ -1,779 +1,376 @@
-Return-Path: <linux-kernel+bounces-766638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF00B24952
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1610EB24956
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09AE78805C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1EA8807A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1C8136347;
-	Wed, 13 Aug 2025 12:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9ED15539A;
+	Wed, 13 Aug 2025 12:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="FVNbTySC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ffUzrl/S";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vkniRPSD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PH4VULNd"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MU03yWID"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77FA25776
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D2111CA9
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755087385; cv=none; b=tw3UGsNzkNlxW66vt7Gu7Omu89wGtvN3wJctOr+FiLi7DABxEkKM/jYhg1z+jWKbWIkM22BCLaa8Lbnw+EWaR9iGq27LbGv7MwqhFKF4yvQmmPV/MQmSMnxJ9TuFTq3WeGuqJQ3u347AZAs/Zk3KXiW2/v6pqhylymnL6DPDamU=
+	t=1755087403; cv=none; b=g+CfnjjPRog1emB9RjD1rCekj6uRf8HnXi/ahAhyQKNY2HOKmErtxc3xKQ53XTMOsqwKSjgWg2VGFUws9jWOBX/Pp7ECRZ8M5PoW3/w9QjMjbHHHKHMWDI30CWuf0JP/Ow5xXaEndS1LOMDxEa0rdfQKnsdxwWdWblqicglv6xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755087385; c=relaxed/simple;
-	bh=ewdpVLm5T23MtPE10BGt9nLBBvgg0dBiSBTgPKosXDI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GcHWpDJz0MATPfaK80NVDfTs6lywVTegBNAFDEfV+aeaupjoaM/mPg/jH4VxmVRLzsW1vOXB+1TmYQWusvnmQ6Xdbam67qcd6d2uLiruWhB8zROqXB/W1fkeDvwatVVVEVdannX2c6JiI2Y8+Kd3ALsJkkV3YssIdNGFl+2KvF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=FVNbTySC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ffUzrl/S; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vkniRPSD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PH4VULNd; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E5BC921AD1;
-	Wed, 13 Aug 2025 12:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755087381; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3WBYJD/DDsZfLe3+gy05jyIJ1R/YjBTCBp+757tj9m4=;
-	b=FVNbTySCRujv7YZGp3iTaa7XCDnD+YQkdFY780Y6dEg7dWn4+HPaGo2ql5cCWDfAYyULhm
-	2h1jKPE3koUEy0Q8FMO9Zyx9AUelhuja/3ZODExhBuu0DXDBd5KemyjXqnI4IEN6VLKRJv
-	8vnGkl7/E2Z2kDTw2ximlB/vLPcg/bI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755087381;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3WBYJD/DDsZfLe3+gy05jyIJ1R/YjBTCBp+757tj9m4=;
-	b=ffUzrl/SHb+9I9giafHwV4NrBjtVr4maruHECWuSw9pPch1gWNoDHpNEe541H5slI2Paf5
-	ERdFH24b8GBpjNCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755087380; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3WBYJD/DDsZfLe3+gy05jyIJ1R/YjBTCBp+757tj9m4=;
-	b=vkniRPSDhpYFMSx1FN9Q2SeQppwtroXXNBPbY85GeJLoxFeOLM7XhTeqQ5bqm/uGk4mxwJ
-	mCX3wYaUY+WnPTQgtqEF9Er0gb84fXf4GOK3tF0wZ7OpWVg/GdAggOGW7Kp2VPaVOwv0DW
-	4+JbVDSv0E6ZW8YozSo//eQSKoVrlbo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755087380;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3WBYJD/DDsZfLe3+gy05jyIJ1R/YjBTCBp+757tj9m4=;
-	b=PH4VULNdXrDLfKvfJW0ZaZOm/rp+bN0Nq4JqNJGMv1qgrJLLumgh/a9l5hU+wLFunZf3OJ
-	12G0yJezqbdTnsBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B9EA13929;
-	Wed, 13 Aug 2025 12:16:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vddoIBSCnGhARwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 13 Aug 2025 12:16:20 +0000
-Message-ID: <b4a18ca4-2889-4a16-9b75-872a1fec3c19@suse.de>
-Date: Wed, 13 Aug 2025 14:16:20 +0200
+	s=arc-20240116; t=1755087403; c=relaxed/simple;
+	bh=5/qgc59oD8soUgBaYKa9gXVnBOWyFLGpMZ+wpMO2kD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nD3PIVQEYyiHUK18XfAz1DPYxrtxyqlHrac9ex6kZb2y3BDhqasIRlJbUANtC6mX756d5Q+peyeB9+XdMrWHTCF7vv2XZI/XBwQU4YlqQeWBtRXBw/ZUwVssUAToH122URQJMnqSO/2Gj0EQMXmE+X4lFVRDGtgKPBdEVCP5UYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MU03yWID; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7426c44e014so5596781b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:16:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755087400; x=1755692200; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IbnSBztKB/ky+HfHfoiCEKZibcC+VHhc0U9rmRsC39Q=;
+        b=MU03yWIDeYtVHuUc80o9ZFdzCVZquy0SEmXRHmdB2xt7uom0jDg38ofZnTiGWD+xIV
+         AyDe9bJjxYpsCnbGTM5hnUkuUTVGTeJKtPHoyTgdWZdR5vqftDElzqG0kXAJn5DG1q+z
+         vQjPGJtBiAEAl8S3rViySW9d2Pp1s/8eWVx3FoacAVHBJM4p6RFCxkGWygbJzHPyqgT9
+         3KGKbGG8UQzWvingJwXKJMu4BwflIB9b3D5fIWchC3Y0mNZNYakt1kJXAd8FWdyzMApS
+         6b74hmY/9o+SMkhQJ5HE8/+iAltRy6GECe6Aj1iweM6PzC7ndR2seO0F1r4bEG/gMCT9
+         ml2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755087400; x=1755692200;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IbnSBztKB/ky+HfHfoiCEKZibcC+VHhc0U9rmRsC39Q=;
+        b=JkIApPsp5wP1NjLkkrpOGQ6UJMsP1Nff90FbudkP/dHKj6wjFJHJRWlMdd9x8hI0g7
+         sHblnbVM01NrGgiWjjADbN/nBt9kHjXkHgskfhDi5zespB5AY8zbcqkyhLnhnFYhUjGt
+         RXUzO96o4A0SXwveXaAEkxjnyq329I8r+XV71aQZ6VG5Jnq+HEeXSwf0j+QJTzNvQysY
+         dmmW3DG/xvLLvSE7OM3F9YBhLlymOCk9NOJzkjrpdnxZ9ziy5d9woCTPIcI6ZEA11DMK
+         5S0oNn9+ObPQFK/ABs3Ryx3peUbSMMgz5/laefErS2PWe3X3cYfkLxtFmVhsOAHNacZm
+         +ePg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ52W8JvokCa4xkPXP+zpUlo01IXpCQoryxB6gt0pn+rAQameQ8+/qXjHtXQBbsa8zUitUX2zsaYPQBVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQyrAKa85FtG7LHRk2C2TbK/Kxhbj6xHwUPWmfa3JxV860AuxO
+	VnS4MCDI3sf0CdcrLQWAsjww7B/FGckjFh7HWmAAFS44+SCs2nj4Ni/MEQamdjslBgg6rpMrMDC
+	x+Q8/gw92EP5rOVcGMeAzQvRuJWrleX48YG42ZxMJ0Q==
+X-Gm-Gg: ASbGncs8/enudd4dnOM34eFVQYcJSh1Sbkl5DDH0ew4srfOO83fu9/OQjBlUeIATYW2
+	qUIUWU/Vxt7ZL3BjKwRL/stlg4OjSNFsBVriciYTlhNjDoWo5//gKxEhtQ8ahqfTcrPnf5fAUew
+	Jt/pqjtyt1S+PUtrprLdjkA165FFn950oAF67b5U6j3ImsOF/wPnl8TFdbngTAOONlLFyeBNMOw
+	Q4vloJLItHENmK0QX4ixtpqRiJcxtxAlB/ndwYDxODBNARxqsY=
+X-Google-Smtp-Source: AGHT+IEqRlX1hXQvIAC8z4ap56R3F6zBfHl+FK5wqB5WBXqk2utT/Iy+dcR7aD5xv5GmvhMOoS30o/Rmi8/TkNbCz1I=
+X-Received: by 2002:a17:902:fc47:b0:242:a0b0:3c28 with SMTP id
+ d9443c01a7336-2430d262dd1mr40863255ad.51.1755087400321; Wed, 13 Aug 2025
+ 05:16:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 RESEND 1/3] drm/shmem-helper: Import dmabuf without
- mapping its sg_table
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Shixiong Ou <oushixiong1025@163.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sean Paul <sean@poorly.run>,
- Jocelyn Falempe <jfalempe@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Shixiong Ou <oushixiong@kylinos.cn>
-References: <20250522070714.439824-1-oushixiong1025@163.com>
- <ba1bdfb8-dbf7-4372-bdcb-df7e0511c702@suse.de>
- <7d974eaa-d8a4-4430-a999-7b06c4e17a81@163.com>
- <9792c6c3-a2b8-4b2b-b5ba-fba19b153e21@suse.de>
- <f18a41f5-bf33-4e83-9cd1-59b0efd952c1@amd.com>
- <47ba5d7b-dd1c-4f19-92cb-523b60f1e876@suse.de>
-Content-Language: en-US
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <47ba5d7b-dd1c-4f19-92cb-523b60f1e876@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[amd.com,163.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,poorly.run,redhat.com,lists.freedesktop.org,vger.kernel.org,kylinos.cn];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+References: <20250812173419.303046420@linuxfoundation.org>
+In-Reply-To: <20250812173419.303046420@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 13 Aug 2025 17:46:26 +0530
+X-Gm-Features: Ac12FXybqNMQTflDlQz__4h-ypQooKNx0q_GNsw0wCT1xS6QPkD-sG6dIOKmaWc
+Message-ID: <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
+Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org, qemu-devel@nongnu.org, 
+	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
+	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>, 
+	Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org, 
+	Zhang Yi <yi.zhang@huaweicloud.com>, Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-ext4 <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-In addition:
+On Tue, 12 Aug 2025 at 23:57, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.1 release.
+> There are 627 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Aug 2025 17:32:40 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.1-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
->> Here udl just silently assumes that it got a vaddr, but that isn't 
->> necessarily the case. Drivers amdgpu (or radeon, nouveau etc...) can 
->> return an io addr as well.
->
-> That's a union of the two pointer types. [1] Using them 
-> interchangeably has worked so far (*) and should work here as well. As 
-> I said in the other mail, ttm_bo_vmap() never bothers to pin the pages 
-> in place and amdgpu might relocated them shortly after.
+LKFT found three regressions on stable-rc 6.16.1-rc1.
 
-AFAICT with the old code we ran dma_buf_pin_on_map() at some point. 
-Could we do this in the new version as well?
+Short version:
+1) Pef build regressions on x86_64 and i386
+2) LTP syscalls failures with 64k Page size on qemu-arm64
+3) Kernel warning at fs/jbd2/transaction.c start_this_handle x86, qemu-arm64
 
-[1] 
-https://elixir.bootlin.com/linux/v6.16/source/drivers/dma-buf/dma-buf.c#L1115
+Long story:
+1)
+The perf gcc-13 build failed on x86_64 and i386.
 
-Best regards
-Thomas
+Build regression: qemu-arm64 ARM64_64K_PAGES ltp syscalls swap fsync
+fallocate failed.
 
->
-> [1] 
-> https://elixir.bootlin.com/linux/v6.16/source/include/linux/iosys-map.h#L110
->
-> Best regards
-> Thomas
->
-> (*) White lie: we had problems on exotic architectures, such as sparc, 
-> but never on x86.
->
->
->>
->> Regards,
->> Christian.
->>
->>> Best regards
->>> Thomas
->>>
->>>> Best regards,
->>>> Shixiong
->>>>
->>>>
->>>>> [  168.785445] BUG: unable to handle page fault for address: 
->>>>> ffffc9012b800000
->>>>> [  168.792311] #PF: supervisor read access in kernel mode
->>>>> [  168.797452] #PF: error_code(0x0000) - not-present page
->>>>> [  168.802586] PGD 100000067 P4D 100000067 PUD 0
->>>>> [  168.807042] Oops: Oops: 0000 [#1] SMP KASAN PTI
->>>>> [  168.811573] CPU: 2 UID: 1000 PID: 2380 Comm: KMS thread 
->>>>> Tainted: G            E       6.16.0-rc5-1-default+ #4080 
->>>>> PREEMPT(voluntary)
->>>>> [  168.823537] Tainted: [E]=UNSIGNED_MODULE
->>>>> [  168.827458] Hardware name: System manufacturer System Product 
->>>>> Name/Z170-A, BIOS 3802 03/15/2018
->>>>> [  168.836125] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
->>>>> [  168.841779] Code: 0f b6 34 28 4c 89 d8 49 d3 e5 83 e0 07 4d 01 
->>>>> dd 83 f9 01 0f 84 4a 03 00 00 83 c0 03 40 38 f0 7c 09 40 84 f6 0f 
->>>>> 85 82 05 00 00 <41> 8b 03 4c 63 7c 24 78 4c 89 5c 24 08 89 c6 41 
->>>>> 89 c4 c1 e8 08
->>>>> c1
->>>>> [  168.860476] RSP: 0018:ffff88811c7e75c0 EFLAGS: 00010246
->>>>> [  168.865697] RAX: 0000000000000003 RBX: 0000000000000000 RCX: 
->>>>> 0000000000000002
->>>>> [  168.872815] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 
->>>>> 0000000000000100
->>>>> [  168.879934] RBP: dffffc0000000000 R08: ffff8881082efe00 R09: 
->>>>> ffff8881082e0000
->>>>> [  168.887046] R10: 0000000000000002 R11: ffffc9012b800000 R12: 
->>>>> ffff88811c7e76f8
->>>>> [  168.894155] R13: ffffc9012b800400 R14: ffff8881082e0007 R15: 
->>>>> 0000000000000000
->>>>> [  168.901266] FS:  00007f4685f3b6c0(0000) 
->>>>> GS:ffff88846c690000(0000) knlGS:0000000000000000
->>>>> [  168.909330] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>> [  168.915058] CR2: ffffc9012b800000 CR3: 0000000117944004 CR4: 
->>>>> 00000000003706f0
->>>>> [  168.922170] Call Trace:
->>>>> [  168.924616]  <TASK>
->>>>> [  168.926714]  ? validate_chain+0x24e/0x5e0
->>>>> [  168.930718]  ? __lock_acquire+0x568/0xae0
->>>>> [  168.934725]  udl_render_hline+0x165/0x33b [udl]
->>>>> [  168.939256]  ? __pfx_udl_render_hline+0x10/0x10 [udl]
->>>>> [  168.944297]  ? local_clock_noinstr+0xb/0x100
->>>>> [  168.948557]  ? __lock_release.isra.0+0x16c/0x2e0
->>>>> [  168.953162]  ? mark_held_locks+0x40/0x70
->>>>> [  168.957077]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
->>>>> [  168.962721] udl_primary_plane_helper_atomic_update+0x432/0x670 
->>>>> [udl]
->>>>> [  168.969145]  ? 
->>>>> __pfx_udl_primary_plane_helper_atomic_update+0x10/0x10 [udl]
->>>>> [  168.976089]  ? __pfx___drm_dev_dbg+0x10/0x10
->>>>> [  168.980357]  ? 
->>>>> drm_atomic_helper_calc_timestamping_constants+0x141/0x200
->>>>> [  168.987044]  ? drm_atomic_helper_commit_planes+0x3b6/0x1030
->>>>> [  168.992599] drm_atomic_helper_commit_planes+0x3b6/0x1030
->>>>> [  168.997987]  drm_atomic_helper_commit_tail+0x41/0xb0
->>>>> [  169.002943]  commit_tail+0x204/0x330
->>>>> [  169.006513]  drm_atomic_helper_commit+0x242/0x2e0
->>>>> [  169.011203]  ? __pfx_drm_atomic_helper_commit+0x10/0x10
->>>>> [  169.016413]  drm_atomic_commit+0x1e1/0x290
->>>>> [  169.020500]  ? prepare_signaling+0x355/0xda0
->>>>> [  169.024769]  ? __pfx_drm_atomic_commit+0x10/0x10
->>>>> [  169.029372]  ? __pfx___drm_printfn_info+0x10/0x10
->>>>> [  169.034069]  drm_mode_atomic_ioctl+0x8ff/0xe40
->>>>> [  169.038510]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10
->>>>> [  169.043466]  ? find_held_lock+0x2b/0x80
->>>>> [  169.047295]  ? __lock_acquire+0x568/0xae0
->>>>> [  169.051293]  ? mark_usage+0x65/0x180
->>>>> [  169.054870]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10
->>>>> [  169.059823]  ? do_raw_spin_unlock+0x55/0x230
->>>>> [  169.064081]  ? drm_is_current_master+0x26/0x30
->>>>> [  169.068517]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10
->>>>> [  169.073465]  drm_ioctl_kernel+0x141/0x2b0
->>>>> [  169.077468]  ? __pfx_drm_ioctl_kernel+0x10/0x10
->>>>> [  169.081987]  ? lock_release.part.0+0x47/0x90
->>>>> [  169.086249]  drm_ioctl+0x481/0xb50
->>>>> [  169.089653]  ? __pfx_drm_mode_atomic_ioctl+0x10/0x10
->>>>> [  169.094610]  ? __pfx_drm_ioctl+0x10/0x10
->>>>> [  169.098525]  ? find_held_lock+0x2b/0x80
->>>>> [  169.102356]  ? lock_release.part.0+0x47/0x90
->>>>> [  169.106621]  ? __fget_files+0x1aa/0x2f0
->>>>> [  169.110450]  ? __fget_files+0x1b4/0x2f0
->>>>> [  169.114281]  __x64_sys_ioctl+0x135/0x1c0
->>>>> [  169.118201]  do_syscall_64+0x68/0x2a0
->>>>> [  169.121856]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>> [  169.126892] RIP: 0033:0x7f469391a53f
->>>>> [  169.130460] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 
->>>>> 24 10 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 
->>>>> 00 00 00 0f 05 <89> c2 3d 00 f0 ff ff 77 18 48 8b 44 24 18 64 48 
->>>>> 2b 04 25 28 00
->>>>> 00
->>>>> [  169.149151] RSP: 002b:00007f4685f39a80 EFLAGS: 00000246 
->>>>> ORIG_RAX: 0000000000000010
->>>>> [  169.156703] RAX: ffffffffffffffda RBX: 00007f465c002da0 RCX: 
->>>>> 00007f469391a53f
->>>>> [  169.163868] RDX: 00007f4685f39b20 RSI: 00000000c03864bc RDI: 
->>>>> 0000000000000010
->>>>> [  169.171029] RBP: 00007f4685f39b20 R08: 0000000000001310 R09: 
->>>>> 00007f465c044cf0
->>>>> [  169.178194] R10: 0000000000000002 R11: 0000000000000246 R12: 
->>>>> 00000000c03864bc
->>>>> [  169.185358] R13: 0000000000000010 R14: 00007f465c0284b0 R15: 
->>>>> 00007f45d402b110
->>>>> [  169.192525]  </TASK>
->>>>> [  169.194732] Modules linked in: udl(E) snd_seq_dummy(E) 
->>>>> snd_hrtimer(E) snd_seq(E) snd_seq_device(E) af_packet(E) 
->>>>> nf_tables(E) iptable_filter(E) binfmt_misc(E) intel_rapl_msr(E) 
->>>>> nls_iso8859_1(E) eeepc_wmi(E) nls
->>>>> _cp437(E) intel_rapl_common(E) snd_hda_codec_realtek(E) 
->>>>> asus_wmi(E) iTCO_wdt(E) vfat(E) ee1004(E) snd_hda_codec_generic(E) 
->>>>> sparse_keymap(E) x86_pkg_temp_thermal(E) iTCO_vendor_support(E) 
->>>>> snd_hda_scodec_component(
->>>>> E) intel_powerclamp(E) snd_hda_codec_hdmi(E) platform_profile(E) 
->>>>> fat(E) e1000e(E) i2c_i801(E) ptp(E) battery(E) snd_hda_intel(E) 
->>>>> i2c_smbus(E) snd_intel_dspcfg(E) mxm_wmi(E) rfkill(E) wmi_bmof(E) 
->>>>> intel_wmi_thunder
->>>>> bolt(E) coretemp(E) pps_core(E) i2c_mux(E) pcspkr(E) 
->>>>> snd_hda_codec(E) xfs(E) snd_hda_core(E) snd_hwdep(E) snd_pcm(E) 
->>>>> snd_timer(E) snd(E) soundcore(E) mei_me(E) acpi_pad(E) button(E) 
->>>>> mei(E) joydev(E) nvme_fabrics(
->>>>> E) loop(E) fuse(E) efi_pstore(E) dm_mod(E) configfs(E) 
->>>>> nfnetlink(E) ip_tables(E) x_tables(E) amdgpu(E) amdxcp(E) 
->>>>> i2c_algo_bit(E) drm_ttm_helper(E) ttm(E) drm_exec(E) hid_generic(E)
->>>>> [  169.194874]  gpu_sched(E) drm_suballoc_helper(E) 
->>>>> ghash_clmulni_intel(E) sha512_ssse3(E) video(E) sha1_ssse3(E) 
->>>>> aesni_intel(E) usbhid(E) drm_panel_backlight_quirks(E) 
->>>>> drm_buddy(E) drm_display_helper(E) cec(E) w
->>>>> mi(E) btrfs(E) blake2b_generic(E) xor(E) raid6_pq(E) msr(E) 
->>>>> i2c_dev(E) efivarfs(E) dmi_sysfs(E)
->>>>> [  169.311501] CR2: ffffc9012b800000
->>>>> [  169.314835] ---[ end trace 0000000000000000 ]---
->>>>> [  169.434549] RIP: 0010:udl_compress_hline16+0x219/0x940 [udl]
->>>>> [  169.440237] Code: 0f b6 34 28 4c 89 d8 49 d3 e5 83 e0 07 4d 01 
->>>>> dd 83 f9 01 0f 84 4a 03 00 00 83 c0 03 40 38 f0 7c 09 40 84 f6 0f 
->>>>> 85 82 05 00 00 <41> 8b 03 4c 63 7c 24 78 4c 89 5c 24 08 89 c6 41 
->>>>> 89 c4 c1 e8 08
->>>>> c1
->>>>> [  169.459062] RSP: 0018:ffff88811c7e75c0 EFLAGS: 00010246
->>>>> [  169.464309] RAX: 0000000000000003 RBX: 0000000000000000 RCX: 
->>>>> 0000000000000002
->>>>> [  169.471474] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 
->>>>> 0000000000000100
->>>>> [  169.478635] RBP: dffffc0000000000 R08: ffff8881082efe00 R09: 
->>>>> ffff8881082e0000
->>>>> [  169.485800] R10: 0000000000000002 R11: ffffc9012b800000 R12: 
->>>>> ffff88811c7e76f8
->>>>> [  169.492962] R13: ffffc9012b800400 R14: ffff8881082e0007 R15: 
->>>>> 0000000000000000
->>>>> [  169.500126] FS:  00007f4685f3b6c0(0000) 
->>>>> GS:ffff88846c690000(0000) knlGS:0000000000000000
->>>>> [  169.508246] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>> [  169.514014] CR2: ffffc9012b800000 CR3: 0000000117944004 CR4: 
->>>>> 00000000003706f0
->>>>> [  169.521180] note: KMS thread[2380] exited with irqs disabled
->>>>> [  175.343111] 
->>>>> ==================================================================
->>>>> [  175.350342] BUG: KASAN: slab-use-after-free in 
->>>>> mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>> [  175.357886] Read of size 4 at addr ffff8881172daff4 by task 
->>>>> kworker/5:0/49
->>>>> [  175.364738]
->>>>> [  175.366235] CPU: 5 UID: 0 PID: 49 Comm: kworker/5:0 Tainted: 
->>>>> G      D     E       6.16.0-rc5-1-default+ #4080 PREEMPT(voluntary)
->>>>> [  175.366240] Tainted: [D]=DIE, [E]=UNSIGNED_MODULE
->>>>> [  175.366242] Hardware name: System manufacturer System Product 
->>>>> Name/Z170-A, BIOS 3802 03/15/2018
->>>>> [  175.366244] Workqueue: events output_poll_execute
->>>>> [  175.366249] Call Trace:
->>>>> [  175.366251]  <TASK>
->>>>> [  175.366254]  dump_stack_lvl+0x68/0x90
->>>>> [  175.366259]  ? mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>> [  175.366261] print_address_description.constprop.0+0x88/0x380
->>>>> [  175.366266]  ? lock_acquire+0xf2/0x140
->>>>> [  175.366269]  ? mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>> [  175.366272]  print_report+0xf8/0x1e2
->>>>> [  175.366275]  ? __virt_addr_valid+0x22e/0x500
->>>>> [  175.366279]  ? kasan_addr_to_slab+0x9/0x90
->>>>> [  175.366282]  ? mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>> [  175.366284]  kasan_report+0xd8/0x190
->>>>> [  175.366288]  ? mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>> [  175.366294]  mutex_can_spin_on_owner+0x1a6/0x1c0
->>>>> [  175.366297]  __ww_mutex_lock.constprop.0+0x2f8/0x34d0
->>>>> [  175.366301]  ? do_raw_spin_trylock+0xa2/0x160
->>>>> [  175.366304]  ? __pfx_do_raw_spin_trylock+0x10/0x10
->>>>> [  175.366308]  ? get_nohz_timer_target+0x28/0x3d0
->>>>> [  175.366311]  ? modeset_lock+0x3c6/0x640
->>>>> [  175.366316]  ? __pfx___ww_mutex_lock.constprop.0+0x10/0x10
->>>>> [  175.366320]  ? rcu_is_watching+0x11/0xb0
->>>>> [  175.366323]  ? timerqueue_add+0x154/0x3c0
->>>>> [  175.366328]  ? __hrtimer_start_range_ns+0x2e1/0x750
->>>>> [  175.366331]  ? rcu_is_watching+0x11/0xb0
->>>>> [  175.366334]  ? lock_acquired+0xb6/0xf0
->>>>> [  175.366337]  ? rcu_is_watching+0x11/0xb0
->>>>> [  175.366340]  ? rcu_is_watching+0x11/0xb0
->>>>> [  175.366342]  ? drm_helper_probe_detect_ctx+0x6d/0x1a0
->>>>> [  175.366345]  ? lock_acquire+0xf2/0x140
->>>>> [  175.366349]  ? ww_mutex_lock+0x27/0x150
->>>>> [  175.366352]  ? drm_helper_probe_detect_ctx+0x6d/0x1a0
->>>>> [  175.366355]  ww_mutex_lock+0x27/0x150
->>>>> [  175.366358]  modeset_lock+0x3c6/0x640
->>>>> [  175.366362]  drm_helper_probe_detect_ctx+0xa6/0x1a0
->>>>> [  175.366366]  ? __pfx_drm_helper_probe_detect_ctx+0x10/0x10
->>>>> [  175.366375]  ? __pfx_drm_connector_list_iter_next+0x10/0x10
->>>>> [  175.366381]  output_poll_execute+0x29b/0x760
->>>>> [  175.366387]  ? trace_hardirqs_on+0x14/0x150
->>>>> [  175.366391]  ? __pfx_output_poll_execute+0x10/0x10
->>>>> [  175.366396]  process_one_work+0x7b5/0x1390
->>>>> [  175.366404]  ? __pfx_process_one_work+0x10/0x10
->>>>> [  175.366409]  ? assign_work+0x156/0x390
->>>>> [  175.366413]  worker_thread+0x58d/0xf60
->>>>> [  175.366420]  ? __pfx_worker_thread+0x10/0x10
->>>>> [  175.366422]  kthread+0x370/0x720
->>>>> [  175.366425]  ? __pfx_kthread+0x10/0x10
->>>>> [  175.366428]  ? local_clock_noinstr+0x56/0x100
->>>>> [  175.366431]  ? local_clock+0x11/0x30
->>>>> [  175.366433]  ? __lock_release.isra.0+0x16c/0x2e0
->>>>> [  175.366437]  ? rcu_is_watching+0x11/0xb0
->>>>> [  175.366439]  ? lockdep_hardirqs_on_prepare.part.0+0x92/0x170
->>>>> [  175.366442]  ? __pfx_kthread+0x10/0x10
->>>>> [  175.366445]  ret_from_fork+0x1f4/0x2f0
->>>>> [  175.366448]  ? __pfx_kthread+0x10/0x10
->>>>> [  175.366450]  ret_from_fork_asm+0x1a/0x30
->>>>> [  175.366459]  </TASK>
->>>>> [  175.366460]
->>>>> [  175.632772] Allocated by task 2342:
->>>>> [  175.636282]  kasan_save_stack+0x1c/0x40
->>>>> [  175.640137]  kasan_save_track+0x10/0x30
->>>>> [  175.643992]  __kasan_slab_alloc+0x5f/0x70
->>>>> [  175.648023]  kmem_cache_alloc_node_noprof+0x13a/0x380
->>>>> [  175.653097]  dup_task_struct+0x32/0x730
->>>>> [  175.656952]  copy_process+0x2d8/0x5380
->>>>> [  175.660720]  kernel_clone+0x9f/0x5e0
->>>>> [  175.664318]  __do_sys_clone3+0x135/0x180
->>>>> [  175.668258]  do_syscall_64+0x68/0x2a0
->>>>> [  175.671940]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>> [  175.677014]
->>>>> [  175.678520] Freed by task 0:
->>>>> [  175.681418]  kasan_save_stack+0x1c/0x40
->>>>> [  175.685273]  kasan_save_track+0x10/0x30
->>>>> [  175.689130]  kasan_save_free_info+0x37/0x70
->>>>> [  175.693333]  __kasan_slab_free+0x33/0x40
->>>>> [  175.697278]  kmem_cache_free+0x10b/0x4d0
->>>>> [  175.701221]  delayed_put_task_struct+0x15e/0x1e0
->>>>> [  175.705858]  rcu_do_batch+0x2e3/0xb30
->>>>> [  175.709542]  rcu_core+0x51d/0xb60
->>>>> [  175.712873]  handle_softirqs+0x1a2/0x6b0
->>>>> [  175.716817]  __irq_exit_rcu+0xf7/0x160
->>>>> [  175.720585]  irq_exit_rcu+0xa/0x30
->>>>> [  175.724006]  sysvec_apic_timer_interrupt+0x9d/0xc0
->>>>> [  175.728820]  asm_sysvec_apic_timer_interrupt+0x16/0x20
->>>>> [  175.733980]
->>>>> [  175.735486] Last potentially related work creation:
->>>>> [  175.740385]  kasan_save_stack+0x1c/0x40
->>>>> [  175.744243]  kasan_record_aux_stack+0x88/0xa0
->>>>> [  175.748618]  __call_rcu_common.constprop.0+0x77/0x850
->>>>> [  175.753693]  __schedule+0x887/0x1d00
->>>>> [  175.757287]  schedule+0xd0/0x260
->>>>> [  175.760533]  smpboot_thread_fn+0x583/0x7a0
->>>>> [  175.764650]  kthread+0x370/0x720
->>>>> [  175.767896]  ret_from_fork+0x1f4/0x2f0
->>>>> [  175.771665]  ret_from_fork_asm+0x1a/0x30
->>>>> [  175.775608]
->>>>> [  175.777113] Second to last potentially related work creation:
->>>>> [  175.782886]  kasan_save_stack+0x1c/0x40
->>>>> [  175.786739]  kasan_record_aux_stack+0x88/0xa0
->>>>> [  175.791118]  task_work_add+0x1b1/0x270
->>>>> [  175.794886]  sched_tick+0x226/0x6f0
->>>>> [  175.798394]  update_process_times+0xe9/0x1f0
->>>>> [  175.802685]  tick_nohz_handler+0x1a6/0x4b0
->>>>> [  175.806801]  __hrtimer_run_queues+0x161/0x960
->>>>> [  175.811181]  hrtimer_interrupt+0x33e/0x880
->>>>> [  175.815295]  __sysvec_apic_timer_interrupt+0xf6/0x390
->>>>> [  175.820370]  sysvec_apic_timer_interrupt+0x98/0xc0
->>>>> [  175.825183]  asm_sysvec_apic_timer_interrupt+0x16/0x20
->>>>> [  175.830343]
->>>>> [  175.831849] The buggy address belongs to the object at 
->>>>> ffff8881172dafc0
->>>>> [  175.831849]  which belongs to the cache task_struct of size 11968
->>>>> [  175.844582] The buggy address is located 52 bytes inside of
->>>>> [  175.844582]  freed 11968-byte region [ffff8881172dafc0, 
->>>>> ffff8881172dde80)
->>>>> [  175.856969]
->>>>> [  175.858474] The buggy address belongs to the physical page:
->>>>> [  175.864070] page: refcount:0 mapcount:0 
->>>>> mapping:0000000000000000 index:0x0 pfn:0x1172d8
->>>>> [  175.872104] head: order:3 mapcount:0 entire_mapcount:0 
->>>>> nr_pages_mapped:0 pincount:0
->>>>> [  175.879788] memcg:ffff88811068a301
->>>>> [  175.883209] anon flags: 
->>>>> 0x2ffff800000040(head|node=0|zone=2|lastcpupid=0x1ffff)
->>>>> [  175.890547] page_type: f5(slab)
->>>>> [  175.893706] raw: 002ffff800000040 ffff888100930500 
->>>>> 0000000000000000 0000000000000001
->>>>> [  175.901479] raw: 0000000000000000 0000000000020002 
->>>>> 00000000f5000000 ffff88811068a301
->>>>> [  175.909249] head: 002ffff800000040 ffff888100930500 
->>>>> 0000000000000000 0000000000000001
->>>>> [  175.917109] head: 0000000000000000 0000000000020002 
->>>>> 00000000f5000000 ffff88811068a301
->>>>> [  175.924968] head: 002ffff800000003 ffffea00045cb601 
->>>>> 00000000ffffffff 00000000ffffffff
->>>>> [  175.932827] head: ffffffffffffffff 0000000000000000 
->>>>> 00000000ffffffff 0000000000000008
->>>>> [  175.940685] page dumped because: kasan: bad access detected
->>>>> [  175.946283]
->>>>> [  175.947787] Memory state around the buggy address:
->>>>> [  175.952603]  ffff8881172dae80: fb fb fb fb fb fb fb fb fc fc fc 
->>>>> fc fc fc fc fc
->>>>> [  175.959854]  ffff8881172daf00: fc fc fc fc fc fc fc fc fc fc fc 
->>>>> fc fc fc fc fc
->>>>> [  175.967101] >ffff8881172daf80: fc fc fc fc fc fc fc fc fa fb fb 
->>>>> fb fb fb fb fb
->>>>> [ 175.974353] ^
->>>>> [  175.981256]  ffff8881172db000: fb fb fb fb fb fb fb fb fb fb fb 
->>>>> fb fb fb fb fb
->>>>> [  175.988504]  ffff8881172db080: fb fb fb fb fb fb fb fb fb fb fb 
->>>>> fb fb fb fb fb
->>>>> [  175.995755] 
->>>>> ==================================================================
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>
->>>>>
->>>>> Am 22.05.25 um 09:07 schrieb oushixiong1025@163.com:
->>>>>> From: Shixiong Ou <oushixiong@kylinos.cn>
->>>>>>
->>>>>> [WHY]
->>>>>> 1. Drivers using DRM_GEM_SHADOW_PLANE_HELPER_FUNCS and
->>>>>>      DRM_GEM_SHMEM_DRIVER_OPS (e.g., udl, ast) do not require
->>>>>>      sg_table import.
->>>>>>      They only need dma_buf_vmap() to access the shared buffer's
->>>>>>      kernel virtual address.
->>>>>>
->>>>>> 2. On certain Aspeed-based boards, a dma_mask of 0xffff_ffff may
->>>>>>      trigger SWIOTLB during dmabuf import. However, IO_TLB_SEGSIZE
->>>>>>      restricts the maximum DMA streaming mapping memory, 
->>>>>> resulting in
->>>>>>      errors like:
->>>>>>
->>>>>>      ast 0000:07:00.0: swiotlb buffer is full (sz: 3145728 
->>>>>> bytes), total 32768 (slots), used 0 (slots)
->>>>>>
->>>>>> [HOW]
->>>>>> Provide a gem_prime_import implementation without sg_table mapping
->>>>>> to avoid issues (e.g., "swiotlb buffer is full"). Drivers that do 
->>>>>> not
->>>>>> require sg_table can adopt this.
->>>>>>
->>>>>> Signed-off-by: Shixiong Ou <oushixiong@kylinos.cn>
->>>>>> ---
->>>>>> v1->v2:
->>>>>>      Patch rebase.
->>>>>> v2->v3:
->>>>>>      Rename the import callback function.
->>>>>>      Remove drm_gem_shmem_prime_export() and separate some codes
->>>>>>      to drm_gem_prime_import_self().
->>>>>> v3->v4:
->>>>>>      Separate the test from the policy.
->>>>>>      Rename the macro.
->>>>>> v4->v5:
->>>>>>      Rename some functions.
->>>>>>
->>>>>>    drivers/gpu/drm/drm_gem_shmem_helper.c | 57 
->>>>>> ++++++++++++++++++++++++++
->>>>>>    drivers/gpu/drm/drm_prime.c            | 36 ++++++++++++----
->>>>>>    include/drm/drm_gem_shmem_helper.h     | 15 +++++++
->>>>>>    include/drm/drm_prime.h                |  3 ++
->>>>>>    4 files changed, 102 insertions(+), 9 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/drm_gem_shmem_helper.c 
->>>>>> b/drivers/gpu/drm/drm_gem_shmem_helper.c
->>>>>> index aa43265f4f4f..126aa79042ad 100644
->>>>>> --- a/drivers/gpu/drm/drm_gem_shmem_helper.c
->>>>>> +++ b/drivers/gpu/drm/drm_gem_shmem_helper.c
->>>>>> @@ -800,6 +800,63 @@ drm_gem_shmem_prime_import_sg_table(struct 
->>>>>> drm_device *dev,
->>>>>>    }
->>>>>> EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_sg_table);
->>>>>>    +/**
->>>>>> + * drm_gem_shmem_prime_import_no_map - Import dmabuf without 
->>>>>> mapping its sg_table
->>>>>> + * @dev: Device to import into
->>>>>> + * @dma_buf: dma-buf object to import
->>>>>> + *
->>>>>> + * Drivers that use the shmem helpers but also wants to import 
->>>>>> dmabuf without
->>>>>> + * mapping its sg_table can use this as their 
->>>>>> &drm_driver.gem_prime_import
->>>>>> + * implementation.
->>>>>> + */
->>>>>> +struct drm_gem_object *drm_gem_shmem_prime_import_no_map(struct 
->>>>>> drm_device *dev,
->>>>>> +                             struct dma_buf *dma_buf)
->>>>>> +{
->>>>>> +    struct dma_buf_attachment *attach;
->>>>>> +    struct drm_gem_shmem_object *shmem;
->>>>>> +    struct drm_gem_object *obj;
->>>>>> +    size_t size;
->>>>>> +    int ret;
->>>>>> +
->>>>>> +    if (drm_gem_is_prime_exported_dma_buf(dev, dma_buf)) {
->>>>>> +        /*
->>>>>> +         * Importing dmabuf exported from our own gem increases
->>>>>> +         * refcount on gem itself instead of f_count of dmabuf.
->>>>>> +         */
->>>>>> +        obj = dma_buf->priv;
->>>>>> +        drm_gem_object_get(obj);
->>>>>> +        return obj;
->>>>>> +    }
->>>>>> +
->>>>>> +    attach = dma_buf_attach(dma_buf, dev->dev);
->>>>>> +    if (IS_ERR(attach))
->>>>>> +        return ERR_CAST(attach);
->>>>>> +
->>>>>> +    get_dma_buf(dma_buf);
->>>>>> +
->>>>>> +    size = PAGE_ALIGN(attach->dmabuf->size);
->>>>>> +
->>>>>> +    shmem = __drm_gem_shmem_create(dev, size, true, NULL);
->>>>>> +    if (IS_ERR(shmem)) {
->>>>>> +        ret = PTR_ERR(shmem);
->>>>>> +        goto fail_detach;
->>>>>> +    }
->>>>>> +
->>>>>> +    drm_dbg_prime(dev, "size = %zu\n", size);
->>>>>> +
->>>>>> +    shmem->base.import_attach = attach;
->>>>>> +    shmem->base.resv = dma_buf->resv;
->>>>>> +
->>>>>> +    return &shmem->base;
->>>>>> +
->>>>>> +fail_detach:
->>>>>> +    dma_buf_detach(dma_buf, attach);
->>>>>> +    dma_buf_put(dma_buf);
->>>>>> +
->>>>>> +    return ERR_PTR(ret);
->>>>>> +}
->>>>>> +EXPORT_SYMBOL_GPL(drm_gem_shmem_prime_import_no_map);
->>>>>> +
->>>>>>    MODULE_DESCRIPTION("DRM SHMEM memory-management helpers");
->>>>>>    MODULE_IMPORT_NS("DMA_BUF");
->>>>>>    MODULE_LICENSE("GPL v2");
->>>>>> diff --git a/drivers/gpu/drm/drm_prime.c 
->>>>>> b/drivers/gpu/drm/drm_prime.c
->>>>>> index d828502268b8..b825b71038d6 100644
->>>>>> --- a/drivers/gpu/drm/drm_prime.c
->>>>>> +++ b/drivers/gpu/drm/drm_prime.c
->>>>>> @@ -910,6 +910,26 @@ struct dma_buf *drm_gem_prime_export(struct 
->>>>>> drm_gem_object *obj,
->>>>>>    }
->>>>>>    EXPORT_SYMBOL(drm_gem_prime_export);
->>>>>>    +
->>>>>> +/**
->>>>>> + * drm_gem_is_prime_exported_dma_buf -
->>>>>> + * checks if the DMA-BUF was exported from a GEM object 
->>>>>> belonging to @dev.
->>>>>> + * @dev: drm_device to check against
->>>>>> + * @dma_buf: dma-buf object to import
->>>>>> + *
->>>>>> + * Return: true if the DMA-BUF was exported from a GEM object 
->>>>>> belonging
->>>>>> + * to @dev, false otherwise.
->>>>>> + */
->>>>>> +
->>>>>> +bool drm_gem_is_prime_exported_dma_buf(struct drm_device *dev,
->>>>>> +                       struct dma_buf *dma_buf)
->>>>>> +{
->>>>>> +    struct drm_gem_object *obj = dma_buf->priv;
->>>>>> +
->>>>>> +    return (dma_buf->ops == &drm_gem_prime_dmabuf_ops) && 
->>>>>> (obj->dev == dev);
->>>>>> +}
->>>>>> +EXPORT_SYMBOL(drm_gem_is_prime_exported_dma_buf);
->>>>>> +
->>>>>>    /**
->>>>>>     * drm_gem_prime_import_dev - core implementation of the 
->>>>>> import callback
->>>>>>     * @dev: drm_device to import into
->>>>>> @@ -933,16 +953,14 @@ struct drm_gem_object 
->>>>>> *drm_gem_prime_import_dev(struct drm_device *dev,
->>>>>>        struct drm_gem_object *obj;
->>>>>>        int ret;
->>>>>>    -    if (dma_buf->ops == &drm_gem_prime_dmabuf_ops) {
->>>>>> +    if (drm_gem_is_prime_exported_dma_buf(dev, dma_buf)) {
->>>>>> +        /*
->>>>>> +         * Importing dmabuf exported from our own gem increases
->>>>>> +         * refcount on gem itself instead of f_count of dmabuf.
->>>>>> +         */
->>>>>>            obj = dma_buf->priv;
->>>>>> -        if (obj->dev == dev) {
->>>>>> -            /*
->>>>>> -             * Importing dmabuf exported from our own gem increases
->>>>>> -             * refcount on gem itself instead of f_count of dmabuf.
->>>>>> -             */
->>>>>> -            drm_gem_object_get(obj);
->>>>>> -            return obj;
->>>>>> -        }
->>>>>> +        drm_gem_object_get(obj);
->>>>>> +        return obj;
->>>>>>        }
->>>>>>          if (!dev->driver->gem_prime_import_sg_table)
->>>>>> diff --git a/include/drm/drm_gem_shmem_helper.h 
->>>>>> b/include/drm/drm_gem_shmem_helper.h
->>>>>> index b4f993da3cae..35f7466dca84 100644
->>>>>> --- a/include/drm/drm_gem_shmem_helper.h
->>>>>> +++ b/include/drm/drm_gem_shmem_helper.h
->>>>>> @@ -287,6 +287,8 @@ drm_gem_shmem_prime_import_sg_table(struct 
->>>>>> drm_device *dev,
->>>>>>                        struct sg_table *sgt);
->>>>>>    int drm_gem_shmem_dumb_create(struct drm_file *file, struct 
->>>>>> drm_device *dev,
->>>>>>                      struct drm_mode_create_dumb *args);
->>>>>> +struct drm_gem_object *drm_gem_shmem_prime_import_no_map(struct 
->>>>>> drm_device *dev,
->>>>>> +                             struct dma_buf *buf);
->>>>>>      /**
->>>>>>     * DRM_GEM_SHMEM_DRIVER_OPS - Default shmem GEM operations
->>>>>> @@ -298,4 +300,17 @@ int drm_gem_shmem_dumb_create(struct 
->>>>>> drm_file *file, struct drm_device *dev,
->>>>>>        .gem_prime_import_sg_table = 
->>>>>> drm_gem_shmem_prime_import_sg_table, \
->>>>>>        .dumb_create           = drm_gem_shmem_dumb_create
->>>>>>    +/**
->>>>>> + * DRM_GEM_SHMEM_DRIVER_OPS_NO_MAP_SGT - shmem GEM operations
->>>>>> + *                                       without mapping 
->>>>>> sg_table on
->>>>>> + *                                       imported buffer.
->>>>>> + *
->>>>>> + * This macro provides a shortcut for setting the shmem GEM 
->>>>>> operations in
->>>>>> + * the &drm_driver structure for drivers that do not require a 
->>>>>> sg_table on
->>>>>> + * imported buffers.
->>>>>> + */
->>>>>> +#define DRM_GEM_SHMEM_DRIVER_OPS_NO_MAP_SGT \
->>>>>> +    .gem_prime_import       = drm_gem_shmem_prime_import_no_map, \
->>>>>> +    .dumb_create            = drm_gem_shmem_dumb_create
->>>>>> +
->>>>>>    #endif /* __DRM_GEM_SHMEM_HELPER_H__ */
->>>>>> diff --git a/include/drm/drm_prime.h b/include/drm/drm_prime.h
->>>>>> index fa085c44d4ca..f50f862f0d8b 100644
->>>>>> --- a/include/drm/drm_prime.h
->>>>>> +++ b/include/drm/drm_prime.h
->>>>>> @@ -100,6 +100,9 @@ struct dma_buf *drm_gem_prime_export(struct 
->>>>>> drm_gem_object *obj,
->>>>>>    unsigned long drm_prime_get_contiguous_size(struct sg_table 
->>>>>> *sgt);
->>>>>>      /* helper functions for importing */
->>>>>> +bool drm_gem_is_prime_exported_dma_buf(struct drm_device *dev,
->>>>>> +                       struct dma_buf *dma_buf);
->>>>>> +
->>>>>>    struct drm_gem_object *drm_gem_prime_import_dev(struct 
->>>>>> drm_device *dev,
->>>>>>                            struct dma_buf *dma_buf,
->>>>>>                            struct device *attach_dev);
->
+> Ian Rogers <irogers@google.com>
+>     perf topdown: Use attribute to see an event is a topdown metic or slots
 
--- 
+Build error:
+
+arch/x86/tests/topdown.c: In function 'event_cb':
+arch/x86/tests/topdown.c:53:25: error: implicit declaration of
+function 'pr_debug' [-Werror=implicit-function-declaration]
+   53 |                         pr_debug("Broken topdown information
+for '%s'\n", evsel__name(evsel));
+      |                         ^~~~~~~~
+cc1: all warnings being treated as errors
+
+2)
+
+The following list of LTP syscalls failure noticed on qemu-arm64 with
+stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
+
+Most failures report ENOSPC (28) or mkswap errors, which may be related
+to disk space handling in the 64K page configuration on qemu-arm64.
+
+The issue is reproducible on multiple runs.
+
+* qemu-arm64, ltp-syscalls - 64K page size test failures list,
+
+  - fallocate04
+  - fallocate05
+  - fdatasync03
+  - fsync01
+  - fsync04
+  - ioctl_fiemap01
+  - swapoff01
+  - swapoff02
+  - swapon01
+  - swapon02
+  - swapon03
+  - sync01
+  - sync_file_range02
+  - syncfs01
+
+Reproducibility:
+ - 64K config above listed test fails
+ - 4K config above listed test pass.
+
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
+
+Test regression: qemu-arm64 ARM64_64K_PAGES ltp syscalls swap fsync
+fallocate failed.
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+swapoff01:
+libswap.c:198: TINFO: create a swapfile size of 1 megabytes (MB)
+tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
+libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
+swapoff01.c:44: TINFO: create a swapfile with 65536 block numbers
+swapoff01.c:44: TCONF: Insufficient disk space to create swap file
+
+swapoff02:
+libswap.c:198: TINFO: create a swapfile size of 1 megabytes (MB)
+tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
+libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
+swapoff02.c:88: TINFO: create a swapfile size of 1 megabytes (MB)
+
+swapon01:
+libswap.c:198: TINFO: create a swapfile size of 1 megabytes (MB)
+tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
+libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
+swapon01.c:39: TINFO: create a swapfile size of 128 megabytes (MB)
+tst_cmd.c:111: TBROK: 'mkswap' exited with a non-zero code 1 at tst_cmd.c:111
+
+swapon02:
+tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
+libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
+swapon02.c:52: TINFO: create a swapfile size of 1 megabytes (MB)
+tst_cmd.c:111: TBROK: 'mkswap' exited with a non-zero code 1 at tst_cmd.c:111
+
+swapon03:
+tst_ioctl.c:26: TINFO: FIBMAP ioctl is supported
+libswap.c:218: TFAIL: mkswap on ext2/ext3/ext4 failed
+tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
+swapon03.c:51: TINFO: create a swapfile size of 1 megabytes (MB)
+tst_cmd.c:111: TBROK: 'mkswap' exited with a non-zero code 1 at tst_cmd.c:111
+
+sync01:
+sync01.c:49: TFAIL: Synced 11403264, expected 33554432
+
+syncfs01:
+syncfs01.c:53: TFAIL: Synced 4096, expected 33554432
+
+sync_file_range02:
+sync_file_range02.c:60: TFAIL: sync_file_range() failed: ENOSPC (28)
+
+fdatasync03:
+fdatasync03.c:43: TFAIL: fdatasync(fd) failed: ENOSPC (28)
+
+fsync01:
+tst_test.c:1888: TINFO: === Testing on ext4 ===
+tst_test.c:1217: TINFO: Formatting /dev/loop0 with ext4 opts='' extra opts=''
+mke2fs 1.47.2 (1-Jan-2025)
+tst_test.c:1229: TINFO: Mounting /dev/loop0 to
+/tmp/LTP_fsyX4HNML/mntpoint fstyp=ext4 flags=0
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+fsync01.c:28: TFAIL: fsync failed: ENOSPC (28)
+
+fsync04:
+tst_test.c:1229: TINFO: Mounting /dev/loop0 to
+/tmp/LTP_fsydyQA53/mnt_point fstyp=ext4 flags=0
+fsync04.c:43: TFAIL: fsync(fd) failed: ENOSPC (28)
+
+fallocate04:
+fallocate04.c:198: TFAIL: fallocate failed: ENOSPC (28)
+
+fallocate05:
+tst_fill_fs.c:53: TBROK: fsync(4) failed: ENOSPC (28)
+
+ioctl_fiemap01
+tst_test.c:1217: TINFO: Formatting /dev/loop0 with ext4 opts='' extra opts=''
+mke2fs 1.47.2 (1-Jan-2025)
+tst_test.c:1229: TINFO: Mounting /dev/loop0 to
+/tmp/LTP_iocjRR3ot/mntpoint fstyp=ext4 flags=0
+ioctl_fiemap01.c:74: TPASS: ioctl(fd, FS_IOC_FIEMAP, fiemap) : EBADR (53)
+ioctl_fiemap01.c:77: TPASS: ioctl(fd, FS_IOC_FIEMAP, fiemap) passed
+ioctl_fiemap01.c:79: TPASS: Expect: Empty file should have 0 extends mapped
+ioctl_fiemap01.c:86: TFAIL: ioctl(fd, FS_IOC_FIEMAP, fiemap) failed: ENOSPC (28)
+ioctl_fiemap01.c:41: TFAIL: Expect: extent fm_mapped_extents is 1
+ioctl_fiemap01.c:50: TFAIL: (extent->fe_flags & fe_mask) (0) != fe_flags (1)
+ioctl_fiemap01.c:51: TPASS: Expect: fe_physical > 1
+ioctl_fiemap01.c:52: TFAIL: extent->fe_length (4702687395951105107) !=
+fe_length (1024)
+ioctl_fiemap01.c:96: TFAIL: ioctl(fd, FS_IOC_FIEMAP, fiemap) failed: ENOSPC (28)
+ioctl_fiemap01.c:41: TFAIL: Expect: extent fm_mapped_extents is 3
+ioctl_fiemap01.c:50: TPASS: (extent->fe_flags & fe_mask) == fe_flags (0)
+ioctl_fiemap01.c:51: TPASS: Expect: fe_physical > 1
+ioctl_fiemap01.c:52: TFAIL: extent->fe_length (4702687395951105107) !=
+fe_length (1024)
+ioctl_fiemap01.c:50: TPASS: (extent->fe_flags & fe_mask) == fe_flags (0)
+ioctl_fiemap01.c:51: TPASS: Expect: fe_physical > 1
+ioctl_fiemap01.c:52: TFAIL: extent->fe_length (5136714152143953955) !=
+fe_length (1024)
+ioctl_fiemap01.c:50: TFAIL: (extent->fe_flags & fe_mask) (0) != fe_flags (1)
+ioctl_fiemap01.c:51: TPASS: Expect: fe_physical > 1
+ioctl_fiemap01.c:52: TFAIL: extent->fe_length (8387236464277024288) !=
+fe_length (1024)
+
+
+Links,
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470711/suite/ltp-syscalls/tests/
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470720/suite/ltp-syscalls/tests/
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470711/suite/ltp-syscalls/test/sync01/log
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470720/suite/ltp-syscalls/test/fdatasync03/log
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29470711/suite/ltp-syscalls/test/swapon01/details/
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16-628-gcd8771110407/testrun/29471488/suite/ltp-syscalls/tests/
+
+
+3)
+
+Test regression: stable-rc 6.16.1-rc1 WARNING fs jbd2 transaction.c
+start_this_handle
+
+Kernel warning noticed on this stable-rc 6.16.1-rc1 this regression was
+reported last month on the Linux next,
+
+- https://lore.kernel.org/all/CA+G9fYsyYQ3ZL4xaSg1-Tt5Evto7Zd+hgNWZEa9cQLbahA1+xg@mail.gmail.com/
+
+Kernel warnings:
+
+------------[ cut here ]------------
+[   34.805150] WARNING: CPU: 1 PID: 627 at fs/jbd2/transaction.c:334
+start_this_handle (fs/jbd2/transaction.c:334 (discriminator 1))
+[   34.807683] Modules linked in: btrfs blake2b_generic xor xor_neon
+raid6_pq zstd_compress sm3_ce sha3_ce sha512_ce fuse drm backlight
+ip_tables x_tables
+[   34.809152] CPU: 1 UID: 0 PID: 627 Comm: io_control01 Not tainted
+6.16.1-rc1 #1 PREEMPT
+[   34.809652] Hardware name: linux,dummy-virt (DT)
+[   34.809961] pstate: 63402009 (nZCv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+[   34.810205] pc : start_this_handle (fs/jbd2/transaction.c:334
+(discriminator 1))
+[   34.810395] lr : start_this_handle (fs/jbd2/transaction.c:334
+(discriminator 1))
+[   34.810798] sp : ffff800080e2f7e0
+[   34.810962] x29: ffff800080e2f820 x28: fff00000c4b43000 x27: ffffa9c145dca000
+[   34.811259] x26: 0000000000000658 x25: 0000000000000629 x24: 0000000000000002
+[   34.811507] x23: 0000000000000629 x22: 0000000000000c40 x21: 0000000000000008
+[   34.811750] x20: fff00000d0800348 x19: fff00000d0800348 x18: 0000000000000000
+[   34.811992] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+[   34.812234] x14: 0000000000000000 x13: 00000000ffffffff x12: 0000000000000000
+[   34.812858] x11: 0000000000000000 x10: ffffa9c1456a8c08 x9 : ffffa9c142b54b84
+[   34.813572] x8 : ffff800080e2f408 x7 : 0000000000000000 x6 : 0000000000000001
+[   34.814462] x5 : ffffa9c145629000 x4 : ffffa9c1456293d0 x3 : 0000000000000000
+[   34.815093] x2 : 0000000000000000 x1 : fff00000c4fd0000 x0 : 0000000000000050
+[   34.815812] Call trace:
+[   34.816213] start_this_handle (fs/jbd2/transaction.c:334
+(discriminator 1)) (P)
+[   34.816719] jbd2__journal_start (fs/jbd2/transaction.c:501)
+[   34.817124] __ext4_journal_start_sb (fs/ext4/ext4_jbd2.c:117)
+[   34.817687] ext4_do_writepages (fs/ext4/ext4_jbd2.h:242 fs/ext4/inode.c:2847)
+[   34.818109] ext4_writepages (fs/ext4/inode.c:2954)
+[   34.818549] do_writepages (mm/page-writeback.c:2636)
+[   34.818983] filemap_fdatawrite_wbc (mm/filemap.c:386 mm/filemap.c:376)
+[   34.819520] __filemap_fdatawrite_range (mm/filemap.c:420)
+[   34.819942] file_write_and_wait_range (mm/filemap.c:794)
+[   34.820349] ext4_sync_file (fs/ext4/fsync.c:154)
+[   34.820486] vfs_fsync_range (fs/sync.c:188)
+[   34.820624] do_fsync (fs/sync.c:201 fs/sync.c:212)
+[   34.820743] __arm64_sys_fsync (fs/sync.c:215)
+[   34.820882] invoke_syscall.constprop.0
+(arch/arm64/include/asm/syscall.h:61 arch/arm64/kernel/syscall.c:54)
+[   34.821046] do_el0_svc (include/linux/thread_info.h:135
+(discriminator 2) arch/arm64/kernel/syscall.c:140 (discriminator 2)
+arch/arm64/kernel/syscall.c:151 (discriminator 2))
+[   34.821172] el0_svc (arch/arm64/include/asm/irqflags.h:82
+(discriminator 1) arch/arm64/include/asm/irqflags.h:123 (discriminator
+1) arch/arm64/include/asm/irqflags.h:136 (discriminator 1)
+arch/arm64/kernel/entry-common.c:165 (discriminator 1)
+arch/arm64/kernel/entry-common.c:178 (discriminator 1)
+arch/arm64/kernel/entry-common.c:768 (discriminator 1))
+[   34.821307] el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:787)
+[   34.821460] el0t_64_sync (arch/arm64/kernel/entry.S:600)
+[   34.821712] ---[ end trace 0000000000000000 ]---
+
+Link:
+ -  https://regressions.linaro.org/lkft/linux-stable-rc-linux-6.16.y/v6.16-628-gcd8771110407/log-parser-test/exception-warning-cpu-pid-at-fsjbd2transaction-start_this_handle/
+
 --
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Linaro LKFT
+https://lkft.linaro.org
 
