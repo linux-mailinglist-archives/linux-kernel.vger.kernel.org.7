@@ -1,190 +1,206 @@
-Return-Path: <linux-kernel+bounces-765984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0894AB240D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:01:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFCD1B240D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9835D188A854
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:00:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B73987A6468
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6B11F099C;
-	Wed, 13 Aug 2025 06:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8992C08D0;
+	Wed, 13 Aug 2025 06:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CNySx9tD"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uecDUHo7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0F92BF3CF
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD6F1F099C;
+	Wed, 13 Aug 2025 06:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755064813; cv=none; b=co5s0KnsiRoI9g6BNipfIIzC01fvfOdaV3OB9FinYIR1fPgJSv6suAzsVW1+5GxestDL/o9aB/Z43K9KgA7tWSPbSItgsg5utYk7gokfBBfc5LFFPHo+hhn9IfSVKrzb/CKCcfRMHGclPALRCRmTxr7eVDAbKMikHOwfYh3FfWU=
+	t=1755064824; cv=none; b=lSQth9dj2pY3jnXlGRNdh0ca7N6/ARRTBvIpH6tgspijueRskWyOnm6y5xUisVwclFVGrhgCOv2KO0iFayCxJSeZddeU46POqACpq0K7+7RjPBb4u15CRbZ1LECyXghU1PoP9gn53v0QtasROB6sBL7HdvE/lPt0uvatjo/XHhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755064813; c=relaxed/simple;
-	bh=JF9fdZsv+ShJc346su7lt6oncbiLbBV/jASjYgXa4yA=;
+	s=arc-20240116; t=1755064824; c=relaxed/simple;
+	bh=yiqnatmjL9df9H+0s0wS55bl9IzIhgx0qIsceSspp+I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aFmyigqHwO2qdXJkcBBg5FKvwhMiLpJn/uFktgMk2XLDutXcz/F8jxBKn2fKaaM4SCLD/qbpJTPJq1IVYVDyjDgG2wbm2sQTCExen17oVM5SEyeTBqJJYh+ziL2apZ9gg7iV6GErl893YePjzDVJF/00VgxmWngX15lXyw3Js2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CNySx9tD; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <997d3b8a-4b3a-4720-8fa0-2f91447021bd@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755064799;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cv0mZfaoxWs8BQP4Uzbmx4o3hMgWue9gP2n4lIHpA6I=;
-	b=CNySx9tD85R6hQwr6H0Ng+Fpr1aZ2L2e4bvv8GG34T1XeUrFHLW1dPqe1qEj6zjuMaokP8
-	DrmXZuQWcTWT2X9uL+R3VC4BBVhxjU1/adh9jZdkD3m1KmBi7PScOXiKpiU4Xsaa7CnQWt
-	54XK/S5/JG2eo3sWb4DI2xjGD0H2GFM=
-Date: Tue, 12 Aug 2025 22:59:52 -0700
+	 In-Reply-To:Content-Type; b=bwqJFGPCmUYMRFiPEk6BO73ZCb4+8X88natjJ9UPutXxk25u2rz514w3wQrZ0uNOLKNJkbwjyETuIRQON6pOV9kDnNrtmrYmYHBUMRehoSN/KMKWCLBKMVFlnkQZiO7t72a6x5XCl7qoEyKtRBQ0sVr4YOj30bll/NDwIo6svhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uecDUHo7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E416DC4CEEB;
+	Wed, 13 Aug 2025 06:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755064823;
+	bh=yiqnatmjL9df9H+0s0wS55bl9IzIhgx0qIsceSspp+I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uecDUHo7bJz6sZeGzPnthW+Y8sFrPrI8j0TdQq6orhxeryF91g/nhLE25qJSLyWeg
+	 db/rXkyYO5OFMFDaSTIlxo6QVT4u58am4on63OvwPbmOdItygk2C7N1XY/QjkJFLiK
+	 0G2lMLWJaqCDNgNmfj+Axh3waeIap+MWfXm2R8qj7hHenjw+i6X81NOWmBuNKWWJSN
+	 lH3YPW2l0zbXakuR/4GrECy2wFoev4lfND8cbSRWAEpD6nqzAuxNIEU7753wspL/BF
+	 7THfta6TK/NEhVcy2nkMs9jxa3vL2VtIByRPlvuPDECrKU9vLGduLoBFTAU3Z3UK7+
+	 X1ebz3yFLGeOg==
+Message-ID: <6d6dc9e6-751f-4079-b21e-2e3461885b03@kernel.org>
+Date: Wed, 13 Aug 2025 08:00:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3 2/2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Content-Language: en-GB
-To: Arnaud Lecomte <contact@arnaud-lcm.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
- john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
- song@kernel.org, syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <20250812193034.18848-1-contact@arnaud-lcm.com>
- <20250812193256.19029-1-contact@arnaud-lcm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250812193256.19029-1-contact@arnaud-lcm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: media: Add Sony IMX585 CMOS image
+ sensor
+To: Will Whang <will@willwhang.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20250810220921.14307-1-will@willwhang.com>
+ <20250810220921.14307-2-will@willwhang.com>
+ <20250811-successful-military-dragon-d72486@kuoka>
+ <CAFoNnrxWwqT9WA-h2WOsUe6Q-qEoz2mTHLpDogAyMwiXXZ9MrA@mail.gmail.com>
+ <f12e6ff3-6ec3-487f-bf9c-0f8c06ee6444@kernel.org>
+ <CAFoNnrxhUof8BBrefm1L1peTxg==Koz72TY+54G_8QUy-rrT8g@mail.gmail.com>
+ <e695c61a-e183-4eea-a7f6-1b2861b2129f@kernel.org>
+ <20250812095543.GJ30054@pendragon.ideasonboard.com>
+ <CAFoNnrzWot_Bf=YZFac1GkZgOOnJycwpidvwL93p3p-C-zn8BA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <CAFoNnrzWot_Bf=YZFac1GkZgOOnJycwpidvwL93p3p-C-zn8BA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 13/08/2025 06:30, Will Whang wrote:
+> On Tue, Aug 12, 2025 at 2:56 AM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+>>
+>> On Tue, Aug 12, 2025 at 08:47:12AM +0200, Krzysztof Kozlowski wrote:
+>>> On 12/08/2025 08:31, Will Whang wrote:
+>>>> On Mon, Aug 11, 2025 at 11:23 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>> On 12/08/2025 04:47, Will Whang wrote:
+>>>>>> On Mon, Aug 11, 2025 at 1:01 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>>>> On Sun, Aug 10, 2025 at 11:09:18PM +0100, Will Whang wrote:
+>>>>>>>> +description:
+>>>>>>>> +  IMX585 sensor is a Sony CMOS sensor with 4K and FHD outputs.
+>>>>>>>> +
+>>>>>>>> +properties:
+>>>>>>>> +  compatible:
+>>>>>>>> +    enum:
+>>>>>>>> +      - sony,imx585
+>>>>>>>> +      - sony,imx585-mono
+>>>>>>>
+>>>>>>> I don't understand this second compatible. Is this different hardware?
+>>>>>>> Can you point me to "mono" datasheet?
+>>>>>>>
+>>>>>>> Your description should explain this. Commit msg as well, instead of
+>>>>>>> speaking about driver (in fact drop all driver related comments).
+>>>>>>>
+>>>>>> Mono version of this sensor is basically just removing the bayer
+>>>>>> filter, so the sensor itself actually doesn't know if it is color or
+>>>>>> mono and from my knowledge there are no registers programmed in the
+>>>>>> factory that will show the variant and model number. (That is why when
+>>>>>> the driver probing it only test blacklevel register because there are
+>>>>>> no ID registers)
+>>>>>> Originally in V1 patch I've made the switch between color and mono in
+>>>>>> dtoverlay config but reviewer comments is to move it to compatible
+>>>>>> string and not property.(https://lore.kernel.org/linux-media/20250703175121.GA17709@pendragon.ideasonboard.com/)
+>>>>>
+>>>>> You only partially answer and judging by mentioning driver below:
+>>>>>
+>>>>>> In this case, what would you recommend?
+>>>>>>
+>>>>>> compatible:
+>>>>>>   enum:
+>>>>>>     - sony,imx585
+>>>>>>     - sony,imx585-mono
+>>>>>>   description: IMX585 has two variants, color and mono which the
+>>>>>> driver supports both.
+>>>>>
+>>>>> ... I still have doubts that you really understand what I am asking. Is
+>>>>> this one device or two different devices?
+>>>>
+>>>> One device that has two variants: IMX585-AAMJ1 (Mono) and IMX585-AAQJ1
+>>>> (Color). Silicon-wise the difference is just with or without bayer
+>>>> filter.
+>>>
+>>> Then I would propose to use sony,imx585-aamj1 and -aaqj1 with short
+>>> explanation either in comment or description about difference in RGB
+>>> mosaic filter.
+>>
+>> Works for me. We could possibly omit the "j1" suffix too.
+>>
+> My thinking is that imx585 and imx585-mono are easier to comprehend
+> than IMX585-AAM and IMX585-AAQ.
+> Because in dtoverlay for the users/me they will have to know what is
+> the exact name instead of easy to remember name.
+> 
+> dtoverlay=imx585-aam
+> is not as nice as
+> dtoverlay=imx585-mono
 
+I have datasheet for AAQ, so how above is easier for me to figure out
+which compatible I am using?
 
-On 8/12/25 12:32 PM, Arnaud Lecomte wrote:
-> Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-> when copying stack trace data. The issue occurs when the perf trace
->   contains more stack entries than the stack map bucket can hold,
->   leading to an out-of-bounds write in the bucket's data array.
->
-> Changes in v2:
->   - Fixed max_depth names across get stack id
->
-> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+> 
+> which is what it does, a mono variant of the sensor.
+> 
+> I really don't understand the standard for compatible string naming
+> here, is there something I missed? Is it required to use the full name
+> of the sensor parts number as a compatible string?
 
-LGTM with a few nits below.
+It's not part number. You have there different models. We don't add
+prose to compatibles, but use device or model names.
 
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
-
-> ---
->   kernel/bpf/stackmap.c | 24 ++++++++++++++----------
->   1 file changed, 14 insertions(+), 10 deletions(-)
->
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index a267567e36dd..e1ee18cbbbb2 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -246,7 +246,7 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
->   }
->   
->   static long __bpf_get_stackid(struct bpf_map *map,
-> -			      struct perf_callchain_entry *trace, u64 flags)
-> +			      struct perf_callchain_entry *trace, u64 flags, u32 max_depth)
->   {
->   	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
->   	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-> @@ -262,6 +262,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
->   
->   	trace_nr = trace->nr - skip;
->   	trace_len = trace_nr * sizeof(u64);
-> +	trace_nr = min(trace_nr, max_depth - skip);
-> +
->   	ips = trace->ip + skip;
->   	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
->   	id = hash & (smap->n_buckets - 1);
-> @@ -321,19 +323,17 @@ static long __bpf_get_stackid(struct bpf_map *map,
->   BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->   	   u64, flags)
->   {
-> -	u32 max_depth = map->value_size / stack_map_data_size(map);
-> -	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-> +	u32 elem_size = stack_map_data_size(map);
->   	bool user = flags & BPF_F_USER_STACK;
->   	struct perf_callchain_entry *trace;
->   	bool kernel = !user;
-> +	u32 max_depth;
->   
->   	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
->   			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
->   		return -EINVAL;
->   
-> -	max_depth += skip;
-> -	if (max_depth > sysctl_perf_event_max_stack)
-> -		max_depth = sysctl_perf_event_max_stack;
-> +	max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
->   
->   	trace = get_perf_callchain(regs, 0, kernel, user, max_depth,
->   				   false, false);
-> @@ -342,7 +342,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->   		/* couldn't fetch the stack trace */
->   		return -EFAULT;
->   
-> -	return __bpf_get_stackid(map, trace, flags);
-> +	return __bpf_get_stackid(map, trace, flags, max_depth);
->   }
->   
->   const struct bpf_func_proto bpf_get_stackid_proto = {
-> @@ -374,6 +374,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
->   	bool kernel, user;
->   	__u64 nr_kernel;
->   	int ret;
-> +	u32 elem_size, max_depth;
->   
->   	/* perf_sample_data doesn't have callchain, use bpf_get_stackid */
->   	if (!(event->attr.sample_type & PERF_SAMPLE_CALLCHAIN))
-> @@ -392,16 +393,18 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
->   		return -EFAULT;
->   
->   	nr_kernel = count_kernel_ip(trace);
-> -
-> +	elem_size = stack_map_data_size(map);
->   	if (kernel) {
->   		__u64 nr = trace->nr;
->   
->   		trace->nr = nr_kernel;
-> -		ret = __bpf_get_stackid(map, trace, flags);
-> +		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-> +		ret = __bpf_get_stackid(map, trace, flags, max_depth);
->   
->   		/* restore nr */
->   		trace->nr = nr;
->   	} else { /* user */
-> +
-
-Remove the above empty line.
-
->   		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
->   
->   		skip += nr_kernel;
-> @@ -409,7 +412,8 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
->   			return -EFAULT;
->   
->   		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
-> -		ret = __bpf_get_stackid(map, trace, flags);
-> +		max_depth = stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-> +		ret = __bpf_get_stackid(map, trace, flags, max_depth);
->   	}
->   	return ret;
->   }
-
+Best regards,
+Krzysztof
 
