@@ -1,68 +1,102 @@
-Return-Path: <linux-kernel+bounces-765814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1199DB23EA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:55:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D19B23E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC0046E65DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C47916D5B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49457280332;
-	Wed, 13 Aug 2025 02:52:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB1E1F0E29;
+	Wed, 13 Aug 2025 02:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="CLFLSxX7"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC661270559;
-	Wed, 13 Aug 2025 02:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D416188A0C
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755053538; cv=none; b=l9QJEkDJ99abgtXB0QRUfkCsIPHRT/UUiCR3Te/iPj5FK06tR+h8C5uTMnFv4E27ebZMo7+Qha/ukvNintwnwZhR9rmWJgVlBf+Kg/kNcGB4eCzCCmWggfdHVSd6uVzG226sl/WWbE4yFkr1zfx3qrZs17IgHD4JbB7X0dC8LkA=
+	t=1755053117; cv=none; b=seTMy9i2XNnuiFsN+zUksJnpwJWEBn6KC/iL1rSS5zyMTArg2purI8VLCsTGcGhMnW9CcsARE3bkQ0zyzx1PT4EvsnV3x5zlEIZjqFiUBaczBjTu42o3/jgwfZ4gSKL0t5yBlcQAGOci1YwWlb1sNu8MX+BVBHPE/j4CWeKnsoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755053538; c=relaxed/simple;
-	bh=pMO/5u3bPj59OUaY7EWtNX7Gfw7oK1jmCpyQpQRv/2c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aGdkBE9VZjj/iyhn3dTfjexGQ4XdjFjPedk+h7VzlMNFJ22kKWINbL8qxrca7bFW0SldLjx8zI8/HCJOCVMpoQlopaSez6UFK3K7uDjyVNDVaa4fTi1Jb69vuXAazzMEjhV4SsUREDcJ53F3J11HRg2/luPZuzxov/C8o8jH5lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1tFX3F5xzYQtpJ;
-	Wed, 13 Aug 2025 10:52:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0F6F81A0359;
-	Wed, 13 Aug 2025 10:52:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBHwhLQ_ZtoAscBDg--.14424S7;
-	Wed, 13 Aug 2025 10:52:14 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	hch@lst.de,
-	tytso@mit.edu,
-	djwong@kernel.org,
-	bmarzins@redhat.com,
-	chaitanyak@nvidia.com,
-	shinichiro.kawasaki@wdc.com,
-	brauner@kernel.org,
-	martin.petersen@oracle.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH blktests v2 3/3] nvme/065: add unmap write zeroes tests
-Date: Wed, 13 Aug 2025 10:44:21 +0800
-Message-Id: <20250813024421.2507446-4-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250813024421.2507446-1-yi.zhang@huaweicloud.com>
-References: <20250813024421.2507446-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1755053117; c=relaxed/simple;
+	bh=qigzO2DTvwyXcMLvudEMT153tkZ+VKdFAQ3TY4DaMas=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=niNmRkBoMfjqw7AoNUkSYdQ0K0D01gcON0yeZ42ncrvMLtIlHDaRkcwpZJZzK+QroGwiQOSbkJX5GUTe2QJplMO+EISRrfVh4CZxEqu4787FQHblG4rToxkzMeB3Hr+ikj7WY5o3j12Qwbd82KlMGECl/d2kjAbeQkr/yETKnEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=CLFLSxX7; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3e55b170787so2540055ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:45:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755053114; x=1755657914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=niKBP2EZ19X+wqMs4ZG9wJKfN7oQpwL1MM9OL7zTge0=;
+        b=CLFLSxX7rF5tvPunB+WqYhc16+BC/oleqw5EDDPSGTH8JVb6EnJhgrle3ITluIU4Yv
+         k1xNiyJihpgtL2gwtaqOHdnW51cQnoDLyYIp7UzpIj41Kfd6VZydepfd94r0jn0ZhxLM
+         HuSett1bUgo4KTCK/HboO0zUbzjpUFV6r5VnFDt+Ka0mHYb9zyIo28z+jB7dLrrx7HP7
+         EpAyH1mrHLTzZlrxjJHsAaGw1hQ0XdOE+LIcWoU3kHTQqT9mQxNCBX1McFz1xeB+UmoV
+         eKBLNKEGArVZqgvf5X+lGlzrdL6D/sJhJVsvtWbCkbYn674eX/vNN9SyQ8H6+h9Q2OZy
+         Swrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755053114; x=1755657914;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=niKBP2EZ19X+wqMs4ZG9wJKfN7oQpwL1MM9OL7zTge0=;
+        b=Mn3Gw7RLTU9/PagVKIsoeUA7uKeuYZxc2ymbF3Y4KE/tQzspcujh6bumGTuYjE1TPA
+         LhtmYyEehICgLXLAp+5io8Laoc6Zh5nkjxkCAfbSrHjYee68rPptwl8K1SWjoJwhHeJQ
+         v7ujkmxQmwtkLL3wmcu18jsQ76fcLobBz36kZrsjH2MYp5pPW5blLI1TSvQ3nu87iZsh
+         pmii/xzZYlbZtqHPnmjV17/DAWGd1E2Uglky9kvV4BnRpq7eH6IfQDiFXFYeV0DQ6hBF
+         FjirCBFyTSQK5o/SA/qSDrJOEk6IQ8tW1m2PP87lhkMtFJV9u4cxQar/FvSICjg0GSEM
+         mSiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRKlUAhQQ8XYkNjMPiU2GBXrcREiI3dnR82IO+TF0PayzMHs9kh02bJB3t3VhYgu+8FJTVp1NUcG+cmac=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8UBqRHYMN92PdTspgycPs1BGYhloXbHYsancV3OXbSEiqiexA
+	zGt4T/PpB6vBDw+/DdlutPhwEE+ciHfdd2mkVmc+VdF/SigZlAe4Lf2tTyfRVs5h0PQ=
+X-Gm-Gg: ASbGnctl383khmP6GsqlJKRlPnXiU1Y1RI/z9UFvIBxOno4M0G0OQjJxAPcWJRRktpC
+	/yYD3L5IWdekYv8EReZxLebjMUrtZh2eWd0yafg9lIUIY7Mq+6Z4ajeC2kYdrCwFHLLMt9WBjZq
+	oBnGfoHXNKu+vcPYzU3gw2li1MMSOoTRzVhSLUpIM42S4ECTaJjIWAOv+GwpaYzYvsb6/meKH3x
+	QEGgmiEnC5ifDyBdh7RXshj9D5E0bjdmXlE7YicaF9y3UzYF81Zjnp1SHbXsW6D1zyMGaCVcAJG
+	Tzc2gftU3HClODpjADwtgIk27exvMewHJw2Cbnq2uRwgQSOGLXBX/S8Ht0zkNgE3wG9HVycBjQq
+	/fYzLoexupe5rq53igPxrIrfMGFvOddNmYtf+xXn3WF+GJhOXKBCtMPS9NAH2uieQr+avDAqjgd
+	H9
+X-Google-Smtp-Source: AGHT+IEBZwyeOzbbOcVhNNK5J1cGS+53cBPTwwwfowqlesyNWISPovkwp31RGRTV3tyrIRkYbuJPkg==
+X-Received: by 2002:a05:6e02:19cd:b0:3e3:b3d0:26cf with SMTP id e9e14a558f8ab-3e5685aa5bcmr15459295ab.10.1755053113531;
+        Tue, 12 Aug 2025 19:45:13 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae9bcfbf6sm3430829173.54.2025.08.12.19.45.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 19:45:13 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: lee@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: mat.jonczyk@o2.pl,
+	dlan@gentoo.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	linux.amoon@gmail.com,
+	troymitchell988@gmail.com,
+	guodong@riscstar.com,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v12 0/7] spacemit: introduce P1 PMIC support
+Date: Tue, 12 Aug 2025 21:45:01 -0500
+Message-ID: <20250813024509.2325988-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,158 +104,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHwhLQ_ZtoAscBDg--.14424S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF1fCr17tr1rZryfKrW5GFg_yoWrXF45pF
-	yjyFyakrWxWFnrGws3Za17WF13Cw4vvry7Cay7tryj93srXry3WrWkKa4jqw1fGF93uw10
-	yayjqFWS9r1UtrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUm214x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
-	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
-	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-	IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
-	xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
-	kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY
-	6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVF
-	xhVjvjDU0xZFpf9x0pRG2NZUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+The SpacemiT P1 is an I2C-controlled PMIC that implements 6 buck
+converters and 12 LDOs.  It contains a load switch, ADC channels,
+GPIOs, a real-time clock, and a watchdog timer.
 
-Test block device unmap write zeroes sysfs interface with NVMeT devices
-which are based on various SCSI debug devices. The NVMe device's
-/sys/block/<disk>/queue/write_zeroes_unmap_max_hw_bytes
-should equal to the write_zeroes_max_bytes if the SCSI debug device
-enable the WRITE SAME command with unmap functionality, and it should
-return 0 otherwise. /sys/block/<disk>/queue/write_zeroes_unmap_max_bytes
-should be equal to write_zeroes_unmap_max_hw_bytes by default, and we
-can disable write zeroes support by setting it to zero.
+This series introduces a multifunction driver for the P1 PMIC as
+well as drivers for its regulators and RTC.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- tests/nvme/065     | 96 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/nvme/065.out |  4 ++
- 2 files changed, 100 insertions(+)
- create mode 100755 tests/nvme/065
- create mode 100644 tests/nvme/065.out
+The content of this version is identical to the previous one.
+It has simply been rebased onto Linux v6.17-rc1.
 
-diff --git a/tests/nvme/065 b/tests/nvme/065
-new file mode 100755
-index 0000000..8631bfa
---- /dev/null
-+++ b/tests/nvme/065
-@@ -0,0 +1,96 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-3.0+
-+# Copyright (C) 2025 Huawei.
-+#
-+# Test block device unmap write zeroes sysfs interface with nvmet scsi
-+# debug devices.
-+
-+. tests/nvme/rc
-+. common/scsi_debug
-+
-+DESCRIPTION="test unmap write zeroes sysfs interface with nvmet devices"
-+QUICK=1
-+
-+nvme_trtype=loop
-+nvmet_blkdev_type="device"
-+
-+requires() {
-+	_have_scsi_debug
-+	_nvme_requires
-+	_require_nvme_trtype_is_loop
-+}
-+
-+readonly TO_SKIP=255
-+
-+setup_test_device() {
-+	local port
-+
-+	if ! _configure_scsi_debug "$@"; then
-+		return 1
-+	fi
-+
-+	if [[ ! -f /sys/block/${SCSI_DEBUG_DEVICES[0]}/queue/write_zeroes_unmap_max_hw_bytes ]]; then
-+		_exit_scsi_debug
-+		return $TO_SKIP
-+	fi
-+
-+	port="$(_create_nvmet_port)"
-+	_create_nvmet_subsystem --blkdev "/dev/${SCSI_DEBUG_DEVICES[0]}"
-+	_add_nvmet_subsys_to_port "${port}" "${def_subsysnqn}"
-+
-+	_create_nvmet_host "${def_subsysnqn}" "${def_hostnqn}"
-+	_nvme_connect_subsys
-+
-+	echo $(_find_nvme_ns "${def_subsys_uuid}")
-+}
-+
-+cleanup_test_device() {
-+	_nvme_disconnect_subsys
-+	_nvmet_target_cleanup --subsysnqn "${def_subsysnqn}"
-+	_exit_scsi_debug
-+}
-+
-+test() {
-+	echo "Running ${TEST_NAME}"
-+
-+	_setup_nvmet
-+
-+	# disable WRITE SAME with unmap
-+	local dname
-+	dname=$(setup_test_device lbprz=0)
-+	ret=$?
-+	if ((ret)); then
-+		if ((ret == TO_SKIP)); then
-+			SKIP_REASONS+=("kernel does not support unmap write zeroes sysfs interface")
-+		fi
-+		return 1
-+	fi
-+
-+	umap_hw_bytes="$(cat "/sys/block/$dname/queue/write_zeroes_unmap_max_hw_bytes")"
-+	umap_bytes="$(cat "/sys/block/$dname/queue/write_zeroes_unmap_max_bytes")"
-+	if [[ $umap_hw_bytes -ne 0 || $umap_bytes -ne 0 ]]; then
-+		echo "Test disable WRITE SAME with unmap failed."
-+	fi
-+	cleanup_test_device
-+
-+	# enable WRITE SAME with unmap
-+	if ! dname=$(setup_test_device lbprz=1 lbpws=1); then
-+		return 1
-+	fi
-+
-+	zero_bytes="$(cat "/sys/block/$dname/queue/write_zeroes_max_bytes")"
-+	umap_hw_bytes="$(cat "/sys/block/$dname/queue/write_zeroes_unmap_max_hw_bytes")"
-+	umap_bytes="$(cat "/sys/block/$dname/queue/write_zeroes_unmap_max_bytes")"
-+	if [[ $umap_hw_bytes -ne $zero_bytes || $umap_bytes -ne $zero_bytes ]]; then
-+		echo "Test enable WRITE SAME with unmap failed."
-+	fi
-+
-+	echo 0 > "/sys/block/$dname/queue/write_zeroes_unmap_max_bytes"
-+	umap_bytes="$(cat "/sys/block/$dname/queue/write_zeroes_unmap_max_bytes")"
-+	if [[ $umap_bytes -ne 0 ]]; then
-+		echo "Test manually disable WRITE SAME with unmap failed."
-+	fi
-+	cleanup_test_device
-+
-+	echo "Test complete"
-+}
-diff --git a/tests/nvme/065.out b/tests/nvme/065.out
-new file mode 100644
-index 0000000..262cfc9
---- /dev/null
-+++ b/tests/nvme/065.out
-@@ -0,0 +1,4 @@
-+Running nvme/065
-+disconnected 1 controller(s)
-+disconnected 1 controller(s)
-+Test complete
+					-Alex
+
+This series is available here:
+  https://github.com/riscstar/linux/tree/outgoing/pmic-v12
+
+Between version 11 and version 12:
+  - Simple rebase
+
+Here is version 11 of this series:
+  https://lore.kernel.org/lkml/20250803025812.373029-1-elder@riscstar.com/
+
+Between version 10 and version 11:
+  - Abandon trying to implement a simple_mfd_data->max_register field
+  - Fix a missing dependency pointed out by the kernel test robot
+
+Here is version 10 of this series:
+  https://lore.kernel.org/lkml/20250726131003.3137282-1-elder@riscstar.com/
+
+Between version 9 and version 10:
+  - The #address-cells and #size-cells for the i2c8 DTS node
+    were moved into its primary definition in "k1.dtsi".
+  - The interrupts property for the i2c8 DTS node was moved
+    below its clock-related properties.
+  - The status property in the pmic@41 DTS node was dropped.
+  - The function that provides the regmap_config structure
+    to use was reworked a bit.
+  - A new function was added to free the regmap_config
+    structure after it's no longer needed.
+
+Here is version 9 of this series:
+  https://lore.kernel.org/lkml/20250724202511.499288-1-elder@riscstar.com/
+
+Between version 8 and version 9:
+  - The max_config value is always used if it is provided with the
+    simple_mfd_data structure.
+  - The regmap_config structure used is allocated dynamically if
+    necessary; otherwise regmap_config_8r_8v is used.
+  - A small duplicated comment is removed
+
+Here is version 8 of this series:
+  https://lore.kernel.org/lkml/20250710175107.1280221-1-elder@riscstar.com/
+
+More complete history is available at that link.
+
+
+Alex Elder (7):
+  dt-bindings: mfd: add support the SpacemiT P1 PMIC
+  mfd: simple-mfd-i2c: add SpacemiT P1 support
+  regulator: spacemit: support SpacemiT P1 regulators
+  rtc: spacemit: support the SpacemiT P1 RTC
+  riscv: dts: spacemit: enable the i2c8 adapter
+  riscv: dts: spacemit: define fixed regulators
+  riscv: dts: spacemit: define regulator constraints
+
+ .../devicetree/bindings/mfd/spacemit,p1.yaml  |  86 +++++++++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      | 135 ++++++++++++++
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |   7 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  13 ++
+ drivers/mfd/Kconfig                           |  11 ++
+ drivers/mfd/simple-mfd-i2c.c                  |  18 ++
+ drivers/regulator/Kconfig                     |  13 ++
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/spacemit-p1.c               | 157 ++++++++++++++++
+ drivers/rtc/Kconfig                           |  10 ++
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-spacemit-p1.c                 | 167 ++++++++++++++++++
+ 12 files changed, 619 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/spacemit,p1.yaml
+ create mode 100644 drivers/regulator/spacemit-p1.c
+ create mode 100644 drivers/rtc/rtc-spacemit-p1.c
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 -- 
-2.39.2
+2.48.1
 
 
