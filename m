@@ -1,145 +1,157 @@
-Return-Path: <linux-kernel+bounces-767295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F03AEB25268
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:49:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72854B25252
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52F537A9E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:48:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C199E884872
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983272BE7BC;
-	Wed, 13 Aug 2025 17:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D8C63CB;
+	Wed, 13 Aug 2025 17:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b="uCEjxzL9"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NyRNzUwC"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA2E2BDC31
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49D02857CA
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755107292; cv=none; b=BVAP5XC8RtRPeXtKjdOA3Fh9zM7vo34tkgJbEaTifPmkrGq+pcYDGwK2zm2NUrYg/9418XjQe7WvFpDW1ZvnKQXqKCi8+ZMtTNnVdbvz7rFfG+7Z/fRt2y86o1WzhnM/MTBr3ker4DafFAEwDw39bI/svKnwy5uF69envjTvUr0=
+	t=1755107114; cv=none; b=TeRNoA/uFx+PjJbOyDLw9uQmtElL7j1V7W3hzj0ubmy7QGTve+YG/NaSWdz6Z5xpnX8YO8bOI8hjfZqn74gg/gDN2CQ/J3EDbIjHf5lsDofo0N6vRmOzSjf0DoSTU2A19kkWE+aGiGA2GaVNXyPAuaGJnhtjo10FTxBv99NrgQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755107292; c=relaxed/simple;
-	bh=wVsDz7PLWcqLuNDyAizM/2yV2YynzKGFnsWWEvqGeqg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jtdvFnx2+++5DVUTgFAn1AdgtOffoV3Q1/z8uqE5A+AH/uOX82OgufsaqcOzWx1/KjxdcQgUmNUA5sTtBMiBrGzErifMDhwdmgJ9daPZDTBXAXTrtd9eYPS5nqCOa0EFS6wZNHdmxO6AFznStbMy1guN0qZi+3YHjKh3vMakdGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr; spf=pass smtp.mailfrom=sartura.hr; dkim=pass (2048-bit key) header.d=sartura.hr header.i=@sartura.hr header.b=uCEjxzL9; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sartura.hr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sartura.hr
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7e87061d120so6278085a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:48:09 -0700 (PDT)
+	s=arc-20240116; t=1755107114; c=relaxed/simple;
+	bh=bZGGYS+1+xVHuw85rtew4Vysp+bkddkyAiVB7KSR+D4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E43pNPjRKOVVMt5kRImCi0gWixYORqJ/F3J3rsfdq4J2KPEd79Cxcedh43CN1Zyg2RxDFrBreP174Se1DhPjPLp6GoT6J/vxLpPI/ZcI/+x0lKo9/meiLeuP8SGGeM3nwjo7rvf2Uz0ep2efsrvKo3DyTJM9jVYXcqoRS9DKSNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NyRNzUwC; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-244581c3b43so125575ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:45:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sartura.hr; s=sartura; t=1755107288; x=1755712088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NR9O5hej1zVdBrSrvTEY2n8cN8r/rUR8l5graqaiob8=;
-        b=uCEjxzL9d6OxCyOhmQi3vdf6Zth+dnpTgzkFmF62rxI5lmbr9a7I3BT+Aqjv0s6LUV
-         U9DBnlwEVGCAp/MeK/dxdFk1den0Y1v99dvqjj1SN+h1nI7sWIoVXEVfUNysmXYHEEiK
-         fNLCmV5VNMAeiuRdQwa41npfs5rCwwEgsK5qqWlA30Kz4rvpyVWvqUgeNELha7yacjbq
-         L2I/M3nup5RK+UmDwy5nsMUiczXNqhWxVz/yBQE2AySs8JD0jsnD1lMR24wMQDsdyedN
-         pazjC5kLX5m1eILw5+jAU3+e+g6pW+2vy3F3PMPrZ+gaznpdDOQAyEdU3pLTcvYy4NcM
-         5nPA==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755107111; x=1755711911; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bHnnLvE38kbDjWGZ3ZhwCuAJ0QrSQ8uli0lPAvpqJY0=;
+        b=NyRNzUwCyQykoamsCJr0sdVapVsT7+XhX+uZhHIUMRDbhxCCEmkAL5vnPr1PMSx/Nj
+         0dSxeYCnAfl/WuaZbPOwDy8lASMGFwqYDvdWTC4xAjnlC/TlDLdvL0o7hHYgpfGJ+JmQ
+         2WzChOhqucrGGU+7bNaKOi594oaKhQjn1wHD9VvUDVbVB5mevdWg3I72+GqD97pDRhGY
+         VYwUEhDqJOQE2qs4X4pIFh/fPHcJi8iSYVXDTIJEexQxikU50XxUA8WzkOIhjc+38Edo
+         u/4TgoZD9n6nPDrREowx2mf74cOXrOJJSxCjFTwJeq8qG7k0yvDZB0Zn5dr3E8D0VxKr
+         giDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755107288; x=1755712088;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NR9O5hej1zVdBrSrvTEY2n8cN8r/rUR8l5graqaiob8=;
-        b=JYjr/qxQvPpkRmZ6d//E9EGLsUOykm4j3Jmef3BCF4zfINYrqZ2fDFbrYsRaiQYUzI
-         y56Lw0CHR7WQ/c/3bJKxO1Jk9/30v5xoBAZ39Stt5jxOOll0TUy2e2z9Ls1knYf4hp2R
-         UW7cFbEE1layMpA5w/U1l7uyKIB7ApHSW//x6Mt4bKF6O8iafpYhax1XENGwffEocbn4
-         0jkTujTfQHiBL5uSZPDbhHVU3kxNcH25qJAttZRl691vEVq6t2BZrnWeCqV/x22HXiib
-         c0d/rqLVpicOReXTssb+F0cBjbgP853vYY9w39xu1Sve2q24VBPgqSXGJPt4sp9DuTAI
-         1Z8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVurw7yR5b3BuII/bUHPytXCrgyvfcDFJAgEYiQIYwQwUxxit9yDRi0+mDN+SWN1cp+2RP05OLYkIWh4Fk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdYmRUz5q25Sn8ryvdBrgJXm8Cacy2pRo3vttRQevL3bukft9R
-	AhU2PcxWl0KbXcnqnLmkHFrmO2NRUwXgCMbts5uMT7Ne9FBHYJpHbKefigh3x4I+u+AL1GJaU9N
-	SOLn0vOs=
-X-Gm-Gg: ASbGnctt2ISMKV9Y8t7RSix/Zoh9MXn8w3N0dR8zkf0KOE1Cs+1C759YJz6MyGKLd8U
-	dTQ2ATpcFCL0duIWzyOzt1hZ4ohpZCocKNTFXNs/yT8/m2uE+3MrSiEsKr6RM8OYfZOUg9QJPJE
-	fjI1aXoxopHPdB7As/nqEStfSnCtai2wnngNl+Ud7vap0SR6LiYEP6aV5OG4bn1lVsFiEYkZCRC
-	JbE28j/qhf8w+MDxCzIsVCpLKMWVYc5ANn81V560vn9WYAs3aIcy2FETQO+yjMOKOxkcjn+nsdz
-	0r+28XquPvUT03KU5ztMBEmOklzVZjMAmGxwaQiA6jqNUD8pepsFWbvrvX56aPWy5lcYaKOMSbo
-	+LiCCxQkACZOsciBlpnA/JBtNp43vS4SOnl9yzywBnA==
-X-Google-Smtp-Source: AGHT+IFRs83sDqTRyEN7DfReHLOYn68Vpzc0LCiQZFoDgh8bJ2M9bgboNPmgbUyMB+oLX7FeYNZzXA==
-X-Received: by 2002:a05:620a:1724:b0:7e7:12c1:8f93 with SMTP id af79cd13be357-7e870600b91mr33016285a.63.1755107288221;
-        Wed, 13 Aug 2025 10:48:08 -0700 (PDT)
-Received: from fedora (d-zg2-251.globalnet.hr. [213.149.37.251])
-        by smtp.googlemail.com with ESMTPSA id af79cd13be357-7e7fa87e7d0sm1627122385a.82.2025.08.13.10.48.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 10:48:07 -0700 (PDT)
-From: Robert Marko <robert.marko@sartura.hr>
-To: linux@armlinux.org.uk,
-	nicolas.ferre@microchip.com,
-	alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	olivia@selenic.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	andi.shyti@kernel.org,
-	lee@kernel.org,
-	broonie@kernel.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	arnd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	daniel.machon@microchip.com
-Cc: luka.perkov@sartura.hr,
-	Robert Marko <robert.marko@sartura.hr>
-Subject: [PATCH v9 9/9] crypto: atmel-aes: make it selectable for ARCH_MICROCHIP
-Date: Wed, 13 Aug 2025 19:44:45 +0200
-Message-ID: <20250813174720.540015-10-robert.marko@sartura.hr>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250813174720.540015-1-robert.marko@sartura.hr>
-References: <20250813174720.540015-1-robert.marko@sartura.hr>
+        d=1e100.net; s=20230601; t=1755107111; x=1755711911;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bHnnLvE38kbDjWGZ3ZhwCuAJ0QrSQ8uli0lPAvpqJY0=;
+        b=oERq64ZpMrL3VXMXemeJ3/exO4OO/uaW6as3cepq0NJFXZqhU06jVX8MM5cwXurozM
+         Ah1tkDR6m3mYsw4JeAxq2kBDFUaWKeZxJLgzJ2uUEymxsTdUHFb3vSjns/ElUxG5eON/
+         9AbEjEeB++SYaZ0mvOsm954MmFpK2LIqCKhboEhILVfbT0HTPNvCzttRzln7tjG/eV9i
+         Bv6q7s/tsyPAl0IESuyY6UDYLEISGAfNTDlNejS8haxQg0e74473m4alOAb763MvheRh
+         sqWrWW8/QBVxUttc8JjTv5Y07dLfcHi98mC5vVb3I5GuzfCWLNjM4xvOQhtgE78GiqHa
+         37Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWX3JjQEyOU5p8GEjgVA1Q66Zc3s/Tmrwz1jR/gx43h4puAcizguMK/ieV6gETBSWt/BARATe/uEqgCN/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznooLz2MSntLoXUQYUwnu3MBMQIFRTRv7IU/SS18pMnnIIzzkS
+	SIF7WlvNO7lXLCqxfGxU65HDml6xCEuVsNjArDXDZH3HtDGHeq/JKVUQ8uvvjOdTm2TqTBkMWr0
+	/jfho
+X-Gm-Gg: ASbGncvIzCTrn5+jxOpUx8ZPSKSRVrFveCuK+Kn72KFQZTQQMne1FmsvOykEQJrgq4u
+	rzVu/0fwM24ml6sZjW/pBTd/3Rl1AaiRu7w/pzlvDml9l8YsRho/UI0ljDturql+CLQpSzFuzpq
+	lMJ3eiIEqjAE5YYKmfOEuDnSvloj716Y3TJamL7WOu3lRKC1eq92KI5PFSa1j2cNINeVS3I4FYm
+	rsCFRb5kZ3sk42JktYm5LNwWW5iasHrhjEs4Fte5aLfS+nBj09zO5aqPlmcpdug68KmutyER9II
+	qFpTLREyRpUkl6nT292GgcdTD5lNBqIZYoO3nxZci6iwlxp+ekxt37EpD38efpJkrP6BiMp+Y17
+	ji27daTFYH614HplBoCnC
+X-Google-Smtp-Source: AGHT+IEugx06OEbiFmM4FR2ifktkysn6f/JEoKaYZX4iJ705OWO3DfKKaVaRuKlZ2WkYiN9BmjVHjg==
+X-Received: by 2002:a17:902:dac8:b0:240:3e72:efb3 with SMTP id d9443c01a7336-2430d2339a8mr63354205ad.43.1755107111127;
+        Wed, 13 Aug 2025 10:45:11 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0e585sm330352765ad.40.2025.08.13.10.45.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 10:45:10 -0700 (PDT)
+Message-ID: <12342355-b3fb-4e78-ad5b-dcfff1366ccf@kernel.dk>
+Date: Wed, 13 Aug 2025 11:45:09 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch 00/11] rseq: Optimize exit to user space
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Wei Liu <wei.liu@kernel.org>
+References: <20250813155941.014821755@linutronix.de>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250813155941.014821755@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-LAN969x uses the Atmel crypto, so make it selectable for ARCH_MICROCHIP to
-avoid needing to update depends in future if other Microchip SoC-s use it
-as well.
+On 8/13/25 10:29 AM, Thomas Gleixner wrote:
+> With the more wide spread usage of rseq in glibc, rseq is not longer a
+> niche use case for special applications.
+> 
+> While working on a sane implementation of a rseq based time slice extension
+> mechanism, I noticed several shortcomings of the current rseq code:
+> 
+>   1) task::rseq_event_mask is a pointless bitfield despite the fact that
+>      the ABI flags it was meant to support have been deprecated and
+>      functionally disabled three years ago.
+> 
+>   2) task::rseq_event_mask is accumulating bits unless there is a critical
+>      section discovered in the user space rseq memory. This results in
+>      pointless invocations of the rseq user space exit handler even if
+>      there had nothing changed. As a matter of correctness these bits have
+>      to be clear when exiting to user space and therefore pristine when
+>      coming back into the kernel. Aside of correctness, this also avoids
+>      pointless evaluation of the user space memory, which is a performance
+>      benefit.
+> 
+>   3) The evaluation of critical sections does not differentiate between
+>      syscall and interrupt/exception exits. The current implementation
+>      silently fixes up critical sections which invoked a syscall unless
+>      CONFIG_DEBUG_RSEQ is enabled.
+> 
+>      That's just wrong. If user space does that on a production kernel it
+>      can keep the pieces. The kernel is not there to proliferate mindless
+>      user space programming and letting everyone pay the performance
+>      penalty.
+> 
+> This series addresses these issues and on top converts parts of the user
+> space access over to the new masked access model, which lowers the overhead
+> of Spectre-V1 mitigations significantly on architectures which support it
+> (x86 as of today). This is especially noticable in the access to the
+> rseq_cs field in struct rseq, which is the first quick check to figure out
+> whether a critical section is installed or not.
+> 
+> It survives the kernels rseq selftests, but I did not any performance tests
+> vs. rseq because I have no idea how to use the gazillion of undocumented
+> command line parameters of the benchmark. I leave that to people who are so
+> familiar with them, that they assume everyone else is too :)
+> 
+> The performance gain on regular workloads is clearly measurable and the
+> consistent event flag state allows now to build the time slice extension
+> mechanism on top. The first POC I implemented:
+> 
+>    https://lore.kernel.org/lkml/87o6smb3a0.ffs@tglx/
+> 
+> suffered badly from the stale eventmask bits and the cleaned up version
+> brought a whopping 25+% performance gain.
 
-Signed-off-by: Robert Marko <robert.marko@sartura.hr>
----
-Changes in v8:
-* Use ARCH_MICROCHIP for depends as its now selected by both ARM and ARM64
-Microchip SoC-s
+Thanks for doing this work, it's been on my list to take a look at rseq
+as it's quite the pig currently and enabled by default (with what I
+assume is from a newer libc).
 
- drivers/crypto/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 04b4c43b6bae..7c1717c35b76 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -439,7 +439,7 @@ config CRYPTO_DEV_ATMEL_AUTHENC
- 
- config CRYPTO_DEV_ATMEL_AES
- 	tristate "Support for Atmel AES hw accelerator"
--	depends on ARCH_AT91 || COMPILE_TEST
-+	depends on ARCH_MICROCHIP || COMPILE_TEST
- 	select CRYPTO_AES
- 	select CRYPTO_AEAD
- 	select CRYPTO_SKCIPHER
 -- 
-2.50.1
+Jens Axboe
 
 
