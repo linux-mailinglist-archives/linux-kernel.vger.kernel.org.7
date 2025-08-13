@@ -1,164 +1,123 @@
-Return-Path: <linux-kernel+bounces-767110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65FBB24F33
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:15:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288CEB24FB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFF967B0F43
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C7C1892985
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7BB1F582E;
-	Wed, 13 Aug 2025 16:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C1A287259;
+	Wed, 13 Aug 2025 16:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qdsxWoF8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="ia8Rxzvr"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141DA74420;
-	Wed, 13 Aug 2025 16:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B085285C8D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755101742; cv=none; b=Yhjl2YNoPKXGCb7K5MYsaGl6OCWu79y3fJFnYz4mkMDjsLw4Q/b30soIkp9EpIjrDcz/9ZD5+cwA4k6CBQ373nXDSZqWShvjE0p9RPoJCeaXyR4wRRWZGi6wV+ALgivyvF6wStSMyNZ2siRWx8JCC4BbiucogdZgoja/y+x2AsI=
+	t=1755101834; cv=none; b=D25yE6sbSqejYqgFppsD+dkGJ67RQr7ZdO8CbqrLTPYxTOdMVUbvkGZnWI4mOOegzzOcoJHVR4n5TFxYcE3Dqai1dLTStNrot9Whq5kXAcmQEU8fE0sDUbzk591Ynl4VEe3xkTrVohXrb8NVVjeHVLFuvkz+87oeM9SPRVpE07Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755101742; c=relaxed/simple;
-	bh=giUUtRKrFjoboowTopXXWzpCiufG2/NF8WvUf9l4T3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S3EafMs6wQj4DsKl89/0cJrM7Ku2R8fhP5KbZJb+ja+mNfTFdM6mmDgfV1xqQro4wgiKdXCDcZ/IOBYIlm891/SL7AqydZVGebXPcROdintbAaO8VRnxB2yOlAzR2LGRwlxm9QTNcRaV7mIMz3OaqDIREENqF7cjc26RrCeq/ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qdsxWoF8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4078C4CEEF;
-	Wed, 13 Aug 2025 16:15:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755101741;
-	bh=giUUtRKrFjoboowTopXXWzpCiufG2/NF8WvUf9l4T3w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qdsxWoF8cymXMny2dOWSc0ymwdJeuSUBVQcaQ2tSEJOiY4tdwefaF1azmwZYTnkZp
-	 OlQh59ECd7I5QQpPLSYxUeAgtGqNULnWYx4G08FC6xO1e0WxnUTGzHE69uTVq6bKFH
-	 9gseNtfDzw/N522ZbexbTfJjz7hn/Km1GJzp9rHIO1YEoBEpKML+f8QUobzOh7AEGT
-	 TMutPprETLLLqT0Rm5T3K0gMVfxzLKkJsPpRIzeEG9FePL3j0/lNrjKKZWfQlI4mal
-	 DwahXotNX1Ija+q7d2bAuXuN8GI98FJ4CTwG8IiPMdmyCitElrKLzlS8Hbx1kxU1B8
-	 4K8J7+gtM2LwQ==
-Message-ID: <e7577165-436d-4335-943b-2187f7b95946@kernel.org>
-Date: Wed, 13 Aug 2025 18:15:37 +0200
+	s=arc-20240116; t=1755101834; c=relaxed/simple;
+	bh=aLnZpcSWdOkXn92ubxlWxf5O2UCHUI3ra/13J7g/mq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hJxWxdMKq3qbEovZoNH5x8NIZGsVRptjJYggNpCiXAMbXq8P0D6xD9UiNBzURRPgxlglHTgV4Cbxgn1mJFYoOrvn66m0wAmcgsskgh2i3WSqDusB68ONFh/e3Ahv9/C2sxeDudliiKqv5gby4wdqp6JMWUx6g52HW++IzzFbMN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=ia8Rxzvr; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e6399d0654so505006585a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:17:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1755101830; x=1755706630; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y0r8lX0/1M6KsfijF5/m66QhjeQjFJTvODKoUvnEDMw=;
+        b=ia8RxzvrROyJtWb4VyAqvpjk2HWUECUbQcj/XKu2JeVwgr++mnuR6dY+T2hXOQBPtz
+         2blZSwirOZPhacLwrC3taqui8/9UJssoM/duHvOZq2HyiooF7r4eM76mPcgRJWeBcjme
+         r1gbU1fp5nVp7Lm39JYmKc0huIYgbBDmjb78kp8zhOHhMHHFRmBYNoeqz2x9NMZWMYFe
+         GqJVyFJwAZP8iVId1xHYsh1Tf9KpKnGMT65wYXUVjoKI94sXsFMHWZ/nk99EhOhCL3K6
+         BV6njPefy1y+Gt+IZyfgcVyg2Ev5k/1j7ujxXhXrDeUtxmtSTXGkDm7/a0KnQi1eTEh9
+         fOpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755101830; x=1755706630;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y0r8lX0/1M6KsfijF5/m66QhjeQjFJTvODKoUvnEDMw=;
+        b=NQIAAouwLRM9YwB78XHX7FYTkVWHNeK8mbD6XFkq0eJ6lDkF7L/lX8ntvrhalWU4B2
+         9duFNabq9Lzq00EaV2e/TbC3iL8fXjt3ks3w2JsMGexGUUkde0SDqozdjd6SnO15jmqu
+         QNKJvLVbYl4S1HkN3R9MnLJGQ0M6miMr3+sOuWby/PRfOUTJJRhWeIv8yq5m0JjFxR1u
+         b0m9szCvipXSCMwMQCfjO7M12pigXodO2/D/qpt15uzg552ImatT3G5Tka6sL6dRdtrv
+         8iQZZdy/3e0pQF4bD0nKIxqG35pUYQwRcNyeWssU9svdMktUqFXlof1VCtCQG1cXBDuf
+         81Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUF7wfpsdzIq+ObgYKXN/tI4b9AGQs6J8wZQdXMyzB1qHl9i3lLSKhNpnS/D+rT/C5PFgLabsnYHCljfLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXh5N184cl42N4lBNEdxm+KADwziICgvTYVFcXbL1ZzgA+4EL9
+	OAyfyt4sh6U3iEXczUnBIdhyUAcTWpR4EijcWp+rWBxng8hrVHBpHcntqabQsXPzM/Y=
+X-Gm-Gg: ASbGncvQln7vFvN0byfq6OOiwYDPqHt+qfSrD5nHt0MVnyfe8QNbv4xoJeC0Dc8L5+x
+	QOZxQgmTn9oW7Gp7cVJdxIb2LKKraVe96Snvra0pVxPmhWtJsUHU+8N+1CHOCLAX+FN8ULUIbnJ
+	OmXulmU0m4bivzsEwMxSlHOld764r2d5tchLaHCjGWgeQ1yIb3x0FDMbRrZRY6gC7si+eB0wJfC
+	NynWpmmB46YZKDSO6P0RfkLp57vB+nOglXY4pQXv8RDyBnNrKTDgYNYOR2Y+/OW1hgkHNVsUHg5
+	3XYT36+p4JYeep+Op/40C/78zdIcVl6TNSFLWyZ8RG84JU52Svnjpq9HRqlw7chPu7ZaH4TKGn8
+	9lVLNndz5rqm+tZYEN1QF7A==
+X-Google-Smtp-Source: AGHT+IGHCZVUArn+hQTSYfm5ZLOiQRAX3EihSL5rOgIAp2pUobtvdJENs5NTWAKywrm2ri8umYv+Hw==
+X-Received: by 2002:a05:620a:560d:b0:7e0:e7b0:967e with SMTP id af79cd13be357-7e86522c104mr386843385a.7.1755101829593;
+        Wed, 13 Aug 2025 09:17:09 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:929a:4aff:fe16:c778])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4af230d8a21sm153187231cf.51.2025.08.13.09.17.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 09:17:09 -0700 (PDT)
+Date: Wed, 13 Aug 2025 12:17:08 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>, cgroups@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] memcg: Optimize exit to user space
+Message-ID: <20250813161708.GA115258@cmpxchg.org>
+References: <87tt2b6zgs.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: iio: mcp9600: Add compatible for
- microchip,mcp9601
-To: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrew Hepp <andrew.hepp@ahepp.dev>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250813151614.12098-1-bcollins@watter.com>
- <20250813151614.12098-2-bcollins@watter.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250813151614.12098-2-bcollins@watter.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87tt2b6zgs.ffs@tglx>
 
-On 13/08/2025 17:15, Ben Collins wrote:
-> MCP9601 is a superset of MCP9600 and is supported by the driver.
-
-There is no driver patch, so I cannot verify last part - about driver -
-and I don't understand it. If it is already supported, doesn't it make
-this patch redundant? Or did you wanted to say you are documenting
-compatible being already used?
-
-
+On Wed, Aug 13, 2025 at 04:57:55PM +0200, Thomas Gleixner wrote:
+> memcg uses TIF_NOTIFY_RESUME to handle reclaiming on exit to user
+> space. TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is utilized by
+> other entities as well.
 > 
-> Signed-off-by: Ben Collins <bcollins@watter.com>
-
-
-Where is the changelog? That's a v2.
-
-No cover letter either...
-
-> ---
->  .../bindings/iio/temperature/microchip,mcp9600.yaml         | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+> This results in a unconditional mem_cgroup_handle_over_high() call for
+> every invocation of resume_user_mode_work(), which is a pointless
+> exercise as most of the time there is no reclaim work to do.
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> index d2cafa38a5442..d8af0912ce886 100644
-> --- a/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> +++ b/Documentation/devicetree/bindings/iio/temperature/microchip,mcp9600.yaml
-> @@ -4,7 +4,7 @@
->  $id: http://devicetree.org/schemas/iio/temperature/microchip,mcp9600.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
-> -title: Microchip MCP9600 thermocouple EMF converter
-> +title: Microchip MCP9600 and similar thermocouple EMF converters
->  
->  maintainers:
->    - Andrew Hepp <andrew.hepp@ahepp.dev>
-> @@ -14,7 +14,9 @@ description:
->  
->  properties:
->    compatible:
-> -    const: microchip,mcp9600
-> +    enum:
-> +      - microchip,mcp9600
-> +      - microchip,mcp9601
+> Especially since RSEQ is used by glibc, TIF_NOTIFY_RESUME is raised
+> quite frequently and the empty calls show up in exit path profiling.
+> 
+> Optimize this by doing a quick check of the reclaim condition before
+> invoking it.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+> Cc: Muchun Song <muchun.song@linux.dev>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
 
-If it is superset, why isn't this expressed with compatibility and fallback?
+Nice!
 
->  
->    reg:
->      maxItems: 1
-
-
-Best regards,
-Krzysztof
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
