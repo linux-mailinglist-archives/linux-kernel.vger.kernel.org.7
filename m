@@ -1,169 +1,241 @@
-Return-Path: <linux-kernel+bounces-767650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86D8B25730
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2DDB25745
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060B7728463
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41228626B1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98367301461;
-	Wed, 13 Aug 2025 23:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3202F5322;
+	Wed, 13 Aug 2025 23:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KkpyQYqp"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kk6ofFEG"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046E02D46A2;
-	Wed, 13 Aug 2025 23:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B282FB98E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755126283; cv=none; b=VPiFuMqBXFz20W3AU+MZobmoks1r53/+yroUxP0eiIULvDRe6mMxl870GB7pxkjd2mF7rMNqAdyuBm5O6tQy8fFmi41E5+lbNRrb5OI8yYOZLdpLwbiR3Niqprwb0xqoXOthJC3QljY9PHZ+f2+hYuQ0NwdZefISXsIlo/v7lLY=
+	t=1755126441; cv=none; b=HFfK5g1HB0IhahdA/GOwWrs/teOq18vDF+YkCD38+ShM+p1yaCE2Ozm3/ptg/deKZcdX7uQ65pQTxWiQL95a5jPH50vinAsvteau735p3nvMa7IOtREsgSx3fCqA+UwcIFfjGY/VyAQUDWdKrkPWvmD12SjUc3bOVarQdkaRD8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755126283; c=relaxed/simple;
-	bh=u77HgcnqZUI0DyTMAuYCiDcC5lkLJPB0fBe76X83Ga0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iB7W8v9U/fUqrhqVWmI6oMhca0e9iDOSu5Twjww+55se32Xi03gi8GfTB/GxqKyQm4fnpE8d4gJhFDfz1EOCfYTP1OZIOgqvL60MugY7V+dObieUYTCSaoquJ2UPOc8b7cwU/KXDJwiNw4w6WBCOKlNdUGxg7Lb+HTV/EZ2CEtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KkpyQYqp; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e931cddb0e2so328261276.3;
-        Wed, 13 Aug 2025 16:04:40 -0700 (PDT)
+	s=arc-20240116; t=1755126441; c=relaxed/simple;
+	bh=/qpjGm0i7AdI98kp/Vvxql5u9hFiHNoiTyqr2D7TQGo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=dWa2CxsxQrAjJPiefhjYLGXTREX2j3S7MK8fJMbdj5ac/reWBckxdVpvCs6CJFb/rsLgFZtacT7Ex2I+0lbOY5efv0NoCXERdV1uoA2XxomuAXfAyZJIyiD1thxs7wr3t5Ku9Gj0zOxa8Vangx1vQl+02Lzz4STSvPdRGXny6M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kk6ofFEG; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b0cbbbaso1955725e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:07:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755126279; x=1755731079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1755126437; x=1755731237; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Pr9Kj1G07sBFKVdkwu1EeIztDNfpAGMBwPb2yvwQO3w=;
-        b=KkpyQYqp/ltXTtI0h0sg4NA5oLpKj4Bja8frcNEWptyVSBGwU2FcHuk4fleLIbcxW7
-         hILs/4UdlHHIyXVqzPLplE6YZ9YSD55szEd4tebLYD2cUSpWWRTswIRNcKMN36AZltoq
-         IwAFWCipMYr4pbTbIdB/ka/bZNsdqOLXtxnlNgQ6r2E/dVRIfYo8b0PpaAV1Zo4NmuXD
-         wCjR5d3GMc/MyUkrePh8YFL1su4NjCnecxukHPbSKMgw7wFotlQzeTc/6buPb9xn6Uk/
-         rxkaIt61xTVlaLOH9nFppnTOUjA5X0bzwYkTxpi1vtTZO6oaH1U9VEMwk237p40wCoW/
-         bQDw==
+        bh=t1w1jD5uAhWjkLk2dF1OZgC9h1u3edFNggTts1awcIQ=;
+        b=kk6ofFEGAQbqV2f9QfuvY1fOYFszjFBJrY7z+D3RZuqFVUHW7hVKITWNl1l5Cb4qHW
+         qmqsd8H43xaAZ7BBrFA7tqd8mb6yllhFdN9oEOZysNa03Eyz0DOU84FFEHW9a2xR5nbs
+         5w3ctgof0ow81fziQBf4xMTmE+7LStTySFToDLjGpeLzU5Mi9bdQ19otpba8jVqGFsIi
+         m5DArBnd5hkLd8ie2nR90+srsZz9EXKCQJZ67OImSNLodl+vtaI0m9P8351cBBzZWd1u
+         UXwl1r6e66jC9DUyeLm9P50VQ3go4nM6QWiRwhB04TP84LuRrUdwfN8l2QmS16UGzBJ8
+         UY2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755126279; x=1755731079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pr9Kj1G07sBFKVdkwu1EeIztDNfpAGMBwPb2yvwQO3w=;
-        b=oHy0H8HycN9vF5jeoIYcQ6kKK094jPZ92/tRCfTV1yFhtimx86M9L+2UzTpqbqDjXU
-         HLNbmONMFaVJdZpLoZ4y3QlN4+jZ+XlNQitGlYDcFI7hRGZEAVhYTTACktLGJDbfbsuV
-         KpjUOvq5oRjUltKlGbEGm0/pVZZHf5MBzgb7RO9GAk10VQIboYe7/LfRyVJLELqmac8E
-         2GKdnPQQnCKAejLU3PKcBYC1UBdSm6KWfzyp+c6LLYpZ0QWAD2GyKS/DQmDVUMMYD5b8
-         WQu/4EOIIm5IlzyKL1sApAKSuO4s1oGAYMs/3IEcJEK2sAXD0s9E1a9qjSoyZgqyFnff
-         s6TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxm89yjjEsz76S9uwHglaYwkFpApYGmPY4OcufF3YrxoLDeiA9A7d2tk6ZeGXdAS8pimJZ3QA9tZR2N8T8@vger.kernel.org, AJvYcCWcrIaz+oCLKmbF8DRkEKx2rEpnhdV6A1AaTMWUsomtwy3s5rHTU16XkJ5W70+Mbz6z6UJsbs/xMtyfdQ==@vger.kernel.org, AJvYcCXO6tz7l1mQ1p2a+OlyICkeLBRiMz4K5ma64bmoTyB7NKnLdttWGSrBB+JEKtQQdrFBO5x8bWiVLc8z@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIVhr+4ZGBq4183R0Il32cTIY3eMQdslnZ80gkRGyjGsLN6wAH
-	tTa1I5mOf2TD/6b5zKynLGeo4tcBiX68uLXGAd+O4KWW/22Q/+U2laCNNzZwnTNhe5CornQ6/Q+
-	9gfv9W7QnmdBbA+3OtqOspeAPnJH48ik=
-X-Gm-Gg: ASbGnctYKP4ZRhY7sGhOkYqz8FAlIqZTS5DvLrYRW7/IVcFS6BbQDruAJsXG7suIgjK
-	OeNaI0uv3uRMlGAa/IPxakmyDdebRyMA8UBW61vpE7YwlkGa3nUtjHf+rmZ1HdvGgzobSwBc/V6
-	eiznqGfco7Wt28xnUfk1a+Kdx1KmuomqIcMTXOJh6n41WAypYaqP4L46tNJBNs/st01LtyKwiWi
-	Tvap8SO+W5bCtpsQoH9
-X-Google-Smtp-Source: AGHT+IG7lFQGkxo260R40BXsMXP2dO7WlFpphAJUK3E5r/amKiJyMYB2CNZKh93w2y97cKZYxB75AvRAwHVMH60IMsc=
-X-Received: by 2002:a05:6902:26ca:b0:e90:6a88:eac0 with SMTP id
- 3f1490d57ef6-e931e24f7eamr1050134276.38.1755126279152; Wed, 13 Aug 2025
- 16:04:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755126437; x=1755731237;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=t1w1jD5uAhWjkLk2dF1OZgC9h1u3edFNggTts1awcIQ=;
+        b=WEm/czgKrXwwtR7aiZn/HitVqQ/20icwG5Dj6uDSxU0WExn1CABDq4ef7FEVe7/Pmt
+         M01THlF3qn3rjkP4u+SeRyuLMalLWj1QJrhivq80csNt99r+/MrTp7JQD8yhS6CsRMDU
+         9lWEXq7O6b3PTZoj29h/Pcn3uyHCrCaTsJ+XkyJgMDfmg7a9Oyk2uDeOK1Cr/aW/GA9v
+         4A0JbB1KOIB0a2NwBeWqSeXdrX1D4/kBpZa6d3VyKIBYA6wM9yNrWMECQjq5etQinlHO
+         2YjwHDg9OBu178GT5HqSKsnePyH96WqnIjlNpBegevK17IrpH7m8sqWZhnOItVaBS1WW
+         LnXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgFu4U0akZlFky/fc68JNbbkIZ3H7H0yvVoUPicMWFpfDvLnv6+cE9a6ekOFpsR3EnAVuO64M6AzYdV5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCsA5M+7JHZ3cQeN0FdwgWB3jI9/PTQKJW1CxxR+kmnuPT5AOR
+	qmhB2h62V/Dv++FPtP8NGL0OGfO0izoDDfgMSsb9j81lrBF4j48FCxS4bmrZkM+hzkM=
+X-Gm-Gg: ASbGncu0E1kqmOrljTUOaGLj3bxiIQ3uIUMXa8k41rNLuL01YJRgtoRGfynFiSwl2VW
+	cOtMxxtQO3nVsR1xlnKHkaE1q3J8htC6RIA2iEiXcC3FUuFdP+zIVyoW5yR6kSIymTfYzfUV37i
+	QWe/toiJPWkhFINQ+vaXF7w7dZhpGt2UUrrC9M/IkdITuEmpUlZKccJ24lsG0rHEqH9CwJwfnqv
+	DLhMDVRL3TDb1nr73dSZbcl5dtAUMDMfTTNm4934SeAQmidS7rpKwvQi1DlKAS/Nem+WydWigQ0
+	inZbt6Begfs+UE6ENnpPIYS4SSN6WE8qJCdK3GrUtBfz7b6iX3X+OJ4gJjVvSjBSmGCsNwgAINF
+	SN84WQ9wPl1swLPcS4/bEKN6Zdls=
+X-Google-Smtp-Source: AGHT+IHLYhRGc4JYIFTUPFhdxnROSBPBG4POVhF8NCo8fac7mqIyrnBrDgT2tDgDmUZXysWtmKuWyQ==
+X-Received: by 2002:a05:600c:354e:b0:456:1442:86e with SMTP id 5b1f17b1804b1-45a1b66929dmr3241165e9.21.1755126437430;
+        Wed, 13 Aug 2025 16:07:17 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:7f3a:5ab2:26aa:831f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a541788sm17732825e9.30.2025.08.13.16.07.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 16:07:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250812192334.11651-1-rosenp@gmail.com> <20250812192334.11651-2-rosenp@gmail.com>
- <14f0cb76-1694-4330-899a-7565af0dfdfc@kernel.org>
-In-Reply-To: <14f0cb76-1694-4330-899a-7565af0dfdfc@kernel.org>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Wed, 13 Aug 2025 16:04:27 -0700
-X-Gm-Features: Ac12FXyys9GBy4gP4fGG0TS-5bObcQEdpHAmr6F9oGDkOu-nkxxKBO0SLtnWMho
-Message-ID: <CAKxU2N_vo9NThjGaiX1Fq5jet0vdw390ZYpVct4=XPa5gwj-Kg@mail.gmail.com>
-Subject: Re: [PATCHv2 1/3] dt-bindings: net: wireless: ath9k: add led bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-wireless@vger.kernel.org, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
-	Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:MIPS" <linux-mips@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 14 Aug 2025 00:07:16 +0100
+Message-Id: <DC1OE9UIUPON.2DOURP7NEQS54@linaro.org>
+Subject: Re: [PATCH v2 2/3] ASoC: codecs: add new pm4125 audio codec driver
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Srinivas Kandagatla" <srinivas.kandagatla@oss.qualcomm.com>, "Srinivas
+ Kandagatla" <srini@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ "Mark Brown" <broonie@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>
+Cc: "Lee Jones" <lee@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>,
+ "Takashi Iwai" <tiwai@suse.com>, <linux-arm-msm@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: aerc 0.20.0
+References: <20250711-pm4125_audio_codec_v1-v2-0-13e6f835677a@linaro.org>
+ <20250711-pm4125_audio_codec_v1-v2-2-13e6f835677a@linaro.org>
+ <87a56d1e-2bbd-4abf-91c8-5129835d8d87@oss.qualcomm.com>
+In-Reply-To: <87a56d1e-2bbd-4abf-91c8-5129835d8d87@oss.qualcomm.com>
 
-On Wed, Aug 13, 2025 at 1:16=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Fri Jul 11, 2025 at 2:32 PM BST, Srinivas Kandagatla wrote:
+> On 7/11/25 4:00 AM, Alexey Klimov wrote:
+>> The audio codec is found in Qualcomm PM2250/PM4125 PMICs and is used on
+>> platforms like Qualcomm QCM2290. It has soundwire interface and
+>> corresponding RX and TX slave devices.
+>>=20
+>> It has only two input channels: HPH left and right. The line output (LO)
+>> is linked to HPHL so the hardware has some limitations regarding concurr=
+ent
+>> playback via HPH and LO for instance.
+>>=20
+>> The codec driver also uses WCD MBCH framework. The MBHC functionality is
+>> implemented in a minimalistic way to enable IRQs and avoid different
+>> issues with IRQs.
+>>=20
+>> Co-developed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.c=
+om>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com=
 >
-> On 12/08/2025 21:23, Rosen Penev wrote:
-> > The ath9k driver has various pin GPIO numbers for different chipsets
-> > which are not always correct for every device.
-> >
-> > Add bindings to specify the correct number and if it should be
-> > active-low.
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  .../bindings/net/wireless/qca,ath9k.yaml           | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.y=
-aml b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> > index d16ca8e0a25d..e701046146f2 100644
-> > --- a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> > +++ b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
-> > @@ -50,6 +50,17 @@ properties:
-> >
-> >    ieee80211-freq-limit: true
-> >
-> > +  led:
-> > +    type: object
+>> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 >
-> Each node must end with additional/unevaluatedProperties: false. See
-> example schema and writing schema.
+> Thanks for doing this Alexey,
 >
-> That will probably lead you to missing LED common binding.
+> I have tested Headset playback, headset recording and Lineout.
+>
+> While testing I have noticed one issue with the places where enable_irq
+> is being used, there is a possiblity of things going wrong in some cases.
+>
+>
+>> ---
+>>  sound/soc/codecs/Kconfig      |   18 +
+>>  sound/soc/codecs/Makefile     |    8 +
+>>  sound/soc/codecs/pm4125-sdw.c |  546 +++++++++++++
+>>  sound/soc/codecs/pm4125.c     | 1767 ++++++++++++++++++++++++++++++++++=
++++++++
+>>  sound/soc/codecs/pm4125.h     |  314 ++++++++
+>>  5 files changed, 2653 insertions(+)
+>>=20
+>
+> ...
+>> +static int pm4125_codec_enable_lo_pa(struct snd_soc_dapm_widget *w,
+>> +				     struct snd_kcontrol *kcontrol, int event)
+>> +{
+>> +	struct snd_soc_component *component =3D snd_soc_dapm_to_component(w->d=
+apm);
+>> +	struct pm4125_priv *pm4125 =3D snd_soc_component_get_drvdata(component=
+);
+>> +
+>> +	switch (event) {
+>> +	case SND_SOC_DAPM_PRE_PMU:
+>> +		snd_soc_component_update_bits(component, PM4125_ANA_COMBOPA_CTL_5, 0x=
+04, 0x00);
+>> +		usleep_range(1000, 1010);
+>> +		snd_soc_component_update_bits(component, PM4125_ANA_COMBOPA_CTL_4, 0x=
+0F, 0x0F);
+>> +		usleep_range(1000, 1010);
+>> +		snd_soc_component_write_field(component, PM4125_ANA_COMBOPA_CTL,
+>> +					      PM4125_ANA_COMBO_PA_SELECT_MASK,
+>> +					      PM4125_ANA_COMBO_PA_SELECT_LO);
+>> +		snd_soc_component_write_field(component, PM4125_DIG_SWR_PDM_WD_CTL0,
+>> +					      PM4125_WDT_ENABLE_MASK,
+>> +					      (PM4125_WDT_ENABLE_RX0_M | PM4125_WDT_ENABLE_RX0_L));
+>> +		break;
+>> +	case SND_SOC_DAPM_POST_PMU:
+>> +		usleep_range(5000, 5010);
+>> +		snd_soc_component_update_bits(component, PM4125_ANA_COMBOPA_CTL_4, 0x=
+0F, 0x04);
+>> +		enable_irq(pm4125->hphl_pdm_wd_int);
+>
+> if headset playback dapm widgets are powered up or active and you try to
+> play on lineout you would get below splat:
+>
+> [ 1181.352762] ------------[ cut here ]------------
+> [ 1181.357435] Unbalanced enable for IRQ 156
+> [ 1181.361489] WARNING: CPU: 1 PID: 877 at kernel/irq/manage.c:753
+> __enable_irq+0x4c/0x7c
+> ...
+>
+> [ 1181.483541] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS
+> BTYPE=3D--)
+> [ 1181.490534] pc : __enable_irq+0x4c/0x7c
+> [ 1181.494405] lr : __enable_irq+0x4c/0x7c
+> [ 1181.498278] sp : ffff8000840ab8a0
+> [ 1181.501618] x29: ffff8000840ab8a0 x28: ffffd79b9725d588 x27:
+> ffff8000840ab948
+> [ 1181.508796] x26: 000000000000309b x25: 0000000000000080 x24:
+> 0000000000000080
+> [ 1181.515980] x23: ffffd79b9698f250 x22: 0000000000000000 x21:
+> 0000000000000000
+> [ 1181.523153] x20: 000000000000009c x19: ffff23c347fd9400 x18:
+> 0000000000000006
+> [ 1181.530335] x17: 0000000000000001 x16: ffffd79b94dbcce8 x15:
+> ffff8000840ab46f
+> [ 1181.537508] x14: 0000000000000000 x13: 3635312051524920 x12:
+> ffffd79b96d96768
+> [ 1181.544691] x11: 0000000000000058 x10: 0000000000000018 x9 :
+> ffffd79b96d96768
+> [ 1181.551862] x8 : 000000000000024f x7 : ffffd79b96dee768 x6 :
+> ffffd79b96dee768
+> [ 1181.559044] x5 : ffff23c3bbbb8508 x4 : 0000000000000000 x3 :
+> 0000000000000027
+> [ 1181.566217] x2 : 0000000000000000 x1 : 0000000000000000 x0 :
+> ffff23c35a0a4600
+> [ 1181.573392] Call trace:
+> [ 1181.575871]  __enable_irq+0x4c/0x7c (P)
+> [ 1181.579748]  enable_irq+0x60/0xd8
+> [ 1181.583098]  pm4125_codec_enable_lo_pa+0x6c/0x1a0 [snd_soc_pm4125]
+> [ 1181.589319]  dapm_seq_check_event+0x11c/0x144
+> [ 1181.593720]  dapm_seq_run_coalesced+0x130/0x1d0
+> [ 1181.598286]  dapm_seq_run+0x264/0x374
+> [ 1181.601991]  dapm_power_widgets+0x664/0x900
+> [ 1181.606212]  snd_soc_dapm_stream_event+0xf4/0x178
+> [ 1181.610957]  __soc_pcm_prepare+0x64/0x120
+> [ 1181.614998]  dpcm_be_dai_prepare+0x120/0x168
+> [ 1181.619299]  dpcm_fe_dai_prepare+0x94/0x178
+> [ 1181.623517]  snd_pcm_do_prepare+0x30/0x50
+> [ 1181.627567]  snd_pcm_action_single+0x48/0xa4
+> [ 1181.631872]  snd_pcm_action_nonatomic+0x94/0xb0
+> [ 1181.636435]  snd_pcm_prepare+0x7c/0xe0
+> [ 1181.640222]  snd_pcm_common_ioctl+0xca4/0x16e0
+> [ 1181.644705]  snd_pcm_ioctl+0x34/0x4c
+> [ 1181.648315]  __arm64_sys_ioctl+0xac/0x104
+> [ 1181.652355]  invoke_syscall+0x48/0x104
+> [ 1181.656147]  el0_svc_common.constprop.0+0x40/0xe0
+> [ 1181.660892]  do_el0_svc+0x1c/0x28
+> [ 1181.664242]  el0_svc+0x30/0xcc
+> [ 1181.667340]  el0t_64_sync_handler+0x10c/0x138
+> [ 1181.671737]  el0t_64_sync+0x198/0x19c
+> [ 1181.675430] ---[ end trace 0000000000000000 ]---
 
->
-> > +    properties:
-> > +      reg:
-> > +        maxItems: 1
-> > +
-> > +      led-active-low:
-> > +        description:
-> > +          LED is enabled with ground signal.
->
-> Aren't you redefining existing properties?
-I don't think led-active-low is specified in any central location:
 
-Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml:  led-active-l=
-ow:
-Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml:
-  led-active-low;
-Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml:
- led-active-low:
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml:
-led-active-low:
-Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml:
- led-active-low;
->
-> > +        type: boolean
-> > +
-> >    qca,no-eeprom:
-> >      $ref: /schemas/types.yaml#/definitions/flag
-> >      description:
-> > @@ -102,5 +113,8 @@ examples:
-> >          compatible =3D "qca,ar9130-wifi";
-> >          reg =3D <0x180c0000 0x230000>;
-> >          interrupts =3D <2>;
-> > +        led {
-> > +          led-sources =3D <0>;
->
-> Totally confusing with schema. active-low in one place, different
-> property in the example and no source for that property at all :/
-Ah right. Will fix.
->
->
-> Best regards,
-> Krzysztof
+Yep, I noticed that one time only but was puzzled how to reproduce.
+As you suggested during out of email list discussion I will move handling
+of IRQs into separate widget.
+
+Thank you,
+Alexey
+
 
