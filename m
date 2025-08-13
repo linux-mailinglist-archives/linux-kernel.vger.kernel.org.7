@@ -1,133 +1,339 @@
-Return-Path: <linux-kernel+bounces-766196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA00B24396
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:02:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67F8B2439B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60993880C3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452AE16B0CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5162EA47E;
-	Wed, 13 Aug 2025 07:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mYtnb3Z7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFACF2BE65A;
-	Wed, 13 Aug 2025 07:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8362E9EDB;
+	Wed, 13 Aug 2025 08:00:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1651448E3;
+	Wed, 13 Aug 2025 08:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071887; cv=none; b=oJfOllp3W1eGwjTFYlWS1rc3IXYkeBtC3j0Vmfscb6RqC5t46IAlm+2YM/EDYJYMmlZh4GXJQPIt1TP65IhwVPqkggE76xxymvnB9ERDLrBCMTOV6Iu36VzBpZxGCCw3OZl8EDYi0NwhlWNk3hmHXuN4Is64VG8aZQgnrkzl1z4=
+	t=1755072032; cv=none; b=eYLFRB2Ko9FFlAcBs91j980tKZLrT8L6K5dKQldXbVsArohPPP+XrTyPeysJVImWMaAz3R4s6L2xeENJDiVM0BcQ7Je77Ozz5+DjRD1rKXGp9KoFINSeDmK7kPs9wmZiXcp5VLlaMyGMBLCePTuex6X3iWhAZZVDyniny5BfG/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071887; c=relaxed/simple;
-	bh=eKYp0uIBZIMuaOiXjjT5VkfmOtK1hJ338ApEda24Owc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LwjR3mNuw5gKf45kSQ9v9Km/cUMKmlSBEyrlnv2G6HtXt5vY5AO1NCgldx1S8Ypaa4hwa6jYsYktBCkixkqV2UmxoBF7KtFJ/udv/ayuzcuz2Xsr6zdVl1OSJFL4jT7NUyP88y6uzlBeH7ZVxkarImNV+W8wrhdIH3diFme1u7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mYtnb3Z7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 286C7C4CEEB;
-	Wed, 13 Aug 2025 07:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755071887;
-	bh=eKYp0uIBZIMuaOiXjjT5VkfmOtK1hJ338ApEda24Owc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mYtnb3Z78YECNeFBj8PmQGq2QA6/Ko3beUHRA+bnDltRSY3Njft0EZ8FxF7DFdyVl
-	 KSNnaOj+vJ7ezl2DwWSCmHzWVtjcvlOgoZRq90COv3D/mYjxj6Yn9ckompydndA3FW
-	 RRlKjySb6vhk0qoOB4mk16utzPRcYYidf+jE/1BzvVCm0JT4pIBIK54N1VUvN8pY0J
-	 NXVRwFv5dz6GIWFk3uhL/5wz9Ha3zt2uLJvocmEZZRqRBAiGbz/tB6vCsGje5wbG2j
-	 VPbDy7kUADaAXeC7RuzYqUjo+arKnjH4XGijUmmPBRJuvfc2Jlen1VnSaw5l2B3ypt
-	 spZ3bmSB0koKQ==
-Message-ID: <3f4f28cf-417b-4f12-8a3d-c1f70f6871c4@kernel.org>
-Date: Wed, 13 Aug 2025 09:58:03 +0200
+	s=arc-20240116; t=1755072032; c=relaxed/simple;
+	bh=yVcmQd4KO5KVyZacgaY7/fWYZ34Yd7oXBi80xI4fIDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dCJSRrfXDpInDsFWajN7rmNiKOVFQ24JIvpi+CwOV0Jp3hwWnpxmFR6UTEKnnbZSEz+1asLqIta+z3I3IOLv67f1uVIgUcCyCGwKwGq7KD6t4gNAmn81fant2mD8ulZJ+IxLG6vxOeZaSVhbz+3EEy9SiNL5/weRQMbaYd9veLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5470C113E;
+	Wed, 13 Aug 2025 01:00:15 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AFE63F5A1;
+	Wed, 13 Aug 2025 01:00:19 -0700 (PDT)
+Date: Wed, 13 Aug 2025 10:00:04 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v2 3/3] rust: xarray: add `insert` and `reserve`
+Message-ID: <aJxGBHbcCdHjTo-B@arm.com>
+References: <20250713-xarray-insert-reserve-v2-0-b939645808a2@gmail.com>
+ <20250713-xarray-insert-reserve-v2-3-b939645808a2@gmail.com>
+ <aJnojv8AWj2isnit@arm.com>
+ <CAJ-ks9=BU2jfT-MPzxDcXrZj7uQkKbVm6WhzGiJsM_628b2kmg@mail.gmail.com>
+ <aJn_dtWDcoscYpgV@arm.com>
+ <CAJ-ks9kECSobk0NX6SXn1US7My028POc=nLmw0AHZGiRUstP2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/6] Support for Exynos7870's display stack (DECON,
- MIPIPHY, DSIM, etc.)
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ-ks9kECSobk0NX6SXn1US7My028POc=nLmw0AHZGiRUstP2g@mail.gmail.com>
 
-On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
-> This series implements changes in the SoC subsystem, which includes
-> devicetree additions. It depends on all sub-series listed below:
-> (Legend: [R]eviewed, [A]ccepted)
+On Mon, Aug 11, 2025 at 02:02:59PM -0400, Tamir Duberstein wrote:
+> On Mon, Aug 11, 2025 at 10:35 AM Beata Michalska
+> <beata.michalska@arm.com> wrote:
+> >
+> > On Mon, Aug 11, 2025 at 09:09:56AM -0400, Tamir Duberstein wrote:
+> > > On Mon, Aug 11, 2025 at 8:57 AM Beata Michalska <beata.michalska@arm.com> wrote:
+> > > >
+> > > > Hi Tamir,
+> > > >
+> > > > Apologies for such a late drop.
+> > >
+> > > Hi Beata, no worries, thanks for your review.
+> > >
+> > > >
+> > > > On Sun, Jul 13, 2025 at 08:05:49AM -0400, Tamir Duberstein wrote:
+> > [snip] ...
+> > > > > +/// A reserved slot in an array.
+> > > > > +///
+> > > > > +/// The slot is released when the reservation goes out of scope.
+> > > > > +///
+> > > > > +/// Note that the array lock *must not* be held when the reservation is filled or dropped as this
+> > > > > +/// will lead to deadlock. [`Reservation::fill_locked`] and [`Reservation::release_locked`] can be
+> > > > > +/// used in context where the array lock is held.
+> > > > > +#[must_use = "the reservation is released immediately when the reservation is unused"]
+> > > > > +pub struct Reservation<'a, T: ForeignOwnable> {
+> > > > > +    xa: &'a XArray<T>,
+> > > > > +    index: usize,
+> > > > > +}
+> > > > > +
+> > [snip] ...
+> > > > > +
+> > > > > +impl<T: ForeignOwnable> Drop for Reservation<'_, T> {
+> > > > > +    fn drop(&mut self) {
+> > > > > +        // NB: Errors here are possible since `Guard::store` does not honor reservations.
+> > > > > +        let _: Result = self.release_inner(None);
+> > > > This seems bit risky as one can drop the reservation while still holding the
+> > > > lock?
+> > >
+> > > Yes, that's true. The only way to avoid it would be to make the
+> > > reservation borrowed from the guard, but that would exclude usage
+> > > patterns where the caller wants to reserve and fulfill in different
+> > > critical sections.
+> > >
+> > > Do you have a specific suggestion?
+> > I guess we could try with locked vs unlocked `Reservation' types, which would
+> > have different Drop implementations, and providing a way to convert locked into
+> > unlocked. Just thinking out loud, so no, nothing specific here.
+> > At very least we could add 'rust_helper_spin_assert_is_held() ?'
 > 
-> exynosdrm-decon            - https://lore.kernel.org/r/20250627-exynosdrm-decon-v3-0-5b456f88cfea@disroot.org
-> exynos7870-mipi-phy        A https://lore.kernel.org/r/20250612-exynos7870-mipi-phy-v1-0-3fff0b62d9d3@disroot.org
-> exynos7870-mipi-phy-fix    - https://lore.kernel.org/r/20250627-exynos7870-mipi-phy-fix-v1-0-2eefab8b50df@disroot.org
-> exynos7870-dsim            - https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-1433b67378d3@disroot.org
-> panel-samsung-s6e8aa5x01   - https://lore.kernel.org/r/20250625-panel-samsung-s6e8aa5x01-v3-0-9a1494fe6c50@disroot.org
-> panel-synaptics-tddi       - https://lore.kernel.org/r/20250625-panel-synaptics-tddi-v2-0-7a62ab1d13c7@disroot.org
+> I don't see how having two types of reservations would help.
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> Can you help me understand how you'd use `rust_helper_spin_assert_is_held` here?
 
-What is the status of the bindings from dependencies? I think they were
-not accepted.
+Probably smth like:
 
-I also replied with few nits for one of DTS patches. Everything else
-looks fine.
+--- a/rust/kernel/xarray.rs
++++ b/rust/kernel/xarray.rs
+@@ -188,7 +188,12 @@ fn with_guard<F, U>(&self, guard: Option<&mut Guard<'_, T>>, f: F) -> U
+         F: FnOnce(&mut Guard<'_, T>) -> U,
+     {
+         match guard {
+-            None => f(&mut self.lock()),
++            None => {
++                unsafe {
++                    bindings::spin_assert_not_held(&(*self.xa.get()).xa_lock as *const _ as *mut _);
++                }
++                f(&mut self.lock())
++            }
+             Some(guard) => {
+                 assert_eq!(guard.xa.xa.get(), self.xa.get());
+                 f(guard)
 
-BTW, really great job you did here, I am impressed!
+but that requires adding the helper for 'lockdep_assert_not_held'.
+That said, it is already too late as we will hit deadlock anyway.
+I would have to ponder on that one a bit more to come up with smth more sensible.
+> 
+> > >
+> > > > > +    }
+> > > > >  }
+> > > > >
+> > > > >  // SAFETY: `XArray<T>` has no shared mutable state so it is `Send` iff `T` is `Send`.
+> > > > > @@ -282,3 +617,136 @@ unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
+> > > > >  // SAFETY: `XArray<T>` serialises the interior mutability it provides so it is `Sync` iff `T` is
+> > > > >  // `Send`.
+> > > > >  unsafe impl<T: ForeignOwnable + Send> Sync for XArray<T> {}
+> > > > > +
+> > > > > +#[macros::kunit_tests(rust_xarray_kunit)]
+> > > > > +mod tests {
+> > > > > +    use super::*;
+> > > > > +    use pin_init::stack_pin_init;
+> > > > > +
+> > > > > +    fn new_kbox<T>(value: T) -> Result<KBox<T>> {
+> > > > > +        KBox::new(value, GFP_KERNEL).map_err(Into::into)
+> > > > I believe this should be GFP_ATOMIC as it is being called while holding the xa
+> > > > lock.
+> > >
+> > > I'm not sure what you mean - this function can be called in any
+> > > context, and besides: it is test-only code.
+> > Actually it cannot: allocations using GFP_KERNEL can sleep so should not be
+> > called from atomic context, which is what is happening in the test cases.
+> 
+> I see. There are no threads involved in these tests, so I think it is
+> just fine to sleep with this particular lock held. Can you help me
+> understand why this is incorrect?
+Well, you won't probably see any issues with your tests, but that just seems
+like a bad practice to start with.
+Within the test, this is being called while in atomic context, and this simply
+violates the rule of not sleeping while holding a spinlock.
+The sleep might be triggered by memory reclaim which might kick in when using
+'GFP_KERNEL' flag. Which is why non-sleeping allocation should be used through
+'GFP_ATOMIC' or 'GFP_NOWAIT'. So it's either changing the flag or moving the
+allocation outside of the atomic section.
 
-Best regards,
-Krzysztof
+
+---
+I will be off for next week so apologies in any delays in replying.
+
+BR
+Beata
+> 
+> >
+> > ---
+> > BR
+> > Beata
+> > >
+> > > >
+> > > > Otherwise:
+> > > >
+> > > > Tested-By: Beata Michalska <beata.michalska@arm.com>
+> > >
+> > > Thanks!
+> > > Tamir
+> > >
+> > > >
+> > > > ---
+> > > > BR
+> > > > Beata
+> > > > > +    }
+> > > > > +
+> > > > > +    #[test]
+> > > > > +    fn test_alloc_kind_alloc() -> Result {
+> > > > > +        test_alloc_kind(AllocKind::Alloc, 0)
+> > > > > +    }
+> > > > > +
+> > > > > +    #[test]
+> > > > > +    fn test_alloc_kind_alloc1() -> Result {
+> > > > > +        test_alloc_kind(AllocKind::Alloc1, 1)
+> > > > > +    }
+> > > > > +
+> > > > > +    fn test_alloc_kind(kind: AllocKind, expected_index: usize) -> Result {
+> > > > > +        stack_pin_init!(let xa = XArray::new(kind));
+> > > > > +        let mut guard = xa.lock();
+> > > > > +
+> > > > > +        let reservation = guard.reserve_limit(.., GFP_KERNEL)?;
+> > > > > +        assert_eq!(reservation.index(), expected_index);
+> > > > > +        reservation.release_locked(&mut guard)?;
+> > > > > +
+> > > > > +        let insertion = guard.insert_limit(.., new_kbox(0x1337)?, GFP_KERNEL);
+> > > > > +        assert!(insertion.is_ok());
+> > > > > +        let insertion_index = insertion.unwrap();
+> > > > > +        assert_eq!(insertion_index, expected_index);
+> > > > > +
+> > > > > +        Ok(())
+> > > > > +    }
+> > > > > +
+> > > > > +    #[test]
+> > > > > +    fn test_insert_and_reserve_interaction() -> Result {
+> > > > > +        const IDX: usize = 0x1337;
+> > > > > +
+> > > > > +        fn insert<T: ForeignOwnable>(
+> > > > > +            guard: &mut Guard<'_, T>,
+> > > > > +            value: T,
+> > > > > +        ) -> Result<(), StoreError<T>> {
+> > > > > +            guard.insert(IDX, value, GFP_KERNEL)
+> > > > > +        }
+> > > > > +
+> > > > > +        fn reserve<'a, T: ForeignOwnable>(guard: &mut Guard<'a, T>) -> Result<Reservation<'a, T>> {
+> > > > > +            guard.reserve(IDX, GFP_KERNEL)
+> > > > > +        }
+> > > > > +
+> > > > > +        #[track_caller]
+> > > > > +        fn check_not_vacant<'a>(guard: &mut Guard<'a, KBox<usize>>) -> Result {
+> > > > > +            // Insertion fails.
+> > > > > +            {
+> > > > > +                let beef = new_kbox(0xbeef)?;
+> > > > > +                let ret = insert(guard, beef);
+> > > > > +                assert!(ret.is_err());
+> > > > > +                let StoreError { error, value } = ret.unwrap_err();
+> > > > > +                assert_eq!(error, EBUSY);
+> > > > > +                assert_eq!(*value, 0xbeef);
+> > > > > +            }
+> > > > > +
+> > > > > +            // Reservation fails.
+> > > > > +            {
+> > > > > +                let ret = reserve(guard);
+> > > > > +                assert!(ret.is_err());
+> > > > > +                assert_eq!(ret.unwrap_err(), EBUSY);
+> > > > > +            }
+> > > > > +
+> > > > > +            Ok(())
+> > > > > +        }
+> > > > > +
+> > > > > +        stack_pin_init!(let xa = XArray::new(Default::default()));
+> > > > > +        let mut guard = xa.lock();
+> > > > > +
+> > > > > +        // Vacant.
+> > > > > +        assert_eq!(guard.get(IDX), None);
+> > > > > +
+> > > > > +        // Reservation succeeds.
+> > > > > +        let reservation = {
+> > > > > +            let ret = reserve(&mut guard);
+> > > > > +            assert!(ret.is_ok());
+> > > > > +            ret.unwrap()
+> > > > > +        };
+> > > > > +
+> > > > > +        // Reserved presents as vacant.
+> > > > > +        assert_eq!(guard.get(IDX), None);
+> > > > > +
+> > > > > +        check_not_vacant(&mut guard)?;
+> > > > > +
+> > > > > +        // Release reservation.
+> > > > > +        {
+> > > > > +            let ret = reservation.release_locked(&mut guard);
+> > > > > +            assert!(ret.is_ok());
+> > > > > +            let () = ret.unwrap();
+> > > > > +        }
+> > > > > +
+> > > > > +        // Vacant again.
+> > > > > +        assert_eq!(guard.get(IDX), None);
+> > > > > +
+> > > > > +        // Insert succeeds.
+> > > > > +        {
+> > > > > +            let dead = new_kbox(0xdead)?;
+> > > > > +            let ret = insert(&mut guard, dead);
+> > > > > +            assert!(ret.is_ok());
+> > > > > +            let () = ret.unwrap();
+> > > > > +        }
+> > > > > +
+> > > > > +        check_not_vacant(&mut guard)?;
+> > > > > +
+> > > > > +        // Remove.
+> > > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xdead));
+> > > > > +
+> > > > > +        // Reserve and fill.
+> > > > > +        {
+> > > > > +            let beef = new_kbox(0xbeef)?;
+> > > > > +            let ret = reserve(&mut guard);
+> > > > > +            assert!(ret.is_ok());
+> > > > > +            let reservation = ret.unwrap();
+> > > > > +            let ret = reservation.fill_locked(&mut guard, beef);
+> > > > > +            assert!(ret.is_ok());
+> > > > > +            let () = ret.unwrap();
+> > > > > +        };
+> > > > > +
+> > > > > +        check_not_vacant(&mut guard)?;
+> > > > > +
+> > > > > +        // Remove.
+> > > > > +        assert_eq!(guard.remove(IDX).as_deref(), Some(&0xbeef));
+> > > > > +
+> > > > > +        Ok(())
+> > > > > +    }
+> > > > > +}
+> > > > >
+> > > > > --
+> > > > > 2.50.1
+> > > > >
+> > > > >
+> > >
 
