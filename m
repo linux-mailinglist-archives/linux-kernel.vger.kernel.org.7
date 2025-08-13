@@ -1,160 +1,99 @@
-Return-Path: <linux-kernel+bounces-767700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5CFB257E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF1BB257E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3BD07B187D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE27D9A6737
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19183002B1;
-	Wed, 13 Aug 2025 23:53:30 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDED28B7F9;
-	Wed, 13 Aug 2025 23:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672272FE58A;
+	Wed, 13 Aug 2025 23:56:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACD22D4B6E;
+	Wed, 13 Aug 2025 23:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755129210; cv=none; b=YEKrb9DZzal8r2lAuv8U6KCZM0GQy2+jX3IzwoYYArdkND2v+5NFT12BTaYw4m/ItpN4lmN7+wp2yp9g/Gsnoo6cds1QOXea0OScTN3Rsdqu8MQaJl6frFUMelXvsfTEhLuZuOGXYoQ4FqwGBSWXRwluKH6+fKwaldX9LfEM9Bs=
+	t=1755129391; cv=none; b=U9Yq4gDEN67+7VA6Tv9BfaTqKyDKfSY5uF2g1e0khi/VNtyu3PwkIYn2g2vuFhwD/71qqni+nI21m2Z9EDk5Sz9NtT6ayU0Qu9HXnZr2LrUNwnnZJnM8saBv7XssDhDg1VKSrK9lTOrks+O5rswRR/vRRvL2QwQzUdv0Y1zmLt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755129210; c=relaxed/simple;
-	bh=wcUdQkTJ7IV/p3A7DgChTP1Bqgk5rMEVbafp6vUdmxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=usuEJODFcbrR7QmLaaOqGUnVK1syUMRmZuIe96JJtBb5QMNPlinbxwynEs5wF1z/ueSDJc+LDkmayQwBXHNmcKm3OeDd9yLPXm/Ff/eRdXaYWi/FUxtAB/Qu6wnou9bHOA32954qGUOaAMMGkSIQMBTpaNypK4JJdJVDgwZcAgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id D607916046F;
-	Wed, 13 Aug 2025 23:53:19 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 9D5A820024;
-	Wed, 13 Aug 2025 23:53:16 +0000 (UTC)
-Date: Wed, 13 Aug 2025 19:53:17 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Sven Schnelle
- <svens@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
- <guoren@kernel.org>, Donglin Peng <dolinux.peng@gmail.com>, Zheng Yejian
- <zhengyejian@huaweicloud.com>
-Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
- graph tracer
-Message-ID: <20250813195317.508a29aa@batman.local.home>
-In-Reply-To: <aJaxRVKverIjF4a6@lappy>
-References: <20250227185804.639525399@goodmis.org>
-	<20250227185822.810321199@goodmis.org>
-	<aJaxRVKverIjF4a6@lappy>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755129391; c=relaxed/simple;
+	bh=0gMaOXiwCkO8Yv/bNLAgqvbF38VbP+tWgQlGJwyd+y4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=scj59ybEx6CuWQZ0/o2qgfy74F4tc+klowHHDNymDYAnjXmvDtHTwSvaoQciVkyYFowiYr6CSIOFGfWEHKKce+ZEwmU8OHOu2tVqodYPGZZFLDCm4O4q6exfu4kE+UuaF+WlWHk4bNACVMHifNIsLUGtOmR3DWLdS+CeSCxeO+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B603D1595;
+	Wed, 13 Aug 2025 16:56:19 -0700 (PDT)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 262E73F738;
+	Wed, 13 Aug 2025 16:56:26 -0700 (PDT)
+From: Andre Przywara <andre.przywara@arm.com>
+To: Lee Jones <lee@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/3] regulator: Add X-Powers AXP318W PMIC support
+Date: Thu, 14 Aug 2025 00:53:27 +0100
+Message-ID: <20250813235330.24263-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.46.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: uu7x1hrokrb99unu8dj1ujno5qjt5p8d
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 9D5A820024
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+HPF6zc+Fq7HDozljgVIZFEoX/jina3WA=
-X-HE-Tag: 1755129196-978234
-X-HE-Meta: U2FsdGVkX1+00n9ZlSbYdfJM38C+mwzZfjjFjptzs2clG1ZBMsHK1gpngHaoGukdEeSJR/yFjzJ9/wvviAKnVIFFQwYwQd5jhjkTjkl3X5FpLGSJSOdUuIYkykSyIR/UAif3BSL3LBors0ThJxi+Ih++M1wT6ul9RDUAE6fisbj/eC1fX0IXuJpbcTXITov7helTIM0xnwo10MJ0lPIP6P8uQ9PW5HRiSJd9sc5AeS7zxaBX8G4Sr1bJ4EhulDD/VKKBOssRe5EsznGIHVOVjoSzsoWnPerSoWs0yCZXK5pfmxL4zf9Vyz1znmkJwOFPPVF8spncswberAUmDbIf+H91nLxqwiyx
+Content-Transfer-Encoding: 8bit
 
-On Fri, 8 Aug 2025 22:24:05 -0400
-Sasha Levin <sashal@kernel.org> wrote:
+This patch series adds support for the X-Powers AXP318W PMIC, which is
+used recently on new boards with Allwinner SoCs (the A733).
+It features 9 DCDC buck converters and 28 LDOs, plus the usual ADC,
+interrupts, and power key components.
+I am marking this as RFC, as this is untested, since I don't have hardware,
+but at least the datasheet [1] gives enough information to get the review
+and discussion started.
 
-> So we've added a dynamically sized array to the end of
-> ftrace_graph_ent_entry, but in struct fgraph_data, the saved entry is
-> defined as:
-> 
->    struct fgraph_data {
->        ...
->        union {
->            struct ftrace_graph_ent_entry ent;
->            struct fgraph_retaddr_ent_entry rent;
->        } ent;
->        ...
->    }
-> 
-> Which doesn't seem to have room for args?
+Patch 1 adds the compatible string to the binding document, and adds
+the additional input supply properties.
+Patch 2 is the MFD part, describing the regmap and all the interrupts.
+So far we support the regulator and power key devices, the ADC and
+other pieces will follow later.
+Patch 3 adds the voltage regulator rails, this part is crucial to enable
+any board using this PMIC, as we depend on those rails even for basic
+devices.
+Based on v6.17-rc1.
 
-No it doesn't :-p
+Please have a look!
 
-> 
-> The code in get_return_for_leaf() does:
-> 
->    data->ent.ent = *curr;
-> 
-> This copies the struct, but curr points to a larger entry with args
-> data. The copy operation only copies sizeof(struct
-> ftrace_graph_ent_entry) bytes, which doesn't include the dynamic args
-> array.
-> 
-> And then later functions (like print_graph_entry()) would go ahead and
-> assume that iter->ent_size is sane and make a mess out of everything.
-> 
-> I can't test right now whether this actually fixes the issues or not,
-> but I wanted to bring this up as this looks somewhat odd and I'm not too
-> familiar with this code.
+Cheers,
+Andre
 
-Thanks for the detail analysis, can you test this patch?
+[1] https://linux-sunxi.org/AXP_PMICs (link in last line)
 
--- Steve
+Andre Przywara (3):
+  dt-bindings: mfd: x-powers,axp152: Document AXP318W
+  mfd: axp20x: Add support for AXP318W PMIC
+  regulator: axp20x: add support for the AXP318W
 
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 66e1a527cf1a..25ea71edb8da 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -35,6 +35,11 @@ struct fgraph_data {
- 		struct ftrace_graph_ent_entry	ent;
- 		struct fgraph_retaddr_ent_entry	rent;
- 	} ent;
-+	/*
-+	 * The @args must be right after @ent, as it is where they
-+	 * are stored in case the function graph tracer has arguments.
-+	 */
-+	unsigned long			args[FTRACE_REGS_MAX_ARGS];
- 	struct ftrace_graph_ret_entry	ret;
- 	int				failed;
- 	int				cpu;
-@@ -623,14 +628,29 @@ get_return_for_leaf(struct trace_iterator *iter,
- 		next = ring_buffer_event_data(event);
- 
- 		if (data) {
-+			int args_size;
-+			int size;
-+
- 			/*
- 			 * Save current and next entries for later reference
- 			 * if the output fails.
- 			 */
--			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT))
-+			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
- 				data->ent.rent = *(struct fgraph_retaddr_ent_entry *)curr;
--			else
-+				size = offsetof(struct fgraph_retaddr_ent_entry, args);
-+			} else {
- 				data->ent.ent = *curr;
-+				size = offsetof(struct ftrace_graph_ent_entry, args);
-+			}
-+
-+			/* If this has args, then append them to after the ent. */
-+			args_size = iter->ent_size - size;
-+			if (args_size > sizeof(long) * FTRACE_REGS_MAX_ARGS)
-+				args_size = sizeof(long) * FTRACE_REGS_MAX_ARGS;
-+
-+			if (args_size >= sizeof(long))
-+				memcpy((void *)&data->ent.ent + size,
-+				       (void*)curr + size, args_size);
- 			/*
- 			 * If the next event is not a return type, then
- 			 * we only care about what type it is. Otherwise we can
+ .../bindings/mfd/x-powers,axp152.yaml         |  18 ++
+ drivers/mfd/axp20x-i2c.c                      |   2 +
+ drivers/mfd/axp20x.c                          |  84 +++++++++
+ drivers/regulator/axp20x-regulator.c          | 159 ++++++++++++++++++
+ include/linux/mfd/axp20x.h                    | 127 ++++++++++++++
+ 5 files changed, 390 insertions(+)
+
+-- 
+2.46.3
+
 
