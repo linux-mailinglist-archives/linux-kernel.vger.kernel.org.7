@@ -1,94 +1,128 @@
-Return-Path: <linux-kernel+bounces-766575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE83B24881
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E42CB24884
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C18586F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACE20587F07
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920642F6570;
-	Wed, 13 Aug 2025 11:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0362F7441;
+	Wed, 13 Aug 2025 11:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mWMaxsJp"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elQKqUFt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A192580FF
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95E82DECB7;
+	Wed, 13 Aug 2025 11:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755084821; cv=none; b=l+p/LsdYDSkC0FFQA4WmqKp5LaFdI5AdtDIt0d+pHxvHLlkxU8sV1Pefi8qgn5HMbUrRyrBhoRj5S5sK7ZbUDz54Hv7XppBsoLwoQGVEtR5EgA1rgasE/gMG9D4kPx14M0RiiATDg5PTbEiHwiHxChC7rmwmpY8zk6pdQCHhYNM=
+	t=1755084891; cv=none; b=QrNViixFqRHjhidTKWXoqaQLFB/iQAKDB06y3Zsd/gSrrkjBUy43hTkDEnGumMDhYLwA/JO7958ttWVQQJHqovfj2J00XnKBPyQYqQ5rqwTY+jHe0aMFmXOqMabUqELfDXfrx6n6/UebRgAWWyewuJAMh4s2vIRCd2xdoesDfGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755084821; c=relaxed/simple;
-	bh=oc9in2Mi6mf5HpHVi2qkhAwXsYPHgkrLdyS0CqhnHrc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HIVZhmf0j+U8lcYKJUFmxDwEsVBSMb1Fu93pcDrPTbrYMeNuH/T3FsZKXFGUgUyPZzgZP50GIEvtLA9bS0IPUMJQEiRIi3P/vWJRs5JDJp5bTPgXgWNq3UyOdS26x5BWbVMxJGzj1gbXM2FMFRjraXaiXjkwzHoKOf2oMWSAwaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mWMaxsJp; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b785aee904so3042017f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 04:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755084809; x=1755689609; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oc9in2Mi6mf5HpHVi2qkhAwXsYPHgkrLdyS0CqhnHrc=;
-        b=mWMaxsJpbZ9NGrGY5kzqY2trtheT+IyRxLFYIX10PgDGUkNERzcLaQWVdoA5jmTOBv
-         N9mKlW1n8jXe//yX6l06Q2y8BSuPNw0h2my3F/5HKz3jGC8qqQ5myv8NEh0P643tw0/U
-         LkK38a2q/LnNqBNkA0Ur8X9MCiyoXhk9iVBA6TWK7HJK/85dGfChevmqIfBPUjUAXGhc
-         j4e7O5j8zrl5Enfyd4gOhYO1txhiFOG0vmpo7jwOfk7xRYomTiy0b1O45mhcP0wmzogV
-         eJBZ6Cr/UTC99UBnqqx5VaOrxwS5p7bC2YWgEGBw5O6hTmtAJee4bNW10FGherxic1Nz
-         t0TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755084809; x=1755689609;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oc9in2Mi6mf5HpHVi2qkhAwXsYPHgkrLdyS0CqhnHrc=;
-        b=qOZpaG95fl3BLfHISjkjOYx99frF5vwmHj3TtZBwRSweu99bLgOJYTGpQx/+0jIObt
-         mJ4aHfZIJ5xJNN0iiY+a+FuvbWdIbo1uTOejAYtZEgMoB7Nv+PHAo13KqqSNJiSbIE2i
-         EK9cFhqDCp/fDzY4RHD8SAlJfdCpgbq3lfZDH8YH9gEOrBRj9IzvvwZIwoNLWwAjZ5xM
-         6sqEMKV2fmGXoB8EfmYipg2GysWOTStslJIHdXrEKoPX5bzx1czVfk68MwaZk+I0T8Dn
-         vkKiOgoYtB4ukkKCCXs+2disARX7zW7tdndfPACI8+GCf/vapH3f3+z+CvOUTY0uG+OU
-         rrfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWx/LIPHcKwH8bXsTi85Rs0I94gZbJ+z+n+wP2gCqo13B06Oh1nl8kNr+2jGdD6nUiHfb/5Rlz0QLhSG/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYLV8CG46/XQY/FDQxuVdpZeVdUVx3P00XI8KTMaK9smlUSi7s
-	bSd3JT1GpZxyQ+Dq3ohFxkx0cIIWjad5XATkS0VvUE63n1OEOEXcQm8Ngr06JiK30IaBMMTjQ8g
-	YEgeOhwmvLpK7tg==
-X-Google-Smtp-Source: AGHT+IEOU16JJnNS8DhWDwtXItrP3lqHsHHp/ybxdPD7FIOs5yLSi2Dy68rYeST/N/WH3SvPANrd5RZ3hKcQGw==
-X-Received: from wmrn40.prod.google.com ([2002:a05:600c:5028:b0:459:db4a:1e14])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:4102:b0:3b9:1d32:cf2f with SMTP id ffacd0b85a97d-3b91d32dce0mr307978f8f.38.1755084808709;
- Wed, 13 Aug 2025 04:33:28 -0700 (PDT)
-Date: Wed, 13 Aug 2025 11:33:27 +0000
-In-Reply-To: <CALkFLLLoXfTNtigbcyD4RdJfY+b5Rh5-5Zta1QM9dBQxZd19cQ@mail.gmail.com>
+	s=arc-20240116; t=1755084891; c=relaxed/simple;
+	bh=X4vNORY0gNVMLcTMbJBl9AZI/E/tVAyLeI+zBrGpA20=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=lIJ1U+bYS9NGYr638uFICCmI1LPm2B+eyRPjQhvjevW1oHCZaqHo4k6ov01TvwMUt6d4pLY28tKPlLlXar14tDNJ6ywPx/oK8oKWPug6n/4gzxErAvsRHmLeNCN5wpjkyxjaWFhHaEggxZ2wq/jkeOR/IVHKOKvpmGrz6lLDoI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elQKqUFt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A5FC4CEEB;
+	Wed, 13 Aug 2025 11:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755084891;
+	bh=X4vNORY0gNVMLcTMbJBl9AZI/E/tVAyLeI+zBrGpA20=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=elQKqUFtQbPTMzjD1auLz1Vhx8wScCFz+KJ8+ho15GyriBPh0Z/PWLIqdrle5YcUc
+	 ovzroerAJnqYl4CBbMJO3927jtHjbHEJOoxYYYl6uo4BMtAuOBSfNMpcGaqG7l9BNJ
+	 23i6RImwJg/i4ja0i0v4NLeMnTcLa5QoyZI6veLzE44l/3PZ4alBMRnUua/6aauwsG
+	 5rYYwJ35ZTFOhjAPvspahvXHCVS3xSK2fuYVGFXYfGS9SRSykRh7M11ki0QxPCPlS7
+	 j+bnCGcBwyOBDOxLEnhjBB0Xv+EhquG6sF/4zGQ1LoiYFw5CTAAOgZBy+QygdaEotW
+	 6zFHE1RxvyQDw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250501163827.2598-1-ujwal.kundur@gmail.com> <20250702152057.4067-1-ujwal.kundur@gmail.com>
- <aGf_W_ZgIf63dmAz@x1.local> <CALkFLLJua-LeS+S5GpiXORA-3wNSR0DTzbh2bvU=Vg-Uzd2VFA@mail.gmail.com>
- <CALkFLLLoXfTNtigbcyD4RdJfY+b5Rh5-5Zta1QM9dBQxZd19cQ@mail.gmail.com>
-X-Mailer: aerc 0.20.1
-Message-ID: <DC19N1YGQP7J.1MH8WV5KHUHFF@google.com>
-Subject: Re: [PATCH v6 1/1] selftests/mm/uffd: Refactor non-composite global
- vars into struct
-From: Brendan Jackman <jackmanb@google.com>
-To: Ujwal Kundur <ujwal.kundur@gmail.com>, Peter Xu <peterx@redhat.com>
-Cc: <akpm@linux-foundation.org>, <shuah@kernel.org>, <linux-mm@kvack.org>, 
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 13:34:46 +0200
+Message-Id: <DC19O2AXINJW.3DS7GDDU3O3E1@kernel.org>
+Subject: Re: [PATCH v4 2/4] rust: iov: add iov_iter abstractions for
+ ITER_DEST
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Alexander Viro"
+ <viro@zeniv.linux.org.uk>, "Arnd Bergmann" <arnd@arndb.de>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Matthew Maurer" <mmaurer@google.com>,
+ "Lee Jones" <lee@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "Benno Lossin" <lossin@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com>
+ <20250813-iov-iter-v4-2-c4f1932b05ef@google.com>
+In-Reply-To: <20250813-iov-iter-v4-2-c4f1932b05ef@google.com>
 
-On Wed Aug 6, 2025 at 3:03 PM UTC, Ujwal Kundur wrote:
-> Ping -- please let me know if there's anything else I must address.
-> I've ensured v6 still applies on mm-new.
+On Wed Aug 13, 2025 at 10:27 AM CEST, Alice Ryhl wrote:
+> +    /// Write data to this IO vector.
+> +    ///
+> +    /// Returns the number of bytes that were written. If this is shorte=
+r than the provided slice,
+> +    /// then no more bytes can be written.
+> +    #[inline]
+> +    pub fn copy_to_iter(&mut self, input: &[u8]) -> usize {
+> +        // SAFETY:
+> +        // * By the struct invariants, it is still valid to write to thi=
+s IO vector.
 
-Hey sorry I've been on a nice long holiday but I can take a look at this
-soon. Just need to get out from under my other review snowdrift first!
+NIT: I think we usually say type invariants.
 
+> +        // * `input` is valid for `input.len()` bytes.
+> +        unsafe { bindings::_copy_to_iter(input.as_ptr().cast(), input.le=
+n(), self.as_raw()) }
+> +    }
+> +
+> +    /// Utility for implementing `read_iter` given the full contents of =
+the file.
+> +    ///
+> +    /// The full contents of the file being read from is represented by =
+`contents`. This call will
+> +    /// write the appropriate sub-slice of `contents` and update the fil=
+e position in `ppos` so
+> +    /// that the file will appear to contain `contents` even if takes mu=
+ltiple reads to read the
+> +    /// entire file.
+> +    #[inline]
+> +    pub fn simple_read_from_buffer(&mut self, ppos: &mut i64, contents: =
+&[u8]) -> Result<usize> {
+> +        if *ppos < 0 {
+> +            return Err(EINVAL);
+> +        }
+> +        let Ok(pos) =3D usize::try_from(*ppos) else {
+> +            return Ok(0);
+> +        };
+> +        if pos >=3D contents.len() {
+> +            return Ok(0);
+> +        }
+> +
+> +        // BOUNDS: We just checked that `pos < contents.len()` above.
+
+I like this one (and the one below). It would be nice to have a lint asking=
+ for such
+comments, such as I'd like to have a "FORGET" one. :)
+
+> +        let num_written =3D self.copy_to_iter(&contents[pos..]);
+> +
+> +        // OVERFLOW: `pos+num_written <=3D contents.len() <=3D isize::MA=
+X <=3D i64::MAX`.
+> +        *ppos =3D (pos + num_written) as i64;
+> +
+> +        Ok(num_written)
+> +    }
+> +}
+
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
