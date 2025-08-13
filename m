@@ -1,123 +1,139 @@
-Return-Path: <linux-kernel+bounces-767133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288CEB24FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84A07B24FA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C7C1892985
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:21:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705B21C815EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C1A287259;
-	Wed, 13 Aug 2025 16:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE6D2877CA;
+	Wed, 13 Aug 2025 16:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="ia8Rxzvr"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o72Kp6QV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B085285C8D
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD93286887;
+	Wed, 13 Aug 2025 16:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755101834; cv=none; b=D25yE6sbSqejYqgFppsD+dkGJ67RQr7ZdO8CbqrLTPYxTOdMVUbvkGZnWI4mOOegzzOcoJHVR4n5TFxYcE3Dqai1dLTStNrot9Whq5kXAcmQEU8fE0sDUbzk591Ynl4VEe3xkTrVohXrb8NVVjeHVLFuvkz+87oeM9SPRVpE07Y=
+	t=1755101860; cv=none; b=QxPOqde+KWy2jK/k8mDaXTtbJ68hlxJoPI5RKjwQE0nrjqlS6hC+tDRIj+APrXB6xTugDACrMvyxrExWuAiM18vg1PEm/uuKVpgXzxpHnobgW5TT72awEN7zQqYHO9+AtAVoQrh61/fgkqmGJdsOlOYPXbpJ2XGGWfUHqWavCmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755101834; c=relaxed/simple;
-	bh=aLnZpcSWdOkXn92ubxlWxf5O2UCHUI3ra/13J7g/mq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hJxWxdMKq3qbEovZoNH5x8NIZGsVRptjJYggNpCiXAMbXq8P0D6xD9UiNBzURRPgxlglHTgV4Cbxgn1mJFYoOrvn66m0wAmcgsskgh2i3WSqDusB68ONFh/e3Ahv9/C2sxeDudliiKqv5gby4wdqp6JMWUx6g52HW++IzzFbMN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=ia8Rxzvr; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7e6399d0654so505006585a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1755101830; x=1755706630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y0r8lX0/1M6KsfijF5/m66QhjeQjFJTvODKoUvnEDMw=;
-        b=ia8RxzvrROyJtWb4VyAqvpjk2HWUECUbQcj/XKu2JeVwgr++mnuR6dY+T2hXOQBPtz
-         2blZSwirOZPhacLwrC3taqui8/9UJssoM/duHvOZq2HyiooF7r4eM76mPcgRJWeBcjme
-         r1gbU1fp5nVp7Lm39JYmKc0huIYgbBDmjb78kp8zhOHhMHHFRmBYNoeqz2x9NMZWMYFe
-         GqJVyFJwAZP8iVId1xHYsh1Tf9KpKnGMT65wYXUVjoKI94sXsFMHWZ/nk99EhOhCL3K6
-         BV6njPefy1y+Gt+IZyfgcVyg2Ev5k/1j7ujxXhXrDeUtxmtSTXGkDm7/a0KnQi1eTEh9
-         fOpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755101830; x=1755706630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y0r8lX0/1M6KsfijF5/m66QhjeQjFJTvODKoUvnEDMw=;
-        b=NQIAAouwLRM9YwB78XHX7FYTkVWHNeK8mbD6XFkq0eJ6lDkF7L/lX8ntvrhalWU4B2
-         9duFNabq9Lzq00EaV2e/TbC3iL8fXjt3ks3w2JsMGexGUUkde0SDqozdjd6SnO15jmqu
-         QNKJvLVbYl4S1HkN3R9MnLJGQ0M6miMr3+sOuWby/PRfOUTJJRhWeIv8yq5m0JjFxR1u
-         b0m9szCvipXSCMwMQCfjO7M12pigXodO2/D/qpt15uzg552ImatT3G5Tka6sL6dRdtrv
-         8iQZZdy/3e0pQF4bD0nKIxqG35pUYQwRcNyeWssU9svdMktUqFXlof1VCtCQG1cXBDuf
-         81Nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUF7wfpsdzIq+ObgYKXN/tI4b9AGQs6J8wZQdXMyzB1qHl9i3lLSKhNpnS/D+rT/C5PFgLabsnYHCljfLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXh5N184cl42N4lBNEdxm+KADwziICgvTYVFcXbL1ZzgA+4EL9
-	OAyfyt4sh6U3iEXczUnBIdhyUAcTWpR4EijcWp+rWBxng8hrVHBpHcntqabQsXPzM/Y=
-X-Gm-Gg: ASbGncvQln7vFvN0byfq6OOiwYDPqHt+qfSrD5nHt0MVnyfe8QNbv4xoJeC0Dc8L5+x
-	QOZxQgmTn9oW7Gp7cVJdxIb2LKKraVe96Snvra0pVxPmhWtJsUHU+8N+1CHOCLAX+FN8ULUIbnJ
-	OmXulmU0m4bivzsEwMxSlHOld764r2d5tchLaHCjGWgeQ1yIb3x0FDMbRrZRY6gC7si+eB0wJfC
-	NynWpmmB46YZKDSO6P0RfkLp57vB+nOglXY4pQXv8RDyBnNrKTDgYNYOR2Y+/OW1hgkHNVsUHg5
-	3XYT36+p4JYeep+Op/40C/78zdIcVl6TNSFLWyZ8RG84JU52Svnjpq9HRqlw7chPu7ZaH4TKGn8
-	9lVLNndz5rqm+tZYEN1QF7A==
-X-Google-Smtp-Source: AGHT+IGHCZVUArn+hQTSYfm5ZLOiQRAX3EihSL5rOgIAp2pUobtvdJENs5NTWAKywrm2ri8umYv+Hw==
-X-Received: by 2002:a05:620a:560d:b0:7e0:e7b0:967e with SMTP id af79cd13be357-7e86522c104mr386843385a.7.1755101829593;
-        Wed, 13 Aug 2025 09:17:09 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:929a:4aff:fe16:c778])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4af230d8a21sm153187231cf.51.2025.08.13.09.17.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 09:17:09 -0700 (PDT)
-Date: Wed, 13 Aug 2025 12:17:08 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, cgroups@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] memcg: Optimize exit to user space
-Message-ID: <20250813161708.GA115258@cmpxchg.org>
-References: <87tt2b6zgs.ffs@tglx>
+	s=arc-20240116; t=1755101860; c=relaxed/simple;
+	bh=qEfPC2UuSGDKxXAWijg44iSZ7Qn8m4JDMfgHpDc4lME=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GthMs4yzTitgpmj3UjXuZwLL8KX6jLdWUuMxuKVnthL3djAuUhW9clCzyXJHLQzCvTWYMd37arV1+XeB4BxN005Lym48r1FEvAc2fwmrwH8MXbYlhcjBhaZGC7t/8fekjhzpqf7kwTT32nwyY7HZAUzvh/dYS6mtTbu5zS6GEvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o72Kp6QV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A165EC4CEEB;
+	Wed, 13 Aug 2025 16:17:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755101860;
+	bh=qEfPC2UuSGDKxXAWijg44iSZ7Qn8m4JDMfgHpDc4lME=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=o72Kp6QVr5zoo16Jdm+n8geo24LaQ+BC3tiNmPAgAcjsfbF/fVSHa7BH9pYLuqEDb
+	 rrDGlOeBqHX6ZjMx+zzFLPftBnIRo/iwDvz24Ao09t5LAZo0g4aVmGiVbQ1Fsv6tXz
+	 wpCyK8ouA+Ekamvr0Apb9yD4XKJObDZSMinmEg+AiMTKy+w1xLRdhWMcF35zSLfxh1
+	 e+HVfBk3WyFNPhCJ+jbDx9+lBMPQCAvHTiE/E59HR8+1v3M3yxH1a7KsVZUI1p5oTd
+	 TeepFWskzV8hhkLUDMKzul3RWHqv8ZKu2XA5y1Fb2HtzYpOiIwNFpkbOf9eQ8h9oPL
+	 rZ+fepXcIOiXQ==
+Message-ID: <d90b8c70-983e-44bd-b2dc-ec8d898217ff@kernel.org>
+Date: Wed, 13 Aug 2025 18:17:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87tt2b6zgs.ffs@tglx>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: hwmon: convert lantiq-cputemp to yaml
+To: Aleksander Jan Bajkowski <olek2@wp.pl>, jdelvare@suse.com,
+ linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, fe@dev.tdt.de, linux-hwmon@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250813091924.1075488-1-olek2@wp.pl>
+ <6f46e420-832a-4c6e-b1e9-d797b0425834@kernel.org>
+ <9d0ebfe1-e92b-45e0-baf1-3d6d2ce4c568@wp.pl>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <9d0ebfe1-e92b-45e0-baf1-3d6d2ce4c568@wp.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 04:57:55PM +0200, Thomas Gleixner wrote:
-> memcg uses TIF_NOTIFY_RESUME to handle reclaiming on exit to user
-> space. TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is utilized by
-> other entities as well.
+On 13/08/2025 11:52, Aleksander Jan Bajkowski wrote:
+> Hi Krzysztof,
 > 
-> This results in a unconditional mem_cgroup_handle_over_high() call for
-> every invocation of resume_user_mode_work(), which is a pointless
-> exercise as most of the time there is no reclaim work to do.
-> 
-> Especially since RSEQ is used by glibc, TIF_NOTIFY_RESUME is raised
-> quite frequently and the empty calls show up in exit path profiling.
-> 
-> Optimize this by doing a quick check of the reclaim condition before
-> invoking it.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Shakeel Butt <shakeel.butt@linux.dev>
-> Cc: Muchun Song <muchun.song@linux.dev>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+> On 8/13/25 11:24, Krzysztof Kozlowski wrote:
+>> On 13/08/2025 11:19, Aleksander Jan Bajkowski wrote:
+>>> +---
+>>> +$id: http://devicetree.org/schemas/hwmon/lantiq,cputemp.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Lantiq cpu temperature sensor
+>>> +
+>>> +maintainers:
+>>> +  - Florian Eckert <fe@dev.tdt.de>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: lantiq,cputemp
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +
+>> I think this reads and writs to some IOMEM space, so you really need
+>> here 'reg'. That's the problem with such old bindings... binding is
 
-Nice!
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Please address this. Driver on first glance tells me it accesses MMIO.
+
+
+Best regards,
+Krzysztof
 
