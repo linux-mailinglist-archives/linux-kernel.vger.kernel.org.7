@@ -1,126 +1,179 @@
-Return-Path: <linux-kernel+bounces-766007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1261EB24130
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:14:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A259CB2412F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F6BF1AA7164
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:12:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C781B3B8C4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0F61096F;
-	Wed, 13 Aug 2025 06:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B802C1590;
+	Wed, 13 Aug 2025 06:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Gef0rgUx"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k26+XLrG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54878CA6F;
-	Wed, 13 Aug 2025 06:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0E4CA6F;
+	Wed, 13 Aug 2025 06:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755065546; cv=none; b=mE+rUqdhIww/v093uIgUwC0DkuePuuxLXfA1864DgF+pIl68IU7/VD8Nj3ejnPmKUPoRc+3xbUwTzF3zgjnoMSBJNVHb8ICHgIPiwaI6CfhnhlMK+cUkySagd8v1CSrTNb05311fL/ChKqM//xVpGqpnYL/Geo8/T8NBbdUQMnM=
+	t=1755065562; cv=none; b=iIszH4FMRlxP+J7Ia+nKSuXgneLDfN63L66tY4bbXX1GXj/R1JUpiJCzu3wO5ALx/ElyaUV684y0kRB3U7xsmj7wEaM8SrxU54F6FHb325fYvHqVOKlBxidbXVHT6itt3/FZDXLkxaD7oUfQhIhMr7Q0F1lt2MR1f5OEi8xwBfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755065546; c=relaxed/simple;
-	bh=cE1DhMiYYzMoy/x/kklbqKG7x+u0x4Y9SODa2dsNNdc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F2/Q1tzKHhzLgkrJfRzHIaE3TTLNevfNmELhlmtGrLesZth91vs4nldU03F1ZccRzrv3Xrdi3Q4hVUr+RG0VoDXXA93AZHlxzVccryXulfW3QjDnRuObe8fSodmURd9enrLvLvMFuiMiMTXmqTVrfYz2UX+zkDNbNe/5eE2G6jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Gef0rgUx; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-458ba079338so2922385e9.1;
-        Tue, 12 Aug 2025 23:12:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1755065544; x=1755670344; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2Swm3ErZ56eiKdwJ9pJQ9YiWefVK45ut4nIQRyp8Jwk=;
-        b=Gef0rgUxjjnWT5CPQ/IhgcT+RLm2zt/C5rngzLUtxK6DwzBDR+bLHRvd9ylFDHrZUT
-         vgZbjjs/nWGmXfEvv9gY/BX3RYLMpgPzKneswXur84aP2+U2PveqsSAmWqB036vKNA8r
-         ErSKeXje6ZiLihNTE8HBnHsd4X/gxuh8B/wFuKGRVXpgr+b05yqspbHvXK2AEZAYmjlZ
-         SfIyQxjhoa24vEEMUoFfwN7Ja1jNQP4IdpwbzQ6RokyHwKcDUyq3NvEN1nvmtZ+eKYWN
-         CYwMfL0uM82iSDdjS5JWLMHh4yeQmbL4GWRMdLUNMqeRt9eF/MBGpht+0lFivVJel1ec
-         cO5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755065544; x=1755670344;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Swm3ErZ56eiKdwJ9pJQ9YiWefVK45ut4nIQRyp8Jwk=;
-        b=tLvXIc1kCLkz8KOSQIQeP9Bo9GyVvDiTXpGJeLz3Io/INOe1bQFpU4XN9yW6Cz1aBB
-         UklpWYTWNKiAGADf/873elxTu4PGR81AmT8yL0Dc5G1p1mKa2kR9mnR1IEWCkyecVP9/
-         xKJrrJY8p2/qOXoN/YgnVatdLgbar77Wv1IbC0U8X6hj+jM2VvKxi8khIe+Rv/M7LPwm
-         cyVYZUMS6VkWSsG+bqe623vWKxbu0gycnxREGUXNdydjMgRRUuBhTqdkURtIMCFI9TO2
-         96w2YQsxO8lH550KLArjyap+EQZzFbfJv6Z8e1uNHmePxUMU7nsHv0D6pbJiMBK68kHf
-         MNhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuDGmRvJtTuXwfZ2Aao4zSsrsfMdcF/rCMwYgv54Rba/Bit2b2IIS+Fb73z6BT/2VIVb26IzyVqAIFbyk=@vger.kernel.org, AJvYcCXqmfcSoaP5VYXVuUAekZaHvHFQTm+5LtgTJkj6WEVwH7Tmve/2ZqQyM1XfAdQ8FWjMuoMIGuPf@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNcrFFIpXqb8pPvQH91fJSaajcEjAgbuHFjwbAa+dyR/Q5Pw+U
-	rb3WTCeGza4KaBak3zFpt/FF5ap3CWONjRDV842S7LJ6mNJ0zj+3RcM=
-X-Gm-Gg: ASbGnct7xqaHhoDE0+2JbLqCyuNRRnfVzN8seReUscK21AxwRmRDpSFrnjvVcMb8ev2
-	oI921nEt334Spc3LFuy8qDJ0BdzXkCwWpwRDnDId9H0OJMptjfJvYqYdbjAs7Pivv4HeQABEWbk
-	S04NUdSuUmVSe/39mKxTWnvTMfgbbhZqnqF0EZzS3pX+D7F/TLiUKmXbe/PpIgmUlqrO5QZZ9kw
-	4hGPUr5YZMCOp78x8rkCKtcrzA1DkEp3CJgJVNSGG/ypgYxV/c6OJfUXdxMxYZnB/OvSwgBR//l
-	/Wj1L4kl+DHz/tr/tiBTU8Nh/0G+1YGxiYGHl4DtkZVl9hIikBdvD0GeCH5Gfq+a9r379BpLPs8
-	hpwe0onmrUPevgwvr9JmmWjGtOx4quajnn4P1J0/zp8ydY1DB7T83ooj6WqiITmFFBlM2X/DVzh
-	Y=
-X-Google-Smtp-Source: AGHT+IHq2Uwf4Cls+JlFUSY5TENcVSVnqP5UV2iObb0l7RNlDG/pq6r9iUkYIeehVaA7IEiSj/WjyQ==
-X-Received: by 2002:a05:600c:1716:b0:456:1d06:f37d with SMTP id 5b1f17b1804b1-45a170565b9mr6114005e9.16.1755065543427;
-        Tue, 12 Aug 2025 23:12:23 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b48db.dip0.t-ipconnect.de. [91.43.72.219])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b9163ae600sm2535494f8f.5.2025.08.12.23.12.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 23:12:22 -0700 (PDT)
-Message-ID: <64d3898e-baa9-449d-a37f-2bd0ca034af8@googlemail.com>
-Date: Wed, 13 Aug 2025 08:12:21 +0200
+	s=arc-20240116; t=1755065562; c=relaxed/simple;
+	bh=WEjIl95UqMxFbzW3h7AnyHICcK65Ko5Swc2ymIiErOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sSFEair1Vtf5rhpSf8zyxJKpqvUAfMv5vo3fSbNe9TqF/5lfON4+s9oCNu9kc2iF7VOr/j9j+Uhuto0QjmqDRo9X9jKHdYwO4/4Rkgo5zbsLaZk1VgtwJ6dCXglULDFF8teU8MLwcgKLUGoZ6F/T3YqEAELa4XmxmiENkFe63uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k26+XLrG; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755065561; x=1786601561;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WEjIl95UqMxFbzW3h7AnyHICcK65Ko5Swc2ymIiErOo=;
+  b=k26+XLrGbtkXeRqZEnT3Uh7YceBjjUqo5IUeKj7yGAk3sUtboernw/Fy
+   ms4szbxQyth4TLC/zhLZoAeG2I49sSc/Ec1fJ2DzdMfBUyhiw1TGxariW
+   5tASW61t5RSCyku35KyaKcxt5ODMhtuZJTRyKlHXXUqH0u8ZjuenhBQOB
+   /Lp03Th9D10QlP2E//tRvJO4eJNQI7FL3PjBnpDK5QuIssr1k1LcgplB+
+   RqijrPuDCH7B0NJGAm8iIOLk4Evx/A/tZoCLi8aX+hCdGyHN1uCixmKKj
+   CqQZPw22A2xEBgD4W63TDBn8Bw0G6YCha7X4NljwDkmtzOiRg80nmmQJs
+   Q==;
+X-CSE-ConnectionGUID: JJHNLjLXRfaHfXLpkPr79w==
+X-CSE-MsgGUID: ljy4Un02SKqnuFzWchEwGw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="67955599"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="67955599"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 23:12:38 -0700
+X-CSE-ConnectionGUID: +WW94DxgSR+S6rEfDZyLDQ==
+X-CSE-MsgGUID: bYLOqADlRSeTUjYPXRWrFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="170591939"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 12 Aug 2025 23:12:33 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1um4is-0009aq-1w;
+	Wed, 13 Aug 2025 06:12:30 +0000
+Date: Wed, 13 Aug 2025 14:12:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jeremy Linton <jeremy.linton@arm.com>,
+	linux-trace-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-perf-users@vger.kernel.org,
+	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
+	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
+	broonie@kernel.org, yury.khrustalev@arm.com,
+	kristina.martsenko@arm.com, liaochang1@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Steve Capper <steve.capper@arm.com>
+Subject: Re: [PATCH v5 5/7] arm64: uprobes: Add GCS support to uretprobes
+Message-ID: <202508131334.FfoZQ27h-lkp@intel.com>
+References: <20250811141010.741989-6-jeremy.linton@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250812173419.303046420@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250812173419.303046420@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250811141010.741989-6-jeremy.linton@arm.com>
 
-Am 12.08.2025 um 19:24 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.16.1 release.
-> There are 627 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Jeremy,
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. Built with GCC 14.2 on Debian Trixie.
-No dmesg oddities or regressions found. I did not see any of the Python warning messages here which I did see in the 
-6.1.148-rc1 build.
+kernel test robot noticed the following build errors:
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+[auto build test ERROR on arm64/for-next/core]
+[also build test ERROR on perf-tools-next/perf-tools-next tip/perf/core perf-tools/perf-tools linus/master v6.17-rc1 next-20250812]
+[cannot apply to acme/perf/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/arm64-probes-Break-ret-out-from-bl-blr/20250811-221529
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
+patch link:    https://lore.kernel.org/r/20250811141010.741989-6-jeremy.linton%40arm.com
+patch subject: [PATCH v5 5/7] arm64: uprobes: Add GCS support to uretprobes
+config: arm64-randconfig-r111-20250813 (https://download.01.org/0day-ci/archive/20250813/202508131334.FfoZQ27h-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.4.0
+reproduce: (https://download.01.org/0day-ci/archive/20250813/202508131334.FfoZQ27h-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508131334.FfoZQ27h-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   arch/arm64/kernel/probes/uprobes.c: In function 'arch_uretprobe_hijack_return_addr':
+>> arch/arm64/kernel/probes/uprobes.c:171:33: error: implicit declaration of function 'get_user_gcs'; did you mean 'put_user_gcs'? [-Werror=implicit-function-declaration]
+     171 |                 gcs_ret_vaddr = get_user_gcs((unsigned long __user *)gcspr, &err);
+         |                                 ^~~~~~~~~~~~
+         |                                 put_user_gcs
+   cc1: some warnings being treated as errors
 
 
-Beste Grüße,
-Peter Schneider
+vim +171 arch/arm64/kernel/probes/uprobes.c
+
+   157	
+   158	unsigned long
+   159	arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr,
+   160					  struct pt_regs *regs)
+   161	{
+   162		unsigned long orig_ret_vaddr;
+   163		unsigned long gcs_ret_vaddr;
+   164		int err = 0;
+   165		u64 gcspr;
+   166	
+   167		orig_ret_vaddr = procedure_link_pointer(regs);
+   168	
+   169		if (task_gcs_el0_enabled(current)) {
+   170			gcspr = read_sysreg_s(SYS_GCSPR_EL0);
+ > 171			gcs_ret_vaddr = get_user_gcs((unsigned long __user *)gcspr, &err);
+   172			if (err) {
+   173				force_sig(SIGSEGV);
+   174				goto out;
+   175			}
+   176	
+   177			/*
+   178			 * If the LR and GCS return addr don't match, then some kind of PAC
+   179			 * signing or control flow occurred since entering the probed function.
+   180			 * Likely because the user is attempting to retprobe on an instruction
+   181			 * that isn't a function boundary or inside a leaf function. Explicitly
+   182			 * abort this retprobe because it will generate a GCS exception.
+   183			 */
+   184			if (gcs_ret_vaddr != orig_ret_vaddr) {
+   185				orig_ret_vaddr = -1;
+   186				goto out;
+   187			}
+   188	
+   189			put_user_gcs(trampoline_vaddr, (unsigned long __user *)gcspr, &err);
+   190			if (err) {
+   191				force_sig(SIGSEGV);
+   192				goto out;
+   193			}
+   194		}
+   195	
+   196		/* Replace the return addr with trampoline addr */
+   197		procedure_link_pointer_set(regs, trampoline_vaddr);
+   198	
+   199	out:
+   200		return orig_ret_vaddr;
+   201	}
+   202	
 
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
