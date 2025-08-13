@@ -1,121 +1,139 @@
-Return-Path: <linux-kernel+bounces-766720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D56B24A63
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:16:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199A9B24A67
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2742D3A6334
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:15:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 066C27B944C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405852E7F3B;
-	Wed, 13 Aug 2025 13:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D052E9EA1;
+	Wed, 13 Aug 2025 13:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TdPaoKKi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imyT2u83"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F982E7F02;
-	Wed, 13 Aug 2025 13:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492FF1E51D;
+	Wed, 13 Aug 2025 13:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090922; cv=none; b=LJqsX1RKiHrRitvvavWvuDSfE1aT5TbmqZvMs0xp/bVP0YCbGgFUrILz7VQPkrfT4lRX//fw30nqSR+kgJbS2D9sWd7801nNPfJa5ezORMmJjTL8pPnMj6WStIH22Of8Q/ZRWqEBG8o5ju1s3VY55ER5uvYiV7VN15ot3UnD8BI=
+	t=1755090994; cv=none; b=nOeTtHhVpXx8INrE9xX9Et4ihCBiDFsbRiXGnRbCZ9Zqft1C6aBjwSQJ7kAVjMvqHKVt4OZ6opX7l3xaL1+Deaagb/h1eQ/dnLh+mQjcNV8EzI0Xf32/Fd4f0rtbXeraJ8gF2YJt4O6pK+29l7xP6VPhQc55KaMioXphKmuCBPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090922; c=relaxed/simple;
-	bh=A2tgh7/qAd1TIge+H+3IgABjLhCELs6ONkvI8pXJgQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HSLo2mEpwolmiwFjSqgrDifqNRisxzKWHBO0qLsYVFeVtgHws4pJDCpTVUWL54fjomniYX2ZhOSoeBBHeC7oP6EfC1Z+ugncq++rUwb4Gbs89alFWzC9aBgiq19WpRo5zhsrKqK7ZES9s8IhFVxWJ1ZL6sITUBmaeXYo7rP4ZBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TdPaoKKi; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755090921; x=1786626921;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=A2tgh7/qAd1TIge+H+3IgABjLhCELs6ONkvI8pXJgQM=;
-  b=TdPaoKKi7+R9Bqhw9/7JJ/048O5I9bc/Vo+fehU8hBMSvuDbk626n3el
-   GyNxcHXBzwuuAO9aBqp+jwio/xaxyk6UchTuoBqUzbY2mxu34YiPqHzc4
-   U558rW/wxJAzov5QRTYypebZfQyUwnX4x7eQaU21XmdUFJAs7NgMg/74g
-   xD7whmSdRLv0QvMtYTpCtNV/R+SaNF3IWVH6aWT/upsGiYl0fcGx4d5Rx
-   VJeMgKGW8RpGxICs0N7K++pRCP72xFJmYnN3iFig85F0TM8n63s6sVArM
-   WiL2TTzjEpQoXo7FLuWJXYZasTmRGNcz8cwLNNO6OUMGg2oQA2QTyaZ/u
-   Q==;
-X-CSE-ConnectionGUID: 6Hyy4/TWSk61N3G8CYUz7w==
-X-CSE-MsgGUID: nzjErotcStqyMs5SZWTZ+A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57460752"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="57460752"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:15:21 -0700
-X-CSE-ConnectionGUID: ZvnCXHHETFekeikGklQQFA==
-X-CSE-MsgGUID: WPq5Uw5gR/ayVSTikizNzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="170601778"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:15:18 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1umBK0-00000005RTh-1sK7;
-	Wed, 13 Aug 2025 16:15:16 +0300
-Date: Wed, 13 Aug 2025 16:15:16 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@anaog.com>,
-	Andy Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH] iio: iio_format_list() should set stride=1 for
- IIO_VAL_CHAR
-Message-ID: <aJyP5PhTcNv8QWQL@smile.fi.intel.com>
-References: <vidvwybkm3vwmtopihyaj6tlvswwa5ixmgptfzpk5ujl2ixjjb@olz6275ftabs>
- <CAHp75VfQFN+F0xMyhWvHOejD0AefDfBLf9s4eu1bpqCBY7bkdA@mail.gmail.com>
+	s=arc-20240116; t=1755090994; c=relaxed/simple;
+	bh=zYImU4jxvzbeYDCcwW8grQtTwXDcIZSor5qvW0OKkxU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VaG/8yyKZ0Gk3K9C9kS14neM6PtHZSEEx0oGO8YjUqPpzd8cMr48twsAYjSWhUzJdJhYnNt27irILTnU8ho4cWZq7gnRgDVzy16hwKwJNxY613vIyxh4Ifiqhly5rERI8TAztidTQ19fH3Mdfm6wFGQ5dTL9IybtKXgvkcHIWAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imyT2u83; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-615756b1e99so8808178a12.0;
+        Wed, 13 Aug 2025 06:16:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755090990; x=1755695790; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bhnbn+hKgeh6Jp1ra5XQn6HuC0UPdIm1P7jBz/93Tj0=;
+        b=imyT2u83JkUo0B6XDskNziSG5PuoK31SsDj17bn4KzZlHFI9lPfAFRlAW7ZU5Z5jpN
+         OtU/mJvQHq7FvVue+DPSbjw3mpLjPWqxQc+ZtXWMJ1STeq6q+Lgser5sv1tnC+AwH7On
+         iixGY4t+oB3lUuPXz/8yEM47X4+S8bLARJpN+wTCUKF1URk09SDrYpL03tIiKjAzTcCE
+         my7/QgiOE+Cra5axSFs79dYAAuPG+fSGnybHbIS+3hTCM9Gd9QrwYXLaQgbnJz24Unrp
+         j/89r3Dw+7totfgkGDrfe2gvOt3OjLJMBVVlDCbxAVhPtDmGHwWyKxwZPPlQ0Yi4YqiD
+         zxtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755090990; x=1755695790;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bhnbn+hKgeh6Jp1ra5XQn6HuC0UPdIm1P7jBz/93Tj0=;
+        b=Na3FuVF/l3yDECFZe+Iv6bSo+4B1V3bivFaKNv/Hj/PYfIFpJds5HLIbnnwJIPltFY
+         fdo4qdCQQqmiwlOEOBUtqF3Sl7r6DYQQuJhLi80cN9VcVIsIj5kz1Rm4paryB4uTEO1z
+         u5tuORCxj7vn2cmXog6SdvU6ni3qBxMEriRikpHGEbScdio5jldExMj8z4GD1ALSHpI/
+         p2vgRCmVhyqKUDstSTlj++eu++EJPKRLTGPDsdwJGOXOWOmVrQBwkLZX6D8XtzozqAya
+         AlgXqOP1ACDQK915uLQi2JMZgCOjCsG1PRu2Kxu63YDNjm+fbdAzl1psmnkG1DKpdZeM
+         +rXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDOFfdRupGfPotrLfpYFX0pGqcA/65hQdh1FOsapytaKe40dCDJ5036jc3bVJL4LUUN2Zrt9W+I8SGiw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7ySRohdi+scVJgym/v4ggeB05qi7Ovw1dVvPzgvIXY7wS3v02
+	RNBNcrMh88pyzBs4V0zPbryWBzwQPUniXpo7tIkLXUaxeJjsHxxBatH5
+X-Gm-Gg: ASbGncuYRk2Vx0seW843JMnryDE1KA8vjof5ByA+CTzIEBhrmqVuX7aQTTvXOwwPBEf
+	1jzw0XCl99e4m6q+uPbf+QqZ71cXjKcmtBUp2h1xPlr8+kmXx+auXduAfVCCV8TzpBxNqc+HGbb
+	5yoqgYgRn+rP2zDFoTLV+TGl3EJlk1SakGjVrriORrpaXwptCiQcAGiCp/3smza9Ctwiyo5/6PF
+	aFn0WLeDSNNTaR0Jl0eQlFNMnD9Zs5cNwEP+AlK7C0Xbl147qIudICyLcwJPzAZlDN+GIN7ew0E
+	btqGAKv3HkkMhugyckxjEmQyBOFJwf/Fq34aYUeQAwaCEFtZ3NjaY2hAY6mDkatDKEisazbaD+U
+	xRnXND+QKxS3nyUWt1lzGaHUYTYqmVrTVq4ADtp7Jwa/MoSzv5dqvpkKlD14Dcdcp+XkR/AAECp
+	YnX8o2CA==
+X-Google-Smtp-Source: AGHT+IGoIdL6p9jy9ix/JIgZYMzk9vduFibPr7vwT5f+APwBedGWjGu2zrz014pU4jXaaRYgPVodvQ==
+X-Received: by 2002:a17:907:97c4:b0:ade:44f8:569 with SMTP id a640c23a62f3a-afca4ec18dfmr285588566b.42.1755090990410;
+        Wed, 13 Aug 2025 06:16:30 -0700 (PDT)
+Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e88desm2420481266b.71.2025.08.13.06.16.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 06:16:30 -0700 (PDT)
+From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+Subject: [PATCH v4 6/7] ALSA: usb-audio: us144mkii: Add deep sleep command
+Date: Wed, 13 Aug 2025 15:15:17 +0200
+Message-Id: <20250813131518.18985-7-ramiserifpersia@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250813131518.18985-1-ramiserifpersia@gmail.com>
+References: <20250813131518.18985-1-ramiserifpersia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VfQFN+F0xMyhWvHOejD0AefDfBLf9s4eu1bpqCBY7bkdA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Aug 12, 2025 at 10:44:13PM +0200, Andy Shevchenko wrote:
-> On Tue, Aug 12, 2025 at 1:13 PM Ben Collins <bcollins@kernel.org> wrote:
+Add a deep sleep vendor command to be sent during suspend, allowing the
+device to enter a lower power state.
 
-...
+Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
+---
+ sound/usb/usx2y/us144mkii.c | 7 +++++++
+ sound/usb/usx2y/us144mkii.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-> > Signed-off-by: Ben Collins <bcollins@kernel.org>
-> 
-> Please, keep the Cc list after the '---' line (note, you may have more
-> than a single one in the patch, hence you may just add it here). This
-> will reduce the unneeded noise in the commit message as the very same
-> information will be available in the email headers and in lore
-> archive.
-> 
-> > Cc: Jonathan Cameron <jic23@kernel.org>
-> > Cc: David Lechner <dlechner@baylibre.com>
-> > Cc: Nuno Sá <nuno.sa@analog.com>
-> > Cc: Andy Shevchenko <andy@kernel.org>
-> >
-> > ---
-> >  drivers/iio/industrialio-core.c | 1 +
-> >  1 file changed, 1 insertion(+)
-
-Forgot to add that no need to resend just for _this_ case, take the above
-advice for the future contributions. I hope Jonathan may remove these Cc from
-the commit message.
-
+diff --git a/sound/usb/usx2y/us144mkii.c b/sound/usb/usx2y/us144mkii.c
+index f7944eb2fb93..e452250fc5b4 100644
+--- a/sound/usb/usx2y/us144mkii.c
++++ b/sound/usb/usx2y/us144mkii.c
+@@ -322,6 +322,13 @@ static int tascam_suspend(struct usb_interface *intf, pm_message_t message)
+ 	usb_kill_anchored_urbs(&tascam->midi_in_anchor);
+ 	usb_kill_anchored_urbs(&tascam->midi_out_anchor);
+ 
++	dev_info(&intf->dev, "sending deep sleep command\n");
++	int err = usb_control_msg(tascam->dev, usb_sndctrlpipe(tascam->dev, 0),
++				  VENDOR_REQ_DEEP_SLEEP, RT_H2D_VENDOR_DEV,
++				  0x0000, 0x0000, NULL, 0, USB_CTRL_TIMEOUT_MS);
++	if (err < 0)
++		dev_err(&intf->dev, "deep sleep command failed: %d\n", err);
++
+ 	return 0;
+ }
+ 
+diff --git a/sound/usb/usx2y/us144mkii.h b/sound/usb/usx2y/us144mkii.h
+index c740a0b5a0ea..ecc4c2fed9e6 100644
+--- a/sound/usb/usx2y/us144mkii.h
++++ b/sound/usb/usx2y/us144mkii.h
+@@ -46,6 +46,7 @@ enum uac_control_selector {
+ 
+ enum tascam_vendor_request {
+ 	VENDOR_REQ_REGISTER_WRITE = 0x41,
++	VENDOR_REQ_DEEP_SLEEP = 0x44,
+ 	VENDOR_REQ_MODE_CONTROL = 0x49,
+ };
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.39.5
 
 
