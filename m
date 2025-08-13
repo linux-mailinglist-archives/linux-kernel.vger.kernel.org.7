@@ -1,167 +1,288 @@
-Return-Path: <linux-kernel+bounces-766674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA448B249D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7860B249D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1845682A73
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F88E683991
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD712E5B33;
-	Wed, 13 Aug 2025 12:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699882E54CA;
+	Wed, 13 Aug 2025 12:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsZ+37HB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FHoaliMj"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B8A136347;
-	Wed, 13 Aug 2025 12:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1B427602D
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089483; cv=none; b=Vs7PDXoXnnb8XFYMvIdPzB5tEMWjLmTuIVBFvLFTLRffwpVUCRTIC9rd04EKGoT+wPPQ1sQNKJoeiJUu/HDTA5O6QJ6dPeoU9Q1TFiPj6wsj9mr3iAvVTp7/vl8OszJSqttyGiMlBmFgxzyizkLkL8BMh6G2a0OyWB3hbnbK0NY=
+	t=1755089503; cv=none; b=n5pWMz3wmTOt0jc5OeMe0qMKhyUv/WJNbs6pwq2QEJZYieiJzJtIXK2YmeSdVQama5JyFERDtBd8CtV4d9LRYChCMSdKbVAbIrkYvsq2HI2hN2GIVTvWea7tWEDFjvRmN0ZWkTuqczCBukY6pRHzNfMok0DXpGHZp+XzkaRQwYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089483; c=relaxed/simple;
-	bh=UMjaZSS4sd8UG4kwOViWpJphe7Bwr3FK+8uuEvptObY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rLw3Ic4DmX9M/jPzj2yHzBbe4rEayB6W4YG+4NOXrUmDKvfEINIqayTy1SPovmThfNBq/Nknj+YAR1PzS1oLmD7XIvw+1glyt0/TF1YOs81x40U8N/xyWc5L0oEaJMrNkEfIfchjw64aMVbeoFMvstBvK8N0jXCdjNH5u9KGl9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsZ+37HB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3288CC4CEEB;
-	Wed, 13 Aug 2025 12:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755089483;
-	bh=UMjaZSS4sd8UG4kwOViWpJphe7Bwr3FK+8uuEvptObY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JsZ+37HBd8CyLifn1Zgw1gjmmahHJ/PUjqGvPg/A/GugA+FnkH3U3P9C7LOuwSSy3
-	 Fsuhxkz+47NJqpf0hpdFHW6Scew12iDmedLeXW7B+PCArEXcXtqRyJhsUtdSZoQ4wv
-	 TvNWjTY7kqttCbgxhGu3GBoaWfrW35eHQGet4JTdgjhegOZM+aFJ9g5R1jppHZwbZj
-	 sV5udSiONnk839IrMB5r8E/SX0WdpPfTM9RRhzLEfT72HTwb+ff81cJIg1pR3+EHfh
-	 MQGo7gCZkySDY+MQEcqEFD62yI0jxMD0ZOEpo8FgLCNaxyofJXQDN9IpcJB1gFPfpd
-	 ay7k8QWarr0lw==
-Date: Wed, 13 Aug 2025 13:51:11 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, achill@achill.org, qemu-devel@nongnu.org,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
-	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
-	linux-perf-users@vger.kernel.org,
-	Zhang Yi <yi.zhang@huaweicloud.com>,
-	Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4 <linux-ext4@vger.kernel.org>
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-Message-ID: <bf9ccc7d-036d-46eb-85a1-b46317e2d556@sirena.org.uk>
-Mail-Followup-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org,
-	qemu-devel@nongnu.org,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
-	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
-	linux-perf-users@vger.kernel.org,
-	Zhang Yi <yi.zhang@huaweicloud.com>,
-	Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4 <linux-ext4@vger.kernel.org>
-References: <20250812173419.303046420@linuxfoundation.org>
- <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
+	s=arc-20240116; t=1755089503; c=relaxed/simple;
+	bh=HjraFinK8S+wxCrFTQ7qGhdHuAkjg13+OfaV22qEhNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gFbsyDBNZY+BEP8gxaK+T5+IidVRLhqFLp0hibK4O/F9kxQxuIYA86GfoEEz1RN8LsOD4KbzxR1aB0Ouzw49CM7F8SXyW0voi19Eaw698gbGbHyEL4OnTPeNmNYvzz5EtwRJrdbKG1awRwTj5rR/RdAMRXgc6UOqoSngpyNVSOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FHoaliMj; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76bd9d723bfso5606570b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755089501; x=1755694301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OaCY6QygZSY7gwTjhsexWl1g6lEhtuzBso3q62sP80I=;
+        b=FHoaliMjf41VU5hZTgGiLNMvQrqFvSpHRQSwaHAShXiAK+5I6yOfFboMU5Eqi/mR9c
+         pmK3v7kdBK4e03WdUU1xE2o10xq4BIa4Vuh/7QRuCHoAiCpzYAfxjrq9LLacWG5/Vzen
+         uE00//CNQsbGwg3fUDgOd4F7ziUDRLLtHCvGw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755089501; x=1755694301;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OaCY6QygZSY7gwTjhsexWl1g6lEhtuzBso3q62sP80I=;
+        b=VCaHJ4pMaP1kz4NeIOUyVyYENKDGG1p5kF00bHhJ0y+hcWd8QrD3CHQ80FVsM6OhGs
+         9KXy/wDBlRWX5JBUyrBe95uRkezsiO5sCewZeR2j4MbETZFe9dOaAdNY1f0iP3o84snD
+         +QGUw6gPQGRe4RSdRX1XwSjL4sg9O9idpbN5tVTcniY0ebrhMoAGnTB8obXDi4GkKp7f
+         R7aWcRtci+63gWNAW+GCgLUc4EEy/UDdMehlT3PY7Wn9bhr/K04WGwE5i3Kxwz2sMEza
+         OwyftFNkX4uevXZP9aeU0I/Sz+pXk7kfpOx+6IDR5UnSru8SG7rJsbtQZMl/7F7Pj4zM
+         L5cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXX0wvEKLG9jqzP+RoXcDHmvo/YUHnnXTr4jGtBUHnU3EDVl1Zp23nquEh4WJFkI6wdSyYS/vZldEaP1Dw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBdFsUzGNFlsKZRL4z9aBlJfqdvOnRnsJCCKxggxclHfn+IY8L
+	Lu8nrYSQTTIS3I5c3KTyC6e9qEI14HA6FqpvPg1KggpwgmLHDdr8uBz8GNXXTjUm1g==
+X-Gm-Gg: ASbGncuSSeg0OYkeiDcVElfOIl58pFps6/q+dbg3ZayEl3waYWIhXa2E/yVBpKRMdZS
+	8+7O4vvcFdeZDTWXSKTy97c4fySFSZ11DZuXLgr9cKZfoe6Tmdu+NSho79zVvaGSWiJlo64BW8q
+	Vpgr1Qb6jkzZpTHAzdh1zkrpZ6e2ACiNws3z62nj30wtt2uQJnzL2aqD0PUt4Q1uC8MOukzmK4i
+	fDa89906rYWELDZsZX7dpI3A49ZUabIsGL4w0/GPd/pcUWZN200ITQj/HhOVgMEZRBdLfJLaBZz
+	SJn+h1BqoJlOkXCE+v/4U4uB0D9TwC8XT9sLaQPljgQ/knqdVxxzHFRmQhPqQ/CPqM458iAY5BW
+	21eU0XaYfmcuQIfTIqGH5RiukXpu14nQLYGR2XAZWUOkBfmOc2Zsz/9hq
+X-Google-Smtp-Source: AGHT+IHvOWzR+m64NjcSp9Sio+ZwCY5wgCmmRripn14ZHanao1N4GJSYFMYpw0majecA30pcR6AfLQ==
+X-Received: by 2002:a05:6a20:7f96:b0:233:4862:753a with SMTP id adf61e73a8af0-240a889f530mr5133358637.0.1755089501234;
+        Wed, 13 Aug 2025 05:51:41 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:99fd:826e:7963:bbb0])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b470fd547d0sm740613a12.4.2025.08.13.05.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 05:51:40 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>
+Cc: dri-devel@lists.freedesktop.org,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>
+Subject: [PATCH v2 1/2] drm/panel: Allow powering on panel follower after panel is enabled
+Date: Wed, 13 Aug 2025 20:51:24 +0800
+Message-ID: <20250813125132.1319482-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.51.0.rc0.205.g4a044479a3-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jpbELjH1qfe0Wb2r"
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
-X-Cookie: Turn the other cheek.
+Content-Transfer-Encoding: 8bit
 
+Some touch controllers have to be powered on after the panel's backlight
+is enabled. To support these controllers, introduce .panel_enabled() and
+.panel_disabling() to panel_follower_funcs and use them to power on the
+device after the panel and its backlight are enabled.
 
---jpbELjH1qfe0Wb2r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Pin-yen Lin <treapking@chromium.org>
 
-On Wed, Aug 13, 2025 at 05:46:26PM +0530, Naresh Kamboju wrote:
-> On Tue, 12 Aug 2025 at 23:57, Greg Kroah-Hartman
+---
 
-> The following list of LTP syscalls failure noticed on qemu-arm64 with
-> stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=3Dy build configuration.
->=20
-> Most failures report ENOSPC (28) or mkswap errors, which may be related
-> to disk space handling in the 64K page configuration on qemu-arm64.
->=20
-> The issue is reproducible on multiple runs.
->=20
-> * qemu-arm64, ltp-syscalls - 64K page size test failures list,
->=20
->   - fallocate04
->   - fallocate05
->   - fdatasync03
->   - fsync01
->   - fsync04
->   - ioctl_fiemap01
->   - swapoff01
->   - swapoff02
->   - swapon01
->   - swapon02
->   - swapon03
->   - sync01
->   - sync_file_range02
->   - syncfs01
+Changes in v2:
+- Replace after_panel_enabled flag with enabled/disabling callbacks
 
-I'm also seeing epoll_ctl04 failing on Raspberry Pi 4, there's a bisect
-still running but I suspect given the error message:
+ drivers/gpu/drm/drm_panel.c | 57 ++++++++++++++++++++++++++++++++++---
+ include/drm/drm_panel.h     | 14 +++++++++
+ 2 files changed, 67 insertions(+), 4 deletions(-)
 
-epoll_ctl04.c:59: TFAIL: epoll_ctl(..., EPOLL_CTL_ADD, ...) with number of =
-nesting is 5 expected EINVAL: ELOOP (40)
+diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
+index c8bb28dccdc1b..e3682c22c4dd2 100644
+--- a/drivers/gpu/drm/drm_panel.c
++++ b/drivers/gpu/drm/drm_panel.c
+@@ -134,6 +134,9 @@ void drm_panel_prepare(struct drm_panel *panel)
+ 	panel->prepared = true;
+ 
+ 	list_for_each_entry(follower, &panel->followers, list) {
++		if (!follower->funcs->panel_prepared)
++			continue;
++
+ 		ret = follower->funcs->panel_prepared(follower);
+ 		if (ret < 0)
+ 			dev_info(panel->dev, "%ps failed: %d\n",
+@@ -179,6 +182,9 @@ void drm_panel_unprepare(struct drm_panel *panel)
+ 	mutex_lock(&panel->follower_lock);
+ 
+ 	list_for_each_entry(follower, &panel->followers, list) {
++		if (!follower->funcs->panel_unpreparing)
++			continue;
++
+ 		ret = follower->funcs->panel_unpreparing(follower);
+ 		if (ret < 0)
+ 			dev_info(panel->dev, "%ps failed: %d\n",
+@@ -209,6 +215,7 @@ EXPORT_SYMBOL(drm_panel_unprepare);
+  */
+ void drm_panel_enable(struct drm_panel *panel)
+ {
++	struct drm_panel_follower *follower;
+ 	int ret;
+ 
+ 	if (!panel)
+@@ -219,10 +226,12 @@ void drm_panel_enable(struct drm_panel *panel)
+ 		return;
+ 	}
+ 
++	mutex_lock(&panel->follower_lock);
++
+ 	if (panel->funcs && panel->funcs->enable) {
+ 		ret = panel->funcs->enable(panel);
+ 		if (ret < 0)
+-			return;
++			goto exit;
+ 	}
+ 	panel->enabled = true;
+ 
+@@ -230,6 +239,18 @@ void drm_panel_enable(struct drm_panel *panel)
+ 	if (ret < 0)
+ 		DRM_DEV_INFO(panel->dev, "failed to enable backlight: %d\n",
+ 			     ret);
++
++	list_for_each_entry(follower, &panel->followers, list) {
++		if (!follower->funcs->panel_enabled)
++			continue;
++
++		ret = follower->funcs->panel_enabled(follower);
++		if (ret < 0)
++			dev_info(panel->dev, "%ps failed: %d\n",
++				 follower->funcs->panel_enabled, ret);
++	}
++exit:
++	mutex_unlock(&panel->follower_lock);
+ }
+ EXPORT_SYMBOL(drm_panel_enable);
+ 
+@@ -243,6 +264,7 @@ EXPORT_SYMBOL(drm_panel_enable);
+  */
+ void drm_panel_disable(struct drm_panel *panel)
+ {
++	struct drm_panel_follower *follower;
+ 	int ret;
+ 
+ 	if (!panel)
+@@ -262,6 +284,18 @@ void drm_panel_disable(struct drm_panel *panel)
+ 		return;
+ 	}
+ 
++	mutex_lock(&panel->follower_lock);
++
++	list_for_each_entry(follower, &panel->followers, list) {
++		if (!follower->funcs->panel_disabling)
++			continue;
++
++		ret = follower->funcs->panel_disabling(follower);
++		if (ret < 0)
++			dev_info(panel->dev, "%ps failed: %d\n",
++				 follower->funcs->panel_disabling, ret);
++	}
++
+ 	ret = backlight_disable(panel->backlight);
+ 	if (ret < 0)
+ 		DRM_DEV_INFO(panel->dev, "failed to disable backlight: %d\n",
+@@ -270,9 +304,12 @@ void drm_panel_disable(struct drm_panel *panel)
+ 	if (panel->funcs && panel->funcs->disable) {
+ 		ret = panel->funcs->disable(panel);
+ 		if (ret < 0)
+-			return;
++			goto exit;
+ 	}
+ 	panel->enabled = false;
++
++exit:
++	mutex_unlock(&panel->follower_lock);
+ }
+ EXPORT_SYMBOL(drm_panel_disable);
+ 
+@@ -569,12 +606,18 @@ int drm_panel_add_follower(struct device *follower_dev,
+ 	mutex_lock(&panel->follower_lock);
+ 
+ 	list_add_tail(&follower->list, &panel->followers);
+-	if (panel->prepared) {
++	if (panel->prepared && follower->funcs->panel_prepared) {
+ 		ret = follower->funcs->panel_prepared(follower);
+ 		if (ret < 0)
+ 			dev_info(panel->dev, "%ps failed: %d\n",
+ 				 follower->funcs->panel_prepared, ret);
+ 	}
++	if (panel->enabled && follower->funcs->panel_enabled) {
++		ret = follower->funcs->panel_enabled(follower);
++		if (ret < 0)
++			dev_info(panel->dev, "%ps failed: %d\n",
++				 follower->funcs->panel_enabled, ret);
++	}
+ 
+ 	mutex_unlock(&panel->follower_lock);
+ 
+@@ -598,12 +641,18 @@ void drm_panel_remove_follower(struct drm_panel_follower *follower)
+ 
+ 	mutex_lock(&panel->follower_lock);
+ 
+-	if (panel->prepared) {
++	if (panel->prepared && follower->funcs->panel_unpreparing) {
+ 		ret = follower->funcs->panel_unpreparing(follower);
+ 		if (ret < 0)
+ 			dev_info(panel->dev, "%ps failed: %d\n",
+ 				 follower->funcs->panel_unpreparing, ret);
+ 	}
++	if (panel->enabled && follower->funcs->panel_disabling) {
++		ret = follower->funcs->panel_disabling(follower);
++		if (ret < 0)
++			dev_info(panel->dev, "%ps failed: %d\n",
++				 follower->funcs->panel_disabling, ret);
++	}
+ 	list_del_init(&follower->list);
+ 
+ 	mutex_unlock(&panel->follower_lock);
+diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+index 843fb756a2950..2407bfa60236f 100644
+--- a/include/drm/drm_panel.h
++++ b/include/drm/drm_panel.h
+@@ -160,6 +160,20 @@ struct drm_panel_follower_funcs {
+ 	 * Called before the panel is powered off.
+ 	 */
+ 	int (*panel_unpreparing)(struct drm_panel_follower *follower);
++
++	/**
++	 * @panel_enabled:
++	 *
++	 * Called after the panel and the backlight have been enabled.
++	 */
++	int (*panel_enabled)(struct drm_panel_follower *follower);
++
++	/**
++	 * @panel_disabling:
++	 *
++	 * Called before the panel and the backlight are disabled.
++	 */
++	int (*panel_disabling)(struct drm_panel_follower *follower);
+ };
+ 
+ struct drm_panel_follower {
+-- 
+2.51.0.rc0.205.g4a044479a3-goog
 
-that it might be:
-
-# bad: [b47ce23d38c737a2f84af2b18c5e6b6e09e4932d] eventpoll: Fix semi-unbou=
-nded recursion
-
-which already got tested, or something adjacent.
-
---jpbELjH1qfe0Wb2r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmicij4ACgkQJNaLcl1U
-h9CPsgf/Zm8iW2xqCXTg33TAp9VCD0jKTGbQODneT3brIHHC/UoNghK+9mMfsEn6
-SQQlgHE0a6ZGj+K7TQchCqcoaN87Mghuxa9RZlBnnu5nGG6FbY0RG05FAbrkPbkz
-+47tdqfnsePdRTgKlgMUBFlTXJAlQu+xosyM9AaVZbisvUFd9gAayCNTvRNmMYQA
-XUGFqqqc2K2z/9UvbkZ5rFAp7MfwZUk9dEeVspaTLScb8nQOkk3EiqvxJ/JGvHNN
-QOG0n41MlgWguQ9swGbUdaemvLZHkx5jAkLMYoOH8g1/sL/IM6mwmQfj5QA51SZW
-rjvQmjeNodIoT5+qzsyvvKz8qHav3w==
-=zk6G
------END PGP SIGNATURE-----
-
---jpbELjH1qfe0Wb2r--
 
