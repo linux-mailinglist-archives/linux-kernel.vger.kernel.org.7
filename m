@@ -1,323 +1,138 @@
-Return-Path: <linux-kernel+bounces-767442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE9DB2543F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:08:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BF2B25447
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20F931C8448D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:07:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95B839A3102
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836802FD7A8;
-	Wed, 13 Aug 2025 20:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7862D641A;
+	Wed, 13 Aug 2025 20:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRTR6Vdv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="chJKdLgV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F4A2D541B;
-	Wed, 13 Aug 2025 20:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FEE62FD7B8
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755115550; cv=none; b=GGd89Qau9gTTyu/u+2kWfjtevjK4HM9I7jCsYo4yhyEBM2d/kwzO+ornU8T6JGJYb3aUmBpwMTb5UhdUPUBs9636R5FUubM1WSFAXUXtuziRHRNfSLFNWYxBSUqnHXY6iTUAucWNINU7XZ3nFCuyrWinc7H06wWVjO9t1PhjvYI=
+	t=1755115592; cv=none; b=NOBSaLn2S+k4z3MYeg1jyn7mzP0+vKRiBgMrLMHeNgCpRkpvn6BznsH1EmbY3FNcxb9tVbnCfp4mE20vjfta1IGbaB6yaWNyV4OvS+U6oR47Z2ySHLdT3JN3Id96qqtt8vW62R1NodNvBJbuI9tIpSKhQXKWd4W7KCplzJFIGSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755115550; c=relaxed/simple;
-	bh=Jg9Z7QAvjp/RAR3RPWLBE1YWB3y536M6igQ7Xbi8qlQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oPFxcmlkLbo/f7lzmGNxAo8Us/utna1/msc6CWom4/6V5e9bPNN/0RuuG4+lNOfJw3FFCWwovIb5GZjjrAFn/UALxF2LEwsyMAmMhFZhSfxtFQzX888OQZv4xnpb2Ve2sAR5moion1cUceFVLlEfJc3gfuCUSeR63CII/lsDnoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRTR6Vdv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE87C4CEF1;
-	Wed, 13 Aug 2025 20:05:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755115550;
-	bh=Jg9Z7QAvjp/RAR3RPWLBE1YWB3y536M6igQ7Xbi8qlQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sRTR6VdvzU1erU9L1jZaGa8Y6v/qJGw836zjahFcO9R9c91DudPC0xt5Qg9HHipeh
-	 kEBuVwqYaPKO/TvvegihTnKkM2Gj/Ps80qtdKfEfXq0LsJLZgj9ctrRQ+TD8lmfpEm
-	 p70otd9dOTz/enMPI56sUxDmbdWXZui6s9M9/53orLPXtRDpLTpeqPUEZWkOtSQD+z
-	 u/iXkzzJZwAvEmmvVBn38L0Irvubc0AQbuNXYk8d0JKfS3KEpDVzzRSIe38efpxp8z
-	 Sg3VqQIoc4XyTHku1Af9RG70Wya68xS7zSuuu+bBSOzksjHQ2M8MpTiQ/g0+F7JT92
-	 vPTdGVXhL9S9g==
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 9/9] Documentation: Fix misc typos
-Date: Wed, 13 Aug 2025 15:05:05 -0500
-Message-ID: <20250813200526.290420-10-helgaas@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250813200526.290420-1-helgaas@kernel.org>
-References: <20250813200526.290420-1-helgaas@kernel.org>
+	s=arc-20240116; t=1755115592; c=relaxed/simple;
+	bh=eP0/SvV4fzqCDP5gj6X9P5PrmBVLr+qxf4Hatmahsh4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WbuhardLcEIMHVH+/8a0EI8XgVDwnMU8Ie2OkroowsvrmcLPOJOHvhpIjZHDz4krVOyM6JjMZoICNtUdP5orfgaDqbZWCNwvCePThopzZ5y01Cm21f0TX7qv7q0uFjBvuCayxctkCEg/+bkRxJEXyImuFMT3GqdYxQ7ltCZG3EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=chJKdLgV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755115589;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=47lxym8iNHWBOL/w60+zi9Lo6y41CAt0QBGdV8YddYA=;
+	b=chJKdLgVTfZW8WymkHJ09pC0rrbH44nPpqxfYnSPftOI4HrGhaA+QW9CElFx1pZxnA3rk6
+	FU8Krhd+7dcXGQpyD2WDNwPc8zADGr49A6TePZn/i19YsP6SrljJYNNLIeawoJWMJvytdw
+	2LDMws+TqdvHJYd2Tz7WZk+pzb41on0=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-376-OGdYMNtoNrqjMcM-55mVWQ-1; Wed, 13 Aug 2025 16:06:26 -0400
+X-MC-Unique: OGdYMNtoNrqjMcM-55mVWQ-1
+X-Mimecast-MFC-AGG-ID: OGdYMNtoNrqjMcM-55mVWQ_1755115586
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-70a9f5bb140so8202076d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:06:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755115586; x=1755720386;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=47lxym8iNHWBOL/w60+zi9Lo6y41CAt0QBGdV8YddYA=;
+        b=AmvrJwCYkphiSNcrnEJIRAFOyyWaG45Na7QGa0mj/Zw+DgqQk5vuPl7x8GE2bNnK5Z
+         akCl3b9a19jv3UUVPQU5ZQylTmyYzxFSyA2iSkqcuRjk/DltK/JXKen2PQmP3flKl3Jx
+         992W3EK1TG+QR2NCCC9B5njismb9mlTCwJfOKI3wdkZbs9XwcWYVLzMpFcGUvg5B2wEf
+         9sHkUSUUaXRZHIa54zzjnSGMOQsMgFSPSuUdO26HOnI4Rj3h1DS0t8Z7FmDlQvDZPuO2
+         qIr7FSv5tPsnmEipOY1KeJltm9UGggQBeNVGyqK3a8w6d4rXHgBfkkwDwC7lMWe3M73L
+         tcrA==
+X-Forwarded-Encrypted: i=1; AJvYcCULdr9Y0RbmN/RdRuE3SnWdS2CTxEIVw2qzWDvpbMr/WObhABkXS8MJNC/npkuatld9RTB9oHO2V/XQmgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDaB6NRtAylSQFrc/yyt2BNVq28NJI78Qf/HVpSBlfbBaB8Z7Z
+	2tkTNxFiVOsa9jkrqksQkAhYMhquFN76HW6Hc2jXrd7AZHLpXZrRp1fjyeck8ssZaP05I846Fbs
+	tl3FwaBLIwCovpGlwYUyR1UQX4H+/J2jhOMTYmhO/xffUOqEeg9rLfsjZNdS0a+edhw==
+X-Gm-Gg: ASbGncux35lxQoKhI3E3vZ+/TRIGsei0xnDRKyGewpZVSTfY5o3LARoYQEnDcQQDhqQ
+	iDkhk0sRtteUDon44YIUFOkh4qECkXgJoBlUcZnAjAxOYi9keDpqwiYtYb1bYeNMTYPdpHuiHW6
+	3PfW9FR7B1SGkB3nowf/C0x7SXBBLoomtEiu9LnGo1aRHzzlDcO6gjlwkVC1MM1iJptj3/rDTMn
+	9oJPbGzMyiEKkEDh9bJwINFD37vGJBcmw1q7Hy7/47Wn44JXZpN2Q9oD4q4nGgyXVbDbZQTJAey
+	J4ZOaXiork4/Sv/yeglweVXvCDHyM+Fc
+X-Received: by 2002:a05:6214:c41:b0:707:69ad:d84a with SMTP id 6a1803df08f44-70af5c31faemr8222156d6.42.1755115585958;
+        Wed, 13 Aug 2025 13:06:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTvuKixXYylw6jZAk9WOPy5ESjWCqWkg0b02ZWazA25ZrJ13LuOVgPLfrU/sj8o6PUC9anPA==
+X-Received: by 2002:a05:6214:c41:b0:707:69ad:d84a with SMTP id 6a1803df08f44-70af5c31faemr8221766d6.42.1755115585490;
+        Wed, 13 Aug 2025 13:06:25 -0700 (PDT)
+Received: from x1.local ([174.89.135.171])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70af5b0ed60sm2678236d6.45.2025.08.13.13.06.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 13:06:24 -0700 (PDT)
+Date: Wed, 13 Aug 2025 16:06:12 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: akpm@linux-foundation.org, aarcange@redhat.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, 21cnbao@gmail.com,
+	ngeoffray@google.com, Suren Baghdasaryan <surenb@google.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Barry Song <v-songbaohua@oppo.com>,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v5] userfaultfd: opportunistic TLB-flush batching for
+ present pages in MOVE
+Message-ID: <aJzwND0VIq6KB5kD@x1.local>
+References: <20250813193024.2279805-1-lokeshgidra@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813193024.2279805-1-lokeshgidra@google.com>
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Wed, Aug 13, 2025 at 12:30:24PM -0700, Lokesh Gidra wrote:
+> MOVE ioctl's runtime is dominated by TLB-flush cost, which is required
+> for moving present pages. Mitigate this cost by opportunistically
+> batching present contiguous pages for TLB flushing.
+> 
+> Without batching, in our testing on an arm64 Android device with UFFD GC,
+> which uses MOVE ioctl for compaction, we observed that out of the total
+> time spent in move_pages_pte(), over 40% is in ptep_clear_flush(), and
+> ~20% in vm_normal_folio().
+> 
+> With batching, the proportion of vm_normal_folio() increases to over
+> 70% of move_pages_pte() without any changes to vm_normal_folio().
+> Furthermore, time spent within move_pages_pte() is only ~20%, which
+> includes TLB-flush overhead.
+> 
+> When the GC intensive benchmark, which was used to gather the above
+> numbers, is run on cuttlefish (qemu android instance on x86_64), the
+> completion time of the benchmark went down from ~45mins to ~20mins.
+> 
+> Furthermore, system_server, one of the most performance critical system
+> processes on android, saw over 50% reduction in GC compaction time on an
+> arm64 android device.
+> 
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Kalesh Singh <kaleshsingh@google.com>
+> Cc: Barry Song <v-songbaohua@oppo.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Peter Xu <peterx@redhat.com>
+> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
 
-Fix typos.
+Acked-by: Peter Xu <peterx@redhat.com>
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
----
- Documentation/accel/qaic/aic100.rst           |  4 ++--
- Documentation/accounting/taskstats.rst        |  2 +-
- Documentation/arch/arm/keystone/knav-qmss.rst |  2 +-
- Documentation/arch/x86/cpuinfo.rst            |  2 +-
- Documentation/devicetree/usage-model.rst      |  2 +-
- Documentation/driver-api/vfio.rst             |  2 +-
- Documentation/hwmon/f71805f.rst               |  2 +-
- Documentation/misc-devices/apds990x.rst       |  2 +-
- Documentation/mm/hwpoison.rst                 |  2 +-
- Documentation/sound/cards/emu-mixer.rst       |  2 +-
- .../translations/zh_TW/process/5.Posting.rst  |  2 +-
- .../userspace-api/media/rc/rc-protos.rst      | 20 +++++++++----------
- 12 files changed, 22 insertions(+), 22 deletions(-)
-
-diff --git a/Documentation/accel/qaic/aic100.rst b/Documentation/accel/qaic/aic100.rst
-index 273da6192fb3..0b575f24eab5 100644
---- a/Documentation/accel/qaic/aic100.rst
-+++ b/Documentation/accel/qaic/aic100.rst
-@@ -455,7 +455,7 @@ deactivate
- 	Deactivate an active workload and return the NSPs to idle.
- 
- status
--	Query the QSM about it's NNC implementation. Returns the NNC version,
-+	Query the QSM about its NNC implementation. Returns the NNC version,
- 	and if CRC is used.
- 
- terminate
-@@ -487,7 +487,7 @@ one user crashes, the fallout of that should be limited to that workload and not
- impact other workloads. SSR accomplishes this.
- 
- If a particular workload crashes, QSM notifies the host via the QAIC_SSR MHI
--channel. This notification identifies the workload by it's assigned DBC. A
-+channel. This notification identifies the workload by its assigned DBC. A
- multi-stage recovery process is then used to cleanup both sides, and get the
- DBC/NSPs into a working state.
- 
-diff --git a/Documentation/accounting/taskstats.rst b/Documentation/accounting/taskstats.rst
-index 2a28b7f55c10..af0519c58eb7 100644
---- a/Documentation/accounting/taskstats.rst
-+++ b/Documentation/accounting/taskstats.rst
-@@ -141,7 +141,7 @@ in future:
- 1. Adding more fields to the end of the existing struct taskstats. Backward
-    compatibility is ensured by the version number within the
-    structure. Userspace will use only the fields of the struct that correspond
--   to the version its using.
-+   to the version it's using.
- 
- 2. Defining separate statistic structs and using the netlink attributes
-    interface to return them. Since userspace processes each netlink attribute
-diff --git a/Documentation/arch/arm/keystone/knav-qmss.rst b/Documentation/arch/arm/keystone/knav-qmss.rst
-index 7f7638d80b42..f9a77eb462b2 100644
---- a/Documentation/arch/arm/keystone/knav-qmss.rst
-+++ b/Documentation/arch/arm/keystone/knav-qmss.rst
-@@ -39,7 +39,7 @@ CPPI/QMSS Low Level Driver document (docs/CPPI_QMSS_LLD_SDS.pdf) at
- 
- 	git://git.ti.com/keystone-rtos/qmss-lld.git
- 
--k2_qmss_pdsp_acc48_k2_le_1_0_0_9.bin firmware supports upto 48 accumulator
-+k2_qmss_pdsp_acc48_k2_le_1_0_0_9.bin firmware supports up to 48 accumulator
- channels. This firmware is available under ti-keystone folder of
- firmware.git at
- 
-diff --git a/Documentation/arch/x86/cpuinfo.rst b/Documentation/arch/x86/cpuinfo.rst
-index dd8b7806944e..4a2a4f2b5fb0 100644
---- a/Documentation/arch/x86/cpuinfo.rst
-+++ b/Documentation/arch/x86/cpuinfo.rst
-@@ -12,7 +12,7 @@ represents an ill-fated attempt from long time ago to put feature flags
- in an easy to find place for userspace.
- 
- However, the amount of feature flags is growing by the CPU generation,
--leading to unparseable and unwieldy /proc/cpuinfo.
-+leading to unparsable and unwieldy /proc/cpuinfo.
- 
- What is more, those feature flags do not even need to be in that file
- because userspace doesn't care about them - glibc et al already use
-diff --git a/Documentation/devicetree/usage-model.rst b/Documentation/devicetree/usage-model.rst
-index 0717426856b2..c89cc3cf817c 100644
---- a/Documentation/devicetree/usage-model.rst
-+++ b/Documentation/devicetree/usage-model.rst
-@@ -128,7 +128,7 @@ successor, the BeagleBoard xM board might look like, respectively::
- 	compatible = "ti,omap3-beagleboard-xm", "ti,omap3450", "ti,omap3";
- 
- Where "ti,omap3-beagleboard-xm" specifies the exact model, it also
--claims that it compatible with the OMAP 3450 SoC, and the omap3 family
-+claims that it is compatible with the OMAP 3450 SoC, and the omap3 family
- of SoCs in general.  You'll notice that the list is sorted from most
- specific (exact board) to least specific (SoC family).
- 
-diff --git a/Documentation/driver-api/vfio.rst b/Documentation/driver-api/vfio.rst
-index 2a21a42c9386..c358f6989c1c 100644
---- a/Documentation/driver-api/vfio.rst
-+++ b/Documentation/driver-api/vfio.rst
-@@ -124,7 +124,7 @@ Assume user wants to access PCI device 0000:06:0d.0::
- 	../../../../kernel/iommu_groups/26
- 
- This device is therefore in IOMMU group 26.  This device is on the
--pci bus, therefore the user will make use of vfio-pci to manage the
-+PCI bus, therefore the user will make use of vfio-pci to manage the
- group::
- 
- 	# modprobe vfio-pci
-diff --git a/Documentation/hwmon/f71805f.rst b/Documentation/hwmon/f71805f.rst
-index 1efe5e5d337c..dea0364c2a6e 100644
---- a/Documentation/hwmon/f71805f.rst
-+++ b/Documentation/hwmon/f71805f.rst
-@@ -55,7 +55,7 @@ additional internal voltages monitored (VSB and battery). It also features
- 6 VID inputs. The VID inputs are not yet supported by this driver.
- 
- The Fintek F71806F/FG Super-I/O chip is essentially the same as the
--F71872F/FG, and is undistinguishable therefrom.
-+F71872F/FG, and is indistinguishable from it.
- 
- The driver assumes that no more than one chip is present, which seems
- reasonable.
-diff --git a/Documentation/misc-devices/apds990x.rst b/Documentation/misc-devices/apds990x.rst
-index e2f75577f731..afba68223a5e 100644
---- a/Documentation/misc-devices/apds990x.rst
-+++ b/Documentation/misc-devices/apds990x.rst
-@@ -26,7 +26,7 @@ using clear channel only. Lux value and the threshold level on the HW
- might vary quite much depending the spectrum of the light source.
- 
- Driver makes necessary conversions to both directions so that user handles
--only lux values. Lux value is calculated using information from the both
-+only lux values. Lux value is calculated using information from both
- channels. HW threshold level is calculated from the given lux value to match
- with current type of the lightning. Sometimes inaccuracy of the estimations
- lead to false interrupt, but that doesn't harm.
-diff --git a/Documentation/mm/hwpoison.rst b/Documentation/mm/hwpoison.rst
-index 483b72aa7c11..dd02fae484dc 100644
---- a/Documentation/mm/hwpoison.rst
-+++ b/Documentation/mm/hwpoison.rst
-@@ -17,7 +17,7 @@ To quote the overview comment::
- 	hardware as being corrupted usually due to a 2bit ECC memory or cache
- 	failure.
- 
--	This focusses on pages detected as corrupted in the background.
-+	This focuses on pages detected as corrupted in the background.
- 	When the current CPU tries to consume corruption the currently
- 	running process can just be killed directly instead. This implies
- 	that if the error cannot be handled for some reason it's safe to
-diff --git a/Documentation/sound/cards/emu-mixer.rst b/Documentation/sound/cards/emu-mixer.rst
-index d87a6338d3d8..edcedada4c96 100644
---- a/Documentation/sound/cards/emu-mixer.rst
-+++ b/Documentation/sound/cards/emu-mixer.rst
-@@ -66,7 +66,7 @@ FX-bus
- 
- name='Clock Source',index=0
- ---------------------------
--This control allows switching the word clock between interally generated
-+This control allows switching the word clock between internally generated
- 44.1 or 48 kHz, or a number of external sources.
- 
- Note: the sources for the 1616 CardBus card are unclear. Please report your
-diff --git a/Documentation/translations/zh_TW/process/5.Posting.rst b/Documentation/translations/zh_TW/process/5.Posting.rst
-index 38f3a6d618eb..eb41ae82d0da 100644
---- a/Documentation/translations/zh_TW/process/5.Posting.rst
-+++ b/Documentation/translations/zh_TW/process/5.Posting.rst
-@@ -88,7 +88,7 @@
- 
-  - 每個補丁都應該能創建一個可以正確地構建和運行的內核；如果補丁系列在中間被
-    斷開，那麼結果仍應是一個正常工作的內核。部分應用一系列補丁是使用
--   “git bisct”工具查找回歸的一個常見場景；如果結果是一個損壞的內核，那麼將使
-+   “git bisect”工具查找回歸的一個常見場景；如果結果是一個損壞的內核，那麼將使
-    那些從事追蹤問題的高尚工作的開發人員和用戶的生活更加艱難。
- 
-  - 不要過分分割。一位開發人員曾經將一組針對單個文件的編輯分成500個單獨的補丁
-diff --git a/Documentation/userspace-api/media/rc/rc-protos.rst b/Documentation/userspace-api/media/rc/rc-protos.rst
-index ec706290c921..a3a9f46b2b9a 100644
---- a/Documentation/userspace-api/media/rc/rc-protos.rst
-+++ b/Documentation/userspace-api/media/rc/rc-protos.rst
-@@ -11,7 +11,7 @@ protocols can encode e.g. an address (which device should respond) and a
- command: what it should do. The values for these are not always consistent
- across different devices for a given protocol.
- 
--Therefore out the output of the IR decoder is a scancode; a single u32
-+Therefore the output of the IR decoder is a scancode; a single u32
- value. Using keymap tables this can be mapped to linux key codes.
- 
- Other things can be encoded too. Some IR protocols encode a toggle bit; this
-@@ -19,7 +19,7 @@ is to distinguish whether the same button is being held down, or has been
- released and pressed again. If has been released and pressed again, the
- toggle bit will invert from one IR message to the next.
- 
--Some remotes have a pointer-type device which can used to control the
-+Some remotes have a pointer-type device which can be used to control the
- mouse; some air conditioning systems can have their target temperature
- target set in IR.
- 
-@@ -75,8 +75,8 @@ protocol, or the manchester BPF decoder.
-      - Command
- 
- There is a variant of rc5 called either rc5x or extended rc5
--where there the second stop bit is the 6th command bit, but inverted.
--This is done so it the scancodes and encoding is compatible with existing
-+where the second stop bit is the 6th command bit, but inverted.
-+This is done so the scancodes and encoding are compatible with existing
- schemes. This bit is stored in bit 6 of the scancode, inverted. This is
- done to keep it compatible with plain rc-5 where there are two start bits.
- 
-@@ -127,7 +127,7 @@ differently.
- rc-5x-20 (RC_PROTO_RC5X_20)
- ---------------------------
- 
--This rc-5 extended to encoded 20 bits. The is a 3555 microseconds space
-+This rc-5 extended to encoded 20 bits. There is a 3555 microsecond space
- after the 8th bit.
- 
- .. flat-table:: rc-5x-20 bits scancode mapping
-@@ -182,7 +182,7 @@ jvc (RC_PROTO_JVC)
- The jvc protocol is much like nec, without the inverted values. It is
- described here https://www.sbprojects.net/knowledge/ir/jvc.php.
- 
--The scancode is a 16 bits value, where the address is the lower 8 bits
-+The scancode is a 16 bit value, where the address is the lower 8 bits
- and the command the higher 8 bits; this is reversed from IR order.
- 
- sony-12 (RC_PROTO_SONY12)
-@@ -329,11 +329,11 @@ The scancode has a somewhat unusual encoding.
- sanyo (RC_PROTO_SANYO)
- ----------------------
- 
--The sanyo protocol is like the nec protocol, but with 13 bits address
-+The sanyo protocol is like the nec protocol, but with 13 bit address
- rather than 8 bits. Both the address and the command are followed by
- their inverted versions, but these are not present in the scancodes.
- 
--Bis 8 to 20 of the scancode is the 13 bits address, and the lower 8
-+Bis 8 to 20 of the scancode is the 13 bit address, and the lower 8
- bits are the command.
- 
- mcir2-kbd (RC_PROTO_MCIR2_KBD)
-@@ -388,7 +388,7 @@ rc-6-mce (RC_PROTO_RC6_MCE)
- This is the rc-6 in mode 6a, 32 bits. The upper 16 bits are the vendor,
- and the lower 16 bits are the vendor-specific bits. This protocol is
- for the Microsoft MCE variant (vendor = 0x800f). The toggle bit in the
--protocol itself is ignored, and the 16th bit should be takes as the toggle
-+protocol itself is ignored, and the 16th bit should be taken as the toggle
- bit.
- 
- sharp (RC_PROTO_SHARP)
-@@ -399,7 +399,7 @@ https://www.sbprojects.net/knowledge/ir/sharp.php. There is a very long
- (40ms) space between the normal and inverted values, and some IR receivers
- cannot decode this.
- 
--There is a 5 bit address and a 8 bit command. In the scancode the address is
-+There is a 5 bit address and an 8 bit command. In the scancode the address is
- in bits 8 to 12, and the command in bits 0 to 7.
- 
- xmp (RC_PROTO_XMP)
 -- 
-2.43.0
+Peter Xu
 
 
