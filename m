@@ -1,208 +1,176 @@
-Return-Path: <linux-kernel+bounces-766193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34BF8B24388
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:01:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE421B24394
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C007062382C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:58:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76683726534
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D812D94B0;
-	Wed, 13 Aug 2025 07:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1ln4MWC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C1A2ED15D;
+	Wed, 13 Aug 2025 07:57:51 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEBB2E9EAF;
-	Wed, 13 Aug 2025 07:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D799D2E8DF8
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071811; cv=none; b=k0/rNANq8Hm6jiRAs+J33XuDSBiyG9KGcXQFlDi1px1M41IeEf/FVaCW9CeQoM5A9izI/kaBf/dkIlCKDvt9gMc7dEtJHrh9u8ItMJltz/uHC293ndtcqAsHW7t/3cu16Xl8gcTTfthRt+OUdr1/23u4xSfd4wyQHnUtiTrocDc=
+	t=1755071870; cv=none; b=LA8ntRv/Cqq9TQWzqK0FFVK1floaTDLmBYwcrtcrhXFmUR/Zo+bAW5GGTsFQZeOT5SThVjClvCnu/owA6Kbea60YoLK0sqzjyjFEtXXB01h0quNJ2+x1B/BYLnrVMsY0B3ZZz80c6QCubtSgCWev6d73bdYAMMjqexQCHgCKbow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071811; c=relaxed/simple;
-	bh=SKWXBFlygeG3qDZNnsJJVgf3glQMopwMM8YJ342cbAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u9MfgogfaL+WCqzh6n1Z1hqtbokkgwZkZknz22sWzPFnPLVu+gXHumsf2zuGvnGDGmzbS6DO1J8YmHqO5mK12UGEflsOnrEeLUyvgzLnp7CXC6EnVOWIPICXuBa5W5log653dDCmyP3HL+BCvx4KvZkLBM5OwC1UmVeaOcHmZ9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1ln4MWC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD2FEC4CEEB;
-	Wed, 13 Aug 2025 07:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755071811;
-	bh=SKWXBFlygeG3qDZNnsJJVgf3glQMopwMM8YJ342cbAs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D1ln4MWCFlclf+UsMtL4BG/cdi8RRDSpRkbWIWOqN13A4FeYX+AlQmTAFA7JvfQj2
-	 P9MLVGh/1GP3xgYGuAjJ2dl/UjiwfKabXH6+CK5dpTiSomUjHxeu/MpSTf6XFR5IEJ
-	 G7+PVIlbTr1aVRvZk0EgZ1R0zQ3bdMQ0PaaBCk+Pp98znt3qgQEP1+xw04s6UtjaPX
-	 DLVJfybtVtRqA4+nnQRbJR1oclLNDc9aszt/uXkeBcVBNWIQ3aE+79Oed7/Cidx2+3
-	 0SeGAtz0bp1MSy8Si8igK9XB8vPRF0YTQrwJUCR06gkiuTGHCZUOyVsBSe9IqkZStB
-	 jri3B9iFlb0pQ==
-Message-ID: <6f0451ee-ddb8-4ded-8f0a-b491de9cc308@kernel.org>
-Date: Wed, 13 Aug 2025 09:56:46 +0200
+	s=arc-20240116; t=1755071870; c=relaxed/simple;
+	bh=JP3JU9DeiGsROJxfLJcR/pj+/8+ah7HYe4Sxa3Bz/AI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=cElmRSVdyv+wUx+1ZQeBap7Kt1nGysH8xfL1zZq2ioRjCme2P1It2byRHVYv3gzAyyGvGA/3x3VFs8hfH2l8Za/7EjpAM4wBEuTtWaRFGE0XGGVE9YJUdm+DFJKQReZWCgIkVaOY6HbOtEZ93Dv6yRiS1BwXm1ELrftQRIRp7fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-881878af906so1252111239f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:57:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755071868; x=1755676668;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j8kNKWjQfVGgObiakLKUOpl9vALlhUvsvnWSAVGV+hA=;
+        b=bozjigpvATF+rJDcILgXhhfVJuz3iGJM38p97wPoEfkO30z9XPHM33nDW4TUUj1yTy
+         jcAuDpe4mgExH/3XOcEsBwhjrGMsM1ytWGNPsRPLxbcc7DJtuxEc7+jbV76PbJ6oalVQ
+         9Eu171NU6rLxtArACe60k4mcGQ4zr4Upoos8ooZnV63u5AUBE3LZQLXn+G8qtUgZ9EG/
+         36V5HzYzQ7KcQV295SOgQ1p+XrxOX3q36J0nWgOrHgIn2IFhLUz6bdDrW9UtSO5ExFqZ
+         BDQDkGsQvEGR46/QTHdk4rCvpF1WcrTwTCwIRAd9CmgGMWsKmvfF///b92aGV5Xhn64c
+         YQ8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWDOiKD4YXCtYh8X/3wZlh7xDdE1YR34bxVfV7bECkk2XkhLQsSLmOC2cqeTyDe8x/Zcauey1fFEDD8RFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/BGdc52T0JL5RajVszfwKtZfHTEcnvWDrQMWtBvHoFpBFGirM
+	f6EjFTah2SJZ5OV86wpznrPNYbpFPceoj5U31kMmgyJhGr+IoWkndQhBAkrNqUGFc7Nn6ZbvMqk
+	PTnIA7zSp5ZKJD40+t/4rvtHZoR1ampjzoskws4XPalMBxxOOrk30a7imR7w=
+X-Google-Smtp-Source: AGHT+IEz0TPsz1KmcJLOVcoGmgl6ivHtpmt3ABdiAZsXXtlUPUoPi0TiH/VXcplKlEfNOByudgT+xTYQ7LySxAvl4q0nNONtBLXh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] arm64: dts: exynos7870: add DSI support
-To: Kaustabh Chakraborty <kauschluss@disroot.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250627-exynos7870-drm-dts-v2-0-d4a59207390d@disroot.org>
- <20250627-exynos7870-drm-dts-v2-3-d4a59207390d@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250627-exynos7870-drm-dts-v2-3-d4a59207390d@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:6c05:b0:881:82bb:94b2 with SMTP id
+ ca18e2360f4ac-884296a2e80mr445984139f.13.1755071867828; Wed, 13 Aug 2025
+ 00:57:47 -0700 (PDT)
+Date: Wed, 13 Aug 2025 00:57:47 -0700
+In-Reply-To: <20250812155245.507012-1-sdf@fomichev.me>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689c457b.a70a0220.7865.0049.GAE@google.com>
+Subject: [syzbot ci] Re: net: Convert to skb_dst_reset and skb_dst_restore
+From: syzbot ci <syzbot+ci1b726090b21fedf1@syzkaller.appspotmail.com>
+To: abhishektamboli9@gmail.com, andrew@lunn.ch, ayush.sawal@chelsio.com, 
+	coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org, 
+	edumazet@google.com, gregkh@linuxfoundation.org, herbert@gondor.apana.org.au, 
+	horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, mhal@rbox.co, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, pabeni@redhat.com, 
+	pablo@netfilter.org, sdf@fomichev.me, steffen.klassert@secunet.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 26/06/2025 22:13, Kaustabh Chakraborty wrote:
->  			reboot-mode {
->  				compatible = "syscon-reboot-mode";
->  				offset = <0x080c>;
-> @@ -674,6 +682,83 @@ cmu_isp: clock-controller@144d0000 {
->  				 <&cmu_mif CLK_GOUT_MIF_CMU_ISP_VRA>;
->  		};
->  
-> +		syscon_cam0: syscon@144f1040 {
-> +			compatible = "samsung,exynos7870-cam0-sysreg", "syscon";
-> +			reg = <0x144f1040 0x04>;
-> +		};
-> +
-> +		dsi: dsi@14800000 {
-> +			compatible = "samsung,exynos7870-mipi-dsi";
-> +			reg = <0x14800000 0x100>;
-> +			interrupts = <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clock-names = "bus", "pll", "byte", "esc";
-> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_BUS_DISP>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_APB_DISP>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_MIPIPHY_TXBYTECLKHS_USER>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_MIPIPHY_RXCLKESC0_USER>;
+syzbot ci has tested the following series
 
-First clocks, then clock-names, please. Same for phys here and in all
-other place.
+[v1] net: Convert to skb_dst_reset and skb_dst_restore
+https://lore.kernel.org/all/20250812155245.507012-1-sdf@fomichev.me
+* [PATCH net-next 1/7] net: Add skb_dst_reset and skb_dst_restore
+* [PATCH net-next 2/7] xfrm: Switch to skb_dst_reset to clear dst_entry
+* [PATCH net-next 3/7] netfilter: Switch to skb_dst_reset to clear dst_entry
+* [PATCH net-next 4/7] net: Switch to skb_dst_reset/skb_dst_restore for ip_route_input callers
+* [PATCH net-next 5/7] staging: octeon: Convert to skb_dst_drop
+* [PATCH net-next 6/7] chtls: Convert to skb_dst_reset
+* [PATCH net-next 7/7] net: Add skb_dst_check_unset
 
-> +
-> +			phy-names = "dsim";
-> +			phys = <&mipi_phy 1>;
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					dsi_to_decon: endpoint {
-> +						remote-endpoint = <&decon_to_dsi>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		decon: decon@14830000 {
+and found the following issue:
+WARNING in nf_reject_fill_skb_dst
 
-node name: display-controller@
+Full report is available here:
+https://ci.syzbot.org/series/dcc132bc-db4e-4a0b-a95c-9960b8a48d10
 
-> +			compatible = "samsung,exynos7870-decon";
-> +			reg = <0x14830000 0x8000>;
-> +			interrupt-names = "fifo", "vsync", "lcd_sys";
-> +			interrupts = <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			clock-names = "pclk_decon0", "aclk_decon0",
-> +				      "decon0_eclk", "decon0_vclk";
-> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_PLL>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_BUS_USER>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_DECON_ECLK>,
-> +				 <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_DECON_VCLK>;
-> +
-> +			iommus = <&sysmmu_decon>;
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					decon_to_dsi: endpoint {
-> +						remote-endpoint = <&dsi_to_decon>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		sysmmu_decon: sysmmu@14860000 {
+***
 
-iommu@
+WARNING in nf_reject_fill_skb_dst
 
-> +			compatible = "samsung,exynos-sysmmu";
-> +			reg = <0x14860000 0x1000>;
-> +			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
-> +			#iommu-cells = <0>;
-> +
-> +			clock-names = "sysmmu";
-> +			clocks = <&cmu_dispaud CLK_GOUT_DISPAUD_MUX_BUS_USER>;
-> +		};
+tree:      net-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
+base:      37816488247ddddbc3de113c78c83572274b1e2e
+arch:      amd64
+compiler:  Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+config:    https://ci.syzbot.org/builds/2aac43d4-6d95-49c6-8e28-28941fdb3117/config
+C repro:   https://ci.syzbot.org/findings/0af27fa7-d0b6-43d6-8965-58fbc54ca186/c_repro
+syz repro: https://ci.syzbot.org/findings/0af27fa7-d0b6-43d6-8965-58fbc54ca186/syz_repro
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5901 at ./include/linux/skbuff.h:1165 skb_dst_check_unset include/linux/skbuff.h:1164 [inline]
+WARNING: CPU: 1 PID: 5901 at ./include/linux/skbuff.h:1165 skb_dst_set include/linux/skbuff.h:1210 [inline]
+WARNING: CPU: 1 PID: 5901 at ./include/linux/skbuff.h:1165 nf_reject_fill_skb_dst+0x2a4/0x330 net/ipv4/netfilter/nf_reject_ipv4.c:234
+Modules linked in:
+CPU: 1 UID: 0 PID: 5901 Comm: kworker/u8:3 Not tainted 6.16.0-syzkaller-12063-g37816488247d-dirty #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Workqueue: ipv6_addrconf addrconf_dad_work
+RIP: 0010:skb_dst_check_unset include/linux/skbuff.h:1164 [inline]
+RIP: 0010:skb_dst_set include/linux/skbuff.h:1210 [inline]
+RIP: 0010:nf_reject_fill_skb_dst+0x2a4/0x330 net/ipv4/netfilter/nf_reject_ipv4.c:234
+Code: 8b 0d 60 b1 8b 08 48 3b 8c 24 e0 00 00 00 75 5d 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d e9 03 8d 67 01 cc e8 cd 6c ab f7 90 <0f> 0b 90 e9 38 ff ff ff 44 89 f9 80 e1 07 fe c1 38 c1 0f 8c 2b fe
+RSP: 0018:ffffc900001e0360 EFLAGS: 00010246
+RAX: ffffffff8a143ee3 RBX: ffff888110b91200 RCX: ffff88810a3d8000
+RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc900001e0490 R08: ffffffff8fa34737 R09: 1ffffffff1f468e6
+R10: dffffc0000000000 R11: fffffbfff1f468e7 R12: ffff888011c5c101
+R13: dffffc0000000001 R14: 1ffff9200003c070 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881a3c21000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c003cc5000 CR3: 000000010fc16000 CR4: 00000000000006f0
+Call Trace:
+ <IRQ>
+ nf_send_unreach+0x17b/0x6e0 net/ipv4/netfilter/nf_reject_ipv4.c:325
+ nft_reject_inet_eval+0x4bc/0x690 net/netfilter/nft_reject_inet.c:27
+ expr_call_ops_eval net/netfilter/nf_tables_core.c:237 [inline]
+ nft_do_chain+0x40c/0x1920 net/netfilter/nf_tables_core.c:285
+ nft_do_chain_inet+0x25d/0x340 net/netfilter/nft_chain_filter.c:161
+ nf_hook_entry_hookfn include/linux/netfilter.h:158 [inline]
+ nf_hook_slow+0xc5/0x220 net/netfilter/core.c:623
+ nf_hook include/linux/netfilter.h:273 [inline]
+ NF_HOOK+0x206/0x3a0 include/linux/netfilter.h:316
+ __netif_receive_skb_one_core net/core/dev.c:5979 [inline]
+ __netif_receive_skb+0x143/0x380 net/core/dev.c:6092
+ process_backlog+0x60e/0x14f0 net/core/dev.c:6444
+ __napi_poll+0xc7/0x360 net/core/dev.c:7489
+ napi_poll net/core/dev.c:7552 [inline]
+ net_rx_action+0x707/0xe30 net/core/dev.c:7679
+ handle_softirqs+0x286/0x870 kernel/softirq.c:579
+ do_softirq+0xec/0x180 kernel/softirq.c:480
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x17d/0x1c0 kernel/softirq.c:407
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:910 [inline]
+ __dev_queue_xmit+0x1d79/0x3b50 net/core/dev.c:4740
+ neigh_output include/net/neighbour.h:547 [inline]
+ ip6_finish_output2+0x11fe/0x16a0 net/ipv6/ip6_output.c:141
+ NF_HOOK include/linux/netfilter.h:318 [inline]
+ ndisc_send_skb+0xb96/0x1470 net/ipv6/ndisc.c:512
+ ndisc_send_ns+0xcb/0x150 net/ipv6/ndisc.c:670
+ addrconf_dad_work+0xaae/0x14b0 net/ipv6/addrconf.c:4282
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
 
+***
 
-Best regards,
-Krzysztof
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
