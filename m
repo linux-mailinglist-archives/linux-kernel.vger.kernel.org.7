@@ -1,100 +1,90 @@
-Return-Path: <linux-kernel+bounces-766942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD1BB24CF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:14:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B17AB24D01
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA499188F9BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41A271BC0A72
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401D52F0C5D;
-	Wed, 13 Aug 2025 15:09:32 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467032FE571;
+	Wed, 13 Aug 2025 15:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SdMeFhAV"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486627260D;
-	Wed, 13 Aug 2025 15:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA562FA0F2
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097771; cv=none; b=KqI/FuTJ7rKGXSiLkLWWfhZ87nG/u4M/21O+aryU0JKeeUABgCKAQ4/hYH88/uO8zLqarvkpINFT2vFD5gfGZTWeBKlqvVdMnAh9pTW4OcPLDF2EsE5pdcqoOdrIPNixIvVydaHcNaAHy91gfQZ2F2XeFQlb2/spc1CoiTl0pNU=
+	t=1755097836; cv=none; b=KHNj3rwI8A63+MGgYYSsdRHpW8Ot1QN+OFaUOm3LBKwIDPSnTvxziZWKYSxggbLSfPzIxLcon3bwq3toezTImC1NC8gEj1LHFM6+P7F54Dp8lkVJSHVIc42qqtCkz+wRtjbXCJBTl2waWnCXV4LvCpWyER0XhoWjT1t5eXjowN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097771; c=relaxed/simple;
-	bh=K5dXaEoNmMWgRK1fo+BPg/hTdrwFez38GOBfbSR/ayU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HpDefWG2kqKhFGXbq3iyeHGxy5hOOxmansMovajS/F/GllLJ1NyvipHqCFEbqdEWzidubk6mCUv3EZeqIq9l3Tclvo6XkCQJ+Tv3gUVm2GqscU+IMshDRlvYbKCQdnwf0668DEqgM4eDrD+zQmVPaPg6ndhFVPwN46d136UXpvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2BYs3CZqz6GFlQ;
-	Wed, 13 Aug 2025 23:07:29 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5433C1400D4;
-	Wed, 13 Aug 2025 23:09:27 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
- 2025 17:09:26 +0200
-Date: Wed, 13 Aug 2025 16:09:25 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
-Subject: Re: [PATCH V2 09/20] nvdimm/namespace_label: Skip region label
- during ns label DPA reservation
-Message-ID: <20250813160925.000015c8@huawei.com>
-In-Reply-To: <20250730121209.303202-10-s.neeraj@samsung.com>
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121234epcas5p2605fbec7bc95f6096550792844b8f8ee@epcas5p2.samsung.com>
-	<20250730121209.303202-10-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755097836; c=relaxed/simple;
+	bh=99uxcXR1J2m2BQHk77hnPMNeqK1L68EQcBXd93xjZgI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ty8VUIKznEiwmVHbz6FRRhQbMGJpvOO8Rqave+RsoGDthz0XmrFU54usyyxDRX36st0nw9Ba2iX8RVZInsaCeU0jPJ5J/9t9f1reYsv1WqAK5X06m2IfeSg5PzSSdrP9+2EQGqsKlo2vwSLda1bs8aud2zOz7jGcFQVsGfMXznQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SdMeFhAV; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755097822;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AGeRG7EIYSd/DYHs9x114MtCV4AwqXM+cwNPFQAJbMo=;
+	b=SdMeFhAVUAWHfrtYGvdN0CNlSrfvu6tfrH7yecpzEjjvnXmIrswCKomYEBSbnP/oEezy/3
+	adhrMngNvcTdPaZhmHSN7RmCkctR6TLGYhs26oKKYiUe5QfvvgiQfw+olh7tjrtFRcekYc
+	2b4/XQp+anvQvbJ+AN4oRnIg+fEZfLI=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [usb-storage] [PATCH 1/3] usb: storage: realtek_cr: Improve
+ function parameter data types
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <a6deb8d0-dc8e-4d4a-94d2-ed2617091eef@rowland.harvard.edu>
+Date: Wed, 13 Aug 2025 17:10:10 +0200
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-usb@vger.kernel.org,
+ usb-storage@lists.one-eyed-alien.net,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Message-Id: <E3437C91-EF05-4EB2-8998-10D599ED3AAD@linux.dev>
+References: <20250813101249.158270-2-thorsten.blum@linux.dev>
+ <a6deb8d0-dc8e-4d4a-94d2-ed2617091eef@rowland.harvard.edu>
+To: Alan Stern <stern@rowland.harvard.edu>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 30 Jul 2025 17:41:58 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
-
-> If Namespace label is present in LSA during nvdimm_probe then DPA
-> reservation is required. But this reservation is not required by region
-> label. Therefore if LSA scanning finds any region label, skip it.
+On 13. Aug 2025, at 15:59, Alan Stern wrote:
+> I just looked through the original source file.  What about 
+> rts51x_bulk_transport_special()?  Shouldn't its buf_len parameter also 
+> be unsigned?
 > 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-> ---
->  drivers/nvdimm/label.c | 4 ++++
->  1 file changed, 4 insertions(+)
+> For that matter, what about cmd_len in both routines?
 > 
-> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
-> index c4748e30f2b6..064a945dcdd1 100644
-> --- a/drivers/nvdimm/label.c
-> +++ b/drivers/nvdimm/label.c
-> @@ -452,6 +452,10 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
->  		lsa_label = to_label(ndd, slot);
->  		nd_label = &lsa_label->ns_label;
->  
-> +		/* skip region label, dpa reservation for ns label only */
-Confusing comment and not clear if skip applies just to region label or
-to dpa reservation as well.
+> And have you checked the corresponding values in all the other 
+> usb-storage subdrivers?
+> 
+> As you can see, worrying about the difference between signed and 
+> unsigned values, when it doesn't really matter, quickly leads to a 
+> morass.
 
-		/* Skip region label.  DPA reservation is for NS label only. */
+There are many other instances throughout the kernel where types could
+be improved, which is why I originally combined this with the if check
+change and limited the data type changes to that scope. Feel free to
+skip this one, as it might not be worthwhile as a standalone patch.
 
-or something along those lines (assuming I have understood this right!)
-> +		if (is_region_label(ndd, lsa_label))
-> +			continue;
-> +
->  		if (!slot_valid(ndd, lsa_label, slot))
->  			continue;
->  
+Thanks,
+Thorsten
 
 
