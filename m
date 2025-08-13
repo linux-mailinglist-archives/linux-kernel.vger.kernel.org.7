@@ -1,135 +1,176 @@
-Return-Path: <linux-kernel+bounces-766133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29606B242BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D345B242BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4B7165F50
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:27:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9261E1686B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759A02D781B;
-	Wed, 13 Aug 2025 07:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116FB2DFA34;
+	Wed, 13 Aug 2025 07:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MZyHJlpG"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1PrPQ9y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D322D3236
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E5B2D979B;
+	Wed, 13 Aug 2025 07:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070050; cv=none; b=CboTkP8GofRSMw5bqo5zYLEipvlilmox6bEpL+VV7Br0cnni1Oq1muQG+vgczDGnOETCGRaP1/rWIWfEPwnW0X5K91V1rmOYuOJ8BwRfaOEE+8JshJSBsJ8lmPnBkpW/JdTzaSMFPGrKHfZxZyLkO3F653ADybcpaV9mP2Zp36k=
+	t=1755070068; cv=none; b=r0k+uS5EU32kI89odikevoy76pPbmztuhoOSuZZ4qLmfgjrEWYHdggt58kXhExH+Dt45Cgg4aY04feKdmzh0BsI/SUIT/+KngaW6l6LhAycSPWO28+dLnNq1khf5TwRSbYjrXZIOZWO9WGD7PR1RrdJkW4efnGd1VOaw9ho8wV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070050; c=relaxed/simple;
-	bh=YHoUjA/8KX/MmU2Uv6aAwYiYpEqz2AMzsIp8MSWSjbA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UA70+QRMvW8a+9VZdB+NmlYEBby+ofWbz9YtjL5bIPI011D6kcpnyaElfU1higRJAkAuCjV6fz53oEKZl08xS9Xil1VEWx8UiXcznZ8uAkgeHjeASslQD896LFtVIe8HviuielrHluM5yxzY2HiPt5HrTUZ9lQJ+fsJap3FqMd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MZyHJlpG; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b783265641so1135561f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:27:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755070048; x=1755674848; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=17SD2UwpWysDD6vNNdHlWpNPy0OKiiXdv4ame2mkJNQ=;
-        b=MZyHJlpGz9zMGijGFCBzEXHlCgGtWADe8YC3voZe7lM2yuhL6lDpgB2qzTBDxnXSNy
-         xIgFsy1yopvy+OWjyWEG1krSQQvThUDHz1hmCHipVzDENcS/4k7/Ix6cgW7oMECmlxK+
-         jlrJL6is7lJk1NvHMPKYwWeJ7o9l4OPvJR+9J9dkuCkpntKHxpJ9Hlca14CqmB1jXp1X
-         L0qKsyi3/qfBEDDDxpSPm4pB5ccoLvBkn4LS03kS7krhcwKZAvFH6eItTnBFQ0plD/XY
-         zqkIklJJi2kCLyzj+RWwzTq4s1K9kJWyHs7CzrCSVgq5RSETK1QGFW64eLWXj0a0tNjS
-         u+nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755070048; x=1755674848;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=17SD2UwpWysDD6vNNdHlWpNPy0OKiiXdv4ame2mkJNQ=;
-        b=r5ALzl8DzgIxAp/iIZWxnoigUD5DupiHUhC0y0ySm3nyPLgl4TQk4I/nUTA1KVCe+Q
-         V8+JmYTsGVoGp4L0zh6cYi+yASw4YXYqPYeoUIKeeZvJ5lNc3LJLMyYPpQ0qyhrHT4iq
-         HZ5C+nOELoRHR7AjWiPhZUfvQlYiMToFb6IQSN5eglL3voatCOnFb5LxLOOnXc8DDIt4
-         +oMKhiLMDixmxxNSVw0NwmOy2QB6/fiQ3Sst6MKC5D92/EITu5f2jDJU6GklAQF7wMC4
-         3dS+NOyY7/jr5wldgpaS0mOo1YGqsvuH1cdb5saOnD8abFgrig62i19s9ASrhWfs9+6l
-         6TLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOWMpdFYtzQJgRxiO5Uh1v8lH4aZmt19DeIXIfxirwd4H3XxC7EClSidIdjstlo2Ns6RoR71N6Ow6/yD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0qlktWW+CR7sAIjVZzGRuawF4xvqpRnpJHWOPEYrDMHfoe9nI
-	PARKspV4M4wt470Fim1tSCVfEB14chl0cbWqUfZKSCXEwaitS5zSKieIY5QWXzeJAah2eu/r9T+
-	fSTyzhYe5L6x7TI8pKg==
-X-Google-Smtp-Source: AGHT+IGwdUHoW8Y7DCJnE3LmPWgw+RTDGRfKlKIp2l/UIObWW7mCAH6YZMY5QXAF8IY4M8lipLx+ulfYnIu9PdU=
-X-Received: from wrxp12.prod.google.com ([2002:a05:6000:18c:b0:3b8:dd81:b66])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:250f:b0:3b8:dabe:bd78 with SMTP id ffacd0b85a97d-3b917ecf44amr1294514f8f.54.1755070047818;
- Wed, 13 Aug 2025 00:27:27 -0700 (PDT)
-Date: Wed, 13 Aug 2025 07:27:25 +0000
-In-Reply-To: <20250812-rnull-up-v6-16-v4-11-ed801dd3ba5c@kernel.org>
+	s=arc-20240116; t=1755070068; c=relaxed/simple;
+	bh=krYBJ3ztp4viHfk1JJqQzSpCNf1QqcjxMu2WeiIBsdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rpSRljk04UcDYWgBlOQHetcfoFb9XR0twDD+fzFd/rcwNt39sz261FL8jk3C6rFg17doYVgljsxFi1M7pJnWqewVJ8d+cORqLZzislDJgfm8eUyi7MBSfNkbSKBxy4fEVyu4wSRaZx3C48jOjhtlltfx4dS44ty9w0LL4hVd7gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1PrPQ9y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBB70C4CEEB;
+	Wed, 13 Aug 2025 07:27:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755070067;
+	bh=krYBJ3ztp4viHfk1JJqQzSpCNf1QqcjxMu2WeiIBsdk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l1PrPQ9yS5rfizqElqeCYwNIbNaDU3FB5nP06YWgeBbfEOcvK7YyFk83jXN2Q2rTO
+	 sIz4sFhX/ZUqeHYUWw5CcBoFfrx59qvfVyKD4E02bgWp1WQpvCyQ+YnjeT1ZNIr6ey
+	 UY6JOyY05+zK5ioBeYDHWMsnvhhNmu/NeSg5DMSp8Q9f9frenu/9U+tRsH9Zsln7kF
+	 rlhUO2WwQ7/zpxrOwepMpPUwCv5xKHj8MXG3jdyU3tIehPitIlUhnjmVRMkV3QvQHC
+	 SBedWE9LwBuB+2uv0sdODkIenIgmVfzyAekXBsR37CF8Cqvb3BD20PzYnPcsbbDst/
+	 948VEriLBf8LA==
+Message-ID: <f9219b68-35a6-456d-911e-c4e8590d69ea@kernel.org>
+Date: Wed, 13 Aug 2025 09:27:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org> <20250812-rnull-up-v6-16-v4-11-ed801dd3ba5c@kernel.org>
-Message-ID: <aJw-XWhDahVeejl3@google.com>
-Subject: Re: [PATCH v4 11/15] rnull: enable configuration via `configfs`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	linux-block@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: sm8450: Flatten usb controller
+ node
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, neil.armstrong@linaro.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250715052739.3831549-1-krishna.kurapati@oss.qualcomm.com>
+ <20250715052739.3831549-3-krishna.kurapati@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250715052739.3831549-3-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 10:44:29AM +0200, Andreas Hindborg wrote:
-> Allow rust null block devices to be configured and instantiated via
-> `configfs`.
+On 15/07/2025 07:27, Krishna Kurapati wrote:
+> Flatten usb controller node and update to using latest bindings
+> and flattened driver approach.
 > 
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8450-hdk.dts       |  5 --
+>  .../dts/qcom/sm8450-sony-xperia-nagara.dtsi   |  5 +-
+>  arch/arm64/boot/dts/qcom/sm8450.dtsi          | 57 +++++++++----------
+>  3 files changed, 27 insertions(+), 40 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450-hdk.dts b/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+> index 2ff40a120aad..0c6aa7ddf432 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+> @@ -1199,11 +1199,6 @@ &usb_1 {
+>  	status = "okay";
+>  };
+>  
+> -&usb_1_dwc3 {
+> -	dr_mode = "otg";
+> -	usb-role-switch;
+> -};
+> -
+>  &usb_1_dwc3_hs {
+>  	remote-endpoint = <&pmic_glink_hs_in>;
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450-sony-xperia-nagara.dtsi b/arch/arm64/boot/dts/qcom/sm8450-sony-xperia-nagara.dtsi
+> index cc1335a07a35..6bd315e10992 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450-sony-xperia-nagara.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450-sony-xperia-nagara.dtsi
+> @@ -781,11 +781,8 @@ &uart7 {
+>  };
+>  
+>  &usb_1 {
+> -	status = "okay";
+> -};
+> -
+> -&usb_1_dwc3 {
+>  	dr_mode = "peripheral";
+> +	status = "okay";
+>  };
+>  
+>  &usb_1_hsphy {
+> diff --git a/arch/arm64/boot/dts/qcom/sm8450.dtsi b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> index 54c6d0fdb2af..89dbac3bdd2b 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8450.dtsi
+> @@ -5417,12 +5417,9 @@ opp-202000000 {
+>  		};
+>  
+>  		usb_1: usb@a6f8800 {
+> -			compatible = "qcom,sm8450-dwc3", "qcom,dwc3";
+> -			reg = <0 0x0a6f8800 0 0x400>;
+> +			compatible = "qcom,sm8450-dwc3", "qcom,snps-dwc3";
+> +			reg = <0 0x0a600000 0 0xfc100>;
 
-Overall LGTM, but a few comments below:
 
-> diff --git a/drivers/block/rnull/configfs.rs b/drivers/block/rnull/configfs.rs
-> new file mode 100644
-> index 000000000000..8d469c046a39
-> --- /dev/null
-> +++ b/drivers/block/rnull/configfs.rs
-> @@ -0,0 +1,218 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +use super::{NullBlkDevice, THIS_MODULE};
-> +use core::fmt::Write;
-> +use kernel::{
-> +    block::mq::gen_disk::{GenDisk, GenDiskBuilder},
-> +    c_str,
-> +    configfs::{self, AttributeOperations},
-> +    configfs_attrs, new_mutex,
+So this was never checked. Can you start using tools before you send
+code upstream?
 
-It would be nice to add
 
-	pub use configfs_attrs;
-
-to the configfs module so that you can import the macro from the
-configfs module instead of the root.
-
-> +            try_pin_init!( DeviceConfig {
-> +                data <- new_mutex!( DeviceConfigInner {
-
-Extra spaces in these macros.
-
-> +        let power_op_str = core::str::from_utf8(page)?.trim();
-> +
-> +        let power_op = match power_op_str {
-> +            "0" => Ok(false),
-> +            "1" => Ok(true),
-> +            _ => Err(EINVAL),
-> +        }?;
-
-We probably want kstrtobool here instead of manually parsing the
-boolean.
-
-Alice
+Best regards,
+Krzysztof
 
