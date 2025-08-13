@@ -1,157 +1,147 @@
-Return-Path: <linux-kernel+bounces-767659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDB0B25753
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:11:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7F2B2574B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:09:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0005E9A00CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:11:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6655A7AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DE12FB989;
-	Wed, 13 Aug 2025 23:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17D82FC863;
+	Wed, 13 Aug 2025 23:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGyxdG3y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OlxveLth"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713412F0C73;
-	Wed, 13 Aug 2025 23:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527442F4A06
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755126680; cv=none; b=jro1OdRSI/LBVfH1OjG1AdtDYoqmDvLVn63gkM92kvhTEodV/acBjOBlZTsnc7jGazuK0lIz67aQFbPQIMCOxqq1oIlNDw7AzF4ct8i7hAnLBsHcAhJKym01Akc1kVtgfMqJQL3uwqLdrYWOwndWSprEqL9OEmRfTFwcL2T7WA0=
+	t=1755126540; cv=none; b=THHpEzhHLBsHNPCii3LcJyS0iZgrLYuyE0C+16eCESTlyf3c6l+tL4o3ARnP9wZNgi1J3GY+yn65lAgzMsRFsw1IYKQGnzsDopbc9MvDueXz1g79Xne4tZfGn+O6J6K/UGe5+Yjs+wQOxcfraiV+R+TmT/k9KE5K0iWZLa5+V9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755126680; c=relaxed/simple;
-	bh=fhWSqsUD+JLrZzRCCQ6qojOKpaAlQUZp/KhpHgxbrA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pmRYElZHK5q/wGQzlV3a/+On6GCCpSv6leywF0lh7HehXkZh2uNw4FqC8BJ2jGct28x46goCMcoCJWRn9SnN8wbd9LfwTl0sj/BSzCKB3Ntgjc5x3WsW8aVWU0g8Mjy9J/KHhi6dLQk6ludiIKwKF7xr3xfdndCQHUQ3arqF++g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGyxdG3y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C04EC4CEEB;
-	Wed, 13 Aug 2025 23:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755126680;
-	bh=fhWSqsUD+JLrZzRCCQ6qojOKpaAlQUZp/KhpHgxbrA4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oGyxdG3yG0UZJZywEx6I+R9WUZL9yYoTABpPK33iSHBo21fNhuWwTD4dpvnfzlt42
-	 722zJO1LPgsbnjR33usSiVHPY2luAHm2wQnXY7nlMoYmfcIiLtYi8XkuYypVcWOpCP
-	 zUL51VCiOwfXwt2/p3Z5lF4faxS8y6KdbYd59E3Y5gdeeTKCg6HRIRbpsRwn5qUj3a
-	 RzbS9y8yPXtF8vKLiuWJjIfx5pBfMLxcK00SXf4Hw7UPAighjlomqUcuzCIawNsESP
-	 WWAjV2r5W6TyBLr0muQGXlLNuHq/Eb/X95sU9nUaJBqRxnT6RkQTqTDyXbmPt4TEM6
-	 MUmBwvKeRNVOw==
-Message-ID: <9dde49e5-4368-402f-8cc2-797ac08c0e8a@kernel.org>
-Date: Thu, 14 Aug 2025 08:08:37 +0900
+	s=arc-20240116; t=1755126540; c=relaxed/simple;
+	bh=D3VCs/yBFzDfZDnvikVOvGWSHbXeqmmlCqMVXJKIChc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=GICEYzA9wqN64FUYUpvJ/WobwzYGmJURri4/qIEcNWEsOvx2Zf+WJO8ijW+O9CAfuxQ51WLsYNhUAFreGfu5XWoFB3QGSTPmme1B6Wzngw/+VJw7yP9N9yUlVrmmp9RXTmlFYcVf7BaIazBlDIDg9I53Gk/RtvZrVSQpe3+ZVkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OlxveLth; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b9d41c1964so176608f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:08:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755126537; x=1755731337; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LYzpkw32rfojTro/yo7c1tGpbEd5gb4/gc+Z99oDHgE=;
+        b=OlxveLth0PbFbSinl2x3O13ijMXjQfKu+/hI8/4tziXCGrFSRzKBOkkOxaDjFOhgev
+         pu/c8d/HpLRsUuoLe+m7ExvEWe31G32wkO6gZH6QfsOrhl76em65Q29WSrYg2YaHFZ78
+         zejUsVj6ZBezt5WMfPNc5PffkZ+tvIk1k5Y4SQhGr+AGjYWjK5F80kNhF/SGmFWImX69
+         nwr41r/tnhdmJ/wf/Y9D2xS4GTzxUUmUoo0pbSbJRunQGJ/PmHgpnjzzCGjdlx+8vq76
+         XUqqobisBGphIoKFwbS0CUG13EngYsGii1yH2qc1D1OG7NnF6FT8fnHE/hk2yeCZ6rgE
+         vdLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755126537; x=1755731337;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LYzpkw32rfojTro/yo7c1tGpbEd5gb4/gc+Z99oDHgE=;
+        b=WiOST2W3RfbziR4ZXhIuvnIwiasH4j1A/NVWl9Pc2tqGQ3tfG/EQRb8WRrctradBhy
+         dnInnk6CIGPfPqaJOcFN/jzZ9Sxq6N8jSYAwOQEnIi2QajkRFPYkXnyKusiWJ3jCYgi3
+         JDFcnWgGlF9UqoicJy5Z/qaLds7aOgvvW1Gcu+2HQNFwjb0iqnQXiSY/RlYdopu2RyGH
+         uM3+RBHL1h61viMS/QFOLn3tXW39sMg95CwcdTIzP24+gvsxDW4noWuGX0o11c02RFCz
+         KptwOtX5ColywZM/psXxz1f7Av1x2r1sVkzzWN64NtgwgkWAHFLn23yJLQydELMO8s+2
+         J40Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWauXMgwQ/WlfsHjUvIo2eT+3IJde24L5BxHS69tYntdDKszyJXCEOfR8O66uCMS4B7t1+6An7Vkz4+jgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs2kC04V9s13jWKh2TBTVZIFeefRJmzRUqyT5w2+nbWULMBNib
+	xsEtQAwHsiaPnwiQF0t8JAnpis79qsdIvLRzfdo4evFxvaz0RB7q0HH7DxceDIjcfbQ=
+X-Gm-Gg: ASbGncspF7FVIJ0JKnP2xuL6+KY/bXsw+NYMgeP/eBxDZ5JxTU9zAHKryBWVIwNyM5k
+	Jc5aGL1mtw4JYHLtQvrU0ghqC4fLhQTcj835OXP90qQpbdvJKoUZA76W7GEmVg4yGlAB7Exjom+
+	zYoWsZXOWlR3CiOSjyKxAgyGcYlVLg96Ex5OoYiBzpUk1umSXPZNMQGjf3e4b6kcjcAZAatqYi/
+	Njvk2uSULOquduhVU2vCfYvludQ1QZ04dWMZO1p5ygHZFA1xSJ3olQ0EzYbJXQ5TTkNVTw82gkH
+	GLACqsPdaofBCBy9VucUYRWeRIRHfXJ3B9EE/4IQpbsszMZgwFXK2Rp958rlbvcfYhNEiuILCvw
+	CXeFEe0ol4sDVa4mORWW0s8tP1X4=
+X-Google-Smtp-Source: AGHT+IFbhBknykhgRmGNQ8HnZA9S45Dxb2/Sf7agYpr4TtNvocsFTRipZsdaZQpRwhDbfSKf8QHY8w==
+X-Received: by 2002:a05:6000:310d:b0:3b6:436:b8ea with SMTP id ffacd0b85a97d-3b9edfd22b1mr647097f8f.6.1755126536667;
+        Wed, 13 Aug 2025 16:08:56 -0700 (PDT)
+Received: from localhost ([2a02:c7c:7259:a00:7f3a:5ab2:26aa:831f])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a590187sm16856315e9.25.2025.08.13.16.08.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 16:08:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "ata: libata-scsi: Improve CDL control"
-To: Igor Pylypiv <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250813204648.1285197-1-ipylypiv@google.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250813204648.1285197-1-ipylypiv@google.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 14 Aug 2025 00:08:55 +0100
+Message-Id: <DC1OFJFCKMLD.28U6N6FES0OC8@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: "Srinivas Kandagatla" <srini@kernel.org>, "Liam Girdwood"
+ <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>, "Lee
+ Jones" <lee@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai"
+ <tiwai@suse.com>, <linux-arm-msm@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Dmitry Baryshkov"
+ <dmitry.baryshkov@oss.qualcomm.com>, "Srinivas Kandagatla"
+ <srinivas.kandagatla@oss.qualcomm.com>
+Subject: Re: [PATCH v2 2/3] ASoC: codecs: add new pm4125 audio codec driver
+X-Mailer: aerc 0.20.0
+References: <20250711-pm4125_audio_codec_v1-v2-0-13e6f835677a@linaro.org>
+ <20250711-pm4125_audio_codec_v1-v2-2-13e6f835677a@linaro.org>
+ <20250711-hungry-uppish-taipan-a0a35a@krzk-bin>
+In-Reply-To: <20250711-hungry-uppish-taipan-a0a35a@krzk-bin>
 
-On 8/14/25 5:46 AM, Igor Pylypiv wrote:
-> This reverts commit 17e897a456752ec9c2d7afb3d9baf268b442451b.
+On Fri Jul 11, 2025 at 9:29 AM BST, Krzysztof Kozlowski wrote:
+> On Fri, Jul 11, 2025 at 04:00:11AM +0100, Alexey Klimov wrote:
+>> +static void pm4125_unbind(struct device *dev)
+>> +{
+>> +	struct pm4125_priv *pm4125 =3D dev_get_drvdata(dev);
+>> +
+>> +	snd_soc_unregister_component(dev);
+>> +	device_link_remove(dev, pm4125->txdev);
+>> +	device_link_remove(dev, pm4125->rxdev);
+>> +	device_link_remove(pm4125->rxdev, pm4125->txdev);
+>> +	component_unbind_all(dev, pm4125);
+>> +}
+>> +
+>> +static const struct component_master_ops pm4125_comp_ops =3D {
+>> +	.bind =3D pm4125_bind,
+>> +	.unbind =3D pm4125_unbind,
+>> +};
+>> +
+>> +static int pm4125_add_slave_components(struct pm4125_priv *pm4125, stru=
+ct device *dev,
+>> +				       struct component_match **matchptr)
+>> +{
+>> +	struct device_node *np =3D dev->of_node;
+>> +
+>> +	pm4125->rxnode =3D of_parse_phandle(np, "qcom,rx-device", 0);
+>> +	if (!pm4125->rxnode)
+>> +		return dev_err_probe(dev, -ENODEV, "Couldn't parse phandle to qcom,rx=
+-device\n");
+>> +	component_match_add_release(dev, matchptr, component_release_of, compo=
+nent_compare_of,
+>> +				    pm4125->rxnode);
+>> +	of_node_put(pm4125->rxnode);
+>
+> If you drop it here, then you do not need to keep it in pm4125 in the
+> first place. But this will point you to the problem - what if
+> pm4125_bind() is called after you dropped the reference?
 
-A full revert is not nice. See below.
+Thanks for pointing this out.
+It looks like that component_release_of callback should handle that so I
+don't think we need of_node_put() here at all.
 
-Also please change the patch title to:
-
-ata: libata-scsi: Fix CDL control
-
-Or similar.
-
-And do not send the patch to stable@vger.kernel.org. It will be picked up if
-you add the Fixes tag (see below).
-
-> 
-> The extra checks for the ATA_DFLAG_CDL_ENABLED flag prevent SET FEATURES
-> command from being issued to a drive when NCQ commands are active.
-> 
-> ata_mselect_control_ata_feature() sets / clears the ATA_DFLAG_CDL_ENABLED
-> flag during the translation of MODE SELECT to SET FEATURES. If SET FEATURES
-> gets deferred due to outstanding NCQ commands, the original MODE SELECT
-> command will be re-queued. When the re-queued MODE SELECT goes through
-> the ata_mselect_control_ata_feature() translation again, SET FEATURES
-> will not be issued because ATA_DFLAG_CDL_ENABLED has been already set or
-> cleared by the initial translation of MODE SELECT.
-> 
-> The ATA_DFLAG_CDL_ENABLED checks in ata_mselect_control_ata_feature()
-> are safe to remove because scsi_cdl_enable() implements a similar logic
-> that avoids enabling CDL if it has been already enabled.
-> 
-
-Please add "Fixes: 17e897a45675 ("ata: libata-scsi: Improve CDL control") here.
-
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> ---
->  drivers/ata/libata-scsi.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 57f674f51b0c..856eabfd5a17 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -3904,27 +3904,17 @@ static int ata_mselect_control_ata_feature(struct ata_queued_cmd *qc,
->  	/* Check cdl_ctrl */
->  	switch (buf[0] & 0x03) {
->  	case 0:
-> -		/* Disable CDL if it is enabled */
-> -		if (!(dev->flags & ATA_DFLAG_CDL_ENABLED))
-> -			return 0;
-> -		ata_dev_dbg(dev, "Disabling CDL\n");
-
-Please keep this debug message and move it below the comment.
-
-> +		/* Disable CDL */
->  		cdl_action = 0;
->  		dev->flags &= ~ATA_DFLAG_CDL_ENABLED;
->  		break;
->  	case 0x02:
-> -		/*
-> -		 * Enable CDL if not already enabled. Since this is mutually
-> -		 * exclusive with NCQ priority, allow this only if NCQ priority
-> -		 * is disabled.
-> -		 */
-> -		if (dev->flags & ATA_DFLAG_CDL_ENABLED)
-> -			return 0;
-> +		/* Enable CDL T2A/T2B: NCQ priority must be disabled */
-
-T2A/T2B is for SCSI, not ATA. So let's not mention that. I prefer that the
-comment keeps the "mutually exclusive" mention, so something like:
-
-		*
-		* Enable CDL. Since this is mutually exclusive with the NCQ
-		* priority feature set, allow this only if NCQ priority is
-		* disabled.
-		*/
-
->  		if (dev->flags & ATA_DFLAG_NCQ_PRIO_ENABLED) {
->  			ata_dev_err(dev,
->  				"NCQ priority must be disabled to enable CDL\n");
->  			return -EINVAL;
->  		}
-> -		ata_dev_dbg(dev, "Enabling CDL\n");
-
-And please keep this debug message.
-
->  		cdl_action = 1;
->  		dev->flags |= ATA_DFLAG_CDL_ENABLED;
->  		break;
-
-
--- 
-Damien Le Moal
-Western Digital Research
+Best regards,
+Alexey
 
