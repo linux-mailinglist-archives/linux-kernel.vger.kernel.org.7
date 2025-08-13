@@ -1,215 +1,217 @@
-Return-Path: <linux-kernel+bounces-765736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305D0B23DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:12:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53E25B23DA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406BD3B9928
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:12:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47981B60375
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA78E188A3A;
-	Wed, 13 Aug 2025 01:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E5B61FCE;
+	Wed, 13 Aug 2025 01:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lFnuuemf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QYMA4CQi"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92194C92;
-	Wed, 13 Aug 2025 01:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD9B2C0F6F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755047526; cv=none; b=JkTH8AM7hZySScDjgNumU8XaCSrmxjRrLgn3pskOhy4+IE8NL5KyP1FwhLkd8vCNqYBWxCv86PPJVFV+QMi1SQCRD5jrur5qBRnUrt8QmiC34ciNVKnvd7YTWcU3/YUbrxXicIbiUONqW9NEgfnvqOuRVE6NECBudUP1XVE+Rqs=
+	t=1755047753; cv=none; b=ikeXmjuQfz9taViQRhFCbMUSyfC9As8LLShOsN9yG5QM2whHfij+5ZpNcIh7zYBVUg2Tg8uAxtVddr+b4fPHFSWy8fV299o6wTnUKB/ltxUfXw7bfSK2VnoIqu5LZ8HCH27HaZu/UTTIXmkX26TVTz980aX40xY48j1MhUfm6nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755047526; c=relaxed/simple;
-	bh=S0gigUqmgRJCUqMvDbhteuiG2iFm4HenjGfH8xwwguw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=shdOz+9pybVgFg2BnbQ5+k2jH9opkCvy9E9G9pSkQds00H28qlhEPupUUSV0oBdoxRef4beScG3h8wU9fW7WrIpOjVshhKltEXILHCzz+zeGBiEnLvpielJlBPmMe4hgIIrsCRCev5t659ff62HPtlAjcxmSL/maeivo0uONHm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lFnuuemf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755047514;
-	bh=gAWKRyEL+/Tiia1fu4YyHdUUo9jpnANXpvBktpAOSPs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lFnuuemfleU9qAq1ZIo+LK9UL26SCpovfLckVgBFG6SctXdL7fQNLQn5NIztNxob5
-	 5WVeBsKKd4C72PKI6oPa8D5g/KOe4jA3/vO+RFADI1Hu45N4haKGQFQmuxDoRKs5CT
-	 d/EhSv73B6DQgVv482rfoxOpYzzgaSh9085oKMbe8XSAIelrIrQWWghrthkdtkk/CW
-	 AVKUy47EqT8Ozjp2zruGoDfTf6gZnvXngxFZvXacmXKPHvNtwngKziryQ7SONosLKI
-	 yYnQ5FGu9ziBqrVdKnSKxpexx4/u36GcQ77zMUQiVAhx/XCbffrjD6P3ToptAo8GYL
-	 +ByflAu6C49sw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c1r1h65Qvz4x43;
-	Wed, 13 Aug 2025 11:11:52 +1000 (AEST)
-Date: Wed, 13 Aug 2025 11:11:51 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>, Simona Vetter
- <simona.vetter@ffwll.ch>
-Cc: Danilo Krummrich <dakr@kernel.org>, Vitaly Wool
- <vitaly.wool@konsulko.se>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the mm-unstable tree with the
- drm-misc-fixes tree
-Message-ID: <20250813111151.6a261ca1@canb.auug.org.au>
+	s=arc-20240116; t=1755047753; c=relaxed/simple;
+	bh=mIHDhenSS2rK9fFxe9YHYNVPOvVSR+Di9OA20vX79Gc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZaPSGEpKhDgQa/lIlbAOcEcuXxrSXpSBQSXVqld1JnN/KxW+qeB+pUyjAFgWeSaYR3PYfrzWvKkvfg9swADJpzGbu7EYdw7J1DMCD51ibFX9UvC07/cmvx62CwR/Ad6qvwbmjxn+n1HQE0xQgFoIAGlvW1nez2cRRvWPt+Z3iGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QYMA4CQi; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7d716798-7cfc-4564-b9a4-32d9f692f037@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755047738;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mIHDhenSS2rK9fFxe9YHYNVPOvVSR+Di9OA20vX79Gc=;
+	b=QYMA4CQiKvCQZgyVr8Uld9xX8glKnItlf06DgAY0nLUelMeBTF58qAfPJlE3+O60jvhVLC
+	h7qrpUyPI5buV1fYyJ1Mx1IONosvVOVF5gtyYWd+Z6lfdCGHDUyj951jierfmkEH3EhHVj
+	Lu6TexGvwNLaRv+4xsPITj344tRyDiw=
+Date: Wed, 13 Aug 2025 09:15:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/THJw_ljfmIy6_QDMWDq2NBc";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Subject: Re: [PATCH 2/6] LoongArch: Add kexec_file support
+To: Youling Tang <youling.tang@linux.dev>, Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Baoquan He <bhe@redhat.com>,
+ kexec@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Youling Tang <tangyouling@kylinos.cn>
+References: <20250811092659.14903-1-youling.tang@linux.dev>
+ <20250811092659.14903-3-youling.tang@linux.dev>
+ <CAAhV-H55n=v+ztBc8UgK339kuhg3LKvcOQu+jhpVrbvO3zf3=g@mail.gmail.com>
+ <9760e574-3eb0-46b2-bccd-916f73b9c39e@linux.dev>
+ <ce63aa14-11a5-4b2c-bfbc-8465b7065197@linux.dev>
+ <ef249b61-f37e-4b72-9610-7f114564988a@linux.dev>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <ef249b61-f37e-4b72-9610-7f114564988a@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/THJw_ljfmIy6_QDMWDq2NBc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+在 8/12/25 5:32 PM, Youling Tang 写道:
+> Hi, Yanteng
+> On 2025/8/12 09:53, Yanteng Si wrote:
+>> 在 8/12/25 9:21 AM, Youling Tang 写道:
+>>> Hi, Huacai
+>>> On 2025/8/11 22:07, Huacai Chen wrote:
+>>>> Hi, Youling,
+>>>>
+>>>> On Mon, Aug 11, 2025 at 5:28 PM Youling Tang <youling.tang@linux.dev> wrote:
+>>>>> From: Youling Tang <tangyouling@kylinos.cn>
+>>>>>
+>>>>> This patch adds support for kexec_file on LoongArch.
+>>>>>
+>>>>> The image_load() as two parts:
+>>>>> - the first part loads the kernel image (vmlinuz.efi or vmlinux.efi)
+>>>>> - the second part loads other segments (eg: initrd, cmdline)
+>>>>>
+>>>>> Currently, pez(vmlinuz.efi) and pei(vmlinux.efi) format images are supported,
+>>>>> but ELF format is not supported.
+>>>>>
+>>>>> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+>>>>> ---
+>>>>>   arch/loongarch/Kconfig                     |   8 ++
+>>>>>   arch/loongarch/include/asm/image.h         |  18 ++++
+>>>>>   arch/loongarch/include/asm/kexec.h         |  12 +++
+>>>>>   arch/loongarch/kernel/Makefile             |   1 +
+>>>>>   arch/loongarch/kernel/kexec_image.c        | 112 +++++++++++++++++++++
+>>>>>   arch/loongarch/kernel/machine_kexec.c      |  33 ++++--
+>>>>>   arch/loongarch/kernel/machine_kexec_file.c |  46 +++++++++
+>>>>>   7 files changed, 219 insertions(+), 11 deletions(-)
+>>>>>   create mode 100644 arch/loongarch/kernel/kexec_image.c
+>>>>>   create mode 100644 arch/loongarch/kernel/machine_kexec_file.c
+>>>>>
+>>>>> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+>>>>> index f0abc38c40ac..fd50c83f7827 100644
+>>>>> --- a/arch/loongarch/Kconfig
+>>>>> +++ b/arch/loongarch/Kconfig
+>>>>> @@ -625,6 +625,14 @@ config CPU_HAS_PREFETCH
+>>>>>   config ARCH_SUPPORTS_KEXEC
+>>>>>          def_bool y
+>>>>>
+>>>>> +config ARCH_SUPPORTS_KEXEC_FILE
+>>>>> +       def_bool 64BIT
+>>>>> +
+>>>>> +config ARCH_SELECTS_KEXEC_FILE
+>>>>> +       def_bool y
+>>>>> +       depends on KEXEC_FILE
+>>>>> +       select HAVE_IMA_KEXEC if IMA
+>>>>> +
+>>>>>   config ARCH_SUPPORTS_CRASH_DUMP
+>>>>>          def_bool y
+>>>>>
+>>>>> diff --git a/arch/loongarch/include/asm/image.h b/arch/loongarch/include/asm/image.h
+>>>>> index 1f090736e71d..829e1ecb1f5d 100644
+>>>>> --- a/arch/loongarch/include/asm/image.h
+>>>>> +++ b/arch/loongarch/include/asm/image.h
+>>>>> @@ -36,5 +36,23 @@ struct loongarch_image_header {
+>>>>>          uint32_t pe_header;
+>>>>>   };
+>>>>>
+>>>>> +static const uint8_t loongarch_image_pe_sig[2] = {'M', 'Z'};
+>>>>> +static const uint8_t loongarch_pe_machtype[6] = {'P', 'E', 0x0, 0x0, 0x64, 0x62};
+>>>>> +
+>>>>> +/**
+>>>>> + * loongarch_header_check_pe_sig - Helper to check the loongarch image header.
+>>>>> + *
+>>>>> + * Returns non-zero if 'MZ' signature is found.
+>>>>> + */
+>>>>> +
+>>>>> +static inline int loongarch_header_check_pe_sig(const struct loongarch_image_header *h)
+>>>>> +{
+>>>>> +       if (!h)
+>>>>> +               return 0;
+>>>>> +
+>>>>> +       return (h->pe_sig[0] == loongarch_image_pe_sig[0]
+>>>>> +               && h->pe_sig[1] == loongarch_image_pe_sig[1]);
+>>>>> +}
+>>>>> +
+>>>>>   #endif /* __ASSEMBLY__ */
+>>>>>   #endif /* __ASM_IMAGE_H */
+>>>>> diff --git a/arch/loongarch/include/asm/kexec.h b/arch/loongarch/include/asm/kexec.h
+>>>>> index cf95cd3eb2de..3ef8517a3670 100644
+>>>>> --- a/arch/loongarch/include/asm/kexec.h
+>>>>> +++ b/arch/loongarch/include/asm/kexec.h
+>>>>> @@ -41,6 +41,18 @@ struct kimage_arch {
+>>>>>          unsigned long systable_ptr;
+>>>>>   };
+>>>>>
+>>>>> +#ifdef CONFIG_KEXEC_FILE
+>>>>> +extern const struct kexec_file_ops kexec_image_ops;
+>>>>> +
+>>>>> +int arch_kimage_file_post_load_cleanup(struct kimage *image);
+>>>>> +#define arch_kimage_file_post_load_cleanup arch_kimage_file_post_load_cleanup
+>>>>> +
+>>>>> +extern int load_other_segments(struct kimage *image,
+>>>>> +               unsigned long kernel_load_addr, unsigned long kernel_size,
+>>>>> +               char *initrd, unsigned long initrd_len,
+>>>>> +               char *cmdline, unsigned long cmdline_len);
+>>>> I think the RISC-V naming "load_extra_segments" is better.
+>>> This name is also fine, but I prefer it to be consistent with
+>>> that in kexec-tools.
+>> I have looked at the code of kexec-tools, and it seems that you referenced a great deal of ARM code when implementing the LoongArch part.
+>>
+>>
+>>>>
+>>>>> +#endif
+>>>>> +
+>>>>>   typedef void (*do_kexec_t)(unsigned long efi_boot,
+>>>>>                             unsigned long cmdline_ptr,
+>>>>>                             unsigned long systable_ptr,
+>>>>> diff --git a/arch/loongarch/kernel/Makefile b/arch/loongarch/kernel/Makefile
+>>>>> index 6f5a4574a911..bd9405ee3888 100644
+>>>>> --- a/arch/loongarch/kernel/Makefile
+>>>>> +++ b/arch/loongarch/kernel/Makefile
+>>>>> @@ -62,6 +62,7 @@ obj-$(CONFIG_MAGIC_SYSRQ)     += sysrq.o
+>>>>>   obj-$(CONFIG_RELOCATABLE)      += relocate.o
+>>>>>
+>>>>>   obj-$(CONFIG_KEXEC_CORE)       += machine_kexec.o relocate_kernel.o
+>>>>> +obj-$(CONFIG_KEXEC_FILE)       += machine_kexec_file.o kexec_image.o
+>>>> We only support the efi format, so we don't need to split a
+>>>> kexec_image.c like RISC-V, just put everything into
+>>>> machine_kexec_file.c is OK.
+>>> I hope it is separated and consistent with other architectures.
+>>> For instance, arm64 only supports one type.
+>> The ARM64 architecture has a long history, and we shouldn't be constrained by it.
+> Support for kexec_elf.c in ELF format may be considered for
+> addition in the future.
 
-Today's linux-next merge of the mm-unstable tree got a conflict in:
+Ok, I see.
 
-  rust/kernel/alloc/allocator.rs
 
-between commit:
+Thanks,
 
-  fde578c86281 ("rust: alloc: replace aligned_size() with Kmalloc::aligned_=
-layout()")
+Yanteng
 
-from the drm-misc-fixes tree and commit:
-
-  cda097b07bce ("rust: support large alignments in allocations")
-
-from the mm-unstable tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc rust/kernel/alloc/allocator.rs
-index 2692cf90c948,63f271624428..000000000000
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@@ -43,11 -42,28 +42,17 @@@ pub struct Vmalloc
-  /// For more details see [self].
-  pub struct KVmalloc;
- =20
- -/// Returns a proper size to alloc a new object aligned to `new_layout`'s=
- alignment.
- -fn aligned_size(new_layout: Layout) -> usize {
- -    // Customized layouts from `Layout::from_size_align()` can have size =
-< align, so pad first.
- -    let layout =3D new_layout.pad_to_align();
- -
- -    // Note that `layout.size()` (after padding) is guaranteed to be a mu=
-ltiple of `layout.align()`
- -    // which together with the slab guarantees means the `krealloc` will =
-return a properly aligned
- -    // object (see comments in `kmalloc()` for more information).
- -    layout.size()
- -}
- -
-  /// # Invariants
-  ///
-- /// One of the following: `krealloc`, `vrealloc`, `kvrealloc`.
-+ /// One of the following: `krealloc_node_align`, `vrealloc_node_align`, `=
-kvrealloc_node_align`.
-  struct ReallocFunc(
--     unsafe extern "C" fn(*const crate::ffi::c_void, usize, u32) -> *mut c=
-rate::ffi::c_void,
-+     unsafe extern "C" fn(
-+         *const crate::ffi::c_void,
-+         usize,
-+         crate::ffi::c_ulong,
-+         u32,
-+         crate::ffi::c_int,
-+     ) -> *mut crate::ffi::c_void,
-  );
- =20
-  impl ReallocFunc {
-@@@ -76,8 -92,9 +81,9 @@@
-          layout: Layout,
-          old_layout: Layout,
-          flags: Flags,
-+         nid: NumaNode,
-      ) -> Result<NonNull<[u8]>, AllocError> {
- -        let size =3D aligned_size(layout);
- +        let size =3D layout.size();
-          let ptr =3D match ptr {
-              Some(ptr) =3D> {
-                  if old_layout.size() =3D=3D 0 {
-@@@ -134,11 -140,10 +140,12 @@@ unsafe impl Allocator for Kmalloc=20
-          layout: Layout,
-          old_layout: Layout,
-          flags: Flags,
-+         nid: NumaNode,
-      ) -> Result<NonNull<[u8]>, AllocError> {
- +        let layout =3D Kmalloc::aligned_layout(layout);
- +
-          // SAFETY: `ReallocFunc::call` has the same safety requirements a=
-s `Allocator::realloc`.
--         unsafe { ReallocFunc::KREALLOC.call(ptr, layout, old_layout, flag=
-s) }
-+         unsafe { ReallocFunc::KREALLOC.call(ptr, layout, old_layout, flag=
-s, nid) }
-      }
-  }
- =20
-@@@ -177,19 -177,10 +179,14 @@@ unsafe impl Allocator for KVmalloc=20
-          layout: Layout,
-          old_layout: Layout,
-          flags: Flags,
-+         nid: NumaNode,
-      ) -> Result<NonNull<[u8]>, AllocError> {
- +        // `KVmalloc` may use the `Kmalloc` backend, hence we have to enf=
-orce a `Kmalloc`
- +        // compatible layout.
- +        let layout =3D Kmalloc::aligned_layout(layout);
- +
--         // TODO: Support alignments larger than PAGE_SIZE.
--         if layout.align() > bindings::PAGE_SIZE {
--             pr_warn!("KVmalloc does not support alignments larger than PA=
-GE_SIZE yet.\n");
--             return Err(AllocError);
--         }
--=20
-          // SAFETY: If not `None`, `ptr` is guaranteed to point to valid m=
-emory, which was previously
-          // allocated with this `Allocator`.
--         unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, fla=
-gs) }
-+         unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, fla=
-gs, nid) }
-      }
-  }
-
---Sig_/THJw_ljfmIy6_QDMWDq2NBc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmib5lcACgkQAVBC80lX
-0Gx5mgf9EZwkGr0JW0BfDMvjOnKHi8qtoXToiSdr0Xlg9SePZp8c6Y7Nr62jhlVz
-LCQyYVUaVNrAbnRKRe1AVwAzmsRZfebSYBjMKdRBM4X+f0F0vHaNsxa6CESieLcA
-JqZDDUkmz5VNvF3t2mG8A4VojPpEhfWX9cDApxGIarnjw7BjjQv8qw7VXawnXjK4
-2vRO0JiR0DujJo+UuK3RXn+S33yBFR4utsb5BdzDrBB6W/8x7xA9mJR/oCO3V+25
-7ypqpfFOXRGmuP7EFn2+7KAIHX86Vpf0TXkPVgMqKhD6l6t2WPNYTj/UkPkZtL1g
-nsgJ9hOa14OstNPhGygEgnchEFJj1w==
-=LP5i
------END PGP SIGNATURE-----
-
---Sig_/THJw_ljfmIy6_QDMWDq2NBc--
+>
+> Thanks,
+> Youling.
+>>
+>>
+>> Thanks,
+>> Yanteng
+>>>
+>>> Youling.
+>>>>
+>>>> Huacai
 
