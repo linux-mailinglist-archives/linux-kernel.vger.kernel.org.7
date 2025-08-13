@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-766482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA391B2470E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:20:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9EE4B2471C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86B9F1643CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:19:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BFA43A6843
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6CE2EBB91;
-	Wed, 13 Aug 2025 10:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E392F0C73;
+	Wed, 13 Aug 2025 10:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXa7pfH+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oC17s7pu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9252D1F7E;
-	Wed, 13 Aug 2025 10:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8952E2D8DAA;
+	Wed, 13 Aug 2025 10:19:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755080371; cv=none; b=BDF8qNQtNb9/s4ngDWh74oWPxBMm1k+XGpXtPJuiD0JWmO0MdKYkK2MDnrlDqP2xzjFMkJiBOscWX1D84kKetzMacYqWngXzJTI/SPHaGpF7urhmaxlhCmalykHbSPU3Mv/IDP/IVbYeMXrYWX1tkaG/8zcmPbSUh/SYooVA9Uk=
+	t=1755080385; cv=none; b=Og3QBhm2vWKM2cHqpaX+NGDHMk14lOa7wJE5sPHhXCalNiP8tQ1Cijgy3bo9MMGuXQe1iNEk1502EMugg1Qpphdml2CeqgAEOQ9MvvtU1X6v6XhyXAeeIVBrV5XTxlJNXxnck58t82uGTZ8OffRfETaP4ukI5F2pfbmzh5fwlx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755080371; c=relaxed/simple;
-	bh=qW9SWoWX6A53AFhzzT38jehPPUJjNU69Tw+gWAuHO48=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=gaW6ZPj/rDbZkAUWpGRrgfzv65ie3kLcT+ELs4KB/x/anN6eQQzma1UgLuM2bcKEhC1ugJodjm5hVOQga7d5yzrv6OXIwruYyCyBy0GBDuIQZ0nWyJX34bG2BtnHYwfw5X3IHBn8Z+P4x91A2Gs8MRHaHwAtgYQSTcS07G1qnaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXa7pfH+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F519C4CEEB;
-	Wed, 13 Aug 2025 10:19:27 +0000 (UTC)
+	s=arc-20240116; t=1755080385; c=relaxed/simple;
+	bh=WW7Mir+gU34YiTAJqNIWuQD1iRMqnkoBG2eCmufkgPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UkA6qr+6r03wMG1XY0xePh5tWvBR8Zu4caH57I0wKaHgCKP1LMuwr++0HWudFQ2iwPibTGsTe38AnVmNiHEkPYfyAz/WpcHYFLdnB2Qtwh1+bj0GW0UmAezqiWFBHXmJIz4x7Og/6dVfYsC0zirF7oc7mafAdrdCwVRJoAYBWF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oC17s7pu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B9ADC4CEF5;
+	Wed, 13 Aug 2025 10:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755080370;
-	bh=qW9SWoWX6A53AFhzzT38jehPPUJjNU69Tw+gWAuHO48=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=fXa7pfH+WHcRrIEQTszchLdqLCY1ttHuNL0sPo1YvUXnQLfMGmX6a1e0j9Hiu73Kh
-	 A4Se8wYGmsx+9XO2QWPrr6zDMoVWsCH5CmLB+f3l/8WvNQyWBiTjpCWnPY1H/N78c5
-	 L5r7+wBDRF/AC/zvx/JOxLAECcN88fYijNDmt7Q75zyc0qnN1HehKPsYEv4clPZwRS
-	 dUutqdh/ZIq2f2ykr3GdtwgNMU2QzOA8VpHKwo7t8TO57GuYemALsKywPDxxlpUlEm
-	 iOQ5MKjnh/X4q2+nhwzHUxa0jN7c0wihdky9ohKIe5s0/D+C76KuJFPogUV9fLkldD
-	 jTdrx+qbeILYw==
+	s=k20201202; t=1755080385;
+	bh=WW7Mir+gU34YiTAJqNIWuQD1iRMqnkoBG2eCmufkgPk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oC17s7pui1RY1stDQ4cvL6jKwFcXt1pDaUFjfZ7i6p7z6iJikK//nDYYhjeuYjTNt
+	 GnrBT7utltwCN2DLL/JxsMdvWXbdZ7vTk5x/PgacmASc5PbJWlkmh1/l/mX3vUlYNu
+	 cRDJVxtxpbc7BfhPIqzJ+OcyHvCLllYFJUQ0e745HAVyxkEkw+BMf96RTLdR7/VuDS
+	 zdKmbkC5USUw9EnDBTF/binacvEC2KBqVEjV6mhtjj6L1To4g6JfMVoasioIehQP+b
+	 hyQ+GdOEz/rXTdZhlbY9u8sinChZFmHvfNTYjKuLvrXk8rOpVkxMqa1gxIfW0THaxY
+	 a8t8CAwR8a74A==
+Date: Wed, 13 Aug 2025 15:49:37 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Palash Kambar <quic_pkambar@quicinc.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_nitirawa@quicinc.com
+Subject: Re: [PATCH] ufs: ufs-qcom: disable lane clocks during phy hibern8
+Message-ID: <w5mkkhxhhndrqhlfomvwohssndtl2njcw7khupyh7qechsynns@kl5ykxtwqawt>
+References: <20250715160524.3088594-1-quic_pkambar@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 13 Aug 2025 12:19:25 +0200
-Message-Id: <DC182DB9HNS9.21ZVBYT6DXHDE@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: alloc: specify the minimum alignment of
- each allocator
-Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, "Andrew Morton" <akpm@linux-foundation.org>,
- "Matthew Wilcox" <willy@infradead.org>, "Tamir Duberstein"
- <tamird@gmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Trevor
- Gross" <tmgross@umich.edu>, <linux-mm@kvack.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
- <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com>
- <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org> <aJxESG0l4-kyUHXg@google.com>
- <DC16OLU29VX3.16T0QDJF7Q18P@kernel.org>
- <CAH5fLgj0kjGBwZFHjErsa7MCV1fz4xTWwrZAcFzHHnkbvS=OMg@mail.gmail.com>
-In-Reply-To: <CAH5fLgj0kjGBwZFHjErsa7MCV1fz4xTWwrZAcFzHHnkbvS=OMg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250715160524.3088594-1-quic_pkambar@quicinc.com>
 
-On Wed Aug 13, 2025 at 11:32 AM CEST, Alice Ryhl wrote:
-> On Wed, Aug 13, 2025 at 11:14=E2=80=AFAM Danilo Krummrich <dakr@kernel.or=
-g> wrote:
->>
->> On Wed Aug 13, 2025 at 9:52 AM CEST, Alice Ryhl wrote:
->> > On Tue, Aug 12, 2025 at 07:52:35PM +0200, Danilo Krummrich wrote:
->> >> On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
->> >> > diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/all=
-ocator.rs
->> >> > index aa2dfa9dca4c309e5a9eafc7da6a8a9bd7b54b11..25fc9f9ae3b4e471a08=
-d77130b374bd1397f7384 100644
->> >> > --- a/rust/kernel/alloc/allocator.rs
->> >> > +++ b/rust/kernel/alloc/allocator.rs
->> >> > @@ -17,6 +17,8 @@
->> >> >  use crate::bindings;
->> >> >  use crate::pr_warn;
->> >> >
->> >> > +const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINA=
-LIGN as usize;
->> >>
->> >> I think this needs the following diff:
->> >>
->> >> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings=
-_helper.h
->> >> index 84d60635e8a9..4ad9add117ea 100644
->> >> --- a/rust/bindings/bindings_helper.h
->> >> +++ b/rust/bindings/bindings_helper.h
->> >> @@ -84,6 +84,7 @@
->> >>
->> >>  /* `bindgen` gets confused at certain things. */
->> >>  const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINA=
-LIGN;
->> >> +const size_t RUST_CONST_HELPER_ARCH_KMALLOC_MINALIGN =3D ARCH_KMALLO=
-C_MINALIGN;
->> >>  const size_t RUST_CONST_HELPER_PAGE_SIZE =3D PAGE_SIZE;
->> >>  const gfp_t RUST_CONST_HELPER_GFP_ATOMIC =3D GFP_ATOMIC;
->> >>  const gfp_t RUST_CONST_HELPER_GFP_KERNEL =3D GFP_KERNEL;
->> >> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/alloc=
-ator.rs
->> >> index 25fc9f9ae3b4..5003907f0240 100644
->> >> --- a/rust/kernel/alloc/allocator.rs
->> >> +++ b/rust/kernel/alloc/allocator.rs
->> >> @@ -17,7 +17,7 @@
->> >>  use crate::bindings;
->> >>  use crate::pr_warn;
->> >>
->> >> -const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALI=
-GN as usize;
->> >> +const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALI=
-GN;
->> >>
->> >>  /// The contiguous kernel allocator.
->> >>  ///
->> >>
->> >>
->> >> No need to resend I can fix it up when applying the patch.
->> >
->> > Hmm. Maybe that depends on the configuration? The constant was generat=
-ed
->> > for me. Either way, happy with the suggested change.
->>
->> That is a bit odd, I'd like to understand this before merging.
->>
->> All of the definitions in the kernel are defines that shouldn't be picke=
-d up by
->> bindgen.
->
-> It is possible for bindgen to pick up a #define in some cases. The
-> main case where bindgen fails is when the macro is defined in terms of
-> a function-like macro. This is why we see so many failures with _IO*
-> macros.
+On Tue, Jul 15, 2025 at 09:35:24PM GMT, Palash Kambar wrote:
+> The UFS lane clocks ensure that the PHY is adequately powered and
+> synchronized before initiating the link. Currently, these clocks
+> remain enabled even after the link enters the Hibern8 state and
+> are only turned off during runtime or system suspend.
+> 
+> Modify the behavior to disable the lane clocks immediately after
+> the link transitions to Hibern8, thereby reducing the power
+> consumption.
+> 
 
-I think I see it now, ARCH_KMALLOC_MINALIGN seems to be either a literal or
-__alignof__(unsigned long long), either directly or indirecty through
-ARCH_DMA_MINALIGN. bindgen doesn't like the __alignof__() extension.
+This statement is technically misleading. You are disabling lane clocks in
+ufs_qcom_setup_clocks(), which gets called during suspend/resume/clk_gate phase.
 
-So, I assume you were on arm64? :)
+But if you want to disable the clocks immediately after Hibern8, you may want to
+add the disable/enable logic in hibern8_notify() callback.
+
+If that is not a strict requirement and you want to do it in
+ufs_qcom_setup_clocks(), you have to reword the description.
+
+- Mani
+
+> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 318dca7fe3d7..50e174d9b406 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -1141,6 +1141,13 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+>  	case PRE_CHANGE:
+>  		if (on) {
+>  			ufs_qcom_icc_update_bw(host);
+> +			if (ufs_qcom_is_link_hibern8(hba)) {
+> +				err = ufs_qcom_enable_lane_clks(host);
+> +				if (err) {
+> +					dev_err(hba->dev, "enable lane clks failed, ret=%d\n", err);
+> +					return err;
+> +				}
+> +			}
+>  		} else {
+>  			if (!ufs_qcom_is_link_active(hba)) {
+>  				/* disable device ref_clk */
+> @@ -1166,6 +1173,9 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+>  			if (ufshcd_is_hs_mode(&hba->pwr_info))
+>  				ufs_qcom_dev_ref_clk_ctrl(host, true);
+>  		} else {
+> +			if (ufs_qcom_is_link_hibern8(hba))
+> +				ufs_qcom_disable_lane_clks(host);
+> +
+>  			ufs_qcom_icc_set_bw(host, ufs_qcom_bw_table[MODE_MIN][0][0].mem_bw,
+>  					    ufs_qcom_bw_table[MODE_MIN][0][0].cfg_bw);
+>  		}
+> -- 
+> 2.34.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
