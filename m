@@ -1,94 +1,149 @@
-Return-Path: <linux-kernel+bounces-766836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49DC8B24BC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:22:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2ABBB24BC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44A0B6812DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:20:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E868D686DBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25862EE29F;
-	Wed, 13 Aug 2025 14:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gB1eYKf6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAB835959;
-	Wed, 13 Aug 2025 14:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDA12ECE91;
+	Wed, 13 Aug 2025 14:20:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB22166F0C;
+	Wed, 13 Aug 2025 14:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755094811; cv=none; b=uZInzPOq4R3ahR37hvRFcdaZYtfzhIWGsKxO7nZihs5merRh0MQ++DGi4M9QcCrnM7fD7LGE+K4lyq3750x2p5PD+7q6l+yswV3ipIxm6zEbnhG/9DvLsquN3/VUFe4ou65t2YCqtUrP4ckSD6yrFUUUqvAP6EOLHXyupL6hSsY=
+	t=1755094826; cv=none; b=XDPpNoBtWwrWEf6yb0mRvK4Dh3i+XmNMUmkJI0//Q6g3UaS42rzbmAlpGZe/JUQ4YaMPnNcu63H23MoGzD2RexDjz+4C0Mt8EKkSMyEU3sZoLfL+rIibg1GqrKqGSVBKfFeHiiPjN3UXxPUunL4zqh0ln6sfBDUpc7AqJ/p7oD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755094811; c=relaxed/simple;
-	bh=Bj74TrIW+856jOK8G8uA9CvCCtJEp2XspJ6ZD/sgPvc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAzWsmZoC6rXPWzztHEbXXhG+pQbX7nL4mW4Jp7S9KRxLyQaTz+dB5YmxlZlIAuDHGGLgr8fE2lauLUUEh9yKQs8FXQbZlsjt5nZ/E7qb2Z3f93mgXoblV0F2UPKN4dbym83RV873/uj0cWZUB75q0nZPd7ZbN6OL4fTYRF/CfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gB1eYKf6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D58DC4CEEB;
-	Wed, 13 Aug 2025 14:20:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755094810;
-	bh=Bj74TrIW+856jOK8G8uA9CvCCtJEp2XspJ6ZD/sgPvc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gB1eYKf6CCouEX8OaBb6lmAPpW+FR4kzdgLKTzlV8nDU4bCLntSxyzxY5KfM+vRG1
-	 ILaj39gXwjibv37VjI4cAWx1AQb4tACP3y1tfrOZb4nBKVicXg3bsCLHAIx9MuUPFc
-	 hWNtpqVml16eLwj+gkN/HU9vqgsXvaEF/Wvu2J7A=
-Date: Wed, 13 Aug 2025 16:20:07 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, ayush.sawal@chelsio.com,
-	andrew+netdev@lunn.ch, horms@kernel.org, dsahern@kernel.org,
-	pablo@netfilter.org, kadlec@netfilter.org,
-	steffen.klassert@secunet.com, mhal@rbox.co,
-	abhishektamboli9@gmail.com, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, herbert@gondor.apana.org.au
-Subject: Re: [PATCH net-next 5/7] staging: octeon: Convert to skb_dst_drop
-Message-ID: <2025081301-thirsty-battalion-8b01@gregkh>
-References: <20250812155245.507012-1-sdf@fomichev.me>
- <20250812155245.507012-6-sdf@fomichev.me>
+	s=arc-20240116; t=1755094826; c=relaxed/simple;
+	bh=1eySh4amzb877mIfH53pBOKu+cOMratB5ve04n0tQ5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ph+e5e5zyklIINZYOpx76ng+np4f1Qdr2G36nGwUAD1CDYhTpgv54hauKMh8ye0aH7PMIr2CJ2ndrp2DPG156IFgKYQTtKFAx/yjCtY+Egz97Yfv0m56Fyn5U7qAOL/ecOvC5e75+fYePINWTPfBUi69bq0Q1eGOI5ip6Wf62WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72F5E12FC;
+	Wed, 13 Aug 2025 07:20:15 -0700 (PDT)
+Received: from [10.163.64.253] (unknown [10.163.64.253])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 772853F5A1;
+	Wed, 13 Aug 2025 07:20:19 -0700 (PDT)
+Message-ID: <c485ed00-e799-490d-ad72-aa8409db02ff@arm.com>
+Date: Wed, 13 Aug 2025 19:50:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812155245.507012-6-sdf@fomichev.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf branch: Fix heap out-of-bounds write in
+ branch_type_count()
+To: Yujun Dong <yujundong@pascal-lab.net>, linux-perf-users@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org
+References: <20250809093812.308027-1-yujundong@pascal-lab.net>
+ <17bdc644-329a-42fb-aba2-d7f80f2a1037@arm.com>
+ <1f73657c-74b3-44a7-bee4-b7cda1a75a02@pascal-lab.net>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <1f73657c-74b3-44a7-bee4-b7cda1a75a02@pascal-lab.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 12, 2025 at 08:52:43AM -0700, Stanislav Fomichev wrote:
-> Instead of doing dst_release and skb_dst_set, do skb_dst_drop which
-> should do the right thing.
-> 
-> Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
-> ---
->  drivers/staging/octeon/ethernet-tx.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/octeon/ethernet-tx.c b/drivers/staging/octeon/ethernet-tx.c
-> index 261f8dbdc382..0ba240e634a1 100644
-> --- a/drivers/staging/octeon/ethernet-tx.c
-> +++ b/drivers/staging/octeon/ethernet-tx.c
-> @@ -346,8 +346,7 @@ netdev_tx_t cvm_oct_xmit(struct sk_buff *skb, struct net_device *dev)
->  	 * The skbuff will be reused without ever being freed. We must
->  	 * cleanup a bunch of core things.
->  	 */
-> -	dst_release(skb_dst(skb));
-> -	skb_dst_set(skb, NULL);
-> +	skb_dst_drop(skb);
->  	skb_ext_reset(skb);
->  	nf_reset_ct(skb);
->  	skb_reset_redirect(skb);
-> -- 
-> 2.50.1
-> 
-> 
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+On 12/08/25 1:01 PM, Yujun Dong wrote:
+> On 2025/8/11 15:03, Anshuman Khandual wrote:
+>> On 09/08/25 3:08 PM, Yujun Dong wrote:
+>> > The branch_type_count() function writes to st->new_counts[flags->new_type]
+>> > when flags->type is PERF_BR_EXTEND_ABI. However, while the array
+>> > st->new_counts is sized for PERF_BR_NEW_MAX (8) entries, the field
+>> > flags->new_type is a 4-bit unsigned value and may hold values up to 15.
+>> >
+>> > This mismatch allows crafted perf data to trigger a heap out-of-bounds
+>> > write when flags->new_type >= 8, leading to memory corruption.
+>>
+>> Crafted ? How could flags->new_type >= 8 when PERF_BR_NEW_MAX is capped at 8.
+>> Is this a real scenario that happened on a system ?
+>>
+> 
+> Thanks for your review and for raising that question. The new_type field
+> in struct branch_flags is declared as a 4-bit bitfield (u64 new_type:4),
+> meaning it can hold values from 0 to 15, even though PERF_BR_NEW_MAX is
+> defined as 8. So, it's entirely possible for flags->new_type to be >= 8.
+
+Sure it is possible but not probable I guess as new_type itself would be
+first guarded by PERF_BR_NEW_MAX.
+
+> 
+> In fact, I've observed such cases when running real-world perf record/top,
+> where perf.data produced contains invalid new_type values, likely due to
+> other bugs or unexpected data corruption. Additionally, a maliciously
+> crafted perf.data file can also force this out-of-bounds write.
+
+Agreed. 
+
+> 
+>> >
+>> > Add a bounds check to ensure flags->new_type is less than
+>> > PERF_BR_NEW_MAX before accessing the new_counts array.
+>>
+>> But it might make sense to add this check just to be on the safer side.
+>>
+> 
+> Notably, new_type is only used in two places:
+> 1. In branch_new_type_name(), where the bounds are already validated.
+> 2. In branch_type_count(), where the current patch now adds the
+> necessary check.
+
+Agreed - this change will ensure consistency across both the functions.
+
+> 
+> Admittedly, the mismatch between the bit-field width (0-15) and
+> PERF_BR_NEW_MAX (8) is the root cause. While adjusting the bit-field
+> to match PERF_BR_NEW_MAX would also resolve the mismatch, that risks
+> breaking existing compatibility. Therefore, adding a bounds check at
+> the use site is the least disruptive correction.
+
+Right, increasing PERF_BR_NEW_MAX to 15 will not be desirable.
+
+> 
+>> >
+>> > Fixes: 0ddea8e2a0c2 ("perf branch: Extend branch type classification")
+>> > Signed-off-by: Yujun Dong <yujundong@pascal-lab.net>
+>> > ---
+>> >  tools/perf/util/branch.c | 8 +++++---
+>> >  1 file changed, 5 insertions(+), 3 deletions(-)
+>> >
+>> > diff --git a/tools/perf/util/branch.c b/tools/perf/util/branch.c
+>> > index 3712be067464..8ea6628c7735 100644
+>> > --- a/tools/perf/util/branch.c
+>> > +++ b/tools/perf/util/branch.c
+>> > @@ -21,10 +21,12 @@ void branch_type_count(struct branch_type_stat *st, struct branch_flags *flags,
+>> >      if (flags->type == PERF_BR_UNKNOWN || from == 0)
+>> >          return;
+>> >
+>> > -    if (flags->type == PERF_BR_EXTEND_ABI)
+>> > -        st->new_counts[flags->new_type]++;
+>> > -    else
+>> > +    if (flags->type == PERF_BR_EXTEND_ABI) {
+>> > +        if (flags->new_type < PERF_BR_NEW_MAX)
+>> > +            st->new_counts[flags->new_type]++;
+>> > +    } else {
+>> >          st->counts[flags->type]++;
+>> > +    }
+>> >
+>> >      if (flags->type == PERF_BR_COND) {
+>> >          if (to > from)
+>> >Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
