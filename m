@@ -1,154 +1,225 @@
-Return-Path: <linux-kernel+bounces-765747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F65B23DC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:38:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC11B23DC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 131EB5673C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE476E508F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1F319A288;
-	Wed, 13 Aug 2025 01:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="fs244+1q"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF631AB6F1;
+	Wed, 13 Aug 2025 01:39:02 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B202C0F8F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E11191F66
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755049107; cv=none; b=uhoVAalXybJX+yG/T+41/kq8GHN725SjZ31c7FY8Ah2939rMx3BXYkmmyEri37BSMyTMt4D/GPbbqg/ffGM0N/mcmcDwlvEAHYZ84vh9OhXRgLlH90P9MqxW5Lr8JbzrLsEfa7qhXairCgX4gM0OfqTRe2q18bpdkUtUOlLj4fk=
+	t=1755049142; cv=none; b=HTc7xKtxtg7pa/I5HEs9YJY3Vq488nGn2u28jR5HFlDJ8C/SKkljlu4D3y4CiFP7J/t+xS9PGJtOn6L82dR+U3E+ScJkkfYR2TfLwqRk1AvJ4fCwCW3cyHOEMaEu1dvjCdJotDsWY8G8weDdENiKH9JmYRmtAu3zP3pi4gkR/vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755049107; c=relaxed/simple;
-	bh=avQTEeDafSyhCSMD6MZeCRj3kg+eXD4fd3LS9e3ITyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j1mQEqJlC6OcfBBiA/quqKTh7kHNBvtX4YSp0/srQJ1t5nV32TLvQ1h5a6v53tvIHMVsW3IGlRiRaFYstHe7syYtCUdmwzQXFwgx3amF3WuJ4i0RQ5kvRp245RYRbrQvZbFq0Mn/+sV0Xi7vg5oJ5hMVMixdRbH3uPllXdghBTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=fs244+1q; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-7074710a90bso52490036d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 18:38:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1755049104; x=1755653904; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xf1ks6JUZ1IFFm+2x9B7TBmLSYkbRnh2E4KrA/6BMZ4=;
-        b=fs244+1qnyRm1qIZqwQcPpjk+RsIreXF5lOHdIq42Gq3r/EOyPU9LggtaTFoxGJIm/
-         RyHpbdAB2lPa0YOhzA47RR3uyuoS6OEV/dORknbvTfjt+b5vOuezbwecrHuVxd/XT9AF
-         XlhgMcf+22ipAzOh3U1zhtilOuOWb0CuylN2zG8U9UsyTVK3F4T2ucXXXK1/phZ8jlT6
-         9PHuow48+gJZsCw9y5jVnF13/QBKVDK/m2m9030+DDE0tMFPw/4x3MmflrvSlC5JwYDv
-         RxEwcrCpHifO9xu3UqlrIRB43Gjc/o09+ocazLI7oVNATAYmYr/Nn2D1JJ6RGMiQOxvx
-         7qVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755049104; x=1755653904;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xf1ks6JUZ1IFFm+2x9B7TBmLSYkbRnh2E4KrA/6BMZ4=;
-        b=t2FTsrEoN9IUDvUxEnr2/CvZb/nE2xu8EpPnjrXioU828gAY9XOnVWE6tdy0EkCNrc
-         21Wg2CjKG51cGpNQrXpeuOtg8rNrwkU0Y4uUEb54blvhjPe4s7Pcsonm3Qeoa8AlXdlF
-         4k+Mv0WL5JVNl4vHX6ugqwcPGra8iSGpbBTKF24DztKZNWiDcVuaOcTHoRkuZsGdKARz
-         JRtP0MSkgh9HDKVu8t4XMobRLMcYli/Xobs4mh/Gwxwgvv1nkVOZrxlPZmjltqmiepgr
-         JbtEIUbwlw74WHLGqCEgTL3LIewodzrah3dr8Z1BL5LJ/dTVLF5LkbRy0y0vQe3AZEIb
-         UR7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfxW1NndkY97t13S0sNZqb9st5hzHopd0G/U5XbG/4v0wp4hgy8gF7TYcBA+rLitPMyoB8tvO3FzFlVRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJUmzmQWdFNoZ9SeNw5HMgEyLo5uC+/wdsQ3gu80O5usADFpNt
-	a04KzmdEDO2RxxS9kkMGcLi9dZu+jiJUMb4Fg3mKIZERF2s7SAhFDcO9wwvOOCAzGw==
-X-Gm-Gg: ASbGncsXNs30Ri7V76VgeoMP4/bY00QV4jYYg8eqclf5W8rZPflzRalMjopsRNW7nvY
-	tJrsD3pD5/gAF8aXZk/yQAPyhTfxRnR9Mg2FQT+oSJpxVOQt/ABHXSsp/EQ0F7X+Pu+OBxemOD5
-	JyYxty0qsxaml3SQpyceeqyDao6x0VWRAo1UsNwiWjouqJwtNjIM9EcvFgqcLEMVWc7doVnmUE+
-	UbZeJhPKnYHmaKpXBMRAFQz66PpjJdP7t1YLs2A2xbCjnM7JaQL09FuXXiGnJNGnZ7NCO4qpkiw
-	q1bIhYGjqQoZx76skgTqfRAxXPK0OIWWwmyC8tQmrb4RFxb/kWljJNKZCng+axBQF6YzwYin2GQ
-	JJ2c40745l77stfbRrqT3EXo=
-X-Google-Smtp-Source: AGHT+IFxLiXaFFD0/y9Ma0z0+T0y1/ZnYdoI8nKVbc4lPZ5ngJrX1uRpLH/2uUXlst7kCQpz8X72nw==
-X-Received: by 2002:a05:6214:21c2:b0:707:5ca4:baa5 with SMTP id 6a1803df08f44-709e85868ebmr17221766d6.0.1755049104308;
-        Tue, 12 Aug 2025 18:38:24 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::fa48])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ce39fb3sm186698816d6.82.2025.08.12.18.38.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 18:38:23 -0700 (PDT)
-Date: Tue, 12 Aug 2025 21:38:20 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Subject: Re: [usb-storage] Re: [PATCH] usb: storage: realtek_cr: Simplify
- rts51x_bulk_transport()
-Message-ID: <49559415-4493-4b90-a9bc-c6b9074a61f6@rowland.harvard.edu>
-References: <20250812144358.122154-1-thorsten.blum@linux.dev>
- <b11a19b6-9fb3-4fdc-b94e-33ff01a634b3@rowland.harvard.edu>
- <19E72C72-AFD3-4D13-8F14-9A1F96B971D3@linux.dev>
+	s=arc-20240116; t=1755049142; c=relaxed/simple;
+	bh=Y5IwKFwYGjT0dM9YrX+SCTAyH2sBl4iyQskxbsC0O3k=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gO5XVFALQ7CKt89T1SjS0lX/GxJ0MOhUAZ9Dyjy/bC8iYJwOonbU4nwBBFVcKoOyjXFxW+aJKOgQobE2iEpCm0zv/xkGKNcFnBEGvlV7tCjuDYV5LuJFvEkvErLjlmtllxh4TXDYhF+mgi5guvGIlDJZWnCEUc8QYuYOscLQOcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201614.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202508130938445172;
+        Wed, 13 Aug 2025 09:38:44 +0800
+Received: from Jtjnmail201618.home.langchao.com (10.100.2.18) by
+ Jtjnmail201614.home.langchao.com (10.100.2.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.57; Wed, 13 Aug 2025 09:38:44 +0800
+Received: from Jtjnmail201618.home.langchao.com ([fe80::e8a5:9069:4c1e:2304])
+ by Jtjnmail201618.home.langchao.com ([fe80::e8a5:9069:4c1e:2304%10]) with
+ mapi id 15.01.2507.057; Wed, 13 Aug 2025 09:38:44 +0800
+From: =?utf-8?B?R2FyeSBDaHUo5qWa5YWJ5bqGKQ==?= <chuguangqing@inspur.com>
+To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?R2FyeSBDaHUo5qWa5YWJ5bqGKQ==?= <chuguangqing@inspur.com>
+Subject: Re: [PATCH 1/1] gpu: drm: fix compilation errors in drm_vram_helper
+Thread-Topic: [PATCH 1/1] gpu: drm: fix compilation errors in drm_vram_helper
+Thread-Index: AdwL8vDUZJsVsPvWGUG6xf+62139XQ==
+Date: Wed, 13 Aug 2025 01:38:44 +0000
+Message-ID: <5863c61a424545119df8ccb28dc1dbf8@inspur.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
+	micalg=SHA1; boundary="----=_NextPart_000_005F_01DC0C36.0DD98A00"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19E72C72-AFD3-4D13-8F14-9A1F96B971D3@linux.dev>
+tUid: 2025813093844534e90f04f7dbd728239cde6c5e78c56
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Tue, Aug 12, 2025 at 11:28:56PM +0200, Thorsten Blum wrote:
-> Hi Alan,
-> 
-> On 12. Aug 2025, at 22:06, Alan Stern wrote:
-> > On Tue, Aug 12, 2025 at 04:43:58PM +0200, Thorsten Blum wrote:
-> >> Change the function parameter 'buf_len' from 'int' to 'unsigned int' and
-> >> only update the local variable 'residue' if needed.
-> >> 
-> >> Update the rts51x_read_status() function signature accordingly.
-> > 
-> > That last part isn't really necessary, is it?  It doesn't make the code 
-> > any clearer, less buggy, or quicker to execute.
-> 
-> It's mostly for consistency because the parameter 'len' is used to call
-> rts51x_bulk_transport() which now expects an unsigned integer. I'd still
-> argue that it makes the code and the function signature a bit clearer
-> because now the type communicates that 'len' cannot be negative.
-> 
-> >> 	- if (residue)
-> >> 		- residue = residue < buf_len ? residue : buf_len;
-> >> 	+ if (residue > buf_len)
-> >> 		+ residue = buf_len;
-> > 
-> > This really has nothing at all to do with whether buf_len is a signed 
-> > quantity -- it should never be negative.  (And I have no idea why the 
-> > original code includes that test for residue being nonzero.)
-> 
-> I agree with "it should never be negative" and ideally the type should
-> reflect this if possible.
-> 
-> It's also easier to reason about the code when comparing two unsigned
-> integers than having to think about implicit type conversion.
-> 
-> > Much more serious is something you didn't change: Just above these lines 
-> > it says:
-> > 
-> > 	residue = bcs->Residue;
-> > 
-> > It should say:
-> > 
-> > 	residue = le32_to_cpu(bcs->Residue);
-> 
-> That should probably be another patch, no?
+------=_NextPart_000_005F_01DC0C36.0DD98A00
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-So we're really talking about three separate things:
+Hi Thomas
 
-	Making buf_len and len unsigned;
+This is what I've done in the yhgch_drm driver.
+See the link below:
+https://lore.kernel.org/all/20250808053508.52202-1-chuguangqing@inspur.com/T/#t
 
-	Simplifying the calculation of residue;
+In fact, through modifications in Patch v2, it allows only the selection of 
+DRM_VRAM_HELPER in the driver.
+See the link below:
+https://lore.kernel.org/all/20250729060728.82402-1-chuguangqing@inspur.com/T/#m3e33f8e155275ea548223c21777c191ecd392159
 
-	Using the correct byte order for bcs->Residue.
+Best regards
+Chuguangqing
 
-The last one fixes a real bug; the other two are very minor by 
-comparison.  Regardless, they should be in three separate patches.
+> From: Thomas Zimmermann <tzimmermann@suse.de>
+> To:chuguangqing <chuguangqing@inspur.com>; Maarten Lankhorst
+> <maarten.lankhorst@linux.intel.com>; Maxime Ripard <mripard@kernel.org>;
+> David Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>
+> Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 1/1] gpu: drm: fix compilation errors in drm_vram_helper
+>
+> Hi
+>
+> Am 29.07.25 um 08:07 schrieb chuguangqing:
+> > We encountered the following errors while compiling drm_vram_helper.ko
+> >
+> > ERROR: modpost: "drm_gem_ttm_print_info"
+> [drivers/gpu/drm/drm_vram_helper.ko] undefined!
+> > ERROR: modpost: "drm_gem_ttm_mmap"
+> [drivers/gpu/drm/drm_vram_helper.ko] undefined!
+> >
+> > The functions drm_gem_ttm_mmap and drm_gem_ttm_print_info are
+> defined in drm_gem_ttm_helper.c. This patch adds drm_gem_ttm_helper.o to
+> DRM_VRAM_HELPER to resolve the undefined symbol errors.
+>
+> You need to select DRM_TTM_HELPER for your driver.
+>
+> Best regards
+> Thomas
+>
+> >
+> > Signed-off-by: chuguangqing <chuguangqing@inspur.com>
+> > ---
+> >   drivers/gpu/drm/Makefile | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile index
+> > 4dafbdc8f86a..abbe32ddf6d0 100644
+> > --- a/drivers/gpu/drm/Makefile
+> > +++ b/drivers/gpu/drm/Makefile
+> > @@ -125,7 +125,7 @@ drm_suballoc_helper-y := drm_suballoc.o
+> >   obj-$(CONFIG_DRM_SUBALLOC_HELPER) += drm_suballoc_helper.o
+> >
+> >   drm_vram_helper-y := drm_gem_vram_helper.o
+> > -obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o
+> > +obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o
+> > +drm_gem_ttm_helper.o
+> >
+> >   drm_ttm_helper-y := drm_gem_ttm_helper.o
+> >   drm_ttm_helper-$(CONFIG_DRM_FBDEV_EMULATION) +=
+> drm_fbdev_ttm.o
+>
+> --
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman HRB
+> 36809 (AG Nuernberg)
+>
 
-If you would like to submit three new patches, please do.
 
-Alan Stern
+------=_NextPart_000_005F_01DC0C36.0DD98A00
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+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
+SIb3DQMHMB0GA1UdDgQWBBQRC/IegXfBTn5cZmp9COa0bolxUDAfBgNVHSMEGDAWgBReWQOmtExY
+YJFO9h61pTmmMsE1ajCCAQ8GA1UdHwSCAQYwggECMIH/oIH8oIH5hoG6bGRhcDovLy9DTj1JTlNQ
+VVItQ0EsQ049SlRDQTIwMTIsQ049Q0RQLENOPVB1YmxpYyUyMEtleSUyMFNlcnZpY2VzLENOPVNl
+cnZpY2VzLENOPUNvbmZpZ3VyYXRpb24sREM9aG9tZSxEQz1sYW5nY2hhbyxEQz1jb20/Y2VydGlm
+aWNhdGVSZXZvY2F0aW9uTGlzdD9iYXNlP29iamVjdENsYXNzPWNSTERpc3RyaWJ1dGlvblBvaW50
+hjpodHRwOi8vSlRDQTIwMTIuaG9tZS5sYW5nY2hhby5jb20vQ2VydEVucm9sbC9JTlNQVVItQ0Eu
+Y3JsMIIBLAYIKwYBBQUHAQEEggEeMIIBGjCBsQYIKwYBBQUHMAKGgaRsZGFwOi8vL0NOPUlOU1BV
+Ui1DQSxDTj1BSUEsQ049UHVibGljJTIwS2V5JTIwU2VydmljZXMsQ049U2VydmljZXMsQ049Q29u
+ZmlndXJhdGlvbixEQz1ob21lLERDPWxhbmdjaGFvLERDPWNvbT9jQUNlcnRpZmljYXRlP2Jhc2U/
+b2JqZWN0Q2xhc3M9Y2VydGlmaWNhdGlvbkF1dGhvcml0eTBkBggrBgEFBQcwAoZYaHR0cDovL0pU
+Q0EyMDEyLmhvbWUubGFuZ2NoYW8uY29tL0NlcnRFbnJvbGwvSlRDQTIwMTIuaG9tZS5sYW5nY2hh
+by5jb21fSU5TUFVSLUNBKDEpLmNydDApBgNVHSUEIjAgBggrBgEFBQcDAgYIKwYBBQUHAwQGCisG
+AQQBgjcKAwQwNQYJKwYBBAGCNxUKBCgwJjAKBggrBgEFBQcDAjAKBggrBgEFBQcDBDAMBgorBgEE
+AYI3CgMEMEsGA1UdEQREMEKgJwYKKwYBBAGCNxQCA6AZDBdjaHVndWFuZ3FpbmdAaW5zcHVyLmNv
+bYEXY2h1Z3VhbmdxaW5nQGluc3B1ci5jb20wUAYJKwYBBAGCNxkCBEMwQaA/BgorBgEEAYI3GQIB
+oDEEL1MtMS01LTIxLTE2MDY5ODA4NDgtNzA2Njk5ODI2LTE4MDE2NzQ1MzEtNTYwNDA2MA0GCSqG
+SIb3DQEBCwUAA4IBAQBDRhwc9Cfe5n65yxddOeEDQbNITPIjt/Q+Mf0KqzH+d4IcHt7HNA8ZhrOp
+YQJiFgjJY9eOo4+lABBfQTWVK3MrIiBTzf1MB8MRXnLKR1+FhZkDj+NRQdKDV6L1rcO+RsCJrLM2
+1MGkhqFlpXCHxlyPt+T18YSXSD0ceJ5QpQ3A+/N2p+OTxezHL5GqPSJT051H43ikZC5xCpZMWafu
+B0GyyrLlvvzet4Ko76Y4jWDL61EEakexUR9RgPcPhYFHiNf9f3wi3fc1AW0J1smh+3rm9INI+6Xx
+/g6gEHmIeBWZfODTrhP6FGMlMMJlLQoSAZbPBadhUnssKKTWgy5rT4qUMYIDkzCCA48CAQEwcDBZ
+MRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJ
+k/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AAkSWdsZNK1EPE5IAAQACRJYwCQYF
+Kw4DAhoFAKCCAfgwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
+ODEzMDEzODQxWjAjBgkqhkiG9w0BCQQxFgQUM9r+5oFD35dAisBthhT+2JHCSxowfwYJKwYBBAGC
+NxAEMXIwcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZImiZPyLGQBGRYIbGFuZ2NoYW8x
+FDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVItQ0ECE34AAkSWdsZNK1EPE5IA
+AQACRJYwgYEGCyqGSIb3DQEJEAILMXKgcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRgwFgYKCZIm
+iZPyLGQBGRYIbGFuZ2NoYW8xFDASBgoJkiaJk/IsZAEZFgRob21lMRIwEAYDVQQDEwlJTlNQVVIt
+Q0ECE34AAkSWdsZNK1EPE5IAAQACRJYwgZMGCSqGSIb3DQEJDzGBhTCBgjALBglghkgBZQMEASow
+CwYJYIZIAWUDBAEWMAoGCCqGSIb3DQMHMAsGCWCGSAFlAwQBAjAOBggqhkiG9w0DAgICAIAwDQYI
+KoZIhvcNAwICAUAwBwYFKw4DAhowCwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQCAjALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAKfH83KW4U5/TTcAoGnATJ1CnmrFGn4kxlekMGC5t+ezGjXam
++hT5NSIIXckxtdB5V6mGamsLOa7qCXORSQ5ALn095U6R3VhiexCkV1XOU/kenXqATGad3mcbcdNG
+A/m32ECtPA+ZB8gqV1QbHvUqZvKQG6jH7Z4FC6gQ3tWLlliBFxs2xU3+e1JxZs8JQLbWmuJa7clq
+R+LJFv9Xu90ZpLXMPTISCQtNlAUG0BdSfE8Y9Fv6KKXcEDycaCTHOtSX6nwMVWIg5CSvmdh74X6J
+FoW3n1tDN6aeZJQpBuw6qsKlO8LPRUH5yoDXcYm9SmwtI1JMsyRLEpzULH0rM3y9mQAAAAAAAA==
+
+------=_NextPart_000_005F_01DC0C36.0DD98A00--
 
