@@ -1,182 +1,161 @@
-Return-Path: <linux-kernel+bounces-766384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A7DB245FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:49:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278C0B245FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:49:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044CB16EE98
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:46:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4B2722F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07C721257E;
-	Wed, 13 Aug 2025 09:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3662F28E5;
+	Wed, 13 Aug 2025 09:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="fVd7vwVP"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013055.outbound.protection.outlook.com [52.101.127.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hMuMMVzg"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2B7212573;
-	Wed, 13 Aug 2025 09:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755078019; cv=fail; b=q3vKpIo2lRhZxYmkvzx7fJFz9MGXC/zItOqxP0du1bLxVfXFl8aqv5gKgznn034kDS+1vHrn/KcVmx4pFbwfcKIN6wrROwnxuhM7AjiyZq7fL2bWx7tG0Bj7ycB+IS4Y9CQSASgMQ/kzpRieBRDcbV2kAIDtOOSatamF3LZyOcA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755078019; c=relaxed/simple;
-	bh=WJzCLIs8Dsq2YtpQWGPDMz4+Ogz3V0k7mAoE+votmf8=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lG+nG4xVduzZRktXcgTOt3E0nhyFnr6NJ08Y1EdBw1OgZASh9QNNHzU+N5Nmmp71zqol6irrnW0n2beGbDtgzgJQM+f91Xal4jyMtwaNuxnRSiO8Qz3GSn0qYdVW7BGdP+j3prsoxnFn3y74XJYMIvoz6FeFUPO4DwZqnxu2XZM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=fVd7vwVP; arc=fail smtp.client-ip=52.101.127.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SfPuLlm3pW0t5tnPfAG1OkugvpZkP+ITLNFCMT+ZxpkkWPIV0ZscsuNQYewdjPB1dPSb4ePHzKZWRoV7hyQhw/hjaDO4T6+S0/QP+ntOyPEIg8Cl69FeXE4vWeoVyKf1SncKuOEyGUjImsaurv4SvEoQZxUwuRm5r+pYCRQA+IKR9P9k12bFtzrni4q6FNEKtsj5cNt4LRsDbRMWvH2OMWkutpmEjPYzkesLBzvdffbgx3LvGzthzx5fUSea6wDyZyEp8xh+reXzYYvmP8Tkiz1w/MXM3LCj56W366yCvhBrOwO63d+Ymt6YHuc7VmLkrhUGGOMFjw3fMSt8EQQvHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pYHwBwpesfflBo+drxKh7ePIDdqOgSRHHjAEh9jnV5Q=;
- b=werXwq2gV4Z/5SoAoDKA0zoqBT5YV+Sz8OfPvAUGFuFvbnuC8Pok7ZPCgMo6m+qg52YN3+fcVWB7lUC40Yy1JlQYY7XlnngnUBwuViwvU474BvGFxDBlbNO5Y09wQJ/OHmavggsGbpvZXXaejNhXYe0YoMxwvjLnPKdSQkoM9xBmUDsWExItK1YwX4F5XWc/mYOmc/wezAwZ43GCq8Z/Sh0v/s8mG0am1BreYpi4agwAaCPsqK2EeIxgIf28E4VYfdgb0fzAy0q7N2AfPLKc/REi4rnIDgrY9ZdQOcGZLw3s20MaXBsh98M/rk/MWPquV6xGDnPmWfdoz6kohR6U1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pYHwBwpesfflBo+drxKh7ePIDdqOgSRHHjAEh9jnV5Q=;
- b=fVd7vwVPS7kpMLNK9MM5ZrEiQa83uyNSr1ZDtmgXhzSkr237WGrewKUpcxPhNvzq3h+qpOnBHKWh4OSkA3F3BFhxFHFKy5rZ/vXqO9Qkpl4xSWrUsBCKUAi3uK107py7vTzo1FiQz5kEujYoe6dXqd5caNhRfiUAIx11YPn2nLpoknRS4lkJWxpPC4Oy0q3OH9vaDmFEQMN8K20/GniCSLwed0709YrWvh/qgJevIerY/B2gPn36vYTaCZVIKzhZjA6oZlRW95/j+bmEeiXh3zKSBznORLg2GiLmmk8VItdwPwYGlOfnHTl+o4X83g8m6XCn8Vg7JNTv1OtRRn1ScA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TYZPR06MB4978.apcprd06.prod.outlook.com (2603:1096:400:1ce::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.21; Wed, 13 Aug
- 2025 09:40:14 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.014; Wed, 13 Aug 2025
- 09:40:14 +0000
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-tegra@vger.kernel.org (open list:TEGRA ARCHITECTURE SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: [PATCH] clk: tegra: Remove redundant semicolons
-Date: Wed, 13 Aug 2025 17:40:03 +0800
-Message-Id: <20250813094003.552308-1-liaoyuanhong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR01CA0015.jpnprd01.prod.outlook.com
- (2603:1096:404:a::27) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2022F548E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755078024; cv=none; b=A3EC3z0GjM4cNe6vGja/LKFj6nE5+cb5flyRxeiW/0rPdB25xyGNojqRQHbnEb1hk/rWUtjpEMXkM17GY5N3GtM0PL6ovrN9a3hHPSyqRW9J89gbCxOmXayLsng/XBjQKnqAunp0Wgvx37nTLCP/jnXtiCNMyONV/XYGSPQO6zI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755078024; c=relaxed/simple;
+	bh=Bzl1fTy5zn3FKPpn8SCij3fXaOSeVZvede8RiBegfvw=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mh/Bf6wu/dtEBRCGgORFY+gN9KIjEitDzWuuWQ0wb4jY/ZdrE7raRY68vbckY0E++uYNncMa7Pbixd/AL/1oyM277ogSi7m7DNGpfQAwSCg107bIpOOrjrleiSwz/tmoJhrxfU2WGjuH2+rr3XDgSkIUSTU7hIHOokN0u+fg88c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hMuMMVzg; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-556fd896c99so5405956e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755078020; x=1755682820; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCLr2/gBgA535ijZwC7LDnHGKufszujGdP3EdKtVNas=;
+        b=hMuMMVzgJw6F4GsH9IWakin6qXABGRo96PjIRDCQ0T10OkS6zyjG0RJHvwuBtBQeHS
+         /EVORnMIHLtwDoQd/bCfVGyrNldQSq9+vvVmU4EdZDeCw2Xj05TLVenDyhizDbyBsqeU
+         TSDucsiVSCVlf7Rko+6APRn2qaPPaE+HfJUxfwtXCmCMVtCfBSeVO5UfMaHD0O6yQ1Uo
+         fZ0NHBS7Znrq0194PKLjvTdoyePViM/e7D+OUZj9cSSF37/l+LNoW4m0TeKFB/KTd3Nc
+         hlzrtx8V4cPzCmCIV7HY01JWGfMuWASlJ7Au2cuNlBZ0GumyVDGR9ninWw15ZEjU2f/N
+         Z/Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755078020; x=1755682820;
+        h=cc:to:subject:message-id:date:references:mime-version:in-reply-to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCLr2/gBgA535ijZwC7LDnHGKufszujGdP3EdKtVNas=;
+        b=MotEl+rxmh3BTptaAEqRzKo22Zs+Ak63hl3b6Ry/bdbNpj7DSc/lrav1U0GVjzQ215
+         GdGc/Z+wv0LVoWxXeTobVG5QhxuZFmSuFt9U9RrTd/f4VqXmsXvRPe9Fex2I80pxB+a0
+         Xcrw1R/6jUD4XpdZSKXkD0qqxeoC3oiCIW95zAwoRv7n+yo3vZ4FnD1F3owMvJzliMwJ
+         aXsNw4qOYyPzUTYMJwBSIERxdT2o2j6bQ7iP4Xodzgond+x3Gg1ye46FldLd+Pp7oPio
+         I3hkLhj8bhNyWJoE7YVGXBhFtysdqJfdzZiZbsiryRY90bDt1aZhOyRd5aIBdGZQ2azo
+         WMhA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Bg3rRvArpAqH52o3C/I8xwv9L2m5P8k2faPm1awlwocGTvZ+rQI9ikIwAvd6MvCCvGH/0RqypmEFutM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDcGqcyQNyGjPe6MpAuO/GM1N0sUNDSxydi19hne9TvrVyfJ9r
+	SfP2NsYxfZbTOKXSmxuZA1xVaLgT4XRpqsm61TrKVZQC5FmSXOsT+le/CY/0NFrkZQ+1fHcKGzJ
+	+XXrjsd2z0G6h/Bvy9eNd8nO1FGlmW0HqEph1K6gpIQ==
+X-Gm-Gg: ASbGncsfiGIHCJdfozvnqMvIAbo2A6FUXSoGigkptbDhYGCj0jeDNsX7JU02UdBAbpa
+	gOfer6UGBR4ku6hR84D0xHWRNXlbFCMr0u/hX7xoaz9J8NGFvMR7ffsmSqoA7KttlB/lqisJTxp
+	DoXGi9UT1/UuEs5JR3ubyTfcANbDflPSx5RIqz44NlKT7/ioXn6wR6fktEH0te32btUxdWTr/yW
+	Gmao4K2ETl/p6G7qA0g4t3rJZzvsY4H50nXLdI=
+X-Google-Smtp-Source: AGHT+IGRkmCRYjQdB/zuZeZqz/1pbYUJ5kWF1/Fnvca1BsseHJzKEkX+Ipcliv5kgaQGrHnHPdceKTRbNuzvOMwZtj4=
+X-Received: by 2002:a05:6512:1396:b0:55b:8863:2b64 with SMTP id
+ 2adb3069b0e04-55ce03c7c16mr795502e87.57.1755078020190; Wed, 13 Aug 2025
+ 02:40:20 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 13 Aug 2025 05:40:19 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 13 Aug 2025 05:40:19 -0400
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <6837249bddf358924e67566293944506206d2d62.1755076369.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYZPR06MB4978:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6476a339-0509-4b4b-d7fc-08ddda4d6776
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?odGk7xSIcxuTy62EI474BNuaSrjrbOhw3PboalZVO2+/ECRT7Rki5JJg0XEh?=
- =?us-ascii?Q?c3m51rq3Awjfu9Aeays+Bd2oRasPp75CRJZAEpsYsn75jak6ZKCExL7SEmX9?=
- =?us-ascii?Q?Wt5WJ/cc/ii9NdmzKyp2spbo06uKhpa6CeK7t5FmyqMZ2UL38PLGXqwFafSI?=
- =?us-ascii?Q?Iaew0vSJZzZRQlEXhowkB1wix+xL3hITKvQvkUHnIaONQDJGB9YfI7NavqFw?=
- =?us-ascii?Q?9naWX0XtDB6sQZqe7N7b1fw0AhZInL3kO5Xq+eFZOAABRwYGnbnlQyYFo6xL?=
- =?us-ascii?Q?i19/HiZh/8Fkvee/D7JL9XZ1gDafRaOoa2agMiloTHdc9Kim27JijoMmucE6?=
- =?us-ascii?Q?Z/00U2t53M6u4mDSpCs78mo1CuKGHejcQo9d1fCyxa1G+Tgjv+ItbbHRfb4C?=
- =?us-ascii?Q?JdlLbi87nxhcbRSZiSZOc0UzdBlNQfTAKM9B+Ydljsgwe4wbR5vgyfs4rYfk?=
- =?us-ascii?Q?8t9d8dEyIUSiAftC/Sf/lnRbEktqw63qSQO15mYVve4N3a5QjZ8he9eVBzHi?=
- =?us-ascii?Q?8rPgpDiSm6hxdlROEzYf5qcpeFoSngv+yIj7o+LbMc7/FrmgcoXwu2LRJPLY?=
- =?us-ascii?Q?PEqv77QG3Sjn8SBYWvAmDNnZnVTmYSoU0DJ6couddPb1T+CtASS+Zb8jR6Pj?=
- =?us-ascii?Q?hKEBohR6aS2rVLVZtHK+eRlFaSMI/MB41yuTPFcS4brT8oekN2WdhwK9VwYI?=
- =?us-ascii?Q?+dqM/s3/Xw+BYEOp2k5omIYmxNwANW+Vx7F3p9SWbJZXsE102ETDafH3Y9LO?=
- =?us-ascii?Q?rF3KNMwh5nrAxRj9dU2aLkCfylXqQZizCmTdfNJUGzbk05bB8dxH1bEnurNQ?=
- =?us-ascii?Q?3wt5mX4h1mRvM9qE6xYj9P0RPKzhPUU7ivw/NJOhquUoBZVULn/gbxPqha9c?=
- =?us-ascii?Q?f2lBLvEspX1muan0kYU8i7VwVqg2D1MosASiuAojGU0754EDj3y1ZRKcrP/w?=
- =?us-ascii?Q?hyckruCsfQuTijQ403ho572ZVjlM7SOAXUlDnKHZCvChCRjnRrVy4N1K7Cos?=
- =?us-ascii?Q?pgU5EaCGvALgQgTsZPmxpeIjTdA3TZiaxLU1U4z/Bh1lHhppqPBPiKz8Qyim?=
- =?us-ascii?Q?d9QG+JjWM5dwhEOF5bKzKb+eenxYwxB4yzdIYZXj4uVxBNHxaK3++w9hLCe5?=
- =?us-ascii?Q?BRv4S9OiFhme3iFdy1MDcx3r1afSj9D/YRpQ+rORV12vVA4FQgQJudxTJLne?=
- =?us-ascii?Q?0oumqRD09Tvxu98VCvMF8nuEs3dzCKFbXlGaNudFql0SJBO7eMkmbFTZp3lR?=
- =?us-ascii?Q?/wKxp+mu688hRbqDQM2AfDpFz0oFjfHt20H1tdPA1RNJ+ulY6hEmCieoHKGn?=
- =?us-ascii?Q?jvXFMGVFGjMJPr59JQs7vroqxk3KZWe7wj8Hi2RNShoZJyILaaYeQd31rcJd?=
- =?us-ascii?Q?M/we8iN98eWOslMFSHMd1o41jIP/dU12gAjAu3E7AuD7oN7cbhwv4ONx96br?=
- =?us-ascii?Q?2Z5frXzk2GsMyjVqZJVXpvADz1rGzEZ5MwJKTvTuhkWR/jQC3fT1gQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?WHp25rY1ql/zjYBpVqr466l3o2nIH3p+0wN+oqWnBzdwt+sOdZoNnw3qEZYQ?=
- =?us-ascii?Q?OTYmkpzvaihgoLrrcJt7USkT9Cr6OjM92EIV8ipJl2w8Rz/wypgEXguvv6iD?=
- =?us-ascii?Q?i2fSn5o1htGxvctYGFdUysN/pdTr/NwuaT8XoJJswbKdn+zOud/lFBwZAAHY?=
- =?us-ascii?Q?DPCZ7BsALLvTejoRBc9Kuk6LfR9T094LbWfrNcTvypD67X+SFVBJUfvMuWMG?=
- =?us-ascii?Q?s819bqgb/EzgL71s1P5tJi4a2jhhP1KUw/bAj//9bGqTBFbBFtHHg/K0Wj6b?=
- =?us-ascii?Q?L0X6AwP1pn1C4O9kYMSr0lLnnoFJjrMt4GKBHJSmq04C/H/OzCX2CzssJDy5?=
- =?us-ascii?Q?/mxvXoK18/L1fW888yaOfCDgTOMwtHZKm6uoMOLGGEPMeBohA/icAL3d2kaH?=
- =?us-ascii?Q?EUVWH++4zcZKowfZuF9q2s3lrIvyX7j3SVPIHLfkuEIpNE2YQblIW6ZISIA6?=
- =?us-ascii?Q?KbglCVpCi/9Ue4OP8DwMTMZYdWTAcIvo9buCFabpGtcdDJPEJypPlb/S5CpE?=
- =?us-ascii?Q?6Zq73Kbpdg07YANMqu5DSSmwdnPkua/fcfxrilpaQx2K6Er6WN4Qpm7yoEag?=
- =?us-ascii?Q?aAdAow1MnAYrPhJ6OhZ8OFa1fXxtH4R227Y7iSfTPME13nDCRQqfM6GqfCAE?=
- =?us-ascii?Q?uMEDtGMYsMtXJXFXy9aQvD144fw3mFUQP7dtBv+uPSabYg6hzpQ/S0avgcH5?=
- =?us-ascii?Q?7+J1GeYQN07bxMiljW4LyWdgKe4eWEQqILKMqZOkd/uOEWWDe5SLuYnWkW0H?=
- =?us-ascii?Q?wMUFFBZOexzbZfNmanPldKVSCTd/n6xl6Z10qDPTv8sXcxFRG5Y0ajAs9YKp?=
- =?us-ascii?Q?t0176hit7MQ6meK5A7HJS3c9VrTSZcwu/Kfvmr+mXRkPtxfpujCmR5DppGKC?=
- =?us-ascii?Q?InxzB4ye5CBmV1XpMuWbnYsQ4uXJ/jr+KgwqQ837UxlZP8cXwJQxiCu5qZWa?=
- =?us-ascii?Q?dqORQMFid+fNUPm+Xv5kpwcEnWyYljpMmCZEfjv7ktfx1AwlBB2qEIW7Oyo0?=
- =?us-ascii?Q?oR2ws6MAav498P4S4bS8HUfKth8M4G+budeNMLKYLUJZUJx2Y1wxYDwu6lyF?=
- =?us-ascii?Q?T8QoDhRKtoG87ij0dqhDxd4yRsC9jMF8BFADyVv8FVBLxNuVVA+gvE6tlTEU?=
- =?us-ascii?Q?l3Nb+No+sizdXY5CquOnBeftcf2PrIMU0k3dZkIypY9NbT2+mzn5pjG3x2ph?=
- =?us-ascii?Q?0+MvnnD7O39sJ/CEtYLcAiKuP1toiR2fGVmR5oWFDSe3VcieD8dVGkF6MBld?=
- =?us-ascii?Q?ufF6TO2q3HmYFmnl+P1E7k9yCPiV7NpQ/uSABhwfmOzRwSmAyIsUFVuFSHCk?=
- =?us-ascii?Q?zsHn8quxpnPsXHF2DqDvNQn85xYNRQd4hbl2isKO5KnfUkoY8uT11mOgFS0t?=
- =?us-ascii?Q?xTta5L5y5hFwrZXL1+G2QOR+ee2wMfqyPXbkgRK6tgbwIM5QX8FGRRWQJiiz?=
- =?us-ascii?Q?7ZEHDDycVJSxA3Tv7TuCG9rNMwhELmrRu2bLVm3e4zEzRACjw6Orz5mcoK7I?=
- =?us-ascii?Q?ILLBYwMwMD+ltWij+SqOqPM3OdMhc27uXwINJQmfOe9Z5isHOHSdrJxP8SzW?=
- =?us-ascii?Q?Q8NR8Vd5CQqC0oA2maWbrjHgMvUC8qcH2N9Jj9oh?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6476a339-0509-4b4b-d7fc-08ddda4d6776
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 09:40:14.1769
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iHho0wA0VU6O6fFI2QqW/D0muHYG7lthyKbHGGdLLpy6bMMhF5NNR3qhw6fbxQWr+bElvLwzxsZt4T9mFwinPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB4978
+References: <6837249bddf358924e67566293944506206d2d62.1755076369.git.mazziesaccount@gmail.com>
+Date: Wed, 13 Aug 2025 05:40:19 -0400
+X-Gm-Features: Ac12FXxS1Ph05y4YxBBe16rtMjc9WlhA3zcIzqCoM52YkPZ7kk1KgpF7Zpp__fk
+Message-ID: <CAMRc=Mf75cangdeg7T4E0nAhJs_BTdLyCu6GcrCL8vJzzAkFWg@mail.gmail.com>
+Subject: Re: [PATCH] iio: adc: bd79124: Add GPIOLIB dependency
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+	Tobias Sperling <tobias.sperling@softing.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Esteban Blanc <eblanc@baylibre.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Remove unnecessary semicolons.
+On Wed, 13 Aug 2025 11:16:06 +0200, Matti Vaittinen
+<mazziesaccount@gmail.com> said:
+> The bd79124 has ADC inputs which can be muxed to be GPIOs. The driver
+> supports this by registering a GPIO-chip for channels which aren't used
+> as ADC.
+>
+> The Kconfig entry does not handle the dependency to GPIOLIB, which
+> causes errors:
+>
+> ERROR: modpost: "devm_gpiochip_add_data_with_key" [drivers/iio/adc/rohm-bd79124.ko] undefined!
+> ERROR: modpost: "gpiochip_get_data" [drivers/iio/adc/rohm-bd79124.ko] undefined!
+>
+> at linking phase if GPIOLIB is not configured to be used.
+>
+> Fix this by adding dependency to the GPIOLIB.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508131533.5sSkq80B-lkp@intel.com/
+> Fixes: 3f57a3b9ab74 ("iio: adc: Support ROHM BD79124 ADC")
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>
 
-Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
----
- drivers/clk/tegra/clk-dfll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 58fa5a59e0c7..22dc29432eff 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -882,7 +882,7 @@ static void dfll_set_frequency_request(struct tegra_dfll *td,
- {
- 	u32 val = 0;
- 	int force_val;
--	int coef = 128; /* FIXME: td->cg_scale? */;
-+	int coef = 128; /* FIXME: td->cg_scale? */
- 
- 	force_val = (req->lut_index - td->lut_safe) * coef / td->cg;
- 	force_val = clamp(force_val, FORCE_MIN, FORCE_MAX);
--- 
-2.34.1
+> ---
+>
+> I am somewhat curious why the failure occurs only at the linking phase?
+> Wouldn't it either be better to have these functions
+> devm_gpiochip_add_data_with_key() and gpiochip_get_data() only declared
+> when the CONFIG_GPIOLIB is y/m, to get errors already during
+> compilation, or provide stubs?
 
+Providing stubs is not correct for sure - a GPIO provider must always pull
+in the relevant infrastructure over Kconfig. As for the former: it seems it's
+a common pattern for the headers containing the "provider" part of the
+subystem API, you'd get the same issue with regulators or pinctrl.
+
+I don't have a good answer, I'd just apply this as it's not a common issue
+from what I can tell.
+
+Bartosz
+
+> ---
+>  drivers/iio/adc/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 6de2abad0197..24f2572c487e 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -1300,7 +1300,7 @@ config RN5T618_ADC
+>
+>  config ROHM_BD79124
+>  	tristate "Rohm BD79124 ADC driver"
+> -	depends on I2C
+> +	depends on I2C && GPIOLIB
+>  	select REGMAP_I2C
+>  	select IIO_ADC_HELPER
+>  	help
+> --
+> 2.50.1
+>
+>
 
