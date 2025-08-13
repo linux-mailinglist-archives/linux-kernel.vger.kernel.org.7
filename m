@@ -1,358 +1,245 @@
-Return-Path: <linux-kernel+bounces-766062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D604FB241C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A10B241C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E44185802F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:44:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0116258096E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B452D2D3721;
-	Wed, 13 Aug 2025 06:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D1C2D3EFA;
+	Wed, 13 Aug 2025 06:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gZAmTTeX"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PbP84mgz"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D464D29DB88;
-	Wed, 13 Aug 2025 06:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755067441; cv=fail; b=XTM9d4NegQNyTiPNPy5nRExFXE/YT3Vs7JfKKoX4071pkZE74t+hAnFhlUF3uPBkl6G7wpOiFtN4khl+F4WkGQdru+MZxE7H0NjPTiBTJCCILibFyDhka27aY2GN1AXLvriEdtPH+Kvbcb/IMXAw1oQyhVVO+YTtVkmp2uUNfzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755067441; c=relaxed/simple;
-	bh=eV0FFJBmiBHgc7Tz3X5AjOSCMNOnjjabm0HbJXYAUjw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=R4/qE24NcByiq3JslPB4GB5WCs0PtWmwgEWcBXoN8pKjsREqoORGLIRmyqZ5BL79bgO5yXHckj3G2L5KVhJ8lFMPW/Ux4KucrS00sapBL1xKEZPMJatx25K3Rxk7kknwW/piDPHMPetrKKL7cpExJug5Imp686px/l8CALpdp0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gZAmTTeX; arc=fail smtp.client-ip=40.107.220.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zPTPfk7uB5NHAkqo925k3KNYuLfYVPaPIL+H5hUQMvc3nERzdJp+cYH7+BFFj8pGHz4B+ci+T+J3URziDKXTwVgXZiJ2JNn4jHsYNy9gYYr3N+vG/aLkhl9PjJh8pW1678IPBRMc2V4EWkcm17BVelzkao8e6TPK1Zfe/7toYf/r4/2TbmHBVtjD8Pti2xwLqpZoef+2/UFTxgYKwLbfDVDo08FSZmT5q6/C77fasQzvOmFfivtulOkgT264ZIAA8d0jcPaUBylmUPHiX5pJBVpBvUOQC2TAScmk7vOoJGb3ben79GzlSy2YiHijCtdkSl3G5ucr4AI4ye1nAEmJPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hWkc+xLy8M0Z6BqYXhqg8qrfBL1tViDhmRzJa/8B8qU=;
- b=vrWK4W5OMMIGFIF8SB7INEayu5AsO8Os/nRPY3XFkW7S9tic0b9kN6QGoPQ98subev+awLNArnxiSFoJ5hMZtx0SNwrT9+og9gv08A7vkiUFrE//hsUwQH1T7L2QztW7+y5d3jtShQPpsuXcx/7Z8Eeban65yd3ZZWJgRQBQfLsGlrRYdeQjYKJK5v6W6uN9r4741IXyejwzMG3vymcRLZsQo3oX4We3I3u2nBGGHXjFRMEWcmDklyEz2QvMey74uh+5G5eB5cogf2rONzSwCIZIL1BfH3OtKuttyM1LiI/vtrNWGPFcMg4N8JMo3/GKP+L2ICbYyuQTAMxvdhrsbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hWkc+xLy8M0Z6BqYXhqg8qrfBL1tViDhmRzJa/8B8qU=;
- b=gZAmTTeXf6JVNrm8rSnLGAAZcjOH0FCchLe2kDw9L5+6xJdhJmYh9CLYGN4yJq4385xE+mUUFK8yDSpY7OAEubFo31/iVrbvRR3gSQ1gzegywYX5bwTYFbcw5XhyXZu9Ygpg8KFUVabXY4OpEpCthyaI102NjVqABNUGnnd8ngI=
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
- by CH3PR12MB7763.namprd12.prod.outlook.com (2603:10b6:610:145::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Wed, 13 Aug
- 2025 06:43:57 +0000
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c%6]) with mapi id 15.20.9009.018; Wed, 13 Aug 2025
- 06:43:57 +0000
-From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
-To: Folker Schwesinger <dev@folker-schwesinger.de>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, "Simek, Michal" <michal.simek@amd.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?=
-	<u.kleine-koenig@baylibre.com>, Marek Vasut <marex@denx.de>
-Subject: RE: [PATCH v3] dmaengine: xilinx_dma: Support descriptor setup from
- dma_vecs
-Thread-Topic: [PATCH v3] dmaengine: xilinx_dma: Support descriptor setup from
- dma_vecs
-Thread-Index: AQHcCvZZDppGcYzUEE2+xKcWZTm2BLRgJKmw
-Date: Wed, 13 Aug 2025 06:43:57 +0000
-Message-ID:
- <MN0PR12MB595370BBBB9AC8B2A81A1A6AB72AA@MN0PR12MB5953.namprd12.prod.outlook.com>
-References: <DBZUIRI5Q4A3.1OIBMF9Z5EQ0X@folker-schwesinger.de>
-In-Reply-To: <DBZUIRI5Q4A3.1OIBMF9Z5EQ0X@folker-schwesinger.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-08-13T06:43:29.0000000Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
- Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|CH3PR12MB7763:EE_
-x-ms-office365-filtering-correlation-id: 991d9827-e293-43a5-0ac1-08ddda34c72c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?7Tfm42afPK8XXeLdI88pnRhnZ2uIpbHa+Ne7l2z00Rg8o1FGundd63qtWb?=
- =?iso-8859-1?Q?VKxUJN0jLVJtBIWnOD7A2g1hGk1Zk01i8KVqUhMp5lKdIR2P7jQaUYzw3+?=
- =?iso-8859-1?Q?J/iDg8aQ3xRVFRuuiOmYNhF456GSiCMyIvesc8GvmaPOmYnKyAJx5102TK?=
- =?iso-8859-1?Q?1Pn4BIeDcaf+vbhguiF7S426e5WCyx6O+GRKiPokzN2T1DAufYqDuTidcR?=
- =?iso-8859-1?Q?uoDS2Sd/t5gIubLbj3duHRsCF+sEs2RJgOwlzI2iQWdq+/wdyO+S6d/onC?=
- =?iso-8859-1?Q?wbBypJ6qGmgGyIBB0008CYlNLVq0lsPg6z0mcy1UxQFMN9hOVRgcbrCZWG?=
- =?iso-8859-1?Q?ap1VES1PXykH2HYw/P+imdnSZc29B51QYatKxZjOAP3FZBSSppUJ0Ji/5v?=
- =?iso-8859-1?Q?vuT/HLJxzE1ctOgdSQZTB5lZv5R+mBa+yZ7LmUd4ViUDf/vCvP8Mlrqr44?=
- =?iso-8859-1?Q?WR2ZNaFeD+bdWvHAmTe5kqwuGWXz3r8EoVhUD7tPcq93v7ncjOrOIgAn2H?=
- =?iso-8859-1?Q?yUZT9Fsm9spQ47mu0tqQGNDSkG9HCJHvlKNmroFgx6sGbyxliFAC4HMLKs?=
- =?iso-8859-1?Q?N2UzF32psF5gzsYxKYr4zuOnAPM4Qp4674qvubfZ5kbZ+s3sO+NlCo6Tzv?=
- =?iso-8859-1?Q?jIYRxxNWZr5dbW72GYI21ACLFCRFbXdVfg7tSB8dJhlspxpACm41uAbGfE?=
- =?iso-8859-1?Q?ceSjnMw6xqnfsZ/3yBj6fdFwhSOpgud0GyCWrXheda3abi5IuF/vDjzuT0?=
- =?iso-8859-1?Q?emjQzU4VsIS0oZFH8yWOd/Z2UUz0NmynHJjuDyUye1EhawdCC9jSyHjT3u?=
- =?iso-8859-1?Q?1eeKH5unJjY6CUCGEOsSS6Hlm/ewEaAifqPwvPbBrDer56l3Rkcr9x9S0b?=
- =?iso-8859-1?Q?HrD2ed4Fgqx3+0SCIN3FtaaJBCMFsfedmG169WElTxP1iFJaka96lT0HpB?=
- =?iso-8859-1?Q?qtYPKutCA+IETEqEOF0BOIij96lFZc9JvCUayxdue7np1FAIMpDOuYAB/3?=
- =?iso-8859-1?Q?LC2JogZPkmArzQdrVFXUzrFboralPyye0640hX1HuIq2sJ8tuzEBdbPt3C?=
- =?iso-8859-1?Q?fXZeb2lzuHqSexzNyIyai470d6pabgqR0N56rTpTay7xwD85lFcaA9U87e?=
- =?iso-8859-1?Q?B+AGZ2gkIF2lmfVWN2vPlOyG8DKihOUtGbhwA4Uw6tZxq5uRvlrPEQUjDd?=
- =?iso-8859-1?Q?6SIgf12crBgM1yhbPVBT5EkJSb+r2r7I6rm/PBriEMMdEWWVBMaaafayVM?=
- =?iso-8859-1?Q?imQs6VEWBOHLXvWzkAwRaF5jvJ+xSKXDE1jn05cOeIIxBvgUReoQvrAD8g?=
- =?iso-8859-1?Q?BZkNNK7g0tMiU4gYkDgq/WV3IV94W+rw/1Dv5u1g7rFVHfRS2v0fhetfkt?=
- =?iso-8859-1?Q?BrLcG8R7pfawT50qmNMHn/42WTQcwC25HkQMPOJ7CcsSMBzYRvpq1Ol1WB?=
- =?iso-8859-1?Q?1JUsfFNwdGFprLg9nU9debPPkbZEIAI73yLzKB7XnyGSwHo3wOf4DsR7vX?=
- =?iso-8859-1?Q?E47lvU30g4sIMAkHdWQ1ngUdLLFbUH7WpQ5A5XKIg8tOpvXTqIEZy3NSPY?=
- =?iso-8859-1?Q?tttSaSc=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?qApoTFpMwkNrnd/qvu5qqqCf6Ell4UtLEhVZVhrJqdeLw5YwXdkEXFN64u?=
- =?iso-8859-1?Q?yYAzhjhcUsudO2AibMHEk+mEcNwpWd3vTCMOXMQkKaL5m7M9pQVu2p9vOH?=
- =?iso-8859-1?Q?L4bwjBzwP4jQwd4pkVzAsq/kq4wseXcvagsKbn5O3btG8NQKOb3019B+8k?=
- =?iso-8859-1?Q?vPMpfg3KPTx0QSS2NkmHEzXLFKhCRxhvzccXcutQ+zUb7+81gWLo75tYzP?=
- =?iso-8859-1?Q?OitWmqduh/rCwvlL904GZFQpSpyaoaw244Hw3GXYC59hkVnBn3YjfuHCj3?=
- =?iso-8859-1?Q?pJlXfvW6ekLc8fRxOEIicTY+5cI8Rlc0Tj8r0WvmMSi6nDEa0svfZe2thj?=
- =?iso-8859-1?Q?UJK0mC5RNbvvg8wsE8TKtwuCbszJch0R+uLd/rXXbi6JsPIESC4irwf6DD?=
- =?iso-8859-1?Q?0q1oEMq7YB12aDfXwpNoJahmvXlw99m3GFMJLcQeJirUsOWO9jv5MHIma9?=
- =?iso-8859-1?Q?CnVWeRbhwBaH8gH1+zAYYD1psp340d5D4rLz9GXGyAv7AkDmuKlhaNwnbA?=
- =?iso-8859-1?Q?tUhwdAsn8cr1F4r/F5aw6E0xDmT9qgFsHg7LNQQ0J5xanXIq6KpMygoyB1?=
- =?iso-8859-1?Q?UZtlkMllYTxJC2gd7BFJ5j9GpBzEXnZLFFo2bUi1KNUYCc2MHjUvVDF85d?=
- =?iso-8859-1?Q?wH6vI54riTtRiCfYVAan0inO+omA5UXgcDTh7izteBmQbOHVlZ+nVa6r1p?=
- =?iso-8859-1?Q?SLBFym+CHdj+eIeIvj5UAH/fLXaijkzSj77Mi3ArJ/0bh/8/ygI+tvf1GU?=
- =?iso-8859-1?Q?bncGc0QcfwfZbKvtHJO2YGbQudgIvMsvFmj0jqY9VxaVpZ8+QhKcEjQhFH?=
- =?iso-8859-1?Q?VAsBvJxGjp8N5EPt7MKLTwNcpd+tXKWUfUxkNQZYYdunYTIZnW2JTDoCXK?=
- =?iso-8859-1?Q?GP/mKPmNAhb53tD3uVlHr6iHY/rprM3Q3jKxrdLD4AfXEXTdSH5oCHBLnK?=
- =?iso-8859-1?Q?rXzLMBTxN9pFhvR4T+o46pmTbs1aK5/kdEiZRr1XQxwhshTHAmLBk6+rgO?=
- =?iso-8859-1?Q?+43uJJ9mqcW/GV6sCcIOocpLfj4aF0Hkq+3F1EXQZdGqSBrA/AvXInWQc+?=
- =?iso-8859-1?Q?ON8rInNr97VY6wOdRhxwrAZ0HjtuQoYi4mql+mJlELpuorypiGBLRscvL9?=
- =?iso-8859-1?Q?QKyY/6n7I0ZYaCDAZwUWaZfgwlSSmquxUgSiWkgXLWXLVMjibQt7g6tYat?=
- =?iso-8859-1?Q?O5gFiqJTphaTUIAVm/ApoAeXjylcHENG15X6LjcG5uN8Z9eovON1uqsNEB?=
- =?iso-8859-1?Q?EQdtT8ZQquPMAcwNXVFwYdNWolzFwFXow2PNFrxqpu2mKUY//v55p0OSp8?=
- =?iso-8859-1?Q?LKP1gYPB6ZOCi6Ue6f6yu87gA6w4aBG0A0xPxTYc9ks/gIAmVpuyMyMgIh?=
- =?iso-8859-1?Q?DqGCL86CliZUKS8BAJKpaVZbbIBf1eu4S2j5r38LnTPes3J007f77fdN4f?=
- =?iso-8859-1?Q?rq45zFD7tFZv3+traMCfEfIBVF2n/OOe4X3525wdHL89k68yiQHaTex6EB?=
- =?iso-8859-1?Q?SUS+gkq4IUDC9dhR/Pnu462nCWETAbDc3HTb140ui/YH3JRPhTeRnMb5bT?=
- =?iso-8859-1?Q?rg2qtIZUX9uiJgmDYaMXKO/HmCZA3gB9zehBsj/TrRwad85Gii2Enwi7Wh?=
- =?iso-8859-1?Q?B7lH3nlyZJoIo=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418272D3EDF
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755067452; cv=none; b=rZkjyH4zIpvKS9QqRdwOI1OMU7f8nwMVgixe+OMT+7rQpOYLH1vij58C9V2VW6VBFhi6tWAqrK/UbHU2DSgdWU5dFpqUgdIvRakgWvJwAWrtQEo8BHgPY4elTC0H1HTlSVPUijfmVdaxU/Dzl8Rl5Jfg1Zyy96vi3LFIdS6gb7A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755067452; c=relaxed/simple;
+	bh=Ntbu4TME5th/Z7sHM0FyWRCc2KPoc/Bn/1D8r1hHyTQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=amH1qBsb25Oo/5QqH3s2Wlj/wGOIFQIk8XxlvjADodaw6qQZIX2f/q3KSNpgBXS9q0fZfWQpkiH29vAFxZefxDcOAuVynVEnh9Dz47rxAeNU7gg3Lvtk9MSkk7D4LBUZZTaBo0RN4lymgzDum1Ky6q5l6BluZFeI6EJwpr9rLhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PbP84mgz; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7430835ec28so4192176a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1755067449; x=1755672249; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kN4SWWkhP+H9aW8tQSuXufONqI8/WS93SoimYt/qVpo=;
+        b=PbP84mgzhPB7Uc+xt5PaKIQfmfLe3TdIo9089ZTK+rKUEU/sxQ0eyEvo67mHsiea8O
+         92ooMsmQ4xRDD+sbgGaEzTWABJB5PSpZZe+adHEb8R0Bvi9VoaTjvw/gecSyQxwem+4W
+         Ty5Y4qVJT+q2mXKsFFX7SLpvXX1nrQ4bUPZ0MvK34u5TDo7YlNoJKousB7OfPJBDgAnz
+         N3ltHpkCl3u7YGFYSYMS9MdZ8jBDEVntz4BKIzIxGSUVrfYwPioAIYoSsGP6+dMsegwl
+         52kHN+J1jXLdhSEiktT9HiXi5WZv3APuDSz3jU/5Znw+HhSeecQ9f+sF0wZVQcxApVIK
+         v9Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755067449; x=1755672249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kN4SWWkhP+H9aW8tQSuXufONqI8/WS93SoimYt/qVpo=;
+        b=ldN5Pq00WrB+fDfjL8j134AULjxvqHt0benuO0zOblgIUsnM0AXRBF+OuwhGAab6eg
+         ZwqWW4rHMvYUQlfoovwTx+EUy+/8g3P8Qf2vEPYcJ43mgpKMe2NLQbYyirDbcU7d8mF1
+         yJnknP3Ov9xHW2VM2ks2yiOUoc7iEzUi66VDD2hl694n+k+Ufkr9c0wHYyuUvlEPWkSl
+         6Kb09c8/C+HCcQmndofDKe3qayRyqLuwZ5E19sM974PEqV7ifVA+lVgEeX4jS5Y9EUAO
+         ZwkO90ZypktWcPbt86o/CvYGG+SK+3E70Egv8N51LvYM0dPEJl1kZ+F9SeK9sgYv7jlQ
+         yjSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkweGX0Ms+jlidwm+rQGfTcSnN1wsY7hofcskl9Hy0Ft/FM0B7MrECsEOAgaVXoijVhJkh0z6ZNFXx/og=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywIkJADP/GMZ393yNQvzb9Xvy4m1IYhvQGiJBlURwSrmmKX0dU
+	HFilmWOglTRlGVS/NHNksiAbAnCudUZQWiFO4lxApu3wVLOWGucGQvelfY6TO4/KmrA8Xx6K+zI
+	eVALH/RWfHD8TCxjQA3JvIYAEWswrxbUdnyMCxwzL1Q==
+X-Gm-Gg: ASbGnctm6m4hilgSnewg25LrWs+hNpLzNdjk7YDV3MmS21tm9aR7+jgSK3YQcCu6xPd
+	4ezhoreSdBG/Q8gvXmvLUzEedquCuJDP0YhTv2jr1uhrAdSMLusSEHSJp2zboteNNpPT/bwGkm0
+	ztCAhCsdo18WoUlVF8EFvDRc4tkohCKme/f5PKIXqFCN4al83ApK7mO4x7UcCYzypzep8Rph9Gd
+	0h0InDTV7K3RM6iS6wRnpX5
+X-Google-Smtp-Source: AGHT+IE1kH655r3yAN3e42gjKNXI3YeADBZSD3EwRPhXTz20ecAS64Pguy13srIYgyLsWKp0VZhzjHp56BATXuR+FCg=
+X-Received: by 2002:a05:6808:1818:b0:434:3f2:4d05 with SMTP id
+ 5614622812f47-435d4211298mr1290082b6e.20.1755067449027; Tue, 12 Aug 2025
+ 23:44:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 991d9827-e293-43a5-0ac1-08ddda34c72c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2025 06:43:57.0735
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: B0hGaVoY7pmdyILea1yoqLMyMzmMJvdRRkmSUJYNgwflrdV52c4wr0VZfXNta+//
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7763
+References: <20250515094301.40016-1-cuiyunhui@bytedance.com>
+ <CAEEQ3w=XqoKmVu1kvc5XUbGbQJsHVkRx=T65tXvYEYo0HCTcnQ@mail.gmail.com>
+ <aJs-aPH32OxpzR3G@sunil-laptop> <CAEEQ3wnHFPBPC0U59rDBJaZYxJ24uJzJ7NDQO0gfmVqoiQwNOw@mail.gmail.com>
+ <aJtKZhvNX0p3obFw@sunil-laptop> <CAEEQ3wmomscuAzuiRyJu4ha8tiM=s1Y-ytQROPTWr1DScMNL3g@mail.gmail.com>
+ <aJwiXKWXik8BmpL8@sunil-laptop>
+In-Reply-To: <aJwiXKWXik8BmpL8@sunil-laptop>
+From: yunhui cui <cuiyunhui@bytedance.com>
+Date: Wed, 13 Aug 2025 14:43:58 +0800
+X-Gm-Features: Ac12FXyGVnizD6EyhuBpve20mgaqlAC7Lqkjh6Jm18br-KgPX42SL0ncGyqGwNM
+Message-ID: <CAEEQ3wky3LXK=ge1wBkHD0ZWtwUF-aBn44EK0Uxa+_2DB1Giqw@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH] ACPI: RISC-V: CPPC: Add CSR_CYCLE for CPPC FFH
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: rafael@kernel.org, lenb@kernel.org, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
+	linux-acpi@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Anup Patel <apatel@ventanamicro.com>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, juwenlong@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[Public]
+Hi Sunil,
 
-> -----Original Message-----
-> From: Folker Schwesinger <dev@folker-schwesinger.de>
-> Sent: Tuesday, August 12, 2025 12:53 AM
-> To: dmaengine@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linu=
-x-
-> kernel@vger.kernel.org
-> Cc: Vinod Koul <vkoul@kernel.org>; Simek, Michal <michal.simek@amd.com>;
-> Jernej Skrabec <jernej.skrabec@gmail.com>; Krzysztof Kozlowski
-> <krzysztof.kozlowski@linaro.org>; Uwe Kleine-K=F6nig <u.kleine-
-> koenig@baylibre.com>; Marek Vasut <marex@denx.de>; Pandey, Radhey Shyam
-> <radhey.shyam.pandey@amd.com>
-> Subject: [PATCH v3] dmaengine: xilinx_dma: Support descriptor setup from
-> dma_vecs
+On Wed, Aug 13, 2025 at 1:28=E2=80=AFPM Sunil V L <sunilvl@ventanamicro.com=
+> wrote:
 >
-> The DMAEngine provides an interface for obtaining DMA transaction descrip=
-tors
-> from an array of scatter gather buffers represented by struct dma_vec. Th=
-is interface
-> is used in the DMABUF API of the IIO framework [1].
-> To enable DMABUF support through the IIO framework for the Xilinx DMA,
-> implement callback .device_prep_peripheral_dma_vec() of struct dma_device=
- in the
-> driver.
+> Hi Yunhui,
 >
-> [1]: https://elixir.bootlin.com/linux/v6.16-rc1/source/drivers/iio/buffer=
-/industrialio-
-> buffer-dmaengine.c#L104
+> On Wed, Aug 13, 2025 at 11:23:39AM +0800, yunhui cui wrote:
+> > Hi Sunil,
+> >
+> > On Tue, Aug 12, 2025 at 10:06=E2=80=AFPM Sunil V L <sunilvl@ventanamicr=
+o.com> wrote:
+> > >
+> [...]
+> > > > > >
+> > > > > > The purpose of cppc_ffh_csr_read() is to calculate the actual
+> > > > > > frequency of the CPU, which is delta_CSR_CYCLE/delta_CSR_XXX.
+> > > > > >
+> > > > > > CSR_XXX should be a reference clock and does not count during W=
+FI
+> > > > > > (Wait For Interrupt).
+> > > > > >
+> > > > > > Similar solutions include: x86's aperf/mperf, and ARM64's AMU w=
+ith
+> > > > > > registers SYS_AMEVCNTR0_CORE_EL0/SYS_AMEVCNTR0_CONST_EL0.
+> > > > > >
+> > > > > > However, we know that CSR_TIME in the current code does count d=
+uring
+> > > > > > WFI. So, is this design unreasonable?
+> > > > > >
+> > > > > > Should we consider proposing an extension to support such a ded=
+icated
+> > > > > > counter (a reference clock that does not count during WFI)? Thi=
+s way,
+> > > > > > the value can be obtained directly in S-mode without trapping t=
+o
+> > > > > > M-mode, especially since reading this counter is very frequent.
+> > > > > >
+> > > > > Hi Yunhui,
+> > > > >
+> > > > > Yes, but we anticipated that vendors might define their own custo=
+m CSRs.
+> > > > > So, we introduced FFH encoding to accommodate such cases.
+> > > > >
+> > > > > Thanks,
+> > > > > Sunil
+> > > >
+> > > > As mentioned earlier, it is best to directly read CSR_XXX (a refere=
+nce
+> > > > clock that does not count during WFI) and CSR_CYCLE in S-mode, rath=
+er
+> > > > than trapping to SBI.
+> > > >
+> > > No. I meant direct CSR access itself not SBI. Please take a look at
+> > > Table 6 of RISC-V FFH spec.
+> > >
+> > > > drivers/acpi/riscv/cppc.c is a generic driver that is not specific =
+to
+> > > > any vendor. Currently, the upstream code already uses CSR_TIME, and
+> > > > the logic of CSR_TIME is incorrect.
+> > > >
+> ACPI spec for "Reference Performance Register" says,
+>
+> "The Reference Performance Counter Register counts at a fixed rate any
+> time the processor is active. It is not affected by changes to Desired
+> Performance, processor throttling, etc."
+>
+> > > CSR_TIME is just an example. It is upto the vendor how _CPC objects a=
+re
+> > > encoded using FFH. The linux code doesn't mean one should use CSR_TIM=
+E
+> > > always.
+> >
+> > First, the example of CSR_TIME is incorrect. What is needed is a
+> > CSR_XXX (a reference clock that does not count during WFI).
+> >
+> > Second, you mentioned that each vendor can customize their own
+> > implementations. But should all vendors' CSR_XXX/YYY/... be added to
+> > drivers/acpi/riscv/cppc.c? Shouldn=E2=80=99t drivers/acpi/riscv/cppc.c =
+fall
+> > under the scope defined by the RISC-V architecture?
+> >
+> No. One can implement similar to csr_read_num() in opensbi. We didn't
+> add it since there was no HW implementing such thing. What I am
+> saying is we have FFH encoding to support such case.
+>
+> > >
+> > > > It would be best to promote a specification to support CSR_XXX, jus=
+t
+> > > > like what has been done for x86 and arm64. What do you think?
+> > > >
+> > > Wouldn't above work? For a standard extension, you may have to provid=
+e
+> > > more data with actual HW.
+> >
+> > This won=E2=80=99t work. May I ask how the current upstream code can ca=
+lculate
+> > the actual CPU frequency using CSR_TIME without trapping to SBI?
+> > This is a theoretical logical issue. Why is data needed here?
+> >
+> As I mentioned above, one can implement a generic CSR read without
+> trapping to SBI.
+>
+> > Could you take a look at the "AMU events and event numbers" chapter in
+> > the ARM64 manual?
+> >
+> As-per ACPI spec reference performance counter is not affected by CPU
+> state. The RISC-V FFH encoding is sufficiently generic to support this
+> requirement, even if the standard CSR_TIME cannot be used. In such
+> cases, an alternative CSR can be encodeded, accessed via an OS-level
+> abstraction such as csr_read_num().
 
-Nit - avoid links for existing kernel sources instead can mention source fi=
-le
-name or commit id that introduced the change.
+So what you're saying is that we should submit a patch like this, right?
+
+diff --git a/drivers/acpi/riscv/cppc.c b/drivers/acpi/riscv/cppc.c
+index 440cf9fb91aab..953c259d46c69 100644
+--- a/drivers/acpi/riscv/cppc.c
++++ b/drivers/acpi/riscv/cppc.c
+@@ -66,16 +66,8 @@ static void cppc_ffh_csr_read(void *read_data)
+ {
+        struct sbi_cppc_data *data =3D (struct sbi_cppc_data *)read_data;
+
+-       switch (data->reg) {
+-       /* Support only TIME CSR for now */
+-       case CSR_TIME:
+-               data->ret.value =3D csr_read(CSR_TIME);
+-               data->ret.error =3D 0;
+-               break;
+-       default:
+-               data->ret.error =3D -EINVAL;
+-               break;
+-       }
++       data->ret.value =3D csr_read_num(data->reg);
++       data->ret.error =3D 0;
+ }
+
+If that's the case, the robustness of the code cannot be guaranteed,
+because the range of CSRs from different vendors is unknown.
+
+Since each vendor will define their own CSRs, why not formalize them
+into a specification?
 
 >
-> Signed-off-by: Folker Schwesinger <dev@folker-schwesinger.de>
-> Reviewed-by: Suraj Gupta <suraj.gupta2@amd.com>
+> Thanks,
+> Sunil
 
-Rest looks fine to me.
-Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
->
-> ---
-> Changes in v3:
-> - Collect R-b tags from v2.
-> - Rebase onto v6.17-rc1.
-> - Link to v2:
-> https://lore.kernel.org/dmaengine/DAQB7EU7UXR3.Z07Q6JQ1V67Y@folker-
-> schwesinger.de/
->
-> Changes in v2:
-> - Improve commit message to include reasoning behind the change.
-> - Rebase onto v6.16-rc1.
-> - Link to v1:
-> https://lore.kernel.org/dmaengine/D8TV2MP99NTE.1842MMA04VB9N@folker-
-> schwesinger.de/
-> ---
->  drivers/dma/xilinx/xilinx_dma.c | 94 +++++++++++++++++++++++++++++++++
->  1 file changed, 94 insertions(+)
->
-> diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilinx_=
-dma.c index
-> a34d8f0ceed8..fabff602065f 100644
-> --- a/drivers/dma/xilinx/xilinx_dma.c
-> +++ b/drivers/dma/xilinx/xilinx_dma.c
-> @@ -2172,6 +2172,99 @@ xilinx_cdma_prep_memcpy(struct dma_chan *dchan,
-> dma_addr_t dma_dst,
->       return NULL;
->  }
->
-> +/**
-> + * xilinx_dma_prep_peripheral_dma_vec - prepare descriptors for a DMA_SL=
-AVE
-> + *   transaction from DMA vectors
-> + * @dchan: DMA channel
-> + * @vecs: Array of DMA vectors that should be transferred
-> + * @nb: number of entries in @vecs
-> + * @direction: DMA direction
-> + * @flags: transfer ack flags
-> + *
-> + * Return: Async transaction descriptor on success and NULL on failure
-> +*/ static struct dma_async_tx_descriptor
-> +*xilinx_dma_prep_peripheral_dma_vec(
-> +     struct dma_chan *dchan, const struct dma_vec *vecs, size_t nb,
-> +     enum dma_transfer_direction direction, unsigned long flags) {
-> +     struct xilinx_dma_chan *chan =3D to_xilinx_chan(dchan);
-> +     struct xilinx_dma_tx_descriptor *desc;
-> +     struct xilinx_axidma_tx_segment *segment, *head, *prev =3D NULL;
-> +     size_t copy;
-> +     size_t sg_used;
-> +     unsigned int i;
-> +
-> +     if (!is_slave_direction(direction) || direction !=3D chan->directio=
-n)
-> +             return NULL;
-> +
-> +     desc =3D xilinx_dma_alloc_tx_descriptor(chan);
-> +     if (!desc)
-> +             return NULL;
-> +
-> +     dma_async_tx_descriptor_init(&desc->async_tx, &chan->common);
-> +     desc->async_tx.tx_submit =3D xilinx_dma_tx_submit;
-> +
-> +     /* Build transactions using information from DMA vectors */
-> +     for (i =3D 0; i < nb; i++) {
-> +             sg_used =3D 0;
-> +
-> +             /* Loop until the entire dma_vec entry is used */
-> +             while (sg_used < vecs[i].len) {
-> +                     struct xilinx_axidma_desc_hw *hw;
-> +
-> +                     /* Get a free segment */
-> +                     segment =3D xilinx_axidma_alloc_tx_segment(chan);
-> +                     if (!segment)
-> +                             goto error;
-> +
-> +                     /*
-> +                      * Calculate the maximum number of bytes to transfe=
-r,
-> +                      * making sure it is less than the hw limit
-> +                      */
-> +                     copy =3D xilinx_dma_calc_copysize(chan, vecs[i].len=
-,
-> +                                     sg_used);
-> +                     hw =3D &segment->hw;
-> +
-> +                     /* Fill in the descriptor */
-> +                     xilinx_axidma_buf(chan, hw, vecs[i].addr, sg_used, =
-0);
-> +                     hw->control =3D copy;
-> +
-> +                     if (prev)
-> +                             prev->hw.next_desc =3D segment->phys;
-> +
-> +                     prev =3D segment;
-> +                     sg_used +=3D copy;
-> +
-> +                     /*
-> +                      * Insert the segment into the descriptor segments
-> +                      * list.
-> +                      */
-> +                     list_add_tail(&segment->node, &desc->segments);
-> +             }
-> +     }
-> +
-> +     head =3D list_first_entry(&desc->segments, struct xilinx_axidma_tx_=
-segment,
-> node);
-> +     desc->async_tx.phys =3D head->phys;
-> +
-> +     /* For the last DMA_MEM_TO_DEV transfer, set EOP */
-> +     if (chan->direction =3D=3D DMA_MEM_TO_DEV) {
-> +             segment->hw.control |=3D XILINX_DMA_BD_SOP;
-> +             segment =3D list_last_entry(&desc->segments,
-> +                                       struct xilinx_axidma_tx_segment,
-> +                                       node);
-> +             segment->hw.control |=3D XILINX_DMA_BD_EOP;
-> +     }
-> +
-> +     if (chan->xdev->has_axistream_connected)
-> +             desc->async_tx.metadata_ops =3D &xilinx_dma_metadata_ops;
-> +
-> +     return &desc->async_tx;
-> +
-> +error:
-> +     xilinx_dma_free_tx_descriptor(chan, desc);
-> +     return NULL;
-> +}
-> +
->  /**
->   * xilinx_dma_prep_slave_sg - prepare descriptors for a DMA_SLAVE transa=
-ction
->   * @dchan: DMA channel
-> @@ -3180,6 +3273,7 @@ static int xilinx_dma_probe(struct platform_device =
-*pdev)
->       xdev->common.device_config =3D xilinx_dma_device_config;
->       if (xdev->dma_config->dmatype =3D=3D XDMA_TYPE_AXIDMA) {
->               dma_cap_set(DMA_CYCLIC, xdev->common.cap_mask);
-> +             xdev->common.device_prep_peripheral_dma_vec =3D
-> +xilinx_dma_prep_peripheral_dma_vec;
->               xdev->common.device_prep_slave_sg =3D xilinx_dma_prep_slave=
-_sg;
->               xdev->common.device_prep_dma_cyclic =3D
->                                         xilinx_dma_prep_dma_cyclic;
->
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> --
-> 2.50.1
+Thanks,
+Yunhui
 
