@@ -1,157 +1,76 @@
-Return-Path: <linux-kernel+bounces-765771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327E4B23E12
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D4EB23E13
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CDB6621C0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:10:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EAC6284EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7A61D5AD4;
-	Wed, 13 Aug 2025 02:10:28 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04B81DB551;
+	Wed, 13 Aug 2025 02:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSWeMYdX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8EA2C0F8F;
-	Wed, 13 Aug 2025 02:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3088112EBE7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755051027; cv=none; b=ty9rF46a/t9fGGCywk91/PqEHsCJ83OwkzNBpw8VKb2dRVze4Mh19/9tla0voMatwuyvHANqgEKByYeL4lXTFR5QP80DLpkb3jez1ZlcKE+H4PX7NfQwM8PN9+KXjnKaZfgE7Yp5DOCbUTNROb+O9gV+TfHJY/dLy/3/yVp1NrU=
+	t=1755051087; cv=none; b=HQEzlSku5JS4QVNSMJsN3Wnj5wp4xbmHNN+up/dD53LTa7P3Hc98WQBtw0ux59P5ltmIH29tO3yN7re36vGFrQAzloJ9e0tDJBAWX8tHJwblPLCXd9C389d57Y52fFfFQCDYQd3++G0kukAhBf74+SLQ54NwpfTnBboiDBQqacI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755051027; c=relaxed/simple;
-	bh=7WjMSmmNdSXLJ+sm0t2tUevFfljwbQvs+2NXPBJA17E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oBAcaaqXZkzBVkYa1C7UYn8CXyQKGAgW79ocwFzfnL7U1D+L07oz4yRKyZO8JLlCxx2gvJ39m3vTipO2lwJ/6u2CtNFCvy8h+Bk0efWCanISlBi+lhexfiVeXQzAlqIT8TDgODtfGZwC2iW90ZXDR2PkYV8U4Un9K1Yt7DlqvGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4c1sLH6Kfbz3Vpwc;
-	Wed, 13 Aug 2025 10:11:19 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id DBCCD140109;
-	Wed, 13 Aug 2025 10:10:15 +0800 (CST)
-Received: from huawei.com (10.175.104.170) by dggpemf500016.china.huawei.com
- (7.185.36.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
- 2025 10:10:14 +0800
-From: Wang Liang <wangliang74@huawei.com>
-To: <razor@blackwall.org>, <idosch@nvidia.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<horms@kernel.org>
-CC: <bridge@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>,
-	<zhangchangzhong@huawei.com>, <wangliang74@huawei.com>
-Subject: [PATCH net v3] net: bridge: fix soft lockup in br_multicast_query_expired()
-Date: Wed, 13 Aug 2025 10:10:54 +0800
-Message-ID: <20250813021054.1643649-1-wangliang74@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1755051087; c=relaxed/simple;
+	bh=TUqa1c4dr8SeRjsgLnXO9MFgB03+Em0g/A6drLb/jwk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EWQ1sNMTpJuCsqWhEv3uhzTt2SJxkdOY/5T0UBzagQrnvCvMaC2dwVYtUOttEwVfV2dZBjSQgNUuZqb0DdxaJFGeNzs7AcIlP08dgHyYKMyogFWmg5juiDhljpx+xt5fhG4MwOhbL9jY5u5KCWmsW2mzqVVOYlCSM7ExYAJzang=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSWeMYdX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E279C4CEF0;
+	Wed, 13 Aug 2025 02:11:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755051086;
+	bh=TUqa1c4dr8SeRjsgLnXO9MFgB03+Em0g/A6drLb/jwk=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=sSWeMYdXeCZ8hw9MDia+Bw0BH1ViM5WnKrugXWJWv20Wohkzcz1R74BDlqc3FMm2e
+	 lLY2ttYG/Ouhfss8KO0khUdQ/vLOii6JVZymGZ84w8cyMCOoSJJ/klM15dzsre/jQk
+	 f7rXwOhhPJ9SGofvx3ElsCzikoOdLzodJ32wGRgaRcr0Q/gW69v+JJOAry62aFWSr0
+	 /Ozre0fXRcrt2ZvL9MSsnaULdwIVu+hoT5ACFjOF4lWtwXpyXJ22j+GoNOeQ0aL49h
+	 /yurkjHz4tkOAYUsIW+J2mx4KWC87wb07AHuvW0XBQK8HSYL4J928uZB7k2Q7YjsNn
+	 7SMU+Fz8lEfDA==
+Message-ID: <013b29ad-3c9f-4042-97ab-839976841244@kernel.org>
+Date: Wed, 13 Aug 2025 10:11:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] f2fs: add reserved nodes for privileged users
+To: Chunhai Guo <guochunhai@vivo.com>, jaegeuk@kernel.org
+References: <20250807133501.551848-1-guochunhai@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250807133501.551848-1-guochunhai@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When set multicast_query_interval to a large value, the local variable
-'time' in br_multicast_send_query() may overflow. If the time is smaller
-than jiffies, the timer will expire immediately, and then call mod_timer()
-again, which creates a loop and may trigger the following soft lockup
-issue.
+On 8/7/25 21:35, Chunhai Guo wrote:
+> This patch allows privileged users to reserve nodes via the
+> 'reserve_node' mount option, which is similar to the existing
+> 'reserve_root' option.
+> 
+> "-o reserve_node=<N>" means <N> nodes are reserved for privileged
+> users only.
+> 
+> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
 
-  watchdog: BUG: soft lockup - CPU#1 stuck for 221s! [rb_consumer:66]
-  CPU: 1 UID: 0 PID: 66 Comm: rb_consumer Not tainted 6.16.0+ #259 PREEMPT(none)
-  Call Trace:
-   <IRQ>
-   __netdev_alloc_skb+0x2e/0x3a0
-   br_ip6_multicast_alloc_query+0x212/0x1b70
-   __br_multicast_send_query+0x376/0xac0
-   br_multicast_send_query+0x299/0x510
-   br_multicast_query_expired.constprop.0+0x16d/0x1b0
-   call_timer_fn+0x3b/0x2a0
-   __run_timers+0x619/0x950
-   run_timer_softirq+0x11c/0x220
-   handle_softirqs+0x18e/0x560
-   __irq_exit_rcu+0x158/0x1a0
-   sysvec_apic_timer_interrupt+0x76/0x90
-   </IRQ>
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-This issue can be reproduced with:
-  ip link add br0 type bridge
-  echo 1 > /sys/class/net/br0/bridge/multicast_querier
-  echo 0xffffffffffffffff >
-  	/sys/class/net/br0/bridge/multicast_query_interval
-  ip link set dev br0 up
-
-The multicast_startup_query_interval can also cause this issue. Similar to
-the commit 99b40610956a ("net: bridge: mcast: add and enforce query
-interval minimum"), add check for the query interval maximum to fix this
-issue.
-
-Link: https://lore.kernel.org/netdev/20250806094941.1285944-1-wangliang74@huawei.com/
-Link: https://lore.kernel.org/netdev/20250812091818.542238-1-wangliang74@huawei.com/
-Fixes: d902eee43f19 ("bridge: Add multicast count/interval sysfs entries")
-Suggested-by: Nikolay Aleksandrov <razor@blackwall.org>
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
----
- net/bridge/br_multicast.c | 16 ++++++++++++++++
- net/bridge/br_private.h   |  2 ++
- 2 files changed, 18 insertions(+)
-
-diff --git a/net/bridge/br_multicast.c b/net/bridge/br_multicast.c
-index 1377f31b719c..8ce145938b02 100644
---- a/net/bridge/br_multicast.c
-+++ b/net/bridge/br_multicast.c
-@@ -4818,6 +4818,14 @@ void br_multicast_set_query_intvl(struct net_bridge_mcast *brmctx,
- 		intvl_jiffies = BR_MULTICAST_QUERY_INTVL_MIN;
- 	}
- 
-+	if (intvl_jiffies > BR_MULTICAST_QUERY_INTVL_MAX) {
-+		br_info(brmctx->br,
-+			"trying to set multicast query interval above maximum, setting to %lu (%ums)\n",
-+			jiffies_to_clock_t(BR_MULTICAST_QUERY_INTVL_MAX),
-+			jiffies_to_msecs(BR_MULTICAST_QUERY_INTVL_MAX));
-+		intvl_jiffies = BR_MULTICAST_QUERY_INTVL_MAX;
-+	}
-+
- 	brmctx->multicast_query_interval = intvl_jiffies;
- }
- 
-@@ -4834,6 +4842,14 @@ void br_multicast_set_startup_query_intvl(struct net_bridge_mcast *brmctx,
- 		intvl_jiffies = BR_MULTICAST_STARTUP_QUERY_INTVL_MIN;
- 	}
- 
-+	if (intvl_jiffies > BR_MULTICAST_STARTUP_QUERY_INTVL_MAX) {
-+		br_info(brmctx->br,
-+			"trying to set multicast startup query interval above maximum, setting to %lu (%ums)\n",
-+			jiffies_to_clock_t(BR_MULTICAST_STARTUP_QUERY_INTVL_MAX),
-+			jiffies_to_msecs(BR_MULTICAST_STARTUP_QUERY_INTVL_MAX));
-+		intvl_jiffies = BR_MULTICAST_STARTUP_QUERY_INTVL_MAX;
-+	}
-+
- 	brmctx->multicast_startup_query_interval = intvl_jiffies;
- }
- 
-diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
-index b159aae594c0..8de0904b9627 100644
---- a/net/bridge/br_private.h
-+++ b/net/bridge/br_private.h
-@@ -31,6 +31,8 @@
- #define BR_MULTICAST_DEFAULT_HASH_MAX 4096
- #define BR_MULTICAST_QUERY_INTVL_MIN msecs_to_jiffies(1000)
- #define BR_MULTICAST_STARTUP_QUERY_INTVL_MIN BR_MULTICAST_QUERY_INTVL_MIN
-+#define BR_MULTICAST_QUERY_INTVL_MAX msecs_to_jiffies(86400000) /* 24 hours */
-+#define BR_MULTICAST_STARTUP_QUERY_INTVL_MAX BR_MULTICAST_QUERY_INTVL_MAX
- 
- #define BR_HWDOM_MAX BITS_PER_LONG
- 
--- 
-2.33.0
-
+Thanks,
 
