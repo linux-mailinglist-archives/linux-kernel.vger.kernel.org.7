@@ -1,329 +1,419 @@
-Return-Path: <linux-kernel+bounces-767428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA09B25420
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:55:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346F3B25422
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC5A888357
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C2E65A6C2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D9A2D1905;
-	Wed, 13 Aug 2025 19:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Yp3/SxfH";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="tbllYNzv"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45372C2ACE;
+	Wed, 13 Aug 2025 19:56:35 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803681DF75B;
-	Wed, 13 Aug 2025 19:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755114894; cv=fail; b=QK4JN9aVwexwna5VrWCaC0aIGlxn3DSy6mpguKUrucYFPET8htjBPfv8xjunKOtG91QoIqosZ/bmaDVprpiMGcR+u7VlP2Wdawg5JsALy2uul9YAZ6Xe+bJxiT7FsLnJfcaklgkOKWFbGEEegjP7aDCcEstEKOYZIKdp9GSTbmQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755114894; c=relaxed/simple;
-	bh=7IrqOIYFrpvbVXHOitaVYiX+xNsslLwr5Vxg24up77c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oEzLOqZW83EzurhiEzyRWUekdEe0FjmNvtuu3tuFO6O4V/Rjy5qzTCBf5ZZbdTwQpXS3K40LYpWxzsq/sTbiNn2WgkZvHxpyhMb0LAtAKryeeSuFGTsVwMG9ZxblQpQQn1gFCHr5sVZa9SyWM8hgNDhSH0aIr0I2MY0DoYB2NX8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Yp3/SxfH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=tbllYNzv; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DIN5uv018386;
-	Wed, 13 Aug 2025 19:53:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=9/AE+vhS5Rm37i8iOw
-	c7FMLD+ZwIig023T6GSPxvAfM=; b=Yp3/SxfHLiymgBg/Wt+n6VZOGpMCBHXrnr
-	Slwy+2BR58Bd9XrI+E+pUMzAQfs2h3K0OAg23eXGuSaCFJIVfrZFt3K7IZc99Qh6
-	IAUJDMHZUh/KYaU5+lfal//RTOlqmvuVGEpgffkr7jCmaYOoEBSfBj74ciKUnqTU
-	Xb4OuXdCxFXoBHhgnxVh6ecUeTS9mM38V5VqlnGFIiU2ppB2lg6uL7Y889145CN4
-	UB6drkiSpigcssfokAq/nxP3oIpvJT7mlVlOK/IsjmrG8P+AgTRTpmuRtv3RVSM2
-	qjww0PsH8byVNVwgDviXSZBSOxpfM65BNzJZHyeRLZQ4rFK3qd+w==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48dxcf8f44-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Aug 2025 19:53:45 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57DJe1te030190;
-	Wed, 13 Aug 2025 19:53:44 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11on2049.outbound.protection.outlook.com [40.107.236.49])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48dvsbue4y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Aug 2025 19:53:44 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sFaBZxIxfF9aYBhtKCXbqKfZhuVnP5ftqjvmFg0Ae2JNXTW4isRpGpMe17uSEEuojbKTOB70Pd6ry5v+Si3obQNPWjzvbpRzRTPUwS01iXMTQePkLrTqli2zcP8sU68F+9FyjMl0L95y7lcn5VFUMF7byh33PsTLPCVeY1GAmLtFegvbLeGURq7m2DpvW84h+Lg5haaI87sINZN4diWxUC0feeTAOQwQsaOl3hSg4ZuX1w00AqVCWoAxU+IXt7UFgea7Nw6R3UgEz+YocGsFGilChid2FucudIsQDNVy1pJiLFgl5LcAi4UssvXFSX1oLusa9rhV1y2z+aKmpg6m+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9/AE+vhS5Rm37i8iOwc7FMLD+ZwIig023T6GSPxvAfM=;
- b=zPLCXuyrVL5qKa15EFambr4dn9xGu2VxtCj6Lsq4gxOl9VLVJznj7Xn2rg0TLDrOeX8QWoo8rH96lpEkrICgd+4+cX3So8rNza00ZcYoqs6bGqLx0pG14s4rHKuJy8JA6Iz6Tji0jWtcHoKLOoaLb5qC3u26BYFz5T4R2Pi6PEahCFDRfMBSDuazF1mylKVESLGQNXCm8/3KOmSunHDvf4bmjc3rnRRjBlLkYDHC4NW2B4LbvB1OrOJh3PAVUBrn84ucnCeU3UFDdBoAzIsLfoEJnZwUBWClFHtQHBj+pgcTdgHLtYEA+4oVDyiXm7MBqyupIaItejRBPtb4oqR6oQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9/AE+vhS5Rm37i8iOwc7FMLD+ZwIig023T6GSPxvAfM=;
- b=tbllYNzvGlSttVZrF1n+NvI6Di5UypOqkUkM7s6QMu4UPnee+vvEGA9qYG//y7PPWx3yJTsu5Q/5EOqtkJSvMHxyWaQlNV6Wgm5as6t9d6bnNP0Dp9PhCbxmaLeA6C8Gy7bHBiZVssCVGDg64TzX4gJXOqXbYYDUoSLjuSUfxa4=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA3PR10MB8591.namprd10.prod.outlook.com (2603:10b6:208:57a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Wed, 13 Aug
- 2025 19:53:18 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
- 19:53:18 +0000
-Date: Wed, 13 Aug 2025 20:53:14 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, "H . Peter Anvin" <hpa@zytor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
-        Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Shakeel Butt <shakeel.butt@linux.dev>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, Matthew Wilcox <willy@infradead.org>,
-        Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 01/10] mm: add bitmap mm->flags field
-Message-ID: <d4ba117d-6234-4069-b871-254d152d7d21@lucifer.local>
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <9de8dfd9de8c95cd31622d6e52051ba0d1848f5a.1755012943.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9de8dfd9de8c95cd31622d6e52051ba0d1848f5a.1755012943.git.lorenzo.stoakes@oracle.com>
-X-ClientProxiedBy: GV2PEPF00003828.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:144:1:0:5:0:7) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DA11A9F89
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 19:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755114994; cv=none; b=iqdHEL9bvwqLacGHJ8Vbims7yUjrJk70rZ9XFSTnQKJXhPI6DIjeITcqTZ1j/woUrYv8u7IYJgV8CqcK/QFb7pba3hVU+qDSuf/krxF5M+Yz1gmFX0BrshACpPrAR/50XRKINqsqVrjp2nC1uxiVXBoi/NjhFCc2JpXkLXXyyDI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755114994; c=relaxed/simple;
+	bh=9fj49A+2eb7KOsAljGVmiXL6DOU4uQi30GgB8LevqwI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hr3m7kZUEBzHaxGzmW9zwjNf4yiWaj6PKIMeOqAaJYVO3fGP0/OR6uBdl3RLKX285rcCCw+YHWcGGCkgsfq8JITWURBugjzeyIKY88E8IVjZJpH8ZrvqAKhxPDhzKfQoYYnODfPsBHFyp2KlriWaes2JsxlJdH01aKWyoKbduVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88432e1f068so27834839f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:56:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755114992; x=1755719792;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vJxiQLV/sV8tZa4aMmkrgIRqw9Q26jw6TU8InBUTCsk=;
+        b=lI8i7Gr5LZYsK3RrEEob5u20arO4AaE+d9vy1ZpDLyGVstqftcW4TxVsO5TVOIZxKu
+         O37JrDiitepOTRmc0OP9rQg7gLTk0pISJ/6Toi2HEdvNmNXQBQrjtQi73YKb0yHuEDIr
+         pJeDOiKEToCYvHU1ScfLa0epsxG3gYp737J0CPvlN1zB4QdXnfLDfN2GsN0pmdNEIeMf
+         2384YoM5snlrf5baFSlEVTtyX6L3k2G82YlZoZriD9NYkCVI+mhIglbGmilyHew1y8SV
+         VguK4LvwTzDXSuiXW2hyrlDnv2KPryB6SIg/qCyGkyaRZSdw/TXdFyeu4knmxSWDKiWt
+         ej3g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0PdLheewGB4HK79EA/lzD/ioPhQxct3o95MtSAUUUvLE+3KRH/tyURPM1LxguQNDPxd6s49eKtB/lqA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFIN7dKKyuQpM8IJbyfvTyTZc/uYnkSPjfH2ZvaZae8vlSUhC5
+	K/GkwL8yDHFsg2X2IOAIUUEnkjVL/KNuFTGlSzk0AIoRmR/RTNXOMUQQBn+XRt+Geq2gKh5ajXA
+	4cevW3mQC6n2Vc2ZR2G5AFQfYeustqvRZSJp/kIfiC0QQAO/40ANjScusOEo=
+X-Google-Smtp-Source: AGHT+IFLMDC1E23T4zrPqSbO2CAX1Y68ZOMDSd8vNH6j0MVrthHPMkoXA4p6D8kFPvNR7aDTnS6SKrYRkp5otFhTUE8TA+1yPZ+1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA3PR10MB8591:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab83ea47-cd76-4203-7cfb-08dddaa30c97
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BjYb+tdD5bwUmE5Tmd9hRcAyWj8WQkdqI0DNs4M5RBxMy6gUe9grjcCbCE/8?=
- =?us-ascii?Q?CfsFD54YWy4kzJXnvrnXXtWe6Ot9JC0FI8WsQ1jjqJdWJy1ZTx5CZlbc1D4J?=
- =?us-ascii?Q?p8b01kqXSE1WrJKCIq9KygJa7UNReINRDHBL5HVnA7oRH+gL3MsW1uCEieZc?=
- =?us-ascii?Q?BCabC+0hTd8NXy6cc5qQ+GguC+xkWKZrKmepKP3HJObuKv7kAand9lnIApPn?=
- =?us-ascii?Q?QicLnS4v0auAeqXKgEfxYPBgTWvtOJrZpWYa/+dtdwnasQnremcXwW7hRmmk?=
- =?us-ascii?Q?zicjd6DlRAn+70a748evwoyZEhykWN0IO5C/94ZiQGDYmncEwIgUtdxnSLno?=
- =?us-ascii?Q?6j+uCcNXqCl5bc7Vdo+OCsUTofdqauzPINFYk6almMTTanZiiebRkN5duXfQ?=
- =?us-ascii?Q?NwEmWpEwXnPuayu3RN6y5CnTAVTdIhqqWgiMFisaG8dBtAFo+/HrZDot7XBa?=
- =?us-ascii?Q?DS2YQgcDwau7egQLIJLhbDfB1NpyHSPUjuneEtMIHe1XhP/KDQsSEvujBCtA?=
- =?us-ascii?Q?pcuUGzFoQ8mNNB32+IVJrzTCrsJ06Fy3RAiTkSGEqvbHo7y64lIgRPLVmGvh?=
- =?us-ascii?Q?1yGKy8DCxMkJT0MzDRAglEkTIMRW8z05MsmYQscTmOsZmgff+TWY/xhjFXHy?=
- =?us-ascii?Q?Zw4qsiKneXee3OR4d+M95L/rLf6d+oTZZF1/3rnl0lvhvV0uD2mLsj6vqG5g?=
- =?us-ascii?Q?PSWKLYmkQZ4QzYHQrWduPixmzY4dSvpqOZhgZxiYlXXsFAeODPZ88UyP3got?=
- =?us-ascii?Q?TCFmpn88potoBDqtaOmePyrpQxpmhs7w9X+q5nmKw4lNTENjGnVdNJBy2xte?=
- =?us-ascii?Q?04TDYFLNzhJNLfkSLutoHrL0IAwy/eKyJcFRuM5/6Yl00NmhJdAY2E7ubFuU?=
- =?us-ascii?Q?947ss1T6MQXngXemDrsSzR45jDTl5xSz0Q5SOwmBNJy0D1BGmWcMlCozGjFV?=
- =?us-ascii?Q?Kt8ZukJb8Tbl2zSfqps7bklj+qfmA2SFyzNU/RCPLHJFc5xUeR3mUuMLL7VZ?=
- =?us-ascii?Q?y+Vc10SR+mCGH3o2pt1ArOHRUk/oXiDxlm5VVOj+BS3umQDTDKoQdUpU8DzB?=
- =?us-ascii?Q?FrOmfaG2Yvq1t4+Wa7vMBHKkv86z0zrgKvjMLTpPk/lUFIidRsYKGUmKRlJQ?=
- =?us-ascii?Q?1wkLwkpcSCHx9uv7SIvjtnqWD3C307OXOpc4ccrd5pADoUDAvImVxk0cX3PI?=
- =?us-ascii?Q?KGRHR7Exltha3Bbqdv+LXdwl1tzugEc8P1HuI6Wzo9hSb6Vkb1MthzEnKF/3?=
- =?us-ascii?Q?yy7hvaH68qn0ASttLlEIN4p0uzGf1OjJK76uzmqn4EcZH/FbylGLmAHgBAht?=
- =?us-ascii?Q?usXgY9MSZihIhJFa31WsIDXsaSJJF3gelm/cqJsW29JfFw+02meurttO4ab8?=
- =?us-ascii?Q?+8JvgeqTQEojNkcL3bfaTxjKXiUPIp/LGDqeHaR1WHVs514ikOwgsXXSuWaJ?=
- =?us-ascii?Q?6Mf6RoAbRZs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SOcF+GJ6GiECOZbw+rLnLbnQOmaAK0AaENc2DiOQKSI5rx+2UaOCku+dChCJ?=
- =?us-ascii?Q?4wRr0LDXAse7U/U8gT7CKG7w+XgGmTXAHOgyJdLXAMwfG84PHHqkIpxJCbSe?=
- =?us-ascii?Q?+WM+DapqjN0RvV+4s1tkYyt02r7wEnpL6ffUC5+6Pl1LgVaCES+mdYH6r1Q6?=
- =?us-ascii?Q?6T9Hx2gUJsEZWsVosgpTfS6q2pWiZXA703NZ80Ety94tD9gxB1Hii6jUYTaw?=
- =?us-ascii?Q?AzBGexaqo1pFmsAhfUYPEQ0YlbukQwrD0xEkyMn47zVvqzrSHgaAuso21I4H?=
- =?us-ascii?Q?wGwm7cMtVq+OVQg1Ef4R1cshhfprf4IOqrlz9n5BZDUPWdty/bg/7lmoM7kA?=
- =?us-ascii?Q?Up3+r7+wcoPjGc7sWDhonIIS8AQmzAY6AEdB5eGYd3fLAPN3jVb/1FoZMap/?=
- =?us-ascii?Q?x+g4rLSA2p30BuoaOc6Eq1wLlGTPBcfyGP+lISHbedaO3JN48UpzZitDkqDi?=
- =?us-ascii?Q?r4ttWwJOP5Y8m4G6y5ISXcztGszCiWm6ZX6d9As6RPhYxFf31i0BfpYsXYGN?=
- =?us-ascii?Q?ntOLI9OuSS98q6rAOG8XxW4SD4ssVQxbgaHS3EH9JXZ82Mozna66lY4W4IVC?=
- =?us-ascii?Q?LSeDysKP2/iSdmdZndajw5iV7wNJH8pNkB9/EHvHu0Cb++wdax4yHPSfegXU?=
- =?us-ascii?Q?vulpJGdEhEzQK5DHxQuaq4GZeSyBxrPoGjNI/ptTtRmXZVTjw8JknPkB5uZB?=
- =?us-ascii?Q?TWvQIssGdgc31T0rdsdCna3QJ2Nu/HBqPwRewRqotm1GwOkyd4kZEir0iapg?=
- =?us-ascii?Q?N4aXbEPrtIPvQZsEsTPaiEAAOobavr9H7bO13NWWz7tAJnFgHNfUClxx/C4x?=
- =?us-ascii?Q?mm7EzAK37DQshiRR7Cgpnwemkbb9avR4NIe+p5JE7Qpu8zE3o1Pyr5sCbh0g?=
- =?us-ascii?Q?tOSp4Em5HlgdQSKbiRZqp2gdiMEZwOU3DXXexhLzQHrmTcZ7iW07rj+Sbici?=
- =?us-ascii?Q?/P73hWvLxYSqL6o18/xiKpO216ZRO2KQTCE4z5fU3u38zvliaoT6ZUrBNsRB?=
- =?us-ascii?Q?ndZvO0ey9shjkvLdac+VHi9Y6tWyY/yIKGCty+drs7w5fN/y1b1A5/I8Ltva?=
- =?us-ascii?Q?VCylGWUtpM8vxI5IO+89+GTbwZ26JmMY2Id60EGEXu5f0IxiEa+bBwZ3AylB?=
- =?us-ascii?Q?xSdRDuQnGBiaMSmBKG39QtMnIh4zLwMBgeD/kfdhT9BNTBvdjCePHOFZ3T/M?=
- =?us-ascii?Q?CA8V3ido2x7OPY1kYdw16bf5dAScxflJ9mwFxB66jCNRHDrh4ckIdRC/IEFM?=
- =?us-ascii?Q?2zSGELh9jrBobE+fYgN4xLw4b3nNZCBX3+n/kA3rsn50+fgORyHVgvzi/Nef?=
- =?us-ascii?Q?caRs9YRrpzIHyy7TMsn3/gznmYITW8ZkLZFexbkdTWFgQtOdzATRp4H8k4ur?=
- =?us-ascii?Q?hJa/dGvsHCmMIg2xZ5MLy+YVwCs1A9SpTQ1Plei9Wh6jwuJ0FQ17/pPH7iJF?=
- =?us-ascii?Q?tRZ3jGV7gfv16CmI75UMxKJDwLfQRJ+EeUsuh+dyqNL4zZPMw/EFRwmX240Q?=
- =?us-ascii?Q?cPizcdnU7f9Rf+HtXpb3bu2xOaM0tXiiqnvbsMUOzgHM9tb8CxVVIXJj9zRz?=
- =?us-ascii?Q?MZAyZ53WLxdSPOPCsLT1YmOnME9asA+67A7Lgrm048TWyJPQCX4kjwhIxPuP?=
- =?us-ascii?Q?aQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	agt/qQABnXBYrHfhOLtQe2cK49VBzgGJbxy2BOGrowQsz2laVXse33lfrZ9y+oxrtmuJk6gdYlsCWJrSdV8lXryr9qolZuGiNeznI8Fe7Zv/mVYgLzAPWSMAZkENWaWsdggyAjre5CXOMHWLgPubU84ilZmHxkQJo3hM1jxb1CEiJPgc5pti2ISGW8tE1NFQo7m+4EI9kreVvVOfxuVyDrduzVK8OaglUsmrhV7HtIeFLR7/h+y6Fv9E68ietW3wt8N4/Wq4YZcfao390oulZ5zXcwZzG9kAA107+j2h5JCbM5L8Cqw6HFROkau6rt5bUYKor6p2qgcCuOF7jKU9tA2fIpMDFyO0JrwiFLCeNlQcjqXDkS82a92y4cn+rPD2knbJYZPIZzntqdpzTz1Bb0bZlnJrfVxp4qLsMvmPlITKsS8ju2ixAOllToIQOHXg//yo/gq2gnM2Ohaio8dVQQVJHfuTf8U3Vr4a9JInTEGmXji7kRxrBu++gCMbl4irscLfBO+N+JAOES3zZYGGGRhEm3y59qUUArKCtf4yMAqB8yvreWlJHMjn9pbzV3Idbesny8Yn1FZAXnrrb9B4XBreQy076vYibfRRrcOULcQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab83ea47-cd76-4203-7cfb-08dddaa30c97
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 19:53:18.3244
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DwBTJKlJg5qAM83s0dnAFEvVQRWG7omDZl1uWg8uG/h2mVXHem325L5m/dmVv1YJfs9bvGwtX4jfDHwgZSKoIE6hT5gxwCJheAAMSjVkyu8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR10MB8591
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
- adultscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2507300000 definitions=main-2508130185
-X-Proofpoint-GUID: dllCVF8UlnIvz2ED6ggPDp520rIXxGqr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDE4NCBTYWx0ZWRfX3T51GYgJcFys
- EElhKJE43ITbY5yLIBiHkeHKkYszLAMB5GKwKlLAMkL/5qRnf0TAk4Rq5Ye9O681fGGxuifwRE2
- baDBw5AnApp1y2WkTfxwQkpzxvrZlFocJFbrnQshG5opwkgXum4G3h4trZJxvv24szeaK94bjVT
- 70HAGpM0HC1a7AK9LgGUUxFZJq4RsksY2SpRUk1nR8q98W8y4RfuLNOkf+yE/PaK+nSkT+B1FIc
- MFmOQNA3QJbWNlXuU/c+jit7/J7DFw89YwgratvW/jnk/oXfT0Tqsg8gXkIegnP3O3nCoFTjcMQ
- XPYPzWB4ujiJ0ADj2YhG2oTEgR9+9catiN7D7MfgqlNPCX0VIuD8EKFtbBhM0s7DTJc/esCi7v9
- 3p4jXHM6NTU/NuY6Ixwwy3rLL3lXvxRIS+PDwajirpjzdWYoW2fk6fzb5Hrx8kpWzgWcUU/N
-X-Authority-Analysis: v=2.4 cv=W8M4VQWk c=1 sm=1 tr=0 ts=689ced49 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=CwLAwcwTAefBDsDzhiMA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: dllCVF8UlnIvz2ED6ggPDp520rIXxGqr
+X-Received: by 2002:a05:6602:140b:b0:87c:5a38:45e9 with SMTP id
+ ca18e2360f4ac-884337d6412mr67094239f.3.1755114991996; Wed, 13 Aug 2025
+ 12:56:31 -0700 (PDT)
+Date: Wed, 13 Aug 2025 12:56:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689cedef.050a0220.7f033.015c.GAE@google.com>
+Subject: [syzbot] [cgroups?] BUG: unable to handle kernel paging request in
+ bpf_prog_ADDR (4)
+From: syzbot <syzbot+f0efdf3dc4fade355f17@syzkaller.appspotmail.com>
+To: cgroups@vger.kernel.org, hannes@cmpxchg.org, linux-kernel@vger.kernel.org, 
+	mkoutny@suse.com, syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andrew,
+Hello,
 
-Apologies, it turns out I put the __private sparse decorator in the wrong
-place :)
+syzbot found the following issue on:
 
-I enclose a fix-patch that fixes this (now *ahem* tested with sparse...) as
-well as fixing some trivial whitespace/code reuse/const stuff in a couple
-accessors.
+HEAD commit:    7b388bf7a9d9 Merge patch series "Linux SBI MPXY and RPMI d..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11098842580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=486f4d7dd4dcbb24
+dashboard link: https://syzkaller.appspot.com/bug?extid=f0efdf3dc4fade355f17
+compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: riscv64
 
-Cheers, Lorenzo
+Unfortunately, I don't have any reproducer for this issue yet.
 
-----8<----
-From cbe60f2c5e35bf1fcffb00c51f79f700edc17e06 Mon Sep 17 00:00:00 2001
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Date: Wed, 13 Aug 2025 20:40:10 +0100
-Subject: [PATCH] mm: place __private in correct place, const-ify
- __mm_flags_get_word
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-7b388bf7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dc41eb358030/vmlinux-7b388bf7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d9b169ef31a4/Image-7b388bf7.xz
 
-The __private sparse indicator was placed in the wrong location, resulting
-in sparse errors, correct this by placing it where it ought to be.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f0efdf3dc4fade355f17@syzkaller.appspotmail.com
 
-Also, share some code for __mm_flags_get_word() and const-ify it to be
-consistent.
+Unable to handle kernel paging request at virtual address 235ba17f9123a408
 
-Finally, fixup inconsistency in __mm_flags_set_word() param alignment.
+======================================================
+WARNING: possible circular locking dependency detected
+6.16.0-rc7-syzkaller-g7b388bf7a9d9 #0 Not tainted
+------------------------------------------------------
+syz.1.16/4027 is trying to acquire lock:
+ffffffff884e8200 (console_owner){....}-{0:0}, at: console_lock_spinning_enable+0x9a/0xd6 kernel/printk/printk.c:1920
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+but task is already holding lock:
+ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:606 [inline]
+ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1532 [inline]
+ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1856 [inline]
+ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x314/0x4088 kernel/sched/core.c:6710
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #4 (&rq->__lock){-.-.}-{2:2}:
+       lock_acquire kernel/locking/lockdep.c:5871 [inline]
+       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
+       _raw_spin_lock_nested+0x36/0x4e kernel/locking/spinlock.c:378
+       raw_spin_rq_lock_nested kernel/sched/core.c:606 [inline]
+       raw_spin_rq_lock kernel/sched/sched.h:1532 [inline]
+       task_rq_lock+0xea/0x3be kernel/sched/core.c:708
+       cgroup_move_task+0x86/0x1f4 kernel/sched/psi.c:1161
+       css_set_move_task+0x1da/0x446 kernel/cgroup/cgroup.c:918
+       cgroup_post_fork+0x16c/0x816 kernel/cgroup/cgroup.c:6754
+       copy_process+0x51ae/0x62e4 kernel/fork.c:2413
+       kernel_clone+0x128/0xe1e kernel/fork.c:2599
+       user_mode_thread+0xd4/0x110 kernel/fork.c:2677
+       rest_init+0x34/0x2e6 init/main.c:710
+       console_on_rootfs+0x0/0x96 init/main.c:1102
+
+-> #3 (&p->pi_lock){-.-.}-{2:2}:
+       lock_acquire kernel/locking/lockdep.c:5871 [inline]
+       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0x3e/0x62 kernel/locking/spinlock.c:162
+       class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:557 [inline]
+       try_to_wake_up+0xb8/0xfcc kernel/sched/core.c:4227
+       default_wake_function+0x30/0x58 kernel/sched/core.c:7121
+       woken_wake_function+0x38/0x64 kernel/sched/wait.c:444
+       __wake_up_common+0x106/0x184 kernel/sched/wait.c:89
+       __wake_up_common_lock kernel/sched/wait.c:106 [inline]
+       __wake_up+0x32/0x58 kernel/sched/wait.c:127
+       tty_wakeup+0x60/0xfc drivers/tty/tty_io.c:519
+       tty_port_default_wakeup+0x2c/0x44 drivers/tty/tty_port.c:69
+       tty_port_tty_wakeup+0x52/0x72 drivers/tty/tty_port.c:415
+       uart_write_wakeup+0x40/0x5e drivers/tty/serial/serial_core.c:121
+       serial8250_tx_chars+0x5f8/0x7a6 drivers/tty/serial/8250/8250_port.c:1838
+       serial8250_handle_irq+0x648/0x938 drivers/tty/serial/8250/8250_port.c:1946
+       serial8250_default_handle_irq+0x80/0xe4 drivers/tty/serial/8250/8250_port.c:1966
+       serial8250_interrupt+0xda/0x1ee drivers/tty/serial/8250/8250_core.c:86
+       __handle_irq_event_percpu+0x268/0xb38 kernel/irq/handle.c:158
+       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+       handle_irq_event+0xb4/0x1ee kernel/irq/handle.c:210
+       handle_fasteoi_irq+0x32c/0xd5a kernel/irq/chip.c:706
+       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+       handle_irq_desc+0xfc/0x140 kernel/irq/irqdesc.c:676
+       generic_handle_domain_irq+0x2a/0x36 kernel/irq/irqdesc.c:732
+       plic_handle_irq+0x17a/0x3c8 drivers/irqchip/irq-sifive-plic.c:386
+       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+       handle_irq_desc+0xfc/0x140 kernel/irq/irqdesc.c:676
+       generic_handle_domain_irq+0x2a/0x36 kernel/irq/irqdesc.c:732
+       riscv_intc_irq+0x4a/0xcc drivers/irqchip/irq-riscv-intc.c:33
+       handle_riscv_irq+0x2e/0x4c arch/riscv/kernel/traps.c:442
+       call_on_irq_stack+0x32/0x40 arch/riscv/kernel/entry.S:395
+
+-> #2 (&tty->write_wait){-.-.}-{3:3}:
+       lock_acquire kernel/locking/lockdep.c:5871 [inline]
+       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0x3e/0x62 kernel/locking/spinlock.c:162
+       __wake_up_common_lock kernel/sched/wait.c:105 [inline]
+       __wake_up+0x22/0x58 kernel/sched/wait.c:127
+       tty_wakeup+0x60/0xfc drivers/tty/tty_io.c:519
+       tty_port_default_wakeup+0x2c/0x44 drivers/tty/tty_port.c:69
+       tty_port_tty_wakeup+0x52/0x72 drivers/tty/tty_port.c:415
+       uart_write_wakeup+0x40/0x5e drivers/tty/serial/serial_core.c:121
+       serial8250_tx_chars+0x5f8/0x7a6 drivers/tty/serial/8250/8250_port.c:1838
+       serial8250_handle_irq+0x648/0x938 drivers/tty/serial/8250/8250_port.c:1946
+       serial8250_default_handle_irq+0x80/0xe4 drivers/tty/serial/8250/8250_port.c:1966
+       serial8250_interrupt+0xda/0x1ee drivers/tty/serial/8250/8250_core.c:86
+       __handle_irq_event_percpu+0x268/0xb38 kernel/irq/handle.c:158
+       handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+       handle_irq_event+0xb4/0x1ee kernel/irq/handle.c:210
+       handle_fasteoi_irq+0x32c/0xd5a kernel/irq/chip.c:706
+       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+       handle_irq_desc+0xfc/0x140 kernel/irq/irqdesc.c:676
+       generic_handle_domain_irq+0x2a/0x36 kernel/irq/irqdesc.c:732
+       plic_handle_irq+0x17a/0x3c8 drivers/irqchip/irq-sifive-plic.c:386
+       generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+       handle_irq_desc+0xfc/0x140 kernel/irq/irqdesc.c:676
+       generic_handle_domain_irq+0x2a/0x36 kernel/irq/irqdesc.c:732
+       riscv_intc_irq+0x4a/0xcc drivers/irqchip/irq-riscv-intc.c:33
+       handle_riscv_irq+0x2e/0x4c arch/riscv/kernel/traps.c:442
+       call_on_irq_stack+0x32/0x40 arch/riscv/kernel/entry.S:395
+
+-> #1 (&port_lock_key){-.-.}-{3:3}:
+       lock_acquire kernel/locking/lockdep.c:5871 [inline]
+       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
+       __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+       _raw_spin_lock_irqsave+0x3e/0x62 kernel/locking/spinlock.c:162
+       uart_port_lock_irqsave+0x2a/0x2b6 include/linux/serial_core.h:717
+       serial8250_console_write+0x1ae/0x15d4 drivers/tty/serial/8250/8250_port.c:3415
+       univ8250_console_write+0x70/0x9c drivers/tty/serial/8250/8250_core.c:396
+       console_emit_next_record kernel/printk/printk.c:3138 [inline]
+       console_flush_all+0x7bc/0xb70 kernel/printk/printk.c:3226
+       __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
+       console_unlock+0x108/0x22e kernel/printk/printk.c:3325
+       vprintk_emit+0x476/0x784 kernel/printk/printk.c:2450
+       vprintk_default+0x26/0x32 kernel/printk/printk.c:2465
+       vprintk+0x20/0x2c kernel/printk/printk_safe.c:82
+       _printk+0x98/0xc4 kernel/printk/printk.c:2475
+       register_console+0x9a2/0xf30 kernel/printk/printk.c:4125
+       uart_configure_port drivers/tty/serial/serial_core.c:2637 [inline]
+       serial_core_add_one_port drivers/tty/serial/serial_core.c:3157 [inline]
+       serial_core_register_port+0x1f6e/0x2058 drivers/tty/serial/serial_core.c:3388
+       serial_ctrl_register_port+0x20/0x2c drivers/tty/serial/serial_ctrl.c:41
+       uart_add_one_port+0x20/0x2c drivers/tty/serial/serial_port.c:143
+       serial8250_register_8250_port+0x12cc/0x2072 drivers/tty/serial/8250/8250_core.c:822
+       of_platform_serial_probe+0x724/0xb42 drivers/tty/serial/8250/8250_of.c:246
+       platform_probe+0xfa/0x1e8 drivers/base/platform.c:1404
+       call_driver_probe drivers/base/dd.c:579 [inline]
+       really_probe+0x236/0x9c2 drivers/base/dd.c:657
+       __driver_probe_device+0x1d4/0x3f2 drivers/base/dd.c:799
+       driver_probe_device+0x60/0x1ce drivers/base/dd.c:829
+       __driver_attach+0x250/0x4ee drivers/base/dd.c:1215
+       bus_for_each_dev+0x124/0x1ba drivers/base/bus.c:370
+       driver_attach+0x3e/0x52 drivers/base/dd.c:1233
+       bus_add_driver+0x29e/0x5e6 drivers/base/bus.c:678
+       driver_register+0x18e/0x3ee drivers/base/driver.c:249
+       __platform_driver_register+0x5e/0x7e drivers/base/platform.c:867
+       of_platform_serial_driver_init+0x22/0x2a drivers/tty/serial/8250/8250_of.c:370
+       do_one_initcall+0x1b0/0xb76 init/main.c:1274
+       do_initcall_level init/main.c:1336 [inline]
+       do_initcalls init/main.c:1352 [inline]
+       do_basic_setup init/main.c:1371 [inline]
+       kernel_init_freeable+0x6e4/0x790 init/main.c:1584
+       kernel_init+0x28/0x24c init/main.c:1474
+       ret_from_fork_kernel+0x2a/0xbec arch/riscv/kernel/process.c:228
+       ret_from_fork_kernel_asm+0x16/0x18 arch/riscv/kernel/entry.S:362
+
+-> #0 (console_owner){....}-{0:0}:
+       check_noncircular+0x132/0x146 kernel/locking/lockdep.c:2178
+       check_prev_add kernel/locking/lockdep.c:3168 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+       validate_chain kernel/locking/lockdep.c:3911 [inline]
+       __lock_acquire+0x12a0/0x24d8 kernel/locking/lockdep.c:5240
+       lock_acquire kernel/locking/lockdep.c:5871 [inline]
+       lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
+       console_lock_spinning_enable+0xc0/0xd6 kernel/printk/printk.c:1924
+       console_emit_next_record kernel/printk/printk.c:3132 [inline]
+       console_flush_all+0x772/0xb70 kernel/printk/printk.c:3226
+       __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
+       console_unlock+0x108/0x22e kernel/printk/printk.c:3325
+       vprintk_emit+0x476/0x784 kernel/printk/printk.c:2450
+       vprintk_default+0x26/0x32 kernel/printk/printk.c:2465
+       vprintk+0x20/0x2c kernel/printk/printk_safe.c:82
+       _printk+0x98/0xc4 kernel/printk/printk.c:2475
+       die_kernel_fault+0x3e/0x7f0 arch/riscv/mm/fault.c:81
+       no_context arch/riscv/mm/fault.c:111 [inline]
+       no_context arch/riscv/mm/fault.c:90 [inline]
+       mm_fault_error arch/riscv/mm/fault.c:117 [inline]
+       handle_page_fault+0x9dc/0x1388 arch/riscv/mm/fault.c:431
+       do_page_fault+0x20/0x56 arch/riscv/kernel/traps.c:428
+       handle_exception+0x15e/0x16a arch/riscv/kernel/entry.S:231
+       bpf_prog_67a7f92a6a5e5f13+0x62/0x7c
+
+other info that might help us debug this:
+
+Chain exists of:
+  console_owner --> &p->pi_lock --> &rq->__lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&rq->__lock);
+                               lock(&p->pi_lock);
+                               lock(&rq->__lock);
+  lock(console_owner);
+
+ *** DEADLOCK ***
+
+8 locks held by syz.1.16/4027:
+ #0: ffffffff88660188 (tracepoints_mutex){+.+.}-{4:4}, at: tracepoint_probe_register_prio_may_exist+0xa6/0x10a kernel/tracepoint.c:431
+ #1: ffffffff8847d590 (cpu_hotplug_lock){++++}-{0:0}, at: percpu_down_read include/linux/percpu-rwsem.h:77 [inline]
+ #1: ffffffff8847d590 (cpu_hotplug_lock){++++}-{0:0}, at: cpus_read_lock+0x14/0x1c kernel/cpu.c:490
+ #2: ffffffff88705b28 (jump_label_mutex){+.+.}-{4:4}, at: jump_label_lock kernel/jump_label.c:27 [inline]
+ #2: ffffffff88705b28 (jump_label_mutex){+.+.}-{4:4}, at: static_key_enable_cpuslocked+0xd4/0x28e kernel/jump_label.c:207
+ #3: ffffffff8849b8a8 (text_mutex){+.+.}-{4:4}, at: arch_jump_label_transform_queue+0x192/0x312 arch/riscv/kernel/jump_label.c:44
+ #4: ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:606 [inline]
+ #4: ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1532 [inline]
+ #4: ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1856 [inline]
+ #4: ffffaf806ed1d098 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x314/0x4088 kernel/sched/core.c:6710
+ #5: ffffffff885dbd80 (rcu_read_lock){....}-{1:3}, at: bpf_set_run_ctx include/linux/bpf.h:2193 [inline]
+ #5: ffffffff885dbd80 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2255 [inline]
+ #5: ffffffff885dbd80 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run4+0x20a/0x70c kernel/trace/bpf_trace.c:2301
+ #6: ffffffff884e7e00 (console_lock){+.+.}-{0:0}, at: vprintk_default+0x26/0x32 kernel/printk/printk.c:2465
+ #7: ffffffff884e8050 (console_srcu){....}-{0:0}, at: console_flush_all+0x114/0xb70 kernel/printk/printk.c:3234
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 4027 Comm: syz.1.16 Not tainted 6.16.0-rc7-syzkaller-g7b388bf7a9d9 #0 PREEMPT 
+Hardware name: riscv-virtio,qemu (DT)
+Call Trace:
+[<ffffffff8007b6f0>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:132
+[<ffffffff80003298>] show_stack+0x30/0x3c arch/riscv/kernel/stacktrace.c:138
+[<ffffffff80062c2c>] __dump_stack lib/dump_stack.c:94 [inline]
+[<ffffffff80062c2c>] dump_stack_lvl+0x12e/0x1a6 lib/dump_stack.c:120
+[<ffffffff80062cc0>] dump_stack+0x1c/0x24 lib/dump_stack.c:129
+[<ffffffff802d7c98>] print_circular_bug+0x254/0x29a kernel/locking/lockdep.c:2046
+[<ffffffff802d7e10>] check_noncircular+0x132/0x146 kernel/locking/lockdep.c:2178
+[<ffffffff802dafd8>] check_prev_add kernel/locking/lockdep.c:3168 [inline]
+[<ffffffff802dafd8>] check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+[<ffffffff802dafd8>] validate_chain kernel/locking/lockdep.c:3911 [inline]
+[<ffffffff802dafd8>] __lock_acquire+0x12a0/0x24d8 kernel/locking/lockdep.c:5240
+[<ffffffff802dce4e>] lock_acquire kernel/locking/lockdep.c:5871 [inline]
+[<ffffffff802dce4e>] lock_acquire+0x1ac/0x448 kernel/locking/lockdep.c:5828
+[<ffffffff80307d9e>] console_lock_spinning_enable+0xc0/0xd6 kernel/printk/printk.c:1924
+[<ffffffff8030a62e>] console_emit_next_record kernel/printk/printk.c:3132 [inline]
+[<ffffffff8030a62e>] console_flush_all+0x772/0xb70 kernel/printk/printk.c:3226
+[<ffffffff8030ab34>] __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
+[<ffffffff8030ab34>] console_unlock+0x108/0x22e kernel/printk/printk.c:3325
+[<ffffffff8030d2ae>] vprintk_emit+0x476/0x784 kernel/printk/printk.c:2450
+[<ffffffff8030d5e2>] vprintk_default+0x26/0x32 kernel/printk/printk.c:2465
+[<ffffffff8030f884>] vprintk+0x20/0x2c kernel/printk/printk_safe.c:82
+[<ffffffff80008dea>] _printk+0x98/0xc4 kernel/printk/printk.c:2475
+[<ffffffff800995be>] die_kernel_fault+0x3e/0x7f0 arch/riscv/mm/fault.c:81
+[<ffffffff8009a74c>] no_context arch/riscv/mm/fault.c:111 [inline]
+[<ffffffff8009a74c>] no_context arch/riscv/mm/fault.c:90 [inline]
+[<ffffffff8009a74c>] mm_fault_error arch/riscv/mm/fault.c:117 [inline]
+[<ffffffff8009a74c>] handle_page_fault+0x9dc/0x1388 arch/riscv/mm/fault.c:431
+[<ffffffff863fdd78>] do_page_fault+0x20/0x56 arch/riscv/kernel/traps.c:428
+[<ffffffff864262fe>] handle_exception+0x15e/0x16a arch/riscv/kernel/entry.S:231
+[<ffffffff78000076>] bpf_prog_67a7f92a6a5e5f13+0x62/0x7c
+Current syz.1.16 pgtable: 4K pagesize, 48-bit VAs, pgdp=0x00000000a1a90000
+[235ba17f9123a408] pgd=000000002460b401, p4d=000000002460b401, pud=0000000000000000
+Oops [#1]
+Modules linked in:
+CPU: 1 UID: 0 PID: 4027 Comm: syz.1.16 Not tainted 6.16.0-rc7-syzkaller-g7b388bf7a9d9 #0 PREEMPT 
+Hardware name: riscv-virtio,qemu (DT)
+epc : bpf_prog_67a7f92a6a5e5f13+0x62/0x7c
+ ra : bpf_dispatcher_nop_func include/linux/bpf.h:1322 [inline]
+ ra : __bpf_prog_run include/linux/filter.h:718 [inline]
+ ra : bpf_prog_run include/linux/filter.h:725 [inline]
+ ra : __bpf_trace_run kernel/trace/bpf_trace.c:2258 [inline]
+ ra : bpf_trace_run4+0x2a6/0x70c kernel/trace/bpf_trace.c:2301
+epc : ffffffff78000076 ra : ffffffff80595fb0 sp : ffff8f80046b7180
+ gp : ffffffff89e816e0 tp : ffffaf8011991a40 t0 : 0000000000000000
+ t1 : 235ba17f9123a408 t2 : ffffffff9123a400 s0 : ffff8f80046b71b0
+ s1 : ffff8f80046b7280 a0 : ffffaf80123179d8 a1 : ffff8f80046b7188
+ a2 : 0000000000000008 a3 : 0000000000000000 a4 : 1ffff1f0001bf206
+ a5 : ffffffff17b0a000 a6 : 0000000000000021 a7 : ffffffff80595f14
+ s2 : 1ffff1f0008d6e3c s3 : 0000000000000000 s4 : ffffffff9123a400
+ s5 : ffff8f80046b7190 s6 : 0000000000000001 s7 : 1ffff1f0001bf205
+ s8 : ffff8f8000df9028 s9 : ffff8f80046b7200 s10: 0000000000000001
+ s11: 0000000000000000 t3 : ca76b45d00000000 t4 : 0000000000001fff
+ t5 : 00000000000000c8 t6 : 0000000000000002 ssp : 0000000000000000
+status: 0000000200000100 badaddr: 235ba17f9123a408 cause: 000000000000000d
+[<ffffffff78000076>] bpf_prog_67a7f92a6a5e5f13+0x62/0x7c
+[<ffffffff80595fb0>] bpf_dispatcher_nop_func include/linux/bpf.h:1322 [inline]
+[<ffffffff80595fb0>] __bpf_prog_run include/linux/filter.h:718 [inline]
+[<ffffffff80595fb0>] bpf_prog_run include/linux/filter.h:725 [inline]
+[<ffffffff80595fb0>] __bpf_trace_run kernel/trace/bpf_trace.c:2258 [inline]
+[<ffffffff80595fb0>] bpf_trace_run4+0x2a6/0x70c kernel/trace/bpf_trace.c:2301
+[<ffffffff80211c92>] __bpf_trace_sched_switch+0x14/0x1c include/trace/events/sched.h:220
+[<ffffffff8640899c>] __traceiter_sched_switch include/trace/events/sched.h:220 [inline]
+[<ffffffff8640899c>] __do_trace_sched_switch include/trace/events/sched.h:220 [inline]
+[<ffffffff8640899c>] trace_sched_switch include/trace/events/sched.h:220 [inline]
+[<ffffffff8640899c>] __schedule+0x1372/0x4088 kernel/sched/core.c:6783
+[<ffffffff8640bbb6>] preempt_schedule_common kernel/sched/core.c:6966 [inline]
+[<ffffffff8640bbb6>] preempt_schedule+0xd2/0x1e2 kernel/sched/core.c:6990
+[<ffffffff8007d968>] __patch_insn_write+0xb7c/0xd88 arch/riscv/kernel/patch.c:159
+[<ffffffff8007ecae>] patch_insn_write+0x78/0xb4 arch/riscv/kernel/patch.c:226
+[<ffffffff80094424>] arch_jump_label_transform_queue+0x19e/0x312 arch/riscv/kernel/jump_label.c:45
+[<ffffffff8081aff8>] __jump_label_update+0x11c/0x3ee kernel/jump_label.c:513
+[<ffffffff8081b5ec>] jump_label_update+0x322/0x52c kernel/jump_label.c:919
+[<ffffffff8081bc44>] static_key_enable_cpuslocked+0x1e4/0x28e kernel/jump_label.c:210
+[<ffffffff8081bd10>] static_key_enable+0x22/0x34 kernel/jump_label.c:223
+[<ffffffff8050ae10>] tracepoint_add_func+0x812/0xa26 kernel/tracepoint.c:315
+[<ffffffff8050b0e2>] tracepoint_probe_register_prio_may_exist+0xbe/0x10a kernel/tracepoint.c:435
+[<ffffffff8059dfd8>] tracepoint_probe_register_may_exist include/linux/tracepoint.h:50 [inline]
+[<ffffffff8059dfd8>] bpf_probe_register+0x150/0x1c2 kernel/trace/bpf_trace.c:2326
+[<ffffffff805ef294>] bpf_raw_tp_link_attach+0x27c/0x538 kernel/bpf/syscall.c:4007
+[<ffffffff805f0dfe>] bpf_raw_tracepoint_open kernel/bpf/syscall.c:4038 [inline]
+[<ffffffff805f0dfe>] __sys_bpf+0x14ba/0x419e kernel/bpf/syscall.c:5878
+[<ffffffff805f4846>] __do_sys_bpf kernel/bpf/syscall.c:5943 [inline]
+[<ffffffff805f4846>] __se_sys_bpf kernel/bpf/syscall.c:5941 [inline]
+[<ffffffff805f4846>] __riscv_sys_bpf+0x6c/0xc6 kernel/bpf/syscall.c:5941
+[<ffffffff8007937a>] syscall_handler+0x94/0x118 arch/riscv/include/asm/syscall.h:112
+[<ffffffff863fdb66>] do_trap_ecall_u+0x396/0x530 arch/riscv/kernel/traps.c:343
+[<ffffffff864262fe>] handle_exception+0x15e/0x16a arch/riscv/kernel/entry.S:231
+Code: 97aa 639c 3303 00c2 a397 1923 8393 3963 6333 2073 (3303) 0003 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	97aa                	add	a5,a5,a0
+   2:	639c                	flw	fa5,0(a5)
+   4:	00c23303          	.4byte	0xc23303
+   8:	1923a397          	auipc	t2,0x1923a
+   c:	39638393          	add	t2,t2,918 # 0x1923a39e
+  10:	20736333          	.4byte	0x20736333
+* 14:	00033303          	.4byte	0x33303 <-- trapping instruction
+
+
 ---
- include/linux/mm_types.h | 23 +++++++++++------------
- 1 file changed, 11 insertions(+), 12 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 46d3fb8935c7..0e001dbad455 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -934,8 +934,8 @@ struct mm_cid {
-  */
- #define NUM_MM_FLAG_BITS BITS_PER_LONG
- typedef struct {
--	__private DECLARE_BITMAP(__mm_flags, NUM_MM_FLAG_BITS);
--} mm_flags_t;
-+	DECLARE_BITMAP(__mm_flags, NUM_MM_FLAG_BITS);
-+} __private mm_flags_t;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
- struct kioctx_table;
- struct iommu_mm_data;
-@@ -1233,17 +1233,8 @@ struct mm_struct {
- 	unsigned long cpu_bitmap[];
- };
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--/* Read the first system word of mm flags, non-atomically. */
--static inline unsigned long __mm_flags_get_word(struct mm_struct *mm)
--{
--	unsigned long *bitmap = ACCESS_PRIVATE(&mm->_flags, __mm_flags);
--
--	return bitmap_read(bitmap, 0, BITS_PER_LONG);
--}
--
- /* Set the first system word of mm flags, non-atomically. */
--static inline void __mm_flags_set_word(struct mm_struct *mm,
--				       unsigned long value)
-+static inline void __mm_flags_set_word(struct mm_struct *mm, unsigned long value)
- {
- 	unsigned long *bitmap = ACCESS_PRIVATE(&mm->_flags, __mm_flags);
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-@@ -1256,6 +1247,14 @@ static inline const unsigned long *__mm_flags_get_bitmap(const struct mm_struct
- 	return (const unsigned long *)ACCESS_PRIVATE(&mm->_flags, __mm_flags);
- }
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-+/* Read the first system word of mm flags, non-atomically. */
-+static inline unsigned long __mm_flags_get_word(const struct mm_struct *mm)
-+{
-+	const unsigned long *bitmap = __mm_flags_get_bitmap(mm);
-+
-+	return bitmap_read(bitmap, 0, BITS_PER_LONG);
-+}
-+
- #define MM_MT_FLAGS	(MT_FLAGS_ALLOC_RANGE | MT_FLAGS_LOCK_EXTERN | \
- 			 MT_FLAGS_USE_RCU)
- extern struct mm_struct init_mm;
---
-2.50.1
+If you want to undo deduplication, reply with:
+#syz undup
 
