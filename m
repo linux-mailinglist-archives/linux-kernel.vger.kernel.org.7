@@ -1,132 +1,95 @@
-Return-Path: <linux-kernel+bounces-766313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886CCB244FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:07:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5869DB24501
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44091BC13DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7F13582F42
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9A22D46C8;
-	Wed, 13 Aug 2025 09:07:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BC820E023;
+	Wed, 13 Aug 2025 09:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VW4HIn/L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4AA20EB
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1562EE5FD;
+	Wed, 13 Aug 2025 09:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755076028; cv=none; b=F2FeZ4h6Xn+O3R0L6qetMwKXx//91fNkN12WL5FXWIcwAGTeGH8rIT6riOc1axQPg/R6VSlDj7x90DZmpM4n7pLSeBomS2lwvBwn9nA52EVeGw1EHI0ydTYBeQ8qQq/Dx5WxI2x3EF1ZFIIhu8egi+R51QoIazH1zDqcXK9EJyU=
+	t=1755076050; cv=none; b=o7hWoGcZ5cv1yvQ9ZwpnXsGomPJ0Fzr+rbh9WNhmjztCxy4o9LK49PoyQfscdgQSQ9G/FvkzIwayBvwFtWHnC7h1gmKnZN8PY7193lJkGA+8UoTdqB2u1x08RVEv+uzKUjiHIDfGNxQFK4pIanPGJGIPZTSc5NZg5TuMuEGTKKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755076028; c=relaxed/simple;
-	bh=WdB0M+OEvFK3Ssc6+6j7QCXwJt3vCzXdlexsaYeFWfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MdvEYvdSs7+chWokDkn5ORqaKidCKz8ti0/6d0IaxcrgYWdXv+csRcmM9xUYDwddnBHcER6ZPfbTZCv2q74+YYyxkBdlbXl5git7LH1PSHVrYQ3Joij2T6YnxzU7xIgM4g0zWa/ybs6XY/szLVJXiGRLOCS85iPsTtXtiSZZ5NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1um7Rh-0001Gb-6F; Wed, 13 Aug 2025 11:06:57 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1um7Rf-0004DN-04;
-	Wed, 13 Aug 2025 11:06:55 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 9F9D2456956;
-	Wed, 13 Aug 2025 09:06:54 +0000 (UTC)
-Date: Wed, 13 Aug 2025 11:06:54 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik Flykt <patrik.flykt@linux.intel.com>, 
-	Dong Aisheng <b29396@freescale.com>, Fengguang Wu <fengguang.wu@intel.com>, 
-	Varka Bhadram <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, 
-	Markus Schneider-Pargmann <msp@baylibre.com>, linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
-	linux-can@vger.kernel.org
-Subject: Re: [PATCH 0/7] can: m_can: fix pm_runtime and CAN state handling
-Message-ID: <20250813-shaggy-xanthic-griffin-23aede-mkl@pengutronix.de>
-References: <20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
- <239711fdd1eb6f79a89af7396ef7eb60f485ec12.camel@pengutronix.de>
+	s=arc-20240116; t=1755076050; c=relaxed/simple;
+	bh=Xbf1FDxbQ/qRvhhN1Z5oTn4sAbhr4F55+ThZxmjLwko=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=IhXGGiPLuyvGJefT/+0tV6Wu1uJugqSy/KVjQPnaXAMlyHaedXJEYySSUlUJjHYAbI0JZpZr6gltRGaX41Z9hLhXVdOycXHN83ARt9tVnWflLkzWib8E0WmZZzv5rUuF1HYYR3uOosx0ot9ZREn6m7EXccaaheDX5Ex2xJGk3c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VW4HIn/L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5893CC4CEF5;
+	Wed, 13 Aug 2025 09:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755076050;
+	bh=Xbf1FDxbQ/qRvhhN1Z5oTn4sAbhr4F55+ThZxmjLwko=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=VW4HIn/Lpne9MfGqe54rPEZ12mib5gy4liVyd+esatGj5PHpXoyIJKRNEHjzRs5kO
+	 ic3RMQhvDr2JIdvnXTT1SuymXML353qI237vplRz3dDGvOozjT/vEpomSjzRtSUGP9
+	 xOgRY6njZiAse8mBtnxmoOtOIMG9Lzbw1JNbegnbjpqMmutJxeuBVlFZ3C/gZ6ojCQ
+	 CG3sPPvmiM3YxIxZTJO3gLRJ4ZFUsPlu3RaNZj4shiXrg9hlB8WqwKluTi5vLJFJRQ
+	 F/3T0sWgY88bUdXnwL3XJrafxYHhczO/qsK38T63TF6B9HLfA/rlogSGaqmW0yIRWG
+	 /KEcg3hCmbntw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hbmzdam4u5w243ii"
-Content-Disposition: inline
-In-Reply-To: <239711fdd1eb6f79a89af7396ef7eb60f485ec12.camel@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---hbmzdam4u5w243ii
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/7] can: m_can: fix pm_runtime and CAN state handling
-MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 11:07:26 +0200
+Message-Id: <DC16J93QUQGV.4Z8STIPX6MGM@kernel.org>
+Subject: Re: linux-next: manual merge of the mm-unstable tree with the
+ drm-misc-fixes tree
+Cc: "Stephen Rothwell" <sfr@canb.auug.org.au>, "Simona Vetter"
+ <simona.vetter@ffwll.ch>, "Vitaly Wool" <vitaly.wool@konsulko.se>, "Intel
+ Graphics" <intel-gfx@lists.freedesktop.org>, "DRI"
+ <dri-devel@lists.freedesktop.org>, "Linux Kernel Mailing List"
+ <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
+ <linux-next@vger.kernel.org>
+To: "Andrew Morton" <akpm@linux-foundation.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250813111151.6a261ca1@canb.auug.org.au>
+ <20250812205946.2db0d8645f3c2ed6c8828ae2@linux-foundation.org>
+In-Reply-To: <20250812205946.2db0d8645f3c2ed6c8828ae2@linux-foundation.org>
 
-On 13.08.2025 10:17:49, Philipp Zabel wrote:
-> On Di, 2025-08-12 at 19:36 +0200, Marc Kleine-Budde wrote:
-> > The first patch fixes a pm_runtime imbalance in the m_can_platform
-> > driver.
-> >=20
-> > The rest of this series fixes the CAN state handling in the m_can
-> > driver:
-> > - add the missing state transition from from Error Warning back to
-> >   Error Active (Patches 2+3)
-> > - address the fact that in some SoCs (observed on the STM32MP15) the
-> >   M_CAN IP core keeps the CAN state and CAN error counters over an
-> >   internal reset cycle. Set the correct CAN state during ifup and
-> >   system resume (Patches 4+5)
-> > - add support for optional shared external reset, to properly reset
-> >   the IP core (Patches 6+7)
->=20
-> Should this declare a dependency on
-> https://lore.kernel.org/all/20250807-stm32mp15-m_can-add-reset-v2-1-f69eb=
-bfced1f@pengutronix.de/
-> or is that already merged?
+On Wed Aug 13, 2025 at 5:59 AM CEST, Andrew Morton wrote:
+> Thanks.
+>
+> Well that's messy.
 
-Still open, reference added to the cover letter.
+I think it's not too bad, the changes are just too close to each other -- n=
+o
+semantic conflict.
 
-Marc
+As a general heads-up, Rust code is a bit more prone to conflicts.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+On one hand this is due to the more powerful type system and components of
+different subsystems being a bit closer connected to each other to provide
+additional safety guarantees.
 
---hbmzdam4u5w243ii
-Content-Type: application/pgp-signature; name="signature.asc"
+On the other hand, there's simply a lot of foundational work going on in
+parallel.
 
------BEGIN PGP SIGNATURE-----
+For the Rust parts that are maintained under your mm tree, I think it shoul=
+d
+generally stay well within limits though.
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmicVasACgkQDHRl3/mQ
-kZxufgf9GutXshp8+S8ac/hryEybfPZHVpDKPMQaIPPYgGazs4P4Wc4bRsfTXWdv
-wDoX//fcfh7PSmzB5cnT5lunun8blvpOkTcADMiemvyXXDtyFkGCZFSy+1OI3xFB
-o8blZON1f8qnWlVZlxCFyy+kAZRSMmUhpFOfCx8ZUwEApauwBfqCR11D114Ag5ue
-+oJtOMPtVaW1OND8dLb1nlzu2QU6CajpyuxDmWcWKqtCRZIHT0TieQX2i/JJiBNu
-Wwc5oWFQI1L87v+EwySJRAWp4o2Pz+2MSG45TTRkJrvAoqza23WxqHTtimQzpMyI
-K7/xeSinooOxQhpF8OyMTXfOG75ATg==
-=tcd7
------END PGP SIGNATURE-----
+> Is it intended that the containing series ("Alloc and drm::Device
+> fixes") be merged into 6.17-rcX?
 
---hbmzdam4u5w243ii--
+Yes, not sure if it will be in -rc2 already, but should be in -rc3. So, the
+conflict in -next should vanish in case you backmerge the corresponding -rc=
+.
 
