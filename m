@@ -1,133 +1,124 @@
-Return-Path: <linux-kernel+bounces-766152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A18FB242EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:40:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B993B242EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD0433A37AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:40:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A65891B63135
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA402D6E46;
-	Wed, 13 Aug 2025 07:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66F12E36EB;
+	Wed, 13 Aug 2025 07:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lG29F3jJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0wD0hsjb"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7284C2D238C
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4822DE709
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070823; cv=none; b=p5aSfTBQISkH9bYbExVDG/c2joyXLS1Jc4PSCMe859Bu7Vs9r9NKJ/dOEUPglg1Y+xzMflUoG5Vpy6KM0btvqI1Ps0G4Db7vc0Z1ixzInfI5YeH/xHQ884b1DhRtkKBe4GFUMbXmvGheNCdC4gZXBu6ECBDjPupO46myuxdegbA=
+	t=1755070830; cv=none; b=syZE9jPr+tRnBXBb2I8jdyPv6IY5pJS3Hiu+zkT06lV3hpFvln1zO8cyz5n6SrbD1l7Jl0b9YfmZibJgIGI6l6eg334L7X7fSI92P/LsEQONGqxYK2ZOWg1f01ymLXlj1qPGIAtfCsHosV62L3vI4ZB7pzBxKtAZ4Oz/ZmXc7D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070823; c=relaxed/simple;
-	bh=WKYPMchJPeoCGBpYS0+31pC4PeqRcgJxD/lMF5bIcDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fam5n8VwSK7VQjNbnUZGtTArEc9k+2m1mAQTwxG9q6KfUz+ptWGkghzriNCYnVKG8JJKe/lekPvlfg3T6gS0D0vtNRqNjjxJBLys8MQoSGOmn/f23Vk5oZTfYg0Y4V5OzPBCahgTewXPQljIesAddCM3moCBwidpSqTYiEXOGyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lG29F3jJ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755070823; x=1786606823;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WKYPMchJPeoCGBpYS0+31pC4PeqRcgJxD/lMF5bIcDQ=;
-  b=lG29F3jJu0WOltdmqdyEy3G1mpFBBX0Cnm2w5EzSrnqr/EzfoU9JinQI
-   9rP0xkiF9TxoJQwfrR8ypR+l7DjMxXLg+v48m3GnvSGQF7JuBTVsV7eEN
-   IBcAnk1OWkK4ELUaHM++MUGjyUsRjvXrQC8ndJGFR3fKTNIwOXNPVSqR0
-   Z8RYA5fQHKYkyc8PlorOkP9cDeIah3ODEYJNlpuicyISAkxGjt6RJQ9DK
-   KFIQV7p4yCE96wmhrevjKKuMSm/oUbhzDDHsYVCPFYr7aamSfWIWJDMUC
-   AAPuuNlEWzc0KfCwJ7q4S5BDYQ12eVXAhwFeoXwvLj4NhwY3d90iz4izD
-   g==;
-X-CSE-ConnectionGUID: jzGdju+sRCaKkAZUyhkNAw==
-X-CSE-MsgGUID: rc3YnGvCTM24wfgwuvuJiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="74934940"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="74934940"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 00:40:21 -0700
-X-CSE-ConnectionGUID: a9L3jeQlQIyyqEIAKPsWQQ==
-X-CSE-MsgGUID: Ip2e9YrPR3mWL1IxZlg4ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="170540055"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 13 Aug 2025 00:40:17 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1um65n-0009fw-1C;
-	Wed, 13 Aug 2025 07:40:15 +0000
-Date: Wed, 13 Aug 2025 15:39:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mike Looijmans <mike.looijmans@topic.nl>,
-	dri-devel@lists.freedesktop.org
-Cc: oe-kbuild-all@lists.linux.dev, Mike Looijmans <mike.looijmans@topic.nl>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-Message-ID: <202508131549.DaogZRF9-lkp@intel.com>
-References: <20250812145256.135645-3-mike.looijmans@topic.nl>
+	s=arc-20240116; t=1755070830; c=relaxed/simple;
+	bh=sCnEx5761AElVItBdhLveYN321t9Jlst6UmQyhNbyvc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tC8PfIMMJgkNeYAB3JLTX/Xz1+s/cBhJ9Dvt/DLEXj/vwavyjGGz8fXaz9K8CnXj+jiLNhLwlDxJTe2C0iOGnp9kyD+LaN6gKYdfBJ0pqolJCIBKv3UktR8zxnpbgvZYKeryxasUDxII2JIdqzvtUD8eEf6RUbz2FAPyWRA4FX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--maze.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0wD0hsjb; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--maze.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b44fdfe7b8dso2492852a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:40:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755070828; x=1755675628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pp49dS5+lV1sQl/6tgxifknga+Oygf66Wdoq0OTUz/4=;
+        b=0wD0hsjbLX3FwrhHoVmDdJBvz3z+5X9oJ5Hq3mlNuej/lFpHuguyCjcXuB0x2QE4hi
+         MowJF4JfhRBPv4S96W7fCpvK1ccTgajpjK/miSRS1JuiMN7BAwSYFsxEx8h2+5vPy4xw
+         o1Yq1N7ddATblwxzW6o5N/DnCwJZ+5vD3lqjQ7TwcjEUleLlbxyN6dM8AfNjrfHRnOgt
+         KoYEq0pfSQJhQPZX154j+5qqvafSlUzkuXKbRcsJtgXXAVv8KPTG8Wf1RzcWeZ96voY7
+         Tdy8Okvq2aNkK8LIbrmjLqZrmmeOt1E4rJD2PHeImdWrb8RRL/ALXXbWFu1Z28ZLVN+K
+         CjEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755070828; x=1755675628;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pp49dS5+lV1sQl/6tgxifknga+Oygf66Wdoq0OTUz/4=;
+        b=SUOEqjmsHFDEsZy8VSSqzJN9wYK+InSd8NgZOoGhF3nINxb0oyXOt7iBU8+BXGjfQ+
+         F6FPBe+wNVoWnaatV1QV3YWFtDUfqMaG81khp/DnVTzKlvtGFRvh6abJmTq2coZyGB5Q
+         Aqchh8+hOadVXGdvmdn+zW4X/ND8YreqjJZDIwWm+9kilZHhbk0aSSlHm55uGBbYnY1T
+         1eEnwQyBB117M2erhgg0C4erGMQDj3ergYIVEqVXttFn3tzOqvWPEHSBMRgsgF5PTA4P
+         JJdqfnBEPdvDRlyLDdvnLh6Uag9iitDmhy8KMlchaH5W5dJTjWXOhZpuG395IXhLxFDc
+         +M8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW7uPi5imeCmy3tNAMPh4Lkg3BjeiFsHsKYT/e+kDUPql8AzXbX5HEDmA7uVvLtqeeOwA8VrN8VxLt1+Aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQrZje4w4qm27VhOYLoRcvcwyFhmW7b4McuowQ3qUVFw7KcS1y
+	Wqi0A5SDA7556lx4WYraKuf9np4uXRjSmcVFYaPhdg9p1yoBoPy35Gcwt3nkpD3TnsDnslTSbg=
+	=
+X-Google-Smtp-Source: AGHT+IHL3hixZQwLVi27pXeiL4huS+wC9o2l4Q6jqQo5VnnAnaUPedzTkKL+Ezbxk46oWK0muukHVbbV
+X-Received: from plhu3.prod.google.com ([2002:a17:903:1243:b0:234:bca4:b7b3])
+ (user=maze job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce0b:b0:240:640a:c57b
+ with SMTP id d9443c01a7336-2430d1f7829mr33241755ad.37.1755070827983; Wed, 13
+ Aug 2025 00:40:27 -0700 (PDT)
+Date: Wed, 13 Aug 2025 00:39:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812145256.135645-3-mike.looijmans@topic.nl>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
+Message-ID: <20250813073955.1775315-1-maze@google.com>
+Subject: [PATCH bpf-next] bpf: hashtab - allow BPF_MAP_LOOKUP{,_AND_DELETE}_BATCH
+ with NULL keys/values.
+From: "=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <maze@google.com>
+To: "=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <zenczykowski@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>
+Cc: Linux Network Development Mailing List <netdev@vger.kernel.org>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, BPF Mailing List <bpf@vger.kernel.org>, 
+	"=?UTF-8?q?Maciej=20=C5=BBenczykowski?=" <maze@google.com>, Stanislav Fomichev <sdf@fomichev.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
+BPF_MAP_LOOKUP_AND_DELETE_BATCH keys & values =3D=3D NULL
+seems like a nice way to simply quickly clear a map.
 
-kernel test robot noticed the following build warnings:
+BPF_MAP_LOOKUP keys/values =3D=3D NULL might be useful if we just want
+the values/keys and don't want to bother copying the keys/values...
 
-[auto build test WARNING on 53e760d8949895390e256e723e7ee46618310361]
+BPF_MAP_LOOKUP keys & values =3D=3D NULL might be useful to count
+the number of populated entries.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mike-Looijmans/dt-bindings-drm-bridge-ti-tmds181-Add-TI-TMDS181-and-SN65DP159-bindings/20250812-225413
-base:   53e760d8949895390e256e723e7ee46618310361
-patch link:    https://lore.kernel.org/r/20250812145256.135645-3-mike.looijmans%40topic.nl
-patch subject: [PATCH 2/2] drm: bridge: Add TI tmds181 and sn65dp159 driver
-config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20250813/202508131549.DaogZRF9-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 3769ce013be2879bf0b329c14a16f5cb766f26ce)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250813/202508131549.DaogZRF9-lkp@intel.com/reproduce)
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Stanislav Fomichev <sdf@fomichev.me>
+Signed-off-by: Maciej =C5=BBenczykowski <maze@google.com>
+---
+ kernel/bpf/hashtab.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508131549.DaogZRF9-lkp@intel.com/
+diff --git a/kernel/bpf/hashtab.c b/kernel/bpf/hashtab.c
+index 5001131598e5..8fbdd000d9e0 100644
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@ -1873,9 +1873,9 @@ __htab_map_lookup_and_delete_batch(struct bpf_map *ma=
+p,
+=20
+ 	rcu_read_unlock();
+ 	bpf_enable_instrumentation();
+-	if (bucket_cnt && (copy_to_user(ukeys + total * key_size, keys,
++	if (bucket_cnt && (ukeys && copy_to_user(ukeys + total * key_size, keys,
+ 	    key_size * bucket_cnt) ||
+-	    copy_to_user(uvalues + total * value_size, values,
++	    uvalues && copy_to_user(uvalues + total * value_size, values,
+ 	    value_size * bucket_cnt))) {
+ 		ret =3D -EFAULT;
+ 		goto after_loop;
+--=20
+2.51.0.rc1.163.g2494970778-goog
 
-All warnings (new ones prefixed by >>):
-
->> drivers/gpu/drm/bridge/ti-tmds181.c:273:41: warning: initializer-string for character array is too long, array size is 8 but initializer has size 9 (including the null terminating character); did you mean to use the 'nonstring' attribute? [-Wunterminated-string-initialization]
-     273 | static const u8 tmds181_id_tmds181[8] = "TMDS181 ";
-         |                                         ^~~~~~~~~~
-   drivers/gpu/drm/bridge/ti-tmds181.c:274:41: warning: initializer-string for character array is too long, array size is 8 but initializer has size 9 (including the null terminating character); did you mean to use the 'nonstring' attribute? [-Wunterminated-string-initialization]
-     274 | static const u8 tmds181_id_dp159[8]   = "DP159   ";
-         |                                         ^~~~~~~~~~
-   2 warnings generated.
-
-
-vim +/nonstring +273 drivers/gpu/drm/bridge/ti-tmds181.c
-
-   272	
- > 273	static const u8 tmds181_id_tmds181[8] = "TMDS181 ";
-   274	static const u8 tmds181_id_dp159[8]   = "DP159   ";
-   275	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
