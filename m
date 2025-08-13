@@ -1,135 +1,163 @@
-Return-Path: <linux-kernel+bounces-766240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63017B24440
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:26:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A77B2443E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 248D53A8BE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:24:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0012168A23
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368AB2ECEBD;
-	Wed, 13 Aug 2025 08:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FE82D8382;
+	Wed, 13 Aug 2025 08:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y+9B8ZRY"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qkZLrDg8"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1CA2D8382
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035652690D9
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073468; cv=none; b=iri6WH3PaVwe91SVpBiVQqPvFHzPhLUddWBjFu0HvQynGnJJOHvvx/+/MBRMoNHafiZ1NvRJpluiwYN+9Rz4l0LrvgQ9wmJxAhW8omY81NqjeEi9aluPOn3Kl4fnQC9l/eJ0kmCk7iiPzi7JUp8AC4bu4ktVZWVhMnZGwBZrM6o=
+	t=1755073540; cv=none; b=e3F0TnueHfHjGHUkEub8/QLDmwqZvJfFcbFckLdks/BddMTAP69trFK4+eI7Aori3FcBXgCBTHseNyMOO2zm9Y1vNPW+q78YeyLjcgypmFIUz3Z8HmwtFO8FatsvGlzAUYaQRNleNxxELgtoCCOPL90glQmosnWe4yTjMbpg7RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073468; c=relaxed/simple;
-	bh=i7q6cu4XOofJpPaygp+2HmHMBYvZuvOZRgvH9TX/sCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mLh1co13DFBGftQ3Ar1T/84MJrWHLgNrMRGUsfhT3IoSFBwwQVqsbiQOdOm7I/SviJ16Vwi/An5cZwYh2FLROAHgP4PhXE2qJIgnQUep3BAoCQv8khHir1HhHvqymYvYTXhmlzWQ+683CK6U7Jq728iQ1ufDVf6EMS/6kG8Jw6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y+9B8ZRY; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b78b2c6ecfso3363736f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:24:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755073465; x=1755678265; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j36Wt2d1lcdfM4qMmSBsoKx8o0T/CsoyesZWxgamGL8=;
-        b=Y+9B8ZRYLT/LKQm7fSfdHyyHSbWoIpIx4/0+X63tmrj0EwmgPjpeTaDixHbPtKSUbD
-         GSgk+jJDpySj7jousX3IT7j9bMezBv9ubwAAz0ZQ7ZnJ9RUFLzDXdrhCsLPeaeZZ8j8A
-         IWhlag8AUXpgR3sehbL+rzLpHHwIP2NGhQGSl5B1JqQzg/yFsv7OGoEFSsJY1yHG+YRO
-         uSu6pAwAejbkUhUlHo2bTZx5YgwtacVUerSffuGpCQW14WXZBlb5h81u94mE7wkUmwvn
-         /RrbnZztNMHAuEc66rCev58tRMFnnXzVGsWShBfCJnABwT7kqy8wxCRlpEDn2yeA6o/J
-         xKxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755073465; x=1755678265;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j36Wt2d1lcdfM4qMmSBsoKx8o0T/CsoyesZWxgamGL8=;
-        b=VzW8l+nPB0mbeqrYYkB28IxYG4bMOGXUzdbhTJk1jqra8djKuKjJ8uCJ0FQkqYjAVk
-         JGmwV7vSBv8qPzdk6zpWjpgnJOrrghmX1eniLTPhv6biAxLZ4kKO1NyxJRdW1Q2HliNF
-         QdNhCkp9Y4FiOaMIdr5RU/N240AtYuPVhpvO2/Gid09/6A/E7PM+HOAnZWnMqorrjZYg
-         JSLnGRs6CwY1OJvGB51+djno5Kub+nr1beH4BGii02kbFWbOl7ziWRCjO9PZkj608jv0
-         GN/XiU1oA9k+QX/96HpnOSgH2div0a9hp4DKqlrtbxk7D6DhU+WQEk8Bx4dfd2K4dL/b
-         QPvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMMHMbcwFpOyTNU/0YUVLlKq59HmJ6giqGT/w0zAvvIYaSeFKwOItL1oUQJzL2fPl2ZM6SbTKLjtVc51I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykmP7UjWPqMomDUjz/VwhsgQ7ZCQCxapcHHrztfDZYJeE/yFMH
-	QUFldsXRgKafd18nXKXYJFqQ08W36mOKOSJ8E2W39e4RTZ6wwQBUAzZJKenxuC9kAT/5QxP7EoS
-	ZvTOiT9FAXgVrWcObcwnkf+KLbweI5STDWvGI7Vzn
-X-Gm-Gg: ASbGncseHgENXCLf5EH/RGxDLYFAS4viMmLllDC4bLSFwqrD6EjVf9YJzuuwNL1yZiV
-	GEZ/C5jbv7ETlidV7VWnNf7jrf9xF/gtMlrtjW0L8gypSc1Vj+izA6YOuTQgK76bSFvbHOHOA3v
-	x9Qh5FUyuGGc5RXK3obXfnyBadpCK/+2UvyiAkfu/Eg6DXvWOUpNdyho+z6nu/VJ0AGw/bvMcCv
-	yX9mjWhl8tYKVA7CI0bazvytfPY93CXjHkFOw==
-X-Google-Smtp-Source: AGHT+IEQTBj4vbtzEEQ6lxltaO/FqbXF7A9ORef0fFY6z6R00Et5UkVsjPhHS6jo/ghAMR6v/ylRnCX7wGQtfB7kXBU=
-X-Received: by 2002:a5d:5d10:0:b0:3b9:1457:df79 with SMTP id
- ffacd0b85a97d-3b917d1e6b2mr1381034f8f.5.1755073465088; Wed, 13 Aug 2025
- 01:24:25 -0700 (PDT)
+	s=arc-20240116; t=1755073540; c=relaxed/simple;
+	bh=nMoAHLHxnMQWUx4EHzTkX8/tmDu8t4ty04qzOlQ9fQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FRLv6AF1wKfyS8nFyOuvJXEluCxIFEsQSGTkhLvo+kSmlvn9iAWKDkFlqPZZPFyrpiQ3otAY0R6FLUpCTu/WhdBQP3CqIf7KNUzEjCa1PYNPtt/2fkRRVXcus0PMrkpAUorfthHmpGVIxOyHCUme3MVNdztFNJxe81cVwc7vNtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qkZLrDg8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=q8qYhv0wpX9+4N9dzaCN01J8ZyfFVx0rJJvAPpWJME4=; b=qkZLrDg8JJidH6ew+1bh+4pnQE
+	dmBF8zljff1YoKcRlo/3rqbuFM7lFPEus1Ut84nY+OirPbxgmXW3ZggXgVbN4sWXUQrpShGQvDhlu
+	LL3PfxVB/dAWEv/4IlpmX7mG0ag9Tj0GTR7KG/aHCCwn+bYE/HLYSSXNmiS98qY/uUqZfHTXQm1hA
+	iJ7oTBf9pBwttXYdLSQpNXXwibLkG9gG9OSLgSdLzIXwG/ic74hHGYJsgIQZJXo8IB6ER0Pzsh3Fh
+	HZ/4KCMEtWtzrzAhqmGb9Y8EuLyz43tGxG0dlKKRKoKCeL46Aq75StQ3HYjq28qn4HDxAp979tPgr
+	3wyOlNGQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1um6nV-00000006zIx-1Jfq;
+	Wed, 13 Aug 2025 08:25:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CE5DF3002C5; Wed, 13 Aug 2025 10:25:24 +0200 (CEST)
+Date: Wed, 13 Aug 2025 10:25:24 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	torvalds@linuxfoundation.org, mingo@kernel.org, namhyung@kernel.org,
+	acme@redhat.com, kees@kernel.org
+Subject: Re: [PATCH v3 06/15] perf: Move common code into both rb and aux
+ branches
+Message-ID: <20250813082524.GJ4067720@noisy.programming.kicks-ass.net>
+References: <20250812103858.234850285@infradead.org>
+ <20250812104019.016252852@infradead.org>
+ <9982e7b3-1046-4da1-9569-52bffe71c9e6@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722-iov-iter-v3-0-3efc9c2c2893@google.com>
- <IMil7T48wWl_KirFiwKV5bNm7TuVsFNPEX3_6CJWEzwQ6n4jaVn943ujBotHAettCFL5Slnb0v_3Cz50enMdqw==@protonmail.internalid>
- <20250722-iov-iter-v3-1-3efc9c2c2893@google.com> <871ppq9fve.fsf@kernel.org>
-In-Reply-To: <871ppq9fve.fsf@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 13 Aug 2025 10:24:13 +0200
-X-Gm-Features: Ac12FXyZHCu-I22etoYCjoFadSFqXkK4cOQ639JdLkpUnt1K4hiGXS3NmFf7rkc
-Message-ID: <CAH5fLghb_YoZgNGGJOa1aLA3bM=tyZKziDwyUqnVPHMg8NW4CQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] rust: iov: add iov_iter abstractions for ITER_SOURCE
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
-	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Benno Lossin <lossin@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9982e7b3-1046-4da1-9569-52bffe71c9e6@lucifer.local>
 
-On Tue, Aug 5, 2025 at 1:18=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
-org> wrote:
+On Wed, Aug 13, 2025 at 06:55:51AM +0100, Lorenzo Stoakes wrote:
+> On Tue, Aug 12, 2025 at 12:39:04PM +0200, Peter Zijlstra wrote:
+> >   if (cond) {
+> >     A;
+> >   } else {
+> >     B;
+> >   }
+> >   C;
+> >
+> > into
+> >
+> >   if (cond) {
+> >     A;
+> >     C;
+> >   } else {
+> >     B;
+> >     C;
+> >   }
+> >
+> 
+> Hm we're doing more than that here though, we're refactoring other stuff at
+> the same time.
+> 
+> I guess you're speaking broad strokes here, but maybe worth mentioniing the
+> tricksy hobbitses around the rb_has_aux() bit.
+
+Does something like so clarify:
+
+Notably C has a success branch and both A and B have two places for
+success. For A (rb case), duplicate the success case because later
+patches will result in them no longer being identical. For B (aux
+case), share using goto (cleaned up later).
+
+> Anyway LGTM so:
+> 
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> 
+> > Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> >  kernel/events/core.c |   25 +++++++++++++++----------
+> >  1 file changed, 15 insertions(+), 10 deletions(-)
+> >
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -7043,6 +7043,8 @@ static int perf_mmap(struct file *file,
+> >  				ret = 0;
+> >  				/* We need the rb to map pages. */
+> >  				rb = event->rb;
+> > +				perf_mmap_account(vma, user_extra, extra);
+> > +				atomic_inc(&event->mmap_count);
+> >  				goto unlock;
+> >  			}
+> >
+> > @@ -7083,6 +7085,9 @@ static int perf_mmap(struct file *file,
+> >  		perf_event_init_userpage(event);
+> >  		perf_event_update_userpage(event);
+> >  		ret = 0;
 > > +
-> > +    /// Advance this IO vector backwards by `bytes` bytes.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// The IO vector must not be reverted to before its beginning.
-> > +    #[inline]
-> > +    pub unsafe fn revert(&mut self, bytes: usize) {
-> > +        // SAFETY: By the struct invariants, `self.iov` is a valid IO =
-vector, and `bytes` is in
-> > +        // bounds.
->
-> "... and by method safety requirements `bytes` is in bounds", right?
+> > +		perf_mmap_account(vma, user_extra, extra);
+> > +		atomic_inc(&event->mmap_count);
+> >  	} else {
+> >  		/*
+> >  		 * AUX area mapping: if rb->aux_nr_pages != 0, it's already
+> > @@ -7127,11 +7132,12 @@ static int perf_mmap(struct file *file,
+> >  		if (rb_has_aux(rb)) {
+> >  			atomic_inc(&rb->aux_mmap_count);
+> >  			ret = 0;
+> > -			goto unlock;
+> > +			goto aux_success;
+> >  		}
+> >
+> >  		if (!perf_mmap_calc_limits(vma, &user_extra, &extra)) {
+> >  			ret = -EPERM;
+> > +			atomic_dec(&rb->mmap_count);
+> >  			goto unlock;
+> >  		}
+> >
+> > @@ -7142,20 +7148,19 @@ static int perf_mmap(struct file *file,
+> >
+> >  		ret = rb_alloc_aux(rb, event, vma->vm_pgoff, nr_pages,
+> >  				   event->attr.aux_watermark, flags);
+> > -		if (!ret) {
+> > -			atomic_set(&rb->aux_mmap_count, 1);
+> > -			rb->aux_mmap_locked = extra;
+> > +		if (ret) {
+> 
+> You dropped the 'AUX allocation failed' comment here, but honestly I think
+> that's fine, it's pretty obvious that's the case given the literal previous
+> line is you trying the AUX allocation... :)
 
-Will reword.
-
-> > +        unsafe { bindings::iov_iter_revert(self.as_raw(), bytes) };
-> > +    }
-> > +
-> > +    /// Read data from this IO vector.
-> > +    ///
-> > +    /// Returns the number of bytes that have been copied.
-> > +    #[inline]
-> > +    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
-> > +        // SAFETY: `Self::copy_from_iter_raw` guarantees that it will =
-not deinitialize any bytes in
-> > +        // the provided buffer, so `out` is still a valid `u8` slice a=
-fter this call.
->
-> I am curious if there is a particular reason you chose "deinitialize"
-> over "write uninitialized" for the wording throughout this patch? It's
-> an unfamiliar phrasing to me.
-
-I've seen it a fair number of times, but I'll change it to less niche wordi=
-ng.
-
-Alice
+Yes that :-)
 
