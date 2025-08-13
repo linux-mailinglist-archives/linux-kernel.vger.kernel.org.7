@@ -1,171 +1,209 @@
-Return-Path: <linux-kernel+bounces-766176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E112B24345
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:54:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D912B24346
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7FD727F64
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:53:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 329457AC6EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28312BE020;
-	Wed, 13 Aug 2025 07:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20502EA17F;
+	Wed, 13 Aug 2025 07:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nn3s1VqG"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bpQP/MOo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DF42E3703
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A082E36F2;
+	Wed, 13 Aug 2025 07:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755071582; cv=none; b=T/sMrW9mTWe+6JlE7E3W0IwerI9xpY3VceFHMzgUEf2cXz2AMmb8yM2cVZ/MUud2OxKGpvg2pyURLk7nyHSR0ME17E9JM4RjBybCvzvJ9GJtUUCQ6WJqMNv06owk8MEYR8zrDRuj8XK6NVMgXFk5a+w61eaaJl6JHkHRHNwP5Fs=
+	t=1755071634; cv=none; b=hWVzXCSsExfXfN6NI8FTttYPY0NNWFO1Hx1l8oeLy32//5ZSxWdN/lGLvq6/LvdA3KcqN6Gj8msdwCK5sTksxXUoFR2UVphqsOqIwV7LvRWPFCGSbxmbeb7jeYSBrN/nEUIgjebQgxHrvyCSTuCApreyYgZgGOYD8X+EtpcgkmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755071582; c=relaxed/simple;
-	bh=f+S3gOFqwImEsJEICH99lenwE5M99OUKlgRH1xjj/Co=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=osFybTqVyX3USfIGHu6qYz3Z9UG/CXjkhjvVc/sW863rvLz0FbimWZUcqvYknaezrJIVnJy8fQtZ79hVgYF5tnv+yJc+97GeS8IMnt7UcMHawVMA+/1Ejm+A0H0DkzHMmkEX/vMJV24LXeW9/O3xfPk0MK8hUpP06wuJKCMhxbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nn3s1VqG; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3322a34e84fso53990791fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 00:53:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755071578; x=1755676378; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iuNYhnn6aytC/r+EF2G2jA7FOCcxkDKpQ1Ff1dFxDJo=;
-        b=nn3s1VqG0m2LPHVuGLCiM3dEvoeTR6UTZCmVqZ66EhnHtaaIhjrYEPsgc49lE3/XB5
-         Bxctl5X9BzzhL5CPJOhes2gSlRe3Llnu1HnKUdPVJPiYoBJcxSY8Ox5u5XU7B5vcjXZs
-         hg22JL08XS34RT8ZMMAOdnAls/X/1Hb53ls2pMEfKWfpStHtY4QkMEdJB3A9h3h/zQpx
-         tIDFQzaesfIKO8v2STyali03Eiqxzu7FIjJErYVL/PHiMMMiYJm4tdbim3MnDQcsO+qp
-         usg7hYCPNfpZ1nrz+7Jhy2tUFMYsAa3uRHxDYqP4fAb/ZsYi+mxiIdNYLqYJ1uHR0axm
-         7mnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755071578; x=1755676378;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iuNYhnn6aytC/r+EF2G2jA7FOCcxkDKpQ1Ff1dFxDJo=;
-        b=EUx8Zv+w5rhwKIbHV+zxo2l/ck8OfT3ziw6/qVMf4OC2oHfmS5zf75KJdqGZlJ1hvm
-         MIJ/IGCiaAQKKeDwdyq5ls3xiqfPsEiymc4NkpQuqsZCT9yVo+2npqf8qx/TcMXFj+TM
-         i2kqHmZ9FmuvQAQYccRz7sJI0+WbeWCDdMZlIHhyBZAxc9vCJDljBuRd7yk5PktsBxlI
-         mOyfq8I9Y7By8FrhEftL+kRk4FP784y2Cq4ny3+CnbTbH9S1X3hTfCaB6L3/Dlo9Bqbq
-         xgDg12DGd5cHiHY8YVhv0HBKdqqRu8sn7nvC1lQIFslv9UN0ldMLHQR7GsKf18qhxmiH
-         YcAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5UdSfMGmMEJMy6WKjDRysApw78g13uzWTI8IkuYW7A0w7uulyUiuqx9mP5oDpz1VrCtfOMnMiz1D7uGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWvZBL6gJxhT7cCo73bX4PulFHUynxUeN1TdLfWmQ+9mJTefnf
-	5SvH7BeCdoXtKJNBVrkT/nuYlhFndNvjGkYlshZ9chY9QnpjyvIcdU4NDSx1atrvvqcYEI7/mED
-	20l/nf2UtMwqQv17YyHLiD3YqfJTOVMU=
-X-Gm-Gg: ASbGncuVZ4j/sooZ1I1mCNnxyUYyQlyh9W9q9cn1wg4IwId1HIkReuKyV5MhDZuHaHy
-	qIatBTDp4IA8fYvVPoIS5uXNitFF7eBu/ZMSqKJt1rQ0LBbidDvDMhFRXm7A5+ZOKUCzCgonJW3
-	IHsyi66t+YApNBIV+Khw4VmhOdiTv7ybE/6V9Fh5htXI7u3Q1e1QF+FT+63biRNr54PCN45qi/B
-	6+FBRsCUnVW+3pH80xmzeKwsqPFyT0+bdMtliiT9Q==
-X-Google-Smtp-Source: AGHT+IGFeq7PPC0eDOedQvgcpVbMujIUP3t7+BvdzV2tK5S5ebK463DvsDG3mCmLv5tGlRuKsDUgiKS8yfPokoH4RbQ=
-X-Received: by 2002:a05:6512:b2a:b0:55c:ad2a:aa85 with SMTP id
- 2adb3069b0e04-55ce03ee417mr558298e87.42.1755071578069; Wed, 13 Aug 2025
- 00:52:58 -0700 (PDT)
+	s=arc-20240116; t=1755071634; c=relaxed/simple;
+	bh=+ZKe1BOixJ/T80IcjTZOqL2H41Ct+rhNJSOCcroFnaQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=WYtCNa7aoRa3eeAQ2Q6zE6tK6bWCR/NzGhC67l8C+XnPYkfycU9DM3GowIhAEJI3X1ptLuocpNaJoYkO4iuexy1hV8dMvJ39PfETFwg6PHB+1Z7YbWJXH4EDVTT+dDoZwGkHoUmmD45qSmuKdeH6S0A+A4g3PrVEUHGTQyi7oG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bpQP/MOo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57D6mhwe026809;
+	Wed, 13 Aug 2025 07:53:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=GtVPQO0nwKFPcGiaywgQA/
+	p6ZJu1iypkJEIbQuuw4ZA=; b=bpQP/MOo3yRrMFA2A57jnkNuazsVFdemkPNiiQ
+	DyY1qjEp7xxHcY7UWjh3acPM8JCmZ/qCiErhrsEi+9L9fa/eIRxyoNZvp5rccceg
+	myM2FhV+PJXG9xnQDIsq3RdA6RH+ZSNZ/JP9mlknwjQZ9UPqDdeCo7BupUz+ze1t
+	AalbV24jLHCJXjcBLvuFt02/5Rd/+YRkvWvh1y+2RyMxH5xYcjb5QXUWu4z3QSzL
+	OGUSpLTYCycB9msqOZoic8OpuHDG3VgrcAtPoJ2KRKFDKm7GOXeNDaL+3kuWsWqc
+	cdOKNvvLSkdN7Exqdtoa8dP7i1Ljn//cx098NLf1D0Mfp/ow==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9su6da-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 07:53:46 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57D7rjCg002007
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 07:53:45 GMT
+Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 13 Aug 2025 00:53:42 -0700
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Date: Wed, 13 Aug 2025 13:23:25 +0530
+Subject: [PATCH v2] media: iris: vpu3x: Add MNoC low power handshake during
+ hardware power-off
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250805154725.22031-1-pranav.tyagi03@gmail.com> <871pppfnjy.ffs@tglx>
-In-Reply-To: <871pppfnjy.ffs@tglx>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Wed, 13 Aug 2025 13:22:46 +0530
-X-Gm-Features: Ac12FXzxt4da2HYC4FFx3-Q0XE9aXKct1tIAwbLc7mv9ge5_lOj4D9vnXeJrQjY
-Message-ID: <CAH4c4jKEx4w3LobdSbixXBK4NaSdfa993YjNF_j_pZoqjieBOQ@mail.gmail.com>
-Subject: Re: [PATCH v3] futex: don't leak robust_list pointer on exec race
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org, 
-	dave@stgolabs.net, andrealmeid@igalia.com, linux-kernel@vger.kernel.org, 
-	jann@thejh.net, keescook@chromium.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250813-sm8650-power-sequence-fix-v2-1-9ed0fc2c45cb@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHREnGgC/42NQQ6CMBBFr0K6dkxbUqSuvIdhUcdBZkELraCG9
+ O5WTuDyveS/v4lEkSmJc7WJSCsnDr6APlQCB+cfBHwvLLTURrZKQxrbxkiYwosiJJoX8kjQ8xt
+ uzjqrpW11XYuynyIVvbevXeGB0zPEz361qp/9p7oqUOCMolNvLZoGL/PCyB6PGEbR5Zy/xsNZU
+ cQAAAA=
+X-Change-ID: 20250812-sm8650-power-sequence-fix-ba9a92098233
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Dikshita Agarwal
+	<quic_dikshita@quicinc.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        "Bryan
+ O'Donoghue" <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755071622; l=3451;
+ i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
+ bh=+ZKe1BOixJ/T80IcjTZOqL2H41Ct+rhNJSOCcroFnaQ=;
+ b=1XtNOMWJVGhKN67HtmloY5f/5o+KsDu0KGsFBqpURMAXektsqzvA7SJGDFpRrPmIvoxPWf+ZB
+ FjKyKXTGIWPAO2Rk6OajYyRoY/5dkQ03j1V3qVMzGRXUoJrgnPfpyiv
+X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
+ pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689c448a cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=4jNVkGc5x75itkM4wVYA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: cOs5ibgnVZPU0SXTbdp6-BV5lamZt2W-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX+1DKYAykTviI
+ Le5qEokqnNow99GjvlBwPcHJDM+L3pc8LDuqaaSH3vYhNPdBbECVuFqd9dAl7x7PH74CrevaUut
+ 21kjZBvVrNPV3x0xXa4fud00lwWjfLpTlZe0RkXVRHbx2+TiFRn1NSzeWRI3G/+NzAcKOFaY0Ga
+ Ozv41fNtaEGPu3do7ywV1f6gCsTA5HLPlAZdo9RdjbM2XL8dMKpNbXXJBYt+NOxHTZ5sy2QhD1/
+ J0SaeR24H3DPmVsF9fdSqyl54UfyB6OK9bf1DUXvpSm3lKfTKp4ZWQlITKV1Hh7IBiwhGVmd9i9
+ SJl2QAcowKFITkUE9SZ5Q1Uafr1wuszjJc5uTRterNe1A5nL+5fMzKIrjX4WO/osT6idnf1iW8S
+ Jc8DUdIX
+X-Proofpoint-GUID: cOs5ibgnVZPU0SXTbdp6-BV5lamZt2W-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090015
 
-On Wed, Aug 6, 2025 at 3:17=E2=80=AFAM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Tue, Aug 05 2025 at 21:17, Pranav Tyagi wrote:
-> > +
-> > +     if (IS_ENABLED(CONFIG_COMPAT) && compat)
-> > +             head =3D p->compat_robust_list;
->
-> This still does not compile because the dead code elimination comes
-> _after_ the compiler decodes this line. I don't even need to fire up a
-> compiler to predict the error emitted when CONFIG_COMPAT=3Dn:
->
->   error: =E2=80=98struct task_struct=E2=80=99 has no member named =E2=80=
-=98compat_robust_list=E2=80=99
->
-> No?
->
-> There is a reason why I suggested you to use that helper function.
->
-> You are obviously free to ignore me, but then please make sure that the
-> stuff you submit compiles _AND_ works. Otherwise if you are not sure,
-> why I told you, ask.
->
-> Please take your time and stop rushing out half baken crap, which wastes
-> everybodys time. I don't care about your time wasted, but I pretty much
-> care about mine.
->
-> To be clear: I don't want to see this in my inbox again before next week
-> and then it better be correct.
->
-> Thanks,
->
->         tglx
->
->
->
+Add the missing write to AON_WRAPPER_MVP_NOC_LPI_CONTROL before
+reading the LPI status register. Introduce a handshake loop to ensure
+MNoC enters low power mode reliably during VPU3 hardware power-off with
+timeout handling.
 
-Hello Sir,
+Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+---
+Changes in v2:
+- Restructured loop for readability (Jorge)
+- Used defines for bits (Konrad, Jorge)
+- Used udelay for short waits (Konrad)
+- Link to v1: https://lore.kernel.org/r/20250812-sm8650-power-sequence-fix-v1-1-a51e7f99c56c@quicinc.com
 
-There is no question of ignoring you. It is my privilege to be
-communicating with you.
-Your guidance in the course of this specific patch has only enhanced
-my understanding.
-I always try to respect everyone's time and agree that I hurried the last o=
-ne as
-time of my mentorship program is closing fast. My apologies.
+Please note that I have not added "Tested-by" tag from Neil in this update,
+as the NOC handshake loop has been restructured.
+---
+ drivers/media/platform/qcom/iris/iris_vpu3x.c | 30 +++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-I have again sent the reworked patch (v4) duly corrected based on your
-observations.
-I have compiled and checked it with CONFIG_COMPAT=3Dn. And to the extent
-my little wisdom
-allowed, I have tested it using the following custom testing code on a
-virtual machine:
+diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+index 9b7c9a1495ee2f51c60b1142b2ed4680ff798f0a..a621878f02f7196de29c9e290a6c5acea34eba8c 100644
+--- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
++++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
+@@ -19,6 +19,9 @@
+ #define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
+ #define REQ_POWER_DOWN_PREP			BIT(0)
+ #define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
++#define NOC_LPI_STATUS_DONE			BIT(0) /* Indicates the NOC handshake is complete */
++#define NOC_LPI_STATUS_DENY			BIT(1) /* Indicates the NOC handshake is denied */
++#define NOC_LPI_STATUS_ACTIVE		BIT(2) /* Indicates the NOC is active */
+ #define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
+ #define CORE_CLK_RUN				0x0
+ 
+@@ -109,7 +112,9 @@ static void iris_vpu3_power_off_hardware(struct iris_core *core)
+ 
+ static void iris_vpu33_power_off_hardware(struct iris_core *core)
+ {
++	bool handshake_done = false, handshake_busy = false;
+ 	u32 reg_val = 0, value, i;
++	u32 count = 0;
+ 	int ret;
+ 
+ 	if (iris_vpu3x_hw_power_collapsed(core))
+@@ -128,13 +133,34 @@ static void iris_vpu33_power_off_hardware(struct iris_core *core)
+ 			goto disable_power;
+ 	}
+ 
++	/* set MNoC to low power */
++	writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
++
++	do {
++		value = readl(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS);
++
++		handshake_done = value & NOC_LPI_STATUS_DONE;
++		handshake_busy = value & (NOC_LPI_STATUS_DENY | NOC_LPI_STATUS_ACTIVE);
++
++		if (handshake_done || !handshake_busy)
++			break;
++
++		writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
++
++		udelay(15);
++
++		writel(REQ_POWER_DOWN_PREP, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
++	} while (++count < 1000);
++
++	if (!handshake_done && handshake_busy)
++		dev_err(core->dev, "LPI handshake timeout\n");
++
+ 	ret = readl_poll_timeout(core->reg_base + AON_WRAPPER_MVP_NOC_LPI_STATUS,
+ 				 reg_val, reg_val & BIT(0), 200, 2000);
+ 	if (ret)
+ 		goto disable_power;
+ 
+-	/* set MNoC to low power, set PD_NOC_QREQ (bit 0) */
+-	writel(BIT(0), core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
++	writel(0, core->reg_base + AON_WRAPPER_MVP_NOC_LPI_CONTROL);
+ 
+ 	writel(CORE_BRIDGE_SW_RESET | CORE_BRIDGE_HW_RESET_DISABLE,
+ 	       core->reg_base + CPU_CS_AHB_BRIDGE_SYNC_RESET);
 
-#define _GNU_SOURCE
-#include <unistd.h>
-#include <sys/syscall.h>
-#include <linux/futex.h>
-#include <linux/unistd.h>
-#include <stdio.h>
+---
+base-commit: d968e50b5c26642754492dea23cbd3592bde62d8
+change-id: 20250812-sm8650-power-sequence-fix-ba9a92098233
 
-int main() {
-    pid_t pid =3D 0;  // 0 =3D self
-    struct robust_list_head *head;
-    size_t len;
-    long ret;
+Best regards,
+-- 
+Dikshita Agarwal <quic_dikshita@quicinc.com>
 
-    ret =3D syscall(SYS_get_robust_list, pid, &head, &len);
-    if (ret =3D=3D -1) {
-        perror("get_robust_list");
-        return 1;
-    }
-
-    printf("Robust list head: %p, length: %zu\n", head, len);
-    return 0;
-}
-
-Regards
-Pranav Tyagi
 
