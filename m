@@ -1,204 +1,151 @@
-Return-Path: <linux-kernel+bounces-767646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C025B2571E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:59:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E220BB25723
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AD2B5A6D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:59:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD2DB9A6072
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86732FC89F;
-	Wed, 13 Aug 2025 22:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC58301494;
+	Wed, 13 Aug 2025 22:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KBKzM3CA"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfteWLM6"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881312980A8;
-	Wed, 13 Aug 2025 22:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99B4301482;
+	Wed, 13 Aug 2025 22:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755125931; cv=none; b=TPHdEOtgfb3qDbJWbx5dDMrCJlW6mlURYBSk/PDQPHvfvRtB0fg27/nshubElKw0W1OIC47a4wOl1cVPMClTlfrHMmXf5fVMmYDL5jg5BkGPK2khtOa9hIAKSY2eT47KVVKs+DNu6Lsb5lUDMu7TtIXy7KTrQ+hgsXheXtolKho=
+	t=1755125984; cv=none; b=RrYXg9XC6jUNWPr8xVqQuR8nFZLW9tA8LdPkPOIfrIYyIxbo56dMxYiDXl/6kzUR6BuIn7XHrSgzTYmAQZdQEA5i/JRSr8hMiTFqV6HsXmAhna4y6bv1EZ0jbI0sI3Za01+CyJQX3GZtGTaMFbhtu3C5AzxkZ9BEIhYBIV/vuQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755125931; c=relaxed/simple;
-	bh=7VPTVLLxq/DNYimYLPn12eRXgDEfiaC8/D5Y/XfUGtU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nZUm65cwStHo1B2AL0Ap7lkcJFignqcxxqyyRdGxD945fPnm7lxF9TzDVPLvrYD8iIE2l9DQ+oSfMOarJbx4zevFu8YS/wA9qKOPL0Q76KDZGottDddeF5akiDAJXJVFXCk/jgegxaE1GofASCKq7xFoTV/2buTYQp1Wa2tCf/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=KBKzM3CA; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DMwhIL2248377;
-	Wed, 13 Aug 2025 17:58:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755125923;
-	bh=zW7wf8U7H0k219rYyFqzmSOqAbuZmutUlJ3BdxBMu3g=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=KBKzM3CA1dZPvJk8nqj+Biwwfs/EmDVJ5QBM04ClSG98b2Sd3Wc2SFb+/PLVj4vBg
-	 GYC1q/vV+bmnoFr+cSxEEgp6mRFKrNn1/TAkbx80KBEKhUePSLiriakoaxJcfbKveo
-	 jR4xceXyfAmJAEeBNYFcNHuqoZ4pLag9lSi+UlXE=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DMwhl61288260
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 17:58:43 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 17:58:42 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 17:58:42 -0500
-Received: from lelvem-mr05.itg.ti.com ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DMwfwe2683333;
-	Wed, 13 Aug 2025 17:58:42 -0500
-From: Andrew Davis <afd@ti.com>
-To: Jonathan Cameron <jic23@kernel.org>,
-        David Lechner
-	<dlechner@baylibre.com>,
-        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-        Andy Shevchenko <andy@kernel.org>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew Davis
-	<afd@ti.com>
-Subject: [PATCH 6/6] iio: health: afe4404: Use dev_err_probe() helper
-Date: Wed, 13 Aug 2025 17:58:40 -0500
-Message-ID: <20250813225840.576305-6-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250813225840.576305-1-afd@ti.com>
-References: <20250813225840.576305-1-afd@ti.com>
+	s=arc-20240116; t=1755125984; c=relaxed/simple;
+	bh=TdSADy9WSIwy8LeBdw/Py9AwRdV3n6oC1LxiSY3ePo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NlpngHJvxyB8r/mgw1HBQTwr4/xXGqFGQmLg2673KXn+9gN61ygXhWwRapGZac0xHCbpdhWg5g/+QvAgfLX4dzOmVnYsyF3q5ynvhr1LqFOdOM9dImyufRMzfyS7/WzPgCJJCSGc5JaMayEtyJrDzuHIMIpJnaMerOiXpCEO82w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfteWLM6; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e931cad1fd8so411912276.1;
+        Wed, 13 Aug 2025 15:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755125981; x=1755730781; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QtTnM1+CJ+t+7tyle0R4QX3bifvSoN3Opl9NJd4e/Wc=;
+        b=HfteWLM6QHCmK6WApONAYYNSUsFWXq46t36QlpZokvUecDyT6Asda92xdGc3NeHMVJ
+         Bzhly+WdgkMqxRTjYWR3FDxKxTcClGCsugl2eh/8iKswpwjvnmOOeI8gQ/2cVWbrJs/b
+         l1Lf3isWhnFEM7VuhfLqIjOBLogxaoTzWF8YZR94Tdfl7+TtdfqQ68TRZORpYdFioSUz
+         foDyUSuTra7nOc7GlS4qbFGi6saCRllw5nvBLCygewua2gz1eeQHKZ9Uruw8qEDnDbJT
+         qBkB86GnEDMYBNOZDuUtDOYnTA2YEngmtqv3OpxWdf39ANMIN26IMsZlZH7GlMkjvXXa
+         X1xA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755125981; x=1755730781;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QtTnM1+CJ+t+7tyle0R4QX3bifvSoN3Opl9NJd4e/Wc=;
+        b=ViPyCuX8CK68YjdMZhZVIpsFf5D2caAiyZaoeTnQSQiLpJsujokvsmmzys+K6KK2AG
+         iEZVBMFw9OFP1Z7OCLlZH8gPwLU5aWwSuw0tQZhpfD5Qn696mKJ3HC0wT+js2UAITZuz
+         97ABZvIWB0hfCeJHkpvc36FJ3Z9DuIPp6b4vJSfTXShQwqpQ0/z31ZiWASpA3JI+A1xP
+         fOA8pJvaeBYz86t2+PuCvZ2pFlgaKCKn9UDLdOqaRhZkjDOa1pW+UU/3cgl/YSESSu8S
+         EFzTzHgU4n2NeEG3TURT7X75GVMlMYbGGsZsTtTAMg16tczqVH3QkzYS4CWpFf+RUxMi
+         5IbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFLrvjrQCYmbf04auJA/K8fvG/FgOpKbXemvdd5DEmtCYwruNNFSMBaoL0uw5tK8mt+UaJuhEz/NDn@vger.kernel.org, AJvYcCW2iWypR+68983sQVtusp+a8PHzhDd2KZa95cO4fs/tdL0nWKqskw0T0rQsW73ofbsG2QyaOS30V2tzsokQ@vger.kernel.org, AJvYcCXJcHAm8tgKQbxQrvpiRmBNWpoDcTUnJLruiQLWUVTw6XIGaWFc6cKuqY8Avro0llD/pJwXpnoAXDz0VA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJyZbexxDrYIULeQ0LhO5+lk9bFVzf85PVBXmFNt0m/PHarGOI
+	rP+cQHuj/jY/AHUdjDouf1IYuvmweA7O+aK8ZSk6cxS2744Hxc3R2IxcSk25ak+beWUbuVdq4dM
+	sJwwmikBG7NsUEFtvn2GUN45XJCfBBA0=
+X-Gm-Gg: ASbGnctwFVBOQYln6Z+aL9T8EKHgEGeoIMTGVl+P4weFrltVVPiwmnVLwLELjyfJr2A
+	gp8X4IH8qTpKsoWb1OsCgOSv+KDoWJyOptQZGfwcbgsjTZqpDE9YKs48PJkzv1FRBU/y0vHDGvK
+	UHhP2A8HnlZMfTqKUSh0vg/0NGM+RWEog6PTsRILUReYdi5e7iviQOTNUqQsJwkj0iaVCTM8zJV
+	d2t/AILMczq4PmNKHjb
+X-Google-Smtp-Source: AGHT+IHz6cMdKoBKos1cjzDtvv0n4P3nLNY03qBHg5Te/w/fGQ2cqg9xOl/zHfAh47QzVnBW5MfyXVGk2B8a5Jg+1qU=
+X-Received: by 2002:a05:6902:1147:b0:e93:cbf:d6a3 with SMTP id
+ 3f1490d57ef6-e931e29a974mr1068859276.45.1755125981503; Wed, 13 Aug 2025
+ 15:59:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20250812192334.11651-1-rosenp@gmail.com> <20250812192334.11651-3-rosenp@gmail.com>
+ <74d5ccda-89f7-4ddc-9574-ba7e8d4a2488@kernel.org>
+In-Reply-To: <74d5ccda-89f7-4ddc-9574-ba7e8d4a2488@kernel.org>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 13 Aug 2025 15:59:30 -0700
+X-Gm-Features: Ac12FXwuaGBEmons1V4bomDQpdmTS3Bsmn8qcg9GPzJP08kaQ7GBvYpHfCMDzn0
+Message-ID: <CAKxU2N91q=d_c===x=AL+pwXkz8K1B8eXj8ePfm6dK_4cAk9Gg@mail.gmail.com>
+Subject: Re: [PATCHv2 2/3] wifi: ath9k: ahb: add led pin OF support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-wireless@vger.kernel.org, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
+	Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This checks for EPROBE_DEFER and allows us to print out the error code
-while return it directly saving some lines of code.
+On Wed, Aug 13, 2025 at 1:20=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 12/08/2025 21:23, Rosen Penev wrote:
+> > The old and removed platform code had support for assigning a value for
+> > the LED pin for when the default is not correct. Effectively a fix for =
+a
+> > non working LED.
+> >
+> > For setting an LED to active high, a negation of led-active-low is used=
+,
+> > as two drivers currently use that and no drivers use led-active-high or
+> > something similar.
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  drivers/net/wireless/ath/ath9k/init.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wirele=
+ss/ath/ath9k/init.c
+> > index c911b178dcc2..7826b113235d 100644
+> > --- a/drivers/net/wireless/ath/ath9k/init.c
+> > +++ b/drivers/net/wireless/ath/ath9k/init.c
+> > @@ -662,6 +662,17 @@ static int ath9k_of_init(struct ath_softc *sc)
+> >       if (ret =3D=3D -EPROBE_DEFER)
+> >               return ret;
+> >
+> > +     np =3D of_get_child_by_name(np, "led");
+> > +     if (np && of_device_is_available(np)) {
+>
+> You are open-coding of_get_available_child_by_name().
+Will fix.
+>
+> > +             u32 led_pin;
+> > +
+> > +             if (!of_property_read_u32(np, "reg", &led_pin))
+> > +                     ah->led_pin =3D led_pin;
+> > +
+> > +             ah->config.led_active_high =3D !of_property_read_bool(np,=
+ "led-active-low");
+> > +             of_node_put(np);
+> > +     }
+>
+> Leaking OF node.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/iio/health/afe4404.c | 62 +++++++++++++-----------------------
- 1 file changed, 22 insertions(+), 40 deletions(-)
-
-diff --git a/drivers/iio/health/afe4404.c b/drivers/iio/health/afe4404.c
-index 19dd821155dd4..18f3cf94e8f71 100644
---- a/drivers/iio/health/afe4404.c
-+++ b/drivers/iio/health/afe4404.c
-@@ -460,39 +460,31 @@ static int afe4404_probe(struct i2c_client *client)
- 	afe->irq = client->irq;
- 
- 	afe->regmap = devm_regmap_init_i2c(client, &afe4404_regmap_config);
--	if (IS_ERR(afe->regmap)) {
--		dev_err(dev, "Unable to allocate register map\n");
--		return PTR_ERR(afe->regmap);
--	}
-+	if (IS_ERR(afe->regmap))
-+		return dev_err_probe(dev, PTR_ERR(afe->regmap),
-+				     "Unable to allocate register map\n");
- 
- 	for (i = 0; i < F_MAX_FIELDS; i++) {
- 		afe->fields[i] = devm_regmap_field_alloc(dev, afe->regmap,
- 							 afe4404_reg_fields[i]);
--		if (IS_ERR(afe->fields[i])) {
--			dev_err(dev, "Unable to allocate regmap fields\n");
--			return PTR_ERR(afe->fields[i]);
--		}
-+		if (IS_ERR(afe->fields[i]))
-+			return dev_err_probe(dev, PTR_ERR(afe->fields[i]),
-+					     "Unable to allocate regmap fields\n");
- 	}
- 
- 	ret = devm_regulator_get_enable(dev, "tx_sup");
--	if (ret) {
--		dev_err(dev, "Unable to enable regulator\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Unable to enable regulator\n");
- 
- 	ret = regmap_write(afe->regmap, AFE440X_CONTROL0,
- 			   AFE440X_CONTROL0_SW_RESET);
--	if (ret) {
--		dev_err(dev, "Unable to reset device\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Unable to reset device\n");
- 
- 	ret = regmap_multi_reg_write(afe->regmap, afe4404_reg_sequences,
- 				     ARRAY_SIZE(afe4404_reg_sequences));
--	if (ret) {
--		dev_err(dev, "Unable to set register defaults\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Unable to set register defaults\n");
- 
- 	indio_dev->modes = INDIO_DIRECT_MODE;
- 	indio_dev->channels = afe4404_channels;
-@@ -505,43 +497,33 @@ static int afe4404_probe(struct i2c_client *client)
- 						   "%s-dev%d",
- 						   indio_dev->name,
- 						   iio_device_id(indio_dev));
--		if (!afe->trig) {
--			dev_err(dev, "Unable to allocate IIO trigger\n");
--			return -ENOMEM;
--		}
-+		if (!afe->trig)
-+			return dev_err_probe(dev, -ENOMEM, "Unable to allocate IIO trigger\n");
- 
- 		iio_trigger_set_drvdata(afe->trig, indio_dev);
- 
- 		ret = devm_iio_trigger_register(dev, afe->trig);
--		if (ret) {
--			dev_err(dev, "Unable to register IIO trigger\n");
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Unable to register IIO trigger\n");
- 
- 		ret = devm_request_threaded_irq(dev, afe->irq,
- 						iio_trigger_generic_data_rdy_poll,
- 						NULL, IRQF_ONESHOT,
- 						AFE4404_DRIVER_NAME,
- 						afe->trig);
--		if (ret) {
--			dev_err(dev, "Unable to request IRQ\n");
--			return ret;
--		}
-+		if (ret)
-+			return dev_err_probe(dev, ret, "Unable to request IRQ\n");
- 	}
- 
- 	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
- 					      &iio_pollfunc_store_time,
- 					      afe4404_trigger_handler, NULL);
--	if (ret) {
--		dev_err(dev, "Unable to setup buffer\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Unable to setup buffer\n");
- 
- 	ret = devm_iio_device_register(dev, indio_dev);
--	if (ret) {
--		dev_err(dev, "Unable to register IIO device\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Unable to register IIO device\n");
- 
- 	return 0;
- }
--- 
-2.39.2
-
+Not following here.
+>
+> > +
+> >       return 0;
+> >  }
+> >
+>
+>
+> Best regards,
+> Krzysztof
 
