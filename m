@@ -1,88 +1,85 @@
-Return-Path: <linux-kernel+bounces-765968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2033AB240AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10541B240B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B78871BC0E3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE5F1AA4771
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8452C08CA;
-	Wed, 13 Aug 2025 05:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9528E2BF01E;
+	Wed, 13 Aug 2025 05:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MmliNpgi"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GiDz8xCV"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BB12D0C84
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:49:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDCB271443
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755064156; cv=none; b=d2wvW0ichqhhcbQKubdRstT+KhpMEpfL/wxiEXQtGT9IorLHP8G24oIcm8+oPUtjgV8e1s9E76vhx1fdaiW1OQ10S7QEmkcYRiktrZSbkqKrN6G/RuUfwAUdE/9Va//BuOOnkp/4OLC9P4uVCAACiK7rjAWroGmbDzZsyH8teIU=
+	t=1755064289; cv=none; b=EmuCLjjTLtBCBcUuzFhTc/6rNQ6KCjHBz52EstTgx/uqxPxqoaZFnoV5ukTkFZWjbh7WA8XtyiTe/IifSivSUihtO2f1UfoCiNBE8c1NlU+BJW1Qdd3NJlwl7E8eZ/+vGJXV7GHX6hX8jgwJtbA2TbcZGGrbMyit4TO4T3MniAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755064156; c=relaxed/simple;
-	bh=5XEzjMGKnaeMJFhQb3Nwzbat+idzevLzr/emeLMFnok=;
+	s=arc-20240116; t=1755064289; c=relaxed/simple;
+	bh=lRxuv0qt4ISYZ4d5L7KaHZ2U9/6/GI12h89YfeucWLo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Sxlb9C01IvvDxJvREx+FfGoxzssZCoT6YSQXBCHolrIkwxmn7sT9fanKtKa0FWGGNKrn23PEiGZpzgzbNYI1x9asNMVNaPUDIexUviEb2mtxX4meG2MR72rnrslFBG1/MnN+7nnXKKK5QjwrKEsQ7LSfId1h2X9k5ECq3MacIQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MmliNpgi; arc=none smtp.client-ip=209.85.128.48
+	 Content-Disposition; b=MBiNmNMDjA63dfDJmMsUal9Ct+XM73qbfECsOjOwK7hhYgWfaHa21URR8VDb0c5ZbFqD+ZPoZYSBuQUqxvFvr1mMG8lAVXnYASo+RE6D9rrd8vzFeB5+Mk3f0y1CkYmvMcp6ePfs1M93mIQmGGE0OcsZE+wbleZkoVa2F4bbVz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GiDz8xCV; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-458baf449cbso59712935e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 22:49:13 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b79bd3b1f7so2952009f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 22:51:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755064152; x=1755668952; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755064286; x=1755669086; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1NATFWYnL9FpvCQHaSEVWqiysmgBFz5wmTJhKI3JDuA=;
-        b=MmliNpgiE/VmRLHxzAL0+iYkaLFqIm9XMYYpGoXkcCzDp1VE3K+5MqRTwqY2MKT0Q9
-         UYnD9ZkOVjPAp4HTLJhXxtFsHVPDPteUtVL/XEwK3O76gkIdu9eIPT8chZnbMMee3UDe
-         kgfaTZBLJdvKhFVU6dosQTRlRlIFc912tK4LVFnWyAw6pZtbi0yQDPY1v1ISCAOfI7qI
-         c53Ibvhg6ZSTjr9Rh/495y5pbY4h6pNnxfBCweBdFFFAXJgmYckQe62/un09B3tv8zBJ
-         TV+9qAhEu1s+WIJTCdJkixR601r0p2yuSpfkuLxbJuhRu6RFSnVIe+O+Zd+YqWP+xh4I
-         38fw==
+        bh=DrOyWBFP21dohGWxqS5PR6ISwURTsFLfxT85phMfX+M=;
+        b=GiDz8xCVMi8EzbvXUojwrgp6kG6UCDdTvwMHFpQSsLJz/56aL0JGV0SVL5+89HndKb
+         Z+TISc/MK81S0vzzd23LBvIvnvss5KtFOb5CrG/C2KvfRQn7vHDXScw9SItB5n009SEI
+         s7/8hTNvvjhu59BM1+U8d2YbxJDIai6fPcReKFBtLeSR0Lt3sHrffDciq2PeMlqDXLIO
+         kKW4stgiBU1YO2jxAs3EzXmHj9kO381dJotJOMz7zwYlyrYbTFlbS+W/n/B8dVUWhlRI
+         iZZC/BFtGtEe+gpdLF7/+b34NaQK+2U5/YmzF0wSFYMNF/E51YsnrKiPOxIg7G/tOsld
+         fmjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755064152; x=1755668952;
+        d=1e100.net; s=20230601; t=1755064286; x=1755669086;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1NATFWYnL9FpvCQHaSEVWqiysmgBFz5wmTJhKI3JDuA=;
-        b=ahh4GCUDXN4TA4yVrL3ybhTqSqosS9Oy41ywNTAxcLEINyN1F2ASpAZO5gJ1Xahm74
-         yiUETk2+jDX/55XYFtaw/hPmi/HTY1IguDJaGbgl/C8qE1OAoxkWmW+Xh8UdbUwKnqD+
-         PdX2wOIWKdhInKMo8ka8I1w2QQPUER+6K8ayeXZiksI4hjw/xUUW/tPwj3dBz+Khy1eK
-         tCLqvoRe4fk5fKFoCkXCXRs7j237YKRjxAIA1DeRQ8yMgvJeYcBp98a0fl4qn2tbT/XY
-         6yqk97nLZYJCxz7Qp9TetbN0BaZLq/W/6aM2ayR3Ug5Iz9b4qb726tYwxgudLFwDj7Gv
-         zCNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVo29/OMWslYuQeDSEpXSd+JXuCafY06hWsz/oGu6LCDEwL4G2pJk6m0l1naXBhVSGeQ01PI4mVn45doMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIus/8Crg+DlzFobaCpg7kb7Cdh6lnG0Xb8r2Z7hlO2v7jnYW7
-	tb4FnH8RlY8iMe5Z/HKNpDxN4p7kh9Acqgqrrj8QOjkUk0DpQvA07Su6HWnQcEOj4FI=
-X-Gm-Gg: ASbGnctpd+Lw0nPn9vjLL2b99ygOrRwIHViVc+svONS/+QIoPGtwCKsVXxInyof8Qnp
-	Y+X9xPLUEv356J4VkQkrRqVSxxDKT37VZjScrKXsny9sHKXduSsfkDiCOzqhCH1Joi/xqzXVdXw
-	Z5F3VXoiCkEhqp/me9seOMxKFqZXUUdgRXXPkBITMBi3/dzLGdrGM8wUo1vIAy4q/MjqfjXLnmL
-	ebaOhZJCCWoE45JqSTdbYDnhWPJFakY0n+xHLc3OBJgXsTeIA4UvOX0qR48MM8qx0mB4+hohr4x
-	EEbJCyFIf6Az0t05L4tmgssZb3lK757avPWaC6DnzwneYHwv94Zr/qE8VtIbzr/2x5TLWStlpto
-	RRrt/SBaBRrzmoCeRdOIW46r04Tdk7MXe8MmU8g==
-X-Google-Smtp-Source: AGHT+IFDvLxnIU17Hp8mu8s/hfxqo91PU/ydIDKmiqnIJjDK4g9R/0BJmMQ3yTeiQ09ZscNds3uIlA==
-X-Received: by 2002:a05:6000:4205:b0:3b8:d493:31f4 with SMTP id ffacd0b85a97d-3b917eb6c5bmr1136780f8f.48.1755064151797;
-        Tue, 12 Aug 2025 22:49:11 -0700 (PDT)
+        bh=DrOyWBFP21dohGWxqS5PR6ISwURTsFLfxT85phMfX+M=;
+        b=XsOj/gnZWe3qpeDinjwGxJ0ZISVFu/cSQgp4QXOfryVouiYUgzpw7Xq4eBg9n6HOvU
+         8ti2viQ5sPt/soRDsfQDs89alXPuJImqmnP5JfnkE9fkNPGZGMENSOyC0Ywk9qlycwvC
+         45BBx+Kjfi4w5Mc2D2Ww6fyv3dOJ5PppuO3bM3kfbl6sFB90mmB299DCZr6TtDfOkQcZ
+         utYEc4q69bY+PESIRw5kqDu2iZFhaMFo3yxSLt9O+GSxiJ7OUt/v8w5CImNXoo1xyHrq
+         UM7PHjyshcKOeVce+tCrj41S0nZCKV/gRlvR8nL7vKLy6VaKuvQ0Ie1VlBYx78UIKdC4
+         FG8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWStNAW4oa6YVL7uGRnMqWj58DkaEOz4V5M4rG4mjgvXjfr68Mk702+hpBR3FoBYo0+ixeYlJFWbsAPKGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztLQV1jXB8dW3T4nN48BKpxGWadcGPFE7QWkOuQunbyNbqP1iY
+	aJZPn/mOImjPyOgvpUnJo01LvPOm2qWHUfAOGdTc2jZkTEzGkgZudbO/E4+35P16Ic3rE0r4nyG
+	ldiVT
+X-Gm-Gg: ASbGncutJuAmRSdzzjPnfFYSfCuky3a/LPAbHxSE51XhnX2+xTstN2hV8JkjsrqUitG
+	dTsitOPq/nx7f5raR3+G4gQbfvefl+PIxwxVCKCLs+wCcyGGTj+foATk7f3o1uTzBvrxOxtVd8b
+	ApgpbTnjzITspgsruXlNvyinn49goMyRoenYk8KMw6gF4gMuksf2WsFeXbHRQh8NBp0DY5E/t/G
+	qOif7KnmjPGJqihZdgCxtbDPKO87O4hPLpXnPxW8jFiz6DQ/idmE16IQsESY81KmbbafnuqfJfG
+	bQqij6T2mwHr/fxW3VfMRnJLwnS1ohfu8KTY5uW2Bf/Gq4Yo+rTaC6xNo2lbTYsZcG1v1JTmnP3
+	VttjKc0xjxwBcVOvMfL/kboIihjs=
+X-Google-Smtp-Source: AGHT+IFcKTFkpLXaLpQ8IyxiEG4h8H2fKINbMz/aPudLtlvebYChChfIWNlq56NuIvASiyNpkDoFVA==
+X-Received: by 2002:a05:6000:4282:b0:3b9:15d7:8fd3 with SMTP id ffacd0b85a97d-3b917e37cf7mr963552f8f.16.1755064286473;
+        Tue, 12 Aug 2025 22:51:26 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4696c8sm45376480f8f.55.2025.08.12.22.49.11
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b8e0bfc79fsm35965508f8f.56.2025.08.12.22.51.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Aug 2025 22:49:11 -0700 (PDT)
-Date: Wed, 13 Aug 2025 08:49:08 +0300
+        Tue, 12 Aug 2025 22:51:26 -0700 (PDT)
+Date: Wed, 13 Aug 2025 08:51:22 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mike Christie <michaelc@cs.wisc.edu>
-Cc: Nilesh Javali <njavali@marvell.com>,
-	Manish Rangankar <mrangankar@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	James Bottomley <JBottomley@parallels.com>,
-	Ravi Anand <ravi.anand@qlogic.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] scsi: qla4xxx: Prevent a potential error pointer dereference
-Message-ID: <aJwnVKS9tHsw1tEu@stanley.mountain>
+To: Lars Poeschel <poeschel@lemonage.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>, Aleksandr Mishin <amishin@t-argos.ru>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] nfc: pn533: Delete an unnecessary check
+Message-ID: <aJwn2ox5g9WsD2Vx@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,30 +90,50 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The qla4xxx_get_ep_fwdb() function is supposed to return NULL on error,
-but qla4xxx_ep_connect() returns error pointers.  Propagating the error
-pointers will lead to an Oops in the caller, so change the error
-pointers to NULL.
+The "rc" variable is set like this:
 
-Fixes: 13483730a13b ("[SCSI] qla4xxx: fix flash/ddb support")
+	if (IS_ERR(resp)) {
+		rc = PTR_ERR(resp);
+
+We know that "rc" is negative so there is no need to check.
+
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/scsi/qla4xxx/ql4_os.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/nfc/pn533/pn533.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index a39f1da4ce47..a761c0aa5127 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -6606,6 +6606,8 @@ static struct iscsi_endpoint *qla4xxx_get_ep_fwdb(struct scsi_qla_host *ha,
+diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
+index 14661249c690..2b043a9f9533 100644
+--- a/drivers/nfc/pn533/pn533.c
++++ b/drivers/nfc/pn533/pn533.c
+@@ -1412,11 +1412,9 @@ static int pn533_autopoll_complete(struct pn533 *dev, void *arg,
+ 			if (dev->poll_mod_count != 0)
+ 				return rc;
+ 			goto stop_poll;
+-		} else if (rc < 0) {
+-			nfc_err(dev->dev,
+-				"Error %d when running autopoll\n", rc);
+-			goto stop_poll;
+ 		}
++		nfc_err(dev->dev, "Error %d when running autopoll\n", rc);
++		goto stop_poll;
+ 	}
  
- 	ep = qla4xxx_ep_connect(ha->host, (struct sockaddr *)dst_addr, 0);
- 	vfree(dst_addr);
-+	if (IS_ERR(ep))
-+		return NULL;
- 	return ep;
- }
+ 	nbtg = resp->data[0];
+@@ -1505,11 +1503,9 @@ static int pn533_poll_complete(struct pn533 *dev, void *arg,
+ 			if (dev->poll_mod_count != 0)
+ 				return rc;
+ 			goto stop_poll;
+-		} else if (rc < 0) {
+-			nfc_err(dev->dev,
+-				"Error %d when running poll\n", rc);
+-			goto stop_poll;
+ 		}
++		nfc_err(dev->dev, "Error %d when running poll\n", rc);
++		goto stop_poll;
+ 	}
  
+ 	cur_mod = dev->poll_mod_active[dev->poll_mod_curr];
 -- 
 2.47.2
 
