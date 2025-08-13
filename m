@@ -1,92 +1,172 @@
-Return-Path: <linux-kernel+bounces-767034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB37B24E34
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:52:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEAFB24E62
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F37E82A47CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A04E9A18C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBB127F171;
-	Wed, 13 Aug 2025 15:43:37 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362E6280A2C;
+	Wed, 13 Aug 2025 15:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O+NwJ5hq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F0A27AC57
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B78E276058;
+	Wed, 13 Aug 2025 15:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099817; cv=none; b=qw61PwqNr1unSyQolTzxwQ1YkBGBP9A/58pgelNPx0fyKV8CVZEHLGDcDttefkhnYp09GGJe94c78gG93imoln+fBswVMrytxhAPp2Do7lnrdRB1oEDa9fmEQBjnf9PkZ/woFkudSK0AyBANElX1TeN8G3RSVfiWLVVtNJl98hA=
+	t=1755099851; cv=none; b=KP/6fIwx/IneH3szRqFm4cgAN2/sz8JFOdoKgE+6Rh8ZIJdBdgSVsjdG019GHu1X+En2NGpWqRC9mZU8/o74wUy9yqmC54rv+SqVttmairpOwoQ7y7u57Nn3hlcHyuBK7YSElsq6nFWCwDsyJXR80CZ+waJiBuwytA06evhvD3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099817; c=relaxed/simple;
-	bh=EZqnd4QbylAM7e7aG7dM5lKczJ/kfENBtLDkC/RXE2o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eL09JnnE6/DBManCEEQnI5sHnGoAKTbiqPInwILuR2Lr6Z19sLldP1q+9+P7bZuFFYqkqadh1KUtkPl/rmrDscWrpSX61qttAWn7Vly88zAS0btZaPyX2lRv+xSolu8JyAW/KDj+KXADO7jpqUYj4oAwyJN20YiwbvhvjcyGVNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-88177d99950so646879739f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:43:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755099814; x=1755704614;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T5elhorgIFMNLHmDqTJfQO7TzeV1TdRqPz9zCjpje9U=;
-        b=sFwzKWszHckjFWhLS+65NzZZATwe4z7cRhwkdBmgImvDFvAXKJU7vb1sjSYdwqjCC9
-         noBFcd+8e3kSESuMWETJsy1PyY49gN9W7XHq27iQJw6rKfD+iNg60sEddxzV5GnHedPN
-         jNpABfP3WKl82x1CFdFQFBtH9yysY8GDVLEyzy8kBwbvnuwjGn78k8WLcQuo+hL9+S88
-         dq0rbgTrWS9u4/p/CXwN7z3iIERfC74IHpG1lm45iSox37qB+GRZiS0iuIWIJYQZUyeI
-         pKTXma6ZdLH0opEBQLJ3sCcQUo2P6dwXZmzasteF1vAxmZLmdsqw1iKzHv9mGnnnL967
-         wxQw==
-X-Gm-Message-State: AOJu0YxGnn4Aesb0XTQjR8gsF4Q4NVspf2TT68JENkok7yq2sz0dzhHq
-	/RruPpP8Vz8mLzjO5ELTDUDW86fFIgcgB9o4N++lZ97Ri6cgtHBqDPQQkoTcXHMo46gujwF2X7I
-	3NHQfYufkbMrabp69oAnNQtUrlvb7ODDWAfhk+X2fXLY+qwJan9oxD4Xwxps=
-X-Google-Smtp-Source: AGHT+IGo5BB5FUqKPzCWaEgFfeaghkL5ATyJwTRacm+/s0J3m83F1O3T2M7b8fq8Og65OXgYqpprRG68XdAnh0mf4OnNxPQWulLh
+	s=arc-20240116; t=1755099851; c=relaxed/simple;
+	bh=O2hl/hlVCOc1FdbV0cQBKJVYbqIwGltINMJ91/7CsDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hLHbi1dIcfLEBHMdJv42U61QWUHMfYgldFKy0+QH7PKNrRbsTj1bIncPhpiT3snbgUB8LDjDKNCjja8aTJi2B61ecQQ0WV1o5SxRWoefmuKJvxayjlDodXydgkVpL/Xdre4WBIkkeuz15ylG3d2F3EWZqEqb+4A577H0Q3GAqDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O+NwJ5hq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 017D7C4CEEB;
+	Wed, 13 Aug 2025 15:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755099851;
+	bh=O2hl/hlVCOc1FdbV0cQBKJVYbqIwGltINMJ91/7CsDw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O+NwJ5hq6eoz0kZJJvysgjZN9eqWQYocqHLJbc++4LHC0hEKirRnUNqU/xk6Fm7vw
+	 /27BzGwp1799XXCZPxUwx12cv4y39Apt4zWq6UyjreNomnIGgtOHvm/xyC+JxuivXI
+	 K5Pxvh3gQKj/8INsYwxjNwKuZoye2GVolnonH9+cY0NLFnUl9SzR8uIeMTsH60o8oa
+	 zdCu3ij0xIHPlILeDgKOpOWqdffbQQB+vKdjMYqNOCjYdcNh2AoD9rRvGQx+FrQgMV
+	 JdGoTpBP3W32C5QdF7nWuCYlgwmEUUHmZAxOxeFdrerd4QzjK3joNwb0cUeNmW539Y
+	 bdvV7TpMHoRXQ==
+Date: Wed, 13 Aug 2025 10:44:10 -0500
+From: Rob Herring <robh@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	mani@kernel.org, kwilczynski@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mpillai@cadence.com, fugang.duan@cixtech.com,
+	guoyin.chen@cixtech.com, peter.chen@cixtech.com,
+	cix-kernel-upstream@cixtech.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 08/13] dt-bindings: PCI: Add CIX Sky1 PCIe Root
+ Complex bindings
+Message-ID: <20250813154410.GB114155-robh@kernel.org>
+References: <20250813042331.1258272-1-hans.zhang@cixtech.com>
+ <20250813042331.1258272-9-hans.zhang@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:13c6:b0:87c:30c6:a7cf with SMTP id
- ca18e2360f4ac-8842950b465mr613753239f.0.1755099814067; Wed, 13 Aug 2025
- 08:43:34 -0700 (PDT)
-Date: Wed, 13 Aug 2025 08:43:34 -0700
-In-Reply-To: <689a3d92.050a0220.7f033.00ff.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689cb2a6.050a0220.51d73.00bd.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
-From: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813042331.1258272-9-hans.zhang@cixtech.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Aug 13, 2025 at 12:23:26PM +0800, hans.zhang@cixtech.com wrote:
+> From: Hans Zhang <hans.zhang@cixtech.com>
+> 
+> Document the bindings for CIX Sky1 PCIe Controller configured in
+> root complex mode with five root port.
+> 
+> Supports 4 INTx, MSI and MSI-x interrupts from the ARM GICv3 controller.
+> 
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> ---
+>  .../bindings/pci/cix,sky1-pcie-host.yaml      | 79 +++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml b/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+> new file mode 100644
+> index 000000000000..2bd66603ac24
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/cix,sky1-pcie-host.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: CIX Sky1 PCIe Root Complex
+> +
+> +maintainers:
+> +  - Hans Zhang <hans.zhang@cixtech.com>
+> +
+> +description:
+> +  PCIe root complex controller based on the Cadence PCIe core.
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: cix,sky1-pcie-host
+> +
+> +  reg:
+> +    items:
+> +      - description: PCIe controller registers.
+> +      - description: ECAM registers.
+> +      - description: Remote CIX System Unit registers.
+> +      - description: Region for sending messages registers.
+> +
+> +  reg-names:
+> +    items:
+> +      - const: reg
+> +      - const: cfg
+> +      - const: rcsu
+> +      - const: msg
+> +
+> +  ranges:
+> +    maxItems: 3
+> +
+> +required:
+> +  - compatible
+> +  - ranges
+> +  - bus-range
+> +  - device_type
+> +  - interrupt-map
+> +  - interrupt-map-mask
+> +  - msi-map
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    / {
 
-***
+bus {
 
-Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
-Author: mst@redhat.com
-
-
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-
-diff --git a/net/core/datagram.c b/net/core/datagram.c
-index 94cc4705e91d..ab890448f3a2 100644
---- a/net/core/datagram.c
-+++ b/net/core/datagram.c
-@@ -642,6 +642,7 @@ int zerocopy_fill_skb_from_iter(struct sk_buff *skb,
- 			return -EFAULT;
- 
- 		length -= copied;
-+		iov_iter_advance(from, copied);
- 
- 		skb->data_len += copied;
- 		skb->len += copied;
-
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      pcie@a010000 {
+> +          compatible = "cix,sky1-pcie-host";
+> +          reg = <0x00 0x0a010000 0x00 0x10000>,
+> +                <0x00 0x2c000000 0x00 0x4000000>,
+> +                <0x00 0x0a000000 0x00 0x10000>,
+> +                <0x00 0x60000000 0x00 0x00100000>;
+> +          reg-names = "reg", "cfg", "rcsu", "msg";
+> +          ranges = <0x01000000 0x00 0x60100000 0x00 0x60100000 0x00 0x00100000>,
+> +                  <0x02000000 0x00 0x60200000 0x00 0x60200000 0x00 0x1fe00000>,
+> +                  <0x43000000 0x18 0x00000000 0x18 0x00000000 0x04 0x00000000>;
+> +          #address-cells = <3>;
+> +          #size-cells = <2>;
+> +          bus-range = <0xc0 0xff>;
+> +          device_type = "pci";
+> +          #interrupt-cells = <1>;
+> +          interrupt-map-mask = <0 0 0 0x7>;
+> +          interrupt-map = <0 0 0 1 &gic 0 0 GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                          <0 0 0 2 &gic 0 0 GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                          <0 0 0 3 &gic 0 0 GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                          <0 0 0 4 &gic 0 0 GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH 0>;
+> +          msi-map = <0xc000 &gic_its 0xc000 0x4000>;
+> +      };
+> +    };
+> -- 
+> 2.49.0
+> 
 
