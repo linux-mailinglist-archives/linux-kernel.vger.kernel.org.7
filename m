@@ -1,163 +1,173 @@
-Return-Path: <linux-kernel+bounces-766352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7D9B24578
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:31:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB020B2457C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342171B67CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:31:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192B5682106
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9952D781B;
-	Wed, 13 Aug 2025 09:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68CC2EFDA5;
+	Wed, 13 Aug 2025 09:32:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeeG2oA+"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DK3Nh7KA"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DC51A9F8F;
-	Wed, 13 Aug 2025 09:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BB32BEC39
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755077452; cv=none; b=K0dMhioj0ZyFDgcmaZDQ0dBgCMoGixA0Pv2BDXLyv/8AUY755VLVIunAFMX/Aw747Jo6sS9iVdtOW0cprmFj0H3U6iaJmanerVSaXdwLuTvDN0tG9gXC/UGzwhk8wbes3a7CbbS60SUzQqq/njGTPOW90TbCgTKqnjf7wsWmBGs=
+	t=1755077539; cv=none; b=DRRnl5RXaLm4Pfoz5XC0oVuI7cy9QMikQKDwaGgDJpKQhy/lRvp/bK3e5OECXJ8S8u3+W2Dr4cVG3XxH2Som+hQWrVjRBUU20Qpsguuckxz7h/OSo6J5DTbnDVX7/kgm36d5bBcjNsW8f5XbcbOGYdAJ51cKOxpOVB7I7GloD7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755077452; c=relaxed/simple;
-	bh=TJ8OdN4pbIcaVrkCD+qSlewG6MleJKciSH5T+oYGUJU=;
+	s=arc-20240116; t=1755077539; c=relaxed/simple;
+	bh=7SU3+Vd7N+k54gBXVj+MIPuqRLDqlAJi49rkww+kS7E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fqLCdG3CqQWN+EvSdYxSnNS13Q41jnBucLcx2ZSKYDJ3ckmpb8WoVJtPZ3Ck9TuWg43gppO+X9JiY3eFI3ovI54GRJR9AWGpQpsaDUZ2fKxwmELoEqUOhSGs8KtOBuemdo19J5PyN6DJSC7Nj/I8P+MNyGfxR1dljJCJo/qA77I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aeeG2oA+; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2e95ab2704fso5484590fac.3;
-        Wed, 13 Aug 2025 02:30:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=c45TU6LImueI2FvamTn8FX4A+68A++v1gm3u0301+sMaFWRg1NYA8T6BMZy+0JBLq9nELI9X5+HVfx7oyOsRPN1NS6MCn3LjRkgeGtkjPlz6pPQLQ14xr/mS6N7W7n6DtEGhLaz1JA1/3b+93J4U1OAQNt3CXI7kGnL704rEy3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DK3Nh7KA; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-458bc3ce3beso38296685e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755077449; x=1755682249; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TJ8OdN4pbIcaVrkCD+qSlewG6MleJKciSH5T+oYGUJU=;
-        b=aeeG2oA+O6jlvXkOeirlrRMfUZ71EILzYV02/Qcq4okrK1ySmXdqYatT0wbxPtuqyN
-         bDfAjMkiOYg3bCqEzgchYe3/Iy8GwiQWjGlN2rFZlEFlF36uS0gVnvwGGlKARWREFpMq
-         nuOcSWxNyjstkLK8+qakt2osW9jyZS0td5ZkUW+7WCQ6YLtFTlTZYXwE4nwH6ji3atbQ
-         yAoOAubktafl+4S9xLA1PhB0vGkK4e1X7FM1AFJ3kho7PrCC8eZvN//JDb1koQrFuSu2
-         +O/bZcVb2JTvr+QTnv/QObYKzqVf+naAu9+rZw3ND5JJcYsQqtINVXH59zI9Sz8FANrm
-         mZww==
+        d=google.com; s=20230601; t=1755077536; x=1755682336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yz1d7edJo/Q+HsJ1HH001Yh+poWlDoP3asDYz4tNc04=;
+        b=DK3Nh7KAnj8xsfCvynps5h293HD8HFHkk7CogjtpuxUByHzUkTIisuSmUu+ownueie
+         nqxF25qfOrXb9doir8fbiraCk1Tx96/7AfV92DXsJmYl7ejrK5QP3PMTy2Lx4zhh6Mf8
+         lUnEdUV/Q6lxvtfPNV8kzB5PkhW/Bda97SXNmQbQjjJkKnd+Ma9PULrH5xS4KbcALsXE
+         wCWBNsbazeoli2qwM4z8iqYJn8blyQGFNSNcW9F7kE+Q9WgYSwIjD00fTC4UqO7A9VET
+         G08yJJPjkCff8OpD8r5UKGgMdlenvcjqWPCy2t0R9RVA367c3gzWhO6XEO70FeBjZT6m
+         YpiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755077449; x=1755682249;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TJ8OdN4pbIcaVrkCD+qSlewG6MleJKciSH5T+oYGUJU=;
-        b=H4loqgl6Ma6cc2G0tc3E4xsqmvbqPIiJNQ9pwHcLHp6DrNVDihbjykZ89jBllzpi/C
-         W5J7FbpowQpjMfttS0XrqBZu/Kak39nKOGuQYIVCjZ4mTbNCstYknO36uBqmrEs1/vvc
-         O/Psmqv9k9z1PYTXnloGZ4sYr5yhnTd2c7KRbWGUCbNavlxE9hnFgN3+IivBeV26EYjZ
-         EiYJahAfPxYDDfkrelA41o79WBbaNWSo488WM9PMLhcfSGFipkZdKqdSsBvw5MEP2VLD
-         43DywD+8DQEMZBYgzEHlFcf/e0EABy8Hx+y5ePpyfhxIl/dnM4d1fikBXQ+4seQZL2KT
-         lwsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPFiNJaAzLhKP0rvRHJ9XPjtGoHBn1iV945wetlZEaDR6TzfzceglIpmFwoQrofZjg0KZxnOew3WHDH3U5@vger.kernel.org, AJvYcCWbsEVqz9tCPPXoW9Lwr52cgkafQtopO5h4J6NOvkDC9ybRvML8eetHwHQlaQLIA0USfBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwklQU9bqnbv6u7IQBsKDszeuQVEHFQlJciWqFL3dGI6963YHKX
-	vMhpkVd4awzxkvjsiTz3/Feluj94n+fb1IAWSSc4t9XTgAi2FB1YdkDFMclxSLpZeBxvgHYa5cA
-	mKiGPRteZEDTIxqOngAqCkikJvNWUShg=
-X-Gm-Gg: ASbGncvGttSCpUt/m8J9eca9DCs4BEIxTqp88RjCg7FCoc+G4efhpJaXzGb4wwfCzPk
-	wB2pTyQ/E0DzTVDFM9bZld9d4wUdQgWfZbWXi+av6h9G82PJGXZks55XbEGRn7dR6RjKKxelLLD
-	GoY3O1CfaoaIfZDzvg2sBLypmp9iw/AOTt+5aDy8naI5Xr0q5tE742xNVjwX1nxEeUGtDEZTsmM
-	MdqMI/SJeYePd6bZQ==
-X-Google-Smtp-Source: AGHT+IGCleggzyNiTDxmweBcMCWhRvEBcEKho5wWuH9zx1B9IpkLVeCcnWKB0fTkTz4J8m22a8rBanwmKxDFanxcSmQ=
-X-Received: by 2002:a05:6871:113:b0:30b:ba5e:3472 with SMTP id
- 586e51a60fabf-30cb5a1034dmr1408492fac.12.1755077449383; Wed, 13 Aug 2025
- 02:30:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755077536; x=1755682336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yz1d7edJo/Q+HsJ1HH001Yh+poWlDoP3asDYz4tNc04=;
+        b=ZFAx02hdQFAKpQ7XCRjN0kESmgkuCpKoT0vMBuvx5NuQJqag2iJncDlVJBefRVmf8U
+         ay0fxCwruOy1UEr24JG/DXN8O+A8BkvjZoWY4DyC/Cx2Nes9l+tpgmXkpALhEKtTl+AF
+         KRkj0azGSnGMYKPvjtv74rVWRHtXfnsfFsLw2fKoKt9GJAVEotVXPh9lTy1oHw1U6TLV
+         i1tsMNC2UgeaecIOfSnycXeF3z0QIGjtSLeNx7MNULWcSK7Hjmrz9o+1T6/0WRsyv4iN
+         otOucPm/Je27jy2Zqr1Jtsd0Lkes6K4caPArA2ZB2TagVczGy17ExS8zsZV9g+lb6303
+         QFdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRkvw3RBL4ZZWjxDukejYhT6Jrc4OBIkLSznoX0zOjlxUrLYq5YJRaAXk9BK2kgIP0rw7GZZZIsqlxyOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+qJ9vpokjiJ7ok+H1JV5X2XUY/zv89Tt+e8oezPfxULj2wqXf
+	u4QrwWkhIj6LNrZ9PbnIFbpph/WjUW7HdSAn4zw+MXH0AgdVmnirQ8dpI9VASgMiqcu/vdI4Q2O
+	SU4ymEGg+zdCCbfT7baBPOoLZgQ7bnbe1FmcVnLca
+X-Gm-Gg: ASbGncsNExXne2af2I5fhXpylW8emgw6l9gfyrwhQ3jr3NCcQ/ipUnNcDDBRSXgYweY
+	9f5frSr6fRtKCrQjOUANqHg7CcVJtxlh8fcaFNE6zymlRZGsXS1ps2WfQ5k2pBX7GS6WroQkGsI
+	W8aiROr2uAsHD31V5mgQO4o3awDOUe2XYEFGyUDWNr31OQseZCMr9DcxMpRKulu135n9JmLVoTj
+	5X0d0NL17r6CCcu1hS8+QtBPc+VNNh91sZePN7T3TplzE0G
+X-Google-Smtp-Source: AGHT+IFj4eeSkV4YCEm6XMyz0NGDwY1SK1orCsey4/K9VCwcmampRVZs860kHi+1N8EEFxllSFaXv3TdJ9X2E2BozSk=
+X-Received: by 2002:a05:600c:3507:b0:458:affe:a5c1 with SMTP id
+ 5b1f17b1804b1-45a165a2d68mr19346975e9.5.1755077535541; Wed, 13 Aug 2025
+ 02:32:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806081051.3533470-1-hugoolli@tencent.com>
- <aJOc8vIkds_t3e8C@google.com> <CAAdeq_+Ppuj8PxABvCT54phuXY021HxdayYyb68G3JjkQE0WQg@mail.gmail.com>
- <aJTytueCqmZXtbUk@google.com> <CAAdeq_+wLaze3TVY5To8_DhE_S9jocKn4+M9KvHp0Jg8pT99KQ@mail.gmail.com>
- <aJobIRQ7Z4Ou1hz0@google.com> <CAAdeq_KK_eChRpPUOrw3XaKXJj+abg63rYfNc4A+dTdKKN1M6A@mail.gmail.com>
- <d3e44057beb8db40d90e838265df7f4a2752361a.camel@infradead.org>
- <CAAdeq_LmqKymD8J9tgEG5AXCXsJTQ1Z1XQan5nD-1qqUXv976w@mail.gmail.com> <e35732dfe5531e4a933cbca37f0d0b7bbaedf515.camel@infradead.org>
-In-Reply-To: <e35732dfe5531e4a933cbca37f0d0b7bbaedf515.camel@infradead.org>
-From: hugo lee <cs.hugolee@gmail.com>
-Date: Wed, 13 Aug 2025 17:30:37 +0800
-X-Gm-Features: Ac12FXxlCVBq0xCCepPf1U4Z-qVa-4DktvSXJVYRytGaqZ7S8pD7hWDvutj6DbQ
-Message-ID: <CAAdeq_LbUkhN-tnO2zbKP9vJNznFRj+28Xxoy3Wb-utmfaW_eQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: Synchronize APIC State with QEMU when irqchip=split
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Sean Christopherson <seanjc@google.com>, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yuguo Li <hugoolli@tencent.com>
+References: <20250811-align-min-allocator-v2-0-3386cc94f4fc@google.com>
+ <20250811-align-min-allocator-v2-1-3386cc94f4fc@google.com>
+ <DC0N2SBVHIS7.2P91EJSTIT1FM@kernel.org> <aJxESG0l4-kyUHXg@google.com> <DC16OLU29VX3.16T0QDJF7Q18P@kernel.org>
+In-Reply-To: <DC16OLU29VX3.16T0QDJF7Q18P@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 13 Aug 2025 11:32:03 +0200
+X-Gm-Features: Ac12FXzv1OKpnnMnkVcOWodh0QqpLsx6V00O4CPKH5Fp0qCDXM23kP48mbFno2o
+Message-ID: <CAH5fLgj0kjGBwZFHjErsa7MCV1fz4xTWwrZAcFzHHnkbvS=OMg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rust: alloc: specify the minimum alignment of each allocator
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Tamir Duberstein <tamird@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, David Woodhouse <dwmw2@infradead.org> wrote:
+On Wed, Aug 13, 2025 at 11:14=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
 >
-> On Tue, 2025-08-12 at 19:50 +0800, hugo lee wrote:
-> > On Tue, Aug 12, David Woodhouse <dwmw2@infradead.org> wrote:
-> > >
-> > > On Tue, 2025-08-12 at 18:08 +0800, hugo lee wrote:
-> > > >
-> > > > On some legacy bios images using guests, they may disable PIT
-> > > > after booting.
-> > >
-> > > Do you mean they may *not* disable the PIT after booting? Linux had
-> > > that problem for a long time, until I fixed it with
-> > > https://git.kernel.org/torvalds/c/70e6b7d9ae3
-> > >
+> On Wed Aug 13, 2025 at 9:52 AM CEST, Alice Ryhl wrote:
+> > On Tue, Aug 12, 2025 at 07:52:35PM +0200, Danilo Krummrich wrote:
+> >> On Mon Aug 11, 2025 at 2:31 PM CEST, Alice Ryhl wrote:
+> >> > diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allo=
+cator.rs
+> >> > index aa2dfa9dca4c309e5a9eafc7da6a8a9bd7b54b11..25fc9f9ae3b4e471a08d=
+77130b374bd1397f7384 100644
+> >> > --- a/rust/kernel/alloc/allocator.rs
+> >> > +++ b/rust/kernel/alloc/allocator.rs
+> >> > @@ -17,6 +17,8 @@
+> >> >  use crate::bindings;
+> >> >  use crate::pr_warn;
+> >> >
+> >> > +const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINAL=
+IGN as usize;
+> >>
+> >> I think this needs the following diff:
+> >>
+> >> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_=
+helper.h
+> >> index 84d60635e8a9..4ad9add117ea 100644
+> >> --- a/rust/bindings/bindings_helper.h
+> >> +++ b/rust/bindings/bindings_helper.h
+> >> @@ -84,6 +84,7 @@
+> >>
+> >>  /* `bindgen` gets confused at certain things. */
+> >>  const size_t RUST_CONST_HELPER_ARCH_SLAB_MINALIGN =3D ARCH_SLAB_MINAL=
+IGN;
+> >> +const size_t RUST_CONST_HELPER_ARCH_KMALLOC_MINALIGN =3D ARCH_KMALLOC=
+_MINALIGN;
+> >>  const size_t RUST_CONST_HELPER_PAGE_SIZE =3D PAGE_SIZE;
+> >>  const gfp_t RUST_CONST_HELPER_GFP_ATOMIC =3D GFP_ATOMIC;
+> >>  const gfp_t RUST_CONST_HELPER_GFP_KERNEL =3D GFP_KERNEL;
+> >> diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/alloca=
+tor.rs
+> >> index 25fc9f9ae3b4..5003907f0240 100644
+> >> --- a/rust/kernel/alloc/allocator.rs
+> >> +++ b/rust/kernel/alloc/allocator.rs
+> >> @@ -17,7 +17,7 @@
+> >>  use crate::bindings;
+> >>  use crate::pr_warn;
+> >>
+> >> -const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALIG=
+N as usize;
+> >> +const ARCH_KMALLOC_MINALIGN: usize =3D bindings::ARCH_KMALLOC_MINALIG=
+N;
+> >>
+> >>  /// The contiguous kernel allocator.
+> >>  ///
+> >>
+> >>
+> >> No need to resend I can fix it up when applying the patch.
 > >
-> > True, they disabled LINT0 and left PIT unaware.
-> >
-> > > > When irqchip=split is on, qemu will keep kicking the guest and try to
-> > > > get the Big QEMU Lock.
-> > >
-> > > If it's the PIT, surely QEMU will keep stealing time pointlessly unless
-> > > we actually disable the PIT itself? Not just the IRQ delivery? Or do
-> > > you use this to realise that the IRQ output from the PIT isn't going
-> > > anywhere and thus disable the event in QEMU completely?
-> > >
-> >
-> > I'm using this to disable the PIT event in QEMU.
-> >
-> > I'm aiming to solve the desynchronization caused by
-> > irqchip=split, so the VM will behave more like the
-> > physical one.
+> > Hmm. Maybe that depends on the configuration? The constant was generate=
+d
+> > for me. Either way, happy with the suggested change.
 >
-> I suspect I'm going to hate your QEMU patch when I see it.
+> That is a bit odd, I'd like to understand this before merging.
 >
-> KVM has a callback when the IRQ is acked, which it uses to retrigger
-> the next interrupt in reinject mode.
->
-> Even in !reinject mode, the kvm_pit_ack_irq() callback could just as
-> easily be used to allow the hrtimer to stop completely until the
-> interrupt gets acked. Which I understand is basically what you want to
-> do in QEMU?
->
-> There shouldn't be any reason to special-case it on the LINT0 setup; if
-> the interrupt just remains pending in the PIC and is never serviced,
-> that should *also* mean we stop wasting steal time on it, right?
->
-> So ideally, QEMU would have the same infrastructure to 'resample' an
-> IRQ when it gets acked. And then it would know when the guest is
-> ignoring the PIT and it needn't bother to generate any more interrupts.
->
-> Except QEMU's interrupt controllers don't yet support that. So for VFIO
-> INTx interrupts, for example, QEMU unmaps the MMIO BARs of the device
-> while an interrupt is outstanding, then sends an event to the kernel's
-> resample irqfd when the guest touches a register therein!
->
-> I'd love to see you fix this in QEMU by hooking up that 'resample'
-> signal when the interrupt is acked in the interrupt controller, and
-> then wouldn't the kernel side of this and the special case for LINT0 be
-> unneeded?
->
+> All of the definitions in the kernel are defines that shouldn't be picked=
+ up by
+> bindgen.
 
-Sorry for the misleading, what I was going to say is
-do only cpu_synchroniza_state() in this new userspace exit reason
-and do nothing on the PIT.
-So QEMU will ignore the PIT as the guests do.
+It is possible for bindgen to pick up a #define in some cases. The
+main case where bindgen fails is when the macro is defined in terms of
+a function-like macro. This is why we see so many failures with _IO*
+macros.
 
-The resample is great and needed, but the synchronization
-makes more sense to me on this question.
+>  Are you sure you do not have additional local changes?
+
+Yes.
+
+Alice
 
