@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-766526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D10B247B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835CDB247B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E6AB16CF13
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3717F726308
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D533C2F0C44;
-	Wed, 13 Aug 2025 10:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3A52F5308;
+	Wed, 13 Aug 2025 10:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="FeILUOqG"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zw/Ep4/Z"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3802EFDA9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FB428F4;
+	Wed, 13 Aug 2025 10:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755082170; cv=none; b=GZaEHtFObgDbDrvV7Vd2774k5xrYztkD1Ghz1Dy2EhfVZ6Gd2Cbr4/HBQMaKWevIUdDOj4LITcgkAxt0DLeH3gBwu28/faBcvlmbIBj4J5qd9yUikuFQe6YR8OYsFzryzfCV/KaDrLNy0bBSjdd4ZhWGWCus5FkEfMBTCAJ40pE=
+	t=1755082240; cv=none; b=BB6/BuBhooqkKqRBUh9oiSBP2XKHv1Vt0SpqbbTTs1ujzCHUo+vMxvySyR0CbbtbeXgFR4s02nlb6kUhI99dnpqU1P87rBSLSp0pCr0GPVF6knwvy38vZNuSJZw7Twkgk/Fo3phWGbaM3S2+bCmdeMR4eOtoWQh/hDzzCiWlJ8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755082170; c=relaxed/simple;
-	bh=o12tWkv1rqEQ/2Gn1MjNVFiGD0fRX6TwDI8PFfPP8C4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=REGQ2D0BCJ7xuWJznkquH7hNfqLaNtitYuNWF5lZBQCjjzPg44+CpKSTkCIv6rovQzu8CVn61zkSxej/tj9fT+A14mzhz2DjvJgbv/hi0/L7KzcqUcLBdjAWA/jQ5k/pku/8wRHmOGSPz9rzcmj7+YakVbiYXVc6Y1/Fvd8B+3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=FeILUOqG; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76bd2b11f80so5926996b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:49:27 -0700 (PDT)
+	s=arc-20240116; t=1755082240; c=relaxed/simple;
+	bh=QdJHHA/5Te0Xa4HimQXd431V5eEGjN4FPvBE6vvCYDU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Tn024y9UneuCBBlyges5vXK1r35EYmWZzUXbmX0fIABkC6v/HzAWkG38WRIAXMapgWZ8wRdkgdlleqL9aBb0fB2F+DXjO6+4/XtML0UuZpLX/FMuawS30Qt1GtIwVMkJf+wPJIb25KvXyv7i2rJR8UTREASBYyJ+o2l3S3yePYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zw/Ep4/Z; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-459e20ec1d9so62339075e9.3;
+        Wed, 13 Aug 2025 03:50:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1755082167; x=1755686967; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EsJrMOipXi6ygDGi8uaWJElErqj//d6RNhZ0Csh1gV4=;
-        b=FeILUOqGD4E7X+N7+T1QACMJBnr+xjwHzNTr7XAwOuLSRRLlHVtMjSy097js1hfybv
-         voeMaS8s8z9lYzIVtGWKUHflYVOMFpOoSDfUZClJtP9NZ233RE5ComFkyCQMrCQsRrji
-         Fvyee7ZQHxV/37C1UND4ry6ECK/u4b7VQpf8QLNmsvm5kvVzv1IGBH6JTRXn3gwj/4TQ
-         DG1e0So39/Xuypr0g5DDnGRQCtfrcYjDtVy99A5cBxZuUnOKpASQ+NiLA2lgMQOAAgix
-         gdNeJo3voM0GKe+SrIOjJg2rY5QfgJ4upe8w9zMWWfwN3cP+NcHBPtqVK0RhOsuMcC3e
-         O7YQ==
+        d=gmail.com; s=20230601; t=1755082237; x=1755687037; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gXWzRkiMkta7AXQW3GKZoQIEt3iuhCo3P5z2A+Zulxc=;
+        b=Zw/Ep4/ZfwUVU21UfnKJda+jjYxZTwJMEYkwD/LtiBFB2Yt+y8oq0JlEbyoyTu9dsH
+         qy267i9xQJ+FHGC2EC+G6ovDr1OK13alaQ2Iq6wmvkeaYvt7rRFqVi0HEWNIgSMLVUgm
+         zWGV32/rScV8WU/M6tZ8XygcUse7JkvSJDxJWklekf/WM4gfIspz7e3EL/yM3nOAruU1
+         uW4/EGMcdHTo8pIfK42tSMRGP5XcQSeFVSc4X1yWrS91UFzLVMJI8vM4SoqkQAOc5exT
+         caINqRV7l+oZSY/fqaAR5ZFXOnO+sToa6h1pm2lsA1TsTTwgKQ6fF7L/Pzf3wzRhGEJ8
+         QjNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755082167; x=1755686967;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1755082237; x=1755687037;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EsJrMOipXi6ygDGi8uaWJElErqj//d6RNhZ0Csh1gV4=;
-        b=u5i6gYYFc6MilJp/MYQXcpdh8xoAyzQw6y0RKZ1Kq2OCpLnOSwNYGcreWVM6yJUkPp
-         zNsKBejyo3FmL/esf4uYp8wvRYy6lSoLW4l7MmHkCmuM2wLYfgYlJi+rFHy9bVskp7Wr
-         8J983NIImuMZdrDvDlaNlDvkDtn9+oh3PmYNcP27OqKVK1v8rfYzwEybmfxtbXRIIDcv
-         FtwhQbnvC1gr10GkBfFEE9em0N3RzsfuEPgGketjGa3XMx46h7qNsdywqbxZ7fGjEhan
-         uZhsfO9GLYc7cZs8qd/a0FNty08SZBqCOefhv35OR+qHSLoHp0Iwmnr0xoFJRNp7hdL6
-         7bzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdDTkXX+wUYrYwZTIppCBfVKPG4l2fujTFvxj9EX4QKqbUEJciTQnRcGjqB9FTwKNAmKwf+6FyyPn1A38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjBGvOax8lcZvLmyTwtnX4FKbsdASUNc8Zg/C4kq0I0lzjqxg3
-	73xRIPEnaiyoUAuRIIRBnQ2ddOe0rGooJk8b+5bQvCytzHtkGx+2dgL8kI8bKoXeQG4=
-X-Gm-Gg: ASbGncv8WccjGyLMlPL0qxYu0g1K6xNdJSViglOJbbH4vx1WEeICppoDcdYPIw29csr
-	Ox15GnrYm/opvu/n79IeX3PklrRaULe6KVm+TJfhRR31T5zR32fZB15RotGpRCgGnaC0xAVPJRN
-	O3lA+nGZLatmigd8lIxe6xXgEvLSljLjk00+Hq1Nutelr+V0TrlmaGYI7a9/ORsxFFThIL1kwLB
-	i5i/DYbDz++aVq5apiiOCg5wkwEc4QwuCqJb3lBOWgS4xaXqkzrpANY4d41BkLFBh15h/8pFJI5
-	anKxHMmCPgTb3Pg/WCE20gXhYlSTCaLP61k4VtRCCmbo+1yuoCws3qB+N0NsJ1nhWd9KS8kbnq7
-	vWjm2S8BX/0/3fZcVU/pBxi3/+UopGWNTjSHHCqBm41Iv4qIjG5GXu2TegHLHk53P1L8=
-X-Google-Smtp-Source: AGHT+IE/YM3UenWxDGDj1rUFrnUNo+PQmT4iczHqOZXZc8fbF1ObrznKIkApKXpNIvM2AlxhxVfRXg==
-X-Received: by 2002:a05:6a21:3381:b0:23e:19fd:e18f with SMTP id adf61e73a8af0-240a8b5e5camr4481586637.35.1755082166961;
-        Wed, 13 Aug 2025 03:49:26 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bae2fe7sm27486647a12.44.2025.08.13.03.49.20
+        bh=gXWzRkiMkta7AXQW3GKZoQIEt3iuhCo3P5z2A+Zulxc=;
+        b=dggp70zR8zwaKsgP4hTKXgGtyG7mL83C+GtbUQMSURmUQOKenVhX/6bPqu64r9wYHf
+         HW/itD+aNGUiK9RBvvg1cx8S1UosxXqT+9aRBeRPEJVdwmUNSmD1dVzy2noA6dkL1dvR
+         uaBBdWV6BvzXEAZpnsMr1QSe8ZLY4mkZ3zO0RszN53Nu/bsD8NHRTjnJLibVibf/4n1I
+         Mn8NxNhodtzI7rQEWLJgRrJmG69K87hULhSTJBIyOUGDGwaSdQ15/KSGtBgCt/7qbOn4
+         Yq4bFPy/149HL9tKE0U4DpbUD0al+GvXqDMqbgKyoiecb+Eb0oi1JxlmJMlXpCYfKPSI
+         97mA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3jeA05YNnjE3vKeTt4/n7kb994fcBZI/7mGlPin5AzMDBxtH4DOGZnIP1VPQbe79XChAJO1drpik=@vger.kernel.org, AJvYcCV7LV2WiPyXvNtxcoXB5Ly8AXf2KnBoiMHdCCT1rMeBDIyThEnD5pkebu0jdByeNDlukwq+7LYpKB3CEmTm@vger.kernel.org, AJvYcCVUyQAx+BqfHgOLJRWLN0AwkFxOZdI3eIwdvg1b25piQTgXKHTk+Z0drg1DLakEBfbm5BZ8NhAu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/cGGNMGipmLM11dgz4PHZrj9R+dPPpSATqHzj7NID3BoKgrDK
+	NV+WQT+2dKxQVHDzhjtzD1FbtMHVw8IT4Is6Pq8mGPQerMHot0jKLS7F
+X-Gm-Gg: ASbGncuepeKHMZDmmdsOAECEcJkVFhgjK4sqxYbS1HSE2MVMiIIZ4c28GhagjYgQRmG
+	XZcaO0ZW+E9r0updAxcFJyg3YJ/+Mh3govQ2zPTxYBB4AYhzVfoOuSQ4SwRwb+ZOWg9/+rEmsyb
+	0QR26FYooiHyVyvOQfrVgRGHuVCgCUfJFBbZGE1U3HVDbBmIC9nBRuemXgXj1HHtLA5BbcDZuRp
+	tFfGj9IMAT5GTw+Sc7bAZr3qqUQaGvitean8VF89f++8k13Qw/xzsC4y+F8QqxgP1C6r3/uorCX
+	fjyc4hAF8QD/hALd4ecHgqqDrdmqOH5tf6G8bPABMTQLRmo8PwqaDFm0CejBXgEtnMbHEWQMnnq
+	YbRPgk4iktZVGF6dHSsLAjowjMc6+ShlxnI/t+acFNC9uoDBU8C21el1iaKSwaYiM2VI5rxtLJQ
+	==
+X-Google-Smtp-Source: AGHT+IFfeNVkXHJUpoFaQ8q/KLnyc90CUdhzECYGMjZz7MgoGX4gYx9MY3J94IfFsD95TsIwFrL/DA==
+X-Received: by 2002:a05:600c:4e93:b0:456:19be:5cc with SMTP id 5b1f17b1804b1-45a165ce311mr21270095e9.14.1755082236778;
+        Wed, 13 Aug 2025 03:50:36 -0700 (PDT)
+Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c338c7dsm47505136f8f.0.2025.08.13.03.50.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 03:49:26 -0700 (PDT)
-Message-ID: <2a9906d7-c914-4e69-8c72-ac848659650c@rivosinc.com>
-Date: Wed, 13 Aug 2025 12:49:17 +0200
+        Wed, 13 Aug 2025 03:50:36 -0700 (PDT)
+Message-ID: <27906f7b-b137-4af2-aa87-49519495a34d@gmail.com>
+Date: Wed, 13 Aug 2025 12:50:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,136 +82,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/5] riscv: add SBI SSE extension definitions
-To: Alexandre Ghiti <alex@ghiti.fr>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Cc: Himanshu Chauhan <hchauhan@ventanamicro.com>,
- Anup Patel <apatel@ventanamicro.com>, Xu Lu <luxu.kernel@bytedance.com>,
- Atish Patra <atishp@atishpatra.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Yunhui Cui <cuiyunhui@bytedance.com>
-References: <20250808153901.2477005-1-cleger@rivosinc.com>
- <20250808153901.2477005-2-cleger@rivosinc.com>
- <d0f8d0d8-fb46-4009-a50f-3faacf8516fc@ghiti.fr>
-Content-Language: en-US
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-In-Reply-To: <d0f8d0d8-fb46-4009-a50f-3faacf8516fc@ghiti.fr>
+From: Gabor Juhos <j4g8y7@gmail.com>
+Subject: Re: [PATCH v2 3/3] i2c: pxa: handle 'Early Bus Busy' condition on
+ Armada 3700
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Wolfram Sang <wsa@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>,
+ Hanna Hawa <hhhawa@amazon.com>, Robert Marko <robert.marko@sartura.hr>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
+References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
+ <20250811-i2c-pxa-fix-i2c-communication-v2-3-ca42ea818dc9@gmail.com>
+ <aJpTHKbLbTz-Z3bo@smile.fi.intel.com>
+Content-Language: hu
+In-Reply-To: <aJpTHKbLbTz-Z3bo@smile.fi.intel.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-On 13/08/2025 11:01, Alexandre Ghiti wrote:
-> Hi Clément,
-> 
-> On 8/8/25 17:38, Clément Léger wrote:
->> Add needed definitions for SBI Supervisor Software Events extension [1].
->> This extension enables the SBI to inject events into supervisor software
->> much like ARM SDEI.
+2025. 08. 11. 22:31 keltezéssel, Andy Shevchenko írta:
+> On Mon, Aug 11, 2025 at 09:49:57PM +0200, Gabor Juhos wrote:
+>> Under some circumstances I2C recovery fails on Armada 3700. At least
+>> on the Methode uDPU board, removing and replugging an SFP module fails
+>> often, like this:
 >>
->> [1] https://lists.riscv.org/g/tech-prs/message/515
+>>   [   36.953127] sfp sfp-eth1: module removed
+>>   [   38.468549] i2c i2c-1: i2c_pxa: timeout waiting for bus free
+>>   [   38.486960] sfp sfp-eth1: module MENTECHOPTO      POS22-LDCC-KR    rev 1.0  sn MNC208U90009     dc 200828
+>>   [   38.496867] mvneta d0040000.ethernet eth1: unsupported SFP module: no common interface modes
+>>   [   38.521448] hwmon hwmon2: temp1_input not attached to any thermal zone
+>>   [   39.249196] sfp sfp-eth1: module removed
+>>   ...
+>>   [  292.568799] sfp sfp-eth1: please wait, module slow to respond
+>>   ...
+>>   [  625.208814] sfp sfp-eth1: failed to read EEPROM: -EREMOTEIO
 >>
->> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->> ---
->>   arch/riscv/include/asm/sbi.h | 61 ++++++++++++++++++++++++++++++++++++
->>   1 file changed, 61 insertions(+)
+>> Note that the 'unsupported SFP module' messages are not relevant. The
+>> module is used only for testing the I2C recovery funcionality, because
+>> the error can be triggered easily with this specific one.
 >>
->> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
->> index 341e74238aa0..e4993fb664d2 100644
->> --- a/arch/riscv/include/asm/sbi.h
->> +++ b/arch/riscv/include/asm/sbi.h
->> @@ -36,6 +36,7 @@ enum sbi_ext_id {
->>       SBI_EXT_STA = 0x535441,
->>       SBI_EXT_NACL = 0x4E41434C,
->>       SBI_EXT_FWFT = 0x46574654,
->> +    SBI_EXT_SSE = 0x535345,
->>         /* Experimentals extensions must lie within this range */
->>       SBI_EXT_EXPERIMENTAL_START = 0x08000000,
->> @@ -430,6 +431,66 @@ enum sbi_fwft_feature_t {
->>     #define SBI_FWFT_SET_FLAG_LOCK            BIT(0)
->>   +enum sbi_ext_sse_fid {
->> +    SBI_SSE_EVENT_ATTR_READ = 0,
->> +    SBI_SSE_EVENT_ATTR_WRITE,
->> +    SBI_SSE_EVENT_REGISTER,
->> +    SBI_SSE_EVENT_UNREGISTER,
->> +    SBI_SSE_EVENT_ENABLE,
->> +    SBI_SSE_EVENT_DISABLE,
->> +    SBI_SSE_EVENT_COMPLETE,
->> +    SBI_SSE_EVENT_SIGNAL,
+>> Enabling debug in the i2c-pxa driver reveals the following:
+>>
+>>   [   82.034678] sfp sfp-eth1: module removed
+>>   [   90.008654] i2c i2c-1: slave_0x50 error: timeout with active message
+>>   [   90.015112] i2c i2c-1: msg_num: 2 msg_idx: 0 msg_ptr: 0
+>>   [   90.020464] i2c i2c-1: IBMR: 00000003 IDBR: 000000a0 ICR: 000007e0 ISR: 00000802
+>>   [   90.027906] i2c i2c-1: log:
+>>   [   90.030787]
+>>
+>> This continues until the retries are exhausted ...
+>>
+>>   [  110.192489] i2c i2c-1: slave_0x50 error: exhausted retries
+>>   [  110.198012] i2c i2c-1: msg_num: 2 msg_idx: 0 msg_ptr: 0
+>>   [  110.203323] i2c i2c-1: IBMR: 00000003 IDBR: 000000a0 ICR: 000007e0 ISR: 00000802
+>>   [  110.210810] i2c i2c-1: log:
+>>   [  110.213633]
+>>
+>> ... then the whole sequence starts again ...
+>>
+>>   [  115.368641] i2c i2c-1: slave_0x50 error: timeout with active message
+>>
+>> ... while finally the SFP core gives up:
+>>
+>>   [  671.975258] sfp sfp-eth1: failed to read EEPROM: -EREMOTEIO
+>>
+>> When we analyze the log, it can be seen that bit 1 and 11 is set in the
+>> ISR (Interface Status Register). Bit 1 indicates the ACK/NACK status, but
+>> the purpose of bit 11 is not documented in the driver code unfortunately.
+>>
+>> The 'Functional Specification' document of the Armada 3700 SoCs family
+>> however says that this bit indicates an 'Early Bus Busy' condition. The
+>> document also notes that whenever this bit is set, it is not possible to
+>> initiate a transaction on the I2C bus. The observed behaviour corresponds
+>> to this statement.
+>>
+>> Unfortunately, I2C recovery does not help as it never runs in this
+>> special case. Although the driver checks the busyness of the bus at
+>> several places, but since it does not consider the A3700 specific bit
+>> in these checks it can't determine the actual status of the bus correctly
+>> which results in the errors above.
+>>
+>> In order to fix the problem, add a new member to struct 'i2c_pxa' to
+>> store a controller specific bitmask containing the bits indicating the
+>> busy status, and use that in the code while checking the actual status
+>> of the bus. This ensures that the correct status can be determined on
+>> the Armada 3700 based devices without causing functional changes on
+>> devices based on other SoCs.
+>>
+>> With the change applied, the driver detects the busy condition, and runs
+>> the recovery process:
+>>
+>>   [  742.617312] i2c i2c-1: state:i2c_pxa_wait_bus_not_busy:449: ISR=00000802, ICR=000007e0, IBMR=03
+>>   [  742.626099] i2c i2c-1: i2c_pxa: timeout waiting for bus free
+>>   [  742.631933] i2c i2c-1: recovery: resetting controller, ISR=0x00000802
+>>   [  742.638421] i2c i2c-1: recovery: IBMR 0x00000003 ISR 0x00000000
+>>
+>> This clears the EBB bit in the ISR register, so it makes it possible to
+>> initiate transactions on the I2C bus again.
+>>
+>> After this patch, the SFP module used for testing can be removed and
+>> replugged numerous times without causing the error described at the
+>> beginning. Previously, the error happened after a few such attempts.
+>>
+>> The patch has been tested also with the following kernel versions:
+>> 5.10.237, 5.15.182, 6.1.138, 6.6.90, 6.12.28, 6.14.6. It improves
+>> recoverabilty on all of them.
 > 
+> ...
 > 
-> Nit but in the specification this event is referred as "inject" instead
-> of "signal", any reason to change that naming?
+>> Note: the patch is included in this series for completeness however
+>> it can be applied independently from the preceding patches. On kernels
+>> 6.3+, it restores I2C functionality even in itself because it recovers
+>> the controller from the bad state described in the previous patch.
+> 
+> Sounds to me like this one should be applied first independently on the
+> discussion / conclusion on the patch 1.
 
-Hi Alex,
+Yes. At least the users would have a working although not optimal solution in
+the meantime.
 
-That's mostly for historic reason, spec changed that after a few
-revision. I'll update that.
-
-Thanks,
-
-Clément
-> 
-> 
->> +    SBI_SSE_EVENT_HART_UNMASK,
->> +    SBI_SSE_EVENT_HART_MASK,
->> +};
->> +
->> +enum sbi_sse_state {
->> +    SBI_SSE_STATE_UNUSED     = 0,
->> +    SBI_SSE_STATE_REGISTERED = 1,
->> +    SBI_SSE_STATE_ENABLED    = 2,
->> +    SBI_SSE_STATE_RUNNING    = 3,
->> +};
->> +
->> +/* SBI SSE Event Attributes. */
->> +enum sbi_sse_attr_id {
->> +    SBI_SSE_ATTR_STATUS        = 0x00000000,
->> +    SBI_SSE_ATTR_PRIO        = 0x00000001,
->> +    SBI_SSE_ATTR_CONFIG        = 0x00000002,
->> +    SBI_SSE_ATTR_PREFERRED_HART    = 0x00000003,
->> +    SBI_SSE_ATTR_ENTRY_PC        = 0x00000004,
->> +    SBI_SSE_ATTR_ENTRY_ARG        = 0x00000005,
->> +    SBI_SSE_ATTR_INTERRUPTED_SEPC    = 0x00000006,
->> +    SBI_SSE_ATTR_INTERRUPTED_FLAGS    = 0x00000007,
->> +    SBI_SSE_ATTR_INTERRUPTED_A6    = 0x00000008,
->> +    SBI_SSE_ATTR_INTERRUPTED_A7    = 0x00000009,
->> +
->> +    SBI_SSE_ATTR_MAX        = 0x0000000A
->> +};
->> +
->> +#define SBI_SSE_ATTR_STATUS_STATE_OFFSET    0
->> +#define SBI_SSE_ATTR_STATUS_STATE_MASK        0x3
->> +#define SBI_SSE_ATTR_STATUS_PENDING_OFFSET    2
->> +#define SBI_SSE_ATTR_STATUS_INJECT_OFFSET    3
->> +
->> +#define SBI_SSE_ATTR_CONFIG_ONESHOT    BIT(0)
->> +
->> +#define SBI_SSE_ATTR_INTERRUPTED_FLAGS_SSTATUS_SPP    BIT(0)
->> +#define SBI_SSE_ATTR_INTERRUPTED_FLAGS_SSTATUS_SPIE    BIT(1)
->> +#define SBI_SSE_ATTR_INTERRUPTED_FLAGS_HSTATUS_SPV    BIT(2)
->> +#define SBI_SSE_ATTR_INTERRUPTED_FLAGS_HSTATUS_SPVP    BIT(3)
->> +
->> +#define SBI_SSE_EVENT_LOCAL_HIGH_PRIO_RAS    0x00000000
->> +#define SBI_SSE_EVENT_LOCAL_DOUBLE_TRAP        0x00000001
->> +#define SBI_SSE_EVENT_GLOBAL_HIGH_PRIO_RAS    0x00008000
->> +#define SBI_SSE_EVENT_LOCAL_PMU_OVERFLOW    0x00010000
->> +#define SBI_SSE_EVENT_LOCAL_LOW_PRIO_RAS    0x00100000
->> +#define SBI_SSE_EVENT_GLOBAL_LOW_PRIO_RAS    0x00108000
->> +#define SBI_SSE_EVENT_LOCAL_SOFTWARE_INJECTED    0xffff0000
->> +#define SBI_SSE_EVENT_GLOBAL_SOFTWARE_INJECTED    0xffff8000
-> 
-> 
-> And here you use "injected".
-> 
-> 
->> +
->> +#define SBI_SSE_EVENT_PLATFORM        BIT(14)
->> +#define SBI_SSE_EVENT_GLOBAL        BIT(15)
->> +
->>   /* SBI spec version fields */
->>   #define SBI_SPEC_VERSION_DEFAULT    0x1
->>   #define SBI_SPEC_VERSION_MAJOR_SHIFT    24
-
+Regards,
+Gabor
 
