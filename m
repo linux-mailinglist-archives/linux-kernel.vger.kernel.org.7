@@ -1,112 +1,114 @@
-Return-Path: <linux-kernel+bounces-766491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2374B2472E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:28:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB52CB24737
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C47B03B7D7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B1E6623C37
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35622F3C0D;
-	Wed, 13 Aug 2025 10:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6732F49E4;
+	Wed, 13 Aug 2025 10:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HCmlWVyZ"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYcYVq2c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB842EFDA9;
-	Wed, 13 Aug 2025 10:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8854B27FB12;
+	Wed, 13 Aug 2025 10:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755080853; cv=none; b=POvuFkW+yh4h99seeeB0DKomsBHNqHApJDKsCm3mzWHeozzDV8t95iIltTXn8ZAY2Knrb1kAxSHNg5MoTmxWf+X12+/BaIoiPAtvgZbE7/1/ZGf3Px8mAFcIVIOkq5XfTLZl/bkDtvEQUbOb+Gqz4/25q/Vic6VENc4EsYK43kI=
+	t=1755081023; cv=none; b=av31feSh3oEH17MY9j5wR7A0zBIApE5vMRurA3NT+ByQAcx0f2lFthEkmZGMOsWr907jq/XKDCu1o9UA7tQpTnZqbafo4XLIGlrV7JWWxgjJwWYa77gaGNR/gJAAO368o5+MM26egN4jRyKHSeEzmMjf8EUsNTcTHbHSOxYSSjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755080853; c=relaxed/simple;
-	bh=raAUt700aF4iEiVGZZ0EI59rwZJovsb5RsBpfTUdZ+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bcvac8dcr1m8E1pfrMemGrUIu4sRQQB8sAfp/6vKBRavN4se0XgUnseso6TqxUheWUzPwTOn7eBFJQCuttHq7psJGkEadPptv34UpU4yac6+B+vBZzJlq/UqDGKT6oQkBHmeZv6gggPaUMiCCWfUwammZ6IbEhYebkSaJXqxdtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HCmlWVyZ; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gYwoVXG6EVtDNB7BQEDc+4ji6UVSTCEFJFvpf+ftEnk=; b=HCmlWVyZpwxvhNFdFqNNQ1MltH
-	tzABBEfLYpc9Z9qWBJh1OgVAO9NfXYc9RUKHPbVQcDbgjfxUeGjIc+gLalwrT0cICox6QAd+0AAJj
-	W419et1dlc7204Vkn3KBNChVJGqHaErmA1/acfm+Q8ZXv3qGtLy1uD0jplLJqg2xAcUY1Skt61mK7
-	Wu382QfV2GCUkSm7ikgYakGa771LzswGReNsFAuf8bsCFK+1TZ78hHBk5aMakoWa15EphPruqzssP
-	CKEJAIcrh0JWCeAnACZV73MgzabyydXmM8NL2zPDk9mI/Wac8wrfGNNnfLSrtJvhalc2IYDJpxAha
-	h3NB4vIg==;
-Received: from [223.233.74.188] (helo=[192.168.1.12])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1um8hZ-00Dchg-7i; Wed, 13 Aug 2025 12:27:25 +0200
-Message-ID: <b6e63336-aa39-dcf3-3f7c-ac90dea127b7@igalia.com>
-Date: Wed, 13 Aug 2025 15:57:17 +0530
+	s=arc-20240116; t=1755081023; c=relaxed/simple;
+	bh=vDPhAaa14SEPGFOTgtOyQn/Sq2qo0iYZvFtBPzZ4t1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kU1GxoWPDcJYt6xJr6Vnq/OABLgojD5ie1U1+JXyg/NgAnRCBpdA2YOU9LK9bTW+4IDMHhg6dQ3q+qgjN+vFOK0ZeL0V2aGtRp1OXZCRl4ei2g5Tb4f01FfRLbbX33jIOuA30rD0p5Z0joAoznQxoTjgA7Kk64DCmH5/ZCZINSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYcYVq2c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 330A8C4CEEB;
+	Wed, 13 Aug 2025 10:30:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755081023;
+	bh=vDPhAaa14SEPGFOTgtOyQn/Sq2qo0iYZvFtBPzZ4t1I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NYcYVq2cYeyg33K6b1yGD/Zb67bkv0TNBDV+giZjQ0RtN1ktgtRkN08z+/S0klgge
+	 0YlSe+Vfm2kjFp09yuHClNnGrnpWilfZfALso27/9W3WxDW7hJbHKdrrWDtjjqZdbd
+	 opNc9/y1IQ64OvOT+D+cgTiglF7ocmEGLqPEjda+EBP4RDRIRJ8rY3iyKZknbyZ4E+
+	 aOATNkv4klY+xnvZJXnjNA1v3apd2FCJe2rdliM3tAawBhSyrVLwc3iQ9gwr9sE1xR
+	 1c07GU1MfRjktDlkMP/654kiFcoxXsp398SJng6Tj1TwZRqPWE0tJE4/cqIVrSlaPX
+	 rR2e2V8hGYz/w==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject: [PATCH v1 3/3] cpuidle: governors: menu: Special-case nohz_full CPUs
+Date: Wed, 13 Aug 2025 12:29:51 +0200
+Message-ID: <2244365.irdbgypaU6@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <2804546.mvXUDI8C0e@rafael.j.wysocki>
+References: <2804546.mvXUDI8C0e@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v7 3/4] treewide: Replace 'get_task_comm()' with
- 'strscpy_pad()'
-Content-Language: en-US
-To: Andy Shevchenko <andriy.shevchenko@intel.com>,
- Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
- laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
- alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
- mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
- david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
- ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
- juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, linux-trace-kernel@vger.kernel.org, kees@kernel.org,
- torvalds@linux-foundation.org
-References: <20250811064609.918593-1-bhupesh@igalia.com>
- <20250811064609.918593-4-bhupesh@igalia.com>
- <aJoGvv5TEfl1liSm@black.igk.intel.com>
-From: Bhupesh Sharma <bhsharma@igalia.com>
-In-Reply-To: <aJoGvv5TEfl1liSm@black.igk.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
+When the menu governor runs on a nohz_full CPU and there are no user
+space timers in the workload on that CPU, it ends up selecting idle
+states with target residency values above TICK_NSEC all the time due to
+a tick_nohz_tick_stopped() check designed for a different use case.
+Namely, on nohz_full CPUs the fact that the tick has been stopped does
+not actually mean anything in particular, whereas in the other case it
+indicates that previously the CPU was expected to be idle sufficiently
+long for the tick to be stopped, so it is not unreasonable to expect
+it to be idle beyond the tick period length again.
+  
+In some cases, this behavior causes latency in the workload to grow
+undesirably.  It may also cause the workload to consume more energy
+than necessary if the CPU does not spend enough time in the selected
+deep idle states.
+
+Address this by amending the tick_nohz_tick_stopped() check in question
+with a tick_nohz_full_cpu() one to avoid using the time till the next
+timer event as the predicted_ns value all the time on nohz_full CPUs.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpuidle/governors/menu.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+--- a/drivers/cpuidle/governors/menu.c
++++ b/drivers/cpuidle/governors/menu.c
+@@ -293,8 +293,18 @@
+ 	 * in a shallow idle state for a long time as a result of it.  In that
+ 	 * case, say we might mispredict and use the known time till the closest
+ 	 * timer event for the idle state selection.
++	 *
++	 * However, on nohz_full CPUs the tick does not run as a rule and the
++	 * time till the closest timer event may always be effectively infinite,
++	 * so using it as a replacement for the predicted idle duration would
++	 * effectively always cause the prediction results to be discarded and
++	 * deep idle states to be selected all the time.  That might introduce
++	 * unwanted latency into the workload and cause more energy than
++	 * necessary to be consumed if the discarded prediction results are
++	 * actually accurate, so skip nohz_full CPUs here.
+ 	 */
+-	if (tick_nohz_tick_stopped() && predicted_ns < TICK_NSEC)
++	if (tick_nohz_tick_stopped() && !tick_nohz_full_cpu(dev->cpu) &&
++	    predicted_ns < TICK_NSEC)
+ 		predicted_ns = data->next_timer_ns;
+ 
+ 	/*
 
 
 
-On 8/11/25 8:35 PM, Andy Shevchenko wrote:
-> On Mon, Aug 11, 2025 at 12:16:08PM +0530, Bhupesh wrote:
->> As Linus mentioned in [1], we should get rid of 'get_task_comm()'
->> entirely and replace it with 'strscpy_pad()' implementation.
->>
->> 'strscpy_pad()' will already make sure comm is NUL-terminated, so
->> we won't need the explicit final byte termination done in
->> 'get_task_comm()'.
->>
->> The relevant 'get_task_comm()' users were identified using the
->> following search pattern:
->>   $ git grep 'get_task_comm*'
->> [1]. https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/
->>
->> Signed-off-by: Bhupesh <bhupesh@igalia.com>
-> Make that a Link tag?
->
->    Link: https://lore.kernel.org/all/CAHk-=wi5c=_-FBGo_88CowJd_F-Gi6Ud9d=TALm65ReN7YjrMw@mail.gmail.com/ #1
->    Signed-off-by: Bhupesh <bhupesh@igalia.com>
->
-
-Sure, will include it in next version. Waiting for further reviews on 
-this v7.
-
-Thanks.
 
