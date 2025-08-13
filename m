@@ -1,172 +1,274 @@
-Return-Path: <linux-kernel+bounces-766067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96533B241D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEBCB241D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E531F621C22
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:46:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94CAA68075B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B554B2D0C6C;
-	Wed, 13 Aug 2025 06:45:50 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FDA2D3A9D;
+	Wed, 13 Aug 2025 06:45:36 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D543B2C3240;
-	Wed, 13 Aug 2025 06:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04082C3240
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755067550; cv=none; b=JWHd2z6U17DVPbDEH/2u65j/TqsBAjqsYelHHFBuGccGybWQgW72zSwLDTNnvypUd45qN3nRdT82q01yihMqdb6Mo6N2Xz23ZP8obIkSJuuA67QSBtb6Bl2eweMOX6ukRDwIDNq7S8fC94ED4khgT0UxZ74xx7Sy7rWjkfN4BoQ=
+	t=1755067535; cv=none; b=mCMN2FqhOkiSPN2myYLPFxo+64FEBOPfkBbqdnI4PBFQ5tGnvDOt0zQRw7JNpox/6JTTKONIsGGS9M55aXDWlWUUS5r38FwnMGVmxKYE9y+tTUF6b0eP6Z+ao64JmJ0w7HWnQA+pKKLCiWkStEkDPtZs05Pu7r6VIGwy5p0WFEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755067550; c=relaxed/simple;
-	bh=X1iAxCzkC0UTn04Af07aTWJbu6jdxrV+7YWDNaiy9Eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lHE9ZB9qDYrF6iE3+PIpDaq4ouZ6ZhTiQS7A5Ij9h/ZXnSLWYJoX/MtzIyA7TEYuGZ8mzsjuBngGgaYJKhYPmWOmb6rp8qrrTQNB7U89AEivQtepz5zBGsESMYW3kmrm7PYCuva6LWu1byNghiG0oRP4djX+2zj0j0Me62QTZ4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpsz11t1755067483t4b22c6e6
-X-QQ-Originating-IP: atNYv484Sc0LnNQn6B0BdZHBN2Wh7P8+LL0ZD0kuURs=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 13 Aug 2025 14:44:41 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1883357001402126137
-Date: Wed, 13 Aug 2025 14:44:41 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: "Anwar, Md Danish" <a0501179@ti.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
-	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
-	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
-	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
-	alexanderduyck@fb.com, richardcochran@gmail.com,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] net: rnpgbe: Add build support for rnpgbe
-Message-ID: <F9D5358C994A229C+20250813064441.GB944516@nic-Precision-5820-Tower>
-References: <20250812093937.882045-1-dong100@mucse.com>
- <20250812093937.882045-2-dong100@mucse.com>
- <5528c38b-0405-4d3b-924a-2bed769f314d@ti.com>
+	s=arc-20240116; t=1755067535; c=relaxed/simple;
+	bh=huLVWDRNke8xg5Kjvlx5WsSzQGvnQrsipQTdrsMCIwc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IuXo4ivgwt9/XYxqtvbvEDtjuiitiiX628XKXhmwVS3yLuzntnfofGZZO5oWG6FqqmzEKDF9QjAXKj8FndgYbwrXwf3L1RSu9nXzgqBXVgidX1H4/+5T7O8L1BSdiQVcbX0YNvhAPonf4olfmp3Sd3oLF/X6SV+elytAeUcFE7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8840c35a389so642416439f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:45:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755067533; x=1755672333;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1SZwkHD3CyNnXHRjhcNe6yr2ggQojGsRPamjq0xLWlU=;
+        b=BcK9nkdUwzqK0XFFaTD1ANwWVVeswKBXe/f5bxDOzALm+MBOnIH20ZC3pH0RLTJIBv
+         fxcAnp0k3TMrlxgbZ0OnO9TUBlBxNUw/2srTNhpL7lEpByHKlKn++idHx2LG1f+ZE5Vv
+         68G86+rPxvA2zp9T7RmWkTU86dWMQajSnNS+LFBjh2zu6likXnjlBXAORBwQTkWsazCc
+         JIJ62BrWwW7DUcOsiIVlW6kf8HdAECkHCLDQS4PO8RJEHNeTo401PgoVt9FPAUW9QMvR
+         FJImXylQlaJhb5A53KobK79nUS+PQZP52hc+BK0Tep9TnMlt1W9b5FhCkHPHEevfsdED
+         dOEw==
+X-Forwarded-Encrypted: i=1; AJvYcCURsn5nuM6WMMMIbuOMH5yWGXoVpQ8pWnL9W+gumzG+rl7z1QfoSVIN+oWgZDBeiRGkl/AcvBdqCfzKaGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9ciJDf0l1aAtoyRAR3Z+Rpq8XUFM9voa0lbylWzDni46YKpiG
+	M+7OP+auA4jgobhCNDCbwf0zev7wktuUGV00uYP93qyQAVAMR/jzjeDI287Behv2aiIBqn9N4pT
+	cCGqbJK8g3yjuMbQ5p9jIS3GLdk6Kr31jN+MZ8XdDDTZfYLz0k7PcLeR/zME=
+X-Google-Smtp-Source: AGHT+IEHWcspNnFTr4GWBjfpAB9Iv4IRNOQOrPha43esbjqDXv4Z/MlF90qA+Jc1oB5yER+ksLvLVEE1N0odNjFf5ZZm0Rafph73
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5528c38b-0405-4d3b-924a-2bed769f314d@ti.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NKfj2Wq2UxkCMsCw1IBd6tlCIxUPVXwDv1tSRFqaAx+AuSu4aeRiHTLO
-	J37q4RFSY3pW8o0D9ZD3VgwRafPrmSGTZJ2ZY75mJ/QY7JGdglOICIBEbtdW1ZfJdv0tE9P
-	9O1meq9FBi7nPc8Uu5jSJwZ6XvDic7tCXK+Fu4pCBadEF51xQzaTA2ttT/tdYabkaAtKanV
-	Wwfs8Cw7XBYEYi/X7L3j/gmFOA3JYMbF8cHtUZInOT4DkM0ddAvaoJjFT0+oR3S7WH/tZd5
-	OvbkCXcEx7TrRCVBkEMJnDZtIYYHCB6SWIPSjnkbTGgHfs97GfEutV+T1RJHDPJNUa4PSq4
-	l2bSCure1YnhNkOxBGDJLm+EeMskP0A7fzxR8P/jpDMpsaJ+LwG5q4x977DR0HHsv7uUPh4
-	3MNBgaozP3fux7eciJVbSfy71fitFbYRe6MTLsiNc2NChpzoFcA5CxSHz+Qp0tPT8J6r3kQ
-	zsjEIQLzzA81DVMlsi4MADumrjrkXo3RtnULmmyQKmusPb5JnqpASwtbRDknOZIyKwm3joQ
-	7h56u5R5C6dXsEXYTUtcIELz0MrXufiXHnRJcr4hCNCHBkJvI5uOqf/OBrOzszFwy3h+BOF
-	91HYrvh9+AH94rpJ816Tzse67cRaE2SQYX+fbL84FmwRaSTyWSw7zQw9qwKWHTTuYvSgXUl
-	i8nqjzUhZCxZGCRtMRxFQr0TNXIwMQDHD/oYLdK0gqh5kkzb/yzJoxasdWJ+H3lCvS+JN7k
-	tsP3kwOGAvjXvu9EjFDXoeduAEGK0Gc44ykCsckq+gpJAg8N+hMJczhSyGsRK5+OUa4xm9E
-	M8oVbHuvyTn9pgZS2k9j5LG6Xt7OUhQrRBb1ndmpzyqhTpeLNMrNX5kcBJ5LOngu4BHJEap
-	tSBBFCHkpVwR4pXMPV0YefqXmDvK/mtXh/sLOOD7dFsj9zb3qv5o6XWpxhssV9/AWrhsS1a
-	QQDuQQn7B449tiiczyMYvPETsItYSyk4n6Utb5jwGZINmSvnbFo+FcuLPejMgpbXYxmdvnC
-	s2NmQL8w==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+X-Received: by 2002:a6b:6201:0:b0:884:1cc9:9b9b with SMTP id
+ ca18e2360f4ac-884296a5492mr322440139f.13.1755067532844; Tue, 12 Aug 2025
+ 23:45:32 -0700 (PDT)
+Date: Tue, 12 Aug 2025 23:45:32 -0700
+In-Reply-To: <000000000000750a0205f62abbf1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689c348c.050a0220.7f033.0141.GAE@google.com>
+Subject: Re: [syzbot] [net?] INFO: task hung in del_device_store
+From: syzbot <syzbot+6d10ecc8a97cc10639f9@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	hdanton@sina.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 12, 2025 at 09:48:07PM +0530, Anwar, Md Danish wrote:
-> On 8/12/2025 3:09 PM, Dong Yibo wrote:
-> > Add build options and doc for mucse.
-> > Initialize pci device access for MUCSE devices.
-> > 
-> > Signed-off-by: Dong Yibo <dong100@mucse.com>
-> > ---
-> >  .../device_drivers/ethernet/index.rst         |   1 +
-> >  .../device_drivers/ethernet/mucse/rnpgbe.rst  |  21 +++
-> >  MAINTAINERS                                   |   8 +
-> >  drivers/net/ethernet/Kconfig                  |   1 +
-> >  drivers/net/ethernet/Makefile                 |   1 +
-> >  drivers/net/ethernet/mucse/Kconfig            |  34 ++++
-> >  drivers/net/ethernet/mucse/Makefile           |   7 +
-> >  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   8 +
-> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  25 +++
-> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 161 ++++++++++++++++++
-> >  10 files changed, 267 insertions(+)
-> >  create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
-> >  create mode 100644 drivers/net/ethernet/mucse/Kconfig
-> >  create mode 100644 drivers/net/ethernet/mucse/Makefile
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
-> 
-> [ ... ]
-> 
-> > + **/
-> > +static int __init rnpgbe_init_module(void)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = pci_register_driver(&rnpgbe_driver);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return 0;
-> > +}
-> 
-> Unnecessary code - can be simplified to just `return
-> pci_register_driver(&rnpgbe_driver);`
-> 
+syzbot has found a reproducer for the following issue on:
 
-Yes, but if I add some new codes which need some free after
-pci_register_driver failed, the new patch will be like this:
+HEAD commit:    8f5ae30d69d7 Linux 6.17-rc1
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=15704da2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
+dashboard link: https://syzkaller.appspot.com/bug?extid=6d10ecc8a97cc10639f9
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12702af0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15816842580000
 
--return pci_register_driver(&rnpgbe_driver);
-+int ret:
-+wq = create_singlethread_workqueue(rnpgbe_driver_name);
-+ret = pci_register_driver(&rnpgbe_driver);
-+if (ret) {
-+	destroy_workqueue(wq);
-+	return ret;
-+}
-+return 0;
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/18a2e4bd0c4a/disk-8f5ae30d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3b5395881b25/vmlinux-8f5ae30d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e875f4e3b7ff/Image-8f5ae30d.gz.xz
 
-Is this ok? Maybe not good to delete code for adding new feature?
-This is what Andrew suggested not to do.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6d10ecc8a97cc10639f9@syzkaller.appspotmail.com
 
-> > +
-> > +module_init(rnpgbe_init_module);
-> > +
-> > +/**
-> > + * rnpgbe_exit_module - Driver remove routine
-> > + *
-> > + * rnpgbe_exit_module is called when driver is removed
-> > + **/
-> > +static void __exit rnpgbe_exit_module(void)
-> > +{
-> > +	pci_unregister_driver(&rnpgbe_driver);
-> > +}
-> > +
-> > +module_exit(rnpgbe_exit_module);
-> > +
-> > +MODULE_DEVICE_TABLE(pci, rnpgbe_pci_tbl);
-> > +MODULE_AUTHOR("Mucse Corporation, <techsupport@mucse.com>");
-> > +MODULE_DESCRIPTION("Mucse(R) 1 Gigabit PCI Express Network Driver");
-> > +MODULE_LICENSE("GPL");
-> 
-> -- 
-> Thanks and Regards,
-> Md Danish Anwar
-> 
-> 
+INFO: task syz-executor:6692 blocked for more than 144 seconds.
+      Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:0     pid:6692  tgid:6692  ppid:1      task_flags:0x400140 flags:0x00000001
+Call trace:
+ __switch_to+0x418/0x87c arch/arm64/kernel/process.c:741 (T)
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x13b0/0x2864 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xb4/0x230 kernel/sched/core.c:7058
+ schedule_preempt_disabled+0x18/0x2c kernel/sched/core.c:7115
+ __mutex_lock_common+0xca0/0x24ac kernel/locking/mutex.c:676
+ __mutex_lock kernel/locking/mutex.c:760 [inline]
+ mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
+ del_device_store+0xd4/0x31c drivers/net/netdevsim/bus.c:234
+ bus_attr_store+0x80/0xa4 drivers/base/bus.c:172
+ sysfs_kf_write+0x1a8/0x23c fs/sysfs/file.c:145
+ kernfs_fop_write_iter+0x314/0x488 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x540/0xa3c fs/read_write.c:686
+ ksys_write+0x120/0x210 fs/read_write.c:738
+ __do_sys_write fs/read_write.c:749 [inline]
+ __se_sys_write fs/read_write.c:746 [inline]
+ __arm64_sys_write+0x7c/0x90 fs/read_write.c:746
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+INFO: task syz-executor:6698 blocked for more than 144 seconds.
+      Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:0     pid:6698  tgid:6698  ppid:6696   task_flags:0x400140 flags:0x00800000
+Call trace:
+ __switch_to+0x418/0x87c arch/arm64/kernel/process.c:741 (T)
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x13b0/0x2864 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xb4/0x230 kernel/sched/core.c:7058
+ schedule_preempt_disabled+0x18/0x2c kernel/sched/core.c:7115
+ __mutex_lock_common+0xca0/0x24ac kernel/locking/mutex.c:676
+ __mutex_lock kernel/locking/mutex.c:760 [inline]
+ mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
+ device_lock include/linux/device.h:911 [inline]
+ device_del+0xa4/0x808 drivers/base/core.c:3840
+ device_unregister+0x2c/0xcc drivers/base/core.c:3919
+ nsim_bus_dev_del drivers/net/netdevsim/bus.c:483 [inline]
+ del_device_store+0x27c/0x31c drivers/net/netdevsim/bus.c:244
+ bus_attr_store+0x80/0xa4 drivers/base/bus.c:172
+ sysfs_kf_write+0x1a8/0x23c fs/sysfs/file.c:145
+ kernfs_fop_write_iter+0x314/0x488 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x540/0xa3c fs/read_write.c:686
+ ksys_write+0x120/0x210 fs/read_write.c:738
+ __do_sys_write fs/read_write.c:749 [inline]
+ __se_sys_write fs/read_write.c:746 [inline]
+ __arm64_sys_write+0x7c/0x90 fs/read_write.c:746
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+INFO: task syz-executor:6701 blocked for more than 144 seconds.
+      Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:0     pid:6701  tgid:6701  ppid:6699   task_flags:0x400140 flags:0x00800000
+Call trace:
+ __switch_to+0x418/0x87c arch/arm64/kernel/process.c:741 (T)
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x13b0/0x2864 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xb4/0x230 kernel/sched/core.c:7058
+ schedule_preempt_disabled+0x18/0x2c kernel/sched/core.c:7115
+ __mutex_lock_common+0xca0/0x24ac kernel/locking/mutex.c:676
+ __mutex_lock kernel/locking/mutex.c:760 [inline]
+ mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
+ del_device_store+0xd4/0x31c drivers/net/netdevsim/bus.c:234
+ bus_attr_store+0x80/0xa4 drivers/base/bus.c:172
+ sysfs_kf_write+0x1a8/0x23c fs/sysfs/file.c:145
+ kernfs_fop_write_iter+0x314/0x488 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x540/0xa3c fs/read_write.c:686
+ ksys_write+0x120/0x210 fs/read_write.c:738
+ __do_sys_write fs/read_write.c:749 [inline]
+ __se_sys_write fs/read_write.c:746 [inline]
+ __arm64_sys_write+0x7c/0x90 fs/read_write.c:746
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
+INFO: task syz-executor:6706 blocked for more than 144 seconds.
+      Not tainted 6.17.0-rc1-syzkaller-g8f5ae30d69d7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:0     pid:6706  tgid:6706  ppid:6705   task_flags:0x400140 flags:0x00800000
+Call trace:
+ __switch_to+0x418/0x87c arch/arm64/kernel/process.c:741 (T)
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x13b0/0x2864 kernel/sched/core.c:6961
+ __schedule_loop kernel/sched/core.c:7043 [inline]
+ schedule+0xb4/0x230 kernel/sched/core.c:7058
+ schedule_preempt_disabled+0x18/0x2c kernel/sched/core.c:7115
+ __mutex_lock_common+0xca0/0x24ac kernel/locking/mutex.c:676
+ __mutex_lock kernel/locking/mutex.c:760 [inline]
+ mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:812
+ del_device_store+0xd4/0x31c drivers/net/netdevsim/bus.c:234
+ bus_attr_store+0x80/0xa4 drivers/base/bus.c:172
+ sysfs_kf_write+0x1a8/0x23c fs/sysfs/file.c:145
+ kernfs_fop_write_iter+0x314/0x488 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:593 [inline]
+ vfs_write+0x540/0xa3c fs/read_write.c:686
+ ksys_write+0x120/0x210 fs/read_write.c:738
+ __do_sys_write fs/read_write.c:749 [inline]
+ __se_sys_write fs/read_write.c:746 [inline]
+ __arm64_sys_write+0x7c/0x90 fs/read_write.c:746
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x58/0x180 arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
 
-Thanks for your feedback.
+Showing all locks held in the system:
+1 lock held by khungtaskd/32:
+ #0: ffff80008f9a9060 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x4/0x48 include/linux/rcupdate.h:330
+3 locks held by kworker/u8:2/41:
+3 locks held by pr/ttyAMA-1/43:
+2 locks held by kworker/u8:5/1987:
+7 locks held by kworker/u8:7/2184:
+5 locks held by kworker/u8:8/2656:
+5 locks held by kworker/u8:9/4759:
+1 lock held by klogd/6155:
+3 locks held by udevd/6166:
+1 lock held by dhcpcd/6220:
+3 locks held by dhcpcd/6221:
+2 locks held by getty/6308:
+ #0: ffff0000d73b90a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
+ #1: ffff80009bbbb2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x34c/0xfa4 drivers/tty/n_tty.c:2222
+4 locks held by syz-executor/6692:
+ #0: ffff0000d802a428 (sb_writers#6){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3107 [inline]
+ #0: ffff0000d802a428 (sb_writers#6){.+.+}-{0:0}, at: vfs_write+0x24c/0xa3c fs/read_write.c:682
+ #1: ffff0000dc4fb888 (&of->mutex){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x1b4/0x488 fs/kernfs/file.c:325
+ #2: ffff0000c6c77e18 (kn->active#55){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x1d0/0x488 fs/kernfs/file.c:326
+ #3: ffff800091a98908 (nsim_bus_dev_list_lock){+.+.}-{4:4}, at: del_device_store+0xd4/0x31c drivers/net/netdevsim/bus.c:234
+5 locks held by kworker/0:4/6694:
+5 locks held by syz-executor/6698:
+ #0: ffff0000d802a428 (sb_writers#6){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3107 [inline]
+ #0: ffff0000d802a428 (sb_writers#6){.+.+}-{0:0}, at: vfs_write+0x24c/0xa3c fs/read_write.c:682
+ #1: ffff0000d9789088 (&of->mutex){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x1b4/0x488 fs/kernfs/file.c:325
+ #2: ffff0000c6c77e18 (kn->active#55){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x1d0/0x488 fs/kernfs/file.c:326
+ #3: ffff800091a98908 (nsim_bus_dev_list_lock){+.+.}-{4:4}, at: del_device_store+0xd4/0x31c drivers/net/netdevsim/bus.c:234
+ #4: ffff0000de8af0e8 (&dev->mutex){....}-{4:4}, at: device_lock include/linux/device.h:911 [inline]
+ #4: ffff0000de8af0e8 (&dev->mutex){....}-{4:4}, at: device_del+0xa4/0x808 drivers/base/core.c:3840
+4 locks held by syz-executor/6701:
+ #0: ffff0000d802a428 (sb_writers#6){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3107 [inline]
+ #0: ffff0000d802a428 (sb_writers#6){.+.+}-{0:0}, at: vfs_write+0x24c/0xa3c fs/read_write.c:682
+ #1: ffff0000c6553088 (&of->mutex){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x1b4/0x488 fs/kernfs/file.c:325
+ #2: ffff0000c6c77e18 (kn->active#55){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x1d0/0x488 fs/kernfs/file.c:326
+ #3: ffff800091a98908 (nsim_bus_dev_list_lock){+.+.}-{4:4}, at: del_device_store+0xd4/0x31c drivers/net/netdevsim/bus.c:234
+4 locks held by syz-executor/6706:
+ #0: ffff0000d802a428 (sb_writers#6){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3107 [inline]
+ #0: ffff0000d802a428 (sb_writers#6){.+.+}-{0:0}, at: vfs_write+0x24c/0xa3c fs/read_write.c:682
+ #1: ffff0000d7a2c488 (&of->mutex){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x1b4/0x488 fs/kernfs/file.c:325
+ #2: ffff0000c6c77e18 (kn->active#55){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x1d0/0x488 fs/kernfs/file.c:326
+ #3: ffff800091a98908 (nsim_bus_dev_list_lock){+.+.}-{4:4}, at: del_device_store+0xd4/0x31c drivers/net/netdevsim/bus.c:234
+3 locks held by syz-executor/6770:
+3 locks held by kworker/u8:12/6772:
+2 locks held by syz-executor/6776:
+
+=============================================
+
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
