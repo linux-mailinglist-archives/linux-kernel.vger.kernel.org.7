@@ -1,80 +1,55 @@
-Return-Path: <linux-kernel+bounces-767335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 493EEB25302
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:26:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC6DFB25306
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C27884FD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BABDE1C8427F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B12D2E716C;
-	Wed, 13 Aug 2025 18:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B192E7F32;
+	Wed, 13 Aug 2025 18:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCj7LPDe"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="KUSbWiPx"
+Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33582D7381
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 18:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A6D303C99;
+	Wed, 13 Aug 2025 18:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755109567; cv=none; b=Hj57X1zO9B9ArUai0xzMWUuAOeGQTTn1XaPxjL/kjx1qUfds5Y67ZjaTI8eknx5e+atpyvRthV/DjRT/Sa0mCKIyJR91JJ4gm+15bvUJL66rKrISYxp68+29suJT5h2l6t8XzGSYsCVSh8nzdiq7CiucsRkT8S4ZKTK4zXhm/U4=
+	t=1755109645; cv=none; b=t4d90Wmzmeki0+GgE47DVWVCTQJRk6ZeGlPVYIg6tvxDGt/w0bHLa3XJccepjyA9fNeEGx5NJ29WqLIZbXnySVyH0QMkNy2L+v8DFFZBKiOm37WRCvAKujSOAuBuY2xJ3jh2oW3KHDH5VvNHwUJcAMEAgU9Qu7cKEX/8NmBc+5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755109567; c=relaxed/simple;
-	bh=kjaqRalQ6f+VnPUzPJ3lUTMCHNI4Mqln+f9A2PCWars=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i+RTeOwEEXSqLpfPSM4fevo5QJdMUXD/stpSjpbRv/jzLHmZnay/FqZddDqQjkPLp4w/IuKc/rZMAReNEoqzur1+XmZYSD8wMqTlzUAG41cuu1mlGXtgJGP0iRPQFKiMpqfTIIueuZvWmvoXoylssYDxBE5v5kbPGuUDnIskRJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PCj7LPDe; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb78d1695so2138966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:26:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755109563; x=1755714363; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PG2XQ09YxGQDAljbZJ1dBpExZdNgeyI6Zcz42FxK4Mc=;
-        b=PCj7LPDeYAXaowVBmpom8m5uScmjxGfFgqFzlR1fSVb7AeboS5eohYmo4ywE9kL95V
-         aBSePNtjlvdtnNb7TpI9Mnlx8jwf/fiRrpOW7gnAFidJ89cxI2K6EU8LOqokfsWw+CKB
-         Su8w9jKFsZwsWgpxnHoIRECsy0coAmxZ+/vy3VoS6lGL9STAMfTx/YcV4ADduNDn39AF
-         /F20vkcFco2SLmIUkRL7DcSjYsWs8QeK6AvFs8gOitpDcfwsjX6MsPWvltJmeLEnLQJz
-         ZGDFOiVjYYeFJdekSgGnTDLNR3FuIjZfm3KiF7DEo/XQFoimthpHVan+uOmjVMvp5g7c
-         yxAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755109563; x=1755714363;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PG2XQ09YxGQDAljbZJ1dBpExZdNgeyI6Zcz42FxK4Mc=;
-        b=pu8iAhcnSHkp4T9dnmaToKDbgCzHDEjnYfJsQkLK4B4AKj0KDPU8sr3X/M6PiDJ6LN
-         51JMwNqUOWjer48o4X7zsx431LMX81hejmalbBwQE8J/lnc+c2MZDlIbgEDbVTcDbNzJ
-         Qc1XkSdiMJMgWXVjgHytpgQjfHy12Oys5IqwnSJ5/L08tVPwrJy9ilI5nRz9t6nd1tB4
-         40Bifsl14DuDOVJDWDNs5wovwSZ10XbiJADI8taM8OjsjXfb8mzvav0Bd6zbA0fKcFwS
-         GTWhgZg7JW/qs6Vx3yk+OOkZma6s4lG+B5OvzlXg3GxQ4EaAx8eeUAbPllAm8SPB1IxW
-         /3Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVr9QMZw7b9TY2EDrLyx6DKDMBSQYJBkhhR0exGKF3bVqJWvpiNo3OUld3swBdJiJtq9XNWUYZrcRhVTlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD3vNRFiR41p0ynaJiW5OH+4qfVbLP49Z/25M0C43lCTk1aBFz
-	suK6d2n+Dzj6L5LDX+JzlkRxUiNUScMGBGbumOsC6oZVRCyNs6sI6pC+eaco8Wyia2s=
-X-Gm-Gg: ASbGncuBd1tHt5TH7sKBD3JnkbHWqonINESbt0Xau+jXWbvjIwamaFDRohFOHG3n+SB
-	prl5xEPfv3jMYSdepdNrKe3BF1N5Bf0NhyajfP75/Q2XnTZNSynQ9hfNFBkykOwiKGbutggYfT4
-	OxHMA/PII45Sv6RP6fN47C1faMFX6eLwdC7pVQeMc1B9/1SWfhOc2cZJYouMjhspVgMehgfcKWR
-	LZkQMi2o003TvZvtex12yF6bJLumSqZeIokCMoAYUMSaQwX6uHFuDZfBWWY93/pyNMU7UnDsdft
-	4KqAK3atcchVzAOT4tIm33lzBITgx0vtVeOJVw5eU1pVZDYv2d7xULByVnV4z3Vr8De9c4xsUej
-	d8CDXD1rgpMUjdGq60r+gtjBExWfqjk1hoRt6XwDu5z4=
-X-Google-Smtp-Source: AGHT+IFaN9KUjjqPxBrud3j7rI49y4RZJJQ73wRUqjRKrKs4uhIrrRPKHQ6crcL+1sNOlr+nwDLI0Q==
-X-Received: by 2002:a17:907:d88:b0:ae3:5d47:634 with SMTP id a640c23a62f3a-afcb98e24d8mr8259266b.9.1755109562455;
-        Wed, 13 Aug 2025 11:26:02 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0766f9sm2488355966b.24.2025.08.13.11.26.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 11:26:01 -0700 (PDT)
-Message-ID: <c0864d4f-fede-4d2e-8f93-c52d870adb5d@linaro.org>
-Date: Wed, 13 Aug 2025 20:25:59 +0200
+	s=arc-20240116; t=1755109645; c=relaxed/simple;
+	bh=1fnCtPI9hc9mxoPa4pC7+exlHl5N905T5kmy087sg88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=COT/MazPSUc+JCKSwj963J4hX30tUwadAETZJZxRy47LQ2r5WlIZJ/qiS61zAYNrBr89ku8fzBigk6AJYUK9cmgEPL7xO6X0Qk14d7q30Qi9UfZEienpnb7pzS5C5sxMoX5n7zVx83U06AqbTX3EyePKqFA0321YL0ALmFtcusU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (2048-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=KUSbWiPx; arc=none smtp.client-ip=129.217.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
+Received: from tu-ex02.tu-dortmund.de (tu-ex02.tu-dortmund.de [129.217.131.228])
+	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPS id 57DIRCGB004857
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 20:27:12 +0200 (CEST)
+Authentication-Results: unimail.uni-dortmund.de;
+	dkim=pass (2048-bit key, unprotected) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.a=rsa-sha256 header.s=1 header.b=KUSbWiPx
+DKIM-Signature: v=1; a=rsa-sha256; d=tu-dortmund.de; s=1; c=relaxed/relaxed;
+	t=1755109632; h=from:subject:to:date:message-id;
+	bh=DkPiYN++kSWdtTfK7OsuF/wgCgpjfka4Ys6hx9JKmPw=;
+	b=KUSbWiPxEBHzBTkquJOkObCbuMUmMJi12wt8y67q/1LGnoFimtlQ+Imh7vAWAauOaB4nWW3YXla
+	4RttCq1vt1xLlAz/QzpUzVjL+nNcMT4iVqaDg4hdOP80GuDlMGZrdB6MTy6y8CdeBDo9fniT2qx5c
+	XsnmV1d3ZEAZ3nnnlOx7uQbkN3LNvQTNhB98CKCHWRYjdd3G/3e/5fRE/gMJgUTiWmdZaLXhcro39
+	yxSSJY8mWElLOwa6IJsvOJ5tFx6J0fMsiMnsh10pchnb4l5GMqTtXyNamtCTUiMqnHjzCmt+dSFoZ
+	cY2HbEX7OIciTdkVbddAtpGgmEmQASLWzwdQ==
+Received: from [IPV6:2a01:599:41d:36e2:83f0:e388:1505:7af] (129.217.131.221)
+ by tu-ex02.tu-dortmund.de (2001:638:50d:2000::228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.58; Wed, 13 Aug 2025 20:27:11 +0200
+Message-ID: <8982048b-f5dc-4fec-bc53-f7ad88fbe199@tu-dortmund.de>
+Date: Wed, 13 Aug 2025 20:27:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,97 +57,200 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 06/17] drm/msm/dsi/phy: Toggle back buffer resync after
- preparing PLL
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krishna Manikandan <quic_mkrishn@quicinc.com>,
- Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Clark <robin.clark@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>, Srinivas Kandagatla <srini@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-References: <20250610-b4-sm8750-display-v6-0-ee633e3ddbff@linaro.org>
- <20250610-b4-sm8750-display-v6-6-ee633e3ddbff@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH net v2] TUN/TAP: Improving throughput and latency by avoiding
+ SKB drops
+To: Jason Wang <jasowang@redhat.com>
+CC: <willemdebruijn.kernel@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Tim Gebauer <tim.gebauer@tu-dortmund.de>
+References: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
+ <CACGkMEvqYWH-dcG4ei8dERy_OXvyF3cgrzQ2_YO-imEsPoYSbQ@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <20250610-b4-sm8750-display-v6-6-ee633e3ddbff@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Simon Schippers <simon.schippers@tu-dortmund.de>
+In-Reply-To: <CACGkMEvqYWH-dcG4ei8dERy_OXvyF3cgrzQ2_YO-imEsPoYSbQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: tu-ex04.tu-dortmund.de (2001:638:50d:2000::230) To
+ tu-ex02.tu-dortmund.de (2001:638:50d:2000::228)
 
-On 10/06/2025 16:05, Krzysztof Kozlowski wrote:
-> According to Hardware Programming Guide for DSI PHY, the retime buffer
-> resync should be done after PLL clock users (byte_clk and intf_byte_clk)
-> are enabled.  Downstream also does it as part of configuring the PLL.
-> 
-> Driver was only turning off the resync FIFO buffer, but never bringing it
-> on again.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+Jason Wang wrote:
+> On Tue, Aug 12, 2025 at 6:04=E2=80=AFAM Simon Schippers
+> <simon.schippers@tu-dortmund.de> wrote:
+>>
+>> This patch is the result of our paper with the title "The NODROP Patch:
+>> Hardening Secure Networking for Real-time Teleoperation by Preventing
+>> Packet Drops in the Linux TUN Driver" [1].
+>> It deals with the tun_net_xmit function which drops SKB's with the reaso=
+n
+>> SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
+>> resulting in reduced TCP performance and packet loss for bursty video
+>> streams when used over VPN's.
+>>
+>> The abstract reads as follows:
+>> "Throughput-critical teleoperation requires robust and low-latency
+>> communication to ensure safety and performance. Often, these kinds of
+>> applications are implemented in Linux-based operating systems and transm=
+it
+>> over virtual private networks, which ensure encryption and ease of use b=
+y
+>> providing a dedicated tunneling interface (TUN) to user space
+>> applications. In this work, we identified a specific behavior in the Lin=
+ux
+>> TUN driver, which results in significant performance degradation due to
+>> the sender stack silently dropping packets. This design issue drasticall=
+y
+>> impacts real-time video streaming, inducing up to 29 % packet loss with
+>> noticeable video artifacts when the internal queue of the TUN driver is
+>> reduced to 25 packets to minimize latency. Furthermore, a small queue
+>> length also drastically reduces the throughput of TCP traffic due to man=
+y
+>> retransmissions. Instead, with our open-source NODROP Patch, we propose
+>> generating backpressure in case of burst traffic or network congestion.
+>> The patch effectively addresses the packet-dropping behavior, hardening
+>> real-time video streaming and improving TCP throughput by 36 % in high
+>> latency scenarios."
+>>
+>> In addition to the mentioned performance and latency improvements for VP=
+N
+>> applications, this patch also allows the proper usage of qdisc's. For
+>> example a fq_codel can not control the queuing delay when packets are
+>> already dropped in the TUN driver. This issue is also described in [2].
+>>
+>> The performance evaluation of the paper (see Fig. 4) showed a 4%
+>> performance hit for a single queue TUN with the default TUN queue size o=
+f
+>> 500 packets. However it is important to notice that with the proposed
+>> patch no packet drop ever occurred even with a TUN queue size of 1 packe=
+t.
+>> The utilized validation pipeline is available under [3].
+>>
+>> As the reduction of the TUN queue to a size of down to 5 packets showed =
+no
+>> further performance hit in the paper, a reduction of the default TUN que=
+ue
+>> size might be desirable accompanying this patch. A reduction would
+>> obviously reduce buffer bloat and memory requirements.
+>>
+>> Implementation details:
+>> - The netdev queue start/stop flow control is utilized.
+>> - Compatible with multi-queue by only stopping/waking the specific
+>> netdevice subqueue.
+>> - No additional locking is used.
+>>
+>> In the tun_net_xmit function:
+>> - Stopping the subqueue is done when the tx_ring gets full after inserti=
+ng
+>> the SKB into the tx_ring.
+>> - In the unlikely case when the insertion with ptr_ring_produce fails, t=
+he
+>> old dropping behavior is used for this SKB.
+>>
+>> In the tun_ring_recv function:
+>> - Waking the subqueue is done after consuming a SKB from the tx_ring whe=
+n
+>> the tx_ring is empty. Waking the subqueue when the tx_ring has any
+>> available space, so when it is not full, showed crashes in our testing. =
+We
+>> are open to suggestions.
+>> - When the tx_ring is configured to be small (for example to hold 1 SKB)=
+,
+>> queuing might be stopped in the tun_net_xmit function while at the same
+>> time, ptr_ring_consume is not able to grab a SKB. This prevents
+>> tun_net_xmit from being called again and causes tun_ring_recv to wait
+>> indefinitely for a SKB in the blocking wait queue. Therefore, the netdev
+>> queue is woken in the wait queue if it has stopped.
+>> - Because the tun_struct is required to get the tx_queue into the new tx=
+q
+>> pointer, the tun_struct is passed in tun_do_read aswell. This is likely
+>> faster then trying to get it via the tun_file tfile because it utilizes =
+a
+>> rcu lock.
+>>
+>> We are open to suggestions regarding the implementation :)
+>> Thank you for your work!
+>>
+>
+> I would like to see some benchmark results. Not only VPN but also a
+> classical VM setup that is using vhost-net + TAP.
+>
 
+I completely overlooked that in tap.c there is also a tap_do_read function.
+I would like to apologize for that and also implement the same behavior
+from the tun_ring_recv function there.
+The implementation is already done and it proved to be working but I will
+test it a bit more before submitting a v3.
 
-BTW, this and two other fixes from this thread were for some reason not
-picked up.
+Regarding your proposed vhost-net + TAP setup: I need more time to
+implement such a setup. However I am wondering what kind of tests you
+would like to see exactly? TCP connections to a remote host like in our
+paper?
 
-One fix got comments, but it does not stop rest of the fixes,
-considering they were reviewed.
+>> [1] Link:
+>> https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publication=
+s/2025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
+>> [2] Link:
+>> https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffect=
+ive-on-tun-device
+>> [3] Link: https://github.com/tudo-cni/nodrop
+>>
+>> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+>> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
+>> ---
+>> V1 -> V2: Removed NETDEV_TX_BUSY return case in tun_net_xmit and removed
+>> unnecessary netif_tx_wake_queue in tun_ring_recv.
+>>
+>>  drivers/net/tun.c | 21 +++++++++++++++++----
+>>  1 file changed, 17 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+>> index cc6c50180663..81abdd3f9aca 100644
+>> --- a/drivers/net/tun.c
+>> +++ b/drivers/net/tun.c
+>> @@ -1060,13 +1060,16 @@ static netdev_tx_t tun_net_xmit(struct sk_buff *=
+skb, struct net_device *dev)
+>>
+>>         nf_reset_ct(skb);
+>>
+>> -       if (ptr_ring_produce(&tfile->tx_ring, skb)) {
+>> +       queue =3D netdev_get_tx_queue(dev, txq);
+>> +       if (unlikely(ptr_ring_produce(&tfile->tx_ring, skb))) {
+>> +               netif_tx_stop_queue(queue);
+>>                 drop_reason =3D SKB_DROP_REASON_FULL_RING;
+>
+> This would still drop the packet. Should we detect if the ring is
+> about to be full and stop then like a virtio-net?
+>
+> Thanks
+>
 
-Best regards,
-Krzysztof
+I am a bit confused. You omitted the important part of the code which
+comes right after that. There I stop the netdev queue when the tx_ring
+gets full. Therefore tun_net_xmit is not (very very unlikely) called when
+there is no space for another SKB and no SKB's are dropped. It is only
+called again after the netdev queue is activated again in the
+tun_ring_recv function.
+
+In virtio-net whole SKB's they basically do the same in the tx_may_stop
+function. The function is called after inserting a SKB and see if there is
+enough space for another max size SKB, which is the same statement as if
+their send_queue is full.
+Correct me if I am wrong!
+Thank you!
+
+Wichtiger Hinweis: Die Information in dieser E-Mail ist vertraulich. Sie is=
+t ausschlie=C3=9Flich f=C3=BCr den Adressaten bestimmt. Sollten Sie nicht d=
+er f=C3=BCr diese E-Mail bestimmte Adressat sein, unterrichten Sie bitte de=
+n Absender und vernichten Sie diese Mail. Vielen Dank.
+Unbeschadet der Korrespondenz per E-Mail, sind unsere Erkl=C3=A4rungen auss=
+chlie=C3=9Flich final rechtsverbindlich, wenn sie in herk=C3=B6mmlicher Sch=
+riftform (mit eigenh=C3=A4ndiger Unterschrift) oder durch =C3=9Cbermittlung=
+ eines solchen Schriftst=C3=BCcks per Telefax erfolgen.
+
+Important note: The information included in this e-mail is confidential. It=
+ is solely intended for the recipient. If you are not the intended recipien=
+t of this e-mail please contact the sender and delete this message. Thank y=
+ou. Without prejudice of e-mail correspondence, our statements are only leg=
+ally binding when they are made in the conventional written form (with pers=
+onal signature) or when such documents are sent by fax.
 
