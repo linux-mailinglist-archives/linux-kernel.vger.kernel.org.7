@@ -1,249 +1,309 @@
-Return-Path: <linux-kernel+bounces-766994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A8CB24D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F611B24EAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B82D3B7747
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:31:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 006A19A568B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5975272E72;
-	Wed, 13 Aug 2025 15:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B060229ACC0;
+	Wed, 13 Aug 2025 15:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RqrBM+4r"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="AGrBXgds";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="juK8mAdA";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="QnCXE/nc"
+Received: from sender5.mail.selcloud.ru (sender5.mail.selcloud.ru [5.8.75.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259F82727F8
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B25F286D42;
+	Wed, 13 Aug 2025 15:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755099050; cv=none; b=naT9I1oSUilj2pdNU1tEriwfdlpLZkGBaddZOq1sOaBylQ0dySnsu22spODRwp3n9vLPhU4DDt65G1OPlp6Bt+il+iH9vByOrsSHyFWEswIIYmv6TRFLjI9SoVDGlbm85wsUhAVpC7s3x5s9XfqGKMcDkV0JLLxHsW/b1mXlFog=
+	t=1755100157; cv=none; b=RXXrPybK9q+u3tg2y38ABw51bkLbw62Jqyz4hCWueJTD6ni/n36+NVQ4yrhpmiyT9zSiSut66lAF0LMjXQbIo7BhLbs7ttn4QZH2SkL56qR1y5aIWPPZvPOlz9cjBrG2xKYUYa4LKO3mBUzA+CsRxvmaHeCzR97M93ODnOAIIco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755099050; c=relaxed/simple;
-	bh=oBpG2Njdb/3sUKn2TUNTKNLeUonqd8QmP93MjbKGHbw=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aTSc/vP75Cop5vYrKx9RBKo3ipMcs1vJu1W2oaJtxoTeUg8/GPF9oZuDIdeIaIzYez7KKyRlWOA+8O3FuTWjr5iR/v/bpK4CrtAac2LPbtVgnlGbK+xo/r7n0fDTakYi2oFDQPq4KxxbiRnSB7xLz049aO5v97diOtXnGsyR5aE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RqrBM+4r; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755099046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dg4Vf15U+E3Og15w4aN3q+dU4EFzVNfYMRDLB+8UxmM=;
-	b=RqrBM+4rmnd7f7csAuy8+jSFgCq4RPvj3YzfAYTrYT19w8YqLd0wETIOIXqbB0VW5R2n6e
-	nNj73wPxbzpzwRfzhbPjXw3SU5kCG8znJgh927XNgi/1O1/zdyC6AJiTgFwKacWxk5EcRN
-	yyvz8SSRlDvkUhFP8tgAy6qVWPBhPmk=
-From: KaFai Wan <kafai.wan@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	shuah@kernel.org,
-	kafai.wan@linux.dev,
-	mrpre@163.com,
+	s=arc-20240116; t=1755100157; c=relaxed/simple;
+	bh=KaVYbjPdXJcoF0koEVQDqyxopMibYjGRBwHW8E6wUJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hhT+3B2RvcGTA/faWHQ4dbNfhAUqUicHe4H+medKAaZa4rfXK4hhvjE9tbBiqhsuEaj3H4ya7lcIJyZyxis24BZ5/PkigZFhsxRaR+g3I/+swVz/RJOJTAPxuHxsNiZnN1/MuHDV3WB/OUrSEyeMA7ug98krZPdGEwGkzaTRefo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=AGrBXgds; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=juK8mAdA; dkim=fail (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=QnCXE/nc reason="signature verification failed"; arc=none smtp.client-ip=5.8.75.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ZFAIijc4fye6M+GUPZT2rKrbn5WLnJzmrCv8+KZckuA=; t=1755100153; x=1755272953;
+	 b=AGrBXgdsekA9+2qdMQJ3dwYI6kHxuyIkk8G2tfEJyARB6X/6hzKJ40kQBDqFxH7pMm741EQ7h5
+	QhfvGwDVnSnbVz1VlCfNGvMVMI5BlR1KeezVkd7nqkbBDGMnNWzx09kUXC0weiCiPJqHWaFsCtF8C
+	9P1HI2r/j/6I21caYbO8=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
+	 s=selcloud; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Help:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=ZFAIijc4fye6M+GUPZT2rKrbn5WLnJzmrCv8+KZckuA=;
+	t=1755100153; x=1755272953; b=juK8mAdAd8FdRHuR1ot7rOBzM4bNEnxIvs5b9UsTfUIDmgI
+	tWGMOBESxk7u3MObB5vMlDV0JVpkdPSYEYAVJqRFfrycWygQRwz3fUUoXU24PhWJges3kgmJ4rJvc
+	kV9vxhdb1GWs18TfHx/WQDxrItK/Cs64hy0HLEC9SsvgNZs=;
+Precedence: bulk
+X-Issuen: 1137846
+X-User: 280060488
+X-Postmaster-Msgtype: 3849
+Feedback-ID: 1137846:15965:3849:samotpravil
+X-From: foxido.dev
+X-from-id: 15965
+X-MSG-TYPE: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-blist-id: 3849
+X-Gungo: 20250728.224157
+X-SMTPUID: mlgnr59
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxido.dev; s=dkim;
+	t=1755099129; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=HLeWuj70V6Rqd1lzNjH51t84oQQZtNSLoLFczbHw8Qk=;
+	b=QnCXE/ncw9G/iPQrz68hw2m14oVprOIq6gguZdCQPxmiRzYBbXWsRtixi4GznLg60c9sVD
+	AX7xS3NrEAptOPKoKBbIUxgE6n1fx4gIiK4TmvvKsNUvoWG+RHU9PvFBe+bHgFGt86PoAi
+	DizwCFOUAIYHi1ZsCuDadT9UABJ9hACs6UeSqlINx9lLGRbGy03kFb5J81qrkc98yF89Vy
+	sGipNawlkFlMvRWwOQueS3b1OfsM/TFONcfxIzV2AbxE972QfMQBrhAx4wER0KE23MlpC5
+	F26YneBVi/MWnVvFrYvbNXiBwqW9vACKOAIxMMLuMNsXYKwhxZLaZkhyCQOptg==
+From: Gladyshev Ilya <foxido@foxido.dev>
+To: foxido@foxido.dev
+Cc: w_armin@gmx.de,
+	linux-input@vger.kernel.org,
+	nikita.nikita.krasnov@gmail.com,
+	Armin Wolf <W_Armin@gmx.de>,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf v2 2/2] selftests/bpf: Add socket filter attach test
-Date: Wed, 13 Aug 2025 23:29:58 +0800
-Message-ID: <20250813152958.3107403-3-kafai.wan@linux.dev>
-In-Reply-To: <20250813152958.3107403-1-kafai.wan@linux.dev>
-References: <20250813152958.3107403-1-kafai.wan@linux.dev>
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v5] platform/x86: Add WMI driver for Redmibook keyboard.
+Date: Wed, 13 Aug 2025 18:31:28 +0300
+Message-ID: <20250813153137.18355-1-foxido@foxido.dev>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
 
-This test verifies socket filter attachment functionality on architectures
-supporting either BPF JIT compilation or the interpreter.
+This driver implements support for various Fn keys (like Cut) and Xiaomi
+specific AI button.
 
-It specifically validates the fallback to interpreter behavior when JIT fails,
-particularly targeting ARMv6 devices with the following configuration:
-  # CONFIG_BPF_JIT_ALWAYS_ON is not set
-  CONFIG_BPF_JIT_DEFAULT_ON=y
-
-Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
 ---
- .../selftests/bpf/prog_tests/socket_filter.c  | 124 ++++++++++++++++++
- .../selftests/bpf/progs/socket_filter.c       |  16 +++
- 2 files changed, 140 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/socket_filter.c
- create mode 100644 tools/testing/selftests/bpf/progs/socket_filter.c
+Changes since v4:
+- Cosmetic fixes from Ilpo's review (posted on v3)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/socket_filter.c b/tools/testing/selftests/bpf/prog_tests/socket_filter.c
+Link to v4: https://lore.kernel.org/platform-driver-x86/20250801120321.97=
+42-1-foxido@foxido.dev
+---
+ MAINTAINERS                      |   6 ++
+ drivers/platform/x86/Kconfig     |  12 +++
+ drivers/platform/x86/Makefile    |   1 +
+ drivers/platform/x86/redmi-wmi.c | 128 +++++++++++++++++++++++++++++++
+ 4 files changed, 147 insertions(+)
+ create mode 100644 drivers/platform/x86/redmi-wmi.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c0b444e5fd5a..eb25fb10e751 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20965,6 +20965,12 @@ S:	Maintained
+ T:	git https://github.com/pkshih/rtw.git
+ F:	drivers/net/wireless/realtek/rtw89/
+=20
++REDMIBOOK WMI DRIVERS
++M:	Gladyshev Ilya <foxido@foxido.dev>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	drivers/platform/x86/redmi-wmi.c
++
+ REDPINE WIRELESS DRIVER
+ L:	linux-wireless@vger.kernel.org
+ S:	Orphan
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index e5cbd58a99f3..9f98a7042e43 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -109,6 +109,18 @@ config XIAOMI_WMI
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called xiaomi-wmi.
+=20
++config REDMI_WMI
++	tristate "Redmibook WMI key driver"
++	depends on ACPI_WMI
++	depends on INPUT
++	select INPUT_SPARSEKMAP
++	help
++	  Say Y here if you want support for WMI-based hotkey events on
++	  Xiaomi Redmibook devices.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called redmi-wmi.
++
+ config GIGABYTE_WMI
+ 	tristate "Gigabyte WMI temperature driver"
+ 	depends on ACPI_WMI
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefil=
+e
+index bea87a85ae75..406dd0807ba7 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_HUAWEI_WMI)		+=3D huawei-wmi.o
+ obj-$(CONFIG_MXM_WMI)			+=3D mxm-wmi.o
+ obj-$(CONFIG_NVIDIA_WMI_EC_BACKLIGHT)	+=3D nvidia-wmi-ec-backlight.o
+ obj-$(CONFIG_XIAOMI_WMI)		+=3D xiaomi-wmi.o
++obj-$(CONFIG_REDMI_WMI)			+=3D redmi-wmi.o
+ obj-$(CONFIG_GIGABYTE_WMI)		+=3D gigabyte-wmi.o
+=20
+ # Acer
+diff --git a/drivers/platform/x86/redmi-wmi.c b/drivers/platform/x86/redm=
+i-wmi.c
 new file mode 100644
-index 000000000000..ee3a4cc1a992
+index 000000000000..104c4953d67d
 --- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/socket_filter.c
-@@ -0,0 +1,124 @@
++++ b/drivers/platform/x86/redmi-wmi.c
+@@ -0,0 +1,128 @@
 +// SPDX-License-Identifier: GPL-2.0
++/* WMI driver for Xiaomi Redmibooks */
 +
-+#include <test_progs.h>
-+#include <sys/utsname.h>
-+#include <uapi/linux/filter.h>
-+#include "socket_filter.skel.h"
++#include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/input.h>
++#include <linux/input/sparse-keymap.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/unaligned.h>
++#include <linux/wmi.h>
 +
-+static int duration;
++#include <uapi/linux/input-event-codes.h>
 +
-+void do_test(void)
++#define WMI_REDMIBOOK_KEYBOARD_EVENT_GUID "46C93E13-EE9B-4262-8488-563BC=
+A757FEF"
++
++#define AI_KEY_VALUE_MASK 0x00000100
++
++static const struct key_entry redmi_wmi_keymap[] =3D {
++	{KE_KEY, 0x00000201,	{KEY_SELECTIVE_SCREENSHOT}},
++	{KE_KEY, 0x00000301,	{KEY_ALL_APPLICATIONS}},
++	{KE_KEY, 0x00001b01,	{KEY_SETUP}},
++
++	/* AI button has code for each position */
++	{KE_KEY, 0x00011801,	{KEY_ASSISTANT}},
++	{KE_KEY, 0x00011901,	{KEY_ASSISTANT}},
++
++	/* Keyboard backlight */
++	{KE_IGNORE, 0x00000501, {}},
++	{KE_IGNORE, 0x00800501, {}},
++	{KE_IGNORE, 0x00050501, {}},
++	{KE_IGNORE, 0x000a0501, {}},
++
++	{KE_END}
++};
++
++struct redmi_wmi {
++	struct input_dev *input_dev;
++	/* Protects the key event sequence */
++	struct mutex key_lock;
++};
++
++static int redmi_wmi_probe(struct wmi_device *wdev, const void *context)
 +{
-+	/* the filter below is the tcpdump filter:
-+	 * tcpdump "not ether host 3c37121a2b3c and not ether host 184ecbca2a3a \
-+	 * and not ether host 14130b4d3f47 and not ether host f0f61cf440b7 \
-+	 * and not ether host a84b4dedf471 and not ether host d022be17e1d7 \
-+	 * and not ether host 5c497967208b and not ether host 706655784d5b"
-+	 */
-+	struct sock_filter code[] = {
-+		{ 0x20,  0,  0, 0x00000008 },
-+		{ 0x15,  0,  2, 0x121a2b3c },
-+		{ 0x28,  0,  0, 0x00000006 },
-+		{ 0x15, 60,  0, 0x00003c37 },
-+		{ 0x20,  0,  0, 0x00000002 },
-+		{ 0x15,  0,  2, 0x121a2b3c },
-+		{ 0x28,  0,  0, 0x00000000 },
-+		{ 0x15, 56,  0, 0x00003c37 },
-+		{ 0x20,  0,  0, 0x00000008 },
-+		{ 0x15,  0,  2, 0xcbca2a3a },
-+		{ 0x28,  0,  0, 0x00000006 },
-+		{ 0x15, 52,  0, 0x0000184e },
-+		{ 0x20,  0,  0, 0x00000002 },
-+		{ 0x15,  0,  2, 0xcbca2a3a },
-+		{ 0x28,  0,  0, 0x00000000 },
-+		{ 0x15, 48,  0, 0x0000184e },
-+		{ 0x20,  0,  0, 0x00000008 },
-+		{ 0x15,  0,  2, 0x0b4d3f47 },
-+		{ 0x28,  0,  0, 0x00000006 },
-+		{ 0x15, 44,  0, 0x00001413 },
-+		{ 0x20,  0,  0, 0x00000002 },
-+		{ 0x15,  0,  2, 0x0b4d3f47 },
-+		{ 0x28,  0,  0, 0x00000000 },
-+		{ 0x15, 40,  0, 0x00001413 },
-+		{ 0x20,  0,  0, 0x00000008 },
-+		{ 0x15,  0,  2, 0x1cf440b7 },
-+		{ 0x28,  0,  0, 0x00000006 },
-+		{ 0x15, 36,  0, 0x0000f0f6 },
-+		{ 0x20,  0,  0, 0x00000002 },
-+		{ 0x15,  0,  2, 0x1cf440b7 },
-+		{ 0x28,  0,  0, 0x00000000 },
-+		{ 0x15, 32,  0, 0x0000f0f6 },
-+		{ 0x20,  0,  0, 0x00000008 },
-+		{ 0x15,  0,  2, 0x4dedf471 },
-+		{ 0x28,  0,  0, 0x00000006 },
-+		{ 0x15, 28,  0, 0x0000a84b },
-+		{ 0x20,  0,  0, 0x00000002 },
-+		{ 0x15,  0,  2, 0x4dedf471 },
-+		{ 0x28,  0,  0, 0x00000000 },
-+		{ 0x15, 24,  0, 0x0000a84b },
-+		{ 0x20,  0,  0, 0x00000008 },
-+		{ 0x15,  0,  2, 0xbe17e1d7 },
-+		{ 0x28,  0,  0, 0x00000006 },
-+		{ 0x15, 20,  0, 0x0000d022 },
-+		{ 0x20,  0,  0, 0x00000002 },
-+		{ 0x15,  0,  2, 0xbe17e1d7 },
-+		{ 0x28,  0,  0, 0x00000000 },
-+		{ 0x15, 16,  0, 0x0000d022 },
-+		{ 0x20,  0,  0, 0x00000008 },
-+		{ 0x15,  0,  2, 0x7967208b },
-+		{ 0x28,  0,  0, 0x00000006 },
-+		{ 0x15, 12,  0, 0x00005c49 },
-+		{ 0x20,  0,  0, 0x00000002 },
-+		{ 0x15,  0,  2, 0x7967208b },
-+		{ 0x28,  0,  0, 0x00000000 },
-+		{ 0x15,  8,  0, 0x00005c49 },
-+		{ 0x20,  0,  0, 0x00000008 },
-+		{ 0x15,  0,  2, 0x55784d5b },
-+		{ 0x28,  0,  0, 0x00000006 },
-+		{ 0x15,  4,  0, 0x00007066 },
-+		{ 0x20,  0,  0, 0x00000002 },
-+		{ 0x15,  0,  3, 0x55784d5b },
-+		{ 0x28,  0,  0, 0x00000000 },
-+		{ 0x15,  0,  1, 0x00007066 },
-+		{ 0x06,  0,  0, 0x00000000 },
-+		{ 0x06,  0,  0, 0x00040000 },
-+	};
-+	struct sock_fprog bpf = {
-+		.len = ARRAY_SIZE(code),
-+		.filter = code,
-+	};
-+	int ret, sock = 0;
-+
-+	sock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-+	if (CHECK(sock < 0, "create socket", "errno %d\n", errno))
-+		return;
-+
-+	ret = setsockopt(sock, SOL_SOCKET, SO_ATTACH_FILTER, &bpf, sizeof(bpf));
-+	CHECK(ret < 0, "attach filter", "errno %d\n", errno);
-+
-+	close(sock);
-+}
-+
-+void test_socket_filter(void)
-+{
-+	struct socket_filter *skel;
-+	struct utsname uts;
++	struct redmi_wmi *data;
 +	int err;
 +
-+	err = uname(&uts);
-+	if (err < 0)
-+		return;
++	/* Init dev */
++	data =3D devm_kzalloc(&wdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
 +
-+	skel = socket_filter__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open"))
-+		return;
++	dev_set_drvdata(&wdev->dev, data);
 +
-+	/* The filter JIT fails on armv6 */
-+	if (strncmp(uts.machine, "armv6", strlen("armv6")) == 0 &&
-+	    skel->kconfig->CONFIG_BPF_JIT_ALWAYS_ON)
-+		test__skip();
-+	else
-+		do_test();
++	err =3D devm_mutex_init(&wdev->dev, &data->key_lock);
++	if (err)
++		return err;
 +
-+	socket_filter__destroy(skel);
++	data->input_dev =3D devm_input_allocate_device(&wdev->dev);
++	if (!data->input_dev)
++		return -ENOMEM;
++
++	data->input_dev->name =3D "Redmibook WMI keys";
++	data->input_dev->phys =3D "wmi/input0";
++
++	err =3D sparse_keymap_setup(data->input_dev, redmi_wmi_keymap, NULL);
++	if (err)
++		return err;
++
++	return input_register_device(data->input_dev);
 +}
-diff --git a/tools/testing/selftests/bpf/progs/socket_filter.c b/tools/testing/selftests/bpf/progs/socket_filter.c
-new file mode 100644
-index 000000000000..f93623ec7ec0
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/socket_filter.c
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
 +
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+extern bool CONFIG_BPF_JIT_ALWAYS_ON __kconfig __weak;
-+
-+/* This function is here to have CONFIG_BPF_JIT_ALWAYS_ON
-+ * used and added to object BTF.
-+ */
-+int unused(void)
++static void redmi_wmi_notify(struct wmi_device *wdev, union acpi_object =
+*obj)
 +{
-+	return CONFIG_BPF_JIT_ALWAYS_ON ? 0 : 1;
++	struct redmi_wmi *data =3D dev_get_drvdata(&wdev->dev);
++	bool autorelease =3D true;
++	u32 payload;
++	int value =3D 1;
++
++	if (obj->type !=3D ACPI_TYPE_BUFFER) {
++		dev_err(&wdev->dev, "Bad response type %u\n", obj->type);
++		return;
++	}
++
++	if (obj->buffer.length < 32) {
++		dev_err(&wdev->dev, "Invalid buffer length %u\n", obj->buffer.length);
++		return;
++	}
++
++	payload =3D get_unaligned_le32(obj->buffer.pointer);
++	struct key_entry *entry =3D sparse_keymap_entry_from_scancode(data->inp=
+ut_dev, payload);
++
++	if (!entry) {
++		dev_dbg(&wdev->dev, "Unknown WMI event with payload %u", payload);
++		return;
++	}
++
++	/* AI key quirk */
++	if (entry->keycode =3D=3D KEY_ASSISTANT) {
++		value =3D !(payload & AI_KEY_VALUE_MASK);
++		autorelease =3D false;
++	}
++
++	guard(mutex)(&data->key_lock);
++	sparse_keymap_report_entry(data->input_dev, entry, value, autorelease);
 +}
--- 
-2.43.0
++
++static const struct wmi_device_id redmi_wmi_id_table[] =3D {
++	{ WMI_REDMIBOOK_KEYBOARD_EVENT_GUID, NULL },
++	{ }
++};
++
++static struct wmi_driver redmi_wmi_driver =3D {
++	.driver =3D {
++		.name =3D "redmi-wmi",
++		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
++	},
++	.id_table =3D redmi_wmi_id_table,
++	.probe =3D redmi_wmi_probe,
++	.notify =3D redmi_wmi_notify,
++	.no_singleton =3D true,
++};
++module_wmi_driver(redmi_wmi_driver);
++
++MODULE_DEVICE_TABLE(wmi, redmi_wmi_id_table);
++MODULE_AUTHOR("Gladyshev Ilya <foxido@foxido.dev>");
++MODULE_DESCRIPTION("Redmibook WMI driver");
++MODULE_LICENSE("GPL");
+--=20
+2.50.0
 
 
