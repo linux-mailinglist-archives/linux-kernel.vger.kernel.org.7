@@ -1,128 +1,225 @@
-Return-Path: <linux-kernel+bounces-765791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44076B23E4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C3AB23E71
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08496270E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC3933B6EBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07DAA1E520B;
-	Wed, 13 Aug 2025 02:39:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FF3253B67;
+	Wed, 13 Aug 2025 02:48:13 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BF0C148
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1256E24DD0B;
+	Wed, 13 Aug 2025 02:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755052745; cv=none; b=khb+Erh/AT6wVeh2aulVt6cgBOdtlLf57vpNwZUKSbDyZXbQ6bXO8g9+H8szbX3aTY5TROfSqsln47Bpy36j7t8VuWYmJNIHcLONqRY1z1jlTUp1rEgaDtaoGtdvkDDPvk23Ixy869k3Cb4X+A+Qo6+hU3ey2hQWDJk9JD5/MGA=
+	t=1755053292; cv=none; b=ZjuZtEOaAw/fTeFbbSHF02XNOilN9KuPUqAudIR6kcGrPoBH94XQz02uGOATvur/OZpBZFg3Qu7x0eUpVUp53CiUJ4C2rs5c/BOqgHmg3+CLXHAMxogW9Mba5NKeRz5izcG+XbjJYykUu+VlkpJVTEyn+8z6Puhllg9dFULFLno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755052745; c=relaxed/simple;
-	bh=QC9OFYRv+gyz2U6H8zlN26/oPu7r6z2JEKA7cC6I2AY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VnMkIn720FLN6aDS460fYXy6iBK01ZsEji0GeQmQLcFo13Vq2oYodagHi3Ew63KQ79S78RqyrsHVRNGj22G3ta8/wBKuNfpX8Kbm8Ikpe3EKeW3bSlLZWQtIGZ2okW0hu8VN7IWLUFasM+g2CKGkCQ/XFhngiRxQ91r2OAP1hac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8817ecc1b33so1409566439f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:39:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755052743; x=1755657543;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ss6wpLZGIwri1rb7C5MMI6Ntgl6FX7+qtc7xrRSYVeY=;
-        b=C0/HwutXaEW67Thr7V8xyaC421343s2CzEt4Y5yHUcODBjnYBc4aCH44tOcfQcW+Zs
-         FCnHuyAI6AG57YxajC4/OfhxE1utx9OJ67kqmA4D14qBh2wdYZvsTJZrAUHQUvoPzR3h
-         SiP3fklcoHONu07Az54tJb2Up+p4jzbHIP7lsScUIfkkaFIdtX1dhi3Q4m0FasOlGIJV
-         BTTzSD5JyBMwxKSBNJ8pJ0Emd21IpyDrJWFg7QjgTnVE8t13w6p+oKdzuFpDC5w7QPph
-         1T6wUqd9PoiLgXKCOk5eRQDr5m+i9nI4VzNpdBBNtSreWUfjsH7XG2XMLoT/tj23DPYA
-         3/mA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmc9IvAHLMSk5IXkyei37qcoKbSqkXhlpvPNfhINEtswKHtpeziYEEWaWJo9BLq6pTD12OQ8cYAoIfr20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYfU7j3X5r7Nx74rPeI18M+a2bepUz37M3fZpmpJO7FY8MKoep
-	iolZAELi4GPWYphaYidtRnHifDox+un4u3a+4XQ/d5p2UoNQK6FZ3zNPIDGyN3c18sn6a2smRO8
-	tNHdV40/mecgRAtkh2YfVBDbQyq0eQatkbvDMKv2BRrIozce7iLvlVCCb620=
-X-Google-Smtp-Source: AGHT+IGh9twwY7VnR3k5A8uF9UQVqlPPzzsSlnOimRPJ4gV4gLlbWPUay2AGqxX5TFlo+uExg74Mxe/kGV0LW8/xFaAbJfaWYNr1
+	s=arc-20240116; t=1755053292; c=relaxed/simple;
+	bh=tZ9QqB/EuyK2i06le0UC9Txj9cWiMawGnDax1Flyk8M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P119h/NNrAdixkzji79UhU4fhBAJy4VIBYMT/WvARONF86wostx8QwKPyjj7bJ+BppkEBe8LIhfCJtIMSHkInX894O0er1Q5CmJiAB9oW2Z2PU7TU5qEWDFaUuCDA1IQP3DKcpYJrtmp2RbmVO+dCmmn4mlPlFWbaMB8Mezvr20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c1t8l0WNPzKHMkv;
+	Wed, 13 Aug 2025 10:48:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 50CC01A1303;
+	Wed, 13 Aug 2025 10:48:06 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP3 (Coremail) with SMTP id _Ch0CgAHgdva_JtofdW_DQ--.32695S4;
+	Wed, 13 Aug 2025 10:48:02 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	hch@lst.de,
+	tytso@mit.edu,
+	djwong@kernel.org,
+	bmarzins@redhat.com,
+	chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com,
+	brauner@kernel.org,
+	martin.petersen@oracle.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH util-linux v2] fallocate: add FALLOC_FL_WRITE_ZEROES support
+Date: Wed, 13 Aug 2025 10:40:15 +0800
+Message-Id: <20250813024015.2502234-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:164e:b0:87c:34e3:1790 with SMTP id
- ca18e2360f4ac-884295f2c91mr286295539f.1.1755052743347; Tue, 12 Aug 2025
- 19:39:03 -0700 (PDT)
-Date: Tue, 12 Aug 2025 19:39:03 -0700
-In-Reply-To: <20250813021941.4438-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689bfac7.a70a0220.7865.0043.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING in move_page_tables
-From: syzbot <syzbot+4d9a13f0797c46a29e42@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgAHgdva_JtofdW_DQ--.32695S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxtFW7XFy3Cw43JFy5XFWkZwb_yoWxXryDpF
+	W5tF18K3yFgw4xGw1xAw4kWw15Zws5WrW5CrZ2grykAr13Ga17Ka1vgryFgasrXrWvka15
+	Xryavry3ur48AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTRRBT5DUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hello,
+From: Zhang Yi <yi.zhang@huawei.com>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in move_page_tables
+The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
+fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES to the fallocate
+utility by introducing a new option -w|--write-zeroes.
 
-R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000002
-R13: 00007f6b549b6038 R14: 00007f6b549b5fa0 R15: 00007fff55995d28
- </TASK>
-------------[ cut here ]------------
-WARNING: CPU: 2 PID: 6580 at mm/mremap.c:357 move_normal_pmd mm/mremap.c:357 [inline]
-WARNING: CPU: 2 PID: 6580 at mm/mremap.c:357 move_pgt_entry mm/mremap.c:595 [inline]
-WARNING: CPU: 2 PID: 6580 at mm/mremap.c:357 move_page_tables+0x3752/0x4580 mm/mremap.c:851
-Modules linked in:
-CPU: 2 UID: 0 PID: 6580 Comm: syz.0.19 Not tainted 6.17.0-rc1-syzkaller-g8742b2d8935f-dirty #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:move_normal_pmd mm/mremap.c:357 [inline]
-RIP: 0010:move_pgt_entry mm/mremap.c:595 [inline]
-RIP: 0010:move_page_tables+0x3752/0x4580 mm/mremap.c:851
-Code: 00 48 8b 04 24 31 ff 0f b6 58 30 89 de e8 f6 1c af ff 84 db 0f 85 0d 01 00 00 e8 09 22 af ff e9 19 d7 ff ff e8 ff 21 af ff 90 <0f> 0b 90 48 8b 44 24 50 48 8d 78 40 48 b8 00 00 00 00 00 fc ff df
-RSP: 0018:ffffc9000367f6f8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 00000000343ec007 RCX: ffffffff820c64bc
-RDX: ffff8880251d2440 RSI: ffffffff820c6fc1 RDI: 0000000000000007
-RBP: ffff888034426700 R08: 0000000000000007 R09: 0000000000000000
-R10: 00000000343ec007 R11: 0000000000000000 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffff88802a726030 R15: ffffffff8df55480
-FS:  00007f6b53df66c0(0000) GS:ffff8880d68bc000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffde7257210 CR3: 000000005332e000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- copy_vma_and_data+0x468/0x790 mm/mremap.c:1215
- move_vma+0x548/0x1780 mm/mremap.c:1282
- mremap_to+0x1b7/0x450 mm/mremap.c:1406
- do_mremap+0xfad/0x1f80 mm/mremap.c:1921
- __do_sys_mremap+0x119/0x170 mm/mremap.c:1977
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6b5478ebe9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6b53df6038 EFLAGS: 00000246 ORIG_RAX: 0000000000000019
-RAX: ffffffffffffffda RBX: 00007f6b549b5fa0 RCX: 00007f6b5478ebe9
-RDX: 0000000000400000 RSI: 0000000000c00000 RDI: 0000200000000000
-RBP: 00007f6b53df6090 R08: 0000200000c00000 R09: 0000000000000000
-R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000002
-R13: 00007f6b549b6038 R14: 00007f6b549b5fa0 R15: 00007fff55995d28
- </TASK>
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+v1->v2:
+ - Minor description modification to align with the kernel.
 
+ sys-utils/fallocate.1.adoc | 11 +++++++++--
+ sys-utils/fallocate.c      | 20 ++++++++++++++++----
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
-Tested on:
-
-commit:         8742b2d8 Merge tag 'pull-fixes' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10b86842580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f9319a42cfb3bf57
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d9a13f0797c46a29e42
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=152825a2580000
+diff --git a/sys-utils/fallocate.1.adoc b/sys-utils/fallocate.1.adoc
+index 44ee0ef4c..0ec9ff9a9 100644
+--- a/sys-utils/fallocate.1.adoc
++++ b/sys-utils/fallocate.1.adoc
+@@ -12,7 +12,7 @@ fallocate - preallocate or deallocate space to a file
+ 
+ == SYNOPSIS
+ 
+-*fallocate* [*-c*|*-p*|*-z*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
++*fallocate* [*-c*|*-p*|*-z*|*-w*] [*-o* _offset_] *-l* _length_ [*-n*] _filename_
+ 
+ *fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_
+ 
+@@ -28,7 +28,7 @@ The exit status returned by *fallocate* is 0 on success and 1 on failure.
+ 
+ The _length_ and _offset_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB, and YB.
+ 
+-The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range* and *--posix* are mutually exclusive.
++The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range*, *--write-zeroes* and *--posix* are mutually exclusive.
+ 
+ *-c*, *--collapse-range*::
+ Removes a byte range from a file, without leaving a hole. The byte range to be collapsed starts at _offset_ and continues for _length_ bytes. At the completion of the operation, the contents of the file starting at the location __offset__+_length_ will be appended at the location _offset_, and the file will be _length_ bytes smaller. The option *--keep-size* may not be specified for the collapse-range operation.
+@@ -76,6 +76,13 @@ Option *--keep-size* can be specified to prevent file length modification.
+ +
+ Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
+ 
++*-w*, *--write-zeroes*::
++Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes, subsequent writes to that range do not require further changes to the file mapping metadata.
+++
++Zeroing is done within the filesystem by preferably submitting write zeores commands, the alternative way is submitting actual zeroed data, the specified range will be converted into written extents. The write zeroes command is typically faster than write actual data if the device supports unmap write zeroes, the specified range will not be physically zeroed out on the device.
+++
++Options *--keep-size* can not be specified for the write-zeroes operation.
++
+ include::man-common/help-version.adoc[]
+ 
+ == AUTHORS
+diff --git a/sys-utils/fallocate.c b/sys-utils/fallocate.c
+index 13bf52915..8d37fdad7 100644
+--- a/sys-utils/fallocate.c
++++ b/sys-utils/fallocate.c
+@@ -40,7 +40,7 @@
+ #if defined(HAVE_LINUX_FALLOC_H) && \
+     (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
+      !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE) || \
+-     !defined(FALLOC_FL_INSERT_RANGE))
++     !defined(FALLOC_FL_INSERT_RANGE) || !defined(FALLOC_FL_WRITE_ZEROES))
+ # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
+ #endif
+ 
+@@ -65,6 +65,10 @@
+ # define FALLOC_FL_INSERT_RANGE		0x20
+ #endif
+ 
++#ifndef FALLOC_FL_WRITE_ZEROES
++# define FALLOC_FL_WRITE_ZEROES		0x80
++#endif
++
+ #include "nls.h"
+ #include "strutils.h"
+ #include "c.h"
+@@ -94,6 +98,7 @@ static void __attribute__((__noreturn__)) usage(void)
+ 	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
+ 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
+ 	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
++	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
+ #ifdef HAVE_POSIX_FALLOCATE
+ 	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
+ #endif
+@@ -304,6 +309,7 @@ int main(int argc, char **argv)
+ 	    { "dig-holes",      no_argument,       NULL, 'd' },
+ 	    { "insert-range",   no_argument,       NULL, 'i' },
+ 	    { "zero-range",     no_argument,       NULL, 'z' },
++	    { "write-zeroes",   no_argument,       NULL, 'w' },
+ 	    { "offset",         required_argument, NULL, 'o' },
+ 	    { "length",         required_argument, NULL, 'l' },
+ 	    { "posix",          no_argument,       NULL, 'x' },
+@@ -312,8 +318,8 @@ int main(int argc, char **argv)
+ 	};
+ 
+ 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+-		{ 'c', 'd', 'i', 'p', 'x', 'z'},
+-		{ 'c', 'i', 'n', 'x' },
++		{ 'c', 'd', 'i', 'p', 'w', 'x', 'z'},
++		{ 'c', 'i', 'n', 'w', 'x' },
+ 		{ 0 }
+ 	};
+ 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+@@ -323,7 +329,7 @@ int main(int argc, char **argv)
+ 	textdomain(PACKAGE);
+ 	close_stdout_atexit();
+ 
+-	while ((c = getopt_long(argc, argv, "hvVncpdizxl:o:", longopts, NULL))
++	while ((c = getopt_long(argc, argv, "hvVncpdizwxl:o:", longopts, NULL))
+ 			!= -1) {
+ 
+ 		err_exclusive_options(c, longopts, excl, excl_st);
+@@ -353,6 +359,9 @@ int main(int argc, char **argv)
+ 		case 'z':
+ 			mode |= FALLOC_FL_ZERO_RANGE;
+ 			break;
++		case 'w':
++			mode |= FALLOC_FL_WRITE_ZEROES;
++			break;
+ 		case 'x':
+ #ifdef HAVE_POSIX_FALLOCATE
+ 			posix = 1;
+@@ -429,6 +438,9 @@ int main(int argc, char **argv)
+ 			else if (mode & FALLOC_FL_ZERO_RANGE)
+ 				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
+ 								filename, str, length);
++			else if (mode & FALLOC_FL_WRITE_ZEROES)
++				fprintf(stdout, _("%s: %s (%ju bytes) write zeroed.\n"),
++								filename, str, length);
+ 			else
+ 				fprintf(stdout, _("%s: %s (%ju bytes) allocated.\n"),
+ 								filename, str, length);
+-- 
+2.39.2
 
 
