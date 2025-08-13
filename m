@@ -1,229 +1,402 @@
-Return-Path: <linux-kernel+bounces-766309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D074B244E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4203B244F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11633AED54
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867723AA581
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA0D2F068A;
-	Wed, 13 Aug 2025 09:03:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fdNaJdSH"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1272D190C;
+	Wed, 13 Aug 2025 09:05:58 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6EF2EBB99
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 09:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755075799; cv=fail; b=E91oF7jl3c1bMH3jQU+99FmpKySUuleraD5cHfxVy6W5ZVwEQzz/LPRlbKeOe6BPPK28BBBX06xmQvKk7YbBhpMu3R4O7goVz46Ot4JIte5GMiC4cf8r5RTyDH6wcE3B5D+xSBLHLag92heJ201Y6LLK8VurTmyxq9nCqBMXP2Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755075799; c=relaxed/simple;
-	bh=MbldZlEHVtr6BizdxuXelUxwbxIq/vymGENBl2+VIrg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Pb2NSkopOtypGqPBsGryRwJYDiDl7Qoo8kJWwfr8xbBdEiu590PdM9kUOzpCWAMaSmwg4QRD9J9zPIDBfXL5jd2he2GtPnj+oOb+2ENgC/MQ1mAEWMOQMLB66vf2q0T3Yk/ucl4YCJQilaXft4dx+8O6uxz/YVjf9PE2LVe0dsQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fdNaJdSH; arc=fail smtp.client-ip=40.107.243.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Rpl5/WQ/8oZyoaApxBwEWGW+d/f48OcjnImg2CFMHXV9tTeTouNcNi/8cSHlT7X9Dfzcdw2tmLkwo12PRIeYDAUA2MgjT/9OaIv58NdB9uyPENl51AoBFX7OEOvFW581MbsqdQ21FcvZXy3YEAdit2Pc1RodMnVpkHQk1f1YkrKO43px4S9jYtkaD6KC4BaF3kdKkoyKRIPbbvLrdm8XvvDEJYc1I2VWgFV1N7Dcrx1j1qFBLlyEBduUDZLpwv9zgExnrzlGH6kErJ1VvInBd5j9uzN/e0FvEq4gx71x7fru2NHwSNYy5HgcsFBMJ+Li5y9vbi+OCQBBNMYC8HxLMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3fKkahLt9C6Vt16hydKrtz6PkxghzWq2t9ExZ7HM/ZQ=;
- b=jSrvIU7qQdSPqoIfVjdszTLkeXAKMfG6tSnx3S4pVYSjKhOKfTPjiMpkMoDziUOzN6iNSYTBrKMkceZrZ82DySxno0mRnLGvgEgfmWsLPsU1jO5REyMxC3xZfRBZOSsLuN7FAjT8uqEJwFqzmQTdPCDNXEK9OssxBmOY3iqh129J1/2zkCQEuYJnvnTvaL2kIFUNwtqHOSxV53thZDN3WoI/PAfYSlKq8oXAuwdKNNOc3PkmAG1QA7Qc4Vrku5mKSn1DITQqcGODKDfCH9hYYwpeiMTcTLY2iDqRyBJwPpkHrFELvu/zKVynpu9bgibMrACraRRTT/vAbQW8SKwXpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3fKkahLt9C6Vt16hydKrtz6PkxghzWq2t9ExZ7HM/ZQ=;
- b=fdNaJdSH8noisQymIPQZe1v51dFmg8DT0jDl86arEsdylc9YSFGldxf56N7TDBS4MJp2TYoiiWYQqS8RQu5P1K6tQxa/KgrOJEx9i0mpH2vb1edZ87LOSg3zDlMFMBWkutxtBIMlzDlZIf4sRvWLwyK1eS9vj8I7ITqAbh78sV4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DS0PR12MB8787.namprd12.prod.outlook.com (2603:10b6:8:14e::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.22; Wed, 13 Aug
- 2025 09:03:15 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9031.014; Wed, 13 Aug 2025
- 09:03:15 +0000
-Message-ID: <36f76e46-580f-43d9-8726-fe13e0c1bba1@amd.com>
-Date: Wed, 13 Aug 2025 11:03:09 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/sched: Document race condition in drm_sched_fini()
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- James Flowers <bold.zone2373@fastmail.com>
-References: <20250813085654.102504-2-phasta@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20250813085654.102504-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BLAPR03CA0070.namprd03.prod.outlook.com
- (2603:10b6:208:329::15) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270AB20EB;
+	Wed, 13 Aug 2025 09:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755075957; cv=none; b=nC2LIaI/pFGb03pS4NpkxDbV1HgWCPzIv+it4WUBc81IzpPUflvoK6yfSPJhotQBffya+VaW2Qt9g/L1u5Ej8VJQTV2/pI63OW1uxhVFLQ2/54EB6bpmoXMfhKLlJGwOnl2cRwAnsPdyhEvAQULHGpFmjijPopGIbT7wlE+/uvY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755075957; c=relaxed/simple;
+	bh=R73pDVK0+rTjwBNX8EeB3Fe4kOmp2X5fu9MZNOhzs3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U3aE8ra/7s7pykj7VNjIqpyZw0WjQZkpiELoHVldjanNoCZKNZXWVY7O8SoSr2NN2ZjqScpRUrEv5NKRbAWgA5GUBq/Skk+TvA6V7InTJfV5CndlSx1owy/k4R+HuFjUE/yZcPCLDL3RuVIUyaJhctkVDTEVXbgml4fTszVvPEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: esmtpsz10t1755075847t32894ac3
+X-QQ-Originating-IP: bqQZWNQI/ONbgNOc8LQ+pUQ21YN60deVeWVf6xrUUHo=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 13 Aug 2025 17:04:05 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 4281347920772169751
+Date: Wed, 13 Aug 2025 17:04:05 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, danishanwar@ti.com, lee@trager.us,
+	gongfan1@huawei.com, lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/5] net: rnpgbe: Add register_netdev
+Message-ID: <B41E833713021188+20250813090405.GC965498@nic-Precision-5820-Tower>
+References: <20250812093937.882045-1-dong100@mucse.com>
+ <20250812093937.882045-6-dong100@mucse.com>
+ <e410918e-98aa-4a14-8fb4-5d9e73f7375e@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS0PR12MB8787:EE_
-X-MS-Office365-Filtering-Correlation-Id: fe01e5a7-9ae2-4eac-c62e-08ddda483caa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1NsKzVCWGpNOU1Oc0JnZTdNNGJjZnhrT0cwZ2ZNZXZ1Ui9TNURPYmI3K3hz?=
- =?utf-8?B?TVdZd2RxanR2K2Z6TGZOeFpxcThFQVl0bTdDeHpBK2ZpYjczU0duMEpFdEl0?=
- =?utf-8?B?UWRySThZZGtTNnEydFVRS1V0UUg0cFc2Q3o4YXc4MUhmZXppblVOZm91dmxl?=
- =?utf-8?B?YTU5aklWbUwzTDJnRWxWUDAvbmFkK3JYamR3MS9yMzljNHR6RUR2bzQreXdV?=
- =?utf-8?B?emlxZmtGSmhNa29rejFIWkpTMWhIaTZ2cmt4a01UQ0plNnVIeEYvdmhJSDFw?=
- =?utf-8?B?RW5mMk9pamYranIzdTlKVjJjVjJmZzhGb2hmR3RvM1lneXlEUFpDU1hHNVh1?=
- =?utf-8?B?OVZwZDhLWEp0WXpqZ2NCaUQ5VmdOc2hTM3Mzc1VJcUZjVjZFZzdEUzNvQWdK?=
- =?utf-8?B?bUgxTGEzUlhETVBXQ2Q5cllublREYTk5NHp5ZkRSb0hhNDA5YXc2NUNYNCtv?=
- =?utf-8?B?R3cwaWR0YmtFVWd0azc3K3B6Q2NzYVJ3ZDc0SVZONVI2MHc0bUpYNElSdER3?=
- =?utf-8?B?Zlh0ODIrcVBSd1RqRnJTSEdQN2l6MllJRG9JVHBqa2IxZWw2eU9hK0NQczJE?=
- =?utf-8?B?SGluekdEcFVPYmdMLzhLcUdIS252TXRjVktGSWFTQWZxUlRlcUVqeENhRlNV?=
- =?utf-8?B?UlUzc3pHdk5BcVlLVW5vck54SXhFeGdHZGk1S3JaL2M5R1BSbnEzbUF5SHdp?=
- =?utf-8?B?TXRJV3FkNC9VVzFSWmw2dGJEbXZLTVdNTWNJbDFlZEp4QWNBbC9maFhCOUYy?=
- =?utf-8?B?K3hTbFBzZEN0b1hCQUlYemFIN3FCa3Q3VzhzL0YrSVZyaTJDOFJuMnN3dzV2?=
- =?utf-8?B?VklXeWZrQ2lyOE9JSTJyK3pRNWxrU0xyVU1XZjVxU0d1M3NuWTFtQVRTcVpt?=
- =?utf-8?B?L3dwNDFIRWZnNW9hRmxadGpPNjB2dXUrMXR4QlRTQ211NmJBbXVOQWZ3dUxB?=
- =?utf-8?B?MkxJQmpOSzlMQXJZL1NMVURWM2pnS0lOWmVGR3ZRUWYreENEcGk1Mk8vL08x?=
- =?utf-8?B?eDY4NjI5MENkV2F5TEdjVzI0aEJHaHZCN0lGRDhKN2tyUnlHWmNQOWVCOXZZ?=
- =?utf-8?B?MFprbFBMTDUybndoME96VjFpUXg3WUtDelF4Z2gyWEFNcGRHWmM5MUVHdjVT?=
- =?utf-8?B?TWQybWlLbk5iNjA5eGhXYkFoVlR0d0dJR3djUGVhQUZ1S0hGa2FUMFdWalJS?=
- =?utf-8?B?TS9VYU1aeUJEQ1lCVWxHdG94SXkyTlZISCtHQ0ZGMk9vbFRLNEVCOEFoZDl4?=
- =?utf-8?B?TldpSzZjNWNzc05MYnA3Q09Idi93YkEwalQzdHZHTURvMEc0Y3lrS1Q3U1VM?=
- =?utf-8?B?aUxnRi9ET2QySTVnSVRWZmNQOWFtVzhzMjNEeU1vczRjVGZweXBXSXc0aHZV?=
- =?utf-8?B?ckcyVmd2b0R2TXJoUTZ4YjU4SFlqaWpHNWRYcm1MTU5ZM0JqVDI4aVVYMDJR?=
- =?utf-8?B?SW9sT284Y2QwYUJ3VCtKS0tIYlFYVCtMUkhvY0cxMGk4K2x0bGFWSGk3cFN0?=
- =?utf-8?B?Q2szVWhycjk0WEFQN2FJRmJhVnNDK0F1RFJzMWVwUTNIR2lUcWxOYWhCUExQ?=
- =?utf-8?B?cHgyYkVKclowMHo4dk8wUHhCWG92a0dHbUpiRC8rQ2FUK0NYUU4xV3FSVlJp?=
- =?utf-8?B?UGpiZDJuTlk2RGNYRWRyMEJvOGRBd2NYWlFRMjRzT0Y3RVhSY0FnYXdaT0ph?=
- =?utf-8?B?RndPcGpxczFyNkF2RHhpZzdMUHdHeW82UXlIbWMzRlBOa20xOHJwc3BscG91?=
- =?utf-8?B?SVZheGVpM2YrM1lVenF4aDRlZ3I1U0kvdklVZGd0WjNieVFIZU5iOGlrQUNm?=
- =?utf-8?B?N1pUY3B3RDZocEE1YWZ1cUJPeE8xTVVnZTdWN2dXMzBTc0NtcHJKNnFGbzJx?=
- =?utf-8?B?aS9ERVlSVmJnWHdJSmpBcmFNc1Q5ZjBlRVlTMm8xNFprU3NoSlA4YkhCMStz?=
- =?utf-8?Q?uBPS33mPlG8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aVUyWGF5N0p1TFY3K2lWWllxSzZYUlRDbmFaTERCODVKcXk5a0I4a2hWS0RD?=
- =?utf-8?B?MDRMYVQ4RVZYQ1RycE0wRWhRODBuWWpJQ2YyM2w5TXp4M2RDS2R0WDdpMC9a?=
- =?utf-8?B?ZXhDbXh2Qy9pZUJLY2wzY29VQ0lpUGFSdFFnR1NSWFB3MVowYXdOSGRRd2Fa?=
- =?utf-8?B?bzJIQVRvTUp6MTJURW1wN00rWEhEK0M3TG5ZY1lDRjhDeExKUEJ5a2xzeFBE?=
- =?utf-8?B?SDlDNVdNT085eG1FejNmTzdzSnFDTmNCQUY1SGFVejN2ZDVRV3Y3dmM0c3lp?=
- =?utf-8?B?Y29ubVJndUxDTTJoZ3VoRHJxMkVYeUVBam9LTE4ybjR4dE90aVY1QU0xenNx?=
- =?utf-8?B?bmdxUURYMEtpOGtaWDNkY00wS0kwc2lmUUxvbVdTR2w3RkJaRW9jelAxdmF3?=
- =?utf-8?B?WDRBeG9vMnZrWUtJUmRxK21WUEwwVElJcjMxS2cxWWgzMjlJVHdESy9QaFBs?=
- =?utf-8?B?YXltL3pTVkVMb3BabmVya2F3RFh2c252NndRalplZlBtTXl4TE1Bc1FVWjJI?=
- =?utf-8?B?SEdvWHFzQTQ2MitwdldkNlFIKyt4bXc2Zk1MY2h6QUxaMlN4eUtOUU1jSFd4?=
- =?utf-8?B?TnY3U0trenVPeXlMZDN6NHZYS0xhbW5jSnNIK0xUS1R6RGZDZnhMMlNrUlFY?=
- =?utf-8?B?VEp1ZmFUYUdDTFByMXNZQ1dCd1FQRkM5Y09DZnVDa3BVZExpdHZzMmlFSjlE?=
- =?utf-8?B?YU9wSjQyOHJURE1lVEZna1psTitvbFJudUg4elF5OEsxYU9EME9IV2NxeGZt?=
- =?utf-8?B?VXVPakVGNU91R3pmTlVpNGI2bDlROC8yT3N5a28yNmpzVkpGMlorZ0JoaXo1?=
- =?utf-8?B?TDF6K3VYS2NZRmdGYzlpdFp4NllMRVE0UVRaWmFQdmJxQnp1WjRWOFdMeGF2?=
- =?utf-8?B?OFNPdE9XSjhJdk1xMDM2d1BQVGFZRWhIV3AremFPekhDSEFsVEh6M1VRblRp?=
- =?utf-8?B?Z1RGTGZFQ1VHYTQ0aUpQSHJRWHdzUGJNbmxLWjgwejBvTG5pZmEyOUQ5RTE0?=
- =?utf-8?B?MzJZRDdEbXVOL0h1YTBtSVdNVnc5OGdRNlE3ajNyOThFKzFUOCtOWkx5WWhy?=
- =?utf-8?B?Y0laSTI5NDJPWE0yRnRhVjBRWmRHbTVNdTNrZEh4cFhiYTJXc1kzMzVGZzYz?=
- =?utf-8?B?dlcrc1VGZDVoUnIwTXNlTGNVMWh5TW1FTlhYdmh2dlp6Z1NmK1l3ZXhFTHp3?=
- =?utf-8?B?anFGQzlKN0RCbUtjWE9sRGEyTHJFdjJkbk9aWkh4czlETnRuT2xlaUxRbGxl?=
- =?utf-8?B?YllQVDdrYnA1Z0lrbXpBUjBKN2RNd0xsWU1xT2YzWXRMUlU3ZkhEcUx6WW4x?=
- =?utf-8?B?enBWaDdWNDd3UDQ5MlE1RDJrQXlJTkF0cTNHTFBwRXNBWkdadlZreWZxcnJx?=
- =?utf-8?B?bHV5UVpybUwyVWdRdjBPNVlTdnp4ZllzTXJ2aXhaQUkxeFB6OHFCbWFHdGxV?=
- =?utf-8?B?eXJaZXVHVkVUTEFHVVdnRVVzeVd3UmFiMkVoeWtJVXFtUFVoSEpieERRM0ZQ?=
- =?utf-8?B?SEZhcXFXaExwRDZZRERjNU9QS2hyWCtXTXZrSnVmUHh4aW9ld1JwY3h5aHE1?=
- =?utf-8?B?RjBJWUhRU2w2MERGejluWEI5dG0vMzQ1Y3h3c1hUdmo0WjVZYVB2MTdXa3Jh?=
- =?utf-8?B?QXlVQTBpWVludlpYeVRRUVhJdzNRc0dlK0JmYWh6dlU0Z2FQRjRVdkxLMWh1?=
- =?utf-8?B?MkFSVGp5bk5kUVZCQUxVVW4vODVzQ2xDTXRrb1k3Nm9GeUNGa25DZzBJUDVN?=
- =?utf-8?B?Nitsc3lUTlBoeHozRUMvYUNuWXpXNnNQNTRMVjRFZmRPMittUm9Pd2cweG1Y?=
- =?utf-8?B?UDdzRG9oWktIRHZERmFVeEswM2ErU3gzdUt1YnkyZzF5Vlo4VEF2QnJ2aWZP?=
- =?utf-8?B?YklERytuYit3cnBaVEFyaGJkbTM5L2VQVTNrTFJzaHQ3TytTY2VERnhuUHhy?=
- =?utf-8?B?L2twZnE5Q3FqM0FJclRTek5VV0dEWXZwcjQvaGRyVHRhU3hNSXdJZHFNQzZU?=
- =?utf-8?B?U1FyYUs0WU5PNGNnQ0lGVWQ4eG9jM2lnMldiYVhYVnVCZHg0ZDBHanQrV2JW?=
- =?utf-8?B?a3YrNmhGREs4UktpelcxY25IYXM1dnhPRWZMNDd1dFA2VTBHSjJMRkkvVXVL?=
- =?utf-8?Q?/Pi+9CxCV5lXbUdS1OesLYnfP?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe01e5a7-9ae2-4eac-c62e-08ddda483caa
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 09:03:14.9603
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6zWtctjQZxspwUITfmUZPILoCQ/aHZaPa/q0NUf/BcrJWaMgrzY4wXKa4hwhrxvn
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8787
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e410918e-98aa-4a14-8fb4-5d9e73f7375e@linux.dev>
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MmIUUz9KGMMdAUkKQml2MOIp5N/y8YJRi6AxjBU3BQhEPVy/yunMHz76
+	8KEyHr7eS7Aw1zPF/J0AUZ6VCyf45D0MpLCWXU63vtFMO6dgK00NfaQ9UhL9fZsy+QuiHWP
+	LhRTONWlRGquZHYxR+mxBbv2rf4G9lvPE9KCvLMpnsJmK3uJZJL30PIfKfmZ6bz2BxpCWSd
+	MSQqWNXnNYGJ/RBPsG92ye0/8texM9Qm+6oKpNEDoNkiHTs9wYhQgyN6l5CpeyjQir9E9FG
+	GcSz3Mjv8wLOh1WQX+FRQCrvkzrgyL7MHOP9iMDo+gu4QMfnnM/RjqfkddCnxReayYUanWT
+	wNBfX9rZ/fufWkhI7y3FjlknfxgVvAc8XyWZlrgFEp2MzTBwiVWLjq8fxSdIs53MafKywnx
+	oOB6n5r6AspzbuLIVm/lrRSca46y8wmjgqXeN6hQmKJJDewT8VRgWbCWx1xfZDNZd0TnYqM
+	avQn1dWYzP8IMrx0h/CUM0myVe5qVE+hILhhEMSVbanDmbBDsSDpuwKpgZX1fJP8pCiMz1+
+	DWTfbLuKxp2iViGPTcy+L9E+UlyBE9v2RvIkziFB8gCTPQ/oOesT3rOwNRsGoC99y/PO7YP
+	GCeyYcGndO6khsKP7ckSxUaXwuBjg1TrkqQ5exRAMcdIuNkA3yZc0EjFT9B0ShkqXCy2baS
+	3af8JqVveuK7zQJUO/g7J9xyWIKakKgfqztzCW1iEvO4B3lm96xIYYf4FEcdWgCpMfpryBd
+	zlEkGmb/fCFYdmnWuPx7Q98uDpu/pMKtDFLO9e3Iz3N136smmq/j7VW3hr0TYKpvPh4iij6
+	J9X1XM45dAOAWXBb2RDb/DUyZdryGkIYZW9j74T3/GvmQFQVjldC1+LCyNEjgjcviOH7B/J
+	+fuxwHMLluBeNUJ/7zEW84s+G0whYWFf5VpZyua7VeOIBt5Rdj3cBDMEYYlLSVb0X7grmAM
+	O1T8Rs2b5wuXLh5pWgDQNfDHDWFZbBp+0kSf0fqwQIyhESp+dSaHQ2tqXcWGE+46VxO2yaY
+	ESC3ZlI4IaOz47dA4ISjxh6J0q1zW86SkBMJXWnA==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On 13.08.25 10:56, Philipp Stanner wrote:
-> In drm_sched_fini() all entities are marked as stopped - without taking
-> the appropriate lock, because that would deadlock. That means that
-> drm_sched_fini() and drm_sched_entity_push_job() can race against each
-> other.
+On Tue, Aug 12, 2025 at 04:32:00PM +0100, Vadim Fedorenko wrote:
+> On 12/08/2025 10:39, Dong Yibo wrote:
+> > Initialize get mac from hw, register the netdev.
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
+> > ---
+> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 22 ++++++
+> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 73 ++++++++++++++++++
+> >   drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  1 +
+> >   .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 76 +++++++++++++++++++
+> >   4 files changed, 172 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > index 6cb14b79cbfe..644b8c85c29d 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > @@ -6,6 +6,7 @@
+> >   #include <linux/types.h>
+> >   #include <linux/mutex.h>
+> > +#include <linux/netdevice.h>
+> >   extern const struct rnpgbe_info rnpgbe_n500_info;
+> >   extern const struct rnpgbe_info rnpgbe_n210_info;
+> > @@ -86,6 +87,18 @@ struct mucse_mbx_info {
+> >   	u32 fw2pf_mbox_vec;
+> >   };
+> > +struct mucse_hw_operations {
+> > +	int (*init_hw)(struct mucse_hw *hw);
+> > +	int (*reset_hw)(struct mucse_hw *hw);
+> > +	void (*start_hw)(struct mucse_hw *hw);
+> > +	void (*init_rx_addrs)(struct mucse_hw *hw);
+> > +	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
+> > +};
+> > +
+> > +enum {
+> > +	mucse_driver_insmod,
+> > +};
+> > +
+> >   struct mucse_hw {
+> >   	void *back;
+> >   	u8 pfvfnum;
+> > @@ -96,12 +109,18 @@ struct mucse_hw {
+> >   	u32 axi_mhz;
+> >   	u32 bd_uid;
+> >   	enum rnpgbe_hw_type hw_type;
+> > +	const struct mucse_hw_operations *ops;
+> >   	struct mucse_dma_info dma;
+> >   	struct mucse_eth_info eth;
+> >   	struct mucse_mac_info mac;
+> >   	struct mucse_mbx_info mbx;
+> > +	u32 flags;
+> > +#define M_FLAGS_INIT_MAC_ADDRESS BIT(0)
+> >   	u32 driver_version;
+> >   	u16 usecstocount;
+> > +	int lane;
+> > +	u8 addr[ETH_ALEN];
+> > +	u8 perm_addr[ETH_ALEN];
 > 
-> This should most likely be fixed by establishing the rule that all
-> entities associated with a scheduler must be torn down first. Then,
-> however, the locking should be removed from drm_sched_fini() alltogether
-> with an appropriate comment.
+> why do you need both addresses if you have this info already in netdev?
 > 
-> Reported-by: James Flowers <bold.zone2373@fastmail.com>
-> Link: https://lore.kernel.org/dri-devel/20250720235748.2798-1-bold.zone2373@fastmail.com/
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Reviewed-by: Christian König <christian.koenig@amd.com>
+'perm_addr' is address from firmware (fixed, can't be changed by user).
+'addr' is the current netdev address (It is Initialized the same with
+'perm_addr', but can be changed by user)
+Maybe I should add 'addr' in the patch which support ndo_set_mac_address?
 
-> ---
-> Changes in v2:
->   - Fix typo.
-> ---
->  drivers/gpu/drm/scheduler/sched_main.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> >   };
+> >   struct mucse {
+> > @@ -123,4 +142,7 @@ struct rnpgbe_info {
+> >   #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
+> >   #define PCI_DEVICE_ID_N210 0x8208
+> >   #define PCI_DEVICE_ID_N210L 0x820a
+> > +
+> > +#define dma_wr32(dma, reg, val) writel((val), (dma)->dma_base_addr + (reg))
+> > +#define dma_rd32(dma, reg) readl((dma)->dma_base_addr + (reg))
+> >   #endif /* _RNPGBE_H */
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> > index 16d0a76114b5..3eaa0257f3bb 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> > @@ -2,10 +2,82 @@
+> >   /* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> >   #include <linux/string.h>
+> > +#include <linux/etherdevice.h>
+> >   #include "rnpgbe.h"
+> >   #include "rnpgbe_hw.h"
+> >   #include "rnpgbe_mbx.h"
+> > +#include "rnpgbe_mbx_fw.h"
+> > +
+> > +/**
+> > + * rnpgbe_get_permanent_mac - Get permanent mac
+> > + * @hw: hw information structure
+> > + * @mac_addr: pointer to store mac
+> > + *
+> > + * rnpgbe_get_permanent_mac tries to get mac from hw.
+> > + * It use eth_random_addr if failed.
+> > + **/
+> > +static void rnpgbe_get_permanent_mac(struct mucse_hw *hw,
+> > +				     u8 *mac_addr)
+> > +{
+> > +	if (mucse_fw_get_macaddr(hw, hw->pfvfnum, mac_addr, hw->lane)) {
+> > +		eth_random_addr(mac_addr);
+> > +	} else {
+> > +		if (!is_valid_ether_addr(mac_addr))
+> > +			eth_random_addr(mac_addr);
+> > +	}
 > 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 5a550fd76bf0..46119aacb809 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1424,6 +1424,22 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
->  			 * Prevents reinsertion and marks job_queue as idle,
->  			 * it will be removed from the rq in drm_sched_entity_fini()
->  			 * eventually
-> +			 *
-> +			 * FIXME:
-> +			 * This lacks the proper spin_lock(&s_entity->lock) and
-> +			 * is, therefore, a race condition. Most notably, it
-> +			 * can race with drm_sched_entity_push_job(). The lock
-> +			 * cannot be taken here, however, because this would
-> +			 * lead to lock inversion -> deadlock.
-> +			 *
-> +			 * The best solution probably is to enforce the life
-> +			 * time rule of all entities having to be torn down
-> +			 * before their scheduler. Then, however, locking could
-> +			 * be dropped alltogether from this function.
-> +			 *
-> +			 * For now, this remains a potential race in all
-> +			 * drivers that keep entities alive for longer than
-> +			 * the scheduler.
->  			 */
->  			s_entity->stopped = true;
->  		spin_unlock(&rq->lock);
+> well, this can be done in one if() statement using logical "or"
+> 
+
+Got it, I will update it.
+
+> > +
+> > +	hw->flags |= M_FLAGS_INIT_MAC_ADDRESS;
+> > +}
+> > +
+> > +/**
+> > + * rnpgbe_reset_hw_ops - Do a hardware reset
+> > + * @hw: hw information structure
+> > + *
+> > + * rnpgbe_reset_hw_ops calls fw to do a hardware
+> > + * reset, and cleans some regs to default.
+> > + *
+> > + * @return: 0 on success, negative on failure
+> > + **/
+> > +static int rnpgbe_reset_hw_ops(struct mucse_hw *hw)
+> > +{
+> > +	struct mucse_dma_info *dma = &hw->dma;
+> > +	int err;
+> > +
+> > +	dma_wr32(dma, RNPGBE_DMA_AXI_EN, 0);
+> > +	err = mucse_mbx_fw_reset_phy(hw);
+> > +	if (err)
+> > +		return err;
+> > +	/* Store the permanent mac address */
+> > +	if (!(hw->flags & M_FLAGS_INIT_MAC_ADDRESS)) {
+> > +		rnpgbe_get_permanent_mac(hw, hw->perm_addr);
+> > +		memcpy(hw->addr, hw->perm_addr, ETH_ALEN);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * rnpgbe_driver_status_hw_ops - Echo driver status to hw
+> > + * @hw: hw information structure
+> > + * @enable: true or false status
+> > + * @mode: status mode
+> > + **/
+> > +static void rnpgbe_driver_status_hw_ops(struct mucse_hw *hw,
+> > +					bool enable,
+> > +					int mode)
+> > +{
+> > +	switch (mode) {
+> > +	case mucse_driver_insmod:
+> > +		mucse_mbx_ifinsmod(hw, enable);
+> > +		break;
+> > +	}
+> > +}
+> > +
+> > +static const struct mucse_hw_operations rnpgbe_hw_ops = {
+> > +	.reset_hw = &rnpgbe_reset_hw_ops,
+> > +	.driver_status = &rnpgbe_driver_status_hw_ops,
+> > +};
+> >   /**
+> >    * rnpgbe_init_common - Setup common attribute
+> > @@ -28,6 +100,7 @@ static void rnpgbe_init_common(struct mucse_hw *hw)
+> >   	mac->back = hw;
+> >   	hw->mbx.ops = &mucse_mbx_ops_generic;
+> > +	hw->ops = &rnpgbe_hw_ops;
+> >   }
+> >   /**
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> > index aee037e3219d..4e07328ccf82 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> > @@ -9,6 +9,7 @@
+> >   #define RNPGBE_ETH_BASE 0x10000
+> >   /**************** DMA Registers ****************************/
+> >   #define RNPGBE_DMA_DUMY 0x000c
+> > +#define RNPGBE_DMA_AXI_EN 0x0010
+> >   /**************** CHIP Resource ****************************/
+> >   #define RNPGBE_MAX_QUEUES 8
+> >   #endif /* _RNPGBE_HW_H */
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> > index c151995309f8..e0a08fa5b297 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+> > @@ -8,6 +8,7 @@
+> >   #include <linux/etherdevice.h>
+> >   #include "rnpgbe.h"
+> > +#include "rnpgbe_mbx_fw.h"
+> >   static const char rnpgbe_driver_name[] = "rnpgbe";
+> >   static const struct rnpgbe_info *rnpgbe_info_tbl[] = {
+> > @@ -34,6 +35,54 @@ static struct pci_device_id rnpgbe_pci_tbl[] = {
+> >   	{0, },
+> >   };
+> > +/**
+> > + * rnpgbe_open - Called when a network interface is made active
+> > + * @netdev: network interface device structure
+> > + *
+> > + * The open entry point is called when a network interface is made
+> > + * active by the system (IFF_UP).
+> > + *
+> > + * @return: 0 on success, negative value on failure
+> > + **/
+> > +static int rnpgbe_open(struct net_device *netdev)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * rnpgbe_close - Disables a network interface
+> > + * @netdev: network interface device structure
+> > + *
+> > + * The close entry point is called when an interface is de-activated
+> > + * by the OS.
+> > + *
+> > + * @return: 0, this is not allowed to fail
+> > + **/
+> > +static int rnpgbe_close(struct net_device *netdev)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * rnpgbe_xmit_frame - Send a skb to driver
+> > + * @skb: skb structure to be sent
+> > + * @netdev: network interface device structure
+> > + *
+> > + * @return: NETDEV_TX_OK or NETDEV_TX_BUSY
+> > + **/
+> > +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
+> > +				     struct net_device *netdev)
+> > +{
+> > +		dev_kfree_skb_any(skb);
+> > +		return NETDEV_TX_OK;
+> > +}
+> > +
+> > +static const struct net_device_ops rnpgbe_netdev_ops = {
+> > +	.ndo_open = rnpgbe_open,
+> > +	.ndo_stop = rnpgbe_close,
+> > +	.ndo_start_xmit = rnpgbe_xmit_frame,
+> > +};
+> > +
+> >   /**
+> >    * rnpgbe_add_adapter - Add netdev for this pci_dev
+> >    * @pdev: PCI device information structure
+> > @@ -106,6 +155,29 @@ static int rnpgbe_add_adapter(struct pci_dev *pdev,
+> >   	hw->dma.dma_version = dma_version;
+> >   	hw->driver_version = 0x0002040f;
+> >   	info->init(hw);
+> > +	hw->mbx.ops->init_params(hw);
+> > +	/* echo fw driver insmod to control hw */
+> > +	hw->ops->driver_status(hw, true, mucse_driver_insmod);
+> > +	err = mucse_mbx_get_capability(hw);
+> > +	if (err) {
+> > +		dev_err(&pdev->dev,
+> > +			"mucse_mbx_get_capability failed! %d\n",
+> > +			err);
+> > +		goto err_free_net;
+> > +	}
+> > +	netdev->netdev_ops = &rnpgbe_netdev_ops;
+> > +	netdev->watchdog_timeo = 5 * HZ;
+> > +	err = hw->ops->reset_hw(hw);
+> > +	if (err) {
+> > +		dev_err(&pdev->dev, "Hw reset failed %d\n", err);
+> > +		goto err_free_net;
+> > +	}
+> > +	eth_hw_addr_set(netdev, hw->perm_addr);
+> > +	memcpy(netdev->perm_addr, hw->perm_addr, netdev->addr_len);
+> 
+> the comment from register_netdevice() says:
+> 
+> 	/* If the device has permanent device address, driver should
+> 	 * set dev_addr and also addr_assign_type should be set to
+> 	 * NET_ADDR_PERM (default value).
+> 	 */
+> 
+> dev_addr is set by eth_hw_addr_set, perm_addr will be set by
+> register_netdev(), no need to manually copy it.
+> 
+
+Got it, I will remove memcpy here.
+
+> > +	ether_addr_copy(hw->addr, hw->perm_addr);
+> 
+> your init() function has the same copy operation...
+> 
+
+I will remove it here.
+
+> > +	err = register_netdev(netdev);
+> > +	if (err)
+> > +		goto err_free_net;
+> >   	return 0;
+> >   err_free_net:
+> > @@ -170,12 +242,16 @@ static int rnpgbe_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> >   static void rnpgbe_rm_adapter(struct pci_dev *pdev)
+> >   {
+> >   	struct mucse *mucse = pci_get_drvdata(pdev);
+> > +	struct mucse_hw *hw = &mucse->hw;
+> >   	struct net_device *netdev;
+> >   	if (!mucse)
+> >   		return;
+> >   	netdev = mucse->netdev;
+> > +	if (netdev->reg_state == NETREG_REGISTERED)
+> > +		unregister_netdev(netdev);
+> >   	mucse->netdev = NULL;
+> > +	hw->ops->driver_status(hw, false, mucse_driver_insmod);
+> >   	free_netdev(netdev);
+> >   }
+> 
+> 
+
+Thanks for your feedback.
 
 
