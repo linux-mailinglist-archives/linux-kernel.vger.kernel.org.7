@@ -1,74 +1,93 @@
-Return-Path: <linux-kernel+bounces-765834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B4EAB23EE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:21:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B91F7B23EF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572F21A27225
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3358563B93
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A621B270541;
-	Wed, 13 Aug 2025 03:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3EB271441;
+	Wed, 13 Aug 2025 03:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kvhTucUC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="SV2nulce"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942161EDA1A;
-	Wed, 13 Aug 2025 03:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609F0270EBF
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 03:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755055300; cv=none; b=BU/BUoCrb8tGgFCAwxCs2DBIlQbtxnYtwz3ABZDAdCQbAuPVhPjaM9UTcnJQjITVbA4Da1GwMAGYoUv0LTidd9UVf4RMGBDZggNfXVOQpzATdz+56T4WpJHjpSKaFmBUzTGxjf4MQYnNANzxLLBxgDqvYXoqfX7Woftm9VjMEWU=
+	t=1755055318; cv=none; b=ss2n/+4VFqwNa3g/9b834kOOVN69NDcMO5h2JJoenl0pQK/1AZxJ3oj7IjPfPJYXVP1ZnFAwPaowpRmj/XUJ5w1oApvdO9GdRbxB1ygHhF5nJv6cILAyOr3yCZc5m80NRK2ShwCLFwzkNo7S1JzPM2/pcpO7efN7BSpSRhi/hR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755055300; c=relaxed/simple;
-	bh=Q3CAbHLCBVDyiOb5ExsJtxT9sJ3zARgcXcaVYKZzXvU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oS7JEBKjPGLBL/kWkHKM7ePm+dWZzbqfK/rfX9ACkd7sbrgly9pZOayq1ltWQJFn8hnQBtP3fUbb6ZdsRcdYakXupkCxzq6cFbdcGQFshULWEw2QvkvJYZbc4AF8rAXMnMAsjguyPQymgWXtr7rr8NlLO3+ryZWujA4OQBSgH6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kvhTucUC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CKaI4w029567;
-	Wed, 13 Aug 2025 03:21:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=TyQ8V+iTVg28IwajxsYPxQLlMjOJohRSq+X
-	yP8tZTpk=; b=kvhTucUCDwpGD4xdg87euFUzt0iWmMLEkXDxANLmq6BQEWJAQNL
-	oMv2ygys9iRHmA4lhNE7wP8NgBQLPQqRGf7OmABLNoq9ibRT1RS0OxkgXit9HTQM
-	Z68hL6rG1NHHLlvVWSoK97yWMxrEwRYVEJMaPgttezh11C1KIKLCwx89x2nbID0U
-	7wAaneIlNSuZ3DFSiGlLosnpxTF0N1//JWtQxRnOMU8NwqcvOKUs0/DJXrD9Mp71
-	u4OQOnESoniWwsuU2GRW3tKTZLLNA7Qh+CCFH5/yQa2c6hPfxovASaZVYn48NL2X
-	TI61v/5lguhyStK9UOiPYrGOwVQjcUbjWbA==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dy3ga8u6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 03:21:36 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57D3LXOR023724;
-	Wed, 13 Aug 2025 03:21:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 48dydm8nrf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 03:21:33 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57D3LXFs023721;
-	Wed, 13 Aug 2025 03:21:33 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 57D3LXw1023709
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 13 Aug 2025 03:21:33 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id 4697A21D2A; Wed, 13 Aug 2025 11:21:32 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: quic_shuaz@quicinc.com
-Cc: linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/4] Fix SSR(SubSystem Restart) issues caused by BT_EN being pulled up by hardware
-Date: Wed, 13 Aug 2025 11:21:26 +0800
-Message-Id: <20250813032130.3851524-1-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755055318; c=relaxed/simple;
+	bh=QXvZG2q1wYALZ9ywXDBmZP2Lg7TZImln+AWgStp7op4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ov2hs6Fi7KEc0jZTtNKLO4JUwfiw/F+z+kbJoGJCS5tRlNLWKZzYPm7ZcSVwRxEVNi9THtnOCfaoEgoQJp+JAWOx7k6UOZltS7oNEMY0kEf6syvn3IiyJxHtJp9Rec6zfUyDnDCH7w7r+RAE9w4DEBrERgYwVKaT4nd0eXNPKnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=SV2nulce; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3e3f449fa6fso57677645ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 20:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1755055314; x=1755660114; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZh5F0QX3EknECzCmYMfb9xtWVRUzlviyKurejiq7Q4=;
+        b=SV2nulcekr4iGfgGD+3qXbM6ug2yWC72pb40cukyk5eOgrIsNQjd0/gGkEhAD4Xv0+
+         vumXzHbnlvPcDkYHPcpFfRps7t3ZRz+qCqD1YhT98c+lPyxHt6zEHeB6wuuTiKpiHhJT
+         7h3yjcozIIgeX8inKnAyWuEv0m+eriG0aKfQyxw8VV4xYfbkxokSwlkpk+HziurupHA1
+         BR11teaqM0BAS3ht8xRgjendAwue6lrW5n+JuQJL+s9fbbcBzX4YTkjQ05ergHAt582m
+         NOPsF0g7FY2kfwkhYUqcxupw7M85sf6RUl54aFaP1/j+mZLoW1zkGeDJCdXRZWi00Ve9
+         2KTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755055314; x=1755660114;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PZh5F0QX3EknECzCmYMfb9xtWVRUzlviyKurejiq7Q4=;
+        b=RJhucrfQ0Ex5tmMri1V7yrTuC/2o+zOKnbljCMA3wxCt8xNWthubgU80IebLlTsgFx
+         4u3E/bmxbMEnznTLoPwA1F9Iysa0vSYeTrInmcCEbchY5tpCHgXbmTysNlLuzwpBLzg8
+         rGLm24JQ8hCqyLGLZmO2LBl9Lfk8tPIaYpNS0shpTGvDpMQzEup3rsKyymN5TRLIZFZW
+         kJldsB19J43GMi56XRE9k0ZIn/ox7g17aUNjlSlv3x0xM2SLBR8CGGma7kQy5cVdAuM1
+         +46xCIEG6azztk1mlQnVe9DIZb7XE8mA1rvoF7fv8s7hTzvZiygiRT++8Pj8bhVEGg4P
+         youw==
+X-Forwarded-Encrypted: i=1; AJvYcCWaVggS7QIldbfaFu09F30a8s2cEBDzL28fPBWXeMN5ojYz8vEi0xFhlGwqKXIRnBVRgVjK2mXUlzoay0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIIOFWmUqpBWOfA3GZF6X7LHYwujHNSlg8EqggZTFJJx82Jqv7
+	Pt+dDG8joWga9PlYWjj5phEFLIxF2Gz0A2cjpo0X+YkWGfyRvdEk96tYzBaucDHcCbg=
+X-Gm-Gg: ASbGnctM9GjFoKkOSoLUwm58z1p2TJF5EUkK+HrM0D2OpiTQ6tmdH67VPxjSAIHtWrx
+	xaaUHh1r4d34OeVfHp1Vb2BHH6XUcdUFcSvNxnW7skju7ZeYPHJrYuLg91S16crFDHpVD/8LP6X
+	dx1KUTtYXhXHfMgHl+cIVRf7hZNbz8y3bAq4AMbOmZHsxXSm6pt/Jot1Uoz469IFieoDuiSVvfA
+	mI3LZIkQfNxwH21lghxAqIU8uTuOmRRNnwQOY9slnK4hTMXWT71s/2s0tpHi+JbpbHudW8zB/sZ
+	N5S2+veyWppJEBB1Whxkved6UP9fnC9Y0+Fi1zfc6HStHYnSGAHNkUnjg1oc00VUJqi7MYaUWLU
+	VTNGSNanXDw+/wQqdDq43O0F5lOzrabpoHQZD94Btb7My/8Tx/zbBHxolpzHGZptO7g==
+X-Google-Smtp-Source: AGHT+IEGjkB4ovYyLSKxeQ7O4Oh8jWvGVbE2gJKsffKwKHW4yl0n/kstE9uKuxUw+5W4Y4U9OyRJLQ==
+X-Received: by 2002:a05:6e02:17ca:b0:3e5:4c7d:b799 with SMTP id e9e14a558f8ab-3e5674713f6mr23473385ab.13.1755055314466;
+        Tue, 12 Aug 2025 20:21:54 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae9cee258sm3453085173.99.2025.08.12.20.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 20:21:54 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: dlan@gentoo.org,
+	lkundrak@v3.sk,
+	devicetree@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor@kernel.org>
+Subject: [PATCH] dt-bindings: serial: 8250: move a constraint
+Date: Tue, 12 Aug 2025 22:21:50 -0500
+Message-ID: <20250813032151.2330616-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,68 +95,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=X4lSKHTe c=1 sm=1 tr=0 ts=689c04c0 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Dei6p5SHAAAA:8
- a=pGLkceISAAAA:8 a=CVKY41Y29sSDTK7O-P4A:9 a=TjNXssC_j7lpFel5tvFf:22
- a=M-Yerj1wOn-OpK7r_3ei:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAzMSBTYWx0ZWRfXyPi96jeRa65D
- kmVxdKjfVovjxvL/gSFonB4ErEY/b+AWpsEqDezi5PZAKRGcNjxsmuDHSj7xB/EiE/cKUUAKCdG
- MK36IKTviGJceILZnGG3Of0mVl+sL3w5remZjcoVhuJl/SXgvrcVOXWC+H7vzlTkQIuJ0/6EFc8
- DBNlD1x+JHz+UQWpzUNtTiRH6u6WpEOLqjPMsr5JnPT/WzOK0MhNouOnovFUmOya8CcDk8w2EIW
- acYmbVftfEXB1oMM/PeSexJJ/1TSlG0N3xkQDVu76ybgW5n4ObNx/dz3s0zjx81d7IGkuUG2veU
- hWxXoGpv03nogx9DJkqmmjQWkMHebXeOCDR0OuOphlgjF3Zs25j2WZvEtCCixJLvlluZ7N7dCCy
- U4r/6Mu/
-X-Proofpoint-GUID: PIStzlbX4rBd_BFHBlVsyFRvBuG8wtm2
-X-Proofpoint-ORIG-GUID: PIStzlbX4rBd_BFHBlVsyFRvBuG8wtm2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 malwarescore=0 adultscore=0
- spamscore=0 bulkscore=0 suspectscore=0 impostorscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090031
 
-This patch series addresses issues encountered during SSR when
-the BT_EN pin is pulled up by hardware. The main issues fixed are:
+A block that required a "spacemit,k1-uart" compatible node to
+specify two clocks was placed in the wrong spot in the binding.
+Conor Dooley pointed out it belongs earlier in the file, as part
+of the initial "allOf".
 
-1. Timeout when sending reset command.
-2. IBS state of host and controller not being synchronized.
-3. Multiple triggers of SSR generating only one coredump file.
-4. SSR process failed due to tx_idle_timer timeout
-
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+Fixes: 2c0594f9f0629 ("dt-bindings: serial: 8250: support an optional second clock")
+Reported-by: Conor Dooley <conor@kernel.org>
+Closes: https://lore.kernel.org/lkml/20250729-reshuffle-contented-e6def76b540b@spud/
+Signed-off-by: Alex Elder <elder@riscstar.com>
 ---
-To: Marcel Holtmann <marcel@holtmann.org>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+ .../devicetree/bindings/serial/8250.yaml      | 46 +++++++++----------
+ 1 file changed, 22 insertions(+), 24 deletions(-)
 
----
-Changes in v2:
-- Update commit messages.
-- Add new change to fix Idle_timer timeout.
-- Link to v1: https://lore.kernel.org/all/20250715051618.724475-1-quic_shuaz@quicinc.com/
----
+diff --git a/Documentation/devicetree/bindings/serial/8250.yaml b/Documentation/devicetree/bindings/serial/8250.yaml
+index e46bee8d25bf0..f59c0b37e8ebb 100644
+--- a/Documentation/devicetree/bindings/serial/8250.yaml
++++ b/Documentation/devicetree/bindings/serial/8250.yaml
+@@ -48,7 +48,6 @@ allOf:
+       oneOf:
+         - required: [ clock-frequency ]
+         - required: [ clocks ]
+-
+   - if:
+       properties:
+         compatible:
+@@ -66,6 +65,28 @@ allOf:
+           items:
+             - const: core
+             - const: bus
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - spacemit,k1-uart
++              - nxp,lpc1850-uart
++    then:
++      required:
++        - clocks
++        - clock-names
++      properties:
++        clocks:
++          minItems: 2
++        clock-names:
++          minItems: 2
++    else:
++      properties:
++        clocks:
++          maxItems: 1
++        clock-names:
++          maxItems: 1
+ 
+ properties:
+   compatible:
+@@ -264,29 +285,6 @@ required:
+   - reg
+   - interrupts
+ 
+-if:
+-  properties:
+-    compatible:
+-      contains:
+-        enum:
+-          - spacemit,k1-uart
+-          - nxp,lpc1850-uart
+-then:
+-  required:
+-    - clocks
+-    - clock-names
+-  properties:
+-    clocks:
+-      minItems: 2
+-    clock-names:
+-      minItems: 2
+-else:
+-  properties:
+-    clocks:
+-      maxItems: 1
+-    clock-names:
+-      maxItems: 1
+-
+ unevaluatedProperties: false
+ 
+ examples:
 
-Shuai Zhang (4):
-  driver: bluetooth: hci_qca: fix ssr fail when BT_EN is pulled up by hw
-  driver: bluetooth: hci_qca: fix host IBS state after SSR
-  driver: bluetooth: hci_qca: Multiple triggers of SSR only generate one
-    coredump file
-  driver: bluetooth: hci_qca: SSR(SubSystem Restart)process failed due
-    to tx_idle_timer timeout
-
- drivers/bluetooth/hci_qca.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 -- 
-2.34.1
+2.48.1
 
 
