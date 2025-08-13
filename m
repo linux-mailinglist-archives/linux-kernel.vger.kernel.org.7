@@ -1,233 +1,121 @@
-Return-Path: <linux-kernel+bounces-766693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D86EAB24A15
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:03:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DF7B24A14
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32FC6883666
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0879558714C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3545A2E610E;
-	Wed, 13 Aug 2025 13:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3463E2D1929;
+	Wed, 13 Aug 2025 13:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PyD1dqBL"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VZYtFpfY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746E61C1AAA
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CCE14F70;
+	Wed, 13 Aug 2025 13:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090047; cv=none; b=AMRALHJQQ7Er1Oea5sA7CA7ZO+9xGYH8n9KOEhUn1aLRmpXpEzWJpN22pyml8DWUfsQI4ikydXFgqc39p5O8fZP6hxoQDrNnBq9Jq9136Lh/Hw+zotVVY1pszvKvkL8AfDYKe2wkZ95fiQN6xuZbtsGPskG4J0DqmI28Su5mQUk=
+	t=1755090149; cv=none; b=nAdPLQxwtPETSCSNoMopbisJF5M+s401N8UJOvNoxtJwFu5fICW77Yd+bYzTWa3RZSY95y+6K0Kxwjh8ib3ly+v2BO39DdUeDMiZSWq28/2RZnYdFnH3/YIZwanwmvHZ2fSPXEXt1is7c+RRQC+5PAaM35rgSyRByXBr954+S4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090047; c=relaxed/simple;
-	bh=Eacqepwje0vml54GTJE6PC8bZ+Y6sjD1UPdztT0uh8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TlBPjywymdrU6eOoDQTR9TtsfvWJL8uBuqpMPYW5kVuf9UWDB/CE6FeZJB76xHaeFnRERoZkCu1SSgNaBmNaXwmZQnj+JstHHZMndTuPEeA1WVVvF0kwqOCWSfLrzTSOlV10iEj40VNP+rL7goRnGRF57dZhWGliNqX3Nwm1PsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PyD1dqBL; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b78a034f17so5027800f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755090043; x=1755694843; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PeR748Kqcp8Ecn+7OwBivcVoxs7eFxEnihqMB/P4pQo=;
-        b=PyD1dqBL1ISMEX5Obq1wtEvKtjoI4qB2GC0NQzFTa9jM1+equLntZaK4Z9lHAJFAru
-         uMoDU8B8PrS/tP+7gnR/lhUXVSbmWUcA/t24SjFGCNOsWzwMNudrFFAdAK1ojwk2e6Fj
-         cR4bUrfQ062JgC12Wz+iLbUKBFocyBZj7k622jItMYu+bIUZezefOnEmPo3suzDhQg1C
-         65NNYW0JZKpuRUVDurSOqbNfAChF9GbXk5QSYi/kWK3EUHT2LReBQ7z2OM8NLAJcCZv1
-         pBRTp32XbCaPUPB5EYeddoJOfqw4OF+tElNtzHq2kl/xcDHajO2fJU5BL/J6Kjja+jYu
-         ZSdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755090043; x=1755694843;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PeR748Kqcp8Ecn+7OwBivcVoxs7eFxEnihqMB/P4pQo=;
-        b=TKfoFZX0S96yCce+wxAPjxJkSApj7SxjYKWMAVZbbx8m6iQUG0955PguChyvYI2CcO
-         aUMla+ieCbjhozSY3ixQDYSmGtjDz2koLpkJPdPRMZJoScQNDtbh0l+XDX07N5FdUOwW
-         Vx/jRaMfvNlcVs8X/CsVS3PE/PDgCoDqXVh5vpL1VxNGvkSD7er5Of2yo6HSvMFnvKeG
-         Y/DlSWGj19fWEf71n+D32uri9lo5X5wDPslIqHKUj/8y8PeQQRr2QuD+BIQonVsSKT8j
-         u2t568uRp9M7vl9kwywPGOsVhEgEPHzcvK4sKTS4jpMuEGRrgiEr5oqZ9LexVI/CQgOG
-         ULoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXq8yEy/LqjIcDvpZjZHnH+Phe+ihK3O+B5aTXBLP5BQ8Fk+pwhnoYGKFuj4RGh4gxjUBWTR87aoaASkSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpFYUekqOesQ9KQTD81K7xVr59j9jprHyANMh3VD/DoC//nHG7
-	OUeAB6Af2c5ATZCPFCFrpaZKn3Z+fnBbnavHhpqVJsJ8zIRrHkiyXPBVl/AVjHb/gOw=
-X-Gm-Gg: ASbGncvPRQlYk2LPSO+4Y0cxqUmRLrTpnVf7rSCLr1TxH/2b6VdYJ5aO+uzyhp/nkuX
-	l7TApBtwyI6zg9GUEVdFFU2hSY8/ESegiKZlilktiKaGtGoO6FwVXqZA7iGl927UI9J8Jok5tZ4
-	VlNElMs9htJvYD/kIqmBuMdTlDX5b2earbu5fyZsvrqlRbMs6ph1s3Ug9DoCSd7CIKwR5DF6Uxk
-	KHWCi7V5akdIH+Y8tCZ+FU77cL2TGatelczrSPtb5PzzQAnuqMXy7Y5urRvQyQDJXx9kbvTDSxK
-	jRKZReOCuGPpWBzpZGV4UKUT3M3T5kEa9CcdS9X5nFAfRrT/YgL+V1eUwo0GPfOP/rcrWv0APaz
-	ino1SFmakIPY6oCtiQtvO4lAxVYKZYdQsGF4OZxGVbFuMD4QChuM54uS1t7sPBA==
-X-Google-Smtp-Source: AGHT+IGVgvf1Uge8sHIDUuFP1oPvQwNSsudB+wr24LhPfVIfTvW2P80/tIqYbrFHm8v3paEcs2k0Bw==
-X-Received: by 2002:a5d:5f95:0:b0:3b7:8dd7:55ad with SMTP id ffacd0b85a97d-3b917f14804mr2270522f8f.39.1755090042622;
-        Wed, 13 Aug 2025 06:00:42 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c3abed3sm47465915f8f.10.2025.08.13.06.00.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 06:00:42 -0700 (PDT)
-Message-ID: <5a4e8480-a291-409d-acc3-f053d4e99981@linaro.org>
-Date: Wed, 13 Aug 2025 15:00:40 +0200
+	s=arc-20240116; t=1755090149; c=relaxed/simple;
+	bh=UrNfwORQz/pjonuLGQ/m/+0Y7ZK7KSJP6xwUgBaSYEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXnyQ06q2EzAB0W/vfuB2uG+DilSClZ26Htl3rLD3RTt/RuHVTNYl3inyCvfa95OIqvlyiDFnIVpVY1wVJVIjyD6NwqX6Ph4rlveJS/KGfjG//RD8L3sxUQca9/DDcsE8FiD65Mc6oe0FFKibiVtGDdwofw1uXXAoJEduVDlYZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VZYtFpfY; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755090148; x=1786626148;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UrNfwORQz/pjonuLGQ/m/+0Y7ZK7KSJP6xwUgBaSYEU=;
+  b=VZYtFpfYmO7ECO8HxhHTO/jVjc519CADScqaAa9c1Y0Z5rUFWMOfZEB1
+   EArIIX8oYvRZER7pzzDjErOsqlbC/VZaCxeAFqlTO+cZmlReIq+ydj7Ts
+   8caJOsPYpzKj1/hPdo7OqsYoC2JoAOWd/5cmmIrLx4khLT4WChFu1wNdq
+   BW/7BnVVKrOty3mhRWQleethM6EfIOe8a7pfvDBhSgFpgh7nK1JU6t4rh
+   Dm8CHxieX+nUa4hzmZdZtIyY7mipGtANcsTyt2YIbgGs/EeFr/BYfzSpp
+   sFQneF2raGgrrSbkXe0uJ/kH0z+DEuBcBEx8ld0yq6t01X4DAeWnxWip8
+   g==;
+X-CSE-ConnectionGUID: r4/6YiSDQmibDa88v7FWyw==
+X-CSE-MsgGUID: fMnynmmnRqmcG1aiTRLdtQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68757654"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="68757654"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:02:27 -0700
+X-CSE-ConnectionGUID: P26DlPJmSKSnJKimNPvhcg==
+X-CSE-MsgGUID: eE8ENaBWROa8sRBaVXMLjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="203643671"
+Received: from smile.fi.intel.com ([10.237.72.52])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:02:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1umB7U-00000005RKR-2yW7;
+	Wed, 13 Aug 2025 16:02:20 +0300
+Date: Wed, 13 Aug 2025 16:02:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Gabor Juhos <j4g8y7@gmail.com>
+Cc: Wolfram Sang <wsa@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Andrew Lunn <andrew@lunn.ch>, Hanna Hawa <hhhawa@amazon.com>,
+	Robert Marko <robert.marko@sartura.hr>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] i2c: pxa: fix I2C communication on Armada 3700
+Message-ID: <aJyM3N9T4xI4Xo1G@smile.fi.intel.com>
+References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
+ <aJpOyWKzBt-tDWUF@smile.fi.intel.com>
+ <4cd3efbd-4798-4f25-9440-879ee289d8ed@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/7] Setting the scene to convert the timers into
- modules
-To: tglx@linutronix.de
-Cc: Jim Cromie <jim.cromie@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Marco Elver <elver@google.com>, Nam Cao <namcao@linutronix.de>,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, John Stulz <jstultz@google.com>,
- Will McVicker <willmcvicker@google.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Saravan Kanna <saravanak@google.com>
-References: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250602151853.1942521-1-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4cd3efbd-4798-4f25-9440-879ee289d8ed@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
+On Wed, Aug 13, 2025 at 12:13:26PM +0200, Gabor Juhos wrote:
+> 2025. 08. 11. 22:12 keltezéssel, Andy Shevchenko írta:
+> > On Mon, Aug 11, 2025 at 09:49:54PM +0200, Gabor Juhos wrote:
 
-Hi Thomas,
+...
 
-was this series dropped ?
+> >> Signed-off-by: Imre Kaloz <kaloz@openwrt.org>
+> >> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+> > 
+> > I didn't get this SoB chain. Who is Imre here and what is his role in all this?
+> 
+> Imre reviewed the patches before publishing those, but we were unsure about that
+> the Reviewed-by tag can be used when it is offered privately before the
+> publicaton, so we decided to use the SoB tag instead.
 
-I'm not able to find it in v6.17-rc1 but it is in the master branch of 
-the tip tree (v6.16-rc7)
+It's exactly what should have been done. As a such the SoB chain is confusing
+(taking into account the authorship of the patches).
 
+> It can be changed to the Rewieved-by tag if that is applicable in this case.
 
-On 02/06/2025 17:18, Daniel Lezcano wrote:
-> The timer drivers are all compiled-in. The initial pre-requisite is to
-> have them available as soon as possible in the boot process. While
-> this statement made sense a long time ago, the platforms have today
-> multiple timers for different purposes along with architected timers
-> which are initialized very early. For example, a timer can be used as
-> a backup timer when the local timers are belonging to a power domain
-> which is shutted down, or used a watchdog timer when the counter are
-> shared, or also as a pulse width modulation counter. Another use case
-> is the platform user may want to switch to a timer different from the
-> architected timers because they have interesting characteristics in
-> the context of a dedicated platform (eg. automotive).
-> 
-> In some existing drivers, there is already the code to load and unload
-> a timer driver even if the Kconfig does not allow that. It means, the
-> need is there but partially upstream.
-> 
-> There were multiple attempts to configure the timer drivers into
-> modules but it faced the fact that we were unsure if it is correctly
-> supported by the time framework.
-> 
-> After investigating deeper in the core code it appears we have
-> everything set for the modularization of the timer drivers.
-> 
->   - When a clocksource is registered with a better rating, the current
->     clocksource is swapped with the new one. The userspace allows to
->     change the current clocksource via sysfs
-> 
->   - A clocksource can be unregistered
-> 
->   - When a clockevent is registered with a better rating, it becomes
->     the active one
-> 
->   - A clockevent can not be unregistered
-> 
-> A timer driver can be loaded later because of all the supported
-> above. However unloading is unsupported because a clockevent can not
-> be unregistered and that will lead to a crash.
-> 
-> But if the timer driver has the module owner set, the core framework
-> will handle the refcount correctly and will prevent to unload the
-> module if a clockevent is registered. All the refcounting is working
-> in different use cases.
-> 
->   - A clocksource is the current clocksource, the refcount is held
-> 
->   - A current clocksource is switched to another one, the refcount is
->     released
-> 
->   - A broadcast timer is registered, the refcount is held
-> 
->   - A local timer is registered, the refcount is held
-> 
-> Consequently, it is possible to unload a module which is only used as
-> a clocksource. As soon as a clockevent is registered, the refcount is
-> held and can not be released thus preventing the module to be
-> unloaded.
-> 
-> That mechanism ensure it is safe to convert the different timer
-> drivers into modules.
-> 
-> This series adds the module owner in the different driver which are
-> initialized with the module_platform_driver() function and export the
-> symbols for the sched_clock_register() function.
-> 
-> Cc: Jim Cromie <jim.cromie@gmail.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Cc: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Cc: Samuel Holland <samuel@sholland.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Nam Cao <namcao@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-sunxi@lists.linux.dev
-> Cc: linux-tegra@vger.kernel.org
-> Cc: John Stulz <jstultz@google.com>
-> Cc: Will McVicker <willmcvicker@google.com>
-> Cc: Peter Griffin <peter.griffin@linaro.org>
-> Cc: Saravan Kanna <saravanak@google.com>
-> 
-> 
-> Daniel Lezcano (7):
->    clocksource/drivers/scx200: Add module owner
->    clocksource/drivers/stm32-lp: Add module owner
->    clocksource/drivers/sun5i: Add module owner
->    clocksource/drivers/tegra186: Add module owner
->    clocksource/drivers/stm: Add module owner
->    clocksource/drivers/cs5535: Add module owner
->    time: Export symbol for sched_clock register function
-> 
->   drivers/clocksource/scx200_hrt.c     | 1 +
->   drivers/clocksource/timer-cs5535.c   | 1 +
->   drivers/clocksource/timer-nxp-stm.c  | 2 ++
->   drivers/clocksource/timer-stm32-lp.c | 1 +
->   drivers/clocksource/timer-sun5i.c    | 2 ++
->   drivers/clocksource/timer-tegra186.c | 3 +++
->   kernel/time/sched_clock.c            | 4 ++--
->   7 files changed, 12 insertions(+), 2 deletions(-)
-> 
-
+Please do so.
 
 -- 
-<http://www.linaro.org/> Linaro.org â”‚ Open source software for ARM SoCs
+With Best Regards,
+Andy Shevchenko
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+
 
