@@ -1,330 +1,163 @@
-Return-Path: <linux-kernel+bounces-766893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 827FBB24C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:51:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE130B24C80
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 047981BC6139
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302C2179F81
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B13C1DD0C7;
-	Wed, 13 Aug 2025 14:48:24 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7403F1DF751;
-	Wed, 13 Aug 2025 14:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAED1D5AD4;
+	Wed, 13 Aug 2025 14:48:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4F319A288;
+	Wed, 13 Aug 2025 14:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755096504; cv=none; b=kWTdHn3LGLbMetowYo+7jZgC9HgYJ5IlkHVmUw+0vY0By158dt9e/7WVhJTQCpGM3tUm/5FmT77Rljb2Wl1FDffq772KxqpD9CxJhj81t0iP9ViRe62WxDM6jbFc12aG+qJVeqa5R1QiThc1mu7dckNdVp4hsREK8Chb0C5q+Bo=
+	t=1755096535; cv=none; b=DJY84rD6yLGeYnJytfuNQaZlv5L/RHSl3TrIZm9w/rO/oV7kXeS6vN1LPWPafBFwXd7tAkRTne9MTh6LAtO/8y/gDH/47ZaFjBL0DFr+IvBkfK20mYS4aUOnWs4GZTmu2kAvlPZbC276lwlN4db5zIqQA+aGrGiwzgR+j5dbOCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755096504; c=relaxed/simple;
-	bh=VGZQcknWMnrx0fAlesqHrCNEIJdNyf1Sx92w8cBhl2w=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dD6G9Mq2SE9W2woJruv8atZ+mNWTy02lKEhocJtTcFo9ZEdANHBhqKpaR/C9gwHmQ5Vk7sBO2gTKRSVT6P43SpSV8sW/zrdO8Q48AgVx6YMm9QKR1KPKx6BOmOtVvFlfbi8opbWVn8xQ91l9wyx1y1NPtrj6LS1F0TdvhLSwQds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2B4X60fRz67H47;
-	Wed, 13 Aug 2025 22:45:32 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D5F9F140121;
-	Wed, 13 Aug 2025 22:48:13 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
- 2025 16:48:13 +0200
-Date: Wed, 13 Aug 2025 15:48:11 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
-Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
- routine
-Message-ID: <20250813154811.00000257@huawei.com>
-In-Reply-To: <20250730121209.303202-6-s.neeraj@samsung.com>
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121228epcas5p411e5cc6d29fb9417178dbd07a1d8f02d@epcas5p4.samsung.com>
-	<20250730121209.303202-6-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755096535; c=relaxed/simple;
+	bh=QDCt6vH8aJxa4wubOXy6BdR0EGboDh52Gw503R3mLcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fXonOic+rgWCcKU7bxuNFZLZsoOK6NztUTTU56MV5Ep4+PhjF3eBNiyeMG3b5dvRXNbdsiYbGePGNR40WvEWH3MyMXLPNh70Ap60OfUcLdYHuOpR90H6gEhVmnq/wsid6hTGY1WQ56Fiw34vSH0alWjJKqCcckgZjffWSytg1a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4402312FC;
+	Wed, 13 Aug 2025 07:48:44 -0700 (PDT)
+Received: from [10.57.1.244] (unknown [10.57.1.244])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8166E3F5A1;
+	Wed, 13 Aug 2025 07:48:34 -0700 (PDT)
+Message-ID: <cae90aa0-9fa6-4066-bbc0-ba391f908fb2@arm.com>
+Date: Wed, 13 Aug 2025 15:48:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/18] kasan: sw_tags: Support tag widths less than 8
+ bits
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: nathan@kernel.org, arnd@arndb.de, broonie@kernel.org,
+ Liam.Howlett@oracle.com, urezki@gmail.com, will@kernel.org,
+ kaleshsingh@google.com, rppt@kernel.org, leitao@debian.org, coxu@redhat.com,
+ surenb@google.com, akpm@linux-foundation.org, luto@kernel.org,
+ jpoimboe@kernel.org, changyuanl@google.com, hpa@zytor.com,
+ dvyukov@google.com, kas@kernel.org, corbet@lwn.net,
+ vincenzo.frascino@arm.com, smostafa@google.com,
+ nick.desaulniers+lkml@gmail.com, morbo@google.com, andreyknvl@gmail.com,
+ alexander.shishkin@linux.intel.com, thiago.bauermann@linaro.org,
+ catalin.marinas@arm.com, ryabinin.a.a@gmail.com, jan.kiszka@siemens.com,
+ jbohac@suse.cz, dan.j.williams@intel.com, joel.granados@kernel.org,
+ baohua@kernel.org, kevin.brodsky@arm.com, nicolas.schier@linux.dev,
+ pcc@google.com, andriy.shevchenko@linux.intel.com, wei.liu@kernel.org,
+ bp@alien8.de, xin@zytor.com, pankaj.gupta@amd.com, vbabka@suse.cz,
+ glider@google.com, jgross@suse.com, kees@kernel.org, jhubbard@nvidia.com,
+ joey.gouly@arm.com, ardb@kernel.org, thuth@redhat.com,
+ pasha.tatashin@soleen.com, kristina.martsenko@arm.com,
+ bigeasy@linutronix.de, lorenzo.stoakes@oracle.com, jason.andryuk@amd.com,
+ david@redhat.com, graf@amazon.com, wangkefeng.wang@huawei.com,
+ ziy@nvidia.com, mark.rutland@arm.com, dave.hansen@linux.intel.com,
+ samuel.holland@sifive.com, kbingham@kernel.org, trintaeoitogc@gmail.com,
+ scott@os.amperecomputing.com, justinstitt@google.com,
+ kuan-ying.lee@canonical.com, maz@kernel.org, tglx@linutronix.de,
+ samitolvanen@google.com, mhocko@suse.com, nunodasneves@linux.microsoft.com,
+ brgerst@gmail.com, willy@infradead.org, ubizjak@gmail.com,
+ peterz@infradead.org, mingo@redhat.com, sohil.mehta@intel.com,
+ linux-mm@kvack.org, linux-kbuild@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org, llvm@lists.linux.dev,
+ kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ada Couprie Diaz <ada.coupriediaz@arm.com>
+References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
+ <780347f3897ea97e90968de028c9dd02f466204e.1755004923.git.maciej.wieczor-retman@intel.com>
+From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+Content-Language: en-US
+Organization: Arm Ltd.
+In-Reply-To: <780347f3897ea97e90968de028c9dd02f466204e.1755004923.git.maciej.wieczor-retman@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, 30 Jul 2025 17:41:54 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+Hi,
 
-> Added __pmem_region_label_update region label update routine to update
-> region label.
-> 
-> Also used guard(mutex)(&nd_mapping->lock) in place of mutex_lock() and
-> mutex_unlock()
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-
-A few comments inline,
-
-Thanks,
-
-Jonathan
-
-
->  static bool slot_valid(struct nvdimm_drvdata *ndd,
->  		struct nd_lsa_label *lsa_label, u32 slot)
->  {
-> @@ -960,7 +970,7 @@ static int __pmem_label_update(struct nd_region *nd_region,
->  		return rc;
->  
->  	/* Garbage collect the previous label */
-> -	mutex_lock(&nd_mapping->lock);
-> +	guard(mutex)(&nd_mapping->lock);
->  	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
->  		if (!label_ent->label)
->  			continue;
-> @@ -972,20 +982,20 @@ static int __pmem_label_update(struct nd_region *nd_region,
->  	/* update index */
->  	rc = nd_label_write_index(ndd, ndd->ns_next,
->  			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
-> -	if (rc == 0) {
-> -		list_for_each_entry(label_ent, &nd_mapping->labels, list)
-> -			if (!label_ent->label) {
-> -				label_ent->label = lsa_label;
-> -				lsa_label = NULL;
-> -				break;
-> -			}
-> -		dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
-> -				"failed to track label: %d\n",
-> -				to_slot(ndd, lsa_label));
-> -		if (lsa_label)
-> -			rc = -ENXIO;
-> -	}
-> -	mutex_unlock(&nd_mapping->lock);
-> +	if (rc)
-> +		return rc;
+On 12/08/2025 14:23, Maciej Wieczor-Retman wrote:
+> From: Samuel Holland <samuel.holland@sifive.com>
+>
+> Allow architectures to override KASAN_TAG_KERNEL in asm/kasan.h. This
+> is needed on RISC-V, which supports 57-bit virtual addresses and 7-bit
+> pointer tags. For consistency, move the arm64 MTE definition of
+> KASAN_TAG_MIN to asm/kasan.h, since it is also architecture-dependent;
+> RISC-V's equivalent extension is expected to support 7-bit hardware
+> memory tags.
+>
+> Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> ---
+>   arch/arm64/include/asm/kasan.h   |  6 ++++--
+>   arch/arm64/include/asm/uaccess.h |  1 +
+>   include/linux/kasan-tags.h       | 13 ++++++++-----
+>   3 files changed, 13 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/kasan.h b/arch/arm64/include/asm/kasan.h
+> index e1b57c13f8a4..4ab419df8b93 100644
+> --- a/arch/arm64/include/asm/kasan.h
+> +++ b/arch/arm64/include/asm/kasan.h
+> @@ -6,8 +6,10 @@
+>   
+>   #include <linux/linkage.h>
+>   #include <asm/memory.h>
+> -#include <asm/mte-kasan.h>
+> -#include <asm/pgtable-types.h>
 > +
-> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
-> +		if (!label_ent->label) {
-> +			label_ent->label = lsa_label;
-> +			lsa_label = NULL;
-> +			break;
-> +		}
-> +	dev_WARN_ONCE(&nspm->nsio.common.dev, lsa_label,
-> +			"failed to track label: %d\n",
-> +			to_slot(ndd, lsa_label));
-> +	if (lsa_label)
-> +		rc = -ENXIO;
-	if (lsa_label)
-		return -ENXIO;
+> +#ifdef CONFIG_KASAN_HW_TAGS
+> +#define KASAN_TAG_MIN			0xF0 /* minimum value for random tags */
+> +#endif
+Building CONFIG_KASAN_HW_TAGS with -Werror on arm64 fails here
+due to a warning about KASAN_TAG_MIN being redefined.
 
-	return 0;
+On my side the error got triggered when compiling
+arch/arm64/kernel/asm-offsets.c due to the ordering of some includes :
+from <asm/processor.h>, <linux/kasan-tags.h> ends up being included
+(by <asm/cpufeatures.h> including <asm/sysreg.h>) before <asm/kasan.h>.
+(Build trace at the end for reference)
 
-is a little clearer.
+Adding `#undef KASAN_TAG_MIN` before redefining the arch version
+allows building CONFIG_KASAN_HW_TAGS on arm64 without
+further issues, but I don't know if this is most appropriate fix.Thanks, 
+Ada ---
 
->  
->  	return rc;
->  }
-> @@ -1127,6 +1137,137 @@ int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  	return 0;
->  }
->  
-> +static int __pmem_region_label_update(struct nd_region *nd_region,
-> +		struct nd_mapping *nd_mapping, int pos, unsigned long flags)
-> +{
-> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
-> +	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +	struct nd_lsa_label *nd_label;
-> +	struct cxl_region_label *rg_label;
-> +	struct nd_namespace_index *nsindex;
-> +	struct nd_label_ent *label_ent;
-> +	unsigned long *free;
-> +	u32 nslot, slot;
-> +	size_t offset;
-> +	int rc;
-> +	uuid_t tmp;
-> +
-> +	if (!preamble_next(ndd, &nsindex, &free, &nslot))
-> +		return -ENXIO;
-> +
-> +	/* allocate and write the label to the staging (next) index */
-> +	slot = nd_label_alloc_slot(ndd);
-> +	if (slot == UINT_MAX)
-> +		return -ENXIO;
-> +	dev_dbg(ndd->dev, "allocated: %d\n", slot);
-> +
-> +	nd_label = to_label(ndd, slot);
-> +
-> +	memset(nd_label, 0, sizeof_namespace_label(ndd));
-> +	rg_label = &nd_label->rg_label;
-> +
-> +	/* Set Region Label Format identification UUID */
-> +	uuid_parse(CXL_REGION_UUID, &tmp);
-> +	export_uuid(nd_label->rg_label.type, &tmp);
-
-	export_uuid(rg_label->type, &tmp);
-
-> +
-> +	/* Set Current Region Label UUID */
-> +	export_uuid(nd_label->rg_label.uuid, &nd_set->uuid);
-
-	export_uuid(rg_label->uuid, &nd_set->uuid);
-
-
-> +
-> +	rg_label->flags = __cpu_to_le32(flags);
-> +	rg_label->nlabel = __cpu_to_le16(nd_region->ndr_mappings);
-> +	rg_label->position = __cpu_to_le16(pos);
-> +	rg_label->dpa = __cpu_to_le64(nd_mapping->start);
-> +	rg_label->rawsize = __cpu_to_le64(nd_mapping->size);
-> +	rg_label->hpa = __cpu_to_le64(nd_set->res->start);
-> +	rg_label->slot = __cpu_to_le32(slot);
-> +	rg_label->ig = __cpu_to_le32(nd_set->interleave_granularity);
-> +	rg_label->align = __cpu_to_le16(0);
-
-As the bot complained... It's le32
-
-> +
-> +	/* Update fletcher64 Checksum */
-> +	rgl_calculate_checksum(ndd, rg_label);
-> +
-> +	/* update label */
-> +	offset = nd_label_offset(ndd, nd_label);
-> +	rc = nvdimm_set_config_data(ndd, offset, nd_label,
-> +			sizeof_namespace_label(ndd));
-> +	if (rc < 0) {
-> +		nd_label_free_slot(ndd, slot);
-> +		return rc;
-> +	}
-> +
-> +	/* Garbage collect the previous label */
-> +	guard(mutex)(&nd_mapping->lock);
-> +	list_for_each_entry(label_ent, &nd_mapping->labels, list) {
-> +		if (!label_ent->label)
-> +			continue;
-> +		if (rgl_uuid_equal(&label_ent->label->rg_label, &nd_set->uuid))
-> +			reap_victim(nd_mapping, label_ent);
-> +	}
-> +
-> +	/* update index */
-> +	rc = nd_label_write_index(ndd, ndd->ns_next,
-> +			nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
-> +	if (rc)
-> +		return rc;
-> +
-> +	list_for_each_entry(label_ent, &nd_mapping->labels, list)
-> +		if (!label_ent->label) {
-> +			label_ent->label = nd_label;
-> +			nd_label = NULL;
-> +			break;
-> +		}
-> +	dev_WARN_ONCE(&nd_region->dev, nd_label,
-> +			"failed to track label: %d\n",
-> +			to_slot(ndd, nd_label));
-> +	if (nd_label)
-> +		rc = -ENXIO;
-
-		return -ENXIO;
-
-> +
-
-	return 0;
-
-is clearer.
-
-> +	return rc;
-> +}
-> +
-> +int nd_pmem_region_label_update(struct nd_region *nd_region)
-> +{
-> +	int i, rc;
-> +
-> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +
-> +		/* No need to update region label for non cxl format */
-> +		if (!ndd->cxl)
-> +			continue;
-> +
-> +		/* Init labels to include region label */
-> +		rc = init_labels(nd_mapping, 1);
-> +
-
-No blank line here - keep the error check closely associated with the
-thing that it is checking.
-
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i,
-> +					NSLABEL_FLAG_UPDATING);
-> +
-
-Same here.
-
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	/* Clear the UPDATING flag per UEFI 2.7 expectations */
-> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
-> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
-> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-> +
-> +		/* No need to update region label for non cxl format */
-> +		if (!ndd->cxl)
-> +			continue;
-> +
-> +		rc = __pmem_region_label_update(nd_region, nd_mapping, i, 0);
-> +
-
-and here.
-
-> +		if (rc)
-> +			return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  int __init nd_label_init(void)
->  {
->  	WARN_ON(guid_parse(NVDIMM_BTT_GUID, &nvdimm_btt_guid));
-> diff --git a/drivers/nvdimm/label.h b/drivers/nvdimm/label.h
-> index 4883b3a1320f..0f428695017d 100644
-> --- a/drivers/nvdimm/label.h
-> +++ b/drivers/nvdimm/label.h
-> @@ -190,6 +190,7 @@ struct nd_namespace_label {
->  struct nd_lsa_label {
-
-Would be better to have this explicitly as a union
-unless later patches add more elements.  That way it'll 
-be obvious at all sites where it is used that it can be one
-of several things.
-
->  	union {
->  		struct nd_namespace_label ns_label;
-> +		struct cxl_region_label rg_label;
->  	};
->  };
->  
-> @@ -233,4 +234,5 @@ struct nd_region;
->  struct nd_namespace_pmem;
->  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
->  		struct nd_namespace_pmem *nspm, resource_size_t size);
-> +int nd_pmem_region_label_update(struct nd_region *nd_region);
->  #endif /* __LABEL_H__ */
-
+   CC      arch/arm64/kernel/asm-offsets.s
+In file included from ./arch/arm64/include/asm/processor.h:42,
+                  from ./include/asm-generic/qrwlock.h:18,
+                  from ./arch/arm64/include/generated/asm/qrwlock.h:1,
+                  from ./arch/arm64/include/asm/spinlock.h:9,
+                  from ./include/linux/spinlock.h:95,
+                  from ./include/linux/mmzone.h:8,
+                  from ./include/linux/gfp.h:7,
+                  from ./include/linux/slab.h:16,
+                  from ./include/linux/resource_ext.h:11,
+                  from ./include/linux/acpi.h:13,
+                  from ./include/acpi/apei.h:9,
+                  from ./include/acpi/ghes.h:5,
+                  from ./include/linux/arm_sdei.h:8,
+                  from ./arch/arm64/kernel/asm-offsets.c:10:
+./arch/arm64/include/asm/kasan.h:11: error: "KASAN_TAG_MIN" redefined [-Werror]
+    11 | #define KASAN_TAG_MIN                   0xF0 /* minimum value for random tags */
+       |
+In file included from ./arch/arm64/include/asm/sysreg.h:14,
+                  from ./arch/arm64/include/asm/cputype.h:250,
+                  from ./arch/arm64/include/asm/cache.h:43,
+                  from ./include/vdso/cache.h:5,
+                  from ./include/linux/cache.h:6,
+                  from ./include/linux/slab.h:15:
+./include/linux/kasan-tags.h:23: note: this is the location of the previous definition
+    23 | #define KASAN_TAG_MIN           0x00 /* minimum value for random tags */
+       |
 
 
