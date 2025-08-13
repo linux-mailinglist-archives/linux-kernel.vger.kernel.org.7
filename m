@@ -1,143 +1,202 @@
-Return-Path: <linux-kernel+bounces-767525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE77B2559A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:37:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45356B25584
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D847D1BC282F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACBFB3ACE85
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335102FC6BF;
-	Wed, 13 Aug 2025 21:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5F42C2AA2;
+	Wed, 13 Aug 2025 21:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="MgtBGUZ3"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QMcCfUja"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BEC2FFDEC;
-	Wed, 13 Aug 2025 21:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C22D17B50A
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755120759; cv=none; b=YdqdNvDX+J4Fp/GQQriZLlbED614BCQxHCrsMYZE1I8K0HN1+J3UeT4IYG8XRU4GjLY9eL33bnVjsIUjH6T9rXpu4YGqgaHmL2Sbb+Q18E5jswYedoPec9BUB86Tk7SeyEZaLCGqrOTSy3xqx4WU6SSzzndUw4Roy7mPsZtosic=
+	t=1755120737; cv=none; b=CciybslxdSTm9Q58Su2ZzxbpoPRDsaFt5DmPnaskTMtFHDCA9rT+L2Hu8xFVdhUvr7p49yHU/NkmWA1JGwW40WN9XKeM42JrTi05PMqrKXdJwVTrwzUwgs4cjfPFImToITvH/YbRz+WO91P0du166ib/ADFRluzogyf87iEEUAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755120759; c=relaxed/simple;
-	bh=YrTV7I0EV9/14jjGp98GHdddZ1yBD5j3sBBEqWvqx08=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q88QLQjR0sdCxF1OF2xWuHUGl1EeAKPml1rCSt3IRD0kuctVkiXCyyCATc5T3ZoW16ayJRmXTu7OTB72PReY8J7wzT3UbQKjGCjh6VNUTmR/v4fUJVzjEub96KdklZZxdBl6Ptx+IC1Zh4g4MOZjB7aG3stU4imr7I5rv7LjyKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=MgtBGUZ3; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BEE2040AFD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755120754; bh=n+EXUx0NIy4qnYvjItAxM4tBrzlvkFAYtOvhUN+rFt4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MgtBGUZ3ySXelPqfP0/vwADarDekDlbbA66cGkTrg+4hfyf4GZySaH5pZV0Dczd4N
-	 KWZ0Nbbv6k+sBcjgtyr8zGbwlgFPHI1b2DR1gQMyiziFCVekPZCcfnJjMYPbgxBxTj
-	 KZwJw9IBAk+3PjYooh0BgvBBAWNe1wbP2fqvjpSicxdkYeczBSiZdhuY88ThXL9Imi
-	 m3ev8CgInGTXNNxbeoaCsNr0Q6hB9xYu6nssNnXWGoKHwvHfVDaCFRcT+6fkYDA/Ig
-	 mIfG+rxIv5aaEru+iCkj0r2UuFXQqVo6gG1DcaaBwHBBnvBRz1zQ4F70Rc4EG4iDMv
-	 FJ6pO9q0UWNVg==
-Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id BEE2040AFD;
-	Wed, 13 Aug 2025 21:32:33 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 11/13] docs: move split-man.pl to tools/doc
-Date: Wed, 13 Aug 2025 15:32:10 -0600
-Message-ID: <20250813213218.198582-12-corbet@lwn.net>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250813213218.198582-1-corbet@lwn.net>
-References: <20250813213218.198582-1-corbet@lwn.net>
+	s=arc-20240116; t=1755120737; c=relaxed/simple;
+	bh=gz575RtG23oSRtncyZleJ9U5eprqql62eLY7aALs0jY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rMW/opLKoqSuTOeF29cPj7wzhesS0xkdpGszk1E4t07cuD+R6H/gv7lPlAZZvGw9xoTTj1rZ9lvzpYwhZBwzIAOoJMiS+vg5v06J5EkyZrH3XJXLT/tSGTkAPTPuE2gfg9wjEMJC4rezajVT0V+umIy0Ijz7ApHlFthmTXJwuqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QMcCfUja; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b9dc5c2f0eso156666f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755120734; x=1755725534; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j5cG3cbEW4nr0PnGSR/wXOBrvwNEWafTFeGX/LZex5Y=;
+        b=QMcCfUjaMG1xw/wXlsMR7BmuiVQt7JGnQXYBn0KycJVQt727KjKoWz+OFEZoGjGfLH
+         bfdQPMmx6lIFJ3qFLw+2dDf362+iO9mHTS6bndnbi8sQwLG2kNt5/WNMvu8vV6ak/SkP
+         iDZ6uayb5eJVdN+VzSXwLsQOEBFmrbroTxUw7ouRZlhnhRwFBXP40X7lDH2tSPcVQtzJ
+         JwH3BQ3NNG9/tVnf4XCID4iOF0lM4w5g/ku3WzRfVwrf2+7TEh2ZcsNfS700Nj4TFC6q
+         sncgnhizEnErZHiVd29lF2NtT6tzxZ20xt1XEgAGQUDWALe0khaBzKUiCVNmu3D2NJ7K
+         tujA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755120734; x=1755725534;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j5cG3cbEW4nr0PnGSR/wXOBrvwNEWafTFeGX/LZex5Y=;
+        b=qQiGYobBpMDgAoE6uQX5q30PWDTwLCTOtpLs318JTveYUAKWujzdHgMx1IwX74vBHt
+         oOqSRxfZdp1XIbBZkAavdqzIfJsyb8Asjn3pjfXaC0Ku3r6ui+Ve4GHONTgSkOpo5Sqn
+         pV+/IomNPpkqcsBLkE3Ym7OFU1cfyAqzmUg4vBOBeNSm068yQBEfJux1cM9x+svGzB3K
+         htUtBRoeMXRn+YvAkxNUXjAIOLmSeUWTGDXEu3XmLMqwlW0Wz2ihw6nwBFQSK0eGzFQ0
+         nDZlN7MefJsQPWg0XvI3ujWFVRp+vI3vqp2fCFqwItN1YmKbyXu/zB8VDU7Cjpxp+TV1
+         raoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQF0VAxRscpxkZKtjEP5859Lrqz1j3qV6ZC56LkVSxqt366jfcjxrco7BfnuAQcc3QganoR1buWSK2GC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtQJ8pGh+16y05SQ2D7cADRrZJQHuxrGZmnL/5R62E7n/xjb4C
+	vN30O4gO5rjJUWd/vdhOefrHjB1EvM9rsttk2l1PR4fAhGB3jHuFHHs7uztP9+/fDHg=
+X-Gm-Gg: ASbGncsOWb08s8B86WiCjLWBJku1d6LMAlH8pXUASU/4RbpUNqLkK3gGNudBoRdfFFo
+	bUOX2UQoGW7ow1ZP8g574iGiA+750Ebko3q9sw+ZnKWpaEtJw4wY5Sf5n/74/RPFa/WuO9XX0Vl
+	pBeGsw4dwEijHYgNWSc6dFK3xgP8MyzMkMeqkUp093dsH24kUY1x0/dOMxqKngvzMzrHqPEizj0
+	4csQXoTNgnhgSLhdY7UMhBHpFgTRnwTHuzD+CX6G+Gl+WwKJy4qj5FERuUb/pAfNhuxTzVrDoUH
+	Ts1NoJOA+F7gLKdGCyoW/uTr42AkpZKCwt40RAd98a8cKZEtkihcdjuKWQk1WqbsGD1W13yPFTr
+	WEtFCPNbJSzqVtWxZnOK9WE/9+pKBdf42zaQ6+sxufQvrQLd0hL/N8uB4eEsFXGHY
+X-Google-Smtp-Source: AGHT+IHkYxD1EboP/TbdW74mssEAzDAmI9C1GIx0bTyGR/ssaIY4vNnPWQhRo2D5dv3Be+lyxWwcGg==
+X-Received: by 2002:a05:6000:288f:b0:3b7:94c6:7c9 with SMTP id ffacd0b85a97d-3b9edf935aemr644651f8f.27.1755120733878;
+        Wed, 13 Aug 2025 14:32:13 -0700 (PDT)
+Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c469319sm47865251f8f.54.2025.08.13.14.32.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 14:32:12 -0700 (PDT)
+Message-ID: <505218ad-d010-42a2-bf01-d2141d55001d@linaro.org>
+Date: Wed, 13 Aug 2025 22:32:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/7] media: qcom: camss: Add CSIPHY support for QCS8300
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250813053724.232494-1-quic_vikramsa@quicinc.com>
+ <20250813053724.232494-4-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20250813053724.232494-4-quic_vikramsa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-...and update all references to it.
-
-Signed-off-by: Jonathan Corbet <corbet@lwn.net>
----
- Documentation/doc-guide/kernel-doc.rst                    | 6 +++---
- Documentation/translations/it_IT/doc-guide/kernel-doc.rst | 2 +-
- Documentation/translations/zh_CN/doc-guide/kernel-doc.rst | 6 +++---
- {scripts => tools/doc}/split-man.pl                       | 0
- 4 files changed, 7 insertions(+), 7 deletions(-)
- rename {scripts => tools/doc}/split-man.pl (100%)
-
-diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
-index 6fc89d444ada..b7c8ce55323c 100644
---- a/Documentation/doc-guide/kernel-doc.rst
-+++ b/Documentation/doc-guide/kernel-doc.rst
-@@ -584,15 +584,15 @@ from the kernel git tree::
- 
-   $ tools/doc/kernel-doc -man \
-     $(git grep -l '/\*\*' -- :^Documentation :^tools) \
--    | scripts/split-man.pl /tmp/man
-+    | tools/doc/split-man.pl /tmp/man
- 
- Some older versions of git do not support some of the variants of syntax for
- path exclusion.  One of the following commands may work for those versions::
- 
-   $ tools/doc/kernel-doc -man \
-     $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
--    | scripts/split-man.pl /tmp/man
-+    | tools/doc/split-man.pl /tmp/man
- 
-   $ tools/doc/kernel-doc -man \
-     $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools") \
--    | scripts/split-man.pl /tmp/man
-+    | tools/doc/split-man.pl /tmp/man
-diff --git a/Documentation/translations/it_IT/doc-guide/kernel-doc.rst b/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-index 05ea0f03c80b..bf04ceea2d83 100644
---- a/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-+++ b/Documentation/translations/it_IT/doc-guide/kernel-doc.rst
-@@ -604,4 +604,4 @@ Come utilizzare kernel-doc per generare pagine man
- Se volete utilizzare kernel-doc solo per generare delle pagine man, potete
- farlo direttamente dai sorgenti del kernel::
- 
--  $ tools/doc/kernel-doc -man $(git grep -l '/\*\*' -- :^Documentation :^tools) | scripts/split-man.pl /tmp/man
-+  $ tools/doc/kernel-doc -man $(git grep -l '/\*\*' -- :^Documentation :^tools) | tools/doc/split-man.pl /tmp/man
-diff --git a/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst b/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-index b242e52f911c..a807295bc403 100644
---- a/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-+++ b/Documentation/translations/zh_CN/doc-guide/kernel-doc.rst
-@@ -484,16 +484,16 @@ kernel-doc扩展包含在内核源代码树中，位于 ``Documentation/sphinx/k
- 
-   $ tools/doc/kernel-doc -man \
-     $(git grep -l '/\*\*' -- :^Documentation :^tools) \
--    | scripts/split-man.pl /tmp/man
-+    | tools/doc/split-man.pl /tmp/man
- 
- 一些旧版本的git不支持路径排除语法的某些变体。
- 以下命令之一可能适用于这些版本::
- 
-   $ tools/doc/kernel-doc -man \
-     $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
--    | scripts/split-man.pl /tmp/man
-+    | tools/doc/split-man.pl /tmp/man
- 
-   $ tools/doc/kernel-doc -man \
-     $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools") \
--    | scripts/split-man.pl /tmp/man
-+    | tools/doc/split-man.pl /tmp/man
- 
-diff --git a/scripts/split-man.pl b/tools/doc/split-man.pl
-similarity index 100%
-rename from scripts/split-man.pl
-rename to tools/doc/split-man.pl
--- 
-2.50.1
-
+On 13/08/2025 06:37, Vikram Sharma wrote:
+> QCS8300 uses the same CSIPHY hardware version (v1.3.0) as
+> SA8775P. The only difference between the two platforms is
+> the number of CSIPHY instances: SA8775P has four, while
+> QCS8300 has three.
+> 
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   .../qcom/camss/camss-csiphy-3ph-1-0.c         |  2 +
+>   drivers/media/platform/qcom/camss/camss.c     | 57 +++++++++++++++++++
+>   2 files changed, 59 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> index a610504359d0..445f4d41e847 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
+> @@ -826,6 +826,7 @@ static bool csiphy_is_gen2(u32 version)
+>   	case CAMSS_7280:
+>   	case CAMSS_8250:
+>   	case CAMSS_8280XP:
+> +	case CAMSS_8300:
+>   	case CAMSS_845:
+>   	case CAMSS_8550:
+>   	case CAMSS_8775P:
+> @@ -928,6 +929,7 @@ static int csiphy_init(struct csiphy_device *csiphy)
+>   		regs->lane_array_size = ARRAY_SIZE(lane_regs_sm8550);
+>   		regs->offset = 0x1000;
+>   		break;
+> +	case CAMSS_8300:
+>   	case CAMSS_8775P:
+>   		regs->lane_regs = &lane_regs_sa8775p[0];
+>   		regs->lane_array_size = ARRAY_SIZE(lane_regs_sa8775p);
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 6b9aba1029b5..410e188d26aa 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -2483,6 +2483,63 @@ static const struct resources_icc icc_res_sm8550[] = {
+>   	},
+>   };
+>   
+> +static const struct camss_subdev_resources csiphy_res_8300[] = {
+> +	/* CSIPHY0 */
+> +	{
+> +		.regulators = { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock = { "csiphy_rx", "csiphy0", "csiphy0_timer" },
+> +		.clock_rate = {
+> +			{ 400000000 },
+> +			{ 0 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "csiphy0" },
+> +		.interrupt = { "csiphy0" },
+> +		.csiphy = {
+> +			.id = 0,
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sdm845,
+> +		}
+> +	},
+> +	/* CSIPHY1 */
+> +	{
+> +		.regulators = { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock = { "csiphy_rx", "csiphy1", "csiphy1_timer" },
+> +		.clock_rate = {
+> +			{ 400000000 },
+> +			{ 0 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "csiphy1" },
+> +		.interrupt = { "csiphy1" },
+> +		.csiphy = {
+> +			.id = 1,
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sdm845,
+> +		}
+> +	},
+> +	/* CSIPHY2 */
+> +	{
+> +		.regulators = { "vdda-phy", "vdda-pll" },
+> +
+> +		.clock = { "csiphy_rx", "csiphy2", "csiphy2_timer" },
+> +		.clock_rate = {
+> +			{ 400000000 },
+> +			{ 0 },
+> +			{ 400000000 },
+> +		},
+> +		.reg = { "csiphy2" },
+> +		.interrupt = { "csiphy2" },
+> +		.csiphy = {
+> +			.id = 2,
+> +			.hw_ops = &csiphy_ops_3ph_1_0,
+> +			.formats = &csiphy_formats_sdm845,
+> +		}
+> +	},
+> +};
+> +
+>   static const struct camss_subdev_resources csiphy_res_8775p[] = {
+>   	/* CSIPHY0 */
+>   	{
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
