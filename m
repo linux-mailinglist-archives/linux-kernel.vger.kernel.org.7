@@ -1,186 +1,157 @@
-Return-Path: <linux-kernel+bounces-767674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C785B2578E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:30:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1169B25794
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:31:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCB895A85DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:30:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DBD5A26CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C0C302779;
-	Wed, 13 Aug 2025 23:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18272F60D1;
+	Wed, 13 Aug 2025 23:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXYNJsPB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gv3tQdnR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD6E2FC890;
-	Wed, 13 Aug 2025 23:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F04C4C81;
+	Wed, 13 Aug 2025 23:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755127784; cv=none; b=kNUr52qIGEURi0pTPtF+uNFCembLr88e0E+wZSs18D8fNe154O6AEVnyK2PkcKERJJjnNIuDYugNoUMytR3OlViXXYmpHSz1c2uxOAbo9XC/y/Pi9CqP+05s3+uLQwklNkJaS8VtSnb+OCyzIme6sVq2/JCDmvT+35uCzttJbTM=
+	t=1755127893; cv=none; b=qgLRLnebI48mLI3VsgUx3acjsPvNjGg6EEEt1ZVnGi8e6Iys5b571w3uAbmpjCPmgxtnZSWsr5fPIfaMGXNBhRZzMQnktZslXkxbMSjPqygJ/1PfdIq/9tq0s9kFjxMB+VgzHe3TaN8dnyCkhKLslPCKQ8VS7lxmXKqUYjbgDw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755127784; c=relaxed/simple;
-	bh=ziSfoknMH5h3TXjzmmojwrcw+kVqkFWXQYJtaH4hbks=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FQmGk8B4rapcjkbqbU89/i8IwXTSkTjfmRSCCrFGYZaCti64EBRWgr/C8xRtX6bGdHA9AH13y9uRLXmi+pFohpxFuz0IY/9OoqQvEsCggeRicbdxNafxHljbVVzzz0++VlAPCuJ2Vc49ZklcXLBufvjwaja+d+mEA3DT0rfvuRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXYNJsPB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF1BC4CEFB;
-	Wed, 13 Aug 2025 23:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755127784;
-	bh=ziSfoknMH5h3TXjzmmojwrcw+kVqkFWXQYJtaH4hbks=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uXYNJsPB7lNyiTOr7FckiRFkvE5R+6dFhuZItSaog0p3/lTPt+7ixc/3S5GIl0xk4
-	 H4RrTP0Lck6DfdhNIG+HALY2aUIBjBe2OYdZj5O2mv0iztif4e/uueQa0LpwIVXUDE
-	 45YfOL6tAvB4yA6vmNPYTVniobqUGTpnsgqmdMajQg57kwslB/5vJ4pGB02vel2VJg
-	 k7lyaRIXB/IkO1RF0Etc86CEMgCG7OPfGsUD6/N+GQflXpieftij0Qtn/Ue5AamPJY
-	 fVMcjWlCOD+HiWi3BWAdJc9voRJyZZKp9ZcmxeJKrnJVMZ1QICv4T0eTTOKQoYWJuz
-	 6DzGmPkU/Ar9g==
-Date: Thu, 14 Aug 2025 01:29:39 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH RFC 00/13] Collect documention-related tools under
- tools/doc
-Message-ID: <20250814012939.0850e5e6@foz.lan>
-In-Reply-To: <20250813213218.198582-1-corbet@lwn.net>
-References: <20250813213218.198582-1-corbet@lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755127893; c=relaxed/simple;
+	bh=pSrk1+Pl2w0c7sZtG87RTW/5Lq01aoGnLMNs1gY4RP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qxFcj7wuLIAlnuWhyNiatPEgg+LYbXJ6xUPW8D9yEtdyTXldRpFrgGzl16B+vnTl7cR5WF9vbJQV5wAKBNOVk22NFP2I5JoOWIiBDD88e9nP4WAWPLjidYP84zDGq+WMI/kzft9/k9CN7G2P/PWf14JMESaDO3Y8JbVak4d1txE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gv3tQdnR; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755127892; x=1786663892;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=pSrk1+Pl2w0c7sZtG87RTW/5Lq01aoGnLMNs1gY4RP4=;
+  b=Gv3tQdnRPm1geHHTVonC5L28fD5ixdeftNlO8/9U0nLE29EwxmHZahuG
+   sj5wofYjnHC2FkDig/97naa3X41DsZNQkEVPA7C/IzjOGiMRZy1+pfy+V
+   mRKO/SRClLGCx78Kszk2uZTGo6HrqFsT/Fljn9skwqJla8Ps+SnX9pVfV
+   d1Tx0EzNfrq/GMX75D1/SmPEBaUQpvRUxwGg2N5KBg9i/HzCsCLPqAPgp
+   uZJ+doW6yrqM7Trc0mPHkchd0wgCoXU/qFvqfrxps7r+AwH9+iVMxIvSU
+   mq+h5YsfG4TXVL5Aw2RI0+A2VjkU/AvgEDbS6wWCXqyfBBPkq9vtaUxOv
+   w==;
+X-CSE-ConnectionGUID: WWRxtCGNS7ejAoUguL6E8Q==
+X-CSE-MsgGUID: wyKB3wZ8TY68bSQYLoWmzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="75011009"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="75011009"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 16:31:31 -0700
+X-CSE-ConnectionGUID: bmj+/WIjR0+o8T9zxuER6A==
+X-CSE-MsgGUID: rNZxCCmtTn+AZmGC+8EyXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166982974"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.131]) ([10.125.111.131])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 16:31:30 -0700
+Message-ID: <d21a66fe-d2ce-46cc-b89e-b60b03eae3da@intel.com>
+Date: Wed, 13 Aug 2025 16:31:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 00/12] TDX: Enable Dynamic PAMT
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>
+Cc: "Gao, Chao" <chao.gao@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>, "x86@kernel.org"
+ <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Zhao, Yan Y" <yan.y.zhao@intel.com>, "Huang, Kai" <kai.huang@intel.com>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
+ <d432b8b7cfc413001c743805787990fe0860e780.camel@intel.com>
+ <sjhioktjzegjmyuaisde7ui7lsrhnolx6yjmikhhwlxxfba5bh@ss6igliiimas>
+ <c2a62badf190717a251d269a6905872b01e8e340.camel@intel.com>
+ <aJqgosNUjrCfH_WN@google.com>
+ <f38f55de6f4d454d0288eb7f04c8c621fb7b9508.camel@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <f38f55de6f4d454d0288eb7f04c8c621fb7b9508.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Em Wed, 13 Aug 2025 15:31:59 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+On 8/13/25 15:43, Edgecombe, Rick P wrote:
+> I redid the test. Boot 10 TDs with 16GB of ram, run userspace to fault in memory
+> from 4 threads until OOM, then shutdown. TDs were split between two sockets. It
+> ended up with 1136 contentions of the global lock, 4ms waiting.
 
-> Our documentation-related tools are spread out over various directories;
-> several are buried in the scripts/ dumping ground.  That makes them harder
-> to discover and harder to maintain.
-> 
-> Recently, the idea of creating a dedicated directory for documentation tools
-> came up; I decided to see what it would look like.  This series creates a
-> new directory, tools/doc, and moves various utilities there, hopefully
-> fixing up all of the relevant references in the process.
+4ms out of how much CPU time?
 
-I would prefer tools/docs ;-)
+Also, contention is *NOT* necessarily bad here. Only _false_ contention.
 
-The rationale is that it is common to have patches for Documentation
-described with "docs:" prefix. Anyway, I don't mind that much.
+The whole point of the lock is to ensure that there aren't two different
+CPUs trying to do two different things to the same PAMT range at the
+same time.
 
-Btw, one of my pending patch series is creating a new *.py script over
-tools/docs (moving a script from Documentation/sphinx) ;-) 
+If there are, one of them *HAS* to wait. It can wait lots of different
+ways, but it has to wait. That wait will show up as spinlock contention.
 
-> 
-> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
-> 
-> The big elephant lurking in this small room is the home for Python modules;
-> I left them under scripts/lib, but that is an even less appropriate place
-> than it was before.
-
-Agreed.
-
-> I would propose either tools/python or lib/python;
-> thoughts on that matter welcome.
-
-Wither way works for me.
-
-> Jonathan Corbet (13):
->   docs: Move the "features" tools to tools/doc
->   docs: move checktransupdate.py to tools/doc
->   docs: move scripts/check-variable-fonts.sh to tools/doc
->   docs: move scripts/documentation-file-ref-check to tools/doc
->   docs: move parallel-wrapper.sh to tools/doc/
->   docs: move get_abi.py to tools/doc
->   docs: move sphinx-pre-install to tools/doc
->   docs: move test_doc_build.py to tools/doc
->   docs: move parse-headers.pl to tools/doc
->   docs: move kernel-doc to tools/doc
->   docs: move split-man.pl to tools/doc
->   docs: move find-unused-docs.sh to tools/doc
->   docs: remove kernel-doc.pl
-> 
->  Documentation/Kconfig                         |    2 +-
->  Documentation/Makefile                        |   24 +-
->  Documentation/conf.py                         |    2 +-
->  Documentation/doc-guide/checktransupdate.rst  |    6 +-
->  Documentation/doc-guide/contributing.rst      |    2 +-
->  Documentation/doc-guide/kernel-doc.rst        |   18 +-
->  Documentation/doc-guide/parse-headers.rst     |    6 +-
->  Documentation/doc-guide/sphinx.rst            |    6 +-
->  Documentation/kbuild/kbuild.rst               |    2 +-
->  Documentation/process/coding-style.rst        |    2 +-
->  Documentation/sphinx/kernel_abi.py            |    2 +-
->  Documentation/sphinx/kernel_feat.py           |    4 +-
->  Documentation/sphinx/kerneldoc-preamble.sty   |    2 +-
->  .../it_IT/doc-guide/kernel-doc.rst            |    8 +-
->  .../it_IT/doc-guide/parse-headers.rst         |    6 +-
->  .../translations/it_IT/doc-guide/sphinx.rst   |    4 +-
->  .../sp_SP/process/coding-style.rst            |    2 +-
->  .../zh_CN/doc-guide/checktransupdate.rst      |    6 +-
->  .../zh_CN/doc-guide/contributing.rst          |    2 +-
->  .../zh_CN/doc-guide/kernel-doc.rst            |   16 +-
->  .../zh_CN/doc-guide/parse-headers.rst         |    6 +-
->  .../translations/zh_CN/doc-guide/sphinx.rst   |    4 +-
->  Documentation/translations/zh_CN/how-to.rst   |    4 +-
->  .../translations/zh_CN/kbuild/kbuild.rst      |    2 +-
->  .../zh_CN/process/coding-style.rst            |    2 +-
->  .../zh_TW/process/coding-style.rst            |    2 +-
->  Documentation/userspace-api/media/Makefile    |    2 +-
->  MAINTAINERS                                   |   11 +-
->  Makefile                                      |    2 +-
->  drivers/gpu/drm/i915/Makefile                 |    2 +-
->  scripts/kernel-doc                            |    1 -
->  scripts/kernel-doc.pl                         | 2439 -----------------
->  .../doc}/check-variable-fonts.sh              |    2 +-
->  {scripts => tools/doc}/checktransupdate.py    |    8 +-
->  .../doc}/documentation-file-ref-check         |    2 +-
->  .../scripts => tools/doc}/features-refresh.sh |    0
->  {scripts => tools/doc}/find-unused-docs.sh    |    8 +-
->  {scripts => tools/doc}/get_abi.py             |    0
->  {scripts => tools/doc}/get_feat.pl            |    2 +-
->  scripts/kernel-doc.py => tools/doc/kernel-doc |    0
->  .../features => tools/doc}/list-arch.sh       |    2 +-
->  .../sphinx => tools/doc}/parallel-wrapper.sh  |    0
->  .../sphinx => tools/doc}/parse-headers.pl     |    4 +-
->  {scripts => tools/doc}/sphinx-pre-install     |    2 +-
->  {scripts => tools/doc}/split-man.pl           |    0
->  {scripts => tools/doc}/test_doc_build.py      |    0
->  46 files changed, 91 insertions(+), 2538 deletions(-)
->  delete mode 120000 scripts/kernel-doc
->  delete mode 100755 scripts/kernel-doc.pl
->  rename {scripts => tools/doc}/check-variable-fonts.sh (98%)
->  rename {scripts => tools/doc}/checktransupdate.py (98%)
->  rename {scripts => tools/doc}/documentation-file-ref-check (99%)
->  rename {Documentation/features/scripts => tools/doc}/features-refresh.sh (100%)
->  rename {scripts => tools/doc}/find-unused-docs.sh (79%)
->  rename {scripts => tools/doc}/get_abi.py (100%)
->  rename {scripts => tools/doc}/get_feat.pl (99%)
->  rename scripts/kernel-doc.py => tools/doc/kernel-doc (100%)
->  rename {Documentation/features => tools/doc}/list-arch.sh (83%)
-
->  rename {Documentation/sphinx => tools/doc}/parallel-wrapper.sh (100%)
->  rename {Documentation/sphinx => tools/doc}/parse-headers.pl (98%)
-
-I prefer if you don't touch those two. I'm already handling them.
-
-Basically, parallel-wrapper.sh will be decommissioned; parse-readers.pl
-will become parse-headers.py (on my series, at tools/docs, but if you
-opt to tools/doc, I'll update it.
-
->  rename {scripts => tools/doc}/sphinx-pre-install (99%)
->  rename {scripts => tools/doc}/split-man.pl (100%)
->  rename {scripts => tools/doc}/test_doc_build.py (100%)
-
-Thanks,
-Mauro
+Even if the global lock went away, that 4ms of spinning might still be
+there.
 
