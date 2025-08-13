@@ -1,81 +1,160 @@
-Return-Path: <linux-kernel+bounces-766433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6DCB2468C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:05:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA50B2468D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A0B3B7CDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEE4A3BD2B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBC4307AFD;
-	Wed, 13 Aug 2025 09:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE91A2F0682;
+	Wed, 13 Aug 2025 09:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UP3ZUYQc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIryKJOX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7652B2FA0DF;
-	Wed, 13 Aug 2025 09:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BE72F7453;
+	Wed, 13 Aug 2025 09:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755078939; cv=none; b=Nj4SyiyMzWFmNkPfTZoG+m7QNXqzL+Liw+tfXt4/C4BGTyK1BpDclcZK7G7EeMGA2INS9oXGC89i+GAVuFWCTYFJDEzemZSPHQWv9BsQqIj8eEJ7TGFaCJ8ZaUE1ExoyHnuqeNOwgxolH268+GFYTBV3avDaJ3UyK6zA8yaoG1A=
+	t=1755078949; cv=none; b=pI6MzM8KTFqb8shABeftKXHzgN8eLbEbsXWZw/WK5uEHSmZ6K1dtx8biSQpDnlcN6Nnj1IRpkdPllPGMKCINY6vuP+fByvMlqI5aq6OLztzFZadmgzkvGnJC3pXYekguyQo63sHFaWGPmhx4hFzc3vjgrWU8n62epp0iQTLgG8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755078939; c=relaxed/simple;
-	bh=RDsfFOpJsyTy7qlEBbtSozjXF6awxrszAO0Ud1U/2JI=;
+	s=arc-20240116; t=1755078949; c=relaxed/simple;
+	bh=qoss9gBQfXJPeGqiJY+aLKqpCiT20+A7Tc3eoa5CTjw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aVLdrE1BGm8vT9inGEvLlRth/wsK5U+6bs9DbSWklMfx/7w5THt/Ji0vbNw4kw8xZbKzrMbXfAMGjbfpzy+e0oVqn/fzcl5Qby3c3tvgciMqTTo/AhizRVMrGDbXu34n041bRICZaMyUGTXuiYH7eBE1AJx1NiltBfmr2nG8Vmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UP3ZUYQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A4FDC4CEEB;
-	Wed, 13 Aug 2025 09:55:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=j1uppE+tChiL4POPCA7seuwjYgQQ8BwKRpnfdg+TSRjMG8U2O4myQJ384BWhg5mh08DmyW8IL8Ri7DNAEQRGVU4mIbZ7vzsMpSCcetwhPeFqBYEk2WFxeGTXoiz4sycE25xOh2glGZOy9ZEL5YaYs4bOYMOvtbN+m8rfRRvfnEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIryKJOX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4419C4CEEB;
+	Wed, 13 Aug 2025 09:55:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755078939;
-	bh=RDsfFOpJsyTy7qlEBbtSozjXF6awxrszAO0Ud1U/2JI=;
+	s=k20201202; t=1755078948;
+	bh=qoss9gBQfXJPeGqiJY+aLKqpCiT20+A7Tc3eoa5CTjw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UP3ZUYQcXPu1m7KBZR2A8x45TwDGxnr9HvGaBOfwUPkE4f5Qdqx8hxovaiIEKNcYL
-	 vS85Vw4gHYV5qga5NNerIkgjzjthm4wNNTibpaRs/uOqPO1Re3t+yA9g2Lfp1/uv6q
-	 7LRW36x2utf84UBAEm6RxjRHedtjgv/og7aii0fKimyBGav4fve9X+2tEaC08xKnn0
-	 q3rV0sFvAMurdJE3m7CVQtmtUkDGIFdY9hjEveS5gX1HkYEpVLq0O81WWcioq2cs4f
-	 0FzlDLbuq9r9V1heCIRoRoy4njPAUeapm9ErABiCME1MXkEy+1WjIvp6O5Z1Ypa4Hi
-	 mhgY4m+RizeyQ==
-Date: Wed, 13 Aug 2025 09:55:35 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] platform/chrome: cros_ec: Avoid
- -Wflex-array-member-not-at-end warning
-Message-ID: <aJxhF38X9dtEtRRG@google.com>
-References: <aJnvuv334M7TljoB@kspp>
+	b=oIryKJOXuKzsBJxAANbWkdKRAzianWzd51zKouaIMXQeBFROvRyeFlaKKLZZ/T4/d
+	 KtE+Y282z04iVn0XAVWEpkM6Oniq4gQrDUYIZZddY2EHfCpkdvXqL/BAsodaflHPpP
+	 QquroJRsF60l3X5igJDWPg9bZ+DgqZqlbOk5EXuMZu6zRJypeiauAYw5zgVf/2+uX4
+	 I9CSyW1CdaZHTtKCRNNICh4RxlR3yxjwsLyCrxHV8IBZY2A3TV+MWkBqSF9mAJ8uDS
+	 7ihKITuiQGdLudL6d9hVUKVUS8+wG87w2HGmwSJ+w0sP64os48ofNGy+AxvyiZHleR
+	 Xp2jVI9s6qF+w==
+Date: Wed, 13 Aug 2025 15:25:40 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Palash Kambar <quic_pkambar@quicinc.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_nitirawa@quicinc.com
+Subject: Re: [PATCH v3] ufs: ufs-qcom: Align programming sequence of Shared
+ ICE for  UFS controller v5
+Message-ID: <x5pkfdxwnpqv66d4y3bucpd6vpxbsahdt2mdj6mdlb43emfkxn@dktn4wpuosgr>
+References: <20250812091714.774868-1-quic_pkambar@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aJnvuv334M7TljoB@kspp>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250812091714.774868-1-quic_pkambar@quicinc.com>
 
-On Mon, Aug 11, 2025 at 10:27:22PM +0900, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+On Tue, Aug 12, 2025 at 02:47:14PM GMT, Palash Kambar wrote:
+> Disable of AES core in Shared ICE is not supported during power
+> collapse for UFS Host Controller V5.0.
 > 
-> Use the new TRAILING_OVERLAP() helper to fix the following warning:
+
+Could you please add more info on the issue observed?
+
+> Hence follow below steps to reset the ICE upon exiting power collapse
+> and align with Hw programming guide.
 > 
-> drivers/platform/chrome/cros_ec.c:106:40: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
->
-> [...]
+> a. Write 0x18 to UFS_MEM_ICE_CFG
+> b. Write 0x0 to UFS_MEM_ICE_CFG
+> 
 
-Applied to
+Please be explicit about the fields you are writing to.
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+> 
+> ---
+> changes from V1:
+> 1) Incorporated feedback from Konrad and Manivannan by adding a delay
+>    between ICE reset assertion and deassertion.
+> 2) Removed magic numbers and replaced them with meaningful constants.
+> 
+> changes from V2:
+> 1) Addressed Manivannan's comment and moved change to ufs_qcom_resume.
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 14 ++++++++++++++
+>  drivers/ufs/host/ufs-qcom.h |  2 +-
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 444a09265ded..60bf5e60b747 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -38,6 +38,9 @@
+>  #define DEEMPHASIS_3_5_dB	0x04
+>  #define NO_DEEMPHASIS		0x0
+>  
+> +#define UFS_ICE_RESET_ASSERT_VALUE	0x18
+> +#define UFS_ICE_RESET_DEASSERT_VALUE	0x00
 
-[1/1] platform/chrome: cros_ec: Avoid -Wflex-array-member-not-at-end warning
-      commit: 8abbbbb588f1f1bf95ae56c1531a17520ce487e2
+Please define the actual bits as per the documentation, not the value you are
+writing. Here, you are changing two fields:
 
-Thanks!
+ICE_SYNC_RST_SEL BIT(3)
+ICE_SYNC_RST_SW BIT(4)
+
+> +
+>  enum {
+>  	TSTBUS_UAWM,
+>  	TSTBUS_UARM,
+> @@ -756,6 +759,17 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>  	if (err)
+>  		return err;
+>  
+> +	if ((!ufs_qcom_is_link_active(hba)) &&
+> +	    host->hw_ver.major == 5 &&
+> +	    host->hw_ver.minor == 0 &&
+> +	    host->hw_ver.step == 0) {
+> +		ufshcd_writel(hba, UFS_ICE_RESET_ASSERT_VALUE, UFS_MEM_ICE);
+> +		ufshcd_readl(hba, UFS_MEM_ICE);
+> +		usleep_range(50, 100);
+
+Please add a comment above the delay to make it clear that the delay is not as
+per the doc:
+		/*
+		 * HW documentation doesn't recommend any delay between the
+		 * reset set and clear. But we are enforcing an arbitrary delay
+		 * to give flops enough time to settle in.
+		 */
+
+> +		ufshcd_writel(hba, UFS_ICE_RESET_DEASSERT_VALUE, UFS_MEM_ICE);
+> +		ufshcd_readl(hba, UFS_MEM_ICE);
+> +	}
+> +
+>  	return ufs_qcom_ice_resume(host);
+>  }
+>  
+> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
+> index 6840b7526cf5..cc1324ce05c7 100644
+> --- a/drivers/ufs/host/ufs-qcom.h
+> +++ b/drivers/ufs/host/ufs-qcom.h
+> @@ -60,7 +60,7 @@ enum {
+>  	UFS_AH8_CFG				= 0xFC,
+>  
+>  	UFS_RD_REG_MCQ				= 0xD00,
+> -
+> +	UFS_MEM_ICE				= 0x2600,
+
+As the internal doc, this register is called UFS_MEM_ICE_CFG.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
