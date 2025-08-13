@@ -1,215 +1,160 @@
-Return-Path: <linux-kernel+bounces-766283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CAF6B244A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:48:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD35B2447E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CD191A2794F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:46:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F271640BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11C82EFD98;
-	Wed, 13 Aug 2025 08:45:36 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DBB23D7D3;
+	Wed, 13 Aug 2025 08:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUsBu5C3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5EA2E5411
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1CE2EE5FE;
+	Wed, 13 Aug 2025 08:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755074736; cv=none; b=j1nTKOVG5Q77Losuv6FleeOw3DNYu9OLq2nwhd8eDlV+P+8N8tGqgD3ppVUQDUpdVXYVWs00kfWiTOAC68TWpYZ2v+gh0TRniQzkK3RwKZpZ50zCi44rg5qXHIEJmTkVXd4J+8+zmoC5ujJw8SaOgHe/bWzsYJAmpHAcBiPVhAw=
+	t=1755074321; cv=none; b=jsawF0Ve1sXik+ILxesPxDyE+0IrrLd/2Wxo2XqUM1bay4g2HwtREJGUSiqeCBsp+ByRlkQb+p410CZLCsJZvt8u3xxatzC2s+IP9KBWWyfn3ZO/4TRorGjo3zk1shakBRzuhgdJoJ9QyTFeBhmGXXqgoXcPfJLEtosPO9Mrpp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755074736; c=relaxed/simple;
-	bh=Ldh16fh8fFa2OPBjVcPdSLU3OlKaSqrsIvKxgPe106A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Oab9adg5aKj4qJ+eQR6d0VtLxSkdqE5HHFXeT6/m+a3x4+jI3S2KwSkS+tV4QFSHzjwXDl02XOCuCE+SOapb+jQ5UK/v6KCjInEfHKA1Hgi3OwBlmfpXUuhvDDR4yCAaweMsMD+PtE/85v0cS8V7TNnqggRaJLiprHVyRsi3JDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1755074720-086e2329551d6fb0001-xx1T2L
-Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx1.zhaoxin.com with ESMTP id hEfWBgoDxOb7YNE1 (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 13 Aug 2025 16:45:21 +0800 (CST)
-X-Barracuda-Envelope-From: EwanHai-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXSHMBX2.zhaoxin.com
- (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 13 Aug
- 2025 16:45:20 +0800
-Received: from ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f]) by
- ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f%7]) with mapi id
- 15.01.2507.044; Wed, 13 Aug 2025 16:45:20 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-Received: from [10.28.24.128] (10.28.24.128) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 13 Aug
- 2025 16:38:39 +0800
-Message-ID: <ed29e030-63f2-493f-af74-d1d0e1fb09e4@zhaoxin.com>
-Date: Wed, 13 Aug 2025 04:38:26 -0400
+	s=arc-20240116; t=1755074321; c=relaxed/simple;
+	bh=4WeOZe+tHXrZMy0vTgIJaEZ2Y1n1zvWM5wBmDGw54R8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tgDdMuOb5lI+gdzUwJXvSdebnAIdB8yu8l/JYKv6sUPUKJROujrKGfjqxtHhquXNd6ePpjuechQeWuqDE0aBfGKcNTW3/N9UJVhPOVjFRd42QHo+HreT6mAdAiZI3dYhEvYv+nKZvZldAGzu4IKpfC3BKDn/WgMWlZ4+hSnnTgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUsBu5C3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A58A3C4CEEB;
+	Wed, 13 Aug 2025 08:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755074320;
+	bh=4WeOZe+tHXrZMy0vTgIJaEZ2Y1n1zvWM5wBmDGw54R8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qUsBu5C38WwPIg4WA4oIhQREHRrReyj8jf3LQR3k4c4sqReEFPa9C13yMLqUdYlOq
+	 ogsyVOrHLE3oQ9cueLxsRiTTl9itk3hAOgH/6f5D1mIeWyF340qT9zXyFZq7ImYGbZ
+	 ITcK5P4Dl38M0Sh7sCRsOtP93JZVIQnfycXnilyttTmMgB6jPpmIfr8UpKlWHBRQUO
+	 5AROKgybXxZSefSjLmNutHY789sj2stpMnUw9z67gunpprgciIAyUK3Wd83pr1rEQT
+	 t8+TDkFGVUN3SVLiLVpnPtuahABRmbBippk1usaQfZVh1L2lXMT0yT2c2ELh0MoW8D
+	 A900Oo1wYL/gQ==
+Date: Wed, 13 Aug 2025 10:38:36 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Lizhi Hou <lizhi.hou@amd.com>, maz@kernel.org,
+	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Issues with OF_DYNAMIC PCI bridge node generation
+ (kmemleak/interrupt-map IC reg property)
+Message-ID: <aJxPDH6Sx0Ur01ER@lpieralisi>
+References: <aJms+YT8TnpzpCY8@lpieralisi>
+ <c627564a-ccc3-9404-ba87-078fb8d10fea@amd.com>
+ <aJrwgKUNh68Dx1Fo@lpieralisi>
+ <e15ebb26-15ac-ef7a-c91b-28112f44db55@amd.com>
+ <CAL_JsqJF6s8GsGe1w6KEkeECab956YiBSFbdbHOiiCv2+v3MAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: x86: expose CPUID 0xC000_0000 for Zhaoxin "Shanghai"
- vendor
-To: Sean Christopherson <seanjc@google.com>
-X-ASG-Orig-Subj: Re: [PATCH] KVM: x86: expose CPUID 0xC000_0000 for Zhaoxin "Shanghai"
- vendor
-CC: <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<x86@kernel.org>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<ewanhai@zhaoxin.com>, <cobechen@zhaoxin.com>, <leoliu@zhaoxin.com>,
-	<lyleli@zhaoxin.com>
-References: <20250811013558.332940-1-ewanhai-oc@zhaoxin.com>
- <aJtYlfuBSWhXS3dW@google.com>
-From: Ewan Hai <ewanhai-oc@zhaoxin.com>
-Content-Language: en-US
-In-Reply-To: <aJtYlfuBSWhXS3dW@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
- zxbjmbx1.zhaoxin.com (10.29.252.163)
-X-Moderation-Data: 8/13/2025 4:45:19 PM
-X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
-X-Barracuda-Start-Time: 1755074721
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 4987
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.145685
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqJF6s8GsGe1w6KEkeECab956YiBSFbdbHOiiCv2+v3MAA@mail.gmail.com>
 
+On Tue, Aug 12, 2025 at 11:59:06AM -0500, Rob Herring wrote:
+> On Tue, Aug 12, 2025 at 10:53 AM Lizhi Hou <lizhi.hou@amd.com> wrote:
+> >
+> >
+> > On 8/12/25 00:42, Lorenzo Pieralisi wrote:
+> > > On Mon, Aug 11, 2025 at 08:26:11PM -0700, Lizhi Hou wrote:
+> > >> On 8/11/25 01:42, Lorenzo Pieralisi wrote:
+> > >>
+> > >>> Hi Lizhi, Rob,
+> > >>>
+> > >>> while debugging something unrelated I noticed two issues
+> > >>> (related) caused by the automatic generation of device nodes
+> > >>> for PCI bridges.
+> > >>>
+> > >>> GICv5 interrupt controller DT top level node [1] does not have a "reg"
+> > >>> property, because it represents the top level node, children (IRSes and ITSs)
+> > >>> are nested.
+> > >>>
+> > >>> It does provide #address-cells since it has child nodes, so it has to
+> > >>> have a "ranges" property as well.
+> > >>>
+> > >>> You have added code to automatically generate properties for PCI bridges
+> > >>> and in particular this code [2] creates an interrupt-map property for
+> > >>> the PCI bridges (other than the host bridge if it has got an OF node
+> > >>> already).
+> > >>>
+> > >>> That code fails on GICv5, because the interrupt controller node does not
+> > >>> have a "reg" property (and AFAIU it does not have to - as a matter of
+> > >>> fact, INTx mapping works on GICv5 with the interrupt-map in the
+> > >>> host bridge node containing zeros in the parent unit interrupt
+> > >>> specifier #address-cells).
+> > >> Does GICv5 have 'interrupt-controller' but not 'interrupt-map'? I think
+> > >> of_irq_parse_raw will not check its parent in this case.
+> > > But that's not the problem. GICv5 does not have an interrupt-map,
+> > > the issue here is that GICv5 _is_ the parent and does not have
+> > > a "reg" property. Why does the code in [2] check the reg property
+> > > for the parent node while building the interrupt-map property for
+> > > the PCI bridge ?
+> >
+> > Based on the document, if #address-cells is not zero, it needs to get
+> > parent unit address. Maybe there is way to get the parent unit address
+> > other than read 'reg'?  Or maybe zero should be used as parent unit
+> > address if 'reg' does not exist?
+> >
+> > Rob, Could you give us some advise on this?
+> 
+> If there's no 'reg', then 'ranges' parent address can be used. If
+> 'ranges' is boolean (i.e. 1:1), then shrug. Just use 0. Probably, 0
+> should just always be used because I don't think it ever matters.
+> 
+> From my read of the kernel's interrupt parsing code, only the original
+> device's node (i.e. the one with 'interrupts') address is ever used in
+> the parsing and matching. So the values in the parent's address cells
+> don't matter. If a subsequent 'interrupt-map' is the parent, then the
+> code would compare the original address with the parent's
+> interrupt-map entries (if not masked). That kind of seems wrong to me,
+> but also unlikely to ever occur if it hasn't already. And that code is
+> something I don't want to touch because we tend to break platforms
+> when we do. The addresses are intertwined with the interrupt
+> translating because interrupts used to be part of the buses (e.g ISA).
+> That hasn't been the case for any h/w in the last 20 years.
 
+If the parent address values don't matter I think we can just leave
+them as zeroes and be done with it (explaining why obviously).
 
-On 8/12/25 11:07, Sean Christopherson wrote:
-> On Sun, Aug 10, 2025, Ewan Hai wrote:
->> rename the local constant CENTAUR_CPUID_SIGNATURE to ZHAOXIN_CPUID_SIGNATURE.
-> Why?  I'm not inclined to rename any of the Centaur references, as I don't see
-> any point in effectively rewriting history.  If we elect to rename things, then
-> it needs to be done in a separate patch, there needs to be proper justification,
-> and _all_ references should be converted, e.g. converting just this one macro
-> creates discrepancies even with cpuid.c, as there are multiple comments that
-> specifically talk about Centaur CPUID leaves.
->
-Okay, it seems I oversimplified the situation.
+Something like this (with a big fat comment added summarizing this
+thread):
 
-My initial thought was that, since there will no longer be separate handling for
-"Centaurhauls," nearly all new software and hardware features will be applied to
-both "Centaurhauls" and "  Shanghai  " vendors in parallel. This would gradually
-lead to more and more occurrences of if (vendor == centaur || vendor ==
-shanghai) in the kernel code. In that case, introducing an is_zhaoxin_vendor()
-helper could significantly reduce the number of repetitive if (xx || yy) checks.
+Lizhi are you able to test it please at least to check it does not break
+anything before I make it a patch for the MLs ?
 
-However, it appears that this "duplication issue" is not a real concern for now.
-We can revisit it later when it becomes a practical problem.
+Any concerns ?
 
-For the current matter, there are two possible approaches. Which one do you
-prefer? Or, if you have other suggestions, please let me know and I will
-incorporate your recommendation into the v2 patch.
-
-## Version 1 ##
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -1820,7 +1820,8 @@ static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
-         int r;
-
-         if (func == CENTAUR_CPUID_SIGNATURE &&
--           boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR)
-+           boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR &&
-+           boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN)
-                 return 0;
-
-         r = do_cpuid_func(array, func, type);
-
-## Version 2 ##
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -1812,6 +1812,7 @@ static int do_cpuid_func(struct kvm_cpuid_array *array, u32 func,
-  }
-
-  #define CENTAUR_CPUID_SIGNATURE 0xC0000000
-+#define ZHAOXIN_CPUID_SIGNATURE 0xC0000000
-
-  static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
-                           unsigned int type)
-@@ -1819,8 +1820,10 @@ static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
-         u32 limit;
-         int r;
-
--       if (func == CENTAUR_CPUID_SIGNATURE &&
--           boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR)
-+       if ((func == CENTAUR_CPUID_SIGNATURE &&
-+            boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR) ||
-+           (func == ZHAOXIN_CPUID_SIGNATURE &&
-+            boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN))
-                 return 0;
-
-         r = do_cpuid_func(array, func, type);
-
->> The constant is used only inside cpuid.c, so the rename is NFC outside this
->> file.
->>
->> Signed-off-by: Ewan Hai <ewanhai-oc@zhaoxin.com>
->> ---
->>   arch/x86/kvm/cpuid.c | 9 +++++----
->>   1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
->> index e2836a255b16..beb83eaa1868 100644
->> --- a/arch/x86/kvm/cpuid.c
->> +++ b/arch/x86/kvm/cpuid.c
->> @@ -1811,7 +1811,7 @@ static int do_cpuid_func(struct kvm_cpuid_array *array, u32 func,
->>        return __do_cpuid_func(array, func);
->>   }
->>
->> -#define CENTAUR_CPUID_SIGNATURE 0xC0000000
->> +#define ZHAOXIN_CPUID_SIGNATURE 0xC0000000
->>
->>   static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
->>                          unsigned int type)
->> @@ -1819,8 +1819,9 @@ static int get_cpuid_func(struct kvm_cpuid_array *array, u32 func,
->>        u32 limit;
->>        int r;
->>
->> -     if (func == CENTAUR_CPUID_SIGNATURE &&
->> -         boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR)
->> +     if (func == ZHAOXIN_CPUID_SIGNATURE &&
->> +             boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR &&
->> +             boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN)
-> Align indentation.
-
-Will fix in v2.
-
->
->          if (func == CENTAUR_CPUID_SIGNATURE &&
->              boot_cpu_data.x86_vendor != X86_VENDOR_CENTAUR &&
->              boot_cpu_data.x86_vendor != X86_VENDOR_ZHAOXIN)
->                  return 0;
->
->>                return 0;
->>
->>        r = do_cpuid_func(array, func, type);
->> @@ -1869,7 +1870,7 @@ int kvm_dev_ioctl_get_cpuid(struct kvm_cpuid2 *cpuid,
->>                            unsigned int type)
->>   {
->>        static const u32 funcs[] = {
->> -             0, 0x80000000, CENTAUR_CPUID_SIGNATURE, KVM_CPUID_SIGNATURE,
->> +             0, 0x80000000, ZHAOXIN_CPUID_SIGNATURE, KVM_CPUID_SIGNATURE,
->>        };
->>
->>        struct kvm_cpuid_array array = {
->> --
->> 2.34.1
->>
-
+-- >8 --
+diff --git i/drivers/pci/of_property.c w/drivers/pci/of_property.c
+index 506fcd507113..dd12691fe43c 100644
+--- i/drivers/pci/of_property.c
++++ w/drivers/pci/of_property.c
+@@ -279,13 +279,6 @@ static int of_pci_prop_intr_map(struct pci_dev *pdev, struct of_changeset *ocs,
+ 			mapp++;
+ 			*mapp = out_irq[i].np->phandle;
+ 			mapp++;
+-			if (addr_sz[i]) {
+-				ret = of_property_read_u32_array(out_irq[i].np,
+-								 "reg", mapp,
+-								 addr_sz[i]);
+-				if (ret)
+-					goto failed;
+-			}
+ 			mapp += addr_sz[i];
+ 			memcpy(mapp, out_irq[i].args,
+ 			       out_irq[i].args_count * sizeof(u32));
 
