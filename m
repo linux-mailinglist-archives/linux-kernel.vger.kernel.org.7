@@ -1,123 +1,288 @@
-Return-Path: <linux-kernel+bounces-767049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38979B24E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2A7B24E69
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18BB0160577
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068705A464D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F40AB28D827;
-	Wed, 13 Aug 2025 15:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94B328C84C;
+	Wed, 13 Aug 2025 15:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F3a7zSGQ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gdu+RhgH"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD535286897;
-	Wed, 13 Aug 2025 15:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5FF286898;
+	Wed, 13 Aug 2025 15:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100020; cv=none; b=RVz75C0509er84ui0D4vE/iRirchAT3LSPsMRbPPtHTnUZ9qjCdhcnr4++fS8kOa7G5a6cAFdnd/6Rkf12tP3c+VqA/K/92t2UIWEON8BBQDFsi3WWG8vURC79jZAs16iBABCSPOD5XwRlArVnUcs2DwOEY9DiyfJvgjsSbgw/s=
+	t=1755100018; cv=none; b=Tf86VFHq+Q7SzdtWho880VEGkb+/PH2YfXZZr4QzmH7rM3FT/VckysJA5WMpus83RHmW6LKT35IQIQ+GQf2zgw2rnau8sPZNzt4Cnh/rJFocarJJ4RqvJQDpcjrJ73BcubwCHdJpmfF9sF7tN1xjPDWSkinwa1VhNTJW7PhY9hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100020; c=relaxed/simple;
-	bh=8C3JEnBgzuNeaQW3gWYprsuy1sUTrnX9KF6z68NKKbc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JH3pJVt0zatn1vS9a3tIUfozM/zQbKngJy0B2Zmf5dyfLR1rrqvobISY1f4zPga/SkbtlL4MkMwKDzt4mvhYYUA48kKLM09gpFlr//rddF9JXCdhuVkmv9Tz5Rm5CIowJuCMikjQSVvk7zPX5W46HPawFldKEBVuD01j36ziY7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F3a7zSGQ; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1755100018; c=relaxed/simple;
+	bh=6v1ojEw/jNsIshlRh8AFAXmDi+4TnVDbN3zXk+OPfAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dvx0Wji5rFk5p+Sz0LPXfeqvJngPSYwUaOuYteTSttle+v0fDSpo6AHZieJK8FnTbN7qKMtVXGrK4JV5Egi9pZ+q8fIVBmY3c1cb+iZRebPRwsmEnphZyr7KD/R0qVF7RXwL7aw1zQgIVPNE3d/zSEn9QVO6qoLzfipCVOgIqlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gdu+RhgH; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55b733911b3so7619667e87.2;
-        Wed, 13 Aug 2025 08:46:58 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9141866dcso1186133f8f.2;
+        Wed, 13 Aug 2025 08:46:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755100017; x=1755704817; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8C3JEnBgzuNeaQW3gWYprsuy1sUTrnX9KF6z68NKKbc=;
-        b=F3a7zSGQKcM9tOsFyyqOUl+FXEetrgBVef98mVn5tN24hMY1NaMn8aSnTK0WB8Z4cy
-         5FOK6zfRavttl5ue77oCukj3aFfYbtGU4T700Or7Y6/5I8tUL+1VRCI4E4VUFBZLqma4
-         1C/eD1PI6c6Yg5OOB5Rfrply49qrNyVwZaLv9DuZQ4Po/R+isCalhTYcZ0r4NvhcsUEX
-         PX3sGbGWvV9jXygpTFZHiQ1HIoY2rgA0/yCeCLuKfZdwOpDIppxw3WCEwqCtlnrA6vWg
-         y8mxt/aAeGvjJnOo8PSw1L3LAKthWzLEd3cuJ5wgDEijQUnO5sBBJMp0SQO+dUFPBmjw
-         qecQ==
+        d=gmail.com; s=20230601; t=1755100015; x=1755704815; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D5gdfUq+mJxhLWblW/OQp9aWlOU7WHgn/nqVMvHooh4=;
+        b=Gdu+RhgHKBUGDqegMrA1yehcOqoiv7o9VPsi9BqZ8amUBigGlsGDKtMHSnqOFQ189n
+         KhaswDH4oUWHIJ+EpxqS6mJP92iEmQU/3FzqCIH6NOSKwAuPPYwaZBfIPfVrig3D8cD5
+         D6kA9bCbkYGz22CvH/NORcqpLDKth3qdOscZ4YToVRqie1X1x9Xm+bZxtyIgygK5blh8
+         35sNh5+AdOIscRMn39Uh4+4/lRmXztM9jQWVoXyOMmh361l7zcgL5S61KquLkg5h6P+Q
+         ayJX5FgbWns5p3rG4SK+oA/zeQFB5BdSYuA+LwdzlaR0fh0i3FIkj8jLqceY7+MOuiAG
+         1jMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755100017; x=1755704817;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8C3JEnBgzuNeaQW3gWYprsuy1sUTrnX9KF6z68NKKbc=;
-        b=xFEaU7Jqup8HEpKHoLXQPBFY4z0vXBfwQ+uHE0NcTDaeBrcJfTA5VQrRht8PJZ/it+
-         sXHm1Dxr0QahuUksIz1QG5crXZHkXQfrCkEbHJ4/uLeGKisiAUJnGUKrdgfO8qO7RLMR
-         DvhZ1sfl8k+TG8RtzRIHHXr9LAI4eLa42qaurBp0Qmd4GlnkZ8gp0M9Wx0doQ+8wySJ9
-         qiikICoFQ316X/AHUnoZQjglP6nLVbELgZn+G2tlqrg6ohELJGY57fe4VTWhzwJlDWDU
-         KrQPxmcf8+ULLrKzIv+3dvmBEETbr9fdqteVkg+oXtTplw9DMdbnAA+s3Nm55zJUlbB6
-         xniA==
-X-Forwarded-Encrypted: i=1; AJvYcCWF9lF+xq/izg3/pQFXRxx5/9vvpoGILuS9kwjHriqAT6fiZD4zNy/KxQGCqhYlbBQs7bXNx1sS7b/c6Yjgh34=@vger.kernel.org, AJvYcCXpge9ECCOp+Wlfal1d4Msgcmd2mRi1MozYOyfWpIDGXB/XaI5b8DCe5/srNI1smwW6YUEHZPPWRotAXyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWvUcF3hdtkDYlYieF/GajNAac+6gBDT9xzKFRyiHBdNpTx6o2
-	/3Q/aPQt28lu79PkH4gplOX1wPjRO5r2/CV7RBM2xKA8rXgEb+SeLSgq5Ssuv9x1gJw3R+Ixibl
-	XJlyDkFQFtFi8UTQ4VK89nOvhQWquUrz5YRtqA+4=
-X-Gm-Gg: ASbGncvfug53v7l8/eKNFDCxrME7Ws+5Uv9Iza2rrgYWlmpInqO1FOstcqOqqiFan27
-	ww0SVwbPmWLhSYVt2cC4d+IK1EtiVWf7ByW9KpIb+yh5wxrOT/CqseDS5YfNSrl9FvIC7Be43TL
-	eX87Js3D6s9saofsJgSDUlXJnGcfWgZ99mGHaOzJFRpiskWqizU/Er9G8qOnaoqW6vxZNFy8+xW
-	ekmzln5YoyraDKVZ85zQwECdsD/SdEXscrz3JprM86j01EQAM4d
-X-Google-Smtp-Source: AGHT+IFlXjCtm/3mLkCKgCQ6oaovDejKJiYTqfx+4Vkk5VXVTLRBcQTPsK+L/8GMgwvkv1tCQDO8KsHElbAZgcSuwQg=
-X-Received: by 2002:a05:6512:3ca6:b0:55b:96e4:11b5 with SMTP id
- 2adb3069b0e04-55ce01418d4mr972466e87.1.1755100016614; Wed, 13 Aug 2025
- 08:46:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755100015; x=1755704815;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D5gdfUq+mJxhLWblW/OQp9aWlOU7WHgn/nqVMvHooh4=;
+        b=dSwsNmVBybXtetSq+TY0AowjU5PAJlv76lyt5rqRRZ0MZNkbYEIEwuvkoK5KG92Sfd
+         33Bk+zSEt3bgH3Xom/AOtL6qrAk7OrnLVcAEF3+jMb17nIDbQXaFlKfLjSodMbCFQneG
+         um0ZxU0rucuJF23cCzev3wMiyocEBpEDcse5iBN96n8p9w92mYXj2msoQhuzLpyLKLGd
+         f9CUsVh3AGUpbw6qWWr1hRf9C4W7mf654H8a99x6gcGp5Hnvl+yvUIZ2ThHwXMxNfhb8
+         Ln/yV+pQXcEdMA/IBhL6hJxKZ9cFQtT+eeDS8gR8O6A0s4U5aZ2wAk+9aGu8nOaDzTjG
+         Rrrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMLWFMoM6LUQvYcfkcOt+MlSeXBkjYwx1ITpI7VtTF6zFIZqJmpphr+Ha2mp0KMGgul3KsfIGyZEUEwWo=@vger.kernel.org, AJvYcCWqO7IF92NnOSAfdqCi3mMvtpUCMDb7GQhzKz3ANICuTtetxlel/mJ36XiAsh/HddKunO/2Gk5v@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcpyuHhKaXlKb8/1DfFJT/C9WpXuTJo05RT9t3BbvgMM5YY/sU
+	UkUHbfj4dNudkfZ5c189kUwL2xTMIxUkiIE7lQZOMuguURqZtVQhAlOT
+X-Gm-Gg: ASbGnctfh2kdFsYcK4Rchk74VUdfz+tZymvvQ21d1pL64Cn0+RyWnXbh21t5PybcJGj
+	561q/oUqqubdUpPrG41a9tWbdBLOQbPapvM2cbxwSviJvwF5G040igQ/FEewmCHlFPQUKyTsBMm
+	8Te/vHGxlbJ2kn1ccBJ+IcK6bM2oNHnJ1VnL+wmgvdMAqm83VqzxVDhn9fCmzXsQAhjXfMvK3Mc
+	6vDxPE2uwhH2KG4f+uTsPEKowVonHcFUbLjZj32+DB4UPTmmt6subVB5XfC3yrD7TfKVWvlpD9/
+	GDcgDTDWcwrcXR7a/09H6Gsg5x7T8OwGGUqZ9ZM/Sc2Y/0GY6ba3hP+iGPEJzSSZGhZQVSc82GD
+	aIdF9f9uEW47nvMmaCz3qoOPMpaRMCGwZpzKhiDM2A37/
+X-Google-Smtp-Source: AGHT+IEQq5IThXEnL5slQftZOSWtXUgt33Lqk9J8t2I7aMMw7CGMx1om7TdukpaPj0t08jqb5tBh7A==
+X-Received: by 2002:a05:6000:40df:b0:3b7:8a28:3e35 with SMTP id ffacd0b85a97d-3b917d2aa13mr2950255f8f.2.1755100015119;
+        Wed, 13 Aug 2025 08:46:55 -0700 (PDT)
+Received: from localhost ([45.10.155.14])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a594e45sm6383155e9.26.2025.08.13.08.46.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 08:46:54 -0700 (PDT)
+Message-ID: <799c2171-7b41-4202-9ea4-e28952f81a65@gmail.com>
+Date: Wed, 13 Aug 2025 17:46:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250710-cstr-core-v14-0-ca7e0ca82c82@gmail.com>
- <20250710-cstr-core-v14-3-ca7e0ca82c82@gmail.com> <DC0A9UKTPH05.2O2V0B2KHMIW8@kernel.org>
- <CAJ-ks9n4V-PEDhkTv6SXj_Oh6LB4LdsNi8Nnv_6JbT7dhvnh2w@mail.gmail.com> <DC1DLSRDL44Z.W74NH6OV15J6@kernel.org>
-In-Reply-To: <DC1DLSRDL44Z.W74NH6OV15J6@kernel.org>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 13 Aug 2025 11:46:20 -0400
-X-Gm-Features: Ac12FXzrZuqOWLNuD2WsxnQxv5byqHT3WGfhqIfZM1e5IVNorXHuhluYNiSBDPo
-Message-ID: <CAJ-ks9=ttX3tYzVq9Kb3Qfx+D+i5_Q7Q-rCHAEpH+fCFgF8AxQ@mail.gmail.com>
-Subject: Re: [PATCH v14 3/3] rust: replace `CStr` with `core::ffi::CStr`
-To: Benno Lossin <lossin@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Christian Brauner <brauner@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next v5 2/5] net: vxlan: add netlink option to bind
+ vxlan sockets to local addresses
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: andrew+netdev@lunn.ch, daniel@iogearbox.net, davem@davemloft.net,
+ donald.hunter@gmail.com, dsahern@kernel.org, edumazet@google.com,
+ horms@kernel.org, idosch@nvidia.com, jacob.e.keller@intel.com,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, martin.lau@kernel.org,
+ menglong8.dong@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com,
+ petrm@nvidia.com, razor@blackwall.org, shuah@kernel.org
+References: <20250812125155.3808-3-richardbgobert@gmail.com>
+ <20250813062904.109300-1-kuniyu@google.com>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <20250813062904.109300-1-kuniyu@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 13, 2025 at 10:40=E2=80=AFAM Benno Lossin <lossin@kernel.org> w=
-rote:
->
-> On Wed Aug 13, 2025 at 4:06 PM CEST, Tamir Duberstein wrote:
-> > On Tue, Aug 12, 2025 at 3:50=E2=80=AFAM Benno Lossin <lossin@kernel.org=
-> wrote:
-> >> On Thu Jul 10, 2025 at 4:53 PM CEST, Tamir Duberstein wrote:
-> >> > +/// Extensions to [`CStr`].
-> >> > +pub trait CStrExt {
-> >>
-> >> Should we make this trait sealed?
-> >
-> > We can -- but is it harmful for someone to implement? I think probably =
-not.
->
-> I don't think anything aside from `CStr` should implement it, so I'd say
-> we make it sealed. There are also safe functions that return raw
-> pointers & an implementation could just return a bogus pointer...
+Kuniyuki Iwashima wrote:
+> From: Richard Gobert <richardbgobert@gmail.com>
+> Date: Tue, 12 Aug 2025 14:51:52 +0200
+>> Currently, VXLAN sockets always bind to 0.0.0.0, even when a local
+>> address is defined. This commit adds a netlink option to change
+>> this behavior.
+>>
+>> If two VXLAN endpoints are connected through two separate subnets,
+>> they are each able to receive traffic through both subnets, regardless
+>> of the local address. The new option will break this behavior.
+>>
+>> Disable the option by default.
+>>
+>> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+>> ---
+>>  drivers/net/vxlan/vxlan_core.c     | 43 +++++++++++++++++++++++++++---
+>>  include/net/vxlan.h                |  1 +
+>>  include/uapi/linux/if_link.h       |  1 +
+>>  tools/include/uapi/linux/if_link.h |  1 +
+>>  4 files changed, 43 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
+>> index f32be2e301f2..15fe9d83c724 100644
+>> --- a/drivers/net/vxlan/vxlan_core.c
+>> +++ b/drivers/net/vxlan/vxlan_core.c
+>> @@ -3406,6 +3406,7 @@ static const struct nla_policy vxlan_policy[IFLA_VXLAN_MAX + 1] = {
+>>  	[IFLA_VXLAN_LABEL_POLICY]       = NLA_POLICY_MAX(NLA_U32, VXLAN_LABEL_MAX),
+>>  	[IFLA_VXLAN_RESERVED_BITS] = NLA_POLICY_EXACT_LEN(sizeof(struct vxlanhdr)),
+>>  	[IFLA_VXLAN_MC_ROUTE]		= NLA_POLICY_MAX(NLA_U8, 1),
+>> +	[IFLA_VXLAN_LOCALBIND]	= NLA_POLICY_MAX(NLA_U8, 1),
+> 
+> Flagging FREEBIND sounds rather NONLOCAL to me.
+> 
+> More specific name would be better.  NON_WILDCARD_BIND ? idk..
+> 
+> $ cat include/net/inet_sock.h
+> ...
+> static inline bool inet_can_nonlocal_bind(struct net *net,
+> 					  struct inet_sock *inet)
+> {
+> 	return READ_ONCE(net->ipv4.sysctl_ip_nonlocal_bind) ||
+> 		test_bit(INET_FLAGS_FREEBIND, &inet->inet_flags) ||
+> 		test_bit(INET_FLAGS_TRANSPARENT, &inet->inet_flags);
+> }
+> 
+> 
+>>  };
+>>  
+>>  static int vxlan_validate(struct nlattr *tb[], struct nlattr *data[],
+>> @@ -4044,15 +4045,37 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
+>>  		conf->vni = vni;
+>>  	}
+>>  
+>> +	if (data[IFLA_VXLAN_LOCALBIND]) {
+>> +		if (changelink) {
+>> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCALBIND], "Cannot rebind locally");
+>> +			return -EOPNOTSUPP;
+>> +		}
+> 
+> Are these two "if" necessary ?
 
-Done in v15.
+Creating a vxlan interface without localbind then adding localbind won't
+result in the socket being rebound. I might implement this in the future,
+but for simplicity, I didn't implement this yet.
+
+> 
+> 
+>> +
+>> +		err = vxlan_nl2flag(conf, data, IFLA_VXLAN_LOCALBIND,
+>> +				    VXLAN_F_LOCALBIND, changelink,
+>> +				    false, extack);
+>> +		if (err)
+>> +			return err;
+>> +	}
+>> +
+>>  	if (data[IFLA_VXLAN_GROUP]) {
+>> +		__be32 addr = nla_get_in_addr(data[IFLA_VXLAN_GROUP]);
+>> +
+>>  		if (changelink && (conf->remote_ip.sa.sa_family != AF_INET)) {
+>>  			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_GROUP], "New group address family does not match old group");
+>>  			return -EOPNOTSUPP;
+>>  		}
+>>  
+>> -		conf->remote_ip.sin.sin_addr.s_addr = nla_get_in_addr(data[IFLA_VXLAN_GROUP]);
+>> +		if ((conf->flags & VXLAN_F_LOCALBIND) && ipv4_is_multicast(addr)) {
+>> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_GROUP], "Cannot add multicast group when bound locally");
+>> +			return -EOPNOTSUPP;
+>> +		}
+>> +
+>> +		conf->remote_ip.sin.sin_addr.s_addr = addr;
+>>  		conf->remote_ip.sa.sa_family = AF_INET;
+>>  	} else if (data[IFLA_VXLAN_GROUP6]) {
+>> +		struct in6_addr addr = nla_get_in6_addr(data[IFLA_VXLAN_GROUP6]);
+>> +
+>>  		if (!IS_ENABLED(CONFIG_IPV6)) {
+>>  			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_GROUP6], "IPv6 support not enabled in the kernel");
+>>  			return -EPFNOSUPPORT;
+>> @@ -4063,7 +4086,12 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
+>>  			return -EOPNOTSUPP;
+>>  		}
+>>  
+>> -		conf->remote_ip.sin6.sin6_addr = nla_get_in6_addr(data[IFLA_VXLAN_GROUP6]);
+>> +		if ((conf->flags & VXLAN_F_LOCALBIND) && ipv6_addr_is_multicast(&addr)) {
+>> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_GROUP6], "Cannot add multicast group when bound locally");
+>> +			return -EOPNOTSUPP;
+>> +		}
+>> +
+>> +		conf->remote_ip.sin6.sin6_addr = addr;
+>>  		conf->remote_ip.sa.sa_family = AF_INET6;
+>>  	}
+>>  
+>> @@ -4071,6 +4099,9 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
+>>  		if (changelink && (conf->saddr.sa.sa_family != AF_INET)) {
+>>  			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCAL], "New local address family does not match old");
+>>  			return -EOPNOTSUPP;
+>> +		} else if (changelink && (conf->flags & VXLAN_F_LOCALBIND)) {
+>> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCAL], "Cannot change local address when bound locally");
+>> +			return -EOPNOTSUPP;
+>>  		}
+>>  
+>>  		conf->saddr.sin.sin_addr.s_addr = nla_get_in_addr(data[IFLA_VXLAN_LOCAL]);
+>> @@ -4084,6 +4115,9 @@ static int vxlan_nl2conf(struct nlattr *tb[], struct nlattr *data[],
+>>  		if (changelink && (conf->saddr.sa.sa_family != AF_INET6)) {
+>>  			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCAL6], "New local address family does not match old");
+>>  			return -EOPNOTSUPP;
+>> +		} else if (changelink && (conf->flags & VXLAN_F_LOCALBIND)) {
+>> +			NL_SET_ERR_MSG_ATTR(extack, tb[IFLA_VXLAN_LOCAL6], "Cannot change local address when bound locally");
+>> +			return -EOPNOTSUPP;
+>>  		}
+>>  
+>>  		/* TODO: respect scope id */
+>> @@ -4517,6 +4551,7 @@ static size_t vxlan_get_size(const struct net_device *dev)
+>>  		nla_total_size(sizeof(__u8)) + /* IFLA_VXLAN_VNIFILTER */
+>>  		/* IFLA_VXLAN_RESERVED_BITS */
+>>  		nla_total_size(sizeof(struct vxlanhdr)) +
+>> +		nla_total_size(sizeof(__u8)) + /* IFLA_VXLAN_LOCALBIND */
+>>  		0;
+>>  }
+>>  
+>> @@ -4596,7 +4631,9 @@ static int vxlan_fill_info(struct sk_buff *skb, const struct net_device *dev)
+>>  	    nla_put_u8(skb, IFLA_VXLAN_REMCSUM_RX,
+>>  		       !!(vxlan->cfg.flags & VXLAN_F_REMCSUM_RX)) ||
+>>  	    nla_put_u8(skb, IFLA_VXLAN_LOCALBYPASS,
+>> -		       !!(vxlan->cfg.flags & VXLAN_F_LOCALBYPASS)))
+>> +		       !!(vxlan->cfg.flags & VXLAN_F_LOCALBYPASS)) ||
+>> +	    nla_put_u8(skb, IFLA_VXLAN_LOCALBIND,
+>> +		       !!(vxlan->cfg.flags & VXLAN_F_LOCALBIND)))
+>>  		goto nla_put_failure;
+>>  
+>>  	if (nla_put(skb, IFLA_VXLAN_PORT_RANGE, sizeof(ports), &ports))
+>> diff --git a/include/net/vxlan.h b/include/net/vxlan.h
+>> index 0ee50785f4f1..e356b5294535 100644
+>> --- a/include/net/vxlan.h
+>> +++ b/include/net/vxlan.h
+>> @@ -333,6 +333,7 @@ struct vxlan_dev {
+>>  #define VXLAN_F_MDB			0x40000
+>>  #define VXLAN_F_LOCALBYPASS		0x80000
+>>  #define VXLAN_F_MC_ROUTE		0x100000
+>> +#define VXLAN_F_LOCALBIND		0x200000
+>>  
+>>  /* Flags that are used in the receive path. These flags must match in
+>>   * order for a socket to be shareable
+>> diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
+>> index 784ace3a519c..7350129b1444 100644
+>> --- a/include/uapi/linux/if_link.h
+>> +++ b/include/uapi/linux/if_link.h
+>> @@ -1399,6 +1399,7 @@ enum {
+>>  	IFLA_VXLAN_LABEL_POLICY, /* IPv6 flow label policy; ifla_vxlan_label_policy */
+>>  	IFLA_VXLAN_RESERVED_BITS,
+>>  	IFLA_VXLAN_MC_ROUTE,
+>> +	IFLA_VXLAN_LOCALBIND,
+>>  	__IFLA_VXLAN_MAX
+>>  };
+>>  #define IFLA_VXLAN_MAX	(__IFLA_VXLAN_MAX - 1)
+>> diff --git a/tools/include/uapi/linux/if_link.h b/tools/include/uapi/linux/if_link.h
+>> index 7e46ca4cd31b..eee934cc2cf4 100644
+>> --- a/tools/include/uapi/linux/if_link.h
+>> +++ b/tools/include/uapi/linux/if_link.h
+>> @@ -1396,6 +1396,7 @@ enum {
+>>  	IFLA_VXLAN_VNIFILTER, /* only applicable with COLLECT_METADATA mode */
+>>  	IFLA_VXLAN_LOCALBYPASS,
+>>  	IFLA_VXLAN_LABEL_POLICY, /* IPv6 flow label policy; ifla_vxlan_label_policy */
+>> +	IFLA_VXLAN_LOCALBIND,
+>>  	__IFLA_VXLAN_MAX
+>>  };
+>>  #define IFLA_VXLAN_MAX	(__IFLA_VXLAN_MAX - 1)
+>> -- 
+>> 2.36.1
+
 
