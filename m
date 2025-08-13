@@ -1,82 +1,161 @@
-Return-Path: <linux-kernel+bounces-767539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FABB255BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:43:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B73AB255CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8355F3ACD90
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3C988442A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4DE3009E1;
-	Wed, 13 Aug 2025 21:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46DC91ADFFB;
+	Wed, 13 Aug 2025 21:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mE8Qar99"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EnBw2Suq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37CB3009DB
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86513009F7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755121307; cv=none; b=Bsb28BrScw/Z0pgdO2+Ok0OjaxLwMr3OfztiYj8l/p8Rw6p+u+ud6HgLCque6tNJVffRr67xYJYx5ipuIAYi2swsvHqxYPoT9Lp4Tkh12eR0waXNpxa9MipvrNGAdRQuN3/NmOVHtxUXvxLBWyzSlC1XST9dzhZYDqfmQ+tNWiA=
+	t=1755121367; cv=none; b=eVloWgW/dB1AduD43B/zGguLKkOSKkZvvMdi8Q3yHgPMr0Jigw3WC/i0I0Ak9Yt2lOV/itThHPeLiHEO7DQJfAgSjFFR1CFQ+Zhf1doYKf/HpexIo/iuQb3r1bzTSlhP0wne6Ad7taYXWLc6SQ0c8yH2o+QbBn1dvhHTz47lqHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755121307; c=relaxed/simple;
-	bh=6KOUN/JH6HdNhm0YMe6IlrFj5wMZhwJdq0fhZ9DLOn8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=bQrz9sIz8PZeEd2WxqP6IUPjbFp147kOb8H7dxx3anKgX2u3ky4SuP4J3AxxID366O816K2ppvFgVBsVJQKY2WHwGy82khaqbySjFllivSreBXVPwprDY2C5oRu/Zi8mLK0/hA1JzMtnKOiqXncUdSd2FRrGIeLU+VlIJrvc+7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mE8Qar99; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E828FC4CEEB;
-	Wed, 13 Aug 2025 21:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755121306;
-	bh=6KOUN/JH6HdNhm0YMe6IlrFj5wMZhwJdq0fhZ9DLOn8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mE8Qar99IrxUWq0u7Xc04KPMLhXRmMS3yOfUzDG2vmP5OhSPvC6Ow5+tsaYKxZlY6
-	 wqMhh5RKzkAxv7b3qTD2p38mkewvPZNyyioxp8RLvfChxoJpNL5l1irPMZiZX3Cht3
-	 470BetnhywGXvAWECOSx7CWn7S5A9hbaFE2xNjPc=
-Date: Wed, 13 Aug 2025 14:41:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Axel Rasmussen <axelrasmussen@google.com>
-Cc: David Hildenbrand <david@redhat.com>, Qingshuang Fu <fffsqian@163.com>,
- hannes@cmpxchg.org, mhocko@kernel.org, zhengqi.arch@bytedance.com,
- lorenzo.stoakes@oracle.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Qingshuang Fu <fuqingshuang@kylinos.cn>,
- Yuanchu Xie <yuanchu@google.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>
-Subject: Re: [PATCH] Fix the data type inconsistency issue of min (tier,
- MAX_CR_TIERS-1) in read_ctrl_pos
-Message-Id: <20250813144145.cf6eece4d1d746568c39bd86@linux-foundation.org>
-In-Reply-To: <CAJHvVchDq-p77VbzO53nNxMTZ-5okMp1SUSQfw_VD3f75fFgAQ@mail.gmail.com>
-References: <20250808072106.153449-1-fffsqian@163.com>
-	<91d72c49-22df-43ed-aeeb-0b93a9da3bfa@redhat.com>
-	<20250811214053.857168fd35e70e73dee1583d@linux-foundation.org>
-	<CAJHvVchDq-p77VbzO53nNxMTZ-5okMp1SUSQfw_VD3f75fFgAQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755121367; c=relaxed/simple;
+	bh=tZkeNJG/k4HgzLYqAar3VskqfPv4lb2PhM0I5jaFVro=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fucOYZ4blND/MYZvgZav6rJFk9PGm3YyhaPOe2uWgF6hstu9ZpJaqIABWNZ3TCQWn+iqdNdA8tiirL2z5WL5/qjR3QaANbfpaBR4nJ0yxes6mW56yqz/JT77MxbBdVL+HShOW/GZUzRibIaDFKae2/HzOXAdIS5qPgdpVp9zneg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EnBw2Suq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755121364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HTAMoi7NWHH5SP+IGuvihL6yckezTSZsu/o/az3fetk=;
+	b=EnBw2Suq6KM4W8lgBe8I1D0WhPyJZD00JenfCux3y4YL7Z2+zU+snwLrsmUrRR7Xr3maFm
+	FELyG3uOMYhHyjN7CFlMmpC1iay20lONRNUn6pk8efzA3pj5FcWcOnxPJm+yCOvO7z48k9
+	wfIwXckq0TZW8AatxJ4DX4MglA70GU4=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-228-rtz11dMnOAOeajZyCkgiEg-1; Wed, 13 Aug 2025 17:42:43 -0400
+X-MC-Unique: rtz11dMnOAOeajZyCkgiEg-1
+X-Mimecast-MFC-AGG-ID: rtz11dMnOAOeajZyCkgiEg_1755121362
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e56ff18e4cso720265ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:42:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755121362; x=1755726162;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HTAMoi7NWHH5SP+IGuvihL6yckezTSZsu/o/az3fetk=;
+        b=C4rPBwXbhbttpwk3yu23RqHSq5Uwe+DEzZWuM9P+v+TRyt8E3aPoUvC4YqtaB3e9BX
+         3W+wq6pTDloSCQIXO5yOm/Xv0hWjgiP8olsQi0e9jvLiKP2l/F0/8wr4NqY8Q0vXjTMl
+         3sJrdqGoLp8LgVxaSWFN5Jq+Pj6lpf3ARfGGAMnuBI9I8Ag8hzJfJbTXbz8ibhU3LsoG
+         x96rZ2Mvw7HBj59S/VYPvUkt0qng75izHsTxoD3oXrcbu+pEEy1w7JTeDRSJ6VJ1IF6q
+         C8KzqDVQz+G5BxvKoOkAl9GrZwfu5vPBvUgVO+u+gI1HyAmPbuK2pK2tylm3Iugvg4Fe
+         3dsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWeASZrhlM7OiwOe9lBG9zvXlrdi6yUWaKSkgDb2XEC4nw//r6OpNg4TW8aLdNwnFeRYxGKO9bpIJlFQMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyremmF+Lk66dn2QGtSK4ScnpTmPHM8nnm0JmUPfbU1SZLLSh9a
+	GS+sVUgmsBf0qvdpDwXi+9XHlv6/BJLkYuUy1h6lIBk0jmIDrBHgeXBVWAFYHbHJJSlA/IIdLgb
+	9X4Y/iViT+QqjME3Jaaap5XsL5oXAqAABO3GdyqkfjhlM88mGedndeCaCANPJRt5VBw==
+X-Gm-Gg: ASbGncuYIIxVMQGqdEENOfIGP1xSx5SEOVSqNZQZkGE0AIxtkueeUJ+7T3mV7AjwEuL
+	Y0++6GURp9cV2o/i+YorW696TZOpyiVRJCtz894NZjBZkQHkj+G4neH/4EkJIJagIZSR18SC99i
+	4AAXxjNCTmJUeayRMOVLlWiiBrMP9OglniQfRjYvd+8OO5PU4FxcDH04ekOqtSbXuE8wk2F+v/0
+	kfsx/H/hghWDc2jT+LYT4QQWLbmktfIfDofZmkocCvDl5ll9N6AXyfCQ5+zGpuvwn0Jvv3yA+JW
+	qjEikdenZkWy96eBA2STIFyjGQlUMCDfHTnrCOEd47g=
+X-Received: by 2002:a05:6e02:2584:b0:3e5:4844:4288 with SMTP id e9e14a558f8ab-3e5674d49f8mr22044895ab.6.1755121362410;
+        Wed, 13 Aug 2025 14:42:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHDHHohC14gyeTWmYipxt4qFzm7xDJM1ET5AJFLlN2JDY03n+D1PVe+fB7ttkokcVWM8OBRFA==
+X-Received: by 2002:a05:6e02:2584:b0:3e5:4844:4288 with SMTP id e9e14a558f8ab-3e5674d49f8mr22044765ab.6.1755121361989;
+        Wed, 13 Aug 2025 14:42:41 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e53e6f9c4fsm48989665ab.41.2025.08.13.14.42.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 14:42:41 -0700 (PDT)
+Date: Wed, 13 Aug 2025 15:42:38 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Farhan Ali <alifm@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, schnelle@linux.ibm.com,
+ mjrosato@linux.ibm.com
+Subject: Re: [PATCH v1 4/6] vfio-pci/zdev: Setup a zpci memory region for
+ error information
+Message-ID: <20250813154238.78794b31.alex.williamson@redhat.com>
+In-Reply-To: <f18e339f-0eb6-4270-9107-58bb70ef0d08@linux.ibm.com>
+References: <20250813170821.1115-1-alifm@linux.ibm.com>
+	<20250813170821.1115-5-alifm@linux.ibm.com>
+	<20250813143028.1eb08bea.alex.williamson@redhat.com>
+	<f18e339f-0eb6-4270-9107-58bb70ef0d08@linux.ibm.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 13 Aug 2025 13:03:42 -0700 Axel Rasmussen <axelrasmussen@google.com> wrote:
+On Wed, 13 Aug 2025 14:25:59 -0700
+Farhan Ali <alifm@linux.ibm.com> wrote:
 
+> On 8/13/2025 1:30 PM, Alex Williamson wrote:
+> > On Wed, 13 Aug 2025 10:08:18 -0700
+> > Farhan Ali <alifm@linux.ibm.com> wrote:  
+> >> diff --git a/include/uapi/linux/vfio_zdev.h b/include/uapi/linux/vfio_zdev.h
+> >> index 77f2aff1f27e..bcd06f334a42 100644
+> >> --- a/include/uapi/linux/vfio_zdev.h
+> >> +++ b/include/uapi/linux/vfio_zdev.h
+> >> @@ -82,4 +82,9 @@ struct vfio_device_info_cap_zpci_pfip {
+> >>   	__u8 pfip[];
+> >>   };
+> >>   
+> >> +struct vfio_device_zpci_err_region {
+> >> +	__u16 pec;
+> >> +	int pending_errors;
+> >> +};
+> >> +
+> >>   #endif  
+> > If this is uapi it would hopefully include some description, but if
+> > this is the extent of what can be read from the device specific region,
+> > why not just return it via a DEVICE_FEATURE ioctl?  Thanks,
 > >
-> >
-> > (cc mglru maintainers, who have yet to reveal themselves in MAINTAINERS)
+> > Alex
+> >  
+> Yes, will add more details about the uapi. My thinking was based on how 
+> we expose some other vfio device information on s390x, such as SCHIB for 
+> vfio-ccw device.
 > 
-> Sorry for that, I took a look at adding myself and Yuanchu, but it
-> wasn't clear how to represent MGLRU in MAINTAINERS, because there
-> isn't a mglru.c, it's bolted on to several existing files with
-> existing maintainers. Should us two just be appended to the list of
-> folks for vmscan.c, or?
+> I didn't think about the DEVICE_FEATURE ioctl. But looking into it, it 
+> looks like we would have to define a device feature (for eg: 
+> VFIO_DEVICE_FEATURE_ZPCI_ERROR), and expose this information via 
+> GET_FEATURE?
 
-I think a separate MGLRU section which mentions mm/vmscan.c is
-appropriate.  kernel/fork.c gets a mention in three sections.
+Yes, and there's a probe capability built-in to determine support.
+
+> If the preference is to use the DEVICE_FEATURE ioctl I can 
+> try that. Curious, any specific reason you prefer the DEVICE_FEATURE 
+> ioctl to the memory region?
+
+Given our current segmenting of the vfio device fd, we're using 40-bits
+of address space for a 6-byte structure.  We're returning structured
+data that has no requirement to be read at arbitrary offsets and
+lengths.  For example, does this series really even handle a short
+read?  We adjust counters for any read, it's more prone to those sorts
+of errors.
+
+Maybe if you actually wanted to allow the user to mmap the error array
+buffer and move the head as they read data while the kernel
+asynchronously fills from the tail, it might make sense to use a
+region, but as used here I don't think it's the right interface.
+Thanks,
+
+Alex
 
 
