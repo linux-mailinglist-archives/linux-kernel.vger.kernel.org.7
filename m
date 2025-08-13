@@ -1,179 +1,88 @@
-Return-Path: <linux-kernel+bounces-766008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A259CB2412F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:14:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B39B24136
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C781B3B8C4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C611188645A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B802C1590;
-	Wed, 13 Aug 2025 06:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9820B2C1589;
+	Wed, 13 Aug 2025 06:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k26+XLrG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaGErLvG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0E4CA6F;
-	Wed, 13 Aug 2025 06:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089ECCA6F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755065562; cv=none; b=iIszH4FMRlxP+J7Ia+nKSuXgneLDfN63L66tY4bbXX1GXj/R1JUpiJCzu3wO5ALx/ElyaUV684y0kRB3U7xsmj7wEaM8SrxU54F6FHb325fYvHqVOKlBxidbXVHT6itt3/FZDXLkxaD7oUfQhIhMr7Q0F1lt2MR1f5OEi8xwBfY=
+	t=1755065599; cv=none; b=nVb8EKRt5TmhpIjHNa8enWich/jvNzzV/KpUaj+rlbajnCfzDq91agReawmtlrORlvsVffo5FmQPq1A4Y0UTnoUAm3R+c7JWbCtS8b/1oHiGjUkEj2VuwNRNBffcd4syJ1GygfjeGxS7D3+0fOGhp8PiCCacE6L78QG2U5V6ZWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755065562; c=relaxed/simple;
-	bh=WEjIl95UqMxFbzW3h7AnyHICcK65Ko5Swc2ymIiErOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSFEair1Vtf5rhpSf8zyxJKpqvUAfMv5vo3fSbNe9TqF/5lfON4+s9oCNu9kc2iF7VOr/j9j+Uhuto0QjmqDRo9X9jKHdYwO4/4Rkgo5zbsLaZk1VgtwJ6dCXglULDFF8teU8MLwcgKLUGoZ6F/T3YqEAELa4XmxmiENkFe63uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k26+XLrG; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755065561; x=1786601561;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WEjIl95UqMxFbzW3h7AnyHICcK65Ko5Swc2ymIiErOo=;
-  b=k26+XLrGbtkXeRqZEnT3Uh7YceBjjUqo5IUeKj7yGAk3sUtboernw/Fy
-   ms4szbxQyth4TLC/zhLZoAeG2I49sSc/Ec1fJ2DzdMfBUyhiw1TGxariW
-   5tASW61t5RSCyku35KyaKcxt5ODMhtuZJTRyKlHXXUqH0u8ZjuenhBQOB
-   /Lp03Th9D10QlP2E//tRvJO4eJNQI7FL3PjBnpDK5QuIssr1k1LcgplB+
-   RqijrPuDCH7B0NJGAm8iIOLk4Evx/A/tZoCLi8aX+hCdGyHN1uCixmKKj
-   CqQZPw22A2xEBgD4W63TDBn8Bw0G6YCha7X4NljwDkmtzOiRg80nmmQJs
-   Q==;
-X-CSE-ConnectionGUID: JJHNLjLXRfaHfXLpkPr79w==
-X-CSE-MsgGUID: ljy4Un02SKqnuFzWchEwGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="67955599"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="67955599"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 23:12:38 -0700
-X-CSE-ConnectionGUID: +WW94DxgSR+S6rEfDZyLDQ==
-X-CSE-MsgGUID: bYLOqADlRSeTUjYPXRWrFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="170591939"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 12 Aug 2025 23:12:33 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1um4is-0009aq-1w;
-	Wed, 13 Aug 2025 06:12:30 +0000
-Date: Wed, 13 Aug 2025 14:12:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jeremy Linton <jeremy.linton@arm.com>,
-	linux-trace-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-perf-users@vger.kernel.org,
-	mhiramat@kernel.org, oleg@redhat.com, peterz@infradead.org,
-	mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, thiago.bauermann@linaro.org,
-	broonie@kernel.org, yury.khrustalev@arm.com,
-	kristina.martsenko@arm.com, liaochang1@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Steve Capper <steve.capper@arm.com>
-Subject: Re: [PATCH v5 5/7] arm64: uprobes: Add GCS support to uretprobes
-Message-ID: <202508131334.FfoZQ27h-lkp@intel.com>
-References: <20250811141010.741989-6-jeremy.linton@arm.com>
+	s=arc-20240116; t=1755065599; c=relaxed/simple;
+	bh=W5Vfudbw3qeEII0c9j4i52O1FO47zCV2DiZIss0JO4o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p0RZ9LCGS4X/MGejNXDFQ3TqG48/sSQ3tbH6jZ1DsvU9VAZUdq/5bpt0vqgfwB/GVmOGyouNDwG2XNoaEiECDUvI7PhmHXXelwG8L7K/zvKaDYQ3kxfqPUWfSsibdKrHywnBemx9UIuNz6chnIc5sP95S2804q15JAuIvTvr6fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaGErLvG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADA5C4CEFC
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:13:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755065595;
+	bh=W5Vfudbw3qeEII0c9j4i52O1FO47zCV2DiZIss0JO4o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HaGErLvGaAU8iPq51GvZbOSF8bgVJTdYgNNjhQONjDVHpp6iQN/Xd/wUTuqRvdWwG
+	 C5V81/RyUZ0veu6c1t4lLHx3JQgOFa6JsEAQRoSlGtJbPfD49eubq/ffu8hefxwMBO
+	 Cg25lrQyWZUQ98P6ecd9UUZuyRU9rjWGGoJ8RvKHZruQGjub9xv9Fg/l3ZkEIGV/vb
+	 h1NNKHmExWIpR64z4XAIku1hW23VUHHBnaNBnlq8kNLPNdZQPD8R+72C0Qx1FyjsZX
+	 8B+AvtX782m9eaF/Yf3k3srQzSKX+tNjK+2yZO5YOyeeEmhtroJCJ0jA3dmxCvextQ
+	 RL6PWXN+UNEWg==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-718409593b9so65171797b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:13:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXWxOuKZvz0b3rPSs/IvfY1MFgUeXOIvvdhNI/TmZznaiJ91Qa4T8bExwunzodXF1vraPbod9sjAJJGElI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlB4N/DPCCOGNtPh1rj5e7hDLLV5Cadql1ZfwyEPU8SGnjpWZk
+	9bRXgSV0NwVZzx/sKZMkckVPFlbgbqV/fHQj0KnmjowsE+ye3x375pkqXcjM/bHE+MVGhPpibaA
+	M0dNpRXP6r8bZTudJApltiiyI9TJQ1D1egoGpLP0w3w==
+X-Google-Smtp-Source: AGHT+IHMJ5hrM6BYKWddcKV/9mOqGWSx0UjeiK7PsjXv12HL+iSu6pnGr7etupATkzLG1i+MPBDUdWzLk+/7HkvRlqo=
+X-Received: by 2002:a05:690c:d:b0:71a:4550:8ac3 with SMTP id
+ 00721157ae682-71d4e54bf5amr25032997b3.22.1755065594874; Tue, 12 Aug 2025
+ 23:13:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250811141010.741989-6-jeremy.linton@arm.com>
+References: <20250812-swap-scan-list-v3-0-6d73504d267b@kernel.org>
+ <20250812-swap-scan-list-v3-1-6d73504d267b@kernel.org> <CAMgjq7CL1pUr25efhu+bT1PRdqw+TkAaCCsBi-1DRBfd28N4OQ@mail.gmail.com>
+In-Reply-To: <CAMgjq7CL1pUr25efhu+bT1PRdqw+TkAaCCsBi-1DRBfd28N4OQ@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 12 Aug 2025 23:13:04 -0700
+X-Gmail-Original-Message-ID: <CACePvbXQ18XYSRu4nGCokvZsh21j=oBk0_h9S+A7Zw_4Dv+S7g@mail.gmail.com>
+X-Gm-Features: Ac12FXyExJGsUwe-uc3d8vHsYw8Bq_bDHUwNl1cib-OweHDW8DGc-AcFLU7hpcM
+Message-ID: <CACePvbXQ18XYSRu4nGCokvZsh21j=oBk0_h9S+A7Zw_4Dv+S7g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm/swapfile.c: introduce function alloc_swap_scan_list()
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jeremy,
+On Tue, Aug 12, 2025 at 9:57=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> I've been testing on top of a locally updated version of V2 for about
+> two days, and it's identical to this one. This looks great, thanks!
 
-kernel test robot noticed the following build errors:
+Thanks for the review.
 
-[auto build test ERROR on arm64/for-next/core]
-[also build test ERROR on perf-tools-next/perf-tools-next tip/perf/core perf-tools/perf-tools linus/master v6.17-rc1 next-20250812]
-[cannot apply to acme/perf/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I have been running the swap stress tests on kernel compile as well.
+No issue so far.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jeremy-Linton/arm64-probes-Break-ret-out-from-bl-blr/20250811-221529
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
-patch link:    https://lore.kernel.org/r/20250811141010.741989-6-jeremy.linton%40arm.com
-patch subject: [PATCH v5 5/7] arm64: uprobes: Add GCS support to uretprobes
-config: arm64-randconfig-r111-20250813 (https://download.01.org/0day-ci/archive/20250813/202508131334.FfoZQ27h-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.4.0
-reproduce: (https://download.01.org/0day-ci/archive/20250813/202508131334.FfoZQ27h-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508131334.FfoZQ27h-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arch/arm64/kernel/probes/uprobes.c: In function 'arch_uretprobe_hijack_return_addr':
->> arch/arm64/kernel/probes/uprobes.c:171:33: error: implicit declaration of function 'get_user_gcs'; did you mean 'put_user_gcs'? [-Werror=implicit-function-declaration]
-     171 |                 gcs_ret_vaddr = get_user_gcs((unsigned long __user *)gcspr, &err);
-         |                                 ^~~~~~~~~~~~
-         |                                 put_user_gcs
-   cc1: some warnings being treated as errors
-
-
-vim +171 arch/arm64/kernel/probes/uprobes.c
-
-   157	
-   158	unsigned long
-   159	arch_uretprobe_hijack_return_addr(unsigned long trampoline_vaddr,
-   160					  struct pt_regs *regs)
-   161	{
-   162		unsigned long orig_ret_vaddr;
-   163		unsigned long gcs_ret_vaddr;
-   164		int err = 0;
-   165		u64 gcspr;
-   166	
-   167		orig_ret_vaddr = procedure_link_pointer(regs);
-   168	
-   169		if (task_gcs_el0_enabled(current)) {
-   170			gcspr = read_sysreg_s(SYS_GCSPR_EL0);
- > 171			gcs_ret_vaddr = get_user_gcs((unsigned long __user *)gcspr, &err);
-   172			if (err) {
-   173				force_sig(SIGSEGV);
-   174				goto out;
-   175			}
-   176	
-   177			/*
-   178			 * If the LR and GCS return addr don't match, then some kind of PAC
-   179			 * signing or control flow occurred since entering the probed function.
-   180			 * Likely because the user is attempting to retprobe on an instruction
-   181			 * that isn't a function boundary or inside a leaf function. Explicitly
-   182			 * abort this retprobe because it will generate a GCS exception.
-   183			 */
-   184			if (gcs_ret_vaddr != orig_ret_vaddr) {
-   185				orig_ret_vaddr = -1;
-   186				goto out;
-   187			}
-   188	
-   189			put_user_gcs(trampoline_vaddr, (unsigned long __user *)gcspr, &err);
-   190			if (err) {
-   191				force_sig(SIGSEGV);
-   192				goto out;
-   193			}
-   194		}
-   195	
-   196		/* Replace the return addr with trampoline addr */
-   197		procedure_link_pointer_set(regs, trampoline_vaddr);
-   198	
-   199	out:
-   200		return orig_ret_vaddr;
-   201	}
-   202	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Chris
 
