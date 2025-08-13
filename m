@@ -1,91 +1,112 @@
-Return-Path: <linux-kernel+bounces-766940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B534DB24CFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21E9B24CF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14ADB3BEB5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2087D18941AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E482FA0F9;
-	Wed, 13 Aug 2025 15:07:48 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723C82F6591;
+	Wed, 13 Aug 2025 15:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/xm8xJp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386B11D5CC6;
-	Wed, 13 Aug 2025 15:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEA935977;
+	Wed, 13 Aug 2025 15:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755097667; cv=none; b=N5mvbQVoMU9UXWGJcIxBUqX9ziSmOWna6wmaU5l2wqrIPQo9I90kaz0BPFOpmHNfXOivf77yXbaBk1LywUQbg1RTOxdkSq2FK07NF3yCODt1gxRHqIXUjXLzfe2sngQYj3ZbUZbf8b//iKjRzpMstYY8OStY07W+rDiwAAevo/E=
+	t=1755097665; cv=none; b=lRp73g/z8Vn8oXkJhU/NDwyux5F4opqeCs5BFV/GZd66yo25MllvIycSk81q5o97HZfITjXz5w13ocr4b+Thz6ruB0DCVh35E4ZV+qGNwUqCurG3CyrmoB3askApAcZquvuqvLe2/P63tnVmvVwY9yyyvxiCZQWuXjJE7symQsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755097667; c=relaxed/simple;
-	bh=aXjzebbFddO40YILFT5Z8xiBxG3ZpokNri+BjawRbDM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PRfrl43k91gUusnzM4y6KftTrERcO6uwi9fg4l9cbWwLEB9SOYhcOTKoOOm0qt9fB90rgrT99Mi/x/pc0+xI/iaoirkIM032Wfa7W258LFYj4276KWzZ4tg1bh4geDNWTDbIGLL2v2i6l1AXT5qHWvRDg9gGSwfiSl0AcID8nns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2BST25n0z6L54Z;
-	Wed, 13 Aug 2025 23:02:49 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B4681400D4;
-	Wed, 13 Aug 2025 23:07:42 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
- 2025 17:07:41 +0200
-Date: Wed, 13 Aug 2025 16:07:40 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>
-CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
-	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
-Subject: Re: [PATCH V2 08/20] nvdimm/label: Include region label in slot
- validation
-Message-ID: <20250813160740.00001ed2@huawei.com>
-In-Reply-To: <20250730121209.303202-9-s.neeraj@samsung.com>
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121232epcas5p4cd632fe09d1bc51499d9e3ac3c2633b3@epcas5p4.samsung.com>
-	<20250730121209.303202-9-s.neeraj@samsung.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755097665; c=relaxed/simple;
+	bh=4gygrHPcm56qsPqtSIULPZO9eKZFnIsDVyMn5VmpQwo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=nSobGemFjSuWwW/ZtGgkvwiVE9L/ZPrjQ4qwX61p0DnD7AvJ0JCrm9Se3JwAT/stHqCzde58RkR0sIi6/qBZ/HdCvnXaJ9HwQeyoj2/dm5HO1Oqke+mea1qlZk6HZ4iEIdK+HwRC08nwyVygd7LJdm/lMZQt9ZZKsL2usPC5oRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/xm8xJp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D34F0C4CEEB;
+	Wed, 13 Aug 2025 15:07:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755097665;
+	bh=4gygrHPcm56qsPqtSIULPZO9eKZFnIsDVyMn5VmpQwo=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=K/xm8xJpakKu7oVtPtkeei94hI5k4tH85a16o5ygnjcVL3bUw5VeOh6SlW1x+QSMF
+	 25YwJSlXoJ8P0qgeAMy9MJIlUKakzxd9nSx3rQTIXJByUV/FOUjJpsaG70o+xvIUu/
+	 iyRY69HkDVsSbPHTiiuWDXc4zVd8LM9HbDcbcISotNmygJAJT31g0+vmrekV9ZhWwO
+	 U43+M4ncy46NZmid+0H737mlzFXgY7v8wVQ9aHHKTHw1ZjtujyDWHUaFH9TQJkHs/i
+	 InjE4h0Lu9pkQJ3c3tLOeIUp/fyfkjQxw6wZvyxmYc+wGlMdSTxlWbXqC2VToLrQux
+	 iGkt7rXEG1SkQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 17:07:41 +0200
+Message-Id: <DC1E72OCYMMU.1C1EWX0YPDEOT@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2] rust: devres: fix leaking call to devm_add_action()
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+References: <20250812130928.11075-1-dakr@kernel.org>
+ <aJw7sx0p0Ec-oLkz@google.com>
+In-Reply-To: <aJw7sx0p0Ec-oLkz@google.com>
 
-On Wed, 30 Jul 2025 17:41:57 +0530
-Neeraj Kumar <s.neeraj@samsung.com> wrote:
+On Wed Aug 13, 2025 at 9:16 AM CEST, Alice Ryhl wrote:
+> On Tue, Aug 12, 2025 at 03:09:06PM +0200, Danilo Krummrich wrote:
+>> When the data argument of Devres::new() is Err(), we leak the preceding
+>> call to devm_add_action().
+>>=20
+>> In order to fix this, call devm_add_action() in a unit type initializer =
+in
+>> try_pin_init!() after the initializers of all other fields.
+>>=20
+>> Fixes: f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
+>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>
+> This looks ok:
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>
+> But can't we do it like this instead?
+> 1. Allocate devm job.
+> 2. Initialize inner field.
+> 3. Use allocation from (1.) to devm_add_action() infallibly.
 
-> slot validation routine validates label slot by calculating label
+Theoretically, we could with a few additions to the C API. But I don't thin=
+k
+it's worth and I don't think we should do it in the context of this patch.
 
-Slot validation ... or
-The slot validation routing ...
+> This way, there's no risk that the inner value may get dropped, which
+> could be an expensive operation.
 
+If we actually fail to allocate a devres node on the C side, I'm not that
+concerned about having to drop data.
 
-> checksum. It was only validating namespace label. This changeset also
-> validates region label if present.
-> 
-> Also validate and calculate lsa v2.1 namespace label checksum
+However, there's also another reason why I think there's no need to conside=
+r it
+now: I still have the rework on my list to get devres callbacks in place su=
+ch
+that we can first revoke the Revocable objects of all corresponding Devres
+objects, call synchronize_rcu() once, and then drop the contained data in-p=
+lace.
 
-LSA v2.1 ...
+In this context I also plan to directly embedd a struct devres_node in the =
+Rust
+Devres type, such that the *only* allocation that remains is the final one =
+when
+the user of Devres allocates for the final impl PinInit, that directly or
+indirectly contains the Devres.
 
-
-> 
-> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
-Otherwise LGTM
-
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-
-
+Once we have that, adding the devres node will also always be infallible.
 
