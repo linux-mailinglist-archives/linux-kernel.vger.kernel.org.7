@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-766228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E781DB24412
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:20:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CF9B24425
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED5DE16E16D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:18:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F06BB7BBF81
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E86C2EF64F;
-	Wed, 13 Aug 2025 08:18:03 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B122EA158;
+	Wed, 13 Aug 2025 08:19:17 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439222ED179
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F861A9FB0;
+	Wed, 13 Aug 2025 08:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073082; cv=none; b=p5RF2udSNhXPW1rM9m7LNRrIndcWGbdtjQc9K9kGyP4xUYUMNiguzboPAUjQR4qbzEyO6/bGAy4HAzPOfJCU4St2gsitZbAN78rIWxLIKCljN9NfECin2ARNjHepHoHgb2KCHiShYNqYNUO8VRjTzp2EbdHRbTI/vhrrZbVPlMI=
+	t=1755073157; cv=none; b=HPiCttABU39jU+s4Ofw3ea/vx+n7H1Q+3yMyGfqRjGPia7FXnYGXFk+EObSc/DsFZAx7/isvUesLLyUmXs0PUEzvzROVhW1aZMpT2Mi/1G2GrKI09tSy9kN4VyToHNUooHGwUai81vegW4pv1ekSUszgWImM0sBJJvnoh+0O+6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755073082; c=relaxed/simple;
-	bh=BOQm1gfTRn5piARkr7daF/P0HADwbUi8oBh5V8Qy9lk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HKl7i45LlFHuFpAfe1rOHGSGTGNz4283gGIDDcpWg0ecuTWA6/LnAFTkQhh9HkE0U35UvmrxRhyKouXyqQJTA2JiBtNKJwrd40hJPbQaHH+Kx8Yi7K61h26vXiDkEa6T+JYGZAfeQonOm7ptQwRRqQfBOsjdX2dMkLVgx8vMrVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1um6gD-000389-E7; Wed, 13 Aug 2025 10:17:53 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1um6gC-0003nM-2z;
-	Wed, 13 Aug 2025 10:17:52 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1um6gC-0004ib-2k;
-	Wed, 13 Aug 2025 10:17:52 +0200
-Message-ID: <6f138742fe92b6d26f0cd87d3c57e141d63c6f3b.camel@pengutronix.de>
-Subject: Re: [PATCH 7/7] can: m_can: add optional support for reset
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, Chandrasekar Ramakrishnan
- <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Patrik
- Flykt <patrik.flykt@linux.intel.com>, Dong Aisheng <b29396@freescale.com>,
- Fengguang Wu <fengguang.wu@intel.com>, Varka Bhadram
- <varkabhadram@gmail.com>, Wu Bo <wubo.oduw@gmail.com>, Markus
- Schneider-Pargmann <msp@baylibre.com>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@pengutronix.de
-Date: Wed, 13 Aug 2025 10:17:52 +0200
-In-Reply-To: <20250812-m_can-fix-state-handling-v1-7-b739e06c0a3b@pengutronix.de>
-References: 
-	<20250812-m_can-fix-state-handling-v1-0-b739e06c0a3b@pengutronix.de>
-	 <20250812-m_can-fix-state-handling-v1-7-b739e06c0a3b@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1755073157; c=relaxed/simple;
+	bh=v7rtgWQNu/mbQ/micpT414DkETdzWVBsO6/aw191THE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ag6uWQ5QDOYv3tCApx+wlqsgYxkvSPeDfo6m22YVQ4DOBUeXp0KGokvg/+HdiJXk2jOdUoqwdExaYBu6WUic4ZgUdQSQCQHNrQlipM/vBYMp7HYOijUQrhHNy+8X+SVG65JUQOSzx2p8Jf38SGjHU2eli/VGjnjl8u+49YXdwvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.192] (ip5f5af7c8.dynamic.kabel-deutschland.de [95.90.247.200])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5389461E647B3;
+	Wed, 13 Aug 2025 10:18:30 +0200 (CEST)
+Message-ID: <9b44df93-acec-4416-9f32-f97d0bfaaa7b@molgen.mpg.de>
+Date: Wed, 13 Aug 2025 10:18:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH v1 iwl-next 1/2] igbvf: add lbtx_packets
+ and lbtx_bytes to ethtool statistics
+To: Kohei Enju <enjuk@amazon.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ kohei.enju@gmail.com
+References: <20250813075206.70114-1-enjuk@amazon.com>
+ <20250813075206.70114-2-enjuk@amazon.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250813075206.70114-2-enjuk@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Di, 2025-08-12 at 19:36 +0200, Marc Kleine-Budde wrote:
-> In some SoCs (observed on the STM32MP15) the M_CAN IP core keeps the
-> CAN state and CAN error counters over an internal reset cycle. The
-> STM32MP15 SoC provides an external reset, which is shared between both
-> M_CAN cores.
->=20
-> Add support for an optional external reset. Take care of shared
-> resets, de-assert reset during the probe phase in
-> m_can_class_register() and while the interface is up, assert the reset
-> otherwise.
->
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Dear Kohei,
+
+
+Thank you for your patch.
+
+Am 13.08.25 um 09:50 schrieb Kohei Enju:
+> Currently ethtool shows lbrx_packets and lbrx_bytes (Good RX
+> Packets/Octets loopback Count), but doesn't show the TX-side equivalents
+> (lbtx_packets and lbtx_bytes). Add visibility of those missing
+> statistics by adding them to ethtool statistics.
+> 
+> In addition, the order of lbrx_bytes and lbrx_packets is not consistent
+> with non-loopback statistics (rx_packets, rx_bytes). Therefore, align
+> the order by swapping positions of lbrx_bytes and lbrx_packets.
+> 
+> Tested on Intel Corporation I350 Gigabit Network Connection.
+> 
+> Before:
+>    # ethtool -S ens5 | grep -E "x_(bytes|packets)"
+>         rx_packets: 135
+>         tx_packets: 106
+>         rx_bytes: 16010
+>         tx_bytes: 12451
+>         lbrx_bytes: 1148
+>         lbrx_packets: 12
+> 
+> After:
+>    # ethtool -S ens5 | grep -E "x_(bytes|packets)"
+>         rx_packets: 748
+>         tx_packets: 304
+>         rx_bytes: 81513
+>         tx_bytes: 33698
+>         lbrx_packets: 97
+>         lbtx_packets: 109
+>         lbrx_bytes: 12090
+>         lbtx_bytes: 12401
+> 
+> Tested-by: Kohei Enju <enjuk@amazon.com>
+
+No need to resend, but I believe, you only add a Tested-by: tag, if the 
+person differs from the author/Signed-off-by: tag.
+
+> Signed-off-by: Kohei Enju <enjuk@amazon.com>
 > ---
->  drivers/net/can/m_can/m_can.c | 26 +++++++++++++++++++++++---
->  drivers/net/can/m_can/m_can.h |  1 +
->  2 files changed, 24 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.=
-c
-> index c24ea0e5599f..0a6d4b523c33 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -23,6 +23,7 @@
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/reset.h>
-> =20
->  #include "m_can.h"
-> =20
-> @@ -1833,6 +1834,7 @@ static int m_can_close(struct net_device *dev)
-> =20
->  	close_candev(dev);
-> =20
-> +	reset_control_assert(cdev->rsts);
+>   drivers/net/ethernet/intel/igbvf/ethtool.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/igbvf/ethtool.c b/drivers/net/ethernet/intel/igbvf/ethtool.c
+> index 773895c663fd..c6defc495f13 100644
+> --- a/drivers/net/ethernet/intel/igbvf/ethtool.c
+> +++ b/drivers/net/ethernet/intel/igbvf/ethtool.c
+> @@ -30,8 +30,10 @@ static const struct igbvf_stats igbvf_gstrings_stats[] = {
+>   	{ "rx_bytes", IGBVF_STAT(stats.gorc, stats.base_gorc) },
+>   	{ "tx_bytes", IGBVF_STAT(stats.gotc, stats.base_gotc) },
+>   	{ "multicast", IGBVF_STAT(stats.mprc, stats.base_mprc) },
+> -	{ "lbrx_bytes", IGBVF_STAT(stats.gorlbc, stats.base_gorlbc) },
+>   	{ "lbrx_packets", IGBVF_STAT(stats.gprlbc, stats.base_gprlbc) },
+> +	{ "lbtx_packets", IGBVF_STAT(stats.gptlbc, stats.base_gptlbc) },
+> +	{ "lbrx_bytes", IGBVF_STAT(stats.gorlbc, stats.base_gorlbc) },
+> +	{ "lbtx_bytes", IGBVF_STAT(stats.gotlbc, stats.base_gotlbc) },
+>   	{ "tx_restart_queue", IGBVF_STAT(restart_queue, zero_base) },
+>   	{ "tx_timeout_count", IGBVF_STAT(tx_timeout_count, zero_base) },
+>   	{ "rx_long_byte_count", IGBVF_STAT(stats.gorc, stats.base_gorc) },
 
-Nitpick, "rsts" as in plural?=20
-
-[...]
-> @@ -2462,8 +2478,10 @@ int m_can_class_register(struct m_can_classdev *cd=
-ev)
->  		 KBUILD_MODNAME, cdev->net->irq, cdev->version);
-> =20
->  	/* Probe finished
-> -	 * Stop clocks. They will be reactivated once the M_CAN device is opene=
-d
-> +	 * Assert rest and stop clocks.
-
-Typo, s/rest/reset/.
-
-Otherwise,
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
 
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Kind regards,
 
-regards
-Philipp
+Paul
 
