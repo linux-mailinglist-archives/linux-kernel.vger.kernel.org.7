@@ -1,89 +1,102 @@
-Return-Path: <linux-kernel+bounces-767104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFB2B24FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:30:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E54B24E89
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535571740FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:13:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78AEC7B39F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72E528AB03;
-	Wed, 13 Aug 2025 16:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="iLZpmoWp"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D58B287256;
+	Wed, 13 Aug 2025 15:56:01 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DF62727F9
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B3227B50F;
+	Wed, 13 Aug 2025 15:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755101238; cv=none; b=VnsJvt/smyoinnS3zK7NFAEDPnL4qg52Sxh/LUU34do/n2DJPoGhRET7TNyArOsqB04YVwkcjP/Qg11jZenJf+fQ2va85PxNtWFyHwcOMjv2jR+AKN2qYM+PuxoF2JkdHnncN+nqcE/cnfElWK706ntxNo+6UpMXHdIFcqAMWNA=
+	t=1755100561; cv=none; b=kSxmw1XRbBekRXPPpSpKMIurJXkhMrFRwcnYhJ/l49bVxbdTLxJ3cAdNFBObmj5J6dCBvmKLZznhmMFZ1rShNEcjJrIdwNaBCDglgDPAyrrAPosDX2fNhzkGnnr97Xko58kW4jMxD4TBsCXYTntdxY9YBW3sKzyit1HwcDLAlhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755101238; c=relaxed/simple;
-	bh=N4JCyCl3TMqGdxL8z8nyy4b0wwx4vjcVA+ne1uluhZo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PTtYi1ghQmauDZ4/Rt2SfhVuhfQ/B/N1Fl6AKzu1Wk+Ss6EYV4aJTQmMPSF8Ck7XtzVo2io4ez7ct9T5EfgZyQpwvBzyVLcxGVHFZtdmS4cnwL6qzUx2TQ7yquUxRER7BQ5uSrEcgfovMRDqlGfuPNQKijJ0fdXFi5rJt5LaLbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=iLZpmoWp; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1755100536;
-	bh=N4JCyCl3TMqGdxL8z8nyy4b0wwx4vjcVA+ne1uluhZo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=iLZpmoWpVApJyh/MbWULYTT+MrxPWB884CI1fKVacIcDXp6PMJbZNxlv5xjj6s4EE
-	 +V19nVSCemZ5TY9cj27OLG63WxO6hTKf96CxuDRjT8B7Gq+26M39qNVya6GxBnA0ny
-	 87ap3K00EQEpcVZU4nqiP3VgHFPGZl1TSIwGWXEc=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 47644401FB; Wed, 13 Aug 2025 08:55:36 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 453694010E;
-	Wed, 13 Aug 2025 08:55:36 -0700 (PDT)
-Date: Wed, 13 Aug 2025 08:55:36 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Sudeep Holla <sudeep.holla@arm.com>
-cc: Jeremy Linton <jeremy.linton@arm.com>, 
-    Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com, 
-    will@kernel.org, patches@amperecomputing.com, 
-    Shubhang@os.amperecomputing.com, krzysztof.kozlowski@linaro.org, 
-    bjorn.andersson@oss.qualcomm.com, geert+renesas@glider.be, arnd@arndb.de, 
-    nm@ti.com, ebiggers@kernel.org, nfraprado@collabora.com, 
-    prabhakar.mahadev-lad.rj@bp.renesas.com, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: defconfig: enable CONFIG_SCHED_CLUSTER
-In-Reply-To: <20250813-gifted-nimble-wildcat-6cdf65@sudeepholla>
-Message-ID: <d172f30d-28ad-dd46-1385-f010107bc789@gentwo.org>
-References: <20250808025533.6422-1-shijie@os.amperecomputing.com> <e47757c3-6091-43b5-ba28-52e11de7d86a@arm.com> <cb383a76-8848-44cd-6f32-fd30478d9ebd@gentwo.org> <2d9259e4-1b58-435d-bf02-9c4badd52fd9@arm.com>
- <20250813-gifted-nimble-wildcat-6cdf65@sudeepholla>
+	s=arc-20240116; t=1755100561; c=relaxed/simple;
+	bh=xzBNb/50mbyLTPm5Suj2K7W5uV4Vxpn9qpduAfvNPgI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sZt0Su4r5L7vUPZf51KTIEElFwAILS/K0ujmla+xivP5KAjcqY6AKwceet5Aq7Q/+U/PIU3Vz5R+eRuRvJ5XxPszmohpTSc4QdyEo9R0BfRIniceP3Gnpw1YHtGbNAJ89M+2TAQaNhnHx5VE4pzGZzuBCzzrMb3QjSILSysnb3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2CbT6hPTz6GFlc;
+	Wed, 13 Aug 2025 23:53:57 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id DB3361404D8;
+	Wed, 13 Aug 2025 23:55:55 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 17:55:55 +0200
+Date: Wed, 13 Aug 2025 16:55:54 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
+Subject: Re: [PATCH V2 12/20] nvdimm/namespace_label: Skip region label
+ during namespace creation
+Message-ID: <20250813165554.00002dea@huawei.com>
+In-Reply-To: <20250730121209.303202-13-s.neeraj@samsung.com>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121238epcas5p212dcce5cc5713173913ee154d5098a2c@epcas5p2.samsung.com>
+	<20250730121209.303202-13-s.neeraj@samsung.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, 13 Aug 2025, Sudeep Holla wrote:
+On Wed, 30 Jul 2025 17:42:01 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-> > The problem is that this information is being sourced from the ACPI PPTT.
-> > The ACPI specification (AFAIK) doesn't define a cluster, so the linux
-> > cluster information is being 'invented' based on however the firmware vendor
-> > choose to group CPU nodes in the PPTT. Which means its possible for them to
-> > unknowingly create clusters, or also fail to create them when they make
-> > sense.
->
-> +1, completely agree. As Jeremy mentioned, it is hit or miss and cluster
-> is loosely defined and IIRC Huawei pushed this based on their platform at
-> the time and it did break some benchmarks on few other platforms. So it
-> is not a good idea to make it default config IMO.
+> During namespace creation skip presence of region label if present.
 
-Can we figure out which platforms benchmarks were affected and why?
+Confusing description.  What does skipping presence mean?
+Reword.
 
-It seems the notion of a "cluster" on ARM64 is derived (I guess a better
-word than "invented" hehe)  from sibling information instead of PPTT. But
-using that information should work fine right?
+During namespace creation, skip any region labels found.
+
+
+> Also preserve region label into labels list if present.
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/nvdimm/namespace_devs.c | 50 +++++++++++++++++++++++++++++----
+>  1 file changed, 45 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index e5c2f78ca7dd..8edd26407939 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -1985,6 +1985,10 @@ static struct device **scan_labels(struct nd_region *nd_region)
+>  		if (!lsa_label)
+>  			continue;
+>  
+> +		/* skip region labels if present */
+
+This is kind of obvious comment. I'd drop it.
+
+> +		if (is_region_label(ndd, lsa_label))
+> +			continue;
+> +
+>  		nd_label = &lsa_label->ns_label;
+>  
 
 
