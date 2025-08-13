@@ -1,234 +1,177 @@
-Return-Path: <linux-kernel+bounces-766755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98ED2B24ABA
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:38:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA79FB24AA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FD3E3B0B09
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8902A0938
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843682EA497;
-	Wed, 13 Aug 2025 13:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC012EA491;
+	Wed, 13 Aug 2025 13:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="eUMrfpWH"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fZfU1JX0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EFB7261D;
-	Wed, 13 Aug 2025 13:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECBA80B;
+	Wed, 13 Aug 2025 13:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755092291; cv=none; b=Cc7UagXDh5vUeO/jgOYQ2eRfWhBFm40jS0M8xDB55kPn+DayufonEGkv5IfDbOCpEc1MsVE8Q2Ycbak/M+Th9CmUh7a+a3E7qiCe2Ga5klxRmDuBQbFyAX65clp/zdSNN1PKkFfmQyLAla7hHtlNV19OSM05OlWGKqEU2WWQbU8=
+	t=1755091915; cv=none; b=JTyhUeMaCKzzaoEEdbmsIFxFVyK1S1pNbAD/Nd98yL3XrRIK1iguajZG9vmifqybBK4+81AJPRUiIL+QTwzYNYJvMm8Q5Pj1gXoYcSzaw15WqUKKfN54dg6kB1Cd5ICq/5n4mZRxySVsO0QK6CQeSzzc9z84RlbtjIoi5SQBwo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755092291; c=relaxed/simple;
-	bh=kzvIFJTThlLQDTF0SfsbvezRVY7pC4RrTK8Eyx2TggI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E0S+FyD4ydm0Yzv/5CKZmPG5fOzF/o1EFKtTn93EUNwq5egjlyuzDqLgBLpEUmPtO04fuHfbCeNzXzwSnh7Ircs1ZW8EaZ1P4fv/WkXBtzg8CLvfpxHNQym24rSkY/v7jcEcwEQcps3FmiyhSjPut0dBnbGP6JtajLaVYSXliHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=eUMrfpWH; arc=none smtp.client-ip=74.208.4.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1755092288; x=1755697088; i=parker@finest.io;
-	bh=9VhQHr4+unstqwJkUnIUsDv4zG6qvG2KxphQg+F/KGM=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=eUMrfpWHkyJZ6xBd0O6x7tFO5S8M4gsJin/97/TF6xmxi+YMTyjay+6CzuOI3uk0
-	 j6ZLzge5YUyWTf17ao4ebQ5Hqa5rQIjY1Gw1Z0dmamboLpH9HA8MZ20zwSemH5Q3U
-	 wJdDxOgdZzrzpDOj69ckpj8NXGndLHrINoYS9pCpVSwr1Q0FGyGHULjydU2uVbj5B
-	 To4cOU8ci9UfTCUVrxR+FNCpAc/VNLFMp4TOaWG6/fhqd+S6om4gJn3ZzFVmZza9d
-	 A2Juhhs1Kx2IFz1AJe/YKD+pUphIQFs2ZP9v5cWebjZjU1hzAYYA1lTUmjlwGyLZ7
-	 QNQO1JwvxZE0UmDAdQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
- mrelay.perfora.net (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id
- 1MZTNi-1v7iq535Mc-00QAvJ; Wed, 13 Aug 2025 15:32:35 +0200
-Date: Wed, 13 Aug 2025 09:30:47 -0400
-From: Parker Newman <parker@finest.io>
-To: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>, Parker
- Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH] tty: serial: 8250: exar: fix kernel warning in
- default_setup function
-Message-ID: <20250813091900.7d4e4e89.parker@finest.io>
-In-Reply-To: <20250813130629.03832804@posteo.net>
-References: <aIiDf31HzRBGuMN2@monster.localdomain>
- <2025072929-distant-hardener-0e75@gregkh>
- <20250730130348.082ad53d@posteo.net>
- <aJJ49CSBqGZM_b1Y@smile.fi.intel.com>
- <20250813130629.03832804@posteo.net>
-Organization: Connect Tech Inc.
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755091915; c=relaxed/simple;
+	bh=LBaV36kinhS2YmnWCqdbe4NeUbgwg6zlvagH3E1PDKk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ui6Shx5VJDN1niVr+/5Xanyg23qSHY570pKVBbmNBFyQwqDsq5k70BwRyz5Ytl4GPNwpQhU1MRV8Kf0AfAL7mWR1RGR7u0DG2Y4N2biaGlabX8Hpo7vI0mhplLb99X1AKvVmsQ+pkJxE1wOaaQ9kw0Ko+E/kqNcugZRKzoKk2N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fZfU1JX0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14D8FC4CEEB;
+	Wed, 13 Aug 2025 13:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755091914;
+	bh=LBaV36kinhS2YmnWCqdbe4NeUbgwg6zlvagH3E1PDKk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=fZfU1JX0513KY6RQ5u4CA1XReF2EwtSPUl9mGOG2aKqICidDoOBi1VkOMqlX2VQkr
+	 OmmEn6gT/3VhI+vewT9+KaGsxvhyTKuB6GzefoHfcuAiK17iXvoIQRNBWPfOXiCOOn
+	 dxtEPT9Ia7jS+9wJ3RLJCLhWGqcDynOjlBif1A1V1LwSNnuo8T73ndSkvh3LJJv7Gy
+	 jAmazTTM6rLVo2W2fVYwP4bDT6qaLVXrA2YKdmujGgIWGaWrby/410iyVA6db7J2/B
+	 UnxdYeWn7Ec92oRndFFDFnF2fE0poDi8GSBkUJrMwP0kDKYGc+cudBBzKxPOS3P4sy
+	 PCBNuNYmFdTpA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Vipin Sharma <vipinsh@google.com>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  tglx@linutronix.de,  mingo@redhat.com,
+  bp@alien8.de,  dave.hansen@linux.intel.com,  x86@kernel.org,
+  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  parav@nvidia.com,
+  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <20250813124140.GA699432@nvidia.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250813063407.GA3182745.vipinsh@google.com>
+	<2025081310-custodian-ashamed-3104@gregkh> <mafs01ppfxwe8.fsf@kernel.org>
+	<2025081351-tinsel-sprinkler-af77@gregkh>
+	<20250813124140.GA699432@nvidia.com>
+Date: Wed, 13 Aug 2025 15:31:44 +0200
+Message-ID: <mafs0bjojwdof.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SznZxPD8Wg0H9mAKXReSepM9oqGY/h7EqhlXevfBi6qe4J72OPJ
- UL4uQ7JuBYPzF1x0VoNcDQiFxWvA5Q7tquqdx49JDWq0P6JKbe82VKYTbUAsfzAbj0Sso0q
- PUlShXNC/iJzYvQFOxaKY9/ToJHJvhyvlyH+X2uDga3Lop6xeKBh1hoTQ1FQl4QcnQcsXxg
- 0tHXfarAG3SKHsMW+nvEw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fkiYmi6M+bs=;dpCzEdJn+Km4HmeNQhuJYrJ/O4w
- tbdy+a9YIF5ZIjdNWE9nQNFzSKpWPy3mvozX5HomM+2k/qtOD2qD/GPETDlcWG1wKZ27+7WU3
- RYXgOwBLVuPuOXLq4p6OV7m1xEc/50RKrCgHQqViLFl0vwGeUhPUsoBF29dYSqbv8MKNEQtg6
- mqFIPm1f8Q9OVYFEFxMYflyq85pjMICsTEEFhFxV8jkMO4E0XxxT38ogjgOluKfqTUf4k4ibu
- wg2eKSwcEIhfa7Vnz+quZzZ7bIgyalWmhrlsYk1F+Ln2ewWIwaTz2uRShl4sRGy6pmkvJpsga
- lFSjaQC/1auZDKPJ6/x8XrLztKnhWqs2DHCfV9jSOTkC9YCN6MhFylFLKRXJBhbheawXzr/dZ
- 9MSGEbf3ZiXpPZwUTfjMiG5EudjKWKM6SILJFtrjljUbtwBrcy+j+wHlNkwylCqzaRwPgUzFS
- O/XeFaXvYXP2kM8zSo/JD77P2ryVD2iHZ5XolxVNdqm/nzAq2ECkHuWODyOFYqyvV2YQDZR5t
- 8zTeRCSbHDRX4I6ucsxvVMMjpE3/LlYL9qTb3M146DQ6Rqy9ELZ1prhJsAy+trktJlwuUZfJd
- lu6vudTsYx0Yy9cGHcpsB2AVIYzN1YHF81Y1heCtWSjinqLS/l3s/7ZIc5gmBnuhFIMYg0ppZ
- yVz6S6nTXtOwXNqRKMwdvsUTyYC4shz1q4p+cyjnaV/Why97cM29ysXioAqqywGzg1/XdJWlQ
- mEw/BOB8ErtG/0qFmLzEihIiVGKE0r5jhuZqbDqtZdijAwkuIapGcKIQt6MmxTBiWR2G+B9s9
- 30cBgz6dvbhx0E/bkqdLzDJGDIncLXRJ8RjG0a7EFqy8EVqtrH4pYnQp1ZujToA5qFLh4N1bQ
- Bq4gkZguvRpBlGJnmrwraZmNk7AytExcH4CALX3K6mn2K082SJy7DXQwi2/FgSMwmHAOkdfSo
- NwRCWZ4HP3Fvxnsa5VNcD4t2qnAuyy5Zu4712MDEJdIQW0bYm5VdNuUsGmCPeNWhPhVRe6PQ/
- uJcqhq+3efNG2mctuGLwrhB5pf6hM8kOT6Gw3TbQ5YF/EWhpNIZfawmxwpaaCA/NQqCohuzTG
- jGZj6K7zMmhZE6ZwJ0U+kt5++LD+UZ35ORkQn2UDelQJZJEQmc3mLkpH93El4pxkrw/laO2pG
- go02G3SzMkqJDvje1ooDboX/G0qrlgMTaxZ+P6TQw9wyoU/dQ2uVn9Dk4gnkkOvldU5QyhRIL
- ju3cI8clBDP26o80VawipZnkqreEosFYWbNm6+ag6Dr2zCJONbJ3wzRvcfU0YhGGuz2GKvvnu
- ea4+MIObzF7gcLxhwTCGZmkyfzI7tsKcMreMRa/e6anQ8cWzrzXTapMuKS1Ha0zUmF5qR+EN1
- 5jD1WRI9xlzW12CoRaa9LWWNErt0zJA0111xAL9Ah7b90vFAiknyPe8sn+TnClRTvM2WwVkVo
- NPJxszDi5uvR95stHD1EBhqWYXCTL1+dCU37h+HSEo/SdgJgiigK/rotLgQbRRofvfoBeogzM
- sW4mXos2eaLYeXraxV/TN1AJV+GFlLrltlSj5ozxmiMPTmAZu/TP8Y5hYpPXQ8DK5ewHyvZe9
- r757BE0fLpenNVjyWHyGSlBwkeuu7WkwkfrcMZinw3Ppor7oHr5a/dOrKxVnTvICDYCcYxfmr
- WyMRQY9hciJkzfBHTeIhvg
+Content-Type: text/plain
 
-On Wed, 13 Aug 2025 11:06:31 +0000
-Wilken Gottwalt <wilken.gottwalt@posteo.net> wrote:
+On Wed, Aug 13 2025, Jason Gunthorpe wrote:
 
-> On Wed, 6 Aug 2025 00:34:44 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
->=20
-> > On Wed, Jul 30, 2025 at 11:03:50AM +0000, Wilken Gottwalt wrote: =20
-> > > On Tue, 29 Jul 2025 10:48:17 +0200
-> > > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > >  =20
-> > > > > diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/s=
-erial/8250/8250_exar.c
-> > > > > index 04a0cbab02c2..5660bb897803 100644
-> > > > > --- a/drivers/tty/serial/8250/8250_exar.c
-> > > > > +++ b/drivers/tty/serial/8250/8250_exar.c
-> > > > > @@ -500,12 +500,13 @@ static int default_setup(struct exar8250 *=
-priv, struct pci_dev
-> > > > > *pcidev, struct uart_8250_port *port)
-> > > > >  {
-> > > > >  	const struct exar8250_board *board =3D priv->board;
-> > > > > +	unsigned int bar =3D 0;
-> > > > >  	unsigned char status;
-> > > > > -	int err;
-> > > > > =20
-> > > > > -	err =3D serial8250_pci_setup_port(pcidev, port, 0, offset, boa=
-rd->reg_shift);
-> > > > > -	if (err)
-> > > > > -		return err;
-> > > > > +	port->port.iotype =3D UPIO_MEM;
-> > > > > +	port->port.mapbase =3D pci_resource_start(pcidev, bar) + offse=
-t;
-> > > > > +	port->port.membase =3D priv->virt + offset;
-> > > > > +	port->port.regshift =3D board->reg_shift; =20
-> > > >=20
-> > > > And so now serial8250_pci_setup_port() is never called?  Are you s=
-ure
-> > > > that's ok? =20
-> > >=20
-> > > Hi Greg,
-> > >=20
-> > > I will not provide a second version of this patch, because this is a=
- bigger
-> > > problem involving 8250_exar, 8250_pci and 8250_pci1xxxx. With the ch=
-anges from
-> > > kernel 6.10 to 6.11 the underlying pcim_* functions where changed. T=
-he
-> > > serial8250_pci_setup_port() does checks on pci_dev + BAR where resou=
-rces were
-> > > already mapped via pcim_iomap(), pci_iomap() or even pci_ioremap_bar=
-(). Not
-> > > sure if mixing this is a good idea after the kernel 6.11 changes.
-> > >=20
-> > > serial8250_pci_setup_port() uses pcim_iomap() and pcim_iomap_table()=
- for checking
-> > > these already mapped resources. But the pcim_iomap_table() is deprec=
-ated and
-> > > suggests to use pcim_iomap() function to aquire the pointer to the r=
-esources
-> > > while at the same time pcim_iomap() description states, don't use th=
-is function=20
-> > > twice on the same BAR. I think the most sane approach would be to dr=
-op the
-> > > pcim_iomap() and pcim_iomap_table() checks from the serial8250_pci_s=
-etup_port()
-> > > function. But I can not fully test this, I only have access to some =
-hardware
-> > > used by the 8250_exar driver. I also CC Andy and Parker, both worked=
- on the
-> > > affected code. =20
-> >=20
-> > I'm on vacations right now and I lost context of this a long ago, plea=
-se Cc me
-> > to any new version of this change to have a fresh look. =20
->=20
-> Hi Andy,
->=20
-> there is not much to add here. It is basically a recursivly added issue =
-and
-> affects the three mentioned drivers. In my opinion it is safe to remove =
-the
-> pcim_iomap() and pcim_iomap_table() functions checks from the generic
-> serial8250_pci_setup_port() function. To me it looks like the "newly"
-> implemented pcim_iomap(), which should not be used twice on the same pci=
- bar,
-> is the only issue here. But I can only speak for the 8250_exar driver. W=
-e
-> use the fix in productions systems and it solves the issue. But beyond t=
-hat?
-> To me the change of the pcim_iomap() looks like a design flaw in general=
-,
-> allowing io-mapping only one resource per pci bar looks odd to me, but I=
- am
-> not knowleged enough about these subsystems.
->=20
-Hi All,
-It looks like there are 2 issues in serial8250_pci_setup_port() after the
-previously mentioned changes to the PCI core.=20
+> On Wed, Aug 13, 2025 at 02:14:23PM +0200, Greg KH wrote:
+>> On Wed, Aug 13, 2025 at 02:02:07PM +0200, Pratyush Yadav wrote:
+>> > On Wed, Aug 13 2025, Greg KH wrote:
+>> > 
+>> > > On Tue, Aug 12, 2025 at 11:34:37PM -0700, Vipin Sharma wrote:
+>> > >> On 2025-08-07 01:44:35, Pasha Tatashin wrote:
+>> > >> > From: Pratyush Yadav <ptyadav@amazon.de>
+>> > >> > +static void memfd_luo_unpreserve_folios(const struct memfd_luo_preserved_folio *pfolios,
+>> > >> > +					unsigned int nr_folios)
+>> > >> > +{
+>> > >> > +	unsigned int i;
+>> > >> > +
+>> > >> > +	for (i = 0; i < nr_folios; i++) {
+>> > >> > +		const struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
+>> > >> > +		struct folio *folio;
+>> > >> > +
+>> > >> > +		if (!pfolio->foliodesc)
+>> > >> > +			continue;
+>> > >> > +
+>> > >> > +		folio = pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodesc));
+>> > >> > +
+>> > >> > +		kho_unpreserve_folio(folio);
+>> > >> 
+>> > >> This one is missing WARN_ON_ONCE() similar to the one in
+>> > >> memfd_luo_preserve_folios().
+>> > >
+>> > > So you really want to cause a machine to reboot and get a CVE issued for
+>> > > this, if it could be triggered?  That's bold :)
+>> > >
+>> > > Please don't.  If that can happen, handle the issue and move on, don't
+>> > > crash boxes.
+>> > 
+>> > Why would a WARN() crash the machine? That is what BUG() does, not
+>> > WARN().
+>> 
+>> See 'panic_on_warn' which is enabled in a few billion Linux systems
+>> these days :(
+>
+> This has been discussed so many times already:
+>
+> https://lwn.net/Articles/969923/
+>
+> When someone tried to formalize this "don't use WARN_ON" position 
+> in the coding-style.rst it was NAK'd:
+>
+> https://lwn.net/ml/linux-kernel/10af93f8-83f2-48ce-9bc3-80fe4c60082c@redhat.com/
+>
+> Based on Linus's opposition to the idea:
+>
+> https://lore.kernel.org/all/CAHk-=wgF7K2gSSpy=m_=K3Nov4zaceUX9puQf1TjkTJLA2XC_g@mail.gmail.com/
+>
+> Use the warn ons. Make sure they can't be triggered by userspace. Use
+> them to detect corruption/malfunction in the kernel.
+>
+> In this case if kho_unpreserve_folio() fails in this call chain it
+> means some error unwind is wrongly happening out of sequence, and we
+> are now forced to leak memory. Unwind is not something that userspace
+> should be controlling, so of course we want a WARN_ON here.
 
-1. pcim_iomap() should only be called once per BAR=20
-2. pcim_iomap_table() is deprecated
+Yep. And if we are saying WARN() should never be used then doesn't that
+make panic_on_warn a no-op? What is even the point of that option then?
 
-It seems like fixing serial8250_pci_setup_port() makes the most sense as t=
-he=20
-deprecated code is in that function. This function is used in 8250_exar,
-8250_pci, and 8250_pci1xxxx.=20
+Here, we are unable to unpreserve a folio that we have preserved. This
+isn't a normal error that we expect to happen. This should _not_ happen
+unless something has gone horribly wrong.
 
-The fix would be to have pcim_iomap() called in probe prior to setting up =
-the=20
-ports. This is already done in 8250_exar and 8250_pci1xxxx but not in 8250=
-_pci.=20
+For example, the calls to kho_preserve_folio() don't WARN(), since that
+can fail for various reasons. They just return the error up the call
+chain. As an analogy, allocating a page can fail, and it is quite
+reasonable to expect the code to not throw out WARN()s for that. But if
+for some reason you can't free a page that you allocated, this is very
+unexpected and should WARN(). Of course, in Linux the page free APIs
+don't even return a status, but I hope you get my point.
 
-Then 8250_pci_setup_port() would need a new argument to pass the serial ca=
-rd's=20
-BAR address. Or maybe add a "struct serial8250_pci_port" that wrappers
-all the arguments?
+If I were a system administrator who sets panic_on_warn, I would _want_
+the system to crash so no further damage happens and I can collect
+logs/crash dumps to investigate later. Without the WARN(), I never get a
+chance to debug and my system breaks silently. For all others, the
+kernel goes on with some possibly corrupted/broken state.
 
-Making these changes for 8250_pci1xxxx and 8250_exar would be trivial but=
-=20
-8250_pci will take some more effort.=20
-
-I can try to get this done in the next few weeks if this makes sense to=20
-everyone. I can test the 8250_exar driver and potentially can find a 8250_=
-pci
-based card but I don't think I have access to anything that uses 8250_pci1=
-xxxx.
-
--Parker
+-- 
+Regards,
+Pratyush Yadav
 
