@@ -1,118 +1,97 @@
-Return-Path: <linux-kernel+bounces-766877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAD4B24C3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56801B24C3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C90C172DC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F886886B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532491DE894;
-	Wed, 13 Aug 2025 14:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15F42EAD00;
+	Wed, 13 Aug 2025 14:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sn3ZmcwL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbQsSzA9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9BE157493;
-	Wed, 13 Aug 2025 14:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058B22D94A4;
+	Wed, 13 Aug 2025 14:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755095992; cv=none; b=OSizzk/OE+1fUhpm+U2m84MSTEugrhvcLrnG9RXVykQ9ZyIHH6lK66d9enyld2akV+lDLBf2Ff3vktDURtK4LzKP2rRpppUoTPRGUFxIFLEZHnTpH1jjbe1JkQgH4YJNlQMkJKVWPxZfKbz1NkcVDjV8NMYD+f9932D5GNiCAVA=
+	t=1755096001; cv=none; b=Z7GC/XvsSbEHgq7OCEUdgyPw0/pMFPhJ6fyvJJwdIEeCODWhu1D76AutAHD8u6s4WcV6KpIUowQflsF5GWYq8V7vIW8qxPEtoDS6RHxTjSj+nOZxi5Tb7qQpPFaordJ0t8CLrj4ivlVhds4LKaWDGR3P9vS9PUyVUhoeu5+tbDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755095992; c=relaxed/simple;
-	bh=sKtxvRLZlfNykdA1sXixrsDKjg9EgHaPHu6i+WxZogk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T8g/pyJxLjJnHZT9/ir/YNGYOyzrS7a4/7CZTlIBVctsOP3ZMnrl5SKBigmdXAjCX8Atxm8f7fZVozBW/U4Hrjw7zE2+8E77aXnHTZ5rZ0p7h/Zgdq6+FG+mLIo2TKlMVeS9ksLgx2v3SwLOeDk4IrqqEJBgdmFFg3hiTIkfMFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sn3ZmcwL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 401F8C4CEEB;
-	Wed, 13 Aug 2025 14:39:52 +0000 (UTC)
+	s=arc-20240116; t=1755096001; c=relaxed/simple;
+	bh=nIMn1kPl8ANV2TH1sXmHbDMsu1fIrTebb3WmS9IqLtc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=DYtLXP+SDI3s+CXoJgvG/ci79dR3UjXQmmnDEVip2z7KXow9hZfK2TvOZtCZ/ECXSe/OjT4fpOC6nVQV9feMNsJm6e+uPc8cmeKfAtAOmkC+GEbFhDTesNvW1EYVXQYCTOW7CSQzDYGlBl3I9nldNVTNRIp+8EoiMwfj8n/w/30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbQsSzA9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF34C4CEED;
+	Wed, 13 Aug 2025 14:39:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755095992;
-	bh=sKtxvRLZlfNykdA1sXixrsDKjg9EgHaPHu6i+WxZogk=;
+	s=k20201202; t=1755096000;
+	bh=nIMn1kPl8ANV2TH1sXmHbDMsu1fIrTebb3WmS9IqLtc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sn3ZmcwLvpi+0nTqSMR3ClCS0YudIhve68GxcRTs/LNz99NzYDg1x3vHc6EcuY0cX
-	 ZD91WxzeFL1QyVpp0V6fyNOf/XPBYrnuAHQe5xPaRX3dY2dozqYAbB0Kxk6QQsCASw
-	 fm7Bu9MP6cOxtIGMKwhXYQ9soJf0Gqs1+A/3msQv1d2A2bLqd6qSQZatt/3JKMqEOi
-	 kBnCzusc31hdJNGX+R9r020mQvAPeE0U428jNws8znPLz2sXdxkbbiOgJoCCXyVvBT
-	 gIX924EceE9/Md5jGecABxkHqDtTisFonN0SDHPECwBQD+esTAnn6BTMry8O0BtcJE
-	 fu+ICP9YBVGWg==
-Date: Wed, 13 Aug 2025 14:39:50 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Nam Cao <namcao@linutronix.de>
-Cc: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-hyperv@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: hv: Remove unused parameter of hv_msi_free()
-Message-ID: <aJyjtvNabuXc1xhX@liuwe-devbox-ubuntu-v2.tail21d00.ts.net>
-References: <20250813055350.1670245-1-namcao@linutronix.de>
+	b=CbQsSzA9gk13zrXG8Mguj441Rgv+J7xz1DDqTcWxw0E6w+KZJXfXDgVjh7xIWKHG7
+	 j6BxIhjitWER3MKemcagzVbBuYX7kD62K9XfRR75YjcWhO7sCsh3QP6vSeKHndKiah
+	 3ifftJCIQRcfZh7MG5Pz2XXiYyNT3B393+5hqtBdbEl6D+4QZZrmSHXGS+NJCQgafm
+	 6RFGTmGeyREC+Xd/SyUzpTnMqIHHhW1zp9Xqjm/0jLxXARVc2HLBq0PTjCchGodC78
+	 vfNdgtQlWz8exx6940Evo8+kimAI/sJC/hh5kLk/MimIJcyV9nWgXfG5bLu1CrKOPp
+	 xcCx6Bzx8Zu3A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813055350.1670245-1-namcao@linutronix.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 16:39:53 +0200
+Message-Id: <DC1DLSRDL44Z.W74NH6OV15J6@kernel.org>
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Tamir Duberstein" <tamird@gmail.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Luis Chamberlain" <mcgrof@kernel.org>, "Russ Weight"
+ <russ.weight@linux.dev>, "Peter Zijlstra" <peterz@infradead.org>, "Ingo
+ Molnar" <mingo@redhat.com>, "Will Deacon" <will@kernel.org>, "Waiman Long"
+ <longman@redhat.com>, "Nathan Chancellor" <nathan@kernel.org>, "Nick
+ Desaulniers" <nick.desaulniers+lkml@gmail.com>, "Bill Wendling"
+ <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>, "Christian
+ Brauner" <brauner@kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>
+Subject: Re: [PATCH v14 3/3] rust: replace `CStr` with `core::ffi::CStr`
+X-Mailer: aerc 0.20.1
+References: <20250710-cstr-core-v14-0-ca7e0ca82c82@gmail.com>
+ <20250710-cstr-core-v14-3-ca7e0ca82c82@gmail.com>
+ <DC0A9UKTPH05.2O2V0B2KHMIW8@kernel.org>
+ <CAJ-ks9n4V-PEDhkTv6SXj_Oh6LB4LdsNi8Nnv_6JbT7dhvnh2w@mail.gmail.com>
+In-Reply-To: <CAJ-ks9n4V-PEDhkTv6SXj_Oh6LB4LdsNi8Nnv_6JbT7dhvnh2w@mail.gmail.com>
 
-On Wed, Aug 13, 2025 at 07:53:50AM +0200, Nam Cao wrote:
-> The 'info' parameter of hv_msi_free() is unused. Delete it.
-> 
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+On Wed Aug 13, 2025 at 4:06 PM CEST, Tamir Duberstein wrote:
+> On Tue, Aug 12, 2025 at 3:50=E2=80=AFAM Benno Lossin <lossin@kernel.org> =
+wrote:
+>> On Thu Jul 10, 2025 at 4:53 PM CEST, Tamir Duberstein wrote:
+>> > +/// Extensions to [`CStr`].
+>> > +pub trait CStrExt {
+>>
+>> Should we make this trait sealed?
+>
+> We can -- but is it harmful for someone to implement? I think probably no=
+t.
 
-Acked-by: Wei Liu <wei.liu@kernel.org>
+I don't think anything aside from `CStr` should implement it, so I'd say
+we make it sealed. There are also safe functions that return raw
+pointers & an implementation could just return a bogus pointer...
 
-I assume this will go through the PCI tree.
-
-> ---
->  drivers/pci/controller/pci-hyperv.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-> index d2b7e8ea710b..146b43981b27 100644
-> --- a/drivers/pci/controller/pci-hyperv.c
-> +++ b/drivers/pci/controller/pci-hyperv.c
-> @@ -1680,7 +1680,6 @@ static void hv_int_desc_free(struct hv_pci_dev *hpdev,
->  /**
->   * hv_msi_free() - Free the MSI.
->   * @domain:	The interrupt domain pointer
-> - * @info:	Extra MSI-related context
->   * @irq:	Identifies the IRQ.
->   *
->   * The Hyper-V parent partition and hypervisor are tracking the
-> @@ -1688,8 +1687,7 @@ static void hv_int_desc_free(struct hv_pci_dev *hpdev,
->   * table up to date.  This callback sends a message that frees
->   * the IRT entry and related tracking nonsense.
->   */
-> -static void hv_msi_free(struct irq_domain *domain, struct msi_domain_info *info,
-> -			unsigned int irq)
-> +static void hv_msi_free(struct irq_domain *domain, unsigned int irq)
->  {
->  	struct hv_pcibus_device *hbus;
->  	struct hv_pci_dev *hpdev;
-> @@ -2181,10 +2179,8 @@ static int hv_pcie_domain_alloc(struct irq_domain *d, unsigned int virq, unsigne
->  
->  static void hv_pcie_domain_free(struct irq_domain *d, unsigned int virq, unsigned int nr_irqs)
->  {
-> -	struct msi_domain_info *info = d->host_data;
-> -
->  	for (int i = 0; i < nr_irqs; i++)
-> -		hv_msi_free(d, info, virq + i);
-> +		hv_msi_free(d, virq + i);
->  
->  	irq_domain_free_irqs_top(d, virq, nr_irqs);
->  }
-> -- 
-> 2.39.5
-> 
+---
+Cheers,
+Benno
 
