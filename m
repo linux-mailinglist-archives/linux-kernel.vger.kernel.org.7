@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-767284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72854B25252
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:47:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E61B25258
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C199E884872
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:46:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56BC1C28585
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D8C63CB;
-	Wed, 13 Aug 2025 17:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5836628C2BC;
+	Wed, 13 Aug 2025 17:46:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="NyRNzUwC"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oePpsgSn"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49D02857CA
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBD41EDA2A;
+	Wed, 13 Aug 2025 17:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755107114; cv=none; b=TeRNoA/uFx+PjJbOyDLw9uQmtElL7j1V7W3hzj0ubmy7QGTve+YG/NaSWdz6Z5xpnX8YO8bOI8hjfZqn74gg/gDN2CQ/J3EDbIjHf5lsDofo0N6vRmOzSjf0DoSTU2A19kkWE+aGiGA2GaVNXyPAuaGJnhtjo10FTxBv99NrgQQ=
+	t=1755107163; cv=none; b=fiSO7GOrEalODNwLZsHlcu1Xqs8qIzrvcz5WXdXdh8AaVfydrYPcSJVjZQ1H2NavVNpQuXom6Fd1uuiWddSCM6YirT7mpDGIm7s8xE5eYcRTbbZeUWeA+ridMZtoCadAbaUJk5IgpzyJccsgzESfM/Yi7Hn9Nmj8hCqIO1icb4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755107114; c=relaxed/simple;
-	bh=bZGGYS+1+xVHuw85rtew4Vysp+bkddkyAiVB7KSR+D4=;
+	s=arc-20240116; t=1755107163; c=relaxed/simple;
+	bh=SAOdBmc1A2yvUpKz1bhQ0GLQ7792IE1seIw31EsLfag=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E43pNPjRKOVVMt5kRImCi0gWixYORqJ/F3J3rsfdq4J2KPEd79Cxcedh43CN1Zyg2RxDFrBreP174Se1DhPjPLp6GoT6J/vxLpPI/ZcI/+x0lKo9/meiLeuP8SGGeM3nwjo7rvf2Uz0ep2efsrvKo3DyTJM9jVYXcqoRS9DKSNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=NyRNzUwC; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-244581c3b43so125575ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1755107111; x=1755711911; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bHnnLvE38kbDjWGZ3ZhwCuAJ0QrSQ8uli0lPAvpqJY0=;
-        b=NyRNzUwCyQykoamsCJr0sdVapVsT7+XhX+uZhHIUMRDbhxCCEmkAL5vnPr1PMSx/Nj
-         0dSxeYCnAfl/WuaZbPOwDy8lASMGFwqYDvdWTC4xAjnlC/TlDLdvL0o7hHYgpfGJ+JmQ
-         2WzChOhqucrGGU+7bNaKOi594oaKhQjn1wHD9VvUDVbVB5mevdWg3I72+GqD97pDRhGY
-         VYwUEhDqJOQE2qs4X4pIFh/fPHcJi8iSYVXDTIJEexQxikU50XxUA8WzkOIhjc+38Edo
-         u/4TgoZD9n6nPDrREowx2mf74cOXrOJJSxCjFTwJeq8qG7k0yvDZB0Zn5dr3E8D0VxKr
-         giDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755107111; x=1755711911;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bHnnLvE38kbDjWGZ3ZhwCuAJ0QrSQ8uli0lPAvpqJY0=;
-        b=oERq64ZpMrL3VXMXemeJ3/exO4OO/uaW6as3cepq0NJFXZqhU06jVX8MM5cwXurozM
-         Ah1tkDR6m3mYsw4JeAxq2kBDFUaWKeZxJLgzJ2uUEymxsTdUHFb3vSjns/ElUxG5eON/
-         9AbEjEeB++SYaZ0mvOsm954MmFpK2LIqCKhboEhILVfbT0HTPNvCzttRzln7tjG/eV9i
-         Bv6q7s/tsyPAl0IESuyY6UDYLEISGAfNTDlNejS8haxQg0e74473m4alOAb763MvheRh
-         sqWrWW8/QBVxUttc8JjTv5Y07dLfcHi98mC5vVb3I5GuzfCWLNjM4xvOQhtgE78GiqHa
-         37Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWX3JjQEyOU5p8GEjgVA1Q66Zc3s/Tmrwz1jR/gx43h4puAcizguMK/ieV6gETBSWt/BARATe/uEqgCN/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznooLz2MSntLoXUQYUwnu3MBMQIFRTRv7IU/SS18pMnnIIzzkS
-	SIF7WlvNO7lXLCqxfGxU65HDml6xCEuVsNjArDXDZH3HtDGHeq/JKVUQ8uvvjOdTm2TqTBkMWr0
-	/jfho
-X-Gm-Gg: ASbGncvIzCTrn5+jxOpUx8ZPSKSRVrFveCuK+Kn72KFQZTQQMne1FmsvOykEQJrgq4u
-	rzVu/0fwM24ml6sZjW/pBTd/3Rl1AaiRu7w/pzlvDml9l8YsRho/UI0ljDturql+CLQpSzFuzpq
-	lMJ3eiIEqjAE5YYKmfOEuDnSvloj716Y3TJamL7WOu3lRKC1eq92KI5PFSa1j2cNINeVS3I4FYm
-	rsCFRb5kZ3sk42JktYm5LNwWW5iasHrhjEs4Fte5aLfS+nBj09zO5aqPlmcpdug68KmutyER9II
-	qFpTLREyRpUkl6nT292GgcdTD5lNBqIZYoO3nxZci6iwlxp+ekxt37EpD38efpJkrP6BiMp+Y17
-	ji27daTFYH614HplBoCnC
-X-Google-Smtp-Source: AGHT+IEugx06OEbiFmM4FR2ifktkysn6f/JEoKaYZX4iJ705OWO3DfKKaVaRuKlZ2WkYiN9BmjVHjg==
-X-Received: by 2002:a17:902:dac8:b0:240:3e72:efb3 with SMTP id d9443c01a7336-2430d2339a8mr63354205ad.43.1755107111127;
-        Wed, 13 Aug 2025 10:45:11 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0e585sm330352765ad.40.2025.08.13.10.45.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 10:45:10 -0700 (PDT)
-Message-ID: <12342355-b3fb-4e78-ad5b-dcfff1366ccf@kernel.dk>
-Date: Wed, 13 Aug 2025 11:45:09 -0600
+	 In-Reply-To:Content-Type; b=qjR22xQJKOwFrtpJ3K0uKaa9zW81z9ObCaKUyH2CIBJuw4J3Xr7vVYwVlr50znWg3k0UDE6BSaQoTWlYQuTMOFh+rHxLD6n3LH59lSF5G670Wcm6OwplH1wulcTDFSdDvCVhTHWxB6cnTMU6auTJMujtxfcXL9WMAtAhntI1eWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oePpsgSn; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DCsCqc025034;
+	Wed, 13 Aug 2025 17:45:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=rQO69Y
+	O43reCLGESm1EHLJt5kapUKs1OeyQ/5+Z8UhQ=; b=oePpsgSnDa2u64GimtzBFZ
+	S4t3UkGJTzriBnUDcPcvk9Jh3KEmwts1g9BkM53UjD3pmZfEpL1o/EHOi0kaHHWc
+	4eD5liO1E2isOdemT1hACVk1tVtC8tziwhjSpaBVX/Kk8zYp6cDTqHnW9cfOaFuL
+	3h5gOYEfJMGecE2PauitlGjv56Zw/DW1CQPG++Q4sUTfhjbN7vCrB10dKp3ZLDah
+	2BuX6F11GfVuOFScCv6MXNt5nMH5+/s57pqtBKBiVi54VpeOfrS3WE0U48ey9daZ
+	j+97XHGCD4VsQgBBW2DQJWkeyrxkbjrWjyzFawH7Y5XAh/V29A3dTQMg0WzU2nag
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaaa5ty-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 17:45:58 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57DFRrLU026485;
+	Wed, 13 Aug 2025 17:45:58 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48eh218k9e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 17:45:58 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57DHjueL19661334
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Aug 2025 17:45:57 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C98F458056;
+	Wed, 13 Aug 2025 17:45:56 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5DA685803F;
+	Wed, 13 Aug 2025 17:45:56 +0000 (GMT)
+Received: from [9.61.255.61] (unknown [9.61.255.61])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 13 Aug 2025 17:45:56 +0000 (GMT)
+Message-ID: <5ca8d085-c211-4b94-a74a-94e75e10d47e@linux.ibm.com>
+Date: Wed, 13 Aug 2025 10:45:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,76 +76,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [patch 00/11] rseq: Optimize exit to user space
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Wei Liu <wei.liu@kernel.org>
-References: <20250813155941.014821755@linutronix.de>
+Subject: Re: [PATCH v1 0/6] Error recovery for vfio-pci devices on s390x
+To: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: schnelle@linux.ibm.com, mjrosato@linux.ibm.com, alex.williamson@redhat.com
+References: <20250813170821.1115-1-alifm@linux.ibm.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250813155941.014821755@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
+From: Farhan Ali <alifm@linux.ibm.com>
+In-Reply-To: <20250813170821.1115-1-alifm@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=KPRaDEFo c=1 sm=1 tr=0 ts=689ccf56 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=9txmHK4o2TbF8a1Ol1YA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: Zh1mqMNiSvId3XtYn4XZtygIdiG5JfAh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfXwK9o+QkXgn3O
+ WFzrPfzv6Shb0xzFJKyBuuAy0+Y6Q3fqx7XZCi6G7SOmSt27oFUoK+X1cWNZG0OLEhXhbdgp/ZY
+ V4zejFubEOhH3+i+feZEcFquTtB68XogZvMG6hdnvdb8khjNmrTNTFyWqmC3odzS3Xglvw83DNT
+ 8VERQi+IiAgkLuKd97fyAzPb68qJtlYJ5KMVFXeZb9Xn/HnBZ0/fbF6DPjlZuqHWhhLbSP1vvaQ
+ hn1sRKC4aRdZ/xdtFK01TkOtdPPkxicmAUnm5WZWOh94uD2ZTvMEG/gxQhIzoRfPjWMxWeHD3jQ
+ MlhTMxGnVdPPQYhHRtLfWQR2Rt1MT15zF+ovZTjNUMa4tEijUkzQ32sMPfy+N8cQcbHKHMwELG+
+ TLNSCig9
+X-Proofpoint-GUID: Zh1mqMNiSvId3XtYn4XZtygIdiG5JfAh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 clxscore=1015 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120224
 
-On 8/13/25 10:29 AM, Thomas Gleixner wrote:
-> With the more wide spread usage of rseq in glibc, rseq is not longer a
-> niche use case for special applications.
-> 
-> While working on a sane implementation of a rseq based time slice extension
-> mechanism, I noticed several shortcomings of the current rseq code:
-> 
->   1) task::rseq_event_mask is a pointless bitfield despite the fact that
->      the ABI flags it was meant to support have been deprecated and
->      functionally disabled three years ago.
-> 
->   2) task::rseq_event_mask is accumulating bits unless there is a critical
->      section discovered in the user space rseq memory. This results in
->      pointless invocations of the rseq user space exit handler even if
->      there had nothing changed. As a matter of correctness these bits have
->      to be clear when exiting to user space and therefore pristine when
->      coming back into the kernel. Aside of correctness, this also avoids
->      pointless evaluation of the user space memory, which is a performance
->      benefit.
-> 
->   3) The evaluation of critical sections does not differentiate between
->      syscall and interrupt/exception exits. The current implementation
->      silently fixes up critical sections which invoked a syscall unless
->      CONFIG_DEBUG_RSEQ is enabled.
-> 
->      That's just wrong. If user space does that on a production kernel it
->      can keep the pieces. The kernel is not there to proliferate mindless
->      user space programming and letting everyone pay the performance
->      penalty.
-> 
-> This series addresses these issues and on top converts parts of the user
-> space access over to the new masked access model, which lowers the overhead
-> of Spectre-V1 mitigations significantly on architectures which support it
-> (x86 as of today). This is especially noticable in the access to the
-> rseq_cs field in struct rseq, which is the first quick check to figure out
-> whether a critical section is installed or not.
-> 
-> It survives the kernels rseq selftests, but I did not any performance tests
-> vs. rseq because I have no idea how to use the gazillion of undocumented
-> command line parameters of the benchmark. I leave that to people who are so
-> familiar with them, that they assume everyone else is too :)
-> 
-> The performance gain on regular workloads is clearly measurable and the
-> consistent event flag state allows now to build the time slice extension
-> mechanism on top. The first POC I implemented:
-> 
->    https://lore.kernel.org/lkml/87o6smb3a0.ffs@tglx/
-> 
-> suffered badly from the stale eventmask bits and the cleaned up version
-> brought a whopping 25+% performance gain.
+Also posted a QEMU series utilizing these kernel patches
+https://lore.kernel.org/qemu-devel/20250813174152.1238-1-alifm@linux.ibm.com/
 
-Thanks for doing this work, it's been on my list to take a look at rseq
-as it's quite the pig currently and enabled by default (with what I
-assume is from a newer libc).
+Thanks
+Farhan
 
--- 
-Jens Axboe
-
+On 8/13/2025 10:08 AM, Farhan Ali wrote:
+> Hi,
+>
+> This Linux kernel patch series introduces support for error recovery for
+> passthrough PCI devices on System Z (s390x).
+>
+> Background
+> ----------
+> For PCI devices on s390x an operating system receives platform specific
+> error events from firmware rather than through AER.Today for
+> passthrough/userspace devices, we don't attempt any error recovery
+> and ignore any error events for the devices. The passthrough/userspace devices are
+> managed by the vfio-pci driver. The driver does register error handling
+> callbacks (error_detected), and on an error trigger an eventfd to userspace.
+> But we need a mechanism to notify userspace (QEMU/guest/userspace drivers) about
+> the error event.
+>
+> Proposal
+> --------
+> We can expose this error information (currently only the PCI Error Code) via a
+> device specific memory region for s390 vfio pci devices. Userspace can then read
+> the memory region to obtain the error information and take appropriate actions
+> such as driving a device reset. The memory region provides some flexibility in
+> providing more information in the future if required.
+>
+> I would appreciate some feedback on this approach.
+>
+> Thanks
+> Farhan
+>
+> Farhan Ali (6):
+>    s390/pci: Restore airq unconditionally for the zPCI device
+>    s390/pci: Update the logic for detecting passthrough device
+>    s390/pci: Store PCI error information for passthrough devices
+>    vfio-pci/zdev: Setup a zpci memory region for error information
+>    vfio-pci/zdev: Perform platform specific function reset for zPCI
+>    vfio: Allow error notification and recovery for ISM device
+>
+>   arch/s390/include/asm/pci.h       |  29 +++++++
+>   arch/s390/pci/pci.c               |   2 +
+>   arch/s390/pci/pci_event.c         | 107 ++++++++++++++-----------
+>   arch/s390/pci/pci_irq.c           |   3 +-
+>   drivers/vfio/pci/vfio_pci_core.c  |  22 +++++-
+>   drivers/vfio/pci/vfio_pci_intrs.c |   2 +-
+>   drivers/vfio/pci/vfio_pci_priv.h  |   8 ++
+>   drivers/vfio/pci/vfio_pci_zdev.c  | 126 +++++++++++++++++++++++++++++-
+>   include/uapi/linux/vfio.h         |   2 +
+>   include/uapi/linux/vfio_zdev.h    |   5 ++
+>   10 files changed, 253 insertions(+), 53 deletions(-)
+>
 
