@@ -1,118 +1,128 @@
-Return-Path: <linux-kernel+bounces-767620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BB3DB256E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:43:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EDE0B256D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ED979E1725
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D6D162337
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E8F2FCC08;
-	Wed, 13 Aug 2025 22:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F562FCC04;
+	Wed, 13 Aug 2025 22:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aNSs16S/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k2FMaNbk"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3D92F3C11;
-	Wed, 13 Aug 2025 22:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85132F3C1B;
+	Wed, 13 Aug 2025 22:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755124839; cv=none; b=rkfjP94zjGE71PhgZ6TZpK/BTnqkWhrAo5fz8uSfDN8ftijy0WR3ya2VXEvloKDeLX4gqFF3iNVcS8l0DX1iN1nBX8Ath6V5GEsuHzvQQ8RAzPxlFpcoYc/9aoHkmLPrPkUqYIJ63sIi7n2AvDsymIlr3uWQP2qgasWgP7E5A/A=
+	t=1755124874; cv=none; b=Tq1UU1HfB0nu+YWf1eZp/qu5jLF+arABcXJTwLBu02XFfjy27k4bgF2qMbxZ4ITK+7EjI8Yd22ugx37rrVrlWdghk0jtYmdW5niG8MjiL/ZqKpr4jZj9yUE5gtQhlwkqouMWmVe5l9dLEuxk71RBO94vZtC7rsnc8rOSeFxNEQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755124839; c=relaxed/simple;
-	bh=x+6Vi/XRLXHhmtIpq36fM3fBUFAdRIirEj2tBLR6nGs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GrYtbP9+JaD+E3aMlvp+PMHDn84z73TTHoKH/KZj1L4RV8/T01oSFHUG8zb4Os5Mk9toOdoZEKg1MGaTK9b+mOMhC8XCxqXkzq/1hX8z26U8WO6bsttEgaGVNeN89iM07NLH4e3VYcTnEdXTt3yBXdhclT3qSduYvPLM59Y6ss8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aNSs16S/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4DF7C4CEEB;
-	Wed, 13 Aug 2025 22:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755124839;
-	bh=x+6Vi/XRLXHhmtIpq36fM3fBUFAdRIirEj2tBLR6nGs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aNSs16S/O+GCzgCR/lVHsGqvnwDXgr7mkEgWPZzafz9LroGq4Ybv5WtgZnEnPvvAN
-	 dxhZAZ4I55h/Ib8/IK/qHWr6vJL4iOCi2MD95zT5CvXkJkE+SNvYVqarZz5AsGSFzv
-	 6ueF83Kdm+VdpP+y1r0Mxid/L/h+/69IbhaaXgWc=
-Date: Wed, 13 Aug 2025 15:40:38 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org, LKML
- <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song
- <muchun.song@linux.dev>, cgroups@vger.kernel.org
-Subject: Re: [PATCH] memcg: Optimize exit to user space
-Message-Id: <20250813154038.dee67ecd858b7223d6b5cc6c@linux-foundation.org>
-In-Reply-To: <hzvjjgzf4cdvj56zeysosb7otkvplbbozzcpij2yeka4a4kakl@4l26obz3karf>
-References: <87tt2b6zgs.ffs@tglx>
-	<hzvjjgzf4cdvj56zeysosb7otkvplbbozzcpij2yeka4a4kakl@4l26obz3karf>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755124874; c=relaxed/simple;
+	bh=KpCFwZ3oV/7sjUJ9smCFBMyA7oN7eSBMRl7gyz8CW0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hl7Z4lI71DyBb0d0OjQHDbkwhF69a9yl3sj8enh6UrrJeSxntj0EHCegiazHAY/3ebDMsMQA78mj6+dRTYgyYfazTL14O92KbOD9J8N2UEUeAd7YzcmPi55RHYTlYtOhDYh6v/UtWZj019ocdegWJGbBRGB0PJCETJvxnyRSkiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=k2FMaNbk; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DMf2TB2171409;
+	Wed, 13 Aug 2025 17:41:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755124862;
+	bh=uyxszRMjUFHRYO2H8s1R+5W6WN98rFLX3bt4sSaC4OI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=k2FMaNbk56GmaqkPGgUH5jhHQJaJS0qV4yqirOHd7EWW2OjNBa0C7F1nbNxTABv4Z
+	 cqJyEImGazUoQW/5krB8xLRGsYPReko/NJyK3kOY0pobWsNbLlFrqmIfcLMh/225gy
+	 wEWTdwaDl48QTqzkkC3ke7VWehfTUQc08baNAGec=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DMf2kb1392339
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 13 Aug 2025 17:41:02 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
+ Aug 2025 17:41:01 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 13 Aug 2025 17:41:01 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DMf1392974091;
+	Wed, 13 Aug 2025 17:41:01 -0500
+Message-ID: <940c1c08-cdfc-46a7-875b-abcb5c24df71@ti.com>
+Date: Wed, 13 Aug 2025 17:41:01 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/3] drm/bridge: it66121: Add it66122 support
+To: Nishanth Menon <nm@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, David Airlie
+	<airlied@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Jason Kridner <jkridner@beagleboard.org>
+References: <20250813204106.580141-1-nm@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20250813204106.580141-1-nm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, 13 Aug 2025 10:19:03 -0700 Shakeel Butt <shakeel.butt@linux.dev> wrote:
-
-> On Wed, Aug 13, 2025 at 04:57:55PM +0200, Thomas Gleixner wrote:
-> > memcg uses TIF_NOTIFY_RESUME to handle reclaiming on exit to user
-> > space. TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is utilized by
-> > other entities as well.
-> > 
-> > This results in a unconditional mem_cgroup_handle_over_high() call for
-> > every invocation of resume_user_mode_work(), which is a pointless
-> > exercise as most of the time there is no reclaim work to do.
-> > 
-> > Especially since RSEQ is used by glibc, TIF_NOTIFY_RESUME is raised
-> > quite frequently and the empty calls show up in exit path profiling.
-> > 
-> > Optimize this by doing a quick check of the reclaim condition before
-> > invoking it.
-> > 
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Cc: Michal Hocko <mhocko@kernel.org>
-> > Cc: Roman Gushchin <roman.gushchin@linux.dev>
-> > Cc: Shakeel Butt <shakeel.butt@linux.dev>
-> > Cc: Muchun Song <muchun.song@linux.dev>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
+On 8/13/25 3:41 PM, Nishanth Menon wrote:
+> Hi,
 > 
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Add support for IT66122, which for all practical purposes is
+> drop in replacement for IT66121 except for the ID register
+> definition.
 > 
-> Since this is seen in profiling data and it is simple enough, I think it
-> is worth backporting to stable trees as well.
+> BeagleY-AI uses this new part as the old part is no longer in production
+> as far as I understand.
+> 
+> Now, BeaglePlay uses it66121 at the moment, but at some point, it might
+> end up flipping over to the new part.
+> 
+> Quick boot log on BeaglePlay for compatibility check:
+> https://gist.github.com/nmenon/6cb8b8a00bcce1755628d131df878840
+> 
+> Changes since V1:
+> * Picked up Krystoff's binding ack
+> * Switched over to a vid/pid list
 
-People will probably do this, but it's a big break of -stable rules.
+Best of both, looks good to me,
 
-If it is a regression fix (ie, has a Fixes:) and if it makes a big
-difference (ie, comes with impressive quantitative testing results)
-then maybe we could push it into -stable anyway...
+Reviewed-by: Andrew Davis <afd@ti.com>
 
-> In the followup cleanup, we can remove the (!nr_pages) check inside
-> __mem_cgroup_handle_over_high() as well.
-
-yup, how about we do that now
-
---- a/mm/memcontrol.c~memcg-optimize-exit-to-user-space-fix
-+++ a/mm/memcontrol.c
-@@ -2213,9 +2213,6 @@ void __mem_cgroup_handle_over_high(gfp_t
- 	struct mem_cgroup *memcg;
- 	bool in_retry = false;
- 
--	if (likely(!nr_pages))
--		return;
--
- 	memcg = get_mem_cgroup_from_mm(current->mm);
- 	current->memcg_nr_pages_over_high = 0;
- 
-_
+> 
+> V1: https://lore.kernel.org/all/20250813190835.344563-1-nm@ti.com/
+> 
+> Nishanth Menon (3):
+>    dt-bindings: display: bridge: it66121: Add compatible string for
+>      IT66122
+>    drm/bridge: it66121: Convert the vid/pid entries into a list
+>    drm/bridge: it66121: Add it66122 support
+> 
+>   .../bindings/display/bridge/ite,it66121.yaml  |  1 +
+>   drivers/gpu/drm/bridge/ite-it66121.c          | 32 ++++++++++++++-----
+>   2 files changed, 25 insertions(+), 8 deletions(-)
+> 
 
 
