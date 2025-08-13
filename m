@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-766694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85DF7B24A14
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:02:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78067B24A17
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0879558714C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1152188C4C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3463E2D1929;
-	Wed, 13 Aug 2025 13:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VZYtFpfY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AE82D9787;
+	Wed, 13 Aug 2025 13:03:43 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CCE14F70;
-	Wed, 13 Aug 2025 13:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E9242D12F7
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755090149; cv=none; b=nAdPLQxwtPETSCSNoMopbisJF5M+s401N8UJOvNoxtJwFu5fICW77Yd+bYzTWa3RZSY95y+6K0Kxwjh8ib3ly+v2BO39DdUeDMiZSWq28/2RZnYdFnH3/YIZwanwmvHZ2fSPXEXt1is7c+RRQC+5PAaM35rgSyRByXBr954+S4U=
+	t=1755090223; cv=none; b=g8dxKAaB6JlWSQ1cEM2PvfZc3VwUTONE5NL90CRvO7DIVPAaCL4Ks1NFdOLig1KMC8ihDk8s7xl1jsm6GkVV/MXy+AQhwhI0yNoriN+bAR212I7jQwG0IpOnXlRHGID+FKdc+AkDAQ0I4WD9YGWchvzq+81zKetINg6UybHLMvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755090149; c=relaxed/simple;
-	bh=UrNfwORQz/pjonuLGQ/m/+0Y7ZK7KSJP6xwUgBaSYEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BXnyQ06q2EzAB0W/vfuB2uG+DilSClZ26Htl3rLD3RTt/RuHVTNYl3inyCvfa95OIqvlyiDFnIVpVY1wVJVIjyD6NwqX6Ph4rlveJS/KGfjG//RD8L3sxUQca9/DDcsE8FiD65Mc6oe0FFKibiVtGDdwofw1uXXAoJEduVDlYZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VZYtFpfY; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755090148; x=1786626148;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=UrNfwORQz/pjonuLGQ/m/+0Y7ZK7KSJP6xwUgBaSYEU=;
-  b=VZYtFpfYmO7ECO8HxhHTO/jVjc519CADScqaAa9c1Y0Z5rUFWMOfZEB1
-   EArIIX8oYvRZER7pzzDjErOsqlbC/VZaCxeAFqlTO+cZmlReIq+ydj7Ts
-   8caJOsPYpzKj1/hPdo7OqsYoC2JoAOWd/5cmmIrLx4khLT4WChFu1wNdq
-   BW/7BnVVKrOty3mhRWQleethM6EfIOe8a7pfvDBhSgFpgh7nK1JU6t4rh
-   Dm8CHxieX+nUa4hzmZdZtIyY7mipGtANcsTyt2YIbgGs/EeFr/BYfzSpp
-   sFQneF2raGgrrSbkXe0uJ/kH0z+DEuBcBEx8ld0yq6t01X4DAeWnxWip8
-   g==;
-X-CSE-ConnectionGUID: r4/6YiSDQmibDa88v7FWyw==
-X-CSE-MsgGUID: fMnynmmnRqmcG1aiTRLdtQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68757654"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="68757654"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:02:27 -0700
-X-CSE-ConnectionGUID: P26DlPJmSKSnJKimNPvhcg==
-X-CSE-MsgGUID: eE8ENaBWROa8sRBaVXMLjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="203643671"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 06:02:24 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1umB7U-00000005RKR-2yW7;
-	Wed, 13 Aug 2025 16:02:20 +0300
-Date: Wed, 13 Aug 2025 16:02:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Wolfram Sang <wsa@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>, Hanna Hawa <hhhawa@amazon.com>,
-	Robert Marko <robert.marko@sartura.hr>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] i2c: pxa: fix I2C communication on Armada 3700
-Message-ID: <aJyM3N9T4xI4Xo1G@smile.fi.intel.com>
-References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
- <aJpOyWKzBt-tDWUF@smile.fi.intel.com>
- <4cd3efbd-4798-4f25-9440-879ee289d8ed@gmail.com>
+	s=arc-20240116; t=1755090223; c=relaxed/simple;
+	bh=net+YE3QHogXlWlMFec/YsoynlXNSNLvWhpeUn87aUs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YTctdFCvDnb3ASneFk3WeifJZ90DzGXQ00fI65Pypdhd2R5yl76ZVJYEfiue64TAQ532BUj+m12ebrt8L2na4Je2Wpowii7xhyavgmTF49Z/GYKfdLwX0fD7LGZjYJ/7jZmwcuP0nxdMg8cq781GEy2ipCLlywxGTyLDIKW2/Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e3ee9c77beso58074695ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:03:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755090217; x=1755695017;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fTlbQ+5lCWedkmmDM5wgqDgXpwjKjQenhY9Z1lVFSds=;
+        b=cqolMM8eHKLj30F5jbU5IZjhnUMW/NEc8u1TxBZLugGkFoyTbvwHR0jmOQkjt7YTcj
+         OEo5TQ+7k1JdOvDqLuGnLpWIGb7NXKEg/yiwV211hqeOyYYMgzV8XkfIZwf6ZuPnOHZP
+         IgPTo3Qu/Ym0pYtPIPH3iZYJM527uVsV06WgVJwtSZ8BCZVVdUokS226p3xAlHqYPYM4
+         Gl7lEdXXgMt9uo1HiCa19nkm7fOhH5o8RD8CQ5IznkkxaK+5Scc551m8qgoaMGqcJPSv
+         3mVmB+Qp+VYrYt5A2TU996umJfUM1SnwxVJRbYhYyxf7LPwvM6RQXsjoV+2qdL8tLtd5
+         BFIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAWCwCyjKOPEjY2cbUaGAeA8GPf01CYF4TCoM1UuyxHQHjYuDyUupasAPzkXMgFgBbnvOSa5LowC2qZl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/2QOhVS43gmc1ZplJh2p61iGhU1oVYe7vz+tFbWMaOCRDAJh7
+	WCUa9J7GGi6GIRZ62YM/ndC0ioWyX3Rv+ItSw2wtjVEd/FOTkW7iqdvkQ599CuVnzO8w3izHASF
+	kkaIbPwt0ehcoZk/f3bduh8lOx/8TBci+h0QjsWg62+yS6oJCgu0vvGzDatk=
+X-Google-Smtp-Source: AGHT+IEoNILpaXFApHt3BIrf6vNHnYzECVrgkPRxUncsquk2HrblXm/Nk+BZ0Knd1pLIpK12NtT7NyEcNp6sbzhuITrihoOQiJMv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4cd3efbd-4798-4f25-9440-879ee289d8ed@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Received: by 2002:a05:6e02:3c89:b0:3e4:ac3:ffd6 with SMTP id
+ e9e14a558f8ab-3e5674a6c2dmr47859725ab.20.1755090184133; Wed, 13 Aug 2025
+ 06:03:04 -0700 (PDT)
+Date: Wed, 13 Aug 2025 06:03:04 -0700
+In-Reply-To: <20250813124145.4469-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689c8d08.050a0220.7f033.014a.GAE@google.com>
+Subject: Re: [syzbot] [kvm?] [net?] [virt?] WARNING in virtio_transport_send_pkt_info
+From: syzbot <syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 13, 2025 at 12:13:26PM +0200, Gabor Juhos wrote:
-> 2025. 08. 11. 22:12 keltezéssel, Andy Shevchenko írta:
-> > On Mon, Aug 11, 2025 at 09:49:54PM +0200, Gabor Juhos wrote:
+Hello,
 
-...
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> >> Signed-off-by: Imre Kaloz <kaloz@openwrt.org>
-> >> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
-> > 
-> > I didn't get this SoB chain. Who is Imre here and what is his role in all this?
-> 
-> Imre reviewed the patches before publishing those, but we were unsure about that
-> the Reviewed-by tag can be used when it is offered privately before the
-> publicaton, so we decided to use the SoB tag instead.
+Reported-by: syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com
+Tested-by: syzbot+b4d960daf7a3c7c2b7b1@syzkaller.appspotmail.com
 
-It's exactly what should have been done. As a such the SoB chain is confusing
-(taking into account the authorship of the patches).
+Tested on:
 
-> It can be changed to the Rewieved-by tag if that is applicable in this case.
+commit:         8742b2d8 Merge tag 'pull-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=136725a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d67d3af29f50297e
+dashboard link: https://syzkaller.appspot.com/bug?extid=b4d960daf7a3c7c2b7b1
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12c575a2580000
 
-Please do so.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Note: testing is done by a robot and is best-effort only.
 
