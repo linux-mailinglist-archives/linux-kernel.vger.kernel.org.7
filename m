@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-766957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3836B24D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:19:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC646B24D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 145DF1667B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5601E174958
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD45A1F09A3;
-	Wed, 13 Aug 2025 15:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6AF1F4634;
+	Wed, 13 Aug 2025 15:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="giIE6ZUz"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="FSTAqWnF"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A9A1EB193
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655441EDA3A;
+	Wed, 13 Aug 2025 15:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755098197; cv=none; b=XcZuk/aGBXRFdajgWJrhdKgPWi3raQgzOlyZR7RnpCxiIChvHIsBePiPfDsgGyMMm5q1pvcnZdxUe3CR5HwEo5g2Jy0xWZF5V6nvw4RcArqV1AlYtce10hWPHqauLVb88P06AXwY7rzXEvRljr1XJvMt1zD07Vu38rG/7cwofXo=
+	t=1755098219; cv=none; b=op7fxURKyJb2zl5YzfKxP4vMaSyBMwMHsOFxyApvGLqc9KYaXSj5prVdC1HmoV8y4vRPnjNVn5ZhBCsMG/ZgKVVmX6B32JhdcdqGdhYpUfOrHdibtvn96GTBo/A425Lw7AZ9pr0AaL7TqWxFLyunHfZ2LZXF64mqG8tio5tm0ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755098197; c=relaxed/simple;
-	bh=YWu6QysTTta+ygIB5yJvbhmovNUrZ+mY2Zbvv1O16X8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AADZGrqux/7CTuFA64+VUXvWunhbrh4pmzY9y09oSvRpNMzRqyulOa20Dz/2kk/PQ6xUaiZ1jlIFwjm+N24nQc7uoaOuhsZ9LKkIlHNIScuzLQTYqBQB7u6NQguFaeGfpQnOS6sN1GTqKSMXeVksBZ5BmhsXCYMBvStNYShSYRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=giIE6ZUz; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3e5614e02efso9793645ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1755098194; x=1755702994; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=shieCgzmVFkz48fGZIWPswfofiSSkJbIXRswAa1EobQ=;
-        b=giIE6ZUzXsy5BiSrQL0MfvrHmTJC/QgApadMRKTwaz5RCeH3bFX1XkJg4DAPaMkPNx
-         5jHBIHwNtjpYMhOsC84f+8FOmxNP7AsSp0Q19UPDWDXnMvmhAGzeq+cEa4ZOS8LG9tuB
-         4hHh/jkYrI4URct0zsXCw8q01h4FIT26RpE7I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755098194; x=1755702994;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=shieCgzmVFkz48fGZIWPswfofiSSkJbIXRswAa1EobQ=;
-        b=Z4XfFwdl8ntWoG5GJuTDQT1EV1KQgmIHdXdO/HY4sQXvNauYxLYGBiqat+2WDn3sYo
-         F/hYwoWfEleUuCB2My8/PIEy3htCGjkDiHh+NCekMNaMdgp8b38Z0/1AK3HPWCprh6cG
-         t3p37IvPRQN4qEGALGBpzUgC9yAMW3H79O8Zy0PTHC6ay4HaYfzcKOTecNaZ4uoVruOb
-         cNj0F/+hUAQjbkJyuSWSmvjT06sgTNQnZI+6eY1nwFc7SlqfxtUhN7PLoKThSHXvDH9H
-         fiRnoR77oaOYDJFAMhIe0reN8vjlv/xjrXGwF3AT91DFIDB3GWwdgnPYqHHflSY3tVJF
-         eqDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9OYE6DAaQHWXH9PhtdPs3xk+GP5kghJfhsESdgqQzshWbEYUiVaG4e1292EzRXIwxW/ZNrK/fiqoQYr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1IXZL4zcfdA5IQeyam77iwu8Mki4s7XsxVJzqCSi5ipipjbhr
-	/BHj+LN9637NF2svpGuCR7XnZWzLf8iOIWg+WMwKl6Pf4EfvGolvPlwa9n3kmEPBcaE=
-X-Gm-Gg: ASbGnctWtA35b5iUd2qUYh4zdwsXAg+iVLDzwVimDxUQFEQomBr6AbenY+8FhzVSwWh
-	rySAyLYUEAxVBuDyVwOWGPSucSWSjjadQyBqkBO3HTcextVv/jXegnLmFDU+ZhfYd7p0pRDJvGF
-	rv+NBDVEDpE+7/NkRZTcCyUlJ6K8RHWO0doiu7YSjKmGOuvqgnP8kvk3OGalWQ2jd7MZtmp86Kb
-	zcve6OBJsFgKRn28e/B7fYbuNQm7zjTgRxLiTxGbIWUZl1OZXoiCcfYJxPZq8QrM9fHBMLgz7mH
-	84XUN6+BNf1VFnWb6q8B7QsWbCm4AJMmBkLmCC+xS49f17WYH8hOlFxwJA3Esw2hYUntqcB+fC5
-	HBzBw/ib42qjQj6kmHFm417gsZqWbYDDl4A==
-X-Google-Smtp-Source: AGHT+IH3h+VIDrQjN5ai4jcK9ftE/5NNjveL7L/XQI2ggB2zwH69RAmhjvCcKUG170OJcY5Gh8frWA==
-X-Received: by 2002:a05:6e02:1fe6:b0:3e5:4b2e:3b05 with SMTP id e9e14a558f8ab-3e56739e3b5mr58175045ab.2.1755098194414;
-        Wed, 13 Aug 2025 08:16:34 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e54270f79fsm43167685ab.7.2025.08.13.08.16.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 08:16:33 -0700 (PDT)
-Message-ID: <0e8e6d86-1fd8-449b-aca7-5ec86b049267@linuxfoundation.org>
-Date: Wed, 13 Aug 2025 09:16:33 -0600
+	s=arc-20240116; t=1755098219; c=relaxed/simple;
+	bh=wuyxRAdOc9VQAvUMY9mwNJe6qRrAvIC7Dop5b+bfkuU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PG52eySjSKPsXK6B53OcoUsqwENURKl65G+dPN/SoH0+yYbWLFPlLm2B1KbAbb0+xKkYzjrNIfUb8y/agy17AynknwrA+XQPiQ1IaXpC9ByalpZrirPKJ99eF5y3vorB3PudlODJwsxau1518T3fOzXQeHOSsKnx/+wxbnGH+0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=FSTAqWnF; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2B1A940AD5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1755098217; bh=5RUQcbRdHlb0azK7oxd9N9h6sfjuy1kAQ4WOx5rNbI0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FSTAqWnF8NnDLZ/xFwv+NxW0BgqckHqTHD7n+cyEpo4+LgzYJYiFTX0tMOW2MfaD3
+	 fouO8zpGBnd8GAXCQoDuc1k9l8hrWH9zAXR6kUpCLiUmdi2igRUL1BtS+UvcqvJ7wQ
+	 e9lsPYOORzg2lA29/rCBlu0HOnReanaRJFy4zzYiygaPVtz86o6cPF8h21Uo5c3p+R
+	 wodEIYrPKGeTamcGD6iOWhSBkkvExTzf+3rBSE5prXQlF5vaFLS3XHa8UtxQLQ1rI8
+	 vdYmnvk5eObUL1XVBMLGW3N5Rekgn/IagMcyZrZ7JCNfWY5M5ciljmPp+J6cN4Y9s2
+	 PLs/ozFLB/pGw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 2B1A940AD5;
+	Wed, 13 Aug 2025 15:16:57 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 5/7] docs: kdoc: tighten up the array-of-pointers case
+In-Reply-To: <20250813005334.31db20b0@foz.lan>
+References: <20250812195748.124402-1-corbet@lwn.net>
+ <20250812195748.124402-6-corbet@lwn.net> <20250813005334.31db20b0@foz.lan>
+Date: Wed, 13 Aug 2025 09:16:56 -0600
+Message-ID: <87sehvb6af.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/253] 6.1.148-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250812172948.675299901@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250812172948.675299901@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 8/12/25 11:26, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.148 release.
-> There are 253 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 14 Aug 2025 17:27:05 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.148-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Compiled and booted on my test system. No dmesg regressions.
+> On Tue, 12 Aug 2025 13:57:46 -0600
+> Jonathan Corbet <corbet@lwn.net> wrote:
+>>              elif KernRe(r'\(.+\)\s*\[').search(arg):
+>> -                # Array-of-pointers
+>> -
+>> -                arg = arg.replace('#', ',')
+>
+> Hmm... if I'm not mistaken, there is(was?) a previous code that replaced
+> commas by "#". Such statement is needed to catch some corner case.
+>
+> This like here is(was?) needed to restore the original arg string.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+That (hackish :) replacement is still there ... but there will be no
+commas in anything matched by the regex here, so the restoration is not
+needed.  I can add that to the changelog for curious readers in the
+future. 
 
-thanks,
--- Shuah
+>> -                r = KernRe(r'[^\(]+\(\s*\*\s*([\w\[\].]*?)\s*(\s*\[\s*[\w]+\s*\]\s*)*\)')
+>> +                r = KernRe(r'[^\(]+\(\s*\*\s*' r'([\w.]*?)' r'\s*(\[\s*\w+\s*\]\s*)*\)')
+>
+> As mentioned on patch 6/7, IMHO doing concats like that at the same line
+> IMO makes it harder to understand. This works best:
+>
+>                 r = KernRe(r'[^\(]+\(\s*\*\s*'
+> 			   r'([\w.]*?)'
+> 			   r'\s*(\[\s*\w+\s*\]\s*)*\)')
+
+I'll do that.
+
+Thanks,
+
+jon
 
