@@ -1,152 +1,194 @@
-Return-Path: <linux-kernel+bounces-766833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A66B24BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:19:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D98EB24BC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4297F6837AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16F963A9922
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FFC2ECD2D;
-	Wed, 13 Aug 2025 14:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FAD2ECEAC;
+	Wed, 13 Aug 2025 14:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="e/679PPM"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iXmwWUhy"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7296C19D88F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D7A2ECD31
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755094494; cv=none; b=iSE4ju+HZAnl+WwZZaHeJGbwA8sYwzD1xhEiRJS1lM6iBDNoAMdyVi/kq0rOi8L1/GJiqdCUD4Gl1FG0qw43c54HLwCoaNT8Q2g3nClYVjzcc9U/lweZS3gTC+Kw9HA9x12cbX6IJ/AbWPGceJcIuq3vsb6MeD8aVRTZ2VzFe08=
+	t=1755094515; cv=none; b=cVREPmJOJ0HRAfVN92jG5cTWRlD0fQ9WgevGLc54OyDsAbf2b1K5a0fXQaZliXZAhedIdQBA3FaiFoypBmUHUl2+VlptvpdCd83cOfzoafcG7UwwIp7wsjYJMRWWPpfDdrg0aeRQP6T/acQGMDMByuZurMgE3Qsg1HO37YMX43s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755094494; c=relaxed/simple;
-	bh=QCMLg4dsgOa1eEM81Z73fL6vTE/mmW2kreT6QN5Otjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MH0mX7+XzXnkZ0ncyIyraUBGpi+mIq8QxpOTN6XTQUfE1YBMDf1JZcjKz8Y0kGDiUtLKYLzItT8S44utbel2UoQg/KejmmIu75pM3/KW57mZdZdlfCYl1ap0pnoLkIJQTImDyvjo64X92yNQDYSO32zUJYn14gJcOjZHj9gzHZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=e/679PPM; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b7910123a0so5901382f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:14:51 -0700 (PDT)
+	s=arc-20240116; t=1755094515; c=relaxed/simple;
+	bh=Y1F5y7YMmYTvjcPHi1UHMNHBFgc9htNL1Zkoh9SHKqw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n/FsWS7Ow/9PCaatjT+CcnPH7Ra5OzXSfulx31Li2MpnWQ7f974YA/4DCE2zsyrlpWDA54D5Nzfrs7INlAKZG5St+73cSCsuiKiXbYuNpMEYgp/tUabpDaxfkj7v1orpn2JyE7sjRV4mld6lEqQAvBkNVHhbD/anbiL5NoUKSW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iXmwWUhy; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-618076fd48bso8966a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 07:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755094490; x=1755699290; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KVpG8bVI3r2CBlCksy8TqW11iXXZZJG0tvWEcZ4LZn8=;
-        b=e/679PPM/O3RuSDpuOdIzXjmQ4pM55ed+j+0m5nXOnR0bfq+vnOG7VC5+BmqF4zVSB
-         ZhYW0VTKuN4pxXUaf0PC47SPmpN4iMfeMN4nEDueXScPk1ZHV2KGgKVnzY4OInWuBzgh
-         1JNYcorolGbwOxROP7X4CHEgix5ZVQ6exdZ6znGQQxzig4QscBCttnYC6dWey6C95OV8
-         PiDMTX4ggucA8SiSf8RtjLKKO3G9bWV5rcibM3P//mDZwok4rSdGK6dlbwaQENTVQyp1
-         Ev3hB6VOy/AKTPB2JuTTsCEAwxog05ivo1BTxFBLqJT/Mub8xbhXMelJWWXaUlRUgaXJ
-         pHBg==
+        d=google.com; s=20230601; t=1755094512; x=1755699312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gCdyA5C6sl+D7SKSeD+kNt6VztluFSoqXBmRZjXidnc=;
+        b=iXmwWUhyV3DnudeZ01rvDiD/6wUb2hP8M2rL2W0qqFWETxSfr3NHzrTwtX5aUmkPZI
+         FA3BGqBKzG5HVoWvn9CU42sEvBnMYwqy1FzxuzRcaGqwHM71mgJNQevnUIehHmGB2X4c
+         mUDIJGh7z+o1MNXZ0hgG3Gb8rxrJVssjGUU0Sp6siZj9ID6B9dZ4U+MyX4FjSGUwU6jP
+         tXI6wHkwFGtmYGgacw4rjVT/1c3b0ixkVkQb0jHbM/d2kx2SYDrj7BBTX5R9wF/Qskca
+         eWHf02BxzAYUqhehgfCV5nYhB3USCunpsfTKWxD/PH3yUq+B8j2gUwnDSUKaR7Amo+bm
+         4IPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755094490; x=1755699290;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KVpG8bVI3r2CBlCksy8TqW11iXXZZJG0tvWEcZ4LZn8=;
-        b=CvMEVj6sJWFvcWK5IRaAzpl3wNOsa6WjWnMyI4wocP6pCbGd7Z0gXsDMV/JYCZPCge
-         iaEQY15omH+X+s++xAfloixnOwDvONH/xDZMAXpkoQMdEmnbVnMXnvR26PYPU1y4VXFG
-         efI5WNTe80YodbiCnfASZNaX3d+1x//OdNaOXjwkeIqGJnrOcz0Q5MRkCaz1BEzRn57Q
-         e/QzZpn2ol2eIS10I7fQMcRW7yZQLA8Kj6edn5/VTQAGHAT78AANRrDtu2d4/txDhH/G
-         K0m9iE2NktT4ntXptVPw4ZEv9M6UAIpj7VwarP6n+74Hxiy8hJ6gMqR5hlLr7XjZHBQn
-         I80A==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ8x/7Oc3orWfAQ3vuxsv1pAPKkuFd88u6Q9fbehLxBz6rg123BfkOA7G0m3yNymdPrwEuJnk7H8r1IqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7hMySQF339A418xkRuCnk5wVcDOYutzIFdOf99jt1CTvfFz8F
-	VAE4L7sRyygHM0Me6UQsv5k6c6yPRRT9ERjWXhs9Se3Cbkw8gdk9kL8vGDxr+HYp39Q=
-X-Gm-Gg: ASbGncvljTWUYofoSKHlex9Khe5yyyL7H//CJcC79QT8CEX4FGzXEwqac1A3rnMM//C
-	RTk8b40rx7PdHi05bJjeM/PLqW1xLU4OY8GZhRzm5gxzCR/JZYb7X4bHpwpMuQtPij7fAf7WiX+
-	pfT3ivNl1FecYcB6/PXEwH9MLgRjkUla14MAXnvGsGdSkyBKPLQBCHQ0YeAT8pxNEoQ04/c58Ay
-	eY1h+JceIVYxu+6Q4oyE2849kX/zuqBVhXgjLr6gq1WSvWLDm2z1u+G/UwUKd7wReVToS07FTtY
-	SSzUWZxovG1CncNuRSZnb/s+6YKMV7veH7eWH1WV2DC1IXNRUXI3Cso6nEewA5ATpfnvfXZyLIt
-	9kCKFxzM97ajMrVma/wsO60vkJcPX79D4MjxKZEoalNA=
-X-Google-Smtp-Source: AGHT+IFm35SgYBxWt9VgUbIXjFlBOfuZ7PxWsBQOS5oI4umuCBzJ8zHC2Ue8SdOP5RfWHEQF78zD1Q==
-X-Received: by 2002:a05:6000:2dc8:b0:3b8:f863:672c with SMTP id ffacd0b85a97d-3b917ea0f3bmr2554936f8f.33.1755094489545;
-        Wed, 13 Aug 2025 07:14:49 -0700 (PDT)
-Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e1b99ff8asm3084354b3a.57.2025.08.13.07.14.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 07:14:49 -0700 (PDT)
-Message-ID: <f60327bb-6546-4d15-8bd2-a05e85d96b4f@suse.com>
-Date: Wed, 13 Aug 2025 16:14:41 +0200
+        d=1e100.net; s=20230601; t=1755094512; x=1755699312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gCdyA5C6sl+D7SKSeD+kNt6VztluFSoqXBmRZjXidnc=;
+        b=U+GqhmlO999FMgelHxnOhmpk4ZP/8TQpdB/yHHI9FBfXizQ1o5h27Jt2MP0+hDlj1V
+         TfiGSASFgj0SrfyFF42w1wTCOc5k/5M4JzTd5TWderHUy4nLOpNP7c+8KXmWsILPu9Er
+         v183XihVllEMfsldLD1/6pA8Y4iNj6YkkbnBo13BI5nPfteTRPV8NCN3J/BPM4wIPnuV
+         jiInvR5kGu/6/Cqmade2y/t0ryX7zbfBoJ/CMYPsMMiwS4O+NuzpBkKfJdoTb3ecDXBI
+         nzOJFuYlOUvZDdCC1qjSkhJin9AGdOcUzQJLmzsdTC0dv6By74TX6I/6b5nNinK9RJoM
+         Picw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhtIrT0Xd2hV9PDoSCV3yx9hbxB1KZ7ebKDUOVPL6zMrmfoAaiw1MzesP/1L+/hhlPxkTOPuaiEuRaC1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFqdtTFDPB6kDXOuDJ1e9LPBwLF3HWPL4BqH7pM6Nz+RrIqlCx
+	q++PCxPsLlLqlYYtVzOpkNOAz3FRViYcIgD8Gb203OcyFlZgBCGt7EXnf+mESuEjpjrSesCLZCZ
+	Iys/9asK6pqzyPQvb7yXVDrZbysAJ7LN2ZoRV+uN7
+X-Gm-Gg: ASbGncsE5vpOgOeq5DjlMGh+zib6Cdkxgucyovc23iAijYNwA1WreMiMRyE3Pf8YRCZ
+	Y2cxvNEEQAZTJ8K2UxTYBf0gOa4vGFRR1LaaCFAix2Xd5f1qr/Xb9Z7epfbQsQqyCW9a8CuOIi4
+	ocfSjgOOmQ9nkbbf16runjLbqSmmZwlf09GHLfvfnJdhJaT47cF00tB6E/CEv2TftQ7CCespTli
+	r6zcUNSQPIWvx8RDHTLZWKp6DAt9qDvepBj7erj46Xh9wOMQiM=
+X-Google-Smtp-Source: AGHT+IGrHXsjBerb6H4iA2/G9f9W9aXY6fFEQY+IlMLrfnIuvzCCyHxV/OD1sC5gfrO8L1dGijqw2XDpP7IbxWdLy7g=
+X-Received: by 2002:a05:6402:1f4f:b0:617:b4c9:4f90 with SMTP id
+ 4fb4d7f45d1cf-6186d54e613mr95378a12.5.1755094511897; Wed, 13 Aug 2025
+ 07:15:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] params: Replace deprecated strcpy() with strscpy() and
- memcpy()
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Shyam Saini <shyamsaini@linux.microsoft.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Dmitry Antipov <dmantipov@yandex.ru>,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- Daniel Gomez <da.gomez@kernel.org>
-References: <20250813132200.184064-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250813132200.184064-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250810062912.1096815-1-lokeshgidra@google.com>
+ <CAGsJ_4wbXkfaAn+79g20SfE-0Ak4QACVP+Mw2vAvMnxBCcLAsQ@mail.gmail.com>
+ <CA+EESO4JFCR5P9PFoY2zo+X1Y-qv+-yy8X887isoqXwfQBtn1Q@mail.gmail.com> <CAGsJ_4zK5iLtYaT2o6ctnZNUgRoxrxkDJ4gnGrTOD7CW5vuRHw@mail.gmail.com>
+In-Reply-To: <CAGsJ_4zK5iLtYaT2o6ctnZNUgRoxrxkDJ4gnGrTOD7CW5vuRHw@mail.gmail.com>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Wed, 13 Aug 2025 07:15:00 -0700
+X-Gm-Features: Ac12FXwcVcIIOY2FQk5ryN01K33bglvd-HUWD6CVhaDAZn5gaMfb8TIOumWEKEI
+Message-ID: <CA+EESO5ny0L8qiB6_b8t9guCVj6+ygjKf5+x6bR2aXjEcJE5Rg@mail.gmail.com>
+Subject: Re: [PATCH v4] userfaultfd: opportunistic TLB-flush batching for
+ present pages in MOVE
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, aarcange@redhat.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, ngeoffray@google.com, 
+	Suren Baghdasaryan <surenb@google.com>, Kalesh Singh <kaleshsingh@google.com>, 
+	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/13/25 3:21 PM, Thorsten Blum wrote:
-> strcpy() is deprecated; use strscpy() and memcpy() instead.
-> 
-> In param_set_copystring(), we can safely use memcpy() because we already
-> know the length of the source string 'val' and that it is guaranteed to
-> be NUL-terminated within the first 'kps->maxlen' bytes.
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> Changes in v2:
-> - Use memcpy() in param_set_copystring() as suggested by Petr Pavlu
-> - Link to v1: https://lore.kernel.org/lkml/20250810214456.2236-1-thorsten.blum@linux.dev/
-> ---
->  kernel/params.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/params.c b/kernel/params.c
-> index b92d64161b75..b96cfd693c99 100644
-> --- a/kernel/params.c
-> +++ b/kernel/params.c
-> @@ -513,13 +513,14 @@ EXPORT_SYMBOL(param_array_ops);
->  int param_set_copystring(const char *val, const struct kernel_param *kp)
->  {
->  	const struct kparam_string *kps = kp->str;
-> +	const size_t len = strnlen(val, kps->maxlen);
->  
-> -	if (strnlen(val, kps->maxlen) == kps->maxlen) {
-> +	if (len == kps->maxlen) {
->  		pr_err("%s: string doesn't fit in %u chars.\n",
->  		       kp->name, kps->maxlen-1);
->  		return -ENOSPC;
->  	}
-> -	strcpy(kps->string, val);
-> +	memcpy(kps->string, val, len + 1);
->  	return 0;
->  }
->  EXPORT_SYMBOL(param_set_copystring);
-> @@ -841,7 +842,7 @@ static void __init param_sysfs_builtin(void)
->  		dot = strchr(kp->name, '.');
->  		if (!dot) {
->  			/* This happens for core_param() */
-> -			strcpy(modname, "kernel");
-> +			strscpy(modname, "kernel");
->  			name_len = 0;
->  		} else {
->  			name_len = dot - kp->name + 1;
+On Wed, Aug 13, 2025 at 2:29=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Tue, Aug 12, 2025 at 11:50=E2=80=AFPM Lokesh Gidra <lokeshgidra@google=
+.com> wrote:
+>
+> > > [...]
+> > >
+> > > >         /*
+> > > > @@ -1257,7 +1327,7 @@ static int move_pages_pte(struct mm_struct *m=
+m, pmd_t *dst_pmd, pmd_t *src_pmd,
+> > > >                 if (!(mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES))
+> > > >                         err =3D -ENOENT;
+> > > >                 else /* nothing to do to move a hole */
+> > > > -                       err =3D 0;
+> > > > +                       err =3D PAGE_SIZE;
+> > >
+> > > To be honest, I find `err =3D PAGE_SIZE` quite odd :-) Could we refin=
+e the
+> > > code to make it more readable?
+> > >
+> > Agreed! I'll replace 'err' with 'ret' as the function no longer only
+> > returns error but also bytes-moved if there is no error.
+> >
+>
+> Looks good. Should we also include the following?
+>
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1246,6 +1246,7 @@ static int move_zeropage_pte(struct mm_struct *mm,
+>  /*
+>   * The mmap_lock for reading is held by the caller. Just move the page(s=
+)
+>   * from src_pmd to dst_pmd if possible, and return number of bytes moved=
+.
+> + * On failure, an error code is returned instead
+>   */
+>  static long move_pages_ptes(struct mm_struct *mm, pmd_t *dst_pmd,
+> pmd_t *src_pmd,
+>                             struct vm_area_struct *dst_vma,
+>
+>
+Of course. I'll add this.
+> > > [...]
+> > >
+> > > > @@ -1857,10 +1930,13 @@ ssize_t move_pages(struct userfaultfd_ctx *=
+ctx, unsigned long dst_start,
+> > > >                                 break;
+> > > >                         }
+> > > >
+> > > > -                       err =3D move_pages_pte(mm, dst_pmd, src_pmd=
+,
+> > > > -                                            dst_vma, src_vma,
+> > > > -                                            dst_addr, src_addr, mo=
+de);
+> > > > -                       step_size =3D PAGE_SIZE;
+> > > > +                       ret =3D move_pages_ptes(mm, dst_pmd, src_pm=
+d,
+> > > > +                                             dst_vma, src_vma, dst=
+_addr,
+> > > > +                                             src_addr, src_end - s=
+rc_addr, mode);
+> > > > +                       if (ret < 0)
+> > > > +                               err =3D ret;
+> > > > +                       else
+> > > > +                               step_size =3D ret;
+> > >
+> > > also looks a bit strange :-)
+> >
+> > Any suggestions on how to improve this? 'step_size' is expected to be
+> > different in each iteration of the loop even without this patch.
+>
+> Usually, we have:
+>
+> if (ret < 0) {
+>     goto or break things;
+> }
+> step_size =3D ret;
+>
+> Given the context, it does seem quite tricky to handle. I=E2=80=99m not s=
+ure,
+> so maybe your code is fine. :-)
 
-Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+Yeah, the special handling for -EAGAIN warrants the current
+implementation. I'll keep it as is then.
 
--- 
-Thanks,
-Petr
+Thanks
+>
+> > >
+> > > >                 }
+> > > >
+> > > >                 cond_resched();
+> > > >
+> > > > base-commit: 561c80369df0733ba0574882a1635287b20f9de2
+> > > > --
+> > > > 2.50.1.703.g449372360f-goog
+>
+> Thanks
+> Barry
 
