@@ -1,118 +1,94 @@
-Return-Path: <linux-kernel+bounces-766891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57104B24C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:48:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BFEB24C5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E2327A6BE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059B63B9DE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736692E8DF5;
-	Wed, 13 Aug 2025 14:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A502ECEAC;
+	Wed, 13 Aug 2025 14:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fsiFJI3T"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WJ+5earH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD5818786A;
-	Wed, 13 Aug 2025 14:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6971D54D8;
+	Wed, 13 Aug 2025 14:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755096482; cv=none; b=INwtzYFvpmXAeVKV61vkQ0Pmzrqo3pJa/xUHqB3hRP8vCFj33hM06f2JE+9bOXagWAmJd00f4hb1fo3BF2ejgCiaoAKsRtbicfjNnFS1j31AKxKaJciqLVC+nDFBBHj66JZ2BCJXYcZEveXzk1wIZYMxMNqVO9ZS9H9lu4CCXfY=
+	t=1755096484; cv=none; b=PhcV7mqAVWQwREjC+uWU3YlzVfDhxEjNZ1BpwFC+0Lz1jmAqn7mfuGFe1puDlsdtN4Vv7h17wQxxUlzbA+1DYMi8ROAPbYHn0e5U44y5boxxRmJE9t2qJHYgLYeormAZ3/9kHaaaSV44PuwdZB38By3qoQGa/pV/7zzmbOisgkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755096482; c=relaxed/simple;
-	bh=TpKhcJfYj0QeFNmSVAkK2qqKILtRN1I5HrA5QO8GQy4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=keoaGNWckAp3pq+diNM2NBUMmJS08n+dqds5nzNogoHgKBfxcpW48B4/XnNXyctibIiWcTTEISwJllKEoauL+kPjUy0XCnyh0BnlHyrJmXOSrzkC7TQlMmhz7GDpazNG0zUgxXngnQJaeBQro4/RoQ82ruJlbel10TXvH+zF2h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fsiFJI3T; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57DElvo02169650;
-	Wed, 13 Aug 2025 09:47:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755096477;
-	bh=K63jITfcwNP/6qrbBcd3v9SV1MMJ3VNtyqIBaX0/Bd8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=fsiFJI3T5QDMRXzrncN6kcQtVp9Z0R2cKqyPKIkTBrTidWQ9PuNcuc8+RYyQgVmU9
-	 2d6C9ohZQX9UpRwr3yGs9sCcszth3dseFJlj4jj8rbWmpEZ2RiqOQ3V5mXlnC95L6h
-	 sUpm2cUzS2qbngs9e+xAcfPyW+BWw5lhBg92JcxI=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57DElvAJ132352
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 13 Aug 2025 09:47:57 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 13
- Aug 2025 09:47:57 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 13 Aug 2025 09:47:57 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57DElvAl2152920;
-	Wed, 13 Aug 2025 09:47:57 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        "Rob Herring
- (Arm)" <robh@kernel.org>
-CC: Nishanth Menon <nm@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: arm: Convert ti,keystone to DT schema
-Date: Wed, 13 Aug 2025 09:47:55 -0500
-Message-ID: <175509646749.163971.1457357729984904510.b4-ty@ti.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250806212824.1635084-1-robh@kernel.org>
-References: <20250806212824.1635084-1-robh@kernel.org>
+	s=arc-20240116; t=1755096484; c=relaxed/simple;
+	bh=Qn8agVW9Vlcdpw9sdzCP4IVz3IhuXOJzbYXLkGDbi9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UKZd+mxVh0Bv+zeRf5KVEU2QoySCmKEm65D+wM8ixagOkTbQMTuHDBrvFqniwEOSKuWoF2HzbEBKGGidjG6bjYi9vHdlx5MtWCC0JUegCPH9l6XZ04vDalDTcxzuR1BSyOWLv/VtyeY/EUXeLpvKFJMfUuCcpFJ2drfLOFLOwXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WJ+5earH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0743DC4CEF6;
+	Wed, 13 Aug 2025 14:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755096484;
+	bh=Qn8agVW9Vlcdpw9sdzCP4IVz3IhuXOJzbYXLkGDbi9c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WJ+5earHOqQatrSxfBJByiizZL9FAcLc+WKCq9ogrON7Wvj8KX2WLcohGJCWZa83g
+	 d15jRGcqsMGmyxjVgqkDCTM7Kjryz4pf4+qDB4qVOfjesSXDXheeZSHvl38VgKntSs
+	 0HRj0k6gbXf+CiHVL6P1+vN267NnSR2ovXNyS8A2hiz4t9UAN3p/maZJ/Lbnr1wHt9
+	 qRzvGSTsBs0VuXl6x3J5EDjZtkGyraW3dJOmBIOT8YwgyZmuIYyWeWfGF9IlS8Gjmn
+	 SblkTEKOfpRW0wgUdUH484VEiWKE8GoS7ox3HUYQxHFaNgwEN8gwYvofYsQprDCaw2
+	 M3zVOtUlw4E+w==
+Date: Wed, 13 Aug 2025 07:48:03 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Roger Quadros <rogerq@kernel.org>
+Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
+ King <linux@armlinux.org.uk>, danishanwar@ti.com, srk@ti.com,
+ linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v4 8/9] net: ethernet: ti: am65-cpsw: add
+ network flow classification support
+Message-ID: <20250813074803.06db304a@kernel.org>
+In-Reply-To: <d787ca03-a54e-46ae-828b-68fbd7b0b3a8@kernel.org>
+References: <20250514-am65-cpsw-rx-class-v4-0-5202d8119241@kernel.org>
+	<20250514-am65-cpsw-rx-class-v4-8-5202d8119241@kernel.org>
+	<20250516182902.5a5bfd98@kernel.org>
+	<d787ca03-a54e-46ae-828b-68fbd7b0b3a8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Rob Herring (Arm),
-
-On Wed, 06 Aug 2025 16:28:23 -0500, Rob Herring (Arm) wrote:
+On Wed, 13 Aug 2025 16:49:27 +0300 Roger Quadros wrote:
+> On 17/05/2025 04:29, Jakub Kicinski wrote:
+> > On Wed, 14 May 2025 15:04:28 +0300 Roger Quadros wrote:  
+> >> The TRM doesn't mention anything about order of evaluation of the
+> >> classifier rules however it does mention in [1]
+> >> "if multiple classifier matches occur, the highest match
+> >> with thread enable bit set will be used."  
+> > 
+> > So we're not sure how to maintain the user requested ordering?  
 > 
+> Currently we are using the user/ethtool provided location as is.
+> 
+> > Am I reading this correctly? If so then ..
+> >   
+> >> +	if (fs->location == RX_CLS_LOC_ANY ||  
+> > 
+> > .. why are we rejecting LOC_ANY?   
+> 
+> Because driver doesn't have logic to decide the location and relies on ethtool to
+> decide it if user doesn't supply it.
 
-
-I have applied the following to branch ti-keystone-dts-next on [1].
-Thank you!
-
-[1/1] dt-bindings: arm: Convert ti,keystone to DT schema
-      commit: 20b3c9a403ee23e57a7e6bf5370ca438c3cd2e99
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
-
+The location supplied by the user may have semantic significance.
+IOW locations may be interpreted as priorities.
+It's better to support LOC_ANY and add the 10 lines of code to
+allocate the id in the driver..
 
