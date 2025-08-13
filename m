@@ -1,132 +1,156 @@
-Return-Path: <linux-kernel+bounces-767178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B061B25011
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:47:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A90AB25015
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DB7B3B4925
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:41:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09D1C16E140
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E4A28750F;
-	Wed, 13 Aug 2025 16:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j+X6ZfTT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF9F2309B3
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46C02877EF;
+	Wed, 13 Aug 2025 16:43:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54912877C4;
+	Wed, 13 Aug 2025 16:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755103311; cv=none; b=tu1hovyb+8P1V7T1DO2h8EKDmLzzrIAlXztG2mPhcMvG7eBOQ8bC0ZFOZ1A9J4gEs3L57KKioGammsFlf/HBBOfM60Xm5slPUX/tIpvk3SlSGJlfRC3h7nUT2oTyDVy3ghQJaeFWqOLnq4Xcq8A7XVydxMg0BJLkYF0w/1DPu7E=
+	t=1755103417; cv=none; b=Rmk4zbDyxUFUGJUUzPt6Ui7yI+B5jNidvd8QVj0ZsIqTTzCKNPKIhhV7nB30oboH0SH7hDK6S91NNoEvYl2uKRAvqKB7xKT4/hhHCe61bS6QtgfZFq1eg+Y7AzPMJvf3KMeHRhUGQuSF4H9g/1gK4b1r5H7bGi7jLK+0hkbkhmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755103311; c=relaxed/simple;
-	bh=POWSo5SQC79Bfe2u0PxIeSUeqYkIrpOe2qKbsp9Xhtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ShGTYOpJtdFL3LSrskUW2DGQJ1JeCdT1jeblHoAYukkXqBSg/z4bdc5tly6sqK1CpmNdd9MWw17/gAvDLQIXWpZw5o0mF2tg02sPl5ddzYAjFzu20oHwTwpe0hTlHU2+OC0+Jk2/UnCnrlynSC1/LSTFft9OawKpo4wKN3a0tgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j+X6ZfTT; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755103310; x=1786639310;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=POWSo5SQC79Bfe2u0PxIeSUeqYkIrpOe2qKbsp9Xhtk=;
-  b=j+X6ZfTTG0LQBa7HqIaugyfMwfT4k4n3RfB5GGAcFDhyY5Dyurcxq2AT
-   LPoeaIEwGuidLRciz5Cf8qr3W0VJtaQwSOEbMICN3dHhXfX1l2oPCQ2nv
-   u3j1IfLh4JGYClKDj3cS5ojf06KZMkdkxquii5FstWEekoId63fYlShpf
-   5xYQIlLVEGeOQAbZq5VNaQ5oZdre4LishCHm2RQ2LpZGJrpEi3bsrxdKe
-   eCQabq646s+I7GT6bOKRNIFvW9qMVNNmmaz9YDjyT/lI5ISt7nRrHUwix
-   NQwWtbODhlpr8/jodhWoSF7Hx4TFeyOCLJdzs9UUMacfFyYzWk/yrLy2i
-   g==;
-X-CSE-ConnectionGUID: XSgs0KBRQrGQXFbACZzS6Q==
-X-CSE-MsgGUID: T+bx74IVRkSaKsikGaeeEQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="82841875"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="82841875"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 09:41:49 -0700
-X-CSE-ConnectionGUID: /Rx6uP4jQVqhkaMJWQP7iQ==
-X-CSE-MsgGUID: NbHgwSHUR8a35+67iCHtig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="170654433"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.131]) ([10.125.111.131])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 09:41:49 -0700
-Message-ID: <a4cb5e3e-717e-4a86-9e15-5b14ef322314@intel.com>
-Date: Wed, 13 Aug 2025 09:41:48 -0700
+	s=arc-20240116; t=1755103417; c=relaxed/simple;
+	bh=eGOtfUOzn7VJhhjgjc5OkdQcb/GSkSfB33WxAxwSZy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ecv0lhDXd8eMcn+Qy90HB3ev3WRTeXcypdi/QH4pWKmkf4Ack94oTzlrrE1zx90rSNhXb/h1B84Ax8Aij94sh6qaCLORZQ6PZKhD6Kz3jtbE706v3snu/tdDe9FKDdjHjW9R1SFUSiIg8VhiZ/k7s1IShC64jxIKhW8EGHkG8DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCEFB12FC;
+	Wed, 13 Aug 2025 09:43:25 -0700 (PDT)
+Received: from e130802.arm.com (e130802.arm.com [10.1.33.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0D923F5A1;
+	Wed, 13 Aug 2025 09:43:30 -0700 (PDT)
+Date: Wed, 13 Aug 2025 17:42:58 +0100
+From: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
+	Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>,
+	Srinivas Kalaga <Srinivas.Kalaga2@arm.com>
+Subject: Re: [PATCH v19 2/6] remoteproc: Add TEE support
+Message-ID: <aJzAkk-k4nfXY7Ux@e130802.arm.com>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+ <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: PF_USER_WORKERs and shadow stack
-To: Oleg Nesterov <oleg@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org
-References: <20250813162824.GA15234@redhat.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250813162824.GA15234@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
 
-On 8/13/25 09:28, Oleg Nesterov wrote:
-> But it seems that if a features_enabled(ARCH_SHSTK_SHSTK) thread creates a
-> PF_USER_WORKER thread, shstk_alloc_thread_stack() will allocate the shadow
-> stack for no reason.
+Hi Arnaud,
 
-Is this costing us anything other than some CPU cycles and 160 bytes of
-memory for a VMA?
+> Add a remoteproc TEE (Trusted Execution Environment) driver that will be
+> probed by the TEE bus. If the associated Trusted application is supported
+> on the secure part, this driver offers a client interface to load firmware
+> by the secure part.
+> This firmware could be authenticated by the secure trusted application.
+> 
+> A specificity of the implementation is that the firmware has to be
+> authenticated and optionally decrypted to access the resource table.
+> 
+> Consequently, the boot sequence is:
+> 
+> 1) rproc_parse_fw --> rproc_tee_parse_fw
+>    remoteproc TEE:
+>    - Requests the TEE application to authenticate and load the firmware
+>      in the remote processor memories.
+>    - Requests the TEE application for the address of the resource table.
+>    - Creates a copy of the resource table stored in rproc->cached_table.
+> 
+> 2) rproc_load_segments --> rproc_tee_load_fw
+>    remoteproc TEE:
+>    - Requests the TEE application to load the firmware. Nothing is done
+>      at the TEE application as the firmware is already loaded.
+>    - In case of recovery, the TEE application has to reload the firmware.
+> 
+> 3) rproc_tee_get_loaded_rsc_table
+>    remoteproc TEE requests the TEE application for the address of the
+>    resource table.
+> 
+> 4) rproc_start --> rproc_tee_start
+>    - Requests the TEE application to start the remote processor.
+> 
+> The shutdown sequence is:
+> 
+> 5) rproc_stop --> rproc_tee_stop
+>    - Requests the TEE application to stop the remote processor.
+> 
+> 6) rproc_tee_release_fw
+>    This function is used to request the TEE application to perform actions
+>    to return to the initial state on stop or on error during the boot
+>    sequence.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+...
+> +
+> +static const struct tee_client_device_id rproc_tee_id_table[] = {
+> +	{UUID_INIT(0x80a4c275, 0x0a47, 0x4905, 0x82, 0x85, 0x14, 0x86, 0xa9, 0x77, 0x1a, 0x08)},
+> +	{}
+> +};
+
+Other implementations may use different UUIDs.
+What about adding a kernel configuration option which, when enabled, allows
+alternative implementations to override this table?
+
+> +/**
+> + * rproc_tee_register() - Register a remote processor controlled by the TEE application.
+...
+> +
+> +static int rproc_tee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+> +{
+> +	/* Today we support only the OP-TEE, could be extend to other tees */
+> +	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
+> +}
+
+Could we make ver->impl_id user-configurable please ? for example, by reading
+it from the device tree since it isn’t discoverable at runtime? In our setup, we’d set
+it to TEE_IMPL_ID_TSTEE.
+
+> +
+> +static int rproc_tee_probe(struct device *dev)
+> +{
+> +	struct tee_context *tee_ctx;
+> +	int ret;
+> +
+> +	/* Open context with TEE driver */
+> +	tee_ctx = tee_client_open_context(NULL, rproc_tee_ctx_match, NULL, NULL);
+> +	if (IS_ERR(tee_ctx))
+> +		return PTR_ERR(tee_ctx);
+> +
+> +	ret = mutex_lock_interruptible(&ctx_lock);
+> +	if (ret)
+> +		return ret;
+
+In some TEEs, the client driver might need to perform extra work during probing.
+For example, when using TS TEE, calling tee_shm_alloc_kernel_buf() is required.
+Could we introduce an rproc_tee_ops and add a TEE probe operation called by the
+remoteproc driver for performing custom TEE setup ?
+
+Kind regards,
+Abdellatif
 
