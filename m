@@ -1,227 +1,93 @@
-Return-Path: <linux-kernel+bounces-766678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0719B249E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:55:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D333B249C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C66C6814F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820601A24E80
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4717B2E5B01;
-	Wed, 13 Aug 2025 12:53:34 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469A02E54AA;
+	Wed, 13 Aug 2025 12:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMS66+jH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C2D15A87C;
-	Wed, 13 Aug 2025 12:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A980317B402
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089613; cv=none; b=IAHYgel35HdlEF7OlDXF4rG9rpd2TuO1qxZq7+voMYCN3J+z/DhiVVhmZLLyj7huGSpSF7eTVZX6EIX0ytuxPlPpz5ZNJLk1Fys0EwNG9eTmsaaxb6LE73egpv4PjaXp2kRXMgrKHi8Tv5Iq1DD3oMWmO7tKElqZW9D8pgr6FwY=
+	t=1755089171; cv=none; b=ssHOFGJx+Dg7OGbW0GHnHznTplJNlkjZAZuZQqD1q8fjYLtpoJNQAR/m3RbwK4CJs0/aWqUKjL3UwU7R8AjaOdPpznYhApc0LzFgKqnNjRLOnSt7g6XFLAeopE3i9kAXXRCeu+5vvAXBG5Pb2uhbt/nB5CnR3mMh42rqpyU6Iyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089613; c=relaxed/simple;
-	bh=c32hhm+mjVpbtNTBFx+pPb1nLihcGoV5AI5Jxjd4TAA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MxN9a47idXFt8IZnPAJ3CA02imVyBgO+E9q5qvTC30Bz6N4i/KQEiuw4YX3y4UYiFaHMmJZ84227YDezZn//HrLbvBYvaMG3TyrRVVgASOsUqXnmSsCHkVxWGIOZtc567MXh5LGCEHgQDLjtyK+NEwbIS/DsWBlJ0ubxI6giXX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c27V61k8dzdc5d;
-	Wed, 13 Aug 2025 20:49:02 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2566A1401F1;
-	Wed, 13 Aug 2025 20:53:22 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 13 Aug 2025 20:53:21 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
-	<Frank.Sae@motor-comm.com>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<heiko@sntech.de>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH V2 net-next] net: phy: motorcomm: Add support for PHY LEDs on YT8521
-Date: Wed, 13 Aug 2025 20:45:42 +0800
-Message-ID: <20250813124542.3450447-1-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1755089171; c=relaxed/simple;
+	bh=ZT0JpTvVCigZnjnkn/I/KbtOHKxQ7IUW9aNh+zCsE6g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BcWzDCyiQzcvFdLoG2m52oyRDUfGSJpewrV2420ySt3PzjKFOUWts8KkHiC1UcrT8xhS70j5alnSvZbSXqZvvmc4h68axwhXWwP4G6uSNE/90pyaFjQ54375izRUhBvxYtwcC4lULu1mhrLh9NMCwDxJQaaqEcAqnqF6za5l2hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMS66+jH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D86EC4CEEB;
+	Wed, 13 Aug 2025 12:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755089171;
+	bh=ZT0JpTvVCigZnjnkn/I/KbtOHKxQ7IUW9aNh+zCsE6g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=HMS66+jHDTZz8nqrxMWaySstee2iZwP7X7bOke9Xus38Cro7xOaOQJHDlyE/VQ9Os
+	 cxZhsr9MxtUb3+AROO5A/vDhMzunaX6vKRwgVpDgUF5UV+7KC2xZ6mchaFASBNugeu
+	 w6is+Iv5adU3NCKthpqxbm6vxatFISvxsitmIAeCVkCGEF7bDNkEeU3VE3d09AjUHe
+	 glUHYG7iy5+PlFS4EF3OWGQimoILktKko9oQRbMd4eDT5xxG3RxguNHyHGCDI7LzBa
+	 D5mPHkdei0ENG0jpdD+yNMhzbgMuOhIH7DpsO1OxA918kn3yV98k3Z0QgB885sBemo
+	 Vy3BU95hPubeQ==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Luke Wang <ziniu.wang_1@nxp.com>
+Cc: "pratyush@kernel.org" <pratyush@kernel.org>,  "tudor.ambarus@linaro.org"
+ <tudor.ambarus@linaro.org>,  "mwalle@kernel.org" <mwalle@kernel.org>,
+  "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+  "richard@nod.at" <richard@nod.at>,  "vigneshr@ti.com" <vigneshr@ti.com>,
+  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,  Bough
+ Chen <haibo.chen@nxp.com>,  Han Xu <han.xu@nxp.com>
+Subject: Re: [PATCH v3 2/2] mtd: spi-nor: core: avoid odd length/address
+ writes in 8D-8D-8D mode
+In-Reply-To: <PAXPR04MB85749F748DD87CE41452AEBBED2AA@PAXPR04MB8574.eurprd04.prod.outlook.com>
+References: <20250708091646.292-1-ziniu.wang_1@nxp.com>
+	<20250708091646.292-2-ziniu.wang_1@nxp.com>
+	<PAXPR04MB85749F748DD87CE41452AEBBED2AA@PAXPR04MB8574.eurprd04.prod.outlook.com>
+Date: Wed, 13 Aug 2025 14:46:08 +0200
+Message-ID: <mafs0jz37wfsf.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemk100013.china.huawei.com (7.202.194.61)
 
-Add minimal LED controller driver supporting
-the most common uses with the 'netdev' trigger.
+Hi Luke,
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
----
-ChangeLog:
-V1 -> V2:
-  - Replace set_bit() with __set_bit(), suggested by Russell.
-  - Optimize the names of some macro definitions, suggested by Andrew.
-  V1: https://lore.kernel.org/all/20250716100041.2833168-2-shaojijie@huawei.com/
-  
-  note: support for ACPI will be sent separately.
-  Link: https://lore.kernel.org/all/aHeEwZaqUd0kNdUQ@shell.armlinux.org.uk/
----
- drivers/net/phy/motorcomm.c | 117 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 117 insertions(+)
+On Wed, Aug 13 2025, Luke Wang wrote:
 
-diff --git a/drivers/net/phy/motorcomm.c b/drivers/net/phy/motorcomm.c
-index 0e91f5d1a4fd..a3593e663059 100644
---- a/drivers/net/phy/motorcomm.c
-+++ b/drivers/net/phy/motorcomm.c
-@@ -213,6 +213,20 @@
- #define YT8521_RC1R_RGMII_2_100_NS		14
- #define YT8521_RC1R_RGMII_2_250_NS		15
- 
-+/* LED CONFIG */
-+#define YT8521_MAX_LEDS				3
-+#define YT8521_LED0_CFG_REG			0xA00C
-+#define YT8521_LED1_CFG_REG			0xA00D
-+#define YT8521_LED2_CFG_REG			0xA00E
-+#define YT8521_LED_ACT_BLK_IND			BIT(13)
-+#define YT8521_LED_FDX_ON_EN			BIT(12)
-+#define YT8521_LED_HDX_ON_EN			BIT(11)
-+#define YT8521_LED_TXACT_BLK_EN			BIT(10)
-+#define YT8521_LED_RXACT_BLK_EN			BIT(9)
-+#define YT8521_LED_1000_ON_EN			BIT(6)
-+#define YT8521_LED_100_ON_EN			BIT(5)
-+#define YT8521_LED_10_ON_EN			BIT(4)
-+
- #define YTPHY_MISC_CONFIG_REG			0xA006
- #define YTPHY_MCR_FIBER_SPEED_MASK		BIT(0)
- #define YTPHY_MCR_FIBER_1000BX			(0x1 << 0)
-@@ -1681,6 +1695,106 @@ static int yt8521_config_init(struct phy_device *phydev)
- 	return phy_restore_page(phydev, old_page, ret);
- }
- 
-+static const unsigned long supported_trgs = (BIT(TRIGGER_NETDEV_FULL_DUPLEX) |
-+					     BIT(TRIGGER_NETDEV_HALF_DUPLEX) |
-+					     BIT(TRIGGER_NETDEV_LINK)        |
-+					     BIT(TRIGGER_NETDEV_LINK_10)     |
-+					     BIT(TRIGGER_NETDEV_LINK_100)    |
-+					     BIT(TRIGGER_NETDEV_LINK_1000)   |
-+					     BIT(TRIGGER_NETDEV_RX)          |
-+					     BIT(TRIGGER_NETDEV_TX));
-+
-+static int yt8521_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+				      unsigned long rules)
-+{
-+	if (index >= YT8521_MAX_LEDS)
-+		return -EINVAL;
-+
-+	/* All combinations of the supported triggers are allowed */
-+	if (rules & ~supported_trgs)
-+		return -EOPNOTSUPP;
-+
-+	return 0;
-+}
-+
-+static int yt8521_led_hw_control_set(struct phy_device *phydev, u8 index,
-+				     unsigned long rules)
-+{
-+	u16 val = 0;
-+
-+	if (index >= YT8521_MAX_LEDS)
-+		return -EINVAL;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK, &rules)) {
-+		val |= YT8521_LED_10_ON_EN;
-+		val |= YT8521_LED_100_ON_EN;
-+		val |= YT8521_LED_1000_ON_EN;
-+	}
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_10, &rules))
-+		val |= YT8521_LED_10_ON_EN;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_100, &rules))
-+		val |= YT8521_LED_100_ON_EN;
-+
-+	if (test_bit(TRIGGER_NETDEV_LINK_1000, &rules))
-+		val |= YT8521_LED_1000_ON_EN;
-+
-+	if (test_bit(TRIGGER_NETDEV_FULL_DUPLEX, &rules))
-+		val |= YT8521_LED_HDX_ON_EN;
-+
-+	if (test_bit(TRIGGER_NETDEV_HALF_DUPLEX, &rules))
-+		val |= YT8521_LED_FDX_ON_EN;
-+
-+	if (test_bit(TRIGGER_NETDEV_TX, &rules) ||
-+	    test_bit(TRIGGER_NETDEV_RX, &rules))
-+		val |= YT8521_LED_ACT_BLK_IND;
-+
-+	if (test_bit(TRIGGER_NETDEV_TX, &rules))
-+		val |= YT8521_LED_TXACT_BLK_EN;
-+
-+	if (test_bit(TRIGGER_NETDEV_RX, &rules))
-+		val |= YT8521_LED_RXACT_BLK_EN;
-+
-+	return ytphy_write_ext(phydev, YT8521_LED0_CFG_REG + index, val);
-+}
-+
-+static int yt8521_led_hw_control_get(struct phy_device *phydev, u8 index,
-+				     unsigned long *rules)
-+{
-+	int val;
-+
-+	if (index >= YT8521_MAX_LEDS)
-+		return -EINVAL;
-+
-+	val = ytphy_read_ext(phydev, YT8521_LED0_CFG_REG + index);
-+	if (val < 0)
-+		return val;
-+
-+	if (val & YT8521_LED_TXACT_BLK_EN || val & YT8521_LED_ACT_BLK_IND)
-+		__set_bit(TRIGGER_NETDEV_TX, rules);
-+
-+	if (val & YT8521_LED_RXACT_BLK_EN || val & YT8521_LED_ACT_BLK_IND)
-+		__set_bit(TRIGGER_NETDEV_RX, rules);
-+
-+	if (val & YT8521_LED_FDX_ON_EN)
-+		__set_bit(TRIGGER_NETDEV_FULL_DUPLEX, rules);
-+
-+	if (val & YT8521_LED_HDX_ON_EN)
-+		__set_bit(TRIGGER_NETDEV_HALF_DUPLEX, rules);
-+
-+	if (val & YT8521_LED_1000_ON_EN)
-+		__set_bit(TRIGGER_NETDEV_LINK_1000, rules);
-+
-+	if (val & YT8521_LED_100_ON_EN)
-+		__set_bit(TRIGGER_NETDEV_LINK_100, rules);
-+
-+	if (val & YT8521_LED_10_ON_EN)
-+		__set_bit(TRIGGER_NETDEV_LINK_10, rules);
-+
-+	return 0;
-+}
-+
- static int yt8531_config_init(struct phy_device *phydev)
- {
- 	struct device_node *node = phydev->mdio.dev.of_node;
-@@ -2920,6 +3034,9 @@ static struct phy_driver motorcomm_phy_drvs[] = {
- 		.soft_reset	= yt8521_soft_reset,
- 		.suspend	= yt8521_suspend,
- 		.resume		= yt8521_resume,
-+		.led_hw_is_supported = yt8521_led_hw_is_supported,
-+		.led_hw_control_set = yt8521_led_hw_control_set,
-+		.led_hw_control_get = yt8521_led_hw_control_get,
- 	},
- 	{
- 		PHY_ID_MATCH_EXACT(PHY_ID_YT8531),
+> Gentle ping on this, are there any comments or issues?
+
+I plan to review it this in the next couple weeks (hopefully this one).
+
+>> 
+>> On Octal DTR capable flashes like Micron Xcella the writes cannot start
+>> or end at an odd address in Octal DTR mode. Extra 0xff bytes need to be
+>> appended or prepended to make sure the start address and end address are
+>> even. 0xff is used because on NOR flashes a program operation can only
+>> flip bits from 1 to 0, not the other way round. 0 to 1 flip needs to
+>> happen via erases.
+>> 
+>> Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
+>> Reviewed-by: Michael Walle <michael@walle.cc>
+>> Signed-off-by: Luke Wang <ziniu.wang_1@nxp.com>
+[...]
+
 -- 
-2.33.0
-
+Regards,
+Pratyush Yadav
 
