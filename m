@@ -1,263 +1,200 @@
-Return-Path: <linux-kernel+bounces-765779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E3EB23E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:21:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FBDB23E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F376872E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:21:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC55768851E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E101E520D;
-	Wed, 13 Aug 2025 02:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58301E1DE9;
+	Wed, 13 Aug 2025 02:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Duedh/1/"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012019.outbound.protection.outlook.com [52.101.66.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K+bRCs5L"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A6A1BCA0E;
-	Wed, 13 Aug 2025 02:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755051674; cv=fail; b=he+dFjVP1x2UvmCWm82w4hLxmG9dMFtuGnAvLWr3WNiJuCALXV/gltVsssBRGb0M4keOqDYoG73glwFPtxMYoha3oCfvsP8edfiMfMhP4Ko4rBbx+OrDLFQ6OkFhMersIXOJWUAaQ91oRqK8Me/vTlSpqrVHmlMwsGfcrWtvew4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755051674; c=relaxed/simple;
-	bh=d1/2+12AClB709owOaP3JSJBRiHm8vWbaryHkj1lwBo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qwhrD/r7oyzHJYI/HhuxZmml1yfUK8KEjeyjCIQU+GymkDoThl0j5XYvySREHUWXj0qI9d3+M/9lWCHjY7K08Ar8/FEkOG+dz+KQ2HeROKS7pySgufu0KlOrPfnqJFNjVuEaRjotJ71HeR5KTX8Ye8HcLamiNWUOSIY9QpvWksY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Duedh/1/; arc=fail smtp.client-ip=52.101.66.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E1BoScEAeSXJ/H5dpJecGbE5ZpoOvKtJT//iojHI3mE5MuuVl7+hjhv2tjt3xLyyEamQsvMWOiU77ZkYgWbQRBNu35IKQ+H6lcrW7NYi8E/xRq7+Q84/dhYUrYEHAanuxBAC+K3t8wPRkA4GJfnBWi27q2m9e8qwYrsYOUNU0LeoYr9YTW2BXjI6aQpyiTIsFBh5p405cQ0PPTDVGVf5V5twP3nysVh1/sVWH+F3oE7caZQIu5jLpSQSzEp+g/GSCnMujbDSRqnZ/Q2PMVKGRQu/18AisgUyjRn7W7iG7j/ohXAYQhoBaIUeKfvApY0hSFgdInp6nCSDmxbrSNrMVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8ZGnJ2MESHWiGowOjwiQvYO5alguor7kC86AXOWtJGE=;
- b=K/PNE/R8kTh/uhIlv2nOlCEzEYtWAArxDGSH5+GzJ0HFE7J2NmKRn5j5m9bRdYoNdImrmtiNpnRWHXfCJq+0RbKE+K73tV7pXTaO8RdL2CHIrqPcKw8o5rN1b6NG48b39jsrMxJcogdvhuBM+tl6p9cW825U37BJxLwcjTV+Nm45jf7ss0gTFt2JdvTO4Hk6x5WupYP4Pnyr3hOAwVxbkWRKwCY6nFuhCmhSksgc86+Fc1mt/fzDp9Qt7ycl/xyIJVive8DXEebzfqylBsKPVwrZNIlA2rNqyl6lvGUqlMapKrjFs5IF8RO9HXFbLLy5iCY2a2miy9KKC7uJX9gPtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8ZGnJ2MESHWiGowOjwiQvYO5alguor7kC86AXOWtJGE=;
- b=Duedh/1/FRK1QcGmKgnfJM4HHKj9WEn9EuzZiATkPXpCswetzqJYHWUolJic2GgPZxUqPAqRBYS3lTJ7DVzbRAAvYsH8+1V0wsIjOY9SHoE02Le62cAcZUCYXUUGuz3EZ+LTqlaV3Aj+BUF9jWjPmi6XgNP7wkruVzNRgoRmcc30aVzGd2AXUG1+6iVfTQqrw4bvzqfZ8+JW9eoXMCL/YHFDYRk/dH/BYFS4gXIvUlKjTuyKnAtJzIfCRUCTyAzEnHgl42b/xm2DjWM0xZ9qBm639aILl9197wd6O+ABTcCTWbMweC1TK3CTK1GGm59nZQpEgIKq8bGo/pkaVPuoXQ==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by DB8PR04MB6842.eurprd04.prod.outlook.com (2603:10a6:10:11c::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Wed, 13 Aug
- 2025 02:21:09 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
- 02:21:08 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"richardcochran@gmail.com" <richardcochran@gmail.com>, Claudiu Manoil
-	<claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>, Frank Li
-	<frank.li@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, "F.S. Peng" <fushi.peng@nxp.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>
-Subject: RE: [PATCH v3 net-next 04/15] ptp: netc: add NETC V4 Timer PTP driver
- support
-Thread-Topic: [PATCH v3 net-next 04/15] ptp: netc: add NETC V4 Timer PTP
- driver support
-Thread-Index: AQHcC3Do+INtWX5a2U2G7TLOdSVPWbRfCPmAgADRQpA=
-Date: Wed, 13 Aug 2025 02:21:08 +0000
-Message-ID:
- <PAXPR04MB8510193754000AB8FE6E1C47882AA@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250812094634.489901-1-wei.fang@nxp.com>
- <20250812094634.489901-5-wei.fang@nxp.com>
- <20250812134931.fjtrmv6fmdgcagre@skbuf>
-In-Reply-To: <20250812134931.fjtrmv6fmdgcagre@skbuf>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|DB8PR04MB6842:EE_
-x-ms-office365-filtering-correlation-id: 87848953-1330-4a9b-ce33-08ddda10103f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?YPvCm3NaONFKMbdknheXOyBz691d84n4aVwuOzMBSdBHEZ9K2yp5bjMhv56v?=
- =?us-ascii?Q?V/gBDkTlUmVpYI/ywx5WLnproFFsEXkXKdUxJ0MuWG9GgPFkiXX38yYZtZaE?=
- =?us-ascii?Q?OXdoBeSxk5WoVsdQmMgh/v85HRLbG3f3GPs6osstwyqYT4gzLmWS++TAxzN7?=
- =?us-ascii?Q?y17iAg9n4oxEfyRTOZT9i9vNbn6ca20XApPVDe1zlaXLnHy24wCJBXAbfhsv?=
- =?us-ascii?Q?n2OI+7tNkTGGawX3llx4NPI04PxgbBTXnrQd80Th+iqIwA511iRTfPTs8Nrb?=
- =?us-ascii?Q?fwbJt+vaPlXogNDeXUjeCq4gPtEjLLcqMBtUpHst61AOL/5U2EiyWsPXbKvQ?=
- =?us-ascii?Q?AdRN8dsO9ak4OesIVgbY7a8xG173YNmTGhJ58tYND+gOSDl2JgHue2w2zZXW?=
- =?us-ascii?Q?+RgK1dZB9RnAf4iDPFGnG3Vha9GgWfgoyDJESgKOc25NoJhGcNurqkO4mjhh?=
- =?us-ascii?Q?yH7v9Rv6mi+oNd4UtJca0Zp07bBiT768/cURov2bKLO4MfjFziyPKDOops/+?=
- =?us-ascii?Q?z/Y7hVLEK+Lp41aX9HTeuVYVpQ0Efk0Uw3Bx1VxaxPhFC6HDBYttBcJgvJog?=
- =?us-ascii?Q?3NWyXqE4WE7pUDYQc12wt9g6Qc1dLUX1xjgaionKaJeCHrlC0X1XhTK5eLW6?=
- =?us-ascii?Q?fEvzC5iumOceFnzDtT5R3PaXVJK59hsfWVvf286v6NJSbh3lztBDPEwBxPfQ?=
- =?us-ascii?Q?MA7c4Gfmh0jbGRf07ELkOVjD2w0yp7H1hVxIoEgGDZ18Y4PGLICFQ8zDSF1d?=
- =?us-ascii?Q?imU2YAY6kj4fXX3oghxNxhsgsWIv1IXK5HI9I9Ux0J2Gj0xg9UJX1CxCoFhX?=
- =?us-ascii?Q?+S+g4ELaFtaGPajp8hec7D3oPOrCRQj0RlHeGgb2yiIOyla5USKWneGe52jm?=
- =?us-ascii?Q?C1aNIkUtEHd8PamSFtKNBlW5qkrDrhsZfF2LKPMGa9c7RvJgpPvBMXtJ0UrJ?=
- =?us-ascii?Q?KB9U86unp7HoMdoQsPmYvMAxdHatBFjrKIziWCnuShd1tZx+Bt9eAW91X2wx?=
- =?us-ascii?Q?+S7TlKGopq3iHE+A4gpaCLcTtJjCkyoMAinDXzUfIj47MzzH3zaEVvApWjNL?=
- =?us-ascii?Q?O2L5Pxr1InHvUnSl5E3si5WwGU1rbuTogWKD+kvr3ts/IWrV142DsgKTelaB?=
- =?us-ascii?Q?xo2QKPmGl/x53vlcEpEr16as0+MSICKiweD8ep709Rxv1QXj6aSOTYUHYvHs?=
- =?us-ascii?Q?8BSRzwVd/Hg1qb1LBwOTarM5fJiAYVAR2t00c2Em6ECDStGdrPt0tXqf/2wI?=
- =?us-ascii?Q?j5m+eEpmf4Z8Z1eUrsro+YjmejoHNmsbeg/lI9VvyoQZTT0dPal1lbgzkaym?=
- =?us-ascii?Q?l+6FhsEFsG1lBcW4n0GhnFtqzWtpaxxO3zfuLKsHpkFaTT3sbMtQZicNDWSW?=
- =?us-ascii?Q?XDduTqjIbew13xzSDwrWLxaCZdPBOpnpoUo+Z6IhKqsXyg/p5wwwPrFhxXWp?=
- =?us-ascii?Q?lWjKP+GNTuoNoXiwBBDZptsZLVCyHaYvZ1pkGMkN3azw3TYUHhIPpA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?n2hHBhewfZ8XFDcx8VDAbMryddzW3v1MDjAZsIljUOI7iSoWGrKT6NBbQpSd?=
- =?us-ascii?Q?m2N8clsJc3bFZbPEFXUMJDZCQFbxIksALxOSNXO91uyUVhzgQNQcQkOhAeOL?=
- =?us-ascii?Q?VzMnmdpyUCMfv2zxVUvDBE9f4m+NxOhoCC2EjbZG7pi1Fn7OVQtUfqu1mEm9?=
- =?us-ascii?Q?IlvUFOa5iJz0ta5xAeUsRk8YwoTwi8E0lLFJuu548AH4KenRw/hc3LlkI9sR?=
- =?us-ascii?Q?xN/eaGtKrBPRLFAZG9TltQwc3IbeNR0DFxM7SAdb0PRfAqnHP2M09lKHkrgX?=
- =?us-ascii?Q?rSpOuoBlt4lpkAxS1vMVHF61Bk3vuZguy3bZ7IScMnDlduGLuSqJxWxQkdoB?=
- =?us-ascii?Q?BH8POWSMPBvzmQsB11hLWVY/qJpeobdJuXB6vm05bYgcMn3iqtzBjBfbQYr8?=
- =?us-ascii?Q?TG2WTsXF3u+vUQDxBHA4vj9iRe3t0brGula31vxFeMzKvLAeENjYVK43XY8B?=
- =?us-ascii?Q?ypsaMlRAiojYVqYf9WPDZyU8SnAHZeFpSUpb7SVfr12SIEF03qhA9gSP6X3h?=
- =?us-ascii?Q?sQ5rdKslA+MNZgqfjjm0cN5dW50Cdhwxr6d00XPb3mKKXPNwfZrOWKdgsbTD?=
- =?us-ascii?Q?3wrRnSQvWm760ginyl2/vWZWpReDVVdKLYCZx6G/JGv41wFLwTnoYeEjnusc?=
- =?us-ascii?Q?D0WTpqTg9SyZ6A/EWGDMwKE52xrATmZdfXyK1/JmcprPr4hGRleRY47Q5ZsF?=
- =?us-ascii?Q?YrAq0pkFohheYHJDw8ngGfznvSKYFCJvvTGppzWK3Th3slH5gmJtFnOsOHnk?=
- =?us-ascii?Q?3v/xFZQfEo80oDX6CkGuCeuM3z2o7xypXd6pDmdmfgZucRt8O29fgaen2XM5?=
- =?us-ascii?Q?tpnE2fyOUrXPYqMvjpS9hXwYyMMLVF5u/+YQvDxoJSE6nJZGgUozr2Bi3eQt?=
- =?us-ascii?Q?Jy4oYWRY0ze6K0nsaD2rLca5aHu3HT+bxXKLe+kx4yi2Pj/v23k1/+0WPekN?=
- =?us-ascii?Q?zhBvRYeWLssfJbMqb5XwQL/L/J6j1sK/wYhVe1uI8jQdOUq1yrRpjnlU/QE9?=
- =?us-ascii?Q?JYZB33F+d9wLcf/kuTfWWjwH1Z2JWUipoXjYYcl6yOgN6SGrtJR3d1PLjxgF?=
- =?us-ascii?Q?zQIOm8Ybf48yUX2k07OwhgTBUxbGHly5iegHR0HyxW7YyC2vu3JHbFldsXDK?=
- =?us-ascii?Q?mxpe/Y0KmO9PsJpPbS5Bq9re+Kdk4cmWlpVH0Nxn86CbFHmQv333Sjb1ZdXo?=
- =?us-ascii?Q?F61Pj9YPfo2hFkbexhnlJB/rDq7r1oVDZVoI0wJ6Emz77WuCgEiTxFcDiIJf?=
- =?us-ascii?Q?1ZTEQTVk3cSUaXjVaR0GH49Y3FzCI5CXMdXrsZPmRGit9ZFCA4OyGcYG3ou3?=
- =?us-ascii?Q?IHifU6ouYMMWCIFmx5fnTaWE8aGI/13e1orS7Ro8Rj1jt3RkgOQ8jx/IXrzD?=
- =?us-ascii?Q?5UUFPwlhQQ46ov6RRwc5xR+auieMLqPo5zYek7VCRhvd63TIt+/VETc0yyds?=
- =?us-ascii?Q?2uwBXE5v4fb7hOEBwmxkXTGZxZYinp15vskxyQbwAl45a5IGpEZ/O4M3xEfM?=
- =?us-ascii?Q?KD+Vf+jD/syiDPWuGD+Obzyz4q5vEM/ESiao8eQ22gpcd9tvnJFJWM9nZQtQ?=
- =?us-ascii?Q?FF/HuWC+aV94ZMBrzxw=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB6E2C0F8F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755051904; cv=none; b=aP3YqYB72Vx02cB9IQEp9U5viR55X95DLAZ92q472k9rOmDjaA5Nf4WhbiIIC04KJ1CN8MfZdwIHHPzBoeftrc49BSjJEQzWD8hFBkoqOu5KpXMfg5efRZrm/SGXPOAItf67xLOkRcA6qQk8eEgFUwjAeQJSNNWyjfmLcDY8lA4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755051904; c=relaxed/simple;
+	bh=TO08Bxdjs6CXgwQaNnTK3VsCDBnZs98H7CvXOF1PSiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujoH+TSzvkWSWNSf6VbXzxCkle0ATtR7NtJ5q9naIZHx3u7MVR+HFeYW02s3RXXx2u1nS+PqitOD7Y3XYkp9fnMIqahqyF31zHqrxl4/jwJkVx00+j1B2EsLJMl/pr0LnWoVpCbHmRl/NV3VWaXsQnJrPqfv6dr/Ev6OzyHU5T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K+bRCs5L; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755051903; x=1786587903;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TO08Bxdjs6CXgwQaNnTK3VsCDBnZs98H7CvXOF1PSiw=;
+  b=K+bRCs5LzNAQRvW3E5KpMo8i6rjdDW3FbhcxbVCoQo96bBPAv9Fj9qvO
+   OCowivAueK2zfhn+0fukleJ4EZ9ztYPbll1ztj6/5SluRwFiewgSzWG+v
+   QFhu96KO04BHLAR5PL6YbS/9XNT6FKdUiWaYjm2wUSJU8PemiZv7VHfTp
+   E1uFXlGq9mcWpq1RG1nfp6cmDk3xXXAp4QE0Ie+y2a0zm4sotRDHqzPn/
+   rHcNz/6Bi65Cq3MgDLeW4RQ8y63AOl8zAaWme/wYK9vUrWnal3Spt6DCG
+   DG/ECi0nBe9/ijhiHbQH9RYc2z7HT3h5p7kOhhODeR/rcX3ax9VaxMFK/
+   Q==;
+X-CSE-ConnectionGUID: iNWvj5HYQJioRd11NJME/g==
+X-CSE-MsgGUID: 4KFmHNMfTPCG4vumvui/vQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57416209"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="57416209"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 19:25:02 -0700
+X-CSE-ConnectionGUID: R7Jgn4tkRgOyjuOYDP9Yvw==
+X-CSE-MsgGUID: 3weZF238QHG4vGIuMOZAOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="165571477"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 12 Aug 2025 19:24:55 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1um1Aa-0009T2-1I;
+	Wed, 13 Aug 2025 02:24:52 +0000
+Date: Wed, 13 Aug 2025 10:23:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Balbir Singh <balbirs@nvidia.com>, dri-devel@lists.freedesktop.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Balbir Singh <balbirs@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Ralph Campbell <rcampbell@nvidia.com>,
+	Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Francois Dugast <francois.dugast@intel.com>
+Subject: Re: [v3 10/11] gpu/drm/nouveau: add THP migration support
+Message-ID: <202508130923.0VGA41Zv-lkp@intel.com>
+References: <20250812024036.690064-11-balbirs@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 87848953-1330-4a9b-ce33-08ddda10103f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2025 02:21:08.3196
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YBD1Ww03CF04Rt10+/kMpNgH0L6/dlgfY096IH3BjspBIy3hFE5ZEt8GNyiOwiLVHVa2hgsKNi/0WartqQtc8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6842
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812024036.690064-11-balbirs@nvidia.com>
 
-> On Tue, Aug 12, 2025 at 05:46:23PM +0800, Wei Fang wrote:
-> > +int netc_timer_get_phc_index(struct pci_dev *timer_pdev) {
-> > +	struct netc_timer *priv;
-> > +
-> > +	if (!timer_pdev)
-> > +		return -ENODEV;
-> > +
-> > +	priv =3D pci_get_drvdata(timer_pdev);
-> > +	if (!priv)
-> > +		return -EINVAL;
-> > +
-> > +	return priv->phc_index;
-> > +}
-> > +EXPORT_SYMBOL_GPL(netc_timer_get_phc_index);
-> ...
-> > @@ -16,4 +17,13 @@ static inline void netc_write(void __iomem *reg, u32
-> val)
-> >  	iowrite32(val, reg);
-> >  }
-> >
-> > +#if IS_ENABLED(CONFIG_PTP_NETC_V4_TIMER)
-> > +int netc_timer_get_phc_index(struct pci_dev *timer_pdev); #else
-> > +static inline int netc_timer_get_phc_index(struct pci_dev
-> > +*timer_pdev) {
-> > +	return -ENODEV;
-> > +}
-> > +#endif
-> > +
->=20
-> I was expecting that with the generic ptp-timer phandle you'd also offer
-> a generic mechanism of retrieving the PHC index, instead of cooking up a
-> custom API convention between the NETC MAC and the NETC timer.
->=20
+Hi Balbir,
 
-Good advice, I did not realize that, I will try to apply your proposal,
-many thanks.
+kernel test robot noticed the following build errors:
 
-> Something like below, completely untested:
->=20
-> struct ptp_clock_fwnode_match {
-> 	struct fwnode_handle *fwnode;
-> 	struct ptp_clock *clock;
-> };
->=20
-> static int ptp_clock_fwnode_match(struct device *dev, void *data)
-> {
-> 	struct ptp_clock_fwnode_match *match =3D data;
->=20
-> 	if (!dev->parent || dev_fwnode(dev->parent) !=3D match->fwnode)
-> 		return 0;
->=20
-> 	match->clock =3D dev_get_drvdata(dev);
-> 	return 1;
-> }
->=20
-> static struct ptp_clock *ptp_clock_find_by_fwnode(struct fwnode_handle
-> *fwnode)
-> {
-> 	struct ptp_clock_fwnode_match match =3D { .fwnode =3D fwnode };
->=20
-> 	class_for_each_device(&ptp_class, NULL, &match,
-> ptp_clock_fwnode_match);
->=20
-> 	return match.clock;
-> }
->=20
-> int ptp_clock_index_by_fwnode_handle(struct fwnode_handle *fwnode)
-> {
-> 	struct fwnode_handle *ptp_fwnode;
-> 	struct ptp_clock *clock;
-> 	int phc_index;
->=20
-> 	ptp_fwnode =3D fwnode_find_reference(fwnode, "ptp-timer", 0);
-> 	if (!ptp_fwnode)
-> 		return -1;
->=20
-> 	clock =3D ptp_clock_find_by_fwnode(ptp_fwnode);
-> 	fwnode_handle_put(ptp_fwnode);
-> 	if (!clock)
-> 		return -1;
->=20
-> 	phc_index =3D ptp_clock_index(clock);
-> 	put_device(&clock->dev);
->=20
-> 	return phc_index;
-> }
-> EXPORT_SYMBOL_GPL(ptp_clock_index_by_fwnode_handle);
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Balbir-Singh/mm-zone_device-support-large-zone-device-private-folios/20250812-105145
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250812024036.690064-11-balbirs%40nvidia.com
+patch subject: [v3 10/11] gpu/drm/nouveau: add THP migration support
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20250813/202508130923.0VGA41Zv-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250813/202508130923.0VGA41Zv-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508130923.0VGA41Zv-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from <command-line>:
+   drivers/gpu/drm/nouveau/nouveau_dmem.c: In function 'nouveau_dmem_migrate_vma':
+>> include/linux/compiler_types.h:572:45: error: call to '__compiletime_assert_706' declared with attribute error: max((1<<((16 + __pte_index_size)-16)), max) signedness error
+     572 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:553:25: note: in definition of macro '__compiletime_assert'
+     553 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:572:9: note: in expansion of macro '_compiletime_assert'
+     572 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:93:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      93 |         BUILD_BUG_ON_MSG(!__types_ok(ux, uy),           \
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/minmax.h:98:9: note: in expansion of macro '__careful_cmp_once'
+      98 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:112:25: note: in expansion of macro '__careful_cmp'
+     112 | #define max(x, y)       __careful_cmp(max, x, y)
+         |                         ^~~~~~~~~~~~~
+   drivers/gpu/drm/nouveau/nouveau_dmem.c:811:23: note: in expansion of macro 'max'
+     811 |                 max = max(HPAGE_PMD_NR, max);
+         |                       ^~~
+--
+   In file included from <command-line>:
+   nouveau/nouveau_dmem.c: In function 'nouveau_dmem_migrate_vma':
+>> include/linux/compiler_types.h:572:45: error: call to '__compiletime_assert_706' declared with attribute error: max((1<<((16 + __pte_index_size)-16)), max) signedness error
+     572 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |                                             ^
+   include/linux/compiler_types.h:553:25: note: in definition of macro '__compiletime_assert'
+     553 |                         prefix ## suffix();                             \
+         |                         ^~~~~~
+   include/linux/compiler_types.h:572:9: note: in expansion of macro '_compiletime_assert'
+     572 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+         |                                     ^~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:93:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+      93 |         BUILD_BUG_ON_MSG(!__types_ok(ux, uy),           \
+         |         ^~~~~~~~~~~~~~~~
+   include/linux/minmax.h:98:9: note: in expansion of macro '__careful_cmp_once'
+      98 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/minmax.h:112:25: note: in expansion of macro '__careful_cmp'
+     112 | #define max(x, y)       __careful_cmp(max, x, y)
+         |                         ^~~~~~~~~~~~~
+   nouveau/nouveau_dmem.c:811:23: note: in expansion of macro 'max'
+     811 |                 max = max(HPAGE_PMD_NR, max);
+         |                       ^~~
+
+
+vim +/__compiletime_assert_706 +572 include/linux/compiler_types.h
+
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  558  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  559  #define _compiletime_assert(condition, msg, prefix, suffix) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  560  	__compiletime_assert(condition, msg, prefix, suffix)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  561  
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  562  /**
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  563   * compiletime_assert - break build and emit msg if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  564   * @condition: a compile-time constant condition to check
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  565   * @msg:       a message to emit if condition is false
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  566   *
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  567   * In tradition of POSIX assert, this macro will break the build if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  568   * supplied condition is *false*, emitting the supplied error message if the
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  569   * compiler has support to do so.
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  570   */
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  571  #define compiletime_assert(condition, msg) \
+eb5c2d4b45e3d2 Will Deacon 2020-07-21 @572  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+eb5c2d4b45e3d2 Will Deacon 2020-07-21  573  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
