@@ -1,96 +1,156 @@
-Return-Path: <linux-kernel+bounces-766770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AF6B24AE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:45:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FC8B24AD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A781744C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5ED23B2E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1162EAB8F;
-	Wed, 13 Aug 2025 13:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB16E2EB5D6;
+	Wed, 13 Aug 2025 13:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKdJqjnw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dvkvDwn6"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E46C2EA74B;
-	Wed, 13 Aug 2025 13:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D242EAB6F
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755092425; cv=none; b=AOjnU63NkmD/DOfbGneM5drdDwj4LqBm5JTmlbHW8kXDQ3nYwO0LPtshj9F+Y58nd/fDnBvw2sZ8csag0mMdeAYr3BpQ4IsxQZZtI/y7KK8nwKERjXm2oPOFgVHSKuArVc9IX6JiTe7SV0VYwZW5pEKbTw+KGqDAB/JMePnIujY=
+	t=1755092479; cv=none; b=Q81c/1SLhC4cHQgH8A+ZVHXNm77QoWf3sdpMviEOU5HkmMijtpc1tgeKnok7pEeiaE6PtaVjDCzkIJDW32kdm7jQQsZvHTvQtprVO0abSvR0VqKxU+ByOaJ9EoaZRKFWJ2vKd86omqDGdhw6XuslWyUJfAUj0Gr//zXYlmrSyrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755092425; c=relaxed/simple;
-	bh=ABkUOWC9dO33/kmvZXFne3hwNpt57QUxop/u2rKx5No=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jD2m0/tlgifzd72ay5jF6f0CUF+oDD4K35rwjTs7Og8+AbK2cy69B7Zec7V49rDenLbpNZSdGW9YzIJZm12fhjyFF5n0A6X8p3DegsFDrnC8KhsGCbg6Qk0oT0X5NUdemocVspIOujUFN6/FGhk5/QzAxVOKZ5HG85Q0b/XDQf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKdJqjnw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9234CC4CEEB;
-	Wed, 13 Aug 2025 13:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755092424;
-	bh=ABkUOWC9dO33/kmvZXFne3hwNpt57QUxop/u2rKx5No=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PKdJqjnwYAKslBfUceq8onLF4jjachPiy4mmNcgq3HWu1XGDi2k1DP3hLd9f8W9id
-	 GGuMAsU/MiK6w5+fY9EZVG1Ywh/d5gdPiS16rFsdKAACKk23B7OE35APtKfLzWyzLd
-	 FhR1pmm7yE0G70DmX46s9f0AYJa9PzkVEOaW7IyzhAbTrg0dOmfvZmlPCSdPgw5dyG
-	 ndYVkSXO6QGPVpuzgyQuFA7OToXs2ksLxxoJONhLz9KWpeNbDBcGZ9oYlX9iMt3dJT
-	 F2fWcZXr+GqOpFCS6ylEW0HuLX48mX/MDnO3mlFOSWCG/2NP8gL8VpWJ9KnRxhch8B
-	 l2E+MmtA/0wSA==
-Date: Wed, 13 Aug 2025 08:40:21 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] dt-bindings: clock: qcom-rpmhcc: Add support for
- Glymur SoCs
-Message-ID: <y4g3xj3i6hpnetoxiq6uh2altlxjdnrff3wv5c4tk42uh52jn7@ymb4qhehvy4n>
-References: <20250813-glymur-clock-controller-v4-v4-0-a408b390b22c@oss.qualcomm.com>
- <20250813-glymur-clock-controller-v4-v4-1-a408b390b22c@oss.qualcomm.com>
+	s=arc-20240116; t=1755092479; c=relaxed/simple;
+	bh=cAR2FPV/ROme89E5VHNey3/dlly2/gqFm0nN2kQt4sg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=QGJTOt2CzSnZQwhs/48qlC8gPe8/gdXiR5O2SSbIGRaPW1W7eiVo5S+TjS1kGzSglueV4kEUb9/qoy1cGj8g4EIQWZyvF7VdPPpV4/CttqhMwBDwV8jcEok2rr5kXrpbCZWC5i447TnJxv2+JjS81iRlWuGvCOvZbF3W2QWz7rQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dvkvDwn6; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b3226307787so5376463a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755092477; x=1755697277; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BuoYHGYkCh033zSzlMciRVTnS9J8QMWvk5NZ+OdGx/A=;
+        b=dvkvDwn6Q69ZDEiOFDSsL7Dop7VF90MGADW9JBQw1QJNXOGwlo+PvbBIYBWQhsi+Hf
+         rpIVh5RNYa+/exggyh3FUfaMidQ/OpITp9OFptcW1tIWt8j2nB3zqe9s+gVbo00HE3dy
+         9m6STNrujQ5Ax8vh7NLrqyMZwC0GRHbE8GlfgZ2gsJsjHhP/7zGmSv1QY/QzafrG1UsH
+         va/iMAC4DFLx2M6+biC8spPoN9lU2JJGP3DSYFxCH5ersoq2EyzJ4/csS4vPtU4a7jSB
+         piZoeAj61M+nZ3NAAcZ2frN65DEP2NtiWNGOVogxl7gftDuUfyn+A0j19IHcEIwNSFv2
+         oryA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755092477; x=1755697277;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BuoYHGYkCh033zSzlMciRVTnS9J8QMWvk5NZ+OdGx/A=;
+        b=CglbobMLPph4suGEyGNYPiQJQ/VDH1AWS37AtdG1qWnnkfhYsAcayklhMpKvXvd2u1
+         m37iWQxOS1PhfSlBzVUoOYHhztZtETdTmdmwyYuI38EZxbGMQsViJWIc2rZetrkrgzIP
+         769Ka+7L2mP1sOwfFP7bDrOaXZd34GdsWcKfaTinbfp2Uu6D3gfGSbISIwxOzVlTw5Tm
+         BJYWiYhdJXYzqcLIXvLVXscXdiTjpBibvgQ4MhdX8K94fkhe2zPIFczBoBXdz+lrff8U
+         85CksA9TIOn2ana7JMt9TaU6GOKLupRTfMP0cvApykv+eCnbdU5fsmW1az6f8g3X5dgH
+         TS7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVDVnqKDtesnGhYjknSrLVqYjSbnH0czaBeIG4Gp54KBM0EUTrxCvrUe1Eg7gGKTzPnAHNcv34rq9jeN70=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxtwnk4xdGOnY4gLqv8vjbiDxk1vZuARUHEABNXwoB5EhIASGJ7
+	eIvjET2zp//DHqBHuvaZ3WZM66Oq/VT3Z5Eu/bw6m+Qne2FZRF/FmUAgVsE5OXzfHtCILN0SbfH
+	CeJvFHNqfERulJ4bI9BKPJtqExIkUzjkWzkqa22koIA==
+X-Gm-Gg: ASbGnctKoFgAWgMEs5FrXZ17HdAy30oZ6bp7F+mH5yeFXkrscIgcEb+4lW8JMGA8Mz1
+	s6FGN1tXFCjT61PbCvma9TUoTLQLspWS+D19gOsODhsX6buSzn0+84eIYuz2hmIZrqbro/47oYS
+	zy2ij7JJOpLbRDpMPmmLol503RmSEheqGby8FjgFS7OSzQOE/I3RqGqlk+3d4YHb32/cXTMcsaq
+	4i3in89ItpnZxjdF9H9xTVxhG8zrjgeTx/WgsVT
+X-Google-Smtp-Source: AGHT+IHJ5NorMBOk/mMmvjq4NxC90d+IjwHZjpyxn70pQloc6AgGTp1y/wa+zMeluJYPNCBvRdh21gvKSjV030UR2Pk=
+X-Received: by 2002:a17:902:f785:b0:23f:e51b:2189 with SMTP id
+ d9443c01a7336-2430d0f9a4bmr54705775ad.17.1755092476818; Wed, 13 Aug 2025
+ 06:41:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813-glymur-clock-controller-v4-v4-1-a408b390b22c@oss.qualcomm.com>
+References: <20250812173419.303046420@linuxfoundation.org> <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
+ <bf9ccc7d-036d-46eb-85a1-b46317e2d556@sirena.org.uk>
+In-Reply-To: <bf9ccc7d-036d-46eb-85a1-b46317e2d556@sirena.org.uk>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 13 Aug 2025 19:11:05 +0530
+X-Gm-Features: Ac12FXxKeYVh06szquTrecWrS7rqGYyi8ckXtXfcapehmWdAEuqul8ZUWvjf2tw
+Message-ID: <CA+G9fYtjAWpeFfb3DesEY8y6aOefkLOVBE=zxsROWLzP_V_iDg@mail.gmail.com>
+Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Naresh Kamboju <naresh.kamboju@linaro.org>, 
+	stable@vger.kernel.org, patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, 
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org, 
+	qemu-devel@nongnu.org, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>, 
+	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>, Petr Vorel <pvorel@suse.cz>, 
+	Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org, 
+	Zhang Yi <yi.zhang@huaweicloud.com>, Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-ext4 <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 13, 2025 at 01:25:17PM +0530, Taniya Das wrote:
-> Add bindings and update documentation compatible for RPMh clock
-> controller on Glymur SoC.
-> 
+On Wed, 13 Aug 2025 at 18:21, Mark Brown <broonie@kernel.org> wrote:
+>
+> On Wed, Aug 13, 2025 at 05:46:26PM +0530, Naresh Kamboju wrote:
+> > On Tue, 12 Aug 2025 at 23:57, Greg Kroah-Hartman
+>
+> > The following list of LTP syscalls failure noticed on qemu-arm64 with
+> > stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
+> >
+> > Most failures report ENOSPC (28) or mkswap errors, which may be related
+> > to disk space handling in the 64K page configuration on qemu-arm64.
+> >
+> > The issue is reproducible on multiple runs.
+> >
+> > * qemu-arm64, ltp-syscalls - 64K page size test failures list,
+> >
+> >   - fallocate04
+> >   - fallocate05
+> >   - fdatasync03
+> >   - fsync01
+> >   - fsync04
+> >   - ioctl_fiemap01
+> >   - swapoff01
+> >   - swapoff02
+> >   - swapon01
+> >   - swapon02
+> >   - swapon03
+> >   - sync01
+> >   - sync_file_range02
+> >   - syncfs01
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+These test failures are not seen on Linus tree v6.16 or v6.15.
 
-> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> index a4414ba0b287b23e69a913d10befa5d7368ff08b..78fa0572668578c17474e84250fed18b48b93b68 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> @@ -17,6 +17,7 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - qcom,glymur-rpmh-clk
->        - qcom,milos-rpmh-clk
->        - qcom,qcs615-rpmh-clk
->        - qcom,qdu1000-rpmh-clk
-> 
-> -- 
-> 2.34.1
-> 
+>
+> I'm also seeing epoll_ctl04 failing on Raspberry Pi 4, there's a bisect
+> still running but I suspect given the error message:
+
+Right !
+LTP syscalls epoll_ctl04 test is failing on Linux mainline as well
+with this error on LKFT CI system on several platforms.
+
+>
+> epoll_ctl04.c:59: TFAIL: epoll_ctl(..., EPOLL_CTL_ADD, ...) with number of nesting is 5 expected EINVAL: ELOOP (40)
+>
+> that it might be:
+>
+> # bad: [b47ce23d38c737a2f84af2b18c5e6b6e09e4932d] eventpoll: Fix semi-unbounded recursion
+>
+> which already got tested, or something adjacent.
+
+A patch has been proposed to update the LTP test case to align with
+recent changes in the Linux kernel code.
+
+[LTP] [PATCH] syscalls/epoll_ctl04: add ELOOP to expected errnos
+
+-https://lore.kernel.org/ltp/39ee7abdee12e22074b40d46775d69d37725b932.1754386027.git.jstancek@redhat.com/
+
+- Naresh
 
