@@ -1,174 +1,178 @@
-Return-Path: <linux-kernel+bounces-765777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38912B23E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:20:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504E2B23E27
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1DE668585F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:20:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1527B4E1552
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB851DD0C7;
-	Wed, 13 Aug 2025 02:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9481F1DD0C7;
+	Wed, 13 Aug 2025 02:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="X9cMFHo+"
-Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiBfmS7S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DC0273FD
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0133EBE65
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755051600; cv=none; b=OwdZsQc8qckn54YDY7/624ZpWZKPz/BC6UzcJAu/mryx4DAeLS4X9P9qra3qyEjTDVc6XFF0gmEBGAttpWdDYzC2Gk+9psBPwyJ8m8wpAfu2MutQm8pgnY3x5pZ/xnEAPlvcLd9NF98/47GoiFS6FSFr3XK++QsPceP56tgqjZs=
+	t=1755051657; cv=none; b=N4J/64w65LjD9unIi38eEpa4XEEXyUZnQ+2HOMxTgbdLn2yhsQRE77GeNUIoLW+GjR+P0IGl1d0B8eOshNdsIjLQ3djIXcHjqhLwmMFgpmJweKHfQRpWwPqN9Olv7DDlFBGBQ7ySD5TQYLvUbESHruQ5PgOBFrU535I1Kpy1F7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755051600; c=relaxed/simple;
-	bh=Tmcf38SAMuWRTp5/pG4zyOpadieUZ3W94t2I1RDBk4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dnv7y0GHhw5IQJvUafiL9SFYnt9wdAi+v2lkEd4aLrBHizyCLhmdEeUk3WPRfS4aC/D+MSAHvYmXRlyfBXptqpg5Sz0oAWUGxDfqF+KrcybA2r8Ktgp+BrxCjAG17Z2ry8tyVd+n2KU7fc3IYcIx4TI2kiaQsLF+ctsF42Wjrb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=X9cMFHo+; arc=none smtp.client-ip=202.108.3.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1755051595;
-	bh=XGubnkrj1lRcpkjQTJL5eHoPcMY+ufdMMxJjIprqyoM=;
-	h=From:Subject:Date:Message-ID;
-	b=X9cMFHo+kXXS89qBKBGcICCUo3rtyH+rsfZqSCGBsTvyA2mOa/OcpXQVPVBoKCulh
-	 76BDSbOUHCQ+npaLntPCfeAVkRgQY5tGUgHFbv/Bb2kpY3cSs/Q8rT5/ea5trh4HGu
-	 rD2UHR5eCqld1e+/ULZmTXhDoyfmx+7qtrqzsEXM=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 689BF64600003B28; Wed, 13 Aug 2025 10:19:51 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7484284456953
-X-SMAIL-UIID: FACDE02A821D4C56B555776F5ACC773F-20250813-101951-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+4d9a13f0797c46a29e42@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] WARNING in move_page_tables
-Date: Wed, 13 Aug 2025 10:19:40 +0800
-Message-ID: <20250813021941.4438-1-hdanton@sina.com>
-In-Reply-To: <689bb893.050a0220.7f033.013a.GAE@google.com>
-References: 
+	s=arc-20240116; t=1755051657; c=relaxed/simple;
+	bh=e02xSPTv4pzn8b5aJnjvESHgTs885TC3nvIQauqARPw=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=bRwgnW6m9Mnr1VHnn7/vyrBGbqNmdROQ8laldccJRSE+oHw+Xnhb49cLwin6moic1ZQXPDdLSALfeC8U7GQ151ub1T3cgI2xRyFc3hD/PDPDqaF7kKkV9AW5zf6SxMSucHOVhA8x7aPAKK1Fr7ICuORivgcXqAS03xXRL1sP7Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiBfmS7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F290C4CEF0;
+	Wed, 13 Aug 2025 02:20:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755051656;
+	bh=e02xSPTv4pzn8b5aJnjvESHgTs885TC3nvIQauqARPw=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=RiBfmS7SbOgiNBwLpJ319zj/MwOHKjq1mqQixvxLbyJM24ePgxkMFQ8s8M7lIpOPS
+	 o4EeC9Opg0Q9B6PygpJ7Qco61XAC4Qm4KJ1Ky+uKsd6mqcDpdooY8N4+PsYryQp0yv
+	 MkpCTKrl87nGmtGX3LV/+xtSWu+2f1XSI2mM4Q5JUSeZUw3/aFfQWUzBuLjSmOB/No
+	 VoXmcR8manIOW4V+0aIuMCMEHWPcWEWnwWvynJNOEbkN4PReVV71NzgDIEPo1mZ1LT
+	 M2bg56k1xe9zwo0wXeQuQU4VwyELsyk/tLkSdizIi7Na+yX51YKv2B8Ja/+aCpGC5s
+	 K39Zoyl02o87Q==
+Message-ID: <8ac33b02-b5ea-4c58-8e60-5411bf0ae62c@kernel.org>
+Date: Wed, 13 Aug 2025 10:20:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: show the list of donation files
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20250812235814.960924-1-jaegeuk@kernel.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250812235814.960924-1-jaegeuk@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> Date: Tue, 12 Aug 2025 14:56:35 -0700	[thread overview]
-> Hello,
+On 8/13/25 07:58, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> This patch introduces a proc entry to show the currently enrolled donation
+> files.
 > 
-> syzbot found the following issue on:
+> - "File path" indicates a file.
+> - "Status"
+>  a. "Donated" means the file is registed in the donation list by
+>     fadvise(offset, length, POSIX_FADV_NOREUSE)
+>  b. "Evicted" means the donated pages were reclaimed.
+> - "Offset (kb)" and "Length (kb) show the registered donation range.
+> - "Cached pages (kb)" shows the amount of cached pages in the inode page cache.
 > 
-> HEAD commit:    53e760d89498 Merge tag 'nfsd-6.17-1' of git://git.kernel.o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=165fe9a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f9319a42cfb3bf57
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4d9a13f0797c46a29e42
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14172842580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b04c34580000
+> For example,
+> 
+> Donation List
+>  # of files  : 2
+>  File path                                              Status     Offset (kb)     Length (kb)    Cached pages (kb)
+> ---
+>  /local/tmp/test2                                      Donated               0         1048576              2097152
+>  /local/tmp/test                                       Evicted               0         1048576              1048576
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/sysfs.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+> 
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 1ffaf9e74ce9..2de7557bfebf 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -1769,6 +1769,68 @@ static int __maybe_unused disk_map_seq_show(struct seq_file *seq,
+>  	return 0;
+>  }
+>  
+> +static int __maybe_unused donation_list_seq_show(struct seq_file *seq,
+> +						void *offset)
+> +{
+> +	struct super_block *sb = seq->private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> +	struct inode *inode;
+> +	struct f2fs_inode_info *fi;
+> +	struct dentry *dentry;
+> +	char *buf, *path;
+> +	int i;
+> +
+> +	buf = f2fs_getname(sbi);
+> +	if (!buf)
+> +		return 0;
+> +
+> +	seq_printf(seq, "Donation List\n");
+> +	seq_printf(seq, " # of files  : %u\n", sbi->donate_files);
+> +	seq_printf(seq, " %-50s %10s %15s %15s %20s\n",
+> +			"File path", "Status", "Offset (kb)",
+> +			"Length (kb)", "Cached pages (kb)");
+> +	seq_printf(seq, "---\n");
+> +
+> +	for (i = 0; i < sbi->donate_files; i++) {
+> +		spin_lock(&sbi->inode_lock[DONATE_INODE]);
+> +		if (list_empty(&sbi->inode_list[DONATE_INODE])) {
+> +			spin_unlock(&sbi->inode_lock[DONATE_INODE]);
+> +			break;
+> +		}
+> +		fi = list_first_entry(&sbi->inode_list[DONATE_INODE],
+> +					struct f2fs_inode_info, gdonate_list);
+> +		list_move_tail(&fi->gdonate_list, &sbi->inode_list[DONATE_INODE]);
+> +		inode = igrab(&fi->vfs_inode);
+> +		spin_unlock(&sbi->inode_lock[DONATE_INODE]);
+> +
+> +		if (!inode)
+> +			continue;
+> +
+> +		inode_lock(inode);
 
-#syz test
+The following flow doesn't update any fields in inode structure, so what about
+using inode_lock_shared() instead?
 
---- x/mm/mremap.c
-+++ y/mm/mremap.c
-@@ -837,7 +837,6 @@ unsigned long move_page_tables(struct pa
- 		new_pmd = alloc_new_pmd(mm, pmc->new_addr);
- 		if (!new_pmd)
- 			break;
--again:
- 		if (is_swap_pmd(*old_pmd) || pmd_trans_huge(*old_pmd)) {
- 			if (extent == HPAGE_PMD_SIZE &&
- 			    move_pgt_entry(pmc, HPAGE_PMD, old_pmd, new_pmd))
-@@ -856,8 +855,9 @@ again:
- 			continue;
- 		if (pte_alloc(pmc->new->vm_mm, new_pmd))
- 			break;
-+		/* bail out to avoid clearing new_pmd */
- 		if (move_ptes(pmc, extent, old_pmd, new_pmd) < 0)
--			goto again;
-+			break;
- 	}
- 
- 	mmu_notifier_invalidate_range_end(&range);
---- x/include/linux/sched.h
-+++ y/include/linux/sched.h
-@@ -2152,6 +2152,8 @@ static inline struct mutex *__get_task_b
- 
- static inline void __set_task_blocked_on(struct task_struct *p, struct mutex *m)
- {
-+	struct mutex *blocked_on = READ_ONCE(p->blocked_on);
-+
- 	WARN_ON_ONCE(!m);
- 	/* The task should only be setting itself as blocked */
- 	WARN_ON_ONCE(p != current);
-@@ -2162,8 +2164,8 @@ static inline void __set_task_blocked_on
- 	 * with a different mutex. Note, setting it to the same
- 	 * lock repeatedly is ok.
- 	 */
--	WARN_ON_ONCE(p->blocked_on && p->blocked_on != m);
--	p->blocked_on = m;
-+	WARN_ON_ONCE(blocked_on && blocked_on != m);
-+	WRITE_ONCE(p->blocked_on, m);
- }
- 
- static inline void set_task_blocked_on(struct task_struct *p, struct mutex *m)
-@@ -2174,16 +2176,19 @@ static inline void set_task_blocked_on(s
- 
- static inline void __clear_task_blocked_on(struct task_struct *p, struct mutex *m)
- {
--	WARN_ON_ONCE(!m);
--	/* Currently we serialize blocked_on under the mutex::wait_lock */
--	lockdep_assert_held_once(&m->wait_lock);
--	/*
--	 * There may be cases where we re-clear already cleared
--	 * blocked_on relationships, but make sure we are not
--	 * clearing the relationship with a different lock.
--	 */
--	WARN_ON_ONCE(m && p->blocked_on && p->blocked_on != m);
--	p->blocked_on = NULL;
-+	if (m) {
-+		struct mutex *blocked_on = READ_ONCE(p->blocked_on);
-+
-+		/* Currently we serialize blocked_on under the mutex::wait_lock */
-+		lockdep_assert_held_once(&m->wait_lock);
-+		/*
-+		 * There may be cases where we re-clear already cleared
-+		 * blocked_on relationships, but make sure we are not
-+		 * clearing the relationship with a different lock.
-+		 */
-+		WARN_ON_ONCE(blocked_on && blocked_on != m);
-+	}
-+	WRITE_ONCE(p->blocked_on, NULL);
- }
- 
- static inline void clear_task_blocked_on(struct task_struct *p, struct mutex *m)
---- x/kernel/locking/ww_mutex.h
-+++ y/kernel/locking/ww_mutex.h
-@@ -342,8 +342,12 @@ static bool __ww_mutex_wound(struct MUTE
- 			 * When waking up the task to wound, be sure to clear the
- 			 * blocked_on pointer. Otherwise we can see circular
- 			 * blocked_on relationships that can't resolve.
-+			 *
-+			 * NOTE: We pass NULL here instead of lock, because we
-+			 * are waking the mutex owner, who may be currently
-+			 * blocked on a different mutex.
- 			 */
--			__clear_task_blocked_on(owner, lock);
-+			__clear_task_blocked_on(owner, NULL);
- 			wake_q_add(wake_q, owner);
- 		}
- 		return true;
---
+Thanks,
+
+> +
+> +		dentry = d_find_alias(inode);
+> +		if (!dentry) {
+> +			path = NULL;
+> +		} else {
+> +			path = dentry_path_raw(dentry, buf, PATH_MAX);
+> +			if (IS_ERR(path))
+> +				goto next;
+> +		}
+> +		seq_printf(seq, " %-50s %10s %15lu %15lu %20lu\n",
+> +				path ? path : "<unlinked>",
+> +				is_inode_flag_set(inode, FI_DONATE_FINISHED) ?
+> +				"Evicted" : "Donated",
+> +				fi->donate_start << (PAGE_SHIFT - 10),
+> +				(fi->donate_end + 1) << (PAGE_SHIFT - 10),
+> +				inode->i_mapping->nrpages << (PAGE_SHIFT - 10));
+> +next:
+> +		inode_unlock(inode);
+> +		iput(inode);
+> +	}
+> +	f2fs_putname(buf);
+> +	return 0;
+> +}
+> +
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>  static int __maybe_unused inject_stats_seq_show(struct seq_file *seq,
+>  						void *offset)
+> @@ -1878,6 +1940,8 @@ int f2fs_register_sysfs(struct f2fs_sb_info *sbi)
+>  				discard_plist_seq_show, sb);
+>  	proc_create_single_data("disk_map", 0444, sbi->s_proc,
+>  				disk_map_seq_show, sb);
+> +	proc_create_single_data("donation_list", 0444, sbi->s_proc,
+> +				donation_list_seq_show, sb);
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>  	proc_create_single_data("inject_stats", 0444, sbi->s_proc,
+>  				inject_stats_seq_show, sb);
+
 
