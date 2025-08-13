@@ -1,120 +1,138 @@
-Return-Path: <linux-kernel+bounces-767317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C174B252C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:06:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC30FB252C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45D107BBA46
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FF9A2A63A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D402BF011;
-	Wed, 13 Aug 2025 18:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3D02BE7DC;
+	Wed, 13 Aug 2025 18:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2w9cYdv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mpGX/o2I"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2702877F7
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 18:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0739D3A1D2
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 18:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755108378; cv=none; b=Aol0dYARDivZ7ha54Gmj+yFsTPgD02920s++PEH9TG7YpDlveU9Rr9HNwG0t3NU7x9YFAQ6HGrpbKIpKrp5ke3hsSbtXCs9gn7+f8jqJFIZXzXPOcD5kKTJOYlfvc730oeVAqyxHSmBBzhD6IiWla35m/1mEjPJZ7XzjLfOPGb8=
+	t=1755108441; cv=none; b=ZpsR8iEZjnrrfMciFDaGNVj5jTejyYuuZO+KNpYo3VcypXO77YuoC3F5cc9OYF6eOyUjskB+Ai9dd0eHWCdARuGzsEJiCj+S0MfyzLcZh8O53jkBdijpzY4/Bp3O470x2Ose7Voc3rRRKQxVCC2L972kXU2xy4egP25VtGHZ4xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755108378; c=relaxed/simple;
-	bh=ehwmLqJXn79f0MsM22ye8xrqHxpgqSwPxeHZwNvflTQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HDToP9SaEkIPLjWVaV6v5+64+IyEFVZT7HGNpiaGMOEKvjnLEstxPiuRvnqayd61bUU8Bs8QAnfxETKgozsh4BXbqOvRlL6RtUuSBX+NpBhlaJELbnSfOMYRmc2pcKUbJXV08Ul/GH4KYqQNCcKGaAVc9DBCxt4e2wkt3FSsUV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2w9cYdv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B2A0C4CEF7;
-	Wed, 13 Aug 2025 18:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755108375;
-	bh=ehwmLqJXn79f0MsM22ye8xrqHxpgqSwPxeHZwNvflTQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Q2w9cYdvspki7A8eW62thlIqxqWRGGcYTUOoDtpWw1qV2uPIAp6zS99GdIbA008cL
-	 GoGgD29vUvnd/Z+Fdn6LLUXEBylqmu2zuaO24EMRHcnYP06o7eUddM2PdTfSnY8NHu
-	 rWbBX8k2//hSYfVte6BGM6UlR8IZJQSVS6739q8qAcy7iVFjTRhnzGREM/72tuqqkm
-	 ExR/XDEIh6LQfd1YsrUOPxAYqi2m9RcVt6/sNyf4zdJ5AbJSV3yvM4i8ZA7QQAyII8
-	 IvzmoiZXmzVE5g/nqbmIhNU9IpV12ebDz1YFbdVVSqbaMK3s4MVr1Kag5V/+di8CkU
-	 4fRTW+Q7b1a1w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>, Breno Leitao
- <leitao@debian.org>
-Cc: linux-kernel@vger.kernel.org, john.c.harrison@intel.com
-Subject: Re: RFC: configfs attribute description
-In-Reply-To: <otrtabbmkoutnvku7mmoecw3f7bjqwhxwuxuu4ewhoseixxgpt@fn3dt5tgrnf3>
-References: <sq3Xfp7-O3mdRYm2TNLAYvv-kw4lb-5S-xl0S9wEcvI72GSytOQIzslrYzZ92KTGLo67af1sraVSpb3sIgMtdQ==@protonmail.internalid>
- <otrtabbmkoutnvku7mmoecw3f7bjqwhxwuxuu4ewhoseixxgpt@fn3dt5tgrnf3>
-Date: Wed, 13 Aug 2025 20:06:05 +0200
-Message-ID: <87349vf65u.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1755108441; c=relaxed/simple;
+	bh=HfcGolfkFJMZjdqIUoPopkVtOqDdwcM7w81IDDcJQxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c991tAYpiQyh6VbdrfkSCRJrkrYrDvxtxmmT/4VLBC4tnWkzGf2bdWTdRT6gB9mMOpP/x7GZBrYPlk/qgYcEwZ0y5JttwIWgB69R8BWR6yKBiA69kfPnkZ75Bl1fIXFn07Sy+e2zbwPQLkOw0CsvsvDsk0NbId+qN/rtDdsoXII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mpGX/o2I; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755108434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mZBQ0Uqep9wyuNlF72Lp7pmuoTgyNsomwyrLmYN62cg=;
+	b=mpGX/o2IpGvpKMKdAwbxBfpRluhXzjCH5fUpaaclA72LRD+BYtshdmib34slqv9Bm6LGEE
+	Jlw6QWJJPcQc337wR+zrCHssQVSBe5NOXM8PHKgxpT2HYnvrPatc6+Laawz2Qk2tR3/yda
+	ClACt7aMN1pXtFVlAAoGCFOK6inPzXo=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thorsten Blum <thorsten.blum@linux.dev>
+Cc: ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ocfs2: Remove commented out mlog() statements
+Date: Wed, 13 Aug 2025 20:06:21 +0200
+Message-ID: <20250813180622.209305-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-"Lucas De Marchi" <lucas.demarchi@intel.com> writes:
+The mlog() statements have been commented out ever since commit
+6714d8e86bf44 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem") -
+remove them.
 
-> Hi,
->
-> In the drm/xe drivers we recently started to use configfs for a few
-> things that would be added as module parameters in the past. Configfs
-> seems a much better fit for us in these cases.
->
-> One thing we are missing from module parameters is the description.
-> I can point people to https://docs.kernel.org/gpu/xe/xe_configfs.html,
-> but having a short description somewhere of each config at runtime would
-> be good. I thought of 2 alternatives and would like to know your opinion
-> or if there's a different way you envision for this.
->
-> 1) Add description to a module info. This would allow to show "all
-> configfs attributes this module implements":
->
-> configfs.h:
-> #define CONFIGFS_ATTR_DESC(_name, _desc) \
-> 	MODULE_INFO(configfs_attr_ ## _name, _desc)
->
-> xe_configfs.c:
-> #define XE_CONFIGFS_ATTR(_name, _desc) \
-> 	CONFIGFS_ATTR(, survivability_mode); \
-> 	CONFIGFS_ATTR_DESC(survivability_mode, \
-> 			   "Bind device in a survivability mode useful to unbrick it")
->
-> Or provide a single macro in configfs itself. This would "standardize"
-> module info to contain configfs_attr_xxxxx to describe each entry a
-> module implements. Main benefit here is that I can take a module and run
->
-> 2) Add description in the fs tree itself, similarly to how perf adds a
-> .unit: 2 attributes are created, with the second being RO:
->
-> ls /sys/kernel/config/xe/0000:03:00.0/
-> ...
-> survivability_mode
-> survivability_mode.description
-> ...
->
-> This could be done all inside xe itself, but I think it would be better
-> if there's a common way across the kernel for that, hence my RFC here.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/ocfs2/dlm/dlmmaster.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-I'm not against adding this if you want to code it. But is it really
-that useful? I always find myself reaching for kernel docs for module
-parameters anyway.
-
-I would suggest providing this info in user space tooling (if you use
-scripts or a binary to interact with your driver through configfs). Or
-you can add the info to the kernel man pages or, as you suggest
-yourself, the kernel documentation.
-
-I am curious what others think of this.
-
-
-Best regards,
-Andreas Hindborg
-
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 86bb1a03bcc1..4145e06d2c08 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -1477,7 +1477,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 			goto send_response;
+ 		} else if (res->owner != DLM_LOCK_RES_OWNER_UNKNOWN) {
+ 			spin_unlock(&res->spinlock);
+-			// mlog(0, "node %u is the master\n", res->owner);
+ 			response = DLM_MASTER_RESP_NO;
+ 			if (mle)
+ 				kmem_cache_free(dlm_mle_cache, mle);
+@@ -1493,7 +1492,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 			BUG();
+ 		}
+ 
+-		// mlog(0, "lockres is in progress...\n");
+ 		spin_lock(&dlm->master_lock);
+ 		found = dlm_find_mle(dlm, &tmpmle, name, namelen);
+ 		if (!found) {
+@@ -1503,8 +1501,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 		set_maybe = 1;
+ 		spin_lock(&tmpmle->spinlock);
+ 		if (tmpmle->type == DLM_MLE_BLOCK) {
+-			// mlog(0, "this node is waiting for "
+-			// "lockres to be mastered\n");
+ 			response = DLM_MASTER_RESP_NO;
+ 		} else if (tmpmle->type == DLM_MLE_MIGRATION) {
+ 			mlog(0, "node %u is master, but trying to migrate to "
+@@ -1531,8 +1527,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 			} else
+ 				response = DLM_MASTER_RESP_NO;
+ 		} else {
+-			// mlog(0, "this node is attempting to "
+-			// "master lockres\n");
+ 			response = DLM_MASTER_RESP_MAYBE;
+ 		}
+ 		if (set_maybe)
+@@ -1559,7 +1553,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 	found = dlm_find_mle(dlm, &tmpmle, name, namelen);
+ 	if (!found) {
+ 		/* this lockid has never been seen on this node yet */
+-		// mlog(0, "no mle found\n");
+ 		if (!mle) {
+ 			spin_unlock(&dlm->master_lock);
+ 			spin_unlock(&dlm->spinlock);
+@@ -1573,8 +1566,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 			goto way_up_top;
+ 		}
+ 
+-		// mlog(0, "this is second time thru, already allocated, "
+-		// "add the block.\n");
+ 		dlm_init_mle(mle, DLM_MLE_BLOCK, dlm, NULL, name, namelen);
+ 		set_bit(request->node_idx, mle->maybe_map);
+ 		__dlm_insert_mle(dlm, mle);
+@@ -1897,8 +1888,6 @@ int dlm_assert_master_handler(struct o2net_msg *msg, u32 len, void *data,
+ 		spin_unlock(&res->spinlock);
+ 	}
+ 
+-	// mlog(0, "woo!  got an assert_master from node %u!\n",
+-	// 	     assert->node_idx);
+ 	if (mle) {
+ 		int extra_ref = 0;
+ 		int nn = -1;
+-- 
+2.50.1
 
 
