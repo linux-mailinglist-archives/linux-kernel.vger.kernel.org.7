@@ -1,145 +1,182 @@
-Return-Path: <linux-kernel+bounces-767414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B25B253F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C931B253F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9526B885A56
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368671C838C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA04D2F99A8;
-	Wed, 13 Aug 2025 19:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A782F99B1;
+	Wed, 13 Aug 2025 19:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="E97hCxf/"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pOLtDGDx"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2076.outbound.protection.outlook.com [40.107.92.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8632F99A1
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 19:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755113508; cv=none; b=j2I9lA7iHycaoZlotcbk1VDkkXom9NLMvqDXIuxzTZEZg+zJ9yHsOWZDlEK/5pi2tSEg1Z+QXWwaIwduCDB9Lu2occiFGpZQcbIikfZclleN0i5erJVjz1MFvyo3aOLb4fCoo1Gk1hwrGuCXLTHO/iFaKHkfzdFzQ7XqRwogUIk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755113508; c=relaxed/simple;
-	bh=ioR29Pj9xpLzZiL83LiJkyB3kOiKZfb19oU1XgoYLp8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=NYV0qTVStOvTh3lCgnm5wLo/IY4gdKmwjB9i7fMO4WR4XY+GzydfkMeKUmJrGoqdn5cKclFUG0Ymdata6ZEf29HUO/0ka6p+rnA7uQgspm6uuZMwasvscG6Gr9EnBOBWxCBYIldetjOpdCa9v0hUwoxcVqhBvpkwAvytH1hZAts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=E97hCxf/; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6188b793d21so252354a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1755113503; x=1755718303; darn=vger.kernel.org;
-        h=content-transfer-encoding:autocrypt:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M3UQLx4CNjygZCyhUGzWq068PCeCoGH2HeU4sWDHqdA=;
-        b=E97hCxf/q1RnqmAur4oPp1IEWXXzxcNOqlQOSrO/t7Hx3mz5j+XFeZWCObwZxxSuSK
-         5R4XSQs56zys316QaSwKftA6sv9ErHBsUlp1kQ+qn7MoTLitWcpynwU0NZlHjpG/0EWU
-         zYEd1Ktn2x00CMECJ1ROrGEgKlvEk6J+D0Sa4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755113503; x=1755718303;
-        h=content-transfer-encoding:autocrypt:subject:from:cc:to
-         :content-language:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M3UQLx4CNjygZCyhUGzWq068PCeCoGH2HeU4sWDHqdA=;
-        b=c94C9pTtuxCB7VwXGpS8Sjw94a0XKipeXEMr0rX4ENFwuz+pwxwXTgfG8MhIJLMXvv
-         hF+ubGU3o1oIdNKk7fQ9OpbJvG8S+KhQD6++I4ItapAnfQmarNL+E48OwI4pxhBO4Uy0
-         jIf6rDSKAmo5eTvqzhx/v6vCbGZU8xdMpck9Sv4kHG2z51sI0kNPjQ9qCqSdTJ3Zupv9
-         wwPqu3rvWlcXTiRQeDx7C/dWOJxv76iEysRPcrqsLkE4lNIaHti+crt493rxeT5WZJFa
-         flfdPXfLiR7IBnRaPrvfOAs5J0dAGc73zOzbFfyQXyRz4pcN+RDH8LqWiauHW/ksTDfd
-         CjCg==
-X-Gm-Message-State: AOJu0Yxsupdxs62HkbT2j92+lF+CDev2sqYEAOvUTJPooWf02XElD4FH
-	4I21mgWU3ZNQJRao0fNc8Vjml5LiUwZOJKcabkgTgvzPezl2Kyyl43ZE0uMP7ajfEM2pE7gGs9r
-	QovPwMsCt
-X-Gm-Gg: ASbGnctsW61iVOXwCsboLEkuEv87wqJGfyWXvUTnccQEBYOkTfHpYllme71tRX9kcBe
-	GJEfbwy8pKOGHUX84zZzKtKO2maMkf0nTXgYgLkGD81X1xfL1IqAALxgwg24pN9Ciy1xjwUp1wA
-	aF/93Ru3Q3wGVqHy5WCCiAx+CVbuh3kN1gvesdmmvTqzvx6Rhs52TmxJTWet/lFUYhU6v3e2qlS
-	YODSx0/KnLHZ9Df5uIxLjIqV0Exj7bBeG6Fb7eTjkL3TopQ/pwJzvlKLsmCOqCGDiqkfF6rhcpi
-	INAziPSMw7dMtEaL8h9xpaUd+tz2gxdKV+RID9abo3dRqYC2bFylkcxtMoKR4FmWqGxTln/XMRu
-	Rx9M1l7bsCia4YtCHFud/RYam4Itle3bjQ5xOaStUUrRFsuAVdpREuHdAaP0Ht6Vcsg5bpkLuCu
-	HY7rQO5q2OnJv2
-X-Google-Smtp-Source: AGHT+IFu3eQQ2dfPqWy22HN13yl5YqrNia4iQspE2AESkHtIu31Vjn8kc726NUydCxeQwmlwqnB4TA==
-X-Received: by 2002:a17:907:7ea8:b0:af2:80c9:7220 with SMTP id a640c23a62f3a-afcb98ccd08mr33950566b.36.1755113503218;
-        Wed, 13 Aug 2025 12:31:43 -0700 (PDT)
-Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0766d1sm2459124466b.18.2025.08.13.12.31.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 12:31:42 -0700 (PDT)
-Message-ID: <a943a7ed-7a17-4c22-a617-b327f7f302e9@broadcom.com>
-Date: Wed, 13 Aug 2025 21:31:41 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0722F9980
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 19:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755113557; cv=fail; b=QU+FdvVxjqPLf0tt8BU+wSTgoAGnQYR7p64opLOPjy6VzAqZRZCSWN8KnDPJC7onYdPBfNjuwVk7+/segDCJwDrK0rBjQXrpQMiAMhN1UYfM8jawI577Tqbz1s9qeLSzWQeRRhKQTBwbP38/YcazdtfcgggcdqFWm2yttCUkp0A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755113557; c=relaxed/simple;
+	bh=LOUIoblLl9aJJO3E5IM6nWIr0e7xZzmm3SMUp2bFl+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YlX2ZxtlFKjeFt5Pyhkr6wc8YzvMMZYI98/6lJleshfrEq30oMoufUBD3Mu5vUzOfghoDxPO8Oa8sg+RGIjEf9JYxZWsKUlKAW2etvcTU3LAh/4bWYHaR7MZhvFH+WmHyFrqbxrM3IxSv2+mxmEMTM/BldMjE598sabBZRzNZF4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pOLtDGDx; arc=fail smtp.client-ip=40.107.92.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=V9QYMkGgcEFeYus7dEm/jAkzziByE0K0lRLfZrPzc0l61/bMgYbNt7ozBW5NPEdPDKghEsGih33iNrFfwuzBsqGaUvF7BgG99A4KhzFk2adrapeXAsDCoA0nFsJP2xQEzq6EFqWBlQ54JIm8GOV2Au/L/76txwDly+eJJrPOOBU7025PY15Z4qpYWh8FjLZIXHgkaUgOxgPLyHwfWp4b+Fp+kRDaN9Ty+dQma8pjOrnLC79Zv5gbasQSe04ia920y6gDiAzbqt5GmuUuVDVdVapTgqDSerXcdYAF3X1g0LhK7/Bi91XyX36giWRCDehFWkN8tD62135HIQRfVaLI6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hieaLH02ehRivagRAChRIEyeg8UCJ1s305Jy8gkewiE=;
+ b=h2E81P50JrHa5qJL0WN3wn17gC1QiHBCxRVCHU5tz9hDhJbokAjt7NVKQov84rnxwTj5cC2N+XBZGww7eLgHNguH+XYb+qQ+7P/1H4NZNZdOcWCAJKH+mdjPT4nVcaXrHvhwYpNynE6hAJnOghcCvOFBP4A5YozqcHZ/Y38rh+rhTK8BB/5Pj6ca1Y3dpkfp2lyLNsifvnkFflr1wkHklAma81FuJen7XB5yreiQicb5i5JSTqOcrldBfjc/7A3a/4Ly/zNPxVfDleBpFSMbPRVJXuf44V6ZNbd87Gf6i3+QLuXE1qFuXLIlmhUOjVQ2AHxvD/A0xdr272/L4Jkemg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hieaLH02ehRivagRAChRIEyeg8UCJ1s305Jy8gkewiE=;
+ b=pOLtDGDxGvAdzr5diTGFwIPbUVDOPD5FMO5ZkeOrtP9f5EI/XG2ksSEkf4D1C9UPFKWfXj89VQ5YFWqKglEi4xF3+ZbHB+8cCtCYQ2cf0niCA4bBPJDUjCPi2EalC22vsnPxoTr6SuCYYx2gyPGOy/FSxSt5Qc9NqG8ApgbUR+Y=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ BN7PPF0D942FA9A.namprd12.prod.outlook.com (2603:10b6:40f:fc02::6c7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8901.27; Wed, 13 Aug
+ 2025 19:32:29 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.9031.012; Wed, 13 Aug 2025
+ 19:32:29 +0000
+Date: Wed, 13 Aug 2025 15:32:24 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Libing He <libhe@redhat.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	David Arcari <darcari@redhat.com>
+Subject: Re: [PATCH v2] x86/CPU/AMD: Ignore invalid reset reason value
+Message-ID: <20250813193224.GA52005@yaz-khff2.amd.com>
+References: <20250723200752.2851345-1-yazen.ghannam@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250723200752.2851345-1-yazen.ghannam@amd.com>
+X-ClientProxiedBy: BN0PR04CA0079.namprd04.prod.outlook.com
+ (2603:10b6:408:ea::24) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Thomas Gleixner <tglx@linutronix.de>,
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Subject: question about disable_irq() and free_irq()
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|BN7PPF0D942FA9A:EE_
+X-MS-Office365-Filtering-Correlation-Id: 917834b2-623f-4651-3fa1-08dddaa02417
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cqgqPpnu0Q4bcHDERr0kYBuSfiXCAB0OIiMSMPhG/T6mabNq5xsPRUfOU7DL?=
+ =?us-ascii?Q?64kxni3w6dQP/5pkdEl/2MC5vRgJe53GecvYJiBrrT9bG5DyokpEh6RuP/hX?=
+ =?us-ascii?Q?pEKEFXMUXbQqc8iqL/hvB5dYvFgtQ61h5KnfMvG8MLhcsCNrgjV1nAv1VncN?=
+ =?us-ascii?Q?ooWqGVzkNefQyJlv5Kz0DSW5Oq5xKi//dMOWzdQfnlTMwto50O9eYmUlrQON?=
+ =?us-ascii?Q?qtIirhmxZQXiOm5OnatRNkx49asyeG1WsQUHp9QeqU7KpQ0LlzTwZ8WYLxIM?=
+ =?us-ascii?Q?TZDH/q8EQb81CMdtj+X5SLY4nf2jDktMqGDs1I2PpdI8LqMqe4X50jYskI1g?=
+ =?us-ascii?Q?aiA6DfgfEnvPdGsHzPmGJx+BTz1AuyjPKMTf2xqzpYQp+9tiq36ktAdmcwjJ?=
+ =?us-ascii?Q?Y2umOiC1+tltnVdecEkkI403j5ExH6Cf5AXiNnMcoMw7SuFyVM28BDNYhyJf?=
+ =?us-ascii?Q?K7k5DMg8Ae0XeUUaLs5bH/GX5DA8CFtPFDLa6O/2QC+hyB93L9V/Leq5zd0d?=
+ =?us-ascii?Q?gLUHq7SXnIDrnfXVOjPpXXI+EanXkiWh4d9riZXus0qj0azTGK3FZhOYnIdy?=
+ =?us-ascii?Q?86dn4ttQz9AALQcXn3LpofyW7D0X7AyEe9PF+iPTByiRnTdysiSo04375oEH?=
+ =?us-ascii?Q?LIoE1T+d29T9tA1cQfYiSNIF0kcJgpR3N91JdaTUPfAW/jAvVMU+TELjxJF9?=
+ =?us-ascii?Q?2yQQ07YtUR8Go6dp6q2CIYaZnrVoAXsKnMfL69eoGazLAbOMiCZZ2akC2VuW?=
+ =?us-ascii?Q?38F6BIg2VBE84URXKHZYwdiecSFuCWngoegu76ExUrzbvrGGDWidFM9UPyp8?=
+ =?us-ascii?Q?1xKmdirrKRserWQpc30dYzIQjX7fW4v60XzuNzJf2e2PylkYe5wsdsD4C/+M?=
+ =?us-ascii?Q?s9/RICsT1rEdLxCqGzP30KCNiivOVuZdeYISvu+z1BMNdvHOXdx4MSoYAtot?=
+ =?us-ascii?Q?0jNqX6lr6BK4Kn2J6sfqb/CpmEGh5l3+5LJBRkhlo9+//PUt4BG8QzJwQYk9?=
+ =?us-ascii?Q?ddsWjLCuHC6fKGNc7BetfxEtBP4A1XbWbRsPm3/wLG4IUD2ijWhVjpOX7a/n?=
+ =?us-ascii?Q?obFcjhq7fMUam1R7AhhI+H8utYSy/0Sh4cb5G6kmuznXnu/dOjbha6Eib/S4?=
+ =?us-ascii?Q?2jhDEhhBjbbjSL19Yqz49mNZei6niMqlTeUdNQFIdGLwi1c8Ubb35TV+TVRX?=
+ =?us-ascii?Q?/cSk/AapWrgYOu/7EIb3T4gAEX6MJg8NnWP7lMqAf56v2i0W4W8CWDzdCPp3?=
+ =?us-ascii?Q?JxP8+tT0CCp09OKtEXXH/X95zUA61Ihs9BtUFY47hiVhc2XIqEbNtD4eCCJ4?=
+ =?us-ascii?Q?4qdSY1UkatehHGH+A6IERuMN1tNRBZ75/MlKWfdpa2jYUEI6fExt2qw/mmSX?=
+ =?us-ascii?Q?dWt10U11HZl62F7caB03I8yBvsW8q/Un0eG/ULFobaYJCtcx9xgeWtVPLk40?=
+ =?us-ascii?Q?RxYpt2KWVNA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?duwV02a3ZOLSQABXihQ7UK0Q2plbQDfPwR2Bpq8TNhb+2eNUU+cA4L9E7HtG?=
+ =?us-ascii?Q?4K9lKit26e0rNkujoofORgMMdLg51+GK2Rq6u7XYJXJd3rTOGT5nMlkKeJrs?=
+ =?us-ascii?Q?PdwnSdDrm2Gix+0KMyM0fH1g1WTy0S9Wiuv7iduLQqFVM+gHMU46eg4CmA2K?=
+ =?us-ascii?Q?nT1xcY8EVaqFyPlrSn0JUdmftbwf6AoFLwlzWuYgNjtkMZvtvdxi33Q6yRdN?=
+ =?us-ascii?Q?gQLNRnKXJ/a2gt0LpL36aaqHAaRgvEiLEnPgv9Z8Oyp1p6b0/qmnj0zZ9x4S?=
+ =?us-ascii?Q?mMT4agIrJX3Jqq447d484+p3x/Qfy9ivHTYF726AsyJJ60pEDaARnr0KSoLz?=
+ =?us-ascii?Q?e2jOZn4Jtk2zDLO7c8/yUFUsfBSdRZ4p5gNjTQg3ycx99FS5QcNmyDCoyDei?=
+ =?us-ascii?Q?nUaNzRfJQpGwBWC+uMRNOjR7FnpQjMQEgaMWWFbx2TlV4dm7nrAWP5LlrOQl?=
+ =?us-ascii?Q?i91HxVnIz2nyEl8BQxFWlDcSvl+YHgyFPDA7Xi6AmD6K37SGniHx848uCae+?=
+ =?us-ascii?Q?oRTyDMlMDR6hgHKamRx+HA7SnWb/n4rFSkMJXsx/PVSou6IYKiHj6R6hFLiA?=
+ =?us-ascii?Q?KFE6CeEhJmxGecSj5TETKJpBIOxytOmkk7IQZISyHnNHeID5d29QMI61OHv2?=
+ =?us-ascii?Q?QmOPmzcqiACEKZsbIWDBfq+qRCioeXaAx46wixSoPJNUFp+ZmWOQtd3fHK4V?=
+ =?us-ascii?Q?wDeEN2NCq/3zktDGYxItiWGUBws7uGg8jE0I2/ynpwmhWFvpbWXMNyjlFALt?=
+ =?us-ascii?Q?sEWmqI9J8iSngh145H5N81pSk/oucnCi7eW6gjPZo2+h81tujuLfmIVaf5nA?=
+ =?us-ascii?Q?gvDg02CeJcOs4N69xd/4gQocNL3YHq77WqPDNCF8sXNIJjRTnEUKNjkGdlQc?=
+ =?us-ascii?Q?iimV6bW9JdfNPI3HvUws91a/qVhIyEgrpEssRoKdP+E2dTEt1auWJBscm9w9?=
+ =?us-ascii?Q?MTht2gaJICon1y0foFPYsoXIgo5K/F0RPESZGBXUW94oasTz5iyWBIUiMXyA?=
+ =?us-ascii?Q?pHIDfdFqnem+YIid834h6hwKrlk9vhAgCCNanjLC2D3ktEm+sc4z2ohMKG0W?=
+ =?us-ascii?Q?cjX9/pQzKC5FoIJXaHxkdgZZ3hOzppfbvWH6PIIDfmEOprJZmfbHiFkN8wAA?=
+ =?us-ascii?Q?sFq5yI9W633S6TQ/oYgOtdFRJ9fnXCLe7p3F1jFiIDps30BLg5B4Lwb1Uqm7?=
+ =?us-ascii?Q?NCHsmY6bwIVsgcHnpKCevNPvfvZwSEBCU9pTQc4+6sU2aHM1GDDkiFS9RIFl?=
+ =?us-ascii?Q?TsBYz+lHApe58W2MalZRzQEqfH1SOz/ZMLqCLbN7A3Xez9uIrTAitbA7F8l0?=
+ =?us-ascii?Q?Rr89/mbkRQcux8w6jZRypAND2PHRubsV0unflWXCJfvL71S9b/gtBP4ExNp/?=
+ =?us-ascii?Q?7Y/dI4OMrH3T3/WfUhTOZIJP8RT+i9jMp6G2ar1zg6asAQR35mz1uybVCzWt?=
+ =?us-ascii?Q?pzV/L2yXDE8/PcpOHa0YZwBEA9zhsLJc8PHdgzEufb+ZoAVUVEgzQzNaNjN9?=
+ =?us-ascii?Q?mJG6iG7fN/1y88f/4oaCsmJB/bFa4Ad2JFeX6sSgNGnQNrrtEleQPIUoLej3?=
+ =?us-ascii?Q?SQ8TGRlmyi6wI6mPNvE0guGJSxyoU18SXGXJN6er?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 917834b2-623f-4651-3fa1-08dddaa02417
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2025 19:32:29.3762
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1dNxDdEcT+xPyiVbHQZPQKDO6LZ1hqyls6MSMby8mCSKZY1pghDk3W8HW4FqLODmaJfy6aStGz9JwQ94gzuFrA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF0D942FA9A
 
-I have gone through the "Linux generic IRQ handling" page [1] but I 
-could not find a definitive answer to my question. So hopefully you can 
-clarify it for me.
+On Wed, Jul 23, 2025 at 08:07:52PM +0000, Yazen Ghannam wrote:
+> The reset reason value may be "all bits set", e.g. 0xFFFFFFFF. This is a
+> commonly used error response from hardware. This may occur due to a real
+> hardware issue or when running in a VM.
+> 
+> The user will see all reset reasons reported in this case.
+> 
+> Return early if running in a VM as this register is not emulated.
+> 
+> Check for an error response value and return early to avoid decoding
+> invalid data.
+> 
+> Also, adjust the data variable type to match the hardware register size.
+> 
+> Fixes: ab8131028710 ("x86/CPU/AMD: Print the reason for the last reset")
+> Reported-by: Libing He <libhe@redhat.com>
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Cc: David Arcari <darcari@redhat.com>
+> Cc: stable@vger.kernel.org
+> ---
 
-I was wondering whether a disable_irq() must be followed by 
-enable_irq(), leaving the nested disable out of this, or could one call 
-free_irq() for a disabled irq.
+Hi all,
 
-Regards,
-Arend
+Any more feedback on this?
 
-[1] https://docs.kernel.org/core-api/genericirq.html
+Thanks,
+Yazen
 
