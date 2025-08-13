@@ -1,333 +1,331 @@
-Return-Path: <linux-kernel+bounces-766099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68912B24245
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:11:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121C5B24231
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A7C917F55B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:10:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B95AE1AA54C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36B92ED174;
-	Wed, 13 Aug 2025 07:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CC82D5C6F;
+	Wed, 13 Aug 2025 07:08:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="TJ6lCE8a";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="GgP676hq"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WzrbQXYw"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9B02ECEA1;
-	Wed, 13 Aug 2025 07:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CB11D5CD4;
+	Wed, 13 Aug 2025 07:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755068938; cv=none; b=NObkFKn5IlqJw/lfVn9eYDYcCB4iyYrcGasrgW2FPB2LJ1lKNw7t51LouBQUicX82VqaMPWHbaiTSFxJYSRzPLQZaVYDsFU3uYLekPXZXngLcOjmLQwacNvzXfVhxQ6X9MTvnqZKw3sTFZ3D6anyZ1lZPTxrgOJbYW+SRzLQhwY=
+	t=1755068902; cv=none; b=oZbCH3HM9k8CAN2rxlCRJQ0R0Qo9VJeDjMMfzs+e9kDsbm0rkGAm1WPTcfFex0y1bM/H3TNUbq6vr3wo4ENtZWy6Nismml3jvO5onMnfy6FIhsl0TgcvUhTm5sjSC/p2yav9/+3NIo75DVUNpfYFZyTflBntN0ZAenTlSGFfFPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755068938; c=relaxed/simple;
-	bh=QYaxlKYoCnSUSTITH74gXHhQqP4vxVMhGv1+UnHTb74=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CcslMNF4TALCBSTVrmiumMlHAox8/RPziChmewTbrQ9etslZQ3z652COKcwEalQTUw80YDHfzid5yF6+AAsmk8uW39bm1KaqW5OqM1tLPWCAMj6vnR1Ehe+W6laDWjckSk3PWRhn2yIHJaYRHgWC4SX4UaClFUrJn0mFk7CWGqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=TJ6lCE8a; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=GgP676hq; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4c1zxg1CW4z9sxM;
-	Wed, 13 Aug 2025 09:08:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1755068935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8jexbxzipWzrxqlmph9PiBTpETZUbRAyJQiQmfwesXA=;
-	b=TJ6lCE8ajvCRDPp2Qm/byOLqXJnvECzLa0KhGFePXqqnZ09txZ0gVOFqCLn341Mx/Z8pvC
-	URzNxMLXD98Qj7LgLGy+v6LMWr6n7GVuP6AA121BKSJmTlSK44z2bHjwtYb1+YcFUImV2A
-	lYaQ0FJSb/jlz4AVdwAL5bUQKaY5LX1FhNkWjKBrI7VB6gd6xvKtWduSFyiG17A7Hpei25
-	BpIKn5RWWpnYkHe/knhb4GZj5lO1HHAAcctiSID5yFTnUZqrxxY9TxsQgCWvDOS2P3nSq6
-	aAOM1XHpvbHxMHJFpD5sCGNFn01SXCXv7inmT47zOxZSVRi3/G1vQ7dQjLbdtw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=GgP676hq;
-	spf=pass (outgoing_mbo_mout: domain of lukasz.majewski@mailbox.org designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=lukasz.majewski@mailbox.org
-From: Lukasz Majewski <lukasz.majewski@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1755068933;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8jexbxzipWzrxqlmph9PiBTpETZUbRAyJQiQmfwesXA=;
-	b=GgP676hqUjQQJUCeoTiHyvGv8pUUmkKmozcJMdzLbGWRcbv01NCnk3t6sOTxB8ihjzwp6r
-	/Jm8suMKH0AnQCE416CjX/8aFskKswhII9S2+EcuKZOqVnEnqIQi2Csjv/E/2zXP2SFruw
-	tnQ6TXGeScf+C1DKmHJVLKb1CvLV8wjVcwIHe1uIDZaHPFdvQb1VYZfgKgOUtvsOynxd/q
-	m/gPRs9KniIsMSfxgcNnu2cvH1BxiMRFwhmcOeB+gDeQq9S/9oN5unCR3Y8AYm5GklKZ5J
-	di4b/+3MFDcNXSosPVHVEgz8whrz0H1CxeMwJcCrhOBWP+IR0rhizEGaEjW4kQ==
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Simon Horman <horms@kernel.org>,
-	Lukasz Majewski <lukasz.majewski@mailbox.org>
-Subject: [net-next v18 7/7] net: mtip: Extend the L2 switch driver for imx287 with bridge operations
-Date: Wed, 13 Aug 2025 09:07:55 +0200
-Message-Id: <20250813070755.1523898-8-lukasz.majewski@mailbox.org>
-In-Reply-To: <20250813070755.1523898-1-lukasz.majewski@mailbox.org>
-References: <20250813070755.1523898-1-lukasz.majewski@mailbox.org>
+	s=arc-20240116; t=1755068902; c=relaxed/simple;
+	bh=upX+jZ6RmPTTcxxHc6wA542NNEKB5fgoEbeojoHxwhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QCh9GScyzmFFtcG3ZAb8ysxy1GqJ5fyvn9LpujGbiPVrmEP3bNKffWnzdCY4wUcO73fFvT4mKwHW4MQTtvI03lSnJj8sKc5lYHC6p/7pfii4ZU0JpofbchyXB6hYJ59Uke0PeRq6U9zvp79Ph/rTclGwoEddQdFBTA1jR4GIGJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WzrbQXYw; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CNQOKb025676;
+	Wed, 13 Aug 2025 07:08:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=6Ic2K93WGmWPe8MeUiDeO0y0bFKmr6
+	B290RLLUMxbbA=; b=WzrbQXYwHmiobHBqv3UVPEEJp+riPv6WFTRTWKefkoaEwU
+	aQKs7YfkVU+GG4j3w66U6qSgJ5zkXAbbK/EtVvTnue5IKAQ20lHjUewR9/lQZepL
+	yjbCArZtV8H+WtTWzsInmIsyfyio+g1pe8YPS7s8lGrihZ8Qc4T0mpw9+zVo+P8L
+	sZB0Sm2yXCCWOxsVWxbktFMuC7F8gBqW+t9DzcLapKLwFhO+DyUYy3UGDd6Nv3IK
+	7zPcCJPRgoVbfq1iJ7vGTK+7WBT+xF3kTUZJZQXqcT2nimME5ZPp/2yWIm9Ih+/W
+	FPMu8iFKfSdwKsesglFP1reXvF5cyeqNlc7sL1zg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaa79h7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 07:08:12 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57D70Yqo008024;
+	Wed, 13 Aug 2025 07:08:11 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaa79h5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 07:08:11 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57D63CwV010621;
+	Wed, 13 Aug 2025 07:08:10 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 48egnupcc5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 07:08:10 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57D789SI62849284
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Aug 2025 07:08:09 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1EE2D20043;
+	Wed, 13 Aug 2025 07:08:09 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D46E320040;
+	Wed, 13 Aug 2025 07:08:06 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.214.209])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 13 Aug 2025 07:08:06 +0000 (GMT)
+Date: Wed, 13 Aug 2025 12:38:04 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+        Ritesh Harjani <ritesh.list@gmail.com>, djwong@kernel.org,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 09/11] ext4: Atomic writes stress test for bigalloc
+ using fio crc verifier
+Message-ID: <aJw51DcgwQc3yfSj@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1754833177.git.ojaswin@linux.ibm.com>
+ <210979d189d43165fa792101cf2f4eb8ef02bc98.1754833177.git.ojaswin@linux.ibm.com>
+ <62ae0bd7-51f2-454d-a005-9a3673059d1b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 71b44368fe03902302c
-X-MBO-RS-META: 4yikww5yjhzhwnbfzdtp181u6u8ig5q4
-X-Rspamd-Queue-Id: 4c1zxg1CW4z9sxM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62ae0bd7-51f2-454d-a005-9a3673059d1b@oracle.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=KPRaDEFo c=1 sm=1 tr=0 ts=689c39dc cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
+ a=NKi2vMn_l3ipVb6-kZMA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: gCIURS3MDvC9wK4fGbHziMrL89Yprv_a
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfXxIttcUPbrpv3
+ 4hxRHX65MAtcMSyEwbsOv+ZLOCJ6CRkYCOTdFLKdhfr7PmKV9bsxVV7sNJIUkLal0p1ou2zhzqn
+ vbDWp1ZkXeHVXFl1yroT/uBYSh1sJhLM07evB2shE8iFEh5jyi1WbCF7n0e554GrQJ9N4ArDwA7
+ +vq3ek4HTJh7NvJCherqhTg3CRTmAToh29X3X927u06iw9O2HSyS7glfA0mYpga8YhpkIbB2WLn
+ aCQJZF1yIjxgxxonee2GkypgFrJxwjnngvjdFMk2rS9Syo73W86SLdHYYCmnndIXOFdQ3AVXzwn
+ 4GGa3gKPGFYgMJPRt/GVoK9GAiA6RJzfMgwMtRS4NZyvWxCr3BC23W7j0OwVTcESOGGT0QwRchH
+ SNwRTE5a
+X-Proofpoint-GUID: 9Z0BYl-nbgKHP34OsiXi5Laera5pZXux
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 clxscore=1015 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120224
 
-After this change the MTIP L2 switch can be configured as offloading
-device for packet switching when bridge on their interfaces is created.
+On Tue, Aug 12, 2025 at 09:08:59AM +0100, John Garry wrote:
+> On 10/08/2025 14:42, Ojaswin Mujoo wrote:
+> > From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+> > 
+> > We brute force all possible blocksize & clustersize combinations on
+> > a bigalloc filesystem for stressing atomic write using fio data crc
+> > verifier.
+> 
+> you seem to run mkfs per block size. Why not just mkfs for largest blocksize
+> once, which will support all block sizes?
 
-Signed-off-by: Lukasz Majewski <lukasz.majewski@mailbox.org>
----
+We are just stressing all the possible combinations to shake out any
+bugs. This is marked as stress so I feel the extra loops should be okay.
 
-Changes for v13:
-- New patch - created by excluding some code from large (i.e. v12 and
-  earlier) MTIP driver
+> 
+> > We run nproc * $LOAD_FACTOR threads in parallel writing to
+> > a single $SCRATCH_MNT/test-file. With atomic writes this test ensures
+> > that we never see the mix of data contents from different threads on
+> > a given bsrange.
+> > 
+> > This test might do overlapping atomic writes but that should be okay
+> > since overlapping parallel hardware atomic writes don't cause tearing as
+> > long as io size is the same for all writes.
+> 
+> Please mention that serializing racing writes is not guaranteed for
+> RWF_ATOMIC, and that NVMe and SCSI provide this guarantee as an inseparable
+> feature to power-fail atomicity.
+> 
+> Please also mention that the value is that we test that we split no bios or
+> only generate a single bio per write syscall.
 
-Changes for v14 - v15:
-- None
+Got it, will do.
+> 
+> > 
+> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
+> >   tests/ext4/061     | 130 +++++++++++++++++++++++++++++++++++++++++++++
+> >   tests/ext4/061.out |   2 +
+> >   2 files changed, 132 insertions(+)
+> >   create mode 100755 tests/ext4/061
+> >   create mode 100644 tests/ext4/061.out
+> > 
+> > diff --git a/tests/ext4/061 b/tests/ext4/061
+> > new file mode 100755
+> > index 00000000..a0e49249
+> > --- /dev/null
+> > +++ b/tests/ext4/061
+> > @@ -0,0 +1,130 @@
+> > +#! /bin/bash
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
+> > +#
+> > +# FS QA Test 061
+> > +#
+> > +# Brute force all possible blocksize clustersize combination on a bigalloc
+> > +# filesystem for stressing atomic write using fio data crc verifier. We run
+> > +# nproc * 2 * $LOAD_FACTOR threads in parallel writing to a single
+> > +# $SCRATCH_MNT/test-file. With fio aio-dio atomic write this test ensures that
+> > +# we should never see the mix of data contents from different threads for any
+> > +# given fio blocksize.
+> > +#
+> > +
+> > +. ./common/preamble
+> > +. ./common/atomicwrites
+> > +
+> > +_begin_fstest auto rw stress atomicwrites
+> > +
+> > +_require_scratch_write_atomic
+> > +_require_aiodio
+> 
+> do you require fio with a certain version somewhere?
 
-Changes for v16:
-- Enable MTIP ports to support bridge offloading
+Oh right you mentioned that atomic=1 was broken on some older fios.
+Would you happen to know which version fixed it?
 
-Changes for v17 - v18:
-- None
----
- .../net/ethernet/freescale/mtipsw/Makefile    |   2 +-
- .../net/ethernet/freescale/mtipsw/mtipl2sw.c  |   9 +-
- .../net/ethernet/freescale/mtipsw/mtipl2sw.h  |   2 +
- .../ethernet/freescale/mtipsw/mtipl2sw_br.c   | 132 ++++++++++++++++++
- 4 files changed, 143 insertions(+), 2 deletions(-)
- create mode 100644 drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c
+> 
+> > +
+> > +FIO_LOAD=$(($(nproc) * 2 * LOAD_FACTOR))
+> > +SIZE=$((100*1024*1024))
+> > +fiobsize=4096
+> > +
+> > +# Calculate fsblocksize as per bdev atomic write units.
+> > +bdev_awu_min=$(_get_atomic_write_unit_min $SCRATCH_DEV)
+> > +bdev_awu_max=$(_get_atomic_write_unit_max $SCRATCH_DEV)
+> > +fsblocksize=$(_max 4096 "$bdev_awu_min")
+> > +
+> > +function create_fio_configs()
+> > +{
+> > +	create_fio_aw_config
+> > +	create_fio_verify_config
+> > +}
+> > +
+> > +function create_fio_verify_config()
+> > +{
+> > +cat >$fio_verify_config <<EOF
+> > +	[aio-dio-aw-verify]
+> > +	direct=1
+> > +	ioengine=libaio
+> > +	rw=randwrite
+> 
+> it prob makes sense to just have read, but I guess with verify_only=1 that
+> this makes no difference
 
-diff --git a/drivers/net/ethernet/freescale/mtipsw/Makefile b/drivers/net/ethernet/freescale/mtipsw/Makefile
-index a99aaf6ddfb2..81e2b0e03e6c 100644
---- a/drivers/net/ethernet/freescale/mtipsw/Makefile
-+++ b/drivers/net/ethernet/freescale/mtipsw/Makefile
-@@ -1,4 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-$(CONFIG_FEC_MTIP_L2SW) += nxp-mtipl2sw.o
--nxp-mtipl2sw-objs := mtipl2sw.o mtipl2sw_mgnt.o
-+nxp-mtipl2sw-objs := mtipl2sw.o mtipl2sw_mgnt.o mtipl2sw_br.o
-diff --git a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
-index 4c9776fc5382..a67fd1f5c807 100644
---- a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
-+++ b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.c
-@@ -1887,11 +1887,15 @@ static int mtip_sw_probe(struct platform_device *pdev)
- 	if (ret)
- 		return dev_err_probe(&pdev->dev, ret, "Could not alloc IRQ\n");
- 
-+	ret = mtip_register_notifiers(fep);
-+	if (ret)
-+		return ret;
-+
- 	ret = mtip_switch_dma_init(fep);
- 	if (ret) {
- 		dev_err(&pdev->dev, "%s: ethernet switch init fail (%d)!\n",
- 			__func__, ret);
--		return ret;
-+		goto unregister_notifiers;
- 	}
- 
- 	ret = mtip_mii_init(fep, pdev);
-@@ -1922,6 +1926,8 @@ static int mtip_sw_probe(struct platform_device *pdev)
- 			  fep->bd_dma);
- 	fep->rx_bd_base = NULL;
- 	fep->tx_bd_base = NULL;
-+ unregister_notifiers:
-+	mtip_unregister_notifiers(fep);
- 
- 	return ret;
- }
-@@ -1930,6 +1936,7 @@ static void mtip_sw_remove(struct platform_device *pdev)
- {
- 	struct switch_enet_private *fep = platform_get_drvdata(pdev);
- 
-+	mtip_unregister_notifiers(fep);
- 	mtip_ndev_cleanup(fep);
- 
- 	mtip_mii_remove(fep);
-diff --git a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h
-index 7e5373823d43..3dae94048917 100644
---- a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h
-+++ b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw.h
-@@ -643,6 +643,8 @@ int mtip_port_learning_config(struct switch_enet_private *fep, int port,
- int mtip_port_blocking_config(struct switch_enet_private *fep, int port,
- 			      bool enable);
- bool mtip_is_switch_netdev_port(const struct net_device *ndev);
-+int mtip_register_notifiers(struct switch_enet_private *fep);
-+void mtip_unregister_notifiers(struct switch_enet_private *fep);
- int mtip_port_enable_config(struct switch_enet_private *fep, int port,
- 			    bool tx_en, bool rx_en);
- void mtip_clear_atable(struct switch_enet_private *fep);
-diff --git a/drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c
-new file mode 100644
-index 000000000000..f961b9cc4e6a
---- /dev/null
-+++ b/drivers/net/ethernet/freescale/mtipsw/mtipl2sw_br.c
-@@ -0,0 +1,132 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ *  L2 switch Controller driver for MTIP block - bridge network interface
-+ *
-+ *  Copyright (C) 2025 DENX Software Engineering GmbH
-+ *  Lukasz Majewski <lukma@denx.de>
-+ */
-+
-+#include <linux/etherdevice.h>
-+#include <linux/netdevice.h>
-+#include <linux/platform_device.h>
-+#include <net/switchdev.h>
-+
-+#include "mtipl2sw.h"
-+
-+static int mtip_ndev_port_link(struct net_device *ndev,
-+			       struct net_device *br_ndev,
-+			       struct netlink_ext_ack *extack)
-+{
-+	struct mtip_ndev_priv *priv = netdev_priv(ndev), *other_priv;
-+	struct switch_enet_private *fep = priv->fep;
-+	struct net_device *other_ndev;
-+	int err;
-+
-+	/* Check if one port of MTIP switch is already bridged */
-+	if (fep->br_members && !fep->br_offload) {
-+		/* Get the second bridge ndev */
-+		other_ndev = fep->ndev[fep->br_members - 1];
-+		other_priv = netdev_priv(other_ndev);
-+		if (other_priv->master_dev != br_ndev) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "L2 offloading only possible for the same bridge!");
-+			return notifier_from_errno(-EOPNOTSUPP);
-+		}
-+
-+		fep->br_offload = 1;
-+		mtip_switch_dis_port_separation(fep);
-+		mtip_clear_atable(fep);
-+	}
-+
-+	if (!priv->master_dev)
-+		priv->master_dev = br_ndev;
-+
-+	fep->br_members |= BIT(priv->portnum - 1);
-+
-+	err = switchdev_bridge_port_offload(ndev, ndev, NULL, NULL, NULL,
-+					    false, extack);
-+	if (err) {
-+		dev_err(&ndev->dev, "can't offload bridge port %s [err: %d]\n",
-+			ndev->name, err);
-+		return err;
-+	}
-+
-+	dev_dbg(&ndev->dev,
-+		"%s: ndev: %s br: %s fep: %p members: 0x%x offload: %d\n",
-+		__func__, ndev->name,  br_ndev->name, fep, fep->br_members,
-+		fep->br_offload);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static void mtip_netdevice_port_unlink(struct net_device *ndev)
-+{
-+	struct mtip_ndev_priv *priv = netdev_priv(ndev);
-+	struct switch_enet_private *fep = priv->fep;
-+
-+	dev_dbg(&ndev->dev, "%s: ndev: %s members: 0x%x\n", __func__,
-+		ndev->name, fep->br_members);
-+
-+	switchdev_bridge_port_unoffload(ndev, NULL, NULL, NULL);
-+
-+	fep->br_members &= ~BIT(priv->portnum - 1);
-+	priv->master_dev = NULL;
-+
-+	if (fep->br_members && fep->br_offload) {
-+		fep->br_offload = 0;
-+		mtip_switch_en_port_separation(fep);
-+		mtip_clear_atable(fep);
-+	}
-+}
-+
-+/* netdev notifier */
-+static int mtip_netdevice_event(struct notifier_block *unused,
-+				unsigned long event, void *ptr)
-+{
-+	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
-+	struct netdev_notifier_changeupper_info *info = ptr;
-+	struct netlink_ext_ack *extack;
-+	int ret = NOTIFY_DONE;
-+
-+	if (!mtip_is_switch_netdev_port(ndev))
-+		return NOTIFY_DONE;
-+
-+	extack = netdev_notifier_info_to_extack(&info->info);
-+
-+	switch (event) {
-+	case NETDEV_CHANGEUPPER:
-+		if (!netif_is_bridge_master(info->upper_dev))
-+			break;
-+
-+		if (info->linking)
-+			ret = mtip_ndev_port_link(ndev, info->upper_dev,
-+						  extack);
-+		else
-+			mtip_netdevice_port_unlink(ndev);
-+
-+		break;
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static struct notifier_block mtip_netdevice_nb __read_mostly = {
-+	.notifier_call = mtip_netdevice_event,
-+};
-+
-+int mtip_register_notifiers(struct switch_enet_private *fep)
-+{
-+	int ret = register_netdevice_notifier(&mtip_netdevice_nb);
-+
-+	if (ret)
-+		dev_err(&fep->pdev->dev, "can't register netdevice notifier\n");
-+
-+	return ret;
-+}
-+
-+void mtip_unregister_notifiers(struct switch_enet_private *fep)
-+{
-+	unregister_netdevice_notifier(&mtip_netdevice_nb);
-+}
--- 
-2.39.5
+Right, but I can change it in the next revision.
 
+> 
+> > +	bs=$fiobsize
+> > +	fallocate=native
+> > +	filename=$SCRATCH_MNT/test-file
+> > +	size=$SIZE
+> > +	iodepth=$FIO_LOAD
+> > +	numjobs=$FIO_LOAD
+> > +	atomic=1
+> > +	group_reporting=1
+> > +
+> > +	verify_only=1
+> > +	verify_state_save=0
+> > +	verify=crc32c
+> > +	verify_fatal=1
+> > +	verify_write_sequence=0
+> > +EOF
+> > +}
+> > +
+> > +function create_fio_aw_config()
+> > +{
+> > +cat >$fio_aw_config <<EOF
+> > +	[aio-dio-aw]
+> > +	direct=1
+> > +	ioengine=libaio
+> > +	rw=randwrite
+> > +	bs=$fiobsize
+> > +	fallocate=native
+> > +	filename=$SCRATCH_MNT/test-file
+> > +	size=$SIZE
+> > +	iodepth=$FIO_LOAD
+> > +	numjobs=$FIO_LOAD
+> > +	group_reporting=1
+> > +	atomic=1
+> > +
+> > +	verify_state_save=0
+> > +	verify=crc32c
+> > +	do_verify=0
+> > +
+> > +EOF
+> > +}
+> > +
+> > +# Let's create a sample fio config to check whether fio supports all options.
+> > +fio_aw_config=$tmp.aw.fio
+> > +fio_verify_config=$tmp.verify.fio
+> > +fio_out=$tmp.fio.out
+> > +
+> > +create_fio_configs
+> > +_require_fio $fio_aw_config
+> > +
+> > +for ((fsblocksize=$fsblocksize; fsblocksize <= $(_get_page_size); fsblocksize = $fsblocksize << 1)); do
+> > +	# cluster sizes above 16 x blocksize are experimental so avoid them
+> > +	# Also, cap cluster size at 128kb to keep it reasonable for large
+> > +	# blocks size
+> > +	fs_max_clustersize=$(_min $((16 * fsblocksize)) "$bdev_awu_max" $((128 * 1024)))
+> > +
+> > +	for ((fsclustersize=$fsblocksize; fsclustersize <= $fs_max_clustersize; fsclustersize = $fsclustersize << 1)); do
+> > +		for ((fiobsize = $fsblocksize; fiobsize <= $fsclustersize; fiobsize = $fiobsize << 1)); do
+> > +			MKFS_OPTIONS="-O bigalloc -b $fsblocksize -C $fsclustersize"
+> 
+> this is quite heavy indentation. Maybe the below steps can be put into a
+> separate routine (to make the code more readable).
+
+Got it.
+
+> 
+> 
+> > +			_scratch_mkfs_ext4  >> $seqres.full 2>&1 || continue
+> > +			if _try_scratch_mount >> $seqres.full 2>&1; then
+> > +				echo "== FIO test for fsblocksize=$fsblocksize fsclustersize=$fsclustersize fiobsize=$fiobsize ==" >> $seqres.full
+> > +
+> > +				touch $SCRATCH_MNT/f1
+> > +				create_fio_configs
+> > +
+> > +				cat $fio_aw_config >> $seqres.full
+> > +				echo >> $seqres.full
+> > +				cat $fio_verify_config >> $seqres.full
+> > +
+> > +				$FIO_PROG $fio_aw_config >> $seqres.full
+> > +				ret1=$?
+> > +
+> > +				$FIO_PROG $fio_verify_config >> $seqres.full
+> > +				ret2=$?
+> > +
+> > +				_scratch_unmount
+> > +
+> > +				[[ $ret1 -eq 0 && $ret2 -eq 0 ]] || _fail "fio with atomic write failed"
+> > +			fi
+> > +		done
+> > +	done
+> > +done
+> > +
+> > +# success, all done
+> > +echo Silence is golden
+> > +status=0
+> > +exit
+> > diff --git a/tests/ext4/061.out b/tests/ext4/061.out
+> > new file mode 100644
+> > index 00000000..273be9e0
+> > --- /dev/null
+> > +++ b/tests/ext4/061.out
+> > @@ -0,0 +1,2 @@
+> > +QA output created by 061
+> > +Silence is golden
+> 
 
