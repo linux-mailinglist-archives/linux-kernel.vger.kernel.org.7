@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-766249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95C0B24451
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34395B24453
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 10:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDF5B5A24CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:28:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0200F5A2596
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEC92F0C75;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D2E2F0C7B;
 	Wed, 13 Aug 2025 08:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lm9GGPrA"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ceVBx8vj"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6112F0C45
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C714A2F0C49
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755073656; cv=none; b=UC+l7PlT5fQNwcQzzDAz9pHuvIUZOWDhA0xXDXX0ZxGK0ltI69jgJ1O6hTegl7tIDlmH/TUfatGfIQ1Clx6C+sv/rBMVqqXysQfJcZRd3SvTDZfyBBRG8Py+qqPkTTze97PyNCVAuceCJpjwPZTWWxJT7F4DA/5DbwjiMYitt1I=
+	t=1755073656; cv=none; b=bOHBqcZysTDkHMIfjRJcNezAwkIHwzW3tL++cDXrLzGT07BZnM63ONfNuAzCBBqu4ikKe5WRANKEP5R/E2SwhBFlsm3fg4ffoHD0NIBsQHtp4Syk/IEdymFz3uH0+MYxjmWG1tSByOmDmDuA8rE2jD5/2Jqz4pn2ceVYS8SC7s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755073656; c=relaxed/simple;
-	bh=8GmvIZIGgqjz8wUeCB2jyp3T1L72lC0TvDtVBsbWwrY=;
+	bh=83CIG/yYVFV5oc5WpQxs7LvduOQS2arjCyxfm7bOmAQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=d710SXdyNdkWxPmueIQqu1bgCmMpoQYWL8+Q9tc/dcDdSA6k0QdMaSrPQFD43C35E1KuVsHptZM2pssLsdsmI3LDZEco/TuArcfaSFkuvFg3WVqsN+y/sk9/TK+P16zuW+9pYxyCB2d2T3WKpShao+9FXgvfq9hxlLpA5e5Ralw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lm9GGPrA; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=mhRSSyBYDo9tkOf9/XH3AXrluZ8SXwkRUZTRSOM7LNl7QcGxUdFlgLhub6N7f1VAdyB8/k3ItrQGGIzKQa5Cgv3vuLLrQa7Rta7B8CBoeQN24WmAbrJPmM3W/HbgqisRwF70fMhuGLOKO2gX6QlN3JEFdG/rvF7tGmWNCJ19BrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ceVBx8vj; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3b91582e402so373628f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:27:33 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-458bf93f729so32829025e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:27:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755073652; x=1755678452; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755073653; x=1755678453; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0v+hlZN0qOTV3FiOFS1cftKwP+d3Jf03nVeRsrqAlE0=;
-        b=Lm9GGPrABoqY5gsk4xvwA/HWsdrC2Ms9IjeSh3Ph83a3WL7Tc3FFqAAeJbodxNWZp0
-         sLvrbdgIKxnJ7bP8Fta9UFJoTL9t+vmTr/XdYv36ONNP/x1JsbBItWiVXrJzI5bs3OyA
-         5V+oGML66O+UqCcX8eXIVIjdT20itaLMalnoJNLkNv2r4w2pJjG/yFw8gUkp6vBpHndh
-         8Q4hGhnGCRzlTJAobJN00pky/+OoKD1zHixw2vzn30hkiAHNTp09GMwTQFOR+dFcHH3u
-         AfXeyP0lSXtGs26JEQdk4Q8Eo6bQqlCSILl09zYyiQnNq7CzESvZzYXDKLucz3eCCVPr
-         xnQQ==
+        bh=Qv73A+++0TWQ7mgHKwS6GFRnfK2NLUU7501mITzCcHQ=;
+        b=ceVBx8vjI7FjCAJaTtPzUca3LkTJEdKRDvpApYOgtyJvp9rn9yLY9yejjgF2XkPOAL
+         YwuhJnP/7vdSWwb3e0DFNHr8e2dlEae4T8a1ChUGsL0Z3QKJ1UFHC1bdgnewjE6ayPUm
+         FQ3YyKDhMMl1NlOB3yUMuc1NVow/UpWSveTIIUvDJh+LS/x17wyfTelgcax5z5H6jBvI
+         5nTHkjlKJigRnK6Rcya+571H6MMKbCcvnD2OypXweDqGQS/etkJJiu58UAe+QGJ33DdD
+         uYi0V8Qqu5/mHmkcvMRvwk8Y5rPfhHFmm1+M3fk7b25pbuur9WWsusMC45MvPAIylXSH
+         07ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755073652; x=1755678452;
+        d=1e100.net; s=20230601; t=1755073653; x=1755678453;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0v+hlZN0qOTV3FiOFS1cftKwP+d3Jf03nVeRsrqAlE0=;
-        b=EZOuKEctVdKp27nHEeOccXOrd0IZxDA67J6fULAA2877mjn3kRZvYRf4lcUVw6vIHr
-         wcvfVwMSOVUNSXCLazhNp3jwYaH/V35Z35ZLCy+/xX2f5eWJPCb6pU5x+0TWr7EuI8PH
-         W6dYotqsIS25Px5WXUK5DxHEPNpzRwY8Vi3kH/q4TwcJyijcqBtBmSWwxFHVzHFQmffx
-         n0BhjVLqNyxqkQHA8ygzHdMubJ+m++PKSloYMqYOQvtdQpbYxBW7AkEc9zCmfocRF0UD
-         UJXbN736Ezgl1x4whbbI6sS5sz5COZoTj2kZNUaQSh2uj9gYGGlYO34e1CI7YN1lUKRW
-         h21A==
-X-Forwarded-Encrypted: i=1; AJvYcCUHNnXhNUAMcRldTMz1TC3W725QwSYura++DH1zmTDoT6XCcN3r0XjSzA4uCtYodWEEWCsiPuZA2w/iEP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf1T8M9L7NKL6Qp5cq4qvYoE8gzrsUW9JsDreMRhyRgQ47rQLe
-	2Dv4JCjTMwzdM1pM4mH8xp+pgfEi/4jrCGLksJHvYkeDhsxEv3EywGC18CMYb4UsZXOxudiGH9j
-	VT7XRVotD0vVKKkmVeA==
-X-Google-Smtp-Source: AGHT+IGsJwn0URuZJVJ1ARqHV9W1udtIKNGJ7JtwTo3h8EApwMiIPJsWupzab2j2spXttYUzHSFLED6y3qc0F74=
-X-Received: from wmqb7.prod.google.com ([2002:a05:600c:4e07:b0:459:dc99:51e4])
+        bh=Qv73A+++0TWQ7mgHKwS6GFRnfK2NLUU7501mITzCcHQ=;
+        b=k47Jrz2PAr1uXRElIyRH2DWdXErWG17OhWspgxMT7j53MF+ZYgl3k/C6Ktuh9oDemH
+         AD1T169z6qn/V9yYb0aAvCmBrwz7WGs2iz21qZFuAw+0gIEigjJJU7LjNbZOqNVLam0q
+         l5CbMZIyy+tEMHjbgrPmezQnS92gahlUMH2Ktv6uRmuh5wT///gJgTCcCJdBew6/9ob/
+         5ro8Hi50V7gRcQ11aK7YG4v/NgV77QE1ODEGHX8I+5jI+b+P5+bVUKiwEJTcZcputiM/
+         EnFVNq7B1En/DBFs3YTDGvNMlM9+HnPM79OmRN0tFdmmMWNLBjmg3MJUiN6QVXUEWWoK
+         vSxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZurXrDjgj2eEI0DLp8tOcigF7sl5Q4UmJ1llFiWI6htnoYBtNOtGTUCsGdZC9zSdd91wSVTkhg4aM1FU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0rMmhzepLojlB2rqyhrjgbQdHVxTHl2VaNmwKOGbMcO57ivDX
+	CTl2G4gTv6Ck7sxyLBogU72O68elK+bYTU6NHJPmJcwVQWA9/NQHtsUag/pQm2QYIARgCOA+rWo
+	t61RUzF3jeH6Nh6rWqQ==
+X-Google-Smtp-Source: AGHT+IHgWah8vaIyiZQvShZ+eP/Xc8juKyVKI8pMD5CVwQu1TaUbkPB2YIy8jD1J9uT8MJfn8rasAauKIeszqX8=
+X-Received: from wmti10.prod.google.com ([2002:a05:600c:8b8a:b0:459:dede:aaea])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5849:0:b0:3b7:9dc1:74a5 with SMTP id ffacd0b85a97d-3b917eb7c9emr1565139f8f.52.1755073651858;
- Wed, 13 Aug 2025 01:27:31 -0700 (PDT)
-Date: Wed, 13 Aug 2025 08:27:18 +0000
+ 2002:a05:600c:19cb:b0:459:e3f8:92ec with SMTP id 5b1f17b1804b1-45a165a5acfmr21538855e9.10.1755073653092;
+ Wed, 13 Aug 2025 01:27:33 -0700 (PDT)
+Date: Wed, 13 Aug 2025 08:27:19 +0000
 In-Reply-To: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250813-iov-iter-v4-0-c4f1932b05ef@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7537; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=8GmvIZIGgqjz8wUeCB2jyp3T1L72lC0TvDtVBsbWwrY=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBonExtQNbgrflr/bZRkchc/RYgoVj91A0aLaz95
- O9nukaSoAOJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJxMbQAKCRAEWL7uWMY5
- RkGwD/wNZmw9xBkgoZPQvxPEi0LiAJUd040joIkFvr4kZE6rES8Z84SkULQ6hMXCl8EvGcd1YdB
- bzcXj2hn3gw9xhNbUZZ4TvXBCA/kPKHsshI3K+1MhRpvw3bv2D/bxq8J1SUDS5Q6ebQKyGkxjqR
- t4/BWbt9awOCmVs9kap7iBaVxZLRBS4EICs9PBPrtxB0vOJzLUZv27Jw0mF9AwJxEv052/lzzqM
- JUEo0d04y3wgvDOXWG9SXqV3SqKX+NxHW6g5U9bo04h/wpsxDMNt2tcMq4wbh62IKQYO68DTyIU
- CS7JSRbBiGJTgCYQFHu+z9Utl2ZL9Tc6RQyeD2gtgHvjfRImm3VfjsjKjmmvbRJxKas/M/uQxq1
- jmRVkXeJRC/vg9PO5j2bP3VKjaUx6FB0sGZbbAvarHOTrTUcG6LNaRmLy2OsihN7qfN3JQ6CSH4
- jpQj2ZI1Wz4t9PW5jjyWUOvhwkMH4Kd9JUfFanqM7ENSyaw8yLsrRGD3+DbpWe6c0bh8SK3gIHe
- 3UU/vmnRT0/l7RUcRa7H/Ehg+r9ZIZE8iO4PQVjH08PDq5ky0PSQ8bLkg1WaaY1uNHPRfGfpdmM
- Mmjdcrb1uyQiFltXGLsQa/hsMN8Mk7X+UKxgts6Nag64lJasKoHhLEa7y7rgBMKsm5hWwnrd0mD r8eSyirw/S5Ltyw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7253; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=83CIG/yYVFV5oc5WpQxs7LvduOQS2arjCyxfm7bOmAQ=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBonExtDx2M5QU/HAIhxb7BlCGwVBsgpWSaCovO1
+ 5VlhROSc4mJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJxMbQAKCRAEWL7uWMY5
+ Rl7DEACuHjq3unzYiXXF1gBZmhUGn5ZpZujbc23zRbQzccdMtRXMp0E8Pr+UP/2B66gNSLrevnT
+ OtYobEWd3ZKxTNZRikw0oNOiLHq4IApLoQfZtXu3C44HSlSpNY+kdcQKYw3/625IeMVRDMvNSb2
+ vVLuTICNlCy2y0TBjZnPpGs9y3F7Yy2bC23RUslHjifhizMBIZal0ivUqCxtkL+V6Dy4E+qBwgQ
+ QPhXGtW9hrnP6R5v8l5K+789YKOXdcHNcRvd2PSsii3bxl1sTDRL99Y9x8Fh/oJJBhpDu6tjKda
+ gcjYwHskokDXbHzBWhA1mJ9gIOUXRYz9Tf4EIy4Z+jtdvkyRCq0/DWp6ZhtLH++opF4pdnKccwM
+ GUBeCKSGrJ/H/5YHRhd844addh6HilyspsL47h9c3qkXpnXa1d4ohutdBcjGxYyQvqWcXqwMX+E
+ 5Yy4jwwnIk7JgsVdQ0xSRwKFLNWq1ROrKzvw2h5SH0pp0pLJBRAST40CXN2cC25ruBnVH8kV8FU
+ CjG48vlV3LXATIuWSOMPoJJxXtZR8GGDKpieYm0lgSp+7ijVkKPZgYoH0EPRuMoU+F9M34xQHwG
+ gBoe7Y4hbEbZbdQ7Z2U6HjbjMnHJ/1nOWfFSNxyXg3sPlmj0VgnFmzRBYRoLp8YJNGVv1YTgtKO oEJPrzLkep36aNw==
 X-Mailer: b4 0.14.2
-Message-ID: <20250813-iov-iter-v4-2-c4f1932b05ef@google.com>
-Subject: [PATCH v4 2/4] rust: iov: add iov_iter abstractions for ITER_DEST
+Message-ID: <20250813-iov-iter-v4-3-c4f1932b05ef@google.com>
+Subject: [PATCH v4 3/4] rust: miscdevice: Provide additional abstractions for
+ iov_iter and kiocb structures
 From: Alice Ryhl <aliceryhl@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
 	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>
@@ -97,191 +98,203 @@ Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
 	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
 	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
-	Benno Lossin <lossin@kernel.org>
+	Benno Lossin <lossin@kernel.org>, Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 
-This adds abstractions for the iov_iter type in the case where
-data_source is ITER_DEST. This will make Rust implementations of
-fops->read_iter possible.
+These will be used for the read_iter() and write_iter() callbacks, which
+are now the preferred back-ends for when a user operates on a char device
+with read() and write() respectively.
 
-This series only has support for using existing IO vectors created by C
-code. Additional abstractions will be needed to support the creation of
-IO vectors in Rust code.
-
-These abstractions make the assumption that `struct iov_iter` does not
-have internal self-references, which implies that it is valid to move it
-between different local variables.
-
-This patch adds an IovIterDest struct that is very similar to the
-IovIterSource from the previous patch. However, as the methods on the
-two structs have very little overlap (just getting the length and
-advance/revert), I do not think it is worth it to try and deduplicate
-this logic.
-
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Co-developed-by: Lee Jones <lee@kernel.org>
+Signed-off-by: Lee Jones <lee@kernel.org>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/iov.rs | 143 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 143 insertions(+)
+ rust/kernel/fs.rs         |  3 +++
+ rust/kernel/fs/kiocb.rs   | 68 +++++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/miscdevice.rs | 63 ++++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 133 insertions(+), 1 deletion(-)
 
-diff --git a/rust/kernel/iov.rs b/rust/kernel/iov.rs
-index 48510d9e8ef152ada337957771d7777fda24f351..f55f8997ac2f79980b16ae60f1b46f6511510375 100644
---- a/rust/kernel/iov.rs
-+++ b/rust/kernel/iov.rs
-@@ -16,6 +16,15 @@
- use core::{marker::PhantomData, mem::MaybeUninit, ptr, slice};
+diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
+index 0121b38c59e63d01a89f22c8ef6983ef5c3234de..6ba6bdf143cb991c6e78215178eb585260215da0 100644
+--- a/rust/kernel/fs.rs
++++ b/rust/kernel/fs.rs
+@@ -6,3 +6,6 @@
  
- const ITER_SOURCE: bool = bindings::ITER_SOURCE != 0;
-+const ITER_DEST: bool = bindings::ITER_DEST != 0;
+ pub mod file;
+ pub use self::file::{File, LocalFile};
 +
-+// Compile-time assertion for the above constants.
-+const _: () = {
-+    build_assert!(
-+        ITER_SOURCE != ITER_DEST,
-+        "ITER_DEST and ITER_SOURCE should be different."
-+    );
-+};
- 
- /// An IO vector that acts as a source of data.
- ///
-@@ -166,3 +175,137 @@ pub fn copy_from_iter_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> &mut [u8] {
-         unsafe { slice::from_raw_parts_mut(out, len) }
-     }
- }
++mod kiocb;
++pub use self::kiocb::Kiocb;
+diff --git a/rust/kernel/fs/kiocb.rs b/rust/kernel/fs/kiocb.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..84c936cd69b0e9b490d54c87d8c7279b27d4476a
+--- /dev/null
++++ b/rust/kernel/fs/kiocb.rs
+@@ -0,0 +1,68 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+/// An IO vector that acts as a destination for data.
++// Copyright (C) 2024 Google LLC.
++
++//! Kernel IO callbacks.
++//!
++//! C headers: [`include/linux/fs.h`](srctree/include/linux/fs.h)
++
++use core::marker::PhantomData;
++use core::ptr::NonNull;
++use kernel::types::ForeignOwnable;
++
++/// Wrapper for the kernel's `struct kiocb`.
 +///
-+/// IO vectors support many different types of destinations. This includes both buffers in
-+/// kernel-space and writing to userspace. It's possible that the destination buffer is mapped in a
-+/// thread-local manner using e.g. `kmap_local_page()`, so this type is not `Send` to ensure that
-+/// the mapping is written to the right context in that scenario.
++/// Currently this abstractions is incomplete and is essentially just a tuple containing a
++/// reference to a file and a file position.
++///
++/// The type `T` represents the filesystem or driver specific data associated with the file.
 +///
 +/// # Invariants
 +///
-+/// Must hold a valid `struct iov_iter` with `data_source` set to `ITER_DEST`. For the duration of
-+/// `'data`, it must be safe to write to this IO vector using the standard C methods for this
-+/// purpose.
-+#[repr(transparent)]
-+pub struct IovIterDest<'data> {
-+    iov: Opaque<bindings::iov_iter>,
-+    /// Represent to the type system that this value contains a pointer to writable data it does
-+    /// not own.
-+    _source: PhantomData<&'data mut [u8]>,
++/// `inner` points at a valid `struct kiocb` whose file has the type `T` as its private data.
++pub struct Kiocb<'a, T> {
++    inner: NonNull<bindings::kiocb>,
++    _phantom: PhantomData<&'a T>,
 +}
 +
-+impl<'data> IovIterDest<'data> {
-+    /// Obtain an `IovIterDest` from a raw pointer.
++impl<'a, T: ForeignOwnable> Kiocb<'a, T> {
++    /// Create a `Kiocb` from a raw pointer.
 +    ///
 +    /// # Safety
 +    ///
-+    /// * The referenced `struct iov_iter` must be valid and must only be accessed through the
-+    ///   returned reference for the duration of `'iov`.
-+    /// * The referenced `struct iov_iter` must have `data_source` set to `ITER_DEST`.
-+    /// * For the duration of `'data`, it must be safe to write to this IO vector using the
-+    ///   standard C methods for this purpose.
-+    #[track_caller]
-+    #[inline]
-+    pub unsafe fn from_raw<'iov>(ptr: *mut bindings::iov_iter) -> &'iov mut IovIterDest<'data> {
-+        // SAFETY: The caller ensures that `ptr` is valid.
-+        let data_source = unsafe { (*ptr).data_source };
-+        assert_eq!(data_source, ITER_DEST);
-+
-+        // SAFETY: The caller ensures the struct invariants for the right durations, and
-+        // `IovIterSource` is layout compatible with `struct iov_iter`.
-+        unsafe { &mut *ptr.cast::<IovIterDest<'data>>() }
-+    }
-+
-+    /// Access this as a raw `struct iov_iter`.
-+    #[inline]
-+    pub fn as_raw(&mut self) -> *mut bindings::iov_iter {
-+        self.iov.get()
-+    }
-+
-+    /// Returns the number of bytes available in this IO vector.
-+    ///
-+    /// Note that this may overestimate the number of bytes. For example, reading from userspace
-+    /// memory could fail with EFAULT, which will be treated as the end of the IO vector.
-+    #[inline]
-+    pub fn len(&self) -> usize {
-+        // SAFETY: We have shared access to this IO vector, so we can read its `count` field.
-+        unsafe {
-+            (*self.iov.get())
-+                .__bindgen_anon_1
-+                .__bindgen_anon_1
-+                .as_ref()
-+                .count
++    /// The pointer must reference a valid `struct kiocb` for the duration of `'a`. The private
++    /// data of the file must be `T`.
++    pub unsafe fn from_raw(kiocb: *mut bindings::kiocb) -> Self {
++        Self {
++            // SAFETY: If a pointer is valid it is not null.
++            inner: unsafe { NonNull::new_unchecked(kiocb) },
++            _phantom: PhantomData,
 +        }
 +    }
 +
-+    /// Returns whether there are any bytes left in this IO vector.
-+    ///
-+    /// This may return `true` even if there are no more bytes available. For example, reading from
-+    /// userspace memory could fail with EFAULT, which will be treated as the end of the IO vector.
-+    #[inline]
-+    pub fn is_empty(&self) -> bool {
-+        self.len() == 0
++    /// Access the underlying `struct kiocb` directly.
++    pub fn as_raw(&self) -> *mut bindings::kiocb {
++        self.inner.as_ptr()
 +    }
 +
-+    /// Advance this IO vector by `bytes` bytes.
-+    ///
-+    /// If `bytes` is larger than the size of this IO vector, it is advanced to the end.
-+    #[inline]
-+    pub fn advance(&mut self, bytes: usize) {
-+        // SAFETY: By the struct invariants, `self.iov` is a valid IO vector.
-+        unsafe { bindings::iov_iter_advance(self.as_raw(), bytes) };
++    /// Get the filesystem or driver specific data associated with the file.
++    pub fn file(&self) -> <T as ForeignOwnable>::Borrowed<'a> {
++        // SAFETY: We have shared access to this kiocb and hence the underlying file, so we can
++        // read the file's private data.
++        let private = unsafe { (*(*self.as_raw()).ki_filp).private_data };
++        // SAFETY: The kiocb has shared access to the private data.
++        unsafe { <T as ForeignOwnable>::borrow(private) }
 +    }
 +
-+    /// Advance this IO vector backwards by `bytes` bytes.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The IO vector must not be reverted to before its beginning.
-+    #[inline]
-+    pub unsafe fn revert(&mut self, bytes: usize) {
-+        // SAFETY: By the struct invariants, `self.iov` is a valid IO vector, and the caller
-+        // ensures that `bytes` is in bounds.
-+        unsafe { bindings::iov_iter_revert(self.as_raw(), bytes) };
++    /// Gets the current value of `ki_pos`.
++    pub fn ki_pos(&self) -> i64 {
++        // SAFETY: We have shared access to the kiocb, so we can read its `ki_pos` field.
++        unsafe { (*self.as_raw()).ki_pos }
 +    }
 +
-+    /// Write data to this IO vector.
-+    ///
-+    /// Returns the number of bytes that were written. If this is shorter than the provided slice,
-+    /// then no more bytes can be written.
-+    #[inline]
-+    pub fn copy_to_iter(&mut self, input: &[u8]) -> usize {
-+        // SAFETY:
-+        // * By the struct invariants, it is still valid to write to this IO vector.
-+        // * `input` is valid for `input.len()` bytes.
-+        unsafe { bindings::_copy_to_iter(input.as_ptr().cast(), input.len(), self.as_raw()) }
-+    }
-+
-+    /// Utility for implementing `read_iter` given the full contents of the file.
-+    ///
-+    /// The full contents of the file being read from is represented by `contents`. This call will
-+    /// write the appropriate sub-slice of `contents` and update the file position in `ppos` so
-+    /// that the file will appear to contain `contents` even if takes multiple reads to read the
-+    /// entire file.
-+    #[inline]
-+    pub fn simple_read_from_buffer(&mut self, ppos: &mut i64, contents: &[u8]) -> Result<usize> {
-+        if *ppos < 0 {
-+            return Err(EINVAL);
-+        }
-+        let Ok(pos) = usize::try_from(*ppos) else {
-+            return Ok(0);
-+        };
-+        if pos >= contents.len() {
-+            return Ok(0);
-+        }
-+
-+        // BOUNDS: We just checked that `pos < contents.len()` above.
-+        let num_written = self.copy_to_iter(&contents[pos..]);
-+
-+        // OVERFLOW: `pos+num_written <= contents.len() <= isize::MAX <= i64::MAX`.
-+        *ppos = (pos + num_written) as i64;
-+
-+        Ok(num_written)
++    /// Gets a mutable reference to the `ki_pos` field.
++    pub fn ki_pos_mut(&mut self) -> &mut i64 {
++        // SAFETY: We have exclusive access to the kiocb, so we can write to `ki_pos`.
++        unsafe { &mut (*self.as_raw()).ki_pos }
 +    }
 +}
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index 6373fe183b2748162988b45d7ed8f563045d3b4d..35630fc638751c416d009fcf0c0ffdf0a4da1218 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -13,7 +13,8 @@
+     device::Device,
+     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+     ffi::{c_int, c_long, c_uint, c_ulong},
+-    fs::File,
++    fs::{File, Kiocb},
++    iov::{IovIterDest, IovIterSource},
+     mm::virt::VmaNew,
+     prelude::*,
+     seq_file::SeqFile,
+@@ -141,6 +142,16 @@ fn mmap(
+         build_error!(VTABLE_DEFAULT_ERROR)
+     }
+ 
++    /// Read from this miscdevice.
++    fn read_iter(_kiocb: Kiocb<'_, Self::Ptr>, _iov: &mut IovIterDest<'_>) -> Result<usize> {
++        build_error!(VTABLE_DEFAULT_ERROR)
++    }
++
++    /// Write to this miscdevice.
++    fn write_iter(_kiocb: Kiocb<'_, Self::Ptr>, _iov: &mut IovIterSource<'_>) -> Result<usize> {
++        build_error!(VTABLE_DEFAULT_ERROR)
++    }
++
+     /// Handler for ioctls.
+     ///
+     /// The `cmd` argument is usually manipulated using the utilities in [`kernel::ioctl`].
+@@ -245,6 +256,46 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         0
+     }
+ 
++    /// # Safety
++    ///
++    /// `kiocb` must be correspond to a valid file that is associated with a
++    /// `MiscDeviceRegistration<T>`. `iter` must be a valid `struct iov_iter` for writing.
++    unsafe extern "C" fn read_iter(
++        kiocb: *mut bindings::kiocb,
++        iter: *mut bindings::iov_iter,
++    ) -> isize {
++        // SAFETY: The caller provides a valid `struct kiocb` associated with a
++        // `MiscDeviceRegistration<T>` file.
++        let kiocb = unsafe { Kiocb::from_raw(kiocb) };
++        // SAFETY: This is a valid `struct iov_iter` for writing.
++        let iov = unsafe { IovIterDest::from_raw(iter) };
++
++        match T::read_iter(kiocb, iov) {
++            Ok(res) => res as isize,
++            Err(err) => err.to_errno() as isize,
++        }
++    }
++
++    /// # Safety
++    ///
++    /// `kiocb` must be correspond to a valid file that is associated with a
++    /// `MiscDeviceRegistration<T>`. `iter` must be a valid `struct iov_iter` for writing.
++    unsafe extern "C" fn write_iter(
++        kiocb: *mut bindings::kiocb,
++        iter: *mut bindings::iov_iter,
++    ) -> isize {
++        // SAFETY: The caller provides a valid `struct kiocb` associated with a
++        // `MiscDeviceRegistration<T>` file.
++        let kiocb = unsafe { Kiocb::from_raw(kiocb) };
++        // SAFETY: This is a valid `struct iov_iter` for reading.
++        let iov = unsafe { IovIterSource::from_raw(iter) };
++
++        match T::write_iter(kiocb, iov) {
++            Ok(res) => res as isize,
++            Err(err) => err.to_errno() as isize,
++        }
++    }
++
+     /// # Safety
+     ///
+     /// `file` must be a valid file that is associated with a `MiscDeviceRegistration<T>`.
+@@ -341,6 +392,16 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+         open: Some(Self::open),
+         release: Some(Self::release),
+         mmap: if T::HAS_MMAP { Some(Self::mmap) } else { None },
++        read_iter: if T::HAS_READ_ITER {
++            Some(Self::read_iter)
++        } else {
++            None
++        },
++        write_iter: if T::HAS_WRITE_ITER {
++            Some(Self::write_iter)
++        } else {
++            None
++        },
+         unlocked_ioctl: if T::HAS_IOCTL {
+             Some(Self::ioctl)
+         } else {
 
 -- 
 2.51.0.rc0.205.g4a044479a3-goog
