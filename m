@@ -1,129 +1,115 @@
-Return-Path: <linux-kernel+bounces-766895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC53B24C68
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:49:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34D3B24C69
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA1E3AA389
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:49:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 990CA7BD808
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6712EAB8C;
-	Wed, 13 Aug 2025 14:49:36 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658B91EDA2A;
-	Wed, 13 Aug 2025 14:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AFF2EBDC6;
+	Wed, 13 Aug 2025 14:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cNuQsrcH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9D32D7395;
+	Wed, 13 Aug 2025 14:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755096576; cv=none; b=O7H7f0fWcIbBmlZJMnv+zJU0Kzm6oN6tyTc4t1/+lqlLdhU/MCoYW6shd/5WCAgmyH++gBj7LJeZvqNIeFcQIxEVjOX/xD+lwbjaFSwpwQBwSVMkjX6wkJ2EvIPXV8chDTz3bYUwCMqdr7/WWRALiCq6GIUyB0aRs6PE1LDiNwA=
+	t=1755096602; cv=none; b=ls+Fux2/S4P5WmxJU4bHocoVeCifinZDXkeZ0G5Eq3rljlhniv2HuosQqsG2YBgW8HN85JEsCARx3fgYesSRlePpQdst9YqpqU/yC51/tb6aWKJYkRp9qe2YBB/fUGWiOKsLeLGWaPWawpGWelnYVHFnyAEggDlCCDmlgr82d/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755096576; c=relaxed/simple;
-	bh=Fpd5zyhXD0W2UAVH7AVvywto09GNq+osgS1cgA+i46E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pSZQX4Jx3WERgSTx1yQ74AGsZaqwKsbf8Dtxthb9L8aIDazyfVMQ79FggIP3K+S4QTbSa4atCvmoNjjV6GbFSBgEI4jcGaVJmGNg8kUy4Ds3xVovSKFr/sC1xCtg8ANo1MfSTf7TouFWYkxRdiEJCJXx1TcCujqcBQjWerlgpYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A16EF14BF;
-	Wed, 13 Aug 2025 07:49:25 -0700 (PDT)
-Received: from [10.57.1.244] (unknown [10.57.1.244])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CB263F5A1;
-	Wed, 13 Aug 2025 07:49:17 -0700 (PDT)
-Message-ID: <31bac00f-7903-46f7-a5a0-1e8f5fd8b9ab@arm.com>
-Date: Wed, 13 Aug 2025 15:49:15 +0100
+	s=arc-20240116; t=1755096602; c=relaxed/simple;
+	bh=IKd79XSfYGYNJK3qu4xBaxWtMjaCoeER7z8B0Tnv+34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jikviEPKKdLabEcQBUY31SryDouaBDqQEtAATLsLrEsUxhvN5PYszmqAbOTp+hiB/vQJ3bPmh5PRIrVIZfipzzyPgBJ+6wPbojGg16kSYiNnAgl6csj7gyA5SPVbEl2m/ULsfZTiE+yzAGtt9frTmgpPub6NrkrKez0v8KK9kl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cNuQsrcH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C55D9C4CEEB;
+	Wed, 13 Aug 2025 14:50:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755096601;
+	bh=IKd79XSfYGYNJK3qu4xBaxWtMjaCoeER7z8B0Tnv+34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cNuQsrcHD5VGQ+uByKxbvwmEZyCgKCmWumBJDT0EGv2CiEyL2RVSFLIM385uIr8wm
+	 pD0TB2dOWQ5I0WXMZ4q6Oj+EkJfcuuiwxrw+Ji1ZpfFb40sP2hEinKXJoxHRGicKD+
+	 2cj+PlTRIiVjqmywuneewZPQT7ExldINaqUH5iJU=
+Date: Wed, 13 Aug 2025 16:49:57 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Guan-Yu Lin <guanyulin@google.com>
+Cc: mathias.nyman@intel.com, hannelotta@gmail.com,
+	zijun.hu@oss.qualcomm.com, xu.yang_2@nxp.com,
+	stern@rowland.harvard.edu, andriy.shevchenko@linux.intel.com,
+	ben@decadent.org.uk, quic_wcheng@quicinc.com,
+	krzysztof.kozlowski@linaro.org, dh10.jung@samsung.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 2/4] usb: offload: add apis for offload usage tracking
+Message-ID: <2025081326-guileless-lego-ec59@gregkh>
+References: <20250801034004.3314737-1-guanyulin@google.com>
+ <20250801034004.3314737-3-guanyulin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 13/18] kasan: arm64: x86: Handle int3 for inline KASAN
- reports
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Cc: nathan@kernel.org, arnd@arndb.de, broonie@kernel.org,
- Liam.Howlett@oracle.com, urezki@gmail.com, will@kernel.org,
- kaleshsingh@google.com, rppt@kernel.org, leitao@debian.org, coxu@redhat.com,
- surenb@google.com, akpm@linux-foundation.org, luto@kernel.org,
- jpoimboe@kernel.org, changyuanl@google.com, hpa@zytor.com,
- dvyukov@google.com, kas@kernel.org, corbet@lwn.net,
- vincenzo.frascino@arm.com, smostafa@google.com,
- nick.desaulniers+lkml@gmail.com, morbo@google.com, andreyknvl@gmail.com,
- alexander.shishkin@linux.intel.com, thiago.bauermann@linaro.org,
- catalin.marinas@arm.com, ryabinin.a.a@gmail.com, jan.kiszka@siemens.com,
- jbohac@suse.cz, dan.j.williams@intel.com, joel.granados@kernel.org,
- baohua@kernel.org, kevin.brodsky@arm.com, nicolas.schier@linux.dev,
- pcc@google.com, andriy.shevchenko@linux.intel.com, wei.liu@kernel.org,
- bp@alien8.de, xin@zytor.com, pankaj.gupta@amd.com, vbabka@suse.cz,
- glider@google.com, jgross@suse.com, kees@kernel.org, jhubbard@nvidia.com,
- joey.gouly@arm.com, ardb@kernel.org, thuth@redhat.com,
- pasha.tatashin@soleen.com, kristina.martsenko@arm.com,
- bigeasy@linutronix.de, lorenzo.stoakes@oracle.com, jason.andryuk@amd.com,
- david@redhat.com, graf@amazon.com, wangkefeng.wang@huawei.com,
- ziy@nvidia.com, mark.rutland@arm.com, dave.hansen@linux.intel.com,
- samuel.holland@sifive.com, kbingham@kernel.org, trintaeoitogc@gmail.com,
- scott@os.amperecomputing.com, justinstitt@google.com,
- kuan-ying.lee@canonical.com, maz@kernel.org, tglx@linutronix.de,
- samitolvanen@google.com, mhocko@suse.com, nunodasneves@linux.microsoft.com,
- brgerst@gmail.com, willy@infradead.org, ubizjak@gmail.com,
- peterz@infradead.org, mingo@redhat.com, sohil.mehta@intel.com,
- linux-mm@kvack.org, linux-kbuild@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org, llvm@lists.linux.dev,
- kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ada Couprie Diaz <ada.coupriediaz@arm.com>
-References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
- <9030d5a35eb5a3831319881cb8cb040aad65b7b6.1755004923.git.maciej.wieczor-retman@intel.com>
-From: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-Content-Language: en-US
-Organization: Arm Ltd.
-In-Reply-To: <9030d5a35eb5a3831319881cb8cb040aad65b7b6.1755004923.git.maciej.wieczor-retman@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801034004.3314737-3-guanyulin@google.com>
 
-Hi,
-
-On 12/08/2025 14:23, Maciej Wieczor-Retman wrote:
-> [...]
->
-> Make part of that hook - which decides whether to die or recover from a
-> tag mismatch - arch independent to avoid duplicating a long comment on
-> both x86 and arm64 architectures.
->
-> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+On Fri, Aug 01, 2025 at 03:39:31AM +0000, Guan-Yu Lin wrote:
+> Introduce offload_usage and corresponding apis to track offload usage
+> on each USB device. Offload denotes that there is another co-processor
+> accessing the USB device via the same USB host controller. To optimize
+> power usage, it's essential to monitor whether the USB device is
+> actively used by other co-processor. This information is vital when
+> determining if a USB device can be safely suspended during system power
+> state transitions.
+> 
+> Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
 > ---
-> [...]
-> diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-> index f528b6041f6a..b9bdabc14ad1 100644
-> --- a/arch/arm64/kernel/traps.c
-> +++ b/arch/arm64/kernel/traps.c
-> @@ -1068,22 +1068,7 @@ int kasan_brk_handler(struct pt_regs *regs, unsigned long esr)
->   
->   	kasan_report(addr, size, write, pc);
->   
-> -	/*
-> -	 * The instrumentation allows to control whether we can proceed after
-> -	 * a crash was detected. This is done by passing the -recover flag to
-> -	 * the compiler. Disabling recovery allows to generate more compact
-> -	 * code.
-> -	 *
-> -	 * Unfortunately disabling recovery doesn't work for the kernel right
-> -	 * now. KASAN reporting is disabled in some contexts (for example when
-> -	 * the allocator accesses slab object metadata; this is controlled by
-> -	 * current->kasan_depth). All these accesses are detected by the tool,
-> -	 * even though the reports for them are not printed.
-> -	 *
-> -	 * This is something that might be fixed at some point in the future.
-> -	 */
-> -	if (!recover)
-> -		die("Oops - KASAN", regs, esr);
-> +	kasan_inline_recover(recover, "Oops - KASAN", regs, esr);
-It seems that `die` is missing as the last argument, otherwise
-CONFIG_KASAN_SW_TAGS will not build on arm64.
-With the fix, it builds fully without further issues.
+>  drivers/usb/core/Kconfig   |  10 +++
+>  drivers/usb/core/Makefile  |   1 +
+>  drivers/usb/core/offload.c | 136 +++++++++++++++++++++++++++++++++++++
+>  drivers/usb/core/usb.c     |   1 +
+>  include/linux/usb.h        |  18 +++++
+>  5 files changed, 166 insertions(+)
+>  create mode 100644 drivers/usb/core/offload.c
+> 
+> diff --git a/drivers/usb/core/Kconfig b/drivers/usb/core/Kconfig
+> index 58e3ca7e4793..d5d38657f929 100644
+> --- a/drivers/usb/core/Kconfig
+> +++ b/drivers/usb/core/Kconfig
+> @@ -143,3 +143,13 @@ config USB_DEFAULT_AUTHORIZATION_MODE
+>  	  ACPI selecting value 2 is analogous to selecting value 0.
+>  
+>  	  If unsure, keep the default value.
+> +
+> +config USB_OFFLOAD
+> +	bool "Enable USB offload feature"
 
-Thanks,
-Ada
+I'm confused, we already have a "USB offload feature" that went into the
+last kernel release, why do we need a separate config option for this as
+well?  Shouldn't this code only get built if the drivers that need it
+select it automatically?  Forcing distros to configure this isn't
+generally a good idea if at all possible.
+
+
+> +	depends on USB
+> +	depends on USB_XHCI_SIDEBAND_SUSPEND
+> +	help
+> +	  Offload denotes that there is another co-processor accessing the
+> +	  USB device via the same USB host controller, creating the
+> +	  "offloaded USB transfers". Say Y to allow offloaded USB
+> +	  transfers during system sleep (Suspend-to-RAM).
+
+Especially because all "desktops" do not want this code selected, so
+having it in all distros feels like a waste to me.
+
+thanks,
+
+greg k-h
 
