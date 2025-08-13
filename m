@@ -1,123 +1,266 @@
-Return-Path: <linux-kernel+bounces-765783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5FFFB23E3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:27:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615A9B23E3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A65FE4E1FE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:27:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B616E4C70
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B807C1EDA0E;
-	Wed, 13 Aug 2025 02:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Eo+1ssNh"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61101DFE09;
-	Wed, 13 Aug 2025 02:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085151E3DFE;
+	Wed, 13 Aug 2025 02:27:54 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0641DEFDD
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755052012; cv=none; b=azPXUm43bZy0JbGdxBEVdYNtr1QBaTmtxH0NE8Ozf/7g2bz7Atbb80nb6SxADGkptDmNpaQd/Pyf+awI9nRuS/+ehrqDVtWvXTK14u5mk0DTXnncZ8siAmOYNhVFAFHHIIDdIHoHWk3hTkaiNZO0Vtdbkp03fDqrsPy1itRI5S0=
+	t=1755052073; cv=none; b=eXlcPNVVudx8cQcStWeb+Keqw9wIq21LnnPKvYqfFeXoyZbaGnbhXN/YrflCOl4R0UdE8XPbMNjIm39WelxvEyZvJmKU/ER5LHTNisYQ+wYPKpcFR+VTOp7lgi4EGFjkSUc/k05QUt/Y7zma8eEJ3QfLMmqpYPxS47VkDQnitw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755052012; c=relaxed/simple;
-	bh=qZ/ufpn8BKzL1WoHIgc6fius6PHeGC33aJ9tGGnau2I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e8iLEMyp00MjOSbMAIoHl3/6yUDGqazS5Cnpwew39uLC+QQepd27+rgRELV+zQ3yxGDFaeUp9HETRJ9PPeQAeV7yFg9LjENUvO8ihCxDE8xd5pKl4cqbBsbQbcuSM99fEa8koh/xD6PBX0/XRBMHR0zy0xrfecSmqgunP72VwO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Eo+1ssNh; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CLR71U027960;
-	Wed, 13 Aug 2025 02:26:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=Um7Ftz2a9Gxqh6yDazlSEYLyO0pibTwEm7GgOmUbkzk=; b=
-	Eo+1ssNhN6650v8o/LMZx2FW9gAWagdhwNRLl+ubpPrY4O+R5K9N12zEhNjAvV4r
-	dtrr4WzVJVfhjTuyez6fyzEmLgbUFEh9RlugPT6oj63Rct+QYcvKSlJzwP/2irTj
-	ZoTf/2B87ytlFe+ZNlnqiprvIk7gaKW8a7jvGaekzQslF4HfTyuxDqseu4D9k3u8
-	Cf9ecZ2tym4s7iltwX68Vp+uCgAFFt6/R4K7duOSTLfkwwadVHRtYRBVa+YCCQSj
-	9G3/nwQurZOpUhuFDi0QHBs0fRExmFFvVFIZvjwss6i7LDmeQ8CE8ij7bHhppTWx
-	DrS0t45YOPv3Hw524ZA7Ng==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 48dxcf69hr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Aug 2025 02:26:40 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57D25ou5030254;
-	Wed, 13 Aug 2025 02:26:40 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48dvsarqrd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 13 Aug 2025 02:26:40 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57D2QaNc004410;
-	Wed, 13 Aug 2025 02:26:39 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48dvsarqpw-3;
-	Wed, 13 Aug 2025 02:26:39 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        Waqar Hameed <waqar.hameed@axis.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>, kernel@axis.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: ufs: core: Remove error print for devm_add_action_or_reset()
-Date: Tue, 12 Aug 2025 22:26:28 -0400
-Message-ID: <175504926155.959040.11869002718065823267.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <pndtt2mkt8v.a.out@axis.com>
-References: <pndtt2mkt8v.a.out@axis.com>
+	s=arc-20240116; t=1755052073; c=relaxed/simple;
+	bh=vQqCnulobDtum9Nm5dEE3ld/dGdzrbZpX65x+QIw8DM=;
+	h=Subject:From:To:Cc:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Ie4wz7rgcdZD4X8iLjhazNihEHB54wER+4sLtDrSaohwiqjn2EI8T3vsPlt/s3X4tMQl5I89iGCFPW0AnwXDMaVeBfTJw8lojspp5Nwr/Ao/e6hwFQOEO6Sc+W5p3gMx19dM7N077UEg298dOdkd3bxVeVbNNkmAq+NCHpuIeLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.126])
+	by gateway (Coremail) with SMTP id _____8BxIK8i+JtoLi4_AQ--.51550S3;
+	Wed, 13 Aug 2025 10:27:46 +0800 (CST)
+Received: from [10.20.42.126] (unknown [10.20.42.126])
+	by front1 (Coremail) with SMTP id qMiowJAxvsEf+JtoXhNIAA--.34377S3;
+	Wed, 13 Aug 2025 10:27:45 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: time: Fix the issue of high cpu usage of vcpu
+ threads in virtual machines
+From: lixianglai <lixianglai@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>,
+ Peter Zijlstra <peterz@infradead.org>, Bibo Mao <maobibo@loongson.cn>,
+ Song Gao <gaosong@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250812090056.771379-1-lixianglai@loongson.cn>
+ <CAAhV-H7pXxFR8PnAOv8CirotXUSPgbb7AEsHU0VGh_YMFFoyJA@mail.gmail.com>
+ <da4311b0-7e8e-647a-260f-1733878cf394@loongson.cn>
+ <CAAhV-H7uhvZeZ9L40AWuRN7t4JAFLNDj4YUOZ_K-oPrCcnpEjA@mail.gmail.com>
+ <13a54d23-24c2-8e59-77ac-900a63cd38ef@loongson.cn>
+Message-ID: <61c858da-8c5e-7652-e580-fc51c211ebb0@loongson.cn>
+Date: Wed, 13 Aug 2025 10:26:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <13a54d23-24c2-8e59-77ac-900a63cd38ef@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 phishscore=0
- adultscore=0 mlxscore=0 bulkscore=0 spamscore=0 mlxlogscore=916
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2507300000 definitions=main-2508130022
-X-Proofpoint-GUID: BAvCVtlCWjQMdT78Yj-y5SpCg0e8lXSu
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDAyMiBTYWx0ZWRfX90KX3tldT5V2
- +gp4jwn8nYHU0cs2Uh+huTOO03M52QdVUqZuemmxDi71vbSD5f7TPZFk6P20KajFnL5XGZ2dTD9
- lEDr+AgJvIAgYqxwjIJvBV0mRSIf5MLXXVLUF9oWXC3MayB9r1ndM2fW0XwMoPrnFw0XshYNPx3
- 8onHik0DfGVJCc2UFRHEo9/dQb5WzvLvmn5yR02z32UqYrYcR7n/Km8ay8/TdAx/XQ73WDdOcHM
- YaBH6wlBh7t3sbWk09OStb73G6fUnJVBDcMs9icK4JElaVSHgBoSuucbm55Era2IuQ4/EGPfkIr
- ltMFjYkkwVOeHc4xHNLgNIiajCvhAOCajQ1Ng+HoBOLstJ3tEdu0Ndm0WIcUjFUd6pRcKAaidRx
- EeIbV/t9cLR77qcz04m4g0g4osTTKqzJrLeMo4oVSWjiYUIUMjvLlwRUd6T9rZP1BypLyXT6
-X-Authority-Analysis: v=2.4 cv=W8M4VQWk c=1 sm=1 tr=0 ts=689bf7e1 cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=mpvREF5a7mMPylFIW4IA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: BAvCVtlCWjQMdT78Yj-y5SpCg0e8lXSu
+Content-Language: en-US
+X-CM-TRANSID:qMiowJAxvsEf+JtoXhNIAA--.34377S3
+X-CM-SenderInfo: 5ol0xt5qjotxo6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxKry8WFWkAw4DWw4kWw18CrX_yoWxAFWDpr
+	WkAF1UJrW5Grn7Xr1jqw1UXry3tr18J3W7Xr1xJF1UArsFyryFgF4jqr1qgF18JrWrJr1U
+	Xr1rXr17uF4UJrXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
+	JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
+	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
+	67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
+	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
+	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8CksDUUUUU==
 
-On Tue, 05 Aug 2025 11:33:36 +0200, Waqar Hameed wrote:
+Hi Huacai Chen:
+>> On Tue, Aug 12, 2025 at 8:50 PM lixianglai <lixianglai@loongson.cn> 
+>> wrote:
+>>>
+>>>
+>>> Hi Huacai Chen:
+>>>> Hi, Xianglai,
+>>>>
+>>>> There is something that can be improved.
+>>>>
+>>>> On Tue, Aug 12, 2025 at 5:24 PM Xianglai Li 
+>>>> <lixianglai@loongson.cn> wrote:
+>>>>> When the cpu is offline, the timer under loongarch is not 
+>>>>> correctly closed,
+>>>>> resulting in an excessively high cpu usage rate of the offline 
+>>>>> vcpu thread
+>>>>> in the virtual machine.
+>>>>>
+>>>>> To correctly close the timer, we have made the following 
+>>>>> modifications:
+>>>>>
+>>>>> Register the cpu hotplug timer start event for loongarch.This 
+>>>>> event will
+>>>>> be called to close the timer when the cpu is offline.
+>>>>>
+>>>>> Clear the timer interrupt when the timer is turned off
+>>>>>
+>>>>> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
+>>>>> ---
+>>>>>    arch/loongarch/kernel/time.c | 20 ++++++++++++++++++++
+>>>>>    include/linux/cpuhotplug.h   |  1 +
+>>>>>    2 files changed, 21 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/loongarch/kernel/time.c 
+>>>>> b/arch/loongarch/kernel/time.c
+>>>>> index 367906b10f81..4daa11512eba 100644
+>>>>> --- a/arch/loongarch/kernel/time.c
+>>>>> +++ b/arch/loongarch/kernel/time.c
+>>>>> @@ -12,6 +12,7 @@
+>>>>>    #include <linux/kernel.h>
+>>>>>    #include <linux/sched_clock.h>
+>>>>>    #include <linux/spinlock.h>
+>>>>> +#include <linux/cpu.h>
+>>>>>
+>>>>>    #include <asm/cpu-features.h>
+>>>>>    #include <asm/loongarch.h>
+>>>>> @@ -86,6 +87,9 @@ static int constant_set_state_shutdown(struct 
+>>>>> clock_event_device *evt)
+>>>>>           timer_config &= ~CSR_TCFG_EN;
+>>>>>           csr_write64(timer_config, LOONGARCH_CSR_TCFG);
+>>>>>
+>>>>> +       /* Clear Timer Interrupt */
+>>>>> +       write_csr_tintclear(CSR_TINTCLR_TI);
+>>>>> +
+>>>>>           raw_spin_unlock(&state_lock);
+>>>>>
+>>>>>           return 0;
+>>>>> @@ -208,8 +212,17 @@ int __init constant_clocksource_init(void)
+>>>>>           return res;
+>>>>>    }
+>>>>>
+>>>>> +static int arch_timer_dying_cpu(unsigned int cpu)
+>>>> We can use arch_timer_dying() for short. And then add an
+>>>> arch_timer_starting() like this:
+>>>>
+>>>> static int arch_timer_starting(unsigned int cpu)
+>>>> {
+>>>>           set_csr_ecfg(ECFGF_TIMER);
+>>>>
+>>>>           return 0;
+>>>> }
+>>>>
+>>>> Though ECFGF_TIMER may be enabled in other places, for syntax we 
+>>>> need it here.
+>>>>
+>>>>> +{
+>>>>> +       constant_set_state_shutdown(NULL);
+>>>>> +
+>>>>> +       return 0;
+>>>>> +}
+>>>>> +
+>>>>>    void __init time_init(void)
+>>>>>    {
+>>>>> +       int err;
+>>>>> +
+>>>>>           if (!cpu_has_cpucfg)
+>>>>>                   const_clock_freq = cpu_clock_freq;
+>>>>>           else
+>>>>> @@ -220,4 +233,11 @@ void __init time_init(void)
+>>>>>           constant_clockevent_init();
+>>>>>           constant_clocksource_init();
+>>>>>           pv_time_init();
+>>>>> +
+>>>>> +       err = 
+>>>>> cpuhp_setup_state_nocalls(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+>>>>> + "loongarch/timer:starting",
+>>>>> +                                       NULL, arch_timer_dying_cpu);
+>>>> Then we need use cpuhp_setup_state() here, because we have a startup
+>>>> function now.
+>>>>
+>>>> And "loongarch/timer:starting" should be
+>>>> "clockevents/loongarch/timer:starting" like others.
+>>>>
+>>>> And the whole should be moved to the last of
+>>>> constant_clockevent_init() because it is clockevent specific.
+>>> like this?
+>>>
+>>> @@ -164,6 +182,10 @@ int constant_clockevent_init(void)
+>>>
+>>>           timer_irq_installed = 1;
+>>>
+>>> + cpuhp_setup_state(CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+>>> + "clockevents/loongarch/timer:starting",
+>>> +                         arch_timer_starting, arch_timer_dying_cpu);
+>>> +
+>>>           sync_counter();
+>>>
+>>>
+>>> I was wondering whether it should be placed before or after the
+>>> "timer_irq_installed" judgment
+>> Should be after "timer_irq_installed" because we only need to run once.
+>>
+>> The best place is after pr_info("Constant clock event device 
+>> register\n");
+>
+> Got it!
+>> And there is another question:
+>> Should we move "write_csr_tintclear(CSR_TINTCLR_TI)" from
+>> constant_set_state_shutdown() to arch_timer_dying()?
+>
+> We may not need to do this. If the context in which the timer is
+> turned off is to disable interrupts, and the last timing period just
+> arrives during this process, when the interrupt is re-enabled,
+> an additional interrupt will be triggered and the next timing expiration
+> time will be filled. This is not in line with expectations.
+> Isn't it more reasonable to clean up the interrupt flag after turning off
+> the timer instead of just doing so cpu offline context cleaning.
+>
 
-> When `devm_add_action_or_reset()` fails, it is due to a failed memory
-> allocation and will thus return `-ENOMEM`. `dev_err_probe()` doesn't do
-> anything when error is `-ENOMEM`. Therefore, remove the useless call to
-> `dev_err_probe()` when `devm_add_action_or_reset()` fails, and just
-> return the value instead.
-> 
-> 
-> [...]
+This is my personal opinion, but I just trace the process of cpu offline 
+and need to clear the timer interrupt.
+Because is not particularly proficient in of the overall system 
+architecture, I might have a one-sided view.
+Do you have a better suggestion?
 
-Applied to 6.17/scsi-fixes, thanks!
+Thanks!
+Xianglai.
 
-[1/1] scsi: ufs: core: Remove error print for devm_add_action_or_reset()
-      https://git.kernel.org/mkp/scsi/c/72fc388d8bc0
+> Thanks!
+> Xianglai.
+>
+>>
+>> Huacai
+>>
+>>>
+>>>>> +       if (err)
+>>>>> +               pr_info("cpu hotplug event register failed");
+>>>> This is not so useful, because the error isn't fatal.
+>>>>
+>>>>
+>>>> Huacai
+>>>>
+>>>>> +
+>>>>>    }
+>>>>> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+>>>>> index edfa61d80702..6606c1546afc 100644
+>>>>> --- a/include/linux/cpuhotplug.h
+>>>>> +++ b/include/linux/cpuhotplug.h
+>>>>> @@ -159,6 +159,7 @@ enum cpuhp_state {
+>>>>>           CPUHP_AP_PERF_ARM_STARTING,
+>>>>>           CPUHP_AP_PERF_RISCV_STARTING,
+>>>>>           CPUHP_AP_ARM_L2X0_STARTING,
+>>>>> +       CPUHP_AP_LOONGARCH_ARCH_TIMER_STARTING,
+>>>>>           CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>>>>>           CPUHP_AP_ARM_ARCH_TIMER_STARTING,
+>>>>>           CPUHP_AP_ARM_ARCH_TIMER_EVTSTRM_STARTING,
+>>>>>
+>>>>> base-commit: 53e760d8949895390e256e723e7ee46618310361
+>>>>> -- 
+>>>>> 2.39.1
+>>>>>
+>>>
+>
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
 
