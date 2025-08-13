@@ -1,324 +1,336 @@
-Return-Path: <linux-kernel+bounces-765971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57A33B240B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:54:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB1F0B240A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D2CD1A26424
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D430C1AA5E2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 05:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C272D23B6;
-	Wed, 13 Aug 2025 05:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gs04jd+o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB2B2BF01E;
+	Wed, 13 Aug 2025 05:49:03 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154122D2385
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9EC2C1598;
+	Wed, 13 Aug 2025 05:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755064169; cv=none; b=MLxDFvy+WypSeqmxsbmo067yuj+C975uN5SPGqL587zwb+EFC44VjLuEh7KCPOlrJH5v7dQKDQLAAZp9fHH/BobCQ6qCmPc0iIZdUmLiuEjr5lK11hX803hmNM6orTy6H04EvXvdxbKTPnip2cXj1g1d6qfVwhcxHbZ7QCy7YZA=
+	t=1755064142; cv=none; b=bFONUAexirVhlxa6Qm2PU+pfQDrClzVrfzuHZiYr3g92Z0cODaaFuo2zv6psLuAxHl8DFvJFVI0xV8mEtXQr98GjjDS3Spnu4RpYq9vT/0B4AdrZ94HDM3Jj62K/5IuNQ7zHQYK01BZuRaQ0MILAZnsKaE9RApEPb9Tq0cUxFHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755064169; c=relaxed/simple;
-	bh=ct2P4Jylji6l95HatANo7+Nm1zSSO67jYR8EPb0kjMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W+Tv59XE8lRMcH/WZL4UJ2U03NCuj8auyvGQjliSVPNUabTVDOFLoDfXi3h7Yq8rRbnnxxq/VTSVyUmDfoNmc9s+mOy8yjckaRbQQTpj959t2MRgaavHS71tuLDjYe4S4aFe4becSXpxbOpKmqs5Ke6gYBuehtHQaJB6fvfyJV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gs04jd+o; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755064166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MrnLAqNPP3MNN09OO/tPRCXaRUs0p44l+QLGU8ZWbJk=;
-	b=Gs04jd+oBnfdtoEit/0FTB3U8eTEq9odnQJHiXGoyvMBHedFiAjKvirpPixZ9C67k7zSk5
-	Sacax/9bND2YH/wt7wqjULhA+iMAkkf6xgpRHAeLvVDw0/zrjJv0pv6uVyNCN1/89tsmXM
-	qWw3X3IEhmGjkDpBuUm9o+r39GpNp2Y=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-kSQY00JZNVishG9zl_7usg-1; Wed,
- 13 Aug 2025 01:49:25 -0400
-X-MC-Unique: kSQY00JZNVishG9zl_7usg-1
-X-Mimecast-MFC-AGG-ID: kSQY00JZNVishG9zl_7usg_1755064164
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4676A1956095;
-	Wed, 13 Aug 2025 05:49:24 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.168])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 444581800280;
-	Wed, 13 Aug 2025 05:49:19 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: hch@infradead.org
-Subject: [PATCH V5 9/9] vduse: switch to use virtio map API instead of DMA API
-Date: Wed, 13 Aug 2025 13:48:31 +0800
-Message-ID: <20250813054831.25865-10-jasowang@redhat.com>
-In-Reply-To: <20250813054831.25865-1-jasowang@redhat.com>
-References: <20250813054831.25865-1-jasowang@redhat.com>
+	s=arc-20240116; t=1755064142; c=relaxed/simple;
+	bh=XhlugzNdH+d95jCW0kj5l9IYJ//kXJPzqTGjstCtpEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c+Abkn9yHqLukqE+wRasMICohEjnYLhhX9EFFKIJRarKnDgInq+O6KeL8vpGKTfNm3L61ckAHPCqrL6TaGDuSKjM9tds390d+S60mPvpmtb7sipwPhAeAq9LvFvt5pfVhAHhWWgT424fUxsXI84mtYOQOp7wx56GYI+RI2K7+as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 30a643cc780911f0b29709d653e92f7d-20250813
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:3daa047f-cd79-47a5-8fd7-224c239c4ce8,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:994f152d6c1a295ca93fe5963adb0ebd,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA
+	:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 30a643cc780911f0b29709d653e92f7d-20250813
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 54274607; Wed, 13 Aug 2025 13:48:51 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 0897CE008FA5;
+	Wed, 13 Aug 2025 13:48:51 +0800 (CST)
+X-ns-mid: postfix-689C2742-86747173
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 4E0DFE008FA3;
+	Wed, 13 Aug 2025 13:48:38 +0800 (CST)
+Message-ID: <8c61ab95-9caa-4b57-adfd-31f941f0264d@kylinos.cn>
+Date: Wed, 13 Aug 2025 13:48:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
+ address process dependency issues
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+ Jan Kara <jack@suse.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+ David Hildenbrand <david@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
+ Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Nico Pache <npache@redhat.com>,
+ xu xin <xu.xin16@zte.com.cn>, wangfushuai <wangfushuai@baidu.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Christian Brauner <brauner@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Jeff Layton <jlayton@kernel.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Adrian Ratiu
+ <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+ <aJSpTpB9_jijiO6m@tiehlicka>
+ <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
+ <aJWglTo1xpXXEqEM@tiehlicka>
+ <ba9c23c4-cd95-4dba-9359-61565195d7be@kylinos.cn>
+ <aJW8NLPxGOOkyCfB@tiehlicka>
+ <09df0911-9421-40af-8296-de1383be1c58@kylinos.cn>
+ <aJnM32xKq0FOWBzw@tiehlicka>
+ <d86a9883-9d2e-4bb2-a93d-0d95b4a60e5f@kylinos.cn>
+ <20250812172655.GF7938@frogsfrogsfrogs>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250812172655.GF7938@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Lacking the support of device specific mapping supported in virtio,
-VDUSE must trick the DMA API in order to make virtio-vdpa transport
-work. This is done by advertising vDPA device as dma device with a
-VDUSE specific dma_ops even if it doesn't do DMA at all.
+Hi,
 
-This will be fixed by this patch. Thanks to the new mapping operations
-support by virtio and vDPA. VDUSE can simply switch to advertise its
-specific mappings operations to virtio via virtio-vdpa then DMA API is
-not needed for VDUSE any more and iova domain could be used as the
-mapping token instead.
+=E5=9C=A8 2025/8/13 01:26, Darrick J. Wong =E5=86=99=E9=81=93:
+> On Tue, Aug 12, 2025 at 01:57:49PM +0800, Zihuan Zhang wrote:
+>> Hi all,
+>>
+>> We encountered an issue where the number of freeze retries increased d=
+ue to
+>> processes stuck in D state. The logs point to jbd2-related activity.
+>>
+>> log1:
+>>
+>> 6616.650482] task:ThreadPoolForeg state:D stack:0=C2=A0 =C2=A0 =C2=A0p=
+id:262026
+>> tgid:4065=C2=A0 ppid:2490=C2=A0 =C2=A0task_flags:0x400040 flags:0x0000=
+4004
+>> [ 6616.650485] Call Trace:
+>> [ 6616.650486]=C2=A0 <TASK>
+>> [ 6616.650489]=C2=A0 __schedule+0x532/0xea0
+>> [ 6616.650494]=C2=A0 schedule+0x27/0x80
+>> [ 6616.650496]=C2=A0 jbd2_log_wait_commit+0xa6/0x120
+>> [ 6616.650499]=C2=A0 ? __pfx_autoremove_wake_function+0x10/0x10
+>> [ 6616.650502]=C2=A0 ext4_sync_file+0x1ba/0x380
+>> [ 6616.650505]=C2=A0 do_fsync+0x3b/0x80
+>>
+>> log2:
+>>
+>> [=C2=A0 631.206315] jdb2_log_wait_log_commit=C2=A0 completed (elapsed =
+0.002 seconds)
+>> [=C2=A0 631.215325] jdb2_log_wait_log_commit=C2=A0 completed (elapsed =
+0.001 seconds)
+>> [=C2=A0 631.240704] jdb2_log_wait_log_commit=C2=A0 completed (elapsed =
+0.386 seconds)
+>> [=C2=A0 631.262167] Filesystems sync: 0.424 seconds
+>> [=C2=A0 631.262821] Freezing user space processes
+>> [=C2=A0 631.263839] freeze round: 1, task to freeze: 852
+>> [=C2=A0 631.265128] freeze round: 2, task to freeze: 2
+>> [=C2=A0 631.267039] freeze round: 3, task to freeze: 2
+>> [=C2=A0 631.271176] freeze round: 4, task to freeze: 2
+>> [=C2=A0 631.279160] freeze round: 5, task to freeze: 2
+>> [=C2=A0 631.287152] freeze round: 6, task to freeze: 2
+>> [=C2=A0 631.295346] freeze round: 7, task to freeze: 2
+>> [=C2=A0 631.301747] freeze round: 8, task to freeze: 2
+>> [=C2=A0 631.309346] freeze round: 9, task to freeze: 2
+>> [=C2=A0 631.317353] freeze round: 10, task to freeze: 2
+>> [=C2=A0 631.325348] freeze round: 11, task to freeze: 2
+>> [=C2=A0 631.333353] freeze round: 12, task to freeze: 2
+>> [=C2=A0 631.341358] freeze round: 13, task to freeze: 2
+>> [=C2=A0 631.349357] freeze round: 14, task to freeze: 2
+>> [=C2=A0 631.357363] freeze round: 15, task to freeze: 2
+>> [=C2=A0 631.365361] freeze round: 16, task to freeze: 2
+>> [=C2=A0 631.373379] freeze round: 17, task to freeze: 2
+>> [=C2=A0 631.381366] freeze round: 18, task to freeze: 2
+>> [=C2=A0 631.389365] freeze round: 19, task to freeze: 2
+>> [=C2=A0 631.397371] freeze round: 20, task to freeze: 2
+>> [=C2=A0 631.405373] freeze round: 21, task to freeze: 2
+>> [=C2=A0 631.413373] freeze round: 22, task to freeze: 2
+>> [=C2=A0 631.421392] freeze round: 23, task to freeze: 1
+>> [=C2=A0 631.429948] freeze round: 24, task to freeze: 1
+>> [=C2=A0 631.438295] freeze round: 25, task to freeze: 1
+>> [=C2=A0 631.444546] jdb2_log_wait_log_commit=C2=A0 completed (elapsed =
+0.249 seconds)
+>> [=C2=A0 631.446387] freeze round: 26, task to freeze: 0
+>> [=C2=A0 631.446390] Freezing user space processes completed (elapsed 0=
+.183
+>> seconds)
+>> [=C2=A0 631.446392] OOM killer disabled.
+>> [=C2=A0 631.446393] Freezing remaining freezable tasks
+>> [=C2=A0 631.446656] freeze round: 1, task to freeze: 4
+>> [=C2=A0 631.447976] freeze round: 2, task to freeze: 0
+>> [=C2=A0 631.447978] Freezing remaining freezable tasks completed (elap=
+sed 0.001
+>> seconds)
+>> [=C2=A0 631.447980] PM: suspend debug: Waiting for 1 second(s).
+>> [=C2=A0 632.450858] OOM killer enabled.
+>> [=C2=A0 632.450859] Restarting tasks: Starting
+>> [=C2=A0 632.453140] Restarting tasks: Done
+>> [=C2=A0 632.453173] random: crng reseeded on system resumption
+>> [=C2=A0 632.453370] PM: suspend exit
+>> [=C2=A0 632.462799] jdb2_log_wait_log_commit=C2=A0 completed (elapsed =
+0.000 seconds)
+>> [=C2=A0 632.466114] jdb2_log_wait_log_commit=C2=A0 completed (elapsed =
+0.001 seconds)
+>>
+>> This is the reason:
+>>
+>> [=C2=A0 631.444546] jdb2_log_wait_log_commit=C2=A0 completed (elapsed =
+0.249 seconds)
+>>
+>>
+>> During freezing, user processes executing jbd2_log_wait_commit enter D=
+ state
+>> because this function calls wait_event and can take tens of millisecon=
+ds to
+>> complete. This long execution time, coupled with possible competition =
+with
+>> the freezer, causes repeated freeze retries.
+>>
+>> While we understand that jbd2 is a freezable kernel thread, we would l=
+ike to
+>> know if there is a way to freeze it earlier or freeze some critical
+>> processes proactively to reduce this contention.
+> Freeze the filesystem before you start freezing kthreads?  That should
+> quiesce the jbd2 workers and pause anyone trying to write to the fs.
+Indeed, freezing the filesystem can work.
 
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vdpa/Kconfig                 |  8 +--
- drivers/vdpa/vdpa_user/iova_domain.c |  2 +-
- drivers/vdpa/vdpa_user/iova_domain.h |  2 +-
- drivers/vdpa/vdpa_user/vduse_dev.c   | 75 ++++++++++++++--------------
- 4 files changed, 41 insertions(+), 46 deletions(-)
+However, this approach is quite expensive: it increases the total=20
+suspend time by about 3 to 4 seconds. Because of this overhead, we are=20
+exploring alternative solutions with lower cost.
 
-diff --git a/drivers/vdpa/Kconfig b/drivers/vdpa/Kconfig
-index 559fb9d3271f..857cf288c876 100644
---- a/drivers/vdpa/Kconfig
-+++ b/drivers/vdpa/Kconfig
-@@ -34,13 +34,7 @@ config VDPA_SIM_BLOCK
- 
- config VDPA_USER
- 	tristate "VDUSE (vDPA Device in Userspace) support"
--	depends on EVENTFD && MMU && HAS_DMA
--	#
--	# This driver incorrectly tries to override the dma_ops.  It should
--	# never have done that, but for now keep it working on architectures
--	# that use dma ops
--	#
--	depends on ARCH_HAS_DMA_OPS
-+	depends on EVENTFD && MMU
- 	select VHOST_IOTLB
- 	select IOMMU_IOVA
- 	help
-diff --git a/drivers/vdpa/vdpa_user/iova_domain.c b/drivers/vdpa/vdpa_user/iova_domain.c
-index 58116f89d8da..ccaed24b7ef8 100644
---- a/drivers/vdpa/vdpa_user/iova_domain.c
-+++ b/drivers/vdpa/vdpa_user/iova_domain.c
-@@ -447,7 +447,7 @@ void vduse_domain_unmap_page(struct vduse_iova_domain *domain,
- 
- void *vduse_domain_alloc_coherent(struct vduse_iova_domain *domain,
- 				  size_t size, dma_addr_t *dma_addr,
--				  gfp_t flag, unsigned long attrs)
-+				  gfp_t flag)
- {
- 	struct iova_domain *iovad = &domain->consistent_iovad;
- 	unsigned long limit = domain->iova_limit;
-diff --git a/drivers/vdpa/vdpa_user/iova_domain.h b/drivers/vdpa/vdpa_user/iova_domain.h
-index 7f3f0928ec78..1f3c30be272a 100644
---- a/drivers/vdpa/vdpa_user/iova_domain.h
-+++ b/drivers/vdpa/vdpa_user/iova_domain.h
-@@ -64,7 +64,7 @@ void vduse_domain_unmap_page(struct vduse_iova_domain *domain,
- 
- void *vduse_domain_alloc_coherent(struct vduse_iova_domain *domain,
- 				  size_t size, dma_addr_t *dma_addr,
--				  gfp_t flag, unsigned long attrs);
-+				  gfp_t flag);
- 
- void vduse_domain_free_coherent(struct vduse_iova_domain *domain, size_t size,
- 				void *vaddr, dma_addr_t dma_addr,
-diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-index f161059d543e..3260edefdf0d 100644
---- a/drivers/vdpa/vdpa_user/vduse_dev.c
-+++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-@@ -88,6 +88,7 @@ struct vduse_dev {
- 	struct device *dev;
- 	struct vduse_virtqueue **vqs;
- 	struct vduse_iova_domain *domain;
-+	struct vduse_iova_domain *dom;
- 	char *name;
- 	struct mutex lock;
- 	spinlock_t msg_lock;
-@@ -814,59 +815,53 @@ static const struct vdpa_config_ops vduse_vdpa_config_ops = {
- 	.free			= vduse_vdpa_free,
- };
- 
--static void vduse_dev_sync_single_for_device(struct device *dev,
-+static void vduse_dev_sync_single_for_device(void *token,
- 					     dma_addr_t dma_addr, size_t size,
- 					     enum dma_data_direction dir)
- {
--	struct vduse_dev *vdev = dev_to_vduse(dev);
--	struct vduse_iova_domain *domain = vdev->domain;
-+	struct vduse_iova_domain *domain = token;
- 
- 	vduse_domain_sync_single_for_device(domain, dma_addr, size, dir);
- }
- 
--static void vduse_dev_sync_single_for_cpu(struct device *dev,
-+static void vduse_dev_sync_single_for_cpu(void *token,
- 					     dma_addr_t dma_addr, size_t size,
- 					     enum dma_data_direction dir)
- {
--	struct vduse_dev *vdev = dev_to_vduse(dev);
--	struct vduse_iova_domain *domain = vdev->domain;
-+	struct vduse_iova_domain *domain = token;
- 
- 	vduse_domain_sync_single_for_cpu(domain, dma_addr, size, dir);
- }
- 
--static dma_addr_t vduse_dev_map_page(struct device *dev, struct page *page,
-+static dma_addr_t vduse_dev_map_page(void *token, struct page *page,
- 				     unsigned long offset, size_t size,
- 				     enum dma_data_direction dir,
- 				     unsigned long attrs)
- {
--	struct vduse_dev *vdev = dev_to_vduse(dev);
--	struct vduse_iova_domain *domain = vdev->domain;
-+	struct vduse_iova_domain *domain = token;
- 
- 	return vduse_domain_map_page(domain, page, offset, size, dir, attrs);
- }
- 
--static void vduse_dev_unmap_page(struct device *dev, dma_addr_t dma_addr,
-+static void vduse_dev_unmap_page(void *token, dma_addr_t dma_addr,
- 				size_t size, enum dma_data_direction dir,
- 				unsigned long attrs)
- {
--	struct vduse_dev *vdev = dev_to_vduse(dev);
--	struct vduse_iova_domain *domain = vdev->domain;
-+	struct vduse_iova_domain *domain = token;
- 
- 	return vduse_domain_unmap_page(domain, dma_addr, size, dir, attrs);
- }
- 
--static void *vduse_dev_alloc_coherent(struct device *dev, size_t size,
--					dma_addr_t *dma_addr, gfp_t flag,
--					unsigned long attrs)
-+static void *vduse_dev_alloc_coherent(void *token, size_t size,
-+				      dma_addr_t *dma_addr, gfp_t flag)
- {
--	struct vduse_dev *vdev = dev_to_vduse(dev);
--	struct vduse_iova_domain *domain = vdev->domain;
-+	struct vduse_iova_domain *domain = token;
- 	unsigned long iova;
- 	void *addr;
- 
- 	*dma_addr = DMA_MAPPING_ERROR;
- 	addr = vduse_domain_alloc_coherent(domain, size,
--				(dma_addr_t *)&iova, flag, attrs);
-+					   (dma_addr_t *)&iova, flag);
- 	if (!addr)
- 		return NULL;
- 
-@@ -875,31 +870,45 @@ static void *vduse_dev_alloc_coherent(struct device *dev, size_t size,
- 	return addr;
- }
- 
--static void vduse_dev_free_coherent(struct device *dev, size_t size,
--					void *vaddr, dma_addr_t dma_addr,
--					unsigned long attrs)
-+static void vduse_dev_free_coherent(void *token, size_t size,
-+				    void *vaddr, dma_addr_t dma_addr,
-+				    unsigned long attrs)
- {
--	struct vduse_dev *vdev = dev_to_vduse(dev);
--	struct vduse_iova_domain *domain = vdev->domain;
-+	struct vduse_iova_domain *domain = token;
- 
- 	vduse_domain_free_coherent(domain, size, vaddr, dma_addr, attrs);
- }
- 
--static size_t vduse_dev_max_mapping_size(struct device *dev)
-+static bool vduse_dev_need_sync(void *token, dma_addr_t dma_addr)
- {
--	struct vduse_dev *vdev = dev_to_vduse(dev);
--	struct vduse_iova_domain *domain = vdev->domain;
-+	struct vduse_iova_domain *domain = token;
-+
-+	return dma_addr < domain->bounce_size;
-+}
-+
-+static int vduse_dev_mapping_error(void *token, dma_addr_t dma_addr)
-+{
-+	if (unlikely(dma_addr == DMA_MAPPING_ERROR))
-+		return -ENOMEM;
-+	return 0;
-+}
-+
-+static size_t vduse_dev_max_mapping_size(void *token)
-+{
-+	struct vduse_iova_domain *domain = token;
- 
- 	return domain->bounce_size;
- }
- 
--static const struct dma_map_ops vduse_dev_dma_ops = {
-+static const struct virtio_map_ops vduse_map_ops = {
- 	.sync_single_for_device = vduse_dev_sync_single_for_device,
- 	.sync_single_for_cpu = vduse_dev_sync_single_for_cpu,
- 	.map_page = vduse_dev_map_page,
- 	.unmap_page = vduse_dev_unmap_page,
- 	.alloc = vduse_dev_alloc_coherent,
- 	.free = vduse_dev_free_coherent,
-+	.need_sync = vduse_dev_need_sync,
-+	.mapping_error = vduse_dev_mapping_error,
- 	.max_mapping_size = vduse_dev_max_mapping_size,
- };
- 
-@@ -2003,27 +2012,18 @@ static struct vduse_mgmt_dev *vduse_mgmt;
- static int vduse_dev_init_vdpa(struct vduse_dev *dev, const char *name)
- {
- 	struct vduse_vdpa *vdev;
--	int ret;
- 
- 	if (dev->vdev)
- 		return -EEXIST;
- 
- 	vdev = vdpa_alloc_device(struct vduse_vdpa, vdpa, dev->dev,
--				 &vduse_vdpa_config_ops, NULL,
-+				 &vduse_vdpa_config_ops, &vduse_map_ops,
- 				 1, 1, name, true);
- 	if (IS_ERR(vdev))
- 		return PTR_ERR(vdev);
- 
- 	dev->vdev = vdev;
- 	vdev->dev = dev;
--	vdev->vdpa.dev.dma_mask = &vdev->vdpa.dev.coherent_dma_mask;
--	ret = dma_set_mask_and_coherent(&vdev->vdpa.dev, DMA_BIT_MASK(64));
--	if (ret) {
--		put_device(&vdev->vdpa.dev);
--		return ret;
--	}
--	set_dma_ops(&vdev->vdpa.dev, &vduse_dev_dma_ops);
--	vdev->vdpa.mapping_token.dma_dev = &vdev->vdpa.dev;
- 	vdev->vdpa.mdev = &vduse_mgmt->mgmt_dev;
- 
- 	return 0;
-@@ -2056,6 +2056,7 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mdev, const char *name,
- 		return -ENOMEM;
- 	}
- 
-+	dev->vdev->vdpa.mapping_token.token = dev->domain;
- 	ret = _vdpa_register_device(&dev->vdev->vdpa, dev->vq_num);
- 	if (ret) {
- 		put_device(&dev->vdev->vdpa.dev);
--- 
-2.31.1
+We have tested it:
 
+https://lore.kernel.org/all/09df0911-9421-40af-8296-de1383be1c58@kylinos.=
+cn/=20
+
+> Maybe the missing piece here is the device model not knowing how to cal=
+l
+> bdev_freeze prior to a suspend?
+Currently, suspend flow seem to does not invoke bdev_freeze(). Do you=20
+have any plans or insights on improving or integrating this=20
+functionality more smoothly into the device model and suspend sequence?
+> That said, I think that doesn't 100% work for XFS because it has
+> kworkers for metadata buffer read completions, and freezes don't affect
+> read operations...
+
+Does read activity also cause processes to enter D (uninterruptible=20
+sleep) state?
+
+ From what I understand, it=E2=80=99s usually writes or synchronous opera=
+tions=20
+that do, but I=E2=80=99m curious if reads can also lead to D state under =
+certain=20
+conditions.
+
+> (just my clueless 2c)
+>
+> --D
+>
+>> Thanks for your input and suggestions.
+>>
+>> =E5=9C=A8 2025/8/11 18:58, Michal Hocko =E5=86=99=E9=81=93:
+>>> On Mon 11-08-25 17:13:43, Zihuan Zhang wrote:
+>>>> =E5=9C=A8 2025/8/8 16:58, Michal Hocko =E5=86=99=E9=81=93:
+>>> [...]
+>>>>> Also the interface seems to be really coarse grained and it can eas=
+ily
+>>>>> turn out insufficient for other usecases while it is not entirely c=
+lear
+>>>>> to me how this could be extended for those.
+>>>>   =C2=A0We recognize that the current interface is relatively coarse=
+-grained and
+>>>> may not be sufficient for all scenarios. The present implementation =
+is a
+>>>> basic version.
+>>>>
+>>>> Our plan is to introduce a classification-based mechanism that assig=
+ns
+>>>> different freeze priorities according to process categories. For exa=
+mple,
+>>>> filesystem and graphics-related processes will be given higher defau=
+lt
+>>>> freeze priority, as they are critical in the freezing workflow. This
+>>>> classification approach helps target important processes more precis=
+ely.
+>>>>
+>>>> However, this requires further testing and refinement before full
+>>>> deployment. We believe this incremental, category-based design will =
+make the
+>>>> mechanism more effective and adaptable over time while keeping it
+>>>> manageable.
+>>> Unless there is a clear path for a more extendable interface then
+>>> introducing this one is a no-go. We do not want to grow different way=
+s
+>>> to establish freezing policies.
+>>>
+>>> But much more fundamentally. So far I haven't really seen any argumen=
+t
+>>> why different priorities help with the underlying problem other than =
+the
+>>> timing might be slightly different if you change the order of freezin=
+g.
+>>> This to me sounds like the proposed scheme mostly works around the
+>>> problem you are seeing and as such is not a really good candidate to =
+be
+>>> merged as a long term solution. Not to mention with a user API that
+>>> needs to be maintained for ever.
+>>>
+>>> So NAK from me on the interface.
+>>>
+>> Thanks for the feedback. I understand your concern that changing the f=
+reezer
+>> priority order looks like working around the symptom rather than solvi=
+ng the
+>> root cause.
+>>
+>> Since the last discussion, we have analyzed the D-state processes furt=
+her
+>> and identified that the long wait time is caused by jbd2_log_wait_comm=
+it.
+>> This wait happens because user tasks call into this function during
+>> fsync/fdatasync and it can take tens of milliseconds to complete. When=
+ this
+>> coincides with the freezer operation, the tasks are stuck in D state a=
+nd
+>> retried multiple times, increasing the total freeze time.
+>>
+>> Although we know that jbd2 is a freezable kernel thread, we are explor=
+ing
+>> whether freezing it earlier =E2=80=94 or freezing certain key processe=
+s first =E2=80=94
+>> could reduce this contention and improve freeze completion time.
+>>
+>>
+>>>>> I believe it would be more useful to find sources of those freezer
+>>>>> blockers and try to address those. Making more blocked tasks
+>>>>> __set_task_frozen compatible sounds like a general improvement in
+>>>>> itself.
+>>>> we have already identified some causes of D-state tasks, many of whi=
+ch are
+>>>> related to the filesystem. On some systems, certain processes freque=
+ntly
+>>>> execute ext4_sync_file, and under contention this can lead to D-stat=
+e tasks.
+>>> Please work with maintainers of those subsystems to find proper
+>>> solutions.
+>> We=E2=80=99ve pulled in the jbd2 maintainer to get feedback on whether=
+ changing the
+>> freeze ordering for jbd2 is safe or if there=E2=80=99s a better approa=
+ch to avoid
+>> the repeated retries caused by this wait.
+>>
 
