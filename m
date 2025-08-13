@@ -1,155 +1,217 @@
-Return-Path: <linux-kernel+bounces-766988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C09B24D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:29:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD7DB24D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 597937B3DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1763E3B3B64
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED712417C5;
-	Wed, 13 Aug 2025 15:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAAF238C3A;
+	Wed, 13 Aug 2025 15:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="iD/vDSU9"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="c1mbcx01"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAE823BCE2;
-	Wed, 13 Aug 2025 15:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E63B1EDA2A;
+	Wed, 13 Aug 2025 15:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755098927; cv=none; b=IHzQkhPUn/XfUH6LzQGLCQn/GrlV6SRQeTShrABIUn58regT2J57Cn6RxX/EAJ1qYHnzyQQzL1KypCqMdZxYcLbk6ZW4+4eWn6xU8BLlKDEwsOLxWVEUZo8r4IVr9MHynMou0l7PiAGg/XB6J+IPG+pLdrTaW6og1xXls+e6S+M=
+	t=1755098975; cv=none; b=mExCkFnvShlBGnDvpM/VJ3ycZwWSHrGdSAB2Vmazjwprr1oOEYsGowN1/MuDd8y7ePjEC8E92SSkJ4TIeYozgaIRo8yk9xyIkiGG/zHp0uZQBegd9DP1E1BaxmTudgFpln4qKg51Wh/6XnpsvrPQ5thptg2+svSWNEoYyScV0/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755098927; c=relaxed/simple;
-	bh=d4tIsS38EDYbVPrOHCTVdpAJiejvoXsr6isPmsDzQaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQRT7ty6UolrHErdgeTnGkirB3wCy/Djio4skGOij6CsjTbREpYppok48uldJ47feepzv54wX8RT7ySLuH3K5huD+540LW6phKTeXODhuAOwdE1MD2Vsk3d2qVGHGFdhGy87WETw9jy/B63U6Np1Q47JJGtQMOYTUB2aAYc63jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=iD/vDSU9; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=99/b1Zz+WjCB1f6WwTNHvQByBXsYpqmstCtToqVhvHk=; b=iD/vDSU9sI7iSXH2vti3YhW/l7
-	WBPlbuoCL0mDmgYtM3Nfy/FT8JngWib2nu/AXoE4dwnSrJbvJDFFh5F0f+3jTcX2b8rg4Zs0olMJ9
-	vq0ycg35wvXZZUAV8lJSs/ElrsVBCH6zzjy290B3/xxTgq2wghkkqv7OPCj27HG/Nbr8JkKqvCLk2
-	sPp/oy/7DWQNTGO8F0xf9daAfQBDD5norhMHYNHlSHMtOpQ1y0qluWuKXzlJ4fHlNuQV9VJ11WFy0
-	HSpYqY3f+mJnalam52JvTJ0k7Wd5+SqqXGzgG70Z7TMb7C0e2M0JTIDhQl7JBya50FYGPgphn5HLu
-	SN8TCSLQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56374)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1umDOz-0006w9-15;
-	Wed, 13 Aug 2025 16:28:33 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1umDOx-0005rk-0D;
-	Wed, 13 Aug 2025 16:28:31 +0100
-Date: Wed, 13 Aug 2025 16:28:30 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Hanna Hawa <hhhawa@amazon.com>,
-	Robert Marko <robert.marko@sartura.hr>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Imre Kaloz <kaloz@openwrt.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] i2c: pxa: prevent calling of the generic recovery
- init code
-Message-ID: <aJyvHnLS-A3F2gN7@shell.armlinux.org.uk>
-References: <20250811-i2c-pxa-fix-i2c-communication-v2-0-ca42ea818dc9@gmail.com>
- <20250811-i2c-pxa-fix-i2c-communication-v2-2-ca42ea818dc9@gmail.com>
- <aJpR96Kkj12BwW-M@smile.fi.intel.com>
- <8cb62eb9-9137-44b4-86f6-82f69813e83f@gmail.com>
- <aJyOu_GUlDPuJXO5@smile.fi.intel.com>
- <0bfcb570-dab3-4038-a1aa-8bc7fe2feee8@gmail.com>
+	s=arc-20240116; t=1755098975; c=relaxed/simple;
+	bh=MR0DcSztgKA4jVA39j6euLbkCbLBnVIqd8/aw4ObGKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MANKYlOQYjQqiS2B1KT2YsqtgHN5k0XN04CoroFIt4S0ox1srql45bxbUfGGdXmPbTxqx8elNuMTPiM5pAYqbNVI01PXPIll6B8q1Yfczto5oEE31tFtBbWO7twhv5rFanXqdPtL8e+fqBV2zrHvvlwnKSa3RgzAnNt+8judKks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=c1mbcx01; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id DBF74A09CA;
+	Wed, 13 Aug 2025 17:29:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=EmjzUDwTEf/ZVzLY6NpU
+	Z7nq/gf392CNl+RtZjfZyd4=; b=c1mbcx01jkNEjwmMwbywiKqeRa2FdI/RIrSg
+	umyluj/3Jz/VgcmHExvEZ83/8clhYcXKnl4CNtKXLL4C6sVBzFUAIjIVFkIWmX1K
+	nWxzKsfWoB2/JqsuF2IIcTMZPu//8sLeZn5YkTpFL9NA7G49np1e6iNV5ZAawslC
+	aYeBn1UUll7OpxgQEapTQLW2IvXkuxUx7CcI436lWs8HpoCDSVjfI95sFiaW+Rap
+	cZdezw/NX7gwsL05oWWbrOrA4eMYPVc9ZfqGn8+XcpyGsXdQGcT7bCkPEU6VzfVr
+	w0toicu09s82GfT4ds9Z0yrh6gGZqg7ZE8dChtnkptX8Yad++Oov3h0tfpBRO6dl
+	pdDztiYuLU/yn1hM2KPBDRir09691LBhPlb5uLBiK0a7O+5a96VbYeMcTtGqDTOc
+	QGVnKDOZAXKZifJdHf9FInn4bG3oeC/EUXYmmTzS/OU+/GYRT348fgzEPKePlQ0x
+	Oft+ihlf9gHnF6ddkab0qJp4lGIZtsSGCoiKo+gbzTp60ug2CtIs2AWFlfUajqkQ
+	HbV/8dWEvFk14kMYJZ0wZUs/umE/Hn6BUZgkKFEt3MQxVS1dprivtz0x9x/2nOhr
+	yO+W5k22H7qaRqWDAj7B2hWObNHnV2mPCF2UGFLW0mlB4RQH4SKWHYSPLpqJ2Swd
+	nrQGohI=
+Message-ID: <db71a9dd-72b0-47ef-a7f0-bd527262c4e9@prolan.hu>
+Date: Wed, 13 Aug 2025 17:29:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ARM: dts: imx6-litesom: Replace license text comment
+ with SPDX identifier
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
+CC: <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Marcin Niestroj <m.niestroj@grinn-global.com>, Piotr Figlarek
+	<piotr.figlarek@grinn-global.com>, Marcin Niestroj <m.niestroj@emb.dev>
+References: <20250709-litesom-dts-lic-v2-1-b907084ced96@prolan.hu>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20250709-litesom-dts-lic-v2-1-b907084ced96@prolan.hu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0bfcb570-dab3-4038-a1aa-8bc7fe2feee8@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-ClientProxiedBy: sinope.intranet.prolan.hu (10.254.0.237) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E617765
 
-On Wed, Aug 13, 2025 at 05:17:28PM +0200, Gabor Juhos wrote:
-> 2025. 08. 13. 15:10 keltezéssel, Andy Shevchenko írta:
-> > On Wed, Aug 13, 2025 at 12:36:45PM +0200, Gabor Juhos wrote:
-> >> 2025. 08. 11. 22:26 keltezéssel, Andy Shevchenko írta:
-> >>> On Mon, Aug 11, 2025 at 09:49:56PM +0200, Gabor Juhos wrote:
-> > 
-> > ...
-> > 
-> >>> TBH this sounds to me like trying to hack the solution and as you pointed out
-> >>> the problem is in pinctrl state changes. I think it may affect not only I2C case.
-> >>
-> >> It is not an error in the pinctrl code. I have checked and even fixed a few bugs
-> >> in that.
-> >>
-> >>> And I didn't get how recovery code affects the initialisation (enumeration).
-> >>
-> >> Without the fix, it is not possible to initiate a transaction on the bus, which
-> >> in turn prevents enumeration.
-> > 
-> > But why? As you said below the first pin control state is changed during the
-> > probe, which is fine, and the culprit one happens on the recovery.
-> 
-> Erm, no. Both happens during probe, before the I2C core tries to enumerate the
-> devices on the bus.
-> 
-> > Why is recovery involved in probe? This is quite confusing...
-> Let me try to explain it differently. Here is the simplified call chain:
-> 
->   i2c_pxa_probe()
->      ...
->      i2c_pxa_init_recovery()
->         pinctrl_select_state()                  <- selects GPIO state
->         pinctrl_select_state()                  <- selects default (I2C) state
->      ...
->      i2c_add_numbered_adapter()
->          i2c_register_adapter()
->              ...
->              i2c_init_recovery()
->                  i2c_gpio_init_recovery()
->                      i2c_gpio_init_generic_recovery()
->                          pinctrl_select_state() <- selects GPIO state***
->                          ...
->                          pinctrl_select_state() <- selects default (I2C) state
->              ...
->              bus_for_each_drv()
->                  __process_new_adapter()
->                      i2c_do_add_adapter()
->                          i2c_detect()           <- enumerates the devices
-> 
-> The culprit is the first pinctrl_select_state() call in
-> i2c_gpio_init_generic_recovery() marked with '***'.
-> 
-> That call causes the controller to go stuck, which makes it impossible to
-> transfer anything on the bus.
+Hi,
 
-Probably because when GPIO state is selected, the I2C bus pins end up
-being set low, which the I2C controller sees, so it thinks there's
-another device communicating on the bus. I could be wrong, as I
-don't have the hardware to hand to research the issue again.
+On 2025. 07. 09. 9:31, Bence CsÃ³kÃ¡s wrote:
+> Replace verbatim license text with a `SPDX-License-Identifier`.
+> 
+> The comment header mis-attributes this license to be "X11", but the
+> license text does not include the last line "Except as contained in this
+> notice, the name of the X Consortium shall not be used in advertising or
+> otherwise to promote the sale, use or other dealings in this Software
+> without prior written authorization from the X Consortium.". Therefore,
+> this license is actually equivalent to the SPDX "MIT" license (confirmed
+> by text diffing).
+> 
+> Cc: Marcin Niestroj <m.niestroj@grinn-global.com>
+> Signed-off-by: Bence CsÃ³kÃ¡s <csokas.bence@prolan.hu>
 
-I have a vague memory that the GPIO state must _always_ reflect the
-actual pin state before switching to it to avoid glitches and avoid
-inadvertently changing the I2C controller state.
++Cc: Piotr Figlarek
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> ---
+> Changes in v2:
+> - Fix msg
+> - Link to v1: https://lore.kernel.org/r/20250702-litesom-dts-lic-v1-1-401e4d141bf0@prolan.hu
+> ---
+>   arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts | 38 +-------------------------
+>   arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi  | 38 +-------------------------
+>   2 files changed, 2 insertions(+), 74 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts b/arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts
+> index 5e62272acfba..7a4127670a6f 100644
+> --- a/arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6ul-liteboard.dts
+> @@ -1,44 +1,8 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+>   /*
+>    * Copyright 2016 Grinn
+>    *
+>    * Author: Marcin Niestroj <m.niestroj@grinn-global.com>
+> - *
+> - * This file is dual-licensed: you can use it either under the terms
+> - * of the GPL or the X11 license, at your option. Note that this dual
+> - * licensing only applies to this file, and not this project as a
+> - * whole.
+> - *
+> - *  a) This file is free software; you can redistribute it and/or
+> - *     modify it under the terms of the GNU General Public License
+> - *     version 2 as published by the Free Software Foundation.
+> - *
+> - *     This file is distributed in the hope that it will be useful,
+> - *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - *     GNU General Public License for more details.
+> - *
+> - * Or, alternatively,
+> - *
+> - *  b) Permission is hereby granted, free of charge, to any person
+> - *     obtaining a copy of this software and associated documentation
+> - *     files (the "Software"), to deal in the Software without
+> - *     restriction, including without limitation the rights to use,
+> - *     copy, modify, merge, publish, distribute, sublicense, and/or
+> - *     sell copies of the Software, and to permit persons to whom the
+> - *     Software is furnished to do so, subject to the following
+> - *     conditions:
+> - *
+> - *     The above copyright notice and this permission notice shall be
+> - *     included in all copies or substantial portions of the Software.
+> - *
+> - *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> - *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> - *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> - *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> - *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> - *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> - *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> - *     OTHER DEALINGS IN THE SOFTWARE.
+>    */
+>   
+>   /dts-v1/;
+> diff --git a/arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi b/arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi
+> index 8d6893210842..c387753f833b 100644
+> --- a/arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi
+> +++ b/arch/arm/boot/dts/nxp/imx/imx6ul-litesom.dtsi
+> @@ -1,44 +1,8 @@
+> +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+>   /*
+>    * Copyright 2016 Grinn
+>    *
+>    * Author: Marcin Niestroj <m.niestroj@grinn-global.com>
+> - *
+> - * This file is dual-licensed: you can use it either under the terms
+> - * of the GPL or the X11 license, at your option. Note that this dual
+> - * licensing only applies to this file, and not this project as a
+> - * whole.
+> - *
+> - *  a) This file is free software; you can redistribute it and/or
+> - *     modify it under the terms of the GNU General Public License
+> - *     version 2 as published by the Free Software Foundation.
+> - *
+> - *     This file is distributed in the hope that it will be useful,
+> - *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - *     GNU General Public License for more details.
+> - *
+> - * Or, alternatively,
+> - *
+> - *  b) Permission is hereby granted, free of charge, to any person
+> - *     obtaining a copy of this software and associated documentation
+> - *     files (the "Software"), to deal in the Software without
+> - *     restriction, including without limitation the rights to use,
+> - *     copy, modify, merge, publish, distribute, sublicense, and/or
+> - *     sell copies of the Software, and to permit persons to whom the
+> - *     Software is furnished to do so, subject to the following
+> - *     conditions:
+> - *
+> - *     The above copyright notice and this permission notice shall be
+> - *     included in all copies or substantial portions of the Software.
+> - *
+> - *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+> - *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+> - *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+> - *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+> - *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+> - *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+> - *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+> - *     OTHER DEALINGS IN THE SOFTWARE.
+>    */
+>   
+>   #include "imx6ul.dtsi"
+> 
+> ---
+> base-commit: 66701750d5565c574af42bef0b789ce0203e3071
+> change-id: 20250702-litesom-dts-lic-ad9774ebde3d
+> 
+> Best regards,
+
+
 
