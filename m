@@ -1,186 +1,144 @@
-Return-Path: <linux-kernel+bounces-767448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29373B2545D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C00B2544A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812F69A236C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61A7C1C8404F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146DA302CA8;
-	Wed, 13 Aug 2025 20:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF20F4FA;
+	Wed, 13 Aug 2025 20:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yuka.dev header.i=@yuka.dev header.b="IRDsjf7w"
-Received: from mail.cyberchaos.dev (mail.cyberchaos.dev [195.39.247.168])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ayX0ijin"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414142FD7C1;
-	Wed, 13 Aug 2025 20:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.39.247.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757002FD7AD
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755115767; cv=none; b=YsxuTLGLj7ZAZgXqNddB/SDF3B1HfYqzfGfppdf0hQ75oOIXtvncxvQm0pKRe48aknovk9VRAYExzZi2kYr+XWW4m7ryrfVRiL840of7n731P1yzG9cV6ccUFFvzIaL5sutSOnOQYfpapOBNO/ly3rsIXmCcNp/SK0s2iBdvAQ0=
+	t=1755115763; cv=none; b=kamYJ4g5uHYKoHhheeyxnvTj1vY0Cz9hEWAc+AeqJA+dU1WMnrGZd9QGR8NPDngDceKx26patVEDquJyZ0HZPPONRMpmJ2Fh4Qd0PnYIuOz90cn9MVDd7R+U3efYWfsVVNswZI2OFQkRTSiMfZ8NCbLBq+e6tQ4DzniPM3NJIU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755115767; c=relaxed/simple;
-	bh=djItZj1tv/P0GBUI4QzQhkjOwTsgdwRm040K9C8xyUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NblYf37Y6XWmQTlo3xvYVn88VS6hwhbA4VJA4BxrIPu3hcL0h887/goVeTdU5apH5+04q1DDsrGoEoLmZWKGLME7dF+T7am1CTTP7wRqX9y23tfY0V0jXo/1deJk45rqez7oRJOx7JOyDy6la3QBPGrQqnsZXBx8ZU3azug5xdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yuka.dev; spf=pass smtp.mailfrom=yuka.dev; dkim=pass (1024-bit key) header.d=yuka.dev header.i=@yuka.dev header.b=IRDsjf7w; arc=none smtp.client-ip=195.39.247.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yuka.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yuka.dev
-From: Yureka Lilian <yuka@yuka.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yuka.dev; s=mail;
-	t=1755115757;
+	s=arc-20240116; t=1755115763; c=relaxed/simple;
+	bh=2n4wZwTwJAQn+2kkdeSV5czAJtaQGGR+E9aS+hCH9Lk=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rUIVd/nYOZPF6pRfSNI/FbuSvG9LV0A5yPS2hIeTgrHyihUxw2gWj3DN0MZNVmrtKo9vMpkGtxMsePR7yxFsdTH3sw8ReW8fjyS+w8+krfkge4crucuXG5u/RNHr8ZdfIr+/Pk9VT29LQk9d+gM8qZxdEA+C2yucMg6rtzq8BiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ayX0ijin; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755115761;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lGjHGjnND+XLcmoc6stb7T/Y2gjWQ0r/KxkZxrbs9BU=;
-	b=IRDsjf7w9zS6UoK/LsRSBg5Tgx9MRXHPWOaDk+JgeW8K1JBdBmGw63YPsdQsqgnymZmkpT
-	mPZ+kA9zedjJOybAXGbKQVe0mWnAjJ7YcBIVykYkuD+VoG4IzdsfsIZuwr33Qdq+O5m9xy
-	irWMa0CwE50zukYGceScP9NGb5YaLv4=
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>
-Cc: Yureka Lilian <yuka@yuka.dev>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] bpf: add test for DEVMAP reuse
-Date: Wed, 13 Aug 2025 22:09:11 +0200
-Message-ID: <20250813200912.3523279-3-yuka@yuka.dev>
-In-Reply-To: <20250813200912.3523279-1-yuka@yuka.dev>
-References: <20250813200912.3523279-1-yuka@yuka.dev>
+	bh=Id7hIB1jKShzLzzptFHUZAPK8H5+qbzZTzK312LljXM=;
+	b=ayX0ijino+gqACB+sg3RnZ2w6o91AXlTkVPqIdCi6jWTf2sFVSSeQY3B1lpZS+RMQ0/anF
+	m9pSoJeeF81V1P07DjArMwPZLR6M89K45mjxL8jBmidDdbLYyUETKppGgNLPekHp/KUHku
+	QR4DCWVi+pdP/7/5TVF1z20yU+zXtRw=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-27-Qi6t1i-DMKqSvZApqMhuEg-1; Wed, 13 Aug 2025 16:09:19 -0400
+X-MC-Unique: Qi6t1i-DMKqSvZApqMhuEg-1
+X-Mimecast-MFC-AGG-ID: Qi6t1i-DMKqSvZApqMhuEg_1755115759
+Received: by mail-yb1-f200.google.com with SMTP id 3f1490d57ef6-e931cc1d46bso381184276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:09:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755115759; x=1755720559;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Id7hIB1jKShzLzzptFHUZAPK8H5+qbzZTzK312LljXM=;
+        b=qPNIYFGfSY6zRPOEvaIilvnKjXnK2MYwbK94W8QDdknZMNDoaeJKrVbQtKAqq7rE7t
+         hbPD5qRCg94Beps5FrxkegNo9qs5rbkBxo5qQ+xBsBett7xjX22IIes/BP8AjYBopqAa
+         FkXtf7GQcW+lek0odabOhT8YSoLecPr9hMWdcEFnxdxb+Z/gBrqOWBjcKiNe9F2RPjDH
+         RfBllK4svNKvSNbSlxkmKXnTgc8KRApaRlruV3qwhLy4LezobGkTe0OwQE+2N0b1BWaY
+         RKvAa66OZMArccrQ1A2ZGiKj0FLwRJOUDybWz30cfcRL1brBVnfodNVx7WIPKXRyntQi
+         uRUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuotf8lstNCCSZiMHC8pl6dhS8eOKBelHwXgXU3ququhmFQFjfSxKjFees7QRFqVQ2MyPx+zayLEIMAQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsXpeK4jO8vE6NOLUEevUm5LHNWi2AVX47vw/9hseQpDC3E4+f
+	KtYSxq34NKux3J+KyS/074bNgvyC/w/1/xs/AoBZ6C8P0F1hf80D/YbkVBU/RlqhoRyCidi88zf
+	EkkEo0ZLPfSFgXlO9+v5ppWmS2mTorhKJ5rjVIYZTR4v/Tp2gr+W07RutkqWtiP5dVg==
+X-Gm-Gg: ASbGnctUwnk1FwoxolV7QYQ8EXq5tYtahT44eoOOMOaxDgowPgauI8lBmXM0H+8KAYQ
+	lo3dUjZSC8zJ6+Qd9TOSXZwtacttYK5S4iZvbeVy/LyiAe3Ms/FuP16rzjBn5v/vI/kW0Ofy/9+
+	p0lrI9rAkJ+F5rqqyn/EjhdY0xbuA939sDH8VhQcIZ2/xFduP7mjbuaIXOqwxN3LB2ilZjfzaeo
+	ZWr4LVe0i8rAATrURNGr7xV4x5joSYb3nFrmaohiGSay+nD/YWhAcRphy6xwK0W0f8RyXBoZM+S
+	GPEi4elC10MXfFHdT5g2ZJbWukulw3K+r6pvlTeCNGOl7ENxBGgApixSMRUVZ7Qn5faIp8ZGlXE
+	46sljEHLTIQ==
+X-Received: by 2002:a05:6902:6b05:b0:e90:7383:cc7d with SMTP id 3f1490d57ef6-e931e191b93mr570932276.21.1755115759196;
+        Wed, 13 Aug 2025 13:09:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpwtZpmV8u1pxNPLlWMiYmxOFFQKXKvZEYc1RrYFUSBfDMMIM6iARj11h42NsnC/JdPE9Gkg==
+X-Received: by 2002:a05:6902:6b05:b0:e90:7383:cc7d with SMTP id 3f1490d57ef6-e931e191b93mr570888276.21.1755115758702;
+        Wed, 13 Aug 2025 13:09:18 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e931d56ed53sm128685276.21.2025.08.13.13.09.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 13:09:18 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <e0ac3594-deab-455c-9c2f-495b4e4422e2@redhat.com>
+Date: Wed, 13 Aug 2025 16:09:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [-next v2 4/4] cpuset: add helpers for cpus read and cpuset_mutex
+ locks
+To: Chen Ridong <chenridong@huaweicloud.com>, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com, christophe.jaillet@wanadoo.fr
+References: <20250813082904.1091651-1-chenridong@huaweicloud.com>
+ <20250813082904.1091651-5-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20250813082904.1091651-5-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The test covers basic re-use of a pinned DEVMAP map,
-with both matching and mismatching parameters.
+On 8/13/25 4:29 AM, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+>
+> cpuset: add helpers for cpus_read_lock and cpuset_mutex
+>
+> Replace repetitive locking patterns with new helpers:
+> - cpus_read_cpuset_lock()
+> - cpus_read_cpuset_unlock()
+>
+> This makes the code cleaner and ensures consistent lock ordering.
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset-internal.h |  2 ++
+>   kernel/cgroup/cpuset-v1.c       | 12 +++------
+>   kernel/cgroup/cpuset.c          | 48 +++++++++++++++------------------
+>   3 files changed, 28 insertions(+), 34 deletions(-)
+>
+> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
+> index 75b3aef39231..6fb00c96044d 100644
+> --- a/kernel/cgroup/cpuset-internal.h
+> +++ b/kernel/cgroup/cpuset-internal.h
+> @@ -276,6 +276,8 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs, int turning_on)
+>   ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
+>   				    char *buf, size_t nbytes, loff_t off);
+>   int cpuset_common_seq_show(struct seq_file *sf, void *v);
+> +void cpus_read_cpuset_lock(void);
+> +void cpus_read_cpuset_unlock(void);
 
-Signed-off-by: Yureka Lilian <yuka@yuka.dev>
----
- .../bpf/prog_tests/pinning_devmap_reuse.c     | 68 +++++++++++++++++++
- .../selftests/bpf/progs/test_pinning_devmap.c | 20 ++++++
- 2 files changed, 88 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/pinning_devmap_reuse.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_pinning_devmap.c
+The names are not intuitive. I would prefer just extend the 
+cpuset_lock/unlock to include cpus_read_lock/unlock and we use 
+cpuset_lock/unlock consistently in the cpuset code. Also, there is now 
+no external user of cpuset_lock/unlock, we may as well remove them from 
+include/linux/cpuset.h.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/pinning_devmap_reuse.c b/tools/testing/selftests/bpf/prog_tests/pinning_devmap_reuse.c
-new file mode 100644
-index 000000000..06befb03b
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/pinning_devmap_reuse.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+#include <test_progs.h>
-+
-+void test_pinning_devmap_reuse(void)
-+{
-+	const char *pinpath1 = "/sys/fs/bpf/pinmap1";
-+	const char *pinpath2 = "/sys/fs/bpf/pinmap2";
-+	const char *file = "./test_pinning_devmap.bpf.o";
-+	struct bpf_object *obj1 = NULL, *obj2 = NULL;
-+	int err;
-+	__u32 duration = 0;
-+	DECLARE_LIBBPF_OPTS(bpf_object_open_opts, opts);
-+
-+	/* load the object a first time */
-+	obj1 = bpf_object__open_file(file, NULL);
-+	err = libbpf_get_error(obj1);
-+	if (CHECK(err, "first open", "err %d\n", err)) {
-+		obj1 = NULL;
-+		goto out;
-+	}
-+	err = bpf_object__load(obj1);
-+	if (CHECK(err, "first load", "err %d\n", err))
-+		goto out;
-+
-+	/* load the object a second time, re-using the pinned map */
-+	obj2 = bpf_object__open_file(file, NULL);
-+	if (CHECK(err, "second open", "err %d\n", err)) {
-+		obj2 = NULL;
-+		goto out;
-+	}
-+	err = bpf_object__load(obj2);
-+	if (CHECK(err, "second load", "err %d\n", err))
-+		goto out;
-+
-+	/* we can close the reference safely without
-+	 * the map's refcount falling to 0
-+	 */
-+	bpf_object__close(obj1);
-+	obj1 = NULL;
-+
-+	/* now, swap the pins */
-+	err = renameat2(0, pinpath1, 0, pinpath2, RENAME_EXCHANGE);
-+	if (CHECK(err, "swap pins", "err %d\n", err))
-+		goto out;
-+
-+	/* load the object again, this time the re-use should fail */
-+	obj1 = bpf_object__open_file(file, NULL);
-+	err = libbpf_get_error(obj1);
-+	if (CHECK(err, "third open", "err %d\n", err)) {
-+		obj1 = NULL;
-+		goto out;
-+	}
-+	err = bpf_object__load(obj1);
-+	if (CHECK(err != -EINVAL, "param mismatch load", "err %d\n", err))
-+		goto out;
-+
-+out:
-+	unlink(pinpath1);
-+	unlink(pinpath2);
-+	if (obj1)
-+		bpf_object__close(obj1);
-+	if (obj2)
-+		bpf_object__close(obj2);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_pinning_devmap.c b/tools/testing/selftests/bpf/progs/test_pinning_devmap.c
-new file mode 100644
-index 000000000..c855f8f87
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_pinning_devmap.c
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_DEVMAP);
-+	__uint(max_entries, 1);
-+	__type(key, __u32);
-+	__type(value, __u32);
-+	__uint(pinning, LIBBPF_PIN_BY_NAME);
-+} pinmap1 SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_DEVMAP);
-+	__uint(max_entries, 2);
-+	__type(key, __u32);
-+	__type(value, __u32);
-+	__uint(pinning, LIBBPF_PIN_BY_NAME);
-+} pinmap2 SEC(".maps");
--- 
-2.50.1
+Cheers,
+Longman
 
 
