@@ -1,127 +1,220 @@
-Return-Path: <linux-kernel+bounces-767211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC83B25109
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:06:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B3FB250C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 19:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B76298847AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51E41C255D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 17:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03D028D8C1;
-	Wed, 13 Aug 2025 17:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FRCXdXAR"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC517284686
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4705029114A;
+	Wed, 13 Aug 2025 17:01:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74E622DF9E;
+	Wed, 13 Aug 2025 17:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755104456; cv=none; b=oSnzTyj4km9UtzauWPW1TT/mY/X36qB6Oem3EsLBJcHFEdfWU3slQI8+dhdVRHxGDET+BkoaREYOT0n7BssJ1Y8+JA5Kvinivo3HLwc9WSEEG6v2dZcSqdkR87xJqLti2XoF2b/CkM8dyLOhEcbL7xshoR9cOncAStshREavthE=
+	t=1755104487; cv=none; b=MikvVOR+bL/opdP5p4U0CmuUZT+GXSWgAyc3+cW9FvWNEVpuBTqMAFQldCLALD/bM2tDoUAODqqta1iRaP8m8FLhkJfnR9KQbskJiuo6fecHo1eq4IjTgS4J5EDtUrxY2r5PK20VyLzWsbtpjuUBF2r0B/JLMFT6l7FGOsh5vTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755104456; c=relaxed/simple;
-	bh=tW8l2auqnZCodEsgXMoZRbvUTLJdEClzNYtQylHae+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A0p89O+VjfLg0XWGUTF3Igo6JdUemdLlf2nhpNVWL8OELE9MsdPktqHZ7UKefSugjvCUIaf2JtinrpHRbMq0wrCW2yePTKJTGrZRK8La8P7vhRSlg7ZLckWB0utXfaYoiQNDhWt0NIkCDDX54LqZL1Zp8YWlnCWDTe2q/UuAzNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FRCXdXAR; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-50f890eadb9so15642137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 10:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755104454; x=1755709254; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tW8l2auqnZCodEsgXMoZRbvUTLJdEClzNYtQylHae+s=;
-        b=FRCXdXARxzFKaOWi7VMohZcgMjcvAM0DJVZfXAje9Sh6z2v5QJWJc/HQjXd1JFyYyg
-         KJkoJQXaNWyUfTUZ+0sFNNAnlwKhfjJ7xcDhOj9jm92fjEw6wtAi1KTpkS4q0n5PBZYT
-         QNvCZnb5vBcDTzygmf9SJ6Y+aHdllcBGjaMlbdgbyaKIoJcRbFa7QqvCOFZHObx7vHfI
-         FhvVapTJqO02rtrv0H+lxOzLzhTpONNBHuMryAEbL4NcoccRejk1O/QIK6za9C4HrIFS
-         5Rzq8As0rR6y4YYmi22MlB0TsbmtJAwsikkIJBzBVY6O5uiOHerBwKox63kLWzYsx68o
-         50zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755104454; x=1755709254;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tW8l2auqnZCodEsgXMoZRbvUTLJdEClzNYtQylHae+s=;
-        b=AyjwJcFh2ySQ74r7ri908hRcovLE64IBDMOjqmM/4n69QFZoN05K4ejfVoOrGJpZZL
-         nuw5GpM/zz7teRvg2KurClxC9tRQMI5O0B0cV628DJvQhZvhmDBMF1lgx6V3n7+g7xEK
-         4hxcIJTX23SmeE4riwDAVlj7trdv7a70iQEAQjfUu0ByKFrXhhGxJYfoSqxt6zmjbnlw
-         xeQIjIT/oByn6tzuT4lUNG44d+tHdDjSPHD2ke72f7afd4Zslym9Xc59pELI3Auesf3l
-         QgfwoMkqZS99k/h3SN2dC53m+R1B6fdmbVwi1zpMp2RjiAQAIm+H0j+2Fo2xNA+ronfk
-         OyxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW22o2+vez5ohxhfrVV/a9RMYspJURP23csSlD2n4YWDYiyZA+zvFAb97KbYHsX2U+RcnM0VvWUympVpwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVmUHQEcGjXIQn0IDVpLl9AfMYP/NOl9rYwVhxm+BnfjHOYrH1
-	45cP4YRO8Wur638nt1ivs8ECAlTQuM+liZVAQK8bDWiOKnbfZE4g5c7qjMHIg7vKspQoGRN8j/j
-	5yFzfB6HfbFnJqKUIk3YDVv/qj4rxIb1Ym8xvfaZA
-X-Gm-Gg: ASbGnctVrgQqBsAEOSPHgC6A3ZAYP9mTjuJXIpaj+XKXzGCN+Wlo06GgrW4pkTqYJGS
-	ZCcG27gTGziXsSJW0iiKx0kI3iKRG9o/iIdDCh4E4bCf+ans9cKnJD2AEPg9vfYJLnBWyYDls/z
-	S1GPT41BA/GYUXsnOCkfqOxD+BCMGLOPUmUtstKkg9z+xvlWJmYDNB4k1W3zlrfRUT3RVodTPSs
-	nknGhN6
-X-Google-Smtp-Source: AGHT+IE5fbyIzT284wp/v2J+M3dQ+I1vuddfrUjl31bhg67u9zcoMswV8ISEJJ1Qkrss4MRf70TqEslGpnMA5YZt2fc=
-X-Received: by 2002:a05:6102:548f:b0:4da:fc9d:f0c with SMTP id
- ada2fe7eead31-50e4f1e17e0mr1597142137.12.1755104452818; Wed, 13 Aug 2025
- 10:00:52 -0700 (PDT)
+	s=arc-20240116; t=1755104487; c=relaxed/simple;
+	bh=9Z/RmbrVLmkjIv2T64d6k3xZWFq+o5FbpjFxow0TKU4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uNb1YOWvgQo3IvoG5yOhVHm4TtQfnCxonaWfpXNgVsdlhFaUAoqRCP8Tas8pKGZ+qkugrW2bxv9bs1Fh6WbxkN1K+8tGnCEX6HwIQ1zCBpca1YXc30Q5ycnu67446Bo6rlghBaX8bkwhF7SvxgOJvjiHDudVdre81AG6QLiGaHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CD3A12FC;
+	Wed, 13 Aug 2025 10:01:17 -0700 (PDT)
+Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.50])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E4DF23F738;
+	Wed, 13 Aug 2025 10:01:20 -0700 (PDT)
+From: Robin Murphy <robin.murphy@arm.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	will@kernel.org,
+	mark.rutland@arm.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-csky@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	dmaengine@vger.kernel.org,
+	linux-fpga@vger.kernel.org,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	coresight@lists.linaro.org,
+	iommu@lists.linux.dev,
+	linux-amlogic@lists.infradead.org,
+	linux-cxl@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH 00/19] perf: Rework event_init checks
+Date: Wed, 13 Aug 2025 18:00:52 +0100
+Message-Id: <cover.1755096883.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.39.2.101.g768bb238c484.dirty
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730205644.2595052-1-blakejones@google.com> <affdc6b1-9980-44d1-89db-d90730c1e384@linux.ibm.com>
-In-Reply-To: <affdc6b1-9980-44d1-89db-d90730c1e384@linux.ibm.com>
-From: Blake Jones <blakejones@google.com>
-Date: Wed, 13 Aug 2025 10:00:40 -0700
-X-Gm-Features: Ac12FXxVXY0vdLIS2h0XVhDSsDR-mQWhlgxzNUG9OR18JmqBChTlwWM2X7kdrYE
-Message-ID: <CAP_z_CgoG73txYYVgyCcVvrCbw+Jc5F=ud2DOXG5vwoVgUukHA@mail.gmail.com>
-Subject: Re: [PATCH v2] Reorder some fields in struct rq.
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Josh Don <joshdon@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Madadi,
+Hi all,
 
-Thanks so much for reviewing this, and I'm glad to hear that the
-change seemed to work well for you.
+[ Note I'm only CC'ing lists for now to avoid spamming nearly 100 
+  individual maintainers/reviewers while we work out the basics ]
 
-On Wed, Aug 13, 2025 at 12:30=E2=80=AFAM Madadi Vineeth Reddy
-<vineethr@linux.ibm.com> wrote:
-> Also ran ebizzy, which doesn=E2=80=99t seem to be impacted. I think it wo=
-uld be good
-> to run a set of standard benchmarks like schbench, ebizzy, hackbench, and
-> stress-ng, along with a real-life workload, to ensure there=E2=80=99s no =
-negative
-> impact. I saw that hackbench was tried, but including those numbers would
-> be helpful.
+Reviving my idea from a few years back, the aim here is to minimise
+the amount of event_init boilerplate that most new drivers have to
+implement (and so many get wrong), while also trying to establish
+some more consistent and easy-to-follow patterns for the things that
+drivers should still care about (mostly group validation).
 
-I agree that it would be interesting to have such a set of benchmarks
-- and also, I'm not sure what they should be. Part of why I mentioned
-my experiment with hackbench is that I'd seen it cited several times
-as a standard scheduling benchmark, and my conclusion from running it
-and profiling it was that I wouldn't recommend including it in a
-canonical set of scheduling benchmarks. I don't have my actual numbers
-from running it, but my recollection was that any delta in performance
-that it showed was well within the margin of error of the test.
+It's ended up somewhat big and ugly, so to start with I've tried to
+optimise for ease of review - based on the typical "fixes, cleanup,
+new development" order the split of the current patches is like so:
 
-I did run this change on a fraction of the Google server fleet, as an
-experiment along with a few other related data structure tweaks, and
-saw a meaningful improvement in application performance. But I only
-got results for the experiment as a whole, so I can't be sure how much
-of the improvement was due to this change vs. the others.
+* Group validation rework (patches #1-#15)
+  - Specific drivers with functional issues by inspection (#1-#7)
+  - Specific drivers where cleanup changes were non-trivial (#8-#11)
+  - Common patterns across remaining drivers (#12-#15)
+* Capabilities rework (patches #16-#18)
+* Giant bonfire of remaining boilerplate! (patch #19)
 
-Blake
+If the overall idea is acceptable then a more relaxed merge strategy
+might be to look at landing the common parts first (#16-#18 and maybe
+#13), then rearrange the rest into per-driver patches, but I'm sure
+nobody wants a ~70-patch series out of the gate :)
 
-> Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-> Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Thanks,
+Robin.
+
+
+Robin Murphy (19):
+  perf/arm-cmn: Fix event validation
+  perf/hisilicon: Fix group validation
+  perf/imx8_ddr: Fix group validation
+  perf/starfive: Fix group validation
+  iommu/vt-d: Fix perfmon group validation
+  ARM: l2x0: Fix group validation
+  ARM: imx: Fix MMDC PMU group validation
+  perf/arm_smmu_v3: Improve group validation
+  perf/qcom: Improve group validation
+  perf/arm-ni: Improve event validation
+  perf/arm-cci: Tidy up event validation
+  perf: Ignore event state for group validation
+  perf: Add helper for checking grouped events
+  perf: Clean up redundant group validation
+  perf: Simplify group validation
+  perf: Introduce positive capability for sampling
+  perf: Retire PERF_PMU_CAP_NO_INTERRUPT
+  perf: Introduce positive capability for raw events
+  perf: Garbage-collect event_init checks
+
+ arch/alpha/kernel/perf_event.c                |  5 +-
+ arch/arc/kernel/perf_event.c                  |  4 +-
+ arch/arm/mach-imx/mmdc.c                      | 29 ++----
+ arch/arm/mm/cache-l2x0-pmu.c                  | 19 +---
+ arch/csky/kernel/perf_event.c                 |  3 +-
+ arch/loongarch/kernel/perf_event.c            |  1 +
+ arch/mips/kernel/perf_event_mipsxx.c          |  1 +
+ arch/powerpc/perf/8xx-pmu.c                   |  3 +-
+ arch/powerpc/perf/core-book3s.c               |  4 +-
+ arch/powerpc/perf/core-fsl-emb.c              |  4 +-
+ arch/powerpc/perf/hv-24x7.c                   | 11 ---
+ arch/powerpc/perf/hv-gpci.c                   | 11 ---
+ arch/powerpc/perf/imc-pmu.c                   | 31 +-----
+ arch/powerpc/perf/kvm-hv-pmu.c                |  5 +-
+ arch/powerpc/perf/vpa-pmu.c                   | 13 +--
+ arch/powerpc/platforms/pseries/papr_scm.c     | 18 +---
+ arch/s390/kernel/perf_cpum_cf.c               |  8 +-
+ arch/s390/kernel/perf_cpum_sf.c               |  2 +
+ arch/s390/kernel/perf_pai_crypto.c            |  1 +
+ arch/s390/kernel/perf_pai_ext.c               |  1 +
+ arch/sh/kernel/perf_event.c                   |  1 -
+ arch/sparc/kernel/perf_event.c                |  4 +-
+ arch/x86/events/amd/ibs.c                     | 32 ++-----
+ arch/x86/events/amd/iommu.c                   | 15 ---
+ arch/x86/events/amd/power.c                   |  7 --
+ arch/x86/events/amd/uncore.c                  | 12 +--
+ arch/x86/events/core.c                        |  7 +-
+ arch/x86/events/intel/bts.c                   |  3 -
+ arch/x86/events/intel/cstate.c                | 16 +---
+ arch/x86/events/intel/pt.c                    |  3 -
+ arch/x86/events/intel/uncore.c                | 16 +---
+ arch/x86/events/intel/uncore_snb.c            | 18 ----
+ arch/x86/events/msr.c                         |  8 +-
+ arch/x86/events/rapl.c                        | 11 ---
+ arch/xtensa/kernel/perf_event.c               |  1 +
+ drivers/devfreq/event/rockchip-dfi.c          | 13 +--
+ drivers/dma/idxd/perfmon.c                    | 17 +---
+ drivers/fpga/dfl-fme-perf.c                   | 18 +---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_pmu.c       |  4 -
+ drivers/gpu/drm/i915/i915_pmu.c               | 13 ---
+ drivers/gpu/drm/xe/xe_pmu.c                   | 13 ---
+ .../hwtracing/coresight/coresight-etm-perf.c  |  5 -
+ drivers/hwtracing/ptt/hisi_ptt.c              |  8 --
+ drivers/iommu/intel/perfmon.c                 | 28 +++---
+ drivers/perf/alibaba_uncore_drw_pmu.c         | 28 +-----
+ drivers/perf/amlogic/meson_ddr_pmu_core.c     |  9 --
+ drivers/perf/arm-cci.c                        | 56 +++--------
+ drivers/perf/arm-ccn.c                        | 34 -------
+ drivers/perf/arm-cmn.c                        | 15 +--
+ drivers/perf/arm-ni.c                         | 35 +++----
+ drivers/perf/arm_cspmu/arm_cspmu.c            | 34 +------
+ drivers/perf/arm_dmc620_pmu.c                 | 28 +-----
+ drivers/perf/arm_dsu_pmu.c                    | 26 +----
+ drivers/perf/arm_pmu.c                        | 19 +---
+ drivers/perf/arm_pmu_platform.c               |  2 +-
+ drivers/perf/arm_smmuv3_pmu.c                 | 35 ++-----
+ drivers/perf/arm_spe_pmu.c                    |  7 +-
+ drivers/perf/cxl_pmu.c                        |  6 --
+ drivers/perf/dwc_pcie_pmu.c                   | 21 +---
+ drivers/perf/fsl_imx8_ddr_perf.c              | 32 +------
+ drivers/perf/fsl_imx9_ddr_perf.c              | 27 ------
+ drivers/perf/hisilicon/hisi_pcie_pmu.c        | 25 ++---
+ drivers/perf/hisilicon/hisi_uncore_pmu.c      | 41 ++------
+ drivers/perf/hisilicon/hns3_pmu.c             | 24 ++---
+ drivers/perf/marvell_cn10k_ddr_pmu.c          | 18 ----
+ drivers/perf/marvell_cn10k_tad_pmu.c          | 12 +--
+ drivers/perf/marvell_pem_pmu.c                | 22 +----
+ drivers/perf/qcom_l2_pmu.c                    | 96 ++++++-------------
+ drivers/perf/qcom_l3_pmu.c                    | 33 ++-----
+ drivers/perf/riscv_pmu_legacy.c               |  1 -
+ drivers/perf/riscv_pmu_sbi.c                  |  3 +-
+ drivers/perf/starfive_starlink_pmu.c          | 32 ++-----
+ drivers/perf/thunderx2_pmu.c                  | 45 ++-------
+ drivers/perf/xgene_pmu.c                      | 29 ------
+ drivers/powercap/intel_rapl_common.c          |  9 +-
+ include/linux/perf_event.h                    | 10 +-
+ kernel/events/core.c                          | 35 +++++--
+ kernel/events/hw_breakpoint.c                 |  1 +
+ 78 files changed, 244 insertions(+), 1053 deletions(-)
+
+-- 
+2.39.2.101.g768bb238c484.dirty
+
 
