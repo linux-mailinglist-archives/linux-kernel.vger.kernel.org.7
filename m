@@ -1,173 +1,113 @@
-Return-Path: <linux-kernel+bounces-767143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3D3B24FD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:31:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625EBB24FF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E0A1C24310
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3C91C242BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8830B287256;
-	Wed, 13 Aug 2025 16:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E7428850E;
+	Wed, 13 Aug 2025 16:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NowuzJLv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W0jViror"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58DA285053;
-	Wed, 13 Aug 2025 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6319288500
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755102287; cv=none; b=BT2zSSBRmMuHJk0IYcx55iT99Sanfzg788ljfC+vtTq+OTMyolekrwfMgjCv3N+TzxuBi97AjlBuRrZb7R0qsTjrXR6+x9Shk2h3m1/ByFXgWe913y7XGgCX9vGc+ClAkhLCnJxHyPd7Sy5RERAL+bct9CWoGDePjx9ouxxfMIg=
+	t=1755102595; cv=none; b=FClm74YIb0XMLZeV+DOebCBWfbnoRkqn7GyLDTyA/zdw4ZecfU8TjDDazTlIJNo1HeAo3YMD/kZIXmuqeyzZuCFChd91B3Sj7BE6OlWRAXig3GM1HIWHkfXJENExF5i5qzBIIU1qjGVqsMl/3jd8eWFNhJGt1fjDo8Kby1rqNZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755102287; c=relaxed/simple;
-	bh=K1Qnz6FeiAMe891bHx38SnseQkGtn7jJpOFA1e7ci+8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TtNIV5327wJHOdlMm1X42tiRJtmpG9VZcmdBhq5G1HocIebBSMha/Qk75hKuaedodYuOgHTxel+F5pO6OVrVYYVkmKmsl3J3rIWdgxAHG+btFJKt5ysW57qqKk34WVjjCoXwjTn1wkwtrKyEGeKe4Ng8ft57CLpuLHItjLaqaJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NowuzJLv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09AF3C4CEEB;
-	Wed, 13 Aug 2025 16:24:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755102287;
-	bh=K1Qnz6FeiAMe891bHx38SnseQkGtn7jJpOFA1e7ci+8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NowuzJLvoDcytU2mnlkUjH9a3VkVMtm7ue/1JeEievbLShowGrZYKS4ljQgIc4Tvt
-	 3+vYZnNOWzD9UQ8pSH9fEmYwxPiiGspKJ3H0P32SvVzl8AqitUBhqFYwGCZ45kSKAJ
-	 87/gu7vuZjna5FtZYWWUpp9S1G/8o7Ty64t0lObmjPlPr2MXYLPDtH4Sc4eAU6xND8
-	 ThhzDQ4hSAh1VB48U+GqBbKfJNoQAGi7b1yhwF4mFVAalvl713Ll6uzzSrl8gdzvsB
-	 qxd/OanAUdPmrliRUlwzqp8QiFiC+SAvfzE7ZdQVKX6a28IsBlnq34Yk6UcqsLFVxB
-	 8m4KWJEM4NWXw==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
+	s=arc-20240116; t=1755102595; c=relaxed/simple;
+	bh=9pgg+XdHdToWRzkyCMq3sArw4zfrHrvDzso0Rfa6hKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kl1y2FPz64TiyXiCL7n4yS4jz0hUX5X3HnWY0+6ldqcaXmIrjPP971XtpD3KQrFGqZspA4SzTLzrl/sXh1BWL88r9n9mH369AdT6VPHMvP1GdfrG2EVe4bv9cbCIrepiYFqUsb0+fGRozvqgMEpY7gIHT6Oi9h8TpzVhDsRO/uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W0jViror; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755102592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=MEJQ0bA6l6R4bPSBmfr8qps58lLXfFOv0XKCIuYxrZc=;
+	b=W0jVirorkwbQAfdDmMHtj+hotwsSbW3/aGDndoing3Yw6L/nDNGv2yr+IX/pxqkBg6hkMa
+	SNKGeRhKmvi8GLoT1yX4ebhZAAVP7gWFg4C3k88loubF4UAd6MRpzg3oPGEWMId3id3ozO
+	xHo2TxF1FM/g3Di/g7J3NW01R86WBkw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-673-BnzzmykcNSi4lbg0s_qCcg-1; Wed,
+ 13 Aug 2025 12:29:47 -0400
+X-MC-Unique: BnzzmykcNSi4lbg0s_qCcg-1
+X-Mimecast-MFC-AGG-ID: BnzzmykcNSi4lbg0s_qCcg_1755102585
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 49ED21955E9D;
+	Wed, 13 Aug 2025 16:29:45 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.62])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D6BE4180028F;
+	Wed, 13 Aug 2025 16:29:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 13 Aug 2025 18:28:29 +0200 (CEST)
+Date: Wed, 13 Aug 2025 18:28:24 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 00/10] mm: make mm->flags a bitmap and 64-bit on all arches
-Date: Wed, 13 Aug 2025 09:24:45 -0700
-Message-Id: <20250813162445.5456-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <af5492d4-f8dc-4270-a4c6-73d76f098942@lucifer.local>
-References: 
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: PF_USER_WORKERs and shadow stack
+Message-ID: <20250813162824.GA15234@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, 13 Aug 2025 05:18:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+I know nothing about the shadow stacks, perhaps I missed something obvious.
 
-> On Tue, Aug 12, 2025 at 01:13:26PM -0700, SeongJae Park wrote:
-> > On Tue, 12 Aug 2025 16:44:09 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-[...]
-> > > In order to execute this change, we introduce a new opaque type -
-> > > mm_flags_t - which wraps a bitmap.
-> >
-> > I have no strong opinion here, but I think coding-style.rst[1] has one?  To
-> > quote,
-> >
-> >     Please don't use things like ``vps_t``.
-> >     It's a **mistake** to use typedef for structures and pointers.
-> 
-> You stopped reading the relevant section in [1] :) Keep going and you see:
-> 
-> 	Lots of people think that typedefs help readability. Not so. They
-> 	are useful only for: totally opaque objects (where the typedef is
-> 	actively used to hide what the object is).  Example: pte_t
-> 	etc. opaque objects that you can only access using the proper
-> 	accessor functions.
-> 
-> So this is what this is.
-> 
-> The point is that it's opaque, that is you aren't supposed to know about or
-> care about what's inside, you use the accessors.
-> 
-> This means we can extend the size of this thing as we like, and can enforce
-> atomicity through the accessors.
-> 
-> We further highlight the opaqueness through the use of the __private.
-> 
-> >
-> > checkpatch.pl also complains similarly.
-> >
-> > Again, I have no strong opinion, but I think adding a clarification about why
-> > we use typedef despite of the documented recommendation here might be nice?
-> 
-> I already gave one, I clearly indicate it's opaque.
+But it seems that if a features_enabled(ARCH_SHSTK_SHSTK) thread creates a
+PF_USER_WORKER thread, shstk_alloc_thread_stack() will allocate the shadow
+stack for no reason.
 
-You're completely right and I agree all the points.  Thank you for kindly
-enlightening me :)
+Don't we need something like the "patch" below? PF_USER_WORKERs never return
+to userspace. Note also that update_fpu_shstk() won't be called in this case.
 
+Oleg.
 
-Thanks,
-SJ
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -209,9 +209,15 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+ 	 * is disabled, new_ssp will remain 0, and fpu_clone() will know not to
+ 	 * update it.
+ 	 */
+-	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->stack_size);
+-	if (IS_ERR_VALUE(new_ssp))
+-		return PTR_ERR((void *)new_ssp);
++	if (args->fn) {
++		new_ssp = 0;
++		// clear p->thread -> shstk/features,
++		// reset_thread_features() won't work
++	} else {
++		new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->stack_size);
++		if (IS_ERR_VALUE(new_ssp))
++			return PTR_ERR((void *)new_ssp);
++	}
+ 
+ 	fpu_clone(p, clone_flags, args->fn, new_ssp);
+ 
 
-[...]
 
