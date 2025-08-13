@@ -1,124 +1,215 @@
-Return-Path: <linux-kernel+bounces-767096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4342BB24F56
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:18:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BC5B24F48
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57D741C81294
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:11:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83F09A37BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164CB2853F3;
-	Wed, 13 Aug 2025 16:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED43286D45;
+	Wed, 13 Aug 2025 16:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GeDNfJep"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HciJ1eXc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C00728469A;
-	Wed, 13 Aug 2025 16:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FC627F011;
+	Wed, 13 Aug 2025 16:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100927; cv=none; b=Y99BKU9DyzbVy/N5IhZRBVLgFooEEIppaGLeIYU87aKUy0K7wpKpsPAbe/7mfZ/eTH0uRrNeIdonp7sE2RY5k3UuqyxftKIVQtS30m3H3vOdFSurRpVGasT3VwT1IlNlOo4h9u5fnliOIxXUhoDQ6SO23eQl+kyrwx4fTLiBNZ4=
+	t=1755100935; cv=none; b=PaPdjHqqCnFJr/wWBWtq9omE6UXOjxZDSBWfxR+aAvKoXCWTmSgHOy5KipiC/L8PWvAIJqEQAyhaCkLi/BsA9FVIWVV7NE4a8wsriH4u1K/Vi2Gka5jBht2S43ByslbWH01ogHmZwAizZ09TwMlUq5NGUIwEXFyeSURgNTAPs8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100927; c=relaxed/simple;
-	bh=UDmbkCATMj3zYzhEYu3RaoajQKcynIBgbBYwP3uZH3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fZIhD4LYOK/sMywd0lazsz/Y/Lpi5oEKWpAsNZx87IvuHQKfZ0+1G+niNfVkTIY9QahyvSlBh1WfDzKIklX9CjeXSEFFd2eC4oNB+2GolA9G+ixj+b42Z/D+z9wyaGdYkodRA25nYA5YdlMDiVq4NT92u7pzmKXXIoFm3teQ+ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GeDNfJep; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2406fe901c4so43253975ad.1;
-        Wed, 13 Aug 2025 09:02:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755100925; x=1755705725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=15PDS4kBFxnfhGyuPIxLhWrdICQOQTl1rvLJxElN8H8=;
-        b=GeDNfJepympUCYCYVbW7S+2qnGu7ESKNWjVQuKZxJ4GTV70nOvvcnyMQDCiwGljTgw
-         W8AvRIbI44UiIa4+t44aFWi4WQQp7VmdnDu0Degd+m1XoyVa/yse8QK+MB4bMUailzwi
-         KLeOtzWfSUAGI09zaKSHM9OcXH9VXumQo8OjCHl7hxuSLZbS+y/eYwknig87acOMYegR
-         HPzcryR699bbiP1xQV09Tfg/9f2H3aGQQNcHqzG20y5h/mZOj/R/Wgy5riOMR00pLrTQ
-         nJQXJDXPRD5yDh9JhV+cUTMVtqbRX1yr1yeqne+lK8XEyG0F0byYluZNHCrx/SwRW0K7
-         Va4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755100925; x=1755705725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=15PDS4kBFxnfhGyuPIxLhWrdICQOQTl1rvLJxElN8H8=;
-        b=BAEiOEKQuwpGWQEnrVeq7SVhiZKlSnUAkfpdn0/rVjHZaGelXGxKBjRmJ3qGesGuqH
-         vWDwAayKzTaosyTCG4ICiyt0I9A8fXSgdkNH+CdByrkMXMWSBVOMGK7LCY8N7reerY7p
-         q2DgiMS3rnFPklZx+towDlduTJaXRJ9USNBVVbAbw8SZaPvBTNousNfyyINioPkOsJFR
-         h8dMXl3Wyxl31ny662i53lAi2aTMFC82cGsEHZnVCHfCw1UTAIo8swY8Rwekw91Rkqnu
-         BlWP5LP2oyrUY8uy1egoBXF3hH6uBIpIC4cBLqDxtLzsLTnFuErJrDHJ2RovxQ3VM34N
-         zGAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVAiOPBLzhG6m7iCosil09kl1Rg5g56MJGLaE+a2JIXfZ/PzF8ujs1JD6HHk9dVm+e3XenJ0fJe3Vkrgp4=@vger.kernel.org, AJvYcCWfkcPO/GXKh00ptlvbi80bVXu6imrhjfAWLj21PpL7towdXtDtbpbxkCB/lE2SKU0JM0WV4yUe/hlfoJVqaIafJQfLwN8j@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPs+BeuHQkFf2dLoyGprgfm54e+dzulfP+xzVdOwDhtSrGrEQd
-	uU/tjnsbKCtC0Df72xxJX4bNpzdLQ9eKtJYgwfir4uWRISmb4lV7EHGdFtWJ+w==
-X-Gm-Gg: ASbGncuPuA6DKiPnbn9bBjfkY9ViLrXTrOrkgEMsXFUsCZDTSAgnKuivLt/aFljlkx2
-	EIAtXFlm4ihXMh7jGJsYsVyE37pEHliWoGU6ysLXKgODocIHK3SqPPxM1gubBCvF0Hu18oS/FW/
-	0l3UU9z0nKRfSruipaVxq24IhsJwl153W9ixOFqaTPF1co0Hzwsv/3m8FkECUIFlAzYQ/VcXzEF
-	TEp036tYzRy9H3ogqqGePmexdLf7ycM1gbFew1M2Va3QhMBrcvq7yPUeU1quslGkRnLPDaDQKLy
-	M5B1L22EGEYunfKmxH85khTXxS8tejGbGzTJiAX0hWK7Tko9inE2Sy0dll23ZaMQ40+sb0VyAsc
-	85f1Ty1ehYEi4VPSPuYsscnCFGyp0yaaEnM5af0mzEItlgZP6dpL1BnMTO6W4G4NCSemPFOrbgh
-	VuIQ==
-X-Google-Smtp-Source: AGHT+IFneh6DcSCXvD6FkQgAozlcfSCn7Et/p7McK6cLRii7ICb97K3VSPkcw+k/fd98jJHchkAFog==
-X-Received: by 2002:a17:903:1aec:b0:240:2e93:8a9a with SMTP id d9443c01a7336-2430d1e570amr56436565ad.42.1755100924906;
-        Wed, 13 Aug 2025 09:02:04 -0700 (PDT)
-Received: from chandra-mohan-sundar.aristanetworks.com ([2401:4900:1cb8:7b85:9b4a:84f0:66de:85c7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2429b4ca995sm197380615ad.177.2025.08.13.09.02.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 09:02:04 -0700 (PDT)
-From: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
-To: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org
-Cc: Chandra Mohan Sundar <chandramohan.explore@gmail.com>,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] apparmor: Remove unused value
-Date: Wed, 13 Aug 2025 21:31:43 +0530
-Message-ID: <20250813160148.132192-1-chandramohan.explore@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755100935; c=relaxed/simple;
+	bh=/IInu1GSbHtzTPZpYgApvUKxtuzp3AMbxp5bRS+CSKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DLy0Z9e/W35dk8UUBOU4zWFoX8OrAHxDmvvookorLHn09kUwuPySZmZhiieBGSfGySR7OlX46TUTyV1NJ/qobxAi3Inmk5sm0g4kpOMqLGaAuQnHT3/TjP0vK95G5ZhOHbpc2xfOcL1ftLXr2v38KufUACchtz40CO4etUkWsU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HciJ1eXc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBLtgL012998;
+	Wed, 13 Aug 2025 16:02:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tOU6SdsJCLYdXKqlaVp+vUFgj1ZmLPafp6bUHKPnOgU=; b=HciJ1eXc4aRksPmt
+	Jc8vdM9ipLuQKYcy8P5hkSZIQ6xc7XLvYxIMpbeom658YqF0sFIrFfTqXimTyR/S
+	LDrexqLzVKGiv6eALosS1VA4ndUFrjIs9EGkbPRWS4pjvNErhKuabX1zq/XiS/TS
+	cu477Sz40q3gta1tShS8ADvzr25+9tP8/IqbDDkBJx6sWWPHSZexg4MTMYqNNw4F
+	NIuSwBt4QIX4OglJnOVCDEpN+nbOUTSt5v2DQd2FVN8WTPSSB6AFOAjHTHPiNpI2
+	0tlKLvrtHq/CseoJvPJbl01T/oVEbzTrrvUxBQH/VOT5GYX3AY2T/3fqmnHLep4S
+	dugjJA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhxagtf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 16:02:04 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57DG23tN012748
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 16:02:03 GMT
+Received: from [10.216.60.81] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 13 Aug
+ 2025 09:02:00 -0700
+Message-ID: <4c70139e-2026-4221-88d8-b64f675ad78e@quicinc.com>
+Date: Wed, 13 Aug 2025 21:31:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ufs: ufs-qcom: Align programming sequence of Shared
+ ICE for UFS controller v5
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>
+References: <20250812091714.774868-1-quic_pkambar@quicinc.com>
+ <x5pkfdxwnpqv66d4y3bucpd6vpxbsahdt2mdj6mdlb43emfkxn@dktn4wpuosgr>
+Content-Language: en-US
+From: Palash Kambar <quic_pkambar@quicinc.com>
+In-Reply-To: <x5pkfdxwnpqv66d4y3bucpd6vpxbsahdt2mdj6mdlb43emfkxn@dktn4wpuosgr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfX25yngnbUoLE1
+ IYj5Ds1okxAwSVEX1P0ZDB+8g8kmXVuPrmahmBREVwk2K6TPLMaut+eDKD82IAjxP0PNHtIGKRN
+ eENLp/wLxofNyKcPgHyAaR76Vc7ATMwZj58xpy/Qy7oyegkXuUtJNB8rlVdZX/iZQ9sgPBkouHY
+ 0rwajmcLXoIPDKTCdBWMBWyhvKDoGzOOhgRQliNr2Kb+/WctkIN6Y9m+DjH/172iJMCNYfS+lWb
+ YS5DDDbPZ4yJpXfV1s+2KDWPc4PdvFjsn+qDMr62YUWeE1Eng3mXusW9RSdNDStykF+1Ms9k3Cm
+ iDwE5A9/HU5xaaaPZ1qrzoin/tpxshEXsYyKfTv0SwrNtT7zRy59D31uJZAmNhHaAafp9CfOOMo
+ GZegczhy
+X-Proofpoint-GUID: ZAK3Cs5ebEjQLy8SDZYd8uuD6eL4VohX
+X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689cb6fc cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=bFtwN0H5KFSSgKAYKl4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: ZAK3Cs5ebEjQLy8SDZYd8uuD6eL4VohX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
 
-The value "new" is being assigned to NULL but that statement does not
- have effect since "new" is being overwritten in the subsequent fallback case.
 
-Remove the unused value. This issue was reported by coverity static
-analyzer.
 
-Fixes: a9eb185be84e9 (apparmor: fix x_table_lookup)
-Signed-off-by: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
----
- security/apparmor/domain.c | 1 -
- 1 file changed, 1 deletion(-)
+On 8/13/2025 3:25 PM, Manivannan Sadhasivam wrote:
+> On Tue, Aug 12, 2025 at 02:47:14PM GMT, Palash Kambar wrote:
+>> Disable of AES core in Shared ICE is not supported during power
+>> collapse for UFS Host Controller V5.0.
+>>
+> 
+> Could you please add more info on the issue observed?
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 267da82afb14..9c0c7fa8de46 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -592,7 +592,6 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
- 		if (!new || **lookupname != '&')
- 			break;
- 		stack = new;
--		new = NULL;
- 		fallthrough;	/* to X_NAME */
- 	case AA_X_NAME:
- 		if (xindex & AA_X_CHILD)
--- 
-2.43.0
+Sure Mani.
+
+> 
+>> Hence follow below steps to reset the ICE upon exiting power collapse
+>> and align with Hw programming guide.
+>>
+>> a. Write 0x18 to UFS_MEM_ICE_CFG
+>> b. Write 0x0 to UFS_MEM_ICE_CFG
+>>
+> 
+> Please be explicit about the fields you are writing to.
+> 
+>> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
+>>
+>> ---
+>> changes from V1:
+>> 1) Incorporated feedback from Konrad and Manivannan by adding a delay
+>>    between ICE reset assertion and deassertion.
+>> 2) Removed magic numbers and replaced them with meaningful constants.
+>>
+>> changes from V2:
+>> 1) Addressed Manivannan's comment and moved change to ufs_qcom_resume.
+>> ---
+>>  drivers/ufs/host/ufs-qcom.c | 14 ++++++++++++++
+>>  drivers/ufs/host/ufs-qcom.h |  2 +-
+>>  2 files changed, 15 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+>> index 444a09265ded..60bf5e60b747 100644
+>> --- a/drivers/ufs/host/ufs-qcom.c
+>> +++ b/drivers/ufs/host/ufs-qcom.c
+>> @@ -38,6 +38,9 @@
+>>  #define DEEMPHASIS_3_5_dB	0x04
+>>  #define NO_DEEMPHASIS		0x0
+>>  
+>> +#define UFS_ICE_RESET_ASSERT_VALUE	0x18
+>> +#define UFS_ICE_RESET_DEASSERT_VALUE	0x00
+> 
+> Please define the actual bits as per the documentation, not the value you are
+> writing. Here, you are changing two fields:
+> 
+> ICE_SYNC_RST_SEL BIT(3)
+> ICE_SYNC_RST_SW BIT(4)
+
+ok Mani.
+
+>> +
+>>  enum {
+>>  	TSTBUS_UAWM,
+>>  	TSTBUS_UARM,
+>> @@ -756,6 +759,17 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+>>  	if (err)
+>>  		return err;
+>>  
+>> +	if ((!ufs_qcom_is_link_active(hba)) &&
+>> +	    host->hw_ver.major == 5 &&
+>> +	    host->hw_ver.minor == 0 &&
+>> +	    host->hw_ver.step == 0) {
+>> +		ufshcd_writel(hba, UFS_ICE_RESET_ASSERT_VALUE, UFS_MEM_ICE);
+>> +		ufshcd_readl(hba, UFS_MEM_ICE);
+>> +		usleep_range(50, 100);
+> 
+> Please add a comment above the delay to make it clear that the delay is not as
+> per the doc:
+
+Sure.
+
+> 		/*
+> 		 * HW documentation doesn't recommend any delay between the
+> 		 * reset set and clear. But we are enforcing an arbitrary delay
+> 		 * to give flops enough time to settle in.
+> 		 */
+> 
+>> +		ufshcd_writel(hba, UFS_ICE_RESET_DEASSERT_VALUE, UFS_MEM_ICE);
+>> +		ufshcd_readl(hba, UFS_MEM_ICE);
+>> +	}
+>> +
+>>  	return ufs_qcom_ice_resume(host);
+>>  }
+>>  
+>> diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
+>> index 6840b7526cf5..cc1324ce05c7 100644
+>> --- a/drivers/ufs/host/ufs-qcom.h
+>> +++ b/drivers/ufs/host/ufs-qcom.h
+>> @@ -60,7 +60,7 @@ enum {
+>>  	UFS_AH8_CFG				= 0xFC,
+>>  
+>>  	UFS_RD_REG_MCQ				= 0xD00,
+>> -
+>> +	UFS_MEM_ICE				= 0x2600,
+> 
+> As the internal doc, this register is called UFS_MEM_ICE_CFG.
+
+Ok will update the register name.
+
+
+> - Mani
+> 
 
 
