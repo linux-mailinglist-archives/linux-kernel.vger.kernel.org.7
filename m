@@ -1,79 +1,141 @@
-Return-Path: <linux-kernel+bounces-766550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50940B247FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:06:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCD1B247FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76465562E0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:06:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C83D7B10BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 11:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7052F6582;
-	Wed, 13 Aug 2025 11:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E612F6574;
+	Wed, 13 Aug 2025 11:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLaKQQx3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="LCd0IsQr"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52F52F28F4;
-	Wed, 13 Aug 2025 11:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E191A9F9E
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 11:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755083185; cv=none; b=ikHKGaSk0qq65oSsiwAxKB5Jid0bgpgvW8ZqZ2qyamFfm3qqHZy2IW09wlACHhxvmotsr52caTWqldUT9oauej6+I/+k+XN+OIb/uPKyd9GTCXBCZMBYZsKs3pHHxXreewpN3Sxk5sU/QbuEjvWYkaqCuDgWwjyLxl9n3tNWvIU=
+	t=1755083202; cv=none; b=qwR62H4hDTxeBxD74nLwZnN4j1dyxl7Z9GYyWXKQvZyKSSpTPluHP85UbGY+vdFFJ8F0hCGvpRg42aItJmOjqSFovI/ft3K1lwsq1yOgpjjiSw28PEdwFSlyR3TseJ+a3WkvlY3cLdfEVfkAIb6IZqdN+DeoYLLeKhWBeCaGaAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755083185; c=relaxed/simple;
-	bh=LfFCw1GiHhrzBmptuNDQ/aeYnRAaPGPtUOjHtJF8ibM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EAJOi+rIjOjOzfxg3bBARTqlEfNIjj4zx0ibqtHM7VjzQhewGKErosLGs/+smJbPYW91pDRsSTD2bnY4O7CekBad4EM/0ZkOWd2NA1oiElscn2hpN3QmZ+v3Jl4qSTHNeZoAsycwBsGYS5/suFr0//TMiA4Cg8HOpVJoMrOAOwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLaKQQx3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE3F3C4CEF5;
-	Wed, 13 Aug 2025 11:06:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755083184;
-	bh=LfFCw1GiHhrzBmptuNDQ/aeYnRAaPGPtUOjHtJF8ibM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=QLaKQQx3R7a01dppD8GG5CDjmb+66U3AM7Fxc0bTrTL4EP8pU5aodTT2YqjNbD344
-	 r+hKCg9mtQNn3xHzOhy0BdBeooneU01ygfts5kpAl7G5bunsjVFGA1/X9Z+eRibe0s
-	 QqKd3NISKaeGqvBL9Reht22+gUfL+hmBwpoZLqORuE587QtlcW3vtT0eZYRYifC/8K
-	 2lfVNiBD7IfJMMEYyGlKrCelw2D17e8uKyLB5EZoV9m9FWlo5SiDy2+USsG35xDrmt
-	 3KqlzFMJkMBYce5s/cxv8zFrh+ZMbt5Xb/mh+ADrHCl6kQ9cCk1g6DcVNldhdJZr7g
-	 pOeS2DKQ/8XOA==
-From: Leon Romanovsky <leon@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
- Fushuai Wang <wangfushuai@baidu.com>
-Cc: dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca
-In-Reply-To: <20250811062534.1041-1-wangfushuai@baidu.com>
-References: <20250811062534.1041-1-wangfushuai@baidu.com>
-Subject: Re: [PATCH] IB/hfi1: Use for_each_online_cpu() instead of
- for_each_cpu()
-Message-Id: <175508318090.201024.471831304009902438.b4-ty@kernel.org>
-Date: Wed, 13 Aug 2025 07:06:20 -0400
+	s=arc-20240116; t=1755083202; c=relaxed/simple;
+	bh=zL5jYILjg03q5A7OCrmFT1vnpldnvjNwH1orB+VxEeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TVvkoVWKGZAQRxG7x1nEmfeY44hdKAtFgC0jwVJWyYS2KTlIVSJ0IhFY5auUcSgwpXiHnA4o7VDgdLym1EnPGIID1LnuJP9DR87OKO9vq6neZpyy26nRvMxDDkDsd40y5j5FbJc9SOtVn224JP0oaZjvPUErUuEPobmdYl8/T3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=LCd0IsQr; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 10E87240103
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:06:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
+	s=1984.ea087b; t=1755083192;
+	bh=NJ0EizDtRJJhlNZhJl1TR1dmIB5G5mhRteqDnrXTujM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:From;
+	b=LCd0IsQrsfXrH+pDn/My9rdl+TZx5IA/HCLlNCNW/iBRIHkiAhe81ovfinrxq/rJ4
+	 3XZk7+69XWZgHCNu/D3CFjjqxfeditCTr/Wb8XiP6tkfJpaCXS4zXyPUnMRFghl2WT
+	 31uc+XEqkjmLE1czyIzwXF7SqsQsH3bSvTLLmDSGvrLNOpoOdcU3znpnnxIc6tGtfY
+	 XsB6zEoUw6/6MLLrCEvLw/zD4HJRFdvgP30CjYrTzIgQOvhNiahfoOQlBQ+tzGN7V/
+	 5AhJJGk0oMaJZLepMuqpfhOIeASMfvQJXUALTYjnj1VRVEEOHQeVmmsTvc95M+f7B2
+	 DA1PtWaI1ClRnD5cTVPnnITXWO0JVIUq0S8SKUp3JtD64EWpR/Uzu5/ngv8/d8pL1q
+	 hFP3nB9+5rtX9R+SNMe5rVnICLKUsdQyfSuRcoYkpc1wWkqmGFmKVRsxoY3KtmGfkX
+	 Y13vd/o3HnSbvtw9i5HwE3daiHhF6C8niSYaO7mEumoYIDCr7tO
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4c25Cq0YLyz9rxB;
+	Wed, 13 Aug 2025 13:06:30 +0200 (CEST)
+Date: Wed, 13 Aug 2025 11:06:31 +0000
+From: Wilken Gottwalt <wilken.gottwalt@posteo.net>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Jiri Slaby
+ <jirislaby@kernel.org>, Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH] tty: serial: 8250: exar: fix kernel warning in
+ default_setup function
+Message-ID: <20250813130629.03832804@posteo.net>
+In-Reply-To: <aJJ49CSBqGZM_b1Y@smile.fi.intel.com>
+References: <aIiDf31HzRBGuMN2@monster.localdomain>
+	<2025072929-distant-hardener-0e75@gregkh>
+	<20250730130348.082ad53d@posteo.net>
+	<aJJ49CSBqGZM_b1Y@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
 
+On Wed, 6 Aug 2025 00:34:44 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-On Mon, 11 Aug 2025 14:25:34 +0800, Fushuai Wang wrote:
-> Replace the opencoded for_each_cpu(cpu, cpu_online_mask) loop with the
-> more readable and equivalent for_each_online_cpu(cpu) macro.
+> On Wed, Jul 30, 2025 at 11:03:50AM +0000, Wilken Gottwalt wrote:
+> > On Tue, 29 Jul 2025 10:48:17 +0200
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > 
+> > > > diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+> > > > index 04a0cbab02c2..5660bb897803 100644
+> > > > --- a/drivers/tty/serial/8250/8250_exar.c
+> > > > +++ b/drivers/tty/serial/8250/8250_exar.c
+> > > > @@ -500,12 +500,13 @@ static int default_setup(struct exar8250 *priv, struct pci_dev
+> > > > *pcidev, struct uart_8250_port *port)
+> > > >  {
+> > > >  	const struct exar8250_board *board = priv->board;
+> > > > +	unsigned int bar = 0;
+> > > >  	unsigned char status;
+> > > > -	int err;
+> > > >  
+> > > > -	err = serial8250_pci_setup_port(pcidev, port, 0, offset, board->reg_shift);
+> > > > -	if (err)
+> > > > -		return err;
+> > > > +	port->port.iotype = UPIO_MEM;
+> > > > +	port->port.mapbase = pci_resource_start(pcidev, bar) + offset;
+> > > > +	port->port.membase = priv->virt + offset;
+> > > > +	port->port.regshift = board->reg_shift;
+> > > 
+> > > And so now serial8250_pci_setup_port() is never called?  Are you sure
+> > > that's ok?
+> > 
+> > Hi Greg,
+> > 
+> > I will not provide a second version of this patch, because this is a bigger
+> > problem involving 8250_exar, 8250_pci and 8250_pci1xxxx. With the changes from
+> > kernel 6.10 to 6.11 the underlying pcim_* functions where changed. The
+> > serial8250_pci_setup_port() does checks on pci_dev + BAR where resources were
+> > already mapped via pcim_iomap(), pci_iomap() or even pci_ioremap_bar(). Not
+> > sure if mixing this is a good idea after the kernel 6.11 changes.
+> > 
+> > serial8250_pci_setup_port() uses pcim_iomap() and pcim_iomap_table() for checking
+> > these already mapped resources. But the pcim_iomap_table() is deprecated and
+> > suggests to use pcim_iomap() function to aquire the pointer to the resources
+> > while at the same time pcim_iomap() description states, don't use this function 
+> > twice on the same BAR. I think the most sane approach would be to drop the
+> > pcim_iomap() and pcim_iomap_table() checks from the serial8250_pci_setup_port()
+> > function. But I can not fully test this, I only have access to some hardware
+> > used by the 8250_exar driver. I also CC Andy and Parker, both worked on the
+> > affected code.
 > 
-> 
+> I'm on vacations right now and I lost context of this a long ago, please Cc me
+> to any new version of this change to have a fresh look.
 
-Applied, thanks!
+Hi Andy,
 
-[1/1] IB/hfi1: Use for_each_online_cpu() instead of for_each_cpu()
-      https://git.kernel.org/rdma/rdma/c/211dc59b7bb5ea
+there is not much to add here. It is basically a recursivly added issue and
+affects the three mentioned drivers. In my opinion it is safe to remove the
+pcim_iomap() and pcim_iomap_table() functions checks from the generic
+serial8250_pci_setup_port() function. To me it looks like the "newly"
+implemented pcim_iomap(), which should not be used twice on the same pci bar,
+is the only issue here. But I can only speak for the 8250_exar driver. We
+use the fix in productions systems and it solves the issue. But beyond that?
+To me the change of the pcim_iomap() looks like a design flaw in general,
+allowing io-mapping only one resource per pci bar looks odd to me, but I am
+not knowleged enough about these subsystems.
 
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
-
+greetings
 
