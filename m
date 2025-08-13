@@ -1,88 +1,194 @@
-Return-Path: <linux-kernel+bounces-765792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E252B23E50
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:41:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B56AB23E93
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B681B61712
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:41:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1D71B63C25
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 02:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0C41E9906;
-	Wed, 13 Aug 2025 02:41:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF84C270559;
+	Wed, 13 Aug 2025 02:50:43 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCCFC2D1
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 02:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D19D1FAC4D;
+	Wed, 13 Aug 2025 02:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755052865; cv=none; b=ahMY4XRJnsrrpTDbPHdsOn6jQIOUgzyvZMniQZfU4trA2eihGQ4ps0Cf9wrZv3h1bX4FjAxSL3vrFxlrepNpNunXK/5SjLTgovUf/Ykzx3/vKEv/nmDRRzlmwIZ/JO2Aitc+wNDfCN/VueOeCPXczeLueC5o8MB83JTYKU9j/Ys=
+	t=1755053443; cv=none; b=Nl9qdr4unwvvKbD+eLGBlGja1FC46ysHNvOEn0aIk2HNh8wlg9KKEQVtA6dyqrG5RF/kclZrbezQRKqam16IiWBFZ46VW08qE+ukmN0pl7lvRWcLvNrwcQxyMNNHuOfjW1Kj08+LlU7xAus7xt1ubIGbViG6TeKC2Lx4mpRoFmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755052865; c=relaxed/simple;
-	bh=VsKyD4w9ND4Q7HUqeebbRH0Rfey+QrywJ4y9uBYbgls=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mLWSZoQtFoiw1yX81Q6TpZQWWugpzzHX7g985eMgl7uKNraDYW/JXpCWTaoBMya9FpAmaCdVhMchIfr42Qh1Q787y4iRsTxXH34wy4rmMfPKYKTOl5U5L5rMtoDvr5gq9OXyRlHoCihny4d5GZ90PNHviFu+P4fKTmKqZyUtmqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-881776a2c22so1507130239f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 19:41:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755052863; x=1755657663;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MOKjVnYuXgqPaa3yg2VZdRRdIXKDXsEBOmFzzU1fh6s=;
-        b=K33AMEFzqPsrt03DQJqPzY8tRVPXh9u5Eb8XyTsxVJ28wyPkW/YPz+zOZrVa9cv7Fg
-         WYHxVriNOxMwMZ422pyBE3ZcrY+7vPjThhSBnEXfieqFjzXAXGU3O0FVmzYdNQtxhrw+
-         FeqiM/jjhPpTcYFVMXd/9fq8vVIPij9L0Eu9BeDwm9LRKMgOqytkl3YQwlecm0KmkpKH
-         a7rk2lUwRkQK2U8Q95lnXCCMT9ATS7XBk31DXpIbGKNud792KNcS3d7OCgzOOsTOXycc
-         9aS8Vmvq8Gi3thiQT3eahmbtciE82NqWZzJxAF3lPw7acVx82kGFf9IBCiIKETBKP+Yo
-         L+BA==
-X-Forwarded-Encrypted: i=1; AJvYcCUV4JcGoPOD8YNBmr2ZSRBu9lxQhQ+z0aiYqEaeh5Ti52KZ5hojOyH26RasaqECFpJEwM36g4xiDZRRgDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcVEiVmcFt4P1Tg89ATvAEUhwWkrFkPszm69T85wC0V7HMHXHV
-	SH519e60Z+k/XHazHB9P6AnytuQefrhG+FQPZ4sFpVf/7LUvxhIpOy+D6Pk6WTmYwDON02DmdJJ
-	p8gJt2xWrjfqtoE6O6vQwaUS4CYwIWuwwyR5lLbuzxz9ALqpo0EropbgxyDo=
-X-Google-Smtp-Source: AGHT+IE78i0L8Gbc2hUUPZVqCdf3/NIu9NoKr5r4DJS96qBoGN7g33icJnejqMKT3NsKeGxo5KY3mUjP6m3F+ezdHb9Casy3gIWl
+	s=arc-20240116; t=1755053443; c=relaxed/simple;
+	bh=65xTXBS7eGQ2OVVFDS+gtYw/5G72uYv1DJdogCLu8CU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Apd1R9/HKVEiJbRJA7I5bbIc10klDNKi7xSaxeopNBRX2U2+4YmKBiZo4HolZD1mnxM6RxYZYtUPvSCvCBny+zFEDPca/QmFXHwhL0keNQQZG2t7qnf/KmRvYR1OvWv2LsYtQeggtLxS+8fWhnrwSCFOj9LHv/snuKRkoqc84nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c1tCf5RH1zKHMmM;
+	Wed, 13 Aug 2025 10:50:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 039291A0E9C;
+	Wed, 13 Aug 2025 10:50:38 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDHjxB2_ZtofKcBDg--.14943S4;
+	Wed, 13 Aug 2025 10:50:37 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	hch@lst.de,
+	tytso@mit.edu,
+	djwong@kernel.org,
+	bmarzins@redhat.com,
+	chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com,
+	brauner@kernel.org,
+	martin.petersen@oracle.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH xfsprogs v2] xfs_io: add FALLOC_FL_WRITE_ZEROES support
+Date: Wed, 13 Aug 2025 10:42:50 +0800
+Message-Id: <20250813024250.2504126-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c8b:b0:881:6d77:6d81 with SMTP id
- ca18e2360f4ac-88429655830mr302881139f.8.1755052863610; Tue, 12 Aug 2025
- 19:41:03 -0700 (PDT)
-Date: Tue, 12 Aug 2025 19:41:03 -0700
-In-Reply-To: <20250813014658.4404-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689bfb3f.a70a0220.7865.0044.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_unregister_user
-From: syzbot <syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHjxB2_ZtofKcBDg--.14943S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxur17Jw1kCF1rXw15JF15twb_yoW5Xr1Up3
+	9rXF1UKa45Xry7WayfGws7WFn8Wws2kr1fJr4xWr1UZ3W5AFyxKFn8G3Z5X3s7WFWxCa1U
+	JFnIqFy5G3WSy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjTR_OzsDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hello,
+From: Zhang Yi <yi.zhang@huawei.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
+fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES support to the
+fallocate utility by introducing a new 'fwzero' command in the xfs_io
+tool.
 
-Reported-by: syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com
-Tested-by: syzbot+14b6d57fb728e27ce23c@syzkaller.appspotmail.com
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+v1->v2:
+ - Minor description modification to align with the kernel.
 
-Tested on:
+ io/prealloc.c     | 36 ++++++++++++++++++++++++++++++++++++
+ man/man8/xfs_io.8 |  6 ++++++
+ 2 files changed, 42 insertions(+)
 
-commit:         8f5ae30d Linux 6.17-rc1
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=16786842580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c5ac3d8b8abfcb
-dashboard link: https://syzkaller.appspot.com/bug?extid=14b6d57fb728e27ce23c
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17f5caf0580000
+diff --git a/io/prealloc.c b/io/prealloc.c
+index 8e968c9f..9a64bf53 100644
+--- a/io/prealloc.c
++++ b/io/prealloc.c
+@@ -30,6 +30,10 @@
+ #define FALLOC_FL_UNSHARE_RANGE 0x40
+ #endif
+ 
++#ifndef FALLOC_FL_WRITE_ZEROES
++#define FALLOC_FL_WRITE_ZEROES 0x80
++#endif
++
+ static cmdinfo_t allocsp_cmd;
+ static cmdinfo_t freesp_cmd;
+ static cmdinfo_t resvsp_cmd;
+@@ -41,6 +45,7 @@ static cmdinfo_t fcollapse_cmd;
+ static cmdinfo_t finsert_cmd;
+ static cmdinfo_t fzero_cmd;
+ static cmdinfo_t funshare_cmd;
++static cmdinfo_t fwzero_cmd;
+ 
+ static int
+ offset_length(
+@@ -377,6 +382,27 @@ funshare_f(
+ 	return 0;
+ }
+ 
++static int
++fwzero_f(
++	int		argc,
++	char		**argv)
++{
++	xfs_flock64_t	segment;
++	int		mode = FALLOC_FL_WRITE_ZEROES;
++
++	if (!offset_length(argv[1], argv[2], &segment)) {
++		exitcode = 1;
++		return 0;
++	}
++
++	if (fallocate(file->fd, mode, segment.l_start, segment.l_len)) {
++		perror("fallocate");
++		exitcode = 1;
++		return 0;
++	}
++	return 0;
++}
++
+ void
+ prealloc_init(void)
+ {
+@@ -489,4 +515,14 @@ prealloc_init(void)
+ 	funshare_cmd.oneline =
+ 	_("unshares shared blocks within the range");
+ 	add_command(&funshare_cmd);
++
++	fwzero_cmd.name = "fwzero";
++	fwzero_cmd.cfunc = fwzero_f;
++	fwzero_cmd.argmin = 2;
++	fwzero_cmd.argmax = 2;
++	fwzero_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
++	fwzero_cmd.args = _("off len");
++	fwzero_cmd.oneline =
++	_("zeroes space and eliminates holes by allocating and submitting write zeroes");
++	add_command(&fwzero_cmd);
+ }
+diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
+index b0dcfdb7..0a673322 100644
+--- a/man/man8/xfs_io.8
++++ b/man/man8/xfs_io.8
+@@ -550,6 +550,12 @@ With the
+ .B -k
+ option, use the FALLOC_FL_KEEP_SIZE flag as well.
+ .TP
++.BI fwzero " offset length"
++Call fallocate with FALLOC_FL_WRITE_ZEROES flag as described in the
++.BR fallocate (2)
++manual page to allocate and zero blocks within the range by submitting write
++zeroes.
++.TP
+ .BI zero " offset length"
+ Call xfsctl with
+ .B XFS_IOC_ZERO_RANGE
+-- 
+2.39.2
 
-Note: testing is done by a robot and is best-effort only.
 
