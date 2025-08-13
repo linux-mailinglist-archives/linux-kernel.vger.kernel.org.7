@@ -1,194 +1,186 @@
-Return-Path: <linux-kernel+bounces-767664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2200AB25765
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:20:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E08F5B25769
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C061D7255F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:20:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 285721C81A1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9932FC87F;
-	Wed, 13 Aug 2025 23:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC60E2FC87A;
+	Wed, 13 Aug 2025 23:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZUr3CSHf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tm5ut3GE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D2D2FB98A
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499F72FB96F;
+	Wed, 13 Aug 2025 23:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755127236; cv=none; b=RX4JnoL3MfLJvVVmCDUr/pYBny+5IXmyN1cQ+El5mgMjsOoDu+3PJeTcfM2XciFrpAcvyb8Bl/H3gd/T+Qs/0UQa+KWs9WRLdr8VEcYO5rsqB7gMGgyxHKo7ZBUMuuIi5NYj7KeEZvsH+c5qq9AfIs4tLpZiZH7TV09eZ5ahZ1Y=
+	t=1755127262; cv=none; b=lvn6xUPzljhOnXktN7NKX5i9Vq6NboCZTytOayk1wBieDU/YhBLqwf7QZD8/xpzARKgCWS6GbAVD469yadhvo/ngtMd42pjP0RkowzaUj6HlW6MpEakAm08DDBGsvrTuG7ARQ5QZGLz5ZKveKJBvC2y4YEFC4Ro6pOUxb/CEJas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755127236; c=relaxed/simple;
-	bh=K41reef5ANbMRiF4uxfGDDzVnXCjuA+uPaSg4T4I0S4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tHvoX7jdDcpyghbDik8oM8yTIQG/75PW0wtNsZCnXN4YheT7Tn8fOdMTrV9syhf5Iv9ALwUG1wm4LmYhxakf7DgBfVM9EkRVFgP8bwXVVvPX/08D3C5tFOqoDXz0VVBFFnA+92zwEmnl7jb4bvV4DrPu1vxZfOvi4au4/bZUh9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZUr3CSHf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DNCNCx024004
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:20:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MqQ5LAlEsNqEJ+2SlpIbhfIckQ4duQR//L6MMCTIFNU=; b=ZUr3CSHfaxYU7N0J
-	LwQg1xZ/rtIGFfgOgxl//7sS/0lm4Aj5yk7ZCp2DrOeQnltcqlalw/MjKgKXJmB+
-	oR6whs/bwSNoSSjCUsRBmrqLCuyYyseg7WuKg2byxi3NUBFU4hAcB1Sdee3KVWPP
-	crdL2t/xZelR9gxtErvlVatGaPVfFcMk+mzQujkhNYImlwRCBKmehZkMqLAxIAXM
-	ApjsmvSP8+P/Lhv6k2mBaW7cR7600sun5hZnVYHOR82/Gm4jqyUqYAyyrV1fU002
-	d28pwp6qqgU8yccOV33hbPzippgHDkbiotXdJ726hvXMeBz1QTAZ/E0N0QmBMdb2
-	A5tNZw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48gr9rt79h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:20:34 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b109be4724so1147071cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 16:20:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755127233; x=1755732033;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MqQ5LAlEsNqEJ+2SlpIbhfIckQ4duQR//L6MMCTIFNU=;
-        b=cYcyrQmooBSZP04mnr9hPv1yNrD+oahDmdiHjCBvN3MwkuH6vlMIqIwiw+SDccoiY6
-         C3hZqI0MM3rFJcKcnWLifqvf+Vy30NmX/wzQHGjRrTqT81BozMVMb0RJdHRPlTS3egG7
-         6BJuNvhiEtWcFeZjc79yV5Yi0DnUD9b4HO++OVNqYx6wt9um92nFTlhwXHg1e/8ahxJD
-         MPRVCmhLCpONjjEPr8jZrpPPGwsDfC3qLMAGB2KVomqvJUAGPZhqzCSsVWMAQpVfrk4/
-         Ta4jhi2+KPrG3tBX9SOVhftwvBTSNzmcBL5f+9nfbPgWefS6zNLzR0C/D3QYEaHvb5jV
-         rVLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWH5CuUFKPa6J8IHF9BmGeKUBXFi05CLnik4RXvDUxk5nFB+0JQaSADUFFdsTfM7sboRQ1/KWud8jH7Zbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiucELnfOZlL3/TYfmv6XCawWfgu8N9XOye5NpOySl8lA9T39/
-	D/E8kdbaI/sZo1w1KD1hIG86WMgwNQiCuhfM9YzOa9TQdA9fzF/4hE0omMLLPZ93wEXiOF+8K2X
-	DPD2r7ZE3uCciQtrp8lYxegxqZUb1+2fUytfQIZ1WTHscvhFu/fjtzP77Yl3UKr26SbI=
-X-Gm-Gg: ASbGncs/WHZ+iMSLhXzgv1eMkErvGr3rwJ8WkXv2sSVmH+86Oki0aMpM7uIwqQVvG/p
-	P4Ka9vMwPL8+rfMk48D2fffWw8urQHjgmDvKotwaTNOiH1Trdz9rbOLjAph0aKYM1gQpz0m/dhe
-	JkYlvoUP5wgw/9/cdIMuZAJez0Aqo94OT0PlpEofeEa9XaD9F1nPa8s9YaTt4ooi5DJvUVeWyex
-	hh62YBZlKUYy0e9o62tbWVHmFy8uTu4A/VEvxlIg94Rqlph9hyQGQXJYDwWr1NLOT9vJkfqRXlV
-	FkLIB0z8UdSaLb/wqx5YzwnvzWsLyfAZGXSKxrOJPx4oly68bYqwqHW6oTvV+OAgivavwfJMRur
-	7poBWFqOvKvqft+06sg==
-X-Received: by 2002:a05:622a:11c9:b0:4a5:aaeb:dce2 with SMTP id d75a77b69052e-4b0fc7bd280mr35471991cf.10.1755127232824;
-        Wed, 13 Aug 2025 16:20:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEerwHUOumqAcf494bszPPlRc+za1y06J1v7a2/RnRceuUSxkyYhtRk1xeTG5320KKmAVxs7g==
-X-Received: by 2002:a05:622a:11c9:b0:4a5:aaeb:dce2 with SMTP id d75a77b69052e-4b0fc7bd280mr35471561cf.10.1755127232170;
-        Wed, 13 Aug 2025 16:20:32 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a9113e40sm22753076a12.57.2025.08.13.16.20.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 16:20:30 -0700 (PDT)
-Message-ID: <8bcb37ed-2885-4f4d-abed-5dd5ec6a254c@oss.qualcomm.com>
-Date: Thu, 14 Aug 2025 01:20:27 +0200
+	s=arc-20240116; t=1755127262; c=relaxed/simple;
+	bh=7QHaI1fcoxBUlAvp1V08Z9TBDjmmxs2AxZfKfYjFpL0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iu+yla3JCRC8OlcS1CFSKSikJzjIVf0NGooh6tXGH1lk9hoAX7pbDYHtrbuPFCa/hG55xBUXQvirDzMo/DtMGlClobBpNpe0UcUnj9MvI/gAXmDeyhs/0ljdake/OqD1wzKx7A44O9W9ATba1gKwTKTkZKtLpZQuvex3klM8ZlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tm5ut3GE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F92C4CEEB;
+	Wed, 13 Aug 2025 23:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755127261;
+	bh=7QHaI1fcoxBUlAvp1V08Z9TBDjmmxs2AxZfKfYjFpL0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tm5ut3GEOG1mFe2/aGoyOYmwODnxtNuPOch6sbjlPY7ccBvevVWPqB1pxoClOAZtV
+	 zU/jCBmD3LCfpfAIfOwZwacdBvB8lJeLm/Tel0PWiK3f/8ly9t69Uqh8JIM7Aq6MEC
+	 /oI9ogGtua3itoEk1odrFe65POEROXSBKqfOgry85wLdsvehMp/+KhnJZah3xDWd8W
+	 ncGd6oT5ppLIJ0wH2vkLVb3lXNHad23PKKUL5HPzzOSnjVy5GQzOkY71taiyNENVnc
+	 CJXOTTFQ7W65780n0gSUE8yro8QFBts62NefoWTwQ/Gvu9NoZaBL9ZWJHLXmCOR+AF
+	 MwUuF+bma0+7Q==
+Date: Wed, 13 Aug 2025 18:21:00 -0500
+From: Rob Herring <robh@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, p.zabel@pengutronix.de,
+	geert+renesas@glider.be, magnus.damm@gmail.com,
+	yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v4 4/8] dt-bindings: reset: renesas,rzg2l-usbphy-ctrl:
+ Document RZ/G3S support
+Message-ID: <20250813232100.GA950521-robh@kernel.org>
+References: <20250808061806.2729274-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250808061806.2729274-5-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/11] qcomtee: enable TEE_IOC_SHM_ALLOC ioctl
-To: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Sumit Garg <sumit.garg@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Apurupa Pattapu <quic_apurupa@quicinc.com>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Sumit Garg <sumit.garg@oss.qualcomm.com>
-References: <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com>
- <20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-10-ce7a1a774803@oss.qualcomm.com>
- <3ec0a8d0-7900-45bd-b0d3-90ee8ca7730c@oss.qualcomm.com>
- <d81abdef-18fa-496d-8493-e8f336c43800@oss.qualcomm.com>
- <d74404ec-44ad-412f-98ef-eed288ecf1bf@oss.qualcomm.com>
- <87c884ed-0975-4ac2-a0fa-16e830a57c72@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <87c884ed-0975-4ac2-a0fa-16e830a57c72@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDA5NCBTYWx0ZWRfX27xLdw7uBgQr
- kMij9B2MqB/jNBUqIyg9d0+xW0Lad+8zmtc0HGJzxqJ6wf0LvoaxVMUvgdvez+oSpGfq7ahs/EF
- 7PwRuQzdLeN3wwQaBPmfoyWlmOE81s8hdxrUsc6yZgQDYOdgvf57MT8358KatWZNuEgvQPbBg/w
- BVcMCaL0XZJBiKurq8HTPsb0zMjSNtu3YwzdzRR/c6MYn+tHZeT8ijEGl1zm+v56Ci8QdfUfM6U
- 4TsZTkCwNDrQ9j0c2fHyN63Ylw7UuyMp/IE3+0doUdQzQPo2qeyEgMn07/r8i3u8z6pV24NPFQU
- 6lo8+d5P6dMnXm86TXAdNsWzosmkZsjqP4i5kXhVMeyDuw5TcrjlqMDrg7xEtTH6kZd6w3SM9tE
- GdzqEQl1
-X-Authority-Analysis: v=2.4 cv=NIrV+16g c=1 sm=1 tr=0 ts=689d1dc2 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=COk6AnOGAAAA:8 a=frUY0QHmMtcHLPOZDgsA:9 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: E2L6_LdtPlt_6eDJ0Nf4YFhr5-PoLGT5
-X-Proofpoint-GUID: E2L6_LdtPlt_6eDJ0Nf4YFhr5-PoLGT5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0
- spamscore=0 malwarescore=0 phishscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508130094
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808061806.2729274-5-claudiu.beznea.uj@bp.renesas.com>
 
-On 8/14/25 1:19 AM, Amirreza Zarrabi wrote:
+On Fri, Aug 08, 2025 at 09:18:02AM +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
+> The Renesas USB PHY hardware block needs to have the PWRRDY bit in the
+> system controller set before applying any other settings. The PWRRDY bit
+> must be controlled during power-on, power-off, and system suspend/resume
+> sequences as follows:
+> - during power-on/resume, it must be set to zero before enabling clocks and
+>   modules
+> - during power-off/suspend, it must be set to one after disabling clocks
+>   and modules
 > 
-> On 8/14/2025 8:49 AM, Konrad Dybcio wrote:
->> On 8/14/25 12:24 AM, Amirreza Zarrabi wrote:
->>>
->>>
->>> On 8/13/2025 8:00 PM, Konrad Dybcio wrote:
->>>> On 8/13/25 2:35 AM, Amirreza Zarrabi wrote:
->>>>> Enable userspace to allocate shared memory with QTEE. Since
->>>>> QTEE handles shared memory as object, a wrapper is implemented
->>>>> to represent tee_shm as an object. The shared memory identifier,
->>>>> obtained through TEE_IOC_SHM_ALLOC, is transferred to the driver using
->>>>> TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_INPUT/OUTPUT.
->>>>>
->>>>> Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>> Acked-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
->>>>> Tested-by: Harshal Dev <quic_hdev@quicinc.com>
->>>>> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
->>>>> ---
->>>>
->>>> [...]
->>>>
->>>>> +/* Mapping information format as expected by QTEE. */
->>>>> +struct qcomtee_mapping_info {
->>>>> +	u64 paddr;
->>>>> +	u64 len;
->>>>> +	u32 perms;
->>>>> +} __packed;
->>>>
->>>> Please use types with explicit endianness, e.g. __le32. I'm assuming
->>>> TZ will always be little-endian, regardless of the host OS
->>>>
->>>
->>> I'm not entirely sure how this point is relevant. As I understand it,
->>> the core that populates this struct is the same one that accesses it in TZ.
->>> Your argument would absolutely make sense if the host and TZ were operating
->>> on different cores with distinct architectures -- such as one being
->>> little-endian and the other big-endian, which is not the case.
->>
->> CONFIG_CPU_BIG_ENDIAN=y exists on arm64
->>
+> Add the renesas,sysc-pwrrdy device tree property, which allows the
+> reset-rzg2l-usbphy-ctrl driver to parse, map, and control the system
+> controller PWRRDY bit at the appropriate time. Along with it add a new
+> compatible for the RZ/G3S SoC.
 > 
-> Or, you are saying we may have a configuration where host is big-endian
-> but TZ is little-endian?
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v4:
+> - dropped blank line from compatible section
+> - s/renesas,sysc-signals/renesas,sysc-pwrrdy/g
+> - dropped description from renesas,sysc-pwrrdy
+> - updated description of renesas,sysc-pwrrdy items
+> - updated patch description
+> 
+> Changes in v3:
+> - none; this patch is new
+> 
+>  .../reset/renesas,rzg2l-usbphy-ctrl.yaml      | 40 ++++++++++++++++---
+>  1 file changed, 34 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+> index b0b20af15313..c1d5f3228aa9 100644
+> --- a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+> +++ b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+> @@ -15,12 +15,14 @@ description:
+>  
+>  properties:
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - renesas,r9a07g043-usbphy-ctrl # RZ/G2UL and RZ/Five
+> -          - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
+> -          - renesas,r9a07g054-usbphy-ctrl # RZ/V2L
+> -      - const: renesas,rzg2l-usbphy-ctrl
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a07g043-usbphy-ctrl # RZ/G2UL and RZ/Five
+> +              - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
+> +              - renesas,r9a07g054-usbphy-ctrl # RZ/V2L
+> +          - const: renesas,rzg2l-usbphy-ctrl
+> +      - const: renesas,r9a08g045-usbphy-ctrl # RZ/G3S
+>  
+>    reg:
+>      maxItems: 1
+> @@ -48,6 +50,19 @@ properties:
+>      $ref: /schemas/regulator/regulator.yaml#
+>      unevaluatedProperties: false
+>  
+> +  renesas,sysc-pwrrdy:
+> +    description: The system controller PWRRDY indicates to the USB PHY if the
+> +                 power supply is ready. PWRRDY needs to be set during power-on
+> +                 before applying any other settings. It also needs to
+> +                 be set before powering off the USB.
 
-I was indeed about to say that.. I believe our tz is always little-endian
-but you can run the HLOS of either endianness
+Where did this odd formatting come from? If copied from somewhere else, 
+patches reformatting them welcome.
 
-Konrad
+    description:
+      The system controller PWRRDY indicates to the USB PHY if the power 
+      supply is ready. PWRRDY needs to be set during power-on before applying 
+      any other settings. It also needs to be set before powering off the USB.
+
+
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - items:
+> +          - description: System controller phandle required by USB PHY CTRL
+> +                         driver to set PWRRDY
+
+Indent by 2 more than 'description'
+
+With that,
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
+> +          - description: Register offset associated with PWRRDY
+> +          - description: Register bitmask associated with PWRRDY
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -57,6 +72,19 @@ required:
+>    - '#reset-cells'
+>    - regulator-vbus
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a08g045-usbphy-ctrl
+> +    then:
+> +      required:
+> +        - renesas,sysc-pwrrdy
+> +    else:
+> +      properties:
+> +        renesas,sysc-pwrrdy: false
+> +
+>  additionalProperties: false
+>  
+>  examples:
+> -- 
+> 2.43.0
+> 
 
