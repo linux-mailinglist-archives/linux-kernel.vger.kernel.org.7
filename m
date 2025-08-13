@@ -1,157 +1,333 @@
-Return-Path: <linux-kernel+bounces-765743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4026B23DB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:31:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC3AB23DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 03:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89DB43A8744
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409193BB091
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 01:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2278819F461;
-	Wed, 13 Aug 2025 01:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IiB6wOPv"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BE51A0730;
+	Wed, 13 Aug 2025 01:39:56 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A4117333F
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A445E12FF69;
+	Wed, 13 Aug 2025 01:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755048708; cv=none; b=bP0vLDHXz1RYOOhBsHiqIiGvyfNeyiP++35vyf0KzE/yQ537i+F+quDCUg6KWDTWsv7qp5bIxS5dcNramIgCgeOQXVkWEmHpxq03o8lN8wBim2FAoWBeKOQ75ZcVmg1IpmwhmrGBvmj6RXjvUkOM2/yUIs4mTD7zlgpg7f0Oe1k=
+	t=1755049195; cv=none; b=An0BGSGN+m0xwo6m3UKUH3PVxGoFsfmK8dttb05d4p/RV0jwGNrd9VIbVqpBkXsyh8d78aS5YmI78nrVhwkEnL/QOeSD04rGhatBS2U+gGkAPGBxCW2wLOuhTMQXrdaBQgCaVXXYPHceAvQoOa0VLG3pr3OpvJdKwW83NDg9A38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755048708; c=relaxed/simple;
-	bh=MvPb3zCS9Grc/PvA90a/i9WK+vFW2rPw8r2AYE0gtqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F1W+KYYPy4LeNsiMTpUS3SPcC0BXAj5zcPJS28Nah13eeUhJLwMO3OT1wFs+ah1dV1ExYa6m5cRuTl2W9DJrk5DlpqsIGOqb1Gqt6xHpL3YHLSX/aBTqTPD3/X9L3M2ZBHfio2TE2rRdNFQyD83rNaHMwlof1Uga/6CSK3ZXfaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IiB6wOPv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57CKXrnJ032229
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:31:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MvPb3zCS9Grc/PvA90a/i9WK+vFW2rPw8r2AYE0gtqI=; b=IiB6wOPvYXwAKf4H
-	3/5ujJyGZpMq2KmwJJ8MUDUMPmhOg6LTMPvJY+5VQRhRUBcG2HSGxdyrIg9wFCyn
-	JWlCSeL39kioCp1HNWSG2J8g6n1yRorLsefD+ozoJY1q2CE3Du1/5az7l3Br4bLb
-	Kxa2n+GhYeTjn7h8jKjky4mhvKFzr4ATAp0MgU0xlwy3LnOqpm5AOUR5BxPZYAMf
-	cB+flLbu68MCm8sxnUiRmzmegr6up+BHxPQXJ6DGkaOcIeUfm9kc7N/RQQ7cIaa+
-	Nm5fPdevV650KCEApjTTlFYQruZu6AJ9Zdl9Xt22agft7PMGOFHZNl29HAFN8N2s
-	Lx5XWQ==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vmwsu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 01:31:46 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b42a11d7427so3810146a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 18:31:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755048705; x=1755653505;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MvPb3zCS9Grc/PvA90a/i9WK+vFW2rPw8r2AYE0gtqI=;
-        b=qNWV0WW7uVZrNnf2dsfaX21iF20TZprslIy8Fvs9cmNtPHIbe5zOlf/kNTfLggHF6E
-         HCLvEIFA0ghTJyRyJEDWkiIOFtWsqOLfoSiVj6/W+FEE+TPwBKvTge6j0hgucj72VoWJ
-         cAHzVHFSiD7GQ5EQxT8BLg0YwPdwexI0Y1nYOGVhr3/Nd2Izl5XhrPygX94+TytrAVGB
-         WDxzTu9qXM6OvYpQQZ4sGcnlns6S2dilFEec/yXGJrDVc2TFLjVgWVzwYFl8n4DSFPrA
-         IqoK3GpbH7cbs0zIgWl4GG2FqhUmtpIqBNlOTg3NMJ33m2+JUQorLFmZpsg0F2ANmwGm
-         ysOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXk9iGRtQFVodfRTmVgoUrdWgUrIpvs2vAxwjQlrBau2VUivuAHvqO1RXCfKArLOt0vkGJeEU1lRa0RC/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx74cBfa39Jkrp5y5l0KR4nAwK8CdNDBx8+RCwuKSe7xFfAcCT
-	EbkfMDD5H2jbZlGnUyD9y72LiLj8GKwLgLdsuR9Xxo2FNvU3Yx+ax0kLhMlTRmPZDsQjV2UcOsk
-	IZcxUm1dTI1ZAyS802jrcCGUPIwY4+ZqT3Zhc6lsIJfdKLmvfboPw603fhPOkHB380bs=
-X-Gm-Gg: ASbGncuzAek5K15QilJA2Uh1KUiGZp2DDhRBRl5sT9RR7WLiXidRJnW+RmwvFIRcMmI
-	pd3RNselFpxl8wpAWmZmuwJysv/26c8GD7pptuomQF/BhRy4/gxFFcUaC+UU9O4j7b7MKSNg5u0
-	TebTku811czCRCIWLLRZqXP7BpMdI5iEVbC9eOopOsBwZzpYzS2mqNnvuVSQIfO+wIIUn+SQyMl
-	KFtGcztKS0kkNWt2I2JpGuL6K94zmTzlbrtydhy9Xe1YZOmdCbdhvhQ9XfVN9nxZ+IHJA+45aWn
-	2U+aaV0uhxnHTk+b3RMdMLSVmqDv3K16iMZTneTBusq+MqMoXKKOvgX5r7UbsyBnSRZPR06dFJ0
-	ceB+Q2XeP1hOaX/Oe8E0lJ+fXx+j3
-X-Received: by 2002:a17:903:3c2c:b0:240:bf59:26bb with SMTP id d9443c01a7336-2430d105d69mr17783125ad.19.1755048704739;
-        Tue, 12 Aug 2025 18:31:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGdQ1DXAaDzxKmVvrKlv5h38m6LWfzDz/yLj0/n0px8bSRgCo+HiXsqzUIOas6zP/ZN2Hi6dg==
-X-Received: by 2002:a17:903:3c2c:b0:240:bf59:26bb with SMTP id d9443c01a7336-2430d105d69mr17782695ad.19.1755048704225;
-        Tue, 12 Aug 2025 18:31:44 -0700 (PDT)
-Received: from [10.133.33.58] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef83f3sm310234365ad.28.2025.08.12.18.31.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Aug 2025 18:31:43 -0700 (PDT)
-Message-ID: <cef1da96-f584-4100-a97d-640fa24e5f54@oss.qualcomm.com>
-Date: Wed, 13 Aug 2025 09:31:36 +0800
+	s=arc-20240116; t=1755049195; c=relaxed/simple;
+	bh=SdwpbvVnufThK3eX0fKb9HNR8Ilapdiw7MAqf0m6fJw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ogQKmF3mTkKe6XUHoHv/yFxIRCfHf2RzkIZpSywh4U3FVHfcsD4N+p6fvxFiOOmEWofApfdPHRxwJmj+Yd0p0rzT9rjuQGgTNaZaK7ZQj8i13X6X+8gVARjl80PmS9tjycXUZWsbZegwBeb71bDamOAYTqdz3rj1lf8JRQrwCj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c1rdz61SzzYQv7G;
+	Wed, 13 Aug 2025 09:39:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 71B681A0359;
+	Wed, 13 Aug 2025 09:39:50 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgC3MxTk7Jtoavv7DQ--.59960S4;
+	Wed, 13 Aug 2025 09:39:50 +0800 (CST)
+From: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+To: sfrench@samba.org,
+	pc@manguebit.org
+Cc: linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org,
+	linux-kernel@vger.kernel.org,
+	chengzhihao1@huawei.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH V3] smb: client: Fix mount deadlock by avoiding super block iteration in DFS reconnect
+Date: Wed, 13 Aug 2025 09:32:08 +0800
+Message-Id: <20250813013208.1564486-1-wangzhaolong@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Update pcie phy bindings for qcs8300
-To: Vinod Koul <vkoul@kernel.org>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
-        mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
-        bhelgaas@google.com, johan+linaro@kernel.org, kishon@kernel.org,
-        neil.armstrong@linaro.org, abel.vesa@linaro.org, kw@linux.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-phy@lists.infradead.org, qiang.yu@oss.qualcomm.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com
-References: <20250811071131.982983-1-ziyue.zhang@oss.qualcomm.com>
- <20250811071131.982983-2-ziyue.zhang@oss.qualcomm.com>
- <aJsYd7tAi4CdOfZ9@vaman>
-Content-Language: en-US
-From: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
-In-Reply-To: <aJsYd7tAi4CdOfZ9@vaman>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfXxbiFXtE9rQr7
- nww9nozHvqd3+DhAHZ5QHESmi+lr4EH9Y6y68CMahjjxb8/tvtByuNGE42qIz1odbLQOcS/lLvi
- OuBj7YLQWUXVbW93u0aSSnLLkKJhUgrLpO5khMFuBfaTrLw4fXvGUvij0yzAwWJGMJX7zR/7n5h
- HpDUJk6ElYHi6x0lMzALp0qRm/6fvUeHlj0LaZmD2KLew3sPtCX12iFdMixd4AJcfpvOu9hGswr
- nYTUqq9YyIaRbrC7Mrs1eXxxOCmYF7YuNHGPuSIYkDb5JMTsYITNq0+dtIxuKFbIDlpdMfingWf
- aW2ddOsruR63O8aASHnvfoD9ZTr/F7ZqT8UZzubm5qeJwpBC293zTcb4WktFIHQJlvX4TcPQRiS
- 2kfJ3c8c
-X-Proofpoint-GUID: rxSVoRR2-ujZhTriblmKmk5xCvSHaoUY
-X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689beb02 cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=buFmA9CyAF0SDTxNqVIA:9
- a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-ORIG-GUID: rxSVoRR2-ujZhTriblmKmk5xCvSHaoUY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-12_08,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
- phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508110107
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgC3MxTk7Jtoavv7DQ--.59960S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFy3XrWUuF4fWrWktFyxZrb_yoW3CF1UpF
+	ySyrWSgr48Gr1UWws7JF4ku34F934kCFy5Cr4xW3WvqayDZrWIgFWqkF1j9FySyayDt3s3
+	Gr4Dt3y29F18uFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: pzdqw6xkdrz0tqj6x35dzhxuhorxvhhfrp/
 
+An AA deadlock occurs when network interruption during mount triggers
+DFS reconnection logic that calls iterate_supers_type().
 
-On 8/12/2025 6:33 PM, Vinod Koul wrote:
-> On 11-08-25, 15:11, Ziyue Zhang wrote:
->> The gcc_aux_clk is not required by the PCIe PHY on qcs8300 and is not
->> specified in the device tree node. Hence, move the qcs8300 phy
->> compatibility entry into the list of PHYs that require six clocks.
->>
->> Removed the phy_aux clock from the PCIe PHY binding as it is no longer
->> used by any instance.
-> This does not apply on phy tree, please rebase
+The detailed call process is as follows:
 
-Hi Vinod
+      mount.cifs
+-------------------------
+path_mount
+  do_new_mount
+    vfs_get_tree
+      smb3_get_tree
+        cifs_smb3_do_mount
+          sget
+            alloc_super
+              down_write_nested(&s->s_umount, ..);  // Hold lock
+          cifs_root_iget
+            cifs_get_inode_info
+              smb2_query_path_info
+                smb2_compound_op
+                  SMB2_open_init
+                    smb2_plain_req_init
+                      smb2_reconnect           // Trigger reconnection
+                        cifs_tree_connect
+                          cifs_get_dfs_tcon_super
+                            __cifs_get_super
+                              iterate_supers_type
+                                super_lock_shared
+                                  super_lock
+                                    __super_lock
+                                      down_read(&sb->s_umount); // Deadlock
+    do_new_mount_fc
+      up_write(&sb->s_umount);  // Release lock
 
-This patch based on the patch you applied in 8.12.
+During mount phase, if reconnection is triggered, the foreground mount
+process may enter smb2_reconnect prior to the reconnect worker being
+scheduled, leading to a deadlock when subsequent DFS tree connect
+attempts reacquire the s_umount lock.
 
-dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
-commit: aac1256a41cfbbaca12d6c0a5753d1e3b8d2d8bf
+The essential condition for triggering the issue is that the API
+iterate_supers_type() reacquires the s_umount lock. Therefore, one
+possible solution is to avoid using iterate_supers_type() and instead
+directly access the superblock through internal data structures.
 
-Can you try to apply it again ? Thanks
+This patch fixes the problem by:
+- Add vfs_sb back-pointer to cifs_sb_info for direct access
+- Protect list traversal with existing tcon->sb_list_lock
+- Use atomic operations to safely manage super block references
+- Remove complex callback-based iteration in favor of simple loop
+- Rename cifs_put_tcp_super() to cifs_put_super() to avoid confusion
 
-BRs
-Ziyue
+Fixes: 3ae872de4107 ("smb: client: fix shared DFS root mounts with different prefixes")
+Signed-off-by: Wang Zhaolong <wangzhaolong@huaweicloud.com>
+---
+
+V3:
+ - Adjust the trace diagram for the super_lock_shared() section to align with
+   the latest mainline call flow. 
+V2:
+ - Adjust the trace diagram in the commit message to indicate when the lock
+   is released
+
+ fs/smb/client/cifs_fs_sb.h |  1 +
+ fs/smb/client/cifsfs.c     |  1 +
+ fs/smb/client/cifsproto.h  |  2 +-
+ fs/smb/client/dfs.c        |  2 +-
+ fs/smb/client/misc.c       | 84 ++++++++++++++------------------------
+ 5 files changed, 34 insertions(+), 56 deletions(-)
+
+diff --git a/fs/smb/client/cifs_fs_sb.h b/fs/smb/client/cifs_fs_sb.h
+index 5e8d163cb5f8..8c513e4c0efe 100644
+--- a/fs/smb/client/cifs_fs_sb.h
++++ b/fs/smb/client/cifs_fs_sb.h
+@@ -49,10 +49,11 @@
+ 
+ struct cifs_sb_info {
+ 	struct rb_root tlink_tree;
+ 	struct list_head tcon_sb_link;
+ 	spinlock_t tlink_tree_lock;
++	struct super_block *vfs_sb;
+ 	struct tcon_link *master_tlink;
+ 	struct nls_table *local_nls;
+ 	struct smb3_fs_context *ctx;
+ 	atomic_t active;
+ 	unsigned int mnt_cifs_flags;
+diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+index 3bd85ab2deb1..383f651eb43f 100644
+--- a/fs/smb/client/cifsfs.c
++++ b/fs/smb/client/cifsfs.c
+@@ -939,10 +939,11 @@ cifs_get_root(struct smb3_fs_context *ctx, struct super_block *sb)
+ 
+ static int cifs_set_super(struct super_block *sb, void *data)
+ {
+ 	struct cifs_mnt_data *mnt_data = data;
+ 	sb->s_fs_info = mnt_data->cifs_sb;
++	mnt_data->cifs_sb->vfs_sb = sb;
+ 	return set_anon_super(sb, NULL);
+ }
+ 
+ struct dentry *
+ cifs_smb3_do_mount(struct file_system_type *fs_type,
+diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
+index c34c533b2efa..6415bb961c1e 100644
+--- a/fs/smb/client/cifsproto.h
++++ b/fs/smb/client/cifsproto.h
+@@ -678,11 +678,11 @@ int copy_path_name(char *dst, const char *src);
+ int smb2_parse_query_directory(struct cifs_tcon *tcon, struct kvec *rsp_iov,
+ 			       int resp_buftype,
+ 			       struct cifs_search_info *srch_inf);
+ 
+ struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon);
+-void cifs_put_tcp_super(struct super_block *sb);
++void cifs_put_super(struct super_block *sb);
+ int cifs_update_super_prepath(struct cifs_sb_info *cifs_sb, char *prefix);
+ char *extract_hostname(const char *unc);
+ char *extract_sharename(const char *unc);
+ int parse_reparse_point(struct reparse_data_buffer *buf,
+ 			u32 plen, struct cifs_sb_info *cifs_sb,
+diff --git a/fs/smb/client/dfs.c b/fs/smb/client/dfs.c
+index f65a8a90ba27..55bcdde4fe26 100644
+--- a/fs/smb/client/dfs.c
++++ b/fs/smb/client/dfs.c
+@@ -446,11 +446,11 @@ int cifs_tree_connect(const unsigned int xid, struct cifs_tcon *tcon)
+ 				     &tl);
+ 	free_dfs_info_param(&ref);
+ 
+ out:
+ 	kfree(tree);
+-	cifs_put_tcp_super(sb);
++	cifs_put_super(sb);
+ 
+ 	if (rc) {
+ 		spin_lock(&tcon->tc_lock);
+ 		if (tcon->status == TID_IN_TCON)
+ 			tcon->status = TID_NEED_TCON;
+diff --git a/fs/smb/client/misc.c b/fs/smb/client/misc.c
+index da23cc12a52c..3b6920a52daa 100644
+--- a/fs/smb/client/misc.c
++++ b/fs/smb/client/misc.c
+@@ -1108,84 +1108,60 @@ int copy_path_name(char *dst, const char *src)
+ 	/* we count the trailing nul */
+ 	name_len++;
+ 	return name_len;
+ }
+ 
+-struct super_cb_data {
+-	void *data;
+-	struct super_block *sb;
+-};
+-
+-static void tcon_super_cb(struct super_block *sb, void *arg)
++static struct super_block *cifs_get_tcon_super(struct cifs_tcon *tcon)
+ {
+-	struct super_cb_data *sd = arg;
++	struct super_block *sb;
+ 	struct cifs_sb_info *cifs_sb;
+-	struct cifs_tcon *t1 = sd->data, *t2;
+ 
+-	if (sd->sb)
+-		return;
++	if (!tcon)
++		return NULL;
+ 
+-	cifs_sb = CIFS_SB(sb);
+-	t2 = cifs_sb_master_tcon(cifs_sb);
+-
+-	spin_lock(&t2->tc_lock);
+-	if ((t1->ses == t2->ses ||
+-	     t1->ses->dfs_root_ses == t2->ses->dfs_root_ses) &&
+-	    t1->ses->server == t2->ses->server &&
+-	    t2->origin_fullpath &&
+-	    dfs_src_pathname_equal(t2->origin_fullpath, t1->origin_fullpath))
+-		sd->sb = sb;
+-	spin_unlock(&t2->tc_lock);
+-}
++	spin_lock(&tcon->sb_list_lock);
++	list_for_each_entry(cifs_sb, &tcon->cifs_sb_list, tcon_sb_link) {
+ 
+-static struct super_block *__cifs_get_super(void (*f)(struct super_block *, void *),
+-					    void *data)
+-{
+-	struct super_cb_data sd = {
+-		.data = data,
+-		.sb = NULL,
+-	};
+-	struct file_system_type **fs_type = (struct file_system_type *[]) {
+-		&cifs_fs_type, &smb3_fs_type, NULL,
+-	};
+-
+-	for (; *fs_type; fs_type++) {
+-		iterate_supers_type(*fs_type, f, &sd);
+-		if (sd.sb) {
+-			/*
+-			 * Grab an active reference in order to prevent automounts (DFS links)
+-			 * of expiring and then freeing up our cifs superblock pointer while
+-			 * we're doing failover.
+-			 */
+-			cifs_sb_active(sd.sb);
+-			return sd.sb;
+-		}
++		if (!cifs_sb->vfs_sb)
++			continue;
++
++		sb = cifs_sb->vfs_sb;
++
++		/* Safely increment s_active only if it's not zero.
++		 *
++		 * When s_active == 0, the super block is being deactivated
++		 * and should not be used. This prevents UAF scenarios
++		 * where we might grab a reference to a super block that's
++		 * in the middle of destruction.
++		 */
++		if (!atomic_add_unless(&sb->s_active, 1, 0))
++			continue;
++
++		spin_unlock(&tcon->sb_list_lock);
++		return sb;
+ 	}
+-	pr_warn_once("%s: could not find dfs superblock\n", __func__);
+-	return ERR_PTR(-EINVAL);
+-}
++	spin_unlock(&tcon->sb_list_lock);
+ 
+-static void __cifs_put_super(struct super_block *sb)
+-{
+-	if (!IS_ERR_OR_NULL(sb))
+-		cifs_sb_deactive(sb);
++	return NULL;
+ }
+ 
+ struct super_block *cifs_get_dfs_tcon_super(struct cifs_tcon *tcon)
+ {
+ 	spin_lock(&tcon->tc_lock);
+ 	if (!tcon->origin_fullpath) {
+ 		spin_unlock(&tcon->tc_lock);
+ 		return ERR_PTR(-ENOENT);
+ 	}
+ 	spin_unlock(&tcon->tc_lock);
+-	return __cifs_get_super(tcon_super_cb, tcon);
++
++	return cifs_get_tcon_super(tcon);
+ }
+ 
+-void cifs_put_tcp_super(struct super_block *sb)
++void cifs_put_super(struct super_block *sb)
+ {
+-	__cifs_put_super(sb);
++	if (!IS_ERR_OR_NULL(sb))
++		deactivate_super(sb);
+ }
+ 
+ #ifdef CONFIG_CIFS_DFS_UPCALL
+ int match_target_ip(struct TCP_Server_Info *server,
+ 		    const char *host, size_t hostlen,
+-- 
+2.39.2
 
 
