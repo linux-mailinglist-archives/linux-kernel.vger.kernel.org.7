@@ -1,90 +1,119 @@
-Return-Path: <linux-kernel+bounces-767142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11F9B24FCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:31:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3D3B24FD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:31:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68FD1C237FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:25:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E0A1C24310
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFB6286D72;
-	Wed, 13 Aug 2025 16:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8830B287256;
+	Wed, 13 Aug 2025 16:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LFFUcB9/"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NowuzJLv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1332857C1;
-	Wed, 13 Aug 2025 16:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58DA285053;
+	Wed, 13 Aug 2025 16:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755102272; cv=none; b=kdhPQCIgh4v0w44QCc0573uGUX7qCxfz1IPMBXQlI6GLdWzn7POG9CcmdjAQkuR5zOZOgFyBH/fg9B67B5uFowEyBAPvwWs/YJ9w139aPDX6BD/Af9oX81CRs67QztTcBTmJYgWnDieiWZnPM4wvUYBbcNIW/+xsm7E2t2Ju/os=
+	t=1755102287; cv=none; b=BT2zSSBRmMuHJk0IYcx55iT99Sanfzg788ljfC+vtTq+OTMyolekrwfMgjCv3N+TzxuBi97AjlBuRrZb7R0qsTjrXR6+x9Shk2h3m1/ByFXgWe913y7XGgCX9vGc+ClAkhLCnJxHyPd7Sy5RERAL+bct9CWoGDePjx9ouxxfMIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755102272; c=relaxed/simple;
-	bh=xvqrrcpDlRkEXLftgfJwBkb/4SGhq3ZlmI8+oAtSdkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D72g/o9PlL7MeVpwU9epZqiAXlS6yDdQefxcLHxwaibBLiybwjYItQ3IuNt9IwIQDg0C/1IPmXF4ID/woO+67/B4xnAtYIw31bi5D+4pyD6A9TudRM8+QaoUFKOPzNTMb41oriy0t92MklnmzU/vrQFsVgQwcmvl5ji43NdJOvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LFFUcB9/; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32326e67c95so98133a91.3;
-        Wed, 13 Aug 2025 09:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755102270; x=1755707070; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u1fYfYwdb+xxWcrL06oZBXhXN1znw9DMoL0ryHqiAVc=;
-        b=LFFUcB9/4HFtJ0YTLk6Tqqt+dSuOcVp5CxKXJqijwY+ILQgEPyocBkZCuv5FKS8IK5
-         EPnr7m70VtgAZGnuPmlqS0sVDpGCAGqjX65Eipg2ReM78kFhhY+/9e1s6AbjjEFIiT5G
-         h+2yC/5XmagakPRqH4OHMtsHhzQ0iJ7RmlWQik1D0yqSiIMa8+lN5ZdQRQzNlwj+05f0
-         PR1MhpuKAzdE68p7rUEq1wCwyZXDcmJ1/EF8UlrgF2FPaDNAZH9PryCqzoq3GYmbBjwW
-         wIXJ7lQAOGFbR3lxJYMm1NRogJrN0V9jS6bYPDmw5h4TDGrdIOSlou0bp9qXIOC9Vv0k
-         TvmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755102270; x=1755707070;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u1fYfYwdb+xxWcrL06oZBXhXN1znw9DMoL0ryHqiAVc=;
-        b=oVyUG8QZj3Sdy4SYtE2yujL8y50GoHj+Q6pG7VJvANcmpZyx+1vGBmqtYaq9pf+Nqw
-         V7kBKyDLa8Up+pinYOtTXm9cCQhmdhSX8uaFm9jntrJclDXVPyfenhQIsMMvnMY+Or1s
-         F/JkbukksxsUsQvnV2XrEs1p8zGwfas2Mv3oLJFXtLb4OauGs7qo5EZqq2u7F3BMzpmV
-         aRZyodutxPHKnVFlD5XjtGUZ9i9eJGqVfKZL4jb/E6B5WftiOEbZmnfLXpQN2bG/75FN
-         x+HGN970gcvLDu1HMfeS7LaJOZyfbGbS3JgI5p0CMcSbHTph8tiBShki4+zxPzDON+Ik
-         F2DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnn3V5Q382aWaCme1cmV+RYd4MW6LFQqgrCk/8va4/a0DXJ/woaTkuKvdLQ7nPjt+jaiCK1XnxvHzk@vger.kernel.org, AJvYcCW3/dFODUkwXSLvwa0lR9uFWmYeGhu1VQQLu2eMSOCzytRTJAV6RoUw+Xtp/GYa8nRdtSYX4EQWzPe3TFc=@vger.kernel.org, AJvYcCX/51RSD15qLjBBRZgH9U2Lfmwy1iX2aWWyG4X3tpzOz8b4nR4tmmr0SqSl+lc812+/0eTpkLmD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2d8W2Big2K5+IIWPWQEOH8EN5FHIChprfJVHY2CJodUqsQenA
-	l2kzebIcelpNaQLf2wO2xD04mT68OGJb7Ca9lH4wYXM/FKDUUIJ8wdSBfR8VcU2o
-X-Gm-Gg: ASbGncutH5B/EAQq31wHbKXXqtvnfHNl4/NDD7vLbl+VmmNLR4IZQbAQnhsSZlKOUfn
-	SpK8AeUPqpLSJszmUBumrBgv6TuiqklXN5zNW/h28L3haP5dAKBFn1Vuwx2A0P/jATv5uFRI+jx
-	qhOYoYWfsCtlqE1lmNQRqvbxKBWC+xW6oY9t4PwoJHvV6DdiqTpwS82VBnGqMhV3BJT8KkOyqEA
-	Bp0wVEs8B67X/LEPlhJ/avbItaMlUNqFcOYvfUaGBvatQ/YXWLNWHotnmmYpXXCBE1X9Ge7jUCE
-	KUQ3zoJMsTZzTykMjOhnVJkyShJovUx4RXbRRGe6dYTEHt/RFtfWiYt6d/pgupzp3/0i4hiuAzz
-	cAXmXvGluaBGwIzEEByJw4bYud0ss4pSIkwYK9oHVBBAV55LZQq2P
-X-Google-Smtp-Source: AGHT+IEp7rdSfbXkfRAvHxQ/8pSlg5nqWRdsJe7pGrzxWe31DZ032owbebBvYAfQFTs/z1iixKXmSw==
-X-Received: by 2002:a17:90b:50cc:b0:31f:6ddd:ef3 with SMTP id 98e67ed59e1d1-321d0f253d2mr5202354a91.35.1755102269702;
-        Wed, 13 Aug 2025 09:24:29 -0700 (PDT)
-Received: from BM5220 (118-232-8-190.dynamic.kbronet.com.tw. [118.232.8.190])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-3232579dfbesm558412a91.20.2025.08.13.09.24.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 09:24:29 -0700 (PDT)
-From: Zenm Chen <zenmchen@gmail.com>
-To: stern@rowland.harvard.edu,
-	gregkh@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Cc: pkshih@realtek.com,
-	rtl8821cerfe2@gmail.com,
-	usbwifi2024@gmail.com,
-	zenmchen@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] USB: storage: Ignore driver CD mode for Realtek multi-mode Wi-Fi dongles
-Date: Thu, 14 Aug 2025 00:24:15 +0800
-Message-ID: <20250813162415.2630-1-zenmchen@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755102287; c=relaxed/simple;
+	bh=K1Qnz6FeiAMe891bHx38SnseQkGtn7jJpOFA1e7ci+8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=TtNIV5327wJHOdlMm1X42tiRJtmpG9VZcmdBhq5G1HocIebBSMha/Qk75hKuaedodYuOgHTxel+F5pO6OVrVYYVkmKmsl3J3rIWdgxAHG+btFJKt5ysW57qqKk34WVjjCoXwjTn1wkwtrKyEGeKe4Ng8ft57CLpuLHItjLaqaJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NowuzJLv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09AF3C4CEEB;
+	Wed, 13 Aug 2025 16:24:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755102287;
+	bh=K1Qnz6FeiAMe891bHx38SnseQkGtn7jJpOFA1e7ci+8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NowuzJLvoDcytU2mnlkUjH9a3VkVMtm7ue/1JeEievbLShowGrZYKS4ljQgIc4Tvt
+	 3+vYZnNOWzD9UQ8pSH9fEmYwxPiiGspKJ3H0P32SvVzl8AqitUBhqFYwGCZ45kSKAJ
+	 87/gu7vuZjna5FtZYWWUpp9S1G/8o7Ty64t0lObmjPlPr2MXYLPDtH4Sc4eAU6xND8
+	 ThhzDQ4hSAh1VB48U+GqBbKfJNoQAGi7b1yhwF4mFVAalvl713Ll6uzzSrl8gdzvsB
+	 qxd/OanAUdPmrliRUlwzqp8QiFiC+SAvfzE7ZdQVKX6a28IsBlnq34Yk6UcqsLFVxB
+	 8m4KWJEM4NWXw==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>,
+	Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	David Rientjes <rientjes@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>,
+	Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Matthew Wilcox <willy@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 00/10] mm: make mm->flags a bitmap and 64-bit on all arches
+Date: Wed, 13 Aug 2025 09:24:45 -0700
+Message-Id: <20250813162445.5456-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <af5492d4-f8dc-4270-a4c6-73d76f098942@lucifer.local>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,76 +122,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Many Realtek USB Wi-Fi dongles released in recent years have two modes: 
-one is driver CD mode which has Windows driver onboard, another one is
-Wi-Fi mode. Add the US_FL_IGNORE_DEVICE quirk for these multi-mode devices.
-Otherwise, usb_modeswitch may fail to switch them to Wi-Fi mode.
+On Wed, 13 Aug 2025 05:18:31 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-Currently there are only two USB IDs known to be used by these multi-mode
-Wi-Fi dongles: 0bda:1a2b and 0bda:a192.
+> On Tue, Aug 12, 2025 at 01:13:26PM -0700, SeongJae Park wrote:
+> > On Tue, 12 Aug 2025 16:44:09 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+[...]
+> > > In order to execute this change, we introduce a new opaque type -
+> > > mm_flags_t - which wraps a bitmap.
+> >
+> > I have no strong opinion here, but I think coding-style.rst[1] has one?  To
+> > quote,
+> >
+> >     Please don't use things like ``vps_t``.
+> >     It's a **mistake** to use typedef for structures and pointers.
+> 
+> You stopped reading the relevant section in [1] :) Keep going and you see:
+> 
+> 	Lots of people think that typedefs help readability. Not so. They
+> 	are useful only for: totally opaque objects (where the typedef is
+> 	actively used to hide what the object is).  Example: pte_t
+> 	etc. opaque objects that you can only access using the proper
+> 	accessor functions.
+> 
+> So this is what this is.
+> 
+> The point is that it's opaque, that is you aren't supposed to know about or
+> care about what's inside, you use the accessors.
+> 
+> This means we can extend the size of this thing as we like, and can enforce
+> atomicity through the accessors.
+> 
+> We further highlight the opaqueness through the use of the __private.
+> 
+> >
+> > checkpatch.pl also complains similarly.
+> >
+> > Again, I have no strong opinion, but I think adding a clarification about why
+> > we use typedef despite of the documented recommendation here might be nice?
+> 
+> I already gave one, I clearly indicate it's opaque.
 
-Information about Mercury MW310UH in /sys/kernel/debug/usb/devices.
-T:  Bus=02 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#= 12 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=0bda ProdID=a192 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=DISK
-C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
-E:  Ad=8a(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=0b(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+You're completely right and I agree all the points.  Thank you for kindly
+enlightening me :)
 
-Information about D-Link AX9U rev. A1 in /sys/kernel/debug/usb/devices.
-T:  Bus=03 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#= 55 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=0bda ProdID=1a2b Rev= 0.00
-S:  Manufacturer=Realtek
-S:  Product=DISK
-C:* #Ifs= 1 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=08(stor.) Sub=06 Prot=50 Driver=(none)
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-Cc: stable@vger.kernel.org # 5.4.x
-Signed-off-by: Zenm Chen <zenmchen@gmail.com>
----
- drivers/usb/storage/unusual_devs.h | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+Thanks,
+SJ
 
-diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
-index 54f0b1c83..5a6577a57 100644
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1494,6 +1494,28 @@ UNUSUAL_DEV( 0x0bc2, 0x3332, 0x0000, 0x9999,
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_NO_WP_DETECT ),
- 
-+/*
-+ * Reported by Zenm Chen <zenmchen@gmail.com>
-+ * Ignore driver CD mode, otherwise usb_modeswitch may fail to switch
-+ * the device into Wi-Fi mode.
-+ */
-+UNUSUAL_DEV( 0x0bda, 0x1a2b, 0x0000, 0xffff,
-+		"Realtek",
-+		"DISK",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_IGNORE_DEVICE ),
-+
-+/*
-+ * Reported by Zenm Chen <zenmchen@gmail.com>
-+ * Ignore driver CD mode, otherwise usb_modeswitch may fail to switch
-+ * the device into Wi-Fi mode.
-+ */
-+UNUSUAL_DEV( 0x0bda, 0xa192, 0x0000, 0xffff,
-+		"Realtek",
-+		"DISK",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_IGNORE_DEVICE ),
-+
- UNUSUAL_DEV(  0x0d49, 0x7310, 0x0000, 0x9999,
- 		"Maxtor",
- 		"USB to SATA",
--- 
-2.50.1
-
+[...]
 
