@@ -1,201 +1,178 @@
-Return-Path: <linux-kernel+bounces-767176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0030B2500E
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:46:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DFDB25010
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0961723ED4
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:40:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED8692A13F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5744C2882B4;
-	Wed, 13 Aug 2025 16:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71262877C4;
+	Wed, 13 Aug 2025 16:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="omjkMhQD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4kof0zn"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57901287510;
-	Wed, 13 Aug 2025 16:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78811232395;
+	Wed, 13 Aug 2025 16:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755103202; cv=none; b=l+00+oOzZ8R43/rcxDmSvwzN12geGqipbv8e3/C1jbHYIZagtQPxe7h74ig5+1Ut8vCuABC95TxELqrqQfSpIKYabNx1VaMvNzk40vjqYh+oTK4MxOWdDEwVprulpz0R6JKn1Lxpnv0jSduIdp4JC6GUAzqFvvIb0+CTmPY0LlM=
+	t=1755103266; cv=none; b=RcH1ktBMTjvHExAM6XNQTf/IeWnq8EvIIn59lBVovNIHQSYDzYFsKblupXWX3MG6yqVtYAPzHNdJwpGU5Od8TS3eBsPDjBvRXwr72O6gq9srtCHSw7EywuFrjIXfeAGSBkzvU7luupOYvC4519tp7YnhqQa65RTm84R5T75Rjkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755103202; c=relaxed/simple;
-	bh=s8ZXEipGSIJlMDIb18naqDV3kZSHdB/qD0ILmHJeqbs=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ecQcjjxOf9d1FToKA9pQp8cwJYguRdZP5AQrXzKYkaCn2zDdxk7GYmYhFaHj199PkUamWxWwEn+MtJMYdSEUSxd50WAV3dTxWdleaqawGaeUKFxrXqRL3/hzGGmLd/voEVp56qWbQRaLQpE+bk47uF91aXlCIE71EJFrPEk+Vhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=omjkMhQD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C198EC4CEEB;
-	Wed, 13 Aug 2025 16:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755103201;
-	bh=s8ZXEipGSIJlMDIb18naqDV3kZSHdB/qD0ILmHJeqbs=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=omjkMhQD9oRe4bVtEyTDH44yDFKboKpOGtcbD8GT9O8J352gBe6l8mq2PUjcuwAcU
-	 8ibfOwvFrmjsvzbFS6QHEhUOniPp/bBUG6U0B0RhmxCJy8c9YG8LsX5OJMHzKVllLd
-	 M49oGrDfr/dl9kC0aV2OSF6sJ1H2VLKNIMvAhLoHWaHjpZoTuTUy85g4HcymGPfokP
-	 ybRp0b5p3By1kpX0tHtrBcx5UIdIhtggKG1tdMEPu3E39ZauYxLd+N3fL3Yh/59aMh
-	 bdA0AfNLGPluOs/0AYYw+WNIjuwcsOlzND96burMON257vVCbGDUXo1L/tJ0UKGXrb
-	 GDnvh28lixVDQ==
-Date: Wed, 13 Aug 2025 11:40:00 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1755103266; c=relaxed/simple;
+	bh=yBwHHprknj6PkryIXl//LRsEtTiobpZSjvx+rnjm8mY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XUfkKMKBno/0PQLCwJZpK7qhKeKf1VncuCYi49nU3vnICIK/+fqiwd/FYaQb/rQrXsKN46igl6+9UGvWtnJAWtOKBouBsncsag6Mjs1rKpwSx7UCG8k5oJ2J1zt7I6J80Hzl6On9Au8cvgjXiqpq7sjrEkur2PRvBhJghV9MdRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N4kof0zn; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb78d5e74so5706566b.1;
+        Wed, 13 Aug 2025 09:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755103263; x=1755708063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i8lrtRx8jCEAKl+bITh8cA+FmiqZOy9jagxjCWazHmw=;
+        b=N4kof0zn10IFTI3eg0bvg/6e3BCwhhJklzc1Uz97WdSTvUXYVg4MbJJh3yYuYnmZ9g
+         ttz5oMu4+uiL9spd/SAmSvlHKlAxH/1A7zr+0DuAFIsmu0mc1TxtmpKsyECJDCfpyRwW
+         sDWd8m4gRqcXVkL2jEt1bPgayP6KG3vJ8E4ZVo65Wgwd1AUxqjan0opyKv4rcpR/jlxj
+         fNhXyLrbwuJbJOjdX6KxbuW/iVFdVb+tXXbH2hl86eKMv3EeYf5lcCQFMzw0yzFSr88e
+         fpZ5PYGyRnYikEKXaKPF++4eq8bzNYq7slndy5LQLeywtgzOLe2SM4n9OBlvAbv4WOo7
+         kB7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755103263; x=1755708063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i8lrtRx8jCEAKl+bITh8cA+FmiqZOy9jagxjCWazHmw=;
+        b=WJQuH93bmEMnoHj1wD6y/WZqRH663pnsgvXYNG4kGZJeJjJkkOtv6Zy7iE8497Rp0B
+         lyqCCFrcv8VQNuk8RT0/8kiFfKUZc7gbnhkjPcGiqvJ9T7PPXVQGTbsYK3ZIw3yu2Moy
+         ZAwWBj5WSmoWfQc+lw/fAGAH8ml21k2yiPpON0b/3cfNAaIkrBq/loUMXFUi1oLgwSUd
+         rgXHkh+070v3A4G7C0eS17kza3Czx2L+oS0dB7lyFYAkwAU4aqRTLRjZIKUgNsHe2HmH
+         0hXevM7L3bEXWGA4mWlRSW4nAYGph641gDdfRorRhMHol09VDFlsgBkK56C5LHqL2fCZ
+         oxWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaLjAaT6HVL5yvgsq4N4WuW4sUZTq2sRgGNN70Q/gXzN1VIhFZF4DLMGwI9SGCZUr4HGiq9d0Ou/QttnvJ@vger.kernel.org, AJvYcCWTvSTYLD1aWFSAboVoni/EgIYneuDBFM89KM6ZlZjqzZ0pc9v0OTVsiL3UstyU96UfU5IFQlBkFig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymfQm5dWQR//SO6Sxk5uyWB5GXVMaETAMERz64B+ES0TkIklkP
+	BoE885WD0eqy99Cgsgcl1VU2L7Y/F5MWgHPEmlMNMaKS2BZRFSKxyoVhMazH1OTNNaviVHtuslM
+	60Axdf/MGxei0WMTO3edTGHvHdrtlgrAde7IhLDE=
+X-Gm-Gg: ASbGncv3ygoRUAvD0rb36E3W3FKmn762FGM290oT3C2WsDFXUaiSuK6Z/MGhjZXzUJM
+	doIMxTbohE/oMPGOfhmSfVP4x5qZTYaXBf78Me+P2/wMxFT8K2wlcIFq6H5ouSJMocXK0AX4zHj
+	nSxqISKxqCxi8Zn3kuhiuw72sk94nKgjdReUX/idIvk5WHAIaEqc42+WGKFphMyNsW8RwXlK/dN
+	+SFtW1eFfx6gw4rofLy
+X-Google-Smtp-Source: AGHT+IHpyocSa1M8AilZduqJlSalEcEYBrFzv1dUwM9wYZQD5lOoEfwF0sEPN64AvptMj8eQOzqyBAVkMN+LWXPkqac=
+X-Received: by 2002:a17:907:1c09:b0:ad8:a04e:dbd9 with SMTP id
+ a640c23a62f3a-afca4df4cb9mr350701066b.31.1755103262647; Wed, 13 Aug 2025
+ 09:41:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Jernej Skrabec <jernej@kernel.org>, linux-kernel@vger.kernel.org, 
- "David S. Miller" <davem@davemloft.net>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@csie.org>, 
- Eric Dumazet <edumazet@google.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Paolo Abeni <pabeni@redhat.com>, linux-arm-kernel@lists.infradead.org, 
- Samuel Holland <samuel@sholland.org>, Jakub Kicinski <kuba@kernel.org>, 
- netdev@vger.kernel.org, linux-sunxi@lists.linux.dev, 
- Conor Dooley <conor+dt@kernel.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-In-Reply-To: <20250813145540.2577789-2-wens@kernel.org>
-References: <20250813145540.2577789-1-wens@kernel.org>
- <20250813145540.2577789-2-wens@kernel.org>
-Message-Id: <175510320095.362031.4736054030445457554.robh@kernel.org>
-Subject: Re: [PATCH net-next v2 01/10] dt-bindings: net: sun8i-emac: Add
- A523 GMAC200 compatible
+References: <20250813151614.12098-1-bcollins@watter.com> <20250813151614.12098-4-bcollins@watter.com>
+In-Reply-To: <20250813151614.12098-4-bcollins@watter.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 13 Aug 2025 18:40:25 +0200
+X-Gm-Features: Ac12FXyDfASdwmfoCUCeh8J29MH2VM_-BxZ0HM94ZZP1YHdB1y4mzbbhq9VhfVc
+Message-ID: <CAHp75Vc6DwpCps9kuXjaCCPrYycbFf3NV2Ye+aEM2_9LWJqMBA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] iio: mcp9600: Add compatibility for mcp9601
+To: Ben Collins <bcollins@watter.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Aug 13, 2025 at 5:17=E2=80=AFPM Ben Collins <bcollins@watter.com> w=
+rote:
+>
+> MCP9601 is a super set of MCP9600. The drivers works without changes
 
-On Wed, 13 Aug 2025 22:55:31 +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
-> 
-> The Allwinner A523 SoC family has a second Ethernet controller, called
-> the GMAC200 in the BSP and T527 datasheet, and referred to as GMAC1 for
-> numbering. This controller, according to BSP sources, is fully
-> compatible with a slightly newer version of the Synopsys DWMAC core.
-> The glue layer around the controller is the same as found around older
-> DWMAC cores on Allwinner SoCs. The only slight difference is that since
-> this is the second controller on the SoC, the register for the clock
-> delay controls is at a different offset. Last, the integration includes
-> a dedicated clock gate for the memory bus and the whole thing is put in
-> a separately controllable power domain.
-> 
-> Add a compatible string entry for it, and work in the requirements for
-> a second clock and a power domain.
-> 
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
-> Changes since v1:
-> - Switch to generic (tx|rx)-internal-delay-ps properties
-> ---
->  .../net/allwinner,sun8i-a83t-emac.yaml        | 81 ++++++++++++++++++-
->  1 file changed, 79 insertions(+), 2 deletions(-)
-> 
+superset
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> on this chipset.
 
-yamllint warnings/errors:
+...
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.example.dtb: ethernet@28000000 (toshiba,visconti-dwmac): clock-names: ['stmmaceth', 'phy_ref_clk'] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.example.dtb: ethernet@28000000 (toshiba,visconti-dwmac): clocks: [[4294967295, 28], [4294967295, 118]] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.example.dtb: ethernet@28000000 (toshiba,visconti-dwmac): compatible: 'oneOf' conditional failed, one must be fixed:
-	['toshiba,visconti-dwmac', 'snps,dwmac-4.20a'] is too long
-	'allwinner,sun8i-a83t-emac' was expected
-	'allwinner,sun8i-h3-emac' was expected
-	'allwinner,sun8i-r40-gmac' was expected
-	'allwinner,sun8i-v3s-emac' was expected
-	'allwinner,sun50i-a64-emac' was expected
-	'toshiba,visconti-dwmac' is not one of ['allwinner,sun20i-d1-emac', 'allwinner,sun50i-a100-emac', 'allwinner,sun50i-h6-emac', 'allwinner,sun50i-h616-emac0', 'allwinner,sun55i-a523-gmac0']
-	'allwinner,sun55i-a523-gmac200' was expected
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.example.dtb: ethernet@28000000 (toshiba,visconti-dwmac): 'resets' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.example.dtb: ethernet@28000000 (toshiba,visconti-dwmac): 'reset-names' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/toshiba,visconti-dwmac.example.dtb: ethernet@28000000 (toshiba,visconti-dwmac): 'syscon' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): clock-names: ['stmmaceth', 'mac-clk-tx', 'mac-clk-rx', 'ethstp', 'eth-ck'] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): clocks: [[4294967295, 105], [4294967295, 103], [4294967295, 104], [4294967295, 112], [4294967295, 123]] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): clock-names: ['stmmaceth', 'mac-clk-tx', 'mac-clk-rx', 'ethstp', 'eth-ck'] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): clocks: [[4294967295, 105], [4294967295, 103], [4294967295, 104], [4294967295, 112], [4294967295, 123]] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): compatible: 'oneOf' conditional failed, one must be fixed:
-	['st,stm32mp1-dwmac', 'snps,dwmac-4.20a'] is too long
-	'allwinner,sun8i-a83t-emac' was expected
-	'allwinner,sun8i-h3-emac' was expected
-	'allwinner,sun8i-r40-gmac' was expected
-	'allwinner,sun8i-v3s-emac' was expected
-	'allwinner,sun50i-a64-emac' was expected
-	'st,stm32mp1-dwmac' is not one of ['allwinner,sun20i-d1-emac', 'allwinner,sun50i-a100-emac', 'allwinner,sun50i-h6-emac', 'allwinner,sun50i-h616-emac0', 'allwinner,sun55i-a523-gmac0']
-	'allwinner,sun55i-a523-gmac200' was expected
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): 'resets' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): 'reset-names' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): 'phy-handle' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): 'syscon' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/stm32-dwmac.example.dtb: ethernet@5800a000 (st,stm32mp1-dwmac): Unevaluated properties are not allowed ('reg-names', 'st,syscon' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): clock-names:0: 'stmmaceth' was expected
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): clock-names: ['axi', 'apb', 'mac_main', 'ptp_ref', 'rmii_internal'] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): clocks: [[4294967295, 34], [4294967295, 37], [4294967295, 154], [4294967295, 155], [4294967295, 158]] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): power-domains: False schema does not allow [[4294967295, 4]]
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): clock-names: ['axi', 'apb', 'mac_main', 'ptp_ref', 'rmii_internal'] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): clocks: [[4294967295, 34], [4294967295, 37], [4294967295, 154], [4294967295, 155], [4294967295, 158]] is too long
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): compatible: 'oneOf' conditional failed, one must be fixed:
-	['mediatek,mt2712-gmac', 'snps,dwmac-4.20a'] is too long
-	'allwinner,sun8i-a83t-emac' was expected
-	'allwinner,sun8i-h3-emac' was expected
-	'allwinner,sun8i-r40-gmac' was expected
-	'allwinner,sun8i-v3s-emac' was expected
-	'allwinner,sun50i-a64-emac' was expected
-	'mediatek,mt2712-gmac' is not one of ['allwinner,sun20i-d1-emac', 'allwinner,sun50i-a100-emac', 'allwinner,sun50i-h6-emac', 'allwinner,sun50i-h616-emac0', 'allwinner,sun55i-a523-gmac0']
-	'allwinner,sun55i-a523-gmac200' was expected
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): 'resets' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): 'reset-names' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): 'phy-handle' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): 'syscon' is a required property
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/mediatek-dwmac.example.dtb: ethernet@1101c000 (mediatek,mt2712-gmac): Unevaluated properties are not allowed ('mediatek,pericfg', 'mediatek,tx-delay-ps' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/allwinner,sun8i-a83t-emac.yaml#
+>  config MCP9600
+> -       tristate "MCP9600 thermocouple EMF converter"
+> +       tristate "MCP9600 and similar thermocouple EMF converters"
+>         depends on I2C
+>         help
+> -         If you say yes here you get support for MCP9600
+> -         thermocouple EMF converter connected via I2C.
 
-doc reference errors (make refcheckdocs):
+> +         If you say yes here you get support for MCP9600, MCP9601, and
+> +         similar thermocouple EMF converters connected via I2C.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250813145540.2577789-2-wens@kernel.org
+To avoid a potential churn in the further changes to support a new HW,
+I would suggest to convert this to the list of supported chips:
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+  ...get support for:
+  - MCP9600
+  - MCP9601
+  and similar...
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+>           This driver can also be built as a module. If so, the module
+>           will be called mcp9600.
 
-pip3 install dtschema --upgrade
+...
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+> +       switch (dev_id) {
+> +       case MCP9600_DEVICE_ID_MCP9600:
+> +       case MCP9600_DEVICE_ID_MCP9601:
+> +               if (dev_id !=3D id->driver_data)
 
+I prefer to see this to be converted to use chip_info before getting
+to a new HW support.
+
+> +                       dev_warn(&client->dev,
+> +                                "Expected id %x but detected %x. Ensure =
+dt is correct\n",
+
+dt --> firmware description
+(the world is not rotating around DT only)
+
+> +                                (u8)id->driver_data, (u8)dev_id);
+
+Use proper specifiers and drop castings.
+
+> +               break;
+>
+
+> +       default:
+> +               dev_warn(&client->dev, "Unknown id %x, using %x\n", (u8)d=
+ev_id,
+> +                       (u8)id->driver_data);
+
+Ditto.
+
+> +       }
+
+...
+
+> +       { "mcp9600", MCP9600_DEVICE_ID_MCP9600 },
+> +       { "mcp9601", MCP9600_DEVICE_ID_MCP9601 },
+
+Nope, use chip_info from day 1, please.
+
+...
+
+>  static const struct of_device_id mcp9600_of_match[] =3D {
+>         { .compatible =3D "microchip,mcp9600" },
+> +       { .compatible =3D "microchip,mcp9601" },
+
+Missed driver data.
+
+>         { }
+>  };
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
