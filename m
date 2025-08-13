@@ -1,85 +1,148 @@
-Return-Path: <linux-kernel+bounces-766740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B36DB24A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:25:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8847B24A7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 559B3721781
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:23:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86C707BA05B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4542E9723;
-	Wed, 13 Aug 2025 13:23:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94282E8E17;
+	Wed, 13 Aug 2025 13:23:57 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8728F2E8E0E
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C882E8893;
+	Wed, 13 Aug 2025 13:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755091386; cv=none; b=YAzbGh3ZxypahJbiOFAMSxzlHH3K8aFIKKgbfvwQmgbNnVbGBA2zkbMt5SFUMvX0C1YBGN57/10eR0zfGmDYHIJxnxjzGMMAkH0zX3DWbrcyzIl1qVDW87pgiZ3JuA0F6k9ykn4K+ZrFBS1PYXoASxggMn6JIsIMQUw/pXh/+WY=
+	t=1755091437; cv=none; b=jKiHxK3602+chW62ct9eQOL0eb0V7EqJLHVVjimQw9GBlHOEQPYOrgDTF5O1EKdObS+ihj85K6Z3cgf6EUH+0QSgnsYlR++jp4BA0Q+GZI4E0r8jkBvVBTmEw72GU/ufUeGmzj62M8QTMcU0UQvQ8xTGc2fxN6VLTCzAxlk4Skw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755091386; c=relaxed/simple;
-	bh=A2VpAySktvLQriopxdsNxDscBXUGGRoH1xVH1LLYWkU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=UQWCZPGTZxTrxIHGsLBsW6/RfqD1Mseloj5xhUdgmY5geFPSB3YDfwwN6hnoSMJk15q8soNwiWbK9c2/Vn5fijWpnPd9Z1x1qnS0CjZammp0C09K7W6CT7MVwFNJIVS5S9O9EWUisk715GH0QaoCZa5ylQkh6jyeA8PRR8lQcxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88193bc4b09so1392844739f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:23:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755091383; x=1755696183;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqlWQM2cM/l+eAFvSIecCVUMTGZ0fGIRs+PGRx61+h0=;
-        b=iuNpBXXiNqeKwb0FT3hmGdhkAkn5DV60kJeL7+JB1MFPGhs4vO7PzCMGJZ2HSE9oBD
-         befPkJrXoXX9DKotzMpvHXlOK/JWFQcqAfkJ30kbzHoqKqiAnvasyTb4Cp7kPlTOQI1O
-         Wg84RfYMls5qrQd6+RU/gXTxanGOln/wwtfkiQteiD+8ml3vX85gX86CGCOvBhwa30t2
-         Wfz0eohEODuRsrhIj8S9jo6nrfXn9MqyqjcIa4bn64OruSHhIS2qQ66Ve+ZAPZqLj+d5
-         6PCs9vRKUoCEFJ/32QzEdlny3A43Qg1BnRrnW9iYRoi9I/wqy7VUlFWgVh57esnbyRFj
-         +pEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQD5b7DiLb9ccSDq++gWfMH/8ymPjnYqjQynSs5eI1jz9zFmoju+raDb7FcfOknoYkCPdtGyDLbyr0MBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcS75OYoBSfg1Y6p0ehO3aYKt8rZunSfIaDLxJ0882qSFluMWu
-	yq7gTzWaQTI6TE1Jqu+JRhH6Jg4JJ2KIrgERug8aNMGiHRjsv7UNgBQEXMZRkqsc7Ayffn1zJUi
-	scXP/wxC8fRYNNIEJ856I2uZocLm+uHr4ir/fxJOPqtlOgXScXmYge9tgDvA=
-X-Google-Smtp-Source: AGHT+IFoBTJMKvELjeLw0jiWfeWXgg5a5yAZe7m7Y4t8cHfSxkiubljDtJ8k1wSRCNVb0Tu/tXUsozkwuvN/gynv/FPxniyuB2eP
+	s=arc-20240116; t=1755091437; c=relaxed/simple;
+	bh=bsPwH+lfd/qXUUhvahSgwJz62Ihew8kA9wWinqW5WJk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iXcz5OqDqf5XRledpBAttASaWb1oEOc7a6f5jPjNt46yqy6GU4AEes84h3mvl3yfwL+pTIQn97pqiEQEXrIcYIpUdtA0N4vEMaizBDTl+0q+PwQAY48byjJMAT9gtG96qenoHQJLWH4SR+YVT9KgCgnwFRK5WTwzQcaxpD+kGGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c28D1352cz6GFl5;
+	Wed, 13 Aug 2025 21:21:53 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 344711400D7;
+	Wed, 13 Aug 2025 21:23:51 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 15:23:50 +0200
+Date: Wed, 13 Aug 2025 14:23:49 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
+Subject: Re: [PATCH V2 02/20] nvdimm/label: Prep patch to accommodate cxl
+ lsa 2.1 support
+Message-ID: <20250813142349.000032a4@huawei.com>
+In-Reply-To: <20250730121209.303202-3-s.neeraj@samsung.com>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121224epcas5p3c3a6563ce186d2fdb9c3ff5f66e37f3e@epcas5p3.samsung.com>
+	<20250730121209.303202-3-s.neeraj@samsung.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1553:b0:881:7e3a:4a37 with SMTP id
- ca18e2360f4ac-8842963bc0fmr564713539f.6.1755091381921; Wed, 13 Aug 2025
- 06:23:01 -0700 (PDT)
-Date: Wed, 13 Aug 2025 06:23:01 -0700
-In-Reply-To: <20250813131449.4491-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <689c91b5.050a0220.51d73.00bb.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING in move_page_tables
-From: syzbot <syzbot+4d9a13f0797c46a29e42@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hello,
+On Wed, 30 Jul 2025 17:41:51 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+> LSA 2.1 format introduces region label, which can also reside
+> into LSA along with only namespace label as per v1.1 and v1.2
+> 
+> As both namespace and region labels are of same size of 256 bytes.
+> Thus renamed "struct nd_namespace_label" to "struct nd_lsa_label",
+> where both namespace label and region label can stay as union.
 
-mm/mremap.c:595:28: error: invalid use of void expression
+Maybe add something on why it makes sense to use a union rather than
+new handling.
+
+> 
+> No functional change introduced.
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+A few minor comments inline.
 
 
-Tested on:
+> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+> index 55cfbf1e0a95..bdf1ed6f23d8 100644
+> --- a/drivers/nvdimm/namespace_devs.c
+> +++ b/drivers/nvdimm/namespace_devs.c
+> @@ -1615,17 +1619,21 @@ static int select_pmem_id(struct nd_region *nd_region, const uuid_t *pmem_id)
+>  	for (i = 0; i < nd_region->ndr_mappings; i++) {
+>  		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+>  		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +		struct nd_lsa_label *lsa_label = NULL;
+Why not pull this into the scope below.
 
-commit:         8742b2d8 Merge tag 'pull-fixes' of git://git.kernel.or..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f9319a42cfb3bf57
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d9a13f0797c46a29e42
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=176d4da2580000
+>  		struct nd_namespace_label *nd_label = NULL;
+>  		u64 hw_start, hw_end, pmem_start, pmem_end;
+>  		struct nd_label_ent *label_ent;
+>  
+>  		lockdep_assert_held(&nd_mapping->lock);
+>  		list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+e.g.
+			struct nd_lsa_label *lsa_label = label_ent->label;
+
+then no need to set it to NULL later.
+
+> -			nd_label = label_ent->label;
+> -			if (!nd_label)
+> +			lsa_label = label_ent->label;
+> +			if (!lsa_label)
+>  				continue;
+> +
+> +			nd_label = &lsa_label->ns_label;
+>  			if (nsl_uuid_equal(ndd, nd_label, pmem_id))
+>  				break;
+> +			lsa_label = NULL;
+>  			nd_label = NULL;
+>  		}
+>  
+> @@ -1746,19 +1754,21 @@ static struct device *create_namespace_pmem(struct nd_region *nd_region,
+>  
+>  	/* Calculate total size and populate namespace properties from label0 */
+>  	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_lsa_label *lsa_label;
+>  		struct nd_namespace_label *label0;
+>  		struct nvdimm_drvdata *ndd;
+>  
+>  		nd_mapping = &nd_region->mapping[i];
+>  		label_ent = list_first_entry_or_null(&nd_mapping->labels,
+>  				typeof(*label_ent), list);
+> -		label0 = label_ent ? label_ent->label : NULL;
+> +		lsa_label = label_ent ? label_ent->label : NULL;
+>  
+> -		if (!label0) {
+> +		if (!lsa_label) {
+>  			WARN_ON(1);
+>  			continue;
+>  		}
+>  
+> +		label0 = &lsa_label->ns_label;
+>  		ndd = to_ndd(nd_mapping);
+>  		size += nsl_get_rawsize(ndd, label0);
+>  		if (nsl_get_position(ndd, label0) != 0)
+>
 
 
