@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-766148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69EBAB242DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:36:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803EDB242E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 09:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BE711667CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:34:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 119753A249B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 07:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAD22D9ED9;
-	Wed, 13 Aug 2025 07:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C5B2D5C6F;
+	Wed, 13 Aug 2025 07:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IgS2znVO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH+1mJ9d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D289A225762;
-	Wed, 13 Aug 2025 07:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854AF1D5CD4;
+	Wed, 13 Aug 2025 07:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755070467; cv=none; b=cbWs90LIGOjNJHJkxmYTaBsrNcThLGDnnJxCMSA++wa9gawh7E+xr+xNYlj/YfjbtJqu8YeauclBkwI73TJTJw4JbyQVMCl+v0HWRbjEhn7RhgIuKZwsva5jmBoWhfADDXt0v9xTAPnGYJ2XNk6e+0BW/r/uFjFvBXyA6CayMVI=
+	t=1755070618; cv=none; b=gMzatl6wWENRMRysJI9uEQrGbm5buyWQkl8E5xnsztH4xeH2OnqjyPMaTTNMrZC0JfmwoKYtxHmf8n2P4FmILxGw0eRfvHZ82GCZhqrsv+6GaObC1vImtEGixW1iz3PrsiJdOkuNvmAzdejld1Wau2sgym+OzsnmmwpaBWPrZNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755070467; c=relaxed/simple;
-	bh=LOw47lq3lTR3OffAqvYBcY7aTdLFREjOhrLME4xQV7k=;
+	s=arc-20240116; t=1755070618; c=relaxed/simple;
+	bh=yd7WnsqfEHhrl3xdnaa0V6HrvSWXxNrKc3LtxXpEtkM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KtXKoR/J9vRHrb43o52ajG9ZJz71mCO4Nt+ZzKTxwMhGLzO++x6rKyhRiBPthoHkNoxWwprH9A8/b9Vp7HbcKmboxAMECq8nYeuFTdTDpgkpd33oeaWnm9czlAHdQOL4MnrVKreObaH9U6c9h6wvC/ejJu0SEmsgYK8JqqndIh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IgS2znVO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C75BC4CEEB;
-	Wed, 13 Aug 2025 07:34:22 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=k5LWKHfF/hEF935XSRM2PRnWbW52rp5Mv2Mx2ifga//M+aMkG/wD6qaxDaCx8X5o1AL17oor6N7a3NpqakPCiduiD5XVfQRKmeBjAi0qyTMTjRecyb0/555jODlUdzwgojaykBi3drtTdDKsjp7S2QTw60GLV4oiG2t+mRIs+tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH+1mJ9d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63CFDC4CEEB;
+	Wed, 13 Aug 2025 07:36:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755070466;
-	bh=LOw47lq3lTR3OffAqvYBcY7aTdLFREjOhrLME4xQV7k=;
+	s=k20201202; t=1755070618;
+	bh=yd7WnsqfEHhrl3xdnaa0V6HrvSWXxNrKc3LtxXpEtkM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IgS2znVOJsb/2yQQhCk1/XOsk+ALrk5kbMtqU25i8vDD5NQrfftFwFA/g+YUx1Lxr
-	 xvpbUjzDsFRLNZSQe4fyJZqyN48QvKuMCUdc7QP2dtGDlRp0CG/1HR1i60+JmYwhau
-	 Ts0bXuajM4QBb8Ah2QcyXbkvUAJ3tl+9P+Sl6Km+ZX+j5lcr5emk38sKtv3XZS/ywp
-	 6UkQQnhQXq/vKbSpiZ61ozXwQR6AeA19ov4U1UMQJ7hDK0+kmbzh/HfRZbFD+oejTY
-	 OGDhVwHorYMpMamFr8MorTN+w2urXI4l6gxkmWctNhW2bGuR9NEmtzgee5mdd8hw/n
-	 zh1Lhefw+iyCQ==
-Message-ID: <faf398eb-2be4-43cd-a5bf-2c688dd7bc18@kernel.org>
-Date: Wed, 13 Aug 2025 09:34:20 +0200
+	b=FH+1mJ9d4zEdDwHjhFN812mwVyPsKVQ4gSbWptxq6FcPOCmBt/6cp6URfl7TkxAat
+	 ZPEg3PKLgL27y5yTnQFZ1N56+3IVfHZHr9OKce2Nh78vVtax6oC9xqnvJjKpA2PjPp
+	 yy6uKPgjhquEowS/C+s2O7QFP5FjdVEeYLVNIXQq8IA6rLkMqXD2Sq7ok0H3hyNW+4
+	 /9/5L6F+h/sIHXKH9cIYGzbw6K4Q2x4F8gJlbQy5V37h54XoYMWd974qCR+xMMgmF7
+	 JHo82Xf/O+8gmXIeN4eGCPAkEx3GNaAMa3ibbp3Zap3m07su+E7F/UABg3kO/sxUrA
+	 +Jqf/PrOi+tTA==
+Message-ID: <5cc336bc-f071-41d2-b59a-af0df23af00b@kernel.org>
+Date: Wed, 13 Aug 2025 09:36:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,30 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: media: Add Sony IMX585 CMOS image
- sensor
-To: Will Whang <will@willwhang.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 1/3] spi: dt-bindings: add doc for Amlogic A113L2 SFC
+To: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ <conor+dt@kernel.org>, Liang Yang <liang.yang@amlogic.com>,
+ Feng Chen <feng.chen@amlogic.com>, linux-spi@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20250810220921.14307-1-will@willwhang.com>
- <20250810220921.14307-2-will@willwhang.com>
- <20250811-successful-military-dragon-d72486@kuoka>
- <CAFoNnrxWwqT9WA-h2WOsUe6Q-qEoz2mTHLpDogAyMwiXXZ9MrA@mail.gmail.com>
- <f12e6ff3-6ec3-487f-bf9c-0f8c06ee6444@kernel.org>
- <CAFoNnrxhUof8BBrefm1L1peTxg==Koz72TY+54G_8QUy-rrT8g@mail.gmail.com>
- <e695c61a-e183-4eea-a7f6-1b2861b2129f@kernel.org>
- <20250812095543.GJ30054@pendragon.ideasonboard.com>
- <CAFoNnrzWot_Bf=YZFac1GkZgOOnJycwpidvwL93p3p-C-zn8BA@mail.gmail.com>
- <6d6dc9e6-751f-4079-b21e-2e3461885b03@kernel.org>
- <CAFoNnrwoRbtvTHHnjarDTKEHnQMaMDERPKi_vnYym3n8tVpzOA@mail.gmail.com>
+ linux-amlogic@lists.infradead.org
+References: <20250808-spifc-v1-0-ff4e30e26a6b@amlogic.com>
+ <20250808-spifc-v1-1-ff4e30e26a6b@amlogic.com>
+ <20250808-adamant-fat-raven-38c8b3@kuoka>
+ <7fab19de-8ed1-4fe5-b2a4-a7e9c13d8424@amlogic.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -118,111 +106,54 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <CAFoNnrwoRbtvTHHnjarDTKEHnQMaMDERPKi_vnYym3n8tVpzOA@mail.gmail.com>
+In-Reply-To: <7fab19de-8ed1-4fe5-b2a4-a7e9c13d8424@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 13/08/2025 08:38, Will Whang wrote:
-> On Tue, Aug 12, 2025 at 11:08 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On 13/08/2025 08:13, Xianwei Zhao wrote:
+>>> +allOf:
+>>> +  - $ref: /schemas/spi/spi-controller.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: amlogic,a4-spifc
+>>> +
+>>> +  reg:
+>>> +    items:
+>>> +      - description: core registers
+>>> +      - description: parent clk control registers
 >>
->> On 13/08/2025 06:30, Will Whang wrote:
->>> On Tue, Aug 12, 2025 at 2:56 AM Laurent Pinchart
->>> <laurent.pinchart@ideasonboard.com> wrote:
->>>>
->>>> On Tue, Aug 12, 2025 at 08:47:12AM +0200, Krzysztof Kozlowski wrote:
->>>>> On 12/08/2025 08:31, Will Whang wrote:
->>>>>> On Mon, Aug 11, 2025 at 11:23 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>> On 12/08/2025 04:47, Will Whang wrote:
->>>>>>>> On Mon, Aug 11, 2025 at 1:01 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>>>>>> On Sun, Aug 10, 2025 at 11:09:18PM +0100, Will Whang wrote:
->>>>>>>>>> +description:
->>>>>>>>>> +  IMX585 sensor is a Sony CMOS sensor with 4K and FHD outputs.
->>>>>>>>>> +
->>>>>>>>>> +properties:
->>>>>>>>>> +  compatible:
->>>>>>>>>> +    enum:
->>>>>>>>>> +      - sony,imx585
->>>>>>>>>> +      - sony,imx585-mono
->>>>>>>>>
->>>>>>>>> I don't understand this second compatible. Is this different hardware?
->>>>>>>>> Can you point me to "mono" datasheet?
->>>>>>>>>
->>>>>>>>> Your description should explain this. Commit msg as well, instead of
->>>>>>>>> speaking about driver (in fact drop all driver related comments).
->>>>>>>>>
->>>>>>>> Mono version of this sensor is basically just removing the bayer
->>>>>>>> filter, so the sensor itself actually doesn't know if it is color or
->>>>>>>> mono and from my knowledge there are no registers programmed in the
->>>>>>>> factory that will show the variant and model number. (That is why when
->>>>>>>> the driver probing it only test blacklevel register because there are
->>>>>>>> no ID registers)
->>>>>>>> Originally in V1 patch I've made the switch between color and mono in
->>>>>>>> dtoverlay config but reviewer comments is to move it to compatible
->>>>>>>> string and not property.(https://lore.kernel.org/linux-media/20250703175121.GA17709@pendragon.ideasonboard.com/)
->>>>>>>
->>>>>>> You only partially answer and judging by mentioning driver below:
->>>>>>>
->>>>>>>> In this case, what would you recommend?
->>>>>>>>
->>>>>>>> compatible:
->>>>>>>>   enum:
->>>>>>>>     - sony,imx585
->>>>>>>>     - sony,imx585-mono
->>>>>>>>   description: IMX585 has two variants, color and mono which the
->>>>>>>> driver supports both.
->>>>>>>
->>>>>>> ... I still have doubts that you really understand what I am asking. Is
->>>>>>> this one device or two different devices?
->>>>>>
->>>>>> One device that has two variants: IMX585-AAMJ1 (Mono) and IMX585-AAQJ1
->>>>>> (Color). Silicon-wise the difference is just with or without bayer
->>>>>> filter.
->>>>>
->>>>> Then I would propose to use sony,imx585-aamj1 and -aaqj1 with short
->>>>> explanation either in comment or description about difference in RGB
->>>>> mosaic filter.
->>>>
->>>> Works for me. We could possibly omit the "j1" suffix too.
->>>>
->>> My thinking is that imx585 and imx585-mono are easier to comprehend
->>> than IMX585-AAM and IMX585-AAQ.
->>> Because in dtoverlay for the users/me they will have to know what is
->>> the exact name instead of easy to remember name.
->>>
->>> dtoverlay=imx585-aam
->>> is not as nice as
->>> dtoverlay=imx585-mono
+>> Why are you poking to parent node or to clock registers? This looks like
+>> mixing up device address spaces.
 >>
->> I have datasheet for AAQ, so how above is easier for me to figure out
->> which compatible I am using?
->>
-> I propose this:
 > 
-> compatible:
->   enum:
->     - sony,imx585
->     - sony,imx585-mono
->     - sony,imx585-AAQJ1
->     - sony,imx585-AAMJ1
-> 
->   description: IMX585 has two variants, color (IMX585-AAQ) and mono
-> (IMX585-AAM) which
-> the driver supports both.
+> The SPIFC bus clock multiplexes EMMC modules, so the corresponding 
+> frequency division register is also in EMMC module. The SPIFC and the 
+> EMMC modules cannot be used simultaneously.
 
-So why four compatibles? BTW, driver does not matter.
+Then obviously you cannot put here EMMC or parent registers.
+
+It looks really like you miss proper hardware representation.
 
 > 
-> Description is there for a reason, dtoverlay has description also. See
-> sony,imx296.yaml as an example.
-> If you are looking at AAQ you know it is a color sensor and all the
-> color sensors from sony can be used with imx+three numbers in the
-> current list.
-> This is following the established convention.
-Which? Sorry, point me anywhere to convention that we do not use proper
-full model names but shortened version for some variant of a device?
-Such approach lead to many issues in the past, for example current
-Risc-v reset mess where contributor wants to remove completely
-incomplete compatible :/
+>>> +
+>>> +  reg-names:
+>>> +    items:
+>>> +      - const: core
+>>> +      - const: pclk
+>>> +
+>>> +  clocks:
+>>> +    items:
+>>> +      - description: clock gate
+>>
+>> Are you sure this is separate clock input to this device?
+>>
+> 
+> This clock is used by the APB interface to access the SPIFC registers.
+
+So APB clock?
+
+
 
 Best regards,
 Krzysztof
