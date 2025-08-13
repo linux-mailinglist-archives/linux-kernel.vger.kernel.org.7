@@ -1,222 +1,165 @@
-Return-Path: <linux-kernel+bounces-767592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B00B25675
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 199CAB2567A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19DD1C8252D
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:16:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4C0D5C1434
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F8F30274B;
-	Wed, 13 Aug 2025 22:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481762E9EAF;
+	Wed, 13 Aug 2025 22:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RjtgX1a9"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f7rPsOib";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7SMwQFQ6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D5C2FE067;
-	Wed, 13 Aug 2025 22:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15ED42FCBE7;
+	Wed, 13 Aug 2025 22:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755123237; cv=none; b=txjhduxFPOTx3XMnxvhcSWFyKCPtA9pROd36ReKjqZr3Mw0ustkIzxQIjYhb2t+tPwaltWazAp1B7vkJ5TGb+aNRpGqACIIF5dXQX7UAoGU8LcLcKewq8FICXFYvJnQ2EFDrM3LZT6Z3vlHsgnOXay0orYMZFVWW5ypxBmyGCpQ=
+	t=1755123311; cv=none; b=A1dqvZLhjqMMh5EBSoWybf/pVl3C0x69V6cjrnaJiBx8uKGxlAPwvRBGW+mFNyFIRi6Wv5/QBGnU/oizgbEPaipNNvWQkMiJ+02y49QQbclvfOxIAWeFRqZOyasShN3CsTd/gIb5T+3lJZqmFgrMv7y5EIphAj1WZRamUjSlx6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755123237; c=relaxed/simple;
-	bh=VTu1YlP6cbBxPd8KlY7/RgMoLKQvCZlYMTO6Lr73lws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cjH8y/RkbTLXSJ4TrsMjEeuT2QhV4JWK+MK/V1et/BaJx+9fDIHv/B4H+mbWe3vtQYxI9qha+wmxN7AZc+q86EFNEqKlnDOypWKEe/8qHz/DF/zHplGRZoAmvOgbS97G6K7Qq+H2/2VOMbajaxLzQdlQKKC31YieLm/IVjEWwTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RjtgX1a9; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b001f55so1374695e9.0;
-        Wed, 13 Aug 2025 15:13:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755123233; x=1755728033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rtjUK0AZOjm4eF0vnry/hWr4fc/ZinEdNV9kmjIXNAY=;
-        b=RjtgX1a93HGEm3VhOTw/CVWVGuLeDsVdnkMCpQed8DHC+nIzKJVFFs/EqnOQoklQk0
-         VNfOQPwHLCyLI4ZEsdnDW5K7MlheIP+t7qcd07mZYK4i03kcjhqx9pHwvVUze+VuHeDA
-         Ip3s2SDRpj5JkfvM7GapzPkJaSCRwT52kyVlJP1o2FPiw3xK0lwrRmUTwCkOmAhkRFMu
-         AE0C78fSj8Z3NhxFaBXJdKqVgCxna/H2KQCvoJP6nlyXLrBseUk/kAQhroW9fQhFtHcc
-         etVZplB/LQRsVaCt3rhCezXWrOdbDuoFhBTfJTSc2qqZGtz1rPFCgpsggj+WMpa3BlUx
-         fX/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755123233; x=1755728033;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rtjUK0AZOjm4eF0vnry/hWr4fc/ZinEdNV9kmjIXNAY=;
-        b=DzXvH5qcMwOCfMM8C2onpjcWmvuuVkRWAIdwbMByC+0KT09tedlGRzuh/sh0NZWNh/
-         bOgHtxDBCB44FUyBZgNib/6th+Tg5Cn4OXqMLpM9ZhUhxUplrFO9BD5Oxna6QLkXR09c
-         yA/e7kjlcC1m+xLWDJUtx+xRy/RI+byFKxXwrIBXz9Z/Srj/0OvkEUi1ojOAhZj5TRdJ
-         PkVyDR6HhgsyQAJUsCgdz4E9qhvzO1i07q6mDfAMHY5Wvtc7sPnzOu6gpLzFtxOVvi+d
-         P3XrittofbWE3jP/mh6ERj8NZU+y39mzpOUH6kaMcvdMXCdqI4vpt67g6NfsgTuDK6qu
-         ozfw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/ySMAQObuT9NI0sxITyInzIfJOeqpreQKoyv+xDGWqK1GRKc7XWEG4fMRW9Nh2IPV9nkv7GmRUafWwc51@vger.kernel.org, AJvYcCWd6pm86q9uslxwd3gTO4gdEA5bg5P3KFxykdfGoUCbWWX0x2oJSZ6tb/hU1bdtOFYuA1Y=@vger.kernel.org, AJvYcCXrzH+CYv+Dxa//PFIKNnXrIZetToLuoluWioaIH9zL+UecUj4rgZiBPGlzLfwj3bAaAZ5rDo+881bA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1dsiTZeT0nr2Aspij6yPfYaIn3kqx2eYAdymvRoW9vaw8Ga6j
-	ahVfsDmlFpwdb6gxqfR1Wjue2BslNr3ARjp3AU5DdQjFD5R8zUut335C8EAOoSUv
-X-Gm-Gg: ASbGnct0QR6CYnY8VSYdf3dYZkEw4lniD4Uz8gVxo1OEoAVdbBcC6k6I0wv1CRIKWcp
-	2nXr1HLgLp38al48BYVRKtQbISc5EFdUVec+3+HOxmaNclGdxr05q6sIOwitPxdo7zjy1eWA3XZ
-	XG/a0VHSfu0xnRWgbjyAVJi/U1bZo90fXG6Z9lmxlsoUxOJVNrIbMo5XGHKHfZB8y906YuMQTHm
-	+wA8vVMTi4wR4NlwBT39Qm0X/xAcZ/y/qgvMpUmxweUKI6UkrEdjy8Ji8r6jejPft8AQy1cbxVP
-	3P5D/0JntuFx2rDHWdr72wGncNl2iM5EI1pBpW9ytY8os0tAX3j3CM67C1cmIiRjfa8wUNPymvQ
-	raFk7IgSu+q+fPw6WIbrQwYWaTA==
-X-Google-Smtp-Source: AGHT+IEgB2v+gCGAWANNa3EKMpLphRvnlwapSV7jWPPQcd9HuQt+NoEXnt3jKfFlDc25gkCc0Dio4g==
-X-Received: by 2002:a05:600c:4f16:b0:442:e9eb:1b48 with SMTP id 5b1f17b1804b1-45a1b65634bmr2958025e9.24.1755123232973;
-        Wed, 13 Aug 2025 15:13:52 -0700 (PDT)
-Received: from localhost ([2a03:2880:31ff:71::])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a59019dsm15967745e9.21.2025.08.13.15.13.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 15:13:52 -0700 (PDT)
-From: Mohsin Bashir <mohsin.bashr@gmail.com>
-To: netdev@vger.kernel.org
-Cc: aleksander.lobakin@intel.com,
-	alexanderduyck@fb.com,
-	andrew+netdev@lunn.ch,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	corbet@lwn.net,
-	daniel@iogearbox.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	hawk@kernel.org,
-	horms@kernel.org,
-	john.fastabend@gmail.com,
-	kernel-team@meta.com,
-	kuba@kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mohsin.bashr@gmail.com,
-	pabeni@redhat.com,
-	sdf@fomichev.me,
-	vadim.fedorenko@linux.dev
-Subject: [PATCH net-next V4 9/9] eth: fbnic: Report XDP stats via ethtool
-Date: Wed, 13 Aug 2025 15:13:19 -0700
-Message-ID: <20250813221319.3367670-10-mohsin.bashr@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250813221319.3367670-1-mohsin.bashr@gmail.com>
-References: <20250813221319.3367670-1-mohsin.bashr@gmail.com>
+	s=arc-20240116; t=1755123311; c=relaxed/simple;
+	bh=G+mmBFJESpPz0yH5bKgn2HavzjDfjgjvfOyxf574VvY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=RJE2UY9sC3bl17jGjLlKW2jnj9bOW6rNoCM1Rl2OVKRy2yyGy4h/ZPzuBZuKEmi3FhiN6aG/Co6a6amu0JIVpDppMpu7IZ1UurVjfQdeUJRxsqRd/Nt4+qxbyyJK/8uaqQA2wXkA5VYBJm9EgZ5EUOlJFBIJGr6GHzSRA8nUCIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f7rPsOib; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7SMwQFQ6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 13 Aug 2025 22:15:06 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1755123307;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z2xFOl9pKB9fowXhN5zH36UGHK1nQkMtc1Iy7X3OFXo=;
+	b=f7rPsOibTLo8uSOe1aTA30SWQ7fEty/jvDeCAUSCK5abkIMPXc6yh5dpMJRfKPhCL4aDyv
+	OVTm+8JcmygjiZvwnUAZeZUnJF5Xf01tqwEDoreMRQP7oBdw8M0Fx9fSEM6SA8SzMy9miS
+	mdXKxa9lR5cZQb3KYa7ro1P2xFoQx4M0KRhVlmiE85C/nzefaMp8nqQBt/3IOnXoMfY5JD
+	1DCwf5YnAXxbmowoPLVrzVmFXZrZLefXHWwvAl8pD/x9lh3CsZWDczps/oWZAlDsLCmSjn
+	Dgty5hbnP+k3ZmfxhiFQRqAn3yHNFnuG4U3i2ARk0IURO/31j/vwpSI2hvveBw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1755123307;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z2xFOl9pKB9fowXhN5zH36UGHK1nQkMtc1Iy7X3OFXo=;
+	b=7SMwQFQ6OBmpFReKBMHxPAVwbpVhFdrzyXr49ybNpd4SAWtZbjDHxbxahJGCpazZOndAsg
+	2FR7EZE3aLjmtfDg==
+From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/entry] x86/vsyscall: Do not require X86_PF_INSTR to emulate
+ vsyscall
+Cc: Dave Hansen <dave.hansen@intel.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <bd81a98b-f8d4-4304-ac55-d4151a1a77ab@intel.com>
+References: <bd81a98b-f8d4-4304-ac55-d4151a1a77ab@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <175512330621.1420.4357100927779312673.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support to collect XDP stats via ethtool API. We record
-packets and bytes sent, and packets dropped on the XDP_TX path.
+The following commit has been merged into the x86/entry branch of tip:
 
-ethtool -S eth0 | grep xdp | grep -v "0"
-     xdp_tx_queue_13_packets: 2
-     xdp_tx_queue_13_bytes: 16126
+Commit-ID:     8ba38a7a9a699905b84fa97578a8291010dec273
+Gitweb:        https://git.kernel.org/tip/8ba38a7a9a699905b84fa97578a8291010d=
+ec273
+Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate:    Tue, 24 Jun 2025 17:59:18 +03:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Wed, 13 Aug 2025 15:02:12 -07:00
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Mohsin Bashir <mohsin.bashr@gmail.com>
+x86/vsyscall: Do not require X86_PF_INSTR to emulate vsyscall
+
+emulate_vsyscall() expects to see X86_PF_INSTR in PFEC on a vsyscall
+page fault, but the CPU does not report X86_PF_INSTR if neither
+X86_FEATURE_NX nor X86_FEATURE_SMEP are enabled.
+
+X86_FEATURE_NX should be enabled on nearly all 64-bit CPUs, except for
+early P4 processors that did not support this feature.
+
+Instead of explicitly checking for X86_PF_INSTR, compare the fault
+address to RIP.
+
+On machines with X86_FEATURE_NX enabled, issue a warning if RIP is equal
+to fault address but X86_PF_INSTR is absent.
+
+[ dhansen: flesh out code comments ]
+
+Originally-by: Dave Hansen <dave.hansen@intel.com>
+Reported-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Andrew Cooper <andrew.cooper3@citrix.com>
+Link: https://lore.kernel.org/all/bd81a98b-f8d4-4304-ac55-d4151a1a77ab@intel.=
+com
+Link: https://lore.kernel.org/all/20250624145918.2720487-1-kirill.shutemov%40=
+linux.intel.com
 ---
- .../net/ethernet/meta/fbnic/fbnic_ethtool.c   | 50 ++++++++++++++++++-
- 1 file changed, 49 insertions(+), 1 deletion(-)
+ arch/x86/entry/vsyscall/vsyscall_64.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c b/drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c
-index 742b557d0e56..ceb8f88ae41c 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c
-@@ -112,6 +112,20 @@ static const struct fbnic_stat fbnic_gstrings_hw_q_stats[] = {
- 	 FBNIC_HW_RXB_DEQUEUE_STATS_LEN * FBNIC_RXB_DEQUEUE_INDICES + \
- 	 FBNIC_HW_Q_STATS_LEN * FBNIC_MAX_QUEUES)
- 
-+#define FBNIC_QUEUE_STAT(name, stat) \
-+	FBNIC_STAT_FIELDS(fbnic_ring, name, stat)
-+
-+static const struct fbnic_stat fbnic_gstrings_xdp_stats[] = {
-+	FBNIC_QUEUE_STAT("xdp_tx_queue_%u_packets", stats.packets),
-+	FBNIC_QUEUE_STAT("xdp_tx_queue_%u_bytes", stats.bytes),
-+	FBNIC_QUEUE_STAT("xdp_tx_queue_%u_dropped", stats.dropped),
-+};
-+
-+#define FBNIC_XDP_STATS_LEN ARRAY_SIZE(fbnic_gstrings_xdp_stats)
-+
-+#define FBNIC_STATS_LEN \
-+	(FBNIC_HW_STATS_LEN + FBNIC_XDP_STATS_LEN * FBNIC_MAX_XDPQS)
-+
- static void
- fbnic_get_drvinfo(struct net_device *netdev, struct ethtool_drvinfo *drvinfo)
- {
-@@ -422,6 +436,16 @@ static void fbnic_get_rxb_dequeue_strings(u8 **data, unsigned int idx)
- 		ethtool_sprintf(data, stat->string, idx);
- }
- 
-+static void fbnic_get_xdp_queue_strings(u8 **data, unsigned int idx)
-+{
-+	const struct fbnic_stat *stat;
-+	int i;
-+
-+	stat = fbnic_gstrings_xdp_stats;
-+	for (i = 0; i < FBNIC_XDP_STATS_LEN; i++, stat++)
-+		ethtool_sprintf(data, stat->string, idx);
-+}
-+
- static void fbnic_get_strings(struct net_device *dev, u32 sset, u8 *data)
- {
- 	const struct fbnic_stat *stat;
-@@ -447,6 +471,9 @@ static void fbnic_get_strings(struct net_device *dev, u32 sset, u8 *data)
- 			for (i = 0; i < FBNIC_HW_Q_STATS_LEN; i++, stat++)
- 				ethtool_sprintf(&data, stat->string, idx);
- 		}
-+
-+		for (i = 0; i < FBNIC_MAX_XDPQS; i++)
-+			fbnic_get_xdp_queue_strings(&data, i);
- 		break;
+diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/=
+vsyscall_64.c
+index c9103a6..6e6c0a7 100644
+--- a/arch/x86/entry/vsyscall/vsyscall_64.c
++++ b/arch/x86/entry/vsyscall/vsyscall_64.c
+@@ -124,7 +124,12 @@ bool emulate_vsyscall(unsigned long error_code,
+ 	if ((error_code & (X86_PF_WRITE | X86_PF_USER)) !=3D X86_PF_USER)
+ 		return false;
+=20
+-	if (!(error_code & X86_PF_INSTR)) {
++	/*
++	 * Assume that faults at regs->ip are because of an
++	 * instruction fetch. Return early and avoid
++	 * emulation for faults during data accesses:
++	 */
++	if (address !=3D regs->ip) {
+ 		/* Failed vsyscall read */
+ 		if (vsyscall_mode =3D=3D EMULATE)
+ 			return false;
+@@ -137,12 +142,18 @@ bool emulate_vsyscall(unsigned long error_code,
  	}
- }
-@@ -464,6 +491,24 @@ static void fbnic_report_hw_stats(const struct fbnic_stat *stat,
- 	}
- }
- 
-+static void fbnic_get_xdp_queue_stats(struct fbnic_ring *ring, u64 **data)
-+{
-+	const struct fbnic_stat *stat;
-+	int i;
+=20
+ 	/*
++	 * X86_PF_INSTR is only set when NX is supported.  When
++	 * available, use it to double-check that the emulation code
++	 * is only being used for instruction fetches:
++	 */
++	if (cpu_feature_enabled(X86_FEATURE_NX))
++		WARN_ON_ONCE(!(error_code & X86_PF_INSTR));
 +
-+	if (!ring) {
-+		*data += FBNIC_XDP_STATS_LEN;
-+		return;
-+	}
-+
-+	stat = fbnic_gstrings_xdp_stats;
-+	for (i = 0; i < FBNIC_XDP_STATS_LEN; i++, stat++, (*data)++) {
-+		u8 *p = (u8 *)ring + stat->offset;
-+
-+		**data = *(u64 *)p;
-+	}
-+}
-+
- static void fbnic_get_ethtool_stats(struct net_device *dev,
- 				    struct ethtool_stats *stats, u64 *data)
- {
-@@ -511,13 +556,16 @@ static void fbnic_get_ethtool_stats(struct net_device *dev,
- 				      FBNIC_HW_Q_STATS_LEN, &data);
- 	}
- 	spin_unlock(&fbd->hw_stats_lock);
-+
-+	for (i = 0; i < FBNIC_MAX_XDPQS; i++)
-+		fbnic_get_xdp_queue_stats(fbn->tx[i + FBNIC_MAX_TXQS], &data);
- }
- 
- static int fbnic_get_sset_count(struct net_device *dev, int sset)
- {
- 	switch (sset) {
- 	case ETH_SS_STATS:
--		return FBNIC_HW_STATS_LEN;
-+		return FBNIC_STATS_LEN;
- 	default:
- 		return -EOPNOTSUPP;
- 	}
--- 
-2.47.3
-
++	/*
+ 	 * No point in checking CS -- the only way to get here is a user mode
+ 	 * trap to a high address, which means that we're in 64-bit user code.
+ 	 */
+=20
+-	WARN_ON_ONCE(address !=3D regs->ip);
+-
+ 	if (vsyscall_mode =3D=3D NONE) {
+ 		warn_bad_vsyscall(KERN_INFO, regs,
+ 				  "vsyscall attempted with vsyscall=3Dnone");
 
