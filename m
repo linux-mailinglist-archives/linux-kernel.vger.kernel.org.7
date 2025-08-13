@@ -1,113 +1,159 @@
-Return-Path: <linux-kernel+bounces-765879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-765880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E3DB23F75
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:22:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB77B23F78
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E0E81892B8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC2291B60D11
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 04:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BF82BE050;
-	Wed, 13 Aug 2025 04:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FDD2BE03E;
+	Wed, 13 Aug 2025 04:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="E+YLf8qv"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bi01UfkM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794F32505A5;
-	Wed, 13 Aug 2025 04:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC3123D7D9;
+	Wed, 13 Aug 2025 04:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755058933; cv=none; b=spwVn0VDtFg49Ekn1h3jGFzAqLuKw5XRa3B0jK+KvKNbrmzAP/UJs3vlVaQfxkiQK0HcZ5sA9xkC8mEufmleDOsWzE6Mn1PSe/ASHwh3+FYaE7Jhb3KF2f6lrZbMte1XeEM2p9nH4FTphiFK3+4ELn7sAYd/AnYIXYHn7d6ZFxg=
+	t=1755058967; cv=none; b=n7Cof4dQSIZ3uyJk6PAnP9GQdTs7H63CBaq3ajemE7qNqooOyo0x7ET+KhU0P0vLSVjCI5nX+AVt/gBo/i951XRLjmCBrcblC1a5RthQfjIE0u9TElN4FgIXAPPrOt7XoDo11BwB+TKg9tl2nvOMyaNW7lt+vnhk6rpmZQe+tc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755058933; c=relaxed/simple;
-	bh=VMh2BLGphXRvG/FFzhL1PFA92eHn/bxF7Kk0BRTOyHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LXTKcPd8bN78a/buuIPfOHGXjPTe1NaE4ndRz8gwfIUXkSZz7d9SauHVJSZxwEKXTjBX8IBv0luzrqEYlQ7OBzCoxraE3mEjbf7SzAgvecgnAavdDKfKeXX+oHTwXz+O0NCzWJdw38KYzuK+T2nfTCYgqqw7wXobu5mmEOYtYiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=E+YLf8qv; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xdU/0zwSMH2y0O1TRA9YmJ5Fw0UxuvH5pkvmlwTE5W4=; b=E+YLf8qvXLfxYK0as6o9jTXHlV
-	yV1NRjXLvW9S0R51j1f3lLc0CGwYDCeWM7y/ylMOtQm9Jx2ANDc9nb+S+roZZ7ANg1Myuq0go4ZR1
-	Z+zJpGFlqLoT3GF0gU1JVh+h459QD9szlEO+8ULWb9wPt5XR9Go9ehuUZEike+kKFfYZxzwA2JovI
-	OWx1fqHFlkh6c9KE8pGaNxB7aN0eqFbkARwEvK3rACEuaDUiKtCBGKXNWP90A8UpYtw1tAMjG1b/Y
-	HsCWforfyvrltzOcXDT9AapZpUs3yCk6YpcxDcZIYg3osY9wQcz6z4BAkW9+MUEp7h3sUGYpc5Q0L
-	Gl0P2Sbw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1um2zy-00000005WTr-37Ng;
-	Wed, 13 Aug 2025 04:22:02 +0000
-Date: Wed, 13 Aug 2025 05:22:02 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: NeilBrown <neil@brown.name>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Steve French <sfrench@samba.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev,
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/11] VFS: introduce dentry_lookup_continue()
-Message-ID: <20250813042202.GA222315@ZenIV>
-References: <20250812235228.3072318-1-neil@brown.name>
- <20250812235228.3072318-5-neil@brown.name>
+	s=arc-20240116; t=1755058967; c=relaxed/simple;
+	bh=qeYIs4x9kxP+JA0FE0QJe7I4M9/ZKaMkE5E1zSV1Ow4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P3qzn6KBpY5V6GWjnFXtg7qCThK43cjGZLOmAjWKH+abPPNqCAUh2IktSdjz54IroU1pzCqjoH2kX1AupfE7fQ4BDjZRvclu+oJ2X+YzheIKy1ZAKpAUNbdj5J8jEkXYKj5NzNEC2KIHsbv9lEArk+5ah+9ZjJJzziYaS01TZzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bi01UfkM; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755058966; x=1786594966;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qeYIs4x9kxP+JA0FE0QJe7I4M9/ZKaMkE5E1zSV1Ow4=;
+  b=bi01UfkMYizAV39zqL+1SKLOxWN8hFy9rNpg5+xtg/4PNqPq5CaQ38J1
+   uWJkRCgfLSGMEI7T4YqySXzvytkxSSJv+DWxy3TPGI3wkY5OAS1RLAjY5
+   ViKPX/lN1nOFzNZS8Tn3d8jcGBABE0Tc7J2nKAWnRpm6RHKD5XbhFSe53
+   S46a5qXHnPxca8yNnKjMM+QpuLm/SPeDXxdRVLA3PdwaZU2xe9FVxbzyZ
+   mWGGX2UsX6XLWmzAi0sWCz32D/4dsgRGPFmB7OxWtYZlc8Ctd5gNfMtTo
+   Vp/u8fyxtVr10VWxrt6erLVB9ZpvBRJUvqwve8zj1n2uw942oA8OGIOI4
+   Q==;
+X-CSE-ConnectionGUID: DJNTKHAnQwS9u2RQkiphRA==
+X-CSE-MsgGUID: L57jDqWCTfmeI7CetvzBrA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57463217"
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="57463217"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 21:22:45 -0700
+X-CSE-ConnectionGUID: 5UDhGpTEQ0mmjdKDYHQ+OA==
+X-CSE-MsgGUID: 9TIbkHqRQEy76pMq8GlzrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
+   d="scan'208";a="167158624"
+Received: from unknown (HELO [10.238.11.25]) ([10.238.11.25])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2025 21:22:41 -0700
+Message-ID: <0c8d6d1c-d9e1-4ffd-bb26-a03fb87cde1f@linux.intel.com>
+Date: Wed, 13 Aug 2025 12:22:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812235228.3072318-5-neil@brown.name>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 06/30] KVM: selftests: Add helper functions to create
+ TDX VMs
+To: Sean Christopherson <seanjc@google.com>, Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>,
+ Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-7-sagis@google.com> <aJpO_zN3buvaQoAW@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aJpO_zN3buvaQoAW@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 12, 2025 at 12:25:07PM +1000, NeilBrown wrote:
-> A few callers operate on a dentry which they already have - unlike the
-> normal case where a lookup proceeds an operation.
-> 
-> For these callers dentry_lookup_continue() is provided where other
-> callers would use dentry_lookup().  The call will fail if, after the
-> lock was gained, the child is no longer a child of the given parent.
-> 
-> There are a couple of callers that want to lock a dentry in whatever
-> its current parent is.  For these a NULL parent can be passed, in which
-> case ->d_parent is used.  In this case the call cannot fail.
-> 
-> The idea behind the name is that the actual lookup occurred some time
-> ago, and now we are continuing with an operation on the dentry.
-> 
-> When the operation completes done_dentry_lookup() must be called.  An
-> extra reference is taken when the dentry_lookup_continue() call succeeds
-> and will be dropped by done_dentry_lookup().
-> 
-> This will be used in smb/server, ecryptfs, and overlayfs, each of which
-> have their own lock_parent() or parent_lock() or similar; and a few
-> other places which lock the parent but don't check if the parent is
-> still correct (often because rename isn't supported so parent cannot be
-> incorrect).
 
-I would really like the see the conversion of these callers.  You are
-asking for a buy-in for a primitive with specific semantics; that's
-hard to review without seeing how it will be used.
+
+On 8/12/2025 4:13 AM, Sean Christopherson wrote:
+> On Thu, Aug 07, 2025, Sagi Shahar wrote:
+[...]
+>> +
+>> +/*
+>> + * Boot parameters for the TD.
+>> + *
+>> + * Unlike a regular VM, KVM cannot set registers such as esp, eip, etc
+>> + * before boot, so to run selftests, these registers' values have to be
+>> + * initialized by the TD.
+>> + *
+>> + * This struct is loaded in TD private memory at TD_BOOT_PARAMETERS_GPA.
+>> + *
+>> + * The TD boot code will read off parameters from this struct and set up the
+>> + * vCPU for executing selftests.
+>> + */
+>> +struct __packed td_boot_parameters {
+> None of these comments explain why these structures are __packed, and I suspect
+> _that_ is the most interesting/relevant information for unfamiliar readers.
+I guess because the fields defined in this structure are accessed by hard-coded
+offsets in boot code.
+But as you suggested below, replicating the functionality of the kernel's
+OFFSET() could get rid of "__packed".
+
+A side topic is when developers should provide comments for the uses of
+"__packed". Is it always preferred a comment for it or a developer can save
+the comment for obvious cases, e.g, the structure is defined according to
+some hardware layout?
+
+>
+>> +	uint32_t cr0;
+>> +	uint32_t cr3;
+>> +	uint32_t cr4;
+>> +	struct td_boot_parameters_dtr gdtr;
+>> +	struct td_boot_parameters_dtr idtr;
+>> +	struct td_per_vcpu_parameters per_vcpu[];
+>> +};
+>> +
+...
+
+>> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S b/tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S
+>> new file mode 100644
+>> index 000000000000..c8cbe214bba9
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/td_boot.S
+>> @@ -0,0 +1,100 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +
+>> +#include "tdx/td_boot_asm.h"
+>> +
+>> +/* Offsets for reading struct td_boot_parameters. */
+>> +#define TD_BOOT_PARAMETERS_CR0         0
+>> +#define TD_BOOT_PARAMETERS_CR3         4
+>> +#define TD_BOOT_PARAMETERS_CR4         8
+>> +#define TD_BOOT_PARAMETERS_GDT         12
+>> +#define TD_BOOT_PARAMETERS_IDT         18
+>> +#define TD_BOOT_PARAMETERS_PER_VCPU    24
+>> +
+>> +/* Offsets for reading struct td_per_vcpu_parameters. */
+>> +#define TD_PER_VCPU_PARAMETERS_ESP_GVA     0
+>> +#define TD_PER_VCPU_PARAMETERS_LJMP_TARGET 4
+>> +
+>> +#define SIZEOF_TD_PER_VCPU_PARAMETERS      10
+> Please figure out how to replicate the functionality of the kernel's OFFSET()
+> macro from  include/linux/kbuild.h, I have zero desire to maintain open coded
+> offset values.
+>
 
