@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-766686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93334B249FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 272DDB24A08
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E413AF211
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0F5882843
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B585A2E54D8;
-	Wed, 13 Aug 2025 12:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92802E54D8;
+	Wed, 13 Aug 2025 12:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6tFPUHG"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="batDg6bZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D034A2D0C60;
-	Wed, 13 Aug 2025 12:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D923184540
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089892; cv=none; b=CX7Jh42F96awUN0tU4FlWiZFWwjYs/4Eo/DPvkii/mvtBHbgUICPHnsSWKPAnfHUErEyBbG579oWz2ombb8Og/AG+uOgndUvnyeWnIrugGSHhvw4QmQwGhDBC/18mZlXdxhq9vHYyzpFhrIm08ZpQdhpn2isf2ufVmjdBMjiuGM=
+	t=1755089930; cv=none; b=HWmH6ozXtkNpC4nKqqVleDQApFmUa08pkPkAODr0dAfuSL9CgV3kaxhuRa72borjHgAbcY3r9rs27IJrQgCVD1NSkrIf+oxjv0L3jKcbtrmfqvNZeT0Xljdsb0E8o+qQiyRb+wRENEgKQXJ4st3Ap+/ROCBBxDdIYN9//kP/C1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089892; c=relaxed/simple;
-	bh=tPbvYfvEEkJ90+feIIjnsSLo4M1qFBVXPPnHurj+jCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O8fOYE6PMD6Vw1lXEEn3IGP4Fs4evxso8EJUH4IBPYM9gyUNf0qbeXoEZPrHSp3KIWQ3ae7mO4z5dEmRu0TswlVg2CFslCE/sZyn4F1/IvvhQEIGIa1VDG11cBwqE7+/GOq5nIHnBfm04D+riTOhNl2FqpwztHiEry/9VyyMz6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S6tFPUHG; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24286ed4505so12155575ad.3;
-        Wed, 13 Aug 2025 05:58:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755089890; x=1755694690; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yhZ15xnNJ8Bsb5/U+nfBs12IH7lId86EXWsj3N0wAEw=;
-        b=S6tFPUHGbGIGW453LdibTjvxOrixs0IIUtZN4gG31KkeJwALt/UTJBSFZ4huex4YPx
-         nUzBlDjP09kBIawXpW9POAPSaehPH9zPJ4tFtDU5GfPw+ypm8HvoVRmvikCSf3NgqTtn
-         B6Slo+f4/smuKgQeflnXpQjHLBwA/nf5nYfMh6pf7QdpTDsf/Prg3pAP/zhf5+UNsFkY
-         EoLZGAgqr2Omk3s9c8apjjd1ao63eLJLkrq78QedLIF55ZrnSAqOm662iIPMfmZQ0DqV
-         9gnNyOSxQhDXLrI4ZTKhIamTTwadS4kEHJqZzo7ha8cek2i//XpPlY+EMTmy3L5epA77
-         U0yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755089890; x=1755694690;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yhZ15xnNJ8Bsb5/U+nfBs12IH7lId86EXWsj3N0wAEw=;
-        b=EzYmdW6n2Y7XcTskYKiTdmqiJNjUtsv4t5rx1HSCxo8kC0WDzHaVwhiNKDpWE3y57E
-         4r/H7+lIPVTzp8k4/IgfKvSjFedgUJeqZI7S10w6lR8hRdpoFwy2ZtGmWF1IgJqKEhf6
-         J7DJ4+WnC5SfBUmWGaiv1BU/Zb0QiXJ0J4y1yKfJEojG7blNsrTswnkvfIi+LR09N+wo
-         w4x92OC+Ain913rAT8gcDKNAGWzBQupn//WE1GmTttyn6i1c/V5OanR5wYawY5hmz9/I
-         bWx9s90A3FfV3ZbdeZZpDHv2eqiyV6hyn2IpO+wfFCEvYsmBTiNhRRlTc+ToUzHB3nRF
-         GYfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDGAkNuqifMmQKtyCjNgIO3VDHYQ4BuwSiepC5MILYrL1PUiBHNtIXcIsY3PHsvkR6Trw5n50maEZAibiL@vger.kernel.org, AJvYcCUVGjAmymR5VtAuVVUj7ScAMiXX/66PpO4xIWlM9MD40Zqku+o7OS22bzq5tb208mAsebqYn25GPsu4yGARwe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIMjzVYCtzM1jtKhlPCxZQoD4APECEw3I/Ov/2IiCkOLHm0jWS
-	R5hpTmkGF1sttN9JWJPgxLtGSTzXMUZLPRes+dXYRbg72XiDCA1uymTqlKjmb34ZFL4pZegd6GC
-	OC2BH+T8WpxLTJT8hMU1wCrz1P7UozPI=
-X-Gm-Gg: ASbGncvloDN1d1l1e0Ft3Dy5RneiElcpRGEfbj1BAK66WMO6VEPt3d/NyQlyEDD76if
-	nRdYiNQVi8NRWvRjqxSbYHAVgVukE+jFjsI+YDuS0o2SR7kgpQLWhif/NFOWtmIO+1KOgNjqvAS
-	772wkVvVVDu3Jqmhz8SNLQiwBegp0yi7P3lOUOwyu0O3ScNYvSLYvyCNhsmX52YXIIMPp2OhKEB
-	pRx/1gsNIfzAZw4Fg==
-X-Google-Smtp-Source: AGHT+IHxKxef7KDAWgS57IBEethaxaid8oH0xBLj3YbbIW+PZKZlovPj9KRyOv5FJHyzY2EunVMbuo8q9l8uWKWf3Bg=
-X-Received: by 2002:a17:902:d487:b0:240:280a:5443 with SMTP id
- d9443c01a7336-2430d0fb768mr20500475ad.3.1755089889907; Wed, 13 Aug 2025
- 05:58:09 -0700 (PDT)
+	s=arc-20240116; t=1755089930; c=relaxed/simple;
+	bh=RkV4BeWFbdxMx75LQHna92WI+HaPKkvSdiwARMtLxig=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=BvK+fimkoX6/G7T5aJzZou1MJ64dXJJi63O7iZphL0H+s6Ah+ztnFHzCh/k3v4Eq6DoLfbsUUd2Eizm7YVYQa/isIbLGvidcHcFYhtx23PQTzXm7H7LoHT/NpLo6CnE3yMwOQW+e29ArqG0U++00I37pUltJKAd3MkyRUqKCQjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=batDg6bZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70D2BC4CEEB;
+	Wed, 13 Aug 2025 12:58:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755089929;
+	bh=RkV4BeWFbdxMx75LQHna92WI+HaPKkvSdiwARMtLxig=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=batDg6bZttXznkMLUheH+SDQRcG2HSzhJ8UNOxc1aKM5VzP9TCS5rjJlclqHJPLTC
+	 8PnkuJAd7ZumcpWcNGTCl72GoleiGzeiZcVEB4tk4GqoTLW4GwfSMwVca7JrEQIJZY
+	 RZMDXsA+D3ab7O9N6Ent0wYMiHTTevZ3yQ6DX3X5FTa2HnBYtArOT+s7wto06u0EGt
+	 jBkiPzJ72cZIkIW/cEGu0rgEbjANrdw2efoc656292Xr/XBLPiH0j1f8Fz9jPwEBIg
+	 E21HTdDGp5Q/FBX+QgyDazLvqUCGAWVbbtlGvu5XLmAewD3Y39TuiQsuNWzEm+3T3q
+	 gTVOG5Oa0mqEg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <Z678TNhCbTk363Tw@kspp> <864c7dd5-0deb-4adb-a1cf-c8a809514d7e@embeddedor.com>
- <217b00f5-d03d-4624-9ba9-d838199ef7b9@embeddedor.com> <CADnq5_M5Jv4A5CXAKY2Qd-dhrfmecnauRtVY_ghSsut7i=KNww@mail.gmail.com>
- <d07b4edc-6048-4c10-b8ac-dcccd5a932d3@embeddedor.com> <d43dac3e-122d-4c16-9c1e-760eac91b8da@embeddedor.com>
-In-Reply-To: <d43dac3e-122d-4c16-9c1e-760eac91b8da@embeddedor.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Wed, 13 Aug 2025 08:57:58 -0400
-X-Gm-Features: Ac12FXwFErwxayzzgdklN7bkoaoY4WArV4IyBD4hoWJZTycIfvcToKy2nH1H0nY
-Message-ID: <CADnq5_Mqa2HWWKrAYTAfjdvEQTMUeB1MBnhtRxJZjXLWcz1nmg@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/amd/pm: Avoid multiple -Wflex-array-member-not-at-end
- warnings
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kenneth Feng <kenneth.feng@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 14:58:45 +0200
+Message-Id: <DC1BGCY1JPKJ.7BHDGBYZDYMZ@kernel.org>
+Subject: Re: [PATCH v2] drm/sched: Document race condition in
+ drm_sched_fini()
+Cc: "Matthew Brost" <matthew.brost@intel.com>,
+ =?utf-8?q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, "James
+ Flowers" <bold.zone2373@fastmail.com>
+To: "Philipp Stanner" <phasta@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250813085654.102504-2-phasta@kernel.org>
+In-Reply-To: <20250813085654.102504-2-phasta@kernel.org>
 
-On Wed, Aug 13, 2025 at 1:12=E2=80=AFAM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+On Wed Aug 13, 2025 at 10:56 AM CEST, Philipp Stanner wrote:
+> In drm_sched_fini() all entities are marked as stopped - without taking
+> the appropriate lock, because that would deadlock. That means that
+> drm_sched_fini() and drm_sched_entity_push_job() can race against each
+> other.
 >
-> Hi!
+> This should most likely be fixed by establishing the rule that all
+> entities associated with a scheduler must be torn down first. Then,
+> however, the locking should be removed from drm_sched_fini() alltogether
+> with an appropriate comment.
 >
-> On 22/04/25 23:58, Gustavo A. R. Silva wrote:
-> >
-> >
-> > On 16/04/25 09:04, Alex Deucher wrote:
-> >> Can you resend, I can't seem to find the original emails.
-> >> Additionally, all of the NISLANDS structures are unused in amdgpu, so
-> >> those could be removed.
+> Reported-by: James Flowers <bold.zone2373@fastmail.com>
+> Link: https://lore.kernel.org/dri-devel/20250720235748.2798-1-bold.zone23=
+73@fastmail.com/
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+> Changes in v2:
+>   - Fix typo.
+> ---
+>  drivers/gpu/drm/scheduler/sched_main.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 >
-> I'm taking a look at this, and it seems that those NISLANDS structs are a=
-ctually
-> needed in amdgpu code. For instance, `struct si_power_info` contains a me=
-mber
-> of the type of `struct ni_power_info`, and this latter struct contains a
-> member of the type of `NISLANDS_SMC_STATETABLE`, thus `NISLANDS_SMC_SWSTA=
-TE`
-> and `NISLANDS_SMC_HW_PERFORMANCE_LEVEL` are needed, and so on.
->
-> So, it seems that all those structs should stay. What do you think?
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/sch=
+eduler/sched_main.c
+> index 5a550fd76bf0..46119aacb809 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1424,6 +1424,22 @@ void drm_sched_fini(struct drm_gpu_scheduler *sche=
+d)
+>  			 * Prevents reinsertion and marks job_queue as idle,
+>  			 * it will be removed from the rq in drm_sched_entity_fini()
+>  			 * eventually
+> +			 *
+> +			 * FIXME:
+> +			 * This lacks the proper spin_lock(&s_entity->lock) and
+> +			 * is, therefore, a race condition. Most notably, it
+> +			 * can race with drm_sched_entity_push_job(). The lock
+> +			 * cannot be taken here, however, because this would
+> +			 * lead to lock inversion -> deadlock.
+> +			 *
+> +			 * The best solution probably is to enforce the life
+> +			 * time rule of all entities having to be torn down
+> +			 * before their scheduler. Then, however, locking could
+> +			 * be dropped alltogether from this function.
 
-They are not used for programming the hardware.  They were just
-inherited from radeon.  All of the NI SMC stuff can be dropped.
+"Enforce the rule" is correct, since factually it's there, as a dependency =
+in
+the code.
 
-Alex
+Do we know which drivers violate this lifetime rule?
 
->
-> Thanks!
-> -Gustavo
+@Christian: What about amdgpu (for which the below was added to begin with)=
+?
+
+> +			 * For now, this remains a potential race in all
+> +			 * drivers that keep entities alive for longer than
+> +			 * the scheduler.
+>  			 */
+>  			s_entity->stopped =3D true;
+>  		spin_unlock(&rq->lock);
+> --=20
+> 2.49.0
+
 
