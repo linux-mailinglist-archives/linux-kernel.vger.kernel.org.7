@@ -1,66 +1,79 @@
-Return-Path: <linux-kernel+bounces-767530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E07B2559C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:37:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58892B255A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88192A545B
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546C21C85545
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 21:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A612F39CD;
-	Wed, 13 Aug 2025 21:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986292F39B5;
+	Wed, 13 Aug 2025 21:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Y9IKNL0t"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OFH2tCi9"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2242F39BD
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4915D184540
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755120834; cv=none; b=F+nyHAQFsPVNLxBFIdTafk2z5AyuAKWHsI1w8DicDWXXGldq40evD1/OTZ0lOKbwJvQpEAezGX8KDg1w4bzXo6DAbOiou4Bor/lzdo23N/7lal2C3MreQ2kA4T5AiBWnPTz+8YbK0fit6fj4C2SORPmDmyieGPpon5ph/uhZKsY=
+	t=1755120831; cv=none; b=gc4pprbAaU9Q0dKQ7g5wesTfY+GXhQ6Xasl+MpmMnqeEjS9ybZUbbKJqlg0DZogibXqEwBi5+zDUFUwSERO9s5GZHuf2AHghBXKdWTlAsYUS5jPArL5LxfMCdVUAhIepdoox4x0AI13paguUgmTiqZZarmjNh+YdOy2yqiLuF7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755120834; c=relaxed/simple;
-	bh=Mg63cs772RqnhIq2vwerB4/Y91td59Qhe5bhLUdPH7I=;
+	s=arc-20240116; t=1755120831; c=relaxed/simple;
+	bh=uTx6cOJQtxOfCRA/41WV7CyIUJyXISfLg3bbXqEPSrw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WdnUVn1867Y9+AnGIggcgudasAVPxSHeYRwzjxShuhfax7pT4WxFnanWCCIhj8QmMvEN9M99nI5C3HlMWL08Zi6KuqWGruAC+q5uKE+QHKAM1nkAE5ps4NkUL06Kx/F6dbVWH5EqALiLDmEjIzOOwmXbO9P7PtWxlRy8tLZUYaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Y9IKNL0t; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
-	by cmsmtp with ESMTPS
-	id mGJNurfRZcOgkmJ6QucbA1; Wed, 13 Aug 2025 21:33:46 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id mJ6PuIGhtb6dmmJ6QulkUC; Wed, 13 Aug 2025 21:33:46 +0000
-X-Authority-Analysis: v=2.4 cv=bs9MBFai c=1 sm=1 tr=0 ts=689d04ba
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=KUZh0rxr2sLgifp9wg4A:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Z9EKTWrWjaLGTQENGfIM0r1lMIFLbySXXr287IS0AEA=; b=Y9IKNL0tPKGvOq+XZEVSc3/Bto
-	kI+ISTnBVHTy1+OtofddX1jWbpk0IYgyQiPcEqbLjVWgwVvu+yRNRs6uwlyV6Q+t8e7LvOfAnuYD0
-	9VCnioEMkeDjElFghwwDjaPYfkG0vT+7bFt87kOWVHRZqY7syGydeR8uPoc3YMqgu6FRecTZrWM+4
-	SROlP53s8OUmPMrgg/7TdGoxazbqdeNIlqQktgJbv+/0uM2U3u6bROp1QlYP7YpHZjjTCzxgh2iwZ
-	jj71x8xJAQclh3qqQRN0+W7rpe7aqUY8TrB3rvql195wrBKRrOH+V7+jWOH3t/JG/9v/+SmraGCW/
-	CrmnUZHw==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:50098 helo=[10.0.1.116])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <re@w6rz.net>)
-	id 1umJ6O-00000001u49-32ql;
-	Wed, 13 Aug 2025 15:33:44 -0600
-Message-ID: <4a3e2afd-41da-4dca-ad13-3f910467e072@w6rz.net>
-Date: Wed, 13 Aug 2025 14:33:41 -0700
+	 In-Reply-To:Content-Type; b=sWCX3AQm4K/fCl3kyEweHvCTf2AQVK5sEqeev2ZWH/eBktLrbe90mYaCsUKb+pl4ked8J72Tk/ZTsl07vh5bn3Vp3IoxGj9KSS9KP6rEcdVhFX1IBwHz9koS5jBTR/ZiIElUOOGOsjXPdz5X2eVz4onggKNiHBsKqtY7Z5AHfdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OFH2tCi9; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b00f187so1085265e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 14:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755120826; x=1755725626; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mcsR2lpNDjubFi27+my/+Mvy0uMimCUXPssMeKK9hBQ=;
+        b=OFH2tCi9mQ1+W/+FczKPse7GMceU9IVGVn+0B+31sqL91iWd0eruGawnbmGTEmK5gs
+         957nVTD80EwQQNA8HSeRNqJA60K2OVqc+9sJvY3Q5EzllRFSQEgK8xGLt1FOwHyq6fdL
+         xZXVERSySw6OSj2/MGnowBvA5+McRuG6VeH4EnXA9sfWQjkprjRO/W9rzs8mLnEqz7gt
+         1WkCzGoNlXuY0wJnho5q6HGK6LR/DMDTXeyfsgcXORTQYl/yOKxoTGOFyoVPBhWdwgSs
+         YQvjfYqaA9KG6o/oWlorwvPm8dFaJYOhZp8/s8DY6xVV4XEbRQFzbP6DFuEUMPXoPCLH
+         QhnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755120826; x=1755725626;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mcsR2lpNDjubFi27+my/+Mvy0uMimCUXPssMeKK9hBQ=;
+        b=haVHwIdP/FRMJ1WuejV2xzdujG9dzLOZ6BL+eGlc2Pn6bMmTG2qwoVge/UryKY1VyF
+         g53x/UinZFj/1ck1Ccn65hm2ybJcgXQQyyeN14b2hV42J33aUJQh2YnfXlpsV321TQkP
+         e6HottF1f3xE323PWxTe9alEuuxe7Wyv6QKPlfmX5tsf5rRAeMle5oXgE8f1nwlfJwqF
+         AnsP5qOzqMX8D+I4g8NkGmWhUDPH8qjRY+oB20fjwnAj7Vgyi1BwW5mtkgi0x6NcN0Of
+         5ARoZbSbvamyJAO8m81E/jc00H7j6U2aw5Sq4iEOqemSw7DoVDESc8u2d3FOonKWm++h
+         QDUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWEztDCdG2PrTQmm/QRV5a4Vio7Q5FG0rXAZkzq25obRcVUw8x4xU8e2EGaZZgd9H2ch42SP+sK/WHj0fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/4HLqma9jkON6djqxkwlDb5J3VYH9ja/jp1UJzMp+VC0ESDS8
+	GYBQdBa3SRXjCIf07HEpx4AUXt5rbkQjb7Ld2Nao5zPruA1+kIuxv9Vx6SK/1AHfaRE=
+X-Gm-Gg: ASbGnctsPZAwXsXJIph+5uFR9EqQUO7vm8b0/lF5VUEGRH2XEHkeZQ2D+pOie4ODqvW
+	dFjQeS+vsyeizoXLX47y6Tfbg73AA8rgCXCXvKGsWd5oUS7ldcDRzQiWcYpxcleEQb6GFIqR62q
+	qy2hURem+NZHOGKiNTwAgD7UkWdOb8UOg6fdVozNd8N415ycjA/91JXSOR/C7FSNVRM78ZZUHiz
+	Nlg22fNaOHSUgl4VgTRl6rYGaM7giT8ggbCx2sjL4ww7sXZTPG06MDrlRyuLp7FNKJ0iW+dmSLE
+	lL54rVTArTG8XKf3DUhTaj7fuw58iaXpbqr2b02awoSCaJCMXVyvbAC6h+4RyU/W3ybEwTkP6NY
+	WHuonMqzjairb2ewAqlMi012kltOykxbCSwxdJG1BkNVibeRfAoKcZ90GSphPED89
+X-Google-Smtp-Source: AGHT+IFQrbl5wtElBhTcltssVqQElSDpYxXU1Tfejew44z/pIJJpOOHXcbKrIs4k71QsMA33PxUImg==
+X-Received: by 2002:a05:600c:4708:b0:459:e025:8c5b with SMTP id 5b1f17b1804b1-45a1b674677mr2714735e9.30.1755120826249;
+        Wed, 13 Aug 2025 14:33:46 -0700 (PDT)
+Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a53a5e3sm15602925e9.24.2025.08.13.14.33.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Aug 2025 14:33:45 -0700 (PDT)
+Message-ID: <c467e3a9-2c67-4231-9d64-d64de08ec2ce@linaro.org>
+Date: Wed, 13 Aug 2025 22:33:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,63 +81,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org
-References: <20250812174357.281828096@linuxfoundation.org>
+Subject: Re: [PATCH v3 4/7] media: qcom: camss: enable csid 690 for qcs8300
+To: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, will@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250813053724.232494-1-quic_vikramsa@quicinc.com>
+ <20250813053724.232494-5-quic_vikramsa@quicinc.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20250812174357.281828096@linuxfoundation.org>
+In-Reply-To: <20250813053724.232494-5-quic_vikramsa@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1umJ6O-00000001u49-32ql
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:50098
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 37
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPfFHew+Cjpeu7IAf3QCeauLcV8lEchBH/zV8CxbZqnu57whI6DWP1RlWmOtNasCO0M8kDYlviJshZuD0joisU1AhbUqv0xu1Qsgm/FOGJkuAsPyK6+7
- YROzbpVUMcRj7eoSqB8X2d2LCqtz4UMWn/3mu42g5Bywdr8AGJ104OmGq7WkuAc8N7kcXMlJPyncm6VyV/lJ5WfE9ibarJxno/0=
 
-On 8/12/25 10:43, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.10 release.
-> There are 480 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 13/08/2025 06:37, Vikram Sharma wrote:
+> The CSID in qcs8300 is version 690, it is same as csid used in
+> lemans(sa8775p). csid gen3 have support for csid 690.
+> 
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/camss/camss-csid-gen3.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen3.c b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> index fc6a9787febe..664245cf6eb0 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen3.c
+> @@ -45,7 +45,8 @@
+>   #define CSID_CSI2_RX_IRQ_CLEAR		0xA4
+>   #define CSID_CSI2_RX_IRQ_SET		0xA8
+>   
+> -#define IS_CSID_690(csid)	(csid->camss->res->version == CAMSS_8775P)
+> +#define IS_CSID_690(csid)	((csid->camss->res->version == CAMSS_8775P) \
+> +				 || (csid->camss->res->version == CAMSS_8300))
+>   #define CSID_BUF_DONE_IRQ_STATUS	0x8C
+>   #define BUF_DONE_IRQ_STATUS_RDI_OFFSET  (csid_is_lite(csid) ?\
+>   						1 : (IS_CSID_690(csid) ?\
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+This really feels like it should be a property of the CSID not of the 
+SoC but... anyway it'll do for now.
 
-Tested-by: Ron Economos <re@w6rz.net>
-
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
