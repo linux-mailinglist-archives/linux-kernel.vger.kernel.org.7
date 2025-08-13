@@ -1,137 +1,205 @@
-Return-Path: <linux-kernel+bounces-766903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C3DB24C9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:56:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A6EB24C8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A23916F172
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:53:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CF2A883258
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787202F068C;
-	Wed, 13 Aug 2025 14:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h9Z1b9Dh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E7A2F6593;
+	Wed, 13 Aug 2025 14:53:44 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDA32ED172;
-	Wed, 13 Aug 2025 14:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC5C2F4A02;
+	Wed, 13 Aug 2025 14:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755096820; cv=none; b=DSN/vdtUu7wr8hDOBVP0PC3iFQjyd86cAyyEwJjGO12U/+g1HtsHUU0SGkvKUQdnNtxtcfCBI3eEzpisRK7WhY/acXos0kCv+WdgkJ2jec5inn/HPY1ivczgdxy9phEDjkYcVb8pnxCF4SjK4sHiTjBU70V9UaxD3oy3wmLUScA=
+	t=1755096824; cv=none; b=u7Wj7WWMvVkEdm3cYLrAYwleHUY/0cAjbBCtccpH4jughGKjn/A3mDV54UrVKJQ+4tJTXK58K1uLmmGUWvcIYTGXNhm3CIfPsZmECbxXO4XMLgtlM68aMxukG8nk8KSP7frTBlF1TCseECee2I5iIHtuk5av6NyJ/vOXB9AI9zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755096820; c=relaxed/simple;
-	bh=qsIzK3FQVmuwp376IvkIc7QaQl0+eKfxluiwZGuycJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZ3tVzIvFop5D3B/m+I6cSiU8NNj7+PkYbg3EU/Shx+VPFS4AlyWroREbvOK3Y1ZbOphZjZarRuSb3OT4ZzTOi/1ooYWK3YCAPjDJWkFuebfzR/z9BEiKU7zUE4P4k52bymd7cytIQucchg7Zx3AeqEQ4nkQjtt0c+J1CDVmMx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h9Z1b9Dh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 933ADC4CEEB;
-	Wed, 13 Aug 2025 14:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755096820;
-	bh=qsIzK3FQVmuwp376IvkIc7QaQl0+eKfxluiwZGuycJo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h9Z1b9DhPWIV6cS+bkMlZk/eNbU+HdGphYtWJcvDnCd4mHNW6LGz0PAzq4S3sz/bQ
-	 Qu6Q/zr1uSLN9QG07lhIO8zKvSK3b5B2d7wMCY+FxzL+PtVIheklfnv+CxHDBiqwKK
-	 HH28jaOUNKO4S5N8tA/MsLvV3/5lSRVuQ5L0TQBQ=
-Date: Wed, 13 Aug 2025 16:53:37 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	achill@achill.org, qemu-devel@nongnu.org,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
-	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
-	linux-perf-users@vger.kernel.org,
-	Zhang Yi <yi.zhang@huaweicloud.com>,
-	Joseph Qi <jiangqi903@gmail.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4 <linux-ext4@vger.kernel.org>,
-	Zhang Yi <yi.zhang@huawei.com>, Theodore Ts'o <tytso@mit.edu>,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-Message-ID: <2025081311-purifier-reviver-aeb2@gregkh>
-References: <20250812173419.303046420@linuxfoundation.org>
- <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
- <2025081300-frown-sketch-f5bd@gregkh>
- <CA+G9fYuEb7Y__CVHxZ8VkWGqfA4imWzXsBhPdn05GhOandg0Yw@mail.gmail.com>
+	s=arc-20240116; t=1755096824; c=relaxed/simple;
+	bh=x1AiFTgwENat1BilzwbyfhzOPWbflYUmMUfO6qWERLg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kjQnyzxMKiB+mGiudKevhNlx1R/guo1ZfGzSO70wQE/HO7QomrMbWYoqaLDYODHVbCLZaPymwc902OuU6kg0KplG+DJvsZUztYY1Paxc9msuBr3VoomiEjbcqWtwxM7gePfYQ5N/O5kB3YhbGzCblv5fwTHVMBpOXbF+zBN7V6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2BBq4X67z6GBch;
+	Wed, 13 Aug 2025 22:50:59 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id AB11914025A;
+	Wed, 13 Aug 2025 22:53:40 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 13 Aug
+ 2025 16:53:40 +0200
+Date: Wed, 13 Aug 2025 15:53:38 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>
+CC: <linux-cxl@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <gost.dev@samsung.com>,
+	<a.manzanares@samsung.com>, <vishak.g@samsung.com>, <neeraj.kernel@gmail.com>
+Subject: Re: [PATCH V2 06/20] nvdimm/region_label: Add region label deletion
+ routine
+Message-ID: <20250813155338.00007bcf@huawei.com>
+In-Reply-To: <20250730121209.303202-7-s.neeraj@samsung.com>
+References: <20250730121209.303202-1-s.neeraj@samsung.com>
+	<CGME20250730121230epcas5p11650f090de55d0a2db541ee32e9a6fee@epcas5p1.samsung.com>
+	<20250730121209.303202-7-s.neeraj@samsung.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYuEb7Y__CVHxZ8VkWGqfA4imWzXsBhPdn05GhOandg0Yw@mail.gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Aug 13, 2025 at 08:01:51PM +0530, Naresh Kamboju wrote:
-> Hi Greg,
-> 
-> > > 2)
-> > >
-> > > The following list of LTP syscalls failure noticed on qemu-arm64 with
-> > > stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
-> > >
-> > > Most failures report ENOSPC (28) or mkswap errors, which may be related
-> > > to disk space handling in the 64K page configuration on qemu-arm64.
-> > >
-> > > The issue is reproducible on multiple runs.
-> > >
-> > > * qemu-arm64, ltp-syscalls - 64K page size test failures list,
-> > >
-> > >   - fallocate04
-> > >   - fallocate05
-> > >   - fdatasync03
-> > >   - fsync01
-> > >   - fsync04
-> > >   - ioctl_fiemap01
-> > >   - swapoff01
-> > >   - swapoff02
-> > >   - swapon01
-> > >   - swapon02
-> > >   - swapon03
-> > >   - sync01
-> > >   - sync_file_range02
-> > >   - syncfs01
-> > >
-> > > Reproducibility:
-> > >  - 64K config above listed test fails
-> > >  - 4K config above listed test pass.
-> > >
-> > > Regression Analysis:
-> > > - New regression? yes
-> >
-> > Regression from 6.16?  Or just from 6.15.y?
-> 
-> Based on available data, the issue is not present in v6.16 or v6.15.
-> 
-> Anders, bisected this regression and found,
-> 
->   ext4: correct the reserved credits for extent conversion
->     [ Upstream commit 95ad8ee45cdbc321c135a2db895d48b374ef0f87 ]
-> 
-> Report lore link,
-> 
-> https://lore.kernel.org/stable/CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com/
+On Wed, 30 Jul 2025 17:41:55 +0530
+Neeraj Kumar <s.neeraj@samsung.com> wrote:
 
-Great, and that's also affecting 6.17-rc1 so we are "bug compatible"?
-:)
+> Added cxl v2.1 format region label deletion routine. This function is
+> used to delete region label from LSA
+> 
+> Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
+> ---
+>  drivers/nvdimm/label.c          | 77 ++++++++++++++++++++++++++++++---
+>  drivers/nvdimm/label.h          |  6 +++
+>  drivers/nvdimm/namespace_devs.c | 12 +++++
+>  drivers/nvdimm/nd.h             |  9 ++++
+>  include/linux/libnvdimm.h       |  1 +
+>  5 files changed, 100 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+> index 94f2d0ba7aca..be18278d6cea 100644
+> --- a/drivers/nvdimm/label.c
+> +++ b/drivers/nvdimm/label.c
+> @@ -1044,7 +1044,8 @@ static int init_labels(struct nd_mapping *nd_mapping, int num_labels)
+>  	return max(num_labels, old_num_labels);
+>  }
+>  
+> -static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+> +static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid,
+> +		enum label_type ltype)
+>  {
+>  	struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+>  	struct nd_label_ent *label_ent, *e;
+> @@ -1068,8 +1069,23 @@ static int del_labels(struct nd_mapping *nd_mapping, uuid_t *uuid)
+>  		if (!nd_label)
+>  			continue;
+>  		active++;
+> -		if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
+> -			continue;
+> +
+> +		switch (ltype) {
+> +		case NS_LABEL_TYPE:
+> +			if (!nsl_uuid_equal(ndd, &nd_label->ns_label, uuid))
+> +				continue;
+> +
+> +			break;
+> +		case RG_LABEL_TYPE:
+> +			if (!rgl_uuid_equal(&nd_label->rg_label, uuid))
+> +				continue;
+> +
+> +			break;
+> +		default:
+> +			dev_err(ndd->dev, "Invalid label type\n");
+> +			return 0;
 
-thanks
+Given you pass in an enum and both elements are covered by other cases
+shouldn't need a default here.
 
-greg k-h
+> +		}
+> +
+>  		active--;
+>  		slot = to_slot(ndd, nd_label);
+>  		nd_label_free_slot(ndd, slot);
+
+
+
+> @@ -1268,6 +1285,56 @@ int nd_pmem_region_label_update(struct nd_region *nd_region)
+>  	return 0;
+>  }
+>  
+> +int nd_pmem_region_label_delete(struct nd_region *nd_region)
+> +{
+> +	int i, rc;
+> +	struct nd_interleave_set *nd_set = nd_region->nd_set;
+> +	struct nd_label_ent *label_ent;
+> +	int ns_region_cnt = 0;
+> +
+> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> +		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
+> +
+> +		/* Find non cxl format supported ndr_mappings */
+> +		if (!ndd->cxl) {
+> +			dev_info(&nd_region->dev, "Region label unsupported\n");
+
+I'd go with "Unsupported region label".  The other way around kind of implies
+a deficiency in the code, whereas point here is that new stuff may be added to
+the spec that we don't yet understand.
+
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* Find if any NS label using this region */
+> +		mutex_lock(&nd_mapping->lock);
+
+I'd go for guard here probably as the scope will mean it gets unlocked
+at end of this loop step.
+
+
+		guard(mutex)(&nd_mapping->lock);
+> +		list_for_each_entry(label_ent, &nd_mapping->labels, list) {
+> +			if (!label_ent->label)
+> +				continue;
+> +
+> +			/*
+> +			 * Check if any available NS labels has same
+> +			 * region_uuid in LSA
+> +			 */
+> +			if (nsl_region_uuid_equal(&label_ent->label->ns_label,
+> +						  &nd_set->uuid))
+> +				ns_region_cnt++;
+> +		}
+> +		mutex_unlock(&nd_mapping->lock);
+> +	}
+> +
+> +	if (ns_region_cnt) {
+> +		dev_dbg(&nd_region->dev, "Region/Namespace label in use\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	for (i = 0; i < nd_region->ndr_mappings; i++) {
+> +		struct nd_mapping *nd_mapping = &nd_region->mapping[i];
+> +
+> +		rc = del_labels(nd_mapping, &nd_set->uuid, RG_LABEL_TYPE);
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int __init nd_label_init(void)
+>  {
+>  	WARN_ON(guid_parse(NVDIMM_BTT_GUID, &nvdimm_btt_guid));
+>
+> @@ -235,4 +240,5 @@ struct nd_namespace_pmem;
+>  int nd_pmem_namespace_label_update(struct nd_region *nd_region,
+>  		struct nd_namespace_pmem *nspm, resource_size_t size);
+>  int nd_pmem_region_label_update(struct nd_region *nd_region);
+> +int nd_pmem_region_label_delete(struct nd_region *nd_region);
+>  #endif /* __LABEL_H__ */
+
+
 
