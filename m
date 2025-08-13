@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-766628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4418BB24933
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:09:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794FCB24935
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D81A687814
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E715368789E
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6BB2FF14E;
-	Wed, 13 Aug 2025 12:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741AC2FE593;
+	Wed, 13 Aug 2025 12:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7xDDgWO"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gg9+ssvl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070DF27602D;
-	Wed, 13 Aug 2025 12:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA392F747A
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755086969; cv=none; b=a2dQPEYfTiWcvqRXL0Hm/+tjoYkTU1xac9a+yM1L392BiuVWL9k4LImzcsddhJvooD7b1GS/Tc/AV8fGpm9ayszMXSfDnzbVR3z33QVuOu9UIPalE5IVbJDAThVivdWS++VFqEN3KUK4wxAooV4PxQhVqvTvLCg+VxQymubju+k=
+	t=1755086997; cv=none; b=ansn1k1ooeDn8MdmUJgZYuVCR89c2x4jwGBZEaLxMDsXgywUHIG3dF8ba7zz1jDUdnT2LCt472IatrjPalf1CzkvjkSYyP38C6HvT5Ue5/kI8XPTRvRvkK7x1V1fjUYdqxI9iv2rs3At1YllXeEW2uu2JeoaH1Dlt67p0cWT+Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755086969; c=relaxed/simple;
-	bh=H8g91jdJ2I5Pf8/gXHixSVo5JI5EuDOSta97uJaRL8k=;
+	s=arc-20240116; t=1755086997; c=relaxed/simple;
+	bh=m/WznaXUGhuabfIHeviZG1YVniNSCGD1sgKRQRpDdGA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DX4ya0udcIYKw+hWvDH7Go/OCc5TK+7VlnsgoKntWsGbMn2WvSmN7jAsaTbQY2GCQLHvBOwDNRsq1zxR64cCvPbk+HOFfpBj5oXt9vERr6zMXp9TDVZLtcLqtABiMM5vSQBSeGj95o2mAMh0QkrRFTENHRJ4ZkrAOgaWDGaM+/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7xDDgWO; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2430926b53eso8910275ad.0;
-        Wed, 13 Aug 2025 05:09:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755086967; x=1755691767; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=O1ynA9yNCLb/DJJBcL2J9BbHmd/+2r7TiLGTA87x+sQ=;
-        b=g7xDDgWOC08vzuhDYY5bW4v88RPzwBe/jbcdT4HGsBnRbjmLHrODOe/Ytohr5r46L3
-         wM3BvctpxcQngdNIR6pUaMQj0r2+tUPUptPolt+0X77szDb76gR/nMWAxYXDTuIAUEZ9
-         WhWbS2rThf/VsR0Z7Wb6XSvD78CeCf0xI5NpvGNAmJHp4vW20CIUZEFhN87FXOShG3ew
-         fMOSyzU9JGpPKF+HXhl+68CgrTtblNyXEstS5KHe3D6Bqony/rHoDEYTWGjScyEmn/6X
-         xXhAUT96nlHKvLWnfpoKQwDtK7QZI8kCT0b7Q8Vd6wpRwAtdgysRdCd+wgmosALhbn/S
-         ghsg==
+	 In-Reply-To:Content-Type; b=YRUXEahGugmu0GXqDZcSKq+N5NdRcwca5CHHCyCb7mUE9xIraXg6BF/1ly2ZL6qTTOonz8EfCIbJnuvrwySJxH2RSW3C9O7I1ULK0RNNuI8XSqqMuqg1igljv4N6hnTWt9CQXbYXEfwuETY/zIqsfP1tX7eIcR50f7+fCf/otx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gg9+ssvl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DBMHNu012161
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:09:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	psYFNtuDqahC04xkfR7SJEBA99hgf4unI++fgcrpz3E=; b=gg9+ssvlTsvev9Pv
+	3F7pGrGmezzHVy3/n9PlAE33ji77Wrs2Wtk3sarmqZfJ4/uGJ1eb+frZaGeSxsRy
+	dEBE/AYFkK7MqSh1Z/l+ijyw+8BgtURn4MFUQlbmrNvWFsSCOThpVzmouQet96tx
+	6ACNERA1YQQqa2d4HODR0o1DZIqYcDUrJBdQbERe4FQL4JYYzYKx6SU1WfSEanf3
+	GVTCCTfI26wXd9tqG6naRqHf2lIBXKPH7YB50j1W0GZxiOca642cACCWgjjlPHy4
+	GtJPxW5xFvZa8EieLOT6nmuq56q2kI6PaJZ2DUfSrbUMsZu/E/X5Po5Qs1oy6u4F
+	33Te5Q==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48g9q9tsb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 12:09:55 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b07b805068so14924381cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 05:09:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755086967; x=1755691767;
+        d=1e100.net; s=20230601; t=1755086994; x=1755691794;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O1ynA9yNCLb/DJJBcL2J9BbHmd/+2r7TiLGTA87x+sQ=;
-        b=YUu+ObAEbFFqFHpwKt4dwpzvk9WCW0cNpKaxXKcpKKZ4VZZc7NroFVjniqm+edoVqU
-         ngyH23/bArD8g3dT3ekcW/U3GqPYrpeMUegxOUTxGbg4hBlvcVgWGfijl4EyjUUP36BN
-         LprpO5HO4P0uQPH97Nq17eRwViMk43tR3rQ6TK1/CGe02DUscN6aI7WgVQvpwDufzAyT
-         A1n2vhwe0TJWTaqvOmVhZXf6GUBmDpzjMqXB+MoODznTK0jqFuJfDrvTn+HIQkDWX3Ae
-         DM2DxnmBWXliWKF4pMnH2/Cnj0RhAa1wZ5S4bnhSXreu5PV0vk8SIpRjvKK+5GaAFsU4
-         MUhA==
-X-Forwarded-Encrypted: i=1; AJvYcCV534CNsJ9AiZmRbf38nJkCr/CKDoClfvoCjJiXNO3MwTLWntvOTcCqWMTazYTg7peXTB5NvEaW1TSfURzy@vger.kernel.org, AJvYcCVoI6kCo1nor1SXAgG1gg/retkntINIb85tswUoOIrVBvirac+a69lXfPTW0AJXkWENm3Vj2lcxtEmURHIsBBbZlzkeTg==@vger.kernel.org, AJvYcCXunf+8MBY5lfe1ze1ZtFsRQoF/1HEhczSjSEcyGqCk46HlGJqFY4tJ/UxOLdOVIZ4iy/9wwKboWKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpZv4S3RpMxpTeT5/GotMirbKG1ljsk/U3dWLMS4jBziJT5l+n
-	FrgTZQOOFq5LDTkZGdZPlV7bvoYiewhf6NC1/Ai8O1csW5OGfVCNv1vR
-X-Gm-Gg: ASbGnctPEEA+uUNhq4rRWEIhko7TZ4Ue7kFojS5dFfBR82Ptd7Fasrlsb1MtOz4+fhf
-	jxtznTvNb2CHjyXKbvRFiaUB/p04yB64D/C66sxed/YYw887E3fY9oHPTCHEbvmEWVvXVYkL3VZ
-	IHb7gElUKTtgSAZeSddlMO92viHr55169mvkyw5xLCAKG0tXtSAuCs/fU/RwCAS/5NnSLYJkUgK
-	D13gf0FLvMRgCmbTMRnfFaAz7dpvjXZAVPYUiGMpEwYaFaPjVAPBtWPste5VlyLf65z9E5zmAcB
-	KPiJszTItAD89HCrgD5i/EHAxD6aLYry25PSylxDVGhyq+adxxdozkiLPKSGNss1iLUJjRiAR+h
-	lrobnX9hEOa0v/G/xK7i7kGFnSJ2t14E=
-X-Google-Smtp-Source: AGHT+IEKxlh5V2GF8tDsf9jD1Ub2AHyeBNd/wpCv29SX9TggXc56K8tKdTw7IPvGqUw42iV6V+rong==
-X-Received: by 2002:a17:903:1ac4:b0:23d:fa9a:80ac with SMTP id d9443c01a7336-2430d142278mr41905825ad.16.1755086967165;
-        Wed, 13 Aug 2025 05:09:27 -0700 (PDT)
-Received: from [192.168.7.13] ([103.182.158.108])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8977896sm324251535ad.79.2025.08.13.05.09.23
+        bh=psYFNtuDqahC04xkfR7SJEBA99hgf4unI++fgcrpz3E=;
+        b=i1ufok3pfbMggyMLd3d5qwzWn+lgzBmoNJLxG/0ET6nnU0swSvWp//WkBXnJ8jl1Y9
+         62z0qeVVOBk/2gkMaNopPls/dhxC9NMMVp2SKLrOkc7BfqVfLOtGm8RO89uXVLRx043F
+         W7QuRKRnJZKWU1eq1Tj43uY2Lqp2+td8maH3cg6QhNLh9iacA0CtuN6gRkPTHXtP1w9B
+         BOnn+qIz8a7tXkHtvHO+AX5wJeq+RkxnWt4MCRXhZbknsePIy3Glwo27nriQGZb9Ovbl
+         13jrn0gzaIoIDyzqLZwJCHGOsKZTVQLCaNT+rAedYPGqsWyIY/nUpp6zap+eQwyRFVgn
+         Eo0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXeHJQgUVyxQAJEPEa3GquLrJ5umrI4oy24hMUgUwWIeCIqL5812+OjAMZcLyyOCbIgtrns9nQe2sMIdf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFPlieFbKaB7JGLoiahZPjDlj26bClm3WMO57uB0HD7moJQzVN
+	tHmPUAP+p9dAULqmYH8rGAHmOpuzYJHoF6EspK5rhY4Ohl+PK2x3L4DqqxGFfGrdKK+AptIUC2d
+	zHxonYrCMGtQ+eMXR1Q2CuXvgSeS4mlF3VDwGnXLuq11ZNrob9y3/3bhFvCv1ddaWSww=
+X-Gm-Gg: ASbGncvTe8HouZYZ9X4ugQWN4nqCPfc0m+Q1bgFMD0wPcqXftcvGDmtrUE8699DJexb
+	X2tBO1d8V80CrChC1qXqh7NUZEnAvgcl4287WsV/7cUCIRSFXWEtDp+HFgj8QLBEoiy0CTf7+i5
+	mPaU27Z0o5DEHk0O/djQBA6pSusMYWuCGQ3ny91yG4Ya+FnPyZGjUr+3gFjsFOnmDbqUVmTwm1V
+	ZEBlOldlZ5w0CTYpUvrlAxdQvkZHHK5fQNAfBK8c6F27u6xdIxHI9MpJug5KA5T+03sayjkFZUM
+	io8k8JIEjef0Wk2ZDTGa4cspL0k0N46Q0uwEIzNZGyvUF8YWHNp1alekHf7LyHZlPrXT+VBzwaS
+	wklH74FwWQ70iPKHu8Q==
+X-Received: by 2002:a05:622a:1103:b0:4ae:dc5b:5fee with SMTP id d75a77b69052e-4b0fc4ab333mr16608381cf.0.1755086993764;
+        Wed, 13 Aug 2025 05:09:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGiI87elj9RoCIsminvTx3/fiw69IXoVr3fAfA90qa00UcNNobX3kI5ozBR7Y0OFrUSdqLEeg==
+X-Received: by 2002:a05:622a:1103:b0:4ae:dc5b:5fee with SMTP id d75a77b69052e-4b0fc4ab333mr16608041cf.0.1755086993180;
+        Wed, 13 Aug 2025 05:09:53 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a219ecfsm2374415866b.94.2025.08.13.05.09.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 05:09:26 -0700 (PDT)
-Message-ID: <dcbd352d-2474-4d83-b7b4-1dce2932c9f2@gmail.com>
-Date: Wed, 13 Aug 2025 17:39:21 +0530
+        Wed, 13 Aug 2025 05:09:52 -0700 (PDT)
+Message-ID: <b9fbee18-729f-483a-bdaa-51766a07ca46@oss.qualcomm.com>
+Date: Wed, 13 Aug 2025 14:09:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,62 +89,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] docs: alienware-wmi: fixed spelling mistake in
- admin guide
-To: Kurt Borja <kuurtb@gmail.com>, linux-doc@vger.kernel.org
-Cc: skhan@linuxfoundation.org, corbet@lwn.net,
- linux-kernel-mentees@lists.linuxfoundation.org,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- ilpo.jarvinen@linux.intel.com, hansg@kernel.org
-References: <20250812201523.69221-1-sohammetha01@gmail.com>
- <20250812204952.73136-1-sohammetha01@gmail.com>
- <20250812204952.73136-3-sohammetha01@gmail.com>
- <DC0RIMIRP717.345GQONQFW4HI@gmail.com>
- <dea5d89e-d918-4d80-a205-38ca7c166cc3@gmail.com>
- <DC10RH2NVBR9.3QC7LKK4O4CW1@gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-romulus: Describe PCIe
+ power supplies
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250812-topic-romulus_wifi_pci-v1-0-2adbed1b1f1d@oss.qualcomm.com>
+ <20250812-topic-romulus_wifi_pci-v1-1-2adbed1b1f1d@oss.qualcomm.com>
+ <aJthkXa8BZMoW3CQ@linaro.org>
 Content-Language: en-US
-From: Soham Metha <sohammetha01@gmail.com>
-In-Reply-To: <DC10RH2NVBR9.3QC7LKK4O4CW1@gmail.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <aJthkXa8BZMoW3CQ@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=CNMqXQrD c=1 sm=1 tr=0 ts=689c8093 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=3iqLFfv8AAAA:8 a=EUspDBNiAAAA:8
+ a=J5sCG4akjCC_sdNGsZ8A:9 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+ a=DXGsuw0cLJ7uQz9nXHMC:22
+X-Proofpoint-GUID: oeU17oA5JyWFpWgvjlOOlVbAisUNCb1z
+X-Proofpoint-ORIG-GUID: oeU17oA5JyWFpWgvjlOOlVbAisUNCb1z
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDE2NCBTYWx0ZWRfX2US2uaXQ4q6L
+ GLnebR9pnZixZvDltP4+AhoUXKVz0gqP5QudUJpEQYsVZDhnGn/XQrt8qTYnUNkKd8brMR3OmEI
+ UNqd/yWdgQqhX4jUtJQgYmd22o6Jbuct5SuI8NfdIzq2wWGGuuBfJJRBAYLdPKMOYQmb/x1M13O
+ LzCW4k+Ytv85kvVLDCV8ZrDapyRxAHfxeaQGpoR9bo+/16QWALF5RZPEgC+WmVj/x2etd572WPX
+ GYzhMo9i0oZTI7Rx2jdMjLzp/c8Lo3gCz0wq4jS580+U6gRbiDUJG3OvJ191D8Nv4d4vtrwVpvz
+ /VQSAQdRy7z9ZCKByTWJIqL1uqAORbER9F5n5JtPCWbBhHYGPxN9KE8aPCk72tovffC5BwJL8sl
+ w0swhnfm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_01,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 phishscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120164
 
-found/fixed the following typo
-
-- aproximate -> approximate
-
-in `Documentation/admin-guide/laptops/alienware-wmi.rst`
-
-Signed-off-by: Soham Metha <sohammetha01@gmail.com>
-Reviewed-by: Kurt Borja <kuurtb@gmail.com>
----
-
-> You are missing mailing lists:
+On 8/12/25 5:45 PM, Stephan Gerhold wrote:
+> On Tue, Aug 12, 2025 at 03:47:23PM +0200, Konrad Dybcio wrote:
+>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>>
+>> Describe the power plumbing to allow fully suspending the slot and the
+>> connected SD controller.
+>>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
->   - platform-driver-x86@vger.kernel.org
->   - linux-kernel@vger.kernel.org
+> Are you sure these supplies really exist on the board? E.g. on the
+> x1e001de-devkit, Windows toggles all these GPIOs, but there doesn't seem
+> to be anything connected to two of them, the 12V supply is simply always
+> on.
+
+Unfortunately, I have no schematics for this board..
+
+I did reverse the polarity (and removed enable-active-high from the vreg
+node) to no effect.. so it may be that they're actually unnecessary, i.e.
+so is this patch
+
 > 
-> And platform-drivers-x86 subsystem maintainers:
+> Even more importantly, for a laptop I would expect they use some part
+> that doesn't need a beefy 12V supply. I don't have the datasheet for
+> RTS5261, but e.g. in [1] this chip is explicitly advertised with 3.3V
+> power.
 > 
->   - Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
->   - Hans de Goede <hansg@kernel.org>
+> I guess it's hard to be sure without schematics and it surely doesn't
+> hurt to toggle these GPIOs like on Windows, but perhaps a comment that
+> some of these likely don't exist would be good ...
 > 
+> [1]: https://www.sdcard.org/cms/wp-content/uploads/2023/06/SDA_computex2023_Realtek.pdf
+> 
+>> ---
 
-Thanks for the clarification. I have added the missing mailing lists 
-and subsystem maintainers as suggested.
+[...]
 
----
+>> +	sde7_main_reg_en: sde7-main-reg-en-state {
+>> +		pins = "gpio6";
+>> +		function = "normal";
+>> +	};
+>> +
+>> +	sde7_aux_reg_en: sde7-aux-reg-en-state {
+>> +		pins = "gpio8";
+>> +		function = "normal";
+>> +	};
+>>  };
+> 
+> I think you should either do a full configuration (include power-source
+> and everything else essential as well) or omit this entirely, because
+> like this you will need the proper configuration from the boot firmware
+> anyway.
 
- Documentation/admin-guide/laptops/alienware-wmi.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+'function' alone is really important on PMIC GPIOs, fwiw
 
-diff --git a/Documentation/admin-guide/laptops/alienware-wmi.rst b/Documentation/admin-guide/laptops/alienware-wmi.rst
-index 27a32a8057da..e532c60db8e2 100644
---- a/Documentation/admin-guide/laptops/alienware-wmi.rst
-+++ b/Documentation/admin-guide/laptops/alienware-wmi.rst
-@@ -105,7 +105,7 @@ information.
- 
- Manual fan control on the other hand, is not exposed directly by the AWCC
- interface. Instead it let's us control a fan `boost` value. This `boost` value
--has the following aproximate behavior over the fan pwm:
-+has the following approximate behavior over the fan pwm:
+Konrad
 
