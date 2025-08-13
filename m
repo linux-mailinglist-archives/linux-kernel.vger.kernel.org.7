@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-767082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644F9B24F1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:13:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB9BB24ED1
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9AD2580001
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:05:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4979B60274
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F222BD003;
-	Wed, 13 Aug 2025 15:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB2A2C0F68;
+	Wed, 13 Aug 2025 15:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IXlw7xUA"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qz+msIor"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBCF299A87
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E244A29B229
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 15:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755100794; cv=none; b=l9hYE8pXnd+BLmXwUaOypKKvKQXloyLCzZhcwr2IdfU+uPzIIhR40NCLU6tmRqtPlPfCkfhXukaJvBos3wYtQ4xr6RCJ6YJH8868MitgujZf5ghO0kFPN3FnSNp6kWebeoMZOP+hG5/yRuJ6+WJRZG8K0xDxTLCAuJJm15Npb70=
+	t=1755100795; cv=none; b=jcjtGHozwNvm3gPZ6ANeOOUmpRI1oXyDsbjdMuxzAfATQH/9t5/ItkQd7L8w6Uah8wmdQHmeSnnBYrEqHxsywEKM5Ef4DIRaSkf2CcvOBv4+HINXQzJkl1ozqmp2FPEpZTU9DQkufCh3uy8POP2FHoFRDIb88m21bB0bhZeJN/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755100794; c=relaxed/simple;
-	bh=BJacCqalYuhTrgJ6z+lyprAGp2ZxuB+c08EcKO9oezw=;
+	s=arc-20240116; t=1755100795; c=relaxed/simple;
+	bh=ta+XFz3HnDL+iYanlmFudLHTEpIpVrwEgFil5Ac6Is4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cQpf0+55e3mDc5ISrJbtW02uOmQxh9L+jt0Y2M6sddFR2t5ebLPEzlUTLnxEwccG9/DHDOfpy7VSogwO2oYaLOWRXRV4KIkfXSkoqKXXGq97ZjYcx2ywlP2QA5NwFma5ho0+kckM9FmltfnekH32/fd8oQu8IP2nr2Z5m4zFS+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IXlw7xUA; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:To:Cc; b=OzNGkesx0ziQ6IsD7Jan9B2tTEbICUmBuwpgpzpxQ+X06+9OHv3KG4/vgtynkgeDxHRGehHzCn5r5fR+o2Q2p2IkD7PEKNsYr//ApWxsOXrEzhZlT0KtBw/YgEzs47NEjK95fxds5nhEgouGd2CcEjB/cb06EuLf4BpRDr21CA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qz+msIor; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so58908505e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:59:51 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-459ebb6bbdfso42600005e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 08:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755100790; x=1755705590; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1755100791; x=1755705591; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hflNaXmnDmYKGXSSuXmMvcjUzpmt1x6X6QV1FeYHqQc=;
-        b=IXlw7xUA2Q9iHS/OLdpohKsscOduB7bIYYDciRBHIMli0wu5LhxNr5sckMojQPyd4G
-         JxR9tYkQ+14SaHBUIq836RU8R2ZVPECGwvqVNY71a9ezP7Gy0XgRppkPUqZICCiaNjOG
-         PBCtlAI8wrjfCtsPhaEVIdhERpPYw8tNNZzcWfGOqNOlclaQC98weDGNu6xAHHxOhU1l
-         fgUwxWDMBC2e7jQPacCJzN657o+2okrvols94IOmdqPwARR0vLMaXnWr2fThUJBxOed/
-         yXonYw4eYxgbA0Kf/HBEXPFkp8DxVYRuzKDQRUCifiKEMKIBkSQTLoJd9aQRDu8jG2J2
-         o8Bw==
+        bh=5QzubzEpxSR8AJtEH00aEvzTNop5IRJl0SD/ZGDdhCw=;
+        b=Qz+msIor5CpX8r2TMU+xzBGMeZ5QGEpz843omJTaWqxKBiUMBCOiKtIhiTAtS0U9IK
+         /lQGk6ipK+rBmR/vDmNFeZEIdtWYsi7rNpoQz4d+up2pNfg7gPb5SeyJqNZTCdzk2VtG
+         uyCHkdkO/uSCkBljPl/ArEj1Iy5X/S3N1/irv0AG/LKt7UE8tIONK35JpxguAti5e6sa
+         kAU4WXwWTpop/0SZ3MLerx7SrSaLZuj1aBfWavVWBnEjWnnfG+oQMCqwKYmlquv4Qht6
+         VH/5YDhknGnCA4jPh/JgsbLjjSGfIQaD8XoolHo49dK/iu5/RluIZ4GGI19dphSpnN3C
+         3+qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755100790; x=1755705590;
+        d=1e100.net; s=20230601; t=1755100791; x=1755705591;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hflNaXmnDmYKGXSSuXmMvcjUzpmt1x6X6QV1FeYHqQc=;
-        b=KRhWAuIPcWgmS70vDd7p2bIn5oV8JvRjFnicfuvOq1lXAmqpKjeXuJgtidpBt2iM0l
-         yqJINMgO8fuw5jkaBdUMU+dPeL+14cdWykktLCNodcBG1qpSFdyFqKWtuQGINi3lNGaE
-         iENeFD1UQYaqG9U318Y9f0qhA2QbhN5AoPvZ23SLaywvKnLaoPq7JZWNt2bjA7eQf9UU
-         XhcguhsTvdMQP7ZGCm0b3FrjvY8g2szcZ2I8z+utUNzlwIiLzBgMAdXnoFRBtVkRwaL2
-         rlCpAH8Bk/5w1c/0dumYRIwOjGZwBa4RfFt9UbOJpdULM8HWeRipdxxP9nbszZwE6vmI
-         vXJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFdmZjZadonYH5bqytWmtbuq2AUdsuCRP5XQuNVTgz+2KCaBaybzKnrF+C3jpZWYGW6/HgDY4A9f/m8cA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJYGtyJZqUoJN5VdzbzXOwZx2YWVQjBd4EBrzdb5Dgp8Mbf91o
-	WeKXRKh1hg1EX/iErky5d5smDGhwJw3VicADVcPH3qIu1QeynxObMWtHIUC3FLPgiUA=
-X-Gm-Gg: ASbGncvAB/5ebitnFMg73wDx5NqIzDT7su/7cIG/CnBH0Gyb0/xXUk1dTHhBceczFto
-	hpvaLWftMMLZsYMUQJdmf56TZZhMZnXv4DQquP+NYMgMd2lB2/E9yXIuZ8VgG//qdygFlEdhFtY
-	XU4aO/ep9jyoCYEmfVXOT8G7WMb4g6yNwrqAdLWiFGFv6z9/qygnsc78TLuzowT44+7RPf9jo0J
-	bxuVUZ3IhbVp97Jb0MYePiYo6WbRlERs56Fm1q+C8XelisTHLk0kVfnfYABtFUyx7HSK71SYRcp
-	vyM0Hgd/1Jp3D4hrB6ZKEOs0eht5TLKG/PGAD0RAcwP/bRSgIvVPgYjNhG+a5yz/Te14wleysyY
-	9aUpuNSY6J1ERubgcH18UNKgDcjZ/I2mpbYrDDQ==
-X-Google-Smtp-Source: AGHT+IHxYDkUcEsCLbIRyFMqaOkoGUJMUYCdTh55vftfsZFEQiSSGKWq1Gxa6ZrB4wY4xUh/ZJMJeQ==
-X-Received: by 2002:a05:600c:1553:b0:459:df25:b839 with SMTP id 5b1f17b1804b1-45a165f7ea6mr27766545e9.33.1755100789993;
-        Wed, 13 Aug 2025 08:59:49 -0700 (PDT)
+        bh=5QzubzEpxSR8AJtEH00aEvzTNop5IRJl0SD/ZGDdhCw=;
+        b=ONUPGrXW1mjAnvCZ7g2oQdEG8DaBXfUSwB9mM2xY6ZZAmwC+mWBlYpsC/pd1AcR5Yv
+         RelUlMU6uuNtPGSVc1CymfdIsyDBCPzHTR9M2A63MHTDmjLUHkKHsAc/241UnChahf45
+         +ZrzPVuiExX6/swqEWMoW26BQLuUYOi8OqSwT8j6SuGb7FvoSi50FuNhfi3kwSr4dCcD
+         3yFefOnh61kNgUFZCsgcPTtznpim5HPo10KhL6A28iaa+UEu8hUxEECjp7ZfI0Djud4Q
+         UfPxat2QsMpyw5gPalei3EWk1ZDshb4wS3T8agb4Ajo8GPKj+Iu8dvhyCcYOEx68pBmS
+         gNCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBEDH42gAOebb+VBOHFLebi115H5CH9hcNQUFpdJD2YO34y1dylZjH+uT65J+WoRyWYAbZh8OwqaOuvak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDPhYAlh/3OdQmggn34i0LAiJ1CdTT1U4o3Mfn/+AcswDfcUGb
+	V4FJMKo/lZuUoF6bFbKW4tVTMM/I6QQevS58DCtZN4yEc7ZmRcAuRXiWEXrNnVnG0so=
+X-Gm-Gg: ASbGnctua+b4xnUwvgUxjhvhAeKRbiTEhU42FjpBbrT0OcWe6WmqGDeUEmuMVkUEICc
+	W5V36oEv8+42wSV7MGddgRfTZoNKGkEK2T5SiQkg+gQfRmsKg1frFvsqX+lU1KSftr37I8UYMwW
+	FGCVN0NTVaXtnJ0WLHH2+//LEB6ZI1XepK1TMYVvWg3EhPA54uxGznYlYsvN9PHw25Pd2VDZQzJ
+	jftPuATVMiCML2c0JkLB+WCZz6/W23EtBQ+uDAbtGiTPKGRXotFeTNrsAUFEP+fdYMbeeAw8nFM
+	xWT+NlgW2w1yu33Kf5IjgwULubKXgliZBJSw45D5r+Aa/UTm4cNdxa7u/sE3czhe3AqhdhdD4/D
+	nii8bWXX7NijcxLWvUVqzxmXHV555v3czm/x48A==
+X-Google-Smtp-Source: AGHT+IEjUP02XfK61rRdhxtRGMf3DS2mDBJhrXTHtM14wcAYEv1oTJOGC8hNEB9g11usNrWVkIY1vQ==
+X-Received: by 2002:a05:600c:a03:b0:453:5c30:a1fd with SMTP id 5b1f17b1804b1-45a165adae2mr30788525e9.8.1755100790994;
+        Wed, 13 Aug 2025 08:59:50 -0700 (PDT)
 Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:4537:5d58:c08d:204b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a517c26sm7087755e9.7.2025.08.13.08.59.48
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1a517c26sm7087755e9.7.2025.08.13.08.59.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 08:59:49 -0700 (PDT)
+        Wed, 13 Aug 2025 08:59:50 -0700 (PDT)
 From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Wed, 13 Aug 2025 17:59:00 +0200
-Subject: [PATCH 3/9] arm64: dts: qcom: x1e001de-devkit: Explicitly enable
- used audio codecs
+Date: Wed, 13 Aug 2025 17:59:01 +0200
+Subject: [PATCH 4/9] arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s:
+ Explicitly enable used audio codecs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250813-x1e80100-disable-audio-codecs-v1-3-af82d9576f80@linaro.org>
+Message-Id: <20250813-x1e80100-disable-audio-codecs-v1-4-af82d9576f80@linaro.org>
 References: <20250813-x1e80100-disable-audio-codecs-v1-0-af82d9576f80@linaro.org>
 In-Reply-To: <20250813-x1e80100-disable-audio-codecs-v1-0-af82d9576f80@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -106,33 +106,50 @@ add the missing status lines to explicitly enable the used audio codecs.
 
 Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ .../boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi     | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-index 2d9627e6c7983daedba87619ba01074ee22b43c9..636264e130b7d4c82cfe7d8a24508cec20ff997d 100644
---- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-@@ -974,6 +974,19 @@ retimer_ss1_con_sbu_out: endpoint {
- 	};
+diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+index 4cf61c2a34e31233b1adc93332bcabef22de3f86..5816b7d5cc5492771d2d1e675ee3e09a86b07ae4 100644
+--- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi
+@@ -967,7 +967,13 @@ touchscreen@10 {
+ 	/* TODO: second-sourced touchscreen @ 0x41 */
  };
  
 +&lpass_rxmacro {
 +	status = "okay";
 +};
 +
+ &lpass_tlmm {
++	status = "okay";
++
+ 	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
+ 		pins = "gpio12";
+ 		function = "gpio";
+@@ -977,12 +983,22 @@ spkr_01_sd_n_active: spkr-01-sd-n-active-state {
+ 	};
+ };
+ 
 +&lpass_txmacro {
 +	status = "okay";
 +};
 +
-+&lpass_vamacro {
-+	/* Not directly used yet, but needed for fsgen by all other macros */
+ &lpass_vamacro {
+ 	pinctrl-0 = <&dmic01_default>;
+ 	pinctrl-names = "default";
+ 
+ 	vdd-micb-supply = <&vreg_l1b_1p8>;
+ 	qcom,dmic-sample-rate = <4800000>;
++
 +	status = "okay";
 +};
 +
- &mdss {
- 	status = "okay";
++&lpass_wsamacro {
++	status = "okay";
  };
+ 
+ &mdss {
 
 -- 
 2.50.1
