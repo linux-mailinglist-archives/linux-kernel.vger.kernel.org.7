@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-767449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7186B2546F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D929B25472
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 22:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A525A888063
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:12:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03CB59A1476
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 20:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F086291864;
-	Wed, 13 Aug 2025 20:12:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F962E1C63;
+	Wed, 13 Aug 2025 20:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="Ai90iJ9f"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C632FD7B9;
-	Wed, 13 Aug 2025 20:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACBA1494CC
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755115925; cv=none; b=C5GjDD4/Pq/KOcrV+wPeKDvyX/iAC0mIiSdUBD0pvuB6sKvvaWIW5IPAIvSh/Ej8GiKd9sQV7Xj32DQbLXzhsq1im7Jtz9AYn+ssNYj2Pm7ilvs6JFJf+xxqVTEaeNQ8vrEa8Vk/NrgSx8KRVFffG6JrOCc9hB35oAI2Idv6kXU=
+	t=1755116116; cv=none; b=bKfbEs5AVyWQsvx/zOsUtwT30kYYyu22YVfk6RNYNR4isG0EM0GYNrnLTBSG35UNzhzuGa0iOW3Ct2o2Bp0bZgYCq7KItwv8+7JOgxl0mPTbEabl8kAAVDsQpEClJgOX09VB2dqs5thuKJ8yt2uvrqKtjKPTnidNpq+KLuy7TKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755115925; c=relaxed/simple;
-	bh=Juf1ZTnx/FB2vFj4STFZmefBih8aOZWA68hdzIY4NFA=;
+	s=arc-20240116; t=1755116116; c=relaxed/simple;
+	bh=/DpqAeslv8bRmsN2sfqbbHvqAKqaJvH3JKfHsdO27s4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JB5AJSzkOAuoNNWpWM6/mxFcqW4DWDAa05IPPI8B6A+k1q8f82MTGOPHrGPwH8WFxwza2Z62Q8i5PUMxFqiBseCBszGY1Y8l290CpEWaGDltftg5jdoJ+1caSUCrMFD06smVfCPrFhl6E8oj2NHZ8BLE+XYFtbilzDyOaUK8Lgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4096C4CEEF;
-	Wed, 13 Aug 2025 20:11:53 +0000 (UTC)
-Date: Wed, 13 Aug 2025 21:11:51 +0100
-From: Mark Brown <broonie@debian.org>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Breno Leitao <leitao@debian.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Russ Weight <russ.weight@linux.dev>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	netdev@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
-Message-ID: <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk>
-References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=av5b+n9799jqPX8sR2UM8Pn77n5dHo/u1RTvktYC/5iJdvyii8aIcqiLe4zfiJV0Sd6JZnPDPTVfGXXlp0ya5S8G/N6EoUIxSqYdtBWoKx008vgxzbZBsA69bVcfPU4W+XKnYSqn6pTnvbrdFGdeT3hREvv+XJxDbh8BqU4qbFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=Ai90iJ9f; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-88428b19ea9so41704539f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 13:15:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxtx.org; s=google; t=1755116113; x=1755720913; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HcgwJo67fSdIwhf/Y1kaVkQkpR61CWnlebZ6dKIeM1Y=;
+        b=Ai90iJ9fJ1yHbEda6tGc0tAtrZrca/fRRhz5yGL3SypnGDFVkmY6wsehiNEioyeK++
+         AKSdnreJai/Xs7SOwIIwgKfbe8QAXJ09fyWKg7gautqyvdQl9SAuZAFn+L8NAHor6LT4
+         lT1WO+/MV59UgaVZUdYIFWSOgXT8BLb2mTTzs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755116113; x=1755720913;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HcgwJo67fSdIwhf/Y1kaVkQkpR61CWnlebZ6dKIeM1Y=;
+        b=wCDIcWx3/ne7dl0oO4IbBrc1U5RbJtMoN9gr5zBml5dfXC02lAPa7BznaIL/Bif6LP
+         YgDddAovdehsO2lSWJclwlDoHO13vMC+NGbgXkLnGBh3sh0L5iFHhChUO+Af6FyuhvEW
+         k2LUIf5TKVSOvMlibbRasvhIwfmpG4EXUzg7Ukm1X7FGd+/Pw9lK4Eu+hmmV6agrU1TN
+         R70Yvqy8MYIkvpfKueXksYkvmo8zDeSb2A/l8QHiwJS6HUKgownWHsvDM41+fLmglD+Y
+         hXk6uTZymkbKBNnxRK/FqZE8foX/D8AFeDO86GvSP658gGl4GPChltqqUaberg0tWnmR
+         hvkg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+hTBb0kpjamhBmIT/eFc2qWpPa+6o7HBEPhRVjQoPSdZ+EzVsHz/CG2w/QhEVDcNi0KUUBuPIBr3FQZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsRlhgO9Ymb6otA9I5NAlCHo4Tx1yGAVxc5/9/e9F/1pKf1gJP
+	1DfkAUEh0dqVdh9iWdxPy8T2t2o2vgqMObfyNyBs1NN9ylVdn92Avgpzy8l32OF7bQ==
+X-Gm-Gg: ASbGncvbJ2AOHadrQUfb38D2GNs28IlI/EauKwLObbJGYKwEE3+jK2UmHOfVNbwRnti
+	5eY1mRc5S9EYTsuobwUmeKvZpwNaD8WiaQLX9g6XMs3wXimstDK3XuX+dZSZbR+0L1Imgyq5Hn6
+	/ZfFdb5O5rHtUekVOYgTUqcoJdfgKWymMty9qPLwQG6S0x1f7cJKN73zRRLtfIOT1x5JhyHg1jD
+	QmdF/H2f1NM/3lr0aiaVrhQQREwogv3dGbWvwZyEo4mRy+OQWTXE8nskSo+Zu9AllmcPbfsWH5Q
+	QCXMfnMR0MukJ7xVhkn6wlaVQgdalUlk/KDnGFMBRPy984LahqZleP8I8oRlqg0lWHkIjCYsGv9
+	Us2Plt9qn8BPnA4kSpK/9rJPWywLncwoKoIoZcv0=
+X-Google-Smtp-Source: AGHT+IFIT83RK1BgW71T/A/tIXZmBd0yTKosCWQhpckCX2xdMMMQJzk4nn/G4EkvLEe5LUihAUVh8w==
+X-Received: by 2002:a05:6602:7184:b0:881:8957:d55e with SMTP id ca18e2360f4ac-8843446d220mr16540339f.3.1755116112915;
+        Wed, 13 Aug 2025 13:15:12 -0700 (PDT)
+Received: from fedora64.linuxtx.org ([72.42.103.70])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50ae99cd268sm3906199173.22.2025.08.13.13.15.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 13:15:12 -0700 (PDT)
+Sender: Justin Forbes <jmforbes@linuxtx.org>
+Date: Wed, 13 Aug 2025 14:15:10 -0600
+From: Justin Forbes <jforbes@fedoraproject.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	achill@achill.org
+Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
+Message-ID: <aJzyTmxsakkQ0SCB@fedora64.linuxtx.org>
+References: <20250812174357.281828096@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6FVk2V0LrGBjdKpm"
-Content-Disposition: inline
-In-Reply-To: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
-X-Cookie: Turn the other cheek.
-
-
---6FVk2V0LrGBjdKpm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250812174357.281828096@linuxfoundation.org>
 
-On Wed, Aug 13, 2025 at 11:59:10AM -0400, Tamir Duberstein wrote:
-> This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
-> which both depend on step 1[3].
->=20
-> This series also has a minor merge conflict with a small change[4] that
-> was taken through driver-core-testing. This series is marked as
-> depending on that change; as such it contains the post-conflict patch.
->=20
-> Subsystem maintainers: I would appreciate your `Acked-by`s so that this
-> can be taken through Miguel's tree (where the previous series must go).
+On Tue, Aug 12, 2025 at 07:43:28PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.10 release.
+> There are 480 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.10-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Something seems to have gone wrong with your posting, both my mail
-server and the mail archives stop at patch 15.  If it were just rate
-limiting or greylisting I'd have expected things to have sorted
-themselves out by now for one or the other.
+Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
+x86_64), and boot tested x86_64. No regressions noted.
 
---6FVk2V0LrGBjdKpm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmic8YYACgkQJNaLcl1U
-h9Cumwf/YkCiNa2FUFyl0xap34GT0uNu8Xh2QH5gQa+2jI19lL8u1OybvUdzWI8N
-dryQmdo4BgnkEFiIeCiAWIUh8fHachIQqfAZfj8yJRexfSk3R0S/Nrg8CfGa9myh
-jkwom0F4sUSvZpsacG1c/oCya64UwN/bCgC+Yw2fivCPjjw/vz1JE5gtarpJEQly
-EJBbiexaSe0XYdtZ3cIT4wm0YElZqekk8U953MglLhWOOLXzt59bkslAam/8fori
-si1u/uVgWv1vyziB8dYHRa26Gsgy9OkgjCD0P64YWkoAV/uSnxsEo5wtWBx2ys1n
-pZ4kmgo8dh16iRQ7pqHeV2g3wE9HiQ==
-=xgNk
------END PGP SIGNATURE-----
-
---6FVk2V0LrGBjdKpm--
+Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
 
