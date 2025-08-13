@@ -1,109 +1,169 @@
-Return-Path: <linux-kernel+bounces-767649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE08B2572C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:04:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C86D8B25730
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC7615A44C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:04:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060B7728463
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 23:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83932FC860;
-	Wed, 13 Aug 2025 23:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98367301461;
+	Wed, 13 Aug 2025 23:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gULORzCb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KkpyQYqp"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078F12F530B;
-	Wed, 13 Aug 2025 23:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046E02D46A2;
+	Wed, 13 Aug 2025 23:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755126262; cv=none; b=Lco7pbKcRNLZPqix2GqraKyUr1wt0rgeDbpT114VALRGomnfL8JVxz3rDBf4Bt/HwlCE5h8lJa31z9AoiDLVCOLI3RrkdHdEqE5K/lkVgNVclJ/XMCJ1lbRGyrAQTysiAf8y7TV8LYIBZBKhwlkVHFNaXFtilCwc4mKtXf3ky5E=
+	t=1755126283; cv=none; b=VPiFuMqBXFz20W3AU+MZobmoks1r53/+yroUxP0eiIULvDRe6mMxl870GB7pxkjd2mF7rMNqAdyuBm5O6tQy8fFmi41E5+lbNRrb5OI8yYOZLdpLwbiR3Niqprwb0xqoXOthJC3QljY9PHZ+f2+hYuQ0NwdZefISXsIlo/v7lLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755126262; c=relaxed/simple;
-	bh=3F+ogyrYcJ8PY1I57KN+xxu49Rm1DOvKC0zBkVlpS24=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mJPc19zqY4UrPJ3rgMzgQYwazErsyB2fJNol85h4DaWtOt1mFkOfzNbmAFYcgDZ4FjEuJn7TYl3TPIXvNoOXokU3weFT/Mv650ID1OS6kfY1JL4vAYBmxl9w8zgdv6B2yYLfHacDWG4UxHwTCMr6x0kV6JHGGsdozNdiqp6UUxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gULORzCb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5ADC4CEF5;
-	Wed, 13 Aug 2025 23:04:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755126261;
-	bh=3F+ogyrYcJ8PY1I57KN+xxu49Rm1DOvKC0zBkVlpS24=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=gULORzCbX4t52dAfG5DuKvm4YIIqfvOAx2w15GEnWcGA3zPp1j7Cf5X0DN1XTUtdv
-	 n74MCqWqzp5i6s8L31cAIYg53ELJQ/y78Ez/QPWAtAMqFKENy687JX6LZtwcI1YySK
-	 X/4AixLfnG9jFoOCWc1ggn2g0Agkl+XXXBRlStfpOCy03YBcMGgEJ8P4X0dasp2onI
-	 ySv+D7D4PiGjXg6hX02QoDFlpOVGN/82cxQhy2q1soLdwF2tgPFkX+o6RBjn5T4ADE
-	 HhxlAxjwmBcpTl+gyAlfkbcB5xyfUjjHWZvzun5VoZ0syqCiu4T32eftEcAdCVhLqA
-	 dt4p4tG6o1mzg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D4BCCCE0A48; Wed, 13 Aug 2025 16:04:19 -0700 (PDT)
-Date: Wed, 13 Aug 2025 16:04:19 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Dominique Martinet <asmadeus@codewreck.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	kernel test robot <lkp@intel.com>,
-	Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Andrew Morton <akpm@linux-foundation.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Maximilian Bosch <maximilian@mbosch.me>,
-	Ryan Lahfa <ryan@lahfa.xyz>, Christian Theune <ct@flyingcircus.io>,
-	Arnout Engelen <arnout@bzzt.net>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] iov_iter: iterate_folioq: fix handling of offset >=
- folio size
-Message-ID: <f389ac0d-de77-4443-9302-3d8895e39daf@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250811-iot_iter_folio-v1-1-d9c223adf93c@codewreck.org>
- <202508120250.Eooq2ydr-lkp@intel.com>
- <20250813051633.GA3895812@ax162>
- <aJwj4dQ3b599qKHn@codewreck.org>
- <aJyVfWKX2eSMsfrb@black.igk.intel.com>
+	s=arc-20240116; t=1755126283; c=relaxed/simple;
+	bh=u77HgcnqZUI0DyTMAuYCiDcC5lkLJPB0fBe76X83Ga0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iB7W8v9U/fUqrhqVWmI6oMhca0e9iDOSu5Twjww+55se32Xi03gi8GfTB/GxqKyQm4fnpE8d4gJhFDfz1EOCfYTP1OZIOgqvL60MugY7V+dObieUYTCSaoquJ2UPOc8b7cwU/KXDJwiNw4w6WBCOKlNdUGxg7Lb+HTV/EZ2CEtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KkpyQYqp; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e931cddb0e2so328261276.3;
+        Wed, 13 Aug 2025 16:04:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755126279; x=1755731079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pr9Kj1G07sBFKVdkwu1EeIztDNfpAGMBwPb2yvwQO3w=;
+        b=KkpyQYqp/ltXTtI0h0sg4NA5oLpKj4Bja8frcNEWptyVSBGwU2FcHuk4fleLIbcxW7
+         hILs/4UdlHHIyXVqzPLplE6YZ9YSD55szEd4tebLYD2cUSpWWRTswIRNcKMN36AZltoq
+         IwAFWCipMYr4pbTbIdB/ka/bZNsdqOLXtxnlNgQ6r2E/dVRIfYo8b0PpaAV1Zo4NmuXD
+         wCjR5d3GMc/MyUkrePh8YFL1su4NjCnecxukHPbSKMgw7wFotlQzeTc/6buPb9xn6Uk/
+         rxkaIt61xTVlaLOH9nFppnTOUjA5X0bzwYkTxpi1vtTZO6oaH1U9VEMwk237p40wCoW/
+         bQDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755126279; x=1755731079;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pr9Kj1G07sBFKVdkwu1EeIztDNfpAGMBwPb2yvwQO3w=;
+        b=oHy0H8HycN9vF5jeoIYcQ6kKK094jPZ92/tRCfTV1yFhtimx86M9L+2UzTpqbqDjXU
+         HLNbmONMFaVJdZpLoZ4y3QlN4+jZ+XlNQitGlYDcFI7hRGZEAVhYTTACktLGJDbfbsuV
+         KpjUOvq5oRjUltKlGbEGm0/pVZZHf5MBzgb7RO9GAk10VQIboYe7/LfRyVJLELqmac8E
+         2GKdnPQQnCKAejLU3PKcBYC1UBdSm6KWfzyp+c6LLYpZ0QWAD2GyKS/DQmDVUMMYD5b8
+         WQu/4EOIIm5IlzyKL1sApAKSuO4s1oGAYMs/3IEcJEK2sAXD0s9E1a9qjSoyZgqyFnff
+         s6TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxm89yjjEsz76S9uwHglaYwkFpApYGmPY4OcufF3YrxoLDeiA9A7d2tk6ZeGXdAS8pimJZ3QA9tZR2N8T8@vger.kernel.org, AJvYcCWcrIaz+oCLKmbF8DRkEKx2rEpnhdV6A1AaTMWUsomtwy3s5rHTU16XkJ5W70+Mbz6z6UJsbs/xMtyfdQ==@vger.kernel.org, AJvYcCXO6tz7l1mQ1p2a+OlyICkeLBRiMz4K5ma64bmoTyB7NKnLdttWGSrBB+JEKtQQdrFBO5x8bWiVLc8z@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIVhr+4ZGBq4183R0Il32cTIY3eMQdslnZ80gkRGyjGsLN6wAH
+	tTa1I5mOf2TD/6b5zKynLGeo4tcBiX68uLXGAd+O4KWW/22Q/+U2laCNNzZwnTNhe5CornQ6/Q+
+	9gfv9W7QnmdBbA+3OtqOspeAPnJH48ik=
+X-Gm-Gg: ASbGnctYKP4ZRhY7sGhOkYqz8FAlIqZTS5DvLrYRW7/IVcFS6BbQDruAJsXG7suIgjK
+	OeNaI0uv3uRMlGAa/IPxakmyDdebRyMA8UBW61vpE7YwlkGa3nUtjHf+rmZ1HdvGgzobSwBc/V6
+	eiznqGfco7Wt28xnUfk1a+Kdx1KmuomqIcMTXOJh6n41WAypYaqP4L46tNJBNs/st01LtyKwiWi
+	Tvap8SO+W5bCtpsQoH9
+X-Google-Smtp-Source: AGHT+IG7lFQGkxo260R40BXsMXP2dO7WlFpphAJUK3E5r/amKiJyMYB2CNZKh93w2y97cKZYxB75AvRAwHVMH60IMsc=
+X-Received: by 2002:a05:6902:26ca:b0:e90:6a88:eac0 with SMTP id
+ 3f1490d57ef6-e931e24f7eamr1050134276.38.1755126279152; Wed, 13 Aug 2025
+ 16:04:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJyVfWKX2eSMsfrb@black.igk.intel.com>
+References: <20250812192334.11651-1-rosenp@gmail.com> <20250812192334.11651-2-rosenp@gmail.com>
+ <14f0cb76-1694-4330-899a-7565af0dfdfc@kernel.org>
+In-Reply-To: <14f0cb76-1694-4330-899a-7565af0dfdfc@kernel.org>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Wed, 13 Aug 2025 16:04:27 -0700
+X-Gm-Features: Ac12FXyys9GBy4gP4fGG0TS-5bObcQEdpHAmr6F9oGDkOu-nkxxKBO0SLtnWMho
+Message-ID: <CAKxU2N_vo9NThjGaiX1Fq5jet0vdw390ZYpVct4=XPa5gwj-Kg@mail.gmail.com>
+Subject: Re: [PATCHv2 1/3] dt-bindings: net: wireless: ath9k: add led bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-wireless@vger.kernel.org, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
+	Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MIPS" <linux-mips@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 03:39:09PM +0200, Andy Shevchenko wrote:
-> On Wed, Aug 13, 2025 at 02:34:25PM +0900, Dominique Martinet wrote:
-> > Nathan Chancellor wrote on Tue, Aug 12, 2025 at 10:16:33PM -0700:
-> > > >    1 warning generated.
-> > > 
-> > > I see this in -next now, should remain be zero initialized or is there
-> > > some other fix that is needed?
-> > 
-> > A zero-initialization is fine, I sent a v2 with zero-initialization
-> > fixed yesterday:
-> > https://lkml.kernel.org/r/20250812-iot_iter_folio-v2-1-f99423309478@codewreck.org
-> > 
-> > (and I'll send a v3 with the goto replaced with a bigger if later today
-> > as per David's request)
-> > 
-> > I assume Andrew will pick it up eventually?
-> 
-> I hope this to happen sooner as it broke my builds too (I always do now `make W=1`
-> and suggest all developers should follow).
+On Wed, Aug 13, 2025 at 1:16=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 12/08/2025 21:23, Rosen Penev wrote:
+> > The ath9k driver has various pin GPIO numbers for different chipsets
+> > which are not always correct for every device.
+> >
+> > Add bindings to specify the correct number and if it should be
+> > active-low.
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  .../bindings/net/wireless/qca,ath9k.yaml           | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.y=
+aml b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
+> > index d16ca8e0a25d..e701046146f2 100644
+> > --- a/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
+> > +++ b/Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml
+> > @@ -50,6 +50,17 @@ properties:
+> >
+> >    ieee80211-freq-limit: true
+> >
+> > +  led:
+> > +    type: object
+>
+> Each node must end with additional/unevaluatedProperties: false. See
+> example schema and writing schema.
+>
+> That will probably lead you to missing LED common binding.
 
-This build failure is showing up in my testing as well.
+>
+> > +    properties:
+> > +      reg:
+> > +        maxItems: 1
+> > +
+> > +      led-active-low:
+> > +        description:
+> > +          LED is enabled with ground signal.
+>
+> Aren't you redefining existing properties?
+I don't think led-active-low is specified in any central location:
 
-In the service of preventing bisection issues, would it be possible to
-fold the fix into the original patch?
-
-							Thanx, Paul
+Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml:  led-active-l=
+ow:
+Documentation/devicetree/bindings/leds/irled/ir-spi-led.yaml:
+  led-active-low;
+Documentation/devicetree/bindings/net/wireless/mediatek,mt76.yaml:
+ led-active-low:
+Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml:
+led-active-low:
+Documentation/devicetree/bindings/net/wireless/qca,ath9k.yaml:
+ led-active-low;
+>
+> > +        type: boolean
+> > +
+> >    qca,no-eeprom:
+> >      $ref: /schemas/types.yaml#/definitions/flag
+> >      description:
+> > @@ -102,5 +113,8 @@ examples:
+> >          compatible =3D "qca,ar9130-wifi";
+> >          reg =3D <0x180c0000 0x230000>;
+> >          interrupts =3D <2>;
+> > +        led {
+> > +          led-sources =3D <0>;
+>
+> Totally confusing with schema. active-low in one place, different
+> property in the example and no source for that property at all :/
+Ah right. Will fix.
+>
+>
+> Best regards,
+> Krzysztof
 
