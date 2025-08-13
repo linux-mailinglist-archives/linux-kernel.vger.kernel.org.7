@@ -1,134 +1,261 @@
-Return-Path: <linux-kernel+bounces-766656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481E1B24986
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:30:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3BBB24982
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59DF3566D44
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79790726543
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547471DA61B;
-	Wed, 13 Aug 2025 12:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3570C1C8616;
+	Wed, 13 Aug 2025 12:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lQy8FSxk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHwXqriF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37191C8FE;
-	Wed, 13 Aug 2025 12:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE4A1B4F0A;
+	Wed, 13 Aug 2025 12:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755088249; cv=none; b=aiXLkgYWgurgn+8EHoSCdamWBI/9D+F0Xhhrvt2OeBuWWK2unA5zZzJF2N5HmqIZkYmWPHw04BRCLxfc1DSi8xyuUgfhSBr5apfHueAOGuwNULF/O2gKG2jXbwFbxT7eyOdK7bnv5KFn6nEO3drOyh2rIev2hj1fFf+/fe/bTHY=
+	t=1755088189; cv=none; b=OIf5C+oo+/Zw7U1InIDn8oVvJHkxjSOSsiYNy44pZWodCTpQUPLjd+DhYxkYaBnlX11CyctPRv1oDVkptrU5WYtDmFKi7G+843a8hdJzOQAsqIAS34NAyTDmjSvu7SX3doxbRIsa6zV2opbtixpdlQoWLwQjtx8wzwm372varYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755088249; c=relaxed/simple;
-	bh=PFsHEezheqBXV0CEB4gSCHIuBI44jNyRudJNTTgils8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XhSBfyie21urObQBXainXCr8Ao/NjqPk4pN95oseyVWeUxDWzfXmkVGxo/OItM0tVA84RvZR+XfvpMFQAuTI2FnOxRhkKchQs61koOh5ZQStViMMaSX7U82nKRSvgMG/I6ArzhYB80sIpq5EFTuVLwvM/mleDh8bgJj7m1D+Uq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lQy8FSxk; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755088248; x=1786624248;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=PFsHEezheqBXV0CEB4gSCHIuBI44jNyRudJNTTgils8=;
-  b=lQy8FSxkIIDHME3R5YeLjj2iAfP57wbdy2+Cog3J3WQiyUsUyDrx9XlF
-   9nrdzwuWfIoUHOqVU+IFvz1sZx9N5ZP9sn4bp0Smx38oK1dcfv6FSF5jf
-   D92mnQ6Yh+HO+g88YtW2a5aERvLw7tJ+7UsgvijuyECkw8PEoHxl0g4xg
-   JnD3KCAWaIYb1wTkLKceue9V3/a3LJsEfkp+O5NvZdubW3jej9aTmWxjh
-   HCBn52KnIPp0/K+fEmCro38kYi9Nc2ugr3nYkNMfG7Lu2Z+6ym5p82ikJ
-   9ardNHJmPG8KkqkVonCEp6/anVjqupEOugMGXXm0jNqM2MMfufYCm4mg4
-   w==;
-X-CSE-ConnectionGUID: pfbwCUsJRUWxpxuNzNj5dA==
-X-CSE-MsgGUID: RYc+9gttQpOTemUlnGspRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="44956846"
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="44956846"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 05:28:05 -0700
-X-CSE-ConnectionGUID: dRG6x7AhToCZ6Bd0MqrZQg==
-X-CSE-MsgGUID: c1Q3Q1JSQUmUM+/Gc7jVTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,285,1747724400"; 
-   d="scan'208";a="170666905"
-Received: from smile.fi.intel.com ([10.237.72.52])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 05:28:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1umAaE-00000005R0Z-1F3W;
-	Wed, 13 Aug 2025 15:27:58 +0300
-Date: Wed, 13 Aug 2025 15:27:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Tobias Sperling <tobias.sperling@softing.com>,
-	Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Esteban Blanc <eblanc@baylibre.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH] iio: adc: bd79124: Add GPIOLIB dependency
-Message-ID: <aJyEzsbYrwwzCdcL@smile.fi.intel.com>
-References: <6837249bddf358924e67566293944506206d2d62.1755076369.git.mazziesaccount@gmail.com>
- <CAMRc=Mf75cangdeg7T4E0nAhJs_BTdLyCu6GcrCL8vJzzAkFWg@mail.gmail.com>
- <CAHp75VcY9JWGH3+HmmJQQtLLTLPvaZ1RJzmPZ1wFBM+gqRiTHw@mail.gmail.com>
- <CAMRc=McL04Sk9YRmimKAALyuDJc75vSJJuZQGWOP87Jv=o7cyw@mail.gmail.com>
+	s=arc-20240116; t=1755088189; c=relaxed/simple;
+	bh=XNCAicR2gx/LNWLP2/epE+0fq3acPUIP+umvFC2d4yY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hsN4y8CXdbO6UdBV8VDURb06Du47iQlmbv0TvsCMHluuStdd/7FE50zmOa6xetiIUODfDrvdp+TT8GZzWqnM8KgcubNwzBClRYM7zg7HzUGPNIK1tAfdvje+KL2DoKLEbKYQuIyn31bobkpvUawrPoPxXwtBejvBIVVJ9hsjFfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHwXqriF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E59BEC4CEEB;
+	Wed, 13 Aug 2025 12:29:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755088189;
+	bh=XNCAicR2gx/LNWLP2/epE+0fq3acPUIP+umvFC2d4yY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=vHwXqriFkxQ7EiVrUgjSioUks8rwkx4eVjDpZCsbSHDq2agW54WOykwGWuSGyuRoe
+	 1feSAHqd3zG2GbCkNRD0nXt6zR/peMPDryianeLxZFn3X+1JRT+lCZ9XMNiU8LZe7H
+	 s55az31uVyk5DgZCcqhGog+4sszkPWKka4iv7Ybqd51f1SLf1e6hFUK5mPZc0jUgOC
+	 6SELeW6WDEpQa5okr1Bd+5wY18v++0zo0FE4Kgh4yXn5Ch2e/Fe5s+G/atCm3fjFOE
+	 paqiDNZuuvFPJftHGAbMCc0ygAnNpvaB+ac+v6hUaftfBpTPghFjxU1hRmcKtPANFP
+	 pohjVQJiItyag==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  pratyush@kernel.org,
+  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
+  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
+  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+In-Reply-To: <20250813063407.GA3182745.vipinsh@google.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-30-pasha.tatashin@soleen.com>
+	<20250813063407.GA3182745.vipinsh@google.com>
+Date: Wed, 13 Aug 2025 14:29:38 +0200
+Message-ID: <mafs0wm77wgjx.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McL04Sk9YRmimKAALyuDJc75vSJJuZQGWOP87Jv=o7cyw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain
 
-On Wed, Aug 13, 2025 at 02:17:44PM +0200, Bartosz Golaszewski wrote:
-> On Wed, Aug 13, 2025 at 12:07 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Wed, Aug 13, 2025 at 11:40 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> > > On Wed, 13 Aug 2025 11:16:06 +0200, Matti Vaittinen
-> > > <mazziesaccount@gmail.com> said:
+Hi Vipin,
 
-...
+Thanks for the review.
 
-> > > As for the former: it seems it's
-> > > a common pattern for the headers containing the "provider" part of the
-> > > subystem API, you'd get the same issue with regulators or pinctrl.
-> > >
-> > > I don't have a good answer, I'd just apply this as it's not a common issue
-> > > from what I can tell.
-> >
-> > If the GPIO functionality is optional (not the main one), the user
-> > should be able to compile it conditionally, in such a case it's either
-> > an ifdeffery in the code, or separate module with its own stubs.
-> 
-> Honestly, it makes much more sense to factor out that optional
-> functionality into its own compilation unit that can be left out
-> completely for !CONFIG_GPIOLIB with a single internal registration
-> function being stubbed within the driver.
+On Tue, Aug 12 2025, Vipin Sharma wrote:
 
-That's what I suggested under "separate module with its own stubs" above.
+> On 2025-08-07 01:44:35, Pasha Tatashin wrote:
+>> From: Pratyush Yadav <ptyadav@amazon.de>
+>> +static void memfd_luo_unpreserve_folios(const struct memfd_luo_preserved_folio *pfolios,
+>> +					unsigned int nr_folios)
+>> +{
+>> +	unsigned int i;
+>> +
+>> +	for (i = 0; i < nr_folios; i++) {
+>> +		const struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
+>> +		struct folio *folio;
+>> +
+>> +		if (!pfolio->foliodesc)
+>> +			continue;
+>> +
+>> +		folio = pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodesc));
+>> +
+>> +		kho_unpreserve_folio(folio);
+>
+> This one is missing WARN_ON_ONCE() similar to the one in
+> memfd_luo_preserve_folios().
+
+Right, will add.
+
+>
+>> +		unpin_folio(folio);
+
+Looking at this code caught my eye. This can also be called from LUO's
+finish callback if no one claimed the memfd after live update. In that
+case, unpin_folio() is going to underflow the pincount or refcount on
+the folio since after the kexec, the folio is no longer pinned. We
+should only be doing folio_put().
+
+I think this function should take a argument to specify which of these
+cases it is dealing with.
+
+>> +	}
+>> +}
+>> +
+>> +static void *memfd_luo_create_fdt(unsigned long size)
+>> +{
+>> +	unsigned int order = get_order(size);
+>> +	struct folio *fdt_folio;
+>> +	int err = 0;
+>> +	void *fdt;
+>> +
+>> +	if (order > MAX_PAGE_ORDER)
+>> +		return NULL;
+>> +
+>> +	fdt_folio = folio_alloc(GFP_KERNEL, order);
+>
+> __GFP_ZERO should also be used here. Otherwise this can lead to
+> unintentional passing of old kernel memory.
+
+fdt_create() zeroes out the buffer so this should not be a problem.
+
+>
+>> +static int memfd_luo_prepare(struct liveupdate_file_handler *handler,
+>> +			     struct file *file, u64 *data)
+>> +{
+>> +	struct memfd_luo_preserved_folio *preserved_folios;
+>> +	struct inode *inode = file_inode(file);
+>> +	unsigned int max_folios, nr_folios = 0;
+>> +	int err = 0, preserved_size;
+>> +	struct folio **folios;
+>> +	long size, nr_pinned;
+>> +	pgoff_t offset;
+>> +	void *fdt;
+>> +	u64 pos;
+>> +
+>> +	if (WARN_ON_ONCE(!shmem_file(file)))
+>> +		return -EINVAL;
+>
+> This one is only check for shmem_file, whereas in
+> memfd_luo_can_preserve() there is check for inode->i_nlink also. Is that
+> not needed here?
+
+Actually, this should never happen since the LUO can_preserve() callback
+should make sure of this. I think it would be perfectly fine to just
+drop this check. I only added it because I was being extra careful.
+
+>
+>> +
+>> +	inode_lock(inode);
+>> +	shmem_i_mapping_freeze(inode, true);
+>> +
+>> +	size = i_size_read(inode);
+>> +	if ((PAGE_ALIGN(size) / PAGE_SIZE) > UINT_MAX) {
+>> +		err = -E2BIG;
+>> +		goto err_unlock;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Guess the number of folios based on inode size. Real number might end
+>> +	 * up being smaller if there are higher order folios.
+>> +	 */
+>> +	max_folios = PAGE_ALIGN(size) / PAGE_SIZE;
+>> +	folios = kvmalloc_array(max_folios, sizeof(*folios), GFP_KERNEL);
+>
+> __GFP_ZERO?
+
+Why? This is only used in this function and gets freed on return. And
+the function only looks at the elements that get initialized by
+memfd_pin_folios().
+
+>
+>> +static int memfd_luo_freeze(struct liveupdate_file_handler *handler,
+>> +			    struct file *file, u64 *data)
+>> +{
+>> +	u64 pos = file->f_pos;
+>> +	void *fdt;
+>> +	int err;
+>> +
+>> +	if (WARN_ON_ONCE(!*data))
+>> +		return -EINVAL;
+>> +
+>> +	fdt = phys_to_virt(*data);
+>> +
+>> +	/*
+>> +	 * The pos or size might have changed since prepare. Everything else
+>> +	 * stays the same.
+>> +	 */
+>> +	err = fdt_setprop(fdt, 0, "pos", &pos, sizeof(pos));
+>> +	if (err)
+>> +		return err;
+>
+> Comment is talking about pos and size but code is only updating pos. 
+
+Right. Comment is out of date. size can no longer change since prepare.
+So will update the comment.
+
+>
+>> +static int memfd_luo_retrieve(struct liveupdate_file_handler *handler, u64 data,
+>> +			      struct file **file_p)
+>> +{
+>> +	const struct memfd_luo_preserved_folio *pfolios;
+>> +	int nr_pfolios, len, ret = 0, i = 0;
+>> +	struct address_space *mapping;
+>> +	struct folio *folio, *fdt_folio;
+>> +	const u64 *pos, *size;
+>> +	struct inode *inode;
+>> +	struct file *file;
+>> +	const void *fdt;
+>> +
+>> +	fdt_folio = memfd_luo_get_fdt(data);
+>> +	if (!fdt_folio)
+>> +		return -ENOENT;
+>> +
+>> +	fdt = page_to_virt(folio_page(fdt_folio, 0));
+>> +
+>> +	pfolios = fdt_getprop(fdt, 0, "folios", &len);
+>> +	if (!pfolios || len % sizeof(*pfolios)) {
+>> +		pr_err("invalid 'folios' property\n");
+>
+> Print should clearly state that error is because fields is not found or
+> len is not multiple of sizeof(*pfolios).
+
+Eh, there is already too much boilerplate one has to write (and read)
+for parsing the FDT. Is there really a need for an extra 3-4 lines of
+code for _each_ property that is parsed?
+
+Long term, I think we shouldn't be doing this manually anyway. I think
+the maintainable path forward is to define a schema for the serialized
+data and have a parser that takes in the schema and gives out a parsed
+struct, doing all sorts of checks in the process.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Pratyush Yadav
 
