@@ -1,120 +1,245 @@
-Return-Path: <linux-kernel+bounces-766049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9941B2419F
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:35:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6328CB2419C
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 08:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA3A1A20D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:34:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F57D566EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 06:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F592D641A;
-	Wed, 13 Aug 2025 06:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B883B2D323F;
+	Wed, 13 Aug 2025 06:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hJ0fiqxB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kSpRXcCN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dk6QpDs1"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53A82D59E5
-	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477782D2390
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 06:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755066796; cv=none; b=CtDir6Nr93twM3h3goPEQo9Dj9Nal5n+6dGpodHCWgxfOAqXcNZ0PHTr8mv5c5cQYrs39J9LoBu8ZiA1BbT5FKBMquGJhb7g7o/1DmVRM3v7JuEbPpELlDwGOwFLODUijlS2UFnGANljjmPfeKMFEs7hfWR+hFr0UoYdl4sauEg=
+	t=1755066886; cv=none; b=kWUaYtB8kFXOCze03dfs5XxwpYoD08b/gjG0GdY+BCNwq0FNqo0kt/V0NtPDY7dywvICadlr/qltrykkzB2hB9cH0wibfT5d97jI5dy4vXBYcjbC87WSzEaLxcezMCtjLjK0rP2+YP/KDvjckBOa1B4w2COgIE3TU0JiCi1B6Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755066796; c=relaxed/simple;
-	bh=55ZW5bke38OmBG0oc9mkB85Mz8oOmbQJs2DkHfThiJA=;
+	s=arc-20240116; t=1755066886; c=relaxed/simple;
+	bh=QnD42qcFxdQmw5Rdxw3IWpBHxe/eMag57tc2qEN9NFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kBUL1ePLs1e8Xib+7ZG2sky2HyhLZ3kjmam1vRhjKoWBqUSXl+8Qrqnyn9Lyou5rStsjDaVql9uuvm0nYP/P2hnqQt6mouQRNzZWFFJdQXl80ov5Mg91V3tBbmZW2Ij+E+hsqPAMt/PWnNF3W3kGLG+UUTaMM227ih3Nq2oHyb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hJ0fiqxB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kSpRXcCN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 13 Aug 2025 08:33:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755066793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1sKdF4g8Z9W+EtXDMssCPla5erR9/85cWMLD/uZGyTc=;
-	b=hJ0fiqxB0IgPvsMep9Xhr8cplfCzGvKGFa6cSysGnLhtfF2rKEWLYlPmpliwZglMNPH4HT
-	fi/80wDf3ga7vA46xJ1ADpVx2f4JPkRkZxOViSU1mjukEcDtPAsIfmr9HivR8Lqml7sHWl
-	Jbft2KH8YYwnu92RD2pJKEXimXc6ZOYihBTa1c5EB3ihI6vU3Govi5zsiaVq+2GB+C0yeu
-	Jn5eDvD7Hp7sFMlBYM2oSkm9dsSWNv+VLPhqAMD+/iGpQTrge5X0xW5eUOijf5hb+udb2W
-	xRdjrW3ciS085LELsi3I6vvawhltF23RH3noXSvxI329JXeNmb3ZK92u95Q7Og==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755066793;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1sKdF4g8Z9W+EtXDMssCPla5erR9/85cWMLD/uZGyTc=;
-	b=kSpRXcCNsDxe30Sl8LJOMqfCVI1y1WubrTjIbuwBjTXYTXubEWltpnevdnOLHGbFbro2Yw
-	MBCcB+oftkhiX6Bw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] softirq: Provide a handshake for canceling tasklets via
- polling on PREEMPT_RT
-Message-ID: <20250813063311.33m0TDKl@linutronix.de>
-References: <20250812143930.22RBn5BW@linutronix.de>
- <20250812145359.QMcaYh9g@linutronix.de>
- <aJuYStGVBjyfVmZM@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XsZv4tjONh159QbYrz76UW9W47x+pKQWSrKipavpKqV4vTsX9UWC6+Z1Kma5vvW4uX/38W57RgBmfcOohHUlnrVxAjLQS1aiQ4xBL/j9G8p3IYwdu+sJSS2O60TxlWVrowzkCIXk+IF1Ht5fG74li7iI/+aSEYkIKLP+8l9PCH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dk6QpDs1; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-242d3be6484so77485ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Aug 2025 23:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755066884; x=1755671684; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lBz0ZD/446lYgybbXFehAqqU9nULcqKZHue50p4Cg4E=;
+        b=Dk6QpDs1CjW6zIuIn5OUCmQAwpvcWVrdkrQIuT7qVN+HZFs99fBaDZGpmVnmDvlNPc
+         oIaCBopqrzxKJHcudas9J2T3/QzTLbxDuocoXkat1nLAkyMFdvKjQwMgl36pU6zV5JBs
+         Kz/wkYWlwyzKybFgGtDbuW7wyWQ0MdvZh6OU3j2R2JPHZXacE508BPL5NovYYQXgO8/I
+         Iff6hGTzypwBzbNAt8l7n9K5kaH6G6uc9TGLKS8NrF6aYLywoaC7GFpRUjmOR3r/aPuM
+         6sEsVGDFJmoQ2svBYu+WEsrO35PVdhIcPh0DL3Dpiasm/HgKepBkbGgWCO3xdJ5dGAXY
+         WCxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755066884; x=1755671684;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lBz0ZD/446lYgybbXFehAqqU9nULcqKZHue50p4Cg4E=;
+        b=PqTBjVu3GZEEbHpSRbhK+st0S7befXAvtjZfo1msVaJMzbn0zQQtv7r90kCy6jWbOl
+         +fxSLDFP1RawL9Jw70zFKa4bBbouQBIf+RTXSYj2F26K0B/4LMkXthUfQeI0aIsG6PLS
+         gMzDJgO64NuPVicAf4jl4nIhm5JkmZfERMpnJ0qtY4FavFKDpbtMRn0YycKLZNn2BEGs
+         uNlRBUgT2UBqCAPk7L6SMHgVaTSwruxUQm4dWBrmDUqGOjh0UKBCP8bos7yN+lXnjLEn
+         h9gNs3xLp5sTucYX7eyXDm/6KvT8FlgTjeM+udjs3Xm6RxsqZleMrKbIDtdee7OF0ZHu
+         QRjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhUPDa0a2iaOdVpYWFO1/Hp8lnnB0UU3sdjcLyhgnjEWBhrtfqIt15PRhJl0QRVvclmqO3IvgF7tkUL8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVzEsBm7kHTb8lWXc/g5VYZu7LvWawJIKxwJwsWPnVSnha6r7/
+	R9C5u49gLkd/8IbM1pKY+8gGkTsxBs0XPS931m1CW6J3iGGXhNizQ6g8dnFjMKgdow==
+X-Gm-Gg: ASbGncuGS18xKuaEW0x/yaGWDsGHuawgju0j7dv7vZJBn3tuA425rJlRNBrirnA4Ig4
+	TkOUcx8IpDPToZ2LVHIE+ppPY5i9bXhBPRXMjCC2f1Xr/BFgeaw2W1rzv+YHfY9BiBr2OdGiyai
+	w72omAnfMG7AcaWhUtkfv5W5k4SuKXyMFvZvQzzd5Fl1Q0L2cx+JJfGOq4z/MO+I3xt1sqaielD
+	rsmasxxI5FeRXUvFeNuYNUVRUKkv7OOPW1BfA1g/ZJEadtV3p++nvX2Kol1F52J8vQnQ+mqLPAt
+	ajFWAoF4w1ehHw7ajKMjAIfd1YcUby3EIoAnCq0O06AlthsU4bqhElQiaEo7lwI8Lt/0m1B6TcO
+	q9be/eHJBrZXnE9pacUUzL3li/OzVkVYj9KgM/GFf03r8Pi5oSlK9KI3JkXpbQO4P0tI=
+X-Google-Smtp-Source: AGHT+IGFb0xX7B2Q6MyY6rFw3BXv1hxo5YhlKW11olCnEO5GfmzQ9WNDztxD1sYVpPXUsxAdW3d/ig==
+X-Received: by 2002:a17:902:e746:b0:240:6076:20cd with SMTP id d9443c01a7336-2430e55bb17mr2238135ad.15.1755066883155;
+        Tue, 12 Aug 2025 23:34:43 -0700 (PDT)
+Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24303d5e705sm30477375ad.14.2025.08.12.23.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Aug 2025 23:34:42 -0700 (PDT)
+Date: Tue, 12 Aug 2025 23:34:37 -0700
+From: Vipin Sharma <vipinsh@google.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
+	leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v3 29/30] luo: allow preserving memfd
+Message-ID: <20250813063407.GA3182745.vipinsh@google.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-30-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJuYStGVBjyfVmZM@slm.duckdns.org>
+In-Reply-To: <20250807014442.3829950-30-pasha.tatashin@soleen.com>
 
-On 2025-08-12 09:38:50 [-1000], Tejun Heo wrote:
-> Hello,
-Hi Tejun,
+On 2025-08-07 01:44:35, Pasha Tatashin wrote:
+> From: Pratyush Yadav <ptyadav@amazon.de>
+> +static void memfd_luo_unpreserve_folios(const struct memfd_luo_preserved_folio *pfolios,
+> +					unsigned int nr_folios)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < nr_folios; i++) {
+> +		const struct memfd_luo_preserved_folio *pfolio = &pfolios[i];
+> +		struct folio *folio;
+> +
+> +		if (!pfolio->foliodesc)
+> +			continue;
+> +
+> +		folio = pfn_folio(PRESERVED_FOLIO_PFN(pfolio->foliodesc));
+> +
+> +		kho_unpreserve_folio(folio);
 
-> On Tue, Aug 12, 2025 at 04:53:59PM +0200, Sebastian Andrzej Siewior wrote:
-> > Does the workqueue-BH code require the canceling from atomic context or
-> > was this just added because the API for BH and non-BH work items is the
-> > same and __cancel_work_sync() allows it?
-> > Could we avoid the busy-waiting for BH work items and rely on the
-> > wait_for_completion() below or do we need something similar to what I
-> > added here for the tasklet API?
-> 
-> The intention is to convert all BH users to workqueue-BH and remove BH
-> (that's what Linus wants and why workqueue-BH came to be), so the APIs
-> should be able to match up, I'm afraid. There were some attempts at pushing
-> the conversion but we've only made minimal progress. If you're looking at BH
-> users anyway and feel like it, please feel free to convert them.
+This one is missing WARN_ON_ONCE() similar to the one in
+memfd_luo_preserve_folios().
 
-I understand this but I am talking about legacy users:
+> +		unpin_folio(folio);
+> +	}
+> +}
+> +
+> +static void *memfd_luo_create_fdt(unsigned long size)
+> +{
+> +	unsigned int order = get_order(size);
+> +	struct folio *fdt_folio;
+> +	int err = 0;
+> +	void *fdt;
+> +
+> +	if (order > MAX_PAGE_ORDER)
+> +		return NULL;
+> +
+> +	fdt_folio = folio_alloc(GFP_KERNEL, order);
 
-| drivers/atm/eni.c:      tasklet_disable_in_atomic(&ENI_DEV(vcc->dev)->task);
-| drivers/net/wireless/ath/ath9k/beacon.c:        tasklet_disable_in_atomic(&sc->bcon_tasklet);
-| drivers/pci/controller/pci-hyperv.c:    tasklet_disable_in_atomic(&channel->callback_event);
+__GFP_ZERO should also be used here. Otherwise this can lead to
+unintentional passing of old kernel memory.
 
-This is what is left. (There is also i915 but this is "special").
-So we are talking about establishing an API and behaviour for those here
-after we painfully managed converting everyone else away:
+> +static int memfd_luo_prepare(struct liveupdate_file_handler *handler,
+> +			     struct file *file, u64 *data)
+> +{
+> +	struct memfd_luo_preserved_folio *preserved_folios;
+> +	struct inode *inode = file_inode(file);
+> +	unsigned int max_folios, nr_folios = 0;
+> +	int err = 0, preserved_size;
+> +	struct folio **folios;
+> +	long size, nr_pinned;
+> +	pgoff_t offset;
+> +	void *fdt;
+> +	u64 pos;
+> +
+> +	if (WARN_ON_ONCE(!shmem_file(file)))
+> +		return -EINVAL;
 
-| git grep 'tasklet_unlock_wait([^s]' | wc -l
-| 5
-| git grep 'tasklet_disable([^s]' | wc -l
-| 97
-| git grep 'tasklet_kill([^s]' | wc -l
-| 304
+This one is only check for shmem_file, whereas in
+memfd_luo_can_preserve() there is check for inode->i_nlink also. Is that
+not needed here?
 
-While I think it could be possible with upstream's help to avoid the
-in-atomic bits for atk9k and hyperv I lost all hope ) for the ATM
-driver.
+> +
+> +	inode_lock(inode);
+> +	shmem_i_mapping_freeze(inode, true);
+> +
+> +	size = i_size_read(inode);
+> +	if ((PAGE_ALIGN(size) / PAGE_SIZE) > UINT_MAX) {
+> +		err = -E2BIG;
+> +		goto err_unlock;
+> +	}
+> +
+> +	/*
+> +	 * Guess the number of folios based on inode size. Real number might end
+> +	 * up being smaller if there are higher order folios.
+> +	 */
+> +	max_folios = PAGE_ALIGN(size) / PAGE_SIZE;
+> +	folios = kvmalloc_array(max_folios, sizeof(*folios), GFP_KERNEL);
 
-> Thanks.
+__GFP_ZERO?
 
-Sebastian
+> +static int memfd_luo_freeze(struct liveupdate_file_handler *handler,
+> +			    struct file *file, u64 *data)
+> +{
+> +	u64 pos = file->f_pos;
+> +	void *fdt;
+> +	int err;
+> +
+> +	if (WARN_ON_ONCE(!*data))
+> +		return -EINVAL;
+> +
+> +	fdt = phys_to_virt(*data);
+> +
+> +	/*
+> +	 * The pos or size might have changed since prepare. Everything else
+> +	 * stays the same.
+> +	 */
+> +	err = fdt_setprop(fdt, 0, "pos", &pos, sizeof(pos));
+> +	if (err)
+> +		return err;
+
+Comment is talking about pos and size but code is only updating pos. 
+
+> +static int memfd_luo_retrieve(struct liveupdate_file_handler *handler, u64 data,
+> +			      struct file **file_p)
+> +{
+> +	const struct memfd_luo_preserved_folio *pfolios;
+> +	int nr_pfolios, len, ret = 0, i = 0;
+> +	struct address_space *mapping;
+> +	struct folio *folio, *fdt_folio;
+> +	const u64 *pos, *size;
+> +	struct inode *inode;
+> +	struct file *file;
+> +	const void *fdt;
+> +
+> +	fdt_folio = memfd_luo_get_fdt(data);
+> +	if (!fdt_folio)
+> +		return -ENOENT;
+> +
+> +	fdt = page_to_virt(folio_page(fdt_folio, 0));
+> +
+> +	pfolios = fdt_getprop(fdt, 0, "folios", &len);
+> +	if (!pfolios || len % sizeof(*pfolios)) {
+> +		pr_err("invalid 'folios' property\n");
+
+Print should clearly state that error is because fields is not found or
+len is not multiple of sizeof(*pfolios).
+
 
