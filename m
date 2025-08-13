@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-766684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026EAB249F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:58:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4600AB249E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 000B61BC53EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB940563539
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4122E5B1C;
-	Wed, 13 Aug 2025 12:56:46 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1012E5B0D;
+	Wed, 13 Aug 2025 12:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ir2uAtIo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE6A2D738C;
-	Wed, 13 Aug 2025 12:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12AD12BD59E;
+	Wed, 13 Aug 2025 12:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755089806; cv=none; b=CCRGTh5m8AXtuMLRk66C0psBHlI8i/2j8AlFBO2H6uvUr/ltctYRvz05mo/OzpLCFwCEdxeZhBGxfNMHWIvXfm4zO5mBj9OEHwas0fuKMlCW/IiLTjOvLvm/YudCaQUA7b74raVPhbgSHUF2RS9GnDZPZ8C+wkPnInPK9aUZ8fs=
+	t=1755089734; cv=none; b=BkJqqZCA0SCD626E/VTiZK3MHfDM2TfRsm6V8dASRA5K+WisvBRnq9r70zGFLeR68ZQtffqSXPWRyWwmNpOKvPavFkksuHtQ6B8sE5Vs0O/eK8j+wO6qNJ/TVBBHxrk86Lu0Hzmc5vQfzSnqm7mF+R59UmXaQDjTm05lG3zTXvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755089806; c=relaxed/simple;
-	bh=2LTFjlXwNsaG96B0in79Z3KYwfr3m33dRjlI8GNgG8o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RHdrVTFSSz7DezIuEooia/WdbXw8Lk1x3nY/XJEh0Jm0L1y4+bNHU58Na2L6rgfESUBm00fQvX6vZWg4S2+kDy14vcgIDgGL1wb7fIGOOg/NyFebIHP7nkB665PDxZt2vw4Ztau90W8t5BkDFtsoNnxyywx1hrXaWObbsOHAv8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4c27bn6RxBz2Dc1d;
-	Wed, 13 Aug 2025 20:53:57 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id C4BBC180044;
-	Wed, 13 Aug 2025 20:56:37 +0800 (CST)
-Received: from huawei.com (10.175.104.170) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 13 Aug
- 2025 20:56:36 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <jhs@mojatatu.com>, <xiyou.wangcong@gmail.com>, <jiri@resnulli.us>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <sdf@fomichev.me>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net/sched: Use TC_RTAB_SIZE instead of magic number
-Date: Wed, 13 Aug 2025 20:55:26 +0800
-Message-ID: <20250813125526.853895-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1755089734; c=relaxed/simple;
+	bh=JUPvu1QqNaGLsr9Bc/71i4YSzV1v5u9JepoTxOxcBdc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qzsrSM+T3ASbyjwLUnAtZ7A84mYpTCXvQpALT2CVGEXOE8zSB4dh1eUaB8hzNRf63YwJwYiDWPkrA6eT+Z9sWLTf+D2jvUtWTjyrFS8MGwAtmVF3WK95CgYSxTKH/HKwcC+KdfU6+H+rpo7aoq3mjBLIFgPai/E5/TgRpuErb88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ir2uAtIo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14969C4CEEB;
+	Wed, 13 Aug 2025 12:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755089733;
+	bh=JUPvu1QqNaGLsr9Bc/71i4YSzV1v5u9JepoTxOxcBdc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=ir2uAtIotgWKbJUSQjEsL5cVjXAgRHNFVB6vE3rX4MOZTvoUA988R3K/ZUcmECEOm
+	 e/ifFSnN1AoKKmRjSOizt7hFU65Koybs4NnDuedk4tSnpUWh2y/ZQ6/JSLrnxQdyVj
+	 as/V8H2HYa0+ukxXCmxyX1xVpeSePqk5QruIgPkwVd0QemjEoRsq+48Kjbdc0gShRw
+	 BAghmAnbZeep/x2HS3I80MMkHNWUyjAz1OCvpm/YK5DE1pEvMXOvLvLC6aDFBh4vRb
+	 +vsc9/YsNJY4Az6/vrL9Del3QP0ENejpVP2Hl0674IKYsaaAMUhcMSB0JpAP5MrBkk
+	 qbinga75Upg2A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 14:55:29 +0200
+Message-Id: <DC1BDUUPAJ8H.3L77AGH012M7F@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ <linux-pm@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: cpumask: rename CpumaskVar::as[_mut]_ref to
+ from_raw[_mut]
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>, "Yury Norov" <yury.norov@gmail.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250813-cpumask-asref-v1-1-1242aa8e0cfc@google.com>
+In-Reply-To: <20250813-cpumask-asref-v1-1-1242aa8e0cfc@google.com>
 
-Replace magic number with TC_RTAB_SIZE to make it more informative.
+On Wed Aug 13, 2025 at 9:54 AM CEST, Alice Ryhl wrote:
+> The prefix as_* shouldn't be used for constructors. For further
+> motivation, see commit 2f5606afa4c2 ("device: rust: rename
+> Device::as_ref() to Device::from_raw()").
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Reviewed-by: Benno Lossin <lossin@kernel.org>
+
 ---
- net/sched/sch_api.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Cheers,
+Benno
 
-diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
-index d7c767b861a4..1e058b46d3e1 100644
---- a/net/sched/sch_api.c
-+++ b/net/sched/sch_api.c
-@@ -431,7 +431,7 @@ struct qdisc_rate_table *qdisc_get_rtab(struct tc_ratespec *r,
- 
- 	for (rtab = qdisc_rtab_list; rtab; rtab = rtab->next) {
- 		if (!memcmp(&rtab->rate, r, sizeof(struct tc_ratespec)) &&
--		    !memcmp(&rtab->data, nla_data(tab), 1024)) {
-+		    !memcmp(&rtab->data, nla_data(tab), TC_RTAB_SIZE)) {
- 			rtab->refcnt++;
- 			return rtab;
- 		}
-@@ -441,7 +441,7 @@ struct qdisc_rate_table *qdisc_get_rtab(struct tc_ratespec *r,
- 	if (rtab) {
- 		rtab->rate = *r;
- 		rtab->refcnt = 1;
--		memcpy(rtab->data, nla_data(tab), 1024);
-+		memcpy(rtab->data, nla_data(tab), TC_RTAB_SIZE);
- 		if (r->linklayer == TC_LINKLAYER_UNAWARE)
- 			r->linklayer = __detect_linklayer(r, rtab->data);
- 		rtab->next = qdisc_rtab_list;
--- 
-2.33.0
-
+> ---
+>  rust/kernel/cpufreq.rs | 2 +-
+>  rust/kernel/cpumask.rs | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
