@@ -1,87 +1,83 @@
-Return-Path: <linux-kernel+bounces-767173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B396BB25007
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319A0B2500B
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 18:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEC61AA0AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F65683057
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18418235045;
-	Wed, 13 Aug 2025 16:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4203E28750F;
+	Wed, 13 Aug 2025 16:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqdQ51vO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sP1yHvOj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709C2286D69;
-	Wed, 13 Aug 2025 16:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26C81F582E;
+	Wed, 13 Aug 2025 16:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755103019; cv=none; b=iDTXoaYB8U+gjBHofk2tkWgVIEaMGj2LqE/EdH7gDFp9JwwQz9RTmvoexi1/hIdvpAgdC3Jueuo+D233UGi5OxxQo73joUGTJxa8t6/FxYb0E3XguIk3p4A63FpRlf8XqZqYJWr7QcTqP/HagagHUX8JwouiVlr2Un8JwHHS2Bc=
+	t=1755103119; cv=none; b=CkGskdWv2ESEMpSHyJ7Q2+qklb0VhI4GcLB35KxY3pJ1+KgOKs2fLV1hRY1ZKYJequ7YKJ/z5Bex00W8G4HC6byAucw73OlpkN71TdiAv7jGnjJf+m4tX8XYL7L/UoO1hK4ivLuCP8SNCnK/jSfD/HEtUDnWnk56wzM1ltpwDbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755103019; c=relaxed/simple;
-	bh=cMS8Hw531No/ecCjZmNrRX5GaWy0pG4vbghgfaqFcvE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=vC8pApN8tyS5n//Dlz5gWg81UbHQitEsDl9O9FknRb60Vk3+yTmLKTkXgOoHNmW+sd9IEowlzVMV0Q5+Q85R7yDRJbJlQP07V9DO+Hh0HLbfX25cXVJvl0NsxGqfKIMH81qR9k4ocuqDhJIy3jwpsawE82VLiktn5DXa5PXyAfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqdQ51vO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCC22C4CEEB;
-	Wed, 13 Aug 2025 16:36:58 +0000 (UTC)
+	s=arc-20240116; t=1755103119; c=relaxed/simple;
+	bh=bSrrYJ5nRDWxnTYtZQ5RJ6DK7pOBI7sCfAHQbe6iUn0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=HPDQaLX2phHz+Ky7Of/nMwNxsKfAp5FfDbNDRi3MsOJ2GQhjAcFPUMcUhRE6cTlOjziRHyV9rKDOv7Iz0oNyw79xflU2uNCqftVGmzNVSKjsCt7n5D72nijhC0iE+rTfH1MyQNYxyMvdRkzoNwUi3bi27G1YtRGxyEPj914JOOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sP1yHvOj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E43AAC4CEEB;
+	Wed, 13 Aug 2025 16:38:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755103018;
-	bh=cMS8Hw531No/ecCjZmNrRX5GaWy0pG4vbghgfaqFcvE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lqdQ51vOVQzVtOZgfHpQ9GW6gLvBmeNIW82cKH9LWxO7iXj8+ReuaYfGOGrjpZCTg
-	 p8V+8kf6aScbY7iwMar78t19reg5mgxStHYELRXZRuQDW5pVGXNNMlYY7R4b/dyMyT
-	 X+TxHQUHAt1fNAdMi2wJXVfL/49DjyFHow/Z5T1UCl3jJLGO5FdZCdpIc6DZIaNJtv
-	 pdBnWr8E5vNW/xKKfj43cnzFFHiiCCV/KDvA/eYc5zCbFpbtJOaiKis51thpreIwj/
-	 ZWc3WnC7rONEDApukmvMDj/eCupGM3VnMKNkO6vit1NKZ6U+3dFkk/F0MK9/Q/SEam
-	 GS1HPl4c2TOUw==
-From: SeongJae Park <sj@kernel.org>
-To: Quanmin Yan <yanquanmin1@huawei.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [RFC PATCH -next 11/16] mm/damon: add addr_unit for DAMON_RECLAIM and LRU_SORT
-Date: Wed, 13 Aug 2025 09:36:56 -0700
-Message-Id: <20250813163656.5611-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250813050706.1564229-12-yanquanmin1@huawei.com>
-References: 
+	s=k20201202; t=1755103119;
+	bh=bSrrYJ5nRDWxnTYtZQ5RJ6DK7pOBI7sCfAHQbe6iUn0=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=sP1yHvOjv02ZSqgZeENV92Xi+fFFvsJkrBbZwT7YK81a1qQHI4NBYnGeGjiiI4xEz
+	 ARTXNeIrGjxGuuGNnWmUmf6geP/VmBMo7bxlnau5bGqz16e1X8rLqmXkVuWa+ZSe5M
+	 eMciiIvBlH3eo4DoCIfbABMp2cz7tdLf5KvI0soFSBRtuyiaj49GdTHHLUDk8X6jf1
+	 BNulZ989JCXagLCTBEukOTP+bif8/qiXahWyg57njDF3TgVTbxAQq4hFBEVIF+qjhA
+	 YUHOwT1MEn40AkWM+AqLmavKgOOX7rqoYsh+gPRnI+K2ADWeZa4w+SCr8YFbjmGjBH
+	 0hnDXO4V/OE0w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 13 Aug 2025 18:38:34 +0200
+Message-Id: <DC1G4NVZ9MES.3KVK7FPXXNS17@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 2/7] rust: gpu: update ARef and AlwaysRefCounted imports
+ from sync::aref
+Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
+To: "Shankari Anand" <shankari.ak0208@gmail.com>
+References: <20250716090941.811418-1-shankari.ak0208@gmail.com>
+In-Reply-To: <20250716090941.811418-1-shankari.ak0208@gmail.com>
 
-On Wed, 13 Aug 2025 13:07:01 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+On Wed Jul 16, 2025 at 11:09 AM CEST, Shankari Anand wrote:
+> Update call sites under gpu to import `ARef` and
+> `AlwaysRefCounted` from `sync::aref` instead of `types`.
+>
+> This aligns with the ongoing effort to move `ARef` and
+> `AlwaysRefCounted` to sync.
+>
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1173
+> Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
 
-> In module DAMON_RECLAIM and DAMON_LRU_SORT, the damon_ctx is
-> independent of the core, necessitating dedicated addr_unit
-> integration for these features.
-> Additionally, if the input monitor_region_start and monitor_region_end
-> are both 0 while addr_unit is set to a non-zero valuethe default
-> system RAM range should be divided by addr_unit.
+Applied to nova-next, thanks!
 
-Do you plan to, and need to use DAMON_RECLAIM and DAMON_LRU_SORT on LPAE-ARM32
-environments?  Can't you use DAMON sysfs interface instead?  If need to use the
-modules, this change looks good to me in high level.  But if not, I'd like to
-skip this change, and wait until someone requests it.
-
-I'll review the code change in depth after the above question is answered.
-
-
-Thanks,
-SJ
-
-[...]
+    [ Alter subject and commit message to be nova specific. - Danilo ]
 
