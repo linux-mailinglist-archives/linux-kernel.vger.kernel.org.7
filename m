@@ -1,143 +1,132 @@
-Return-Path: <linux-kernel+bounces-766831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56EFFB24BB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12142B24BBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 16:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9334F3BC3C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B5C68264A
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DCD2ECD30;
-	Wed, 13 Aug 2025 14:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21E82ECD2F;
+	Wed, 13 Aug 2025 14:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTQy73FU"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F3baQ1ii"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33352EAB6A;
-	Wed, 13 Aug 2025 14:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E77B2EB5CD;
+	Wed, 13 Aug 2025 14:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755094424; cv=none; b=WVBs4YLtvMz4WN3zsYARJRWZDy5pVheAspz18qNG7xuBiSHE9drSoKPDwwAxGs6dlxO7jV8GFElKi1+iFT/IwIOnvwaol5d7a1mioimDvUIT0ZguKf1DaBJ73Rm7zki4lfgYBKYSK4P8gu7JtCMccvivroSHsxJ0UOGcQJmL5ws=
+	t=1755094436; cv=none; b=JvDwXcKNDJlmaRtM7rBvPh7zMNrO6T0LnIM93B7mQnhvgxZHDQp2UOwDp9wYV2bkY8+Cpu6fbsjPpTDRxIAJjYKtmTXtkLsrFlMKBaw5klvFInuCKFShNeehPThZy0IvbCNjbUmw/7ujeoG/a1fJKDxPepYlXDfCLfThvCyFLAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755094424; c=relaxed/simple;
-	bh=1806fHgVHrvXvwwYH4cO0aCEnas1j5+fCDRQvdoKNsQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CjEXmX8RXBZ84OMgn/HDK031hQaDJYtEnyvxg4acS6rHPoLAGnHDoOz7I2mmn66MbEsXGgtMrTVr38Y+GqwtSzXZSXuYV0051DeKlgnGQ0pponMHe2JgJ4mdM78bSqctnmsKVurtq/ePGmVJmEMs2hw4U5bEUwc2RxmxypMWSxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nTQy73FU; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b0632ae199so14846841cf.1;
-        Wed, 13 Aug 2025 07:13:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755094422; x=1755699222; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WARLCY0cBcmQtgbWBsLZHA7KrPzPqDIpjlTk0tlOfnk=;
-        b=nTQy73FUxHAKoRTGiMJAgGM98lznbPIPFGkYKUJIU8TBQnAdFIdOrIP9OT11Sltily
-         S+FQM4fs9SKER4Eh5MDris/xWpmyeEPkDmD7AiLfnf6pn3zFDbSb0ebUUkLingcTCGMB
-         NclwcQ5iEqhDBToZki2s5yAdmVLIFa60VoGnrldS8ZXOouvHfVY3L+Y+w5XMZYarfXc2
-         HEK/gopoPoV/Ugu/TABjroHaaOFtZKcgbWgXEUjcnUp+bCNUjpPVnISMJf2SHrL2O3GR
-         9lDjI7cfKFlwY78pcYKP2kTLw0auhgrPOqEjIVTl8apEsTfGJuCB9jtYq0SUrRggrTmk
-         AY/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755094422; x=1755699222;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WARLCY0cBcmQtgbWBsLZHA7KrPzPqDIpjlTk0tlOfnk=;
-        b=uv+CFcFo6r2XmCEwb83tGbqPczayXbWxEZo4aU+X3jNmvbVBvYYw2zBdPARgifxUqP
-         AthmeAawO5LUfK4wLJ3h3XUS2mm5AviV6LcSL+YAO/SovEjrmUuigY7D+jQF3r/x9VD3
-         +MmuimCpR26dUsr5JfCaLQ3eYjH4Vceo457uqpmL5uqMI0F/L1enxhJc90pIbEoRmHM5
-         JU0T/Z8NkGwYG+OE7iVSVbIs6NJEkNFc5xaiPhxSBdLIQ5GpuQNG9KDTEVqMbW+I30HD
-         QDe1wyF6pA7T26AIS7o8plTvRO2Gb7Vk25ohz1VmKEE6z7vrvvpRd22LBZmL1Y1YZkat
-         pe+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjwgjjzfH+yrCG42hGHTOg0KGwAl1G2fnHcveP/pU6HLWXfW1AoRuTgzI7iu7elSGJ/3Sfq4zYdcPEutU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAKyFX7nVHNr6gm4q3H8jsbbYI/PCybp3oExgg6IEsdCnxqYyS
-	/wdB+e9DnXOvegc3dL9p4W9/+JvUKL832TGKCuhwyazVLs0ZVnuxMCzYm+Fu1UUoeAjFBstZW5N
-	2aPvih3l38gJg5P2+ICXtznZMW0Q5pf8=
-X-Gm-Gg: ASbGncvlbENXDHmOqaDy3fQp1roCq8apdDUxOxpNLc3ux64oFj3MAXxVjDpJp2b6eXG
-	bSNwbzD+1MtcSxRj7ZSxwJn+EkMdMM47vIbCCR3AppidGLdCUKTgcsnK7Uy4/PuMYnmp+IGh0+L
-	CR1LC6wzMWJHb9LbDhxmNCtZJzG4xNsL8J5ncUWY6A29KP5CXtZnBKNdqpWjaVK3pWpI92AwNAW
-	zBHcg==
-X-Google-Smtp-Source: AGHT+IH0OUqPFF2OAmBmmyQVnYWrTf+kgSA3SmC4KfOBUbYLHJEpW1sWKER2B6fu0r7fb47UrSCF0PfRfse3xIEirFQ=
-X-Received: by 2002:ac8:5981:0:b0:4ab:6d02:c061 with SMTP id
- d75a77b69052e-4b0fc6ee4d9mr18190961cf.6.1755094421607; Wed, 13 Aug 2025
- 07:13:41 -0700 (PDT)
+	s=arc-20240116; t=1755094436; c=relaxed/simple;
+	bh=o9+mXqAZgYbbl5JJgeqk/XBNJNga6xKxin8Qw7DRFX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jG8kSdoldF27epQXugTX7YUDTi5xGWlTtCFwEvU0eeQalKUsvJHisX8SssznckJrdi1JHbdBC+b2arWiR4sds5c+LbiatoEZcbUFRaE+21hib9hSg4jSkUd8Rhj8tsPV0iC2ZOYBBbiurUyQjTRAIB7MCbTFd7FlsaPoyQVL63o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F3baQ1ii; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=K44Xl1XsCvQ5r0uMP9kh7LzOK2PeNe/STdmukBQUiGM=; b=F3baQ1ii3EIeLIpZDumSryNN6l
+	cN2Q75KYD2cQ1lY0Dcaedtib3sblYth0ZONOwsnAC1bjmCBwRHCUXr5nT7I/kNNi8K6UcfZiaP+H5
+	FXbTTfDQZmKq4iRn+URzbPCktXBR/bxN50xcfGWiBL+6T1x0dwCAmCNLRu/nZKt6Xp2Np89woFpmR
+	eDQBWmw8qrukOtnCZn0zKRhed6Tl3Zgye7t6psHtHVg2HDjnF2Ztz9dZqE+O+rXhDkPatReUag4ra
+	oHSdAWbDnZOC0Pm+omaKJ5YdykRAbD8bsctQ1Ijf9fk2q3gsSfHtLymwKg1DojVMQBu3HnylY0JkV
+	ZH8Y2l4w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1umCEd-00000009NIE-1kSz;
+	Wed, 13 Aug 2025 14:13:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E970E3002C5; Wed, 13 Aug 2025 16:13:46 +0200 (CEST)
+Date: Wed, 13 Aug 2025 16:13:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: dave.jiang@intel.com, linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [PATCH] cleanup: Fix unused guard error function with
+ DEFINE_CLASS_IS_COND_GUARD
+Message-ID: <20250813141346.GM4067720@noisy.programming.kicks-ass.net>
+References: <20250804220955.1453135-1-dan.j.williams@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250705134810.197494-1-miguelgarciaroman8@gmail.com> <DB5MMOAEFZZU.5TK1BDNOTFEO@bootlin.com>
-In-Reply-To: <DB5MMOAEFZZU.5TK1BDNOTFEO@bootlin.com>
-From: =?UTF-8?B?TWlndWVsIEdhcmPDrWEgUm9tw6Fu?= <miguelgarciaroman8@gmail.com>
-Date: Wed, 13 Aug 2025 16:13:29 +0200
-X-Gm-Features: Ac12FXwEIJRL4UB-B460eVYTQqv1Yu6V-YfbLfnCrluBzhLSBPK4mTm4ZR6Hnck
-Message-ID: <CABKbRo+7=_p=yt02FsCtTksA5C0_eS2LHt-FMkE1ddpuaEDJ6w@mail.gmail.com>
-Subject: Re: [PATCH] wilc1000: replace deprecated strcpy() with strscpy()
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ajay.kathat@microchip.com, claudiu.beznea@tuxon.dev, marex@denx.de, 
-	kvalo@kernel.org, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804220955.1453135-1-dan.j.williams@intel.com>
 
-Gentle ping.
+On Mon, Aug 04, 2025 at 03:09:54PM -0700, Dan Williams wrote:
+> Andy reports that the "lock_timer" scheme in kernel/time/posix-timers.c,
+> with its custom usage of DEFINE_CLASS_IS_COND_GUARD(), results in:
+> 
+> kernel/time/posix-timers.c:89:1: error: unused function 'class_lock_timer_lock_err' [-Werror,-Wunused-function]
+>    89 | DEFINE_CLASS_IS_COND_GUARD(lock_timer);
+> 
+> ...with a clang W=1 build. Per Nathan, clang catches unused "static inline"
+> functions in C files since commit 6863f5643dd7 ("kbuild: allow Clang to
+> find unused static inline functions for W=1 build").
 
-Just checking if anything else is needed for this patch.
-Reviewed-by: Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com>
-Thanks!
+I so loathe that warning :/
 
-El lun, 7 jul 2025 a las 8:58, Alexis Lothor=C3=A9
-(<alexis.lothore@bootlin.com>) escribi=C3=B3:
->
-> Hi,
->
-> On Sat Jul 5, 2025 at 3:48 PM CEST, Miguel Garc=C3=ADa wrote:
-> > strcpy() is deprecated for NUL-terminated strings.  Replace the single
-> > instance in wilc1000 netdev setup with strscpy(), which guarantees
-> > NUL-termination and prevents overflow.
-> >
-> > ndev->name is a fixed-size buffer (IFNAMSIZ, 16 bytes).
-> >
-> > Signed-off-by: Miguel Garc=C3=ADa <miguelgarciaroman8@gmail.com>
->
-> LGTM, thanks for the update
->
-> Reviewed-by: Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com>
->
-> > ---
-> >  drivers/net/wireless/microchip/wilc1000/netdev.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/wireless/microchip/wilc1000/netdev.c b/drivers=
-/net/wireless/microchip/wilc1000/netdev.c
-> > index af298021e050..8f4d11e1a2a6 100644
-> > --- a/drivers/net/wireless/microchip/wilc1000/netdev.c
-> > +++ b/drivers/net/wireless/microchip/wilc1000/netdev.c
-> > @@ -960,7 +960,7 @@ struct wilc_vif *wilc_netdev_ifc_init(struct wilc *=
-wl, const char *name,
-> >
-> >       vif =3D netdev_priv(ndev);
-> >       ndev->ieee80211_ptr =3D &vif->priv.wdev;
-> > -     strcpy(ndev->name, name);
-> > +     strscpy(ndev->name, name, sizeof(ndev->name));
-> >       vif->wilc =3D wl;
-> >       vif->ndev =3D ndev;
-> >       ndev->ml_priv =3D vif;
->
->
->
->
-> --
-> Alexis Lothor=C3=A9, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
->
+> There are 2 ways to solve this, either mark the class_##_lock_err()
+> function as __maybe_unused, or make sure class_##_lock_err() *is* used /
+> gets called to disposition the lock status.
+> 
+> At present __lock_timer() only indicates failure with a NULL __guard_ptr().
+> However, one could imagine that __lock_timer(), or some other custom
+> conditional locking primitive, wants to pass an ERR_PTR() to indicate the
+> reason for the lock acquisition failure.
+> 
+> Update __scoped_cond_guard() to check for ERR_PTR() in addition to NULL
+> @scope values. This allows __lock_timer(), or another open coded
+> DEFINE_CLASS_IS_COND_GUARD() user, to switch to passing an ERR_PTR() in the
+> future. In the meantime, this just silences the warning.
+> 
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: David Lechner <dlechner@baylibre.com>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Reported-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+> Closes: http://lore.kernel.org/aIo18KZpmKuR4hVZ@black.igk.intel.com
+> Fixes: 857d18f23ab1 ("cleanup: Introduce ACQUIRE() and ACQUIRE_ERR() for conditional locks")
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+> Dave, I am sending this to you to take upstream since the warning came
+> in through the CXL tree. If anyone else wants to take it just holler.
+> 
+>  include/linux/cleanup.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+> index 4eb83dd71cfe..d8e7d1e5561b 100644
+> --- a/include/linux/cleanup.h
+> +++ b/include/linux/cleanup.h
+> @@ -423,7 +423,8 @@ _label:									\
+>  
+>  #define __scoped_cond_guard(_name, _fail, _label, args...)		\
+>  	for (CLASS(_name, scope)(args); true; ({ goto _label; }))	\
+> -		if (!__guard_ptr(_name)(&scope)) {			\
+> +		if (!__guard_ptr(_name)(&scope) ||			\
+> +		     __guard_err(_name)(&scope)) {			\
+>  			BUILD_BUG_ON(!__is_cond_ptr(_name));		\
+>  			_fail;						\
+>  _label:									\
+
+What does this do for code generation ?
 
