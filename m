@@ -1,143 +1,162 @@
-Return-Path: <linux-kernel+bounces-766785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-766685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DCFB24B26
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 15:52:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0882B249FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 14:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77C6B3B3D3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 13:47:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EAE1AA09D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 13 Aug 2025 12:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C912D543D;
-	Wed, 13 Aug 2025 13:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CAB2E54AB;
+	Wed, 13 Aug 2025 12:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFJaXswK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gVOlHXGj"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5381D72612;
-	Wed, 13 Aug 2025 13:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDAD2C3769;
+	Wed, 13 Aug 2025 12:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755092821; cv=none; b=R572mxmP+tW1CVgtmzY6uww8c8Yu6izmd8ZZBjBm5xEcc0B1O4Ydm9LV2WdNVfnTiiwQnq+KeQwyEeLsZtb7yHZk2393BGYtVYiZFSNoqmFHCzROnFr/1FDsuFKIVPgN4cTe2xspwuBEQDpY1Cp6SH5LhH7E7/KYJd2BjfjQaDQ=
+	t=1755089856; cv=none; b=Xw/rd6xM4V5yBlB2Kl5kQNJQ4kTbXxtycn4NQ7O6N3qHaNaO7Fg52M+ak5EpvUvONo2tV/Fv7IpnO9FgMpX9Ox+zU/Qg6qP6UigU3DIhB6oDZcuCvC2dUeTC9MMI5c1EYI9usWYdFrmO2OyZRULh915FsN3L1wTkzZW4qnlK62Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755092821; c=relaxed/simple;
-	bh=EJYyeOv5ZSaTNdX5BL2jh/SZksaRmpZRfnRTezj2Irs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TLFmywO+fm8oQWJfOqLgmYd7HsGzb54qRYS6e0R+xZC/T9DmHITFWVAKs02Xv63NfsGy6jHIYNM5rvjtDspI2Xs+a5vYJwm+7OH+dPleQF822fKD3flbHf9N3bN6YMcvTfkZnSYP4h9EPWgmKuD8y87V91Cy04gbog9f1FXQM9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFJaXswK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F879C4CEF6;
-	Wed, 13 Aug 2025 13:46:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755092820;
-	bh=EJYyeOv5ZSaTNdX5BL2jh/SZksaRmpZRfnRTezj2Irs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=EFJaXswKUs3cDdFU19fktK4ee4MHO1Ci8TCx4IVbq4J3ZHqAaeXNmj/f9SW7eCNtt
-	 CGgSm8zhUIk6cC0LdcrD0ZhFw0zRPuPrt3WxF8Nu39Ojbur1sHYU0aFA65pK37S1Lc
-	 0Ovd6PBZ4QV8T6/De/vletNvtURR012xCaMjxFZalIpr5tnJ1/ZvoN22WYgVM0KEX3
-	 Y+n9+EinU1bgK4r6RKv7rjQROew+l+UtCioC5vYV16dzoxkkls/5Dgck0U21Q8KavX
-	 DHM9VsPGFzeXO6ffB6Nf/hP+1ec5TCB28AMZLTpLNitOys/58AaNk4a7Ol3zYywNMA
-	 aznm89cr+uhIw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Alex
- Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Jens Axboe
- <axboe@kernel.dk>, linux-block@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 12/15] rust: block: add `GenDisk` private data support
-In-Reply-To: <aJw_I-YQUfupWCXL@google.com>
-References: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org>
- <20250812-rnull-up-v6-16-v4-12-ed801dd3ba5c@kernel.org>
- <I-QXOGdDtTAVOcFvHZksoPqkYUZThmxrTUNw1h_MEGXdk_X_dc2txQdKJPMLz-yPmqL956iydAqVD9D5aL2SDQ==@protonmail.internalid>
- <aJw_I-YQUfupWCXL@google.com>
-Date: Wed, 13 Aug 2025 14:56:58 +0200
-Message-ID: <87a543fkh1.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1755089856; c=relaxed/simple;
+	bh=MuySi8sGF43XpA/joBh7X59LLJ7d8bjSnCs2l8x7hac=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nYbVUvvp3illijmZuQbBHTUqdd7obGq7K3ZLCuhOFHiuYj/ya5W3qAoZuWrEUo6ReqArI/joWxjO5h3FQp9V/A5Q5fjC3jHzZe1/eup2PVgFVr/lZ8MSukviA2eM8EPF9ZOPXJUkCXc3ytngkAMzQb/vPqoBex2vNCPaAOq4Dn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gVOlHXGj; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B2175443D7;
+	Wed, 13 Aug 2025 12:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1755089852;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4LqS3Q6phEP/DPZ1mfnaxML62/DqcKCkwjx/UApUTUU=;
+	b=gVOlHXGjsNr7KKDk0ZThJ8H4IXjAesO9gnPORc9Hn7ogm83F7yP6JmgoWOfLIrE493k00U
+	n17vG/wzSpbdBwpSljfKhC7TRbalHJK9PbUcAq6o2FiWScgNN8PgzE45UcBv5oECk5Qpw8
+	YLernhmInIHUyggWMz+FGQ7pTO3lgfGXlvvD8ORWOf1kgchoHwN9RZvG3T8WZk7m6KKInf
+	znJaz1lZYjaE2gtDfjTXwcRV1AXRPaq1h+dmLau6+rvwnWngjyKF9W3Va2/Za4MmApGylB
+	5BkUIrzCeVNYkr4dNQAde8XlcOIIw+AwQ7yx/6KnKSxdsJaFd21BOP6Ma1Hbqg==
+Date: Wed, 13 Aug 2025 14:57:30 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, Michal Kubecek
+ <mkubecek@suse.cz>, Dent Project <dentproject@linuxfoundation.org>, Kyle
+ Swenson <kyle.swenson@est.tech>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH ethtool v2 2/3] ethtool: pse-pd: Add PSE priority
+ support
+Message-ID: <20250813145730.0b47e26e@kmaincent-XPS-13-7390>
+In-Reply-To: <aJyEMob8kFAvD-HU@pengutronix.de>
+References: <20250813-b4-feature_poe_pw_budget-v2-0-0bef6bfcc708@bootlin.com>
+	<20250813-b4-feature_poe_pw_budget-v2-2-0bef6bfcc708@bootlin.com>
+	<aJyEMob8kFAvD-HU@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddufeekvdejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepp
+ hgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehmkhhusggvtggvkhesshhushgvrdgtiidprhgtphhtthhopeguvghnthhprhhojhgvtghtsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhg
+X-GND-Sasl: kory.maincent@bootlin.com
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Le Wed, 13 Aug 2025 14:25:22 +0200,
+Oleksij Rempel <o.rempel@pengutronix.de> a =C3=A9crit :
 
-> On Tue, Aug 12, 2025 at 10:44:30AM +0200, Andreas Hindborg wrote:
->> Allow users of the rust block device driver API to install private data in
->> the `GenDisk` structure.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->
-> Overall LGTM.
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->
->>          self,
->>          name: fmt::Arguments<'_>,
->>          tagset: Arc<TagSet<T>>,
->> +        queue_data: T::QueueData,
->>      ) -> Result<GenDisk<T>> {
->> +        let data = queue_data.into_foreign();
->> +        let recover_data = ScopeGuard::new(|| {
->> +            drop(
->> +                // SAFETY: T::QueueData was created by the call to `into_foreign()` above
->> +                unsafe { T::QueueData::from_foreign(data) },
->> +            );
->
-> This is usually formatted as:
->
-> // SAFETY: T::QueueData was created by the call to `into_foreign()` above
-> drop(unsafe { T::QueueData::from_foreign(data) });
+> Hi Kory,
+>=20
+> Thank you for your work! Here are some review comments...
 
-I don't really have a preference, my optimization function was to
-minimize distance to the unsafe block. Are there any rust guidelines on this?
+Hello Oleksij,
 
->
->>  impl<T: Operations> Drop for GenDisk<T> {
->>      fn drop(&mut self) {
->> +        // SAFETY: By type invariant of `Self`, `self.gendisk` points to a valid
->> +        // and initialized instance of `struct gendisk`, and, `queuedata` was
->> +        // initialized with the result of a call to
->> +        // `ForeignOwnable::into_foreign`.
->> +        let queue_data = unsafe { (*(*self.gendisk).queue).queuedata };
->> +
->>          // SAFETY: By type invariant, `self.gendisk` points to a valid and
->>          // initialized instance of `struct gendisk`, and it was previously added
->>          // to the VFS.
->>          unsafe { bindings::del_gendisk(self.gendisk) };
->> +
->> +        drop(
->> +            // SAFETY: `queue.queuedata` was created by `GenDiskBuilder::build` with
->> +            // a call to `ForeignOwnable::into_foreign` to create `queuedata`.
->> +            // `ForeignOwnable::from_foreign` is only called here.
->> +            unsafe { T::QueueData::from_foreign(queue_data) },
->> +        );
->
-> Ditto here.
->
->>          //    reference counted by `ARef` until then.
->>          let rq = unsafe { Request::aref_from_raw((*bd).rq) };
->>
->> +        // SAFETY: `hctx` is valid as required by this function.
->> +        let queue_data = unsafe { (*(*hctx).queue).queuedata };
->> +
->> +        // SAFETY: `queue.queuedata` was created by `GenDisk::try_new()` with a
->> +        // call to `ForeignOwnable::into_pointer()` to create `queuedata`.
->> +        // `ForeignOwnable::from_foreign()` is only called when the tagset is
->> +        // dropped, which happens after we are dropped.
->> +        let queue_data = unsafe { T::QueueData::borrow(queue_data.cast()) };
->
-> Is this cast necessary? Is it not a void pointer?
+>=20
+> On Wed, Aug 13, 2025 at 10:57:51AM +0200, Kory Maincent wrote:
+> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> >=20
+> > Add support for PSE (Power Sourcing Equipment) priority management:
+> > - Add priority configuration parameter (prio) for port priority managem=
+ent
+> > - Display power domain index, maximum priority, and current priority
+> >=20
+> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> > ---
+> >  ethtool.8.in     | 13 +++++++++++++
+> >  ethtool.c        |  1 +
+> >  netlink/pse-pd.c | 29 +++++++++++++++++++++++++++++
+> >  3 files changed, 43 insertions(+)
+> >=20
+> > diff --git a/ethtool.8.in b/ethtool.8.in
+> > index 29b8a8c..163b2b0 100644
+> > --- a/ethtool.8.in
+> > +++ b/ethtool.8.in
+> > @@ -561,6 +561,7 @@ ethtool \- query or control network driver and hard=
+ware
+> > settings .RB [ c33\-pse\-admin\-control
+> >  .BR enable | disable ]
+> >  .BN c33\-pse\-avail\-pw\-limit N
+> > +.BN prio N
+> >  .HP
+> >  .B ethtool \-\-flash\-module\-firmware
+> >  .I devname
+> > @@ -1911,6 +1912,15 @@ This attribute specifies the allowed power limit
+> > ranges in mW for configuring the c33-pse-avail-pw-limit parameter. It
+> > defines the valid power levels that can be assigned to the c33 PSE in
+> > compliance with the c33 standard.
+> > +.TP
+> > +.B power-domain-index
+> > +This attribute defines the index of the PSE Power Domain. =20
+>=20
+> May be:
+>=20
+> Reports the index of the PSE power domain the port belongs to. Every
+> port belongs to exactly one power domain. Port priorities are defined
+> within that power domain.
+>=20
+> Each power domain may have its own maximum budget (e.g., 100 W per
+> domain) in addition to a system-wide budget (e.g., 200 W overall).
+> Domain limits are enforced first: if a single domain reaches its budget,
+> only ports in that domain are affected. The system-wide budget is
+> enforced across all domains; only when it is exceeded do cross-domain
+> priorities apply.
 
-Leftover from old `ForeignOwnable` I think. I'll remove it.
+Thanks for the doc review!
+Maybe we should not talking about cross-domain priority yet, we don't know =
+how
+PSE are supposed to behave on that specific case.=20
 
+...
 
-Best regards,
-Andreas Hindborg
+> > +	if (tb[ETHTOOL_A_PSE_PRIO]) {
+> > +		u32 val;
+> > +
+> > +		val =3D mnl_attr_get_u32(tb[ETHTOOL_A_PSE_PRIO]);
+> > +		print_uint(PRINT_ANY, "priority", "Priority %u\n", val); =20
+>=20
+> missing colon
+> 		print_uint(PRINT_ANY, "priority", "Priority: %u\n", val);
 
+Well spotted, thanks!
 
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
