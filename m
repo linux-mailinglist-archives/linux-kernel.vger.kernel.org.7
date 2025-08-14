@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-768390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A19B2609E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:19:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB239B260A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46851CC214F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:14:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333035A58D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C5B2D321F;
-	Thu, 14 Aug 2025 09:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CDA2EA739;
+	Thu, 14 Aug 2025 09:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ShgqzQ75"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6OYOWcP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C0B2E7BD3;
-	Thu, 14 Aug 2025 09:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8FA2EA14F;
+	Thu, 14 Aug 2025 09:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755162783; cv=none; b=fzO67sQf5NmwMIck7opRAoH2bIOkG0hQ9RskyY8NT4MBxc1mpt5P/awpjvcprUrUz3/JL+rATHaek8OWUscyEgHZ+Synp8MZy7hOdo23m+K4MBL0S1azfhvYh4PfGYyGC6a2M9+VVwtUbj9BDMOuYUj63cxNtuaYjSjgpApupaA=
+	t=1755162785; cv=none; b=mGZlH9Kne9wfvTmGtW5pW0sEei81srwghvQUbM9jcMGM5aHH0zyihRA2TdqR6EqW0aV8tPtoPvpfjFOBYDQ9kR85l/WuzcnjEqYCjg8VBbYrK81CHil6Rcy5ggdiN0sPpSHUUSaLCM0Qn2ilCVIedpfECNsEzOxWpwB8TfwqtRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755162783; c=relaxed/simple;
-	bh=Y30KNXbgJ12KC38CWWbM6Y8iAA7KjcgOZLUX49FTcvI=;
+	s=arc-20240116; t=1755162785; c=relaxed/simple;
+	bh=q9LD0gI3IQlorPkwhPUPSS6YvP6vOk6wY3/rSaYBFrk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a5X6w3zhWJLYrkmv8qGUbXXZE1XgIhVugw0GlE8TfMfGo2neYNOpCuaKbg0JKpNc0Nea+FYU6lyEfxZIon+sV/TbZwCFKswWiS9n8zfmBvzDeY6aeXw/rxe/6o5wb2D53e68GLV8u5gmvFsd4wLYRwP3rGv8M0QJi+dcf1x2cxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ShgqzQ75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35CABC4CEF1;
-	Thu, 14 Aug 2025 09:13:02 +0000 (UTC)
+	 MIME-Version; b=fuELW8vQjHvOQlmIOfj0koZA/FmHrPyzV0MjynzSKc5yICrWGu+HIUisLgS+iRJ/jU9OXNoQ7k1AuHoZtKNI8Ri/mVFpkiv71iyPlPc5Huf27uIxMsGrX349zXmg2QHmrRkRHjBmP3XGVyWoF4dtBDq/NbXGIPgXnf0CTkq4liQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6OYOWcP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B05C4CEEF;
+	Thu, 14 Aug 2025 09:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755162783;
-	bh=Y30KNXbgJ12KC38CWWbM6Y8iAA7KjcgOZLUX49FTcvI=;
+	s=k20201202; t=1755162784;
+	bh=q9LD0gI3IQlorPkwhPUPSS6YvP6vOk6wY3/rSaYBFrk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ShgqzQ75YETRAvwAr0f4KpCiv9jPSMK2UaxmT/2G5vo22PQLPjc3c3KtZyqy/O83Q
-	 WLNAV37JkCZeqY60EWSfjnrKjGFF54Wj47U6eFwQcIWJ6PvXI6Ymf2tbm+DsDie/mK
-	 sp+B5VB9PLLF9kbQaM8y9AoYc3J8LkC1QmLBHic8Z2QRhpQiYGt8F7tjU0R3pw+kXP
-	 nyXtNPbkKotmFSgZ2c03WKg4WhcJ/WTlp45TIs0taa1KS2n3SWXioEJiASodm4z/Jv
-	 Z15kPHLKMMjVf/uNAhBLJnBht+C4vNXbmC0VZZMf0IfoQeDPQuGyEZS0kkWq1q3boo
-	 1DHzuKkQlm2dA==
+	b=G6OYOWcPmO8UYvNy7ppr9hGdmmNx6dNBeuB+AQcxn1Tw6e8AYDFm2UItO1/hHVG8c
+	 ierr71Gsc/9PGCQ6+SwvI+Bs/ceICdDsvPCoxvLQLiXEcVatbPKsoBgUk/UdwGwaUT
+	 D9B0LpbSH1BCi5b3VF4q6SpaK9Ee3tl2ca+JENSjs/wBzEkE848sYHm6FVxuJVk4WU
+	 HKqxt3QJ3ZxA3RVZoSDj6zbCZ2hq7JybFoS/vBxGalGiiJLf2xpDEP38l7gHMoRasM
+	 KfSnDvDNQDg8LZ3J0/8ZssduLXIKFIzBo80qskto6smgVUGzllOsbvBvBvKW6xpda6
+	 keWpdM41dpALQ==
 From: Tzung-Bi Shih <tzungbi@kernel.org>
 To: bleung@chromium.org
 Cc: tzungbi@kernel.org,
@@ -48,9 +48,9 @@ Cc: tzungbi@kernel.org,
 	akpm@linux-foundation.org,
 	gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] lib: Add ref_proxy module
-Date: Thu, 14 Aug 2025 09:10:18 +0000
-Message-ID: <20250814091020.1302888-2-tzungbi@kernel.org>
+Subject: [PATCH 2/3] platform/chrome: Protect cros_ec_device lifecycle with ref_proxy
+Date: Thu, 14 Aug 2025 09:10:19 +0000
+Message-ID: <20250814091020.1302888-3-tzungbi@kernel.org>
 X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
 In-Reply-To: <20250814091020.1302888-1-tzungbi@kernel.org>
 References: <20250814091020.1302888-1-tzungbi@kernel.org>
@@ -62,306 +62,238 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some resources can be removed asynchronously, for example, resources
-provided by a hot-pluggable device like USB.  When holding a reference
-to such a resource, it's possible for the resource to be removed and
-its memory freed, leading to use-after-free errors on subsequent access.
+The cros_ec_device can be unregistered when the underlying device is
+removed.  Other kernel drivers that interact with the EC may hold a
+pointer to the cros_ec_device, creating a risk of a use-after-free
+error if the EC device is removed while still being referenced.
 
-Introduce the ref_proxy library to establish weak references to such
-resources.  It allows a resource consumer to safely attempt to access a
-resource that might be freed at any time by the resource provider.
-
-The implementation uses a provider/consumer model built on Sleepable
-RCU (SRCU) to guarantee safe memory access:
-
- - A resource provider allocates a struct ref_proxy_provider and
-   initializes it with a pointer to the resource.
-
- - A resource consumer that wants to access the resource allocates a
-   struct ref_proxy handle which holds a reference to the provider.
-
- - To access the resource, the consumer uses ref_proxy_get().  This
-   function enters an SRCU read-side critical section and returns the
-   pointer to the resource.  If the provider has already freed the
-   resource, it returns NULL.  After use, the consumer calls
-   ref_proxy_put() to exit the SRCU critical section.  The
-   REF_PROXY_GET() is a convenient helper for doing that.
-
- - When the provider needs to remove the resource, it calls
-   ref_proxy_provider_free().  This function sets the internal resource
-   pointer to NULL and then calls synchronize_srcu() to wait for all
-   current readers to finish before the resource can be completely torn
-   down.
+To prevent this, leverage the ref_proxy library and convert the
+underlying device drivers to resource providers of cros_ec_device.
 
 Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
 ---
- include/linux/ref_proxy.h |  37 ++++++++
- lib/Kconfig               |   3 +
- lib/Makefile              |   1 +
- lib/ref_proxy.c           | 184 ++++++++++++++++++++++++++++++++++++++
- 4 files changed, 225 insertions(+)
- create mode 100644 include/linux/ref_proxy.h
- create mode 100644 lib/ref_proxy.c
+ drivers/platform/chrome/Kconfig             | 8 ++++++--
+ drivers/platform/chrome/cros_ec_i2c.c       | 5 +++++
+ drivers/platform/chrome/cros_ec_ishtp.c     | 5 +++++
+ drivers/platform/chrome/cros_ec_lpc.c       | 5 +++++
+ drivers/platform/chrome/cros_ec_rpmsg.c     | 5 +++++
+ drivers/platform/chrome/cros_ec_spi.c       | 4 ++++
+ drivers/platform/chrome/cros_ec_uart.c      | 5 +++++
+ include/linux/platform_data/cros_ec_proto.h | 3 +++
+ 8 files changed, 38 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/ref_proxy.h b/include/linux/ref_proxy.h
-new file mode 100644
-index 000000000000..16ff29169272
---- /dev/null
-+++ b/include/linux/ref_proxy.h
-@@ -0,0 +1,37 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __LINUX_REF_PROXY_H
-+#define __LINUX_REF_PROXY_H
-+
-+#include <linux/cleanup.h>
-+
-+struct device;
-+struct ref_proxy;
-+struct ref_proxy_provider;
-+
-+struct ref_proxy_provider *ref_proxy_provider_alloc(void *ref);
-+void ref_proxy_provider_free(struct ref_proxy_provider *rpp);
-+struct ref_proxy_provider *devm_ref_proxy_provider_alloc(struct device *dev,
-+							 void *ref);
-+
-+struct ref_proxy *ref_proxy_alloc(struct ref_proxy_provider *rpp);
-+void ref_proxy_free(struct ref_proxy *proxy);
-+void __rcu *ref_proxy_get(struct ref_proxy *proxy);
-+void ref_proxy_put(struct ref_proxy *proxy);
-+
-+DEFINE_FREE(ref_proxy, struct ref_proxy *, if (_T) ref_proxy_put(_T))
-+
-+#define _REF_PROXY_GET(_proxy, _name, _label, _ref) \
-+	for (struct ref_proxy *_name __free(ref_proxy) = _proxy;	\
-+	     (_ref = ref_proxy_get(_name)) || true; ({ goto _label; }))	\
-+		if (0) {						\
-+_label:									\
-+			break;						\
-+		} else
-+
-+#define REF_PROXY_GET(_proxy, _ref)					\
-+	_REF_PROXY_GET(_proxy, __UNIQUE_ID(proxy_name),			\
-+		       __UNIQUE_ID(label), _ref)
-+
-+#endif /* __LINUX_REF_PROXY_H */
-+
-diff --git a/lib/Kconfig b/lib/Kconfig
-index c483951b624f..18237a766606 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -583,6 +583,9 @@ config STACKDEPOT_MAX_FRAMES
- 	default 64
- 	depends on STACKDEPOT
- 
-+config REF_PROXY
-+	bool
-+
- config REF_TRACKER
- 	bool
- 	depends on STACKTRACE_SUPPORT
-diff --git a/lib/Makefile b/lib/Makefile
-index 392ff808c9b9..e8ad6f67cee9 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -258,6 +258,7 @@ KASAN_SANITIZE_stackdepot.o := n
- KMSAN_SANITIZE_stackdepot.o := n
- KCOV_INSTRUMENT_stackdepot.o := n
- 
-+obj-$(CONFIG_REF_PROXY) += ref_proxy.o
- obj-$(CONFIG_REF_TRACKER) += ref_tracker.o
- 
- libfdt_files = fdt.o fdt_ro.o fdt_wip.o fdt_rw.o fdt_sw.o fdt_strerror.o \
-diff --git a/lib/ref_proxy.c b/lib/ref_proxy.c
-new file mode 100644
-index 000000000000..49940bea651c
---- /dev/null
-+++ b/lib/ref_proxy.c
-@@ -0,0 +1,184 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/device.h>
-+#include <linux/kref.h>
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 2281d6dacc9b..fe7b219093e9 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -88,7 +88,7 @@ config CROS_EC
+ config CROS_EC_I2C
+ 	tristate "ChromeOS Embedded Controller (I2C)"
+ 	depends on CROS_EC && I2C
+-
++	select REF_PROXY
+ 	help
+ 	  If you say Y here, you get support for talking to the ChromeOS
+ 	  EC through an I2C bus. This uses a simple byte-level protocol with
+@@ -98,6 +98,7 @@ config CROS_EC_I2C
+ config CROS_EC_RPMSG
+ 	tristate "ChromeOS Embedded Controller (rpmsg)"
+ 	depends on CROS_EC && RPMSG && OF
++	select REF_PROXY
+ 	help
+ 	  If you say Y here, you get support for talking to the ChromeOS EC
+ 	  through rpmsg. This uses a simple byte-level protocol with a
+@@ -111,6 +112,7 @@ config CROS_EC_ISHTP
+ 	tristate "ChromeOS Embedded Controller (ISHTP)"
+ 	depends on CROS_EC
+ 	depends on INTEL_ISH_HID
++	select REF_PROXY
+ 	help
+ 	  If you say Y here, you get support for talking to the ChromeOS EC
+ 	  firmware running on Intel Integrated Sensor Hub (ISH), using the
+@@ -123,7 +125,7 @@ config CROS_EC_ISHTP
+ config CROS_EC_SPI
+ 	tristate "ChromeOS Embedded Controller (SPI)"
+ 	depends on CROS_EC && SPI
+-
++	select REF_PROXY
+ 	help
+ 	  If you say Y here, you get support for talking to the ChromeOS EC
+ 	  through a SPI bus, using a byte-level protocol. Since the EC's
+@@ -133,6 +135,7 @@ config CROS_EC_SPI
+ config CROS_EC_UART
+ 	tristate "ChromeOS Embedded Controller (UART)"
+ 	depends on CROS_EC && ACPI && SERIAL_DEV_BUS
++	select REF_PROXY
+ 	help
+ 	  If you say Y here, you get support for talking to the ChromeOS EC
+ 	  through a UART, using a byte-level protocol.
+@@ -144,6 +147,7 @@ config CROS_EC_LPC
+ 	tristate "ChromeOS Embedded Controller (LPC)"
+ 	depends on CROS_EC && ACPI && (X86 || COMPILE_TEST)
+ 	depends on HAS_IOPORT
++	select REF_PROXY
+ 	help
+ 	  If you say Y here, you get support for talking to the ChromeOS EC
+ 	  over an LPC bus, including the LPC Microchip EC (MEC) variant.
+diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
+index 38af97cdaab2..d9ecf27585f1 100644
+--- a/drivers/platform/chrome/cros_ec_i2c.c
++++ b/drivers/platform/chrome/cros_ec_i2c.c
+@@ -12,6 +12,7 @@
+ #include <linux/platform_data/cros_ec_commands.h>
+ #include <linux/platform_data/cros_ec_proto.h>
+ #include <linux/platform_device.h>
 +#include <linux/ref_proxy.h>
-+#include <linux/slab.h>
-+#include <linux/srcu.h>
+ #include <linux/slab.h>
+ 
+ #include "cros_ec.h"
+@@ -296,6 +297,10 @@ static int cros_ec_i2c_probe(struct i2c_client *client)
+ 	if (!ec_dev)
+ 		return -ENOMEM;
+ 
++	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
++	if (!ec_dev->ref_proxy_provider)
++		return -ENOMEM;
 +
-+/**
-+ * struct ref_proxy_provider - A handle for resource provider.
-+ * @srcu: The SRCU to protect the resource.
-+ * @ref:  The pointer of resource.  It can point to anything.
-+ * @kref: The refcount for this handle.
-+ */
-+struct ref_proxy_provider {
-+	struct srcu_struct srcu;
-+	void __rcu *ref;
-+	struct kref kref;
-+};
+ 	i2c_set_clientdata(client, ec_dev);
+ 	ec_dev->dev = dev;
+ 	ec_dev->priv = client;
+diff --git a/drivers/platform/chrome/cros_ec_ishtp.c b/drivers/platform/chrome/cros_ec_ishtp.c
+index 7e7190b30cbb..0b74a5b16b52 100644
+--- a/drivers/platform/chrome/cros_ec_ishtp.c
++++ b/drivers/platform/chrome/cros_ec_ishtp.c
+@@ -12,6 +12,7 @@
+ #include <linux/pci.h>
+ #include <linux/platform_data/cros_ec_commands.h>
+ #include <linux/platform_data/cros_ec_proto.h>
++#include <linux/ref_proxy.h>
+ #include <linux/intel-ish-client-if.h>
+ 
+ #include "cros_ec.h"
+@@ -547,6 +548,10 @@ static int cros_ec_dev_init(struct ishtp_cl_data *client_data)
+ 	if (!ec_dev)
+ 		return -ENOMEM;
+ 
++	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
++	if (!ec_dev->ref_proxy_provider)
++		return -ENOMEM;
 +
-+/**
-+ * struct ref_proxy - A handle for resource consumer.
-+ * @rpp: The pointer of resource provider.
-+ * @idx: The index for the RCU critical section.
-+ */
-+struct ref_proxy {
-+	struct ref_proxy_provider *rpp;
-+	int idx;
-+};
+ 	client_data->ec_dev = ec_dev;
+ 	dev->driver_data = ec_dev;
+ 
+diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
+index 7d9a78289c96..8b5de1ad5f2f 100644
+--- a/drivers/platform/chrome/cros_ec_lpc.c
++++ b/drivers/platform/chrome/cros_ec_lpc.c
+@@ -23,6 +23,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/printk.h>
+ #include <linux/reboot.h>
++#include <linux/ref_proxy.h>
+ #include <linux/suspend.h>
+ 
+ #include "cros_ec.h"
+@@ -641,6 +642,10 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
+ 	if (!ec_dev)
+ 		return -ENOMEM;
+ 
++	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
++	if (!ec_dev->ref_proxy_provider)
++		return -ENOMEM;
 +
-+/**
-+ * ref_proxy_provider_alloc() - Allocate struct ref_proxy_provider.
-+ * @ref: The pointer of resource.
-+ *
-+ * This holds an initial refcount to the struct.
-+ *
-+ * Return: The pointer of struct ref_proxy_provider.  NULL on errors.
-+ */
-+struct ref_proxy_provider *ref_proxy_provider_alloc(void *ref)
-+{
-+	struct ref_proxy_provider *rpp;
+ 	platform_set_drvdata(pdev, ec_dev);
+ 	ec_dev->dev = dev;
+ 	ec_dev->phys_name = dev_name(dev);
+diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+index bc2666491db1..c9be9ba63ead 100644
+--- a/drivers/platform/chrome/cros_ec_rpmsg.c
++++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+@@ -10,6 +10,7 @@
+ #include <linux/platform_data/cros_ec_commands.h>
+ #include <linux/platform_data/cros_ec_proto.h>
+ #include <linux/platform_device.h>
++#include <linux/ref_proxy.h>
+ #include <linux/rpmsg.h>
+ #include <linux/slab.h>
+ 
+@@ -220,6 +221,10 @@ static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
+ 	if (!ec_dev)
+ 		return -ENOMEM;
+ 
++	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
++	if (!ec_dev->ref_proxy_provider)
++		return -ENOMEM;
 +
-+	rpp = kzalloc(sizeof(*rpp), GFP_KERNEL);
-+	if (!rpp)
-+		return NULL;
+ 	ec_rpmsg = devm_kzalloc(dev, sizeof(*ec_rpmsg), GFP_KERNEL);
+ 	if (!ec_rpmsg)
+ 		return -ENOMEM;
+diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
+index 8ca0f854e7ac..b0f33f02ec24 100644
+--- a/drivers/platform/chrome/cros_ec_spi.c
++++ b/drivers/platform/chrome/cros_ec_spi.c
+@@ -10,6 +10,7 @@
+ #include <linux/platform_data/cros_ec_commands.h>
+ #include <linux/platform_data/cros_ec_proto.h>
+ #include <linux/platform_device.h>
++#include <linux/ref_proxy.h>
+ #include <linux/slab.h>
+ #include <linux/spi/spi.h>
+ #include <uapi/linux/sched/types.h>
+@@ -752,6 +753,9 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
+ 	if (!ec_dev)
+ 		return -ENOMEM;
++	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
++	if (!ec_dev->ref_proxy_provider)
++		return -ENOMEM;
+ 
+ 	/* Check for any DT properties */
+ 	cros_ec_spi_dt_probe(ec_spi, dev);
+diff --git a/drivers/platform/chrome/cros_ec_uart.c b/drivers/platform/chrome/cros_ec_uart.c
+index 19c179d49c90..ce080b464977 100644
+--- a/drivers/platform/chrome/cros_ec_uart.c
++++ b/drivers/platform/chrome/cros_ec_uart.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_data/cros_ec_proto.h>
++#include <linux/ref_proxy.h>
+ #include <linux/serdev.h>
+ #include <linux/slab.h>
+ #include <uapi/linux/sched/types.h>
+@@ -263,6 +264,10 @@ static int cros_ec_uart_probe(struct serdev_device *serdev)
+ 	if (!ec_dev)
+ 		return -ENOMEM;
+ 
++	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
++	if (!ec_dev->ref_proxy_provider)
++		return -ENOMEM;
 +
-+	init_srcu_struct(&rpp->srcu);
-+	rcu_assign_pointer(rpp->ref, ref);
-+	synchronize_srcu(&rpp->srcu);
-+	kref_init(&rpp->kref);
+ 	serdev_device_set_drvdata(serdev, ec_dev);
+ 	init_waitqueue_head(&ec_uart->response.wait_queue);
+ 
+diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
+index 3ec24f445c29..9f5c8fb353b6 100644
+--- a/include/linux/platform_data/cros_ec_proto.h
++++ b/include/linux/platform_data/cros_ec_proto.h
+@@ -158,6 +158,7 @@ struct cros_ec_command {
+  * @pd: The platform_device used by the mfd driver to interface with the
+  *      PD behind an EC.
+  * @panic_notifier: EC panic notifier.
++ * @ref_proxy_provider: The ref_proxy_provider to this device.
+  */
+ struct cros_ec_device {
+ 	/* These are used by other drivers that want to talk to the EC */
+@@ -203,6 +204,8 @@ struct cros_ec_device {
+ 	struct platform_device *pd;
+ 
+ 	struct blocking_notifier_head panic_notifier;
 +
-+	return rpp;
-+}
-+EXPORT_SYMBOL(ref_proxy_provider_alloc);
-+
-+static void ref_proxy_provider_release(struct kref *kref)
-+{
-+	struct ref_proxy_provider *rpp = container_of(kref,
-+			struct ref_proxy_provider, kref);
-+
-+	cleanup_srcu_struct(&rpp->srcu);
-+	kfree(rpp);
-+}
-+
-+/**
-+ * ref_proxy_provider_free() - Free struct ref_proxy_provider.
-+ * @rpp: The pointer of resource provider.
-+ *
-+ * This sets the resource `(struct ref_proxy_provider *)->ref` to NULL to
-+ * indicate the resource has gone.
-+ *
-+ * This drops the refcount to the resource provider.  If it is the final
-+ * reference, ref_proxy_provider_release() will be called to free the struct.
-+ */
-+void ref_proxy_provider_free(struct ref_proxy_provider *rpp)
-+{
-+	rcu_assign_pointer(rpp->ref, NULL);
-+	synchronize_srcu(&rpp->srcu);
-+	kref_put(&rpp->kref, ref_proxy_provider_release);
-+}
-+EXPORT_SYMBOL(ref_proxy_provider_free);
-+
-+static void devm_ref_proxy_provider_free(void *data)
-+{
-+	struct ref_proxy_provider *rpp = data;
-+
-+	ref_proxy_provider_free(rpp);
-+}
-+
-+/**
-+ * devm_ref_proxy_provider_alloc() - Dev-managed ref_proxy_provider_alloc().
-+ * @dev: The device.
-+ * @ref: The pointer of resource.
-+ *
-+ * This holds an initial refcount to the struct.
-+ *
-+ * Return: The pointer of struct ref_proxy_provider.  NULL on errors.
-+ */
-+struct ref_proxy_provider *devm_ref_proxy_provider_alloc(struct device *dev,
-+							 void *ref)
-+{
-+	struct ref_proxy_provider *rpp;
-+
-+	rpp = ref_proxy_provider_alloc(ref);
-+	if (rpp)
-+		if (devm_add_action_or_reset(dev, devm_ref_proxy_provider_free,
-+					     rpp))
-+			return NULL;
-+
-+	return rpp;
-+}
-+EXPORT_SYMBOL(devm_ref_proxy_provider_alloc);
-+
-+/**
-+ * ref_proxy_alloc() - Allocate struct ref_proxy_provider.
-+ * @rpp: The pointer of resource provider.
-+ *
-+ * This holds a refcount to the resource provider.
-+ *
-+ * Return: The pointer of struct ref_proxy_provider.  NULL on errors.
-+ */
-+struct ref_proxy *ref_proxy_alloc(struct ref_proxy_provider *rpp)
-+{
-+	struct ref_proxy *proxy;
-+
-+	proxy = kzalloc(sizeof(*proxy), GFP_KERNEL);
-+	if (!proxy)
-+		return NULL;
-+
-+	proxy->rpp = rpp;
-+	kref_get(&rpp->kref);
-+
-+	return proxy;
-+}
-+EXPORT_SYMBOL(ref_proxy_alloc);
-+
-+/**
-+ * ref_proxy_free() - Free struct ref_proxy.
-+ * @proxy: The pointer of struct ref_proxy.
-+ *
-+ * This drops a refcount to the resource provider.  If it is the final
-+ * reference, ref_proxy_provider_release() will be called to free the struct.
-+ */
-+void ref_proxy_free(struct ref_proxy *proxy)
-+{
-+	struct ref_proxy_provider *rpp = proxy->rpp;
-+
-+	kref_put(&rpp->kref, ref_proxy_provider_release);
-+	kfree(proxy);
-+}
-+EXPORT_SYMBOL(ref_proxy_free);
-+
-+/**
-+ * ref_proxy_get() - Get the resource.
-+ * @proxy: The pointer of struct ref_proxy.
-+ *
-+ * This tries to de-reference to the resource and enters a RCU critical
-+ * section.
-+ *
-+ * Return: The pointer to the resource.  NULL if the resource has gone.
-+ */
-+void __rcu *ref_proxy_get(struct ref_proxy *proxy)
-+{
-+	struct ref_proxy_provider *rpp = proxy->rpp;
-+
-+	proxy->idx = srcu_read_lock(&rpp->srcu);
-+	return rcu_dereference(rpp->ref);
-+}
-+EXPORT_SYMBOL(ref_proxy_get);
-+
-+/**
-+ * ref_proxy_put() - Put the resource.
-+ * @proxy: The pointer of struct ref_proxy.
-+ *
-+ * Call this function to indicate the resource is no longer used.  It exits
-+ * the RCU critical section.
-+ */
-+void ref_proxy_put(struct ref_proxy *proxy)
-+{
-+	struct ref_proxy_provider *rpp = proxy->rpp;
-+
-+	srcu_read_unlock(&rpp->srcu, proxy->idx);
-+}
-+EXPORT_SYMBOL(ref_proxy_put);
++	struct ref_proxy_provider *ref_proxy_provider;
+ };
+ 
+ /**
 -- 
 2.51.0.rc1.163.g2494970778-goog
 
