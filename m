@@ -1,132 +1,129 @@
-Return-Path: <linux-kernel+bounces-769163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D08B26AEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7ABEB26AF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB8AF3BE8EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 486A23BA3ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEED21CC62;
-	Thu, 14 Aug 2025 15:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mC3quBJ7"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A50121256D;
+	Thu, 14 Aug 2025 15:23:41 +0000 (UTC)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C998F58;
-	Thu, 14 Aug 2025 15:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3448F49;
+	Thu, 14 Aug 2025 15:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755184987; cv=none; b=aQohXFp/JpT19s82fhEAvJTsnw060gti3hCX5/abHeR/ZFSdI55XeHbf7jFAXKmV7REeQcbKLYZDZO5Mk3ZucsuR3O6dcIEMnDymWlkvyT2mPXQ0TKkcriQHGKypF8WfmBWHFEqQmILn+BpUG4LkD3Ja5fzUCwRn9OWhbA5fNdI=
+	t=1755185020; cv=none; b=jE54aj5N6zQoYNP7PQLYQ4qYusz64Tsal36c5meu5yGP+8Rp7rayJiiKzhBAc65FGrGrvZD5rQqXBsakhdJNUgVFebjbWYHZn2jpJXaOrElLgwtI4ISx7rNRW7VtdmS4RC9osabCBxWv3Ugr2CqwRfa/PgceDascHISmiw7yeDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755184987; c=relaxed/simple;
-	bh=qjtO41c38rpuKsYV5ayAQzQ9BLfZGevGWrqxNM6oyTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RaaBwHz6nS1/DRwQqKG5cMRZ9nGHIMa2lKudNFmIbb+qHhxC5cqZ+/MaxFbNP8hhkVdphuQg5tqMnQMJigO4pIgO7kg3r/OM3bjaQ6eWV+UOmIgO280VsT9kxi1HqFlsIrYvNZ55txOhqNPjs5wliMFzn5XDVQ38owHuY48B3Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=mC3quBJ7; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755184985; x=1786720985;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qjtO41c38rpuKsYV5ayAQzQ9BLfZGevGWrqxNM6oyTM=;
-  b=mC3quBJ7Pg12S678iCnWHT7686LiIoAhAA3EpmxFDyq3SZvxUFt6qnBo
-   W0ToffjhyQ3gdHLuftZsNXn3jhVAPAnfr1MDNGf56Pu9AIH8jpJqSP48d
-   cquCbMWEJ99gyZ3BMaWEKOheQ3A9lQm3fxYD2028VHZhB2f0dV5o4gXum
-   Hnz97rIdp11DXHuEOCnxnDRFHH3LUhfNcnNGnCu6nlHSKxB7R0u1QFoYV
-   JDi8dZiYCVrEXJ0e/a61AclbCjp+znOYtCN++1tt1At2bloNzLG/W6J4m
-   cG015o7pP/f+PYIurDAeImWAsAnSKOqw0WDiDwyZKJiUI8DzJFmeCn9RB
-   Q==;
-X-CSE-ConnectionGUID: OtV+OFDYSuOsKLpywoW1nQ==
-X-CSE-MsgGUID: GwQnAvf/ThKdu6dsdqUvnw==
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="44660456"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2025 08:23:03 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 14 Aug 2025 08:22:54 -0700
-Received: from [10.150.206.71] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Thu, 14 Aug 2025 08:22:51 -0700
-Message-ID: <10824956-cb3a-4ccc-bea4-0f7310090db7@microchip.com>
-Date: Thu, 14 Aug 2025 17:22:50 +0200
+	s=arc-20240116; t=1755185020; c=relaxed/simple;
+	bh=/yXezW1FG/KZ1KYAeG0hPBHTm1AHW5a3nvMlnzWwcQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eYbljHU4G0Hk6Cs2Hr/Hng/G0t7BqZWbV+kQxY14xTWQVUwASQVsfq2J/S2FQmYa89sI8N9PBvdQIoFLD6lLWp4TqT3l5kQRc1nSUz/B0MtnCOgA7srQVoaFND/1w3khbyv3YYqPC+PcM4kmP3fjpzUgWbbMxCt8XMXrGfkgIuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-50f88bd4b96so759719137.1;
+        Thu, 14 Aug 2025 08:23:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755185016; x=1755789816;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uksBVcZMFGT5hrIgSm/PLHfK7WggjB7I/fNjjld2HMw=;
+        b=MOLbPBxhMdWQSqsYs1jIZ2MgnU3f7VQTML2dyoeQAtPA+DUuFaWiyjCtTTFA870Tw8
+         GSNvj+RlwgOZUw63EQS+q0+wR87iGcUgFdSNhNFUEIguHBq/nj3y9EU+FRMyOtdHrqEJ
+         IpVP2kNwbGFUwhbt9lXYy0cJbKHsagUKUA9vS+dbUxxhtE3L5PgSXxhUmlZRJ/fzQhG9
+         buDfi/KIKV2yrr+/TZDA56PbG3tZCuBUnkpZL0ecPNhmrtFItVZLG7khuK15BttVMNRc
+         NdUMG4GW8BI7POYra6boJdFxdbcnQ0Z0VfN9a5ZygjlCCRqft0nOhzGbd3E69LkKFmu6
+         w62Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU6HjJUl0hO+GaTzzmhsvCp2JPF5co4opqM36JKXxySR/zdgjWxtqmZ0M/D0PdYe5TdXS9dvwhLBx2r5pxWPoW8Xbk=@vger.kernel.org, AJvYcCV+H++Gp4wH46t2cgIqICb3VThvV1DH5uGQ66WA1chC8HJrRTp2JIOIJ6VVGF/5tSl2JoXt/SdYvV1YO7BN@vger.kernel.org, AJvYcCXnp/9R3wo15frjSg1OmAWWk0uMR3IFlObUIYDGuvZ6huJWsvJG13LoWiaIjOmG8epz2amZiWzQVQE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUblTl4/Cp6hK+2GzoqtVR+fWoveijKbpA6y/MPHdHn920kxGc
+	FifGukBc2tsANYXTzjhdthoDDiH+eBLg14Urf1hVqqKsxqi3R7AvWDfN9vl4ubeg
+X-Gm-Gg: ASbGncv1MQ7cRe2ZcfNeNczzFGd0qqCsDkbM9M+9247edatWEHe75PIKAlW+DMVUCE+
+	LXJGe4ehzCPAj50FcxzCGWYPdjUb6cXDOKny2tckhizAAkXHCQirqCQNV7QrohaddjMtMnhjvl8
+	YXmQ6Fv2ETIhV+U7xtPiZ/Utnor05tRciuQKvJl2O/daawEJKHwrKrGyRwMjEOUUjkuCOIB7JOK
+	BcKrMNksjWulrqMK6guq2KKxdVefI+CYXV/8DWBTRFYk1FAQWgCvY3o8WiQfFoc0a1AQtuWEJz9
+	L5/FnmOhL341RFqbUjYxoz8fy19lcWehu1DQrvDgjWrJ0mg0QIKxrGMdRMDmEAWg0d+HXxB4+Y+
+	LsjWAMKHQUSiBhQbxH5FVqGSaUvWQcTGTJA0+YddkufSZQvokJLsrJr++yF4j
+X-Google-Smtp-Source: AGHT+IFGWyS+iCmY7mzjhAsPN+k928BiREDzOXt0k/jAzn7rlqkw3J2jNctBHg4EPqbo7GLSlyZJbA==
+X-Received: by 2002:a05:6102:54a6:b0:4df:4a04:8d5e with SMTP id ada2fe7eead31-50fdf8e5078mr1495148137.8.1755185015804;
+        Thu, 14 Aug 2025 08:23:35 -0700 (PDT)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-509aee2556asm2155776137.22.2025.08.14.08.23.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 08:23:35 -0700 (PDT)
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-89018fcdcd4so533771241.1;
+        Thu, 14 Aug 2025 08:23:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU+4J1Zoqd6RH0PYqpCCp7HBFSPQk3Gan1ieOmDzTXkff+UiU8+WE0iXHzS1FGReBYfZUqzVi0JiBo=@vger.kernel.org, AJvYcCVlJnnJ6jzSSWTjkfprtRmngmjSmWGDTnpjZ6Xae6oXWxP2vLCC1Uu142NeU+TryoLOXRiyGHPOxrJFBa7hfPkIwXY=@vger.kernel.org, AJvYcCWbH/swOcCJ0oV8rZgxeQxYK1jAr/BIC5pB52a1PT1lnn8J+Ibyw8vv86Cg6akiugsnX5L9/0MhHka6ZzqF@vger.kernel.org
+X-Received: by 2002:a05:6102:6a85:b0:4f3:36bc:554f with SMTP id
+ ada2fe7eead31-50fdf2dc666mr1330157137.4.1755185014743; Thu, 14 Aug 2025
+ 08:23:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 001/114] clk: at91: peripheral: fix return value
-To: <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>,
-	"Stephen Boyd" <sboyd@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-	"Alexandre Belloni" <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Paul Cercueil <paul@crapouillou.net>, "Steen
- Hegelund" <Steen.Hegelund@microchip.com>, Daniel Machon
-	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <soc@lists.linux.dev>
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com>
- <20250811-clk-for-stephen-round-rate-v1-1-b3bf97b038dc@redhat.com>
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Content-Language: en-US, fr
-Organization: microchip
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-1-b3bf97b038dc@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250812171720.3245851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250812171720.3245851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 14 Aug 2025 17:23:23 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUFUTpA711xfGOyc7iEMnML1qesYv+ZTP=SEh09yLGXJA@mail.gmail.com>
+X-Gm-Features: Ac12FXwusyOrnYu42swR2dZbBbdA963OtASjhChxeNyolXggOV8FBZ1vTVfWLS8
+Message-ID: <CAMuHMdUFUTpA711xfGOyc7iEMnML1qesYv+ZTP=SEh09yLGXJA@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a09g077: Add module clocks for SCI1-SCI5
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/08/2025 at 17:17, Brian Masney via B4 Relay wrote:
-> From: Brian Masney <bmasney@redhat.com>
-> 
-> determine_rate() is expected to return an error code, or 0 on success.
-> clk_sam9x5_peripheral_determine_rate() has a branch that returns the
-> parent rate on a certain case. This is the behavior of round_rate(),
-> so let's go ahead and fix this by setting req->rate.
-> 
-> Fixes: b4c115c76184f ("clk: at91: clk-peripheral: add support for changeable parent rate")
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+Hi Prabhakar,
 
-Looks good to me:
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+On Tue, 12 Aug 2025 at 19:17, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add asynchronous core clocks and module clocks for SCI channels 1
+> through 5 on the RZ/T2H SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks, best regards,
-   Nicolas
+Thanks for your patch!
 
-> ---
->   drivers/clk/at91/clk-peripheral.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-> index c173a44c800aa8cc6970c266995f4a60b0a38554..629f050a855aaebfd1a03ff87c2b016cd2284a5a 100644
-> --- a/drivers/clk/at91/clk-peripheral.c
-> +++ b/drivers/clk/at91/clk-peripheral.c
-> @@ -279,8 +279,11 @@ static int clk_sam9x5_peripheral_determine_rate(struct clk_hw *hw,
->          long best_diff = LONG_MIN;
->          u32 shift;
-> 
-> -       if (periph->id < PERIPHERAL_ID_MIN || !periph->range.max)
-> -               return parent_rate;
-> +       if (periph->id < PERIPHERAL_ID_MIN || !periph->range.max) {
-> +               req->rate = parent_rate;
-> +
-> +               return 0;
-> +       }
-> 
->          /* Fist step: check the available dividers. */
->          for (shift = 0; shift <= PERIPHERAL_MAX_SHIFT; shift++) {
-> 
-> --
-> 2.50.1
-> 
-> 
+> --- a/drivers/clk/renesas/r9a09g077-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
+> @@ -48,6 +48,11 @@
+>  #define DIVCA55S       CONF_PACK(SCKCR2, 12, 1)
+>
+>  #define DIVSCI0ASYNC   CONF_PACK(SCKCR3, 6, 2)
+> +#define DIVSCI1ASYNC   CONF_PACK(SCKCR3, 8, 2)
+> +#define DIVSCI2ASYNC   CONF_PACK(SCKCR3, 10, 2)
+> +#define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
+> +#define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
+> +#define DIVSCI5ASYNC   CONF_PACK(SCKCR2, 18, 2)
 
+Please move the last one to the previous block, next to the other
+SCKCR2 definitions.
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.18, with the above fixed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
