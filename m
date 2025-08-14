@@ -1,145 +1,231 @@
-Return-Path: <linux-kernel+bounces-768510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DADB261CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:06:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84542B261D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB73F5A2ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:01:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E86621E72
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872282FA0F8;
-	Thu, 14 Aug 2025 10:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S2Za1iEb"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DD42E8885;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08F72F7461;
 	Thu, 14 Aug 2025 10:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DCA2264CF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755165687; cv=none; b=ZbJ1yKg/BHVUK4hDvdGVeS6vnOJ5S4lsvfx4UcgFMC7IHUU68uOhINaC4tVw4JV4x+o4Sd+V4aDJfmPk/YMTyt+DdRezZQ/oK74QpobWdf+smtnTIki+Sp8QfSBZNSQDvIHp/NkpCGkdA5UZpiqtYW59mWkefgz6BwMEaSAy0FM=
+	t=1755165686; cv=none; b=Yu5cukXLVMhWgFjS+hhq6K7L2v7nHb4VAF4sOfW2utNBKI5zDdj86goslmEpYwIM1Yt8ydRA6Pvvddf+/eJw5QHLGQ5NhPnT+/DC0mVIAw9xpiNng4TVgLnmZcOkpPMefvo2ivgxsBtJJ4/bQ1xsd39o9w7LS03VrDknsh1DICI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755165687; c=relaxed/simple;
-	bh=BrDWoluxtku+nAW6JwX2qFZu1TEVQX5iuHLya+uBpYE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r7Tl+2BEn9yTKoeMvZnu5cIbEakL881pkqe2n1bJwrsX2maDv0bzJonV0uPsAh65lienk3NS8NGUHXcPN6G8YsPO0glrUzc7OoMorVAn8Ny1yWMNNWEU6ESCwAuFDD6nDOUTd+Dy3rDX+NfsZA8MN9MaJYoUltCU2/a6qs+/clg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S2Za1iEb; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2e5c0d4fso656399b3a.0;
-        Thu, 14 Aug 2025 03:01:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755165686; x=1755770486; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eXsOjMYTb4N096B2RBgHg0TlPam36w84ousz1r3Kh/Q=;
-        b=S2Za1iEbBrHLj8afqLIavbFzmBNv1Nwn8VbdFKQPlubN6eCfEtmUitXj1IB0OHZfRn
-         brG7zZ3FPh1rKTdob39M1ezW9cEsqYV2MsK6cXFZVSXFYvQ4Ts/ina/896ktnMGwGdSz
-         b+i7olZsOT0wMf8TLdm0JXKQRPiahVinb5v5CqjBSU7wj9guCEkanq2lOXAhZpmO7x3k
-         M1tBCUumCKiZgN9S0trLuzYPF/8CFeESoMDwxyw90X73Rk/azbYF4xbGHZHXhZ2eda8d
-         fDQ4K/Y+Xy267Lc2WYN6lBJHn3vGG9sijWVK1ZjDiS3m22MvNARaTBJyL/ywdXjkVJdQ
-         wRlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755165686; x=1755770486;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eXsOjMYTb4N096B2RBgHg0TlPam36w84ousz1r3Kh/Q=;
-        b=J8Gl4YsHBSlh431wpn1FBtmEHUHvwqawOWj8vw9TCwXc2eXeCAIO+HtRk8aO1USmSc
-         u2FjJBL3MWRnXh+ZvBh4Ty6TlH3grT8FERcrzvl06cUQ//cC7kOw70rAMnhiUaC0024O
-         MVELqA/iCAizfHeV6vYmSXPYBbyQkdOBDBrKTknH99qikIgbPphA3qaQ620xY38tvtxs
-         vroAJqyM6ngHcGO94VNyzbmcYhP4q3vAmKgHhqhp9TbPDQjuiRx2bb41eSipMDpz/OLi
-         xC+oQoIl/MEGo6DyPQBhZBOrtUtken/LBNorCFJc685FYpGLWHfvCb6A5Z7Y/4JMS4Gj
-         zobg==
-X-Forwarded-Encrypted: i=1; AJvYcCVy2J7QGdKEcG/eMSO+xu4BdV5gz0c+7Qa3hAC9XnbnBdRBpfR6bZQ19ggDJEr05AChXLiF4Z8O/x2HCb4=@vger.kernel.org, AJvYcCXofr7AmzBX5tYFb+CTa3P9TQlN7AtL/njyn8b0CWzwIphWXtWBQNMQWcAnPKi4srECnHDNuNxGISDoP4ZdQQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOANIPBj/63mI5XlCcyD+/klEVjskUvGeIeG9OMrx9bAmEtEga
-	amox5RqtXNC4o1wL+VJ1Qqcw6gvnS7LPISu0CSqu6V8jU+SND8Gnp4Hf
-X-Gm-Gg: ASbGnct5MptKk31yTmV4u/q4ujxVBaa8B2LTl7g2+eq+E1SJ8SE3CRDjOEVnYucwpUe
-	8qPjqJWUk4507Kg4N7ZczNhMVY9gWWEVCcQQyA+POcNGcoa2pMg/Gnkib/xvaUuom1WoI7NdFZv
-	1QHGuTmp/r1tclw+Ak9d6TrAWsqUtudCJPKi0C8D0r5FQEfgW+zDNPVzefZJflRBXRsZDa4tjXg
-	tG2OHY6hPBr6ZzckR1+BbvruLeJ7acsK3ZzbxvDOaXTBgiOQREwfUfdK6KwZvDMaHZr4pElj2SP
-	ARsXNmzgDGoT7kErFXv3v60f6ICMDjsdTqk1NOPTgx7e4i5I9pxzsGEpt8hRsPHgrYmH1WPO8fC
-	SrxBLL8SEHgHfg4srF6HzzMzWz0QaJ6QSv+DAAFnqNVb5E40=
-X-Google-Smtp-Source: AGHT+IHtQtzs4xAhMglWTlMm98Tg62vXGnMsGvFl8G6W60TYRQsjv42WL6mcwaBkuN3cuuOHuM8EeQ==
-X-Received: by 2002:a05:6a00:179a:b0:76b:cae6:ee8a with SMTP id d2e1a72fcca58-76e2fd434f7mr3459776b3a.12.1755165685117;
-        Thu, 14 Aug 2025 03:01:25 -0700 (PDT)
-Received: from shankari-IdeaPad.. ([103.24.60.31])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbce84sm34377876b3a.71.2025.08.14.03.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 03:01:24 -0700 (PDT)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Shankari Anand <shankari.ak0208@gmail.com>
-Subject: [PATCH RESEND] rust: fs: update ARef and AlwaysRefCounted imports from sync::aref
-Date: Thu, 14 Aug 2025 15:31:01 +0530
-Message-Id: <20250814100101.304408-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755165686; c=relaxed/simple;
+	bh=CXYXs0dPEYMhtU9PbUst0aP64RMhqEm11qe4bE8+W84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qrETlwM8sBGO1Xwy0CmDjhUPiww/B/w4pMlCAJ0piNHYbGPq7TC0d2o//Sm1OW/FISZJN/BhuuDhm+E+BEB4DrBjNhdQrmH5uGBb5i8pkfsDaVUKLxKri1uOc99NCwLKXGDMLzArLjELARgs0H3WaQLvmiS3UZegrhI0OQRtLWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4B06E43380;
+	Thu, 14 Aug 2025 10:01:21 +0000 (UTC)
+Message-ID: <ce64a10b-74ff-407f-a8a8-94c114f753bf@ghiti.fr>
+Date: Thu, 14 Aug 2025 12:01:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 09/13] mm: Provide address parameter to
+ p{te,md,ud}_user_accessible_page()
+To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
+ sweettea-kernel@dorminy.me, nicholas@linux.ibm.com,
+ christophe.leroy@csgroup.eu, Rohan McLure <rmclure@linux.ibm.com>,
+ Ingo Molnar <mingo@kernel.org>
+References: <20250813062614.51759-1-ajd@linux.ibm.com>
+ <20250813062614.51759-10-ajd@linux.ibm.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250813062614.51759-10-ajd@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepudelfedrfeefrdehjedrudelleenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeduleefrdeffedrheejrdduleelpdhhvghloheplgduledvrdduieekrddvvddruddtudgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheprghjugeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehlihhnuhigphhptgdquggvvheslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehli
+ hhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-Update call sites in the fs subsystem to import `ARef` and
-`AlwaysRefCounted` from `sync::aref` instead of `types`.
 
-This aligns with the ongoing effort to move `ARef` and
-`AlwaysRefCounted` to sync.
+On 8/13/25 08:26, Andrew Donnellan wrote:
+> From: Rohan McLure <rmclure@linux.ibm.com>
+>
+> On several powerpc platforms, a page table entry may not imply whether
+> the relevant mapping is for userspace or kernelspace. Instead, such
+> platforms infer this by the address which is being accessed.
+>
+> Add an additional address argument to each of these routines in order to
+> provide support for page table check on powerpc.
+>
+> [ajd@linux.ibm.com: rebase on arm64 changes]
+> Signed-off-by: Rohan McLure <rmclure@linux.ibm.com>
+> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Acked-by: Ingo Molnar <mingo@kernel.org>  # x86
+> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+> ---
+> v15: rebase
+> ---
+>   arch/arm64/include/asm/pgtable.h |  6 +++---
+>   arch/riscv/include/asm/pgtable.h |  6 +++---
+>   arch/x86/include/asm/pgtable.h   |  6 +++---
+>   mm/page_table_check.c            | 12 ++++++------
+>   4 files changed, 15 insertions(+), 15 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 2203ebac81d9..254265e9a423 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1290,17 +1290,17 @@ static inline int pmdp_set_access_flags(struct vm_area_struct *vma,
+>   #endif
+>   
+>   #ifdef CONFIG_PAGE_TABLE_CHECK
+> -static inline bool pte_user_accessible_page(pte_t pte)
+> +static inline bool pte_user_accessible_page(pte_t pte, unsigned long addr)
+>   {
+>   	return pte_valid(pte) && (pte_user(pte) || pte_user_exec(pte));
+>   }
+>   
+> -static inline bool pmd_user_accessible_page(pmd_t pmd)
+> +static inline bool pmd_user_accessible_page(pmd_t pmd, unsigned long addr)
+>   {
+>   	return pmd_valid(pmd) && !pmd_table(pmd) && (pmd_user(pmd) || pmd_user_exec(pmd));
+>   }
+>   
+> -static inline bool pud_user_accessible_page(pud_t pud)
+> +static inline bool pud_user_accessible_page(pud_t pud, unsigned long addr)
+>   {
+>   	return pud_valid(pud) && !pud_table(pud) && (pud_user(pud) || pud_user_exec(pud));
+>   }
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index d60e1604852d..f3dd94929d58 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -817,17 +817,17 @@ static inline void set_pud_at(struct mm_struct *mm, unsigned long addr,
+>   }
+>   
+>   #ifdef CONFIG_PAGE_TABLE_CHECK
+> -static inline bool pte_user_accessible_page(pte_t pte)
+> +static inline bool pte_user_accessible_page(pte_t pte, unsigned long addr)
+>   {
+>   	return pte_present(pte) && pte_user(pte);
+>   }
+>   
+> -static inline bool pmd_user_accessible_page(pmd_t pmd)
+> +static inline bool pmd_user_accessible_page(pmd_t pmd, unsigned long addr)
+>   {
+>   	return pmd_leaf(pmd) && pmd_user(pmd);
+>   }
+>   
+> -static inline bool pud_user_accessible_page(pud_t pud)
+> +static inline bool pud_user_accessible_page(pud_t pud, unsigned long addr)
+>   {
+>   	return pud_leaf(pud) && pud_user(pud);
+>   }
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index 63350b76c0c6..b977cebb5f44 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -1679,17 +1679,17 @@ static inline bool arch_has_hw_nonleaf_pmd_young(void)
+>   #endif
+>   
+>   #ifdef CONFIG_PAGE_TABLE_CHECK
+> -static inline bool pte_user_accessible_page(pte_t pte)
+> +static inline bool pte_user_accessible_page(pte_t pte, unsigned long addr)
+>   {
+>   	return (pte_val(pte) & _PAGE_PRESENT) && (pte_val(pte) & _PAGE_USER);
+>   }
+>   
+> -static inline bool pmd_user_accessible_page(pmd_t pmd)
+> +static inline bool pmd_user_accessible_page(pmd_t pmd, unsigned long addr)
+>   {
+>   	return pmd_leaf(pmd) && (pmd_val(pmd) & _PAGE_PRESENT) && (pmd_val(pmd) & _PAGE_USER);
+>   }
+>   
+> -static inline bool pud_user_accessible_page(pud_t pud)
+> +static inline bool pud_user_accessible_page(pud_t pud, unsigned long addr)
+>   {
+>   	return pud_leaf(pud) && (pud_val(pud) & _PAGE_PRESENT) && (pud_val(pud) & _PAGE_USER);
+>   }
+> diff --git a/mm/page_table_check.c b/mm/page_table_check.c
+> index 1c33439b9c0b..abc2232ceb39 100644
+> --- a/mm/page_table_check.c
+> +++ b/mm/page_table_check.c
+> @@ -151,7 +151,7 @@ void __page_table_check_pte_clear(struct mm_struct *mm, unsigned long addr,
+>   	if (&init_mm == mm)
+>   		return;
+>   
+> -	if (pte_user_accessible_page(pte)) {
+> +	if (pte_user_accessible_page(pte, addr)) {
+>   		page_table_check_clear(pte_pfn(pte), PAGE_SIZE >> PAGE_SHIFT);
+>   	}
+>   }
+> @@ -163,7 +163,7 @@ void __page_table_check_pmd_clear(struct mm_struct *mm, unsigned long addr,
+>   	if (&init_mm == mm)
+>   		return;
+>   
+> -	if (pmd_user_accessible_page(pmd)) {
+> +	if (pmd_user_accessible_page(pmd, addr)) {
+>   		page_table_check_clear(pmd_pfn(pmd), PMD_SIZE >> PAGE_SHIFT);
+>   	}
+>   }
+> @@ -175,7 +175,7 @@ void __page_table_check_pud_clear(struct mm_struct *mm, unsigned long addr,
+>   	if (&init_mm == mm)
+>   		return;
+>   
+> -	if (pud_user_accessible_page(pud)) {
+> +	if (pud_user_accessible_page(pud, addr)) {
+>   		page_table_check_clear(pud_pfn(pud), PUD_SIZE >> PAGE_SHIFT);
+>   	}
+>   }
+> @@ -208,7 +208,7 @@ void __page_table_check_ptes_set(struct mm_struct *mm, unsigned long addr,
+>   
+>   	for (i = 0; i < nr; i++)
+>   		__page_table_check_pte_clear(mm, addr + PAGE_SIZE * i, ptep_get(ptep + i));
+> -	if (pte_user_accessible_page(pte))
+> +	if (pte_user_accessible_page(pte, addr))
+>   		page_table_check_set(pte_pfn(pte), nr, pte_write(pte));
+>   }
+>   EXPORT_SYMBOL(__page_table_check_ptes_set);
+> @@ -234,7 +234,7 @@ void __page_table_check_pmds_set(struct mm_struct *mm, unsigned long addr,
+>   
+>   	for (i = 0; i < nr; i++)
+>   		__page_table_check_pmd_clear(mm, addr + PMD_SIZE * i, *(pmdp + i));
+> -	if (pmd_user_accessible_page(pmd))
+> +	if (pmd_user_accessible_page(pmd, addr))
+>   		page_table_check_set(pmd_pfn(pmd), stride * nr, pmd_write(pmd));
+>   }
+>   EXPORT_SYMBOL(__page_table_check_pmds_set);
+> @@ -250,7 +250,7 @@ void __page_table_check_puds_set(struct mm_struct *mm, unsigned long addr,
+>   
+>   	for (i = 0; i < nr; i++)
+>   		__page_table_check_pud_clear(mm, addr + PUD_SIZE * i, *(pudp + i));
+> -	if (pud_user_accessible_page(pud))
+> +	if (pud_user_accessible_page(pud, addr))
+>   		page_table_check_set(pud_pfn(pud), stride * nr, pud_write(pud));
+>   }
+>   EXPORT_SYMBOL(__page_table_check_puds_set);
 
-Suggested-by: Benno Lossin <lossin@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1173
-Acked-by: Alice Ryhl <aliceryhl@google.com>
-Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
----
-It part of a subsystem-wise split series, as suggested in:
-https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
-This split series is intended to ease review and subsystem-level maintenance.
 
-The original moving patch is here: (commit 07dad44aa9a93)
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
 
-Gradually the re-export from types.rs will be eliminated in the
-future cycle.
+Thanks,
 
-(Carry-forwarded acked-by tag and added Christian and Alexander as recipient)
----
- rust/kernel/fs/file.rs | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-index 35fd5db35c46..18cf579d3312 100644
---- a/rust/kernel/fs/file.rs
-+++ b/rust/kernel/fs/file.rs
-@@ -11,7 +11,8 @@
-     bindings,
-     cred::Credential,
-     error::{code::*, Error, Result},
--    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
-+    sync::aref::{ARef, AlwaysRefCounted},
-+    types::{NotThreadSafe, Opaque},
- };
- use core::ptr;
- 
--- 
-2.34.1
+Alex
 
 
