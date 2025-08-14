@@ -1,124 +1,154 @@
-Return-Path: <linux-kernel+bounces-769173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A468B26B16
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:34:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0336FB26B02
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ABC11CC0EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:31:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D1267B3C72
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84488223DEC;
-	Thu, 14 Aug 2025 15:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85129225A35;
+	Thu, 14 Aug 2025 15:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EP0Zh5mv"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jTOR52cE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCFF22422B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34A321B9D6;
+	Thu, 14 Aug 2025 15:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755185465; cv=none; b=syb6upuEodBRsJuiYUEjMkDqHGN6uM2iBmjNIrnaWHkH3QJvFD6Wq1Nfsvzc4JdJBIN5O5GTD+qbRAu5OOvsGInwj8yGAZBka327Tf8oPHCTUV2ILTkm7LCkjBeJeTMyMSqqEpC/piws3SdhpdXvfY1p/JfWDJDB1mHc41q58Cc=
+	t=1755185450; cv=none; b=PhpxBbjIVakEsl81t/Pj6FJr7g4QZBrlfRMizaLeJOXEQnNQ0nguYXUJWEkur83fzvwbDpyHnM+grtG+tWAgpsmM3cVwwxTBP4G94fRbE/AKH11b0nEJ3tKIyU2u60XX7vrvo0I0DFMPbwT5A2WlCYaX7bXhHfc1RIVfCFZ2avc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755185465; c=relaxed/simple;
-	bh=6pEXfEutJZNFRvI9iOQTeyeyiNCFfdCXQmwpC/lAWTs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8QExL0b4IIVyVIy7F7YRZI0fzLvMoRLKt7rkPMXSiz7SBu2fjY0rXxZNLVF65ro2JNjJ9qQcsraaV9MNy+CSDkVC+LZ8F8Sut4ehJOfpOaHY7hmH4fbku7ogYfiY9Sou0ACrUTryWM8VIb0M2YqVOD7EJ2Arus+LIGf6NuLKNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EP0Zh5mv; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-88432ccd787so59217039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1755185463; x=1755790263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=P81sLlQTBntaiAmYzutesJIvj0Q6YtF/nY9RwqB2OPg=;
-        b=EP0Zh5mvgRkeSespWlx8Bxo1bZi+JsDUlMxfzcjBx7PvtHBc0cZtFRz6kpVWSRATGZ
-         zhxIA9Ef/z6NwcRL9JWdei1bNjySEyR/oDVYv24Xp1BPHJd9p0YTxmR5qZF7SVrGBmFn
-         qPf4waKU4d8FWl+vY+VWHT876/DLdAQ27xonc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755185463; x=1755790263;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P81sLlQTBntaiAmYzutesJIvj0Q6YtF/nY9RwqB2OPg=;
-        b=fG36dTiz2RTkIb8tmVk/A8pGYD1vUbPu2wgGBqY/UZtFKHVCNgTwuS26/iLRBK1RUw
-         kpBOPOcfMuDB2SaSyqGAvSKFzh1HlBnKUDkYfYKGafALc6AHLTEnMw9R053J65qr2LYE
-         awBIxjovmjwpeTItAiy6oRgzU8XNjIPMf9OtCayhPE67hNU1nWkx/yZastdDtutpQ3JK
-         qolQXtOBtLLW+Kh87Mi81gzmmm123QPig3kemDwx0W2Xj1INlsctM7Kl83SnjJApe3GM
-         DBm0A0j2jOfYPjhZybFUNQYlxS1Gz5tollIF11HRbYEBkyipAw5a/56BYxCO2s9+J+sG
-         ZQaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQFww8YhMuxnR8Zcft+wNP5YUGxI0Gxzl3KzoQ3QEqYJrq9D6u99ojJolgLZAzsnYP2yyh+qIzG/gR5zE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8a4tRUf9tsZj4JkqWtoaD6wi9aNANge7IOvqUEOGUzhqbRhUY
-	DjwPAo10uNqa22P7cM3oFSJKZ/+l8ZhwXOjFj7ptw+3jHw6ZFa3yuuckPqCOb0xiIx0=
-X-Gm-Gg: ASbGnctVF1J+FPvUIsghkIXhtksVbz+ZqEMRi3Eom3r7HWR9QN19vpHKzgmEPh/FxZ0
-	axXMtW6ot+YxufCYjuvDe1gr0Ig7uNSH06TN1OJNYrYLMHsZDVx0N2lHOX5m9I0ZqfRTwlAfHrh
-	s7WP+v4wz32M7eMvW/hgHA/EbthllZiZJxDCDQpvz6rtwFWK2qVmA4DhC420etVbvDPki6GGG5U
-	4EiYr64kX5Wr7L5djIIjRQBLxyzvh6h+por4rHjfjQhk7gy7ku0DFInMyS6/rPYvOgUi40QvHKi
-	zRuf4UuyjBanEUomxwZMyHkB1n+JS0mcBIQ368n0fwP/QNj0aQW8UX5LBS4aN42E4xriXYA9H0j
-	5JBw94tqbNxOMeHUCSJkEElBKoV97A0mo+0v5g3UBy6dpEA==
-X-Google-Smtp-Source: AGHT+IHqEzRf3rffyzPsHD2EKsF4U453EP+95KNO41JbKJnPnjn6DHb2sPXPvKuMmoj+GWLiCfXedQ==
-X-Received: by 2002:a05:6602:148a:b0:87c:38f7:556a with SMTP id ca18e2360f4ac-88433c9b735mr588192239f.8.1755185438769;
-        Thu, 14 Aug 2025 08:30:38 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-883f18d5d77sm535160439f.14.2025.08.14.08.30.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 08:30:38 -0700 (PDT)
-Message-ID: <08a4b41b-fdcc-4104-b02c-ec28078ae80a@linuxfoundation.org>
-Date: Thu, 14 Aug 2025 09:30:36 -0600
+	s=arc-20240116; t=1755185450; c=relaxed/simple;
+	bh=cvTYcOO2SFOCDjwerP1KEOTUieXi4c8bDV0Z2qhr2s4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCNVFuF9QEbSi1LuTJ12N7FashyRRv7NMAZgqIijJATbUTtgVnwfpXju9RKroLX001/15shT4g1HFz1/vXrqXzq4OxjXts6Br2ozB5rzgdxUgPK8Ux3GZob1A+lGtTub49ZYzQSY0rv2qBnV5OAWeOs5WBN1lbqPMp6MMNjQVVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jTOR52cE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51789C4CEED;
+	Thu, 14 Aug 2025 15:30:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755185450;
+	bh=cvTYcOO2SFOCDjwerP1KEOTUieXi4c8bDV0Z2qhr2s4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jTOR52cELhkyDE+NrphwZYdLWf4cfJAMhSsdNkjjGXFVbnh3vqBpW91wVEGUkEYtJ
+	 JRwUwCFEaf4x+OyYrdf0R9Ua1H5/GNFbwLX4h6vwnDEiIka6iFvJzrjB6meClf4B8X
+	 WkXh/Yp7lXXwYtX1kgmHJ7Jz6UEKqS9UWLtHT8Mc=
+Date: Thu, 14 Aug 2025 17:30:46 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	qemu-devel@nongnu.org,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	LTP List <ltp@lists.linux.it>, chrubis <chrubis@suse.cz>,
+	Petr Vorel <pvorel@suse.cz>, Ian Rogers <irogers@google.com>,
+	linux-perf-users@vger.kernel.org, Joseph Qi <jiangqi903@gmail.com>,
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	Zhang Yi <yi.zhang@huawei.com>, Theodore Ts'o <tytso@mit.edu>,
+	Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
+Message-ID: <2025081436-upchuck-shush-adba@gregkh>
+References: <20250812173419.303046420@linuxfoundation.org>
+ <CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com>
+ <2025081300-frown-sketch-f5bd@gregkh>
+ <CA+G9fYuEb7Y__CVHxZ8VkWGqfA4imWzXsBhPdn05GhOandg0Yw@mail.gmail.com>
+ <2025081311-purifier-reviver-aeb2@gregkh>
+ <42aace87-1b89-4b17-96f1-3efbabc4acf3@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] print: fix spelling error in message
-To: Madhur Kumar <madhurkumar004@gmail.com>, aconole@redhat.com,
- echaudro@redhat.com, i.maximets@ovn.org, shuah@kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- dev@openvswitch.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250814144916.338054-1-madhurkumar004@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250814144916.338054-1-madhurkumar004@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42aace87-1b89-4b17-96f1-3efbabc4acf3@huaweicloud.com>
 
-On 8/14/25 08:49, Madhur Kumar wrote:
-
-Missing changelog - commit summary log is missing the subsystem
-details - selftests/net: ------
-
-> Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
-> ---
->   tools/testing/selftests/net/openvswitch/ovs-dpctl.py | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Aug 14, 2025 at 09:27:49AM +0800, Zhang Yi wrote:
+> On 2025/8/13 22:53, Greg Kroah-Hartman wrote:
+> > On Wed, Aug 13, 2025 at 08:01:51PM +0530, Naresh Kamboju wrote:
+> >> Hi Greg,
+> >>
+> >>>> 2)
+> >>>>
+> >>>> The following list of LTP syscalls failure noticed on qemu-arm64 with
+> >>>> stable-rc 6.16.1-rc1 with CONFIG_ARM64_64K_PAGES=y build configuration.
+> >>>>
+> >>>> Most failures report ENOSPC (28) or mkswap errors, which may be related
+> >>>> to disk space handling in the 64K page configuration on qemu-arm64.
+> >>>>
+> >>>> The issue is reproducible on multiple runs.
+> >>>>
+> >>>> * qemu-arm64, ltp-syscalls - 64K page size test failures list,
+> >>>>
+> >>>>   - fallocate04
+> >>>>   - fallocate05
+> >>>>   - fdatasync03
+> >>>>   - fsync01
+> >>>>   - fsync04
+> >>>>   - ioctl_fiemap01
+> >>>>   - swapoff01
+> >>>>   - swapoff02
+> >>>>   - swapon01
+> >>>>   - swapon02
+> >>>>   - swapon03
+> >>>>   - sync01
+> >>>>   - sync_file_range02
+> >>>>   - syncfs01
+> >>>>
+> >>>> Reproducibility:
+> >>>>  - 64K config above listed test fails
+> >>>>  - 4K config above listed test pass.
+> >>>>
+> >>>> Regression Analysis:
+> >>>> - New regression? yes
+> >>>
+> >>> Regression from 6.16?  Or just from 6.15.y?
+> >>
+> >> Based on available data, the issue is not present in v6.16 or v6.15.
+> >>
+> >> Anders, bisected this regression and found,
+> >>
+> >>   ext4: correct the reserved credits for extent conversion
+> >>     [ Upstream commit 95ad8ee45cdbc321c135a2db895d48b374ef0f87 ]
+> >>
+> >> Report lore link,
+> >>
+> >> https://lore.kernel.org/stable/CA+G9fYtBnCSa2zkaCn-oZKYz8jz5FZj0HS7DjSfMeamq3AXqNg@mail.gmail.com/
+> > 
+> > Great, and that's also affecting 6.17-rc1 so we are "bug compatible"?
+> > :)
+> > 
 > 
-> diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> index 8a0396bfa..b521e0dea 100644
-> --- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> +++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> @@ -1877,7 +1877,7 @@ class OvsPacket(GenericNetlinkSocket):
->                       elif msg["cmd"] == OvsPacket.OVS_PACKET_CMD_EXECUTE:
->                           up.execute(msg)
->                       else:
-> -                        print("Unkonwn cmd: %d" % msg["cmd"])
-> +                        print("Unknown cmd: %d" % msg["cmd"])
->               except NetlinkError as ne:
->                   raise ne
->   
+> Hi,
+> 
+> This issue has already fixed in 6.17-rc1 through this series:
+> 
+> https://lore.kernel.org/linux-ext4/20250707140814.542883-1-yi.zhang@huaweicloud.com/
+> 
+> 
+> To fix this issue in 6.16, it's necessary to backport the whole series
+> instead of just pick 5137d6c8906b ("ext4: fix insufficient credits
+> calculation in ext4_meta_trans_blocks()") and 95ad8ee45cdb {"ext4: correct
+> the reserved credits for extent conversion").  Otherwise, this will make
+> the problem more likely to occur.
 
-Look at the submitting patches documentation to learn how to write
-commit summary, logs, and how to submit patches in general.
+Thanks, I'll just postpone this one for now.
 
-thanks,
--- Shuah
+greg k-h
 
