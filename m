@@ -1,293 +1,222 @@
-Return-Path: <linux-kernel+bounces-767762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD71B258D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:14:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410A4B258CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4A8723950
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E1D61B679AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655701922DD;
-	Thu, 14 Aug 2025 01:13:33 +0000 (UTC)
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F041C17C21C;
+	Thu, 14 Aug 2025 01:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHNLgEwz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EA2FF653;
-	Thu, 14 Aug 2025 01:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755134012; cv=none; b=Q9T7IXMFGVX9J6zQG/CyI9FQZRg6UJqItCK0mvLLnJwVe8EG0n2rRL4BJEFplrj7uFt01lhBSY8lUAyccaLkS++hMzTe/0YffMV2Gt16Zrh9fPDaNuysHqlR9MXKzfGr1LqCkSwEboHF3kRRQ1cAnivTcVOqYLG45xvpVjdEgOg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755134012; c=relaxed/simple;
-	bh=5v9NdgrIL68h/Zn/HscHqxUBL3WZYUGNHlkxFV453ds=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=L4OEL91qFARV1xNSMyJGK0PDdaeCAKv0PySSFtajWrnaNQtaDqZLGlndkvqiG7JBI3TJUCPNUw1sfAdrNyYEsJGBaBdb7M1q/UFAidCS+AEXRtWu/I2sNKc+rXAq+x1ej1tjc4+uoApL7tgBVZMdpCaHIbutFRD3gBTh0t9trco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1umMWx-005h4S-F7;
-	Thu, 14 Aug 2025 01:13:25 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637542FF653;
+	Thu, 14 Aug 2025 01:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755134060; cv=fail; b=CxmMf3QF7UP0DQ8160vsabV1Pa2VrOntcVJU+98tC88uD6LoXQbRYs99dSQlU/PNskd3T4OP9azUsc+wEtPJ0qcCF0YKl1e6QijYslW3/xnTAPcP40ySj+nGI/Vq1dsFrYEoylwkiCp5IQUoX6uHhXuIqXEJmCNpc/pw4nRu0cU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755134060; c=relaxed/simple;
+	bh=DjGYyfxSlSmW5/6adUbAuX1/3Q2Io+1KNTYr+YmAChA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZEZsJ8aeGDHaZdZ2UjsoIBIOGXIKE6w9K1vvm4yAa197lORtp+EImEZ9svTDSUXCIu1teavpxBQmmsEuPjk0SnELeeGiewMJoOu7I05D67Yw3Zzya+fq+hllTeTc4FOKyhE0n/ypkN7ZKLHekGQuvGLWHSwePcgiS6Zf3+G8VKs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHNLgEwz; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755134058; x=1786670058;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=DjGYyfxSlSmW5/6adUbAuX1/3Q2Io+1KNTYr+YmAChA=;
+  b=hHNLgEwzbPH4r8hWZLFuERzt+z56tF1M/x/OgdPOhCU9PjpdzDWjRRIF
+   irt8qSyteB/HYtb2a7poM+FBLY/PX0MT1PBBllqcBMn9kfng5dZN9MptW
+   adpsu1nJ3BB2cd0WfXYDUinBViwbCMGuNelplM+tRg/n02dFIuBc9smy4
+   nBE2CjeA6HIUm1w5O6k9mM9Z/q0927cJTX0LACDwhqlTEs0fuVsr8LTL6
+   4JvUDlils5Nh7hVuJJw0ZcQcgeJqOtsaepupMddsi0exQgV3shxJOBieD
+   7KBSL6PV4aQM/rRnedBfr4kHwawFI2hySm+3N/tB0BDQNjakhGLLWUDCR
+   w==;
+X-CSE-ConnectionGUID: 99WahjVpSWqMdhZ5pauJGg==
+X-CSE-MsgGUID: 9JdX9HvzTcyAxBoHUbpgzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="75015818"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="75015818"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 18:14:18 -0700
+X-CSE-ConnectionGUID: sicr9fKsSuWL/DRQgKU8SA==
+X-CSE-MsgGUID: LVlbZnKdQs+jnw7w9N4a/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="167424626"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 18:14:17 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Wed, 13 Aug 2025 18:14:17 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Wed, 13 Aug 2025 18:14:17 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (40.107.96.71) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 13 Aug 2025 18:14:17 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=udNVK//2lorEemqeqzog/Ire2kp533GAKIsB2Y5ZbULTZjaJho2ZvlTkSWc0lRvd2ZHuXsim9qYWqh+nm/1j/11zUdRdpEpioDYhF+mjF4t2Gn9fkXheG2hoVeBGJSJsl7hGsfdzXzjIdDyEUrWZVxmC4KnQH8MxmhMldaJgDC+b36PGk1/S92htnIAxymMia9TutyIeQprjE4X71OewrkQZYcq44CvggqLM2h4BqGO2NQPQRn72K+l168a6aJiVk6f1JfjFUwQekGNcf0PbwiE9/C7jaB/9NtkJedv7TiDzDwvV4RFWW4nLq2OVQEIaIFtrHq/VtJz17A7MZJ3y4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DjGYyfxSlSmW5/6adUbAuX1/3Q2Io+1KNTYr+YmAChA=;
+ b=AgjjfsBO5MovL9eVFbgH2PuFUQRbuHW66BAS83ddKVnbXmj4kr5fWvZi8Nc4yt2G1D81zxFnq8mW8UGHcE+sPTO96NTpOrhlRqyHU0VPKT48ka4Eyc6qt+k3xK944/xLHy9uyCF7BzGSHrGMmGRNKxAol7I6kgy6imNV1qEK0a8ccAngncGsTW+uOZYlftaNzNDSErDw8n3D0GBCG4EiG0meeg9haccKXr2b0mHu5VANVXfRfG6qbw2XZuv+5N/RnWdxCzqL4jwfeY05Pf4qCUn/0W9I4pp2rmKdx7J4ubFUdf7dLqyYfeEg/q9iPD0mGJy+bB7FGSN8rIOS5xnOVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DS0PR11MB8018.namprd11.prod.outlook.com (2603:10b6:8:116::12)
+ by DS0PR11MB6542.namprd11.prod.outlook.com (2603:10b6:8:d2::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.24; Thu, 14 Aug
+ 2025 01:14:14 +0000
+Received: from DS0PR11MB8018.namprd11.prod.outlook.com
+ ([fe80::3326:f493:9435:d3df]) by DS0PR11MB8018.namprd11.prod.outlook.com
+ ([fe80::3326:f493:9435:d3df%4]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
+ 01:14:14 +0000
+From: "Guo, Wangyang" <wangyang.guo@intel.com>
+To: "Hansen, Dave" <dave.hansen@intel.com>, Sean Christopherson
+	<seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+	<vkuznets@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, "H. Peter
+ Anvin" <hpa@zytor.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+CC: "Li, Tianyou" <tianyou.li@intel.com>, Tim Chen
+	<tim.c.chen@linux.intel.com>
+Subject: RE: [PATCH RESEND^2] x86/paravirt: add backoff mechanism to
+ virt_spin_lock
+Thread-Topic: [PATCH RESEND^2] x86/paravirt: add backoff mechanism to
+ virt_spin_lock
+Thread-Index: AQHcC+yQEgE5TQe78E2AKtk/v3wmArRgo+CAgAC1XSA=
+Date: Thu, 14 Aug 2025 01:14:14 +0000
+Message-ID: <DS0PR11MB80186AF86A0924C8240437C09235A@DS0PR11MB8018.namprd11.prod.outlook.com>
+References: <20250813005043.1528541-1-wangyang.guo@intel.com>
+ <a79307f2-e6be-4e59-a74e-16e09ed69e8f@intel.com>
+In-Reply-To: <a79307f2-e6be-4e59-a74e-16e09ed69e8f@intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR11MB8018:EE_|DS0PR11MB6542:EE_
+x-ms-office365-filtering-correlation-id: 18288500-6cc3-4a21-b623-08dddacfe244
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?MzFZMkNYVU9CVURCaExIeENNZCtKaWp5MitZNGIxY1pFM2pBSU53OHFmRStF?=
+ =?utf-8?B?eUo4RFlGK0ZWWTZSM1RiRnM3Z0dyeGNObnpJQTFYKzRIZlVKaFZVVy8zUk1s?=
+ =?utf-8?B?WTkzMUdaSGJSSytBdkFZbFhMS3hWQmdmMVNRd0lSSTlGdCtmbkhQK3RkT1ZL?=
+ =?utf-8?B?N0lzMWFSaEcyWnVxaGpzZVNaZlRpeFVnSmdBN3VNcHRSc3RXNGNsbGNRYU5E?=
+ =?utf-8?B?cTJZMitBandBM1RLLzlIZzBnQllpcXBmNUtBVm9Cc0Rodnk3S2FBeWY0aGZU?=
+ =?utf-8?B?ZHlOZU8zbjBCbFZ3WmZrYzM0WE1Pd09hWHlFbWJoZTd1aVFxTDhlb3Fab2R0?=
+ =?utf-8?B?NFJETUhPajJEWEpYYTZxM2x6S2ZxU2UvVUplSFl6cko0bUkrS3Y4SjZQa2pD?=
+ =?utf-8?B?YVhkeVlrY0FrcjdoeXVsaWw3NncybDZrYW04Z2lEWU9JOWRLQUQ4LzNpa2Ri?=
+ =?utf-8?B?TVVqUTc5QjVJelRCYlpKWVZUWlhlZy9MZE80QjdaS016bWlOZ2dvQVkzU05k?=
+ =?utf-8?B?SVVuekhIZ2lZMFU0VkxmM2dCS0RBaDhPUStHSjBsRzVzR3FFZnNRWlFvbkFH?=
+ =?utf-8?B?K1YxRGVzcG9zUUFNY3hRYnRsR1d6NlZHYUM0U3lMbE1GVWVFSkNEbEQ5TTNX?=
+ =?utf-8?B?OGt3ekJFOGxRK2tZRUc1ZVVzTHpNc2NwdmZmb2lNb25zODdTSUxlNTB1SGZK?=
+ =?utf-8?B?YjlxU3daMjVpOGErQzZqR253YVdqRTFZTWNlbUZXZlV6ZUJrbHRFMlZZUnIv?=
+ =?utf-8?B?NTdHRFZXYUVUaHBMTFdFK3hoVEd6QlcyZjdoa1NGQnlzT2lhQXlxbkRQdDZW?=
+ =?utf-8?B?VFdaV2dyL1JWOVJPRHEzQVhpdEdjT1UyWmp2bmRCN3NSWklXUnlZaFhLWHBH?=
+ =?utf-8?B?YnIyQm84Q29qZmRHNkRxMFkwUXFLUXhlLzhEWmQzNGYyWVErNldOSlRua0Q4?=
+ =?utf-8?B?N3B5Nk5EMWlTQUViMEQwY1I2SnFKQjRhNVlnK2lDZDAxMXE0Y1gxYXZUOWEw?=
+ =?utf-8?B?bytMVENUNlV1WUxBZzRmUmpxcFB5THBKOThURVJRR1VtZ3RJVFdCR0RuVHI1?=
+ =?utf-8?B?M3ZwRjQrZEhLL3lmSGxkSWpBejZNbHc0YjdnS0I4cnNZYVlPVEU2RXlWVzJ5?=
+ =?utf-8?B?QmFJS25iZ3krYzlkYktFdFNSd1BKYVZHUXdwK3N4TGtyd293d1VQWU9hK3pJ?=
+ =?utf-8?B?RjdzYStMampvV2FPUnI0Tk11VCtUZnNuOTlXbys5UnBzdlZnQ2lBS0JHYmhB?=
+ =?utf-8?B?UWpSMmUzbjVxM1RrcGdlRUFrRUVybzVRYUJ6WFUwWktvQml0SHVsMTBBTFhl?=
+ =?utf-8?B?dFB5ZE5KZjJuSkdadmg1WjY3NzVVVFNKRHdCUkswd2tTZkxYMmRDV0FxWTd4?=
+ =?utf-8?B?dEpFaXUyaTZPUVdjdHl6RFBxU3A1VFdwS1dsQndOM2dZREpYQnlWc0EyVFNv?=
+ =?utf-8?B?ZzBxUWY0NnlQblJvT2NyOVp2NURBTWh5eHVNbTRmNERBckRlZGdVOTVOUjRG?=
+ =?utf-8?B?UVVWbW9nS2Q3RG4rUnVVYzMrRVVVZUMzcjJ2RHFYTmh0eE03R2pFTXl5cWo4?=
+ =?utf-8?B?UXFhZ3NCUXVhbDEyQndOY2FWNTFHWGtQRWNFK2ZLTWxwTnNKWEo1MEJCRktq?=
+ =?utf-8?B?d2xWdEpSSjh0U284TUtieUMydzF1M2szWmovLzBtZmtnaGo0enpjUnBKNm8r?=
+ =?utf-8?B?L3g3di9hSFp6TlRwUWM1Rlc5aG5ZY25RRnpyditJUnFqUU12Q2Y4UWVqZ1Fv?=
+ =?utf-8?B?cTduNWFuSUloQjRXaHJIVlpnQTlvMWxnNXdOOWp2Rm4yaDBUaTQwK0tJZUxN?=
+ =?utf-8?B?NEpyYm1PZk9JeWtCdnZMc2hyTnF1TlltNFpQMDZpbUV0dEFqcVpqdngzaHQw?=
+ =?utf-8?B?WXNwZ21xSWd0ZU9UNHJzM2dEVkthVkJ6aEVtS0RBRFhYWElnNUVKUHM3Rk93?=
+ =?utf-8?B?ZTcvMkhPWEo3amVsbC8zYzRBSkFidXFXSDFjd1JPV0lxb2I1L0lwZFRZbXI3?=
+ =?utf-8?Q?UPMlnAYY0yOJ6EbNmOR8bVS26Jchz8=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8018.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cytMc1B6Uk1ybkR2eWVhU0NiSC9NYzlpS1BhRE5wU0VRNVJRbytZcmhxVFht?=
+ =?utf-8?B?QTdlTCtXaFhodUZDMFlKRGUzK3V0TndxMFhJMm5FOEtuSzNHVlQ1V2tvMi9k?=
+ =?utf-8?B?Smh2a3laOVAvRkIyZWc0Y2FseWZ6TmNyU0RlUnZxc3NZcXpmb0lJMVY0ZG56?=
+ =?utf-8?B?c1d5MzEzVUtpbTUvTVdqWUMvcU5NYmN5MGNjcUUxVkx3dnRPUlljR3NMTCtk?=
+ =?utf-8?B?VWE2NWRZb3BJQW54R3p2WnJTZ1dQMnNjNlZaOGNaQlhITHRab3BqdUJJQ0to?=
+ =?utf-8?B?VnF5eVVOVFZKTUYySlpQL3N0ZnZoYzlSYTNpdCs5Q0NoZnptRU9qbWJOaDhR?=
+ =?utf-8?B?ZVF0VUlFMXBEL0VhMXJTeHV5QjZZR2ZtbG9OdDBKZlBBVHIrUzVKMHRqODYy?=
+ =?utf-8?B?Q2ExSWdSWjJMNzYxYTNDUXNmRDYrWmZPRkRLK01mazdMa2RIaE5wWjA2bjFI?=
+ =?utf-8?B?T21HcWR1Wkc1eVp6em9QL3RGV2FwR2xwOGRzcTdBTHlFWVAxZ3lRN1FqZ1dp?=
+ =?utf-8?B?dXZ6ZFRTVDVOSTVXS3poYndjd0ZJdjQwT1N5bUkxcHBoMWFWMUw5bmxFcmtZ?=
+ =?utf-8?B?aXhzVlRSTDZyUzRXdFdWSWFHTzdBckxYWDFGZ3V5RDlJZUZxRVBhbW9BVmNj?=
+ =?utf-8?B?TDRZVkh2ekRwWTBFRzF5UytKWTdhcVR4bVRBWW9TUVhGTDJLYzNrSWV2WWdZ?=
+ =?utf-8?B?MEg0RFY5cVFXQ2xlWTJJdTYzK0JzYzU2UWNBWDJockJ4bDl0YXR3RjEwL0Qy?=
+ =?utf-8?B?MU5QQTdaUEpZdVlIWURkeGk2WlNMMm1iVkhmZUJDME1uNmpqSDE3M0FPYVNY?=
+ =?utf-8?B?azByYmZnazlhN2dUYlF2QkRISm5oV0VxQjFTbHdJYjIvaEZJdlhWdDN3SXNU?=
+ =?utf-8?B?dThQYzViNS96OUJwODg1ZXZyZGROZDdlelB5M2VGblJoU0U0a0lGUXlpekxD?=
+ =?utf-8?B?T3ZaTXB4RHNwa0d6cDVWODgwb00rdjczdnBJWEp3NlRtb3pxelY2OUQ5UXl5?=
+ =?utf-8?B?RkNLa1JoTEJkUVNtRnJIN2NvTk9IeEJLMEZEblZUbkJsUVJFN0lQQUQzMlhp?=
+ =?utf-8?B?ZXlVc2xsby90OXF0QnlKbVUyYUphR2lmaEsxdmJhTWVTbUczNTBCbHFCcTRP?=
+ =?utf-8?B?dmRPMXFPeEFUci94SWlhOVVhcHRmeU5aLzcvbnJ5MGVBZ25aOS93NnlKRDRG?=
+ =?utf-8?B?ZGsxZW55eG5TWm1FSmwyVVlmd1hqOGVkUFdkNVFmTWhOb3RVRDBoamU0Zkhx?=
+ =?utf-8?B?YVRYYThVTmdHbDJKR2hKZGFhU3hXQjBWUVFkN1FLMG9LOS9rMmZnc0ZQZGdv?=
+ =?utf-8?B?R25UVmhOREo3OTAvS2RKbCs2ZmYrSU9FVS82R0E1NjF0aUoxKy9LMlIydFRT?=
+ =?utf-8?B?QnhJMnpXajZYK0xjekFmZ3kybUhEbEVxTENRM2ozVTJnVityRytkMHF5TGdS?=
+ =?utf-8?B?WTZ6NzQ0NGl4Mk1PTTg5SUNvalo2N3JsakJpS1ZvdzVvSjVDcGxlZGJVTnRB?=
+ =?utf-8?B?SHpzNnJRTmtjdHdCSVVZUUxtcUlKb3ZPKzMxYUhhdmVVV01iV3VDdmhidmJC?=
+ =?utf-8?B?VXhxdnVFRHNHNDhXVk5JVStYMTErY1d6ODVub3JXbEl1Y2lkREdodDNEbGZq?=
+ =?utf-8?B?aFJTY3UvcWUxVmF5eUd4amh0YVJKVG40NEtFdStjVjFxVkorOEo4V0dkWGdW?=
+ =?utf-8?B?Ylg1OE54dWZSSkZOYzVGWVduK3lOQXkyNFA4UjR6RVlacXYrVTRpaDdISW1I?=
+ =?utf-8?B?WXVkaHZ6QmxYejEvUDhHRzZOYndac01MMittSGlDLzZlZzYwZUNqaHByUmwr?=
+ =?utf-8?B?ZGRJVzArWW5DaGJ6ODg4NVE1V1dSRTlIZnJXSURCRy9hdkpid29nOHNHN3RN?=
+ =?utf-8?B?WDBzM3IwbWsyRmxLZWRUNGd5dEVnQUpvVlY4UGJPd25YNHMwWmlubHR4cVZ4?=
+ =?utf-8?B?Z0lBNWpCZ2h1VUlRUmlPU0J0MitOc3JsdCtsRDdTY3BNYitvYlRFekpjM1gz?=
+ =?utf-8?B?bWs2ZmZRUGcvVytjSlFVNGFDSy82K1J1a1BtaEV5YUZGNFRibzg3d1VSUXpu?=
+ =?utf-8?B?U3E5REdmSjlQNkhYRnA0WDMxSnNSRlBLK1BXM09MdEI0dUpXRWQwY2R1Z21v?=
+ =?utf-8?Q?yzMQ3Y7YMTLPHRUMOyMPZ1ujM?=
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Amir Goldstein" <amir73il@gmail.com>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "David Howells" <dhowells@redhat.com>,
- "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Steve French" <sfrench@samba.org>, "Namjae Jeon" <linkinjeon@kernel.org>,
- "Carlos Maiolino" <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-afs@lists.infradead.org, netfs@lists.linux.dev,
- ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
- linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/11] VFS: Change vfs_mkdir() to unlock on failure.
-In-reply-to:
- <CAOQ4uxhU12U8g_EYkUyc4Jdpzjy3hT1hZYB0L1THwvTsti8mTw@mail.gmail.com>
-References:
- <>, <CAOQ4uxhU12U8g_EYkUyc4Jdpzjy3hT1hZYB0L1THwvTsti8mTw@mail.gmail.com>
-Date: Thu, 14 Aug 2025 11:13:24 +1000
-Message-id: <175513400457.2234665.11514455496974675927@noble.neil.brown.name>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8018.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18288500-6cc3-4a21-b623-08dddacfe244
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2025 01:14:14.5333
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ymi1PIiE7E9K/q8BoosRIChBhE9/XruFRLdLVvSkdszVGTFYZddTb35GYAUnGVqMLJ52x7GcE2+gql1FGgQ/2w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6542
+X-OriginatorOrg: intel.com
 
-On Wed, 13 Aug 2025, Amir Goldstein wrote:
-> On Wed, Aug 13, 2025 at 1:53=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
-> >
-> > Proposed changes to directory-op locking will lock the dentry rather
-> > than the whole directory.  So the dentry will need to be unlocked.
-> >
-> > vfs_mkdir() consumes the dentry on error, so there will be no dentry to
-> > be unlocked.
->=20
-> Why does it need to consume the dentry on error?
-
-Because when the recent change was made to have vfs_mkdir() and ->mkdir
-handling the fact that the passed-in denty might not be used, that was
-the interface that was deemed to be best of all that were considered.
-
-
-> Why can't it leave the state as is on error and let the caller handle
-> its own cleanup?
-
-There are three possible results from vfs_mkdir()
- - the dentry that was passed in has been instantiated
- - a different dentry was already attached to the inode, and it has been
-   splice in to the given name
- - there was an error.
-
-In the second case it seems easiest to dput() the original dentry as it
-is no longer interesting and that saves the caller from having the test
-and maybe dput() - all callers would need identical handling.
-It seemed most consistent to always dput() the passed-in dentry if it
-wasn't returned.
->=20
-> >
-> > So this patch changes vfs_mkdir() to unlock on error as well as
-> > releasing the dentry.  This requires various other functions in various
-> > callers to also unlock on error - particularly in nfsd and overlayfs.
-> >
-> > At present this results in some clumsy code.  Once the transition to
-> > dentry locking is complete the clumsiness will be gone.
-> >
-> > Callers of vfs_mkdir() in ecrypytfs, nfsd, xfs, cachefiles, and
-> > overlayfs are changed to make the new behaviour.
->=20
-> I will let Al do the vfs review of this and will speak up on behalf of
-> the vfs users of the API
->=20
-> One problem with a change like this - subtle change to semantics
-> with no function prototype change is that it is a "backporting land mine"
-> both AUTOSEL and human can easily not be aware of the subtle
-> semantic change in a future time when a fix is being backported
-> across this semantic change.
->=20
-> Now there was a prototype change in c54b386969a5 ("VFS: Change
-> vfs_mkdir() to return the dentry.") in v6.15 not long ago, so (big) if this
-> semantic change (or the one that follows it) both get into the 2025 LTS
-> kernel, we are in less of a problem, but if they don't, it's kind of a big
-> problem for the stability of those subsystems in LTS kernels IMO -
-> not being able to use "cleanly applies and build" as an indication to
-> "likelihood of a correct backport".
-
-Renaming to vfs_mkdir2() might be justified.  I think we have to change
-the interface somehow to enable per-dentry locking, and I don't think a
-signature change would be justified.  So maybe a name change is needed.
-
->=20
-> and now onto review of ovl code...
->=20
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index 70b8687dc45e..24f7e28b9a4f 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -162,14 +162,18 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
-ruct dentry *dir,
-> >         goto out;
-> >  }
-> >
-> > +/* dir will be unlocked on return */
-> >  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *parent,
-> > -                              struct dentry *newdentry, struct ovl_cattr=
- *attr)
-> > +                              struct dentry *newdentry_arg, struct ovl_c=
-attr *attr)
-> >  {
-> >         struct inode *dir =3D parent->d_inode;
-> > +       struct dentry *newdentry __free(dentry_lookup) =3D newdentry_arg;
-> >         int err;
-> >
-> > -       if (IS_ERR(newdentry))
-> > +       if (IS_ERR(newdentry)) {
-> > +               inode_unlock(dir);
-> >                 return newdentry;
-> > +       }
-> >
-> >         err =3D -ESTALE;
-> >         if (newdentry->d_inode)
-> > @@ -213,12 +217,9 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, s=
-truct dentry *parent,
-> >                 err =3D -EIO;
-> >         }
-> >  out:
-> > -       if (err) {
-> > -               if (!IS_ERR(newdentry))
-> > -                       dput(newdentry);
-> > +       if (err)
-> >                 return ERR_PTR(err);
-> > -       }
-> > -       return newdentry;
-> > +       return dget(newdentry);
-> >  }
-> >
-> >  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r,
-> > @@ -228,7 +229,6 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, st=
-ruct dentry *workdir,
-> >         inode_lock(workdir->d_inode);
-> >         ret =3D ovl_create_real(ofs, workdir,
-> >                               ovl_lookup_temp(ofs, workdir), attr);
-> > -       inode_unlock(workdir->d_inode);
->=20
-> Things like that putting local code out of balance make my life as
-> maintainer very hard.
-
-I understand.  By the end of the change this is no longer unbalanced.
-Keeping the code perfect at each step while making each step coherent
-enough to be reviewed is a challenge.
-
-
->=20
-> I prefer that you leave the explicit dir unlock in the callers until the ti=
-me
-> that you change the create() API not require holding the dir lock.
->=20
-> I don't even understand how you changed the call semantics to an ovl
-> function that creates a directory or non-directory when your patch only
-> changes mkdir semantics, but I don't want to know, because even if this
-> works and I cannot easily understand how, then I do not want the confusing
-> semantics in ovl code.
->=20
-> I think you should be able to scope ovl_lookup_temp() with
-> dentry_lookup*() { } done_dentry_lookup() and use whichever semantics
-> you like about dir lock inside the helpers, as long as ovl code looks and f=
-eels
-> balanced.
->=20
-> >         return ret;
-> >  }
-> >
-> > @@ -336,7 +336,6 @@ static int ovl_create_upper(struct dentry *dentry, st=
-ruct inode *inode,
-> >                                     ovl_lookup_upper(ofs, dentry->d_name.=
-name,
-> >                                                      upperdir, dentry->d_=
-name.len),
-> >                                     attr);
-> > -       inode_unlock(udir);
-> >         if (IS_ERR(newdentry))
-> >                 return PTR_ERR(newdentry);
-> >
-> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> > index 4f84abaa0d68..238c26142318 100644
-> > --- a/fs/overlayfs/overlayfs.h
-> > +++ b/fs/overlayfs/overlayfs.h
-> > @@ -250,6 +250,7 @@ static inline struct dentry *ovl_do_mkdir(struct ovl_=
-fs *ofs,
-> >
-> >         ret =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
-> >         pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, PTR_ERR_OR_ZE=
-RO(ret));
-> > +       /* Note: dir will have been unlocked on failure */
-> >         return ret;
-> >  }
-> >
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index df85a76597e9..5a4b0a05139c 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -328,11 +328,13 @@ static struct dentry *ovl_workdir_create(struct ovl=
-_fs *ofs,
-> >                 }
-> >
-> >                 work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
-> > -               inode_unlock(dir);
-> >                 err =3D PTR_ERR(work);
-> >                 if (IS_ERR(work))
-> >                         goto out_err;
-> >
-> > +               dget(work); /* Need to return this */
-> > +
-> > +               done_dentry_lookup(work);
->=20
-> Another weird example.
-> I would expect that dentry_lookup*()/done_dentry_lookup()
-> would be introduced to users in the same commit, so the code
-> always remains balanced.
->=20
-> All in all, I think you should drop this patch from the series altogether
-> and drop dir unlock from callers only later after they have been
-> converted to use the new API.
->=20
-> Am I misunderstanding something that prevents you from doing that?
-
-I think I tried delaying the vfs_mkdir() change and stumbled.
-The problem involved done_path_create(). e.g. dev_mkdir() calls=20
-  kern_path_create()
-  vfs_mkdir()
-  done_path_create()
-
-Changing semantics of vfs_mkdir() necessitated a corresponding change in
-done_path_create() and doing that necessitated prep elsewhere.
-init_mkdir and ksmbd_vfs_mkdir follow the same pattern.
-
-Maybe I could temporarily introduce a done_path_create_mkdir() for
-those.
-
-Thanks,
-NeilBrown
-
-
->=20
-> Thanks,
-> Amir.
->=20
-
+T24gOC8xMy8yMDI1IDEwOjIzIFBNLCBEYXZlIEhhbnNlbiB3cm90ZToNCj4gT24gOC8xMi8yNSAx
+Nzo1MCwgV2FuZ3lhbmcgR3VvIHdyb3RlOg0KPj4gVGhlIG9wdGltaXphdGlvbiBjYW4gaW1wcm92
+ZXMgU3BlY0NQVTIwMTcgNTAyLmdjY19yIGJlbmNobWFyayBieSB+NCUgZm9yDQo+PiAyODggY29y
+ZXMgVk0gb24gSW50ZWwgWGVvbiA2IEUtY29yZXMgcGxhdGZvcm0uDQo+IA0KPiBXaGljaCBzcGVj
+aWZpYyBsb2NrcyBhcmUgZ2V0dGluZyBjb250ZW5kZWQ/DQoNClRoZSBtYWpvcml0eSBjb21lcyBm
+cm9tIGxydXZlYy0+bHJ1X2xvY2sgd2hlbiBkb2luZyByZWxlYXNlX3BhZ2VzLg0KDQpCUg0KV2Fu
+Z3lhbmcNCg==
 
