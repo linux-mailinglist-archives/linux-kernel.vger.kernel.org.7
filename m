@@ -1,218 +1,130 @@
-Return-Path: <linux-kernel+bounces-769347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C928B26D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6F5B26D44
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C68BE5C3602
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:05:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53533600E01
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842441F3D54;
-	Thu, 14 Aug 2025 17:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748351FCF7C;
+	Thu, 14 Aug 2025 17:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePjbseTs"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R2sbObHT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65FD1E4BE;
-	Thu, 14 Aug 2025 17:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC023321446;
+	Thu, 14 Aug 2025 17:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755191138; cv=none; b=q6uWBIzSMDnC0M3Sgf2dioFlvpX4pgXwR1r1uIYy+4VH9EdaVzOokCFyAjNg0L6OQfIEI8kSpSKDtcMspRqPp2cxk4jo2SKF4SgKJ0v1p4eUpuuFDj/mTw7xgDNxaEwui+6d5EqBanHrV+9MGX8gDfyg7Z/Gjbq4kMm/0GmShwQ=
+	t=1755191205; cv=none; b=Sg2xn9u1RgE583gdKwU0ssl5YyO3qP1s23MPIPlRuVT6irZIQ0Y1vWCS1c95cGdA3jYmU8L5AmMGzXhirZ7W/mj3DxBWjKkhQwE+EG76H3wIEvrnOCU6sgIz76hKIU+CTdUNYtftcQ1+jW4vJ0C9CGimrSugmhsC3gweu2veIJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755191138; c=relaxed/simple;
-	bh=AYnNiEQMKz9u/0mNhTpLE4pbq6s6pA2e+OWKRcUhmwo=;
+	s=arc-20240116; t=1755191205; c=relaxed/simple;
+	bh=7ZxYnpu99t0vZK+i5eu58QROLyB3Osh4912wLP+tnas=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ox/JPztcVkItEdpN+uW6z+jzTv1EAvO9ku0qCtgkyLmpgx5ntFvWoCZtB9J/CalsEHlVTcOLHngRcw6J80KDL4KA+LZ7ZU71NHRIwu1pY32G37Ql1Qlg2UoDuy5jMUTAhLCh7lsKTuwji4gk7ycURQ4AWJAv0/xYboQs6JjSKws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePjbseTs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2F44C4CEED;
-	Thu, 14 Aug 2025 17:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755191137;
-	bh=AYnNiEQMKz9u/0mNhTpLE4pbq6s6pA2e+OWKRcUhmwo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9mtrDbnT8wPpSOWEsN1sgq2jgBuTrHOs4qhYvrspDASZjQe02+9zjmYcnpnDG1gTu4SH4S06R5U3YTtnKhNbA6+E3lmuzosS2eaRr5s6T8vn7ZqrNXd6HtzypeztL4Am+DM32IWd06eGS+AVu7tgKAfkrF8sVKLNzo/A0aXsAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R2sbObHT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B07FDC4CEED;
+	Thu, 14 Aug 2025 17:06:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755191205;
+	bh=7ZxYnpu99t0vZK+i5eu58QROLyB3Osh4912wLP+tnas=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePjbseTsgvCnf9MSlpDAb+6BEbd6dK/lVlA/wjBfgMXT46/7H/Waayyd0GwI6J90b
-	 ersGSKiW6YTvXYiQrNuqg0jeY0JdfZasId02q/hHNZdhk3NgBfXTX7syrKyfd0E0UH
-	 qh9wH21uZs0r74ztgnYfWt2UQ0pXRBwpa+vbf9f5v3TndYMpggLC0UichYEMIFh4ea
-	 /RWLeBs6Hsfh+V00lG2P6lLAW/Q6H/WChQrlXcx7ilhPHKKPWZ0HVjsF0PIFIKg0SX
-	 cwS5LCE17ZvjSy5WRTT3MScr4846WdT8YSNVrlmx+vASvBZdlFwT2PeSFWgtphkn0c
-	 D7vs6qbT5ukiA==
-Date: Thu, 14 Aug 2025 13:05:35 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-	Donglin Peng <dolinux.peng@gmail.com>,
-	Zheng Yejian <zhengyejian@huaweicloud.com>
-Subject: Re: [PATCH v4 2/4] ftrace: Add support for function argument to
- graph tracer
-Message-ID: <aJ4XX4qvHUZRAFxF@lappy>
-References: <20250227185804.639525399@goodmis.org>
- <20250227185822.810321199@goodmis.org>
- <aJaxRVKverIjF4a6@lappy>
- <20250813195317.508a29aa@batman.local.home>
+	b=R2sbObHTU7j8tt1ACsqdXrxxy0DRrlkD6AzWHftGONh5kYE0OeE0LA3jZCM4cmbcS
+	 L20aaWDLkw1DM/nPhSNBFifj4b7k2mzoWsawWos9BqbPp5JU9cNjeac7GdQicyJH0p
+	 au6vTe0rnkXX/Dod1xOME9n2hdfVLBENtrqjA8wc=
+Date: Thu, 14 Aug 2025 19:06:41 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Zenm Chen <zenmchen@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, pkshih@realtek.com,
+	rtl8821cerfe2@gmail.com, stable@vger.kernel.org,
+	usb-storage@lists.one-eyed-alien.net, usbwifi2024@gmail.com
+Subject: Re: [usb-storage] Re: [PATCH] USB: storage: Ignore driver CD mode
+ for Realtek multi-mode Wi-Fi dongles
+Message-ID: <2025081428-unfold-shakily-6278@gregkh>
+References: <03d4c721-f96d-4ace-b01e-c7adef150209@rowland.harvard.edu>
+ <20250814140329.2170-1-zenmchen@gmail.com>
+ <b938a764-6ded-4b76-a15c-82c0062abf42@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250813195317.508a29aa@batman.local.home>
+In-Reply-To: <b938a764-6ded-4b76-a15c-82c0062abf42@rowland.harvard.edu>
 
-On Wed, Aug 13, 2025 at 07:53:17PM -0400, Steven Rostedt wrote:
->On Fri, 8 Aug 2025 22:24:05 -0400
->Sasha Levin <sashal@kernel.org> wrote:
->
->> So we've added a dynamically sized array to the end of
->> ftrace_graph_ent_entry, but in struct fgraph_data, the saved entry is
->> defined as:
->>
->>    struct fgraph_data {
->>        ...
->>        union {
->>            struct ftrace_graph_ent_entry ent;
->>            struct fgraph_retaddr_ent_entry rent;
->>        } ent;
->>        ...
->>    }
->>
->> Which doesn't seem to have room for args?
->
->No it doesn't :-p
->
->>
->> The code in get_return_for_leaf() does:
->>
->>    data->ent.ent = *curr;
->>
->> This copies the struct, but curr points to a larger entry with args
->> data. The copy operation only copies sizeof(struct
->> ftrace_graph_ent_entry) bytes, which doesn't include the dynamic args
->> array.
->>
->> And then later functions (like print_graph_entry()) would go ahead and
->> assume that iter->ent_size is sane and make a mess out of everything.
->>
->> I can't test right now whether this actually fixes the issues or not,
->> but I wanted to bring this up as this looks somewhat odd and I'm not too
->> familiar with this code.
->
->Thanks for the detail analysis, can you test this patch?
->
->-- Steve
->
->diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
->index 66e1a527cf1a..25ea71edb8da 100644
->--- a/kernel/trace/trace_functions_graph.c
->+++ b/kernel/trace/trace_functions_graph.c
->@@ -35,6 +35,11 @@ struct fgraph_data {
-> 		struct ftrace_graph_ent_entry	ent;
-> 		struct fgraph_retaddr_ent_entry	rent;
-> 	} ent;
->+	/*
->+	 * The @args must be right after @ent, as it is where they
->+	 * are stored in case the function graph tracer has arguments.
->+	 */
->+	unsigned long			args[FTRACE_REGS_MAX_ARGS];
-> 	struct ftrace_graph_ret_entry	ret;
-> 	int				failed;
-> 	int				cpu;
->@@ -623,14 +628,29 @@ get_return_for_leaf(struct trace_iterator *iter,
-> 		next = ring_buffer_event_data(event);
->
-> 		if (data) {
->+			int args_size;
->+			int size;
->+
-> 			/*
-> 			 * Save current and next entries for later reference
-> 			 * if the output fails.
-> 			 */
->-			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT))
->+			if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
-> 				data->ent.rent = *(struct fgraph_retaddr_ent_entry *)curr;
->-			else
->+				size = offsetof(struct fgraph_retaddr_ent_entry, args);
->+			} else {
-> 				data->ent.ent = *curr;
->+				size = offsetof(struct ftrace_graph_ent_entry, args);
->+			}
->+
->+			/* If this has args, then append them to after the ent. */
->+			args_size = iter->ent_size - size;
->+			if (args_size > sizeof(long) * FTRACE_REGS_MAX_ARGS)
->+				args_size = sizeof(long) * FTRACE_REGS_MAX_ARGS;
->+
->+			if (args_size >= sizeof(long))
->+				memcpy((void *)&data->ent.ent + size,
->+				       (void*)curr + size, args_size);
-> 			/*
-> 			 * If the next event is not a return type, then
-> 			 * we only care about what type it is. Otherwise we can
+On Thu, Aug 14, 2025 at 12:21:16PM -0400, Alan Stern wrote:
+> On Thu, Aug 14, 2025 at 10:03:29PM +0800, Zenm Chen wrote:
+> > > Also, can you collect a usbmon trace showing what happens when the dongle is plugged in?
+> > 
+> > Hi Alan,
+> > 
+> > Today I removed usb_modeswitch from my system and grabbed some data, could you please take
+> > a look what was wrong? many thanks!
+> 
+> Yes, this shows the problem.  I'll skip the unimportant stuff below.
+> 
+> > D-Link AX9U
+> 
+> ...
+> 
+> > ffff8ae1f0bee000 771359614 S Bo:2:053:5 -115 31 = 55534243 0a000000 08000000 80000a25 00000000 00000000 00000000 000000
+> > ffff8ae1f0bee000 771359684 C Bo:2:053:5 0 31 >
+> > ffff8ae1b52d83c0 771359702 S Bi:2:053:4 -115 8 <
+> > ffff8ae1b52d83c0 771359812 C Bi:2:053:4 0 8 = 00007bff 00000200
+> > ffff8ae1f0bee000 771359853 S Bi:2:053:4 -115 13 <
+> > ffff8ae1f0bee000 771359935 C Bi:2:053:4 0 13 = 55534253 0a000000 00000000 00
+> 
+> This is a READ CAPACITY(10) command.  It asks the device for the number
+> of data blocks it contains and the size of each block.  The reply says
+> there are 31744 blocks each containing 512 bytes (which is unheard-of
+> for CDs; they virtually always have 2048 bytes per block).
+> 
+> ...
+> 
+> > ffff8ae1f0bee000 771366235 S Bo:2:053:5 -115 31 = 55534243 17000000 0c000000 00000615 1000000c 00000000 00000000 000000
+> > ffff8ae1f0bee000 771366306 C Bo:2:053:5 0 31 >
+> > ffff8ae218ff2900 771366317 S Bo:2:053:5 -115 12 = 00000008 00000000 00000800
+> > ffff8ae218ff2900 771366432 C Bo:2:053:5 0 12 >
+> > ffff8ae1f0bee000 771366443 S Bi:2:053:4 -115 13 <
+> > ffff8ae1f0bee000 771366556 C Bi:2:053:4 0 13 = 55534253 17000000 0c000000 01
+> 
+> This is a MODE SELECT(6) command.  This one tells the device to change
+> the block size to 2048.  The device responds with an error indication.
+> 
+> > ffff8ae1f0bee000 771366567 S Bo:2:053:5 -115 31 = 55534243 18000000 12000000 80000603 00000012 00000000 00000000 000000
+> > ffff8ae1f0bee000 801899370 C Bo:2:053:5 -104 0
+> 
+> This is a REQUEST SENSE command; it asks the device to report the
+> details of the error condition from the previous command.  But the
+> device doesn't reply and the command times out.  From this point on,
+> the trace shows nothing but repeated resets.  They don't help and the
+> device appears to be dead.
+> 
+> I don't know of any reasonable way to tell the kernel not to send that
+> MODE SELECT(6) command.
+> 
+> The log for the Mercury is generally similar although the details are
+> different.  Everything works okay until the computer sends a command
+> that the device doesn't like.  At that point the device dies and
+> resets don't revive it.
+> 
+> So it does indeed look like there is no alternative to making
+> usb-storage ignore the devices.
+> 
+> Greg, do you still have the original patch email that started this 
+> thread?  You can add:
+> 
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-Got a small build error:
+Thanks, I have it somewhere, I'll dig it up and apply it.
 
-kernel/trace/trace_functions_graph.c: In function ‘get_return_for_leaf’:
-./include/linux/stddef.h:16:33: error: ‘struct fgraph_retaddr_ent_entry’ has no member named ‘args’
-    16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-       |                                 ^~~~~~~~~~~~~~~~~~
-kernel/trace/trace_functions_graph.c:640:40: note: in expansion of macro ‘offsetof’
-   640 |                                 size = offsetof(struct fgraph_retaddr_ent_entry, args);
-       |                                        ^~~~~~~~
-
-Does this look right on top of your patch:
-
-diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
-index 25ea71edb8da..f0f37356ef29 100644
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -637,20 +637,21 @@ get_return_for_leaf(struct trace_iterator *iter,
-                          */
-                         if (unlikely(curr->ent.type == TRACE_GRAPH_RETADDR_ENT)) {
-                                 data->ent.rent = *(struct fgraph_retaddr_ent_entry *)curr;
--                               size = offsetof(struct fgraph_retaddr_ent_entry, args);
-+                               /* fgraph_retaddr_ent_entry doesn't have args field */
-+                               size = sizeof(struct fgraph_retaddr_ent_entry);
-+                               args_size = 0;
-                         } else {
-                                 data->ent.ent = *curr;
-                                 size = offsetof(struct ftrace_graph_ent_entry, args);
-+                               /* If this has args, then append them to after the ent. */
-+                               args_size = iter->ent_size - size;
-+                               if (args_size > sizeof(long) * FTRACE_REGS_MAX_ARGS)
-+                                       args_size = sizeof(long) * FTRACE_REGS_MAX_ARGS;
-+
-+                               if (args_size >= sizeof(long))
-+                                       memcpy((void *)&data->ent.ent + size,
-+                                              (void*)curr + size, args_size);
-                         }
--
--                       /* If this has args, then append them to after the ent. */
--                       args_size = iter->ent_size - size;
--                       if (args_size > sizeof(long) * FTRACE_REGS_MAX_ARGS)
--                               args_size = sizeof(long) * FTRACE_REGS_MAX_ARGS;
--
--                       if (args_size >= sizeof(long))
--                               memcpy((void *)&data->ent.ent + size,
--                                      (void*)curr + size, args_size);
-                         /*
-                          * If the next event is not a return type, then
-                          * we only care about what type it is. Otherwise we can
-
--- 
-Thanks,
-Sasha
+greg k-h
 
