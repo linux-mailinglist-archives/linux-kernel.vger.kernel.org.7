@@ -1,259 +1,199 @@
-Return-Path: <linux-kernel+bounces-769620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1517CB2710A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:48:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B37B27108
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117005E6D64
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:48:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76CBB3B6AE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB93279DCC;
-	Thu, 14 Aug 2025 21:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150D527A92D;
+	Thu, 14 Aug 2025 21:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aTzaRelh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXJpknXi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B0B319878
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505FC1A238C;
+	Thu, 14 Aug 2025 21:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755208084; cv=none; b=Fm30sLw3JYvpnEyOPKbu/qJCgaz650oRghH7IrHBNRjgOX5Gr1K4ahqQX/ul3KdVbT/lEKqMCM1ODF78TmTIB+LP+2Z9y59GuIdqkr5yhKRt74Oq2RSppo488SFHEdO5SPyHhXir4gkWhm2YDNZOdjue8GGfvqrRTftD772jbo8=
+	t=1755207992; cv=none; b=PG+iUuXdnOZeV3df47cfaTWh0upp5zE/ro6hIqaHCHtLcdJK+Tl5VgKnu1M0oCChw8Ho0t8tEsqF8T+KEvNj1l8mLB3o8s6NSV8e6xqz5RqxYit3b7jmpbw0ItFR96kL5nM8EjPeQJspP9UDO+KDjH4M/GPK7QTMXSVw3jG9lU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755208084; c=relaxed/simple;
-	bh=V6wXdJLrBZ8RcJqkcHRG6ySv0M1Vq3mIHeW4kuR3MGc=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Db8ZMyZh+TaSa+AYXqkvDdnlE8yfjE/scS95w7DyW+snXqTZ8H3wsuSzRlfnM+kjokx+/qzU33RZai0jBwelWNfzDJZRq4f/rcFV5L9snn1zJM4sVy/ANll654UEW/E1n6HZDwp4VqL6xRxZw0l3Q8rJ2enGZOQRA2kj8cqYjlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aTzaRelh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755208081;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hMrmnnaTuE7E24vkMuvtxjjxa9pOJBVXm+5edbNayAI=;
-	b=aTzaRelhWEShCtjtK+UlRtgWqwsgY8IuRK8BV8nDpEkf6Kex5wJk3OkrLnblhad6OJymE6
-	/ZBoBubXUMOXIXWU6fKsIGR25T1KL0uAytBkgFyFVrUn77Cm7Ces8WFT55rkQCUYcnxmUJ
-	DoFRkzMPMo5/kjN5XKXUHm2DrCt71Fw=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-487-HEFzikZhPcqMN1yOvb2dkA-1; Thu,
- 14 Aug 2025 17:45:56 -0400
-X-MC-Unique: HEFzikZhPcqMN1yOvb2dkA-1
-X-Mimecast-MFC-AGG-ID: HEFzikZhPcqMN1yOvb2dkA_1755207955
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F63318004A7;
-	Thu, 14 Aug 2025 21:45:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.21])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 61E0730001A2;
-	Thu, 14 Aug 2025 21:45:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>,
-    Paulo Alcantara <pc@manguebit.org>, Steve French <sfrench@samba.org>
-cc: dhowells@redhat.com, Xiaoli Feng <fengxiaoli0714@gmail.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, netfs@lists.linux.dev,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs: Fix unbuffered write error handling
+	s=arc-20240116; t=1755207992; c=relaxed/simple;
+	bh=H5t50i2Arx8cGLKWfYb6yZf07e2LtwSpP7PZAJqXp/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kMJVvrElGdagDOXV97f2v/i2IpoQm5sxLLQgUD4lWyyM/OUsX3KcAf7BM9qNRr5jW6YTg3TMtLEcP/WKJKg6mKOXcQKHSbkhrJI0VydIz8t/OBW/xCReBua8LJeX8RDngbB4csRBMkDGFsNQ7fAkhUT2IbfjlZccGbjaWvwI7yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXJpknXi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ECAAC4CEED;
+	Thu, 14 Aug 2025 21:46:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755207991;
+	bh=H5t50i2Arx8cGLKWfYb6yZf07e2LtwSpP7PZAJqXp/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NXJpknXinO50P0+vSaRs7K7YYw4Wo4RbRFwUweNTAz5Nk84MifsScECN9mkqAPJfz
+	 8SU0cz4tqZpvri04RpBLcInZpWOOi+L1LslTZUe5sAFUo/C4EPYzAi1oHFhzn5xPRf
+	 78sBywQ+wpIeohQxeuP/86TNWP9NC5vqzt6SaG9atDJ+QaOAfVRmev1qNHTjLykCfB
+	 17ZmC/qHErJa4+TdyyLg5CwJp5vN0S8EbmY75Q6FI0o2Qk4DouzT91XSOpPJB6HC6T
+	 GAKUSJV8Z5yQ2roiQCffAaYgeSUI1qq19G8Eoj3Nb2l2NWOklMOdPLLysQp4aIPgAT
+	 QMSL6YQQhwsfA==
+Date: Thu, 14 Aug 2025 23:46:24 +0200
+From: Alexey Gladkov <legion@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v6 6/9] modpost: Add modname to mod_device_table alias
+Message-ID: <aJ5ZMJC4eCpDb5D8@example.org>
+References: <cover.1755170493.git.legion@kernel.org>
+ <15724fb8669dae64e3c8d31ab620f977984b2177.1755170493.git.legion@kernel.org>
+ <DC26OG2L7OMH.31RE7460D4DHU@kernel.org>
+ <aJ3qsonmvUUErQx9@example.org>
+ <DC27G409IQGT.H9G83QDQ9V7R@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <915442.1755207950.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 14 Aug 2025 22:45:50 +0100
-Message-ID: <915443.1755207950@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DC27G409IQGT.H9G83QDQ9V7R@kernel.org>
 
-If all the subrequests in an unbuffered write stream fail, the subrequest
-collector doesn't update the stream->transferred value and it retains its
-initial LONG_MAX value.  Unfortunately, if all active streams fail, then w=
-e
-take the smallest value of { LONG_MAX, LONG_MAX, ... } as the value to set
-in wreq->transferred - which is then returned from ->write_iter().
+On Thu, Aug 14, 2025 at 04:03:01PM +0200, Danilo Krummrich wrote:
+> On Thu Aug 14, 2025 at 3:54 PM CEST, Alexey Gladkov wrote:
+> > On Thu, Aug 14, 2025 at 03:26:53PM +0200, Danilo Krummrich wrote:
+> >> On Thu Aug 14, 2025 at 3:07 PM CEST, Alexey Gladkov wrote:
+> >> > At this point, if a symbol is compiled as part of the kernel,
+> >> > information about which module the symbol belongs to is lost.
+> >> >
+> >> > To save this it is possible to add the module name to the alias name.
+> >> > It's not very pretty, but it's possible for now.
+> >> >
+> >> > Cc: Miguel Ojeda <ojeda@kernel.org>
+> >> > Cc: Andreas Hindborg <a.hindborg@kernel.org>
+> >> > Cc: Danilo Krummrich <dakr@kernel.org>
+> >> > Cc: Alex Gaynor <alex.gaynor@gmail.com>
+> >> > Cc: rust-for-linux@vger.kernel.org
+> >> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> >> > ---
+> >> >  include/linux/module.h   | 14 +++++++++++++-
+> >> >  rust/kernel/device_id.rs |  8 ++++----
+> >> >  scripts/mod/file2alias.c | 18 ++++++++++++++----
+> >> >  3 files changed, 31 insertions(+), 9 deletions(-)
+> >> >
+> >> > diff --git a/include/linux/module.h b/include/linux/module.h
+> >> > index 3319a5269d28..e31ee29fac6b 100644
+> >> > --- a/include/linux/module.h
+> >> > +++ b/include/linux/module.h
+> >> > @@ -244,10 +244,22 @@ struct module_kobject *lookup_or_create_module_kobject(const char *name);
+> >> >  /* What your module does. */
+> >> >  #define MODULE_DESCRIPTION(_description) MODULE_INFO(description, _description)
+> >> >  
+> >> > +/*
+> >> > + * Format: __mod_device_table__kmod_<modname>__<type>__<name>
+> >> > + * Parts of the string `__kmod_` and `__` are used as delimiters when parsing
+> >> > + * a symbol in file2alias.c
+> >> > + */
+> >> > +#define __mod_device_table(type, name)	\
+> >> > +	__PASTE(__mod_device_table__,	\
+> >> > +	__PASTE(__KBUILD_MODNAME,	\
+> >> > +	__PASTE(__,			\
+> >> > +	__PASTE(type,			\
+> >> > +	__PASTE(__, name)))))
+> >> > +
+> >> >  #ifdef MODULE
+> >> >  /* Creates an alias so file2alias.c can find device table. */
+> >> >  #define MODULE_DEVICE_TABLE(type, name)					\
+> >> > -static typeof(name) __mod_device_table__##type##__##name		\
+> >> > +static typeof(name) __mod_device_table(type, name)			\
+> >> >    __attribute__ ((used, alias(__stringify(name))))
+> >> >  #else  /* !MODULE */
+> >> >  #define MODULE_DEVICE_TABLE(type, name)
+> >> > diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
+> >> > index 70d57814ff79..62c42da12e9d 100644
+> >> > --- a/rust/kernel/device_id.rs
+> >> > +++ b/rust/kernel/device_id.rs
+> >> > @@ -195,10 +195,10 @@ macro_rules! module_device_table {
+> >> >      ($table_type: literal, $module_table_name:ident, $table_name:ident) => {
+> >> >          #[rustfmt::skip]
+> >> >          #[export_name =
+> >> > -            concat!("__mod_device_table__", $table_type,
+> >> > -                    "__", module_path!(),
+> >> > -                    "_", line!(),
+> >> > -                    "_", stringify!($table_name))
+> >> > +            concat!("__mod_device_table__", line!(),
+> >> 
+> >> Why do we have line!() between "__mod_device_table__" and "__kmod_", while the
+> >> format is defined as "__mod_device_table__kmod_<modname>__<type>__<name>" above?
+> >
+> > The "__mod_device_table__" is used to filter symbols.
+> > The meaning part starts after "__kmod_" part. After that, order becomes
+> > important.
+> >
+> >> The previous logic was to create a unique name with
+> >> using "<module_path>_<line>_<table_name>" as "<name>". So, I think this should
+> >> actually be:
+> >> 
+> >> 	concat!("__mod_device_table__kmod_",
+> >> 		module_path!(),
+> >> 		"__", $table_type,
+> >> 		"__", stringify!($table_name),
+> >> 		"_", line!())
+> >> 
+> >> rather than the below.
+> >
+> > No. "stringify!($table_name)" should be the last thing in this string.
+> > This is the a symbol name that will be searched for in the elf to generate
+> > modalias.
+> 
+> $table_name is not guaranteed to be unique for a certain module_path!(), hence
+> we need line!() to guarantee uniqueness.
+> 
+> The symbol name will be unique no matter where you place line!() of course, but
+> $table_name + line!() is the unique table name, which I think is what we want?
 
-LONG_MAX was chosen as the initial value so that all the streams can be
-quickly assessed by taking the smallest value of all stream->transferred -
-but this only works if we've set any of them.
+Again, no. We need the entire symbol to be unique so that the linker
+doesn't complain. In fact, this symbol will later be removed from the elf.
+It is only needed for the modpost utility.
 
-Fix this by adding a flag to indicate whether the value in
-stream->transferred is valid and checking that when we integrate the
-values.  stream->transferred can then be initialised to zero.
+The modpost requires a format symbol:
 
-This was found by running the generic/750 xfstest against cifs with
-cache=3Dnone.  It splices data to the target file.  Once (if) it has used =
-up
-all the available scratch space, the writes start failing with ENOSPC.
-This causes ->write_iter() to fail.  However, it was returning
-wreq->transferred, i.e. LONG_MAX, rather than an error (because it thought
-the amount transferred was non-zero) and iter_file_splice_write() would
-then try to clean up that amount of pipe bufferage - leading to an oops
-when it overran.  The kernel log showed:
+__mod_device_table__<random>*__kmod_<modname>__<type>__<name>
 
-    CIFS: VFS: Send error in write =3D -28
+"<random>*" may or may not exist. This is a place to add uniqueness if
+needed.
 
-followed by:
+The fields "<modname>”, "<type>" and "<name>" must be very specific and
+must not be random. These values are used for generation.
 
-    BUG: kernel NULL pointer dereference, address: 0000000000000008
+> 
+> >> 
+> >> > +                    "__kmod_", module_path!(),
+> >> > +                    "__", $table_type,
+> >> > +                    "__", stringify!($table_name))
+> >> >          ]
+> >> >          static $module_table_name: [::core::mem::MaybeUninit<u8>; $table_name.raw_ids().size()] =
+> >> >              unsafe { ::core::mem::transmute_copy($table_name.raw_ids()) };
+> >> 
+> >
+> > -- 
+> > Rgrds, legion
+> 
 
-with:
-
-    RIP: 0010:iter_file_splice_write+0x3a4/0x520
-    do_splice+0x197/0x4e0
-
-or:
-
-    RIP: 0010:pipe_buf_release (include/linux/pipe_fs_i.h:282)
-    iter_file_splice_write (fs/splice.c:755)
-
-Also put a warning check into splice to announce if ->write_iter() returne=
-d
-that it had written more than it was asked to.
-
-Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
-Reported-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220445
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Paulo Alcantara <pc@manguebit.org>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <sprasad@microsoft.com>
-cc: netfs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: stable@vger.kernel.org
----
- fs/netfs/read_collect.c  |    4 +++-
- fs/netfs/write_collect.c |   10 ++++++++--
- fs/netfs/write_issue.c   |    4 ++--
- fs/splice.c              |    3 +++
- include/linux/netfs.h    |    1 +
- 5 files changed, 17 insertions(+), 5 deletions(-)
-
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index 3e804da1e1eb..a95e7aadafd0 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -281,8 +281,10 @@ static void netfs_collect_read_results(struct netfs_i=
-o_request *rreq)
- 		} else if (test_bit(NETFS_RREQ_SHORT_TRANSFER, &rreq->flags)) {
- 			notes |=3D MADE_PROGRESS;
- 		} else {
--			if (!stream->failed)
-+			if (!stream->failed) {
- 				stream->transferred +=3D transferred;
-+				stream->transferred_valid =3D true;
-+			}
- 			if (front->transferred < front->len)
- 				set_bit(NETFS_RREQ_SHORT_TRANSFER, &rreq->flags);
- 			notes |=3D MADE_PROGRESS;
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 0f3a36852a4d..cbf3d9194c7b 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -254,6 +254,7 @@ static void netfs_collect_write_results(struct netfs_i=
-o_request *wreq)
- 			if (front->start + front->transferred > stream->collected_to) {
- 				stream->collected_to =3D front->start + front->transferred;
- 				stream->transferred =3D stream->collected_to - wreq->start;
-+				stream->transferred_valid =3D true;
- 				notes |=3D MADE_PROGRESS;
- 			}
- 			if (test_bit(NETFS_SREQ_FAILED, &front->flags)) {
-@@ -356,6 +357,7 @@ bool netfs_write_collection(struct netfs_io_request *w=
-req)
- {
- 	struct netfs_inode *ictx =3D netfs_inode(wreq->inode);
- 	size_t transferred;
-+	bool transferred_valid =3D false;
- 	int s;
- =
-
- 	_enter("R=3D%x", wreq->debug_id);
-@@ -376,12 +378,16 @@ bool netfs_write_collection(struct netfs_io_request =
-*wreq)
- 			continue;
- 		if (!list_empty(&stream->subrequests))
- 			return false;
--		if (stream->transferred < transferred)
-+		if (stream->transferred_valid &&
-+		    stream->transferred < transferred) {
- 			transferred =3D stream->transferred;
-+			transferred_valid =3D true;
-+		}
- 	}
- =
-
- 	/* Okay, declare that all I/O is complete. */
--	wreq->transferred =3D transferred;
-+	if (transferred_valid)
-+		wreq->transferred =3D transferred;
- 	trace_netfs_rreq(wreq, netfs_rreq_trace_write_done);
- =
-
- 	if (wreq->io_streams[1].active &&
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 50bee2c4130d..0584cba1a043 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -118,12 +118,12 @@ struct netfs_io_request *netfs_create_write_req(stru=
-ct address_space *mapping,
- 	wreq->io_streams[0].prepare_write	=3D ictx->ops->prepare_write;
- 	wreq->io_streams[0].issue_write		=3D ictx->ops->issue_write;
- 	wreq->io_streams[0].collected_to	=3D start;
--	wreq->io_streams[0].transferred		=3D LONG_MAX;
-+	wreq->io_streams[0].transferred		=3D 0;
- =
-
- 	wreq->io_streams[1].stream_nr		=3D 1;
- 	wreq->io_streams[1].source		=3D NETFS_WRITE_TO_CACHE;
- 	wreq->io_streams[1].collected_to	=3D start;
--	wreq->io_streams[1].transferred		=3D LONG_MAX;
-+	wreq->io_streams[1].transferred		=3D 0;
- 	if (fscache_resources_valid(&wreq->cache_resources)) {
- 		wreq->io_streams[1].avail	=3D true;
- 		wreq->io_streams[1].active	=3D true;
-diff --git a/fs/splice.c b/fs/splice.c
-index 4d6df083e0c0..f5094b6d00a0 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -739,6 +739,9 @@ iter_file_splice_write(struct pipe_inode_info *pipe, s=
-truct file *out,
- 		sd.pos =3D kiocb.ki_pos;
- 		if (ret <=3D 0)
- 			break;
-+		WARN_ONCE(ret > sd.total_len - left,
-+			  "Splice Exceeded! ret=3D%zd tot=3D%zu left=3D%zu\n",
-+			  ret, sd.total_len, left);
- =
-
- 		sd.num_spliced +=3D ret;
- 		sd.total_len -=3D ret;
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 185bd8196503..98c96d649bf9 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -150,6 +150,7 @@ struct netfs_io_stream {
- 	bool			active;		/* T if stream is active */
- 	bool			need_retry;	/* T if this stream needs retrying */
- 	bool			failed;		/* T if this stream failed */
-+	bool			transferred_valid; /* T is ->transferred is valid */
- };
- =
-
- /*
+-- 
+Rgrds, legion
 
 
