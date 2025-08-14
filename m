@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-768714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D79A0B26473
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:39:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D13B26476
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57916888032
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169EB8883AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818722F39C5;
-	Thu, 14 Aug 2025 11:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RSNb5au0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03182F60AE;
+	Thu, 14 Aug 2025 11:39:22 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1D815A8
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B322EE29B;
+	Thu, 14 Aug 2025 11:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171547; cv=none; b=IhC0m5kSZJG9zEQ1a5+mKRkEW+cfkirPZz2r/Blf+0ZOwhBRUpViTnQgP1iOiMrW0I88a3Blx34C56WpMuUUR32c++ukMIHeItoMsvBNZWCxabCFe6LsFTjk9hGep990NS8Cqec28QJfGHDR5iX+h53R0U/838FiWWw4rvh6tvo=
+	t=1755171562; cv=none; b=CNxnCatTFXQ98oqbS4+kQfNiLHn7hpxTER6Is9UBNhWacTB9WlwDKasPUT/hjm7rxJBY9Cd9GU6PQIbZxb3dv7+s5ZRIkkSQcq8ATnVlLA56LwuoRJ1tElSgH7v2lFh/1L6ngxInlgE6ISifEP3EVff0v+SZ/e50jP4RT8wXnqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171547; c=relaxed/simple;
-	bh=+fPcT9hKJxHhqGh56ibnQ12erPjW1tZJjXXP9J+cHjg=;
+	s=arc-20240116; t=1755171562; c=relaxed/simple;
+	bh=Eir/rgS3kgL52Co3KkPLtwcZ4CRSV9Q+wvSC4VDLnRk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tF8hifzJRK+mP908u3Xd2ccOrXO7ZH4l5xkO4P6eaX35DjZXuKlx1ZAgavjcfwexd6d83fRphwiZSW8wOdmJxoV8OvVKG/D85CO+Hbs1EQv/ghTq5lwV8O/eGqoTystn39eP3GQUZLkwPgZgSYm09rgJgMCHxzKMHVBbM57h7fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RSNb5au0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0720C4CEED;
-	Thu, 14 Aug 2025 11:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755171546;
-	bh=+fPcT9hKJxHhqGh56ibnQ12erPjW1tZJjXXP9J+cHjg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RSNb5au0vHsIbn3gH4Z1hrQa4/LytYnAgAk8suiaxYJYV1eg6HXw4geZWLXR6vzkt
-	 0zJsehVcvkZzF8IAjUgrLp19bLwmgo1xgW9UqiNmgPHY7t/4IWPkeKXB+GWyiyaPOg
-	 7aWIepeQvMgB+98F+i4wAK0zV+X+h5BCBUvgxiuY=
-Date: Thu, 14 Aug 2025 13:39:02 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Wang Wensheng <wangwensheng4@huawei.com>
-Cc: rafael@kernel.org, dakr@kernel.org, tglx@linutronix.de,
-	saravanak@google.com, robh@kernel.org, broonie@kernel.org,
-	linux-kernel@vger.kernel.org, chenjun102@huawei.com
-Subject: Re: [PATCH 2/3] driver core: Introduce fw_devlink_relax_consumers
- helper
-Message-ID: <2025081429-lair-esophagus-eb8b@gregkh>
-References: <20250814111023.2693-1-wangwensheng4@huawei.com>
- <20250814111023.2693-3-wangwensheng4@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YHVihryX3iZe8cjzMeiTuCtvUGOg5fvghn9t9BkDJGuN5bONeWmQQXDtNh1j/gkUKTFNU2mySt3ASypK+KDh+/GdMrL3h4W9ar4QdQJvRnaSuszlKkyg2YU2gMVksYC7zLfJ6vkBrxAOJx3qtZVqxWPiXBqInlsDvlEr7OGJCf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A4A0C4CEED;
+	Thu, 14 Aug 2025 11:39:17 +0000 (UTC)
+Date: Thu, 14 Aug 2025 12:39:14 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
+	arnd@arndb.de, will@kernel.org, peterz@infradead.org,
+	akpm@linux-foundation.org, mark.rutland@arm.com,
+	harisokn@amazon.com, cl@gentwo.org, ast@kernel.org,
+	memxor@gmail.com, zhenglifeng1@huawei.com,
+	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
+	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+	rafael@kernel.org, daniel.lezcano@linaro.org
+Subject: Re: [PATCH v3 1/5] asm-generic: barrier: Add
+ smp_cond_load_relaxed_timewait()
+Message-ID: <aJ3K4tQCztOXF6hO@arm.com>
+References: <20250627044805.945491-1-ankur.a.arora@oracle.com>
+ <20250627044805.945491-2-ankur.a.arora@oracle.com>
+ <aJXWyxzkA3x61fKA@arm.com>
+ <877bz98sqb.fsf@oracle.com>
+ <aJy414YufthzC1nv@arm.com>
+ <87bjoi2wdf.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,60 +57,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250814111023.2693-3-wangwensheng4@huawei.com>
+In-Reply-To: <87bjoi2wdf.fsf@oracle.com>
 
-On Thu, Aug 14, 2025 at 07:10:22PM +0800, Wang Wensheng wrote:
-> Some devices are added during its parent's probe and will never get
-> bound to a driver. In this case, with fw_devlink set to "rpm",
-> which is the default value, its consumers will be deferred probe
-> until deferred_probe_timeout when fw_devlink_drivers_done() would
-> relax the devlinks to the suplier.
+On Thu, Aug 14, 2025 at 12:30:36AM -0700, Ankur Arora wrote:
+> Catalin Marinas <catalin.marinas@arm.com> writes:
+> > On Mon, Aug 11, 2025 at 02:15:56PM -0700, Ankur Arora wrote:
+> >> Catalin Marinas <catalin.marinas@arm.com> writes:
+> >> > Also I feel the spinning added to poll_idle() is more of an architecture
+> >> > choice as some CPUs could not cope with local_clock() being called too
+> >> > frequently.
+> >>
+> >> Just on the frequency point -- I think it might be a more general
+> >> problem that just on specific architectures.
+> >>
+> >> Architectures with GENERIC_SCHED_CLOCK could use a multitude of
+> >> clocksources and from a quick look some of them do iomem reads.
+> >> (AFAICT GENERIC_SCHED_CLOCK could also be selected by the clocksource
+> >> itself, so an architecture header might not need to be an arch choice
+> >> at  all.)
+> >>
+> >> Even for something like x86 which doesn't use GENERIC_SCHED_CLOCK,
+> >> we might be using tsc or jiffies or paravirt-clock all of which would
+> >> have very different performance characteristics. Or, just using a
+> >> clock more expensive than local_clock(); rqspinlock uses
+> >> ktime_get_mono_fast_ns().
+> >>
+> >> So, I feel we do need a generic rate limiter.
+> >
+> > That's a good point but the rate limiting is highly dependent on the
+> > architecture, what a CPU does in the loop, how fast a loop iteration is.
+> >
+> > That's why I'd keep it hidden in the arch code.
 > 
-> Use this function to relax the consumer devlinks, just like what we
-> do for the unmatched devices in fw_devlink_drivers_done(), so that
-> the consumer devices would be probed not that later.
+> Yeah, this makes sense. However, I would like to keep as much of the
+> code that does this common.
+
+You can mimic what poll_idle() does for x86 in the generic
+implementation, maybe with some comment referring to the poll_idle() CPU
+usage of calling local_clock() in a loop. However, allow the arch code
+to override the whole implementation and get rid of the policy. If an
+arch wants to spin for some power reason, it can do it itself. The code
+duplication for a while loop is much more readable than a policy setting
+some spin/wait parameters just to have a single spin loop. If at some
+point we see some pattern, we could revisit the common code.
+
+For arm64, I doubt the extra spinning makes any difference. Our
+cpu_relax() doesn't do anything (almost), it's probably about the same
+cost as reading the monotonic clock. I also see a single definition
+close enough to the logic in __delay() on arm64. It would be more
+readable than a policy callback setting wait/spin with a separate call
+for actually waiting. Well, gut feel, let's see how that would look
+like.
+
+> Currently the spin rate limit is scaled up or down based on the current
+> spin (or SMP_TIMEWAIT_SPIN_BASE) in the common __smp_cond_spinwait()
+> which implements a default policy.
+> SMP_TIMEWAIT_SPIN_BASE can already be chosen by the architecture but
+> that doesn't allow it any runtime say in the spinning.
 > 
-> Signed-off-by: Wang Wensheng <wangwensheng4@huawei.com>
-> ---
->  drivers/base/core.c    | 22 ++++++++++++++++++++++
->  include/linux/device.h |  1 +
->  2 files changed, 23 insertions(+)
+> I think a good way to handle this might be the same way that the wait
+> policy is handled. When the architecture handler (__smp_cond_timewait()
+> on arm64) is used, it should be able to choose both spin and wait and
+> can feed those back into __smp_cond_spinwait() which can do the scaling
+> based on that.
+
+Exactly.
+
+> > However, in the absence of some precision requirement for the potential
+> > two users of this interface, I think we complicate things unnecessarily.
+> > The only advantage is if you want to make it future proof, in case we
+> > ever need more precision.
 > 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index d22d6b23e758..2f7101ad9d11 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -1754,6 +1754,28 @@ static void fw_devlink_relax_link(struct device_link *link)
->  		dev_name(link->supplier));
->  }
->  
-> +/**
-> + * fw_devlink_relax_consumers - Relax the devlinks with all its consumers
-> + * @dev: Device whose consumer devlinks will be relaxed
-> + *
-> + * Some devices are added during its parent's probe and will never get bound
-> + * to a driver. In this case its consumers will be deferred probe until
-> + * deferred_probe_timeout.
-> + *
-> + * Use this function to relax the consumer devlinks so that the consumers
-> + * device would be probed not that later.
-> + */
-> +void fw_devlink_relax_consumers(struct device *dev)
-> +{
-> +	struct device_link *link;
-> +
-> +	device_links_write_lock();
-> +	list_for_each_entry(link, &dev->links.consumers, s_node)
-> +		fw_devlink_relax_link(link);
-> +	device_links_write_unlock();
-> +}
-> +EXPORT_SYMBOL_GPL(fw_devlink_relax_consumers);
+> There's the future proofing aspect but also having time-remaining
+> simplifies the rate limiting of the time-check because now it can
+> rate-limit depending on how often the policy handler is called and
+> the remaining time.
 
-We currently do not export any "fw_" functions from the driver core, why
-do that now?  This feels wrong as this should all be "internal" to the
-driver core, no driver should be calling this.
+To keep things simple, I'd skip the automatic adjustment of the rate
+limiting in the generic code. Just go for a fixed one until someone
+complains about the slack.
 
-thanks,
+> >> This also gives the WFET a clear end time (though it would still need
+> >> to be converted to timer cycles) but the WFE path could stay simple
+> >> by allowing an overshoot instead of falling back to polling.
+> >
+> > For arm64, both WFE and WFET would be woken up by the event stream
+> > (which is enabled on all production systems). The only reason to use
+> > WFET is if you need smaller granularity than the event stream period
+> > (100us). In this case, we should probably also add a fallback from WFE
+> > to a busy loop.
+> 
+> What do you think would be a good boundary for transitioning to a busy
+> loop?
+> 
+> Say, we have < 100us left and the event-stream is 100us. We could do
+> what __delay() does and spin for the remaining time. But given that we
+> dont' care about precision at least until there's need for it, it seems
+> to be better to err on the side of saving power.
+> 
+> So, how about switching to busy-looping when we get to event-stream-period/4?
+> (and note that in a comment block.)
 
-greg k-h
+Let's do like __delay() (the principle, not necessarily copying the
+code) - start with WFET if available, WFE otherwise. For the latter,
+when the time left is <100us, fall back to spinning. We can later get
+someone to benchmark the power usage and we can revisit. Longer term,
+WFET would be sufficient without any spinning.
+
+That said, I thin our __delay() implementation doesn't need spinning if
+WFET is available:
+
+diff --git a/arch/arm64/lib/delay.c b/arch/arm64/lib/delay.c
+index cb2062e7e234..5d4c28db399a 100644
+--- a/arch/arm64/lib/delay.c
++++ b/arch/arm64/lib/delay.c
+@@ -43,10 +43,10 @@ void __delay(unsigned long cycles)
+ 
+ 		while ((get_cycles() - start + timer_evt_period) < cycles)
+ 			wfe();
+-	}
+ 
+-	while ((get_cycles() - start) < cycles)
+-		cpu_relax();
++		while ((get_cycles() - start) < cycles)
++			cpu_relax();
++	}
+ }
+ EXPORT_SYMBOL(__delay);
+ 
+-- 
+Catalin
 
