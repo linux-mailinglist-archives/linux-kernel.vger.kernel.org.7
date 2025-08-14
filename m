@@ -1,117 +1,130 @@
-Return-Path: <linux-kernel+bounces-768786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB7DB26573
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:34:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2695B26579
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92BA04E3454
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:34:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 268799E86DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF47F2F290A;
-	Thu, 14 Aug 2025 12:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295B02FD1A1;
+	Thu, 14 Aug 2025 12:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lejqI9kt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2g2BIJ8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2296C17B50A;
-	Thu, 14 Aug 2025 12:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF221DE2A5;
+	Thu, 14 Aug 2025 12:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755174884; cv=none; b=mPnTZZ8mW+3PIWi3nWiigOZ59496R9NhtzAl7aREFRXT2Xm1iiFoHlLUay2j2EGzpwAcGv6HZVB77mOWGMNq+ZMNk7QWex0Sr1E2UbbirjrfD75PKcqdkm/CPJPdv+5Lbb6kRv2kth0l/bFFHoRNRUPSkHSbyfGFupTqJ+KuyFc=
+	t=1755174912; cv=none; b=bIT5Zc/kQ3NYWol5bPy/zl2FbXAOafSCrPtHbEQLl0V2U2ISBlP2gSjockzA5ZOXujj6/UuvkZbWNnGJtLLXrB2xi+WVnQ/zh69p/qiVS2lV0OasO0h6Z2JSmxgH+Zb8wepjuvM7I/1DFnc4GeQH7NBMcWPRKAYmS8ratnmf3u0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755174884; c=relaxed/simple;
-	bh=0VrAhuKLaVyb61WaZNhMiNNuBwVKngCyRJ/V5YN1iC0=;
+	s=arc-20240116; t=1755174912; c=relaxed/simple;
+	bh=5hXrpmcmtYiZJx4oU8qkI207P6Gx3hYundw5EKylrIQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RIFk+pjn5z4wxYjFYgYIPNIoolre70Z+wlgEW5ppcVl+BZhvLKnC240m0vBeIg2fXFhby16jWzW6AIYdFFgAFXS4XiGYIDhR50hhbvHQbtC+G+8gqpEt3FkztQNKXEyZn+eID+AdGZMYJbm2UQ7L/7vip1e/Pvo/d5Bw5HKnPCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lejqI9kt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D3BAC4CEED;
-	Thu, 14 Aug 2025 12:34:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPdc7sHAGVD4TrJ2AMAQs8w+ZVFfeKiMAkPt0F0Q2+g+oLCATQPpfpK2j8cMiVkL7teBmg85fMm+qg1W/t1R0sb/Nzak8LER2tySdRJa7/fpPzMPOU7OMXgGSmwtr6rlnjXJDOyM+sgI6nzsP7XBJpawpIs6pbDFMAg53BnPVOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2g2BIJ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3623FC4CEED;
+	Thu, 14 Aug 2025 12:35:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755174883;
-	bh=0VrAhuKLaVyb61WaZNhMiNNuBwVKngCyRJ/V5YN1iC0=;
+	s=k20201202; t=1755174912;
+	bh=5hXrpmcmtYiZJx4oU8qkI207P6Gx3hYundw5EKylrIQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lejqI9kt2PAkvbRwc5AaugS5uDQA2HkPjMWYuMxXxEtFScLJzoUrTAQiqwJuBngFF
-	 lLVzwCltFh5qjf9/KX4a0w+Sd+CXsOL3dY2pq8juPi2E6gQCSO/IITqhxc4bDcm+lH
-	 8QgRcYEOPQh+19yrMj/gVX86hJADE2bn2LEjQyWQ6nat4FwWDtgEC+ImWeOeg0RIOv
-	 xTMKM0VOPQ/0ZiGH9lMcnz8b3Pkkhx77rG4nglx2PjjBfXqhZlyDrPZM0Jf/jg0+TB
-	 OJVeXwcsSpUAbZV42yDHMIFVThhRELGqvDhNvndpfzRPfYp23OfRcFlHVyDeB0ZrXs
-	 Nt2ds8u/ocxAA==
-Date: Thu, 14 Aug 2025 13:34:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Santhosh Kumar K <s-k6@ti.com>
-Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	tudor.ambarus@linaro.org, pratyush@kernel.org, mwalle@kernel.org,
-	p-mantena@ti.com, linux-spi@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-	a-dutta@ti.com, u-kumar1@ti.com, praneeth@ti.com
-Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
- controller
-Message-ID: <2f051eae-61c7-4bff-9f85-cf37b02a7ea3@sirena.org.uk>
-References: <20250811193219.731851-1-s-k6@ti.com>
- <20250811193219.731851-2-s-k6@ti.com>
- <6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk>
- <20487e7f-33dd-4b65-b1a8-5bb8a06ef859@ti.com>
+	b=N2g2BIJ8YPB3KdUqlIQ+3sf88XYTAU5YzXsxCIMkq+b9inEW2vgp9A4ivccGvjwfF
+	 AV/wNRHN7Rl4BZfB83b4YqKem1VH+FiuolX5SiQ0hmKku6kJ9fzYlnSHRYR/hZfo4A
+	 t7RgKyvSz54/20bp9OQxBJ3FdHTZ28zI3/O5nihwLrWH4XxMFsh7ImLJrid7kdNvXc
+	 dxHzSoTZ0eAkBFydpLdrAEROqaFVHC+xn4DDTCz/hN4fLyFBvzVlWYglA0CvtcModo
+	 8sk1zeTQvWBfTVENe6sc6PZjsbCDpigaPftEIsijKrs4a0DqSYC9HgT0MWUqY4ie5R
+	 dAHYa4zIponFg==
+Date: Thu, 14 Aug 2025 15:35:06 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
+	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
+	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v1 08/16] kmsan: convert kmsan_handle_dma to use physical
+ addresses
+Message-ID: <20250814123506.GD310013@unreal>
+References: <cover.1754292567.git.leon@kernel.org>
+ <5b40377b621e49ff4107fa10646c828ccc94e53e.1754292567.git.leon@kernel.org>
+ <20250807122115.GH184255@nvidia.com>
+ <20250813150718.GB310013@unreal>
+ <20250814121316.GC699432@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hsVsvyCGymldcnqG"
-Content-Disposition: inline
-In-Reply-To: <20487e7f-33dd-4b65-b1a8-5bb8a06ef859@ti.com>
-X-Cookie: This sentence no verb.
-
-
---hsVsvyCGymldcnqG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250814121316.GC699432@nvidia.com>
 
-On Thu, Aug 14, 2025 at 05:04:33PM +0530, Santhosh Kumar K wrote:
-> On 14/08/25 01:56, Mark Brown wrote:
+On Thu, Aug 14, 2025 at 09:13:16AM -0300, Jason Gunthorpe wrote:
+> On Wed, Aug 13, 2025 at 06:07:18PM +0300, Leon Romanovsky wrote:
+> > > >  /* Helper function to handle DMA data transfers. */
+> > > > -void kmsan_handle_dma(struct page *page, size_t offset, size_t size,
+> > > > +void kmsan_handle_dma(phys_addr_t phys, size_t size,
+> > > >  		      enum dma_data_direction dir)
+> > > >  {
+> > > >  	u64 page_offset, to_go, addr;
+> > > > +	struct page *page;
+> > > > +	void *kaddr;
+> > > >  
+> > > > -	if (PageHighMem(page))
+> > > > +	if (!pfn_valid(PHYS_PFN(phys)))
+> > > >  		return;
+> > > 
+> > > Not needed, the caller must pass in a phys that is kmap
+> > > compatible. Maybe just leave a comment. FWIW today this is also not
+> > > checking for P2P or DEVICE non-kmap struct pages either, so it should
+> > > be fine without checks.
+> > 
+> > It is not true as we will call to kmsan_handle_dma() unconditionally in
+> > dma_map_phys(). The reason to it is that kmsan_handle_dma() is guarded
+> > with debug kconfig options and cost of pfn_valid() can be accommodated
+> > in that case. It gives more clean DMA code.
+> 
+> Then check attrs here, not pfn_valid.
 
-> > Should we have something that blocks these tuning required modes without
-> > the appropriate tuning, and/or allows discovery of which modes require
-> > this tuning?  This all feels very landmineish - client drivers just have
-> > to know when tuning is required.
+attrs are not available in kmsan_handle_dma(). I can add it if you prefer.
 
-> The flash's maximum operating frequency determines whether PHY tuning is
-> required, as we need tuning in case of Cadence controller for frequencies
-> over 50 MHz.
+> 
+> > So let's keep this patch as is.
+> 
+> Still need to fix the remarks you clipped, do not check PageHighMem
+> just call kmap_local_pfn(). All thie PageHighMem stuff is new to this
+> patch and should not be here, it is the wrong way to use highmem.
 
-That's entirely specific to the Candence controller from the sounds of
-it, that makes it hard to write a client driver if you need to know
-exactly what the controller you're dealing with is and what it's
-requirements are.
+Sure, thanks
 
-> And we do check for this condition - see Patch 07/10,
-> cqspi_phy_op_eligible_sdr(), which currently verifies the flash frequency
-> against 166 MHz. This logic can be improved by implementing both min and max
-> frequency checks, will update in the following version.
-
-I can't actually tell how that verifies if the tuning has been done
-appropriately TBH, at least not without more effort than I'd care to
-(and the tuning only gets added in patch 10?).
-
---hsVsvyCGymldcnqG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmid190ACgkQJNaLcl1U
-h9BuIAf9HOg6LtPbsCspgF6wLQokIeC1xc/j87GykKnreWyld/ZIRyHTDhWa+kJl
-KxWpWUNF/Nu1JT9nAnx03BTvx7fTOt+WKScIJg1kZFnWRHoULMQ0tEoYxEGMPUVG
-TnXuBDDrb+AfwJdR5w112Z0ixw8yTVk8cNFnAEfCAUoxkpxXnesWYjoTV3GhztRQ
-LTWxBj+EWthPRgIz0SnZFC0o54u+iJ9n5hkb7YiAVJ2A+O/XvcYogdXmulGWlvLl
-g5Ec19gMjIo0LwIc6h9MDc/fFNnUDkSHSvd2t9g6DhjCMf+/Y+phV3v3AHYRlKhC
-GYTzuHHYpdWrQbl/1JO/bw31IFhtcA==
-=1D0X
------END PGP SIGNATURE-----
-
---hsVsvyCGymldcnqG--
+> 
+> Jason
+> 
 
