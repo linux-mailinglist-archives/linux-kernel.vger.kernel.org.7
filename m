@@ -1,64 +1,37 @@
-Return-Path: <linux-kernel+bounces-768505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5716B261B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:03:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D2FB261C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 729EE3AB754
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:58:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BFC55C4B9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474862F83A4;
-	Thu, 14 Aug 2025 09:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TvnElCkH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B58C2FC867;
+	Thu, 14 Aug 2025 10:00:03 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F042F6595;
-	Thu, 14 Aug 2025 09:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CBB2F99BE
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755165511; cv=none; b=C0zQp6x+YDEq1c5P4uauehyADMEunKOT89NJ7n8DehFZcmXcbP9yue7ZxsFHBbpQkxM/quXzPH8bEf62Xa/zbKXXlKKtkYeAuQLsKpvfwfHxA7/B6WpOHD/78OMa0yOCVg4q/ddMHghrwvG5Gi1VsHVLCSYYJxuqMfKRHboW7D8=
+	t=1755165602; cv=none; b=b+FfqGUM3nd4gZCbVv3k1c1gzC2MuDrlJmij19MJz0cxo5kwgv6zj5AmknnB5ztxBkiHT25c0TIF2CVxjUPSNkfajXQxpPo7nCrVT04a+mlve0+bbL0QVl1rBedfSiC/LbjaqvfZ52FKr2++pwY3sCilfiBHCH/Szv3zJ+Ta8p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755165511; c=relaxed/simple;
-	bh=TQyR7FXuCKYETcWNVZ8PIU2nphVvP/m9P30vQmjTT0s=;
+	s=arc-20240116; t=1755165602; c=relaxed/simple;
+	bh=k8pg6zKaAn4KxxOrzXs3mn5BY3v3RGul0MX3FzG6CSw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fEAxqVu7WW2T4pcg93SPzuASMazhJTOV/vT2zFAejuSKXDgN5wOmShI9QXYC2Lfin1Pb/zxFgoJ6D+xLGKZCP/uEN/2aDk4mo4tLWl0qDYwUp/dWy27j9Pv4sno3nmBJxmOn6XKz1IUr5LoPJ+l4QdX1RFQffRuRQT0y39Ubw8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TvnElCkH; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755165510; x=1786701510;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TQyR7FXuCKYETcWNVZ8PIU2nphVvP/m9P30vQmjTT0s=;
-  b=TvnElCkHrtKj+V68ihYs4TR8Mq+6dXUP8eMI9I1Zd6vhK+2anoGf+AJC
-   H2zAY+6FE+dMAwj2EXZFpQFN4OVfYqv2uCYsmzNeap3kLd2FhJGKpWrHW
-   gDA+BuCwQEHsrcn9TftXZiFcwJ/5ldkmjmOlcK9O1KQUapk7O6n55dFGc
-   ae+eOxB4+l6mHUP+bRIPoGoN3F0KfE60+Nyn9AER6TWSnWhxgTFce96GC
-   q91s4sVyugH+PaCd0atIe37FqCYJlo6YeedLE6VhbOT6yjyNQTQTtUsXH
-   42I8uB2luKR7hSzdUmJnX+d83uoD9JZIDK9tIDrR6H6unfOZmWmsjdbXV
-   g==;
-X-CSE-ConnectionGUID: e8HH5AiyRCuDY3kh2MqinQ==
-X-CSE-MsgGUID: PE8wlNMQRd6GTQYPE88glw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="56685448"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="56685448"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 02:58:29 -0700
-X-CSE-ConnectionGUID: ucPWRSpTSVO4bCGlCpVRsw==
-X-CSE-MsgGUID: 1GNLvUZtSaSJcVASkakdJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="171954294"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 02:58:24 -0700
-Message-ID: <12524aa3-006a-4fee-bd10-b83adf7a503a@linux.intel.com>
-Date: Thu, 14 Aug 2025 17:58:22 +0800
+	 In-Reply-To:Content-Type; b=ndWNk1fQQC+nIJuCe62BdyUM2vFDbc5Stw0IU9wIFQusc11ReeaNX69AoLRJ7CnLzBARsfPzFZfR8J0KuNP0xxnlU4QqXZtPPL+Q7SqkXju+iCwUd4phb5cn2PehpjSsf15SD48N+S4r/K4QqKdUJ8MfRsc0LO/cSPPit3ZxIEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A12FF43379;
+	Thu, 14 Aug 2025 09:59:57 +0000 (UTC)
+Message-ID: <d021125f-49b0-43d3-ab7a-4eef1836aeeb@ghiti.fr>
+Date: Thu, 14 Aug 2025 11:59:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,179 +39,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 18/30] KVM: selftests: TDX: Add TDX MMIO reads test
-To: Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
- Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
- <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20250807201628.1185915-1-sagis@google.com>
- <20250807201628.1185915-19-sagis@google.com>
+Subject: Re: [PATCH v16 07/13] mm/page_table_check: Reinstate address
+ parameter in [__]page_table_check_pmd_clear()
+To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
+ sweettea-kernel@dorminy.me, nicholas@linux.ibm.com,
+ christophe.leroy@csgroup.eu, Rohan McLure <rmclure@linux.ibm.com>,
+ Ingo Molnar <mingo@kernel.org>
+References: <20250813062614.51759-1-ajd@linux.ibm.com>
+ <20250813062614.51759-8-ajd@linux.ibm.com>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250807201628.1185915-19-sagis@google.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250813062614.51759-8-ajd@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpedthfelfeejgeehveegleejleelgfevhfekieffkeeujeetfedvvefhledvgeegieenucfkphepudelfedrfeefrdehjedrudelleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleefrdeffedrheejrdduleelpdhhvghloheplgduledvrdduieekrddvvddruddtudgnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepudegpdhrtghpthhtoheprghjugeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehlihhnuhigphhptgdquggvvheslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehli
+ hhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
 
-
-On 8/8/2025 4:16 AM, Sagi Shahar wrote:
-[...]
-> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> index 8c3b6802c37e..f92ddda2d1ac 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> @@ -31,6 +31,25 @@ void tdx_test_assert_io(struct kvm_vcpu *vcpu, uint16_t port, uint8_t size,
->   		    vcpu->run->io.direction);
+On 8/13/25 08:26, Andrew Donnellan wrote:
+> From: Rohan McLure <rmclure@linux.ibm.com>
+>
+> This reverts commit 1831414cd729 ("mm/page_table_check: remove unused
+> parameter in [__]page_table_check_pmd_clear").
+>
+> Reinstate previously unused parameters for the purpose of supporting
+> powerpc platforms, as many do not encode user/kernel ownership of the
+> page in the pte, but instead in the address of the access.
+>
+> [ajd@linux.ibm.com: rebase on arm64 changes]
+> Signed-off-by: Rohan McLure <rmclure@linux.ibm.com>
+> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Acked-by: Ingo Molnar <mingo@kernel.org>  # x86
+> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+> ---
+> v15: rebase
+> ---
+>   arch/arm64/include/asm/pgtable.h |  2 +-
+>   arch/riscv/include/asm/pgtable.h |  2 +-
+>   arch/x86/include/asm/pgtable.h   |  2 +-
+>   include/linux/page_table_check.h | 11 +++++++----
+>   include/linux/pgtable.h          |  2 +-
+>   mm/page_table_check.c            |  5 +++--
+>   6 files changed, 14 insertions(+), 10 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 81f06e5e32b2..dfcdf051b114 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1370,7 +1370,7 @@ static inline pte_t __ptep_get_and_clear_anysz(struct mm_struct *mm,
+>   		page_table_check_pte_clear(mm, pte);
+>   		break;
+>   	case PMD_SIZE:
+> -		page_table_check_pmd_clear(mm, pte_pmd(pte));
+> +		page_table_check_pmd_clear(mm, address, pte_pmd(pte));
+>   		break;
+>   #ifndef __PAGETABLE_PMD_FOLDED
+>   	case PUD_SIZE:
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+> index 2484c0788012..d11fc6333606 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -860,7 +860,7 @@ static inline pmd_t pmdp_huge_get_and_clear(struct mm_struct *mm,
+>   {
+>   	pmd_t pmd = __pmd(atomic_long_xchg((atomic_long_t *)pmdp, 0));
+>   
+> -	page_table_check_pmd_clear(mm, pmd);
+> +	page_table_check_pmd_clear(mm, address, pmd);
+>   
+>   	return pmd;
+>   }
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index 8b45e0c41923..b68bea15f32d 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -1318,7 +1318,7 @@ static inline pmd_t pmdp_huge_get_and_clear(struct mm_struct *mm, unsigned long
+>   {
+>   	pmd_t pmd = native_pmdp_get_and_clear(pmdp);
+>   
+> -	page_table_check_pmd_clear(mm, pmd);
+> +	page_table_check_pmd_clear(mm, addr, pmd);
+>   
+>   	return pmd;
+>   }
+> diff --git a/include/linux/page_table_check.h b/include/linux/page_table_check.h
+> index 808cc3a48c28..3973b69ae294 100644
+> --- a/include/linux/page_table_check.h
+> +++ b/include/linux/page_table_check.h
+> @@ -15,7 +15,8 @@ extern struct page_ext_operations page_table_check_ops;
+>   
+>   void __page_table_check_zero(struct page *page, unsigned int order);
+>   void __page_table_check_pte_clear(struct mm_struct *mm, pte_t pte);
+> -void __page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd);
+> +void __page_table_check_pmd_clear(struct mm_struct *mm, unsigned long addr,
+> +				  pmd_t pmd);
+>   void __page_table_check_pud_clear(struct mm_struct *mm, unsigned long addr,
+>   				  pud_t pud);
+>   void __page_table_check_ptes_set(struct mm_struct *mm, unsigned long addr,
+> @@ -52,12 +53,13 @@ static inline void page_table_check_pte_clear(struct mm_struct *mm, pte_t pte)
+>   	__page_table_check_pte_clear(mm, pte);
 >   }
 >   
-> +void tdx_test_assert_mmio(struct kvm_vcpu *vcpu, uint64_t phys_addr,
-> +			  uint32_t size, uint8_t is_write)
-> +{
-> +	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_MMIO,
-> +		    "Got exit_reason other than KVM_EXIT_MMIO: %u (%s)\n",
-> +		    vcpu->run->exit_reason,
-> +		    exit_reason_str(vcpu->run->exit_reason));
-> +
-> +	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_MMIO &&
-It's already checked above.
-
-> +		    vcpu->run->mmio.phys_addr == phys_addr &&
-> +		    vcpu->run->mmio.len == size &&
-> +		    vcpu->run->mmio.is_write == is_write,
-> +		    "Got an unexpected MMIO exit values: %u (%s) %llu %u %u\n",
-> +		    vcpu->run->exit_reason,
-> +		    exit_reason_str(vcpu->run->exit_reason),
-> +		    vcpu->run->mmio.phys_addr, vcpu->run->mmio.len,
-> +		    vcpu->run->mmio.is_write);
-> +}
-> +
->   void tdx_run(struct kvm_vcpu *vcpu)
+> -static inline void page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
+> +static inline void page_table_check_pmd_clear(struct mm_struct *mm,
+> +					      unsigned long addr, pmd_t pmd)
 >   {
->   	td_vcpu_run(vcpu);
-> diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> index 720ef5e87071..563f1025c8a3 100644
-> --- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> +++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> @@ -719,6 +719,91 @@ void verify_guest_hlt(void)
->   	_verify_guest_hlt(0);
+>   	if (static_branch_likely(&page_table_check_disabled))
+>   		return;
+>   
+> -	__page_table_check_pmd_clear(mm, pmd);
+> +	__page_table_check_pmd_clear(mm, addr, pmd);
 >   }
 >   
-> +/* Pick any address that was not mapped into the guest to test MMIO */
-> +#define TDX_MMIO_TEST_ADDR 0x200000000
-> +#define MMIO_SYNC_VALUE 0x42
-> +
-> +void guest_mmio_reads(void)
-> +{
-> +	uint64_t mmio_test_addr = TDX_MMIO_TEST_ADDR | tdx_s_bit;
-> +	uint64_t data;
-> +	uint64_t ret;
-> +
-> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 1, &data);
-> +	tdx_assert_error(ret);
-> +	if (data != 0x12)
-> +		tdx_test_fatal(1);
-> +
-> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 2, &data);
-> +	tdx_assert_error(ret);
-> +	if (data != 0x1234)
-> +		tdx_test_fatal(2);
-> +
-> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 4, &data);
-> +	tdx_assert_error(ret);
-> +	if (data != 0x12345678)
-> +		tdx_test_fatal(4);
-> +
-> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 8, &data);
-> +	tdx_assert_error(ret);
-> +	if (data != 0x1234567890ABCDEF)
-> +		tdx_test_fatal(8);
-> +
-> +	/* Make sure host and guest are synced to the same point of execution */
-> +	tdx_test_report_to_user_space(MMIO_SYNC_VALUE);
-Is this step necessary?
-
-
-> +
-> +	/* Read an invalid number of bytes. */
-> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 10, &data);
-> +	tdx_assert_error(ret);
-> +
-> +	tdx_test_success();
-> +}
-> +
-> +/*
-> + * Verifies guest MMIO reads.
-> + */
-> +void verify_mmio_reads(void)
-> +{
-> +	struct kvm_vcpu *vcpu;
-> +	struct kvm_vm *vm;
-> +
-> +	vm = td_create();
-> +	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
-> +	vcpu = td_vcpu_add(vm, 0, guest_mmio_reads);
-> +	td_finalize(vm);
-> +
-> +	printf("Verifying TD MMIO reads:\n");
-> +
-> +	tdx_run(vcpu);
-> +	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 1, MMIO_READ);
-> +	*(uint8_t *)vcpu->run->mmio.data = 0x12;
-> +
-> +	tdx_run(vcpu);
-> +	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 2, MMIO_READ);
-> +	*(uint16_t *)vcpu->run->mmio.data = 0x1234;
-> +
-> +	tdx_run(vcpu);
-> +	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 4, MMIO_READ);
-> +	*(uint32_t *)vcpu->run->mmio.data = 0x12345678;
-> +
-> +	tdx_run(vcpu);
-> +	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 8, MMIO_READ);
-> +	*(uint64_t *)vcpu->run->mmio.data = 0x1234567890ABCDEF;
-> +
-> +	tdx_run(vcpu);
-> +	TEST_ASSERT_EQ(tdx_test_read_report_from_guest(vcpu), MMIO_SYNC_VALUE);
-> +
-> +	td_vcpu_run(vcpu);
-> +	TEST_ASSERT_EQ(vcpu->run->exit_reason, KVM_EXIT_SYSTEM_EVENT);
-> +	TEST_ASSERT_EQ(vcpu->run->system_event.data[12], TDG_VP_VMCALL_INVALID_OPERAND);
-> +
-> +	tdx_run(vcpu);
-> +	tdx_test_assert_success(vcpu);
-> +
-> +	kvm_vm_free(vm);
-> +	printf("\t ... PASSED\n");
-> +}
-> +
->   int main(int argc, char **argv)
+>   static inline void page_table_check_pud_clear(struct mm_struct *mm,
+> @@ -121,7 +123,8 @@ static inline void page_table_check_pte_clear(struct mm_struct *mm, pte_t pte)
 >   {
->   	ksft_print_header();
-> @@ -726,7 +811,7 @@ int main(int argc, char **argv)
->   	if (!is_tdx_enabled())
->   		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
+>   }
 >   
-> -	ksft_set_plan(10);
-> +	ksft_set_plan(11);
->   	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
->   			 "verify_td_lifecycle\n");
->   	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
-> @@ -747,6 +832,8 @@ int main(int argc, char **argv)
->   			 "verify_guest_msr_reads\n");
->   	ksft_test_result(!run_in_new_process(&verify_guest_hlt),
->   			 "verify_guest_hlt\n");
-> +	ksft_test_result(!run_in_new_process(&verify_mmio_reads),
-> +			 "verify_mmio_reads\n");
+> -static inline void page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
+> +static inline void page_table_check_pmd_clear(struct mm_struct *mm,
+> +					      unsigned long addr, pmd_t pmd)
+>   {
+>   }
 >   
->   	ksft_finished();
->   	return 0;
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 28fcff844b63..d97f40f1365d 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -648,7 +648,7 @@ static inline pmd_t pmdp_huge_get_and_clear(struct mm_struct *mm,
+>   	pmd_t pmd = *pmdp;
+>   
+>   	pmd_clear(pmdp);
+> -	page_table_check_pmd_clear(mm, pmd);
+> +	page_table_check_pmd_clear(mm, address, pmd);
+>   
+>   	return pmd;
+>   }
+> diff --git a/mm/page_table_check.c b/mm/page_table_check.c
+> index bd1242087a35..e8c26b616aed 100644
+> --- a/mm/page_table_check.c
+> +++ b/mm/page_table_check.c
+> @@ -156,7 +156,8 @@ void __page_table_check_pte_clear(struct mm_struct *mm, pte_t pte)
+>   }
+>   EXPORT_SYMBOL(__page_table_check_pte_clear);
+>   
+> -void __page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
+> +void __page_table_check_pmd_clear(struct mm_struct *mm, unsigned long addr,
+> +				  pmd_t pmd)
+>   {
+>   	if (&init_mm == mm)
+>   		return;
+> @@ -231,7 +232,7 @@ void __page_table_check_pmds_set(struct mm_struct *mm, unsigned long addr,
+>   	page_table_check_pmd_flags(pmd);
+>   
+>   	for (i = 0; i < nr; i++)
+> -		__page_table_check_pmd_clear(mm, *(pmdp + i));
+> +		__page_table_check_pmd_clear(mm, addr + PMD_SIZE * i, *(pmdp + i));
+>   	if (pmd_user_accessible_page(pmd))
+>   		page_table_check_set(pmd_pfn(pmd), stride * nr, pmd_write(pmd));
+>   }
+
+
+Acked-by: Alexandre Ghiti <alexghiti@rivosinc.com> # riscv
+
+Thanks,
+
+Alex
 
 
