@@ -1,95 +1,104 @@
-Return-Path: <linux-kernel+bounces-769703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE190B27234
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:51:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF97AB27238
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A41FF1658DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78CA33AD4BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707A2283130;
-	Thu, 14 Aug 2025 22:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FF3283C83;
+	Thu, 14 Aug 2025 22:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcQ0s7/6"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MU9v0qYU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDE423185E;
-	Thu, 14 Aug 2025 22:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187E3281352
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755211852; cv=none; b=RPybrw8gkZfc85S3USmpocrOK4F40UQtDI8AFjxzW2BrWk8bCml0WoAMEZW5XkGC8JqQqmLny9lQjqVTUoziTSvc3SRcQuKs5ZGBJZGP1wrJsDLxUQxxCpBwf77CJU/PQjuzkOpC7pOlrkHl1gQb3NLVsJmHt7CsCgirKy0Mba8=
+	t=1755211869; cv=none; b=uCtILDjHE8y/MWXo8fbmtGz4Pq6U3dBRRntT1EU1Fc3rXUm9sy2yCACkYDRCv88rzgYBlJI8EQbPosGH1QEdVl5CDeD5XbEMj2vqOWI24E/dWpocMoZh7ELgsc4tF1cBWnXRmzP8m0Ph4gAmxgrz/ouWd+GOOCjJKSmf37xtgMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755211852; c=relaxed/simple;
-	bh=k3g3av1ExpxSpGPQvhDqy0PXWfc84KcrITee0dOTqgw=;
+	s=arc-20240116; t=1755211869; c=relaxed/simple;
+	bh=VsRfvsLbvMPweRFwX9yd1l+oGWIeHLlnNvKbVKtNBMA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eAOISnJXHSK6O6fPQVhkH+YU23V0jWHvrWAmVfjg7mw/cJQCv8JF3vmYHib/53A8zTnQUzqWoFaplbAIT23vYys32s4uI4TtWlve9Whq/Z45jIm2Aq4sAX3Cj1wyMTgu3Mq1Q+A8tbfVhUnVZeLiuU4BBsiSktifvOBkLLoV/5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcQ0s7/6; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-323267adb81so1949081a91.1;
-        Thu, 14 Aug 2025 15:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755211850; x=1755816650; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WVawUElbuEdpT/L0IVDdSj9wdhwbVEtke7BFQtXU6aA=;
-        b=DcQ0s7/6XGDmMx8IQ9ViQd6bimAQDM7N3nSNWqIykjLD4YZY0CkfGEbjoXblhrQq+3
-         /nc65dV2pYz8aSvax4pJEGDIklXtXHBqCJSpXr7zX+ckwAEO4pTzR+OLa2NrZmxyE7zN
-         EuLyUHE3pNIli4OHnPsbSx/u46l3Lf5jPY+UofRxMh+Yi71AyQzTeZuyTl4Nphs0pg8p
-         8Js3bzk3nXIQtgYKfHxVkns3hJSZQWJnY4M/VndAHYmuf8e+kDsErb9uUEX2zmCR2m3p
-         MPpW30Wf3TnHhzicW7OE5d+oAFeh0Z88IH1OcTX/3GkNcsgsBVtMdj3ELbOgWG4c3r6s
-         WWVg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=lDZe5Icf7F83thQnzX/Gmkl6C+UhFFg25JwLs0/DDWMepMN/lFSQbbDxu51axRiIVt/Zoj8TfwMSW/+3o1qBm/SGYPdYPdHXolZcWhm+qfRdlp9JwTZ93u8TiRGRmN9v/y6eMN2VSngcVHd0pcw4FiqsMHjSdCY4tFfpWcI26G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MU9v0qYU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EHW3EO026997
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:51:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=At5mFz1vkSy2faOkC/EtnV9d
+	eGFeKo96q35XzSytUj0=; b=MU9v0qYUV+xumib0ODJKcZrNBxxl+lSpjy8TNlgZ
+	9v9eV1aYSpbpAPYits6nrach4CQU1KixVp9hLJpHsjZK+TLqDyWYLK0XatS/X99j
+	iV/k+fwTaLr10voXU1QcBHyEBAearCgIja/3rEWYtwEchiOQ98/Dg8aA2lzsiH+a
+	2poOjUwxiMiLVi/yZ/TLJ94FLK1cxSCwmdzBKQdEOSoO/7vxMN03f6FTwPTj2D8e
+	aGB+s8oYduUEOX5pm8XdnI08aq87QrPJdzckw6ErIOG1WRnA9NeC1kif4f/igcE6
+	d4B3d6QUGsqPKqNsAfP03KAT3oXupMaFK4WhdJEBquwQCg==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffhjw6cx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 22:51:06 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-76e2e8fc814so1279603b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:51:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755211850; x=1755816650;
+        d=1e100.net; s=20230601; t=1755211866; x=1755816666;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WVawUElbuEdpT/L0IVDdSj9wdhwbVEtke7BFQtXU6aA=;
-        b=f975AEV4H3icfnVlbkWoF2CdAKEg7j8iRl1CCHwkfv2BSaViADo7mu/YezQUVsc0Qh
-         CPPpjrQyp+HKQDg+dtTaNzqIt2nS5Ik+BQHzJ4BHeWTtTVsIhpV1srt/emI4EflL9mo6
-         uk28CLfZEjKJ9XP+ePcMJ0DIYvonjk0CVa0hX6GkMIGsoO+YKFFkNVENlK/XP4EEAy+N
-         zvAWw07OzH8aSABebJ43HqiDjDbfwL8ED2AdlqS8SOz72S175mUd+De4MuC3NbDexQwo
-         iis0TQl6CifCQ9Quc6Y5krkNHG7RhFcqoGNLusmFLKVFBTwsJU1FDCI2Au/yY9nlAYi8
-         gTow==
-X-Forwarded-Encrypted: i=1; AJvYcCUA8e0I22tgfGhuMfA+xfXx6nBQgyDm5e4IW45k0R3iD+WzoJm5GQ3VTSuyWeAmUIUpRmsW8sBwTVr2@vger.kernel.org, AJvYcCUM1NiJWmf7Lo5XrOaX7oCbD81auEt3YK+oohX1GN0zswjFBObQzF9p7qaRpbe1MjaCL5WT6Ui0F4CT@vger.kernel.org, AJvYcCXy/I6c0usgVVyGSQ5LsjoxiC2YIXnCp7gG66Qv4zbTZ4WgulD7lGW1+XkvxocayutpbHGNUjNG07jm3aMm@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg5Sfj2jYCTrLWDgO1JDHrd8wDti9Lv/dsfvhrhorkHcy1oj0/
-	toahmOezAWT0UZANH2pNXTaj1fZTLusPQm83VVkOAxo7jiF1hj7elTXi
-X-Gm-Gg: ASbGncsAIIWC4445JwT9hw7Pd9IYxljcVX6/T8oMQXh3y10jVxQ/ZvNvC7yoxL3UFe9
-	D+cFEuVH6v/DG2gqdXS/sOLIIib0cHMj6b5IoNamakYOlsI26mBcN6aV3+u2IN0+AHQy2R4+CLA
-	fBYlPZNJ5tT9alND/fKenTI+KNcVB3t9Oa6uhLTa7rfLW1uWlPlmB/vQSka50LsyKUvEJ9jTTh5
-	COQuLrn/CkUzk+rew2izvwpETRycesRh0k3HsI5JpiQfCn8FEIYkSlxcqeUXPvIlf6j9mJD0mQ2
-	43GHB31T5R4wuvTbRr/yTW//gIwEQ4vrOrWPwTGj975y9FqWDlhGxBRXu03SZRWsi4b/XCnGNN6
-	QE3XHTjI4DrMIzcry/TGX9mDVB4Yt9YvO
-X-Google-Smtp-Source: AGHT+IEJqNeT1yM7BjiHaonVA76lx9wIv7oauipmGKTTR2d3Fa2Yg6FGWlZUCw2T0pv6BwK2DA17bw==
-X-Received: by 2002:a17:90b:1810:b0:31a:9004:899d with SMTP id 98e67ed59e1d1-32327a4f242mr8445796a91.18.1755211850284;
-        Thu, 14 Aug 2025 15:50:50 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b471519d8bcsm2721398a12.61.2025.08.14.15.50.49
+        bh=At5mFz1vkSy2faOkC/EtnV9deGFeKo96q35XzSytUj0=;
+        b=j8eIKOmW8kW8Z51KAN7gwCTrzRb3negrFYk1phx4aigG1Id79EYJY44YBTbleJkOmP
+         WvUYT+P0KuEXJaVVwP8JNy5Cb4vHxbTJ20HgzCr2nxXho2nWHgFcvfhG38Q3pC/TiWKD
+         kPpYwdIdWcYlAOMhWnnnC3zpRYVU7lXkaLlWqdfmA7wlnYis1uZS6nEKzYJr8Cc5H7Ra
+         ww8CTbWjs/TX961Zh7MsRcrMWP1PCZmDLP02M0mOgcfstG/wRodxKucgGgMPLsal3Hk4
+         jB7OzyBRXlc8EUQqTGospKHyiJAN5i1XIm9A0ER8R00oNC1UKmLUJdW3RKbKAXJzVoxn
+         TwVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEkmhuwgHqkDni3kAnBHRNvub9S20y2TLdp5X3ifMMXuQ9nNs78p2rYK3iWmP2CaciddkRlRbXaVQZF/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu/tvqVesB+kgJ39jcMDiCZ/lRbDNyvlHYn5ZmDRYdTQAR5kYy
+	DKO9hvwNOuHGOw3fhN54IEnatgbiEgW7tZIX//iwh0IGKm2b/hoSlhq6aMp6us0At2+wmed/hvV
+	xD/JunLa/eC3gd9e0N9nNgvxC5PO0rLvVQZp67TPizYw7EbZpfJHc1zQn8hrg1J6m8jU=
+X-Gm-Gg: ASbGncsY8siJXIywMDn9j5XPasxeRZOwAbeQU5DBV3LF2i6fqfw7ShwTTUdEKT0/fx/
+	9RAuIju3X+pLPz7i0TuoNvY5qGDA4dldWFYKXVFqoCBr7R/oKVe75nb/UHVP9xuNa0PDzwc7drh
+	tgrbKr3naP7pE7WKr5sJev8uzqnN6hs3s4y7yfa/91HBngkUBKMhq6hlb/KpUPvaJKy5VthDBN2
+	SYjevyR4lV64/c8Go7a9tzVnqL7F5LsQfre/7Q81Mzt+araOF/xtZD6VdruMHxuLQutcHYO6D+q
+	DbGD4kCziVssoLr+XOMJE6+xL+P8+abadYkftbwcPH/+ImvsjypPP7QgJ2aZjIR8fRZjmWYM+3p
+	NxDT8msYaBNCLahCwggGNxIQ=
+X-Received: by 2002:a05:6a00:a0e:b0:74d:f997:1b45 with SMTP id d2e1a72fcca58-76e31eedebdmr7910293b3a.8.1755211865647;
+        Thu, 14 Aug 2025 15:51:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE82TPNJ3ll/m6MhFabEUR14MGIKrwXTkhR8iXZvn445BnTFS2znQUAA1pHvzWHlQz+zbMePQ==
+X-Received: by 2002:a05:6a00:a0e:b0:74d:f997:1b45 with SMTP id d2e1a72fcca58-76e31eedebdmr7910261b3a.8.1755211865187;
+        Thu, 14 Aug 2025 15:51:05 -0700 (PDT)
+Received: from hu-bjorande-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c61705bd7sm14513362b3a.31.2025.08.14.15.51.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 15:50:50 -0700 (PDT)
-Date: Fri, 15 Aug 2025 06:49:58 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Alex Elder <elder@riscstar.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org, 
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org, 
-	kishon@kernel.org
-Cc: dlan@gentoo.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de, tglx@linutronix.de, 
-	johan+linaro@kernel.org, thippeswamy.havalige@amd.com, namcao@linutronix.de, 
-	mayank.rana@oss.qualcomm.com, shradha.t@samsung.com, quic_schintav@quicinc.com, 
-	fan.ni@samsung.com, devicetree@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-pci@vger.kernel.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Junzhong Pan <panjunzhong@linux.spacemit.com>
-Subject: Re: [PATCH 4/6] phy: spacemit: introduce PCIe/combo PHY
-Message-ID: <mj5e6afmbqo2tpt3zjuebcfif3flvgqq663erv3xuvbg72nd6g@bapy44nobzyw>
-References: <20250813184701.2444372-1-elder@riscstar.com>
- <20250813184701.2444372-5-elder@riscstar.com>
- <valmrbddij2dn4fjxefr46zud2u6eco2isyaa62sd66d27foyl@4hrhafqftgb5>
- <4eaa30bc-9a25-4fe0-b685-1d0d8fa503c2@riscstar.com>
+        Thu, 14 Aug 2025 15:51:04 -0700 (PDT)
+Date: Thu, 14 Aug 2025 15:51:02 -0700
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Pankaj Patil <pankaj.patil@oss.qualcomm.com>, sboyd@kernel.org,
+        mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_rjendra@quicinc.com,
+        taniya.das@oss.qualcomm.com, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] clk: qcom: gcc: Add support for Global Clock
+ Controller
+Message-ID: <aJ5l+0Fv7nm2vKuZ@hu-bjorande-lv.qualcomm.com>
+References: <20250716152017.4070029-1-pankaj.patil@oss.qualcomm.com>
+ <20250716152017.4070029-8-pankaj.patil@oss.qualcomm.com>
+ <28ea2b11-a269-4536-8306-185bf272bd60@kernel.org>
+ <2yekmjqihkzsfjr223vepigfj4hfruleigguhrlekp6s7riuxk@ta5kghr2kafi>
+ <4559a710-8b4f-4988-b063-40486fe0ffe2@kernel.org>
+ <2025081338-backwash-oak-0677@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,90 +107,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4eaa30bc-9a25-4fe0-b685-1d0d8fa503c2@riscstar.com>
+In-Reply-To: <2025081338-backwash-oak-0677@gregkh>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NCBTYWx0ZWRfX9TFgSWHP5wk7
+ QKSkhknAESAZ8s/MNIs7nshxVFKdXl9hbsEpuhegnbT7PBn/tasuckdHACCe3bzQ6kkl9UVQ8O9
+ Qsj2v7LPXbrHgL9DVYUFYnraOyu+hEsbl1wrTAE699D4NhLVccVqkD1ITnxZXDdisDIgVOARKcB
+ 7QnBLd5fXdvKakbq0q5t6AUmUfjFSWrXDYRyPLBXH1P671alt+5YbJv9dOOCEUpsCQFlHNbU/IJ
+ awFFTegTZXY+OWPTP4aSTwb+DIcDgcBas46LZO8+s0KW/eZqSRVZS9KfNDRgccmGFgvizgeeZ10
+ L3eyeB0LACAiVE0WYpolpHePYdhLTRUWR+ccVgTTpMUpSmiBAFUJg+8M5lMbu1v0j/44mv6Xdgn
+ 1E/Z4zOE
+X-Proofpoint-GUID: o_fAyGOQPX7ufQSwHy0-tNZsett6yxPd
+X-Authority-Analysis: v=2.4 cv=TJFFS0la c=1 sm=1 tr=0 ts=689e685a cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=mDV3o1hIAAAA:8 a=xkPlMqQ6EUx7zbaPWWUA:9
+ a=CjuIK1q_8ugA:10 a=JEtk54xxEQEA:10 a=UDyAGHZwfzgA:10
+ a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-ORIG-GUID: o_fAyGOQPX7ufQSwHy0-tNZsett6yxPd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-14_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0
+ phishscore=0 clxscore=1015 spamscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110074
 
-On Thu, Aug 14, 2025 at 07:15:43AM -0500, Alex Elder wrote:
-> On 8/13/25 6:42 PM, Inochi Amaoto wrote:
-> > On Wed, Aug 13, 2025 at 01:46:58PM -0500, Alex Elder wrote:
-> > > Introduce a driver that supports three PHYs found on the SpacemiT
-> > > K1 SoC.  The first PHY is a combo PHY that can be configured for
-> > > use for either USB 3 or PCIe.  The other two PHYs support PCIe
-> > > only.
+On Wed, Aug 13, 2025 at 06:19:20PM +0200, Greg KH wrote:
+> On Sun, Jul 20, 2025 at 02:18:19PM +0200, Krzysztof Kozlowski wrote:
+> > On 20/07/2025 05:46, Bjorn Andersson wrote:
+> > > On Wed, Jul 16, 2025 at 06:28:15PM +0200, Krzysztof Kozlowski wrote:
+> > >> On 16/07/2025 17:20, Pankaj Patil wrote:
+> > > [..]
+> > >>> diff --git a/drivers/clk/qcom/gcc-glymur.c b/drivers/clk/qcom/gcc-glymur.c
+> > >>> new file mode 100644
+> > >>> index 000000000000..a1a6da62ed35
+> > >>> --- /dev/null
+> > >>> +++ b/drivers/clk/qcom/gcc-glymur.c
+> > >>> @@ -0,0 +1,8623 @@
+> > >>> +// SPDX-License-Identifier: GPL-2.0-only
+> > >>> +/*
+> > >>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> > >>
+> > >> Missing date.
+> > >>
 > > > 
-> > > All three PHYs must be programmed with an 8 bit receiver termination
-> > > value, which must be determined dynamically; only the combo PHY is
-> > > able to determine this value.  The combo PHY performs a special
-> > > calibration step at probe time to discover this, and that value is
-> > > used to program each PHY that operates in PCIe mode.  The combo
-> > > PHY must therefore be probed--first--if either of the PCIe-only
-> > > PHYs will be used.
+> > > Per updated company guidelines we don't want a year here. Please let us
+> > > know if you have any concerns with this.
 > > > 
-> > > During normal operation, the USB or PCIe driver using the PHY must
-> > > ensure clocks and resets are set up properly.  However clocks are
-> > > enabled and resets are de-asserted temporarily by this driver to
-> > > perform the calibration step on the combo PHY.
-> > > 
-> > > Tested-by: Junzhong Pan <panjunzhong@linux.spacemit.com>
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > ---
-> > >   drivers/phy/Kconfig                |  11 +
-> > >   drivers/phy/Makefile               |   1 +
-> > >   drivers/phy/phy-spacemit-k1-pcie.c | 639 +++++++++++++++++++++++++++++
-> > >   3 files changed, 651 insertions(+)
-> > >   create mode 100644 drivers/phy/phy-spacemit-k1-pcie.c
-> 
-> . . .
-> 
-> > > diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> > > index c670a8dac4680..20f0078e543c7 100644
-> > > --- a/drivers/phy/Makefile
-> > > +++ b/drivers/phy/Makefile
-> 
-> . . .
-> 
-> > > +static int k1_pcie_pll_lock(struct k1_pcie_phy *k1_phy, bool pcie)
-> > > +{
-> > > +	u32 val = pcie ? CFG_FORCE_RCV_RETRY : 0;
-> > > +	void __iomem *virt;
-> > > +
-> > > +	writel(val, k1_phy->regs + PCIE_RC_DONE_STATUS);
-> > > +
-> > > +	/*
-> > > +	 * Wait for indication the PHY PLL is locked.  Lanes for ports
-> > > +	 * B and C share a PLL, so it's enough to sample just lane 0.
-> > > +	 */
-> > > +	virt = k1_phy->regs + PCIE_PU_ADDR_CLK_CFG;	/* Lane 0 */
-> > > +
-> > > +	return readl_poll_timeout(virt, val, val & PLL_READY,
-> > > +				  POLL_DELAY, PLL_TIMEOUT);
-> > > +}
-> > > +
+> > I remember the guidelines and they were about publishing your code, not
+> > about contributing to open-source projects. And whatever you have
+> > internally does not cover us at all. You can have internal guideline
+> > saying you need to buy me a beer or I need to buy you a beer. Does not
+> > matter.
 > > 
-> > Can we use standard clk_ops and clk_mux to normalize this process?
+> > That above copyright statement without date does not adhere to expected
+> > format. Explanation how this should be written:
+> > 
+> > https://www.gnu.org/licenses/gpl-howto.en.html#copyright-notice
+> > 
+> > The GPL-2.0 license in the kernel also uses date:
+> > 
+> > "Copyright (C) <year>  <name of author>    "
+> > 
+> > There is no option without date in the license or GPL faq. I am not a
+> > lawyer, so no clue whether this is what we want, but I also should not
+> > be my task to figure out whether different copyright statement is okay
+> > or not. It's your burden.
+> > 
+> > Or drop the Copyright statement complete to avoid any questions.
 > 
-> I understand you're suggesting that we represent this as a clock.
+> Note, we don't take legal advice from the FSF :)
 > 
-> Can you be more specific about how you suggest I do that?
-> 
-> For example, are you suggesting I create a separate clock driver
-> for this one PLL (in each PCIe register space)?
-> 
-> Or do you mean use clock structures and callbacks within this
-> driver to represent this?
+> That being said, any/none of the above is just fine, there's not even a
+> requirement for a copyright line at all.  It's up to the author of the
+> file as to the format for what they want to do in the end, none of it
+> matters to the actual existance of the copyright itself, which is
+> implicit with or without a copyright line.
 > 
 
-I think using clock structures and registering them is just fine, 
-there are many phy drivers already do this.
+Thank you for your guidance, Greg.
 
-> I'm just not sure what you have in mind, and the two options I
-> mention seem a lot more complicated than this one function.
+Then we choose to follow the format used in this patch, without the
+year, going forward.
+
+Thank you,
+Bjorn
+
+> thanks,
 > 
-
-Yes, it is more complex than just adding one function, but it 
-make the code clean and easy to understand as the clock looks
-complex. Also, register this clock allow us to know the state
-of internal clock by looking clk_summary.
-
-Regards,
-Inochi
+> greg "I talk to too many lawyers" k-h
 
