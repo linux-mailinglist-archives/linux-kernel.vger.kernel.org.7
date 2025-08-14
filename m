@@ -1,221 +1,153 @@
-Return-Path: <linux-kernel+bounces-768066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F7DB25C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:05:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5236EB25C9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60071C27055
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:04:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA305814F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3A02641C6;
-	Thu, 14 Aug 2025 07:04:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AF8266B46;
+	Thu, 14 Aug 2025 07:04:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOlEDaW5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bNNdrRpQ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B553325A326;
-	Thu, 14 Aug 2025 07:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6F325EF9C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755155052; cv=none; b=qVaOdipGv9V4BWAN0FCQg8A+6nDna5chfEeA9BI9BoH6uG5o7/9zK8bXwUfw29fg0diSJlQfCIajiFvRngoPAhym6Pfet5yaPU9ny/XqeqBbmMmCSKez4AdIQ7uWGMExJ6YzRg07jiuurDqP7tTrxVbHqKDkgRUAnbrQj7eT0TE=
+	t=1755155087; cv=none; b=VQ4jm1afRHIQwZkuV5fhQa2hE0W1LwofVlo+cIbkjh/6zYXgV6GYBavkMWReMpAEaRAKdqVRT/5iaqNXR1yWEl75uuWSfhDS3I1FZZlhYgvypdx/FKIDdyoRKQgBURMTuhmlccFw2bpkLCFLzJFEmaMoXxHrjG6JnIUd5ag4pJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755155052; c=relaxed/simple;
-	bh=7pJ0Fl261mW06QcqNKqe/+yuvQAesZpRiKlzp/hYupk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jvp6WGAr32t5Kc8yXYPe0H98KJ2NJzhPxhUzQzgD9MvpLef5LKtDRKL5NAuip1EfWYHtEnZWKiTgEn9lbCpsD3biq6bmoLnRgXTZTpoyEZrcIAk8MEdXCAWgqAKfDsBsB9aSp2dOjeh0Qyfx+9ifkO7ZUKSMuQDuKM2UrRUeWuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOlEDaW5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFBB6C4CEEF;
-	Thu, 14 Aug 2025 07:04:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755155052;
-	bh=7pJ0Fl261mW06QcqNKqe/+yuvQAesZpRiKlzp/hYupk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cOlEDaW5ECeXrzN6DPKXy+8yDJuFotlq5GGenZw4h+YwpzB27POapMjDf3zI2vNjr
-	 7NGamYhZSAESN4SQsIT14gGugSgp+qc5VyanSZjUgRXYx0EiQ5hlNzuM82YktHn1SC
-	 meXT1qphP5QpMiGzFMoBZHOkw6J7eCAHNu3buCi2dNwSVn4dR25j1/jqFCj5ZEzSzE
-	 BcbDoXXDkkfc3RYyRXcaUemNEndurNv9zZQrDzBFkaHHZPSJXDXNMTj/W9zW3U4vu1
-	 6OWOvaUk7zcckhKDF/u2VgIFRSlRKylp3gRiHycSNwAJK1zKdQlfobKZYwwDHXyE76
-	 DBbgISTw3I/0w==
-Message-ID: <ef95652d-eafd-45e1-9603-16c4edcb8e9e@kernel.org>
-Date: Thu, 14 Aug 2025 09:04:06 +0200
+	s=arc-20240116; t=1755155087; c=relaxed/simple;
+	bh=OPNvTv++d0Y1DCwMTZqTMCES5f0J/hlk6EFNeyS4hyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qncEi22kduVUCz8cvoh+w07J63TI4EElxnhyjFeafcG2QdbkyxBTHdz3pRKM5rtEtoNmoE5kpIfJuLmYozz2StnQUzKysR0LshjelDqK6CWzuSJR+XBuEcNptDjlI+Gug/IAYXtIE53Zuwjrp9x88O3y1MZbhFfgRoi91fh/n9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bNNdrRpQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DMFgYW002966
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:04:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ZmTgSJksSvRsRHlh4lCCGxN6
+	MG1QDdCZK4fWrb5z4Xo=; b=bNNdrRpQzXYPs/ayMZz46oM2FkiixC5Y6AUFBN6+
+	Kdm5eGANHD1XRmxt5Mxt06M6At9w1ezphHaBefnK4/CVWQPlL4VjNtTdDzevnpaW
+	BsVtgQ+kpAgX1HpSb51ttdWyDiYIedwu09WV7DEVwWnW6q2wyV43XAGH51nwlkGh
+	aAqTzsJi8hJv31PJybLHtZpbkU/S0HD0UDub0I34pGIo08kQ1gjUXV3JcHI/ISNm
+	q7WgS77xRtdkfzdGvlkutBiV0B0jjClIgIhL4SJSx9iSxdAJ1U+/wWGcsZ+cD4B1
+	7qJQ9PVKO+Qk1uAp+n7boW4xV8uh5WZ8Dtl1gJHHDZ9iPw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxdv6q6e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:04:45 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109c5ac7aso15105011cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:04:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755155085; x=1755759885;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZmTgSJksSvRsRHlh4lCCGxN6MG1QDdCZK4fWrb5z4Xo=;
+        b=krG72I71NiI+Wr4vB/vKkgM8QomgQHC8F0X7iiDDwz8fEBECRuIQMEnMyuQWbFkrn4
+         yhw0d0TWtOFpl9kpCYG9iVNfnG3wARG/BkyU0mLCziovlE11po79ucAJ1JAG/XoPtV1Y
+         SneBvZkJ1rgDI5IiY81eQyNnaMS8atCm1jurVkZXRqocuGQPV7EWVGj7ieVvenIptaVC
+         6l2tVD5uclCh5gd8wjrGajwrdTtnpspT49HY68U11cEldEm2KYYD0nnPiMDxyDmeaHLV
+         25foYOiQ2QzIipaqQZ1gb4MQb1oaCIFtESQbg/pdCSH7yxIVkiBY9OBxTSkp9hfasTm2
+         W7ag==
+X-Forwarded-Encrypted: i=1; AJvYcCV5gqbsqFEzNQgREyIP6E+lymjQDHldnvrfENrN/qfcKEjVNFTMIzNdcFt3quhdLhrJeEcXNrRWxCZIlmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU+PBMlCJrLKYCk5zrPrALjeEJRV/MdKsogeJB8T9rFU8oS0GE
+	IXwTdFHjXCA2XMCrF471aV/R98zdiAX+WVIehAjkUo4tcWkien1wC0j3Z8OGm6UupmF38LIZmWd
+	rKXphdzsECuXaG48t0b5M3+wXPIqXiCdU84CxHFzf7z1yaOARy8Ag8MIYGFEXHQAjfm4=
+X-Gm-Gg: ASbGncuOafrq/y4CULWaq5av5DQS+uP5GNb3pcNh4X2j5KE6b7rsavvNLliZuM4gKXS
+	4Y2vRXT4pA6SWMOEZIMOuS/ndYm0l+OQE6JDXkP4hIqTwg+0c6FDBi9jpaU2Xx1HAvrwnNT7tNK
+	nI5p6PRwd0Q118z8aq+NcIRUZLf1pquoRVlQ4kMTUVTk1pRBRK6AfRttcRKYCrSkLh6CVAP4V7a
+	FZqxHP13udRVlBQyupFxzTlW+EH7zbhpJsjubL+uxP1lqZ2trxXxOU9B4EZCOqe6EftwV1mP9ox
+	jmTwwNcFTtZln0ChlURGgZbMepEwaqicthZMLKYSk9Fdx/0pnH11TJ8/Ts5T7lh4CYD+GLMIbV7
+	BSbNciTy8swBhp4gmHdqP9NHub+Vb/lKKhkMpgiXYhvf0lZL+6Gay
+X-Received: by 2002:a05:622a:50:b0:4b0:863b:f4e6 with SMTP id d75a77b69052e-4b10c3d1082mr18771181cf.14.1755155084591;
+        Thu, 14 Aug 2025 00:04:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFf4GMEnU9+DKPNr9nEosmOJfrXRZRGgqiLTRtxITAX9r7U1qxrwlquD8TRJWARcRaI1vnUOw==
+X-Received: by 2002:a05:622a:50:b0:4b0:863b:f4e6 with SMTP id d75a77b69052e-4b10c3d1082mr18770701cf.14.1755155084097;
+        Thu, 14 Aug 2025 00:04:44 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55cc8592678sm2433329e87.31.2025.08.14.00.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 00:04:43 -0700 (PDT)
+Date: Thu, 14 Aug 2025 10:04:41 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Ling Xu <quic_lxu5@quicinc.com>
+Cc: srini@kernel.org, amahesh@qti.qualcomm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, sumit.semwal@linaro.org,
+        christian.koenig@amd.com, thierry.escande@linaro.org,
+        quic_vgattupa@quicinc.com, quic_kuiw@quicinc.com,
+        ekansh.gupta@oss.qualcomm.com, dri-devel@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+        stable@kernel.org
+Subject: Re: [PATCH v3 2/4] misc: fastrpc: Fix fastrpc_map_lookup operation
+Message-ID: <nmipsdulp2roagr5g2emrijonc4xkupoqm3vdelaiihy547qlk@yvg4qmg2qgwj>
+References: <20250807100420.1163967-1-quic_lxu5@quicinc.com>
+ <20250807100420.1163967-3-quic_lxu5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next 1/3] dt-bindings: net: dsa: yt921x: Add Motorcomm
- YT921x switch support
-To: David Yang <mmyangfl@gmail.com>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
- Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250814065032.3766988-1-mmyangfl@gmail.com>
- <20250814065032.3766988-2-mmyangfl@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250814065032.3766988-2-mmyangfl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807100420.1163967-3-quic_lxu5@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689d8a8d cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8
+ a=4xMk_dLyLN26lIRFNMoA:9 a=CjuIK1q_8ugA:10 a=zgiPjhLxNE0A:10
+ a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: in1Z68UYzJr6kveRBfhZcg5Q8Vt1ATRc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX1fkYzw76I6DR
+ 043jq5EcjPJsWEWDImrfmhTgLgE8TAv93fnYvFF+8vBaacNNgrUsVmae+BVwQmA9CD/uay29zhO
+ 7ToPtu1wdy/gt5JO1i65Z2LzeQpUJ/qNDwl8XADh34x4QReyTFQUQDRbhurhLD1L6bl1ajAIxUy
+ 3vkQ9QvvisH9asOup23Njv/nqhXaG0SjXpNfzTvXT6zK30ksx2CKLLEtfw41Vou22ty6p8HOAcK
+ RRX6u6xRDbvEO3lACr0B6/Kr0Uv5sq/M+eJO+scLKuzxjLwdn9oE/a7vdCvqYodCaVgpM4ttYbD
+ 47tO8Qapqsc2PasXTxKJFvxOJzs2MyVRx72c07eQRxvRaDoVLfB/w7AFJ863D7+4XmZ4BH6df/o
+ TA+/gqGR
+X-Proofpoint-GUID: in1Z68UYzJr6kveRBfhZcg5Q8Vt1ATRc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090025
 
-On 14/08/2025 08:50, David Yang wrote:
-> The Motorcomm YT921x series is a family of Ethernet switches with up to
-> 8 internal GbE PHYs and up to 2 GMACs.
+On Thu, Aug 07, 2025 at 03:34:18PM +0530, Ling Xu wrote:
+> Fastrpc driver creates maps for user allocated fd buffers. Before
+> creating a new map, the map list is checked for any already existing
+> maps using map fd. Checking with just map fd is not sufficient as the
+> user can pass offsetted buffer with less size when the map is created
+> and then a larger size the next time which could result in memory
+> issues. Check for dma_buf object also when looking up for the map.
 > 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> Fixes: c68cfb718c8f ("misc: fastrpc: Add support for context Invoke method")
+> Cc: stable@kernel.org
+> Co-developed-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+> Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+> Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
 > ---
->  .../bindings/net/dsa/motorcomm,yt921x.yaml    | 121 ++++++++++++++++++
->  1 file changed, 121 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+>  drivers/misc/fastrpc.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml b/Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
-> new file mode 100644
-> index 000000000000..2f0e4532e73e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
-> @@ -0,0 +1,121 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/dsa/motorcomm,yt921x.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Motorcomm YT921x Ethernet switch family
-> +
-> +maintainers:
-> +  - David Yang <mmyangfl@gmail.com>
-> +
-> +description: |
-> +  The Motorcomm YT921x series is a family of Ethernet switches with up to 8
-> +  internal GbE PHYs and up to 2 GMACs, including YT9213NB, YT9214NB, YT9215RB,
-> +  YT9215S, YT9215SC, YT9218N, YT9218MB.
-> +
-> +  For now, only YT9215 is supported.
 
-Please describe complete hardware. Drivers are not relevant here and
-binding cannot support anything, thus this feels like comment about drivers.
-
-> +
-> +properties:
-> +  compatible:
-> +    const: motorcomm,yt9215
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    description: Optional gpio specifier for a reset line
-
-Drop comment, 100% redundant.
-
-> +    maxItems: 1
-> +
-> +  motorcomm,switch-id:
-> +    description: |
-> +      When managed via mdio, hard-configured switch id to distinguish between
-> +      multiple devices.
-
-IDs are not allowed.
-
-> +    enum: [0, 1, 2, 3]
-> +    default: 0
-> +
-> +  mdio:
-> +    $ref: /schemas/net/mdio.yaml#
-> +    unevaluatedProperties: false
-> +    description: MDIO bus for the internal GbE PHYs.
-> +
-> +  mdio-external:
-> +    $ref: /schemas/net/mdio.yaml#
-> +    unevaluatedProperties: false
-> +    description: External MDIO bus.
-> +
-> +    properties:
-> +      compatible:
-> +        const: motorcomm,yt921x-mdio-external
-
-Incomplete compatible... but also not needed in the first place.
-
-> +
-> +    required:
-> +      - compatible
-> +
-> +allOf:
-> +  - $ref: dsa.yaml#/$defs/ethernet-ports
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    mdio {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        switch@1d {
-> +            compatible = "motorcomm,yt9215";
-> +            reg = <0x1d>;
-> +
-
-Incomplete example. Where are all other properties?
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
 
-
-Best regards,
-Krzysztof
+-- 
+With best wishes
+Dmitry
 
