@@ -1,129 +1,111 @@
-Return-Path: <linux-kernel+bounces-769164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7ABEB26AF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:28:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4C5B26AF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 486A23BA3ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:23:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1369189ED48
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A50121256D;
-	Thu, 14 Aug 2025 15:23:41 +0000 (UTC)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B03A215062;
+	Thu, 14 Aug 2025 15:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MRHyPsQu"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3448F49;
-	Thu, 14 Aug 2025 15:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A85191F91
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755185020; cv=none; b=jE54aj5N6zQoYNP7PQLYQ4qYusz64Tsal36c5meu5yGP+8Rp7rayJiiKzhBAc65FGrGrvZD5rQqXBsakhdJNUgVFebjbWYHZn2jpJXaOrElLgwtI4ISx7rNRW7VtdmS4RC9osabCBxWv3Ugr2CqwRfa/PgceDascHISmiw7yeDY=
+	t=1755185173; cv=none; b=m56r5gepyENj6kX5sh3Mc93923ghIhGOdUtXQjvPDyjAxiWKF8cEskI3H+hOmuZ7UMrIgXJmyQDiYQYw5CvPc8lwj0lNIZFZXYTSVNhi5MhIOlfrxtijg4pPLKSoxfHiWoSs5Em5Ku07el441zMNTbUjAhcFPpSbtNWXkkyKGus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755185020; c=relaxed/simple;
-	bh=/yXezW1FG/KZ1KYAeG0hPBHTm1AHW5a3nvMlnzWwcQo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eYbljHU4G0Hk6Cs2Hr/Hng/G0t7BqZWbV+kQxY14xTWQVUwASQVsfq2J/S2FQmYa89sI8N9PBvdQIoFLD6lLWp4TqT3l5kQRc1nSUz/B0MtnCOgA7srQVoaFND/1w3khbyv3YYqPC+PcM4kmP3fjpzUgWbbMxCt8XMXrGfkgIuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-50f88bd4b96so759719137.1;
-        Thu, 14 Aug 2025 08:23:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755185016; x=1755789816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uksBVcZMFGT5hrIgSm/PLHfK7WggjB7I/fNjjld2HMw=;
-        b=MOLbPBxhMdWQSqsYs1jIZ2MgnU3f7VQTML2dyoeQAtPA+DUuFaWiyjCtTTFA870Tw8
-         GSNvj+RlwgOZUw63EQS+q0+wR87iGcUgFdSNhNFUEIguHBq/nj3y9EU+FRMyOtdHrqEJ
-         IpVP2kNwbGFUwhbt9lXYy0cJbKHsagUKUA9vS+dbUxxhtE3L5PgSXxhUmlZRJ/fzQhG9
-         buDfi/KIKV2yrr+/TZDA56PbG3tZCuBUnkpZL0ecPNhmrtFItVZLG7khuK15BttVMNRc
-         NdUMG4GW8BI7POYra6boJdFxdbcnQ0Z0VfN9a5ZygjlCCRqft0nOhzGbd3E69LkKFmu6
-         w62Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6HjJUl0hO+GaTzzmhsvCp2JPF5co4opqM36JKXxySR/zdgjWxtqmZ0M/D0PdYe5TdXS9dvwhLBx2r5pxWPoW8Xbk=@vger.kernel.org, AJvYcCV+H++Gp4wH46t2cgIqICb3VThvV1DH5uGQ66WA1chC8HJrRTp2JIOIJ6VVGF/5tSl2JoXt/SdYvV1YO7BN@vger.kernel.org, AJvYcCXnp/9R3wo15frjSg1OmAWWk0uMR3IFlObUIYDGuvZ6huJWsvJG13LoWiaIjOmG8epz2amZiWzQVQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUblTl4/Cp6hK+2GzoqtVR+fWoveijKbpA6y/MPHdHn920kxGc
-	FifGukBc2tsANYXTzjhdthoDDiH+eBLg14Urf1hVqqKsxqi3R7AvWDfN9vl4ubeg
-X-Gm-Gg: ASbGncv1MQ7cRe2ZcfNeNczzFGd0qqCsDkbM9M+9247edatWEHe75PIKAlW+DMVUCE+
-	LXJGe4ehzCPAj50FcxzCGWYPdjUb6cXDOKny2tckhizAAkXHCQirqCQNV7QrohaddjMtMnhjvl8
-	YXmQ6Fv2ETIhV+U7xtPiZ/Utnor05tRciuQKvJl2O/daawEJKHwrKrGyRwMjEOUUjkuCOIB7JOK
-	BcKrMNksjWulrqMK6guq2KKxdVefI+CYXV/8DWBTRFYk1FAQWgCvY3o8WiQfFoc0a1AQtuWEJz9
-	L5/FnmOhL341RFqbUjYxoz8fy19lcWehu1DQrvDgjWrJ0mg0QIKxrGMdRMDmEAWg0d+HXxB4+Y+
-	LsjWAMKHQUSiBhQbxH5FVqGSaUvWQcTGTJA0+YddkufSZQvokJLsrJr++yF4j
-X-Google-Smtp-Source: AGHT+IFGWyS+iCmY7mzjhAsPN+k928BiREDzOXt0k/jAzn7rlqkw3J2jNctBHg4EPqbo7GLSlyZJbA==
-X-Received: by 2002:a05:6102:54a6:b0:4df:4a04:8d5e with SMTP id ada2fe7eead31-50fdf8e5078mr1495148137.8.1755185015804;
-        Thu, 14 Aug 2025 08:23:35 -0700 (PDT)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-509aee2556asm2155776137.22.2025.08.14.08.23.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 08:23:35 -0700 (PDT)
-Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-89018fcdcd4so533771241.1;
-        Thu, 14 Aug 2025 08:23:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+4J1Zoqd6RH0PYqpCCp7HBFSPQk3Gan1ieOmDzTXkff+UiU8+WE0iXHzS1FGReBYfZUqzVi0JiBo=@vger.kernel.org, AJvYcCVlJnnJ6jzSSWTjkfprtRmngmjSmWGDTnpjZ6Xae6oXWxP2vLCC1Uu142NeU+TryoLOXRiyGHPOxrJFBa7hfPkIwXY=@vger.kernel.org, AJvYcCWbH/swOcCJ0oV8rZgxeQxYK1jAr/BIC5pB52a1PT1lnn8J+Ibyw8vv86Cg6akiugsnX5L9/0MhHka6ZzqF@vger.kernel.org
-X-Received: by 2002:a05:6102:6a85:b0:4f3:36bc:554f with SMTP id
- ada2fe7eead31-50fdf2dc666mr1330157137.4.1755185014743; Thu, 14 Aug 2025
- 08:23:34 -0700 (PDT)
+	s=arc-20240116; t=1755185173; c=relaxed/simple;
+	bh=CwSoSBe+cn3v30dVZLiZarZJizto/erzOZ11w6iQusI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GD1JBJPZWET+1HH2YuYIXoYlXbOgR/2IMhLlgDyLiTshaG59BVDshnKUNBmmnX9yAhFppdbh74WPQcN5rFyhBI9Mmof+8q9Bh1Lr+f6pgIeCrPA2Sp4Gyhx9J9eiZPcs+Dpqe7Yppt7L78pDgfTNqnCHrU9nmiAU1/1IMr2pr88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MRHyPsQu; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3BDC740E0217;
+	Thu, 14 Aug 2025 15:26:08 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id LVyVHPsXXvWb; Thu, 14 Aug 2025 15:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1755185164; bh=nw2ymgBzS1YqIhKd6bQn6hXxsLYlfrBPgNbJFqVjBH0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MRHyPsQu8Sn6uyzxG5R1EzD3mSugQcQD7A7ce+cYmy0CAFTdDE/2KGL0IA7Fzclj0
+	 ecmU3zwU10puXsRfVmqcXOdcaQpPq2H37N06r6REc2lMuHXTC+GVATTrfVruKiRYEY
+	 E2k0yoDUtydEmqHJKt2NHvElwFXHjTwRiWv1zvR/ABRp+G82NWi5JuYrJwGFS0/GGq
+	 GmgG9kKIksXSXDYvdlB1NbokKQHA2aDkLs85/Q3XO8FxB8JC7dg+zRKKzoF/OMkWe7
+	 daxTR70rdk3bMSTlNHrGwuRG070CWdtjeCXFT7qzcITwhtM7omNNQNy6g0+y3ysfcn
+	 4v11hMdizLFMvBI+R2QrZ+U5TvNrOpTkin9cSQ8Scq+Cmj1Za+SkPU56OyRfxTDJ/z
+	 +eZAmXNmF3D0er8vJj7jvu1c95Ftho/CHHs4OTP3ErI4exMexdw3tdVIR76diD/2Ie
+	 o/HGOE6mAZt7DUUNLTfKXRIJwlosZy4nlobHpVD+xNe8Qs+NEdPlgHQmEUpZ1KsELm
+	 LHV/GWZSMOAcPzl8NHTmJaBbYyhO0QVIKE7VgfQtYEKoz4tm/+SqF7hY5baO3fBF6E
+	 T3X6g9Y7S8QEzoSG80tMB6MR6nHEsMojCzKyt47CJ7Hj+Dk0FyovHSYzYuWL9Kdx1k
+	 0jDpvED8MaKLMnGVTeoucWvU=
+Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5B3F540E00DE;
+	Thu, 14 Aug 2025 15:25:57 +0000 (UTC)
+Date: Thu, 14 Aug 2025 17:25:50 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Stephen Horvath <s.horvath@outlook.com.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/tsc: Read AMD CPU frequency from
+ Core::X86::Msr::PStateDef
+Message-ID: <20250814152550.GAaJ3__hIHnOBhKGWN@fat_crate.local>
+References: <20250813112020.345622-1-s.horvath@outlook.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812171720.3245851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250812171720.3245851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Aug 2025 17:23:23 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUFUTpA711xfGOyc7iEMnML1qesYv+ZTP=SEh09yLGXJA@mail.gmail.com>
-X-Gm-Features: Ac12FXwusyOrnYu42swR2dZbBbdA963OtASjhChxeNyolXggOV8FBZ1vTVfWLS8
-Message-ID: <CAMuHMdUFUTpA711xfGOyc7iEMnML1qesYv+ZTP=SEh09yLGXJA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a09g077: Add module clocks for SCI1-SCI5
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813112020.345622-1-s.horvath@outlook.com.au>
 
-Hi Prabhakar,
+On Wed, Aug 13, 2025 at 11:23:38AM +0000, Stephen Horvath wrote:
+> +	/* The PPR defines the core multiplier as CpuFid * 25MHz */
+> +	p0_freq = cpufid * 25;
 
-On Tue, 12 Aug 2025 at 19:17, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add asynchronous core clocks and module clocks for SCI channels 1
-> through 5 on the RZ/T2H SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+As someone already pointed out:
 
-Thanks for your patch!
+PPR Vol 1 for AMD Family 1Ah Model 02h C1
 
-> --- a/drivers/clk/renesas/r9a09g077-cpg.c
-> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
-> @@ -48,6 +48,11 @@
->  #define DIVCA55S       CONF_PACK(SCKCR2, 12, 1)
->
->  #define DIVSCI0ASYNC   CONF_PACK(SCKCR3, 6, 2)
-> +#define DIVSCI1ASYNC   CONF_PACK(SCKCR3, 8, 2)
-> +#define DIVSCI2ASYNC   CONF_PACK(SCKCR3, 10, 2)
-> +#define DIVSCI3ASYNC   CONF_PACK(SCKCR3, 12, 2)
-> +#define DIVSCI4ASYNC   CONF_PACK(SCKCR3, 14, 2)
-> +#define DIVSCI5ASYNC   CONF_PACK(SCKCR2, 18, 2)
+...
 
-Please move the last one to the previous block, next to the other
-SCKCR2 definitions.
+MSRC001_006[4...B] [P-state [7:0]] (Core::X86::Msr::PStateDef)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18, with the above fixed.
+...
 
-Gr{oetje,eeting}s,
+CpuFid[11:0]: core frequency ID.
 
-                        Geert
+FFFh- <Value>*5
+010h
+
+So we need to do per-family checks here.
+
+Not sure if that is worth it, frankly.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards/Gruss,
+    Boris.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+https://people.kernel.org/tglx/notes-about-netiquette
 
