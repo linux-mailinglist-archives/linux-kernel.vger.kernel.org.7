@@ -1,169 +1,141 @@
-Return-Path: <linux-kernel+bounces-769122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F6CB26A68
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:04:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C29B26A80
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7F81885B58
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B911E9E4888
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2797220A5EA;
-	Thu, 14 Aug 2025 14:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EA520101D;
+	Thu, 14 Aug 2025 15:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HwJY7R5Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hvnhPjAD"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C511C5486;
-	Thu, 14 Aug 2025 14:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE27C1A256B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183589; cv=none; b=q+t7CvTuEtXuXbwWK91W99YQAHmz9EPBANBc7Bb6GIWMNPbIlnmIdqDKdE5Dh8v/UuQVgv0BzzHi6qg4KRkP5pz6+RRCF6OayGOJp1g09HQtHOAZgUUVq/o3sbqdbFOnF4/nN6cJ0wAL4DMfqLliwgJ8cvcX3c/xdi9f69d91zY=
+	t=1755183701; cv=none; b=WarskmmsKMzep3rClr6YPG3bkFB1miSbSX3T1LTDRXx8KhZsTzx6yMw5hS4A9Xj0bKNvmNydhp3OsC45+RFfXyN0HtmwGvrsPxaW9MBSmrEHOx6lu8l2NojVeb55zHO7QhKNsfzRz2nZpxts3+bnYobaOopT0uvawKQk3GMLSEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183589; c=relaxed/simple;
-	bh=nhCkSzRoamaC2x6YatM8AEEAlKpcan3l13anynVtDVs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=iwsj8DvcFghJmW8hWRmDr8NEnvhDNO1PMnvkKT9lVGMfaYL/m+lt00cfo6Ib860WXCtNtuDZVwUc3jDR9pnuHuOCekAwhDAe0EPM7rdrRr4hbm/HnR/k4Dy3HNLn3oRiFG8BK7n+SVVq+q52ukJq3hjxT9xx/HxlUDJaiX/jdRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HwJY7R5Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEC0AC4CEED;
-	Thu, 14 Aug 2025 14:59:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755183588;
-	bh=nhCkSzRoamaC2x6YatM8AEEAlKpcan3l13anynVtDVs=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=HwJY7R5YAC0+cWuEW9IFGPuZ262x7OjBrTIbVN0pPGtIcJ7DR8tQEVn+khZflTm9R
-	 XIHsEG4IVQmAUeK64NTGVkFV9GX6RwpNjdEU9J48Z6IAujyEc3s5baikGQPqi2upgu
-	 puZAdm3EQEV2HmByevPQPy6tpSqBoJY5FBGQ9k4w+AA33Ctcd9USN5U7auncolSa2e
-	 wSltFxJf1P/WCvSapNAZDZPQevT382REwfSRcfy0sSYpsJUN8/eFjNPqZRAz9I4ME1
-	 x6YHN2/9e/wkxwKHgd7R5Yk4DUVEQxAd2gOorEbQAVS6MmYfTu+CAoRg5z2zu9g8NU
-	 sL2O+KCX7t19A==
+	s=arc-20240116; t=1755183701; c=relaxed/simple;
+	bh=eAX3ikxNe6MVJTImuD3GJ14HQEmQ973JjkPPycFOdDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kEDlkwvzu0AymmC0NSgb3VhrNq1JvUyYVLFTv9eojbcjrSAMkBSF2DVDXHG7T/XMTT8+3LMuNNXoKKyXvEP9dNNhn/r6eCQvmwEvyRhDAEgWdxj5r5CH9NT7Sg3cARnbwnVUzWTtqJSeRH2OS3/PBU3S0oc80+c9uWDlP+ASKsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hvnhPjAD; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-61bd4e24ac7so373777eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755183698; x=1755788498; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5+bdefBK94Sf3p8b0pm5TB+67GcihuPdogRAGM60PoM=;
+        b=hvnhPjADLatwG0nLHls0CJ2kWhVd8V+0FKFB7KHcn28lDDzC6zrdyCn2XmKMrSJ6PC
+         8qH9t1CMYdB6mygv0ltkT81HYaGT22Mk5C+7PHBRdTpf4HCnI2HiZMCaNQEo5bRaKOvV
+         LMhtcUzD4NG/q89qzU+SRcrXplGI/1oBOFnk+B9S7/Uv78U9sY6YlAWsmD3CpDNUqWoc
+         J8sYrGw8mcyfDJtoGbzDiy7LNRHaYC5YdKQ/WftVB9VuUn3UADG2ZIy+A7LKms/jLAQW
+         N4+gsnhsQPzl/pfv1DHxhKESN+3eROS9V4IE7McUGlX0psqwYNLruqJbO5zNwbwwO3Kd
+         pFzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755183698; x=1755788498;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5+bdefBK94Sf3p8b0pm5TB+67GcihuPdogRAGM60PoM=;
+        b=lVyec35CVYtg9EYk20LrqeyT55ZwW5c5BvTZ+tT6oASBWqJwbGbvlsccmKlYwWSHtx
+         lkXyg0ty3z9ztr6151fmWe2vjDwCiKL95vuWFHPqLeaFCMcP6XQ4c2y6OSzug19MfSdY
+         9poTVRa6ZmnJIQUX728XX1GFuWy9rQTsY3FR3beAFXfD9Xpc1ifN+5Joi2KyCpb8e9rK
+         5J/cPnySU6qe2RwK0gdprVrxGyU/m2+xyZT3/3ZTRpx8NnLYzeeqrLGoljRp1h6TPy+3
+         n0TQso9Q78jqi8qngn6oDooi5NtS8n0JoiQvjq1mIiGwN4cA9DsQfVjFNo69EJe9DFwy
+         o4VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpaSXso94iypTDvyf6SwtVJGLf9L/pqztTBMu7ZK5SY6VRw91oDBBqBNvoaYgpkgK2PPr0qsJfTmJPwfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBax/Mx/fRjfESOb5m3IiP4MgiXNDngGm30+SAud/sQlFXdIVq
+	ynTDFQM3LZnpzP2Ifbx+KcaFuC8ukPlq1Q5FzwfpE2DveMK5o0qOgzvvofvf2DcTTGM=
+X-Gm-Gg: ASbGncs+T4OFd96lEfkprmmFvzi/X/G8eXzTyz7WdnJvXW/kHpH1D5F6gGx6IPl2Foo
+	QmhKehDH2sq3AUl5PWl5t7YnRPaTJ18WMXXTnj/GCr/8IOPVkIf7Ky18LOvCWIySDje4ZOBauyY
+	RmN0MXd/JYle7ezuad6gpEHRhzgfpqsDYGh8bt1KMOU12NWNiHuM8zcdBqR701L/wEHAlMAMcxu
+	jbR8zOP+G8FTYP0n4PZxGQs+QfMNPVbQLQmUAHcgb3h4RuOzaze9+IoyM5ZEZH9onT+kbrlzGDy
+	2Hf6a7Tf9tC9qEgxZp2Q+0WPgvgYYs62xtSBnXSPbgmSsLDH8D/vaevknX69Fpcwlg5BQOfAAuF
+	VrmrKgMNHDbZFAT7NWqbRcxtViueI4mURScozaXCfHNo/dPHTC6cNuG/AWwL10DtiuUJ2+7JvoF
+	s=
+X-Google-Smtp-Source: AGHT+IGB723bs75DAprqEIh1aSatPfXgi38wq6Ht4Qk9bR/OoLw1uP5inRG9suzj74+4IyK4RgkUQQ==
+X-Received: by 2002:a05:6808:4fe4:b0:435:8699:40b1 with SMTP id 5614622812f47-435df7cc62dmr1944390b6e.24.1755183696164;
+        Thu, 14 Aug 2025 08:01:36 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:2d9b:959c:3c59:5831? ([2600:8803:e7e4:1d00:2d9b:959c:3c59:5831])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ce87aa55sm1105850b6e.25.2025.08.14.08.01.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 08:01:35 -0700 (PDT)
+Message-ID: <014487e4-f8c7-42e6-a68a-9e984002fd46@baylibre.com>
+Date: Thu, 14 Aug 2025 10:01:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] iio: adc: adc128s052: Support ROHM BD7910[0,1,2,3]
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sukrut Bellary <sbellary@baylibre.com>,
+ Lothar Rubusch <l.rubusch@gmail.com>
+References: <cover.1755159847.git.mazziesaccount@gmail.com>
+ <e43c184fc6aa5c768045fc772b64d812fdb06254.1755159847.git.mazziesaccount@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <e43c184fc6aa5c768045fc772b64d812fdb06254.1755159847.git.mazziesaccount@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 14 Aug 2025 16:59:42 +0200
-Message-Id: <DC28NIMIPF5I.2P17OZFA06GXL@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 1/2] drm_gem: add mutex to drm_gem_object.gpuva
-Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Boris
- Brezillon" <boris.brezillon@collabora.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Steven Price" <steven.price@arm.com>,
- "Liviu Dudau" <liviu.dudau@arm.com>, "Rob Clark"
- <robin.clark@oss.qualcomm.com>, "Rob Herring" <robh@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-References: <20250814-gpuva-mutex-in-gem-v1-0-e202cbfe6d77@google.com>
- <20250814-gpuva-mutex-in-gem-v1-1-e202cbfe6d77@google.com>
-In-Reply-To: <20250814-gpuva-mutex-in-gem-v1-1-e202cbfe6d77@google.com>
+Content-Transfer-Encoding: 7bit
 
-On Thu Aug 14, 2025 at 3:53 PM CEST, Alice Ryhl wrote:
-> There are two main ways that GPUVM might be used:
->
-> * staged mode, where VM_BIND ioctls update the GPUVM immediately so that
->   the GPUVM reflects the state of the VM *including* staged changes that
->   are not yet applied to the GPU's virtual address space.
-> * immediate mode, where the GPUVM state is updated during run_job(),
->   i.e., in the DMA fence signalling critical path, to ensure that the
->   GPUVM and the GPU's virtual address space has the same state at all
->   times.
->
-> Currently, only Panthor uses GPUVM in immediate mode, but the Rust
-> drivers Tyr and Nova will also use GPUVM in immediate mode, so it is
-> worth to support both staged and immediate mode well in GPUVM. To use
-> immediate mode, the GEMs gpuva list must be modified during the fence
-> signalling path, which means that it must be protected by a lock that is
-> fence signalling safe.
->
-> For this reason, a mutex is added to struct drm_gem_object that is
-> intended to achieve this purpose. Adding it directly in the GEM object
-> both makes it easier to use GPUVM in immediate mode, but also makes it
-> possible to take the gpuva lock from core drm code.
->
-> As a follow-up, another change that should probably be made to support
-> immediate mode is a mechanism to postpone cleanup of vm_bo objects, as
-> dropping a vm_bo object in the fence signalling path is problematic for
-> two reasons:
->
-> * When using DRM_GPUVM_RESV_PROTECTED, you cannot remove the vm_bo from
->   the extobj/evicted lists during the fence signalling path.
-> * Dropping a vm_bo could lead to the GEM object getting destroyed.
->   The requirement that GEM object cleanup is fence signalling safe is
->   dubious and likely to be violated in practice.
->
-> Panthor already has its own custom implementation of postponing vm_bo
-> cleanup.
->
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On 8/14/25 3:35 AM, Matti Vaittinen wrote:
+> The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
+> ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
+> the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
+> and, based on the data sheets, they seem identical from the software
+> point-of-view.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
 > ---
->  drivers/gpu/drm/drm_gem.c | 2 ++
->  include/drm/drm_gem.h     | 4 +++-
->  2 files changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> index 6a44351e58b7741c358406c8a576b6660b5ca904..24c109ab3fadd5af2e5d9de3f=
-e330b105217a9ce 100644
-> --- a/drivers/gpu/drm/drm_gem.c
-> +++ b/drivers/gpu/drm/drm_gem.c
-> @@ -187,6 +187,7 @@ void drm_gem_private_object_init(struct drm_device *d=
-ev,
->  	kref_init(&obj->refcount);
->  	obj->handle_count =3D 0;
->  	obj->size =3D size;
-> +	mutex_init(&obj->gpuva.lock);
->  	dma_resv_init(&obj->_resv);
->  	if (!obj->resv)
->  		obj->resv =3D &obj->_resv;
-> @@ -1057,6 +1058,7 @@ drm_gem_object_free(struct kref *kref)
->  	if (WARN_ON(!obj->funcs->free))
->  		return;
-> =20
-> +	mutex_destroy(&obj->gpuva.lock);
->  	obj->funcs->free(obj);
 
-I really can't think of a valid case where we need to access this mutex fro=
-m the
-GEM's free() callback, yet it probably doesn't hurt to mention it in the
-documentation of struct drm_gem_object_funcs.
+One small suggestion. With that:
 
->  }
->  EXPORT_SYMBOL(drm_gem_object_free);
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index d3a7b43e2c637b164eba5af7cc2fc8ef09d4f0a4..5934d8dc267a65aaf62d2d025=
-869221cd110b325 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -403,11 +403,13 @@ struct drm_gem_object {
->  	 * Provides the list of GPU VAs attached to this GEM object.
->  	 *
->  	 * Drivers should lock list accesses with the GEMs &dma_resv lock
-> -	 * (&drm_gem_object.resv) or a custom lock if one is provided.
-> +	 * (&drm_gem_object.resv) or a custom lock if one is provided. The
-> +	 * mutex inside this struct may be used as the custom lock.
->  	 */
->  	struct {
->  		struct list_head list;
-> =20
-> +		struct mutex lock;
->  #ifdef CONFIG_LOCKDEP
->  		struct lockdep_map *lock_dep_map;
->  #endif
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
-We should remove this and the corresponding functions (i.e.
-drm_gem_gpuva_set_lock(), drm_gem_gpuva_assert_lock_held()) in a subsequent
-patch and let GPUVM assert for this mutex directly rather than for the
-lockdep_map.
+> ---
+>  drivers/iio/adc/ti-adc128s052.c | 36 +++++++++++++++++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
+> index 81153253529e..2f2ed438cf4e 100644
+> --- a/drivers/iio/adc/ti-adc128s052.c
+> +++ b/drivers/iio/adc/ti-adc128s052.c
+> @@ -122,6 +122,10 @@ static const struct iio_chan_spec adc124s021_channels[] = {
+>  	ADC128_VOLTAGE_CHANNEL(3),
+>  };
+>  
+> +static const struct iio_chan_spec bd79100_channels[] = {
+
+Even though the driver doesn't support it yet, there is a
+adc121s021 [1] so would be nice to use that instead of bd79100
+to keep the naming consistent.
+
+[1]: https://www.ti.com/product/ADC121C021
+
+> +	ADC128_VOLTAGE_CHANNEL(0),
+> +};
+> +
 
