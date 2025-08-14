@@ -1,74 +1,96 @@
-Return-Path: <linux-kernel+bounces-768815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A357BB265C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:49:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFAB9B265CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F30A04567
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:47:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DD687BECEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507152FFDDE;
-	Thu, 14 Aug 2025 12:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1052FCBEC;
+	Thu, 14 Aug 2025 12:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="em8DHCZL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cptbg7K/"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F171381AF;
-	Thu, 14 Aug 2025 12:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67162318157;
+	Thu, 14 Aug 2025 12:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755175632; cv=none; b=PE2rV0vPggTmJNeQWcuFNFRNI8wgPSoMZMcQOU5B0OsCNECuCNXMrwAK8XuSK26W94MbjIEKZRXvkALsxlcOC14v9cttW8YxvgeuFbdIW3NqhEZYe3ToPIxjPZzIEieBnjBWWeS3Lh3O1JnOsy0kct3MNQFfKgnJLP7ZRgIbKOY=
+	t=1755175719; cv=none; b=IciNKB5cr2gRKtPFJPz5fHjNx9sPBYXp+/EF04khdfUvi0ZUCRD/k+8tyxYvsCo7MqR0lrOt/y/Q2jxzaEFgV9E1iOrz8hIm8OZef2REAZ58etV0Jgnad8830h1sVsqFzCS0hghYAVq1n5rud233x7DQ5KtfL27dYf6le8TF1kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755175632; c=relaxed/simple;
-	bh=YYlNZanvxgPBpAFZZouGRj/ghSNVvNTe1basTd5g2Rs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MzXNvvIuJBuJcydY5y1d74IbtB7yw7UX79V93t9t8bAf+sXFlgwYQ88xTbP9zxCoWTY+lNZP6pFe8RfMlx3lI/1QH//hniCFOGPIcGa1FvR+z+o89tp8CEGjLaTsnaqNl2ZYlCjKrB9ZhaiaDqE1jXM/ND4gySzuou5FM+OrO3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=em8DHCZL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E9hU9a021243;
-	Thu, 14 Aug 2025 12:47:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=OjQwE0PV+FzhXDFLlctubdexTbu7eQlPHrU
-	15HjcS90=; b=em8DHCZLeVssW2HDyALGkyxBDYD7kfx4k8lU2Gnd1neCJ0qFoEy
-	cFBexCH0akv5ejj9mhXVVE1ldxerHDvXu5pD7Y6jJ6Ij6HG8XRt13wwlI9t8oIiK
-	YUG4liJGx3re8jedGtqdmaIW75LGkzy+gVIA1BjPpe55HGULyGKtnbk7q7n78j/E
-	+y6NptmtnfosLXIOdMZE+X75ixiPlh7kgjQ7/hyHIBILnFgJGlUfhzC3/avAeOxd
-	/HEhso/DaSVaEmFagxFxa1RXO97GxFt5eoA612t/qGa40CPqfPnRgZerpKQGppS7
-	XKQYKYwvttArqFoPDqXhKFuG92QbqyC2z3w==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9sywyg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 12:47:10 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57ECl8FH028101;
-	Thu, 14 Aug 2025 12:47:08 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 48dydmgwqp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 12:47:08 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57ECl8Dh028090;
-	Thu, 14 Aug 2025 12:47:08 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 57ECl7B4028086
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 12:47:08 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id 029F222BDD; Thu, 14 Aug 2025 20:47:06 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: quic_bt@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/4] Fix SSR(SubSystem Restart) issues caused by BT_EN being pulled up by hardware
-Date: Thu, 14 Aug 2025 20:47:00 +0800
-Message-Id: <20250814124704.2531811-1-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755175719; c=relaxed/simple;
+	bh=qsEIxSoadRh7yIrxNFMagrWs/ueAEVrhFQQT4KDnfv8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JdS8CTa0M/N3Yd/TYDgyfcHGL/Cb8ZxBHm80Ggv4BD6yPU4di6TpcDiOjLrgTJO7mZ7dTCIAY4aKO2oAbOGIZgcqPbETOTe2HuqOXbHsSS8dDcO9Y+Mn51pfY/Z0C4dvv/EkPaW4f0Bh9bS5zVkU3yp0hetOE3BBbJqlPeHo94o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cptbg7K/; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b005a3bso4287895e9.0;
+        Thu, 14 Aug 2025 05:48:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755175716; x=1755780516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pVy7tYLtXQbSkC4Emvjy88IQs7BjfVsb1Snv8qVFaXg=;
+        b=Cptbg7K/rPf0xr5ofvde6g7Reh4PgDoYKgB95JXoW/tIjYt54zT8LO2XQxdxW3xMY1
+         jzRZAqECIDPKz8aaHz8L0+ng4a9OGiVaN1FGVu9NDEeyYnKwgWhiHqcvSeKjqamPq4+O
+         a1TyrdsGfPxPy4yx5EDj+0i8kkjMKMNvBXVAa9xlwB2Pg8A1nWWxYBQrNeyYVio+VTL5
+         U5Z4p6ZNdhScv5ffVRPGtCO592iBtU7gastxlAl/0sPhHmzZySoXGYo2Uj/TK49Xv9Ix
+         rtLl3nGo0A6DyNEFcRdXVQYkPTihrz1wNWnkboMp5Fx4EiYUXduwFVdRAHCTrZP8jOXo
+         6Eqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755175716; x=1755780516;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pVy7tYLtXQbSkC4Emvjy88IQs7BjfVsb1Snv8qVFaXg=;
+        b=TlfJRahQu2qGJg7nOUcqih/qlItE8bkSyupZ99YH9VLG5fBqzaCb2H5Xk+MGEdaXh2
+         YOJY46Fny7dhTcJu+4ovJcE7MLZIqGa69WrIjImJEtpWaXMGNP0OHplXcwcwkPc6qTm3
+         nF4kwG3j5n7ZkEMKtGT3jYyM0vSq9G/1Df5vAngCuMG0e5Vask8Zm+HtAsPK/XtDHjVQ
+         iU5VfD7qvwp6ZL2iyC/veZnDZQBU36mmwME2RRmXt5q6MtBcvJCRuCf4hnFaS2QZu3fy
+         gQrrvjoOPbtgFRpD1tBsti5Y6Rv1IQtnzKVnLRWtfNOjspUZ6CUK7uPAGbZOweiDKxWF
+         smJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvNbJgXBwfmiR0adUQmCkXL1kEYoXP4u3awrNLWhKlKh7YE/ALhfxeqg4iCVRD2cQILSExw8GyfXoc@vger.kernel.org, AJvYcCWFISovEKaz7vVGnTw5Bh3opBF0xkGg4Qem+WyQniPv5HOzunz06diUj1CHVnTdOSXVbanbu37FKj+2e3Pk@vger.kernel.org, AJvYcCWM0svvFTEb4Smgha/Vgh2G4rbB0uTsAI355/y4ZcxO15x8AYsQOPfymoMiIFoboqgvxwq4ZANF6i+03VuG82YJFSc=@vger.kernel.org, AJvYcCXX2XiJXGsV3cfc5rSIAhM7GTCfabzIoYfn0j/U2/cv1M051cy7cWLFSMozI0O4KMy8TRm2Nd9XIqMC@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQkIsjCR9OFqQmH58bM6hejFIik4rwd5nUenrtow87MBwVgQ1X
+	yH2DkmPiBPuYkCAKNgxBJwcPNyiv/LMy4x7/Pi+ni4WxMvhiWkCr+Gnd
+X-Gm-Gg: ASbGncvnb1WNNmeuBNv9T6Pp3YJBfIJxu8YkDKryJk6FFS5L+daArK66hN9YgkUyJC5
+	y+ga7sQoKIov3h2fChjaJ5JtG/cZ+dDbhTGK6xg+zczDkNwvf3N80W+qmIo+A/P+iY+x2L9DZcg
+	gx1HOF3LbAxC51NKmVH4pw4VRhZhU3eNzNv8YTq+h7LFa4oO5dGA02HERD2cosXBdsZb3tuJBNU
+	hNoK+w1OjACE8AuHr9b0PsEoxIj+gvSexVvsnB4/pdMwRBT8m33+pwNygAFkSEz6UnGMGlCKBP4
+	trjT1TeOKZYqKJusjxJs604Hshl+FPReg6XaUNRgObAFCeS4uacHXhN0dy1PjoDX5c67qr/UUXD
+	bUWz2wi6lqFRISBffQed2HPCN8n7U8SU4ztH1F0gF6i9kmiwUCXnxb8CnLB/cdnwqW17uQx69Y4
+	mmbGJpd1xy
+X-Google-Smtp-Source: AGHT+IGsml9K9x6Rgdie5ws55C3BMuDFXQDdDCDlE9wpE+nokfAy8H1wuWVAl7m0+3LUphufDOjy+Q==
+X-Received: by 2002:a05:600c:3146:b0:453:5a04:b60e with SMTP id 5b1f17b1804b1-45a1b653da0mr22712015e9.26.1755175715315;
+        Thu, 14 Aug 2025 05:48:35 -0700 (PDT)
+Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c466838sm53497380f8f.49.2025.08.14.05.48.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 05:48:35 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/4] Add RZ/G3E GPT clocks and resets
+Date: Thu, 14 Aug 2025 13:48:23 +0100
+Message-ID: <20250814124832.76266-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,68 +98,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689ddace cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Dei6p5SHAAAA:8
- a=pGLkceISAAAA:8 a=CVKY41Y29sSDTK7O-P4A:9 a=TjNXssC_j7lpFel5tvFf:22
- a=M-Yerj1wOn-OpK7r_3ei:22
-X-Proofpoint-ORIG-GUID: IrhH-b2LliyRMT7tdwLTMhmw4xPl6qsm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX0raSV9ud6uSn
- smiyaNFbEgGMLQdxvaKv12wqWwzH4/hwEhv+hGObwU7pdvUT1PiBk5/NaV/3TgemHq/uUtHH/Xq
- 1Kka/0EYlYUW0PjQK7vbnnrGUy5bwOVP9zoOXfrgC4/pZN/M/6O3+GMxXn+QvMzHYoCZzV/Y/Yt
- wwOGzFDc/UwyH3vT4LwVAVFfLLvPW7bKkqdvpSJjOU6kI/VAmitCFlh6hQKVIPZYndnXFdyAYNf
- Ip4/9E6wvSLx6O0WBa2YjBsLgV8zS1R1vTcTJ7YRUvAr6bIncLiRFO7BVFLNpN4nBbsbwcFbBaG
- eTtYB2aKdvKzI8BUptVKUfPzNfsRUhu+NweBAn5a6/YM2Vmq/p07x+UrllLD/GlcK1aNTKRYaoA
- P7o8Rdq3
-X-Proofpoint-GUID: IrhH-b2LliyRMT7tdwLTMhmw4xPl6qsm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
- phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090015
 
-This patch series addresses issues encountered during SSR when
-the BT_EN pin is pulled up by hardware. The main issues fixed are:
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-1. Timeout when sending reset command.
-2. IBS state of host and controller not being synchronized.
-3. Multiple triggers of SSR generating only one coredump file.
-4. SSR process failed due to tx_idle_timer timeout
+The RZ/G3E GPT IP has multiple clocks and resets. It has bus and core
+clocks. The bus clock is module clock and core clock is sourced from
+the bus clock. So add support for module clock as parent reusing the
+existing rzv2h_cpg_fixed_mod_status_clk_register().
 
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
----
-To: Marcel Holtmann <marcel@holtmann.org>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: quic_bt@quicinc.com
+Biju Das (4):
+  clk: renesas: rzv2h: Refactor
+    rzv2h_cpg_fixed_mod_status_clk_register()
+  clk: renesas: rzv2h: Add support for parent mod clocks
+  dt-bindings: clock: renesas,r9a09g047-cpg: Add GPT core clocks
+  clk: renesas: r9a09g047: Add GPT clocks and resets
 
----
-Changes in v4:
-- Update commit messages.
-- Link to v3: https://lore.kernel.org/all/20250813033505.3868781-1-quic_shuaz@quicinc.com/
----
-
-Shuai Zhang (4):
-  driver: bluetooth: hci_qca: fix ssr fail when BT_EN is pulled up by hw
-  driver: bluetooth: hci_qca: fix host IBS state after SSR
-  driver: bluetooth: hci_qca: Multiple triggers of SSR only generate one
-    coredump file
-  driver: bluetooth: hci_qca: SSR(SubSystem Restart)process failed due
-    to tx_idle_timer timeout
-
- drivers/bluetooth/hci_qca.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/clk/renesas/r9a09g047-cpg.c           | 10 ++-
+ drivers/clk/renesas/rzv2h-cpg.c               | 74 ++++++++++++-------
+ drivers/clk/renesas/rzv2h-cpg.h               | 22 ++++--
+ .../dt-bindings/clock/renesas,r9a09g047-cpg.h |  2 +
+ 4 files changed, 75 insertions(+), 33 deletions(-)
 
 -- 
-2.34.1
+2.43.0
 
 
