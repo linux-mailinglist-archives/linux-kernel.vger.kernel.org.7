@@ -1,143 +1,237 @@
-Return-Path: <linux-kernel+bounces-767768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9F2B258E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:21:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9281B258EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 553D07242FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:21:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E543A1C21749
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28CD191F9C;
-	Thu, 14 Aug 2025 01:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WoX7AG+k"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415E5188000;
+	Thu, 14 Aug 2025 01:23:04 +0000 (UTC)
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023121.outbound.protection.outlook.com [52.101.127.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AFB12F5A5;
-	Thu, 14 Aug 2025 01:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755134456; cv=none; b=ZnqbtTEmRhFpkAK75EcDueoFzLh4J24+B0hMV/ZjLRTqPYmER336NjeyzGHzzB+r4OjRldMGn9bSbhvMFAFlPebUZ+V9YWA6SS0UAW04UjhlrYzYoeWHxRYgEWNMCLGgbFjp1JMwf9SVaQn6kYveYcKXh/mZXba04LgAiVTaW48=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755134456; c=relaxed/simple;
-	bh=xuXec0vNgnMrOGkKbUiODZFYAEqOMJ7nf4q3Q6ncR8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aCarHSVSHy7vU9HyInxzttES5dwczPnZUCuEY6bYHhsi+D9T9XaK5Hdbr5eSh1gbMdI0Ln97O1MS/+prq75Nna/CbHsxXu7bwbI4Igu5BYtX3eWuRtrZNk966lIXJrEWSzSYFRJgpI3i4aenINxJMe/wmADdJXpg2I8OlQWEIn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WoX7AG+k; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24457f47000so3244245ad.0;
-        Wed, 13 Aug 2025 18:20:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755134454; x=1755739254; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J3cqJjsKgUfNQHIJGghY3tGnN26Swv5SE+XpWRbKNFE=;
-        b=WoX7AG+k/a520FQj1KJFte5J7L+bZjvTRjiv1HqXdoEZUL9ZcFJu4JfPXFpmKY+6WZ
-         vOpO+vLebHMhERbpaKO5Mg3W/Vzn+fnTRj/ptGMg2oLyriBnGn04BNBxigH/jFOAEuEj
-         M56INF5bq1bGNxIMGbn0dNuD9t54Vs/1LQkA1mUTyQjzYEVj1LJqskY7NJgmZdrquTrH
-         OsnwOAf2M67/F8Cvl8oVrhPqWH359hxkhSgTXlJfkuej2HSD4EtDM1LPPaZ89BhWmdUZ
-         AmtIjOxmM4oIdCzx2lvRjPmtAhkrgjbE6ot4+ktm3w/CluYym9gwebsEzytj4lj0erQF
-         V/0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755134454; x=1755739254;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J3cqJjsKgUfNQHIJGghY3tGnN26Swv5SE+XpWRbKNFE=;
-        b=mJU2dhCqiCax/aXdU2hlx0UFmVUFe7ILi4fe37aJvMUpgC5iuyBPF41wWuF3Zz+RTl
-         k5EVP41dP3+JP21KjPEHHk7AYkwGo70MlzhZ3lCgu1o4vs7LEKIy46OhCIX0RtCRiLI7
-         SAggOdZaG/TD3heZvSyy1YHg2y3lf52enemlCFj+S6gZNb3rY4aoXhlv0j+XveD7MEXb
-         rPaieXgXLXXsCDUh18Xp3KlBjHcWQXINPc8xUL+o/oOkvScAHWoEqoNfSxuDanV6cgSl
-         g1DDtUunKlWYjRtVjDeqGYN8Gd44xs3zAftP+DeVqpIFe3Ax2c1ahN8Br39hry6QoG/T
-         fyHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFXu3XC9N3P0SkdFug5+K9L4a0sIJVnwV5r97argLeHB4qYf6IN2sczcJmMeYs0rzomRS2sRzH4z1K@vger.kernel.org, AJvYcCV0kqkYGcEZH0PPWJuhMhYkH4ECquURxfBE9XBKx9SpcMxrCAYHK4SpfiJIqlSdQUekS4BMB44vz553uC4AixR4@vger.kernel.org, AJvYcCXkM91Fy/oz+Qw/DuT806l8/dBJrpyvI8pTOiQ4F3TaAMgayZb2shzTf0epl+NZKrGnWn0UpuFknAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhzc8m4YB2FTS5FmOXmtG1dsOtuxIM5JQI+52i0cI5/PMtUME3
-	L1tNzlWjAAfd8Mi2Ingiju0tUl7HWrTdD1Qyp/mGoF7uL/EAemxGcRkd
-X-Gm-Gg: ASbGnctrqiaHSBW2/LsBJuGe7uXXaZhRsRqel6XgkmyeDJwcvykCxDnq6JiknxLRCtQ
-	0JgRvZfgZT7KwspEv7CcmS2DDXLwFpDszceHwBcQoe/osLIrUO4Fyp4k4kLwubNkLzlTb7EQrwt
-	GEzaTMwHKdbVnen8W6nbfLcsJOzzTZd/X2QQfb7iZUCGLIJKd9bpkLShjiGdrrZTq3/lJQ+p7Bd
-	2W9KZVREj6+41WuKJ0IcHGFUGsmmkfd9w17S29y8KveoDPF6V1hjm4oTC4KSt7J9P2er7ryiPWz
-	psrsQAo+hCSf4jfyeo4WhRtbSY5eYNVhfbPuOVhJFKv/SLOrFT6jN94ucCpQ8ESPlfpiiUdPrWv
-	yxc2pS8SSCwBlXbMKSaMEuUKqLPgOFPuh
-X-Google-Smtp-Source: AGHT+IG37hIYaf4kIMoA8W+G3+4vMQF4EyJICk0l4JUSm8Gn749aXw4b4WcSeuRrmNGT4Xpxneqrhw==
-X-Received: by 2002:a17:903:4b2d:b0:242:9bbc:3647 with SMTP id d9443c01a7336-244586f26ecmr16090005ad.57.1755134454095;
-        Wed, 13 Aug 2025 18:20:54 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f1ebc1sm335304225ad.67.2025.08.13.18.20.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 18:20:52 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 4A11F41384E8; Thu, 14 Aug 2025 08:20:50 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Kernel Workflows <workflows@vger.kernel.org>,
-	Linux Kernel Selftests <linux-kselftest@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	David Gow <davidgow@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Tim Bird <Tim.Bird@sony.com>,
-	Rae Moar <rmoar@google.com>
-Subject: [PATCH 2/2] Documentation: ktap: Separate first bullet list items
-Date: Thu, 14 Aug 2025 08:20:46 +0700
-Message-ID: <20250814012046.21235-3-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250814012046.21235-1-bagasdotme@gmail.com>
-References: <20250814012046.21235-1-bagasdotme@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654CC8F49;
+	Thu, 14 Aug 2025 01:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.121
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755134583; cv=fail; b=EGoebkRwiofNs/2nrbregeheb73ctoWsBwzCa1BB2fvxB+p8Gu3oOuH9yVCQTPrSc/igBbyDMu+BsEcJnwpd4myZ1g6KV9ugzfgAgppREx+5MG6yK4NIYzQzGniBX+MbJV3pFVolBdeovaIrlnEcCdVLYH4VsBnRqg11WOYFri8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755134583; c=relaxed/simple;
+	bh=iCbCS7tdp2roTCWYKqQsh8i75wB9zLUYDVrCqU5tePI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ltWsrgMClPzwWPzViScM2jw4PUWHb1PMs0/L4Sviq3V3gtgyb85dALA2OdbITvSTVgyx3kgaVP6+pbFCzOkrwaeaoFZ4/KsSAIn93He4kNloypLOfpeWGhLX7OAVB9noxpiupQ1V08s0yMv5WjITtRMuiO0WBL0YcaoLMN20rGw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.127.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y/sHVe+0P+hdEVHjy5f51b6y2GmUXXwvIXhMtL0wa8F2Jzq036Wkq5CNy7wKLsNUj3sr+U922KkZb7UQofrG+thgUAAoRQDJ1ER572G2IVlCF9JSfTeB7WEKGMePfVMI568/wxTSJht9DvHKMUeLmiRdgjVd7Sb8FFlSqQ8KjN0fotImNbhjmUhHMbNuVUXqNXu+eoOER61qWsV4RxIpRX1JubQtY3bDd2T9Kqul1t97wa+pJZRBnuT0wzFRB2wc4mfcj2wbDFCIrZdNb7kvroa2tO7Ud8dn/qjpdfY+1y2DPVVcc1NsDePvPZaQ4KZhi349BcOEiLy9X+Lt3/NzYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HlBESoKd81/WZmHkV5cTBM0zmxJqmTnHPdCRF4EKuCM=;
+ b=krQbAO0LEiIg8YW2GsNG3YNvQV1y0eGSKEzg0zycYbRkyFdg9B6xDXnbW1Am5KpLThkjkVZiq2IKu7gl1Ohc0xyVd4uAe+ilar+8ARwepHD16bXJmMzdyNfEtKIWhcW0NcvFo9WdUXhB17l0FIJinzejvHkGPYzvbSywlwlMM6jL1rw2e7t+6Iy7HSL4vR9FPZD/tButQgu5aWEeD2+qBuFW2pAxgqYYEkyZcXyB1rFXvEpxURI27HvGxitvkV4vo0NxvhJEbDBzgy4ypxjtyo98u0jb2Kxo++VOtIUI/by2wIFKXVftJtTPs7rjqsVa0CR2uFdQOjRDQP8uWmXzlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from TY1PR01CA0184.jpnprd01.prod.outlook.com (2603:1096:403::14) by
+ PS1PPF5B542C4C3.apcprd06.prod.outlook.com (2603:1096:308::251) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8989.20; Thu, 14 Aug 2025 01:22:52 +0000
+Received: from TY2PEPF0000AB83.apcprd03.prod.outlook.com
+ (2603:1096:403:0:cafe::35) by TY1PR01CA0184.outlook.office365.com
+ (2603:1096:403::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.17 via Frontend Transport; Thu,
+ 14 Aug 2025 01:22:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ TY2PEPF0000AB83.mail.protection.outlook.com (10.167.253.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 01:22:51 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 1EB3044C3CBA;
+	Thu, 14 Aug 2025 09:22:50 +0800 (CST)
+Message-ID: <70300a06-c466-4d0d-a870-78ebfb684563@cixtech.com>
+Date: Thu, 14 Aug 2025 09:22:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1357; i=bagasdotme@gmail.com; h=from:subject; bh=xuXec0vNgnMrOGkKbUiODZFYAEqOMJ7nf4q3Q6ncR8k=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlzLU5rWLo3RFyrsRI4fdyCKTNpcdnOmPdtEx60yF3ct X5b3+FrHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZiI+GaG/7H9pZObVZs+7vmx tH7m41d6zc8UT7/VfrtKnHP1h4Wn+uYx/Hd48Y5BaM3pW56/TNz9Y9jZ5ZTeBpZkLVdJMWb+Kd4 VzgoA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 08/13] dt-bindings: PCI: Add CIX Sky1 PCIe Root Complex
+ bindings
+To: Rob Herring <robh@kernel.org>
+Cc: mpillai@cadence.com, cix-kernel-upstream@cixtech.com,
+ lpieralisi@kernel.org, bhelgaas@google.com, devicetree@vger.kernel.org,
+ conor+dt@kernel.org, linux-pci@vger.kernel.org, mani@kernel.org,
+ kw@linux.com, kwilczynski@kernel.org, krzk+dt@kernel.org,
+ fugang.duan@cixtech.com, guoyin.chen@cixtech.com, peter.chen@cixtech.com,
+ linux-kernel@vger.kernel.org
+References: <20250813042331.1258272-1-hans.zhang@cixtech.com>
+ <20250813042331.1258272-9-hans.zhang@cixtech.com>
+ <175507391391.3310343.12670862270884103729.robh@kernel.org>
+ <cb35dfbd-2fa4-4125-bd87-9f86405983eb@cixtech.com>
+ <20250813154328.GA114155-robh@kernel.org>
+Content-Language: en-US
+From: Hans Zhang <hans.zhang@cixtech.com>
+In-Reply-To: <20250813154328.GA114155-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB83:EE_|PS1PPF5B542C4C3:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3099d4a1-2aeb-4ac5-8af3-08dddad1163e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V1F6U05DaEI3ODJnSzdxWjV2NUx4T0VHMnVtZ1BuSmczMS92VStUeTduN2tN?=
+ =?utf-8?B?cXd2akNPY1UyNlBrc2dFdUpqZ1dCdDF4KzUvM3BKcVJpT2xITmhEWUMwdXRa?=
+ =?utf-8?B?bzF1S0VYdmxVSGJaRWxBNXEvMGwybjk4YjlwaFNSTVZhaGswS3Z0VTVQUE52?=
+ =?utf-8?B?d0pPUjZRUnk0UWZJR0ROYkFpR1FGb1VYVUZYd0x3RkltUFFjeVhkbEJQUHNY?=
+ =?utf-8?B?KzViNWFuekpyLzZSY0VTRVpBVTBEazF2cVNvUk9iaTd0UmJHRzBZM1FSUURN?=
+ =?utf-8?B?RkcvUFYrd0U2UmFzbWZ0L0N2R3RrYkFmMTJIT1pkVVRMRVFuQ3haanlQZitX?=
+ =?utf-8?B?Ylk5cnRVbnZOdDNQM0FyNytLVVFTdFdxZDc4c1IzRWR3dTZCNGhlVElRSmxN?=
+ =?utf-8?B?VTJiTEVXcjJHbkp3dTRnMm1jZFh4bW9ybk1FaWhrN3NSdmEwbDhuUVNFcnMy?=
+ =?utf-8?B?NGNuQldvcnZCRWxSNkoyUHJ2ZTJ2c3hISm8zNEMxcGJUQjZVVUQ1ejd1Ym5n?=
+ =?utf-8?B?TnpENU1JV2Z1RkdQVjBhOFFtczJRU3RtWmZ1RVd4cGlQV0tzNFhINmV2Q2Rs?=
+ =?utf-8?B?Ym5HVTBKWjhiR00zemtnOVh5T0lWN0FhZTQwNnV4TlJGUGFvTFBMT3NQZnI5?=
+ =?utf-8?B?ajh6WXM2dmF4NGhtY0VxS1ZWdjR5cWdKSyttc21yYzI3clBpcWRsc1gyUnds?=
+ =?utf-8?B?bHZIRGppaTU1RGFMRWZoZm1jcGZQZXAzOVlRb0xQVzlOS0pYK0ZrTDV4MVRx?=
+ =?utf-8?B?SDVOR1dkTS8rbWY4ZVJ6a3c5R0ZLL3pFUmtpR0dOVzY4T0liTGtCTWJRTWV0?=
+ =?utf-8?B?MHdBY1l6WHRKUVc2RWRHOWxhWlJKdEtGK2hUUFpOZk16UEVESmlqdWtGVGJP?=
+ =?utf-8?B?L1p6QjV0NmlZNk5EVm92VXBHOGozRG05Nit3L2oyTHdMUGswc1Z2d2MyeUJr?=
+ =?utf-8?B?Z3NncmRTUWxpTTB3NTM3dERPYk9Db25qRE90ZjFmUk42c0pnV3pJUEN0dnoz?=
+ =?utf-8?B?VWlhOEhsZTZidk9yQXlkYWJUSm1nN1NzOVZRazhOa0VFekVnWTRiK3BUaWZo?=
+ =?utf-8?B?Q3JsY1dWbWNRb3pHcGdtVHhabHRFUEFoSWUxOEUvZHluMWM1R1ZCUmlVUG5x?=
+ =?utf-8?B?VlhBa2xjRzV3dk1NMVZIbW1SQ1p5T3N0SFpXV1hDbi81aUd4TEFFNzg1S1F3?=
+ =?utf-8?B?MjlyblhHYnFNMjEwVktPaDN3dGpCTkg1SWVKSlpzdktnc2poMlkzTTN4TlNt?=
+ =?utf-8?B?S3RWQndBWVNwRnFLZG5FTkxKc0RLM2hkWnhDRCt4ZjVaSHB2R2pXdGxPNkR0?=
+ =?utf-8?B?TjkyNys2ck4xUS82L2FpZDdtTGRvOUdVQWV0NGNEckpsaFliQTU0eFAxZGNQ?=
+ =?utf-8?B?WjJ6MWdsT2NlWWgrUjl0TE1uYUN4dzF2ckNtYktwK3BONVZsZW1nSlREK2Zm?=
+ =?utf-8?B?MCt0SkJzRmx1alpkS24rN0pWOEJWUFhVRDI3M1hRQlI1NVAxcmc5WVNweHln?=
+ =?utf-8?B?OU1ILzdTdmRMUnBFS1hGVVZyQVB4eHRlZlVDazMwYlA5S1ZRKzVIclQ5bUR0?=
+ =?utf-8?B?WHhYSEFxT21KLytpV2ZKYjQ4aDliK2V5TVlSVW5Na0hFZHR4OE45RG53OFls?=
+ =?utf-8?B?ZTZTL0hFbXlxY2ZOSTJHeHowYzkzM2QxOWVKcm1DdlNvSmRQR01tVjNIS1lJ?=
+ =?utf-8?B?bUxBQ29kaGZ5VmFLVldkSmpJZDY1alpYci9mRjk4WjNBcFd0U0pobnpUK0x1?=
+ =?utf-8?B?WHkvWHlSSUYyTnQzREY4K0dsL0hkenNLUThoVmo1Zko4QW5PYTRjYmhjK21m?=
+ =?utf-8?B?V1BDSGZXUGdmMUc3ek4wNzNZRTgveGJaaGJjQnArN28wZjJaU1R0ampPczEy?=
+ =?utf-8?B?MkNUeDlsdE9vSDNoaW55TzhyOEFXWmErQStDc3d2RGxzSE5XWjB1V0VhRlVZ?=
+ =?utf-8?B?MEJkdE1CVEI0VTFUUzV6U09Yc2h3SkhmYXR1M1hyZTZOSUZqWE9rZXZCenBV?=
+ =?utf-8?B?TkJSMElxWW9BPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013)(13003099007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 01:22:51.0658
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3099d4a1-2aeb-4ac5-8af3-08dddad1163e
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	TY2PEPF0000AB83.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPF5B542C4C3
 
-The first bullet list items are shown in htmldocs output as combined
-with previous paragraph due to missing blank line separator. Add it.
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/dev-tools/ktap.rst | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/dev-tools/ktap.rst b/Documentation/dev-tools/ktap.rst
-index 54fac3d3bf7b05..a9810bed5fd4de 100644
---- a/Documentation/dev-tools/ktap.rst
-+++ b/Documentation/dev-tools/ktap.rst
-@@ -20,6 +20,7 @@ machine-readable, whereas the diagnostic data is unstructured and is there to
- aid human debugging.
- 
- KTAP output is built from four different types of lines:
-+
- - Version lines
- - Plan lines
- - Test case result lines
-@@ -38,6 +39,7 @@ All KTAP-formatted results begin with a "version line" which specifies which
- version of the (K)TAP standard the result is compliant with.
- 
- For example:
-+
- - "KTAP version 1"
- - "TAP version 13"
- - "TAP version 14"
-@@ -276,6 +278,7 @@ Example KTAP output
- This output defines the following hierarchy:
- 
- A single test called "main_test", which fails, and has three subtests:
-+
- - "example_test_1", which passes, and has one subtest:
- 
-    - "test_1", which passes, and outputs the diagnostic message "test_1: initializing test_1"
--- 
-An old man doll... just what I always wanted! - Clara
+On 2025/8/13 23:43, Rob Herring wrote:
+> EXTERNAL EMAIL
+> 
+> On Wed, Aug 13, 2025 at 05:12:57PM +0800, Hans Zhang wrote:
+>>
+>>
+>> On 2025/8/13 16:31, Rob Herring (Arm) wrote:
+>>> EXTERNAL EMAIL
+>>>
+>>> On Wed, 13 Aug 2025 12:23:26 +0800, hans.zhang@cixtech.com wrote:
+>>>> From: Hans Zhang <hans.zhang@cixtech.com>
+>>>>
+>>>> Document the bindings for CIX Sky1 PCIe Controller configured in
+>>>> root complex mode with five root port.
+>>>>
+>>>> Supports 4 INTx, MSI and MSI-x interrupts from the ARM GICv3 controller.
+>>>>
+>>>> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+>>>> ---
+>>>>    .../bindings/pci/cix,sky1-pcie-host.yaml      | 79 +++++++++++++++++++
+>>>>    1 file changed, 79 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+>>>>
+>>>
+>>> My bot found errors running 'make dt_binding_check' on your patch:
+>>>
+>>> yamllint warnings/errors:
+>>>
+>>> dtschema/dtc warnings/errors:
+>>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: /: 'compatible' is a required property
+>>>           from schema $id: http://devicetree.org/schemas/root-node.yaml#
+>>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb: /: 'model' is a required property
+>>>           from schema $id: http://devicetree.org/schemas/root-node.yaml#
+>>>
+>>> doc reference errors (make refcheckdocs):
+>>>
+>>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250813042331.1258272-9-hans.zhang@cixtech.com
+>>>
+>>> The base for the series is generally the latest rc1. A different dependency
+>>> should be noted in *this* patch.
+>>>
+>>> If you already ran 'make dt_binding_check' and didn't see the above
+>>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>>> date:
+>>>
+>>> pip3 install dtschema --upgrade
+>>>
+>>> Please check and re-submit after running the above command yourself. Note
+>>> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+>>> your schema. However, it must be unset to test all examples with your schema.
+>>>
+>>
+>> Dear Rob,
+>>
+>> I'm very sorry. No errors were detected on my PC. I'll check my local
+>> environment and fix this issue in the next version.
+>>
+>> If I have done anything wrong, please remind me.
+>>
+>>
+>>
+>> hans@hans:~/code/kernel_org/linux$ export CROSS_COMPILE=/home/hans/cix/bringup_master/tools/gcc/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+>> hans@hans:~/code/kernel_org/linux$ export ARCH=arm64
+>> hans@hans:~/code/kernel_org/linux$ make dt_binding_check
+>> DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+>>    SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+>>    CHKDT   ./Documentation/devicetree/bindings
+>>    LINT    ./Documentation/devicetree/bindings
+>>    DTEX Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dts
+>>    DTC [C]
+>> Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.example.dtb
+>> hans@hans:~/code/kernel_org/linux$ make W=1 dt_binding_check
+>> DT_SCHEMA_FILES=Documentation/devicetree/bindings/pci/cix,sky1-pcie-host.yaml
+> 
+> DT_SCHEMA_FILES limits testing to only the matching pattern.
+> Ultimately, you have to test without it.
+> 
+
+Dear Rob,
+
+Thank you very much for your reply and reminder. I will check it 
+carefully again.
+
+Best regards,
+Hans
 
 
