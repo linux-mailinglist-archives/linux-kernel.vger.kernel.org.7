@@ -1,150 +1,324 @@
-Return-Path: <linux-kernel+bounces-768750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6F9B264FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69033B26504
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012C51C2630C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:07:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EFB02A3A6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0459A2FC899;
-	Thu, 14 Aug 2025 12:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0200E2FD7AB;
+	Thu, 14 Aug 2025 12:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="Uco0q+ye"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rueauJ5R"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C721DD877
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C472FC889;
+	Thu, 14 Aug 2025 12:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173213; cv=none; b=ZRpWkLXDW/XeFzRbQ2wMmOgpjTqP/rrMxOEszRkcDwvJ/RConR9//XqudK6OEG0zfg73TGn1IHi+cWaAz5vS3aBolHd7LfxfgOP7IvfqZTRhH7OTjlHuynrhFX4T7pCm6okS5lIwMV7qjaRDsf+GZJYmuEruCOZC0o+9x1k0yj0=
+	t=1755173321; cv=none; b=AUzeC8SgoqstRLO7gPAbOSR1vslp7ViClx2ihUs30Z8Op9yu5QkNH0dndp5Nn72nem9Zhk11mXsQXKl2q9uuxmQf9CNEHDrlTUgfu+oj1dALoqUJii8OE0dB6DVtuFpUi/EIs0ZIAynWvuAy9Zt/7PWCp9Bkr/yaCMOjmWP2DwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173213; c=relaxed/simple;
-	bh=wiB//OFp2BrFQuwN6BZWO5CNv4TW0Uuh2XVDxdHzt2g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V+nKfmZvjzO7A+2N0qXBrXP4UXRgTmML92+x3inp+/EHpn5uHkUzzlMC7bcIHE57TFGlqxf+U0nzyEJ1TgRMRxEyHCsheLR0xEwVhlVz7vw+ABoe4Bij9EdL6l54E1SayhqyimvRHKukF6aWpFcGSatV+npPjeoxDYC6NURg2uM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=Uco0q+ye; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32326e8005bso951480a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 05:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1755173210; x=1755778010; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uVJEHbwUiQHMVs0nBo4suasLYxYlbOfnqJ9z6JjAl18=;
-        b=Uco0q+yevvvJ8ufD9rEQuGtsN3P8qyXinaF7KujzHsRwdtEuyquqqlpxeOWlMypvWu
-         W6Kt0vtiPtxKAz6ugQfq3PKTpHoQPRXsaJL+nLYUHUn6wuw4VjLdHVJfqctUDBdEgS/e
-         Hirv0SSS0iwxxtT6yijbUGUCoaFo8RIrnAzqjRjs6++iwxbJ7qm/InT3fmlAUN4SE3ZN
-         En/n9oqOzmz3aXpdpdOAn4vNBFeKUFd8KlZhyZ3F9to4zCbRn6BYFym68oLcOKnOvrFH
-         p4Khorzzm9NksDwbB1yDo7JAvjlotvYqdmecndy6g4vU5RK/G1JLtulyVIw9ksoQR6Sp
-         u6NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755173210; x=1755778010;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uVJEHbwUiQHMVs0nBo4suasLYxYlbOfnqJ9z6JjAl18=;
-        b=IHkJQyYvOLIHj7SIPrXiGatSS8H9sd7607qdCqaMq3VjWMpXsHx+O3fgMFMK8iLUGs
-         y33E8NXrfSl8rHqWjpirgOg6xI2BxFpFpCSJCg4MyO3Rj1lpqhVzouAWGlXAOkbfZ0C4
-         IpZd6fInCYyf5zDj97pmtRLr8XpRU0o4PK0oB+ROTGtpXut+7Qq+4zJJHkYM73ToqJzr
-         BqrRIRgcQD2jcmWa/JkpS3DGLIUackR1+aFq/O9bZzG6AoJtC1oOYUGHDt2RkAwfKf0B
-         4b97jq/Cgrwa+EjcsMVuqtQV0pYyZwjwzFg8h2kxzPS+pU9s+41RB7xEGhozAfZOX5Rf
-         DiMA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Qj7y+GilgCu/qlRFX05q34Gfzn5xDNj7TXRn099MYarbAqyj3VZAjykdJozsqBYxyukbyoJ/okiJkNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJCUml+/O3O1MGNMS6sUGTDGcMRDX28XVyZS1U/kQaSnS7ddYJ
-	LSrxXmLPqFzRlpyNh6GRXFMcZXDFSB+UfWNkDX2Y8umEttNC9a81cpNwRnnlHjzOwlI=
-X-Gm-Gg: ASbGnctwzetLxaEjkXwRW3nallPWsAl0Ao22OwN2dF7ZXukpgBUwvN2zbkx6gPzvZXH
-	IUzhnJqj1uBVYYi5Y1OAFlZvCU/pk8yeojIWS8WBLfRJ0lDGKvKHtfYwDgrAehv3OEohjrocSYg
-	L+0cTksqSXSf3TwlvpVvUch9P2L8j2bUuT+7KPJtp5i+06V0xhPBmiqrQ1P3g/WQ8+CsdUUIYbi
-	iIOuWFkpL8nQFNaexuygcN52vEz2UYwEAIgqTIamBW4rfvgFFachqRFBIIsTiyYLxM2yidrQXuL
-	BSEzOnXTUh0PEt5mDGID+mVG7rX0RF7OgZp7MYOmAUzEIOFs+4c/EmFSpNijBne3n7QSX/pM8JX
-	vXlTXyfJZmL3rIUKT4D0KVHhO5aod9a7YaO4mH6d9U21o5UOf4QKBKcVH0WaXir+7nzG9gQ==
-X-Google-Smtp-Source: AGHT+IFEAHkPnfRIgoDwjDPEfLaXInGcoKVU6vuvYGC8vXWNCk2KB5smgVfxup0qNj0vfsNR8sfSYA==
-X-Received: by 2002:a17:90b:3d8c:b0:31e:7410:a4d7 with SMTP id 98e67ed59e1d1-32327accc9bmr5541078a91.33.1755173210426;
-        Thu, 14 Aug 2025 05:06:50 -0700 (PDT)
-Received: from alexghiti.eu.rivosinc.com (alexghiti.eu.rivosinc.com. [141.95.202.232])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3232f8c8e4bsm923478a91.2.2025.08.14.05.06.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 05:06:50 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Thu, 14 Aug 2025 12:06:14 +0000
-Subject: [PATCH] riscv: Use an atomic xchg in pudp_huge_get_and_clear()
+	s=arc-20240116; t=1755173321; c=relaxed/simple;
+	bh=I93VlVOJProf6GUAvlPX+GK4JwdxGhkQUVPWmypw+EY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F96GgZwwHaTmh4i/ZdLB/ETJB7nFNTo7tioDYXDrXQL5QFDGyV7FKRMSN1K2KT1KCWNI6kgqyXpAtmoFNnYWUUErNRlCCDCkI9cxg5AMNfUbaRF6QLa+6CnkfUoUpmQ+2PX4RM09c7uPgXfUUsiyg39MQZ7nLN7+KOhV2UAkFc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rueauJ5R; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EC7Tgj2376138;
+	Thu, 14 Aug 2025 07:07:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755173249;
+	bh=XnS9iucL55LRf3nUvtmDFTQqhw9YTWJHMvHDM/O8QKQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=rueauJ5RDCTkk6CGad6l6/CXVYyE7dEItp5e9/gRmn/AulTIhBuAz0d5MclhHuK2l
+	 4KIzgq8EfSfNlaTaOw0AOxKubx+iJ2AKfu2ueDYQnS99tUHBc8dBqAC5AHzr24bCxK
+	 aLyVxcCWbl0P8fzj+yxbNqILInAXTg9tZknhh7g8=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EC7SvT1134283
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 07:07:28 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 07:07:28 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 07:07:28 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EC7MJj3884391;
+	Thu, 14 Aug 2025 07:07:22 -0500
+Message-ID: <8a041e8e-b9a8-4bd9-ab1a-de66f943dea6@ti.com>
+Date: Thu, 14 Aug 2025 17:37:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/5] net: rnpgbe: Add n500/n210 chip support
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
+        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
+        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
+        <richardcochran@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-3-dong100@mucse.com>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20250814073855.1060601-3-dong100@mucse.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250814-dev-alex-thp_pud_xchg-v1-1-b4704dfae206@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIADXRnWgC/x3MQQqAIBBA0avErBvI1KiuEhGhUw5EiVYI0d2Tl
- m/x/wORAlOEvngg0M2Rjz1DlAUYN+8rIdtsqKtaV61QaOnGeaOEp/OTv+yUjFuxFVoaKaTtVAO
- 59YEWTv93GN/3A4nQqbBnAAAA
-X-Change-ID: 20250814-dev-alex-thp_pud_xchg-8153c313d946
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Alexandre Ghiti <alexghiti@rivosinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1490;
- i=alexghiti@rivosinc.com; h=from:subject:message-id;
- bh=wiB//OFp2BrFQuwN6BZWO5CNv4TW0Uuh2XVDxdHzt2g=;
- b=owGbwMvMwCGWYr9pz6TW912Mp9WSGDLmXvT/2sjZzsLpbla9zt1RuuD5t94w2cMrAiYbPNs49
- c9vRsYXHaUsDGIcDLJiiiwK5gldLfZn62f/ufQeZg4rE8gQBi5OAZjIyyMM//1mHIl5e/635P6/
- pQ/FNQKfHZd/Ja4ac2j/y6McX6b1rhFkZJhk8vpp7+FXXZc0rvpcrXQS7NPLM3TaFGYw/3j4Sov
- 1HpwA
-X-Developer-Key: i=alexghiti@rivosinc.com; a=openpgp;
- fpr=DC049C97114ED82152FE79A783E4BA75438E93E3
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Make sure we return the right pud value and not a value that could
-have been overwritten in between by a different core.
 
-Fixes: c3cc2a4a3a23 ("riscv: Add support for PUD THP")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
-Note that this will conflict with
-https://lore.kernel.org/linux-riscv/20250625063753.77511-1-ajd@linux.ibm.com/
-if applied after 6.17.
----
- arch/riscv/include/asm/pgtable.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index 91697fbf1f9013005800f713797e4b6b1fc8d312..e69346307e78608dd98d8b7a77b7063c333448ee 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -942,6 +942,17 @@ static inline int pudp_test_and_clear_young(struct vm_area_struct *vma,
- 	return ptep_test_and_clear_young(vma, address, (pte_t *)pudp);
- }
- 
-+#define __HAVE_ARCH_PUDP_HUGE_GET_AND_CLEAR
-+static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
-+					    unsigned long address, pud_t *pudp)
-+{
-+	pud_t pud = __pud(atomic_long_xchg((atomic_long_t *)pudp, 0));
-+
-+	page_table_check_pud_clear(mm, pud);
-+
-+	return pud;
-+}
-+
- static inline int pud_young(pud_t pud)
- {
- 	return pte_young(pud_pte(pud));
+On 14/08/25 1:08 pm, Dong Yibo wrote:
+> Initialize n500/n210 chip bar resource map and
+> dma, eth, mbx ... info for future use.
+> 
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> ---
+>  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |  55 +++++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   |  85 +++++++++++++
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  12 ++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 112 ++++++++++++++++++
+>  5 files changed, 266 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+> 
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/Makefile b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> index 9df536f0d04c..42c359f459d9 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/Makefile
+> @@ -5,4 +5,5 @@
+>  #
+>  
+>  obj-$(CONFIG_MGBE) += rnpgbe.o
+> -rnpgbe-objs := rnpgbe_main.o
+> +rnpgbe-objs := rnpgbe_main.o\
+> +	       rnpgbe_chip.o
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> index 64b2c093bc6e..08faac3a67af 100644
+> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> @@ -4,15 +4,70 @@
+>  #ifndef _RNPGBE_H
+>  #define _RNPGBE_H
+>  
+> +#include <linux/types.h>
+> +
+> +extern const struct rnpgbe_info rnpgbe_n500_info;
+> +extern const struct rnpgbe_info rnpgbe_n210_info;
+> +extern const struct rnpgbe_info rnpgbe_n210L_info;
+> +
+>  enum rnpgbe_boards {
+>  	board_n500,
+>  	board_n210,
+>  	board_n210L,
+>  };
+>  
+> +enum rnpgbe_hw_type {
+> +	rnpgbe_hw_n500 = 0,
+> +	rnpgbe_hw_n210,
+> +	rnpgbe_hw_n210L,
+> +	rnpgbe_hw_unknown
+> +};
+> +
+> +struct mucse_dma_info {
+> +	void __iomem *dma_base_addr;
+> +	void __iomem *dma_ring_addr;
+> +	u32 dma_version;
+> +};
+> +
+> +struct mucse_eth_info {
+> +	void __iomem *eth_base_addr;
+> +};
+> +
+> +struct mucse_mac_info {
+> +	void __iomem *mac_addr;
+> +};
+> +
+> +struct mucse_mbx_info {
+> +	/* fw <--> pf mbx */
+> +	u32 fw_pf_shm_base;
+> +	u32 pf2fw_mbox_ctrl;
+> +	u32 fw_pf_mbox_mask;
+> +	u32 fw2pf_mbox_vec;
+> +};
+> +
+> +struct mucse_hw {
+> +	void __iomem *hw_addr;
+> +	void __iomem *ring_msix_base;
+> +	struct pci_dev *pdev;
+> +	enum rnpgbe_hw_type hw_type;
+> +	struct mucse_dma_info dma;
+> +	struct mucse_eth_info eth;
+> +	struct mucse_mac_info mac;
+> +	struct mucse_mbx_info mbx;
+> +	u32 driver_version;
+> +	u16 usecstocount;
+> +};
+> +
+>  struct mucse {
+>  	struct net_device *netdev;
+>  	struct pci_dev *pdev;
+> +	struct mucse_hw hw;
+> +};
+> +
+> +struct rnpgbe_info {
+> +	int total_queue_pair_cnts;
+> +	enum rnpgbe_hw_type hw_type;
+> +	void (*init)(struct mucse_hw *hw);
+>  };
+>  
+>  /* Device IDs */
+> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> new file mode 100644
+> index 000000000000..79aefd7e335d
+> --- /dev/null
+> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> @@ -0,0 +1,85 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> +
+> +#include "rnpgbe.h"
+> +#include "rnpgbe_hw.h"
+> +
+> +/**
+> + * rnpgbe_init_common - Setup common attribute
+> + * @hw: hw information structure
+> + **/
+> +static void rnpgbe_init_common(struct mucse_hw *hw)
+> +{
+> +	struct mucse_dma_info *dma = &hw->dma;
+> +	struct mucse_eth_info *eth = &hw->eth;
+> +	struct mucse_mac_info *mac = &hw->mac;
+> +
+> +	dma->dma_base_addr = hw->hw_addr;
+> +	dma->dma_ring_addr = hw->hw_addr + RNPGBE_RING_BASE;
+> +
+> +	eth->eth_base_addr = hw->hw_addr + RNPGBE_ETH_BASE;
+> +
+> +	mac->mac_addr = hw->hw_addr + RNPGBE_MAC_BASE;
+> +}
+> +
+> +/**
+> + * rnpgbe_init_n500 - Setup n500 hw info
+> + * @hw: hw information structure
+> + *
+> + * rnpgbe_init_n500 initializes all private
+> + * structure, such as dma, eth, mac and mbx base on
+> + * hw->hw_addr for n500
+> + **/
+> +static void rnpgbe_init_n500(struct mucse_hw *hw)
+> +{
+> +	struct mucse_mbx_info *mbx = &hw->mbx;
+> +
+> +	rnpgbe_init_common(hw);
+> +
+> +	mbx->fw2pf_mbox_vec = 0x28b00;
+> +	mbx->fw_pf_shm_base = 0x2d000;
+> +	mbx->pf2fw_mbox_ctrl = 0x2e000;
+> +	mbx->fw_pf_mbox_mask = 0x2e200;
+> +	hw->ring_msix_base = hw->hw_addr + 0x28700;
+> +	hw->usecstocount = 125;
+> +}
 
----
-base-commit: 62950c35a515743739e3d863eac25c20a5bd1613
-change-id: 20250814-dev-alex-thp_pud_xchg-8153c313d946
+These hardcoded values should be defined in rnpgbe_hw.h as macros rather
+than using magic numbers.
 
-Best regards,
+> +
+> +/**
+> + * rnpgbe_init_n210 - Setup n210 hw info
+
+> +static int rnpgbe_add_adapter(struct pci_dev *pdev,
+> +			      const struct rnpgbe_info *info)
+> +{
+> +	struct net_device *netdev;
+> +	void __iomem *hw_addr;
+> +	struct mucse *mucse;
+> +	struct mucse_hw *hw;
+> +	u32 dma_version = 0;
+> +	u32 queues;
+> +	int err;
+> +
+> +	queues = info->total_queue_pair_cnts;
+> +	netdev = alloc_etherdev_mq(sizeof(struct mucse), queues);
+> +	if (!netdev)
+> +		return -ENOMEM;
+> +
+> +	SET_NETDEV_DEV(netdev, &pdev->dev);
+> +	mucse = netdev_priv(netdev);
+> +	mucse->netdev = netdev;
+> +	mucse->pdev = pdev;
+> +	pci_set_drvdata(pdev, mucse);
+> +
+> +	hw = &mucse->hw;
+> +	hw->hw_type = info->hw_type;
+> +	hw->pdev = pdev;
+> +
+> +	switch (hw->hw_type) {
+> +	case rnpgbe_hw_n500:
+> +		hw_addr = devm_ioremap(&pdev->dev,
+> +				       pci_resource_start(pdev, 2),
+> +				       pci_resource_len(pdev, 2));
+> +		if (!hw_addr) {
+> +			err = -EIO;
+> +			goto err_free_net;
+> +		}
+> +
+> +		dma_version = readl(hw_addr);
+> +		break;
+> +	case rnpgbe_hw_n210:
+> +	case rnpgbe_hw_n210L:
+> +		hw_addr = devm_ioremap(&pdev->dev,
+> +				       pci_resource_start(pdev, 2),
+> +				       pci_resource_len(pdev, 2));
+> +		if (!hw_addr) {
+> +			err = -EIO;
+> +			goto err_free_net;
+> +		}
+> +
+> +		dma_version = readl(hw_addr);
+> +		break;
+
+The code in both case branches is identical. Remove the switch statement
+and use the common code instead.
+
+> +	default:
+> +		err = -EIO;
+> +		goto err_free_net;
+> +	}
+> +	hw->hw_addr = hw_addr;
+> +	hw->dma.dma_version = dma_version;
+> +	hw->driver_version = 0x0002040f;
+> +	info->init(hw);
+> +	return 0;
+> +
+> +err_free_net:
+> +	free_netdev(netdev);
+> +	return err;
+> +}
+> +
+
+
 -- 
-Alexandre Ghiti <alexghiti@rivosinc.com>
+Thanks and Regards,
+Danish
 
 
