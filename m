@@ -1,138 +1,135 @@
-Return-Path: <linux-kernel+bounces-768726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC89B26494
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:45:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA686B2649B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35DC43ABBD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4CE1CC1D84
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB562F60D3;
-	Thu, 14 Aug 2025 11:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263752FABEB;
+	Thu, 14 Aug 2025 11:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPnGEXsm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="tPyjpAX3"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C412E6106;
-	Thu, 14 Aug 2025 11:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABADC2F998C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171950; cv=none; b=MEcGBj3Mr5mIdnbIUwOaVdMtU/HfbLubPs0LN2znD7CTpER69cAD/wup4l34h2uSIf9JGv3xyeqVAcLI5AeNH3b5FJRXwT6IjPsK5oCKzCr3j/6iqTpHves4eCG1md6y33LZAe393YVeO28iTgtEmUyOgFEGukp2pp2nEfjpzKw=
+	t=1755172117; cv=none; b=aewbgvtpK/Ypkx4X/uh6zTdanyfaH1k3nQ0aiDZLmnbAMiEXm5lg2QfOs4hZWxs82YZJXaH0T58FgZzkBDVfuBVppEoWF1eW5fqrayXMmwH68zimPLLeQxEajuk1JoyD09SKAeioRxKthphlgX/qC8XInHmCsXsnM5fn4Vlr/rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171950; c=relaxed/simple;
-	bh=FexkV7nvaMJKSQuSjt56VRn1ropgn6XWofqYu3VqSl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bx1mkDSspXgCilokvH8kPICDDpkmIB5ifWSSyueAnBaXmftSTYYxPjdKOz8RsAJvhE6dxjseVgAs3sSq+KcDxavje/uHUZ5hnMTeVn31lg+LA8Oqhaf/5Gzwi7QsUgUMEo7KwElEdJ4vWDKrel6qlMJW7vc4tPLB/EZRtcy5HI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPnGEXsm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6900C4CEF1;
-	Thu, 14 Aug 2025 11:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755171950;
-	bh=FexkV7nvaMJKSQuSjt56VRn1ropgn6XWofqYu3VqSl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OPnGEXsmQefCR5XKxWgB20+CdEPRHLpwVjZ9QqpgyiEZ/0tCDnmajIc2xnznI+BzQ
-	 Is37m5tR5w39ME0RZCAMaBBsKQRSYqMs9a9tZjjyQriX3RqQOr5IihltzPkGu3m3Q4
-	 vZTJUJH1TKkWTXuh5TamQ5xvr35SXOixpW9FVi2OiCGYyXHmfuOj0dXi7B8UQAC5Q+
-	 zxQk6CKRtdavLtwGvB7gY6HSlp4w30N0rA/eF4w9gIis1iaNFxzbmJZsXiOQE7bHUr
-	 9ZJMetEeDzQbchb9v2/vyLtoHZnblpw/SncrzFzAA5/Uj9OF05Wi8okNIKcTLXJXu5
-	 tNIXry1AK4ePw==
-Date: Thu, 14 Aug 2025 12:45:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Usama Arif <usamaarif642@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
-	surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
-	baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
-	ziy@nvidia.com, laoar.shao@gmail.com, dev.jain@arm.com,
-	baolin.wang@linux.alibaba.com, npache@redhat.com,
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com, vbabka@suse.cz,
-	jannh@google.com, Arnd Bergmann <arnd@arndb.de>, sj@kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v4 7/7] selftests: prctl: introduce tests for disabling
- THPs except for madvise
-Message-ID: <b433c998-0f7b-4ca4-a867-5d1235149843@sirena.org.uk>
-References: <20250813135642.1986480-1-usamaarif642@gmail.com>
- <20250813135642.1986480-8-usamaarif642@gmail.com>
- <13220ee2-d767-4133-9ef8-780fa165bbeb@lucifer.local>
- <bac33bcc-8a01-445d-bc42-29dabbdd1d3f@redhat.com>
- <5b341172-5082-4df4-8264-e38a01f7c7d7@lucifer.local>
- <0b7543dd-4621-432c-9185-874963e8a6af@redhat.com>
- <5dce29cc-3fad-416f-844d-d40c9a089a5f@lucifer.local>
+	s=arc-20240116; t=1755172117; c=relaxed/simple;
+	bh=2n58AnN8/7Sa58+iL/4wUwjaX1O7651vgF/GnzLpYUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EHYvHj9KoumfFL3OmFAgtNrtRHYgcxUQvWo23c3X9CvM++QuR4BFUG8LapfzqD53R/kt275mH50ClQPxYh910O+JPO4GTrUPH0yOdnlfJq9VMdmT4OrT3Pvgtw+v4zY/2YSaG4/vW+D1qeZmYFWBPThqRxKo/h8NpWcNsG2lw/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=tPyjpAX3; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
+	by cmsmtp with ESMTPS
+	id mVp0uoFoD1jt6mWReurO2J; Thu, 14 Aug 2025 11:48:34 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id mWRduQdijrnsYmWRduh4bQ; Thu, 14 Aug 2025 11:48:34 +0000
+X-Authority-Analysis: v=2.4 cv=OLkn3TaB c=1 sm=1 tr=0 ts=689dcd12
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=aBvOdYTnlRd+2LFm/58ENA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
+ a=ciplz7lBqJibEU-u5rUA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EbnZD1AMDuV7+S1NXEbn+nHpy6nqMny8DiTNPxWn18g=; b=tPyjpAX3i3y4qgRzjjAKYzgBHO
+	BGB2PaBSXDsfBXm8ZgZX9ICuWBjt1GJa49v0Ki3hMeIyWkZtbZgGxvMrYPPL1+3RpkimVlKoY9dEn
+	YtBOR85SwXYIRHc5Av4JcZFKvEf1nfV4qQERyhanJEHvMPKymsW0yIjHwpDfNg1QHwAWjnZxLPWF3
+	3mOj1/FKN3icVdXdoMlW9fvXT7Wby/9RI5jHirWT3SW/Pp0FIb0r38tNEzJL09LwLLNC7CbkgEwYd
+	oFAIWxRRXfg39FV2aECAF5jnXDK3+r+Rbjv6lIjGXMbvvam6jLa4sXd08yNXPDB4gzoUMZhR/q4+t
+	UNPgkVDg==;
+Received: from 172.117.7.202.megaegg.ne.jp ([202.7.117.172]:55560 helo=[192.168.241.228])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1umWRd-00000003h2r-0Aaz;
+	Thu, 14 Aug 2025 06:48:33 -0500
+Message-ID: <4b9eea66-f004-4b5f-bf48-4c32205cc8ee@embeddedor.com>
+Date: Thu, 14 Aug 2025 20:48:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HgKF1GOS9//9I841"
-Content-Disposition: inline
-In-Reply-To: <5dce29cc-3fad-416f-844d-d40c9a089a5f@lucifer.local>
-X-Cookie: This sentence no verb.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
+ linux-pwm@vger.kernel.org, chrome-platform@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <aJtRPZpc-Lv-C6zD@kspp>
+ <2pgdxifg2zmyhvemm7a2qntprsz5nhh3ustrrlg2vvcqffwj6c@22enjpgycjbt>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <2pgdxifg2zmyhvemm7a2qntprsz5nhh3ustrrlg2vvcqffwj6c@22enjpgycjbt>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 202.7.117.172
+X-Source-L: No
+X-Exim-ID: 1umWRd-00000003h2r-0Aaz
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 172.117.7.202.megaegg.ne.jp ([192.168.241.228]) [202.7.117.172]:55560
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPBTpKUqWUCnQaUPaayiFaQp8B+Hq4A1gQBxIM0tCzpMSyrBpxjj9oG5pdpFMHdGkAMeiRwCFvpELGMylGD6/e2cwryA7ok01p6udyCuYSCfoadpAs9Z
+ 1bkP+k0YNIv+uuPvQkEkm+5agEZJBg/yJmAvBo0Omj3ZDlQF85bJzYQfsynFK+apbKNjyd/520Xr7ti9POVl5avt3wXlyvsEbgrnQ9/I2nLUXAQGd3jkUwnG
 
 
---HgKF1GOS9//9I841
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> diff --git a/include/linux/stddef.h b/include/linux/stddef.h
+> index dab49e2ec8c0..8ca9df87a523 100644
+> --- a/include/linux/stddef.h
+> +++ b/include/linux/stddef.h
+> @@ -108,7 +108,7 @@ enum {
+>   	union {									\
+>   		TYPE NAME;							\
+>   		struct {							\
+> -			unsigned char __offset_to_##FAM[offsetof(TYPE, FAM)];	\
+> +			unsigned char __offset_to_##FAM[sizeof(TYPE)];		\
+>   			MEMBERS							\
+>   		};								\
+>   	}
+> 
+> which only leaves one usage of FAM in the name of the padding struct
+> member. I'm sure someone is able to come up with something nice here to
+> get rid of FAM completely or point out what I'm missing.
 
-On Thu, Aug 14, 2025 at 11:49:15AM +0100, Lorenzo Stoakes wrote:
-> On Thu, Aug 14, 2025 at 11:32:55AM +0200, David Hildenbrand wrote:
-> > On 13.08.25 20:52, Lorenzo Stoakes wrote:
+Flexible structures (structs that contain a FAM) may have trailing padding.
+Under that scenario sizeof(TYPE) causes the overlay between FAM and MEMBERS
+to be misaligned.
 
-> > > I can't see anything in the kernel to #ifdef it out so I suppose you mean
-> > > running these tests on an older kernel?
+On the other hand, offsetof(TYPE, FAM) precisely positions the trailing
+MEMBERS where the FAM begins, which is correct and safe.
 
-...
+Thanks
+-Gustavo
 
-> > > But this is an unsupported way of running self-tests, they are tied to the
-> > > kernel version in which they reside, and test that specific version.
 
-> > > Unless I'm missing something here?
-
-> > I remember we allow for a bit of flexibility when it is simple to handle.
-
-> > Is that documented somewhere?
-
-> Not sure if it's documented, but it'd make testing extremely egregious if
-> you had to consider all of the possible kernels and interactions and etc.
-
-> I think it's 'if it happens to work then fine' but otherwise it is expected
-> that the tests match the kernel.
-
-> It's also very neat that with a revision you get a set of (hopefully)
-> working tests for that revision :)
-
-Some people do try to run the selftests with older kernels, they're
-trying to get better coverage for the stables.  For a lot of areas the
-skipping falls out natually since there's some optionality (so even with
-the same kernel version you might not have the feature in the running
-kernel) or it's a new API which has a discovery mechanism in the ABI
-anyway.  OTOH some areas have been actively hostile to the idea of
-running on older kernels so there are things that do break when you try.
-TBH so long as the tests don't crash the system or something people are
-probably just going to ignore any tests that have never passed.
-
---HgKF1GOS9//9I841
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmidzGUACgkQJNaLcl1U
-h9A7uAf/TsWdfXYkIPkM2Rj3C1HzjIuj6j4nnUhMESgtZSbf9Am99POGQmQxnUay
-Mz75k34/LOlxbUGyk2oz2tqb4Ad725WPmSqg4IEQXJ3or551O2tAApBrrbwTKfrT
-ha9jUqj/hhFasDuM9PZsHTUcEk4DKGYtFHOtrucuQMDOSNH7lsB3BEVyaY4xxHzM
-d2dWm3i1c8VlbU8gFIX794INH1sdcja2Syh0d5wraBAZ+NS+uJ5iWyZw43YgTGiX
-qQR+HWxD/m3NSNX6L58jpZYJq6Q40xDz8aQQiAd2omnwIYWln4HIitcYTpeNvQNw
-Poh6lZXtgIVoXt2Io6PYJpr3LnpP6A==
-=Xem/
------END PGP SIGNATURE-----
-
---HgKF1GOS9//9I841--
 
