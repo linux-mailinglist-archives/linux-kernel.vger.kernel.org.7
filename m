@@ -1,184 +1,117 @@
-Return-Path: <linux-kernel+bounces-767916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65BAB25A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:27:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A55B25A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE6D1C24E48
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:27:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69B3A2A1D8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4700E1FECAB;
-	Thu, 14 Aug 2025 04:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CB41FDA89;
+	Thu, 14 Aug 2025 04:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R9egz5S4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zJzVGlIh"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A9B79FE;
-	Thu, 14 Aug 2025 04:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA6C1F8F04
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 04:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755145602; cv=none; b=AG3pcD7ifOSpiAg+/1Kx3N4naqJIBl+HhBV1AxCsUrFSYy9e/0DkIXod5bi13AVr7EeWcg6gD3SJO33/S1clwk5wR7PNDhvD+v5boEx0zGnwae4IsaPNGGPrkTdO9sAZ3tqtDwEc/wCbfo5DzyPfsqPbdjh4iY69oNmpWlfob58=
+	t=1755145588; cv=none; b=OUnBNv46PuNVLZbMAE1QlpTGbyZGgZwhIKs3nqTl3Vbu08mkNnXKY+1xSogwHBsVvTMM8PzpJpR0UQc00LDc0cAeuWhpXP5rAyTU4DY8iuJluhVpkCiT5/1CDWViKQJQ8yoiIrosS51xKNDdLAf+MGG1yWT6oJwcDakgjtmRcwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755145602; c=relaxed/simple;
-	bh=sBLUNb42w2jz2ZlgBmIQXwpPBdBWdvuXUkbV2elogYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QxbzrdGMiPZsWD5zlvKXfnhJ8lS9qD5Ll2fNwAZh1OaP072GaZrukOVRx6adNYgIMKlgZr8y7grZ8+juKgicCdc7gOkf8TDjkG6hshDzuKdDZPKwOMy6rZTfXjLr70dFfFj0pNR93resvR5X0n7RRfEYLEhmfLiOy9c1/Mk33CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R9egz5S4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DN2rCR031245;
-	Thu, 14 Aug 2025 04:26:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7DzY+zh6d6AHtlLEfK3xL+SfU30o5/x7or790c7+rfM=; b=R9egz5S4Nhd1pwuL
-	mHgBh2XGXfMTtNBv0ObZq8ZpMYfsy1YEr4JlyE0Evrrh6TEWEjxWDbA6Uzmf7S2e
-	X3NPpxvVD4I3uR1hSjUkvKUF1OahIOVM1AvZfcggQWs7D3A+K72dYwTNP9/PmZO/
-	cDHtoj2ogkK8o+5x8KY/oV1WDm5DwT3b9F3noD7GK9M5O5ipUwvrq/CdysqivOwz
-	KlfhMYuvqmRA0ktMW0yxlXxndNWEs4AkA1IP1vqTeXgnycd6lKTjCpbBAqGIsJoe
-	A/GKZ3lXvhlOJ8tG0k9/0a1aa4shEL/HqU4dNrzDoGEaKSPScUwpmD0zDssf+he9
-	bq7QiQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vs4sy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 04:26:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57E4QIs5024490
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 04:26:18 GMT
-Received: from [10.50.36.96] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 13 Aug
- 2025 21:26:13 -0700
-Message-ID: <04b34250-520e-6320-bfcf-4dbb4ea0c523@quicinc.com>
-Date: Thu, 14 Aug 2025 09:56:10 +0530
+	s=arc-20240116; t=1755145588; c=relaxed/simple;
+	bh=M+zbR6R1Nm/4pCp0B7gheJGuNDaXY/XrNqF/Pyj8bmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xgynju76i+cXpeQ7zV3KlBpkSucF0pjYKSa+gSacgI9Gph0XqIaOmFctB6H/bnY+bFaN7fzI0cDYvCCCRBO/cRv0PtBwxt4OaMsnZP2uyKWRcR9JbDJ369/MeS+zPvigx9fOFLAZJABEWOtRQntHZg9IDbH4IBNtl/nK+hr/Sms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zJzVGlIh; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2e613e90so427083b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755145586; x=1755750386; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Y4+VbSY2gENC6vjJLIhD6H5q5HP7szxm2F2pf2ubmU=;
+        b=zJzVGlIhOOZynWHY+t7mRu8y3SWCOAPEcC0ucyRK12R+yWvC05JlQ3kKWYyoFTS4W0
+         3Rtv6Iiq4omT8z/bs3GsfWgiDZWRllOvEorxYQyaqYSZBST4JzvcdF7Tkc/HRTy7OqrE
+         cPY4tIZwxUWgmIyA9MTBZzOtualAg954lX8N8/6lEkkHfECN1oGAdT4s9WxkGVzE0mam
+         1Q8xRe9atpVbOcHoWfEUaMpqA/ouqwq+KvMxpzJu8Ys4nAF5e2i63sW0JRvZZohyarRd
+         8gfz8Sa84PUTu8vHnHURHgz1Uf6j93ow6VqxmC9hILfGqwi3SSD1FxJKh8YMCsJvizhd
+         7pVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755145586; x=1755750386;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Y4+VbSY2gENC6vjJLIhD6H5q5HP7szxm2F2pf2ubmU=;
+        b=FOjhy3a2dE9oXJpoZlPw9cO/fi+hSdDuTVLvEYM1see+2A+sWl24gMHKfKggCcxeoe
+         vwKHwUIRZS4o++2I12WlmH2hEaxco4wYuhjvtHlogV293E5XzvHbwCDVXJkgZmvi6MP8
+         12XqS03nSa2SyeGHLag9cI6emF2XVBiA+3NZas/QQtDbzHPJCRQ2RV0vXDJbG5wBxCXr
+         1yIMtaciRDuKSTg7FlJn5O4fozprrp4UNM95LIze2OrARP31CmrBAcbEhSZdmb78xzwR
+         Hf/n2n+kBd9hwHd7AWkVGBmcWRwzz1Jdie9/q69GjiV+D5eAosH6gk5UP35EjvqJmdt1
+         esDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJchu3/oBBdb2ZBJSdATR9iKnfJ54+iPYyGP8YUwwsvBtsy+BeFyzq92feBBNBJvQgIk4dugpRlTk9cIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwG05UpHqPPoyGbUJwaKSz6/1Z8bwa5b9F2xKzgYZVwQXjD1Bp
+	EHkbyGK/WROg688GjIq2dx0iH9PLFlhMPYdeKP80gR78rt8XMbNUcRIq8BPkENJOZzw=
+X-Gm-Gg: ASbGncubCA2h2+fKdN55jTUzshJOEF99CycCxhaVYvUSs8yfa5PwnsHSSQNbYusNCCm
+	+E6fwqI79FQ523JHVB0o7xTbJuhP/+CA6nA4IP6j7YnDrFnSi9fZGH3n0oo9L0fbv8bTFm6HxVR
+	wyahBXhqxfZYND8lIvMmVkM4t7xpa4ofRTyB80/HIOjfmEJjxEeb/Gki/xajkxIbDOL2xpSjRVK
+	zhVS9wvhP12q1UFEGDXndFuES2TdW1YsYKqud6HttN4vV/47zD1iJiSusTaZwuGLKBrMrQjaPKt
+	2QimYaddie02WqR14S7C0s8y6pr6VT5U0YyBPnIQQNlfC3aHCEa1btGVRLeOJVtDBo1RzN/T+Gs
+	9J1hretRGyaglSswju6pcVSoSSMr3a1SXmYI=
+X-Google-Smtp-Source: AGHT+IHTIvSY9FFJNBppNNZLO9sn/8s0tAcL4Le93FVv9JRJ529BpdCYJLpwI72ZJr0ZEnJN7dNv2g==
+X-Received: by 2002:a05:6a00:1304:b0:740:aa31:fe66 with SMTP id d2e1a72fcca58-76e2f8cf708mr2713273b3a.4.1755145585869;
+        Wed, 13 Aug 2025 21:26:25 -0700 (PDT)
+Received: from localhost ([122.172.87.165])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e2037acf2sm3493102b3a.112.2025.08.13.21.26.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 21:26:25 -0700 (PDT)
+Date: Thu, 14 Aug 2025 09:56:22 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Baptiste Lepers <baptiste.lepers@gmail.com>
+Cc: stable@vger.kernel.org, Yury Norov <yury.norov@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: cpumask: Mark CpumaskVar as transparent
+Message-ID: <20250814042622.t2qx6mlelntxi77b@vireshk-i7>
+References: <20250812144215.64809-1-baptiste.lepers@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
- video codec
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
- <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
- <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
- <8d8dcaef-eb96-4e7b-9a0a-8b3836cb284c@kernel.org>
- <e33a22ba-f82a-412a-b1fd-d1cd50f6b21d@kernel.org>
- <93e35282-52a3-4c3e-8065-b2a6c363c974@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <93e35282-52a3-4c3e-8065-b2a6c363c974@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfX+MUbxS/11pb8
- kxk1KZei8c2zDtpP88n6MZxSCboO7tADBSOSDaSIWyP/Am5iFRfhmakW9Le8RuzdAtvl1WJkQKD
- bW9q9/6Gdq0so6eEvoC9oOICIKZVvTgjtyMMR8APAvb3d3n39QUg6zngAjJVQFVTfGEuzcyWwoe
- yYdvCzTryv3/5R/SSwrWB5anEMr9NqEk2vjH16MToxcAQa7G6NniS+lfKC6SWhnAYv9vBRh6307
- mKSKtc+bn6vLGtfhxMuwPZyQRJiCu+ejjw4SEicbM4Od9hgLWNQw5zdVPx74ZuXcW/uchuVcCat
- KPg8CjTlPAL0zb2HEUm14EvelblVexjhW1WLPocaHexaE8a0DMrcNdoJ5xSzhlGVn2N+Akjfnh4
- gShMIy/m
-X-Proofpoint-GUID: AzIbW23rQvmCWCXP-lbDAupKwO6q2rVk
-X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689d656b cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=KKAkSRfTAAAA:8 a=3k836agxgdhUhSIPf64A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: AzIbW23rQvmCWCXP-lbDAupKwO6q2rVk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
- phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508110107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250812144215.64809-1-baptiste.lepers@gmail.com>
 
-
-
-On 8/14/2025 2:45 AM, Bryan O'Donoghue wrote:
-> On 12/08/2025 09:04, Krzysztof Kozlowski wrote:
->> On 12/08/2025 10:00, Krzysztof Kozlowski wrote:
->>> On 12/08/2025 09:54, Dikshita Agarwal wrote:
->>>>
->>>>
->>>> On 8/4/2025 7:07 PM, Krzysztof Kozlowski wrote:
->>>>> Add binding for Qualcom SM8750 Iris video codec, which comes with
->>>>> significantly different powering up sequence than previous SM8650, thus
->>>>> different clocks and resets.  For consistency keep existing clock and
->>>>> clock-names naming, so the list shares common part.
->>>>>
->>>>> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->>>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>> ---
->>>>>   .../bindings/media/qcom,sm8750-iris.yaml           | 186
->>>>> +++++++++++++++++++++
->>>>>   1 file changed, 186 insertions(+)
->>>>>
->>>>
->>>> Query:
->>>> Can the additional reset and clocks be accommodated in existing 8550-iris
->>>
->>> No, different hardware. Although it is hardware from your domain and
->>> your company, so I would assume you know the answer.
->> I guess I misread - I thought you want to re-use existing properties or
->> something like that, but you just want to create one huge binding?
->>
->> No. Don't grow these unmaintainable patterns. We have been changing this
->> for some time already :/
->>
->> Best regards,
->> Krzysztof
+On 12-08-25, 16:42, Baptiste Lepers wrote:
+> Unsafe code in CpumaskVar's methods assumes that the type has the same
+> layout as `bindings::cpumask_var_t`. This is not guaranteed by
+> the default struct representation in Rust, but requires specifying the
+> `transparent` representation.
 > 
-> @Dikshita can you revert here are you happy with a new binding or
-> requesting in-line changes in Iris - my reading here is a binding is
-> justified.
-> 
-
-Sure, but I was trying to understand how extending the current SM8550
-binding for [1] wasn't an issue.
-
-[1]
-https://lore.kernel.org/linux-media/20250417-topic-sm8x50-iris-v10-v7-1-f020cb1d0e98@linaro.org/
-
-Thanks,
-Dikshita
-
-> @Krzysztof
-> https://lore.kernel.org/linux-arm-msm/fb8f154b-3da4-4bee-82e1-3a1597a35c46@kernel.org/
-> 
-> Are you sending a v3 here ?
-> 
-> I can also just add the OPP when applying this patch.
-> 
+> Fixes: 8961b8cb3099a ("rust: cpumask: Add initial abstractions")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Baptiste Lepers <baptiste.lepers@gmail.com>
 > ---
-> bod
-> 
+>  rust/kernel/cpumask.rs | 1 +
+>  1 file changed, 1 insertion(+)
+
+Applied. Thanks.
+
+-- 
+viresh
 
