@@ -1,117 +1,125 @@
-Return-Path: <linux-kernel+bounces-769109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E79AB26A11
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:53:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B45B26A47
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEE437A44C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3741CE3B1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C8F1A2C11;
-	Thu, 14 Aug 2025 14:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681EA1D5CED;
+	Thu, 14 Aug 2025 14:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sPCoOGfP"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qQKFq6iA"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2F3202F9F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C481E7C34
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183194; cv=none; b=gGe+2YkNsXhU/4D16CEFSc9sbTncjiUGGMvT+P5eosX4TWBMUKVGioovBAQDVmzXN/FKE4PoDw5lsPcy1eLX2DRv/EF5HONSfyGixR6W1SX6n24jlD+T8lExy2WHQ3OsVkBfZRscK8Aw8ccVTKs1ScZaw+OhcUbiAfciewLgdU0=
+	t=1755183205; cv=none; b=kH557mTMd23PpzbYRG/QRQpcXGjn758SJqAqshlQQLF5TK8UFFRUpuuLHu7O9lrEAmNPx9dDsTAupYwmlkpye6cKflakll3YN7QZoPrEoG/vri9BVQBk1OihNji88VJqFpRUnpGJr70UdXbWiXDNNVvVGELe0plR4310eI8OEUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183194; c=relaxed/simple;
-	bh=uYPKVnCGSF9KqP4NlEo5K+nVBeFYMJK0jedD7gkxEVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N4BUDivFKB+XrTaqCqtt6Pbfky5t63BBOEOKmm9j95RKD/8ldYt1nZk/RI8DIBm8RPJh8VjwoMSAcBtNh+SG9P9QlXO+BaZHRe1iQUf0y+zgiw0fEV3/gmsNkVBhq8DI5eASPa7YaIfSHpIoFApK+eeAwa0PZK9+ryL8bC5iPng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sPCoOGfP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=hNKzyUyk9qrPsU4ca85Tu54B/jH8HzSAwnkafnMU5IA=; b=sPCoOGfPKQsjY5++aSYpyrSSOC
-	0xLbSsJlsCuIABdccKlxc8LtvZVujH3OvnIS+dBEiRtZldD5kPcOg57AIzu5003WD0oW8TnvOkcaT
-	EIVlV62KJ35YvNjdUV1z492EKMxj3uzCSPC60JXC80SgGYrWq6bc3B9ZlcqgEHl70OcttBAYBqzDp
-	Kk+GM5ZoaWeseRKqsVFnQxXhxON0k6MktL7RCQklwYMF/BvXgjjo0M/OkcY4FGLSpHZFwqLHnj2/p
-	RL7hvMZKbv6Adx7r8uq2Q+NeUnvIiseC4FPcl10+ElKdvLs32Cjt62biNle4tZivXWkO8/gOk4y9n
-	8OumUw6Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umZKG-00000001X3Q-3v0i;
-	Thu, 14 Aug 2025 14:53:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D7E18302DA9; Thu, 14 Aug 2025 16:53:08 +0200 (CEST)
-Date: Thu, 14 Aug 2025 16:53:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kuba Piecuch <jpiecuch@google.com>
-Cc: mingo@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	joshdon@google.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] sched: add ability to throttle sched_yield()
- calls to reduce contention
-Message-ID: <20250814145308.GB4067720@noisy.programming.kicks-ass.net>
-References: <20250808200250.2016584-1-jpiecuch@google.com>
- <20250811083609.GB1613200@noisy.programming.kicks-ass.net>
- <CABCx4RDTq6x5=dqiROM6GYU21heaCYwOkerUxvf9ENaEM3+BtQ@mail.gmail.com>
+	s=arc-20240116; t=1755183205; c=relaxed/simple;
+	bh=NoD+ETZUwC1NI2iM9n8JTzIDjdIebuVBxIdD00m9A4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=haHVH7uTgn3t0aTYk0X9tRHr7AvEDbWmW+/67Cpeu3GYAIb4Ikm3TvJO+0xmDA5JPIF9MTwioEhjMnfWwPYfBbFo9prRqak+dj8chG+WOgsOKM89XNiOIuBt3ejmi7tXcRvAXj/Z7Em1iycAHP+0gMGIvDvFW5IlJ2U4id02QWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qQKFq6iA; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30cceb749d7so400126fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755183203; x=1755788003; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KzOI1R5AmqgwHvOsxB+fLFbNEjWM3he7pbnJXPseqYk=;
+        b=qQKFq6iAVny0evBubLrDxa1Djp2eyCJfflC4haB4URjNn4xK+9hac9TvqLnvdtu1vo
+         rv7nz4Dx4AKNTYSoxG8J5whIpnr9YyKtraIM0wPWRE8Ub4zbzKlafLS8iTlNGCDn7bkA
+         8BodmPvVXd0ULlWwIgWThqdoqz398qJGCUSJ7JksQlFFqpGEN4W4Q9YIHK5JHzT1TThW
+         ICT88Jt7ZNQ5HU4S1CfE7vnfHCPx8qzow1c/Fi6h3yye5NaIZtXOFSegKpZXi/0yrIMG
+         G72VEDeLJPeTSMsEuaNZFpfVQcJRvTm1E5MAb9ryPDOwvhfckQBFiUxp855exnmvoVb/
+         F2bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755183203; x=1755788003;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KzOI1R5AmqgwHvOsxB+fLFbNEjWM3he7pbnJXPseqYk=;
+        b=unxAvH1ShdsuYhK+/0HqNKZ7J4dQzUicRqYpEnCwbVFj76wVFHNP3hPLAuYadZGQ0f
+         JcdbaLr0u5mmN5BJRl7KI4vAskGn36BUftLZtNFrXiskoOhlwJIuplp0NCwjWE5O57Xi
+         8LZpXoB3ldq4K0Ze0FUuvO5QsCroL7IncemxuQJ5Cefg6/cW1NdcfsNTAj5jV3xI+68I
+         aVeikillQWDS7F6hJQEY3zwLRwm3rOCw0+NPr4ylhh8OebpEFn9p520VL8+YKO3hZWlg
+         DMdAvZlRJW7+2F68GLFvvTKbOmBhGQwOwYLn2o0JvC3jyS8Qrt2hoGDQ3shz2aMVp/aS
+         ahbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVptsPGS8SNp4wS8nWLUhi4J+k0pWcHfn2uJRI5mMirIZqnJnwrmL4ZQokHuPKmoI4FU2pk7xAPtC8O38w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza40JggLWHRvaEi520n+YISbznvIw84mMRqjZFnE9cDd6PKK9s
+	gVvLNzPdCw3zplydoyvYW2Kdq6sFfTC1qrAolNWXg1r6HHAU6oOQD3eEM56lSaBcpuA=
+X-Gm-Gg: ASbGncutpELqe4uLpbqsRKW7k+2UwMs/VAqeQMPP9XTsh6lOwKYpeWD/PXt+YVjRlhH
+	pEsjzB9DBmVZxkh6164oV//h0LU+wv+bbGURW8vanQyAwIbOBg8nyOdcDjzwrtq8yn/QS6ixIH4
+	6sB/0TOBBGRuRZYmI29pIaLWcLwkxAiFE2aCrQsOiR2Q0zGOrUs9BIdH8VlqVnihXYphC+qZNQb
+	gca5F+GscVOaIlR+dgLZiEmR1yzCrnRacypeWU3mpOrKrlhXqqITAM485H5mvBcrLoisHV5VLzB
+	k3QByruTO0hpeaHtlpj3saZzUfd2iq/agDaBzzSAf3zsvz4aVBKC2MOmqltlv5lFTXnm+XNQJHi
+	MQAhtNFIsEPFsyxgGBqmlHZbaj9oBHWHDBTHUcQXm7JS68kDF4TxelUfrjCE8g8HLzcw2OWsowz
+	I=
+X-Google-Smtp-Source: AGHT+IHZQPl7wPLYHM/KcEYiWAE0RJvui1GqMwr8hzIsejCa/j3IZ2UWYnVBxZ+MYPbjzDGWie9RZg==
+X-Received: by 2002:a05:6808:6554:20b0:434:b43:d498 with SMTP id 5614622812f47-435df7fd625mr1317435b6e.28.1755183203117;
+        Thu, 14 Aug 2025 07:53:23 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:2d9b:959c:3c59:5831? ([2600:8803:e7e4:1d00:2d9b:959c:3c59:5831])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ce879777sm1104886b6e.24.2025.08.14.07.53.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 07:53:22 -0700 (PDT)
+Message-ID: <d817f2c9-063f-4506-888f-f3c6faef53c4@baylibre.com>
+Date: Thu, 14 Aug 2025 09:53:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABCx4RDTq6x5=dqiROM6GYU21heaCYwOkerUxvf9ENaEM3+BtQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] iio: adc: adc128s052: Simplify matching chip_data
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sukrut Bellary <sbellary@baylibre.com>,
+ Lothar Rubusch <l.rubusch@gmail.com>
+References: <cover.1755159847.git.mazziesaccount@gmail.com>
+ <b91ca4c576aac225525bbd7cd904bf684e796987.1755159847.git.mazziesaccount@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <b91ca4c576aac225525bbd7cd904bf684e796987.1755159847.git.mazziesaccount@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 11, 2025 at 03:35:35PM +0200, Kuba Piecuch wrote:
-> On Mon, Aug 11, 2025 at 10:36 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Fri, Aug 08, 2025 at 08:02:47PM +0000, Kuba Piecuch wrote:
-> > > Problem statement
-> > > =================
-> > >
-> > > Calls to sched_yield() can touch data shared with other threads.
-> > > Because of this, userspace threads could generate high levels of contention
-> > > by calling sched_yield() in a tight loop from multiple cores.
-> > >
-> > > For example, if cputimer is enabled for a process (e.g. through
-> > > setitimer(ITIMER_PROF, ...)), all threads of that process
-> > > will do an atomic add on the per-process field
-> > > p->signal->cputimer->cputime_atomic.sum_exec_runtime inside
-> > > account_group_exec_runtime(), which is called inside update_curr().
-> > >
-> > > Currently, calling sched_yield() will always call update_curr() at least
-> > > once in schedule(), and potentially one more time in yield_task_fair().
-> > > Thus, userspace threads can generate quite a lot of contention for the
-> > > cacheline containing cputime_atomic.sum_exec_runtime if multiple threads of
-> > > a process call sched_yield() in a tight loop.
-> > >
-> > > At Google, we suspect that this contention led to a full machine lockup in
-> > > at least one instance, with ~50% of CPU cycles spent in the atomic add
-> > > inside account_group_exec_runtime() according to
-> > > `perf record -a -e cycles`.
-> >
-> > I've gotta ask, WTH is your userspace calling yield() so much?
+On 8/14/25 3:35 AM, Matti Vaittinen wrote:
+> The adc128s052 driver supports a few different ICs. IC specific
+> configuration data is stored in an array. IC data, residing in a
+> specific point of the array, is pointed from the SPI device match data.
 > 
-> The code calling sched_yield() was in the wait loop for a spinlock. It
-> would repeatedly yield until the compare-and-swap instruction succeeded
-> in acquiring the lock. This code runs in the SIGPROF handler.
+> There is no need to have the chip config data structures in an array
+> and splitting them out of an array has at least following benefits:
+> 
+> - Chip-specific structures can be named after the chips they support.
+>   This makes referring them a tad cleaner, compared to using a generic
+>   array name with a numerical index.
+> 
+> - Avoid all potential 'out of bounds' errors which can result if the
+>   array is changed.
+> 
+> Split the chip configuration data array to individual structures.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
+> ---
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
-Well, then don't do that... userspace spinlocks are terrible, and
-bashing yield like that isn't helpful either.
-
-Throttling yield seems like entirely the wrong thing to do. Yes, yield()
-is poorly defined (strictly speaking UB for anything not FIFO/RR) but
-making it actively worse doesn't seem helpful.
-
-The whole itimer thing is not scalable -- blaming that on yield seems
-hardly fair.
-
-Why not use timer_create(), with CLOCK_THREAD_CPUTIME_ID and
-SIGEV_SIGNAL instead?
 
