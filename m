@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-768382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2B8B2604F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:11:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86214B26066
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3444B7BB682
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:10:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54FB84E478F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FB22ED17A;
-	Thu, 14 Aug 2025 09:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2ED2E7173;
+	Thu, 14 Aug 2025 09:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLuUBGtd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9Cyj6W/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DF92EBDC7;
-	Thu, 14 Aug 2025 09:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF9C25D55D;
+	Thu, 14 Aug 2025 09:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755162584; cv=none; b=CmVe97kSHJ3xn4tovJMW5JafHYIz2cgXGOrm+rHQW/M4os1GbV52TDf2/pv3rDG8Xppxh7z8MysBQF3WvPsVhs/KlAS+ukVUEyF5WtfGcCBCiCPP44MHqFl3GyRyS4N/WMwEmPyXqxk59mMWMGjzTK4bgWtLG80mGmspNds+dto=
+	t=1755162782; cv=none; b=E2XWLsxqo1kZ+b2vRJK0BHz/dgzZsTJz+/J/3nQlHHuyjMraEx3fzRA4zlh5tunjiJdwPuCZE1LVZ2RWFN5mueB0fOcZCQ2GSsvFNSVn1eX9ohkXTK6neJFcnUBoMedIIBgzv2XfZSqO6RuO8YlJFDB/21MyHOsaA0oTyAjUWro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755162584; c=relaxed/simple;
-	bh=4haXZhUQhwWTQfAUzZvN0UDYTjKDPWIQ5LTd46KE9Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6UF2pIPWBOMpuxe4fe6+xlna+hgPF7Co4WrN5DqiOvtV+IHW/d1mmTsblmlSYj5h3AIBYDnNxeJZrgWoOc11SZPqvkdyJWbYOX/iDWDQgB3YMgghUnfAYCLiw/jShkWWvKIwcrZtiTyOhoU6SvG7aUYjeepUmNeqmt753ZF1GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLuUBGtd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 887F0C4CEEF;
-	Thu, 14 Aug 2025 09:09:42 +0000 (UTC)
+	s=arc-20240116; t=1755162782; c=relaxed/simple;
+	bh=zTnd/EQxH4FlH/lPSgFBoU+tEq21O8hLYgOIgxRyWdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WwZeqA32SK4gy2qt2yccoHikXzNmc87IlV3abG9rqo3cw29BVd/OAQS55mu2cb6xxxCEjWOeWIqN2Ron0mXwxpIuQ+onSy6jSS0f/2qQObCTvA53shhoPhz+O8zyFBjf9Zm72VwzCa5Y5sbKD3eoj/kVDUutEhC5Xlzme714rMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9Cyj6W/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43829C4CEED;
+	Thu, 14 Aug 2025 09:13:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755162583;
-	bh=4haXZhUQhwWTQfAUzZvN0UDYTjKDPWIQ5LTd46KE9Xo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eLuUBGtdppkgsKgis3nVC/Avqik7RnCYzK9KO7reriPcUJPTO57YUPt85/HgWATYX
-	 v9Xpj+vF0aZsc18rDuptx7cW4VFNjpbBXuNKNF/BdANIEzLtY2wqZNZ7MAAWQMDBK/
-	 IWS+cH7eNxDp8JNHuyoSSiJQXAgvWF3CDzn0gZFUCptj/TB3sQ5f+WPhrzRnCOuIbk
-	 JwiFm7oLFMdZfFut8BL+1nbFQ3pzVMsXxnVW5fgtoDEPzWfSIFLmm187pl+w1OmZHW
-	 26Enk7S0sOkxJuXinXiwvqCjBvF6QqFEZ+mGMqIuZQ+iY/PBBNMU+lgeMhR2MoVCxl
-	 MQSCILYYJFxRQ==
-Date: Thu, 14 Aug 2025 11:09:40 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-Cc: Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Christophe Roullier <christophe.roullier@foss.st.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 03/13] dt-bindings: display: st: add new compatible to
- LVDS device
-Message-ID: <20250814-dancing-nautilus-of-camouflage-ebb441@kuoka>
-References: <20250812-drm-misc-next-v2-0-132fd84463d7@foss.st.com>
- <20250812-drm-misc-next-v2-3-132fd84463d7@foss.st.com>
+	s=k20201202; t=1755162781;
+	bh=zTnd/EQxH4FlH/lPSgFBoU+tEq21O8hLYgOIgxRyWdo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l9Cyj6W/l5xnKZ/l8qUh/GhfP1BtWD3PPlVfiWFzPGhVvrtQi+v9Ywos39a/nf2vT
+	 v+it9Qa/zOhS2L0gjv/dctcCdkyUj5qFmZvNEsbuVbMTNoCS0TynzODt+gp/344BtF
+	 uUodj8rqqf+DyIorcX8/O1//WGjvbbe5yzC/O7U9o5L3naMweahe4q9KnlcExGJAG5
+	 s8CDu/0JYzUKdMR5YX8Sro6P4ILE9/um66yGutqTGZ3UyVyywsdZ8WCYoTl3bY7Vdw
+	 raXRCtdnXDG/Ws1WomubTKgLkrEzON4Gs4toBZp0iuuyDX9DiF4fYu/iTw7lI9uQjK
+	 5CswDJo+EoFOQ==
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: bleung@chromium.org
+Cc: tzungbi@kernel.org,
+	dawidn@google.com,
+	chrome-platform@lists.linux.dev,
+	akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/3] platform/chrome: Fix a possible UAF via ref_proxy
+Date: Thu, 14 Aug 2025 09:10:17 +0000
+Message-ID: <20250814091020.1302888-1-tzungbi@kernel.org>
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250812-drm-misc-next-v2-3-132fd84463d7@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 12, 2025 at 03:49:00PM +0200, Raphael Gallais-Pou wrote:
-> Update the compatible to accept both "st,stm32mp255-lvds" and
-> st,stm32mp25-lvds" respectively.  Default will fall back to
-> "st,stm32mp25-lvds".
-> 
-> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
-> ---
->  Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml b/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
-> index 6736f93256b5cebb558cda5250369ec4b1b3033c..b777c55626e4b322d77ef411ad9e4a3afb6c9131 100644
-> --- a/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
-> +++ b/Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml
-> @@ -31,7 +31,13 @@ description: |
->  
->  properties:
->    compatible:
-> -    const: st,stm32mp25-lvds
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - st,stm32mp255-lvds
-> +          - const: st,stm32mp25-lvds
-> +      - items:
+This is a follow-up series of [1].  It tries to fix a possible UAF in the
+fops of cros_ec_chardev after the underlying protocol device has gone by
+using a newly introduced ref_proxy library.
 
-Drop. This should be just enum or const, no need for items.
+The 1st patch introduces the ref_proxy which is an implementation of ideas
+from the talk [2].
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The 2nd patch converts existing protocol devices to resource providers
+of cros_ec_device.
 
-Best regards,
-Krzysztof
+The 3rd patch converts cros_ec_chardev to a resource consumer of
+cros_ec_device to fix the UAF.
+
+[1] https://lore.kernel.org/chrome-platform/20250721044456.2736300-6-tzungbi@kernel.org/
+[2] https://lpc.events/event/17/contributions/1627/
+
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Tzung-Bi Shih (3):
+  lib: Add ref_proxy module
+  platform/chrome: Protect cros_ec_device lifecycle with ref_proxy
+  platform/chrome: cros_ec_chardev: Consume cros_ec_device via ref_proxy
+
+ drivers/platform/chrome/Kconfig             |   8 +-
+ drivers/platform/chrome/cros_ec_chardev.c   | 125 ++++++++-----
+ drivers/platform/chrome/cros_ec_i2c.c       |   5 +
+ drivers/platform/chrome/cros_ec_ishtp.c     |   5 +
+ drivers/platform/chrome/cros_ec_lpc.c       |   5 +
+ drivers/platform/chrome/cros_ec_rpmsg.c     |   5 +
+ drivers/platform/chrome/cros_ec_spi.c       |   4 +
+ drivers/platform/chrome/cros_ec_uart.c      |   5 +
+ include/linux/platform_data/cros_ec_proto.h |   3 +
+ include/linux/ref_proxy.h                   |  37 ++++
+ lib/Kconfig                                 |   3 +
+ lib/Makefile                                |   1 +
+ lib/ref_proxy.c                             | 184 ++++++++++++++++++++
+ 13 files changed, 348 insertions(+), 42 deletions(-)
+ create mode 100644 include/linux/ref_proxy.h
+ create mode 100644 lib/ref_proxy.c
+
+-- 
+2.51.0.rc1.163.g2494970778-goog
 
 
