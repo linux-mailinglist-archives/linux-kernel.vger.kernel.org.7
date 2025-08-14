@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-768468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F56B26147
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:46:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0CD0B26168
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE409E3E05
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:40:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AEA25E14C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9A72EAB9D;
-	Thu, 14 Aug 2025 09:37:54 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901A42E7184;
+	Thu, 14 Aug 2025 09:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzZ0Ixp5"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76091239E7E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876552E9752
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755164273; cv=none; b=Bn/rWDzFrCUjOeIYDr6eHb/3iLYrW+Ylnz/DBgHVXzbV3xJJu1SBrbojCMT0NBkAvpQ/oEfUX4rY6571MW9fFHEVTdcR9N2XvCT0egiVZZ9Yv26rQUxa9wsaPCyZG7pEys+gCPo4d7bZekDlzknxKYNFW0FqzYcHqXtxZqtO0x4=
+	t=1755164316; cv=none; b=i+ZME0swISswcoOVmHZ8qioYdD+W6rNSGkjGFDA5bYMpAmxZqpQ27aNq7dWC79v2aKlvY8IPe4Ncart347qjJB9BPbuxSNRpChW3/fma8Xz878lu0YI9tWCn52y38D2JcHghzGAC0nJuM99TsrAbj0HV0DAzv65kfhSEUHXOTc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755164273; c=relaxed/simple;
-	bh=fwx8siD17JqEXvrGQeimrhNPQ6pdiWziduef/SP96IY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=R8G2CuJ5696l4Jb6vVGOnWSQYubyXhuOl+e5E2Dun8vA0Rhxs1tL6CLIWMmODnu+soqi3rF2KoKVFFgDErtihD5wWtPiKIgFExWdJoNhFKxOot94tyYqKA12WjcgzrcT1fVtrUwlEekBdg5EQhYoAF2z/VklwkbdGIxyEmQTFYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4c2g7t6B27z2TT7M;
-	Thu, 14 Aug 2025 17:35:06 +0800 (CST)
-Received: from dggpemf500011.china.huawei.com (unknown [7.185.36.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 51B151A0188;
-	Thu, 14 Aug 2025 17:37:48 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- dggpemf500011.china.huawei.com (7.185.36.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Aug 2025 17:37:46 +0800
-Message-ID: <2530ba09-73eb-c0fd-5d77-4e6c5a0810a6@huawei.com>
-Date: Thu, 14 Aug 2025 17:37:46 +0800
+	s=arc-20240116; t=1755164316; c=relaxed/simple;
+	bh=y82OKNC3cPTYUm3lzqxc3yCWzX2KyCRnyITs/rWxdzU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dDzMGV8Gjei2lnncHcxEg2sqMzqut353vztiZ41fO/yHnMCePI213ggn4xmfmFkSdh73ZDjf1hjmsogx/wPP8J96mpvsZk9u2Jg+2qyWVsmiha8Lu04ICClP80fEp5aVjqrhHnN8Ev3KTRvcSOSSCP11M6++dN573aylGHYPrJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzZ0Ixp5; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2eb6d07bso752747b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:38:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755164314; x=1755769114; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lxQ609SiF79aF+tUZK9EpOz6Eq30AySkPKB8PMqfPL4=;
+        b=VzZ0Ixp5ASjyfBCMFbLFWlIH9dPBL9tzCqEn3BrvpD2t/JT1zms+16iy2HSs/48fs/
+         oLerWUI7uPdYPRUqqbLD2I5b32b5Prikot8qFSV/G9HP8BcBPi90yRaRPPxJdi26lmN/
+         hAEm47dq84dvSjyTfDFurw4q/heB8xipHFbdEErXdV7WWiAa074Fufc72VaZWPfU3/28
+         6yUhCJl7tvqFakLHVEknyS3C6l+jBYqUX5IwhPPNB4e6cHcQ7maQsz1HJvOamF/N6r44
+         ahHwX3MCpGjaV213yxSiVAnrpeqOf5g5FNhuGYgWexRcC1uuh0WcDX/xD5qzg+aVPwsI
+         5Ddw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755164314; x=1755769114;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lxQ609SiF79aF+tUZK9EpOz6Eq30AySkPKB8PMqfPL4=;
+        b=Zr39Ox/KgnfaK3MM6QaRHrLovN+ELNXpPtpDrZJyc2QqXOz7Gqtlxw05bcDbt1azDM
+         /V8KE4VXsl4ztvqHF9vNWS3ffZcelAKm+ArDg7rOCC9nInlsIF8bK2iZw2fPEVHoqVGj
+         iKBzQPxrUWZWQYTxXXnS0C1dw5ZoItHGxctedn/o7UyvCZwCmkBpR8KZmAo9kFYh733Y
+         iyvp3xenOObXfkBRWl8p0mVcXoaLgEp/kZf6GxzlQ5TGg88qV+KtiCzkSYX43liXEDaZ
+         0gcwsHLbqZ9Fd1UtvCacHKJnuTVlaIVX9OJtymW5dwqkPKral3TILfTk6XhKrLY8BAtk
+         LtlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVe1GEfpK/Q0RnbM22JhYumMeUYO2qeE3yXbunefv6Q030X4pnth9/aD4sKOFmNhlD84NC7f3EXEUZr06U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPF1E9F05j9EFZd6SW/7LjLVX7yucImPDVwxoHgoisAgjNDrQq
+	Ei8uBc2AzsZtwNxLMJp8m14sm0QPXYwfjXkphbk/Pk1C6cqoJw+f5jOb
+X-Gm-Gg: ASbGnctmtgpOzWXcvBqI1Mmuk3fcKk3zii3Zw/vaDLofTpuT7viY/6F9OskeaeyqWfB
+	tvA8Si50EbdLtUaL2L/KE8eT4J0qw45bb4FtmpsWtNPzwZgEPQ1wVkKWy/NfxEb3Somk1bN+uet
+	uIcXnjg4BDLIaOnHUIHqrV5V5FIs6z4dQVpcvg/8TQcmA66sS6UJYUK+FDRuByiy0vMO45D9D14
+	5LJ6meSN1ZXcLo1frAx1zfi6/TkeFSJqz3HmGTCBN1SgBF/HOcE/NClz0mvxlOSdOLeKMoQV4qU
+	WpSLaytiMmAfnRDptfxN275VY34xbR7eNK2BvaYeJ7DFwZI3oV53Pn2uAyK4ZDKsEBTXLykgKwe
+	5SpBwiEi/tIIFKIciac+B0acPoHqZc/2Q/a7NgWC2Q+/VWkxC9eYJMYfsf4W2Suo=
+X-Google-Smtp-Source: AGHT+IGnBBc3PTnIkHOQStT1GfBXOd7Y5JSOH57uU361QnQ+b4clQK59JKzYjcoeMR32zPHfO+e5jQ==
+X-Received: by 2002:a05:6a20:6a05:b0:21e:eb3a:dc04 with SMTP id adf61e73a8af0-240bd06a6abmr3929273637.3.1755164313629;
+        Thu, 14 Aug 2025 02:38:33 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b42d4b0ed65sm12555730a12.27.2025.08.14.02.38.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 02:38:33 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: surenb@google.com,
+	kent.overstreet@linux.dev,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] alloc_tag: Use str_on_off() helper
+Date: Thu, 14 Aug 2025 17:38:27 +0800
+Message-Id: <20250814093827.237980-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH -next v7 0/7] arm64: entry: Convert to generic irq entry
-Content-Language: en-US
-To: Ada Couprie Diaz <ada.coupriediaz@arm.com>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
-	<sstabellini@kernel.org>, <mark.rutland@arm.com>, <puranjay@kernel.org>,
-	<broonie@kernel.org>, <mbenes@suse.cz>, <ryan.roberts@arm.com>,
-	<akpm@linux-foundation.org>, <chenl311@chinatelecom.cn>,
-	<anshuman.khandual@arm.com>, <kristina.martsenko@arm.com>,
-	<liaochang1@huawei.com>, <ardb@kernel.org>, <leitao@debian.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<xen-devel@lists.xenproject.org>
-References: <20250729015456.3411143-1-ruanjinjie@huawei.com>
- <6bd09b5b-9830-42b4-ad9e-9ad1e153e564@arm.com>
- <94757d00-5a8e-ac6b-f832-030f33ccf771@huawei.com>
- <a3a8c0b8-e953-4c93-ab4d-0d9a4b3e47b1@arm.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <a3a8c0b8-e953-4c93-ab4d-0d9a4b3e47b1@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500011.china.huawei.com (7.185.36.131)
+Content-Transfer-Encoding: 8bit
 
+Replace the ternary (enable ? "on" : "off") with the str_on_off()
+helper from string_choices.h. This improves readability by replacing
+the three-operand ternary with a single function call, ensures
+consistent string output, and allows potential string deduplication
+by the linker, resulting in a slightly smaller binary.
 
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+Compiled test only.
 
-On 2025/8/12 0:03, Ada Couprie Diaz wrote:
-> On 06/08/2025 09:11, Jinjie Ruan wrote:
-> 
->> On 2025/8/5 23:08, Ada Couprie Diaz wrote:
->>> Hi Jinjie,
->>>
->>> On 29/07/2025 02:54, Jinjie Ruan wrote:
->>>
->>>> Since commit a70e9f647f50 ("entry: Split generic entry into generic
->>>> exception and syscall entry") split the generic entry into generic irq
->>>> entry and generic syscall entry, it is time to convert arm64 to use
->>>> the generic irq entry. And ARM64 will be completely converted to
->>>> generic
->>>> entry in the upcoming patch series.
->>> Note : I had to manually cherry-pick a70e9f647f50 when pulling the
->>> series
->>> on top of the Linux Arm Kernel for-next/core branch, but there might be
->>> something I'm missing here.
->> It seems that it is now in mainline v6.16-rc1 and linux-next but not
->> Linux Arm Kernel for-next/core branch.
-> You're right, I misinterpreted the `-next` of the subject, thanks for the
-> clarification !
->>> I'll spend some time testing the series now, specifically given patch
->>> 6's
->>> changes, but other than that everything I saw made sense and didn't look
->>> like it would be of concern to me.
->> Thank you for the test and review.
-> 
-> I've spent some time testing the series with a few different
-> configurations,
-> including PREEMPT_RT, pNMI, various lockup and hang detection options,
-> UBSAN, shadow call stack, and various CONFIG_DEBUG_XYZ (focused on locks
-> and IRQs), on both hardware (AMD Seattle) and KVM guests.
-> 
-> I tried to generate a diverse set of interrupts (via debug exceptions,
-> page faults, perf, kprobes, swapping, OoM) while loading the system with
-> different workloads, some generating a lot of context switches : hackbench
-> and signaltest from rt-tests[0], and mc-crusher[1], a memcached
-> stress-test.
-> 
-> I did not have any issues, nor any warning reported by the various
-> debug features during all my hours of testing, so it looks good !
-> 
-> Tested-by: Ada Couprie Diaz <ada.coupriediaz@arm.com>
+ lib/alloc_tag.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thank you for your comprehensive testing and code review.
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index e9b33848700a..d4449205eca2 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -9,6 +9,7 @@
+ #include <linux/proc_fs.h>
+ #include <linux/seq_buf.h>
+ #include <linux/seq_file.h>
++#include <linux/string_choices.h>
+ #include <linux/vmalloc.h>
+ #include <linux/kmemleak.h>
+ 
+@@ -726,7 +727,7 @@ static int __init setup_early_mem_profiling(char *str)
+ 		}
+ 		mem_profiling_support = true;
+ 		pr_info("Memory allocation profiling is enabled %s compression and is turned %s!\n",
+-			compressed ? "with" : "without", enable ? "on" : "off");
++			compressed ? "with" : "without", str_on_off(enable));
+ 	}
+ 
+ 	if (enable != mem_alloc_profiling_enabled()) {
+-- 
+2.34.1
 
-> 
-> Thank you for the series !
-> Ada
-> 
-> [0]: https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/
-> [1]: https://github.com/memcached/mc-crusher
-> 
-> 
 
