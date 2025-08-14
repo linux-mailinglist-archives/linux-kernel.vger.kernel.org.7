@@ -1,57 +1,52 @@
-Return-Path: <linux-kernel+bounces-767829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F37CB25996
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:45:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D9DB25997
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 545AB5A2D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D806F1C85C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92684237713;
-	Thu, 14 Aug 2025 02:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBD7230BD2;
+	Thu, 14 Aug 2025 02:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffEMm01r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jf3VAhtj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDBB2FF658;
-	Thu, 14 Aug 2025 02:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24B91494DB
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755139540; cv=none; b=Xb5kAchMt/QQ1+pyxWBrbQ0tvvZR/liRzoPi61CQX1Z2PbaAis3WcXtKHWWK38EMuLmDPFDnTGsPJ9S1Yb5r0TMa83yrHglWX4M4nm7iCmuYvs8zPtAoLl1fPdLXIobDAgeRYvqLmzbQWJYJK8EQtsq5ORAxjoRkm+MMob8cjCM=
+	t=1755139546; cv=none; b=WwG/rAVgPje/fvnoJXeO7EACeBQpXkJiWhC9KrO2eRpwA8VgNEaruI0HCFeND0pPPX1cz0hBrxEYUpgqDKST5zPkdLWRQ3CMTS8vI3zZoxUTQZaHHXbLXw6e+bf1GP8KiUUQkUA13tgOMfaHtEjiq6o21fh7NxozvyXG68FTIj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755139540; c=relaxed/simple;
-	bh=cylJVHW+1KjnMWOmh5ZJFJida/FE88+MrKIpEFEGbEI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CajRonJPiPZkRiwQEojr/a84TPbdgNj4Yd2/3+5Xt9DjDInNQJnGUgwpKUf8n1pANpUhed8u2Fh+ZfVHT254WlIB1tqdbysrAwpgSw4i6Kvy0J6gyHjMsWSjTusT3I4PF+k7EnnLc1yq5JbvwljN0jCcERKRaeJ3cenqh/bjHsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffEMm01r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A309C4CEEB;
-	Thu, 14 Aug 2025 02:45:37 +0000 (UTC)
+	s=arc-20240116; t=1755139546; c=relaxed/simple;
+	bh=v6gtkvXreyqOqot4vkurerVhlYiyKQACGbn8bOCtH/0=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=Nb9WL9UKuPezzrt5FMZ/QU421rWsYtMeTnEk/ChzZ6Yv1ySED962FRThyO3PWgJN3WYGXscwBsV7vGpEra/i+HLvCLW6lgV31NJokc41Wp0LwJzC1T87tXYec4LvQJPkOic7j16eK2BiQUR9UaV0U7pz1jdnUP+pO6atpMbZacU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jf3VAhtj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D3BC4CEEB;
+	Thu, 14 Aug 2025 02:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755139539;
-	bh=cylJVHW+1KjnMWOmh5ZJFJida/FE88+MrKIpEFEGbEI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ffEMm01rmKNRK6ijpitPRdPaS4ips9kTQq3QzPVhMxPkpwWrKRvGACn/mApqZRX/v
-	 PpAL+EqqkxO3JTBluvBbpn7j/UtqpZs8Uucyx3Y1MEI+wNzXPXK7N5hISDYYAs3JvK
-	 4V2JetbfkBOTkUDIohRULfm53XS/BddYvzQdSi4o+ePBsFpt5FenvQpzFaitxm4Zqx
-	 4TbSUMsPWLUFTFpr+aOiCpYHDakUIJMH+/L2UmyyPVTfD7Mmlv6U7CjCG2rGySWMFh
-	 AQkG/5ilwOHUUg0tn4LwnNhFwFnxd7wCHK0zvxvbquKhTfGe5wqP/ERI/YaoQKCHO2
-	 /yigrAt/c0HMw==
-Date: Thu, 14 Aug 2025 11:45:35 +0900
+	s=k20201202; t=1755139545;
+	bh=v6gtkvXreyqOqot4vkurerVhlYiyKQACGbn8bOCtH/0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jf3VAhtjMpl5qCNIDTYJCo6KsPnnm2bZ0Tt+V+4V3TZREvqG63HPF+B7zst8gUM5v
+	 fVGeKsuLbcP7E2YUhJRACq2BXm4Ua846XfK0hyWRcyT0YlAD+++0MnfLGSjGTlNwM/
+	 rl7Bhdwgq4fc9b5eFkHh5RxwfWSy08OfEVHfbmS344dR2O2yDR4Q2kZURB0o1hy23D
+	 9BNcr1//wexcEVEvq3/mkzZiBDlKwWp74L4knttu+ESb2CvuB83j8+EFH/Gw1U0krq
+	 l590Oa4mow1RVbSyznZ6iXaEqkM8BIU6Y1hLmQp9zGiypi1Nz1v1aiJF0ZJCE2YIID
+	 lx4RJ62JgCL4Q==
+Date: Thu, 14 Aug 2025 11:45:41 +0900
 From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
- "David S. Miller" <davem@davemloft.net>,
- linux-trace-kernel@vger.kernel.org, Naveen N Rao <naveen@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Remove bouncing kprobes maintainer
-Message-Id: <20250814114535.a9ee927aa232731d4b9c63d5@kernel.org>
-In-Reply-To: <4f2f7e26-561e-483a-bc67-0cc29549b866@intel.com>
-References: <20250808180124.7DDE2ECD@davehans-spike.ostc.intel.com>
-	<20250811155352.45ee7061226f3e85aeda54b7@kernel.org>
-	<4f2f7e26-561e-483a-bc67-0cc29549b866@intel.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] probes: Fixes for v6.17-rc1
+Message-Id: <20250814114541.681999bfa828ca159b7bb32d@kernel.org>
 X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,22 +57,64 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 11 Aug 2025 06:49:38 -0700
-Dave Hansen <dave.hansen@intel.com> wrote:
+Hi Linus,
 
-> On 8/10/25 23:53, Masami Hiramatsu (Google) wrote:
-> >> The kprobes MAINTAINERS entry includes anil.s.keshavamurthy@intel.com.
-> >> That address is bouncing. Remove it.
-> >>
-> >> This still leaves three other listed maintainers.
-> > OK, should this be an urgent commit?
-> 
-> It's not urgent in that it's obviously not breaking anything.
-> 
-> But if it was in code I maintain, I'd probably send it up to Linus to
-> apply in the next -rc kernel instead of waiting for the next merge window.
+Probes fixes for v6.17-rc1:
 
-OK, let's send it to Linus, thanks!
+ - MAINTAINERS: Remove bouncing kprobes maintainer.
+     Since anil.s.keshavamurthy@intel.com causes bouncing, remove it.
+
+
+Please pull the latest probes-fixes-v6.17-rc1 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+probes-fixes-v6.17-rc1
+
+Tag SHA1: 1bc9e46d17a3246b34b1030dcf8be0a4f61930f6
+Head SHA1: e2f9ae91619add9884428d095c3c630b6b120a61
+
+
+Dave Hansen (1):
+      MAINTAINERS: Remove bouncing kprobes maintainer
+
+----
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
+---------------------------
+commit e2f9ae91619add9884428d095c3c630b6b120a61
+Author: Dave Hansen <dave.hansen@linux.intel.com>
+Date:   Thu Aug 14 11:38:58 2025 +0900
+
+    MAINTAINERS: Remove bouncing kprobes maintainer
+    
+    The kprobes MAINTAINERS entry includes anil.s.keshavamurthy@intel.com.
+    That address is bouncing. Remove it.
+    
+    This still leaves three other listed maintainers.
+    
+    Link: https://lore.kernel.org/all/20250808180124.7DDE2ECD@davehans-spike.ostc.intel.com/
+    
+    Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+    Cc: Naveen N Rao <naveen@kernel.org>
+    Cc: "David S. Miller" <davem@davemloft.net>
+    Cc: Masami Hiramatsu <mhiramat@kernel.org>
+    Cc: linux-trace-kernel@vger.kernel.org
+    Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index fe168477caa4..a2bc2bb91970 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -13686,7 +13686,6 @@ F:	scripts/Makefile.kmsan
+ 
+ KPROBES
+ M:	Naveen N Rao <naveen@kernel.org>
+-M:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+ M:	"David S. Miller" <davem@davemloft.net>
+ M:	Masami Hiramatsu <mhiramat@kernel.org>
+ L:	linux-kernel@vger.kernel.org
+
 
 -- 
 Masami Hiramatsu (Google) <mhiramat@kernel.org>
