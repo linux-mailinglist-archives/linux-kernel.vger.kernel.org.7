@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-768664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C42B263D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:08:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7B9B263E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D64B85A1789
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D933B1D2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EBB2F39B2;
-	Thu, 14 Aug 2025 11:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NwIlOaYM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9D22F39C9;
+	Thu, 14 Aug 2025 11:10:00 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01808145B3F;
-	Thu, 14 Aug 2025 11:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CC02F0C66;
+	Thu, 14 Aug 2025 11:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755169732; cv=none; b=cmBF8WcUHGUlTKmW+S7fmplzNcKnAG3ml0lNwQIn9Olli43tOCpCboX+C7b2hRvOv1TRlvwHZyKGi9hWf4EYb/D60iEzBuH0kFaaTgMxKhKG+gxvsjO1cNz4E4PkdIXVEeWFyJwnsJSP/R9Aey2CA3fSxKcfNVLC8oxHbAlM9KM=
+	t=1755169800; cv=none; b=aCk8/M2vgGNfQtBlq2nizvrRTX+gpVxeoYvkeZXNc5rhm3emA6Lzm11Iy+kr68ayUINbadO4nee4yuZDf9dx8s4N6HRqNlqOfA3QiI48FT3Njh+1GKhA7pbyTaSZwfWICj+cAMJqUdf8mhekGTCKN/KoyreVb9rgdjrd41dPg/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755169732; c=relaxed/simple;
-	bh=NcM/DeAVlXKmPkl7bBlwD0/QB2aiGZ25NX4zY8t3JZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pRSvR+921/hb6pk3i8dKDolwZSdgVPXTcWCB65g5q8sOpskRyApaj+8re41Ae1sKSlU5SfXEcSWJPrFoofDjS5gKKUQTs3XupDbmk8rz3QBj3Xs0QPr8NMjOyXkciuaRXOE42XBvXlnTr8TxYYaP5lal5Do07WwTyHQeQkDgtAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NwIlOaYM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17270C4CEED;
-	Thu, 14 Aug 2025 11:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755169731;
-	bh=NcM/DeAVlXKmPkl7bBlwD0/QB2aiGZ25NX4zY8t3JZ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NwIlOaYMCnbeBsS0fBLSHuuDnB/pqFV4dluw0+qSzHzUhq+lYiZn73OHbU8mnOnFn
-	 hB/r5LcpDdMM3f58g9MJYgITW2nFGieiM9esO9Pd41l5NalsUBpoMbsD4WZqugaLiY
-	 mMYfxqLQhL4SM3xQs64YIYw3xr/5rjn4Z4x7asoxXuf1I9nqK4i7ZC2NwFMdBb8dLf
-	 TI/xIJtSN8Xc3Fpb3C4mmeddLZq+Q/R7S1JdP1R8pg8sP+9jveJzHb5uCAOVce0djK
-	 LbYNTxSpqTxSrcjay48DoGWF5HMxlLm8OPtupmsgRl3JjoSbgRI/Tq2pqXe6d33/dS
-	 P3yDSmUkVhUpg==
-Date: Thu, 14 Aug 2025 13:08:48 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-pwm@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <2pgdxifg2zmyhvemm7a2qntprsz5nhh3ustrrlg2vvcqffwj6c@22enjpgycjbt>
-References: <aJtRPZpc-Lv-C6zD@kspp>
+	s=arc-20240116; t=1755169800; c=relaxed/simple;
+	bh=AgKpJR63+jLRsNWIgdjfzyb983CVreNGrFiByRt6oxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QzdF5jBbUT/6F9Cj1+UZizxMZfSFR3581s47CQFt7hgosw34RNeKYfQaq9g2n2L32ZcTkGT+riaX5MeZgEOk6y5eJAS/Ed0TkZLMqF3wSWfiJMWhhFq2VB287yIk4qCU9wiVe29lC9KtyYXBJF3+k6poMZ3tJzxrQt/CrwYya7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2jFF14hYzYQvHm;
+	Thu, 14 Aug 2025 19:09:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id BBD4A1A1648;
+	Thu, 14 Aug 2025 19:09:51 +0800 (CST)
+Received: from [10.174.178.72] (unknown [10.174.178.72])
+	by APP4 (Coremail) with SMTP id gCh0CgC3MxT9w51oE2ebDg--.19609S3;
+	Thu, 14 Aug 2025 19:09:51 +0800 (CST)
+Message-ID: <dc6e25cd-17b6-4a32-8ef9-162069646a25@huaweicloud.com>
+Date: Thu, 14 Aug 2025 19:09:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vfjd7sxzjdmqmwth"
-Content-Disposition: inline
-In-Reply-To: <aJtRPZpc-Lv-C6zD@kspp>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] md: add helper rdev_needs_recovery()
+To: Li Nan <linan666@huaweicloud.com>, song@kernel.org, yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pmenzel@molgen.mpg.de, yi.zhang@huawei.com, yangerkun@huawei.com,
+ houtao1@huawei.com, zhengqixing@huawei.com
+References: <20250814015721.3764005-1-zhengqixing@huaweicloud.com>
+ <20250814015721.3764005-2-zhengqixing@huaweicloud.com>
+ <0e94be00-769c-dab0-a14c-a49c137e054c@huaweicloud.com>
+From: Zheng Qixing <zhengqixing@huaweicloud.com>
+In-Reply-To: <0e94be00-769c-dab0-a14c-a49c137e054c@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgC3MxT9w51oE2ebDg--.19609S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxur4fAFWfZw1DKryxtr43Wrg_yoW5uFWxpF
+	1kJFyUJryUCr18Gr1UJr1UJFyUJr1UJw4UJry7J3WUJryUJr1jqr1UXryYgr1UJr48Ar1U
+	Jr1UXr4UZr1UGr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+
+Hi,
 
 
---vfjd7sxzjdmqmwth
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
- warnings
-MIME-Version: 1.0
+在 2025/8/14 15:09, Li Nan 写道:
+>
+>
+> 在 2025/8/14 9:57, Zheng Qixing 写道:
+>> From: Zheng Qixing <zhengqixing@huawei.com>
+>>
+>> Add a helper for checking if an rdev needs recovery.
+>>
+>> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+>> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+>> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   drivers/md/md.c | 18 ++++++++++--------
+>>   1 file changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index ac85ec73a409..4663e172864e 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -4835,6 +4835,14 @@ metadata_store(struct mddev *mddev, const char 
+>> *buf, size_t len)
+>>   static struct md_sysfs_entry md_metadata =
+>>   __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR, metadata_show, 
+>> metadata_store);
+>>   +static bool rdev_needs_recovery(struct md_rdev *rdev, sector_t 
+>> sectors)
+>> +{
+>> +    return !test_bit(Journal, &rdev->flags) &&
+>> +           !test_bit(Faulty, &rdev->flags) &&
+>> +           !test_bit(In_sync, &rdev->flags) &&
+>> +           rdev->recovery_offset < sectors;
+>> +}
+>> +
+>
+> Every caller is already checking 'rdev->raid_disk >= 0'. Should we 
+> move it
+> into rdev_needs_recovery()?
+>
 
-Hello,
+Good point, thanks.
 
-On Tue, Aug 12, 2025 at 11:35:41PM +0900, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
->=20
-> Use the new TRAILING_OVERLAP() helper to fix the following warnings:
->=20
-> drivers/pwm/pwm-cros-ec.c:53:40: warning: structure containing a flexible=
- array member is not at the end of another structure [-Wflex-array-member-n=
-ot-at-end]
-> drivers/pwm/pwm-cros-ec.c:87:40: warning: structure containing a flexible=
- array member is not at the end of another structure [-Wflex-array-member-n=
-ot-at-end]
->=20
-> This helper creates a union between a flexible-array member (FAM)
-> and a set of members that would otherwise follow it. This overlays
-> the trailing members onto the FAM while preserving the original
-> memory layout.
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> ---
->  drivers/pwm/pwm-cros-ec.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/pwm/pwm-cros-ec.c b/drivers/pwm/pwm-cros-ec.c
-> index 189301dc395e..67cfa17f58e0 100644
-> --- a/drivers/pwm/pwm-cros-ec.c
-> +++ b/drivers/pwm/pwm-cros-ec.c
-> @@ -49,10 +49,9 @@ static int cros_ec_pwm_set_duty(struct cros_ec_pwm_dev=
-ice *ec_pwm, u8 index,
->  				u16 duty)
->  {
->  	struct cros_ec_device *ec =3D ec_pwm->ec;
-> -	struct {
-> -		struct cros_ec_command msg;
-> +	TRAILING_OVERLAP(struct cros_ec_command, msg, data,
 
-It's a bit ugly to have to pass the name of the flexible array member.
+Qixing
 
-I think the following would work:
 
-diff --git a/include/linux/stddef.h b/include/linux/stddef.h
-index dab49e2ec8c0..8ca9df87a523 100644
---- a/include/linux/stddef.h
-+++ b/include/linux/stddef.h
-@@ -108,7 +108,7 @@ enum {
- 	union {									\
- 		TYPE NAME;							\
- 		struct {							\
--			unsigned char __offset_to_##FAM[offsetof(TYPE, FAM)];	\
-+			unsigned char __offset_to_##FAM[sizeof(TYPE)];		\
- 			MEMBERS							\
- 		};								\
- 	}
+>>   enum sync_action md_sync_action(struct mddev *mddev)
+>>   {
+>>       unsigned long recovery = mddev->recovery;
+>> @@ -8969,10 +8977,7 @@ static sector_t md_sync_position(struct mddev 
+>> *mddev, enum sync_action action)
+>>           rcu_read_lock();
+>>           rdev_for_each_rcu(rdev, mddev)
+>>               if (rdev->raid_disk >= 0 &&
+>> -                !test_bit(Journal, &rdev->flags) &&
+>> -                !test_bit(Faulty, &rdev->flags) &&
+>> -                !test_bit(In_sync, &rdev->flags) &&
+>> -                rdev->recovery_offset < start)
+>> +                rdev_needs_recovery(rdev, start))
+>>                   start = rdev->recovery_offset;
+>>           rcu_read_unlock();
+>>   @@ -9333,10 +9338,7 @@ void md_do_sync(struct md_thread *thread)
+>>                   rdev_for_each_rcu(rdev, mddev)
+>>                       if (rdev->raid_disk >= 0 &&
+>>                           mddev->delta_disks >= 0 &&
+>> -                        !test_bit(Journal, &rdev->flags) &&
+>> -                        !test_bit(Faulty, &rdev->flags) &&
+>> -                        !test_bit(In_sync, &rdev->flags) &&
+>> -                        rdev->recovery_offset < mddev->curr_resync)
+>> +                        rdev_needs_recovery(rdev, mddev->curr_resync))
+>>                           rdev->recovery_offset = mddev->curr_resync;
+>>                   rcu_read_unlock();
+>>               }
+>
 
-which only leaves one usage of FAM in the name of the padding struct
-member. I'm sure someone is able to come up with something nice here to
-get rid of FAM completely or point out what I'm missing.
-
-Best regards
-Uwe
-
---vfjd7sxzjdmqmwth
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmidw70ACgkQj4D7WH0S
-/k5ieAf/TUUo4o0zI26SLZTp8nM6qwiZ9GhAA1lOoSO1+aUR/7VkqYJ7yO/fsdMH
-eAjsyTZixz4uh7p0c+nGpPS4wjpGry7l579dXbYkt6gVU3np/kXR93OUJDdYNbkU
-pkAhBvgWCRLbhuytiwDm1OJjlbTqu1piDh1/r3wgdud+cnva7caeQCVqfeHtRPQz
-X+ww6vwxHzAR2pTzGdLrBIZYt5yZhqUdOXidMETxqGdO3Z17zeUt15fzVyN/6h80
-UZOl1VXw9+T2v1v8+Wp48YMBIblWoGKf/qNmDFzpQyzS1tIsXpy+GEaK6tjrODuG
-xmdLAxw+LR1V8wthsULHBwBasbgfHg==
-=hwjq
------END PGP SIGNATURE-----
-
---vfjd7sxzjdmqmwth--
 
