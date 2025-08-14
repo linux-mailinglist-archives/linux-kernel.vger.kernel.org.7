@@ -1,131 +1,124 @@
-Return-Path: <linux-kernel+bounces-768241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B197DB25EC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 212F3B25EC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BACD1C86DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844CE1C87C4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C139C2E9738;
-	Thu, 14 Aug 2025 08:24:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9745F2E8E0E;
+	Thu, 14 Aug 2025 08:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v1YV6rWN"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="F0MSg3FO"
+Received: from out162-62-58-69.mail.qq.com (out162-62-58-69.mail.qq.com [162.62.58.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E4B2E7BDC
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3594A25B2E3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755159886; cv=none; b=WcJHWMe4mCmNwgBoTjK7G2/kErk4qCaxB/tuAXwqTMbMpaxnkEXDL8O5Q+uX/dAlvxB3krO3u012FbQ41E4bTbrB3PeBC8qDb92ayaqkOj/FYJw0EgcUZvjhZxzsYkFDgs2aTFC76/POGJJ0jB+0CbIerXJtw2IC77VmMYBXT94=
+	t=1755159907; cv=none; b=h9ShUEuQl88BWcyMjFiLtoxhBqIdl+ohTDW9TatxtcrdLsPznIzem1IL7qTfNilVBCdixsobUSrfsRmBNRj+qpvrMEGq2zVWKNl+1YhMAxSthTQ6kZJeGeXx7/Ap3gNaNdwim991yQ2rW3X8IkKMgEEjQK3m/zDbrpRW69Oz/d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755159886; c=relaxed/simple;
-	bh=01JJlSModoqysW+sRDKwyF6wO+ZTlR4O5R5WhdmWmU8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oyVYLvMzqpUYj9TDDxqLKBNiS9aG2zGZhn0PYw0fnQfR2kpDoMVQwqNfhtAB7g0qJBHpV3dZ7HBT7q4ThxCiddrEzbqz5AQTR4Scy+ZWlsqRn+bMk0PFLriKPF+CTuZlkcaemwufXN+I90DOj+ItgA66NV6WuILny/4hv7rqGJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v1YV6rWN; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a1b04f817so2620555e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:24:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755159882; x=1755764682; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XjZ/eR6SQYjR+SXWKMp+2N2e/5Kxjm09W05WAM7WjMU=;
-        b=v1YV6rWNmU6fsaHjl4Aai9kCoub56MSu6ji+yAqRobOgvUtCVokLnu/7FVpgK43Ax5
-         VVTst6wVaTIjTD/1Dw9t+CzUf3AyOwIg5515ucymvGnfx28L/uIOGSQRS5cwKUA4csna
-         Jy2EP47cb/GBaEAA86liWMLeXlajFf2WBYhZSbbBj2Yk6GGyTyUxWoTjHI6gJC6DsLNb
-         Qg1nd5QPetY17WeE4yUUEXKSXo3V5khlF2xGZmc1qjnUrc0ctrREG8Zi9/jhAbbuCgjt
-         KSKKA7Knd9IQqfKV9AuX0icnKtdAKSnlQisnyVxIov4/yiM4Jxk3f/z9qp0CzY9kq15+
-         IqXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755159882; x=1755764682;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XjZ/eR6SQYjR+SXWKMp+2N2e/5Kxjm09W05WAM7WjMU=;
-        b=H9vtQGmVLYIULc+0VOJKM5PaZDMI+dLL7mZeXDAviDvJm0r36ZpvfHb0JlHV3P3SUL
-         pBcfwSRSe9TYkpMtNwVj2NVOMZz5ndA7tH/PGXT8HGos84+ITdm35Ggyld3fiJNUMpNv
-         BHACYWrn5Wxe/n2TUwWCn70NvaZrdWCkXMjuHOrDz67l5xjSzLRENws0irLPFRxJEpO4
-         4vH6bpLj2nHlsXXql+DV5gcukbiP1/9pn7DcOX8vGaeUTPO19CknZN1edzQObqJhKyI7
-         qNgE8t5tTvXuaIw55Axo658aREvDLzVAWKQiOL+EjvsDwZJG9oObvVX6xtBl5/2QaxGy
-         aGNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyW4B0dBxmzSGglQ5Dyl5AqQNmoTV+78qxIwQvOTyrzpOwQFD5HKmz7mD2wV7mmqofHS8WhB8I8ANwhRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzT1jPmRqD89TO+T+6jw9APRJn7Ws20ZTgR7ule+CChMoXb5r6
-	iswG52zGfqVo5h9gqhZ7aQGwCZQWCEZoQ+L2wk1whO4wDje9ThMeIpII25mVZ0s+ZdrQJK+8KOU
-	k90SzTv1n4LV2NfCFfw==
-X-Google-Smtp-Source: AGHT+IEGivgrzos4CoGDHY7uH0CTjOvIWOyqPK2uMv3U+POUyDq1mhFpmt0OotkxsQj2w6KHcsTz1JVeOL0tM4c=
-X-Received: from wmbjg12.prod.google.com ([2002:a05:600c:a00c:b0:458:a7ae:4acf])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:190a:b0:459:d6a6:792 with SMTP id 5b1f17b1804b1-45a1b67a1ddmr13345765e9.29.1755159881981;
- Thu, 14 Aug 2025 01:24:41 -0700 (PDT)
-Date: Thu, 14 Aug 2025 08:24:41 +0000
-In-Reply-To: <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk>
+	s=arc-20240116; t=1755159907; c=relaxed/simple;
+	bh=fJwA3Wsi5qpZzCtNYjIXgQ6A+h2vJij5+Dz6yEHJ+es=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=WMCxI5lRtx937dJyvNt/avR1gH4MlNxFcjIEsgNTOcEI4IC8GiB/7zTQiYx29ej/sAp0gEn7GWBC6iiONSyfJkbhZs+/KctviF8uzbnbG/twsjLF633x2kbJXrf+ixypYeavgcUoEiEO11mGzOrOkid8eFa6lysNgyKDYQ2UBdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=F0MSg3FO; arc=none smtp.client-ip=162.62.58.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1755159899; bh=N/RCDYzoGGGtQMS42zug99z+6gLmBa7KLqRyaAfRQUs=;
+	h=From:To:Cc:Subject:Date;
+	b=F0MSg3FOlNs2vGs3bDCfIVEbgE1E74QInyw5Sx/iDFyW1vIgU9azlrjle7rafOVxI
+	 hKM460+dRIiyFEZBsjWGEm2/3WBWeowTG2RF3XCK4oq36QXnyaTygY+lHvyqv/o0AI
+	 UrARqvSTqEAN027jkPsNREjxkOMvSFXsmGDaLDW8=
+Received: from VM-222-126-tencentos.localdomain ([14.116.239.37])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 63929001; Thu, 14 Aug 2025 16:24:57 +0800
+X-QQ-mid: xmsmtpt1755159897td1m5xjle
+Message-ID: <tencent_E69E39D3C1EAC68651075BCF298FFE81BE07@qq.com>
+X-QQ-XMAILINFO: NnYhxYSyuBnLKNB2xFolFIhnp8fqpIAbYDBcppu4/+J5bh+jYbKiU3eQ3k+1eg
+	 v73kX6H0N/eucNuBgbFhJVIUu+k8tChg/BH7fqmDif42EFJ1RlCdnTRBGqw7knDp3WUqdfpC6bQN
+	 OuLt1YsmD5D5m5P4ri4YmCtK5iKPdU8EnlUxDUm2hw9HJi9iaScsyRGJSezuwjVTR3pxddtgaxue
+	 9QEeiDkeXcivFLSCHtHHTrlktTPUhMCMO54eaaUQ+80IPDWr+FEUSoAYQm/R7nlOizd4cFX/g2vX
+	 uNUC8X98Ucrs2Zof47PW+QJLl2KC5/SrnuALStYPNKr5wPK3So5zIrswRLVn+cpn6NXc7dgIgKGm
+	 Oli4eZKM6/Cj/vxrGrQGHl6KzBx8mpMtG2KCU3ZUgSAfYutlAEtlA6pqOSox0czgc8uc46jQ4/ID
+	 DWSHq3FwTdDwCcLsxuyXhlVeeJWh3WUf1/M0khm83l3I3H1nsqLzducwr9aqGV5ap+FXAMm0+cVo
+	 HC3hOzwGwIqTlna3R61m/uvPbNScXlHwf4foaNJvbg9YbTJPeceFMcW89LbnvMBSDDKBHTUXgvtE
+	 tCO6k2UQacJztek8fITzHM6hVg+5ArXinWOSiuUh/lXIoiHTiaoEznOBOY45YTSDvGapfp+qtn9G
+	 U9v5neRfW68QWOORqun7h+9N2PeMvmTMzR6jbNbmsf1BQOkNGhsfnKuGvL4elHWmiKTwkGgCsozR
+	 EKI7upytjjq8GeE9XcsxyXSls+yIDnYfodLpKYd0q0/f+1PAzTr3XXqQeQR1tFZVhImaqhW6vAZZ
+	 20fO5rPn+sivcuo87RcDEjUUIucgTd2618O2ObJ07dg+6hQh0QSItyOfQoZSX+yQLsuJUoJhT4gD
+	 96fDNAWV8XoqvH84+NAOD72MnYsDKa1jx35FyHXRu+gMq5g247wVyuTH19XdRaQ3r05LI9MsLF4K
+	 fFLyhTUNMz+57olKOppUFP6kt9aaMJYdA41DqIM6Q24jwfTCIMOWCXiTDI1mSUnF1fSPUussg5N+
+	 9uvQBsu2VpkCOniCZnhV0Bgrzr/CDPZmiYdRFYeOcdVxl2CLP69b1Xet1ZhJrqPL0nWyyngwejQH
+	 Z9QpFB
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Vencent Liu <961342126@qq.com>
+To: maddy@linux.ibm.com
+Cc: mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	961342126@qq.com,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Vencent Liu <Security@tencent.com>
+Subject: [PATCH] powerpc: Fix resource leak in ls_uart.c
+Date: Thu, 14 Aug 2025 16:24:50 +0800
+X-OQ-MSGID: <20250814082450.768340-1-961342126@qq.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com> <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk>
-Message-ID: <aJ2dST9C8QLUcftA@google.com>
-Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
-From: Alice Ryhl <aliceryhl@google.com>
-To: Mark Brown <broonie@debian.org>
-Cc: Tamir Duberstein <tamird@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Breno Leitao <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	"Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=" <kwilczynski@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 13, 2025 at 09:11:51PM +0100, Mark Brown wrote:
-> On Wed, Aug 13, 2025 at 11:59:10AM -0400, Tamir Duberstein wrote:
-> > This series depends on step 3[0] which depends on steps 2a[1] and 2b[2]
-> > which both depend on step 1[3].
-> > 
-> > This series also has a minor merge conflict with a small change[4] that
-> > was taken through driver-core-testing. This series is marked as
-> > depending on that change; as such it contains the post-conflict patch.
-> > 
-> > Subsystem maintainers: I would appreciate your `Acked-by`s so that this
-> > can be taken through Miguel's tree (where the previous series must go).
-> 
-> Something seems to have gone wrong with your posting, both my mail
-> server and the mail archives stop at patch 15.  If it were just rate
-> limiting or greylisting I'd have expected things to have sorted
-> themselves out by now for one or the other.
+From: Vencent Liu <Security@tencent.com>
 
-Tamir mentioned to me that he ran into a daily limit on the number of
-emails he could send.
+In the ls_uarts_init function, the device node
+reference count wasn't properly released on error paths.
+When `of_get_property("clock-frequency")`
+fails, the function returns `-EINVAL` without calling
+`of_node_put(avr)` to release the device node reference obtained by
+`of_find_node_by_path()`.
 
-Alice
+Signed-off-by: Vencent Liu <Security@tencent.com>
+---
+ arch/powerpc/platforms/embedded6xx/ls_uart.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/platforms/embedded6xx/ls_uart.c b/arch/powerpc/platforms/embedded6xx/ls_uart.c
+index 6c1dbf8ae718..b889206bea4c 100644
+--- a/arch/powerpc/platforms/embedded6xx/ls_uart.c
++++ b/arch/powerpc/platforms/embedded6xx/ls_uart.c
+@@ -18,6 +18,7 @@
+ #include <linux/of_address.h>
+ #include <asm/io.h>
+ #include <asm/termbits.h>
++#include <linux/cleanup.h>
+ 
+ #include "mpc10x.h"
+ 
+@@ -114,11 +115,11 @@ static void __init ls_uart_init(void)
+ 
+ static int __init ls_uarts_init(void)
+ {
+-	struct device_node *avr;
+ 	struct resource res;
+ 	int len, ret;
+ 
+-	avr = of_find_node_by_path("/soc10x/serial@80004500");
++	struct device_node *avr __free(device_node) =
++			of_find_node_by_path("/soc10x/serial@80004500");
+ 	if (!avr)
+ 		return -EINVAL;
+ 
+-- 
+2.43.5
+
 
