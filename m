@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-768192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E76E5B25E01
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B0CB25E02
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9992F16C8EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:49:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBE25A09F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9FD2DA758;
-	Thu, 14 Aug 2025 07:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8B62DEA7D;
+	Thu, 14 Aug 2025 07:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6a8KH03"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AblpmqcX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145D52E2DD4;
-	Thu, 14 Aug 2025 07:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD31C286D52;
+	Thu, 14 Aug 2025 07:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755157700; cv=none; b=RzYnW0F2/0xX4ifPvy/P68YKm/oqVLRA8gr5v7+HcbE3vLk0iKCYb6AKoALTMjSm1SX8AmxB7jGYgGfVy5DjBdo43DB4d4ajfFZmx2XBaBaINKCd6siL9U39DGBzWPG8y4Vzih/0spgmsN/RyRf7J/e7qU9ShearZyjVgUchcn8=
+	t=1755157796; cv=none; b=MDpSWlIJJg343YqiHrwjfX7mwIu3R5/dV78pBwxwFwSIyzb/sgu9UWI9b7i/73Jsv2uiRRDIAUA6Kv/4hGQGpxJ3r96GuntYwlvf7eCKXYftjJtvro1TNwsUGL932pg/Cyf7AK7oUQuM43GNoMzP+Bgn83Fj0BOKHWxtCwtGQo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755157700; c=relaxed/simple;
-	bh=4I2LLiyJ9DPd4hAV9M6f+f6szjy4RI1GEIyPYnnsRJ0=;
+	s=arc-20240116; t=1755157796; c=relaxed/simple;
+	bh=f35AnSEo6H6Mj8LPGStUWaOusqBiWbWyTlU3soOSje4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sbzjEuzTr/4X1p29SzjaTGIJW1/7NOS4NadpDWZ2Yfh1WeVp/JyYT0Sr5qq+CuRtr4r7IUuraewYYzHpUNoJnpMuDwt+XeiBGuS/uStI5RZn2UuYvj7zfLuWNjtZo8/2A1YGRU/pHvRZHMO++TUoARAqJLG8wbfsXqto7BFDlUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6a8KH03; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21298C4CEEF;
-	Thu, 14 Aug 2025 07:48:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ic0qKuHh4WHZyoOQxmZx/kgCbRxOxSmn3eTHeyA3CH7p0XbEY9nppQFbCxgOT8HWshQGgE+Gfunb2Iu/uCeLnTtTNGEGJFo6EoFLwQsQYHQTwrD2rpcfqHGFqOBuSJaOhNGUUpKEgrbksVCqOYs+TWTvlLNDcFRaCmd8wLGteTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AblpmqcX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 585FDC4CEEF;
+	Thu, 14 Aug 2025 07:49:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755157697;
-	bh=4I2LLiyJ9DPd4hAV9M6f+f6szjy4RI1GEIyPYnnsRJ0=;
+	s=k20201202; t=1755157796;
+	bh=f35AnSEo6H6Mj8LPGStUWaOusqBiWbWyTlU3soOSje4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c6a8KH035/R1tJ68b8GYHhGdk+3gApxdXHhos1ntBpqbYonicYG5hHoR2CqoCnTV5
-	 CS6UtxDDg9kSJW+ANZ3LCvNpuRWW3GXjhBQnYkJ8x4RNYOoewVS/SyXnqDUoxAKyDm
-	 CFjORTPsTGzeDpbC6YfBqVocChKstD3DoxwnCCk7mKTjloqI2H1t3RNBLTTLn563wd
-	 aQhsLzPRVNAtQkKXxAU91kyczgNaetcev249Zfy6/XM7nIJeUP8x6QXwO7zuWEMMjS
-	 Aosyecpk24gzRfMuVivOd4CyVxE/ChxuRmJ1p+aRuboJ2oiBTvl4d3DwgSt2gRUG7/
-	 B5ML3XIgIOFiw==
-Message-ID: <ad3f03da-696d-4e87-a218-9c9f26f830f7@kernel.org>
-Date: Thu, 14 Aug 2025 09:48:12 +0200
+	b=AblpmqcXAN4ysoqlSXpI2+ce7BroJRKBqENO6jOU8nbQ1sWveX0r75s4ALXlEDAAR
+	 8mR61mUCUsjNonJRaMp6ttbamG8Pp9VfNXBjVbeItoBFdRWbEvvVidFXOPHV6+om96
+	 Xa7Ik0Aj6APGF4HuTd56kHnDxFfcR2JoHI4O49I2kvCIOEhs9wyylg2fpM4YQ1ZGT7
+	 3F1xigHsaH2t6HzqRYPVxKIPC0sgD8U6GuA5T3MKBnqgpEc1Z1uzIz6gqpyNe27esM
+	 MUZXs96VAjJtRnW33VuXnzT0WubpZQbG9Vet2r635PaqVC1miOxC1YmUQC36pWAQpt
+	 cjI7rgK2HoKHA==
+Message-ID: <026419bc-c0f8-4891-a348-311f51cb999f@kernel.org>
+Date: Thu, 14 Aug 2025 09:49:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] dt-bindings: mailbox: thead,th1520-mbox: retrofit
- for other mailboxes
+Subject: Re: [RFC PATCH 2/4] dt-bindings: firmware: thead,th1520-aon: add a
+ mailbox name for SBI
 To: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>,
  Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -60,9 +60,9 @@ Cc: Han Gao <rabenda.cn@gmail.com>, Inochi Amaoto <inochiama@gmail.com>,
  Yao Zi <ziyao@disroot.org>, linux-riscv@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250814070757.2267325-1-uwu@icenowy.me>
- <20250814070757.2267325-2-uwu@icenowy.me>
- <d7278d14-2c7e-4414-9ae6-7639d8f69c94@kernel.org>
- <b4216bc75530702e9e0bb951f566c04e959ac7a6.camel@icenowy.me>
+ <20250814070757.2267325-3-uwu@icenowy.me>
+ <d0d4c9e7-c350-4996-a53b-09b13bdb9409@kernel.org>
+ <1b63d1872f5b2c89f2fafdf717bda5ec29589b69.camel@icenowy.me>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,160 +108,54 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <b4216bc75530702e9e0bb951f566c04e959ac7a6.camel@icenowy.me>
+In-Reply-To: <1b63d1872f5b2c89f2fafdf717bda5ec29589b69.camel@icenowy.me>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/08/2025 09:34, Icenowy Zheng wrote:
+On 14/08/2025 09:30, Icenowy Zheng wrote:
 > 在 2025-08-14星期四的 09:18 +0200，Krzysztof Kozlowski写道：
 >> On 14/08/2025 09:07, Icenowy Zheng wrote:
->>> The current binding of thead,th1520-mbox can only apply to the
->>> C910T
->>> mailbox (which has an ID of 0).
+>>> The SBI firmware might want to communicate to the AON firmware too.
 >>>
->>> Because of the weird mailbox register mapping practice for world
->>> seperation on TH1520, the binding needs some reword, in addition to
->>> add
->>> a property for mailbox ID, to describe other mailboxes.
->>>
->>> Update the binding, in order to make it suitable to describe other
->>
->> But I do not see any new device being added.
-> 
-> See PATCH 3/4 in this patchset.
-> 
-> Or do you mean I need to add new compatibles as I said below?
-
-I don't know... you say there are some other mailboxes (I understand as
-mailbox controllers) but I don't see anything being added here.
-
-
-> 
->>
->>> mailboxes. The example is also updated, with an addition of
->>> mbox_c910t
->>> label to show that the example describes this specfiic mailbox,
->>> mailbox
->>> ID added and the register window sizes updated to the values from
->>> the
->>> manual (previously the remote-icu0 register windows is declared to
->>> be
->>> overly small that it would never work).
+>>> Add a mbox-name item to allow to allocate a mailbox for SBI.
 >>>
 >>> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
 >>> ---
->>>  .../bindings/mailbox/thead,th1520-mbox.yaml   | 49 ++++++++++++++-
->>> ----
->>>  1 file changed, 36 insertions(+), 13 deletions(-)
+>>>  .../devicetree/bindings/firmware/thead,th1520-aon.yaml     | 7
+>>> ++++---
+>>>  1 file changed, 4 insertions(+), 3 deletions(-)
 >>>
 >>> diff --git
->>> a/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
->>> b/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
->>> index 0971fb97896ef..5a24d2e8a6a8c 100644
->>> --- a/Documentation/devicetree/bindings/mailbox/thead,th1520-
->>> mbox.yaml
->>> +++ b/Documentation/devicetree/bindings/mailbox/thead,th1520-
->>> mbox.yaml
->>> @@ -12,6 +12,17 @@ description:
->>>    through mailbox channels. It also allows one core to signal
->>> another processor
->>>    using interrupts via the Interrupt Controller Unit (ICU).
+>>> a/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
+>>> b/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
+>>> index 3365124c7fd47..555465f4aab4e 100644
+>>> --- a/Documentation/devicetree/bindings/firmware/thead,th1520-
+>>> aon.yaml
+>>> +++ b/Documentation/devicetree/bindings/firmware/thead,th1520-
+>>> aon.yaml
+>>> @@ -26,11 +26,12 @@ properties:
+>>>      const: thead,th1520-aon
 >>>  
->>> +  The SoC is divided to two worlds, REE and TEE, although it's
->>> currently unknown
->>> +  how to enable the seperation between worlds so the seperation
->>> does not exist
->>> +  yet. However each mailbox is assigned to a certain world, and
->>> register windows
->>> +  for mailboxes are assigned to different worlds too. In a certain
->>> world's
->>> +  register windows for mailboxes, only mailboxes assigned to this
->>> world will
->>> +  have the local ICU part mapped (in addition to the remote ICU
->>> part of the
->>> +  other same-world mailbox), and mailboxes assigned to the other
->>> world have
->>> +  only the coressponding remote ICU part mapped to this world. Two
->>> mailboxes
->>> +  (C910T and E902) are assigned to the TEE world and two mailboxes
->>> (C906 and
->>> +  C910R) are assigned to the REE world.
->>> +
->>>  maintainers:
->>>    - Michal Wilczynski <m.wilczynski@samsung.com>
->>>  
->>> @@ -22,9 +33,9 @@ properties:
->>>    clocks:
->>>      items:
->>>        - description: Clock for the local mailbox
->>> -      - description: Clock for remote ICU 0
->>> -      - description: Clock for remote ICU 1
->>> -      - description: Clock for remote ICU 2
->>> +      - description: Clock for the other mailbox in the same world
->>> +      - description: Clock for the first mailbox in the other
->>> world
->>> +      - description: Clock for the second mailbox in the other
->>> world
->>>  
->>>    clock-names:
->>>      items:
->>> @@ -35,10 +46,14 @@ properties:
->>>  
->>>    reg:
->>>      items:
->>> -      - description: Mailbox local base address
->>> -      - description: Remote ICU 0 base address
->>> -      - description: Remote ICU 1 base address
->>> -      - description: Remote ICU 2 base address
->>> +      - description: Base address of this specific mailbox
->>> +      - description: Base address of the other mailbox in the same
->>> world
->>> +      - description:
->>> +          Base address of the register window in this world
->>> corresponding to the
->>> +          first other-world mailbox.
->>> +      - description:
->>> +          Base address of the register window in this world
->>> corresponding to the
->>> +          second other-world mailbox.
+>>>    mboxes:
+>>> -    maxItems: 1
+>>> +    maxItems: 2
 >>
->> This feels like ABI change.
 >>
->>>  
->>>    reg-names:
->>>      items:
->>> @@ -50,10 +65,17 @@ properties:
->>>    interrupts:
->>>      maxItems: 1
->>>  
->>> +  thead,mbox-id:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    description:
->>> +      The ID of this specific mailbox that this device tree node
->>> describes. For
->>> +      compatibility with old device trees, if missing, the ID is
->>> default to 0,
->>> +      the C910T mailbox.
->>
->> No, you cannot have instance IDs. It's even explicitly documented in
->> writing bindings.
+>> ABI break without explanation why ("allow" is not a reason to affect
+>> ABI) and its impact.
 > 
-> The problem is that the mailbox cannot send to itself, so the "sending
-> to self" slot is redefined to other meaning.
+> Is adding items an ABI break?
 
-I don't know what is sending to self...
+Adding required items is ABI break. You can easily test it. Apply patch
+#1 and test your DTS. Apply patch #2 and test your DTS. New warnings
+appear, so that's a proof of ABI impact.
+
 
 > 
-> Or should I assign different compatible strings to all 4 mailboxes
-> because they have different registers in the "sending to self" slot,
-> which have different offset because of instance ID?
+> Or should I explicitly say "minItems: 1" here?
 
-Commit msg is quite vague in describing hardware. It has a lot of text
-but no answers to questions. What are the differences? What is the hardware?
-
-if you have different programming model, then you have different
-compatibles, usually.
-
+Yes, but you should clearly explain the impact. Is it working? Not
+working? Are you fixing something?
 
 Best regards,
 Krzysztof
