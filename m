@@ -1,153 +1,240 @@
-Return-Path: <linux-kernel+bounces-769171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202A2B26B10
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:32:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17658B26A90
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AB8E1C8582A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10921BC0214
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709E8225A4F;
-	Thu, 14 Aug 2025 15:30:11 +0000 (UTC)
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57BA820B1E8;
+	Thu, 14 Aug 2025 15:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OuL3e9J/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8D5217F34;
-	Thu, 14 Aug 2025 15:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CE015E5C2
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755185410; cv=none; b=k7rOo7uJVir9MYoLiuz4umSFH/aM7hL3b9G09uOmNUCWQedFh2p9nlMuuZxXfIkfKJCsxkUigagRjheewOfIhdg232rOjRJ4eaYPXthFA+1kVcrYYoB1a77paXHcxWbU8/N4IxxXSMJ7LpGHbyruZcy7Nueu9x68iakeBNNWCvY=
+	t=1755184112; cv=none; b=mIVXGOW5I94w+hZbgvPbAIRET6qaOKajDU/Tvk26YbcOF3gmIXPtDWVOc57lLRCdSDWbsg6qm4pmvqC6VlbF9RqOHLmdxEDcjc5VbARgD7ToSsoucGDAIhRGOD6yyYatKCBlVeOuTTwUmOoilGLvsNBGtRbLlvEhhZADIbN1Dro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755185410; c=relaxed/simple;
-	bh=QYRUK4EXKQ3Br3Wc32yS0rLX0zRpM2iSrQbV0k4msLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W5HaWJNB5yFOWH6ORohcWcjxlNHxkOlGsKLnAmPqyscyHSFNo7kq5OUrqGGCp6C7e42BMNNGupoqRf6DyZwQ6TFFZSIogP4IZWK4cA74b8oa9iUzFCB7+U+p64mxiQB/mAtjLohw4qzWxsMh3MNWIy5gAXao3fcIRK+Nyv1jb5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-74381ed5567so549123a34.1;
-        Thu, 14 Aug 2025 08:30:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755185408; x=1755790208;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n9du/Bs1Vwkuk15qOOpl62+YeIchI37tbTZ/WdEUy2s=;
-        b=WaHN2/mYnRT+unxLRZOZ+kEa3l1yZdDfqt7WWxL9VEVeCN7GwnyTLXeHAUkrlga27k
-         7+OV3iSRxu6EKR5KS8H8hQ47/PGO7LfStqt9DG9dlyginSlE5s30L3XmdiaHRs5LOsjt
-         XCMHvOi7AgaNy93QOKKuZ/Bz3/uq3V8QMiRymwVJziXgsXkgNOIx+fUBVQ39LOuWGTIi
-         peA8nuuB9l4ZcI0F1zQ2U6rkd5hTccS2ejCK6xQ0DSJ5SxzER4tWaqvGDaZVkCGTXYys
-         U8lPGvBBiTKYxiJxFFgewcYuEfOupqaGFQa7WG5uY5w/F36mTJgSNxwLAdalGjOyxP9v
-         AC9A==
-X-Forwarded-Encrypted: i=1; AJvYcCU4gRhRyvAySezY67c6igw65uZ5HuUFdUpoTdGUxBE2gVibmJQIFkqO8MVWGU6DYNzCRnEMANcH7Q==@vger.kernel.org, AJvYcCUBVf5+8s4eAmJe9ntYm4gGyLCWcDxy/+0J+Q1svNLn6l8p/vCQDAAclRja7xM4LZFq6p7ei6o0LzL0VQ==@vger.kernel.org, AJvYcCUWur4iOlN14ame+Y5nhwwpzIli8pvJxmrW4CqWKzk+tbSygDcmQhE10i921un6B9JsWCFSW1DYKscpekooww==@vger.kernel.org, AJvYcCVVW9nJ++owPEt/fgroLh2NS4H6t88vdsOfxBEVMcwYTHgGa5EmadgnIYKcQvi9XMMJlc9VgmdN6PVom4dYP/Ze4FI=@vger.kernel.org, AJvYcCVs48fAsh1ErLmLhzxf/Fao4/5VJMoacj8/M6ik8A8q8ax4Un4D/DpvAvFSER7QUojHCNxa+Qdwq2YilcC79SZAvR8=@vger.kernel.org, AJvYcCWn8oFMEqlJoluVsfrFni2hJ2x1XxXdUa0PFsmbfbKEkN4hdMzH3LYjl6Ng1Pmih15J/Yj9I12qIFeEGMqf@vger.kernel.org, AJvYcCXGTOzeWqWg5O15R60qs/XJaO5jsrr8x7y17lG23YB0rfG+GT2hCjnllMbhrVi7SG11h4sWf1j56C2y@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBDw0THRN4Q46qgLQkFoW8FpLg3CaVPomqdcCkOsZhPQ/woOyx
-	kakVk76E0EdfNMXS8TvQBvlQIj4muuTJRldymROE1iPF4IM7o0X29lF++927D1oZ
-X-Gm-Gg: ASbGncscS+Sbh+mDgUneinz05aB0yT7boHrW9WHr8ADWJnj8pGBhVVgWQ0gOOEDIbA8
-	M2KADpZKSCgrAJFNzv/FqKyQ/ZHwuWHAydHAvTjmEUz+c/Lu4SN34KKYf8q7MMUK4Bb/9zImor+
-	VUAipw396zRgvllF1NLWDmiTD5LKdawyfIUzugTlXMUKAIBG/q8CEMU2Grb7J88TJKU43THncG5
-	Yg37bn0IHJXSAGfTa9+fprHoWlnWLwPy2wmLqLgJ5rLIwJ8saMw75+CxkOUmZuhQV0jjvhBlY1s
-	CedxA0s/4KSeokUBoPmFLWjZFcXoYs/+xW65Qez9q75TBi9m4j1X0ymLkM5oUFeTIWc/gZrQIWw
-	4QcHhJ4k2l4jkoIznp1sHJCP9PvRmaMbN/P0XO0hSfWT7v1FEE3nYSL8XDXVS2JIZ7b+md6g=
-X-Google-Smtp-Source: AGHT+IEBDxnMmtw1mGlZxi3sooeebHiN8D20hnUAg1n9o8DiDqOJlvJCPF0OHdbMATdI2suzUal3RA==
-X-Received: by 2002:a05:6830:661a:b0:741:b827:feda with SMTP id 46e09a7af769-74382c02786mr2278808a34.25.1755185408212;
-        Thu, 14 Aug 2025 08:30:08 -0700 (PDT)
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com. [209.85.210.51])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7436f7a3e73sm1514152a34.0.2025.08.14.08.30.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 08:30:07 -0700 (PDT)
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-74381dd4c61so502515a34.0;
-        Thu, 14 Aug 2025 08:30:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+5+VbG8A5HplG2YF5gMN5YBXYrcmt9co6DXu2dQwbs115RxWEzBT9tkbWPviUZ4scC9pEZTvAXot0phoM@vger.kernel.org, AJvYcCU3caaQfm9J4CkDm4Xxc6tFebVuGkUM7gzmc4IG/nOWQ+RGV7JV3RWHCNb7otHImvLJbTBtV7ug4w==@vger.kernel.org, AJvYcCV2VHiy91g1zcG/3ec3wR8HE3lY+kGnSpTXsd3eOwakmPO7vK8KgU/5s3dipWYSgKPMD4s4IcQNMRdq@vger.kernel.org, AJvYcCW4a0S7PVZTtUTpIQmbikGoIZRXYqpq9pXzuimfZpxc8ANuu8bZjJEInNdct40klHVS83YARanaQoAStmdyQQ==@vger.kernel.org, AJvYcCWN1BCj0jaVuIfUzcr11dN35Ed8iFJQWDts/s9d3mlHrzsFwVOnHGyBnBA8ScXEp4iwHGHqk1dIv+CSO6wvhRuMdoM=@vger.kernel.org, AJvYcCWroU6fm2UL6HGy7s6/1XLC4aiaSan0APJb+J8iwBvVGfR1obVluDaebcomd6+Didl11tP24iNmZOb3CQ==@vger.kernel.org, AJvYcCXxrcwzKyKPkXZczkpFUZYAhPpGyTGoRBJT7H+MGODzLbDOSxwhPLfWHeaesnsC17nG6oo5ueIdRwdnOZbuLMx8Eh8=@vger.kernel.org
-X-Received: by 2002:a05:690c:700b:b0:719:f582:be17 with SMTP id
- 00721157ae682-71d635fe81bmr48846567b3.35.1755183986689; Thu, 14 Aug 2025
- 08:06:26 -0700 (PDT)
+	s=arc-20240116; t=1755184112; c=relaxed/simple;
+	bh=GfF0s6f197bMuptd5be2Fs0Wo4zopdv8qTtVyo+8tQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UBSC5NF5pF02xN0Hc7B8FEJ4kntgkbKg0WTDRXa6kIJhR7XceDDuDIJ73ixLiosW+fSC1j1d0l4RI10FWGwkyLZAMxVtdDAOAA1X+/fmVKe5kttN6mErOz8yBBrFfdiAMb7o/Xyg6NdvMniKRU7lTjVRd9rE1XYbiJJcopSQkOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OuL3e9J/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755184108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PE8N2uaD/Pg6MGT7NhXTCEVNuDeyLJrl41o9DY15Q54=;
+	b=OuL3e9J/4hY0fxWzT+nMNnXZBtOv2ew3bdBxtKZJX6N5rNmTQr0jJFnSAK2C86enybbiZx
+	xfDnBSBnqIp2wPSPpGzbFAICbXyPkZYsRtwZj1WWLYp90y8OGAZuxTZcnFZ51fmzNR9T/L
+	5b3ln1AYxZq3iog8FU7E/j89U0cK64w=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-477-p1eJVUCzOUieIRePiEzflA-1; Thu,
+ 14 Aug 2025 11:08:25 -0400
+X-MC-Unique: p1eJVUCzOUieIRePiEzflA-1
+X-Mimecast-MFC-AGG-ID: p1eJVUCzOUieIRePiEzflA_1755184104
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62EBE1955D48;
+	Thu, 14 Aug 2025 15:08:24 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.44.32.52])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 023EA180047F;
+	Thu, 14 Aug 2025 15:08:19 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Nam Cao <namcao@linutronix.de>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>,
+	linux-trace-kernel@vger.kernel.org
+Subject: [RFC PATCH 00/17] rv: Add Hybrid Automata monitor type, per-object and deadline monitors
+Date: Thu, 14 Aug 2025 17:07:52 +0200
+Message-ID: <20250814150809.140739-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-92-b3bf97b038dc@redhat.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-92-b3bf97b038dc@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Aug 2025 17:06:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUR9phiPyhi9=f3gdA_f5oRmaX=ucj8SUquXQEq7bUTkg@mail.gmail.com>
-X-Gm-Features: Ac12FXzt8_e3pGt50aBSDpwDZhCGVBhDLrUDheSmsSXHpMoy_pb5BR_R7aHtEdE
-Message-ID: <CAMuHMdUR9phiPyhi9=f3gdA_f5oRmaX=ucj8SUquXQEq7bUTkg@mail.gmail.com>
-Subject: Re: [PATCH 092/114] clk: renesas: rzg2l-cpg: convert from
- round_rate() to determine_rate()
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
-	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
-	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Alex Helms <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, 11 Aug 2025 at 17:19, Brian Masney via B4 Relay
-<devnull+bmasney.redhat.com@kernel.org> wrote:
-> From: Brian Masney <bmasney@redhat.com>
->
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+This RFC contains several related changes, I'm sending them together to
+give the full picture and get early feedback but I'm probably going to
+submit some of them separately.
+The main areas are:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18.
+* DA monitor cleanup to remove macros
 
-Gr{oetje,eeting}s,
+* Hybrid automata
 
-                        Geert
+    Hybrid automata are an extension of deterministic automata where each
+    state transition is validating a constraint on a finite number of
+    environment variables.
 
+    Hybrid automata can be used to implement timed automata, where the
+    environment variables are clocks.
+
+* per-object monitors
+
+    Define the generic per-object monitor allow RV monitors on any kind
+    of object where the user can specify how to get an id (e.g. pid for
+    tasks) and the data type for the monitor_target (e.g. struct
+    task_struct * for tasks).
+
+    The monitor storage (e.g. the rv monitor, pointer to the target, etc.)
+    is stored in a hash table indexed by id.
+
+* deadline monitors collection
+
+    Add the throttle and nomiss monitors to validate timing aspects of
+    the deadline scheduler, as they work for tasks and servers, their
+    inclusion requires also per-object monitors (for dl entities).
+
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Tomas Glozar <tglozar@redhat.com>
+Cc: Juri Lelli <jlelli@redhat.com>
+Cc: Clark Williams <williams@redhat.com>
+Cc: John Kacur <jkacur@redhat.com>
+Cc: linux-trace-kernel@vger.kernel.org
+
+Gabriele Monaco (17):
+  rv: Refactor da_monitor to minimise macros
+  rv: Cleanup da_monitor after refactor
+  Documentation/rv: Adapt documentation after da_monitor refactoring
+  verification/rvgen: Adapt dot2k and templates after refactoring
+    da_monitor.h
+  verification/rvgen: Annotate DA functions with types
+  verification/dot2c: Remove __buff_to_string() and cleanup
+  verification/rvgen: Remove unused variable declaration from containers
+  rv: Add Hybrid Automata monitor type
+  verification/rvgen: Allow spaces in and events strings
+  verification/rvgen: Add support for Hybrid Automata
+  Documentation/rv: Add documentation about hybrid automata
+  rv: Add sample hybrid monitors stall
+  rv: Convert the opid monitor to a hybrid automaton
+  sched: Add deadline tracepoints
+  rv: Add support for per-object monitors in DA/HA
+  verification/rvgen: Add support for per-obj monitors
+  rv: Add deadline monitors
+
+ Documentation/tools/rv/rv-mon-stall.rst       |   44 +
+ .../trace/rv/deterministic_automata.rst       |    2 +-
+ Documentation/trace/rv/hybrid_automata.rst    |  307 ++++
+ Documentation/trace/rv/index.rst              |    1 +
+ Documentation/trace/rv/monitor_deadline.rst   |  111 ++
+ Documentation/trace/rv/monitor_sched.rst      |   62 +-
+ Documentation/trace/rv/monitor_stall.rst      |   43 +
+ Documentation/trace/rv/monitor_synthesis.rst  |  130 +-
+ include/linux/rv.h                            |   30 +
+ include/rv/automata.h                         |  132 +-
+ include/rv/da_common.h                        |   21 +
+ include/rv/da_monitor.h                       | 1265 ++++++++++-------
+ include/rv/ha_monitor.h                       |  398 ++++++
+ include/trace/events/sched.h                  |   55 +
+ kernel/sched/deadline.c                       |    8 +
+ kernel/trace/rv/Kconfig                       |   19 +
+ kernel/trace/rv/Makefile                      |    4 +
+ kernel/trace/rv/monitors/deadline/Kconfig     |    5 +
+ kernel/trace/rv/monitors/deadline/deadline.c  |   35 +
+ kernel/trace/rv/monitors/deadline/deadline.h  |   82 ++
+ kernel/trace/rv/monitors/nomiss/Kconfig       |   15 +
+ kernel/trace/rv/monitors/nomiss/nomiss.c      |  234 +++
+ kernel/trace/rv/monitors/nomiss/nomiss.h      |   81 ++
+ .../trace/rv/monitors/nomiss/nomiss_trace.h   |   19 +
+ kernel/trace/rv/monitors/nrp/nrp.c            |   22 +-
+ kernel/trace/rv/monitors/nrp/nrp.h            |    2 +
+ kernel/trace/rv/monitors/opid/Kconfig         |   11 +-
+ kernel/trace/rv/monitors/opid/opid.c          |  119 +-
+ kernel/trace/rv/monitors/opid/opid.h          |   90 +-
+ kernel/trace/rv/monitors/opid/opid_trace.h    |    4 +
+ kernel/trace/rv/monitors/rtapp/rtapp.c        |    2 -
+ kernel/trace/rv/monitors/sched/sched.c        |    2 -
+ kernel/trace/rv/monitors/sco/sco.c            |   18 +-
+ kernel/trace/rv/monitors/sco/sco.h            |    2 +
+ kernel/trace/rv/monitors/scpd/scpd.c          |   20 +-
+ kernel/trace/rv/monitors/scpd/scpd.h          |    2 +
+ kernel/trace/rv/monitors/snep/snep.c          |   20 +-
+ kernel/trace/rv/monitors/snep/snep.h          |    2 +
+ kernel/trace/rv/monitors/snroc/snroc.c        |   18 +-
+ kernel/trace/rv/monitors/snroc/snroc.h        |    2 +
+ kernel/trace/rv/monitors/sssw/sssw.c          |   30 +-
+ kernel/trace/rv/monitors/sssw/sssw.h          |    2 +
+ kernel/trace/rv/monitors/stall/Kconfig        |    9 +
+ kernel/trace/rv/monitors/stall/stall.c        |  116 ++
+ kernel/trace/rv/monitors/stall/stall.h        |   64 +
+ kernel/trace/rv/monitors/stall/stall_trace.h  |   19 +
+ kernel/trace/rv/monitors/sts/sts.c            |   26 +-
+ kernel/trace/rv/monitors/sts/sts.h            |    2 +
+ kernel/trace/rv/monitors/throttle/Kconfig     |   15 +
+ kernel/trace/rv/monitors/throttle/throttle.c  |  259 ++++
+ kernel/trace/rv/monitors/throttle/throttle.h  |  115 ++
+ .../rv/monitors/throttle/throttle_trace.h     |   19 +
+ kernel/trace/rv/monitors/wip/wip.c            |   18 +-
+ kernel/trace/rv/monitors/wip/wip.h            |    2 +
+ kernel/trace/rv/monitors/wwnr/wwnr.c          |   20 +-
+ kernel/trace/rv/monitors/wwnr/wwnr.h          |    2 +
+ kernel/trace/rv/rv_trace.h                    |   68 +-
+ tools/verification/models/deadline/nomiss.dot |   23 +
+ .../verification/models/deadline/throttle.dot |   43 +
+ tools/verification/models/sched/opid.dot      |   36 +-
+ tools/verification/models/stall.dot           |   20 +
+ tools/verification/rvgen/__main__.py          |    8 +-
+ tools/verification/rvgen/rvgen/automata.py    |  155 +-
+ tools/verification/rvgen/rvgen/dot2c.py       |  129 +-
+ tools/verification/rvgen/rvgen/dot2k.py       |  317 ++++-
+ tools/verification/rvgen/rvgen/generator.py   |    4 +-
+ .../rvgen/rvgen/templates/container/main.c    |    2 -
+ .../rvgen/rvgen/templates/dot2k/main.c        |   17 +-
+ .../rvgen/templates/dot2k/trace_hybrid.h      |   16 +
+ 69 files changed, 3969 insertions(+), 1026 deletions(-)
+ create mode 100644 Documentation/tools/rv/rv-mon-stall.rst
+ create mode 100644 Documentation/trace/rv/hybrid_automata.rst
+ create mode 100644 Documentation/trace/rv/monitor_deadline.rst
+ create mode 100644 Documentation/trace/rv/monitor_stall.rst
+ create mode 100644 include/rv/da_common.h
+ create mode 100644 include/rv/ha_monitor.h
+ create mode 100644 kernel/trace/rv/monitors/deadline/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/deadline/deadline.c
+ create mode 100644 kernel/trace/rv/monitors/deadline/deadline.h
+ create mode 100644 kernel/trace/rv/monitors/nomiss/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/nomiss/nomiss.c
+ create mode 100644 kernel/trace/rv/monitors/nomiss/nomiss.h
+ create mode 100644 kernel/trace/rv/monitors/nomiss/nomiss_trace.h
+ create mode 100644 kernel/trace/rv/monitors/stall/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/stall/stall.c
+ create mode 100644 kernel/trace/rv/monitors/stall/stall.h
+ create mode 100644 kernel/trace/rv/monitors/stall/stall_trace.h
+ create mode 100644 kernel/trace/rv/monitors/throttle/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/throttle/throttle.c
+ create mode 100644 kernel/trace/rv/monitors/throttle/throttle.h
+ create mode 100644 kernel/trace/rv/monitors/throttle/throttle_trace.h
+ create mode 100644 tools/verification/models/deadline/nomiss.dot
+ create mode 100644 tools/verification/models/deadline/throttle.dot
+ create mode 100644 tools/verification/models/stall.dot
+ create mode 100644 tools/verification/rvgen/rvgen/templates/dot2k/trace_hybrid.h
+
+
+base-commit: 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.50.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
