@@ -1,166 +1,133 @@
-Return-Path: <linux-kernel+bounces-767976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CE8B25B68
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:58:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8C0B25B6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:59:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E0631C81DE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:58:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5885C5C44E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539F3230BEE;
-	Thu, 14 Aug 2025 05:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE20228CB0;
+	Thu, 14 Aug 2025 05:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1Xngf2XY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FU61HHVU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ECC2264A1;
-	Thu, 14 Aug 2025 05:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEBE1E7660;
+	Thu, 14 Aug 2025 05:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755151082; cv=none; b=hcDarhnFeVgMceLjEow4hJmsYpEolnaFI6gqtPNXoDb7fKVC/QhqIcegzytI8uYSBSR4YEAxIKEJsMCeXR1kvlA+3gDFpFK9UT/T6TlWdEsOBqYMNGkXB00X5oPEKRMnNSahsu2MOb7/KA2nO2OeKhYOutfHjEMD8cPRJdraF3E=
+	t=1755151127; cv=none; b=jkIIdsMkQV99DuJJ4LaSowEz4cKR3eyTPQ82KUtWVlDUCLB4Yf+6lyrceG/6wAT99HlmjyXJdml/cRma5i5Sxl7Bqb4yr5wpZkrB9rY7q1WkDNzdl5KDZgAW5ldv5vHsx3uDxE9cfYfUPwlgMYZXO1nDKd3qcZOE5L7R1DZIpnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755151082; c=relaxed/simple;
-	bh=i+BULjIrt5Ty3hv65N41KIDjGgGgkaHyuvDeN1TuW7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kB799ypg+SvwCNLLK194vETdugaQxlx8l5QGLBMeoLtoRvyzJSWz5kqB6ODCQWjx6W3PXXavEsZDd7v0A10BAxBWCn1VcmhexPwlKIG5iznTM4y+/Gb2tcEz4cp2mMr2tU6Ua1VCjiQ0+iAKLJWfq1PaBUXrLd9F/DFT7ZIWLss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1Xngf2XY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3AFBC4CEEF;
-	Thu, 14 Aug 2025 05:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755151082;
-	bh=i+BULjIrt5Ty3hv65N41KIDjGgGgkaHyuvDeN1TuW7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1Xngf2XYsaKJfjKq5a4SFvaG/HFhLb++ksZ0Xm9oIzgpfhgM/4M3Os4gAyr5ukE1Y
-	 aWM8omb7C8TNSaLSy+po4tYydM7GoUYMXTPdck/uY5V9hcG9d421V0WC1FEmdJd3+A
-	 lSCTj3C+aPuYKfV2AfC7FsGtInx5i07+jDZAlMJ4=
-Date: Thu, 14 Aug 2025 07:57:58 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Selvarasu Ganesan <selvarasu.g@samsung.com>
-Cc: Thinh.Nguyen@synopsys.com, m.grzeschik@pengutronix.de, balbi@ti.com,
-	bigeasy@linutronix.de, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jh0801.jung@samsung.com,
-	dh10.jung@samsung.com, akash.m5@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com,
-	shijie.cai@samsung.com, alim.akhtar@samsung.com,
-	muhammed.ali@samsung.com, thiagu.r@samsung.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3] usb: dwc3: Remove WARN_ON for device endpoint command
- timeouts
-Message-ID: <2025081442-monotype-pony-83ed@gregkh>
-References: <CGME20250808125457epcas5p111426353bf9a15dacfa217a9abff6374@epcas5p1.samsung.com>
- <20250808125315.1607-1-selvarasu.g@samsung.com>
- <2025081348-depict-lapel-2e9e@gregkh>
- <f9120ba5-e22b-498f-88b3-817893af22be@samsung.com>
+	s=arc-20240116; t=1755151127; c=relaxed/simple;
+	bh=YqjGY16kAIhfftSdmD6Uo3e3M9wXkFLFyaZhRsF6uvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jO96kmRGj9GC+J980ndryQeWbzjrBLXpbAQsZJqmcMxjUNZGGPfSQcY1cHt2EQvEkVnttIVa6AYoQEuTbgZl6gt/JYY6zC+gr6AgfBQUV+rPggNFs4SqnGHs2bIunC7mMcj/UxYfvXFjM/NwU5zSgU23mS7Xp+Ovq7flNZDa/JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FU61HHVU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5932C4CEF5;
+	Thu, 14 Aug 2025 05:58:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755151127;
+	bh=YqjGY16kAIhfftSdmD6Uo3e3M9wXkFLFyaZhRsF6uvc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FU61HHVUBIw4vtg1C3qgLCXVuIE7UMisPWwvGsDUGX18a0i1FuLbCTMusEXGg0CK7
+	 dY5tNu7X34ifWdqGZRmiEJnZW4lYrMBhfqL93UqBdQJPa8MIss64/B9raRHONdcbNr
+	 hHsFALy+ocQqwIP4nIOs33XVqPV+batVqCtiflEl/EQOYSj9Kxu5KxwObGMkKjSEXz
+	 JvLb98Ch+99EFWb4c7aueHqKYiKXQB0D1F2ETarmf4t97BQBM4lwaEU87OwQ34bBDZ
+	 xQj6aTJBqEpisxsApAXL8zecEifPAdliRTYVbIwOfqBJt02ArrYOrkXGyzlNyGYhMj
+	 ngaXr+uHcxyUQ==
+Message-ID: <f9104329-f2ca-4b50-855f-27b7328efd61@kernel.org>
+Date: Thu, 14 Aug 2025 07:58:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9120ba5-e22b-498f-88b3-817893af22be@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] media: dt-bindings: qcom,sm8550-iris: Add SM8750
+ video codec
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250804-sm8750-iris-v2-0-6d78407f8078@linaro.org>
+ <20250804-sm8750-iris-v2-1-6d78407f8078@linaro.org>
+ <683024c7-3740-cb9a-6924-33816edd63f3@quicinc.com>
+ <8d8dcaef-eb96-4e7b-9a0a-8b3836cb284c@kernel.org>
+ <e33a22ba-f82a-412a-b1fd-d1cd50f6b21d@kernel.org>
+ <93e35282-52a3-4c3e-8065-b2a6c363c974@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <93e35282-52a3-4c3e-8065-b2a6c363c974@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 14, 2025 at 10:23:38AM +0530, Selvarasu Ganesan wrote:
+On 13/08/2025 23:15, Bryan O'Donoghue wrote:
+> @Krzysztof 
+> https://lore.kernel.org/linux-arm-msm/fb8f154b-3da4-4bee-82e1-3a1597a35c46@kernel.org/
 > 
-> On 8/13/2025 8:03 PM, Greg KH wrote:
-> > On Fri, Aug 08, 2025 at 06:23:05PM +0530, Selvarasu Ganesan wrote:
-> >> This commit addresses a rarely observed endpoint command timeout
-> >> which causes kernel panic due to warn when 'panic_on_warn' is enabled
-> >> and unnecessary call trace prints when 'panic_on_warn' is disabled.
-> >> It is seen during fast software-controlled connect/disconnect testcases.
-> >> The following is one such endpoint command timeout that we observed:
-> >>
-> >> 1. Connect
-> >>     =======
-> >> ->dwc3_thread_interrupt
-> >>   ->dwc3_ep0_interrupt
-> >>    ->configfs_composite_setup
-> >>     ->composite_setup
-> >>      ->usb_ep_queue
-> >>       ->dwc3_gadget_ep0_queue
-> >>        ->__dwc3_gadget_ep0_queue
-> >>         ->__dwc3_ep0_do_control_data
-> >>          ->dwc3_send_gadget_ep_cmd
-> >>
-> >> 2. Disconnect
-> >>     ==========
-> >> ->dwc3_thread_interrupt
-> >>   ->dwc3_gadget_disconnect_interrupt
-> >>    ->dwc3_ep0_reset_state
-> >>     ->dwc3_ep0_end_control_data
-> >>      ->dwc3_send_gadget_ep_cmd
-> >>
-> >> In the issue scenario, in Exynos platforms, we observed that control
-> >> transfers for the previous connect have not yet been completed and end
-> >> transfer command sent as a part of the disconnect sequence and
-> >> processing of USB_ENDPOINT_HALT feature request from the host timeout.
-> >> This maybe an expected scenario since the controller is processing EP
-> >> commands sent as a part of the previous connect. It maybe better to
-> >> remove WARN_ON in all places where device endpoint commands are sent to
-> >> avoid unnecessary kernel panic due to warn.
-> >>
-> >> Cc: stable@vger.kernel.org
-> >> Co-developed-by: Akash M <akash.m5@samsung.com>
-> >> Signed-off-by: Akash M <akash.m5@samsung.com>
-> >> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
-> >> Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-> >> ---
-> >>
-> >> Changes in v3:
-> >> - Added Co-developed-by tags to reflect the correct authorship.
-> >> - And Added Acked-by tag as well.
-> >> Link to v2: https://lore.kernel.org/all/20250807014639.1596-1-selvarasu.g@samsung.com/
-> >>
-> >> Changes in v2:
-> >> - Removed the 'Fixes' tag from the commit message, as this patch does
-> >>    not contain a fix.
-> >> - And Retained the 'stable' tag, as these changes are intended to be
-> >>    applied across all stable kernels.
-> >> - Additionally, replaced 'dev_warn*' with 'dev_err*'."
-> >> Link to v1: https://lore.kernel.org/all/20250807005638.thhsgjn73aaov2af@synopsys.com/
-> >> ---
-> >>   drivers/usb/dwc3/ep0.c    | 20 ++++++++++++++++----
-> >>   drivers/usb/dwc3/gadget.c | 10 ++++++++--
-> >>   2 files changed, 24 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/drivers/usb/dwc3/ep0.c b/drivers/usb/dwc3/ep0.c
-> >> index 666ac432f52d..b4229aa13f37 100644
-> >> --- a/drivers/usb/dwc3/ep0.c
-> >> +++ b/drivers/usb/dwc3/ep0.c
-> >> @@ -288,7 +288,9 @@ void dwc3_ep0_out_start(struct dwc3 *dwc)
-> >>   	dwc3_ep0_prepare_one_trb(dep, dwc->ep0_trb_addr, 8,
-> >>   			DWC3_TRBCTL_CONTROL_SETUP, false);
-> >>   	ret = dwc3_ep0_start_trans(dep);
-> >> -	WARN_ON(ret < 0);
-> >> +	if (ret < 0)
-> >> +		dev_err(dwc->dev, "ep0 out start transfer failed: %d\n", ret);
-> >> +
-> > If this fails, why aren't you returning the error and handling it
-> > properly?  Just throwing an error message feels like it's not going to
-> > do much overall.
+> Are you sending a v3 here ?
 > 
-> Hi Greg,
-> 
-> Thanks for your review comments.
-> 
-> The trigger EP command is followed by an error message in case of 
-> failure, but no corrective action is required from the driver's 
-> perspective. In this context, returning an error code is not necessary, 
-> as the driver's operation can continue uninterrupted.
-> 
-> This approach is consistent with how WARN_ON is handled, as it also does 
-> not return a value. Furthermore, This approach aligns with how handled 
-> similar situations elsewhere in the code, where added error messages 
-> instead of using WARN_ON.
+> I can also just add the OPP when applying this patch.
+DTS is independent and whatever discussed there does not really stop
+this patch. This patch stops DTS, though. v3 of DTS does not matter -
+the question is if any has comments for this patch (other than doing
+something opposite we do for most bindings...).
 
-Ok, thanks for letting me know, but be prepared for someone in the
-future to come along and attempt to actually add error handling return
-logic as it does seem arbitrary to do this for these cases.
-
-greg k-h
+Best regards,
+Krzysztof
 
