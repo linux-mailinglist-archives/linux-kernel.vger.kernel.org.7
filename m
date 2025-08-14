@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-769490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8ADB26F5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:54:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C00DB26F66
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:55:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63802585C05
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E02B1887F22
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950A723506F;
-	Thu, 14 Aug 2025 18:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395FA23BCF0;
+	Thu, 14 Aug 2025 18:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFz2Ma6e"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqu/2FVy"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED67226D1B;
-	Thu, 14 Aug 2025 18:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D61227B9F;
+	Thu, 14 Aug 2025 18:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755197663; cv=none; b=hrbDuvGQSGh5D475s7jfg75fKBOze5pNX9zFA6qMZpDwHxdGmVghrHxHqz5FOB2qt0n11SDKK3YJ01lrVptzQlW4P4iKgUxOZ4ylkC63NgjJtmO5TuVjbxJ9rWONAcIT3LSYnK077SpXox2TzvQ4i9HHTzWWTBKWbQ28nJeA9v8=
+	t=1755197664; cv=none; b=Se5H4y7koYwbv1475ZXc3DQYvrPvf4/XiHK3d7lbKsrC9Dooa0K88ML0iV0Kfj3daOyy6XaIX3flXPioob90fp2UVPnx2OjyCF7p0GDzGhwNo+e25cWwszssUNImFu7qzPE8TqpF7U6k8iuech29KnLRQmorHmLUmLEA/iuEFak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755197663; c=relaxed/simple;
-	bh=OYZVGa1PYJPNGIjnnm7Kj/36+cnPl22d4hWZLZI5SBs=;
+	s=arc-20240116; t=1755197664; c=relaxed/simple;
+	bh=tggz2+GmBG4xBPdyVi8HYEMsQK+lBxfBlXLrkbqzFpw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+TomC7vmG8Z0tSFS9FGciow1nhoQEU63YB2cif/S0WEcogczhsazlL3p2Tp+omK7vGHE5vIvQLRhMl+Km1ad/eDtuxS4nPPP/wAqRmk5nZA+qD3gXhPtM8ekL43TYXkpWue7IHjIrtdmnuRUEapgaThmxfebe6nL4K1vwWV/AM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFz2Ma6e; arc=none smtp.client-ip=209.85.216.52
+	 To:Cc:Content-Type; b=AdqyvHSd8eXOmIWVItT8IwohYQu/VAc9R/xffgpWXa9YSC3noWWP0oE+otIG62VZO44bLgQs/huPAysXA2+FHHZs5n3aym/BFPsmIFMYCSDwFKyUSl/h4cYficQuX2viJ4LWFyNpCua5F5Yw26h8Q5C/m15fKFjaiJY7nt4KPsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqu/2FVy; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-32326e20aeeso250175a91.2;
-        Thu, 14 Aug 2025 11:54:21 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7a0550cso214401466b.2;
+        Thu, 14 Aug 2025 11:54:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1755197661; x=1755802461; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OYZVGa1PYJPNGIjnnm7Kj/36+cnPl22d4hWZLZI5SBs=;
-        b=gFz2Ma6eHVFcevxfE0/brh9YS3UALnfEV1rBhIC/erT7b0nkL+jw1OsCmuajCH0xU2
-         CagOymMfNsbXw5cX/F3/Nong4DNqCc799NHoPQSqqZnTwDjlHEkFr7jj0rFUw4k8atm9
-         nVxSTxDJakYkRmAp10ok6eLeyx4J/jzBhUgpbspctDvW0tsT2xo7fNLw2s0Yy1uu4YfN
-         0x+U/HJ3aZ0PaPoNwZtRYm/vTGOuO0Xa0wd0c8yzFJIoAbNGurcfbjFNkiRZfxuV1HTm
-         5wxa+LHGMClRCIyB9SHTo+NA8a5tO4WTUrlOSz0AFjpb0aHL8ca3UCNoEK1j1XtT1gc3
-         Dsmg==
+        bh=a5RguQAEZjn9f2hOjKQrmC+1X6fHs478ln+1RiZBuL4=;
+        b=mqu/2FVyfrb8dRZI2W3d20RGyXuexPzjBpgBo1XOtd3iO6SCQCGtNYQNM3MjMvaOYU
+         yZCYDuneP8e+K/Ryit7xNQjya/o1d1JYCtuyEeTxIselhID0/82eLEi5TvOZSorj0wee
+         qwN2+N9TKK9G6dSlcT8gxi+hv/p3RGzshGOQlGtolL/i1jbm9EnOHtVvtLL3SxvhMvcK
+         A5rkmkzhnLYnWRrNVLz5CYQlh3g0j7ggLFNw5OSB4O5eupFIAQ84h2GFWSjKNMXZzcCl
+         nXrmpZguZqItjsA3xqwBEVdREnbUc5ZTBfwzXrsy54Q3grQR1EL7mFV5onGOgavRjGVr
+         5K5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1755197661; x=1755802461;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OYZVGa1PYJPNGIjnnm7Kj/36+cnPl22d4hWZLZI5SBs=;
-        b=oy26eFcw851KMWiTVsiL/HKNzzSUszClbHtB9glRYKRkqPlhv/u2wjUY0eG6lin6qV
-         YE5S1qoQZxddlQvCxdmdyHoxaymx3FCWZjadcHZNTokJkI7js5FdwTJqHZW4IXFKdhKW
-         3azaV2txO+RkJTiHUq1YVYBr7Ba1gnjhOAIAbFHZ2bz7MqdieDa5QtrDsy4jM2Lcitm+
-         4+I/zhQeR6WuhEVI/QeumIPVUTMCroSZUo24RV9gsRjE8K5kSLwYJ6eLQtGjtVribt5D
-         EuP0VxZ3BwVq1DVrm0sUbNpe+olqD8sfKL/hn0XhPp8PRppq4c37pWgazV77WJdi+mVt
-         J+Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzsRFPccU7QPNfp3SSM96NGkNe9OW02aUgDnzSYhDkAgkIaXjDbEKqHcB9BiCvobmaii01KML0c+WAt+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhUmtbN/r2lPmpHYlPvC1p7bF7XoP593T4I29cp9RWVgoZ5kUC
-	78oCkxbhdTgx1oJuQ4XYYmtIfEM2WoEYqSE2F3/R5ZEyeOlPojNVXu/qyLWBKN0rrvdSQfDAgul
-	A7aaVhdXu3qc4bOKNOEd+fmKkZbZ9/bQ=
-X-Gm-Gg: ASbGncu1j1kQsPsNXkn/72LfWamFoMMTjxJ6sUAskHCBEc9IXu8R+QojOfgPZNrKbuf
-	WyfE2RgiNUPQHgyKYcZyy1Bp++fCgBx4dTa8X3ZaGDDInsr+FrOuJHlZrZF58HgpPcWX0XnY0ef
-	+yaCw6VVFtwRtE8QOfPlH2ExzN7UmHaCOT7f9JhOAhZPr2IXKOd/eJ8MRuoW/+Pjhdk1EaNAB87
-	Pohqjup
-X-Google-Smtp-Source: AGHT+IG2OpBwgrzW1tGXTKHhCvFJxT6+QTACraQ+4La5od/G8sAeSk6s5/oSwHcphG/Rbx7PyRjjmu0zbq04Wz+pt1M=
-X-Received: by 2002:a17:902:e551:b0:240:8717:e393 with SMTP id
- d9443c01a7336-2445855d35amr27380075ad.5.1755197660947; Thu, 14 Aug 2025
+        bh=a5RguQAEZjn9f2hOjKQrmC+1X6fHs478ln+1RiZBuL4=;
+        b=rob2Z96vCTpTvRxQFXnCYKG0UvKyBca5nCwQMVafY9G0MCfm4adjopOgDoxvnOsm6H
+         2IkppmBKAbEcONKbL0Q7RLyMfYb5fRHyUDE4wgly6Gsw7HxiRI1lcaiNB8bpSsPzAHVL
+         sidJuvntqdPm1gBVfAgrxbj9IRogsj/DL3QoNGeWlgYqa9BYAxLO5wSUBy4UzBp7oBFx
+         msA6R7c4gYTs3ku/QOCK536XfrZmHdhpYsi9eXKt6g3oxcADTIn59meNtXi4exUDUv2g
+         VzvD60q1BX08nw+iYl7wXnIGpragy+1QEfPXl1NCDbkseGk3nzrQqOeDx3Xe/PB/VwG5
+         ksTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVb6syY+DR9KtDRe0QFW/X+WrW5d+GiGRNJD4eFq53Re/gX1PeKvhzr4eXhvBf4xdCUATdaLrNw3RSRU5yhkQ==@vger.kernel.org, AJvYcCVnh3tlc8883uKda2MwHJx+Mo9V1RYBorhmAOS0uM2ID7rkJF+AIY9gdvbZsnkET7RsmtKW+4mlgb7hKElF@vger.kernel.org, AJvYcCWQOhEGkJN4rWVIJxtMEY+ULx/B68spqz8nhZkWBXARgcXdGOVdbEe9idQi4NVL5j6MyEr1XWQhbB+bzC5h@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr7t2tHn6x24kV2imcx5i1PcdyNoQZj7pqR98EC1Hi1ZIFrYZ8
+	Kp3mQOiKBVYFhRru9y/P5Evs6uQsi0TtIFOjZERh7pn+atmBoN2/jRxr7644KLU484gtN8SmI/c
+	I105k5lB0ElACdf/kbHI3F8fxFx9vx7o=
+X-Gm-Gg: ASbGnctjhVK3FfBDgWu/PanJmsNrz0Oxhh+UrNQWtXLzhJu9wKnsh/8C64YAKugnXHu
+	l0pR0DSoRLQvQf58c4fJ83wdrHQmaL4L5qaNsjih6PuXGO9AkNqiGF9mtZx97cTB4MjUPrKOzvh
+	c+K2z7F9WSlMmvWFFbWeLgR03ksYCZHU8drdc8fcbuNvxgqnwILVPPWcuw0fU34Et2Uum1eGBkA
+	Khhzk8=
+X-Google-Smtp-Source: AGHT+IEuokzxyAX4467XWcBtpl1YzVW89X7lfLdrDPNZ76oXgfod1/bfbyAUT2upv/ekSkmgsjEVtWdXX6pKFwm9zOs=
+X-Received: by 2002:a17:906:d555:b0:afa:1b05:69c3 with SMTP id
+ a640c23a62f3a-afcbe24701bmr340732866b.47.1755197660800; Thu, 14 Aug 2025
  11:54:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -74,38 +74,66 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ec0dcd14-e974-43ff-b4f4-3dfe2f31a91c@t-8ch.de>
- <20250814162211.566168-2-areejhamid8560@gmail.com> <CANiq72mbTqu8KuKn1uKM8czesrg+or-S3K9e_ohJz1b6kzdffw@mail.gmail.com>
-In-Reply-To: <CANiq72mbTqu8KuKn1uKM8czesrg+or-S3K9e_ohJz1b6kzdffw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 14 Aug 2025 20:54:08 +0200
-X-Gm-Features: Ac12FXxybBvTV1eECTHV-8gFuZ3Wi3EHZqw-1RbS55cKepkyOA4bq0h6O62VfBs
-Message-ID: <CANiq72k0-dggqh-z5JLhrUbuQf_RHCOCjd=iYF+Fv+wLT8=x0w@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: lib: add if_cfg! macro for conditional compilation
-To: Areej Hamid <areejhamid8560@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
-	aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, 
-	viresh.kumar@linaro.org, tamird@gmail.com, dingxiangfei2009@gmail.com, 
-	gregkh@linuxfoundation.org
+References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com> <20250814-tonyk-overlayfs-v5-8-c5b80a909cbd@igalia.com>
+In-Reply-To: <20250814-tonyk-overlayfs-v5-8-c5b80a909cbd@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 14 Aug 2025 20:54:09 +0200
+X-Gm-Features: Ac12FXxskQaFpte7u50qMgk9eRo6WKhS2AuvFF2sXn9jvwK5SYnQyfdmt_znwtw
+Message-ID: <CAOQ4uxg6HDTCNKzp=wTKP4CaLVojzZNb61Wp4xgikYZiWK1TMQ@mail.gmail.com>
+Subject: Re: [PATCH v5 8/9] ovl: Check for casefold consistency when creating
+ new dentries
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 8:49=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Thu, Aug 14, 2025 at 7:22=E2=80=AFPM Andr=C3=A9 Almeida <andrealmeid@iga=
+lia.com> wrote:
 >
-> Finally, we may want to consider putting this into somewhere else,
-> rather than the root file of the crate.
+> In a overlayfs with casefold enabled, all new dentries should have
+> casefold enabled as well. Check this at ovl_create_real().
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+> Changes from v4:
+> - Add pr_warn()
+>
+> Changes from v3:
+> - New patch
+> ---
+>  fs/overlayfs/dir.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> index 70b8687dc45e8e33079c865ae302ac58464224a6..88e888ed8696363d6cde39817=
+f6c21e795f0760a 100644
+> --- a/fs/overlayfs/dir.c
+> +++ b/fs/overlayfs/dir.c
+> @@ -187,6 +187,12 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, s=
+truct dentry *parent,
+>                         /* mkdir is special... */
+>                         newdentry =3D  ovl_do_mkdir(ofs, dir, newdentry, =
+attr->mode);
+>                         err =3D PTR_ERR_OR_ZERO(newdentry);
+> +                       /* expect to inherit casefolding from workdir/upp=
+erdir */
+> +                       if (!err && ofs->casefold !=3D ovl_dentry_casefol=
+ded(newdentry)) {
+> +                               pr_warn_ratelimited("dentry wrong casefol=
+d inheritance");
 
-By the way, there are some strange addresses in Cc: Thomas at domain
-dot com, Andreas at Linaro, etc.
+pr_warn_ratelimited("wrong inherited casefold (%pd2)\n", newdentry);
 
-Where are you fetching those from? Please use the ones from the
-`MAINTAINERS` file.
+No need to report.
+I can fix that on commit.
 
-Thanks!
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 
-Cheers,
-Miguel
+
+Thanks,
+Amir.
 
