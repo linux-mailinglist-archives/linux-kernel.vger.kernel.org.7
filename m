@@ -1,66 +1,68 @@
-Return-Path: <linux-kernel+bounces-769573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2708B2707F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:59:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD299B27087
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A80E1CC5F8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E7B3B74A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032FA274669;
-	Thu, 14 Aug 2025 20:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D3826CE36;
+	Thu, 14 Aug 2025 21:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jZBTLYNL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="luVafUmX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502C4272E42;
-	Thu, 14 Aug 2025 20:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C6B481DD;
+	Thu, 14 Aug 2025 21:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755205160; cv=none; b=uQ5sjzib1SREbmQL18QKX7inumMOmk+FxEKbii776ETKy5azmffMGQ8ss+8LhHP9EJF5Z+VZNgKVLwMLE0n9fV1twuNkyHLLJ1uletBK6DfAO2HVwokNXDEdFhK15fqDNF/Z/7+hA4ugcCHQLHv6DLsav154kq8n3nwNZcIA11I=
+	t=1755205324; cv=none; b=aAlSjnoAEaQtk06ldNyyUieKPIbU7OJme35Umu8BtpQ6wq63aH0r3t25YHUEcJ5fYJL3YBOnghy35MJcjKMbza/0Ltn86EQb7foW+Lu93Bd472z4GxDqbIhB2dp0Zeapxaq+aUxIdsihzSJFjWPhJaXa0Q8IuOEGlDfKxTtY4Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755205160; c=relaxed/simple;
-	bh=Tb8hGze9KVpCqWMZFaP75hh5mWHsorO7iqkAvfTQO0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ug68nprUDi1Px/uZvaR8mxw+lgeYDdhukztwYtHdH411ckkXWIZqyLTCq0hTcGMH7z+EMsZur6U51WkkJAJxYiwfUywP5FWWgOSv/V6L8HozGLknE3QrwWNcOc7nmyTCBnUi8ZuD1BS+xox+bFIAIhLvcVGiejDhFS6swNBJg7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jZBTLYNL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE42C4CEED;
-	Thu, 14 Aug 2025 20:59:18 +0000 (UTC)
+	s=arc-20240116; t=1755205324; c=relaxed/simple;
+	bh=SPIR3Nsw+5J3K3Ewb8jiZA+vLOjaQGkkApcnPTOLSPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TS5RWgGi4EK9cmZSETN1//GM3RjicSFwdsE1jVbjpLF1Jwc/bjZSQgOla+Lh1sL9uH5BKIf76/PhXgxeXmQYgRcvoCefRcJUIruBTWT3A2yOAqg+wCCuaDASbfwYIV8Nok8Ry04WzI20VkGkLsZGRtJ0TnMzcGrd84VdiXnjkPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=luVafUmX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 583E0C4CEED;
+	Thu, 14 Aug 2025 21:02:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755205158;
-	bh=Tb8hGze9KVpCqWMZFaP75hh5mWHsorO7iqkAvfTQO0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jZBTLYNLo7rNXtPYOKWDDRJLNg2SiYsR/U1wfMoexVHfzeh5+ZibOWLXayI+mIaTt
-	 ZT96Ozjsd1xBRGn3x5U6VisXs03AJvs8UQYinxH82K3zFUaiGzhh7yUTD6QIMGsgkE
-	 zTGnmu5MrD0sAe1rEjhoEAoZFexLOCe1g2gdsLiGUY8+jwGhDrLfNvg8aUx0F7cy98
-	 Lwq9S0qxDeGkK13MhRUcBYuUAXYe7GI485FoymZc3ZZQhJ41hudUfwPDxXllrku/9W
-	 v2P37OM35nBn/szcH83yL6eTCl3yGQIzS2ApXQNsaCBBp2/FLFgTqkBv0k58wKR11t
-	 zrMQg6cwn0jdg==
-Date: Thu, 14 Aug 2025 15:59:17 -0500
-From: Rob Herring <robh@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Frank Li <Frank.Li@nxp.com>, Mark Brown <broonie@kernel.org>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	Fugang Duan <B38611@freescale.com>, Gao Pan <pandy.gao@nxp.com>,
-	Fugang Duan <fugang.duan@nxp.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Larisa Grigore <larisa.grigore@oss.nxp.com>,
-	Larisa Grigore <larisa.grigore@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com,
-	linux-spi@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 11/13] dt-bindings: lpspi: Update maximum num-cs value
-Message-ID: <20250814205917.GA3894941-robh@kernel.org>
-References: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
- <20250814-james-nxp-lpspi-v1-11-9586d7815d14@linaro.org>
+	s=k20201202; t=1755205323;
+	bh=SPIR3Nsw+5J3K3Ewb8jiZA+vLOjaQGkkApcnPTOLSPk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=luVafUmXkK48Wbx3zLnbSoF++g69YJbKIO9NYmamezJOm9eb4seLzVQstBzNGEtfO
+	 2tb9MfDmu2ynxCaA8bwbD9IExbjzQSMabId7s0712YeNhMxdWjH11pFUEJVLj6fcZI
+	 PYZpHRCxxZGGO6WQ0VCvNFklMxQy/fnGkg1YHVtZ4ESyVP3vj7FQqbHEQaKHizFt4h
+	 WU2uj6tLEHQADpYMtia9+/VAmUYTWr8mxEvS4reD6sbcqOagJfNaEOiD+2Y/uvUe0z
+	 oHCe5NsVJe6CKIN+T13DhExo8jvcSQm927JqZRTxj9O5L5zoLZNN5esXiur6Bo+T/m
+	 OooBs0t1hXnJQ==
+Date: Thu, 14 Aug 2025 16:02:01 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Linas Vepstas <linasvepstas@gmail.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Oliver O'Halloran <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCH v5 0/3] PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI
+ recovery
+Message-ID: <20250814210201.GA348169@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,44 +71,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250814-james-nxp-lpspi-v1-11-9586d7815d14@linaro.org>
+In-Reply-To: <20250807-add_err_uevents-v5-0-adf85b0620b0@linux.ibm.com>
 
-On Thu, Aug 14, 2025 at 05:06:51PM +0100, James Clark wrote:
-> As mentioned in commit f46b06e62c86 ("spi: spi-fsl-lpspi: Read
-> chip-select amount from hardware for i.MX93"), some devices support up
-> to 3 chip selects so update the max value.
+On Thu, Aug 07, 2025 at 03:55:37PM +0200, Niklas Schnelle wrote:
+> Hi Bjorn, Lukas, Mahesh,
 > 
-> This isn't a fix or functional change because the devices with 3 chip
-> selects support reading the number of chip selects from hardware, so the
-> value wouldn't have needed to be set here. However the commit states
-> that the DT could be used to overwrite any HW value, so the full range
-> should be supported. This also avoids confusion for any readers about
-> how many chip selects there are.
-
-If reading the h/w gives you 3, when would the DT need to override that 
-with 3? You only need an override for 2 or less.
-
+> This series adds issuing of uevents during PCI recovery on s390. In
+> developing this I noticed that pci_uevent_ers() ignores
+> PCI_ERS_RESULT_NEED_RESET. I think this will result in AER not generating a uevent
+> at the beginning of recovery if drivers request a reset via the voting
+> on error_detected() returns. This is fixed in the first patch and relied
+> upon by the s390 recovery code as it also uses the result of
+> error_detected() though with one device/driver at a time.
 > 
-> Signed-off-by: James Clark <james.clark@linaro.org>
+> Thanks,
+> Niklas
+> 
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 > ---
->  Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v5:
+> - Add R-b from Lukas Wunner for EEH
+> - Improve commit message for EEH (Lukas Wunner)
+> - Move the EEH patch to the end so the reference to s390 relies on the
+>   as is and not future state ;)
+> - Link to v4: https://lore.kernel.org/r/20250807-add_err_uevents-v4-0-c624bfd8638d@linux.ibm.com
 > 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
-> index a65a42ccaafe..ce7bd44ee17e 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
-> @@ -64,7 +64,7 @@ properties:
->      description:
->        number of chip selects.
->      minimum: 1
-> -    maximum: 2
-> +    maximum: 3
->      default: 1
->  
->    power-domains:
+> Changes in v4:
+> - Add change in EEH to use the return of error_detected() in the uevent
+>   just like AER and the new s390 code
+> - Add R-b from Lukas
+> - Link to v3: https://lore.kernel.org/r/20250730-add_err_uevents-v3-0-540b158c070f@linux.ibm.com
 > 
-> -- 
-> 2.34.1
+> Changes in v3:
+> - Reworded cover letter
+> - Rebase on v6.16
+> - Link to v2: https://lore.kernel.org/r/20250623-add_err_uevents-v2-0-a3a2cf8e711d@linux.ibm.com
 > 
+> Changes in v2:
+> - Add a patch fixing pci_uevent_ers() mistakenly ignoring PCI_ERS_RESULT_NEED_RESET
+> - Use the result of error_detected() for initial pci_uevent_ers()
+> - Drop fixes tag in s390 patch
+> - Rebase and re-test on current master
+> - Link to v1: https://lore.kernel.org/r/20250424-add_err_uevents-v1-1-3384d6b779c6@linux.ibm.com
+> 
+> ---
+> Niklas Schnelle (3):
+>       PCI/AER: Fix missing uevent on recovery when a reset is requested
+>       PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI recovery
+>       powerpc/eeh: Use result of error_detected() in uevent
+> 
+>  arch/powerpc/kernel/eeh_driver.c | 2 +-
+>  arch/s390/pci/pci_event.c        | 3 +++
+>  drivers/pci/pci-driver.c         | 3 ++-
+>  include/linux/pci.h              | 2 +-
+>  4 files changed, 7 insertions(+), 3 deletions(-)
+
+Applied on pci/aer for v6.18, thanks!  This on top of Lukas's series:
+
+  https://lore.kernel.org/all/cover.1755008151.git.lukas@wunner.de/
+
+Expect the whole branch to be rebased to add Reviewed-by, etc.
 
