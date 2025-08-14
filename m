@@ -1,167 +1,249 @@
-Return-Path: <linux-kernel+bounces-769657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977E1B271A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:31:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89042B271A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6198A1B67F94
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:31:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58A31B67E62
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3225327978C;
-	Thu, 14 Aug 2025 22:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54B227D784;
+	Thu, 14 Aug 2025 22:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8NZu8Q2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="COoh6O1N"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8229C277819;
-	Thu, 14 Aug 2025 22:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755210653; cv=none; b=TVcuxR4AiKn4YniYA9LXxiY1PiRTHnhhmlqfKCL7eccK13e/Oy8+v5hdqVcC5WRAXoJXi1v2VkYe7PpG8+5QHhXSH3jPZzvd+3gfJuQ9pMDYvgjuCCrbcHHUGUQPodktAFfeDceaBhKirrc1aYPYU+q7trJ+ut8gzjfnWL6lqFo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755210653; c=relaxed/simple;
-	bh=N5VWGitysz6JFmoe9n2FhghAKkO8HINQCHJY2U2kRIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ockeZoBVjiRR3/2rqs7Ksm2UgX64FVbx0fqIEUF7DF9ZshtIsmtyKoaYlW4hQ2A8+4BKuZLE/vaYY2AVYqjQ30KwsjvO6Jk0leyZXrWuSqE8ayxsDwHcfDWqGltHuVU8jbHsdxWkskZvjZXJXcAvsM0RIEkET8EzKJaKBUAqKRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8NZu8Q2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC6FBC4CEED;
-	Thu, 14 Aug 2025 22:30:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755210653;
-	bh=N5VWGitysz6JFmoe9n2FhghAKkO8HINQCHJY2U2kRIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c8NZu8Q23AcSpDXYfCjfS+nijpycYbRazO8ud7muK7v/NQSmnieFRpVKZ9HpE+Se3
-	 ihK/DheTyy0oiRrb1M1422BzweCx9GFLH23gWJEy8hhRFRngUNMiGhj74MtotNPhtF
-	 yqrUOurUhDDUC58YxblyH88j6+KNNTcK/igm+HoklMSc/qyxQ5KQz0I5OYmUnqEyQb
-	 hSHC3P59PHrQpHRwdNhYBEJf+FY2XgcEMPuuTzqg6Z4f866bnKk9VJKWj+onG9pmFj
-	 gWnmU3joyDUmkrHXStOUAiu75Y3Os4fO4BMRMQVIFbAidL1DN8rkqKZOMOECpHF6et
-	 Ltq0O6AyGRRpQ==
-Date: Thu, 14 Aug 2025 17:30:52 -0500
-From: Rob Herring <robh@kernel.org>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
-	andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com,
-	linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v17 1/3] dt-bindings: i2c: aspeed,i2c.yaml: add
- transfer-mode and global-regs properties and update example
-Message-ID: <20250814223052.GA4004307-robh@kernel.org>
-References: <20250814084156.1650432-1-ryan_chen@aspeedtech.com>
- <20250814084156.1650432-2-ryan_chen@aspeedtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361D21F9F7A;
+	Thu, 14 Aug 2025 22:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755210690; cv=fail; b=dNqQIQGzwgvTJpUsof8zuYDuJoIWxB6DCyfZT11Yz4EZQVNSggrABfnfecxv6nEoK5rI6G3CrDT7lyAr2h3D7pzisbeJarb5IN34WC7iqclPVnw5J49HBAq0nOAc8aqkBL133pCd+n6xv4pxxpI5bMBVKn915o5DmgYhReaPNWQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755210690; c=relaxed/simple;
+	bh=mMwn6hxe5M0fjzYOMsiEHTc8G9bVN/2UnNJZaQWP5dM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RpzybsSu3EJqP1kivr3Gesx6IqHyJf5lI6Vh6TPNnra8XkJJWecb+pR3Q8p4w+mFixxCyY9s8XCfXxTAU1STHyC6tx6Trvv/Md0dkqPArbvTEfsrhkgShuvE/lMdGgs+EPpJv/z1HZcuQbXq2LAR5GNGfVJiMuX4vLxeLMFokKg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=COoh6O1N; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755210689; x=1786746689;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=mMwn6hxe5M0fjzYOMsiEHTc8G9bVN/2UnNJZaQWP5dM=;
+  b=COoh6O1NwX06JGLH2QS0sFukpvz3uaSaTA6USNva/GoydVIm/6nN101H
+   d1zUHvqF35pd8unhK/OxwX3z9GuQwnaD+G9Vtmy2+7kkDe37TPAY9FEAu
+   DnSbqZoFHcvIMJD9O+OTER7yGy4PHUgcx0aII403C2h2b6DckSrTrAO3H
+   RT27FoTHgFpzZiyqJt55wxbSYzmjNvI3Vu/IGoH4HOORJSIOYRauIvgqO
+   sThkQoLcK46cLLr/sSayLDalC9bwA3SISYFdYRNBzIFBA7copsWG1c/Hw
+   Wr/4BUvAfoMdYHyz/hFsuKdIO6E3q0sg6kz1Y0e039bLAxAhDASllv+rq
+   w==;
+X-CSE-ConnectionGUID: V4EyQAMEStepdT0VQW+/0g==
+X-CSE-MsgGUID: hsUek14USteoaW0vEbYXbg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57450098"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="57450098"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 15:31:06 -0700
+X-CSE-ConnectionGUID: z5jicAFMQe+7RMrtufnKyw==
+X-CSE-MsgGUID: qX6EJrFaSIGssznSgYtiFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="167681028"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 15:31:05 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 14 Aug 2025 15:31:04 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Thu, 14 Aug 2025 15:31:04 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.55) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Thu, 14 Aug 2025 15:31:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rKsMmLz5TsLrGrvIBOh5AxW/+mp1LG0OPr3NKeBkajQ43EyHaGX9UypT4eI9MLnlyPfPdDtNPuk+bgCvTFE26dRfqKNTunR3NQUbEvxbVO5/OL5lG+srjDS9KthjXEULXTAr3x4ZwoJ9LYnTeuhDoTF2R1NgoV6peVaAdFaQTqlEF/UZfbuocTKb+AgBteND+J73PuMTqTVyBWkwRLqfB9mM54JIm/SjkI4YwzrphUlAeiPanI9UnGDgZBWcyWXWN9nH8//+lcqQVX37HOCnYsoJWq2MkmNYfvKLEBunvbipPFF1In0zDCBfuMcZmRCR1NVQer0t/wNZP4eGYj95/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mMwn6hxe5M0fjzYOMsiEHTc8G9bVN/2UnNJZaQWP5dM=;
+ b=AO4NATH58Ke4b/LtQHhPopSTWX9Sdis04uNE5G1PduNKTHrnFuJOlqgSdyWUUsTUuULo+JNCKYT65VzaQ7Bz/u/xF/LwVYaxAnT6h97c1KQBw6d8uoYB+zuMDgVzdSf9BeUxdWTcTaO1iRPOXcFU+O+AEAvD66uUZO0HyVDNe229vl/nOTeth/8YAYh3/OLUqqbOGCJSBKpKQMm88RCG6mbOUuZXSguK+/cKziE4q1QehHsivUqMbh1doK5Qrz+8pzMLMB9LfQOqGkYj1Iu8RHOf+pxFZvkKyKgNNaq4qLNlilfcpGrhG1SP5zdEsszfNnpjfywsnUvW2gYKCKzBNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5525.namprd11.prod.outlook.com (2603:10b6:208:31f::10)
+ by BL3PR11MB6386.namprd11.prod.outlook.com (2603:10b6:208:3b6::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
+ 2025 22:31:00 +0000
+Received: from BL1PR11MB5525.namprd11.prod.outlook.com
+ ([fe80::1a2f:c489:24a5:da66]) by BL1PR11MB5525.namprd11.prod.outlook.com
+ ([fe80::1a2f:c489:24a5:da66%5]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
+ 22:31:00 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "Reshetova, Elena" <elena.reshetova@intel.com>, "Hansen, Dave"
+	<dave.hansen@intel.com>
+CC: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"mingo@kernel.org" <mingo@kernel.org>, "Scarlata, Vincent R"
+	<vincent.r.scarlata@intel.com>, "x86@kernel.org" <x86@kernel.org>,
+	"jarkko@kernel.org" <jarkko@kernel.org>, "Annapurve, Vishal"
+	<vannapurve@google.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Mallick, Asit K" <asit.k.mallick@intel.com>,
+	"Aktas, Erdem" <erdemaktas@google.com>, "Cai, Chong" <chongc@google.com>,
+	"Bondarevska, Nataliia" <bondarn@google.com>, "seanjc@google.com"
+	<seanjc@google.com>, "Raynor, Scott" <scott.raynor@intel.com>
+Subject: Re: [PATCH v14 4/5] x86/sgx: Implement ENCLS[EUPDATESVN]
+Thread-Topic: [PATCH v14 4/5] x86/sgx: Implement ENCLS[EUPDATESVN]
+Thread-Index: AQHcDO5KasBtAADxqku0BocXors/zrRh47YAgAAlQoCAALNggA==
+Date: Thu, 14 Aug 2025 22:31:00 +0000
+Message-ID: <f5e9a2fc1b3f11ed8bf1525a53d0f7ce830200c5.camel@intel.com>
+References: <20250814073640.1507050-1-elena.reshetova@intel.com>
+		 <20250814073640.1507050-5-elena.reshetova@intel.com>
+	 <a74ede5f4466572e33c92fceb69136b82c042d7e.camel@intel.com>
+	 <DM8PR11MB5750E0E7EE14FA87E9C48336E735A@DM8PR11MB5750.namprd11.prod.outlook.com>
+In-Reply-To: <DM8PR11MB5750E0E7EE14FA87E9C48336E735A@DM8PR11MB5750.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5525:EE_|BL3PR11MB6386:EE_
+x-ms-office365-filtering-correlation-id: b1535fbb-8201-4ceb-638f-08dddb823eff
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?WkVNdlc0MVdrUVJiNTROSjhMT1lCeC9CSDRqZlM3MUEweHpoTDZJemt3VTF3?=
+ =?utf-8?B?c0lVMWlibVNZVWM0MS9GdjJMbmRZUDc3MDRDM3pHOW9lMVdLK2VhcVpmbXNS?=
+ =?utf-8?B?M3VHdkc0c0xrVWlLb3l6U29jVGdZRXUrNjVTZnUxOWlTdlU1d0JzZFpmZzJ3?=
+ =?utf-8?B?ajRFYzljcEVieTdKbHd3Z2VMWEoraXlsOHdYdDllVVJiOWFJMDAra0JUZWdz?=
+ =?utf-8?B?aEJYM1VnbnVqU1h6RWhZemswN09DVGhaMG10Vkl5amNtY09acUhUOXl6ZjZM?=
+ =?utf-8?B?Zkc5VGdpTjZ1OUhRSEFCRGVPUnduVGhLMmVDczJpWEJicitQeFFtbEo2cGdF?=
+ =?utf-8?B?bE5wNDhESTJ5NlpCdUlST0lPTk1VdVhJVFJ2dVRVK21tOFBjUFJpWWFzbmh6?=
+ =?utf-8?B?a1R3c3Z0Sm5oOHhwdkl0eXcvRThaK3BCcHd0VlFSUVRqL2hXSE1KYTlsRkE2?=
+ =?utf-8?B?N01nNXUzOEFIN28rNndPYm1rUUdJamxxUTk3SElLUjI5SUVONGZwTVdtOWJZ?=
+ =?utf-8?B?RkdQL2NyOHRVK1d2WUZvV0RuRzNBb1R6ZmpTcUdqUHk4N1UxUm5OUHFmZVRp?=
+ =?utf-8?B?NEkxM1hxdWZwRStibmpWSk53OXVBcER0RHg3YSt0YlZ5R1JHMUc4QkVmU2d3?=
+ =?utf-8?B?bDQxK094bmJVbVNma3N1VmdvMjAwMUpETFhiZ3BpeldQS25PQ2VJSUg1eTRp?=
+ =?utf-8?B?akNjQlpqMFkzUDlvMy85SFNOUTR3K0lGU2I2K2ZlRzB6NDJ6UGhKTm9ndW9W?=
+ =?utf-8?B?NGZiMlZNekR3cjlIS1JPN3RRaGlpM09VblZwdFcwcmEyK0dzYjZZUUo1cUM1?=
+ =?utf-8?B?c2pZZDUrUkUvMlpYRWlrMHhjS2dtakpVRlo2ZHIrVUgvckNoS2U4M0NQTm11?=
+ =?utf-8?B?OUVNc0JxVURlbW9HbW16dWdHeU95dE5DTjJFU292OEw3OE1JZVNGemd3WEtv?=
+ =?utf-8?B?aXo2MnpGR0hoRUhiTnZqbGYrL1V3VzY3OEVVdVlGQzFTV1F0c3g5Y2prWFhD?=
+ =?utf-8?B?aytOdXQ0WWNPQ1hoU25tTzBTaEJrYTlmV1BxUWd6RHBRM2pzbkx3UmxGRzFR?=
+ =?utf-8?B?K0ZTTW1UWUpkalE1cm1EbWV1NVI2QU83OVY0RE9uNWJPMUoyNmZndXZoNGN4?=
+ =?utf-8?B?ZlF4cGNsKzRJbW5CTFpHeTRjM3pjeGZGQUJFamNoWTk2cTh6dW1Cb2xTcnR5?=
+ =?utf-8?B?aEhHTzBYbmduVGQvNll1OHExaDhWb3JIOFJlZmxnQllmUVBySTFjTkRiQUVE?=
+ =?utf-8?B?bjFXYnlVYm5SNkxiWUh1TmhaTy9yYmN4WGFWR2hqcUZmazRDM2hpbHFTUEpM?=
+ =?utf-8?B?K2k4SlRraTFSaEp0ZnFiQmNxeThtNzRHb0JjRGJHdWF6ODZiQUVzQjFJeHBR?=
+ =?utf-8?B?VGZySWc0STZlOVcyVTVwcExCQS9LSTV6QnFlbU1aRElLOUw0SExaUGpsVHRm?=
+ =?utf-8?B?R0FzT2Y1dy9LeTY4MXJ2TjEvTGFyd0VtRFNCbnZCMS9TMlJpdlZqeVppWGpI?=
+ =?utf-8?B?WGk3K2xGVURxMURGR2tnaFRqOUorOVNtdHk3UmJZcStadWk2NjB0eGoxSC9s?=
+ =?utf-8?B?TEdWMkdpKzQ1K1JYZUVhOUpQQTlZTGxZK2FaNitoZ09Pc3dORDVGZzRKSnhm?=
+ =?utf-8?B?bWMzK2t6VWpGS3RjN0VqNTVKTkJQY3hDaWlRMkcrUkFHd056UDBlVDFCcFlk?=
+ =?utf-8?B?M01GNURJa3l4ZFpzTmVIaEJYMEpUdUV3bmg0dlpPQTJXZTlZNGVxU1NGMGxY?=
+ =?utf-8?B?b1kxL20rNy9FeWUrOC9PaFdsZHY1RkhEVjVPSXVxQldGR1pRam42TVdEdWhs?=
+ =?utf-8?B?ZlJxNkkvWTdtT2VJKytMTk9nQThCNVFkQTlWVGd1MVhrdHBCb0tCa0pqVHlL?=
+ =?utf-8?B?Y285ZGFhM1p6OTdFY01BWkJPSDl6QkdGTDFobEhDa3FkVTlyWVdmQ0hjYjd6?=
+ =?utf-8?B?dGZ2Z0k4eE1VUXpEOVJkM0ltNFJlODNCdDIwUXhmYXhiYXZ0Szc3cFZ2VzNt?=
+ =?utf-8?Q?hJ741wLBP4liFmk8rm6EYiz9Vrjc3Y=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5525.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aFo2SmFIQXlsNjZCcWlTYjNqMUc5OFljODdjZFo0aG1FRUVucFBmR0JWYUcy?=
+ =?utf-8?B?Y0x0Tk1TNXRDYm51K0dwWTQzbTAzQSs4YTZJSzFTTXVtekQ2REdWajFUL3Ew?=
+ =?utf-8?B?L1psczdaeVYra3dvTmJiUHBHUEZvNTRqTm05d3JjT1ppaDJxeU1XMDVia1oz?=
+ =?utf-8?B?eTBoeU95SW84aTN0RDAyUFhvaHhZOU1pTVg4RFcxNGRvZGF3bHlHdWx5UUdy?=
+ =?utf-8?B?bmpCZ25iZjBFTXAwZXVjbE5DZW8wVnl3eVhOcjU2N1VUR2ZGNGRYY3RmWkJS?=
+ =?utf-8?B?M0RhV0RDOVpxNnNNdnRLOHVFampiRjBvR29pQmhCZE9KM3d1elcyb29WVVdO?=
+ =?utf-8?B?elJISm5USUFhSjlhbkpKbExpWG8zeXRLdGNNYmVsSHZ5SUZmVUhhb3JQMkZT?=
+ =?utf-8?B?dUptMnpCUTRTTU43U3UwcFovTkVmM3NNVFFGUDc1S0RvK3RGbEdtY3ZHeDZS?=
+ =?utf-8?B?ZmxYYUZ3TG5sMVFWZkdRNTM1RE94eFdOY1cwZFFOUitSblhJWlVBbG1IOEoy?=
+ =?utf-8?B?SzArZ2QwaG5SbE93ajFzU1pwS2xGcC93ZXVEK2NVOXdLdXQxdGxqMXljOGhv?=
+ =?utf-8?B?dEVyWlZwb1hMQUNrYkdNKzNWYnJHUFVySnJuRFZyMmFsMzdBOFBQMHRSaC9P?=
+ =?utf-8?B?Z2s1UnROdVc0OVVYSkEwdjZtcDYvODhGbzBNZVRxM3BKS2N1Q05tZUZJMms1?=
+ =?utf-8?B?SlErZXZFOGFibWRPV3ZSMnNHL1F6MUZiUWZEMTM4Y2NIeDJFK0dzTUNyMkhl?=
+ =?utf-8?B?b3pFZ09sWncvNjlQdUFhNTBnR2JaTG5lWDZzbmV0MmZVTVU1YnBkdGlsUG1r?=
+ =?utf-8?B?bEZFa0prNEc2K1lZeXpWZGV2cHVFc0lHdXltaHJIWXdBMHBya0xiY3JyRk12?=
+ =?utf-8?B?MnNZYzJuZkhmU1orZ01xZHU5TW1Eamgva0xzVXBnWmh5MFlLNjNzYnU5UGVs?=
+ =?utf-8?B?UVdOVU55WkN4aW1WMzFTbDZIblAxamRwbm53TDhmYW50V3BIRnlHUHlJN1Fh?=
+ =?utf-8?B?VHNMVm51VmRZK2F5RE8yZjZ1RUlaT1JvV3NLeXp1c2MybjdESDZTT2JnbkZz?=
+ =?utf-8?B?RU1QdTJWYjBEWmFBWGZyK3RhT3Y0MEkyNEpnTVNiOFFoRXU3dElZUmNYc1hC?=
+ =?utf-8?B?eDEwUVBKWkt2dTB3a2RXUlBHQmV1UFdscjNlVG81VmpPZHVPbEMyOE5IWDAy?=
+ =?utf-8?B?cnBiVUdCeDdEL01JeXZUMFNVaDRXaHIzNUxHL3JWQlhoTXI0QzJBR2dsVkpp?=
+ =?utf-8?B?SThmVFpNUVJ2R2RYWTU0QmVoeTZlbVA5d291YUFsUlBEWHBidWs1dDF0bWNH?=
+ =?utf-8?B?b0NWc2VxM0dFSGpwOWJiOTBFS1YySU1vUmFpamxRWWpqRnRORFZLZklwKzRm?=
+ =?utf-8?B?U016RDY5QmMvNGNXYkZ1RFM0bFpoZzZRMGk2djJiL21vTU0wWHp5M2tQUDV2?=
+ =?utf-8?B?UVZmRzNpcXhLbnVLVWYxUDFVSHhYVUhvMHdnRy9PV3Fwb1U5Mm9RQmRITXYz?=
+ =?utf-8?B?VXk2YUcyNmtHMkZJSkJMRC9nTFJYOHh5eXNxY252ekxEQ0NTRVBxaDFGQUZi?=
+ =?utf-8?B?dG90UitWN3YxZUQwdWkyenFvcHBHdHREMFR6NHk2QUFFbXNSelBtdmI5enNz?=
+ =?utf-8?B?bkprSCtVeDBNN1JheVlrZmJlbUVOSVJObDAydjJ0RHhNMFljOWoyaXpFRUxh?=
+ =?utf-8?B?RnJjcmpneFJiNXVUMTVLTDYxTHJaWG9Jekk0YVhLWm1MSjQ2TTdRRld5Ym5r?=
+ =?utf-8?B?TnBhLzFlZjA1NjJFb1NVSzJXOUNhN1gxRkVSL25EMDY5dUpDbFI1dVR5UEZD?=
+ =?utf-8?B?UEcwdXJCbEF2WHVGVVdqNlBKVHJoTWpuNCtscXc4RzFNRmRPSG5aTGVVWmMw?=
+ =?utf-8?B?RDNpWEdWZExQL0wwSmJaaEFEd3pXcCtZUGFxcVFSZlB1UW5Vck9odmtNZDUx?=
+ =?utf-8?B?WE14bGFOQVlPNTYzY3hEZWZNTlhXSDdYcnZNQUc2S3BEV0R0SUlIVlh1cmZj?=
+ =?utf-8?B?NzRLVjQ1bDRDakdlUXFWenVBVXB2em50bEltby9TaGFyaVhXVlcwSUJzY1pM?=
+ =?utf-8?B?bk1oaHViRjFWcGMwRng2bXRzRFVwUGxpaS9MWnZzRTJpMldjcndyNW1MTU1r?=
+ =?utf-8?Q?nO8TlUDVO9NXCzaMz0UVwWAnX?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0CEC70812D0DE94EB37F4BBAAD00E8C1@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814084156.1650432-2-ryan_chen@aspeedtech.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5525.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1535fbb-8201-4ceb-638f-08dddb823eff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2025 22:31:00.5163
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3DDyaMP7s/+DvkJ7pWwzWgmBr2kzpKUHq58AFmI7MGTrUNg2gbqD7uBfEmzg6Hroh/r8ZYmSdV3bci9VcowY4Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR11MB6386
+X-OriginatorOrg: intel.com
 
-On Thu, Aug 14, 2025 at 04:41:54PM +0800, Ryan Chen wrote:
-> - Add property "aspeed,global-regs" to get phandle set global
-> register, for register mode selection and clock divider control.
-> - Add an optional property "aspeed,transfer-mode" to
-> allow device tree to specify the desired transfer method used
-> by each I2C controller instance.
-> - Update example to demonstrate usage of 'aspeed,global-regs' and
-> 'aspeed,transfer-mode' for AST2600 I2C controller.
-
-All of this is evident reading the patch. Explain here why you need this 
-change.
-
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  .../devicetree/bindings/i2c/aspeed,i2c.yaml   | 39 +++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
-> index 5b9bd2feda3b..2a9f7d1d2ea1 100644
-> --- a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
-> @@ -44,6 +44,34 @@ properties:
->      description: frequency of the bus clock in Hz defaults to 100 kHz when not
->        specified
->  
-> +  aspeed,transfer-mode:
-> +    description: |
-> +      ASPEED ast2600 platform equipped with 16 I2C controllers each i2c controller
-> +      have 1 byte transfer buffer(byte mode), 32 bytes buffer(buffer mode), and
-> +      share a DMA engine.
-> +      Select I2C transfer mode for this controller. Supported values are:
-> +        - "byte": Use 1 byte for i2c transmit (1-byte buffer).
-> +        - "buffer": Use buffer (32-byte buffer) for i2c transmit. (default)
-> +                    Better performance then byte mode.
-
-If no 'aspeed,transfer-mode' property defaults to buffer mode, you never 
-need 'aspeed,transfer-mode = "buffer"'.
-
-When would you ever use "byte" mode? Sometimes you want worse 
-performance? That makes no sense.
-
-I feel like we already discussed this, but I'm not going to dig thru 17 
-versions to see.
-
-> +        - "dma": Each controller DMA mode is shared DMA engine. The AST2600 SoC
-> +                 provides a single DMA engine shared for 16 I2C controllers,
-> +                 so only a limited number of controllers can use DMA simultaneously.
-> +                 Therefore, the DTS must explicitly assign which controllers are
-> +                 configured to use DMA.
-> +      Only one mode can be selected per controller.
-
-The only thing that really makes sense is dma, and you need 1 boolean 
-property for that. IOW, what you had on v10 which we gave reviewed-by 2+ 
-years ago.
-
-Do you have any actual test results or usecase that show DMA is useful 
-here? Typical I2C xfers are not streaming large amounts of data to 
-justify the setup costs of DMA. It wouldn't surprise me if DMA was 
-actually slower.
-
-> +      On AST2600, each controller supports all three modes.
-> +      If not specified, buffer mode is used by default.
-> +    enum:
-> +      - byte
-> +      - buffer
-> +      - dma
-> +
-> +  aspeed,global-regs:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: |
-
-Don't need '|'. Read the documentation about when it is needed or not 
-needed.
-
-> +      The phandle of i2c global register node, For control the i2c register
-> +      define selection, clock divider mode selection and clock divider control.
-> +
->  required:
->    - reg
->    - compatible
-> @@ -66,3 +94,14 @@ examples:
->        interrupts = <0>;
->        interrupt-parent = <&i2c_ic>;
->      };
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    i2c1: i2c@80 {
-> +      compatible = "aspeed,ast2600-i2c-bus";
-> +      reg = <0x80 0x80>, <0xc00 0x20>;
-> +      aspeed,global-regs = <&i2c_global>;
-> +      clocks = <&syscon ASPEED_CLK_APB>;
-> +      resets = <&syscon ASPEED_RESET_I2C>;
-> +      interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
-> +      aspeed,transfer-mode = "buffer";
-> +    };
-> -- 
-> 2.34.1
-> 
+DQo+ID4gDQo+ID4gPiANCj4gPiA+ICsgKiBSZXR1cm46DQo+ID4gPiArICogKiAlMDoJCS0gU3Vj
+Y2VzcyBvciBub3Qgc3VwcG9ydGVkDQo+ID4gPiArICogKiAlLUVBR0FJTjoJCS0gQ2FuIGJlIHNh
+ZmVseSByZXRyaWVkLCBmYWlsdXJlIGlzIGR1ZSB0byBsYWNrIG9mDQo+ID4gPiArICogKgkJCWVu
+dHJvcHkgaW4gUk5HDQo+ID4gDQo+ID4gTml0OiBpZiBhbm90aGVyIHZlcnNpb24gaXMgZXZlciBu
+ZWVkZWQsIEkgdGhpbmsgaXQgd291bGQgYmUgYmV0dGVyIHRvIG1ha2UNCj4gPiB0aGUgdGV4dCB2
+ZXJ0aWNhbCBhbGlnbmVkIHcvbyB0aGUgbGVhZGluZyAnLScsIGkuZS4sDQo+ID4gDQo+ID4gCSog
+JS1FQUdBSU46CS0gQ2FuIGJlIC4uLi4NCj4gPiAJCQkgIGVudHJvcHkgaW4gUk5HLg0KPiA+IA0K
+PiA+IC4uIGluc3RlYWQgb2YNCj4gPiANCj4gPiAJKiAlLUVBR0FJTjoJLSBDYW4gYmUgLi4uLg0K
+PiA+IAkJCWVudHJvcHkgaW4gUk5HLg0KPiANCj4gT0ssIHllcywgdGhpcyBjYW4gYmUgZml4ZWQs
+IGluZGVlZC4gDQo+IA0KDQpJIGRvd25sb2FkZWQgdGhvc2UgcGF0Y2hlcyBhbmQgY2hlY2tlZCBs
+b2NhbGx5LiAgSSBmb3VuZCB0aGVyZSdzIGFuDQp1bm5lY2Vzc2FyeSAndGFiJyBiZXR3ZWVuIHRo
+ZSBlcnJvciBjb2RlcyBhbmQgdGhlIGRlc2NyaXB0aW9ucywgbWFraW5nIHRoZQ0Kd2hpdGVzcGFj
+ZSBiZXR3ZWVuIHRoZW0gdW5uZWNlc3NhcmlseSB0b28gbG9uZy4NCg0KUGxlYXNlIHNlZSBiZWxv
+dyBkaWZmIEkgY2FtZSB1cCB3aXRoOg0KDQpkaWZmIC0tZ2l0IGEvYXJjaC94ODYva2VybmVsL2Nw
+dS9zZ3gvbWFpbi5jDQpiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4uYw0KaW5kZXggY2Zm
+NWM0ZDIyYWMyLi5jNjQ2NzYyOGRhMDQgMTAwNjQ0DQotLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1
+L3NneC9tYWluLmMNCisrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvc2d4L21haW4uYw0KQEAgLTky
+OSwxMCArOTI5LDEwIEBAIHN0YXRpYyBpbnQgc2d4X3VzYWdlX2NvdW50Ow0KICAqIGNyeXB0b2dy
+YXBoaWMgYXNzZXRzLg0KICAqDQogICogUmV0dXJuOg0KLSAqICogJTA6ICAgICAgICAgICAgICAg
+LSBTdWNjZXNzIG9yIG5vdCBzdXBwb3J0ZWQNCi0gKiAqICUtRUFHQUlOOiAgICAgICAgIC0gQ2Fu
+IGJlIHNhZmVseSByZXRyaWVkLCBmYWlsdXJlIGlzIGR1ZSB0byBsYWNrIG9mDQotICogKiAgICAg
+ICAgICAgICAgICAgICBlbnRyb3B5IGluIFJORw0KLSAqICogJS1FSU86ICAgICAgICAgICAgLSBV
+bmV4cGVjdGVkIGVycm9yLCByZXRyaWVzIGFyZSBub3QgYWR2aXNhYmxlDQorICogKiAlMDogICAg
+ICAgLSBTdWNjZXNzIG9yIG5vdCBzdXBwb3J0ZWQNCisgKiAqICUtRUFHQUlOOiAtIENhbiBiZSBz
+YWZlbHkgcmV0cmllZCwgZmFpbHVyZSBpcyBkdWUgdG8gbGFjayBvZg0KKyAqICogICAgICAgICAg
+ICAgZW50cm9weSBpbiBSTkcNCisgKiAqICUtRUlPOiAgICAtIFVuZXhwZWN0ZWQgZXJyb3IsIHJl
+dHJpZXMgYXJlIG5vdCBhZHZpc2FibGUNCiAgKi8NCiBzdGF0aWMgaW50IHNneF91cGRhdGVfc3Zu
+KHZvaWQpDQogew0K
 
