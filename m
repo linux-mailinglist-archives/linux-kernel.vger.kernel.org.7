@@ -1,180 +1,138 @@
-Return-Path: <linux-kernel+bounces-769475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7165B26F2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA41B26F29
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 608257A7497
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52AAA1C248BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 190C5230BD9;
-	Thu, 14 Aug 2025 18:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25067234973;
+	Thu, 14 Aug 2025 18:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bru4Rdi2"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+OwVj2O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B552309B0;
-	Thu, 14 Aug 2025 18:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691D92309B0;
+	Thu, 14 Aug 2025 18:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755197019; cv=none; b=lQJQSrufunRGRcaSYjL9r8g17INRayg4Tqll999KpboaI5XG8ZuTzJ6z92NCDrpJN1QH7jy8w70sGCLZ2GQpdtWJgLU/nGQwD5+4rjtUQvJ6IEue1f1A7Ux8LmJ3IFskAPkmQm3RUU8o6Jzp8vIrPfPop792+cGNknb0Ctzvj+4=
+	t=1755197012; cv=none; b=jjUh/hzwePT48Yhv/Cadk/UKgKhX6KE6MKtR/wGzcAPZoIoNiEKQn6wlZuxhYU93GbqVeUntgW1Gq/LGvCNxtUETHO64ZjIXoaT8K4+tcGdQC2tpIGgNRro88VeJNYA+1zUU+8WnmJWxU5F2rw/5/OmbZOWpUC2sGPGkycEIoko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755197019; c=relaxed/simple;
-	bh=HzhGSOEbP93yW11E2dVFWSxpffOEMSlBt4hcNy8rzUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W7HTjDQOCS58z9OcQ8U1qLBeo1C2q5n0UGtTane4pfpjFzDu1GbVFd+DoOf2MfZb+gNnsJAMMjJhu9EywZm8v8T9KgHEXnR0fw0QvryOAXlJI8Z3G5sdtKwuTreTXVhfn0zAf4THO9zIiuS+4VXG749kYKdq9UzCEiDJ1E1bUnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bru4Rdi2; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32326e7c3b1so77313a91.3;
-        Thu, 14 Aug 2025 11:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755197017; x=1755801817; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WH+OLX4PVYHaF7paZnuikm/Sd4CSwuIUJmjMyFBnjJY=;
-        b=Bru4Rdi2wJnM+hLE80bQPnhQGiwCmQ0QXq9ux0KtQ/K/QZ65kqHdxiMOj2PkkIv72J
-         pP8gKDj/M5nyMztzgTRfo2TMMLT4PgEgubIRbIU/z7M8oqOzjX0OMb5b53TUu8EKfA/q
-         YasPVbSuvmgZWcwntfCc5rLyudAwHdyhwMHINf/eRm+Mc2qSjzbzwMFa7aYUiiwdKywe
-         c+0eCxOLuRPK6k3txgYpzNEtOdaJWg3CBl0vQrXEjZ5fHINvCrS6AjCn+3g8rD2wa1KA
-         lO26ZzgWoy2D2CzBUZaeKpV/0hzXIsjtI5IBZVKLSZ8q4Qu6dao/+pNGFQS8cekTNGjH
-         KCYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755197017; x=1755801817;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WH+OLX4PVYHaF7paZnuikm/Sd4CSwuIUJmjMyFBnjJY=;
-        b=jAfvG3yInEQ7tElLLB6dx1OY5Q+wvr+V5M3MUMyeTRGG3GhQ5517y3XIFvfI5al21s
-         azjcadaOsH9gu40eqNDYSkCaslmG+ZVVrpd9y6taZ5r5zOv4v13NhPVhglj5iZaw2IiB
-         0awlaBthvtdi8FWSBKVYhM+q9zKncCCCSTgn6n05LfIrl8ytK1grif73CrgPU8fQhO6l
-         e+xorhoSTzQJg+dNgqGevYb01edKJdQuaRY/zgpWU1J4W2hqQP2Or6lhlK29m1bvd/Zr
-         sqNdeT+GZgbMauzJIirg9uJRyIOLhcM2cdSFjdMP7Vd334MKsMbyEbzfFlqJjKJVOQHS
-         kqsA==
-X-Forwarded-Encrypted: i=1; AJvYcCU65ozkrhV3E84woP8APIHAUeRilkUOSj3lqDjgY6bixVsXUNFH1bZGZLxW2USudCeP9m/6jP8gWgHzK6bXLdRlh8E=@vger.kernel.org, AJvYcCUqUOfovKCyUqBgpAmsAXCgptZu+KA1yEDDd+uD9PXbWeaC0+Q7bvJt/1xwOubfj8jDU+iwQtdAbJQ=@vger.kernel.org, AJvYcCXPokvk3BfpGeuQxWzwBCgzdhm4jghieXD5CCM29dRqS8gvwR8ohIankUp4xeb+MpNdv2ekbvQ7YugYuQ8ef/3CaeSIYCk=@vger.kernel.org, AJvYcCXQiurg3JRMGo0kv7U/kylpiTZ7dx2IHC608pP4nG0VyUR9rBrUavPiaz4PQkIRCXQappNcfuZU7dOkUZZN@vger.kernel.org, AJvYcCXlWIRXw/tlAuiezwa791vyuy1hW7R8DAeVbWbs+dgKL8kofwL71QOY0Zm8YTTH9ow5pHQbQynZ7Bk6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXi/JK40boNgCdGVJMJMfeXJnpy7kQ70wu13wN3CDxUfB5Wiqq
-	qOL1SiH14+ld+QiD3lWglX35uDZjxRV02VW8w/VAPTc3zuO10wutMIjH
-X-Gm-Gg: ASbGncvrhtgtz81HTkd8NFDPxjgV1cXPcCMJECv1cPcaTvy0EyhFUvRodbaFVZSS6E9
-	hoBEFH0pjJ0P598pzJ4hw2l6/Dr11nCSzbZJjy7cApfFfGTMzJ3+KuGxTPuatIq+059DclTo0hT
-	TkxK/YKkvsAhniQzBVw3PoVD0J2XzNn1QFqv8BOTT+Vk9/dl4IeiaLy6jZzQzCARpCehH0Fdwx2
-	G3d+UQwiHaSf5TE6zTWEalyMcEo1f1ywIBj8eW53rfajnwFVlsQ4FlRY/cybInDGP1CjKZk7j1T
-	t6EmqcOE0vNdYGI7aAEAdOFqaVdr2frtlQHGtuBTwDYjc9MaOOCkDP2tnmEm7rk7kU0riIwKr9i
-	x8pLpKtRBM/R2KlJo/k5DkO2IlDuk8w==
-X-Google-Smtp-Source: AGHT+IHpyIE58Xouwhj6yBGTLqqaBArMNrYcPZiFgWmogKeWrtCsF1xc0DbS3TA1SKqjyLzK1ppp+w==
-X-Received: by 2002:a17:90b:33c4:b0:31f:141:448c with SMTP id 98e67ed59e1d1-32327b45d14mr2843144a91.3.1755197016744;
-        Thu, 14 Aug 2025 11:43:36 -0700 (PDT)
-Received: from ranganath.. ([2406:7400:98:2b0c:a05e:ba31:bd42:d797])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32330fc5142sm2594991a91.8.2025.08.14.11.43.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 11:43:36 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-To: alison.schofield@intel.com
-Cc: alim.akhtar@samsung.com,
-	corbet@lwn.net,
-	dave@stgolabs.net,
-	linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel-mentees@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	rafael@kernel.org,
-	skhan@linuxfoundation.org,
-	vishal.l.verma@intel.com,
-	vnranganath.20@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v2] Documentation: Fix driver-api typos
-Date: Fri, 15 Aug 2025 00:13:03 +0530
-Message-ID: <20250814184304.20448-1-vnranganath.20@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <aJ4KEKHn351vQXe_@aschofie-mobl2.lan>
-References: <aJ4KEKHn351vQXe_@aschofie-mobl2.lan>
+	s=arc-20240116; t=1755197012; c=relaxed/simple;
+	bh=+edEx8wP5sj6lIPPo4+9dTecgBzL9N0lb1TKODlviEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5o8m+bcEJ1M3+UdfvihLRdamgHnKblel5Dfpn0vzKAUrgkKPBePKPssP/XPCuWKWlbrES9ggX/bP4eF3iolsMNQyI2f5WoPsiq5rhzb4AehTNJSwfPZLvwo+7OOpvp0o4Ghwe5wGdGeIsje++F7+4JwpAUwXAR16sT6ZW156uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+OwVj2O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC47DC4CEED;
+	Thu, 14 Aug 2025 18:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755197011;
+	bh=+edEx8wP5sj6lIPPo4+9dTecgBzL9N0lb1TKODlviEg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X+OwVj2OLlRjK6XZS/8srDIRauWKxHcA5a0JJhaqDHoM751EWi35LMp2Qe71x0vJI
+	 F3EJ42mzPbM5HV+kbrIw+hh1YmI3ExfnBXTCfklBDrnUbATkYqavQRwnzlA8+5Es4P
+	 0+ej6Zk10WhURXK1AJDCbBBAXRx0GmNAAYusuOELHieRqq67QzKPoAdJiF1E9AAV82
+	 axYbo7gzJ/2k223McejgeoQ1CdcFwGND6LcXLewKrTSJqwkWLyxwizNuzO3cAJYp3l
+	 /DuPYD3q9QH5fFlOheUTni3cZbMk0KIUxvxBoLChPc+8KhPSF8Pv+R2INB3sXR0lN8
+	 RYjoZvJjyUDsA==
+Date: Thu, 14 Aug 2025 19:43:27 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Shimrra Shai <shimrrashai@gmail.com>
+Cc: lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+	perex@perex.cz, tiwai@suse.com
+Subject: Re: Re: [PATCH 1/2] ASoC: es8323: enable right-hand DAC-mixer
+ connection on ES8323
+Message-ID: <7d2529cb-7ecb-4616-af04-f65b1f309d89@sirena.org.uk>
+References: <b5a64166-c55f-4ca4-af92-52c954847af6@sirena.org.uk>
+ <20250814183344.59453-1-shimrrashai@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="V6wTkxydwkAjWbTz"
+Content-Disposition: inline
+In-Reply-To: <20250814183344.59453-1-shimrrashai@gmail.com>
+X-Cookie: This sentence no verb.
 
-Corrected a few spelling mistakes
 
-v2:
-* corrected as per suggestions.
-* improved the phrasing.
+--V6wTkxydwkAjWbTz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-functionalty ==> functionality
-in Documentation/driver-api/cxl/devices/device-types.rst
+On Thu, Aug 14, 2025 at 01:33:44PM -0500, Shimrra Shai wrote:
+> On Thu, Aug 14, 2025 at 01:11:59 PM +0100, Mark Brown wrote:
+> > On Wed, Aug 13, 2025 at 08:47:31PM -0500, Shimrra Shai wrote:
 
-adjascent ==> adjacent
-in Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> > >  	snd_soc_component_write(component, ES8323_DACCONTROL17, 0xB8);
+> > > +	snd_soc_component_write(component, ES8323_DACCONTROL20, 0xB8);
 
-succeessful ==> successful
-in Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> > Neither of these should be unconditional writes, these should be user
+> > visible controls.  We don't encode specific system's use cases into the
+> > driver.
 
-Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
----
- .../driver-api/cxl/devices/device-types.rst        |  2 +-
- .../example-configurations/one-dev-per-hb.rst      |  2 +-
- .../thermal/exynos_thermal_emulation.rst           | 14 +++++++-------
- 3 files changed, 9 insertions(+), 9 deletions(-)
+> I was just following the precedent from the driver's prior
+> author(s), in the manner of the line above it. Presumably, enabling
+> the left-hand DAC-mixer connection only was a solution that worked
 
-diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
-index 923f5d89bc04..7f69dfa4509b 100644
---- a/Documentation/driver-api/cxl/devices/device-types.rst
-+++ b/Documentation/driver-api/cxl/devices/device-types.rst
-@@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
- Typically used for initialization, configuration, and I/O access for anything
- other than memory (CXL.mem) or cache (CXL.cache) operations.
- 
--The Linux CXL driver exposes access to .io functionalty via the various sysfs
-+The Linux CXL driver exposes access to .io functionality via the various sysfs
- interfaces and /dev/cxl/ devices (which exposes direct access to device
- mailboxes).
- 
-diff --git a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-index aebda0eb3e17..a4c3fb51ea7d 100644
---- a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-+++ b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-@@ -10,7 +10,7 @@ has a single CXL memory expander with a 4GB of memory.
- Things to note:
- 
- * Cross-Bridge interleave is not being used.
--* The expanders are in two separate but adjascent memory regions.
-+* The expanders are in two separate but adjacent memory regions.
- * This CEDT/SRAT describes one node per device
- * The expanders have the same performance and will be in the same memory tier.
- 
-diff --git a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-index c21d10838bc5..c679502f01c7 100644
---- a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-+++ b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-@@ -28,13 +28,13 @@ changed into it.
- delay of changing temperature. However, this node only uses same delay
- of real sensing time, 938us.)
- 
--Exynos emulation mode requires synchronous of value changing and
--enabling. It means when you want to update the any value of delay or
--next temperature, then you have to enable emulation mode at the same
--time. (Or you have to keep the mode enabling.) If you don't, it fails to
--change the value to updated one and just use last succeessful value
--repeatedly. That's why this node gives users the right to change
--termerpature only. Just one interface makes it more simply to use.
-+Exynos emulation mode requires that value changes and enabling are performed
-+synchronously. This means that when you want to update any value, such as the
-+delay or the next temperature, you must enable emulation mode at the same
-+time (or keep the mode enabled). If you do not, the value will fail to update
-+and the last successful value will continue to be used. For this reason,
-+this node only allows users to change the temperature. Providing a single
-+interface makes it simpler to use.
- 
- Disabling emulation mode only requires writing value 0 to sysfs node.
- 
--- 
-2.43.0
+Yes, as I say this is very bad practice on the part of the original
+authors which only escaped review due to the magic numbers.
 
+> instead of using a blanket for all devices as I thought. In that
+> case, that means the original author was also wrong, and so I need
+> to know exactly where it should be placed.
+
+Like I say these should be userspace controls, not just blind writes.
+Probably wired up in DAPM, SOC_DAPM_SINGLE().
+
+> which suggest it is in fact controllable already, but I wonder why it
+> is in the "bypass" switch only and not the "playback" switch, which
+> seems to do nothing (SND_SOC_NOPM). Would it perhaps be correct to
+> move these to the "playback" switch, or to have both switches
+> collapsed into a single switch?
+
+Those will be different audio paths, it's almost certainly a bug due to
+the hard coding of the enables.  Both DAC and bypass paths should be
+normal user controllable things, from the sound of it what's needed is
+to define the register for the DAC path.
+
+> In any case, if these are the correct places to enable this control
+> and it is already supported there, then it seems neither write command
+> in the setup is needed, viz. we should _delete_
+
+> snd_soc_component_write(component, ES8323_DACCONTROL17, 0xB8);
+
+> too. What do you say?
+
+Yes, ideally that shouldn't be there.  There's some risk that there
+might be some userspace relying on having the mono channel enabled by
+default though so perhaps it's safer to just leave that as is - the path
+can still be configured by userspace, even if we end up with a weird
+asymmetric default.  I guess there's also some other things in that
+register which most likely should also be controllable.
+
+--V6wTkxydwkAjWbTz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmieLk4ACgkQJNaLcl1U
+h9Aujwf9H4/FrH0RsNY7gMqAmRWMuc3EYNLFbcnfpLD+rFs2X4sX3XiQCaPzY/S0
+XgDhpQP1+6+oLIJx8m9+mm5Tpcbr237cNLkYkktWT16vTC0Kb9mVmjMR5i1plscZ
+NbsFHXCZmmxYv6TFYYgjIq1vuYCssxzU7QBFJJSdXBzehOi4deYinNcN9lRti0jX
+TYcfWOxYT9xKhzaJuXWAoQLt1XFMNnzS1LBD5QfWUKgnmEV7RQ0o7io2flZVnqVA
+ZD4wQwRqGVlB7R9pQRuupNhoKJyruO5Cd7NmwmQFtuUSwXS8ca4UO9pU/52dJueh
+jrSJ+kSDmrF7fheV6q3yHrpBoYPuhQ==
+=x+Gy
+-----END PGP SIGNATURE-----
+
+--V6wTkxydwkAjWbTz--
 
