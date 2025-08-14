@@ -1,189 +1,174 @@
-Return-Path: <linux-kernel+bounces-768229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDF1B25E86
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:15:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E83CB25E89
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5903A3BC8F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:15:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D6B27B1A30
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9935B2E765B;
-	Thu, 14 Aug 2025 08:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF5F2E7F18;
+	Thu, 14 Aug 2025 08:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TCoGRjBN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DuLWiJm6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3DB2E7627;
-	Thu, 14 Aug 2025 08:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0492E7F2E;
+	Thu, 14 Aug 2025 08:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755159299; cv=none; b=SDFzxfPNMTsLWVd3A1Sc3KXrdnUw/5fOyu5/gC8KChIGQJjtuBvJUSb0C0i4MpzQxlvwgfpdZDmzLbyPcTbPHM6IJeXYDXmyLFZrRFEj46RxiZ9IWZUUeTO/uMNVS3BZXM7gMER2SPQ3J+zQGsd/947X8v6dSL7N8R+jzh0TR/Y=
+	t=1755159345; cv=none; b=RJSQ9Q5KH4xj6+ukE5C3ij4AHRK5+7kfPMx/SsS2b0XpVTAc1j4WFaMR/XvG7ZIP9STWOtXLv8CzH8KTVdb0l04yD18T3NVq0oXvCnl1YBzwGIewDptba361xS1z2Mab2eY3gJMqJDosJHaSCH9f48fnYTjWDFK+D80uzE9APOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755159299; c=relaxed/simple;
-	bh=Wr3WdE3uMOX6/8GG9xdLhWuBzjGorSz5KLFTSo0Z0U0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DZuQwfjqlEqBR3V9SJ7MLDd6CaSTBnVTQ1B7qONeFARqLXOD67FlzuIgUjapChlWFKzydg9EOMVT2FgdMocwsFmzPOrxQv7QuAAAcSmFNB+BF6/VV7HIfzrz8yw6GQMkJ91Qp5tJl5H3+/ztmT0QbwrJ9cwMxI0lznuNjfuelt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TCoGRjBN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DLvfum002766;
-	Thu, 14 Aug 2025 08:14:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uJLHSyRwMcxEA2wz9A/E2nc3nbXUEmdM0eGNEHTw7Xo=; b=TCoGRjBNi2UBJGKv
-	uxMEEGYQI32/BcfYSPbYpJ+5OygxU0EzVKDLgzZQ2RJKxTD4QsUCVHhfsXPCth5t
-	vVgf3Db1sqZTioI42RpvQfTrpL77aooON5OG9AsoizKX6z9GMvQ1kfbZg6pgj3u1
-	zEGRCRFpqFyQzvdYj/TfkXB9NTN32o0+GYUG5dqfbaig7U9bArdSPmmzwhHkFOTb
-	6QWFL7K/hJSQ8NPmWIKlt/h/JC0aXyWwLj39AsHlmCJHhdUTC4/CSWy1oSxiEMGe
-	KTYl2BEDr01rKGuuCckOIFyJaGHfaB4dKQXLr+sszdk7f/sBO2WwhO/z6SaO2sTw
-	pYDclg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxdv6wvr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:14:48 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57E8El48031319
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:14:47 GMT
-Received: from [10.133.33.43] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
- 2025 01:14:43 -0700
-Message-ID: <c532bb78-dca8-4922-9d8e-ae1346f73eee@quicinc.com>
-Date: Thu, 14 Aug 2025 16:14:40 +0800
+	s=arc-20240116; t=1755159345; c=relaxed/simple;
+	bh=6E0Tfz3mQAO8WgpBT7lxhRZaLaj11rwitgOe3a6lVFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eebs9yPZliKtV9tPxlyWWkupAabfPjSPY9933wd74Lyv0mdIVT08QX8nNOCTHSInTFHaxJX52WnpivVtm3nc7e/2R70E1JJ70O/a2FDkHdZQIm3yDMEcpMyvRV1Qmiyf3G25wXW+QychFA1i3uqiJ1yWc9aBPYFmMM3BbB4oiL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DuLWiJm6; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755159343; x=1786695343;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6E0Tfz3mQAO8WgpBT7lxhRZaLaj11rwitgOe3a6lVFg=;
+  b=DuLWiJm6uV9jlhLe7bW59m+XKxl9xFf95zhKS8mxSLQaXvYTThsxxAdG
+   jIyIVSJq2bGdAanBQDD0eJWHCAst1SsUl5LMVDnFXs60eOJBWVwgWstDS
+   p5DDthoeNJ7pt850foCF/reoFBGuf2Zk88EQpRRGYVRyVjsUoMQK24tlV
+   YQ4NGjXFssXiYQOwMYAZ6gpjqiD0F7MI8oY876bYsw38uY1mBBdnI/cTw
+   Lg64MB581LfwdtHxyV/xWTg8xwC2pRBbq6AoJLifmLyt4ogUdJRGYdNhI
+   Lhbe1TKDNPFHnj0rHTMCHfsehykJikPsNiVWwQjdeaO5ShyHngoxktdUO
+   A==;
+X-CSE-ConnectionGUID: OY/TJQv6TQOGDpl6vg7TGg==
+X-CSE-MsgGUID: L89AeeGuQL2QR1FRGrvDRw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="80045683"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="80045683"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 01:15:43 -0700
+X-CSE-ConnectionGUID: 6QvLLeTHS52x5elOnY5SwA==
+X-CSE-MsgGUID: FPLkVErvS/+BynwVet6Qsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166964216"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 14 Aug 2025 01:15:39 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umT7P-000Ajw-2T;
+	Thu, 14 Aug 2025 08:15:30 +0000
+Date: Thu, 14 Aug 2025 16:15:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Griffin <peter.griffin@linaro.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
+	William Mcvicker <willmcvicker@google.com>,
+	Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: Re: [PATCH v3 2/2] phy: samsung: gs101-ufs: Add .notify_phystate() &
+ hibern8 enter/exit values
+Message-ID: <202508141555.NJvU2oYQ-lkp@intel.com>
+References: <20250813-phy-notify-pmstate-v3-2-3bda59055dd3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/38] drm/msm/dp: break up dp_display_enable into two
- parts
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>
-References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
- <20250609-msm-dp-mst-v2-3-a54d8902a23d@quicinc.com>
- <gwib6zcvkxsxcz222cno5jbvsnt2abdoqfnymlxq7e6c6wdfvn@nlplodnco2sw>
- <48c61bce-21e6-488a-b976-da53004b6226@quicinc.com>
- <ftlaxwogzz72rg4plguaet4wi64pmdfmd62qve4xffamxq4fsu@ytd4edwv6ixm>
-Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <ftlaxwogzz72rg4plguaet4wi64pmdfmd62qve4xffamxq4fsu@ytd4edwv6ixm>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689d9af8 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=SWdLHOgqrEU_Pm2j9X4A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: aMQ9PDp31Enln-e_mZqrOB1z5pJMtIoG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfXyVyhGECUQbQr
- nXnoa7aSs7bmwFGIcBfkp11zTn+lX4e13KOnDyJ45w1dQ+/NtqwV8sKPaipll1xz40evMKDNs++
- f2nr69Qjy+2Hu2+7NXTV6KJxg2sMCl+3eCNRWv1yoEcJ7x05jRztRhmiBMSZaFmgmr3tcpEdzAk
- PQFVzpvgx9NfppDp2/PQYzZ9JGMZOsvA6zZ/vbzGXDTdh7yuVwSONBxMIR7nXeeNAjnB0350Ss7
- gMPv9vUDbxR5Q/0nxBFGSGUfGsPhOA4Y+Tk01lRdcQGDZA+ksjO8rctxo/qsmx9u36EgaLOqNh8
- bNYuedA9m5Jg3306rAx6zALXvzoptBxeYqz344Ewuu2l2fnlm2fxryAGtFAI0nEdcXmEtWG2nqU
- jr3PGbZz
-X-Proofpoint-GUID: aMQ9PDp31Enln-e_mZqrOB1z5pJMtIoG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090025
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813-phy-notify-pmstate-v3-2-3bda59055dd3@linaro.org>
+
+Hi Peter,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 43c3c17f0c805882d1b48818b1085747a68c80ec]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/phy-add-new-phy_notify_state-api/20250813-231312
+base:   43c3c17f0c805882d1b48818b1085747a68c80ec
+patch link:    https://lore.kernel.org/r/20250813-phy-notify-pmstate-v3-2-3bda59055dd3%40linaro.org
+patch subject: [PATCH v3 2/2] phy: samsung: gs101-ufs: Add .notify_phystate() & hibern8 enter/exit values
+config: arm-randconfig-001-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141555.NJvU2oYQ-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 3769ce013be2879bf0b329c14a16f5cb766f26ce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508141555.NJvU2oYQ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508141555.NJvU2oYQ-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/phy/samsung/phy-samsung-ufs.c:232:11: warning: variable 'cfg' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+     232 |         else if (state.ufs_state == PHY_UFS_HIBERN8_EXIT)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/phy/samsung/phy-samsung-ufs.c:235:19: note: uninitialized use occurs here
+     235 |         for_each_phy_cfg(cfg) {
+         |                          ^~~
+   drivers/phy/samsung/phy-samsung-ufs.c:232:7: note: remove the 'if' if its condition is always true
+     232 |         else if (state.ufs_state == PHY_UFS_HIBERN8_EXIT)
+         |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     233 |                 cfg = ufs_phy->cfgs_hibern8[CFG_PRE_HIBERN8_EXIT];
+   drivers/phy/samsung/phy-samsung-ufs.c:224:39: note: initialize the variable 'cfg' to silence this warning
+     224 |         const struct samsung_ufs_phy_cfg *cfg;
+         |                                              ^
+         |                                               = NULL
+   1 warning generated.
 
 
+vim +232 drivers/phy/samsung/phy-samsung-ufs.c
 
-On 2025/8/13 20:59, Dmitry Baryshkov wrote:
-> On Wed, Aug 13, 2025 at 05:36:10PM +0800, Yongxing Mou wrote:
->>
->>
->> On 2025/6/9 20:59, Dmitry Baryshkov wrote:
->>> On Mon, Jun 09, 2025 at 08:21:22PM +0800, Yongxing Mou wrote:
->>>> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
->>>>
->>>> dp_display_enable() currently re-trains the link if needed
->>>> and then enables the pixel clock, programs the controller to
->>>> start sending the pixel stream. Splite these two parts into
->>>> prepare/enable APIs, to support MST bridges_enable inserte
->>>
->>> typos
->>>
->>>> the MST payloads funcs between enable stream_clks and programe
->>>> register.
->>>>
->>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->>>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->>>> ---
->>>>    drivers/gpu/drm/msm/dp/dp_ctrl.c    | 57 +++++++++++++--------
->>>>    drivers/gpu/drm/msm/dp/dp_ctrl.h    |  3 +-
->>>>    drivers/gpu/drm/msm/dp/dp_display.c | 99 +++++++++++++++++++++++++++----------
->>>>    drivers/gpu/drm/msm/dp/dp_display.h |  1 +
->>>>    4 files changed, 111 insertions(+), 49 deletions(-)
->>>>
-> 
->>>> @@ -831,7 +831,37 @@ static int msm_dp_display_set_mode(struct msm_dp *msm_dp_display,
->>>>    	return 0;
->>>>    }
->>>> -static int msm_dp_display_enable(struct msm_dp_display_private *dp, bool force_link_train)
->>>> +static int msm_dp_display_prepare(struct msm_dp_display_private *dp)
->>>> +{
->>>> +	int rc = 0;
->>>> +	struct msm_dp *msm_dp_display = &dp->msm_dp_display;
->>>> +	bool force_link_train = false;
->>>> +
->>>> +	drm_dbg_dp(dp->drm_dev, "sink_count=%d\n", dp->link->sink_count);
->>>> +	if (msm_dp_display->prepared) {
->>>> +		drm_dbg_dp(dp->drm_dev, "Link already setup, return\n");
->>>> +		return 0;
->>>> +	}
->>>
->>> How can it be prepared here? It is called at the beginning of the
->>> .atomic_enable() only, so there is no way this can be true.
->>>
->> Emm, sorry for forget this case.. Whern MST enabled,
->> msm_dp_display_prepare() will be called from mst_bridge_atomic_pre_enable,
->> that means, when second stream called this func, it already prepared, so we
->> should skip here. so this condition will really hit in MST case..
-> 
-> Then it should be refcounted. And, ideally, this should come later as a
-> part of one of MST-enablement patches, when it actually makes sense
-> 
-Okay. I will move this part to appropriate patch.
->>>> +
->>>> +	rc = pm_runtime_resume_and_get(&msm_dp_display->pdev->dev);
->>>> +	if (rc) {
->>>> +		DRM_ERROR("failed to pm_runtime_resume\n");
->>>> +		return rc;
->>>> +	}
->>>> +
->>>> +	if (dp->hpd_state == ST_CONNECTED && !msm_dp_display->power_on) {
->>>> +		msm_dp_display_host_phy_init(dp);
->>>> +		force_link_train = true;
->>>> +	}
->>>> +
-> 
+   219	
+   220	static int samsung_ufs_phy_notify_state(struct phy *phy,
+   221						union phy_notify state)
+   222	{
+   223		struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
+   224		const struct samsung_ufs_phy_cfg *cfg;
+   225		int i, err;
+   226	
+   227		if (!ufs_phy->cfgs_hibern8)
+   228			return 0;
+   229	
+   230		if (state.ufs_state == PHY_UFS_HIBERN8_ENTER)
+   231			cfg = ufs_phy->cfgs_hibern8[CFG_POST_HIBERN8_ENTER];
+ > 232		else if (state.ufs_state == PHY_UFS_HIBERN8_EXIT)
+   233			cfg = ufs_phy->cfgs_hibern8[CFG_PRE_HIBERN8_EXIT];
+   234	
+   235		for_each_phy_cfg(cfg) {
+   236			for_each_phy_lane(ufs_phy, i) {
+   237				samsung_ufs_phy_config(ufs_phy, cfg, i);
+   238			}
+   239		}
+   240	
+   241		if (state.ufs_state == PHY_UFS_HIBERN8_EXIT) {
+   242			for_each_phy_lane(ufs_phy, i) {
+   243				if (ufs_phy->drvdata->wait_for_cdr) {
+   244					err = ufs_phy->drvdata->wait_for_cdr(phy, i);
+   245					if (err)
+   246						goto err_out;
+   247				}
+   248			}
+   249		}
+   250	
+   251		return 0;
+   252	err_out:
+   253		return err;
+   254	}
+   255	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
