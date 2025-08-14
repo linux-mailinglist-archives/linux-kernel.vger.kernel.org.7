@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-768553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88694B26285
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:24:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D5FB26288
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32CBD5C0A62
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:22:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35D325C2430
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B316302774;
-	Thu, 14 Aug 2025 10:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF5A302CC0;
+	Thu, 14 Aug 2025 10:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fHh9ybAI"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZVXFvV0u"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D24301475
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F192EBBA7
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755166559; cv=none; b=PZYH5OsmZC5WcNWkCToNRAKr70FIoJEFZjn7MlZrulImtdUgj5/TrpLQ6048FKv61wr/2/X8VIogUTOUSdF1CDF794JPc5PmMBaRp5rgMNYKVyjYVLUd+9Ng0bOd6wYFqNkw40AzabLRrjT6sCL+K3fMsUbsf+SNPmXCvPwOFL4=
+	t=1755166567; cv=none; b=RBUYDBKh0UCWqFZEJYNe4Sqqj2xdmJ+tVVO+TEq0p4RIqIoMoz/pDhDNa1LZFG2On+mZvk4HCRCd5iZhZNk2SqYKJ+HnQPiA/Ze2JDky0RtrbqF0Jq8lXMSSeMXGMRjoXVwmn9C8q7QFkiL41w3pxjd7r35yup5taaLv5vNqIlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755166559; c=relaxed/simple;
-	bh=ikwK1L1Zqv+UgFsFXEmpO+tfpHaf2zCZIQITeI8jLNs=;
+	s=arc-20240116; t=1755166567; c=relaxed/simple;
+	bh=K9wUwnjWFxdOJ7Wm33r78Qn4RUe2Lz37lf3pYpYOLXM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=d5oR+0daOTjKEEnxsjmycFQDOUEd0K/ddQBDLSv3pFg/RK/fRMC4Av38syExT1yuQ6OeaO30CvsBYLHvEgDHg7lBrVHboFBdJvD6hnPXcWXeuOH2DeIMyWOtKoOwFRgv2uvDFRQ/284bdVZwgcbSbHbZUEL0ncErx7EqnKVlJ80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fHh9ybAI; arc=none smtp.client-ip=170.10.133.124
+	 Content-Disposition:In-Reply-To; b=EzH3qmKo00GaeFCUMy/OCxqFIgSGbqxiZbgb2+sC4THD2DVnuxm7yP0uSpLGMGyiiurkLTeyFIl6Bo0cm9jgoOV6tlPIPkqlK9QUl8NHk3tfq5E8AYjXaWUGwPK9iijojErSkVDW6NWhLWABpMMc0H+jAS82hA6DQNC9Ylhdl4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZVXFvV0u; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755166557;
+	s=mimecast20190719; t=1755166565;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=cc8JTYkYXyLOfAFP05hC+s4ahvBhm0jxKwqiDB0jMOc=;
-	b=fHh9ybAIGo9NfQ3D4ka8wV95/DTAZYqb5imuIJ1gla5ZMbEAb88TPkKmiqOCclKdCSLcjA
-	AC6wpDE445MfbMkfR62Fh9clBCfpvU88a+bIGIhTPY9euFhV22z9VY+JqVUTwLbYatS4Rg
-	9QsHc5508AN/CrxztjrS2pcXqGSZz24=
+	 in-reply-to:in-reply-to; bh=DVY1QUCNIwldEWKREIgkBawz/WH7nI6qPUesGk16egQ=;
+	b=ZVXFvV0u5s8eEVPk8CX4BuHOhhy0b/tzj8C3/aVgBw7/X4nbnq1IHJnLKwVVaAUwe15YGF
+	RbeCGtUz5EC3a+HCv3wyz+dtYUJQnhLrlA4FqmaambGebWS+mY+DhkEgz/anV3bPbUTKBx
+	CZDxvMM0Kr0z/+SHfUHTGV4QMF464GM=
 Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-388-FS5_zYP6OA-_seZQdQ0AFA-1; Thu,
- 14 Aug 2025 06:15:51 -0400
-X-MC-Unique: FS5_zYP6OA-_seZQdQ0AFA-1
-X-Mimecast-MFC-AGG-ID: FS5_zYP6OA-_seZQdQ0AFA_1755166550
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-26-JBqeZ61SNCqTASO1AyXFcw-1; Thu,
+ 14 Aug 2025 06:16:01 -0400
+X-MC-Unique: JBqeZ61SNCqTASO1AyXFcw-1
+X-Mimecast-MFC-AGG-ID: JBqeZ61SNCqTASO1AyXFcw_1755166560
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 091BD1882805;
-	Thu, 14 Aug 2025 10:15:50 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9BDEF18824F2;
+	Thu, 14 Aug 2025 10:15:59 +0000 (UTC)
 Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.62])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 02A051955E89;
-	Thu, 14 Aug 2025 10:15:45 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0B1911800446;
+	Thu, 14 Aug 2025 10:15:51 +0000 (UTC)
 Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 14 Aug 2025 12:14:34 +0200 (CEST)
-Date: Thu, 14 Aug 2025 12:14:29 +0200
+	oleg@redhat.com; Thu, 14 Aug 2025 12:14:43 +0200 (CEST)
+Date: Thu, 14 Aug 2025 12:14:35 +0200
 From: Oleg Nesterov <oleg@redhat.com>
 To: Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
@@ -66,9 +66,9 @@ To: Borislav Petkov <bp@alien8.de>,
 	Sohil Mehta <sohil.mehta@intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [PATCH 4/6] x86/shstk: add "task_struct *tsk" argument to
- reset_thread_features()
-Message-ID: <20250814101429.GA17356@redhat.com>
+Subject: [PATCH 5/6] x86/shstk: don't create the shadow stack for
+ PF_USER_WORKERs
+Message-ID: <20250814101435.GA17362@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,72 +79,90 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20250814101340.GA17288@redhat.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Preparation for the next change.
+If a features_enabled(ARCH_SHSTK_SHSTK) userspace thread creates a
+PF_USER_WORKER thread, shstk_alloc_thread_stack() allocates the shadow
+stack for no reason, the new (kernel) thread will never return to usermode.
+
+Plus the current code doesn't even look correct, in this case fpu_clone()
+won't call update_fpu_shstk().
+
+Add the new "bool minimal = !!args->fn" argument (which matches that of
+fpu_clone()) to shstk_alloc_thread_stack() and change it to do
+reset_thread_features(tsk) if "minimal" is true.
+
+With this patch ssp_get() -> ssp_active(target) should never return true
+if target->flags & PF_USER_WORKER.
 
 Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 ---
- arch/x86/include/asm/shstk.h | 4 ++--
- arch/x86/kernel/process_64.c | 2 +-
- arch/x86/kernel/shstk.c      | 8 ++++----
- 3 files changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/shstk.h |  4 ++--
+ arch/x86/kernel/process.c    |  2 +-
+ arch/x86/kernel/shstk.c      | 11 ++++++++++-
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/include/asm/shstk.h b/arch/x86/include/asm/shstk.h
-index ba6f2fe43848..92d449cc352a 100644
+index 92d449cc352a..dfb2aeebc25f 100644
 --- a/arch/x86/include/asm/shstk.h
 +++ b/arch/x86/include/asm/shstk.h
-@@ -15,7 +15,7 @@ struct thread_shstk {
- };
- 
+@@ -17,7 +17,7 @@ struct thread_shstk {
  long shstk_prctl(struct task_struct *task, int option, unsigned long arg2);
--void reset_thread_features(void);
-+void reset_thread_features(struct task_struct *task);
+ void reset_thread_features(struct task_struct *task);
  unsigned long shstk_alloc_thread_stack(struct task_struct *p, unsigned long clone_flags,
- 				       unsigned long stack_size);
+-				       unsigned long stack_size);
++				       bool minimal, unsigned long stack_size);
  void shstk_free(struct task_struct *p);
-@@ -26,7 +26,7 @@ bool shstk_is_enabled(void);
- #else
- static inline long shstk_prctl(struct task_struct *task, int option,
+ int setup_signal_shadow_stack(struct ksignal *ksig);
+ int restore_signal_shadow_stack(void);
+@@ -28,7 +28,7 @@ static inline long shstk_prctl(struct task_struct *task, int option,
  			       unsigned long arg2) { return -EINVAL; }
--static inline void reset_thread_features(void) {}
-+static inline void reset_thread_features(struct task_struct *task) {}
+ static inline void reset_thread_features(struct task_struct *task) {}
  static inline unsigned long shstk_alloc_thread_stack(struct task_struct *p,
- 						     unsigned long clone_flags,
+-						     unsigned long clone_flags,
++						     unsigned long clone_flags, bool minimal,
  						     unsigned long stack_size) { return 0; }
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 52a5c03c353c..543425ea8d44 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -540,7 +540,7 @@ start_thread_common(struct pt_regs *regs, unsigned long new_ip,
- 		load_gs_index(__USER_DS);
- 	}
+ static inline void shstk_free(struct task_struct *p) {}
+ static inline int setup_signal_shadow_stack(struct ksignal *ksig) { return 0; }
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 1b7960cf6eb0..e932e0e53972 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -209,7 +209,7 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+ 	 * is disabled, new_ssp will remain 0, and fpu_clone() will know not to
+ 	 * update it.
+ 	 */
+-	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->stack_size);
++	new_ssp = shstk_alloc_thread_stack(p, clone_flags, args->fn, args->stack_size);
+ 	if (IS_ERR_VALUE(new_ssp))
+ 		return PTR_ERR((void *)new_ssp);
  
--	reset_thread_features();
-+	reset_thread_features(current);
- 
- 	loadsegment(fs, 0);
- 	loadsegment(es, _ds);
 diff --git a/arch/x86/kernel/shstk.c b/arch/x86/kernel/shstk.c
-index 2ddf23387c7e..e6d3b1371b11 100644
+index e6d3b1371b11..3da22c6f5874 100644
 --- a/arch/x86/kernel/shstk.c
 +++ b/arch/x86/kernel/shstk.c
-@@ -184,11 +184,11 @@ static int shstk_setup(void)
- 	return 0;
- }
- 
--void reset_thread_features(void)
-+void reset_thread_features(struct task_struct *tsk)
- {
--	memset(&current->thread.shstk, 0, sizeof(struct thread_shstk));
--	current->thread.features = 0;
--	current->thread.features_locked = 0;
-+	memset(&tsk->thread.shstk, 0, sizeof(struct thread_shstk));
-+	tsk->thread.features = 0;
-+	tsk->thread.features_locked = 0;
+@@ -192,11 +192,20 @@ void reset_thread_features(struct task_struct *tsk)
  }
  
  unsigned long shstk_alloc_thread_stack(struct task_struct *tsk, unsigned long clone_flags,
+-				       unsigned long stack_size)
++				       bool minimal, unsigned long stack_size)
+ {
+ 	struct thread_shstk *shstk = &tsk->thread.shstk;
+ 	unsigned long addr, size;
+ 
++	/*
++	 * Kernel threads cloned from userspace thread never return to
++	 * usermode.
++	 */
++	if (minimal) {
++		reset_thread_features(tsk);
++		return 0;
++	}
++
+ 	/*
+ 	 * If shadow stack is not enabled on the new thread, skip any
+ 	 * switch to a new shadow stack.
 -- 
 2.25.1.362.g51ebf55
 
