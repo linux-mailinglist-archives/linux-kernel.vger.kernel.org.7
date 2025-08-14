@@ -1,176 +1,361 @@
-Return-Path: <linux-kernel+bounces-769086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF59FB269E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C08B26A04
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1C6E3AFF5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:43:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEA7B601096
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6FD1FE45A;
-	Thu, 14 Aug 2025 14:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3571C1F4262;
+	Thu, 14 Aug 2025 14:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lACj2DGd"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Td1ShWdI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B3D1DE3B5;
-	Thu, 14 Aug 2025 14:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65700321428;
+	Thu, 14 Aug 2025 14:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755182570; cv=none; b=p+rHp5u56gcu5cINPQpL0EXtrOsPMCwbHOFB+YvxjAoOacSSvfk0ZEeOGXgwwwIrBOJHT5/ylvbD8MKBXdNyfOssDXzGM2ufMieuUPcaXnP6KYlo9C8XtHTZbFYtpowdLmq6GmjOdOaUnLG0TGL2Jni2Ln7iWrK21vt1ZDlOMaU=
+	t=1755182620; cv=none; b=IU7Rv5gS9aRbkkE5CEJK8s/fFRT10P15qJ2kRXn+GUYDTBxM8qJgsSDPxzgAVNBTYoZNUk6pFzpYCvYTpW59Ry2mseRE35lH9FHwqMgfbdIOBTdBisOZGqMOkAwFGAWd/zjQNJdM1dC379Oy3Cwm/pq3zMhtJqJDNdN+c84ewAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755182570; c=relaxed/simple;
-	bh=MobfB4SZ6VjZKXzrXbLomGeTlLEdXpJz0vuRlj/n+Io=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E8z+vLXmujltHJU88qAgGujoJcRK4QLJ/FyMuBMBociupQN8UScy3To2ihldyacYZJX8S8WHvznTNfHrAxhKlXW4fJghwfVUA4mI5yLBpK/ohXs/R34/xt2Hb/lNaGkrRatst9MXMSjBUHa+FfYldxGtMkJZqc9ZimHbfjz4Hfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lACj2DGd; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b004a31so7024685e9.0;
-        Thu, 14 Aug 2025 07:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755182567; x=1755787367; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p2VPK+LGzPHiwIqFk3Ohj/RoTK5gsaz46bIEazLhBRA=;
-        b=lACj2DGdF6YwEyiWB+E+cAgkbqQeGIURjoHZi+Vc8Cwvc7BOX5Rj37X7cRVRzyUrwC
-         2yOLO3GtcA7gYkbIcLUWX0ZG/WligU6Q6oh3dPGLed8s3BmYGLSOYkvoJ9hxXUkuuGmT
-         tuq6QBO6Z+QgKCaYLZeIUgErJiGmStxTVVMzX7mk2sQiiKCg+BvaKwUmlw+bfFrTkQDx
-         /vsa7DSb6ppZpAkoveCTFQw1xBZH5QJKxrfJ9gkdqD/J3H54nOck4NDUvmjpE3H4lWv+
-         F3GZBq0phxKS1ICxruwuweD7UA1Mmetm9kW1/g0xfPPmfLKuoXH0XxKGi1HdpYRYGPB9
-         1kbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755182567; x=1755787367;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2VPK+LGzPHiwIqFk3Ohj/RoTK5gsaz46bIEazLhBRA=;
-        b=mFAjcqRV95tcLVWiICk2Xz9gOtLdkcH/yuVBwgWiY4nZgFSIwCg4JgRCQvBNALNhF9
-         l1Hq90wLjktnbIbdT/hcLFr3yTpSEFVQbS0Bztyj/1fWM/DclGoxqzmm5hK6ss0JePap
-         7F0rVwmQVQ2R+L1/FuWsGmAPmDiXToSF8WksYYPccIxIK2+mOrWv7ZFzesgzFIHyb8og
-         4h7mHL8mG6tXUKbdxC4+gaLSZshD64pgpUsIXWVZx+L5iAOoh5qhW+aRoT56e7Eh7Egj
-         h5BYm/rYilz4Qfstt4tqElIyEh70KUDFA3Q4/+ePUS2WqkEW7oCGQM9Buh5Z407xOfbT
-         4c+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjK5T6oOGriTjWZ6SREBpSoXhAY9QXpZGeqbhN0930tK367/fpVYapVuQy9NKGezbMV1xbw9LxL6tq@vger.kernel.org, AJvYcCVNSmH5Wfu6URIXsucvJX/z7SSK1mgp7pr4mpmyD1fZvUegCUSIu2AdQ+V9DJ9yGBpKL1YY4yUfTgCwEKodx+22eA==@vger.kernel.org, AJvYcCVSropR0Cl+fwoQFwIq3daJg7zCUsOnBbNWDVGPZFKJU9Pq7gBg+WgtYH8IiY7bPyeFOV1XRfHWVLCb@vger.kernel.org, AJvYcCVwzBpwQVAHsfHBg+S5jq7ydUftLB+X7Ykn9o20mhPZayhoAhr1+HWQPsyn06FdGsU1J6dMdgGz1X126uwl@vger.kernel.org, AJvYcCWw65ZP+Bl+iEMSmCfvsyGr0cCodufTgUvsr+cMwsXeWR4HGwlMYFwhvN5s0BCzWEksJOwtVOtqkoia@vger.kernel.org
-X-Gm-Message-State: AOJu0YzATodbTaqvU8jbB4bQjkQr3m/56WXNTl8b5G0tzY8mlwQRo177
-	hro/Q2eFoReoCIMmFyZStrnA7i7pAMrUwMbixhetAB4J/eLTMQEmIGnK
-X-Gm-Gg: ASbGncskHf6A28yLvJKrlWB8b7Wx93wl0XTQ8apx/7wOGFpf1/DqG2wrVfr7j7++hEd
-	DfnljX0VqrwspoIgrDhbO/m+ozdAQYC8uziY+80L+W7DVyZkQ1AQ1DoxKO4l2DAKoEOv9UAIJqJ
-	GtO2SiiKt2CqkXF3e+jvcywmCaUBaxqrIYHKl+WOU/GAaLX0mbUQUFOi7rNR1jWP06tozXIe1bu
-	9me5Gr30hJ8rSeIDTb75GoLSafULYpXYee8CGpy80AqGqs0Pn0gH6Rh52r+W4bD77P00i9OcDlc
-	uhFCE+8agsl5gyjEVcc3z2QVayWMPRktcb7HshKUOqOGduke8kacglZoWxPBbY2KfACsg+idzwL
-	YxR5PczYWIZcKrE87XFMIT7/7QMgVrjL4NgY+xiaHWiMPdv5LqK+TbS6AYf6Y1SAKseKWppPGGT
-	oSmceIoTU1vNdX5W9YYHvGAbVvvuH0dqfUh3Q0Y88Ziquqj6octTNQ5yzFvzBX66O6H5tQFGhLa
-	po=
-X-Google-Smtp-Source: AGHT+IFhCWJEojvA7i+pME+fago4vJDtFzuQD2e2yOvIROciTuu5CIqY7MvPDw7EgLATDPP7poH6og==
-X-Received: by 2002:a05:600c:4f49:b0:440:6a1a:d89f with SMTP id 5b1f17b1804b1-45a1fe78624mr4900695e9.4.1755182567395;
-        Thu, 14 Aug 2025 07:42:47 -0700 (PDT)
-Received: from ?IPV6:2a01:cb08:941b:4c00:f383:4db2:82a:81e9? (2a01cb08941b4c00f3834db2082a81e9.ipv6.abo.wanadoo.fr. [2a01:cb08:941b:4c00:f383:4db2:82a:81e9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c718769sm24256305e9.30.2025.08.14.07.42.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 07:42:46 -0700 (PDT)
-Message-ID: <da8578ae-3f79-4082-b0fb-760553004c93@gmail.com>
-Date: Thu, 14 Aug 2025 16:42:45 +0200
+	s=arc-20240116; t=1755182620; c=relaxed/simple;
+	bh=m2f8i2xS2F6gXwTPl0Q6uWrEEf/MbNIU2SzsNqIeB24=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a8jjnTX2SILFReJvoz6KAjgedSGLln/lMF69uqW+AE6gR+EwQg6PPWr4FCTz6eGq1KU/xJJDif1pbhICgFQDNZDjpHHU763FuJDSge3K1D3+70k8yrQ6m5MSq+iTzfHTgXWFuYbOAi+wk2ULdwb14l9OdTPFHgGo481QLRlQK4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Td1ShWdI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E9CQXp013275;
+	Thu, 14 Aug 2025 14:43:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RcK6OvgQ6v2PfhGkbZOzRwUntQToWcEy5gAjb4ONN+I=; b=Td1ShWdIQznwUYVL
+	h5mMnrYZhnq/d60X+imC09/W1HaHYIMoTITeZjSsH1INXLy1Sn73pH/V76NjUxGb
+	05ypWIUG8IohxFlPu/EuyPA1voh79P/AjDD8mvNRIkvjTFlmrH0shVlrgioXgx2F
+	ufy9oIt+ys7dLv2HxIvBnnaaok+LCrPFtecha7feGUaPdvzeQaAEkAvQvT5hIEty
+	RadWc5bL132PwVea3frmoOyrBOncjE+fsJuyiedMkhtzchZTJnux7Ck8DQnrFAS3
+	Z66FKmmSKLKNoXTxb9me3L8C1KNkKlT4lDWNXiDWLZSQ47kMj7QX67P5cr1YbZ9E
+	AgECIw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffq6uwjj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 14:43:30 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57EEhUAf017863
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 14:43:30 GMT
+Received: from [10.216.25.245] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
+ 2025 07:43:26 -0700
+Message-ID: <3954667c-5b27-38b6-f6b9-1943b29d6594@quicinc.com>
+Date: Thu, 14 Aug 2025 20:13:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/20] dt-bindings: memory: introduce DDR4
-To: Rob Herring <robh@kernel.org>,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Julius Werner <jwerner@chromium.org>,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
- <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
- <20250730211151.GA1749004-robh@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 14/24] media: iris: Add support for
+ ENUM_FRAMESIZES/FRAMEINTERVALS for encoder
 Content-Language: en-US
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-In-Reply-To: <20250730211151.GA1749004-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Renjiang Han <quic_renjiang@quicinc.com>,
+        Wangao Wang <quic_wangaow@quicinc.com>
+References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
+ <20250813-iris-video-encoder-v2-14-c725ff673078@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250813-iris-video-encoder-v2-14-c725ff673078@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NSBTYWx0ZWRfX22MQ7jlcmBa+
+ SqMhLFiIFi9K1XFkUQrZ6SFg5iLLR1/CR0RUKvoHWIZyz+duBD3HyPXfRFtI/oQ5JW6Mzi2PnPi
+ +Ils5FI98IEV2fh8t5LZRKmuvjZQREz+YA7111TZHYaSDYfWzwqKFdd5/K7oj6pnCKlDL4ok67p
+ zpBukqK7TWN+pWr0M+66VpCjAomZk1gWHEg/DZ0C0qe/Yf194lSdTH61wgjx+59uMDOEfA1vExb
+ g+mVd8Mgs52Q5cuBFnPHhXLptcgIzf4AEPRKTJYkyKt0WvPL9V4OWLzONS67f5qRxCddxm5r7xq
+ Csn37hSYsmE9VI1AErtSoAhel7HJCzu3t8tdQbD5lQw7IR/zPnFkYeZHujS6e9Aa+fjKMGkFyzk
+ 85qkHuhV
+X-Authority-Analysis: v=2.4 cv=TLZFS0la c=1 sm=1 tr=0 ts=689df612 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=6xPJ2PTebPPjTCxbr_sA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: -OtH-xD-lzE_FQ9zD_lIIXkK3Yqi-PBe
+X-Proofpoint-ORIG-GUID: -OtH-xD-lzE_FQ9zD_lIIXkK3Yqi-PBe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110075
 
-Hi Rob,
 
-On 30/07/2025 23:11, Rob Herring wrote:
-> On Mon, Jul 28, 2025 at 05:29:37PM +0200, Clément Le Goffic wrote:
->> Introduce JEDEC compliant DDR bindings, that use new memory-props binding.
->>
->> Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
->> ---
->>   .../memory-controllers/ddr/jedec,ddr4.yaml         | 34 ++++++++++++++++++++++
->>   1 file changed, 34 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
->> new file mode 100644
->> index 000000000000..f457066a2f8b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/memory-controllers/ddr/jedec,ddr4.yaml
->> @@ -0,0 +1,34 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/memory-controllers/ddr/jedec,ddr4.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: DDR3 SDRAM compliant to JEDEC JESD79-4D
->> +
->> +maintainers:
->> +  - Krzysztof Kozlowski <krzk@kernel.org>
->> +
->> +allOf:
->> +  - $ref: jedec,sdram-props.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - pattern: "^ddr4-[0-9a-f]{2},[0-9a-f]{1}$"
+On 8/13/2025 3:08 PM, Dikshita Agarwal wrote:
+> Add support for frame size and frame interval enumeration by
+> implementing ENUM_FRAMESIZES/FRAMEINTERVALS V4L2 ioctls for encoder
+> video device with necessary hooks.
 > 
-> Shouldn't this be 'jedec,ddr4-...'
-
-That's not the case for lpddr bindings, I wanted both lpddr and ddr 
-bindings to be similar but this can change.
-
+> This allows userspace application to query encoder capabilities and
+> adapt encoding configurations accordingly.
 > 
->> +      - const: jedec,ddr4
->> +
->> +required:
->> +  - compatible
->> +  - density
->> +  - io-width
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    ddr {
->> +        compatible = "ddr4-ff,f", "jedec,ddr4";
->> +        density = <8192>;
->> +        io-width = <8>;
->> +    };
->>
->> -- 
->> 2.43.0
->>
+> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  .../platform/qcom/iris/iris_platform_common.h      |  5 +-
+>  .../media/platform/qcom/iris/iris_platform_gen2.c  |  3 ++
+>  .../platform/qcom/iris/iris_platform_sm8250.c      |  1 +
+>  drivers/media/platform/qcom/iris/iris_vdec.c       | 13 +++++
+>  drivers/media/platform/qcom/iris/iris_vdec.h       |  1 +
+>  drivers/media/platform/qcom/iris/iris_venc.c       | 13 +++++
+>  drivers/media/platform/qcom/iris/iris_venc.h       |  1 +
+>  drivers/media/platform/qcom/iris/iris_vidc.c       | 58 ++++++++++++++++++++--
+>  8 files changed, 91 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index adafdce8a856f9c661aabc5ca28f0faceaa93551..792f46e2e34fd564a1ed61523f72826fc8f74582 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -21,7 +21,8 @@ struct iris_inst;
+>  #define DEFAULT_MAX_HOST_BUF_COUNT		64
+>  #define DEFAULT_MAX_HOST_BURST_BUF_COUNT	256
+>  #define DEFAULT_FPS				30
+> -#define NUM_MBS_8K				((8192 * 4352) / 256)
+> +#define MAXIMUM_FPS				480
+> +#define NUM_MBS_8K                             ((8192 * 4352) / 256)
+>  
+>  enum stage_type {
+>  	STAGE_1 = 1,
+> @@ -179,6 +180,8 @@ struct iris_platform_data {
+>  	u32 max_session_count;
+>  	/* max number of macroblocks per frame supported */
+>  	u32 max_core_mbpf;
+> +	/* max number of macroblocks per second supported */
+> +	u32 max_core_mbps;
+>  	const u32 *input_config_params_default;
+>  	unsigned int input_config_params_default_size;
+>  	const u32 *input_config_params_hevc;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index d3026b2bcb708c7ec31f134f628df7e57b54af4f..1e2fadfe17672029b46e07ce00a8e31e0711fd58 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -354,6 +354,7 @@ struct iris_platform_data sm8550_data = {
+>  	.num_vpp_pipe = 4,
+>  	.max_session_count = 16,
+>  	.max_core_mbpf = NUM_MBS_8K * 2,
+> +	.max_core_mbps = ((7680 * 4320) / 256) * 60,
+>  	.input_config_params_default =
+>  		sm8550_vdec_input_config_params_default,
+>  	.input_config_params_default_size =
+> @@ -429,6 +430,7 @@ struct iris_platform_data sm8650_data = {
+>  	.num_vpp_pipe = 4,
+>  	.max_session_count = 16,
+>  	.max_core_mbpf = NUM_MBS_8K * 2,
+> +	.max_core_mbps = ((7680 * 4320) / 256) * 60,
+>  	.input_config_params_default =
+>  		sm8550_vdec_input_config_params_default,
+>  	.input_config_params_default_size =
+> @@ -500,6 +502,7 @@ struct iris_platform_data qcs8300_data = {
+>  	.num_vpp_pipe = 2,
+>  	.max_session_count = 16,
+>  	.max_core_mbpf = ((4096 * 2176) / 256) * 4,
+> +	.max_core_mbps = ((7680 * 4320) / 256) * 60, //TODO confirm!!
 
-Best regards,
-Clément
+TODO ? 4k@60 is supported mbps for qcs8300
+
+>  	.input_config_params_default =
+>  		sm8550_vdec_input_config_params_default,
+>  	.input_config_params_default_size =
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> index 8d0816a67ae0b6886204ce93fa5ccafaac10392a..2a3cbe1f2d4b27d3cce9e9cdad1525801d71a041 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> @@ -128,6 +128,7 @@ struct iris_platform_data sm8250_data = {
+>  	.num_vpp_pipe = 4,
+>  	.max_session_count = 16,
+>  	.max_core_mbpf = NUM_MBS_8K,
+> +	.max_core_mbps = ((7680 * 4320) / 256) * 60,
+>  	.input_config_params_default =
+>  		sm8250_vdec_input_config_param_default,
+>  	.input_config_params_default_size =
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
+> index 3482ff3f18d2bcd592b7eb7d803bf98e29276ebb..6afbd2f89260a233d75d7a0cdf3647236216c9ec 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
+> @@ -263,6 +263,19 @@ int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>  	return 0;
+>  }
+>  
+> +int iris_vdec_validate_format(struct iris_inst *inst, u32 pixelformat)
+> +{
+> +	const struct iris_fmt *fmt = NULL;
+> +
+> +	if (pixelformat != V4L2_PIX_FMT_NV12) {
+> +		fmt = find_format(inst, pixelformat, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
+> +		if (!fmt)
+> +			return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  int iris_vdec_subscribe_event(struct iris_inst *inst, const struct v4l2_event_subscription *sub)
+>  {
+>  	int ret = 0;
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.h b/drivers/media/platform/qcom/iris/iris_vdec.h
+> index b24932dc511a65017b1cadbcb984544475bd0723..097e02bfa72b5ac4e46e66c61842df1d9dd4565b 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.h
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.h
+> @@ -13,6 +13,7 @@ void iris_vdec_inst_deinit(struct iris_inst *inst);
+>  int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f);
+>  int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>  int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
+> +int iris_vdec_validate_format(struct iris_inst *inst, u32 pixelformat);
+>  int iris_vdec_subscribe_event(struct iris_inst *inst, const struct v4l2_event_subscription *sub);
+>  void iris_vdec_src_change(struct iris_inst *inst);
+>  int iris_vdec_streamon_input(struct iris_inst *inst);
+> diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
+> index 6bb59ce4fc565d3dcc6185233ef25d2e4d85cb3e..301206253090962abbb4e4eac8ee88e7b359c98d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_venc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_venc.c
+> @@ -270,3 +270,16 @@ int iris_venc_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>  		return -EINVAL;
+>  	}
+>  }
+> +
+> +int iris_venc_validate_format(struct iris_inst *inst, u32 pixelformat)
+> +{
+> +	const struct iris_fmt *fmt = NULL;
+> +
+> +	if (pixelformat != V4L2_PIX_FMT_NV12) {
+> +		fmt = find_format(inst, pixelformat, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
+> +		if (!fmt)
+> +			return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/media/platform/qcom/iris/iris_venc.h b/drivers/media/platform/qcom/iris/iris_venc.h
+> index eb26a3ecbd98b3f02dfdea0dfc41bcd3a90904b6..04fd41275547c40c359c6ea04dfe4ee31d2d0df6 100644
+> --- a/drivers/media/platform/qcom/iris/iris_venc.h
+> +++ b/drivers/media/platform/qcom/iris/iris_venc.h
+> @@ -13,5 +13,6 @@ void iris_venc_inst_deinit(struct iris_inst *inst);
+>  int iris_venc_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f);
+>  int iris_venc_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>  int iris_venc_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
+> +int iris_venc_validate_format(struct iris_inst *inst, u32 pixelformat);
+>  
+>  #endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index 06b2737c5892ebbcf43b4cff66062d85cf805c20..cb1280c0c6c82187243f0bda4d98e42370ee787c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -373,13 +373,18 @@ static int iris_enum_framesizes(struct file *filp, void *fh,
+>  {
+>  	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>  	struct platform_inst_caps *caps;
+> +	int ret = 0;
+>  
+>  	if (fsize->index)
+>  		return -EINVAL;
+>  
+> -	if (fsize->pixel_format != V4L2_PIX_FMT_H264 &&
+> -	    fsize->pixel_format != V4L2_PIX_FMT_NV12)
+> -		return -EINVAL;
+> +	if (inst->domain == DECODER)
+> +		ret = iris_vdec_validate_format(inst, fsize->pixel_format);
+> +	else
+> +		ret = iris_venc_validate_format(inst, fsize->pixel_format);
+> +
+> +	if (ret)
+> +		return ret;
+>  
+>  	caps = inst->core->iris_platform_data->inst_caps;
+>  
+> @@ -391,6 +396,51 @@ static int iris_enum_framesizes(struct file *filp, void *fh,
+>  	fsize->stepwise.max_height = caps->max_frame_height;
+>  	fsize->stepwise.step_height = STEP_HEIGHT;
+>  
+> +	return ret;
+> +}
+> +
+> +static int iris_enum_frameintervals(struct file *filp, void *fh,
+> +				    struct v4l2_frmivalenum *fival)
+> +
+> +{
+> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> +	struct platform_inst_caps *caps;
+> +	struct iris_core *core = inst->core;
+> +	u32 fps, mbpf;
+> +	int ret = 0;
+> +
+> +	if (inst->domain == DECODER)
+> +		return -ENOTTY;
+> +
+> +	if (fival->index)
+> +		return -EINVAL;
+> +
+> +	ret = iris_venc_validate_format(inst, fival->pixel_format);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!fival->width || !fival->height)
+> +		return -EINVAL;
+> +
+> +	caps = inst->core->iris_platform_data->inst_caps;
+> +	if (fival->width > caps->max_frame_width ||
+> +	    fival->width < caps->min_frame_width ||
+> +	    fival->height > caps->max_frame_height ||
+> +	    fival->height < caps->min_frame_height)
+> +		return -EINVAL;
+> +
+> +	mbpf = NUM_MBS_PER_FRAME(fival->height, fival->width);
+> +	fps = DIV_ROUND_UP(core->iris_platform_data->max_core_mbps, mbpf);
+> +
+> +	fival->type = V4L2_FRMIVAL_TYPE_STEPWISE;
+> +	fival->stepwise.min.numerator = 1;
+> +	fival->stepwise.min.denominator =
+> +			min_t(u32, fps, MAXIMUM_FPS);
+> +	fival->stepwise.max.numerator = 1;
+> +	fival->stepwise.max.denominator = 1;
+> +	fival->stepwise.step.numerator = 1;
+> +	fival->stepwise.step.denominator = MAXIMUM_FPS;
+> +
+>  	return 0;
+>  }
+>  
+> @@ -525,6 +575,8 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops_enc = {
+>  	.vidioc_s_fmt_vid_out_mplane    = iris_s_fmt_vid_mplane,
+>  	.vidioc_g_fmt_vid_cap_mplane    = iris_g_fmt_vid_mplane,
+>  	.vidioc_g_fmt_vid_out_mplane    = iris_g_fmt_vid_mplane,
+> +	.vidioc_enum_framesizes         = iris_enum_framesizes,
+> +	.vidioc_enum_frameintervals     = iris_enum_frameintervals,
+>  };
+>  
+>  void iris_init_ops(struct iris_core *core)
+> 
 
