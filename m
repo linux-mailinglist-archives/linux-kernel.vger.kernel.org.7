@@ -1,56 +1,75 @@
-Return-Path: <linux-kernel+bounces-769037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3977B26956
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:30:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3380DB2698A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2579D6830E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:18:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B41E1CE740F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE1C194C75;
-	Thu, 14 Aug 2025 14:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3447DA6D;
+	Thu, 14 Aug 2025 14:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pkigFILR"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AE7321434;
-	Thu, 14 Aug 2025 14:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a4JrZJz7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A9F19D071
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181094; cv=none; b=mx/MwdIOm+ZKevr8gEMMd64nZW68w2r8IYsbKkFGQx5TNSnLaiiqDOtBY956Xai7wGtxm3yWuXsg7mTihDVQmZN0yk8WvvpqpWCUB+RBX5hYeNmrdvltm5g9ZD4QBSY4guZZn7DdgbUy+Gty+uMYWeLl99kZjOvTd9ypIWinPzc=
+	t=1755181097; cv=none; b=ibMFX8GRls368sCf/ZR7YcXytelUYAYZaQmUTbiZQi+7jZuxum+5GpvgMfbNFNicA9X0WTsYDKfjnxWXvjVZp7YWlztThFBNX1GpksvT3I8ka00DClumQsXQmjS45K+87+e8gE4z6Qqdfc79E5h7NHROC/3LIrKNLHn1OgyNbU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181094; c=relaxed/simple;
-	bh=IhC+AH+sL5Ewpx1ekxRZP9eUwSnEE189Nad6dFGz4wA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GFpbgJX5aZurXQhqXZbwEPvGToFYvidHoGL5qmNL0P2bwV8XDTy/rY+HInEMKPUUZBsfb85qgqazopO2rTfxUoZ697mYnXHW2E8GmgGvigm4NHVA8vvtlFgERjMvJm2tQwRyJzQnu/JrmuSVA+IzyF+v1eDSxU3OhxFHqai1Uos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pkigFILR; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=gV
-	8fEWQYv6PwrR4EGbkUj3gAtUsDrnYbn3W2p81RopA=; b=pkigFILRnwf3AjC2Tj
-	lYJA8damRV/npAT4x6j1OW1ZZzeVvcIZBmo/t2H9jeEYPFAxZkLElH8Z6zphRjQr
-	ojD2OXSil/LWAqmo4TZtW9zlxJNx/PUr1HkFSXbc0ERce7cAWpGfLR6srNahx2S/
-	jE9QpXNyvRR52l+9EOY83LCFc=
-Received: from phoenix.. (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wAXt8QG8J1otxnOBw--.45910S5;
-	Thu, 14 Aug 2025 22:17:45 +0800 (CST)
-From: Jiawei Zhao <phoenix500526@163.com>
-To: ast@kernel.org
-Cc: daniel@iogearbox.net,
-	andrii@kernel.org,
-	yonghong.song@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf-next v9 3/3] selftests/bpf: make usdt_o2 reliably generate SIB USDT arg spec
-Date: Thu, 14 Aug 2025 14:17:40 +0000
-Message-ID: <20250814141741.77698-4-phoenix500526@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250814141741.77698-1-phoenix500526@163.com>
-References: <20250814141741.77698-1-phoenix500526@163.com>
+	s=arc-20240116; t=1755181097; c=relaxed/simple;
+	bh=fzicJF7q4dLRrPHjJsfFWmWacz7FUNgbf3Z1XpBzzQE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=R1fGNnkauHpIPRjRYa3J2G1fBSj9PCZ4/Pr/hS20HpyDA17vAmsBrvYH/hQM6/E6T1vwvyyB3MOF26O7KWP8j6ZogLSgM4R2o7KFo6Ren331EYSMtjCOw9hgy23qGC70uZuOVZEvZfv6Lu7asUQv3vm67f6QRTR0LoHg4MSfLkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a4JrZJz7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755181094;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bNKOtXjUgCmr7vZC9Pfp3UyUNOWyPhcYtzWE4DBiIqI=;
+	b=a4JrZJz7kvvsXcVJiF/fmJG+7DX1EWWK+1kRq4JXIY4RkzHJcFW37a//GB6U/HeW/g9XXi
+	7ZReM41T/f9RQqos3VjL3CbZ+SPHafYuAxFh9nF8r7XHolmhJTQgGK1TgBqHzIknjbLlus
+	3RZlZRMCeCKmePT4DwcjxefhMe7cWIo=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-658-ftt7xQQsN2aAGreQBuMtOA-1; Thu,
+ 14 Aug 2025 10:18:08 -0400
+X-MC-Unique: ftt7xQQsN2aAGreQBuMtOA-1
+X-Mimecast-MFC-AGG-ID: ftt7xQQsN2aAGreQBuMtOA_1755181086
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 15590180034F;
+	Thu, 14 Aug 2025 14:18:06 +0000 (UTC)
+Received: from laptop.redhat.com (unknown [10.45.224.86])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 98D7D19327C0;
+	Thu, 14 Aug 2025 14:18:01 +0000 (UTC)
+From: Eric Auger <eric.auger@redhat.com>
+To: eric.auger.pro@gmail.com,
+	eric.auger@redhat.com,
+	robin.murphy@arm.com,
+	rafael@kernel.org,
+	bhelgaas@google.com,
+	jgg@ziepe.ca,
+	lpieralisi@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lenb@kernel.org,
+	jean-philippe@linaro.org,
+	jsnitsel@redhat.com
+Subject: [RFC] iommu: Fix virtio-iommu probing
+Date: Thu, 14 Aug 2025 16:17:58 +0200
+Message-ID: <20250814141758.2140641-1-eric.auger@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,66 +77,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAXt8QG8J1otxnOBw--.45910S5
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WryrKw48tFyDGF17ZrW5Wrg_yoW8KFykpa
-	4kGayYkF1kXFyfA34xJrW7Z3WrK3Z7ArW8ArWkK34vvF1UJ348Xr47K3Wjv3s8C3yF934Y
-	vay8t3s5ua18AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jT4E_UUUUU=
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFAOpiGid7mspcQAAse
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-usdt_o2 is intended to exercise the SIB (Scale-Index-Base) argument
-handling in libbpf's USDT path. With GCC 13 this reliably produced a
-SIB-form argument (e.g. 8@(%rdx,%rax,8)), but with newer GCC (e.g. 15)
-the compiler frequently optimizes the probe argument into a plain
-register (e.g. 8@%rax) or a stack slot, so the test stops covering the
-SIB code path and becomes flaky across toolchains.
+Commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
+probe path") broke virtio-iommu probing and no iommu group are
+produced anymore.
 
-Force a SIB memory operand in the probe by:
-* placing the base pointer into %rdx and the index into %rax using an
-  empty inline asm with output constraints ("=d", "=a") and matching
-  inputs
-* immediately passing base[idx] to STAP_PROBE1.
+When probe_iommu_group() gets called viommu_probe_device() fails
+because viommu_get_by_fwnode(fwspec->iommu_fwnode) returns NULL.
+So it seems we need to restore the original iommu_probe_device
+call site in acpi_iommu_configure_id() to get a chance to probe
+the device again.
 
-This makes the compiler encode the operand as SIB (base + index8),
-which in .note.stapsdt shows up as 8@(%rdx,%rax,8) regardless of GCC
-version. A memory clobber and noinline prevent reordering/re-allocation
-around the probe site.
+Maybe this defeats the whole purpose of the original commit but
+at least it fixes the virtio-iommu probing.
 
-This change is x86_64-specific and does not alter program semantics; it
-only stabilizes the USDT argument shape so the test consistently
-validates SIB handling. Clang historically prefers stack temporaries for
-such operands, but the selftests build with GCC, and this keeps behavior
-stable across GCC versions without introducing a separate .S file.
+Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper probe path")
+Cc: stable@vger.kernel.org # v6.15+
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
-Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
 ---
- tools/testing/selftests/bpf/prog_tests/usdt_o2.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/usdt_o2.c b/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-index f02dcf5188ab..920df73649b5 100644
---- a/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-+++ b/tools/testing/selftests/bpf/prog_tests/usdt_o2.c
-@@ -15,11 +15,15 @@ __attribute__((optimize("O2")))
- int lets_test_this(int);
- static volatile __u64 array[1] = {test_value};
+I also tested smmu probing and this seems to work fine.
+---
+ drivers/acpi/scan.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index fb1fe9f3b1a3..9f4efa8f75a6 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1632,6 +1632,13 @@ static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
+ 		err = viot_iommu_configure(dev);
+ 	mutex_unlock(&iommu_probe_device_lock);
  
--static __always_inline void trigger_func(void)
-+static noinline void trigger_func(void)
- {
- 	/* Base address + offset + (index * scale) */
--	for (volatile int i = 0; i <= 0; i++)
--		STAP_PROBE1(test, usdt1, array[i]);
-+	/* Force SIB addressing with inline assembly */
-+	const __u64 *base;
-+	__u32 idx;
-+	/* binding base to %rdx and idx to %rax */
-+	asm volatile("" : "=d"(base), "=a"(idx) : "0"(array), "1"((__u32)0) : "memory");
-+	STAP_PROBE1(test, usdt1, base[idx]);
++	/*
++	 * If we have reason to believe the IOMMU driver missed the initial
++	 * iommu_probe_device() call for dev, replay it to get things in order.
++	 */
++	if (!err && dev->bus)
++		err = iommu_probe_device(dev);
++
+ 	return err;
  }
  
- static void basic_sib_usdt(void)
 -- 
-2.43.0
+2.49.0
 
 
