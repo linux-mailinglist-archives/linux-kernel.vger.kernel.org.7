@@ -1,161 +1,112 @@
-Return-Path: <linux-kernel+bounces-768112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5CEB25D26
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:26:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7255CB25D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF849881FDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:23:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EE317BC8CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289A8265CBE;
-	Thu, 14 Aug 2025 07:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A962A26A1D0;
+	Thu, 14 Aug 2025 07:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b="BlZcLfM7"
-Received: from mx.nabladev.com (mx.nabladev.com [178.251.229.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdlUttA+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568972594B4;
-	Thu, 14 Aug 2025 07:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.251.229.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1532266B6F;
+	Thu, 14 Aug 2025 07:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755156203; cv=none; b=YRfNrq7ilqqnLTFQdBowZeze+dmAIZcy+Qo3NBfqLF0cMS9yyMl5boqyXuaL5b+FRBz9I17pTFvkux29BM8gDpGcySBJ/ZI24dtOuI7Hp2+E7UvR7wlUHHHcT3InSdrnf2b419Fh8hYuaGmeFSxfxbs7vz8mklFCF7BKBWqazAk=
+	t=1755156300; cv=none; b=pTyvZ+EPK/fcz0Mrs72L+cLqF+MAbyGXroV11V3olQYnPnnJwd6kMVdBWFdX2fcy5FelLxGFTPLB6IiqSCqPlccu/LDqYQ6OU6UJE75mbKxlBQI7BLyQTj5Bd59CF+wWDHPOzab/L4PBuHfP5/ebrFmBRqoF4tofWDJuRl0y5mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755156203; c=relaxed/simple;
-	bh=SIf1CgqSi/4snwC2FPmH2Jt+toAqVhJjRGjlhnKAKXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iYuJEDoXf/ehKqWwMpmWEZG75k0/VVvgAe7S/45zpvKao4qMBpuZdEtGSy/5dcwOSNos4uEnLKYPoHA+LzDzLb7WvVe980tjGUM4aM4z8Jkj/zf9AVBlh8Cs0mi+77IO3PIwryMS/WkxMGT6VQ4M31yVtjOVkWNUj8Uw4epdhNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com; spf=pass smtp.mailfrom=nabladev.com; dkim=pass (2048-bit key) header.d=nabladev.com header.i=@nabladev.com header.b=BlZcLfM7; arc=none smtp.client-ip=178.251.229.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nabladev.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nabladev.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2FCD5100C39;
-	Thu, 14 Aug 2025 09:23:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nabladev.com;
-	s=dkim; t=1755156197;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ILUQ+Zz6T9JcFtvvS2OcMHRLaXdHMtwPMmr1SraYPXg=;
-	b=BlZcLfM7Hf5Ri6Cxa2izA2iK39jcEQAPJUcx97QKpuuAw5Z3DsVv0SWJ/zj8fPJhSBWMH9
-	l0lob7QBAgYkZxnAo5MYluDURYIS6R5Qc3b+4Y3Ku0maPGPdLzeelhii5LnjYxw4aJM0HN
-	3ynZ+prOWF7w0FWDVOyu2CWV2UInsUiOpcOO9sbc/94EyERD+BTe/evhu0mdnfXec8Etlc
-	cqZaPiMG2TIYy6jpivuW/n8blf9AgMKdtLAUcqWJET3ORCW+ISqSrP8KdGp+pYSKYxCvTx
-	VLu2kqexTsXT94FfDfeyrVhHC01HP72xnq4tu9TQ5JScGouVxti8gZSwp6BO1A==
-Date: Thu, 14 Aug 2025 09:23:09 +0200
-From: =?UTF-8?B?xYF1a2Fzeg==?= Majewski <lukma@nabladev.com>
-To: Frieder Schrempf <frieder.schrempf@kontron.de>
-Cc: Frieder Schrempf <frieder@fris.de>, netdev@vger.kernel.org, Andrew Lunn
- <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- linux-kernel@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
- UNGLinuxDriver@microchip.com, Vladimir Oltean <olteanv@gmail.com>, Woojung
- Huh <woojung.huh@microchip.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Jesse Van Gavere <jesseevg@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, Pieter Van Trappen
- <pieter.van.trappen@cern.ch>, "Russell King (Oracle)"
- <rmk+kernel@armlinux.org.uk>, Simon Horman <horms@kernel.org>, Tristram Ha
- <tristram.ha@microchip.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Subject: Re: [RFC PATCH] net: dsa: microchip: Prevent overriding of HSR port
- forwarding
-Message-ID: <20250814092309.1534e1b4@wsk>
-In-Reply-To: <a838b848-8633-4312-b246-17af9175535c@kontron.de>
-References: <20250813152615.856532-1-frieder@fris.de>
-	<20250813174553.5c2cdeb3@wsk>
-	<a838b848-8633-4312-b246-17af9175535c@kontron.de>
-Organization: Nabla
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755156300; c=relaxed/simple;
+	bh=XNXHCiEWK5MhZ/JoxcVkCOVT4sKxJhnlMv2tEOMdXt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gtb2QpKWzDX3Fp8v4EP3e25uGUYXiNsXEeIoynQDGKs+SBpRsjkJS6iFyL+wjJr8viimJufY6X+dWCq2RQtVRlxwLCYLpiuwH/fsxd24GoLCQS5u6D5r7JsDQJfrLK/ZO7OyW+SAaeQ/7vHkhNQjhFVWaimqxAR3VXh9K+JtQus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdlUttA+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59EA7C4CEF4;
+	Thu, 14 Aug 2025 07:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755156299;
+	bh=XNXHCiEWK5MhZ/JoxcVkCOVT4sKxJhnlMv2tEOMdXt0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pdlUttA+vnFfZdhDZtUFT4gpTBEQ/NupD3p/nWd9xhli6v9AJ7zerS0/QOcTLPTjX
+	 0k3Coq+8rtJPt9wii6nt7hsUvWEUXfRegAoCIhsL//0seohmqRfbRixS5/CKUYQjhZ
+	 R5SOH7OkXT4FmyDa7VCCrFZBMG07+gyMTqUBo8gT5117UwfEX4G/xXolAdFjKGr6rd
+	 H2Fhuq1OvsuD63SRvMUiimi2QVLG4L1Chqjo1mzkbqyvuVhl3pHw6ftcvQb7RXFZWu
+	 AmRb+FU2m7DMaJdmmz2OqyDZvgjHynKYWl0i2sora+FUhQj36ZKLXJDCLRYKsKEEdd
+	 PZo8cLyGy1+7g==
+From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>
+Subject: [PATCH 00/16] tty: use lock, rpm, and free guards
+Date: Thu, 14 Aug 2025 09:24:40 +0200
+Message-ID: <20250814072456.182853-1-jirislaby@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On Wed, 13 Aug 2025 17:57:02 +0200
-Frieder Schrempf <frieder.schrempf@kontron.de> wrote:
+The first 4 patches introduce guards for:
+* console_lock/console_unlock
+* tty_port_tty_get/tty_kref_put
+* uart_port_lock/uart_port_unlock in all its variants (_irq, _irqsave,
+  _try)
+* serial8250_rpm_get/serial8250_rpm_put
 
-> Am 13.08.25 um 17:45 schrieb =C5=81ukasz Majewski:
-> > [Sie erhalten nicht h?ufig E-Mails von lukma@nabladev.com. Weitere
-> > Informationen, warum dies wichtig ist, finden Sie unter
-> > https://aka.ms/LearnAboutSenderIdentification ]
-> >=20
-> > Hi Frieder,
-> >  =20
-> >> From: Frieder Schrempf <frieder.schrempf@kontron.de>
-> >>
-> >> The KSZ9477 supports NETIF_F_HW_HSR_FWD to forward packets between
-> >> HSR ports. This is set up when creating the HSR interface via
-> >> ksz9477_hsr_join() and ksz9477_cfg_port_member().
-> >>
-> >> At the same time ksz_update_port_member() is called on every
-> >> state change of a port and reconfiguring the forwarding to the
-> >> default state which means packets get only forwarded to the CPU
-> >> port.
-> >>
-> >> If the ports are brought up before setting up the HSR interface
-> >> and then the port state is not changed afterwards, everything works
-> >> as intended:
-> >>
-> >>   ip link set lan1 up
-> >>   ip link set lan2 up
-> >>   ip link add name hsr type hsr slave1 lan1 slave2 lan2 supervision
-> >> 45 version 1 ip addr add dev hsr 10.0.0.10/24
-> >>   ip link set hsr up
-> >>
-> >> If the port state is changed after creating the HSR interface, this
-> >> results in a non-working HSR setup:
-> >>
-> >>   ip link add name hsr type hsr slave1 lan1 slave2 lan2 supervision
-> >> 45 version 1 ip addr add dev hsr 10.0.0.10/24
-> >>   ip link set lan1 up
-> >>   ip link set lan2 up
-> >>   ip link set hsr up
-> >>
-> >> In this state, packets will not get forwarded between the HSR ports
-> >> and communication between HSR nodes that are not direct neighbours
-> >> in the topology fails.
-> >>
-> >> To avoid this, we prevent all forwarding reconfiguration requests
-> >> for ports that are part of a HSR setup with NETIF_F_HW_HSR_FWD
-> >> enabled.
-> >>
-> >> Fixes: 2d61298fdd7b ("net: dsa: microchip: Enable HSR offloading
-> >> for KSZ9477") Signed-off-by: Frieder Schrempf
-> >> <frieder.schrempf@kontron.de> ---
-> >> I'm posting this as RFC as my knowledge of the driver and the
-> >> stack in general is very limited. Please review thoroughly and
-> >> provide feedback. Thanks! =20
-> >=20
-> > I don't have the HW at hand at the moment (temporary).
-> >=20
-> > Could you check if this patch works when you create two hsr
-> > interfaces
-> > - i.e. hsr1 would use HW offloading from KSZ9744 and hsr2 is just
-> > the one supporting HSR in software. =20
->=20
-> My hardware only has three user ports. So that might get a bit
-> difficult to test. I will try to configure one unconnected port to
-> set up two HSR links, but I won't be able to fully test this due to
-> the lack of the fourth physical link.
->=20
+"tty/vt: use guard()s" also introduces a local free_page_ptr guard for
+__get_free_page/free_page (with proper casts). This could be made
+public in include/.
 
-Ok, I see...
+The rest of patches make uses all those guards across the tty code.
 
-I was using the Atmel's/Microchip Devel board with 5 ports...
+Jiri Slaby (SUSE) (16):
+  console: introduce console_lock guard()s
+  tty: introduce tty_port_tty guard()
+  serial: introduce uart_port_lock() guard()s
+  serial: 8250: introduce RPM guard()s
+  tty: tty_port: use guard()s
+  mxser: use tty_port_tty guard() in mxser_port_isr()
+  mxser: use guard()s
+  serial: serial_core: use guard()s
+  serial: 8250: use guard()s
+  serial: 8250_core: use guard() in serial_unlink_irq_chain()
+  serial: 8250_omap: extract omap_8250_set_termios_atomic()
+  serial: 8250_omap: use guard()s
+  serial: 8250_rsa: use guard()s
+  tty/vt: use guard()s in con_font_set/get() and con_{set,get}_unimap()
+  tty/vt: use guard()s
+  s390/char/con3270: use tty_port_tty guard()
 
---=20
-Best regards,
+ drivers/s390/char/con3270.c         |  18 +-
+ drivers/tty/mxser.c                 | 259 ++++++++++--------------
+ drivers/tty/serial/8250/8250.h      |   5 +
+ drivers/tty/serial/8250/8250_core.c |  91 ++++-----
+ drivers/tty/serial/8250/8250_omap.c | 145 ++++++--------
+ drivers/tty/serial/8250/8250_port.c | 298 ++++++++++++----------------
+ drivers/tty/serial/8250/8250_rsa.c  |   7 +-
+ drivers/tty/serial/serial_core.c    | 143 ++++++-------
+ drivers/tty/tty_port.c              | 168 +++++++---------
+ drivers/tty/vt/consolemap.c         | 116 +++++------
+ drivers/tty/vt/selection.c          |  20 +-
+ drivers/tty/vt/vc_screen.c          |  74 +++----
+ drivers/tty/vt/vt.c                 | 187 ++++++++---------
+ drivers/tty/vt/vt_ioctl.c           | 190 ++++++++----------
+ include/linux/console.h             |   2 +
+ include/linux/serial_core.h         |  13 ++
+ include/linux/tty_port.h            |  14 ++
+ 17 files changed, 747 insertions(+), 1003 deletions(-)
 
-Lukasz Majewski
+-- 
+2.50.1
 
---
-Nabla Software Engineering GmbH
-HRB 40522 Augsburg
-Phone: +49 821 45592596
-E-Mail: office@nabladev.com
-Geschftsfhrer : Stefano Babic
 
