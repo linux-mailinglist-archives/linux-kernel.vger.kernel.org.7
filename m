@@ -1,98 +1,79 @@
-Return-Path: <linux-kernel+bounces-768251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF3EB25EE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:32:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05095B25EDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189771B60B27
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:30:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F7207BAE74
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AA72E7F33;
-	Thu, 14 Aug 2025 08:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gpKKgtsd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709782E7F02;
+	Thu, 14 Aug 2025 08:30:52 +0000 (UTC)
+Received: from baidu.com (mx24.baidu.com [111.206.215.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DE22580D7;
-	Thu, 14 Aug 2025 08:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4020E134A8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.206.215.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160188; cv=none; b=DY+hqeAJkVysTlSwNe3oO0fxf9B6kVQ4bGdRUJq7tjMfLn5TrXiMa7TLwGY1sNZjjZaBYoObHIkpduIV6hGVr/zzI/KuJporV8+ufcDIMLnimeYCb+ktpkf4R755bnGb2pWgeYwLANGr9nyqhUeuAQA76BAK8it6fMyt2iy+8UM=
+	t=1755160252; cv=none; b=d+WUH4MdogXCbemH0Sqx0cmIKXRtSXQkzS+PlYpbiuU8LaprncY5vweBSY1yjxv/qR6FfV0EVXQguIT95qfPgRLV+oV+i4ugVNEjq3g89kaJ0DS4wYX/E8sNOGcDp2iejpDxot1/Y1tAYUMSHw48QnVo0D8eKL7UgndZbAu5D8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160188; c=relaxed/simple;
-	bh=czB9BQFUSwV/+y45czm/RfvfKjNZIL9R6PoXdqY73Hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kjwt9uFCFU8QGShMEBsMdxCZROlp6msNJxZdQBtlQXOjxOrKKi+MpCLOAaYoCjHUbyEv05EVB1gni1mNv8lCB4XGWOHgARZ0gKsNj7mD8yVcwk7NL7Rd78iw821jdNwaZS4OxsBLZfUJX4Qx1Q9Dk8/itn8oKFc4VakFTeol2a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gpKKgtsd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C67BBC4CEF7;
-	Thu, 14 Aug 2025 08:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755160188;
-	bh=czB9BQFUSwV/+y45czm/RfvfKjNZIL9R6PoXdqY73Hc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gpKKgtsd6bZYAKDZj6uqmdK41sXqXoT81mI+N6HfapbmEVGrDCYGUa2AQ1wiK5bwO
-	 QLnzgxc4sotDIP5DfgrRGM0w2xY7sEpjzrBHuOQCWKKDq/MgeBxRDEjVMtnc+jZDsf
-	 LIB7FQlpoxqZJbqVQiQJKzGAmfK8r/ub+hbFrgd62AnaFiXT+c2gV5XqEBbT6FzZrJ
-	 5dPy6pz+A62BmxEjYaQrREJm4IrP2NA6D/7Y1li6F5eIT31f6m7LWyocSac6qJ1INl
-	 ZBbozPIuwwMsLt5efmD7GwAvEnr+wheIvobMwpCCl+WF9icX/ZRTjtDt3e3U6b8pQZ
-	 7UQUEitABmgmQ==
-Date: Thu, 14 Aug 2025 10:29:45 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Wei Fang <wei.fang@nxp.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"richardcochran@gmail.com" <richardcochran@gmail.com>, Claudiu Manoil <claudiu.manoil@nxp.com>, 
-	Vladimir Oltean <vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, 
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, 
-	"pabeni@redhat.com" <pabeni@redhat.com>, "vadim.fedorenko@linux.dev" <vadim.fedorenko@linux.dev>, 
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
-	"festevam@gmail.com" <festevam@gmail.com>, "F.S. Peng" <fushi.peng@nxp.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v3 net-next 03/15] dt-bindings: net: add an example for
- ENETC v4
-Message-ID: <20250814-finicky-tall-wolverine-6a5b90@kuoka>
-References: <20250812094634.489901-1-wei.fang@nxp.com>
- <20250812094634.489901-4-wei.fang@nxp.com>
- <aJtR4j9+w5fVsJL4@lizhi-Precision-Tower-5810>
- <PAXPR04MB8510925387F9F72A8E99AB82882AA@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <aJyq2h+y+KBjqmsr@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1755160252; c=relaxed/simple;
+	bh=f8zVS4Q8JqSHQ+wA/RVUUaCIPVam32ikQJKx/Wn0OeA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=c1tpmt6dKsRqbdHMJmvORIB7pOzYpp5aVCLOX+QpYdn7v+HeXnpnqS6It1COrtqrsMJYObEH3CvTYeb8EN0i3Iq/efAzjemqwjQgVhJ1I7BF+8EBhGVNP7NFF0CaPnGSAy7GsbzJ60XpYA9WoB8qUPcsams1QCM9K/paXWm1gGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=111.206.215.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: lirongqing <lirongqing@baidu.com>
+To: <muchun.song@linux.dev>, <osalvador@suse.de>, <david@redhat.com>,
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Li RongQing <lirongqing@baidu.com>
+Subject: [PATCH] mm/hugetlb: early exit from hugetlb_pages_alloc_boot() when max_huge_pages=0
+Date: Thu, 14 Aug 2025 16:29:50 +0800
+Message-ID: <20250814082950.2888-1-lirongqing@baidu.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aJyq2h+y+KBjqmsr@lizhi-Precision-Tower-5810>
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc8.internal.baidu.com (172.31.50.52) To
+ bjkjy-exc3.internal.baidu.com (172.31.50.47)
+X-FEAS-Client-IP: 172.31.50.47
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-On Wed, Aug 13, 2025 at 11:10:18AM -0400, Frank Li wrote:
-> On Wed, Aug 13, 2025 at 01:38:55AM +0000, Wei Fang wrote:
-> > > On Tue, Aug 12, 2025 at 05:46:22PM +0800, Wei Fang wrote:
-> > > > Add a DT node example for ENETC v4 device.
-> > >
-> > > Not sure why need add examples here? Any big difference with existed
-> > > example?
-> > >
-> >
-> > For enetc v4, we have added clocks, and it also supports ptp-timer
-> > property, these are different from enetc v1, so I think it is better to
-> > add an example for v4.
-> 
-> If there are not big change, needn't duplicate one example at yaml file,
-> the content should be in dts file already. Pass DTB_CHECK should be okay.
+From: Li RongQing <lirongqing@baidu.com>
 
-Two new properties is on the edge of justification of new example. I am
-fine with both - having this patch and dropping it.
+Optimize hugetlb_pages_alloc_boot() to return immediately when
+max_huge_pages is 0, saving cycles when hugepages aren't configured
+in the kernel command line.
 
-Best regards,
-Krzysztof
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+---
+ mm/hugetlb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 753f99b..514fab5 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3654,6 +3654,9 @@ static void __init hugetlb_hstate_alloc_pages(struct hstate *h)
+ 		return;
+ 	}
+ 
++	if (!h->max_huge_pages)
++		return;
++
+ 	/* do node specific alloc */
+ 	if (hugetlb_hstate_alloc_pages_specific_nodes(h))
+ 		return;
+-- 
+2.9.4
 
 
