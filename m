@@ -1,169 +1,106 @@
-Return-Path: <linux-kernel+bounces-767811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B61B2595F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:05:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A84B25956
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948122A7886
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:05:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B3B87A2AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0740A243376;
-	Thu, 14 Aug 2025 02:05:18 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7EA238C24;
+	Thu, 14 Aug 2025 01:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MBsIxElx"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A66237704;
-	Thu, 14 Aug 2025 02:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A242A231853;
+	Thu, 14 Aug 2025 01:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755137117; cv=none; b=OTXWo4Awe/QsOKq50bD6KtHrEXxNDitUkCx3CBdPoeNdPpER3Ie01PKgvUvld4gheaHCeGO551d6gzuxtCgbLkF5JX/eQcu3JvdR/IGydx3yidy+cF6f7CO3fg6S/DeO5HT88O2O1cXO2oRnSRdti51LiMj1VFL8S3N35YZSxng=
+	t=1755136698; cv=none; b=udNDMMAG38yZhYQUiT/NFcd2GpMoDpX4tHXz9KwYV8J8Ad+rGUIvYsfzO54rE7lns5CeB9dcl8mFGZ6c6/zEKne/ecSXp1S1kg+YA++lUf50Iw3sKYamvSkcErD3yCH3wCn05Peh166Paly682oykySCVY62uTc1DVr2Gee2H8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755137117; c=relaxed/simple;
-	bh=58UlwQy1yBcF9ZZ1cRNrAJ4s/XBlgpt0pYISUGm+gOM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C4baHjDBRT7FbsscjTkir2uttHf1sZBn2V8r51nc4YPr6lZngL7Bw6lvy0KYDLjmS/UT1XYOwAUgrUaI9ghJn0fof/D4x3WQoepl3MCzPMWKmdO5Xx/HlWDaa7NQ0obwe9DBD+l+8seb4mBJFlfKVEg0Lupk31PQO4UkQ8H5vFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4c2T8h5ZFpzKHMgc;
-	Thu, 14 Aug 2025 10:05:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 122C11A2127;
-	Thu, 14 Aug 2025 10:05:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBHERJRRJ1oFStwDg--.63851S6;
-	Thu, 14 Aug 2025 10:05:07 +0800 (CST)
-From: Zheng Qixing <zhengqixing@huaweicloud.com>
-To: song@kernel.org,
-	yukuai3@huawei.com,
-	linan122@huawei.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	pmenzel@molgen.mpg.de,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	zhengqixing@huawei.com
-Subject: [PATCH v3 2/2] md: fix sync_action incorrect display during resync
-Date: Thu, 14 Aug 2025 09:57:21 +0800
-Message-Id: <20250814015721.3764005-3-zhengqixing@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250814015721.3764005-1-zhengqixing@huaweicloud.com>
-References: <20250814015721.3764005-1-zhengqixing@huaweicloud.com>
+	s=arc-20240116; t=1755136698; c=relaxed/simple;
+	bh=q2SGHb3APxGdMTmDmItq4Pu4zI6iiexqPHr9lgOY3DA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ej5YkK2itbnWaz+D0jLsJ9m6VGSg4JeKvQjIHtA44XTrpWXFDjftlpcMH5YgH8ukvf2r2sRMGPlZSoUiafRTJf3H4PK5OitYIeZLqgmv806dkibF0t31+3TKAZh8bldr5k2JQWsw5VZXsaYvBQJh93f5T4JtC10pa1Vvnj4FQDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MBsIxElx; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=OULRM4aV2FRJFBE1gYMM0RJzh8b5jot7eoMGHtiCmGA=; b=MBsIxElxqbQMTdHrM6BcYWZ0+4
+	xcO7DUvbQHekl9JU9h0eEA/acArYZO0/c65dzpp7XBIumGFJqNYBpC68WOoKvWn8IZIeSjwbcvBQ2
+	Bfaag3Z/VQZqmKIdoz8T7OV2W/PKYme6DAPAtt1HIM13lNWvbZlyTRIuKd/2SKxU4kh81c3L2Zo9P
+	ytGu8bkFzPSKdQik9vbNYDAyKncI1gQIZTZJZzS79qYzN8z0qPjP/j8tp/WRh5RcgeYOHEr6tvUsD
+	fEAyXRTq8T+QfnRyP/OFBEYNw00YCRTnHjkdrpGp0T3hcQRPDyabtEoq9K0FC8+lYi3DwHYZ+35aS
+	iRTcK5Xg==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1umNEL-0000000FXu6-0gjV;
+	Thu, 14 Aug 2025 01:58:13 +0000
+Message-ID: <98ed6868-8030-4d10-b66d-c7e3d42886f8@infradead.org>
+Date: Wed, 13 Aug 2025 18:58:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHERJRRJ1oFStwDg--.63851S6
-X-Coremail-Antispam: 1UD129KBjvJXoWxGr1rWr1rJry8Zw15Xr17GFg_yoW5XrWkpF
-	4IkF98Wr17JryfJa9xA34qvFWF93WxWrW7JFyfW345AanxKrnYva47K3W3WFyDAFyava1Y
-	q34DtFW5uF4UCaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
-	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
-	Ij6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
-	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
-	0_Jw0_GFyl42xK82IYc2Ij64vIr41l4c8EcI0Ec7CjxVAaw2AFwI0_Jw0_GFyl4I8I3I0E
-	4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
-	WUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
-	Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rV
-	WUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4U
-	JbIYCTnIWIevJa73UjIFyTuYvjxU2WrWUUUUU
-X-CM-SenderInfo: x2kh0wptl0x03j6k3tpzhluzxrxghudrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Documentation: ktap: formatting cleanup
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Kernel Workflows <workflows@vger.kernel.org>,
+ Linux Kernel Selftests <linux-kselftest@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Gow <davidgow@google.com>,
+ Shuah Khan <skhan@linuxfoundation.org>, Tim Bird <Tim.Bird@sony.com>,
+ Rae Moar <rmoar@google.com>
+References: <20250814012046.21235-1-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250814012046.21235-1-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Zheng Qixing <zhengqixing@huawei.com>
+Hi,
 
-During raid resync, if a disk becomes faulty, the operation is
-briefly interrupted. The MD_RECOVERY_RECOVER flag triggered by
-the disk failure causes sync_action to incorrectly show "recover"
-instead of "resync". The same issue affects reshape operations.
+For both patches:
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 
-Reproduction steps:
-  mdadm -Cv /dev/md1 -l1 -n4 -e1.2 /dev/sd{a..d} // -> resync happended
-  mdadm -f /dev/md1 /dev/sda                     // -> resync interrupted
-  cat sync_action
-  -> recover
+but I have a process question, I suppose.
+Why send this patch series to the workflows mailing list?
 
-Add progress checks in md_sync_action() for resync/recover/reshape
-to ensure the interface correctly reports the actual operation type.
+(This is not the first occasion of this happening [by other people]).
 
-Fixes: 4b10a3bc67c1 ("md: ensure resync is prioritized over recovery")
-Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
----
- drivers/md/md.c | 38 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 36 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 4663e172864e..5b6ab4ef042e 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -4843,9 +4843,34 @@ static bool rdev_needs_recovery(struct md_rdev *rdev, sector_t sectors)
- 	       rdev->recovery_offset < sectors;
- }
- 
-+static enum sync_action md_get_active_sync_action(struct mddev *mddev)
-+{
-+	struct md_rdev *rdev;
-+	bool is_recover = false;
-+
-+	if (mddev->resync_offset < MaxSector)
-+		return ACTION_RESYNC;
-+
-+	if (mddev->reshape_position != MaxSector)
-+		return ACTION_RESHAPE;
-+
-+	rcu_read_lock();
-+	rdev_for_each_rcu(rdev, mddev) {
-+		if (rdev->raid_disk >= 0 &&
-+		    rdev_needs_recovery(rdev, MaxSector)) {
-+			is_recover = true;
-+			break;
-+		}
-+	}
-+	rcu_read_unlock();
-+
-+	return is_recover ? ACTION_RECOVER : ACTION_IDLE;
-+}
-+
- enum sync_action md_sync_action(struct mddev *mddev)
- {
- 	unsigned long recovery = mddev->recovery;
-+	enum sync_action active_action;
- 
- 	/*
- 	 * frozen has the highest priority, means running sync_thread will be
-@@ -4869,8 +4894,17 @@ enum sync_action md_sync_action(struct mddev *mddev)
- 	    !test_bit(MD_RECOVERY_NEEDED, &recovery))
- 		return ACTION_IDLE;
- 
--	if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
--	    mddev->reshape_position != MaxSector)
-+	/*
-+	 * Check if any sync operation (resync/recover/reshape) is
-+	 * currently active. This ensures that only one sync operation
-+	 * can run at a time. Returns the type of active operation, or
-+	 * ACTION_IDLE if none are active.
-+	 */
-+	active_action = md_get_active_sync_action(mddev);
-+	if (active_action != ACTION_IDLE)
-+		return active_action;
-+
-+	if (test_bit(MD_RECOVERY_RESHAPE, &recovery))
- 		return ACTION_RESHAPE;
- 
- 	if (test_bit(MD_RECOVERY_RECOVER, &recovery))
+On 8/13/25 6:20 PM, Bagas Sanjaya wrote:
+> Hi,
+> 
+> Just a little formatting cleanup for ktap docs (actually only bullet list
+> items fix in [2/2]; the first patch is trivial spelling fix).
+> 
+> Enjoy!
+
+
+> 
+> Bagas Sanjaya (2):
+>   Documentation: ktap: Correct "its" spelling
+>   Documentation: ktap: Separate first bullet list items
+> 
+>  Documentation/dev-tools/ktap.rst | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> 
+> base-commit: 0bbc2548ea85e6bda835a08c6d47d46435945cda
+
 -- 
-2.39.2
-
+~Randy
 
