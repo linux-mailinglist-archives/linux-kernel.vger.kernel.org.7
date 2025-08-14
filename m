@@ -1,95 +1,72 @@
-Return-Path: <linux-kernel+bounces-769103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C946B26A42
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:59:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD26B26A3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C44AA250B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:51:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BA45651AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A642080E8;
-	Thu, 14 Aug 2025 14:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D5821B91D;
+	Thu, 14 Aug 2025 14:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C7VBe2Eu"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alR2Dhq8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933521F9F7A;
-	Thu, 14 Aug 2025 14:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21C821884B;
+	Thu, 14 Aug 2025 14:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183004; cv=none; b=LiiPeIMZNYBC3a29okjXc4L2NoSOUugVJK26R1UJUjQCkIpOHWtHDd8MSbudBGG4JDr7AZlPuGDSJpTwTwXPvg4Dz7mu4ZHf1C1PErDD4wzNYW0vq3Mq2o3atqrMH6A1WtkRH8Ii6D3sxNakWN+70gEyNgsoZEeywmAWCS3sMqU=
+	t=1755183049; cv=none; b=S5E6hKMrHrz065YUlgklWnX9booYMLv7Hr1E45b4KhXmWe/5PzAXWO73vGqC2HMhT2rnNdBqC7q7hDFeqFwhpHdobFlJYRPNcbcx0HTV+JP7gAN5mGgR2yjO54AlRghR4CcVJVpqJ/7QHdU91wm8MKC0RkrFSatxzOFN6+NATgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183004; c=relaxed/simple;
-	bh=/axWMk9uhm1ZdfUfbj/8KGnGVoYfA5qdAmKGDGQr6gM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YvyqTB3de4a7/uZkBNQ5tvVX4UHqE+IMYro6HX0bU3mo9CWiU7k2fCeFzUZSXMGmxh2v2QizDD68lFB5mjxTdwEp9DBMKGmt802ewS85gfGOb5s+WeZA26v6njXtyEmheZ0yU3PJ8CF7DG2PZiYUG/I7vsBB9gmEH0aQ+CJi0+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C7VBe2Eu; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2eb6d07bso1097074b3a.3;
-        Thu, 14 Aug 2025 07:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755183003; x=1755787803; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EiGNQqMO9h967QGrm5aTrwhMppzluhyJ6Y8QYxAY+/s=;
-        b=C7VBe2EuoJmTIdhOsBmHiNhh8NnofuJujfHOjakCeY+k4WrdkEPA/0GQ4a3UlBSeg6
-         dgUVzSyjMVmW2nCUDCHcVrf+N6UV4ENVCX/uLvkJK009zIMShNrpwz4C1CJn1oaivRkV
-         GET+I7iDquQUE30U6quNEJ68zXHpSFyx/ZZYrDYqWpzx/9V78kusBiXFzuIHGdY5P8Ok
-         V1dSh5oJ//9oyvDQKCvuv/G3fPHa0mrhKS/OQiwe8P6P6azAWwxkhQMlWgZR6qZmGgHp
-         wpeCU5hYvn26rAmrtGJQWJg8+eWOheTb2ujQjaQSa1CeGD+iqLxo9bZSsc7Qqu7pGh0D
-         99pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755183003; x=1755787803;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EiGNQqMO9h967QGrm5aTrwhMppzluhyJ6Y8QYxAY+/s=;
-        b=jIQq2bBnNhkY6JNe5tgY9vzcum2VhAdOJNxsd77xfO9jHV7KukBh1EaG1tgbrkh3px
-         DMRIKs+WeHcr2bHqOGcwwwtAHHwX24qMMihMj0pVH9CbnVR4aXe1/lfm3eINLzlR7spm
-         kDGoSNZjKqR3xW15/m5r6T3YewSwsmjN9bue+s1aB+uC4U0b56ztwt5sfrV5MlD2EUAl
-         katt0OpdzyMtPtYXCPT+pJQbcRrVXThfVv3EQZEg5hSroZ71L4UHbfbQ1q+8MdxlxVVe
-         GMtbmrsj7D/DkD7uGI5fg6H020QgeV6NIwJElNHOwPtGsP+3Gpd0p1Q0n7STRFmj/tBj
-         8LPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVNRFkPTpjJVukXAdF1dzzzHaKU0d9xsOqu4i82zT+qQxOLMjMcxK/H4Dfp2nugdiR+5dQrt9PG@vger.kernel.org, AJvYcCWfj3ljTLjIxlWgMnpOfTX/e7fhbQrMysGllrz0qTsC3dWc9mjF45Qbl8AIj8mQlx6Sf/UzDcEgoe85MlU=@vger.kernel.org, AJvYcCWuPNHu4kyTOas1O0UJFVWq2MOwuME/kDtZIJi7DoCoCv59LVOXgZXddRgtm1TV2YhNwpclKuBZv+4yh9lyOMVC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTVABbu1moI42eKaz3FyUcaYw3vcGXkVlQC+oa/DL/RQyFdY/b
-	TvedrSK01VZPDNXiTVsQlwyAiPIhirrX6fRuDIYkWg7vea0cHKYNjBDk
-X-Gm-Gg: ASbGnctb4Vd4Ic56Go0z3q8QT9iEQLqeyaJgDcoWWLMlNLIRo1LtrHitl4GQsPtFQaw
-	m+PoXQrYRGNinj1DQkT4trVYOlEFuTW8vt7M/tlyK6NAMAOi4xsTd6Wdicz1Iz9gGnB1zAhmow/
-	4Je9e1gCI+TYeUzU3I04SEJdfmODEOFuVP6sOZyBvmN8/KsIAc3lIqFbuiEKZUKyoeWVOtr4SOu
-	Y0GBo17+D4YxxA1MCvuxQ7cpV9Xiy+E+YJPq+t9g7vY9dP+D48KHW9Xk4UrlhMlG4un6Yoopt60
-	n7+Mk7pSj8Osf7TMMDYd896dxS9q3MwEayau9qFCQ70KmOtfmfo0epYJiwwIjyjCVDkIMEDV1HI
-	/s3UvDtp9gTcdgcOXfKCPoLn8xy26pvdtAA==
-X-Google-Smtp-Source: AGHT+IEdzkV+CLZH6cOjPdRoNZpBVJROikuNEjsteCsJY+iEdrQMZCNWUmg6yND82tvTwvCnt7A8Yw==
-X-Received: by 2002:a05:6a00:6f03:b0:76e:3a11:d24f with SMTP id d2e1a72fcca58-76e3a11d959mr1757940b3a.15.1755183002365;
-        Thu, 14 Aug 2025 07:50:02 -0700 (PDT)
-Received: from archlinux ([36.255.84.59])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8fa33sm35117359b3a.43.2025.08.14.07.49.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 07:50:01 -0700 (PDT)
-From: Madhur Kumar <madhurkumar004@gmail.com>
-To: aconole@redhat.com,
-	echaudro@redhat.com,
-	i.maximets@ovn.org,
-	shuah@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	dev@openvswitch.org,
-	linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1755183049; c=relaxed/simple;
+	bh=R1h5hI0HCu+Xju2ydiONXcIr678k3J8wRawMs1+FlMs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SRlvFebtbPvPES3TZSMn0Wm5+oPr3Ac1VS/cCbAM0b7x0RCPL5QtC0OEq3g/3+65AIVzFJ2rJ6iAFvJFu76uz7H/2vlEGLCxgYMySpolP/keVNPCLJrfFBndd/9JFI/M3zFcA5wB6X7Xe0sGw3YU6YN963zApvRuapt1CRk5LNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alR2Dhq8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12805C4CEED;
+	Thu, 14 Aug 2025 14:50:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755183049;
+	bh=R1h5hI0HCu+Xju2ydiONXcIr678k3J8wRawMs1+FlMs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=alR2Dhq8VSVA6ChI/5Elm94IcZUwFvI6z1v1NImonVMtOTINSkT292Nq5QkbXijIk
+	 7VN1vk9suQLwQAwerk696t347oCquzaO3ojGEuRCs3W/D1EmlTdKNZPyZ6JeC1U+ki
+	 Ao2MN0MjEZkH0dsvZYWD3TP63bzL5lKfOeS2GcWINhpkbvowLz1HSqP1ZXgxHsXrRS
+	 Ta2Tb9pBEGlU8jgjFUquUnck9zk72eiZmhSRQZoHL+sLDOKGqRg4TXa1d2fodNRLsf
+	 WNxk/lNzj8FENbufOXS8ZYK0zotIySo+DCPBlDO6KuBjTD2/PLUHFwYHBY0uEV4KJ4
+	 lnrGgChjcx8UQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: achill@achill.org,
+	akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
 	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Madhur Kumar <madhurkumar004@gmail.com>
-Subject: [PATCH] print: fix spelling error in message
-Date: Thu, 14 Aug 2025 20:19:16 +0530
-Message-ID: <20250814144916.338054-1-madhurkumar004@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.15 000/480] 6.15.10-rc1 review
+Date: Thu, 14 Aug 2025 16:50:35 +0200
+Message-ID: <20250814145035.2342562-1-ojeda@kernel.org>
+In-Reply-To: <20250812174357.281828096@linuxfoundation.org>
+References: <20250812174357.281828096@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,25 +75,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Madhur Kumar <madhurkumar004@gmail.com>
----
- tools/testing/selftests/net/openvswitch/ovs-dpctl.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, 12 Aug 2025 19:43:28 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.15.10 release.
+> There are 480 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Aug 2025 17:42:20 +0000.
+> Anything received after that time might be too late.
 
-diff --git a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-index 8a0396bfa..b521e0dea 100644
---- a/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-+++ b/tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-@@ -1877,7 +1877,7 @@ class OvsPacket(GenericNetlinkSocket):
-                     elif msg["cmd"] == OvsPacket.OVS_PACKET_CMD_EXECUTE:
-                         up.execute(msg)
-                     else:
--                        print("Unkonwn cmd: %d" % msg["cmd"])
-+                        print("Unknown cmd: %d" % msg["cmd"])
-             except NetlinkError as ne:
-                 raise ne
- 
--- 
-2.50.1
+Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
+for loongarch64:
 
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
+
+Thanks!
+
+Cheers,
+Miguel
 
