@@ -1,199 +1,140 @@
-Return-Path: <linux-kernel+bounces-767934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64532B25AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:12:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA15B25AB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA60E5A7EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:12:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8D065A7ECE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B46E21D3CC;
-	Thu, 14 Aug 2025 05:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41B0C21CC59;
+	Thu, 14 Aug 2025 05:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MkSCPga1"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FCjjvweP"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73392192F9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 05:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65971D5151
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 05:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755148333; cv=none; b=ZWS/1/KOikNWInC0szD/CuLIM2bRES5H/QZMO8oNcm/hMZKR62Sc6bHay/UOw9fIzwSP0rSqiNfvhWSQddAV0b3LcUz3L2pgYFoZHWAtJwIKpbMwKGNxZILkFAKXlS7grRJZShgeWP1Z2Gmq/0k6PDYi4MjGHcOsNqCTfQ9K69Y=
+	t=1755148398; cv=none; b=UokdxAk0GjS6wgyzCZrE9/k2BVlW199+8piwD8L6qUrW0IzHYUhCHtXTGo87jsPq3tUWV5JxpyJ0LKVG0SERfyPV39LdtCvEwLx2VD/uv5K4NCAAq0Q5MS4TBZMlAKxl3r2EHWQt0UKDW9KYfB2k2a6aF47oAtYzhfryMqbgkKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755148333; c=relaxed/simple;
-	bh=YaF6qaNbfZR7C1UmE5o7deC1mp8iVKvjMQoaZqOQFxk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Zbd/4AXxCU8JdcZsgt+YaApcyibmhP7uSib/y+tb0RMkZgJDaq5IqgEchoW6mZTaXFWNlCPXWD9FjU4mTvcN8sx56hbzvlA+v5SZ3E49k0/HXHWIoj/84hFVXfj3dJ1a5i9XpAQ2pX36qhsUjoc66WO/wMIi2i0CXgiYgAoEXdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MkSCPga1; arc=none smtp.client-ip=209.85.208.49
+	s=arc-20240116; t=1755148398; c=relaxed/simple;
+	bh=k7BQOJKsWTRVbsTyj8wE27+ReeJC9Y/WsWlZgzIGoO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l26wM/VDEDSPdujupho56VFZcWEdakyD0uhUZllZqg083I054htyQAOOqMBa3CU0G7ldx3jEWyrJBX4+j1iBAVXxKXDq1i/4LNXdE8WY/05PNBQFqcXUG0UTuLEznBWW6aFo3P1min4HaOVB98uIfBALK3pC7YAjRxBsf82SUWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FCjjvweP; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b657bddso1044333a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 22:12:10 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7322da8so95972166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 22:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755148328; x=1755753128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7UUaCbQk/tQidZQRYXdHI6wdrBH3WftKB2sa5wcWzvs=;
-        b=MkSCPga1F8ROO/73OwExDxZ30IIkxPfsTbp7VVUYF0fF49q0cqfGEpjhLHaiU633HF
-         rigVXFScFOb6FJnYs3MG5F1tG6d/sCYuBpKz3XqVWTC9De/TKSnZsFUMWXa2cDOB3sxw
-         JOzpJuD8doyqiOssXLH4B2dIMdoYUvziu6+y0Gg5nc2m56ZMbG1o6hs9GfRuHvGyyi8w
-         4ajivJ8lVAufAXnhtBhi42zEQUYyhXYQZEziZyzyB2VRcGpY9rxUbKmBTwBVjsAlvYXy
-         d5HhOJRvoUfVjUZawoEjMWgELQKyRKKDG3chgZxyCmdUBwfLzpICK9p6h6o1fkPdLmUH
-         bEDA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755148395; x=1755753195; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zOs+Ja2LywqReJC9686EhsUnOQ6QzXRLXHcqfrYvThc=;
+        b=FCjjvwePwZ2mhuucScjnjn68NRhkzBNKMlIdyRf5y6AxrjHQUi07I1Or7rMDz+zQHl
+         jtVNBrD4S+gB74F5wnu2qtSXOPExGCbb+JTxot53WZTiSMl0aS0WTISMK/737/1s4344
+         xMJAtGWsBw/vBV4QjVmMShPS0soDQ/7rKSWug8TIliJ0cMj7vDiLWxqq2mkoOIQhd/YX
+         wqdTBzMA7LIrUJJu5+7JHw+BJTjHlKzDBhM7LX/KgcqEOnbkDPvzzm1E7T51W2+1+klq
+         4p5v4M6q/mPGhfGMHjiu1XCHNkaOMpfZecn63KrJpGzcEyHFs57aE4uINI4xt33IfwZG
+         ZwGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755148328; x=1755753128;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7UUaCbQk/tQidZQRYXdHI6wdrBH3WftKB2sa5wcWzvs=;
-        b=ASENklG3beYpN9tiW+idGIqRscB2mkIIYDj4xD12s+mlXBb4sOyNDKpc2GwLJqJijT
-         v7L8meC4UL9xyLunpzTc4a6rZinMB77hLjBXHgjae0sHPCAQmq3NiNaV6mvOV56i+bZt
-         FNO+eElEk+XTE/VjhczM2OVvCAJmSGGMBJCr7e/Rn7MOVUt+CI96RzerTukyAK6WmPjQ
-         eCdBsgtA9wDYrM4ZhcHWga6vu8xxuFxhz68d4zOW70w/EotpNsZ7A2GzfesJ1WyPQyou
-         qo2SU4nkFt7g7XTidApZiXdKxsFLLQS/Wi/juoiei55j7/DZH7/4IvtXybvsNct4JuZB
-         ssrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyD95Jz8LJxow3Gv8LHGGmWsn5CejkCauOMAgaFdMkm19QPWEfV72Jv87vjHNwFhh7OD0b1uRzuE/NOoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZxj/cAhIJItnJ6vr1M4OTAM2opL+ihvdVnmM3TzNxH2QC2eeS
-	sTHlRURn7kjiGYc/K4Chv5Wpd80vJsthRdAmhum+fH5ue43+eK5MoQzkN3fDwAeXeNA=
-X-Gm-Gg: ASbGncup24cWK4ivGV0CMmkWB5zBFbDSMMUx6uqyQNGxs5Ua/yfyTyipY2esbOzwdRK
-	By2OZ8uOFaMMdE66Eg3bTGP5cEr8b+tfqTqvBWIBBpxZQrH1OPhrpm6fC8+chUxlNj7kh70AYx2
-	4tVBFoWu4sa0l9PN+pWxDDiOExKkvJTy3Hh/KXAXlUIR/TbTHVuH/HQ8T4oJugmi+eSdHH9oVNR
-	PAaO1Xv/HWlTn4ZRD93qU0zzfMoY2LrWPlfBlmRV+DGnJZNAgsFoCH0tN0++A6IE/bCOcwIr3pU
-	zps30uBs4URRRg56LTMZ+VBfAXKCo6c+v+EoP8GWEgbYmx9FvGdt7IAXYOSrlwJyioO19Pcmjf6
-	oBdsrOp+2NDhgjMavtmKmlVrT/x8rMw4N0xsz4g==
-X-Google-Smtp-Source: AGHT+IE2qNMmiWwpZbVyrEo69mF6dA6ewxgwveepPO3c3U2g6RrCgHK7XTCos3mlcSqU5U6vEPad3Q==
-X-Received: by 2002:a05:6402:354c:b0:615:cb9c:d5a2 with SMTP id 4fb4d7f45d1cf-6188c1fb55dmr1316865a12.18.1755148328431;
-        Wed, 13 Aug 2025 22:12:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755148395; x=1755753195;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zOs+Ja2LywqReJC9686EhsUnOQ6QzXRLXHcqfrYvThc=;
+        b=V+HtBk8b8nPw6dtwWlPStregvBPZn1vhd+5AA1Hlt60mEPelcPAN3t/ID2hpVAcO3E
+         vab1CKRjspVP+ZNz6U9z+br/zWxV3C4pI3YvrHLxnYVPNV0CWqbOfeWo281oehsd4Fo4
+         f6RuHalaQKRNgMialvR+wdQ1ivv78RfCPwBrYZU7MQ2K77jnzstMy9nIjNnvpGB8uj4U
+         I8R3kbvI2U5ffS4Y6ZnEgWai7NbDvvc8gWO8lsEaUYynQqR5Jv/lAi6cXAyRTuPse/bI
+         qiTIGYSP6BHMKh6GToTmAhst2A64pokF4YB1sSlT8Cu6hfkRuKSAHc11h+l8LByDqhO7
+         JPTg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4h1/B3PW9bHNtcuKp/ohlnRYyI84S8qSC8oABl4S1A84zEL9HwCel7RJ+aq6dPfVHwzE2BU6wFeZ92Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygbBhcnhhaCCR+wlnjQkxzSNKK08SgX1b88m973qv0fjsGPeps
+	7GhCowRyd9vpQ3RuhhMuA6iFQPWZqY+1VCo4l+7zr4sPaMLCczguZ1oImG1rc7h2s5/E/sOWZQX
+	ljfpD
+X-Gm-Gg: ASbGncsa9CtF5b0As8mesFpHv66Ahv5WLiE9pVlh5kHTBcgFo+Urretxd3mBuDFCGRR
+	1+jdHtrl+xV54Qvme5AP3lk9ErL20Z3u373PX5hh6hhxFzgOb8i4ELV1nF8KqcmfDk8Hb8P9otR
+	eiMX+3hfSZpTzjyRy2TFR+OLFPhKW9JP8ggwDYn9ZsOno/MF05p6I9tKtUFtngW6j4+5y43WrmQ
+	F/AAtforoFA5yyzuQGA7mnDrK9lL9vrzJz92vHOw83m6kuowvzyQBujf39fhtcvDm3hVqo4j3P9
+	nwYu6Ym4NCtoNTF2mw82iLuu7cN4uKcFvY7OHsqm2DVvXRmBDuGaIhIMq/l6KcOtlbMIAU0Vt/d
+	jK+VXdVQ2kiJjQbwB8J8ceURDqO0=
+X-Google-Smtp-Source: AGHT+IE21Fscsduu8A2gVWCDMuP+3BFd0qyr2OthVuaxd9+6x6FL4+ivV3/eWrrrt5/okGohfJQ1Gg==
+X-Received: by 2002:a17:907:7243:b0:afa:97:55e9 with SMTP id a640c23a62f3a-afcb98c0441mr149870466b.36.1755148394806;
+        Wed, 13 Aug 2025 22:13:14 -0700 (PDT)
 Received: from localhost ([2a02:8071:b783:6940:36f3:9aff:fec2:7e46])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-61865823411sm3172298a12.28.2025.08.13.22.12.06
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-af91a078a28sm2533359966b.3.2025.08.13.22.13.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 22:12:07 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Zaid Alali <zaidal@os.amperecomputing.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>
-Cc: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
+        Wed, 13 Aug 2025 22:13:14 -0700 (PDT)
+Date: Thu, 14 Aug 2025 07:13:12 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
+	Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@baylibre.com>, linux-omap@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] ACPI: APEI: EINJ: Fix resource leak by remove callback in .exit.text
-Date: Thu, 14 Aug 2025 07:11:57 +0200
-Message-ID: <20250814051157.35867-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.50.1
+Subject: Re: [PATCH v2 resend] pcmcia: omap_cf: Mark driver struct with
+ __refdata to prevent section mismatch
+Message-ID: <c5agcvxca6z7fb6eqwlrqq4232toncpfuu5frds3ebsbht7tyz@7lpkvzl4lyxi>
+References: <4937807c9d70644fae705459f36574bd24846d31.1755099931.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3107; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=YaF6qaNbfZR7C1UmE5o7deC1mp8iVKvjMQoaZqOQFxk=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBonXAe4wXCd+w9j012xGyTT62s1jZjYP8qMlwkY VgjJDWWVa6JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaJ1wHgAKCRCPgPtYfRL+ TneRCAC2WyUwTXznndtVthjtYInPYamfSX2NFfpWVuHokH3cjFu3g5qKEMAbIyhhImFwn3LAHFM q2EBEddDIFu3hhV0bfaFW1WAAWQnUw/wLTbZOfMIMjT8y5TDSycQdjjTK0WIURH6lfshxqzILxM 4eYP4zuLu8XAv/j4k1Smzyt6JFFdA0bK6rpIkz4vx+X7tD8/8gjVPNSAp31xarETNBOMiK0t00s NF5jqzx4G9X4oFozftrXlZk9MDupzmRLsWyWFVc+FmHTNxEi4q/13KFciAte9zzs05BnmzmzIFC p/56E0SgI9fUGJ6d+80/klkpUfWHCxf2fCzDU8zh1piFDpVn
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xpccwvq7aahfhfvt"
+Content-Disposition: inline
+In-Reply-To: <4937807c9d70644fae705459f36574bd24846d31.1755099931.git.geert+renesas@glider.be>
 
-The .remove() callback is also used during error handling in
-faux_probe(). As einj_remove() was marked with __exit it's not linked
-into the kernel if the driver is built-in, potentially resulting in
-resource leaks.
 
-Also remove the comment justifying the __exit annotation which doesn't
-apply any more since the driver was converted to the faux device
-interface.
+--xpccwvq7aahfhfvt
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 resend] pcmcia: omap_cf: Mark driver struct with
+ __refdata to prevent section mismatch
+MIME-Version: 1.0
 
-Fixes: 6cb9441bfe8d ("ACPI: APEI: EINJ: Transition to the faux device interface")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
-Hello,
+Hello Geert,
 
-note that the intention seems to be that this construct is safe, see
-commit c393befa14ab ("driver core: faux: Suppress bind attributes").
-Note further that I don't have a machine to test that so this is only
-based on code reading. An appropriate test might be:
+On Wed, Aug 13, 2025 at 05:50:14PM +0200, Geert Uytterhoeven wrote:
+> As described in the added code comment, a reference to .exit.text is ok
+> for drivers registered via platform_driver_probe().  Make this explicit
+> to prevent the following section mismatch warning
+>=20
+>     WARNING: modpost: drivers/pcmcia/omap_cf: section mismatch in referen=
+ce: omap_cf_driver+0x4 (section: .data) -> omap_cf_remove (section: .exit.t=
+ext)
+>=20
+> that triggers on an omap1_defconfig + CONFIG_OMAP_CF=3Dm build.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-| diff --git a/drivers/base/faux.c b/drivers/base/faux.c
-| index f5fbda0a9a44..decb15f1194a 100644
-| --- a/drivers/base/faux.c
-| +++ b/drivers/base/faux.c
-| @@ -39,6 +39,8 @@ static int faux_match(struct device *dev, const struct device_driver *drv)
-|  	return 1;
-|  }
-|  
-| +static int once;
-| +
-|  static int faux_probe(struct device *dev)
-|  {
-|  	struct faux_object *faux_obj = to_faux_object(dev);
-| @@ -56,7 +58,11 @@ static int faux_probe(struct device *dev)
-|  	 * Add groups after the probe succeeds to ensure resources are
-|  	 * initialized correctly
-|  	 */
-| -	ret = device_add_groups(dev, faux_obj->groups);
-| +
-| +	if (once++)
-| +		ret = -ENOMEM;
-| +	else
-| +		ret = device_add_groups(dev, faux_obj->groups);
-|  	if (ret && faux_ops && faux_ops->remove)
-|  		faux_ops->remove(faux_dev);
- 
-(quoted to make sure that this hunk won't be used when the patch is
-applied).
+Reviewed-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
 
-Even if the faux device interface is fixed not to rely on .remove() the
-comment in einj-core.c needs some love.
+--xpccwvq7aahfhfvt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards
-Uwe
+-----BEGIN PGP SIGNATURE-----
 
- drivers/acpi/apei/einj-core.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmidcGUACgkQj4D7WH0S
+/k4qSQf+N2OQhVnGMcoElMAvBwKbRCYoXFuMOt9VpW03suQ+ZcmFQ0WmQou3haZQ
+IN7houqborh6Ue1EGpUzlzDurVsTzGE+yD4buFiPzbUpJmjg9Cr6OUeC/GXqLQOg
+Gs00rX2Xe1norafY8hDLFSbZHW3qENC7bRrRFkTCN2Gc0FaBiGNWNllE989SBoqT
+cwn8PzptDWqd7o8clOUBxZkTQG4j94H8WMgHHNDVbtWVra5Da4i57HyqWSCRbDZ2
+EBIwnC9shX0y8FwwQGwVQYteqIzn8ThU+C7vuoZ5+mV/L+E4o0Amc0xSzCs8fIZB
+S4Ho9JpdVDD8G2HV/ezYADHoQIBWfw==
+=su2q
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-index bf8dc92a373a..1204fa3df285 100644
---- a/drivers/acpi/apei/einj-core.c
-+++ b/drivers/acpi/apei/einj-core.c
-@@ -1091,7 +1091,7 @@ static int __init einj_probe(struct faux_device *fdev)
- 	return rc;
- }
- 
--static void __exit einj_remove(struct faux_device *fdev)
-+static void einj_remove(struct faux_device *fdev)
- {
- 	struct apei_exec_context ctx;
- 
-@@ -1114,15 +1114,9 @@ static void __exit einj_remove(struct faux_device *fdev)
- }
- 
- static struct faux_device *einj_dev;
--/*
-- * einj_remove() lives in .exit.text. For drivers registered via
-- * platform_driver_probe() this is ok because they cannot get unbound at
-- * runtime. So mark the driver struct with __refdata to prevent modpost
-- * triggering a section mismatch warning.
-- */
--static struct faux_device_ops einj_device_ops __refdata = {
-+static struct faux_device_ops einj_device_ops = {
- 	.probe = einj_probe,
--	.remove = __exit_p(einj_remove),
-+	.remove = einj_remove,
- };
- 
- static int __init einj_init(void)
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
--- 
-2.50.1
-
+--xpccwvq7aahfhfvt--
 
