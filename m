@@ -1,109 +1,130 @@
-Return-Path: <linux-kernel+bounces-768457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA41B26137
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:43:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0120B26139
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B0FC1CC763B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47A181883218
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851123074B9;
-	Thu, 14 Aug 2025 09:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9362EAB98;
+	Thu, 14 Aug 2025 09:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d0uvATVe"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fU3mZIT6"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB2B3074A2
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A582EA15E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755163914; cv=none; b=TwehTAGotMnHdZJlRWKpaofRp7+EOnCqJuj70AcEHO2bMcTjmNlvpxVr87UNTaGZF4sINOOzNxhB/Y8wqwllKeFd2uDejadna8nnL4oBm0pSVepVxrz0h6kGNCIA+yGO6ptxpyPWqrBzBpwAX2VNwwslsmBKghZXc6kykP+Qcxc=
+	t=1755163980; cv=none; b=tbbOG2hkgFagUOAUxcVXbYj2atETb0qZuXFuocf4XJ3vfBGwMCvmN5vePleH4j3mSvh0c2ZPbJDeWH6528TU/h8D0JYE9HDZtuzmeX0jIvGkozRDnhl657huKYkztUMYIi8PJxTtYUT9fI1NurTKrVj7qeFohcpeVj3wpn4Erto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755163914; c=relaxed/simple;
-	bh=fijvh1Io+D01e7vlvgm9vHdhu9F1/ZeWvTBFZGxfd8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eRtP/+5tbLJLVjdJtia0yFT4fxSQFSDMtXgP2oUvLuo331E4htqT7SFEsNzdy51uf5UpjbE3yTGRbEtz0CMbNhUVRjewPTVZPdY6glepm/q2ymC30iZc5ovsOXlzFCPNp4UUvPt3uzVNQKEbTIiyIBcgOsFIj9/H98WIieH5bFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d0uvATVe; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1755163980; c=relaxed/simple;
+	bh=Ddcf2otYVNARg/taorSZLAtQAtvhMThscR3wOc9nohs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vBOn67eagSrKqBkxgyNpIvBwyVxLGqlOavWstzczhuuCsnLqdVa8VxDFjhXfTC+Ph72WmPKswrdxlsyBb8+j0otfaMP4ODMQQfFobofJtQIaWHJiSqomD1MOlOqwGOmpYh3vOxkrHYRf7ObCg/hKtALEMM5cL9ReXthMSmor4G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fU3mZIT6; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76e2e89bebaso574447b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:31:53 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb78d5e74so116910366b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:32:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755163913; x=1755768713; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bJQjTQPOVmlrRZrnxoAqufcGLuagbkJPkwYuRKf3anU=;
-        b=d0uvATVeqF6vwiqqCPkDaIZtCRC0GSN3BebyMOY1eBZgdQSqyevGc48t+Ru7YHeEPB
-         OEzsMqcGeIM16BIBswY+v1nQfHma0NsnvgSufhGht1/7Qy8rXW1tltuzTV7NaHC7RUdz
-         GX2uZrf+JS7y3GXMJZgm1X6GgFtcZSAd7DoSTUcKsc/o3W1LOTpwttJnuLG4S1UxY1lT
-         0m5brhNNwVCOiMJTjrXeNwEsdHukdUNjj8JpBSV8q5TltdFKBdWByPFAb3FLflXLQhgQ
-         5GwN6KsALz2jm+2VGh9wvgkfOybllZGZaLvuORMPMyulqf3D4prrBq+V0N/engKfS+8w
-         j4cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755163913; x=1755768713;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1755163977; x=1755768777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bJQjTQPOVmlrRZrnxoAqufcGLuagbkJPkwYuRKf3anU=;
-        b=TzRLBA4Vi6In5Wq/DvZ9aNikag6AseTIv1frQdIdizguW1I+r98Zy6pje8+HROhHRd
-         ywShgA0uKUxdN/SlN6H+Tur1PScsbcgf7/LhaYdvbNOwTM+R7ehvjwlQI+6qiFo62BDP
-         hw50BiBtlcqDkMj+4yUIWF9dS+Al1sDlQnnkVicaKwj94wakWa3cYGGyxq7GNMZmafNB
-         IPQhadUG6pcF0ZHf1SpyBtiyGH8Ma/SIivVDVDt31v/SLmrzppF4JIOu21/7/t263O9+
-         RSJH06LnGgLF/69vuLNod39fDQjq/QArAtkX3p97eBSUoueOQI6yTM7aKw3sEsqEg9zu
-         dWqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKdaKn7QPdZBUXiszj5TkybQm2GmFLclE1S+gXM02i0+Pmx4wGwpBbQt8oXc9LaDiu3IoJ2f1inkucYvc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSf97PZZmQDnLUEpKCJpqHcMR7wezJtYv/QSjUg8nsDiL8kbUz
-	NEsX1V6K3evhscEJrrSOpLEPi4Hla9XfoNQci++6KhjBNgJ8U12kXyo7u9XTa5vwoug=
-X-Gm-Gg: ASbGncv6ffvNlpNcHnxkDt+12Ojik7Uh3nOx/Qkd08WTp4Q+plOxSMSSjEdfEHKWXlr
-	cBLfjs3sr/EjshevexSlboyD+5c7ggQNQmTNM7tVZM6RYf29Z3fURFweJW1fgdPr1NTMJebOPm/
-	zde82cfknrqZuHujCNEwaahTBmdm8OrDgUACuLEdqKxdaquTq83MZ+bVYLu6hKxhhkFhZfGP94w
-	uLhBxCYz1pyp3HuB0v+yfhmgCzAG6vxOXhI9sVi8mSQaUEMQEgeR1hcrGXQZGhxUPHhD5uWka8K
-	NMURnPLhaqG/VzARXPje8QhMQZGwO0aF6RVzyLm3cf/phzLZTDEErI+2O/9nlsk0XiPXAhQoezU
-	AtOU4Ijfnxv0/AGnuGsehyMkQ
-X-Google-Smtp-Source: AGHT+IGt+a3zic40FsS4GaqjDHI71oyeZLUh6BKu1SRmqo/xOps+14RtHTg7s8vjxpDcoyfKt36llw==
-X-Received: by 2002:a05:6a00:2196:b0:76b:fe65:71f5 with SMTP id d2e1a72fcca58-76e31ff2ae2mr3142286b3a.20.1755163912683;
-        Thu, 14 Aug 2025 02:31:52 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce93da5sm33802268b3a.50.2025.08.14.02.31.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 02:31:52 -0700 (PDT)
-Date: Thu, 14 Aug 2025 15:01:49 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "rafael J . wysocki" <rafael@kernel.org>,
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] cpufreq: Return current frequency when frequency
- table is unavailable
-Message-ID: <20250814093149.ob36l2gxo33snbac@vireshk-i7>
-References: <20250814085216.358207-1-zhangzihuan@kylinos.cn>
- <20250814090201.pdtvxqq3st65iooq@vireshk-i7>
- <3f901678-c75e-48ac-985a-2834f9ba4c8f@kylinos.cn>
+        bh=/PgWqN4timfjl4cZJRm42vhchyn9UqvfvoLN2gf4TII=;
+        b=fU3mZIT6gEwgZDiGnmaheocxclu9gw4fft58ddiZWBISqEEf1hZSUMK2bBmzVFqS3y
+         o8L7noQ4rUy5x1mZ6SGh0Yque5vYLKcVI7gvHvPDsdiBBrqQOGqVQlOMWQcAN358uiv+
+         yexl7lSVNGWTe3wUFwitSt+MeJGvMQUzn0IRB1zBXpIEh8ZQBAuP3LnQ+Ivv+qE2pkGu
+         7XpMbiuDTHBW1pbGKBSFg/0FB4MI2GZuZdIU1rKzcAIMnc/NiR2bd4JccGfaogSsoyRG
+         d0qsEhG1DNFdLJZb4CTubErfLgrnNYrC4WbPnogJLll0V43Tu60njrJQk6qcJuRF9J82
+         VntA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755163977; x=1755768777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/PgWqN4timfjl4cZJRm42vhchyn9UqvfvoLN2gf4TII=;
+        b=XM7M4yavA/rMDEjdorrVGNiqOoFNgNjbnCNtqYAsCDAbeLKXvXvXhzoo5LzPvtzt2P
+         T+ThspxwnJKCmRDcJZ2AoysXZDUv+Bda7nXQPlCyy8agcz22vxl6kHaXBP+0YDJo+zTC
+         otaN2JH6eBUyeVqTbjdck2b2TtT7gCzO8Ch5ePB8P6KtlRKWArubQL23nvcDEIwFh/xI
+         /qGDVJob4KivPLjrKx0rbM4EoEakDSKcAmKWtb0XlHA1IhyymyWLbQCuf5ptv0kDYqR+
+         qyBWrOpJRApnG1+oaAXe3ZvniUEhBl56egjL6rr5goULj0FVD2ng1E/xd58Z1BIwkThY
+         ic3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWIDqfYtJGsdoQmNfDUoo1L8990Qx1CHupqoiInE6IsO2PtE514FC7oAU0inHx8cDco5xP8uMDfinAvwEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3Evw941PXTnO7NdClrhcuxcHSJtNYXbFngAs1hfL4ckN8GePB
+	1F77dlKPLy8ptXMU73ceuOAj8PzRIQiFEuv3Htyp+kE1hrbmjaoXFigNOLFBQg0OvBBWLVu3EQV
+	1NEBn6MYET0uDDdOm608V7obxdm3EsAxtWWw8nH1XEQ==
+X-Gm-Gg: ASbGncsdRvlzqRcdzUDuqggjWvxP6eTSEiUlMV919CfTkBWtz9H7fWOMPn13XYd5ehY
+	OeMlNqKQ3KiDMdbRu2o9FGzLsM591GQPG96ZKr/4F07Lcs4LGxkFbewhiu3dgaTXpspEXEdBTQW
+	HHruAavnQDPt+gjGT8v6cgOU9S9Etrl9629cJCXKnfUBwd/KUsxHeRICrvR8vZPwH9xIWqVquf9
+	Q/FUyxZOdgk6fQWyXiE+YziJTJffuO6SSjjcPo=
+X-Google-Smtp-Source: AGHT+IFrAVXvmsSi7GbBhU2lB5DsCLyrrz/JBWyYAZLJ3h+X8DtQSjG9apEyelCtFkio9GsKeQdg8qpPOGy++jb/RKw=
+X-Received: by 2002:a17:907:7e99:b0:af9:e3d3:a450 with SMTP id
+ a640c23a62f3a-afcbe02ae07mr165697966b.6.1755163977510; Thu, 14 Aug 2025
+ 02:32:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f901678-c75e-48ac-985a-2834f9ba4c8f@kylinos.cn>
+References: <aJwk0yBSCccGCjX3@stanley.mountain> <175506979055.8476.10658684000717777329.b4-ty@linaro.org>
+ <CACRpkda_-JBGTTh7pLd+MkoVyCCKDqTZm8t9vaxWMWDE+sGyLw@mail.gmail.com>
+In-Reply-To: <CACRpkda_-JBGTTh7pLd+MkoVyCCKDqTZm8t9vaxWMWDE+sGyLw@mail.gmail.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Date: Thu, 14 Aug 2025 11:32:46 +0200
+X-Gm-Features: Ac12FXwz2T5b5IuGlaWDfV_45Y7w640Ir8a_Q8gAQw7wKqwa0C0dwbE5i-RKcEo
+Message-ID: <CACMJSeue_3A33gQjkN2T0=G14faWs7NaXK9sEy=q877w9f+-AQ@mail.gmail.com>
+Subject: Re: [PATCH next] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Richard <thomas.richard@bootlin.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14-08-25, 17:24, Zihuan Zhang wrote:
-> I just feel that it might not be ideal to set a frequency when the frequency
-> table is unavailable.
-> 
-> Perhaps adding a log or warning when the frequency table is missing could be
-> a better approach.
+On Thu, 14 Aug 2025 at 10:42, Linus Walleij <linus.walleij@linaro.org> wrot=
+e:
+>
+> On Wed, Aug 13, 2025 at 9:23=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.p=
+l> wrote:
+>
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > On Wed, 13 Aug 2025 08:38:27 +0300, Dan Carpenter wrote:
+> > > The "> chip->ngpio" comparison here needs to be ">=3D chip->ngpio",
+> > > otherwise it leads to an out of bounds access.  The fwd->valid_mask
+> > > bitmap only has chip->ngpio bits and the fwd->descs[] array has that
+> > > same number of elements.  These values are set in
+> > > devm_gpiochip_fwd_alloc().
+> > >
+> > >
+> > > [...]
+> >
+> > Applied, thanks!
+> >
+> > [1/1] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
+> >       https://git.kernel.org/brgl/linux/c/148547000cfc1ba8cec0285726833=
+3d08724b9cc
+>
+> Do I need this for the aggregator immutable branch I merged yesterday?
+>
+> I have only merged that branch to my new development series, if
+> you need me to pull in a new version just send a new pull request
+> and I will use that instead.
+>
+> Yours,
+> Linus Walleij
 
-There are a lot of drivers that don't provide a frequency table, i.e.
-drivers with setpolicy() or target() callbacks. Only the
-target_index() ones provide a freq table.
+No, it's not a build-time dependency and it will end up in next anyway
+from my tree.
 
--- 
-viresh
+Bart
 
