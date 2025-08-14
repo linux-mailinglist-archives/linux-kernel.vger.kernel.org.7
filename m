@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-768956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FB3B26853
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:01:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA08B26869
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202D61C87915
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F55DA2654B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFF8301463;
-	Thu, 14 Aug 2025 13:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e03NKnZ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E264B3019B6;
+	Thu, 14 Aug 2025 13:56:17 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7636D2FCBF1;
-	Thu, 14 Aug 2025 13:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A843002DB;
+	Thu, 14 Aug 2025 13:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179679; cv=none; b=tSP4+ovGwPEtbuI9Kj0EfPoOLlfTHs+4sIl1rwyjEux972duxtiNPwTnJ3Kxyvz3rUdS7urViz02gry7qIwXx+fLhEoNNnRoULdvwu5miSDIqr7aR0mOQ1Im1W6kZe3PaOc0TTXNrRSZg3GvKKMtZgTbRtdlR+3RV8vvezZm7V8=
+	t=1755179777; cv=none; b=KvblzUYFX/qZPUAeMpWz4I6wI/nbltdVo136OFagnqypUM85wb4mbq7ErHnBfnsL8kfNW06GSRIQDmbEQJBwfmgz9w97ifGMrJRanndEkeDv2OKZ8GMJ4g379yBzKDWgk/drfuBDFRUwKSPJNpKc741r1UBoOxOfe5Xv/Fc1RjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179679; c=relaxed/simple;
-	bh=Pq9K4lFVCjWXcoUHMD2/NQ/zY/jH7W1uAx+GiZVQeQ0=;
+	s=arc-20240116; t=1755179777; c=relaxed/simple;
+	bh=FY5sbNBK7qZlnMcmmL7hNtLU1I+7sRKJWqEJAf4IRlo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3I5uStS4qLq0pPthHcO5APwEFLevJVM91YThbBzHElnEymhL6Hlky38aLPovZ1TtThfvPUIZweefAadF0Z/Vu8+7nSsKpzUhe8XWNSLfkKp/RXFe26XDzrr9BWYkNdJKdjYiO8GSc/ex+NP1++8VmHpPtziRtqZgpTZ6zeRT88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e03NKnZ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B435C4CEED;
-	Thu, 14 Aug 2025 13:54:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755179677;
-	bh=Pq9K4lFVCjWXcoUHMD2/NQ/zY/jH7W1uAx+GiZVQeQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e03NKnZ5pRDJGkYy7nHE7La3Qop/W5zFF6vmyQ2hPvJtNNddT/LjGILExqFQbIlKi
-	 ZhAJKlB6eZIyJGFGVlHtw9U8YNpAfv74nS1gwqxD9oxbplgtXp12aOi/gG4T8drbe3
-	 5sKXOsKAmQZV+a0d1v+fU5idUKIIxqvRr7bUMN+c=
-Date: Thu, 14 Aug 2025 15:54:35 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hardeep Sharma <quic_hardshar@quicinc.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 6.6.y v2 1/1] block: Fix bounce check logic in
- blk_queue_may_bounce()
-Message-ID: <2025081404-conceal-next-8858@gregkh>
-References: <20250814063655.1902688-1-quic_hardshar@quicinc.com>
- <2025081450-pacifist-laxative-bb4c@gregkh>
- <21bf1ed6-9343-40e1-9532-c353718aee92@quicinc.com>
- <2025081449-dangling-citation-90d7@gregkh>
- <4a898590-e1ca-41dc-b8b7-a5884d10db5d@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GglJZeI2UEK3aLJ5770UdZAqGBg8GAzVrShhIpiRAoeThNUosG314XPvurwWasa86s7VUP/ZxbKPfR1Xqxqgrak5czfZsWuEEu8pNn6I8sCgjN/Ge/BL8kWe7qbJBm99twNi9GufInFzXjVUMuom9o1c1vLwkdWDip7McysVnM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpsz9t1755179680t7764a06f
+X-QQ-Originating-IP: kAirI4c1dFDqOa0MCUTbPS30JYAfzpXeBXjviMMwVKo=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 14 Aug 2025 21:54:38 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2664948985724009700
+Date: Thu, 14 Aug 2025 21:54:37 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] net: rnpgbe: Add basic mbx_fw support
+Message-ID: <3866866DBCE66734+20250814135437.GB1094497@nic-Precision-5820-Tower>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-5-dong100@mucse.com>
+ <c69d6a87-3d9f-49dc-836e-f33508c62c1a@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,34 +61,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4a898590-e1ca-41dc-b8b7-a5884d10db5d@quicinc.com>
+In-Reply-To: <c69d6a87-3d9f-49dc-836e-f33508c62c1a@ti.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: M18A+sp1qNHzq4pS8N4zhVqEyqkwpR7zx0f9witggg/dsBSbKWlYGfF+
+	KSC3lTws0MRn5ALXJj3gWlUBde/tPG8qQZIuw9kYIoRZfRZFFtLRp+junxyMZti2Y0gpduW
+	YJvddH7f3qf9BSTA5DlQbk7u4lQOr81HEloppjsHkh4IY0H4N0j1iGLdtiSFmC7Tiep5KtS
+	x5HCbA5ul6dHGomY8MnWW0mF4TEIetJeX+JpNx70Y69THDIlK+LDPGsT0snlthmprBriTCX
+	gLjd5NXoy++aH4VXnniVSMjqSTcpE+GTDgXx0Y9ClnxggdliMF1Zhm+TaIcpY3n4mZuGgke
+	r91IrVzsmG1cXNYDJOMnxFI+mgoaYnzgBVsSAkE2WC2yOOf23Vf564Ju7WfUROmfH3lmIbz
+	oxhyuUqnz0GkXDFo3xuiIYkJKLbPQnu/D8kuNE8OM5R+bIXCZ8TjPer9yIOS6SKuFgxyAHN
+	JWDBSBQg/O4lTgpE7zDkYTG3vbd8ihzhTF4zhVTWiwrc2ANPUClZogOFwW85B2YORNc/nUX
+	Tw3t5IqeEZDNTAxEqPPZLp6isxWQck0MbYfrXVg9Ng1Rlp2nr8nkkOO+L8voZ/E8B1HDF3j
+	BmD8X7NhUAyPd14ehGsElAF88EpUCfIfTt0y1KAtwsfTlx0vXFuKxkzz90tRRqyby/VPZ2E
+	Madd51B/uDQTEwJ0O+IOE8eKQQfg6BpPytaA+hIbG1fonPhJPRqn3ZfmwH46QPy/letg+QU
+	B9Cmw0mRbrZrgSIqOirE2lanKLFbdwrR0DcelfVeZJvc/jFnTMquoosSt4s0h5RPUKhNlND
+	gMbW1ojh9bKBSXBy4wHnI+HJGcVoe3bFhvVJe7AzRckIGs9m8y9pXE6w2WE5c/qS0bh7UcD
+	2ajtooU3vBi8EoJZmYDSQ2sSvbaNl6YvVqOACdx4qk4boRWpiSdNMMI4uH/szhcvORE71/G
+	q2goKo/jxgMfHnfjGbEYM2rbw2Mku9KbuAwxBYgVx8bFIv0rFKBY//hgPQNwAeHnulXuGFd
+	rHcFCNrbtfvTuuPIpuut2ALHBsU8M=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-RECHKSPAM: 0
 
-A: http://en.wikipedia.org/wiki/Top_post
-Q: Were do I find info about this thing called top-posting?
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
-
-A: No.
-Q: Should I include quotations after my reply?
-
-http://daringfireball.net/2007/07/on_top
-
-On Thu, Aug 14, 2025 at 06:36:29PM +0530, Hardeep Sharma wrote:
-> This change to blk_queue_may_bounce() in block/blk.h will only affect
-> systems with the following configuration:
+On Thu, Aug 14, 2025 at 05:40:14PM +0530, MD Danish Anwar wrote:
+> On 14/08/25 1:08 pm, Dong Yibo wrote:
+> > Initialize basic mbx_fw ops, such as get_capability, reset phy
+> > and so on.
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
+> > ---
+> >  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
+> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |   4 +
+> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c | 264 ++++++++++++++++++
+> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h | 201 +++++++++++++
+> >  4 files changed, 471 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
+> >  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
+> > 
 > 
-> 1. 32-bit ARM architecture
-> 2. Physical DDR memory greater than 1GB
-> 3. CONFIG_HIGHMEM enabled
-> 4. Virtual memory split of 1GB for kernel and 3GB for userspace
+> > +
+> > +/**
+> > + * mbx_cookie_zalloc - Alloc a cookie structure
+> > + * @priv_len: private length for this cookie
+> > + *
+> > + * @return: cookie structure on success
+> > + **/
+> > +static struct mbx_req_cookie *mbx_cookie_zalloc(int priv_len)
+> > +{
+> > +	struct mbx_req_cookie *cookie;
+> > +
+> > +	cookie = kzalloc(struct_size(cookie, priv, priv_len), GFP_KERNEL);
+> > +	if (cookie) {
+> > +		cookie->timeout_jiffes = 30 * HZ;
 > 
-> Under these conditions, the logic for buffer bouncing is relevant because
-> the kernel may need to handle memory above the low memory threshold, which
-> is typical for highmem-enabled 32-bit systems with large RAM. On other
-> architectures or configurations, this code path will not be exercised.
+> Typo: should be "timeout_jiffies" instead of "timeout_jiffes"
+> 
 
-You did not answer most of the questions I asked for some reason :(
+Got it, I will fix it.
+
+> > +		cookie->magic = COOKIE_MAGIC;
+> > +		cookie->priv_len = priv_len;
+> > +	}
+> > +	return cookie;
+> > +}
+> > +
+> > +/**
+> 
+> 
+> -- 
+> Thanks and Regards,
+> Danish
+> 
+> 
+
+Thanks for you feedback.
 
 
