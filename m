@@ -1,275 +1,194 @@
-Return-Path: <linux-kernel+bounces-768692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28688B26434
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:27:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43A2B26445
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E4ED7A2153
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7551CC4C41
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B752F4A00;
-	Thu, 14 Aug 2025 11:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FEA2F1FFE;
+	Thu, 14 Aug 2025 11:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="A+DhvwE+"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dxg8T1Ei"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAB22F0C6E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EBE2EE5EC
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755170807; cv=none; b=jqvbbqiVp7tZSlrVVd1t/oGNcR1Tjq0+NPKOCtDxG2IcyyGtqtfZxIuMFGdU+eNQ9EEqLAYzQTO/1rYNrPf7tFdGcjoGc2oh0gmxoT22dmbZKaeVr5GxrDLkL7PKySehfGO+zOOuxbVr7BB43jjXE56AIZQyWkzTLRWOkYEtDBM=
+	t=1755170842; cv=none; b=SIFzBWQ3JRk3YBeEchDK2pcb0AAKf+Zj5cSE2PtBFJ95UgoRZYgAEprxjd7WyVgyTv0D+p2Nw+O0xRyobgW4rwW0JL0NTZ0/0TTwaNEosn/F1vV3jI1xNwGdu+6pv/RTN48CfUOWITDa88JpsHiT0aov3K2IL81MPwrxWimTfDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755170807; c=relaxed/simple;
-	bh=epsU6CJkL8Y2Lgc4OVbJpKH512xqEz8z5bFYimSS8QE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=OQa0kbUJ5WVM5bmcdTPs3NmQrDE4wfKLOkpkGRT6V40RVtqFs9pwLTtDLscUZaNUlWKzSeuvnbmrlHbPtPXWxifu2alN8gZgRHyh75nIfLEU4fCmQSRUJQ+vx81Cq3nAaOP+CU4RiUOr9SnFtmmZuT2Cpx/MHacRXjM5hp15C3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=A+DhvwE+; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250814112636euoutp02f37d7b602696b485344f61cfcf91247c~bnopMEUey1625616256euoutp02h
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:26:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250814112636euoutp02f37d7b602696b485344f61cfcf91247c~bnopMEUey1625616256euoutp02h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755170796;
-	bh=+OXY5MBEwk0jrYJZN16GlrQS4PB2GzTe0j9NScg3+/A=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=A+DhvwE++uOVIyVb32AbTkLnS0oSjjeRky46vJGRu7TzHyQkqfXMTCOt9SMdCc/RV
-	 8963aRXVrqn98Sj0lbI/3dG6oCvYZNijxAvU4+h9z23V0E3wC1u6sLqhWvxLuy8fpu
-	 FqNuc1KECR1VvvwWfi/odeq+7I3K+kjRlJ4RnIWY=
-Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250814112636eucas1p206b752b35c984c7eac2d87eb14dfb270~bnoos_SS51872218722eucas1p2G;
-	Thu, 14 Aug 2025 11:26:36 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250814112634eusmtip2866c82989b01dc30cd17f669701e5f35~bnonZXT4g2264922649eusmtip2c;
-	Thu, 14 Aug 2025 11:26:34 +0000 (GMT)
-Message-ID: <1840a54c-c03a-42e3-a3a8-52e38919df38@samsung.com>
-Date: Thu, 14 Aug 2025 13:26:33 +0200
+	s=arc-20240116; t=1755170842; c=relaxed/simple;
+	bh=48tAzMVD40mXj8PB2BiEi7B6j1poHkoi0f43NUhjxlk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y08oTaQr1vtfwEAIcd97CufJfHQX2SZ5cK0J+UaAfwYo76xo9hl1JMjWiX2wn1K8Vgwm3WkpDExDdOEIYPVG/pEDwRGwC1+jB0mwsiqTvwRwBahqLW7p4lAIdDQ5xGaazNo7k9Sj6CIudg+Z35LKiwOtNgYZjIy74hxBkOcZDJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dxg8T1Ei; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E9siYc030090
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:27:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	bvsGtU8EQVIVsNLvkznVXlqh5U1/8tjeUVO97mEHdw8=; b=dxg8T1EiYL9OcJwS
+	5mzMdXeaqv222a/hfOGO/LDSP2ifmAk2SRanZBzWs1waH5nr8tkRyukja7LjhrTx
+	0iz1QgJuBRzfcDEySMoRDsHuIAMtYH8J+20fac5nyNGJyi7xs2kIO5j6ayicbgYV
+	mY/Ic7p7/YB3YGosS263/N3J1AFNiOtPAEsC25NGLeENqJ+etLSzydaR3TxgtSXv
+	Ofq5RlAvt7Ys5+GS197TyKy5bX8PIS/jGDp0D00USFk39nxVMB8H1Ig+iQZxch4d
+	OdgWJxV/BfyRTfH9XmtihLfXkxqMLTB7yudFNlBD/tCAvkKoKTDtrG4fH7Ll+D+h
+	zRHomQ==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vtcqn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:27:19 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b1099194ffso3719261cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 04:27:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755170838; x=1755775638;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bvsGtU8EQVIVsNLvkznVXlqh5U1/8tjeUVO97mEHdw8=;
+        b=dB5y0fWIM0xa5WPeDR/ElobKgYVjKyj9OV9jzBkIOb8d9lum1S9PzWyH8Xaorn4INk
+         /IwXv1Ah3+pTo6231FZsblOGRgak93UxLiAq3sx0lEl8n/soUFb6XJzeTAZsHyR5EyJQ
+         ygirkULKObvEvWzJ72xb4+NDCN4F8kA8CaEoIHaACZdCaUj1hMRfY3JGrkSG9VCC6g8B
+         J59UyigeXcbN+4dVYCXZkt7aWHIPPw+CbtanuN1hO0ZNH7YGxogxZ8oUFa8DJNGMqvUa
+         L0qY6klNpfvGZROOQ0s/BYjfGWSOaVOZtcRMz7buS3YRou90aNRM6tP9s/3H9B5qvCW6
+         jJFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Rq6OuC/Zc4oQbR65rzzSPPnx5UwdLf1CxsQ8MSk2E4BjihnHHQzJqIGAlQEUZ47PrqreH4at46c3JG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7eo2V7mdR8Ne2C7Gm0MLm02eNz2eoLXJbIx72bcdiVAfxlQNK
+	byn3VNqpClj+z8y/j1aYoGfmH2Kt9QIP5R7Zi+F4TPqoocieciVsCphVXH7AzoilfU5Avnes83L
+	pbyIEHrLpFIhGy5alTqd7L9m7sBjnuT1NGuFIS9EzPuo3uGOi2hjlHrGZvKyoAOFJcxlpHPMKS3
+	4=
+X-Gm-Gg: ASbGncthIIY83d5+3rKYRANCHSa11YfC9t9pSJMSNku5cM7NMw0USZu107oOCjHVR5Z
+	L17PnKsT+xb1wJlfTWiZ/3ba2z7WqeLE6a1jB2NCQZlT7PeakGQ3k3+YD8frq5HcYvrBYkJhO2c
+	tPyMNaQv+zOjUe4ulPtyEU8gtmlziuOo7NkO+ybQHEy97cSfU7LrR9z1FAf6FpIK/3aetz8/sG4
+	C1V9d0o3IZve8hw6TKeHkjcFQPwjeW41Q1I1vfyqdn8Hid92SpENGEl+d3FJQgyZqFAw3ze9dYG
+	3hp+T/puO6r6qOjrF3NslrO30VzH3IO2+MNUX63xpjIDyWEr3/ZoLNtCfvBoYkRJedLB+B1nn2U
+	dsx3ZmeOwyduixnb9DA==
+X-Received: by 2002:a05:6214:62e:b0:709:8842:56f5 with SMTP id 6a1803df08f44-70ae7011913mr17664156d6.3.1755170838177;
+        Thu, 14 Aug 2025 04:27:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHTu7SXRxQxpz8/MLVN48BYHvT9GmSmQ485QFVu7S13NXbeVoB0o9r138fw7Vr2LU4rtD2YLA==
+X-Received: by 2002:a05:6214:62e:b0:709:8842:56f5 with SMTP id 6a1803df08f44-70ae7011913mr17664016d6.3.1755170837694;
+        Thu, 14 Aug 2025 04:27:17 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61850794509sm4720140a12.31.2025.08.14.04.27.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 04:27:16 -0700 (PDT)
+Message-ID: <213ce041-733e-4e3e-87d5-db0b37c410b4@oss.qualcomm.com>
+Date: Thu, 14 Aug 2025 13:27:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v2 3/3] drm/bridge: sii9234: use extcon cable detection
- logic to detect MHL
-To: Henrik Grimler <henrik@grimler.se>, Andrzej Hajda
-	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
-	Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, replicant@osuosl.org,
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: qcom: icc-bwmon: Fix handling dev_pm_opp_find_bw_*()
+ errors
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
+References: <20250814063256.10281-2-krzysztof.kozlowski@linaro.org>
+ <e35ca54c-252f-45c4-bfdf-fd943f833bc4@oss.qualcomm.com>
+ <f2400037-c39c-4266-9e77-b084bd5f9395@linaro.org>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250814112636eucas1p206b752b35c984c7eac2d87eb14dfb270
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52
-X-EPHeader: CA
-X-CMS-RootMailID: 20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52
-References: <20250724-exynos4-sii9234-driver-v2-0-faee244f1d40@grimler.se>
-	<CGME20250724185204eucas1p1d699db3abebc702ea8261b2e41a77c52@eucas1p1.samsung.com>
-	<20250724-exynos4-sii9234-driver-v2-3-faee244f1d40@grimler.se>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <f2400037-c39c-4266-9e77-b084bd5f9395@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfX4E1vnUBjyDT1
+ ghvMBFmrweBROyZy4OM7NRBhakJ92GW5a1VAlrHtELrO4iDMFIdIcIhnUfvNvxLdU/W37kxs5Ce
+ XcaDBSIEz/Wby+qsMAPRo98mnpjs/Bygr+ssf0Uba32drp082hL3mLxrsxwtEs94AdMPFnagtCS
+ 6w5Cmq+0jQOUJDRr8Re4PqdGQ3ONQtJ3nz2fy+MJrV/MFythWGQlgIiPB9RhwuUa1AZOr6AD8Az
+ r62t3pIMqX4TMnsX5YMd/+neC7Agk6H9z+Mi9iJEJqhTkqLDR4Bn1Ga2Gq468o8OsVBDagBVXpN
+ ycHFwbkoq4FkBk55pBOnSBx8rEgxxwrwN/K+Xz3JXSAcAhJfde732H+uasmd9kMaGihplXeWo5e
+ eKOJEcNv
+X-Proofpoint-GUID: pq1-1d2DbxelJt7jFp6NYE1i9r93iCdA
+X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689dc817 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+ a=Y1L1eU8S7K9_Pyojpb0A:9 a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: pq1-1d2DbxelJt7jFp6NYE1i9r93iCdA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110107
 
-On 24.07.2025 20:50, Henrik Grimler wrote:
-> To use MHL we currently need the MHL chip to be permanently on, which
-> consumes unnecessary power. Let's use extcon attached to MUIC to enable
-> the MHL chip only if it detects an MHL cable.
->
-> Signed-off-by: Henrik Grimler <henrik@grimler.se>
-> ---
-> v2: add dependency on extcon. Issue reported by kernel test robot
->      <lkp@intel.com>
-> ---
->   drivers/gpu/drm/bridge/Kconfig   |  1 +
->   drivers/gpu/drm/bridge/sii9234.c | 89 ++++++++++++++++++++++++++++++++++++++--
->   2 files changed, 87 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index b9e0ca85226a603a24f90c6879d1499f824060cb..f18a083f6e1c6fe40bde5e65a1548acc61a162ae 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -303,6 +303,7 @@ config DRM_SII902X
->   config DRM_SII9234
->   	tristate "Silicon Image SII9234 HDMI/MHL bridge"
->   	depends on OF
-> +	select EXTCON
->   	help
->   	  Say Y here if you want support for the MHL interface.
->   	  It is an I2C driver, that detects connection of MHL bridge
-> diff --git a/drivers/gpu/drm/bridge/sii9234.c b/drivers/gpu/drm/bridge/sii9234.c
-> index 0e0bb1bf71fdcef788715cfd6fa158a6992def33..4d84ba01ea76816bebdbc29d48a041c9c6cd508e 100644
-> --- a/drivers/gpu/drm/bridge/sii9234.c
-> +++ b/drivers/gpu/drm/bridge/sii9234.c
-> @@ -19,6 +19,7 @@
->   
->   #include <linux/delay.h>
->   #include <linux/err.h>
-> +#include <linux/extcon.h>
->   #include <linux/gpio/consumer.h>
->   #include <linux/i2c.h>
->   #include <linux/interrupt.h>
-> @@ -26,6 +27,7 @@
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/mutex.h>
-> +#include <linux/of_graph.h>
->   #include <linux/regulator/consumer.h>
->   #include <linux/slab.h>
->   
-> @@ -170,8 +172,12 @@ struct sii9234 {
->   	struct drm_bridge bridge;
->   	struct device *dev;
->   	struct gpio_desc *gpio_reset;
-> -	int i2c_error;
->   	struct regulator_bulk_data supplies[4];
-> +	struct extcon_dev *extcon;
-> +	struct notifier_block extcon_nb;
-> +	struct work_struct extcon_wq;
-> +	int cable_state;
-> +	int i2c_error;
->   
->   	struct mutex lock; /* Protects fields below and device registers */
->   	enum sii9234_state state;
-> @@ -864,6 +870,70 @@ static int sii9234_init_resources(struct sii9234 *ctx,
->   	return 0;
->   }
->   
-> +static void sii9234_extcon_work(struct work_struct *work)
-> +{
-> +	struct sii9234 *ctx =
-> +		container_of(work, struct sii9234, extcon_wq);
-> +	int state = extcon_get_state(ctx->extcon, EXTCON_DISP_MHL);
-> +
-> +	if (state == ctx->cable_state)
-> +		return;
-> +
-> +	ctx->cable_state = state;
-> +
-> +	if (state > 0)
-> +		sii9234_cable_in(ctx);
-> +	else
-> +		sii9234_cable_out(ctx);
-> +}
-> +
-> +static int sii9234_extcon_notifier(struct notifier_block *self,
-> +			unsigned long event, void *ptr)
-> +{
-> +	struct sii9234 *ctx =
-> +		container_of(self, struct sii9234, extcon_nb);
-> +
-> +	schedule_work(&ctx->extcon_wq);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +static int sii9234_extcon_init(struct sii9234 *ctx)
-> +{
-> +	struct extcon_dev *edev;
-> +	struct device_node *musb, *muic;
-> +	int ret;
-> +
-> +	/* Get micro-USB connector node */
-> +	musb = of_graph_get_remote_node(ctx->dev->of_node, 1, -1);
-> +	/* Then get micro-USB Interface Controller node */
-> +	muic = of_get_next_parent(musb);
-> +
-> +	if (!muic) {
-> +		dev_info(ctx->dev,
-> +			 "no extcon found, switching to 'always on' mode\n");
-> +		return 0;
-> +	}
-> +
-> +	edev = extcon_find_edev_by_node(muic);
-> +	of_node_put(muic);
-> +	if (IS_ERR(edev)) {
-> +		dev_err_probe(ctx->dev, PTR_ERR(edev),
-> +			      "invalid or missing extcon\n");
-> +	}
+On 8/14/25 1:25 PM, Krzysztof Kozlowski wrote:
+> On 14/08/2025 11:15, Konrad Dybcio wrote:
+>> On 8/14/25 8:32 AM, Krzysztof Kozlowski wrote:
+>>> The ISR calls dev_pm_opp_find_bw_ceil(), which can return EINVAL, ERANGE
+>>> or ENODEV, and if that one fails with ERANGE, then it tries again with
+>>> floor dev_pm_opp_find_bw_floor().
+>>>
+>>> Code misses error checks for two cases:
+>>> 1. First dev_pm_opp_find_bw_ceil() failed with error different than
+>>>    ERANGE,
+>>> 2. Any error from second dev_pm_opp_find_bw_floor().
+>>>
+>>> In an unlikely case these error happened, the code would further
+>>> dereference the ERR pointer.  Close that possibility and make the code
+>>> more obvious that all errors are correctly handled.
+>>>
+>>> Reported by Smatch:
+>>>   icc-bwmon.c:693 bwmon_intr_thread() error: 'target_opp' dereferencing possible ERR_PTR()
+>>>
+>>> Fixes: b9c2ae6cac40 ("soc: qcom: icc-bwmon: Add bandwidth monitoring driver")
+>>> Cc: <stable@vger.kernel.org>
+>>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+>>> Closes: https://lore.kernel.org/r/aJTNEQsRFjrFknG9@stanley.mountain/
+>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>
+>>> ---
+>>>
+>>> Some unreleased smatch, though, because I cannot reproduce the warning,
+>>> but I imagine Dan keeps the tastiests reports for later. :)
+>>> ---
+>>>  drivers/soc/qcom/icc-bwmon.c | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+>>> index 3dfa448bf8cf..597f9025e422 100644
+>>> --- a/drivers/soc/qcom/icc-bwmon.c
+>>> +++ b/drivers/soc/qcom/icc-bwmon.c
+>>> @@ -656,6 +656,9 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
+>>>  	if (IS_ERR(target_opp) && PTR_ERR(target_opp) == -ERANGE)
+>>>  		target_opp = dev_pm_opp_find_bw_floor(bwmon->dev, &bw_kbps, 0);
+>>>  
+>>> +	if (IS_ERR(target_opp))
+>>> +		return IRQ_HANDLED;
+>>
+>> So the thunk above checks for a ceil freq relative to bw_kbps and then
+>> if it doesn't exist, for a floor one
+>>
+>> Meaning essentially if we fall into this branch, there's no OPPs in the
+>> table, which would have been caught in probe
+> Yes, unless:
+> 1. There is a bug in the opp code
+> 2. Probe code is anyhow changed in the future
+> 
+> I think the code should be readable and obviouswithin the function, not
+> depend on some pre-checks in the probe. But if you think that's
+> defensive coding I can also add a comment to silence future Smatch
+> complains.
 
-It looks that the original logic got lost somehow in the above code 
-block, what causes kernel oops if compiled as module and loaded before 
-extcon provider. Please handle -EPROBE_DEFER and propagate error value, 
-like the original code did in sii8620 driver:
+I ultimately don't *really* mind either, just wanted to point out that
+currently it's effectively a false positive
 
-         if (IS_ERR(edev)) {
-                 if (PTR_ERR(edev) == -EPROBE_DEFER)
-                         return -EPROBE_DEFER;
-                 dev_err(ctx->dev, "Invalid or missing extcon\n");
-                 return PTR_ERR(edev);
-         }
-
-
-> +
-> +	ctx->extcon = edev;
-> +	ctx->extcon_nb.notifier_call = sii9234_extcon_notifier;
-> +	INIT_WORK(&ctx->extcon_wq, sii9234_extcon_work);
-> +	ret = extcon_register_notifier(edev, EXTCON_DISP_MHL, &ctx->extcon_nb);
-> +	if (ret) {
-> +		dev_err(ctx->dev, "failed to register notifier for MHL\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static enum drm_mode_status sii9234_mode_valid(struct drm_bridge *bridge,
->   					 const struct drm_display_info *info,
->   					 const struct drm_display_mode *mode)
-> @@ -916,12 +986,17 @@ static int sii9234_probe(struct i2c_client *client)
->   	if (ret < 0)
->   		return ret;
->   
-> +	ret = sii9234_extcon_init(ctx);
-> +	if (ret < 0)
-> +		return ret;
-> +
->   	i2c_set_clientdata(client, ctx);
->   
->   	ctx->bridge.of_node = dev->of_node;
->   	drm_bridge_add(&ctx->bridge);
->   
-> -	sii9234_cable_in(ctx);
-> +	if (!ctx->extcon)
-> +		sii9234_cable_in(ctx);
->   
->   	return 0;
->   }
-> @@ -930,7 +1005,15 @@ static void sii9234_remove(struct i2c_client *client)
->   {
->   	struct sii9234 *ctx = i2c_get_clientdata(client);
->   
-> -	sii9234_cable_out(ctx);
-> +	if (ctx->extcon) {
-> +		extcon_unregister_notifier(ctx->extcon, EXTCON_DISP_MHL,
-> +					   &ctx->extcon_nb);
-> +		flush_work(&ctx->extcon_wq);
-> +		if (ctx->cable_state > 0)
-> +			sii9234_cable_out(ctx);
-> +	} else {
-> +		sii9234_cable_out(ctx);
-> +	}
->   	drm_bridge_remove(&ctx->bridge);
->   }
->   
->
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+Konrad
 
