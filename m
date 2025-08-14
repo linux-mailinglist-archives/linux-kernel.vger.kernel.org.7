@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-768792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E4C2B26588
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:39:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9475B2650F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93369B6215F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:37:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16D71CC5A4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87702FCC1F;
-	Thu, 14 Aug 2025 12:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CDB2FCC1F;
+	Thu, 14 Aug 2025 12:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akItc4ij"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FWLeO9XL"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386DF25C706;
-	Thu, 14 Aug 2025 12:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FB02FC892;
+	Thu, 14 Aug 2025 12:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755175145; cv=none; b=InuDgcACN0tzWpZtQa60p2Ei/ItVtSx2TuFmjd3BVNwyupgD8tqDoAyDSugyowDF281cBIVvqCrzuFxAazRbehMdbAgllDFppG2RbxnHFRODXtUEY7SpM6FTlTyeH9J4owrq8/y36SByxPQPtRkC4U5UzPo1Rbs1/uJrni24zH4=
+	t=1755173467; cv=none; b=Jg2+dS5WDJrekAXYhraFvWHLhbCaHJSy9oK9o3v+6v/ddxOatMFNJTVyNZU/9xjtLJa/F/YcMpoNRx1g0NGZPbg3VicdxptmEnGvjpaoKJ8hzKxo0M4tBiJFSLuzhjHOzBTVq9N/HK+yj7obFUoLSAIhyYoyTbRai56V/YcMV9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755175145; c=relaxed/simple;
-	bh=ySXXtCWInS8Dd3/1b6Y0gmPDaMaREnzvgVBoXZIcJWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7Jll0wCVd1d1siJOWGDOWGBvIQ3ZZDTxpxxCGduuwO9clUhfaT1+X1DrxBJvx2CBiDMjve9xn0hYLzq30klYhXMczRqMuLVrUU4iFlOPyg9Z7sqLmqO/OUQNo+66cphLJ+WsszwVoZAoKF1Jf7VbiMXINn/O+zs3mHbXBsxZY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akItc4ij; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52747C4CEED;
-	Thu, 14 Aug 2025 12:39:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755175144;
-	bh=ySXXtCWInS8Dd3/1b6Y0gmPDaMaREnzvgVBoXZIcJWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=akItc4ijtv7KbvHP7dipeKN2FgLp05rwNWt1rXWKAFydgSzO7hW1J8nrFuZDREgId
-	 704i5w0FfP2rUOtUHRI6CaAdXZF77FtLgVA3gOELEv2z+T6+q3u/q9MfRzo6ERStq4
-	 RqLtFsGBChRZwSGqPM9r+GZ/Ti71KG63W3C6o/cVjO81pu4CV1wI8ftQTfBdOOMNPo
-	 eqf150V7ELf8Qvq+UudbpXy71JNKcsT4vDBbAninETTOo5GzblNmp7rDszN0HmBEwg
-	 3G5gdF5rRAqH2JMEkSk2S06Z/35XNtNe6k9LXvWT7U7KKLMfvRhPgvcovYfr3M3A4h
-	 xsoZum7n9VV5Q==
-Date: Thu, 14 Aug 2025 14:10:13 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] kbuild: enable -Werror for hostprogs
-Message-ID: <aJ3SJWu8-o2S-KU5@levanger>
-References: <20250814-kbuild-werror-v2-0-c01e596309d2@linutronix.de>
- <20250814-kbuild-werror-v2-6-c01e596309d2@linutronix.de>
+	s=arc-20240116; t=1755173467; c=relaxed/simple;
+	bh=X8Ebv39DsgYW5S3vCtvPIj2jStoX614nqqQF4Oft9TA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=idnJmnJ5d2UjDj/1gvz8STUQ3zpxymW1/ea3TwmF65bSJi3LY/4iauWMue5ffzJCkmJ29CQlXim1AcOLgMXJbVrSlxp9lXaXEZqCWP1/Ff1QbT+0+xbpC6tQQwZ+OAGUTQeg4cZ7zJCeGOViqJ7hvMDYxAtPmCc+xluaYBxKNYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FWLeO9XL; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57ECAM3t1927833;
+	Thu, 14 Aug 2025 07:10:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755173422;
+	bh=P55J7AG+dVG9wSnCiAJHatO757Yyz2jOVx50FgR/qyA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=FWLeO9XLv76gKZ8Sqysx3J24Rq32v/j5fEXrMvLxCjGxOpak/ZySOpwE2F8wUle2i
+	 sT7NMO+TI4vN2ZV4V0hxDuCOvYORT2IhqghhQuQqxXlPJIwYXnH/xCO0EV4v13LNMZ
+	 SJyBDDSvlx5BgddFmZvWFfR5o9gXc8Jt+TU4l9tg=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57ECAMh11135417
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 07:10:22 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 07:10:21 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 07:10:21 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57ECAFeI3887319;
+	Thu, 14 Aug 2025 07:10:16 -0500
+Message-ID: <c69d6a87-3d9f-49dc-836e-f33508c62c1a@ti.com>
+Date: Thu, 14 Aug 2025 17:40:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250814-kbuild-werror-v2-6-c01e596309d2@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/5] net: rnpgbe: Add basic mbx_fw support
+To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
+        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
+        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
+        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
+        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
+        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
+        <richardcochran@gmail.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-5-dong100@mucse.com>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20250814073855.1060601-5-dong100@mucse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Aug 14, 2025 at 12:14:46PM +0200, Thomas Weiﬂschuh wrote:
-> The hostprog compilers and linkers do not share the regular compiler flags,
-> so they are not affected by CONFIG_WERROR or W=e. As hostprogs are used
-> during the bootstrap of the build, they can't depend on kconfig options.
+
+
+On 14/08/25 1:08 pm, Dong Yibo wrote:
+> Initialize basic mbx_fw ops, such as get_capability, reset phy
+> and so on.
 > 
-> Enable -Werror unconditionally.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> 
+> Signed-off-by: Dong Yibo <dong100@mucse.com>
 > ---
-> For testing in -next, as discussed in
-> https://lore.kernel.org/lkml/20250812-kbuild-werror-v1-2-36c9ff653700@linutronix.de/
-
-yeah, I am not sure if this is a good change, but I am ok with testing
-it in next, as Nathan suggested.
-
-For the rest of the series:
-
-Reviewed-by: Nicolas Schier <nsc@kernel.org>
-
-Thanks.
-
-> ---
->  scripts/Makefile.extrawarn | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
+>  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |   4 +
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c | 264 ++++++++++++++++++
+>  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h | 201 +++++++++++++
+>  4 files changed, 471 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
+>  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
 > 
-> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-> index 96ff3f5582d651f0016c8ccd49d46022cc6fe070..1434cb6208cb82f20aeb29cc8c059220d1a1f6d2 100644
-> --- a/scripts/Makefile.extrawarn
-> +++ b/scripts/Makefile.extrawarn
-> @@ -224,3 +224,8 @@ KBUILD_USERLDFLAGS	+= -Wl,--fatal-warnings
->  KBUILD_RUSTFLAGS	+= -Dwarnings
->  
->  endif
+
 > +
-> +# Hostprog flags are used during build bootstrapping and can not rely on CONFIG_ symbols.
-> +KBUILD_HOSTCFLAGS	+= -Werror
-> +KBUILD_HOSTLDFLAGS	+= -Wl,--fatal-warnings
-> +KBUILD_HOSTRUSTFLAGS	+= -Dwarnings
-> 
-> -- 
-> 2.50.1
-> 
+> +/**
+> + * mbx_cookie_zalloc - Alloc a cookie structure
+> + * @priv_len: private length for this cookie
+> + *
+> + * @return: cookie structure on success
+> + **/
+> +static struct mbx_req_cookie *mbx_cookie_zalloc(int priv_len)
+> +{
+> +	struct mbx_req_cookie *cookie;
+> +
+> +	cookie = kzalloc(struct_size(cookie, priv, priv_len), GFP_KERNEL);
+> +	if (cookie) {
+> +		cookie->timeout_jiffes = 30 * HZ;
+
+Typo: should be "timeout_jiffies" instead of "timeout_jiffes"
+
+> +		cookie->magic = COOKIE_MAGIC;
+> +		cookie->priv_len = priv_len;
+> +	}
+> +	return cookie;
+> +}
+> +
+> +/**
+
+
+-- 
+Thanks and Regards,
+Danish
+
 
