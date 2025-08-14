@@ -1,202 +1,207 @@
-Return-Path: <linux-kernel+bounces-767919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E89B25A88
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4BDB25A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13ED71C208A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B9941C25679
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA114202990;
-	Thu, 14 Aug 2025 04:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=thingy.jp header.i=@thingy.jp header.b="kfBrl5m3"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E85B207DE2;
+	Thu, 14 Aug 2025 04:39:16 +0000 (UTC)
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53AE204598
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 04:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB201FF7D7
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 04:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755146152; cv=none; b=klaYU+RaInCShT6fQsjKagE8j//FbSxmneacNVTwLWxkA0ikG+wI+9qa3n8+zuTG/Pxql485xPJfdNoLeJjdmCd+uJ/RDK2qPPT99pGoAVWMvyNhWwiNc2rwRaq1e5jAtHwK1TpiEjwhDc/ivaY7o/8/2o7IpcK1+vS2zsZQDUI=
+	t=1755146356; cv=none; b=sWGfV9o/DXftz+7fPIUGGtDBmWEtI4JC0z6PuXefVh2lL39dIgCAnem2ZAimCk7bOX8wnXO6hLYhQWGABc1fKywHxL03hPF32LzgrsfNwjinKR/35IZMf6RgKETBzGuU5qO9moMsyYYEg6zgDchjSIj0s/+15NDHgDNBegb1DFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755146152; c=relaxed/simple;
-	bh=QGb/WSxQrkoalS0PQR6chjMqXIC8l1e9Dtd3KAUUo7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BQcPfmvrLxtWka4jxabHX6tpq1TTFLpYdumO9Nl+fS18ChKU2Lkdw6nSlI34Z6JYONCxosLfdqwPYaFoVWd4fpz9r0IRzVYX+APNIa8M+/3pqUm5tOJgAu97ARvlD9v7+O3krxMa7mMMtH2ZwNHRRE+8HpnT0IHY+PTl0qBEkis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thingy.jp; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=thingy.jp header.i=@thingy.jp header.b=kfBrl5m3; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thingy.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-323267b98a4so546146a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 21:35:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thingy.jp; s=google; t=1755146148; x=1755750948; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W68wJmIpwZKYrhZj9rQMZlkUfiQu51PmIXBdt9PMw2k=;
-        b=kfBrl5m3X3pUKzeASIa5uThvSEb/zB82C2JruDgTOivhhSjhUjMBmcPL8IhJVxAjVG
-         6qON9Ajt9fHHBWQKEfYsoV1u4jSeEE0qNkZh6VuTz41gtP/7s1I8dBc/NuAwLu/lt9KT
-         CKKBnN/q50LzlMJEeWPS0cO85J+8t6tbmlZGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755146148; x=1755750948;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W68wJmIpwZKYrhZj9rQMZlkUfiQu51PmIXBdt9PMw2k=;
-        b=agY6C347sQ77XwLKGX0pnwHVa9GfOUIliR8Om2nWJBjjXA6lFH+1s5x17pWtPFESou
-         0faK/sjUEoips33w7nU5bhjkuEPtHzvFUkJL4nR1FgeJSVf4I+pp4Da1GZMz1mny6U/y
-         yyD0RjPlGLw4sXzt92dVOdfMNhldP8nSb7m4Ub/MOFEU+srQBoexmnRR4d4LiiNchkd9
-         UfNuhniGUfsQlv1TzzWC6G1zeo9+Zi9PYasicxwK2zRi7/oWazky5F7wss6eXTS5G1z2
-         5g7t9ItGNQ8HfS3wWY6p/49hFu3aOES31zzFRBktZ5FOz61Kn1FCoGmdLF3tdr6uNOCj
-         YRAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYJjARTe0Oxcz+1v6WFEB+enkVhNqeT5cCu5nM0vIkLWds474sZytg6u/sxWhtk1wQ+Xxp8wkKLMRmEBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywa2nmZjRVJFwfLctO1FO6Ph7VX2p862ghVryGOXxaaotA9VQeW
-	V0B3Qolb/7beVxzSMx3qgPaATBs9naucGeov7f3zTyNoSZVb+sWH/JE92KaH/yK1dRYsiGNAhAT
-	Q6Q2qal2O7aMkR31dCgr65FFZp97Zwc0eeyQnfcAnOA==
-X-Gm-Gg: ASbGncvP3x6jQVFZldNA6KVJtiRLIM9hhXjnMhPPUyIO+i/J43awtrMdXGM6DMjlhj2
-	2X1eVpwjdGr+EKNqxMrBw0WoHAIikCjvEcRF/mEGdV3gaAvXhv090Iy1muhRVqSe/o22lcVBevA
-	19iweTBcc7E0DCKtSklt+pYOAzTlFxqQwTftgnDK9lAOEeFsk6OdGTmKtM8A3w5CQ89uihVG52M
-	iIfdkYF90aH
-X-Google-Smtp-Source: AGHT+IFjwIWeQGe9GR6r4b2M90JJvm8sY4wwHgdbP9dAwNnEibxW+RtNYUEdWU1EXNpbiBYlhjSbLxcOxiikHu61EP4=
-X-Received: by 2002:a17:90b:58e7:b0:31f:6682:bd28 with SMTP id
- 98e67ed59e1d1-32327a52880mr2616043a91.16.1755146147789; Wed, 13 Aug 2025
- 21:35:47 -0700 (PDT)
+	s=arc-20240116; t=1755146356; c=relaxed/simple;
+	bh=t1hh/Jw0YAv0hUSy9t/Xv7c8RObia1W8amBTjd34shY=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=BMWNNODqRn8QzTaRvIk8m61+Br3FPLFVzQ/sEaROLnhLeAN1jNmDSVwId9+RqRKyx25qpk9JNVUSbVFQCRWTeh4h6yJr2E3YXeRcjB0f0c7rrPszYNWRdPgL3p+uzn5+Aue+lHRSh08ixu4UphxBjb6MqoqLQACkb0i7I1yPMeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+	by 156.147.23.52 with ESMTP; 14 Aug 2025 13:39:04 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.178.31.96)
+	by 156.147.1.151 with ESMTP; 14 Aug 2025 13:39:04 +0900
+X-Original-SENDERIP: 10.178.31.96
+X-Original-MAILFROM: chanho.min@lge.com
+From: Chanho Min <chanho.min@lge.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>
+Cc: linux-bluetooth@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	gunho.lee@lge.com,
+	stable@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+	Chanho Min <chanho.min@lge.com>
+Subject: [PATCH] Bluetooth: fix use-after-free in device_for_each_child()
+Date: Thu, 14 Aug 2025 13:38:32 +0900
+Message-Id: <20250814043832.8767-1-chanho.min@lge.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-84-b3bf97b038dc@redhat.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-84-b3bf97b038dc@redhat.com>
-From: Daniel Palmer <daniel@thingy.jp>
-Date: Thu, 14 Aug 2025 13:35:36 +0900
-X-Gm-Features: Ac12FXxr3rvVXpJVntmlzZatJLppeB52b6KjThcDVumW6l6FaIvxvyr3Ex-UBYM
-Message-ID: <CAFr9PXn=jJPKzMcTa-TJSNuNQknauEttNZg=jV3sBwkTYqxLcw@mail.gmail.com>
-Subject: Re: [PATCH 084/114] clk: mstar: msc313-cpupll: convert from
- round_rate() to determine_rate()
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
-	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, 
-	Andrea della Porta <andrea.porta@suse.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Qin Jian <qinjian@cqplus1.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Alex Helms <alexander.helms.jy@renesas.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Brian,
+From: Dmitry Antipov <dmantipov@yandex.ru>
 
-On Tue, 12 Aug 2025 at 00:18, Brian Masney via B4 Relay
-<devnull+bmasney.redhat.com@kernel.org> wrote:
->
-> From: Brian Masney <bmasney@redhat.com>
->
-> The round_rate() clk ops is deprecated, so migrate this driver from
-> round_rate() to determine_rate() using the Coccinelle semantic patch
-> on the cover letter of this series.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
-> ---
->  drivers/clk/mstar/clk-msc313-cpupll.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/clk/mstar/clk-msc313-cpupll.c b/drivers/clk/mstar/clk-msc313-cpupll.c
-> index a93e2dba09d3523199263494efd2bf6987bb4156..3e643be02fe2a79c043c1b79a5e95c869b757ba1 100644
-> --- a/drivers/clk/mstar/clk-msc313-cpupll.c
-> +++ b/drivers/clk/mstar/clk-msc313-cpupll.c
-> @@ -140,20 +140,22 @@ static unsigned long msc313_cpupll_recalc_rate(struct clk_hw *hw, unsigned long
->                                              parent_rate);
->  }
->
-> -static long msc313_cpupll_round_rate(struct clk_hw *hw, unsigned long rate,
-> -                                    unsigned long *parent_rate)
-> +static int msc313_cpupll_determine_rate(struct clk_hw *hw,
-> +                                       struct clk_rate_request *req)
->  {
-> -       u32 reg = msc313_cpupll_regforfrequecy(rate, *parent_rate);
-> -       long rounded = msc313_cpupll_frequencyforreg(reg, *parent_rate);
-> +       u32 reg = msc313_cpupll_regforfrequecy(req->rate, req->best_parent_rate);
-> +       long rounded = msc313_cpupll_frequencyforreg(reg, req->best_parent_rate);
->
->         /*
->          * This is my poor attempt at making sure the resulting
->          * rate doesn't overshoot the requested rate.
->          */
-> -       for (; rounded >= rate && reg > 0; reg--)
-> -               rounded = msc313_cpupll_frequencyforreg(reg, *parent_rate);
-> +       for (; rounded >= req->rate && reg > 0; reg--)
-> +               rounded = msc313_cpupll_frequencyforreg(reg, req->best_parent_rate);
->
-> -       return rounded;
-> +       req->rate = rounded;
-> +
-> +       return 0;
->  }
->
->  static int msc313_cpupll_set_rate(struct clk_hw *hw, unsigned long rate, unsigned long parent_rate)
-> @@ -168,7 +170,7 @@ static int msc313_cpupll_set_rate(struct clk_hw *hw, unsigned long rate, unsigne
->
->  static const struct clk_ops msc313_cpupll_ops = {
->         .recalc_rate    = msc313_cpupll_recalc_rate,
-> -       .round_rate     = msc313_cpupll_round_rate,
-> +       .determine_rate = msc313_cpupll_determine_rate,
->         .set_rate       = msc313_cpupll_set_rate,
->  };
->
->
-> --
-> 2.50.1
->
->
+[ Upstream commit 27aabf27fd014ae037cc179c61b0bee7cff55b3d ]
 
-Only visually inspected but seems correct.
+Syzbot has reported the following KASAN splat:
 
-Reviewed-by: Daniel Palmer <daniel@thingy.jp>
+BUG: KASAN: slab-use-after-free in device_for_each_child+0x18f/0x1a0
+Read of size 8 at addr ffff88801f605308 by task kbnepd bnep0/4980
 
-Thanks,
+CPU: 0 UID: 0 PID: 4980 Comm: kbnepd bnep0 Not tainted 6.12.0-rc4-00161-gae90f6a6170d #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x100/0x190
+ ? device_for_each_child+0x18f/0x1a0
+ print_report+0x13a/0x4cb
+ ? __virt_addr_valid+0x5e/0x590
+ ? __phys_addr+0xc6/0x150
+ ? device_for_each_child+0x18f/0x1a0
+ kasan_report+0xda/0x110
+ ? device_for_each_child+0x18f/0x1a0
+ ? __pfx_dev_memalloc_noio+0x10/0x10
+ device_for_each_child+0x18f/0x1a0
+ ? __pfx_device_for_each_child+0x10/0x10
+ pm_runtime_set_memalloc_noio+0xf2/0x180
+ netdev_unregister_kobject+0x1ed/0x270
+ unregister_netdevice_many_notify+0x123c/0x1d80
+ ? __mutex_trylock_common+0xde/0x250
+ ? __pfx_unregister_netdevice_many_notify+0x10/0x10
+ ? trace_contention_end+0xe6/0x140
+ ? __mutex_lock+0x4e7/0x8f0
+ ? __pfx_lock_acquire.part.0+0x10/0x10
+ ? rcu_is_watching+0x12/0xc0
+ ? unregister_netdev+0x12/0x30
+ unregister_netdevice_queue+0x30d/0x3f0
+ ? __pfx_unregister_netdevice_queue+0x10/0x10
+ ? __pfx_down_write+0x10/0x10
+ unregister_netdev+0x1c/0x30
+ bnep_session+0x1fb3/0x2ab0
+ ? __pfx_bnep_session+0x10/0x10
+ ? __pfx_lock_release+0x10/0x10
+ ? __pfx_woken_wake_function+0x10/0x10
+ ? __kthread_parkme+0x132/0x200
+ ? __pfx_bnep_session+0x10/0x10
+ ? kthread+0x13a/0x370
+ ? __pfx_bnep_session+0x10/0x10
+ kthread+0x2b7/0x370
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
 
-Daniel
+Allocated by task 4974:
+ kasan_save_stack+0x30/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0xaa/0xb0
+ __kmalloc_noprof+0x1d1/0x440
+ hci_alloc_dev_priv+0x1d/0x2820
+ __vhci_create_device+0xef/0x7d0
+ vhci_write+0x2c7/0x480
+ vfs_write+0x6a0/0xfc0
+ ksys_write+0x12f/0x260
+ do_syscall_64+0xc7/0x250
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 4979:
+ kasan_save_stack+0x30/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x4f/0x70
+ kfree+0x141/0x490
+ hci_release_dev+0x4d9/0x600
+ bt_host_release+0x6a/0xb0
+ device_release+0xa4/0x240
+ kobject_put+0x1ec/0x5a0
+ put_device+0x1f/0x30
+ vhci_release+0x81/0xf0
+ __fput+0x3f6/0xb30
+ task_work_run+0x151/0x250
+ do_exit+0xa79/0x2c30
+ do_group_exit+0xd5/0x2a0
+ get_signal+0x1fcd/0x2210
+ arch_do_signal_or_restart+0x93/0x780
+ syscall_exit_to_user_mode+0x140/0x290
+ do_syscall_64+0xd4/0x250
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+In 'hci_conn_del_sysfs()', 'device_unregister()' may be called when
+an underlying (kobject) reference counter is greater than 1. This
+means that reparenting (happened when the device is actually freed)
+is delayed and, during that delay, parent controller device (hciX)
+may be deleted. Since the latter may create a dangling pointer to
+freed parent, avoid that scenario by reparenting to NULL explicitly.
+
+Cc: stable@vger.kernel.org # 5.4
+Reported-by: syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com
+Tested-by: syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=6cf5652d3df49fae2e3f
+Fixes: a85fb91e3d72 ("Bluetooth: Fix double free in hci_conn_cleanup")
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+Signed-off-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+[ chanho: Backported from v5.10.y to v5.4.y. device_find_any_child() is not
+supported in v5.4.y, so changed to use device_find_child() with __match_any ]
+Signed-off-by: Chanho Min <chanho.min@lge.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/bluetooth/hci_sysfs.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
+
+diff --git a/net/bluetooth/hci_sysfs.c b/net/bluetooth/hci_sysfs.c
+index 266112c960ee8..f8e7b0ba2d273 100644
+--- a/net/bluetooth/hci_sysfs.c
++++ b/net/bluetooth/hci_sysfs.c
+@@ -19,14 +19,9 @@ static const struct device_type bt_link = {
+ 	.release = bt_link_release,
+ };
+ 
+-/*
+- * The rfcomm tty device will possibly retain even when conn
+- * is down, and sysfs doesn't support move zombie device,
+- * so we should move the device before conn device is destroyed.
+- */
+-static int __match_tty(struct device *dev, void *data)
++static int __match_any(struct device *dev, void *unused)
+ {
+-	return !strncmp(dev_name(dev), "rfcomm", 6);
++	return 1;
+ }
+ 
+ void hci_conn_init_sysfs(struct hci_conn *conn)
+@@ -71,10 +66,12 @@ void hci_conn_del_sysfs(struct hci_conn *conn)
+ 		return;
+ 	}
+ 
++	/* If there are devices using the connection as parent reset it to NULL
++	 * before unregistering the device.
++	 */
+ 	while (1) {
+ 		struct device *dev;
+-
+-		dev = device_find_child(&conn->dev, NULL, __match_tty);
++		dev = device_find_child(&conn->dev, NULL, __match_any);
+ 		if (!dev)
+ 			break;
+ 		device_move(dev, NULL, DPM_ORDER_DEV_LAST);
 
