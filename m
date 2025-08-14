@@ -1,150 +1,132 @@
-Return-Path: <linux-kernel+bounces-768962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35864B2687C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:05:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA975B26973
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57481CE36A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:56:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8429D606CB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349673019A5;
-	Thu, 14 Aug 2025 13:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70671C861A;
+	Thu, 14 Aug 2025 14:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AKOCZK3X"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="ZR9RNxbe"
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C993002DC;
-	Thu, 14 Aug 2025 13:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBDB1ADC93
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179743; cv=none; b=J7BhyJZCwKghExOBxu+tZgtSdQZr+sGfTUp9s+36IlNnhSM6vGBmQP0+rPExAS/0KICRiDILHl3umMSlGko39c3HS37eThvNS6Kf6GIMSo0tT7N+oQjF/zJCGshkEAFjSxP7LyLj5ZE5/qSwE+QDKVUxrrnxfNl7a6XiN1jjam8=
+	t=1755180718; cv=none; b=LVMdBfpiGX4J1CX59kJLwvOtSkaBgrAUrUb0lfJfDphKGhvGC8PU3I/fhUMyjXYtN1ldyq0NFz/3BX44evEz1UXhZejv56RvaKUxxfRjbdOyDsa6dbMSDEWqu5N1O0+rotUeE7QGEES2b4yaygHGM1qeIFS6f2GKpnA3MIwRpZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179743; c=relaxed/simple;
-	bh=7JzL3Ns20W8JlBQbpJ32kWh4gyRkykl+6/gLUYxEY3M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=niIWJi+2OgeD70pYaubmYNZJtVjygQ0Bf2tqSMRMar+OmJeUvBZTX9BnfRGkklKIFHZ7XwZ4cnYJKRMmCD7ll10GPLAk5gbuaW3hI8qYaDGQwkAgC0CsvvTx8ZtO2wuqXgLxJXIZijUasXG5cDfOc9ywRPcaCeSzFQ5zJAUPO/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AKOCZK3X; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EDtYGd2392931;
-	Thu, 14 Aug 2025 08:55:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755179734;
-	bh=i0GvU8yXRcaO2Y4NEKTLzJjcr67hga2PE/48KWK3328=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=AKOCZK3XG2RHK4KkfW2OnGKYAQ7P7wIU1yF72WMDSySWBFxTiBa0OB2KnUh9aHtpn
-	 xCA6Hy7OZDk9FXgkHsbMCBiiqkQO9PD1+O1RUA/QbMEto6D6/q3klRH9US5/muwWht
-	 09pEJkSwfnm7p4qzVA/dqtSKUC+JV2L4mbq4qMIQ=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EDtYrh1752703
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 08:55:34 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 08:55:34 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 08:55:34 -0500
-Received: from lelvem-mr05.itg.ti.com ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EDtX4E4004753;
-	Thu, 14 Aug 2025 08:55:34 -0500
-From: Andrew Davis <afd@ti.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Hari Nagalla <hnagalla@ti.com>, Beleswar Padhi
-	<b-padhi@ti.com>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew
- Davis <afd@ti.com>
-Subject: [PATCH 3/3] remoteproc: da8xx: Use devm_rproc_add() helper
-Date: Thu, 14 Aug 2025 08:55:32 -0500
-Message-ID: <20250814135532.638040-3-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250814135532.638040-1-afd@ti.com>
-References: <20250814135532.638040-1-afd@ti.com>
+	s=arc-20240116; t=1755180718; c=relaxed/simple;
+	bh=Y1o6emuvsPrqT+WdWAFVSifqHHuldu2i2ckRsNT25/I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TnRjlG5wIUSnO0WARvLSDekBPCZVfEEIe5qWmYWAjIQjhTuWE7SBisMYQylmPPSGnZX3Ab6snhQaGT93CGa2RT1dQhyJdO4OgQ3f0Lk1U3fPVXIUBk5MxXIr1jcicaCjtJhQ9fZDfSSFss86nMpesPLHO7E7URt+t7P5jurJEsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=ZR9RNxbe; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=BBLjP4xvKDuUFhARlS1Ydysza6+nSWdlIM3BlOBCokY=;
+	b=ZR9RNxbeiqfWaz2YieZy484lT4aLrYRkBa5eVtHwAqoPKkWgCviGZXx0vOXHsCpdj7MYN2Gec
+	InkLNagzTTNNaNc9F3YunmB677AjilGx6mLexq8iT454fQi9NACXsrLPHx0zDCz7D8eTr28ASYA
+	m7Vu/RyqCaZkSVciXfLv8Fs=
+Received: from w013.hihonor.com (unknown [10.68.26.19])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4c2mwn2tTvzYlnhn;
+	Thu, 14 Aug 2025 21:55:53 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w013.hihonor.com
+ (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Aug
+ 2025 21:55:59 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 14 Aug
+ 2025 21:55:59 +0800
+From: <zhongjinji@honor.com>
+To: <linux-mm@kvack.org>
+CC: <akpm@linux-foundation.org>, <mhocko@suse.com>, <rientjes@google.com>,
+	<shakeel.butt@linux.dev>, <npache@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<peterz@infradead.org>, <dvhart@infradead.org>, <dave@stgolabs.net>,
+	<andrealmeid@igalia.com>, <liam.howlett@oracle.com>, <liulu.liu@honor.com>,
+	<feng.han@honor.com>, <zhongjinji@honor.com>
+Subject: [PATCH v4 0/3] mm/oom_kill: Only delay OOM reaper for processes using robust futexes
+Date: Thu, 14 Aug 2025 21:55:52 +0800
+Message-ID: <20250814135555.17493-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-ClientProxiedBy: w003.hihonor.com (10.68.17.88) To a018.hihonor.com
+ (10.68.17.250)
 
-Use the device lifecycle managed add function. This helps prevent mistakes
-like deleting out of order in cleanup functions and forgetting to delete
-on error paths.
+From: zhongjinji <zhongjinji@honor.com>
 
-As this now makes the IRQ free ordered correctly, we can drop that from
-the remove() callback, which is now empty and can also be removed.
+The OOM reaper quickly reclaims a process's memory when the system hits OOM,
+helping the system recover. Without the OOM reaper, if a process frozen by
+cgroup v1 is OOM killed, the victim's memory cannot be freed, leaving the
+system in a poor state. Even if the process is not frozen by cgroup v1,
+reclaiming victims' memory remains important, as having one more process
+working speeds up memory release.
 
-Signed-off-by: Andrew Davis <afd@ti.com>
+When processes holding robust futexes are OOM killed but waiters on those
+futexes remain alive, the robust futexes might be reaped before
+futex_cleanup() runs. This can cause the waiters to block indefinitely [1].
+
+To prevent this issue, the OOM reaper's work is delayed by 2 seconds [1]. Since
+many killed processes exit within 2 seconds, the OOM reaper rarely runs after
+this delay. However, robust futex users are few, so delaying OOM reap for all
+victims is unnecessary.
+
+If each thread's robust_list in a process is NULL, the process holds no robust
+futexes. For such processes, the OOM reaper should not be delayed. For
+processes holding robust futexes, to avoid issue [1], the OOM reaper must
+still be delayed.
+
+Patch 1 introduces process_has_robust_futex() to detect whether a process uses
+robust futexes. Patch 2 delays the OOM reaper only for processes holding robust
+futexes, improving OOM reaper performance. Patch 3 makes the OOM reaper and
+exit_mmap() traverse the maple tree in opposite orders to reduce PTE lock
+contention caused by unmapping the same vma.
+
+Link: https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u [1]
+
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index 58b4f05283d92..e418a2bf5d2ee 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -302,8 +302,6 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	platform_set_drvdata(pdev, rproc);
--
- 	/* everything the ISR needs is now setup, so hook it up */
- 	ret = devm_request_threaded_irq(dev, irq, da8xx_rproc_callback,
- 					handle_event, 0, "da8xx-remoteproc",
-@@ -328,7 +326,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	drproc->irq_data = irq_data;
- 	drproc->irq = irq;
- 
--	ret = rproc_add(rproc);
-+	ret = devm_rproc_add(dev, rproc);
- 	if (ret) {
- 		dev_err(dev, "rproc_add failed: %d\n", ret);
- 		return ret;
-@@ -337,21 +335,6 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static void da8xx_rproc_remove(struct platform_device *pdev)
--{
--	struct rproc *rproc = platform_get_drvdata(pdev);
--	struct da8xx_rproc *drproc = rproc->priv;
--
--	/*
--	 * The devm subsystem might end up releasing things before
--	 * freeing the irq, thus allowing an interrupt to sneak in while
--	 * the device is being removed.  This should prevent that.
--	 */
--	disable_irq(drproc->irq);
--
--	rproc_del(rproc);
--}
--
- static const struct of_device_id davinci_rproc_of_match[] __maybe_unused = {
- 	{ .compatible = "ti,da850-dsp", },
- 	{ /* sentinel */ },
-@@ -360,7 +343,6 @@ MODULE_DEVICE_TABLE(of, davinci_rproc_of_match);
- 
- static struct platform_driver da8xx_rproc_driver = {
- 	.probe = da8xx_rproc_probe,
--	.remove = da8xx_rproc_remove,
- 	.driver = {
- 		.name = "davinci-rproc",
- 		.of_match_table = of_match_ptr(davinci_rproc_of_match),
+v3 -> v4:
+
+1. Rename check_robust_futex() to process_has_robust_futex() for clearer
+   intent.
+2. Because the delay_reap parameter was added to task_will_free_mem(),
+   the function is renamed to should_reap_task() to better clarify
+   its purpose.
+3. Add should_delay_oom_reap() to decide whether to delay OOM reap.
+4. Modify the OOM reaper to traverse the maple tree in reverse order; see patch
+   3 for details.
+These changes improve code readability and enhance OOM reaper behavior.
+
+zhongjinji (3):
+  futex: Introduce function process_has_robust_futex()
+  mm/oom_kill: Only delay OOM reaper for processes using robust futexes
+  mm/oom_kill: Have the OOM reaper and exit_mmap() traverse the maple
+    tree in opposite orders
+
+ include/linux/futex.h |  5 ++++
+ include/linux/mm.h    |  3 +++
+ kernel/futex/core.c   | 30 +++++++++++++++++++++++
+ mm/oom_kill.c         | 55 +++++++++++++++++++++++++++++++------------
+ 4 files changed, 78 insertions(+), 15 deletions(-)
+
 -- 
-2.39.2
+2.17.1
 
 
