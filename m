@@ -1,463 +1,170 @@
-Return-Path: <linux-kernel+bounces-769008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8471BB26931
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08824B268FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADFC6605588
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:10:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8128AA0B50
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD2A3009FC;
-	Thu, 14 Aug 2025 14:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3828532144A;
+	Thu, 14 Aug 2025 14:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="o4EUZp7e"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ADF2FE068;
-	Thu, 14 Aug 2025 14:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEOyQxV2"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC03321427;
+	Thu, 14 Aug 2025 14:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180253; cv=none; b=Ft1crqGz3YEM9RTWLuN2H8XXlW/MUjRU6Ny1THIs067WWXciiSWsK2XHPgLnvG9AEuhwC5Bh+9Db0lE6DOOMvKYAn1/maJQzbrjEwXLhfoMdP9rZAuhrjBK59gdTuEewjovWZk5yPLDDA2mgo6Kay+zHXdlz/76e9qDFJvFdS24=
+	t=1755180408; cv=none; b=V+Q2/RduAfCvZjCoOH5gmgQnTTARjegyNhms1i8s9uHSXADFQWmziOuiIIs6DG2C9tZ2hf5FRwlohzlxFxAI/vR6cwIV80W08Gmr4SccsrwL3FwQG8c7Ult1DnvobevL+O7Rh1mkYZ+12RI7Ve49B2uCEqODcjN+c99sUC0bO0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180253; c=relaxed/simple;
-	bh=As9vrC7IC2q8iJ9LHFF2keqpU5lN5U6mE2zKrc71Y2o=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JH8c9JzCWny5W3/0pyNovUAWrVtEh6DCimvilnOpAyJWT5kaBdje3yxhoGu2vc4m0SlNbCdXuH65k6BO8b3CRYB2w8cvjB7vB955kI/UUrdvfabRW2xocxl5G+7RZn1NatcfTfz7ypcEpmR0X9qbcM1M+TAMSs9p/m1ndbGKbGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=o4EUZp7e; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1204)
-	id 79CEC2015E7F; Thu, 14 Aug 2025 07:04:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 79CEC2015E7F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1755180250;
-	bh=zYCT6Jet8CDRw5oxMXtwIXVigIas5OE8tAujKD9wZN0=;
-	h=Date:From:To:Subject:From;
-	b=o4EUZp7e7RocA31ZJR2CUP1IKEUe8S+wnOZzntoAXEPMN6WC0ra24wk60RgJ64h09
-	 w7iZbcqIMLiG/BVJs9brX0ObEhE7JuTGJAC8KJHFAwu8lRPS2dFNzH1BtLoJJUXYdQ
-	 NK49+fhBOiPoTWGp03kVZ9y68y01cETmuAcjRRZM=
-Date: Thu, 14 Aug 2025 07:04:10 -0700
-From: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-To: horms@kernel.org, kuba@kernel.org, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, longli@microsoft.com, kotaranov@microsoft.com,
-	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
-	john.fastabend@gmail.com, sdf@fomichev.me, lorenzo@kernel.org,
-	michal.kubiak@intel.com, ernis@linux.microsoft.com,
-	shradhagupta@linux.microsoft.com, shirazsaleem@microsoft.com,
-	rosenp@gmail.com, netdev@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ssengar@linux.microsoft.com, dipayanroy@microsoft.com
-Subject: [PATCH net-next v5] net: mana: Use page pool fragments for RX
- buffers instead of full pages to improve memory efficiency.
-Message-ID: <20250814140410.GA22089@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1755180408; c=relaxed/simple;
+	bh=Ybxk1TB6zRWIfSh85LcO2RRx7atnh+AZLW/N/PE9Rcs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mUyBNeELNzOgCUg2jCxasK5M0tyAJx4y2+4iOd4iGHu+uzUhvGnTAFVuQHBhVOyub5gwG+5ZwnmWbi1n8zIl04Qd0LezxmXFaE9F6VAI46c2atzEaicVgPxJhdc/IBi71B14SjX1bjnjSMfLbk1iLXBdW9lZehC+G6ufMKoCUGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEOyQxV2; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9e418ba08so477264f8f.3;
+        Thu, 14 Aug 2025 07:06:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755180405; x=1755785205; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Qda6eKiChu1mXCojr2a5Wn7iDIeLm6m2hQhqg1Pn4sg=;
+        b=UEOyQxV2fDgRPnaeK13ztdYlFtXTWFg64MhSQhLr9GeLlZCAIn0K97TQUBfP2+SduR
+         Al2JfRyZZm2u9JJ+unyZ7q375+glYjQQKM//CeKBjP5J8X9bPHWSGRhkqB4jZqBwu7r/
+         zDeOnVfox4n+JUoSrqeNesGOKMb83hXBKxU/u/fKv/zso4XPrGfUQ3zfSZAAnYSTa3Jq
+         4aNoOVJJLBXogTTu0NQ8CurDLFA+ht0Ft1GYDCW1hLAMqlbDCGltE+j+bYeNU9j2Ll2P
+         YSTD9iAT5FxvILJmBQFpIenvZyrbq0VRBn0ef1UzMXHsVNYOoGnI9qP7rwfTW90b90XJ
+         B3ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755180405; x=1755785205;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qda6eKiChu1mXCojr2a5Wn7iDIeLm6m2hQhqg1Pn4sg=;
+        b=cx8KrlCSHUcIxMN5jRuK9sHHqrr3aLtW7UggxS+3bejR6Wasodjm0cjavrzbun/gVE
+         NSZwIa52DVBiH9COvG/ERYCuomGcOEqIGUuUmcnE6XAcHzzfZKMb+VKVtuqgxPxGweIs
+         kD67nkpJdpgHtVJNK/zDBAcGeaIs1KoJuXs6mUwkYaDPUnGpti3JLhf+aEWNW0GtBTmQ
+         wXcom8kAFFydxIN4ANeaEs0Tg6zURNmL4gg3UPbZhlmoVqcH3ws7+DxYJMKOa3qojbxk
+         KihkYkhGwMY84jxCoEV0ce8wC7nPCz3vyP3jR9GQoh15Djptj4tMcCwRLnx1zpVPIQ6s
+         OxSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl9stnpj4dcJZ69DWkrXWP3MVfPaoS19rI/lqC3cYdDjxzyZCE9TiWEp4GYuE4JRCZdUs4qTAOxr9qWKRBLZ52jw==@vger.kernel.org, AJvYcCVwNXwtQbEu2ngNB0OdQE1459Y8oGdLxao3IKx/73iQumJuHqBqpnHvpamfWpCCDFsb3aggOX4SDaOv@vger.kernel.org, AJvYcCWHTfpM5B1Ij7F+fd8jOwYDJod+AA6gkQx4QtFt+GFN04HsCbePs/nmgVGzeybuzZ+HogN58Dviv9gE@vger.kernel.org, AJvYcCXTFRikrNZ4wgEeEmya00J2Dz7HurzJcHpyRouEsqY7H1+UU0l1Txjb1hfPdXKRSmx9QNUAMBe1i9Uj@vger.kernel.org, AJvYcCXj9xd6PaEkNXO9MBNhOpvg6Rrqqi+8zb+ONT46OwDtKl653Da48CCsYecIXoo061tBPeBUW8kGY/9+rpq+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfunE9r9nrfoGbNhasfvwz9IaMq9FWCB7yNkXeLMEfza+P2m+v
+	sGbRVyl1AxOJp5d41YQHhCg3nBzlwzNEndwAfkdCZdpIcrD0g8zc3WwY
+X-Gm-Gg: ASbGncvmFhRPDf10dzEm+sONPK3cNF3W4jBi6bDeZ0jZ76RuQxoRRWSBNKHE+7QiL6U
+	ufQHVhGEa1gsvcOCbXOIU9LLBjUaCKGldAYHLSTYxncu94gwMBI6brtMbRjLZVcEIq5nzmBLWHr
+	66nqyupdtmek2A994t/8OiMrZ9k0r3PYXSCE9pn73c/gbBkLdbV5+qMLCV52hgRJ0CEABNNiPey
+	nZZo+Ii1ns5vKbRgQM5P1L1xo6Llj9wInmC4bqVewglcRxcdv7YPle8C1cNJCNmL1DZ7odtYO74
+	yoQZrLKF9uCfG1+lfqTjjYqJH4iVnfqq4D/s2tV7p0Qg0kH8btbpTT3KQX2x6DR7SBW7aJk8HnD
+	1sxiOjgvS30kQQ8YvegvPXEJikhW78rsh3gPzivG60iLSOlAymhxf1jk3cyI626QtMpcRdTX4hz
+	8kxvc0pB6RGnICcpYCkWyZLfPXJbAmvWbGAIVuDCYkoPOqZJC7K2zLl7sg7nfBF24WI4z6pwyPh
+	8M=
+X-Google-Smtp-Source: AGHT+IEnQ9do0ALLGKmunp/XJpi/t5BmL0hnvtsNOXrAxguTK/fiIMH8QwU2UzXZuUzOb9KHxDTCdQ==
+X-Received: by 2002:a05:6000:2405:b0:3b9:7bf0:88e1 with SMTP id ffacd0b85a97d-3b9edfd55bfmr2615620f8f.56.1755180404714;
+        Thu, 14 Aug 2025 07:06:44 -0700 (PDT)
+Received: from ?IPV6:2a01:cb08:941b:4c00:f383:4db2:82a:81e9? (2a01cb08941b4c00f3834db2082a81e9.ipv6.abo.wanadoo.fr. [2a01:cb08:941b:4c00:f383:4db2:82a:81e9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e0bfc79fsm40404341f8f.56.2025.08.14.07.06.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 07:06:44 -0700 (PDT)
+Message-ID: <4055d2c4-64c7-498f-8cdb-8d749d32ec68@gmail.com>
+Date: Thu, 14 Aug 2025 16:06:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
+Subject: Re: [PATCH v5 05/20] dt-bindings: memory: factorise LPDDR props into
+ SDRAM props
+To: Julius Werner <jwerner@chromium.org>,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
+ <20250728-ddrperfm-upstream-v5-5-03f1be8ad396@foss.st.com>
+ <CAODwPW-FjCtPGYkNYozo0ybEjz_rVOeDqkvEPiCmQ6M2in0OeQ@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAODwPW-FjCtPGYkNYozo0ybEjz_rVOeDqkvEPiCmQ6M2in0OeQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch enhances RX buffer handling in the mana driver by allocating
-pages from a page pool and slicing them into MTU-sized fragments, rather
-than dedicating a full page per packet. This approach is especially
-beneficial on systems with large base page sizes like 64KB.
+Hi Julius,
 
-Key improvements:
+On 30/07/2025 20:27, Julius Werner wrote:
+>> +      Compatible strings can be either explicit vendor names and part numbers
+>> +      (e.g. elpida,ECB240ABACN), or generated strings of the form
+>> +      lpddrX,YY,ZZZZ or ddrX-YYYY,AAAA...,ZZZZ where X, Y, A and Z are in lower
+> 
+> If the revision ID is only one byte for DDR, there should be only two Zs.
 
-- Proper integration of page pool for RX buffer allocations.
-- MTU-sized buffer slicing to improve memory utilization.
-- Reduce overall per Rx queue memory footprint.
-- Automatic fallback to full-page buffers when:
-   * Jumbo frames are enabled (MTU > PAGE_SIZE / 2).
-   * The XDP path is active, to avoid complexities with fragment reuse.
+Indeed, will fix it here and in the dedicated field documentation below.
+Wouldn't it be better to add a regex pattern for the compatible ?
 
-Testing on VMs with 64KB pages shows around 200% throughput improvement.
-Memory efficiency is significantly improved due to reduced wastage in page
-allocations. Example: We are now able to fit 35 rx buffers in a single 64kb
-page for MTU size of 1500, instead of 1 rx buffer per page previously.
+> 
+>> +      case hexadecimal with leading zeroes.
+> 
+> AAAA is not hexadecimal, it's a verbatim ASCII string (at least that's
+> how I would define it, for readability).
 
-Tested:
+Yes you're right. I'll add the numbers of chars it corresponds to in the 
+dedicated field below also.
 
-- iperf3, iperf2, and nttcp benchmarks.
-- Jumbo frames with MTU 9000.
-- Native XDP programs (XDP_PASS, XDP_DROP, XDP_TX, XDP_REDIRECT) for
-  testing the XDP path in driver.
-- Memory leak detection (kmemleak).
-- Driver load/unload, reboot, and stress scenarios.
+> 
+>> +      For LPDDR and DDR SDRAM, X is the SDRAM version (2, 3, 4, etc.).
+>> +      For LPDDR SDRAM:
+>> +        - YY is the manufacturer ID (from MR5), 1 byte
+>> +        - ZZZZ is the revision ID (from MR6 and MR7), 2 bytes
+>> +      For DDR4 SDRAM with SPD, according to JEDEC SPD4.1.2.L-6 :
+>> +        - YYYY is the manufacturer ID, 2 bytes, from bytes 320 and 321
+>> +        - AAAA... is the part number, 20 bytes, from bytes 329 to 348
+> 
+> This should clarify that it is excluding trailing spaces (so only the
+> significant part of those 20 bytes, since they're supposed to be
+> padded with spaces at the end).
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
----
-Changes in v5:
-  - Switch to old_prog on allocation/reconfig failure in mana_xdp_set.
-Changes in v4:
-  - Better error handling in mana_xdp_set.
-Changes in v3:
-  - Retained the pre-alloc rxbuf for driver reconfig paths
-    to better handle low memory scenario during reconfig.
-Changes in v2:
-  - Fixed mana_xdp_set() to return error code on failure instead of
-    always returning 0.
-  - Moved all local variable declarations to the start of functions
-    in mana_get_rxbuf_cfg.
-  - Removed unnecessary parentheses and wrapped lines to <= 80 chars.
-  - Use mana_xdp_get() for checking bpf_prog.
-  - Factored repeated page put/free logic into a static helper function.
----
- .../net/ethernet/microsoft/mana/mana_bpf.c    |  46 +++++-
- drivers/net/ethernet/microsoft/mana/mana_en.c | 151 ++++++++++++------
- include/net/mana/mana.h                       |   4 +
- 3 files changed, 150 insertions(+), 51 deletions(-)
+I'll add a comment about that.
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_bpf.c b/drivers/net/ethernet/microsoft/mana/mana_bpf.c
-index d30721d4516f..7697c9b52ed3 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_bpf.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_bpf.c
-@@ -174,6 +174,7 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
- 	struct mana_port_context *apc = netdev_priv(ndev);
- 	struct bpf_prog *old_prog;
- 	struct gdma_context *gc;
-+	int err;
- 
- 	gc = apc->ac->gdma_dev->gdma_context;
- 
-@@ -195,11 +196,45 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
- 	 */
- 	apc->bpf_prog = prog;
- 
--	if (old_prog)
--		bpf_prog_put(old_prog);
-+	if (apc->port_is_up) {
-+		/* Re-create rxq's after xdp prog was loaded or unloaded.
-+		 * Ex: re create rxq's to switch from full pages to smaller
-+		 * size page fragments when xdp prog is unloaded and
-+		 * vice-versa.
-+		 */
-+
-+		/* Pre-allocate buffers to prevent failure in mana_attach */
-+		err = mana_pre_alloc_rxbufs(apc, ndev->mtu, apc->num_queues);
-+		if (err) {
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "XDP: Insufficient memory for tx/rx re-config");
-+			return err;
-+		}
-+
-+		err = mana_detach(ndev, false);
-+		if (err) {
-+			netdev_err(ndev,
-+				   "mana_detach failed at xdp set: %d\n", err);
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "XDP: Re-config failed at detach");
-+			goto err_dealloc_rxbuffs;
-+		}
-+
-+		err = mana_attach(ndev);
-+		if (err) {
-+			netdev_err(ndev,
-+				   "mana_attach failed at xdp set: %d\n", err);
-+			NL_SET_ERR_MSG_MOD(extack,
-+					   "XDP: Re-config failed at attach");
-+			goto err_dealloc_rxbuffs;
-+		}
- 
--	if (apc->port_is_up)
- 		mana_chn_setxdp(apc, prog);
-+		mana_pre_dealloc_rxbufs(apc);
-+	}
-+
-+	if (old_prog)
-+		bpf_prog_put(old_prog);
- 
- 	if (prog)
- 		ndev->max_mtu = MANA_XDP_MTU_MAX;
-@@ -207,6 +242,11 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
- 		ndev->max_mtu = gc->adapter_mtu - ETH_HLEN;
- 
- 	return 0;
-+
-+err_dealloc_rxbuffs:
-+	apc->bpf_prog = old_prog;
-+	mana_pre_dealloc_rxbufs(apc);
-+	return err;
- }
- 
- int mana_bpf(struct net_device *ndev, struct netdev_bpf *bpf)
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index a7973651ae51..3efe2e696589 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -56,6 +56,15 @@ static bool mana_en_need_log(struct mana_port_context *apc, int err)
- 		return true;
- }
- 
-+static void mana_put_rx_page(struct mana_rxq *rxq, struct page *page,
-+			     bool from_pool)
-+{
-+	if (from_pool)
-+		page_pool_put_full_page(rxq->page_pool, page, false);
-+	else
-+		put_page(page);
-+}
-+
- /* Microsoft Azure Network Adapter (MANA) functions */
- 
- static int mana_open(struct net_device *ndev)
-@@ -629,21 +638,40 @@ static void *mana_get_rxbuf_pre(struct mana_rxq *rxq, dma_addr_t *da)
- }
- 
- /* Get RX buffer's data size, alloc size, XDP headroom based on MTU */
--static void mana_get_rxbuf_cfg(int mtu, u32 *datasize, u32 *alloc_size,
--			       u32 *headroom)
-+static void mana_get_rxbuf_cfg(struct mana_port_context *apc,
-+			       int mtu, u32 *datasize, u32 *alloc_size,
-+			       u32 *headroom, u32 *frag_count)
- {
--	if (mtu > MANA_XDP_MTU_MAX)
--		*headroom = 0; /* no support for XDP */
--	else
--		*headroom = XDP_PACKET_HEADROOM;
-+	u32 len, buf_size;
- 
--	*alloc_size = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD + *headroom);
-+	/* Calculate datasize first (consistent across all cases) */
-+	*datasize = mtu + ETH_HLEN;
- 
--	/* Using page pool in this case, so alloc_size is PAGE_SIZE */
--	if (*alloc_size < PAGE_SIZE)
--		*alloc_size = PAGE_SIZE;
-+	/* For xdp and jumbo frames make sure only one packet fits per page */
-+	if (mtu + MANA_RXBUF_PAD > PAGE_SIZE / 2 || mana_xdp_get(apc)) {
-+		if (mana_xdp_get(apc)) {
-+			*headroom = XDP_PACKET_HEADROOM;
-+			*alloc_size = PAGE_SIZE;
-+		} else {
-+			*headroom = 0; /* no support for XDP */
-+			*alloc_size = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD +
-+						     *headroom);
-+		}
- 
--	*datasize = mtu + ETH_HLEN;
-+		*frag_count = 1;
-+		return;
-+	}
-+
-+	/* Standard MTU case - optimize for multiple packets per page */
-+	*headroom = 0;
-+
-+	/* Calculate base buffer size needed */
-+	len = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD + *headroom);
-+	buf_size = ALIGN(len, MANA_RX_FRAG_ALIGNMENT);
-+
-+	/* Calculate how many packets can fit in a page */
-+	*frag_count = PAGE_SIZE / buf_size;
-+	*alloc_size = buf_size;
- }
- 
- int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_queues)
-@@ -655,8 +683,9 @@ int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_qu
- 	void *va;
- 	int i;
- 
--	mana_get_rxbuf_cfg(new_mtu, &mpc->rxbpre_datasize,
--			   &mpc->rxbpre_alloc_size, &mpc->rxbpre_headroom);
-+	mana_get_rxbuf_cfg(mpc, new_mtu, &mpc->rxbpre_datasize,
-+			   &mpc->rxbpre_alloc_size, &mpc->rxbpre_headroom,
-+			   &mpc->rxbpre_frag_count);
- 
- 	dev = mpc->ac->gdma_dev->gdma_context->dev;
- 
-@@ -1841,8 +1870,11 @@ static void mana_rx_skb(void *buf_va, bool from_pool,
- 
- drop:
- 	if (from_pool) {
--		page_pool_recycle_direct(rxq->page_pool,
--					 virt_to_head_page(buf_va));
-+		if (rxq->frag_count == 1)
-+			page_pool_recycle_direct(rxq->page_pool,
-+						 virt_to_head_page(buf_va));
-+		else
-+			page_pool_free_va(rxq->page_pool, buf_va, true);
- 	} else {
- 		WARN_ON_ONCE(rxq->xdp_save_va);
- 		/* Save for reuse */
-@@ -1858,33 +1890,46 @@ static void *mana_get_rxfrag(struct mana_rxq *rxq, struct device *dev,
- 			     dma_addr_t *da, bool *from_pool)
- {
- 	struct page *page;
-+	u32 offset;
- 	void *va;
--
- 	*from_pool = false;
- 
--	/* Reuse XDP dropped page if available */
--	if (rxq->xdp_save_va) {
--		va = rxq->xdp_save_va;
--		rxq->xdp_save_va = NULL;
--	} else {
--		page = page_pool_dev_alloc_pages(rxq->page_pool);
--		if (!page)
-+	/* Don't use fragments for jumbo frames or XDP where it's 1 fragment
-+	 * per page.
-+	 */
-+	if (rxq->frag_count == 1) {
-+		/* Reuse XDP dropped page if available */
-+		if (rxq->xdp_save_va) {
-+			va = rxq->xdp_save_va;
-+			page = virt_to_head_page(va);
-+			rxq->xdp_save_va = NULL;
-+		} else {
-+			page = page_pool_dev_alloc_pages(rxq->page_pool);
-+			if (!page)
-+				return NULL;
-+
-+			*from_pool = true;
-+			va = page_to_virt(page);
-+		}
-+
-+		*da = dma_map_single(dev, va + rxq->headroom, rxq->datasize,
-+				     DMA_FROM_DEVICE);
-+		if (dma_mapping_error(dev, *da)) {
-+			mana_put_rx_page(rxq, page, *from_pool);
- 			return NULL;
-+		}
- 
--		*from_pool = true;
--		va = page_to_virt(page);
-+		return va;
- 	}
- 
--	*da = dma_map_single(dev, va + rxq->headroom, rxq->datasize,
--			     DMA_FROM_DEVICE);
--	if (dma_mapping_error(dev, *da)) {
--		if (*from_pool)
--			page_pool_put_full_page(rxq->page_pool, page, false);
--		else
--			put_page(virt_to_head_page(va));
--
-+	page =  page_pool_dev_alloc_frag(rxq->page_pool, &offset,
-+					 rxq->alloc_size);
-+	if (!page)
- 		return NULL;
--	}
-+
-+	va  = page_to_virt(page) + offset;
-+	*da = page_pool_get_dma_addr(page) + offset + rxq->headroom;
-+	*from_pool = true;
- 
- 	return va;
- }
-@@ -1901,9 +1946,9 @@ static void mana_refill_rx_oob(struct device *dev, struct mana_rxq *rxq,
- 	va = mana_get_rxfrag(rxq, dev, &da, &from_pool);
- 	if (!va)
- 		return;
--
--	dma_unmap_single(dev, rxoob->sgl[0].address, rxq->datasize,
--			 DMA_FROM_DEVICE);
-+	if (!rxoob->from_pool || rxq->frag_count == 1)
-+		dma_unmap_single(dev, rxoob->sgl[0].address, rxq->datasize,
-+				 DMA_FROM_DEVICE);
- 	*old_buf = rxoob->buf_va;
- 	*old_fp = rxoob->from_pool;
- 
-@@ -2314,15 +2359,15 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
- 		if (!rx_oob->buf_va)
- 			continue;
- 
--		dma_unmap_single(dev, rx_oob->sgl[0].address,
--				 rx_oob->sgl[0].size, DMA_FROM_DEVICE);
--
- 		page = virt_to_head_page(rx_oob->buf_va);
- 
--		if (rx_oob->from_pool)
--			page_pool_put_full_page(rxq->page_pool, page, false);
--		else
--			put_page(page);
-+		if (rxq->frag_count == 1 || !rx_oob->from_pool) {
-+			dma_unmap_single(dev, rx_oob->sgl[0].address,
-+					 rx_oob->sgl[0].size, DMA_FROM_DEVICE);
-+			mana_put_rx_page(rxq, page, rx_oob->from_pool);
-+		} else {
-+			page_pool_free_va(rxq->page_pool, rx_oob->buf_va, true);
-+		}
- 
- 		rx_oob->buf_va = NULL;
- 	}
-@@ -2428,11 +2473,22 @@ static int mana_create_page_pool(struct mana_rxq *rxq, struct gdma_context *gc)
- 	struct page_pool_params pprm = {};
- 	int ret;
- 
--	pprm.pool_size = mpc->rx_queue_size;
-+	pprm.pool_size = mpc->rx_queue_size / rxq->frag_count + 1;
- 	pprm.nid = gc->numa_node;
- 	pprm.napi = &rxq->rx_cq.napi;
- 	pprm.netdev = rxq->ndev;
- 	pprm.order = get_order(rxq->alloc_size);
-+	pprm.queue_idx = rxq->rxq_idx;
-+	pprm.dev = gc->dev;
-+
-+	/* Let the page pool do the dma map when page sharing with multiple
-+	 * fragments enabled for rx buffers.
-+	 */
-+	if (rxq->frag_count > 1) {
-+		pprm.flags =  PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
-+		pprm.max_len = PAGE_SIZE;
-+		pprm.dma_dir = DMA_FROM_DEVICE;
-+	}
- 
- 	rxq->page_pool = page_pool_create(&pprm);
- 
-@@ -2471,9 +2527,8 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
- 	rxq->rxq_idx = rxq_idx;
- 	rxq->rxobj = INVALID_MANA_HANDLE;
- 
--	mana_get_rxbuf_cfg(ndev->mtu, &rxq->datasize, &rxq->alloc_size,
--			   &rxq->headroom);
--
-+	mana_get_rxbuf_cfg(apc, ndev->mtu, &rxq->datasize, &rxq->alloc_size,
-+			   &rxq->headroom, &rxq->frag_count);
- 	/* Create page pool for RX queue */
- 	err = mana_create_page_pool(rxq, gc);
- 	if (err) {
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index e1030a7d2daa..0921485565c0 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -65,6 +65,8 @@ enum TRI_STATE {
- #define MANA_STATS_RX_COUNT 5
- #define MANA_STATS_TX_COUNT 11
- 
-+#define MANA_RX_FRAG_ALIGNMENT 64
-+
- struct mana_stats_rx {
- 	u64 packets;
- 	u64 bytes;
-@@ -328,6 +330,7 @@ struct mana_rxq {
- 	u32 datasize;
- 	u32 alloc_size;
- 	u32 headroom;
-+	u32 frag_count;
- 
- 	mana_handle_t rxobj;
- 
-@@ -510,6 +513,7 @@ struct mana_port_context {
- 	u32 rxbpre_datasize;
- 	u32 rxbpre_alloc_size;
- 	u32 rxbpre_headroom;
-+	u32 rxbpre_frag_count;
- 
- 	struct bpf_prog *bpf_prog;
- 
--- 
-2.43.0
+> 
+>> +        - Z is the revision ID, 1 byte, from byte 349
+>> +      The former form is useful when the SDRAM vendor and part number are
+>> +      known, such as when the SDRAM is soldered on the board.
+> 
+> This inversion of the statement is a bit odd? I think it's more
+> important to explain why we need the latter form (or just explain
+> both).
+
+I will document both forms so.
+
+> 
+>> +      SDRAM revision ID:
+>> +        - LPDDR SDRAM, decoded from Mode Register 6 and 7, always 2 bytes.
+>> +        - DDR4 SDRAM, decoded from the SPD from byte 349 according to
+>> +          JEDEC SPD4.1.2.L-6.
+> 
+> nit: Add "always one byte" for clarity and consistency with the LPDDR
+> equivalent.
+
+Ack
 
 
