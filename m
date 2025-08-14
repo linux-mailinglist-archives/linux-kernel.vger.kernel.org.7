@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-768455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F4EB26135
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:42:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BBAB26132
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04311887B14
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC55A3B1272
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA59B305E06;
-	Thu, 14 Aug 2025 09:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5107307495;
+	Thu, 14 Aug 2025 09:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ClexRkY9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpc3ENZq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA3E303CAB;
-	Thu, 14 Aug 2025 09:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FD1302779;
+	Thu, 14 Aug 2025 09:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755163907; cv=none; b=UsrDN4bIDxuX7hhhNRkL1k9UL7Yk7BJeFp2ZzQm1RLpBMA+fomvauppm5/6ACNr9tpczinMxZAe/H9f/NMj+oM2bUIsRFgUP+pbLIYej0Zqji4iIACDeozXii6FUkC3DFoLvkibDOSP8yXiVy1w6jXAyGQ/I2vMjF9EuMmx1T04=
+	t=1755163911; cv=none; b=Bf3YNCHbFhyY0+yL5NTvCCQEmp0wmOy0FTEKPMFx8UqiouHPN9oVViOcH4xz1nqxequPVNmj8Qsz1/TG9o8oekMb+IZVZ24p9R64WfKj6uJa2JS0Wudy7O+rlDr1wZWZuFpBsZ5KZ4fL8kdm0mabTmDCWHhEZwGKVuO3BfhJGGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755163907; c=relaxed/simple;
-	bh=KU8iCPwOBksDO7Sd3iDRD2on8k7W4YiXdZipzP3STXA=;
+	s=arc-20240116; t=1755163911; c=relaxed/simple;
+	bh=e9mgz8XbeaX7DTGVgHJOp/zC3oQa22JUfQ5bhgnwxPo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jU0uFq4+LUp4zPYiovgKeoSGeCeuqZe+GTc+wvWYHQ0H9+BKk2ItfnqPXYtflck6J+uySRb72fgb/uRoZpHkP4fdQwB13yTbtA6B/WWWQlXfsgc/IllaSK49MuujUKF3jKNJCuKF00x00NGHK18HpY58Oo2jUyPlBAnZUja5RS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ClexRkY9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06397C4CEF1;
-	Thu, 14 Aug 2025 09:31:43 +0000 (UTC)
+	 MIME-Version; b=b8dJiVAnqkbpMI47zMgS/GEcE8SeaXaX55Yw6kofb5XmUNTYZMOFCFuxjrQAo2PtbHxf9eOdTXSYyDsUdxU1j/rbDEZ1/NnOgkjqR8d5q9yznQiKQHgh/hUxPaxkbBR449sJ5ZPui7URlQRhQv/2iDrbUe3WX2foI4DthsxAuQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpc3ENZq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE206C4CEEF;
+	Thu, 14 Aug 2025 09:31:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755163907;
-	bh=KU8iCPwOBksDO7Sd3iDRD2on8k7W4YiXdZipzP3STXA=;
+	s=k20201202; t=1755163910;
+	bh=e9mgz8XbeaX7DTGVgHJOp/zC3oQa22JUfQ5bhgnwxPo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ClexRkY9V6MGiVefVjvEicea1kMdZiPoA5yMywBPlX3UHH2B+SP6rUWndbLKJyKYb
-	 ZzXqK9yG0gVw79md48fk4zSskDhpsKLdHSf5sEwmSz2AClWY9PzLovxxNRnoRdC7Bg
-	 OGaqqcKdcTb/2VzuMfc9AuvW3m/p45dgot1fLnq/U5MdZItWJVHhJ4CdcD+AJy0q4p
-	 Z3krhLk0tJF0vPRDH0v5yYuEW4scpANbwxd8as86ODgqQPN5Lt377VdiVx9yBfJNjU
-	 fGtmNNiWeTV3RmlVAPCKoRgv9DMB2rLyNKrBD9mkivH3bJw9/wOGan5tejGI46k9ES
-	 k76D8aoTzyQWg==
+	b=hpc3ENZqf4EbC8ZV20nW0mMu+FBQ1KYLpSHcZAao2EFG7uE/JCFGYRuYUvC0U5XIc
+	 g00C41cxSR9+hEzl+sDRTJQXSnS4nN4JK4MhJebJCOBOSqEQc2ipwsDOW28k15PY+a
+	 JcnXvgXuATAr8CXmYGFjWVFK4dCMwFA9zI+VOTd7b4cHFXMP0mI9V9St1Mk7sXy6l6
+	 KodOd66b5OBvXiN3H3HJOKai3aoJMoMYi/MX8JtMnsmmT5nigw1mnPXZquwOH1e3Kc
+	 rzvb3oBJqzD5v50ZNRsp9aTxtTCWwNxtQrI0XqREZ536vkfwKPfeC64g/Z0wszrs5M
+	 6UmzJHcfCaTWQ==
 From: Benno Lossin <lossin@kernel.org>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>,
@@ -53,12 +53,12 @@ To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
 	Danilo Krummrich <dakr@kernel.org>
-Cc: linux-acpi@vger.kernel.org,
+Cc: linux-pm@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/11] rust: acpi: replace `core::mem::zeroed` with `pin_init::zeroed`
-Date: Thu, 14 Aug 2025 11:30:37 +0200
-Message-ID: <20250814093046.2071971-11-lossin@kernel.org>
+Subject: [PATCH v3 11/11] rust: cpufreq: replace `MaybeUninit::zeroed().assume_init()` with `pin_init::zeroed()`
+Date: Thu, 14 Aug 2025 11:30:38 +0200
+Message-ID: <20250814093046.2071971-12-lossin@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250814093046.2071971-1-lossin@kernel.org>
 References: <20250814093046.2071971-1-lossin@kernel.org>
@@ -78,24 +78,31 @@ the C side changed and is most likely incorrect.
 
 Signed-off-by: Benno Lossin <lossin@kernel.org>
 ---
- rust/kernel/acpi.rs | 4 +---
+ rust/kernel/cpufreq.rs | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/rust/kernel/acpi.rs b/rust/kernel/acpi.rs
-index 7ae317368b00..f9488be9249c 100644
---- a/rust/kernel/acpi.rs
-+++ b/rust/kernel/acpi.rs
-@@ -42,9 +42,7 @@ pub const fn new(id: &'static CStr) -> Self {
-             "ID exceeds 16 bytes"
-         );
-         let src = id.as_bytes_with_nul();
--        // Replace with `bindings::acpi_device_id::default()` once stabilized for `const`.
--        // SAFETY: FFI type is valid to be zero-initialized.
--        let mut acpi: bindings::acpi_device_id = unsafe { core::mem::zeroed() };
-+        let mut acpi: bindings::acpi_device_id = pin_init::zeroed();
-         let mut i = 0;
-         while i < src.len() {
-             acpi.id[i] = src[i];
+diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
+index afc15e72a7c3..be2dffbdb546 100644
+--- a/rust/kernel/cpufreq.rs
++++ b/rust/kernel/cpufreq.rs
+@@ -27,7 +27,6 @@
+ use core::{
+     cell::UnsafeCell,
+     marker::PhantomData,
+-    mem::MaybeUninit,
+     ops::{Deref, DerefMut},
+     pin::Pin,
+     ptr,
+@@ -1013,8 +1012,7 @@ impl<T: Driver> Registration<T> {
+         } else {
+             None
+         },
+-        // SAFETY: All zeros is a valid value for `bindings::cpufreq_driver`.
+-        ..unsafe { MaybeUninit::zeroed().assume_init() }
++        ..pin_init::zeroed()
+     };
+ 
+     const fn copy_name(name: &'static CStr) -> [c_char; CPUFREQ_NAME_LEN] {
 -- 
 2.50.1
 
