@@ -1,253 +1,129 @@
-Return-Path: <linux-kernel+bounces-768020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B427FB25BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:40:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0FF5B25BF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A20680BFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 832E13BAD5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5A9253920;
-	Thu, 14 Aug 2025 06:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C00253B67;
+	Thu, 14 Aug 2025 06:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="RpxYocEr"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022124.outbound.protection.outlook.com [40.107.75.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jr/kJEsD"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF3A24E4BD;
-	Thu, 14 Aug 2025 06:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755153545; cv=fail; b=uQl0SVQTREeyp5CUBN94E2TdVzCT/aVHjPK6/iWzYASsEYntlAaccKEKMrQKxllaXiEuiCVCFtLIpohRb7IgXFPoG9lPbrw3Zr1CoBTG5WV2NklBtDPBdHEhcbXVMYO3kfaXQsA6qFHqE4PMf8oc88WTUZIusokt0IdITt+QBmw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755153545; c=relaxed/simple;
-	bh=rZOzvPjs4AyRxn6ucorElqQ1n53OSuBv6UChsfg3wmk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aDoU2ShVEjFyWAdC0pMJ9pzVH9pv7gtzdCBAxuCsn16/69L5/yPBxxJl6OGCPHwLRMLRQXyivVPfJvu3SFKjvOvqW4TsmLzEADverJrLER9Ti3gXsmKGHzDWCFxkkqdVkEOqMmsTIQXrBEEFD60LJe8vq8T8MNeW/C2gFx0/GnI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=RpxYocEr; arc=fail smtp.client-ip=40.107.75.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e9rx6L6BS/d9iGeOGW7Ucj4oP8x0VNtLlJ68nQYVdn8Z9sE4H4KbfYutl3Ty9P/2YeOlS9MaPwS/D1Lw/7skV8ZzSZKswXK+ktaHHssp95OLl3Ki5NRxOCkdNXmVl23Mm/dI2JsaXnO6tIFOSCqiQQND384qUL80aIttv14V7vwxwlXHYI/4bKdcefpRgqRrdDf+Xw+WJJ5bjlJnTGrOuWttWPm8AWvBOrZysOM+7CzHFtZmllHrwayDLbQiCzgAiXZrextNuMZd7u5lsSBD9TLrzAxZ/X4DNE6QqW7RzRr9VQC47cI5lugNVXd2dTHjRL4sYSYfAQbNKfUITJ6anA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nbFuXIPekPrC/EbSQaXQ3BRVLBYDVP/aRtZ6xA/zyYs=;
- b=g0NGGaDcjTxe6uDPXA81Jozyu4LS0GCFV8iB87ty/0d/R/4eK+URazj4tLaXLzqNydMBdewr3u/SIg8uOwgVXpC9L2e1csk1EeD/44od8ftHAvmskQJZpT1XepCNowgZfEndSx0NXLyzLRqDpUiZQgsfG4WLbV7ohbB97aE6+rBLyNeDREQKIBO66RJjRxcWH0I39Bnyb2sZEdpL9Fbkg1G5MjH7C1VQgsxqDidRFD0gR0cNryXr3arB4mfbJZU0DQGEf6NvfWfOgC7vrjXgRvjiZ3/+1+h1VF7JUCQPE2OuzOrtXZlGbgYmedZ73XqjUTADnSI2dWwlnUb9usowbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nbFuXIPekPrC/EbSQaXQ3BRVLBYDVP/aRtZ6xA/zyYs=;
- b=RpxYocErMgLSo0A87k7RYqoSbpOV0fysL7tGLYaW+6oRkGNQ4lllM6BzFh7XGjUna6AZO/UvlTAqY5WfS3nOf0boZ9LUT/ZsJ32iLykB8QUEBz9Qh6xPdo+NseInB3PCMyMFHNoK6nv+tQW1H3YzvBo49gbRa0DToJodpMhkL7AZ+BkYmuvT2LCbJQbpeMQnPoYsGgtxXiS4ChTnV92Gmbow7vE4HRiL9Hfqci8CEm9OgYGQytaLfgpGsPMrZtWClzFCX1ZI/t+GgUkCBXMYwddaQTCcxnaV8AftDxJdtPMzsrcYsPN/xmVjhbQ3KMLFGoCD+vos1xDsF0MUtMbmfg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
- by PS1PPF83F4A8B9F.apcprd03.prod.outlook.com (2603:1096:308::2dd) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Thu, 14 Aug
- 2025 06:38:58 +0000
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::ac4e:718:3b03:3123%4]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 06:38:58 +0000
-Message-ID: <cf825229-7294-4fc5-b7dd-09dc1198db74@amlogic.com>
-Date: Thu, 14 Aug 2025 14:38:54 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] spi: dt-bindings: add doc for Amlogic A113L2 SFC
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liang Yang <liang.yang@amlogic.com>,
- Feng Chen <feng.chen@amlogic.com>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org
-References: <20250808-spifc-v1-0-ff4e30e26a6b@amlogic.com>
- <20250808-spifc-v1-1-ff4e30e26a6b@amlogic.com>
- <20250808-adamant-fat-raven-38c8b3@kuoka>
- <7fab19de-8ed1-4fe5-b2a4-a7e9c13d8424@amlogic.com>
- <5cc336bc-f071-41d2-b59a-af0df23af00b@kernel.org>
- <d872a711-7442-4e2e-bc59-0d6f4f656fde@amlogic.com>
- <017a4d15-286d-4e0a-89ff-f658009a6de6@kernel.org>
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-In-Reply-To: <017a4d15-286d-4e0a-89ff-f658009a6de6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SGXP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::23)
- To TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9EB24FC09;
+	Thu, 14 Aug 2025 06:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755153584; cv=none; b=jaxDQt1lr1rXig0sWI9/4ah7mMKBeN/08MuL33BHbMxpDsXcdaSX+aPdfqaE+ClujswgSh5sEpETvrT/UjsSdImDczujhjjgZamwIxD75Bj47RSBizgVyElkxj3Id0l3GIEVWs9VlV/QeR8tmCdssk5P3ix9NsoII2YTZwCRCTc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755153584; c=relaxed/simple;
+	bh=R1C/8DCIBJz96E2r7yTyeQKXLBEZvbbz3YPZilRHxA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCRvjW41h+P/OktOMoODO/atJpVVJM8sxfth2jcdx0kbagtm9rhPPK03q1yBZ8qeMWJ03Tvmc6x4zwysMIyIL/bZYYbrzA6lZAbv3U96i6wuy6sRY903f9TPbKFZknlTvLm5Cz112z74QIOQeM9EUIw9FlS7G6ivR/+b/C6NJLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jr/kJEsD; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2445806df50so4184335ad.1;
+        Wed, 13 Aug 2025 23:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755153582; x=1755758382; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R1C/8DCIBJz96E2r7yTyeQKXLBEZvbbz3YPZilRHxA8=;
+        b=jr/kJEsDnjD/nmJQ3oijUrAZXAf8LhjzJwNhxGxq1aPEwJdCWvhVb+DXYr9v+olo9y
+         zn+n9IvAztJeIUArutGDSoBMSKmLovA5Z0NkqAsYI72SuWavElB3iXVsK5KnSOoteuZa
+         yzvxl80Ir1wtGSVXsnAX2YYwB6yPG5OZDqGrIlUH70wJZj7dZslKOhwWyuci/URYipHy
+         v3GuvTnkz6FSje5n6XezNSJoHoXfJxMUlTXlck+ZhqCxAbetHoDM6LafzuWoPHkmOsoY
+         U9y2T9Y9elp4kRON3eRFf7umnUNyS7wGhqxgfPaBVfiBk8RuG0GEVC8KqrGZCTMQRviB
+         tjGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755153582; x=1755758382;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R1C/8DCIBJz96E2r7yTyeQKXLBEZvbbz3YPZilRHxA8=;
+        b=hXdNkpauHn/+rL0INDWcHPd/Pl4cgpm9IzOFJyTX1877LA6K9fxiun+mRU4Di6EaKS
+         O5pTkEWGyP2yM29y7iAVnrAMYF5JnGF7erKILoxWWzXjTunnd3nGfGAzvGA8XkiSyBmL
+         y5X2J/Rk4JUNqInX0zCafcU8r51Vi0oof/RN3jT9w2nzvexKeR8TUVc8EpmiLCo27H6R
+         I2UQWxsoXp3TLI8McljgFjeYPyT2Lln1d32OrEWdbB2z+UX5Xe4qNcjSv9QnZaxEfyRr
+         KQQe1sJIDVf4MblxWwLALM1hi3/IESaDjdA/ixbOPJNtjei2yHi18gqOl92j+qz2dtzX
+         /pbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCYnqQLr+GUCDc/wIYggZRL4gha+PX8M3dirZH522MTGVUaGXgOU5cEDEJm42ACAl/grdfD3MdNswPIinh@vger.kernel.org, AJvYcCUjaHAhKgBzhVINEjve5q1ul5OsHsmKb+dKT67Ju36YorIqhMcpgscwYJPpUPObeMYtsWxgvL4qSMAP@vger.kernel.org, AJvYcCVAdiBLuS+F62ly4JS/XB0y2Ly14UtnnVG4E7wpNuyaqSYTwZqQTXuVRScCiPasWB0ieuN+hWZMd4g=@vger.kernel.org, AJvYcCVNTes2H2etAEXGiPte1wQjhqQFD0YU1wRG4XXn//prxBMcIiQwVOTNQYlUKEteFZBrwJBT0un2qJBdrWyPt8Nd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwyMMv8yHtRnyOyaHEILxPtYR7sD5dV0AoUhPjnrzPoCJIn0AX
+	bxRDZdCoVrU1dXFDV6zLe2S5Qjt8PG+/nUn9LbRrZISTmX0862eFntsA
+X-Gm-Gg: ASbGnctgDS+J3Zui/4etNHcbmr+qmpJjCICOdrGmDf4aSPp4VGv08h3XcNm6Aav5bQi
+	YhGpQqUTc3kXZZ94tTeoGXGoM1mbjyhtPHXsZOruygLkisOZZZf++rLFBAMPH+2aRhOaFwnw3B9
+	y5P9UbZwlMfFrL6tjHX8W8kLC4/O4MpbKpoBweQeXNEjdqw6310+UM3BrRJwSYntluesocSCbS/
+	pIT/9FnPDlSZwSuiBU3Zguie7TZ+JVGzXjaM0F7cF718a16+hBkBR+/ly6+CL9S4jK62Tnq5oFz
+	v18APxGchKOzYlyCjo0SaqbUArmd6E/hSrcypL2RDHjje4txikHmj4Dq9AeVlY45YziRGE61TdD
+	U7vFMH2TnTXi9bpL4KSlAnw==
+X-Google-Smtp-Source: AGHT+IEUsKVk7G4ljZuETiaQhj9SpFjdw3c+YmZ4fIKMSMdn/3GF4m36bVdbkDaj2lnQ9wltfClBWA==
+X-Received: by 2002:a17:903:1af0:b0:240:2145:e51d with SMTP id d9443c01a7336-2445868b3ebmr30999825ad.31.1755153582122;
+        Wed, 13 Aug 2025 23:39:42 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-244590608dbsm10300325ad.66.2025.08.13.23.39.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 23:39:38 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 783CB40164BE; Thu, 14 Aug 2025 13:39:34 +0700 (WIB)
+Date: Thu, 14 Aug 2025 13:39:34 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Workflows <workflows@vger.kernel.org>,
+	Linux Kernel Selftests <linux-kselftest@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Gow <davidgow@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Tim Bird <Tim.Bird@sony.com>, Rae Moar <rmoar@google.com>
+Subject: Re: [PATCH 0/2] Documentation: ktap: formatting cleanup
+Message-ID: <aJ2Epp0b3HgeaMxk@archie.me>
+References: <20250814012046.21235-1-bagasdotme@gmail.com>
+ <98ed6868-8030-4d10-b66d-c7e3d42886f8@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|PS1PPF83F4A8B9F:EE_
-X-MS-Office365-Filtering-Correlation-Id: e86358e8-eec6-462e-fa0c-08dddafd3f8e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cUVTclFMWTlBUko0QXIxUG1ESHdoUVV2VHVwWkMzM09XTEFldkFYOTRqU1Jp?=
- =?utf-8?B?YUU4YjNWNUVmbGJUZVJYK0hkL2lCZW0xV094aVJ1dkd6RktkRHp6VWVPNnZa?=
- =?utf-8?B?NGtYbmxCT0tXdnBGNkUxMDhjWDZndE1yOVdEd01NOHdkbXFlbkM1UGdWM21x?=
- =?utf-8?B?cnljMUVJYVlaSGlGbVNuZm1jZEY2TTU0aVpoUmF6OUZYaWpDM1IrSnZVbytT?=
- =?utf-8?B?dU1hMUtISEU2NG05NStUb0VMUjNjNU90cFUwN1BUaG04eXZSZklCd1V5NHZZ?=
- =?utf-8?B?b2V0MFlTRnN1RDFxL0RmeVZUaG1Oekdld0dZdU9lUjR2UE5KTlRFSGlUVi9k?=
- =?utf-8?B?NlMwdnY4NE1wTUZvSGFxU2pJYVd5S3M3VGxhVkk5QWRrRXhnUEF2Nk82QmJQ?=
- =?utf-8?B?REVRdk1za2IrV0xmSlA5SGhEUm0rTlAvYkUxZ1RMWXd2Uk15QkdMazVVMVpz?=
- =?utf-8?B?TUpHZmVKck41aVg4NUVTa2plemRrTThLdnVnRXdRUFJzOTcvOStiWUU0eTdN?=
- =?utf-8?B?SUxaeFZsd3dUWnBmc21Yb1RlV0ZCbTJOVWtwdzVsWjBnYmJibjFlSmlwRTJh?=
- =?utf-8?B?WXArUzBWR3BMcDJXRDhMMEhuUzhWclVwd0FwdVc3NUxzaTk0bTlzeGZqWGVj?=
- =?utf-8?B?OTNRczNPTDd2VGhXYjAyK0Z1d2VtNDFoMllZMXZQRjliQ1JleUxNVFFDb01r?=
- =?utf-8?B?SGw1emRDQTZXbXJ5TmVWUDFNN3BHTmJVd3QyelRPVVJtNlc1NnJaNUFycHc5?=
- =?utf-8?B?bUViNElIMHphUmRpVnY5UUNIdC85L1dXb3lRR0UvZVgyWVRTbDc2UlN2UXRt?=
- =?utf-8?B?ekE4RVdFcmU4OE1uTHlzSENzUis5RXVaUEZHYnRaakdHZEh6WVJwRjQrVUJ2?=
- =?utf-8?B?dDl3cnJzdUIwcVJybGQ5SHkzLzFuYkZJUGJyMDYxeVlrbFowUlN2cUxCTWpB?=
- =?utf-8?B?TlpCU1F2Mk00dE9nblZKMjljYU9aUlFOUUc0SVZVaGNGeWhLTkVPYTNxTzNT?=
- =?utf-8?B?cmt4RTlYVlppVVdRcWw0cXU4WUdwR29UdlZBcUZnVnA3TmhZYkRnS1hwdlRL?=
- =?utf-8?B?WGx4eXVrODJhQ0hwN1NGWWVsb1RnNktHUHRkaVhaeEhCRWJxZnJEaFNpY2ps?=
- =?utf-8?B?U1RVdVA1L3M5bDNnMDU0WFVTOVNublJBSWh6dE9zUk9YTitTQitwRktXc3Vk?=
- =?utf-8?B?MEV6eGwwTGxYSjVnZTQycERsMTFhdGd2OWtTTHBSY2hpU1IyeWYyMEQrYzFB?=
- =?utf-8?B?UHhqaE9uQmRXRm9OYnZvSDJsVE41OEFXdHVubUUyS0dpdWJhVGRhekhLazIr?=
- =?utf-8?B?ZmE1OEJ1dFhtcHBDMHl2bDRPTGJ5TmJRTjlRZk5pTzNnR1I5YlhIU01xa2ZJ?=
- =?utf-8?B?cm5rWXB4djFxL1h5bDgwSmdsWVUyTnFvOUU3MUg5SWlqZzdMZm41S2thdGw1?=
- =?utf-8?B?UWI3aS9FTjZ1eFRsS3l4ZXFYb3ZKOTNMMGF6S3ZoQmFBMERPQXJJRTQwQnhs?=
- =?utf-8?B?TTFjSG1GZ0doajduSmxsM1NTR0duT1d3UlBoM0Z0ZWpvVkkyM3ltU28zMDRz?=
- =?utf-8?B?TjNITVFTZjhISFgvVWRmWTFrZGduZCs5anI3ckxJTVlqK0wrM2lLaHJsdEx5?=
- =?utf-8?B?a1dSeUVqUlR0VHQrQUUzUlY3Vmw5c2dUYmU0S3NXaWFvN3huMys3Z0l3aHQy?=
- =?utf-8?B?Rk05M3RTVC9kTS9Cd1g4MVMzV1dDenBVbDRyemZyckNGSHplTmNtQnl0SHY5?=
- =?utf-8?B?V0t5c09nNUZxWEtHcGpmUXlCNEw3VmZQQUo0bDZGc2pzS0phZEs0dUNuNy9v?=
- =?utf-8?B?U0VMaXErNW9UUmJ4ckhvMk45R3RSYm1sMTI4YzlMUDlGV0N0Z0tjTXc2ZWlS?=
- =?utf-8?B?ZjFBTFBtSm1la1FtTzQwanVDZmtQZGZnWmIzYWZDRTlWOHo0YlF0VWFyV2hY?=
- =?utf-8?Q?qJZT7wEDHiI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bGVZaSsxcm9iZ0JzS0xMZjBGdTlOTnBzUzUwTXFiekRmeVdQbHpPSmhTS0Jp?=
- =?utf-8?B?TlllSHhPNVdNSk1Nc3gwWkIxdG93dXN1SU11V2ZwcHYxYzNRR01ROFF4UU1m?=
- =?utf-8?B?VXc3OUV4Uk1Dem4vSWVBb2I1Ly92SjFSemt2YXpIa0x3alRNbENKZzNVVE1G?=
- =?utf-8?B?bkVrOEZPT1ZzWTZFL2Q3R1JVVGUvbXVWYUd2OUx0eVlJMTQwclhBZm9MZkJK?=
- =?utf-8?B?djlUSmV6emxGNWhPNkFsZTcyNi9hSkZ2WHF3dm1oVW4vR24zL1dDcFJmYXBX?=
- =?utf-8?B?RnBNSlFwa3J1V0NPMUVoL3FQdXB3WG9JMEZhRmMxbG95cVZqZ1JTS0toWXRj?=
- =?utf-8?B?YmUzMExKaWpPbGZKUU5KSmp5aVhZRDFqTm9QeHlhMFNhOW53Q0FQWW91NHl6?=
- =?utf-8?B?WWs2Y2pTSnoxVkJha1gxSUtHN3ZjRWZ0TFJ1dDVodkQvMUNVNE1wQnA2WDdI?=
- =?utf-8?B?dHB5MzJxQjVsTlRueWpHU3Z4VG5WMjVJalp1US93aWhNaTlESWliSmdrWk5r?=
- =?utf-8?B?c3pPV2tYSzRpL09wQWRveXdyV2t6Q1NQQ3ZHUG1CWkxTNnliYnN6RjgxRDVz?=
- =?utf-8?B?ZFZHZnNHK3B2RXJpT09HNEUveENIVllMbkwrL2t6RWJSOEdRVVZGbnFQYldu?=
- =?utf-8?B?cFgzdk1lNVNZdjMxVmJqNGhGRzE4N3dROGRpTHY4Sk5rbURoM0FNUktGVUUz?=
- =?utf-8?B?ckVCd3ozS21BdTJ6dVlGZjk4RkhhdXlXbFl2Yk1FZDRpZ2Z3UHArd2Zsb1FL?=
- =?utf-8?B?SVRBK2ZZd0U5OHFvOE5OT3NxalVFQUwzSUY5UnpPMnBCLzIya3dWb3VSbmVt?=
- =?utf-8?B?bVFBdUxPdmVtQUZ4aFBwME15V0xwb3g1RFNBelk0UFNoL3NRSkc4NTAvdHNu?=
- =?utf-8?B?d0svR2RYUTJ5akJxKzdEcGJVY2x3c0FkM1NCZExZL0JGOWVVaXZJOHh6eEJW?=
- =?utf-8?B?WFgrd2R2TEVoZ2NkQkJxNDlpZ2tHUW9aY1dFSGQ4aXo0cEZLY08wOFpWOHgv?=
- =?utf-8?B?MjRpRS96dFlzdVRFSUlKV0xHK3NtOTNuNFF2S3ZuZEloeEhER1A1WDZhYzk1?=
- =?utf-8?B?ZEMvaDIrbGtRbGVwcmV0U2JOR1VrSXRQeFdtb1VTZEZ6amZIYkJOYkxKbDYz?=
- =?utf-8?B?Mi9oS3ZiVTF5R3pFWUFRY21WQlpzdjFJQzdjSTY1SXFOcTY1eittcVJWakxh?=
- =?utf-8?B?aldUVkhLOWk0Y3UyajBBbDBpbndCWjVQQWNyampydTlCQVhhNjRzZWVqNjZM?=
- =?utf-8?B?cXFXWXgzTndoS3YvWkZpQ3lLY3A1azBwWXhvL1ZWR1J6UHZzb3llQW9OcUZG?=
- =?utf-8?B?WWhMY20ySjYvM0RsY3diSTJDZkZvNEg4S2tBUGx4ZC9NcmVZMjQ0ZUlxTjBy?=
- =?utf-8?B?VXMwN3p2MVJUQjY3ZFVIQkI2SjBoZWUxUFB6SVI5MzJQZE9RQzNYT0Vxc1J1?=
- =?utf-8?B?UXE3UmNVeTZmVm1jY01yMjhPS2FDU0tXU2lib0lRc3ZpRFNhV1MvdUlmME9W?=
- =?utf-8?B?S0VUa1Q0M25QSVFvNGpEbTh5MUdTNUltZXFSMWtEVXZmZE9OdWR4Q1R1ZmFs?=
- =?utf-8?B?cW9UVG9EL0RHVXFmUDBzNzhZQWpPKzRMa1p2emVpZGpUbmNLTXRxSldoeHFH?=
- =?utf-8?B?MUVCaENDTXQrWUt3akh2aXVWa0NJOUlCeHdiWmw1ekhxblpCUWNSRUxYVXU2?=
- =?utf-8?B?ZHUrZm96NFUxQXVTUkc2Tld1NStycldacWNZZEtTOWFqVEdIT2VIVTU2a2VH?=
- =?utf-8?B?ZFQ1R3dGUStDTFNENHVsb09GMHdhY25wRWxlaTVSV2k3eXFESkltbzVJSklw?=
- =?utf-8?B?U3FmdHdRMUlhbEx2M0VPejFMbDhuM1hvOEZ0d3V5c2lwNVZFcS8veVRpcnpz?=
- =?utf-8?B?anpOODdQWUpYVmYrY0h6M1dJbWVCWWcxM0wzUUwyQzVMYkF6SWdoRjdLSVFp?=
- =?utf-8?B?YUFuemt3SUVkN0tjdHFHM0dhMmNEVFJZa0ludDJ5dkQ3ZVpHcWk1a0FYdk5X?=
- =?utf-8?B?K1A5WkV5bC9uRldnd2RjMkQya29rOFY5amd5VWpSQ0lwSElXSmRxMHF6b0tZ?=
- =?utf-8?B?bDJEUHhGM1BjZlF5RkhnSHo2UFdxNVBmQnIycHZBbHR3SlFudy9HMkVmWXNz?=
- =?utf-8?B?N1FhR0tYQjQvZHpQRjNZLzErVVJUQWRFSVZWK2paVHpIdk1iMmNhTnJvZkxZ?=
- =?utf-8?B?ZVE9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e86358e8-eec6-462e-fa0c-08dddafd3f8e
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 06:38:58.5782
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oZuaPZg8XK9dPk0JSkFsfuZ3uBm1s6vGsi8dfLodKML2UOZinq5bpcAlxSv6ycm+jmQObDnpIlJgVfis/Ep+wnE5H+oRYsmNXjwGGGSHDco=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PS1PPF83F4A8B9F
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ie7JBSI6Q0nMquM1"
+Content-Disposition: inline
+In-Reply-To: <98ed6868-8030-4d10-b66d-c7e3d42886f8@infradead.org>
 
-Hi Krzysztof,
-    Thanks for your reply.
 
-On 2025/8/14 00:19, Krzysztof Kozlowski wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> On 13/08/2025 11:34, Xianwei Zhao wrote:
->> Hi Krzysztof,
->>      Thanks  for your reply.
->>
->> On 2025/8/13 15:36, Krzysztof Kozlowski wrote:
->>> [ EXTERNAL EMAIL ]
->>>
->>> On 13/08/2025 08:13, Xianwei Zhao wrote:
->>>>>> +allOf:
->>>>>> +  - $ref: /schemas/spi/spi-controller.yaml#
->>>>>> +
->>>>>> +properties:
->>>>>> +  compatible:
->>>>>> +    const: amlogic,a4-spifc
->>>>>> +
->>>>>> +  reg:
->>>>>> +    items:
->>>>>> +      - description: core registers
->>>>>> +      - description: parent clk control registers
->>>>>
->>>>> Why are you poking to parent node or to clock registers? This looks like
->>>>> mixing up device address spaces.
->>>>>
->>>>
->>>> The SPIFC bus clock multiplexes EMMC modules, so the corresponding
->>>> frequency division register is also in EMMC module. The SPIFC and the
->>>> EMMC modules cannot be used simultaneously.
->>>
->>> Then obviously you cannot put here EMMC or parent registers.
->>>
->>> It looks really like you miss proper hardware representation.
->>>
->>
->> It does seem a bit unusual. However, in our hardware design, EMMC and
->> SFC modules are integrated, and they share common resources such as the
->> clock and I/O pins .They are mutually exclusive.
->>
-> 
-> How did you express it in DT? This looks similar to serial engines and
-> such are not implemented independently.
-> 
+--ie7JBSI6Q0nMquM1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The hardware design provides this clock for both modules — EMMC and 
-SPIFC. A control bit (bit 31: Cfg_NAND, where 0 = Port C only, 1 = NAND) 
-is used to determine which module uses the clock.
+On Wed, Aug 13, 2025 at 06:58:12PM -0700, Randy Dunlap wrote:
+> Why send this patch series to the workflows mailing list?
 
-It's not that NAND is using EMMC’s resources; rather, the configuration 
-register controlling this selection is located within the EMMC module, 
-which makes the setup appear somewhat unusual.
+Workflows ML is listed in get_maintainer.pl output.
 
-In the device tree (DT), I'll just refer directly to the clock frequency 
-division control register.
+Thanks.
 
-If I don't describe it here, then when SPIFC needs to operate, EMMC will 
-  be disabled. In that case, I won’t be able to access the corresponding 
-clock division setting, which means SPIFC won't be able to function either.
+--=20
+An old man doll... just what I always wanted! - Clara
 
->> Here, I'll modify the register description. Do you think it's feasible
-> 
-> No, because it changes nothing... Clock provider pokes clock divider
-> registers. Not clock consumer.
-> 
-> Best regards,
-> Krzysztof
+--ie7JBSI6Q0nMquM1
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaJ2EoAAKCRD2uYlJVVFO
+o1TpAP9lIizu4pMJAsA+vYyUic3/QOcQJD/j49wQx+7Ze/5cOwD+NP451W3K4yU0
+7K0SzH1b+L+VQr9cnTE9JqR0GqZ1BAk=
+=TK+6
+-----END PGP SIGNATURE-----
+
+--ie7JBSI6Q0nMquM1--
 
