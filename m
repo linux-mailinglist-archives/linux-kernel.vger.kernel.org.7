@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-768703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D4DB26460
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228A5B26461
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C89A00FA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1D615A7833
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE012F39AA;
-	Thu, 14 Aug 2025 11:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDEF2EE5EC;
+	Thu, 14 Aug 2025 11:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l76vktzh"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iicrYriF"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FBF41A8F;
-	Thu, 14 Aug 2025 11:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF6A1A9F9D;
+	Thu, 14 Aug 2025 11:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171286; cv=none; b=Mg7A99yoUt9jyDnLVv8GVsUfB2zL0YK1R7+EQDwKkbsuFzUKoUnmY+GLmTjwOiPsbSjNLNEGA0tZEQlB1MtIJnTvzOhPx+Wb6rilLrMVZTvEMryQoV905GfcY6P0TosgQ6Yc8DhR7uVouyHGngIMb1bssfAZ8UZM9TdH8h4UHH8=
+	t=1755171300; cv=none; b=YcxAWxEDLSKLxRjTLBU4BIjUdrJs8w9hKxEQtz+JZSHPebs/BT+uIIzczkr1GP/xlUyR9uvghaiTbrm0+YeXgt3x4G7+Zc985tdDXqv5XdTKh7KxekScWMdNk6XQ5viVa/0s9BtJAVbLVkY8AvIgkMISLDsh7XIcfD4HZyVGYhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171286; c=relaxed/simple;
-	bh=Zuk+VGhg6j5wK1OB9dS8TGsA6Z+8A+u3suS/2dnnabE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aFzsAPZBq3bTPEdGyxiDKwkhhBN4ezAVeGeavwtTwZxCZecK5IOGUtKFBGt5LDUj8Ogl/4BR3WWd8v6uw0LBEjvPp26Li7OIPVwh3b/IfFJj25EgGmFicafl9C2Zt4MYy3sYIr+8J5o++aGTgIc2IPSksX9jzfJb6bUP0fvTjSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l76vktzh; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-74381e0a227so606530a34.0;
-        Thu, 14 Aug 2025 04:34:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755171284; x=1755776084; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KfsQ0qqhk7rtPTAMLbJo5EZqlICp1s4TcMgY/WUahN0=;
-        b=l76vktzhZWPa8j+weL32foWTGKaW93k4wrGxgC3aWRCNqC0UcrTgJdViEMkQ4FRu7C
-         SDWbesyS/SJGkOLWeieuxfeV0rjN1zznLHYJqv+d9DYytzevRImY5QAIep6uninNSvob
-         PbMlmcNh1nfC1W2USqJYQ8YokQpp1KDEz5V5MsscvYiTsYV2hEabdnzMAz2w8fDEI00f
-         p5V/5N2ebNAtroQMTG+ucRTwd1s3ykPuG/vdhWshfe1pIx3/6rm+8kKS67ZnzFW8HEE/
-         8Pdg38gfUqmb8cunIw/CJap+iKs5NQ6cTlL+6ZJHtETdNnWp+1NHsDKWdIEBzR5/gzQ7
-         ajxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755171284; x=1755776084;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KfsQ0qqhk7rtPTAMLbJo5EZqlICp1s4TcMgY/WUahN0=;
-        b=oLPfEwg6ZsxE5jUkrnkkdf+vD0x8hG+iWPuD23umeErv/DPYPVN0O8qwDHgHSDaXd+
-         1XjyojNY3/FDxMnbm9qujOeQlUw2fgh1JdcacGU7TPdgt2IlHTdrMqyeXCbHH0jt+b0M
-         UOoE8+rupZXT4HZVbUzKYkfLDe0D+hei6hul6t3trsqDmatemGSNJJDLN8YCd0WU5wZW
-         4BJIgGogeEjZ+hyQ6+zFfk+zMhSJl4fswiR4AJXKPY6Utngl1WqLIs+AYjgCvX/z7tlD
-         8c/vWwzZ8gxANJw47ttiaJ0GagImNRY3itHtpaKMvEeJPgalMq9wpUkODN2xi7WGFeBX
-         539w==
-X-Forwarded-Encrypted: i=1; AJvYcCVQtIXkfh985Jt0QzHNE9729jHf0oNgbPZeHbNI0QwjJO8hd9WLZuR8wqzjWFm0yP4McxiCGnBtzgA=@vger.kernel.org, AJvYcCXnydKWTEy4Tg2okDaAN5d+oR4FyFol/EwqxISgF/BQp0kZwp6PPdUq3imBO+F7NTJOOxgVr+KmqRJHiQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgmotqAzT7KdwZCaIKVTZtVtTLeeRzdILsle8kIcVlDkVr7xAA
-	yDTKOFjj6+WCOQAj+ateWFGAYoVWYAil6UeZpgcp9aK7LPQQG0k5e5LWJjEDuWJjogMMPAdE2E5
-	52ck07XDF9wbX9TyXYoiImNE3GldEG46qOwuk
-X-Gm-Gg: ASbGnct7bC2QszF7vF06Agr4YBSOcxIP7HdO+5WlKk9+yvI5uq8f3ZK3gaDtPx+fxJp
-	YVuBeTxaq3TZa6/2KkfVxyFpe/f8YjUhLHr5Rcvav4HEUIiipFbB6q03jTYdmSZ9D+xjOORfM14
-	h/RGUkgIUXs8s7Q36NQwhj3fqU5v9tPaHnAhezobq3hC2u+LywiRdQUtu7ogFPqWotTyAyHJVhc
-	c5J
-X-Google-Smtp-Source: AGHT+IFoou5bSu/kqDLdzefLDe0WLJaufqCS9rAF/VRLOcfCgnPo245UHo+Js3kcXq6dc//GcucSxxgTqPnwfAXzSZM=
-X-Received: by 2002:a05:6830:3497:b0:727:3439:5bdf with SMTP id
- 46e09a7af769-74382bc3f86mr1518448a34.13.1755171284124; Thu, 14 Aug 2025
- 04:34:44 -0700 (PDT)
+	s=arc-20240116; t=1755171300; c=relaxed/simple;
+	bh=+qIU5841RvYEt8uMguyqbcYHK9dBC2sIctCw+Y6F39Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FFSHEm9ukE6QE0K3ZmWC1IirpmC1R+v5FYmItMRQpxe5Eqs67KMG0YYmE3BV1erlvcLJVeZgGoBIj0QzL9vycpnSR29jG3ttX2pKtNo2/G3ErnLUgefHybm+8SivhGP8/jZHqyfTtEK1zoOD2IicORuQbNv/xDB8pYlPxC8PbtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iicrYriF; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EBYdtT1922781;
+	Thu, 14 Aug 2025 06:34:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755171279;
+	bh=7LbU+yv2+Y6jnYq61nIb7SKpWsz0Z9nUrQStSnTQjvg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=iicrYriFr/xt9We9t8/o/L9I1Wxtp+0cnkPfNnoE9Jgh3U33Uhcu0k6a3pWYfE/Y4
+	 eiDza8w56ia5wKHqjjk4IeNZHmP8hhLjj9p9AXK0ew2EpB4/642IRTPkJz4mcIFvwZ
+	 X+K+6OaD17VSnvwbZDPu9MQ52FO8rfEuFQASjBv4=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EBYdEl1118411
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 06:34:39 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 06:34:38 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 06:34:38 -0500
+Received: from [172.24.233.254] (santhoshkumark.dhcp.ti.com [172.24.233.254])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EBYY1g3540111;
+	Thu, 14 Aug 2025 06:34:34 -0500
+Message-ID: <20487e7f-33dd-4b65-b1a8-5bb8a06ef859@ti.com>
+Date: Thu, 14 Aug 2025 17:04:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?Q?Rafa=C5=82_Wysocki?= <rjwysocki@gmail.com>
-Date: Thu, 14 Aug 2025 13:34:31 +0200
-X-Gm-Features: Ac12FXytc0dymczB_6o7akUKrXNMtwU4g0NYyt99SuhFWDhS5SSpjpVawz5w29Q
-Message-ID: <CAJZ5v0hdFatBoM-o3s_-+Q+529npq8FNo36pESFQrBGqZJdm=w@mail.gmail.com>
-Subject: [GIT PULL] ACPI fixes for v6.17-rc2
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
+ controller
+To: Mark Brown <broonie@kernel.org>
+CC: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+        <tudor.ambarus@linaro.org>, <pratyush@kernel.org>, <mwalle@kernel.org>,
+        <p-mantena@ti.com>, <linux-spi@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <a-dutta@ti.com>, <u-kumar1@ti.com>, <praneeth@ti.com>, <s-k6@ti.com>
+References: <20250811193219.731851-1-s-k6@ti.com>
+ <20250811193219.731851-2-s-k6@ti.com>
+ <6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk>
+Content-Language: en-US
+From: Santhosh Kumar K <s-k6@ti.com>
+In-Reply-To: <6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Linus,
+Hello Mark,
 
-Please pull from the tag
+On 14/08/25 01:56, Mark Brown wrote:
+> On Tue, Aug 12, 2025 at 01:02:10AM +0530, Santhosh Kumar K wrote:
+>> From: Pratyush Yadav <pratyush@kernel.org>
+>>
+>> Some controllers like the Cadence OSPI controller need to perform a
+>> tuning sequence to operate at high data rates. Tuning is needs to happen
+>> once the device is switched to appropriate mode (say 8S-8S-8S or
+>> 8D-8D-8D). Add a hook that spi-mem client devices can call in order to tune
+>> the controller to operate in a given mode and data rate.
+>>
+>> This is somewhat similar to eMMC/SD tuning for higher speed modes like
+>> HS200, but there isn't a standard specification around the same though.
+> 
+> Should we have something that blocks these tuning required modes without
+> the appropriate tuning, and/or allows discovery of which modes require
+> this tuning?  This all feels very landmineish - client drivers just have
+> to know when tuning is required.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.17-rc2
+The flash's maximum operating frequency determines whether PHY tuning is 
+required, as we need tuning in case of Cadence controller for 
+frequencies over 50 MHz.
 
-with top-most commit 40f2f1aa62578547e2977e8c0516048e0b71018c
+And we do check for this condition - see Patch 07/10,
+cqspi_phy_op_eligible_sdr(), which currently verifies the flash 
+frequency against 166 MHz. This logic can be improved by implementing 
+both min and max frequency checks, will update in the following version.
 
- Merge branches 'acpi-ec' and 'acpi-processor'
+Thanks,
+Santhosh.
 
-on top of commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-
- Linux 6.17-rc1
-
-to receive ACPI fixes for 6.17-rc2.
-
-These restore corner case behavior of the EC driver related to the
-handling of defective ACPI tables and fix a recent regression in the
-ACPI processor driver:
-
- - Prevent the ACPI EC driver from ignoring ECDT information in the
-   cases when the ID string in the ECDT is invalid, but not empty, to
-   fix touchpad detection on ThinkBook 14 G7 IML (Armin Wolf).
-
- - Rearrange checks in acpi_processor_ppc_init() to restore the handling
-   of frequency QoS requests related to _PPC limits inadvertently broken
-   by a recent update (Rafael Wysocki).
-
-Thanks!
-
-
----------------
-
-Armin Wolf (1):
-      ACPI: EC: Relax sanity check of the ECDT ID string
-
-Rafael J. Wysocki (1):
-      ACPI: processor: perflib: Move problematic pr->performance check
-
----------------
-
- drivers/acpi/ec.c                | 10 +++++++---
- drivers/acpi/processor_perflib.c |  5 ++++-
- 2 files changed, 11 insertions(+), 4 deletions(-)
 
