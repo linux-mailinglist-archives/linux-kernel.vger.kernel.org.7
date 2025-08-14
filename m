@@ -1,127 +1,202 @@
-Return-Path: <linux-kernel+bounces-767744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1669B25886
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:45:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82AF4B25889
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6ACE3AFF77
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4CC727E4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A0E158538;
-	Thu, 14 Aug 2025 00:45:03 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051E51E4A4;
+	Thu, 14 Aug 2025 00:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="GQZefl78"
+Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC862FF64E;
-	Thu, 14 Aug 2025 00:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C557D182B4
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755132302; cv=none; b=GPGtCiFbaOC9duvws0Hd9k+ch7ttc8KrdkfL54kKV00hhsaa2eP4lJQ3AX5KEvvB9z9cpuQgTLGUmAm07UMzQO2CACcmcvizlV7lCvBV44MAW8IGzkS39VEcN08XPQSICHEE8RuTcayhOZuA4w+sRVeAFBXZI5IINaDAxYPxRFk=
+	t=1755132441; cv=none; b=O2q9ZDNMGOOlpSwn29jnfSrZFIdyr9ETkg1BUOgiC1OidJuSNg+rU93UFgAovLDzT75f6a3qKah/QCSoI89nVxdeC1rTWr9f9dC4nHa4FiPrRCNA/ISzZ1Y6Kb6253YwAAQWEwayy0YEomGJJkcekcvcy8EeHKrKv5I0UAsWfeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755132302; c=relaxed/simple;
-	bh=Wt6hmav3wLkFt0xc9QToGleOM54+T5q9i5hftisO7g8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDAJT+PxoSIRJ/1n3VCP9g7QGaQT5MPYCf12Of1zZOXuc8Ano52hEZRN/9FUjQDyQSGyV8Yf6S+8DRjxdubIV4l4wbgZXqnvUiJulIbx4xiyTO1x17ERUgZf4QyEGUWNOScuL1GgcKnvb5RbMG46QTq09y7cAWxk/PSticvGJ+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2RNC5mxGzYQtxg;
-	Thu, 14 Aug 2025 08:44:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 69A151A07BB;
-	Thu, 14 Aug 2025 08:44:58 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgDnrNeJMZ1ocyMmDg--.27924S2;
-	Thu, 14 Aug 2025 08:44:58 +0800 (CST)
-Message-ID: <750ac0bd-42f9-47fa-8274-0ff4e4a7fa3d@huaweicloud.com>
-Date: Thu, 14 Aug 2025 08:44:57 +0800
+	s=arc-20240116; t=1755132441; c=relaxed/simple;
+	bh=h6TZNYNdslHx0L36UHuxcqKA4zVzfHXe6M7yqVXVCC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RG6jgWi2fQyya2jMBYMBtYbFB67EsMhGRARrJmfNVEky58ioSeoGKFnWjiSyPD6Jh/DDaPJ8GhxTV9xRSL7hWLf6dKFisQ8stA13tSi3gZrCLv4lqVYCY27YgCUNdzJ+DT9OkCztAKUsNBp2pV/VSm3ALQylNrzRY1V56qeKg6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=GQZefl78; arc=none smtp.client-ip=148.163.135.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
+Received: from pps.filterd (m0167068.ppops.net [127.0.0.1])
+	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DNgJ7j027255
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:47:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pps01; bh=+W1C
+	FszVGIZi3P5h7WgbYekgaYS6L9gBwMa5nUeu698=; b=GQZefl78Yy5HEyH/Kuat
+	73tqz0UKEstWC/QVBVwKZd1bZBHhRlE+c9QqVt5qfUUjQaAj2RFXbqW4BJwds9SQ
+	nepfXcDmSC/LCNmEtKkcBZyXL0ZomqEssu+NII9+eJZtZ/1/30ZrpKoZxD2jHsNI
+	3aOGAohKSm452mAyw6fVpcJv7MRvConX0nFhgtzqikYuj3zMvpJUFTFmtlRg5yCf
+	whtSiKu9UOBvcK8OyB7lslh7yOdsl8OfmbUo6MVYv1u0brZ2OCg7+2zhSqB+bDrh
+	W1+HC6n+H86riYDK55mQ9oHJOaLAsQTf6C5lBmBuOjPwiwRoIKs18ycYEaOg4xIj
+	0w==
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com [209.85.128.200])
+	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 48h0dtja8e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:47:18 -0400 (EDT)
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-71d60b39826so6508387b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:47:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755132438; x=1755737238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+W1CFszVGIZi3P5h7WgbYekgaYS6L9gBwMa5nUeu698=;
+        b=d/W+erv6PtW/iZoq6qyoy7DJva2CQz3iD6XKTIqovkM9vALbZQNeHscnRkCff/w7FF
+         KkiSX6EvN2bExBkkNlEhHhAECkrpyEyBqsaP2RPRQzFYp5t3nW3Fp5VYVMQEX/SccXFn
+         5fzJsRvw8k2wZEPUac/lrkefxJU+obGopBzs6E4z/GC3qixeGPD8gs19SfvLkqeHmnCy
+         iF1jrHBRZTLzC81dDwN38e9G535bKolYVyoiEwx0v8KUnbq6l4iB9bI6fwXOKt4SXL5m
+         GgxVVEYxFDGB0LEy1x+dtYf6ehcJxRFJx2/iP3BfYYvRbmluxDV7yERKed2S8ZInOBuk
+         X1lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFRKw1jFDiGJiqiEyw0yUGRQorBd+JzReKuQE3bv3UpwdHaFE77njm3OWrefUNtcyZ2mBFZ8LOr7BB2Zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn0jSa9uPQvTzJONVncoqU5BWYpvTngIuamsW1hXPIYUZTkH6h
+	GlJr6qx33jD4Aq1fDWE6zLHuWCFRzWehjD9BXCp7uO/alnreJrYckmpfCI/fxf/WZZI10z9jcjV
+	hX/F9YCtRyQZD8O+vs/FJbTHKsMxTbdL/vR5h9dQinlnhcU1DoUEAg20dS9WtNSWZKQR5uuVP4N
+	xrY5JER4vGfPtMJjIvcWUAXckzlXZOwHKumr4G
+X-Gm-Gg: ASbGncsogHILYoe01SWGMSlNM3wOkPLh1IG30g1wZtJ3ixk0Crp9mYS87gUOdE0KjHx
+	P+KkKJ3BSAHuy5nogh/ZnAMXXsWllDOZjLzXDMMyvmBs5UniAxTgyxK+MKySyFKH5eLKUhfg9xC
+	g+dmJW7ZB4c/yVfjfiy6zS
+X-Received: by 2002:a05:690c:48ca:b0:71a:2299:f0d8 with SMTP id 00721157ae682-71d63436ce4mr13895207b3.16.1755132437668;
+        Wed, 13 Aug 2025 17:47:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHeeYjMmAgiZ7FysL4G/SYNLSiM8yZ29h7XEmQJd9HgHMUKuGSYyn53OrcPwrkmvLyqFM0CBFJxp3Jo4TiwRUU=
+X-Received: by 2002:a05:690c:48ca:b0:71a:2299:f0d8 with SMTP id
+ 00721157ae682-71d63436ce4mr13894937b3.16.1755132437227; Wed, 13 Aug 2025
+ 17:47:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [-next v2 4/4] cpuset: add helpers for cpus read and cpuset_mutex
- locks
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com, christophe.jaillet@wanadoo.fr
-References: <20250813082904.1091651-1-chenridong@huaweicloud.com>
- <20250813082904.1091651-5-chenridong@huaweicloud.com>
- <e0ac3594-deab-455c-9c2f-495b4e4422e2@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <e0ac3594-deab-455c-9c2f-495b4e4422e2@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDnrNeJMZ1ocyMmDg--.27924S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF4Utw15Cw4xGr17CF15urg_yoW8CrWDpF
-	n5GFW3JFWjkFn7uw13u3W5WFyrKw4rKa1UGrnxJFy8ZFy2yF12vF1DWasIgryYyrWxCr1j
-	vFnF9a1a9FyDJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbmii3UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20250813-crypto_clean-v1-1-11971b8bf56a@columbia.edu>
+In-Reply-To: <20250813-crypto_clean-v1-1-11971b8bf56a@columbia.edu>
+From: Tal Zussman <tz2294@columbia.edu>
+Date: Thu, 14 Aug 2025 03:47:05 +0300
+X-Gm-Features: Ac12FXw3AkDGEST3MJ3X56ZlPppVghiVg3EgvhCnyh2Gy9Ho0QSrXxNEMgFTNaw
+Message-ID: <CAKha_srSRA9HftM+zLeRVrONKmPdtm-wTXq3n2NC60Gynuvwyw@mail.gmail.com>
+Subject: Re: [PATCH] lib/crypto: ensure generated *.S files are removed on
+ make clean
+To: Eric Biggers <ebiggers@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDAwMyBTYWx0ZWRfXxyaWTY7xNCF/
+ qDyMBh18flE4+WJzmuA8P8zxpcaDwBtr2FEn0grARDx1goTFQJpXu0Wk5rJIECOgibWoXGEJVRR
+ r1bxaRbpUXPlZxDGE2yFaf9PtefISdh743FlBh/cEsStSSK0wlx/B1QCGMmjlal5cXa0cZppKih
+ xD0NYS10CQCb6P2KlrhkLLw7Lo9aQPdxDFTugo7cu1DpoK8izBDFKSQHD2OhQaYsHl1DIvEON3Q
+ mpMUA+L5hBuEFGBev9PZkhC8x9E6ZdDi0wh1BIgvFG+FIJiZNrwjkYYjItUrmnd/slEF0bvGdWj
+ 8ZQhCu5Flj5mM+HidBy1oRbxRDV7LfXVKwAOYv7EVc+u21afidXwXbRIFiyEU+6gzMl+zj4EwvA
+ C2Kedz3L
+X-Proofpoint-GUID: Pe-c0i8LZDyg4uH-DAQUuKdDFo3Smm0a
+X-Proofpoint-ORIG-GUID: Pe-c0i8LZDyg4uH-DAQUuKdDFo3Smm0a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 malwarescore=0 mlxlogscore=441 phishscore=0
+ clxscore=1015 priorityscore=1501 adultscore=0 bulkscore=10 impostorscore=0
+ mlxscore=0 lowpriorityscore=10 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2507300000 definitions=main-2508140003
 
+On Thu, Aug 14, 2025 at 3:39=E2=80=AFAM Tal Zussman <tz2294@columbia.edu> w=
+rote:
+>
+> make clean does not check the kernel config when removing files. As
+> such, additions to clean-files under CONFIG_ARM or CONFIG_ARM64 are not
+> evaluated. For example, when building on arm64, this means that
+> lib/crypto/arm64/sha{256,512}-core.S are left over after make clean.
+>
+> Set clean-files unconditionally to ensure that make clean removes these
+> files.
+>
+> Fixes: e96cb9507f2d ("lib/crypto: sha256: Consolidate into single module"=
+)
+> Fixes: 24c91b62ac50 ("lib/crypto: arm/sha512: Migrate optimized SHA-512 c=
+ode to library")
+> Fixes: 60e3f1e9b7a5 ("lib/crypto: arm64/sha512: Migrate optimized SHA-512=
+ code to library")
+> Signed-off-by: Tal Zussman <tz2294@columbia.edu>
+> ---
+> An alternative approach is to rename the generated files to *.s and
+> remove the clean-files lines, as make clean removes *.s files
+> automatically. However, this would require explicitly defining the
+> corresponding *.o rules.
+> ---
+>  lib/crypto/Makefile | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
+> index e4151be2ebd4..44f6a1fdc808 100644
+> --- a/lib/crypto/Makefile
+> +++ b/lib/crypto/Makefile
+> @@ -100,7 +100,6 @@ ifeq ($(CONFIG_ARM),y)
+>  libsha256-y +=3D arm/sha256-ce.o arm/sha256-core.o
+>  $(obj)/arm/sha256-core.S: $(src)/arm/sha256-armv4.pl
+>         $(call cmd,perlasm)
+> -clean-files +=3D arm/sha256-core.S
+>  AFLAGS_arm/sha256-core.o +=3D $(aflags-thumb2-y)
+>  endif
+>
+> @@ -108,7 +107,6 @@ ifeq ($(CONFIG_ARM64),y)
+>  libsha256-y +=3D arm64/sha256-core.o
+>  $(obj)/arm64/sha256-core.S: $(src)/arm64/sha2-armv8.pl
+>         $(call cmd,perlasm_with_args)
+> -clean-files +=3D arm64/sha256-core.S
+>  libsha256-$(CONFIG_KERNEL_MODE_NEON) +=3D arm64/sha256-ce.o
+>  endif
+>
+> @@ -132,7 +130,6 @@ ifeq ($(CONFIG_ARM),y)
+>  libsha512-y +=3D arm/sha512-core.o
+>  $(obj)/arm/sha512-core.S: $(src)/arm/sha512-armv4.pl
+>         $(call cmd,perlasm)
+> -clean-files +=3D arm/sha512-core.S
+>  AFLAGS_arm/sha512-core.o +=3D $(aflags-thumb2-y)
+>  endif
+>
+> @@ -140,7 +137,6 @@ ifeq ($(CONFIG_ARM64),y)
+>  libsha512-y +=3D arm64/sha512-core.o
+>  $(obj)/arm64/sha512-core.S: $(src)/arm64/sha2-armv8.pl
+>         $(call cmd,perlasm_with_args)
+> -clean-files +=3D arm64/sha512-core.S
+>  libsha512-$(CONFIG_KERNEL_MODE_NEON) +=3D arm64/sha512-ce-core.o
+>  endif
+>
+> @@ -167,3 +163,7 @@ obj-$(CONFIG_PPC) +=3D powerpc/
+>  obj-$(CONFIG_RISCV) +=3D riscv/
+>  obj-$(CONFIG_S390) +=3D s390/
+>  obj-$(CONFIG_X86) +=3D x86/
+> +
+> +# clean-files must be defined unconditionally
+> +clean-files +=3D arm/sha256-core.S arm/sha256-core.S
+> +clean-files +=3D arm64/sha512-core.S arm64/sha512-core.S
 
+Sorry this is broken, needs the following fix on top.
+I'll fix in v2.
 
-On 2025/8/14 4:09, Waiman Long wrote:
-> On 8/13/25 4:29 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> cpuset: add helpers for cpus_read_lock and cpuset_mutex
->>
->> Replace repetitive locking patterns with new helpers:
->> - cpus_read_cpuset_lock()
->> - cpus_read_cpuset_unlock()
->>
->> This makes the code cleaner and ensures consistent lock ordering.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset-internal.h |  2 ++
->>   kernel/cgroup/cpuset-v1.c       | 12 +++------
->>   kernel/cgroup/cpuset.c          | 48 +++++++++++++++------------------
->>   3 files changed, 28 insertions(+), 34 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
->> index 75b3aef39231..6fb00c96044d 100644
->> --- a/kernel/cgroup/cpuset-internal.h
->> +++ b/kernel/cgroup/cpuset-internal.h
->> @@ -276,6 +276,8 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs, int turning_on)
->>   ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
->>                       char *buf, size_t nbytes, loff_t off);
->>   int cpuset_common_seq_show(struct seq_file *sf, void *v);
->> +void cpus_read_cpuset_lock(void);
->> +void cpus_read_cpuset_unlock(void);
-> 
-> The names are not intuitive. I would prefer just extend the cpuset_lock/unlock to include
-> cpus_read_lock/unlock and we use cpuset_lock/unlock consistently in the cpuset code. Also, there is
-> now no external user of cpuset_lock/unlock, we may as well remove them from include/linux/cpuset.h.
-> 
-> Cheers,
-> Longman
+diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
+index 44f6a1fdc808..539d5d59a50e 100644
+--- a/lib/crypto/Makefile
++++ b/lib/crypto/Makefile
+@@ -165,5 +165,5 @@ obj-$(CONFIG_S390) +=3D s390/
+ obj-$(CONFIG_X86) +=3D x86/
 
-I like the idea and have considered it.
-However, I noticed that cpuset_locked is being used in __sched_setscheduler.
-
--- 
-Best regards,
-Ridong
-
+ # clean-files must be defined unconditionally
+-clean-files +=3D arm/sha256-core.S arm/sha256-core.S
+-clean-files +=3D arm64/sha512-core.S arm64/sha512-core.S
++clean-files +=3D arm/sha256-core.S arm/sha512-core.S
++clean-files +=3D arm64/sha256-core.S arm64/sha512-core.S
 
