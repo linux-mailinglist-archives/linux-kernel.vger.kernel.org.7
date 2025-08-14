@@ -1,153 +1,100 @@
-Return-Path: <linux-kernel+bounces-769428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6256B26E87
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:05:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89824B26E8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B9A05E598C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317F7189F5FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7259319862;
-	Thu, 14 Aug 2025 18:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF6729D268;
+	Thu, 14 Aug 2025 18:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yp4lHwwJ"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yuka.dev header.i=@yuka.dev header.b="e/3mznWt"
+Received: from mail.cyberchaos.dev (mail.cyberchaos.dev [195.39.247.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F89319851
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 18:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFED319878;
+	Thu, 14 Aug 2025 18:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.39.247.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755194461; cv=none; b=OvMSWDV17XauXivtx1xcohIrhO522eB/T67PywQqyzUYM2ZuSX+yB/mxLqCjP10/JcnwJPxAly7llqDrsP0eDZ0kLIeLzFhjeBz7gu47Jnxz/I2QHW3rh9+4Fo2dGcg3t8/VsV4jgM+NrV/h59WwBFcZqOBjgEkJopCHfHfhDYs=
+	t=1755194531; cv=none; b=kQYflPJKB84E/ZYhsM7RTHTagllEUMqKhv/sJ3B0oczexKh3Ffda8h6mPaonNxSoBgYm6UxxTkvbhBs8ax5HAmlzdozHiepOtDU0q+2LmgzfsLmfQnX3rC19B5YjY4RP/i/dc3UiPggmRDzyd4Ao6HlLiRVjKidcoCvgIh0qn9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755194461; c=relaxed/simple;
-	bh=sgHYyHT9P3+Ri4inTzepKA9eeR2T6s/x27iDn6LlylY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UPkSAZ79i/5/bVHJV9czVaVzKHlvf/SLFl34IswzzJw/cmDyKmYuUDF4IXKhx1ljHmMaQnFp0/Tg3ZMcWrVaBomds+YqhwV0ILlVglk0PRdTUQDt1N9BehLK4rpNyvaJMEfOtAWNs7xM87dPhCjqbdJ6LQbPdsF4umESI6kccYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yp4lHwwJ; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3232669f95eso1196943a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755194460; x=1755799260; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qo8YP48saC70f8nhVLPXqNgxZORbU+kNCjpBN1UXxU4=;
-        b=yp4lHwwJYq2zxzBh5QeF3tBijABWJ3ejrrCveINGhpxVfKNdPMuCd+x9XKvYmCGEyY
-         MgrxkRwTZzhajoanqEaIqea8C5AcbQBde5KlsOXEFb5WwsEHlI5bkZ90qArxvnNLsbfQ
-         e1/gShvmilV8015UIZMRlWBANAKc0BKnFm5fU5U9ptMFaik89bl2nKiPVu8xKCKJlu5A
-         x5+ER4txzZOI67kW16NVqCnjU8MFd8KvY/XayF7RfcMUCyL8um9LQv0o/K7AeLi9nE+d
-         9OrglUl39wt0Ibika3AKX8orSaC8dbEspx9NaV7v2zsOhFxooc4Fc/0aJdgxKcxNA9t/
-         WZ/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755194460; x=1755799260;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qo8YP48saC70f8nhVLPXqNgxZORbU+kNCjpBN1UXxU4=;
-        b=T3s/QiOF/YWGK6sGEKQkUEBdGAvs8bHCC/Ue9FpICgFrs2gepDz65CtDMWhLDWxKY/
-         OcMz8+TU31qGN+mcNRwRcB3nW75/Ad+4WNcSJqvrW+21oQTmSXE619TeE937BewY+AXi
-         HSFjDB4yHLduh9rFwMHrbhd1pDEK8TMSRPxN1N2DigTKHX7QkR51aI50IvVp3Zr4nJq+
-         Fpd9Nf11559LVA7dREDjAJEJtZu/0++tRP743tefdbdidyDiMFpD2pMSWwkt1z+e1L9S
-         2Ta86Yl3aiWeaOLMiVomRhc7GXCeyqpW8/tf+zZTA4N6ndbof+kK8ir8Q7fkpL6zeVjM
-         lIxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuSEicQiHw8iJ31O4VpBzkcr2ZUozhwN5eQGnjpkFWE4ZVQYQJor7HSiHaN2ZwfrhhlfiiJ8vgEdl4VYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsq5AXRTuVsIxNTd42G/hOIw4QqjGDGwD0BTelIgnyej8c4u+D
-	91eCeLfp02PhoDS+7/ZVCQIrCyrO9gNUun5Bil+USqDNcOwvKdtJJIGjRr4SJECbBppHanGvS2K
-	RNrJwXQ==
-X-Google-Smtp-Source: AGHT+IEGQtx1mDPknNV+0MSozvZx9Iz59OeDO2C+iu+5XN28Cy4LHlj3QKqp8YTRlYFCSm+U+Hh+N8eOiJg=
-X-Received: from pjbtd11.prod.google.com ([2002:a17:90b:544b:b0:31f:2a78:943])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:51cd:b0:30a:4874:5397
- with SMTP id 98e67ed59e1d1-3232b239af0mr5459494a91.9.1755194459725; Thu, 14
- Aug 2025 11:00:59 -0700 (PDT)
-Date: Thu, 14 Aug 2025 11:00:57 -0700
-In-Reply-To: <ebd8132d5c0d4b1994802028a2bef01bd45e62a2.camel@intel.com>
+	s=arc-20240116; t=1755194531; c=relaxed/simple;
+	bh=+GNU2gDpN6GiKnpKgO/L5NE6HXec9msvUjnPjkB/igE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VA2inEg7DdOzuN5xX0nzH9sok6bFHFZcnH7SgWuabO7TbZBJZc9nP5ZMBHGxmquJD4FPI1g7MVrdzvq84S3UZmmifp/3FOjvfrSKCPJlW/l2Bk4NrmJgJeVekIWwcvw2Romt1iq4knnkpKy+NEcXeA5EGupGTjau4Q70fqZ+M6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yuka.dev; spf=pass smtp.mailfrom=yuka.dev; dkim=pass (1024-bit key) header.d=yuka.dev header.i=@yuka.dev header.b=e/3mznWt; arc=none smtp.client-ip=195.39.247.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yuka.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yuka.dev
+From: Yureka Lilian <yuka@yuka.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yuka.dev; s=mail;
+	t=1755194525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=uvmzxtbe3yYROKJpF3l2EIRZ74hgQcblp4CjdJSICQ8=;
+	b=e/3mznWt/1genX+GZkDV38Zz+xLVKyT9UDorjnTbs4dnXHKa2PKDW4KNbfoIgZngg4/lit
+	SdGxJO1FE66aEJqXcGeWaCh3bVZCfsqp8auDBah3iEM2WSsng/H/uoIbbdUEioOdDVg4QO
+	gaUbtjnrrqjIlBsxy7NdEWZPqckoqOs=
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: Yureka Lilian <yuka@yuka.dev>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] libbpf: fix reuse of DEVMAP
+Date: Thu, 14 Aug 2025 20:01:11 +0200
+Message-ID: <20250814180113.1245565-2-yuka@yuka.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1755126788.git.kai.huang@intel.com> <d8993692714829a2b1671412cdd684781c43d54a.1755126788.git.kai.huang@intel.com>
- <aJ3qhtzwHIRPrLK7@google.com> <ebd8132d5c0d4b1994802028a2bef01bd45e62a2.camel@intel.com>
-Message-ID: <aJ4kWcuyNIpCnaXE@google.com>
-Subject: Re: [PATCH v6 7/7] KVM: TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Kai Huang <kai.huang@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, Dave Hansen <dave.hansen@intel.com>, 
-	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Reinette Chatre <reinette.chatre@intel.com>, 
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"mingo@redhat.com" <mingo@redhat.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	"kas@kernel.org" <kas@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "sagis@google.com" <sagis@google.com>, 
-	Farrah Chen <farrah.chen@intel.com>, "bp@alien8.de" <bp@alien8.de>, Chao Gao <chao.gao@intel.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Dan J Williams <dan.j.williams@intel.com>, 
-	"x86@kernel.org" <x86@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025, Rick P Edgecombe wrote:
-> On Thu, 2025-08-14 at 06:54 -0700, Sean Christopherson wrote:
-> > > diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> > > index 66744f5768c8..1bc6f52e0cd7 100644
-> > > --- a/arch/x86/kvm/vmx/tdx.c
-> > > +++ b/arch/x86/kvm/vmx/tdx.c
-> > > @@ -442,6 +442,18 @@ void tdx_disable_virtualization_cpu(void)
-> > > =C2=A0=C2=A0		tdx_flush_vp(&arg);
-> > > =C2=A0=C2=A0	}
-> > > =C2=A0=C2=A0	local_irq_restore(flags);
-> > > +
-> > > +	/*
-> > > +	 * No more TDX activity on this CPU from here.=C2=A0 Flush cache to
-> > > +	 * avoid having to do WBINVD in stop_this_cpu() during kexec.
-> > > +	 *
-> > > +	 * Kexec calls native_stop_other_cpus() to stop remote CPUs
-> > > +	 * before booting to new kernel, but that code has a "race"
-> > > +	 * when the normal REBOOT IPI times out and NMIs are sent to
-> > > +	 * remote CPUs to stop them.=C2=A0 Doing WBINVD in stop_this_cpu()
-> > > +	 * could potentially increase the possibility of the "race".
+changes in v3:
 
-Why is that race problematic?  The changelog just says
+- instead of setting BPF_F_RDONLY_PROG on both sides, just
+  clear BPF_F_RDONLY_PROG in map_info.map_flags as suggested
+  by Andrii Nakryiko
 
- : However, the native_stop_other_cpus() and stop_this_cpu() have a "race"
- : which is extremely rare to happen but could cause the system to hang.
- :=20
- : Specifically, the native_stop_other_cpus() firstly sends normal reboot
- : IPI to remote CPUs and waits one second for them to stop.  If that times
- : out, native_stop_other_cpus() then sends NMIs to remote CPUs to stop
- : them.
+- in the test, use ASSERT_* instead of CHECK
+- shorten the test by using open_and_load from the skel
+- in the test, drop NULL check before unloading/destroying bpf objs
 
-without explaining how that can cause a system hang.
+- start the commit messages with "libbpf" and "selftests/bpf"
+  respectively instead of just "bpf"
 
-> > > +	 */
-> > > +	tdx_cpu_flush_cache();
-> >=20
-> > IIUC, this can be:
-> >=20
-> > 	if (IS_ENABLED(CONFIG_KEXEC))
-> > 		tdx_cpu_flush_cache();
-> >=20
->=20
-> No strong objection, just 2 cents. I bet !CONFIG_KEXEC && CONFIG_INTEL_TD=
-X_HOST
-> kernels will be the minority. Seems like an opportunity to simplify the c=
-ode.
+changes in v2:
 
-Reducing the number of lines of code is not always a simplification.  IMO, =
-not
-checking CONFIG_KEXEC adds "complexity" because anyone that reads the comme=
-nt
-(and/or the massive changelog) will be left wondering why there's a bunch o=
-f
-documentation that talks about kexec, but no hint of kexec considerations i=
-n the
-code.
+- preserve compatibility with older kernels
+- add a basic selftest covering the re-use of DEVMAP maps
+
+Yureka Lilian (2):
+  libbpf: fix reuse of DEVMAP
+  selftests/bpf: add test for DEVMAP reuse
+
+ tools/lib/bpf/libbpf.c                        | 11 ++++
+ .../bpf/prog_tests/pinning_devmap_reuse.c     | 50 +++++++++++++++++++
+ .../selftests/bpf/progs/test_pinning_devmap.c | 20 ++++++++
+ 3 files changed, 81 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/pinning_devmap_reuse.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_pinning_devmap.c
+
+-- 
+2.50.1
+
 
