@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-769436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FEDEB26EA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:12:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A065AB26EAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1DA8A25E8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:12:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE8F97BB82F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCACF319869;
-	Thu, 14 Aug 2025 18:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9461E8833;
+	Thu, 14 Aug 2025 18:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b="NwSUjG8y"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXRMjfUx"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFAF63B9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 18:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B0F8834;
+	Thu, 14 Aug 2025 18:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755195166; cv=none; b=gtAIeBgjlTakYgtegT0cp7gskcC/ZBLzDIfo8a0BSiV9wLyQ/hsPDP19XS74/1gRel/KU9b1FUWJCaZeGHLBCUswiOw2poi6xX4yCCQGgFi9vQPSd0yiQPNLsvuLIno0XuVft6eGRe0Kooj0R+xO9IHoXaWYyK95W6Pmzt3a/xc=
+	t=1755195365; cv=none; b=cm9SxSzeUvsaciamhLweAInBg0fnSZqIl8EJHALhxMKHHAkaKFJxr9S96eVeAnjki8CWn11FoR00Lx1FKelw3Av1dK9b445FMWyagsULNBXTrR3LMa3+nPZHKrLjCLcJufjpC4vTNWFtR5jqrctokTzPYK/XeOKpUZ3gigeKpfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755195166; c=relaxed/simple;
-	bh=ixFsJ3RPHuU/BU5W6UO6O467skwYcxEo8e5gerlA/Tc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhKXEJY2iU/jX0yhlfh/AKNhZCvJrogqMhBPA+VMxkfTryYMmLZw50taGNnBbi/nrvsupqCihG9LgUOj2U5x9MAqX9tsYoDyvQO5U+Wg12gIFwQ+8f/w5UUAeNNf8Atm/qWsyodoollDlZ2ME7IsmTpC683eDhc4iqsO/L/Pfjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer; spf=none smtp.mailfrom=libretech.co; dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b=NwSUjG8y; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=libretech.co
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7e8704c52b3so137867185a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:12:44 -0700 (PDT)
+	s=arc-20240116; t=1755195365; c=relaxed/simple;
+	bh=lfR5m4C6qpeGF7BqklRhmXMKFJ//+lAnAnq/PFTEm3A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gAMmOXjVL3AR/ZtjFcaWEA/iahQgS0rNFVS6jB5MeVWIWIbvjdEvkj+GR9Pmogi0khzL7lc7Xp9Qxonye7QK/XXJhdtuhOVFJ/IITFSXR6h7qIg/TGXi6prDTLsqMdtPd6QzjcY46I5hdDJCNAnwCwKZQk8KV1ayaM7cyuP4uag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PXRMjfUx; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d6059f490so11387687b3.3;
+        Thu, 14 Aug 2025 11:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=libre.computer; s=google; t=1755195163; x=1755799963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4/dZvvhdpeV5T70CXzzhIM2ftvucviNjA+HOyZU3hVU=;
-        b=NwSUjG8y5m02ew1jaWglQPvBmFJzJ9KZcTQUsPdCdmiMyXw1LdvDkT2Ey+DO+oj18R
-         KLGaHh1pTZecpNBsYl3xi9WT0ibZ5ovLKlMRJfPstzT4TrD01fQk1ZXUVZrCWExzWDwT
-         7/Q1r1Ftf67AEJP1qM4Qlrl5rQfcax9/cd5Oa48OqhY4YUk8B8qTx7cg/dTuZN27TgQp
-         tK7AdSV8bwQJPrnCmWBxp44PsxIGiRtf8W7AxYS3odPLdtAlixHWLEh4J4FuZ4PlnZFe
-         neRgauxt+CJvc+jA+WVV7pm/IcMGopnTpeRQprLv4M6Q27IM6Dlk/HFoqA/AgOS+uv9Q
-         8iRA==
+        d=gmail.com; s=20230601; t=1755195362; x=1755800162; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G+n4/FeNOVvGWacFWXQIqguWy7zGbFv1DUiyZxjURns=;
+        b=PXRMjfUxyW1eH5BBggU5NkT+3a06M3vzq4Y4kYYPIO/vm8+5zNxn5DajbE68leq9PE
+         XuM6k0cbqxE81MFFKPoRiAdX6b8f24dgh9bEUsYHMn4Cv82zFQEmqqag/HUCx7v3/zrw
+         IQlIUuHbPElK4CNxR1A8l0VfNB93a9+f9i9+miQ6z61jfMyvBMVTzqdAgyCSpUTmoX6z
+         DkP80oPSOgFle4/GppWtJc0uEdATSLZgQf2IX0V3nXmqUisTVHiJd4IFqd6oVW56guM9
+         4FHBTErUiG+EF3z5cOSeXMnSmMLtK42i5NYRZEBt6yaGo61ag4Cu8Ua4Vqjm0U68rnUJ
+         uq6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755195163; x=1755799963;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4/dZvvhdpeV5T70CXzzhIM2ftvucviNjA+HOyZU3hVU=;
-        b=UtYTlt3awLrutBYbrYZTD3KEjrFCgG07tYoYmNgjLqkZ2aS2IFtRi7HOlwnVKYlJSo
-         YcKKPn3XYBeBrjajKgXLFuI+ix+g6886gLrqdpD0zI6qQ32EKm6VNv7DRFsmq/CRrjiV
-         JiH1qAAFV3zrggpV8kofvlHlazSfGzJlygsdR1kc+fAA/QvLsTJO5G500SqgBVn/yQqv
-         XhBkodcn4qFqpInkNIpDGaWoJ3bff8fOZEkExtOTJ0TcSteTpeWoa2sviFVp4Q6u3xV+
-         ChOQiQhbAUHbty1j+Usc4Vcn+rQ2QaKxODMnZd//MvJLZ3K0+atH6zL7uLKg+byRmUNV
-         nsng==
-X-Forwarded-Encrypted: i=1; AJvYcCWcxynD9nAR27745L/QF5M4irKE/XgAaRSJuj0JxCmSo2ZK41pEsju+7TviICq6YkX3bc9iIgWLHYrx3gY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl1TbUYwzApNYp0HpCs0sZC7WNQ7eE5iCEpO/L+FdDXZ6zUnqM
-	ojoAx5VueY1bLgLuz22bzbA1Ins31aaw6SHTfPSBrh8SXwIkQlLm/f9F8OwxI4EfFA==
-X-Gm-Gg: ASbGncvvzy+rS8tf5AvdruYblD4QX0hdQceUHDPsMs8x63ERHNo/xcKqRaV34UbK9bd
-	ZuJvVl6teX1HfDMm9kaNWp6KlckWEcMYyFQjMQ0S3T4sNMnFwWL1FbJ8HZ4Hg6hTe+X4YB9xErv
-	U7CVf+WVBaG/S3+SlDiH/hGIfZC0y7jK6HoknehZdBFLg25F8Id6hMUrM1A/+aZbrzG81QtKnHH
-	fKxc/nWiHswpEOGYwPcyscuqtks9XVnb78yN9Lg9cIBmu1R1NKq2CW+bDCVRL6TKh8Kk2rNLtdh
-	249UoW/rdfYnTnKIvNg1742ww9Mb4mUR0p7wRayvbwApERseC43j76MhxnWWSaUpVmSyAL6MQ+7
-	2C97bdb+k67bdh7aS9NYbvk05SPU=
-X-Google-Smtp-Source: AGHT+IHZet1Jvv8jg99HpAw6hDsF8fx3/AYC1SN8lGZ35gs0uFt1zck15oaDyeVmE3ge8wvu7oeH4w==
-X-Received: by 2002:a05:620a:4055:b0:7e8:2989:1149 with SMTP id af79cd13be357-7e8705b5fa2mr627043385a.49.1755195163315;
-        Thu, 14 Aug 2025 11:12:43 -0700 (PDT)
-Received: from localhost ([172.56.29.94])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70af5c43392sm16269836d6.84.2025.08.14.11.12.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 11:12:42 -0700 (PDT)
-From: Da Xue <da@libre.computer>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Da Xue <da@libre.computer>,
-	linux-gpio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: meson-g12a: add GPIOC_7 pcie_clkreqn pinmux
-Date: Thu, 14 Aug 2025 14:12:36 -0400
-Message-ID: <20250814181236.1956731-1-da@libre.computer>
-X-Mailer: git-send-email 2.47.2
+        d=1e100.net; s=20230601; t=1755195362; x=1755800162;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G+n4/FeNOVvGWacFWXQIqguWy7zGbFv1DUiyZxjURns=;
+        b=RwBD2QSgmot99pibcIlIz02m3BgCj7I4awjLjaxgbXYh7GdRVq7HtNytBtY8sPi4vD
+         s9amiGGflDuhf5UO/etkM6UhJK7AlKidzJsNqdKBgnmy5q0AEIIbwgpaM8GOSvq8sqpR
+         gYUsWmGb9sI3zjC65ux6YFFWHH96HxKoTyV2G627VRoPV8Po33uhjNQcNCvdXHMMwqFT
+         nZn6QnzLhob9+liKxoHWKQi7NnfNCUEp4/BjOUGsh9A3UtFdH0NbVl18X+FbLobL28Cv
+         xFDm7CNrCt6FpM6ACOAC1r2KZ9rKl12aGCewqbFM9Kx3iJlPVBoyvF0mxqR/1YURa6+j
+         L7YA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1i4jH6Cw4SlLSWcKjOWy09aQYf4NdNB99rujy7AQegYUtNQJ0SjqcHSY+rQanMfElIFnTVvuJ@vger.kernel.org, AJvYcCVskjFs6Oy5v2Ia+dceKpcNaWy7ekJVvI/hbdPjGHZ/aDHhMiWrm1YuxtL2qTnWYU4LFWrZREWJ0Hdh2PQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5Kj8xNht6fbbgKgfG+j+MVdMN3bfnoj8JrCVgeEHUSoIQYV2z
+	2P1Syy+5Kt1BqwrokkKLwkJOLPRmO5u3o+K0dCXlF2CqfQRqZP2gw3+FnPdumJfETu7P050ew99
+	ieEjwd8IfqzqMqUnK0o2DnHob37EOpaw=
+X-Gm-Gg: ASbGncszDTJxmQed7zBhMhM8AZ3hz6NjiPS0+gmJbzHSchAJIkBl6oSMRzqYf3j/sZA
+	kqRpJMQVBceJWl9apjTbJypDREuy3q7O1tOQ85WWwDV5Am+orDWQX+QYEdPl8fBzF6F97OxElU3
+	NrEDjZlK2EyBZtekDZwKLhIpalQeCATH9AIk8lmDvsx867QJI8JBEWo7RxnZIy3nmazPQtQS37y
+	wV0pDh912h7ZlWf33GLZV7eg9d/wEJ4GKE=
+X-Google-Smtp-Source: AGHT+IGfpA6WLqLoMafirvagHvFBKAIxZpGtck1OYWE5+xJQUQ5A40uzUgqaBVYQ02HSxIUhyuJwK/zBp85IPpmZZE4=
+X-Received: by 2002:a05:690c:6103:b0:70c:c013:f26 with SMTP id
+ 00721157ae682-71d635b3ab1mr53754757b3.33.1755195362372; Thu, 14 Aug 2025
+ 11:16:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250814172300.57458-1-zhtfdev@gmail.com>
+In-Reply-To: <20250814172300.57458-1-zhtfdev@gmail.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Thu, 14 Aug 2025 20:15:25 +0200
+X-Gm-Features: Ac12FXx_XcXnWKz9GdNfc372MhOuX6-i0nxWtxdWnyxqLeh1JDk-xBvVwPU7e-Y
+Message-ID: <CAF=yD-KTwwWMwTMtLBkwWORB26Ty64o8pw1QxBefDmkHi6rL0g@mail.gmail.com>
+Subject: Re: [PATCH] net: tun: fix strscpy call with missing size argument
+To: Zhang Tengfei <zhtfdev@gmail.com>
+Cc: =?UTF-8?Q?Miguel_Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>, 
+	ason Wang <jasowang@redhat.com>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	linux-kernel@vger.kernel.org, Network Development <netdev@vger.kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Amlogic G12 exposes PCIe clock request signal on GPIOC_7 pinmux func 1
+On Thu, Aug 14, 2025 at 7:23=E2=80=AFPM Zhang Tengfei <zhtfdev@gmail.com> w=
+rote:
+>
+> The tun_set_iff() and tun_get_iff() functions call strscpy()
+> with only two arguments, omitting the destination buffer size.
+>
+> This patch corrects these calls by providing the required size
+> argument using the IFNAMSIZ macro. This ensures the code adheres
+> to the function's documented contract and improves its overall
+> robustness and clarity.
+>
+> Fixes: a57384110dc6 ("tun: replace strcpy with strscpy for ifr_name")
+> Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
 
-Add the relevant pinmux and pin groups
+The two argument choice is intentional. In that case the length is
+taken from the struct field sizes, which is more robust than an
+explicit argument.
 
-Signed-off-by: Da Xue <da@libre.computer>
----
- drivers/pinctrl/meson/pinctrl-meson-g12a.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+https://lore.kernel.org/netdev/6899fde3dbfd6_532b129461@willemb.c.googlers.=
+com.notmuch/
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson-g12a.c b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-index 8b9130c6e170..117e72b4ffcb 100644
---- a/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson-g12a.c
-@@ -442,6 +442,8 @@ static const unsigned int tdm_c_dout1_z_pins[]		= { GPIOZ_3 };
- static const unsigned int tdm_c_dout2_z_pins[]		= { GPIOZ_4 };
- static const unsigned int tdm_c_dout3_z_pins[]		= { GPIOZ_5 };
- 
-+static const unsigned int pcie_clkreqn_pins[]		= { GPIOC_7 };
-+
- static const struct meson_pmx_group meson_g12a_periphs_groups[] = {
- 	GPIO_GROUP(GPIOZ_0),
- 	GPIO_GROUP(GPIOZ_1),
-@@ -721,6 +723,7 @@ static const struct meson_pmx_group meson_g12a_periphs_groups[] = {
- 	GROUP(pdm_din2_c,		4),
- 	GROUP(pdm_din3_c,		4),
- 	GROUP(pdm_dclk_c,		4),
-+	GROUP(pcie_clkreqn,		1),
- 
- 	/* bank GPIOH */
- 	GROUP(spi1_mosi,		3),
-@@ -1183,6 +1186,10 @@ static const char * const tdm_c_groups[] = {
- 	"tdm_c_dout2_z", "tdm_c_dout3_z",
- };
- 
-+static const char * const pcie_clkreqn_groups[] = {
-+	"pcie_clkreqn"
-+};
-+
- static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3", "GPIOAO_4",
- 	"GPIOAO_5", "GPIOAO_6", "GPIOAO_7", "GPIOAO_8", "GPIOAO_9",
-@@ -1309,6 +1316,7 @@ static const struct meson_pmx_func meson_g12a_periphs_functions[] = {
- 	FUNCTION(tdm_a),
- 	FUNCTION(tdm_b),
- 	FUNCTION(tdm_c),
-+	FUNCTION(pcie_clkreqn),
- };
- 
- static const struct meson_pmx_func meson_g12a_aobus_functions[] = {
--- 
-2.47.2
 
+> ---
+>  drivers/net/tun.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index 86a9e927d0ff..88c440c99542 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -2823,13 +2823,13 @@ static int tun_set_iff(struct net *net, struct fi=
+le *file, struct ifreq *ifr)
+>         if (netif_running(tun->dev))
+>                 netif_tx_wake_all_queues(tun->dev);
+>
+> -       strscpy(ifr->ifr_name, tun->dev->name);
+> +       strscpy(ifr->ifr_name, tun->dev->name, IFNAMSIZ);
+>         return 0;
+>  }
+>
+>  static void tun_get_iff(struct tun_struct *tun, struct ifreq *ifr)
+>  {
+> -       strscpy(ifr->ifr_name, tun->dev->name);
+> +       strscpy(ifr->ifr_name, tun->dev->name, IFNAMSIZ);
+>
+>         ifr->ifr_flags =3D tun_flags(tun);
+>
+> --
+> 2.47.3
+>
 
