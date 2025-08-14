@@ -1,118 +1,127 @@
-Return-Path: <linux-kernel+bounces-768928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839CCB26805
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:51:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58623B2680D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D5E81892212
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:45:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF874620D5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC622FF657;
-	Thu, 14 Aug 2025 13:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03BB301036;
+	Thu, 14 Aug 2025 13:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T1lOc6Ki"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IdZIJ3cR"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB583AC22;
-	Thu, 14 Aug 2025 13:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CBF3002AB;
+	Thu, 14 Aug 2025 13:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179096; cv=none; b=VVF+FWJsjq7RkxBbWRDAiPOh542u66vCkaK5mV68/EQvOGFpAkMWWk/3+B0db1fR+pFZj0BuekeiyXYn+oyQQ240s3Ww1sC0oIRMu0dRmrxHlsDYj33O3ojB3iZ0YptcVKH8n/IFjJkQFAdBzRwPHaY+DG+Qqcsy1twH9okbvYw=
+	t=1755179230; cv=none; b=a+bYUtuwSOJTIeDCR78hKjJPI8KmOpFCNnA15oU/0Jq5DXO80Y49ZIRtovxFaEtPLoO9YCoEiwIxhgWcX+zCW1BNY1yjU55dou3oAVvtxV2XG9YWcAsKueI8P7XYtE57v6EvrMBfMUl4zOvPHuPedvpP1xi0Kxaveurgh9T9Cjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179096; c=relaxed/simple;
-	bh=eZxSUhPR9dmQ4lFwMM6GT4qCLe9UaSmB4btAA1xP9Vg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CdMlzrNAJLDqU2LCCBv/E4GBXQIEBeb03KCrJqJhDbFubcG0/jVvunOIFAlv2JUgBC3FLz9GzmhWegMa1fY8vXUdWuIEsGJSf0DGoTtYv3jDUVj+optKfezv0wi0kRYudIY+v1RMVYmZKPeJH0q01/v3e5F/is+gwfO+JNAKrNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T1lOc6Ki; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 082CAC4CEED;
-	Thu, 14 Aug 2025 13:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755179094;
-	bh=eZxSUhPR9dmQ4lFwMM6GT4qCLe9UaSmB4btAA1xP9Vg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T1lOc6Ki9/E/Igz7aECcF7MMg5BHBfKmAKnQpbBY37170RnJHYJVS6vkN+AIuNmv/
-	 flRScqDVYrQ31aVX5ya2G9B94+XhkSuwE90a7MUJ4zhxq6X2ZOxamdaYpOyYZGeNKl
-	 3bJlveXXJDAUJFzSE2Wq74SiIMzDkVUIxjb7jfn7zS8ORhE18U9HkjSFiiN2Z3UhGl
-	 ckKroI07jWO3moDNy5tOJC7xMh4StnxzjApV56Ichf9J/hH9QOZj0cotmz3pXoiUR5
-	 dC9igsF3GptCcl7A/6E+bbTohtEL95WBrhYsl2Lec9OJ5ZHesJBT1RDRV4NMqsqjMW
-	 oeUiWxqmBb3BA==
-Message-ID: <32e6bb4b-711c-455e-bfa4-2c0b2011e1ec@kernel.org>
-Date: Thu, 14 Aug 2025 16:44:49 +0300
+	s=arc-20240116; t=1755179230; c=relaxed/simple;
+	bh=GqVc2VsNvo8WaKH1lYDYvEXU5odP4Glj4NAepOPOiyI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j+K4aRajA8hC1wH/0T+x+iKcjN3vz19gL+X9sbcYwbjG8i+jUQp/HDK+e6sCn71Zb+NdChsa4NEjB7HGs2fhH996KPXkfZb8uTcCxurWSVR1+FHfNuPGdg8J3kBi7ilIuvkc9/fLIS/ZToy4KEvOUlC78XE3O6PADSTIDld7jvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IdZIJ3cR; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EDkrh21942947;
+	Thu, 14 Aug 2025 08:46:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755179213;
+	bh=CchY9kgd+QHnqasSPXFS7iuj2D2oQD8WBNnjx7vsovw=;
+	h=From:To:CC:Subject:Date;
+	b=IdZIJ3cRekrOJ5eRec8dUCXheT/vToLg38HmnDYjFTPjih2H+0X6nv0bL+OlbZpcK
+	 /F4pEEOFuJWnuvZo4vRh/IwH44obOQneLSJ8rFBtBYk9LbT3t7S7sKY42CgdJOIPGr
+	 2ES/qC8Hc2MKe85Nx4Lo8KbFzTJ5/rFRH8RDCH+w=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EDkrF71748922
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 08:46:53 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 08:46:53 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 08:46:53 -0500
+Received: from localhost (dhcp-172-24-233-105.dhcp.ti.com [172.24.233.105])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EDkq4X3688508;
+	Thu, 14 Aug 2025 08:46:52 -0500
+From: Anshul Dalal <anshuld@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: Anshul Dalal <anshuld@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/4] Add support for TI AM6254atl SiP
+Date: Thu, 14 Aug 2025 19:15:26 +0530
+Message-ID: <20250814134531.2743874-1-anshuld@ti.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 8/9] net: ethernet: ti: am65-cpsw: add network
- flow classification support
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- danishanwar@ti.com, srk@ti.com, linux-omap@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250514-am65-cpsw-rx-class-v4-0-5202d8119241@kernel.org>
- <20250514-am65-cpsw-rx-class-v4-8-5202d8119241@kernel.org>
- <20250516182902.5a5bfd98@kernel.org>
- <d787ca03-a54e-46ae-828b-68fbd7b0b3a8@kernel.org>
- <20250813074803.06db304a@kernel.org>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20250813074803.06db304a@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi all,
 
+This patch series adds support for AM6254atl SiP (or AM62x SiP for short)
+to the linux device-tree.
 
-On 13/08/2025 17:48, Jakub Kicinski wrote:
-> On Wed, 13 Aug 2025 16:49:27 +0300 Roger Quadros wrote:
->> On 17/05/2025 04:29, Jakub Kicinski wrote:
->>> On Wed, 14 May 2025 15:04:28 +0300 Roger Quadros wrote:  
->>>> The TRM doesn't mention anything about order of evaluation of the
->>>> classifier rules however it does mention in [1]
->>>> "if multiple classifier matches occur, the highest match
->>>> with thread enable bit set will be used."  
->>>
->>> So we're not sure how to maintain the user requested ordering?  
->>
->> Currently we are using the user/ethtool provided location as is.
->>
->>> Am I reading this correctly? If so then ..
->>>   
->>>> +	if (fs->location == RX_CLS_LOC_ANY ||  
->>>
->>> .. why are we rejecting LOC_ANY?   
->>
->> Because driver doesn't have logic to decide the location and relies on ethtool to
->> decide it if user doesn't supply it.
-> 
-> The location supplied by the user may have semantic significance.
-> IOW locations may be interpreted as priorities.
+The OPN (Orderable Part Number) 'AM6254atl' expands as follows[1]:
 
-OK. Is there any convention on location vs priority for user or it is driver dependent?
-i.e. Does higher location mean higher priority?
+AM6254atl
+     ||||
+     |||+-- Feature Lookup (L indicates 512MiB of integrated LPDDR4)
+     ||+--- Device Speed Grade (T indicates 1.25GHz/1.4GHz on the A53 cores)
+     |+---- Silicon PG Revision (A indicates SR 1.0)
+     +----- Core configuration (4 indicates A53's in Quad core config)
 
-> It's better to support LOC_ANY and add the 10 lines of code to
-> allocate the id in the driver..
+AM62x SiP provides the existing AM62x SoC with 512MiB of DDR integrated in a
+single packages.
 
-OK.
+This patch set adds the new 'k3-am6254atl' SoC level dtsi alongside the
+'k3-am6254atl-sk' dts for the EVM (Evaluation Module board). The newly added
+'k3-am625-sk-common' dtsi includes the common hardware between the existing
+AM62x EVM and the new EVM for AM62x SiP.
 
-I did more tests and it seems that higher locations in the classifier override the lower locations.
+Regards,
+Anshul
+---
+[1]: https://www.ti.com/lit/ds/symlink/am625sip.pdf Page#21
+Product Page:
+    https://www.ti.com/product/AM625SIP/part-details/AM6254ATLHJAMKR
+---
+Anshul Dalal (4):
+  arm64: dts: ti: k3-am62*: remove SoC dtsi from common dtsi
+  dt-bindings: arm: ti: Add binding for AM625 SiP
+  arm64: dts: ti: Introduce base support for AM6254atl SiP
+  arm64: dts: ti: Add support for AM6254atl SiP SK
 
-With this new information, what is the best approach?
-
-I can add support for LOC_ANY with logic to find first available free location.
-If driver supports LOC_ANY, does driver also need to support explicit location supplied by user? In this case I think user convention and driver convention of location vs priority must match.
+ .../devicetree/bindings/arm/ti/k3.yaml        |   7 +
+ arch/arm64/boot/dts/ti/Makefile               |   1 +
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts      |   8 +
+ .../arm64/boot/dts/ti/k3-am625-sk-common.dtsi | 296 +++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am625-sk.dts        | 301 +-----------------
+ arch/arm64/boot/dts/ti/k3-am6254atl-sk.dts    |  15 +
+ arch/arm64/boot/dts/ti/k3-am6254atl.dtsi      |  23 ++
+ .../arm64/boot/dts/ti/k3-am62x-sk-common.dtsi |   8 -
+ 8 files changed, 354 insertions(+), 305 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am6254atl-sk.dts
+ create mode 100644 arch/arm64/boot/dts/ti/k3-am6254atl.dtsi
 
 -- 
-cheers,
--roger
+2.50.1
 
 
