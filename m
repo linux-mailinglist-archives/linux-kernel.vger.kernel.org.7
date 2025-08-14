@@ -1,104 +1,118 @@
-Return-Path: <linux-kernel+bounces-767800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F28B2593E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:42:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8065B25941
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9425A73B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:42:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AE6F7ACB45
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E025120B803;
-	Thu, 14 Aug 2025 01:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1F121C9F4;
+	Thu, 14 Aug 2025 01:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YWrqswGN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYALRBxU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C715A7263B;
-	Thu, 14 Aug 2025 01:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DC521B9D6;
+	Thu, 14 Aug 2025 01:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755135741; cv=none; b=dW8prpiZvTx++0E5Hou6fUBeXuJj5686/BvJBnesFKoZi79UqL3X+kqTfqnRmcmnezje3lJetDYr3oc/8ZdPi5h+k+X8Eau5I1nnR7mLqk/wOt8mTQgvlyVZf+yEmseeL+w6ObrXyG+FmBzGSgUw9pTDZedwrbfPQrjKS+hwGHo=
+	t=1755135918; cv=none; b=duJu1ujakaMDFhmtuo/hkrWrHA2aqWkbQz72HeKzvrT5tKjSYQKS0PebncPtL92NShUtH4Rd7FREMC/FfWWY0aL9B/1MfEqOsoCo8zXMQRItVhgia+Ue6KEPFgcSr7KfW7YdVDzvm1lxRMh10ium4g25EUcjD7+QRPrrefyH7Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755135741; c=relaxed/simple;
-	bh=Rw+pu+peCaYge0AoCUwiSxdU8CuhMy8jWNrPeCV/Gqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jRtsMzQWHuYWKeLHjCTEbwh9K3cmk9XribAZ1iH5uym6/l0zqxU4f/VfnZUhHe96KcuILuYgCq9uqJs3NzUJ1wfxRk8WiR4nUN9rWQuIEPj9/XgdfSid8/2VicGwQXOsuYS5S+ziBjfYQqUBjDRy2Yl1rFjfTJKAI1c7he/XF8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YWrqswGN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755135735;
-	bh=BoQjNHcSTqBSm8/g9xSlXTgBMgYi/g2g7YQFiR/wprk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YWrqswGN/z3zONChak208QV2TYz5qgyn+kLY3yEEHATGy3WFnVXO9AOew1KxOoYRK
-	 vz5KYKtZ0EYOjVRIrCLjCQLtSjQ4d9bRhwICUXeVtHMxpdpeeaLeqJr39uX2cZ382w
-	 dWoUBd0LWrWutswO8uS8DQir3XaJ1dgUEZ5+RKrcEG18r+CJPvhL7I3HdO7EReh/ET
-	 KJ58EGPaCvPl090L+dcBtwbzRrUl/jjiCNMB43icSMEZHpnTIX1ZFd6R15TyL7QZYd
-	 meenfmwAznwIJJDUCtaySLez+f8EiRn0HCCkKRAGYHKOERs1hU+79FbZuAEx9WYvnS
-	 yi+BXgcZ/dhyg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c2SfG6Vz1z4wcg;
-	Thu, 14 Aug 2025 11:42:14 +1000 (AEST)
-Date: Thu, 14 Aug 2025 11:42:14 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Corey Minyard <corey@minyard.net>, Rob Herring <robh@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the ipmi tree
-Message-ID: <20250814114214.609818aa@canb.auug.org.au>
+	s=arc-20240116; t=1755135918; c=relaxed/simple;
+	bh=i1y7qQa9SFhRvqFt20v8XEo9Q9dbavK0njZxN1E1hEw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QR0CiZCYxRyFtSBTcvvPfLwtRKtxqieXD6SQe+YnG49n3l8i8XXjDVRRrxLKXck+Eru6+/Aucp7dbNVXZZTTkZt80YEQ8+NllExpRUsiOnceIWgtzyr7Y1bsR+L6Uy0rdd5I8qtX6ln//GQ17g7fxlLw2r/cUo+WAjvVPehiWJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYALRBxU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0192C4CEED;
+	Thu, 14 Aug 2025 01:45:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755135918;
+	bh=i1y7qQa9SFhRvqFt20v8XEo9Q9dbavK0njZxN1E1hEw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YYALRBxUqMJ+a9O2DJA0OI+d8U2eVb4vghGmYmkHPuACCSxiAyNFcZN9CKtvACSnq
+	 JtBXiJAprlL8dieMg+YUqZenFdoYTMQM3qCM+sFvAfw0ZJKnbklA3b1CCl2sLivabS
+	 Jyq6QcJ/hMtxUC2Eg7vb0AQozFUM9UiuiGe9B4S/t6LZGASKEg85nJKT4oYSFQfhvZ
+	 Jj7SP53EACoQARdrD4OiletkRcQ2NAy0nPdYU63lTkQNSnyXo4zTd/5YA8SzP1SlTy
+	 9W5wuCcs94qevo8gdrhzjCK1E9zTB7stWmlDMvju/ewfItbTbiTzR2/uUz/AU5OQok
+	 ggHvEA8Ed32cw==
+Message-ID: <b6860c56-e91d-45c8-8d4c-05bcae97a2bb@kernel.org>
+Date: Thu, 14 Aug 2025 10:42:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/tX2BVTQpzL7MTWMVvxLdtkz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 1/7] block: check for valid bio while splitting
+To: Keith Busch <kbusch@kernel.org>, Bart Van Assche <bvanassche@acm.org>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
+ Hannes Reinecke <hare@suse.de>
+References: <20250805141123.332298-1-kbusch@meta.com>
+ <20250805141123.332298-2-kbusch@meta.com> <aJzwO9dYeBQAHnCC@kbusch-mbp>
+ <d9116c88-4098-46a7-8cbc-c900576a5da3@acm.org> <aJz9EUxTutWLxQmk@kbusch-mbp>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <aJz9EUxTutWLxQmk@kbusch-mbp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---Sig_/tX2BVTQpzL7MTWMVvxLdtkz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 8/14/25 6:01 AM, Keith Busch wrote:
+> On Wed, Aug 13, 2025 at 01:41:49PM -0700, Bart Van Assche wrote:
+>> On 8/13/25 1:06 PM, Keith Busch wrote:
+>>> But I can't make that change because many scsi devices don't set the dma
+>>> alignment and get the default 511 value. This is fine for the memory
+>>> address offset, but the lengths sent for various inquriy commands are
+>>> much smaller, like 4 and 32 byte lengths. That length wouldn't pass the
+>>> dma alignment granularity, so I think the default value is far too
+>>> conservative. Does the address start size need to be a different limit
+>>> than minimum length? I feel like they should be the same, but maybe
+>>> that's just an nvme thing.
+>>
+>> Hi Keith,
+>>
+>> Maybe I misunderstood your question. It seems to me that the SCSI core
+>> sets the DMA alignment by default to four bytes. From
+>> drivers/scsi/hosts.c:
+> 
+> Thanks, I think you got my meaning. 
+> 
+> I'm using the AHCI driver. It looks like ata_scsi_dev_config() overrides
+> the dma_alignment to sector_size - 1, and that pattern goes way back,
+> almost 20 years ago, so maybe I can't change it.
 
-Hi all,
+That is probably buggy now in the sense that the scsi layer should be able to
+send any command with a size not aligned to the LBA size or ATA sector (512 B)
+and libata-scsi SAT should do the translation using an internal 512B aligned
+command size.
 
-The following commit is also in the devicetree tree as a different commit
-(but the same patch):
+What makes a mess here is that SCSI allows having a media-access command
+specifying a transfer size that is not aligned on the LBA size. The transfer
+will be "short" in that case, which is perfectly fine with SCSI. But ATA does
+not allow that. It is all or nothing and the command size thus must always be
+aligned to the LBA size.
 
-  84e7845761c7 ("dt-bindings: ipmi: aspeed,ast2400-kcs-bmc: Add missing "cl=
-ocks" property")
+I think that dma_alignment was abused to check that. But I think it should not
+be too hard to check the alignment in libata-scsi when translating the command.
+SAS HBAs should be doing something similar too. Have never exactly tested that
+though, and I am afraid how many SAS HBAs will not like unaligned command to
+ATA devices...
 
-This is commit
+We also have the different alignment for management commands (most of which use
+512B sector size) and media access commands which use the actual device LBA
+size alignment.
 
-  a2f5472f1cbe ("dt-bindings: ipmi: aspeed,ast2400-kcs-bmc: Add missing "cl=
-ocks" property")
+So it is a mess :)
 
-in the devicetree tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/tX2BVTQpzL7MTWMVvxLdtkz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmidPvYACgkQAVBC80lX
-0GzjDggAkaz1N0Lokj1kni7y8Qzxl0XW/iw+ppcRZ8czY0d50KmBZb3e31xwShzu
-vZIbkJnF2LS6eul0RI5qmfprRzDzC4mRGChAz3mdT8T9qGTiKu8h37vAVfdmWhg4
-bL1vN2Trb3eoLlqdkiE5EZAAFUAz6xEfCZYiIMRbnGbLWVoqSzYI5/I6noM2fPgQ
-jS7MZ6D8ddVEmQ6XrjWKhTX+kLBRF9qjCvNqCBNGkk2Lj9i5LS4/aLoKCtnbKW0H
-2jLBWKqlCJq4FAzOsmuZ05UPqQYHdctyqSI1OB/kdmqxS24jNKF9p6ZYPrHolPZT
-EFo/jS9QBagUNQO2IM8rfQBQjYPIdQ==
-=j5mG
------END PGP SIGNATURE-----
-
---Sig_/tX2BVTQpzL7MTWMVvxLdtkz--
+-- 
+Damien Le Moal
+Western Digital Research
 
