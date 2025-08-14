@@ -1,136 +1,176 @@
-Return-Path: <linux-kernel+bounces-769237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD6AB26BB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACE1B26BE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D9C686C75
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E78A067BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2601123E347;
-	Thu, 14 Aug 2025 15:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8D024634F;
+	Thu, 14 Aug 2025 16:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AesMwfFg"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b="KLEy2dSs"
+Received: from www5210.sakura.ne.jp (www5210.sakura.ne.jp [133.167.8.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5277199FD0
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7272523BD1F;
+	Thu, 14 Aug 2025 16:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=133.167.8.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186881; cv=none; b=NLtwj88KTgyyNm4jYzd1i6xiTGztwFYZVspOUTppH5iA0ZxdDO1of8geuWJnSKAqdW1F3pgCngWZqn0Z5yLNMiaOPAc7tciacVaYrd65Wa4XgTNNRTZUMXIjU/a1okvQlOs9/D8h+eEvawrg6gwE07xfxDTUlgen1PMV2YztFEs=
+	t=1755187226; cv=none; b=JSs1C/iwL6YFMP8j/DTh7C5tYfDpoIo1qD/V8OHFzWku603URgN9rU6FPA1AT9YeVwfE75etRrY/3ju1uwdJdC2aKdi5UtDxlhHKhLEubJWfoGaiZuFa3ubqhWUjhKtZY99bwNT7/40BqNIUx8UFB92VYipsmMGy36lD+GSjb9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186881; c=relaxed/simple;
-	bh=F0pElEsvxrR0RRjThz7t1RhU6UkOvkMNrQNHbBwmIrc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EBaViw+juU+ot9+rEz3uWR2jFwsC03pGjvijLXlkpS5hpYZAZdah+NpkDm7Hw7cIzM2e3h26QeO866vYcT5sjrw693qFQXutNY/RdkMt3h48ccU+XZyg8QgCvL6gY1aZFh83kEiKIqP9OocH5RHUWwc3wgvPXclAL+CtC+CtokA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AesMwfFg; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32326e8005bso1246394a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:54:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1755186879; x=1755791679; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CvabB1TykqrJuGy2/4C13LzT2Q6NuaXnmqhVowsnYYk=;
-        b=AesMwfFg2Y4v8ydIg5KcWovRFzao8+OjlqgnSWYZ6hMnmFQZdYhYcdM1rG2dJ7PRpl
-         pQ2Dnnk2PrbTalMzEaiX8/m1WxFyS+x6yslVs5Z9KcBeD+5wfHRkB6NKb6AB335aGlkE
-         TAANeaCbrp8LuJ4suTnrLW2BxdacPGqFG9ag6ioofzBUt3quhmDpmDYMdGoXR/MB8qhb
-         pn/7HInE0PgdGqz7r9Wbknq8QMg2NXOqCvqPZhiwgufAGzZynpX6hvOty3E5RUXFr+bD
-         FsDG/7dA502flcnP0i3xXA1Fehyq+dm5e90lWWS3l7srK5xNzbBZ+rnBR/ueV3q/sooy
-         jwWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755186879; x=1755791679;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CvabB1TykqrJuGy2/4C13LzT2Q6NuaXnmqhVowsnYYk=;
-        b=h9tJhLC2IXviN+UOgwLwovPRkMtuAXSAkpfWipzeohcukzRFtRx678neLXElFwObS+
-         uRAUvR7/3twR7Gc43+4L7GX2KWf6fAuz75jSnnsFqgK8uHvj4g72BZGhZCn9gmTSYiof
-         foQpFGtCnZLlvInq8B60ciO5aq8ieRkWM16j1J6sCY0jMT6nM2vN4iyYb7y5UdaSMtFt
-         0nu2+rpaYOQ2CQqAOAmQ4qQf9LF1Vd+TTRsjyBmwAd8duoIj37l5SgTGfcCAiNHY6gCD
-         ZEve+yeKXL1io3s3/J5U+xcaLRFQfjsmSzKPmFJSZTiWGHEY8cZw4sQOc8B2CLlJ2EaG
-         9ung==
-X-Forwarded-Encrypted: i=1; AJvYcCV44Y+c7gIE1+iLX/5GktbfKXpQUFr4COvLWBQSkY5g+kNf2AmsYyefEeMN8MbqnIz1RLuFSCHEEV70Ncs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJsBjzZtHogUAMfGDK5DnWFATaxGKYQgIIHvQGE2qqWVdG+0vg
-	RIZC+grMGRJkebToCUYRFsXX7fBni0T/k6TyslDps6DtFPxBR8I0Za6LREg00mY6+2mzWwiv4q4
-	gKzJSfqhksvNgnBX5BAl3JKTJBpgs7HSNemJYv8yY
-X-Gm-Gg: ASbGncvZA6QSbVGposDbopRZJxNxdzh2Ced1Cg//aigsxw9635G8p8t520pjBH7hK77
-	8oQp2dtdwMRiORXwIU0uRfnnRPI3uaaFubxTHgTwcqxvXOwi/rOBMN7MezjHQSeBOuQ/qXjPjRL
-	VgtmDzzO02WxpQyugLAcDSU2xLuLiAMmaxD9l+E+4vLw2/eWOE9XVLww2Lm/XwpzVubU0IOpt1w
-	B4byTRGHLR1U+zp6Q==
-X-Google-Smtp-Source: AGHT+IF3C041JRsjxUqaaZy5hpDym6lDLSiH1UTT6ITfTxQxD+tAO83OLFzF/MDi+d7eudf6g7YOpN2iMFBcxPHh4Nk=
-X-Received: by 2002:a17:90b:39c7:b0:312:1d2d:18e2 with SMTP id
- 98e67ed59e1d1-32327a51eecmr5939431a91.20.1755186879054; Thu, 14 Aug 2025
- 08:54:39 -0700 (PDT)
+	s=arc-20240116; t=1755187226; c=relaxed/simple;
+	bh=N/HxePd3bsp/SkNMjTAfFk8WDg+5khUdyzNxzASkK9E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JzmL2GSq4QlCSDNYjzWb9Qk7s59JGPaq2TotWchGOtruf6IG2JCV1+kWXZ4ub5bGqZ8rqNbppFKF5ZkLslmwyIL7hNfGzmjE7w7S/NqtMGjXWLS4CZRv8yTyDdlJp9CHfw3Vj+49g6XYQjOGL0lvBceK4nKXHxBseMceqfGd5FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me; spf=pass smtp.mailfrom=mgml.me; dkim=pass (2048-bit key) header.d=mgml.me header.i=@mgml.me header.b=KLEy2dSs; arc=none smtp.client-ip=133.167.8.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mgml.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mgml.me
+Received: from NEET (p4453024-ipxg00r01tokaisakaetozai.aichi.ocn.ne.jp [153.230.174.24])
+	(authenticated bits=0)
+	by www5210.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 57EFsS5U072086
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 15 Aug 2025 00:54:28 +0900 (JST)
+	(envelope-from k@mgml.me)
+DKIM-Signature: a=rsa-sha256; bh=N/HxePd3bsp/SkNMjTAfFk8WDg+5khUdyzNxzASkK9E=;
+        c=relaxed/relaxed; d=mgml.me;
+        h=Message-ID:Date:Subject:To:From;
+        s=rs20250315; t=1755186868; v=1;
+        b=KLEy2dSsFbJCWObiL7YZJfdG5CnLD8GXks6HRwFrgZm3iJeGwqNMbvwc2Ck9z+VA
+         cOnOrRYu59DWJ0jvk0N0Tdnc/3ojFNWFbRDcTUiTQW5q6zmA2eQctQ5x4aSIAGdr
+         HOJcPXBHBs1dN8OEbMjoEfhug2UCV3tqmCGtRhvcu+pqw+jtncepqBjf4IrDYdNT
+         9Y9OiLXto6dHpiOupRWFYIy+EJ1jclumK2fWHhV5cJD5LSianlXIwszGXgClZPth
+         Cl+WaN3IWjQhOnkv+9PF6e6/MH2S3i9XEMS22WCd0MJofBLFWYov3LwRunoGBfd9
+         /JkKOmyIlalMWQ8axfSTKA==
+Message-ID: <c4980d23-7a76-4c28-b9a8-5989524c1f93@mgml.me>
+Date: Fri, 15 Aug 2025 00:54:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814093046.2071971-1-lossin@kernel.org> <20250814093046.2071971-8-lossin@kernel.org>
- <CAHC9VhQXOezJ2=B1BQOqLgfuzDJEVS5G_r9+_bQ+OUNTpjZCKw@mail.gmail.com> <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
-In-Reply-To: <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 14 Aug 2025 11:54:27 -0400
-X-Gm-Features: Ac12FXzlwiXq64khBtAeerI7ifBROgc4LhPQT_zvpgV5Z4PtTDCkCmp0ECJQmC4
-Message-ID: <CAHC9VhQNi31KSpB-MtvZO9e5fzuM_87VWb6rrMtxcqOGSPTiNg@mail.gmail.com>
-Subject: Re: [PATCH v3 07/11] rust: security: replace `core::mem::zeroed` with `pin_init::zeroed`
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, Jocelyn Falempe <jfalempe@redhat.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] md/raid1,raid10: don't broken array on failfast metadata
+ write fails
+To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>,
+        Mariusz Tkaczyk <mtkaczyk@kernel.org>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "yukuai (C)" <yukuai3@huawei.com>, Kenta Akagi <k@mgml.me>
+References: <20250812090119.153697-1-k@mgml.me>
+ <36f78ba0-ac3b-5d97-89f3-2b09d49d1701@huaweicloud.com>
+Content-Language: en-US
+From: Kenta Akagi <k@mgml.me>
+In-Reply-To: <36f78ba0-ac3b-5d97-89f3-2b09d49d1701@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 11:31=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> On Thu, Aug 14, 2025 at 5:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> >
-> > I'm happy to take this via the LSM tree, but it would be nice to see a
-> > Reviewed-by/Acked-by from someone with a better understanding of Rust
-> > :)
+On 2025/08/13 9:59, Yu Kuai wrote:
+> Hi,
 >
-> I think the idea is to take all these through the Rust one with
-> Acked-bys from the maintainers (or we can skip this one and do it in a
-> future cycle when the first patches get in).
+> 在 2025/08/12 17:01, Kenta Akagi 写道:
+>> It is not intended for the array to fail when a metadata write with
+>> MD_FAILFAST fails.
+>> After commit 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10"),
+>> when md_error is called on the last device in RAID1/10,
+>> the MD_BROKEN flag is set on the array.
+>> Because of this, a failfast metadata write failure will
+>> make the array "broken" state.
+>>
+>> If rdev is not Faulty even after calling md_error,
+>> the rdev is the last device, and there is nothing except
+>> MD_BROKEN that prevents writes to the array.
+>> Therefore, by clearing MD_BROKEN, the array will not become
+>> "broken" after a failfast metadata write failure.
+>
+> I don't understand here, I think MD_BROKEN is expected, the last
+> rdev has IO error while updating metadata, the array is now broken
+> and you can only read it afterwards. Allow using this broken array
+> read-write might causing more severe problem like data loss.
+>
+Thank you for reviewing.
 
-[CC'd the LSM list, as I just realized it wasn't on the original patch
-posting; in the future please include the LSM list on LSM related Rust
-patchsets/patches]
+I think that only when the bio has the MD_FAILFAST flag,
+a metadata write failure to the last rdev should not make it
+broken array at that point.
 
-That's fine, it wasn't clear from the post that was the plan, and I
-vaguely recalled from past conversations with Rust devs that they
-preferred Rust wrappers/helpers to go in via the associated subsystem
-tree.
+This is because a metadata write with MD_FAILFAST is retried after
+failure as follows:
 
-> In any case, Benno is very knowledgeable in Rust -- he wrote the
-> library being called here -- so unless you see something out of the
-> ordinary, it seems OK to me.
+1. In super_written, MD_SB_NEED_REWRITE is set in sb_flags.
 
-My comment asking for additional review/ACK tags wasn't due to any
-distrust of Benno - thank you for your work Benno - it is just a
-matter of trying to make sure there are at least two sets of
-(knowledgeable) eyes on a patch before it is merged.  If it is
-something I'm merging into one the trees I maintain, normally I count
-myself as the second set of eyes, but in this case I don't (yet)
-consider myself a knowledgeable Rust reviewer so I was asking for an
-additional explicit review tag.  If someone else is going to merge
-this patch{set}, then it's up to them; although I would hope they
-would do something similar.
+2. In md_super_wait, which is called by the function that
+executed md_super_write and waits for completion,
+-EAGAIN is returned because MD_SB_NEED_REWRITE is set.
 
---=20
-paul-moore.com
+3. The caller of md_super_wait (such as md_update_sb)
+receives a negative return value and then retries md_super_write.
+
+4. The md_super_write function, which is called to perform
+the same metadata write, issues a write bio
+without MD_FAILFAST this time, because the rdev has LastDev flag.
+
+When a bio from super_written without MD_FAILFAST fails,
+the array is truly broken, and MD_BROKEN should be set.
+
+A failfast bio, for example in the case of nvme-tcp ,
+will fail immediately if the connection to the target is
+lost for a few seconds and the device enters a reconnecting
+state - even though it would recover if given a few seconds.
+This behavior is exactly as intended by the design of failfast.
+
+However, md treats super_write operations fails with failfast as fatal.
+For example, if an initiator - that is, a machine loading the md module -
+loses all connections for a few seconds, the array becomes
+broken and subsequent write is no longer possible.
+This is the issue I am currently facing, and which this patch aims to fix.
+
+Should I add more context to the commit message? Please advise.
+
+Thanks,
+AKAGI
+
+> Thanks,
+> Kuai
+>
+>>
+>> Fixes: 9631abdbf406 ("md: Set MD_BROKEN for RAID1 and RAID10")
+>> Signed-off-by: Kenta Akagi <k@mgml.me>
+>> ---
+>>   drivers/md/md.c | 1 +
+>>   drivers/md/md.h | 2 +-
+>>   2 files changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>> index ac85ec73a409..3ec4abf02fa0 100644
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -1002,6 +1002,7 @@ static void super_written(struct bio *bio)
+>>           md_error(mddev, rdev);
+>>           if (!test_bit(Faulty, &rdev->flags)
+>>               && (bio->bi_opf & MD_FAILFAST)) {
+>> +            clear_bit(MD_BROKEN, &mddev->flags);
+>>               set_bit(MD_SB_NEED_REWRITE, &mddev->sb_flags);
+>>               set_bit(LastDev, &rdev->flags);
+>>           }
+>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>> index 51af29a03079..2f87bcc5d834 100644
+>> --- a/drivers/md/md.h
+>> +++ b/drivers/md/md.h
+>> @@ -332,7 +332,7 @@ struct md_cluster_operations;
+>>    *                   resync lock, need to release the lock.
+>>    * @MD_FAILFAST_SUPPORTED: Using MD_FAILFAST on metadata writes is supported as
+>>    *                calls to md_error() will never cause the array to
+>> - *                become failed.
+>> + *                become failed while fail_last_dev is not set.
+>>    * @MD_HAS_PPL:  The raid array has PPL feature set.
+>>    * @MD_HAS_MULTIPLE_PPLS: The raid array has multiple PPLs feature set.
+>>    * @MD_NOT_READY: do_md_run() is active, so 'array_state', ust not report that
+>>
+>
+>
 
