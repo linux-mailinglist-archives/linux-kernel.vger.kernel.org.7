@@ -1,57 +1,69 @@
-Return-Path: <linux-kernel+bounces-768166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 240EDB25DC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:42:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBB4B25DBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038425A1923
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:38:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF5491B68A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BCD2690D9;
-	Thu, 14 Aug 2025 07:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gPNbLCku"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14509271444;
+	Thu, 14 Aug 2025 07:40:24 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AD5265CAB
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A59D26CE0E;
+	Thu, 14 Aug 2025 07:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755157108; cv=none; b=nUC9xW7kYS2M7Br+tnEKwvdoo014JmAG0dVtMramfghmV10L8qQpAb9vXLWTNPSE/P3EvKRlhPNhfSmzdvBaVf3JEfKhQ1Pmq2rmmLfK4bWKvb8RQkXYUP/dVKR0VaOLmmktxQHW3fYmH1Yf12VsYidnXFu7O1jqV4g6FOyyWGI=
+	t=1755157223; cv=none; b=SYliC71tD4fSigV1Fg8/wlQR+PA2ut5KInGP0fKOZRAo8mPX6yuIbWdBArMK9YT8kDcPHDFek716b9FS30K//yCU90mhM8Yv/pfecYXsZDc89opZW/crwvzmfuOZS2GLzjZo5K/RGyybOTRXKGE/tCoWLhnTXy3ZmFmOx0WwCXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755157108; c=relaxed/simple;
-	bh=PuQmcaPEUVbGG1gx2yYyNMXoVhPDh2c46IXC3Nn2nYI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I9DZlIAJD3NMpXELvy7/RfzzhyCvIy1Rtivd5rfR3kxIqozGp2v+u0lquSvm3XDoDTR9hYphF1WvcS/gYHb4meIk76qrI8m/Mvrj/dExqkttJifdeFVtSDrofyWq+pddDPQzybL9cKkFHOHazjLEg1pi9uoBT53ee6l6e+JKpbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gPNbLCku; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755157104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2Up7LN5pRzzuJ/r68Q6CcBRepJ9T84L2u1jpkC+lZmQ=;
-	b=gPNbLCkuG4AgXYU6MmRUxyf21L4YUDuC6QJRvH4xEOxg1KY8TblsTk2iQ4WBFLHA9DiK80
-	Ntki8FRNYVS3Jd46hHeLeCA8WFnPt/Ru0usafdN7z0cnzXtcJAnaJ4QcX/lToQzve+O3aO
-	4seSCVe/Fcpcce9VEQj6+alAxzDP2h0=
-From: Ye Liu <ye.liu@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Ye Liu <liuye@kylinos.cn>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: Fix typos in VMA comments
-Date: Thu, 14 Aug 2025 15:37:59 +0800
-Message-ID: <20250814073800.13617-1-ye.liu@linux.dev>
+	s=arc-20240116; t=1755157223; c=relaxed/simple;
+	bh=I8wL8Bije0sj19c4wegVxWNIvq5gd4gFzUnw71IjeNc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TjusmwmyjWqneg/BX0hKuuvTKWxOypZ+Hm+8RiJ1cI3eIYAe5fw5OI/q1/08kUcD0em0SZDyW8M4ee4L7se+ZpT0RVqzZ5CaHpLh7/ED+nmDucVxwhVcWifsEUSXeZMv/62BzPJccl+YsZpDlZF/Zc5cFFSXV+PrtTg/lF+dJ4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpgz8t1755157144tba28a6ad
+X-QQ-Originating-IP: rUxkcWEOBOc2GCBlXoflVIntl0nBg1T2I/TUM5RkhQk=
+Received: from localhost.localdomain ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 14 Aug 2025 15:39:00 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 13568056976583856875
+EX-QQ-RecipientCnt: 23
+From: Dong Yibo <dong100@mucse.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	corbet@lwn.net,
+	gur.stavi@huawei.com,
+	maddy@linux.ibm.com,
+	mpe@ellerman.id.au,
+	danishanwar@ti.com,
+	lee@trager.us,
+	gongfan1@huawei.com,
+	lorenzo@kernel.org,
+	geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com,
+	lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com,
+	richardcochran@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dong100@mucse.com
+Subject: [PATCH v4 0/5] Add driver for 1Gbe network chips from MUCSE
+Date: Thu, 14 Aug 2025 15:38:50 +0800
+Message-Id: <20250814073855.1060601-1-dong100@mucse.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,47 +71,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: N7JaPSsNCN5wPIAAE6c4mIrmc3ZCmZtH2K5NIiNWQ1s6cae/VJUwZnsO
+	gTrHWo6JpDTz3ORhlJ1TuHs8NTRG+sgpFgB8gte01sdvZ+BJHK27YfPUuWqPadd9dm/wqGk
+	yWXtF/SWWrxJMM3RWBrpW5ZpMWLIaYFkG7Nf7InkoYu3egtMgZlYJ+wiZv+904CE+pwd/xA
+	YqFxqPaWUMtouHPh3UgYrpRxIHxhzhTLqP0oJBz+RX4uBN4G1ixRruftM9ugK8wsdMd84BB
+	Hejs4kNSUf4Q4iohPkgztjsWE139iWVh1sPUZjuWzvkglX9gY1PVUMlzT7wUqVikV9zJyLZ
+	vc/6QudS0NhF9iHXmzMLLPxYDiCyh1mXfxbOYGtMSOAiIvui8uj0BgraAwuz0mtG9hn03ck
+	ZWT6slcWcmKAQb3ojKuFo3rK7iJD9Asg/AJX7uHAEregY7wQjHzMt95U38qXmAav66N+Bd7
+	d63GwwAE5BHimAu0jdbPnJaf03AvZaphzdwMrx8NecLN3s/sbIm+CI0WH2lwO28UIUo0StA
+	lTLyKa+DFuFJ5nu5bg8oYc0pwwK0pvHIrHigFiyh/kfWvdvDNNLDJmfjWBlrHvGxxP7a5AK
+	L+EdKl6yfjmhjTzWwXi7Xz+ewcJ9YUFiFXRJL6WpXbYh7IVGiA/uIIMHtWPJRBglC7BI7C7
+	HNDwRPmON+G7v+06AJE01yrkPkJlS96aQI7C8liMsQZCmrzWlIjeR2gQlUZyOiJEBpxJkSa
+	/i1R0JyhEwnPEeibB0zEnaxWQGhrSs0zrLz1LT3kRx5LvqfcASD8BKDNbd/WVV2Bi43aBPx
+	/hSpg07ABd1zvZvQ9PHQ6uAZcF2Cz5Hx5S8o10Rp042IW5IOCKGRsrcP/0b7dXEGFI0bGiM
+	1oSBZaUnw/H/YvX5du3GAInYYdX9Ibudxq8jWqerMUiFPKVK+nAq6DvmTXyIG4pTxy5+keo
+	s8r2W4ruYuioXv+42pT1WXsv4NHYjtFORgMqQcKc44doVwb6qob4lNs7VqwlS6d1R5s5NAn
+	IxcgEsByRaUA87PYE6ERgcYZdOnOVKRiC1KJhu+w==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-From: Ye Liu <liuye@kylinos.cn>
+Hi maintainers,
 
-Fixed the following typos in VMA-related files:
-1. "operationr" -> "operation" in mm/vma.h
-2. "initialisaing" -> "initializing" in mm/vma_init.c
+This patch series is v4 to introduce support for MUCSE N500/N210 1Gbps
+Ethernet controllers. I divide codes into multiple series, this is the
+first one which only register netdev without true tx/rx functions.
 
-Signed-off-by: Ye Liu <liuye@kylinos.cn>
----
- mm/vma.h      | 2 +-
- mm/vma_init.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+The driver has been tested on the following platform:
+   - Kernel version: 6.16.0
+   - Intel Xeon Processor
 
-diff --git a/mm/vma.h b/mm/vma.h
-index b123a9cdedb0..bcdc261c5b15 100644
---- a/mm/vma.h
-+++ b/mm/vma.h
-@@ -145,7 +145,7 @@ struct vma_merge_struct {
- 	 */
- 	bool __remove_middle :1;
- 	/*
--	 * Internal flag used during the merge operationr to indicate we will
-+	 * Internal flag used during the merge operation to indicate we will
- 	 * remove vmg->next.
- 	 */
- 	bool __remove_next :1;
-diff --git a/mm/vma_init.c b/mm/vma_init.c
-index 8e53c7943561..d847c6557261 100644
---- a/mm/vma_init.c
-+++ b/mm/vma_init.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-or-later
- 
- /*
-- * Functions for initialisaing, allocating, freeing and duplicating VMAs. Shared
-+ * Functions for initializing, allocating, freeing and duplicating VMAs. Shared
-  * between CONFIG_MMU and non-CONFIG_MMU kernel configurations.
-  */
- 
+Changelog:
+v3 -> v4:
+  [patch 1/5]:
+  1. Remove redundant label.
+  2. Simplify 'rnpgbe_init_module' function.
+  [patch 2/5]:
+  1. Remove 'back' define in structure define.
+  2. Remove no-use 'static int bd_number'.
+  3. Remove no-use 'pf2fw_mbox_mask' define in 'struct mucse_mbx_info'.  
+  [patch 3/5]:
+  1. Fix min() is not assigned bug in 'mucse_read_mbx'.
+  2. Fix v define to u32 in 'mucse_mbx_reset'.
+  3. Use USEC_PER_SEC instead of hardcode.
+  [patch 4/5]:
+  1. Optimize 'mucse_fw_send_cmd_wait'
+  2. Optimize 'struct mbx_fw_cmd_reply' variable declaration.
+  3. Fix missing initialization of err in 'mucse_mbx_get_capability'.
+  [patch 5/5]:
+  1. Optimize 'rnpgbe_get_permanent_mac'.
+  2. Remove no-need init netdev->perm_addr.
+  3. Remove addr in structure 'mucse_hw'.
+  4. Add 'netdev->stats.tx_dropped++' in 'rnpgbe_xmit_frame'.
+
+links:
+v3: https://lore.kernel.org/netdev/20250812093937.882045-1-dong100@mucse.com/
+v2: https://lore.kernel.org/netdev/20250721113238.18615-1-dong100@mucse.com/
+v1: https://lore.kernel.org/netdev/20250703014859.210110-1-dong100@mucse.com/
+
+Dong Yibo (5):
+  net: rnpgbe: Add build support for rnpgbe
+  net: rnpgbe: Add n500/n210 chip support
+  net: rnpgbe: Add basic mbx ops support
+  net: rnpgbe: Add basic mbx_fw support
+  net: rnpgbe: Add register_netdev
+
+ .../device_drivers/ethernet/index.rst         |   1 +
+ .../device_drivers/ethernet/mucse/rnpgbe.rst  |  21 +
+ MAINTAINERS                                   |   8 +
+ drivers/net/ethernet/Kconfig                  |   1 +
+ drivers/net/ethernet/Makefile                 |   1 +
+ drivers/net/ethernet/mucse/Kconfig            |  34 ++
+ drivers/net/ethernet/mucse/Makefile           |   7 +
+ drivers/net/ethernet/mucse/rnpgbe/Makefile    |  11 +
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 138 ++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 163 +++++++
+ drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  15 +
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 341 ++++++++++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c    | 443 ++++++++++++++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h    |  31 ++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c | 264 +++++++++++
+ .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h | 201 ++++++++
+ 16 files changed, 1680 insertions(+)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/mucse/rnpgbe.rst
+ create mode 100644 drivers/net/ethernet/mucse/Kconfig
+ create mode 100644 drivers/net/ethernet/mucse/Makefile
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/Makefile
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_main.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx.h
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
+ create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
+
 -- 
-2.43.0
+2.25.1
 
 
