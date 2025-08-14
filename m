@@ -1,162 +1,160 @@
-Return-Path: <linux-kernel+bounces-768193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B0CB25E02
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:51:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA85B25E11
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBE25A09F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EE741CC06A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8B62DEA7D;
-	Thu, 14 Aug 2025 07:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C002E2853;
+	Thu, 14 Aug 2025 07:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AblpmqcX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FQpcOBij"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD31C286D52;
-	Thu, 14 Aug 2025 07:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DA02E7F10;
+	Thu, 14 Aug 2025 07:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755157796; cv=none; b=MDpSWlIJJg343YqiHrwjfX7mwIu3R5/dV78pBwxwFwSIyzb/sgu9UWI9b7i/73Jsv2uiRRDIAUA6Kv/4hGQGpxJ3r96GuntYwlvf7eCKXYftjJtvro1TNwsUGL932pg/Cyf7AK7oUQuM43GNoMzP+Bgn83Fj0BOKHWxtCwtGQo4=
+	t=1755157876; cv=none; b=G95UFavcpa3Kx0Jp8mCuUTKSgfrW0IDD551fEWCEKQ29ho2Ha2ZS7nNPT8+x/up7HpjEf7x0afF49tPrmSEug1BxpuIO/Bw6u5lHDgyL9e5m/1NWlBnVKF+Dwd25Ag2b5vIfSOF52AkVUJVNgyXJoTrwe/IoR1iZLte/WTVqQp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755157796; c=relaxed/simple;
-	bh=f35AnSEo6H6Mj8LPGStUWaOusqBiWbWyTlU3soOSje4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ic0qKuHh4WHZyoOQxmZx/kgCbRxOxSmn3eTHeyA3CH7p0XbEY9nppQFbCxgOT8HWshQGgE+Gfunb2Iu/uCeLnTtTNGEGJFo6EoFLwQsQYHQTwrD2rpcfqHGFqOBuSJaOhNGUUpKEgrbksVCqOYs+TWTvlLNDcFRaCmd8wLGteTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AblpmqcX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 585FDC4CEEF;
-	Thu, 14 Aug 2025 07:49:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755157796;
-	bh=f35AnSEo6H6Mj8LPGStUWaOusqBiWbWyTlU3soOSje4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AblpmqcXAN4ysoqlSXpI2+ce7BroJRKBqENO6jOU8nbQ1sWveX0r75s4ALXlEDAAR
-	 8mR61mUCUsjNonJRaMp6ttbamG8Pp9VfNXBjVbeItoBFdRWbEvvVidFXOPHV6+om96
-	 Xa7Ik0Aj6APGF4HuTd56kHnDxFfcR2JoHI4O49I2kvCIOEhs9wyylg2fpM4YQ1ZGT7
-	 3F1xigHsaH2t6HzqRYPVxKIPC0sgD8U6GuA5T3MKBnqgpEc1Z1uzIz6gqpyNe27esM
-	 MUZXs96VAjJtRnW33VuXnzT0WubpZQbG9Vet2r635PaqVC1miOxC1YmUQC36pWAQpt
-	 cjI7rgK2HoKHA==
-Message-ID: <026419bc-c0f8-4891-a348-311f51cb999f@kernel.org>
-Date: Thu, 14 Aug 2025 09:49:50 +0200
+	s=arc-20240116; t=1755157876; c=relaxed/simple;
+	bh=d1f4mmUw+s4rQ40HwrviQrVXwuM1d7NMgIi8LdtLCFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IWuB72xFyyeDqDpo49daOjkrjKkAXJ4UbYsJwDr2awkrQ7YSNkVzatpeAhKp1Na6y+u7/mdsXEog513ET2lt7YKi+aBPkSRAR5MRuvzVNiCI893U8qAWecrJqSJX3iw6YdjvEqx9q3VIScUhvdTjAi8F16As4g4us9X98OBs2eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FQpcOBij; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DNM9c2012828;
+	Thu, 14 Aug 2025 07:50:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	p81hshlx7Wv2iXZggKjLGGwXSZ+o/tdplFet3Iz+J18=; b=FQpcOBij43kJkvBJ
+	XaW579auirQeHP7Cdpa+5KYZm7bUozy2g9RoI7PHi08NL7vbP45iSlKe7TFDvvl2
+	rQqEQ5Dw9KnCioh6uwz4N1gXaCXcPETa2oERNxZSVpnVXwzxhKu/Sc5mgYq8FdeZ
+	GuqE5aMJFESJuEeQ383TyNyitG1oFhzckXxSkSdtaeRitEIktQsGPbZMGmyT8ozx
+	8SDF7fA/RFiakolbKTky2lW++iJMgz23tb411/l7cR/HjRgBA549/TYwMq9NJ+3o
+	gFXKVyLNqWyARA69hc1aalmRXjRLO/phrC2lKeH9arab+KrW675Iu0ohZMeJlxVq
+	iouw2g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhxd04g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 07:50:55 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57E7osLq014428
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 07:50:54 GMT
+Received: from [10.50.5.139] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
+ 2025 00:50:49 -0700
+Message-ID: <a4f05871-0229-8ac6-d2c3-b0dd71a9aa57@quicinc.com>
+Date: Thu, 14 Aug 2025 13:20:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/4] dt-bindings: firmware: thead,th1520-aon: add a
- mailbox name for SBI
-To: Icenowy Zheng <uwu@icenowy.me>, Drew Fustini <fustini@kernel.org>,
- Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Han Gao <rabenda.cn@gmail.com>, Inochi Amaoto <inochiama@gmail.com>,
- Yao Zi <ziyao@disroot.org>, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250814070757.2267325-1-uwu@icenowy.me>
- <20250814070757.2267325-3-uwu@icenowy.me>
- <d0d4c9e7-c350-4996-a53b-09b13bdb9409@kernel.org>
- <1b63d1872f5b2c89f2fafdf717bda5ec29589b69.camel@icenowy.me>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 05/24] media: iris: Allow substate transition to load
+ resources during output streaming
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <1b63d1872f5b2c89f2fafdf717bda5ec29589b69.camel@icenowy.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>,
+        Bryan O'Donoghue <bod.linux@nxsw.ie>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Renjiang Han <quic_renjiang@quicinc.com>,
+        Wangao Wang <quic_wangaow@quicinc.com>
+References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
+ <20250813-iris-video-encoder-v2-5-c725ff673078@quicinc.com>
+ <24714b00-cc15-4c9b-b0d4-8c76d702fcc2@nxsw.ie>
+ <cd2ded3a-ab91-4199-9edf-8acc8d6d11ba@oss.qualcomm.com>
+ <11acb8fd-9d81-460e-ac2c-38f370324ea5@kernel.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <11acb8fd-9d81-460e-ac2c-38f370324ea5@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfXzg8A53NeMbjq
+ 8M2Bsx1SY16128wd4ZXnQvvRGrKzU2Qj7Tx45VqEKPpfpqKLvFajq8xQ7Do61MCZPozheYg1SxC
+ JZyWm9JFu5WWDEEsKDzUG7LAmzMpY9l8mwHf0ZQmyo9bZK9GXtfW2ZZbA+9PFuenTjmLaXJ5cWs
+ t0qOeypXC6gAOMFguNSKF+1XKQP26kiG1frNkghZQfcxLInZZPw5fDKVP5Md/cqraIGkSly4l3U
+ VMdPE2tYrn793Mi9Iqix9I3rD7kPnZrTvOjProfo6ociqbAEmEq96AxSpj21w2QNoQ+5y96mWZm
+ u5Hwt5m8711oF7ly2sdTRSjegbu2/2CK6Sf6Fd2ZVjWAzkP/r+3b11AWWGZ8XafTSs+Wifuf8PO
+ fs+RBFMH
+X-Proofpoint-GUID: kOPeFGcpcAFlSnOGAI1PaFCaT2jnFDfO
+X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689d955f cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
+ a=yK6j1-holOLB1QIQiPAA:9 a=QEXdDO2ut3YA:10 a=1R1Xb7_w0-cA:10
+ a=OREKyDgYLcYA:10
+X-Proofpoint-ORIG-GUID: kOPeFGcpcAFlSnOGAI1PaFCaT2jnFDfO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
 
-On 14/08/2025 09:30, Icenowy Zheng wrote:
-> 在 2025-08-14星期四的 09:18 +0200，Krzysztof Kozlowski写道：
->> On 14/08/2025 09:07, Icenowy Zheng wrote:
->>> The SBI firmware might want to communicate to the AON firmware too.
+
+
+On 8/14/2025 11:43 AM, Krzysztof Kozlowski wrote:
+> On 14/08/2025 00:55, Konrad Dybcio wrote:
+>> On 8/13/25 11:51 PM, Bryan O'Donoghue wrote:
+>>> On 13/08/2025 10:37, Dikshita Agarwal wrote:
+>>>> However, now after removing that restriction, the instance state can be
+>>>> OUTPUT_STREAMING when firmware start is triggered and substate needs to
+>>>> be moved to LOAD_RESOURCES.
+>>>>
+>>>> Fixes: 547f7b8c5090 ("media: iris: add check to allow sub states transitions")
 >>>
->>> Add a mbox-name item to allow to allocate a mailbox for SBI.
+>>> If a restriction has been removed, has that restriction been marked as a 
+>>> Fixes: ?
 >>>
->>> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
->>> ---
->>>  .../devicetree/bindings/firmware/thead,th1520-aon.yaml     | 7
->>> ++++---
->>>  1 file changed, 4 insertions(+), 3 deletions(-)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
->>> b/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
->>> index 3365124c7fd47..555465f4aab4e 100644
->>> --- a/Documentation/devicetree/bindings/firmware/thead,th1520-
->>> aon.yaml
->>> +++ b/Documentation/devicetree/bindings/firmware/thead,th1520-
->>> aon.yaml
->>> @@ -26,11 +26,12 @@ properties:
->>>      const: thead,th1520-aon
->>>  
->>>    mboxes:
->>> -    maxItems: 1
->>> +    maxItems: 2
+>>> If not then we can't actually backport this fix as the dependency - the 
+>>> restriction removal has not been marked for backport.
 >>
+>> Please stop confusing fixes and backports..
 >>
->> ABI break without explanation why ("allow" is not a reason to affect
->> ABI) and its impact.
+>> If you're really paranoid about this commit getting autoselected, see
+>> 'noautosel' under this section:
+>>
+>> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html#option-1
 > 
-> Is adding items an ABI break?
+> Commit still needs to explain what is the bug, what is observable issue
+> being fixed here. Lack of feature is not a bug.
 
-Adding required items is ABI break. You can easily test it. Apply patch
-#1 and test your DTS. Apply patch #2 and test your DTS. New warnings
-appear, so that's a proof of ABI impact.
+Ok, will add more info.
 
-
+Regards,
+Dikshita
 > 
-> Or should I explicitly say "minItems: 1" here?
-
-Yes, but you should clearly explain the impact. Is it working? Not
-working? Are you fixing something?
-
-Best regards,
-Krzysztof
+> Best regards,
+> Krzysztof
 
