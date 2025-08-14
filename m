@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-769248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22087B26BCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:03:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA56B26BDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06A6B1CE42D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:58:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C00CD7B52DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7562FB966;
-	Thu, 14 Aug 2025 15:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D8F212B1E;
+	Thu, 14 Aug 2025 16:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DWjsmerM"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1FZCpuG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F5F2FB996;
-	Thu, 14 Aug 2025 15:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5F121C9ED;
+	Thu, 14 Aug 2025 16:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186998; cv=none; b=q7QHUWSkuyhsmhzE1TImF5Jjyvc/2x+z+SBavjz6i44z7Y+kpVQj9I/R+SYOxwHCPIS8z/O3xHnZa4Kn/F1dwn4oFzY8fpdQwgxFG6jv7tQMXTw55GM0feJ5Zx4ob0WcBLhG49o4/vlrd+6IO/mPoNjGI+MubHX2Xh5YGrqHyuM=
+	t=1755187472; cv=none; b=iD9/UQA7jceKrlBBSOrYw1Ce2pOTvSv1UX8vH4utfILyqK7yriFUE8wAAR/7FtRlhOtEC4tIiHNYBgw1s8pxwF6mBOuOPbVeUUxtSyn/Mx/4vRtKgXx25TtBx+vZSWxxleXSzC9ef+tP5WTdnMy5RvK5ZSpOUqmHaEcmr9hnUVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186998; c=relaxed/simple;
-	bh=3h2uES2VslNzNOlhdk3e0ZzlqdhIcg1czAl4A5mleuE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DfzGNKvuFffL1dgvruaJUuv8fT0yV87DSqOC/lMMefwQT05iBL2BFRqjtRKOlaTRq7QrDmz4rpNcEQNeGufFDdQOpU6o/8LBXoIxHs84jBPzAa6vCySkuekgd+4R6gbu9P2X6UmRsLIPQeG8BkBP2XqKqEvF4Oix64mWqPSv85s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DWjsmerM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=RxZJR6SmruU9qKmz3YFoByNqdMbdKVlOdMVKI5gChGw=; b=DWjsmerMtgZVEQf1yV8diFOgum
-	bJMBcGQzoxKtqF8UXL3rU1XZ3GhSyR6MbV6HWS1Oe9y5W0A7+HQeoL4nrvSKtaSjQcU8nt9j4pTQA
-	1Ab4TIdmydfaf3pa/OAatpok66Vlkw3897N+owgWXbUR1yKxhwr/a6LGFxlqdSuLUni6e0Y1iA3E+
-	a0EL6dfVj9wJ0eW7w0wcuLW0bfuuvnHq1c2XcW3mR0xfrJ7AourX9vUm/gAJmuPFtKdtHc3qXLis8
-	LmfZyPjGjMd4y+mM1TU1SsxpMk12GeuLRkVaeshWALgk7drZmoe1IognxpRK/Xo4btZQRbhQZmgcM
-	2DvYHeTw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umaJe-0000000HYBq-36lq;
-	Thu, 14 Aug 2025 15:56:34 +0000
-Message-ID: <95b81414-52d4-4e13-a894-9d59cd0e175c@infradead.org>
-Date: Thu, 14 Aug 2025 08:56:34 -0700
+	s=arc-20240116; t=1755187472; c=relaxed/simple;
+	bh=0DvQEAd0ldq1r3dzwWT+fSNKJ5CZVR01NTIGwBUpIL8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KcCQCZyjag5YGSLL8Psp0TTZBqYDgb4Byhd4dXT+3D7S8wWjB/U5ox7+sgbOneanWBfyqbQxKzmMcFXo0JeqTwbTxwOR8K/mEkA629U4tDopr7QFa/+lunXb8IGb/qsh1XLnpO3sxtZUycRwW6XEvjUYy1zkgitn7Nfke/h0QvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1FZCpuG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69A5FC4CEEF;
+	Thu, 14 Aug 2025 16:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755187471;
+	bh=0DvQEAd0ldq1r3dzwWT+fSNKJ5CZVR01NTIGwBUpIL8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=l1FZCpuGsRG6LoTlMwU47Eq1G/89Mq76dfMn5sDX6GxTtkW7JNlOaLZUkB5MKsNdj
+	 tWPnUMIbJXcHZJIM1iyPIKOoOHX+C9A5o1jV/5Z1gtA2k/qUqEttQ7gQb/YftF4t1R
+	 +btu+JJB2uMxtwXvZngJ3YbUH48zMUM1QcM4NuresbPlclmygvx621Q2ACOq/Cvuww
+	 w8ZGVHpeU+pKv1JSkOPjXF9ahETOkyKl1tUbvWLeslO+kzJ+GdZWZWdM0xRQvnQJaC
+	 gsK9PNDoF6d1mKs+xG6UQoMftDoi7dygOlOAMkJAXRHfUGtiHPaXqB6n4Bt6PNtwzr
+	 iwlOqwVRkPz8w==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [RFC PATCH -next 00/16] mm/damon: support ARM32 with LPAE
+Date: Thu, 14 Aug 2025 09:04:29 -0700
+Message-Id: <20250814160429.67476-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <ee37ea36-7298-4174-b146-fd62b24ef345@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: Fix driver-api typos
-To: Ranganath V N <vnranganath.20@gmail.com>, corbet@lwn.net,
- linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
- dave@stgolabs.net, rafael@kernel.org, linux-kernel-mentees@vger.kernel.org,
- skhan@linuxfoundation.org, vishal.l.verma@intel.com
-References: <20250814114245.16399-1-vnranganath.20@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250814114245.16399-1-vnranganath.20@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+On Thu, 14 Aug 2025 22:07:12 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
-
-On 8/14/25 4:42 AM, Ranganath V N wrote:
-> Corrected a few spelling mistakes
 > 
-> - functionalty ==> functionality
-> in Documentation/driver-api/cxl/devices/device-types.rst
+> 在 2025/8/14 8:57, SeongJae Park 写道:
+> > On Wed, 13 Aug 2025 10:25:44 -0700 SeongJae Park <sj@kernel.org> wrote:
+> >
+> >> Hello Quanmin,
+> >>
+> >> On Wed, 13 Aug 2025 13:06:50 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+> >>
+> >>> Previously, DAMON's physical address space monitoring only supported
+> >>> memory ranges below 4GB on LPAE-enabled systems. This was due to
+> >>> the use of 'unsigned long' in 'struct damon_addr_range', which is
+> >>> 32-bit on ARM32 even with LPAE enabled.
+> >>>
+> >>> Implements DAMON compatibility for ARM32 with LPAE enabled.
+> >> Thank you for working on this, Quanmin!
+> >>
+> >>> Patches 01/16 through 10/16 are from the mailing list[1], add a new core
+> >>> layer parameter called 'addr_unit'. Operations set layer can translate a
+> >>> core layer address to the real address by multiplying the parameter value
+> >>> to the core layer address.
+> >>>
+> >>> Patches 11/16 through 14/16 extend and complement patches 01~10, addressing
+> >>> various issues introduced by the addr_unit implementation.
+> >>>
+> >>> Patches 15/16 and 16/16 complete native DAMON support for 32-bit systems.
+> >> Overall, looks good to me.  I have a few change requests including below major
+> >> ones, though.
+> >>
+> >> First, let's squash patches for fixing problems made with patches 1-10 into
+> >> patches 1-10.  If you don't mind, I will post RFC v2 of those so that you can
+> >> pick into your series.
+> >>
+> >> Second, let's keep DAMOS stats in 'unsigned long' type.  This require fixups of
+> >> patches 1-10.  If you don't mind, I will also do this in RFC v2 of those.
+> > Instead of posting completely new RFC v2 of the ten patches, I think posting
+> > fixup patches as replies to this thread might be a better approach.  I will
+> > make fixups first, see what looks easier for working together with you, and
+> > either post entirely new version of the patch series, or send individual fixups
+> > as replies to each patch of this thread.
+> >
+> > And one more questions.  What is the baseline if this series?  I cannot simply
+> > apply these patches on mm-unstable or mm-new.  It would be nice if you could
+> > share a git tree having these patches fully applied, since 'cherry-pick' is
+> > easier than 'am' for me.
 > 
-> - adjascent ==> adjacent
-> in Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> Hi SJ,
 > 
-> - succeessful ==> successful
-> in Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-> 
-> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+> Thank you for your detailed suggestions on the patch series. Please allow me
+> some time to thoroughly review each of your recommendations.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Thanks.
+No worry, please take your time :)
 
-> ---
->  Documentation/driver-api/cxl/devices/device-types.rst           | 2 +-
->  .../cxl/platform/example-configurations/one-dev-per-hb.rst      | 2 +-
->  Documentation/driver-api/thermal/exynos_thermal_emulation.rst   | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+> I haven’t responded
+> to every point immediately because I’d like to first attempt updating the patches
+> accordingly. If I encounter any questions or issues during the process, I’ll promptly
+> reach out to discuss them with you, very appreciate your patience and guidance.
+
+Sounds good.
+
 > 
-> diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
-> index 923f5d89bc04..7f69dfa4509b 100644
-> --- a/Documentation/driver-api/cxl/devices/device-types.rst
-> +++ b/Documentation/driver-api/cxl/devices/device-types.rst
-> @@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
->  Typically used for initialization, configuration, and I/O access for anything
->  other than memory (CXL.mem) or cache (CXL.cache) operations.
->  
-> -The Linux CXL driver exposes access to .io functionalty via the various sysfs
-> +The Linux CXL driver exposes access to .io functionality via the various sysfs
->  interfaces and /dev/cxl/ devices (which exposes direct access to device
->  mailboxes).
->  
-> diff --git a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-> index aebda0eb3e17..a4c3fb51ea7d 100644
-> --- a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-> +++ b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
-> @@ -10,7 +10,7 @@ has a single CXL memory expander with a 4GB of memory.
->  Things to note:
->  
->  * Cross-Bridge interleave is not being used.
-> -* The expanders are in two separate but adjascent memory regions.
-> +* The expanders are in two separate but adjacent memory regions.
->  * This CEDT/SRAT describes one node per device
->  * The expanders have the same performance and will be in the same memory tier.
->  
-> diff --git a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-> index c21d10838bc5..f77d27c25ce2 100644
-> --- a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-> +++ b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
-> @@ -32,7 +32,7 @@ Exynos emulation mode requires synchronous of value changing and
->  enabling. It means when you want to update the any value of delay or
->  next temperature, then you have to enable emulation mode at the same
->  time. (Or you have to keep the mode enabling.) If you don't, it fails to
-> -change the value to updated one and just use last succeessful value
-> +change the value to updated one and just use last successful value
->  repeatedly. That's why this node gives users the right to change
->  termerpature only. Just one interface makes it more simply to use.
->  
+> By the way, this patch series is based on linux-next(commit:2674d1eadaa2).
 
--- 
-~Randy
+Thank you for sharing this.  From the next time, please use mm-new[1] as a
+baseline for DAMON patches if there is no reason to not do so.
+
+[1] https://origin.kernel.org/doc/html/latest/mm/damon/maintainer-profile.html#scm-trees
+
+
+Thanks,
+SJ
+
+[...]
 
