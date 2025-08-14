@@ -1,63 +1,66 @@
-Return-Path: <linux-kernel+bounces-768448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62BBBB2611D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E83B26123
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A5F8885800
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3A13A214E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBB82F531D;
-	Thu, 14 Aug 2025 09:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54392FFDC8;
+	Thu, 14 Aug 2025 09:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWXt7W3y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxSST9/E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE0C2FABFB;
-	Thu, 14 Aug 2025 09:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242C72EAB95;
+	Thu, 14 Aug 2025 09:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755163879; cv=none; b=Is0ZfdNM4DgIWfdzkmUs5Mzwsam3u4BhBUhaLP/V1Jjl8jVYrIyPn11GTg+k7AeiXvN9DNCFSWTl8bBYWCLKfBVK6IyPYprLW+1MEenG2Q8r3cT4iYSOimMTjsx9fOsRNNI0KQkihULojHEMkNHaNQiYcgYKN+kQzPJDzmSMI4o=
+	t=1755163884; cv=none; b=VQU/P9jzEy6tGF4QOLZjs8KJZQmNp0RjOyTfymRH1CBzzKY29efbiweIELA87c7oaL9rnWlq+rhLwtSUM11t2PYRFjwAmmuEwiSPa5LHSsY+o5hWZtrHpZxpyBwR+MNzGlMTIBBapFFH3a4dd3t2LaDSvxFUP+sWXYECPy9Km1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755163879; c=relaxed/simple;
-	bh=gVyxB1Di/2E8IPGLNeHV1iWeZXC/jQa+aBKyc3yL/O4=;
+	s=arc-20240116; t=1755163884; c=relaxed/simple;
+	bh=yKJUWm1zLKi1m/VPpREySff4bPrqQHo2VgSLpYvSluo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sywOjobQRKqBADCuDzMwHdrTb+G6zZaFfILVcI8XXEkIFCREJ4acrIFSkSfvybhXBW4jiI1FhFA1KSFcGEJsQjF1JuLMHmNqdpBEQBowMDmHjOHLj0zlWolVm3xQztDguKuG9vMdswkQkeFX2Ya3LxokvhPXO8bhegcd8tZ5chs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWXt7W3y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BE7C4CEEF;
-	Thu, 14 Aug 2025 09:31:16 +0000 (UTC)
+	 MIME-Version; b=Va+KAnr6IPobbXzGkJGkcJiegUdc9RRacX1dcoycG/No1eLAdmRlCjQYBs3MRqLyeIp90qIEspWLUOrX4iRMA1RF5IJUExOQYqcPt3dL7rK/BbEG7ozAVtpdd7dY0yYtcDmWcg/nYYnkhvtfFzgmEP6jL2Nbh34uw/HtZuYWzVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxSST9/E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A7DAC4CEED;
+	Thu, 14 Aug 2025 09:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755163879;
-	bh=gVyxB1Di/2E8IPGLNeHV1iWeZXC/jQa+aBKyc3yL/O4=;
+	s=k20201202; t=1755163884;
+	bh=yKJUWm1zLKi1m/VPpREySff4bPrqQHo2VgSLpYvSluo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nWXt7W3ykBE+CGCc/BwgDp+tcMOXo40jPetIeBoIf5YzrKWYXdLnCe1I91e1u9VXL
-	 TA/6rB9PHeO/C0GvHUTDWIAA3PqQ7YhdkLpXw1GAsBNj/B40CwPT+QjyoUH5A9ZQH6
-	 iAiW0gR/B54UDhbJT6LMhI8wLXC4m6awY8iVNqEoB3V7GvWLYWXFTP4ndLnHJib1oY
-	 YgloZiQaG/WXFl+Opc02Moi9Kd9G7LMYyR2vEYtIGYnXOK5W4MMfsrHF6DXV3VKGRC
-	 MTCzmSLiq0HmnMbgpcD7ak6Rc/bCBx3+FjGCqAdGVKTS5ddwqMsaEwBlrSVhHRzjb2
-	 ivFOpBJJsIIbg==
+	b=kxSST9/E5SjL+n89YastPyvyzkDMOtJ5q7V6TqcUjFuLgzUbcauZQcC0M4PewJ9ln
+	 c0Nrc1goBx8OEwwt1C/0zEh6g6ULihnrut8r2Ck8ELDTi7NOtooZi2jA7kHhWaDOk0
+	 FCPNH42dMrlD25ILDTxCp/PaVcQyULspu4GDAr17IQe4KwhRUuko1hg9G/QqnNC+eF
+	 F6pHarsNFPsiA+LXo1qQw5EtkM046JYJn+wbla3iuETL0zK/iKwYtRtHWMzFrgt35r
+	 tUNY9S0ruMTmiy4lerhidIjUw88nN/S5rJQAm4yvdbEpbbKOzSWi0wjdAUWwfOtJug
+	 M7NjGr8sj4Zug==
 From: Benno Lossin <lossin@kernel.org>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
+To: Andreas Hindborg <a.hindborg@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
 	Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
 	Gary Guo <gary@garyguo.net>,
 	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
 	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: netdev@vger.kernel.org,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Yutaro Ohno <yutaro.ono.418@gmail.com>,
+	Manas <manas18244@iiitd.ac.in>,
+	Xizhe Yin <xizheyin@smail.nju.edu.cn>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 04/11] rust: phy: replace `MaybeUninit::zeroed().assume_init()` with `pin_init::zeroed()`
-Date: Thu, 14 Aug 2025 11:30:31 +0200
-Message-ID: <20250814093046.2071971-5-lossin@kernel.org>
+Subject: [PATCH v3 05/11] rust: block: replace `core::mem::zeroed` with `pin_init::zeroed`
+Date: Thu, 14 Aug 2025 11:30:32 +0200
+Message-ID: <20250814093046.2071971-6-lossin@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250814093046.2071971-1-lossin@kernel.org>
 References: <20250814093046.2071971-1-lossin@kernel.org>
@@ -77,24 +80,39 @@ the C side changed and is most likely incorrect.
 
 Signed-off-by: Benno Lossin <lossin@kernel.org>
 ---
- rust/kernel/net/phy.rs | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ rust/kernel/block/mq/gen_disk.rs | 3 +--
+ rust/kernel/block/mq/tag_set.rs  | 4 +---
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
-index 7de5cc7a0eee..3e5565a6a130 100644
---- a/rust/kernel/net/phy.rs
-+++ b/rust/kernel/net/phy.rs
-@@ -556,9 +556,7 @@ pub const fn create_phy_driver<T: Driver>() -> DriverVTable {
-         } else {
-             None
-         },
--        // SAFETY: The rest is zeroed out to initialize `struct phy_driver`,
--        // sets `Option<&F>` to be `None`.
--        ..unsafe { core::mem::MaybeUninit::<bindings::phy_driver>::zeroed().assume_init() }
-+        ..pin_init::zeroed()
-     }))
- }
+diff --git a/rust/kernel/block/mq/gen_disk.rs b/rust/kernel/block/mq/gen_disk.rs
+index cd54cd64ea88..75b90fe20c7d 100644
+--- a/rust/kernel/block/mq/gen_disk.rs
++++ b/rust/kernel/block/mq/gen_disk.rs
+@@ -93,8 +93,7 @@ pub fn build<T: Operations>(
+         name: fmt::Arguments<'_>,
+         tagset: Arc<TagSet<T>>,
+     ) -> Result<GenDisk<T>> {
+-        // SAFETY: `bindings::queue_limits` contain only fields that are valid when zeroed.
+-        let mut lim: bindings::queue_limits = unsafe { core::mem::zeroed() };
++        let mut lim: bindings::queue_limits = pin_init::zeroed();
  
+         lim.logical_block_size = self.logical_block_size;
+         lim.physical_block_size = self.physical_block_size;
+diff --git a/rust/kernel/block/mq/tag_set.rs b/rust/kernel/block/mq/tag_set.rs
+index c3cf56d52bee..dae9df408a86 100644
+--- a/rust/kernel/block/mq/tag_set.rs
++++ b/rust/kernel/block/mq/tag_set.rs
+@@ -38,9 +38,7 @@ pub fn new(
+         num_tags: u32,
+         num_maps: u32,
+     ) -> impl PinInit<Self, error::Error> {
+-        // SAFETY: `blk_mq_tag_set` only contains integers and pointers, which
+-        // all are allowed to be 0.
+-        let tag_set: bindings::blk_mq_tag_set = unsafe { core::mem::zeroed() };
++        let tag_set: bindings::blk_mq_tag_set = pin_init::zeroed();
+         let tag_set: Result<_> = core::mem::size_of::<RequestDataWrapper>()
+             .try_into()
+             .map(|cmd_size| {
 -- 
 2.50.1
 
