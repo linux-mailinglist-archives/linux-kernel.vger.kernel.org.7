@@ -1,116 +1,224 @@
-Return-Path: <linux-kernel+bounces-769282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD59B26C6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:23:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D43B26C50
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68B9F172649
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:17:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 242077BACE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0314254AF0;
-	Thu, 14 Aug 2025 16:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904E5199FD0;
+	Thu, 14 Aug 2025 16:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ec8Ya6XB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pio9G6wb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B177E1DD889;
-	Thu, 14 Aug 2025 16:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47AD25A344;
+	Thu, 14 Aug 2025 16:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755188237; cv=none; b=MGev7OGRX/HhairEvA+LWD/M86KukiK9yA36OiXCKVeHDow/1kqf+5A99fAX5br2ol2HuZrKIZjf1tArzHtFA5vKXtq4v6/Ap2WQQk9Y2fym75Nv5O+pSjrXx8YLRYNzudqUWV5+Oy7qXFnJPjZbOvbn7q7+oFs3cQoS8oOxi2M=
+	t=1755188239; cv=none; b=gAHVRx+FyTZAxrFZepEWlkzrEFEMEOly6caQ4M8ZKXl4aSzRWiIWw5jP/E7T4NUcWxfE9n6wn8vyeFJ3zUc8WpWVo2CRcKeJ104gjHkrpVba+4SJQte2KecrZr7A4ogr8Xez9Fy8O43TSyik02PfA5eZWBQft+BIhe2vlLT34rM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755188237; c=relaxed/simple;
-	bh=VP/ziay4XX20JtXwVWku6vtOhHXC9F3yoIDWnipRVhk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qhKU3tm26LkH0hhFgtLEdBrMdEvZ1SgK/IdK7K28JRK2q6oKcfaoGpO5eVcyv49WXw7zKVwOosJVHWQXEzaKKu82fE5nIcBXk+wYlRpYYhAqMN894xmd1yz/nV4P6hnNuHZ4zEKb/iR+SbomrFnhab1U8w8RLa3hBen3svF1gVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ec8Ya6XB; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755188236; x=1786724236;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=VP/ziay4XX20JtXwVWku6vtOhHXC9F3yoIDWnipRVhk=;
-  b=Ec8Ya6XBO8lDSCu0t7p9uNAMqPriYcuHX2wuAhnk2/nOaRXdBlEbe/N+
-   Q0fTDbjlnCGYvogIjCn4fm47nwK/d1Qu2u1Ng6fXvRyH+tQIwpWhLGtSa
-   TQqRO0jI2zFz2d2uuzOXBFAlxRlPFfJs2PXAx/ozBqjsd8IiAkOtIUPv8
-   Va5vrFgJoYZiCIDTsPirjCTAfxXzbbP72beI63Qr5/MaVNleOa0Db3WAW
-   GzF6R63tSAkQK1EkbzWJ2bld06+GpGrKVNUPxh6IdPet3BW81uwoqM3l5
-   FhtEqBca/JN6XS/S/Nxq5NW+gLV3vvhqOUFr8Pfm7cx0jdbeyeF6LUuA7
-   g==;
-X-CSE-ConnectionGUID: bLQ77NQ+RyGLNb5Hi+UNyQ==
-X-CSE-MsgGUID: Sy+6P0JHTEaonqyw56Vxpw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57435664"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="57435664"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 09:17:15 -0700
-X-CSE-ConnectionGUID: kUnWyTSASNmiq/wvy5LufQ==
-X-CSE-MsgGUID: j09L6sUWTfKzx8dpzmkifg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="166435476"
-Received: from inaky-mobl1.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.223.60])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 09:17:13 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Len Brown <lenb@kernel.org>,
-	Zaid Alali <zaidal@os.amperecomputing.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>,
-	"Lai, Yi1" <yi1.lai@intel.com>
-Subject: [PATCH] ACPI: APEI: EINJ: Check if user asked for EINJV2 injection
-Date: Thu, 14 Aug 2025 09:17:06 -0700
-Message-ID: <20250814161706.4489-1-tony.luck@intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755188239; c=relaxed/simple;
+	bh=t1D6JoRLNosJcvcAajcvRlnrHWGxzsuS/lzNJzOW0hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNsyJ78u3aa/XG8534vXKiXtbdZKZROf9woRYc+WJMjpD7sXK3f3WJxXVBMFT02FloP9Jxzz/QIgGQ5m7Y6Wlyvs/mV0t+/0PhW1X9RJC9tZHBUMxxAfxmPBe7opTviU21tuLlrKDV7Awy2NSib085rUnUhhQfGUjSB1AyA+yhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pio9G6wb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537E7C4CEED;
+	Thu, 14 Aug 2025 16:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755188239;
+	bh=t1D6JoRLNosJcvcAajcvRlnrHWGxzsuS/lzNJzOW0hI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pio9G6wbquRvNu83KBNo2X4ztLrxi/r01Yra2kDpuajo7CBkUHYYdvK4faGGh0HAb
+	 rjx5Jgv7eKKlNVHsDBdwh6KVPR/H86dc/0jE4Ulqbyw2S9fQgN/GnAbwPsbeyMyOwh
+	 Chfx2v5gw69odeDgxyQhKNpeonaJFTYVzkOrmTP0ZtQraFQBTrcxusI+woyhb3Mu2X
+	 KOQEiRaxdyE0Vkl5ywCpafmAZVj8+ZlCmDK2W9tI8bja1kwi6xsM2NdYTCv+aZ8bva
+	 3+GYCvPHocaHi8HN9R6QSONg6DmD7PBKMBCGQ+nBxRsAEyuM6T6HEnlxupBmmEUjU1
+	 sRjtoDvFgxQow==
+Date: Thu, 14 Aug 2025 11:17:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Steven Price <steven.price@arm.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v2 2/2] accel: Add Arm Ethos-U NPU driver
+Message-ID: <20250814161718.GA3117411-robh@kernel.org>
+References: <20250811-ethos-v2-0-a219fc52a95b@kernel.org>
+ <20250811-ethos-v2-2-a219fc52a95b@kernel.org>
+ <CAPj87rNG8gT-Wk+rQnFMsbCBqX6pL=qZY--_5=Z4XchLNsM5Ng@mail.gmail.com>
+ <CAPj87rNDPQqTqj1LAdFYmd4Y12UHXWi5+65i0RepkcOX3wvEyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPj87rNDPQqTqj1LAdFYmd4Y12UHXWi5+65i0RepkcOX3wvEyA@mail.gmail.com>
 
-On an EINJV2 capable system, users may still use the old injection
-interface but einj_get_parameter_address() takes the EINJV2 path to map
-the parameter structure. This results in the address the user supplied
-being stored to the wrong location and the BIOS injecting based on an
-uninitialized field (0x0 in the reported case).
+On Thu, Aug 14, 2025 at 11:51:44AM +0100, Daniel Stone wrote:
+> Hi Rob,
 
-Check the version of the request when mapping the EINJ parameter
-structure in BIOS reserved memory.
+Thanks for the review.
 
-Fixes: 691a0f0a557b ("ACPI: APEI: EINJ: Discover EINJv2 parameters")
-Reported-by: Lai, Yi1 <yi1.lai@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- drivers/acpi/apei/einj-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> On Tue, 12 Aug 2025 at 13:53, Daniel Stone <daniel@fooishbar.org> wrote:
+> > On Mon, 11 Aug 2025 at 22:05, Rob Herring (Arm) <robh@kernel.org> wrote:
+> > > +static int ethos_ioctl_submit_job(struct drm_device *dev, struct drm_file *file,
+> > > +                                  struct drm_ethos_job *job)
+> > > +{
+> > > +       [...]
+> > > +       ejob->cmd_bo = drm_gem_object_lookup(file, job->cmd_bo);
+> > > +       cmd_info = to_ethos_bo(ejob->cmd_bo)->info;
+> > > +       if (!ejob->cmd_bo)
+> > > +               goto out_cleanup_job;
+> >
+> > NULL deref here if this points to a non-command BO. Which is better
+> > than wild DMA, but hey.
+> 
+> Sorry this wasn't more clear. There are two NULL derefs here. If you
+> pass an invalid BO, ejob->cmd_bo is dereferenced before the NULL
+> check, effectively neutering it and winning you a mail from the other
+> Dan when he runs sparse on it. Secondly you pass a BO which is valid
+> but not a command BO, cmd_info gets unconditionally dereferenced so it
+> will fall apart there too.
 
-diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-index bf8dc92a373a..99f1b841fba9 100644
---- a/drivers/acpi/apei/einj-core.c
-+++ b/drivers/acpi/apei/einj-core.c
-@@ -315,7 +315,7 @@ static void __iomem *einj_get_parameter_address(void)
- 			memcpy_fromio(&v5param, p, v5param_size);
- 			acpi5 = 1;
- 			check_vendor_extension(pa_v5, &v5param);
--			if (available_error_type & ACPI65_EINJV2_SUPP) {
-+			if (is_v2 && available_error_type & ACPI65_EINJV2_SUPP) {
- 				len = v5param.einjv2_struct.length;
- 				offset = offsetof(struct einjv2_extension_struct, component_arr);
- 				max_nr_components = (len - offset) /
--- 
-2.50.1
+Yep. And there's a 3rd issue that I'm not setting 'ret' to an error 
+value.
 
+> 
+> > > +       for (int i = 0; i < NPU_BASEP_REGION_MAX; i++) {
+> > > +               struct drm_gem_object *gem;
+> > > +
+> > > +               if (job->region_bo_handles[i] == 0)
+> > > +                       continue;
+> > > +
+> > > +               /* Don't allow a region to point to the cmd BO */
+> > > +               if (job->region_bo_handles[i] == job->cmd_bo) {
+> > > +                       ret = -EINVAL;
+> > > +                       goto out_cleanup_job;
+> > > +               }
+> >
+> > And here I suppose you want to check if the BO's info pointer is
+> > non-NULL, i.e. disallow use of _any_ command BO instead of only
+> > disallowing this job's own command BO.
+> 
+> This is the main security issue, since it would allow writes a
+> cmdstream BO which has been created but is not _the_ cmdstream BO for
+> this job. Fixing that is pretty straightforward, but given that
+> someone will almost certainly try to add dmabuf support to this
+> driver, it's also probably worth a comment in the driver flags telling
+> anyone who tries to add DRIVER_PRIME that they need to disallow export
+> of cmdbuf BOs.
+
+What would be the usecase for exporting BOs here?
+
+I suppose if one wants to feed in camera data and we need to do the 
+allocation in the ethos driver since it likely has more constraints 
+(i.e. must be contiguous). (Whatever happened on the universal allocator 
+or constraint solver? I haven't been paying attention for a while...)
+
+> Relatedly, I think there's missing validity checks around the regions.
+> AFAICT it would be possible to do wild memory access:
+> * create a cmdstream BO which accesses one region
+> * submit a job using that cmdstream with one data BO correctly
+> attached to the region, execute the job and wait for completion
+> * free the data BO
+> * resubmit that job but declare zero BO handles
+> 
+> The first issue is that the job will be accepted by the processing
+> ioctl, because it doesn't check that all the regions specified by the
+> cmdstream are properly filled in by the job, which is definitely one
+> to fix for validation. The second issue is that region registers are
+> not cleared in any way, so in the above example, the second job will
+> reuse the region configuration from the first. I'm not sure if
+> clearing out unused job fields would be helpful defence in depth or
+> not; your call.
+
+I had considered clearing unused the region registers. That really has 
+little effect. There's not any way to disable regions. And region 
+offsets are a full 64-bits, so even if one set base address to 0 or some 
+faulting region, a cmdstream can still get to any address.
+
+The other issue is just whether there's leftover cmdstream state from 
+prior jobs. That's why the cmd_info is initialized to all 1s so that the 
+cmdstream has to setup all the state.
+
+> > (There's also a NULL deref if an invalid GEM handle is specified.)
+> 
+> This one is similar to the first; drm_gem_object_lookup() return isn't
+> checked so it gets dereferenced unconditionally.
+
+Here's the reworked (but not yet tested) code which I think should solve 
+all of the above issues. There was also an issue with the cleanup path 
+that we wouldn't do a put on the last BO if there was a size error. We 
+just need to set ejob->region_bo[ejob->region_cnt] and increment 
+region_cnt before any checks.
+
+	ejob->cmd_bo = drm_gem_object_lookup(file, job->cmd_bo);
+	if (!ejob->cmd_bo) {
+		ret = -ENOENT;
+		goto out_cleanup_job;
+	}
+	cmd_info = to_ethos_bo(ejob->cmd_bo)->info;
+	if (!cmd_info) {
+		ret = -EINVAL;
+		goto out_cleanup_job;
+	}
+
+	for (int i = 0; i < NPU_BASEP_REGION_MAX; i++) {
+		struct drm_gem_object *gem;
+
+		/* Can only omit a BO handle if the region is not used or used for SRAM */
+		if (!job->region_bo_handles[i] &&
+		    (!cmd_info->region_size[i] || (i == ETHOS_SRAM_REGION && job->sram_size)))
+			continue;
+
+		gem = drm_gem_object_lookup(file, job->region_bo_handles[i]);
+		if (!gem) {
+			dev_err(dev->dev,
+				"Invalid BO handle %d for region %d\n",
+				job->region_bo_handles[i], i);
+			ret = -ENOENT;
+			goto out_cleanup_job;
+		}
+
+		ejob->region_bo[ejob->region_cnt] = gem;
+		ejob->region_bo_num[ejob->region_cnt] = i;
+		ejob->region_cnt++;
+
+		if (to_ethos_bo(gem)->info) {
+			dev_err(dev->dev,
+				"Cmdstream BO handle %d used for region %d\n",
+				job->region_bo_handles[i], i);
+			ret = -EINVAL;
+			goto out_cleanup_job;
+		}
+
+		/* Verify the command stream doesn't have accesses outside the BO */
+		if (cmd_info->region_size[i] > gem->size) {
+			dev_err(dev->dev,
+				"cmd stream region %d size greater than BO size (%llu > %zu)\n",
+				i, cmd_info->region_size[i], gem->size);
+			ret = -EOVERFLOW;
+			goto out_cleanup_job;
+		}
+	}
 
