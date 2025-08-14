@@ -1,95 +1,96 @@
-Return-Path: <linux-kernel+bounces-768277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11355B25F29
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:40:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2A6B25F30
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 007A95A7B7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 534551634A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B3E2E7BBE;
-	Thu, 14 Aug 2025 08:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F27C2E8E1A;
+	Thu, 14 Aug 2025 08:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="jamsIrHa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MUwzqnsp"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="Lko/orpi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b0G/73GG"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC022DE709
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2452E765B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160853; cv=none; b=TDZjvfLl9cSbzh0QyKGm0VkcvTNnrcE6U9KtrMd9gwe30Zy6EBbHQvVlFWJObU/FDXmsFmADuU9XGAMjYO9fqjeekbuCe+i4SbthQ2wlzCcj1M59BDHSHgG7RUl1wdlhaz91ajN/odDundRKfXLdBWRmpdryDIzYAygUbfu48W8=
+	t=1755160855; cv=none; b=T88YMJXiv3ohBfy69TVv2bZfBZX7e4yq0pfQ+KqZiUbotkoasK+GFmMKx+bA2xMYL5K2lrmTSA9aoF4PlXQZxcIsmjPOkcV8tp4H09MpZFb7gK/IdsPBeVKjEph9lcQdad8dBezGzskqgzAQ5e9wXcWd5XfCipFJrHWF0Ki5m9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160853; c=relaxed/simple;
-	bh=ZV9g15yATwUQ4KRLeEZL4tJS6hLbRv80h5AbIBbK0Wc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bAZ1D+9XSppNd33x/rtG36/HMMoKB9NABFVHUVLp8vDmz1M8Z4sH83Jk9yXb0SE7p+DQ3EXWv4HDbEybe45K6pGZLjwHPLSK+I+KIM3rDc5W74NUPzCRaann6nQUuJyPfOvByHBHUSvlkHa5Z4PstPWtN+U0+MnL+bqiQm7yj1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=jamsIrHa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MUwzqnsp; arc=none smtp.client-ip=103.168.172.155
+	s=arc-20240116; t=1755160855; c=relaxed/simple;
+	bh=mpHvjrYtpy7asIuYnTB4flgke7dzGuWpfolSDHarVSw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=I+qZYKcx6vEt8ncKZyi9HopecJoA5HsibDcI8LKMQQ8WgcLlydQ5NK3ucUUQUNS5f17iBqyqIUxHvkvY5fKAPDTAF6cCZcqfDneI26ha3gnGgPXaNZLmNyegotJauMaRVq8eI3EVG1v+nZMYCRWRI+zUCviwUShB6Kel34P3Kmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=Lko/orpi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b0G/73GG; arc=none smtp.client-ip=103.168.172.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3B59F14001B4;
-	Thu, 14 Aug 2025 04:40:50 -0400 (EDT)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id B36D5EC020C;
+	Thu, 14 Aug 2025 04:40:52 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 14 Aug 2025 04:40:50 -0400
+  by phl-compute-10.internal (MEProxy); Thu, 14 Aug 2025 04:40:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm2; t=1755160850; x=1755247250; bh=vV
-	TgLcT5IoFf0DgDdDv2GD6JnpUqRszQ9RbVmywYabk=; b=jamsIrHaBsps8Yw1bx
-	raYGHW7I75SD7qsxWM4SSRyiWhqhvweu8rxP1BIrqmdP0DBMF2Gy2vXdZ4PowCzi
-	GLajaXAtUhaJ2WgAm6oAyKEBm+XJ4ggbajTrI3/d9WknT8uO/bkfEYrc7AtvBKRU
-	ho9K97dkK+fWLtUc0vu8f3h8ZoHNn4+4/tCnugLPczqk+kE4zixkmD7/wJneV7XZ
-	mexPxQasxSQJOxU9pKucATy67ge0b4hGhO6A698MJeUPK4vPC2dbfCHSALpO/1C9
-	1MnbToxyABzjFnShEzEUzgVnjLGuzCRoF5SQX4oyOvBhu9s2/8fTLmAc8MEPp6n7
-	1Kdg==
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1755160852;
+	 x=1755247252; bh=dInGrJE+Wye5FBXM3QXXiTdcsGBJk2tEBTfaT2DZ2P0=; b=
+	Lko/orpi4SK6byknfmhH4e98miSBxF84PL7TaHkXdNJcTZkiL+mtDS6ENTs8jY4W
+	frcJ2jPFiZ6cP2ueYCgdW8bQO2/gxlqA/cqcrPOLkbzdDEP47rqctEi7XNyI+5Tj
+	/Qs29MGL7wt0vk8WF0Xf0Jb2v4yXxefP7qFk9/8StJs2H6uSsqVGJta9/+ssOn7j
+	7q/Zq/RjuwkxuVY+jpJRmrW13ZqjVBvxuBDgaQhhOkqHeb5hWfnE2j0Bh9/PiezR
+	T7JrGEfYsShE5L6JefI7FL8oRZdz1uw+pjEtcfti5oilRA6aIVZDl81136M/uwAB
+	3PU+Q8zeC6AqvY4Fqaz4fA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1755160850; x=1755247250; bh=vVTgLcT5IoFf0DgDdDv2GD6JnpUq
-	RszQ9RbVmywYabk=; b=MUwzqnspf82PC87Yp5R0aovZj7msskrjaIeASNmGF1sn
-	9i/QcLeEi1LgzadCFD33tDXToj8ZebKdELT5/gCo1Meq+6kqad2RFjGip2s6IA+g
-	nTiC6csLAgYTINq0cmRAiQTFsrykRsuraBvt8L5LInHDzc4ZQr9+wZ1R9Q12qP/D
-	opIO5yfOj2WqMJP7wRMelUCTWK/+Ez73x0HtQG8a7hsUszG/4K96ULGiYa+N6EIy
-	S7T9wXgeIcaQHUfjRk+zk87qNOQXfheoRqsiJsL92oO2Ks4npsctfokv+3u1rGSg
-	7BNE94ZD/+gSJrRWX5kSWcDnx+BYuQ/RN0MMrCnFbA==
-X-ME-Sender: <xms:EKGdaPkhlJQh62dE6OodIez8UJeXp33Dgjic4ZTrgfTRXQu3S4L4uA>
-    <xme:EKGdaIxOFBaW2URHtdczN8iBIlorqL7DNLFTDr4Ltg0YZBJX74toCLWpLRCiKhas2
-    Px0P4VKC6Dtj_JbU4Y>
-X-ME-Received: <xmr:EKGdaCzZtNulyg04eaIGQ5ueAhdGYymJ4QMmNwTfJiQ8gVxeEJ50h2Qf1Uwth5UevBdL5AEeCD7HsU_6eytegT63K8baltdbmkd9tQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtieefucetufdoteggodetrf
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1755160852; x=
+	1755247252; bh=dInGrJE+Wye5FBXM3QXXiTdcsGBJk2tEBTfaT2DZ2P0=; b=b
+	0G/73GGv25R4Dn57qSO1jTgpX7OXss73gTjqFM7Oo3rBZ5BGDq4jzLtwdLcgOanY
+	bjp5QjzyzBT8cykXLBCOmP1FQqtA+tIzLXbTjQUP0DHHQu3aFQd86c9yWe7q73hr
+	BdpTW7Njh+nSaI5w1bXHphvxRSQP4lny15JFDRavBg2433A+tBtKcybfBchSG9Us
+	yHUtXm5g9kV99OoJYEy8S0apSaF/ZQVN2ZJadLIUqG5XwzYXAsFOhxkwJIzWtYxC
+	ieK+ZzAl+nriRFYqMtrirzltak4flimoH1+06LqNMarczUWKYynqw7wRABUueejm
+	7kH9AWIvedwKZbhpYMSQQ==
+X-ME-Sender: <xms:E6GdaEnqMQwD_5dvyZxxPdb-CA23pmcwlgSuyvYsrGcs1IacO3I6_Q>
+    <xme:E6GdaJx4-s8tuXuKdl_RwAl5_es-lHyDLLNQ93XJ-RS_IHjeZKy5nlmvx9vgq8EkO
+    ujWwXHB4RuleeGmMBg>
+X-ME-Received: <xmr:E6GdaPwhP3P5xGk9pkKNxrmIZLH6vmcYYxprQtFZuwx6-1eEchNujbvwn3MP7a-bmdqJiEp9wlpMkcGdD0iaPWKYhSAHHXqHZxpPYA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtiedvucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpeflrghnnhgvucfi
-    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhephfdtue
-    duleejffduvdehkeeutdefhfdtvdeiieegheffleefvedvhfeggeegffefnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurd
-    hnvghtpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohhmmhhusehlihhsth
-    hsrdhlihhnuhigrdguvghvpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshht
-    pdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhmpdhrtghpthhtoh
-    epjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhs
-    rdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlse
-    hlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepnhgvrghlsehgohhm
-    phgrrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrh
-    hnvghlrdhorhhg
-X-ME-Proxy: <xmx:EKGdaIUKmPxTuOIURS0yoVF5PSqYJ1R_zOe_Sng_hLqB5W3Jn-hcOg>
-    <xmx:EKGdaJREdjzSYfD5xoDZ1C9UMNk8ADbLHWsuqIKbsepoP54gWCsCrA>
-    <xmx:EKGdaAQOVgpBMUP839qnZVrV-u9QNJMCYcf4viXjthJUODE4HaQLvw>
-    <xmx:EKGdaBeDsbgdTpG6P3KZFW1wDVj_eDzL8kdLqx8-OOy-qYbD1q2xyw>
-    <xmx:EqGdaC2EAjQZsslXUinEzZDPPAa4TbUIM0wnFZqCEG-a1sqJskyq2lOJ>
+    gurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdejnecuhfhrohhmpeflrghnnhgv
+    ucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    ehheeileduffehteeihfdvtdelffdutdeludduiedutedvfeffheekhefgtedtnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrg
+    hurdhnvghtpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohhmmhhusehlih
+    hsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdr
+    shhtpdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhmpdhrtghpth
+    htohepjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhs
+    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvg
+    hlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepnhgvrghlsehg
+    ohhmphgrrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:E6GdaBXroz8lPxjww_1gpBAT_vuCq1zxaGWsfN0w-op29NwH-9_wVg>
+    <xmx:E6GdaORBBlmqCZyayryKfGCygdHeRDuRkYa5zGyeMI_Z_Ab78ZhfbQ>
+    <xmx:E6GdaBTJ-nZo50ho-eHIU87xcmcdXu6mdEb8GM9imWYLBRoZ9gRSgQ>
+    <xmx:E6GdaOeIpU34LfxYAbzvwPp1xzoS5giolcmwtzYseE3zlnYxgGGtCw>
+    <xmx:FKGdaH2mSOs3f8J27TU-24IOAwytsu9nMTjxo5VO-bVL66M-t36_Xc4->
 Feedback-ID: i47b949f6:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 14 Aug 2025 04:40:48 -0400 (EDT)
+ 14 Aug 2025 04:40:51 -0400 (EDT)
 From: Janne Grunau <j@jannau.net>
-Subject: [PATCH 0/3] iommu: apple-dart: Four level page table support
-Date: Thu, 14 Aug 2025 10:40:23 +0200
-Message-Id: <20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net>
+Date: Thu, 14 Aug 2025 10:40:24 +0200
+Subject: [PATCH 1/3] iommu: apple-dart: Make the hw register fields u32s
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,10 +99,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAPegnWgC/x3MSwqAMAxF0a1IxgasH6xuRRwEfWqgaGlFBHHvF
- odncO9DEUERqc8eCrg06rEnmDyjaZN9BeucTGVRNoU1hsV7B54lnFw7XHCR7dIJrEymqltKoQ9
- Y9P6nw/i+H3C0rOJkAAAA
-X-Change-ID: 20250811-apple-dart-4levels-8f9ae8ac1347
+Message-Id: <20250814-apple-dart-4levels-v1-1-db2214a78c08@jannau.net>
+References: <20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net>
+In-Reply-To: <20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net>
 To: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
  Neal Gompa <neal@gompa.dev>, Joerg Roedel <joro@8bytes.org>, 
  Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
@@ -109,40 +109,68 @@ Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
  iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
  Janne Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1010; i=j@jannau.net;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1124; i=j@jannau.net;
  s=yk2024; h=from:subject:message-id;
- bh=ZV9g15yATwUQ4KRLeEZL4tJS6hLbRv80h5AbIBbK0Wc=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhoy5C/m8XQ59ip4p/j33DvepbJ3ftzPmHdcRW39g++EuB
- q2bDDemdZSyMIhxMciKKbIkab/sYFhdoxhT+yAMZg4rE8gQBi5OAZjIZBVGhnMvtWu2vn/ruinq
- /fqnrtNXCFe2X/qy3GtV1/8C1nWZC9sYGfpMuJWFKzQ3FMRxmbJGJgWbqHNemSe2VM3gddA0V8N
- XHAA=
+ bh=Ah2FtuAI2Pz9rAwG3UdfiegkoAw7DTu7B/zqezSouiI=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhoy5C/lm/zDfVRph9d3OmFnl3Qox5ramw3xB3WnW0k+PW
+ 19PLNXpKGVhEONikBVTZEnSftnBsLpGMab2QRjMHFYmkCEMXJwCMJEFWgz/fVoq+NS6AxoKJN5e
+ knb75SSVz7j72+tXuYv5/73SXcn6jJFhV1DhUYYXrw7tf+Yl/OjfxDvTdPWuF8TWmktYRbRuSD3
+ PDgA=
 X-Developer-Key: i=j@jannau.net; a=openpgp;
  fpr=8B336A6BE4E5695E89B8532B81E806F586338419
 
-The DART instances found in T602x based SoCs (Apple's M2 Pro/Max/Ultra)
-indicate an IAS of 42 bit. This results in alloc_io_pgtable_ops()
-failing as io-pgtable-dart supports at most 36-bit IAS.
-The t8110 DART design supports 4-level page tables. Implement support
-for this in io-pgtable-dart and mark DART stream with more than 36-bit
-IAS as 4-level page tables.
+From: Hector Martin <marcan@marcan.st>
 
+The registers are 32-bit and the offsets definitely don't need 64 bits
+either, these should've been u32s.
+
+Signed-off-by: Hector Martin <marcan@marcan.st>
 Signed-off-by: Janne Grunau <j@jannau.net>
 ---
-Hector Martin (3):
-      iommu: apple-dart: Make the hw register fields u32s
-      iommu: io-pgtable: Add 4-level page table support
-      iommu: apple-dart: Add 4-level page table support
+ drivers/iommu/apple-dart.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
- drivers/iommu/apple-dart.c      |  47 ++++++++-----
- drivers/iommu/io-pgtable-dart.c | 143 ++++++++++++++++++++++++----------------
- include/linux/io-pgtable.h      |   1 +
- 3 files changed, 118 insertions(+), 73 deletions(-)
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250811-apple-dart-4levels-8f9ae8ac1347
+diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
+index 190f28d76615159527649cd288df395a50d950ef..e72a93e78e26ca61b233c83d439dbdfadf040fc6 100644
+--- a/drivers/iommu/apple-dart.c
++++ b/drivers/iommu/apple-dart.c
+@@ -166,22 +166,22 @@ struct apple_dart_hw {
+ 
+ 	int max_sid_count;
+ 
+-	u64 lock;
+-	u64 lock_bit;
++	u32 lock;
++	u32 lock_bit;
+ 
+-	u64 error;
++	u32 error;
+ 
+-	u64 enable_streams;
++	u32 enable_streams;
+ 
+-	u64 tcr;
+-	u64 tcr_enabled;
+-	u64 tcr_disabled;
+-	u64 tcr_bypass;
++	u32 tcr;
++	u32 tcr_enabled;
++	u32 tcr_disabled;
++	u32 tcr_bypass;
+ 
+-	u64 ttbr;
+-	u64 ttbr_valid;
+-	u64 ttbr_addr_field_shift;
+-	u64 ttbr_shift;
++	u32 ttbr;
++	u32 ttbr_valid;
++	u32 ttbr_addr_field_shift;
++	u32 ttbr_shift;
+ 	int ttbr_count;
+ };
+ 
 
-Best regards,
 -- 
-Janne Grunau <j@jannau.net>
+2.50.1
 
 
