@@ -1,194 +1,212 @@
-Return-Path: <linux-kernel+bounces-768272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6B13B25F15
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:39:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC0EDB25F17
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCEEA72256F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7959017440E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A09E2E7BB5;
-	Thu, 14 Aug 2025 08:38:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB8F2E88BE;
+	Thu, 14 Aug 2025 08:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b="NeOPeJPq"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzwSedKi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264991A317D;
-	Thu, 14 Aug 2025 08:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6182DE6E3;
+	Thu, 14 Aug 2025 08:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160736; cv=none; b=jbwsfqyKfgu5KEx3T+yakRluOZMRW/W9CUDcGT6V+y0gkFLZPT9wLDpxfEajOqO8yfGuTnKtDnSpP/1zgFGuJuBmEl2OulJa/7Tr4gIa70xZdbmeS5/OB+CN9h6JgGv+acJPGgVPeYIvO6Yzsd6ba6y8d89wgYhvbv11tp2WkDk=
+	t=1755160759; cv=none; b=mEEYO2ZchR+JOudMjDykGe/oIrM1qlKJNjxa2gQIJ/VleOeYxe58ZqxcHx2ar5iQtuyox+O3o92CvtobOdQ9YI7FNTh1aD91UXSHP+Q0UaoLjjTqWcaxeSBDjgIoPEPO2Nrg/qWEkui/X0G+XFtRTrCNTWp/EH5ZRzGAgN9b2Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160736; c=relaxed/simple;
-	bh=oC4w0r+Y8/lS2On04LFvZMxS/7HpI84hdXY8N9SeUYs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n1tSTQ6ZvG+KCJ8tAYz7lXoe0tTPPstcrWl92nDAO959JThza5VSXmBU/C1Ax531cF8T0MreyOQ4NrVVIpWfCaK+bTLZd2T3KXWEpj8JgI9u3dH7xQ7D7g5bE6TvjemFTXiEz39ZTMRbFEIk/uV4rAFA7gUtIVnx71TGVNky03s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com; spf=pass smtp.mailfrom=simcom.com; dkim=pass (1024-bit key) header.d=simcom.com header.i=@simcom.com header.b=NeOPeJPq; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=simcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simcom.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=simcom.com;
-	s=oxqy2404; t=1755160697;
-	bh=TmzLBsblzlVCGEigafIkJTDDPkH67MJneLNgOeHkKl0=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=NeOPeJPqg6hnP1cDxVt9Xw2IByLCMB87kEJGCiSz7AWfKwzQ+XPY9fIYCl4rs7yCa
-	 rVbyh12InNdt1a8lhPYM5kJwCzZzRo7+ulqrZAQ2ZMTGESdBfFWDyf4IklRl1FgLVW
-	 DKDVw5B1f5wfsoedT/R8vqcqS968b4oM+pwmq+mM=
-X-QQ-mid: zesmtpgz1t1755160695t54cc26cf
-X-QQ-Originating-IP: FSUdK7A9mQBvAWnD53mTRB/7AddW/leOstDRoZZH0XY=
-Received: from smart.. ( [116.2.183.233])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 14 Aug 2025 16:38:13 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6810780293316914624
-EX-QQ-RecipientCnt: 5
-From: "xiaowei.li" <xiaowei.li@simcom.com>
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"xiaowei.li" <xiaowei.li@simcom.com>
-Subject: [PATCH] USB: serial: option: add SIMCom 8230C compositions
-Date: Thu, 14 Aug 2025 16:38:11 +0800
-Message-Id: <20250814083811.2033720-1-xiaowei.li@simcom.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755160759; c=relaxed/simple;
+	bh=wfqWmiFu+hf5riWH1oiwtGbPEfN6D8DeAmej1du6BhY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMXcVxJCfNreOc4qPRMjxH9mc4ekPWjdgPFNvmfmb37KFp7ekrYmse3aDY9dVD1zpSRMCSU0D+za6eKgU9t06ZUSMQ1ustSRqrR3XoL9DPO55l6VJiGJFcMWFXb/aN6JA4hikm+9ujq1X5gOQbQt3dmcVAI29OsvovUS5qpTNLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzwSedKi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7188CC4CEF4;
+	Thu, 14 Aug 2025 08:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755160756;
+	bh=wfqWmiFu+hf5riWH1oiwtGbPEfN6D8DeAmej1du6BhY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JzwSedKiUIueXjAwiEvvgu9Pg7k0kNpnO8Uu4NT96uQ5AFJeZLFlxMhMYmmqQKgf9
+	 vkRr6fLBH/J6KQaFSI5SL4BICjVxdtsmUGvpcNsQgVqh8n+TDsLp/ZSzZGKwJy6Vu/
+	 P26Vc0ScJ0V1qyZCwGuo5A9RurBj/wQK5MgjLtYcBOlURHX9zRDDmhud/nvuI+G1Kp
+	 7AR6ipV+2txrE2N62GVE5xzXojsCfMmVJMeTlKseveRHMqgGHGJeEa8Tt0gzNwMRjO
+	 9krcCidK65DrhHDCRoNCXT2dOKsRCBYhgtjRqtbs1HvHnV8ajX5CJxMw/Oe6FjlzvD
+	 kjMlCCcya+wJA==
+Date: Thu, 14 Aug 2025 11:38:53 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	David Rientjes <rientjes@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Matthew Wilcox <willy@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 07/10] mm: correct sign-extension issue in MMF_* flag
+ masks
+Message-ID: <aJ2gnTpRW3QLTcn6@kernel.org>
+References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
+ <f92194bee8c92a04fd4c9b2c14c7e65229639300.1755012943.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:simcom.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NrYaBztQq5Mh5bKvkQFJnIqoy5bGmzsoJ8Q3o6gCRKglEdfovpmJxor8
-	crG4FQyL/Pr0yT4Gspgrsol268ua4qITPDrfsd5NCAViuCoHgjMe/jGSrjVWaXYpn1jEk6g
-	b4PRdy7Qk6QfXkYEO7AqWzSbBtU5P8IlCCzaTZkZ8yEax2wOe0D+iLfHR63TibgaOoNpKSL
-	mJ39jpiSlkVap/JOPm7wtW2530x5ld7MAut+yD+Qce7YuZ4tEJ/oB/HPS0YVj0a2yzggOpM
-	ha9cmEhlxA9InIUD87hEQ3VhyxF81BHCdE/o1odYzyWGDBOC4m1FuLgxpvCeBVrvtHXtURQ
-	IlBI7rFJLDLP6nGNFkVDRP7NXMgKr5SfDXUoWqGpA33W5lqrajov3Pe3AMrZINUgl4IRHs2
-	gk4lEMEUVGaWNqkyaHlub1j9kxPyezsDW/AVRSGueuphBOKk9X7BYnXQQg6OyCoAHJMhs4D
-	HNdZl7jJJGFUDWHVc+8uONrKOVaOg8ow9PKGOTwXOtzwDAZ9LdaoybF5KoiNM0rcAFKA9+U
-	KlMNIy+jWGNCtulyOo5L7kz2tUO0JChtiFI0tZMu2nOSoGgeH3msr+a/UuJAD8rkhjicnQu
-	SOSI7iHdh4Sfd2oexX+mAJVigphdQBtc1/guiZpSC4He9WRY+4v5ZliBQ1ZKlkBttbUV3SK
-	3V0i33ybSly1OpurosevcFshqym+0HhxGrEVElRns25aY32BVH826BtupeCLC1N9GrunKJf
-	vH8dCp8tHg3rTVG6ohhAb5trCNyIuLPvOZgtE62t+dLs9ulZpl4gLSVpd16E1DX/7ZsNnz0
-	mfBi0BS6kKW2KYslZ1o1/5KrqXdnG0DqeBTSmesNl1Uj8VknicWiD1bkpjO7PRdccWltbip
-	USnVVdiDWe2HwlFgDODWXPuFSTZ1HpvUvMft/nNkGvs0B0rklOuSC4N5u3CHOAyFVr30uGO
-	3H9yNdmUZwsiG+0H8wz0X5dmFRuDz2+T+9KXmPN6wQvx1r1hNSrL619ZVigpRPJNyJibOfT
-	HS9tsWHe28Di4RFp2P
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f92194bee8c92a04fd4c9b2c14c7e65229639300.1755012943.git.lorenzo.stoakes@oracle.com>
 
-USB Device Listings:
-0x9071: tty (DM) + tty (NMEA) + tty (AT) + rmnet (QMI mode) + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#= 10 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=9071 Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=50 Driver=qmi_wwan
-E:  Ad=86(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+On Tue, Aug 12, 2025 at 04:44:16PM +0100, Lorenzo Stoakes wrote:
+> There is an issue with the mask declarations in linux/mm_types.h, which
+> naively do (1 << bit) operations. Unfortunately this results in the 1 being
+> defaulted as a signed (32-bit) integer.
+> 
+> When the compiler expands the MMF_INIT_MASK bitmask it comes up with:
+> 
+> (((1 << 2) - 1) | (((1 << 9) - 1) << 2) | (1 << 24) | (1 << 28) | (1 << 30)
+> | (1 << 31))
+> 
+> Which overflows the signed integer to -788,527,105. Implicitly casting this
+> to an unsigned integer results in sign-expansion, and thus this value
+> becomes 0xffffffffd10007ff, rather than the intended 0xd10007ff.
+> 
+> While we're limited to a maximum of 32 bits in mm->flags, this isn't an
+> issue as the remaining bits being masked will always be zero.
+> 
+> However, now we are moving towards having more bits in this flag, this
+> becomes an issue.
+> 
+> Simply resolve this by using the _BITUL() helper to cast the shifted value
+> to an unsigned long.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-0x9078: tty (DM) + tty (NMEA) + tty (AT) + ECM + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#=  9 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=9078 Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=06 Prot=00 Driver=cdc_ether
-E:  Ad=86(I) Atr=03(Int.) MxPS=  16 Ivl=32ms
-I:  If#= 4 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-I:* If#= 4 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=cdc_ether
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-0x907b: RNDIS + tty (DM) + tty (NMEA) + tty (AT) + adb
-T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=02 Dev#=  8 Spd=480  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=907b Rev= 5.15
-S:  Manufacturer=SIMCOM
-S:  Product=SDXBAAGHA-IDP _SN:D744C4C5
-S:  SerialNumber=0123456789ABCDEF
-C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=ef(misc ) Sub=04 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 1 Cls=ef(misc ) Sub=04 Prot=01 Driver=rndis_host
-E:  Ad=82(I) Atr=03(Int.) MxPS=   8 Ivl=32ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=option
-E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> ---
+>  include/linux/mm_types.h | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 46d3fb8935c7..38b3fa927997 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -1756,7 +1756,7 @@ enum {
+>   * the modes are SUID_DUMP_* defined in linux/sched/coredump.h
+>   */
+>  #define MMF_DUMPABLE_BITS 2
+> -#define MMF_DUMPABLE_MASK ((1 << MMF_DUMPABLE_BITS) - 1)
+> +#define MMF_DUMPABLE_MASK (_BITUL(MMF_DUMPABLE_BITS) - 1)
+>  /* coredump filter bits */
+>  #define MMF_DUMP_ANON_PRIVATE	2
+>  #define MMF_DUMP_ANON_SHARED	3
+> @@ -1771,13 +1771,13 @@ enum {
+>  #define MMF_DUMP_FILTER_SHIFT	MMF_DUMPABLE_BITS
+>  #define MMF_DUMP_FILTER_BITS	9
+>  #define MMF_DUMP_FILTER_MASK \
+> -	(((1 << MMF_DUMP_FILTER_BITS) - 1) << MMF_DUMP_FILTER_SHIFT)
+> +	((_BITUL(MMF_DUMP_FILTER_BITS) - 1) << MMF_DUMP_FILTER_SHIFT)
+>  #define MMF_DUMP_FILTER_DEFAULT \
+> -	((1 << MMF_DUMP_ANON_PRIVATE) |	(1 << MMF_DUMP_ANON_SHARED) |\
+> -	 (1 << MMF_DUMP_HUGETLB_PRIVATE) | MMF_DUMP_MASK_DEFAULT_ELF)
+> +	(_BITUL(MMF_DUMP_ANON_PRIVATE) | _BITUL(MMF_DUMP_ANON_SHARED) | \
+> +	 _BITUL(MMF_DUMP_HUGETLB_PRIVATE) | MMF_DUMP_MASK_DEFAULT_ELF)
+>  
+>  #ifdef CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS
+> -# define MMF_DUMP_MASK_DEFAULT_ELF	(1 << MMF_DUMP_ELF_HEADERS)
+> +# define MMF_DUMP_MASK_DEFAULT_ELF	_BITUL(MMF_DUMP_ELF_HEADERS)
+>  #else
+>  # define MMF_DUMP_MASK_DEFAULT_ELF	0
+>  #endif
+> @@ -1797,7 +1797,7 @@ enum {
+>  #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
+>  #define MMF_HUGE_ZERO_FOLIO	23      /* mm has ever used the global huge zero folio */
+>  #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+> -#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+> +#define MMF_DISABLE_THP_MASK	_BITUL(MMF_DISABLE_THP)
+>  #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
+>  #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
+>  /*
+> @@ -1810,16 +1810,15 @@ enum {
+>  #define MMF_HAS_PINNED		27	/* FOLL_PIN has run, never cleared */
+>  
+>  #define MMF_HAS_MDWE		28
+> -#define MMF_HAS_MDWE_MASK	(1 << MMF_HAS_MDWE)
+> -
+> +#define MMF_HAS_MDWE_MASK	_BITUL(MMF_HAS_MDWE)
+>  
+>  #define MMF_HAS_MDWE_NO_INHERIT	29
+>  
+>  #define MMF_VM_MERGE_ANY	30
+> -#define MMF_VM_MERGE_ANY_MASK	(1 << MMF_VM_MERGE_ANY)
+> +#define MMF_VM_MERGE_ANY_MASK	_BITUL(MMF_VM_MERGE_ANY)
+>  
+>  #define MMF_TOPDOWN		31	/* mm searches top down by default */
+> -#define MMF_TOPDOWN_MASK	(1 << MMF_TOPDOWN)
+> +#define MMF_TOPDOWN_MASK	_BITUL(MMF_TOPDOWN)
+>  
+>  #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+>  				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
+> -- 
+> 2.50.1
+> 
 
-Signed-off-by: Xiaowei Li <xiaowei.li@simcom.com>
----
- drivers/usb/serial/option.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index e5cd33093423..8c4d28dfd64e 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2097,6 +2097,12 @@ static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) },	/* Simcom SIM7500/SIM7600 MBIM mode */
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9011, 0xff),	/* Simcom SIM7500/SIM7600 RNDIS mode */
- 	  .driver_info = RSVD(7) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x907b, 0xff),
-+	  .driver_info = RSVD(5) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9078, 0xff),
-+	  .driver_info = RSVD(5) },
-+	{ USB_DEVICE(0x1e0e, 0x9071),
-+	  .driver_info = RSVD(3) | RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9205, 0xff) },	/* Simcom SIM7070/SIM7080/SIM7090 AT+ECM mode */
- 	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9206, 0xff) },	/* Simcom SIM7070/SIM7080/SIM7090 AT-only mode */
- 	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
 -- 
-2.34.1
-
+Sincerely yours,
+Mike.
 
