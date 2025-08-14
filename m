@@ -1,300 +1,404 @@
-Return-Path: <linux-kernel+bounces-769314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE76B26CDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:47:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1255B26CE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27F705E60A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385E81C852BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB54301470;
-	Thu, 14 Aug 2025 16:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AapH0SWr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D48C2F99A8;
+	Thu, 14 Aug 2025 16:44:18 +0000 (UTC)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0523623313F;
-	Thu, 14 Aug 2025 16:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E74B21B9FE;
+	Thu, 14 Aug 2025 16:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755189795; cv=none; b=Tb5dd9sF2CKURurMzH89t14D0UqmrAqk4+FjJJnb7XMfT5dJTlwqrWtKoR8OHZ39lVvR5QQEWEB0kWIr8Zr9RU0BHe4JZDtORWfyoxiLjd+AznfiIPHh2G+ugGDzBy2gPLuqfV9WAxKDnsx/hQOl2I/iNHXHEtAJqmoA4rSebTI=
+	t=1755189857; cv=none; b=Kl94SFi9f4W4wPsnE3GBtMShnB+AIgfYlau1S/oN9a01LV2nBuIJvtpa/qfq6UhnghRXXATzcXib+LVXUB+rCvpAvxBFNTCOCN9zdaseXEuBofA9Vi5X2CBVbsVAvy9YLxXoxH2mDblxRgxOW6PnxB0QjtYJTuhJGZR1t00FXIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755189795; c=relaxed/simple;
-	bh=cVYpcTsjTeAvvi4JNeURuCo2newojqCTC+yq6X3j8tM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNQi1xpFMtPP06xFHkRbG/n6AhE2wNRf7shVeEng4fT8DIJ+mkw9ZBmgkTxXPUIJfGX1o3yrEO+NwpVA3IFpc8lcqNbd4cfqva5Xle4VOIOf+bxlBJ6x3MQCgClT+k0uPFnkr4wOgYG3ovn9reI3dvqzpShOH8tDexQyYrTSKvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AapH0SWr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78DA1C4CEED;
-	Thu, 14 Aug 2025 16:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755189794;
-	bh=cVYpcTsjTeAvvi4JNeURuCo2newojqCTC+yq6X3j8tM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AapH0SWr4OT/uvhWFMhjowdkBCTUfuG1U7McDeYP/IGs4ijBpVPTJHeOWUyOs6nXN
-	 Ts51KwUR92rHiLap2ctiKRBYxKJd+7zVtRYFbLMhU7p4aLJ54Y3yoOlyZi2YAZMhhs
-	 SN9TYtk5vvcJDTOo9ohMjZnG7u4yEll6W8AxE0TWGfcgb7tU6mUmvggfLQTu4FW6yl
-	 vUSUwuTxB4WqjNQuoRo/xHMZ9NNGdmCBYoaK+Ggi5zgUoDGJN6iQFjk9OCRvCLGmwp
-	 w1qHXAMwtrGK/zpDUXco9/wXAoOqy61Xf/lxa/2/zFoCu743Zkru3aDUAhthHb4gs5
-	 XtdDP6T9DVD6A==
-Date: Thu, 14 Aug 2025 09:43:13 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: Michal Hocko <mhocko@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
-	wangfushuai <wangfushuai@baidu.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
- address process dependency issues
-Message-ID: <20250814164313.GO7942@frogsfrogsfrogs>
-References: <aJSpTpB9_jijiO6m@tiehlicka>
- <4c46250f-eb0f-4e12-8951-89431c195b46@kylinos.cn>
- <aJWglTo1xpXXEqEM@tiehlicka>
- <ba9c23c4-cd95-4dba-9359-61565195d7be@kylinos.cn>
- <aJW8NLPxGOOkyCfB@tiehlicka>
- <09df0911-9421-40af-8296-de1383be1c58@kylinos.cn>
- <aJnM32xKq0FOWBzw@tiehlicka>
- <d86a9883-9d2e-4bb2-a93d-0d95b4a60e5f@kylinos.cn>
- <20250812172655.GF7938@frogsfrogsfrogs>
- <8c61ab95-9caa-4b57-adfd-31f941f0264d@kylinos.cn>
+	s=arc-20240116; t=1755189857; c=relaxed/simple;
+	bh=Pi12NCjVNa0Ym+EGtm5xt0Js6GSAC2n7/7dVT3rMZoQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gmBsSbftWrk35w+iu8cxrLZmNodInk2gJerEkUVbeKuDd9KZUAK8nKETmw/mvuLxdlzPGCHJ+E3meKo6Kg2mmsb7FX6kKjysDRMk4mBq+ac+utX8Us/CXaLX3OaN8N/j3CZ5FSJbeR9pteh4n+O2vtWd8FavcljUzwiqqKXPviU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-323266d2d9eso1019621a91.0;
+        Thu, 14 Aug 2025 09:44:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755189854; x=1755794654;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n6Ds2V8iI29lENVwGkMXUhsBybo0WpVnyyaXg0iPlVc=;
+        b=W+t5I/xpTpXvvkstmhGzTCR0X6z/Je8rKE8JNDagkEvNmM6Et2ah5+8xrZP9SjEYIu
+         3pls2LlqArW5BDI0Y/9T98c9T5i2q1gl+V4ukafW5SKKLu+M1g1ljPv7dcnF2gQ/JDE8
+         zUQcMjyukRLewCRY7cPdT/JCIwvlBJUOOUORmtqrzAtMFe6SIsE6A7+HpqibPxTDqz2r
+         0GavYUHsk0N9tUYCfvjKhBjP/jNcVxacsH6NwIhoE6jh9Oj2NM2PG2d9S4/T9vg1O1RD
+         icndY4XS2skykSZZQbY1rnOKnfPuiABzT4D3+PitEkK+e/28RAkKYVbFXA7H6gqWvOxt
+         JJYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZP0IfP+Sej9NZNhQSuRKpeh7yUz3b/TLYzVOEmzyUUQUij+qexQ3qM3fyhoQbaY2YPPY7kxuTNrC9saQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxds0PY0YcxCUog5HvinyvVD3m1bemsfzoRtLNmOWM2MfRl5TN0
+	o3c2E4cV2qJ8oizNh60/E2E9sTo+1z9XMXOCXR1NCSv3+71iSWZy5vnlu2Ih
+X-Gm-Gg: ASbGncsQMjlH3PhvpGY+JyeGIXE/dxDRT+Khww21yLiRj/qwu0w/XCoqyn54vKVl693
+	+VIbPfQ8FmY83xeEzHAvOLe0sfjXiKp1dFp55+Uc6+UY3UGD7HnkirxZEaV8CB3hx+TZgp5Kscc
+	/8c0aBlncqH0h5SgvCn9jOY3f46VcsiN8J/PQWhSgL2qRK+hMXCV2DU5GFPFjcgv/SQXoywOJ+s
+	173SHeXb+82ZRs43Kq/QLxQi8X2FL221lRp6tZdUA6K0OYOtacT4rKvZKM+oah5JeulTM/NRqB9
+	6rUbzWiI1T4q53m1QT9MYqhZSj7SxxkXVhNP9YquBceyfJPc/wCRjZjuK4JMcSjpiSP6IHG/ms7
+	/8KdYtuNbuLpwdD7Rh03lOhkwJtqyNa2BBKbW5dYAu0RZ+9EpqffWwiBtw2k=
+X-Google-Smtp-Source: AGHT+IEfWn7TjnKHS0RiH5DoZStYJK0DFqD4OC/pvUjtCfhkz0jsuZUx0Us7RAkcm9ZX0vY7n2Ukwg==
+X-Received: by 2002:a17:90b:1f85:b0:31f:867:d6b4 with SMTP id 98e67ed59e1d1-323279c8531mr6918867a91.10.1755189854415;
+        Thu, 14 Aug 2025 09:44:14 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-3232ae14f6dsm1029231a91.6.2025.08.14.09.44.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 09:44:14 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	donald.hunter@gmail.com,
+	horms@kernel.org,
+	jstancek@redhat.com,
+	sdf@fomichev.me,
+	jacob.e.keller@intel.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] tools: ynl: make ynl.c more c++ friendly
+Date: Thu, 14 Aug 2025 09:44:13 -0700
+Message-ID: <20250814164413.1258893-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8c61ab95-9caa-4b57-adfd-31f941f0264d@kylinos.cn>
 
-On Wed, Aug 13, 2025 at 01:48:37PM +0800, Zihuan Zhang wrote:
-> Hi,
-> 
-> 在 2025/8/13 01:26, Darrick J. Wong 写道:
-> > On Tue, Aug 12, 2025 at 01:57:49PM +0800, Zihuan Zhang wrote:
-> > > Hi all,
-> > > 
-> > > We encountered an issue where the number of freeze retries increased due to
-> > > processes stuck in D state. The logs point to jbd2-related activity.
-> > > 
-> > > log1:
-> > > 
-> > > 6616.650482] task:ThreadPoolForeg state:D stack:0     pid:262026
-> > > tgid:4065  ppid:2490   task_flags:0x400040 flags:0x00004004
-> > > [ 6616.650485] Call Trace:
-> > > [ 6616.650486]  <TASK>
-> > > [ 6616.650489]  __schedule+0x532/0xea0
-> > > [ 6616.650494]  schedule+0x27/0x80
-> > > [ 6616.650496]  jbd2_log_wait_commit+0xa6/0x120
-> > > [ 6616.650499]  ? __pfx_autoremove_wake_function+0x10/0x10
-> > > [ 6616.650502]  ext4_sync_file+0x1ba/0x380
-> > > [ 6616.650505]  do_fsync+0x3b/0x80
-> > > 
-> > > log2:
-> > > 
-> > > [  631.206315] jdb2_log_wait_log_commit  completed (elapsed 0.002 seconds)
-> > > [  631.215325] jdb2_log_wait_log_commit  completed (elapsed 0.001 seconds)
-> > > [  631.240704] jdb2_log_wait_log_commit  completed (elapsed 0.386 seconds)
-> > > [  631.262167] Filesystems sync: 0.424 seconds
-> > > [  631.262821] Freezing user space processes
-> > > [  631.263839] freeze round: 1, task to freeze: 852
-> > > [  631.265128] freeze round: 2, task to freeze: 2
-> > > [  631.267039] freeze round: 3, task to freeze: 2
-> > > [  631.271176] freeze round: 4, task to freeze: 2
-> > > [  631.279160] freeze round: 5, task to freeze: 2
-> > > [  631.287152] freeze round: 6, task to freeze: 2
-> > > [  631.295346] freeze round: 7, task to freeze: 2
-> > > [  631.301747] freeze round: 8, task to freeze: 2
-> > > [  631.309346] freeze round: 9, task to freeze: 2
-> > > [  631.317353] freeze round: 10, task to freeze: 2
-> > > [  631.325348] freeze round: 11, task to freeze: 2
-> > > [  631.333353] freeze round: 12, task to freeze: 2
-> > > [  631.341358] freeze round: 13, task to freeze: 2
-> > > [  631.349357] freeze round: 14, task to freeze: 2
-> > > [  631.357363] freeze round: 15, task to freeze: 2
-> > > [  631.365361] freeze round: 16, task to freeze: 2
-> > > [  631.373379] freeze round: 17, task to freeze: 2
-> > > [  631.381366] freeze round: 18, task to freeze: 2
-> > > [  631.389365] freeze round: 19, task to freeze: 2
-> > > [  631.397371] freeze round: 20, task to freeze: 2
-> > > [  631.405373] freeze round: 21, task to freeze: 2
-> > > [  631.413373] freeze round: 22, task to freeze: 2
-> > > [  631.421392] freeze round: 23, task to freeze: 1
-> > > [  631.429948] freeze round: 24, task to freeze: 1
-> > > [  631.438295] freeze round: 25, task to freeze: 1
-> > > [  631.444546] jdb2_log_wait_log_commit  completed (elapsed 0.249 seconds)
-> > > [  631.446387] freeze round: 26, task to freeze: 0
-> > > [  631.446390] Freezing user space processes completed (elapsed 0.183
-> > > seconds)
-> > > [  631.446392] OOM killer disabled.
-> > > [  631.446393] Freezing remaining freezable tasks
-> > > [  631.446656] freeze round: 1, task to freeze: 4
-> > > [  631.447976] freeze round: 2, task to freeze: 0
-> > > [  631.447978] Freezing remaining freezable tasks completed (elapsed 0.001
-> > > seconds)
-> > > [  631.447980] PM: suspend debug: Waiting for 1 second(s).
-> > > [  632.450858] OOM killer enabled.
-> > > [  632.450859] Restarting tasks: Starting
-> > > [  632.453140] Restarting tasks: Done
-> > > [  632.453173] random: crng reseeded on system resumption
-> > > [  632.453370] PM: suspend exit
-> > > [  632.462799] jdb2_log_wait_log_commit  completed (elapsed 0.000 seconds)
-> > > [  632.466114] jdb2_log_wait_log_commit  completed (elapsed 0.001 seconds)
-> > > 
-> > > This is the reason:
-> > > 
-> > > [  631.444546] jdb2_log_wait_log_commit  completed (elapsed 0.249 seconds)
-> > > 
-> > > 
-> > > During freezing, user processes executing jbd2_log_wait_commit enter D state
-> > > because this function calls wait_event and can take tens of milliseconds to
-> > > complete. This long execution time, coupled with possible competition with
-> > > the freezer, causes repeated freeze retries.
-> > > 
-> > > While we understand that jbd2 is a freezable kernel thread, we would like to
-> > > know if there is a way to freeze it earlier or freeze some critical
-> > > processes proactively to reduce this contention.
-> > Freeze the filesystem before you start freezing kthreads?  That should
-> > quiesce the jbd2 workers and pause anyone trying to write to the fs.
-> Indeed, freezing the filesystem can work.
-> 
-> However, this approach is quite expensive: it increases the total suspend
-> time by about 3 to 4 seconds. Because of this overhead, we are exploring
-> alternative solutions with lower cost.
+Compiling ynl.c in a C++ code base requires invoking C compiler and
+using extern "C" for the headers. To make it easier, we can add
+small changes to the ynl.c file to make it palatable to the native
+C++ compiler. The changes are:
+- avoid using void* pointer arithmetic, use char* instead
+- avoid implicit void* type casts, add c-style explicit casts
+- avoid implicit int->enum type casts, add c-style explicit casts
+- avoid anonymous structs (for type casts)
+- namespacify cpp version, this should let us compile both ynl.c
+  as c and ynl.c as cpp in the same binary (YNL_CPP can be used
+  to enable/disable namespacing)
 
-Indeed it does, because now XFS and friends will actually shut down
-their background workers and flush all the dirty data and metadata to
-disk.  On the other hand, if the system crashes while suspended, there's
-a lot less recovery work to be done.
+Also add test_cpp rule to make sure ynl.c won't break C++ in the future.
 
-Granted the kernel (or userspace) will usually sync() before suspending
-so that's not been a huge problem in production afaict.
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+---
+ tools/net/ynl/lib/Makefile   |  5 +++-
+ tools/net/ynl/lib/ynl-priv.h | 11 ++++++-
+ tools/net/ynl/lib/ynl.c      | 58 +++++++++++++++++++++---------------
+ tools/net/ynl/lib/ynl.h      | 19 +++++++++---
+ 4 files changed, 63 insertions(+), 30 deletions(-)
 
-> We have tested it:
-> 
-> https://lore.kernel.org/all/09df0911-9421-40af-8296-de1383be1c58@kylinos.cn/
-> 
-> > Maybe the missing piece here is the device model not knowing how to call
-> > bdev_freeze prior to a suspend?
-> Currently, suspend flow seem to does not invoke bdev_freeze(). Do you have
-> any plans or insights on improving or integrating this functionality more
-> smoothly into the device model and suspend sequence?
-> > That said, I think that doesn't 100% work for XFS because it has
-> > kworkers for metadata buffer read completions, and freezes don't affect
-> > read operations...
-> 
-> Does read activity also cause processes to enter D (uninterruptible sleep)
-> state?
+diff --git a/tools/net/ynl/lib/Makefile b/tools/net/ynl/lib/Makefile
+index 4b2b98704ff9..94f8dc4a31d1 100644
+--- a/tools/net/ynl/lib/Makefile
++++ b/tools/net/ynl/lib/Makefile
+@@ -11,7 +11,7 @@ OBJS=$(patsubst %.c,%.o,${SRCS})
+ 
+ include $(wildcard *.d)
+ 
+-all: ynl.a
++all: ynl.a test_cpp
+ 
+ ynl.a: $(OBJS)
+ 	@echo -e "\tAR $@"
+@@ -23,6 +23,9 @@ ynl.a: $(OBJS)
+ distclean: clean
+ 	rm -f *.a
+ 
++test_cpp: ynl.c
++	$(COMPILE.cpp) -DYNL_CPP -o ynl.cc.o $<
++
+ %.o: %.c
+ 	$(COMPILE.c) -MMD -c -o $@ $<
+ 
+diff --git a/tools/net/ynl/lib/ynl-priv.h b/tools/net/ynl/lib/ynl-priv.h
+index 824777d7e05e..1dbb14e760e6 100644
+--- a/tools/net/ynl/lib/ynl-priv.h
++++ b/tools/net/ynl/lib/ynl-priv.h
+@@ -6,6 +6,10 @@
+ #include <stddef.h>
+ #include <linux/types.h>
+ 
++#if defined(__cplusplus) && defined(YNL_CPP)
++namespace ynl_cpp {
++#endif
++
+ struct ynl_parse_arg;
+ 
+ /*
+@@ -224,7 +228,7 @@ static inline void *ynl_attr_data_end(const struct nlattr *attr)
+ 
+ #define ynl_attr_for_each_payload(start, len, attr)			\
+ 	for ((attr) = ynl_attr_first(start, len, 0); attr;		\
+-	     (attr) = ynl_attr_next(start + len, attr))
++	     (attr) = ynl_attr_next((char *)start + len, attr))
+ 
+ static inline struct nlattr *
+ ynl_attr_if_good(const void *end, struct nlattr *attr)
+@@ -467,4 +471,9 @@ ynl_attr_put_sint(struct nlmsghdr *nlh, __u16 type, __s64 data)
+ 	else
+ 		ynl_attr_put_s64(nlh, type, data);
+ }
++
++#if defined(__cplusplus) && defined(YNL_CPP)
++} // namespace ynl_cpp
++#endif
++
+ #endif
+diff --git a/tools/net/ynl/lib/ynl.c b/tools/net/ynl/lib/ynl.c
+index 2a169c3c0797..9155b4d5b9f9 100644
+--- a/tools/net/ynl/lib/ynl.c
++++ b/tools/net/ynl/lib/ynl.c
+@@ -11,6 +11,10 @@
+ 
+ #include "ynl.h"
+ 
++#if defined(__cplusplus) && defined(YNL_CPP)
++namespace ynl_cpp {
++#endif
++
+ #define ARRAY_SIZE(arr)		(sizeof(arr) / sizeof(*arr))
+ 
+ #define __yerr_msg(yse, _msg...)					\
+@@ -23,13 +27,13 @@
+ 		}							\
+ 	})
+ 
+-#define __yerr_code(yse, _code...)		\
+-	({					\
+-		struct ynl_error *_yse = (yse);	\
+-						\
+-		if (_yse) {			\
+-			_yse->code = _code;	\
+-		}				\
++#define __yerr_code(yse, _code...)				 \
++	({                                                       \
++		struct ynl_error *_yse = (yse);                  \
++								 \
++		if (_yse) {                                      \
++			_yse->code = (enum ynl_error_code)_code; \
++		}                                                \
+ 	})
+ 
+ #define __yerr(yse, _code, _msg...)		\
+@@ -149,7 +153,7 @@ ynl_err_walk(struct ynl_sock *ys, void *start, void *end, unsigned int off,
+ 		return n;
+ 	}
+ 
+-	data_len = end - start;
++	data_len = (char *)end - (char *)start;
+ 
+ 	ynl_attr_for_each_payload(start, data_len, attr) {
+ 		astart_off = (char *)attr - (char *)start;
+@@ -192,7 +196,7 @@ ynl_err_walk(struct ynl_sock *ys, void *start, void *end, unsigned int off,
+ 
+ 	off -= sizeof(struct nlattr);
+ 	start =  ynl_attr_data(attr);
+-	end = start + ynl_attr_data_len(attr);
++	end = (char *)start + ynl_attr_data_len(attr);
+ 
+ 	return n + ynl_err_walk(ys, start, end, off, next_pol,
+ 				&str[n], str_sz - n, nest_pol);
+@@ -325,12 +329,12 @@ ynl_ext_ack_check(struct ynl_sock *ys, const struct nlmsghdr *nlh,
+ static int
+ ynl_cb_error(const struct nlmsghdr *nlh, struct ynl_parse_arg *yarg)
+ {
+-	const struct nlmsgerr *err = ynl_nlmsg_data(nlh);
++	const struct nlmsgerr *err = (struct nlmsgerr *)ynl_nlmsg_data(nlh);
+ 	unsigned int hlen;
+ 	int code;
+ 
+ 	code = err->error >= 0 ? err->error : -err->error;
+-	yarg->ys->err.code = code;
++	yarg->ys->err.code = (enum ynl_error_code)code;
+ 	errno = code;
+ 
+ 	hlen = sizeof(*err);
+@@ -348,7 +352,7 @@ static int ynl_cb_done(const struct nlmsghdr *nlh, struct ynl_parse_arg *yarg)
+ 
+ 	err = *(int *)NLMSG_DATA(nlh);
+ 	if (err < 0) {
+-		yarg->ys->err.code = -err;
++		yarg->ys->err.code = (enum ynl_error_code)-err;
+ 		errno = -err;
+ 
+ 		ynl_ext_ack_check(yarg->ys, nlh, sizeof(int));
+@@ -366,7 +370,7 @@ int ynl_attr_validate(struct ynl_parse_arg *yarg, const struct nlattr *attr)
+ 	unsigned int type, len;
+ 	unsigned char *data;
+ 
+-	data = ynl_attr_data(attr);
++	data = (unsigned char *)ynl_attr_data(attr);
+ 	len = ynl_attr_data_len(attr);
+ 	type = ynl_attr_type(attr);
+ 	if (type > yarg->rsp_policy->max_attr) {
+@@ -463,7 +467,7 @@ int ynl_submsg_failed(struct ynl_parse_arg *yarg, const char *field_name,
+ 
+ static void ynl_err_reset(struct ynl_sock *ys)
+ {
+-	ys->err.code = 0;
++	ys->err.code = YNL_ERROR_NONE;
+ 	ys->err.attr_offs = 0;
+ 	ys->err.msg[0] = 0;
+ }
+@@ -643,8 +647,8 @@ ynl_get_family_info_mcast(struct ynl_sock *ys, const struct nlattr *mcasts)
+ 	if (!ys->n_mcast_groups)
+ 		return 0;
+ 
+-	ys->mcast_groups = calloc(ys->n_mcast_groups,
+-				  sizeof(*ys->mcast_groups));
++	ys->mcast_groups = (struct ynl_sock_mcast *)calloc(
++		ys->n_mcast_groups, sizeof(*ys->mcast_groups));
+ 	if (!ys->mcast_groups)
+ 		return YNL_PARSE_CB_ERROR;
+ 
+@@ -741,7 +745,8 @@ ynl_sock_create(const struct ynl_family *yf, struct ynl_error *yse)
+ 	int sock_type;
+ 	int one = 1;
+ 
+-	ys = malloc(sizeof(*ys) + 2 * YNL_SOCKET_BUFFER_SIZE);
++	ys = (struct ynl_sock *)malloc(sizeof(*ys) +
++				       2 * YNL_SOCKET_BUFFER_SIZE);
+ 	if (!ys)
+ 		return NULL;
+ 	memset(ys, 0, sizeof(*ys));
+@@ -878,7 +883,7 @@ static int ynl_ntf_parse(struct ynl_sock *ys, const struct nlmsghdr *nlh)
+ 	} else {
+ 		struct genlmsghdr *gehdr;
+ 
+-		gehdr = ynl_nlmsg_data(nlh);
++		gehdr = (struct genlmsghdr *)ynl_nlmsg_data(nlh);
+ 		cmd = gehdr->cmd;
+ 	}
+ 
+@@ -888,7 +893,7 @@ static int ynl_ntf_parse(struct ynl_sock *ys, const struct nlmsghdr *nlh)
+ 	if (!info->cb)
+ 		return YNL_PARSE_CB_ERROR;
+ 
+-	rsp = calloc(1, info->alloc_sz);
++	rsp = (struct ynl_ntf_base_type *)calloc(1, info->alloc_sz);
+ 	rsp->free = info->free;
+ 	yarg.data = rsp->data;
+ 	yarg.rsp_policy = info->policy;
+@@ -933,7 +938,8 @@ int ynl_ntf_check(struct ynl_sock *ys)
+ 
+ /* YNL specific helpers used by the auto-generated code */
+ 
+-struct ynl_dump_list_type *YNL_LIST_END = (void *)(0xb4d123);
++struct ynl_dump_list_type *YNL_LIST_END =
++	(struct ynl_dump_list_type *)(void *)(0xb4d123);
+ 
+ void ynl_error_unknown_notification(struct ynl_sock *ys, __u8 cmd)
+ {
+@@ -962,7 +968,7 @@ ynl_check_alien(struct ynl_sock *ys, const struct nlmsghdr *nlh, __u32 rsp_cmd)
+ 			return -1;
+ 		}
+ 
+-		gehdr = ynl_nlmsg_data(nlh);
++		gehdr = (struct genlmsghdr *)ynl_nlmsg_data(nlh);
+ 		if (gehdr->cmd != rsp_cmd)
+ 			return ynl_ntf_parse(ys, nlh);
+ 	}
+@@ -973,7 +979,7 @@ ynl_check_alien(struct ynl_sock *ys, const struct nlmsghdr *nlh, __u32 rsp_cmd)
+ static
+ int ynl_req_trampoline(const struct nlmsghdr *nlh, struct ynl_parse_arg *yarg)
+ {
+-	struct ynl_req_state *yrs = (void *)yarg;
++	struct ynl_req_state *yrs = (struct ynl_req_state *)yarg;
+ 	int ret;
+ 
+ 	ret = ynl_check_alien(yrs->yarg.ys, nlh, yrs->rsp_cmd);
+@@ -1006,7 +1012,7 @@ int ynl_exec(struct ynl_sock *ys, struct nlmsghdr *req_nlh,
+ static int
+ ynl_dump_trampoline(const struct nlmsghdr *nlh, struct ynl_parse_arg *data)
+ {
+-	struct ynl_dump_state *ds = (void *)data;
++	struct ynl_dump_state *ds = (struct ynl_dump_state *)data;
+ 	struct ynl_dump_list_type *obj;
+ 	struct ynl_parse_arg yarg = {};
+ 	int ret;
+@@ -1015,7 +1021,7 @@ ynl_dump_trampoline(const struct nlmsghdr *nlh, struct ynl_parse_arg *data)
+ 	if (ret)
+ 		return ret < 0 ? YNL_PARSE_CB_ERROR : YNL_PARSE_CB_OK;
+ 
+-	obj = calloc(1, ds->alloc_sz);
++	obj = (struct ynl_dump_list_type *)calloc(1, ds->alloc_sz);
+ 	if (!obj)
+ 		return YNL_PARSE_CB_ERROR;
+ 
+@@ -1066,3 +1072,7 @@ int ynl_exec_dump(struct ynl_sock *ys, struct nlmsghdr *req_nlh,
+ 	yds->first = ynl_dump_end(yds);
+ 	return -1;
+ }
++
++#if defined(__cplusplus) && defined(YNL_CPP)
++} // namespace ynl_cpp
++#endif
+diff --git a/tools/net/ynl/lib/ynl.h b/tools/net/ynl/lib/ynl.h
+index db7c0591a63f..47a8652f056f 100644
+--- a/tools/net/ynl/lib/ynl.h
++++ b/tools/net/ynl/lib/ynl.h
+@@ -9,6 +9,10 @@
+ 
+ #include "ynl-priv.h"
+ 
++#if defined(__cplusplus) && defined(YNL_CPP)
++namespace ynl_cpp {
++#endif
++
+ enum ynl_error_code {
+ 	YNL_ERROR_NONE = 0,
+ 	__YNL_ERRNO_END = 4096,
+@@ -56,6 +60,11 @@ struct ynl_family {
+ 	unsigned int ntf_info_size;
+ };
+ 
++struct ynl_sock_mcast {
++	unsigned int id;
++	char name[GENL_NAMSIZ];
++};
++
+ /**
+  * struct ynl_sock - YNL wrapped netlink socket
+  * @err: YNL error descriptor, cleared on every request.
+@@ -71,10 +80,7 @@ struct ynl_sock {
+ 	__u16 family_id;
+ 
+ 	unsigned int n_mcast_groups;
+-	struct {
+-		unsigned int id;
+-		char name[GENL_NAMSIZ];
+-	} *mcast_groups;
++	struct ynl_sock_mcast *mcast_groups;
+ 
+ 	struct ynl_ntf_base_type *ntf_first;
+ 	struct ynl_ntf_base_type **ntf_last_next;
+@@ -140,4 +146,9 @@ static inline bool ynl_has_ntf(struct ynl_sock *ys)
+ struct ynl_ntf_base_type *ynl_ntf_dequeue(struct ynl_sock *ys);
+ 
+ void ynl_ntf_free(struct ynl_ntf_base_type *ntf);
++
++#if defined(__cplusplus) && defined(YNL_CPP)
++} // namespace ynl_cpp
++#endif
++
+ #endif
+-- 
+2.50.1
 
-Usually.
-
-> From what I understand, it’s usually writes or synchronous operations that
-> do, but I’m curious if reads can also lead to D state under certain
-> conditions.
-
-Anything that sets the task state to uninterruptible.
-
---D
-
-> > (just my clueless 2c)
-> > 
-> > --D
-> > 
-> > > Thanks for your input and suggestions.
-> > > 
-> > > 在 2025/8/11 18:58, Michal Hocko 写道:
-> > > > On Mon 11-08-25 17:13:43, Zihuan Zhang wrote:
-> > > > > 在 2025/8/8 16:58, Michal Hocko 写道:
-> > > > [...]
-> > > > > > Also the interface seems to be really coarse grained and it can easily
-> > > > > > turn out insufficient for other usecases while it is not entirely clear
-> > > > > > to me how this could be extended for those.
-> > > > >    We recognize that the current interface is relatively coarse-grained and
-> > > > > may not be sufficient for all scenarios. The present implementation is a
-> > > > > basic version.
-> > > > > 
-> > > > > Our plan is to introduce a classification-based mechanism that assigns
-> > > > > different freeze priorities according to process categories. For example,
-> > > > > filesystem and graphics-related processes will be given higher default
-> > > > > freeze priority, as they are critical in the freezing workflow. This
-> > > > > classification approach helps target important processes more precisely.
-> > > > > 
-> > > > > However, this requires further testing and refinement before full
-> > > > > deployment. We believe this incremental, category-based design will make the
-> > > > > mechanism more effective and adaptable over time while keeping it
-> > > > > manageable.
-> > > > Unless there is a clear path for a more extendable interface then
-> > > > introducing this one is a no-go. We do not want to grow different ways
-> > > > to establish freezing policies.
-> > > > 
-> > > > But much more fundamentally. So far I haven't really seen any argument
-> > > > why different priorities help with the underlying problem other than the
-> > > > timing might be slightly different if you change the order of freezing.
-> > > > This to me sounds like the proposed scheme mostly works around the
-> > > > problem you are seeing and as such is not a really good candidate to be
-> > > > merged as a long term solution. Not to mention with a user API that
-> > > > needs to be maintained for ever.
-> > > > 
-> > > > So NAK from me on the interface.
-> > > > 
-> > > Thanks for the feedback. I understand your concern that changing the freezer
-> > > priority order looks like working around the symptom rather than solving the
-> > > root cause.
-> > > 
-> > > Since the last discussion, we have analyzed the D-state processes further
-> > > and identified that the long wait time is caused by jbd2_log_wait_commit.
-> > > This wait happens because user tasks call into this function during
-> > > fsync/fdatasync and it can take tens of milliseconds to complete. When this
-> > > coincides with the freezer operation, the tasks are stuck in D state and
-> > > retried multiple times, increasing the total freeze time.
-> > > 
-> > > Although we know that jbd2 is a freezable kernel thread, we are exploring
-> > > whether freezing it earlier — or freezing certain key processes first —
-> > > could reduce this contention and improve freeze completion time.
-> > > 
-> > > 
-> > > > > > I believe it would be more useful to find sources of those freezer
-> > > > > > blockers and try to address those. Making more blocked tasks
-> > > > > > __set_task_frozen compatible sounds like a general improvement in
-> > > > > > itself.
-> > > > > we have already identified some causes of D-state tasks, many of which are
-> > > > > related to the filesystem. On some systems, certain processes frequently
-> > > > > execute ext4_sync_file, and under contention this can lead to D-state tasks.
-> > > > Please work with maintainers of those subsystems to find proper
-> > > > solutions.
-> > > We’ve pulled in the jbd2 maintainer to get feedback on whether changing the
-> > > freeze ordering for jbd2 is safe or if there’s a better approach to avoid
-> > > the repeated retries caused by this wait.
-> > > 
-> 
 
