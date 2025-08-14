@@ -1,338 +1,180 @@
-Return-Path: <linux-kernel+bounces-769748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F77B2733E
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:53:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DFCBB27322
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:49:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0907A60010D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:53:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DFEFA04C68
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0137288CA2;
-	Thu, 14 Aug 2025 23:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7E42857F8;
+	Thu, 14 Aug 2025 23:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=adomerle.pw header.i=@adomerle.pw header.b="nqH63Q/S";
-	dkim=permerror (0-bit key) header.d=adomerle.pw header.i=@adomerle.pw header.b="vnhsBWze"
-Received: from mail.adomerle.pw (mail.adomerle.pw [185.125.100.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nogP06os"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E107E230270;
-	Thu, 14 Aug 2025 23:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.100.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDC17260B;
+	Thu, 14 Aug 2025 23:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755215609; cv=none; b=MPfQR2/pxhuFur+AHHwtlWZesz6MkqOanTXwpvqnxUXLriXNe3NaAH2qwixVKqLhvBfk+9iC/78YgwRf/yu7+tzD+lhZk5wVHbQ+gI2FrlczFbtPcYqQ/GQGaHsIQS839ujB+UGt0DGGXM6YUs4UQWFvzhRdSJESr5i4N+Wc9iE=
+	t=1755215336; cv=none; b=crdMb9YzqNXKDz+DYaOay09S1pVJkbxC6x3vK8y41+YeUw35wHWEMMvnlJrHe6BpNbP3GMvSrEtSgsnjDhhFJwIopNlpOE+MQ5QIC2eT/YDTMRm9zyqdSugSotrrj6YkP2USaeFkzJZwwQ1kD1xC1U8afKGmmCNut7W+BhIXS8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755215609; c=relaxed/simple;
-	bh=4EvKD7kbgZYLzeYWbrYU2QUkRXHWsToQm57R7977eFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=My1aOzk2YvVIWjh6RUJsQP/4Bzmifkuzjy4aVNgkdIAMIq6TdIxbMmGrjB7rL+vKEgq54H9Wo6skJRg2mU97F/injxLk2bZGlqXBTjretoyDRlunvJLZJ6uk0MZ+a/yWho0V9DZGLomw38/OWfqfLP0VdNDTccDMuVc/cHDMjpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=adomerle.pw; spf=pass smtp.mailfrom=adomerle.pw; dkim=pass (2048-bit key) header.d=adomerle.pw header.i=@adomerle.pw header.b=nqH63Q/S; dkim=permerror (0-bit key) header.d=adomerle.pw header.i=@adomerle.pw header.b=vnhsBWze; arc=none smtp.client-ip=185.125.100.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=adomerle.pw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=adomerle.pw
-DKIM-Signature: v=1; a=rsa-sha256; s=202506r; d=adomerle.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1755215449; bh=LCkNZjlpL9iQI0iTMwF0ACn
-	6X86SzcrWkFRS8szsJ0c=; b=nqH63Q/Su04hnBrnLTMiVzH8SVAUrvqLiZAsDhJx42AzcAOpHd
-	ibNmMkpmt6qSxw+8Wdwi+K4PM3hN2/0y/xve+n/d21XgDXUnJB500dDqOZEBVkWS39oubtr9gvS
-	ZsG3X7S2mrbLN9Ubi8THJE24eXIJgoy5+4TwM4ZWF7nFttlr+fal97X6ebne5f2dIvsGMaYE0Fc
-	tJO3sZfBdZ4gduRoqN0qN2hyE2O9WNQ7gv1EsrerlTPOhB1J64HQCJdlw/AkbTWlc65HM7TTxXv
-	Q9+Rj+gfCGVhNQk0a+hEXeFlSnh8xnPnE6M9lbnbE1CLrnKRucCT3CZrWdQZ+Lo2m9A==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202506e; d=adomerle.pw; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1755215449; bh=LCkNZjlpL9iQI0iTMwF0ACn
-	6X86SzcrWkFRS8szsJ0c=; b=vnhsBWzeX8Y51MSoVXgusOp2e2+f4g7uTMiKazSjqIBjUGua3B
-	CRfuCfogbARyjOoCll0PDe97BhPYzXuFLxCQ==;
-From: Arseniy Velikanov <me@adomerle.pw>
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Arseniy Velikanov <me@adomerle.pw>
-Subject: [PATCH v1 2/2] phy: mediatek: tphy: Add software role switching
-Date: Fri, 15 Aug 2025 03:48:25 +0400
-Message-ID: <20250814234825.810-2-me@adomerle.pw>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250814234825.810-1-me@adomerle.pw>
-References: <20250814234825.810-1-me@adomerle.pw>
+	s=arc-20240116; t=1755215336; c=relaxed/simple;
+	bh=J2pOmDG+0oiYVuABnzLpk0FXLDrvf8TG3nt5h0zb8Wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ldDaSAyA1EMM0QM908LXRf5G17twEolwkC+Ezp84eUBbNgLsuv12YB+PJjkUBvQGwuCMFGonIXzIt6S6a2zC/0JURIh/NNUlzAW/zy4Zbooh2zVtwC5ZgUsGfTu9NUa++Ko8jsJ+iLNQtqvrh1Qlpr5/HJMpteK82wu90NaQaPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nogP06os; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73D75C4CEED;
+	Thu, 14 Aug 2025 23:48:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755215335;
+	bh=J2pOmDG+0oiYVuABnzLpk0FXLDrvf8TG3nt5h0zb8Wc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=nogP06oslO7URh1TMZmmDCnc0s7XptzWzvQrNbaa5my3Xl7uQMYaj5rv3Qy3ygMua
+	 pru3uNCkv3Q5ukA56dwBTHaG1B4kHdPspMyxzIYiFRpMMH/UUaYTfHgVhHvQem9y/s
+	 d/f0MpKWkE2Z0dpqSfygQDBx2ElwFfMxGWdbU663kQISXjlOrI9CkAYAz9MOh5SIjK
+	 ZxbCxMubhnpqVA+uSGzvAFoLLT4WXOYFPAI0LNNbgZX4fmHTvBNo7oAi2WT0ib787f
+	 LBDuDEXNjUrdehRjHWMgWAjzI5pq5yuZswGdrAVM4pgJ7Vuy38hMVX4nVcNTGtNdDs
+	 yjlclV3hr8MgA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 19419CE0ADB; Thu, 14 Aug 2025 16:48:54 -0700 (PDT)
+Date: Thu, 14 Aug 2025 16:48:54 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+	jessica.zhang@oss.qualcomm.com, sean@poorly.run,
+	marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
+	antomani103@gmail.com, linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/msm: Fix objtool warning in submit_lock_objects()
+Message-ID: <00f16170-93ca-4dac-a01f-4c5e0c60ff4c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250807131058.1013858-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807131058.1013858-1-sashal@kernel.org>
 
-MediaTek USB T-PHY has broken role switching on (likely) all mobile SoCs.
-Known affected socs are: MT6735, MT6757, MT6761, MT6765, MT6768, MT6771,
-MT6785, MT6789.
+On Thu, Aug 07, 2025 at 09:10:58AM -0400, Sasha Levin wrote:
+> Split the vmbind case into a separate helper function
+> submit_lock_objects_vmbind() to fix objtool warning:
+> 
+>   drivers/gpu/drm/msm/msm.o: warning: objtool: submit_lock_objects+0x451:
+>   sibling call from callable instruction with modified stack frame
+> 
+> The drm_exec_until_all_locked() macro uses computed gotos internally
+> for its retry loop. Having return statements inside this macro, or
+> immediately after it in certain code paths, confuses objtool's static
+> analysis of stack frames, causing it to incorrectly flag tail call
+> optimizations.
+> 
+> Fixes: 92395af63a99 ("drm/msm: Add VM_BIND submitqueue")
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-The downstream kernel manually controls the PHY mode by writing
-"test mode" FORCE regs. Setting all these regs fixes device/host modes, but
-breaks dual-role functionality. As a workaround we use workqueue that
-periodically checks the USB role and changes the PHY mode accordingly.
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
-To address this issue only on affected SoCs, we introduce a new
-device-tree property `mediatek,software-role-switch`. This ensures
-the workaround is applied only to broken hardware while leaving unaffected
-devices (like Chromebooks) untouched.
-
-Signed-off-by: Arseniy Velikanov <me@adomerle.pw>
----
- drivers/phy/mediatek/phy-mtk-tphy.c | 148 ++++++++++++++++++++++++++++
- 1 file changed, 148 insertions(+)
-
-diff --git a/drivers/phy/mediatek/phy-mtk-tphy.c b/drivers/phy/mediatek/phy-mtk-tphy.c
-index f6504e0ecd1a..472859ec929c 100644
---- a/drivers/phy/mediatek/phy-mtk-tphy.c
-+++ b/drivers/phy/mediatek/phy-mtk-tphy.c
-@@ -18,6 +18,9 @@
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
-+#include <linux/usb/role.h>
-+#include <linux/usb/otg.h>
-+#include <linux/workqueue.h>
- 
- #include "phy-mtk-io.h"
- 
-@@ -111,11 +114,18 @@
- 
- #define U3P_U2PHYDTM1		0x06C
- #define P2C_RG_UART_EN			BIT(16)
-+#define P2C_FORCE_IDPULLUP	BIT(8)
- #define P2C_FORCE_IDDIG		BIT(9)
-+#define P2C_FORCE_AVALID	BIT(10)
-+#define P2C_FORCE_SESSEND	BIT(12)
-+#define P2C_FORCE_VBUSVALID	BIT(13)
-+
- #define P2C_RG_VBUSVALID		BIT(5)
- #define P2C_RG_SESSEND			BIT(4)
-+#define P2C_RG_BVALID			BIT(3)
- #define P2C_RG_AVALID			BIT(2)
- #define P2C_RG_IDDIG			BIT(1)
-+#define P2C_RG_IDPULLUP			BIT(0)
- 
- #define U3P_U2PHYBC12C		0x080
- #define P2C_RG_CHGDT_EN		BIT(0)
-@@ -317,6 +327,8 @@ struct mtk_phy_instance {
- 		struct u3phy_banks u3_banks;
- 	};
- 	struct clk_bulk_data clks[TPHY_CLKS_CNT];
-+	struct delayed_work dr_work;
-+	struct usb_role_switch *role_switch;
- 	u32 index;
- 	u32 type;
- 	struct regmap *type_sw;
-@@ -326,14 +338,17 @@ struct mtk_phy_instance {
- 	u32 efuse_intr;
- 	u32 efuse_tx_imp;
- 	u32 efuse_rx_imp;
-+	int current_role;
- 	int eye_src;
- 	int eye_vrt;
- 	int eye_term;
- 	int intr;
- 	int discth;
- 	int pre_emphasis;
-+	int sw_get_retries;
- 	bool bc12_en;
- 	bool type_force_mode;
-+	bool software_role_switch;
- };
- 
- struct mtk_tphy {
-@@ -818,12 +833,118 @@ static void u2_phy_pll_26m_set(struct mtk_tphy *tphy,
- 			 P2R_RG_U2PLL_FRA_EN | P2R_RG_U2PLL_REFCLK_SEL);
- }
- 
-+static void u2_phy_instance_role_set(struct mtk_phy_instance *instance,
-+				     int role)
-+{
-+	struct u2phy_banks *u2_banks = &instance->u2_banks;
-+	void __iomem *com = u2_banks->com;
-+
-+	instance->current_role = role;
-+
-+	/* end session before role switch */
-+	mtk_phy_set_bits(com + U3P_U2PHYDTM1, P2C_RG_SESSEND);
-+	mdelay(5);
-+	mtk_phy_clear_bits(com + U3P_U2PHYDTM1, P2C_RG_SESSEND);
-+
-+	switch (role) {
-+	case USB_ROLE_DEVICE:
-+		dev_dbg(&instance->phy->dev, "set device role\n");
-+		mtk_phy_set_bits(com + U3P_U2PHYDTM1, P2C_RG_IDDIG);
-+		break;
-+	case USB_ROLE_HOST:
-+		dev_dbg(&instance->phy->dev, "set host role\n");
-+		mtk_phy_clear_bits(com + U3P_U2PHYDTM1, P2C_RG_IDDIG);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
-+static void u2_phy_role_switch_work(struct work_struct *work)
-+{
-+	struct mtk_phy_instance *instance =
-+		container_of(work, struct mtk_phy_instance, dr_work.work);
-+	int role;
-+
-+	if (IS_ERR_OR_NULL(instance->role_switch))
-+		instance->role_switch = usb_role_switch_get(&instance->phy->dev);
-+
-+	if (IS_ERR_OR_NULL(instance->role_switch)) {
-+		if (instance->sw_get_retries >= 10) {
-+			dev_warn(&instance->phy->dev, "failed to get role switch\n");
-+			return;
-+		}
-+
-+		instance->sw_get_retries += 1;
-+		schedule_delayed_work(&instance->dr_work, msecs_to_jiffies(500));
-+	}
-+
-+	role = usb_role_switch_get_role(instance->role_switch);
-+
-+	if (instance->current_role == role)
-+		goto reschedule_work;
-+
-+	u2_phy_instance_role_set(instance, role);
-+
-+reschedule_work:
-+	schedule_delayed_work(&instance->dr_work, msecs_to_jiffies(100));
-+}
-+
-+static int u2_phy_software_role_switch_init(struct mtk_phy_instance *instance)
-+{
-+	struct fwnode_handle *ep, *remote_ep, *usb_fwnode;
-+	struct device *usb_dev;
-+	int mode;
-+
-+	instance->sw_get_retries = 0;
-+
-+	ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(&instance->phy->dev),
-+					     0,
-+					     0,
-+					     FWNODE_GRAPH_ENDPOINT_NEXT);
-+	if (!ep)
-+		return -ENODEV;
-+
-+	remote_ep = fwnode_graph_get_remote_endpoint(ep);
-+	fwnode_handle_put(ep);
-+	if (!remote_ep)
-+		return -ENODEV;
-+
-+	usb_fwnode = fwnode_graph_get_port_parent(remote_ep);
-+	fwnode_handle_put(remote_ep);
-+
-+	if (!usb_fwnode)
-+		return -ENODEV;
-+
-+	usb_dev = bus_find_device_by_fwnode(&platform_bus_type, usb_fwnode);
-+	fwnode_handle_put(usb_fwnode);
-+	if (!usb_dev)
-+		return -ENODEV;
-+
-+	mode = usb_get_role_switch_default_mode(usb_dev);
-+	if (mode == USB_DR_MODE_HOST)
-+		u2_phy_instance_role_set(instance, USB_ROLE_HOST);
-+	else
-+		u2_phy_instance_role_set(instance, USB_ROLE_DEVICE);
-+
-+	INIT_DELAYED_WORK(&instance->dr_work, u2_phy_role_switch_work);
-+
-+	return 0;
-+}
-+
- static void u2_phy_instance_init(struct mtk_tphy *tphy,
- 	struct mtk_phy_instance *instance)
- {
- 	struct u2phy_banks *u2_banks = &instance->u2_banks;
- 	void __iomem *com = u2_banks->com;
- 	u32 index = instance->index;
-+	int ret;
-+
-+	if (instance->software_role_switch) {
-+		ret = u2_phy_software_role_switch_init(instance);
-+		if (ret)
-+			dev_warn(&instance->phy->dev, "failed to initialize role switching\n");
-+	}
- 
- 	/* switch to USB function, and enable usb pll */
- 	mtk_phy_clear_bits(com + U3P_U2PHYDTM0, P2C_FORCE_UART_EN | P2C_FORCE_SUSPENDM);
-@@ -883,6 +1004,18 @@ static void u2_phy_instance_power_on(struct mtk_tphy *tphy,
- 
- 		mtk_phy_set_bits(com + U3P_U2PHYDTM0, P2C_RG_SUSPENDM | P2C_FORCE_SUSPENDM);
- 	}
-+
-+	if (instance->software_role_switch) {
-+		/* Set FORCE modes for manual role switching */
-+		mtk_phy_set_bits(com + U3P_U2PHYDTM1, P2C_FORCE_IDPULLUP
-+			| P2C_FORCE_IDDIG | P2C_FORCE_AVALID | P2C_FORCE_VBUSVALID
-+			| P2C_FORCE_SESSEND);
-+		mtk_phy_set_bits(com + U3P_U2PHYDTM1, P2C_RG_IDPULLUP | P2C_RG_BVALID);
-+
-+		if (!instance->role_switch)
-+			schedule_delayed_work(&instance->dr_work, msecs_to_jiffies(100));
-+	}
-+
- 	dev_dbg(tphy->dev, "%s(%d)\n", __func__, index);
- }
- 
-@@ -906,6 +1039,9 @@ static void u2_phy_instance_power_off(struct mtk_tphy *tphy,
- 		mtk_phy_clear_bits(com + U3D_U2PHYDCR0, P2C_RG_SIF_U2PLL_FORCE_ON);
- 	}
- 
-+	if (instance->role_switch)
-+		cancel_delayed_work_sync(&instance->dr_work);
-+
- 	dev_dbg(tphy->dev, "%s(%d)\n", __func__, index);
- }
- 
-@@ -940,6 +1076,9 @@ static void u2_phy_instance_set_mode(struct mtk_tphy *tphy,
- 		tmp &= ~P2C_RG_IDDIG;
- 		break;
- 	case PHY_MODE_USB_OTG:
-+		/* We are managing role in workqueue */
-+		if (instance->software_role_switch)
-+			return;
- 		tmp &= ~(P2C_FORCE_IDDIG | P2C_RG_IDDIG);
- 		break;
- 	default:
-@@ -1129,6 +1268,11 @@ static void phy_parse_property(struct mtk_tphy *tphy,
- 	if (instance->type == PHY_TYPE_USB3)
- 		instance->type_force_mode = device_property_read_bool(dev, "mediatek,force-mode");
- 
-+	instance->software_role_switch =
-+		device_property_read_bool(dev, "mediatek,software-role-switch");
-+	if (instance->software_role_switch)
-+		dev_info(dev, "software role switch enabled\n");
-+
- 	if (instance->type != PHY_TYPE_USB2)
- 		return;
- 
-@@ -1618,6 +1762,10 @@ static int mtk_tphy_probe(struct platform_device *pdev)
- 		struct phy *phy;
- 		int retval;
- 
-+		/* filter non-phy nodes (e.g. graphs) */
-+		if (!of_find_property(child_np, "reg", NULL))
-+			continue;
-+
- 		instance = devm_kzalloc(dev, sizeof(*instance), GFP_KERNEL);
- 		if (!instance)
- 			return -ENOMEM;
--- 
-2.50.1
-
+> ---
+> 
+> Changes since v1:
+>  - Extract helper submit_lock_objects_vmbind() instead of refactoring
+>    single loop
+> 
+>  drivers/gpu/drm/msm/msm_gem_submit.c | 49 +++++++++++++++-------------
+>  1 file changed, 27 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_gem_submit.c b/drivers/gpu/drm/msm/msm_gem_submit.c
+> index 5f8e939a5906..1ce90e351b7a 100644
+> --- a/drivers/gpu/drm/msm/msm_gem_submit.c
+> +++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+> @@ -271,32 +271,37 @@ static int submit_lookup_cmds(struct msm_gem_submit *submit,
+>  	return ret;
+>  }
+>  
+> -/* This is where we make sure all the bo's are reserved and pin'd: */
+> -static int submit_lock_objects(struct msm_gem_submit *submit)
+> +static int submit_lock_objects_vmbind(struct msm_gem_submit *submit)
+>  {
+> -	unsigned flags = DRM_EXEC_INTERRUPTIBLE_WAIT;
+> +	unsigned flags = DRM_EXEC_INTERRUPTIBLE_WAIT | DRM_EXEC_IGNORE_DUPLICATES;
+>  	struct drm_exec *exec = &submit->exec;
+> -	int ret;
+> +	int ret = 0;
+>  
+> -	if (msm_context_is_vmbind(submit->queue->ctx)) {
+> -		flags |= DRM_EXEC_IGNORE_DUPLICATES;
+> +	drm_exec_init(&submit->exec, flags, submit->nr_bos);
+>  
+> -		drm_exec_init(&submit->exec, flags, submit->nr_bos);
+> +	drm_exec_until_all_locked (&submit->exec) {
+> +		ret = drm_gpuvm_prepare_vm(submit->vm, exec, 1);
+> +		drm_exec_retry_on_contention(exec);
+> +		if (ret)
+> +			break;
+>  
+> -		drm_exec_until_all_locked (&submit->exec) {
+> -			ret = drm_gpuvm_prepare_vm(submit->vm, exec, 1);
+> -			drm_exec_retry_on_contention(exec);
+> -			if (ret)
+> -				return ret;
+> +		ret = drm_gpuvm_prepare_objects(submit->vm, exec, 1);
+> +		drm_exec_retry_on_contention(exec);
+> +		if (ret)
+> +			break;
+> +	}
+>  
+> -			ret = drm_gpuvm_prepare_objects(submit->vm, exec, 1);
+> -			drm_exec_retry_on_contention(exec);
+> -			if (ret)
+> -				return ret;
+> -		}
+> +	return ret;
+> +}
+>  
+> -		return 0;
+> -	}
+> +/* This is where we make sure all the bo's are reserved and pin'd: */
+> +static int submit_lock_objects(struct msm_gem_submit *submit)
+> +{
+> +	unsigned flags = DRM_EXEC_INTERRUPTIBLE_WAIT;
+> +	int ret = 0;
+> +
+> +	if (msm_context_is_vmbind(submit->queue->ctx))
+> +		return submit_lock_objects_vmbind(submit);
+>  
+>  	drm_exec_init(&submit->exec, flags, submit->nr_bos);
+>  
+> @@ -305,17 +310,17 @@ static int submit_lock_objects(struct msm_gem_submit *submit)
+>  					drm_gpuvm_resv_obj(submit->vm));
+>  		drm_exec_retry_on_contention(&submit->exec);
+>  		if (ret)
+> -			return ret;
+> +			break;
+>  		for (unsigned i = 0; i < submit->nr_bos; i++) {
+>  			struct drm_gem_object *obj = submit->bos[i].obj;
+>  			ret = drm_exec_prepare_obj(&submit->exec, obj, 1);
+>  			drm_exec_retry_on_contention(&submit->exec);
+>  			if (ret)
+> -				return ret;
+> +				break;
+>  		}
+>  	}
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int submit_fence_sync(struct msm_gem_submit *submit)
+> -- 
+> 2.39.5
+> 
 
