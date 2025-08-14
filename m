@@ -1,62 +1,86 @@
-Return-Path: <linux-kernel+bounces-768846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DE0B26638
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5164B2664A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2A844E582C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:07:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7880C583E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687BA3002DE;
-	Thu, 14 Aug 2025 13:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C813002B2;
+	Thu, 14 Aug 2025 13:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TDgXKLmO"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lhWBwb7Y"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE062FFDEC;
-	Thu, 14 Aug 2025 13:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916582FD7B1
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755176809; cv=none; b=lXnKMOLlDTStqZVteuwEn4aqxK0l/J92/PqpHRijzhkwyx/Y2qH7UBmAIndGXWBdJYreuHk3fAkhHxzj3GtYnPM3M1IdwC46N8u9UpHzLcm1yqGMZpBN0CCjIAxQIvqvw0UsZx1UBiY1MmHOOrt0jqf390CxzkPJHPDcoCqJ3Q8=
+	t=1755176804; cv=none; b=dtfJccC+BNRGdt03RC6DaMcHxTmbiN4ykPmtb5VikC4G+pD3tDo38YXHDqVpgHsT24/HGbhols5BM8OwhlftdcSh66MpPexVq13a8hz6GGlNT1y8MlMy62Kz/VMiTwlSlkYRxtDN7POyoFnfOlsDrxKFytvqZEi3U3qjRtkFXG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755176809; c=relaxed/simple;
-	bh=jOAqWxiriywVpdi5TvvVzAUwFdL9W9fDqxh9mmGsPOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kBTDpmZD553ZbmCJPMdiApxo+BHFel73Xru6piCpOpgIavNnraSIc4HRhQgSY8ivyrbf7EWis/CNNLBskEiqATTrbvKCjxn3bu4NaTW4iG+Kr2sDpOkKhvE5h6z0bWQ0wnZG9h3KIjBS7yIEvfZlkVtBeg4xnp8sSVnj90fZRlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TDgXKLmO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E9FKSE027000;
-	Thu, 14 Aug 2025 13:06:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1755176804; c=relaxed/simple;
+	bh=5QFXOIxYwI7wCwUqfWa3nfNhBOnOmJw0HWwriyxIzbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gog/VoeVjG1khmwEiSYSI52XtvvX3hHMuhuXrqWzMiY1DKCRah3IimPD1N5olsovN1m73SxTAIr1eeqKo+YeXybG+bad/sc5RfdM3pXtcKh2Wg8be/3kbF29kzk5cPTFYv2sIRMzVKvm30BJwJq6ejeZWqfnDrVKh6N5MIdfFQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lhWBwb7Y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E8leXr030070
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:06:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	krCmXFTYeP7XPxF+yvCB610msvOX8qDJ7ylNRn64itE=; b=TDgXKLmOy6cQtKS7
-	bQlVryepSBECdEiPJgutVSSdfJiH51n/3j2IzTAat/wzJ459HeLvlTTOGQTeGBmX
-	dKBc1tHEKb9VKjCqwP5kEe80Lx0raXBhg1GzWeu+hGbAA5J0f6LAYwdIAY7N76xp
-	aw4XnwNunsOTqnTiXk602sSKBCgozPoy2zz8RnIHJjzQ4vWYAGd/72w/697MAK6p
-	iTWb1a6lujBLR51M9+z3X4EryTfPZPtqGYMQi5k0i37G5jbfC3UdsbFwbDsITc07
-	katUi9kzYk2sKrcURepF2ce1b/PeAzm4nDBM/BY7V9p0k2RlRZ3ErumdpzVhOy+B
-	bj6Rkg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffhjukd2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 13:06:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57ED6YmD008250
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 13:06:34 GMT
-Received: from [10.50.4.137] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
- 2025 06:06:32 -0700
-Message-ID: <4a898590-e1ca-41dc-b8b7-a5884d10db5d@quicinc.com>
-Date: Thu, 14 Aug 2025 18:36:29 +0530
+	XV3fpM6PG+X0UarE3jfdjPT0PHf2JRl3mAJsJYPvWcI=; b=lhWBwb7YbBE16vF1
+	W5dok5ZDPP+jDAVnHBW5TQxUsvaBbeif8vr/nSpEehD7I9Iv7udLJG9WJw14/R+n
+	2+k6RtGJf+NN5sRu5S0e40Mvm+FtlaD5pijfm9gCf8OrvAOwoUQNE3oah/Soj1Sr
+	UYrxxQfi0emEoij+YzdCW9NTmOE7Ao+PfL/nG5PcRqrpvmc5bnyXrGki2fwI+z54
+	a7ksDb/bTacBJJzyR+8lv2Zt1JgggzVGh5XGwV2KYmOjpPNkHPGghE9lAL2rM3S5
+	gPN1sm5plNza5cFkd4VTbgoGzomu41hmQ4y8O/te8x8on+yKWL0hDMeYVHUNveQE
+	I+KHzA==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vtmk5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:06:40 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76e2e8afd68so810470b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:06:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755176798; x=1755781598;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XV3fpM6PG+X0UarE3jfdjPT0PHf2JRl3mAJsJYPvWcI=;
+        b=gXRX9uhRtpDGY8A/G9V06XatoRvJWR9vAS262rjMUFtfW47rcm7iN/3BbagcL35DAD
+         MBI488R/ey/eVLto0Uo/39Z/VCtOThbhhMUxrOHijJW7lNj9PJbIbGr5qvIkGQAJ1JIN
+         vMEB5PyalmLlaQaJ7UQxJJ2Z+cRGCedQUVWgLtxEIZ8vHM9FG27fsTi5GWOeHq+jE/pp
+         us6eSw0L4lTKqCg/ZryrcjmG/HsAOMwRTXAN7dKkfphgPQJ3oB5FqgAAmrEpOBMV74uu
+         UXRdzBRJzT4ckACzyC7ZnqETKsySx8v9soDSN8mKQpbHcnshVQlUgVnkfjPUOtgsnRK2
+         WNuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWimD/uvz+/bsE7hfXgd22wTcI012JaYUFYvkI8dvbo+n5jiZU20ng2Xixfp+K1io/bbhO7RsXGDTB9iXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuHIYBRychPsqj7RSOK2T1hmJOKgLbDFXCSjx5vARsfU/dM7Iu
+	BdmBe3VZIm0JwxvAkbS3cEqKKgWDvcmlLMJypCQYH9l1NdBhgdiMvSSZUQHo1VDwcFLqaZT/K20
+	VjCJ1PQ+tTXSNiwIHOoxH99SVA1I7VunqoYqyNbP77DYY1yKKXMtS+FAoJIxJ6kZ4n/M=
+X-Gm-Gg: ASbGncvrdee/ZrsC0/LuXgFe5jEd7LrJ9gpHfIOY8EpEPM+KeDtmTSx/oT17qoOewsN
+	Zd3hRVO+5Dj3qOzgxlZOk6vqgmB+Smq90K60Aj35JlZaTVpmM7dPkdHyHv7112pyqJY3LH67Ddr
+	cngGdTvcTGfTXLMs1wiI68Y4NBVq8grqOjI06y+ag4ZLRhV7bUfJEgF4jbNpsO9A35eg8f7UtNl
+	0grPjlCGONNewOdj/dTVTX51M95VUM4iu1yekkXahEBeY9ab7EJoBO3gKOhtI5HyvvieK08hUQm
+	4n3qiGztDXErNfO8180IzDL1dxz3PSUAMYWKSuaHu0JMZIYq4QOqmNJ2uqRzKJcDpHId
+X-Received: by 2002:a05:6a00:4650:b0:76b:ef69:1543 with SMTP id d2e1a72fcca58-76e2fc0c9b8mr5324892b3a.8.1755176797473;
+        Thu, 14 Aug 2025 06:06:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBFx/H+3iy2tcu3WVFw0h+HOxwYWREu85TH/L/ROS7fGub3Tdh4+ooKwdQrYnPEDgRG2oI7w==
+X-Received: by 2002:a05:6a00:4650:b0:76b:ef69:1543 with SMTP id d2e1a72fcca58-76e2fc0c9b8mr5324785b3a.8.1755176796665;
+        Thu, 14 Aug 2025 06:06:36 -0700 (PDT)
+Received: from [192.168.0.195] ([49.204.31.133])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbd22csm34678583b3a.65.2025.08.14.06.06.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 06:06:35 -0700 (PDT)
+Message-ID: <2ac5aaa8-18ba-466a-ba67-8212daf9c3b5@oss.qualcomm.com>
+Date: Thu, 14 Aug 2025 18:36:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,173 +88,809 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6.y v2 1/1] block: Fix bounce check logic in
- blk_queue_may_bounce()
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
-        "Martin K .
- Petersen" <martin.petersen@oracle.com>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250814063655.1902688-1-quic_hardshar@quicinc.com>
- <2025081450-pacifist-laxative-bb4c@gregkh>
- <21bf1ed6-9343-40e1-9532-c353718aee92@quicinc.com>
- <2025081449-dangling-citation-90d7@gregkh>
+Subject: Re: [PATCH v4 6/7] dt-bindings: clock: qcom: document the Glymur
+ Global Clock Controller
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250813-glymur-clock-controller-v4-v4-0-a408b390b22c@oss.qualcomm.com>
+ <20250813-glymur-clock-controller-v4-v4-6-a408b390b22c@oss.qualcomm.com>
+ <wttnza5lagqzda2qxeyksm464mmzycp7vwcwzrwynx7mmounti@ex7pbezr6eiy>
 Content-Language: en-US
-From: Hardeep Sharma <quic_hardshar@quicinc.com>
-In-Reply-To: <2025081449-dangling-citation-90d7@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NCBTYWx0ZWRfX3bnogNWKfMR/
- pkUGFbI4Fa+HiSzuLOUc57yXJKys4ffNs0rDVEbdAe+5THN8SKzL1GdE0LrqQeLMW1KZ4ChpsxF
- jTwkknavvpsZr1QyDy0E2m0rAMVbB+49LcSHA4bwJ2LxWVNq/CaKbUkZCaYZMQDEJAKU0lRI/rc
- c2l6sOfzis06Tn9wTY60SjZ59w/bfbKyhcYlpEi8hPcDkwqJVRfiYh/L2lh7mBNFJB7jNNeNaik
- yL7Zp1d/8jV3Al0f8wdSc36x9qOq002vQtYuLK2wbVXhBa8QqYl2BR9YKgLcXFuKSgILaKhQB+T
- mmx9IueSqHnSylVrVn760RGV7Mjf/JAtAn2UJU/rX1OOtNnqB8gXi+KW4Rv29M1d5bhFwtFi/0F
- XDP1AHek
-X-Proofpoint-GUID: bNKjm28c2Joohus3FoSjco54BNTGQihO
-X-Authority-Analysis: v=2.4 cv=TJFFS0la c=1 sm=1 tr=0 ts=689ddf5b cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=8iWu0OXfL7HOh5h_90kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: bNKjm28c2Joohus3FoSjco54BNTGQihO
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <wttnza5lagqzda2qxeyksm464mmzycp7vwcwzrwynx7mmounti@ex7pbezr6eiy>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfXw/178ckEsvF8
+ SXB3A5t/fRtM+ilprczliRqEZpNMq3ca5JeJrms27KoEISgYpQPr3j5WPDLMtLSy9LvDL5XV7Oc
+ EmLM4WkBFlzxHMJJCBohXBskiXoo1GCWzk1tG9EPB/yYKyJrR8ch6a5beKougUfYfzawHK9cnKY
+ Wm5w/efa4GKc5ZrgM6dZdnqw3LvCHN7rliFh8ZDBW3bZb1hwFm5P1q1GNkRi0iTjCQ0LJ62xiAC
+ 6NJTswlBInR8d2+qGalR47VTclChsI9K5sJazpQJ1MhQBhpkGh2iBJT+zE6r92Xgk+fuQjjxBzj
+ 4MY2GLNPlE1BNizMoj/rQ9ED67JJpWT51YPaK8MDY5y0r0OKtv4eK8xMnjEDgIX6QFZs8ty8yNL
+ Yo5F+LRC
+X-Proofpoint-GUID: 4fl7OXGMWLCacAKGJW_een_Zi_R8b-lr
+X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689ddf60 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=/kiP2gCwObMqexHosDfpNA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8 a=EUspDBNiAAAA:8
+ a=autLQW-Arp-aHypb7gEA:9 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+ a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-ORIG-GUID: 4fl7OXGMWLCacAKGJW_een_Zi_R8b-lr
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 adultscore=0 impostorscore=0 malwarescore=0
- phishscore=0 clxscore=1015 spamscore=0 bulkscore=0 classifier=typeunknown
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
  authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508110074
+ engine=8.19.0-2507300000 definitions=main-2508110107
 
-This change to blk_queue_may_bounce() in block/blk.h will only affect 
-systems with the following configuration:
 
-1. 32-bit ARM architecture
-2. Physical DDR memory greater than 1GB
-3. CONFIG_HIGHMEM enabled
-4. Virtual memory split of 1GB for kernel and 3GB for userspace
 
-Under these conditions, the logic for buffer bouncing is relevant 
-because the kernel may need to handle memory above the low memory 
-threshold, which is typical for highmem-enabled 32-bit systems with 
-large RAM. On other architectures or configurations, this code path will 
-not be exercised.
+On 8/13/2025 7:21 PM, Bjorn Andersson wrote:
+> On Wed, Aug 13, 2025 at 01:25:22PM +0530, Taniya Das wrote:
+>> Add device tree bindings for global clock controller on Glymur SoCs.
+>>
+> 
+> Shouldn't that be SoC (singular)?
 
-On 8/14/2025 5:06 PM, Greg KH wrote:
-> On Thu, Aug 14, 2025 at 04:24:25PM +0530, Hardeep Sharma wrote:
+SoC :), will fix that.
+
+> 
+>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>> ---
+>>  .../devicetree/bindings/clock/qcom,glymur-gcc.yaml | 122 +++++
+>>  include/dt-bindings/clock/qcom,glymur-gcc.h        | 578 +++++++++++++++++++++
+>>  2 files changed, 700 insertions(+)
 >>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,glymur-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,glymur-gcc.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..d9409746729ee4d9befe8029b11914cafedb33e5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,glymur-gcc.yaml
+>> @@ -0,0 +1,122 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,glymur-gcc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller on Glymur SoC
+>> +
+>> +maintainers:
+>> +  - Taniya Das <taniya.das@oss.qualcomm.com>
+>> +
+>> +description: |
+>> +  Qualcomm global clock control module provides the clocks, resets and power
+>> +  domains on Glymur SoC.
+>> +
+>> +  See also: include/dt-bindings/clock/qcom,glymur-gcc.h
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,glymur-gcc
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: Board XO source
+>> +      - description: Board XO_A source
+>> +      - description: Sleep clock source
+>> +      - description: USB 0 Phy DP0 GMUX clock source
+>> +      - description: USB 0 Phy DP1 GMUX clock source
+>> +      - description: USB 0 Phy PCIE PIPEGMUX clock source
+>> +      - description: USB 0 Phy PIPEGMUX clock source
+>> +      - description: USB 0 Phy SYS PCIE PIPEGMUX clock source
+>> +      - description: USB 1 Phy DP0 GMUX 2 clock source
+>> +      - description: USB 1 Phy DP1 GMUX 2 clock source
+>> +      - description: USB 1 Phy PCIE PIPEGMUX clock source
+>> +      - description: USB 1 Phy PIPEGMUX clock source
+>> +      - description: USB 1 Phy SYS PCIE PIPEGMUX clock source
+>> +      - description: USB 2 Phy DP0 GMUX 2 clock source
+>> +      - description: USB 2 Phy DP1 GMUX 2 clock source
+>> +      - description: USB 2 Phy PCIE PIPEGMUX clock source
+>> +      - description: USB 2 Phy PIPEGMUX clock source
+>> +      - description: USB 2 Phy SYS PCIE PIPEGMUX clock source
+>> +      - description: PCIe 3a pipe clock
+>> +      - description: PCIe 4b pipe clock
+>> +      - description: PCIe 4 pipe clock
+>> +      - description: PCIe 5 pipe clock
+>> +      - description: PCIe 6 pipe clock
+>> +      - description: PCIe 6b pipe clock
+> 
+> When I look at the documentation, we seem to have pipe clocks for pcie
+> 0, 1, 2, 3a, 3b, 4, 5, and 6. And this seems to better match the clock
+> defines below as well...
+> 
+
+Bjorn, the PCIE 0, 1, 2 are connected to USB4 PHY 0/1/2 pcie pipe clock
+source.
+
+> Can you please confirm that the inputs you have listed here are complete
+> and correct? (It's not going to be possible to add things in the middle
+> later and adding 0, 1, and 2 at the bottom will not sit well with my
+> OCD).
+> 
+
+These are the complete list of external clocks and nothing else is required.
+
+> Regards,
+> Bjorn
+> 
+>> +      - description: QUSB4 0 PHY RX 0 clock source
+>> +      - description: QUSB4 0 PHY RX 1 clock source
+>> +      - description: QUSB4 1 PHY RX 0 clock source
+>> +      - description: QUSB4 1 PHY RX 1 clock source
+>> +      - description: QUSB4 2 PHY RX 0 clock source
+>> +      - description: QUSB4 2 PHY RX 1 clock source
+>> +      - description: UFS PHY RX Symbol 0 clock source
+>> +      - description: UFS PHY RX Symbol 1 clock source
+>> +      - description: UFS PHY TX Symbol 0 clock source
+>> +      - description: USB3 PHY 0 pipe clock source
+>> +      - description: USB3 PHY 1 pipe clock source
+>> +      - description: USB3 PHY 2 pipe clock source
+>> +      - description: USB3 UNI PHY pipe 0 clock source
+>> +      - description: USB3 UNI PHY pipe 1 clock source
+>> +      - description: USB4 PHY 0 pcie pipe clock source
+>> +      - description: USB4 PHY 0 Max pipe clock source
+>> +      - description: USB4 PHY 1 pcie pipe clock source
+>> +      - description: USB4 PHY 1 Max pipe clock source
+>> +      - description: USB4 PHY 2 pcie pipe clock source
+>> +      - description: USB4 PHY 2 Max pipe clock source
+>> +
+>> +required:
+>> +  - compatible
+>> +  - clocks
+>> +  - '#power-domain-cells'
+>> +
+>> +allOf:
+>> +  - $ref: qcom,gcc.yaml#
+>> +
+>> +unevaluatedProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/qcom,rpmh.h>
+>> +    clock-controller@100000 {
+>> +      compatible = "qcom,glymur-gcc";
+>> +      reg = <0x100000 0x1f9000>;
+>> +      clocks = <&rpmhcc RPMH_CXO_CLK>,
+>> +               <&rpmhcc RPMH_CXO_CLK_A>,
+>> +               <&sleep_clk>,
+>> +               <&usb_0_phy_dp0_gmux>,
+>> +               <&usb_0_phy_dp1_gmux>,
+>> +               <&usb_0_phy_pcie_pipegmux>,
+>> +               <&usb_0_phy_pipegmux>,
+>> +               <&usb_0_phy_sys_pcie_pipegmux>,
+>> +               <&usb_1_phy_dp0_gmux_2>,
+>> +               <&usb_1_phy_dp1_gmux_2>,
+>> +               <&usb_1_phy_pcie_pipegmux>,
+>> +               <&usb_1_phy_pipegmux>,
+>> +               <&usb_1_phy_sys_pcie_pipegmux>,
+>> +               <&usb_2_phy_dp0_gmux 2>,
+>> +               <&usb_2_phy_dp1_gmux 2>,
+>> +               <&usb_2_phy_pcie_pipegmux>,
+>> +               <&usb_2_phy_pipegmux>,
+>> +               <&usb_2_phy_sys_pcie_pipegmux>,
+>> +               <&pcie_3a_pipe>, <&pcie_4b_pipe>,
+>> +               <&pcie_4_pipe>, <&pcie_5_pipe>,
+>> +               <&pcie_6_pipe>, <&pcie_6b_pipe>,
+>> +               <&qusb4_0_phy_rx_0>, <&qusb4_0_phy_rx_1>,
+>> +               <&qusb4_1_phy_rx_0>, <&qusb4_1_phy_rx_1>,
+>> +               <&qusb4_2_phy_rx_0>, <&qusb4_2_phy_rx_1>,
+>> +               <&ufs_phy_rx_symbol_0>, <&ufs_phy_rx_symbol_1>,
+>> +               <&ufs_phy_tx_symbol_0>,
+>> +               <&usb3_phy_0_pipe>, <&usb3_phy_1_pipe>,
+>> +               <&usb3_phy_2_pipe>,
+>> +               <&usb3_uni_phy_pipe_0>, <&usb3_uni_phy_pipe_1>,
+>> +               <&usb4_phy_0_pcie_pipe>, <&usb4_phy_0_max_pipe>,
+>> +               <&usb4_phy_1_pcie_pipe>, <&usb4_phy_1_max_pipe>,
+>> +               <&usb4_phy_2_pcie_pipe>, <&usb4_phy_2_max_pipe>;
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #power-domain-cells = <1>;
+>> +    };
+>> +
+>> +...
+>> diff --git a/include/dt-bindings/clock/qcom,glymur-gcc.h b/include/dt-bindings/clock/qcom,glymur-gcc.h
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..10c12b8c51c34c5931c34b4437be03aea098ba53
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,glymur-gcc.h
+>> @@ -0,0 +1,578 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>> +/*
+>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_GLYMUR_H
+>> +#define _DT_BINDINGS_CLK_QCOM_GCC_GLYMUR_H
+>> +
+>> +/* GCC clocks */
+>> +#define GCC_GPLL0						0
+>> +#define GCC_GPLL0_OUT_EVEN					1
+>> +#define GCC_GPLL1						2
+>> +#define GCC_GPLL14						3
+>> +#define GCC_GPLL14_OUT_EVEN					4
+>> +#define GCC_GPLL4						5
+>> +#define GCC_GPLL5						6
+>> +#define GCC_GPLL7						7
+>> +#define GCC_GPLL8						8
+>> +#define GCC_GPLL9						9
+>> +#define GCC_AGGRE_NOC_PCIE_3A_WEST_SF_AXI_CLK			10
+>> +#define GCC_AGGRE_NOC_PCIE_3B_WEST_SF_AXI_CLK			11
+>> +#define GCC_AGGRE_NOC_PCIE_4_WEST_SF_AXI_CLK			12
+>> +#define GCC_AGGRE_NOC_PCIE_5_EAST_SF_AXI_CLK			13
+>> +#define GCC_AGGRE_NOC_PCIE_6_WEST_SF_AXI_CLK			14
+>> +#define GCC_AGGRE_UFS_PHY_AXI_CLK				15
+>> +#define GCC_AGGRE_UFS_PHY_AXI_HW_CTL_CLK			16
+>> +#define GCC_AGGRE_USB2_PRIM_AXI_CLK				17
+>> +#define GCC_AGGRE_USB3_MP_AXI_CLK				18
+>> +#define GCC_AGGRE_USB3_PRIM_AXI_CLK				19
+>> +#define GCC_AGGRE_USB3_SEC_AXI_CLK				20
+>> +#define GCC_AGGRE_USB3_TERT_AXI_CLK				21
+>> +#define GCC_AGGRE_USB4_0_AXI_CLK				22
+>> +#define GCC_AGGRE_USB4_1_AXI_CLK				23
+>> +#define GCC_AGGRE_USB4_2_AXI_CLK				24
+>> +#define GCC_AV1E_AHB_CLK					25
+>> +#define GCC_AV1E_AXI_CLK					26
+>> +#define GCC_AV1E_XO_CLK						27
+>> +#define GCC_BOOT_ROM_AHB_CLK					28
+>> +#define GCC_CAMERA_AHB_CLK					29
+>> +#define GCC_CAMERA_HF_AXI_CLK					30
+>> +#define GCC_CAMERA_SF_AXI_CLK					31
+>> +#define GCC_CAMERA_XO_CLK					32
+>> +#define GCC_CFG_NOC_PCIE_ANOC_AHB_CLK				33
+>> +#define GCC_CFG_NOC_PCIE_ANOC_SOUTH_AHB_CLK			34
+>> +#define GCC_CFG_NOC_USB2_PRIM_AXI_CLK				35
+>> +#define GCC_CFG_NOC_USB3_MP_AXI_CLK				36
+>> +#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				37
+>> +#define GCC_CFG_NOC_USB3_SEC_AXI_CLK				38
+>> +#define GCC_CFG_NOC_USB3_TERT_AXI_CLK				39
+>> +#define GCC_CFG_NOC_USB_ANOC_AHB_CLK				40
+>> +#define GCC_CFG_NOC_USB_ANOC_SOUTH_AHB_CLK			41
+>> +#define GCC_DISP_AHB_CLK					42
+>> +#define GCC_DISP_HF_AXI_CLK					43
+>> +#define GCC_EVA_AHB_CLK						44
+>> +#define GCC_EVA_AXI0_CLK					45
+>> +#define GCC_EVA_AXI0C_CLK					46
+>> +#define GCC_EVA_XO_CLK						47
+>> +#define GCC_GP1_CLK						48
+>> +#define GCC_GP1_CLK_SRC						49
+>> +#define GCC_GP2_CLK						50
+>> +#define GCC_GP2_CLK_SRC						51
+>> +#define GCC_GP3_CLK						52
+>> +#define GCC_GP3_CLK_SRC						53
+>> +#define GCC_GPU_CFG_AHB_CLK					54
+>> +#define GCC_GPU_GEMNOC_GFX_CLK					55
+>> +#define GCC_GPU_GPLL0_CLK_SRC					56
+>> +#define GCC_GPU_GPLL0_DIV_CLK_SRC				57
+>> +#define GCC_PCIE_0_AUX_CLK					58
+>> +#define GCC_PCIE_0_AUX_CLK_SRC					59
+>> +#define GCC_PCIE_0_CFG_AHB_CLK					60
+>> +#define GCC_PCIE_0_MSTR_AXI_CLK					61
+>> +#define GCC_PCIE_0_PHY_RCHNG_CLK				62
+>> +#define GCC_PCIE_0_PHY_RCHNG_CLK_SRC				63
+>> +#define GCC_PCIE_0_PIPE_CLK					64
+>> +#define GCC_PCIE_0_SLV_AXI_CLK					65
+>> +#define GCC_PCIE_0_SLV_Q2A_AXI_CLK				66
+>> +#define GCC_PCIE_1_AUX_CLK					67
+>> +#define GCC_PCIE_1_AUX_CLK_SRC					68
+>> +#define GCC_PCIE_1_CFG_AHB_CLK					69
+>> +#define GCC_PCIE_1_MSTR_AXI_CLK					70
+>> +#define GCC_PCIE_1_PHY_RCHNG_CLK				71
+>> +#define GCC_PCIE_1_PHY_RCHNG_CLK_SRC				72
+>> +#define GCC_PCIE_1_PIPE_CLK					73
+>> +#define GCC_PCIE_1_SLV_AXI_CLK					74
+>> +#define GCC_PCIE_1_SLV_Q2A_AXI_CLK				75
+>> +#define GCC_PCIE_2_AUX_CLK					76
+>> +#define GCC_PCIE_2_AUX_CLK_SRC					77
+>> +#define GCC_PCIE_2_CFG_AHB_CLK					78
+>> +#define GCC_PCIE_2_MSTR_AXI_CLK					79
+>> +#define GCC_PCIE_2_PHY_RCHNG_CLK				80
+>> +#define GCC_PCIE_2_PHY_RCHNG_CLK_SRC				81
+>> +#define GCC_PCIE_2_PIPE_CLK					82
+>> +#define GCC_PCIE_2_SLV_AXI_CLK					83
+>> +#define GCC_PCIE_2_SLV_Q2A_AXI_CLK				84
+>> +#define GCC_PCIE_3A_AUX_CLK					85
+>> +#define GCC_PCIE_3A_AUX_CLK_SRC					86
+>> +#define GCC_PCIE_3A_CFG_AHB_CLK					87
+>> +#define GCC_PCIE_3A_MSTR_AXI_CLK				88
+>> +#define GCC_PCIE_3A_PHY_RCHNG_CLK				89
+>> +#define GCC_PCIE_3A_PHY_RCHNG_CLK_SRC				90
+>> +#define GCC_PCIE_3A_PIPE_CLK					91
+>> +#define GCC_PCIE_3A_PIPE_CLK_SRC				92
+>> +#define GCC_PCIE_3A_SLV_AXI_CLK					93
+>> +#define GCC_PCIE_3A_SLV_Q2A_AXI_CLK				94
+>> +#define GCC_PCIE_3B_AUX_CLK					95
+>> +#define GCC_PCIE_3B_AUX_CLK_SRC					96
+>> +#define GCC_PCIE_3B_CFG_AHB_CLK					97
+>> +#define GCC_PCIE_3B_MSTR_AXI_CLK				98
+>> +#define GCC_PCIE_3B_PHY_RCHNG_CLK				99
+>> +#define GCC_PCIE_3B_PHY_RCHNG_CLK_SRC				100
+>> +#define GCC_PCIE_3B_PIPE_CLK					101
+>> +#define GCC_PCIE_3B_PIPE_CLK_SRC				102
+>> +#define GCC_PCIE_3B_PIPE_DIV2_CLK				103
+>> +#define GCC_PCIE_3B_PIPE_DIV_CLK_SRC				104
+>> +#define GCC_PCIE_3B_SLV_AXI_CLK					105
+>> +#define GCC_PCIE_3B_SLV_Q2A_AXI_CLK				106
+>> +#define GCC_PCIE_4_AUX_CLK					107
+>> +#define GCC_PCIE_4_AUX_CLK_SRC					108
+>> +#define GCC_PCIE_4_CFG_AHB_CLK					109
+>> +#define GCC_PCIE_4_MSTR_AXI_CLK					110
+>> +#define GCC_PCIE_4_PHY_RCHNG_CLK				111
+>> +#define GCC_PCIE_4_PHY_RCHNG_CLK_SRC				112
+>> +#define GCC_PCIE_4_PIPE_CLK					113
+>> +#define GCC_PCIE_4_PIPE_CLK_SRC					114
+>> +#define GCC_PCIE_4_PIPE_DIV2_CLK				115
+>> +#define GCC_PCIE_4_PIPE_DIV_CLK_SRC				116
+>> +#define GCC_PCIE_4_SLV_AXI_CLK					117
+>> +#define GCC_PCIE_4_SLV_Q2A_AXI_CLK				118
+>> +#define GCC_PCIE_5_AUX_CLK					119
+>> +#define GCC_PCIE_5_AUX_CLK_SRC					120
+>> +#define GCC_PCIE_5_CFG_AHB_CLK					121
+>> +#define GCC_PCIE_5_MSTR_AXI_CLK					122
+>> +#define GCC_PCIE_5_PHY_RCHNG_CLK				123
+>> +#define GCC_PCIE_5_PHY_RCHNG_CLK_SRC				124
+>> +#define GCC_PCIE_5_PIPE_CLK					125
+>> +#define GCC_PCIE_5_PIPE_CLK_SRC					126
+>> +#define GCC_PCIE_5_PIPE_DIV2_CLK				127
+>> +#define GCC_PCIE_5_PIPE_DIV_CLK_SRC				128
+>> +#define GCC_PCIE_5_SLV_AXI_CLK					129
+>> +#define GCC_PCIE_5_SLV_Q2A_AXI_CLK				130
+>> +#define GCC_PCIE_6_AUX_CLK					131
+>> +#define GCC_PCIE_6_AUX_CLK_SRC					132
+>> +#define GCC_PCIE_6_CFG_AHB_CLK					133
+>> +#define GCC_PCIE_6_MSTR_AXI_CLK					134
+>> +#define GCC_PCIE_6_PHY_RCHNG_CLK				135
+>> +#define GCC_PCIE_6_PHY_RCHNG_CLK_SRC				136
+>> +#define GCC_PCIE_6_PIPE_CLK					137
+>> +#define GCC_PCIE_6_PIPE_CLK_SRC					138
+>> +#define GCC_PCIE_6_PIPE_DIV2_CLK				139
+>> +#define GCC_PCIE_6_PIPE_DIV_CLK_SRC				140
+>> +#define GCC_PCIE_6_SLV_AXI_CLK					141
+>> +#define GCC_PCIE_6_SLV_Q2A_AXI_CLK				142
+>> +#define GCC_PCIE_NOC_PWRCTL_CLK					143
+>> +#define GCC_PCIE_NOC_QOSGEN_EXTREF_CLK				144
+>> +#define GCC_PCIE_NOC_SF_CENTER_CLK				145
+>> +#define GCC_PCIE_NOC_SLAVE_SF_EAST_CLK				146
+>> +#define GCC_PCIE_NOC_SLAVE_SF_WEST_CLK				147
+>> +#define GCC_PCIE_NOC_TSCTR_CLK					148
+>> +#define GCC_PCIE_PHY_3A_AUX_CLK					149
+>> +#define GCC_PCIE_PHY_3A_AUX_CLK_SRC				150
+>> +#define GCC_PCIE_PHY_3B_AUX_CLK					151
+>> +#define GCC_PCIE_PHY_3B_AUX_CLK_SRC				152
+>> +#define GCC_PCIE_PHY_4_AUX_CLK					153
+>> +#define GCC_PCIE_PHY_4_AUX_CLK_SRC				154
+>> +#define GCC_PCIE_PHY_5_AUX_CLK					155
+>> +#define GCC_PCIE_PHY_5_AUX_CLK_SRC				156
+>> +#define GCC_PCIE_PHY_6_AUX_CLK					157
+>> +#define GCC_PCIE_PHY_6_AUX_CLK_SRC				158
+>> +#define GCC_PCIE_RSCC_CFG_AHB_CLK				159
+>> +#define GCC_PCIE_RSCC_XO_CLK					160
+>> +#define GCC_PDM2_CLK						161
+>> +#define GCC_PDM2_CLK_SRC					162
+>> +#define GCC_PDM_AHB_CLK						163
+>> +#define GCC_PDM_XO4_CLK						164
+>> +#define GCC_QMIP_AV1E_AHB_CLK					165
+>> +#define GCC_QMIP_CAMERA_CMD_AHB_CLK				166
+>> +#define GCC_QMIP_CAMERA_NRT_AHB_CLK				167
+>> +#define GCC_QMIP_CAMERA_RT_AHB_CLK				168
+>> +#define GCC_QMIP_GPU_AHB_CLK					169
+>> +#define GCC_QMIP_PCIE_3A_AHB_CLK				170
+>> +#define GCC_QMIP_PCIE_3B_AHB_CLK				171
+>> +#define GCC_QMIP_PCIE_4_AHB_CLK					172
+>> +#define GCC_QMIP_PCIE_5_AHB_CLK					173
+>> +#define GCC_QMIP_PCIE_6_AHB_CLK					174
+>> +#define GCC_QMIP_VIDEO_CV_CPU_AHB_CLK				175
+>> +#define GCC_QMIP_VIDEO_CVP_AHB_CLK				176
+>> +#define GCC_QMIP_VIDEO_V_CPU_AHB_CLK				177
+>> +#define GCC_QMIP_VIDEO_VCODEC1_AHB_CLK				178
+>> +#define GCC_QMIP_VIDEO_VCODEC_AHB_CLK				179
+>> +#define GCC_QUPV3_OOB_CORE_2X_CLK				180
+>> +#define GCC_QUPV3_OOB_CORE_CLK					181
+>> +#define GCC_QUPV3_OOB_M_AHB_CLK					182
+>> +#define GCC_QUPV3_OOB_QSPI_S0_CLK				183
+>> +#define GCC_QUPV3_OOB_QSPI_S0_CLK_SRC				184
+>> +#define GCC_QUPV3_OOB_QSPI_S1_CLK				185
+>> +#define GCC_QUPV3_OOB_QSPI_S1_CLK_SRC				186
+>> +#define GCC_QUPV3_OOB_S0_CLK					187
+>> +#define GCC_QUPV3_OOB_S0_CLK_SRC				188
+>> +#define GCC_QUPV3_OOB_S1_CLK					189
+>> +#define GCC_QUPV3_OOB_S1_CLK_SRC				190
+>> +#define GCC_QUPV3_OOB_S_AHB_CLK					191
+>> +#define GCC_QUPV3_OOB_TCXO_CLK					192
+>> +#define GCC_QUPV3_WRAP0_CORE_2X_CLK				193
+>> +#define GCC_QUPV3_WRAP0_CORE_CLK				194
+>> +#define GCC_QUPV3_WRAP0_QSPI_S2_CLK				195
+>> +#define GCC_QUPV3_WRAP0_QSPI_S2_CLK_SRC				196
+>> +#define GCC_QUPV3_WRAP0_QSPI_S3_CLK				197
+>> +#define GCC_QUPV3_WRAP0_QSPI_S3_CLK_SRC				198
+>> +#define GCC_QUPV3_WRAP0_QSPI_S6_CLK				199
+>> +#define GCC_QUPV3_WRAP0_QSPI_S6_CLK_SRC				200
+>> +#define GCC_QUPV3_WRAP0_S0_CLK					201
+>> +#define GCC_QUPV3_WRAP0_S0_CLK_SRC				202
+>> +#define GCC_QUPV3_WRAP0_S1_CLK					203
+>> +#define GCC_QUPV3_WRAP0_S1_CLK_SRC				204
+>> +#define GCC_QUPV3_WRAP0_S2_CLK					205
+>> +#define GCC_QUPV3_WRAP0_S2_CLK_SRC				206
+>> +#define GCC_QUPV3_WRAP0_S3_CLK					207
+>> +#define GCC_QUPV3_WRAP0_S3_CLK_SRC				208
+>> +#define GCC_QUPV3_WRAP0_S4_CLK					209
+>> +#define GCC_QUPV3_WRAP0_S4_CLK_SRC				210
+>> +#define GCC_QUPV3_WRAP0_S5_CLK					211
+>> +#define GCC_QUPV3_WRAP0_S5_CLK_SRC				212
+>> +#define GCC_QUPV3_WRAP0_S6_CLK					213
+>> +#define GCC_QUPV3_WRAP0_S6_CLK_SRC				214
+>> +#define GCC_QUPV3_WRAP0_S7_CLK					215
+>> +#define GCC_QUPV3_WRAP0_S7_CLK_SRC				216
+>> +#define GCC_QUPV3_WRAP1_CORE_2X_CLK				217
+>> +#define GCC_QUPV3_WRAP1_CORE_CLK				218
+>> +#define GCC_QUPV3_WRAP1_QSPI_S2_CLK				219
+>> +#define GCC_QUPV3_WRAP1_QSPI_S2_CLK_SRC				220
+>> +#define GCC_QUPV3_WRAP1_QSPI_S3_CLK				221
+>> +#define GCC_QUPV3_WRAP1_QSPI_S3_CLK_SRC				222
+>> +#define GCC_QUPV3_WRAP1_QSPI_S6_CLK				223
+>> +#define GCC_QUPV3_WRAP1_QSPI_S6_CLK_SRC				224
+>> +#define GCC_QUPV3_WRAP1_S0_CLK					225
+>> +#define GCC_QUPV3_WRAP1_S0_CLK_SRC				226
+>> +#define GCC_QUPV3_WRAP1_S1_CLK					227
+>> +#define GCC_QUPV3_WRAP1_S1_CLK_SRC				228
+>> +#define GCC_QUPV3_WRAP1_S2_CLK					229
+>> +#define GCC_QUPV3_WRAP1_S2_CLK_SRC				230
+>> +#define GCC_QUPV3_WRAP1_S3_CLK					231
+>> +#define GCC_QUPV3_WRAP1_S3_CLK_SRC				232
+>> +#define GCC_QUPV3_WRAP1_S4_CLK					233
+>> +#define GCC_QUPV3_WRAP1_S4_CLK_SRC				234
+>> +#define GCC_QUPV3_WRAP1_S5_CLK					235
+>> +#define GCC_QUPV3_WRAP1_S5_CLK_SRC				236
+>> +#define GCC_QUPV3_WRAP1_S6_CLK					237
+>> +#define GCC_QUPV3_WRAP1_S6_CLK_SRC				238
+>> +#define GCC_QUPV3_WRAP1_S7_CLK					239
+>> +#define GCC_QUPV3_WRAP1_S7_CLK_SRC				240
+>> +#define GCC_QUPV3_WRAP2_CORE_2X_CLK				241
+>> +#define GCC_QUPV3_WRAP2_CORE_CLK				242
+>> +#define GCC_QUPV3_WRAP2_QSPI_S2_CLK				243
+>> +#define GCC_QUPV3_WRAP2_QSPI_S2_CLK_SRC				244
+>> +#define GCC_QUPV3_WRAP2_QSPI_S3_CLK				245
+>> +#define GCC_QUPV3_WRAP2_QSPI_S3_CLK_SRC				246
+>> +#define GCC_QUPV3_WRAP2_QSPI_S6_CLK				247
+>> +#define GCC_QUPV3_WRAP2_QSPI_S6_CLK_SRC				248
+>> +#define GCC_QUPV3_WRAP2_S0_CLK					249
+>> +#define GCC_QUPV3_WRAP2_S0_CLK_SRC				250
+>> +#define GCC_QUPV3_WRAP2_S1_CLK					251
+>> +#define GCC_QUPV3_WRAP2_S1_CLK_SRC				252
+>> +#define GCC_QUPV3_WRAP2_S2_CLK					253
+>> +#define GCC_QUPV3_WRAP2_S2_CLK_SRC				254
+>> +#define GCC_QUPV3_WRAP2_S3_CLK					255
+>> +#define GCC_QUPV3_WRAP2_S3_CLK_SRC				256
+>> +#define GCC_QUPV3_WRAP2_S4_CLK					257
+>> +#define GCC_QUPV3_WRAP2_S4_CLK_SRC				258
+>> +#define GCC_QUPV3_WRAP2_S5_CLK					259
+>> +#define GCC_QUPV3_WRAP2_S5_CLK_SRC				260
+>> +#define GCC_QUPV3_WRAP2_S6_CLK					261
+>> +#define GCC_QUPV3_WRAP2_S6_CLK_SRC				262
+>> +#define GCC_QUPV3_WRAP2_S7_CLK					263
+>> +#define GCC_QUPV3_WRAP2_S7_CLK_SRC				264
+>> +#define GCC_QUPV3_WRAP_0_M_AHB_CLK				265
+>> +#define GCC_QUPV3_WRAP_0_S_AHB_CLK				266
+>> +#define GCC_QUPV3_WRAP_1_M_AHB_CLK				267
+>> +#define GCC_QUPV3_WRAP_1_S_AHB_CLK				268
+>> +#define GCC_QUPV3_WRAP_2_M_AHB_CLK				269
+>> +#define GCC_QUPV3_WRAP_2_S_AHB_CLK				270
+>> +#define GCC_SDCC2_AHB_CLK					271
+>> +#define GCC_SDCC2_APPS_CLK					272
+>> +#define GCC_SDCC2_APPS_CLK_SRC					273
+>> +#define GCC_SDCC4_AHB_CLK					274
+>> +#define GCC_SDCC4_APPS_CLK					275
+>> +#define GCC_SDCC4_APPS_CLK_SRC					276
+>> +#define GCC_UFS_PHY_AHB_CLK					277
+>> +#define GCC_UFS_PHY_AXI_CLK					278
+>> +#define GCC_UFS_PHY_AXI_CLK_SRC					279
+>> +#define GCC_UFS_PHY_AXI_HW_CTL_CLK				280
+>> +#define GCC_UFS_PHY_ICE_CORE_CLK				281
+>> +#define GCC_UFS_PHY_ICE_CORE_CLK_SRC				282
+>> +#define GCC_UFS_PHY_ICE_CORE_HW_CTL_CLK				283
+>> +#define GCC_UFS_PHY_PHY_AUX_CLK					284
+>> +#define GCC_UFS_PHY_PHY_AUX_CLK_SRC				285
+>> +#define GCC_UFS_PHY_PHY_AUX_HW_CTL_CLK				286
+>> +#define GCC_UFS_PHY_RX_SYMBOL_0_CLK				287
+>> +#define GCC_UFS_PHY_RX_SYMBOL_0_CLK_SRC				288
+>> +#define GCC_UFS_PHY_RX_SYMBOL_1_CLK				289
+>> +#define GCC_UFS_PHY_RX_SYMBOL_1_CLK_SRC				290
+>> +#define GCC_UFS_PHY_TX_SYMBOL_0_CLK				291
+>> +#define GCC_UFS_PHY_TX_SYMBOL_0_CLK_SRC				292
+>> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK				293
+>> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC				294
+>> +#define GCC_UFS_PHY_UNIPRO_CORE_HW_CTL_CLK			295
+>> +#define GCC_USB20_MASTER_CLK					296
+>> +#define GCC_USB20_MASTER_CLK_SRC				297
+>> +#define GCC_USB20_MOCK_UTMI_CLK					298
+>> +#define GCC_USB20_MOCK_UTMI_CLK_SRC				299
+>> +#define GCC_USB20_MOCK_UTMI_POSTDIV_CLK_SRC			300
+>> +#define GCC_USB20_SLEEP_CLK					301
+>> +#define GCC_USB30_MP_MASTER_CLK					302
+>> +#define GCC_USB30_MP_MASTER_CLK_SRC				303
+>> +#define GCC_USB30_MP_MOCK_UTMI_CLK				304
+>> +#define GCC_USB30_MP_MOCK_UTMI_CLK_SRC				305
+>> +#define GCC_USB30_MP_MOCK_UTMI_POSTDIV_CLK_SRC			306
+>> +#define GCC_USB30_MP_SLEEP_CLK					307
+>> +#define GCC_USB30_PRIM_MASTER_CLK				308
+>> +#define GCC_USB30_PRIM_MASTER_CLK_SRC				309
+>> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK				310
+>> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			311
+>> +#define GCC_USB30_PRIM_MOCK_UTMI_POSTDIV_CLK_SRC		312
+>> +#define GCC_USB30_PRIM_SLEEP_CLK				313
+>> +#define GCC_USB30_SEC_MASTER_CLK				314
+>> +#define GCC_USB30_SEC_MASTER_CLK_SRC				315
+>> +#define GCC_USB30_SEC_MOCK_UTMI_CLK				316
+>> +#define GCC_USB30_SEC_MOCK_UTMI_CLK_SRC				317
+>> +#define GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC			318
+>> +#define GCC_USB30_SEC_SLEEP_CLK					319
+>> +#define GCC_USB30_TERT_MASTER_CLK				320
+>> +#define GCC_USB30_TERT_MASTER_CLK_SRC				321
+>> +#define GCC_USB30_TERT_MOCK_UTMI_CLK				322
+>> +#define GCC_USB30_TERT_MOCK_UTMI_CLK_SRC			323
+>> +#define GCC_USB30_TERT_MOCK_UTMI_POSTDIV_CLK_SRC		324
+>> +#define GCC_USB30_TERT_SLEEP_CLK				325
+>> +#define GCC_USB34_PRIM_PHY_PIPE_CLK_SRC				326
+>> +#define GCC_USB34_SEC_PHY_PIPE_CLK_SRC				327
+>> +#define GCC_USB34_TERT_PHY_PIPE_CLK_SRC				328
+>> +#define GCC_USB3_MP_PHY_AUX_CLK					329
+>> +#define GCC_USB3_MP_PHY_AUX_CLK_SRC				330
+>> +#define GCC_USB3_MP_PHY_COM_AUX_CLK				331
+>> +#define GCC_USB3_MP_PHY_PIPE_0_CLK				332
+>> +#define GCC_USB3_MP_PHY_PIPE_0_CLK_SRC				333
+>> +#define GCC_USB3_MP_PHY_PIPE_1_CLK				334
+>> +#define GCC_USB3_MP_PHY_PIPE_1_CLK_SRC				335
+>> +#define GCC_USB3_PRIM_PHY_AUX_CLK				336
+>> +#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				337
+>> +#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				338
+>> +#define GCC_USB3_PRIM_PHY_PIPE_CLK				339
+>> +#define GCC_USB3_PRIM_PHY_PIPE_CLK_SRC				340
+>> +#define GCC_USB3_SEC_PHY_AUX_CLK				341
+>> +#define GCC_USB3_SEC_PHY_AUX_CLK_SRC				342
+>> +#define GCC_USB3_SEC_PHY_COM_AUX_CLK				343
+>> +#define GCC_USB3_SEC_PHY_PIPE_CLK				344
+>> +#define GCC_USB3_SEC_PHY_PIPE_CLK_SRC				345
+>> +#define GCC_USB3_TERT_PHY_AUX_CLK				346
+>> +#define GCC_USB3_TERT_PHY_AUX_CLK_SRC				347
+>> +#define GCC_USB3_TERT_PHY_COM_AUX_CLK				348
+>> +#define GCC_USB3_TERT_PHY_PIPE_CLK				349
+>> +#define GCC_USB3_TERT_PHY_PIPE_CLK_SRC				350
+>> +#define GCC_USB4_0_CFG_AHB_CLK					351
+>> +#define GCC_USB4_0_DP0_CLK					352
+>> +#define GCC_USB4_0_DP1_CLK					353
+>> +#define GCC_USB4_0_MASTER_CLK					354
+>> +#define GCC_USB4_0_MASTER_CLK_SRC				355
+>> +#define GCC_USB4_0_PHY_DP0_CLK_SRC				356
+>> +#define GCC_USB4_0_PHY_DP0_GMUX_CLK_SRC				357
+>> +#define GCC_USB4_0_PHY_DP1_CLK_SRC				358
+>> +#define GCC_USB4_0_PHY_DP1_GMUX_CLK_SRC				359
+>> +#define GCC_USB4_0_PHY_P2RR2P_PIPE_CLK				360
+>> +#define GCC_USB4_0_PHY_P2RR2P_PIPE_CLK_SRC			361
+>> +#define GCC_USB4_0_PHY_PCIE_PIPE_CLK				362
+>> +#define GCC_USB4_0_PHY_PCIE_PIPE_CLK_SRC			363
+>> +#define GCC_USB4_0_PHY_PCIE_PIPE_MUX_CLK_SRC			364
+>> +#define GCC_USB4_0_PHY_PCIE_PIPEGMUX_CLK_SRC			365
+>> +#define GCC_USB4_0_PHY_PIPEGMUX_CLK_SRC				366
+>> +#define GCC_USB4_0_PHY_RX0_CLK					367
+>> +#define GCC_USB4_0_PHY_RX0_CLK_SRC				368
+>> +#define GCC_USB4_0_PHY_RX1_CLK					369
+>> +#define GCC_USB4_0_PHY_RX1_CLK_SRC				370
+>> +#define GCC_USB4_0_PHY_SYS_CLK_SRC				371
+>> +#define GCC_USB4_0_PHY_SYS_PIPEGMUX_CLK_SRC			372
+>> +#define GCC_USB4_0_PHY_USB_PIPE_CLK				373
+>> +#define GCC_USB4_0_SB_IF_CLK					374
+>> +#define GCC_USB4_0_SB_IF_CLK_SRC				375
+>> +#define GCC_USB4_0_SYS_CLK					376
+>> +#define GCC_USB4_0_TMU_CLK					377
+>> +#define GCC_USB4_0_TMU_CLK_SRC					378
+>> +#define GCC_USB4_0_UC_HRR_CLK					379
+>> +#define GCC_USB4_1_CFG_AHB_CLK					380
+>> +#define GCC_USB4_1_DP0_CLK					381
+>> +#define GCC_USB4_1_DP1_CLK					382
+>> +#define GCC_USB4_1_MASTER_CLK					383
+>> +#define GCC_USB4_1_MASTER_CLK_SRC				384
+>> +#define GCC_USB4_1_PHY_DP0_CLK_SRC				385
+>> +#define GCC_USB4_1_PHY_DP0_GMUX_2_CLK_SRC			386
+>> +#define GCC_USB4_1_PHY_DP1_CLK_SRC				387
+>> +#define GCC_USB4_1_PHY_DP1_GMUX_2_CLK_SRC			388
+>> +#define GCC_USB4_1_PHY_P2RR2P_PIPE_CLK				389
+>> +#define GCC_USB4_1_PHY_P2RR2P_PIPE_CLK_SRC			390
+>> +#define GCC_USB4_1_PHY_PCIE_PIPE_CLK				391
+>> +#define GCC_USB4_1_PHY_PCIE_PIPE_CLK_SRC			392
+>> +#define GCC_USB4_1_PHY_PCIE_PIPE_MUX_CLK_SRC			393
+>> +#define GCC_USB4_1_PHY_PCIE_PIPEGMUX_CLK_SRC			394
+>> +#define GCC_USB4_1_PHY_PIPEGMUX_CLK_SRC				395
+>> +#define GCC_USB4_1_PHY_PLL_PIPE_CLK_SRC				396
+>> +#define GCC_USB4_1_PHY_RX0_CLK					397
+>> +#define GCC_USB4_1_PHY_RX0_CLK_SRC				398
+>> +#define GCC_USB4_1_PHY_RX1_CLK					399
+>> +#define GCC_USB4_1_PHY_RX1_CLK_SRC				400
+>> +#define GCC_USB4_1_PHY_SYS_CLK_SRC				401
+>> +#define GCC_USB4_1_PHY_SYS_PIPEGMUX_CLK_SRC			402
+>> +#define GCC_USB4_1_PHY_USB_PIPE_CLK				403
+>> +#define GCC_USB4_1_SB_IF_CLK					404
+>> +#define GCC_USB4_1_SB_IF_CLK_SRC				405
+>> +#define GCC_USB4_1_SYS_CLK					406
+>> +#define GCC_USB4_1_TMU_CLK					407
+>> +#define GCC_USB4_1_TMU_CLK_SRC					408
+>> +#define GCC_USB4_1_UC_HRR_CLK					409
+>> +#define GCC_USB4_2_CFG_AHB_CLK					410
+>> +#define GCC_USB4_2_DP0_CLK					411
+>> +#define GCC_USB4_2_DP1_CLK					412
+>> +#define GCC_USB4_2_MASTER_CLK					413
+>> +#define GCC_USB4_2_MASTER_CLK_SRC				414
+>> +#define GCC_USB4_2_PHY_DP0_CLK_SRC				415
+>> +#define GCC_USB4_2_PHY_DP0_GMUX_CLK_SRC				416
+>> +#define GCC_USB4_2_PHY_DP1_CLK_SRC				417
+>> +#define GCC_USB4_2_PHY_DP1_GMUX_CLK_SRC				418
+>> +#define GCC_USB4_2_PHY_P2RR2P_PIPE_CLK				419
+>> +#define GCC_USB4_2_PHY_P2RR2P_PIPE_CLK_SRC			420
+>> +#define GCC_USB4_2_PHY_PCIE_PIPE_CLK				421
+>> +#define GCC_USB4_2_PHY_PCIE_PIPE_CLK_SRC			422
+>> +#define GCC_USB4_2_PHY_PCIE_PIPE_MUX_CLK_SRC			423
+>> +#define GCC_USB4_2_PHY_PCIE_PIPEGMUX_CLK_SRC			424
+>> +#define GCC_USB4_2_PHY_PIPEGMUX_CLK_SRC				425
+>> +#define GCC_USB4_2_PHY_RX0_CLK					426
+>> +#define GCC_USB4_2_PHY_RX0_CLK_SRC				427
+>> +#define GCC_USB4_2_PHY_RX1_CLK					428
+>> +#define GCC_USB4_2_PHY_RX1_CLK_SRC				429
+>> +#define GCC_USB4_2_PHY_SYS_CLK_SRC				430
+>> +#define GCC_USB4_2_PHY_SYS_PIPEGMUX_CLK_SRC			431
+>> +#define GCC_USB4_2_PHY_USB_PIPE_CLK				432
+>> +#define GCC_USB4_2_SB_IF_CLK					433
+>> +#define GCC_USB4_2_SB_IF_CLK_SRC				434
+>> +#define GCC_USB4_2_SYS_CLK					435
+>> +#define GCC_USB4_2_TMU_CLK					436
+>> +#define GCC_USB4_2_TMU_CLK_SRC					437
+>> +#define GCC_USB4_2_UC_HRR_CLK					438
+>> +#define GCC_VIDEO_AHB_CLK					439
+>> +#define GCC_VIDEO_AXI0_CLK					440
+>> +#define GCC_VIDEO_AXI0C_CLK					441
+>> +#define GCC_VIDEO_AXI1_CLK					442
+>> +#define GCC_VIDEO_XO_CLK					443
+>> +
+>> +/* GCC power domains */
+>> +#define GCC_PCIE_0_TUNNEL_GDSC					0
+>> +#define GCC_PCIE_1_TUNNEL_GDSC					1
+>> +#define GCC_PCIE_2_TUNNEL_GDSC					2
+>> +#define GCC_PCIE_3A_GDSC					3
+>> +#define GCC_PCIE_3A_PHY_GDSC					4
+>> +#define GCC_PCIE_3B_GDSC					5
+>> +#define GCC_PCIE_3B_PHY_GDSC					6
+>> +#define GCC_PCIE_4_GDSC						7
+>> +#define GCC_PCIE_4_PHY_GDSC					8
+>> +#define GCC_PCIE_5_GDSC						9
+>> +#define GCC_PCIE_5_PHY_GDSC					10
+>> +#define GCC_PCIE_6_GDSC						11
+>> +#define GCC_PCIE_6_PHY_GDSC					12
+>> +#define GCC_UFS_PHY_GDSC					13
+>> +#define GCC_USB20_PRIM_GDSC					14
+>> +#define GCC_USB30_MP_GDSC					15
+>> +#define GCC_USB30_PRIM_GDSC					16
+>> +#define GCC_USB30_SEC_GDSC					17
+>> +#define GCC_USB30_TERT_GDSC					18
+>> +#define GCC_USB3_MP_SS0_PHY_GDSC				19
+>> +#define GCC_USB3_MP_SS1_PHY_GDSC				20
+>> +#define GCC_USB4_0_GDSC						21
+>> +#define GCC_USB4_1_GDSC						22
+>> +#define GCC_USB4_2_GDSC						23
+>> +#define GCC_USB_0_PHY_GDSC					24
+>> +#define GCC_USB_1_PHY_GDSC					25
+>> +#define GCC_USB_2_PHY_GDSC					26
+>> +
+>> +/* GCC resets */
+>> +#define GCC_AV1E_BCR						0
+>> +#define GCC_CAMERA_BCR						1
+>> +#define GCC_DISPLAY_BCR						2
+>> +#define GCC_EVA_BCR						3
+>> +#define GCC_GPU_BCR						4
+>> +#define GCC_PCIE_0_LINK_DOWN_BCR				5
+>> +#define GCC_PCIE_0_NOCSR_COM_PHY_BCR				6
+>> +#define GCC_PCIE_0_PHY_BCR					7
+>> +#define GCC_PCIE_0_PHY_NOCSR_COM_PHY_BCR			8
+>> +#define GCC_PCIE_0_TUNNEL_BCR					9
+>> +#define GCC_PCIE_1_LINK_DOWN_BCR				10
+>> +#define GCC_PCIE_1_NOCSR_COM_PHY_BCR				11
+>> +#define GCC_PCIE_1_PHY_BCR					12
+>> +#define GCC_PCIE_1_PHY_NOCSR_COM_PHY_BCR			13
+>> +#define GCC_PCIE_1_TUNNEL_BCR					14
+>> +#define GCC_PCIE_2_LINK_DOWN_BCR				15
+>> +#define GCC_PCIE_2_NOCSR_COM_PHY_BCR				16
+>> +#define GCC_PCIE_2_PHY_BCR					17
+>> +#define GCC_PCIE_2_PHY_NOCSR_COM_PHY_BCR			18
+>> +#define GCC_PCIE_2_TUNNEL_BCR					19
+>> +#define GCC_PCIE_3A_BCR						20
+>> +#define GCC_PCIE_3A_LINK_DOWN_BCR				21
+>> +#define GCC_PCIE_3A_NOCSR_COM_PHY_BCR				22
+>> +#define GCC_PCIE_3A_PHY_BCR					23
+>> +#define GCC_PCIE_3A_PHY_NOCSR_COM_PHY_BCR			24
+>> +#define GCC_PCIE_3B_BCR						25
+>> +#define GCC_PCIE_3B_LINK_DOWN_BCR				26
+>> +#define GCC_PCIE_3B_NOCSR_COM_PHY_BCR				27
+>> +#define GCC_PCIE_3B_PHY_BCR					28
+>> +#define GCC_PCIE_3B_PHY_NOCSR_COM_PHY_BCR			29
+>> +#define GCC_PCIE_4_BCR						30
+>> +#define GCC_PCIE_4_LINK_DOWN_BCR				31
+>> +#define GCC_PCIE_4_NOCSR_COM_PHY_BCR				32
+>> +#define GCC_PCIE_4_PHY_BCR					33
+>> +#define GCC_PCIE_4_PHY_NOCSR_COM_PHY_BCR			34
+>> +#define GCC_PCIE_5_BCR						35
+>> +#define GCC_PCIE_5_LINK_DOWN_BCR				36
+>> +#define GCC_PCIE_5_NOCSR_COM_PHY_BCR				37
+>> +#define GCC_PCIE_5_PHY_BCR					38
+>> +#define GCC_PCIE_5_PHY_NOCSR_COM_PHY_BCR			39
+>> +#define GCC_PCIE_6_BCR						40
+>> +#define GCC_PCIE_6_LINK_DOWN_BCR				41
+>> +#define GCC_PCIE_6_NOCSR_COM_PHY_BCR				42
+>> +#define GCC_PCIE_6_PHY_BCR					43
+>> +#define GCC_PCIE_6_PHY_NOCSR_COM_PHY_BCR			44
+>> +#define GCC_PCIE_NOC_BCR					45
+>> +#define GCC_PCIE_PHY_BCR					46
+>> +#define GCC_PCIE_PHY_CFG_AHB_BCR				47
+>> +#define GCC_PCIE_PHY_COM_BCR					48
+>> +#define GCC_PCIE_RSCC_BCR					49
+>> +#define GCC_PDM_BCR						50
+>> +#define GCC_QUPV3_WRAPPER_0_BCR					51
+>> +#define GCC_QUPV3_WRAPPER_1_BCR					52
+>> +#define GCC_QUPV3_WRAPPER_2_BCR					53
+>> +#define GCC_QUPV3_WRAPPER_OOB_BCR				54
+>> +#define GCC_QUSB2PHY_HS0_MP_BCR					55
+>> +#define GCC_QUSB2PHY_HS1_MP_BCR					56
+>> +#define GCC_QUSB2PHY_PRIM_BCR					57
+>> +#define GCC_QUSB2PHY_SEC_BCR					58
+>> +#define GCC_QUSB2PHY_TERT_BCR					59
+>> +#define GCC_QUSB2PHY_USB20_HS_BCR				60
+>> +#define GCC_SDCC2_BCR						61
+>> +#define GCC_SDCC4_BCR						62
+>> +#define GCC_TCSR_PCIE_BCR					63
+>> +#define GCC_UFS_PHY_BCR						64
+>> +#define GCC_USB20_PRIM_BCR					65
+>> +#define GCC_USB30_MP_BCR					66
+>> +#define GCC_USB30_PRIM_BCR					67
+>> +#define GCC_USB30_SEC_BCR					68
+>> +#define GCC_USB30_TERT_BCR					69
+>> +#define GCC_USB3_MP_SS0_PHY_BCR					70
+>> +#define GCC_USB3_MP_SS1_PHY_BCR					71
+>> +#define GCC_USB3_PHY_PRIM_BCR					72
+>> +#define GCC_USB3_PHY_SEC_BCR					73
+>> +#define GCC_USB3_PHY_TERT_BCR					74
+>> +#define GCC_USB3_UNIPHY_MP0_BCR					75
+>> +#define GCC_USB3_UNIPHY_MP1_BCR					76
+>> +#define GCC_USB3PHY_PHY_PRIM_BCR				77
+>> +#define GCC_USB3PHY_PHY_SEC_BCR					78
+>> +#define GCC_USB3PHY_PHY_TERT_BCR				79
+>> +#define GCC_USB3UNIPHY_PHY_MP0_BCR				80
+>> +#define GCC_USB3UNIPHY_PHY_MP1_BCR				81
+>> +#define GCC_USB4_0_BCR						82
+>> +#define GCC_USB4_0_DP0_PHY_PRIM_BCR				83
+>> +#define GCC_USB4_1_BCR						84
+>> +#define GCC_USB4_2_BCR						85
+>> +#define GCC_USB_0_PHY_BCR					86
+>> +#define GCC_USB_1_PHY_BCR					87
+>> +#define GCC_USB_2_PHY_BCR					88
+>> +#define GCC_VIDEO_AXI0_CLK_ARES					89
+>> +#define GCC_VIDEO_AXI1_CLK_ARES					90
+>> +#define GCC_VIDEO_BCR						91
+>> +
+>> +#endif
 >>
->> On 8/14/2025 2:33 PM, Greg KH wrote:
->>> On Thu, Aug 14, 2025 at 12:06:55PM +0530, Hardeep Sharma wrote:
->>>> Buffer bouncing is needed only when memory exists above the lowmem region,
->>>> i.e., when max_low_pfn < max_pfn. The previous check (max_low_pfn >=
->>>> max_pfn) was inverted and prevented bouncing when it could actually be
->>>> required.
->>>>
->>>> Note that bouncing depends on CONFIG_HIGHMEM, which is typically enabled
->>>> on 32-bit ARM where not all memory is permanently mapped into the kernel’s
->>>> lowmem region.
->>>>
->>>> Branch-Specific Note:
->>>>
->>>> This fix is specific to this branch (6.6.y) only.
->>>> In the upstream “tip” kernel, bounce buffer support for highmem pages
->>>> was completely removed after kernel version 6.12. Therefore, this
->>>> modification is not possible or relevant in the tip branch.
->>>>
->>>> Fixes: 9bb33f24abbd0 ("block: refactor the bounce buffering code")
->>>> Cc: stable@vger.kernel.org
->>>> Signed-off-by: Hardeep Sharma <quic_hardshar@quicinc.com>
->>>
->>> Why do you say this is only for 6.6.y, yet your Fixes: line is older
->>> than that?
->> [Hardeep Sharma]::
+>> -- 
+>> 2.34.1
 >>
->> Yes, the original commit was merged in kernel 5.13-rc1, as indicated by the
->> Fixes: line. However, we are currently working with kernel 6.6, where we
->> encountered the issue. While it could be merged into 6.12 and then
->> backported to earlier versions, our focus is on addressing it in 6.6.y,
->> where the problem was observed.
-> 
-> For obvious reasons, we can not take a patch only for one older kernel
-> and not a newer (or the older ones if possible), otherwise you will have
-> a regression when you move forward to the new version as you will be
-> doing eventually.
-> 
-> So for that reason alone, we can not take this patch, NOR should you
-> want us to.
-> 
->>> And why wasn't this ever found or noticed before?
->> [Hardeep Sharma] ::
-> 
-> Odd quoting, please fix your email client :)
-> 
->> This issue remained unnoticed likely because the bounce buffering logic is
->> only triggered under specific hardware and configuration
->> conditions—primarily on 32-bit ARM systems with CONFIG_HIGHMEM enabled and
->> devices requiring DMA from lowmem. Many platforms either do not use highmem
->> or have hardware that does not require bounce buffering, so the bug did not
->> manifest widely.
-> 
-> So no one has hit this on any 5.15 or newer devices?  I find that really
-> hard to believe given the number of those devices in the world.  So what
-> is unique about your platform that you are hitting this and no one else
-> is?
-> 
->>> Also, why can't we just remove all of the bounce buffering code in this
->>> older kernel tree?  What is wrong with doing that instead?
->>
->> [Hardeep Sharma]::
->>
->> it's too intrusive — I'd need to backport 40+ dependency patches, and I'm
->> unsure about the instability this might introduce in block layer on kernel
->> 6.6. Plus, we don't know if it'll work reliably on 32-bit with 1GB+ DDR and
->> highmem enabled. So I'd prefer to push just this single tested patch on
->> kernel 6.6 and older affected versions.
-> 
-> Whenever we take one-off patches, 90% of the time it causes problems,
-> both with the fact that the patch is usually buggy, AND the fact that it
-> now will cause merge conflicts going forward.  40+ patches is nothing in
-> stable patch acceptance, please try that first as you want us to be able
-> to maintain these kernels well for your devices over time, right?
-> 
-> So please do that first.  Only after proof that that would not work
-> should you even consider a one-off patch.
-> 
->> Removing bounce buffering code from older kernel trees is not feasible for
->> all use cases. Some legacy platforms and drivers still rely on bounce
->> buffering to support DMA operations with highmem pages, especially on 32-bit
->> systems.
-> 
-> Then how was it removed in newer kernels at all?  Did we just drop
-> support for that hardware?  What happens when you move to a newer kernel
-> on your hardware, does it stop working?  Based on what I have seen with
-> some Android devices, they seem to work just fine on Linus's tree today,
-> so what is unique about your platform that is going to break and not
-> work anymore?
-> 
->>> And finally, how was this tested?
->>
->> [Hardeep Sharma]:
->>
->> The patch was tested on a 32-bit ARM platform with CONFIG_HIGHMEM enabled
->> and a storage device requiring DMA from lowmem.>
-> 
-> So this is for a 32bit ARM system only?  Not 64bit?  If so, why is this
-> also being submitted to the Android kernel tree which does not support
-> 32bit ARM at all?
-> 
-> And again, does your system not work properly on 6.16?  If not, why not
-> fix that first?
-> 
-> thanks,
-> 
-> greg k-h
+
+
+-- 
+Thanks,
+Taniya Das
 
 
