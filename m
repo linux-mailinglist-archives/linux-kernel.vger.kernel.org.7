@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-769250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678F4B26BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:08:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22087B26BCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3567C3B5EF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:03:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06A6B1CE42D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7D8248176;
-	Thu, 14 Aug 2025 16:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7562FB966;
+	Thu, 14 Aug 2025 15:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="q9wUU9/A"
-Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DWjsmerM"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3D2244690;
-	Thu, 14 Aug 2025 16:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F5F2FB996;
+	Thu, 14 Aug 2025 15:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755187411; cv=none; b=GkuDZlkif4EWR6FMxEJtLhB5z2Xew8eIcYX4GHnG9ksSFLlB6MnprwL7I8YDQwB77XWAuCC38wEPxxZJHl2GJUBEcG0sVlFciIdjZWXsYcLQ+woMAHbHtObK8s+85Ct16eOviNtIi/grEwGb7C1q6zX24BtvBOeWhSPJoJ/rz7M=
+	t=1755186998; cv=none; b=q7QHUWSkuyhsmhzE1TImF5Jjyvc/2x+z+SBavjz6i44z7Y+kpVQj9I/R+SYOxwHCPIS8z/O3xHnZa4Kn/F1dwn4oFzY8fpdQwgxFG6jv7tQMXTw55GM0feJ5Zx4ob0WcBLhG49o4/vlrd+6IO/mPoNjGI+MubHX2Xh5YGrqHyuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755187411; c=relaxed/simple;
-	bh=g1WA8Ej03Sf9dhAAuIrvWiYJhQRp0RMxdlmdjVG+MZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t1aom3F+wueM+/F1vpZaoeOZ2542sYpQ1FRgXG+a0vGeTHQljB7g2L30QiQBawrXiOIMgbBQJ0KTECVvJUfe+Dp0oct/K1yL2CfVX5PZwbBz+pS4dqVaaPqCppw/KtPYJW3pWqjL7CD8isvi5zDVCgDW6I/enVb3AQ5dwkrAUuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=q9wUU9/A; arc=none smtp.client-ip=178.154.239.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:5c92:0:640:d905:0])
-	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 749C081780;
-	Thu, 14 Aug 2025 18:56:29 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NuOJc8CMeqM0-Yb9JvFND;
-	Thu, 14 Aug 2025 18:56:28 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1755186988;
-	bh=QTy62BW8oSOSc+qcq9pzWoofEE0H7QDkiOpZD2U0w9M=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=q9wUU9/Al17TwHApLWwhmyk1OJ2o/toHvDrDDgVT5xMd3Xj9sh6mmkPJAvS224Ozi
-	 Lckhpxdsll/mzMoT0xFykdXkf5iF9Xue3VYMQvChIzKDI6+1yMt/pfkJ0FtmAI8p0U
-	 3L2PrP+EEV7lBALev2XM97oumXSobT7EJ18kQvwY=
-Authentication-Results: mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Thu, 14 Aug 2025 18:56:22 +0300
-From: Onur <work@onurozkan.dev>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Benno Lossin <lossin@kernel.org>, Lyude Paul <lyude@redhat.com>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net, a.hindborg@kernel.org, aliceryhl@google.com,
- tmgross@umich.edu, dakr@kernel.org, peterz@infradead.org, mingo@redhat.com,
- will@kernel.org, longman@redhat.com, felipe_life@live.com,
- daniel@sedlak.dev, bjorn3_gh@protonmail.com
-Subject: Re: [PATCH v5 0/3] rust: add `ww_mutex` support
-Message-ID: <20250814185622.468aad30@nimda.home>
-In-Reply-To: <76D4D052-79B6-4D3F-AAA1-164FF7A41284@collabora.com>
-References: <20250621184454.8354-1-work@onurozkan.dev>
-	<20250724165351.509cff53@nimda.home>
-	<ec32fc5f5a8658c084f96540bd41f5462fa5c182.camel@gmail.com>
-	<20250806085702.5bf600a3@nimda.home>
-	<539d3e0da773c32a42b4ab5c9d4aa90383481ff6.camel@redhat.com>
-	<DBVLEGFYBWKE.2RW8J853CJHTY@kernel.org>
-	<20250814141302.1eabda12@nimda.home>
-	<76D4D052-79B6-4D3F-AAA1-164FF7A41284@collabora.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1755186998; c=relaxed/simple;
+	bh=3h2uES2VslNzNOlhdk3e0ZzlqdhIcg1czAl4A5mleuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DfzGNKvuFffL1dgvruaJUuv8fT0yV87DSqOC/lMMefwQT05iBL2BFRqjtRKOlaTRq7QrDmz4rpNcEQNeGufFDdQOpU6o/8LBXoIxHs84jBPzAa6vCySkuekgd+4R6gbu9P2X6UmRsLIPQeG8BkBP2XqKqEvF4Oix64mWqPSv85s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DWjsmerM; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=RxZJR6SmruU9qKmz3YFoByNqdMbdKVlOdMVKI5gChGw=; b=DWjsmerMtgZVEQf1yV8diFOgum
+	bJMBcGQzoxKtqF8UXL3rU1XZ3GhSyR6MbV6HWS1Oe9y5W0A7+HQeoL4nrvSKtaSjQcU8nt9j4pTQA
+	1Ab4TIdmydfaf3pa/OAatpok66Vlkw3897N+owgWXbUR1yKxhwr/a6LGFxlqdSuLUni6e0Y1iA3E+
+	a0EL6dfVj9wJ0eW7w0wcuLW0bfuuvnHq1c2XcW3mR0xfrJ7AourX9vUm/gAJmuPFtKdtHc3qXLis8
+	LmfZyPjGjMd4y+mM1TU1SsxpMk12GeuLRkVaeshWALgk7drZmoe1IognxpRK/Xo4btZQRbhQZmgcM
+	2DvYHeTw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1umaJe-0000000HYBq-36lq;
+	Thu, 14 Aug 2025 15:56:34 +0000
+Message-ID: <95b81414-52d4-4e13-a894-9d59cd0e175c@infradead.org>
+Date: Thu, 14 Aug 2025 08:56:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: Fix driver-api typos
+To: Ranganath V N <vnranganath.20@gmail.com>, corbet@lwn.net,
+ linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, alim.akhtar@samsung.com,
+ dave@stgolabs.net, rafael@kernel.org, linux-kernel-mentees@vger.kernel.org,
+ skhan@linuxfoundation.org, vishal.l.verma@intel.com
+References: <20250814114245.16399-1-vnranganath.20@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250814114245.16399-1-vnranganath.20@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Thu, 14 Aug 2025 09:38:38 -0300
-Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
-> Hi Onur,
->=20
-> > On 14 Aug 2025, at 08:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
-> >=20
-> > Hi all,
-> >=20
-> > I have been brainstorming on the auto-unlocking (on dynamic number
-> > of mutexes) idea we have been discussing for some time.
-> >=20
-> > There is a challange with how we handle lock guards and my current
-> > thought is to remove direct data dereferencing from guards. Instead,
-> > data access would only be possible through a fallible method (e.g.,
-> > `try_get`). If the guard is no longer valid, this method would fail
-> > to not allow data-accessing after auto-unlock.
-> >=20
-> > In practice, it would work like this:
-> >=20
-> > let a_guard =3D ctx.lock(mutex_a)?;
-> > let b_guard =3D ctx.lock(mutex_b)?;
-> >=20
-> > // Suppose user tries to lock `mutex_c` without aborting the
-> > // entire function (for some reason). This means that even on
-> > // failure, `a_guard` and `b_guard` will still be accessible.
-> > if let Ok(c_guard) =3D ctx.lock(mutex_c) {
-> >     // ...some logic
-> > }
-> >=20
-> > let a_data =3D a_guard.try_get()?;
-> > let b_data =3D b_guard.try_get()?;
->=20
-> Can you add more code here? How is this going to look like with the
-> two closures we=E2=80=99ve been discussing?
 
-Didn't we said that tuple-based closures are not sufficient when
-dealing with a dynamic number of locks (ref [1]) and ww_mutex is mostly
-used with dynamic locks? I thought implementing that approach is not
-worth it (at least for now) because of that.
+On 8/14/25 4:42 AM, Ranganath V N wrote:
+> Corrected a few spelling mistakes
+> 
+> - functionalty ==> functionality
+> in Documentation/driver-api/cxl/devices/device-types.rst
+> 
+> - adjascent ==> adjacent
+> in Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> 
+> - succeessful ==> successful
+> in Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> 
+> Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
 
-[1]: https://lore.kernel.org/all/DBS8REY5E82S.3937FAHS25ANA@kernel.org
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks.
 
-Regards,
-Onur
+> ---
+>  Documentation/driver-api/cxl/devices/device-types.rst           | 2 +-
+>  .../cxl/platform/example-configurations/one-dev-per-hb.rst      | 2 +-
+>  Documentation/driver-api/thermal/exynos_thermal_emulation.rst   | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/cxl/devices/device-types.rst b/Documentation/driver-api/cxl/devices/device-types.rst
+> index 923f5d89bc04..7f69dfa4509b 100644
+> --- a/Documentation/driver-api/cxl/devices/device-types.rst
+> +++ b/Documentation/driver-api/cxl/devices/device-types.rst
+> @@ -22,7 +22,7 @@ The basic interaction protocol, similar to PCIe configuration mechanisms.
+>  Typically used for initialization, configuration, and I/O access for anything
+>  other than memory (CXL.mem) or cache (CXL.cache) operations.
+>  
+> -The Linux CXL driver exposes access to .io functionalty via the various sysfs
+> +The Linux CXL driver exposes access to .io functionality via the various sysfs
+>  interfaces and /dev/cxl/ devices (which exposes direct access to device
+>  mailboxes).
+>  
+> diff --git a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> index aebda0eb3e17..a4c3fb51ea7d 100644
+> --- a/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> +++ b/Documentation/driver-api/cxl/platform/example-configurations/one-dev-per-hb.rst
+> @@ -10,7 +10,7 @@ has a single CXL memory expander with a 4GB of memory.
+>  Things to note:
+>  
+>  * Cross-Bridge interleave is not being used.
+> -* The expanders are in two separate but adjascent memory regions.
+> +* The expanders are in two separate but adjacent memory regions.
+>  * This CEDT/SRAT describes one node per device
+>  * The expanders have the same performance and will be in the same memory tier.
+>  
+> diff --git a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> index c21d10838bc5..f77d27c25ce2 100644
+> --- a/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> +++ b/Documentation/driver-api/thermal/exynos_thermal_emulation.rst
+> @@ -32,7 +32,7 @@ Exynos emulation mode requires synchronous of value changing and
+>  enabling. It means when you want to update the any value of delay or
+>  next temperature, then you have to enable emulation mode at the same
+>  time. (Or you have to keep the mode enabling.) If you don't, it fails to
+> -change the value to updated one and just use last succeessful value
+> +change the value to updated one and just use last successful value
+>  repeatedly. That's why this node gives users the right to change
+>  termerpature only. Just one interface makes it more simply to use.
+>  
+
+-- 
+~Randy
 
