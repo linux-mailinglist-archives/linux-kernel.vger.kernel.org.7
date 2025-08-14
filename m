@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-768146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236ECB25D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:37:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5756B25D6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7932A010CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5B51C83B51
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0F626FA70;
-	Thu, 14 Aug 2025 07:29:49 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209D826B747;
+	Thu, 14 Aug 2025 07:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="JY1R47Nf"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BC3259C83;
-	Thu, 14 Aug 2025 07:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755156588; cv=none; b=HIhq0KvvIqtAaBavw8/mXI+vk+U4aQ07+J5kBSyqZl+5oRgDX337Hj1d6lncxvG5bIpq9qrHVe6Kjzr20CN4Lz3iei/IpCNGRXI3kzOuhPK/FqRuPyclIelE89jqac8ezSqhFoQBZzustqPD9PAxXxoeHpcB/ChBSn5dZSAXi1k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755156588; c=relaxed/simple;
-	bh=6NDjjCsQASG5ZZOQnM0m9/VFP2301fUlMsPXAXbht4g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dBTJIVSziNx1ROB+sL0LbkjMrah9LTLlcnDvk83dqgT2ul0MpaDy+GdgVRalRSpE0eaPVeJJpuUKH7r05IKYbewk52M1Pw74zypanCEI3w549o53OCrpZidF8E73zIcF0GF2DZlbaZniWo6LOb8AQL3Tirsj7brrR9YBiqBBEco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 6fcc959c78e011f0b29709d653e92f7d-20250814
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
-	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
-	CIE_UNKNOWN, GTI_FG_BS, GTI_C_CI, GTI_RG_INFO, GTI_C_BU
-	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:265ac78d-44e1-410e-a988-49924ad70b26,IP:10,
-	URL:0,TC:0,Content:-25,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:15
-X-CID-INFO: VERSION:1.1.45,REQID:265ac78d-44e1-410e-a988-49924ad70b26,IP:10,UR
-	L:0,TC:0,Content:-25,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:15
-X-CID-META: VersionHash:6493067,CLOUDID:afcbee8ec8a41c6e65ebd45262442616,BulkI
-	D:2508141529406YEDDMS0,BulkQuantity:0,Recheck:0,SF:19|23|38|43|66|72|74|78
-	|102,TC:nil,Content:0|50,EDM:5,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil
-	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
-X-UUID: 6fcc959c78e011f0b29709d653e92f7d-20250814
-X-User: tianyaxiong@kylinos.cn
-Received: from localhost.localdomain [(175.2.165.11)] by mailgw.kylinos.cn
-	(envelope-from <tianyaxiong@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 755108821; Thu, 14 Aug 2025 15:29:39 +0800
-From: Yaxiong Tian <tianyaxiong@kylinos.cn>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	lenb@kernel.org,
-	robert.moore@intel.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	acpica-devel@lists.linux.dev,
-	Yaxiong Tian <tianyaxiong@kylinos.cn>
-Subject: [PATCH v2 0/2] ACPI: processor: idle: Per-CPU idle driver for hybrid CPUs
-Date: Thu, 14 Aug 2025 15:29:34 +0800
-Message-Id: <20250814072934.1016694-1-tianyaxiong@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8DC62797B8;
+	Thu, 14 Aug 2025 07:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755156640; cv=pass; b=rTxJuwR7MRVksdXwislWTqXJN2/bONiJo4eMwdDlIVPrHE6jaiLsY+stvZkAy9RWzSuclnPJof8jesPuxJZhDdKIP9CfEdARwq2saCDODis96KK5D1wIXU5n7SNu7eDehY7up/kkCphiygI/HY3SIfglRx0o5YOOTdwxw7cwGGY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755156640; c=relaxed/simple;
+	bh=4YKeOCrqfpj59GD3VQlFLFbf1XftNmL9kWn00fco//k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pFoGjlMmV8WyPOVwHfGfR3THtcKLxOkUS1gx7rTbQcukaBbHeE2OVGmC5xqCEGTXcg0E0hoyD2y3zAFQHDoECs0EbLHFcPE0nmdwQdgf0lR5q0NLO1NfbmcS7SAxEl5qgU8WxfWwKQ8kXaOdfjJJhKAH4TVrDguQJ3MK/thv03Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=JY1R47Nf; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755156620; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SPunGYyixl+oELVyQ528XgFQeeYb0rvoaJ+Eu2HDDKE5C33LZsDBVEv1P5SDOCd1wTXRhTyKhZfeKml2gTwJMmLHxe482R2MAp3vNRwF92fRoIrgJvBhNa35WtUgYC29n6Nz+PtKRLCN/rE25olvHrZPEHfczpTMhgi4aMdYdRw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755156620; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4YKeOCrqfpj59GD3VQlFLFbf1XftNmL9kWn00fco//k=; 
+	b=dni2mPhibvReAa3iqkj8KXvzg1rkjJn/AIekKryJPkV65iDi+8nhn0aUW7igXL4pFiryrOZoRy7LFRXEtcI6lIwrdKUDrlb/n2bOiR2p4oPWELAnHbnvutS/oV+QhcGaRvK99LCL28xPOwATd5sTqdvMoptv2Gn2BKHE8APDWnA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755156620;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=4YKeOCrqfpj59GD3VQlFLFbf1XftNmL9kWn00fco//k=;
+	b=JY1R47NfTAyWEMgXmq2J4D+EjiVlWXKVAKLmE1REJkFD3s4LCB4bryCRwEJ2uxG8
+	IdkDvO/bF2zGxls4Ws4siFLpOGmamOFCTTbRLHKV3jJOEDqa59XtJAjYFq0F4sx63Mv
+	dvoGYfhWlwjX39R5fv3sBp/ZQFz+5J7ijAH00roooEUJOzYSgs2C/KnT2CwTupNxkY8
+	vg3QgFF0l4QPFAjMTEcRg7YHGwUPpowCrmtr+UZ5ZLo6xlDme1ObMS8XxE2ag7EEWqV
+	tZtw35LE7dy/HThdoyBYmdeJTY5TMrVfeLaPMn5YaXzK+DhFQM5pGdYZXYaLU5+3qt1
+	LP0fO4UVMw==
+Received: by mx.zohomail.com with SMTPS id 1755156617506124.96455839373789;
+	Thu, 14 Aug 2025 00:30:17 -0700 (PDT)
+Message-ID: <1b63d1872f5b2c89f2fafdf717bda5ec29589b69.camel@icenowy.me>
+Subject: Re: [RFC PATCH 2/4] dt-bindings: firmware: thead,th1520-aon: add a
+ mailbox name for SBI
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Drew Fustini
+ <fustini@kernel.org>,  Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jassi Brar
+ <jassisinghbrar@gmail.com>, Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Han Gao <rabenda.cn@gmail.com>, Inochi Amaoto <inochiama@gmail.com>, Yao
+ Zi <ziyao@disroot.org>, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 14 Aug 2025 15:30:10 +0800
+In-Reply-To: <d0d4c9e7-c350-4996-a53b-09b13bdb9409@kernel.org>
+References: <20250814070757.2267325-1-uwu@icenowy.me>
+	 <20250814070757.2267325-3-uwu@icenowy.me>
+	 <d0d4c9e7-c350-4996-a53b-09b13bdb9409@kernel.org>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-This series addresses limitations in the current ACPI idle driver model
-for hybrid CPU architectures (e.g., ARM big.LITTLE, Intel Alder Lake),
-where different core types have distinct _LPI-state characteristics.
+=E5=9C=A8 2025-08-14=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 09:18 +0200=EF=BC=
+=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
+> On 14/08/2025 09:07, Icenowy Zheng wrote:
+> > The SBI firmware might want to communicate to the AON firmware too.
+> >=20
+> > Add a mbox-name item to allow to allocate a mailbox for SBI.
+> >=20
+> > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> > ---
+> > =C2=A0.../devicetree/bindings/firmware/thead,th1520-aon.yaml=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 7
+> > ++++---
+> > =C2=A01 file changed, 4 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git
+> > a/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
+> > b/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
+> > index 3365124c7fd47..555465f4aab4e 100644
+> > --- a/Documentation/devicetree/bindings/firmware/thead,th1520-
+> > aon.yaml
+> > +++ b/Documentation/devicetree/bindings/firmware/thead,th1520-
+> > aon.yaml
+> > @@ -26,11 +26,12 @@ properties:
+> > =C2=A0=C2=A0=C2=A0=C2=A0 const: thead,th1520-aon
+> > =C2=A0
+> > =C2=A0=C2=A0 mboxes:
+> > -=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 2
+>=20
+>=20
+> ABI break without explanation why ("allow" is not a reason to affect
+> ABI) and its impact.
 
-This series introduces:
+Is adding items an ABI break?
 
-1. A per-CPU idle driver model to accurately represent idle-state per core type.
-2. A new interface to fetch cpuidle_driver by CPU ID, required for early
-   registration scenarios.
+Or should I explicitly say "minItems: 1" here?
 
-This issue was initially discussed at:
-https://lore.kernel.org/linux-pm/97e8bc72-e44b-487a-91ba-206732094955@arm.com/T/#t
-
-Changes since V2:
-- Fix "using smp_processor_id() in preemptible" BUG in patch 0002.
-
-Yaxiong Tian (2):
-  cpuidle: Add interface to get cpuidle_driver by CPU ID
-  ACPI: processor: idle: Replace single idle driver with per-CPU model
-    for better hybrid CPU support
-
- drivers/acpi/Kconfig            |  1 +
- drivers/acpi/processor_driver.c |  3 +-
- drivers/acpi/processor_idle.c   | 66 +++++++++++++++++----------------
- drivers/cpuidle/driver.c        | 16 ++++++++
- include/acpi/processor.h        |  2 +-
- include/linux/cpuidle.h         |  4 ++
- 6 files changed, 59 insertions(+), 33 deletions(-)
-
--- 
-2.25.1
+>=20
+>=20
+> Best regards,
+> Krzysztof
 
 
