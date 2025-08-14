@@ -1,148 +1,244 @@
-Return-Path: <linux-kernel+bounces-768504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07854B261B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:03:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5716B261B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987219E226F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 729EE3AB754
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423462F745C;
-	Thu, 14 Aug 2025 09:58:17 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474862F83A4;
+	Thu, 14 Aug 2025 09:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TvnElCkH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5282F659F;
-	Thu, 14 Aug 2025 09:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F042F6595;
+	Thu, 14 Aug 2025 09:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755165496; cv=none; b=E7rnA3wqrykPf7wekQubmNj/WCLiUSPL+V52qqQYTpl2bWMpevt5MvRHJD7NLzaAYUex/ktIjCd+g4rzfoP3QtHmzuMRa082ncsfgCcVXx3QpQ33aT/LWkHNBeEpqnzMlfQyH8TQRDzDaP+kJuPDDlXdIrk1zLuqjMpZXqP0Igo=
+	t=1755165511; cv=none; b=C0zQp6x+YDEq1c5P4uauehyADMEunKOT89NJ7n8DehFZcmXcbP9yue7ZxsFHBbpQkxM/quXzPH8bEf62Xa/zbKXXlKKtkYeAuQLsKpvfwfHxA7/B6WpOHD/78OMa0yOCVg4q/ddMHghrwvG5Gi1VsHVLCSYYJxuqMfKRHboW7D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755165496; c=relaxed/simple;
-	bh=c6hg11JChL/Z5ebyc3d8W/NuDFKnfQBBgcLkpkhNtLw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LrWvpj9M02MHLsCqk5knqW7rYwqGIAqwmCoAmWqhtlFD0LyNk8W6sbT4vt9vwk2JGVa2YiS2iC/Os10kg/UGXvJiwMki5kmTN9Z4DhtFDG6t35e2e65Vmr8kyhj90kdaGB8+oA1Wf6b2qK10O1IYYshhwMmZz9AX9rgdku6RBuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 2d02eb0c78f511f0b29709d653e92f7d-20250814
-X-CID-CACHE: Type:Local,Time:202508141735+08,HitQuantity:2
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:596a5f94-f76f-4f1a-aba3-d028fdec78b9,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-50
-X-CID-META: VersionHash:6493067,CLOUDID:285143e7b64956b5ff9f7cd813fc6bb9,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:1,IP:nil,URL
-	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
-	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2d02eb0c78f511f0b29709d653e92f7d-20250814
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <liujiajia@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 301693908; Thu, 14 Aug 2025 17:58:06 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 649ABE008FA5;
-	Thu, 14 Aug 2025 17:58:06 +0800 (CST)
-X-ns-mid: postfix-689DB32E-258094814
-Received: from nature.lan (unknown [172.25.120.81])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 1F2AFE008FA3;
-	Thu, 14 Aug 2025 17:58:04 +0800 (CST)
-From: Jiajia Liu <liujiajia@kylinos.cn>
-To: pmenzel@molgen.mpg.de,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: alex_lu@realsil.com.cn,
-	hildawu@realtek.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiajia Liu <liujiajia@kylinos.cn>
-Subject: [PATCH v2] Bluetooth: btrtl: fix rtl_dump.fw_version for firmware v2
-Date: Thu, 14 Aug 2025 17:57:39 +0800
-Message-ID: <20250814095739.38343-1-liujiajia@kylinos.cn>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755165511; c=relaxed/simple;
+	bh=TQyR7FXuCKYETcWNVZ8PIU2nphVvP/m9P30vQmjTT0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fEAxqVu7WW2T4pcg93SPzuASMazhJTOV/vT2zFAejuSKXDgN5wOmShI9QXYC2Lfin1Pb/zxFgoJ6D+xLGKZCP/uEN/2aDk4mo4tLWl0qDYwUp/dWy27j9Pv4sno3nmBJxmOn6XKz1IUr5LoPJ+l4QdX1RFQffRuRQT0y39Ubw8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TvnElCkH; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755165510; x=1786701510;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=TQyR7FXuCKYETcWNVZ8PIU2nphVvP/m9P30vQmjTT0s=;
+  b=TvnElCkHrtKj+V68ihYs4TR8Mq+6dXUP8eMI9I1Zd6vhK+2anoGf+AJC
+   H2zAY+6FE+dMAwj2EXZFpQFN4OVfYqv2uCYsmzNeap3kLd2FhJGKpWrHW
+   gDA+BuCwQEHsrcn9TftXZiFcwJ/5ldkmjmOlcK9O1KQUapk7O6n55dFGc
+   ae+eOxB4+l6mHUP+bRIPoGoN3F0KfE60+Nyn9AER6TWSnWhxgTFce96GC
+   q91s4sVyugH+PaCd0atIe37FqCYJlo6YeedLE6VhbOT6yjyNQTQTtUsXH
+   42I8uB2luKR7hSzdUmJnX+d83uoD9JZIDK9tIDrR6H6unfOZmWmsjdbXV
+   g==;
+X-CSE-ConnectionGUID: e8HH5AiyRCuDY3kh2MqinQ==
+X-CSE-MsgGUID: PE8wlNMQRd6GTQYPE88glw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="56685448"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="56685448"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 02:58:29 -0700
+X-CSE-ConnectionGUID: ucPWRSpTSVO4bCGlCpVRsw==
+X-CSE-MsgGUID: 1GNLvUZtSaSJcVASkakdJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="171954294"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 02:58:24 -0700
+Message-ID: <12524aa3-006a-4fee-bd10-b83adf7a503a@linux.intel.com>
+Date: Thu, 14 Aug 2025 17:58:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 18/30] KVM: selftests: TDX: Add TDX MMIO reads test
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-19-sagis@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250807201628.1185915-19-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-rtl_dump.fw_version is not set for firmware v2. Since
-rtl_epatch_header_v2.fw_version seems to be different with the
-release version, set it to the fw version read after downloading
-firmware.
 
-For latest RTL8852B FW from commit c1a6a1a2 ("rtl_bt: Update RTL8852B
-BT USB FW to 0x098B_154B") in linux-firmware, the release version
-is 0x098B_154B corresponding to $(hci_rev)_$(lmp_subver) and at
-file offset 0x16aee.
 
- $ hexdump -C rtl_bt/rtl8852bu_fw.bin | grep '4b 15'
- 00016ae0  99 66 4e d2 bc 93 07 07  2d b1 bf 4b 15 8b 4b 15
- $ hexdump -C rtl_bt/rtl8852bu_fw.bin | grep '8b 09'
- 00016af0  8b 09 08 00 00 00 00 00  00 00 ff 02 01 01 14 01
+On 8/8/2025 4:16 AM, Sagi Shahar wrote:
+[...]
+> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> index 8c3b6802c37e..f92ddda2d1ac 100644
+> --- a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
+> @@ -31,6 +31,25 @@ void tdx_test_assert_io(struct kvm_vcpu *vcpu, uint16_t port, uint8_t size,
+>   		    vcpu->run->io.direction);
+>   }
+>   
+> +void tdx_test_assert_mmio(struct kvm_vcpu *vcpu, uint64_t phys_addr,
+> +			  uint32_t size, uint8_t is_write)
+> +{
+> +	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_MMIO,
+> +		    "Got exit_reason other than KVM_EXIT_MMIO: %u (%s)\n",
+> +		    vcpu->run->exit_reason,
+> +		    exit_reason_str(vcpu->run->exit_reason));
+> +
+> +	TEST_ASSERT(vcpu->run->exit_reason == KVM_EXIT_MMIO &&
+It's already checked above.
 
-rtl_epatch_header_v2.fw_version is 0134ff2b-00019cfe at file offset 8.
+> +		    vcpu->run->mmio.phys_addr == phys_addr &&
+> +		    vcpu->run->mmio.len == size &&
+> +		    vcpu->run->mmio.is_write == is_write,
+> +		    "Got an unexpected MMIO exit values: %u (%s) %llu %u %u\n",
+> +		    vcpu->run->exit_reason,
+> +		    exit_reason_str(vcpu->run->exit_reason),
+> +		    vcpu->run->mmio.phys_addr, vcpu->run->mmio.len,
+> +		    vcpu->run->mmio.is_write);
+> +}
+> +
+>   void tdx_run(struct kvm_vcpu *vcpu)
+>   {
+>   	td_vcpu_run(vcpu);
+> diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> index 720ef5e87071..563f1025c8a3 100644
+> --- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> +++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> @@ -719,6 +719,91 @@ void verify_guest_hlt(void)
+>   	_verify_guest_hlt(0);
+>   }
+>   
+> +/* Pick any address that was not mapped into the guest to test MMIO */
+> +#define TDX_MMIO_TEST_ADDR 0x200000000
+> +#define MMIO_SYNC_VALUE 0x42
+> +
+> +void guest_mmio_reads(void)
+> +{
+> +	uint64_t mmio_test_addr = TDX_MMIO_TEST_ADDR | tdx_s_bit;
+> +	uint64_t data;
+> +	uint64_t ret;
+> +
+> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 1, &data);
+> +	tdx_assert_error(ret);
+> +	if (data != 0x12)
+> +		tdx_test_fatal(1);
+> +
+> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 2, &data);
+> +	tdx_assert_error(ret);
+> +	if (data != 0x1234)
+> +		tdx_test_fatal(2);
+> +
+> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 4, &data);
+> +	tdx_assert_error(ret);
+> +	if (data != 0x12345678)
+> +		tdx_test_fatal(4);
+> +
+> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 8, &data);
+> +	tdx_assert_error(ret);
+> +	if (data != 0x1234567890ABCDEF)
+> +		tdx_test_fatal(8);
+> +
+> +	/* Make sure host and guest are synced to the same point of execution */
+> +	tdx_test_report_to_user_space(MMIO_SYNC_VALUE);
+Is this step necessary?
 
- $ hexdump -n 16 -C rtl_bt/rtl8852bu_fw.bin
- 00000000  52 54 42 54 43 6f 72 65  2b ff 34 01 fe 9c 01 00  |RTBTCore+.4=
-.....|
 
-Tested with RTL8852BE BT (0bda:b85c) and the following script.
-
-  #!/bin/bash
-
-  set -ex
-
-  echo 1 | tee /sys/class/bluetooth/hci*/device/coredump > /dev/null
-
-  sleep 1
-  cat /sys/class/devcoredump/devcd*/data | grep --binary-file=3Dtext 'Fir=
-mware Version: 0x98B154B'
-
-  echo 0 | tee /sys/class/devcoredump/devcd*/data > /dev/null
-
-Signed-off-by: Jiajia Liu <liujiajia@kylinos.cn>
----
-Changes in v2:
- - Commit message
-   - More about FW release version
-   - Add test script
-
- drivers/bluetooth/btrtl.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 6abd962502e3..6ad3ba7901e9 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -822,6 +822,7 @@ static int rtl_download_firmware(struct hci_dev *hdev=
-,
- 	int j =3D 0;
- 	struct sk_buff *skb;
- 	struct hci_rp_read_local_version *rp;
-+	struct btrealtek_data *coredump_info =3D hci_get_priv(hdev);
-=20
- 	dl_cmd =3D kmalloc(sizeof(*dl_cmd), GFP_KERNEL);
- 	if (!dl_cmd)
-@@ -873,6 +874,9 @@ static int rtl_download_firmware(struct hci_dev *hdev=
-,
- 	rp =3D (struct hci_rp_read_local_version *)skb->data;
- 	rtl_dev_info(hdev, "fw version 0x%04x%04x",
- 		     __le16_to_cpu(rp->hci_rev), __le16_to_cpu(rp->lmp_subver));
-+	if (coredump_info->rtl_dump.fw_version =3D=3D 0)
-+		coredump_info->rtl_dump.fw_version =3D
-+			__le16_to_cpu(rp->hci_rev) << 16 | __le16_to_cpu(rp->lmp_subver);
- 	kfree_skb(skb);
-=20
- out:
---=20
-2.50.1
+> +
+> +	/* Read an invalid number of bytes. */
+> +	ret = tdg_vp_vmcall_ve_request_mmio_read(mmio_test_addr, 10, &data);
+> +	tdx_assert_error(ret);
+> +
+> +	tdx_test_success();
+> +}
+> +
+> +/*
+> + * Verifies guest MMIO reads.
+> + */
+> +void verify_mmio_reads(void)
+> +{
+> +	struct kvm_vcpu *vcpu;
+> +	struct kvm_vm *vm;
+> +
+> +	vm = td_create();
+> +	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
+> +	vcpu = td_vcpu_add(vm, 0, guest_mmio_reads);
+> +	td_finalize(vm);
+> +
+> +	printf("Verifying TD MMIO reads:\n");
+> +
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 1, MMIO_READ);
+> +	*(uint8_t *)vcpu->run->mmio.data = 0x12;
+> +
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 2, MMIO_READ);
+> +	*(uint16_t *)vcpu->run->mmio.data = 0x1234;
+> +
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 4, MMIO_READ);
+> +	*(uint32_t *)vcpu->run->mmio.data = 0x12345678;
+> +
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_mmio(vcpu, TDX_MMIO_TEST_ADDR, 8, MMIO_READ);
+> +	*(uint64_t *)vcpu->run->mmio.data = 0x1234567890ABCDEF;
+> +
+> +	tdx_run(vcpu);
+> +	TEST_ASSERT_EQ(tdx_test_read_report_from_guest(vcpu), MMIO_SYNC_VALUE);
+> +
+> +	td_vcpu_run(vcpu);
+> +	TEST_ASSERT_EQ(vcpu->run->exit_reason, KVM_EXIT_SYSTEM_EVENT);
+> +	TEST_ASSERT_EQ(vcpu->run->system_event.data[12], TDG_VP_VMCALL_INVALID_OPERAND);
+> +
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_success(vcpu);
+> +
+> +	kvm_vm_free(vm);
+> +	printf("\t ... PASSED\n");
+> +}
+> +
+>   int main(int argc, char **argv)
+>   {
+>   	ksft_print_header();
+> @@ -726,7 +811,7 @@ int main(int argc, char **argv)
+>   	if (!is_tdx_enabled())
+>   		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
+>   
+> -	ksft_set_plan(10);
+> +	ksft_set_plan(11);
+>   	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
+>   			 "verify_td_lifecycle\n");
+>   	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
+> @@ -747,6 +832,8 @@ int main(int argc, char **argv)
+>   			 "verify_guest_msr_reads\n");
+>   	ksft_test_result(!run_in_new_process(&verify_guest_hlt),
+>   			 "verify_guest_hlt\n");
+> +	ksft_test_result(!run_in_new_process(&verify_mmio_reads),
+> +			 "verify_mmio_reads\n");
+>   
+>   	ksft_finished();
+>   	return 0;
 
 
