@@ -1,172 +1,171 @@
-Return-Path: <linux-kernel+bounces-768769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9A4B26541
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:20:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3737B26544
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 958B27BFD49
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:18:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5BAA1CC4616
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014C42FCC01;
-	Thu, 14 Aug 2025 12:19:48 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C27E2FD1DD;
+	Thu, 14 Aug 2025 12:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="isYmo1/t"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44DD15D3
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173987; cv=none; b=basuaOl94ueXd8LPwAoz/Hq4W/+hqofRZqpQj+mL0jhxAY+5FuWKWdKUrs+p1ioDaJSHypHWtpPQTu+78dBeulxnIEDvr4qJ1832zPSAQTGhI1AzVZxsK0K+vlkbLKKf2cqqtbtTqZldKSxnpYSIxOtx1Y+Nh8buGepDN3siHUA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173987; c=relaxed/simple;
-	bh=A7TwX+6vzT7UwTiDp02xeDkZGg8b0d/GRe+by0OpddI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uaYc5K5NXM6GZLHxSEOxcw1c7aGFfOEDveNfg965SN5yU4kA3ZLUnC1ExHyEDspuC1OqMkiDb2lorENdSLY35inK1Za0/CgIIslyImRk0oCT3A83WdnMLtU6FJ4xZ/rHIgfQhX/GqdxgswZ4ezcvYj9OAZrIUbJeixH+/1xrcvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c2khp1tjmzdcHb;
-	Thu, 14 Aug 2025 20:15:22 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9C11B14027A;
-	Thu, 14 Aug 2025 20:19:42 +0800 (CST)
-Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Aug 2025 20:19:42 +0800
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Aug 2025 20:19:41 +0800
-Message-ID: <1dd93bb7-4f67-4b9b-8b6a-d7c5c77cf807@huawei.com>
-Date: Thu, 14 Aug 2025 20:19:41 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835152FCBFB;
+	Thu, 14 Aug 2025 12:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755174012; cv=fail; b=ZNltfKj/vppwy3KBDstsM8pBpXxx1VoTNYjdYzGUlnQ/y38D4wn2Drw0+zUeGdorJHaaKqK1RMAmEcZ2TKN26p0pdb/7pEq2zQZjJy8MlxqgOv1iWHPmtprGME8L4fIA9sitMxlGWtqCc+A0Zj+Qpvat+1WRoam6AvlCgzm1hAY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755174012; c=relaxed/simple;
+	bh=gO98iLU0CnpR0TnBbEWUa41UuSGVuyFZWSl/D5LE74k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=e+DprZbT0OOfovhsORjdSkG+rgkOrVJKrL7L0yXIPXPAbLRW2RfuhsWajvFTlK4UrPKgwQEGsQA3DxDnhkP1QVAyCl8S1RaRW9or/vVqDp6jctiOSrg+R/9SyOY4dgv0JYfPB3p9x8sFhVHKlQfUgXDJdRQJxAy2DFg2Hu+rISk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=isYmo1/t; arc=fail smtp.client-ip=40.107.223.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OeyBnzKHg1/iXxgvwlFkRoIrmyZf/qtSGsNGSnDytLI7k1nprghTRw0BPh6pHKeK+3PhrS/zhgBDngXOEH20u4imSb+VsgczZtvnH0AyXr3auH9/ng1AK6R5Vv/m8QS4F9VJOneDhYZM4r8YtF8aR8hW3xp8QT40LNL7Y+/QqpWBLAj4QtpX45tID/t/Mt2p/PVHp5YHXcUyDCW2iImpPyqanhyvnt0NLUtZSPgMTEz6JNiZ4yGLYPsQNK5hja11vpPXJLehi13XlhsnaEfOOjCDMabG6N7SIbNJWKwDigZMA0/DrTD1AdOOSU0Jw3npezim5Pmu9JFq8gIhgRBdag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gO98iLU0CnpR0TnBbEWUa41UuSGVuyFZWSl/D5LE74k=;
+ b=KWNLAZe0Y8AqthlZI9gvzi80U5ULdyExTD+v512NQQqjM2oHK8xzit8eUR/2AbS0cCQ9b8gKxASRmwpe81RwI+/TRML/qpnBhRlqdRzZsS+u7tv1OqVxP3zjV2a6kr8JaUyG0F3qr1cCCgfFljzbqBTgRM/of0vN8wk8bljfIAL+ST1Q3Mm9COzP89ugd7xCms8Ub/Ssq3d/GHMIUFtfObySEkzFP7X66dcRhma71i46OHbdcvs1e2Opo0cNkZiTLv8YVpRt4zch9Vcos2jR4tYHKxW8n95R5pCpl6dV0KtL5H0VGyd8htPlKbpi2wQ44OFrxro/Jd81v2yEdM7/0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gO98iLU0CnpR0TnBbEWUa41UuSGVuyFZWSl/D5LE74k=;
+ b=isYmo1/tKmuhVu5gytHF5AoNeFvCnnby44KflqBz4MPW0tFbbC5kGXF//7r2czgpd1kReyacVwGyk/1fHbskTrwgEi7+UHCs44NbCjQOakUAkozOKkfQWglezE6VhQPz38YpVKJ1XDteLo79MvkdrLrZohwzV05P8udknykiOYxVak1ZEIeBo4QpRw0ogAPIvt3qNbIaO/3JnzklNfsf47gQ8if4yuJ+Z2hJEelmGbjfcgh7Lg3RShvQzi49C1NQLpPR8iudzxr9wJz/uhyXSFjZgaWYxfgcZ8q3UCBhvRoyiVe9X13Bg1hwlDwDnsuD+rUVnI6gaOsIaor5KszrgQ==
+Received: from MW4PR12MB7213.namprd12.prod.outlook.com (2603:10b6:303:22a::18)
+ by CY8PR12MB7586.namprd12.prod.outlook.com (2603:10b6:930:99::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.13; Thu, 14 Aug
+ 2025 12:20:08 +0000
+Received: from MW4PR12MB7213.namprd12.prod.outlook.com
+ ([fe80::b049:8074:780:73f]) by MW4PR12MB7213.namprd12.prod.outlook.com
+ ([fe80::b049:8074:780:73f%3]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
+ 12:20:08 +0000
+From: Ankit Agrawal <ankita@nvidia.com>
+To: Morduan Zang <zhangdandan@uniontech.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+	Yishai Hadas <yishaih@nvidia.com>, "shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "kevin.tian@intel.com"
+	<kevin.tian@intel.com>
+CC: "wangyuli@uniontech.com" <wangyuli@uniontech.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [PATCH] vfio/nvgrace-gpu: fix grammatical error
+Thread-Topic: [PATCH] vfio/nvgrace-gpu: fix grammatical error
+Thread-Index: AQHcDQtHHmqfZKGsbUCHWlYR6tCggLRiERIq
+Date: Thu, 14 Aug 2025 12:20:08 +0000
+Message-ID:
+ <MW4PR12MB7213EA6E903EC10A00BD6029B035A@MW4PR12MB7213.namprd12.prod.outlook.com>
+References:
+ <54E1ED6C5A2682C8+20250814110358.285412-1-zhangdandan@uniontech.com>
+In-Reply-To:
+ <54E1ED6C5A2682C8+20250814110358.285412-1-zhangdandan@uniontech.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MW4PR12MB7213:EE_|CY8PR12MB7586:EE_
+x-ms-office365-filtering-correlation-id: 2dbaaa01-327b-47f6-2818-08dddb2ce8a5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?ipoaF9majeW6DV59LhTG5sGmsy1MyvdbWRAVmcj6iaKsWmnz5v4j2XyFu8?=
+ =?iso-8859-1?Q?tGCrNh7KSNFZhrhnVj/Fd4bVmWq6/6Y4ZrIUIvdD5WfyX59qpbM81imPUv?=
+ =?iso-8859-1?Q?kJttQwFRogrEYCzm9N70kxwspsDXFXhjO7VqykWubHOizCAVtqnA593CRB?=
+ =?iso-8859-1?Q?uQzsKhByYK19w2ORzVg3TfS8ARcWJ7sH1/7vBt6MmADKcepMHzuczEZaUV?=
+ =?iso-8859-1?Q?4zy6j6b5XZZoeDsqB1zSGVYx6N+JYXadIRd7Ivcv4EOa8d0pzWx8loorFg?=
+ =?iso-8859-1?Q?RABfqQXgxiSBmfqZdy7YpbKgzsNVylV7zma7KkJwm8J4PwnkuAlu/EfW62?=
+ =?iso-8859-1?Q?gnLS5myg0lLSZDGo1Ko5XX6qV6s0Qp41Txj9j1vmD3KuwiumGX7T1OJdNN?=
+ =?iso-8859-1?Q?TVBozCEKRjR9ue26gdc1z9EzSOzOAythahqY07ariuHrfJDAP2T0vOVNBb?=
+ =?iso-8859-1?Q?J72WYmsdoz/C77BvWqVWQljY4DJh3O+cGJgZI7FkH8oYCSK24Zf2AEergG?=
+ =?iso-8859-1?Q?dfwjp34diMmerNSFARHezP0EJ0G8I+cg1mAaCf+gzOaytT+XWtLzHVLJII?=
+ =?iso-8859-1?Q?c9X7K1bJvzxAsnPj/2MQywfcDIMNEqH1TiyToIVgVzPDhq4a8SHkV7bts/?=
+ =?iso-8859-1?Q?KK6yDSL5nc90eCz6114exlA+3eKA5LhlzxyuaOyVfjf//3Q3W7GNJxBt42?=
+ =?iso-8859-1?Q?5AkS2UgincrleGUnfamYaTtvvXMLjmEr0mhM+YuA6r/hpJS/HOMdaF3h/K?=
+ =?iso-8859-1?Q?O60PX6L6XQZj1qWqA3qitr9gBbbEOWU6NxgCsClr526sDqsdkguq1XMhJ+?=
+ =?iso-8859-1?Q?9yUBfDx6pb29VHH5VVsdDv146nHrmHa8/rPKFtLVL5ma0lTeZ0rXxJBDik?=
+ =?iso-8859-1?Q?/v0oV0gMIS29ZUFd/QWjwmf601HBBOdpLUJHIs4mX/mL/P5xorbqkwy+g3?=
+ =?iso-8859-1?Q?jJA/P8oFSr57B8dYiO10cNG9oJK65vXQRzNMNXay+PrfgFssKcgr3mtW7h?=
+ =?iso-8859-1?Q?1/yqTlb5LMMYGISbG/u89JgyhgjKeaIcts402CyXWNc625I4W8hxEh7KHS?=
+ =?iso-8859-1?Q?VwyMGHF00tnt5SzhiFHVA9Q6YQTKTusv07BF/bnIYS+zfn6dQemF2xeVTb?=
+ =?iso-8859-1?Q?QnShV3Aj8tVzAxwUho6ZznTbl3EO77jPnPbyVHJwkP1/CEw23lUaWDuaOk?=
+ =?iso-8859-1?Q?NgEmxLjcNKlWx0FyFnILql2j57RyFnQUxWS2nIN0ixJ2ldPweDLKwt7umz?=
+ =?iso-8859-1?Q?B0NceGrMwqseUGF70Z9yK78Vf8HKm40gbixRrFXYj68CKKdyO8qgnK2X40?=
+ =?iso-8859-1?Q?s6rcaHH/Y8GMaJC97LBTtPszrjn5cVkKn7xbJ049qhJaZloNOb2rXFx2Xt?=
+ =?iso-8859-1?Q?5VPsMcTqxLdTG3K3HUW1B8kA8wR2aSKBSA6pb+4HBTu1+oO/T+B9eZLM2W?=
+ =?iso-8859-1?Q?HcwOyiiNyqIlatj0Y5xZRwdb3SngZRKBCvgjCI2fyRwN/5Me+AXU24G1d5?=
+ =?iso-8859-1?Q?5JJwWtOTAa4offJn3+8bYjPPiYPG/UV/E47gtEzHWcjpWJ3UoeJQFx2rNC?=
+ =?iso-8859-1?Q?sgmBH+I=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7213.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?dQhp6HDZNrl1sNbxDkV+64Q7GjrcyU+v0+/m4Xpyzxe/PlILcq8/Sx6nBg?=
+ =?iso-8859-1?Q?tkfUS6cis6jU1anKdzVhEM5ImYBx/P+Arrz3rzQJDAc4pQu6bNi/KpY1D4?=
+ =?iso-8859-1?Q?HnxPEZr1NMLOiNerZ/AXQHY+dSCoK8P+9SaygPVPpxQgP1zRPq5Pkt5WVL?=
+ =?iso-8859-1?Q?e7XTREkZuszvKCGM8Rg6hngXxYTwOv0ICQE+CwuvTbUo+kl5RkBEpNrp9e?=
+ =?iso-8859-1?Q?kLdj1DQom+q0V3kl4vn1cq0yAt+6wscJrBvz6GFxOn+mEiBz4cbSiEIJj2?=
+ =?iso-8859-1?Q?2N8QjZ4D2hQ2Mq53VVLs56MbmtrGXkRawNmjpr6XIsgsKzjnWjIhv4U6LY?=
+ =?iso-8859-1?Q?KRdUQJEpxAu5XjLsXjC/WlR0dV5pVWPUK4FBqPMaTK5sHjs4rlDDqK+ub7?=
+ =?iso-8859-1?Q?ni0wSr4ZEwoo9nvyzclLntbsOSZFxyNrcTowC5mhFWb+XQwPmlYjh6jX2c?=
+ =?iso-8859-1?Q?T+TlRJnS4tQjV3kUL2HJ+L7NU0jFqDtrw8pCADbO3fQ0nHIShAbF6NHz0T?=
+ =?iso-8859-1?Q?GfplwqofsKIFVCc8WYQDgUxegJYd8Lo96E4UWAVUCmHGqTw00BhWRSCbrc?=
+ =?iso-8859-1?Q?VxO4feplu+/qVvLie0mz56a1cDIO0KlF/gni+HpfziN+wInaz3RElHGFPE?=
+ =?iso-8859-1?Q?IKYcKG0nmYsntFVAuvjR40DY4AmRMS4bJwRjfhB7eKDXYibgwrZj0Lz9pa?=
+ =?iso-8859-1?Q?B8/SLHRPEZDEs9H38R3wL/eSe1uhg8lwb3gfuRnIzustVqVuMCimy4cjaV?=
+ =?iso-8859-1?Q?e45VHDb3eUhZRiyJGVGJy+xWyN6mlvBIxLkKOPbUEd+K49HWksvCjZDoJD?=
+ =?iso-8859-1?Q?o2F/xllX3cy0pFiFzuXvLi091sehzrsdYqqsqefJnTI4Ak0hWZh7RuCJrr?=
+ =?iso-8859-1?Q?7MbTv07cx9AZUdx6ND7NCYslyQCIKBETtIaOdDefp8EFcd0hHMP4/akGwY?=
+ =?iso-8859-1?Q?FLXQWmI6CdM8odgD6wjK6+FRQ2z8u6LtrMP+j92AhxnEcKG81ufLy5NULv?=
+ =?iso-8859-1?Q?+vUZO+QHdJNVhC30Eu8KDC5djaBYwwCoa0bl7yD+nDvM+KOEfwi77rWyn0?=
+ =?iso-8859-1?Q?JEvfqJClvpKJxnbt/ezlXIvcOXnKuE4ClEPCUMQx08uJjHUbdkcw6dhOo7?=
+ =?iso-8859-1?Q?NOdfvm9xkp0VzQzfDaBJzNalM4nIHCSwQzR6mBlrUanc6rS+4giE7ClK2g?=
+ =?iso-8859-1?Q?xsylY1JkjShDf1rGiU6IM/RzM6sCjeDMvTpqoTU0WfKbRNA7oHwVTFstwt?=
+ =?iso-8859-1?Q?4BKQWca54XT5999MCKG2P6QFzehUXFOrmUgVgLhPhI+Y7Nviw27G7MNkSO?=
+ =?iso-8859-1?Q?sJTrDzKK65kzIHJUWHyT3/xlWRSMGKYHZ46g33ZZhLwEgRy8FUyWpbGjTU?=
+ =?iso-8859-1?Q?hSy+I6LrxnMkrOE/o4RZrnFzTG14oV+vLR3aYej/HRSfCticVQQHhcrNzy?=
+ =?iso-8859-1?Q?ixz5jKbcxRxfXWlke6quDhXgsOehsAK4zNdCvorIelz6NfNnL7jAPijX/X?=
+ =?iso-8859-1?Q?f0P0fnwRxFXe9rlaNWy6pbFoV0TZn0dMv/muyw54tEyHla524UzLzAdOgE?=
+ =?iso-8859-1?Q?TIn6ECqKRk/qqcSxsFA1CiQbwwjGVAApNHfaM1eBLI40hGWkGXivR5OJrV?=
+ =?iso-8859-1?Q?Bc0XJbCo1NpUE=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 drm-dp 02/11] drm/hisilicon/hibmc: fix dp
- probabilistical detect errors after HPD irq
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <fengsheng5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20250813094238.3722345-1-shiyongbang@huawei.com>
- <20250813094238.3722345-3-shiyongbang@huawei.com>
- <aayi7zjrmru2ancexrqmcutams6ohde3nrkhqacixwp45dsk4v@7ig6hqzahdxf>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <aayi7zjrmru2ancexrqmcutams6ohde3nrkhqacixwp45dsk4v@7ig6hqzahdxf>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemq100007.china.huawei.com (7.202.195.175)
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7213.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2dbaaa01-327b-47f6-2818-08dddb2ce8a5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2025 12:20:08.4208
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 89dTxqVSHuqL44ozjot5q+atuNfQQRH5VWFX6uY0t0yYZEGblrjvvikGPHulmJCnUHcQTY7mKT69OGwisIqzKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7586
 
-
-> On Wed, Aug 13, 2025 at 05:42:29PM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
->>
->> The debouncing when HPD pulled out still remains sometimes, 200ms still can
->> not ensure helper_detect() is correct. So add a flag to hold the sink
->> status, and changed detect_ctx() functions by using flag to check status.
-> THis doesn't explain what is wrong with
-> drm_connector_helper_detect_from_ddc(). In the end, this function
-> doesn't use the HPD pin.
-
-I'm sorry about the misunderstanding.
-The issue is that after plugging or unplugging the monitor, the driver takes no action sometimes
-even though an interrupt is triggered. The root cause is that drm_connector_helper_detect_from_ddc()
-still returns connected status when the monitor is unplugged.
-And I will fix the way in the end.
-
-Thanks,
-Baihan Li!
-
-
->> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> ---
->> ChangeLog:
->> v3 -> v4:
->>    - remove link training process in hibmc_dp_detect(), suggested by Dmitry Baryshkov.
->>    - remove if (dev->registered), suggested by Dmitry Baryshkov.
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  1 +
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 19 ++++++++++++-------
->>   2 files changed, 13 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> index 665f5b166dfb..68867475508c 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> @@ -50,6 +50,7 @@ struct hibmc_dp {
->>   	struct drm_dp_aux aux;
->>   	struct hibmc_dp_cbar_cfg cfg;
->>   	u32 irq_status;
->> +	int hpd_status;
->>   };
->>   
->>   int hibmc_dp_hw_init(struct hibmc_dp *dp);
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> index d06832e62e96..ded38530ecda 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> @@ -34,9 +34,12 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
->>   static int hibmc_dp_detect(struct drm_connector *connector,
->>   			   struct drm_modeset_acquire_ctx *ctx, bool force)
->>   {
->> -	mdelay(200);
->> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
->>   
->> -	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
->> +	if (dp->hpd_status)
->> +		return connector_status_connected;
->> +	else
->> +		return connector_status_disconnected;
->>   }
->>   
->>   static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
->> @@ -115,21 +118,23 @@ irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
->>   {
->>   	struct drm_device *dev = (struct drm_device *)arg;
->>   	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
->> +	struct hibmc_dp *dp = &priv->dp;
->>   	int idx;
->>   
->>   	if (!drm_dev_enter(dev, &idx))
->>   		return -ENODEV;
->>   
->> -	if (priv->dp.irq_status & DP_MASKED_SINK_HPD_PLUG_INT) {
->> +	if (((dp->irq_status & DP_MASKED_SINK_HPD_PLUG_INT) && !dp->hpd_status)) {
->>   		drm_dbg_dp(&priv->dev, "HPD IN isr occur!\n");
->> -		hibmc_dp_hpd_cfg(&priv->dp);
->> +		hibmc_dp_hpd_cfg(dp);
->> +		dp->hpd_status = 1;
->>   	} else {
->>   		drm_dbg_dp(&priv->dev, "HPD OUT isr occur!\n");
->> -		hibmc_dp_reset_link(&priv->dp);
->> +		hibmc_dp_reset_link(dp);
->> +		dp->hpd_status = 0;
->>   	}
->>   
->> -	if (dev->registered)
->> -		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
->> +	drm_connector_helper_hpd_irq_event(&priv->dp.connector);
->>   
->>   	drm_dev_exit(idx);
->>   
->> -- 
->> 2.33.0
->>
+Thanks Morduan for fixing this!=0A=
+=0A=
+Reviewed-by: Ankit Agrawal <ankita@nvidia.com>=
 
