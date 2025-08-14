@@ -1,169 +1,124 @@
-Return-Path: <linux-kernel+bounces-769049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C78CB26980
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:35:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5514B26993
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8333A05F4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:22:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3541BC510B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCAF19D8A3;
-	Thu, 14 Aug 2025 14:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598FE1DDA09;
+	Thu, 14 Aug 2025 14:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="r9xClWN3"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XhkljLK6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C3432142A;
-	Thu, 14 Aug 2025 14:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A486915B0EC;
+	Thu, 14 Aug 2025 14:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181308; cv=none; b=bc2d8GHG211QDGY3wuCeq++RLGJnUrXyJcCCV2QLDF6A96IXRhxZ/nihrl/Q5pz+bizykAX/P7Ed/Z8sw6eeDaRy3gH45hW4hRuHUs4bhM/ilBIyLDmXERhiR7p3eprADLLh1RwBZcn7/EJsrCXankanVMmWGi7B0je17Yim4mY=
+	t=1755181310; cv=none; b=Qb4+zE2T8Dum9yex43Eb1zlfp1jfKFCmJN+4VXSXZn6/rR4oz2r4L2eQy2Ki2Rn07ayMDqDw9Y4ZpG2Wi6ZMSFnhCnKpGv2k2b8OXSZxpmwDy2f05tw4CXutcnEe+66IbvkOTWvmp6WEcjPIBhSg1PY5KmPJ6pqQ57JA6H8E0AA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181308; c=relaxed/simple;
-	bh=RwyioGqHpNLArXgX5EMwEOrG2VbvcPLtrOSmzrNLb7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EC1c67vY50TMGe9U31W2FMHt1l+dOv7vJXvwyBZR1sLtsiZ9w+KhU+TMsEJsGsR3e9ZqVG3nZTkt+k+lqKIXVpOUiFU2NBXTDhze5q47YUgDhkUujFPYRv5JUvr3mKkuir1jTZpo7ifZn+mY/mGgQrM8Og1EKFYPGrdYibzEctY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=r9xClWN3; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4c2nVZ2T0xz9shX;
-	Thu, 14 Aug 2025 16:21:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1755181302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TuUVUGDrxlPwL85eCorobk2whR7srtFUu6MloQXOaWE=;
-	b=r9xClWN3bAYV76AT8/Dra0Dfa9BDhLnp6UW5BIR2M9wFNsyhwwWQ8jeYSj/Kv+Y/FryjEP
-	WuWlv8Q1KZ99/kPXWmN9FPOAuWbP+fm6XeXJDXA8qhD7SFRuQgPhvTeGe0ACR5hHSvOKXP
-	uqu42nXvQ4Jn5Z4neVeF97U+cy55EZKGWB0Rm81y44Ui45htFKGmyQS514y/eUO7e3D2hJ
-	SwCVnfUHy+WIF/uzUmtpWUL+Yuj6o5qWEEZsCt/chZBVjzL08oY3yAyBGCCdrpJgphpvUF
-	d5QEqqAUjl+GH6HtwX7co9D0gFmzD6iBkrzm9Tq3axMQvpuzSt95aEpru2ULcw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::202 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: "Darrick J . Wong" <djwong@kernel.org>,
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	linux-xfs@vger.kernel.org,
-	kernel@pankajraghav.com,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH] iomap: use largest_zero_folio() in iomap_dio_zero()
-Date: Thu, 14 Aug 2025 16:21:37 +0200
-Message-ID: <20250814142137.45469-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1755181310; c=relaxed/simple;
+	bh=TQ6PdhDSzw7Dzr1c2UpdagPEGThCspSgUuL/b+/vsVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biXy3vBysSAblrNzdJ8NB9JoVDhyWPr0Jqs6jPyPfk1V16XJjeEa3JH8/dKMx4C0LqwIO7pd8v19E7iMTX1YkODxUZzH8tk63RTWh4lRD9aCr4jcnoGwGvooVKuoAerJ0cc+t1yKwK/KJ0v2pto1jkSzT4uE2JeYGzMX54ccNGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XhkljLK6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0F5C4CEF7;
+	Thu, 14 Aug 2025 14:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755181310;
+	bh=TQ6PdhDSzw7Dzr1c2UpdagPEGThCspSgUuL/b+/vsVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XhkljLK6qCOV4anQ1thdHIA7DE1gIGCQU/qzWxSmuHWiJGJI5lpmz7ZF4RM5aNpFA
+	 LifSRFqmgNXX85n1tdsWRMr7IHmqzXjmPOcoDLlle44+1hWLXNd6/ISqDHz9Q2I5Ln
+	 Bos+mblFFH63IpRJFyfJXBUnFKUDirDSTqtyQqis=
+Date: Thu, 14 Aug 2025 16:21:46 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Julian Taylor <julian.taylor@1und1.de>
+Cc: patchwork-bot+netdevbpf@kernel.org, Fedor Pchelkin <pchelkin@ispras.ru>,
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+	kuniyu@google.com, edumazet@google.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Subject: Re: [PATCH net] netlink: avoid infinite retry looping in
+ netlink_unicast()
+Message-ID: <2025081448-version-excursion-1456@gregkh>
+References: <20250728080727.255138-1-pchelkin@ispras.ru>
+ <175392900576.2584771.4406793154439387342.git-patchwork-notify@kernel.org>
+ <9fa0c0ea-9c5d-4039-856f-222486283a3c@1und1.de>
+ <2025081422-monetize-ferocity-fe28@gregkh>
+ <2ebf39be-aa26-4863-931b-a32fde9de182@1und1.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4c2nVZ2T0xz9shX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ebf39be-aa26-4863-931b-a32fde9de182@1und1.de>
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+On Thu, Aug 14, 2025 at 04:14:39PM +0200, Julian Taylor wrote:
+> 
+> 
+> On 14.08.25 15:57, Greg KH wrote:
+> > On Thu, Aug 14, 2025 at 02:51:27PM +0200, Julian Taylor wrote:
+> > > 
+> > > On 31.07.25 04:30, patchwork-bot+netdevbpf@kernel.org wrote:
+> > > > Hello:
+> > > > 
+> > > > This patch was applied to netdev/net.git (main)
+> > > > by Jakub Kicinski <kuba@kernel.org>:
+> > > > 
+> > > > On Mon, 28 Jul 2025 11:06:47 +0300 you wrote:
+> > > > > netlink_attachskb() checks for the socket's read memory allocation
+> > > > > constraints. Firstly, it has:
+> > > > > 
+> > > > >     rmem < READ_ONCE(sk->sk_rcvbuf)
+> > > > > 
+> > > > > to check if the just increased rmem value fits into the socket's receive
+> > > > > buffer. If not, it proceeds and tries to wait for the memory under:
+> > > > > 
+> > > > > [...]
+> > > > 
+> > > > Here is the summary with links:
+> > > >     - [net] netlink: avoid infinite retry looping in netlink_unicast()
+> > > >       https://git.kernel.org/netdev/net/c/759dfc7d04ba
+> > > > 
+> > > > You are awesome, thank you!
+> > > 
+> > > hello,
+> > > as far as I can tell this patch has not made it to the 6.1 stable tree yet in the 6.1.148 review yet:
+> > > https://www.spinics.net/lists/stable/msg866199.html
+> > 
+> > Please use lore.kernel.org links.
+> > 
+> > > As this seems to be causing issues in distributions releasing 6.1.147 can this still be added to the next possible stable release?
+> > > See following issues in relation to loading audit rules which seems to trigger the fixed bug:
+> > > https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1111017
+> > > https://github.com/amazonlinux/amazon-linux-2023/issues/988
+> > > 
+> > > I have tested this patch solves the problem in the Debian bookworm using 6.1.x
+> > 
+> > What is the git commit id of this patch in Linus's tree?
+> > 
+> 
+> 
+> The commit id is 759dfc7d04bab1b0b86113f1164dc1fec192b859
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=759dfc7d04bab1b0b86113f1164dc1fec192b859
 
-iomap_dio_zero() uses a custom allocated memory of zeroes for padding
-zeroes. This was a temporary solution until there was a way to request a
-zero folio that was greater than the PAGE_SIZE.
+Thanks, I'll queue this up for the next round of kernels.
 
-Use largest_zero_folio() function instead of using the custom allocated
-memory of zeroes. There is no guarantee from largest_zero_folio()
-function that it will always return a PMD sized folio. Adapt the code so
-that it can also work if largest_zero_folio() returns a ZERO_PAGE.
+Right now we have a backlog of 500+ patches due to all of these being
+added during the -rc1 merge window.  Please be patient while we dig
+through them.
 
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
----
- fs/iomap/direct-io.c | 38 +++++++++++++++-----------------------
- 1 file changed, 15 insertions(+), 23 deletions(-)
+thanks,
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index b84f6af2eb4c..a7a281ea3e50 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -24,13 +24,6 @@
- #define IOMAP_DIO_WRITE		(1U << 30)
- #define IOMAP_DIO_DIRTY		(1U << 31)
- 
--/*
-- * Used for sub block zeroing in iomap_dio_zero()
-- */
--#define IOMAP_ZERO_PAGE_SIZE (SZ_64K)
--#define IOMAP_ZERO_PAGE_ORDER (get_order(IOMAP_ZERO_PAGE_SIZE))
--static struct page *zero_page;
--
- struct iomap_dio {
- 	struct kiocb		*iocb;
- 	const struct iomap_dio_ops *dops;
-@@ -285,24 +278,35 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
- {
- 	struct inode *inode = file_inode(dio->iocb->ki_filp);
- 	struct bio *bio;
-+	struct folio *zero_folio = largest_zero_folio();
-+	int nr_vecs = max(1, i_blocksize(inode) / folio_size(zero_folio));
- 
- 	if (!len)
- 		return 0;
-+
- 	/*
--	 * Max block size supported is 64k
-+	 * This limit shall never be reached as most filesystems have a
-+	 * maximum blocksize of 64k.
- 	 */
--	if (WARN_ON_ONCE(len > IOMAP_ZERO_PAGE_SIZE))
-+	if (WARN_ON_ONCE(nr_vecs > BIO_MAX_VECS))
- 		return -EINVAL;
- 
--	bio = iomap_dio_alloc_bio(iter, dio, 1, REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
-+	bio = iomap_dio_alloc_bio(iter, dio, nr_vecs,
-+				  REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
- 	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
- 				  GFP_KERNEL);
- 	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
- 	bio->bi_private = dio;
- 	bio->bi_end_io = iomap_dio_bio_end_io;
- 
--	__bio_add_page(bio, zero_page, len, 0);
-+	while (len > 0) {
-+		unsigned int io_len = min(len, folio_size(zero_folio));
-+
-+		bio_add_folio_nofail(bio, zero_folio, io_len, 0);
-+		len -= io_len;
-+	}
- 	iomap_dio_submit_bio(iter, dio, bio, pos);
-+
- 	return 0;
- }
- 
-@@ -822,15 +826,3 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	return iomap_dio_complete(dio);
- }
- EXPORT_SYMBOL_GPL(iomap_dio_rw);
--
--static int __init iomap_dio_init(void)
--{
--	zero_page = alloc_pages(GFP_KERNEL | __GFP_ZERO,
--				IOMAP_ZERO_PAGE_ORDER);
--
--	if (!zero_page)
--		return -ENOMEM;
--
--	return 0;
--}
--fs_initcall(iomap_dio_init);
-
-base-commit: 931e46dcbc7e6035a90e9c4a27a84b660e083f0a
--- 
-2.50.1
-
+greg k-h
 
