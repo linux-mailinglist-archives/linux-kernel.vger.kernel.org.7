@@ -1,144 +1,164 @@
-Return-Path: <linux-kernel+bounces-768474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07417B2616D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECDBB26178
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A0535E28BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F6017A622
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE322E973B;
-	Thu, 14 Aug 2025 09:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD452ED155;
+	Thu, 14 Aug 2025 09:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdNHMX1K"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IS8APo4E"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EF11A9F94;
-	Thu, 14 Aug 2025 09:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6355287241;
+	Thu, 14 Aug 2025 09:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755164495; cv=none; b=MTYXp1KvVTtVk3qzD5HbbNgomZcI1laAZ+8wOggIibhk2WSN0Ymd7PAvxyaWYH5GAbPt71/DdlMdr6TdJRl6N88p0vXTxzQeOoURuinHex0iwLPjXeVHV1U0g+pngHemhvHx9gnP32YRT8QX3mCCoF8HNGjH0CQ6fFgefEcjO/k=
+	t=1755164740; cv=none; b=eMquOtPxV8wKKD+k6QcH7ukCuTlNY7qlla4ASwKDpCeBaAf7hv0L/0tdIPLa4Grm7VpCWoNolfp9ixEZY3Id1G5/ZyUu9iIe/Xo9Hiww4XtWcrgHfNrXIDKCnOvO2bw0k5pTYWNIo4J0BsASP3BsYnlzn2aZv/6OWTpvyatiAFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755164495; c=relaxed/simple;
-	bh=fqWw6Rlkb6iW5fYfJR1lVN007rszHDAUsQ5oLmIgy/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p88OMIUVGIJ6n2ye3pMy9AcU9ILxo1OxNWHkHdJcguseoqbSCGktNOKtuaWhpge3QbQBty0v20wI/M1WPoFr7iV6xn9gX0W5xMaTw/Vj95DeAzkxNz23S5YrLTQ3DBsGgcuArrrtGZcZdpHwmW5zQ54zupp1e64uwdRNoV/W3is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WdNHMX1K; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1755164740; c=relaxed/simple;
+	bh=KM92jO8VeknSMnZUwnTA8K+PnMbF85QSmFWuuxCNr4g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ee5tjSAGdHlyakSD4xfOz2YcMmM97vc6ZrDwkRr/jetDAaCrUrJSN7Z/dFlpfupXmEcmJ+DcH3YCtCmzQ+Ni6sp2Eq0uHAo4ShV3klhatdzrNDwvaPesERVV9Pw+sVw8uv6fN11kQUnliVkp6xB7LLUmtXznCBaexSVUjy/+ow0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IS8APo4E; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45a1b0bd237so5753915e9.2;
-        Thu, 14 Aug 2025 02:41:33 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76e2e89bebaso581101b3a.1;
+        Thu, 14 Aug 2025 02:45:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755164492; x=1755769292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mfVsnps5PF16eK/6Z6rbqgY0AeNAHzhL7ZogriCupsE=;
-        b=WdNHMX1KzEEAylfU/Dya/2xOa3nxCBrjaVnGtOPiX9yf+Ib0r1jt3DSx3XbKFBJRY3
-         BgYQNh/8s2zevQPbORjzt1Fzwn62qw/eTL6XgIgUlQyz26RWjvQ/LSyruP9HBVHqXGER
-         HrB5guwvkSZtsqLHpVZYTVvDnd27qONC4xsFs0zU14pXKv7+8BudIw/gD7SPjWQUmpLb
-         dWOTjz8523FCxf+ZFO8KyQIRKjgxgSQaPvaTwP5KHfYLhvdk6MZn4+jRCVZlbPcE1w5P
-         t84QEbtlZNgTwGb+pvDDgjvK69T4vgTS/SdmjxDmXvHaXnZzDDYKWoFqGNSAG/U3ICNv
-         fvJg==
+        d=gmail.com; s=20230601; t=1755164735; x=1755769535; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oMN0x5Zo7hh9TITRfrQy5jjYiGyYIfO4mlcflHw2ibQ=;
+        b=IS8APo4Eww3RJyZ9ffbehmmd09h3g0j3fTngDO4cSdrOMY6Oh68WSN7TqPHFIAZ5rX
+         mGqQfVyDo+8qd/MVoEyO32rGwcVa7Lhg5DpoNWqBEB3bLETMlKf0xU1JcFrJ2Mjntwz5
+         1WfAPSTZgB6Gb8qep2f6hTw60u1K2gDHpIxnVu9L0QTdQnQU3jrRNJh2Kfaqdl66UNMh
+         3xpeCi+ziPB5mMsk91mp5wzFq0gL2tMU9aO5yhsWTQBqZjLGaBwcCwFRro8C1+j+KAmK
+         Cc+D35jrRlDU6IZG09tW+SxI58dnGsL3e7443PBY61Ss3UhqyzOsCuOpGA4KEx9FxKzf
+         ZQfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755164492; x=1755769292;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mfVsnps5PF16eK/6Z6rbqgY0AeNAHzhL7ZogriCupsE=;
-        b=qUHuyWe02uAb8mVgt0osRhA2aDAGggFB/wQzcWSULcAuzdRCbIqBUMGC59Y7ofGPCK
-         N2EC1zVyvdTYHh0paatuvJShQSgSCp5MVWUZbMqxlE6705suGKYjnEiJUhET+jLIkX/L
-         Ox+n68kG64B9tktSl4I/Im4O6MgiQEk9BvuI65snhKtGAK6eVEa4gjn4wt+OtiRsCtJo
-         Do4nZvcS4/061bbnrFie9fyflhH4YwQydJZADk3vGNYQuFM5HgfhK52ZC4QKCw8au2Pf
-         OsHWcHPp+7t587wHnPdqK7flzTg4cOYan8IZ+RC+VGvtkNTyq1SF+k6kW3ZDMsrPT8Pe
-         a+Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0kjEf6iEtjZCvdajw6BIw9N/1i5NK2ZaITCxUU5k5odEyZhoX64QL+f9rTeQ95gFWQk40kdIOsTqOn83c@vger.kernel.org, AJvYcCUhSqEee1nzkkSZPEVUIm9056/35MmKw1w0G7jl7GVhC36OrCNz1kJUm0EtxZupAicVyfots7Dm@vger.kernel.org, AJvYcCUzIf11/JK+OxteUyNnNuxa6MDXsGQ7zAgI85AosVmIQ47j41Pi9buf27uhwZfnXk48tzUAuLDDXthC9w==@vger.kernel.org, AJvYcCUzhSGVJGk5mTYUtyn5/a2bYVFGqBaKTQ8qMn7XGtR1n7ARiX2YEUYzSbEmiV1kEE+Rz3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxexseO+QNzdo8NW7uKOnExUh2P1u65km9GICzTudkSAvJ0WSdQ
-	qURPKQyuxh93tT9hgCojHNr4cgmDVqeiBy+pNLo8YyukR/cwtjtB/3xN
-X-Gm-Gg: ASbGncttQZUudnsUaiVp2jwj9hLEgb4VPD5o5Smv/joQCEn+YY1rYxbPvjf8Rx6xLMn
-	8IvlqUINnZDirCx+EP0cBIYKN94j2Se/ou+QvkTMSqjiR/Gug+Z4x2g0irEnk8x4pHHf278drY6
-	a8JbOkB/1oYEeN4djDuifMc0ZNzF9vxYqxcCDH7/FnhOehrJHvVl1Fe0GH8kB2/ZMhD64KiQ+mC
-	W/zp4SGVrBv0QpF2elJ1k+eOVxSl5sRQGoJ7VLiLT+pHFD+J/wm4xn6iGlun0JtNlpghquP2SJ6
-	9JPc2mh1WYx+6lOhlJiALRkD5u1w0BmFF3ExnMo936v1/69FlWDMBN354K1i6R3S7E6KSwPXf9p
-	+coWFmSP0xKEQCCH6te0Az6oUzcjy9Ww01JqKA3o39UXilw==
-X-Google-Smtp-Source: AGHT+IHBe3UbzHGADMZbxm6C1MQMCttafmz3pDCs0fFtOpYQDzgStuK34BlZw62Cf2j8jvkUuST0pA==
-X-Received: by 2002:a05:600c:3b93:b0:459:d780:3604 with SMTP id 5b1f17b1804b1-45a1b605845mr18547955e9.3.1755164491690;
-        Thu, 14 Aug 2025 02:41:31 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::26f? ([2620:10d:c092:600::1:7acd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6be10esm15261205e9.3.2025.08.14.02.41.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 02:41:30 -0700 (PDT)
-Message-ID: <e8d33a38-6465-432a-9c28-25f2689e95da@gmail.com>
-Date: Thu, 14 Aug 2025 10:42:47 +0100
+        d=1e100.net; s=20230601; t=1755164735; x=1755769535;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oMN0x5Zo7hh9TITRfrQy5jjYiGyYIfO4mlcflHw2ibQ=;
+        b=iMnCykZ8DEVxPkVQrfBPbbjkoXXEmR7wIXMTdNjSy8IY9ywYsbzeZtOArgxo/5yXd/
+         CEPv+LAnKTApdbh348D7eIqn+qT0UK3Ao1sUnpE4higvS1hEC3hqXzE+ZUY8L2oRe8Ei
+         2OPgi4BiRMTgDZiFlEOwh4k+B78tQkCa7ipp9lhG+JqgQ3xJ8nB6n1wlilSIA6NgI3js
+         Wl1w4vaq079xFqthYoG0bVqBWXf9bPRPLCfj1jdFBMPpkRTbbrKlhwQ6AfRHxmLqClDG
+         MzhyiP8q2NO2v8xl2AdFfRj5hljBLk3rjLXat8JCBLdDDLt2TeM/5djuiQfovt/I6BBo
+         SVeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGRLOseZXhaJLTRyHXRzeAOQEzyo7s/McWJLsKdXUB79oKk8+6SHUKywNr9hR10NyeTu9heK3JhQWH9VM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4LFG1vdHyxvfOw+pRQ9RxFuduu96amguT4cGbXnXdPRF37SFj
+	SE8Y4DmCNFDPF4mdmqjGdVtb1qgy7XnSWMbQSgeycb8OmqwthQoEg5pC
+X-Gm-Gg: ASbGncvZMxSR0OnoIWakDFVwcaNTvHG9OAnR+a8ZJ8GUCFCj0RbWJGfPLZKQFGEAbtv
+	gEh+NKlEacR8/hQhXIvaYq0SBKD8aIDf8sSGaFFpZm7pAB3lzD3YH9Mr8jTX3R51javDdTUCERq
+	vDBqYIWtr3vsm3x1DVz20k4ot/ou/qiEYranWWnlpPUBK7OQ7QObNX1fWrO2q91Kw4KofhxN+gr
+	OwKN7xZ1gKCCKddm9x3sfXvCRNB8eUY78aewqnZXF2x79OHWAYf3dvUJkGYm92Vy2az1oX06k31
+	6K7nYkkem/c259adKEWEb7tPDReCJCjKdFDscuYYixTuM81ABQi+nYVLF6mw0ua58uc8jsjlYbE
+	t8Sx/EEl7MTMj5/TvZy+gVsWrDGUSpK+036crDyPv372bZDA0HYM9z8j3oCViwx35VfEox6MoVG
+	JyuH06dmM55AhZVvQn6o52+Ls0SXXG
+X-Google-Smtp-Source: AGHT+IG3C7V389BrCRAN1Uymn48CA1exKEYl6jou2mxxAV4PixPK6nvq4Y+wAWCq9YZtg3Qey1vBEg==
+X-Received: by 2002:a05:6a00:cc2:b0:748:f6a0:7731 with SMTP id d2e1a72fcca58-76e3200dbdamr3122117b3a.23.1755164735051;
+        Thu, 14 Aug 2025 02:45:35 -0700 (PDT)
+Received: from AHUANG12-3ZHH9X.lenovo.com (1-175-133-46.dynamic-ip.hinet.net. [1.175.133.46])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c61dd2ce7sm13106519b3a.41.2025.08.14.02.45.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 02:45:34 -0700 (PDT)
+From: "Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ahuang12@lenovo.com,
+	"Adrian Huang (Lenovo)" <adrianhuang0701@gmail.com>
+Subject: [PATCH v2 1/1] pidfs: Fix memory leak in pidfd_info()
+Date: Thu, 14 Aug 2025 17:44:53 +0800
+Message-Id: <20250814094453.15232-1-adrianhuang0701@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux-next v3] mm, page_pool: introduce a new page type
- for page pool in page type
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Byungchul Park <byungchul@sk.com>, akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org, kernel_team@skhynix.com, harry.yoo@oracle.com,
- ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
- ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org,
- kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com,
- baolin.wang@linux.alibaba.com, almasrymina@google.com, toke@redhat.com,
- bpf@vger.kernel.org, linux-rdma@vger.kernel.org, sfr@canb.auug.org.au,
- linux-mm@kvack.org, netdev@vger.kernel.org
-References: <20250729110210.48313-1-byungchul@sk.com>
- <20250813060901.GA9086@system.software.com>
- <6bbf6ca2-0c46-43b7-82d8-b990f01ae5dd@gmail.com>
- <20250813075212.051b5178@kernel.org>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250813075212.051b5178@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 8/13/25 15:52, Jakub Kicinski wrote:
-> On Wed, 13 Aug 2025 12:18:56 +0100 Pavel Begunkov wrote:
->> It should go to net, there will be enough of conflicts otherwise.
->> mm maintainers, do you like it as a shared branch or can it just
->> go through the net tree?
-> 
-> Looks like this is 100% in mm, and the work is not urgent at all.
+After running the program 'ioctl_pidfd03' of Linux Test Project (LTP) or
+the program 'pidfd_info_test' in 'tools/testing/selftests/pidfd' of the
+kernel source, kmemleak reports the following memory leaks:
 
-There is a slight dependency in rc1, but we should be able to
-massage it to be mm only.
+  # cat /sys/kernel/debug/kmemleak
+  unreferenced object 0xff110020e5988000 (size 8216):
+    comm "ioctl_pidfd03", pid 10853, jiffies 4294800031
+    hex dump (first 32 bytes):
+      02 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
+      00 00 00 00 af 01 00 00 80 00 00 00 00 00 00 00  ................
+    backtrace (crc 69483047):
+      kmem_cache_alloc_node_noprof+0x2fb/0x410
+      copy_process+0x178/0x1740
+      kernel_clone+0x99/0x3b0
+      __do_sys_clone3+0xbe/0x100
+      do_syscall_64+0x7b/0x2c0
+      entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  ...
+  unreferenced object 0xff11002097b70000 (size 8216):
+  comm "pidfd_info_test", pid 11840, jiffies 4294889165
+  hex dump (first 32 bytes):
+    06 40 00 00 00 00 00 00 10 00 00 00 00 00 00 00  .@..............
+    00 00 00 00 b5 00 00 00 80 00 00 00 00 00 00 00  ................
+  backtrace (crc a6286bb7):
+    kmem_cache_alloc_node_noprof+0x2fb/0x410
+    copy_process+0x178/0x1740
+    kernel_clone+0x99/0x3b0
+    __do_sys_clone3+0xbe/0x100
+    do_syscall_64+0x7b/0x2c0
+    entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  ...
 
-> So I'm happy for Andrew to take this, and dependent patches (if any)
-> can come in the next cycle.
+The leak occurs because pidfd_info() obtains a task_struct via
+get_pid_task() but never calls put_task_struct() to drop the reference,
+leaving task->usage unbalanced.
 
-Yeah, good option. It'd be a good idea to cut the diff down to
-avoid removing the relevant mm page state checks until the next
-cycle.
-  >> @@ -1379,9 +1376,11 @@ __always_inline bool free_pages_prepare(struct page *page,
->>    		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
->>    		folio->mapping = NULL;
->>    	}
->> -	if (unlikely(page_has_type(page)))
->> +	if (unlikely(page_has_type(page))) {
->> +		WARN_ON_ONCE(PageNet_pp(page));
-> 
-> I guess my ask to add a comment here got ignored?
+Fix the issue by adding '__free(put_task) = NULL' to the local variable
+'task', ensuring that put_task_struct() is automatically invoked when
+the variable goes out of scope.
 
-It's an old patch attached as a point of reference. Any actual submission
-surely will need to follow up on the reviews.
+Fixes: 7477d7dce48a ("pidfs: allow to retrieve exit information")
+Signed-off-by: Adrian Huang (Lenovo) <adrianhuang0701@gmail.com>
+---
+Changes in v2: Assign NULL to the local variable 'task'
 
+---
+ fs/pidfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index edc35522d75c..108e7527f837 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -296,12 +296,12 @@ static __u32 pidfs_coredump_mask(unsigned long mm_flags)
+ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+ {
+ 	struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
++	struct task_struct *task __free(put_task) = NULL;
+ 	struct pid *pid = pidfd_pid(file);
+ 	size_t usize = _IOC_SIZE(cmd);
+ 	struct pidfd_info kinfo = {};
+ 	struct pidfs_exit_info *exit_info;
+ 	struct user_namespace *user_ns;
+-	struct task_struct *task;
+ 	struct pidfs_attr *attr;
+ 	const struct cred *c;
+ 	__u64 mask;
 -- 
-Pavel Begunkov
+2.34.1
 
 
