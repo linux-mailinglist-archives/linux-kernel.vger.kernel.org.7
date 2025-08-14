@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-767749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95EFB258A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:58:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C78CB2589E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47744725B72
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:57:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A835A1C07B8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F26A15E5BB;
-	Thu, 14 Aug 2025 00:57:32 +0000 (UTC)
-Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B791B158538;
+	Thu, 14 Aug 2025 00:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOcl/GGf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4784B2FF66B;
-	Thu, 14 Aug 2025 00:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100BF2FF66B;
+	Thu, 14 Aug 2025 00:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755133051; cv=none; b=Lo79vIERZLY4OXBnNASC8tPJPCevC5ZBN0O6/gVOXbIfNun7ijIevObsKJghHTlfxTiRZL7ZfZb80nc+VoF7/00Rpm2ieDfZunuOSTUJfRgQzzI9778anLQs7pX578jtxuFvXjzoQ2iEoxTEZ8MreLEnwHVvo3NXTM7Dv6NJZu4=
+	t=1755133062; cv=none; b=GOWg7U/mxG5hWn2adVe0LwqRf05s1xYZ0I+9+TCjL7E7rMRBMkO+XnyIsC4Zba+MS6b10nDUnESnJXX9qReuMSotT0qChGtFOONIiqIJHTwQqlpvX9Rq8YCqY3rkZMFxWRvoBjjIliuE/ccK1aFH+kipzzxFSvcFLIlHdHqkNts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755133051; c=relaxed/simple;
-	bh=FsILFVHrLouIwQUepaOtEF88P07nkFMv9H8p9pBzu1s=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=QXX7dQRFmIaRm787+WpgyN84Z7kTE0q5TEdGzxzkQUhADZ2jN2BV9C3BiyuNPXO1iLsZBVPu2gr+ue2HkCyNszQiCxzbkaPCX2e7rHgFCne6weORsrvHFmcjnLmH1vTAVEzzl1OahuUzaRtOIO6yYlkozF5hDt1SienQhBnzUDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
-Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
-	by neil.brown.name with esmtp (Exim 4.95)
-	(envelope-from <mr@neil.brown.name>)
-	id 1umMH3-005gzt-L3;
-	Thu, 14 Aug 2025 00:56:59 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1755133062; c=relaxed/simple;
+	bh=153zhUSGq/KWvkkdlqL7wLh94pOu0kTwnsKJAuOqD14=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LKX1n7PrvWmFvm2TN/fvZDIxOLUc8exbZiBVkS/t3bkoG3s6IsOiJ+lIz9BLzVrt5BkI1EfHZfOVzx7TOSZq2v0Dr7ZfCfymDi2FYX+xgrcTg36RYkN1VzcgDrByRSMIma4WnzwRTqiLQ4bhXNn5qg+8P293+TqmDK9NBgh5kdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOcl/GGf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60EE4C4CEED;
+	Thu, 14 Aug 2025 00:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755133061;
+	bh=153zhUSGq/KWvkkdlqL7wLh94pOu0kTwnsKJAuOqD14=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MOcl/GGfHB4GpoAi6OiNe1lLxxd54T5fSjtzKKYyxnjje7GHL0MsHp/TYCJAB1XG+
+	 QrZULcM+dWWj8pjXjiFwjTwmz4rfV/Duu4mrxP2+zauPGCN7TvrsK8iDYMynrGDYX9
+	 wQ8vbSH4TFObnopKdvw/XE3rAaZ1N4cY0z53bdK+lpDtHbD6L5T4kyxEmqxJzXK9Cw
+	 agUIel/yCiDCoa/nskdheQjzD74m8i+MUS3oRbwInZby0C8WFzTcm4/AgUDmrWUQ8M
+	 6doSFc7I0n2F2gCu5r3CVbaBdxJW78ojMSsHtj/cCwoCFfZfMI8VF5GbHx+sZhVVEq
+	 YEk2OQR/xJ70Q==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Quanmin Yan <yanquanmin1@huawei.com>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [RFC PATCH -next 00/16] mm/damon: support ARM32 with LPAE
+Date: Wed, 13 Aug 2025 17:57:38 -0700
+Message-Id: <20250814005738.52844-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250813172545.6637-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neil@brown.name>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "David Howells" <dhowells@redhat.com>,
- "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Amir Goldstein" <amir73il@gmail.com>, "Steve French" <sfrench@samba.org>,
- "Namjae Jeon" <linkinjeon@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
- netfs@lists.linux.dev, ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
- linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 10/11] VFS: use d_alloc_parallel() in lookup_one_qstr_excl().
-In-reply-to: <20250813051957.GE222315@ZenIV>
-References: <>, <20250813051957.GE222315@ZenIV>
-Date: Thu, 14 Aug 2025 10:56:58 +1000
-Message-id: <175513301880.2234665.7949166216437739702@noble.neil.brown.name>
+Content-Transfer-Encoding: 8bit
 
-On Wed, 13 Aug 2025, Al Viro wrote:
-> On Tue, Aug 12, 2025 at 12:25:13PM +1000, NeilBrown wrote:
->=20
-> > + * If it is d_in_lookup() then these conditions can only be checked by t=
-he
-> > + * file system when carrying out the intent (create or rename).
->=20
-> I do not understand.  In which cases would that happen and what would happen
-> prior to that patch in the same cases?
->=20
+On Wed, 13 Aug 2025 10:25:44 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-NFS (and I think it is only NFS) returns NULL from ->lookup() without
-instantiating the dentry and without clearing DENTRY_PAR_LOOKUP if
-passed "LOOKUP_CREATE | LOOKUP_EXCL" or "LOOKUP_RENAME_TARGET".
+> Hello Quanmin,
+> 
+> On Wed, 13 Aug 2025 13:06:50 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+> 
+> > Previously, DAMON's physical address space monitoring only supported
+> > memory ranges below 4GB on LPAE-enabled systems. This was due to
+> > the use of 'unsigned long' in 'struct damon_addr_range', which is
+> > 32-bit on ARM32 even with LPAE enabled.
+> > 
+> > Implements DAMON compatibility for ARM32 with LPAE enabled.
+> 
+> Thank you for working on this, Quanmin!
+> 
+> > 
+> > Patches 01/16 through 10/16 are from the mailing list[1], add a new core
+> > layer parameter called 'addr_unit'. Operations set layer can translate a
+> > core layer address to the real address by multiplying the parameter value
+> > to the core layer address.
+> > 
+> > Patches 11/16 through 14/16 extend and complement patches 01~10, addressing
+> > various issues introduced by the addr_unit implementation.
+> > 
+> > Patches 15/16 and 16/16 complete native DAMON support for 32-bit systems.
+> 
+> Overall, looks good to me.  I have a few change requests including below major
+> ones, though.
+> 
+> First, let's squash patches for fixing problems made with patches 1-10 into
+> patches 1-10.  If you don't mind, I will post RFC v2 of those so that you can
+> pick into your series.
+> 
+> Second, let's keep DAMOS stats in 'unsigned long' type.  This require fixups of
+> patches 1-10.  If you don't mind, I will also do this in RFC v2 of those.
 
-So when e.g. filename_create() calls lookup_one_qstr_excl() the result could
-be a d_in_lookup() dentry.  It could be that the name exists on the
-server, but the client hasn't bothered to check.  So determining that
-the result wasn't ERR_PTR(-EEXIST) does NOT assure us that the name
-doesn't exist.
+Instead of posting completely new RFC v2 of the ten patches, I think posting
+fixup patches as replies to this thread might be a better approach.  I will
+make fixups first, see what looks easier for working together with you, and
+either post entirely new version of the patch series, or send individual fixups
+as replies to each patch of this thread.
 
-The intent needs to be attempted, such as when do_mknodat() goes on to
-call e.g.  vfs_create().  Only once that returns an error can we know if
-the name existed.
+And one more questions.  What is the baseline if this series?  I cannot simply
+apply these patches on mm-unstable or mm-new.  It would be nice if you could
+share a git tree having these patches fully applied, since 'cherry-pick' is
+easier than 'am' for me.
 
-i.e. the API promise:
 
-+ *   Will return -EEXIST if name is found and LOOKUP_EXCL was passed.
+Thanks,
+SJ
 
-must be understood against the background that the name might not be
-found due to the lookup being short-circuited and not attempted.
-The other promise:
-
-+ *   Will return -ENOENT if name isn't found and LOOKUP_CREATE wasn't passed.
-
-is currently safe from confusion, but I can imagine that one day a
-LOOKUP_UNLINK intent could allow a filesystem to short-circuit the
-lookup in do_unlinkat() and simply send an UNLINK request to a server
-and return the result.
-
-So I thought it worth highlighting the fact that these errors are
-best-effort, and that d_in_lookup() is a real possibility.
-
-NeilBrown
+[...]
 
