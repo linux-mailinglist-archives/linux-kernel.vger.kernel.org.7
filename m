@@ -1,203 +1,164 @@
-Return-Path: <linux-kernel+bounces-769279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76169B26C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:18:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D916FB26C35
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC4D1722F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:13:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABEA64E2842
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498412472AB;
-	Thu, 14 Aug 2025 16:13:49 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E293E17D346;
-	Thu, 14 Aug 2025 16:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F62202C3A;
+	Thu, 14 Aug 2025 16:14:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4EC218592
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 16:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755188028; cv=none; b=ZJ2bBpm7c7Ur6QAB5iuLZeYoQbGC5t4tknjy3BIXC+VarT1WbUObO1ZjzK9M9DT/rX/PesjJ8fRXTcc01G+1+LwwulIMDBsTcJ3j54+5WPqJ6RounGbG38A5V0VcdA2dfBFUYWwLk8raFpTXcQQsQLNNRm8lJrgcC+N54UD+/Dc=
+	t=1755188044; cv=none; b=WMiMWeS4yNE9uSX85iWz0+SO4y3JWZr+gLP5dYgF0SA+jb/h2/eFEAUXY2lH+ou+0gBLF5G7MuzSvf7w4kDaERW/D9oe9F0aZuDrRT/KNLKJvvC0xgO8FpoC/5MHUqrQ5UEI8IGpvfYC0TOglHLAmV0Pbw8AD3yzDuVMQx317h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755188028; c=relaxed/simple;
-	bh=FipTccn1zY0e8KcfPWQwq9vsqe8F2fCuI41sg9kkj1k=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZPlxlkevLqZ1/+LZYxhhFH5NossuidxsI9mcnMunnnozZtw5c/3DZw7eNyQjlxth4T6xQ2cU6O3qTiieZqIe3CtRT9VH3hW6w6/5muofJ1VRWsZXMJFHdnVxe6oL6pYfFxb7bqP7eJ8TZZpKWdd620uSjSoQv6zQdASIzxPfaGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4c2qwX2xNYz6L5PD;
-	Fri, 15 Aug 2025 00:10:52 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id CE4E714010C;
-	Fri, 15 Aug 2025 00:13:36 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 14 Aug
- 2025 18:13:35 +0200
-Date: Thu, 14 Aug 2025 17:13:34 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Daniel Ferguson <danielf@os.amperecomputing.com>
-CC: Ard Biesheuvel <ardb@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, "James
- Morse" <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, "Borislav
- Petkov" <bp@alien8.de>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-efi@vger.kernel.org>, <linux-edac@vger.kernel.org>, "Mauro Carvalho
- Chehab" <mchehab+huawei@kernel.org>
-Subject: Re: [PATCH v5 3/5] efi/cper: Add a new helper function to print
- bitmasks
-Message-ID: <20250814171334.00002f29@huawei.com>
-In-Reply-To: <20250813-mauro_v3-v6-16-rev2-v5-3-954db8ccfbe6@os.amperecomputing.com>
-References: <20250813-mauro_v3-v6-16-rev2-v5-0-954db8ccfbe6@os.amperecomputing.com>
-	<20250813-mauro_v3-v6-16-rev2-v5-3-954db8ccfbe6@os.amperecomputing.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1755188044; c=relaxed/simple;
+	bh=Fr6xTqn+YFAKntbls3pZMJ3VQKpDZwrzY1H8n1hFwDk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N2RPnxPubdoE31I4nougMMoZnptHjjpSiPllXVajQcqXnTnUUz/XGfUlETkM23Hynre1Fo0eP5U5vUY3daBjpmdjLcfyEFK5Cr5nJpjNftgLZZ7e7w0iTX+cSBCeuQZ1w912MqoumOHJ2SDpHAy0+JcRUfXwJXHFPEvJY2qY6Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82C8E1691
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:13:53 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 720CA3F738
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:14:01 -0700 (PDT)
+Date: Thu, 14 Aug 2025 17:13:54 +0100
+From: "liviu.dudau@arm.com" <liviu.dudau@arm.com>
+To: "Kandpal, Suraj" <suraj.kandpal@intel.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	"kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>,
+	"amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"intel-xe@lists.freedesktop.org" <intel-xe@lists.freedesktop.org>,
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+	"Nautiyal, Ankit K" <ankit.k.nautiyal@intel.com>,
+	"Murthy, Arun R" <arun.r.murthy@intel.com>,
+	"Shankar, Uma" <uma.shankar@intel.com>,
+	"Nikula, Jani" <jani.nikula@intel.com>,
+	"harry.wentland@amd.com" <harry.wentland@amd.com>,
+	"siqueira@igalia.com" <siqueira@igalia.com>,
+	"alexander.deucher@amd.com" <alexander.deucher@amd.com>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"robin.clark@oss.qualcomm.com" <robin.clark@oss.qualcomm.com>,
+	"abhinav.kumar@linux.dev" <abhinav.kumar@linux.dev>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"jessica.zhang@oss.qualcomm.com" <jessica.zhang@oss.qualcomm.com>,
+	"sean@poorly.run" <sean@poorly.run>,
+	"marijn.suijten@somainline.org" <marijn.suijten@somainline.org>,
+	"mcanal@igalia.com" <mcanal@igalia.com>,
+	"dave.stevenson@raspberrypi.com" <dave.stevenson@raspberrypi.com>,
+	"tomi.valkeinen+renesas@ideasonboard.com" <tomi.valkeinen+renesas@ideasonboard.com>,
+	"kieran.bingham+renesas@ideasonboard.com" <kieran.bingham+renesas@ideasonboard.com>,
+	"louis.chauvet@bootlin.com" <louis.chauvet@bootlin.com>
+Subject: Re: [RFC PATCH 1/8] drm: writeback: Refactor drm_writeback_connector
+ structure
+Message-ID: <aJ4LQvqli36TlETu@e110455-lin.cambridge.arm.com>
+References: <20250811092707.3986802-1-suraj.kandpal@intel.com>
+ <20250811092707.3986802-2-suraj.kandpal@intel.com>
+ <20250811094429.GE21313@pendragon.ideasonboard.com>
+ <awtqznhquyn7etojonmjn7karznefsb7fdudawcjsj5g2bok3u@2iqcdviuiz2s>
+ <20250811111546.GA30760@pendragon.ideasonboard.com>
+ <2ah3pau7p7brgw7huoxznvej3djct76vgfwtc72n6uub7sjojd@zzaebjdcpdwf>
+ <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DM3PPF208195D8D0E55A761A3C16B87BAEEE32AA@DM3PPF208195D8D.namprd11.prod.outlook.com>
 
-On Wed, 13 Aug 2025 14:19:16 -0700
-Daniel Ferguson <danielf@os.amperecomputing.com> wrote:
+Hi,
 
-> From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+On Wed, Aug 13, 2025 at 10:04:22AM +0000, Kandpal, Suraj wrote:
+> > > > };
+> > >
+> > > I still don't like that. This really doesn't belong here. If anything,
+> > > the drm_connector for writeback belongs to drm_crtc.
+> > 
+> > Why? We already have generic HDMI field inside drm_connector. I am really
+> > hoping to be able to land DP parts next to it. In theory we can have a DVI-
+> > specific entry there (e.g. with the subconnector type).
+> > The idea is not to limit how the drivers subclass those structures.
+> > 
+> > I don't see a good case why WB should deviate from that design.
+> > 
+> > > If the issue is that some drivers need a custom drm_connector
+> > > subclass, then I'd rather turn the connector field of
+> > > drm_writeback_connector into a pointer.
+> > 
+> > Having a pointer requires additional ops in order to get drm_connector from
+> > WB code and vice versa. Having drm_connector_wb inside drm_connector
+> > saves us from those ops (which don't manifest for any other kind of structure).
+> > Nor will it take any more space since union will reuse space already taken up by
+> > HDMI part.
+> > 
+> > >
 > 
-> Add a helper function to print a string with names associated
-> to each bit field.
-> 
-> A typical example is:
-> 
-> 	const char * const bits[] = {
-> 		"bit 3 name",
-> 		"bit 4 name",
-> 		"bit 5 name",
-> 	};
-> 	char str[120];
->         unsigned int bitmask = BIT(3) | BIT(5);
-> 
-> 	#define MASK  GENMASK(5,3)
-> 
-> 	cper_bits_to_str(str, sizeof(str), FIELD_GET(MASK, bitmask),
-> 			 bits, ARRAY_SIZE(bits));
-> 
-> The above code fills string "str" with "bit 3 name|bit 5 name".
-> 
-> Reviewed-by; Jonathan Cameron <Jonathan.Cameron@huawei.com>
-My typo still here :(
+> Seems like this thread has died. We need to get a conclusion on the design.
+> Laurent do you have any issue with the design given Dmitry's explanation as to why this
+> Design is good for drm_writeback_connector.
 
-So drop that garbage and
+I'm with Laurent here. The idea for drm_connector (and a lot of drm structures) are to
+be used as base "classes" for extended structures. I don't know why HDMI connector ended
+up inside drm_connector as not all connectors have HDMI functionality, but that's a cleanup
+for another day.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+drm_writeback_connector uses the 'base' drm_connector only for a few things, mostly in
+__drm_writeback_connector_init() and prepare_job()/cleanup_job(). In _init() we just setup
+the properties and the encoder after we disable interlacing. prepare_job()/cleanup_job()
+is another workaround to be to some custom ops some drivers might want for signalling. So
+we should be able to convert the 'base' drm_connector to a pointer relatively easy. We shouldn't
+need to get to the drm_connector from a drm_writeback_connector() outside drm_writeback.c.
+
+Then it looks like what we need is a __drm_writeback_connector_init_with_connector() where we
+can pass a base pointer and remember it. Maybe an extra parameter to existing init functions,
+or a new one that skips the encoder initialisation entirely.
+
+Best regards,
+Liviu
 
 
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-> ---
->  drivers/firmware/efi/cper.c | 60 +++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/cper.h        |  2 ++
->  2 files changed, 62 insertions(+)
+> Regards,
+> Suraj Kandpal
 > 
-> diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-> index 928409199a1a4009b11cf3189fe036ad8861169c..79ba688a64f8da7af2dad097b9331c72afc73864 100644
-> --- a/drivers/firmware/efi/cper.c
-> +++ b/drivers/firmware/efi/cper.c
-> @@ -12,6 +12,7 @@
->   * Specification version 2.4.
->   */
->  
-> +#include <linux/bitmap.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/time.h>
-> @@ -106,6 +107,65 @@ void cper_print_bits(const char *pfx, unsigned int bits,
->  		printk("%s\n", buf);
->  }
->  
-> +/**
-> + * cper_bits_to_str - return a string for set bits
-> + * @buf: buffer to store the output string
-> + * @buf_size: size of the output string buffer
-> + * @bits: bit mask
-> + * @strs: string array, indexed by bit position
-> + * @strs_size: size of the string array: @strs
-> + *
-> + * Add to @buf the bitmask in hexadecimal. Then, for each set bit in @bits,
-> + * add the corresponding string describing the bit in @strs to @buf.
-> + *
-> + * A typical example is::
-> + *
-> + *	const char * const bits[] = {
-> + *		"bit 3 name",
-> + *		"bit 4 name",
-> + *		"bit 5 name",
-> + *	};
-> + *	char str[120];
-> + *	unsigned int bitmask = BIT(3) | BIT(5);
-> + *	#define MASK GENMASK(5,3)
-> + *
-> + *	cper_bits_to_str(str, sizeof(str), FIELD_GET(MASK, bitmask),
-> + *			 bits, ARRAY_SIZE(bits));
-> + *
-> + * The above code fills the string ``str`` with ``bit 3 name|bit 5 name``.
-> + *
-> + * Return: number of bytes stored or an error code if lower than zero.
-> + */
-> +int cper_bits_to_str(char *buf, int buf_size, unsigned long bits,
-> +		     const char * const strs[], unsigned int strs_size)
-> +{
-> +	int len = buf_size;
-> +	char *str = buf;
-> +	int i, size;
-> +
-> +	*buf = '\0';
-> +
-> +	for_each_set_bit(i, &bits, strs_size) {
-> +		if (!(bits & BIT_ULL(i)))
-> +			continue;
-> +
-> +		if (*buf && len > 0) {
-> +			*str = '|';
-> +			len--;
-> +			str++;
-> +		}
-> +
-> +		size = strscpy(str, strs[i], len);
-> +		if (size < 0)
-> +			return size;
-> +
-> +		len -= size;
-> +		str += size;
-> +	}
-> +	return len - buf_size;
-> +}
-> +EXPORT_SYMBOL_GPL(cper_bits_to_str);
-> +
->  static const char * const proc_type_strs[] = {
->  	"IA32/X64",
->  	"IA64",
-> diff --git a/include/linux/cper.h b/include/linux/cper.h
-> index 0ed60a91eca9d6425c9a41947a927b59f7aa2c71..58f40477c824e61c7f798978947bf1f441ce45ad 100644
-> --- a/include/linux/cper.h
-> +++ b/include/linux/cper.h
-> @@ -588,6 +588,8 @@ const char *cper_mem_err_type_str(unsigned int);
->  const char *cper_mem_err_status_str(u64 status);
->  void cper_print_bits(const char *prefix, unsigned int bits,
->  		     const char * const strs[], unsigned int strs_size);
-> +int cper_bits_to_str(char *buf, int buf_size, unsigned long bits,
-> +		     const char * const strs[], unsigned int strs_size);
->  void cper_mem_err_pack(const struct cper_sec_mem_err *,
->  		       struct cper_mem_err_compact *);
->  const char *cper_mem_err_unpack(struct trace_seq *,
-> 
+> > > > I plan to add drm_connector_dp in a similar way, covering DP needs
+> > > > (currently WIP).
+> > 
+> > --
+> > With best wishes
+> > Dmitry
 
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
