@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-769050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5514B26993
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:37:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06B3AB26965
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:31:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3541BC510B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:22:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B09960666F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598FE1DDA09;
-	Thu, 14 Aug 2025 14:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9761C6FFA;
+	Thu, 14 Aug 2025 14:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XhkljLK6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="sLESdke4"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A486915B0EC;
-	Thu, 14 Aug 2025 14:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DE5321425;
+	Thu, 14 Aug 2025 14:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181310; cv=none; b=Qb4+zE2T8Dum9yex43Eb1zlfp1jfKFCmJN+4VXSXZn6/rR4oz2r4L2eQy2Ki2Rn07ayMDqDw9Y4ZpG2Wi6ZMSFnhCnKpGv2k2b8OXSZxpmwDy2f05tw4CXutcnEe+66IbvkOTWvmp6WEcjPIBhSg1PY5KmPJ6pqQ57JA6H8E0AA=
+	t=1755181348; cv=none; b=DEsU8OkCYoLDVxszHoNgmI0tDj8EMWh2gOHPcAsZ9pPX/bEh6XFnr123y03uCal0vboxon6tEzoR3QCjUxSZFAJTcPxh2i6LtsLY6eBOB07bEQX1KHNGXOPJc8vaqaKhqwR6nBQV6ExJZqYHhi97e9Z9lqHuXPqS9LwMu3EQQqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181310; c=relaxed/simple;
-	bh=TQ6PdhDSzw7Dzr1c2UpdagPEGThCspSgUuL/b+/vsVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=biXy3vBysSAblrNzdJ8NB9JoVDhyWPr0Jqs6jPyPfk1V16XJjeEa3JH8/dKMx4C0LqwIO7pd8v19E7iMTX1YkODxUZzH8tk63RTWh4lRD9aCr4jcnoGwGvooVKuoAerJ0cc+t1yKwK/KJ0v2pto1jkSzT4uE2JeYGzMX54ccNGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XhkljLK6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0F5C4CEF7;
-	Thu, 14 Aug 2025 14:21:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755181310;
-	bh=TQ6PdhDSzw7Dzr1c2UpdagPEGThCspSgUuL/b+/vsVM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XhkljLK6qCOV4anQ1thdHIA7DE1gIGCQU/qzWxSmuHWiJGJI5lpmz7ZF4RM5aNpFA
-	 LifSRFqmgNXX85n1tdsWRMr7IHmqzXjmPOcoDLlle44+1hWLXNd6/ISqDHz9Q2I5Ln
-	 Bos+mblFFH63IpRJFyfJXBUnFKUDirDSTqtyQqis=
-Date: Thu, 14 Aug 2025 16:21:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Julian Taylor <julian.taylor@1und1.de>
-Cc: patchwork-bot+netdevbpf@kernel.org, Fedor Pchelkin <pchelkin@ispras.ru>,
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-	kuniyu@google.com, edumazet@google.com, horms@kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org, stable@vger.kernel.org
-Subject: Re: [PATCH net] netlink: avoid infinite retry looping in
- netlink_unicast()
-Message-ID: <2025081448-version-excursion-1456@gregkh>
-References: <20250728080727.255138-1-pchelkin@ispras.ru>
- <175392900576.2584771.4406793154439387342.git-patchwork-notify@kernel.org>
- <9fa0c0ea-9c5d-4039-856f-222486283a3c@1und1.de>
- <2025081422-monetize-ferocity-fe28@gregkh>
- <2ebf39be-aa26-4863-931b-a32fde9de182@1und1.de>
+	s=arc-20240116; t=1755181348; c=relaxed/simple;
+	bh=/XNYpGekW5FTkck9vkxbycrYIDktpqRjcH0lEJ1R/bY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qSecMYCW5yNDSGc2AKTSvCXJYzIgcseIT3viuoTJszkLEgCFRRhPBG4jYHNtGmZlCVIUzsqfPNjcOJUCc+aqp89BVlnlgGjix2BUq5YdrBV9YWQsLROIGYiOUCIoeorbFL3Eua2DkXBRFq5OWma5aPpXbMI0n5UWpzYoRqq9YQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=sLESdke4; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=yBVHQGnzgNju8paCixuYP7SJ47LWZfp4e7tehQ9v+jU=; b=sLESdke4jcvzMSZyS2XuOK9j0f
+	LGePkEsEt9Gyie3xmH0z39G50LcNZwydVway9tZtd7tHGKzNbSxYnpYROrUTNdfVCs4+H9/x0lnHl
+	dthaY+JBajtTijeiE3BfVeAI+NnMxVXml7Cu8nvSqbZsIjLqxRDolPjCAG3I90PQSNClmekFN4n+X
+	eILTr2tQRYXei9nFktUA9AWkoAlu6Y4dgyuxeqacJkHmTklLT4Qfui1HESI2HAKLFblz6fMwmOxxu
+	OR7Y4aEcqokM6v788Ka6Hbe4YmGN/QmQXpKL/xUHChlDIKT4PNUOSoo1slPiCKjDBMZ1V2ONoN4oG
+	qslh++qA==;
+Date: Thu, 14 Aug 2025 16:22:22 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+Cc: linux-kernel@vger.kernel.org, peter.ujfalusi@gmail.com,
+ dmitry.torokhov@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ lgirdwood@gmail.com, tiwai@suse.com, conor+dt@kernel.org, lee@kernel.org,
+ ukleinek@kernel.org, broonie@kernel.org, gregkh@linuxfoundation.org,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-pwm@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-usb@vger.kernel.org, shuah@kernel.org
+Subject: Re: [PATCH v2 9/9] dt-bindings: mfd: twl: Add missing sub-nodes for
+ TWL4030 & TWL603x
+Message-ID: <20250814162222.4173e3e8@akair>
+In-Reply-To: <20250814132129.138943-10-jihed.chaibi.dev@gmail.com>
+References: <20250814132129.138943-1-jihed.chaibi.dev@gmail.com>
+	<20250814132129.138943-10-jihed.chaibi.dev@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2ebf39be-aa26-4863-931b-a32fde9de182@1und1.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 14, 2025 at 04:14:39PM +0200, Julian Taylor wrote:
+Am Thu, 14 Aug 2025 15:21:29 +0200
+schrieb Jihed Chaibi <jihed.chaibi.dev@gmail.com>:
+
+> Update the TI TWL family Device Tree binding to include additional
+> subnodes for TWL4030, TWL6030, and TWL6032 devices.
 > 
+> This patch enhances the schema by adding support for audio, GPIO, power,
+> keypad, PWM, PWM LED, and USB subnodes, referencing their respective YAML
+> schemas where applicable. These additions improve the schema's
+> completeness, enabling better validation and documentation of the
+> TWL multi-function device's capabilities.
 > 
-> On 14.08.25 15:57, Greg KH wrote:
-> > On Thu, Aug 14, 2025 at 02:51:27PM +0200, Julian Taylor wrote:
-> > > 
-> > > On 31.07.25 04:30, patchwork-bot+netdevbpf@kernel.org wrote:
-> > > > Hello:
-> > > > 
-> > > > This patch was applied to netdev/net.git (main)
-> > > > by Jakub Kicinski <kuba@kernel.org>:
-> > > > 
-> > > > On Mon, 28 Jul 2025 11:06:47 +0300 you wrote:
-> > > > > netlink_attachskb() checks for the socket's read memory allocation
-> > > > > constraints. Firstly, it has:
-> > > > > 
-> > > > >     rmem < READ_ONCE(sk->sk_rcvbuf)
-> > > > > 
-> > > > > to check if the just increased rmem value fits into the socket's receive
-> > > > > buffer. If not, it proceeds and tries to wait for the memory under:
-> > > > > 
-> > > > > [...]
-> > > > 
-> > > > Here is the summary with links:
-> > > >     - [net] netlink: avoid infinite retry looping in netlink_unicast()
-> > > >       https://git.kernel.org/netdev/net/c/759dfc7d04ba
-> > > > 
-> > > > You are awesome, thank you!
-> > > 
-> > > hello,
-> > > as far as I can tell this patch has not made it to the 6.1 stable tree yet in the 6.1.148 review yet:
-> > > https://www.spinics.net/lists/stable/msg866199.html
-> > 
-> > Please use lore.kernel.org links.
-> > 
-> > > As this seems to be causing issues in distributions releasing 6.1.147 can this still be added to the next possible stable release?
-> > > See following issues in relation to loading audit rules which seems to trigger the fixed bug:
-> > > https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1111017
-> > > https://github.com/amazonlinux/amazon-linux-2023/issues/988
-> > > 
-> > > I have tested this patch solves the problem in the Debian bookworm using 6.1.x
-> > 
-> > What is the git commit id of this patch in Linus's tree?
-> > 
+> The changes ensure proper handling of TWL4030-specific features (audio,
+> keypad, PWM, PWM LED, USB, GPIO, and power) and TWL6030/TWL6032-specific
+> features (PWM, PWM LED, and USB), with appropriate schema references to
+> prevent unevaluated properties.
 > 
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+> ---
+>  .../devicetree/bindings/mfd/ti,twl.yaml       | 63 +++++++++++++++++++
+>  1 file changed, 63 insertions(+)
 > 
-> The commit id is 759dfc7d04bab1b0b86113f1164dc1fec192b859
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=759dfc7d04bab1b0b86113f1164dc1fec192b859
+> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> index f162ab60c..81f9d8f72 100644
+> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
+> @@ -76,6 +76,38 @@ allOf:
+>            properties:
+>              compatible:
+>                const: ti,twl4030-wdt
+> +
+> +        audio:
+> +          type: object
+> +          $ref: /schemas/sound/ti,twl4030-audio.yaml#
+> +          unevaluatedProperties: false
+> +
+> +        keypad:
+> +          type: object
+> +          $ref: /schemas/input/ti,twl4030-keypad.yaml#
+> +          unevaluatedProperties: false
+> +
+> +        pwm:
+> +          type: object
+> +          $ref: /schemas/pwm/ti,twl-pwm.yaml#
+> +          unevaluatedProperties: false
+> +
+> +        pwmled:
+> +          type: object
+> +          $ref: /schemas/pwm/ti,twl-pwmled.yaml#
+> +          unevaluatedProperties: false
+> +
+I think the pwm stuff is so simple, that it can go in here directly.
 
-Thanks, I'll queue this up for the next round of kernels.
+> +        'twl4030-usb':
+> +          type: object
+> +          $ref: /schemas/usb/ti,twlxxxx-usb.yaml#
+> +          unevaluatedProperties: false
+> +
+> +        gpio:
+> +          type: object
+> +
+$ref it to restrict compatibles.
 
-Right now we have a backlog of 500+ patches due to all of these being
-added during the -rc1 merge window.  Please be patient while we dig
-through them.
+> +        power:
+> +          type: object
+> +
+just list the compatibles allowed here.
 
-thanks,
 
-greg k-h
+Regards,
+Andreas
 
