@@ -1,162 +1,124 @@
-Return-Path: <linux-kernel+bounces-767826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F8CB2598F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:41:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 005C6B25991
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A6391C8578A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C77AC3BADC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC90256C6D;
-	Thu, 14 Aug 2025 02:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C93256C6F;
+	Thu, 14 Aug 2025 02:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZmMRdCO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="pwN6kVWH"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7444C341AA;
-	Thu, 14 Aug 2025 02:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC24341AA
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755139276; cv=none; b=EcksqHYMO13mB4b6a/eJCMry1x0iIXMiQFUfoz7eBiXNn9rI4r42Q8T3Ia10Fgmo3IuUfmOwbf1hVyW/F/2LoOFyfF+Na4FyN4HjcWrdBhjK5gms2XkOsIA0KFR20BgX3YAz+EUXJladCq8JerAB2Apt3eSsaQUeSv1wp/euF8M=
+	t=1755139324; cv=none; b=Tw4jKy+XjgPxU2NdFBnJNOfU7QAGY0rrhzvKPQNLLggh8LsQyQZV8t1AVMeW7YgPnrBLuyVv4BK0JFKnFXX9iHDhPJyWjXDft1SdTDsy8iABgqpu1pzSNDwp7R8y6obMUBr7q+nhK1F3fIVywAil6/pu0unT49bGXbc+e6LBlv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755139276; c=relaxed/simple;
-	bh=L59CXZefwhrH5q1FHmL+4aKZFmV6u0sSqUpurTk9jhY=;
+	s=arc-20240116; t=1755139324; c=relaxed/simple;
+	bh=5Az+Af3n683KZXZJI20rTIjpZlv6RgGbYo2hi8ndzkE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jejP45zR/qBJt6udbS805ptdq5dmlIVebypNuYnnLoDTSNrsYB6qkfP5zs+N7tsf2e9METsrOlhLV7idmS56aYTjAgC5JOuCX49PyQKdWqBxNubjRRZK2g27AKWGfs8yf+osjz6MuYXJWhH+ptL97KvlD87FscCWWHL4eSUTLos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZmMRdCO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE6D4C4CEEB;
-	Thu, 14 Aug 2025 02:41:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755139276;
-	bh=L59CXZefwhrH5q1FHmL+4aKZFmV6u0sSqUpurTk9jhY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LZmMRdCOFCbIepOK26Ntp4tGHYKBctPJao2xJvLXF/xkH7D/dS/AE7tiJ4Q0AolOh
-	 wnwAbzW5MrSwrdqM2a5hDV4hUTNNC4MonYpUXt8VvTbELFMSdnAegpV1rSy14ZFdfp
-	 /l1dxnHqBrHNMovXKgNlX+BUGrFiY4otrc6IMk421IxpVARc4zQqMISdlbp+6Pvy50
-	 qWg8/XH43YsN8WOvR9jlvziMYtHOcnr1dpi21zhyo2FpdAUq9+8W9FJIKVVcxhk35o
-	 yD38/Ws7eW+4d6yewfk+agTLh8U60OJLS45jOklRsR/WmHs52yjUDx2/piEv6tmPCu
-	 DJHNjowCYG4UQ==
-Date: Wed, 13 Aug 2025 19:40:12 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Tal Zussman <tz2294@columbia.edu>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/crypto: ensure generated *.S files are removed on
- make clean
-Message-ID: <20250814024012.GA1296@sol>
-References: <20250813-crypto_clean-v1-1-11971b8bf56a@columbia.edu>
- <CAKha_srSRA9HftM+zLeRVrONKmPdtm-wTXq3n2NC60Gynuvwyw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M3kHb6b/1GuNwQtF/ff2R/drjCB/VWAxKUArmYFg/j3eDjo1X9kx3/R5de+A2+t2IHsOw6wt262vKqm5+R51Rqwlip9HlO0+8t48Bu0hnIcTP4mVF7soBanLyd1XMQQs/ABT4tIdC38vr1anI1dMn3SksVErdTINHOr+jmTyRVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=pwN6kVWH; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-30cce908e12so498154fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 19:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1755139321; x=1755744121; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PJNUvNqMaWEA4NfLjVG0wZfCDDqvwD1owu885aCL3Q4=;
+        b=pwN6kVWHNR+gs6sz1zfta4Rb+Yq3lf9G5/XF5bOodJfx0pQaoOHBzIR4dwqgDbbn34
+         +FpPVpvcGa4UcEJhY8XfG71/VCrImcB0qYwLGVGQFokwcDwLkh8quPOC8VwntSe1L7aQ
+         Sq/DvxvKrXcjGPTR8MBtTCREiWnW/ICvDbTdpt8ygzaWgjlMw4C2rv9tGT+f3lWQgBP/
+         fwtdTl4eYXgs42/XWXbbzDkpfvgv4Z7KItR8ZSqOm6KA28gGEY0tuIPq7z4hDjVYvHn6
+         Jf2VmJkZVaVOqlqZE+fg175hFKQ4raBCqg3ULE6j9gBU+8/2Xh0VfOevX4xmwakRyuD0
+         JfBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755139321; x=1755744121;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PJNUvNqMaWEA4NfLjVG0wZfCDDqvwD1owu885aCL3Q4=;
+        b=oGAxdHoJA9f2ZdiPafQsDArGHYZy91tpV//VGrXMBwtxO3ro5ASUMgdJMOEqQPdM9A
+         bMFU/N7AMq4q5VEFcLoOYfFv4lIzPz5+oF+7/MRoQfgg2nzzgIa4noSbx3zXv/59YAuz
+         IdsYGeUs03C1PeX15l+itfuENeULgyWAEH7TTFJJ88c/7ORnPnhngDeA89JmN0G0rL+n
+         s+x3w+INxqXjf/ZxYdboU4IRzJcTo3J6FbgdsjM1a52nYHOtIjVUhvffBzHnC0ecpCs7
+         0hGJrJ7AplbX9RyzgolrYk1EqsZ6rsSzTivjJyvLGUE9gue8exVqNmZwkjP82cDerQ05
+         ZhCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNTocpKI7ddWWvURTeH8MkWa+nifnBPd1UXkgQoMx3QM5WUb+VLUjqhI9n7fnUtUtvS96DDC8ZerDYgSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsuzSSmnvrk9jFX5x2uWbv6ekb8XSpx5pyB0HUiDCvJK0uvaWJ
+	kgzVHIUNSDId23ZGC0mAUMOg0ZUHLlGX08CrvyXSDKPXYv2qlxmu4Z6NhkJpdme1+1HU2TNc0d7
+	2uzs4zTU=
+X-Gm-Gg: ASbGncs9PnEbIr1uthsJUyT309XtKoA4mrWBvi0fJZo6sXJ66SbcG/2hicFZyYTZBuF
+	lZ/x3L1loPZNMbipat43DD1Wy5cWYA308p5vxX1REAA7JDRddDtlMcsk0drszytDrnAgjRn9qNy
+	GGdc2FAqnkOSoJacAjc7yXvJJJ3/J4uExTXgu/BX4NvYhH3g11cdnR3GY/3xq4u7uu6W7Aupw0S
+	x05vu726jPIDHs6+ZWNtSWCUoj9fvQlPJiinAd1/kyBYZv92xyy2Q/pRbMGHwhGHTtFrLk5tr3u
+	yXc5Ienl9KmMnC1cjP7rKGt9ja+8aBSt5T4998+aOpyxG/258wx709Ku/0bkvvfuXJVWE/viEoD
+	c7orTAbpK3aIkEydwljpA8wvE4pzu+2c1Ve4=
+X-Google-Smtp-Source: AGHT+IE/Whgr0VPOqXq34YRNuyEHshloSAlvqInb6X7aJcqtcPv+fjB8h72KLEAmiG1lXgEK1jMYVg==
+X-Received: by 2002:a05:6871:7b06:b0:308:fc2b:b7d with SMTP id 586e51a60fabf-30cd139a2ffmr981337fac.46.1755139321636;
+        Wed, 13 Aug 2025 19:42:01 -0700 (PDT)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:b599:8872:e83:bedd])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30ccfe6bcd5sm360892fac.14.2025.08.13.19.41.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 19:42:01 -0700 (PDT)
+Date: Wed, 13 Aug 2025 21:41:55 -0500
+From: Corey Minyard <corey@minyard.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rob Herring <robh@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the ipmi tree
+Message-ID: <aJ1M883eMiVCtoaO@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <20250814114214.609818aa@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKha_srSRA9HftM+zLeRVrONKmPdtm-wTXq3n2NC60Gynuvwyw@mail.gmail.com>
+In-Reply-To: <20250814114214.609818aa@canb.auug.org.au>
 
-On Thu, Aug 14, 2025 at 03:47:05AM +0300, Tal Zussman wrote:
-> On Thu, Aug 14, 2025 at 3:39 AM Tal Zussman <tz2294@columbia.edu> wrote:
-> >
-> > make clean does not check the kernel config when removing files. As
-> > such, additions to clean-files under CONFIG_ARM or CONFIG_ARM64 are not
-> > evaluated. For example, when building on arm64, this means that
-> > lib/crypto/arm64/sha{256,512}-core.S are left over after make clean.
-> >
-> > Set clean-files unconditionally to ensure that make clean removes these
-> > files.
-> >
-> > Fixes: e96cb9507f2d ("lib/crypto: sha256: Consolidate into single module")
-> > Fixes: 24c91b62ac50 ("lib/crypto: arm/sha512: Migrate optimized SHA-512 code to library")
-> > Fixes: 60e3f1e9b7a5 ("lib/crypto: arm64/sha512: Migrate optimized SHA-512 code to library")
-> > Signed-off-by: Tal Zussman <tz2294@columbia.edu>
-> > ---
-> > An alternative approach is to rename the generated files to *.s and
-> > remove the clean-files lines, as make clean removes *.s files
-> > automatically. However, this would require explicitly defining the
-> > corresponding *.o rules.
-> > ---
-> >  lib/crypto/Makefile | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
-> > index e4151be2ebd4..44f6a1fdc808 100644
-> > --- a/lib/crypto/Makefile
-> > +++ b/lib/crypto/Makefile
-> > @@ -100,7 +100,6 @@ ifeq ($(CONFIG_ARM),y)
-> >  libsha256-y += arm/sha256-ce.o arm/sha256-core.o
-> >  $(obj)/arm/sha256-core.S: $(src)/arm/sha256-armv4.pl
-> >         $(call cmd,perlasm)
-> > -clean-files += arm/sha256-core.S
-> >  AFLAGS_arm/sha256-core.o += $(aflags-thumb2-y)
-> >  endif
-> >
-> > @@ -108,7 +107,6 @@ ifeq ($(CONFIG_ARM64),y)
-> >  libsha256-y += arm64/sha256-core.o
-> >  $(obj)/arm64/sha256-core.S: $(src)/arm64/sha2-armv8.pl
-> >         $(call cmd,perlasm_with_args)
-> > -clean-files += arm64/sha256-core.S
-> >  libsha256-$(CONFIG_KERNEL_MODE_NEON) += arm64/sha256-ce.o
-> >  endif
-> >
-> > @@ -132,7 +130,6 @@ ifeq ($(CONFIG_ARM),y)
-> >  libsha512-y += arm/sha512-core.o
-> >  $(obj)/arm/sha512-core.S: $(src)/arm/sha512-armv4.pl
-> >         $(call cmd,perlasm)
-> > -clean-files += arm/sha512-core.S
-> >  AFLAGS_arm/sha512-core.o += $(aflags-thumb2-y)
-> >  endif
-> >
-> > @@ -140,7 +137,6 @@ ifeq ($(CONFIG_ARM64),y)
-> >  libsha512-y += arm64/sha512-core.o
-> >  $(obj)/arm64/sha512-core.S: $(src)/arm64/sha2-armv8.pl
-> >         $(call cmd,perlasm_with_args)
-> > -clean-files += arm64/sha512-core.S
-> >  libsha512-$(CONFIG_KERNEL_MODE_NEON) += arm64/sha512-ce-core.o
-> >  endif
-> >
-> > @@ -167,3 +163,7 @@ obj-$(CONFIG_PPC) += powerpc/
-> >  obj-$(CONFIG_RISCV) += riscv/
-> >  obj-$(CONFIG_S390) += s390/
-> >  obj-$(CONFIG_X86) += x86/
-> > +
-> > +# clean-files must be defined unconditionally
-> > +clean-files += arm/sha256-core.S arm/sha256-core.S
-> > +clean-files += arm64/sha512-core.S arm64/sha512-core.S
+On Thu, Aug 14, 2025 at 11:42:14AM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Sorry this is broken, needs the following fix on top.
-> I'll fix in v2.
+> The following commit is also in the devicetree tree as a different commit
+> (but the same patch):
+
+I think by normal rules this belongs in my tree.  I'm not sure how it
+got into the devicetree tree without my ack.  Or maybe the rules around
+device tree are different.
+
+I'm fine with it either place, though.
+
+-corey
+
 > 
-> diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
-> index 44f6a1fdc808..539d5d59a50e 100644
-> --- a/lib/crypto/Makefile
-> +++ b/lib/crypto/Makefile
-> @@ -165,5 +165,5 @@ obj-$(CONFIG_S390) += s390/
->  obj-$(CONFIG_X86) += x86/
+>   84e7845761c7 ("dt-bindings: ipmi: aspeed,ast2400-kcs-bmc: Add missing "clocks" property")
 > 
->  # clean-files must be defined unconditionally
-> -clean-files += arm/sha256-core.S arm/sha256-core.S
-> -clean-files += arm64/sha512-core.S arm64/sha512-core.S
-> +clean-files += arm/sha256-core.S arm/sha512-core.S
-> +clean-files += arm64/sha256-core.S arm64/sha512-core.S
+> This is commit
+> 
+>   a2f5472f1cbe ("dt-bindings: ipmi: aspeed,ast2400-kcs-bmc: Add missing "clocks" property")
+> 
+> in the devicetree tree.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Hmm, interesting.  So 'make clean' works in kind of a unique way.  It
-looks at $(ARCH), but not .config.  And though no CONFIG_* options are
-set for it, it still processes all the subdirectories like
-'obj-$(CONFIG_FOO) += subdir/'.  But it doesn't process the contents of
-'if' statements conditional on $(CONFIG_FOO).  I guess it couldn't
-really work in any other way, but it's a bit unique.
 
-Yes, just defining the clean-files unconditionally looks like the best
-option here.  Please go ahead and send out v2 with the corrected
-filenames.  Thanks!
-
-- Eric
 
