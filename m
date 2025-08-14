@@ -1,219 +1,103 @@
-Return-Path: <linux-kernel+bounces-767797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065C7B25932
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:38:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A099AB25942
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B045588A8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:37:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 609203BE1B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A6720B215;
-	Thu, 14 Aug 2025 01:37:47 +0000 (UTC)
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023076.outbound.protection.outlook.com [40.107.44.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C8E21CA1E;
+	Thu, 14 Aug 2025 01:45:22 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EBB5189F3F;
-	Thu, 14 Aug 2025 01:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755135467; cv=fail; b=Ru7WUN4sW3n6Gh0YncC0IW/JdpgvaCeKVMnwPeKXPsxu1XWxnio9j9Nb8TH20JksW7iVm4uAy0sEZeS4TuF7pD7OuheO7laKnH5RPNQSO4+yXVeOud3RfC3YMEDvEn/9jhS+MPbHeeDULUyxXrY/cDVuV5vhUmCHtmSyDHzmXSg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755135467; c=relaxed/simple;
-	bh=CJaj3yslVEF3GLQCVsujTaXNVdj3DzhjiYmNdaPNnNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lqbfZGnI17oKQtjWIeQHgXi4457wZaXw3IvG8lr037JbUhlamj/PugltubHFqVIjyTLO5vjS6ZNX36sCgbJB+7pJ9nGcLi5WsL5t3mTQEROTaX94rtpRZBVxMj5FOhXQI5p+huCq9OHvGX7Ght1U6ns7Pp/roqaXtaqBNncM5t4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A8balTbRZOPfnZ9nvkWbaLfXDg1/tlOKcT6xCOZQ7IrBQ09KTXqowWBq+UkIx9ZqF4f2dLW2KUx8GpbJsoAqrjJhAigT++VyEKA5dRW6qEdeThr+O0GHo5BZcjlQDZxD9+MolWP8R12gSXTNePny3pVnGl7EeieQmqcRlAaNfnCZV3GCLuIe9WTrkNkNjNPdAlIHuBfUdyDIiTlIHDTgO1f8ATwN9ka9QzAFuxSeuATWB0T0RlC9TXpQSU2eR+imO7sBE8XQe64UFcMO/LPvY9+8NbAkI6EbgwGtf8WnOTH9uYSWimZiKOhnQE80YwXeXYPb3Vj8uJDPvnsfRrpzaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m5SlmHeBtBrjKmqXgTcubHOV1JZUHMVkI5lsRQEau/A=;
- b=FJ3saKL5Ot0j+DTKCXcWLbaGueFh6FKGZAiH9ZBR2DMRcXOmkheBquC1TykIkkG2EUEFQYAB3QeG8e0zBjp2VC9UGk+3vOJiIAzapTqUSLRuogFzFDoSOToenPQXMRdtUYN+uvawCNM1zxYjhvZGonJU8i5Y/dfW3+MxyIvZ3KmgTdwNCYc5QabmiKtc62XWEJtl04hKRsKnoqDCbIluUcHNevBOTvjNmtfz6iBXlO+iiRM0TGTkrHMHyAYF4BbFZpR7TmudUeh5mBzBMARblN+tygL9P3oQ7M/D0pEBhxIY5iTpURpLQ2cgI1HZ0lB1d2qWEa5Y2mVJIW/3BiU74w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cadence.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from OSTP286CA0068.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:226::14)
- by SEYPR06MB6663.apcprd06.prod.outlook.com (2603:1096:101:175::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
- 2025 01:37:40 +0000
-Received: from OSA0EPF000000C8.apcprd02.prod.outlook.com
- (2603:1096:604:226:cafe::73) by OSTP286CA0068.outlook.office365.com
- (2603:1096:604:226::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.17 via Frontend Transport; Thu,
- 14 Aug 2025 01:37:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- OSA0EPF000000C8.mail.protection.outlook.com (10.167.240.54) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 01:37:39 +0000
-Received: from [172.16.64.208] (unknown [172.16.64.208])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 566E740A5A30;
-	Thu, 14 Aug 2025 09:37:38 +0800 (CST)
-Message-ID: <67928928-6e75-4683-9445-0c25a9d606b4@cixtech.com>
-Date: Thu, 14 Aug 2025 09:37:38 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D02621257D
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755135921; cv=none; b=gnjRx5K9DliB4DamUXMt+D0J7hAkx2uJF+yCCzRx1yQH1H9Ms6WtQl7a927Ish7d8gtPQhBluyFlVVYlR87lJ1fxESem36z1/WnnYcnVGgHdRvnlgeRpZ48FEVEWpJQcqw/onPgckNr3rlawm6aFBIdfQkQm1RQaP8HXFBLMfA0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755135921; c=relaxed/simple;
+	bh=LqDNTDFrazzI3dKWZR5opY+1GSAgsrV7awgIElMlWto=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gs6q+2v7hBBqmisA6JMBNaPbzu4xYqVppRgVNcYOu+9ZXU2rXBVyIZ70PQu5WGsO2SoUC3HowA/da+ZZqwRoS0FDW8ZMGAzAO//mn7bjNYuGOPopNAJ9RihAT7767pFI/StrUcb8faAbtbCBP0wepIQk9xWqoTQYZIt64O8NQk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowAAngIGhP51oZJGTCw--.10867S2;
+	Thu, 14 Aug 2025 09:45:05 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	heiko@sntech.de
+Cc: linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] phy: rockchip: naneng-combphy: Convert comma to semicolon
+Date: Thu, 14 Aug 2025 09:39:43 +0800
+Message-Id: <20250814013943.2905307-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/13] Enhance the PCIe controller driver for next
- generation controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>, bhelgaas@google.com,
- lpieralisi@kernel.org, kw@linux.com, mani@kernel.org, robh@kernel.org,
- kwilczynski@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: mpillai@cadence.com, fugang.duan@cixtech.com, guoyin.chen@cixtech.com,
- peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250813042331.1258272-1-hans.zhang@cixtech.com>
- <cc4f69b3-4d9b-4a6f-a296-61ab5ffb9565@kernel.org>
-Content-Language: en-US
-From: Hans Zhang <hans.zhang@cixtech.com>
-In-Reply-To: <cc4f69b3-4d9b-4a6f-a296-61ab5ffb9565@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSA0EPF000000C8:EE_|SEYPR06MB6663:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63e9ebef-d79d-4ac4-5a0f-08dddad3278d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K1UxVmthVGlxNU9OQjJMU3UwUkgxWFB5VE5wd1lZa3hRUHdud1B0YTMzekhP?=
- =?utf-8?B?RjlTWjZBbjFYU0VVdkUreFJJZ1Y3ZzNoSDJrNklzRU81MzhsbTg5MXVlQzBP?=
- =?utf-8?B?Yi9LdW0xd2RNMEpFb3ZXd2dMN0ttZ3ZSS29BbFpOc090QTRXQnJVNWRRaExp?=
- =?utf-8?B?K01QQld0b3hWYlNyTnRCMWJDNFpHbDA3M3daNTkzdXNRZ0JkcWxHenNlRThj?=
- =?utf-8?B?dXRIaTlNdmZvaU9CWkdvQUlEODNXeUt2SGtNNW9tY2NsR2ZqdFZacWJMcFc4?=
- =?utf-8?B?QjZEbmJ6S0l3VFVIaENNY2RQdzAwWXRHbG9UUUFBbDQ1U0tBTjZ1bXJia3Fl?=
- =?utf-8?B?Z1NTUGhXc3FibTJxRmxqSDRMMHZ2VllHZm9iTWpXa1pTa1pRemlaeGhJOUJh?=
- =?utf-8?B?QTV0UEV0Q1plZTUyQlF4REE1dWdWMlhaRGthYmpXek11Y0x3UE1lbkxpM1dK?=
- =?utf-8?B?RUFkTXFPY1NYSFpiYnhybnRyTEJEVGNMd2ovUmQ0dmR6SWExNlFaNlVRTCtY?=
- =?utf-8?B?QjFkN2c4ZDY3dWc1ZU1PYUswbXhBc0k0K0ZqYlRmT0dvSEZjeE5GL1VOZVdq?=
- =?utf-8?B?ZWNsSUxoWnJQVkQ1OGc1UkVSeFY5RldyWWUxQmpmL1VOS1VvYVZURWF0eHNo?=
- =?utf-8?B?Rzh2VkNOc0lmNmlTSW4yVllyeU01Zll4Zm0vSDB4ZkFuTnlSaXhhaGpDWWtH?=
- =?utf-8?B?N3NIUmFOWEtQUXFwK2J1S2NwNXlKTmlCSFc4TXpyZDMvd241emVWL3VUM0lU?=
- =?utf-8?B?S3g1MDZRZGVxQU1ldG04bXdicG94R1V6aHNsSmRqV0dnVzJIYVRoY0Z4SUpw?=
- =?utf-8?B?eWF1S1lmK1B4ODU1a1FCbmFHaXpqV053WHZZeE5kTnZRZ1JCbERZY3JPdHFE?=
- =?utf-8?B?OWQ2dnM1UHJidXZqQzliVk4zVm5DWDZRbzBFdnJSNi9YNWVBc1hIM09KOERx?=
- =?utf-8?B?UVVTUk1xTjhtcUR4ekJpdDVwYlBHenRodC8ydlhhN3Ezb013aVE0RUdrWjVN?=
- =?utf-8?B?NGRIbkEwN3hNdkpUdnJsYkdyQWN0Ky85WW5TaWZNeVlKK29ibWtTdzgrNVdz?=
- =?utf-8?B?OWFUYWtZeEJtQWdMTi8xVHA1TE9hMUdhRThPZ3pIQUdlMENmVHRvMmpEMHdN?=
- =?utf-8?B?QlE5WUFnRlJqUkREUG5XRHd2UVB6eEVRVm5HN0s3WDFpbDkzLzdlMGxmOW5p?=
- =?utf-8?B?ZU5kU1RIZDJkbWhENDlUTmg1OUdObDEvanpnTk02VG8xRDhEam91L1NML1Vr?=
- =?utf-8?B?UEpHcnQzdWhNU3BaYzloeVVySHdEdlFOTnJmSloxMFFiZzk4RGN5ZElLYStF?=
- =?utf-8?B?NzY0aFNGWEpaRjNBWkpONHRYV0dVSDV1RE9MM2ZMUTRRb0grZzZYNzk4bXd5?=
- =?utf-8?B?SEIyVUNGVTNqWk5iVi9tSG9jZ01iZzZSdDI0dHVVR254TkFMK3dFQkVTL3Qy?=
- =?utf-8?B?b051MHhjUDFKUXVsbEkvRWxXbVJTWWdtRGFNNEFydElXRUZIY0lXS3doNm9X?=
- =?utf-8?B?eDNkUGdiTkRESFpRMC9zZ0NBbkVYS3NpcGJHMVBxTWtFa0MrUUxpSUkyVmpI?=
- =?utf-8?B?OU1hekt2WTRUSmpEcnpFelpBeEpNUHBIVHl4Z2pEak9kZG5pZG1wL0JGTE9Z?=
- =?utf-8?B?MHkzNk8zUjRReElJeVJiUllOY09GVjhqUWNJU0tZK0lFa3VWUTRROEVYYWtu?=
- =?utf-8?B?WFl0RkpRZDYzRVROMVBuYVM3N0FSRlRyTDQxL0didG42bUEzRUlpcTJaVVo3?=
- =?utf-8?B?ek02cndGclNmcVRMU2EzclFNd0lHbmliSkVNQlB1RlNuUkVsVnRFcnJpanNJ?=
- =?utf-8?B?S2RIejYrY28zOVRxblZZcjJ6YS81T2c3SzdyeUV4V1ZZU3NodTJJcmtaelh4?=
- =?utf-8?B?WEdhcmFCUGhobWZ3VEtNY2tFdnJwNEVVNXo4RXQ4bVZUOU9YdEdGUGY1ZEZs?=
- =?utf-8?B?OWM3dzdWdEpWc2RKQVMyak00K1VRaUhmNVZ0ZUZOdERsN05pOHE1VUJXajUw?=
- =?utf-8?B?eWpwM2xWUFJUeVBGR1BzZFJtSFFhYTl2M2dXTG8wakJEWXJjRU9rRWdqQTlv?=
- =?utf-8?B?RlRKMUQzSEE5UFl6cnJFeFpQREp0SVp2N2dXUT09?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 01:37:39.0960
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63e9ebef-d79d-4ac4-5a0f-08dddad3278d
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	OSA0EPF000000C8.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6663
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAngIGhP51oZJGTCw--.10867S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoW8JrW7pw
+	s2yayqvr97G398uws3tFs8CF1Fkan8Kw47CFnrA343XasFvF1DG3s29FyDJr47Jr17Za15
+	Wa9xta43Gr43ZrJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvq14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	Jw0_GFylc2xSY4AK67AK6w4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JUmNtsUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
+Replace comma between expressions with semicolons.
 
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
 
-On 2025/8/14 03:14, Krzysztof Kozlowski wrote:
-> EXTERNAL EMAIL
-> 
-> On 13/08/2025 06:23, hans.zhang@cixtech.com wrote:
->> From: Hans Zhang <hans.zhang@cixtech.com>
->>
->> ---
->> Dear Maintainers,
->>
->> This series is Cadence's HPA PCIe IP and the Root Port driver of our
->> CIX sky1. Please help review. Thank you very much.
->> ---
->>
->> Enhances the exiting Cadence PCIe controller drivers to support
->> HPA (High Performance Architecture) Cadence PCIe controllers.
->>
->> The patch set enhances the Cadence PCIe driver for HPA support.
->> The header files are separated out for legacy and high performance
->> register maps, register address and bit definitions. The driver
->> read register and write register functions for HPA take the
->> updated offset stored from the platform driver to access the registers.
->> As part of refactoring of the code, few new files are added to the
->> driver by splitting the existing files.
->> This helps SoC vendor who change the address map within PCIe controller
->> in their designs. Setting the menuconfig appropriately will allow
->> selection between RP and/or EP PCIe controller support. The support
->> will include Legacy and HPA for the selected configuration.
->>
->> The TI SoC continues to be supported with the changes incorporated.
->>
->> The changes address the review comments in the previous patches where
->> the need to move away from "ops" pointers used in current implementation
->> and separate out the Legacy and HPA driver implementation was stressed.
->>
->> The scripts/checkpatch.pl has been run on the patches with and without
->> --strict. With the --strict option, 4 checks are generated on 2 patch,
->> which can be ignored. There are no code fixes required for these checks.
->> All other checks generated by ./scripts/checkpatch.pl --strict can be
->> ignored.
->>
->> ---
->> Changes for v7
->>          - Rebase to v6.17-rc1.
->>          - Fixed the error issue of cix,sky1-pcie-host.yaml make dt_binding_check.
->>          - CIX SKY1 Root Port driver compilation error issue: Add header
->>            file, Kconfig select PCI_ECAM.
->>
-> 
-> Where are lore links to all previous versions?
+Found by inspection.
+No functional change intended.
+Compile tested only.
 
-Dear Krzysztof,
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/phy/rockchip/phy-rockchip-naneng-combphy.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I will add it in all future versions.
+diff --git a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+index 0d25872e6712..a3ef19807b9e 100644
+--- a/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
++++ b/drivers/phy/rockchip/phy-rockchip-naneng-combphy.c
+@@ -1252,7 +1252,7 @@ static int rk3588_combphy_cfg(struct rockchip_combphy_priv *priv)
+ 		writel(val, priv->mmio + RK3568_PHYREG15);
+ 
+ 		/* Set PLL KVCO fine tuning signals. */
+-		val = RK3568_PHYREG33_PLL_KVCO_VALUE << RK3568_PHYREG33_PLL_KVCO_SHIFT,
++		val = RK3568_PHYREG33_PLL_KVCO_VALUE << RK3568_PHYREG33_PLL_KVCO_SHIFT;
+ 		rockchip_combphy_updatel(priv, RK3568_PHYREG33_PLL_KVCO_MASK, val, RK3568_PHYREG33);
+ 
+ 		/* Enable controlling random jitter. */
+-- 
+2.25.1
 
-
-V6:
-https://patchwork.kernel.org/project/linux-pci/cover/20250808072929.4090694-1-hans.zhang@cixtech.com/
-
-V5:
-https://patchwork.kernel.org/project/linux-pci/cover/20250630041601.399921-1-hans.zhang@cixtech.com/
-
-V4:
-https://patchwork.kernel.org/project/linux-pci/cover/20250424010445.2260090-1-hans.zhang@cixtech.com/
-
-V3:
-https://patchwork.kernel.org/project/linux-pci/patch/20250411103656.2740517-1-hans.zhang@cixtech.com/
-
-Best regards,
-Hans
 
