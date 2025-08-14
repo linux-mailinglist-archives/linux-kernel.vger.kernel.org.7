@@ -1,133 +1,239 @@
-Return-Path: <linux-kernel+bounces-768597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F211B262FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:42:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2147B262F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A4756040A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:40:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFB313A7032
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872A22EA742;
-	Thu, 14 Aug 2025 10:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B7D2E7BC8;
+	Thu, 14 Aug 2025 10:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IGYZR0db"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2dYubL9"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D322D7383
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B68318133;
+	Thu, 14 Aug 2025 10:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755168021; cv=none; b=YjstJ4pJA4QEN9aN4gIL/yZ1lou5j/3uYe05XANi5CEZYRH/3LNv2Qjc/LvD8v9G3KsF5SPwGm4SfaSGItOPbE+jRj+1Hwi3pdPkUXnCgfwQvr022lp2n1G46WmNjEgEBoheZlfS+JbmmSehNdKf1Imj5hKIu9Er+7nUpFWedI4=
+	t=1755168000; cv=none; b=k1IYMM7uZZETA4vYWhOpKB88F3Xqz+/+4tXJZ52sZEQhToQCjQlFWvf6wZCnHOqTau78vDfKKAMQTrcWrpyD0dT11RAleNjvEUshmVL5BvMhNSmxzlEC2GwiLHKOWZw8SVdiBuLir4BUZPzZqYrhP7/2XxriFB3S/8gKuXSgAqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755168021; c=relaxed/simple;
-	bh=qgfwGSZfEbkniLqHKgCT8fgNudcnf/OobMNwSIUdZLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sYBCAGLil6LQsmJ6/wV8VS0zLgSW0jx7mdhp3RfnkAUx7pCcftuZvZRHbZ1JO8/XKwR+l/NXvti9FzyiR7mN8bH08XtNJA6tkbTttFF7U75mXPDSADvj1mxFTu1saJRxdT4rSVPS2ZCSPPM9aD2q7keOSlcOUx4XThyFv2O3vPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IGYZR0db; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755168020; x=1786704020;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=qgfwGSZfEbkniLqHKgCT8fgNudcnf/OobMNwSIUdZLE=;
-  b=IGYZR0dbLmFgtDeo1H00F5uLD6UQZ9Hihp/HQg6Wd05oebBlcILvTu4n
-   gqfUpxDOzqkpwxAcOiV8QF0rZCa5BqISa9QOjHq2r7ErCSj35YBV/hrLR
-   Daebx6Dz8tkXctU572+HQQpvMzARbV39LpbIQ31ThofoE/yDHPeTTlYu3
-   03PaSg+cclv59pZMyWG0TA1KMPzhS78AdSgHylmRkM0PUqH0+/6mWpkDz
-   mGCSxXMIWFj5PKo000pa6rlJjKKusgOzh8wyyTmta1P4r95wWaTCtFuNm
-   VGjHItUmSf4aVyRAHHBOVhggBaDhc01mVnrOlRoXC14oLOReUolz8qg/V
-   g==;
-X-CSE-ConnectionGUID: w5DpgixiQ5Oo6oAWUP1kzA==
-X-CSE-MsgGUID: kIezentyTeucw6gIMQAMjg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57383964"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="57383964"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 03:40:20 -0700
-X-CSE-ConnectionGUID: 23PtKySTRtWxjmbbTauNRA==
-X-CSE-MsgGUID: ywXMU6qyR52yYxydnP2uFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="197719795"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 14 Aug 2025 03:40:17 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umVNX-000ArQ-1j;
-	Thu, 14 Aug 2025 10:40:15 +0000
-Date: Thu, 14 Aug 2025 18:39:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Raul E Rangel <rrangel@chromium.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Petr Mladek <pmladek@suse.com>
-Subject: init/main.c:753:(.init.text+0x7e): relocation truncated to fit:
- R_ARC_S25W_PCREL against symbol `__st_r13_to_r16' defined in .text section
- in ../lib/gcc/arc-linux/8.5.0/libgcc.a(_millicodethunk_st.o)
-Message-ID: <202508141854.NCR7LIB7-lkp@intel.com>
+	s=arc-20240116; t=1755168000; c=relaxed/simple;
+	bh=p06MvJgtcL5Wzvs+Hc9e0fECqZuplhgzVFE2ug/2z8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cMsH5E7yBLOEzIhlSOxfUSvwkTSmXpQHZVju8ib0o52xi+wrVJlMSbIpeddj8FTDUDmwfTDrkHGsrRF/2wg5ogyEI5XGN0l/QYZ/FJD/nPicec/vYM9picClblG7jj5xz+QQBVvT9sHr33w5/vcm6ZqMMHz04CKafKsuMjHCNR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2dYubL9; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b281d25so2953495e9.3;
+        Thu, 14 Aug 2025 03:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755167996; x=1755772796; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=57VUURc27LxVFIBsmK8jZRMZVLyyp3u4YL6pJCsmNDY=;
+        b=Y2dYubL9fz/M5n8VdKhNXDOIJhrNqjBYJdBPyK2zGUAZjNh29pgwpK+H4Tsv0cgfyl
+         MfnOn8Ebm3ch/LstGxqiohfBKLsqWDt2xKbnmb0ZODp+Af0Q6WijtQaa85+rL+IOGEpF
+         CgTDThCtvTn8g8+zSAUkTUfrkytNTrsTrvxlzWQb+yiDS231GDl8Fwyn2UR/5sZ4fQFr
+         Qec+rr/SMJxx9Mni7EE850rgtoTIZe5BLLyJuO1l7MJmYgVbfNpYJA9zjY42anYJu6yt
+         7XlRIpnv2tlRsmZojSBcJfLxFRqRHw9P4Tc0AJsWoIkKZe+IEqVxquOO99u9oEr0HyHw
+         t89g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755167996; x=1755772796;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=57VUURc27LxVFIBsmK8jZRMZVLyyp3u4YL6pJCsmNDY=;
+        b=TDvI91EYs9xJ7FU0c8g5UYF8HPYJDKr8zb6okHNZ5QWgVkvNED89LLE/RFJIaK27bl
+         dliYdds8eZFw1nhUIF5C18ylHM4L2FmGym+LNJWx/MmsWLSb7qqCauGfIeWKD9FWvHH+
+         Xk+lp+QJkq4MMm8AOCbpJkrShZDXXkA0xk10sozUgvGleXGSaVrnMndAqrpmhNquBgOO
+         iM6Nj73GxyFxnDMWx7iQBZSiiqZxx1nPGPm+d8rzBV3cDq4vxtuwrNmBs2I/jCHVLm7u
+         A22jnfpdZ8P0mHpnM5DERZa2R9fQPdNj+Vn5aFFDAveAnW5qi8RDY6h0clTJU2R5ngiN
+         g4vA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/b3gZ8wgW3amuweY5ix/RU1yUJBS3T+2vucT2qcp5UGpcbYuJzonvmRRVqk+UduSiCk7VIDvWOI3Iu07Q@vger.kernel.org, AJvYcCVF9FxuQPl+jMzLUspEa6KX5bYuGJn1Nku8sHLOFXnm2YrET5ajFEKmIY8AO0k7xpOa+dtDdtvMRttbGw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNSJtVwy/Up27hh3+OgY/WFn08qy02XfoNe9xCsvNQ+MlmRdOx
+	kTI+wsfRq5Phefz94S/vGZ45ihfEG1perihaYXL2hfCUZkxRwFIVPjfIZywSyw==
+X-Gm-Gg: ASbGncsGNaRwpRlEYTA37Bf/SSLIuCPZim1QVg05XpFa3FKxpgcPI6EEVVtEI+WhSRG
+	BZMZtB1bKXaoTlijraKKyQ5YnHdrmlxonFKnx4EYm/6X2/IuwLE2DgXDZydAHlKzzELI7qr5HgV
+	+/Z9mvI+pjd3w9s94MGvVd1MUmzMf/G0+CEJ/l4w9a5sJidgVgCGk33OoL/TqRF/K4DJfp9DT99
+	j0pIqGv8McV0uDKDCXIycqYjPo3BR1k4DvhviYRrYZA/h9XvUQF9dQEjTD3k5bPjO2Qez69Btgb
+	d9/mlg2bnHTjEdYEAzItgAFIeBK9i1ZHHMc9FD4YYEAefgwXk23hJ15U8sv1rYWMnZYAhPUfjgy
+	veH30+eXV+JdqJeLJrSgANEkjMISBdw==
+X-Google-Smtp-Source: AGHT+IFAkKLNmtuyJkHer8b7gaduPvs4Mr3VYaQlQqlwAQOjoaeNWP0Kmsbn4DSFm9O9VoSLBLKJ2Q==
+X-Received: by 2002:a05:600c:524c:b0:43d:4e9:27ff with SMTP id 5b1f17b1804b1-45a1b601572mr18942675e9.7.1755167996373;
+        Thu, 14 Aug 2025 03:39:56 -0700 (PDT)
+Received: from fedora ([94.73.32.0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b9132f00ecsm8214300f8f.24.2025.08.14.03.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 03:39:55 -0700 (PDT)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: jikos@kernel.org
+Cc: bentiss@kernel.org,
+	luguohong@xiaomi.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v3 1/2] HID: input: rename hidinput_set_battery_charge_status()
+Date: Thu, 14 Aug 2025 12:39:39 +0200
+Message-ID: <20250814103947.116139-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Raul,
+In preparation for a patch fixing a bug affecting
+hidinput_set_battery_charge_status(), rename the function to
+hidinput_update_battery_charge_status() and move it up so it can be used
+by hidinput_update_battery().
 
-FYI, the error/warning still remains.
+Refactor, no functional changes.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
-commit: 17b655759e83fd5e28931a0ece96fa9c2ab718e7 init: Don't proxy `console=` to earlycon
-date:   11 months ago
-config: arc-randconfig-r113-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141854.NCR7LIB7-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250814/202508141854.NCR7LIB7-lkp@intel.com/reproduce)
+Tested-by: 卢国宏 <luguohong@xiaomi.com>
+Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508141854.NCR7LIB7-lkp@intel.com/
+---
 
-All errors (new ones prefixed by >>):
+v3:
 
-   init/main.o: in function `do_early_param':
->> init/main.c:753:(.init.text+0x7e): relocation truncated to fit: R_ARC_S25W_PCREL against symbol `__st_r13_to_r16' defined in .text section in ../lib/gcc/arc-linux/8.5.0/libgcc.a(_millicodethunk_st.o)
+ - Improved commit message
+ - Link to v2: https://lore.kernel.org/linux-input/20250806073944.5310-1-jose.exposito89@gmail.com/
 
+v2:
 
-vim +753 init/main.c
+ - Added Tested-by: 卢国宏 <luguohong@xiaomi.com>
+ - Fixed compile warning:
+   https://lore.kernel.org/linux-input/202508042305.PBym6Evd-lkp@intel.com/
+ - Link to v1: https://lore.kernel.org/linux-input/20250804091215.6637-1-jose.exposito89@gmail.com/
+---
+ drivers/hid/hid-input-test.c | 10 +++++-----
+ drivers/hid/hid-input.c      | 38 ++++++++++++++++++------------------
+ 2 files changed, 24 insertions(+), 24 deletions(-)
 
-^1da177e4c3f41 Linus Torvalds    2005-04-16  749  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  750  /* Check for early params. */
-ecc8617053e0a9 Luis R. Rodriguez 2015-03-30  751  static int __init do_early_param(char *param, char *val,
-ecc8617053e0a9 Luis R. Rodriguez 2015-03-30  752  				 const char *unused, void *arg)
-^1da177e4c3f41 Linus Torvalds    2005-04-16 @753  {
-914dcaa84c53f2 Rusty Russell     2010-08-11  754  	const struct obs_kernel_param *p;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  755  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  756  	for (p = __setup_start; p < __setup_end; p++) {
-17b655759e83fd Raul E Rangel     2024-09-11  757  		if (p->early && parameq(param, p->str)) {
-^1da177e4c3f41 Linus Torvalds    2005-04-16  758  			if (p->setup_func(val) != 0)
-ea676e846a8171 Andrew Morton     2013-04-29  759  				pr_warn("Malformed early option '%s'\n", param);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  760  		}
-^1da177e4c3f41 Linus Torvalds    2005-04-16  761  	}
-^1da177e4c3f41 Linus Torvalds    2005-04-16  762  	/* We accept everything at this stage. */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  763  	return 0;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  764  }
-^1da177e4c3f41 Linus Torvalds    2005-04-16  765  
-
-:::::: The code at line 753 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
-
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
-
+diff --git a/drivers/hid/hid-input-test.c b/drivers/hid/hid-input-test.c
+index 77c2d45ac62a..6f5c71660d82 100644
+--- a/drivers/hid/hid-input-test.c
++++ b/drivers/hid/hid-input-test.c
+@@ -7,7 +7,7 @@
+ 
+ #include <kunit/test.h>
+ 
+-static void hid_test_input_set_battery_charge_status(struct kunit *test)
++static void hid_test_input_update_battery_charge_status(struct kunit *test)
+ {
+ 	struct hid_device *dev;
+ 	bool handled;
+@@ -15,15 +15,15 @@ static void hid_test_input_set_battery_charge_status(struct kunit *test)
+ 	dev = kunit_kzalloc(test, sizeof(*dev), GFP_KERNEL);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, dev);
+ 
+-	handled = hidinput_set_battery_charge_status(dev, HID_DG_HEIGHT, 0);
++	handled = hidinput_update_battery_charge_status(dev, HID_DG_HEIGHT, 0);
+ 	KUNIT_EXPECT_FALSE(test, handled);
+ 	KUNIT_EXPECT_EQ(test, dev->battery_charge_status, POWER_SUPPLY_STATUS_UNKNOWN);
+ 
+-	handled = hidinput_set_battery_charge_status(dev, HID_BAT_CHARGING, 0);
++	handled = hidinput_update_battery_charge_status(dev, HID_BAT_CHARGING, 0);
+ 	KUNIT_EXPECT_TRUE(test, handled);
+ 	KUNIT_EXPECT_EQ(test, dev->battery_charge_status, POWER_SUPPLY_STATUS_DISCHARGING);
+ 
+-	handled = hidinput_set_battery_charge_status(dev, HID_BAT_CHARGING, 1);
++	handled = hidinput_update_battery_charge_status(dev, HID_BAT_CHARGING, 1);
+ 	KUNIT_EXPECT_TRUE(test, handled);
+ 	KUNIT_EXPECT_EQ(test, dev->battery_charge_status, POWER_SUPPLY_STATUS_CHARGING);
+ }
+@@ -63,7 +63,7 @@ static void hid_test_input_get_battery_property(struct kunit *test)
+ }
+ 
+ static struct kunit_case hid_input_tests[] = {
+-	KUNIT_CASE(hid_test_input_set_battery_charge_status),
++	KUNIT_CASE(hid_test_input_update_battery_charge_status),
+ 	KUNIT_CASE(hid_test_input_get_battery_property),
+ 	{ }
+ };
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index ff1784b5c2a4..262787e6eb20 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -595,6 +595,20 @@ static void hidinput_cleanup_battery(struct hid_device *dev)
+ 	dev->battery = NULL;
+ }
+ 
++static bool hidinput_update_battery_charge_status(struct hid_device *dev,
++						  unsigned int usage, int value)
++{
++	switch (usage) {
++	case HID_BAT_CHARGING:
++		dev->battery_charge_status = value ?
++					     POWER_SUPPLY_STATUS_CHARGING :
++					     POWER_SUPPLY_STATUS_DISCHARGING;
++		return true;
++	}
++
++	return false;
++}
++
+ static void hidinput_update_battery(struct hid_device *dev, int value)
+ {
+ 	int capacity;
+@@ -617,20 +631,6 @@ static void hidinput_update_battery(struct hid_device *dev, int value)
+ 		power_supply_changed(dev->battery);
+ 	}
+ }
+-
+-static bool hidinput_set_battery_charge_status(struct hid_device *dev,
+-					       unsigned int usage, int value)
+-{
+-	switch (usage) {
+-	case HID_BAT_CHARGING:
+-		dev->battery_charge_status = value ?
+-					     POWER_SUPPLY_STATUS_CHARGING :
+-					     POWER_SUPPLY_STATUS_DISCHARGING;
+-		return true;
+-	}
+-
+-	return false;
+-}
+ #else  /* !CONFIG_HID_BATTERY_STRENGTH */
+ static int hidinput_setup_battery(struct hid_device *dev, unsigned report_type,
+ 				  struct hid_field *field, bool is_percentage)
+@@ -642,14 +642,14 @@ static void hidinput_cleanup_battery(struct hid_device *dev)
+ {
+ }
+ 
+-static void hidinput_update_battery(struct hid_device *dev, int value)
++static bool hidinput_update_battery_charge_status(struct hid_device *dev,
++						  unsigned int usage, int value)
+ {
++	return false;
+ }
+ 
+-static bool hidinput_set_battery_charge_status(struct hid_device *dev,
+-					       unsigned int usage, int value)
++static void hidinput_update_battery(struct hid_device *dev, int value)
+ {
+-	return false;
+ }
+ #endif	/* CONFIG_HID_BATTERY_STRENGTH */
+ 
+@@ -1515,7 +1515,7 @@ void hidinput_hid_event(struct hid_device *hid, struct hid_field *field, struct
+ 		return;
+ 
+ 	if (usage->type == EV_PWR) {
+-		bool handled = hidinput_set_battery_charge_status(hid, usage->hid, value);
++		bool handled = hidinput_update_battery_charge_status(hid, usage->hid, value);
+ 
+ 		if (!handled)
+ 			hidinput_update_battery(hid, value);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.1
+
 
