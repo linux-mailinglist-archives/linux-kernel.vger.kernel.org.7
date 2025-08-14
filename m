@@ -1,134 +1,103 @@
-Return-Path: <linux-kernel+bounces-768755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9475B2650F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:11:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44A4AB26517
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16D71CC5A4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:11:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 951DD7BCBC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CDB2FCC1F;
-	Thu, 14 Aug 2025 12:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FWLeO9XL"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC772FCC16;
+	Thu, 14 Aug 2025 12:11:49 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FB02FC892;
-	Thu, 14 Aug 2025 12:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA46428504B;
+	Thu, 14 Aug 2025 12:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173467; cv=none; b=Jg2+dS5WDJrekAXYhraFvWHLhbCaHJSy9oK9o3v+6v/ddxOatMFNJTVyNZU/9xjtLJa/F/YcMpoNRx1g0NGZPbg3VicdxptmEnGvjpaoKJ8hzKxo0M4tBiJFSLuzhjHOzBTVq9N/HK+yj7obFUoLSAIhyYoyTbRai56V/YcMV9g=
+	t=1755173509; cv=none; b=TsIivcikQHnqMRbFoi7pILxV2qrOIZH3zZfWAhcXBSJu+CluMzeMwQ0qMOKmHTuUMJFjJtshs1+9KYeW5buA3jEoEBxUWMcp75D0Jarb6KKUsqgYIQhYAnCG10CoHLFSsh+tJxqDz8mdx1QxhlJjNzJQ21RYG6wwbzWg2sY4Dv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173467; c=relaxed/simple;
-	bh=X8Ebv39DsgYW5S3vCtvPIj2jStoX614nqqQF4Oft9TA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=idnJmnJ5d2UjDj/1gvz8STUQ3zpxymW1/ea3TwmF65bSJi3LY/4iauWMue5ffzJCkmJ29CQlXim1AcOLgMXJbVrSlxp9lXaXEZqCWP1/Ff1QbT+0+xbpC6tQQwZ+OAGUTQeg4cZ7zJCeGOViqJ7hvMDYxAtPmCc+xluaYBxKNYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FWLeO9XL; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57ECAM3t1927833;
-	Thu, 14 Aug 2025 07:10:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755173422;
-	bh=P55J7AG+dVG9wSnCiAJHatO757Yyz2jOVx50FgR/qyA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=FWLeO9XLv76gKZ8Sqysx3J24Rq32v/j5fEXrMvLxCjGxOpak/ZySOpwE2F8wUle2i
-	 sT7NMO+TI4vN2ZV4V0hxDuCOvYORT2IhqghhQuQqxXlPJIwYXnH/xCO0EV4v13LNMZ
-	 SJyBDDSvlx5BgddFmZvWFfR5o9gXc8Jt+TU4l9tg=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57ECAMh11135417
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 07:10:22 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 07:10:21 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 07:10:21 -0500
-Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57ECAFeI3887319;
-	Thu, 14 Aug 2025 07:10:16 -0500
-Message-ID: <c69d6a87-3d9f-49dc-836e-f33508c62c1a@ti.com>
-Date: Thu, 14 Aug 2025 17:40:14 +0530
+	s=arc-20240116; t=1755173509; c=relaxed/simple;
+	bh=8u9RP2xh/1X5QpQ/eJnsBhp/8hmSeMReZKli+xcbNVY=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=RKM6j+IV3IFTDinjWHMtthikifmLd9wDUltcGPKphj2e6zjK34Wovk8eUiPi1PjukMG5Ox7kE8aYy/jdUaFy9fZ9SkvjSUJaJEfM7eFvEODBcTwnttPFgGoivq2IEPlBYR+30aFHgM+nqPg8+Y+QC1e+NdUcSaauYsz3Nzgd1jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4c2kcY3dDjz5H1s9;
+	Thu, 14 Aug 2025 20:11:41 +0800 (CST)
+Received: from xaxapp05.zte.com.cn ([10.99.98.109])
+	by mse-fl1.zte.com.cn with SMTP id 57ECBQvP076334;
+	Thu, 14 Aug 2025 20:11:26 +0800 (+08)
+	(envelope-from wang.yaxin@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 14 Aug 2025 20:11:29 +0800 (CST)
+Date: Thu, 14 Aug 2025 20:11:29 +0800 (CST)
+X-Zmail-TransId: 2afb689dd271ffffffffc4a-3b075
+X-Mailer: Zmail v1.0
+Message-ID: <20250814201129510XielEwRpr4QXPx_XBtkhv@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] net: rnpgbe: Add basic mbx_fw support
-To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
-        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
-        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
-        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
-        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
-        <richardcochran@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250814073855.1060601-1-dong100@mucse.com>
- <20250814073855.1060601-5-dong100@mucse.com>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <20250814073855.1060601-5-dong100@mucse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+From: <wang.yaxin@zte.com.cn>
+To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>
+Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>,
+        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
+        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
+        <zhang.yunkai@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIDAvNCBsaW51eCBuZXh0IHYyXSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgbmV0d29ya2luZyBkb2NzIHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 57ECBQvP076334
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Thu, 14 Aug 2025 20:11:41 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 689DD27D.000/4c2kcY3dDjz5H1s9
 
+From: Wang Yaxin <wang.yaxin@zte.com.cn>
 
+translate networking docs to Simplified Chinese
 
-On 14/08/25 1:08 pm, Dong Yibo wrote:
-> Initialize basic mbx_fw ops, such as get_capability, reset phy
-> and so on.
-> 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
-> ---
->  drivers/net/ethernet/mucse/rnpgbe/Makefile    |   3 +-
->  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    |   4 +
->  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c | 264 ++++++++++++++++++
->  .../net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h | 201 +++++++++++++
->  4 files changed, 471 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.c
->  create mode 100644 drivers/net/ethernet/mucse/rnpgbe/rnpgbe_mbx_fw.h
-> 
+v1->v2:
+https://lore.kernel.org/all/20250728153954564ePWG4rm0QdFoq2QGWUGlt@zte.com.cn/
+https://lore.kernel.org/all/CAD-N9QW7=frNYSJDhaUiggSF9p_v33R8BQ0t8vypWUCXO+pyZQ@mail.gmail.com/
+1. resend by plain text.
+2. remove unneccessary empty line in subject.
 
-> +
-> +/**
-> + * mbx_cookie_zalloc - Alloc a cookie structure
-> + * @priv_len: private length for this cookie
-> + *
-> + * @return: cookie structure on success
-> + **/
-> +static struct mbx_req_cookie *mbx_cookie_zalloc(int priv_len)
-> +{
-> +	struct mbx_req_cookie *cookie;
-> +
-> +	cookie = kzalloc(struct_size(cookie, priv, priv_len), GFP_KERNEL);
-> +	if (cookie) {
-> +		cookie->timeout_jiffes = 30 * HZ;
+Sun yuxi (2):
+  Docs/zh_CN: Translate mptcp-sysctl.rst to Simplified Chinese
+  Docs/zh_CN: Translate generic-hdlc.rst to Simplified Chinese
 
-Typo: should be "timeout_jiffies" instead of "timeout_jiffes"
+Wang Yaxin (2):
+  Docs/zh_CN: Translate skbuff.rst to Simplified Chinese
+  Docs/zh_CN: Translate timestamping.rst to Simplified Chinese
 
-> +		cookie->magic = COOKIE_MAGIC;
-> +		cookie->priv_len = priv_len;
-> +	}
-> +	return cookie;
-> +}
-> +
-> +/**
-
+ .../zh_CN/networking/generic-hdlc.rst         | 176 +++++
+ .../translations/zh_CN/networking/index.rst   |   8 +-
+ .../zh_CN/networking/mptcp-sysctl.rst         | 139 ++++
+ .../translations/zh_CN/networking/skbuff.rst  |  44 ++
+ .../zh_CN/networking/timestamping.rst         | 674 ++++++++++++++++++
+ 5 files changed, 1037 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/translations/zh_CN/networking/generic-hdlc.rst
+ create mode 100644 Documentation/translations/zh_CN/networking/mptcp-sysctl.rst
+ create mode 100644 Documentation/translations/zh_CN/networking/skbuff.rst
+ create mode 100644 Documentation/translations/zh_CN/networking/timestamping.rst
 
 -- 
-Thanks and Regards,
-Danish
-
+2.25.1
 
