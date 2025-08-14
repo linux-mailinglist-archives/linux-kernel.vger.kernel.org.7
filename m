@@ -1,94 +1,243 @@
-Return-Path: <linux-kernel+bounces-768303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BFCB25F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:51:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF19B25EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 218131C82C65
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8497B5A238A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90082EA47E;
-	Thu, 14 Aug 2025 08:50:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9F62EA171
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A0A2E7BB7;
+	Thu, 14 Aug 2025 08:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYJMiC+A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F2264A76;
+	Thu, 14 Aug 2025 08:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755161437; cv=none; b=HXYmGax+/AncSuvqYtdZhM6AcFKV//Z4y+xR5+hA8rTWZF3RArPY/iSTPzauOKdVYp0JhK/tyUG/HyxtgtbVhFKxCAmwnQtVyhjHKCOiHkj/3xbXgju1LD5zNFFf368sU4UTd8fJ4Y1g1ed2dAVJMsqleAWSfQc59gDHP6rhVeQ=
+	t=1755160461; cv=none; b=HwDx64GKDkJ+xcfTp75vcZYl0eAYpS2ItdrcRZLvZz7Bc2+d6U+8enLFrn5qWZUcr6bJC2Dpp53moI8BlJo0GkHg8RbTPYlNHTd0ZcqmRecMOZkraOOxqoIUw0xNtQUr/GTZzGoWLb6zyCDEJxSsXybTlzcEvVyZyUhNunIuqMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755161437; c=relaxed/simple;
-	bh=6ZIyyM5zaS7uVMYtvcL6aGUnfvx4uAfg6dCvZifmzYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lzZUOMupdYbfAG17Tus2/izJimEvcmUBjrxGdp+4pBEvg4CDDO3JWRl5bXhZUZKKr6AvbTbmvW3yhU4TFBkYzuYr9cuOMBvKrbHTBDKYkjvWSd4/a38eNfK5VucThTlZoxr2jbjj3GB/jNmrLgJC+M4366H/8pAldTy6Zky5NTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4c2dnG3Xs7z9sSL;
-	Thu, 14 Aug 2025 10:33:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 1tkUzicEPWcZ; Thu, 14 Aug 2025 10:33:54 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4c2dnG2pKsz9sSK;
-	Thu, 14 Aug 2025 10:33:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 472C48B764;
-	Thu, 14 Aug 2025 10:33:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id PmUnmtuep_BF; Thu, 14 Aug 2025 10:33:54 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D38D28B763;
-	Thu, 14 Aug 2025 10:33:53 +0200 (CEST)
-Message-ID: <52be7ae1-34f7-49ef-80b0-0eb6577205ff@csgroup.eu>
-Date: Thu, 14 Aug 2025 10:33:52 +0200
+	s=arc-20240116; t=1755160461; c=relaxed/simple;
+	bh=JJZTzu+RAz4/lXyoF8hhed0E/+6KW4y3Lc2HDHprM3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8arL3X/cSiR7Z+dtZ4F/9RJ6eycj0WrVvc/4L2Uj9xGKVwFnJDKgurLFlWEJ+NWJ+iTmKZ5MrlaJSmq1N55S0MAbc+Q7WXrWXy83GGudtLjS4CX22lOZfj5TaXvIiU2VbYlcLUxnr6Vse/gx7+sFYngi7hyqE3/VZ+ZQAWcifM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYJMiC+A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83461C4CEEF;
+	Thu, 14 Aug 2025 08:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755160460;
+	bh=JJZTzu+RAz4/lXyoF8hhed0E/+6KW4y3Lc2HDHprM3E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sYJMiC+A6ZsYL/xcMfF5gXE5Tqd2ONGCHOWgXGdfoS679A/WsvWY4v/yNnAdOGJ+l
+	 jTR2ZQjW5ocrjLWjjrbnOIQaPGP72w5wLeWhPEeNMh/kwb4iF3HCdoGM4lS27vlnlE
+	 C06vKS2l/dvw+L7KYiTEAmNBniJOG5U2Dg3Z8Oqi41JdMD+dOS2ox8Yt3JVFMK4Ko8
+	 yPGdi7p5vKJqhIUOiCUOT01Fp1IeSJzEyef+iKY1gvCG+p8H824C5wj+OzG16e87LX
+	 PfIthLVHmXIqBCLYKsRoqDM9o16zhFcmVnIDLFE4O9kfBbO8ZR3C0vmiLs8ODwrqV+
+	 DOhyHiLRa8bQA==
+Date: Thu, 14 Aug 2025 11:33:59 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	David Rientjes <rientjes@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Matthew Wilcox <willy@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 05/10] mm: convert uprobes to mm_flags_*() accessors
+Message-ID: <aJ2fd3iD6GqZ_LWw@kernel.org>
+References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
+ <1d4fe5963904cc0c707da1f53fbfe6471d3eff10.1755012943.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-References: <20241118123254.620519-1-andriy.shevchenko@linux.intel.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20241118123254.620519-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d4fe5963904cc0c707da1f53fbfe6471d3eff10.1755012943.git.lorenzo.stoakes@oracle.com>
 
-Hi Andy,
-
-Le 18/11/2024 à 13:31, Andy Shevchenko a écrit :
-> Remove legacy-of-mm-gpiochip.h header file. The above mentioned
-> file provides an OF API that's deprecated. There is no agnostic
-> alternatives to it and we have to open code the logic which was
-> hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
-> drivers are using their own labeling schemas and resource retrieval
-> that only a few may gain of the code deduplication, so whenever
-> alternative is appear we can move drivers again to use that one.
+On Tue, Aug 12, 2025 at 04:44:14PM +0100, Lorenzo Stoakes wrote:
+> As part of the effort to move to mm->flags becoming a bitmap field, convert
+> existing users to making use of the mm_flags_*() accessors which will, when
+> the conversion is complete, be the only means of accessing mm_struct flags.
 > 
-> As a side effect this change fixes a potential memory leak on
-> an error path, if of_mm_gpiochip_add_data() fails.
+> No functional change intended.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Is there a reason for having done this change in cpm1_gpiochip_add16() 
-and cpm1_gpiochip_add32() [arch/powerpc/platform/8xx/cpm1.c] and not in 
-cpm2_gpiochip_add32() [arch/powerpc/sysdev/cpm_common.c] while all three 
-functions are called from cpm_gpio_probe() 
-[arch/powerpc/sysdev/cpm_gpio.c] ?
+Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-Christophe
+> ---
+>  kernel/events/uprobes.c | 32 ++++++++++++++++----------------
+>  1 file changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 7ca1940607bd..31a12b60055f 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1153,15 +1153,15 @@ static int install_breakpoint(struct uprobe *uprobe, struct vm_area_struct *vma,
+>  	 * set MMF_HAS_UPROBES in advance for uprobe_pre_sstep_notifier(),
+>  	 * the task can hit this breakpoint right after __replace_page().
+>  	 */
+> -	first_uprobe = !test_bit(MMF_HAS_UPROBES, &mm->flags);
+> +	first_uprobe = !mm_flags_test(MMF_HAS_UPROBES, mm);
+>  	if (first_uprobe)
+> -		set_bit(MMF_HAS_UPROBES, &mm->flags);
+> +		mm_flags_set(MMF_HAS_UPROBES, mm);
+>  
+>  	ret = set_swbp(&uprobe->arch, vma, vaddr);
+>  	if (!ret)
+> -		clear_bit(MMF_RECALC_UPROBES, &mm->flags);
+> +		mm_flags_clear(MMF_RECALC_UPROBES, mm);
+>  	else if (first_uprobe)
+> -		clear_bit(MMF_HAS_UPROBES, &mm->flags);
+> +		mm_flags_clear(MMF_HAS_UPROBES, mm);
+>  
+>  	return ret;
+>  }
+> @@ -1171,7 +1171,7 @@ static int remove_breakpoint(struct uprobe *uprobe, struct vm_area_struct *vma,
+>  {
+>  	struct mm_struct *mm = vma->vm_mm;
+>  
+> -	set_bit(MMF_RECALC_UPROBES, &mm->flags);
+> +	mm_flags_set(MMF_RECALC_UPROBES, mm);
+>  	return set_orig_insn(&uprobe->arch, vma, vaddr);
+>  }
+>  
+> @@ -1303,7 +1303,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+>  			/* consult only the "caller", new consumer. */
+>  			if (consumer_filter(new, mm))
+>  				err = install_breakpoint(uprobe, vma, info->vaddr);
+> -		} else if (test_bit(MMF_HAS_UPROBES, &mm->flags)) {
+> +		} else if (mm_flags_test(MMF_HAS_UPROBES, mm)) {
+>  			if (!filter_chain(uprobe, mm))
+>  				err |= remove_breakpoint(uprobe, vma, info->vaddr);
+>  		}
+> @@ -1595,7 +1595,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
+>  
+>  	if (vma->vm_file &&
+>  	    (vma->vm_flags & (VM_WRITE|VM_SHARED)) == VM_WRITE &&
+> -	    test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags))
+> +	    mm_flags_test(MMF_HAS_UPROBES, vma->vm_mm))
+>  		delayed_ref_ctr_inc(vma);
+>  
+>  	if (!valid_vma(vma, true))
+> @@ -1655,12 +1655,12 @@ void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned lon
+>  	if (!atomic_read(&vma->vm_mm->mm_users)) /* called by mmput() ? */
+>  		return;
+>  
+> -	if (!test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags) ||
+> -	     test_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags))
+> +	if (!mm_flags_test(MMF_HAS_UPROBES, vma->vm_mm) ||
+> +	     mm_flags_test(MMF_RECALC_UPROBES, vma->vm_mm))
+>  		return;
+>  
+>  	if (vma_has_uprobes(vma, start, end))
+> -		set_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags);
+> +		mm_flags_set(MMF_RECALC_UPROBES, vma->vm_mm);
+>  }
+>  
+>  static vm_fault_t xol_fault(const struct vm_special_mapping *sm,
+> @@ -1823,10 +1823,10 @@ void uprobe_end_dup_mmap(void)
+>  
+>  void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
+>  {
+> -	if (test_bit(MMF_HAS_UPROBES, &oldmm->flags)) {
+> -		set_bit(MMF_HAS_UPROBES, &newmm->flags);
+> +	if (mm_flags_test(MMF_HAS_UPROBES, oldmm)) {
+> +		mm_flags_set(MMF_HAS_UPROBES, newmm);
+>  		/* unconditionally, dup_mmap() skips VM_DONTCOPY vmas */
+> -		set_bit(MMF_RECALC_UPROBES, &newmm->flags);
+> +		mm_flags_set(MMF_RECALC_UPROBES, newmm);
+>  	}
+>  }
+>  
+> @@ -2370,7 +2370,7 @@ static void mmf_recalc_uprobes(struct mm_struct *mm)
+>  			return;
+>  	}
+>  
+> -	clear_bit(MMF_HAS_UPROBES, &mm->flags);
+> +	mm_flags_clear(MMF_HAS_UPROBES, mm);
+>  }
+>  
+>  static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
+> @@ -2468,7 +2468,7 @@ static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
+>  		*is_swbp = -EFAULT;
+>  	}
+>  
+> -	if (!uprobe && test_and_clear_bit(MMF_RECALC_UPROBES, &mm->flags))
+> +	if (!uprobe && mm_flags_test_and_clear(MMF_RECALC_UPROBES, mm))
+>  		mmf_recalc_uprobes(mm);
+>  	mmap_read_unlock(mm);
+>  
+> @@ -2818,7 +2818,7 @@ int uprobe_pre_sstep_notifier(struct pt_regs *regs)
+>  	if (!current->mm)
+>  		return 0;
+>  
+> -	if (!test_bit(MMF_HAS_UPROBES, &current->mm->flags) &&
+> +	if (!mm_flags_test(MMF_HAS_UPROBES, current->mm) &&
+>  	    (!current->utask || !current->utask->return_instances))
+>  		return 0;
+>  
+> -- 
+> 2.50.1
+> 
 
+-- 
+Sincerely yours,
+Mike.
 
