@@ -1,137 +1,142 @@
-Return-Path: <linux-kernel+bounces-769453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE3EB26EE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:29:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA90B26EEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6C11CC2C52
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:29:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F3BA4E0F91
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18B9223DD0;
-	Thu, 14 Aug 2025 18:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037BC230D0E;
+	Thu, 14 Aug 2025 18:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yoHaKrbc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RkYsB+6h"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85DB31985A;
-	Thu, 14 Aug 2025 18:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5645223DC0
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 18:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755196155; cv=none; b=iG0FLAR1gEiziIe9BmkVCc42qMNwpUMRF+2RoiDaRIrlDBj+ZcR8YHA6nKGjGrN7cv7/7T0W6hiH+m3QllxvP+1aljFrm9gsywc4QpYUAxgtqzDoeAnzFxcstCbkMRe23EWvjJ7EMCOTCIRHVWGELYQKoxUs9BzGvOcFSTXcxDk=
+	t=1755196209; cv=none; b=QzgSYvwg6shjWyGL06QI7og9oL4fGAW59JNhsGkCHgKOb95gbK3F9aP/+EcgHfV/4F6oKA/I3zi7u5Mj+zEpdcLcyFGgdx4I3JlDMZDdq4hYFdHJOEGnm9eBD1w1ApbZGfQA/DCabePCdy/79aXDg5s1TX3VklPAhvTzYC1rG78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755196155; c=relaxed/simple;
-	bh=H/7cxgG58tWqR4Nrwl+Uq7YGXzUlJdaBMhPlhJ1BJD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uBuyFWXVNcIoEZAWnmDQCJxUWKgpLkB3+6+Wlgu9sp0KE+vmfX8UG+UUbPXmNbu5YxhPXyPDZ4Zsobp/pMUeQWJYlq/Sf0cxk9vMXSMOtjinmjsTsI7HyaMS8PHS9kUwn7+zhLeysUmugSHXp20t6bVcBm4aYtnr8i/tfVK3p98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yoHaKrbc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C90C4CEED;
-	Thu, 14 Aug 2025 18:29:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755196154;
-	bh=H/7cxgG58tWqR4Nrwl+Uq7YGXzUlJdaBMhPlhJ1BJD8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yoHaKrbc7hk54aha/UoZ8wC+34GeR+MY6b7PkJY+7npyEhDHs7vrOhq0Fb33dKBJX
-	 t4nDu3O/uSlOw+nDwE98UYI0FjCItPaUENBggTQXgd0uPLOYVQD4DUA1hFMrgk46SP
-	 HiDLZCYCz6VRu48OZI3g7L7jy45dWhtjnAFHbx+4=
-Date: Thu, 14 Aug 2025 20:29:11 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Nir Lichtman <nir@lichtman.org>,
-	Yuran Pereira <yuran.pereira@hotmail.com>,
-	linux-hardening@vger.kernel.org,
-	Daniel Thompson <daniel@riscstar.com>,
-	kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kdb: Replace deprecated strcpy() with strscpy() and
- memcpy()
-Message-ID: <2025081451-amigo-joylessly-8b8d@gregkh>
-References: <20250814163237.229544-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1755196209; c=relaxed/simple;
+	bh=A4c0iTOf2R71rU6WSqW1yP7mOGni3aEu/5lN6bh82ew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PfDrvdAxV/uzetTveVXSNYj7RZ5jGJl/aYS8hxTh1bVUPh135oZQtj6d4SZ3bISsuev2awfv/QSzcSXKUP3DG0uNe8WtnCU9ECPjNZdBNJYGXibyuRCwK1Xvd0kHanBBq+X2jfaIRwncDXDWF+52m6UyROZGwewI3y8xG7LCoQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RkYsB+6h; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-242d1e9c6b4so33915ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755196207; x=1755801007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ig/c0W4/BOO1c1TnermMCysZ+XWEDUNRpnYsEQ42d4w=;
+        b=RkYsB+6hzpQ8MaI6myIK+xqd3t2Ox3QnLZmmYNKK4ZDdZga/2Ib5v2bEhnObqJKom/
+         FAc88W4Qd5Kze4dZf/iY8STZnNkMLW/SvYJTj2qgQKNFDP1pPFjr/rAmdytwqDJUb3B2
+         4/T70/SbHEWg2lMcOi7ZKKgd89HRUiDxhZOru8tFUjrSHAIJblvJlbU4xmaROliXuNWj
+         wtRtI6iBtgaN528SJgQUWCJ17rFnGK6Fs0S0EYP9rzHPb9ZBijgp6LL5IAmy7dW1Z5km
+         QVo7mkecdp4skRn1fMzeIVgiakzD3p8NsgUULEbOclfo2LbVTzJiV4XzO8hFWaAprJJP
+         dYPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755196207; x=1755801007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ig/c0W4/BOO1c1TnermMCysZ+XWEDUNRpnYsEQ42d4w=;
+        b=nrrAg7fom3FqrG94nGiqOr74HeVf4IHO9wKrwfTDtXbz4aAKWJePFFLB+/m9cHa8iS
+         26cijAioqxkSYKwm6OsBjHZut3ys8CsKwPY9d/dnSMgbcfRcZvedncqZB5+DVDirfd9W
+         xF6sABnHucU50F8XnJ3508v3EQag2cO82Ns2zf+eI6GbdlNCYZv7kDC9R8A5eU3Kz71E
+         LTLs/Mz3PS0yn/9LQ06SF29PkvS/YeJAKmnhhd3IRRguoLKAVFdz6S2z6hjnPUOjPvZH
+         /1N3y3drBPNoejBOvEB71WKRAS83PsGdp0RaKmVg+IZ+LFdsGbxSxbaaafelkzDUvAOM
+         AaDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWisuUUumIW6NZnRLNCFltU5g1i/F/kbecaQg/juMhNCBHZDEBzCO2d6X5VrhGBgKYsGjFIvwZujh50MI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8SN+Sv7yt5zruqIVHqWhpH11J/c5zNfrYHjKCbpiRc7SEbSNM
+	CuSc6JBOxSMDbqf24WUr1pi+LugrGfrgs5SdyrU3m+cxJuopUZaTd2pIVc/jadDvKpSMb+1BBtV
+	wLvfTMK3vMcTOB/cMheFC47IQeknAX2dOnZmsd8gy
+X-Gm-Gg: ASbGncuSm79O/j6Ey2SeGdhj/UpiUGRJpWFEG6342f8jjJcGmu0KclVsAYq7CVTeQg4
+	s+xmO9IXiR7q5uytg39cih4vb2sJ2cK7vhyOaPg4gocOg9UwXQdnJWd6Ks6UhellBev1A5aQ4qs
+	grXhK1sJ0kmz3y7CTfPVXCp7ag7draapaSO2Pux0kJ/dA0ERbHNiqDuvuMA8kvXRzwIT/wSGgyV
+	YlFzI8R4eot6P3Nf11Le+wdkrVSTxtgCamHNjIYw4QORMdy45NlHxVp9AbtAe6NTQ==
+X-Google-Smtp-Source: AGHT+IEJ3rIt+hm3527BfevwvcRNLE+CbaQKjXaAlRRRLeXWlJYoOK5k1FQMQ32BZFyBpLy5XqDtrS+ugxQllWxJwvU=
+X-Received: by 2002:a17:902:d512:b0:240:640a:c564 with SMTP id
+ d9443c01a7336-24469cc0686mr251445ad.3.1755196206738; Thu, 14 Aug 2025
+ 11:30:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814163237.229544-2-thorsten.blum@linux.dev>
+References: <20250807093950.4395-1-yan.y.zhao@intel.com> <20250807094616.4776-1-yan.y.zhao@intel.com>
+ <CAGtprH8a4i-U-4Z6=Bk87FsC2nG+UbTVWB1Sc8oYXMJs7pHUwA@mail.gmail.com>
+In-Reply-To: <CAGtprH8a4i-U-4Z6=Bk87FsC2nG+UbTVWB1Sc8oYXMJs7pHUwA@mail.gmail.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 14 Aug 2025 11:29:54 -0700
+X-Gm-Features: Ac12FXzYb_vWbUpk-pxM17D-jaCI2hnlVjz3bGZCmNK_-ADInzx_yScOkMMIGpI
+Message-ID: <CAGtprH8da6iwwG6u6Z2EpGaqFVWWFJD4o3RUvDYmxDQ9qaYm0w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 22/23] KVM: TDX: Handle Dynamic PAMT on page split
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, x86@kernel.org, rick.p.edgecombe@intel.com, 
+	dave.hansen@intel.com, kas@kernel.org, tabba@google.com, 
+	ackerleytng@google.com, quic_eberman@quicinc.com, michael.roth@amd.com, 
+	david@redhat.com, vbabka@suse.cz, thomas.lendacky@amd.com, pgonda@google.com, 
+	zhiquan1.li@intel.com, fan.du@intel.com, jun.miao@intel.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, xiaoyao.li@intel.com, 
+	binbin.wu@linux.intel.com, chao.p.peng@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 06:32:34PM +0200, Thorsten Blum wrote:
-> strcpy() is deprecated; use strscpy() and memcpy() instead and remove
-> several manual NUL-terminations.
-> 
-> In parse_grep(), we can safely use memcpy() because we already know the
-> length of the source string 'cp' and that it is guaranteed to be
-> NUL-terminated within the first KDB_GREP_STRLEN bytes.
-> 
-> Since the destination buffers 'cmd_cur' and 'cmd_hist[cmd_head]' have
-> the fixed length CMD_BUFLEN, strscpy() automatically determines their
-> size using sizeof() when the size argument is omitted. This makes the
-> explicit size arguments for the existing strscpy() calls unnecessary,
-> remove them.
-> 
-> No functional changes intended.
-> 
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> Changes in v2:
-> - Use memcpy() instead of strscpy() in parse_grep() as suggested by Greg
-> - Compile-tested only so far
-> - Link to v1: https://lore.kernel.org/lkml/20250814120338.219585-2-thorsten.blum@linux.dev/
-> ---
->  kernel/debug/kdb/kdb_main.c | 32 ++++++++++++++------------------
->  1 file changed, 14 insertions(+), 18 deletions(-)
-> 
-> diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-> index 7a4d2d4689a5..048dbbcd91a4 100644
-> --- a/kernel/debug/kdb/kdb_main.c
-> +++ b/kernel/debug/kdb/kdb_main.c
-> @@ -727,14 +727,10 @@ static int kdb_defcmd(int argc, const char **argv)
->  	mp->help = kdb_strdup(argv[3], GFP_KDB);
->  	if (!mp->help)
->  		goto fail_help;
-> -	if (mp->usage[0] == '"') {
-> -		strcpy(mp->usage, argv[2]+1);
-> -		mp->usage[strlen(mp->usage)-1] = '\0';
-> -	}
-> -	if (mp->help[0] == '"') {
-> -		strcpy(mp->help, argv[3]+1);
-> -		mp->help[strlen(mp->help)-1] = '\0';
-> -	}
-> +	if (mp->usage[0] == '"')
-> +		strscpy(mp->usage, argv[2] + 1, strlen(argv[2]) - 1);
-> +	if (mp->help[0] == '"')
-> +		strscpy(mp->help, argv[3] + 1, strlen(argv[3]) - 1);
->  
->  	INIT_LIST_HEAD(&kdb_macro->statements);
->  	defcmd_in_progress = true;
-> @@ -860,7 +856,7 @@ static void parse_grep(const char *str)
->  		kdb_printf("search string too long\n");
->  		return;
->  	}
-> -	strcpy(kdb_grep_string, cp);
-> +	memcpy(kdb_grep_string, cp, len + 1);
->  	kdb_grepping_flag++;
->  	return;
->  }
-> @@ -1076,12 +1072,12 @@ static int handle_ctrl_cmd(char *cmd)
->  		if (cmdptr != cmd_tail)
->  			cmdptr = (cmdptr + KDB_CMD_HISTORY_COUNT - 1) %
->  				 KDB_CMD_HISTORY_COUNT;
-> -		strscpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-> +		strscpy(cmd_cur, cmd_hist[cmdptr]);
+On Wed, Aug 13, 2025 at 10:31=E2=80=AFPM Vishal Annapurve <vannapurve@googl=
+e.com> wrote:
+>
+> On Thu, Aug 7, 2025 at 2:46=E2=80=AFAM Yan Zhao <yan.y.zhao@intel.com> wr=
+ote:
+> >
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > +static struct page *tdx_alloc_pamt_page_split(void *data)
+> > +{
+> > +       struct kvm *kvm =3D data;
+> > +       void *p;
+> > +
+> > +       p =3D kvm_mmu_memory_cache_alloc(&kvm->arch.pamt_page_cache);
+> > +       return virt_to_page(p);
+> > +}
+> > +
+> >  static int tdx_spte_demote_private_spte(struct kvm *kvm, gfn_t gfn,
+> > -                                       enum pg_level level, struct pag=
+e *page)
+> > +                                       enum pg_level level, struct pag=
+e *page,
+> > +                                       kvm_pfn_t pfn_for_gfn)
+> >  {
+> >         int tdx_level =3D pg_level_to_tdx_sept_level(level);
+> > +       hpa_t hpa =3D pfn_to_hpa(pfn_for_gfn);
+> >         struct kvm_tdx *kvm_tdx =3D to_kvm_tdx(kvm);
+> >         gpa_t gpa =3D gfn_to_gpa(gfn);
+> >         u64 err, entry, level_state;
+> > +       LIST_HEAD(pamt_pages);
+> > +
+> > +       tdx_pamt_get(page, PG_LEVEL_4K, tdx_alloc_pamt_page_split, kvm)=
+;
+>
+> This invocation needs a return value check.
+>
+> > +       tdx_alloc_pamt_pages(&pamt_pages, tdx_alloc_pamt_page_split, kv=
+m);
+>
+> IIUC tdx_pamt_get() will result in pamt_pages allocation above, so
+> this step is not needed.
 
-Again, you are doing two different things in this patch, it should be 2
-different patches.
-
-thanks,
-
-greg k-h
+I missed that one allocation is to cover the EPT page and another is
+for HPA ranges backing the GPA mappings. So ignore my rest of the
+comments except about the error handling for tdx_pamt_get() and
+tdx_alloc_pamt_pages() missing in this patch.
 
