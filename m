@@ -1,80 +1,44 @@
-Return-Path: <linux-kernel+bounces-769106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C967DB26A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:52:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6102FB26A3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1FF7A5160
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:51:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9BA1BC5B0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DF632142C;
-	Thu, 14 Aug 2025 14:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97404202C3A;
+	Thu, 14 Aug 2025 14:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BppAGEUt"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754CF192580
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ywh0rKA+"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D711D8E10;
+	Thu, 14 Aug 2025 14:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183079; cv=none; b=YFfG7N9gCgR28dhpfpBogx4ok/BMq4tF0beAab+35pKgqXmffVFfjvum5M5mdvPUeQxTR6K55z+SWuQdv5KUrOlpONasRLtgQJ2hcKmv12gkqh0Qeke+rQhDiDWwJK1v0VfxCFl0afZpFbvsd0mOCTw2dgsGUFYGijH+XJBn7PQ=
+	t=1755183142; cv=none; b=L45R8snJ2+IjCt+vEyeHHxdXAl9qPxZ1eleb73cJl/BtOaWdGbYPitfUBTpU/0dpughLUCJVx0FQqQfEK4jSomInp5dybvEzUI/TU8eAuP3e8dC3cr9gcXotH6ATpsPNnAGxl+32qgp0c22Nnhc9qIJUtnJEcwQzuJg7cyvAw6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183079; c=relaxed/simple;
-	bh=fyP/OLr3beYwssW4o3anr5GsJIQEhtOVd8ngVUetdSQ=;
+	s=arc-20240116; t=1755183142; c=relaxed/simple;
+	bh=A/1Dx+EmXGmCUQMBqX5c4h2Fh46t8yiSdNxyKXOPqLI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jYpLsTsIkuK7wVH3WvgLSz2luHdLeJZjm4grkxlkc4Qt6EwNeuVJhElflEqvmXv2y4GXjGsWc8D/hb6RFfSKm0RU/Aa0ss/6UWdGY4zKxYnia3T5XF1cFLUmsNitx21q9nbo0AwfDav0558BjON/EH5w2qosyvu5xwReC1S+7iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BppAGEUt; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30ccea6239bso907276fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755183075; x=1755787875; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NhLbtz2pbCynkwC1z2ilVubEr1pcqPcdknoxUGu5RA0=;
-        b=BppAGEUtHHtmsexkVgMOslgdxIUReQ8vAOm59cKPcjPnjmIxbidYBt0Q+MCtzFIw2g
-         OPWMj1DaHSHkHPEMlALAA+QCUKxu+iroLsvOY6hiBJQl0+Oesrvspmcj7lSBRWIAwGeW
-         J13NeImus4GIgqybGU+oVoC2AeOKP4T7W/73m8TTsN99Ug9ESQWmWHlVbyVfDQsQ9h68
-         pzizqRKMLmdX4SNIWW0guvzFHnsClC2irrsD9L/yDRMM8MY7p+uNj6OJtQn+IInf5h5j
-         7H2qw/K8S6NNhqdDXpzqN5TG9JgbyUmWoKSQ7AVBKZtr1c48QotX5nXyK9EWNv0lvHZV
-         M+CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755183075; x=1755787875;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NhLbtz2pbCynkwC1z2ilVubEr1pcqPcdknoxUGu5RA0=;
-        b=YRcYI3GydallLdBMhZ6hntX562AxQIGu0IqlETrGwnUBA3eE+hDtbrEOpEhJnaoXJh
-         88JUNxxgqVoLfcUhyiZUiC+rHJT9iA8WlzKZrs+t27VzRGe1aYiSCDNoGLu7rpX/azci
-         no8s4vyPdJ+zMo34rTYi2qE3sbqfqUKfs2/h7vnebTH6kVVF3fteD2IwHdYb8cp59FOS
-         VLg1101gTumQvVENFhN3KwLoFJy2GYmXoRiFDvwMKVsb6eoRyfLdtoAGOS8tT9J7jfJu
-         dSmB3b1hEtJ/WIUXf0OcJl8qv9Tsxwptd8IUzb9Xz9ugIMcnogTmiIjgH+01pwXiI0Oe
-         OIGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGnDaD8qUnRZOFIcCgtG4kz2S1dZvDIZpdVBD906cP84LN9lHz6CrhEmQh8Bci/E7M6+SBBz3JedL+I6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2bU7abwb8VSTWNvL4pk6A+a2dKdOA6zqsG6/MALJQC/7qHMPm
-	mID/tHzQnWUMtaNIy5lnntujcMPxS39OYrdFyHkvPVjfXqJjxKCExGGBSnw5WVHs47E=
-X-Gm-Gg: ASbGncu5745QPZEptwC4rnryuubp3AE/+/+ta6tP2hMRc+Fu6FFm+0OwzrRny+WrvrZ
-	e0mteY0vYt3qO42RBOWqtGXWGxheCsLfhVScZEqjrxVyKTaTy6c0XdP02vfOHkQTR+G23+Sasdq
-	Dfc25pt3w/Ta5AX4tj/jKZseFnkQOLe1vBfA+C4w5eIGD9mq60tRk0AjoBX/LtTQv2+rpWtJ9qy
-	P7/Wq3CF61tQ7YpnYQxIgbKwjyFsscwOfO1lsa/HHAmfmsRHqo7S5J1YsvM5LVqxQMT4vbpcs3o
-	GfYqwgbh0MpJqXmrA1x8lfc7ZKRBVsVYd+tisrqbLNDefVhxo6WPr9XwOLcK5Y9TtxeryH4IDRK
-	BlvZsDCKRyrlROjqjKSVE8WFLVnR0UxhF+MpZwXiud/0OmIEjAoWDF3cmp8EUpKKIyPmzQt3oUe
-	s=
-X-Google-Smtp-Source: AGHT+IGBSpWFh7v66sa0tHjx26XHgGotdF9DhOCF3YJvgTAZk5dQT2EANWxR0b3KAVLYLKWGk2J75w==
-X-Received: by 2002:a05:6871:6a5:b0:30b:582d:8eed with SMTP id 586e51a60fabf-30cd1399dbamr2002074fac.39.1755183075184;
-        Thu, 14 Aug 2025 07:51:15 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:2d9b:959c:3c59:5831? ([2600:8803:e7e4:1d00:2d9b:959c:3c59:5831])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7436f879fabsm1436841a34.13.2025.08.14.07.51.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 07:51:14 -0700 (PDT)
-Message-ID: <b1cc499b-403e-4dcf-9e6a-10d4d43a8b30@baylibre.com>
-Date: Thu, 14 Aug 2025 09:51:13 -0500
+	 In-Reply-To:Content-Type; b=cb0Oc81l8fl8E1HU5rKxYtkNwVpI08TCTD9d2fnmdeazoQB+/sC/eLe49+n9nLtnuptkEZp5Upv86cJSDWXQ6wIYQzz5QLveo9H8vFh2zcJXHRcZZpoyQhfT+XadDrlUaL0ruunohkeHmgOpSma7SW9I8XFMl47sAbpEC3Y2oGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ywh0rKA+; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=yNBxAsOW8EbclsTwkaYfdFQhFlRaLddS/ekeHmhtBUE=;
+	b=Ywh0rKA++bgZFaDeK2MD9ryc4ggoet6HezmoyjzYJenQydha8n6SmzTg6izXDs
+	/NdHaoj+Vyl54Vp+PrAHPv+R4Pv/sTrUWOTqUHjr7hnfI7uj9nmuYe2uvfY/Ensv
+	skIigoXiEH91WE8rGqUZFq1+7OpTUxewigsX+S6XVZOzY=
+Received: from [IPV6:240e:b8f:919b:3100:3980:6173:5059:2d2a] (unknown [])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDnH4zm951o0bLmBw--.49739S2;
+	Thu, 14 Aug 2025 22:51:19 +0800 (CST)
+Message-ID: <215953a5-658d-4cb2-ab02-57be3ac72697@163.com>
+Date: Thu, 14 Aug 2025 22:51:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,71 +46,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: Add BD7910[0,1,2,3]
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1755159847.git.mazziesaccount@gmail.com>
- <8ef78e3cffcfdf99153a3fcf57860771890f1632.1755159847.git.mazziesaccount@gmail.com>
- <175ce750-7f5d-477c-8d18-dd418ba749be@gmail.com>
+Subject: Re: [PATCH v15 0/6] Refactor capability search into common macros
+To: Niklas Schnelle <schnelle@linux.ibm.com>, lpieralisi@kernel.org,
+ kwilczynski@kernel.org, bhelgaas@google.com, helgaas@kernel.org,
+ jingoohan1@gmail.com, mani@kernel.org
+Cc: robh@kernel.org, ilpo.jarvinen@linux.intel.com, gbayer@linux.ibm.com,
+ lukas@wunner.de, arnd@kernel.org, geert@linux-m68k.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250813144529.303548-1-18255117159@163.com>
+ <39e654cfcce848d57671cbd5d7038f2f9667789a.camel@linux.ibm.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <175ce750-7f5d-477c-8d18-dd418ba749be@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <39e654cfcce848d57671cbd5d7038f2f9667789a.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDnH4zm951o0bLmBw--.49739S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ary3CrW5urWxKr1DuF48WFg_yoW8tFyxpa
+	4kA3ZIyayUJFy7C3Wvqa1IvFyYqF92y343J3s8G345XF9I9FyUXryftw4F9F9rGr4293WI
+	vrW2qa48ZFn8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U5nYwUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWxGpo2id9ecyeAAAst
 
-On 8/14/25 4:57 AM, Matti Vaittinen wrote:
-> On 14/08/2025 11:35, Matti Vaittinen wrote:
->> The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
->> ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
->> the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
 
-Is it just a difference in max sample rate? or pinout?
 
->> and, based on the data sheets, they seem identical from the software
->> point-of-view.
+On 2025/8/14 16:32, Niklas Schnelle wrote:
+> On Wed, 2025-08-13 at 22:45 +0800, Hans Zhang wrote:
+>> Dear Maintainers,
 >>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> This patch series addresses long-standing code duplication in PCI
+>> capability discovery logic across the PCI core and controller drivers.
+>> The existing implementation ties capability search to fully initialized
+>> PCI device structures, limiting its usability during early controller
+>> initialization phases where device/bus structures may not yet be
+>> available.
+>>
+>> The primary goal is to decouple capability discovery from PCI device
+>> dependencies by introducing a unified framework using config space
+>> accessor-based macros. This enables:
+>>
+>> 1. Early Capability Discovery: Host controllers (e.g., Cadence, DWC)
+>> can now perform capability searches during pre-initialization stages
+>> using their native config accessors.
+>>
+>> 2. Code Consolidation: Common logic for standard and extended capability
+>> searches is refactored into shared macros (`PCI_FIND_NEXT_CAP` and
+>> `PCI_FIND_NEXT_EXT_CAP`), eliminating redundant implementations.
+>>
+>> 3. Safety and Maintainability: TTL checks are centralized within the
+>> macros to prevent infinite loops, while hardcoded offsets in drivers
+>> are replaced with dynamic discovery, reducing fragility.
+>>
+>> Key improvements include:
+>> - Driver Conversions: DesignWare and Cadence drivers are migrated to
+>>    use the new macros, removing device-specific assumptions and ensuring
+>>    consistent error handling.
+>>
+>> - Enhanced Readability: Magic numbers are replaced with symbolic
+>>    constants, and config space accessors are standardized for clarity.
+>>
+>> - Backward Compatibility: Existing PCI core behavior remains unchanged.
+>>
 >> ---
->>   .../devicetree/bindings/iio/adc/rohm,bd79104.yaml     | 11 ++++++++++-
->>   1 file changed, 10 insertions(+), 1 deletion(-)
+>> Dear Niklas and Gerd,
 >>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
->> index f0a1347ba4db..6a6e6ab4aca3 100644
->> --- a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
->> +++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
->> @@ -14,7 +14,16 @@ description: |
->>     properties:
->>     compatible:
->> -    const: rohm,bd79104
->> +    oneOf:
->> +      - items:
-
-You can drop the items: here since there is only one item.
-
->> +          - enum:
->> +              - rohm,bd79100
->> +              - rohm,bd79101
->> +              - rohm,bd79102
->> +              - rohm,bd79104
->> +      - items:
->> +          - const: rohm,bd79104
->> +          - const: rohm,bd79103
+>> Can you test this series of patches on the s390?
+>>
+>> Thank you very much.
 > 
-> Oops. I believe the order of the compatibles is wrong for the fallback.
-
-Indeed.
-
+> Hi Hans, I gave this series a try on top of v6.17-rc1 on s390
+> and a bunch of PCI devices including the mlx5 cards that Gerd we
+> originally saw issues with. All looks well now. So feel free to
+> add as appropriate:
 > 
->>       reg:
->>       maxItems: 1
+> Tested-by: Niklas Schnelle <schnelle@linux.ibm.com>
 > 
-> Yours,
->     -- Matti
+
+Hi Niklas,
+
+Thank you very much for your test. Let's see what others think.
+
+Best regards,
+Hans
 
 
