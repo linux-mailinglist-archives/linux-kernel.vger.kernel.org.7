@@ -1,223 +1,154 @@
-Return-Path: <linux-kernel+bounces-768926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0198B26802
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:51:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D547B267C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FE61BC1AB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:42:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 691527A7257
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EFE52FE047;
-	Thu, 14 Aug 2025 13:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B919C2FE071;
+	Thu, 14 Aug 2025 13:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DkUqg0cn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kVINtjbi"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A3F126C17
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB80E2FD7C4;
+	Thu, 14 Aug 2025 13:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755178947; cv=none; b=EewwOVwQZZS9vZfiuNp6M/Uep1iXH+3kP+CJdQ/Vyd+miJh9SBi0bI7Ze1E1EEPVpsoDxsNSyXFhcETYhoUckL2nyEcT660xmOfHa9kjKO4hSrz9cTjX8K/r863LI2nLGvaDiMy81wSggptGbnUU6VaDUNzKFEqywvAKvVZQXoY=
+	t=1755178978; cv=none; b=boSG1h3qLik9y7utS2wgZqaa/lfHGHBjYQ6X4uwkp8OGcmgTqwoVnXcQAF60wIQ+8uprLcBJ69WjWihvgYPczQVpArp6kxY8VNYFHbgJmk+13b44CKxk2iiaC/sfw5vmwGcjfGcAabzuhRhGCBdj3lTjRab1d0NUCUJOk1v8Q18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755178947; c=relaxed/simple;
-	bh=zjqv7UfkFa8qCDUj1JmeN4FXpiMbciEZNAsjBTbzNbU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TgjdnYC7zAWzutQVDj98KfBYQNx1HqeLoOYr/33io8xc3XZs5YsVvM53+KPlJierER0n5pKwDqIeABvE1p1xE05kTuyhWRbgGdCdcKYy7Uum63A2w2RS1q4HfyTKgU9XF/YJqmliPLertW3ZisuW1G1//NJC4n+/9hQCgN5HEG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DkUqg0cn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755178944;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L7PBNSto22d4UbHu4vRwWB72/fXAJM6SbOk5sL9uz6g=;
-	b=DkUqg0cnDkCWOgnU817nKEIyMgF4giHp54rK1Vsh9MJSsoPeJMOKXIUPUBnKGjMakG3xfu
-	xb+rnol3uYqrGN0IDYjqZhDGYWavUHbOTntUNLYEGMx6fi7lTTOAGDxgVg93YotoazQCFb
-	wUlw/tqj+W6zPcphvZcVbEUPQxDFXX4=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-21-ABsl0eVCND6jH1gu3EED0w-1; Thu, 14 Aug 2025 09:42:23 -0400
-X-MC-Unique: ABsl0eVCND6jH1gu3EED0w-1
-X-Mimecast-MFC-AGG-ID: ABsl0eVCND6jH1gu3EED0w_1755178943
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e8704b4b01so228706285a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:42:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755178943; x=1755783743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L7PBNSto22d4UbHu4vRwWB72/fXAJM6SbOk5sL9uz6g=;
-        b=mvzsLtEwCfBf1FejlH30grbt9U93S1xJOWOWeL1Wf2N9k/tvh5B3dyH5ooXb3hozOt
-         GhQBlMIWvvP6Wy3K9z+/B5NF6SSAln8wTn8fzuNqC2U2YoindIVSGboZ0MicVWh7hXjv
-         grYOucZ+44kG9Ka+TB5oU7kIVMmimyB8FKsQC+wroEJ+nvzHO9Kcqcax4xJb5lWqfKk2
-         bv0rdjikbKiR02YEtJVJEHSGxO7IUISUAxw/2SNaqVSnDBSX7wNQ0XNTa9Km137k+r6f
-         ZyFBt2qptdpmii9Q73Vj4wWAhbecWe0IVCQGli9h6H7bIoHSzf/z+y5Loyy0F+JsHrxR
-         tuUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJM6NznmyL7MMKQn/Ob1mrcYt/q7tNxU8XiDOtPkKNjvhIm+OHTMiJe5c0f82l/eMBq73qdIpxDzTBdaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqAMG5WTavhEdSNP3QfnvilkiaCNJSOFyqXin3px8Trl7uP3sb
-	lDRT0hfZP9FYytu4T8Gyyy/CnMf8YSM7sI0TZdp1CCp6Sfm+f1fNeSkbE4su9YZJghtwkP7LQA4
-	PcPdYUvvw+6EQHZqsfozvFD9veNpx6VUkBrH5mssUd/kAF4KHphuXzJlnxN6tQv4ktw==
-X-Gm-Gg: ASbGncsuF3z9n88aQ4D1tZ6RIV4GDGWpzgcZ1yTpePgqvwBGjiOz4yNSvC34FtbvZDQ
-	QKEahgRN/nmqyVlAM9sSwWVdCqWIqvtmzaqAtoXhSWdtfLwstrCuxAjZvSzyjeJ6WIAUz2BrNIk
-	m/Q/6fF8OV7fGlTnLdYRJDx9vf73c3JTH1/Du6A27BDyPxqUmUmLNk8yFUc6resH/5hSm7354wo
-	AydCT+joFiqI2Mi5keLfv3rrIGBU49zEu+/Qo7yiKbJjo2ZeopCwxQ8JaidT69JatwD9NHnGhjw
-	rQc9+s7tukhpdQ204YLzr5aZn0sZe+4tbdMrfj3L6tEv7+eHO+X5PhH3xNQ98wj9dbyQXQ==
-X-Received: by 2002:a05:622a:5e0b:b0:4af:1535:6b53 with SMTP id d75a77b69052e-4b11575fc31mr7844771cf.54.1755178942762;
-        Thu, 14 Aug 2025 06:42:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHUUko9D9muIZooHvwqxneJzEmbMuKpU9esY9TSRzoqLmOYgEw5i+o/jT3lTpx4LQ/xxEEnA==
-X-Received: by 2002:a05:622a:5e0b:b0:4af:1535:6b53 with SMTP id d75a77b69052e-4b11575fc31mr7844451cf.54.1755178942267;
-        Thu, 14 Aug 2025 06:42:22 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.57.62.225])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b06741bf77sm152084081cf.34.2025.08.14.06.42.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 06:42:21 -0700 (PDT)
-Date: Thu, 14 Aug 2025 15:42:15 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Yuri Andriaccio <yurand2000@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: Re: [RFC PATCH v2 12/25] sched/rt: Add {alloc/free}_rt_sched_group
- and dl_server specific functions
-Message-ID: <aJ3nt5KKZmTX8Mt_@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250731105543.40832-1-yurand2000@gmail.com>
- <20250731105543.40832-13-yurand2000@gmail.com>
+	s=arc-20240116; t=1755178978; c=relaxed/simple;
+	bh=NxAH7pfdeVhvM9KogxMAO/rVTXgioDohPhvXnvPf85Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=MIkNyVvAyYOr7A7ZUXLHvM/dae5gh+WIG1mUHEotLcUHag9P5eu1kYmPyhDEX3oAga0FCWvPqMNWllxaQuuF4CXLD3RwHG0UlGJqX5nZ/cA1hkLi9VnK0y86E6aAwH4lNilApZsV2mjnV0FtpWu/Ixw0OLND/H+ZRuDDXUb+JIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kVINtjbi; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1755178956; x=1755783756; i=markus.elfring@web.de;
+	bh=NxAH7pfdeVhvM9KogxMAO/rVTXgioDohPhvXnvPf85Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=kVINtjbidBNj8F0/VWB3HQbhGtpLc1IfsbTNjRebdJ4jb2YJ9Srekk53BTF1a1Rq
+	 CxxSba3K7X8QVkeakNu8ttd5yZAGdUDW/Tf+rPlufCs35EwpUGfsElw37S8ia3xWn
+	 wCQNBXbCT0/eRZnFiVitofMR/TM8yOT/s5Pggd9faY7D4PNS5AsoX9wbtceKkATAv
+	 C+ttqejqi+iI0hM5B7bJmht2t3JEllq0pnF1vdUuvGJPwt+Ww22zRPA6I2TpPeucb
+	 3Z9Hsb2x0ucjaPCj0vah51inMIJUARnR6aZzW28ziP0VRkilD/3y0CT7XgNRPazWO
+	 COTWRFDGZeIt4zKX6w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.224]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZB07-1v8Bgr0zMf-00Vn5B; Thu, 14
+ Aug 2025 15:42:36 +0200
+Message-ID: <73577de6-3fc1-456b-90b5-3fa69a42366e@web.de>
+Date: Thu, 14 Aug 2025 15:42:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731105543.40832-13-yurand2000@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: Qianfeng Rong <rongqianfeng@vivo.com>, linux-media@vger.kernel.org,
+ linux-staging@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans de Goede <hansg@kernel.org>, Hans Verkuil <hverkuil@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <20250814133032.236533-1-rongqianfeng@vivo.com>
+Subject: Re: [PATCH] media: atomisp: Use vmemdup_user() instead of open-coding
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250814133032.236533-1-rongqianfeng@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:YRsnSl31eeIhch4r06I4QkoiqETqK7OYyAvrHi8sYbYvWh7IgB5
+ pDdZF/5iavYVrJM5QbWYqJTKH/xR8qmHNLZ8JT05c5XuAItVB3QeggDbdU7HYeumbNlNxVN
+ soxOzT6Qxmu2y5GjO++9/gcFAm5zCLfTBxYXdeyd1hv+K0mOYTv+BHyR5W3ImZRLiM0K6X6
+ U81fmKWwDTBI56UrVhwKg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:x0N7f8F7Fvw=;f/O0YHZp7Fnnpt48W8fK19b//KA
+ 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
+ 54/ZZIL0//9C03Eu6GxnxCAE8//Z
 
-Hi!
+> Use vmemdup_user() to get a copy of the user buffer in
+> atomisp_v4l2_framebuffer_to_css_frame().
 
-On 31/07/25 12:55, Yuri Andriaccio wrote:
-> From: luca abeni <luca.abeni@santannapisa.it>
-> 
-> Add allocation and deallocation code for rt-cgroups. Add rt dl_server's specific
-> functions that pick the next eligible task to run.
-> 
-> Co-developed-by: Alessio Balsini <a.balsini@sssup.it>
-> Signed-off-by: Alessio Balsini <a.balsini@sssup.it>
-> Co-developed-by: Andrea Parri <parri.andrea@gmail.com>
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> Co-developed-by: Yuri Andriaccio <yurand2000@gmail.com>
-> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
-> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
-> ---
->  kernel/sched/rt.c | 107 ++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 104 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 38178003184..9c4ac6875a2 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -93,8 +93,39 @@ void unregister_rt_sched_group(struct task_group *tg)
->  
->  void free_rt_sched_group(struct task_group *tg)
->  {
-> +	int i;
-> +
->  	if (!rt_group_sched_enabled())
->  		return;
-> +
-> +	for_each_possible_cpu(i) {
-> +		if (tg->dl_se) {
-> +			unsigned long flags;
-> +
-> +			/*
-> +			 * Since the dl timer is going to be cancelled,
-> +			 * we risk to never decrease the running bw...
-> +			 * Fix this issue by changing the group runtime
-> +			 * to 0 immediately before freeing it.
-> +			 */
-> +			dl_init_tg(tg->dl_se[i], 0, tg->dl_se[i]->dl_period);
-> +			raw_spin_rq_lock_irqsave(cpu_rq(i), flags);
-> +			BUG_ON(tg->rt_rq[i]->rt_nr_running);
-> +			raw_spin_rq_unlock_irqrestore(cpu_rq(i), flags);
+Was an information source (like the following) reused here?
+https://elixir.bootlin.com/linux/v6.16/source/scripts/coccinelle/api/memdup_user.cocci#L2
 
-So here we always call dl_init_tg for cpu 0, is it correct?
-
-Also I wonder if the lock shouldn't cover both init and subsequent
-check.
-
-> +
-> +			hrtimer_cancel(&tg->dl_se[i]->dl_timer);
-> +			kfree(tg->dl_se[i]);
-> +		}
-> +		if (tg->rt_rq) {
-> +			struct rq *served_rq;
-> +
-> +			served_rq = container_of(tg->rt_rq[i], struct rq, rt);
-> +			kfree(served_rq);
-> +		}
-> +	}
-> +
-> +	kfree(tg->rt_rq);
-> +	kfree(tg->dl_se);
->  }
->  
->  void init_tg_rt_entry(struct task_group *tg, struct rq *served_rq,
-> @@ -109,12 +140,77 @@ void init_tg_rt_entry(struct task_group *tg, struct rq *served_rq,
->  	tg->dl_se[cpu] = dl_se;
->  }
->  
-> +static bool rt_server_has_tasks(struct sched_dl_entity *dl_se)
-> +{
-> +	return !!dl_se->my_q->rt.rt_nr_running;
-> +}
-> +
-> +static struct task_struct *_pick_next_task_rt(struct rt_rq *rt_rq);
-> +static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, bool first);
-> +static struct task_struct *rt_server_pick(struct sched_dl_entity *dl_se)
-> +{
-> +	struct rt_rq *rt_rq = &dl_se->my_q->rt;
-> +	struct rq *rq = rq_of_rt_rq(rt_rq);
-> +	struct task_struct *p;
-> +
-> +	if (dl_se->my_q->rt.rt_nr_running == 0)
-> +		return NULL;
-> +
-> +	p = _pick_next_task_rt(rt_rq);
-> +	set_next_task_rt(rq, p, true);
-> +
-> +	return p;
-> +}
-> +
->  int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent)
->  {
-> +	struct rq *s_rq;
-> +	struct sched_dl_entity *dl_se;
-> +	int i;
-> +
->  	if (!rt_group_sched_enabled())
->  		return 1;
->  
-> +	tg->rt_rq = kcalloc(nr_cpu_ids, sizeof(struct rt_rq *), GFP_KERNEL);
-> +	if (!tg->rt_rq)
-> +		goto err;
-> +	tg->dl_se = kcalloc(nr_cpu_ids, sizeof(dl_se), GFP_KERNEL);
-> +	if (!tg->dl_se)
-> +		goto err;
-
-Don't we need to free the array allocated above if we fail here?
-
-Thanks,
-Juri
-
+Regards,
+Markus
 
