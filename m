@@ -1,175 +1,84 @@
-Return-Path: <linux-kernel+bounces-768218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79F2B25E5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:08:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32809B25E66
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0383A4420
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6803117BCFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB972E62CB;
-	Thu, 14 Aug 2025 08:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8A02E716D;
+	Thu, 14 Aug 2025 08:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBWkJxXa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3DR2zks"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E38D27A12B;
-	Thu, 14 Aug 2025 08:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C815927A12B;
+	Thu, 14 Aug 2025 08:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755158816; cv=none; b=fQhlQNOI5PE+CDve6sxPVJgcPYoPxjKwG+vGQcBf64XKJhR8xwZVWyCWTpRVljTlnTZO5IOxPlWamvZjRVRQgf98PGiW8toZiFZr4Zw4quCW5VneW7XQOEjAEqoIAgJes5QimgLZoxCtK2vYzsrGD9qzPclLv2Dpgk4/GvM9/Fk=
+	t=1755158830; cv=none; b=YzNbYf6NKGAfk6+GCbZRWeT/TyZltLpKEXp4JofYpq05P+OQ6alPafhbfp0RpQgQukVUfbrfOLVhQO/p9VoqTnU6ObLjtqgXuMoy+KYQw8/KZJRaiZQ9TUki2DEV5hI07Ge47zW+78uexJaLZ6GXuZ0q6UKyO0xQFK7ZcFkCbGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755158816; c=relaxed/simple;
-	bh=cICgknm5aE0tdDgyfidlUK1Hbu9WfKnqPKmWMA3QDyk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=VbVP5vhWZjhVKUaqmT70D5pURFlTO4Rnmsx9/QSXj6QZryWxTZdPjuWOn9PQXy8tweosrAdtresWdvGm+zYcpErL82fLLlcJmH0tfbW15D856hAkDEEdXoSuplnRYEQ8V/bjWzF+QdHSZO40eWIJeIPi1nmFSx2BCWJdbpjfElA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBWkJxXa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81B7FC4CEEF;
-	Thu, 14 Aug 2025 08:06:52 +0000 (UTC)
+	s=arc-20240116; t=1755158830; c=relaxed/simple;
+	bh=Il0WWMV2+0zJaBAEupvI9iKf2fQYXz9ojo2+2AmZbuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zw0kvy+4z/aw6RnBYBgxmPbLW8uADaqbYlF844za6bAVRYPiRHP6jErwb+mO8/QLRwvJ3WxseDmrfr+h5kyZrNY/fvOaaOicCGUf91J7W5JaWGoLAMfxGrU2yaApRNw6unbv5Amv5lHQdIAgsnA7sN0Q/QIojKwMtnLg3bZciH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j3DR2zks; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0717C4CEEF;
+	Thu, 14 Aug 2025 08:07:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755158815;
-	bh=cICgknm5aE0tdDgyfidlUK1Hbu9WfKnqPKmWMA3QDyk=;
-	h=Date:Subject:From:To:References:In-Reply-To:From;
-	b=WBWkJxXaYlnmb0wwTZrD5h2yYfkZzlw31h6V8C1NZJfblLkryaWBiS0ZPuZ4bn4Md
-	 g7rmnBokkG6JpC4V4d/QUmjf8q3zX091wSXtHCCuhF1xNDzoAnPcM6i7FW7zTxPD4e
-	 INRSopUL17efivYxJq2dMqgyqQ17yHn7qPS0TAuMsViWrDDZuqyoO3woMqgInIIUz+
-	 8g1msaKFsLWAhg9TKEeh3D5GUMxcKZq8TjEVrXjpxr9YeLB/1s2lmIPPtcMYc/lCqK
-	 8ontYLD0tKRLpdyiUfgyxk6wDqtG4xsbEmFk/0SQYxa2mjRhEx9pUinTjt7sUonjWt
-	 VnBM52ufi7cGA==
+	s=k20201202; t=1755158830;
+	bh=Il0WWMV2+0zJaBAEupvI9iKf2fQYXz9ojo2+2AmZbuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j3DR2zks9xtxCntatW5lSYPxgP3Qlp0t4bOziW4V9M3k4O5IbOD4/cOsjXnnf/1Hu
+	 ZWz/bhDjVzNMEWunoYwi+FVofjpp2keY69uAcuEdHWlE0+Pz9i0pm47Zj0uI3je6yM
+	 l90Ej5BLJBzwwYftvZKa4CCTKvJiD7JcANEC1/Qk80nRnGQ6JPmhB7koyVvKJiHGq2
+	 o+O+X2ddQxyb2LWf/yOsOeE1pXA+Oo3eCjTQBXUMTHxniHHNq8a1UogQPJto/s1N/K
+	 sJdH9eB5f7+Iji1SPryPQSBZmZ2o6u4LyaIGC5r5moD+rswYjP/t8TPXEQxo2kBmGf
+	 ihYhJcqjZHifQ==
+Date: Thu, 14 Aug 2025 10:07:07 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] dt-bindings: clock: qcom: Document the Glymur SoC
+ TCSR Clock Controller
+Message-ID: <20250814-wakeful-pronghorn-of-symmetry-a1ca28@kuoka>
+References: <20250813-glymur-clock-controller-v4-v4-0-a408b390b22c@oss.qualcomm.com>
+ <20250813-glymur-clock-controller-v4-v4-2-a408b390b22c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 14 Aug 2025 10:06:50 +0200
-Message-Id: <DC1ZVE8AM8GJ.3UZBQBW7HOFE3@kernel.org>
-Subject: Re: [PATCH v9] rust: transmute: Add methods for FromBytes trait
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Christian S. Lima" <christiansantoslima21@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <benno.lossin@proton.me>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "Danilo Krummrich" <dakr@kernel.org>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <~lkcamp/patches@lists.sr.ht>,
- <richard120310@gmail.com>
-X-Mailer: aerc 0.20.1
-References: <20250811213851.65644-1-christiansantoslima21@gmail.com>
-In-Reply-To: <20250811213851.65644-1-christiansantoslima21@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813-glymur-clock-controller-v4-v4-2-a408b390b22c@oss.qualcomm.com>
 
-On Mon Aug 11, 2025 at 11:38 PM CEST, Christian S. Lima wrote:
-> @@ -9,27 +11,136 @@
->  ///
->  /// It's okay for the type to have padding, as initializing those bytes =
-has no effect.
->  ///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// use kernel::transmute::FromBytes;
-> +///
-> +/// let foo =3D [1, 2, 3, 4];
-> +///
-> +/// let result =3D u32::from_bytes(&foo)?;
-> +///
-> +/// #[cfg(target_endian =3D "little")]
-> +/// assert_eq!(*result, 0x4030201);
-> +///
-> +/// #[cfg(target_endian =3D "big")]
-> +/// assert_eq!(*result, 0x1020304);
-> +/// ```
-> +///
-> +/// # Safety
-> +///
-> +/// All bit-patterns must be valid for this type. This type must not hav=
-e interior mutability.
-> +pub unsafe trait FromBytes {
-> +    /// Converts a slice of bytes to a reference to `Self` when the refe=
-rence
-> +    /// is properly aligned and the size of slice is equal to that of `T=
-`
-> +    /// and is different from zero. In another case, it will return
-> +    ///`None`.
+On Wed, Aug 13, 2025 at 01:25:18PM +0530, Taniya Das wrote:
+> The Glymur SoC TCSR block provides CLKREF clocks for EDP, PCIe, and USB. Add
+> this to the TCSR clock controller binding together with identifiers for
+> the clocks.
+> 
+> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,sm8550-tcsr.yaml           |  3 +++
+>  include/dt-bindings/clock/qcom,glymur-tcsr.h       | 24 ++++++++++++++++++++++
+>  2 files changed, 27 insertions(+)
 
-The first line in any documentation should be a single, short sentence.
-Also separate it from the contents by a newline, otherwise markdown will
-render it as a single paragraph.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> +    fn from_bytes(bytes: &[u8]) -> Option<&Self>;
-> +
-> +    /// Converts a mutable slice of bytes to a reference to `Self`
-> +    /// when the reference is properly aligned and the size of slice
-> +    /// is equal to that of `T` and is different from zero. In another
-> +    /// case, it will return `None`.
-> +    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
-> +    where
-> +        Self: AsBytes;
-> +}
-
-> +
-> +// SAFETY: If all bit patterns are acceptable for individual values in a=
-n array, then all bit
-> +// patterns are also acceptable for arrays of that type.
-> +unsafe impl<T: FromBytes> FromBytes for [T] {
-> +    fn from_bytes(bytes: &[u8]) -> Option<&Self> {
-> +        let size =3D ::core::mem::size_of::<T>();
-> +        build_assert!(size =3D=3D 0, "Can't create a slice with zero ele=
-ments");
-
-This message is wrong, it sounds as if the size of `bytes` was zero and
-you can definitely create a slice with zero elements.
-
-> +        let slice_ptr =3D bytes.as_ptr().cast::<T>();
-> +        if bytes.len() % size =3D=3D 0 && slice_ptr.is_aligned() {
-> +            // SAFETY: Since the number of elements is different from
-> +            // zero and the pointer is aligned, the slice is valid.
-
-Please take a look at the documentation of `from_raw_parts`, there are
-several bullet points of safety requirements. Please provide a
-justification for each one and also place them in a bullet point list.
-
----
-Cheers,
-Benno
-
-> +            unsafe { Some(::core::slice::from_raw_parts(slice_ptr, bytes=
-.len() / size)) }
-> +        } else {
-> +            None
-> +        }
-> +    }
-> +
-> +    fn from_bytes_mut(bytes: &mut [u8]) -> Option<&mut Self>
-> +    where
-> +        Self: AsBytes,
-> +    {
-> +        let size =3D ::core::mem::size_of::<T>();
-> +        build_assert!(size =3D=3D 0, "Can't create a slice with zero ele=
-ments");
-> +        let slice_ptr =3D bytes.as_mut_ptr().cast::<T>();
-> +        if bytes.len() % size =3D=3D 0 && slice_ptr.is_aligned() {
-> +            // SAFETY: Since the number of elements is different from
-> +            // zero and the pointer is aligned, the slice is valid.
-> +            unsafe {
-> +                Some(::core::slice::from_raw_parts_mut(
-> +                    slice_ptr,
-> +                    bytes.len() / size,
-> +                ))
-> +            }
-> +        } else {
-> +            None
-> +        }
-> +    }
->  }
-> =20
->  /// Types that can be viewed as an immutable slice of initialized bytes.
+Best regards,
+Krzysztof
 
 
