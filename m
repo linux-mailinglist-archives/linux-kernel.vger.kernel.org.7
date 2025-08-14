@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-768587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB47B262CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:33:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3769AB262E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BB7FB65BFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:31:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1AAD3B0D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813F22D8364;
-	Thu, 14 Aug 2025 10:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C5A2F39BE;
+	Thu, 14 Aug 2025 10:32:48 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B9B31812D
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EE92F0C4A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755167565; cv=none; b=G9wFFLlXy6G7IUbtihC0ztsxA8HBjs0pBtHfOEY3XPBbvpJaP323ejqqJ1ryYY95bwIIu0Og8bw1SD/J5b17awFkNykIJgCslTrrRQGM4G+Z7QcRXaUbYi0WRXyq/eNsMRFqSsjIa6LPTlOhrAb2swu5PmpSvM7/07Ae4G4e+Nw=
+	t=1755167567; cv=none; b=tZGSQCVvJQmG+0yy/JK5cIt4wRgLJ7QNuJXyUpncLKUVKqnz1LXbAIC5c2Il4DzKmgV4Zx3vrIdI9cNZYVkN5nWcg3JZYoUqoKQnkysAfj9k2Cz9ckWkHfgXs+2d3vKs3lP64iHsoupJX3mWvaBTAaWLjJRJ37pN7INldH2yvy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755167565; c=relaxed/simple;
-	bh=IJ2ngFHMK6odzXZAC5T0LKD77jbBDIgceYrTtjwERts=;
+	s=arc-20240116; t=1755167567; c=relaxed/simple;
+	bh=QimykCrwB6ZAsWvsWPV6V2st17u9CiEZrkUa85W44qE=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cW3tCcOtMISG9BUhkv3zkZeDpoIqmLbZiL1NJiMmYoWODw8rLCkXOT02nIOxlaH5OPrJYOQ+cK7A0PcheaAtyzUMpMCbPHQDEnW5c/7paIm0SiwunWlo1lfEijbbk8HKzjc75E/vqcTTejoD9gfVoBNAFCQekMGyEzCPZtLpBvw=
+	 Content-Type:MIME-Version; b=FHOUTtQXzLlkWg+mFnx4DNxHUwJI6Xk7ZfVSdT7D/22wPHe8rd/hmZ6Ys9NDHn9Z7trcExK7A0PoZha0ols+l2MVLUeXGvpHbXanRhYSqWSsFUOQNF/iT4lM3Z7UexsPQxH3Gv/JaCmIQX6RPWqdhrUTyELydvvAdLBJpII9+W4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,31 +32,29 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVG4-0007B6-E6; Thu, 14 Aug 2025 12:32:32 +0200
+	id 1umVGA-0007By-LC; Thu, 14 Aug 2025 12:32:38 +0200
 Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVG3-000Er4-0J;
-	Thu, 14 Aug 2025 12:32:31 +0200
+	id 1umVGA-000Er8-1T;
+	Thu, 14 Aug 2025 12:32:38 +0200
 Received: from pza by lupine with local (Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVG3-000GLn-03;
-	Thu, 14 Aug 2025 12:32:31 +0200
-Message-ID: <7939caa888e91270876c9f0616ce92b4651b4e9e.camel@pengutronix.de>
-Subject: Re: [PATCH v5 1/2] dt-bindings: reset: eswin: Documentation for
- eic7700 SoC
+	id 1umVG5-000GML-16;
+	Thu, 14 Aug 2025 12:32:33 +0200
+Message-ID: <1c6b0262f0043e65592501d88221ec2a69e9d641.camel@pengutronix.de>
+Subject: Re: [PATCH v5 2/2] reset: eswin: Add eic7700 reset driver
 From: Philipp Zabel <p.zabel@pengutronix.de>
 To: dongxuyang@eswincomputing.com, robh@kernel.org, krzk+dt@kernel.org, 
  conor+dt@kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com, 
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com, Krzysztof
-	Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Thu, 14 Aug 2025 12:32:30 +0200
-In-Reply-To: <20250725093400.724-1-dongxuyang@eswincomputing.com>
+	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Date: Thu, 14 Aug 2025 12:32:33 +0200
+In-Reply-To: <20250725093436.779-1-dongxuyang@eswincomputing.com>
 References: <20250725093249.669-1-dongxuyang@eswincomputing.com>
-	 <20250725093400.724-1-dongxuyang@eswincomputing.com>
+	 <20250725093436.779-1-dongxuyang@eswincomputing.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4-2 
@@ -74,50 +72,34 @@ X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 On Fr, 2025-07-25 at 17:34 +0800, dongxuyang@eswincomputing.com wrote:
 > From: Xuyang Dong <dongxuyang@eswincomputing.com>
 >=20
-> Add device tree binding documentation and header file for the ESWIN
-> eic7700 reset controller module.
+> Add support for reset controller in eic7700 series chips.
+> Provide functionality for asserting and deasserting resets
+> on the chip.
 >=20
 > Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
 > Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../bindings/reset/eswin,eic7700-reset.yaml   |  42 +++
->  .../dt-bindings/reset/eswin,eic7700-reset.h   | 298 ++++++++++++++++++
->  2 files changed, 340 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/eswin,eic7700=
--reset.yaml
->  create mode 100644 include/dt-bindings/reset/eswin,eic7700-reset.h
+>  drivers/reset/Kconfig         |  10 +
+>  drivers/reset/Makefile        |   1 +
+>  drivers/reset/reset-eic7700.c | 432 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 443 insertions(+)
+>  create mode 100644 drivers/reset/reset-eic7700.c
 >=20
-> diff --git a/Documentation/devicetree/bindings/reset/eswin,eic7700-reset.=
-yaml b/Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
-> new file mode 100644
-> index 000000000000..d05a0531dce3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/reset/eswin,eic7700-reset.yaml
-> @@ -0,0 +1,42 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/reset/eswin,eic7700-reset.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ESWIN EIC7700 SoC reset controller
-> +
-> +maintainers:
-> +  - Yifeng Huang <huangyifeng@eswincomputing.com>
-> +  - Xuyang Dong <dongxuyang@eswincomputing.com>
-> +
-> +description:
-> +  The system reset controller can be used to reset various peripheral
-> +  controllers in ESWIN eic7700 SoC.
-> +
-> +properties:
-> +  compatible:
-> +    const: eswin,eic7700-reset
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index d85be5899da6..82f829f4c9f0 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -66,6 +66,16 @@ config RESET_BRCMSTB_RESCAL
+>  	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
+>  	  BCM7216.
+>=20
+> +config RESET_EIC7700
+> +	bool "Reset controller driver for ESWIN SoCs"
+> +	depends on ARCH_ESWIN || COMPILE_TEST
 
 Undeclared dependency on [1].
 
-[1] https://lore.kernel.org/all/20250616112316.3833343-4-pinkesh.vaghela@ei=
+[1] https://lore.kernel.org/all/20250616112316.3833343-3-pinkesh.vaghela@ei=
 nfochips.com/
 
 regards
