@@ -1,340 +1,356 @@
-Return-Path: <linux-kernel+bounces-768938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7D6B26827
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:54:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7E4B26841
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739A156699B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:49:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF9D9E0519
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD138301029;
-	Thu, 14 Aug 2025 13:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B2F2FE04B;
+	Thu, 14 Aug 2025 13:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l+XoEblV"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2089.outbound.protection.outlook.com [40.107.100.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4s69L1v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AC01E9B2A;
-	Thu, 14 Aug 2025 13:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179363; cv=fail; b=kxVnnTb/XLRabKhGSXHjwJMomWwU7nKYDapPxh/mzsiRINxPmb+5IGtperglwfSqKTX92mdtfWyyDKB4MhypALsoLEvMov0cNuPsp1Ziq/2VkutBI/VktrxhbjDTaECU2SZ8j8Zz3rOUWli977aPWRLTAvIZTmQnJkKw46MMkkU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179363; c=relaxed/simple;
-	bh=0fqLoyDJLpjW10Nwqs0M4QPwUMc3fvQ9avvjueT5Q0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lI/uzJG7pGW4Bwqfs9A8heEXkeBKFblJNu69/pNm3sJmybXCi47trd9GQpNx1R2Uoz0WJaEaKexDlUN7A3X8QKT/Noz9+AZY7cQxS6FnSbOmVh5DfquxecYDr9JjjXRqtheJMme0LxNZoVz3D+859wwNd09nKP8hM4RAlST9J7U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l+XoEblV; arc=fail smtp.client-ip=40.107.100.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PHvQaS4/9nzicodu9HpAKZfee35JO13t9ramBUIvRXBIT6Ru4jgaUDdaakalRlkwZ2KwJdGY5xZ0AUzOE1SmbPnt/XejLzGWnjfYPdilxiRQ0Pz1Qe8TLv3RSQohn3WcROfSQ2Bfkntg4Xn4r+mwfCWW6YsS9Z5rYruaWfU48sa4rU+mH7bxmiyBCxiaGnW0oi3M2CU82rq3s1LXMXrgsD5OrdKEru5ovQJBr1nZ1zQZz9FH0gQaJrtPULSiMCTSRh8zM2EXr7OcKxYCVFYcscelrdbmap38gXGpvB9MzCCWEk2ThT9LpPZNbkpx2HahX1P3fBWNwFDjv6aYPHPH1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LqmoVPhcyiGlfQ2STdBHMfbirQT5BpD8Nh67k+N+aKw=;
- b=ea7V2zfVDTOk2BsMDBBh9nq63jGGRLfa0Jwh5WeSeL5Cp5OYGCxS3WyNFOGjPpEqkQTeXRBzI/MJKnJmlJHXAYfsaqMj3qIitWyBiNyekSBpYbtd4B27whPOA65ipON3zeFCfThpfSJDtbLg9lb2J8sXW4p+1IOedC/EkC8DDXZ7L6/w13QMhgevWmrp0vdYpa8llqUPZ0yBIVzq2o2NcGz+WdBv6hu30KMcHEEZV2HL0nRRUTMjlN4ZkFsj/5zFB2DkcURFqQBtuo846ycMhKl8Zz28ceZEZ+jBTpHymzaQcPOG3CzhcpgMtZ8Ri+Re8AUI0YapWVuMyxnikF7qgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LqmoVPhcyiGlfQ2STdBHMfbirQT5BpD8Nh67k+N+aKw=;
- b=l+XoEblVG6KTH5a6RNma6dnpL9ENtvQNIEM9aN9ar+vxnquvmdJKq/oKwEBws8byhohEVwaGE03r3Dt4g1NdBQNYzXjBVBBfDDOrah7YqnhGFXB0hsCWo2tYKucqSM6ywblHOf6NMlbJB7iu/IPmD6mjwQGY2Pyunm+IYRA6vnixEougQVx4GJrCt7XGUrBWkh+0CqSyEcfi/TmeyTAtFtzRfYYDf809EWAk6cUJmPi3Qlxp84Aw/sspl0RH2I3lDEAORBcxYErt9mhm69Nlb6931OR1f9eiDxQEvM9ew6tsSEZZp3sVipV+gsT8toKF3t4b66/sseDvydVcSa1Z6w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS0PR12MB7509.namprd12.prod.outlook.com (2603:10b6:8:137::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Thu, 14 Aug
- 2025 13:49:19 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9031.012; Thu, 14 Aug 2025
- 13:49:19 +0000
-Date: Thu, 14 Aug 2025 10:49:17 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com
-Subject: Re: [PATCH v3 16/30] liveupdate: luo_ioctl: add userpsace interface
-Message-ID: <20250814134917.GE802098@nvidia.com>
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-17-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807014442.3829950-17-pasha.tatashin@soleen.com>
-X-ClientProxiedBy: YT3PR01CA0026.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:86::14) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249F52FE064;
+	Thu, 14 Aug 2025 13:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755179561; cv=none; b=BvIBaIad0Dh6Dd0ZE0m7lFbqGNoeCyNPrvnuRunNToc8lvxAFGP2/6rVKYDnlmaZ76T8zzyWh6sEtN/skzKjjP1E9yr2SIBxjTIX4UkxKirHXc//u+IQowiI64P+prfTkrdApklk+Oyakb3Yns7b/Ll6qQhYvOLXEKDN6OiiiEc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755179561; c=relaxed/simple;
+	bh=YVEL4qHwQgtfbHG+I3WiGlyaT3HMVv50NMOTP8/4a9U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F2WOmNFgED8eIJGdtcP2FEOk/5Ru8IsADgdmWoNp5lvkZ6ajMx9e3+cUvAEj79pcsC7nXwVq0fw7sIYD7v1dsKwd+m5KtwJQpzaeqmvUOynw7ZcWbMw9m7tIjizq6/tguO06zC/hr/GcbEjf1Rm/18zynXl1TWWxMCyuqbAcp/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4s69L1v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E80EC4CEED;
+	Thu, 14 Aug 2025 13:52:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755179560;
+	bh=YVEL4qHwQgtfbHG+I3WiGlyaT3HMVv50NMOTP8/4a9U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=n4s69L1vyfn02IWPi3qjxNuzZiiTe6HbC5SpHqwwZRZovypprfjb3V54PPxZHRjEh
+	 yye9ad09dvbTaNYJyohgDJBSfnb42xo8WjqVqMjWfKrAhPU5Ezbwa4LqcbWAGqPICx
+	 bVn0b/VL6RkbQijQ4dEedlg2li+pLzWBZL7cdjW8ylhVdR67fdPO0vmFEa3amnhZaq
+	 rxNUxGuD1M+MqUFmqCD1Z0Jkpp8E9Q/6Rm9lvI+zLwybxbJ11O6UdVvlxylko9VrLL
+	 35QiMbP3DELeBk1Mj1P6ThCN60wA1Ij0rEfjgbchRn4WiIGAaz+xlVwDnOfA2HXsjv
+	 SwZV1Q2GHUDJA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Scott Wood <oss@buserror.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] dt-bindings: powerpc: Drop duplicate fsl/mpic.txt
+Date: Thu, 14 Aug 2025 08:51:56 -0500
+Message-ID: <20250814135157.2747346-2-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB7509:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2528fbdd-1513-4c5e-eaeb-08dddb395d9f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?h4o4EUIL6jNJi94sJUT8sZRCqzk+a027Po6lGbnVi1XUcDgferYFzXcYPHza?=
- =?us-ascii?Q?0ZWF42j0RhBK4EwfzKS6vyLGgXsxjEyJOukhlVQDUEFxkvXIaqwKaDPEMW6t?=
- =?us-ascii?Q?KNUZaOi0TV6FdsX2ycdXv5tVPzg1q9gWonZ+zEwT4pPLe7HH5uOrs3OI2uSf?=
- =?us-ascii?Q?JMHFjoWYjyppA9kSWCPJ2goN57fZiVrfhjFfgoSHVM4yKVoc4AdbrKcu8M39?=
- =?us-ascii?Q?fQCXQAQn+Gdgy6gF6vIaK8Fc1KRG5gJONUzWIunlQJue4C9fU4bpxtJ8je8P?=
- =?us-ascii?Q?5AhSckVNzgJO4QKMt+BSRG73QMctSgoHv8D5xgcLlrLw9YcGet3IY5JfMHn8?=
- =?us-ascii?Q?mCtrCBRdGTgQqSdNZHHQuLe95EpMJLWnYlyfWXXZmszhoQwNre1yRtzcdDSP?=
- =?us-ascii?Q?3l6d3L0YoJO9ajxmN3oYcMRB0V08fEnLLKC+tUIg2xwC8nEW1OqUJvO9OKAp?=
- =?us-ascii?Q?ZahiO1/tBPrzPsgWyxmCejZKsTz4k1Il3Gc1Krs9opwI0Xt9vBUOQOvQW8x4?=
- =?us-ascii?Q?q68cZurNykeAPPw4UMy4TNCf+Z2Kk7xXTNMK5ZgfVcuc+NJfxDjcdFsNAo2d?=
- =?us-ascii?Q?XBReCoedxDHqqdmPEsil/8qAkza+YZUk1ZawcDLjkU3UJuwflAX+Co4z/e6i?=
- =?us-ascii?Q?EJPRQHNjAkHnd9p50raPidEXejCUberBc1rJLSihg6ekhkLri0N+KCFqRovH?=
- =?us-ascii?Q?9v/gj7ZGw2EpufnNN82MZSB+TB1kZWPo1Y5NXWUQj4kAo4aAE4B+oehiP/Si?=
- =?us-ascii?Q?2+fF6CwqU7RYOrQjsyn19rq9PZVbKTNcmjFbCTVreaAESccSleL6gFQ2lLGg?=
- =?us-ascii?Q?tOyARG4pTKMPqQq6MrtWtfOdAlq8UkFpfDYCNAPguLmVlKWiPulM+HkgmX7E?=
- =?us-ascii?Q?Fhu0vRayoodnvrlDrJOQazeCsvWdmeDRdbkFXmBP8OqzPlwjkxbprTYlDWYK?=
- =?us-ascii?Q?8SU4FOYyXR3R069D32MlRELmJnVQ1JuBvpJ2XHoHkUJsLHtxUuRo4nrZEEfw?=
- =?us-ascii?Q?VjGsijNlYvMEAvAZ1sXo028caKyxt8RsGrZ1xlqxxpXfwXcFMQPJiluQ2Uzl?=
- =?us-ascii?Q?vBqjjry8w548VpfRgpmOGp9opQKHhj2rKLXLKwpplWF6HwRRAskWw0N4yS7D?=
- =?us-ascii?Q?yODpAsjbML8t7KFI8P2u66rcLRPKiaFU+b4lgJ/1ArM39EqM6IIv5FlCjmLV?=
- =?us-ascii?Q?3ao/Ad7Uf1WV+hXEObyXcUPbvulUQyYfpyZWB0vlS/RIX1VeP8OZiq/Ab/8V?=
- =?us-ascii?Q?k4mrKZChywPC3CMGcwJfFy+6en5qHwJ6T/Z2B4sKS26guDI5jr3+b7Mwt4gW?=
- =?us-ascii?Q?4r1LGEdNa4t3CPvxRXzZnigT1Ow4lKW2m+wWsRycpPT6eJe0tx3aLnCqoW50?=
- =?us-ascii?Q?1e+m3sNZZZz/O7Vg0yVa3v7LZf/gwLbo2CHLUh8k0afDJ9CZYLmC5YQKOAKh?=
- =?us-ascii?Q?u96OoMSdPaE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tD4giBDiuTeRstLrh8/v6HO2B/+bCa1Me/AOCJsBCXHW9HcIunHJBLwSPuQc?=
- =?us-ascii?Q?PXrz6n57/STA6YuINrXa9bUgh8i5g6zeEisF0GD/UPnU70ayulfKu9tCcbeB?=
- =?us-ascii?Q?1auWvZkCoEGvWqW0C6ghhKaCjfWeFfQp5gV+d/MbmPXJnmeioqCTDKFtyDgL?=
- =?us-ascii?Q?9k9EK++T5d8xRteQGek1RiAlkvIXR1fzK4XCbEHI8m0ceAyd1FaBsTTzajpH?=
- =?us-ascii?Q?qEcgKnDvYEeYNfft47UPCL1nKuuvLpdY8vXdVX1+HBnHUq8K/QsUtHHLMGV+?=
- =?us-ascii?Q?kaKPkCTQa6XlMBcwR0bsqXDA3h+uYJ5QelsXElpnNM7H4hszk27Rcnm+yT02?=
- =?us-ascii?Q?kXzFD1JzzgbjYgMBm6PJfROPYMa7SH9ix0eT+kGgcTU5HjYvuDx9H+dJMHGB?=
- =?us-ascii?Q?zGWxYhL0dWwArQA7tXqhYmW9Kthp/8h6qWF+ZOxxNXtpgQe8cXPq+ciGn9Np?=
- =?us-ascii?Q?n6EBl3Zds7MdK3bm1UIiEbZMQYs6axHr144wwzH9a5D1U7yqrY0wWj4TOmNW?=
- =?us-ascii?Q?Hf3bZ9o3udp5nD7YuFAtP9GMaSxzq0h/g1M3Epbxk+QQ5s/cvLHVK9URSk8J?=
- =?us-ascii?Q?ZlY4p1JXrgg31IpXS8yOvRq8BGULiG9fUINP+NzT/gmcG0qoPEFScwrdibGe?=
- =?us-ascii?Q?IPv5GgO5GOtranm8UJGVtL8rA4b+eeQvuAKbdu2r9ZNf/VjanLWvSNXDIeMs?=
- =?us-ascii?Q?dHPZWYlbMVP10toYxnxrRxkIfFJOvvEZq7FtT7ziglGkS9mI6D6bvfTH/cGw?=
- =?us-ascii?Q?UNLMYliv9SXv7xjxORXNbQDbrSP5AFyHd1PTOnzd/R+atQaz7zCaghGHD2Kv?=
- =?us-ascii?Q?TsofBQvlqBk4V5mu8mJiPW+PgRiiLcpR4sNniuqIRlaT0OcXKHBvNs4POpjL?=
- =?us-ascii?Q?Vg/92R/70phZjpPqIPXRgQUEJLuqnoVhy6js8LIVwo703lA3nIONuWMTHYny?=
- =?us-ascii?Q?BQxkHvzWMDzm8CDyoYMfb7fW0pxBrwpjaUZbZteMIvi5QQ7rpVm4fmYDdd6X?=
- =?us-ascii?Q?5qHFuDGVmgyDtb9AQxcWzhHErtBE9P35/oXzSTfF3MEh41iBHm+sBM6CZOn0?=
- =?us-ascii?Q?QPk/xaeUht/VzdZxPd/GmdamYBq/5pBE3UD7sio31v4aU1xsvCh01Z3ReHqY?=
- =?us-ascii?Q?YnpUtrrlJp2NB4/raRdIGx3/UEo0U2wYG6aXA9xrpi3FwUINA8bzzN4RWYYv?=
- =?us-ascii?Q?aFJeVs+pzvoW2CatEx/ZzcDFCC/ej34m/fq0wK1dNmm+lTMuZ8czvkfAcnWY?=
- =?us-ascii?Q?HSpOzLall0tv68a6tppAIXcpc8/eTyOqMpoILpHgZ/XsEVcAyWN+MVAaLoNL?=
- =?us-ascii?Q?SFCYyhuDFybNmjyBvqmI/iOB5opHLyICJtvjoYnztV0EEMAH/Y1zg9U2PxxZ?=
- =?us-ascii?Q?H+Aw+W+h9CsG+CW/LBRyTRkSLs0f1Ny6a9Ryqz4maJkYYYPb4aMTvVv4w+cu?=
- =?us-ascii?Q?SJnB+zlnTbmTkgb/2h4MCxjmFnXIWZnsQI/C79Vsdsg86mne8FvN2JMtmo4e?=
- =?us-ascii?Q?gL3heLfiLHB0yiV8zdwyhdD6w82H8IL3apseES56IDacelgWs9l2pmNISgw/?=
- =?us-ascii?Q?yV6OU1rwPZKfdx+4rck=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2528fbdd-1513-4c5e-eaeb-08dddb395d9f
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 13:49:18.9325
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MdxNoDMiV0WXqVDji+VlVeeSPo6nYmqdw1CGOnPScmXm99plWFs7S0QDxXYC09FJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7509
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 07, 2025 at 01:44:22AM +0000, Pasha Tatashin wrote:
-> +/**
-> + * DOC: General ioctl format
-> + *
-> + * The ioctl interface follows a general format to allow for extensibility. Each
-> + * ioctl is passed in a structure pointer as the argument providing the size of
-> + * the structure in the first u32. The kernel checks that any structure space
-> + * beyond what it understands is 0. This allows userspace to use the backward
-> + * compatible portion while consistently using the newer, larger, structures.
-> + *
-> + * ioctls use a standard meaning for common errnos:
-> + *
-> + *  - ENOTTY: The IOCTL number itself is not supported at all
-> + *  - E2BIG: The IOCTL number is supported, but the provided structure has
-> + *    non-zero in a part the kernel does not understand.
-> + *  - EOPNOTSUPP: The IOCTL number is supported, and the structure is
-> + *    understood, however a known field has a value the kernel does not
-> + *    understand or support.
-> + *  - EINVAL: Everything about the IOCTL was understood, but a field is not
-> + *    correct.
-> + *  - ENOENT: An ID or IOVA provided does not exist.
-                    ^^^^^^^^^
+The chrp,open-pic binding schema already supports the "fsl,mpic"
+compatible. Add a couple of missing properties and support for 4
+"#interrupt-cells" to the chrp,open-pic binding, so fsl/mpic.txt can be
+removed.
 
-Maybe this should be 'token' ?
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+v2:
+ - Add support for 4 #interrupt-cells
+---
+ .../interrupt-controller/chrp,open-pic.yaml   |  17 +-
+ .../devicetree/bindings/powerpc/fsl/mpic.txt  | 231 ------------------
+ 2 files changed, 16 insertions(+), 232 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/powerpc/fsl/mpic.txt
 
-> + *  - ENOMEM: Out of memory.
-> + *  - EOVERFLOW: Mathematics overflowed.
-> + *
-> + * As well as additional errnos, within specific ioctls.
-> + */
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/chrp,open-pic.yaml b/Documentation/devicetree/bindings/interrupt-controller/chrp,open-pic.yaml
+index f0d9bbd7d510..642738512f3c 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/chrp,open-pic.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/chrp,open-pic.yaml
+@@ -36,12 +36,27 @@ properties:
+     const: 0
+ 
+   '#interrupt-cells':
+-    const: 2
++    description:
++      A value of 4 means that interrupt specifiers contain the interrupt-type or
++      type-specific information cells.
++    enum: [ 2, 4 ]
+ 
+   pic-no-reset:
+     description: Indicates the PIC shall not be reset during runtime initialization.
+     type: boolean
+ 
++  single-cpu-affinity:
++    description:
++      If present, non-IPI interrupts will be routed to a single CPU at a time.
++    type: boolean
++
++  last-interrupt-source:
++    description:
++      Some MPICs do not correctly report the number of hardware sources in the
++      global feature registers. This value, if specified, overrides the value
++      read from MPIC_GREG_FEATURE_LAST_SRC.
++    $ref: /schemas/types.yaml#/definitions/uint32
++
+ required:
+   - compatible
+   - reg
+diff --git a/Documentation/devicetree/bindings/powerpc/fsl/mpic.txt b/Documentation/devicetree/bindings/powerpc/fsl/mpic.txt
+deleted file mode 100644
+index dc5744636a57..000000000000
+--- a/Documentation/devicetree/bindings/powerpc/fsl/mpic.txt
++++ /dev/null
+@@ -1,231 +0,0 @@
+-=====================================================================
+-Freescale MPIC Interrupt Controller Node
+-Copyright (C) 2010,2011 Freescale Semiconductor Inc.
+-=====================================================================
+-
+-The Freescale MPIC interrupt controller is found on all PowerQUICC
+-and QorIQ processors and is compatible with the Open PIC.  The
+-notable difference from Open PIC binding is the addition of 2
+-additional cells in the interrupt specifier defining interrupt type
+-information.
+-
+-PROPERTIES
+-
+-  - compatible
+-      Usage: required
+-      Value type: <string>
+-      Definition: Shall include "fsl,mpic".  Freescale MPIC
+-          controllers compatible with this binding have Block
+-          Revision Registers BRR1 and BRR2 at offset 0x0 and
+-          0x10 in the MPIC.
+-
+-  - reg
+-      Usage: required
+-      Value type: <prop-encoded-array>
+-      Definition: A standard property.  Specifies the physical
+-          offset and length of the device's registers within the
+-          CCSR address space.
+-
+-  - interrupt-controller
+-      Usage: required
+-      Value type: <empty>
+-      Definition: Specifies that this node is an interrupt
+-          controller
+-
+-  - #interrupt-cells
+-      Usage: required
+-      Value type: <u32>
+-      Definition: Shall be 2 or 4.  A value of 2 means that interrupt
+-          specifiers do not contain the interrupt-type or type-specific
+-          information cells.
+-
+-  - #address-cells
+-      Usage: required
+-      Value type: <u32>
+-      Definition: Shall be 0.
+-
+-  - pic-no-reset
+-      Usage: optional
+-      Value type: <empty>
+-      Definition: The presence of this property specifies that the
+-          MPIC must not be reset by the client program, and that
+-          the boot program has initialized all interrupt source
+-          configuration registers to a sane state-- masked or
+-          directed at other cores.  This ensures that the client
+-          program will not receive interrupts for sources not belonging
+-          to the client.  The presence of this property also mandates
+-          that any initialization related to interrupt sources shall
+-          be limited to sources explicitly referenced in the device tree.
+-
+-  - big-endian
+-      Usage: optional
+-      Value type: <empty>
+-          If present the MPIC will be assumed to be big-endian.  Some
+-          device-trees omit this property on MPIC nodes even when the MPIC is
+-          in fact big-endian, so certain boards override this property.
+-
+-  - single-cpu-affinity
+-      Usage: optional
+-      Value type: <empty>
+-          If present the MPIC will be assumed to only be able to route
+-          non-IPI interrupts to a single CPU at a time (EG: Freescale MPIC).
+-
+-  - last-interrupt-source
+-      Usage: optional
+-      Value type: <u32>
+-          Some MPICs do not correctly report the number of hardware sources
+-          in the global feature registers.  If specified, this field will
+-          override the value read from MPIC_GREG_FEATURE_LAST_SRC.
+-
+-INTERRUPT SPECIFIER DEFINITION
+-
+-  Interrupt specifiers consists of 4 cells encoded as
+-  follows:
+-
+-   <1st-cell>   interrupt-number
+-
+-                Identifies the interrupt source.  The meaning
+-                depends on the type of interrupt.
+-
+-                Note: If the interrupt-type cell is undefined
+-                (i.e. #interrupt-cells = 2), this cell
+-                should be interpreted the same as for
+-                interrupt-type 0-- i.e. an external or
+-                normal SoC device interrupt.
+-
+-   <2nd-cell>   level-sense information, encoded as follows:
+-                    0 = low-to-high edge triggered
+-                    1 = active low level-sensitive
+-                    2 = active high level-sensitive
+-                    3 = high-to-low edge triggered
+-
+-   <3rd-cell>   interrupt-type
+-
+-                The following types are supported:
+-
+-                  0 = external or normal SoC device interrupt
+-
+-                      The interrupt-number cell contains
+-                      the SoC device interrupt number.  The
+-                      type-specific cell is undefined.  The
+-                      interrupt-number is derived from the
+-                      MPIC a block of registers referred to as
+-                      the "Interrupt Source Configuration Registers".
+-                      Each source has 32-bytes of registers
+-                      (vector/priority and destination) in this
+-                      region.   So interrupt 0 is at offset 0x0,
+-                      interrupt 1 is at offset 0x20, and so on.
+-
+-                  1 = error interrupt
+-
+-                      The interrupt-number cell contains
+-                      the SoC device interrupt number for
+-                      the error interrupt.  The type-specific
+-                      cell identifies the specific error
+-                      interrupt number.
+-
+-                  2 = MPIC inter-processor interrupt (IPI)
+-
+-                      The interrupt-number cell identifies
+-                      the MPIC IPI number.  The type-specific
+-                      cell is undefined.
+-
+-                  3 = MPIC timer interrupt
+-
+-                      The interrupt-number cell identifies
+-                      the MPIC timer number.  The type-specific
+-                      cell is undefined.
+-
+-   <4th-cell>   type-specific information
+-
+-                The type-specific cell is encoded as follows:
+-
+-                 - For interrupt-type 1 (error interrupt),
+-                   the type-specific cell contains the
+-                   bit number of the error interrupt in the
+-                   Error Interrupt Summary Register.
+-
+-EXAMPLE 1
+-	/*
+-	 * mpic interrupt controller with 4 cells per specifier
+-	 */
+-	mpic: pic@40000 {
+-		compatible = "fsl,mpic";
+-		interrupt-controller;
+-		#interrupt-cells = <4>;
+-		#address-cells = <0>;
+-		reg = <0x40000 0x40000>;
+-	};
+-
+-EXAMPLE 2
+-	/*
+-	 * The MPC8544 I2C controller node has an internal
+-	 * interrupt number of 27.  As per the reference manual
+-	 * this corresponds to interrupt source configuration
+-	 * registers at 0x5_0560.
+-	 *
+-	 * The interrupt source configuration registers begin
+-	 * at 0x5_0000.
+-	 *
+-	 * To compute the interrupt specifier interrupt number
+-         *
+-	 *       0x560 >> 5 = 43
+-	 *
+-	 * The interrupt source configuration registers begin
+-	 * at 0x5_0000, and so the i2c vector/priority registers
+-	 * are at 0x5_0560.
+-	 */
+-	i2c@3000 {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		cell-index = <0>;
+-		compatible = "fsl-i2c";
+-		reg = <0x3000 0x100>;
+-		interrupts = <43 2>;
+-		interrupt-parent = <&mpic>;
+-		dfsrr;
+-	};
+-
+-
+-EXAMPLE 3
+-	/*
+-	 *  Definition of a node defining the 4
+-	 *  MPIC IPI interrupts.  Note the interrupt
+-	 *  type of 2.
+-	 */
+-	ipi@410a0 {
+-		compatible = "fsl,mpic-ipi";
+-		reg = <0x40040 0x10>;
+-		interrupts = <0 0 2 0
+-		              1 0 2 0
+-		              2 0 2 0
+-		              3 0 2 0>;
+-	};
+-
+-EXAMPLE 4
+-	/*
+-	 *  Definition of a node defining the MPIC
+-	 *  global timers.  Note the interrupt
+-	 *  type of 3.
+-	 */
+-	timer0: timer@41100 {
+-		compatible = "fsl,mpic-global-timer";
+-		reg = <0x41100 0x100 0x41300 4>;
+-		interrupts = <0 0 3 0
+-		              1 0 3 0
+-		              2 0 3 0
+-		              3 0 3 0>;
+-	};
+-
+-EXAMPLE 5
+-	/*
+-	 * Definition of an error interrupt (interrupt type 1).
+-	 * SoC interrupt number is 16 and the specific error
+-         * interrupt bit in the error interrupt summary register
+-	 * is 23.
+-	 */
+-	memory-controller@8000 {
+-		compatible = "fsl,p4080-memory-controller";
+-		reg = <0x8000 0x1000>;
+-		interrupts = <16 2 1 23>;
+-	};
+-- 
+2.47.2
 
-Ah if you copy the comment make sure to faithfully follow it in the
-implementation :)
-
-> +struct liveupdate_ioctl_fd_unpreserve {
-> +       __u32           size;
-> +       __aligned_u64   token;
-> +};
-
-It is best to explicitly pad, so add a __u32 reserved between size and
-token
-
-Then you need to also check that the reserved is 0 when parsing it,
-return -EOPNOTSUPP otherwise.
-
-> +static atomic_t luo_device_in_use = ATOMIC_INIT(0);
-
-I suggest you bundle this together into one struct with the misc_dev
-and the other globals and largely pretend it is not global, eg refer
-to it through container_of, etc
-
-Following practices like this make it harder to abuse the globals.
-
-> +struct luo_ucmd {
-> +	void __user *ubuffer;
-> +	u32 user_size;
-> +	void *cmd;
-> +};
-> +
-> +static int luo_ioctl_fd_preserve(struct luo_ucmd *ucmd)
-> +{
-> +	struct liveupdate_ioctl_fd_preserve *argp = ucmd->cmd;
-> +	int ret;
-> +
-> +	ret = luo_register_file(argp->token, argp->fd);
-> +	if (!ret)
-> +		return ret;
-> +
-> +	if (copy_to_user(ucmd->ubuffer, argp, ucmd->user_size))
-> +		return -EFAULT;
-
-This will overflow memory, ucmd->user_size may be > sizeof(*argp)
-
-The respond function is an important part of this scheme:
-
-static inline int iommufd_ucmd_respond(struct iommufd_ucmd *ucmd,
-                                       size_t cmd_len)
-{
-        if (copy_to_user(ucmd->ubuffer, ucmd->cmd,
-                         min_t(size_t, ucmd->user_size, cmd_len)))
-                return -EFAULT;
-
-The min (sizeof(*argp) in this case) can't be skipped!
-
-> +static int luo_ioctl_fd_restore(struct luo_ucmd *ucmd)
-> +{
-> +	struct liveupdate_ioctl_fd_restore *argp = ucmd->cmd;
-> +	struct file *file;
-> +	int ret;
-> +
-> +	argp->fd = get_unused_fd_flags(O_CLOEXEC);
-> +	if (argp->fd < 0) {
-> +		pr_err("Failed to allocate new fd: %d\n", argp->fd);
-
-No need
-
-> +		return argp->fd;
-> +	}
-> +
-> +	ret = luo_retrieve_file(argp->token, &file);
-> +	if (ret < 0) {
-> +		put_unused_fd(argp->fd);
-> +
-> +		return ret;
-> +	}
-> +
-> +	fd_install(argp->fd, file);
-> +
-> +	if (copy_to_user(ucmd->ubuffer, argp, ucmd->user_size))
-> +		return -EFAULT;
-
-Wrong order, fd_install must be last right before return 0. Failing
-system calls should not leave behind installed FDs.
-
-> +static int luo_ioctl_set_event(struct luo_ucmd *ucmd)
-> +{
-> +	struct liveupdate_ioctl_set_event *argp = ucmd->cmd;
-> +	int ret;
-> +
-> +	switch (argp->event) {
-> +	case LIVEUPDATE_PREPARE:
-> +		ret = luo_prepare();
-> +		break;
-> +	case LIVEUPDATE_FINISH:
-> +		ret = luo_finish();
-> +		break;
-> +	case LIVEUPDATE_CANCEL:
-> +		ret = luo_cancel();
-> +		break;
-> +	default:
-> +		ret = -EINVAL;
-
-EOPNOTSUPP
-
-> +union ucmd_buffer {
-> +	struct liveupdate_ioctl_fd_preserve	preserve;
-> +	struct liveupdate_ioctl_fd_unpreserve	unpreserve;
-> +	struct liveupdate_ioctl_fd_restore	restore;
-> +	struct liveupdate_ioctl_get_state	state;
-> +	struct liveupdate_ioctl_set_event	event;
-> +};
-
-I discourage the column alignment. Also sort by name.
-
-> +static const struct luo_ioctl_op luo_ioctl_ops[] = {
-> +	IOCTL_OP(LIVEUPDATE_IOCTL_FD_PRESERVE, luo_ioctl_fd_preserve,
-> +		 struct liveupdate_ioctl_fd_preserve, token),
-> +	IOCTL_OP(LIVEUPDATE_IOCTL_FD_UNPRESERVE, luo_ioctl_fd_unpreserve,
-> +		 struct liveupdate_ioctl_fd_unpreserve, token),
-> +	IOCTL_OP(LIVEUPDATE_IOCTL_FD_RESTORE, luo_ioctl_fd_restore,
-> +		 struct liveupdate_ioctl_fd_restore, token),
-> +	IOCTL_OP(LIVEUPDATE_IOCTL_GET_STATE, luo_ioctl_get_state,
-> +		 struct liveupdate_ioctl_get_state, state),
-> +	IOCTL_OP(LIVEUPDATE_IOCTL_SET_EVENT, luo_ioctl_set_event,
-> +		 struct liveupdate_ioctl_set_event, event),
-
-Sort by name
-
-Jason
 
