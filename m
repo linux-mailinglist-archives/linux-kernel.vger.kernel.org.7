@@ -1,93 +1,109 @@
-Return-Path: <linux-kernel+bounces-769350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61423B26D4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28611B26D51
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37F1C165663
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:11:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C33A6011DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B646C21256F;
-	Thu, 14 Aug 2025 17:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BE21FCF7C;
+	Thu, 14 Aug 2025 17:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fqkZOyPj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lT3/PRpv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hbnq6yVw"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB95A1EB5FD
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F241E3DDB
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755191460; cv=none; b=iGKAJZwrlf/88P3bsuRgCmcTBof5npsreyk/bCWZgSvgCIEqfzWC1BNonXSiQS/FnHBuTB0xSveYgocyc7hjxEgm3F6QeoWjnZk9ZTIOpUKCELeEsauKcMin+hRHfxWB455nU/RPCsttxTyjNbnOC+RA/tV9drSwHj7VfRwEkNY=
+	t=1755191523; cv=none; b=YLHjre2u41EJz39oYixKCpIXb5rI8dDIQk1G8dhhV0JZNVvCJmqlaIyjOBQR0Ifxp8CUF0AAOLpG2k4tsLY0AvXhJKHGACcFLsswYP2CRrEdL0tkbkVweV/CXbqlMOCk2Eblthii5doS7Yel4rZ4FIUvpYgHw6GYKbxhs27rIzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755191460; c=relaxed/simple;
-	bh=550onVgFRw0/Q/X5fla3S9NRQ61rV59Lg0nfJVwpQdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vja5rxJpKnR98h7zt7FirILHXlc5VUg+1O9xLbGqzbacgUh0c4EQQpKlhvsjg4zfR7x+J2hHU9NixvmoHgJnBOV3oL/4zDvJ/f9rxamPllhtEB9pcLQBdQfpPAwLJYXpziACmQPNekrC2RqfGxGpgkkXDSJNgJSwZoJXTb+7k2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fqkZOyPj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lT3/PRpv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 14 Aug 2025 19:10:54 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755191456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NSPuE0qqUtgD/ltrE16mUC6QPPWglETWqRrWz9tf6b0=;
-	b=fqkZOyPjHu2D9TEUo+nuCJUECZ+JAx0d+oUMKC+27Y7wJnMowwWI71dQMVPWZ/3SHQ+vsf
-	wzyVde0DP/tmzMARnb9YqrmAr12ZPySHWkXDGm8SxkzpcPhH5SVXlKAhH7oWMK7MT5iIwe
-	rMp13FJhRH6y5LL8w+7AWL5FNfQViqScH8MQptU0+Gu3S9mSj3NE9CxEYly7Cjcj35bLMR
-	snCJc7zG+8nFgdgDaNMtLvI39jYTXzB6qlp/CZy+8cire8KbMPZszC5tUrRd21Sz8Vm7pL
-	UEdJGyL7b+bHiF87XsnJ0iBHLpr9DoyErQ7Qqen8Z1eW9o9RLZF0HA9Q1CwkFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755191456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NSPuE0qqUtgD/ltrE16mUC6QPPWglETWqRrWz9tf6b0=;
-	b=lT3/PRpva+2FgcuGPHE4p8HTHHiEje0bUslTJ2Z/t+oo6bni5kJPdrumvRSr+gEsGPFv8j
-	0q4H/npYt582SBCg==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>, linux-kernel@vger.kernel.org,
-	Konstantin Belousov <kib@kib.kiev.ua>,
-	John Baldwin <jhb@freebsd.org>,
-	"<cperciva@tarsnap.com>" <cperciva@tarsnap.com>
-Subject: Re: [PATCH v2] x86/bhyve: Detect FreeBSD Bhyve hypervisor
-Message-ID: <aJ4YnmxWspw1bb-1@lx-t490>
-References: <140183ef0ad52cf0f5f892409d362f1ed09129f3.camel@infradead.org>
+	s=arc-20240116; t=1755191523; c=relaxed/simple;
+	bh=qc5aDxJK1F64LBXPkuZ9lc6/pWc96CzMLXP24y+TBhA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kuqzc9xpyhvSUlicHK/N2ysjoTIQY426GnWw7UUPgRafFac4pp6pOC0P9aXEGLHdlmOn4Q1ybDGbOVlWDid5oyxwltzhx21XGBLYjLzTlrTiKqKrQ4Ayx8IkTWP9HCtitVcBguUdktseB1IzomUhOkRiCX+55r0uJYEhp59ynDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hbnq6yVw; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45a1b0b2d21so6008135e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:12:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755191520; x=1755796320; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jPB5RNhCbCcAQ6bj3jSC8GzEt+oraETjWNlOpTPSYog=;
+        b=Hbnq6yVwrjQ9+QTQKKn1Cyvqml36lFRKdSG4DexDBmVsxfzBg/Czi7kkHE4Uu7awbU
+         hCnKIRDIRy7W2t6wJrszLytsyw2BFgKe6mvSZHwzue7R/i1z4S36QY+Z2iFF1k6hbt/t
+         r0YJ0CGEdoZxVixz9t9hi60yZQPqqFp7bC+3egDmbQBYt9+GrvsHGD55A/i0wT/Yi9q5
+         WxLPlgzIyD+CyhKSQysV1jeW1QIn8f1pWea/gkRPVgSIJm1aquvDAOInYUqvf9I7ruMx
+         yuAoSdO8gLkqg2FlxbAwm1+vtSFngNbA17Di8CWhSU77cFAJph8SKs+v973i2+JZmGgU
+         7avA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755191520; x=1755796320;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jPB5RNhCbCcAQ6bj3jSC8GzEt+oraETjWNlOpTPSYog=;
+        b=corDu6at6qnYII7IwR6djBYsbxyGCyQdMHV8hvkFVcn9L+vkCHhCxlze7aiCP3bbYO
+         ORI8DRDF+FfqbuwcDvd2q5sNKK/GBcNm1j8gkrFX4GXZ/rrCJTSGgBUbNsosK2D1cPiU
+         spqGd9ntQGYUYaTkMoebBFRDc+cDh6wOrBQGH9xGgZG0aqcwf0ezfqBG18pa/lGSXWrL
+         NEpntBexDADVcWFL3a74p7rHQpzSMtLxtfg3Z4oWtdQ8D6bTom4s5GjdnI4Ly8E43G2s
+         oCrJftpB4a+5I/tT4opsr5vzrKJrq2vzKtVOy9UV9bylKyjO4Mng1rU1roh2HmEU5srP
+         s/fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9bhZTNFF8nzulttp+nLRrBHifN2cRXF1u/PpxuE5EcsaeR3W9gY47b7sEQg9xmGD1oG7DBQwyzjsflUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZMZYgq83ku8rapgcsU5Y3PSxDT6o+6tOgPYrPgw+RBSw7K01a
+	Cb8ohwVx3BBSCK9Owc9gqUtY8MrkI1z5PPEALnv0S/Xfw2AM19cPQWn10/zAJxrp
+X-Gm-Gg: ASbGnctxP9OliRFWCYgVoxct9iy9wpkA+gBmW7yMLAjg4T1aEWJMz93hTO1MlSaUP4V
+	25ZJ+W+nCxUkPdLoRuRnrfq4HJeKR3RcNI09SbkwywMIFm9jcoZT/pz38FlVTCbB+Io+c9NoRmh
+	Cok/AR+/WZQDYOKQXLPXZ52dM7nCKyNXUbepjYffgGMZ/ROiHJPGtFfxSSwsN+sRmIHjqD3NGeL
+	aHu+CmK5Uhl6BlDOmikvkPjBHIyFta4pm3et3o/YL6X4BrYD49gNWcUtTNzU6D9jionJLhtrkGa
+	3RYr2Ja3mBiZM9hSJgbTP9bxEYHqwFcI7+a4LZPxsOvqB6dd3YHA/EKA7tvxbBC+/XnAspdgqd6
+	Ic9eczskjiJM=
+X-Google-Smtp-Source: AGHT+IEiKVW5cysYs6D9PUPlaCXMJp4HJbkFO4bp/Ybcr87V8BvWMNudwkgIyJLcJXX8zmDW65a0Vw==
+X-Received: by 2002:a05:600c:468c:b0:459:d709:e59f with SMTP id 5b1f17b1804b1-45a1badbec6mr33517195e9.0.1755191519354;
+        Thu, 14 Aug 2025 10:11:59 -0700 (PDT)
+Received: from localhost ([2a03:2880:31ff::])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c46ee84sm50127252f8f.57.2025.08.14.10.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 10:11:58 -0700 (PDT)
+From: Yueyang Pan <pyyjason@gmail.com>
+To: Suren Baghdasaryan <surenb@google.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Usama Arif <usamaarif642@gmail.com>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC 0/1] Try to add memory allocation info for cgroup oom kill
+Date: Thu, 14 Aug 2025 10:11:56 -0700
+Message-ID: <cover.1755190013.git.pyyjason@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <140183ef0ad52cf0f5f892409d362f1ed09129f3.camel@infradead.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, 14 Aug 2025, David Woodhouse wrote:
->
-> +static uint32_t __init bhyve_detect(void)
-> +{
-> +	if (boot_cpu_data.cpuid_level < 0 ||
-> ...
+Right now in the oom_kill_process if the oom is because of the cgroup 
+limit, we won't get memory allocation infomation. In some cases, we 
+can have a large cgroup workload running which dominates the machine. 
+The reason using cgroup is to leave some resource for system. When this 
+cgroup is killed, we would also like to have some memory allocation 
+information for the whole server as well. This is reason behind this 
+mini change. Is it an acceptable thing to do? Will it be too much 
+information for people? I am happy with any suggestions!
 
-The CPUID API at <asm/cpuid/api.h> provides a cpuid_feature() macro for
-this.  Let's please use that instead.
+Yueyang Pan (1):
+  Add memory allocation info for cgroup oom
 
-I understand that arch/x86/kernel/kvm.c and arch/x86/kernel/jailhouse.c
-does a similar "cpuid_level < 0" check, but they should also be using
-cpuid_feature() instead.
+ mm/oom_kill.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks!
-Ahmed
+-- 
+2.47.3
+
 
