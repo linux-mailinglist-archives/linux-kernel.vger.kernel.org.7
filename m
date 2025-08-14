@@ -1,210 +1,189 @@
-Return-Path: <linux-kernel+bounces-768880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27353B26708
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A5BEB26715
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F25916374F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:21:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C642A200D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8BA2FCC1E;
-	Thu, 14 Aug 2025 13:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1C03002B2;
+	Thu, 14 Aug 2025 13:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FdFq7v5v"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="htu5+Mgh"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7253C15E8B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13B5191F92;
+	Thu, 14 Aug 2025 13:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755177655; cv=none; b=f8sStJKHNoBrozGO7mZcRwdn/iFtldMxrmzmqn8G7woZC0GIebOb87z0O5lC1PMSOKMkqjXQeTacr3wRlXdGCpIry8UWIlopew3rwosGRNBiNbf1Z65WZYS8CMLcUyiN1oSybI2DHt+w6jBhQ0pQGdr7eXqfBk/Kk76Pixtzl/Y=
+	t=1755177707; cv=none; b=OOizPgKuLk3Q1WW87kzAFN3HjHchX6xDj+xrSpgQgmvX6iKRB35wOspqq0z+vsalmKGa5r7aKo/EWQJA0QqTl86JuNMgCN8B6CqIScXN3oHqGGlz3IDu9OES9Nimqa3Tvl/+ZgmTodIgA+CqrK7D3OT83SrKgU1KFBdur2Rj7TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755177655; c=relaxed/simple;
-	bh=zTNC/4eq5veW9+1xQ3P6/mA8C3u94zDak9iq+m3TOLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bi0kR5Y7fNdRv38WWud6mmKNg9DLAqBQY6K+zaT4wvW0+zylKd18c59lvqhsij9ib8Y4mgFB5PoRVR5Ok0wBLZ5lQDahSwDgY0ABsVGu6UGa0dWDzdlvfAASuBwG+k37CYOBXMSajtGz0AEswhdH0wmQ/o8zWW1LT8eEguQUixk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FdFq7v5v; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755177652;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A7jDafqYB98HwVmHR1rUWCQQF4cRrv10NE/cqOShDxE=;
-	b=FdFq7v5vV6ZWLt5BNVtKyx1Do0Fn5VavcAF0N4lC0amRxMlAGDahyGbVbyocjV4PCakLWN
-	6MSiNiFAWZHfIvAKNY0GDP9Eo+XJkB6kJmZZhislnCarvktFhJykmaiS/qgsTy+L+Mn3L4
-	L1DYHnrGNTVrz2L2aNpOPByyVPecNq0=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-478-UJG6ceFVMfe7cNUxARakww-1; Thu, 14 Aug 2025 09:20:46 -0400
-X-MC-Unique: UJG6ceFVMfe7cNUxARakww-1
-X-Mimecast-MFC-AGG-ID: UJG6ceFVMfe7cNUxARakww_1755177645
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-333f933c559so3102641fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:20:45 -0700 (PDT)
+	s=arc-20240116; t=1755177707; c=relaxed/simple;
+	bh=0gNc8y0IxUkuy33DkYbXgIB1lUXVSIPD5J6S87Zz8uo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GercWxGBFgSkN93Ribzwo98tAzpmTZHUTmTw9LiTs8x8o4meEDfiyhgC8kXKO2TKquB/LdoCY2ajn47mKNlLy0iTq6kxDSHjzIbgcJUjr4MUYfHVK4MMdEjLbFnq0OuB5MFHtSOKmZAI43ZKX0yS4W9E+neZVYtF5oWXLBR6t10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=htu5+Mgh; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45a1b0c8867so6948125e9.3;
+        Thu, 14 Aug 2025 06:21:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755177704; x=1755782504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7bMDJo186p2jEew+3Zrvp2fY8n4JWRnO1Ap6IS9F3qA=;
+        b=htu5+MghSTtEpIvCtptHhN7BReJOz4mTY0s09QMrZqyOZ/Hw/fx4xJpZLAGVIBz4d8
+         wWX/pKSgb6DPeoxiipf8pfVvV7CbjysSK94roSennAL65dzk7LuGA3Qu9UObqv7IU1bm
+         BRT6rDpIZpOWMp4QkDQBA8TkT4fpGYjDCzIsFMbTG3JqNv3Au9hlinrX33L/jWIqyB4Z
+         2d9fbgn4NIbepjCDapB2DP37bMczLOyU2DEmvAaTnC7cDpQ4HaU9ZCKKkhM3kwuSei1g
+         2OBzVO3cl/kA8Z7IZrIzW8iPLhSmZInR+O/DyCsTYzKCuoWfl8XDfg7QqC/UbmVb8a4K
+         Y2PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755177644; x=1755782444;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7jDafqYB98HwVmHR1rUWCQQF4cRrv10NE/cqOShDxE=;
-        b=o91dm1V8+eSrULl4XCxzJGRDf33VPU1+By9I1IRuWGiFwqNrAmfjQjTnsIGhuLl7KG
-         d5vMtstAu/tTho59Y5Hbmf6LtDKXtQJJR11KvYn9CZ5FDgZUlEMBgcaLiHnmJjGFa/d8
-         ghspEZpS0DAWDdkrslu0HljzjBhVO6NZ39S8xA+yHDQGdHjfzLiAsMIzxa3xJuSF/jgu
-         REc0Zqs77oWmBmx2C1LHL8CSlG2QFOxSk6Mi9TgFDsAnG/AhvU91iklakAh5Zyy1y4Sk
-         DEEcLo0t1Xn9vbba1B4C0kxhGUUGkoQlxH0/GcDrv0HvKE+Z77vNq6wZ6RrVLBRj3gUV
-         KQCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXS8YOTyuAtJ6j2gDZ9lTnKKiJPTp8natXQp5KvfN9mEiTjenPgg5lrtg/lHErztJg3HgjlE8ytMnYZHAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBFIhf5NfoMkSKHMdIHXfhEclfujFbgnpwpDTGwAhrRqIxya0T
-	e7bCJ0A+7NSgHqSlk3uX9QYqF09LvnaomAXYnCkhLcMm5hY29HPRWEYKCK6S/zogbFCKmNw9Mxv
-	/WujepC96xKFrEVsiMKyKaHdHaqPxLPiNzEabuAsJyzdAqwBOQ5szI0zwSeEEaJcb
-X-Gm-Gg: ASbGncuXozeZEUy6/TSkmDA6YQXp1dnrDEOIPKlkZkuSZJW5d4FurjPaLuPMvI8Bsd4
-	m4IdDztgDrY1a1Lk0L9/FxknLFsSLFh5h2o+uPxJy1xiKHVQie2U0LtpJDrBHo7HyEk7JDKV9yS
-	dPy5E6mw2ocYkiy4DwMZxN2IgGXuMgV8+pot8J6k2kGAhPmrlVWmJoGJjUGcjTy8cj8C151hhn0
-	xrDjC8jdWCZIX+wqCO6d9gxoJMLcScqbZ2QklXcClBd79fxvBc0PWwR+er6ZDRFLPoUrp21P5ru
-	O1VCrlXwEOCwLFGNxWCFgzN8Xj+1/wTy98F0FsmJ5mfisLW9E0meqE2ism+tVHKDgA==
-X-Received: by 2002:a05:6512:ea7:b0:55b:9796:5d6e with SMTP id 2adb3069b0e04-55ce4fda8b4mr814850e87.6.1755177644439;
-        Thu, 14 Aug 2025 06:20:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWihT0k4QKDaAkdeReoErFsWLC1uspW0xCEZNbMy9GEmljSgmnx/hsb8xuhqqpYddj4a50qA==
-X-Received: by 2002:a05:6512:ea7:b0:55b:9796:5d6e with SMTP id 2adb3069b0e04-55ce4fda8b4mr814835e87.6.1755177643940;
-        Thu, 14 Aug 2025 06:20:43 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88ca3327sm5640778e87.127.2025.08.14.06.20.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 06:20:43 -0700 (PDT)
-Message-ID: <67b6e041-4bea-485d-a881-cc674d719685@redhat.com>
-Date: Thu, 14 Aug 2025 16:20:42 +0300
+        d=1e100.net; s=20230601; t=1755177704; x=1755782504;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7bMDJo186p2jEew+3Zrvp2fY8n4JWRnO1Ap6IS9F3qA=;
+        b=gwS/vcPtvvKJ9z8GFTDrTWs/ipdsDH3E5A9sHjO9cCH0pyYkrqOjgIn+R80E5GBx0/
+         Zydv5x2zSmnYYrhMTMm4jswmWiyCRR5pmMl8YrB10sBvy8P65ScWXdPWGNiIlzI+isBY
+         Br8QyvUieZK7rRn0Wy9r4xfqd2oA0fMDjNmkhbU7dy/Ec5+3ObJOVm1QGZY8BR2ttPLK
+         TYemRWuiM6uwG5HhS7BPBJw3ITBsO15kAyoBqQ53yncWpybScHi28ZgrcdTKr8elXhlV
+         Cni9ynCiC3Hxqr1nTHkvTiXyv61q/pKC4vSZnat62/FlyZZuoaSdxPPFLSnFPOg/t3+p
+         iuMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBs0rH07hJLLnDNcyjFyz/jHPAXX25DjwTqv+qgZ3WiSdd2I0KXJkYqjfd03w0LZHrZtzGIS+eqe2U@vger.kernel.org, AJvYcCULeoNynuPt8uAjJGFxH8V1ytSYsX3mn3948FYwXRombIC3OWDBs8Q0ge+rWwP/69Bp4uUf+qp9vUAqADQ=@vger.kernel.org, AJvYcCWCZl+ms+q+rWOL4QnlsRktBVw6RYJ9O9FYUQY1B79dvkh4x4HNhrACLghxgBQqknBnDe+IEOMx2suv@vger.kernel.org, AJvYcCWVGalRs8yw9u1CKOViC9gtTco8wlIJQzWP6476MCJkLBdHi9lHNQ1kFeCq1D1aWoMt4iOjnMEXiEaHwic=@vger.kernel.org, AJvYcCXVXlrciv1OG8eZbelCGQRX1TxGNwV6uTbjHSpy8NoYoLhbl6z/8sif50WQKyq/2qW//GVLd4kAa7TP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfxrUlgBgJ/LejtZlyBPEFniEXUhMNteoxx8XFQ+E+IHQahU17
+	duoYXAENPVeFfGzsKJVzXWsv7Dbc1xGdLKwToiM50E44Bc+mXZKD/a/NmzWF
+X-Gm-Gg: ASbGncvWDpYzGBrcgyACL2XH4qX3KfZFs1Eqivx40MS2AEPEs9iKSdW8I02p1NsgB2d
+	2hvyzThaH3UAT8qlmtUogJUm84Kxt28ck74PWoDgfKZpdhGZeAQiVwuN3Yc5E4V1UpPaXXnkQKu
+	CKe+4D/bzpJk7kfxj4rIR4TaRSIuw6JWo/gkOIQW3HmTSmrJ7+w9lodZ/abjC78/SWZZCsbI/jB
+	KKpzWcgwZcvL+pR+5mwvimYn+661BWwAw5K6O1/qH3AfoivE8WrxMCd1PW9vkzSH4uD10l2eX7l
+	6U+kOIKpwD1ZjXLUv9KFAVpIU5Wa08/2RCEHrC2lzdw2vmByicEmwfmnGH0Ef5S6N5DGzezQR94
+	j+izdG86ObPC9mfSXWYJZr1dZ/fatBscP9dpZJoN1Kq8KAe8ymMF46qX0aqWH6RR0pgziNwzM2D
+	kRKXQl+RikRTS+Go8eifVMdGMft3Y70z18
+X-Google-Smtp-Source: AGHT+IGjryud1OAhsbQzG5opdza3J0arXvGMqqvPhb9Y/7Sf6esDDcwIpDPlr3q8nLe5TGjuWY/5zA==
+X-Received: by 2002:a5d:64e8:0:b0:3b7:7936:e7fb with SMTP id ffacd0b85a97d-3b9edf3897emr2394083f8f.30.1755177703292;
+        Thu, 14 Aug 2025 06:21:43 -0700 (PDT)
+Received: from localhost.localdomain (lmontsouris-658-1-96-160.w81-250.abo.wanadoo.fr. [81.250.250.160])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9386sm50998831f8f.18.2025.08.14.06.21.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 06:21:42 -0700 (PDT)
+From: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: andreas@kemnade.info,
+	peter.ujfalusi@gmail.com,
+	dmitry.torokhov@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	lgirdwood@gmail.com,
+	tiwai@suse.com,
+	conor+dt@kernel.org,
+	lee@kernel.org,
+	ukleinek@kernel.org,
+	broonie@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	shuah@kernel.org,
+	jihed.chaibi.dev@gmail.com
+Subject: [PATCH v2 0/9] dt-bindings: Convert TWL4030/6040 family binding to DT schema
+Date: Thu, 14 Aug 2025 15:21:20 +0200
+Message-Id: <20250814132129.138943-1-jihed.chaibi.dev@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] mm: use current as mmu notifier's owner
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- David Hildenbrand <david@redhat.com>, Leon Romanovsky <leonro@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, Balbir Singh <balbirs@nvidia.com>
-References: <20250814072045.3637192-1-mpenttil@redhat.com>
- <20250814072045.3637192-3-mpenttil@redhat.com>
- <20250814124041.GD699432@nvidia.com>
- <2da9464b-3b3d-46bd-a68f-bfef1226bbf6@redhat.com>
- <20250814130403.GF699432@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <20250814130403.GF699432@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On 8/14/25 16:04, Jason Gunthorpe wrote:
+This series modernizes the Device Tree bindings for the Texas
+Instruments TWL4030/TWL6040 family by converting all remaining
+legacy TXT bindings to the structured YAML DT schema format.
 
-> On Thu, Aug 14, 2025 at 03:53:00PM +0300, Mika Penttilä wrote:
->> On 8/14/25 15:40, Jason Gunthorpe wrote:
->>> On Thu, Aug 14, 2025 at 10:19:26AM +0300, Mika Penttilä wrote:
->>>> When doing migration in combination with device fault handling,
->>>> detect the case in the interval notifier.
->>>>
->>>> Without that, we would livelock with our own invalidations
->>>> while migrating and splitting pages during fault handling.
->>>>
->>>> Note, pgmap_owner, used in some other code paths as owner for filtering,
->>>> is not readily available for split path, so use current for this use case.
->>>> Also, current and pgmap_owner, both being pointers to memory, can not be
->>>> mis-interpreted to each other.
->>>>
->>>> Cc: David Hildenbrand <david@redhat.com>
->>>> Cc: Jason Gunthorpe <jgg@nvidia.com>
->>>> Cc: Leon Romanovsky <leonro@nvidia.com>
->>>> Cc: Alistair Popple <apopple@nvidia.com>
->>>> Cc: Balbir Singh <balbirs@nvidia.com>
->>>>
->>>> Signed-off-by: Mika Penttilä <mpenttil@redhat.com>
->>>> ---
->>>>  lib/test_hmm.c   | 5 +++++
->>>>  mm/huge_memory.c | 6 +++---
->>>>  mm/rmap.c        | 4 ++--
->>>>  3 files changed, 10 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
->>>> index 761725bc713c..cd5c139213be 100644
->>>> --- a/lib/test_hmm.c
->>>> +++ b/lib/test_hmm.c
->>>> @@ -269,6 +269,11 @@ static bool dmirror_interval_invalidate(struct mmu_interval_notifier *mni,
->>>>  	    range->owner == dmirror->mdevice)
->>>>  		return true;
->>>>  
->>>> +	if (range->event == MMU_NOTIFY_CLEAR &&
->>>> +	    range->owner == current) {
->>>> +		return true;
->>>> +	}
->>> I don't understand this, there is nothing in hmm that says only
->>> current can call hmm_range_fault, and indeed most applications won't
->>> even gurantee that.
->> No it's the opposite, if we are ourselves the invalidator, don't care.
-> I think you've missed the point, you cannot use range->owner in any
-> way to tell "we are ourselves the invalidator". It is simply not the
-> meaning of range->owner.
+This improves the bindings by adding formal type checking, clear property
+definitions, and machine-readable examples, which allows for automated
+validation and better documentation for developers.
 
-Usually it is the device but used similarly, look for instance nouveau:
+This v2 series addresses feedback from the initial submission, adds a new
+patch to fix validation errors that were uncovered by the stricter schemas,
+and includes several other minor improvements.
 
+Thank you,
+Jihed
+---
 
-static bool nouveau_svm_range_invalidate(struct mmu_interval_notifier *mni,
-                                         const struct mmu_notifier_range *range,
-                                         unsigned long cur_seq)
-{
-        struct svm_notifier *sn =
-                container_of(mni, struct svm_notifier, notifier);
+Changes from v2:
 
-        if (range->event == MMU_NOTIFY_EXCLUSIVE &&
-            range->owner == sn->svmm->vmm->cli->drm->dev)
-                return true;
+  - Add new patch (9/9) to fix the parent ti,twl.yaml binding by adding
+    the missing sub-node definitions, resolving dtbs_check errors.
+  - (1/9) ti,twl4030-audio: Moved binding to sound/, added enum for
+    ti,enable-vibra, and simplified the example.
+  - (2/9) ti,twl6040: Renamed twl6040,audpwron-gpio to ti,audpwron-gpio
+    to fix a vendor prefix validation error.
+  - (8/9) ti,twlxxxx-usb: Added '#phy-cells' property to support the
+    standard PHY framework.
+  - (7/9) omap-twl4030: Minor cosmetic fixes, retaining Acked-by Mark Brown.
+  - Other patches: Minor description and formatting cleanups.
 
-Where we return in case are the initiator of the make_device_exclusive. Otherwise,
-it would also hang in next mmu_interval_read_begin().
+The following nine patches are included in this series:
+Jihed Chaibi (9):
+  mfd: dt-bindings: ti,twl4030-audio: convert to DT schema
+  mfd: dt-bindings: ti,twl6040: convert to DT schema
+  input: dt-bindings: ti,twl4030-keypad: convert to DT schema
+  mfd: dt-bindings: ti,twl4030-power: convert to DT schema
+  pwm: dt-bindings: ti,twl-pwm: convert to DT schema
+  pwm: dt-bindings: ti,twl-pwmled: convert to DT schema
+  Documentation: omap-twl4030: convert to DT schema
+  usb: dt-bindings: ti,twlxxxx-usb: convert to DT schema
+  dt-bindings: mfd: twl: Add missing sub-nodes for TWL4030 & TWL603x
 
-owner is void * and admit used in a creative way here, but it can't be wrongly interpreted
-as dev if current.
+ .../bindings/input/ti,twl4030-keypad.yaml     |  44 +++++
+ .../bindings/input/twl4030-keypad.txt         |  27 ---
+ .../devicetree/bindings/mfd/ti,twl.yaml       |  63 +++++++
+ .../bindings/mfd/ti,twl4030-power.yaml        |  69 ++++++++
+ .../devicetree/bindings/mfd/ti,twl6040.yaml   | 155 ++++++++++++++++++
+ .../devicetree/bindings/mfd/twl4030-audio.txt |  46 ------
+ .../devicetree/bindings/mfd/twl4030-power.txt |  48 ------
+ .../devicetree/bindings/mfd/twl6040.txt       |  67 --------
+ .../devicetree/bindings/pwm/ti,twl-pwm.txt    |  17 --
+ .../devicetree/bindings/pwm/ti,twl-pwm.yaml   |  46 ++++++
+ .../devicetree/bindings/pwm/ti,twl-pwmled.txt |  17 --
+ .../bindings/pwm/ti,twl-pwmled.yaml           |  46 ++++++
+ .../bindings/sound/omap-twl4030.txt           |  62 -------
+ .../bindings/sound/ti,omap-twl4030.yaml       | 102 ++++++++++++
+ .../bindings/sound/ti,twl4030-audio.yaml      |  90 ++++++++++
+ .../bindings/usb/ti,twlxxxx-usb.yaml          | 125 ++++++++++++++
+ .../devicetree/bindings/usb/twlxxxx-usb.txt   |  43 -----
+ 17 files changed, 740 insertions(+), 327 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/ti,twl4030-keypad.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/twl4030-keypad.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl4030-power.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/ti,twl6040.yaml
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-audio.txt
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl4030-power.txt
+ delete mode 100644 Documentation/devicetree/bindings/mfd/twl6040.txt
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwm.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/ti,twl-pwmled.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/omap-twl4030.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/ti,omap-twl4030.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/ti,twl4030-audio.yaml
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,twlxxxx-usb.yaml
+ delete mode 100644 Documentation/devicetree/bindings/usb/twlxxxx-usb.txt
 
->
->>> So if this plan relies on something like the above in drivers I don't
->>> see how it can work.
->>>
->>> If this is just some hack for tests, try instead to find a solution
->>> that more accurately matches what a real driver should do.
->>>
->>> But this also seems overall troublesome to your goal, if you do a
->>> migrate inside hmm_range_fault() it will generate an invalidation call
->>> back and that will increment the seqlock and we will loop
->>> hmm_range_fault() again which rewalks.
->> That's the problem this solves.
->> The semantics is "if we are the invalidator don't wait for invalidate end",
->> aka don't mmu_interval_set_seq() that would make hang in the next mmu_interval_read_begin(),
->> waiting the invalidate to end
-> I doubt we can skip mmu_interval_set_seq(), doing so can corrupt concurrent
-> hmm_range_fault in some other thread.
->
-> Nor, as I said, can we actually skip the invalidation toward HW
-> anyhow.
->
-> At the very least this commit message fails to explain the new locking
-> proposal, or justify why it can work.
-
-Yes the commit message could be better. 
-But this is essentially the same as nouveau is doing with 
-MMU_NOTIFY_EXCLUSIVE handling, just not using the dev as the qualifier,
-because that is not easily available in the context.
-
---Mika
-
-> Jason
->
+-- 
+2.39.5
 
 
