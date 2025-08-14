@@ -1,338 +1,240 @@
-Return-Path: <linux-kernel+bounces-768736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AA0B264BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:54:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE1C6B264C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 219BA56095B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8571D563244
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584412FB97E;
-	Thu, 14 Aug 2025 11:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3EF22FB980;
+	Thu, 14 Aug 2025 11:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DkVQwwI7"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2047.outbound.protection.outlook.com [40.107.236.47])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="f/hxzrDp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AF51EF39E;
-	Thu, 14 Aug 2025 11:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755172458; cv=fail; b=YqIQZntckHxtctRE1giNBg6TTQQ23CTSxXTsJGiaAZTkwO/50Ps4Ctt/kNs5YUulhcruHhUwEhAkkw83C5413qMW9G7A/BPeqUUv+pJXSsm+L/pFTJD1lVARCUTTahjcd/m9Jbp5rZdtq6dmDYu55H4LDAKX6GFdBHOxxVyzaec=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755172458; c=relaxed/simple;
-	bh=o0AyGzig3ZIEJW3H+D/rGLve7duWvkFSAA1n6xO6C0E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=O1RzBpFH5dKNwCpNLGs7Ol4bWYwY4iX3JMkBsaPw4KD9/49o0rpy2LZS5IMWTMVxzPeIQXslzzqTA5f0sLWgB56zuIry0vpX9Rc0VAQeQokZ4vCbc6YLDtGjXTRDdxcc8UWF7Smbnu+EH0yqNr+kjCLmvNGA3sGxvX5XP8yAtQI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DkVQwwI7; arc=fail smtp.client-ip=40.107.236.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sXJMn2dNMBPsyCSobuhlSyzDin9v1DJhnUbjJpBaKm+62wiYNMM1xbyxoM4UrhPY/o9w/xS+AADsFiPW8tciCjHpWvpiTK/+4j4yNws7hC2WEhbJNiNDdvOrAcF2dV1hzYh221ZjnOFgQf2FOtgOLs694lPMV8lHFoZSaWry8EM2PQNdoIzF9mF/j/VFgkS0m4zCvp202XeevqhJ0tzCasneBOIOIPrpwuB5dR0zEknzsCVHSacr8ylFsIOO0tB+m51voNrNHpID/1ldDECkX3IBZiHObWrHlIC0y9nFgHJ0AjW43pTLEO5izxRmSwXdPY4wf3StR2Or5oK3daNmLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O70hckIml9NhwQQH2EYZR3a6VcWYdEmeK/wMML9xIwc=;
- b=oO7UK+eCaHw05s8fg9yTW705oMLrLpOtKzkr0pLCOa6uVL3rgchY5TtGXsxVsPtyFAXgH1GIQpH9YGiLuLRG26uwukBFh4wc82ipla6HnS0TWGbIdywEfWnpQNaoZ9B0exJF1CW27H3dxApzEatvH8KXQyM2DXjNMDmqmPRBi2GLZDzb+zrmP7dgHqS0kWfO/bnDUDQw2LYyj4DqUN9i2nI8FkexohDJB3S4SmqrLx70GGtVAZV97EpVYU1EoATDYc7qVGrJ9J9YMgHE6fV+EKdEOFYJFVHLnLFK86IkzsW5MaeLyqyhtzUDWI0LXe8avaQ8FkK/KbD3b65H7A9y7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O70hckIml9NhwQQH2EYZR3a6VcWYdEmeK/wMML9xIwc=;
- b=DkVQwwI7X53DxPY8FhouTcKsPbin2qtqC4zOEjLfTNJbLZTlB8dtTY1EoG2DUFml5uGCQFkIup1mKLduR/jMC/JuorHLPUlYE0xAX8y8pGAT04X5hSSUJR+57c2YoKyVGuyDSme2GOfgaE2SdxAEOs5bWahZC6lGd1gIra9qsMk=
-Received: from CH2PR04CA0007.namprd04.prod.outlook.com (2603:10b6:610:52::17)
- by SJ1PR12MB6148.namprd12.prod.outlook.com (2603:10b6:a03:459::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Thu, 14 Aug
- 2025 11:54:13 +0000
-Received: from CH1PEPF0000AD76.namprd04.prod.outlook.com
- (2603:10b6:610:52:cafe::22) by CH2PR04CA0007.outlook.office365.com
- (2603:10b6:610:52::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.17 via Frontend Transport; Thu,
- 14 Aug 2025 11:54:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000AD76.mail.protection.outlook.com (10.167.244.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 11:54:12 +0000
-Received: from [10.236.30.53] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Aug
- 2025 06:54:10 -0500
-Message-ID: <e32a48dc-a8f7-4770-9e2f-1f3721872a63@amd.com>
-Date: Thu, 14 Aug 2025 06:54:10 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B772FABFD
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755172553; cv=none; b=luX2YiTAj7PAEIvN7ql+QYd2x852mGphXZnV4YyYIQRP/34NU8A/9So3P0Gnk1w+Qa5j3SIHcYIkGm1+1y+QMmvg2K37JHEYmEei2HES5IouVDsP9Tstz3JgNnwlFzWNU7QH0ZVD9dXqmm6KWrPBPILPkiaXI4Wq+UjjuuCP3wo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755172553; c=relaxed/simple;
+	bh=a4PCDUN3BWKJQof73UOlnWBtwCz9o5k7rIL0T7w2yDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QP1CI2o1GmaILwC6oqO+xuVcGPedO5PQYMf/ogU3rQjnQFKp2ZbVaJp7mMlts6yIwruO3d3y6lkq2Ifu0JCVaunIWb5XWPs9D1XWEInGtMiuVGcIHFGtgmZBr02VKi77BNI9/YRHCZLUjOa8r4HD+vl1adwGo0sbnBE5CsAbHMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=f/hxzrDp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E8x9oG020573
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:55:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=KwaUoxCOeIrDWwA8MlhquWgH
+	JPxXaTq1KQH7JgKMBMY=; b=f/hxzrDpyJJBp6bHh10DNPL4BxwP+hS/6GNa2af/
+	kCwkSAX3lPXVFDQoUuReh+6mV5Ldm+9d0JnrtCGHNhSAdze7NYm4nq0Ey7/4Y47q
+	pMIr91TaLzYMy2KckdySSHg+MQb1lfJu67Yhb5AUdXAH6C4gYJHKMrOi7+7kl8AB
+	+fA9oJ9uUeH/RSTS5cAxaH54hq19sVstF0kmMJHCXe9eFxrYt+Dtsb26+Ls/bw6d
+	/CknuDnqcL29vPlPa56tJmfcJtjP5DAZ3fG+LPJ+OqENzYITxp0MroUYDm7Km7IR
+	wzsPzGtckcyxaS/krzZ82e4K5ZWUUOD4jEMxu0wPXi0nog==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48g5hmfhm2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:55:49 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b109be525eso24284551cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 04:55:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755172548; x=1755777348;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KwaUoxCOeIrDWwA8MlhquWgHJPxXaTq1KQH7JgKMBMY=;
+        b=KHO7RV797cnAOfeo7zYwrj6QMmtdGWtCcXVBrBi3zduwwJ0u9nAdOQ+qYRDZUpNbVf
+         iF5GXoB/pr/uzkpOBWzUzvtlNcyAtTDNkxlgqoaz2m6X07N5fIADIneru6hxAUzow3lt
+         5Wt8XEcVdr1X2DJmUHurzwR+8S1mSHQyycB/Dc2hRxQHR/a2TDi4393foGhMGiksB9fi
+         ZRPg9Mw6yOy5EjMtItoFg4OMO/3TurglRcguj5TGvIfPl9D/BIE1F74jtB5lVzeSYZ+a
+         7jCkad1GXdjw2pUWaR+O/gLE1fLDaZBlFBhrQrR1cDiXk8jt1vafWDmKO7ZlVXMhjFxU
+         x9Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlPCF7TqcflBRAdN03wU31s7a8IL7r7dfXxZOpMglZ3Pyw3vdgyk8sqzFJo8YHtG9im9If3yKQ8wzKKqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdJoOVUlCridVsDzspEVQYf8akyj4VXwMpMlnG9WN87WadFZP8
+	H0FgJg7KlKuQ62T3n/m9U8jUh2b/1tQ+3HXbzkonbps1WO+wnyZE9SAKoc4+haaRiqN4Lez5RcL
+	DEtGZSwdkentWjI3GeLb6El7BPNfR84dXvWNmlWPpBdc2CgEbzXbr6WXIjpneWN8wjwo=
+X-Gm-Gg: ASbGncsUxe+TjXap1m2ZjheLURYxEH/85af4CqPv+4Ez7t9jHpkNjNQGTZRcmpwY2LY
+	D2HI7DCIBgPPv7NvnT4j9lK3lWgp5XR7R/Dh+b8ExtDsiqEgZL4gq14QeXbPZZGjQYGouaIddPA
+	rmvcacKQMqh8mnTR/SB06lhzwqNnp0lVK5OZoCiCYuS268qoqspSPPvQfVApP/z/oEOAP2hDXB5
+	sz3He0GSKpeMzlO4eH5kMJQANNeqiZ0JHp6emUeHnYILZrGXxFEPXCjz9RRDN4tD++ck9z8NWyQ
+	1rDAoIcyvy/kng7/B2HuL22+men3/TdNOBVJ97Gx7BJ2cMO6H5Cye9nF1aYQ/RjjVxAwLL2s2Y8
+	Pa6XtWddv3VVBVFITAtu3S9/UpzU2WYWwPeWQeE8g+WoVjRgb3IjG
+X-Received: by 2002:a05:622a:181b:b0:4b0:81b2:a028 with SMTP id d75a77b69052e-4b10a9599a6mr38768421cf.9.1755172548291;
+        Thu, 14 Aug 2025 04:55:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5PGTOUVfkkOdPwUV4mfK2TYoGc7cZ5ZdF55FySgMx3O0MHYR346J62Rlv5Z/fmOpnbr4S+g==
+X-Received: by 2002:a05:622a:181b:b0:4b0:81b2:a028 with SMTP id d75a77b69052e-4b10a9599a6mr38768071cf.9.1755172547762;
+        Thu, 14 Aug 2025 04:55:47 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55c78c9123bsm3781616e87.44.2025.08.14.04.55.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 04:55:46 -0700 (PDT)
+Date: Thu, 14 Aug 2025 14:55:44 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Danilo Krummrich <dakr@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>, Michael Walle <mwalle@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH 0/2] driver core: platform: / drm/msm: dp: Delay applying
+ clock defaults
+Message-ID: <flybqtcacqa3mtvav4ba7qcqtn6b7ocziweydeuo4v2iosqdqe@4oj7z4ps7d2c>
+References: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 7/7] KVM: SEV: Add SEV-SNP CipherTextHiding support
-From: Kim Phillips <kim.phillips@amd.com>
-To: "Kalra, Ashish" <ashish.kalra@amd.com>, Tom Lendacky
-	<thomas.lendacky@amd.com>, <corbet@lwn.net>, <seanjc@google.com>,
-	<pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	<hpa@zytor.com>, <john.allen@amd.com>, <herbert@gondor.apana.org.au>,
-	<davem@davemloft.net>, <akpm@linux-foundation.org>, <rostedt@goodmis.org>,
-	<paulmck@kernel.org>
-CC: <nikunj@amd.com>, <Neeraj.Upadhyay@amd.com>, <aik@amd.com>,
-	<ardb@kernel.org>, <michael.roth@amd.com>, <arnd@arndb.de>,
-	<linux-doc@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-References: <cover.1752869333.git.ashish.kalra@amd.com>
- <44866a07107f2b43d99ab640680eec8a08e66ee1.1752869333.git.ashish.kalra@amd.com>
- <9132edc0-1bc2-440a-ac90-64ed13d3c30c@amd.com>
- <03068367-fb6e-4f97-9910-4cf7271eae15@amd.com>
- <b063801d-af60-461d-8112-2614ebb3ac26@amd.com>
- <29bff13f-5926-49bb-af54-d4966ff3be96@amd.com>
- <5a207fe7-9553-4458-b702-ab34b21861da@amd.com>
- <a6864a2c-b88f-4639-bf66-0b0cfbc5b20c@amd.com>
- <9b0f1a56-7b8f-45ce-9219-3489faedb06c@amd.com>
- <96022875-5a6f-4192-b1eb-40f389b4859f@amd.com>
- <5eed047b-c0c1-4e89-87e9-5105cfbb578e@amd.com>
- <506de534-d4dd-4dda-b537-77964aea01b9@amd.com>
- <47783816-ff18-4ae0-a1c8-b81df6d2f4ef@amd.com>
- <a747227c-c194-47c4-89be-ba509c0633e4@amd.com>
-Content-Language: en-US
-In-Reply-To: <a747227c-c194-47c4-89be-ba509c0633e4@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD76:EE_|SJ1PR12MB6148:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99b99215-85d6-4286-5d30-08dddb294972
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q0Jlb1NlTVNMSEE5WEk2eG81M0VrSUY3dUx4ZC9nVEJucTJmNHdOZUNXY3ly?=
- =?utf-8?B?RCtHME5iQmRtbUNGSXd1ZGVuWVQycFJTY00xTCt0MEc0Z0JyaWwxcEtJMmZw?=
- =?utf-8?B?bjdxS2RUbm9PUmVSTWNCSTRJOEZtaTQ1THNoWTNYUUJ6WjRsdWNyZTNucWJa?=
- =?utf-8?B?dkMvVzk0OU04SHA5U0taZjBqazlpZ0NPdXVvdGZ2SmxYN1NIOU0zTmxyblN6?=
- =?utf-8?B?VHlIQ3pTWVlsMHc3THo1a1JoTG9wV29SazRyZ0txRERXWkNPazFXRk9vbVJG?=
- =?utf-8?B?anBGUVBRNUJ2QVIzb0kwZ0VwVXhoMDFPTzh4SzBxUnpuMGVVOEpXOG0ySTJQ?=
- =?utf-8?B?ZnNLVUl1bStEdlB4dE5EUkJVKzkzd25UaEJWaGRTUnVLbHlHMytycUlReUxX?=
- =?utf-8?B?bVRNZVd4WElDNHlPdlVjaUQ5UkhnUkZvb3pZZjNxZDVhTGhIWTV5Z1lQbXBo?=
- =?utf-8?B?dXhsWFNCa25NRWVFSnRNVW5LY2RYZ0tNN3J2eXQxaVR1c2pRa0JOZEMrMjhi?=
- =?utf-8?B?bisxZW1MMGk1OUpyMmM1VEwycllwd0lPSzRhcGc1c2FzYWo3Nll6cEdlNjdX?=
- =?utf-8?B?Z2hKTk13dExCSGZFaXZlV1dJdmg4Q1ZiTnNyQk5xMU5iRk1wWUlhak5OSVJi?=
- =?utf-8?B?c1piL2docmZsMGxyU2tMN3Bybytxc0lBeFpMUlZYMWUvZGhNeisydjNEQXdk?=
- =?utf-8?B?eERlUW13eEZCM1JPUDExaVYwbXpNL2dQdFI0bHFtV0tISllzVUk2c2ppOFg3?=
- =?utf-8?B?UE1mdlRRb1ZHTEpXZ0dNdGRkcW92NmY2M3hXR0Q1ZjlWdkpET2lBT2oyQkNL?=
- =?utf-8?B?aURwS2p2eGovMjlsRVNCcWIvVmpQSFNETU1Vc3U1ZzljakVyVUZCWXpkS0RS?=
- =?utf-8?B?YnhHNG0xNGFkcGhzU2ljTUVzRTlTV0c4RWJFNTlwME55VlozVWR2d3F4S1dW?=
- =?utf-8?B?bVJ5TFpKdjJpWE00UkZzZUwrQmRWby9qSEo0d0J1M2REWnBqck9oY2UvelRK?=
- =?utf-8?B?Uzc0UDhESU94Y3FqZk9kZnpBR2FzQnBjbjJaTUpOSFF6RjFHSXVPRnBySENL?=
- =?utf-8?B?UllyZ3ZXQWd2K1BiWDlhVUNDdUtoTTdqTUhGNUFBcHpJZHc4ZjlkUzVnbFBT?=
- =?utf-8?B?ZDFTQVJabm9SSlRrZ0x6ajZ6L2hRYUYzL0pvT20vcUpkZTF3S1R5WkVtNDB0?=
- =?utf-8?B?SERha2ZxL203Y2tYeFQ1dlVSOHVKUHgvcHdBMDdXRDZObHB5ZEc2ZGVyekNF?=
- =?utf-8?B?WFM2bDhwMUxRa0ZEcUI4cFp1dmMzeU45blhIUDNwTi9nYkY0N3pkcHVoeDla?=
- =?utf-8?B?bFhwU01yVXlFdDUraFBpcGJkbjJnQjluY2lYMk1vdG9ENjJVakZBR1hTdy94?=
- =?utf-8?B?cDlOTFdHL1cwV3dOL2tXWks3QWxqZFFnS3JkZDB0NldPWU84YnFNZjE1aWh5?=
- =?utf-8?B?c0hZaXFjc0ZpWEY2SXkvbHE2UUtKU25Bek9SajZaa1dPRjUya25kQzFvMDJs?=
- =?utf-8?B?RG5TdEYrUHc2bU5zVDFwbWhBeldpUTg0K3BGV3M4MzJ5bDlCb0VLNzRzYmZm?=
- =?utf-8?B?VG1oUTZLTXZ5UG0rQldsekhPajZobDd0ZDVseHNSSmN0V0lxUEtGcUUzYVdE?=
- =?utf-8?B?WENzSnQyQ1BHZDU0Q3JOWUxwY0l4cFlLamIzRTRZTEM1VFRzRnRtcTR6clpE?=
- =?utf-8?B?bkpyVUJlcXRpVHg2eSt4UWpEOXBKVEwvTFJUUmhibngxRS9tUGxHdHBOQ01E?=
- =?utf-8?B?UE5XS2x4R1ByY0JCTkpFT2Q5cHFaVHJlaC9Oeklma25VOUtOMHpOYWtFc2pm?=
- =?utf-8?B?cjVTWERNRnd5a2ZqTVZOMnV6ZEZicm80cjRwL1dMSHZvOGwzTDNuVTJvWVRD?=
- =?utf-8?B?bXlkUzVoR1UrSE9SeUlRM0pCYU04OGdKQkY2ZmxydVhTNW5CMHZHRW12WGNK?=
- =?utf-8?B?SW1ibjQ0VGlMcFl6N25ZZ3V6bmdibDJPMHVESkpuVlhQbTBWWWxsdDdPVVhh?=
- =?utf-8?B?U1BzclpHZUpOcUxWQm1Kc2owTWFGd1RKTDZZRjRISldNZzBqTyt6dnBTVmh2?=
- =?utf-8?B?ZkZCUFYwVFQyZUNrTG1hWW5kaFRYd0VONmlMQT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 11:54:12.8293
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99b99215-85d6-4286-5d30-08dddb294972
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD76.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6148
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDExOSBTYWx0ZWRfX9Vz30/sNaM3y
+ 6AdWP/Fe/dm744QQvuXU2WfxHNQiCe5CCzy31f9dZEKHDVfTM5carTuyZYyPKVQLG28kYmg5RJr
+ WzIbTgDSV44MEQ+sPGt9nSjzK0RzAIBSKgyjW+GrBxTG8y0qyT9LHrI/+sJl4BkDuOPuET+BCs6
+ 2sId2Oq9kqhOfvRe1B+krjTDZ3kgZogdxS+aKZR/wsgR8ka8eWByuAcaCKk6FGXbpvcRh47OaiH
+ chtEKLl3kvsce/jdaovEF12czanZ84ISenOfHeKHVha/WuEFVwfnj3Z7Q7YqddGO+cNUxmmgXgB
+ N9ivvlBhfqfu1LkeaZUT5kdiXuXEsCMjgVcjizA3G6IGqEYhM2XovIO5/9fXBmn0uYqFfMcgLCC
+ KDftAgx8
+X-Proofpoint-GUID: HfNxKJXulHbVSn8_t4vknpD40u9L-9RG
+X-Proofpoint-ORIG-GUID: HfNxKJXulHbVSn8_t4vknpD40u9L-9RG
+X-Authority-Analysis: v=2.4 cv=d4b1yQjE c=1 sm=1 tr=0 ts=689dcec5 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=PpI7sDOo-OXBv82Lu10A:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 spamscore=0 phishscore=0 adultscore=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120119
 
-On 8/12/25 6:30 PM, Kim Phillips wrote:
-> On 8/12/25 2:38 PM, Kalra, Ashish wrote:
->> On 8/12/2025 2:11 PM, Kim Phillips wrote:
->>> On 8/12/25 1:52 PM, Kalra, Ashish wrote:
->>>> On 8/12/2025 1:40 PM, Kim Phillips wrote:
->>>>>>> It's not as immediately obvious that it needs to (0 < x < 
->>>>>>> minimum SEV ASID 100).
->>>>>>> OTOH, if the user inputs "ciphertext_hiding_asids=0x1", they now 
->>>>>>> see:
->>>>>>>
->>>>>>>         kvm_amd: invalid ciphertext_hiding_asids "0x1" or !(0 < 
->>>>>>> 99 < minimum SEV ASID 100)
->>>>>>>
->>>>>>> which - unlike the original v7 code - shows the user that the 
->>>>>>> '0x1' was not interpreted as a number at all: thus the 99 in the 
->>>>>>> latter condition.
->>>>>> This is incorrect, as 0 < 99 < minimum SEV ASID 100 is a valid 
->>>>>> condition!
->>>>> Precisely, meaning it's the '0x' in '0x1' that's the "invalid" part.
->>>>>> And how can user input of 0x1, result in max_snp_asid == 99 ?
->>>>> It doesn't, again, the 0x is the invalid part.
->>>>>
->>>>>> This is the issue with combining the checks and emitting a 
->>>>>> combined error message:
->>>>>>
->>>>>> Here, kstroint(0x1) fails with -EINVAL and so, max_snp_asid 
->>>>>> remains set to 99 and then the combined error conveys a wrong 
->>>>>> information :
->>>>>> !(0 < 99 < minimum SEV ASID 100)
->>>>> It's not, it says it's *OR* that condition.
->>>> To me this is wrong as
->>>> !(0 < 99 < minimum SEV ASID 100) is simply not a correct statement!
->>> The diff I provided emits exactly this:
->>>
->>> kvm_amd: invalid ciphertext_hiding_asids "0x1" or !(0 < 99 < minimum 
->>> SEV ASID 100)
->>>
->>>
->>> which means *EITHER*:
->>>
->>> invalid ciphertext_hiding_asids "0x1"
->>>
->>> *OR*
->>>
->>> !(0 < 99 < minimum SEV ASID 100)
->>>
->>> but since the latter is 'true', the user is pointed to the former
->>> "0x1" as being the interpretation problem.
->>>
->>> Would adding the word "Either" help?:
->>>
->>> kvm_amd: Either invalid ciphertext_hiding_asids "0x1", or !(0 < 99 < 
->>> minimum SEV ASID 100)
->>>
->>> ?
->> No, i simply won't put an invalid expression out there:
->>
->> !(0 < 99 < minimum SEV ASID 100)
->
-> When not quoted out of context, it's not an invalid expression (in the 
-> 99 case) because it's preceded with the word "or:"
->
-> ..., or !(0 < 99 < minimum SEV ASID 100)
->
->>> If not, feel free to separate them: the code is still much cleaner.
->> Separating the checks will make the code not very different from the 
->> original function, so i am going to keep the original code.
->
-> Take a look at the example diff below, then.  It's still less, simpler 
-> code because it eliminates:
->
-> 1. the unnecessary ciphertext_hiding_asid_nr variable
->
-> 2. the redundant isdigit(ciphertext_hiding_asids[0])) check
-> and 3. the 'invalid_parameter:' label referenced by only one goto 
-> statement. 
+On Thu, Aug 14, 2025 at 11:18:05AM +0200, Stephan Gerhold wrote:
+> Currently, the platform driver core always calls of_clk_set_defaults()
+> before calling the driver probe() function. This will apply any
+> "assigned-clock-parents" and "assigned-clock-rates" specified in the device
+> tree. However, in some situations, these defaults cannot be safely applied
+> before the driver has performed some early initialization. Otherwise, the
+> clock operations might fail or the device could malfunction.
+> 
+> This is the case for the DP/DSI controller on some Qualcomm platforms. We
+> use assigned-clock-parents there to bind the DP/DSI link clocks to the PHY,
+> but this fails if the PHY is not already powered on. We often bypass this
+> problem because the boot firmware already sets up the correct clock parent,
+> but this is not always the case.
 
-Re-posting, since I believe the previous email's diff got mangled:
+So, the issue is that our abstraction is loose and we register a clock
+before it becomes usable. Would it be better to delay registering a
+clock until it's actually useable? (and then maybe to unregister on the
+link shutdown)
 
-  arch/x86/kvm/svm/sev.c | 44 ++++++++++++++++++++------------------------
-  1 file changed, 20 insertions(+), 24 deletions(-)
+> 
+> Michael had a somewhat related problem in the PVR driver recently [1],
+> where of_clk_set_defaults() needs to be called a second time from the PVR
+> driver (after the GPU has been powered on) to make the assigned-clock-rates
+> work correctly.
+> 
+> I propose adding a simple flag to the platform_driver struct that skips the
+> call to of_clk_set_defaults(). The platform driver can then call it later
+> after the necessary initialization was performed (in my case: after the PHY
+> was fully enabled for the first time).
+> 
+> There are also alternative solutions that I considered, but so far
+> I discarded them in favor of this simple one:
+> 
+>  - Avoid use of assigned-clock-parents: We could move the clocks from
+>    "assigned-clock-parents" to "clocks" and call clk_set_parent() manually
+>    from the driver. This is what we did for DSI on SM8750 (see commit
+>    80dd5911cbfd ("drm/msm/dsi: Add support for SM8750")).
+> 
+>    This is the most realistic alternative, but it has a few disadvantages:
+> 
+>     - We need additional boilerplate in the driver to assign all the clock
+>       parents, that would be normally hidden by of_clk_set_defaults().
+> 
+>     - We need to change the existing DT bindings for a number of platforms
+>       just to workaround this limitation in the Linux driver stack. The DT
+>       does not specify when to apply the assigned-clock-parents, so there
+>       is nothing wrong with the current hardware description.
+> 
+>  - Use clock subsystem CLK_OPS_PARENT_ENABLE flag: In theory, this would
+>    enable the new parent before we try to reparent to it. It does not work
+>    in this situation, because the clock subsystem does not have enough
+>    information to power on the PHY. Only the DP/DSI driver has.
+> 
+Another possible option would be to introduce the 'not useable' state /
+flag to the CCF, pointing out that the clock is registered, but should
+not be considered for parenting operations.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 7ac0f0f25e68..1b9702500c73 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -2970,8 +2970,6 @@ static bool is_sev_snp_initialized(void)
+>  - Cache the new parent in the clock driver: We could try to workaround
+>    this problem in the clock driver, by delaying application of the new
+>    clock parent until the parent actually gets enabled. From the
+>    perspective of the clock subsystem, the clock would be already
+>    reparented. This would create an inconsistent state: What if the clock
+>    is already running off some other parent and we get a clk_set_rate()
+>    before the parent clock gets enabled? It would operate on the new
+>    parent, but the actual rate is still being derived from the old parent.
+> 
 
-  static bool check_and_enable_sev_snp_ciphertext_hiding(void)
-  {
--       unsigned int ciphertext_hiding_asid_nr = 0;
--
-         if (!ciphertext_hiding_asids[0])
-                 return false;
+But... Generally it feels that we should be able to bring up the clocks
+in some 'safe' configuration, so that the set_parent / set_rate calls
+can succeed. E.g. DISP_CC_MDSS_DPTX0_LINK_CLK_SRC can be clocked from XO
+until we actually need to switch it to a proper rate. I see that
+e.g. dispcc-sm8550.c sets 'CLK_SET_RATE_PARENT' on some of DP clock
+sources for no reason (PHY clock rates can not be set through CCF, they
+are controlled through PHY ops).
 
-@@ -2980,32 +2978,28 @@ static bool 
-check_and_enable_sev_snp_ciphertext_hiding(void)
-                 return false;
-         }
+> [1]: https://lore.kernel.org/r/20250716134717.4085567-3-mwalle@kernel.org/
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+> Stephan Gerhold (2):
+>       driver core: platform: Add option to skip/delay applying clock defaults
+>       drm/msm: dp: Delay applying clock defaults until PHY is fully enabled
+> 
+>  drivers/base/platform.c             |  8 +++++---
+>  drivers/gpu/drm/msm/dp/dp_ctrl.c    | 10 ++++++++++
+>  drivers/gpu/drm/msm/dp/dp_display.c |  2 ++
+>  include/linux/platform_device.h     |  6 ++++++
+>  4 files changed, 23 insertions(+), 3 deletions(-)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250812-platform-delay-clk-defaults-44002859f5c5
+> 
+> Best regards,
+> -- 
+> Stephan Gerhold <stephan.gerhold@linaro.org>
+> 
 
--       if (isdigit(ciphertext_hiding_asids[0])) {
--               if (kstrtoint(ciphertext_hiding_asids, 10, 
-&ciphertext_hiding_asid_nr))
--                       goto invalid_parameter;
--
--               /* Do sanity check on user-defined 
-ciphertext_hiding_asids */
--               if (ciphertext_hiding_asid_nr >= min_sev_asid) {
--                       pr_warn("Module parameter 
-ciphertext_hiding_asids (%u) exceeds or equals minimum SEV ASID (%u)\n",
--                               ciphertext_hiding_asid_nr, min_sev_asid);
--                       return false;
--               }
--       } else if (!strcmp(ciphertext_hiding_asids, "max")) {
--               ciphertext_hiding_asid_nr = min_sev_asid - 1;
-+       if (!strcmp(ciphertext_hiding_asids, "max")) {
-+               max_snp_asid = min_sev_asid - 1;
-+               min_sev_es_asid = max_snp_asid + 1;
-+               return true;
-         }
-
--       if (ciphertext_hiding_asid_nr) {
--               max_snp_asid = ciphertext_hiding_asid_nr;
--               min_sev_es_asid = max_snp_asid + 1;
--               pr_info("SEV-SNP ciphertext hiding enabled\n");
-+       if (kstrtoint(ciphertext_hiding_asids, 10, &max_snp_asid)) {
-+               pr_warn("ciphertext_hiding_asids \"%s\" is not an 
-integer or 'max'\n", ciphertext_hiding_asids);
-+               return false;
-+       }
-
--               return true;
-+       /* Do sanity check on user-defined ciphertext_hiding_asids */
-+       if (max_snp_asid < 1 || max_snp_asid >= min_sev_asid) {
-+               pr_warn("!(0 < ciphertext_hiding_asids %u < minimum SEV 
-ASID %u)\n",
-+                       max_snp_asid, min_sev_asid);
-+               max_snp_asid = min_sev_asid - 1;
-+               return false;
-         }
-
--invalid_parameter:
--       pr_warn("Module parameter ciphertext_hiding_asids (%s) invalid\n",
--               ciphertext_hiding_asids);
--       return false;
-+       min_sev_es_asid = max_snp_asid + 1;
-+
-+       return true;
-  }
-
-  void __init sev_hardware_setup(void)
-@@ -3122,8 +3116,10 @@ void __init sev_hardware_setup(void)
-                  * ASID range into separate SEV-ES and SEV-SNP ASID 
-ranges with
-                  * the SEV-SNP ASID starting at 1.
-                  */
--               if (check_and_enable_sev_snp_ciphertext_hiding())
-+               if (check_and_enable_sev_snp_ciphertext_hiding()) {
-+                       pr_info("SEV-SNP ciphertext hiding enabled\n");
-                         init_args.max_snp_asid = max_snp_asid;
-+               }
-                 if (sev_platform_init(&init_args))
-                         sev_supported = sev_es_supported = 
-sev_snp_supported = false;
-                 else if (sev_snp_supported)
-
+-- 
+With best wishes
+Dmitry
 
