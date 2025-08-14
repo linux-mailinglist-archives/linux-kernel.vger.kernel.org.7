@@ -1,125 +1,173 @@
-Return-Path: <linux-kernel+bounces-769071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66A4B269B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:41:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80B3B269C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D289E1E46
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:33:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415219E3128
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60F31F17E8;
-	Thu, 14 Aug 2025 14:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A071BE871;
+	Thu, 14 Aug 2025 14:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gnl9jsm6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="e7jfXMEt"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B3A1E8335;
-	Thu, 14 Aug 2025 14:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6181ACECE
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181966; cv=none; b=gBodVNu7hbHsTQd+z7JU9cqWbZxTmRI88ybj+ygQxjsopr+4ww3BWxLCI0WalDK+9SH7tltOFR2ObicMBrTuItRvXf+Q23QbfUzyHpQo24hoVndF+xI2+GDBfU8VhuNqQncCNeSLOZ31Aaj6nub+a/cPFBS5o2W8EbjpMdXT7os=
+	t=1755182025; cv=none; b=KObCncyGBb+8aADE31FTBgZdwIKDNwdVHrmI7NlCW0gqjeFl0sH746COundGPIVMwecJDf1eim3bOV2u4SP5SJQpL5jmJmZOzz2Vw0QWFaJXC5xc/oj2y/pCnXBZ/uNjzTmaSzrNzpblknm3obuNh3RLoH+X0ZqlNo1pIfvXJ4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181966; c=relaxed/simple;
-	bh=2YgBYu0tho6+NwLlDqBIcjwF8u4K+m2ays0gRmPyQKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NdP5lvkK9sBa73M4EIR3vYtCjd9KFB9TJyAo7ehET+gYVQQywo7k/ucRkcZZB8a0ghwPzkBCuiWlUxNsvAIDYRIBNiv8alhWjRRdPzw1gAna3PekxOnUb7LzA+rKjFQFfGUMfjkvScK4JAghBRSU9CtfuTXPAv7DBqG+QT7yx7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gnl9jsm6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D273AC4CEED;
-	Thu, 14 Aug 2025 14:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755181965;
-	bh=2YgBYu0tho6+NwLlDqBIcjwF8u4K+m2ays0gRmPyQKg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gnl9jsm6Xus63Y0SCB/oxV5NkcCTq9ft8Fuo/O44twup8m1YNTvdAUVXmssbIpeOh
-	 gg7Y15u+IFfCrDD4kNWuEwEdy5WAPxsMeabPJsRhoJlsmDgeq/hTOH/YkZByslv7dJ
-	 KLCTtVP8faTK8IGCCsYYNgSTw9zyZI8uS9t2BMpVWlgeDDxFAM21jiEnxHUj7GlYCb
-	 qKXPXQT5e3BgdAuiksK4gqWzCFAg8POUedn5Lb2cyLJxGuNl/XyvUwwN3FJwogPK0W
-	 Jx7ly2bnvImgiMeMvjzyGpOqpj92VZZYGKqXDfWGOoIv8YoE7nnuesWte46Qqh41pk
-	 HVen4J/VvZoDw==
-Date: Thu, 14 Aug 2025 16:32:40 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: luyulin@eswincomputing.com
-Cc: hehuan1@eswincomputing.com, dlemoal@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-ide@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: Re: [PATCH v1 1/2] dt-bindings: sata: eswin: Document for
- EIC7700 SoC
-Message-ID: <aJ3ziEwmGF-KLPuT@ryzen>
-References: <20250515085114.1692-1-hehuan1@eswincomputing.com>
- <20250515085723.1706-1-hehuan1@eswincomputing.com>
- <aCXPL8m0OjEOI_q9@ryzen>
- <2630d08e.133.198a7fe5583.Coremail.luyulin@eswincomputing.com>
+	s=arc-20240116; t=1755182025; c=relaxed/simple;
+	bh=3HRyi/pPqiXt+55im0ZeDQ/EKS5tO/F9qNKqrYGaFPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=QjKoxL5aS7ZUgtIBgUz9XrKT8hSO5H8c8IJKCz76t6E+eD0WL57ZtJkSFiLZLMqh6X5aG1C168GNJXNvW53KSKmgt9qXQp9qZ0dKt+bezuhRRdQWl+wwhyKS+ss00aUpwqjQ/WInzz8HYOUFB+h20pksFN9hwA7j4RAZnQ8jKQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=e7jfXMEt; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250814143341euoutp01df70f07574827e7c607a9b53083b3db9~bqL-NTkri1662616626euoutp01B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:33:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250814143341euoutp01df70f07574827e7c607a9b53083b3db9~bqL-NTkri1662616626euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755182021;
+	bh=HYTbEJeXrofpbs+IrmDrCBkyO0qBISpuRD07yukoC3M=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=e7jfXMEtbajFgUjwRBhcTLRIVblrZOpnEbsCSf3WAKB1weUW7mUHDy9TxhLX2WjL+
+	 kHFZv4Xci0Ot/45YURj7O/2bNOx4+5EINW25i7mU557c2szi1xkvgufLUGo2E3ntEz
+	 34/Z2FghVovoMJr9w84HVH3KRqE89Cp0FhfBmgUc=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250814143340eucas1p24ef13c4a8a272a5830bc0adbbc8206a2~bqL_iNFfu0056100561eucas1p2Y;
+	Thu, 14 Aug 2025 14:33:40 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250814143338eusmtip29e7b2dc498b358fdadaba0c0c10331ce~bqL7__0l03070130701eusmtip20;
+	Thu, 14 Aug 2025 14:33:37 +0000 (GMT)
+Message-ID: <a3a2f8be-2c3c-49e7-b27a-72364ea48b06@samsung.com>
+Date: Thu, 14 Aug 2025 16:33:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4 00/13] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+	dianders@chromium.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250814104753.195255-1-damon.ding@rock-chips.com>
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2630d08e.133.198a7fe5583.Coremail.luyulin@eswincomputing.com>
+X-CMS-MailID: 20250814143340eucas1p24ef13c4a8a272a5830bc0adbbc8206a2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+X-EPHeader: CA
+X-CMS-RootMailID: 20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264
+References: <CGME20250814104818eucas1p2c5029f6d5997f4fafd6370f9e7fb2264@eucas1p2.samsung.com>
+	<20250814104753.195255-1-damon.ding@rock-chips.com>
 
-Hello Yulin,
+On 14.08.2025 12:47, Damon Ding wrote:
+> PATCH 1 is a small format optimization for struct analogid_dp_device.
+> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+> PATCH 3-6 are preparations for apply drm_bridge_connector helper.
+> PATCH 7 is to apply the drm_bridge_connector helper.
+> PATCH 8-10 are to move the panel/bridge parsing to the Analogix side.
+> PATCH 11-12 are preparations for apply panel_bridge helper.
+> PATCH 13 is to apply the panel_bridge helper.
 
-On Thu, Aug 14, 2025 at 05:51:59PM +0800, luyulin@eswincomputing.com wrote:
-> Thank you very much for your constructive suggestions. Based on your advice,
-> I have optimized both the driver and the YAML program.
-> I sincerely apologize for the delayed response to your suggestions.
+This series lacks 'select DRM_BRIDGE_CONNECTOR' in ExynosDP's Kconfig, 
+so it causes build break:
 
-No need to apologize for anything :)
+drivers/gpu/drm/exynos/exynos_dp.c:177: undefined reference to 
+`drm_bridge_connector_init'
+make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
 
+After adding this dependency, the Exynos DP driver stops working. On 
+Samsung Snow Chromebook I observed following issue:
 
-> > The good news is that snps,dwc-ahci-common.yaml has defined and documented
-> > all the SATA clocks and resets for your board already (a lot of them which
-> > you missed to include in this binding).
-> > 
-> > 
-> > Looking quickly at:
-> > eswin,hsp_sp_csr = <&hsp_sp_csr 0x1050>;
-> > 
-> > I can't help to wonder if these regs shouldn't be in a SATA PHY binding
-> > instead.
-> > 
-> > Do e.g. a
-> > $ git grep -A 20 snps,dwc-ahci arch/
-> > 
-> > There are multiple examples that use a PHY driver.
-> > 
-> > If you were to implement a PHY driver, it is possible that you would
-> > not need to create a new (AHCI) DT binding at all, you could probably
-> > just add your compatible string to snps,dwc-ahci.yaml, as (from a quick)
-> > glance, all the only platform specific things appear to be PHY related.
-> > 
-> Thank you very much for your expert advice. I have already implemented a 
-> independent PHY driver, while the controller driver utilizes ahci_dwc.c.
-> Due to our hardware platform's SATA controller has specific constraints on clock, reset
-> and port resources, I think adding these to snps,dwc-ahci.yaml might compromise its readability.
-> Following reference implementations from other vendors in the Linux kernel, 
-> such as rockchip,dwc-ahci.yaml, amlogic,axg-pcie.yaml and others, I plan to create 
-> a new eswin,eic7700-ahci.yaml to describe these specifications.
-> Based on your professional experience, would you consider this approach acceptable?
+[    4.534220] exynos-dp 145b0000.dp-controller: failed to attach 
+following panel or bridge (-16)
+[    4.543428] exynos-drm exynos-drm: failed to bind 
+145b0000.dp-controller (ops exynos_dp_ops): -16
+[    4.551775] exynos-drm exynos-drm: adev bind failed: -16
+[    4.556559] exynos-dp 145b0000.dp-controller: probe with driver 
+exynos-dp failed with error -16
 
-That sounds like a good approach.
+I will investigate details later in the evening.
 
-When you create your device tree binding, make sure to reference
-snps,dwc-ahci-common.yaml, like the other DWC based bindings:
+> Damon Ding (13):
+>    drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
+>    drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
+>      &drm_bridge_funcs.atomic_enable
+>    drm/bridge: analogix_dp: Add &analogix_dp_plat_data.next_bridge
+>    drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
+>    drm/bridge: exynos_dp: Remove unused &exynos_dp_device.connector
+>    drm/bridge: analogix_dp: Remove redundant
+>      &analogix_dp_plat_data.skip_connector
+>    drm/bridge: analogix_dp: Apply drm_bridge_connector helper
+>    drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
+>    drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
+>    drm/exynos: exynos_dp: Apply analogix_dp_finish_probe()
+>    drm/bridge: analogix_dp: Remove panel disabling and enabling in
+>      analogix_dp_set_bridge()
+>    drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing
+>      in analogix_dp_unbind()
+>    drm/bridge: analogix_dp: Apply panel_bridge helper
+>
+>   .../drm/bridge/analogix/analogix_dp_core.c    | 384 ++++++++++--------
+>   .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
+>   drivers/gpu/drm/exynos/exynos_dp.c            |  48 +--
+>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  49 +--
+>   include/drm/bridge/analogix_dp.h              |   7 +-
+>   5 files changed, 248 insertions(+), 245 deletions(-)
+>
+> ---
+>
+> Changes in v2:
+> - Update Exynos DP driver synchronously.
+> - Move the panel/bridge parsing to the Analogix side.
+>
+> Changes in v3:
+> - Rebase for the existing devm_drm_bridge_alloc() applying commit.
+> - Fix the typographical error of panel/bridge check in exynos_dp_bind().
+> - Squash all commits related to skip_connector deletion in both Exynos and
+>    Analogix code into one.
+> - Apply panel_bridge helper to make the codes more concise.
+> - Fix the handing of bridge in analogix_dp_bridge_get_modes().
+> - Remove unnecessary parameter struct drm_connector* for callback
+>    &analogix_dp_plat_data.attach().
+> - In order to decouple the connector driver and the bridge driver, move
+>    the bridge connector initilization to the Rockchip and Exynos sides.
+>
+> Changes in v4:
+> - Rebase for the applied &drm_bridge_funcs.detect() modification commit.
+> - Rename analogix_dp_find_panel_or_bridge() to analogix_dp_finish_probe().
+> - Drop the drmm_encoder_init() modification commit.
+> - Rename the &analogix_dp_plat_data.bridge to
+>    &analogix_dp_plat_data.next_bridge.
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-$ git grep snps,dwc-ahci-common.yaml
-baikal,bt1-ahci.yaml:  - $ref: snps,dwc-ahci-common.yaml#
-baikal,bt1-ahci.yaml:    $ref: /schemas/ata/snps,dwc-ahci-common.yaml#/$defs/dwc-ahci-port
-rockchip,dwc-ahci.yaml:    $ref: /schemas/ata/snps,dwc-ahci-common.yaml#/$defs/dwc-ahci-port
-rockchip,dwc-ahci.yaml:  - $ref: snps,dwc-ahci-common.yaml#
-snps,dwc-ahci.yaml:  - $ref: snps,dwc-ahci-common.yaml#
-snps,dwc-ahci.yaml:    $ref: /schemas/ata/snps,dwc-ahci-common.yaml#/$defs/dwc-ahci-port
-
-
-Kind regards,
-Niklas
 
