@@ -1,140 +1,142 @@
-Return-Path: <linux-kernel+bounces-769152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD7FBB26ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:21:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC626B26AC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63EA46819B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 772141893448
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9991521B9CF;
-	Thu, 14 Aug 2025 15:16:24 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDB01E522;
+	Thu, 14 Aug 2025 15:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KyrQDlp8"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84CF1E522;
-	Thu, 14 Aug 2025 15:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4327D215766
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755184584; cv=none; b=tW/mZ0gGxbBJoh/7i3Nils1HRcI5BzKxEVdvizsXMCQ3SxRxAwwUtzIVTzwtHVFR5RZ7GKRDjcs9HG7AHvoJbW1KGZjtvZLL21gyGzKGfa4pwOFAVOp+/kR5TJArvAJsXjQ9vwjnCUKF/VijHHhNrbohkleXgi17NVs2pqNJv5M=
+	t=1755184664; cv=none; b=NijS5zLCIJp/QPQ2hgC8BK0EQzaokiuYCGeyyZT/shyYn+kIKK8sA2hkHdAcucHRALsteVU/QNLAeZkdAqw/v4NZ+zz9nYDCt+SR16ZxAkmrHVcPoYStfyz4ihVFfJzfuGgCg21INrnR1U4PylHISqU1prTBEDUQj68lNS6tEHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755184584; c=relaxed/simple;
-	bh=xFaNBPd5xmGmmkpljvnBrEghjgv4yqpYGJ8MNUf++Nk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QHvLwO0MtuHloH6FxlH+ZSbsCackA6qtkjUQnnEeIsSoExk4t9KrU51fqzhflstpearJ5lRMRMDGAiWqSwjsjAFHqP/SRecv8WGNfi9/228iuib6oVXFE/KN0IiHNwRTDYhixw9fE0OAnv8uV6VXBqu+dA+SBkBZ/03GFK5e0zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-244581cd020so1535315ad.2;
-        Thu, 14 Aug 2025 08:16:22 -0700 (PDT)
+	s=arc-20240116; t=1755184664; c=relaxed/simple;
+	bh=jebkRezHI9tnuDesgjFDZKdyprU+i58WH5cbBdDaPds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iN0FwarEhtD4bPO+R51VeJs/VEZYbc74quDFXHlZ2KL/arThn0jun0DQNmmXhIiS2ZMO73kSXIdf9Usw2PgeunktTy7BiZnU971tT+I0glKubTMPCBmROKI8Dh0A9slhLtNUq8Zc9yCbLtei+1hEJPj8w6mM4YvaqkV7f5aDME8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KyrQDlp8; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9dc5c8ee7so754165f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1755184660; x=1755789460; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4bPCyFEVFb9QBBc46MlBjvus9sTU3F14kHpN5YVA+9Y=;
+        b=KyrQDlp8x99YWrksEidXMTV7K7LIIYgqnGS7tCf78uwdjONAM4g/oxaOGmxHsQ9H7s
+         JFL15sPdfCpnBaNvsdroT9JD0Wo5KntWGveNatjl3/Ewa3mld0Y46ELSCDTY978GR5Aw
+         K5vORtFZuBuNOjFC3NPgqggcP98CS3eTr23Ff5tOCIezJg1QwBwFZ73AkGjKGlNjM4Z3
+         +u2EsViWn04YHpSm1RV51++MPMMKaJ7Sv5wWtcdsvSS3kSvsXMZ3Or5usW6b4xuzrfDJ
+         hB5lpV3ZXx7L8Plhd7rAe4IfOzuCUqB0WP9zEtK85KWyJsbjhnl5PnSVOyeCsa+59kq6
+         JdrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755184582; x=1755789382;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Eb4Pwt+4DlcYTmjaI/seSD+b8VboyEm5UlMbHZ6SHow=;
-        b=Y9EXp/ffkL4dcHQzvHjKb7o2VFha0qs5gVojloYfxkQGq9pb/U081k3vLfo2dpui1x
-         B6nDlYTsPadCiG4gB20CXq+35yqoPDy9+jhO3M80uDtueBH7IO9z0ewSvU/bDAZLrbDR
-         xdvXbRuZ5PrJEbSEWe0qJy3OWgrkov0gkMdMysGJaQnPYVNYduXEm9qBJlf3qLFYwiXM
-         bD7stxpaGgPD6ygz4ZHZ+pV0E5PKrQUzpIX8TqgS28vLQBBAgiw/blZQxpwKYKEtz9jX
-         O8NuO37vBviugxLF2RcC3QNRgnwy6XK+p0Xu56yonCwA3wD0SY/pPPRcRsd4ItHuBUqT
-         PPiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTXaFhki9zHQ2LmpXYfKMCgv0DnWiUT1oAC6sX6qbSRklWlHne4DwxHz/LOUSnj7hkZZaah9JAX3s1xZ8=@vger.kernel.org, AJvYcCXatLONKHW7qE/ng/bTQL4TcZRxLOjJSnxhZZ+lEYvUg5JKLF2QrE+NF7y+t/tKbbuwORGdYUvtScEtNrPJXiILag==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyCJytXbluPEOKT7elT5F2Y72zFJQrSAQeZ/EcBe4RCOKg+hz7
-	SR6XGZWu5+yTrXxA8sqdAmEVP99MjvluEDoct0LlOUIEB/4ugjYgAsr7
-X-Gm-Gg: ASbGncs89YWxLD5Lgq2nKXKpldbC8lbumxEUbPg5+XEltBNW6ztViMgIOQyLZ3zt4mO
-	YQUMJbNwWKnEZqsjOa6YuCrUdSWn7e3ojaGTHNljaaFEqRAtsien7UGNLFxv7d/iFOEC5bBa+6B
-	F1IJV11u4wlujgZ3UwFEgWsRNwA8choYjKbKqhmFmw3BpqYUp8bcCk84OoKjqhLX2AUDMoRZlVV
-	PxUJhGJ9IR8ZMCUfzoO5U83bi+VnqcwyAxbYBBIBjtlLckfc5/3hZ52k68zkYgUK/w/guCm765N
-	HU0RGQ/t30WQZO07pMuBScDbmeb0AAlgfyp91IYzS00lIIpkhh4Yu6a6BYoDM6d/jEoYBgmnFd0
-	P3rR7bRwn9EtQ
-X-Google-Smtp-Source: AGHT+IFYf6c65S+ueeahtRG3nAVnc+xop3PDlfgKrPzWTagW5Fh/Eu2n1Xz11DqEF3h51G44eb5chg==
-X-Received: by 2002:a17:903:1c5:b0:240:8fd6:f798 with SMTP id d9443c01a7336-2445851909amr23360095ad.4.1755184581749;
-        Thu, 14 Aug 2025 08:16:21 -0700 (PDT)
-Received: from localhost ([218.152.98.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2430040122bsm72357495ad.59.2025.08.14.08.16.16
+        d=1e100.net; s=20230601; t=1755184660; x=1755789460;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4bPCyFEVFb9QBBc46MlBjvus9sTU3F14kHpN5YVA+9Y=;
+        b=LesjfckedrE3j3thKwbzZngjAGZ0XihflYh0F14ags2qeBSXtl7xbwFARXVXiwoeQM
+         b/h8d3jDfHei1BxyBhd5exxCpSVIIn8P0pZc+4NJSm6WyEH9na6W8ZdTvcWkJ7FR64Dz
+         PjlC+JxvtS7pNcf7j7ge9YNoxL3iOosH9CAn+CyzIMLekMG7+ss9WtD6HdISiOQI5zH2
+         b9DGtNJTa4uHKxteq12ML0NnzeDJv8ATgUb36yk6PyUE/bEPaWGJ1487RBxfMby5LoXH
+         EOw/ciWB9/UbveSYNFXqv/9NZeulv5WriNfV6QUu/+SLG7TIPaipP3RBPPXFoNDAD8jw
+         /xow==
+X-Forwarded-Encrypted: i=1; AJvYcCXfTB1uC89rTETcQfPQhBSL/9h638/VoxF2PDn0gU46ZhxIvKXn9qAcuoQ8PJbXIpZYR89A5CY1d3QZU8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFEXKinHKyUeJ/M55hBU9VVV1HzYzv/8t1Ch7IwmH7LuVXYJ53
+	QorPN0LslnIjbB4fb5wpfxlih7b5tA64q5lY/5Mpl3fyTjFR5LIgsf4gDxghadLxlpk=
+X-Gm-Gg: ASbGnculUBof8attEAu1fQXb2wa/Wyg+XRZK924jKZXiGblf+Z1WxDAzp2S3mbgj/3b
+	WsFAGN8ezhecJ93N+KYUqSvJtNSG06pKNupRpPXe/Bs/CWSUj+KUfy85RqhkSzXNZACuy0T9VPH
+	pbW5ByptIr6ShHlDkewChcITLk8g4sxTvD0tgO3Lb2lXFzZdybfoHuf2Hgo3g7Elx69yrbhhAdi
+	ALA6EKBGc7GzVLSgL4Mm4BYGnI4aZxoE7bLvlakoipOIiO8aj+jqfH+xvyNFmR2BSI30TJHXASn
+	YXf7u7lxYA+jTd9weYyvYfDxsrVsE/dnKnUpVohbsSqDDlPn2MExH+GX1vl/XNzpPM2F4qR4VgL
+	PPmZ/b6wa4bd0ImWmd1SCNyEKEF8pakpOvbtTo2ZPVg==
+X-Google-Smtp-Source: AGHT+IE7suJ0obZmqoydTK2uVUrVJqQaX40zbLZtTWthO0PNMSN/7U4TL/K+YmLBz0Tutg25pJxQ4w==
+X-Received: by 2002:a05:6000:230a:b0:3b8:d79a:6a53 with SMTP id ffacd0b85a97d-3b9e4170942mr2609226f8f.23.1755184660517;
+        Thu, 14 Aug 2025 08:17:40 -0700 (PDT)
+Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899b5f2sm353353755ad.125.2025.08.14.08.17.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 08:16:21 -0700 (PDT)
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	"Arnaldo Carvalho de Melo" <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <ysk@kzalloc.com>
-Subject: [PATCH] perf: arm64: Sync ESR_ELx_EC_* macros in arm64_exception_types.h with esr.h
-Date: Thu, 14 Aug 2025 15:14:53 +0000
-Message-ID: <20250814151452.618765-2-ysk@kzalloc.com>
-X-Mailer: git-send-email 2.50.0
+        Thu, 14 Aug 2025 08:17:39 -0700 (PDT)
+Date: Thu, 14 Aug 2025 17:17:28 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: tj@kernel.org, hannes@cmpxchg.org, lizefan@huawei.com, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com, 
+	chenridong@huawei.com, gaoyingjie@uniontech.com
+Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
+ destruction to avoid hung_tasks
+Message-ID: <btaaerpdl3bolxbysbqcig6kiccdgsoo32td64sk6yo4m5l5zy@nds6s35p6e6w>
+References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
+ <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
+ <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com>
+ <htzudoa4cgius7ncus67axelhv3qh6fgjgnvju27fuyw7gimla@uzrta5sfbh2w>
+ <4fdf0c5b-54ce-474a-a2c7-8b99322ff30e@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nm367fmo4a37tcui"
+Content-Disposition: inline
+In-Reply-To: <4fdf0c5b-54ce-474a-a2c7-8b99322ff30e@huaweicloud.com>
 
-Update perf util arm64_exception_types.h to match the exception class
-macros defined in tools/arch/arm64/include/asm/esr.h. This ensures
-consistency between perf tooling and the kernel header definitions for
-ESR_ELx_EC_* values.
 
-Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
----
- tools/perf/arch/arm64/util/arm64_exception_types.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+--nm367fmo4a37tcui
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
+ destruction to avoid hung_tasks
+MIME-Version: 1.0
 
-diff --git a/tools/perf/arch/arm64/util/arm64_exception_types.h b/tools/perf/arch/arm64/util/arm64_exception_types.h
-index 27c981ebe401..29931bf19062 100644
---- a/tools/perf/arch/arm64/util/arm64_exception_types.h
-+++ b/tools/perf/arch/arm64/util/arm64_exception_types.h
-@@ -33,7 +33,7 @@
- #define ESR_ELx_EC_PAC		(0x09)	/* EL2 and above */
- /* Unallocated EC: 0x0A - 0x0B */
- #define ESR_ELx_EC_CP14_64	(0x0C)
--/* Unallocated EC: 0x0d */
-+#define ESR_ELx_EC_BTI		(0x0D)
- #define ESR_ELx_EC_ILL		(0x0E)
- /* Unallocated EC: 0x0F - 0x10 */
- #define ESR_ELx_EC_SVC32	(0x11)
-@@ -46,7 +46,10 @@
- #define ESR_ELx_EC_SYS64	(0x18)
- #define ESR_ELx_EC_SVE		(0x19)
- #define ESR_ELx_EC_ERET		(0x1a)	/* EL2 only */
--/* Unallocated EC: 0x1b - 0x1E */
-+/* Unallocated EC: 0x1B */
-+#define ESR_ELx_EC_FPAC		(0x1C)	/* EL1 and above */
-+#define ESR_ELx_EC_SME		(0x1D)
-+/* Unallocated EC: 0x1E */
- #define ESR_ELx_EC_IMP_DEF	(0x1f)	/* EL3 only */
- #define ESR_ELx_EC_IABT_LOW	(0x20)
- #define ESR_ELx_EC_IABT_CUR	(0x21)
-@@ -55,7 +58,7 @@
- #define ESR_ELx_EC_DABT_LOW	(0x24)
- #define ESR_ELx_EC_DABT_CUR	(0x25)
- #define ESR_ELx_EC_SP_ALIGN	(0x26)
--/* Unallocated EC: 0x27 */
-+#define ESR_ELx_EC_MOPS		(0x27)
- #define ESR_ELx_EC_FP_EXC32	(0x28)
- /* Unallocated EC: 0x29 - 0x2B */
- #define ESR_ELx_EC_FP_EXC64	(0x2C)
--- 
-2.50.0
+Hi Ridong.
 
+On Thu, Jul 31, 2025 at 07:53:02PM +0800, Chen Ridong <chenridong@huaweicloud.com> wrote:
+> Have you come up with a better solution for this?
+> Would appreciate your thoughts when you have time.
+
+Sorry for taking so long. (Also expect my next response here may be
+slow.)
+I tried reproducing it with the described LTP tests [1] (to get a better
+idea about what and why needs to be offlined) but I cannot bring it to a
+hang nor lockdep report. How do you launch the particular LTP tests to
+trigger this?
+
+Thanks,
+Michal
+
+[1]
+while true ; do
+	/opt/ltp/testcases/bin/cgroup_fj_function.sh net_cls $pp
+	/opt/ltp/testcases/bin/cgroup_fj_function.sh perf_event
+done
+(with pp both `;` or `&` for concurrent runs, two vCPUs)
+
+--nm367fmo4a37tcui
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaJ3+BgAKCRB+PQLnlNv4
+CIdXAP4gJKLPertpfmLD61YAP9Wa1M2wVwhki3vo6TMN3x/24AD+OgODyIBF9VOm
+9CJVX35w3E51XyIGiitdzxsuttlz7Aw=
+=PZvf
+-----END PGP SIGNATURE-----
+
+--nm367fmo4a37tcui--
 
