@@ -1,145 +1,147 @@
-Return-Path: <linux-kernel+bounces-768623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DADB2635C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66ED5B26362
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849F39E4F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:51:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B0EA21F18
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1C72F83C0;
-	Thu, 14 Aug 2025 10:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569022F83CD;
+	Thu, 14 Aug 2025 10:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZGQe08AH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c6guDUGj"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F4F1A23A4;
-	Thu, 14 Aug 2025 10:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A1314E2F2
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755168657; cv=none; b=cjC4wyXStw5wtFLqrVG2vLpDqjJwaCrwq0PrARMHbCpclTx+4s+ws9UPOiyCOgx7rcT+7uOi7UkZfqHmDunJqOHxtBjvzCuPi0XMgTJjeAL1Bco+DBicEtHqhj6IsrjHFqU3pSHh1QtZJNmggdzwz3XEbKIbjZYjw+GVOs1T6D0=
+	t=1755168683; cv=none; b=JxlYWOFbdbFoQaVfTJ+dQpGYA5NiQmwS9RPEwFVkV84OwhoQaKadoWoiUtn3kRbe8pgusI1UDRXwOfnl+MC87WFsvZmO6iEK/vsdJetmDgL2zrlUV5yv5UthM+/9eiQQnwYwswJJGDI9xdmP6kjH/kAaEnvj65TwiDzkS0viKbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755168657; c=relaxed/simple;
-	bh=5FZMVn/f9zmbDS+pM2DrCxTMUD+WFq5mD1JzKYBhC24=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sJjMHMiMVM4nHqbEDdDaL6+BLA4DU5TTUWDFnswebc9Ez8d07fJxr7zf9Rs9PnHOgzJhgoZAmb73e4esUxxF3dz+e6eI2U6q/swzjiTVG8sJf07iOW3RS0mKs/mpAKUY6psqJ84L6WJYhIqzHeQyjYBPag6abDDLb/nOruI6rtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZGQe08AH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2CB8C4CEEF;
-	Thu, 14 Aug 2025 10:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755168657;
-	bh=5FZMVn/f9zmbDS+pM2DrCxTMUD+WFq5mD1JzKYBhC24=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZGQe08AHBlMcDNPQYWP71w7jEYy5jVpSuxqsiifbm9k7soSAyKAMCDd46MCc4tbUG
-	 F+u8HY4ZzP5oBVIUJFBRzGAusfchiFY6u8XEvJ2GiAOJtP4wjoooke02Rp64sbKNST
-	 1YsBknLvmkRf0S56M5NwL44ofUyvEC+Y0Z0NBkd/s4Wr3b2wua359374gpEZ6X4eAO
-	 9vny4f8rk8vN4pgxLNg6xeI22ccFnLCa7z1LUP1mndPd9Dvax88T0SIaBOaDBewNqd
-	 cThdnBpAboxxCKNjVNMOsRgQZHklhHgCVUlB1OAvKFWXTpnrCmnFs4JKKtwJttdU+a
-	 Vous6kyZFgO4A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1umVXq-007PWx-Gi;
-	Thu, 14 Aug 2025 11:50:54 +0100
-Date: Thu, 14 Aug 2025 11:49:26 +0100
-Message-ID: <86ldnmdvpl.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: 	Daniel Lezcano <daniel.lezcano@linaro.org>, Steven Price <steven.price@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Hanjun Guo <guohanjun@huawei.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/4] clocksource/drivers/arm_arch_timer: Add standalone MMIO driver
-In-Reply-To: <8e58b01b-772d-4ca7-a681-34f10baa07e6@arm.com>
-References: <20250807160243.1970533-1-maz@kernel.org>
-	<20250807160243.1970533-3-maz@kernel.org>
-	<8e58b01b-772d-4ca7-a681-34f10baa07e6@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1755168683; c=relaxed/simple;
+	bh=rSx84v2RWy7DYtMA4DT3vwAvFBT/1eeXyAR0mT5L71w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=avC0GzkZooqusSFV4lly7g039aRn7XHVJtvrw1aNCGi2II7fQ2WsCXMG1kS9qa0KBm0hX49UfOZHaJHmp4tbgf6Qd6vuBaxHg9bmITdt+mL6GSLZYrvWmMFDgTFBbuEnPZ6u3kBz+GAt+meiAM5uAore7T918X5ANcL8HQH0gRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c6guDUGj; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45a1b05fe23so4025905e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755168680; x=1755773480; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Usjf2Lwxzvbim7S5kgmgOqxfjpVorryscczoj/caPjU=;
+        b=c6guDUGj0TYUHwYrUze+3NjW4aBlSDunI3PeOPfi2EYLDf1KXCtc1QcQCssuFEw9eo
+         EyhRVZN76Oc0tqtfsL0Wkr3o/Vy+8XcGtF2Pr9Mbov7JIhLLCxc5mTNdl+22kAxNj1xY
+         Pwq0l72ivAqYNq7Wj3kMlBsc9DXtUn2mFKjPyiTzAO6Iaomfj5xp6fDqcwiWwRTMv8gp
+         60+L/MFsEXAmvL0qrIAHDEyyb6+4TxwJ99kCg+004oY/wi6SRS5QR9bNODvuoW8iLa31
+         yTcO/3ouJ8upxzLTWQw9oMQmKpKSj4uwLGrLLJVlbclYFhGP4yjh2ErOwyV57mXFDC/F
+         QZQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755168680; x=1755773480;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Usjf2Lwxzvbim7S5kgmgOqxfjpVorryscczoj/caPjU=;
+        b=T4j94sfLslhwYiueCB/NPq8DEL/Z6x2O2HKn7+dFl906BCfvQKXRIT8sIGTQWprV4X
+         RvaHTnHKSDbFbAKq3/X/5hR/ZDhlwFufBew2+BsuBu+rMUn2rp67vIOSL9PjJHW6RgHO
+         qMZSXjvxWUOF0lcW3BWnoYikp6Ll5YijA0srVqkvlmcgiD6Ywehwifv44QZ8+IJOmLKZ
+         aLVPvtcykLrTeVIRCOq/kY578IMfczZcinKNT6JqbW5LRiUGJg1RYplP8UiS5YRcS9Hx
+         qiYxE03QJVNhB++JaHwgc0ZV58yYzDbc8h0fSe8NnJoJTA3Cz+u9fc8GkCi/o4hjfKO/
+         N+kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjPnL2NHtbreqwg2sbBQagJihTVbuZbjwFIMfAZHwM0+6t3lDKVgy3p+xgi8WFRjFlY/ETkxPK7nDHoYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjwENEWuFPAwFoQvjgHN6H4lqwOZgqJjKgdG1PpE45I633G9fh
+	QjCNhLlX0Riq5wbYMpmoV61VAJ084kGDwXtBjz94i9Xmes+efiVQS2ZU/gl8beLx4pA=
+X-Gm-Gg: ASbGnctRSLXr7m4cdPF+g+kPlRGlwYvaIif7+YW2K75Tfy4FaLuLZYu3rWZg4L+mcTH
+	VD8P4fEcK8LIZV8RbPsmwE1sNyHl4MHG0vQ2GRDbi+dinMxlWZvfpXwXAJ3IicNfwX2uw4a+ug6
+	sJnw5I4r5bVc3ehC2neRr0bPXjC9psnYGF/9D3ea2wiSm4z7IZbyQ2BHnGeebpIWhNSbfVrWLb7
+	pNyy7ZWQkaQu7yxZPRtdtLpnj7BbHNuQZApFpmNifi9kwjzwmDVSl3FC6bNRwjNnC5seUIRSaJr
+	34CiBGOHlnb5TvfbcAAiqCa9823u2YRvJJ03k2asOMD6XTGitZchmTm+WOGBjkwiGgxdk7v8qL9
+	3aUAufAPG+cWkhUyGB1TbUhlrl5HnP9bqpThid7Q4eQ==
+X-Google-Smtp-Source: AGHT+IGi1J840nNnMEHt0PQ+bJMM7STyMRvyW+nAoUIIj5zhCJZ53xyxLHO0So7XafSfOfSk3XvbbA==
+X-Received: by 2002:a05:600c:827:b0:459:e094:92cb with SMTP id 5b1f17b1804b1-45a1d7309camr9947535e9.12.1755168680077;
+        Thu, 14 Aug 2025 03:51:20 -0700 (PDT)
+Received: from ho-tower-lan.lan ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b226eecsm14228345e9.1.2025.08.14.03.51.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 03:51:19 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH v2 0/6] coresight: Add format attribute for setting the
+ timestamp interval
+Date: Thu, 14 Aug 2025 11:49:51 +0100
+Message-Id: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: daniel.lezcano@linaro.org, steven.price@arm.com, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, rafael@kernel.org, tglx@linutronix.de, mark.rutland@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE+/nWgC/22Nyw6CMBBFf4XM2po+QIgr/8OwqGWAMdrqjCESw
+ r9bcevynOSeu4AgEwociwUYJxJKMYPdFRBGHwdU1GUGq22la1uqq7+jqCBK5hh6xqeqg7VV7V2
+ DnYO8ezD29N6a5zbzSPJKPG8Xk/naX60x5k9tMkqri9YmdAd0pS5PN4qe0z7xAO26rh/AyvQns
+ wAAAA==
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Leo Yan <leo.yan@arm.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ James Clark <james.clark@linaro.org>
+X-Mailer: b4 0.14.0
 
-On Thu, 14 Aug 2025 11:13:47 +0100,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> On 07/08/2025 17:02, Marc Zyngier wrote:
-> > Add a new driver for the MMIO side of the ARM architected timer.
-> > Most of it has been lifted from the existing arch timer code,
-> > massaged, and finally rewritten.
-> > 
-> > It supports both DT and ACPI as firmware descriptions.
-> > 
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > ---
-> >  MAINTAINERS                               |   1 +
-> >  drivers/clocksource/arm_arch_timer_mmio.c | 420 ++++++++++++++++++++++
-> >  2 files changed, 421 insertions(+)
-> >  create mode 100644 drivers/clocksource/arm_arch_timer_mmio.c
-> > 
-> [...]
-> > +static void arch_timer_mmio_setup(struct arch_timer *at, int irq)
-> > +{
-> > +	at->evt = (struct clock_event_device) {
-> > +		.features		   = (CLOCK_EVT_FEAT_ONESHOT |
-> > +					      CLOCK_EVT_FEAT_DYNIRQ),
-> > +		.name			   = "arch_mem_timer",
-> > +		.rating			   = 400,
-> > +		.cpumask		   = cpu_possible_mask,
-> > +		.irq 			   = irq,
-> > +		.set_next_event		   = arch_timer_mmio_set_next_event,
-> > +		.set_state_oneshot_stopped = arch_timer_mmio_shutdown,
-> > +		.set_state_shutdown	   = arch_timer_mmio_shutdown,
-> > +	};
-> > +
-> > +	at->evt.set_state_shutdown(&at->evt);
-> > +
-> > +	clockevents_config_and_register(&at->evt, at->rate, 0xf, CLOCKSOURCE_MASK(56));
-> 
-> This doesn't work on 32 bit - clockevents_config_and_register()'s final
-> argument is an unsigned long, and a 56 bit mask doesn't fit. This
-> triggers a compiler warning:
+Do some cleanups then add a new format attribute to set the timestamp
+interval for ETMv4 in Perf mode. The current interval is too high for
+most use cases, and particularly on the FVP the number of timestamps
+generated is excessive.
 
-Already reported, see 20250814111657.7debc9f1@canb.auug.org.au.
+Although it would be good to make only SYNC timestamps the default and
+have counter timestamps opt-in, this would be a breaking change. We
+can always do that later, or disable counter timestamps from Perf.
 
-> Possible this should really be min(CLOCKSOURCE_MASK(56), ULONG_MAX)? But
-> I'm not familiar enough with this code. Most likely it's dead code on a
-> 32 bit platform.
+This is added as an event format attribute, rather than a Coresight
+config because it's something that the driver is already configuring
+automatically in Perf mode with any unused counter, so it's not possible
+to modify this with a config.
 
-No, this definitely exists on 32bit crap, since it has been part of
-the architecture from the ARMv7+VE days.
+Applies to coresight/next
 
-I think this is more of an impedance mismatch between the
-CLOCKSOURCE_MASK() helper and the clockevents_config_and_register(),
-and a (unsigned long) cast would do the trick.
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+Changes in v2:
+- Only show the attribute for ETMv4 to improve usability and fix the
+  arm32 build error. Wrapping everything in
+  IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X) isn't ideal, but the -perf.c
+  file is shared between ETMv3 and ETMv4, and there is already precedent
+  for doing it this way.
+- Link to v1: https://lore.kernel.org/r/20250811-james-cs-syncfreq-v1-0-b001cd6e3404@linaro.org
 
-But it also means that the per-cpu timer also gets truncated the same
-way, and that has interesting impacts on how often the timer is
-reprogrammed.
+---
+James Clark (6):
+      coresight: Change syncfreq to be a u8
+      coresight: Fix holes in struct etmv4_config
+      coresight: Repack struct etmv4_drvdata
+      coresight: Refactor etm4_config_timestamp_event()
+      coresight: Add format attribute for setting the timestamp interval
+      coresight: docs: Document etm4x ts_interval
 
-Daniel, do you want a patch on top or a new series?
+ Documentation/trace/coresight/coresight.rst        |  14 +++
+ drivers/hwtracing/coresight/coresight-etm-perf.c   |  13 ++-
+ drivers/hwtracing/coresight/coresight-etm4x-core.c | 110 +++++++++++++--------
+ drivers/hwtracing/coresight/coresight-etm4x.h      |  86 ++++++++++------
+ 4 files changed, 151 insertions(+), 72 deletions(-)
+---
+base-commit: a80198ba650f50d266d7fc4a6c5262df9970f9f2
+change-id: 20250724-james-cs-syncfreq-7c2257a38ed3
 
-	M.
-
+Best regards,
 -- 
-Without deviation from the norm, progress is not possible.
+James Clark <james.clark@linaro.org>
+
 
