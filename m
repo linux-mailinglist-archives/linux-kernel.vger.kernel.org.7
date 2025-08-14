@@ -1,98 +1,91 @@
-Return-Path: <linux-kernel+bounces-769504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588AEB26F87
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:10:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6208B26F8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5DD91CE0AC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:11:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E7B1CE08E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C196B23A989;
-	Thu, 14 Aug 2025 19:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFC5233733;
+	Thu, 14 Aug 2025 19:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="kpcbpTEP"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5fSDPg2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF701EEA55;
-	Thu, 14 Aug 2025 19:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D978A1E7660;
+	Thu, 14 Aug 2025 19:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755198633; cv=none; b=gc352XivqjK5e4imS27ZOML37Pk3IYqqWLG2KGbgNhWSsmZQYT0N0s122W2tkfKdD0OFa906Om3H8CytzPu3E0QihppxuJHi3mFFgq4GJzhRHjG35i9tpMy/JMu72cqtgkZGbjmiWMn6AX62LEC3PCpGUOWjsB7qShLW/lTR6RE=
+	t=1755198712; cv=none; b=XHquHxEEpd6CEYVlaswddE7vCI/kPTUJepyRsGXaiF+9/0L0aHkdaTc+l32vgrLHiYo9jRx95cIFMvQfz9DKHCzWch1aQHtZDRlf5+i2Qql9SxosH4dz3tWamijwOfVWXxdJWCt0tXtPwavSewhdtbtn1MInbLghBVT8J5B38UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755198633; c=relaxed/simple;
-	bh=7Ic7fVgdgQ8MblQFjMCCiNuHrsFYD4KaCcqXjlfhrB8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o+/gTEjXO2uBdwBUOASes5I/GWcPl2CcLXkYRVeGUDBnze1DkRCtqVLnmxD5o89mM32yZ+qYeJstx0qFczcmeQO666OA1YQPVAbhLFM+LtaIAH67FtdHUBpNE+e1hXsLI5atg3L6d8fufwVHGhUR2zlPjrJjtBscJuKBrON4+nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=kpcbpTEP; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4716fb798dso813777a12.0;
-        Thu, 14 Aug 2025 12:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1755198631; x=1755803431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Ic7fVgdgQ8MblQFjMCCiNuHrsFYD4KaCcqXjlfhrB8=;
-        b=kpcbpTEPjOfz1Y7B9JkjbpGvXBnF3XnA9rfDw+xrCrhXW70b/+56a7OtAYeDfSfyoW
-         1XuUVI7MHLIisr8SSgVOnTCElbTrc8ZAsiiFpo72VaX/6QRJ4I8Ry2DYWzre/k5nvRhG
-         pdcALgJhTgVE6VMKijy9gr92MSd9V5eXGrZYhvtsiPqf5TsD4fiyJIGM7/BACdv4MXF7
-         udtbycaUPVnWmvojxuYHaTZVtpCVyLGDljsJTKYjVutLlNMfQeEs0jEf5zIFTCWZOQqI
-         Z0VW4iP1ZpLUG81jFtkQtg4vaMIevm33eGE87ZTMzCz83zH81RjRdp3gpXaaRYdlfKHC
-         bENQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755198631; x=1755803431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Ic7fVgdgQ8MblQFjMCCiNuHrsFYD4KaCcqXjlfhrB8=;
-        b=pjN+jvVuiW10zyU9wk5MhM2ppChaHxy3TB1SL5xj+VGvZJ9VKcjEZ+hgAGb7hjZi5M
-         jTFxtOKCNd5wMw+9plL6zwgXofUj09R7bdrpGUzXo0FOkza2yqZLu+YSnDry0HVtlE03
-         n2qtsa9Lad+wmu461lTclClh6JyTlfHmd33ZUAtiSrbifRwrR75tmcQ47bB1eOnFyiNb
-         U6n5ynnB7Lb3ndRqAsaJTaIQlDb6+ZP60GCnYX5KoBNYoPgN9iGEfATcu8/s0RVA0j85
-         xYfQ0TpP8BdfbPP4S92ARsTf4+5IRsOR6ar5G3mRWEAZrxkD7klIFL6vMTPWZiMe2TS8
-         bqUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW0mrGq2fyHCmxelWiGF9oBS9uRI5rrLsqmL3jsSsn654ytBVLn366sYJ4jDlDY46Wm6mTQf7cK/co@vger.kernel.org, AJvYcCXH7rJcUtdnuxLMo0EaCBMwNRCTc4EAf91tljQ2a8ewPYCJGSWU6cIuy80Yt95gF4Can3N5E6zL+kJ2mFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw2MVsbXeK580zT3lpKe6fGhCc0iGHkfqLOlZehSp+mr2XpxVQ
-	9kYfYBoZe6QYlUplfPt7fosa/NfE1SU6kmd7UpGD3aUBWsqL5G6T7A5X0J7fj3s0Q84cvEiUiWp
-	+nXzabrSlVrW8Ai+JnRbIoZQF1vbEcD4=
-X-Gm-Gg: ASbGncteKYfAfES7g+/mBYQS0s5J9W6SqAY2XpgSRx2vpLg2avBxPK3qSCTDttEdS93
-	3zDhDfuWOAvh+G12xW3E+AcDDkP4WbIysM42fwF2gkvgoTSvqAYeINJuWdf/8fzi7OkDwT1lKoM
-	HYpKpIeDXy3UTIemwG9yLpaYnG7iZA8ToUsP08SXEEfAb7Oe+eTkk4jmo2s6WThOjbKzaflvaaq
-	FfdQwSLHXLQIGWBOkVrtIyTbpMaBb71yU8tWLI4
-X-Google-Smtp-Source: AGHT+IGCkVCFwHi3iu3RTkUkT3KWCaKedVBq8LMJeylvVrEEx6RjEVwapMlmkmou0xfA/EzyS/n8fJ+FeogGpmfch5s=
-X-Received: by 2002:a17:902:cccf:b0:242:b315:dda7 with SMTP id
- d9443c01a7336-244589fefd4mr53592755ad.3.1755198631063; Thu, 14 Aug 2025
- 12:10:31 -0700 (PDT)
+	s=arc-20240116; t=1755198712; c=relaxed/simple;
+	bh=rWR61neL3MyeysPfhUM6pZsrCT7uhomrQ6Z+HRz8JvU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=d/XySres15opxoCVF/4cww9o3AvpFK3vOU5YOInqF7uDrI6p0195WWsUuLeNdqgiPJK50z4ifOLcOsQqTvvwsR7s8w8JeBm1jAo32jQ2ZJ7a8tQVl0Ji3lq/i1pca48Ds/sW2x73utm+nUtHSfAjXMWq1ik+rLSER/Gmkk+ie2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5fSDPg2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660D4C4CEED;
+	Thu, 14 Aug 2025 19:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755198711;
+	bh=rWR61neL3MyeysPfhUM6pZsrCT7uhomrQ6Z+HRz8JvU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=L5fSDPg2rQK5b1sb9EFknDgrDQgDCsyJ9e34wgjy6J7gwRpVzyZJ+Z84bE20dIY3z
+	 KdFZkaTQ7EvFQcZ5SFz5kxTM52zpMW0FZtdhYnbcLQ74ZUsPu5e0UiFQUpBQAY/ySz
+	 5bWGBbkQQAkXQ43995r6k/uLaF1jYqpMPklJIacaI+u1znoXwbwr7+598AzqCSxGYl
+	 6yWSgLf9+5T6MDjHR8pbaq/lr0T3hmHP6GyIdwuJnaj1DBlkJ2USnEdv/mJUfM4o74
+	 SqlKE6QTiqRU3LbWBaK08XqH2niHxo1B+U10hgA0CEnvgXaX4KKNHuhsEUqm3A6QFC
+	 1MOevBl60+kKA==
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nicolas Schier <nicolas.schier@linux.dev>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Nicolas Schier <nsc@kernel.org>
+In-Reply-To: <20250813-kbuild-hdrtest-fixes-v2-0-8a7921ca3a03@linutronix.de>
+References: <20250813-kbuild-hdrtest-fixes-v2-0-8a7921ca3a03@linutronix.de>
+Subject: Re: [PATCH v2 0/5] kbuild: uapi: various fixes
+Message-Id: <175519871015.2179051.5280852058585473330.b4-ty@kernel.org>
+Date: Thu, 14 Aug 2025 12:11:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812092908.101867-1-zhao.xichao@vivo.com>
-In-Reply-To: <20250812092908.101867-1-zhao.xichao@vivo.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Thu, 14 Aug 2025 21:10:20 +0200
-X-Gm-Features: Ac12FXz3DsOF41iVXZ21DRUi5sZbQZVEuhx31cU5DqXvUGLAmoyIN49sur7oF4Q
-Message-ID: <CAFBinCCrC02K8v3FbDzGTQYbPhC9RrJC3cnbuHLjJz8+AuV7jw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: meson-mx-sdhc: use PTR_ERR_OR_ZERO() to simplify code
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: ulf.hansson@linaro.org, neil.armstrong@linaro.org, khilman@baylibre.com, 
-	jbrunet@baylibre.com, linux-mmc@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev
 
-On Tue, Aug 12, 2025 at 11:29=E2=80=AFAM Xichao Zhao <zhao.xichao@vivo.com>=
- wrote:
->
-> Use the standard error pointer macro to shorten the code and simplify.
->
-> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+On Wed, 13 Aug 2025 08:16:55 +0200, Thomas Weißschuh wrote:
+> Various fixes and promotion of warnings to real errors.
+> 
+> I didn't add Fixes: tags as digging up the original changes would be
+> cumbersome as the code moved a lot over the years.
+> Backporting this doesn't make sense anyways.
+> 
+> 
+> [...]
+
+Applied, thanks!
+
+[1/5] kbuild: uapi: rerun header tests when headers_check.pl changes
+      https://git.kernel.org/kbuild/c/d4b7080be277c
+[2/5] kbuild: uapi: fail header test on compiler warnings
+      https://git.kernel.org/kbuild/c/3788d69db18d3
+[3/5] kbuild: uapi: upgrade warning on asm/types.h inclusion to error
+      https://git.kernel.org/kbuild/c/24b1bd64ee403
+[4/5] kbuild: uapi: upgrade check_sizetypes() warning to error
+      https://git.kernel.org/kbuild/c/c3a9d74ee413b
+[5/5] kbuild: uapi: upgrade check_declarations() warning to error
+      https://git.kernel.org/kbuild/c/b8d762c983053
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
 
