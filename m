@@ -1,171 +1,114 @@
-Return-Path: <linux-kernel+bounces-769019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3879B26953
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:30:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44D3BB2691B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3234A6019D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B383602D2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D14215055;
-	Thu, 14 Aug 2025 14:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Taw12qG1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DB3212546;
-	Thu, 14 Aug 2025 14:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF502192E5;
+	Thu, 14 Aug 2025 14:09:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7BB1FF60A;
+	Thu, 14 Aug 2025 14:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180541; cv=none; b=XuRPFmjA6qFr8OGMzIBYewP390wIVnCEjdS20+QhtFixuO92BbPlC9slqPxJ6rBANcMNCCQcoJCjQgQQpBWqLk0fK/jGMLDnFHpJjy5kn1vBGpQ8i9pQgH5b/iiIwGcSqAPy4i7uuLc+0cgd7Dka5SojbSivuDl7kbRO3naxYRw=
+	t=1755180561; cv=none; b=s9bjm+CEkYUlNVjpAJclfoGqcQi2a2r7ckhgqF6tsGJKI2XbIQ6ZqvvyA5jUBi8LEB5GyFqF+Ru54MwUrLh0AhMRVOjOrbGR8kHh/3WxkIGKsDIvL1KoPjKmTKSwwmnBO/bZE7FMpSggD9jA+w2RZwYVgGI0qqBxlA5vl5lXrQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180541; c=relaxed/simple;
-	bh=KoWgzximSrrSXOKG05+Ln2RZTFfG6mhzQE07XNVMxr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=di1B6zQsccKFZ+zsY5qKl8Fwu2dYJ//OYNXT23ix573oDHw35r7O1wVOMINcwlVfhkwIgSIKVntpG3sBjsGzCV63sOFNSs71/W1e+xZMcKwjwUwBn7WIhl6KoU/rXDo4TQHYbYC4siSFyGqP6w0Le1NMSyzH0PwIAXODuwBP9l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Taw12qG1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 163A3C4CEED;
-	Thu, 14 Aug 2025 14:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755180540;
-	bh=KoWgzximSrrSXOKG05+Ln2RZTFfG6mhzQE07XNVMxr4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Taw12qG1musZlOg9O2MJdjAn+r2utRcPjMH9lo2Gx4scEDioXCFvdglOn+buWsSPO
-	 TWP8z/lZXaJeXSLJC+lzFQTe36YJbtPkFHqcpH1VytyXBVTfSRwJPGvJI4hIPlG6rr
-	 NmRsu9HjlOgmYHNTVCVdIa5TIIorSHLjuGSyYZZRadR2B6XRYjd4KusYoiYLxLIdN0
-	 qxfTVIF5mWJFwebr0eKSbDWX2pTwnhPm5zadc8yZwF0HlCSs03x/fl6xnVEd/e8bBg
-	 BHTtd2DePzkEG2QRrZQZejExx/HxUBICpPqwMod3zylWJ2YBwevKDI+AeVqgeYnZcz
-	 O2fvFiAJfd12w==
-Date: Thu, 14 Aug 2025 16:08:57 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-pwm@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <mlvple4tcnvu35a2liva5wxhafshc634fu46kwyrepn75wvuec@udshn3ja6lvc>
-References: <aJtRPZpc-Lv-C6zD@kspp>
- <2pgdxifg2zmyhvemm7a2qntprsz5nhh3ustrrlg2vvcqffwj6c@22enjpgycjbt>
- <4b9eea66-f004-4b5f-bf48-4c32205cc8ee@embeddedor.com>
+	s=arc-20240116; t=1755180561; c=relaxed/simple;
+	bh=u6UoCMTz7eI4baHzDu8yRdrQGijNFLhgrdCAkBIXgfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dk/NlQ4KhhhNhEVFSFeOQEjv2Itsc9Sqp1/XDIguSSJIMjrirDLInSc40wIvg0VhtePpL761fP6JnMPu5Arxbye9BMreoNGIVJzKZaoViuIuyqEp5WFbebMSsh0wtJuxoXUWdBamb6Z5ZpX/DV5VMH2Y9Pech9/d5V8hvT/xkgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A909168F;
+	Thu, 14 Aug 2025 07:09:10 -0700 (PDT)
+Received: from [10.1.38.46] (e127648.arm.com [10.1.38.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A67B63F738;
+	Thu, 14 Aug 2025 07:09:17 -0700 (PDT)
+Message-ID: <9104c434-9025-4365-8127-28014ddddc8d@arm.com>
+Date: Thu, 14 Aug 2025 15:09:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fuq2btbbfpvvuy3v"
-Content-Disposition: inline
-In-Reply-To: <4b9eea66-f004-4b5f-bf48-4c32205cc8ee@embeddedor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] cpuidle: governors: menu: Special-case nohz_full
+ CPUs
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
+References: <2804546.mvXUDI8C0e@rafael.j.wysocki>
+ <2244365.irdbgypaU6@rafael.j.wysocki>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <2244365.irdbgypaU6@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 8/13/25 11:29, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> When the menu governor runs on a nohz_full CPU and there are no user
+> space timers in the workload on that CPU, it ends up selecting idle
+> states with target residency values above TICK_NSEC all the time due to
+> a tick_nohz_tick_stopped() check designed for a different use case.
+> Namely, on nohz_full CPUs the fact that the tick has been stopped does
+> not actually mean anything in particular, whereas in the other case it
+> indicates that previously the CPU was expected to be idle sufficiently
+> long for the tick to be stopped, so it is not unreasonable to expect
+> it to be idle beyond the tick period length again.
+>   
+> In some cases, this behavior causes latency in the workload to grow
+> undesirably.  It may also cause the workload to consume more energy
+> than necessary if the CPU does not spend enough time in the selected
+> deep idle states.
+> 
+> Address this by amending the tick_nohz_tick_stopped() check in question
+> with a tick_nohz_full_cpu() one to avoid using the time till the next
+> timer event as the predicted_ns value all the time on nohz_full CPUs.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/cpuidle/governors/menu.c |   12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -293,8 +293,18 @@
+>  	 * in a shallow idle state for a long time as a result of it.  In that
+>  	 * case, say we might mispredict and use the known time till the closest
+>  	 * timer event for the idle state selection.
+> +	 *
+> +	 * However, on nohz_full CPUs the tick does not run as a rule and the
+> +	 * time till the closest timer event may always be effectively infinite,
+> +	 * so using it as a replacement for the predicted idle duration would
+> +	 * effectively always cause the prediction results to be discarded and
+> +	 * deep idle states to be selected all the time.  That might introduce
+> +	 * unwanted latency into the workload and cause more energy than
+> +	 * necessary to be consumed if the discarded prediction results are
+> +	 * actually accurate, so skip nohz_full CPUs here.
+>  	 */
+> -	if (tick_nohz_tick_stopped() && predicted_ns < TICK_NSEC)
+> +	if (tick_nohz_tick_stopped() && !tick_nohz_full_cpu(dev->cpu) &&
+> +	    predicted_ns < TICK_NSEC)
+>  		predicted_ns = data->next_timer_ns;
+>  
+>  	/*
+> 
+> 
+> 
 
---fuq2btbbfpvvuy3v
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
- warnings
-MIME-Version: 1.0
-
-On Thu, Aug 14, 2025 at 08:48:23PM +0900, Gustavo A. R. Silva wrote:
->=20
-> > diff --git a/include/linux/stddef.h b/include/linux/stddef.h
-> > index dab49e2ec8c0..8ca9df87a523 100644
-> > --- a/include/linux/stddef.h
-> > +++ b/include/linux/stddef.h
-> > @@ -108,7 +108,7 @@ enum {
-> >   	union {									\
-> >   		TYPE NAME;							\
-> >   		struct {							\
-> > -			unsigned char __offset_to_##FAM[offsetof(TYPE, FAM)];	\
-> > +			unsigned char __offset_to_##FAM[sizeof(TYPE)];		\
-> >   			MEMBERS							\
-> >   		};								\
-> >   	}
-> >=20
-> > which only leaves one usage of FAM in the name of the padding struct
-> > member. I'm sure someone is able to come up with something nice here to
-> > get rid of FAM completely or point out what I'm missing.
->=20
-> Flexible structures (structs that contain a FAM) may have trailing paddin=
-g.
-> Under that scenario sizeof(TYPE) causes the overlay between FAM and MEMBE=
-RS
-> to be misaligned.
-
-That sounds wrong to me; are you sure? In that case allocating space for
-such a struct using
-
-	struct mystruct {
-		unsigned short len;
-		unsigned int array[];
-	};
-
-	s =3D malloc(sizeof(struct mystruct) + n * sizeof(unsigned int));
-
-wouldn't do the right thing.=20
-
-I found in the net (e.g.
-https://rgambord.github.io/c99-doc/sections/6/7/2/1/index.html):
-
-	In most situations, the flexible array member is ignored. In
-	particular, the size of the structure is as if the flexible
-	array member were omitted except that it may have more trailing
-	padding than the omission would imply.
-
-So I'd claim that sizeof does work here as intended.
-
-gcc here also behaves fine:
-
-	uwe@taurus:~$ cat test.c
-	#include <stdio.h>
-
-	struct mystruct {
-		unsigned short len;
-		unsigned int array[];
-	};
-
-	struct mystruct2 {
-		unsigned short len;
-	};
-
-	int main()
-	{
-		printf("sizeof(struct mystruct) =3D %zu\n", sizeof(struct mystruct));
-		printf("sizeof(struct mystruct2) =3D %zu\n", sizeof(struct mystruct2));
-		return 0;
-	}
-
-	uwe@taurus:~$ make test
-	cc    -c -o test.o test.c
-	cc   test.o   -o test
-
-	uwe@taurus:~$ ./test
-	sizeof(struct mystruct) =3D 4
-	sizeof(struct mystruct2) =3D 2
-
-Best regards
-Uwe
-
---fuq2btbbfpvvuy3v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmid7fYACgkQj4D7WH0S
-/k5blAgAh5+IokY92+K/+9z3K4qgh2F2Qwfe9kLJkliHAtW0BjPXsSmvDfrl6liX
-GHh7M26217I9OMG75Bhpl8C+jpzN6EMtRsAD/zFcdDDl/JACrm7yO56/FcVN1rER
-vjf+3ExMbV/ZMhRKY+Rsp3LCAbkkuywX6g2Lr7lDWmu4L/RyEGi1lSXVYSgMGvpi
-npJhS+qEtbbHXT2eUQCR/e3aQHHA/PUSPvvXsJ7u5fVDCQzTz6gluHY0zrtXl5su
-jXZ4C0ux6veyfj7S7m0ayFZRRdavN2SOhBVcWSIwNewhGFjQZCAuFBZ6ht9TzwyF
-nL6IkD2TrBgj6T2mtyWwmt8eHuM4tg==
-=CpNn
------END PGP SIGNATURE-----
-
---fuq2btbbfpvvuy3v--
+OTOH the behaviour with $SUBJECT possibly means that we use predicted_ns from
+get_typical_interval() (which may suggest picking a shallow state based on
+previous wakeup patterns) only then to never wake up again?
 
