@@ -1,372 +1,125 @@
-Return-Path: <linux-kernel+bounces-768733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AA3B264B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:52:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15FD7B264B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 601AC5E55D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 220273B5DE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7772FAC0F;
-	Thu, 14 Aug 2025 11:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABFC2FB967;
+	Thu, 14 Aug 2025 11:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuxJwlw7"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOpuGU1j"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CE21474CC;
-	Thu, 14 Aug 2025 11:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F242FABFD;
+	Thu, 14 Aug 2025 11:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755172228; cv=none; b=YwCyo0D6TJVVLn3/m3N3dYXaPhJJ+fpwDiE8bc36WyyIiarap2IRuD3lD3moCfK5ck7FKomkZXMT46ZoQ8mOUSXsK/gab0LMu4PcAYYdqaSRSjbWMRtxPhTwgX7OG1u1RFPHD8KwntOPWcTOSczJd7+MVC/iX3IaubDJqE6qJdk=
+	t=1755172297; cv=none; b=WF34y1QM7bdkLHNUThlNhLzevbwmKYj0uV4RS7eJZhcp0Tq7ihA3ZkdVv7A1F/DnSbs9oWTp/XdDI0WWASI6Lh9zme6bsBS2Mv3VxFi1FUw033ox6aIVQZZ/BI4fKc3YKVXk0OFtAFFo9+R4FCT4jkqhHZW/8xzLKgsQK/3PNs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755172228; c=relaxed/simple;
-	bh=WPIgaEeWW+6oaq2UZm0lrOrqcZ5AeKCSiyIHj44SQjU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JaJ/5NwhxzMnWFwC9ZKBt3vHur/PVI6HKkhZqviSSF2BIQuzbQnC3YYHM6ZwQSdQ+QJMB8Vw9TjdAMOf1OP1FLzZxzkoOMDPQr5qECWGPoe6fKrCj2xEVB9bpj+EQY9WDIPJaldUPWiMW21+qqyioYPbqnNMzuYjgEoiuYwJSjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuxJwlw7; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1755172297; c=relaxed/simple;
+	bh=4tk9bwz8coDizZfq6CK2c5VjBma58QVXrU05Sen13vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qGcYBPzaFqo1TpzYpcD9BRbxLrMl0+rJuXOCNDDqNkVGDRBFzQicDF/bDt74quqS6RuzLAXE03nOvKkxx+SIm92dU0CKS1qJxIKrYw/Ja+ctbJGgD8kDq0v55VEp25g9159XXMvqb/gIsxBgfLjbBl/Z90YDUFNwVwh4EjIuC+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOpuGU1j; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45a15fd04d9so13070195e9.1;
-        Thu, 14 Aug 2025 04:50:26 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45a1b065d59so4182175e9.1;
+        Thu, 14 Aug 2025 04:51:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755172225; x=1755777025; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZjBMwTLbk2n8XSDykkMjED4XnxkTChi3RMpFjh0P9gI=;
-        b=RuxJwlw7WsT6gO+Se4oVEEW5AdfqvtDQncVga6wxYnt3oNIVDiK0A6gmlJWPTgTZkc
-         nLCnUV8UaL4Si1q25uP+krFpalYO5vKHjl2A2WliJT+ZSf22jo5iBNko+FCG0ykv+Ggs
-         V5g8pnm9a/i0T9mxkc5gWhYHztgiLhGLwVJoBNdIjM/G9juyz10LjefRwgbyAISnw/f/
-         jT/SfljWYTYjhbDflZtGRcO5YJok04O6m7PZz6o0mGZbaamHMixkgB8nOF8tIZiJSpBj
-         j8/ujlfL/i2eDBvYc79hFQFxRql7QbZbbc5tnjoCXqCBvfFDocVCz1UbqFMSGFDBQJzN
-         TGNg==
+        d=gmail.com; s=20230601; t=1755172294; x=1755777094; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6VnTFOiEQ/KEA1BYExh4enVyNJmydSamaAd1v3h7zMU=;
+        b=aOpuGU1jf+qcwwAvXD+VrAXKD9P6O8jdO0Xyi6BlALhF66zSV/QxYf4avRSshfPoG8
+         LlRjGznS7W7Z6nu0rJG9UNciNhrSJa8Rj39lN1hT3X/jr2MZ7RQOjNXGsoJAu36IlewB
+         Ug3V8CBDjwMOQs5hDsloV/ZlYWQzPjTzRwaeXb9amijVAOyLnBOK48ageNruL8L/pwrp
+         K6dGVcKCK9dGo/N9ZVnzWBYTqGU3EvhJWfpv53K80Ik7T4QkgnmmUbUDL8KrBaNgwUgE
+         RolMnDFPTPtgDFGaQAMo37sfXKjnmf5NCTntKuS2OTlPtmC9QnO9d/lJ1P2d1K3XT4qE
+         VD4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755172225; x=1755777025;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZjBMwTLbk2n8XSDykkMjED4XnxkTChi3RMpFjh0P9gI=;
-        b=qp0QzDh8FQ9p0w4g5gS9aF2jwkyWTcHHGJK0XldGbVMDPdZFAEXzQoAwrFB2BmDTcD
-         RL7bd/2Nz0CZMFmczMrRh44CD0aFf5n23zee8uwgymhZEEf0MV+oRIoGGEr82CW/wADj
-         1WrVmQK0JJlPrckP6rrppScPy2AHegu/95F7TDTVoDU942Q2YQVO0PEaomQpn5PPN1KU
-         NFhMEYAG7tGy1cSshR/JnTITs6eaUQqLMs9JXZuEuAqcLHjg688jsnG18sCdwue1JIw6
-         zkn0KYFjIL3Dv1GeeDXa3TOYW9tkOMnDnGPHzEOS/SdEngrpppnYIq6oqBYoRGbYIVQ3
-         kCRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1idetCs/hYl37dkaadT0+B/PJzqDMoDIH/uhXI1VDaQkcJXSnGV78i6Flhai1GfUpAtdPRG5ZsW0MEHSDqcUqf/Y=@vger.kernel.org, AJvYcCVfSyCc1kdWLfQJR4AcN6YraOs3QmlokItTjVyAFRwAbi078QcWZYohe/wGhUUfiHJ2voQToIvI/Sw3mgM=@vger.kernel.org, AJvYcCXyd1YwmjHFzteaHLAOInCO4X35uNZw0T+7OZdP0RzABChjgY0Rkg4NJCUwftaCkHj/Q+jcUuss48ob@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQwi13NIbnzcbO/j27hD/J0zyWL6+bDJncULZ3najccYsjD/S1
-	7MqMoGkOjqJB8GF6y6HEhMGFyWQ4WjazV+wzUHSzxlBUtGWQwJtsj6jYhnRlOZw/Buk=
-X-Gm-Gg: ASbGncsWEAAW+tGHrEWm4yyl14ZXS2qJpbLaJMroNYXGNGfEF2jzLTbC/ipqf/XvAuu
-	GEnEd2NCmbk1tbN2yljgodqfOST3WALmAj119pITKnNvh05Fhm83pjRAIsZkZ/2tpdTTL0dwqwv
-	g7CysyDT0+NWhNY+ifb1zmbO4tmKI4DwNF28xRBJr0LDorKJAx/+IzKyD4QfSx4xlacwMaBAlRP
-	Fmmky3COJ30/oIKJgnk+MAAZpmwOdw7/waqJuD/nywtaC0NCUu7UBhm3QNljq7DQywOvBb7787M
-	U6bZuc/Oo+hkENaUWdBtyGuYC6pEwZaOw3vUQ9yXEYn3yx1ybBouHcT5l83F+hl/cHmMl9aN4Ii
-	LDNylGi6nAuw2PtPsMxCI9cAaObzaN3n9Ug7REJryYlC+MDTLtuXnQDCTBWbZ1eBhvMjhLcjvSg
-	==
-X-Google-Smtp-Source: AGHT+IFjW7j24IKwAbDEeuaifuS1g4pZEcs6fn2eZpwSjA1+MslRWQWk6ljnKRJpR5zJLR16Yp0C2A==
-X-Received: by 2002:a05:600c:8b2b:b0:456:1d06:f37d with SMTP id 5b1f17b1804b1-45a1b6e30c9mr24430965e9.16.1755172224721;
-        Thu, 14 Aug 2025 04:50:24 -0700 (PDT)
-Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6cd169sm18244355e9.8.2025.08.14.04.50.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 04:50:24 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] pwm: rzg2l-gpt: Implementation of the waveform callbacks
-Date: Thu, 14 Aug 2025 12:50:20 +0100
-Message-ID: <20250814115022.73732-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1755172294; x=1755777094;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6VnTFOiEQ/KEA1BYExh4enVyNJmydSamaAd1v3h7zMU=;
+        b=oZiVRapC/cTrOR3LJvSKhXqeTo2orzLuctHJ/cZoYJC0FQ+6WpTHDT5lqE2V21sYvP
+         uHLsIwa6ohp6egQ3Jwd8hSfz5ek+KGu2t9xTJikIkmSZlNe2jyKMMejX7LEVg3rBNcHm
+         3x088xyUqCUVP3EIWB0PbwHI/K3asMMefrODzuzip/rcTdYLtWm867cq7ekt19l4hrNB
+         yzUrTG+cvCw0qf6rt1q4vx5URNM19YqhfSO796FjZFqVbj5Em6RuDxNmamOFGsTJ9fes
+         PXsL1gj1Kr6AN+kQ7l44ROmXpd/AEvQNs7bvGyWPqJMus1IeEyf1+wI6EgHL9TwFi6gA
+         IV2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVR72gMDLSLwJa2OokLeVHlQsUxqnDhvUucPU1tmxft+p+VzR1I0xluqEXcgCYyurq2fbsrunq2xiM0jCiH@vger.kernel.org, AJvYcCWAop0R5qC6KFEORbaoMrUun+1OetbA1cfMBiMOhAM30upoVNMhNPnWjNF+JkBbz7fgC08+UCoIN7bdyCdHmA==@vger.kernel.org, AJvYcCXAVLpzQKr62bTXdeIrQk1h5uLY4i2+T6NHVK/gGFoGoXqQuwoKiWUn4yU7qHnVBaB/8DPJOmyYHRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXN66GzwNGPcDOKnU/s8PHByqF/yo8P5FMq8u6JrzjzsWwoJ8D
+	HbYBFKxuq2wrdcfC+qe+3l7skQy/EgePeF97WLA3EgAZlwhfIsictq4R
+X-Gm-Gg: ASbGncsfFOsFd7IjWRNlSV0CN2U3IEhH2ij3QRcr4G4o4F4UqExXBSMqlATXz3SVciP
+	xWMlnQajzt5q0hhivO6ozr1xh1/1dmSNNxc0gVTmK8pxogkaKylmuRYA6Lgw5QNdmIORrHv7GLi
+	eqTj9Ul4OFjQSHI9cbzHtO38Ur8xk+ryq3Art84N8O/eod7vhy8AOK4a9IL/hhDmPwDnGC+D1jz
+	hG4PsuIQVDh3+WjkOunYIXExGyElDEtNb7QTwAaQZU3wB01/dZeG0r08BkNoqnz4aXUwP6ivtzS
+	uG+mneN/PuJql7B9RKSIU+Qp4atnXk6x6kK2MkAjMf2jZbavK27Fp+zQnZVU9HNFyFyvYgS7vgo
+	wpE1DcouPnHeDU4ykaPovcvQvHTcGCveMf2CBOf0i8286G16oBritZc4Bb5fC5naEq7kb19SpyA
+	WmQCWNvQ==
+X-Google-Smtp-Source: AGHT+IHthldMbcpzDbaJ1GGbyBIqgCUgRr8Aa4x6eTmOxq4YHMkcIGai32HHy+wWjTZMm4tR/4WApw==
+X-Received: by 2002:a05:600c:1390:b0:459:db5a:b0b9 with SMTP id 5b1f17b1804b1-45a1b67a215mr16749815e9.28.1755172293482;
+        Thu, 14 Aug 2025 04:51:33 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::7:8979])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abeb2sm50579340f8f.11.2025.08.14.04.51.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 04:51:32 -0700 (PDT)
+Message-ID: <4d23ba51-e8d8-41bc-8d46-a7bccb4c3c20@gmail.com>
+Date: Thu, 14 Aug 2025 12:51:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 7/7] selftests: prctl: introduce tests for disabling
+ THPs except for madvise
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com, Mark Brown <broonie@kernel.org>
+References: <20250813135642.1986480-1-usamaarif642@gmail.com>
+ <20250813135642.1986480-8-usamaarif642@gmail.com>
+ <13220ee2-d767-4133-9ef8-780fa165bbeb@lucifer.local>
+ <bac33bcc-8a01-445d-bc42-29dabbdd1d3f@redhat.com>
+ <5b341172-5082-4df4-8264-e38a01f7c7d7@lucifer.local>
+ <1ff24f1b-7ba2-4595-b3f6-3eb93ea5a40d@gmail.com>
+ <a8b0eb8d-442e-4cfc-ab79-3c6bc6a86ff0@lucifer.local>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <a8b0eb8d-442e-4cfc-ab79-3c6bc6a86ff0@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Convert the rzg2l-gpt driver to use the new callbacks for hardware
-programming.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Dropped modifing hardware from .round_waveform_tohw() callback.
----
- drivers/pwm/pwm-rzg2l-gpt.c | 175 +++++++++++++++++++++---------------
- 1 file changed, 102 insertions(+), 73 deletions(-)
+> 
+> Why would you move things around though? Think it's fine as-is, if something on
+> setup fails then all tests should fail.
 
-diff --git a/drivers/pwm/pwm-rzg2l-gpt.c b/drivers/pwm/pwm-rzg2l-gpt.c
-index 360c8bf3b190..f0a8531457ca 100644
---- a/drivers/pwm/pwm-rzg2l-gpt.c
-+++ b/drivers/pwm/pwm-rzg2l-gpt.c
-@@ -86,6 +86,13 @@ struct rzg2l_gpt_chip {
- 	u32 channel_enable_count[RZG2L_MAX_HW_CHANNELS];
- };
- 
-+/* This represents a hardware configuration for one channel */
-+struct rzg2l_gpt_waveform {
-+	u32 gtpr;
-+	u32 gtccr;
-+	u8 prescale;
-+};
-+
- static inline struct rzg2l_gpt_chip *to_rzg2l_gpt_chip(struct pwm_chip *chip)
- {
- 	return pwmchip_get_drvdata(chip);
-@@ -190,8 +197,10 @@ static void rzg2l_gpt_disable(struct rzg2l_gpt_chip *rzg2l_gpt,
- 	/* Stop count, Output low on GTIOCx pin when counting stops */
- 	rzg2l_gpt->channel_enable_count[ch]--;
- 
--	if (!rzg2l_gpt->channel_enable_count[ch])
-+	if (!rzg2l_gpt->channel_enable_count[ch]) {
- 		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch), RZG2L_GTCR_CST, 0);
-+		rzg2l_gpt->period_ticks[ch] = 0;
-+	}
- 
- 	/* Disable pin output */
- 	rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTIOR(ch), RZG2L_GTIOR_OxE(sub_ch), 0);
-@@ -215,54 +224,37 @@ static u64 rzg2l_gpt_calculate_period_or_duty(struct rzg2l_gpt_chip *rzg2l_gpt,
- 	return DIV64_U64_ROUND_UP(tmp, rzg2l_gpt->rate_khz);
- }
- 
--static int rzg2l_gpt_get_state(struct pwm_chip *chip, struct pwm_device *pwm,
--			       struct pwm_state *state)
--{
--	struct rzg2l_gpt_chip *rzg2l_gpt = to_rzg2l_gpt_chip(chip);
--
--	state->enabled = rzg2l_gpt_is_ch_enabled(rzg2l_gpt, pwm->hwpwm);
--	if (state->enabled) {
--		u32 sub_ch = rzg2l_gpt_subchannel(pwm->hwpwm);
--		u32 ch = RZG2L_GET_CH(pwm->hwpwm);
--		u8 prescale;
--		u32 val;
--
--		val = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTCR(ch));
--		prescale = FIELD_GET(RZG2L_GTCR_TPCS, val);
--
--		val = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTPR(ch));
--		state->period = rzg2l_gpt_calculate_period_or_duty(rzg2l_gpt, val, prescale);
--
--		val = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTCCR(ch, sub_ch));
--		state->duty_cycle = rzg2l_gpt_calculate_period_or_duty(rzg2l_gpt, val, prescale);
--		if (state->duty_cycle > state->period)
--			state->duty_cycle = state->period;
--	}
--
--	state->polarity = PWM_POLARITY_NORMAL;
--
--	return 0;
--}
--
- static u32 rzg2l_gpt_calculate_pv_or_dc(u64 period_or_duty_cycle, u8 prescale)
- {
- 	return min_t(u64, DIV_ROUND_DOWN_ULL(period_or_duty_cycle, 1 << (2 * prescale)),
- 		     U32_MAX);
- }
- 
--/* Caller holds the lock while calling rzg2l_gpt_config() */
--static int rzg2l_gpt_config(struct pwm_chip *chip, struct pwm_device *pwm,
--			    const struct pwm_state *state)
-+static int rzg2l_gpt_round_waveform_tohw(struct pwm_chip *chip,
-+					 struct pwm_device *pwm,
-+					 const struct pwm_waveform *wf,
-+					 void *_wfhw)
-+
- {
- 	struct rzg2l_gpt_chip *rzg2l_gpt = to_rzg2l_gpt_chip(chip);
--	u8 sub_ch = rzg2l_gpt_subchannel(pwm->hwpwm);
-+	struct rzg2l_gpt_waveform *wfhw = _wfhw;
- 	u8 ch = RZG2L_GET_CH(pwm->hwpwm);
- 	u64 period_ticks, duty_ticks;
- 	unsigned long pv, dc;
--	u8 prescale;
-+
-+	guard(mutex)(&rzg2l_gpt->lock);
-+	if (wf->period_length_ns == 0) {
-+		*wfhw = (struct rzg2l_gpt_waveform){
-+			.gtpr = 0,
-+			.gtccr = 0,
-+			.prescale = 0,
-+		};
-+
-+		return 0;
-+	}
- 
- 	/* Limit period/duty cycle to max value supported by the HW */
--	period_ticks = mul_u64_u64_div_u64(state->period, rzg2l_gpt->rate_khz, USEC_PER_SEC);
-+	period_ticks = mul_u64_u64_div_u64(wf->period_length_ns, rzg2l_gpt->rate_khz, USEC_PER_SEC);
- 	if (period_ticks > RZG2L_MAX_TICKS)
- 		period_ticks = RZG2L_MAX_TICKS;
- 	/*
-@@ -277,13 +269,14 @@ static int rzg2l_gpt_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			period_ticks = rzg2l_gpt->period_ticks[ch];
- 	}
- 
--	prescale = rzg2l_gpt_calculate_prescale(rzg2l_gpt, period_ticks);
--	pv = rzg2l_gpt_calculate_pv_or_dc(period_ticks, prescale);
--
--	duty_ticks = mul_u64_u64_div_u64(state->duty_cycle, rzg2l_gpt->rate_khz, USEC_PER_SEC);
-+	wfhw->prescale = rzg2l_gpt_calculate_prescale(rzg2l_gpt, period_ticks);
-+	pv = rzg2l_gpt_calculate_pv_or_dc(period_ticks, wfhw->prescale);
-+	wfhw->gtpr = pv;
-+	duty_ticks = mul_u64_u64_div_u64(wf->duty_length_ns, rzg2l_gpt->rate_khz, USEC_PER_SEC);
- 	if (duty_ticks > period_ticks)
- 		duty_ticks = period_ticks;
--	dc = rzg2l_gpt_calculate_pv_or_dc(duty_ticks, prescale);
-+	dc = rzg2l_gpt_calculate_pv_or_dc(duty_ticks, wfhw->prescale);
-+	wfhw->gtccr = dc;
- 
- 	/*
- 	 * GPT counter is shared by multiple channels, we cache the period ticks
-@@ -292,6 +285,58 @@ static int rzg2l_gpt_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	 */
- 	rzg2l_gpt->period_ticks[ch] = period_ticks;
- 
-+	return 0;
-+}
-+
-+static int rzg2l_gpt_round_waveform_fromhw(struct pwm_chip *chip,
-+					   struct pwm_device *pwm,
-+					   const void *_wfhw,
-+					   struct pwm_waveform *wf)
-+{
-+	struct rzg2l_gpt_chip *rzg2l_gpt = to_rzg2l_gpt_chip(chip);
-+	const struct rzg2l_gpt_waveform *wfhw = _wfhw;
-+
-+	wf->period_length_ns = rzg2l_gpt_calculate_period_or_duty(rzg2l_gpt, wfhw->gtpr,
-+								  wfhw->prescale);
-+	wf->duty_length_ns = rzg2l_gpt_calculate_period_or_duty(rzg2l_gpt, wfhw->gtccr,
-+								wfhw->prescale);
-+	wf->duty_offset_ns = 0;
-+
-+	return 0;
-+}
-+
-+static int rzg2l_gpt_read_waveform(struct pwm_chip *chip,
-+				   struct pwm_device *pwm,
-+				   void *_wfhw)
-+{
-+	struct rzg2l_gpt_chip *rzg2l_gpt = to_rzg2l_gpt_chip(chip);
-+	struct rzg2l_gpt_waveform *wfhw = _wfhw;
-+	u32 sub_ch = rzg2l_gpt_subchannel(pwm->hwpwm);
-+	u32 ch = RZG2L_GET_CH(pwm->hwpwm);
-+	u32 gtcr;
-+
-+	if (rzg2l_gpt_is_ch_enabled(rzg2l_gpt, pwm->hwpwm)) {
-+		gtcr = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTCR(ch));
-+		wfhw->prescale = FIELD_GET(RZG2L_GTCR_TPCS, gtcr);
-+		wfhw->gtpr = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTPR(ch));
-+		wfhw->gtccr = rzg2l_gpt_read(rzg2l_gpt, RZG2L_GTCCR(ch, sub_ch));
-+		if (wfhw->gtccr > wfhw->gtpr)
-+			wfhw->gtccr = wfhw->gtpr;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rzg2l_gpt_write_waveform(struct pwm_chip *chip,
-+				    struct pwm_device *pwm,
-+				    const void *_wfhw)
-+{
-+	struct rzg2l_gpt_chip *rzg2l_gpt = to_rzg2l_gpt_chip(chip);
-+	const struct rzg2l_gpt_waveform *wfhw = _wfhw;
-+	u8 sub_ch = rzg2l_gpt_subchannel(pwm->hwpwm);
-+	u8 ch = RZG2L_GET_CH(pwm->hwpwm);
-+
-+	guard(mutex)(&rzg2l_gpt->lock);
- 	/*
- 	 * Counter must be stopped before modifying mode, prescaler, timer
- 	 * counter and buffer enable registers. These registers are shared
-@@ -310,14 +355,14 @@ static int rzg2l_gpt_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 
- 		/* Select count clock */
- 		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch), RZG2L_GTCR_TPCS,
--				 FIELD_PREP(RZG2L_GTCR_TPCS, prescale));
-+				 FIELD_PREP(RZG2L_GTCR_TPCS, wfhw->prescale));
- 
- 		/* Set period */
--		rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTPR(ch), pv);
-+		rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTPR(ch), wfhw->gtpr);
- 	}
- 
- 	/* Set duty cycle */
--	rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTCCR(ch, sub_ch), dc);
-+	rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTCCR(ch, sub_ch), wfhw->gtccr);
- 
- 	if (rzg2l_gpt->channel_enable_count[ch] <= 1) {
- 		/* Set initial value for counter */
-@@ -326,44 +371,28 @@ static int rzg2l_gpt_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 		/* Set no buffer operation */
- 		rzg2l_gpt_write(rzg2l_gpt, RZG2L_GTBER(ch), 0);
- 
--		/* Restart the counter after updating the registers */
--		rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch),
--				 RZG2L_GTCR_CST, RZG2L_GTCR_CST);
--	}
--
--	return 0;
--}
--
--static int rzg2l_gpt_apply(struct pwm_chip *chip, struct pwm_device *pwm,
--			   const struct pwm_state *state)
--{
--	struct rzg2l_gpt_chip *rzg2l_gpt = to_rzg2l_gpt_chip(chip);
--	bool enabled = pwm->state.enabled;
--	int ret;
--
--	if (state->polarity != PWM_POLARITY_NORMAL)
--		return -EINVAL;
--
--	guard(mutex)(&rzg2l_gpt->lock);
--	if (!state->enabled) {
--		if (enabled)
--			rzg2l_gpt_disable(rzg2l_gpt, pwm);
--
--		return 0;
-+		if (wfhw->gtpr)
-+			/* Restart the counter after updating the registers */
-+			rzg2l_gpt_modify(rzg2l_gpt, RZG2L_GTCR(ch),
-+					 RZG2L_GTCR_CST, RZG2L_GTCR_CST);
- 	}
- 
--	ret = rzg2l_gpt_config(chip, pwm, state);
--	if (!ret && !enabled)
-+	if (wfhw->gtpr && !rzg2l_gpt_is_ch_enabled(rzg2l_gpt, pwm->hwpwm))
- 		rzg2l_gpt_enable(rzg2l_gpt, pwm);
-+	else if (!wfhw->gtpr && rzg2l_gpt_is_ch_enabled(rzg2l_gpt, pwm->hwpwm))
-+		rzg2l_gpt_disable(rzg2l_gpt, pwm);
- 
--	return ret;
-+	return 0;
- }
- 
- static const struct pwm_ops rzg2l_gpt_ops = {
- 	.request = rzg2l_gpt_request,
- 	.free = rzg2l_gpt_free,
--	.get_state = rzg2l_gpt_get_state,
--	.apply = rzg2l_gpt_apply,
-+	.sizeof_wfhw = sizeof(struct rzg2l_gpt_waveform),
-+	.round_waveform_tohw = rzg2l_gpt_round_waveform_tohw,
-+	.round_waveform_fromhw = rzg2l_gpt_round_waveform_fromhw,
-+	.read_waveform = rzg2l_gpt_read_waveform,
-+	.write_waveform = rzg2l_gpt_write_waveform,
- };
- 
- static int rzg2l_gpt_probe(struct platform_device *pdev)
+If its a "test" itself and not a check, I think its better if it belongs in TEST_F and
+not FIXTURE_SETUP.
+But yeah this is ofcourse going to be the first test, so if it fails the entire thing
+is marked as a failure and we dont proceed.
 
-base-commit: 48fbc945565ee8d7256eedd83e3c10df585aee6a
--- 
-2.43.0
+> 
+> Cheers, Lorenzo
 
 
