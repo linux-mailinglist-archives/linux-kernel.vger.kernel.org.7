@@ -1,150 +1,162 @@
-Return-Path: <linux-kernel+bounces-769372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8800BB26D95
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA92BB26D82
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8B9AA6EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:24:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5829A052E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD84330274B;
-	Thu, 14 Aug 2025 17:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D26A221FDC;
+	Thu, 14 Aug 2025 17:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Zil5TAjG"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jcQO2goa"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414282FF65D;
-	Thu, 14 Aug 2025 17:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4DA139D0A;
+	Thu, 14 Aug 2025 17:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755192157; cv=none; b=knJWaD2etzzOk6vKjD7/Hs5DHerp336AuyDD7myGWAOK9ck98nJ9f7L7CHxcsk6hmAzAZbGE65iblOX3ohW+CkEFKtcJqz64A5WPjjUDpq859DoZ8E9ff//9qkhk+x2pIoZkL8E84q7guG9P6hxujkHDtAQOuC7NNJl6Hiu5P4w=
+	t=1755192149; cv=none; b=VmSkoJUkn1k77MDidvOujet69qVIb7tWyC6WV9YM6zRlStZOzu0fOsE8EOVNUfTUb0hFxBdUPeWSkIoD+O+2MjzGLEuSLPSrwsa2/4SBVebo+X4t6g89L1HrumND87LdTECAzHj//phioA+cp5DgbVyJF8y7gTiZFr9oWem61+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755192157; c=relaxed/simple;
-	bh=bKVFrBqGvAD3vVqLD4NuKolXrYOcV4cywgK8Bf20XwI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TxaDZETACglHX3rzwt+YW2HpK6n7/8+XOvsAN98zgXeOUaqoYFt8d9dfKDwrzn5bIgO2fR7PuTXGFkVxp0m7ONwe8KISx7EnoULvV7k0IZVEuLZA6SU+9eRoohjiW5b4vGZAB3kY8Pl/tIUn1l1QJnEDAIzC2j64WcIt+6DGepk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Zil5TAjG; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gjrftLA6H/CDpl1y0yRuntaxWCtziLrcQi4OYIkb7ko=; b=Zil5TAjGj4oBsXZBIKDMpSqWp0
-	81gUEj11ZLnsEDhQVDCAnyyf5HyeDh09BBy5dN18mWQx99J/iXR/FaRM8h3sAJT3w9ZoV3olYZP7Y
-	/em9gGP5tIfsjLKW5BO1zJ5Vz+kMuATZicPZWW1nsCWif3mXVp2jKRvZMPkDTH5blhjKa0Cp38ENf
-	uGK5QQb8hRmt5ipiYTCWazXrTFxrf2iSsWw/xgSMSqv4YxaL0jEQD6C9PPhX2L1MfPukqxOw/4qD4
-	r5nsXBZHd5m44P+J9iv7MhdSbNISKNbwFcXoiSSwdnwje24+M1k0SqVsMUkKVNBBJtqLLWUVs9DQa
-	FmIBOo+w==;
-Received: from [152.250.7.37] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1umbeo-00EDyT-0i; Thu, 14 Aug 2025 19:22:30 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Thu, 14 Aug 2025 14:22:14 -0300
-Subject: [PATCH v5 3/9] ovl: Prepare for mounting case-insensitive enabled
- layers
+	s=arc-20240116; t=1755192149; c=relaxed/simple;
+	bh=120jGlfjlfdd7Emz7Fp/PilxZdEz4gAqwhu1OwG95+4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jTkEaNpA9vAeW1otvk+EdlSNNlvSDB6D3bwmQ89a4O6SFzXYwLNkvAMggw9fQrus2MZZKnQchsp/CIYWr5CqePJi9yPo1c81i7kf5QOemOuwlKmW4s2Kk/7Srru0ekWm9xKrdg/N+0mTGtGMCpbPzjeQvqLP9omCgc+jAS5IoMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jcQO2goa; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-afcb731caaaso164344566b.0;
+        Thu, 14 Aug 2025 10:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755192146; x=1755796946; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bXQ4zFcP1VHzRpcQtDiXfue/khViqbfXGoh+G+cmdaU=;
+        b=jcQO2goaVvlpNqnbCmk8MD2w2G4Ikl2AxA1FUHPcRX07lB9bsislIhhNBP31doOLep
+         328L5SUupLrCpu2gG6cgUi8617cVlpB+dxinwxhE2plLPk+7t1n/iOeTMtzJErq6qnuC
+         vZvZYIgT4TGrIUH3OnUyF5WQ9A6d5c3jQhtkQIZ/ET98C92ZWeDea8DhrcodArqtQttr
+         Mge7+Cg0RU8L6VNVyGM+2+kEJhcejeSmO2voN33MRSuNxYpCkAsCyRLWi4NMd9SitPC1
+         K+TS2tJlMGpvlBD+3FNgyce3Otw4yJNX/Ht8dqYHH4brrOyeFKJnC4p2elE7B4Htcg0j
+         v36Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755192146; x=1755796946;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bXQ4zFcP1VHzRpcQtDiXfue/khViqbfXGoh+G+cmdaU=;
+        b=RMUQIfxuw4PlhNgcr6SIB/JhGcHoJlDXFAhA9cc8zglYC3WZmvWXchYWGZHapNUV2k
+         n902ux/AllxOk8vlIO3vjrrlpm8UAAHFHLlQ4uefu6br2TdZIxrL+18EJolni/rjlh7k
+         lH8GAW9Ky2AHY1rdPY83nuA/evgpYEc4zh/mGyMXo73QsfhADt59sK9L9BIl7rzC7nvd
+         zrn4YKEIlJi/rVj33mVYLei2hmNVVmdHdQHF8+GV5GA5zLUm6jTOsslbCoBpEY3nsbkx
+         FTzTLbLxoANI27a17haiuc+L1GHKda0+wB81qUeQAjMync2OwZCFfuH7cHFQIiny+dfq
+         RmsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWD1WnmvWmUsCzEpUEbrUrkTipmL2V8jOeexgQuU3RGwv44jzL1695TjfUOGpGcg1SQBaXxpPTDNeizPA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB7ueFGy4XyMpx0sOrU91SGyhBSM0g9lYHxUF2j7sgMuwrIfXq
+	jHdSHtdaLxpK5kaM0C5MViv8Eoa+zzVC61+OLs5EPX7c/mfdBflP6vNi
+X-Gm-Gg: ASbGncuu9E2+ZauTXtLvp7/bbxEoK4Fw2JEmwJVkj7sgRY2ky8xz1eoI8c/SKz+aZ6a
+	WWJWiL/+mlAIAyzyLhNZBTvjHqe4iX7ZeISz7Feu+zdA+8xDv7qpUVj6wDLpphi33zhmeYt56HW
+	J/ZL/QR3eJ0nrri5OJCgtsQ8wVh2ZBO0BWNdICkfQSLbVASZrXWp/ZKBtQH0Y4nIX5leSx9xPkG
+	CcXmmRTb/x3aCk6wYWyOZnAmWxrQs7fUijY6WtWtdi+EnXkIGDhL9o5wMEOi1beQKk8Fn1N4AVT
+	G5+t3E+U2sv3VYU6kRiTRm+ErMMO90MRhAGK5ISjylA4t+ZwG3aXFEv5IgtiCqNJG76rkqtChSK
+	5olzGDh5dzPrlGckzgsfT0CxNUdZg56pT0LsmT/DGSAhvBsQmT8b1t7E6akS24CP5VL3apVnwH4
+	Wn2XM7DA==
+X-Google-Smtp-Source: AGHT+IER2zPzMvrw4CKEPAnHDQegy0Jro1MRokFhNcNZXbr3NRVE24nTIWs58dh8OLsl7TmsaP1jvQ==
+X-Received: by 2002:a17:907:7208:b0:ad8:914b:7d0b with SMTP id a640c23a62f3a-afcb9357c3emr378205866b.11.1755192145818;
+        Thu, 14 Aug 2025 10:22:25 -0700 (PDT)
+Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2c265sm23774115a12.26.2025.08.14.10.22.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 10:22:25 -0700 (PDT)
+From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+Subject: [PATCH v6 0/7] ALSA: usb-audio: Add driver for TASCAM US-144MKII
+Date: Thu, 14 Aug 2025 19:22:15 +0200
+Message-Id: <20250814172222.9448-1-ramiserifpersia@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250814-tonyk-overlayfs-v5-3-c5b80a909cbd@igalia.com>
-References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
-In-Reply-To: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
 
-Prepare for mounting layers with case-insensitive dentries in order to
-supporting such layers in overlayfs, while enforcing uniform casefold
-layers.
+This is v6 of the patch series to add a new driver
+for the TASCAM US-144MKII USB audio interface.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-Changes from v4:
-- Move relaxation of dentry_weird to the last patch
-- s/filesystems/layerss
-- Commit now says "Prepare for" instead of "Support"
----
- fs/overlayfs/ovl_entry.h |  1 +
- fs/overlayfs/params.c    | 15 ++++++++++++---
- fs/overlayfs/params.h    |  1 +
- 3 files changed, 14 insertions(+), 3 deletions(-)
+Changes in v6:
+  - Addressed open brace cosmetic standards for scoped_guard() calls.
+  - Added lost default values for digital in/out kcontrols.
 
-diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-index 4c1bae935ced274f93a0d23fe10d34455e226ec4..1d4828dbcf7ac4ba9657221e601bbf79d970d225 100644
---- a/fs/overlayfs/ovl_entry.h
-+++ b/fs/overlayfs/ovl_entry.h
-@@ -91,6 +91,7 @@ struct ovl_fs {
- 	struct mutex whiteout_lock;
- 	/* r/o snapshot of upperdir sb's only taken on volatile mounts */
- 	errseq_t errseq;
-+	bool casefold;
- };
- 
- /* Number of lower layers, not including data-only layers */
-diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
-index f4e7fff909ac49e2f8c58a76273426c1158a7472..17d2354ba88d92e1d9653e8cb1382d860a7329c5 100644
---- a/fs/overlayfs/params.c
-+++ b/fs/overlayfs/params.c
-@@ -277,16 +277,25 @@ static int ovl_mount_dir_check(struct fs_context *fc, const struct path *path,
- 			       enum ovl_opt layer, const char *name, bool upper)
- {
- 	struct ovl_fs_context *ctx = fc->fs_private;
-+	struct ovl_fs *ofs = fc->s_fs_info;
-+	bool is_casefolded = ovl_dentry_casefolded(path->dentry);
- 
- 	if (!d_is_dir(path->dentry))
- 		return invalfc(fc, "%s is not a directory", name);
- 
- 	/*
- 	 * Allow filesystems that are case-folding capable but deny composing
--	 * ovl stack from case-folded directories.
-+	 * ovl stack from inconsistent case-folded directories.
- 	 */
--	if (ovl_dentry_casefolded(path->dentry))
--		return invalfc(fc, "case-insensitive directory on %s not supported", name);
-+	if (!ctx->casefold_set) {
-+		ofs->casefold = is_casefolded;
-+		ctx->casefold_set = true;
-+	}
-+
-+	if (ofs->casefold != is_casefolded) {
-+		return invalfc(fc, "case-%ssensitive directory on %s is inconsistent",
-+			       is_casefolded ? "in" : "", name);
-+	}
- 
- 	if (ovl_dentry_weird(path->dentry))
- 		return invalfc(fc, "filesystem on %s not supported", name);
-diff --git a/fs/overlayfs/params.h b/fs/overlayfs/params.h
-index c96d939820211ddc63e265670a2aff60d95eec49..ffd53cdd84827cce827e8852f2de545f966ce60d 100644
---- a/fs/overlayfs/params.h
-+++ b/fs/overlayfs/params.h
-@@ -33,6 +33,7 @@ struct ovl_fs_context {
- 	struct ovl_opt_set set;
- 	struct ovl_fs_context_layer *lower;
- 	char *lowerdir_all; /* user provided lowerdir string */
-+	bool casefold_set;
- };
- 
- int ovl_init_fs_context(struct fs_context *fc);
+Changes in v5:
+  - Addressed u64 remainder in Patch 2/7.
+  - Refactored guard() calls for spinlocks to scoped_guard() for ones
+    that got missed(hopefully all).
 
+Changes in v4:
+  - Removing leading spaces from #defines as requested.
+  - Renaming fpoInitPattern to fpo_init_pattern.
+  - Removing unnecessary kfree() calls.
+  - Replacing manual lock/unlock patterns with scoped_guard().
+
+Changes in v3
+  - Corrected v2 invalid patches order
+  The v2 submission included mix of patches for v2 that were unusable.
+  These new patches are valid now.
+
+Changes in v2:
+  - Patch 1: Dropped blank line, initialized `__free(kfree)` variable to
+     NULL, and fixed `struct tascam_card` indentation.
+  - Patch 2: Corrected indentation in `us144mkii.h`.
+  - Patch 3: Changed `fpoInitPattern` to `fpo_init_pattern` (snake_case),
+     initialized `__free(kfree)` variable, and replaced
+     `guard(spinlock_irqsave)` with `scoped_guard()`.
+  - Patch 5: Updated control names to standard "Playback Source" and
+     "Capture Source" formats, and initialized `__free(kfree)` variable to NULL.
+  - Patch 6: Re-organized code style alignments into previous patches.
+  - Patch 7: Fixed trailing whitespace warning.
+
+Šerif Rami (7):
+  ALSA: usb-audio: Add initial driver for TASCAM US-144MKII
+  ALSA: usb-audio: us144mkii: Add PCM core infrastructure
+  ALSA: usb-audio: us144mkii: Implement audio playback and feedback
+  ALSA: usb-audio: us144mkii: Implement audio capture and decoding
+  ALSA: usb-audio: us144mkii: Add MIDI support and mixer controls
+  ALSA: usb-audio: us144mkii: Add deep sleep command
+  ALSA: usb-audio: Add infrastructure for TASCAM US-144MKII
+
+ sound/usb/Kconfig                    |  12 +
+ sound/usb/usx2y/Makefile             |   2 +
+ sound/usb/usx2y/us122l.c             |   6 -
+ sound/usb/usx2y/us144mkii.c          | 620 +++++++++++++++++++++++++++
+ sound/usb/usx2y/us144mkii.h          | 368 ++++++++++++++++
+ sound/usb/usx2y/us144mkii_capture.c  | 319 ++++++++++++++
+ sound/usb/usx2y/us144mkii_controls.c | 444 +++++++++++++++++++
+ sound/usb/usx2y/us144mkii_midi.c     | 399 +++++++++++++++++
+ sound/usb/usx2y/us144mkii_pcm.c      | 370 ++++++++++++++++
+ sound/usb/usx2y/us144mkii_pcm.h      | 165 +++++++
+ sound/usb/usx2y/us144mkii_playback.c | 456 ++++++++++++++++++++
+ 11 files changed, 3155 insertions(+), 6 deletions(-)
+ create mode 100644 sound/usb/usx2y/us144mkii.c
+ create mode 100644 sound/usb/usx2y/us144mkii.h
+ create mode 100644 sound/usb/usx2y/us144mkii_capture.c
+ create mode 100644 sound/usb/usx2y/us144mkii_controls.c
+ create mode 100644 sound/usb/usx2y/us144mkii_midi.c
+ create mode 100644 sound/usb/usx2y/us144mkii_pcm.c
+ create mode 100644 sound/usb/usx2y/us144mkii_pcm.h
+ create mode 100644 sound/usb/usx2y/us144mkii_playback.c
+
+base-commit: e8e4f3c242cc26de9d69bd8b3a678d1e50980abe
 -- 
-2.50.1
+2.39.5
 
 
