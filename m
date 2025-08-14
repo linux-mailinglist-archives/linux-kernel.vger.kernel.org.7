@@ -1,147 +1,163 @@
-Return-Path: <linux-kernel+bounces-769253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FB2B26C00
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:10:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B31B26C08
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F05685135
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1A59A015E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2638B24BBEE;
-	Thu, 14 Aug 2025 16:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA4D248869;
+	Thu, 14 Aug 2025 16:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdhgNAEH"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bibmmQvZ"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31049220F55;
-	Thu, 14 Aug 2025 16:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A946246BCF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 16:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755187602; cv=none; b=BceVhMZc7VKP2a+d+fAhPWmHPatDj7UyXa/oMuPJoJX9QnOzMKUuwd4CJRHvwso9J98SuzrLqeEP122UJcOZdZDZgGf7qR697ZJXpqoiPZ134PlugzpsEtdZ+iT5VJvpdd0c6BLAZTYVob2ndIOnR3IoFV6K0mn7E9frqAFZSAg=
+	t=1755187625; cv=none; b=O8kVikyH11k6Y4nAKmeLCzCHL6RgRiOUkhwu9VHMEuDTeDHb6j8sQDr75/NW6oOM3ayEQMuqPqm8US3ZmF0k6Oj70MwuBhHE5nDM894OhRsxcNDjwfC1QtKlKsmtkBTRUdkJiPTzxGgBaVrPOrKsDyRWVei0FXDi8YeWgtIcP68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755187602; c=relaxed/simple;
-	bh=lz47cxuQXW9kCaneS5tiSGf5QivssZJjHuGYjSUYoDE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tNggl4fXwHKkn60okcvuOQm+0TQFHF6Bv7qqJX8FBraiZTDnDJpLAYt4tYrbO2tLKW6dVElXE5uzeBFKuswiMsvxLK4vDvfnzK81T800nifSmhEGshNbTNsbGdF9Skmk6VlaKD+RTybVEHuQqhkVKNkH3kAxtNCRq0zxr0cMqSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdhgNAEH; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-323266d6f57so1319082a91.0;
-        Thu, 14 Aug 2025 09:06:41 -0700 (PDT)
+	s=arc-20240116; t=1755187625; c=relaxed/simple;
+	bh=MEMndkwsKz3Wir01XY15+wsOAiobH1YxwPbkYo3eX7Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iskGET7XqvXBJ/jf0s1EzWsDTuip+PdHq4QVc31hXEpKZZ0YJuAxpBgZ2NbTaQRqgDvB4idlLNIigRVbGsg5Wp6szIM2bRszG3VV1z+3Qcts+XnSjh8vEzEnFguDLFX63fw8mL/XYd0YDsPRPpHHM2pZlrOEsyI/JTB1PPNypro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bibmmQvZ; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45a1b097037so6363875e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:07:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755187600; x=1755792400; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2JQC78ZpgMIMuWQWRfvjMuPKHibgoB05xt+yx0YmXFw=;
-        b=QdhgNAEHZO265vJT4m3HGJ817fIbSIqIVCixapDZ2OMf/kiW4yfhFGRECcIvvECMJh
-         iZsAumfMmtbBpE+qMnRBAmG38RqHOEjk62pIJ3LDECfyLkYED/ngN2SE86Z2K9MrbjOk
-         +ugbq55w2bjRyI/vMRDnwoDjgKKD/J1WnDoZXvc1TLTNFSUyBs0WxavQqEUMtzm3+lcE
-         +//eVSza9qfws79KoUJEhsLsNo+Z3ZyS0YzzD3KetHW/f0grrlrvCob06n6vkS58nkL2
-         AxuGqTvhMy+7AKM36yOWBdKfli5ZB4H8l+fy3tPRIWwsjLZ6LwVg6dKmLElDA/0cXJr5
-         RGKQ==
+        d=linaro.org; s=google; t=1755187621; x=1755792421; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yj38X/0MfiFnhuC5i4RxM2VUGXAWD2Xbv8OmXp3rmdA=;
+        b=bibmmQvZBZkUL7IGH+Xr/U4n4OtdjnPCPKcsE6j2efOgUnz/WDj4Vzydfgr22xW3AP
+         iu0rrm9Fgw2dOl/kVAVN6g7nArEG0h7FfhnoDiD4ZkGz57/vxoPH+D/VXMRLcVbfc5X8
+         +PWAjKS/MB54XYnfxDaGXXZyp0Ox0gzswZVK6a+b+z5XBEGJuz96Z190tjK5wso9uSej
+         sKH7COfdHJTG6vQUvYlPzmX5kQDQ0Jlz3lQzwbWTIJ6mzRyKyG3woa56dpcAbA/77fG6
+         4w2cLhCmwb36dKAa+khZ7YkJbHHPVPjxfkDtJDcvXgjYU8S+FnGlYggVj6nSxFhRxM+3
+         MKBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755187600; x=1755792400;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2JQC78ZpgMIMuWQWRfvjMuPKHibgoB05xt+yx0YmXFw=;
-        b=CRsedaOioT/QLbC5iSgEdJBeC95qdnCmLqySJYvImiKlUKEfTTEFQYRZKVYTy3G65A
-         LSpJGHkqqyecyYp/WMwsfHLaVxNiAfZvvv90qquP419asFyHc3j8gfP428jlnFBtnwXH
-         lFegFA1f3DEoiNJA/QU6albpZJ9F/Wp8sy0rz4v41BjdIAeA/ikPy6Tr+cqJakDeDKHF
-         UZYpTsT/gS1SkesqatJ0YSZkJIl7Z2o/2OpnjrVjV1138DgDQ4Ziz7IQksKvdith1eFA
-         uszBEj2g/PljqkghbNAfB/Zg018AWTNbsIzxJ6vrl7VNEZFxxM4UkWJs8igoC5BVSWVA
-         vM9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU0EdazzusJ9VpP0llZ+DeOQ7CBY84DHcwJ7iQSBT6m9+2rqq+ZnS9zBrWuqUXKsVqwNEkGnoq722ZqnOcy@vger.kernel.org, AJvYcCVG3rQyqU3Pp4/TSwTKtYGlimkHB1xAd9ygDTvxZ42ytNMkFrm4Atd+0xYV1zt1IE7T9P0=@vger.kernel.org, AJvYcCWcV19tz88Qgdo0wViFSIlwgHKg5pNETUMH2BEIzhaZ9ms9m6b2tOKAc33ezl6f2zMl92bohIOCx8tUTJqBDbpa@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ4JekbJ3hrAn6kKNkhPyXOPz6UUGpkt3bWz4rP1+gc+Flsgj9
-	32h4HfrXK9ColyuaJbz1YLG0dNJd9SdxqLGckX3NQ9tpRupi5UlpnpHZ
-X-Gm-Gg: ASbGncv4tOCpe+KAFj3TeHLDAmwpZRhqo+JIgY+nw8pXYAFc3AG9EnuO0jbvwyyVJ7F
-	BwK8fWy+1WG8NXdk1nQk/M6XZVnGmVJSjF1JXEwptQCOPFTMle373PnIbXftewR5jwmBud0SJNb
-	kSgN7T7i7KKR+fZniBkcdS3c9cKyGtzUsMWp+0e73KiVf/uVfVZmKLodPhq4uJEkEi2iOcAYIF+
-	XFXxlaAWQKOZKVtVvDp3nplPLhgzIqJzpjDSPFt8gWVYbNTweIg6Ch6+gsab5ibDJa9KtWdjsB+
-	miIspqGOULBTmUJ+r75n4Uch4PYzpfD1rsqHGePDnY/9LriRVVfIOjtMTOb+AiDx2EvldS05nGN
-	Cp9gEwj5Sra/5cBFzqNY=
-X-Google-Smtp-Source: AGHT+IEhBBG0ngLQSL1m1pTEMacHumOyYx5CiFYAiylVBFK4bQhJSTeJAL3kGYnVrMJWW2lrkPzzkg==
-X-Received: by 2002:a17:90b:2745:b0:31f:eae:a7e8 with SMTP id 98e67ed59e1d1-32327b28cbdmr5893443a91.11.1755187600264;
-        Thu, 14 Aug 2025 09:06:40 -0700 (PDT)
-Received: from [192.168.0.226] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32331097831sm2246465a91.33.2025.08.14.09.06.39
+        d=1e100.net; s=20230601; t=1755187621; x=1755792421;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yj38X/0MfiFnhuC5i4RxM2VUGXAWD2Xbv8OmXp3rmdA=;
+        b=sg087y4x+5tZ+A6TaRVgOXXDiQgEm2mMxjaui13gU6dkWBt+ZhuBTypNsoFtgZuKun
+         FDWA8sX1m9/25X6leci7v/2xBql3oYyAlowJRBFhJ/+RIseMlYXoEkzGzkHLcaxV9fkq
+         FGLAD+TT5RpNkoXlszBeqx6HX0Jts3uBmyej3vOu34zSQlzkAM5MBzj8mIeeYgIWj50f
+         6/Ods+nJoEBbCLOngFE6yfXcLirv3t+75fZO50z6ZDVZJ2jNVSMTwYwWA2vDSQ2+rCZY
+         GHWcGltnsLQog+qiGKUNA6E02RJ3P/Un34tGwohxyWiVkYPD+xNzXVMjL8zSD8nCxgRK
+         NVxw==
+X-Forwarded-Encrypted: i=1; AJvYcCW58/MAknza4LU6s3K5yYeovoME2UNGEAoAPzMnn0V545N+WBrXA7pPme2v+4w7i9RlMn5E5QWStoPO7ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBuJPpCOs+1M5L1vQG2DZkO0UQtLrHvTrZcWf5nAxdT20JCjaF
+	A7AZatEYPebIH7+WSxp9kDGj7CX0ms0QCMRUavZzWCtpfbXTuYVZb1WmA9ZBKsGoL14=
+X-Gm-Gg: ASbGncuQ5C1xu5NIiMI4zzJ7GDqBZSvKtoTcdOlZcPVvv+r/N9MtjDmlApPI21ggi1r
+	tKaVjq+h6XW7+c2sq4wfX1H6vuj+HJM0vKuiUjqffqoLXPWrf6lG4fk5LTX8JeDacit9akqXXcd
+	sSUvKLH1/0BnoS4kUZV9X4tGIAThswtXkXTrh2bEZRznaGNIp8OV+SGFLWFx7pVryuHci98FD2+
+	6IwHL87U8qlJT8l2FI97QC6JtPXHiT13W+vWnwlispKTR+2cawnhBH034HF0aOXSFmIGjxgp/vL
+	JmWmugXDmDttsJou9dCUnvytwgbY8jP237RF3JQKyWYepisC2I20IZ20DPYpuIuB3bTEWvpO9DA
+	3GzMXTjG91LxD9aOgRgMFokjqBNKgl38=
+X-Google-Smtp-Source: AGHT+IGccfHVH8S3HQU2QCeEdvi+7U1L+lLQrDOX9EP621ilEY0DVdTkWjRgqUW6HC5Zu2JnCCHaEg==
+X-Received: by 2002:a05:600c:470a:b0:459:db5a:b097 with SMTP id 5b1f17b1804b1-45a1b6489e0mr37662135e9.16.1755187621381;
+        Thu, 14 Aug 2025 09:07:01 -0700 (PDT)
+Received: from ho-tower-lan.lan ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6bd172sm28363495e9.6.2025.08.14.09.07.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 09:06:39 -0700 (PDT)
-Message-ID: <35c18502a4870d8a833c1c9af20b85ca3f8a0ff6.camel@gmail.com>
-Subject: Re: [PATCH bpf v2 2/2] selftests/bpf: Add socket filter attach test
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Puranjay Mohan <puranjay12@gmail.com>
-Cc: KaFai Wan <kafai.wan@linux.dev>, puranjay@kernel.org, 
-	xukuohai@huaweicloud.com, ast@kernel.org, daniel@iogearbox.net, 
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
- song@kernel.org, 	yonghong.song@linux.dev, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, 	jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, mrpre@163.com, 	linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, 	linux-kselftest@vger.kernel.org
-Date: Thu, 14 Aug 2025 09:06:35 -0700
-In-Reply-To: <CANk7y0hQWOL3OW8Ok4e-kp7Brn5Zq6H5+EfS=mVtoVd+AUxZmA@mail.gmail.com>
-References: <20250813152958.3107403-1-kafai.wan@linux.dev>
-	 <20250813152958.3107403-3-kafai.wan@linux.dev>
-	 <eb6f9ba4acccc7685596a8f1b282667a43d51ca8.camel@gmail.com>
-	 <CANk7y0hQWOL3OW8Ok4e-kp7Brn5Zq6H5+EfS=mVtoVd+AUxZmA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        Thu, 14 Aug 2025 09:07:00 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Subject: [PATCH 00/13] spi: spi-fsl-lpspi: Generic fixes and support for
+ S32G devices
+Date: Thu, 14 Aug 2025 17:06:40 +0100
+Message-Id: <20250814-james-nxp-lpspi-v1-0-9586d7815d14@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJAJnmgC/2XOSwqDMBCA4atI1k3JgxjtqvcoXUSd6BRrQlKCR
+ bx7oxRKcfkPzDezkAgBIZJLsZAACSO6KQc/FaQdzNQDxS43EUwoprmiD/OESKfZ09FHj5Rb06o
+ KtDCqJnnLB7A47+LtnnvA+HLhvR9IfJt+LckPVuKU0a4uhdSVsbJtriNOJrizCz3ZsCR+QMWOz
+ ySRAalryzvTlBrgD1jX9QNSTsKt8AAAAA==
+To: Frank Li <Frank.Li@nxp.com>, Mark Brown <broonie@kernel.org>, 
+ Clark Wang <xiaoning.wang@nxp.com>, Fugang Duan <B38611@freescale.com>, 
+ Gao Pan <pandy.gao@nxp.com>, Fugang Duan <fugang.duan@nxp.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+ Larisa Grigore <larisa.grigore@oss.nxp.com>, 
+ Larisa Grigore <larisa.grigore@nxp.com>, 
+ Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, 
+ Ciprianmarian Costea <ciprianmarian.costea@nxp.com>, s32@nxp.com
+Cc: James Clark <james.clark@linaro.org>, linux-spi@vger.kernel.org, 
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org
+X-Mailer: b4 0.14.0
 
-On Thu, 2025-08-14 at 13:23 +0200, Puranjay Mohan wrote:
-> On Thu, Aug 14, 2025 at 2:35=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.c=
-om> wrote:
-> >=20
-> > On Wed, 2025-08-13 at 23:29 +0800, KaFai Wan wrote:
-> > > This test verifies socket filter attachment functionality on architec=
-tures
-> > > supporting either BPF JIT compilation or the interpreter.
-> > >=20
-> > > It specifically validates the fallback to interpreter behavior when J=
-IT fails,
-> > > particularly targeting ARMv6 devices with the following configuration=
-:
-> > >   # CONFIG_BPF_JIT_ALWAYS_ON is not set
-> > >   CONFIG_BPF_JIT_DEFAULT_ON=3Dy
-> > >=20
-> > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> > > ---
-> >=20
-> > This test should not be landed as-is, first let's do an analysis for
-> > why the program fails to jit compile on arm.
-> >=20
-> > I modified kernel to dump BPF program before jit attempt, but don't
-> > see anything obviously wrong with it.  The patch to get disassembly
-> > and disassembly itself with resolved kallsyms are attached.
-> >=20
-> > Can someone with access to ARM vm/machine take a looks at this?
-> > Puranjay, Xu, would you have some time?
->=20
-> Hi Eduard,
-> Thanks for the email, I will look into it.
->=20
-> Let me try to boot a kernel on ARMv6 qemu and reproduce this.
+Various fixes for LPSI along with some refactorings. None of the fixes
+are strictly related to S32G, however these changes all originate from
+the work to support S32G devices. The only commits that are strictly
+related are for the new s32g2 and s32g3 compatible strings.
 
-Thank you, Puranjay,
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+To: Frank Li <Frank.Li@nxp.com>
+To: Mark Brown <broonie@kernel.org>
+To: Clark Wang <xiaoning.wang@nxp.com>
+To: Fugang Duan <B38611@freescale.com>
+To: Gao Pan <pandy.gao@nxp.com>
+To: Fugang Duan <fugang.duan@nxp.com>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Shawn Guo <shawnguo@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+To: Fabio Estevam <festevam@gmail.com>
+To: Larisa Grigore <larisa.grigore@oss.nxp.com>
+To: Larisa Grigore <larisa.grigore@nxp.com>
+To: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+To: Ciprianmarian Costea <ciprianmarian.costea@nxp.com>
+To: s32@nxp.com
+Cc: linux-spi@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org
 
-While looking at the code yesterday I found a legit case for failing
-to jit on armv6:
+---
+James Clark (7):
+      spi: spi-fsl-lpspi: Enumerate all pin configuration definitions
+      spi: spi-fsl-lpspi: Add DT property to override default pin config
+      spi: spi-fsl-lpspi: Constify devtype datas
+      spi: spi-fsl-lpspi: Make prescale erratum a bool
+      spi: spi-fsl-lpspi: Parameterize reading num-cs from hardware
+      dt-bindings: lpspi: Update maximum num-cs value
+      dt-bindings: lpspi: Document nxp,lpspi-pincfg property
 
-https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/arch/=
-arm/net/bpf_jit_32.c#n445
-https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/arch/=
-arm/net/bpf_jit_32.c#n2089
+Larisa Grigore (6):
+      spi: spi-fsl-lpspi: Fix transmissions when using CONT
+      spi: spi-fsl-lpspi: Set correct chip-select polarity bit
+      spi: spi-fsl-lpspi: Reset FIFO and disable module on transfer abort
+      spi: spi-fsl-lpspi: Clear status register after disabling the module
+      spi: spi-fsl-lpspi: Add compatible for S32G
+      dt-bindings: lpspi: Document support for S32G
 
-But attached program does not seem to be that big to hit 0xfff boundary.
+ .../devicetree/bindings/spi/spi-fsl-lpspi.yaml     | 21 +++++-
+ drivers/spi/spi-fsl-lpspi.c                        | 87 +++++++++++++++-------
+ 2 files changed, 82 insertions(+), 26 deletions(-)
+---
+base-commit: 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
+change-id: 20250715-james-nxp-lpspi-1fac58e72a59
+
+Best regards,
+-- 
+James Clark <james.clark@linaro.org>
+
 
