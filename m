@@ -1,148 +1,121 @@
-Return-Path: <linux-kernel+bounces-768283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F1C2B25F3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:43:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017AFB25F5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C139B6111E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFECF5C41CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4733C2E9738;
-	Thu, 14 Aug 2025 08:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BD62E7F1F;
+	Thu, 14 Aug 2025 08:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLWki/Cj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DuU6Euah"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEF82E7F33;
-	Thu, 14 Aug 2025 08:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6912A2EB5AC
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160921; cv=none; b=cVHqsioJTDsRRiFINP/agtd9Hle72Jns8i6YhFENxa8R6Zyppn9TqNpgqp681g9HkKAWIchb57g9SfPzAsGOjxbt8jMvkmC5Rt/BH0k4JCC855xkOrplVBfgBcv9UtNhTITVGggy9Eb4bUy9yHe0iOXuJA38XlFFgIROggMVgvQ=
+	t=1755160938; cv=none; b=Sg7mz68NgY7ccdzcdXfjx9IKTj9hsIe/hO4X5ohh+PZMWYfnitB3QFbnwS0M9xy8YwQZomoAXoxdoR9XF78M0MBjFra2BG0kZIGFK7lWMurnnC93Ra3tslCM4VMcaf8tl5YsjsR1qScbjgLcV/BlS2w+ll1l0FT+7f00bFKuQ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160921; c=relaxed/simple;
-	bh=hSfqsaj/54/AUhgiEYXHKF6d+IkSFoFTImigQ6SYPEI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OTYAOVUVNYqdXhxqfR05E0my30kFdfSkEt6UCgycBwcAJArVhukdyJ9I55v5eXM9fGfoPWOKsrP4HVPNy9fGdb+57flaDMpWd6g4oHBDHKg5qSGqxRlpA2vbI8UlYuGaEQlE6UIbitn+TCTHTDjifjGBR6JVnaR5lP3FJFJetho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mLWki/Cj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5C05C4CEF4;
-	Thu, 14 Aug 2025 08:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755160921;
-	bh=hSfqsaj/54/AUhgiEYXHKF6d+IkSFoFTImigQ6SYPEI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=mLWki/Cjb9CWSuHl/zoUrRCF7uhRMggYA7Mn4nWbbRfRhYC3HBiO5YZDHry7rDS/X
-	 MYmVZw+u1R8VmTTcngE/rvuAWo9TC0Q7u0iuXlECYsmpc39Fh0m0WYigjKHz/pbOmT
-	 /vfedaWESel4ukqZ7f9xqL7PixHeAzrH0NZfOZHdfon2gd3OHis/edJhsGga/7oYuW
-	 PQq1DBlRLT62BjQUscMWY3WeW3sD1in+sMUE+ezoMTkdtafsT7J0P0tU7s5w739Y7B
-	 f096S60HleIg97SydCbIV05evpFdkOzrOzn6xQmInWyaQzgJ5fSqG3exKYykr+Cnri
-	 ZSUX5p7PqnnJA==
-Message-ID: <e6e06ab1-6744-4730-a2a7-be8c66bf74a3@kernel.org>
-Date: Thu, 14 Aug 2025 10:41:57 +0200
+	s=arc-20240116; t=1755160938; c=relaxed/simple;
+	bh=ZLJ+OvTO9Egq2EDBDmrCftbeyKLRuoLdld/Xe68LeYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VPjYz+h1oYN6pftV/W7e/VeOQc7wV2MJ57PGD9E99hbjfINi6Wh88JWHpum+8UoEF1JLb0CLfhODDkwN0eStFEZCSmrB8Pty/b2cMN+5R9zIhBF8/SkFgYsl6pEXg/iYbfnyDHYfiUZqZ4FisInztHM0OURHsiTQBIltLNyPwDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DuU6Euah; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-55cdfcc0ceaso1690914e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755160931; x=1755765731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LG6dQwLAbECIeGoi2Xeo1tsUHSb5SDFit/yFv4rq4XM=;
+        b=DuU6EuahpUEIIkQja/tfYIOrM/AopXqcl63toq9TKuL5pk5ZF/AzsUAv+hqwYcykvd
+         dPVPEJC9nrtWppsJ9J1HeZUGXQ3GXfvHVyMiE++R3TUfwtY+VQKHAWmgQj2a+tfTC+wG
+         b7GyKEooiQYMKWFW/7Q/dB+nRcnzuQgoqG3UTtZ3E9wWhqYhkatldo8m0uQd+/t3BlRV
+         AkrGN5l1zNXYhtET+qCA47OpPhAD/6Ry+VV8t4n4wxFXdv9xSPKE2pKR3g7TVLSS8zBU
+         ME/tw9Z9N5CNdbkzxAN36qyAyg2uYDIZnrXJSGMhEHIeoAp1MQxnZJ5fyJLmNrYHLoDB
+         FP4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755160931; x=1755765731;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LG6dQwLAbECIeGoi2Xeo1tsUHSb5SDFit/yFv4rq4XM=;
+        b=fnqYCDhMw/xwosG6BvRDqjwfr+YyhzrrskTbTNlsACGRAsZAGN+1gpW6rOZjCsbFXL
+         E6xh1oqW/3JrDv4zwIlaekAit7vOA1yN5M7xOpqoM9uY9qqA4pqAaoTTtSXTjit3NDuf
+         dgydwxS1XPPR0qQuVnThy0smdmGeBU5dw25PYvXySizdn7FeRKsMQ/mOxif7V0ICToRK
+         PzDDO+vPbcafu2Yx+o5ENDOCPlT8Bmi5LckL867sy4pL9w3G1Zfs3joFzDvAPswSaPg7
+         FL9EmrPkUXWni4mssMyvyKAySzP1zolu0hg6aP6FI5xw2ViPfPWLxs1fYkVxQX9KhCBe
+         f+SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLtDm9fNTdGgbxhEtsHp1l3vZFLn+YrNxgYFqcx5AiTVYk41VNyKOdL1LhSONqoCARYNq3Qn2t6qeYJPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu92oVW0y7v4KzO95wy/BTIG/9VBhulJXSwRbpdn/aZWvKiU0M
+	lWLxWZPId3dCYs1vcwh0ORdoA9ZlR8eI6ujuyQPDClGnEtdyOWTlkI0tMMO8+0byVHNu3FbjB3r
+	lKdntEpXChHfqZl40IW45WP5gDMvYMPZsP2Hwge3tvA==
+X-Gm-Gg: ASbGncsquu3ZLVOsdTEgH7+GVRSbCT5BeIHr9PWpg5D6Cw3f+b0GSfT+p+1/Nbx1CuW
+	Yg1qQbjhu17BQhRhS8vSEIn/iXjTiOW5Ke1f+fQEWDWE+Xv/bz8c29/TW+Kc6ifTMJybWWW25Ub
+	GcssXnlawJygq25VNCCmntRp8g+CweOz3lnHklOGh8svbCXB/uNgfEwh4CFijX6jpToEPL4BJC7
+	T6ZKC8=
+X-Google-Smtp-Source: AGHT+IHprenDdT2lQfzU6Lhu57IKRhlpEZsnmmWVHV7r4cnpXiXk5gJnWOJBt44y2tnOfA/ZI4lRbK2Sb9a3BU4XGrM=
+X-Received: by 2002:a05:6512:3190:b0:55a:4b21:a80a with SMTP id
+ 2adb3069b0e04-55ce62623camr605127e87.1.1755160931332; Thu, 14 Aug 2025
+ 01:42:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: Add initial audio support for
- Hamoa-IOT-EVK
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: leqi@qti.qualcomm.com, Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
- <172f1a38-d7a8-4799-ad44-f3eea69f297a@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <172f1a38-d7a8-4799-ad44-f3eea69f297a@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <aJwk0yBSCccGCjX3@stanley.mountain> <175506979055.8476.10658684000717777329.b4-ty@linaro.org>
+In-Reply-To: <175506979055.8476.10658684000717777329.b4-ty@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 14 Aug 2025 10:42:00 +0200
+X-Gm-Features: Ac12FXzC-XOfXo4WQ45R4xq6JzH2dBOftR1LqQ_rC3r3c1A0HvmOG4EuWVtRZ8M
+Message-ID: <CACRpkda_-JBGTTh7pLd+MkoVyCCKDqTZm8t9vaxWMWDE+sGyLw@mail.gmail.com>
+Subject: Re: [PATCH next] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Richard <thomas.richard@bootlin.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Andy Shevchenko <andy@kernel.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/07/2025 13:08, Krzysztof Kozlowski wrote:
-> On 28/07/2025 09:16, leqi via B4 Relay wrote:
->> From: leqi <leqi@qti.qualcomm.com>
->>
->> This patch adds initial audio codec support for the Hamoa-IOT-EVK board,
->> including WCD9385 configuration, micbias voltage settings, GPIO reset,
->> and power supply bindings. It enables basic audio functionality for
->> further development. Basic test is good in Hamoa-IOT-EVK board.
->>
->> Signed-off-by: leqi <leqi@qti.qualcomm.com>
->> ---
->> Changes in v2:
->> - Updated author email address to leqi@qti.qualcomm.com.
->> - Clarified that audio is validated with this change.
->> - Link to v1: https://lore.kernel.org/all/20250723-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com/
->> ---
->>  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 232 +++++++++++++++++++++++++++++
->>  1 file changed, 232 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
->> index 843f39c9d59286a9303a545411b2518d7649a059..91618e22e86c46c698b3639f60bc19314705b391 100644
->> --- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
->> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
->> @@ -124,6 +124,94 @@ pmic_glink_ss2_con_sbu_in: endpoint {
-> 
-> 
-> This was not merged, was it? Same comment as other patch, when you have
-> entire code ready send entire board. Not chunk by chunk.
-> 
-> You are not following properly release early, release often.
+On Wed, Aug 13, 2025 at 9:23=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 
-Why this is still not included in initial submission which happens now?
-Either you work Linux style (release early) or, if you decide to wait
-till everything is ready, you submit board as one patch, not everything
-as 100 different patches.
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> On Wed, 13 Aug 2025 08:38:27 +0300, Dan Carpenter wrote:
+> > The "> chip->ngpio" comparison here needs to be ">=3D chip->ngpio",
+> > otherwise it leads to an out of bounds access.  The fwd->valid_mask
+> > bitmap only has chip->ngpio bits and the fwd->descs[] array has that
+> > same number of elements.  These values are set in
+> > devm_gpiochip_fwd_alloc().
+> >
+> >
+> > [...]
+>
+> Applied, thanks!
+>
+> [1/1] gpio: aggregator: Fix off by one in gpiochip_fwd_desc_add()
+>       https://git.kernel.org/brgl/linux/c/148547000cfc1ba8cec02857268333d=
+08724b9cc
 
-Best regards,
-Krzysztof
+Do I need this for the aggregator immutable branch I merged yesterday?
+
+I have only merged that branch to my new development series, if
+you need me to pull in a new version just send a new pull request
+and I will use that instead.
+
+Yours,
+Linus Walleij
 
