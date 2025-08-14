@@ -1,172 +1,215 @@
-Return-Path: <linux-kernel+bounces-768991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D07B268E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:17:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C37DB268E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86D539E3747
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:05:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 887A81CE6CEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B643019B8;
-	Thu, 14 Aug 2025 13:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="J6LX3x5W"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDCA31F012;
-	Thu, 14 Aug 2025 13:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A5515B0EC;
+	Thu, 14 Aug 2025 14:00:33 +0000 (UTC)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0666512FF69;
+	Thu, 14 Aug 2025 14:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179972; cv=none; b=USw4p4jGKOczKwF7ON+Qf06ruwqkLhSFPghEsK98bPhgOsTMAXsYbwJw2FfIPDVBcp/gBbHvnY4DqdHt3ksdgUtYmJhKz32qKbiscxJ7nY1N5Kv+aBcc09ygVa+Vhx2LvDoO0iq+ZZEupv6Dm0US1b+6Qrbs3cjXj9viYd5rOwY=
+	t=1755180033; cv=none; b=fOcmOSYAn0yY1IOKnXxJnni5Tehd20PU14IbIn1yqWN8AhO0GhP2kPAxmabzWUb8SQrB0ismycXyx6VVckTAxoqCDNvKyTKnkjzKy3y6zlvByAhVfeV8peyQbwuKjXamvBrgBSF1i9UqYGsaQ+2FVdPIgga41beyULkjaALa3ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179972; c=relaxed/simple;
-	bh=seZWa+JyXD1KsVCPRTt17Bcrb4b3iOqD5eAQ0vNw9yc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=CHDj6hoaJq2mI7gdOdZvov4Gw4T8hxiO9LYMcUG8St5OsGo3dDWSTF4Yo0Cx+dj9C86g558cIjW14sT7AqGQd8xBaWlWoSjp+FEZK7DKDBGbBiPIBvoGmn2yqANxW/kGeJCfcNArwOUA64ClQjpLU57eDnHTXBvZHirLmrBGwU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=J6LX3x5W reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=W02Oc1CqUdpt5hhm3tyKd5nlAV05WQriIwEfbmSd12Y=; b=J
-	6LX3x5WuDzQ2zqNLm82zS8C53ilY9ddHXNx3Wdf1FUHUbeuWK/3s0AOpu9kxQaXl
-	sINRIVq17D6X6Badqwv/5k5GlEkd6jU8LPNXFoT5n1eTC+TLlcFbKz3MCBUHjmxz
-	N9F20MxAYO4y5luGZdPON3UqnQEAcTripElEXEwPIg=
-Received: from phoenix500526$163.com ( [120.230.124.83] ) by
- ajax-webmail-wmsvr-40-102 (Coremail) ; Thu, 14 Aug 2025 21:59:01 +0800
- (CST)
-Date: Thu, 14 Aug 2025 21:59:01 +0800 (CST)
-From: =?GBK?B?1dS80ey/?= <phoenix500526@163.com>
-To: "Jiri Olsa" <olsajiri@gmail.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
-	daniel@iogearbox.net, shuah@kernel.org, yonghong.song@linux.dev,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	s=arc-20240116; t=1755180033; c=relaxed/simple;
+	bh=KHG7xwAlZo5KtTQwWmzzzmt2xUyzEvURPn80RuE61H4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pyziuP3NGzwOlXlYpTgtPrmBmWfkuSEoJIbID22l0D4mzQ2E0qNnT88itKJv6diZ5XYHcVDlIRlZ+bGkqFTn6hWavKIV2kS2VVhV+QO5nC50+AxSkHR3iTkooIuY5JnU6Z1PlC9EEuFHgoQj3Dw6qEHKEF4ypAzTV0avkbzjGU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
+X-QQ-mid: zesmtpsz5t1755179969tcc391592
+X-QQ-Originating-IP: oo50RviW9iR1o+OtONEechxBV1y/n/Sj+n0GrlQ3YP4=
+Received: from localhost ( [203.174.112.180])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 14 Aug 2025 21:59:27 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6429672801832651080
+Date: Thu, 14 Aug 2025 21:59:26 +0800
+From: Yibo Dong <dong100@mucse.com>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+	corbet@lwn.net, gur.stavi@huawei.com, maddy@linux.ibm.com,
+	mpe@ellerman.id.au, lee@trager.us, gongfan1@huawei.com,
+	lorenzo@kernel.org, geert+renesas@glider.be,
+	Parthiban.Veerasooran@microchip.com, lukas.bulwahn@redhat.com,
+	alexanderduyck@fb.com, richardcochran@gmail.com,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH bpf-next v8 2/2] selftests/bpf: Add an usdt_o2 test
- case in selftests to cover SIB handling logic
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <aJ2lxyUYfQkfQW2-@krava>
-References: <20250814064504.103401-1-phoenix500526@163.com>
- <20250814064504.103401-3-phoenix500526@163.com> <aJ2lxyUYfQkfQW2-@krava>
-X-NTES-SC: AL_Qu2eB/2ctkEv5yeQYekfmUsVh+o9X8K1vfsk3oZfPJp+jCzp6CUNclhTBEr81tCDEh+0kAiHdzxR+P1Xbahacr8MH69Tnuzu5eMUZpxIVVBtfA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+Subject: Re: [PATCH v4 5/5] net: rnpgbe: Add register_netdev
+Message-ID: <933ACEBDA5823549+20250814135926.GC1094497@nic-Precision-5820-Tower>
+References: <20250814073855.1060601-1-dong100@mucse.com>
+ <20250814073855.1060601-6-dong100@mucse.com>
+ <dd6ece66-ae4b-424a-aa09-872ac15e1549@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2ff6a1c4.8e68.198a8e07fa3.Coremail.phoenix500526@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZigvCgD3f9qm651oilIaAA--.2555W
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFAypiGid5AyzWwABsN
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd6ece66-ae4b-424a-aa09-872ac15e1549@ti.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MgRO26CFjEybqIR83FmKs4gEh8++NeWfcuOdUd3x6X0XNdyiI8GBHAmJ
+	LOD720A0RBmR3TuWFSylxdUo8RB7BuqEDa7oNNrHZyI2fDspsXiI9G6Dzq30sofb9EtgiWL
+	bmCux0/vo7j/uV6SS181L/3WPgZITDjKc5Pmdru3AbWJvzjFbtx+d5LAAycAP/sP8nDdwH1
+	PWdaC1WE3KS4w9MSwhVVSg3QQRN6oKdj02RcdjDYyuNEBJub+EDxKsSi2MrurYpSU1ZGNAp
+	84qv9UVr/0WJPn/3+1YcC2qhwdMaIg7Cq+J4kn4OWpvKn+ZeAxIAnAbhuwxVdfjFhnEg9kQ
+	ZLjLo1hOe03j5fEILCPqy0fAMY6Y2Rvk+kuAUFGv2rvC9To+7zOaowJRd+XGG6KQN8jOcoF
+	lwkrrXTiDt0HjBmIZkNAID6LQNl62zCnqunNrSDVp9e2+XwIvxsw7DlvcC6hc+eGC/x+kCb
+	RE3fIS3Z2eypkrUxXeFeDieIwzfAr233LWHqRRPevf4khqtiWRzeUWm5msIfOcSfM3NShAr
+	u2yA6QIDkVNUU8uEYjvb3VfdN6ad/cmYURPv0gb7zZgNEonkOBqnlum2/81l5Ka+EQZrAJZ
+	QgOjdPD2Lgk8CaxM7clTEI8+WWmAzWCTlSN/3Fp2OkoonCIUB4L2R20EQqKPaJEZ6Wq3SYK
+	KEJNrSANxZjs0TC0kcnZO410iqZDLjHAKaIRRV9Gxe5eyPNdvFR0lZBzEyg/hp6J89qYKTq
+	zbnKVimaTPTVEO5HUCsBLi1k1UePI0IWmJEYLVLC/4aewA5h0B4IG3LkY82TqR1YQ731Oq1
+	OTwJbHGWHsWKBfS2WKi6AbAHcTdewtGx2nDiuJs4jgUl/EtsklxQ3XcjYU8IcmFL/W+D7iT
+	4wrrbn+kvDqP9vHsDh4omLxdIfyORqUmd0WHosTTiI1W7s7ptsghhVrqhxGLWZOuswkmWRo
+	ZsFtH+SJBgDeAW641jWcKRKPb691C/opGH6abo4h0qEuB3e/mSebRdZJZds2mKrZsXyaNJw
+	fk6KMexlfcwADPUFo8EM2SmkiBmJCL6EAubCKDCQ==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-CgoKCgoKCkhpLCBKaXJpLiBJJ3ZlIGFscmVhZHkgbW9kaWZpZWQgdGhlIHVzZHRfbzIuYyB0byBn
-ZW5lcmF0ZSBpdHMgdXNkdCBhcmd1bWVudCBzcGVjIGluIGFzc2VtYmx5LgoKQ291bGQgeW91IGhl
-bHAgbWUgdmVyaWZ5IHRoaXMgbW9kaWZpY2F0aW9uIHNpbmNlIEkgY2Fubm90IHJlcHJvZHVjZSB0
-aGlzIGlzc3VlLiBJIGd1ZXNzIHRoaXMKc29sdXRpb24gbWF5IHdvcmsuIAoKVGhhbmtzIQoKCgoK
-CkF0IDIwMjUtMDgtMTQgMTc6MDA6NTUsICJKaXJpIE9sc2EiIDxvbHNhamlyaUBnbWFpbC5jb20+
-IHdyb3RlOgo+T24gVGh1LCBBdWcgMTQsIDIwMjUgYXQgMDY6NDU6MDRBTSArMDAwMCwgSmlhd2Vp
-IFpoYW8gd3JvdGU6Cj4+IFdoZW4gdXNpbmcgR0NDIG9uIHg4Ni02NCB0byBjb21waWxlIGFuIHVz
-ZHQgcHJvZyB3aXRoIC1PMSBvciBoaWdoZXIKPj4gb3B0aW1pemF0aW9uLCB0aGUgY29tcGlsZXIg
-d2lsbCBnZW5lcmF0ZSBTSUIgYWRkcmVzc2luZyBtb2RlIGZvciBnbG9iYWwKPj4gYXJyYXkgYW5k
-IFBDLXJlbGF0aXZlIGFkZHJlc3NpbmcgbW9kZSBmb3IgZ2xvYmFsIHZhcmlhYmxlLAo+PiBlLmcu
-ICIxQC05NiglcmJwLCVyYXgsOCkiIGFuZCAiLTFANCt0MSglcmlwKSIuCj4+IAo+PiBJbiB0aGlz
-IHBhdGNoOgo+PiAtIGFkZCB1c2R0X28yIHRlc3QgY2FzZSB0byBjb3ZlciBTSUIgYWRkcmVzc2lu
-ZyB1c2R0IGFyZ3VtZW50IHNwZWMKPj4gICBoYW5kbGluZyBsb2dpYwo+Cj5oaSwKPm9uIG15IHNl
-dHVwIChnY2MxNSkgdGhlIHRlc3QgZ2VuZXJhdGVzIHVzdCByZWdpc3RlciBhcmd1bWVudDoKPgo+
-ICBzdGFwc2R0ICAgICAgICAgICAgICAweDAwMDAwMDJhICAgICAgIE5UX1NUQVBTRFQgKFN5c3Rl
-bVRhcCBwcm9iZSBkZXNjcmlwdG9ycykKPiAgICBQcm92aWRlcjogdGVzdAo+ICAgIE5hbWU6IHVz
-ZHQxCj4gICAgTG9jYXRpb246IDB4MDAwMDAwMDAwMDc2NzdjZSwgQmFzZTogMHgwMDAwMDAwMDAz
-NWJjNzI4LCBTZW1hcGhvcmU6IDB4MDAwMDAwMDAwMDAwMDAwMAo+ICAgIEFyZ3VtZW50czogOEAl
-cmF4Cj4KPgo+ICA3Njc3YzY6ICAgICAgIDQ4IDhiIDA0IGM1IDIwIDQ5IDljICAgIG1vdiAgICAw
-eDM5YzQ5MjAoLCVyYXgsOCksJXJheAo+ICA3Njc3Y2Q6ICAgICAgIDAzCj4gIDc2NzdjZTogICAg
-ICAgOTAgICAgICAgICAgICAgICAgICAgICAgbm9wCj4KPgo+SSdtIG5vdCBzdXJlIGlmIHRoZXJl
-J3MgcmVsaWFibGUgc29sdXRpb24gdG8gZ2VuZXJhdGUgU0lCIGFyZ3VtZW50IGZyb20gZ2NjLAo+
-bWF5YmUgd2UgY291bGQgZ2VuZXJhdGUgYWxsIGluIGFzc2VtYmx5LCBidXQgdGhhdCBtaWdodCBn
-ZXQgY29tcGxpY2F0ZWQKPgo+amlya2EKPgo+Cj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBKaWF3ZWkg
-WmhhbyA8cGhvZW5peDUwMDUyNkAxNjMuY29tPgo+PiAtLS0KPj4gIHRvb2xzL3Rlc3Rpbmcvc2Vs
-ZnRlc3RzL2JwZi9NYWtlZmlsZSAgICAgICAgICB8ICAxICsKPj4gIC4uLi9zZWxmdGVzdHMvYnBm
-L3Byb2dfdGVzdHMvdXNkdF9vMi5jICAgICAgICB8IDY5ICsrKysrKysrKysrKysrKysrKysKPj4g
-IC4uLi9zZWxmdGVzdHMvYnBmL3Byb2dzL3Rlc3RfdXNkdF9vMi5jICAgICAgICB8IDM3ICsrKysr
-KysrKysKPj4gIDMgZmlsZXMgY2hhbmdlZCwgMTA3IGluc2VydGlvbnMoKykKPj4gIGNyZWF0ZSBt
-b2RlIDEwMDY0NCB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ190ZXN0cy91c2R0X28y
-LmMKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJv
-Z3MvdGVzdF91c2R0X28yLmMKPj4gCj4+IGRpZmYgLS1naXQgYS90b29scy90ZXN0aW5nL3NlbGZ0
-ZXN0cy9icGYvTWFrZWZpbGUgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvTWFrZWZpbGUK
-Pj4gaW5kZXggNDg2MzEwNjAzNGRmLi4yNGZmMWEzMjk2MjUgMTAwNjQ0Cj4+IC0tLSBhL3Rvb2xz
-L3Rlc3Rpbmcvc2VsZnRlc3RzL2JwZi9NYWtlZmlsZQo+PiArKysgYi90b29scy90ZXN0aW5nL3Nl
-bGZ0ZXN0cy9icGYvTWFrZWZpbGUKPj4gQEAgLTc2MCw2ICs3NjAsNyBAQCBUUlVOTkVSX0JQRl9C
-VUlMRF9SVUxFIDo9ICQkKGVycm9yIG5vIEJQRiBvYmplY3RzIHNob3VsZCBiZSBidWlsdCkKPj4g
-IFRSVU5ORVJfQlBGX0NGTEFHUyA6PQo+PiAgJChldmFsICQoY2FsbCBERUZJTkVfVEVTVF9SVU5O
-RVIsdGVzdF9tYXBzKSkKPj4gIAo+PiArCj4+ICAjIERlZmluZSB0ZXN0X3ZlcmlmaWVyIHRlc3Qg
-cnVubmVyLgo+PiAgIyBJdCBpcyBtdWNoIHNpbXBsZXIgdGhhbiB0ZXN0X21hcHMvdGVzdF9wcm9n
-cyBhbmQgc3VmZmljaWVudGx5IGRpZmZlcmVudCBmcm9tCj4+ICAjIHRoZW0gKGUuZy4sIHRlc3Qu
-aCBpcyB1c2luZyBjb21wbGV0ZWx5IHBhdHRlcm4pLCB0aGF0IGl0J3Mgd29ydGgganVzdAo+PiBk
-aWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dfdGVzdHMvdXNkdF9v
-Mi5jIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dfdGVzdHMvdXNkdF9vMi5jCj4+
-IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZjAyZGNmNTE4OGFi
-Cj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3By
-b2dfdGVzdHMvdXNkdF9vMi5jCj4+IEBAIC0wLDAgKzEsNjkgQEAKPj4gKy8vIFNQRFgtTGljZW5z
-ZS1JZGVudGlmaWVyOiBHUEwtMi4wCj4+ICsvKiBDb3B5cmlnaHQgKGMpIDIwMjUgSmlhd2VpIFpo
-YW8gPHBob2VuaXg1MDA1MjZAMTYzLmNvbT4uICovCj4+ICsjaW5jbHVkZSA8dGVzdF9wcm9ncy5o
-Pgo+PiArCj4+ICsjaW5jbHVkZSAiLi4vc2R0LmgiCj4+ICsjaW5jbHVkZSAidGVzdF91c2R0X28y
-LnNrZWwuaCIKPj4gKwo+PiArI2lmIGRlZmluZWQoX19HTlVDX18pICYmICFkZWZpbmVkKF9fY2xh
-bmdfXykKPj4gK19fYXR0cmlidXRlX18oKG9wdGltaXplKCJPMiIpKSkKPj4gKyNlbmRpZgo+PiAr
-Cj4+ICsjZGVmaW5lIHRlc3RfdmFsdWUgMHhGRURDQkE5ODc2NTQzMjEwVUxMCj4+ICsjZGVmaW5l
-IFNFQyhuYW1lKSBfX2F0dHJpYnV0ZV9fKChzZWN0aW9uKG5hbWUpLCB1c2VkKSkKPj4gKwo+PiAr
-aW50IGxldHNfdGVzdF90aGlzKGludCk7Cj4+ICtzdGF0aWMgdm9sYXRpbGUgX191NjQgYXJyYXlb
-MV0gPSB7dGVzdF92YWx1ZX07Cj4+ICsKPj4gK3N0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCB0
-cmlnZ2VyX2Z1bmModm9pZCkKPj4gK3sKPj4gKwkvKiBCYXNlIGFkZHJlc3MgKyBvZmZzZXQgKyAo
-aW5kZXggKiBzY2FsZSkgKi8KPj4gKwlmb3IgKHZvbGF0aWxlIGludCBpID0gMDsgaSA8PSAwOyBp
-KyspCj4+ICsJCVNUQVBfUFJPQkUxKHRlc3QsIHVzZHQxLCBhcnJheVtpXSk7Cj4+ICt9Cj4+ICsK
-Pj4gK3N0YXRpYyB2b2lkIGJhc2ljX3NpYl91c2R0KHZvaWQpCj4+ICt7Cj4+ICsJTElCQlBGX09Q
-VFMoYnBmX3VzZHRfb3B0cywgb3B0cyk7Cj4+ICsJc3RydWN0IHRlc3RfdXNkdF9vMiAqc2tlbDsK
-Pj4gKwlzdHJ1Y3QgdGVzdF91c2R0X28yX19ic3MgKmJzczsKPj4gKwlpbnQgZXJyOwo+PiArCj4+
-ICsJc2tlbCA9IHRlc3RfdXNkdF9vMl9fb3Blbl9hbmRfbG9hZCgpOwo+PiArCWlmICghQVNTRVJU
-X09LX1BUUihza2VsLCAic2tlbF9vcGVuIikpCj4+ICsJCXJldHVybjsKPj4gKwo+PiArCWJzcyA9
-IHNrZWwtPmJzczsKPj4gKwlic3MtPm15X3BpZCA9IGdldHBpZCgpOwo+PiArCj4+ICsJZXJyID0g
-dGVzdF91c2R0X28yX19hdHRhY2goc2tlbCk7Cj4+ICsJaWYgKCFBU1NFUlRfT0soZXJyLCAic2tl
-bF9hdHRhY2giKSkKPj4gKwkJZ290byBjbGVhbnVwOwo+PiArCj4+ICsJLyogdXNkdDEgd29uJ3Qg
-YmUgYXV0by1hdHRhY2hlZCAqLwo+PiArCW9wdHMudXNkdF9jb29raWUgPSAweGNhZmVkZWFkYmVl
-ZmZlZWQ7Cj4+ICsJc2tlbC0+bGlua3MudXNkdDEgPSBicGZfcHJvZ3JhbV9fYXR0YWNoX3VzZHQo
-c2tlbC0+cHJvZ3MudXNkdDEsCj4+ICsJCQkJCQkgICAgIDAgLypzZWxmKi8sICIvcHJvYy9zZWxm
-L2V4ZSIsCj4+ICsJCQkJCQkgICAgICJ0ZXN0IiwgInVzZHQxIiwgJm9wdHMpOwo+PiArCWlmICgh
-QVNTRVJUX09LX1BUUihza2VsLT5saW5rcy51c2R0MSwgInVzZHQxX2xpbmsiKSkKPj4gKwkJZ290
-byBjbGVhbnVwOwo+PiArCj4+ICsJdHJpZ2dlcl9mdW5jKCk7Cj4+ICsKPj4gKwlBU1NFUlRfRVEo
-YnNzLT51c2R0MV9jYWxsZWQsIDEsICJ1c2R0MV9jYWxsZWQiKTsKPj4gKwlBU1NFUlRfRVEoYnNz
-LT51c2R0MV9jb29raWUsIDB4Y2FmZWRlYWRiZWVmZmVlZCwgInVzZHQxX2Nvb2tpZSIpOwo+PiAr
-CUFTU0VSVF9FUShic3MtPnVzZHQxX2FyZ19jbnQsIDEsICJ1c2R0MV9hcmdfY250Iik7Cj4+ICsJ
-QVNTRVJUX0VRKGJzcy0+dXNkdDFfYXJnLCB0ZXN0X3ZhbHVlLCAidXNkdDFfYXJnIik7Cj4+ICsJ
-QVNTRVJUX0VRKGJzcy0+dXNkdDFfYXJnX3JldCwgMCwgInVzZHQxX2FyZ19yZXQiKTsKPj4gKwlB
-U1NFUlRfRVEoYnNzLT51c2R0MV9hcmdfc2l6ZSwgc2l6ZW9mKGFycmF5WzBdKSwgInVzZHQxX2Fy
-Z19zaXplIik7Cj4+ICsKPj4gK2NsZWFudXA6Cj4+ICsJdGVzdF91c2R0X28yX19kZXN0cm95KHNr
-ZWwpOwo+PiArfQo+PiArCj4+ICsKPj4gKwo+PiArdm9pZCB0ZXN0X3VzZHRfbzIodm9pZCkKPj4g
-K3sKPj4gKwliYXNpY19zaWJfdXNkdCgpOwo+PiArfQo+PiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVz
-dGluZy9zZWxmdGVzdHMvYnBmL3Byb2dzL3Rlc3RfdXNkdF9vMi5jIGIvdG9vbHMvdGVzdGluZy9z
-ZWxmdGVzdHMvYnBmL3Byb2dzL3Rlc3RfdXNkdF9vMi5jCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0
-Cj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uMTQ2MDJhYTU0NTc4Cj4+IC0tLSAvZGV2L251bGwKPj4g
-KysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dzL3Rlc3RfdXNkdF9vMi5jCj4+
-IEBAIC0wLDAgKzEsMzcgQEAKPj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4w
-Cj4+ICsvKiBDb3B5cmlnaHQgKGMpIDIwMjIgTWV0YSBQbGF0Zm9ybXMsIEluYy4gYW5kIGFmZmls
-aWF0ZXMuICovCj4+ICsKPj4gKyNpbmNsdWRlICJ2bWxpbnV4LmgiCj4+ICsjaW5jbHVkZSA8YnBm
-L2JwZl9oZWxwZXJzLmg+Cj4+ICsjaW5jbHVkZSA8YnBmL3VzZHQuYnBmLmg+Cj4+ICsKPj4gK2lu
-dCBteV9waWQ7Cj4+ICsKPj4gK2ludCB1c2R0MV9jYWxsZWQ7Cj4+ICt1NjQgdXNkdDFfY29va2ll
-Owo+PiAraW50IHVzZHQxX2FyZ19jbnQ7Cj4+ICtpbnQgdXNkdDFfYXJnX3JldDsKPj4gK3U2NCB1
-c2R0MV9hcmc7Cj4+ICtpbnQgdXNkdDFfYXJnX3NpemU7Cj4+ICsKPj4gK1NFQygidXNkdCIpCj4+
-ICtpbnQgdXNkdDEoc3RydWN0IHB0X3JlZ3MgKmN0eCkKPj4gK3sKPj4gKwlsb25nIHRtcDsKPj4g
-Kwo+PiArCWlmIChteV9waWQgIT0gKGJwZl9nZXRfY3VycmVudF9waWRfdGdpZCgpID4+IDMyKSkK
-Pj4gKwkJcmV0dXJuIDA7Cj4+ICsKPj4gKwlfX3N5bmNfZmV0Y2hfYW5kX2FkZCgmdXNkdDFfY2Fs
-bGVkLCAxKTsKPj4gKwo+PiArCXVzZHQxX2Nvb2tpZSA9IGJwZl91c2R0X2Nvb2tpZShjdHgpOwo+
-PiArCXVzZHQxX2FyZ19jbnQgPSBicGZfdXNkdF9hcmdfY250KGN0eCk7Cj4+ICsKPj4gKwl1c2R0
-MV9hcmdfcmV0ID0gYnBmX3VzZHRfYXJnKGN0eCwgMCwgJnRtcCk7Cj4+ICsJdXNkdDFfYXJnID0g
-KHU2NCl0bXA7Cj4+ICsJdXNkdDFfYXJnX3NpemUgPSBicGZfdXNkdF9hcmdfc2l6ZShjdHgsIDAp
-Owo+PiArCj4+ICsJcmV0dXJuIDA7Cj4+ICt9Cj4+ICsKPj4gK2NoYXIgX2xpY2Vuc2VbXSBTRUMo
-ImxpY2Vuc2UiKSA9ICJHUEwiOwo+PiAtLSAKPj4gMi40My4wCj4+IAo+PiAK
+On Thu, Aug 14, 2025 at 05:44:51PM +0530, MD Danish Anwar wrote:
+> On 14/08/25 1:08 pm, Dong Yibo wrote:
+> > Initialize get mac from hw, register the netdev.
+> > 
+> > Signed-off-by: Dong Yibo <dong100@mucse.com>
+> > ---
+> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 18 +++++
+> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 73 ++++++++++++++++++
+> >  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  1 +
+> >  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 75 +++++++++++++++++++
+> >  4 files changed, 167 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > index 7ab1cbb432f6..7e51a8871b71 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
+> > @@ -6,6 +6,7 @@
+> >  
+> >  #include <linux/types.h>
+> >  #include <linux/mutex.h>
+> > +#include <linux/netdevice.h>
+> >  
+> >  extern const struct rnpgbe_info rnpgbe_n500_info;
+> >  extern const struct rnpgbe_info rnpgbe_n210_info;
+> > @@ -82,6 +83,15 @@ struct mucse_mbx_info {
+> >  	u32 fw2pf_mbox_vec;
+> >  };
+> >  
+> > +struct mucse_hw_operations {
+> > +	int (*reset_hw)(struct mucse_hw *hw);
+> > +	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
+> > +};
+> > +
+> > +enum {
+> > +	mucse_driver_insmod,
+> > +};
+> > +
+> >  struct mucse_hw {
+> >  	u8 pfvfnum;
+> >  	void __iomem *hw_addr;
+> > @@ -91,12 +101,17 @@ struct mucse_hw {
+> >  	u32 axi_mhz;
+> >  	u32 bd_uid;
+> >  	enum rnpgbe_hw_type hw_type;
+> > +	const struct mucse_hw_operations *ops;
+> >  	struct mucse_dma_info dma;
+> >  	struct mucse_eth_info eth;
+> >  	struct mucse_mac_info mac;
+> >  	struct mucse_mbx_info mbx;
+> > +	u32 flags;
+> > +#define M_FLAGS_INIT_MAC_ADDRESS BIT(0)
+> >  	u32 driver_version;
+> >  	u16 usecstocount;
+> > +	int lane;
+> > +	u8 perm_addr[ETH_ALEN];
+> >  };
+> >  
+> >  struct mucse {
+> > @@ -117,4 +132,7 @@ struct rnpgbe_info {
+> >  #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
+> >  #define PCI_DEVICE_ID_N210 0x8208
+> >  #define PCI_DEVICE_ID_N210L 0x820a
+> > +
+> > +#define dma_wr32(dma, reg, val) writel((val), (dma)->dma_base_addr + (reg))
+> > +#define dma_rd32(dma, reg) readl((dma)->dma_base_addr + (reg))
+> 
+> These macros could collide with other definitions. Consider prefixing
+> them with the driver name (rnpgbe_dma_wr32).
+> 
+> I don't see these macros getting used anywhere in this series. They
+> should be introduced when they are used.
+> 
+
+Got it, I will introduce codes when they are used.
+
+> >  #endif /* _RNPGBE_H */
+> > diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> > index e0c6f47efd4c..aba44b31eae3 100644
+> > --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> > +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
+> > @@ -1,11 +1,83 @@
+> >  // SPDX-License-Identifier: GPL-2.0
+> >  /* Copyright(c) 2020 - 2025 Mucse Corporation. */
+> >  
+> > +#include <linux/pci.h>
+> >  #include <linux/string.h>
+> > +#include <linux/etherdevice.h>
+> >  
+> >  #include "rnpgbe.h"
+> >  #include "rnpgbe_hw.h"
+> >  #include "rnpgbe_mbx.h"
+> > +#include "rnpgbe_mbx_fw.h"
+> 
+> > +/**
+> > + * rnpgbe_xmit_frame - Send a skb to driver
+> > + * @skb: skb structure to be sent
+> > + * @netdev: network interface device structure
+> > + *
+> > + * @return: NETDEV_TX_OK or NETDEV_TX_BUSY
+> > + **/
+> > +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
+> > +				     struct net_device *netdev)
+> > +{
+> > +		dev_kfree_skb_any(skb);
+> > +		netdev->stats.tx_dropped++;
+> > +		return NETDEV_TX_OK;
+> > +}
+> 
+> You didn't fix this extra indentation. This was present in v3 as well
+> 
+> https://lore.kernel.org/all/94eeae65-0e4b-45ef-a9c0-6bc8d37ae789@ti.com/#:~:text=skb)%3B%0A%3E%20%2B%09%09return%20NETDEV_TX_OK%3B%0A%3E%20%2B-,%7D,-Extra%20indentation%20on
+> 
+
+Sorry, I missed fix this, I will fix it in the next version.
+
+> > +
+> > +static const struct net_device_ops rnpgbe_netdev_ops = {
+> > +	.ndo_open = rnpgbe_open,
+> > +	.ndo_stop = rnpgbe_close,
+> 
+> 
+> -- 
+> Thanks and Regards,
+> Danish
+> 
+> 
+
+Thanks for your feedback
+
 
