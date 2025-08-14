@@ -1,81 +1,45 @@
-Return-Path: <linux-kernel+bounces-769009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08824B268FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 864FEB26907
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8128AA0B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:11:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0DD4AA1738
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3828532144A;
-	Thu, 14 Aug 2025 14:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEOyQxV2"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB1E1A5B84;
+	Thu, 14 Aug 2025 14:07:20 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC03321427;
-	Thu, 14 Aug 2025 14:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98A717A318
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180408; cv=none; b=V+Q2/RduAfCvZjCoOH5gmgQnTTARjegyNhms1i8s9uHSXADFQWmziOuiIIs6DG2C9tZ2hf5FRwlohzlxFxAI/vR6cwIV80W08Gmr4SccsrwL3FwQG8c7Ult1DnvobevL+O7Rh1mkYZ+12RI7Ve49B2uCEqODcjN+c99sUC0bO0I=
+	t=1755180440; cv=none; b=WI0kp4Cj2tOwK2eQsVdjkjTWF8Yiff8N2lbjIHqJIHA0TQR0esb6V0qOhGc/bEGmEHH4jcr3ftt3OQVwp9bpxXpPsRBC9wghgeyUC5GOIE+ZPsjEht5PQABqcb61jLCZnOdHi2VT9a1BNGvE2a1v4tXipUeo49zyZXlP4+xfOX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180408; c=relaxed/simple;
-	bh=Ybxk1TB6zRWIfSh85LcO2RRx7atnh+AZLW/N/PE9Rcs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mUyBNeELNzOgCUg2jCxasK5M0tyAJx4y2+4iOd4iGHu+uzUhvGnTAFVuQHBhVOyub5gwG+5ZwnmWbi1n8zIl04Qd0LezxmXFaE9F6VAI46c2atzEaicVgPxJhdc/IBi71B14SjX1bjnjSMfLbk1iLXBdW9lZehC+G6ufMKoCUGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEOyQxV2; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9e418ba08so477264f8f.3;
-        Thu, 14 Aug 2025 07:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755180405; x=1755785205; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Qda6eKiChu1mXCojr2a5Wn7iDIeLm6m2hQhqg1Pn4sg=;
-        b=UEOyQxV2fDgRPnaeK13ztdYlFtXTWFg64MhSQhLr9GeLlZCAIn0K97TQUBfP2+SduR
-         Al2JfRyZZm2u9JJ+unyZ7q375+glYjQQKM//CeKBjP5J8X9bPHWSGRhkqB4jZqBwu7r/
-         zDeOnVfox4n+JUoSrqeNesGOKMb83hXBKxU/u/fKv/zso4XPrGfUQ3zfSZAAnYSTa3Jq
-         4aNoOVJJLBXogTTu0NQ8CurDLFA+ht0Ft1GYDCW1hLAMqlbDCGltE+j+bYeNU9j2Ll2P
-         YSTD9iAT5FxvILJmBQFpIenvZyrbq0VRBn0ef1UzMXHsVNYOoGnI9qP7rwfTW90b90XJ
-         B3ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755180405; x=1755785205;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qda6eKiChu1mXCojr2a5Wn7iDIeLm6m2hQhqg1Pn4sg=;
-        b=cx8KrlCSHUcIxMN5jRuK9sHHqrr3aLtW7UggxS+3bejR6Wasodjm0cjavrzbun/gVE
-         NSZwIa52DVBiH9COvG/ERYCuomGcOEqIGUuUmcnE6XAcHzzfZKMb+VKVtuqgxPxGweIs
-         kD67nkpJdpgHtVJNK/zDBAcGeaIs1KoJuXs6mUwkYaDPUnGpti3JLhf+aEWNW0GtBTmQ
-         wXcom8kAFFydxIN4ANeaEs0Tg6zURNmL4gg3UPbZhlmoVqcH3ws7+DxYJMKOa3qojbxk
-         KihkYkhGwMY84jxCoEV0ce8wC7nPCz3vyP3jR9GQoh15Djptj4tMcCwRLnx1zpVPIQ6s
-         OxSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUl9stnpj4dcJZ69DWkrXWP3MVfPaoS19rI/lqC3cYdDjxzyZCE9TiWEp4GYuE4JRCZdUs4qTAOxr9qWKRBLZ52jw==@vger.kernel.org, AJvYcCVwNXwtQbEu2ngNB0OdQE1459Y8oGdLxao3IKx/73iQumJuHqBqpnHvpamfWpCCDFsb3aggOX4SDaOv@vger.kernel.org, AJvYcCWHTfpM5B1Ij7F+fd8jOwYDJod+AA6gkQx4QtFt+GFN04HsCbePs/nmgVGzeybuzZ+HogN58Dviv9gE@vger.kernel.org, AJvYcCXTFRikrNZ4wgEeEmya00J2Dz7HurzJcHpyRouEsqY7H1+UU0l1Txjb1hfPdXKRSmx9QNUAMBe1i9Uj@vger.kernel.org, AJvYcCXj9xd6PaEkNXO9MBNhOpvg6Rrqqi+8zb+ONT46OwDtKl653Da48CCsYecIXoo061tBPeBUW8kGY/9+rpq+@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfunE9r9nrfoGbNhasfvwz9IaMq9FWCB7yNkXeLMEfza+P2m+v
-	sGbRVyl1AxOJp5d41YQHhCg3nBzlwzNEndwAfkdCZdpIcrD0g8zc3WwY
-X-Gm-Gg: ASbGncvmFhRPDf10dzEm+sONPK3cNF3W4jBi6bDeZ0jZ76RuQxoRRWSBNKHE+7QiL6U
-	ufQHVhGEa1gsvcOCbXOIU9LLBjUaCKGldAYHLSTYxncu94gwMBI6brtMbRjLZVcEIq5nzmBLWHr
-	66nqyupdtmek2A994t/8OiMrZ9k0r3PYXSCE9pn73c/gbBkLdbV5+qMLCV52hgRJ0CEABNNiPey
-	nZZo+Ii1ns5vKbRgQM5P1L1xo6Llj9wInmC4bqVewglcRxcdv7YPle8C1cNJCNmL1DZ7odtYO74
-	yoQZrLKF9uCfG1+lfqTjjYqJH4iVnfqq4D/s2tV7p0Qg0kH8btbpTT3KQX2x6DR7SBW7aJk8HnD
-	1sxiOjgvS30kQQ8YvegvPXEJikhW78rsh3gPzivG60iLSOlAymhxf1jk3cyI626QtMpcRdTX4hz
-	8kxvc0pB6RGnICcpYCkWyZLfPXJbAmvWbGAIVuDCYkoPOqZJC7K2zLl7sg7nfBF24WI4z6pwyPh
-	8M=
-X-Google-Smtp-Source: AGHT+IEnQ9do0ALLGKmunp/XJpi/t5BmL0hnvtsNOXrAxguTK/fiIMH8QwU2UzXZuUzOb9KHxDTCdQ==
-X-Received: by 2002:a05:6000:2405:b0:3b9:7bf0:88e1 with SMTP id ffacd0b85a97d-3b9edfd55bfmr2615620f8f.56.1755180404714;
-        Thu, 14 Aug 2025 07:06:44 -0700 (PDT)
-Received: from ?IPV6:2a01:cb08:941b:4c00:f383:4db2:82a:81e9? (2a01cb08941b4c00f3834db2082a81e9.ipv6.abo.wanadoo.fr. [2a01:cb08:941b:4c00:f383:4db2:82a:81e9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e0bfc79fsm40404341f8f.56.2025.08.14.07.06.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 07:06:44 -0700 (PDT)
-Message-ID: <4055d2c4-64c7-498f-8cdb-8d749d32ec68@gmail.com>
-Date: Thu, 14 Aug 2025 16:06:42 +0200
+	s=arc-20240116; t=1755180440; c=relaxed/simple;
+	bh=J+z3Q/Ta1L7bZn5a+jyN7+K/TabGM5ub8Fzy5FMgPAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Fu2oO0mzDCy/8hmBBPZSDfAsSB53bbMUbbj5pudtuuMk/b8yNwZxOfS1ryiMCl2ZAuHU8rHGpbbHt6A+CoLlm2dzL5Wr8cONV/rta59Wga0epfV+UayyyjO46HIrg8CVXlXSLJA4Yr79pmdr9HFuhsNjizR0DMsiNtCFCgEce6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4c2n8k1zdTztTJm;
+	Thu, 14 Aug 2025 22:06:14 +0800 (CST)
+Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
+	by mail.maildlp.com (Postfix) with ESMTPS id 43150180B54;
+	Thu, 14 Aug 2025 22:07:14 +0800 (CST)
+Received: from [10.174.176.250] (10.174.176.250) by
+ dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 14 Aug 2025 22:07:13 +0800
+Message-ID: <ee37ea36-7298-4174-b146-fd62b24ef345@huawei.com>
+Date: Thu, 14 Aug 2025 22:07:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,88 +47,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-Subject: Re: [PATCH v5 05/20] dt-bindings: memory: factorise LPDDR props into
- SDRAM props
-To: Julius Werner <jwerner@chromium.org>,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
- <20250728-ddrperfm-upstream-v5-5-03f1be8ad396@foss.st.com>
- <CAODwPW-FjCtPGYkNYozo0ybEjz_rVOeDqkvEPiCmQ6M2in0OeQ@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAODwPW-FjCtPGYkNYozo0ybEjz_rVOeDqkvEPiCmQ6M2in0OeQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [RFC PATCH -next 00/16] mm/damon: support ARM32 with LPAE
+To: SeongJae Park <sj@kernel.org>
+CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
+References: <20250814005738.52844-1-sj@kernel.org>
+From: Quanmin Yan <yanquanmin1@huawei.com>
+In-Reply-To: <20250814005738.52844-1-sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ dggpemf200018.china.huawei.com (7.185.36.31)
 
-Hi Julius,
 
-On 30/07/2025 20:27, Julius Werner wrote:
->> +      Compatible strings can be either explicit vendor names and part numbers
->> +      (e.g. elpida,ECB240ABACN), or generated strings of the form
->> +      lpddrX,YY,ZZZZ or ddrX-YYYY,AAAA...,ZZZZ where X, Y, A and Z are in lower
-> 
-> If the revision ID is only one byte for DDR, there should be only two Zs.
+在 2025/8/14 8:57, SeongJae Park 写道:
+> On Wed, 13 Aug 2025 10:25:44 -0700 SeongJae Park <sj@kernel.org> wrote:
+>
+>> Hello Quanmin,
+>>
+>> On Wed, 13 Aug 2025 13:06:50 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+>>
+>>> Previously, DAMON's physical address space monitoring only supported
+>>> memory ranges below 4GB on LPAE-enabled systems. This was due to
+>>> the use of 'unsigned long' in 'struct damon_addr_range', which is
+>>> 32-bit on ARM32 even with LPAE enabled.
+>>>
+>>> Implements DAMON compatibility for ARM32 with LPAE enabled.
+>> Thank you for working on this, Quanmin!
+>>
+>>> Patches 01/16 through 10/16 are from the mailing list[1], add a new core
+>>> layer parameter called 'addr_unit'. Operations set layer can translate a
+>>> core layer address to the real address by multiplying the parameter value
+>>> to the core layer address.
+>>>
+>>> Patches 11/16 through 14/16 extend and complement patches 01~10, addressing
+>>> various issues introduced by the addr_unit implementation.
+>>>
+>>> Patches 15/16 and 16/16 complete native DAMON support for 32-bit systems.
+>> Overall, looks good to me.  I have a few change requests including below major
+>> ones, though.
+>>
+>> First, let's squash patches for fixing problems made with patches 1-10 into
+>> patches 1-10.  If you don't mind, I will post RFC v2 of those so that you can
+>> pick into your series.
+>>
+>> Second, let's keep DAMOS stats in 'unsigned long' type.  This require fixups of
+>> patches 1-10.  If you don't mind, I will also do this in RFC v2 of those.
+> Instead of posting completely new RFC v2 of the ten patches, I think posting
+> fixup patches as replies to this thread might be a better approach.  I will
+> make fixups first, see what looks easier for working together with you, and
+> either post entirely new version of the patch series, or send individual fixups
+> as replies to each patch of this thread.
+>
+> And one more questions.  What is the baseline if this series?  I cannot simply
+> apply these patches on mm-unstable or mm-new.  It would be nice if you could
+> share a git tree having these patches fully applied, since 'cherry-pick' is
+> easier than 'am' for me.
 
-Indeed, will fix it here and in the dedicated field documentation below.
-Wouldn't it be better to add a regex pattern for the compatible ?
+Hi SJ,
 
-> 
->> +      case hexadecimal with leading zeroes.
-> 
-> AAAA is not hexadecimal, it's a verbatim ASCII string (at least that's
-> how I would define it, for readability).
+Thank you for your detailed suggestions on the patch series. Please allow me
+some time to thoroughly review each of your recommendations. I haven’t responded
+to every point immediately because I’d like to first attempt updating the patches
+accordingly. If I encounter any questions or issues during the process, I’ll promptly
+reach out to discuss them with you, very appreciate your patience and guidance.
 
-Yes you're right. I'll add the numbers of chars it corresponds to in the 
-dedicated field below also.
+By the way, this patch series is based on linux-next(commit:2674d1eadaa2).
 
-> 
->> +      For LPDDR and DDR SDRAM, X is the SDRAM version (2, 3, 4, etc.).
->> +      For LPDDR SDRAM:
->> +        - YY is the manufacturer ID (from MR5), 1 byte
->> +        - ZZZZ is the revision ID (from MR6 and MR7), 2 bytes
->> +      For DDR4 SDRAM with SPD, according to JEDEC SPD4.1.2.L-6 :
->> +        - YYYY is the manufacturer ID, 2 bytes, from bytes 320 and 321
->> +        - AAAA... is the part number, 20 bytes, from bytes 329 to 348
-> 
-> This should clarify that it is excluding trailing spaces (so only the
-> significant part of those 20 bytes, since they're supposed to be
-> padded with spaces at the end).
+Thanks,
+Quanmin Yan
 
-I'll add a comment about that.
-
-> 
->> +        - Z is the revision ID, 1 byte, from byte 349
->> +      The former form is useful when the SDRAM vendor and part number are
->> +      known, such as when the SDRAM is soldered on the board.
-> 
-> This inversion of the statement is a bit odd? I think it's more
-> important to explain why we need the latter form (or just explain
-> both).
-
-I will document both forms so.
-
-> 
->> +      SDRAM revision ID:
->> +        - LPDDR SDRAM, decoded from Mode Register 6 and 7, always 2 bytes.
->> +        - DDR4 SDRAM, decoded from the SPD from byte 349 according to
->> +          JEDEC SPD4.1.2.L-6.
-> 
-> nit: Add "always one byte" for clarity and consistency with the LPDDR
-> equivalent.
-
-Ack
-
+>
+> Thanks,
+> SJ
+>
+> [...]
+>
 
