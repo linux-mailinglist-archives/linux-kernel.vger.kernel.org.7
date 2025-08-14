@@ -1,175 +1,309 @@
-Return-Path: <linux-kernel+bounces-769533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ECEFB26FEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:59:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF3DAB26FEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D931FAA4BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:58:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9127172621
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2EC248F7F;
-	Thu, 14 Aug 2025 19:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F18245003;
+	Thu, 14 Aug 2025 20:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYr78f7F"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XP9lAoce"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2F42472B7;
-	Thu, 14 Aug 2025 19:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2092231986E;
+	Thu, 14 Aug 2025 20:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755201524; cv=none; b=rjgEN4mgycWyOMAwO3IFyHS2+mx31fp6g/+Bsx6Cbf5ahcQKD3xwZZckfUIpC0soonUJjOy/E8WOny2UJMZWVQSx5WAvfEdrwYDac5wO+SKUfMWlCcTWfiPbYVBxICHLmoykwKAV0x7Cu5Rq1nbx5m212f+Yb/3yKQh9UgzGvHs=
+	t=1755201979; cv=none; b=qb2BN2vX8ZI+qjILIGyDKdwqlRSj5bl47PJnFXVdJlw7zSVQOSLwczEhsw7zG+ccr8CgQKRhlLggQN4J2H9WCuvaai5rfo/mipSAVxlhZFEg+R0FsV7byIJe+8OZROuZDbMeUYFQ7AchDqhq7vjpSRZ88J1m2T2sBoPsGYlBhrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755201524; c=relaxed/simple;
-	bh=nrlkrGOj9FqTVo2wmyTaurACgaNJ4dRf1Fq6fsT64vA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z5EnhXUPb/1XT3fHrdIyEhRsSAxZj2Ne4qHybek4+PsktT30Maqc8OED/lBffRWfGpYTrV9tfOglWTmG5U20H6019VWORqDEgwWkiMxrTCcwFSKBzI22QmHxfvTUnEr47RqeVrUrLqIn5FendKSbcALsJ6Q7DEJ5st8A/es4S1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iYr78f7F; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e2eb09041so1297539b3a.3;
-        Thu, 14 Aug 2025 12:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755201522; x=1755806322; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TTV/lDDZEqi/BsEhizG8Om94UxJelIedyE+K0f5Dktw=;
-        b=iYr78f7FOjxjM88H6FT0tmNT+wetghXtw8cSGZNUFPbrjp46BSlCDMYG/6Q+naOWk1
-         HnsDRTGgLTXJ+iCr+lBxAPnpXobd7NS8LgND0hrLMXjY1mM5KK6Kdk/KtLrszEuYYy+T
-         y0QJ/LIskX/4jj0G4rKf9LX/M16y9d2TTyODf+DQjijGR+kEpZNcFmtHsQ6RN01+pCnJ
-         2hKzCyDYsFAYQdbEHC6F3IGot8LzH+rcpQk4VEarkw2M70qQVCjKY/uRkdICv8ug3Xul
-         qaSrqf0dDFiHOl9p4Bw1m6+FaypXJ2wIzbU0P7c6Uj7DfEwCfEbI6yRu+zxzYRVEO1Gq
-         Mggw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755201522; x=1755806322;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TTV/lDDZEqi/BsEhizG8Om94UxJelIedyE+K0f5Dktw=;
-        b=l4knTqrri0r2nRk5WGet1+VGgmIBC1144VO/XciWDKakvw1nxFSp9KkWcKFNEs+LjD
-         pjIEXTPy7c/Jo2dNodGrnTTKomOC7fu6/2mKuXZ/kKGW7U+pddzMoAvHB9TN/HFV+Ysw
-         qLhE57euVo7d4k8aIn2pUK+EFo7HALRKAl9bRcqwclOJcE8SpkBSq9dCbXgfM43k8Yaw
-         TWNa+ZS6Ao1v88GymLBpIB1Xx58i/AHFtTjWOh27eWI29srv/HEv+IqU7KfCEA+7hC13
-         MIpVv1FlwOgYfnREfU4DJkWjb0UGrGJ+kdmq7zfhHOFTgHryQQDdGaWxYih3pXeURTGd
-         wsbw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhlXd8ZnMpHqBFSUwNQH18NXHU8/GkOrX/HY6azuV2GaT2TZJbvhI/jH9z7fIIywfK5yQdz2UE@vger.kernel.org, AJvYcCXninItpOig7uYWIakG45GZgGBfRb+ymqUYkZJkXEySC1UXMFqAZyDJbf6qA+ossR5KU+ebKtZz1/NF/Rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2i2x/BKpLiAu1Fhpw/3az8qvz/85g8dh4KimxiDxf8MTUn6CW
-	G2kkIqkyo6MKKmTFQoSM4jTGGxiiBYbmaReW33TGIWP8PRnagIF0B+PU
-X-Gm-Gg: ASbGnct4QZA/ndCEcBdFPi4FmLnWu2Cy90tshvafXf0Le6eEn1/M7MCd3wtAXuIsOxi
-	PKFDbcKN2UPXPOA+wE1QD6llh3T0sbaSgF6AwaBhPM9i9zEjOkQmieHulhVJt2Wc2V0nE/EcVZ3
-	ODs+TrgE3jUU0OlBWqQo5jyE5ER+DwFdOFmr6ULf3X1tDSI6IVrr3TWH5k4O2TZs698pRz1vXyN
-	KDs4KDtBAtjhhmxmesv04faU720odeKm5vFVKSV3S7AXeJN4ZXeyB2baCFFJ/c6wLWOpsRR30Hr
-	TDwTQqsT3Hx7XyMI4CjNt9fQvADJ9EsdZpYKpC3D7TmWTf9GjwfNerUP+YROMrL+zJ9Wf+CZUe6
-	Y+isupIWBu8+blJmVXExXumH+LecRIj76
-X-Google-Smtp-Source: AGHT+IGfqAEK4l5/msrW/qNfWimt6bHO8cTnrAWKRlRK83XrpYBg6McxN2mX0rKbCM7Sw+3yfa29kg==
-X-Received: by 2002:a05:6a00:3e1b:b0:76b:c882:e0a with SMTP id d2e1a72fcca58-76e31eb9d76mr4896477b3a.5.1755201522541;
-        Thu, 14 Aug 2025 12:58:42 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e2037acf2sm5380761b3a.112.2025.08.14.12.58.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 12:58:41 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: Aaron Conole <aconole@redhat.com>,
-	Eelco Chaudron <echaudro@redhat.com>,
-	Ilya Maximets <i.maximets@ovn.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org,
-	dev@openvswitch.org,
-	linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>
-Subject: [PATCH] net: openvswitch: Use for_each_cpu_from() where appropriate
-Date: Thu, 14 Aug 2025 15:58:37 -0400
-Message-ID: <20250814195838.388693-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755201979; c=relaxed/simple;
+	bh=DSEVssbYUW7EyFNuLSgJP6Mv9qIDhRmUfjzP270dk4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZpzUqrR8hfIFm64HhJNqvt5mA+QW02diLDOes83Xv5fk8Kb9kaM9znRHNEqkfYbtXdyfeRKC3q3W9JqxjaZvwKMhKOKDXUoLlFkpFuLy1cMzgZu4tYS20TV1RApSGoK9v0rDoDo5S11hR/V1Xhjt2TEsKNdJJMLfJOdPlbmA1X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XP9lAoce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A05CC4CEED;
+	Thu, 14 Aug 2025 20:06:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755201977;
+	bh=DSEVssbYUW7EyFNuLSgJP6Mv9qIDhRmUfjzP270dk4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XP9lAocefRcO21s2gc28mBdiZ0ZRwcyh8VXqxXpvYSfNV/hPuWrIxJzLm35ed38Pi
+	 /hJmwnzZyNeXbuVFF5FMp4WeN70XS5uaOUs1DXquSIBBv9FeRZ0UetCAgKewNE8RX9
+	 4rrHdY/pFMBzHKfH7NUekomLyG+JdLojM4zuEDgJdsHj9aGh5AzriobGPfw8sKdUcT
+	 60ph8erWUjJILDOOYSrc3nUXlGPvnF6nK04EeR3PCAJfY3XxcLhtFB60aULie5WRgR
+	 HpfdBypBrQflldgb+IeMQC8vRChl8KsdEojDigStV2yiUCQyY8gPfAyMnhUJXRnPK8
+	 /mONfczzJGqdw==
+Date: Thu, 14 Aug 2025 13:06:15 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Liang Kan <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf test: Add test case for event group throttling with
+ inactive events
+Message-ID: <aJ5Bt1q3AZFxxz_U@google.com>
+References: <20250813163251.490451-2-ysk@kzalloc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250813163251.490451-2-ysk@kzalloc.com>
 
-From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+Hi Yunseong,
 
-Openvswitch opencodes for_each_cpu_from(). Fix it and drop some
-housekeeping code.
+On Wed, Aug 13, 2025 at 04:32:52PM +0000, Yunseong Kim wrote:
+> A recent UBSAN shift-out-of-bounds report was identified when throttling
+> event groups that included inactive (PERF_EVENT_STATE_OFF) events.
+> This occurred because pmu->start()/stop() could be called on these events,
+> potentially leaving event->hw.idx at -1. This leads to undefined behavior
+> when PMU code later uses this negative index as a shift exponent.
+> 
+> The issue need to ensuring perf_event_throttle() and
+> perf_event_unthrottle() skip inactive events entirely.
+> 
+> Introduce a new perf test suite, "event group throttle", to verify this
+> fix and prevent regressions.
 
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
----
- net/openvswitch/flow.c       | 14 ++++++--------
- net/openvswitch/flow_table.c |  8 ++++----
- 2 files changed, 10 insertions(+), 12 deletions(-)
+Thanks for your work!
 
-diff --git a/net/openvswitch/flow.c b/net/openvswitch/flow.c
-index b80bd3a90773..b464ab120731 100644
---- a/net/openvswitch/flow.c
-+++ b/net/openvswitch/flow.c
-@@ -129,15 +129,14 @@ void ovs_flow_stats_get(const struct sw_flow *flow,
- 			struct ovs_flow_stats *ovs_stats,
- 			unsigned long *used, __be16 *tcp_flags)
- {
--	int cpu;
-+	/* CPU 0 is always considered */
-+	unsigned int cpu = 1;
- 
- 	*used = 0;
- 	*tcp_flags = 0;
- 	memset(ovs_stats, 0, sizeof(*ovs_stats));
- 
--	/* We open code this to make sure cpu 0 is always considered */
--	for (cpu = 0; cpu < nr_cpu_ids;
--	     cpu = cpumask_next(cpu, flow->cpu_used_mask)) {
-+	for_each_cpu_from(cpu, flow->cpu_used_mask) {
- 		struct sw_flow_stats *stats = rcu_dereference_ovsl(flow->stats[cpu]);
- 
- 		if (stats) {
-@@ -158,11 +157,10 @@ void ovs_flow_stats_get(const struct sw_flow *flow,
- /* Called with ovs_mutex. */
- void ovs_flow_stats_clear(struct sw_flow *flow)
- {
--	int cpu;
-+	/* CPU 0 is always considered */
-+	unsigned int cpu = 1;
- 
--	/* We open code this to make sure cpu 0 is always considered */
--	for (cpu = 0; cpu < nr_cpu_ids;
--	     cpu = cpumask_next(cpu, flow->cpu_used_mask)) {
-+	for_each_cpu_from(cpu, flow->cpu_used_mask) {
- 		struct sw_flow_stats *stats = ovsl_dereference(flow->stats[cpu]);
- 
- 		if (stats) {
-diff --git a/net/openvswitch/flow_table.c b/net/openvswitch/flow_table.c
-index d108ae0bd0ee..0a97ea08457a 100644
---- a/net/openvswitch/flow_table.c
-+++ b/net/openvswitch/flow_table.c
-@@ -107,16 +107,16 @@ int ovs_flow_tbl_count(const struct flow_table *table)
- 
- static void flow_free(struct sw_flow *flow)
- {
--	int cpu;
-+	/* CPU 0 is always considered */
-+	unsigned int cpu = 1;
- 
- 	if (ovs_identifier_is_key(&flow->id))
- 		kfree(flow->id.unmasked_key);
- 	if (flow->sf_acts)
- 		ovs_nla_free_flow_actions((struct sw_flow_actions __force *)
- 					  flow->sf_acts);
--	/* We open code this to make sure cpu 0 is always considered */
--	for (cpu = 0; cpu < nr_cpu_ids;
--	     cpu = cpumask_next(cpu, flow->cpu_used_mask)) {
-+
-+	for_each_cpu_from(cpu, flow->cpu_used_mask) {
- 		if (flow->stats[cpu])
- 			kmem_cache_free(flow_stats_cache,
- 					(struct sw_flow_stats __force *)flow->stats[cpu]);
--- 
-2.43.0
+I'm curious what happens if it runs on unfixed kernels.  I suspect this
+should be in the selftest so that it can tie with the kernel fix.
 
+By having this in the perf tools test suite, you cannot guarantee if the
+kernel has the fix.  And it may turn the kernel into an unstable state
+easily.
+
+Thanks,
+Namhyung
+
+> 
+> The test sets up a scenario designed to trigger frequent throttling:
+> 1. A parent event (leader) is created with sample_period = 1.
+> 2. A child event is created in the same group but initialized with
+>    disabled = 1 (inactive).
+> 
+> A process opens these events and runs in a tight loop. The frequent
+> sampling of the leader causes the entire group, including the inactive
+> child event, to be rapidly throttled and unthrottled by the kernel.
+> 
+> The test monitors /dev/kmsg during execution, looking for "UBSAN",
+> "Invalid PMEV" "WARNING:", or "BUG:" messages.
+> 
+> To ensure robustness and avoid false positives from unrelated prior kernel
+> messages, the test opens /dev/kmsg and uses lseek(SEEK_END) to skip all
+> existing log entries before starting the test loop. If /dev/kmsg cannot be
+> accessed or seeked (e.g., lack of CAP_SYSLOG), the test handles it
+> appropriately by skipping or failing.
+> 
+> Related Reproducer by Mark Rutland
+> Link: https://lore.kernel.org/lkml/aIEePonPatjNrJVk@J2N7QTR9R3/
+> 
+> Related Kernel Fix
+> Link: https://lore.kernel.org/lkml/20250812012722.127646-1-ysk@kzalloc.com/
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+> ---
+>  tools/perf/tests/Build                  |   1 +
+>  tools/perf/tests/builtin-test.c         |   1 +
+>  tools/perf/tests/event_group_throttle.c | 132 ++++++++++++++++++++++++
+>  tools/perf/tests/tests.h                |   1 +
+>  4 files changed, 135 insertions(+)
+>  create mode 100644 tools/perf/tests/event_group_throttle.c
+> 
+> diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+> index 3e8394be15ae..e22e2f285500 100644
+> --- a/tools/perf/tests/Build
+> +++ b/tools/perf/tests/Build
+> @@ -70,6 +70,7 @@ perf-test-y += util.o
+>  perf-test-y += hwmon_pmu.o
+>  perf-test-y += tool_pmu.o
+>  perf-test-y += subcmd-help.o
+> +perf-test-y += event_group_throttle.o
+>  
+>  ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc))
+>  perf-test-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
+> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+> index 85142dfb3e01..d302bf9d1535 100644
+> --- a/tools/perf/tests/builtin-test.c
+> +++ b/tools/perf/tests/builtin-test.c
+> @@ -141,6 +141,7 @@ static struct test_suite *generic_tests[] = {
+>  	&suite__symbols,
+>  	&suite__util,
+>  	&suite__subcmd_help,
+> +	&suite__event_group_throttle,
+>  	NULL,
+>  };
+>  
+> diff --git a/tools/perf/tests/event_group_throttle.c b/tools/perf/tests/event_group_throttle.c
+> new file mode 100644
+> index 000000000000..7d5191d7e812
+> --- /dev/null
+> +++ b/tools/perf/tests/event_group_throttle.c
+> @@ -0,0 +1,132 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <time.h>
+> +#include <sys/wait.h>
+> +#include <signal.h>
+> +#include <sys/syscall.h>
+> +#include <sys/types.h>
+> +#include <string.h>
+> +#include <stdio.h>
+> +#include <fcntl.h>
+> +#include <unistd.h>
+> +#include <errno.h>
+> +#include <linux/perf_event.h>
+> +#include "perf-sys.h"
+> +#include "tests.h"
+> +#include "debug.h"
+> +
+> +static struct perf_event_attr attr_parent = {
+> +	.type = PERF_TYPE_HARDWARE,
+> +	.size = sizeof(attr_parent),
+> +	.config = PERF_COUNT_HW_CPU_CYCLES,
+> +	.sample_period = 1,
+> +	.exclude_kernel = 1,
+> +};
+> +
+> +static struct perf_event_attr attr_child = {
+> +	.type = PERF_TYPE_HARDWARE,
+> +	.size = sizeof(attr_child),
+> +	.config = PERF_COUNT_HW_CPU_CYCLES,
+> +	.exclude_kernel = 1,
+> +	.disabled = 1,
+> +};
+> +
+> +static pid_t run_event_group_throttle(void)
+> +{
+> +	pid_t pid = fork();
+> +
+> +	if (pid == 0) {
+> +		int parent, child;
+> +
+> +		parent = sys_perf_event_open(&attr_parent, 0, -1, -1, 0);
+> +		if (parent < 0) {
+> +			pr_debug("Unable to create event: %d\n", parent);
+> +			exit(-1);
+> +		}
+> +
+> +		child = sys_perf_event_open(&attr_child, 0, -1, parent, 0);
+> +		if (child < 0) {
+> +			pr_debug("Unable to create event: %d\n", child);
+> +			exit(-1);
+> +		}
+> +
+> +		for (;;)
+> +			asm("" ::: "memory");
+> +
+> +		_exit(0);
+> +	}
+> +	return pid;
+> +}
+> +
+> +static bool is_kmsg_err(int fd)
+> +{
+> +	char buf[1024];
+> +	ssize_t len;
+> +
+> +	while ((len = read(fd, buf, sizeof(buf) - 1)) > 0) {
+> +		buf[len] = '\0';
+> +
+> +		if (strstr(buf, "UBSAN") || strstr(buf, "WARNING:") ||
+> +		    strstr(buf, "BUG:") || strstr(buf, "Invalid PMEV")) {
+> +			pr_debug("Kernel log error detected: %s", buf);
+> +			return true;
+> +		}
+> +	}
+> +
+> +	if (len < 0 && errno != EAGAIN) {
+> +		pr_debug("Error reading /dev/kmsg: %s\n", strerror(errno));
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static int test__event_group_throttle(struct test_suite *test __maybe_unused,
+> +				int subtest __maybe_unused)
+> +{
+> +	time_t start;
+> +	pid_t pid;
+> +	int fd;
+> +
+> +	fd = open("/dev/kmsg", O_RDONLY | O_NONBLOCK);
+> +	if (fd < 0) {
+> +		/*
+> +		 * If /dev/kmsg cannot be opened (e.g. permission denied), skip the test
+> +		 * as we cannot verify the absence of kernel errors.
+> +		 */
+> +		pr_debug("Failed to open /dev/kmsg: %s. Skipping test.\n", strerror(errno));
+> +		return TEST_SKIP;
+> +	}
+> +
+> +	/*
+> +	 * Seek to the end to ignore past events (like EFI boot warnings).
+> +	 * This typically requires CAP_SYSLOG.
+> +	 */
+> +	if (lseek(fd, 0, SEEK_END) < 0) {
+> +		pr_debug("Failed to seek to end of /dev/kmsg: %s\n", strerror(errno));
+> +		return TEST_FAIL;
+> +	}
+> +
+> +	start = time(NULL);
+> +	do {
+> +		pr_debug("Starting event group throttling...\n");
+> +		pid = run_event_group_throttle();
+> +
+> +		sleep(8);
+> +
+> +		pr_debug("event group throttler(PID=%d)\n", pid);
+> +		kill(pid, SIGKILL);
+> +		waitpid(pid, NULL, 0);
+> +
+> +		/* Check for errors during the run */
+> +		if (is_kmsg_err(fd)) {
+> +			close(fd);
+> +			return TEST_FAIL;
+> +		}
+> +	} while (time(NULL) - start < 10);
+> +
+> +	return TEST_OK;
+> +}
+> +
+> +DEFINE_SUITE("event group throttle", event_group_throttle);
+> diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+> index 97e62db8764a..031856a710b2 100644
+> --- a/tools/perf/tests/tests.h
+> +++ b/tools/perf/tests/tests.h
+> @@ -179,6 +179,7 @@ DECLARE_SUITE(event_groups);
+>  DECLARE_SUITE(symbols);
+>  DECLARE_SUITE(util);
+>  DECLARE_SUITE(subcmd_help);
+> +DECLARE_SUITE(event_group_throttle);
+>  
+>  /*
+>   * PowerPC and S390 do not support creation of instruction breakpoints using the
+> -- 
+> 2.50.0
+> 
 
