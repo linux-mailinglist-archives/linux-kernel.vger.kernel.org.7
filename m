@@ -1,56 +1,77 @@
-Return-Path: <linux-kernel+bounces-768195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFCEB25E0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:53:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB59B25DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08239171B66
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:51:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1D6D7AD9EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13294287518;
-	Thu, 14 Aug 2025 07:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE55287259;
+	Thu, 14 Aug 2025 07:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpDKIpnN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kKCK9wZH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBE1205ABA;
-	Thu, 14 Aug 2025 07:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EF7286D7C;
+	Thu, 14 Aug 2025 07:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755157898; cv=none; b=KdlHhA8YKpYUQNR+s8uzdWg7w93qZordH+rH7c/4XR9fTmnja29i7ZtsG9e/5CjZdLRhZAYokvNSogmULZWjfy4WJfleC7vw6fNrg1F9ppBqpmwGnbpOyEwBYpincY4erqSLMZY0yW7qg7xit/Mii++xuZAbauPNBXlMl+rM1Hg=
+	t=1755157455; cv=none; b=KPhd+PWqpMIMA5K23Tiqs3r14c15Nnpdxo3FRkQOUjENgLZSK0WD7KdQ9ngdFkjC/h6C8+hq/nqk1G17wThTAhy1Kd+3sCu6Sus65DQonK19Sh2Kfbow+5naR06d0MT35rH20kHabwsGx3uX9BJ5zL6dkXfjmTF486dBSb63zYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755157898; c=relaxed/simple;
-	bh=v9VvPeUNkiYLsnm5QnJA58YlOU9rsWyTUonI6fizXCY=;
+	s=arc-20240116; t=1755157455; c=relaxed/simple;
+	bh=blkHOHEfczNkc2vt5BMxds3HfRRJSuQ39S+5rHDxB+g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tyoLqw2FkDeWNiZdJZXjL6M5GPK8KZAalEa2nYyiVKiH6smqlVjk5IoEg4G3IofQtawUdTa4CIGWz0fLSTagkRkNCbb/eq2ZiOnhAlHjoyeE0BXkmyoCdQhKRXu/ukuo0QTULJ9uMbzfdzpVfix2/xCkXQQ0m8fF6XX7guOCbHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpDKIpnN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 945DBC4CEEF;
-	Thu, 14 Aug 2025 07:51:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755157897;
-	bh=v9VvPeUNkiYLsnm5QnJA58YlOU9rsWyTUonI6fizXCY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HpDKIpnNETkXnHQSwCbvN2lXghfs4ctSCHzLF3CCNwMK7ab7aZCuhWBc8R0rAXFgr
-	 XYlDrr+JvysDzRRYkCLGk/oUzagfsSx/1x8bTq29BXImg8oihuIRhy6siQtfcZBoSS
-	 OwKsvSMX08WE/bJJGr/AMbH8oo6aSdvJyS9KJ+A6Kt6lJgvsWLI5pfCJZ3eA8r/fj+
-	 y9eE/u9Ys5GtQ7dnQM1nVPVGvyytOr7WQL6rbC7E7xPSijc4R3cz3hdFW/cCH4Mzqg
-	 X3c41OaaWwvS5N42cqztidmcwMMkcXQYD15MaRBvjbN/IoQTpBF5ZGN03Ype1d10kJ
-	 0i/fL9Wyaeb6w==
-Date: Thu, 14 Aug 2025 09:42:22 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Shankari Anand <shankari.ak0208@gmail.com>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kconfig: nconf: Format and print 'line' without a
- temporary copy
-Message-ID: <aJ2TUo_2Mwct924o@levanger>
-References: <20250811161650.37428-2-thorsten.blum@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FzA+oQkA3kal0aZphJGEvh/TTfKQ2GV394ZkwbiaSCJK01+J1HMlG1vI0u4dGndwzr81tHKZnt5XQbiJs6TkCjeVleDgZkKavdlD6ih3M9fHSL3eF+JVKy9kpU4zxmDlDWJlcuNcAHs1mAYQc5PJGXtIrCnGhKK/f/BSGG5EdOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kKCK9wZH; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755157454; x=1786693454;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=blkHOHEfczNkc2vt5BMxds3HfRRJSuQ39S+5rHDxB+g=;
+  b=kKCK9wZHaTHgd8QtS/tzmypEar2nTER7jUhai+ZtGdF8lTbnuxATBFse
+   TncjMd6JmARnDk0x9PwLBTRmojyE1JaziJEuq6ijIF08NJEjk7jq1uDx9
+   Joc5aM1W/kb7DiD6H3+NrU+dHrsWyPKZU9qZuQrC6SYk3Fqf2ssZCXstF
+   nGP3swTQMBt5lomiFaHrP/T3ySj1aaTYXMEnbj+KR+bl9/9R9VM44RECd
+   mlSPoRyp1hxF5CRmUIyXvgmISzuOwyjtDD6rgPVwBE112lM46/4EcbvtY
+   3CT7R1T4L2l5COqvbz4frpWzPNFIurL69QYmtXJSSRyKNdWz28GnFMjJG
+   w==;
+X-CSE-ConnectionGUID: 2oUbN6+4TuORtL1d2mCoMg==
+X-CSE-MsgGUID: +Asxgz5gQIGJBuoAl5UhUw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="74918024"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="74918024"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 00:44:14 -0700
+X-CSE-ConnectionGUID: 1yKr6sy4QamA0+e78ukiIQ==
+X-CSE-MsgGUID: 9p35hw8OSp2btYpLGtKG4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166677201"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 14 Aug 2025 00:44:11 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umSd6-000Aim-2n;
+	Thu, 14 Aug 2025 07:44:08 +0000
+Date: Thu, 14 Aug 2025 15:42:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, schnelle@linux.ibm.com,
+	mjrosato@linux.ibm.com, alifm@linux.ibm.com,
+	alex.williamson@redhat.com
+Subject: Re: [PATCH v1 5/6] vfio-pci/zdev: Perform platform specific function
+ reset for zPCI
+Message-ID: <202508141518.Z82dHhVu-lkp@intel.com>
+References: <20250813170821.1115-6-alifm@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,26 +80,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250811161650.37428-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250813170821.1115-6-alifm@linux.ibm.com>
 
-On Mon, Aug 11, 2025 at 06:16:48PM +0200, Thorsten Blum wrote:
-> Use "%.*s" as the format specifier and supply the 'line' length 'len' to
-> mvwprintw() to format and print each line without making a temporary
-> copy. Remove the temporary buffer.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->  scripts/kconfig/nconf.gui.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
+Hi Farhan,
 
-thanks!
+kernel test robot noticed the following build errors:
 
-Reviewed-by: Nicolas Schier <nsc@kernel.org>
+[auto build test ERROR on awilliam-vfio/next]
+[also build test ERROR on s390/features linus/master v6.17-rc1 next-20250814]
+[cannot apply to kvms390/next awilliam-vfio/for-linus]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-As kconfig is currently orphaned, I am going to take this via kbuild
-tree.
+url:    https://github.com/intel-lab-lkp/linux/commits/Farhan-Ali/s390-pci-Restore-airq-unconditionally-for-the-zPCI-device/20250814-012243
+base:   https://github.com/awilliam/linux-vfio.git next
+patch link:    https://lore.kernel.org/r/20250813170821.1115-6-alifm%40linux.ibm.com
+patch subject: [PATCH v1 5/6] vfio-pci/zdev: Perform platform specific function reset for zPCI
+config: csky-randconfig-002-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141518.Z82dHhVu-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508141518.Z82dHhVu-lkp@intel.com/reproduce)
 
-Kind regards,
-Nicolas
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508141518.Z82dHhVu-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from drivers/vfio/pci/vfio_pci_core.c:36:
+>> drivers/vfio/pci/vfio_pci_priv.h:104:5: warning: no previous prototype for 'vfio_pci_zdev_reset' [-Wmissing-prototypes]
+     104 | int vfio_pci_zdev_reset(struct vfio_pci_core_device *vdev)
+         |     ^~~~~~~~~~~~~~~~~~~
+--
+   csky-linux-ld: drivers/vfio/pci/vfio_pci_intrs.o: in function `vfio_pci_zdev_reset':
+>> drivers/vfio/pci/vfio_pci_priv.h:105: multiple definition of `vfio_pci_zdev_reset'; drivers/vfio/pci/vfio_pci_core.o:(.text+0x1a6c): first defined here
+   csky-linux-ld: drivers/vfio/pci/vfio_pci_rdwr.o: in function `vfio_pci_zdev_reset':
+>> drivers/vfio/pci/vfio_pci_priv.h:105: multiple definition of `vfio_pci_zdev_reset'; drivers/vfio/pci/vfio_pci_core.o:(.text+0x1a6c): first defined here
+   csky-linux-ld: drivers/vfio/pci/vfio_pci_config.o: in function `vfio_pci_zdev_reset':
+   (.text+0x1964): multiple definition of `vfio_pci_zdev_reset'; drivers/vfio/pci/vfio_pci_core.o:(.text+0x1a6c): first defined here
+
+
+vim +105 drivers/vfio/pci/vfio_pci_priv.h
+
+   101	
+   102	static inline void vfio_pci_zdev_close_device(struct vfio_pci_core_device *vdev)
+   103	{}
+ > 104	int vfio_pci_zdev_reset(struct vfio_pci_core_device *vdev)
+ > 105	{
+   106		return -ENODEV;
+   107	}
+   108	#endif
+   109	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
