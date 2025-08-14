@@ -1,104 +1,248 @@
-Return-Path: <linux-kernel+bounces-768018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3C2B25BEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:39:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9E7B25BF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7400D9E2B3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E30E99E2D9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1576D253F2A;
-	Thu, 14 Aug 2025 06:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JwM7opGU"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F802528FD;
+	Thu, 14 Aug 2025 06:38:42 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FC924EAAB;
-	Thu, 14 Aug 2025 06:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B632C235341;
+	Thu, 14 Aug 2025 06:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755153470; cv=none; b=Dkq9gHacEuZujbrM21k8Xgv7bBViSWAn5TSdRFtmI0PNChDlbmyyhsYjOA1Cn7dql+vHBB7AukgEGvVeYFcQBVXyfB9HuTOfJ1lc7mcS9cEB6UF4d6JXSMX4QhgFkesCt5ikhK7W0+cpAqd3zNKvb+nYmk7V/hqwuFUibg3FA8I=
+	t=1755153521; cv=none; b=aMTH+6xhfdtkNp4cKpwSFkMpPGL6o8dK5rLDce0kxRGAd561xKNJVEoZOsczur7UEI+IFjbKVfRcaRPcT9YXln6csUeMOkRyAfmsD+8dwePtrTPG+6OBE4oXbFMb29F3HFHJhq9amrHBBaFcD0qedNPX7cu+iZnIL3aUHZj74tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755153470; c=relaxed/simple;
-	bh=B1QTAQBoom+bZUbodaVKz7Gl/FzojVpGFCIaeqSrgsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLZ0fXjWSdak2EffuC6dYL7gBfPTEvQOHws0aOLtg8OIyBsyYE0nF56d7Fu8uhIaoRyDJq+Bs6bZCQDIYirAPY/eSoy1BK9k7+tmAw2CXpj3cI/7tTnHXD2pUUgJZ3HFW6yTZnQw2oxbRVv1tCZhfcesRRd/IbPnVh0SieK+mZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JwM7opGU; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PBoXKZba7jZDXvxDCcq8JAvR5ylpCzt0nNe7Pc3u/Lw=; b=JwM7opGUcWtB53X1JsZi9MIweR
-	6B1GSuOCBnnZ/BoEl30erJmH3IjFURVvUanwyoVP2ZfWCqLQC7iVSOrF9i7jRoyaFlSUytmCb/fXj
-	TbBBnHX1ykMhrST8KIGlVxKLCCLU+LO13gj0KTHc3SE4ZJpQi/WFOs1SGebKuHyy7K4T4tVs0YYv2
-	RGmJzTyWt7p5Wo35c3dP+/TFxBJqi52eMICCS7FG5RExIVCDI/o/iWsCwWS/EvPfQz1KDOKwvi6pW
-	0+59lQHd7MP4KAVKV96V1jvJ1hbNeDm9q8wUmp/anhI6vzZRSw+BDH+qMrxb8crBzF3dRZ5pHvXI0
-	tRcopWTA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umRar-000000008l6-2zHC;
-	Thu, 14 Aug 2025 06:37:45 +0000
-Date: Thu, 14 Aug 2025 07:37:45 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Tycho Andersen <tycho@tycho.pizza>, Andrei Vagin <avagin@google.com>,
-	Andrei Vagin <avagin@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Pavel Tikhomirov <snorcht@gmail.com>,
-	LKML <linux-kernel@vger.kernel.org>, criu@lists.linux.dev,
-	Linux API <linux-api@vger.kernel.org>,
-	stable <stable@vger.kernel.org>
-Subject: Re: [RFC][CFT] selftest for permission checks in mount propagation
- changes
-Message-ID: <20250814063745.GP222315@ZenIV>
-References: <CANaxB-xbsOMkKqfaOJ0Za7-yP2N8axO=E1XS1KufnP78H1YzsA@mail.gmail.com>
- <20250726175310.GB222315@ZenIV>
- <CAEWA0a6jgj8vQhrijSJXUHBnCTtz0HEV66tmaVKPe83ng=3feQ@mail.gmail.com>
- <20250813185601.GJ222315@ZenIV>
- <aJzi506tGJb8CzA3@tycho.pizza>
- <20250813194145.GK222315@ZenIV>
- <CAE1zp77jmFD=rySJVLf6yU+JKZnUpjkBagC3qQHrxPotrccEbQ@mail.gmail.com>
- <20250814044239.GM222315@ZenIV>
- <20250814055142.GN222315@ZenIV>
- <20250814055702.GO222315@ZenIV>
+	s=arc-20240116; t=1755153521; c=relaxed/simple;
+	bh=W6z6qVkPhFJfIZeybYAsLN9vl8e4DqJY47PuPx8Q9aM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=EiLinUgMRT4WqoTifhz28YEE6z3wM3pHv364PEAVFRG46dfEGGWpAyRs6qSDj9Zfquh7R8wQbb80DyK+vd60WnjadmMC/OyGmnA6Z0FT2+sTjluClmFnzd9dSXIr7wNrrVbZb3I0BFACz91mpH/B+uVorPrqmv4EWkQ7oUNOZAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2bDB2kxLzYQvBp;
+	Thu, 14 Aug 2025 14:38:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 01AF61A1ABB;
+	Thu, 14 Aug 2025 14:38:33 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCnIxRnhJ1ops2FDg--.17931S3;
+	Thu, 14 Aug 2025 14:38:32 +0800 (CST)
+Subject: Re: [PATCH v4 1/2] loop: Rename and merge get_size/get_loop_size to
+ lo_calculate_size
+To: Rajeev Mishra <rajeevm@hpe.com>, axboe@kernel.dk, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250813195228.12021-1-rajeevm@hpe.com>
+ <20250813195228.12021-2-rajeevm@hpe.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <43c58aed-3fff-564b-e658-ebe3f7735fb9@huaweicloud.com>
+Date: Thu, 14 Aug 2025 14:38:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814055702.GO222315@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250813195228.12021-2-rajeevm@hpe.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnIxRnhJ1ops2FDg--.17931S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3XFW5Gw18XryUWF15WFW7Arb_yoW7AFW3pF
+	15Za4FyrWrKF9rGFsrtwn7XF1Fqa1vg347Z34DZa40kwnavr9IkFyfCFWF9rW7Jr9xAFyF
+	q3WDJFykAr1jqr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUYCJmUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-> void do_unshare(void)
-> {
-> 	FILE *f;
-> 	uid_t uid = geteuid();
-> 	gid_t gid = getegid();
-> 	unshare(CLONE_NEWNS|CLONE_NEWUSER);
-> 	f = fopen("/proc/self/uid_map", "w");
-> 	fprintf(f, "0 %d 1", uid);
-> 	fclose(f);
-> 	f = fopen("/proc/self/setgroups", "w");
-> 	fprintf(f, "deny");
-> 	fclose(f);
-> 	f = fopen("/proc/self/gid_map", "w");
-> 	fprintf(f, "0 %d 1", gid);
-> 	fclose(f);
-> 	mount(NULL, "/", NULL, MS_REC|MS_PRIVATE, NULL);
-> }
+Hi,
 
-This obviously needs error checking - in this form it won't do
-anything good without userns enabled (coredump on the first
-fprintf() in there, since there won't be /proc/self/uid_map);
-should probably just report CLONE_NEWUSER failure, warn about
-skipped tests, fall back to unshare(CLONE_NEWNS) and skip
-everything in in_child()...
+ÔÚ 2025/08/14 3:52, Rajeev Mishra Ð´µÀ:
+> - Renamed get_size to lo_calculate_size.
+> - Merged get_size and get_loop_size logic into lo_calculate_size.
+> - Updated all callers to use lo_calculate_size.
+> - Added header to lo_calculate_size.
+> 
+> Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
+> ---
+>   drivers/block/loop.c | 50 +++++++++++++++++++-------------------------
+>   1 file changed, 21 insertions(+), 29 deletions(-)
+> 
+
+This patch has lots of style issues, please run checkpatch and fix
+the warnings first.
+
+Thanks,
+Kuai
+
+./scripts/checkpatch.pl 
+0001-loop-Rename-and-merge-get_size-get_loop_size-to-lo_c.patch
+WARNING: please, no spaces at the start of a line
+#52: FILE: drivers/block/loop.c:142:
++       loff_t loopsize;$
+
+WARNING: please, no spaces at the start of a line
+#54: FILE: drivers/block/loop.c:144:
++       loopsize = i_size_read(file->f_mapping->host);$
+
+WARNING: please, no spaces at the start of a line
+#55: FILE: drivers/block/loop.c:145:
++       if (lo->lo_offset > 0)$
+
+WARNING: suspect code indent for conditional statements (7, 15)
+#55: FILE: drivers/block/loop.c:145:
++       if (lo->lo_offset > 0)
++              loopsize -= lo->lo_offset;
+
+WARNING: please, no spaces at the start of a line
+#58: FILE: drivers/block/loop.c:148:
++       if (loopsize < 0)$
+
+WARNING: suspect code indent for conditional statements (7, 15)
+#58: FILE: drivers/block/loop.c:148:
++       if (loopsize < 0)
++              return 0;
+
+WARNING: Statements should start on a tabstop
+#59: FILE: drivers/block/loop.c:149:
++              return 0;
+
+WARNING: please, no spaces at the start of a line
+#60: FILE: drivers/block/loop.c:150:
++       if (lo->lo_sizelimit > 0 && lo->lo_sizelimit < loopsize)$
+
+WARNING: suspect code indent for conditional statements (7, 15)
+#60: FILE: drivers/block/loop.c:150:
++       if (lo->lo_sizelimit > 0 && lo->lo_sizelimit < loopsize)
++              loopsize = lo->lo_sizelimit;
+
+WARNING: please, no spaces at the start of a line
+#66: FILE: drivers/block/loop.c:156:
++       return loopsize >> 9;$
+
+total: 0 errors, 10 warnings, 80 lines checked
+
+NOTE: For some of the reported defects, checkpatch may be able to
+       mechanically convert to the typical style using --fix or 
+--fix-inplace.
+
+0001-loop-Rename-and-merge-get_size-get_loop_size-to-lo_c.patch has 
+style problems, please review.
+
+NOTE: If any of the errors are false positives, please report
+       them to the maintainer, see CHECKPATCH in MAINTAINERS.
+
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 1b6ee91f8eb9..5faf8607dfb2 100644
+> --- a/drivers/block/loop.c
+> +++ b/drivers/block/loop.c
+> @@ -137,30 +137,23 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
+>   static int max_part;
+>   static int part_shift;
+>   
+> -static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+> -{
+> -	loff_t loopsize;
+> -
+> -	/* Compute loopsize in bytes */
+> -	loopsize = i_size_read(file->f_mapping->host);
+> -	if (offset > 0)
+> -		loopsize -= offset;
+> -	/* offset is beyond i_size, weird but possible */
+> -	if (loopsize < 0)
+> -		return 0;
+> -
+> -	if (sizelimit > 0 && sizelimit < loopsize)
+> -		loopsize = sizelimit;
+> -	/*
+> -	 * Unfortunately, if we want to do I/O on the device,
+> -	 * the number of 512-byte sectors has to fit into a sector_t.
+> -	 */
+> -	return loopsize >> 9;
+> -}
+> -
+> -static loff_t get_loop_size(struct loop_device *lo, struct file *file)
+> -{
+> -	return get_size(lo->lo_offset, lo->lo_sizelimit, file);
+> +static loff_t lo_calculate_size(struct loop_device *lo, struct file *file)
+> +{
+> +       loff_t loopsize;
+> +       /* Compute loopsize in bytes */
+> +       loopsize = i_size_read(file->f_mapping->host);
+> +       if (lo->lo_offset > 0)
+> +	       loopsize -= lo->lo_offset;
+> +       /* offset is beyond i_size, weird but possible */
+> +       if (loopsize < 0)
+> +	       return 0;
+> +       if (lo->lo_sizelimit > 0 && lo->lo_sizelimit < loopsize)
+> +	       loopsize = lo->lo_sizelimit;
+> +       /*
+> +	* Unfortunately, if we want to do I/O on the device,
+> +	* the number of 512-byte sectors has to fit into a sector_t.
+> +	*/
+> +       return loopsize >> 9;
+>   }
+>   
+>   /*
+> @@ -569,7 +562,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+>   	error = -EINVAL;
+>   
+>   	/* size of the new backing store needs to be the same */
+> -	if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
+> +	if (lo_calculate_size(lo, file) != lo_calculate_size(lo, old_file))
+>   		goto out_err;
+>   
+>   	/*
+> @@ -1063,7 +1056,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
+>   	loop_update_dio(lo);
+>   	loop_sysfs_init(lo);
+>   
+> -	size = get_loop_size(lo, file);
+> +	size = lo_calculate_size(lo, file);
+>   	loop_set_size(lo, size);
+>   
+>   	/* Order wrt reading lo_state in loop_validate_file(). */
+> @@ -1255,8 +1248,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+>   	if (partscan)
+>   		clear_bit(GD_SUPPRESS_PART_SCAN, &lo->lo_disk->state);
+>   	if (!err && size_changed) {
+> -		loff_t new_size = get_size(lo->lo_offset, lo->lo_sizelimit,
+> -					   lo->lo_backing_file);
+> +		loff_t new_size = lo_calculate_size(lo, lo->lo_backing_file);
+>   		loop_set_size(lo, new_size);
+>   	}
+>   out_unlock:
+> @@ -1399,7 +1391,7 @@ static int loop_set_capacity(struct loop_device *lo)
+>   	if (unlikely(lo->lo_state != Lo_bound))
+>   		return -ENXIO;
+>   
+> -	size = get_loop_size(lo, lo->lo_backing_file);
+> +	size = lo_calculate_size(lo, lo->lo_backing_file);
+>   	loop_set_size(lo, size);
+>   
+>   	return 0;
+> 
+
 
