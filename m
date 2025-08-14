@@ -1,107 +1,125 @@
-Return-Path: <linux-kernel+bounces-768588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3769AB262E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:36:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDDE6B262E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1AAD3B0D35
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8845C3B6ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C5A2F39BE;
-	Thu, 14 Aug 2025 10:32:48 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952192F83BF;
+	Thu, 14 Aug 2025 10:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2Qo/JnH"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EE92F0C4A
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1A62F39A0;
+	Thu, 14 Aug 2025 10:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755167567; cv=none; b=tZGSQCVvJQmG+0yy/JK5cIt4wRgLJ7QNuJXyUpncLKUVKqnz1LXbAIC5c2Il4DzKmgV4Zx3vrIdI9cNZYVkN5nWcg3JZYoUqoKQnkysAfj9k2Cz9ckWkHfgXs+2d3vKs3lP64iHsoupJX3mWvaBTAaWLjJRJ37pN7INldH2yvy4=
+	t=1755167568; cv=none; b=L7PrcjFeltAtiI+o9VOzCOmI66caRevVc2H8Hc6iJXO6NUIO7XPXpcKxkHHgNt+uvwukE7EN6h/ef5yyGaj/Oy3CT1jws/iDx7VQRi1+TO4k7GFWpVaQ1DKFvfz964giQCW7hGi0yoLb+wPrrIPUk7Cda3+OSY7VTbA7+wUNQJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755167567; c=relaxed/simple;
-	bh=QimykCrwB6ZAsWvsWPV6V2st17u9CiEZrkUa85W44qE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FHOUTtQXzLlkWg+mFnx4DNxHUwJI6Xk7ZfVSdT7D/22wPHe8rd/hmZ6Ys9NDHn9Z7trcExK7A0PoZha0ols+l2MVLUeXGvpHbXanRhYSqWSsFUOQNF/iT4lM3Z7UexsPQxH3Gv/JaCmIQX6RPWqdhrUTyELydvvAdLBJpII9+W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVGA-0007By-LC; Thu, 14 Aug 2025 12:32:38 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVGA-000Er8-1T;
-	Thu, 14 Aug 2025 12:32:38 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVG5-000GML-16;
-	Thu, 14 Aug 2025 12:32:33 +0200
-Message-ID: <1c6b0262f0043e65592501d88221ec2a69e9d641.camel@pengutronix.de>
-Subject: Re: [PATCH v5 2/2] reset: eswin: Add eic7700 reset driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: dongxuyang@eswincomputing.com, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com, 
-	huangyifeng@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Date: Thu, 14 Aug 2025 12:32:33 +0200
-In-Reply-To: <20250725093436.779-1-dongxuyang@eswincomputing.com>
-References: <20250725093249.669-1-dongxuyang@eswincomputing.com>
-	 <20250725093436.779-1-dongxuyang@eswincomputing.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1755167568; c=relaxed/simple;
+	bh=CYzbKVOF/TPdEmZ8s/gMlGCZBSnCGBFSN85mnNON29o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jRX6X6jzZZgAhPaau5dEYQ2y/Yyi2kqFcGwu9rd2VM0VF/iy/pbZ1aIGBSIuSuoUXp+VKaONVBJkTFfGPbsAEY/MvtnX6Uu0R89Y0N3RDAuvJ5WAMrTt6xHyyh89n/nRL2R3bfS5SObXQwywhuKF7UkFyg6uWTVi6ItfZvOw/Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2Qo/JnH; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b109bedc38so150231cf.2;
+        Thu, 14 Aug 2025 03:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755167565; x=1755772365; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Uidag5GH3rbfp6RvsevZJFZiGLSa9EyuN+ZmrX0Ohk0=;
+        b=a2Qo/JnHFNH/HV2PqscLXujDOgzNWzNA+xghTMSzmc8xSFL9dozAsok3LsTQGGCpt+
+         ZMUIqNQj2zsqXzs8bm1Edr7bKW3LGsy6G2dhgIydUqIbjpGhj2VbvvT8UU5jM6PMKs/W
+         PZgmwpVYfzbCLfYUh+JhyAor9G7VwAubY3UzIK0Rfh5Zs5ZqNOJRJB8jbBjLQ5tuyzOW
+         kz/UjFCLFN5XAAo95AGgOQYF2bqn3axF3dBhYvJOw8plwqzhUh1xkCs3ho8KzoitHEiZ
+         FYXi3NBZLon68PbaThYRETcwZ5VaP9QmLXh0EQJjyvTvUVlf1DxLEq9J/nV1LsMDeB3C
+         GUDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755167565; x=1755772365;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uidag5GH3rbfp6RvsevZJFZiGLSa9EyuN+ZmrX0Ohk0=;
+        b=pjQiP+tiOfVFnOJJlgE0yiu6M/PXi7C/gbeLWzGHZ0sMpMbvI/+SqLjmjIFlajMnWH
+         pfKA4EK+EM1EHPY1XTqTL7Ux7sAxVo4DGKg8noJZxjAGL/B6d9sU+TfYbaPXT2JJkKdC
+         mApMCKmpRNS600an2ZEpfm7it+jES6CpRpSvPYJkxaopr83PLxylFGWZnNAp15vs3BXm
+         +dH7pe65amBQfAMKsYzHUxOxB3UmLp0td1Lr3G7VcRaCGB9B5vUopAj3EtJLgAzZm180
+         7x+VAGKleRASqEMNjrZFEHwAg7GGjFom46QvRyIaPsODd3ewDf73PmOXO2gGpcik+OE2
+         SU3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWeRWfsNBeqGtxVKYRoAvbhwwCz/gwql5kzrkE9vN5aI+K35+OE2GFGDrFOrkxfONtrCywV5s4fLsZ0+ZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg4cbbT3Pba+j0b8w6lu4axG3qfVP1uvrppfIF9TKysxGF2YS1
+	48Oul4QH5SvlJQB2B9sYprDsK28XUTmU/T70z/43JBl+P+AUfEnPaqJLl5Fjw6rZsYABByIb5sj
+	v+bjhIsAJ5ahH9cmuaOckHikb4TZxYNA=
+X-Gm-Gg: ASbGnctLKUAPE7v3kQm3EJpZPH/gkPPYy41j7AJi2OJWcrUGKoaSrK3mpCvx+tHVLn5
+	Pwjy1MAGpX7JQUwCNwpDeLjE57TAAZRLG5KGhMgnOKYd+VowYDoT8HzkwPhXFy1bGZ5K3QCN2ko
+	bVnwDvtdzOhkGDLHfVkjggH5XfoG72e2nXdEojrJiTIYl/R3nGTfrnflFBSw54Z6QrgLsMxTkM+
+	bvkyA==
+X-Google-Smtp-Source: AGHT+IFu31MRahXeNRGXB5OCH9nzb1U/olRrBgEEv0rdSL8Stn8Hl/kczWWsDd0HZkH7R447MArgv+9zbTEYHlkXCT4=
+X-Received: by 2002:ac8:5885:0:b0:4ab:6b8c:1a41 with SMTP id
+ d75a77b69052e-4b10aa84523mr16219091cf.7.1755167565307; Thu, 14 Aug 2025
+ 03:32:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250812082244.60240-1-miguelgarciaroman8@gmail.com> <175513140725.3830230.6064788817690151758.git-patchwork-notify@kernel.org>
+In-Reply-To: <175513140725.3830230.6064788817690151758.git-patchwork-notify@kernel.org>
+From: =?UTF-8?B?TWlndWVsIEdhcmPDrWEgUm9tw6Fu?= <miguelgarciaroman8@gmail.com>
+Date: Thu, 14 Aug 2025 12:32:34 +0200
+X-Gm-Features: Ac12FXySgBOEXQm53QMc0vwZNeEvULA1MusZ7LbWpESUt9ICaStDDiAZ1RsJJy8
+Message-ID: <CABKbRoJDogS-uzy-vott1LHxEPB3tVU4SrBwaagmrhreXxuX9A@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] tun: replace strcpy with strscpy for ifr_name
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	willemdebruijn.kernel@gmail.com, jasowang@redhat.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fr, 2025-07-25 at 17:34 +0800, dongxuyang@eswincomputing.com wrote:
-> From: Xuyang Dong <dongxuyang@eswincomputing.com>
->=20
-> Add support for reset controller in eic7700 series chips.
-> Provide functionality for asserting and deasserting resets
-> on the chip.
->=20
-> Signed-off-by: Yifeng Huang <huangyifeng@eswincomputing.com>
-> Signed-off-by: Xuyang Dong <dongxuyang@eswincomputing.com>
-> ---
->  drivers/reset/Kconfig         |  10 +
->  drivers/reset/Makefile        |   1 +
->  drivers/reset/reset-eic7700.c | 432 ++++++++++++++++++++++++++++++++++
->  3 files changed, 443 insertions(+)
->  create mode 100644 drivers/reset/reset-eic7700.c
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index d85be5899da6..82f829f4c9f0 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -66,6 +66,16 @@ config RESET_BRCMSTB_RESCAL
->  	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 on
->  	  BCM7216.
->=20
-> +config RESET_EIC7700
-> +	bool "Reset controller driver for ESWIN SoCs"
-> +	depends on ARCH_ESWIN || COMPILE_TEST
-
-Undeclared dependency on [1].
-
-[1] https://lore.kernel.org/all/20250616112316.3833343-3-pinkesh.vaghela@ei=
-nfochips.com/
-
-regards
-Philipp
+El jue, 14 ago 2025 a las 2:29, <patchwork-bot+netdevbpf@kernel.org> escrib=
+i=C3=B3:
+>
+> Hello:
+>
+> This patch was applied to netdev/net-next.git (main)
+> by Jakub Kicinski <kuba@kernel.org>:
+Perfect, thanks!
+>
+> On Tue, 12 Aug 2025 10:22:44 +0200 you wrote:
+> > Replace the strcpy() calls that copy the device name into ifr->ifr_name
+> > with strscpy() to avoid potential overflows and guarantee NULL terminat=
+ion.
+> >
+> > Destination is ifr->ifr_name (size IFNAMSIZ).
+> >
+> > Tested in QEMU (BusyBox rootfs):
+> >  - Created TUN devices via TUNSETIFF helper
+> >  - Set addresses and brought links up
+> >  - Verified long interface names are safely truncated (IFNAMSIZ-1)
+> >
+> > [...]
+>
+> Here is the summary with links:
+>   - [net-next,v2] tun: replace strcpy with strscpy for ifr_name
+>     https://git.kernel.org/netdev/net-next/c/a57384110dc6
+>
+> You are awesome, thank you!
+> --
+> Deet-doot-dot, I am a bot.
+> https://korg.docs.kernel.org/patchwork/pwbot.html
+>
+>
 
