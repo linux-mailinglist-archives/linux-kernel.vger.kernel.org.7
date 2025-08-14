@@ -1,79 +1,60 @@
-Return-Path: <linux-kernel+bounces-768502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEE7B261B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:02:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F34FB261C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 505AA3A5059
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:57:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C161B661C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091972F744D;
-	Thu, 14 Aug 2025 09:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQm6hYx1"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8B72F744D;
+	Thu, 14 Aug 2025 09:57:23 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10472F6599;
-	Thu, 14 Aug 2025 09:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1097D2F6599;
+	Thu, 14 Aug 2025 09:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755165433; cv=none; b=s3nW7UGeg4I0b8jNbwRleca4ddTALs96BzekPxEjzX89lCewsKwYoJOmzGGwIlD2NGpioY9oQxGjs5AuMpybShkR7ufx1/bO9qz0iqFYaQHEvpe5mRqqTV3zA534pjjlBpjbLlI9HBculkSeYUrIT0E/yvqwdREOQDBOt6UYGUs=
+	t=1755165443; cv=none; b=tR9hGncgsso/c8snj/3anlBu8QPFQRlGBc69iVU+JiyF5z/+NQfodkplhsgkmNBojE7EktVWf5b0IX8SNtiJ4qwyZkyxzvn5FVUfJtbnCU5aw/adK8Zy9Qxx43HsZuJFObho1Y7UrO8gZtBK63ITGYmBralyaHMdnRV6Hors0nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755165433; c=relaxed/simple;
-	bh=hxq+BAlC4BTcZrulCz2ztttBWVAi3fJkeyvA1e4ENoI=;
+	s=arc-20240116; t=1755165443; c=relaxed/simple;
+	bh=AFmQW3s817yYNoHLbcU7I5ZtCWhEg4P0VV83vq1w460=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ueox/CTpQkN3GFCWuLh4WwPPDUlufchxSKPx9MT47LIKYPEKLmTwtEpJiEKrde9iCin1ld4/+ecnA5XDths2RyPkbCfDf5UaEuo2MXKLu+ecXhIQ5AO7bcbDe7WtbE/ftsholiowIm8swNCjc/oljU/94/n31l/u2kqjdZYvYQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQm6hYx1; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55ce508d4d6so559909e87.0;
-        Thu, 14 Aug 2025 02:57:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755165430; x=1755770230; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3s7YhXsV6p0c1Yl9oTw0XLLqhsC5QWkVPLgNC0X3hf4=;
-        b=dQm6hYx1WBB1tEM0R17+NuxxwSNEXrvb3G19PqQ3zYlKj0kWM5B/wlwj0BXm0y9r5I
-         NBJaPQxgEJEpYy9Vol9G+byEBzktUoX1iDXyLvyBZhEH95GF73riV8ID8QyFf9g8Bhx+
-         zLbIiCFwo9R/P95/NmqmSKwZURAotKOJ319Fs0+t1I4a6Ubk3U9p+xLcvBIDVZQn+9RH
-         1o9SvuTFb9z5VYoEtPqwZ55WiP/EbyKXzrDnHHB9afKY2SyzHE+LYVeXwfGDwYFiLvBN
-         FdGm7og0Sj/UXccM2OjICpo6TKUYaxsdaDLNBQKj+N63NHO/7QyUFNCbsvImf9cFiER7
-         uEyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755165430; x=1755770230;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3s7YhXsV6p0c1Yl9oTw0XLLqhsC5QWkVPLgNC0X3hf4=;
-        b=WR9nLsZt7ouJN8/RENoZsdVYOTGLjxLwuY0q6wnjv0JvQ84Dr/UC3jo6ZIoaUdJSh8
-         k2i+TMq5j3AxqUPr7742KJbhXQ4HzQjkFdkksbDuKi2zcb6OidpkqZtSxEYG8YppPWop
-         DVu5vYAgSoplsOCqUj5H/xO7I0HkFUL5aM/WP74HWJ0FUnnKJBQI8ehXI3Eg0+mjYUl8
-         yKp8JW+6kYcxkI38t+19tkCj/wErDESDwun143sHyIJEciRQpcX74qjgdRztGCK5LtLC
-         40LDa0lN1I8QKrCAAjIBnO/gP7R2vzp7+IfH2jbyARAEToLSkd6da4Ve8HkvMQRuWv6G
-         LiCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaME7L51tP5EdCz7a83OJ1AzAZk/cQ6sUwqxMfbJMFq00tVMpO9+hfGkbz68sm5c6WYFo+0OnZHaGf@vger.kernel.org, AJvYcCWfO2eJNZ+cbMX7f5ksWq5KOP0UarNQ9TQHY4PbkS3z5PjjHu8qYao8fN3ifMYJPEIRH7RWFkPm9Ive@vger.kernel.org, AJvYcCXcAHgIMf6vq2bTex2lpCc1nj93Vi10DFxmwIGgpK6+KCc8OvmWCTcr23EHD9W+NnDzsBK2Lrn+zxrRQ7ru@vger.kernel.org
-X-Gm-Message-State: AOJu0YysJvhzWn8hE21Gw/GHMZtqmQ6QdTwvP4PqpXL4zLPBLVQjSUWi
-	GWzH8C2emDWZMAqsijrMcKdkDOno4MMW+EuMqoFGqMd31soFPjbQb0wa
-X-Gm-Gg: ASbGncuOV/bJxLgdx2MxRFyIKOhkzFxiG89Kqy/+9CmWrtNhvvLsIwJm7iklXC/dfse
-	IrRlWqbssln6z1NLBc3vB83OiaUpHYriTvIJ+cONnOS522zbXHp5KJ6H58m5hXe/00rkcecv2ka
-	nduUkbp9OoyJYSVHImEuycBLtsEJFjV0uWl9AkMQGyIR+RD5+npGxCZ3bCiAkEwFidpf0IQiIUu
-	AX0svZ0gZXU3OioOdM8uz1sG005Rd+hN/kUfF3EaJt4EBrZwEZu+WuPO+OLZXXmbK1KQXa67Vzs
-	LkxBErlQ1vF3tc9+XhZZzClgo21z5EwmRMEXIw/OGDqK4n1gMlo2Q5tJKkJwZ6Lev+ip3unl9ec
-	8L7WLiDlX8IKldtvRYB2LtKDIwXgyuraj6tg=
-X-Google-Smtp-Source: AGHT+IGQuXcr+7hBrPHuoqBZIph7f+GgG15OetCBb/AawoLaoonWiiogi5JxMf81RcBC2bNbHe2U1w==
-X-Received: by 2002:a05:6512:12c8:b0:55c:c98b:39ea with SMTP id 2adb3069b0e04-55ce5032d3dmr729324e87.27.1755165429555;
-        Thu, 14 Aug 2025 02:57:09 -0700 (PDT)
-Received: from [172.16.183.161] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c987acsm5529433e87.100.2025.08.14.02.57.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 02:57:08 -0700 (PDT)
-Message-ID: <175ce750-7f5d-477c-8d18-dd418ba749be@gmail.com>
-Date: Thu, 14 Aug 2025 12:57:07 +0300
+	 In-Reply-To:Content-Type; b=HPqqScZi8Mf1BTSYe5a5+01Hj/pQmo4UjNSKNUNw9fgkGgilSygZxrE7ZGDhz/SLTFyculOA7cnR74hC+lcvV8YNzVCn5qkCxFK2UmZ9eH+wGjDWA2UMJ4k8zkwbe00gAlOLc5IWT3IRuUAPKVQ4RtSM00VawLqsxb9Igiakwko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 0e07284e78f511f0b29709d653e92f7d-20250814
+X-CID-CACHE: Type:Local,Time:202508141724+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:9f6f0721-ee35-4d2f-b97d-82be5c063267,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:4e9b3f680a37dbdb16fbf95a0e950642,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 0e07284e78f511f0b29709d653e92f7d-20250814
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 2136356546; Thu, 14 Aug 2025 17:57:14 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 6E6B7E008FA5;
+	Thu, 14 Aug 2025 17:57:14 +0800 (CST)
+X-ns-mid: postfix-689DB2F8-408393812
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id ECD3FE008FA3;
+	Thu, 14 Aug 2025 17:57:11 +0800 (CST)
+Message-ID: <711f7b99-e881-4c55-b748-23ac38770ff2@kylinos.cn>
+Date: Thu, 14 Aug 2025 17:57:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,61 +62,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: Add BD7910[0,1,2,3]
-To: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+Subject: Re: [PATCH v1] cpufreq: Return current frequency when frequency table
+ is unavailable
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "rafael J . wysocki" <rafael@kernel.org>,
+ zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <cover.1755159847.git.mazziesaccount@gmail.com>
- <8ef78e3cffcfdf99153a3fcf57860771890f1632.1755159847.git.mazziesaccount@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <8ef78e3cffcfdf99153a3fcf57860771890f1632.1755159847.git.mazziesaccount@gmail.com>
+References: <20250814085216.358207-1-zhangzihuan@kylinos.cn>
+ <20250814090201.pdtvxqq3st65iooq@vireshk-i7>
+ <3f901678-c75e-48ac-985a-2834f9ba4c8f@kylinos.cn>
+ <20250814093149.ob36l2gxo33snbac@vireshk-i7>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <20250814093149.ob36l2gxo33snbac@vireshk-i7>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 14/08/2025 11:35, Matti Vaittinen wrote:
-> The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
-> ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
-> the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
-> and, based on the data sheets, they seem identical from the software
-> point-of-view.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> ---
->   .../devicetree/bindings/iio/adc/rohm,bd79104.yaml     | 11 ++++++++++-
->   1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
-> index f0a1347ba4db..6a6e6ab4aca3 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
-> @@ -14,7 +14,16 @@ description: |
->   
->   properties:
->     compatible:
-> -    const: rohm,bd79104
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - rohm,bd79100
-> +              - rohm,bd79101
-> +              - rohm,bd79102
-> +              - rohm,bd79104
-> +      - items:
-> +          - const: rohm,bd79104
-> +          - const: rohm,bd79103
 
-Oops. I believe the order of the compatibles is wrong for the fallback.
+=E5=9C=A8 2025/8/14 17:31, Viresh Kumar =E5=86=99=E9=81=93:
+> On 14-08-25, 17:24, Zihuan Zhang wrote:
+>> I just feel that it might not be ideal to set a frequency when the fre=
+quency
+>> table is unavailable.
+>>
+>> Perhaps adding a log or warning when the frequency table is missing co=
+uld be
+>> a better approach.
+> There are a lot of drivers that don't provide a frequency table, i.e.
+> drivers with setpolicy() or target() callbacks. Only the
+> target_index() ones provide a freq table.
+>
+Thank you for the explanation! I now understand that some drivers do not=20
+require a frequency table to set the frequency.
 
->   
->     reg:
->       maxItems: 1
+I will drop it.
 
-Yours,
-	-- Matti
+Best regards,
+Zihuan Zhang
 
