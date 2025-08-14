@@ -1,218 +1,120 @@
-Return-Path: <linux-kernel+bounces-769119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568EEB26A6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3961EB26A71
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C481781F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CEB5807B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CAC204096;
-	Thu, 14 Aug 2025 14:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048EB214814;
+	Thu, 14 Aug 2025 14:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nKsWMHOT"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2061.outbound.protection.outlook.com [40.107.220.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1XenmWT"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1455533D6;
-	Thu, 14 Aug 2025 14:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183567; cv=fail; b=GjJ/U/j2agZOY/Q0jRrk5Eoa5HFEj80iVQXlIZfZ9vZFl6z8lrYexPZqf5f8d9TkJKcktnmwnlQBecLTPhwSvu/s0GIhQpnF2K398V2lXIbFAfWWRx0a6fbKv9Qa04hj3Qi2nWQMqBWOs23iefdhsEu7QwG03NidlibJ3h2tDy8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183567; c=relaxed/simple;
-	bh=4ooYEGrw9S3Aru0421s7/KM2Nkh/1sIRIK9ZjZmYoGI=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A5D32142D;
+	Thu, 14 Aug 2025 14:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755183576; cv=none; b=T497ZIl0JTKPzTaUjpObCTVvERYba76UPjbt8/jXqNS3goHx95aHKljnm6rYf/yKgRm9/4QFovxRyrKVJzTrlQZ1izWxASUTOTEs8oLYQC0GlvLVkmAfBWeIzfdXNdyNAZFqktrLGq3ibtSdMTJ/Bcq+JkR6+IlnW5lwXfKsUOs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755183576; c=relaxed/simple;
+	bh=xik06j9J7NbriowQ9Jg7OPweDnDxx1OwDQ3G6EGce/U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZHEJ/UxJfDop5T0MIOUkdUs/6dSYn0JbJ5tRQ1gDhvLIfrV0LiqPFvOr3IShi2FXfv6ErT/v2yG4vRtlAXmteRpE94ANo155Orj1nyFpW9mVaSkoeBC2cieyxw4ufJyOnbZELOO5QKj5n0IPHI4IBjK7qngtzkzhC6wXRyy2FM0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nKsWMHOT; arc=fail smtp.client-ip=40.107.220.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mif9D/BwCkWPVX2CqV+azXJH4DIXjiWipZT48dpSau6z70R6J6k33mvbN3m9sMOFvlbw2H5vcmAfEHKbPubV8TgTpUxv4LrLtI2eJ0IkPOLlRKbM2Ko05dbM4wAGFDE6hohQIwbPG9wZ+7dxwv5rDMKRXRn/BcSgZeysmIQ9VXQ8jBXZ+mbB2wCm3p5h4RojurRBAbTH3kNzveIurXedJ28ZrqrCLAbXtU6j/v71wBr002QpbR387yGviM0NBZtxfXu0Jk+yUpaO9PgyK4OyYhIglte7sLWn3ScsEKdWHL8A3gxkR8KswQobhajBmmLZfebMxmX3c++cuIKv3zsHlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BxbUkK6cRgbLxAE9Jf4SEwrZF3cLlOTxcuGkUIz7ayU=;
- b=DF8iZzqkDulROvr9YU3AOZXjHwu9oc48CXL0sNfgPwA36D6VcBKMwpxq+n6RcSzjMyNU1ZqNlY91i6U0sm0X8Gj88dCYFcfPOgKpxufJ1awuOh6tn1FRVpKF91rv0PbSFOQfRFO44MCbtPTRbcOrypBuaEaVNeuBG7v6cSHBaS4W5JS8y5KUhtERCsV3Lt5uqF1ma/eYfnmX+WEcpg7Gpn+ogvkOldxhbfNxCnuoxG3b1jzQs6AFeeTepElR7VRwzW5agX69wa1bM0Vu7UsosSJg/DRDFXAbtVKezEyz6m0nzVkSAkgA6cJig1KvvG/wTIRHi3F5se+jFOZKEIdADA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BxbUkK6cRgbLxAE9Jf4SEwrZF3cLlOTxcuGkUIz7ayU=;
- b=nKsWMHOTQ8/j/ui3RTpp5r4Py2Zdrt6zLEA+6Bem/1pkaGMl50dTYt3llKwDVSgSD4H621T/xEFMHtLFjjz9FkidTiwonv+kheslKZRwacZYYjvP61/4cuRisYywKE/jHGCqZk4Cl1+z+hQEeY01VzPdfTzH61w/I4OC63pw9Edod6Dj+y2a5gPc3Fq5XjaeWIa+Ocs+t62hZ/yfoTG0H+Ef0TxjQ/4Wt1koHyiy860IEePESRfivnogOQQr3ZRBIs8acCE8DqX4HP2uqbzGABu42slDA7+K5UmzvNVGCb3Ew5Vxe/7VGGGVZpyk4E7h0Ib8OwyVpTCgzku06Rb2Ig==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- LV2PR12MB5872.namprd12.prod.outlook.com (2603:10b6:408:173::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
- 2025 14:59:22 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 14:59:22 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
- baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v4 2/7] mm/huge_memory: convert "tva_flags" to
- "enum tva_type"
-Date: Thu, 14 Aug 2025 10:59:18 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <E2CC7BF8-A3F2-4F14-BBDE-94B635FA1795@nvidia.com>
-In-Reply-To: <20250813135642.1986480-3-usamaarif642@gmail.com>
-References: <20250813135642.1986480-1-usamaarif642@gmail.com>
- <20250813135642.1986480-3-usamaarif642@gmail.com>
-Content-Type: text/plain
-X-ClientProxiedBy: BN9PR03CA0846.namprd03.prod.outlook.com
- (2603:10b6:408:13d::11) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	 MIME-Version; b=ojqtFwXrehVxTzcwf6w230Fnl79WaJT45cArQz4qf6N1Yn7bC84/ChWm7RQdInCvOT/LvOQ3PMIdrIG83Way8jrQxr5FePMKMfCOMnD0ILAvMi3BM+kTBvhhJEKSB10svWUKJhegDwHJmmcmBoej7vjR28R2ZOhQn/Px4Q5tKxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1XenmWT; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2eb3726cso660656b3a.3;
+        Thu, 14 Aug 2025 07:59:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755183574; x=1755788374; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WQt5BqMjb9nx7BmE6KGMd9a47fQxp1m276b+AFq/m20=;
+        b=O1XenmWT8GpuAnpAu+cPiE1Tyf0ApgNNxZS7xMw+2ra61GJ0A25nSSIXOCHTZg6v9q
+         Gh1jHX/Nn6KP/R8H1eN3/gYB1YmvzQ+K09r/06rh6j9ieFWg3kMmkOrE0vgtFqrfaG1l
+         OkxnzyQuAJ7PfZyPknlm8513R9akFatfF1yQ5vRSbXll3Pj87NiY/QumhGH6ohBlr05s
+         a2O3zh1CqW4KXqPzuFkspPKyoMSFexHqjBEdscv7OGdjyk679ny9XFSc7HpmTEXBHa2e
+         sO2IU+YhlhnwoBLSAk3VJc6RktqSRBHHgJZaol/DQksRaeIZ3vD4KPsby3TphMn4Gj0q
+         8/hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755183574; x=1755788374;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WQt5BqMjb9nx7BmE6KGMd9a47fQxp1m276b+AFq/m20=;
+        b=YLjFk61efnABH43aT6nbY8bK/FSaBibXK1HI0SyYaTsqbESKvC+65lPOBKd/G2x94g
+         6zi/VqhHLvG7SXtTkD/AfcWvwH+T8weQYScwCZiWSPg69ba2ierP8/rdvph/6iMUqZoM
+         VN/4pKDbGU+I1Q1mb9FULcWeTzUjCrWnkU0BOc0fxluvlj+F9FMDLYpD95c8LUGeFx1K
+         sKZ4qPmClQHYDgLD61/drKQ22DVuX9/qtJThdP9ON/wKz1IQcRg5qY/ByP6DLoIXMS+j
+         hXeDMa/0VZTLTxxzYXRJ3aKZiIWTtD+XHkK6sdjYPbHk2z5DngIxU1HXeI9hVnjwoPcM
+         tSvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAsKjfF78XXodcUXGaSLqmmOov/XkVy6NMtq4FM/I+4R4MU+bY7sr5Fbv64oUqoOftoxCTi739d2FmjeM=@vger.kernel.org, AJvYcCUyDnimxImy0zg6f1EwSHPM+dWaKPxSsKO57gVzDyBuHP6fbl5OtMf2iOD8g342EEQfiYoUGrpj@vger.kernel.org, AJvYcCXDC7jjyrdO3M7iioHPJ2Tm/V1IYtKkhjfVN3ruOvZRnYyIZv5U/sMBJIaxByzgpjJVGgJiuMMncTPa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv1qKK3bO5hTiqkfh3+PM83DLr/dV+w4sejMqkVT/KaqDlHvcn
+	TvVVVyddgpNEyDJ+fpjLquOyaQ9HcXXiYqat28wScCbtvdsi+M2rUTt3
+X-Gm-Gg: ASbGnct5l4DKMcp6jfabZ14rJoF12P3VcJO4wPzG15R8LXTI8UrPEkK+bPZIXiab5C3
+	PF+zbL9lFlw0fMRVQ1N4RD1c1iKk8GwEx4j9OB3OZZhZriHzchJVRSQW8rn4HDetKFQjLlAHzbf
+	L2+U1w9Zbr3NczpTNmIAjnb4CVQWgr0LLsVBVPlvS93SNQAPzHuNQ3/phn1XYkzpaFMk1UdKgMN
+	cRcjmblwHbGGOC21h8oryTjzDdfCk2MuX12vwByI0iqkRJaw2xJTx80hSHQCvDjdF4gaG9uU1Wl
+	6fjFutXWwwg/ccbU77Fs7AuBjlr4n0+IdBuql2Oj5x7IjrPMMnyhPjGJy6W3N8cskNFP1wQtnLa
+	GK1x0uYkpTbFMtieHSucm1xV/QMIWJyjBiXzf26COGJZKyeKONrG0
+X-Google-Smtp-Source: AGHT+IGRMPcf4GCPT1hT8R0Sqa5lVHS0BKPn1vKIJX5n1+A/XkyAqp+HbZf0i+LSOPW8MgiygRk/vw==
+X-Received: by 2002:a05:6a00:2d8f:b0:75f:8239:5c2b with SMTP id d2e1a72fcca58-76e2fdb134dmr4953990b3a.23.1755183574170;
+        Thu, 14 Aug 2025 07:59:34 -0700 (PDT)
+Received: from BM5220 (118-232-8-190.dynamic.kbronet.com.tw. [118.232.8.190])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-76bcce8e854sm34960878b3a.46.2025.08.14.07.59.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 07:59:33 -0700 (PDT)
+From: Zenm Chen <zenmchen@gmail.com>
+To: larsm17@gmail.com
+Cc: gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	pkshih@realtek.com,
+	rtl8821cerfe2@gmail.com,
+	stable@vger.kernel.org,
+	stern@rowland.harvard.edu,
+	usb-storage@lists.one-eyed-alien.net,
+	usbwifi2024@gmail.com,
+	zenmchen@gmail.com
+Subject: Re: [PATCH] USB: storage: Ignore driver CD mode for Realtek multi-mode Wi-Fi dongles
+Date: Thu, 14 Aug 2025 22:59:26 +0800
+Message-ID: <20250814145926.3067-1-zenmchen@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <8e9066d4-1b04-4423-869d-2bac0a3385a2@gmail.com>
+References: <8e9066d4-1b04-4423-869d-2bac0a3385a2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|LV2PR12MB5872:EE_
-X-MS-Office365-Filtering-Correlation-Id: f080be6c-b9d2-48ed-15e8-08dddb43273f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2mzesMskJEdB9lAjy5JPDG3WXjcJfUjp+/rTfWK1Oj8sbvQUGjrUlLIwso0c?=
- =?us-ascii?Q?0woLK3qaBlom1irDaHtrrBCNtngLMqFD8bJ0UcABueww/bH3ANYCQ4PiPGK+?=
- =?us-ascii?Q?bmvOh+s072CVZcqIHX0S8uxc0iZgjT2uPdA4ghIF+1N2+EYDXtZDWDyWEuHS?=
- =?us-ascii?Q?/APDH98G3geRUapIFFNN6mXUdgyXkgsI0LJlDaYrKP6HjCZCxB0qlCnguN5h?=
- =?us-ascii?Q?Xmwezyx/znGdCakiF4hPgjqajBorRFbdl/ycDCEVhvNhaQ67UiYf1dC5PD0R?=
- =?us-ascii?Q?OpPw3d7WZ+V9EKxbwQwjSVThbTQI6YOTL23kv8sx0qxbs/DlMsx2lieAKzYY?=
- =?us-ascii?Q?tOXCLYORFVoCziRzsZCtxfsAH9HFmpvurYmNHvWmK8zmdjZiLbhX5krsfRyh?=
- =?us-ascii?Q?wofUQY2Dc3k9wReizCbbM6rHjELs4PGIxXNGJFZf56MT+RRiBGn12fHm+mb2?=
- =?us-ascii?Q?VkyhAERQsu7I6TpZ3SALKJq4SnZo4wSb6QTNEcl5L5sKD7vLcKNdBIdKNhtr?=
- =?us-ascii?Q?2vOgNXHl664fuvpr2BJD4lpoyQhhKGGsEzJAV0bqUBylXszobZFTv3nJSiX7?=
- =?us-ascii?Q?RdD3L6J/uPFpvn/bnqghT0k8kJwF21en6ZtSDHMGKP7y/jmSdI07RalmGQtM?=
- =?us-ascii?Q?4QMVhcy8jsHDNS+yYYZU3d46B/ljwqD1mB1p+FZgaYfz9jZhVjMyuqE1FwX5?=
- =?us-ascii?Q?67B/w3+FyUcWhuCIP0KKVOBKNBxE0Jr0xPqY9h/hRCXoBKsNv6h4k+ORHnby?=
- =?us-ascii?Q?09TUxJPJFyC9hii1a5hlnb20gFKvgweMvxOkb/z/PODY+8UXrRAoZ9zKrS4o?=
- =?us-ascii?Q?PUTqVd81q9pvDCqF2Jd3sL3mVKuUUt/TrxmhFRKLs4K4moqZl51VE68F/nH/?=
- =?us-ascii?Q?kmGURrFL2xcgKIoa01cmsngLMfesF8CtKDgDQhA2a6L1NvEGG/GSwDUG4QJ6?=
- =?us-ascii?Q?kNE+10Oi0eS3hy5bGhYXv28G73N8n4JrSVhxJ6ZehnJJGmaQF/q7R2/lu+af?=
- =?us-ascii?Q?b5zCasRP3JeeA8J7ORbufUdzPJln6beNdb368TAiTzJ8PbBTBmRZmo+h9XaV?=
- =?us-ascii?Q?Y1oSiPaOh3JfOuFhNVJCiduzTZZPWBerNuIYdVIy5uaSGpLtilhffPqb4rsK?=
- =?us-ascii?Q?16qzzXM/7T2aNS1op6CqgOaIGYAWFRb18Ldqr9KfIg682ac9PG/od2IDCF7p?=
- =?us-ascii?Q?ybiUaCizgLIsW6Rr67b2APSjvptRu7b1Jvdxi8UJo7vJJsaKoJMT+p1O4+eh?=
- =?us-ascii?Q?yXxHbRIrGNtOuGUmNg06nn6Lppdt1coUJi4AH6FJurr3D7Nu3ppVS2mx2Dvb?=
- =?us-ascii?Q?J8u3GhI9fiWd2jCaExYuq5pOqI5dXoqoQfaL8PVqZwoXYZCAtnCw2xpeLM1k?=
- =?us-ascii?Q?5kv1t96CD2imaJxLqySZlWQVJBYAgSN+NMhpWJh+D5XAhHXKiv7gZeiKeBG/?=
- =?us-ascii?Q?jx2PZXGm6OQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xpa1pLribUmPVWhRFkireiEiuH/Ld1bGEFcvpopPRJlGJac+Kjl1MvlwQwso?=
- =?us-ascii?Q?G6hyFyLO0exvJRVFD+LXuhkWxEx2YU5iIks6VG4YiOigfpJQRLnVoV47vNU7?=
- =?us-ascii?Q?FeE19luY2bhdLebasACNHrsiGLVjOSuSGiHYPn5a18A0cJQwWeJc4VX4UqA7?=
- =?us-ascii?Q?p0AizxC1HOzxJaFGI+nd+LLtWpl3zL11FGCCByhXt0CzVQSCwajUo6taoeg8?=
- =?us-ascii?Q?lz8P+RfGQwe4vwudcrLSonFW64flzSU7ClNI2StFBd5iKWK26FfH9zixkDbr?=
- =?us-ascii?Q?3sqJakM6CnUlJOFQb9lYUepSvMpepL6jg8Ynqg0kf983LHMaAvUKu3XrcT9o?=
- =?us-ascii?Q?Kg8X7h0Q6bm9UjGbEqpwla9sJ8zqIg1DzMwbQTCEe7Iygw/qwdszB6ImMxHn?=
- =?us-ascii?Q?onak4ZYZnQRMwgFw3nzy80ctwMY/+cntgq33rpfBsa2s1CkEu4WQdmSLSux2?=
- =?us-ascii?Q?W1I2fdKKXhzRizWCx2Mw+gh6z8EiPeSn99U4wZ/GnbyOXdnbsMTacxTskgRQ?=
- =?us-ascii?Q?9h+3YH+DKCNyP3uYCmHo+fyp8Hakqx5Vgph7thYSpId326dkI8cvW9vj5+ZL?=
- =?us-ascii?Q?GZyfdB3xo6yoFGohP7IUZ96g6CbmjVOpwYZ13IKEkcgTZYcPclz2s9dVNzKh?=
- =?us-ascii?Q?nkpspBVMrAULnoe0/WNmtmuiJYH9swBEZJ2KWtLd8pl8vMeMgEFzfY2ognS3?=
- =?us-ascii?Q?evsNKf8iwS5fnUWT5QZd9h5u9Hb3Z8aCSZ+xDIr+uZ/UjS4t16HKdx5A7pto?=
- =?us-ascii?Q?uUQZfoOGhQuucS+cwK7Tk+BlaVl5snw3I4mSwamnWLbSJEgpMYp1ituBI1fF?=
- =?us-ascii?Q?UeVcXeYcfbBRqymmBnC/g68AVQvu+M9f716AatkPE7+EUevGKTPyqy7qSB5c?=
- =?us-ascii?Q?WbdJwL2jUwaBGoSB26N/DrLSmqwidrJepOFjpWMv3q2nNB/uWWGv4IOptsNq?=
- =?us-ascii?Q?mzq+5vNdRh2ONysLhIRwxA4HAUEq/WbKNuFOcFp6TMY+uOyUvZuXhwV4TgPb?=
- =?us-ascii?Q?e5hbrpIYmCB6kphckCxHq1SiA+yzAZP2yzlI739xrOgAFo3G4D37IiFaJSyb?=
- =?us-ascii?Q?no4nH/Beh0Tv33Nhr/3axTjnzv4ydOBYFifKbXqLDCi7tPcrDKfoLlYQ6+jB?=
- =?us-ascii?Q?5DUQdjPnCSGSCR8I0ijB2TEhDbR7BLHxk1PI/LImts5BMwND97e20qVtL0Ss?=
- =?us-ascii?Q?h1MGUD4Xr2fAmSXz7Rwl+VyWlZ2hEZ5rIgNRdplhKVxJotDsMPKxKVUqCmr8?=
- =?us-ascii?Q?+gi86fgz8H7VA3Iu+MPfYuEY/Mj6T9FgSF+Q1M45UjfPCreST9rbvaumtku8?=
- =?us-ascii?Q?InsjsTJhHtC4IzNn76TIoP0JJ6npV6hBaJB6WF5dlZXHPkqiINdFAsfDIOCV?=
- =?us-ascii?Q?9+DY8RzyJqaQ4SnkHrAa8rEnNZuiLACuJhR//yua/rhDqDrJ2RMn8/++/cDE?=
- =?us-ascii?Q?UnQdgNiadnVMajh68Vd6bTvcGBhrIliThmviMkTTDs6im72beQOKlH4cgZmt?=
- =?us-ascii?Q?WR7l3NF16QOeM5rVx6masNwXZi8SXrouk4/23TgjhcTBsahBvklW6g//ta2W?=
- =?us-ascii?Q?7PTne4xUb+T+34nNBFqv0BJAvjKivdCRQFyvoNtZ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f080be6c-b9d2-48ed-15e8-08dddb43273f
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 14:59:22.5351
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0f0RWLcRM504fUy6fzvSLtrkn8PpNF8wPIlcUaqgupx+ZWDAJThil9UNNvxB8joE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5872
+Content-Transfer-Encoding: 8bit
 
-On 13 Aug 2025, at 9:55, Usama Arif wrote:
+> Hi Lars,
+> 
+> If I apply this patch to my kernel, usb_modeswitch can switch both to
+> Wi-Fi mode smoothly and fastly, but I don't know why. @@
 
-> From: David Hildenbrand <david@redhat.com>
->
-> When determining which THP orders are eligible for a VMA mapping,
-> we have previously specified tva_flags, however it turns out it is
-> really not necessary to treat these as flags.
->
-> Rather, we distinguish between distinct modes.
->
-> The only case where we previously combined flags was with
-> TVA_ENFORCE_SYSFS, but we can avoid this by observing that this
-> is the default, except for MADV_COLLAPSE or an edge cases in
-> collapse_pte_mapped_thp() and hugepage_vma_revalidate(), and
-> adding a mode specifically for this case - TVA_FORCED_COLLAPSE.
->
-> We have:
-> * smaps handling for showing "THPeligible"
-> * Pagefault handling
-> * khugepaged handling
-> * Forced collapse handling: primarily MADV_COLLAPSE, but also for
->   an edge case in collapse_pte_mapped_thp()
->
-> Disregarding the edge cases, we only want to ignore sysfs settings only
-> when we are forcing a collapse through MADV_COLLAPSE, otherwise we
-> want to enforce it, hence this patch does the following flag to enum
-> conversions:
->
-> * TVA_SMAPS | TVA_ENFORCE_SYSFS -> TVA_SMAPS
-> * TVA_IN_PF | TVA_ENFORCE_SYSFS -> TVA_PAGEFAULT
-> * TVA_ENFORCE_SYSFS             -> TVA_KHUGEPAGED
-> * 0                             -> TVA_FORCED_COLLAPSE
->
-> With this change, we immediately know if we are in the forced collapse
-> case, which will be valuable next.
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Usama Arif <usamaarif642@gmail.com>
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  fs/proc/task_mmu.c      |  4 ++--
->  include/linux/huge_mm.h | 30 ++++++++++++++++++------------
->  mm/huge_memory.c        |  8 ++++----
->  mm/khugepaged.c         | 17 ++++++++---------
->  mm/memory.c             | 14 ++++++--------
->  5 files changed, 38 insertions(+), 35 deletions(-)
->
+I forgot to say that I've added one more entry into /lib/udev/rules.d/40-usb_modeswitch.rules
+to let usb_modeswitch support the ID 0bda:a192.
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
+$ grep -E "1a2b|a192" -i /lib/udev/rules.d/40-usb_modeswitch.rules 
+ATTR{idVendor}=="0bda", ATTR{idProduct}=="1a2b", RUN+="usb_modeswitch '/%k'"
+ATTR{idVendor}=="0bda", ATTR{idProduct}=="a192", RUN+="usb_modeswitch '/%k'"
 
-Best Regards,
-Yan, Zi
+A config file in /usr/share/usb_modeswitch for the ID 0bda:a192 was also created.
+
+$ cat /usr/share/usb_modeswitch/0bda\:a192
+# RTL8192FU
+TargetVendor=0x0bda
+TargetProduct=0xf192
+StandardEject=1
 
