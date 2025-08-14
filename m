@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-768710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C2CCB2646C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:37:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17B9B2646D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:37:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3A41C84F2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:37:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E55377B93D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79882EE29B;
-	Thu, 14 Aug 2025 11:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2B22F2913;
+	Thu, 14 Aug 2025 11:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NZrLUswu"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dVlUAFmH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295B82BCF6C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998D62BE020
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171455; cv=none; b=ZJpgMwLimwaiiNqbdIIrtal3YR6UNROzIcEVyDMnUyhiyfT7CBCEZ3Mhy1i6hSeTmiI+/AGC+h0C/GO5jC7EbP54LmD96atktlknSjmY/SqTYHTmmrHGc9jqgersu8es4nb0rfgXjPheVWGi1XyC6ruqjxft4rmQi24Ye4lUOWI=
+	t=1755171463; cv=none; b=dZ0+rhfGG8x0rZUCasGRfomEFCh2E8WwwfF/HDVzwpYva0wVMST3cfDnHirdFOazIewGCvMFMtmAjvcdG608cOeYFEv2Y0TmFanVboYiZr78tHUG2VehcYxtzLcjAqypxqLqqNOvYlXnXtNdIsmP4i+8GnNXW/lx5wS/m05wGgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171455; c=relaxed/simple;
-	bh=m92ZkHYBwGSR/MWGeeE7TM23PRZOOX3uclgnrUE8vxI=;
+	s=arc-20240116; t=1755171463; c=relaxed/simple;
+	bh=MvGkXuSZizdSAeen5J/IQpL/vIRSBfXfiCCe/dOr7jo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iBWPAs9tlI+U0S6X0fJWoM1TnWYr58fJHKRxAqKrfKmS4dlxTK9cSTFRaAeB5oOz+uy+xe5jSwsInrWBbccuWYev8U4fxnElQAnZbCqFq9jVupUE7E6x/rkJtbx0ZRY5Ntn2wL8ldTW/xMsseoEghLugSAZSE6cl4tKg9JQDu3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NZrLUswu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19ECFC4CEED;
-	Thu, 14 Aug 2025 11:37:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CjJpi8RGrqmenwu45sQ/9EQSfct0iWcT+3kZsXGxdLTHKPenxHHOkNTIC6qM9tugWMFv5ebRjVv8t5UX8eDj9oSg5kC1BEFZNQzlxUFDItEP1PczH3apcGVrS9kZP1TooB1MYAOvb3mPVaeYLEDsglOEG8OafQnueK9UjztM6MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dVlUAFmH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D36C4CEED;
+	Thu, 14 Aug 2025 11:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755171453;
-	bh=m92ZkHYBwGSR/MWGeeE7TM23PRZOOX3uclgnrUE8vxI=;
+	s=korg; t=1755171462;
+	bh=MvGkXuSZizdSAeen5J/IQpL/vIRSBfXfiCCe/dOr7jo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NZrLUswurNZ3RhMLS0zNJ69M/Bmo8dzo3XdiNkD0YpAgqaqdZTt8QOoTaAW13EtWM
-	 qOGneKYMg/BNf4zDcsnKmHURHXfxx/wm6QYgqouAD+nxSDCNvl5NNN8/7w+7l5VFLL
-	 d2fEgNGRXN3b714NxZWbeBIUH4z8qI6r35HNrNug=
-Date: Thu, 14 Aug 2025 13:37:29 +0200
+	b=dVlUAFmHJhJJMvEtb2lyovQ4H4POdKk14L0+sUSAiOoS8Q/oFtEM6GZXU2ahfcsc8
+	 ICDhqRxfDxQtdFNBzGbknOlrsiVe0iLUTC81KcRUxlpqFruiXvHCET/Far0w57Yqeo
+	 sSZi4nvPz48BMx/sKRPkobl+cQJNqpzAsMW3Fi84=
+Date: Thu, 14 Aug 2025 13:37:38 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Wang Wensheng <wangwensheng4@huawei.com>
 Cc: rafael@kernel.org, dakr@kernel.org, tglx@linutronix.de,
@@ -45,7 +45,7 @@ Cc: rafael@kernel.org, dakr@kernel.org, tglx@linutronix.de,
 	linux-kernel@vger.kernel.org, chenjun102@huawei.com
 Subject: Re: [PATCH 1/3] driver core: Fix concurrent problem of
  deferred_probe_extend_timeout()
-Message-ID: <2025081416-reverb-unaired-1de9@gregkh>
+Message-ID: <2025081431-puzzling-mumble-9570@gregkh>
 References: <20250814111023.2693-1-wangwensheng4@huawei.com>
  <20250814111023.2693-2-wangwensheng4@huawei.com>
 Precedence: bulk
@@ -101,10 +101,48 @@ On Thu, Aug 14, 2025 at 07:10:21PM +0800, Wang Wensheng wrote:
 >  void deferred_probe_extend_timeout(void)
 >  {
 > +	mutex_lock(&deferred_probe_mutex);
+>  	/*
+>  	 * If the work hasn't been queued yet or if the work expired, don't
+>  	 * start a new one.
+> @@ -333,6 +334,7 @@ void deferred_probe_extend_timeout(void)
+>  		pr_debug("Extended deferred probe timeout by %d secs\n",
+>  					driver_deferred_probe_timeout);
+>  	}
+> +	mutex_unlock(&deferred_probe_mutex);
+>  }
+>  
+>  /**
+> -- 
+> 2.22.0
+> 
 
-Perhaps use a guard() instead?
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
 thanks,
 
-greg k-h
+greg k-h's patch email bot
 
