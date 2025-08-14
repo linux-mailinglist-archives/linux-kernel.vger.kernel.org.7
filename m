@@ -1,774 +1,223 @@
-Return-Path: <linux-kernel+bounces-768930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCB9B2680E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78926B26826
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BEDF6255BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:47:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8111C25BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D59D53002AE;
-	Thu, 14 Aug 2025 13:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5148301003;
+	Thu, 14 Aug 2025 13:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Z/GCGjvG"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="XeMACWsP"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB6E3009E7;
-	Thu, 14 Aug 2025 13:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49002FCC1A;
+	Thu, 14 Aug 2025 13:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179229; cv=none; b=ojO1NWcjuVWfrQ/vC5jeurRjOFA/l1XHGTJBULZ6JUUSCs5Y34srBetzPdlB1H3LQofpB+QLikHcmNh2hI1BLJDGqdoAKUIKy07oKPItzPDQxz8NG4RtFBTLDYvvEyhSfCuA5ffeo1QL0FTnWPAe1Rnat37n984U91vPFKVWLxU=
+	t=1755179272; cv=none; b=jXeq86UvLUnN7dV7yydmDurWfQ0BeJ/adhQT0rRdGgqhOTWLmRTJIogYRNclSRtqKlXjyBIk1YLAJwy9WxjRjM7435lwevufZUVYvyJHGEqK/dB06bdXC001rdUM2itXf0Hgoirm0wY5D/ZJTuruA01WIGVYKmZoiSuLXz5VWpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179229; c=relaxed/simple;
-	bh=lDvxS32hdxTWk+QbrjIF1OqHcRJC6N9gm4cLOcrBODo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Y2SSjyrUiyCYe8aR2b4u8NUBc/MA6XbHTCmC5z2211L/gRo59asJDI8+Ns4YbEgpb7jUgIDiW2F+JXssta1JeM3kR2xzp+rAlZC5GHZ/T7LZv1l7s8p82D6o1FXOisOJwbYmjVlKsnq8Lzgi8iRdwItYMly8T7DNXMDOUurd6S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Z/GCGjvG; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EDl1gg1890369;
-	Thu, 14 Aug 2025 08:47:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755179221;
-	bh=kcD25U2aC3p0wP+5f8KI7KX1hON58t0yb8dyeFLFTs4=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=Z/GCGjvG8fdJClRGu3fqXfD0BwOFgJwal9+mjvc7Fz14/ZQiIbI/qGDiwxcNSEzqQ
-	 tpmAgyCnARdouzgF/vLKF+J9SGPUwH/Kdhfvgh/YAQ6ko5+HnSwwcfdtOuZp4LAJWJ
-	 h1tfvWQIz1ivBrVogZyWH8hLa07x3swN94iDEq1M=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EDl1xX1748940
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 08:47:01 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 08:47:00 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 08:47:00 -0500
-Received: from localhost (dhcp-172-24-233-105.dhcp.ti.com [172.24.233.105])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EDkxLr3688581;
-	Thu, 14 Aug 2025 08:47:00 -0500
-From: Anshul Dalal <anshuld@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: Anshul Dalal <anshuld@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 4/4] arm64: dts: ti: Add support for AM6254atl SiP SK
-Date: Thu, 14 Aug 2025 19:15:30 +0530
-Message-ID: <20250814134531.2743874-5-anshuld@ti.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250814134531.2743874-1-anshuld@ti.com>
-References: <20250814134531.2743874-1-anshuld@ti.com>
+	s=arc-20240116; t=1755179272; c=relaxed/simple;
+	bh=bHLlQ+i7MUaszUfOEpThaWyGiB8ftDea67xt4jpYH7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwDjR5mpsMn8Q5WWY6LcLEYqzPuguB3+ZSQzTAdlH/rNTDRNxNxCiAuJwqrj+8XLjHshRDoG0+3R7/Zvty8YwXow1g3H1ww0zKBEiuxbh6SJUURE/m9VPtKzQRupE6PEM45RFH9W1UzrkNZVYm93fpeVxwXWIjip9u1IQqycn20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=XeMACWsP; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4c2mlJ3KJSz9slm;
+	Thu, 14 Aug 2025 15:47:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1755179260;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uki2al884XzKP49qjOl830kb/sNWeIrrfQ7gI47948k=;
+	b=XeMACWsPRRrEdyomOJfL2aOqZ1Synd5sgH4SEZXXzDfB+5pL8EC8Y0ZnSAjUy+m+fzaTUK
+	i7qQCHAp/Qy/Uqo+BDd67QyoFeFYa+g78T4cVS028jxGqgkM1AKk+gqqxxQ+KkBjcDz1oC
+	pxt6QyTzPkqyBe2V92fayiGQ7H83hhX527Kg5+0fYiIy3gREAuKgErRQjosUnpdbLhdppl
+	KnDnUXjk4GTQmMxljRAImWegqc3LCbGS9jwS850U4n4PdEU7udVUV0cJ3zei2som0C8oSX
+	oi3omMpBPyOlNeRlvCDpJvEUdES9vJnjPaN8/vQJgetV714WYHsasKtUQWCkTw==
+Date: Thu, 14 Aug 2025 23:47:24 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: Charalampos Mitrodimas <charmitro@posteo.net>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	David Howells <dhowells@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] debugfs: fix mount options not being applied
+Message-ID: <2025-08-14.1755177392-elderly-somber-portal-duress-1AbFcr@cyphar.com>
+References: <20250804-debugfs-mount-opts-v1-1-bc05947a80b5@posteo.net>
+ <a1b3f555-acfe-4fd1-8aa4-b97f456fd6f4@redhat.com>
+ <d6588ae2-0fdb-480d-8448-9c993fdc2563@redhat.com>
+ <2025-08-14.1755150554-popular-erased-gallons-heroism-gRtAbX@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="gbonwdwtpt3b6c5h"
+Content-Disposition: inline
+In-Reply-To: <2025-08-14.1755150554-popular-erased-gallons-heroism-gRtAbX@cyphar.com>
 
-This patch adds the dt for SK-AM62-SIP, which uses the existing
-SK-AM62 board design with the new AM6254atl SiP. This changes the
-location of memory node from the board dts to SoC level dtsi
-(k3-am6254atl in our case).
 
-Therefore this patch introduces the new 'k3-am625-sk-common.dtsi'
-which represents the common hardware used for both 'am625-sk' and
-'am6254atl-sk' boards with the inheritance hierarchy modified to:
+--gbonwdwtpt3b6c5h
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] debugfs: fix mount options not being applied
+MIME-Version: 1.0
 
-k3-am625-sk.dts:
+On 2025-08-14, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> On 2025-08-05, Eric Sandeen <sandeen@redhat.com> wrote:
+> > On 8/4/25 12:22 PM, Eric Sandeen wrote:
+> > > On 8/4/25 9:30 AM, Charalampos Mitrodimas wrote:
+> > >> Mount options (uid, gid, mode) are silently ignored when debugfs is
+> > >> mounted. This is a regression introduced during the conversion to the
+> > >> new mount API.
+> > >>
+> > >> When the mount API conversion was done, the line that sets
+> > >> sb->s_fs_info to the parsed options was removed. This causes
+> > >> debugfs_apply_options() to operate on a NULL pointer.
+> > >>
+> > >> As an example, with the bug the "mode" mount option is ignored:
+> > >>
+> > >>   $ mount -o mode=3D0666 -t debugfs debugfs /tmp/debugfs_test
+> > >>   $ mount | grep debugfs_test
+> > >>   debugfs on /tmp/debugfs_test type debugfs (rw,relatime)
+> > >>   $ ls -ld /tmp/debugfs_test
+> > >>   drwx------ 25 root root 0 Aug  4 14:16 /tmp/debugfs_test
+> > >=20
+> > > Argh. So, this looks a lot like the issue that got fixed for tracefs =
+in:
+> > >=20
+> > > e4d32142d1de tracing: Fix tracefs mount options
+> > >=20
+> > > Let me look at this; tracefs & debugfs are quite similar, so perhaps
+> > > keeping the fix consistent would make sense as well but I'll dig
+> > > into it a bit more.
+> >=20
+> > So, yes - a fix following the pattern of e4d32142d1de does seem to reso=
+lve
+> > this issue.
+> >=20
+> > However, I think we might be playing whack-a-mole here (fixing one fs a=
+t a time,
+> > when the problem is systemic) among filesystems that use get_tree_singl=
+e()
+> > and have configurable options. For example, pstore:
+> >=20
+> > # umount /sys/fs/pstore=20
+> >=20
+> > # mount -t pstore -o kmsg_bytes=3D65536 none /sys/fs/pstore
+> > # mount | grep pstore
+> > none on /sys/fs/pstore type pstore (rw,relatime,seclabel)
+> >=20
+> > # mount -o remount,kmsg_bytes=3D65536 /sys/fs/pstore
+> > # mount | grep pstore
+> > none on /sys/fs/pstore type pstore (rw,relatime,seclabel,kmsg_bytes=3D6=
+5536)
+> > #
+>=20
+> Isn't this just a standard consequence of the classic "ignore mount
+> flags if we are reusing a superblock" behaviour? Not doing this can lead
+> to us silently clearing security-related flags ("acl" is the common
+> example used) and was the main reason for FSCONFIG_CMD_CREATE_EXCL.
+>=20
+> Maybe for some filesystems (like debugfs), it makes sense to permit a
+> mount operation to silently reconfigure existing mounts, but this should
+> be an opt-in knob per-filesystem.
+>=20
+> Also, if we plan to do this then you almost certainly want to have
+> fs_context track which set of parameters were set and then only
+> reconfigure those parameters *which were set*. At the moment,
+> fs_context_for_reconfigure() works around this by having the current
+> sb_flags and other configuration be loaded via init_fs_context(), but if
+> you do an auto-reconfigure with an fs_context created for mounting then
+> you won't inherit _any_ of the old mount options. This could lead to a
+> situation like:
+>=20
+>   % mount -t pstore -o ro /sys/fs/pstore
+>   % mount -t pstore -o kmsg_bytes=3D65536 /tmp
+>   % # /sys/fs/pstore is now rw.
+>=20
+> Which is really not ideal, as it would make it incredibly fragile for
+> anyone to try to mount these filesystems without breaking other mounts
+> on the system.
+>=20
+> If fs_context tracked which parameters were configured and only applied
+> the set ones, at least you would avoid unintentionally unsetting
+> parameters of the original mount.
 
-     k3-am62    k3-am62x-sk-common
-        |            |
-    k3-am625    k3-am625-sk-common
-        |            |
-        +-----+------+
-              |
-         k3-am625-sk
+My mistake, fs_context does this already with fc->sb_flags_mask. That
+leaves each filesystem to handle this properly for fc->s_fs_info, and
+the ones I've checked _do_ handle this properly -- false alarm! (I
+missed this on the first pass-through.)
 
-k3-am6254atl-sk.dts:
+I guess then that this is more of a question of what users expect. I
+agree with what David Howells was quoted as saying, which is that
+silently doing this is really suboptimal. I still feel that logging a
+warning is more preferable -- if the VFS can be told whether
+fc->s_fs_info diverges from sb->s_fs_info, then we can log a warning (or
+alternatively, it could be done by each filesystem and VFS does it for
+the generic s_flags).
 
-     k3-am62
-        |
-     k3-am625       k3-am62x-sk-common
-        |                |
-    k3-am6254atl    k3-am625-sk-common
-        |                |
-        +-------+--------+
-                |
-         k3-am6254atl-sk
+This is arguably more practical than FSCONFIG_CMD_CREATE_EXCL for most
+users because it could give you feedback on what parameters were
+problematic, and if there was no warning then you don't need to worry
+about the mount sharing a superblock. FSCONFIG_CMD_CREATE_EXCL would
+then only be needed for truly paranoid programs. AFAICS, mount(8) does
+now forward warning messages from fclog, so this would mean admins would
+be able to see the warning immediately from their mount(8) call. Older
+mount(2)-based users would see it in dmesg.
 
-Signed-off-by: Anshul Dalal <anshuld@ti.com>
----
- arch/arm64/boot/dts/ti/Makefile               |   1 +
- .../arm64/boot/dts/ti/k3-am625-sk-common.dtsi | 296 ++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am625-sk.dts        | 296 +-----------------
- arch/arm64/boot/dts/ti/k3-am6254atl-sk.dts    |  15 +
- 4 files changed, 313 insertions(+), 295 deletions(-)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
- create mode 100644 arch/arm64/boot/dts/ti/k3-am6254atl-sk.dts
+I can take a look writing a patch for this?
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index aad9177930e6..72f8755a0f30 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -28,6 +28,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am62x-phyboard-lyra-gpio-fan.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am62-lp-sk.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am62-lp-sk-nand.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am62-pocketbeagle2.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-am6254atl-sk.dtb
- 
- # Boards with AM62Ax SoC
- dtb-$(CONFIG_ARCH_K3) += k3-am62a7-sk.dtb
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
-new file mode 100644
-index 000000000000..fe0b98e1d105
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am625-sk-common.dtsi
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * Common dtsi for AM625 SK and derivatives
-+ *
-+ * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+#include "k3-am62x-sk-common.dtsi"
-+
-+/ {
-+	opp-table {
-+		/* Add 1.4GHz OPP for am625-sk board. Requires VDD_CORE to be at 0.85V */
-+		opp-1400000000 {
-+			opp-hz = /bits/ 64 <1400000000>;
-+			opp-supported-hw = <0x01 0x0004>;
-+			clock-latency-ns = <6000000>;
-+		};
-+	};
-+
-+	vmain_pd: regulator-0 {
-+		/* TPS65988 PD CONTROLLER OUTPUT */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vmain_pd";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		bootph-all;
-+	};
-+
-+	vcc_5v0: regulator-1 {
-+		/* Output of LM34936 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_5v0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&vmain_pd>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		bootph-all;
-+	};
-+
-+	vcc_3v3_sys: regulator-2 {
-+		/* output of LM61460-Q1 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_3v3_sys";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vmain_pd>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		bootph-all;
-+	};
-+
-+	vdd_mmc1: regulator-3 {
-+		/* TPS22918DBVR */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_mmc1";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		vin-supply = <&vcc_3v3_sys>;
-+		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
-+		bootph-all;
-+	};
-+
-+	vdd_sd_dv: regulator-4 {
-+		/* Output of TLV71033 */
-+		compatible = "regulator-gpio";
-+		regulator-name = "tlv71033";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vdd_sd_dv_pins_default>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		vin-supply = <&vcc_5v0>;
-+		gpios = <&main_gpio0 31 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x0>,
-+			 <3300000 0x1>;
-+		bootph-all;
-+	};
-+
-+	vcc_1v8: regulator-5 {
-+		/* output of TPS6282518DMQ */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_1v8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_3v3_sys>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&main_pmx0 {
-+	main_mmc0_pins_default: main-mmc0-default-pins {
-+		bootph-all;
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x220, PIN_INPUT, 0) /* (Y3) MMC0_CMD */
-+			AM62X_IOPAD(0x218, PIN_INPUT, 0) /* (AB1) MMC0_CLK */
-+			AM62X_IOPAD(0x214, PIN_INPUT, 0) /* (AA2) MMC0_DAT0 */
-+			AM62X_IOPAD(0x210, PIN_INPUT_PULLUP, 0) /* (AA1) MMC0_DAT1 */
-+			AM62X_IOPAD(0x20c, PIN_INPUT_PULLUP, 0) /* (AA3) MMC0_DAT2 */
-+			AM62X_IOPAD(0x208, PIN_INPUT_PULLUP, 0) /* (Y4) MMC0_DAT3 */
-+			AM62X_IOPAD(0x204, PIN_INPUT_PULLUP, 0) /* (AB2) MMC0_DAT4 */
-+			AM62X_IOPAD(0x200, PIN_INPUT_PULLUP, 0) /* (AC1) MMC0_DAT5 */
-+			AM62X_IOPAD(0x1fc, PIN_INPUT_PULLUP, 0) /* (AD2) MMC0_DAT6 */
-+			AM62X_IOPAD(0x1f8, PIN_INPUT_PULLUP, 0) /* (AC2) MMC0_DAT7 */
-+		>;
-+	};
-+
-+	main_rgmii2_pins_default: main-rgmii2-default-pins {
-+		bootph-all;
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x184, PIN_INPUT, 0) /* (AE23) RGMII2_RD0 */
-+			AM62X_IOPAD(0x188, PIN_INPUT, 0) /* (AB20) RGMII2_RD1 */
-+			AM62X_IOPAD(0x18c, PIN_INPUT, 0) /* (AC21) RGMII2_RD2 */
-+			AM62X_IOPAD(0x190, PIN_INPUT, 0) /* (AE22) RGMII2_RD3 */
-+			AM62X_IOPAD(0x180, PIN_INPUT, 0) /* (AD23) RGMII2_RXC */
-+			AM62X_IOPAD(0x17c, PIN_INPUT, 0) /* (AD22) RGMII2_RX_CTL */
-+			AM62X_IOPAD(0x16c, PIN_OUTPUT, 0) /* (Y18) RGMII2_TD0 */
-+			AM62X_IOPAD(0x170, PIN_OUTPUT, 0) /* (AA18) RGMII2_TD1 */
-+			AM62X_IOPAD(0x174, PIN_OUTPUT, 0) /* (AD21) RGMII2_TD2 */
-+			AM62X_IOPAD(0x178, PIN_OUTPUT, 0) /* (AC20) RGMII2_TD3 */
-+			AM62X_IOPAD(0x168, PIN_OUTPUT, 0) /* (AE21) RGMII2_TXC */
-+			AM62X_IOPAD(0x164, PIN_OUTPUT, 0) /* (AA19) RGMII2_TX_CTL */
-+		>;
-+	};
-+
-+	ospi0_pins_default: ospi0-default-pins {
-+		bootph-all;
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x000, PIN_OUTPUT, 0) /* (H24) OSPI0_CLK */
-+			AM62X_IOPAD(0x02c, PIN_OUTPUT, 0) /* (F23) OSPI0_CSn0 */
-+			AM62X_IOPAD(0x00c, PIN_INPUT, 0) /* (E25) OSPI0_D0 */
-+			AM62X_IOPAD(0x010, PIN_INPUT, 0) /* (G24) OSPI0_D1 */
-+			AM62X_IOPAD(0x014, PIN_INPUT, 0) /* (F25) OSPI0_D2 */
-+			AM62X_IOPAD(0x018, PIN_INPUT, 0) /* (F24) OSPI0_D3 */
-+			AM62X_IOPAD(0x01c, PIN_INPUT, 0) /* (J23) OSPI0_D4 */
-+			AM62X_IOPAD(0x020, PIN_INPUT, 0) /* (J25) OSPI0_D5 */
-+			AM62X_IOPAD(0x024, PIN_INPUT, 0) /* (H25) OSPI0_D6 */
-+			AM62X_IOPAD(0x028, PIN_INPUT, 0) /* (J22) OSPI0_D7 */
-+			AM62X_IOPAD(0x008, PIN_INPUT, 0) /* (J24) OSPI0_DQS */
-+		>;
-+	};
-+
-+	vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x07c, PIN_OUTPUT, 7) /* (P25) GPMC0_CLK.GPIO0_31 */
-+		>;
-+		bootph-all;
-+	};
-+
-+	main_gpio1_ioexp_intr_pins_default: main-gpio1-ioexp-intr-default-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x01d4, PIN_INPUT, 7) /* (B15) UART0_RTSn.GPIO1_23 */
-+		>;
-+		bootph-all;
-+	};
-+};
-+
-+&main_gpio0 {
-+	bootph-all;
-+};
-+
-+&main_gpio1 {
-+	bootph-all;
-+};
-+
-+&main_i2c1 {
-+	exp1: gpio@22 {
-+		compatible = "ti,tca6424";
-+		reg = <0x22>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&main_gpio1_ioexp_intr_pins_default>;
-+		interrupt-parent = <&main_gpio1>;
-+		interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+		gpio-line-names = "GPIO_CPSW2_RST", "GPIO_CPSW1_RST",
-+				   "PRU_DETECT", "MMC1_SD_EN",
-+				   "VPP_LDO_EN", "EXP_PS_3V3_En",
-+				   "EXP_PS_5V0_En", "EXP_HAT_DETECT",
-+				   "GPIO_AUD_RSTn", "GPIO_eMMC_RSTn",
-+				   "UART1_FET_BUF_EN", "WL_LT_EN",
-+				   "GPIO_HDMI_RSTn", "CSI_GPIO1",
-+				   "CSI_GPIO2", "PRU_3V3_EN",
-+				   "HDMI_INTn", "PD_I2C_IRQ",
-+				   "MCASP1_FET_EN", "MCASP1_BUF_BT_EN",
-+				   "MCASP1_FET_SEL", "UART1_FET_SEL",
-+				   "TSINT#", "IO_EXP_TEST_LED";
-+		bootph-all;
-+	};
-+};
-+
-+&sdhci0 {
-+	bootph-all;
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc0_pins_default>;
-+	disable-wp;
-+};
-+
-+&sdhci1 {
-+	vmmc-supply = <&vdd_mmc1>;
-+	vqmmc-supply = <&vdd_sd_dv>;
-+};
-+
-+&cpsw3g {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_rgmii1_pins_default>, <&main_rgmii2_pins_default>;
-+};
-+
-+&cpsw_port2 {
-+	/* PCB provides an internal delay of 2ns */
-+	phy-mode = "rgmii-rxid";
-+	phy-handle = <&cpsw3g_phy1>;
-+};
-+
-+&cpsw3g_mdio {
-+	cpsw3g_phy1: ethernet-phy@1 {
-+		reg = <1>;
-+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-+		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+		ti,min-output-impedance;
-+	};
-+};
-+
-+&fss {
-+	bootph-all;
-+};
-+
-+&ospi0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ospi0_pins_default>;
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0x0>;
-+		spi-tx-bus-width = <8>;
-+		spi-rx-bus-width = <8>;
-+		spi-max-frequency = <25000000>;
-+		cdns,tshsl-ns = <60>;
-+		cdns,tsd2d-ns = <60>;
-+		cdns,tchsh-ns = <60>;
-+		cdns,tslch-ns = <60>;
-+		cdns,read-delay = <4>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			bootph-all;
-+
-+			partition@0 {
-+				label = "ospi.tiboot3";
-+				reg = <0x0 0x80000>;
-+			};
-+
-+			partition@80000 {
-+				label = "ospi.tispl";
-+				reg = <0x80000 0x200000>;
-+			};
-+
-+			partition@280000 {
-+				label = "ospi.u-boot";
-+				reg = <0x280000 0x400000>;
-+			};
-+
-+			partition@680000 {
-+				label = "ospi.env";
-+				reg = <0x680000 0x40000>;
-+			};
-+
-+			partition@6c0000 {
-+				label = "ospi.env.backup";
-+				reg = <0x6c0000 0x40000>;
-+			};
-+
-+			partition@800000 {
-+				label = "ospi.rootfs";
-+				reg = <0x800000 0x37c0000>;
-+			};
-+
-+			partition@3fc0000 {
-+				bootph-pre-ram;
-+				label = "ospi.phypattern";
-+				reg = <0x3fc0000 0x40000>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-sk.dts b/arch/arm64/boot/dts/ti/k3-am625-sk.dts
-index 1c6812a8ae9b..52954c77df80 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am625-sk.dts
-@@ -8,310 +8,16 @@
- /dts-v1/;
- 
- #include "k3-am625.dtsi"
--#include "k3-am62x-sk-common.dtsi"
-+#include "k3-am625-sk-common.dtsi"
- 
- / {
- 	compatible = "ti,am625-sk", "ti,am625";
- 	model = "Texas Instruments AM625 SK";
- 
--	opp-table {
--		/* Add 1.4GHz OPP for am625-sk board. Requires VDD_CORE to be at 0.85V */
--		opp-1400000000 {
--			opp-hz = /bits/ 64 <1400000000>;
--			opp-supported-hw = <0x01 0x0004>;
--			clock-latency-ns = <6000000>;
--		};
--	};
--
- 	memory@80000000 {
- 		/* 2G RAM */
- 		reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
- 		device_type = "memory";
- 		bootph-pre-ram;
- 	};
--
--	vmain_pd: regulator-0 {
--		/* TPS65988 PD CONTROLLER OUTPUT */
--		bootph-all;
--		compatible = "regulator-fixed";
--		regulator-name = "vmain_pd";
--		regulator-min-microvolt = <5000000>;
--		regulator-max-microvolt = <5000000>;
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
--	vcc_5v0: regulator-1 {
--		/* Output of LM34936 */
--		bootph-all;
--		compatible = "regulator-fixed";
--		regulator-name = "vcc_5v0";
--		regulator-min-microvolt = <5000000>;
--		regulator-max-microvolt = <5000000>;
--		vin-supply = <&vmain_pd>;
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
--	vcc_3v3_sys: regulator-2 {
--		/* output of LM61460-Q1 */
--		bootph-all;
--		compatible = "regulator-fixed";
--		regulator-name = "vcc_3v3_sys";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		vin-supply = <&vmain_pd>;
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
--	vdd_mmc1: regulator-3 {
--		/* TPS22918DBVR */
--		bootph-all;
--		compatible = "regulator-fixed";
--		regulator-name = "vdd_mmc1";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-boot-on;
--		enable-active-high;
--		vin-supply = <&vcc_3v3_sys>;
--		gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
--	};
--
--	vdd_sd_dv: regulator-4 {
--		/* Output of TLV71033 */
--		bootph-all;
--		compatible = "regulator-gpio";
--		regulator-name = "tlv71033";
--		pinctrl-names = "default";
--		pinctrl-0 = <&vdd_sd_dv_pins_default>;
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-boot-on;
--		vin-supply = <&vcc_5v0>;
--		gpios = <&main_gpio0 31 GPIO_ACTIVE_HIGH>;
--		states = <1800000 0x0>,
--			 <3300000 0x1>;
--	};
--
--	vcc_1v8: regulator-5 {
--		/* output of TPS6282518DMQ */
--		compatible = "regulator-fixed";
--		regulator-name = "vcc_1v8";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		vin-supply = <&vcc_3v3_sys>;
--		regulator-always-on;
--		regulator-boot-on;
--	};
--};
--
--&main_pmx0 {
--	main_mmc0_pins_default: main-mmc0-default-pins {
--		bootph-all;
--		pinctrl-single,pins = <
--			AM62X_IOPAD(0x220, PIN_INPUT, 0) /* (Y3) MMC0_CMD */
--			AM62X_IOPAD(0x218, PIN_INPUT, 0) /* (AB1) MMC0_CLK */
--			AM62X_IOPAD(0x214, PIN_INPUT, 0) /* (AA2) MMC0_DAT0 */
--			AM62X_IOPAD(0x210, PIN_INPUT_PULLUP, 0) /* (AA1) MMC0_DAT1 */
--			AM62X_IOPAD(0x20c, PIN_INPUT_PULLUP, 0) /* (AA3) MMC0_DAT2 */
--			AM62X_IOPAD(0x208, PIN_INPUT_PULLUP, 0) /* (Y4) MMC0_DAT3 */
--			AM62X_IOPAD(0x204, PIN_INPUT_PULLUP, 0) /* (AB2) MMC0_DAT4 */
--			AM62X_IOPAD(0x200, PIN_INPUT_PULLUP, 0) /* (AC1) MMC0_DAT5 */
--			AM62X_IOPAD(0x1fc, PIN_INPUT_PULLUP, 0) /* (AD2) MMC0_DAT6 */
--			AM62X_IOPAD(0x1f8, PIN_INPUT_PULLUP, 0) /* (AC2) MMC0_DAT7 */
--		>;
--	};
--
--	main_rgmii2_pins_default: main-rgmii2-default-pins {
--		bootph-all;
--		pinctrl-single,pins = <
--			AM62X_IOPAD(0x184, PIN_INPUT, 0) /* (AE23) RGMII2_RD0 */
--			AM62X_IOPAD(0x188, PIN_INPUT, 0) /* (AB20) RGMII2_RD1 */
--			AM62X_IOPAD(0x18c, PIN_INPUT, 0) /* (AC21) RGMII2_RD2 */
--			AM62X_IOPAD(0x190, PIN_INPUT, 0) /* (AE22) RGMII2_RD3 */
--			AM62X_IOPAD(0x180, PIN_INPUT, 0) /* (AD23) RGMII2_RXC */
--			AM62X_IOPAD(0x17c, PIN_INPUT, 0) /* (AD22) RGMII2_RX_CTL */
--			AM62X_IOPAD(0x16c, PIN_OUTPUT, 0) /* (Y18) RGMII2_TD0 */
--			AM62X_IOPAD(0x170, PIN_OUTPUT, 0) /* (AA18) RGMII2_TD1 */
--			AM62X_IOPAD(0x174, PIN_OUTPUT, 0) /* (AD21) RGMII2_TD2 */
--			AM62X_IOPAD(0x178, PIN_OUTPUT, 0) /* (AC20) RGMII2_TD3 */
--			AM62X_IOPAD(0x168, PIN_OUTPUT, 0) /* (AE21) RGMII2_TXC */
--			AM62X_IOPAD(0x164, PIN_OUTPUT, 0) /* (AA19) RGMII2_TX_CTL */
--		>;
--	};
--
--	ospi0_pins_default: ospi0-default-pins {
--		bootph-all;
--		pinctrl-single,pins = <
--			AM62X_IOPAD(0x000, PIN_OUTPUT, 0) /* (H24) OSPI0_CLK */
--			AM62X_IOPAD(0x02c, PIN_OUTPUT, 0) /* (F23) OSPI0_CSn0 */
--			AM62X_IOPAD(0x00c, PIN_INPUT, 0) /* (E25) OSPI0_D0 */
--			AM62X_IOPAD(0x010, PIN_INPUT, 0) /* (G24) OSPI0_D1 */
--			AM62X_IOPAD(0x014, PIN_INPUT, 0) /* (F25) OSPI0_D2 */
--			AM62X_IOPAD(0x018, PIN_INPUT, 0) /* (F24) OSPI0_D3 */
--			AM62X_IOPAD(0x01c, PIN_INPUT, 0) /* (J23) OSPI0_D4 */
--			AM62X_IOPAD(0x020, PIN_INPUT, 0) /* (J25) OSPI0_D5 */
--			AM62X_IOPAD(0x024, PIN_INPUT, 0) /* (H25) OSPI0_D6 */
--			AM62X_IOPAD(0x028, PIN_INPUT, 0) /* (J22) OSPI0_D7 */
--			AM62X_IOPAD(0x008, PIN_INPUT, 0) /* (J24) OSPI0_DQS */
--		>;
--	};
--
--	vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
--		bootph-all;
--		pinctrl-single,pins = <
--			AM62X_IOPAD(0x07c, PIN_OUTPUT, 7) /* (P25) GPMC0_CLK.GPIO0_31 */
--		>;
--	};
--
--	main_gpio1_ioexp_intr_pins_default: main-gpio1-ioexp-intr-default-pins {
--		bootph-all;
--		pinctrl-single,pins = <
--			AM62X_IOPAD(0x01d4, PIN_INPUT, 7) /* (B15) UART0_RTSn.GPIO1_23 */
--		>;
--	};
--};
--
--&main_gpio0 {
--	bootph-all;
--};
--
--&main_gpio1 {
--	bootph-all;
--};
--
--&main_i2c1 {
--	bootph-all;
--	exp1: gpio@22 {
--		bootph-all;
--		compatible = "ti,tca6424";
--		reg = <0x22>;
--		gpio-controller;
--		#gpio-cells = <2>;
--		gpio-line-names = "GPIO_CPSW2_RST", "GPIO_CPSW1_RST",
--				   "PRU_DETECT", "MMC1_SD_EN",
--				   "VPP_LDO_EN", "EXP_PS_3V3_En",
--				   "EXP_PS_5V0_En", "EXP_HAT_DETECT",
--				   "GPIO_AUD_RSTn", "GPIO_eMMC_RSTn",
--				   "UART1_FET_BUF_EN", "WL_LT_EN",
--				   "GPIO_HDMI_RSTn", "CSI_GPIO1",
--				   "CSI_GPIO2", "PRU_3V3_EN",
--				   "HDMI_INTn", "PD_I2C_IRQ",
--				   "MCASP1_FET_EN", "MCASP1_BUF_BT_EN",
--				   "MCASP1_FET_SEL", "UART1_FET_SEL",
--				   "TSINT#", "IO_EXP_TEST_LED";
--
--		interrupt-parent = <&main_gpio1>;
--		interrupts = <23 IRQ_TYPE_EDGE_FALLING>;
--		interrupt-controller;
--		#interrupt-cells = <2>;
--
--		pinctrl-names = "default";
--		pinctrl-0 = <&main_gpio1_ioexp_intr_pins_default>;
--	};
--};
--
--&sdhci0 {
--	bootph-all;
--	non-removable;
--	pinctrl-names = "default";
--	pinctrl-0 = <&main_mmc0_pins_default>;
--	status = "okay";
--};
--
--&sdhci1 {
--	vmmc-supply = <&vdd_mmc1>;
--	vqmmc-supply = <&vdd_sd_dv>;
--};
--
--&cpsw3g {
--	pinctrl-names = "default";
--	pinctrl-0 = <&main_rgmii1_pins_default>, <&main_rgmii2_pins_default>;
--};
--
--&cpsw_port2 {
--	phy-mode = "rgmii-rxid";
--	phy-handle = <&cpsw3g_phy1>;
--};
--
--&cpsw3g_mdio {
--	cpsw3g_phy1: ethernet-phy@1 {
--		reg = <1>;
--		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
--		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
--		ti,min-output-impedance;
--	};
--};
--
--&fss {
--	bootph-all;
--};
--
--&ospi0 {
--	bootph-all;
--	status = "okay";
--	pinctrl-names = "default";
--	pinctrl-0 = <&ospi0_pins_default>;
--
--	flash@0 {
--		bootph-all;
--		compatible = "jedec,spi-nor";
--		reg = <0x0>;
--		spi-tx-bus-width = <8>;
--		spi-rx-bus-width = <8>;
--		spi-max-frequency = <25000000>;
--		cdns,tshsl-ns = <60>;
--		cdns,tsd2d-ns = <60>;
--		cdns,tchsh-ns = <60>;
--		cdns,tslch-ns = <60>;
--		cdns,read-delay = <4>;
--
--		partitions {
--			bootph-all;
--			compatible = "fixed-partitions";
--			#address-cells = <1>;
--			#size-cells = <1>;
--
--			partition@0 {
--				label = "ospi.tiboot3";
--				reg = <0x0 0x80000>;
--			};
--
--			partition@80000 {
--				label = "ospi.tispl";
--				reg = <0x80000 0x200000>;
--			};
--
--			partition@280000 {
--				label = "ospi.u-boot";
--				reg = <0x280000 0x400000>;
--			};
--
--			partition@680000 {
--				label = "ospi.env";
--				reg = <0x680000 0x40000>;
--			};
--
--			partition@6c0000 {
--				label = "ospi.env.backup";
--				reg = <0x6c0000 0x40000>;
--			};
--
--			partition@800000 {
--				label = "ospi.rootfs";
--				reg = <0x800000 0x37c0000>;
--			};
--
--			partition@3fc0000 {
--				bootph-pre-ram;
--				label = "ospi.phypattern";
--				reg = <0x3fc0000 0x40000>;
--			};
--		};
--	};
--};
--
--&tlv320aic3106 {
--	DVDD-supply = <&vcc_1v8>;
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am6254atl-sk.dts b/arch/arm64/boot/dts/ti/k3-am6254atl-sk.dts
-new file mode 100644
-index 000000000000..055e63a3fbb1
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am6254atl-sk.dts
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * AM6254atl SiP SK: https://www.ti.com/lit/df/sprr482b/sprr482b.zip
-+ * Webpage: https://www.ti.com/tool/SK-AM62-SIP
-+ *
-+ * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+#include "k3-am6254atl.dtsi"
-+#include "k3-am625-sk-common.dtsi"
-+
-+/ {
-+	model = "Texas Instruments AM6254atl SK";
-+	compatible = "ti,am6254atl-sk", "ti,am6254atl", "ti,am625";
-+};
--- 
-2.50.1
+> FWIW, cgroupv1 has a warning when this situation happens (see the
+> pr_warn() in cgroup1_root_to_use()). I always wondered why this wasn't
+> done on the VFS level, as a warning is probably enough to alert admins
+> about this behaviour without resorting to implicitly changing the mount
+> options of existing mounts.
+>
+> > I think gadgetfs most likely has the same problem but I'm not yet sure
+> > how to test that.
+> >=20
+> > I have no real objection to merging your patch, though I like the
+> > consistency of following e4d32142d1de a bit more. But I think we should
+> > find a graceful solution so that any filesystem using get_tree_single
+> > can avoid this pitfall, if possible.
+> >=20
+> > -Eric
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--gbonwdwtpt3b6c5h
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaJ3o7BsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG8uFAD8D6BvKVqzSuguwXOZR87r
+x3LVUElRso6HkG56g8pV8aIA/3VeQxywwXuC+Xm7tGcH0y8jmFl0E2j0zA7Fvg93
+NmIJ
+=/t/I
+-----END PGP SIGNATURE-----
+
+--gbonwdwtpt3b6c5h--
 
