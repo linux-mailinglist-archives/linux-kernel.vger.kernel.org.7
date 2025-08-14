@@ -1,172 +1,309 @@
-Return-Path: <linux-kernel+bounces-769578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA0A3B2708E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:05:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28A20B27092
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF625565E58
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:05:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E5E627536
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E102C2749C9;
-	Thu, 14 Aug 2025 21:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57216272E42;
+	Thu, 14 Aug 2025 21:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNosmvel"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XXyYdoPS"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B146B481DD;
-	Thu, 14 Aug 2025 21:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755205532; cv=none; b=VfEhAR9kMNyh+3XqxAK7t7jCNXqIQisjGGa5ySPbxGIVkpi9AjnuNk1o1apqo0UznFAnm3rXROisgs+pfuG+ejHaYo2aR3+rfgpeka7EIcsU50rskljSGlcDV/rKtGjgF86fjxLzkI427SLA6z0fRvTFraxwh6qo70SzG3iy4zU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755205532; c=relaxed/simple;
-	bh=ZCIl/bch8Z+EnJqYBHhA4O86LR5t1lBHn52rRfKa2AU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gcsl1bRQHa6nkebWzVVXu0D3kLz5t6lu+kyC8NgtnisZohl96CMWPN2NQiXpXIreHm3SfocalIDPpDY5AZcmloSplfWF8sQgqEkd0DMUpKIzVnEqW/ZTal4FteRXgL6DqhrueXQxri2mefCttViHPnQPccv+UlVdArhjIV2hPv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNosmvel; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-323266d6f57so1609682a91.0;
-        Thu, 14 Aug 2025 14:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755205530; x=1755810330; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b2T2PoMsudVCZDZVP5aXgBiKlpVA7csNpTl7e1h8I1g=;
-        b=UNosmvelLXY0j+HpYTdzFL3QasUlCs4NtPgiInAiqo1dDDMepqUzUEP/DwWrWKqkrS
-         zDDoAHqbTb30Oorm+Za5oug0cnH2fbi38e8Ma9pIOU3paDhpn1IPTpNhSUp9JIPSXQDG
-         UEO4mv0HOCjyafhnXmcNkjL0jafDb9gMrCicQqaiTzOW1ulQQmXKMzQW6s2jXdxA3oqd
-         g5QCL0cewGg+MXOunLAjLSHB0H9JhEAi/xdjXvksi3K0+pcaQAyXIMOeeV72wdZ8ctAR
-         8tS7Lrpp8tMAzig1mSyn6nuY7z/NGEpK2DwWZpk5cxJpxXjC82V4GEy+VA399VpuBu0A
-         1GsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755205530; x=1755810330;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b2T2PoMsudVCZDZVP5aXgBiKlpVA7csNpTl7e1h8I1g=;
-        b=sqKZaAdIVp21jyqULy+ML2TlYIMwhLaqvPpAOVmoaPivcgcmSud7E3U8ePB1tRQD+K
-         IGk8LfUEdHjwqRzMs4eHlwqz3Jv0k8mAaubaXcoMCfzvIFAe0WaGhEBomBRaknmwfYCC
-         5h3SyoPT43IY6UCi4ilhzD3NYoa06dE3aX9tXx4BxaI470/NR3s9Hq5BaSvwmkt/D9GI
-         WVwDR9FaXnohdMq81qXpXOPp5ih8Yv5mdTcDab+Q6UbGTF+q3dYGXMFX0v26xopf+IZe
-         hEufYkcXMikY8n1rJ5WYXfyrefK6QEnLfyZZluQHZnVylLEcYeIRTcGXjWP9DJzA9RjY
-         Q29Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU0mk89OtyVRo4MIEzfCA7Okr/fYq1GZO+a5l6kR2zW4+7QNf86d/3/xbaGfA0yFH5LJ34z9yRDxcaMcfk=@vger.kernel.org, AJvYcCWfz9GutM2SPyum/spJjw1PihnkH/M5QCAzaPcxki87CnsImTp9sdqmG8NCpMn7DI0F2zmpQodP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL6jVSyXFHXQe+neUWVGw73lJj5jWXyuvGSya4YkVPgd/TvA6J
-	8y95p6AmAX597eOURM5pllAiru7wsI+fYpQZzWV5LTbEH8Vj8QhRbU/S
-X-Gm-Gg: ASbGncsZQMfpa3uqdFfEATI0IinMtF2YX6AqZCaWuIl4KUoN5+/lpJ7ipqr88owmRId
-	h62DYsQMBfXvsnID1OspzeIwbUeq1n1uYxNMVYNAkPkGRQ8AoENtPTtVeTej+NJ29Qh6YbgDU8H
-	Gi4lSPv5yX9GP4pi5a5OnUnj9+tLV6Ieh/zbIKeLT0GXpWF9N48drv/MTNtU0+v+HHEgHUsPJZH
-	ALaRmoCtCW/O51UeobbFs0f/srJ2CpnXmw2Yno2Lzcs9MzhGVSVGWJGJrWbGVqXT+ZzajUaeTH3
-	KegD7Vo4lpeSANNOA2oF5HxqOUNbxxhsq9qSnCbaiLTuvNplaQAW+fm5Jn/XwqZVEDWNnhlezf8
-	R96z68te7kJg++qm1oOHDdA==
-X-Google-Smtp-Source: AGHT+IF38DQIT8miVnC99y7ONcHPClHfyWEuPfhP5Okjv5gjZagJcD4NNDaRehygybwdY0lCOtBdiQ==
-X-Received: by 2002:a17:90b:1d50:b0:31f:3cfd:d334 with SMTP id 98e67ed59e1d1-32327b09c1amr6796298a91.4.1755205529869;
-        Thu, 14 Aug 2025 14:05:29 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3233116f46fsm2823419a91.28.2025.08.14.14.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 14:05:29 -0700 (PDT)
-Date: Thu, 14 Aug 2025 17:05:27 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: Aaron Conole <aconole@redhat.com>, Eelco Chaudron <echaudro@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	dev@openvswitch.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: openvswitch: Use for_each_cpu_from() where
- appropriate
-Message-ID: <aJ5Pl1i0RczgaHyI@yury>
-References: <20250814195838.388693-1-yury.norov@gmail.com>
- <c5b583a8-65da-4adb-8cf1-73bf679c0593@ovn.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D620F253B73;
+	Thu, 14 Aug 2025 21:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755205662; cv=fail; b=WmLzi6p/Fvl0d9Y/K0ifD01Od8g0H2yT5HXLWk5mdpzGH8lu9p96kxM14u0hLSq1TTy6YHnWfd31U0AloposjwUYF/JTXS6/hZBhBInrKKUj44x5Y8R5D7vfl2YwIyrL7lK5Wy3T3QfKU+MbAu36tNpK/tBuvRCY7U5pgD8Zv70=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755205662; c=relaxed/simple;
+	bh=nvFHVNg/PPtQf7pQFI2AOOTwx18khztnzP9WvMYjim8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=C6FKvW38ddk5Wqw8uUEwIsjs/Gfypic94DaqSxbbVqOOTLtVyhY+YkDmoqMB4xiYhCGAhCiaieupIIhzHTqdsegcs8S6liyM7Mb2iCRFtUZXfPQtNJ6zMIpKztZztGQMSH7SudZyVJY3YYXt9opgeYWcFEqPGCRD2JzWluWobWY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XXyYdoPS; arc=fail smtp.client-ip=40.107.220.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QNq6R8+H//79LwOzD8R+8DQ+x+zfPZNMy9TZgmWRdWFbAxr/eGJNP94cCjLAude9sD3UCBMEQwVNuWpfoqVH4lgrARJZ8hnTtCEvkiFKy+/CCtgM0EFvRltyMVmiuxiRSD+9qQ3qiarK0JsHlQJtih+1hHRUXdqvty8aAjDprR9duoptXIWTwGPBZfuSUdgXbYfIWSDA3fDtXqcp8lep9Gw8UVUPteyz1VIM/cKvJftoJUi59erwom5t9NJzMUkaF9NTUaftH3uDNu27/sY4wgSHbYJXzHTvOVhI0i067IDMey9sj0dbQETHX1+jxAMEb6quS/QzfJMLmhciRSJHbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gsP4wNTw7A1Hl9HquvyIyPzZrqPy/mhnToFMxQ9UHfQ=;
+ b=cF+thQojVtYgBzSodbQCpPCsPb3ocaA9J0t9kMnn1I6/nbdcY2xXUWcM841DvTzf6bbjOCj/AVs7MWxkW5841nPGMjwnfN/syRch7jwXAVkjmB+d+VxKJy/S6l2Dv/lx6ELENG5oAIkEu82r+3g+z6AC2hpENLFL2jKntMXbAbD/7L4g7/FDtXdVGyqdEiwm/z0h0qGDV2qA32k5BPsIGtIgM10OGThhIvPrC19H1e48xbiyAPzgiGbwx/IGXilvnSD1gysMEe/Y1YP2mVShMyQPTk7Fxxb4CS+y0gMLHq0Tt7+Y1yekdY4Sdjulik5bzLfNdMbyXQsYDI8CfJ7otA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gsP4wNTw7A1Hl9HquvyIyPzZrqPy/mhnToFMxQ9UHfQ=;
+ b=XXyYdoPSo4KKbHoE+fZv2KxuhVExcOGy7tANzlUoWjShk1yKwUlVrugdfwrLfOlXAYGgUfjlfUvM3a2rzG9f/nZhfJFyFRasK851f6M7j3tGlB/jgPxKBfgYsv2389gCQ0hf4Vd7zNhRCqAwdfdavLVpvOB1W7YmBHCnPGO4gs0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
+ DS5PPFBABE93B01.namprd12.prod.outlook.com (2603:10b6:f:fc00::65f) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.18; Thu, 14 Aug
+ 2025 21:07:39 +0000
+Received: from DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
+ ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
+ 21:07:39 +0000
+Date: Thu, 14 Aug 2025 17:07:30 -0400
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, avadhut.naik@amd.com, john.allen@amd.com
+Subject: Re: [PATCH v2] x86/mce: Do away with unnecessary context quirks
+Message-ID: <20250814210730.GA228071@yaz-khff2.amd.com>
+References: <20250814154809.165916-1-yazen.ghannam@amd.com>
+ <aJ4U3g4fDNNibUOz@agluck-desk3>
+ <20250814193056.GA192444@yaz-khff2.amd.com>
+ <aJ4-c0gNPbwwU3jk@agluck-desk3>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJ4-c0gNPbwwU3jk@agluck-desk3>
+X-ClientProxiedBy: BN9PR03CA0741.namprd03.prod.outlook.com
+ (2603:10b6:408:110::26) To DM4PR12MB6373.namprd12.prod.outlook.com
+ (2603:10b6:8:a4::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5b583a8-65da-4adb-8cf1-73bf679c0593@ovn.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DS5PPFBABE93B01:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09b7ec67-c379-42ae-564c-08dddb7699bc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cUw4cEJzL25wdVlERkRLT0VpS05TL0JoVEhhT3VnMjNuUUtxby9JZDErVktX?=
+ =?utf-8?B?WCs1NEptR2JxdkFNUnF0RHlyRTc0Tm1ZbkVtUis2c0ZJeWxWMmNFVm14czEy?=
+ =?utf-8?B?SFBIZUkzc21PZE8xQTVRNFBFN201UFpjcjFkZ0lsaDN2dzd3d2w0SlJMMS9s?=
+ =?utf-8?B?TGtzNkI4TWJWOXRaYXNWZDdEa2k3bGdSTUxSY0ZNcE5jZU9EUS8xVStYYmNu?=
+ =?utf-8?B?UU9PNWJYMmcxQktGTmQ0T3RtRUc3Wi9vekhYbEl5Z2x1ZFphdzRIb2tvUmlL?=
+ =?utf-8?B?UmJ3M283bEpIeDRvbVprdlpwdHBxMmhmckFQb0NqWlVxQkhmV01SeElHZVhL?=
+ =?utf-8?B?amRGcVlOVFZPUm1hQTFRT212dFFkRVNQY2tJeTdDRDJSUVIwdGFyRXBMQzF2?=
+ =?utf-8?B?UVFnMDlLZnJHYmtKQis0ekdrM3FLK1d6eXgrL3NENWVrZTdNTjhNbldSdzE2?=
+ =?utf-8?B?NjFISElOa3NnV2tqUGo5VVI1RnZTVnRpN0s1TUtKVkp1bXN2aUttcTZCdmpO?=
+ =?utf-8?B?YUF0dUdrNlR0QjU2NHViMUVPMXpnTzJPUkVHQ25yUDE0S21vZmpQSFNoU3Ex?=
+ =?utf-8?B?QW9xS25sTlZNcUtJK3Yza09FLy9sS1dyMHYybXhFbVQ2d2RrTDFxUnlBbDhx?=
+ =?utf-8?B?aHBFRGtyUm5xd2h4VEJsQnc0bzZkTzljTHE3UkhERm8yL3NwcC96U2hWYzZY?=
+ =?utf-8?B?ZnVaVnViYVlHL1UxR3VRSEEzTEZmQmVXb3UzRzFNUFlwMVNkU3JYTXBmSlJx?=
+ =?utf-8?B?UlkzTFYzLzdPRDZHRGZKNlF0cllIdDc3dVFZNkUvSzN6QnFBMm9QanhBb1hV?=
+ =?utf-8?B?aXNCZjZWSy9GcmM1a2I5aktjMFBsbHB6SXhCbjl6ais4cFhFZ2N4RExoVDBu?=
+ =?utf-8?B?QWQwa1p5Y3JTaFA2M2RxSlp6NkowYWJCZW84TDVGb295SVRwQ0ZtcXhqNktI?=
+ =?utf-8?B?V1d0Q3V2YitBVnRVeDNVTHk2S0lyMUEzODMvV3gySjFHdm9nUzBFUVc4VDk4?=
+ =?utf-8?B?TEtuZlB6RUNFaWdVMFpzNWJZOW1rMEV4azRFRUsycmcyaE40bWVnNEJlT1VJ?=
+ =?utf-8?B?VXdBUTRpWFpEbnErV3FTT0h3Q3hMM1pCLzkxVlVZT1ZidGUwcVJCMWt2Q1or?=
+ =?utf-8?B?WmJDdVJ3Zyt4eUEraXFMd0VPakJaVnlQNkttWUl2SXZ1N0VrMEw5a21id284?=
+ =?utf-8?B?cjlNZy9HVy9mbXJsWXdyeGJCdjllRDZRUFl4QksvNmNYemFyN20yOTJjc3JN?=
+ =?utf-8?B?dFN0VW1WZDFqdE9Eb0diVy8rbFJhWUtsUERCOGlwUHQ4L2lSTHFkOTFDSWN2?=
+ =?utf-8?B?NW9tUXBGZWJMQk1zb3N6RXZFQlg5dHhDUjl4QWlYRU84ejJ0L1FZV1JwaEgx?=
+ =?utf-8?B?ZDhRSlVnRlU4VGhEb2FGQUVCTnZYV2F3YzNVS21FcFlCNlF6MElmVUVYd2F1?=
+ =?utf-8?B?cXdGR1hDUWdCNUR4UDVKSTdYbkVENGsvdDU4Tks4UVFKYlQ1K2N4bXNoZDZq?=
+ =?utf-8?B?cXVXY3pFcTJVbkhvVkdBVFpMMXpMTXcvZGprMy8rZUwvRWxHeTAwRENtREQr?=
+ =?utf-8?B?SkJCUUVrRUpzaE9mRzArQjJFRnN1TzF5ZGNDa3Zjemo4VklBd1BmRkdsd3FF?=
+ =?utf-8?B?WndVZ292SWZRK3EwRmhyWFJFeDhVUWgzdjFsNGFkZnRkTEhlR2c1Yy9UOHY2?=
+ =?utf-8?B?R3VvWjdNZVlTSW9nNk5ldDJ1Q0ZhWkt3UXBMamh6Y2JaLzZ2MytPUTA3L0lx?=
+ =?utf-8?B?citGR20rUERPWjcyWjVDRmZPQUY3aTR4dFBHdXFHUnAvbVl6RjB5QlVjMXJV?=
+ =?utf-8?B?NHJyc0g5K2kxcTFGQlhCY2owZ1pLR21Yc05qN3ZyZU5RSTZldXYrZnpwOVFy?=
+ =?utf-8?B?a3ppYmhjM2xMSjZmV0lrcksxeTZKZGlZY1Q4R21RRThVY3c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dmZJbVRhbUxsamN4dFg3SlZWV1JlTUNTRmVKb3cwdU96TVFDSWJ6c1dDZUZZ?=
+ =?utf-8?B?WVExQ2wyYUl3OGhYMzZYdjh4VFZJMHNGUm1nNWNUaGEwVExEMTJzUXVWUEY2?=
+ =?utf-8?B?ODhFaHUvZk96V0c2TmRVKy96SzdnVW4vNUxTWXdFQThXa29qVnFaVFcvdkFr?=
+ =?utf-8?B?emJwKzRPSlFRTUhqdjFFYU1hZ1AyS3o5OUorMjNzNTVkVVpza1dIZUZKRTEw?=
+ =?utf-8?B?eXk5MWxiaHRIVFBhaTFWWm9IZHhqTWorb2FiTzF0THZoaVI1dVdERXkzOFRK?=
+ =?utf-8?B?ajEvWFBSTzJpdit2RWl3cWhCSzFIekkwTG1lRFg0RGJyc0gxZUcyNDlTbnhF?=
+ =?utf-8?B?dFQrbEhEVVVrZkZhSC81TEx5VXVtZnkreUZBOXoxOHJ5a1VDME9sOExEbjI5?=
+ =?utf-8?B?dWdrTWJJb2Q1M0JldEpqc1V2Q0Rsb0RIQUlKZUFuWVRlVkt1bUhZbmNlYjls?=
+ =?utf-8?B?REhLQnFwRjQ4SmlSZUFIemprMkEwR1g4TllLMTVzeFptMC8vMVZPa1kwRHBU?=
+ =?utf-8?B?OUJsa00xQVRMOG1uVUVXdzYvSkc2d2FxTXd2blY4bE1UaitaMkNyY1hsQ0p0?=
+ =?utf-8?B?YUNLL212MHBqT0dOeGlpUXo3V29adDBlR3RvdEhhdkEyTmZGZ1dZYzRsWjRp?=
+ =?utf-8?B?THVHZzI0blQwbFhXdTR2NTBsYU00aVBjMFUrL1Z6ZUlmU0tVWmY4eGxOSjZm?=
+ =?utf-8?B?ZVVhdDZkZ2kvK2ZWOW5nc041aTNpaWpzdzlkbzFiK3cyT1ZYOWxlR2svekxW?=
+ =?utf-8?B?V0xuUnNhL0RVdGp2alZKZGNkOHI4NXZtYWhqQzF3aTRxaVJEb3FvUEFmWE52?=
+ =?utf-8?B?bGRRUVV4djVjZGFGcFA1N045ZFZKZjVPNnE3RXMyV3FvZE9iempMdEtjay9F?=
+ =?utf-8?B?R1lJdmtoWkoxQm1sM0xlSC8vR0s1ZUlQWmxQclpweG80bzY1MG9VWWxZeFh1?=
+ =?utf-8?B?aDZWOWNTZHFjdXNBVE05dW9sRExBNHRLcjZFU3UxditITkFiMUZ2SEZmZGRL?=
+ =?utf-8?B?ZWQzWFJYV0QrNFg0b1pSd2ZFdlN5bDRZZ2MxL2xxRnRXVzB2OXBUMHNCZXBK?=
+ =?utf-8?B?Nk1ZUnp5UDdkWlV5TjFBY2JpMTFWM0JjMUVSSG5MZWN4c2Y5OGNXMkF2TTFY?=
+ =?utf-8?B?MU9SdUZKTkhqZjJQL1gwaFMvakJ0OExVczNLcXJsd2krS3lWRU41Y0x0MG9N?=
+ =?utf-8?B?amg1SmN1M0dUR1BzMzRRdUhuaVNZK0YxNWxXOGJ6bkRDZStsTzFEdFgxakVk?=
+ =?utf-8?B?ZGNGZDQ3aHQwcFlRcnJsSHdGNVZpZ0p3RmlTV24rN1lxRzl6MUVJSmNpWTV2?=
+ =?utf-8?B?NFFoOUxwTlZSMVN1ZEllQnhGSUxEeEVmNWxWakRLcEordk1mdFpZcFdkRUtJ?=
+ =?utf-8?B?aGY1UklucXlzM05OTHJWZE1KYVhRUzZBTDZ0L0JKTngzSGx3L01KL3dvTTdn?=
+ =?utf-8?B?anJObHB1MFNYY0d0b0NuNmVEeWkrdjl3NTRUYnlhWU5CM1RHRWxZOExZVllD?=
+ =?utf-8?B?UVJxb0J3dkFQNUVMa1hJeFZrTmR2ejVwZnJVa0NQa3o5Q2F4RUdLR2RkQ3ZV?=
+ =?utf-8?B?MEVSbkpzYWtQNTA4ei85OG1aMmM3VVMwQ3B4ZStCMDE4TjFxN1JjWHBWaktu?=
+ =?utf-8?B?TURGSURpaWlRLzREUW1JMXdYdWdGbEQ3d0I5WXQ5OFV1TW5kU281bDJhU0VJ?=
+ =?utf-8?B?M2ZZdFU3UEIrMkNiWXNYdHUrODRmcDg0RnI3T0oxQ3daVDRzbzNONXloTS9W?=
+ =?utf-8?B?c2duTjdLeUE4a2Z6OFFudy9zbGh3NTRrRVhGaGhGWnhrTGtWQlpCbzN0VDht?=
+ =?utf-8?B?MlUwNll2ZlpJVDd4Y2JmdVNSWEMwd1cwcTB6a3Y5OVpCMER3MmkvOEFKdUlY?=
+ =?utf-8?B?cHl5WFBZZlRldTZJRnVHbWNsM2lVVW4xblpOOWRtQmVHMElSaG1mekxnbS9v?=
+ =?utf-8?B?WWhhY2JEZW1sQ2c1L2V4UmpacU1pS0dFZG54bll0N0wveEVPZnNEOFJFczVv?=
+ =?utf-8?B?MURucnBpVTNYLzk1MmdVVGpwK2VKbFF2dGhjaGVSTklQZjR4Y2V2Y3Q5cXlJ?=
+ =?utf-8?B?NUhkNXk4K20rR3ZjTHJPalFCVVorcEVFRllndlhLMjdHby9YNCtuTjN0MXFY?=
+ =?utf-8?Q?bMLyQ+1DKCs55hCEftDao2p5g?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09b7ec67-c379-42ae-564c-08dddb7699bc
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 21:07:39.0738
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vVwXKxcKzbGGbmtpWTydG8zRkT9AKSSg5ld6wIfjcmq1RtyEapNWf7U9IxW5+IgWVdLFL2Fp7lO7pthmtn1z+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFBABE93B01
 
-On Thu, Aug 14, 2025 at 10:49:30PM +0200, Ilya Maximets wrote:
-> On 8/14/25 9:58 PM, Yury Norov wrote:
-> > From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+On Thu, Aug 14, 2025 at 12:52:19PM -0700, Luck, Tony wrote:
+> On Thu, Aug 14, 2025 at 03:30:56PM -0400, Yazen Ghannam wrote:
+> > On Thu, Aug 14, 2025 at 09:54:54AM -0700, Luck, Tony wrote:
+> > > On Thu, Aug 14, 2025 at 11:48:09AM -0400, Yazen Ghannam wrote:
+> > > > -/*
+> > > > - * During IFU recovery Sandy Bridge -EP4S processors set the RIPV and
+> > > > - * EIPV bits in MCG_STATUS to zero on the affected logical processor (SDM
+> > > > - * Vol 3B Table 15-20). But this confuses both the code that determines
+> > > > - * whether the machine check occurred in kernel or user mode, and also
+> > > > - * the severity assessment code. Pretend that EIPV was set, and take the
+> > > > - * ip/cs values from the pt_regs that mce_gather_info() ignored earlier.
+> > > > - */
+> > > > -static __always_inline void
+> > > > -quirk_sandybridge_ifu(int bank, struct mce *m, struct pt_regs *regs)
+> > > > -{
+> > > > -	if (bank != 0)
+> > > > -		return;
+> > > > -	if ((m->mcgstatus & (MCG_STATUS_EIPV|MCG_STATUS_RIPV)) != 0)
+> > > > -		return;
+> > > > -	if ((m->status & (MCI_STATUS_OVER|MCI_STATUS_UC|
+> > > > -		          MCI_STATUS_EN|MCI_STATUS_MISCV|MCI_STATUS_ADDRV|
+> > > > -			  MCI_STATUS_PCC|MCI_STATUS_S|MCI_STATUS_AR|
+> > > > -			  MCACOD)) !=
+> > > > -			 (MCI_STATUS_UC|MCI_STATUS_EN|
+> > > > -			  MCI_STATUS_MISCV|MCI_STATUS_ADDRV|MCI_STATUS_S|
+> > > > -			  MCI_STATUS_AR|MCACOD_INSTR))
+> > > > -		return;
+> > > > -
+> > > > -	m->mcgstatus |= MCG_STATUS_EIPV;
+> > > 
+> > > I don't think this part of the Sandybridge quirk is covered in your
+> > > new code. Without EIPV set, the Intel severity table driven code will
+> > > fail to note this as recoverable.
+> > > 
 > > 
-> > Openvswitch opencodes for_each_cpu_from(). Fix it and drop some
-> > housekeeping code.
+> > Which severity do you mean? EIPV is not needed to be set in any of them.
 > > 
-> > Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> > ---
-> >  net/openvswitch/flow.c       | 14 ++++++--------
-> >  net/openvswitch/flow_table.c |  8 ++++----
-> >  2 files changed, 10 insertions(+), 12 deletions(-)
+> > Unless you mean this check:
 > > 
-> > diff --git a/net/openvswitch/flow.c b/net/openvswitch/flow.c
-> > index b80bd3a90773..b464ab120731 100644
-> > --- a/net/openvswitch/flow.c
-> > +++ b/net/openvswitch/flow.c
-> > @@ -129,15 +129,14 @@ void ovs_flow_stats_get(const struct sw_flow *flow,
-> >  			struct ovs_flow_stats *ovs_stats,
-> >  			unsigned long *used, __be16 *tcp_flags)
-> >  {
-> > -	int cpu;
-> > +	/* CPU 0 is always considered */
-> > +	unsigned int cpu = 1;
+> > 	if (!mc_recoverable(m->mcgstatus))
+> > 		return IN_KERNEL;
+> > 
+> > This would never give the "IN_KERNEL_RECOV" context.
+> > 
+> > And this is the only case affected:
+> > "Action required: data load in error recoverable area of kernel"
+> > 
+> > But that is for "Data": MCACOD_DATA
+> > 
+> > And the quirk is for "Instructions": MCACOD_INSTR
+> > 
+> > So I *think* we're covered.
+> > 
+> > I got the impression that setting EIPV in the quirk was to fake our way
+> > through getting the CS register. It seemed to me that it wasn't directly
+> > needed for severity grading in the quirky case.
+> > 
+> > If we unconditionally get the CS register, then we no longer need to
+> > fake EIPV. At least, that is my understanding.
+>  
+> Yazen,
 > 
-> Hmm.  I'm a bit confused here.  Where is CPU 0 considered if we start
-> iteration from 1?
-
-I didn't touch this part of the original comment, as you see, and I'm
-not a domain expert, so don't know what does this wording mean.
-
-Most likely 'always considered' means that CPU0 is not accounted in this
-statistics.
-  
-> >  	*used = 0;
-> >  	*tcp_flags = 0;
-> >  	memset(ovs_stats, 0, sizeof(*ovs_stats));
-> >  
-> > -	/* We open code this to make sure cpu 0 is always considered */
-> > -	for (cpu = 0; cpu < nr_cpu_ids;
-> > -	     cpu = cpumask_next(cpu, flow->cpu_used_mask)) {
-> > +	for_each_cpu_from(cpu, flow->cpu_used_mask) {
+> It's horribly subtle.  On Sandybridge machine check bank 0 is shared by
+> the two hyperthreads on a core, and machine checks are always broadcast.
 > 
-> And why it needs to be a for_each_cpu_from() and not just for_each_cpu() ?
-
-The original code explicitly ignores CPU0. If we use for_each_cpu(),
-it would ignore initial value in 'cpu'. Contrary, for_each_cpu_from()
-does respect it.
-
-> Note: the original logic here came from using for_each_node() back when
-> stats were collected per numa, and it was important to check node 0 when
-> the system didn't have it, so the loop was open-coded, see commit:
->   40773966ccf1 ("openvswitch: fix flow stats accounting when node 0 is not possible")
+> For instruction poison consumption both threads on the core see the
+> machine check and the same IA32_MC0_STATUS value.
 > 
-> Later the stats collection was changed to be per-CPU instead of per-NUMA,
-> th eloop was adjusted to CPUs, but remained open-coded, even though it
-> was probbaly safe to use for_each_cpu() macro here, as it accepts the
-> mask and doesn't limit it to available CPUs, unlike the for_each_node()
-> macro that only iterates over possible NUMA node numbers and will skip
-> the zero.  The zero is importnat, because it is used as long as only one
-> core updates the stats, regardless of the number of that core, AFAIU.
+> IA32_MCG_STATUS is per-thread.
 > 
-> So, the comments in the code do not really make a lot of sense, especially
-> in this patch.
+> The thread that tried to consume the poison sees: RIPV=0, EIPV=0, MCIP=1
+> 
+> The innocent bystander thread sees: RIPV=1, EIPV=0, MCIP=1
+> 
+> The innocent bystander matches this entry in the severity table:
+> 
+>         MCESEV(
+>                 KEEP, "Action required but unaffected thread is continuable",
+>                 SER, MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCI_ADDR, MCI_UC_SAR|MCI_ADDR),
+>                 MCGMASK(MCG_STATUS_RIPV|MCG_STATUS_EIPV, MCG_STATUS_RIPV)
+>                 ),
+> 
+> I need the consuming thread to match this one:
+> 
+>         MCESEV(
+>                 AR, "Action required: instruction fetch error in a user process",
+>                 SER, MASK(MCI_STATUS_OVER|MCI_UC_SAR|MCI_ADDR|MCACOD, MCI_UC_SAR|MCI_ADDR|MCACOD_INSTR),
+>                 USER
+>                 ),
+> 
+> 
+> But the first match nature of the table means that this rule hits
+> (becauase neither or RIPV or EIPV is set):
+> 
+>         /* Neither return not error IP -- no chance to recover -> PANIC */
+>         MCESEV(
+>                 PANIC, "Neither restart nor error IP",
+>                 EXCP, MCGMASK(MCG_STATUS_RIPV|MCG_STATUS_EIPV, 0)
+>                 ),
+> 
 
-I can include CPU0 and iterate over it, but it would break the existing
-logic. The intention of my work is to minimize direct cpumask_next()
-usage over the kernel, and as I said I'm not a domain expert here.
+Thanks Tony. I see what you mean.
 
-Let's wait for more comments. If it's indeed a bug in current logic,
-I'll happily send v2.
+Do we really need this rule? It is essentially the same as the following
+rule:
+
+	        MCESEV(
+			PANIC, "In kernel and no restart IP",
+		        EXCP, KERNEL, MCGMASK(MCG_STATUS_RIPV, 0)
+			),
+
+...since we assume "KERNEL" context if RIPV|EIPV are clear after
+checking the CS register.
+
+The message is not as explicit though. 
+
+I did have an earlier idea that we introduce an "UNKNOWN" context for
+the !pt_regs case.
+
+We could add the "UNKNOWN" context to the "Neither restart nor error IP"
+rule. That way it'll be skipped if we have a "USER" context and then it
+should match the one you want.
+
+Also, I just saw this in the Intel SDM:
+
+"For the P6 family processors, if the EIPV flag in the MCG_STATUS MSR is
+set, the saved contents of CS and EIP registers are directly associated
+with the error that caused the machine-check exception to be generated;
+if the flag is clear, the saved instruction pointer may not be associated
+with the error (see Section 17.3.1.2, “IA32_MCG_STATUS MSR”)."
+
+But I can't tell if this is true just for P6 or all, because the CS
+register isn't referenced again with EIPV.
 
 Thanks,
-Yury
+Yazen
 
