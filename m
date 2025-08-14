@@ -1,228 +1,188 @@
-Return-Path: <linux-kernel+bounces-768606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468A5B2630F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:44:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAFEB26326
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:48:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDF271C86CF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:44:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29FD83A82D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4272E8899;
-	Thu, 14 Aug 2025 10:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N/noWQ+k"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45501318136
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755168258; cv=fail; b=fdGsq/Hn3h/zDYLKarD5PYUk1VuD4mD2zEh1IGimtLXv+79I6Hp5ClNaOrK64N/yo2tKjemshXM31PzxQEk17rhtwsjMVu3jH+DSt8we7OqCPv9PqrApR18Z323fyf0fWmP7gB5OXCrnSgZSjEcg0EIG9oiz9n//XixZw/vArHA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755168258; c=relaxed/simple;
-	bh=lTT/SrNtqWXqd/hgJ1g5hqQiQkqmO7rod+pZy7Wk+dw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=C9n3JAFKu/uyColsWXnCpl91FiHt0eT0FBfZVISlHngWnacNLMtHrh16tUJcPxWIIY7lDD01B6epXn1S0O56QdYxUCpTaRXyWPuVgipOSrab/CC85O8tv3a9eZzCoRufxcuoKxC6t9RXF3MNj6Dy2LWbChPeKC37AHnio7xsKPg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N/noWQ+k; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755168257; x=1786704257;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=lTT/SrNtqWXqd/hgJ1g5hqQiQkqmO7rod+pZy7Wk+dw=;
-  b=N/noWQ+kMDUQ9DdrbkyaBrZIk7FpqwwvuXlpT9j2goz3Ha5AaZh8bY9j
-   gDI+tmZdcfXgyr+UP5yjt9xUjEcPDRGUziIpibyjUyF7AihEA9KDnDd7z
-   ow0ckXclda6g8/dHIc52Xzs2IPaQsJh4Y2ataHzqIopSCHIh83kMa4Ojz
-   i4PFbuBEoXt5kDPrpqyt0HwDEgp+6q8KnAa37ahsGtqN0wKclUqiSl2gr
-   5OAFQ4od6OpQErA8wP6PxIHjBh3wyAtuAsF1NhXw5u77CpaAdLmm+0/Sx
-   hfkxLs2OJxkoCRbfShMDeoYyY75IheKQoOlxpcbs9Lbgk9R77npZhv1oA
-   g==;
-X-CSE-ConnectionGUID: Fb2YFYRtQIWj2Q9F3x432g==
-X-CSE-MsgGUID: BrlqprnLSPWKewDgoyQBbA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68084971"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="68084971"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 03:44:16 -0700
-X-CSE-ConnectionGUID: dmkEKf9yS8CA4EKfdE9KOA==
-X-CSE-MsgGUID: jP9eyV0ZT320UpirOuUCeg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="166366132"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 03:44:15 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 03:44:15 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 14 Aug 2025 03:44:15 -0700
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.72)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 03:44:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oQCHCKgt5/fccrGRCdkjSZ5lzMCv+gLIPX/XLPN9G8OhL01Hd2lo40abSyXfV5CzTExUNwJDs/rBF4RRTfwwq5NrB99gRfT6foKU+uY1bHOQWFHxRgW40HuP6eYRkdWmw44s7AGo9QhKuQOWYfMjInwXs2zpGh+ZDZqxQJd05pX78wAocLIS1hGQDS2yEsp4GpcsskrCnFRC2v2tddBnXIEJA4AUXjml3knv1BTepDeqhYpZ/VQPU2tOGobj+24mcW8jG4+ut0dR9mB6AfhGkQkTiCaVxRVxty64cRDegYd3nBTPSTAbnFuDtmH520e0C3eKNJQCZ2H8SB6i/By+ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lTT/SrNtqWXqd/hgJ1g5hqQiQkqmO7rod+pZy7Wk+dw=;
- b=NcRv+du99YSJgEIH6YyMcdxf9DSSlnfm124R5GztkR5WSXy//BoVozZZgfNVVrKNW4JFKpEin9CQRZJDCkEVQlUoJnXpZU95NoIHg5sVByTg6YvGCGiFiyznZojQhZXFNDGDa5k5uq/y9lA0sD8gsOpgzZOFO/3piA9E6QjmoYsa0ESX9V+AgavLJS+TR39htsw3ZQkRrru/X3iXGzP8n2oxItSWs9UCXzrJAjAWe2aoU6CHGnLlD+0zTT2pB1GgL1559EFO52a+HLl5I4Pm2Q9nsjVYIk2GHZuIiV6KB1IXS/1NbeoRsZXFfljNXjEN95ZQvONGAc0vkkK58BuayQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM4PR11MB5549.namprd11.prod.outlook.com (2603:10b6:5:388::7) by
- PH3PPF8517B3F27.namprd11.prod.outlook.com (2603:10b6:518:1::d35) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.13; Thu, 14 Aug
- 2025 10:44:07 +0000
-Received: from DM4PR11MB5549.namprd11.prod.outlook.com
- ([fe80::6c31:ab8a:d70:2555]) by DM4PR11MB5549.namprd11.prod.outlook.com
- ([fe80::6c31:ab8a:d70:2555%5]) with mapi id 15.20.9031.012; Thu, 14 Aug 2025
- 10:44:07 +0000
-From: "Avizrat, Yaron" <yaron.avizrat@intel.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"sfr@canb.auug.org.au" <sfr@canb.auug.org.au>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, "Elbaz, Koby" <koby.elbaz@intel.com>,
-	"Sinyuk, Konstantin" <konstantin.sinyuk@intel.com>, "Levi, Ilia"
-	<ilia.levi@intel.com>
-Subject: [PATCH 1/1] MAINTAINERS: Change habanalabs maintainers
-Thread-Topic: [PATCH 1/1] MAINTAINERS: Change habanalabs maintainers
-Thread-Index: AQHcDQGynfOaZ33xFUSBU8dmS0/bNbRh6tYAgAAL3fA=
-Date: Thu, 14 Aug 2025 10:44:07 +0000
-Message-ID: <DM4PR11MB55491ACAA33DF29CEF3C67DAE935A@DM4PR11MB5549.namprd11.prod.outlook.com>
-References: <20250814095556.5424-1-koby.elbaz@intel.com>
- <20250814095556.5424-2-koby.elbaz@intel.com>
- <DS0PR11MB77675D0ED3C78DF853B9A6CB8E35A@DS0PR11MB7767.namprd11.prod.outlook.com>
-In-Reply-To: <DS0PR11MB77675D0ED3C78DF853B9A6CB8E35A@DS0PR11MB7767.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR11MB5549:EE_|PH3PPF8517B3F27:EE_
-x-ms-office365-filtering-correlation-id: f475f8b5-d2a2-44de-ab6c-08dddb1f7eb0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?TEJ2LzdRMGI0dlJSZG5FL1RhV3JadE5tWCtGZ1NWaE1na0RabHB3R3hwaEVD?=
- =?utf-8?B?bzNGY3F6LzIxLzl0ZVhMSEV4N0pRaEJaVzVDOHRJTGtGNlBNRVpQZjBOMVNr?=
- =?utf-8?B?NW1HakFLRTdGVE0vQUFFQjNHcStDZTJmYm5YOEg3S2xiMTBydi8wN1Y3YXc3?=
- =?utf-8?B?OXlISXRDcXZhcGZQbU5udHpvaXdwQ3hwRUdERE9SREZVd3JIdmI3L2hqMnJz?=
- =?utf-8?B?L1pQSXF3T1hXNzBpWGhwTFpneHVMc1BoT0s3blNwdjlnM3VvbHNDbUZaUjc3?=
- =?utf-8?B?cTlnN25FNkhPTzZ1UUdpOTE0alM4ZGxJcmcxTFh6b3pXU0N1czlJMElIaENW?=
- =?utf-8?B?eThMN0VTNTVwODYxWHRuTDhHckpDNS9xRTJ5NzJHbytRSUJQNUhaYklzbWJX?=
- =?utf-8?B?UVdoUUZwQU9KYjRPVVpYVDhnNGlLU2o3SzNmRUNvbFZLc1poTW91ZTZwV3lY?=
- =?utf-8?B?VjdMTEF5SGNVVUpKRlRiQ1JxamdjL1I2VEtwTmZUZ2F0VW5CeWJHZWx0QWdY?=
- =?utf-8?B?aExNNzdXMTM4YWdnRmNXVG9ZWWwyMjRDdzM4dFZaVFZuVGlrRUIrdXErdHdG?=
- =?utf-8?B?aEJtWE5pMFJTaUdvR0RYQmVsekNUaHdyZXc1dm1IYUE3S05wR3lDeHBKTkdO?=
- =?utf-8?B?TExxeU9pWm1UZXV3SldRV0NQaXZmZDRxVlo2VUdBZkk1KzJHRU9JQ2ZrV1dG?=
- =?utf-8?B?U0Nmc2xSSEU5MHBFWTdIVi9Ycy9kNEJXbWRySUl4eVBQZFIrM3hZTENUbEcw?=
- =?utf-8?B?OFJtWFo2SkRVZ1Y5TGd4WkRTVWU5MEhnRThVWG1ncWFwL3BRSEJGUGEyUm9R?=
- =?utf-8?B?TzhDbVpSWDRZYklUYW5SWU4wQlYzNWtRWlFiNWx1ZWNyaWFvcW95d3dNQnRC?=
- =?utf-8?B?NmlJdnFQMlFkZWt1ODZtZ256QmdvclBQekUwVTQzQ0pRZklXRHNaVmhjR1hp?=
- =?utf-8?B?NEp2L3poRi9INHdheGV1U01vT1U4TERmMnVQenpWQkp6djNYVFBzWmphNUFh?=
- =?utf-8?B?VDBGZUY4VHdJa21TTDltcXNBQU4yNW0wRzFOdit0TS9CLzIremQ3UXRFYVYr?=
- =?utf-8?B?QVNEb1F2T2J5SmMzQWx5NzJuTmVURTZTdEVPUkZKUnRHNi9UYWx4NGZXUFpp?=
- =?utf-8?B?Vzd0K2QzaVc5cUl6NUxTdERCQ3JLVmdOZ0EvRk1pVTBrd05MalpWZDlLYndv?=
- =?utf-8?B?Zi9jdC81U29pU0lGN3pYajREUVdXTTg2cmd3OXowOTc0OW03Ulh6TllYYTds?=
- =?utf-8?B?RTM3SllVZ24vZGtkRmh2eUhPOFY1aEo2cXdOZ2hFNk1HeTJCSHoxN0UwTUdi?=
- =?utf-8?B?eG5NbSt6R2Z6dEpVV2NEdmFjTUNFckhhdW94ZGxuckloTmYyRkt4Q080WEwz?=
- =?utf-8?B?MHVPdS85V2hncldnL0lKdk0zdHgyUEJaSnlRQVR2TDJiMmxhQ2hjRTBsWHVO?=
- =?utf-8?B?TWxBRENyZ3ljUjUybFYrdTQ4cjY5cC9kQzV0alBzNVZ4SkZrZUJhREdmN1R2?=
- =?utf-8?B?dlV4U2ZPMHBMU3RGM3lvRDFkUk5rcEhaZWRCYXNLNW00WDUwT3JOMHdFbVNM?=
- =?utf-8?B?a3dKbmNtZzNtNzFYWGMwWHhqYm90VUU3c0FaSzNzZjVnYTNqZkViY1ZNVjA3?=
- =?utf-8?B?QldEOTVnb1UxWTFzcnJ5ZEFUY2d4QklIU2w3Sm5pclIrcEZhdk9SVjdjS0pM?=
- =?utf-8?B?azRmUlJFMVV1NkdZalBuY2hDZTEvV1RZWVh0enJTQW9LeWtGVXFkNXRYVzRB?=
- =?utf-8?B?WkNIcjZvZHVnNjd3UW04SE43SktZTU40RmcrYVV3ZFVIM1BNUUV0UWYrdmhw?=
- =?utf-8?B?Q2hBanV1QW15Wm9YMjl5NkFJRytFcmx2NWtCRVV1SWNUWlJlb1VFYjZ0UGZ0?=
- =?utf-8?B?Q2xMdFdsSjBnNy9BWmIrREJxOENBRE9HM3VpSHF6YjBQWTYwVUh6NXU0Nnhr?=
- =?utf-8?B?Wi9CMk1Oc3RIT3dnK0JSUElJQVI1dUpYUnRQRGpTUFhrWU5URTRudEFXa3FJ?=
- =?utf-8?B?L29MZ09lVHJnPT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5549.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZmhPM0UzWCtTZFdNS0FXVDNSalcyNm1KKytlNWNJRUVoUzZSRldveFhJRnlw?=
- =?utf-8?B?RUNnYjZkT1BzVEN4dllJNzZsOGJqTVJqSGJrbWtHeXV1NUd2Vyt6THhZTVpp?=
- =?utf-8?B?WSt2ZHBiV3BEYXhDNC9MeFROZGIzYmNtdEY2TnN5cHBOOXNnSnpSckJkbUdv?=
- =?utf-8?B?SktoQlpYVFBnanFPbDc3TDFFS2E5Zm9CTTZobEcyeGpIeFF2WlIxdlArakM1?=
- =?utf-8?B?a1ZqcHJUa1k0Q3Rkc2xsMUpoaFE2dkhnTldKWUlVWXU3a3ErRldYRzhOVFF4?=
- =?utf-8?B?bGR2T3dWNm50VVVsVmpLQVhzaVh6U0g2ZVhNNC9vTUxDanFidTRyeUhZenNS?=
- =?utf-8?B?S001eFlIMnNPdEw1dy84cEltelFISEVHbUt3cjdyNUkweTg2aTFSNDQzTXly?=
- =?utf-8?B?ZlBkeVdPMkorcDVzczR3TUh6Y1pwc0NuTkJDV1JlbVZSY0NlQ0VQWFN2ejB4?=
- =?utf-8?B?M0x0bzZmVEw5MFl0bkZ1Q3o1UFR2VEdZNysvUVBrMVlDTEx4T09NUVRvUUZk?=
- =?utf-8?B?MTlEenQvL1kvQytQZjNZeFc5SmxzZlNVQmtHckk1MUhqUjdtNUk1ekRheXFR?=
- =?utf-8?B?b3g2OGVYd0NMY3pZNlo3bFNQamZ6Rm9MSTZUZkZzM3BFdDYxbmk1bERpaEpm?=
- =?utf-8?B?aHpOZkVIczV1ZHkyODdXVk54U3RwOFFsL0MrTXdSNmZDeERPZmh0UkdqOXZV?=
- =?utf-8?B?VCs5UFFjdG1WYXdraldONGdxaDZoZDVoTVBmOTVNb0pDRjNuMFJHZmJidE82?=
- =?utf-8?B?YmxUMzV1cFY1ZzhTeWJqSFdHeTVoVVVkN2o3eVhDdHREMGdURUp3dzA3TEpK?=
- =?utf-8?B?emYvbWM2aTZlZTdodzhxazZMYkw2dDRROTYzZHhoejFUcGlycGsxNnBtZHhC?=
- =?utf-8?B?cGhNNThyM3F5aU1EQVpKczB6ZFUvZk8zcmVkWEF1emhUaXpVbWJvUVN3VkRI?=
- =?utf-8?B?NlpYdXB6WGVucGNPS0JWZjJlbTBYRW1Sd1dEWXJBb2dNZ3hBUUxqWklvdHBj?=
- =?utf-8?B?THVYYXRyU1pEWFJ1dnVaT2FqU1JZVERTR0JoWHFXVkdzc1JNWTdCU0ZuWnRs?=
- =?utf-8?B?WnlZMTBIMzJoN2pjZHZDd2FJR045YUZaTUJRQkVMSTR4Z1ZSSHZqZ0VvRmx0?=
- =?utf-8?B?VUY5eHBhR1Ayb1F5aUNXN0ZPRjRCQ1Joc2c1UFppYTRsQmVJNit3ZkQvWm00?=
- =?utf-8?B?NXBSWXExWmZaTDF3K2tKNnRzcTM2YnJJdHN3ZHlJUjZUT1FybWV5Z2w2QmNu?=
- =?utf-8?B?eDZYb2I5bE5heW1ZMnMvZVdSUEFzWjZ6OHNEb2pNTXI5b2NnS2kycUM0Ly81?=
- =?utf-8?B?UGZrTzJTTWE3OFpWcUlBM3FzdWxubVoxeGRuQ0lrdVNMT0hSWWFmV2pQUUoy?=
- =?utf-8?B?cENDdG9vVkVOQnQ1T09OWnpoNVlCKyt1RG9FUit3NE1lcVhyL3F3VG14NC8y?=
- =?utf-8?B?VDZSeFY4a0RxZ0prYTloTlhCaXIyZ1J3M1ArQmNJaThRZVJWcGdISUZmL0ZU?=
- =?utf-8?B?blBXUHJaM1MxR0hCNkJwa29Fc012d2M5ei9pUVVDYmJPdkdBc2x4NG5ucVdU?=
- =?utf-8?B?a2g3QmNEWGlVWk4ySVFlWXRid2JmeVhHNEJYZCt6dDJrVkgvTGh6RCtCYUQ0?=
- =?utf-8?B?SmVxWllYcFpwcnJoYklZUnZQTUIrMGMxa1JvUEdDcTlsT1IycnVRMDdydjA5?=
- =?utf-8?B?dXV4L2U4dkpoeU1yL2NURm9SR0FQSzkzK050YjVaWURYT2ZGV0NTL3NMbFRo?=
- =?utf-8?B?N3dPVGNCVkVlUGtxaC9jZ1V2Vkp0Tm9ROWFIbERSZ1dSNmJnLzBDdWlsaThG?=
- =?utf-8?B?aWhOSUUrREdINVVSZzNDQWNXTWNvLy9FakFjQWpwcTZKN3NSczBjdVlHY1NQ?=
- =?utf-8?B?L0ZMUzgwaitCTHVVT3FGYW52TW9SZ2RaVlhBRStIMk9rTTd3KzZZeVJ0cG53?=
- =?utf-8?B?VEdhWVlvZDI5aExCK0RZNVordmRtTzhPbXJZeERjbnNLcFVRcEdmSm9FbUwz?=
- =?utf-8?B?MVJUbUZQVVkrU1FxUzF1OVhpTWdvWVNxeU1qcVFnc3VVVmhEbG5xcWVtV0lD?=
- =?utf-8?B?VFRqcWY1dHJGQ2lqdS9abm5KZEJ4RkU4emhlT1BqVE5iRm0ra0txL1VaZjBT?=
- =?utf-8?Q?5n7AYsdYW8/9R9Bw9yp0q1DDq?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE518318123;
+	Thu, 14 Aug 2025 10:46:11 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9992E9721
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755168371; cv=none; b=cCmzYi8/ZRYBR7ssKPUs/N0EszG5g5br746ThRyVA4vRVCXy+qlfGaOTL4XT+RvEvSI1QS3u2BK/uWdvyFZ9SRTeAf+miCpWGsAlYptjVvYPuWypwvxNMR5AYQxKcY3ZDzOLXkxtYu+DGiXOd0k1fzwQWKpN1FRfsY14PBz+XIs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755168371; c=relaxed/simple;
+	bh=axo/qIflGsP0M3WRqY3IcIlA4kosE9/6nmehw11KYb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hx7Nwm1pjpR/WSIznfsBBK3/kUxa0W6Ugwdl5VFMv6ynqmeMhdzKQNaumvXgRDaG3IXI2griH7Fgmn/a2UhVv8d8t3jecDodJY2AP0X5Wf9HAgXl3tCj5Di3eBpSqjjZ/NXRVbOj9JMhNvb2u7wIJ0B/rRP+181CSL5YFFjcgtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E56F2113E;
+	Thu, 14 Aug 2025 03:45:59 -0700 (PDT)
+Received: from [10.163.65.236] (unknown [10.163.65.236])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C23BE3F738;
+	Thu, 14 Aug 2025 03:46:06 -0700 (PDT)
+Message-ID: <5e5f45c1-e813-4900-8fad-2ed0dc067468@arm.com>
+Date: Thu, 14 Aug 2025 16:16:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5549.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f475f8b5-d2a2-44de-ab6c-08dddb1f7eb0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2025 10:44:07.1937
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OaKfRYyRt3wkCjkgbof7ngL5Z14YOo2xLRESda5L9i4Ws99E7FrN7UhJfVg6JBu3nuEuG/OJim6sNrjM/Ykapw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF8517B3F27
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/debug_vm_pgtable: clear page table entries at
+ destroy_args()
+To: "Herton R. Krzesinski" <herton@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+References: <20250731214051.4115182-1-herton@redhat.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250731214051.4115182-1-herton@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SSB3aWxsIGJlIGxlYXZpbmcgSW50ZWwgc29vbiwgS29ieSBFbGJheiAmIEtvbnN0YW50aW4gU2lu
-eXVrIHdpbGwgdGFrZSB0aGUgcm9sZSBvZiBoYWJhbmFsYWJzIGRyaXZlciBtYWludGFpbmVycy4N
-Cg0KU2lnbmVkLW9mZi1ieTogWWFyb24gQXZpenJhdCA8eWFyb24uYXZpenJhdEBpbnRlbC5jb20+
-DQpSZXZpZXdlZC1ieTogS29ieSBFbGJheiA8a29ieS5lbGJhekBpbnRlbC5jb20+DQpSZXZpZXdl
-ZC1ieTogS29uc3RhbnRpbiBTaW55dWsgPGtvbnN0YW50aW4uc2lueXVrQGludGVsLmNvbT4NCi0t
-LQ0KIE1BSU5UQUlORVJTIHwgMyArKy0NCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCsp
-LCAxIGRlbGV0aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJT
-DQppbmRleCA1YzRkNmU0OWY3NWUuLmI5ZTIyOGUyYTgyMCAxMDA2NDQNCi0tLSBhL01BSU5UQUlO
-RVJTDQorKysgYi9NQUlOVEFJTkVSUw0KQEAgLTEwNjY2LDcgKzEwNjY2LDggQEAgUzoJTWFpbnRh
-aW5lZA0KIEY6CWJsb2NrL3BhcnRpdGlvbnMvZWZpLioNCiANCiBIQUJBTkFMQUJTIFBDSSBEUklW
-RVINCi1NOglZYXJvbiBBdml6cmF0IDx5YXJvbi5hdml6cmF0QGludGVsLmNvbT4NCitNOglLb2J5
-IEVsYmF6IDxrb2J5LmVsYmF6QGludGVsLmNvbT4NCitNOglLb25zdGFudGluIFNpbnl1ayA8a29u
-c3RhbnRpbi5zaW55dWtAaW50ZWwuY29tPg0KIEw6CWRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcNCiBTOglTdXBwb3J0ZWQNCiBDOglpcmM6Ly9pcmMub2Z0Yy5uZXQvZHJpLWRldmVsDQot
-LQ0KMi40My4wDQoNCg==
+This has been on linux-next for almost last two weeks now and
+no problem has been reported. So I guess it's all good.
+
+On 01/08/25 3:10 AM, Herton R. Krzesinski wrote:
+> The mm/debug_vm_pagetable test allocates manually page table entries for the
+> tests it runs, using also its manually allocated mm_struct. That in itself is
+> ok, but when it exits, at destroy_args() it fails to clear those entries with
+> the *_clear functions.
+> 
+> The problem is that leaves stale entries. If another process allocates
+> an mm_struct with a pgd at the same address, it may end up running into
+> the stale entry. This is happening in practice on a debug kernel with
+> CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
+> extra debugging I added (it prints a warning trace if pgtables_bytes goes
+> negative, in addition to the warning at check_mm() function):
+> 
+> [    2.539353] debug_vm_pgtable: [get_random_vaddr         ]: random_vaddr is 0x7ea247140000
+> [    2.539366] kmem_cache info
+> [    2.539374] kmem_cachep 0x000000002ce82385 - freelist 0x0000000000000000 - offset 0x508
+> [    2.539447] debug_vm_pgtable: [init_args                ]: args->mm is 0x000000002267cc9e
+> (...)
+> [    2.552800] WARNING: CPU: 5 PID: 116 at include/linux/mm.h:2841 free_pud_range+0x8bc/0x8d0
+> [    2.552816] Modules linked in:
+> [    2.552843] CPU: 5 UID: 0 PID: 116 Comm: modprobe Not tainted 6.12.0-105.debug_vm2.el10.ppc64le+debug #1 VOLUNTARY
+> [    2.552859] Hardware name: IBM,9009-41A POWER9 (architected) 0x4e0202 0xf000005 of:IBM,FW910.00 (VL910_062) hv:phyp pSeries
+> [    2.552872] NIP:  c0000000007eef3c LR: c0000000007eef30 CTR: c0000000003d8c90
+> [    2.552885] REGS: c0000000622e73b0 TRAP: 0700   Not tainted  (6.12.0-105.debug_vm2.el10.ppc64le+debug)
+> [    2.552899] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24002822  XER: 0000000a
+> [    2.552954] CFAR: c0000000008f03f0 IRQMASK: 0
+> [    2.552954] GPR00: c0000000007eef30 c0000000622e7650 c000000002b1ac00 0000000000000001
+> [    2.552954] GPR04: 0000000000000008 0000000000000000 c0000000007eef30 ffffffffffffffff
+> [    2.552954] GPR08: 00000000ffff00f5 0000000000000001 0000000000000048 0000000000004000
+> [    2.552954] GPR12: 00000003fa440000 c000000017ffa300 c0000000051d9f80 ffffffffffffffdb
+> [    2.552954] GPR16: 0000000000000000 0000000000000008 000000000000000a 60000000000000e0
+> [    2.552954] GPR20: 4080000000000000 c0000000113af038 00007fffcf130000 0000700000000000
+> [    2.552954] GPR24: c000000062a6a000 0000000000000001 8000000062a68000 0000000000000001
+> [    2.552954] GPR28: 000000000000000a c000000062ebc600 0000000000002000 c000000062ebc760
+> [    2.553170] NIP [c0000000007eef3c] free_pud_range+0x8bc/0x8d0
+> [    2.553185] LR [c0000000007eef30] free_pud_range+0x8b0/0x8d0
+> [    2.553199] Call Trace:
+> [    2.553207] [c0000000622e7650] [c0000000007eef30] free_pud_range+0x8b0/0x8d0 (unreliable)
+> [    2.553229] [c0000000622e7750] [c0000000007f40b4] free_pgd_range+0x284/0x3b0
+> [    2.553248] [c0000000622e7800] [c0000000007f4630] free_pgtables+0x450/0x570
+> [    2.553274] [c0000000622e78e0] [c0000000008161c0] exit_mmap+0x250/0x650
+> [    2.553292] [c0000000622e7a30] [c0000000001b95b8] __mmput+0x98/0x290
+> [    2.558344] [c0000000622e7a80] [c0000000001d1018] exit_mm+0x118/0x1b0
+> [    2.558361] [c0000000622e7ac0] [c0000000001d141c] do_exit+0x2ec/0x870
+> [    2.558376] [c0000000622e7b60] [c0000000001d1ca8] do_group_exit+0x88/0x150
+> [    2.558391] [c0000000622e7bb0] [c0000000001d1db8] sys_exit_group+0x48/0x50
+> [    2.558407] [c0000000622e7be0] [c00000000003d810] system_call_exception+0x1e0/0x4c0
+> [    2.558423] [c0000000622e7e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+> (...)
+> [    2.558892] ---[ end trace 0000000000000000 ]---
+> [    2.559022] BUG: Bad rss-counter state mm:000000002267cc9e type:MM_ANONPAGES val:1
+> [    2.559037] BUG: non-zero pgtables_bytes on freeing mm: -6144
+> 
+> Here the modprobe process ended up with an allocated mm_struct from the
+> mm_struct slab that was used before by the debug_vm_pgtable test. That is not a
+> problem, since the mm_struct is initialized again etc., however, if it ends up
+> using the same pgd table, it bumps into the old stale entry when clearing/freeing
+> the page table entries, so it tries to free an entry already gone (that one
+> which was allocated by the debug_vm_pgtable test), which also explains the
+> negative pgtables_bytes since it's accounting for not allocated entries in the
+> current process. As far as I looked pgd_{alloc,free} etc. does not clear entries,
+> and clearing of the entries is explicitly done in the free_pgtables->
+> free_pgd_range->free_p4d_range->free_pud_range->free_pmd_range->
+> free_pte_range path. However, the debug_vm_pgtable test does not call
+> free_pgtables, since it allocates mm_struct and entries manually for its test
+> and eg. not goes through page faults. So it also should clear manually the
+> entries before exit at destroy_args().
+> 
+> This problem was noticed on a reboot X number of times test being done
+> on a powerpc host, with a debug kernel with CONFIG_DEBUG_VM_PGTABLE
+> enabled. Depends on the system, but on a 100 times reboot loop the
+> problem could manifest once or twice, if a process ends up getting the
+> right mm->pgd entry with the stale entries used by mm/debug_vm_pagetable.
+> After using this patch, I couldn't reproduce/experience the problems
+> anymore. I was able to reproduce the problem as well on latest upstream
+> kernel (6.16).
+> 
+> I also modified destroy_args() to use mmput() instead of mmdrop(), there
+> is no reason to hold mm_users reference and not release the mm_struct
+> entirely, and in the output above with my debugging prints I already
+> had patched it to use mmput, it did not fix the problem, but helped
+> in the debugging as well.
+> 
+> Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+> ---
+>  mm/debug_vm_pgtable.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> index 7731b238b534..0f5ddefd128a 100644
+> --- a/mm/debug_vm_pgtable.c
+> +++ b/mm/debug_vm_pgtable.c
+> @@ -1041,29 +1041,34 @@ static void __init destroy_args(struct pgtable_debug_args *args)
+>  
+>  	/* Free page table entries */
+>  	if (args->start_ptep) {
+> +		pmd_clear(args->pmdp);
+>  		pte_free(args->mm, args->start_ptep);
+>  		mm_dec_nr_ptes(args->mm);
+>  	}
+>  
+>  	if (args->start_pmdp) {
+> +		pud_clear(args->pudp);
+>  		pmd_free(args->mm, args->start_pmdp);
+>  		mm_dec_nr_pmds(args->mm);
+>  	}
+>  
+>  	if (args->start_pudp) {
+> +		p4d_clear(args->p4dp);
+>  		pud_free(args->mm, args->start_pudp);
+>  		mm_dec_nr_puds(args->mm);
+>  	}
+>  
+> -	if (args->start_p4dp)
+> +	if (args->start_p4dp) {
+> +		pgd_clear(args->pgdp);
+>  		p4d_free(args->mm, args->start_p4dp);
+> +	}
+>  
+>  	/* Free vma and mm struct */
+>  	if (args->vma)
+>  		vm_area_free(args->vma);
+>  
+>  	if (args->mm)
+> -		mmdrop(args->mm);
+> +		mmput(args->mm);
+>  }
+>  
+>  static struct page * __init
+
 
