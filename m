@@ -1,222 +1,172 @@
-Return-Path: <linux-kernel+bounces-768999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3DC0B26899
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:07:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE50BB268EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A46C74E2DA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:07:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D21EA27BFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360071EB1A4;
-	Thu, 14 Aug 2025 14:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCB8134AC;
+	Thu, 14 Aug 2025 14:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gGzytPXq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gqgctjnJ"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E4E1E0E14
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364501F2C45
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180121; cv=none; b=qsT4ZqGcXwmQauQSG8wYBsYIsj92prMy5Habw549Is6FF+Q4fk4FA0gMf1Uxgad8rsXFXh4Qnuz9ieQCcYYL6jKjCH/Q7T2gLTprUP2kCcBdgwsQo2uDw2nQxcfw5ukOnA+4GK2LA/xZ+sXOGqFnHIl1wLxiBJpTxkpYsQxQJPI=
+	t=1755180165; cv=none; b=iVPx9aMwlhhaHWLRWH2vx5pQp59wNesFort2glB4KUeBWlappqufGAbtXjqeNNwpPILVrf3XmXM4uXwIIG2+k/UFG+/pcTJOns4sTjmSWv3QlPagREfgAAa9DGQK3GllgFtj5E48cDUrvMnIyWzLkkTgi+gDFMhvcIdngZtj60A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180121; c=relaxed/simple;
-	bh=ZpqJkdRqmgMpLBrGPUoz1aoYYxR6Dcu+5W9DucJYJzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OzU8wSO0X4WyUtHsgkNxXqY/8Mx5LNFjQ4x5Fha3r85MXrb072AWzEqf0PDbsNYrurjEW/zIkn24kA97ntv561p9FdwVfNAwcrMSoD9KC0npSiAWTJ9PE56PC5S9vcqiPxsMFHWeoCDt0nsdZOZe8yRZJdxdgIx6SSJNrubW9kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gGzytPXq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755180118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q/EryTRMH+rxkrqTuruXtg2o9IutiuwuTWQJ7ZDObv8=;
-	b=gGzytPXqrvPNyirhekGl+Y0z/QwDKmYmoHawi+cCok9rIhFPmRJmUIZv89SfxmcerA3JMb
-	eoJMGoFDusYbxDwD1CuHJzCXoG0PNUtJlUR/VsKh1V5VuSuSVYm3AJ4gI6JFSbTKEwkRRN
-	ykBC1uK/ZXnJFmaS6t0pxKG6vr2ltSw=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504-RTdhcZHxPOino9gArpu1pQ-1; Thu, 14 Aug 2025 10:01:55 -0400
-X-MC-Unique: RTdhcZHxPOino9gArpu1pQ-1
-X-Mimecast-MFC-AGG-ID: RTdhcZHxPOino9gArpu1pQ_1755180115
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e8704d540cso104795785a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:01:55 -0700 (PDT)
+	s=arc-20240116; t=1755180165; c=relaxed/simple;
+	bh=vD6N19vulg3nT1U+XDDs5iFEvbwhlOucwBKUyBA3INc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T7Vcv5rSILRImw/cHJoHw5jpNH2stGYlEnEcKblpx4rkW7IO6r9A4KJzbaDW2sN5gNWkc9dFFlzjzDWx37w2owLhrCfQ92EvxXQtCvosyHrmTDQB3/OGXs5t4W8gRpDnBf1llvKsQz4ic0KBFF5LycIVmv+JFtU7xZNj2kZoVso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gqgctjnJ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9d41c1963so509016f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755180161; x=1755784961; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=USeovI1td615+m2hPQWxMlhtpdb04/bJ2k3zHNEipJk=;
+        b=gqgctjnJCGzhl1czEXqJS54vIfPyqjCUl0pj2GywqdDP9jBxdphgaww62BXBo5VYJe
+         s+2Ugt0BD8ilg7MWS8PdNRWblewwgR9qpaj6uf7rko5jyBvrqDy1Z9WtkXzunBeiMugf
+         aAPfzKlRtjkT96zXaL0W6TYMevGWktdeVzuXUVoQB11zMKVXXSyzfaeEh+IPjJGIWpn6
+         tNr7Bku7DL3KQYiv4Wafz+IRtzMvuGUDS2Z9m5LZD2FgFI/LMUkgXdJz997bbftXDV6y
+         hZUZr9si4IJ3TZuJhgL/o9RdotV+IGzewmnThwHTWzFdKt2M3SWtHy82ptwPXo2hwump
+         eeKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755180114; x=1755784914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q/EryTRMH+rxkrqTuruXtg2o9IutiuwuTWQJ7ZDObv8=;
-        b=LdN6EjerOnSOrczXj2E1ZJHbP4R69eBqZf7AXsQzKzGc98Wyd6YeHNX/TLh44br4+G
-         fwyDqCejaLkJMcahmRWoAl2BIv5GEWcxAO36Qn+8WOKtqvbw8fhcUwRTzG+DjK7wzVP7
-         5hRzgk95nZfeESeYlr4oNoMPQBbEoBXxK4A6tNIyJmjQ4trT8L+fofvipkwdB6CQbDWn
-         Y+sPMftP1K4VJeHItnI9IQPYF2LfRE3oF23f3gg00yxKYaBNYmB0T/Sp3DOyPlx80zVv
-         eI4EwnasX2ojYnrbYTnIHapzLFkLKYLidIgqXLtuXMg+rDYMPngQGK7GWbc8BYkOV6fC
-         cVag==
-X-Forwarded-Encrypted: i=1; AJvYcCWmEwR/hNITWLaej23cieUnRbgre8pGuA5/fh+mjq3Zpsiuy5A3QcGL1M1E9ZSUGe+hN5PFxJXOI00ovD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXdjnqZ9GXDgvneW967B+YG3BqDn/TwVI7epAaG8aRxhiWTeXj
-	SChiDU1qkN0M0k7yB3PK3yJjfYkzV+AhFB8EMzvXJMtND02H0d+5p2KVKnZ2r+b5fMtpFm4/9HG
-	HiM639gMD3SVZdELkg6VYRii7gfJDk3BmYnFPRxFjSoIXNl8KlhsrVFs1kr5MwOOJ7YqDbXQNMp
-	kg
-X-Gm-Gg: ASbGncs0cwg6bKATRp0xcDHRASH+XK5suu3B2ThuQ7Z+O7kZqdc6YeJVawEzn/oTUtS
-	XxwpSRgc+hi2RLJGeNEJxev9HmSMiEw95CbDSjHC5u9uie6ra+07pvL/AZn+5At5aLQxw9WUjQr
-	TSUVC1jjBJKZVTG1RjVSmoRzZ0MLk4pTtP+ZE/hcOQtrSEPmE48Mt3YwozRrCODLUUPjW+7ioXU
-	N26vlc7nQYgWgKQEfyXMulihjbd0fmsaQ5NjEJ+3N7hEK0dlTzqHBSJBS52ekcWzj1gQj8ywV3M
-	TdS6hPu0hBY2Ek9SToDOcqXNzYek8jsRAzsfytZfVc6jDNR1ewpXGuyioMXVhE7f7kDjcg==
-X-Received: by 2002:a05:620a:7184:b0:7e8:2038:7cdc with SMTP id af79cd13be357-7e87043977bmr365632685a.38.1755180113956;
-        Thu, 14 Aug 2025 07:01:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHereF1KbK3/3c8JFcDQw95om+m5/ETSh5q8qoQAFiyEGNi6yPmT+vduGnwdOgCxujgsEV75w==
-X-Received: by 2002:a05:620a:7184:b0:7e8:2038:7cdc with SMTP id af79cd13be357-7e87043977bmr365582885a.38.1755180108649;
-        Thu, 14 Aug 2025 07:01:48 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.57.62.225])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e816a9a3cdsm1417099185a.23.2025.08.14.07.01.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 07:01:47 -0700 (PDT)
-Date: Thu, 14 Aug 2025 16:01:41 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Yuri Andriaccio <yurand2000@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: Re: [RFC PATCH v2 13/25] sched/rt: Add HCBS related checks and
- operations for rt tasks
-Message-ID: <aJ3sRfefZCxZd2t0@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250731105543.40832-1-yurand2000@gmail.com>
- <20250731105543.40832-14-yurand2000@gmail.com>
+        d=1e100.net; s=20230601; t=1755180161; x=1755784961;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=USeovI1td615+m2hPQWxMlhtpdb04/bJ2k3zHNEipJk=;
+        b=dssjNkCq2tWZWcWy3nnr2DpCKNXC3vyR1i+bsEegxSlCv1SjK/P+aVTrPxNPy3FYRB
+         4GtqKWM8jwIW/gU3UeNen75bB6jQVdq36hrlNepATWAZRvBLiOyWx6852iZRjOx14HSB
+         Eok8krqXt+djI7TCuiz3NK+23emXNfAVXKuggLig3ALTgVmaBKnZyf9On94NVcgVB9Sw
+         dydTeaCCvjGEtUURRhATtYkGWVIEn/+ki9uy+XyAJNGOLDglpPjBBZVuJ2c9P/oiU9QX
+         nkghsYrpCTIAa/6xJb61pphTugR0FIylG/UG2uu/YWvppk6acaZIyenrq7AAJO5C8p8l
+         DACg==
+X-Gm-Message-State: AOJu0YycbmrrdloyPE/h5ph0fCY0itYWa2qLmwmFZzzyyAhITGOgW83i
+	qi4rquZRWmKmyRcsZIPabbp3WKS2dDIA0DlBH6EHRl/MdpmUBszkRdmUu9n0AtreYCQ=
+X-Gm-Gg: ASbGncs9XaTAAnPLuqwLQLDticVM3AqN0tThtDbueg5cGg3qh6xibbgB6VU0rjYnQEu
+	FApdg7a8xT+mMyiLBrB7iXuj13n+NUYvJPxSVBX7sPKRDAPVV5xAxtLh+SPSgs7i28AfIK8EXdU
+	CXuWFPdtCQuaWv5F9yPq9xhHzl6s9hP2QvdXX54uhlrB9isIbRTIUJS9cz41B2yY+nwcwzSB3pO
+	28V2pq5wWgWKx+O5E07gIwclgiSb5tEbugwd8Ng3BI5aFZaePFEPH8raRi2OYGpDdpoiegMr4Tq
+	hHhY+nBsG2oe66jJwmNVHsGcdzz7vlgQ/h/sDHH6TVFLM/0tX4BKY3tPaLAFHuWOsSe51MFB0sZ
+	DOcVf54VDQVfzEkmDQjw3D2kLLI/b7vHJZ4o1DqHO8zfHrDp68nSUDlr5SJOEoA==
+X-Google-Smtp-Source: AGHT+IERUJslQgwOH4b97ptMQL4N4tOcjICMqR7HsbySu7FxgbLzrjkgYS25JdaV9G4A+kXiHJj3RQ==
+X-Received: by 2002:a05:6000:2503:b0:3a6:d349:1b52 with SMTP id ffacd0b85a97d-3b9edf1cf68mr2732676f8f.21.1755180161393;
+        Thu, 14 Aug 2025 07:02:41 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b911469bffsm9885157f8f.36.2025.08.14.07.02.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 07:02:40 -0700 (PDT)
+Message-ID: <52887b08-d5bc-4710-af7c-a70fab5e7f81@linaro.org>
+Date: Thu, 14 Aug 2025 16:02:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731105543.40832-14-yurand2000@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] clocksource/drivers/arm_arch_timer: Add standalone
+ MMIO driver
+To: Marc Zyngier <maz@kernel.org>, Steven Price <steven.price@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner
+ <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>
+References: <20250807160243.1970533-1-maz@kernel.org>
+ <20250807160243.1970533-3-maz@kernel.org>
+ <8e58b01b-772d-4ca7-a681-34f10baa07e6@arm.com> <86ldnmdvpl.wl-maz@kernel.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <86ldnmdvpl.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi!
-
-On 31/07/25 12:55, Yuri Andriaccio wrote:
-> From: luca abeni <luca.abeni@santannapisa.it>
+On 14/08/2025 12:49, Marc Zyngier wrote:
+> On Thu, 14 Aug 2025 11:13:47 +0100,
+> Steven Price <steven.price@arm.com> wrote:
+>>
+>> On 07/08/2025 17:02, Marc Zyngier wrote:
+>>> Add a new driver for the MMIO side of the ARM architected timer.
+>>> Most of it has been lifted from the existing arch timer code,
+>>> massaged, and finally rewritten.
+>>>
+>>> It supports both DT and ACPI as firmware descriptions.
+>>>
+>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>>> ---
+>>>   MAINTAINERS                               |   1 +
+>>>   drivers/clocksource/arm_arch_timer_mmio.c | 420 ++++++++++++++++++++++
+>>>   2 files changed, 421 insertions(+)
+>>>   create mode 100644 drivers/clocksource/arm_arch_timer_mmio.c
+>>>
+>> [...]
+>>> +static void arch_timer_mmio_setup(struct arch_timer *at, int irq)
+>>> +{
+>>> +	at->evt = (struct clock_event_device) {
+>>> +		.features		   = (CLOCK_EVT_FEAT_ONESHOT |
+>>> +					      CLOCK_EVT_FEAT_DYNIRQ),
+>>> +		.name			   = "arch_mem_timer",
+>>> +		.rating			   = 400,
+>>> +		.cpumask		   = cpu_possible_mask,
+>>> +		.irq 			   = irq,
+>>> +		.set_next_event		   = arch_timer_mmio_set_next_event,
+>>> +		.set_state_oneshot_stopped = arch_timer_mmio_shutdown,
+>>> +		.set_state_shutdown	   = arch_timer_mmio_shutdown,
+>>> +	};
+>>> +
+>>> +	at->evt.set_state_shutdown(&at->evt);
+>>> +
+>>> +	clockevents_config_and_register(&at->evt, at->rate, 0xf, CLOCKSOURCE_MASK(56));
+>>
+>> This doesn't work on 32 bit - clockevents_config_and_register()'s final
+>> argument is an unsigned long, and a 56 bit mask doesn't fit. This
+>> triggers a compiler warning:
 > 
-> Add checks wheter a task belongs to the root cgroup or a rt-cgroup, since HCBS
-> reuses the rt classes' scheduler, and operate accordingly where needed.
+> Already reported, see 20250814111657.7debc9f1@canb.auug.org.au.
 > 
-> Co-developed-by: Alessio Balsini <a.balsini@sssup.it>
-> Signed-off-by: Alessio Balsini <a.balsini@sssup.it>
-> Co-developed-by: Andrea Parri <parri.andrea@gmail.com>
-> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
-> Co-developed-by: Yuri Andriaccio <yurand2000@gmail.com>
-> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
-> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
-> ---
->  kernel/sched/core.c     |   3 +
->  kernel/sched/deadline.c |  16 ++++-
->  kernel/sched/rt.c       | 147 +++++++++++++++++++++++++++++++++++++---
->  kernel/sched/sched.h    |   6 +-
->  kernel/sched/syscalls.c |  13 ++++
->  5 files changed, 171 insertions(+), 14 deletions(-)
+>> Possible this should really be min(CLOCKSOURCE_MASK(56), ULONG_MAX)? But
+>> I'm not familiar enough with this code. Most likely it's dead code on a
+>> 32 bit platform.
 > 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 3a69cb906c3..6173684a02b 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -2196,6 +2196,9 @@ void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags)
->  {
->  	struct task_struct *donor = rq->donor;
->  
-> +	if (is_dl_group(rt_rq_of_se(&p->rt)) && task_has_rt_policy(p))
-> +		resched_curr(rq);
+> No, this definitely exists on 32bit crap, since it has been part of
+> the architecture from the ARMv7+VE days.
+> 
+> I think this is more of an impedance mismatch between the
+> CLOCKSOURCE_MASK() helper and the clockevents_config_and_register(),
+> and a (unsigned long) cast would do the trick.
+> 
+> But it also means that the per-cpu timer also gets truncated the same
+> way, and that has interesting impacts on how often the timer is
+> reprogrammed.
+> 
+> Daniel, do you want a patch on top or a new series?
 
-Why this unconditional resched for tasks in groups?
+A new series please
 
-...
+Thanks
 
-> @@ -715,6 +744,14 @@ enqueue_task_rt(struct rq *rq, struct task_struct *p, int flags)
->  	check_schedstat_required();
->  	update_stats_wait_start_rt(rt_rq_of_se(rt_se), rt_se);
->  
-> +	/* Task arriving in an idle group of tasks. */
-> +	if (IS_ENABLED(CONFIG_RT_GROUP_SCHED) &&
-> +	    is_dl_group(rt_rq) && rt_rq->rt_nr_running == 0) {
-> +		struct sched_dl_entity *dl_se = dl_group_of(rt_rq);
-> +
-> +		dl_server_start(dl_se);
-> +	}
-> +
->  	enqueue_rt_entity(rt_se, flags);
 
-Is it OK to start the server before the first task is enqueued in an
-idle group?
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-...
-
-> @@ -891,6 +936,34 @@ static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
->  {
->  	struct task_struct *donor = rq->donor;
->  
-> +	if (!rt_group_sched_enabled())
-> +		goto no_group_sched;
-> +
-
-I think the below deserves a comment detailing the rules of preemption
-(inside/outside groups, etc.).
-
-> +	if (is_dl_group(rt_rq_of_se(&p->rt)) &&
-> +	    is_dl_group(rt_rq_of_se(&rq->curr->rt))) {
-> +		struct sched_dl_entity *dl_se, *curr_dl_se;
-> +
-> +		dl_se = dl_group_of(rt_rq_of_se(&p->rt));
-> +		curr_dl_se = dl_group_of(rt_rq_of_se(&rq->curr->rt));
-> +
-> +		if (dl_entity_preempt(dl_se, curr_dl_se)) {
-> +			resched_curr(rq);
-> +			return;
-> +		} else if (!dl_entity_preempt(curr_dl_se, dl_se)) {
-
-Isn't this condition implied by the above?
-
-...
-
-> +#ifdef CONFIG_RT_GROUP_SCHED
-> +static int group_push_rt_task(struct rt_rq *rt_rq)
-> +{
-> +	struct rq *rq = rq_of_rt_rq(rt_rq);
-> +
-> +	if (is_dl_group(rt_rq))
-> +		return 0;
-> +
-> +	return push_rt_task(rq, false);
-> +}
-> +
-> +static void group_push_rt_tasks(struct rt_rq *rt_rq)
-> +{
-> +	while (group_push_rt_task(rt_rq))
-> +		;
-> +}
-> +#else
-> +static void group_push_rt_tasks(struct rt_rq *rt_rq)
-> +{
-> +	push_rt_tasks(rq_of_rt_rq(rt_rq));
-> +}
-> +#endif
-> +
-
-Hummm, maybe too much for a single patch? I am a little lost at this
-point. :))
-
-Thanks,
-Juri
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
