@@ -1,334 +1,187 @@
-Return-Path: <linux-kernel+bounces-768400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296DCB260AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:23:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D550B260B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34C1885AC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C592D1C23D7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70372EA17C;
-	Thu, 14 Aug 2025 09:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECB182264CF;
+	Thu, 14 Aug 2025 09:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQa0IPhI"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vrskjrDW"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27A22EA160;
-	Thu, 14 Aug 2025 09:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380F7221721
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755163011; cv=none; b=K6y9TQ37JRgab+LUsgGG5j37nJBulw24N6AYdYnP0oqCu+ySAIFx+8Ns68Vv/CINGGIkhySJuscLqE6L1SqR9k9H2tQRB0koyD9V1kRD8eQ3BqXQLOA6Stvrwb7D9fh0Mh2vNol7/DNsYrwcn4UachpjH7XWW7heiU1dQ++WBto=
+	t=1755163101; cv=none; b=QBQGHv1OuWmGrgsexZvIJbu95Wt7pt78LA7UZ7HWy6bfuKVT+OCaWTSElwEA3+g9ssPFYHXJv4U7RI63vngNPPHfee/PQH7/bC/DshqQlY5BvKoEfTWoDTbZQJPxm0BtvnyBDhCXJZ4WrSfxnwB05/m/JHZytxPBJM5GoFBkKtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755163011; c=relaxed/simple;
-	bh=4hKo60OOYdhk6IKRvFRlLisspZF1UtpsaSscie29dyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=st6KiStzwEMz44mX7cETDYFMILSzA7b1Qzaok7EQ58mmT58T5LIak062AKGEkBrJgJpWg9UzQQOk64KubRj+PEf4T7K9cjmylMM0JTdBpn+J3gv8qHw4IPH7SE6LfklBS825fQh00hbKBSuM0SgksaPtLhk5PgnR6O0En/NKDlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQa0IPhI; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6188b656159so1168847a12.1;
-        Thu, 14 Aug 2025 02:16:49 -0700 (PDT)
+	s=arc-20240116; t=1755163101; c=relaxed/simple;
+	bh=sfXErAu2y829baB7asLxYKvQd/EDsFZz8LkUJdrlX+s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MWAJhKA+HYw55LceBJ1SdyJdhoJhJKm1YfZMeXQZB2q2qWjhYVYRkwb9JwoGjrRJAQVjGVUZKnNxprAOPvnfhHI/cpwbTxszP8FuSXBCWaNdMPSNzFeVnagsiq4mRPuaX2+CNT/OANTCQ/cM/y5fLN7nfC4j13dFb44mcxG4KjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vrskjrDW; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b9e4193083so562615f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:18:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755163008; x=1755767808; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=maL8ja7snbyxSg/aB0udz/2XPVl8dYyS2NvjcHhRBsU=;
-        b=TQa0IPhIR3TrWxss+tVQgjRfMp2bEk+6jJ08tcTIS4KD/tr4cZe3wnfaH3W1+t/VRH
-         ZNfbwNURh2BGbmYFsw+A4Rfr629nDUMuLKPmdDfy5Gban7XbHsv1xuMKseARHPDRe41D
-         oALTl7TIDOgqQjQrLlJ83ASaVLOgbKgHJUq5QUUez5zx3AmT6tlD6qdevYmUDBwsD1Dp
-         VB037lC3p8CSaLXbIL8cTadmcK3lqpGFAGT+n7X93spCmNXkLLvrOK94fdQxq+evL+oj
-         Wc/kUUGDgKaCLEQN76TRV318NFeYJsKjhB4XLVCaOhlfyYsIPooQ0QgASi5YwkwunBte
-         53ug==
+        d=linaro.org; s=google; t=1755163097; x=1755767897; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ffaHlWpu8RE7aequBY+27dl9SNuH9GqRdQDvB6bAj+s=;
+        b=vrskjrDW+yTCwnAjf2FdtgrY3NMOG87/i8gdo4OdV8sqSd461Cme9WWyLcr8JVcp60
+         bct5xwOOehrBp2YNXZmdltdbbhHBai2Upp05ETDkzqFdVtkgEVwialYPA72Txdz3PLao
+         nLohiPbY74h5VYeYSfzQSfaTFP1aJNtheSufIDOKTva2OjZTsztWTCqm/ZlhKny7Eiok
+         iE1SS+bCDWRFbT9/hSW2T79L549PJnnQZFVm3UgqGxFcchHOHHDwc4P5qXmbN0stlgrp
+         4iSq17Wa9pULfjrEjasYVhnPVpYvQFvbD4z8VhlYh1rxlTy2V3EOncRDl12R0AobRLkj
+         V7lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755163008; x=1755767808;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=maL8ja7snbyxSg/aB0udz/2XPVl8dYyS2NvjcHhRBsU=;
-        b=hzxAGYIVlFT0fKX5NvqAJrsAn407zgk/SL2J2Wip7M33UXR2HdR5ebacembPBCE4eW
-         k8cttYSVOW3nB/xZGT75X0D99I8Wj1BWXMhj9EocHKakPyuL1SEtz+Sl1baTQwhjxFQR
-         oqCHlM6oNM8X5cP9Yx1pAENY9K7NPC3b6QSJ8hchQSsPnnfTtKi4OuO5HIEje5GgNQif
-         wuBY6V7TpXAYqU1OQ4eUkAFweV8BAH5v/7gqOg2V1yAxzUBwK3JGXmNlV4zL5ebdJssf
-         +mGRVkmaUUUrBnNtVOWRCJu6QYUKMzn/r5ZkPaYV8WZTgy/wVqiB2gkXl6s5+qTObJ6Z
-         ae8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUcYYXs7y2InoOrl0/lARGkYF2YKdb8J3+Ryl2LogvLv6sptUQA/5DPR3qxfPoM/c5e5W/QB5Y00DWx7VA=@vger.kernel.org, AJvYcCVYmf+oUdPjFW+/WhL/ukfYAG4/iV3Yku8prK+RnYAYRYhC/Njdoi2FuAkm61S7gTBbrtoWqLKNlIUfmr6qHN6S@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvz1h7etcJuqqgY1mM3/9ZzNx8cIAfYS9FHfqaxpGWYv+FP823
-	OaKZ7T56JGBcLv3dmQi2e5IUXNeeKEw2vSCexnrH16Ckjrl8PczJmoPw
-X-Gm-Gg: ASbGncvgf7xZlDmrsVbSTiMMa0KZk4N45I18fJHy/GCtb+Q49f+31+Tf2xCgJveHkGV
-	y2QDJ7QAF0dHG2ImUSWRzTxZ7EkfrFDrj5Zi18pk2uECaRq4itgSj+fNongBEeXwgojPI2tJ87n
-	kvSQdQgJsJwjmej+xXHdl+hmoCE1DVBkDTT+Q/kdBFVWJwVXjE1ahqVw+47dnsCsMRPrlxbaa5H
-	J3itY0N8javO9UvHoFktt7dub2d/Az+Mje094P9vBGTwQoLpyoU41AAZUzHo6PEd8UAAX6ftvyW
-	9Lprwd6xsqrRw6VZIQUUAHCRDFfoZAnVU/LAM2eMrXkkxGMsHEHZHLJSjHltD0Cwovwx4AxQ5Wx
-	c8LwNLodYmSrl4eH/R0t0zw==
-X-Google-Smtp-Source: AGHT+IE13oXUtnMs/Hs8gStTap5qVhOyy5FFDOfkTObdSMHP/qfsbCsjE7ChNeDnKH/AZiw3TDdy+Q==
-X-Received: by 2002:a05:6402:90c:b0:618:2011:cad4 with SMTP id 4fb4d7f45d1cf-6188b92f8camr2177926a12.15.1755163007905;
-        Thu, 14 Aug 2025 02:16:47 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f245c1sm23289384a12.22.2025.08.14.02.16.47
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Aug 2025 02:16:47 -0700 (PDT)
-Date: Thu, 14 Aug 2025 09:16:47 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Zi Yan <ziy@nvidia.com>, g@master.smtp.subspace.kernel.org
-Cc: Wei Yang <richard.weiyang@gmail.com>, wang lian <lianux.mm@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] selftests/mm: check after-split folio orders in
- split_huge_page_test.
-Message-ID: <20250814091647.6prozsywma7qlugm@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250812155512.926011-1-ziy@nvidia.com>
- <20250812155512.926011-5-ziy@nvidia.com>
+        d=1e100.net; s=20230601; t=1755163097; x=1755767897;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ffaHlWpu8RE7aequBY+27dl9SNuH9GqRdQDvB6bAj+s=;
+        b=Pz1JLet6C/yVdm1aFtajcXr+JGu+F9pEYkG1WkDz+liIvUUYt0+5/WlUfRkJbNnroC
+         ea3rpPHHmsXG1iDop4LtTokuhXHRH5uBr1Ze+6Bl446Ia/I+Avp1jrIAwY36Cme8QxYl
+         R3IGd0pau2BjfV6xm5Zxy5oK+PDW0q2jUyeK2ZELcVCn6OhPz5PfOShz6lRvJC/VcxC9
+         OehZJEmUwwSLXFMkyxptOgQMwDpGVK+v21n0FTLXtfRWx/O2PfZE+QY3KSziokVF5mfT
+         yzBaTzUp9LbUSwfubxCvhJtJcPTgOmWsaoNXwC89F5KMHV4mEGs8nbM+8wmiaAYLDeie
+         bLQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEnBXPMP4IJNcoQuWgUfGs5tWiAk8gYtMP6qTDN4MJnqfM6L4MvHwp6AuvEX/x39Iy7I847RLWh/wE0p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/ok5HqdSxsADF9WPGW86DN/BqmYlaGS3Z+ax1w9KzjMkrOHzN
+	O3DJ49K+aIpnq9pY/HAd4xyLiFdK2BJsTy75CzrSa/zF3oH3+7uFc8+se0HRy7bqAXQ=
+X-Gm-Gg: ASbGncu7xsRhO+6yffXWrpMg+Pl0rVYruLMLm0o050c/RR8oraPDDrE2PA3//FuhI+S
+	b/wgTrq1PW23AmRFGEu9GP/xILwFJ7RxX25a1tlQphbQZbF0BJj+EWTe1IAnVsWmZ8D92eHji+s
+	N6JrusvkIVEbw82lrNIZXTGguweO3qdeSet+hzzZBD0SNZ7x+xeLMaQ8P/MTUzHn2vVRpT2ZKVP
+	k1X39BkQLhYPkCZywv0YG1+mv9RwFDwMHLBijtX5oJxb3z/wzKEgySF5189dyuiaLtbdfbDGQRs
+	hXVppS6XwkT1lwdyilQkU2PAocyoTD08TOD/94U0fzjXUuTt1oeRLLqmurOYXg/KPlw/eBHTQDP
+	S41zaYVPihqYvYq3TkRLCumh/E/9Sz71f6f12J+/hW6LiOtA=
+X-Google-Smtp-Source: AGHT+IGCOwNbc5nUe5UXc9T+LlZ8/LSjfCjdWogYZwRPwtV/r3ZErXEW4EvaurTmA3Z5w5QHIDd2wA==
+X-Received: by 2002:a05:6000:420b:b0:3b7:76e8:b9f7 with SMTP id ffacd0b85a97d-3b9e414d51emr1806910f8f.10.1755163097393;
+        Thu, 14 Aug 2025 02:18:17 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:ef41:ea13:2485:4711:708])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c74876csm13861925e9.14.2025.08.14.02.18.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 02:18:17 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: [PATCH 0/2] driver core: platform: / drm/msm: dp: Delay applying
+ clock defaults
+Date: Thu, 14 Aug 2025 11:18:05 +0200
+Message-Id: <20250814-platform-delay-clk-defaults-v1-0-4aae5b33512f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250812155512.926011-5-ziy@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM2pnWgC/x3MQQqAIBBA0avErBswSbCuEi3ExhoyC60oorsn7
+ f7b/AcSRaYEbfFApJMTryGjKguwkwkjIQ/ZIIVUQlcSN292t8YFB/LmRuvnXM4cfk9Y10JIrRq
+ nrIJ82CI5vv5717/vBzozBnltAAAA
+X-Change-ID: 20250812-platform-delay-clk-defaults-44002859f5c5
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Abel Vesa <abel.vesa@linaro.org>, Michael Walle <mwalle@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Tue, Aug 12, 2025 at 11:55:12AM -0400, Zi Yan wrote:
->Instead of just checking the existence of PMD folios before and after folio
->split tests, use check_folio_orders() to check after-split folio orders.
->
->The following tests are not changed:
->1. split_pte_mapped_thp: the test already uses kpageflags to check;
->2. split_file_backed_thp: no vaddr available.
->
->Signed-off-by: Zi Yan <ziy@nvidia.com>
->---
-> .../selftests/mm/split_huge_page_test.c       | 85 +++++++++++++------
-> 1 file changed, 61 insertions(+), 24 deletions(-)
->
->diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
->index 3aaf783f339f..1ea2c7f22962 100644
->--- a/tools/testing/selftests/mm/split_huge_page_test.c
->+++ b/tools/testing/selftests/mm/split_huge_page_test.c
->@@ -26,6 +26,7 @@ uint64_t pagesize;
-> unsigned int pageshift;
-> uint64_t pmd_pagesize;
-> unsigned int pmd_order;
->+int *expected_orders;
-> 
-> #define SPLIT_DEBUGFS "/sys/kernel/debug/split_huge_pages"
-> #define SMAP_PATH "/proc/self/smaps"
->@@ -37,6 +38,11 @@ unsigned int pmd_order;
-> 
-> #define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
-> 
->+const char *pagemap_proc = "/proc/self/pagemap";
->+const char *kpageflags_proc = "/proc/kpageflags";
->+int pagemap_fd;
->+int kpageflags_fd;
->+
-> int is_backed_by_folio(char *vaddr, int order, int pagemap_fd, int kpageflags_fd)
-> {
-> 	unsigned long pfn_head;
->@@ -49,18 +55,21 @@ int is_backed_by_folio(char *vaddr, int order, int pagemap_fd, int kpageflags_fd
-> 
-> 	pfn = pagemap_get_pfn(pagemap_fd, vaddr);
-> 
->+	/* non present page */
-> 	if (pfn == -1UL)
-> 		return 0;
-> 
-> 	if (get_pfn_flags(pfn, kpageflags_fd, &pfn_flags))
-> 		return 0;
-> 
->+	/* check for order-0 pages */
-> 	if (!order) {
-> 		if (pfn_flags & (KPF_THP | KPF_COMPOUND_HEAD | KPF_COMPOUND_TAIL))
-> 			return 0;
-> 		return 1;
-> 	}
-> 
->+	/* non THP folio */
-> 	if (!(pfn_flags & KPF_THP))
-> 		return 0;
-> 
->@@ -69,9 +78,11 @@ int is_backed_by_folio(char *vaddr, int order, int pagemap_fd, int kpageflags_fd
-> 	if (get_pfn_flags(pfn_head, kpageflags_fd, &pfn_flags))
-> 		return 0;
-> 
->+	/* head PFN has no compound_head flag set */
-> 	if (!(pfn_flags & (KPF_THP | KPF_COMPOUND_HEAD)))
-> 		return 0;
-> 
->+	/* check all tail PFN flags */
-> 	for (i = 1; i < (1UL << order) - 1; i++) {
-> 		if (get_pfn_flags(pfn_head + i, kpageflags_fd, &pfn_flags))
-> 			return 0;
+Currently, the platform driver core always calls of_clk_set_defaults()
+before calling the driver probe() function. This will apply any
+"assigned-clock-parents" and "assigned-clock-rates" specified in the device
+tree. However, in some situations, these defaults cannot be safely applied
+before the driver has performed some early initialization. Otherwise, the
+clock operations might fail or the device could malfunction.
 
-The comment in is_backed_by_folio() is more proper to be in previous patch?
+This is the case for the DP/DSI controller on some Qualcomm platforms. We
+use assigned-clock-parents there to bind the DP/DSI link clocks to the PHY,
+but this fails if the PHY is not already powered on. We often bypass this
+problem because the boot firmware already sets up the correct clock parent,
+but this is not always the case.
 
->@@ -198,6 +209,12 @@ void split_pmd_thp_to_order(int order)
-> 		if (one_page[i] != (char)i)
-> 			ksft_exit_fail_msg("%ld byte corrupted\n", i);
-> 
->+	memset(expected_orders, 0, sizeof(int) * (pmd_order + 1));
->+	expected_orders[order] = 4 << (pmd_order - order);
->+
->+	if (check_folio_orders(one_page, len, pagemap_fd, kpageflags_fd,
->+			       expected_orders, (pmd_order + 1)))
->+		ksft_exit_fail_msg("Unexpected THP split\n");
-> 
-> 	if (!check_huge_anon(one_page, 0, pmd_pagesize))
-> 		ksft_exit_fail_msg("Still AnonHugePages not split\n");
->@@ -212,22 +229,6 @@ void split_pte_mapped_thp(void)
-> 	size_t len = 4 * pmd_pagesize;
-> 	uint64_t thp_size;
-> 	size_t i;
->-	const char *pagemap_template = "/proc/%d/pagemap";
->-	const char *kpageflags_proc = "/proc/kpageflags";
->-	char pagemap_proc[255];
->-	int pagemap_fd;
->-	int kpageflags_fd;
->-
->-	if (snprintf(pagemap_proc, 255, pagemap_template, getpid()) < 0)
->-		ksft_exit_fail_msg("get pagemap proc error: %s\n", strerror(errno));
->-
->-	pagemap_fd = open(pagemap_proc, O_RDONLY);
->-	if (pagemap_fd == -1)
->-		ksft_exit_fail_msg("read pagemap: %s\n", strerror(errno));
->-
->-	kpageflags_fd = open(kpageflags_proc, O_RDONLY);
->-	if (kpageflags_fd == -1)
->-		ksft_exit_fail_msg("read kpageflags: %s\n", strerror(errno));
-> 
-> 	one_page = mmap((void *)(1UL << 30), len, PROT_READ | PROT_WRITE,
-> 			MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
->@@ -285,8 +286,6 @@ void split_pte_mapped_thp(void)
-> 
-> 	ksft_test_result_pass("Split PTE-mapped huge pages successful\n");
-> 	munmap(one_page, len);
->-	close(pagemap_fd);
->-	close(kpageflags_fd);
-> }
-> 
-> void split_file_backed_thp(int order)
->@@ -489,6 +488,7 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
-> 		int order, int offset)
-> {
-> 	int fd;
->+	char *split_addr;
-> 	char *addr;
-> 	size_t i;
-> 	char testfile[INPUT_MAX];
->@@ -502,14 +502,27 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
-> 	err = create_pagecache_thp_and_fd(testfile, fd_size, &fd, &addr);
-> 	if (err)
-> 		return;
->+
-> 	err = 0;
-> 
->-	if (offset == -1)
->-		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
->-			      (uint64_t)addr + fd_size, order);
->-	else
->-		write_debugfs(PID_FMT_OFFSET, getpid(), (uint64_t)addr,
->-			      (uint64_t)addr + fd_size, order, offset);
->+	memset(expected_orders, 0, sizeof(int) * (pmd_order + 1));
+Michael had a somewhat related problem in the PVR driver recently [1],
+where of_clk_set_defaults() needs to be called a second time from the PVR
+driver (after the GPU has been powered on) to make the assigned-clock-rates
+work correctly.
 
-I am not familiar with split, you change it to split on each pmd_pagesize from
-4 pmd_pagesize. Is there any difference?
+I propose adding a simple flag to the platform_driver struct that skips the
+call to of_clk_set_defaults(). The platform driver can then call it later
+after the necessary initialization was performed (in my case: after the PHY
+was fully enabled for the first time).
 
->+	if (offset == -1) {
->+		for (split_addr = addr; split_addr < addr + fd_size; split_addr += pmd_pagesize)
->+			write_debugfs(PID_FMT, getpid(), (uint64_t)split_addr,
->+				      (uint64_t)split_addr + pagesize, order);
+There are also alternative solutions that I considered, but so far
+I discarded them in favor of this simple one:
 
-                                                ^--- here should be vaddr_end
+ - Avoid use of assigned-clock-parents: We could move the clocks from
+   "assigned-clock-parents" to "clocks" and call clk_set_parent() manually
+   from the driver. This is what we did for DSI on SM8750 (see commit
+   80dd5911cbfd ("drm/msm/dsi: Add support for SM8750")).
 
-Curious why not (uint64_t)split_addr + pmd_pagesize?
+   This is the most realistic alternative, but it has a few disadvantages:
 
->+
->+		expected_orders[order] = fd_size / (pagesize << order);
->+	} else {
->+		int times = fd_size / pmd_pagesize;
->+
->+		for (split_addr = addr; split_addr < addr + fd_size; split_addr += pmd_pagesize)
->+			write_debugfs(PID_FMT_OFFSET, getpid(), (uint64_t)split_addr,
->+				      (uint64_t)split_addr + pagesize, order, offset);
+    - We need additional boilerplate in the driver to assign all the clock
+      parents, that would be normally hidden by of_clk_set_defaults().
 
-As above.
+    - We need to change the existing DT bindings for a number of platforms
+      just to workaround this limitation in the Linux driver stack. The DT
+      does not specify when to apply the assigned-clock-parents, so there
+      is nothing wrong with the current hardware description.
 
->+
->+		for (i = order + 1; i < pmd_order; i++)
->+			expected_orders[i] = times;
->+		expected_orders[order] = 2 * times;
->+	}
-> 
-> 	for (i = 0; i < fd_size; i++)
-> 		if (*(addr + i) != (char)i) {
->@@ -518,6 +531,13 @@ void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
-> 			goto out;
-> 		}
-> 
->+	if (check_folio_orders(addr, fd_size, pagemap_fd, kpageflags_fd,
->+			       expected_orders, (pmd_order + 1))) {
->+		ksft_print_msg("Unexpected THP split\n");
->+		err = 1;
->+		goto out;
->+	}
->+
-> 	if (!check_huge_file(addr, 0, pmd_pagesize)) {
-> 		ksft_print_msg("Still FilePmdMapped not split\n");
-> 		err = EXIT_FAILURE;
->@@ -569,9 +589,22 @@ int main(int argc, char **argv)
-> 
-> 	nr_pages = pmd_pagesize / pagesize;
-> 	pmd_order = GET_ORDER(nr_pages);
->+
->+	expected_orders = (int *)malloc(sizeof(int) * (pmd_order + 1));
->+	if (!expected_orders)
->+		ksft_exit_fail_msg("Fail to allocate memory: %s\n", strerror(errno));
->+
-> 	tests = 2 + (pmd_order - 1) + (2 * pmd_order) + (pmd_order - 1) * 4 + 2;
-> 	ksft_set_plan(tests);
-> 
->+	pagemap_fd = open(pagemap_proc, O_RDONLY);
->+	if (pagemap_fd == -1)
->+		ksft_exit_fail_msg("read pagemap: %s\n", strerror(errno));
->+
->+	kpageflags_fd = open(kpageflags_proc, O_RDONLY);
->+	if (kpageflags_fd == -1)
->+		ksft_exit_fail_msg("read kpageflags: %s\n", strerror(errno));
->+
-> 	fd_size = 2 * pmd_pagesize;
-> 
-> 	split_pmd_zero_pages();
->@@ -596,6 +629,10 @@ int main(int argc, char **argv)
-> 			split_thp_in_pagecache_to_order_at(fd_size, fs_loc, i, offset);
-> 	cleanup_thp_fs(fs_loc, created_tmp);
-> 
->+	close(pagemap_fd);
->+	close(kpageflags_fd);
->+	free(expected_orders);
->+
-> 	ksft_finished();
-> 
-> 	return 0;
->-- 
->2.47.2
+ - Use clock subsystem CLK_OPS_PARENT_ENABLE flag: In theory, this would
+   enable the new parent before we try to reparent to it. It does not work
+   in this situation, because the clock subsystem does not have enough
+   information to power on the PHY. Only the DP/DSI driver has.
 
+ - Cache the new parent in the clock driver: We could try to workaround
+   this problem in the clock driver, by delaying application of the new
+   clock parent until the parent actually gets enabled. From the
+   perspective of the clock subsystem, the clock would be already
+   reparented. This would create an inconsistent state: What if the clock
+   is already running off some other parent and we get a clk_set_rate()
+   before the parent clock gets enabled? It would operate on the new
+   parent, but the actual rate is still being derived from the old parent.
+
+[1]: https://lore.kernel.org/r/20250716134717.4085567-3-mwalle@kernel.org/
+
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Stephan Gerhold (2):
+      driver core: platform: Add option to skip/delay applying clock defaults
+      drm/msm: dp: Delay applying clock defaults until PHY is fully enabled
+
+ drivers/base/platform.c             |  8 +++++---
+ drivers/gpu/drm/msm/dp/dp_ctrl.c    | 10 ++++++++++
+ drivers/gpu/drm/msm/dp/dp_display.c |  2 ++
+ include/linux/platform_device.h     |  6 ++++++
+ 4 files changed, 23 insertions(+), 3 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250812-platform-delay-clk-defaults-44002859f5c5
+
+Best regards,
 -- 
-Wei Yang
-Help you, Help me
+Stephan Gerhold <stephan.gerhold@linaro.org>
+
 
