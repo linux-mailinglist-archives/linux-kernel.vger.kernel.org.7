@@ -1,152 +1,172 @@
-Return-Path: <linux-kernel+bounces-768768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD63B26542
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:20:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9A4B26541
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11CB189C815
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:20:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 958B27BFD49
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B8B2FCC1D;
-	Thu, 14 Aug 2025 12:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FxXulLAo"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014C42FCC01;
+	Thu, 14 Aug 2025 12:19:48 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D56A15D3;
-	Thu, 14 Aug 2025 12:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44DD15D3
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173975; cv=none; b=Nabc8KlYZ0Q7HgLzeOXZ+VMinjNIUgS4zEu8/lsDyEm0AJ9StT6tEdmexOR5IaHZvpOB/oH4j+u1uGV84PI+u/k4AnLd9YmJJ7svpWv4VdR7mek7DtpkpmRryfIafSUx8CAqOhUrYbGS4f+0MuvQFEiBKD7jdZAHDICve2KQWpA=
+	t=1755173987; cv=none; b=basuaOl94ueXd8LPwAoz/Hq4W/+hqofRZqpQj+mL0jhxAY+5FuWKWdKUrs+p1ioDaJSHypHWtpPQTu+78dBeulxnIEDvr4qJ1832zPSAQTGhI1AzVZxsK0K+vlkbLKKf2cqqtbtTqZldKSxnpYSIxOtx1Y+Nh8buGepDN3siHUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173975; c=relaxed/simple;
-	bh=cVUwkg44gWTMiAI0H/K8VGUxs2MWReS6frnwDplaM30=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CMARKI9UXkIZxQD95z1Kih6CbJDpRxvZk1rxQOlDwWzRzb8xQ18WwsTMxfjGr5R0evPcs1ZrrrkG3Lqjrcb2JqTlBw/UDv3Zh3A0t/SPTUCxzJWngKDGKa0rHQFebrWy4ToZ5aBQ4rVn1/iotQbax7PPT+JbW7kFw0eQhpeZ/3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FxXulLAo; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6188b73e6ddso1774538a12.3;
-        Thu, 14 Aug 2025 05:19:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755173971; x=1755778771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JEAni+jTz0fmFhcueZ2bkxNr+3F3k4dXHWU2un0B95U=;
-        b=FxXulLAoa3g83x7N+S0Vfd8sVWDQ13peOxdBKq7CzblAal06pE9UOwxjOwoww3qw74
-         6qBE8YZp4Cx2sHA4VYOcn+yG1/1Ze511LgRBTBmqU89H7jOj1AMbE7neeC7aKLsCXgRC
-         1/wy5aJ3R/9caUs+Eg2QjoPbuv2eMBsSziIMg/0w4xm8FAkCNUEd5hmBgzZgLbb46wiQ
-         j4LRpeJIkcq7vLySWjCk0mU4WMpZOLjUFSWWCuUC8fgEYfWSu5oAXyKm7ymouk5XB0iI
-         BmBneyyi4vr/ktSk25KuiW5mT4meqqc7SZR4CeDXlW1CjlmvbOB7il6XunMykHCXU893
-         byEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755173971; x=1755778771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JEAni+jTz0fmFhcueZ2bkxNr+3F3k4dXHWU2un0B95U=;
-        b=jvm/9Qqm0TIbl76UakzuGRtufw5nz91SiHHIu33VZm3rxTV6P8oOx8v7ObpUU+n+2P
-         0a/tD68Crv0ai5jb1et2TmatCpPJZ4rU5+DTCr9O3uMDSgzmCnFKDD4TI76hpSZiYSp3
-         8kaJ3/tvrpVxcbd04g2wuOyZSS1GVVVEU4m/ptvzsb/BujenpgQoTnkfZErZ+1ShifM7
-         mN/AqF4eVTtzhSf9j8WdkLdWyZxAJzZrOnsJGcIfk4gVmBz5W3Y9DdxMhFOSTLUpZK9S
-         iKTi++TQZIZGs//cr69rvDrIDE2DNK7PalgsMfXbJjmNXBGiXo+nLaxOf+cBOhUJ0AQY
-         MRog==
-X-Forwarded-Encrypted: i=1; AJvYcCUQHuLKHO6eKJ4erFJvht7TkT+bZFjG0EnjQi8pLHV0YhPskQHE8aX/Fyh7x3MuVHrDVgrrEa+VmuNe4cWj5w==@vger.kernel.org, AJvYcCUzW/vdvx+A9OiQBRevTeZhOkDe8jpU8409ZKXVsAnkY99Xs8tTY4q7Ij354tkaU7SLnttNvvB3rkAOdQlR@vger.kernel.org, AJvYcCVMU6vZ3tO9W6q0csLlfQItgbVgjdzcKVXtT8bka2Z+QwyRxkCsl2fRf0h4yGsuqTrncwtFs913m5OhGenc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaDsLaIUFAV3alW4ADkYvMxVXp4w4niRSjPcX8/6EwsKhmF7CD
-	p///xEq4GgF5WCDmvAp/OpAHtbPr8s/an/rjMMh3ni/iLg67QM+4iWfuTPu1WUXZj3akY04ifEY
-	hkynFaTVHIZ7LXNtHiAoLLBIWuR4xREo=
-X-Gm-Gg: ASbGnctyV2qw8IuiNzDdsubl7YUcclcYPrvqcHTOG1gcWzOXvd0uk3YXEXFhsh0Ftkb
-	8KJpUTfA7ZYyumYAlcv8rgN/cSbAY/LDq755KDShJ/2+fxrWASVMxZGJvyLvWXKXVz/OHe5gO29
-	Iy/O8l7PobU2Mdzcj5FRQ0S/QxzZxIbuaLtIudsCkE4Bvr+6C7rN+Bsfl37T6LHHkADpiWLQriG
-	2Kl6HI=
-X-Google-Smtp-Source: AGHT+IHcizjh3OchzONIXTdDXXHV6InpoUCf4DCUlBsxAfPv3ktXONYjfA1wmkqCUnNYcdr6C/fVbYTHeQQW0un8ogQ=
-X-Received: by 2002:a17:907:6ea7:b0:afa:17ef:be34 with SMTP id
- a640c23a62f3a-afcb939d298mr299613066b.5.1755173970734; Thu, 14 Aug 2025
- 05:19:30 -0700 (PDT)
+	s=arc-20240116; t=1755173987; c=relaxed/simple;
+	bh=A7TwX+6vzT7UwTiDp02xeDkZGg8b0d/GRe+by0OpddI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uaYc5K5NXM6GZLHxSEOxcw1c7aGFfOEDveNfg965SN5yU4kA3ZLUnC1ExHyEDspuC1OqMkiDb2lorENdSLY35inK1Za0/CgIIslyImRk0oCT3A83WdnMLtU6FJ4xZ/rHIgfQhX/GqdxgswZ4ezcvYj9OAZrIUbJeixH+/1xrcvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c2khp1tjmzdcHb;
+	Thu, 14 Aug 2025 20:15:22 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9C11B14027A;
+	Thu, 14 Aug 2025 20:19:42 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 14 Aug 2025 20:19:42 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 14 Aug 2025 20:19:41 +0800
+Message-ID: <1dd93bb7-4f67-4b9b-8b6a-d7c5c77cf807@huawei.com>
+Date: Thu, 14 Aug 2025 20:19:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com> <20250813-tonyk-overlayfs-v4-4-357ccf2e12ad@igalia.com>
-In-Reply-To: <20250813-tonyk-overlayfs-v4-4-357ccf2e12ad@igalia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 14 Aug 2025 14:19:18 +0200
-X-Gm-Features: Ac12FXzzH6iFPTcXmNpZfWhm2ifoAcrV0wMjOawgycMr0nhK2A9vGqzCk-TAysY
-Message-ID: <CAOQ4uxj4AvR851vZ7d_QZm1Grg2aa0hefP0-bywRXamHFXyP5A@mail.gmail.com>
-Subject: Re: [PATCH v4 4/9] fs: Create sb_same_encoding() helper
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
-	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	kernel-dev@igalia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 drm-dp 02/11] drm/hisilicon/hibmc: fix dp
+ probabilistical detect errors after HPD irq
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <fengsheng5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20250813094238.3722345-1-shiyongbang@huawei.com>
+ <20250813094238.3722345-3-shiyongbang@huawei.com>
+ <aayi7zjrmru2ancexrqmcutams6ohde3nrkhqacixwp45dsk4v@7ig6hqzahdxf>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <aayi7zjrmru2ancexrqmcutams6ohde3nrkhqacixwp45dsk4v@7ig6hqzahdxf>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On Thu, Aug 14, 2025 at 12:37=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid@ig=
-alia.com> wrote:
->
-> For cases where a file lookup can look in different filesystems (like in
-> overlayfs), both super blocks must have the same encoding and the same
-> flags. To help with that, create a sb_same_encoding() function.
->
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
 
-please reorder vfs patches before ovl patches
+> On Wed, Aug 13, 2025 at 05:42:29PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> The debouncing when HPD pulled out still remains sometimes, 200ms still can
+>> not ensure helper_detect() is correct. So add a flag to hold the sink
+>> status, and changed detect_ctx() functions by using flag to check status.
+> THis doesn't explain what is wrong with
+> drm_connector_helper_detect_from_ddc(). In the end, this function
+> doesn't use the HPD pin.
 
-> Changes from v3:
-> - Improve wording
->
-> Changes from v2:
-> - Simplify the code. Instead of `if (cond) return true`, just do `return
->   cond`;
-> ---
->  include/linux/fs.h | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 20102d81e18a59d5daaed06855d1f168979b4fa7..64d24e89bc5593915158b40f0=
-442e6d8ef3d968d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3753,6 +3753,24 @@ static inline bool sb_has_encoding(const struct su=
-per_block *sb)
->         return !!sb_encoding(sb);
->  }
->
-> +/*
-> + * Compare if two super blocks have the same encoding and flags
-> + */
-> +static inline bool sb_same_encoding(const struct super_block *sb1,
-> +                                   const struct super_block *sb2)
-> +{
-> +#if IS_ENABLED(CONFIG_UNICODE)
-> +       if (sb1->s_encoding =3D=3D sb2->s_encoding)
-> +               return true;
-> +
-> +       return (sb1->s_encoding && sb2->s_encoding &&
-> +              (sb1->s_encoding->version =3D=3D sb2->s_encoding->version)=
- &&
-> +              (sb1->s_encoding_flags =3D=3D sb2->s_encoding_flags));
-> +#else
-> +       return true;
-> +#endif
-> +}
-> +
->  int may_setattr(struct mnt_idmap *idmap, struct inode *inode,
->                 unsigned int ia_valid);
->  int setattr_prepare(struct mnt_idmap *, struct dentry *, struct iattr *)=
-;
->
-> --
-> 2.50.1
->
+I'm sorry about the misunderstanding.
+The issue is that after plugging or unplugging the monitor, the driver takes no action sometimes
+even though an interrupt is triggered. The root cause is that drm_connector_helper_detect_from_ddc()
+still returns connected status when the monitor is unplugged.
+And I will fix the way in the end.
+
+Thanks,
+Baihan Li!
+
+
+>> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v3 -> v4:
+>>    - remove link training process in hibmc_dp_detect(), suggested by Dmitry Baryshkov.
+>>    - remove if (dev->registered), suggested by Dmitry Baryshkov.
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  1 +
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 19 ++++++++++++-------
+>>   2 files changed, 13 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> index 665f5b166dfb..68867475508c 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> @@ -50,6 +50,7 @@ struct hibmc_dp {
+>>   	struct drm_dp_aux aux;
+>>   	struct hibmc_dp_cbar_cfg cfg;
+>>   	u32 irq_status;
+>> +	int hpd_status;
+>>   };
+>>   
+>>   int hibmc_dp_hw_init(struct hibmc_dp *dp);
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> index d06832e62e96..ded38530ecda 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> @@ -34,9 +34,12 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>>   static int hibmc_dp_detect(struct drm_connector *connector,
+>>   			   struct drm_modeset_acquire_ctx *ctx, bool force)
+>>   {
+>> -	mdelay(200);
+>> +	struct hibmc_dp *dp = to_hibmc_dp(connector);
+>>   
+>> -	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
+>> +	if (dp->hpd_status)
+>> +		return connector_status_connected;
+>> +	else
+>> +		return connector_status_disconnected;
+>>   }
+>>   
+>>   static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>> @@ -115,21 +118,23 @@ irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
+>>   {
+>>   	struct drm_device *dev = (struct drm_device *)arg;
+>>   	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
+>> +	struct hibmc_dp *dp = &priv->dp;
+>>   	int idx;
+>>   
+>>   	if (!drm_dev_enter(dev, &idx))
+>>   		return -ENODEV;
+>>   
+>> -	if (priv->dp.irq_status & DP_MASKED_SINK_HPD_PLUG_INT) {
+>> +	if (((dp->irq_status & DP_MASKED_SINK_HPD_PLUG_INT) && !dp->hpd_status)) {
+>>   		drm_dbg_dp(&priv->dev, "HPD IN isr occur!\n");
+>> -		hibmc_dp_hpd_cfg(&priv->dp);
+>> +		hibmc_dp_hpd_cfg(dp);
+>> +		dp->hpd_status = 1;
+>>   	} else {
+>>   		drm_dbg_dp(&priv->dev, "HPD OUT isr occur!\n");
+>> -		hibmc_dp_reset_link(&priv->dp);
+>> +		hibmc_dp_reset_link(dp);
+>> +		dp->hpd_status = 0;
+>>   	}
+>>   
+>> -	if (dev->registered)
+>> -		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
+>> +	drm_connector_helper_hpd_irq_event(&priv->dp.connector);
+>>   
+>>   	drm_dev_exit(idx);
+>>   
+>> -- 
+>> 2.33.0
+>>
 
