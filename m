@@ -1,170 +1,243 @@
-Return-Path: <linux-kernel+bounces-768239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C7BB25EAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:24:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CCBB25EB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6CDA5816AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:24:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDBB57A697E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9132E8899;
-	Thu, 14 Aug 2025 08:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E79E2E92D2;
+	Thu, 14 Aug 2025 08:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IEayfplB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C0gBMjrG"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4D32E765D;
-	Thu, 14 Aug 2025 08:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CFC2E763F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755159863; cv=none; b=bk2Aw8vPcZ+47O/RAc/6OY4qgtfBAtehkUqgqpyVLdFcofkqUF/KYGtOhzN+Le7aIbcz9BngAs5RtqolHV+NszaPDvR9ry6ftj1YRL1fIglgDUKzzD3eUcqUFUt5A+JTepuFVktt5bxmsQC3v2GC2yLNQCwzDhPYMWZLDzr2BbA=
+	t=1755159885; cv=none; b=TMkuhsow4bU/7l5vF7ZZtqRRjskozX00agTmqUv0/i9c9YRLAoV9Dyk5nlqEis5SwJirlOPRtExua+O+ksjYuYwD4ykyw6zDriJXhcKr5JvvRsX/fGDbGbYvg7sIL9tPOfxtG62iMZYS0yzT8vypTbYox1H6SqdS5l1IjU55x38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755159863; c=relaxed/simple;
-	bh=aASuKHKL3mPUvMBJFo6SmagCsY4bnRW90Zs6x5bDR1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jaCFowCCkh5tBXzGK2EACgLAA57RPSrz7VtzfYpW2e0G5Px2L4wm55Fv1/S/QN80JKUcmXJryz4Rr4o26CXAkatkzQACWwSZw0B4oUlk9nsaheTSxF3pw+M3qhgxzhgA0Fzb7IxKD8kdVtVDh/sU0Ie1Yh4qpp2JYcJ0eNaJGTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IEayfplB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DMK63Z002802;
-	Thu, 14 Aug 2025 08:24:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	szT/7VYEBT/i5GUPMjZjxaNeVR3yEWoylClLnLJqr60=; b=IEayfplBxKjeaews
-	/zUHucINY3YUc96+ar4knPO5acsNRdG+JDpWRWiJm7pLFVmVJKH/1SWiXGe6fa+G
-	KYq8VrIiOLDH+unWPVt1tfemahWjO9lV9ERbyb50ho7ejrkm8oraZDQK3+o6nNo7
-	xf1FAVdU6O4FuyFsAa1aVWCTQR9LkscUPWbgxY91LaIvJLu8fl7vOkV/7Pr8NeRT
-	0+kBSY380UXaPGBFk1b+Jr5eDy8iilzvBbM7g078aWEhyGpJ8KXP6hIK8npIuvr/
-	5F5nm6YyUTmTFRJzNrzeDMv6mjviFEKQEDEKH5o9yN9yprEu8CQc2wHgQpOEpCjX
-	F2KT5g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dxdv6xq1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:24:12 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57E8OBJM013091
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:24:11 GMT
-Received: from [10.133.33.43] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
- 2025 01:24:07 -0700
-Message-ID: <93c5b8c8-891b-4643-9da6-c669eaa34750@quicinc.com>
-Date: Thu, 14 Aug 2025 16:24:05 +0800
+	s=arc-20240116; t=1755159885; c=relaxed/simple;
+	bh=QRuY0xcssAqNzsjoe0+GUA8Ky7ufdADxvjC0vu3O1m4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jQuZadF2I2iqJOJSg/2DKbYtU9cKqhGogBiOchpCq7dlg87SmfGlVVumMYJ6l9qqXSWMXnOcl/mb/3AOGBO7IkiGm+e7hA1Y/iTO+Lk89P0qtOndY3+gpiFs7yRU6nW4rXYJXuRlT6+qYi5RXUtJF0zQQHaL5qEE28ibZUpPU+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C0gBMjrG; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-244581caca6so4743205ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755159882; x=1755764682; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PN4ndrkgVneBhF71YXNayTVC1k6fq5rxQE8AAOWHWiE=;
+        b=C0gBMjrGoGoEWwSDu9dlfODOYAQEXw6ta3mYFDeqUZenJBwikZtfeDUXTM4CkwM9sE
+         VyNXWNlG+8Hpz6yS9+5uQkU1Cn5hxST1QflmH23bNR0BizP9dcji0dKdDucIbaZarXkU
+         5So270KWNsJcSF/8hNGSHBRbK4XOCHTDf8lIsAgBz1awuAM3LhrFyqJvaxt8eJc8ZOUF
+         Nm57lLEdCdmRHMSdkOlOUbOaCY13V2ia44Ua12HHCiqUJ+5SWiTiotJ34wxYjOUUESbC
+         iabESHXFvmMiYmeYlhOmABe2H0dk4HL56Chz0s3aRMjDuNwACxritEreeMvTdeluoXQV
+         /3hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755159882; x=1755764682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PN4ndrkgVneBhF71YXNayTVC1k6fq5rxQE8AAOWHWiE=;
+        b=Ga67zR985vNMAZ4eSAxLrp3oX3DGr379rhXD8PGBlKyrLElxz2UTnRFKe4FwM7XJpP
+         xZOCIZWE6ITKkbnUjYdEH/nBWAneDOvRuDpgpIODRaRjQpU8aGYONy+jVThl4YnplR2V
+         JH8J1xayTkQsHXbo9s3KfXn0FKOECr8Oklpc5G0oupiXDuCoEI4HCe6aFN0u/szNII8H
+         5h+ovmrF8mAgT2GC8FGzRDG72RRe/ElJ10wHLCPvbPcrmljF8el+DbeteZZtrRa97PJe
+         a7mP1JCL/FzErAmo4mArrhHuke8c+bBBgSvC9SbbAckqqGvBF8ALAcyg0G3O0waYlfwK
+         Ma4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVS9mh9phXspsffNfE3JhwdbAi1vBMo+up1Yj1Yc90F93OkJOB4waT0BE25p36FkzL0LFXjbP6jUDE5LiQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7pxXMYnnqO4FTQowuDPXgacQ0P7H+AB5ZNpdxVL5x8bYBqmX2
+	UmstfwIDOLKkjy1ihFwcZMySxJT0MXF/bo7nVR2EZBC0TzHKG1Ph80iD+7TB2WXaYQergq+9MVc
+	Ca4zRMjguMleXEumNa3rxEwq2hJ9qCWYI37L3J7ReZw==
+X-Gm-Gg: ASbGncsrlCk1JAwLCP4j1BZelQwHJbsWlAlyn05c5bc9amM066rqAnfTMpBGPvlavBe
+	w0xG1nUS87JMaalBNfV2zkLF6r765rEfD4X2TfGN94nolnn+rDtjsYnsh5vr+epHgdtP2uHz2Ip
+	WSy4WNdiYJjWiR2VWAZckLFQGiOxBnlJm0iEMnHL3UzlPj5OFiA4qg3S387kwra9/qyAtSMTeRB
+	7VoH67Au0/kh0t0GfcvWDAEOh0ImQtURbg+6uyChVrV1qYC37lF
+X-Google-Smtp-Source: AGHT+IEQ6olLFhlnuBt+suQ/HYvysyluDH8m5MsRBc9LHDFH2apZD3pSIajpR/6y6fisab/HUr4DU1uJ9Fx/39JH2o0=
+X-Received: by 2002:a17:902:da92:b0:243:17a:cd48 with SMTP id
+ d9443c01a7336-2445851f038mr40305795ad.17.1755159882053; Thu, 14 Aug 2025
+ 01:24:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 31/38] drm/msm/dp: propagate MST state changes to dp
- mst module
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>
-References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
- <20250609-msm-dp-mst-v2-31-a54d8902a23d@quicinc.com>
- <4w6rtzhetxrco5ncynr52qeveypfpqkclh24kcdpfcn5u3v5at@evxsz3xdxfio>
-Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <4w6rtzhetxrco5ncynr52qeveypfpqkclh24kcdpfcn5u3v5at@evxsz3xdxfio>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=IuYecK/g c=1 sm=1 tr=0 ts=689d9d2d cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=5dxOTwhkvzhATaH7nOcA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: hvg2gk1y84MVIM3NTfVYHMKjpKaxTJys
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAyNSBTYWx0ZWRfX9z2K+JQ6amlS
- VGgMpx8TyAffQcJfm1yHwZ985kGjfDamTmjV3hzlpeWNZaWPNtuYrDJwFDpLU2NNuJQhKrej57Y
- V1jbFeXPtEJfU8y60P4VBPlR4fXKN/RuVTUfLhLb8RwK+lWmIzaRwjb0cixs9iqecR65GMG76fU
- ObOAZirYAR7Mq5As3o8ck7v2qkTee6x0NyRLercJboxgCloxR7o1K4/SKOSk5fVzLiGga+/2fSy
- JGO3CiZeAPp2/4N7gzPhyE/HuwI0R5uAeiXHa4jPnOrSs2rfj3z3Q9c9gUAgu+WSiS1rfAdebik
- Fb2MMueBSj7akiiDgdkWKbOwFgPIYtbgnGANxooApqzPA34psuLaFTCImOoz+INcgI4+UcRsXD2
- OcOL6R/y
-X-Proofpoint-GUID: hvg2gk1y84MVIM3NTfVYHMKjpKaxTJys
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 phishscore=0 suspectscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508090025
+References: <20250812173014.736537091@linuxfoundation.org>
+In-Reply-To: <20250812173014.736537091@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 14 Aug 2025 13:54:29 +0530
+X-Gm-Features: Ac12FXyyGXeSA7vfnwGf0EzVOprDr4qz86gCpoS_15nupDMTeTdNSdzNao3uL0M
+Message-ID: <CA+G9fYvMdJpO=qWHh0o0u7qeaTS3-=AF2FgtLgMbRuKQ_5vccw@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/369] 6.12.42-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, 12 Aug 2025 at 23:37, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.42 release.
+> There are 369 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Aug 2025 17:27:11 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.42-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-On 2025/6/9 22:56, Dmitry Baryshkov wrote:
-> On Mon, Jun 09, 2025 at 08:21:50PM +0800, Yongxing Mou wrote:
->> Introduce APIs to update the MST state change to MST framework when
->> device is plugged/unplugged.
->>
->> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> 
-> Hmm, who is the author of the patch?
-> 
-Sorry for that. will update it . author is Abhinav
->> ---
->>   drivers/gpu/drm/msm/dp/dp_display.c | 20 ++++++++++++++++++++
->>   drivers/gpu/drm/msm/dp/dp_mst_drm.c | 15 +++++++++++++++
->>   drivers/gpu/drm/msm/dp/dp_mst_drm.h |  1 +
->>   3 files changed, 36 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
->> index 323d1c0a9efa4fa30ce97317e873607c54409a11..9dbcf4553cad70c9e3722160a87403fc815765d7 100644
->> --- a/drivers/gpu/drm/msm/dp/dp_display.c
->> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
->> @@ -29,6 +29,7 @@
->>   #include "dp_drm.h"
->>   #include "dp_audio.h"
->>   #include "dp_debug.h"
->> +#include "dp_mst_drm.h"
->>   
->>   static bool psr_enabled = false;
->>   module_param(psr_enabled, bool, 0);
->> @@ -420,6 +421,17 @@ static void msm_dp_display_mst_init(struct msm_dp_display_private *dp)
->>   	msm_dp->mst_active = true;
->>   }
->>   
->> +static void msm_dp_display_set_mst_mgr_state(struct msm_dp_display_private *dp,
->> +					     bool state)
->> +{
->> +	if (!dp->msm_dp_display.mst_active)
->> +		return;
->> +
->> +	msm_dp_mst_display_set_mgr_state(&dp->msm_dp_display, state);
->> +
->> +	drm_dbg_dp(dp->drm_dev, "mst_mgr_state: %d\n", state);
-> 
-> Yet-another-oneliner? Noooo. Really, no.
-> 
-Got it. Will remove it and call msm_dp_mst_display_set_mgr_state directly.
->> +}
->> +
->>   static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
->>   {
->>   	struct drm_connector *connector = dp->msm_dp_display.connector;
-> 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+## Build
+* kernel: 6.12.42-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 3566c7a6291d9602f9f443a3e97340103197f811
+* git describe: v6.12.41-370-g3566c7a6291d
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
+.41-370-g3566c7a6291d
+
+## Test Regressions (compared to v6.12.40-118-g487cdbecb4dc)
+
+## Metric Regressions (compared to v6.12.40-118-g487cdbecb4dc)
+
+## Test Fixes (compared to v6.12.40-118-g487cdbecb4dc)
+
+## Metric Fixes (compared to v6.12.40-118-g487cdbecb4dc)
+
+## Test result summary
+total: 308371, pass: 287741, fail: 6222, skip: 13991, xfail: 417
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 137 passed, 2 failed
+* arm64: 57 total, 56 passed, 1 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 40 passed, 0 failed
+* riscv: 25 total, 22 passed, 3 failed
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 48 passed, 1 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
