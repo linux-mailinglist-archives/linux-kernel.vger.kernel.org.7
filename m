@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-768391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB239B260A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:20:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EB6B260A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:19:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333035A58D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:13:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E555A57BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CDA2EA739;
-	Thu, 14 Aug 2025 09:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20B527144D;
+	Thu, 14 Aug 2025 09:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6OYOWcP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VN23y8pb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8FA2EA14F;
-	Thu, 14 Aug 2025 09:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A512EF644;
+	Thu, 14 Aug 2025 09:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755162785; cv=none; b=mGZlH9Kne9wfvTmGtW5pW0sEei81srwghvQUbM9jcMGM5aHH0zyihRA2TdqR6EqW0aV8tPtoPvpfjFOBYDQ9kR85l/WuzcnjEqYCjg8VBbYrK81CHil6Rcy5ggdiN0sPpSHUUSaLCM0Qn2ilCVIedpfECNsEzOxWpwB8TfwqtRw=
+	t=1755162787; cv=none; b=ZfJcmlsr3/31hnQmtk4wyUiAVEtYUOz/EflTnOztDtLMtTPMIGQXTyDYllZJzraddwF9Z4M7qY+NlkLct4MjfsUaRFiT0NULToTATDRO/Pg4BcqdGb6Y67UHiQBwennv9cHf9iuCCrkOvZwcARMHgxmyl5KmMPrizQkPKDWSeKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755162785; c=relaxed/simple;
-	bh=q9LD0gI3IQlorPkwhPUPSS6YvP6vOk6wY3/rSaYBFrk=;
+	s=arc-20240116; t=1755162787; c=relaxed/simple;
+	bh=TBXf9TlITbl7kntH3GIMV20rolg0uvfkE9lfCdNPb+4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fuELW8vQjHvOQlmIOfj0koZA/FmHrPyzV0MjynzSKc5yICrWGu+HIUisLgS+iRJ/jU9OXNoQ7k1AuHoZtKNI8Ri/mVFpkiv71iyPlPc5Huf27uIxMsGrX349zXmg2QHmrRkRHjBmP3XGVyWoF4dtBDq/NbXGIPgXnf0CTkq4liQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6OYOWcP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B05C4CEEF;
-	Thu, 14 Aug 2025 09:13:03 +0000 (UTC)
+	 MIME-Version; b=eqLIUbsmW+987Gsy6BYAKbpJa9q4QTDNS4OEiDigTxZG6uDfYtSkrBv6LZAfv303J9lwBugSX3G22MwKATexp/ztHgufRqQD0mcW3Z5Wgk9oyZn0/r+/brYpvGv+xazUg/CYS7w5IKPsvmiR/dYdD2V4863OJZhmqAvfHYLwwKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VN23y8pb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B21CC4CEFA;
+	Thu, 14 Aug 2025 09:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755162784;
-	bh=q9LD0gI3IQlorPkwhPUPSS6YvP6vOk6wY3/rSaYBFrk=;
+	s=k20201202; t=1755162786;
+	bh=TBXf9TlITbl7kntH3GIMV20rolg0uvfkE9lfCdNPb+4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G6OYOWcPmO8UYvNy7ppr9hGdmmNx6dNBeuB+AQcxn1Tw6e8AYDFm2UItO1/hHVG8c
-	 ierr71Gsc/9PGCQ6+SwvI+Bs/ceICdDsvPCoxvLQLiXEcVatbPKsoBgUk/UdwGwaUT
-	 D9B0LpbSH1BCi5b3VF4q6SpaK9Ee3tl2ca+JENSjs/wBzEkE848sYHm6FVxuJVk4WU
-	 HKqxt3QJ3ZxA3RVZoSDj6zbCZ2hq7JybFoS/vBxGalGiiJLf2xpDEP38l7gHMoRasM
-	 KfSnDvDNQDg8LZ3J0/8ZssduLXIKFIzBo80qskto6smgVUGzllOsbvBvBvKW6xpda6
-	 keWpdM41dpALQ==
+	b=VN23y8pbqqlmt6tFYwlOJ1z1eGvrjZE/jLEjPRXQau6t4UzWNeTwseKrPdi72GaTX
+	 9fBABkCYry94P3y5AQzqeFT+qDeooYGretDmUClN8UxQWfUvl0Ro805EM8EVMmQDwO
+	 2jP9MH/QGK2bSdItJjtJbZjKvWIDnv4spp41+fUGFILXSYpagZMUt5yAvjbPrY1h3Z
+	 GlJa+IEzPPy5ekgvUYtzbBkCF8DkHvCPymkP0QUSKk091+4EplYAlQFati/EAIr9Ag
+	 1Are5J8+c22UXAZO/rR5WJb42ps4Z6o/tyKW6EIxQQxFtxYulxAdYtBdd7zMbQ1rPA
+	 L1MKgI6WSDJ+w==
 From: Tzung-Bi Shih <tzungbi@kernel.org>
 To: bleung@chromium.org
 Cc: tzungbi@kernel.org,
@@ -48,9 +48,9 @@ Cc: tzungbi@kernel.org,
 	akpm@linux-foundation.org,
 	gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] platform/chrome: Protect cros_ec_device lifecycle with ref_proxy
-Date: Thu, 14 Aug 2025 09:10:19 +0000
-Message-ID: <20250814091020.1302888-3-tzungbi@kernel.org>
+Subject: [PATCH 3/3] platform/chrome: cros_ec_chardev: Consume cros_ec_device via ref_proxy
+Date: Thu, 14 Aug 2025 09:10:20 +0000
+Message-ID: <20250814091020.1302888-4-tzungbi@kernel.org>
 X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
 In-Reply-To: <20250814091020.1302888-1-tzungbi@kernel.org>
 References: <20250814091020.1302888-1-tzungbi@kernel.org>
@@ -62,238 +62,242 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The cros_ec_device can be unregistered when the underlying device is
-removed.  Other kernel drivers that interact with the EC may hold a
-pointer to the cros_ec_device, creating a risk of a use-after-free
-error if the EC device is removed while still being referenced.
+The cros_ec_chardev driver provides a character device interface to the
+ChromeOS EC.  A file handle to this device can remain open in userspace
+even if the underlying EC device is removed.
 
-To prevent this, leverage the ref_proxy library and convert the
-underlying device drivers to resource providers of cros_ec_device.
+This creates a classic use-after-free vulnerability.  Any file operation
+(ioctl, release, etc.) on the open handle after the EC device has gone
+would access a stale pointer, leading to a system crash.
+
+To prevent this, leverage the ref_proxy library and convert
+cros_ec_chardev to a resource consumer of cros_ec_device.
 
 Signed-off-by: Tzung-Bi Shih <tzungbi@kernel.org>
 ---
- drivers/platform/chrome/Kconfig             | 8 ++++++--
- drivers/platform/chrome/cros_ec_i2c.c       | 5 +++++
- drivers/platform/chrome/cros_ec_ishtp.c     | 5 +++++
- drivers/platform/chrome/cros_ec_lpc.c       | 5 +++++
- drivers/platform/chrome/cros_ec_rpmsg.c     | 5 +++++
- drivers/platform/chrome/cros_ec_spi.c       | 4 ++++
- drivers/platform/chrome/cros_ec_uart.c      | 5 +++++
- include/linux/platform_data/cros_ec_proto.h | 3 +++
- 8 files changed, 38 insertions(+), 2 deletions(-)
+ drivers/platform/chrome/cros_ec_chardev.c | 125 +++++++++++++++-------
+ 1 file changed, 85 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-index 2281d6dacc9b..fe7b219093e9 100644
---- a/drivers/platform/chrome/Kconfig
-+++ b/drivers/platform/chrome/Kconfig
-@@ -88,7 +88,7 @@ config CROS_EC
- config CROS_EC_I2C
- 	tristate "ChromeOS Embedded Controller (I2C)"
- 	depends on CROS_EC && I2C
--
-+	select REF_PROXY
- 	help
- 	  If you say Y here, you get support for talking to the ChromeOS
- 	  EC through an I2C bus. This uses a simple byte-level protocol with
-@@ -98,6 +98,7 @@ config CROS_EC_I2C
- config CROS_EC_RPMSG
- 	tristate "ChromeOS Embedded Controller (rpmsg)"
- 	depends on CROS_EC && RPMSG && OF
-+	select REF_PROXY
- 	help
- 	  If you say Y here, you get support for talking to the ChromeOS EC
- 	  through rpmsg. This uses a simple byte-level protocol with a
-@@ -111,6 +112,7 @@ config CROS_EC_ISHTP
- 	tristate "ChromeOS Embedded Controller (ISHTP)"
- 	depends on CROS_EC
- 	depends on INTEL_ISH_HID
-+	select REF_PROXY
- 	help
- 	  If you say Y here, you get support for talking to the ChromeOS EC
- 	  firmware running on Intel Integrated Sensor Hub (ISH), using the
-@@ -123,7 +125,7 @@ config CROS_EC_ISHTP
- config CROS_EC_SPI
- 	tristate "ChromeOS Embedded Controller (SPI)"
- 	depends on CROS_EC && SPI
--
-+	select REF_PROXY
- 	help
- 	  If you say Y here, you get support for talking to the ChromeOS EC
- 	  through a SPI bus, using a byte-level protocol. Since the EC's
-@@ -133,6 +135,7 @@ config CROS_EC_SPI
- config CROS_EC_UART
- 	tristate "ChromeOS Embedded Controller (UART)"
- 	depends on CROS_EC && ACPI && SERIAL_DEV_BUS
-+	select REF_PROXY
- 	help
- 	  If you say Y here, you get support for talking to the ChromeOS EC
- 	  through a UART, using a byte-level protocol.
-@@ -144,6 +147,7 @@ config CROS_EC_LPC
- 	tristate "ChromeOS Embedded Controller (LPC)"
- 	depends on CROS_EC && ACPI && (X86 || COMPILE_TEST)
- 	depends on HAS_IOPORT
-+	select REF_PROXY
- 	help
- 	  If you say Y here, you get support for talking to the ChromeOS EC
- 	  over an LPC bus, including the LPC Microchip EC (MEC) variant.
-diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
-index 38af97cdaab2..d9ecf27585f1 100644
---- a/drivers/platform/chrome/cros_ec_i2c.c
-+++ b/drivers/platform/chrome/cros_ec_i2c.c
-@@ -12,6 +12,7 @@
- #include <linux/platform_data/cros_ec_commands.h>
+diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
+index c9d80ad5b57e..f4aa70c8b6d4 100644
+--- a/drivers/platform/chrome/cros_ec_chardev.c
++++ b/drivers/platform/chrome/cros_ec_chardev.c
+@@ -22,6 +22,7 @@
  #include <linux/platform_data/cros_ec_proto.h>
  #include <linux/platform_device.h>
+ #include <linux/poll.h>
 +#include <linux/ref_proxy.h>
  #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/uaccess.h>
+@@ -32,7 +33,7 @@
+ #define CROS_MAX_EVENT_LEN	PAGE_SIZE
  
- #include "cros_ec.h"
-@@ -296,6 +297,10 @@ static int cros_ec_i2c_probe(struct i2c_client *client)
- 	if (!ec_dev)
- 		return -ENOMEM;
+ struct chardev_priv {
+-	struct cros_ec_device *ec_dev;
++	struct ref_proxy *ec_dev_proxy;
+ 	struct notifier_block notifier;
+ 	wait_queue_head_t wait_event;
+ 	unsigned long event_mask;
+@@ -55,6 +56,7 @@ static int ec_get_version(struct chardev_priv *priv, char *str, int maxlen)
+ 	};
+ 	struct ec_response_get_version *resp;
+ 	struct cros_ec_command *msg;
++	struct cros_ec_device __rcu *ec_dev;
+ 	int ret;
  
-+	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
-+	if (!ec_dev->ref_proxy_provider)
-+		return -ENOMEM;
+ 	msg = kzalloc(sizeof(*msg) + sizeof(*resp), GFP_KERNEL);
+@@ -64,12 +66,19 @@ static int ec_get_version(struct chardev_priv *priv, char *str, int maxlen)
+ 	msg->command = EC_CMD_GET_VERSION + priv->cmd_offset;
+ 	msg->insize = sizeof(*resp);
+ 
+-	ret = cros_ec_cmd_xfer_status(priv->ec_dev, msg);
+-	if (ret < 0) {
+-		snprintf(str, maxlen,
+-			 "Unknown EC version, returned error: %d\n",
+-			 msg->result);
+-		goto exit;
++	REF_PROXY_GET(priv->ec_dev_proxy, ec_dev) {
++		if (!ec_dev) {
++			ret = -ENODEV;
++			goto exit;
++		}
 +
- 	i2c_set_clientdata(client, ec_dev);
- 	ec_dev->dev = dev;
- 	ec_dev->priv = client;
-diff --git a/drivers/platform/chrome/cros_ec_ishtp.c b/drivers/platform/chrome/cros_ec_ishtp.c
-index 7e7190b30cbb..0b74a5b16b52 100644
---- a/drivers/platform/chrome/cros_ec_ishtp.c
-+++ b/drivers/platform/chrome/cros_ec_ishtp.c
-@@ -12,6 +12,7 @@
- #include <linux/pci.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
-+#include <linux/ref_proxy.h>
- #include <linux/intel-ish-client-if.h>
++		ret = cros_ec_cmd_xfer_status(ec_dev, msg);
++		if (ret < 0) {
++			snprintf(str, maxlen,
++				 "Unknown EC version, returned error: %d\n",
++				 msg->result);
++			goto exit;
++		}
+ 	}
  
- #include "cros_ec.h"
-@@ -547,6 +548,10 @@ static int cros_ec_dev_init(struct ishtp_cl_data *client_data)
- 	if (!ec_dev)
- 		return -ENOMEM;
- 
-+	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
-+	if (!ec_dev->ref_proxy_provider)
-+		return -ENOMEM;
+ 	resp = (struct ec_response_get_version *)msg->data;
+@@ -92,22 +101,30 @@ static int cros_ec_chardev_mkbp_event(struct notifier_block *nb,
+ {
+ 	struct chardev_priv *priv = container_of(nb, struct chardev_priv,
+ 						 notifier);
+-	struct cros_ec_device *ec_dev = priv->ec_dev;
++	struct cros_ec_device __rcu *ec_dev;
+ 	struct ec_event *event;
+-	unsigned long event_bit = 1 << ec_dev->event_data.event_type;
+-	int total_size = sizeof(*event) + ec_dev->event_size;
++	unsigned long event_bit;
++	int total_size;
 +
- 	client_data->ec_dev = ec_dev;
- 	dev->driver_data = ec_dev;
++	REF_PROXY_GET(priv->ec_dev_proxy, ec_dev) {
++		if (!ec_dev)
++			return NOTIFY_DONE;
  
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index 7d9a78289c96..8b5de1ad5f2f 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -23,6 +23,7 @@
- #include <linux/platform_device.h>
- #include <linux/printk.h>
- #include <linux/reboot.h>
-+#include <linux/ref_proxy.h>
- #include <linux/suspend.h>
+-	if (!(event_bit & priv->event_mask) ||
+-	    (priv->event_len + total_size) > CROS_MAX_EVENT_LEN)
+-		return NOTIFY_DONE;
++		event_bit = 1 << ec_dev->event_data.event_type;
++		total_size = sizeof(*event) + ec_dev->event_size;
  
- #include "cros_ec.h"
-@@ -641,6 +642,10 @@ static int cros_ec_lpc_probe(struct platform_device *pdev)
- 	if (!ec_dev)
- 		return -ENOMEM;
+-	event = kzalloc(total_size, GFP_KERNEL);
+-	if (!event)
+-		return NOTIFY_DONE;
++		if (!(event_bit & priv->event_mask) ||
++		    (priv->event_len + total_size) > CROS_MAX_EVENT_LEN)
++			return NOTIFY_DONE;
  
-+	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
-+	if (!ec_dev->ref_proxy_provider)
-+		return -ENOMEM;
+-	event->size = ec_dev->event_size;
+-	event->event_type = ec_dev->event_data.event_type;
+-	memcpy(event->data, &ec_dev->event_data.data, ec_dev->event_size);
++		event = kzalloc(total_size, GFP_KERNEL);
++		if (!event)
++			return NOTIFY_DONE;
 +
- 	platform_set_drvdata(pdev, ec_dev);
- 	ec_dev->dev = dev;
- 	ec_dev->phys_name = dev_name(dev);
-diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
-index bc2666491db1..c9be9ba63ead 100644
---- a/drivers/platform/chrome/cros_ec_rpmsg.c
-+++ b/drivers/platform/chrome/cros_ec_rpmsg.c
-@@ -10,6 +10,7 @@
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
- #include <linux/platform_device.h>
-+#include <linux/ref_proxy.h>
- #include <linux/rpmsg.h>
- #include <linux/slab.h>
++		event->size = ec_dev->event_size;
++		event->event_type = ec_dev->event_data.event_type;
++		memcpy(event->data, &ec_dev->event_data.data, ec_dev->event_size);
++	}
  
-@@ -220,6 +221,10 @@ static int cros_ec_rpmsg_probe(struct rpmsg_device *rpdev)
- 	if (!ec_dev)
+ 	spin_lock(&priv->wait_event.lock);
+ 	list_add_tail(&event->node, &priv->events);
+@@ -166,7 +183,12 @@ static int cros_ec_chardev_open(struct inode *inode, struct file *filp)
+ 	if (!priv)
  		return -ENOMEM;
  
-+	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
-+	if (!ec_dev->ref_proxy_provider)
-+		return -ENOMEM;
+-	priv->ec_dev = ec_dev;
++	priv->ec_dev_proxy = ref_proxy_alloc(ec_dev->ref_proxy_provider);
++	if (!priv->ec_dev_proxy) {
++		ret = -ENOMEM;
++		goto err;
++	}
 +
- 	ec_rpmsg = devm_kzalloc(dev, sizeof(*ec_rpmsg), GFP_KERNEL);
- 	if (!ec_rpmsg)
- 		return -ENOMEM;
-diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
-index 8ca0f854e7ac..b0f33f02ec24 100644
---- a/drivers/platform/chrome/cros_ec_spi.c
-+++ b/drivers/platform/chrome/cros_ec_spi.c
-@@ -10,6 +10,7 @@
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_ec_proto.h>
- #include <linux/platform_device.h>
-+#include <linux/ref_proxy.h>
- #include <linux/slab.h>
- #include <linux/spi/spi.h>
- #include <uapi/linux/sched/types.h>
-@@ -752,6 +753,9 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
- 	if (!ec_dev)
- 		return -ENOMEM;
-+	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
-+	if (!ec_dev->ref_proxy_provider)
-+		return -ENOMEM;
+ 	priv->cmd_offset = ec->cmd_offset;
+ 	filp->private_data = priv;
+ 	INIT_LIST_HEAD(&priv->events);
+@@ -178,9 +200,14 @@ static int cros_ec_chardev_open(struct inode *inode, struct file *filp)
+ 					       &priv->notifier);
+ 	if (ret) {
+ 		dev_err(ec_dev->dev, "failed to register event notifier\n");
+-		kfree(priv);
++		goto err;
+ 	}
  
- 	/* Check for any DT properties */
- 	cros_ec_spi_dt_probe(ec_spi, dev);
-diff --git a/drivers/platform/chrome/cros_ec_uart.c b/drivers/platform/chrome/cros_ec_uart.c
-index 19c179d49c90..ce080b464977 100644
---- a/drivers/platform/chrome/cros_ec_uart.c
-+++ b/drivers/platform/chrome/cros_ec_uart.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_data/cros_ec_proto.h>
-+#include <linux/ref_proxy.h>
- #include <linux/serdev.h>
- #include <linux/slab.h>
- #include <uapi/linux/sched/types.h>
-@@ -263,6 +264,10 @@ static int cros_ec_uart_probe(struct serdev_device *serdev)
- 	if (!ec_dev)
- 		return -ENOMEM;
++	return 0;
++err:
++	if (priv->ec_dev_proxy)
++		ref_proxy_free(priv->ec_dev_proxy);
++	kfree(priv);
+ 	return ret;
+ }
  
-+	ec_dev->ref_proxy_provider = devm_ref_proxy_provider_alloc(dev, ec_dev);
-+	if (!ec_dev->ref_proxy_provider)
-+		return -ENOMEM;
+@@ -251,11 +278,16 @@ static ssize_t cros_ec_chardev_read(struct file *filp, char __user *buffer,
+ static int cros_ec_chardev_release(struct inode *inode, struct file *filp)
+ {
+ 	struct chardev_priv *priv = filp->private_data;
+-	struct cros_ec_device *ec_dev = priv->ec_dev;
++	struct cros_ec_device __rcu *ec_dev;
+ 	struct ec_event *event, *e;
+ 
+-	blocking_notifier_chain_unregister(&ec_dev->event_notifier,
+-					   &priv->notifier);
++	REF_PROXY_GET(priv->ec_dev_proxy, ec_dev) {
++		if (ec_dev)
++			blocking_notifier_chain_unregister(
++					&ec_dev->event_notifier,
++					&priv->notifier);
++	}
++	ref_proxy_free(priv->ec_dev_proxy);
+ 
+ 	list_for_each_entry_safe(event, e, &priv->events, node) {
+ 		list_del(&event->node);
+@@ -273,6 +305,7 @@ static long cros_ec_chardev_ioctl_xcmd(struct chardev_priv *priv, void __user *a
+ {
+ 	struct cros_ec_command *s_cmd;
+ 	struct cros_ec_command u_cmd;
++	struct cros_ec_device __rcu *ec_dev;
+ 	long ret;
+ 
+ 	if (copy_from_user(&u_cmd, arg, sizeof(u_cmd)))
+@@ -299,10 +332,17 @@ static long cros_ec_chardev_ioctl_xcmd(struct chardev_priv *priv, void __user *a
+ 	}
+ 
+ 	s_cmd->command += priv->cmd_offset;
+-	ret = cros_ec_cmd_xfer(priv->ec_dev, s_cmd);
+-	/* Only copy data to userland if data was received. */
+-	if (ret < 0)
+-		goto exit;
++	REF_PROXY_GET(priv->ec_dev_proxy, ec_dev) {
++		if (!ec_dev) {
++			ret = -ENODEV;
++			goto exit;
++		}
 +
- 	serdev_device_set_drvdata(serdev, ec_dev);
- 	init_waitqueue_head(&ec_uart->response.wait_queue);
++		ret = cros_ec_cmd_xfer(ec_dev, s_cmd);
++		/* Only copy data to userland if data was received. */
++		if (ret < 0)
++			goto exit;
++	}
  
-diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
-index 3ec24f445c29..9f5c8fb353b6 100644
---- a/include/linux/platform_data/cros_ec_proto.h
-+++ b/include/linux/platform_data/cros_ec_proto.h
-@@ -158,6 +158,7 @@ struct cros_ec_command {
-  * @pd: The platform_device used by the mfd driver to interface with the
-  *      PD behind an EC.
-  * @panic_notifier: EC panic notifier.
-+ * @ref_proxy_provider: The ref_proxy_provider to this device.
-  */
- struct cros_ec_device {
- 	/* These are used by other drivers that want to talk to the EC */
-@@ -203,6 +204,8 @@ struct cros_ec_device {
- 	struct platform_device *pd;
+ 	if (copy_to_user(arg, s_cmd, sizeof(*s_cmd) + s_cmd->insize))
+ 		ret = -EFAULT;
+@@ -313,24 +353,29 @@ static long cros_ec_chardev_ioctl_xcmd(struct chardev_priv *priv, void __user *a
  
- 	struct blocking_notifier_head panic_notifier;
+ static long cros_ec_chardev_ioctl_readmem(struct chardev_priv *priv, void __user *arg)
+ {
+-	struct cros_ec_device *ec_dev = priv->ec_dev;
++	struct cros_ec_device __rcu *ec_dev;
+ 	struct cros_ec_readmem s_mem = { };
+ 	long num;
+ 
+-	/* Not every platform supports direct reads */
+-	if (!ec_dev->cmd_readmem)
+-		return -ENOTTY;
++	REF_PROXY_GET(priv->ec_dev_proxy, ec_dev) {
++		if (!ec_dev)
++			return -ENODEV;
+ 
+-	if (copy_from_user(&s_mem, arg, sizeof(s_mem)))
+-		return -EFAULT;
++		/* Not every platform supports direct reads */
++		if (!ec_dev->cmd_readmem)
++			return -ENOTTY;
+ 
+-	if (s_mem.bytes > sizeof(s_mem.buffer))
+-		return -EINVAL;
++		if (copy_from_user(&s_mem, arg, sizeof(s_mem)))
++			return -EFAULT;
+ 
+-	num = ec_dev->cmd_readmem(ec_dev, s_mem.offset, s_mem.bytes,
+-				  s_mem.buffer);
+-	if (num <= 0)
+-		return num;
++		if (s_mem.bytes > sizeof(s_mem.buffer))
++			return -EINVAL;
 +
-+	struct ref_proxy_provider *ref_proxy_provider;
- };
++		num = ec_dev->cmd_readmem(ec_dev, s_mem.offset, s_mem.bytes,
++					  s_mem.buffer);
++		if (num <= 0)
++			return num;
++	}
  
- /**
+ 	if (copy_to_user((void __user *)arg, &s_mem, sizeof(s_mem)))
+ 		return -EFAULT;
 -- 
 2.51.0.rc1.163.g2494970778-goog
 
