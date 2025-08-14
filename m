@@ -1,90 +1,106 @@
-Return-Path: <linux-kernel+bounces-769718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5839BB272CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:10:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57FDDB272CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95A625E77FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:10:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 762F54E5F32
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7939B2877CA;
-	Thu, 14 Aug 2025 23:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE552877F3;
+	Thu, 14 Aug 2025 23:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="0R/JyhNG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aW1MsRk4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D183E2877C5
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 23:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F9928751A;
+	Thu, 14 Aug 2025 23:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755212955; cv=none; b=kIaMUk3nYzDUZiUstCLGOAFxfdTn2E9C9QRwRVu5wrlshbvodK/QvPcAVhKkPOp55B43F//E0LGl4+onJWhrYHbJdumkenEcJ8TrMQRk9l9WFwQAueFg9iJvvO3iyKo+5/JmCB+jv41+wQdwwmCnnLl8yjx4Tlvf2a6k/wfkpR8=
+	t=1755212980; cv=none; b=UzkAGCwTHLlm+vJXvVhGvSt8umjrUyVp9tZzIVBsfhF8FKtalcdn8Z1fbmFtjjC2jLd6StnksyQwThtAqtPdH4pdusodqM/PTRESxrFXb0Bd8mJzWyhC2VDOWccgAppCyREjCGZ1ncKOYqFo+56xjA05/wmSrDlqFhwgjDRXhPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755212955; c=relaxed/simple;
-	bh=8+3X2KbhAIZ4Bx08PApMHwoBqmWQTqqkpPsM0eZcjoY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=d4iN+o0SUESQB06+x9iCBe7j9SSReMZbaoi+FahqccInQDHCEohy1U7IVeE1IVL8iGJMOk8BP54edG/NVxgASr1zz00CrVxqgyu19u3VLMU/r0F+Px5dDFQI209br4RM656sUyOejsl3EqKpvhy9dNd3X0QuQ+U3gLEzNrEdS10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=0R/JyhNG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2EA2C4CEED;
-	Thu, 14 Aug 2025 23:09:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755212955;
-	bh=8+3X2KbhAIZ4Bx08PApMHwoBqmWQTqqkpPsM0eZcjoY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=0R/JyhNGgq/eZXZdrifW43th1gOVFSjuevoez3EcC7Ev3iF0mZiqmMuJEn/orhgdv
-	 dgMvFVRZJzIVKW0m/EuWolNPBJfDx3GGkVphPCRP6l2x6VMTiCYpUAZaHh5UXdkhfu
-	 vbUpWP605ZV30nzT0a1/ThIggXXfjwIrRk4X46/M=
-Date: Thu, 14 Aug 2025 16:09:14 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: <zhongjinji@honor.com>
-Cc: <linux-mm@kvack.org>, <mhocko@suse.com>, <rientjes@google.com>,
- <shakeel.butt@linux.dev>, <npache@redhat.com>,
- <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
- <peterz@infradead.org>, <dvhart@infradead.org>, <dave@stgolabs.net>,
- <andrealmeid@igalia.com>, <liam.howlett@oracle.com>, <liulu.liu@honor.com>,
- <feng.han@honor.com>
-Subject: Re: [PATCH v4 3/3] mm/oom_kill: Have the OOM reaper and exit_mmap()
- traverse the maple tree in opposite orders
-Message-Id: <20250814160914.7a4622ae1370092dde11c5f2@linux-foundation.org>
-In-Reply-To: <20250814135555.17493-4-zhongjinji@honor.com>
-References: <20250814135555.17493-1-zhongjinji@honor.com>
-	<20250814135555.17493-4-zhongjinji@honor.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755212980; c=relaxed/simple;
+	bh=aokRSJi83wn6MuP5avdXHnJYDdO8hONUlIGhy+Jz2lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KBg7SyhIGgOIZNfT5PjClnXG2efRpgomJQJEFWLOnRNh8fS7VqkMmSUIZD9g5NvzMf6iSazr+dBcqagwvQjm2r2Cf6zi98OtX2x3iEYI2+KYxFs0kzFC2e8gd/G9b0qFXWfAkulAZXLE6IhFO2zT9bO6Rqg8ctW4yhbG4ux8n6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aW1MsRk4; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755212979; x=1786748979;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aokRSJi83wn6MuP5avdXHnJYDdO8hONUlIGhy+Jz2lk=;
+  b=aW1MsRk4pZeDd3wKWGmHJi9Z3wpPY0FH7uUvJYydyxyUwQCrw11t4sVf
+   oK14fTr0rYrA4mJ/iPGFXBpDSHXbLvvOd51JvTWUtPIiZNAvip8lX/hOA
+   QHYtQPmCd+cXwocalm5B/FYX4As2YY7kWub/boIEOgDn2llnvjQU6OfC2
+   xx5uu4MSDBcN9PtRV6rK2R7hMcGHjkIARaDuy3oEgReAbpPD2N3vyogWW
+   rzhcVP4tzJ2+ykJqfv8YuRD3sw2xgKQKeDOJTgddNdf91obijwTfZi+6Y
+   fgZK2XJi1gH2s8fkDkPyu5oga7v2mRP5rIraEI3N9PtqFJEUlP8AANh7v
+   Q==;
+X-CSE-ConnectionGUID: XIU1dhJFSYaaKwhmB/Q56A==
+X-CSE-MsgGUID: ODAebk55Q5mxX/hPMKAxEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="56564066"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="56564066"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 16:09:38 -0700
+X-CSE-ConnectionGUID: 9pYHM7jBSvm2T8aKsJe9fA==
+X-CSE-MsgGUID: zRPrrsF/S/yTZaTPfcsl8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="197870279"
+Received: from c02x38vbjhd2mac.jf.intel.com (HELO [10.54.75.17]) ([10.54.75.17])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 16:09:38 -0700
+Message-ID: <3d0945ca-eb6b-430d-a6d2-a4396596170c@linux.intel.com>
+Date: Thu, 14 Aug 2025 16:09:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] cxl, acpi/hmat: Update CXL access coordinates
+ directly instead of through HMAT
+Content-Language: en-GB
+To: dan.j.williams@intel.com, Dave Jiang <dave.jiang@intel.com>,
+ linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
+ vishal.l.verma@intel.com, ira.weiny@intel.com, akpm@linux-foundation.org,
+ david@redhat.com
+References: <20250814171650.3002930-1-dave.jiang@intel.com>
+ <20250814171650.3002930-4-dave.jiang@intel.com>
+ <689e64229859f_50ce10082@dwillia2-xfh.jf.intel.com.notmuch>
+From: Marc Herbert <marc.herbert@linux.intel.com>
+In-Reply-To: <689e64229859f_50ce10082@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Thu, 14 Aug 2025 21:55:55 +0800 <zhongjinji@honor.com> wrote:
 
-> When a process is OOM killed, if the OOM reaper and the thread running
-> exit_mmap() execute at the same time, both will traverse the vma's maple
-> tree along the same path. They may easily unmap the same vma, causing them
-> to compete for the pte spinlock. This increases unnecessary load, causing
-> the execution time of the OOM reaper and the thread running exit_mmap() to
-> increase.
 
-Please tell me what I'm missing here.
+On 2025-08-14 15:33, dan.j.williams@intel.com wrote:
 
-OOM kills are a rare event.  And this race sounds like it will rarely
-occur even if an oom-killing is happening.  And the delay will be
-relatively short.
+>> Fixes: debdce20c4f2 ("cxl/region: Deal with numa nodes not enumerated by SRAT")
+> 
+> Why that one and not?
+> 
+> 067353a46d8c cxl/region: Add memory hotplug notifier for cxl region
+> 
+> It is the ext_updated machinery that is the main problem that messes up
+> sysfs, right?
+> 
 
-If I'm correct then we're addressing rare*rare*small, so why bother?
+For sure 067353a46d8c is where my git bisect unambiguously landed.
 
-> When a process exits, exit_mmap() traverses the vma's maple tree from low to high
-> address. To reduce the chance of unmapping the same vma simultaneously,
-> the OOM reaper should traverse vma's tree from high to low address. This reduces
-> lock contention when unmapping the same vma.
-
-Sharing some before-and-after runtime measurements would be useful.  Or
-at least, detailed anecdotes.
+Tested-by: Marc Herbert <marc.herbert@linux.intel.com>
+(the series as a whole)
 
 
