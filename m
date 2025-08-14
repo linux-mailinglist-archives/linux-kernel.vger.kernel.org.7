@@ -1,174 +1,119 @@
-Return-Path: <linux-kernel+bounces-768231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E83CB25E89
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:16:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF5FB25E88
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D6B27B1A30
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:14:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9598D7AFBD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF5F2E7F18;
-	Thu, 14 Aug 2025 08:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5262E765B;
+	Thu, 14 Aug 2025 08:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DuLWiJm6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="SS3K9Ijq"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0492E7F2E;
-	Thu, 14 Aug 2025 08:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0822E7BBC
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755159345; cv=none; b=RJSQ9Q5KH4xj6+ukE5C3ij4AHRK5+7kfPMx/SsS2b0XpVTAc1j4WFaMR/XvG7ZIP9STWOtXLv8CzH8KTVdb0l04yD18T3NVq0oXvCnl1YBzwGIewDptba361xS1z2Mab2eY3gJMqJDosJHaSCH9f48fnYTjWDFK+D80uzE9APOE=
+	t=1755159341; cv=none; b=MV/2LZK/rhi825WqbcqXRxDMtmRrYX40EoCZlrnUwVdfFwMv62LWzdBNpMoI2CIPjGqb+5sEfGIr2P/bbDCzEm022rD+otVVEUVpfdti8t7O3weoORiV5Y9Kp2dB4I6sN31/RxmEyHbROP+bVMTI6FS4p/zg8ln5i8YVT/U6jb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755159345; c=relaxed/simple;
-	bh=6E0Tfz3mQAO8WgpBT7lxhRZaLaj11rwitgOe3a6lVFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eebs9yPZliKtV9tPxlyWWkupAabfPjSPY9933wd74Lyv0mdIVT08QX8nNOCTHSInTFHaxJX52WnpivVtm3nc7e/2R70E1JJ70O/a2FDkHdZQIm3yDMEcpMyvRV1Qmiyf3G25wXW+QychFA1i3uqiJ1yWc9aBPYFmMM3BbB4oiL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DuLWiJm6; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755159343; x=1786695343;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6E0Tfz3mQAO8WgpBT7lxhRZaLaj11rwitgOe3a6lVFg=;
-  b=DuLWiJm6uV9jlhLe7bW59m+XKxl9xFf95zhKS8mxSLQaXvYTThsxxAdG
-   jIyIVSJq2bGdAanBQDD0eJWHCAst1SsUl5LMVDnFXs60eOJBWVwgWstDS
-   p5DDthoeNJ7pt850foCF/reoFBGuf2Zk88EQpRRGYVRyVjsUoMQK24tlV
-   YQ4NGjXFssXiYQOwMYAZ6gpjqiD0F7MI8oY876bYsw38uY1mBBdnI/cTw
-   Lg64MB581LfwdtHxyV/xWTg8xwC2pRBbq6AoJLifmLyt4ogUdJRGYdNhI
-   Lhbe1TKDNPFHnj0rHTMCHfsehykJikPsNiVWwQjdeaO5ShyHngoxktdUO
-   A==;
-X-CSE-ConnectionGUID: OY/TJQv6TQOGDpl6vg7TGg==
-X-CSE-MsgGUID: L89AeeGuQL2QR1FRGrvDRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="80045683"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="80045683"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 01:15:43 -0700
-X-CSE-ConnectionGUID: 6QvLLeTHS52x5elOnY5SwA==
-X-CSE-MsgGUID: FPLkVErvS/+BynwVet6Qsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="166964216"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 14 Aug 2025 01:15:39 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umT7P-000Ajw-2T;
-	Thu, 14 Aug 2025 08:15:30 +0000
-Date: Thu, 14 Aug 2025 16:15:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Peter Griffin <peter.griffin@linaro.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, kernel-team@android.com,
-	William Mcvicker <willmcvicker@google.com>,
-	Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: [PATCH v3 2/2] phy: samsung: gs101-ufs: Add .notify_phystate() &
- hibern8 enter/exit values
-Message-ID: <202508141555.NJvU2oYQ-lkp@intel.com>
-References: <20250813-phy-notify-pmstate-v3-2-3bda59055dd3@linaro.org>
+	s=arc-20240116; t=1755159341; c=relaxed/simple;
+	bh=vyBNpa/h0nKYr0F+MWJtAcla1gioP/9iiUzs4ZKIUgk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=utHl219W5aLqUCe6U8rzXvI8Ya9KJva6ryhFJxL6+KmNB80z7bn93Tu3FwMoyB8tujMEF9r0ysGjas8ueSzqZyX7sWhbAYWKFOXApuJc7RmamT/Y1jB6Jf3IemcGDs55A/y7C4IGE96R3fd1KbYjcH6QhmH6FvZfkwu3o+t1DWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=SS3K9Ijq; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 8117 invoked from network); 14 Aug 2025 10:15:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1755159334; bh=siCawFjKEYaGDYTl/uHnk23Bcm/PTLCbRpO7IOPBWQQ=;
+          h=From:To:Subject;
+          b=SS3K9IjqiSkBYSBWV0NU1PfY+/BXJRIlHlQCq6ppBotafgtbBKibQygFfrjFpleEU
+           VTTWj7FmR2jAYttry3byzTi+Pvriv7Qo4k7E1uuJYQ/eeL+C2iAjR8CLGvplFdKO74
+           Ole95/xAgi9OSrGgn5B+qmglrqsqG3nCwxskxCg+hAOues9+cjrbmDBESSslihhwQe
+           P5eWAno+hqy68owIy780i9XLc9uuaW1DFQV9V0RlSGMcJvFhLU+r4gbgnIsn7ncUo6
+           2W3e6kTCJUJE1oQrSCccwUL+U6+ws7KFZXwOc0Hu1IkDTwLlA+68JnihZUob83MIWw
+           1oDuNBTWAMf2Q==
+Received: from 83.24.134.210.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.134.210])
+          (envelope-sender <olek2@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <tsbogend@alpha.franken.de>; 14 Aug 2025 10:15:34 +0200
+From: Aleksander Jan Bajkowski <olek2@wp.pl>
+To: tsbogend@alpha.franken.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	olek2@wp.pl,
+	linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: mips: lantiq: Document lantiq dcdc binding
+Date: Thu, 14 Aug 2025 10:15:21 +0200
+Message-ID: <20250814081525.3058069-1-olek2@wp.pl>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813-phy-notify-pmstate-v3-2-3bda59055dd3@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 74f88ab005c4f5654f7aaf5d4b4f85a5
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 000000A [0QN0]                               
 
-Hi Peter,
+TODO: Description
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+---
+ .../mips/lantiq/lantiq,dcdc-xrx200.yaml       | 32 +++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
 
-[auto build test WARNING on 43c3c17f0c805882d1b48818b1085747a68c80ec]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Peter-Griffin/phy-add-new-phy_notify_state-api/20250813-231312
-base:   43c3c17f0c805882d1b48818b1085747a68c80ec
-patch link:    https://lore.kernel.org/r/20250813-phy-notify-pmstate-v3-2-3bda59055dd3%40linaro.org
-patch subject: [PATCH v3 2/2] phy: samsung: gs101-ufs: Add .notify_phystate() & hibern8 enter/exit values
-config: arm-randconfig-001-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141555.NJvU2oYQ-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 3769ce013be2879bf0b329c14a16f5cb766f26ce)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508141555.NJvU2oYQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508141555.NJvU2oYQ-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/phy/samsung/phy-samsung-ufs.c:232:11: warning: variable 'cfg' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-     232 |         else if (state.ufs_state == PHY_UFS_HIBERN8_EXIT)
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/phy/samsung/phy-samsung-ufs.c:235:19: note: uninitialized use occurs here
-     235 |         for_each_phy_cfg(cfg) {
-         |                          ^~~
-   drivers/phy/samsung/phy-samsung-ufs.c:232:7: note: remove the 'if' if its condition is always true
-     232 |         else if (state.ufs_state == PHY_UFS_HIBERN8_EXIT)
-         |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     233 |                 cfg = ufs_phy->cfgs_hibern8[CFG_PRE_HIBERN8_EXIT];
-   drivers/phy/samsung/phy-samsung-ufs.c:224:39: note: initialize the variable 'cfg' to silence this warning
-     224 |         const struct samsung_ufs_phy_cfg *cfg;
-         |                                              ^
-         |                                               = NULL
-   1 warning generated.
-
-
-vim +232 drivers/phy/samsung/phy-samsung-ufs.c
-
-   219	
-   220	static int samsung_ufs_phy_notify_state(struct phy *phy,
-   221						union phy_notify state)
-   222	{
-   223		struct samsung_ufs_phy *ufs_phy = get_samsung_ufs_phy(phy);
-   224		const struct samsung_ufs_phy_cfg *cfg;
-   225		int i, err;
-   226	
-   227		if (!ufs_phy->cfgs_hibern8)
-   228			return 0;
-   229	
-   230		if (state.ufs_state == PHY_UFS_HIBERN8_ENTER)
-   231			cfg = ufs_phy->cfgs_hibern8[CFG_POST_HIBERN8_ENTER];
- > 232		else if (state.ufs_state == PHY_UFS_HIBERN8_EXIT)
-   233			cfg = ufs_phy->cfgs_hibern8[CFG_PRE_HIBERN8_EXIT];
-   234	
-   235		for_each_phy_cfg(cfg) {
-   236			for_each_phy_lane(ufs_phy, i) {
-   237				samsung_ufs_phy_config(ufs_phy, cfg, i);
-   238			}
-   239		}
-   240	
-   241		if (state.ufs_state == PHY_UFS_HIBERN8_EXIT) {
-   242			for_each_phy_lane(ufs_phy, i) {
-   243				if (ufs_phy->drvdata->wait_for_cdr) {
-   244					err = ufs_phy->drvdata->wait_for_cdr(phy, i);
-   245					if (err)
-   246						goto err_out;
-   247				}
-   248			}
-   249		}
-   250	
-   251		return 0;
-   252	err_out:
-   253		return err;
-   254	}
-   255	
-
+diff --git a/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
+new file mode 100644
+index 000000000000..5648b9676b3c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
+@@ -0,0 +1,32 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mips/lantiq/lantiq,dcdc-xrx200.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Lantiq DCDC (DC-DC converter with voltage sensor)
++
++maintainers:
++  - Aleksander Jan Bajkowski <olek2@wp.pl>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - lantiq,dcdc-xrx200
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    dcdc@106a00 {
++        compatible = "lantiq,dcdc-xrx200";
++        reg = <0x106a00 0x200>;
++    };
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.2
+
 
