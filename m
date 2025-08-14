@@ -1,171 +1,212 @@
-Return-Path: <linux-kernel+bounces-768581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E25FB262C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:32:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DF1B262E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8141CC5BCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95518B66AC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4EB302773;
-	Thu, 14 Aug 2025 10:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF1C318156;
+	Thu, 14 Aug 2025 10:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YV9/3g2X"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fgby6TzX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D71C3019B9;
-	Thu, 14 Aug 2025 10:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B47318153
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755167148; cv=none; b=jRxI/z91gVeDpxLVxxT1kLns9XZWFyCXO65XxjtOBvc1nwQ09kTcVNcIc/M2BQgvuTRMRQg4sKOeJyKfaG7FOwVRGIiQbk8UVtIiSbAhiaUKnmR1ua19VIAd4p9/sUdbKsx8zmCMN2wFYpTRcJydsQaxhsgRiJO/qCouLyDmg1I=
+	t=1755167159; cv=none; b=nU06xH0ql6zQTIxZesi8+i1YYDsE+zvkjdX+/tCNfi9WFJIyxz9MDqnG3UTpu8+4NdCEMVXlY1LeL44cZQgyQ4SOp4kz/30ZxSiPyRity1dCWN+cSJ3A9LUshdzjpVMmxkrDmG+9kdsQyjjosEK3vXmf2h9ZB2LyEGOfOfYrkIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755167148; c=relaxed/simple;
-	bh=XXEWb42qJiWZo4Du0CRE6Yam0gPdSTS3/b8BYir1sbk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=scdN25ME26cvR5BUd+JwFAd36It/+5l8Q2UMb+SmYLsuFB9BSLfhLCQJ8Ni0C3P6tvnfxTfW4XF8uudD5i0uIOcHmqP0GwOjlg5MqVSOdtqlXZBsBH9NCHa37wqS10Di6HFSrX7jSfsMzrYUCZlfwANC28HBmhePxj2Flt4Orq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YV9/3g2X; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so98768866b.3;
-        Thu, 14 Aug 2025 03:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755167144; x=1755771944; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SewnEnAKmtNzuvxDsbzRVoc3jMFrgs3azT7RAG1IenM=;
-        b=YV9/3g2XK6AxpNghPGrojLGTy7YdVxXESeO3sPJ9FvqqEdfM22wSt9z0iPyI45LrrF
-         BaNiSPvs3AtTvBg/malBMJqalccmwG0uojtugDRhEAvyA/SUYjogRIt16rglpL74zd+a
-         rNtp5n45TB5o/6IwBxw9WNkOmckj5t+9tmH2pf3vxIRBpqgLumX96UBu5JncGZuW/pHk
-         R/qEfFC6uN2U9LOh8+0F6ZgTihv2iGKEaZl4IOylxHOOwCTpHfc3uUMgMb/jooSmU9aJ
-         wK09uf5PJi16HgcqJEcEBcg61EXrfw0POHnFYpyBmHMWK/SXGWtUUyUbqJxPXKIHzKpA
-         an9w==
+	s=arc-20240116; t=1755167159; c=relaxed/simple;
+	bh=67TWpFC9kFmlTZkHoTfDgzCSeOb00SIOcx47D6NFSkE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MIN/k3h86DmlBE5Ob663WkNLEMzJv4UD8/PC91WqNr7LJhQhvei5th3ITF2FLhLMfGflF17U7rUwO2x33g3w/Z+En7nRqRGeSS7FBdIJdEmEcX51a5a6cJX/yqs88ybfjpEVOMSZv0lyrcCdwFvkLG7aTWuX9dRJjHZ5nQtODs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fgby6TzX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755167156;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dgn81Tr+8hcjcnOTiZziRVmr22vaTnfczgkfFVMrPuA=;
+	b=fgby6TzXFnIhsIkSds5pZ9KUPp6RKLb8FVz13+9jB2oJ0VF2xMIcCPSOoLvQQFXMP/yh3z
+	Qu+iyR8L29C085jANB+lKjw7kTULiZEkn1HbUrbbGIloGp4MQWYw6YvHitXqrqiR/N4/jE
+	YHnGuYS8lhmpfJ61hz1ML72BSon/Arg=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-310-rC2Drf0_Mk60ypjViS0y9w-1; Thu, 14 Aug 2025 06:25:53 -0400
+X-MC-Unique: rC2Drf0_Mk60ypjViS0y9w-1
+X-Mimecast-MFC-AGG-ID: rC2Drf0_Mk60ypjViS0y9w_1755167153
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-70a9f562165so24711056d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:25:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755167144; x=1755771944;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755167153; x=1755771953;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SewnEnAKmtNzuvxDsbzRVoc3jMFrgs3azT7RAG1IenM=;
-        b=WLXOfcngS116oBxsNap8d9DjYL0sTr6tUZkkhdp0+YDD5O31CVk/pECGcMRGs52rWe
-         wTUWgY6iWGo3p7JJ5arX2tCPz+XID5rda8eEDWZCCxPAGDJaTN4y/XwsST2kuEnL4wkz
-         m2pBZBQBzvjCCFSZa1xjpqsM8tip1kwVjouNoqM5LuM+mXgvcIODNzu/RuibRGvDFSGC
-         mchF/jCEBUVsKdE4sjBYB7okJcwsi6M0V6NwkY9dg2qVk3Y2uurl9Q4wtF9+ycgsATKl
-         7Xzggd/INiUs0ztCEhhAvpto8Z+djdZShsq2WhAQ+BGuTB3lguIm2fgc8S7qRNZqImYP
-         g9XA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLPL3pfltlqO1WHlZhXpKFX4XgAi02JMDmSDB64b7w/lK3rNHb03lRc7vBS2JecWBWUK3/l9uiu4X09g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXRS2cbOnu6WXtnp7swj2ViAz76qH3jxzkVW7VxLfmqldHPO9g
-	FF8qefXbc+krLHznFS1TXqnj2CbnK4lynjz66s9Hk4d7nR8lNtgbGqVD
-X-Gm-Gg: ASbGnctw1YVf7Q+6Tjy42iYpOYvOkuOA5OaBVXMRZSfuxLFIlCC+G+e3rHKdGJ7RDew
-	UUtRYrfYVKKvwOWQQ9uRu0gzDXWFC1jLRDouysBt/PP1Dp6yWawLXi+HqMJc3f2pg0l7nDTedH7
-	zb+mU1tF0UqJyqNrzeDDaIrt9Jlb93p4UF7fo/i+EKbT763m2t1vo/dZRvd8O0q2WVpWkgVCkOa
-	QjkRd6gLtblmbRy+oHyTxDqYMnhK10IAK5YmGTy85fGW352V8tXGjwCiHxiHnd8UoUgmfKQQj0E
-	q6b8MG3TyYkDIlRG31YvUwLiq/BPtkNDgrnFdwv2bRKuD1XDOylZznXkvpg+Q33F6lJtN9/0BWB
-	BJRpogaPEcuO1BdFx7LTHGaIb3/8NKfCQlZhr9uDZKwucElsFK1cc6RiQ4hgnQHbqktZ3vhbNLV
-	OReMMMHVyHzgebDtJZ
-X-Google-Smtp-Source: AGHT+IHnjPer6hGFqdqgcMR4LLZgrzX6AF/9gsUnLKsB2TR8vO6mtbamm4yE7uhseuAnQmBoX8mWDQ==
-X-Received: by 2002:a17:907:9486:b0:af9:116c:61c4 with SMTP id a640c23a62f3a-afcb98fc88amr219387366b.48.1755167144261;
-        Thu, 14 Aug 2025 03:25:44 -0700 (PDT)
-Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a219ef2sm2564819466b.96.2025.08.14.03.25.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 03:25:43 -0700 (PDT)
-From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-To: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-Subject: [PATCH v5 7/7] ALSA: usb-audio: Add infrastructure for TASCAM US-144MKII
-Date: Thu, 14 Aug 2025 12:25:34 +0200
-Message-Id: <20250814102534.34439-8-ramiserifpersia@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250814102534.34439-1-ramiserifpersia@gmail.com>
-References: <20250814102534.34439-1-ramiserifpersia@gmail.com>
+        bh=dgn81Tr+8hcjcnOTiZziRVmr22vaTnfczgkfFVMrPuA=;
+        b=FplU9/rXs5+LqVvOD5k1LlH6/Th2ni1Gb1dfqzkPPSVV/U0V54++bxnkHDAyZbNvXa
+         9nwAU+pBQ5gE09nRYfzZo3UOWHszFZ++y2zcaaQpaF8Hk+EN7e+YH1SrK4zUAHdTUqED
+         wIyO5ykZ7AB+pdeK7OJ3p6RMW7RvjewuZm+pZS93C3Zxt5mWtgUGuobD3syFVd+FW+GD
+         aVnaOQrzJjEuNjaToF82FAYGornklzP4lYSABfZi/oGJug+n9lws8dwIzWnc/eGXRm6A
+         BNoO8+OQHHAtps+3eftr7UtrFuPQye085SOAh/Xht/QJUnYTfq6AU2tDszHaCeBg3s/7
+         vjUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWV0N9KhFNwQqsXZ8yTqosNxenUJW6Pl7N3Uh+4UylAgwhsycgZ6plfgSGso74b14cYT0IVSy4w+kCW3LE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfqmUaArxASfvmVUzyVPjKq/l17qEIXFPklpcIUqFdPPNdnjeI
+	DNLJioruqmiY48tsOq1F/wQGmW/HiLa3AAMjTwd2RaL7SuDKxBoP2a5D8Kff3inw5dc7OWNL6nA
+	/Gl6hrpXPd/lhfEhdTTeNsk6BVmv73BFSkkHz3D5AHpXCDZiT6IphAMZJ3sxMSRxNQF83V56Lbe
+	Jv2LKPGuCBVEaE2KmZq72Fj2x3H8ZvGAH3U067ugGt
+X-Gm-Gg: ASbGncvZTP92+M5iwPzL2i/Wm1EsZ+/KXU2DkzOrwVaeAGaH2qSXKaoxVcNSmjvPgyH
+	xU0XKGZ+cqMjx6iApXz8jvF4V3gVaEcx2/8HRqSx/tjLf+5si/qFcHl7TjLcu+z3rE7UDIZKFF6
+	7mdJESs3pFJg+fSi58hUsnr+ebbQp7AYaHqm50bi1pdQkhmOpD3AEh
+X-Received: by 2002:ac8:7e81:0:b0:4b1:dd3:e3a0 with SMTP id d75a77b69052e-4b10dd3eecfmr23734461cf.63.1755167152805;
+        Thu, 14 Aug 2025 03:25:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHj6Fqf8ZwqtpABxCnBRRgWEUtTuRorTGk78D6BUIRWpQRL0vtIDMWjft+v/pu6kMmSX/QebZM7wdmGQ8Fxz5E=
+X-Received: by 2002:ac8:7e81:0:b0:4b1:dd3:e3a0 with SMTP id
+ d75a77b69052e-4b10dd3eecfmr23733991cf.63.1755167152330; Thu, 14 Aug 2025
+ 03:25:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250808015134.2875430-2-lichliu@redhat.com> <20250814081339.3007358-1-safinaskar@zohomail.com>
+In-Reply-To: <20250814081339.3007358-1-safinaskar@zohomail.com>
+From: Lichen Liu <lichliu@redhat.com>
+Date: Thu, 14 Aug 2025 18:25:41 +0800
+X-Gm-Features: Ac12FXxDAq6OF9fc6qDx2bbELbCoeU3NGz_x-43ufP_dIt47GGsYNY84NXPWPG0
+Message-ID: <CAPmSd0OpjE7-kKtW08LthJXsdMi4YNEfdrKiLjmHYtHuQ+CCkg@mail.gmail.com>
+Subject: Re: [PATCH] fs: Add 'rootfsflags' to set rootfs mount options
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: brauner@kernel.org, kexec@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, rob@landley.net, viro@zeniv.linux.org.uk, 
+	weilongchen@huawei.com, cyphar@cyphar.com, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, initramfs@vger.kernel.org, 
+	Mimi Zohar <zohar@linux.ibm.com>, Stefan Berger <stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This commit adds Kconfig and Makefile entries for TASCAM US-144MKII
-USB audio/MIDI interface support. It includes the configuration option
-and links new driver files.
+On Thu, Aug 14, 2025 at 4:15=E2=80=AFPM Askar Safin <safinaskar@zohomail.co=
+m> wrote:
+>
+> Lichen Liu <lichliu@redhat.com>:
+> > When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
+> > By default, a tmpfs mount is limited to using 50% of the available RAM
+> > for its content. This can be problematic in memory-constrained
+> > environments, particularly during a kdump capture.
+> >
+> > In a kdump scenario, the capture kernel boots with a limited amount of
+> > memory specified by the 'crashkernel' parameter. If the initramfs is
+> > large, it may fail to unpack into the tmpfs rootfs due to insufficient
+> > space. This is because to get X MB of usable space in tmpfs, 2*X MB of
+> > memory must be available for the mount. This leads to an OOM failure
+> > during the early boot process, preventing a successful crash dump.
+> >
+> > This patch introduces a new kernel command-line parameter, rootfsflags,
+> > which allows passing specific mount options directly to the rootfs when
+> > it is first mounted. This gives users control over the rootfs behavior.
+> >
+> > For example, a user can now specify rootfsflags=3Dsize=3D75% to allow t=
+he
+> > tmpfs to use up to 75% of the available memory. This can significantly
+> > reduce the memory pressure for kdump.
+> >
+> > Consider a practical example:
+> >
+> > To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
+> > the default 50% limit, this requires a memory pool of 96MB to be
+> > available for the tmpfs mount. The total memory requirement is therefor=
+e
+> > approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacke=
+d
+> > kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) =E2=89=88 220MB.
+> >
+> > By using rootfsflags=3Dsize=3D75%, the memory pool required for the 48M=
+B
+> > tmpfs is reduced to 48MB / 0.75 =3D 64MB. This reduces the total memory
+> > requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
+> > smaller crashkernel size, such as 192MB.
+> >
+> > An alternative approach of reusing the existing rootflags parameter was
+> > considered. However, a new, dedicated rootfsflags parameter was chosen
+> > to avoid altering the current behavior of rootflags (which applies to
+> > the final root filesystem) and to prevent any potential regressions.
+> >
+> > This approach is inspired by prior discussions and patches on the topic=
+.
+> > Ref: https://www.lightofdawn.org/blog/?viewDetailed=3D00128
+> > Ref: https://landley.net/notes-2015.html#01-01-2015
+> > Ref: https://lkml.org/lkml/2021/6/29/783
+> > Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-in=
+itramfs.html#what-is-rootfs
+> >
+> > Signed-off-by: Lichen Liu <lichliu@redhat.com>
+> > ---
+> >  fs/namespace.c | 11 ++++++++++-
+> >  1 file changed, 10 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index ddfd4457d338..a450db31613e 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
+> >  }
+> >  __setup("mphash_entries=3D", set_mphash_entries);
+> >
+> > +static char * __initdata rootfs_flags;
+> > +static int __init rootfs_flags_setup(char *str)
+> > +{
+> > +     rootfs_flags =3D str;
+> > +     return 1;
+> > +}
+> > +
+> > +__setup("rootfsflags=3D", rootfs_flags_setup);
+> > +
+> >  static u64 event;
+> >  static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+> >  static DEFINE_IDA(mnt_group_ida);
+> > @@ -6086,7 +6095,7 @@ static void __init init_mount_tree(void)
+> >       struct mnt_namespace *ns;
+> >       struct path root;
+> >
+> > -     mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
+> > +     mnt =3D vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags=
+);
+> >       if (IS_ERR(mnt))
+> >               panic("Can't create rootfs");
+> >
+> > --
+> > 2.50.1
+>
+> Thank you for this patch!
+>
+> I suggest periodically check linux-next to see whether the patch got ther=
+e.
+>
+> If it was not applied in resonable time, then resend it.
+> But this time, please, clearly specify tree, which should accept it.
+> I think the most apropriate tree is VFS tree here.
+> So, when resending please add linux-fsdevel@vger.kernel.org to CC and say=
+ in first paragraph
+> in your mail that the patch is for VFS tree.
+Thank You!
 
-The Kconfig entry for US-144MKII is added. The Makefile is updated to
-compile new driver components.
+I checked the linux-next and it was not applied now. I will resend
+this patch and CC linux-fsdevel@vger.kernel.org.
 
-The US-122L driver's device ID table is adjusted to remove the US-144MKII
-entry, as it will now be handled by its dedicated driver.
-
-Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
----
- sound/usb/Kconfig        | 12 ++++++++++++
- sound/usb/usx2y/Makefile |  2 ++
- sound/usb/usx2y/us122l.c |  6 ------
- 3 files changed, 14 insertions(+), 6 deletions(-)
-
-diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
-index 41c47301bc19..9b890abd96d3 100644
---- a/sound/usb/Kconfig
-+++ b/sound/usb/Kconfig
-@@ -117,6 +117,18 @@ config SND_USB_US122L
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called snd-usb-us122l.
- 
-+config SND_USB_US144MKII
-+	tristate "Tascam US-144MKII USB driver"
-+	depends on X86 || COMPILE_TEST
-+	select SND_RAWMIDI
-+	select SND_PCM
-+	help
-+	  Say Y here to include support for Tascam US-144MKII USB Audio/MIDI
-+	  interface.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called snd-usb-us144mkii.
-+
- config SND_USB_6FIRE
- 	tristate "TerraTec DMX 6Fire USB"
- 	select FW_LOADER
-diff --git a/sound/usb/usx2y/Makefile b/sound/usb/usx2y/Makefile
-index fc033aba03a4..9db87ae39ee9 100644
---- a/sound/usb/usx2y/Makefile
-+++ b/sound/usb/usx2y/Makefile
-@@ -1,6 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- snd-usb-usx2y-y := usbusx2y.o usX2Yhwdep.o usx2yhwdeppcm.o
- snd-usb-us122l-y := us122l.o
-+snd-usb-us144mkii-y := us144mkii.o us144mkii_pcm.o us144mkii_playback.o us144mkii_capture.o us144mkii_midi.o us144mkii_controls.o
- 
- obj-$(CONFIG_SND_USB_USX2Y) += snd-usb-usx2y.o
- obj-$(CONFIG_SND_USB_US122L) += snd-usb-us122l.o
-+obj-$(CONFIG_SND_USB_US144MKII) += snd-usb-us144mkii.o
-\ No newline at end of file
-diff --git a/sound/usb/usx2y/us122l.c b/sound/usb/usx2y/us122l.c
-index 2ace3ba46091..8dbbefe3e730 100644
---- a/sound/usb/usx2y/us122l.c
-+++ b/sound/usb/usx2y/us122l.c
-@@ -686,12 +686,6 @@ static const struct usb_device_id snd_us122l_usb_id_table[] = {
- 		.idVendor =	0x0644,
- 		.idProduct =	USB_ID_US122MKII
- 	},
--	{
--		.match_flags =	USB_DEVICE_ID_MATCH_DEVICE,
--		.idVendor =	0x0644,
--		.idProduct =	USB_ID_US144MKII,
--		.driver_info =	US122L_FLAG_US144
--	},
- 	{ /* terminator */ }
- };
- MODULE_DEVICE_TABLE(usb, snd_us122l_usb_id_table);
--- 
-2.39.5
+>
+> --
+> Askar Safin
+>
 
 
