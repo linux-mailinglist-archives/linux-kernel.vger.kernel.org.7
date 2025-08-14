@@ -1,172 +1,176 @@
-Return-Path: <linux-kernel+bounces-768156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 423F5B25D7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:34:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2DDB25DC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 846451C82BE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 091743ABA18
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA724267AF2;
-	Thu, 14 Aug 2025 07:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C643F26CE0E;
+	Thu, 14 Aug 2025 07:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RnS1aIBf"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ffdl5HCC"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89318F4A;
-	Thu, 14 Aug 2025 07:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1716B26C3A6
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755156889; cv=none; b=r+QOdsHo4ki0swrsRRg8UcpSEfADnu+X3TiqABVxbMtwK4FU8G2voktkYfF+El+sNw/bXQ3UL5o+vVbSayXfvBTbuNnG86+QyocI+YKzz74MoGG5XWpE4zJcudf7Dm1qgJVvTu2kL4/WDb7iF6iBSOz1VGvmWQ7RjlBp1jZ4798=
+	t=1755157064; cv=none; b=k2o4tOFPT3OvGEA1LhfOeV4+L8rjO/iRz7zjIosMRJsYWtzuHhoO9yPkDSwcAuqDRNo4//GFVxvwzXdYxJq9if3TVVuKgMhNh0rcBVHL98lLhi9Gd150THARnIR0c1k2vPiaiXidtjYXg/pK62YQQG89YRxDMNAapEVQDrsbLhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755156889; c=relaxed/simple;
-	bh=gb//sC3uVnfDkJjy2aiYiacPurthSFG/TQvxcS/O8Po=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=II84jPGW790VDftgaqPpN/pJOsCeZXBvx2xIoqdOoZ7kBGc2kPEIw0sw0o3oWUtbykdQ2q68o86N+67EknGncpra2JGQwgKwov5HBVVvxQXulLRGTfonqbVZZp7hS/HaHekqBHtkFRbJuc6euje2waPMQlkxOd9D5x6ttJQeECk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RnS1aIBf; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0215444500;
-	Thu, 14 Aug 2025 07:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1755156884;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f5tAIsgzKuRELv1sm6eESXsPqoZSkkSUqkB2pMeL970=;
-	b=RnS1aIBf3kPuNafBPr5O0T08jAPqeQ5PpdRcHNBXts4N2l7FzWgxEa6s2MzTJsWNvgoeJD
-	rs8+UoZ/6KX/KVJx9TlJiusbzmgArqHlVRGeCLaSbEsBCU2HRcAMZ2Q5Qi8yQ9qqHxhaCY
-	NQmY9HLvJ6a0YwkT+bGet4Q8QyI+Aj8y1e8qwovE6YeuPE7LJBJLThkwFB6wDIv/q3vUa2
-	Y6BOmIXrewaucYGADm1kHYF/XC7OeNePDcd/Dn60VHLbxJgrXLJgPXdpZzOpr47yx6UAcQ
-	3j7sr1Ocv7R9ogaltf0elyZxx3zqzbvSGBpnFIRzpAzDqPD8sZmkYmLXX95ChA==
-Date: Thu, 14 Aug 2025 09:34:43 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Shengjiu Wang
- <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam
- <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] soc: fsl: qmc: Only set completion interrupt
- when needed
-Message-ID: <20250814093443.1506b49f@bootlin.com>
-In-Reply-To: <20250813120651.27dc8467@bootlin.com>
-References: <cover.1754993232.git.christophe.leroy@csgroup.eu>
-	<badb68a85910e5e6f1094ef3b01805209ac21854.1754993232.git.christophe.leroy@csgroup.eu>
-	<20250813120651.27dc8467@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1755157064; c=relaxed/simple;
+	bh=i5bV8DJtt0kW/7rs56nYtMMFUHI8Xh3Xhpcajvy4BqQ=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ryfazzt1FVXFSOIJhRfh6dNT/zOSCWD66APGn5Pkj50kIefxq9JQ4YoWCOcVrk6ZSBZcr+eme7E9qJ0Jh8eO9qg8xa5rkI+7k3JaWZITi907OtvZtqpEhDMlN2oCR0FX747rOY7/zi7dGtVftQ/lTeM6GGgGOJnLni0a8+Wo4Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ffdl5HCC; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55ce520caf9so716139e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:37:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1755157060; x=1755761860; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E6lyA0E3BsgF3c0Firp9DhkX0QGDczU/GAUF9m624y8=;
+        b=Ffdl5HCCGlAiRUNmG1lYFJKGkgMtToqwAeEYQf5+4P/qxIQiURoMJ9Xtdbefw7Dc5f
+         1W85T8Myuj2S2CDVmdltB5SAXfKh2kXcA/dJYsLTuGPX8oqhNhVejPNDs3HIjN0BZb4p
+         uiXe4VlZzueA7tukLnZDF6MYmxwneDSOquseRNWYdGufEJR0P37xMCrdIm8VEelePI95
+         aQxtrxpfKs1m1rM5LFc/eL7AY2Zxw3B+kydWS1bbAwXdsxxWUgd72DTOtW5+fzee9+fy
+         rtyO/IP7Li9+iU9VVyzrfRzNORUxIBmILWE3XvUqRMIAuzqRwcLre35Dn6IZAhm/fPfh
+         F2Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755157060; x=1755761860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=E6lyA0E3BsgF3c0Firp9DhkX0QGDczU/GAUF9m624y8=;
+        b=qCulV+T/8J5nH6whbRAeZutalWMYWCMZ4tLqxgp/ixTz1wO36MRD+RC7U1rFOsaP2H
+         5MUb8gdKvQTgdot9JR+n875vfGtMRkX6sqHzHCBCmt2weLzQ+YaPlTH3Q8zuu9hTU7fA
+         rKlRxMHsXUd7vXXMMIKKTlIrg8tnNRoPwp5QFoamTp0fx5SF7Z0HluvcKswHUCXq2fHq
+         Drju5BhyhVDZKz40qemmJIg5ErlLOeOm1LsKohZ8KHU2qC/wijQwfCylMoJAob5s738a
+         ZNP6Y5rKnhpsJ/MwaTC4+QG/yOuRPsaatjjkdvzSvVxAhCrfbPP2uCrwPanAxJxHlXdY
+         l0iA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7EMLUMjEwMWJqNqfEMIEGlpfCGxXJKqmNLDcfXdNhTqtU+IiSP/H6rtYnXjruTjEUSXdqLwm5+TJggko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXR+eAb0ACM6FNhYdLAYkdYLGGuhlvEr8ECPsCix6xpAqeWYiJ
+	Wov6s3KxjGa/OcSJQ75VIngrVjKNUR70h41mF0xtOni47SpFtNU+mWZlDNWNLnJlw6QnWmaT0Wq
+	1fPyfOsW8JiC+Hbds0Epe8S8RbuQ290nmhg5PMQUdFg==
+X-Gm-Gg: ASbGncsIObF6MuyqYHGvWahGJc5OY8CsviFhY7TryEGq7AHyP1rmm+OWrWiCHJqyMsv
+	fSkkIFH/31A7np6/zcRt8lXgLKMbqwkc80xbVZAS1jiunRFbq95xjHQ/hj/jT/VEO6v7Tdk605n
+	af/Wt7ZL0ygLGb0vJrG75lvx+tTtGad2IsxILXbeHoRcNAykD0FVK8t7tQTxMel41ccvLkNAaNs
+	3TfPqueEzx139AuJZL7wYQfPXGbpp1fagbwwMY=
+X-Google-Smtp-Source: AGHT+IH95og7bwOhUuHKkvwv0kTue2EveWatnb0pXZcfIY30oh+DnenMVeGiemPUTLNRulqOQX9vjsDh8YkJvs9r6SA=
+X-Received: by 2002:a05:6512:3d29:b0:55b:8f02:c9d0 with SMTP id
+ 2adb3069b0e04-55ce4fe3984mr762477e87.0.1755157060157; Thu, 14 Aug 2025
+ 00:37:40 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 14 Aug 2025 03:37:39 -0400
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 14 Aug 2025 03:37:39 -0400
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <CAHp75VeSA=AYDKOV5XQ5nnz7EZRmnhbbVyJrcBUcMO2LrRMTmQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemtggstdekmeelkeeltgemkedttddtmehfugekudemleehgegvmedvudehrgemfeeluddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdtkeemleeklegtmeektddttdemfhgukedumeelheegvgemvdduhegrmeefledutddphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtohepqhhirghnghdriihhrghosehngihprdgtohhmpdhrtghpthhtohepshhhvghnghhjihhurdifrghnghesghhmrghilhdrtghomhdprhgtphhtthhop
- egiihhusghordfnvggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhhitgholhgvohhtshhukhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: herve.codina@bootlin.com
+References: <20250812-pinctrl-gpio-pinfuncs-v4-0-bb3906c55e64@linaro.org>
+ <20250812-pinctrl-gpio-pinfuncs-v4-3-bb3906c55e64@linaro.org> <CAHp75VeSA=AYDKOV5XQ5nnz7EZRmnhbbVyJrcBUcMO2LrRMTmQ@mail.gmail.com>
+Date: Thu, 14 Aug 2025 03:37:39 -0400
+X-Gm-Features: Ac12FXy2K4h4wcbTuyQHNLoBpmiM4n8vonnKvWP5_H1uDnS85jqeBZjb-G5DXZs
+Message-ID: <CAMRc=MfzSq+7EY8cV+J_AePve6r+yV5QEHqG=Z2N8Afmy+Bc2Q@mail.gmail.com>
+Subject: Re: [PATCH v4 03/15] pinctrl: airoha: replace struct function_desc
+ with struct pinfunction
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christophe,
+On Wed, 13 Aug 2025 18:57:00 +0200, Andy Shevchenko
+<andy.shevchenko@gmail.com> said:
+> On Tue, Aug 12, 2025 at 10:27=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.=
+pl> wrote:
+>>
+>> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
+>> struct function_desc is a wrapper around struct pinfunction with an
+>> additional void *data pointer. This driver doesn't use the data pointer.
+>> We're also working towards reducing the usage of struct function_desc in
+>> pinctrl drivers - they should only be created by pinmux core and
+>> accessed by drivers using pinmux_generic_get_function(). Replace the
+>> struct function_desc objects in this driver with smaller struct
+>> pinfunction instances.
+>
+> ...
+>
+>>  #define PINCTRL_FUNC_DESC(id)                                          =
+\
+>>         {                                                               =
+\
+>>                 .desc =3D {                                             =
+  \
+>> -                       .func =3D {                                     =
+  \
+>> -                               .name =3D #id,                          =
+  \
+>> -                               .groups =3D id##_groups,                =
+  \
+>> -                               .ngroups =3D ARRAY_SIZE(id##_groups),   =
+  \
+>> -                       }                                               =
+\
+>> +                       .name =3D #id,                                  =
+  \
+>> +                       .groups =3D id##_groups,                        =
+  \
+>> +                       .ngroups =3D ARRAY_SIZE(id##_groups),           =
+  \
+>
+> Can this use PINCTRL_PINFUNCITON() ?
+>
 
-On Wed, 13 Aug 2025 12:06:51 +0200
-Herve Codina <herve.codina@bootlin.com> wrote:
+Yes, it can. I'll update v5.
 
-> Hi Christophe,
-> 
-> On Tue, 12 Aug 2025 12:50:55 +0200
-> Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
-> 
-> > When no post-completion processing is expected, don't waste time
-> > handling useless interrupts.
-> > 
-> > Only set QMC_BD_[R/T]X_I when a completion function is passed in,
-> > and perform seamless completion on submit for interruptless buffers.
-> > 
-> > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > ---
-> > v2: Keep the UB flag to mark not completed buffers and seamlessly flag them as completed during next submit.
-> > ---
-> >  drivers/soc/fsl/qe/qmc.c | 44 ++++++++++++++++++++++++++++++----------
-> >  1 file changed, 33 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-> > index 36c0ccc06151f..8f76b9a5e385d 100644
-> > --- a/drivers/soc/fsl/qe/qmc.c
-> > +++ b/drivers/soc/fsl/qe/qmc.c
-> > @@ -461,9 +461,16 @@ int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
-> >  
-> >  	ctrl = qmc_read16(&bd->cbd_sc);
-> >  	if (ctrl & (QMC_BD_TX_R | QMC_BD_TX_UB)) {
-> > -		/* We are full ... */
-> > -		ret = -EBUSY;
-> > -		goto end;
-> > +		if (!(ctrl & QMC_BD_TX_I) && bd == chan->txbd_done) {
-> > +			if (ctrl & QMC_BD_TX_W)
-> > +				chan->txbd_done = chan->txbds;
-> > +			else
-> > +				chan->txbd_done++;
-> > +		} else {
-> > +			/* We are full ... */
-> > +			ret = -EBUSY;
-> > +			goto end;
-> > +		}
-> >  	}
-> >  
-> >  	qmc_write16(&bd->cbd_datlen, length);
-> > @@ -475,6 +482,10 @@ int qmc_chan_write_submit(struct qmc_chan *chan, dma_addr_t addr, size_t length,
-> >  
-> >  	/* Activate the descriptor */
-> >  	ctrl |= (QMC_BD_TX_R | QMC_BD_TX_UB);
-> > +	if (complete)
-> > +		ctrl |= QMC_BD_TX_I;
-> > +	else
-> > +		ctrl &= ~QMC_BD_TX_I;
-> >  	wmb(); /* Be sure to flush the descriptor before control update */
-> >  	qmc_write16(&bd->cbd_sc, ctrl);
-> >    
-> 
-> You try to purge one descriptor for which the transfer is done but you do that
-> when you have no more free descriptors.
-> 
-> You end up with all descriptor "used". I think a better way to do that is
-> to purge all "done" descriptor configured to work without interrupts until a
-> descriptor with interrupt is found.
+Bart
 
-I have looked again at your code and looking for a free descriptor only when it
-is needed is sufficient. You can forget my previous proposal.
-
-Back to your code, I think you need to be sure that the descriptor you want to
-re-use is really available and so you need to check the 'R' bit to be sure
-that we are not with 'R' = 1 and 'UB' = 1 which means "BD is used, waiting for
-a transfer".
-
-For instance:
-
-	if (ctrl & (QMC_BD_TX_R | QMC_BD_TX_UB)) {
-		if (!(ctrl & (QMC_BD_TX_I | QMC_BD_TX_R) &&
-		    bd == chan->txbd_done) {
-			if (ctrl & QMC_BD_TX_W)
-				chan->txbd_done = chan->txbds;
-			else
-				chan->txbd_done++;
-		} else {
-			/* We are full ... */
-			ret = -EBUSY;
-			goto end;
-		}
-	}
-
-Best regards,
-Hervé
+>>                 },                                                      =
+\
+>>                 .groups =3D id##_func_group,                            =
+  \
+>>                 .group_size =3D ARRAY_SIZE(id##_func_group),            =
+  \
+>
+>>  };
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
 
