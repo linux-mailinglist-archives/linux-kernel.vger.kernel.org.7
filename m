@@ -1,103 +1,147 @@
-Return-Path: <linux-kernel+bounces-769252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6317B26BF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:09:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FB2B26C00
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6E162356A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:05:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F05685135
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A062472AB;
-	Thu, 14 Aug 2025 16:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2638B24BBEE;
+	Thu, 14 Aug 2025 16:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="is4eNz25"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdhgNAEH"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8110A229B02;
-	Thu, 14 Aug 2025 16:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31049220F55;
+	Thu, 14 Aug 2025 16:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755187544; cv=none; b=EPiWPswu+4P7CHToVAXYy1hxeguXZzYBlbw+KoOdzC23/PDWQHY94nekC1Uw+za0XfV2T9XHn3SCg31M1ZQOATJnQztDERBslflYMBcVqRlk8g0pev653fqXCj+T5C735NetrAfR3A1ynj899G4pMcpPoo5feQpT0i0yBxU+iq8=
+	t=1755187602; cv=none; b=BceVhMZc7VKP2a+d+fAhPWmHPatDj7UyXa/oMuPJoJX9QnOzMKUuwd4CJRHvwso9J98SuzrLqeEP122UJcOZdZDZgGf7qR697ZJXpqoiPZ134PlugzpsEtdZ+iT5VJvpdd0c6BLAZTYVob2ndIOnR3IoFV6K0mn7E9frqAFZSAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755187544; c=relaxed/simple;
-	bh=2VBn/q19MqFxQjSVovJsPcabVWmmz0XefCLtJliVmWo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dgSMkrImTUvJ+Q+QJrI21AIdle7VsXtyd7iVFapWUBt50qPW8PnR0ghb27uyAvZT/NQAGforM0jnssdN55pfsO9H7VKPGF2PlzMgLkJL/O0NlSDJ23+444sCSuyTbn5U0Ky747qAONwQMJJWEi22l0OiZzg6QY7xvgpHUxHgT2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=is4eNz25; arc=none smtp.client-ip=209.85.208.45
+	s=arc-20240116; t=1755187602; c=relaxed/simple;
+	bh=lz47cxuQXW9kCaneS5tiSGf5QivssZJjHuGYjSUYoDE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tNggl4fXwHKkn60okcvuOQm+0TQFHF6Bv7qqJX8FBraiZTDnDJpLAYt4tYrbO2tLKW6dVElXE5uzeBFKuswiMsvxLK4vDvfnzK81T800nifSmhEGshNbTNsbGdF9Skmk6VlaKD+RTybVEHuQqhkVKNkH3kAxtNCRq0zxr0cMqSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdhgNAEH; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6188b6e79a0so1614437a12.2;
-        Thu, 14 Aug 2025 09:05:42 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-323266d6f57so1319082a91.0;
+        Thu, 14 Aug 2025 09:06:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755187541; x=1755792341; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2VBn/q19MqFxQjSVovJsPcabVWmmz0XefCLtJliVmWo=;
-        b=is4eNz25hodoyDne4Sm4q6ySLRarHBfeCvj2SHQE0h3/HK5A1b+m8uHEhAQaFYWAQQ
-         9hgOoz2j7DddCVt8EV77dwRg/0gd+bIVrm7/ADvUl0tE/51NzgVLHGzBc1zE5lfsQK0A
-         6K72bztGvgVmDdIdR7UcEN5sWTxE0j/F+5Z+ToOnYb034LTkfntRhjGFJrPc5uTS72xd
-         49NZ/lDx+vwAdXShQKYwqfJvrTsgD0fL4XCip8bGY1P0LYenknoxezjpzJGWg1EA9OXB
-         d42Au1rDKa0cafrz7+tn6isI+Pf9jkTFIQqjxjGe9VL02q7+dZ+FQ96eW2wEpbPR8IqO
-         +Ybw==
+        d=gmail.com; s=20230601; t=1755187600; x=1755792400; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2JQC78ZpgMIMuWQWRfvjMuPKHibgoB05xt+yx0YmXFw=;
+        b=QdhgNAEHZO265vJT4m3HGJ817fIbSIqIVCixapDZ2OMf/kiW4yfhFGRECcIvvECMJh
+         iZsAumfMmtbBpE+qMnRBAmG38RqHOEjk62pIJ3LDECfyLkYED/ngN2SE86Z2K9MrbjOk
+         +ugbq55w2bjRyI/vMRDnwoDjgKKD/J1WnDoZXvc1TLTNFSUyBs0WxavQqEUMtzm3+lcE
+         +//eVSza9qfws79KoUJEhsLsNo+Z3ZyS0YzzD3KetHW/f0grrlrvCob06n6vkS58nkL2
+         AxuGqTvhMy+7AKM36yOWBdKfli5ZB4H8l+fy3tPRIWwsjLZ6LwVg6dKmLElDA/0cXJr5
+         RGKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755187541; x=1755792341;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2VBn/q19MqFxQjSVovJsPcabVWmmz0XefCLtJliVmWo=;
-        b=vKBOjC7Z4c+qYNzBHJuMDrYEBfj15G5nGU9Rl0rY8cnRjDJ/8buvGR2TT214uXQf2V
-         R8vlQKlSnR8M4/3h8QNybpYnnmOpQndNiGNTrhtgF8nv+A9kRUUSAPhMtRdViiSZtxB3
-         8Ln0sumoPOz+uLCmlGcA9MHMkm+i0y4sRnaUtBSCtw9lKK/lmMKqENfIq7DiHFRV4a44
-         pC1IGGx6CYV+pBDwaBR9v0aXttoK1uICFYzV/oW9TSEUNKWiTHFiBruCFCH3pFuIshYB
-         uefnx4YWA4IvQPa7YuPuq+ZUbKSKSBQi4gzf8ue/XqRYfcTYksv8TEMy+s04zOmNeD83
-         KsIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUW790Qlbrc8y4QeZQAUBrAa0lv8jQRojHaQe9VvXgeoR7S4C2DSUBoyJ4T5UzL6ZzMW7ovy34F6vdriA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxII0YQpOX8TtbJzF8lU6YzwKZRtWFVM2sXNTmLGqjrDJMTMaN6
-	TDF3ydi73+tmoDqKv9ALx47OymmrwIE1285Eo9/zYzd7nEo0bIzIQkh0
-X-Gm-Gg: ASbGncsvnxpXIQDaQOSTm1N3e0qCNWaETGKkK3zSvKyEt3zrcQeFQqR0/5NEm8Vu+/a
-	IDRYJQfJn5uf28iPKntIw7vegv+mPp4oem/VviI4w3qWNXgZ867pCBOvrddsU3w+2oal5t2B/0i
-	Xxi5Dk1wqBia0i5+r9Mpqn4VD3IHwd4XmWsRR8LZUaFbEmu0vaaz0cQDer4kahthszmK6MPlrhq
-	GSjkK9T9DFEU6i/pdipRQh5XdYHnF6jrnU34heHoyES5a6LgOaopQ0oMtJ9+xhVdu1+a92x7Ydf
-	Mf1fixxq9ODvAOElxNn8A8L50B/IDJt4ssFUdKexxBLRI3EDLjhIUyXre6CVo6ySdSlSNG7TVQK
-	MeHXBc4SsL3LpFwKFBPr7cjwiHija0yFykR3sEGtkE9z+Ejf0ABWHxgnbFwxol+vFQ016DfMZs3
-	fiVMk70/Q=
-X-Google-Smtp-Source: AGHT+IG5WggNgC2/hqpkeGTZv4PzkkEHiFlfXEjNy62djRE4DmAspEIhTs+rKOl1TP7K6jYTcO96sg==
-X-Received: by 2002:a05:6402:5250:b0:617:e4ba:30aa with SMTP id 4fb4d7f45d1cf-6188c21d516mr3253372a12.32.1755187540529;
-        Thu, 14 Aug 2025 09:05:40 -0700 (PDT)
-Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2b892sm24277253a12.25.2025.08.14.09.05.39
+        d=1e100.net; s=20230601; t=1755187600; x=1755792400;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2JQC78ZpgMIMuWQWRfvjMuPKHibgoB05xt+yx0YmXFw=;
+        b=CRsedaOioT/QLbC5iSgEdJBeC95qdnCmLqySJYvImiKlUKEfTTEFQYRZKVYTy3G65A
+         LSpJGHkqqyecyYp/WMwsfHLaVxNiAfZvvv90qquP419asFyHc3j8gfP428jlnFBtnwXH
+         lFegFA1f3DEoiNJA/QU6albpZJ9F/Wp8sy0rz4v41BjdIAeA/ikPy6Tr+cqJakDeDKHF
+         UZYpTsT/gS1SkesqatJ0YSZkJIl7Z2o/2OpnjrVjV1138DgDQ4Ziz7IQksKvdith1eFA
+         uszBEj2g/PljqkghbNAfB/Zg018AWTNbsIzxJ6vrl7VNEZFxxM4UkWJs8igoC5BVSWVA
+         vM9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0EdazzusJ9VpP0llZ+DeOQ7CBY84DHcwJ7iQSBT6m9+2rqq+ZnS9zBrWuqUXKsVqwNEkGnoq722ZqnOcy@vger.kernel.org, AJvYcCVG3rQyqU3Pp4/TSwTKtYGlimkHB1xAd9ygDTvxZ42ytNMkFrm4Atd+0xYV1zt1IE7T9P0=@vger.kernel.org, AJvYcCWcV19tz88Qgdo0wViFSIlwgHKg5pNETUMH2BEIzhaZ9ms9m6b2tOKAc33ezl6f2zMl92bohIOCx8tUTJqBDbpa@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ4JekbJ3hrAn6kKNkhPyXOPz6UUGpkt3bWz4rP1+gc+Flsgj9
+	32h4HfrXK9ColyuaJbz1YLG0dNJd9SdxqLGckX3NQ9tpRupi5UlpnpHZ
+X-Gm-Gg: ASbGncv4tOCpe+KAFj3TeHLDAmwpZRhqo+JIgY+nw8pXYAFc3AG9EnuO0jbvwyyVJ7F
+	BwK8fWy+1WG8NXdk1nQk/M6XZVnGmVJSjF1JXEwptQCOPFTMle373PnIbXftewR5jwmBud0SJNb
+	kSgN7T7i7KKR+fZniBkcdS3c9cKyGtzUsMWp+0e73KiVf/uVfVZmKLodPhq4uJEkEi2iOcAYIF+
+	XFXxlaAWQKOZKVtVvDp3nplPLhgzIqJzpjDSPFt8gWVYbNTweIg6Ch6+gsab5ibDJa9KtWdjsB+
+	miIspqGOULBTmUJ+r75n4Uch4PYzpfD1rsqHGePDnY/9LriRVVfIOjtMTOb+AiDx2EvldS05nGN
+	Cp9gEwj5Sra/5cBFzqNY=
+X-Google-Smtp-Source: AGHT+IEhBBG0ngLQSL1m1pTEMacHumOyYx5CiFYAiylVBFK4bQhJSTeJAL3kGYnVrMJWW2lrkPzzkg==
+X-Received: by 2002:a17:90b:2745:b0:31f:eae:a7e8 with SMTP id 98e67ed59e1d1-32327b28cbdmr5893443a91.11.1755187600264;
+        Thu, 14 Aug 2025 09:06:40 -0700 (PDT)
+Received: from [192.168.0.226] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32331097831sm2246465a91.33.2025.08.14.09.06.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 09:05:40 -0700 (PDT)
-From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
-To: tiwai@suse.de
-Cc: linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	ramiserifpersia@gmail.com,
-	tiwai@suse.com
-Subject: Re: [PATCH v5 0/7] ALSA: usb-audio: Add driver for TASCAM US-144MKII
-Date: Thu, 14 Aug 2025 18:05:38 +0200
-Message-Id: <20250814160538.3269-1-ramiserifpersia@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <87qzxduchg.wl-tiwai@suse.de>
-References: <87qzxduchg.wl-tiwai@suse.de>
+        Thu, 14 Aug 2025 09:06:39 -0700 (PDT)
+Message-ID: <35c18502a4870d8a833c1c9af20b85ca3f8a0ff6.camel@gmail.com>
+Subject: Re: [PATCH bpf v2 2/2] selftests/bpf: Add socket filter attach test
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Puranjay Mohan <puranjay12@gmail.com>
+Cc: KaFai Wan <kafai.wan@linux.dev>, puranjay@kernel.org, 
+	xukuohai@huaweicloud.com, ast@kernel.org, daniel@iogearbox.net, 
+	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+ song@kernel.org, 	yonghong.song@linux.dev, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, 	jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, mrpre@163.com, 	linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, 	linux-kselftest@vger.kernel.org
+Date: Thu, 14 Aug 2025 09:06:35 -0700
+In-Reply-To: <CANk7y0hQWOL3OW8Ok4e-kp7Brn5Zq6H5+EfS=mVtoVd+AUxZmA@mail.gmail.com>
+References: <20250813152958.3107403-1-kafai.wan@linux.dev>
+	 <20250813152958.3107403-3-kafai.wan@linux.dev>
+	 <eb6f9ba4acccc7685596a8f1b282667a43d51ca8.camel@gmail.com>
+	 <CANk7y0hQWOL3OW8Ok4e-kp7Brn5Zq6H5+EfS=mVtoVd+AUxZmA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Thanks, I’ll fix the brace placement for scoped_guard() in the next revision.
-If there’s anything else you’d like me to adjust before resubmitting, please let me know.
+On Thu, 2025-08-14 at 13:23 +0200, Puranjay Mohan wrote:
+> On Thu, Aug 14, 2025 at 2:35=E2=80=AFAM Eduard Zingerman <eddyz87@gmail.c=
+om> wrote:
+> >=20
+> > On Wed, 2025-08-13 at 23:29 +0800, KaFai Wan wrote:
+> > > This test verifies socket filter attachment functionality on architec=
+tures
+> > > supporting either BPF JIT compilation or the interpreter.
+> > >=20
+> > > It specifically validates the fallback to interpreter behavior when J=
+IT fails,
+> > > particularly targeting ARMv6 devices with the following configuration=
+:
+> > >   # CONFIG_BPF_JIT_ALWAYS_ON is not set
+> > >   CONFIG_BPF_JIT_DEFAULT_ON=3Dy
+> > >=20
+> > > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> > > ---
+> >=20
+> > This test should not be landed as-is, first let's do an analysis for
+> > why the program fails to jit compile on arm.
+> >=20
+> > I modified kernel to dump BPF program before jit attempt, but don't
+> > see anything obviously wrong with it.  The patch to get disassembly
+> > and disassembly itself with resolved kallsyms are attached.
+> >=20
+> > Can someone with access to ARM vm/machine take a looks at this?
+> > Puranjay, Xu, would you have some time?
+>=20
+> Hi Eduard,
+> Thanks for the email, I will look into it.
+>=20
+> Let me try to boot a kernel on ARMv6 qemu and reproduce this.
 
-Thanks,
-Šerif
+Thank you, Puranjay,
+
+While looking at the code yesterday I found a legit case for failing
+to jit on armv6:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/arch/=
+arm/net/bpf_jit_32.c#n445
+https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/arch/=
+arm/net/bpf_jit_32.c#n2089
+
+But attached program does not seem to be that big to hit 0xfff boundary.
 
