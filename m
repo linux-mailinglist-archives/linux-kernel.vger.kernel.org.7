@@ -1,155 +1,149 @@
-Return-Path: <linux-kernel+bounces-767831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6553BB25998
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:49:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824C2B2599D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B743C1C85BB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D93CD9A18C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB042580CC;
-	Thu, 14 Aug 2025 02:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EB1258CFF;
+	Thu, 14 Aug 2025 02:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaOz01j6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="IP0lyHCv"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B24F2FF64F;
-	Thu, 14 Aug 2025 02:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ED32FF64F;
+	Thu, 14 Aug 2025 02:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755139755; cv=none; b=u6sPlL4DtHYBbz0ZJ27/2esaaISd28RfEtg0sX+ZIVutO+1acg9Wbi830pCI3CX0bcKJVi9PK/oXquCugv9F0A78LGCTqUhOwyiL3cWUSPIi5eTVQ0mBSjNratw048mgLCQfvZnLAcf1sFlGkt7kLCgs7MQ/duGIB3FaIBAFUb8=
+	t=1755139953; cv=none; b=Q0F4ezX8Z/DX2+LdlJK3+HTizTzwAQ31t2piOOfbxd3KtvDYI1jQvaC1ZxkAwhKTD9YX+e+iJmiqDbud4dlbkFZU5MQQmsp/rtobAOq2t/LQsWbg1D7Wm1dknm0D9V8wCspXkjjgTjc6duG7/IHZFQrTi5yi6Tb8PgMuxW8cRyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755139755; c=relaxed/simple;
-	bh=NpHssSYhn2CrKHZjneLbrsKgTdd7DLyCmHtf4o7Q5rQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LIR3xfAGhtiGT70TyAJeNwRra1mqoxJPWDsk4YHeZM5sKwZkQyJBmvU5/Pxn9LlxCZYC5ja7mxxTBTbaCZyMz3OMkK3yqYVFb2CUvX52VB4zjoNm1OK6Dir1JAtmzNTo5BDmJBlPROQIPk3YYuDt3CnT23EZp/as0+fW4nLFRCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaOz01j6; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755139754; x=1786675754;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NpHssSYhn2CrKHZjneLbrsKgTdd7DLyCmHtf4o7Q5rQ=;
-  b=YaOz01j6kGHY6x2+z/eQSu+fg12T1L2PissdDkuIAR9TnXWTZMhv8UT5
-   kWXkBvbEpesNoQCQVugb7flFrARMH/Ndqk2P0Tw8TCqSni9vg2AuYspZA
-   HdTD0Q/UrEjinVrruslV0KLrUWErx2FsWV4yW40ceWdTDVjD95Iv7vCvp
-   gKT6pu4tCTOb3vchl5U0B45wov5ao9nhPHWUTzwOaMXcu6149PDSQ6Gyq
-   HLI9uITCvlgGJ/WE5hMuwVbRbXKv12IdpvezosrLTCYHhbscRdQ0kpZHx
-   Xi72nUQsVfjeQM4mV2oMINrkFr/fzU6bCN1JvyTpQ2RR0IfYp/vKJ/Dy5
-   w==;
-X-CSE-ConnectionGUID: BCWlbJRsTweg9FAWXitocw==
-X-CSE-MsgGUID: yMHyqI4eQTWBxHJJWTbgKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="61067348"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="61067348"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 19:49:11 -0700
-X-CSE-ConnectionGUID: PvsRFcA1Qz+YhDZhaV9yIw==
-X-CSE-MsgGUID: K+dR4kxIQvyOIl0PurNKPA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="171977867"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 19:49:07 -0700
-Message-ID: <4b7e7099-79da-4178-8f16-6780d8137ae1@linux.intel.com>
-Date: Thu, 14 Aug 2025 10:49:04 +0800
+	s=arc-20240116; t=1755139953; c=relaxed/simple;
+	bh=HTBR17vhoYZ8Fi2t2D3VIezhF9RyLF5ybAAkSkRGq8Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/td9ifg0vjVWtEgiEfb4Us0TEvr5mJSvG286E54h6mIGjHEhQDequhDwRZ1LrqAhNqVi0xvk3/j71qJmIAxMp55UmXRxvKWU3/xaGuAg0nenx/0Sy+TX4iOJfPx30ZBfJ1NjMtMqdDZ3vLxrwjS/ZEExu0NVyykVsNKRHeuFAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=IP0lyHCv; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7B03E2524A;
+	Thu, 14 Aug 2025 04:52:27 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id cu1DZ5Gm8wiw; Thu, 14 Aug 2025 04:52:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1755139946; bh=HTBR17vhoYZ8Fi2t2D3VIezhF9RyLF5ybAAkSkRGq8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=IP0lyHCvPv+3+laZDJpARS5vDAKdwVsdhv8aZpJ5IvVRrvQM1z27khXbxpnj+zrMB
+	 5HcafG2t4IiYPOLHc+fFm3/m3okPNtlifM+Dybdo6Tbb6qDXcejrXy+B9S/rtORe87
+	 CFwCebY00Xoo9MC7aAAX7+Q6gKCFG5K5B5W8f+dnGNnkPPDpz2PT7s/gvNMf9CrcdA
+	 Juphco4xYgVhAf4Uk/RQCMspBrS/y1vDm7KtATFNruZtsj1GjTrzhjobOW4G5mrFHy
+	 erPVFeKHdD2DosHAtc+A7v8eDaX/bTg5ucv1Z4toHLO04pnCYWESuA/1XsVdBkaVQP
+	 m1Zirohbl2zOA==
+Date: Thu, 14 Aug 2025 02:52:03 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	mani@kernel.org, bhelgaas@google.com, vkoul@kernel.org,
+	kishon@kernel.org
+Cc: dlan@gentoo.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+	tglx@linutronix.de, johan+linaro@kernel.org,
+	thippeswamy.havalige@amd.com, namcao@linutronix.de,
+	mayank.rana@oss.qualcomm.com, shradha.t@samsung.com,
+	inochiama@gmail.com, quic_schintav@quicinc.com, fan.ni@samsung.com,
+	devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: phy: spacemit: add SpacemiT PCIe/combo
+ PHY
+Message-ID: <aJ1PJBax-Pj983OZ@pie>
+References: <20250813184701.2444372-1-elder@riscstar.com>
+ <20250813184701.2444372-2-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 08/30] KVM: selftests: TDX: Update
- load_td_memory_region() for VM memory backed by guest memfd
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Sean Christopherson <seanjc@google.com>, Sagi Shahar <sagis@google.com>
-Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>,
- Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>,
- Isaku Yamahata <isaku.yamahata@intel.com>,
- Erdem Aktas <erdemaktas@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
- "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
- Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20250807201628.1185915-1-sagis@google.com>
- <20250807201628.1185915-9-sagis@google.com> <aJpTMVV-F0z8iyb4@google.com>
- <4b938a0a-a4ef-42c9-aef5-c931f2ad8aa0@linux.intel.com>
- <bec79c4a-499d-4f82-bfea-05746d4085e9@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <bec79c4a-499d-4f82-bfea-05746d4085e9@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813184701.2444372-2-elder@riscstar.com>
 
+On Wed, Aug 13, 2025 at 01:46:55PM -0500, Alex Elder wrote:
+> Add the Device Tree binding for the PCIe/USB 3.0 combo PHY found in
+> the SpacemiT K1 SoC.  This is one of three PCIe PHYs, and is unusual
+> in that only the combo PHY can perform a calibration step needed to
+> determine settings used by the other two PCIe PHYs.
+> 
+> Calibration must be done with the combo PHY in PCIe mode, and to allow
+> this to occur independent of the eventual use for the PHY (PCIe or USB)
+> some PCIe-related properties must be supplied: clocks; resets; and a
+> syscon phandle.
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  .../bindings/phy/spacemit,k1-combo-phy.yaml   | 110 ++++++++++++++++++
+>  1 file changed, 110 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml b/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+> new file mode 100644
+> index 0000000000000..ed78083a53231
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
 
+...
 
-On 8/13/2025 10:42 PM, Reinette Chatre wrote:
-> Hi Binbin,
->
-> On 8/13/25 2:23 AM, Binbin Wu wrote:
->>
->> On 8/12/2025 4:31 AM, Sean Christopherson wrote:
->>> On Thu, Aug 07, 2025, Sagi Shahar wrote:
->> [...]
->>>> +
->>>>    /*
->>>>     * TD creation/setup/finalization
->>>>     */
->>>> @@ -459,28 +474,35 @@ static void load_td_memory_region(struct kvm_vm *vm,
->>>>        if (!sparsebit_any_set(pages))
->>>>            return;
->>>>    +    if (region->region.guest_memfd != -1)
->>>> +        register_encrypted_memory_region(vm, region);
->>>> +
->>>>        sparsebit_for_each_set_range(pages, i, j) {
->>>>            const uint64_t size_to_load = (j - i + 1) * vm->page_size;
->>>>            const uint64_t offset =
->>>>                (i - lowest_page_in_region) * vm->page_size;
->>>>            const uint64_t hva = hva_base + offset;
->>>>            const uint64_t gpa = gpa_base + offset;
->>>> -        void *source_addr;
->>>> +        void *source_addr = (void *)hva;
->>>>              /*
->>>>             * KVM_TDX_INIT_MEM_REGION ioctl cannot encrypt memory in place.
->>>>             * Make a copy if there's only one backing memory source.
->>>>             */
->>>> -        source_addr = mmap(NULL, size_to_load, PROT_READ | PROT_WRITE,
->>>> -                   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
->>>> -        TEST_ASSERT(source_addr,
->>>> -                "Could not allocate memory for loading memory region");
->>>> -
->>>> -        memcpy(source_addr, (void *)hva, size_to_load);
->>>> +        if (region->region.guest_memfd == -1) {
->>> Oh, here's the "if".
->> Is it still possible for "region->region.guest_memfd == -1" case?
->> KVM_TDX_INIT_MEM_REGION can only work with guest memfd, right?
->>
-> This is still used and supports test "KVM: selftests: TDX: Test
-> LOG_DIRTY_PAGES flag to a non-GUEST_MEMFD memslot" found in patch #30 that
-> was created to support the issue encountered when QEMU attaches an emulated
-> VGA device to a TD. More details available in the fix:
-> fbb4adadea55 ("KVM: x86: Make cpu_dirty_log_size a per-VM value")
+> +  spacemit,syscon-pmu:
+> +    description:
+> +      PHandle that refers to the APMU system controller, whose
+> +      regmap is used in setting the mode
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 
-I think load_td_memory_region() should return directly for non-guest_memfd
-region.
-In current upstream version, KVM_TDX_INIT_MEM_REGION doesn't support
-non-guest_memfd region.
+Clock controllers and ethernet controllers all use spacemit,apmu to
+refer the APMU system controller. Do you think it's better to keep them
+aligned?
 
-The mmap/memcpy/munmap sequence should be removed because it does nothing but
-zero out the original content.
+...
 
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/spacemit,k1-syscon.h>
+> +    combo_phy: phy@c0b10000 {
 
+This label is unnecessary.
 
->
-> Reinette
+> +        compatible = "spacemit,k1-combo-phy";
+> +        reg = <0xc0b10000 0x1000>;
+> +        clocks = <&syscon_apmu CLK_PCIE0_DBI>,
+> +                 <&syscon_apmu CLK_PCIE0_MASTER>,
+> +                 <&syscon_apmu CLK_PCIE0_SLAVE>;
+> +        clock-names = "dbi",
+> +                      "mstr",
+> +                      "slv";
+> +        resets = <&syscon_apmu RESET_PCIE0_DBI>,
+> +                 <&syscon_apmu RESET_PCIE0_MASTER>,
+> +                 <&syscon_apmu RESET_PCIE0_SLAVE>,
+> +                 <&syscon_apmu RESET_PCIE0_GLOBAL>;
+> +        reset-names = "dbi",
+> +                      "mstr",
+> +                      "slv",
+> +                      "global";
+> +        spacemit,syscon-pmu = <&syscon_apmu>;
+> +        #phy-cells = <1>;
+> +        status = "disabled";
+> +    };
 
+Best regards,
+Yao Zi
 
