@@ -1,136 +1,108 @@
-Return-Path: <linux-kernel+bounces-769274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60116B26C11
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:11:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30817B26C4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62F9C7B8CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F20DD5A511B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA18256C88;
-	Thu, 14 Aug 2025 16:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01BB24A05D;
+	Thu, 14 Aug 2025 16:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tydm61H8"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8K/QkvY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C4A21FF5D;
-	Thu, 14 Aug 2025 16:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324B2229B02;
+	Thu, 14 Aug 2025 16:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755187866; cv=none; b=SgWoFmIWV0i/yjSVUIOw/CopInCaqrtMugGY6VebCftLmQKNCy6sjxKk1rNgnZ080n/WX3A2zpAfhxej09D7/MW70o5B2SMrc1YOM78L9/q354jrEOSNa3AOi3bcMemXswMnVvsfb4P8M0qawFqvfjLXl2g2VU1kd3P1wIAy5Ao=
+	t=1755187888; cv=none; b=KP35KhVDDj2Jfn+CGzKEMkWJS3nN8Iuxa/FGCyEDA5VgYZXhCa56T1yvNx0AXkW7YxKkxd6pUQ1gEFmM5ROG4rRUxr8x3miTxW6ZKaX000vpZWoPYlqXlpjoVld990ML5gyqLmjjJGJK/ET1hMp3yPSpLMtGG96shVrYC0sfLhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755187866; c=relaxed/simple;
-	bh=y9am9xltrW3534LcpckWsyuFtUZ4VO+0ecgGxs7lRAg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PlG04p0E+101vWUbFe8LusjiSyoC1jiPgUynS6VD5snmg+4sUYWXDr3d/boVPBmnT0Px6Mvr1R0opogxwLrGhzI+QMmVhMwd+ITjhYNezGL1cmFGuOAPLw/qRHE8LAkhx2ymDXyjjRJ9oW5tclGS1S4qcgsN+HYC9229q4ye7jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tydm61H8; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EGAq8q1916363;
-	Thu, 14 Aug 2025 11:10:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755187852;
-	bh=zNxFBetvcy3aVTCoqvvC2GPeFMAlHszkPcmJmnZNL2U=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=tydm61H8/ZRDrdubLCHh+jz62yx6nUrLynUbWBpiV+QyoDpR8mA/PRpJAdi7GgsGP
-	 NRcsMHCa7oaYauG1Q56ewVBoIn6c3F/LXHPJy4irNk877td5QfE8Zta0iPgYKsVWii
-	 aJ3bZaaelJPT+8uECJL5bE3rHL7II/P3ihVoD8k0=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EGAqLh1823425
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 11:10:52 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 11:10:51 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 11:10:51 -0500
-Received: from lelvem-mr06.itg.ti.com ([10.249.42.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EGAndn4172380;
-	Thu, 14 Aug 2025 11:10:51 -0500
-From: Andrew Davis <afd@ti.com>
-To: Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Paul Cercueil
-	<paul@crapouillou.net>,
-        Vivek Kasireddy <vivek.kasireddy@intel.com>,
-        Daniel
- Vetter <daniel@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-media@vger.kernel.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
-        Andrew
- Davis <afd@ti.com>
-Subject: [PATCH v2 3/3] udmabuf: Use module_misc_device() to register this device
-Date: Thu, 14 Aug 2025 11:10:49 -0500
-Message-ID: <20250814161049.678672-4-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250814161049.678672-1-afd@ti.com>
-References: <20250814161049.678672-1-afd@ti.com>
+	s=arc-20240116; t=1755187888; c=relaxed/simple;
+	bh=08/3DM8LoFIHR7/BNGxuLaxDxNLDuFb1zlEw9gyMNdQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ja5fW4t8gV8d6zsgmqRgQLX78n8hEdr/0HWvmaAFqPKpWiykI1zeCmD04T1LBRMqrS9lQ3U9GsucY9zQyqm26gvkhMmsZWMnHy289nb1dacTedn0fz4sKVRAsRvvzz6eYmRiwbQjkc3eVg4iBteY4DljGTlCRY43A0PHVfP3elM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8K/QkvY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81AF8C4CEED;
+	Thu, 14 Aug 2025 16:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755187887;
+	bh=08/3DM8LoFIHR7/BNGxuLaxDxNLDuFb1zlEw9gyMNdQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=c8K/QkvYAZUSLTmYvCDdY7DHU0hbICvAA1weY6qGkXzn9FQYu+81sqYA0kcq6k+Cd
+	 7rTBOYUMYpkj4Q0wTOKEYyGWuoeOqrcd4HvXijlEUjfWjl1xyKEvR8KypKfiPgOALi
+	 9mKkTc6ed5mUsXA9CpT5Kg+Pq/eJANp2zzxfxXZmYTWZ7Nr7Po5CM6wa8Dnz6FQSWH
+	 a02UeSlvlFOTpLTivuLE9sS6R4EgutHFLUzead5V+C+WwP6PxQC1gbWdvE5VkvoaJ2
+	 R2u2E2xJYtcixHNVl/JOn63noKQOIt8U/1WZxE06cQVJY6ucikVlNHmyV7vaDbBdfe
+	 a6rP/W2d5xcvg==
+From: SeongJae Park <sj@kernel.org>
+To: Quanmin Yan <yanquanmin1@huawei.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	akpm@linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	wangkefeng.wang@huawei.com,
+	zuoze1@huawei.com
+Subject: Re: [RFC PATCH -next 11/16] mm/damon: add addr_unit for DAMON_RECLAIM and LRU_SORT
+Date: Thu, 14 Aug 2025 09:11:25 -0700
+Message-Id: <20250814161125.67602-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <39e07350-2510-49fe-ae4a-e5d10b69291c@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Now that we do not need to call dma_coerce_mask_and_coherent() on our
-miscdevice device, use the module_misc_device() helper for registering
-and module init/exit.
+On Thu, 14 Aug 2025 20:59:04 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
 
-While here, add module description and license, modules built with W=1
-warn if built without these.
+> 
+> 在 2025/8/14 0:36, SeongJae Park 写道:
+> > On Wed, 13 Aug 2025 13:07:01 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+> >
+> >> In module DAMON_RECLAIM and DAMON_LRU_SORT, the damon_ctx is
+> >> independent of the core, necessitating dedicated addr_unit
+> >> integration for these features.
+> >> Additionally, if the input monitor_region_start and monitor_region_end
+> >> are both 0 while addr_unit is set to a non-zero valuethe default
+> >> system RAM range should be divided by addr_unit.
+> > Do you plan to, and need to use DAMON_RECLAIM and DAMON_LRU_SORT on LPAE-ARM32
+> > environments?  Can't you use DAMON sysfs interface instead?  If need to use the
+> > modules, this change looks good to me in high level.  But if not, I'd like to
+> > skip this change, and wait until someone requests it.
+> >
+> > I'll review the code change in depth after the above question is answered.
+> >
+> Hi SJ,
+> 
+> Yes, we need to use these modules in an LPAE-ARM32 environment. The modular
+> approach often provides more flexibility in our workflow, so we would greatly
+> appreciate it if you could take some time to review the code!🙂
 
-Signed-off-by: Andrew Davis <afd@ti.com>
-Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
----
- drivers/dma-buf/udmabuf.c | 24 +++---------------------
- 1 file changed, 3 insertions(+), 21 deletions(-)
+Thank you for clarifying.  Ok, I understand this change is really required.
 
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index 8d71c3d72eb5e..d888e4d667c67 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -566,26 +566,8 @@ static struct miscdevice udmabuf_misc = {
- 	.name           = "udmabuf",
- 	.fops           = &udmabuf_fops,
- };
--
--static int __init udmabuf_dev_init(void)
--{
--	int ret;
--
--	ret = misc_register(&udmabuf_misc);
--	if (ret < 0) {
--		pr_err("Could not initialize udmabuf device\n");
--		return ret;
--	}
--
--	return 0;
--}
--
--static void __exit udmabuf_dev_exit(void)
--{
--	misc_deregister(&udmabuf_misc);
--}
--
--module_init(udmabuf_dev_init)
--module_exit(udmabuf_dev_exit)
-+module_misc_device(udmabuf_misc);
- 
- MODULE_AUTHOR("Gerd Hoffmann <kraxel@redhat.com>");
-+MODULE_DESCRIPTION("Userspace memfd to DMA-BUF misc Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.39.2
+However, I think reviewing and revising this part may take time.  Meanwhile,
+seems this part is not an essential one of this patch series, and has no
+problem at be separated and merged after the essential parts.
 
+So, could we separate this part from this patch series?  That is, let's work on
+the essential part first.  After the work on the essential part is done, you
+could post this part as another patch series, and then we can work together
+again on it.
+
+
+Thanks,
+SJ
+
+[...]
 
