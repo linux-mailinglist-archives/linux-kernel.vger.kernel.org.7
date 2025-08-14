@@ -1,62 +1,80 @@
-Return-Path: <linux-kernel+bounces-768105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B13B25D0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:22:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFAD9B25CFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 032D69E11E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:21:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EE0B1B66636
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048F7269806;
-	Thu, 14 Aug 2025 07:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151CC25F78D;
+	Thu, 14 Aug 2025 07:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UJEXMVqL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSAuDPq8"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C677B255F31;
-	Thu, 14 Aug 2025 07:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7458F2594B4;
+	Thu, 14 Aug 2025 07:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755156066; cv=none; b=NwMLtQog7xsr9e63w5+qe0mWqpBrZdFZfDHYmZjvVecaQxG+eeFHI13EIavbv++RyZPa/Y14pEH9BmMH8WSv7aFBSg5HgugekHzdtuxIrXXfNZzRXMs2BJVSm+8WZiazhh0EFi/FEOjCoBFGpfDmYRtD5o40ieoWTLANNpoZRFw=
+	t=1755156026; cv=none; b=E0wtPl3amgLt1LDBWWH1kI5Go796/oGfuwfyIcX9jkcoN6f/8JEUHas4b1WuYQFRZplDcTM818iAliEcdIQd3PrGuQqGM/uYtHXYIv+8l5SS0sJY9qGsejLCzHUCDRPR49YhmX4BUpvqsGbvgTvhY/Z1RMyBme0iH4s+k4U2Z84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755156066; c=relaxed/simple;
-	bh=QVWJfxryv5an2qu/yYFf6jH5snA22fzCZz+X9kWErqY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PPqLHBzRplgvJGqzGYfLm6pwfxpmygc2Pwt2Vxntng3GEhBlxUv6nPcbVUPGhqWAEuZ8uv+KpEH/HFSLbnpuo4bvvmY9LMWQu+5CPdMfTLRsP3S4HLsCmzGndTGB6N9Opi7K0zDPGzGFu+8YfgCJjV2bcfyXQSgTGMQsTPy2sfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UJEXMVqL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DLkD4k031974;
-	Thu, 14 Aug 2025 07:20:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RsScPcpy4lyc0qyWfKF/vKWfu+4Gt4nFM/6cBTbAPSw=; b=UJEXMVqLLcZi+p3N
-	A2lCRP16sPiscs5eIT/WBC+BLzjgjQz3HwTkUl/mEyfXFs95l3YC3XFmZZaTrWy8
-	Z0q26ZpvykYw1yEW5W+wmowIocUU2RWgw1qvoZLNWyyW7D2ZM/GdvDSKt7ZvoeVZ
-	DOOXWO8ppvLnUQmnmW9fpe6gSqOarUV/QCxKXX9ULJvQlsSK5ip+gizxxZsZZb+L
-	TBiT3oN2bSKldWGUZpa/ABlXTpfTq/7Obfe6VudWCtpAoiqISX3SKc9sU7nCfHEy
-	XYJAtk33KfZE3y0atJjlN6rzhF3OrvvTwW2pycCVTO63qp7ZJAhjr3Yr8t1CBK74
-	cryiFA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fem4jq28-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 07:20:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57E7KSFX021991
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 07:20:28 GMT
-Received: from [10.216.15.102] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
- 2025 00:20:21 -0700
-Message-ID: <bc001360-1cfe-4886-a023-367a8edc21c5@quicinc.com>
-Date: Thu, 14 Aug 2025 12:50:17 +0530
+	s=arc-20240116; t=1755156026; c=relaxed/simple;
+	bh=pZXmrg8MiW7C8Uhr5fkDtKZ2nKQCR+iwqNestQ30eeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OOphZZIZVFfLxQRMDOtW3j6Mkq+AvA3xdkyvHQN/mOuHhETzZB6o9/v8nYLLGz2XXB2MIXotZYMPC51IlyJeUfR63cbhac3d2kEPi/r253hU/0Kk3zWSvgAcfJyU91MiweHtKWbdf8nygFeqiM1Vka2ABnZjYEsVhQCMsmCmjZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSAuDPq8; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6188b733bbaso1183614a12.3;
+        Thu, 14 Aug 2025 00:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755156023; x=1755760823; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D/NHbSr4di9+LOvyh5vB0HjJ5xqdtdZYOflf+Cm7gPY=;
+        b=CSAuDPq87ARVz31M1+mxhyNjRjUmRQLn6y69MRc0l8PVdwTGPTIWrLRNI0TjCCfMAe
+         KOHUIRMI08SPTY55KM4FSrBeX6Thxyian0Fs+gVmtsT8znNK+P5P/NyJmHWgZyjSxYEh
+         f89AJia+ZqKYBGjZGiiOxOHHP9JKtucvU9iEztjgCEBeX9kDu0gcLQ0RQVebsonoFr7r
+         yc0GviR//xNWRprszQBakjDtSQpAI/juTHSQd6pmwwucUQyQ5gdzxZVxcNLD5ZCGAi1+
+         FMoHSmZJHGDFkBE328jYyFwnOxMfboBJ5S+1HTCPUhWYEIJ3zKu2OzVzVTLcvWKbd2yQ
+         OHQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755156023; x=1755760823;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D/NHbSr4di9+LOvyh5vB0HjJ5xqdtdZYOflf+Cm7gPY=;
+        b=K/1r5gbTUKIMNEaZvRp+6xX5ZBU6P+gIEqe1aa7w1utBzgTJV6+msdHY5TVTxGGICM
+         Yy+SG17BAKndfMRU2lWTpFual92FIRgSs5T+8E1k87QDTFx+h7YZFbrVLOgg364/5SDZ
+         UftKeRC5JA1KE7UwwA3stot1lK5uqAMFqqK3P24V21g1I7DnLxz7P/iRSdK12W+7XAzV
+         on0Ve/sE7qGhKBel9Dna57OM/Hp4FozYHq1i+jYVzWujS55YZAeAQPR1sgDAomtlLJs1
+         nCXaEsrJ5ItItcTQiof9L1k7JcNNS8VPp8n5omuU7rAtBVt7Sf0htXYPuIeTeMPxJOcq
+         H/XA==
+X-Forwarded-Encrypted: i=1; AJvYcCXUUqLbIz0CdtbPvxaCzFnUYWsKUdmN2KSsvC2X4F6SsOWrX0u2n7u4OfGSJvncrnq1XYXwrtOwBj/8ViE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+w2T8GW1TuVaBMreOLkdXtyne8evLBiDFOCZxXaxHOimkxsCk
+	BG2QPfdxYnJ9KfApJkqdcBCd9NfZnEYfL0rWF7LZLwd6M/Kl8s/l0X9qnzDaog==
+X-Gm-Gg: ASbGncsKEgl4H4nBB5f9wvcKIYbc0CzjD/hUcRu98B4BCFZAmoSLu2YYEpqyv8GKyWp
+	3NaRwStf6DWYLBVm1MEOvU9yhlUWezUF5OFtGNWVat3LcUOcfIi8mx3/KZldilhg6lQ48Lf3GVY
+	/F5CMxzUCFssZGyRGXjhnY6JzAzcEnX+w0gNMsTwa8EU0uSNvkAkHVD4QB7Ps3O04U4LxYfKNNw
+	rzcHcMmF0WjDrZInPV6HFDuKBCXnx1gMvMe3sIk5ZKA64OnlPH069h6KAFTZ/alr0VSIC4F5Q1o
+	c6y5b1iEQH8zlxQEkRScX05I5EOTk9LClsQqjdNupRpwBatbzyvtvR/jdDHwrMyqutWbTw97YX/
+	fPPQYOLSjrnOx1D/wrrokf6RuoxVxLOhqxof+yDiar/Wwqi6QKglFSw9YRkTI6328wiqSNBIpn5
+	dWyatWfNMufoZP+GpqWqvOig==
+X-Google-Smtp-Source: AGHT+IHXdusFcYQak4vlZ2g0XYjuaEkrrLAfEahhybzhZ561jawqXJBDs50NQGVWVrnMbl6yAeYtfg==
+X-Received: by 2002:a17:907:3f14:b0:af9:e1f0:cd33 with SMTP id a640c23a62f3a-afcb93942b7mr176473066b.2.1755156022407;
+        Thu, 14 Aug 2025 00:20:22 -0700 (PDT)
+Received: from ?IPV6:2001:9e8:f104:d732:d942:d18e:4382:4b17? ([2001:9e8:f104:d732:d942:d18e:4382:4b17])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0763d8sm2564446066b.2.2025.08.14.00.20.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 00:20:21 -0700 (PDT)
+Message-ID: <0bbc671b-e96c-4089-8540-65d89fa5aa81@gmail.com>
+Date: Thu, 14 Aug 2025 09:20:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,171 +82,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dts: describe x1e80100 ufs
-To: Harrison Vanderbyl <harrison.vanderbyl@gmail.com>, <marcus@nazgul.ch>,
-        <kirill@korins.ky>, <vkoul@kernel.org>, <kishon@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mani@kernel.org>, <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
-        <bvanassche@acm.org>, <andersson@kernel.org>, <agross@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>
-References: <20250814005904.39173-1-harrison.vanderbyl@gmail.com>
- <20250814005904.39173-4-harrison.vanderbyl@gmail.com>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <20250814005904.39173-4-harrison.vanderbyl@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH i2c-host v5 5/5] i2c: rtl9300: Implement I2C block read
+ and write
+Content-Language: en-GB
+To: Sven Eckelmann <sven@narfation.org>,
+ Chris Packham <chris.packham@alliedtelesis.co.nz>,
+ Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Harshal Gohel <hg@simonwunderlich.de>,
+ Simon Wunderlich <sw@simonwunderlich.de>
+References: <20250810-i2c-rtl9300-multi-byte-v5-0-cd9dca0db722@narfation.org>
+ <20250810-i2c-rtl9300-multi-byte-v5-5-cd9dca0db722@narfation.org>
+From: Jonas Jelonek <jelonek.jonas@gmail.com>
+In-Reply-To: <20250810-i2c-rtl9300-multi-byte-v5-5-cd9dca0db722@narfation.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YSxe04GFzNwz5z3pryrGGbxCF4rljt4H
-X-Proofpoint-ORIG-GUID: YSxe04GFzNwz5z3pryrGGbxCF4rljt4H
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA2OCBTYWx0ZWRfX7ifYVO1VrwO9
- 2uaWKsyal7TYIgXXTDi76hHS/MDZcG5/kwWI8LvPyih8rS8SUwv2m9/RdrKv7CB+5QqlgJJu1tI
- kCBeRajqk3vMF041wqz+XxZjZImXndbDYYiJDjSaQjo4At/aOr3NVPliiLTrX5s7Tydf/3u+imt
- XjjlsOaL0mDzFHlzw0q8iogO4Ztdh/L7igK9STf4hMZpJzDzAgJmq3gasMwHEMuclRGDGi8Im7b
- VRPFb68lUDDuCJfXYrdVcy7C7CQ9JVzM88KRCjyk7ThV3sFwcrot+b2dwEnhKmTCzTbWyqWdXPD
- HG7AsZoMs5gTD+plgSe/1u4gW/gqnaq1v76zWo8wTNdLt0ghUYE8pBQvypHJlgdulzFJE8KoSYv
- 9op27r2X
-X-Authority-Analysis: v=2.4 cv=YMafyQGx c=1 sm=1 tr=0 ts=689d8e3d cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=bSFmR1_Cq-7rNE1wWKgA:9
- a=Kjs97tkqnXMi_ocT:21 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1011 priorityscore=1501 spamscore=0 suspectscore=0
- adultscore=0 impostorscore=0 malwarescore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110068
 
+Hi,
 
+tested this as far as I've been able too with simple reads and I2C block read
+on several RTL93xx devices. No issues and block read is working for me, so
+the whole series is getting from me:
 
-On 8/14/2025 6:29 AM, Harrison Vanderbyl wrote:
-> Describe device tree entry for x1e80100 ufs device
-> Signed-off-by: Harrison Vanderbyl <harrison.vanderbyl@gmail.com>
+Reviewed-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+Tested-by: Jonas Jelonek <jelonek.jonas@gmail.com>
+
+Hopefully we can proceed soon with our efforts in this driver :)
+
+Best,
+Jonas
+
+On 10.08.2025 20:05, Sven Eckelmann wrote:
+> From: Harshal Gohel <hg@simonwunderlich.de>
+>
+> It was noticed that the original implementation of SMBus Block Write in the
+> driver was actually an I2C Block Write. Both differ only in the Count byte
+> before the actual data:
+>
+>   S Addr Wr [A] Comm [A] Count [A] Data [A] Data [A] ... [A] Data [A] P
+>
+> The I2C Block Write is just skipping this Count byte and starts directly
+> with the data:
+>
+>   S Addr Wr [A] Comm [A] Data [A] Data [A] ... [A] Data [A] P
+>
+> The I2C controller of RTL93xx doesn't handle this Count byte special and it
+> is simply another one of (16 possible) data bytes. Adding support for the
+> I2C Block Write therefore only requires skipping the count byte (0) in
+> data->block.
+>
+> It is similar for reads. The SMBUS Block read is having a Count byte before
+> the data:
+>
+>   S Addr Wr [A] Comm [A]
+>             Sr Addr Rd [A] [Count] A [Data] A [Data] A ... A [Data] NA P
+>
+> And the I2C Block Read is directly starting with the actual data:
+>
+>   S Addr Wr [A] Comm [A]
+>             Sr Addr Rd [A] [Data] A [Data] A ... A [Data] NA P
+>
+> The I2C controller is also not handling this byte in a special way. It
+> simply provides every byte after the Rd marker + Ack as part of the 16 byte
+> receive buffer (registers). The content of this buffer just has to be
+> copied to the right position in the receive data->block.
+>
+> Signed-off-by: Harshal Gohel <hg@simonwunderlich.de>
+> Co-developed-by: Sven Eckelmann <sven@narfation.org>
+> Signed-off-by: Sven Eckelmann <sven@narfation.org>
+> Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 > ---
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 91 ++++++++++++++++++++++++++
->   1 file changed, 91 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index a9a7bb676c6f..effa776e3dd0 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -2819,6 +2819,97 @@ tsens3: thermal-sensor@c274000 {
->   			#thermal-sensor-cells = <1>;
->   		};
->   
+>  drivers/i2c/busses/i2c-rtl9300.c | 37 +++++++++++++++++++++++++++++++++----
+>  1 file changed, 33 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
+> index cfafe089102aa208dde37096d5105d4140278ca9..4b215f9a24e6aeb8ff078cfc03a54c7bd9a60c38 100644
+> --- a/drivers/i2c/busses/i2c-rtl9300.c
+> +++ b/drivers/i2c/busses/i2c-rtl9300.c
+> @@ -183,22 +183,32 @@ static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
+>  		return -EIO;
+>  
+>  	if (read_write == I2C_SMBUS_READ) {
+> -		if (size == I2C_SMBUS_BYTE || size == I2C_SMBUS_BYTE_DATA) {
+> +		switch (size) {
+> +		case I2C_SMBUS_BYTE:
+> +		case I2C_SMBUS_BYTE_DATA:
+>  			ret = regmap_read(i2c->regmap,
+>  					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
+>  			if (ret)
+>  				return ret;
+>  			data->byte = val & 0xff;
+> -		} else if (size == I2C_SMBUS_WORD_DATA) {
+> +			break;
+> +		case I2C_SMBUS_WORD_DATA:
+>  			ret = regmap_read(i2c->regmap,
+>  					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
+>  			if (ret)
+>  				return ret;
+>  			data->word = val & 0xffff;
+> -		} else {
+> +			break;
+> +		case I2C_SMBUS_I2C_BLOCK_DATA:
+> +			ret = rtl9300_i2c_read(i2c, &data->block[1], len);
+> +			if (ret)
+> +				return ret;
+> +			break;
+> +		default:
+>  			ret = rtl9300_i2c_read(i2c, &data->block[0], len);
+>  			if (ret)
+>  				return ret;
+> +			break;
+>  		}
+>  	}
+>  
+> @@ -296,6 +306,25 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
+>  		len = data->block[0] + 1;
+>  		break;
+>  
+> +	case I2C_SMBUS_I2C_BLOCK_DATA:
+> +		ret = rtl9300_i2c_reg_addr_set(i2c, command, 1);
+> +		if (ret)
+> +			goto out_unlock;
+> +		if (data->block[0] < 1 || data->block[0] > I2C_SMBUS_BLOCK_MAX) {
+> +			ret = -EINVAL;
+> +			goto out_unlock;
+> +		}
+> +		ret = rtl9300_i2c_config_xfer(i2c, chan, addr, data->block[0]);
+> +		if (ret)
+> +			goto out_unlock;
+> +		if (read_write == I2C_SMBUS_WRITE) {
+> +			ret = rtl9300_i2c_write(i2c, &data->block[1], data->block[0]);
+> +			if (ret)
+> +				goto out_unlock;
+> +		}
+> +		len = data->block[0];
+> +		break;
 > +
-> +		ufs_mem_hc: ufs@1d84000 {
-> +			compatible = "qcom,x1e80100-ufshc",
-> +			"qcom,ufshc", "jedec,ufs-2.0";
-> +			reg = <0 0x01d84000 0 0x3000>;
-> +			
-> +			
-> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			phys = <&ufs_mem_phy>;
-> +			phy-names = "ufsphy";
-> +
-> +			lanes-per-direction = <2>;
-> +
-> +			#reset-cells = <1>;
-> +			resets = <&gcc GCC_UFS_PHY_BCR>;
-> +
-> +			reset-gpios = <&tlmm 238 GPIO_ACTIVE_LOW>;
-> +			reset-names = "rst";
-> +
-> +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-> +
-> +			iommus = <&apps_smmu 0x1a0 0x0>;
-> +
-> +			clock-names = "core_clk",
-> +				      "bus_aggr_clk",
-> +				      "iface_clk",
-> +				      "core_clk_unipro",
-> +				      "ref_clk",
-> +				      "tx_lane0_sync_clk",
-> +				      "rx_lane0_sync_clk",
-> +				      "rx_lane1_sync_clk";
-> +
-> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
-> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
-> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-> +				 <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
-> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_1_CLK>;
-> +
-> +			freq-table-hz = <100000000 403000000>,
-> +					<0 0>,
-> +					<0 0>,
-> +					<100000000 403000000>,
-> +					<100000000 403000000>,
-> +					<0 0>,
-> +					<0 0>,
-> +					<0 0>;
-> +
-Please use OPP table instead of freq-table-hz.
-
-
-> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
-
-For Config Path, use QCOM_ICC_TAG_ACTIVE_ONLY.
-
-YOu can refer to ICC discussion link for SM8750 - 
-https://lore.kernel.org/linux-devicetree/354f8710-a5ec-47b5-bcfa-bff75ac3ca71@oss.qualcomm.com/ 
-
-
-
-
-> +			interconnect-names = "ufs-ddr", "cpu-ufs";
-> +
-> +			qcom,ice = <&ice>;
-> +
-> +			status = "disabled";
-> +		};
-> +
-> +		ufs_mem_phy: phy@1d80000 {
-> +			compatible = "qcom,x1e80100-qmp-ufs-phy";
-> +			reg = <0 0x01d80000 0 0x2000>;
-> +
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
-> +
-> +			clock-names = "ref",
-> +				      "ref_aux",
-> +				      "qref";
-> +
-> +			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-> +
-> +			resets = <&ufs_mem_hc 0>;
-> +			reset-names = "ufsphy";
-> +
-> +			#phy-cells = <0>;
-> +
-> +			status = "disabled";
-> +		};
-> +
-> +		ice: crypto@1d90000 {
-> +			compatible = "qcom,x1e80100-inline-crypto-engine",
-> +				     "qcom,inline-crypto-engine";
-> +			reg = <0 0x1d88000 0 0x8000>;
-> +
-> +			clocks = <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
-> +		};
-> +
->   		usb_1_ss0_hsphy: phy@fd3000 {
->   			compatible = "qcom,x1e80100-snps-eusb2-phy",
->   				     "qcom,sm8550-snps-eusb2-phy";
+>  	default:
+>  		dev_err(&adap->dev, "Unsupported transaction %d\n", size);
+>  		ret = -EOPNOTSUPP;
+> @@ -314,7 +343,7 @@ static u32 rtl9300_i2c_func(struct i2c_adapter *a)
+>  {
+>  	return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
+>  	       I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
+> -	       I2C_FUNC_SMBUS_BLOCK_DATA;
+> +	       I2C_FUNC_SMBUS_BLOCK_DATA | I2C_FUNC_SMBUS_I2C_BLOCK;
+>  }
+>  
+>  static const struct i2c_algorithm rtl9300_i2c_algo = {
+>
 
 
