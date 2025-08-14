@@ -1,128 +1,179 @@
-Return-Path: <linux-kernel+bounces-769334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F22D3B26D00
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:54:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651D4B26D27
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7931CC55AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:55:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0363B6008AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF0F1FDA92;
-	Thu, 14 Aug 2025 16:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B5A2FCBFD;
+	Thu, 14 Aug 2025 16:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfH/zQy0"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAijTxAu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C74166F1A;
-	Thu, 14 Aug 2025 16:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935A3166F1A;
+	Thu, 14 Aug 2025 16:54:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755190463; cv=none; b=J1mxVTeYpHHmzPfXGI1lE3oOCxYJFxG5Fg8+vpj5jBS31XfrvN/PjDxZ2N7GB+f3GBGo1AcT9tJWzkTqiLlla1d4X0qmycdkSCIUdO0dvQsJlnisQNLukMWE0ATW5peIv8nCTPFYkA0oFO6dXt0gDU/JZI8Af7xNotj75IwkNhI=
+	t=1755190471; cv=none; b=Mng35y6LGam56qCAyXJJKDA/RiZjJFYarUHdAejIFJYP/JlpF5lwRgRMoBfHcok9TZ1huOeCPk3hjvTuMIR6im5lMCeI8jyoGwvnmM7vKSb40QxdIr+zF+O+OzeMSFZ4YxmRNer+mr8gj90dXq0HF11pzMAKxuJhaTWKsE5OfNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755190463; c=relaxed/simple;
-	bh=YfHkh+eSRqs9I6udgnVleOU/rOxXdnn1bs0TZZvIbmU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tRwTnKYz0Z+YadCARFIBC86fihacooaMUCxfLQ4xyqy0jkCS1ytHLXAnrv1YaMh6q6QG7Kw7iG9N7f89PIGxYmQIQ+uVdJzGd5OqXELjzGKrK6UDheAsu6IfLDVbTFAA/v0EpgKqUkMhiOuWllVs2qQswIelTAwriaGXeDAncuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfH/zQy0; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24457f47000so10011075ad.0;
-        Thu, 14 Aug 2025 09:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755190461; x=1755795261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bzAUOwpAWoQpgwAW5jB4MGjXOdEDxLQtc2FXn4/gdjw=;
-        b=gfH/zQy0i6G9/4roGh5krWToK/2GnUf9pQwDfIQrCD3c82XHBc1e/ySv7DszgXeHpf
-         /f0njJqVIeumvqcSAE68wQcxJUCc8JFZa1XbA/ufYsmmTGAQzpleaP4mjxGs0VgZNyY8
-         66PCy3dTUT8biHWduHb/PqJnFlEYraoZGAuqbF4vPjdkPYR8IiC86Ephh5VrolFAFhgK
-         bUNnOmCEVTpSHqERHAJ3JDXL9W1634EcI9nORMUaXBekLs9p2st9HLHWLMlpjDnoyGGP
-         a5mIiffh5lQvv8XwJJGLLoQIvqIFFgoMxUGsiq337oH8yb61G6W+54qpvbAqzPN5DuYa
-         JHdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755190461; x=1755795261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bzAUOwpAWoQpgwAW5jB4MGjXOdEDxLQtc2FXn4/gdjw=;
-        b=bOAQQpwG3ady6njLW/+KzIbYZeOlWeQztGjHANq9aJ1v8r6Blt1JP9EGm34caodRZZ
-         GsvZYqXuopVddOkQdhu1SGKIrnJ44AMvpLzUIDNPpE4gkprDfsp/lXLkrKBqnSi0o8IG
-         a9hy5vECRyAfX3/3aKZEXpDN2NUWpaDOLbi+dlQoLf24luDVmNvccBytVrQ7PwuUTf1K
-         Eg5m2GGGWhW3p/StqMDwBQafrx3BgwjtZtfjyiTu58nfpV6WKCnQnr3BssDuYIqc31mY
-         gBz5s/PbMm6M6gfOLiswTa0CiF8jhd4idAXAYxzFol6KhZg2XUb66xpft+0LdWPOdJa5
-         0inQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/0Jb036T0Op4GTVq8eYhzks9OyPlKOlcHSLjp9fyG8FYa0MG4PrIbM2jgpbbD2A54UE8gDXCNBSbkr6eJ/aCa7aVpBBl8@vger.kernel.org, AJvYcCWbtbud9UZ7EDWJszJH4Z7WgY2dA4sxbupuRxKeNuQic771daIdKOHeXV5PA8bwEKhsUSwzmggIEkVRr3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIcHVhFjlM2A9DGUIOYGtFuOYvq7Tb+nlOqF/MYgPNUfXSIx1l
-	k6XOQgFrTkY+8yha9xjGndv7Owx7KcICBDHo3E4Oy36Y6K2QMU10SRmq
-X-Gm-Gg: ASbGncuSc97eHVYCTG99OWai2VjrEYgKEAQwEb11IaYSdvm6aPRPX3NYiRBJjy/y4M4
-	hOinYk8dc7anqWMpItAm0tR4v0pVR8BSR5KyylRqiEmuexBy9CVxePo+/dnECp9xT0uQSdGSsPa
-	KuNO3F8da71dTodRD5Qr7MBvInw9wp78TYx4an5GeZGL4v4c1wOU5ua/8PGpgsq04SI9AsVPPb4
-	5iole71nmQGWaLZuEfoMb9qva0xI2/z+x9H5h14iT9O07YCBPIu4jAvby/09h81bhYFZ7RrQuFS
-	wGxTupXkJRYhDdWwOwsMM95c7vzqmHN/gnndqY27XiqA0WPl1+08SQd4Ee8nTWwSCyaSl4ZF/FK
-	NXzLlh7/UVQxhEH2otvCBalcjOJcTKZJ+TBFsfRHAKb5Rr4eEqlPE7Ek7B9+5U2cMMat9O8zsig
-	I=
-X-Google-Smtp-Source: AGHT+IEqMpZO5u/tm/cwn+0YsGs4tZglauzhONrWB/FV5p8lGP3iOxI6+izHLFRBqWNEDG3eBmVaBw==
-X-Received: by 2002:a17:902:c952:b0:234:ba37:879e with SMTP id d9443c01a7336-244586bf29amr53951435ad.38.1755190461424;
-        Thu, 14 Aug 2025 09:54:21 -0700 (PDT)
-Received: from chandra-mohan-sundar.aristanetworks.com ([2401:4900:1cb8:7b85:37eb:c20:7321:181])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24244f5c1c0sm310205985ad.45.2025.08.14.09.54.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 09:54:21 -0700 (PDT)
-From: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
-To: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org
-Cc: Chandra Mohan Sundar <chandramohan.explore@gmail.com>,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH v2] apparmor: Remove unused value
-Date: Thu, 14 Aug 2025 22:24:01 +0530
-Message-ID: <20250814165403.616195-1-chandramohan.explore@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755190471; c=relaxed/simple;
+	bh=l+BdPGU5s1lSz+Wn4Skj6yNZHRqBxCYdP1QbhjGj46w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dc07DHx9nFSHmzBYwR7BbcJmg7lOKpRasaYF+uZqdyptW55paegCO4RlJvEhoYTQudzshijREYsIjGbp1LXX8zMgPOB/oXPKu1+7mlVg5wLwDPGuSSj9OF7TGl2lmefY/Nxq+ZJeUybdkPscwKYRXU6alJZsBvdkUxT1Glh2pw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uAijTxAu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2593AC4CEED;
+	Thu, 14 Aug 2025 16:54:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755190471;
+	bh=l+BdPGU5s1lSz+Wn4Skj6yNZHRqBxCYdP1QbhjGj46w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uAijTxAuY3vGwM78+PrRc/fCQLGARlU2IACUe8szD/QvaX7trsuwHqBZM0fU/BkJ0
+	 PrKRsyPReVqn1jx+XoArIoQSdVBZ6pgLV5XJ3gwVZsxMoPqw64Rd5/ba5m5Giswfef
+	 +pWR5d1bRDswR628xphF8ZJg5OzExBiI+bx4OjoJXq70IScPa3+UDFRffBnH7BGs6t
+	 Z0b1epTyG+7p8SS4oKLtdLRaB4oVYY2J/7eVwEiWHaGt2ultzwauOolHjFJbFepz6P
+	 8AtC40MBVot4IzdXlUjfNKsre/FmlM+TNETCjpS5bIV9PHVY5//XDsMmFYJmeboDSM
+	 trEYUGuKC9C6A==
+Date: Thu, 14 Aug 2025 09:54:30 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, hch@lst.de,
+	tytso@mit.edu, bmarzins@redhat.com, chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
+	martin.petersen@oracle.com, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH xfsprogs v2] xfs_io: add FALLOC_FL_WRITE_ZEROES support
+Message-ID: <20250814165430.GR7942@frogsfrogsfrogs>
+References: <20250813024250.2504126-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813024250.2504126-1-yi.zhang@huaweicloud.com>
 
-The value "new" is being assigned to NULL but that statement does not
-have effect since "new" is being overwritten in the subsequent
-fallback case.
+On Wed, Aug 13, 2025 at 10:42:50AM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> The Linux kernel (since version 6.17) supports FALLOC_FL_WRITE_ZEROES in
+> fallocate(2). Add support for FALLOC_FL_WRITE_ZEROES support to the
+> fallocate utility by introducing a new 'fwzero' command in the xfs_io
+> tool.
+> 
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=278c7d9b5e0c
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+> v1->v2:
+>  - Minor description modification to align with the kernel.
+> 
+>  io/prealloc.c     | 36 ++++++++++++++++++++++++++++++++++++
+>  man/man8/xfs_io.8 |  6 ++++++
+>  2 files changed, 42 insertions(+)
+> 
+> diff --git a/io/prealloc.c b/io/prealloc.c
+> index 8e968c9f..9a64bf53 100644
+> --- a/io/prealloc.c
+> +++ b/io/prealloc.c
+> @@ -30,6 +30,10 @@
+>  #define FALLOC_FL_UNSHARE_RANGE 0x40
+>  #endif
+>  
+> +#ifndef FALLOC_FL_WRITE_ZEROES
+> +#define FALLOC_FL_WRITE_ZEROES 0x80
+> +#endif
+> +
+>  static cmdinfo_t allocsp_cmd;
+>  static cmdinfo_t freesp_cmd;
+>  static cmdinfo_t resvsp_cmd;
+> @@ -41,6 +45,7 @@ static cmdinfo_t fcollapse_cmd;
+>  static cmdinfo_t finsert_cmd;
+>  static cmdinfo_t fzero_cmd;
+>  static cmdinfo_t funshare_cmd;
+> +static cmdinfo_t fwzero_cmd;
+>  
+>  static int
+>  offset_length(
+> @@ -377,6 +382,27 @@ funshare_f(
+>  	return 0;
+>  }
+>  
+> +static int
+> +fwzero_f(
+> +	int		argc,
+> +	char		**argv)
+> +{
+> +	xfs_flock64_t	segment;
+> +	int		mode = FALLOC_FL_WRITE_ZEROES;
 
-Remove the unused value. This issue was reported by coverity static
-analyzer.
+Shouldn't this take a -k to add FALLOC_FL_KEEP_SIZE like fzero?
 
-Fixes: a9eb185be84e9 ("apparmor: fix x_table_lookup when stacking is not the first entry")
-Signed-off-by: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
----
-Changes since v1:
-    Fixed the commit message and Fixes tag message formatting.
+(The code otherwise looks fine to me)
 
- security/apparmor/domain.c | 1 -
- 1 file changed, 1 deletion(-)
+--D
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 267da82afb14..9c0c7fa8de46 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -592,7 +592,6 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
- 		if (!new || **lookupname != '&')
- 			break;
- 		stack = new;
--		new = NULL;
- 		fallthrough;	/* to X_NAME */
- 	case AA_X_NAME:
- 		if (xindex & AA_X_CHILD)
--- 
-2.43.0
-
+> +
+> +	if (!offset_length(argv[1], argv[2], &segment)) {
+> +		exitcode = 1;
+> +		return 0;
+> +	}
+> +
+> +	if (fallocate(file->fd, mode, segment.l_start, segment.l_len)) {
+> +		perror("fallocate");
+> +		exitcode = 1;
+> +		return 0;
+> +	}
+> +	return 0;
+> +}
+> +
+>  void
+>  prealloc_init(void)
+>  {
+> @@ -489,4 +515,14 @@ prealloc_init(void)
+>  	funshare_cmd.oneline =
+>  	_("unshares shared blocks within the range");
+>  	add_command(&funshare_cmd);
+> +
+> +	fwzero_cmd.name = "fwzero";
+> +	fwzero_cmd.cfunc = fwzero_f;
+> +	fwzero_cmd.argmin = 2;
+> +	fwzero_cmd.argmax = 2;
+> +	fwzero_cmd.flags = CMD_NOMAP_OK | CMD_FOREIGN_OK;
+> +	fwzero_cmd.args = _("off len");
+> +	fwzero_cmd.oneline =
+> +	_("zeroes space and eliminates holes by allocating and submitting write zeroes");
+> +	add_command(&fwzero_cmd);
+>  }
+> diff --git a/man/man8/xfs_io.8 b/man/man8/xfs_io.8
+> index b0dcfdb7..0a673322 100644
+> --- a/man/man8/xfs_io.8
+> +++ b/man/man8/xfs_io.8
+> @@ -550,6 +550,12 @@ With the
+>  .B -k
+>  option, use the FALLOC_FL_KEEP_SIZE flag as well.
+>  .TP
+> +.BI fwzero " offset length"
+> +Call fallocate with FALLOC_FL_WRITE_ZEROES flag as described in the
+> +.BR fallocate (2)
+> +manual page to allocate and zero blocks within the range by submitting write
+> +zeroes.
+> +.TP
+>  .BI zero " offset length"
+>  Call xfsctl with
+>  .B XFS_IOC_ZERO_RANGE
+> -- 
+> 2.39.2
+> 
+> 
 
