@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-768927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D547B267C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:43:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D74EB26833
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 691527A7257
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9945B9E5B83
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B919C2FE071;
-	Thu, 14 Aug 2025 13:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="kVINtjbi"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB80E2FD7C4;
-	Thu, 14 Aug 2025 13:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670F33009F2;
+	Thu, 14 Aug 2025 13:50:39 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF63B2FFDDE;
+	Thu, 14 Aug 2025 13:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755178978; cv=none; b=boSG1h3qLik9y7utS2wgZqaa/lfHGHBjYQ6X4uwkp8OGcmgTqwoVnXcQAF60wIQ+8uprLcBJ69WjWihvgYPczQVpArp6kxY8VNYFHbgJmk+13b44CKxk2iiaC/sfw5vmwGcjfGcAabzuhRhGCBdj3lTjRab1d0NUCUJOk1v8Q18=
+	t=1755179438; cv=none; b=M+/GR9OPN2EJMxsFVNsK4LgsqSsRAoHGYjzEcDiFGswpuHT4qKarraPv8hksTyh004MaJ/niIxkpiIPYV5P1hPRNYXkhgG+FYA/+4tm8h1f8QPquHq6LXMbwUISY+JvIYxHzBtAzIg81voAfaTo5oSpmmlDvAS/1TqkswRAkRQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755178978; c=relaxed/simple;
-	bh=NxAH7pfdeVhvM9KogxMAO/rVTXgioDohPhvXnvPf85Q=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MIkNyVvAyYOr7A7ZUXLHvM/dae5gh+WIG1mUHEotLcUHag9P5eu1kYmPyhDEX3oAga0FCWvPqMNWllxaQuuF4CXLD3RwHG0UlGJqX5nZ/cA1hkLi9VnK0y86E6aAwH4lNilApZsV2mjnV0FtpWu/Ixw0OLND/H+ZRuDDXUb+JIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=kVINtjbi; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1755178956; x=1755783756; i=markus.elfring@web.de;
-	bh=NxAH7pfdeVhvM9KogxMAO/rVTXgioDohPhvXnvPf85Q=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=kVINtjbidBNj8F0/VWB3HQbhGtpLc1IfsbTNjRebdJ4jb2YJ9Srekk53BTF1a1Rq
-	 CxxSba3K7X8QVkeakNu8ttd5yZAGdUDW/Tf+rPlufCs35EwpUGfsElw37S8ia3xWn
-	 wCQNBXbCT0/eRZnFiVitofMR/TM8yOT/s5Pggd9faY7D4PNS5AsoX9wbtceKkATAv
-	 C+ttqejqi+iI0hM5B7bJmht2t3JEllq0pnF1vdUuvGJPwt+Ww22zRPA6I2TpPeucb
-	 3Z9Hsb2x0ucjaPCj0vah51inMIJUARnR6aZzW28ziP0VRkilD/3y0CT7XgNRPazWO
-	 COTWRFDGZeIt4zKX6w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.224]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZB07-1v8Bgr0zMf-00Vn5B; Thu, 14
- Aug 2025 15:42:36 +0200
-Message-ID: <73577de6-3fc1-456b-90b5-3fa69a42366e@web.de>
-Date: Thu, 14 Aug 2025 15:42:33 +0200
+	s=arc-20240116; t=1755179438; c=relaxed/simple;
+	bh=vFczm8e5OaiPzDro8LfC6emO/k/Igt0MHXU7T1y7z8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HTFYqDf5JsR6ImuBh7i77+YLW1BXiaPjEYt5q/9AAS8X5+TaSndzVRHybOQvPGRUOrJegKoHTOef6GcilvK5Wf6QZaCRfDft1d5uvGkFOmbv8jKzEb952lr62rUZ8vBdXsmMbgbeJLV985rBdVxHAijOggqZX6qKllGUfSU9t60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4c2mf83rJXz9sSN;
+	Thu, 14 Aug 2025 15:43:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id DBzqxKLEhtqg; Thu, 14 Aug 2025 15:43:12 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4c2mf82mg0z9sSH;
+	Thu, 14 Aug 2025 15:43:12 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 48B088B764;
+	Thu, 14 Aug 2025 15:43:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id u4JdrB2diOCo; Thu, 14 Aug 2025 15:43:12 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C584A8B763;
+	Thu, 14 Aug 2025 15:43:09 +0200 (CEST)
+Message-ID: <86186254-b2c6-4818-af0a-4eb67d90e501@csgroup.eu>
+Date: Thu, 14 Aug 2025 15:43:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,99 +55,165 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Qianfeng Rong <rongqianfeng@vivo.com>, linux-media@vger.kernel.org,
- linux-staging@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, Andy Shevchenko <andy@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans de Goede <hansg@kernel.org>, Hans Verkuil <hverkuil@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <20250814133032.236533-1-rongqianfeng@vivo.com>
-Subject: Re: [PATCH] media: atomisp: Use vmemdup_user() instead of open-coding
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250814133032.236533-1-rongqianfeng@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:YRsnSl31eeIhch4r06I4QkoiqETqK7OYyAvrHi8sYbYvWh7IgB5
- pDdZF/5iavYVrJM5QbWYqJTKH/xR8qmHNLZ8JT05c5XuAItVB3QeggDbdU7HYeumbNlNxVN
- soxOzT6Qxmu2y5GjO++9/gcFAm5zCLfTBxYXdeyd1hv+K0mOYTv+BHyR5W3ImZRLiM0K6X6
- U81fmKWwDTBI56UrVhwKg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:x0N7f8F7Fvw=;f/O0YHZp7Fnnpt48W8fK19b//KA
- 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
- 54/ZZIL0//9C03Eu6GxnxCAE8//Z
+Subject: Re: [PATCH v4 00/24] vdso: Reject absolute relocations during build
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, Kees Cook <kees@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Richard Weinberger <richard@nod.at>,
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, linux-mm@kvack.org, linux-um@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ loongarch@lists.linux.dev, linux-s390@vger.kernel.org,
+ linux-mips@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, Jan Stancek <jstancek@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@redhat.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+References: <20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250812-vdso-absolute-reloc-v4-0-61a8b615e5ec@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> Use vmemdup_user() to get a copy of the user buffer in
-> atomisp_v4l2_framebuffer_to_css_frame().
 
-Was an information source (like the following) reused here?
-https://elixir.bootlin.com/linux/v6.16/source/scripts/coccinelle/api/memdup_user.cocci#L2
 
-Regards,
-Markus
+Le 12/08/2025 à 07:44, Thomas Weißschuh a écrit :
+> The compiler can emit absolute relocations in vDSO code,
+> which are invalid in vDSO code.
+> Detect them at compile-time.
+
+I'm a bit puzzled with this series.
+
+If I understand correctly, the check will be done only when you have 
+RUST available ?
+
+I wouldn't expect having RUST to build a C kernel.
+
+By the way, aren't relocations already detected by command 
+cmd_vdso_check in lib/vdso/Makefile.include , using readelf ? Why is a 
+new tool needed and why does it have to be written in RUST langage ?
+
+Thanks
+Christophe
+
+> 
+> libc elf.h is missing some of the relocation constants,
+> so make user of the kernels own UAPI headers instead.
+> 
+> Kbuild and Rust folks: This contains custom definitions of hostprog
+> bindgen and rust library commands.
+> These are currently only defined inside the subsystem directory.
+> Let me know if they should go into scripts/Makefile.host.
+> 
+> This will conflict with my SPARC64 generic vDSO patches [0].
+> If both end up being applied at the same time, please leave out commit
+> 'vdso/vdsocheck: Drop the transitional kconfig option' from this series.
+> 
+> [0] https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1%40linutronix.de%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C3f03f6747325451ee98808ddd9634f27%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638905742749561064%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=HacF%2FvlUoxA9P6fTiN1ytw49gwayX1wNE7IxfEkFutE%3D&reserved=0
+> 
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> ---
+> Changes in v4:
+> - Replace the inline shell logic with a dedicated build-time tool
+> - Link to v3: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fr%2F20250611-vdso-absolute-reloc-v3-0-47897d73784b%40linutronix.de&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C3f03f6747325451ee98808ddd9634f27%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638905742749584369%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=7NxAhutk6IXl%2B3fe1kkZEzhZz6CWye%2FVAcFO%2BgtS4uo%3D&reserved=0
+> 
+> Changes in v3:
+> - Drop already applied bugfix for arm64
+> - Disable LTO for the riscv vDSO, as it is incompatible
+> - Link to v2: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fr%2F20250430-vdso-absolute-reloc-v2-0-5efcc3bc4b26%40linutronix.de&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C3f03f6747325451ee98808ddd9634f27%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638905742749600546%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=uv0qMS5qq0DovLHtxfRvT42atbJEkztylpOS8zt6bJ4%3D&reserved=0
+> 
+> Changes in v2:
+> - Link to openend (invalid) GCC bug containing more explanations
+> - Refine commit messages
+> - Don't fail on commit absolute relocations in debug info
+> - Link to v1: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fr%2F20250429-vdso-absolute-reloc-v1-0-987a0afd10b5%40linutronix.de&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C3f03f6747325451ee98808ddd9634f27%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638905742749616057%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=K5iwoz0Xqc8kheotWEc4M2KrZ7UVMDObOyFfCPj4N8Q%3D&reserved=0
+> 
+> ---
+> Thomas Weißschuh (24):
+>        elf, uapi: Add a header for relocation constants
+>        x86/elf, um/x86/elf: Move relocation constants to UAPI
+>        ARM: elf: Move relocation constants to UAPI
+>        arm64: elf: Move relocation constants to UAPI
+>        powerpc/elf: Move relocation constants to UAPI
+>        riscv: elf: Move relocation constants to UAPI
+>        LoongArch: Move relocation constants to UAPI
+>        s390/elf: Move relocation constants to UAPI
+>        MIPS: ELF: Move relocation constants to UAPI
+>        tools headers UAPI: Sync ELF headers with the kernel sources
+>        vdso: Add the vdsocheck tool
+>        x86/vdso: Enable the vdsocheck tool
+>        ARM: vdso: Enable the vdsocheck tool
+>        arm64: vdso: Enable the vdsocheck tool
+>        powerpc/elf: Add 32-bit REL16 relocation definitions
+>        powerpc/vdso: Enable the vdsocheck tool
+>        riscv: vdso: Deduplicate CFLAGS_REMOVE_* variables
+>        riscv: vdso: Disable LTO for the vDSO
+>        riscv: vdso: Enable the vdsocheck tool
+>        LoongArch: vDSO: Enable the vdsocheck tool
+>        s390/vdso: Enable the vdsocheck tool
+>        MIPS: ELF: Add more PC-relative relocation definitions
+>        MIPS: vdso: Enable the vdsocheck tool
+>        vdso/vdsocheck: Drop the transitional kconfig option
+> 
+>   arch/arm/include/asm/elf.h          |  24 --
+>   arch/arm/vdso/Makefile              |   4 +-
+>   arch/arm64/include/asm/elf.h        |  55 ----
+>   arch/arm64/kernel/vdso/Makefile     |   4 +-
+>   arch/loongarch/include/asm/elf.h    | 100 ------
+>   arch/loongarch/vdso/Makefile        |   4 +-
+>   arch/mips/include/asm/elf.h         |  53 ---
+>   arch/mips/vdso/Makefile             |   8 +-
+>   arch/powerpc/include/uapi/asm/elf.h | 201 ------------
+>   arch/powerpc/kernel/vdso/Makefile   |   4 +-
+>   arch/riscv/include/uapi/asm/elf.h   |  66 ----
+>   arch/riscv/kernel/vdso/Makefile     |  11 +-
+>   arch/s390/include/asm/elf.h         |  83 -----
+>   arch/s390/kernel/vdso32/Makefile    |   4 +-
+>   arch/s390/kernel/vdso64/Makefile    |   4 +-
+>   arch/x86/entry/vdso/Makefile        |   6 +-
+>   arch/x86/include/asm/elf.h          |  34 --
+>   arch/x86/um/asm/elf.h               |  33 --
+>   include/uapi/linux/elf-r.h          | 631 ++++++++++++++++++++++++++++++++++++
+>   include/uapi/linux/elf.h            |   1 +
+>   lib/vdso/Makefile                   |   2 +
+>   lib/vdso/Makefile.include           |  17 +
+>   lib/vdso/check/.gitignore           |   3 +
+>   lib/vdso/check/Makefile             |  28 ++
+>   lib/vdso/check/elf.rs               | 488 ++++++++++++++++++++++++++++
+>   lib/vdso/check/vdsocheck.rs         | 279 ++++++++++++++++
+>   tools/include/uapi/linux/elf-em.h   |  71 ++++
+>   tools/include/uapi/linux/elf-r.h    | 631 ++++++++++++++++++++++++++++++++++++
+>   tools/include/uapi/linux/elf.h      | 112 ++++++-
+>   29 files changed, 2277 insertions(+), 684 deletions(-)
+> ---
+> base-commit: 5180c6526acc9f1cb58f8b11fba67583c22e0854
+> change-id: 20250428-vdso-absolute-reloc-a226293c1761
+> 
+> Best regards,
+
 
