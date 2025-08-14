@@ -1,175 +1,270 @@
-Return-Path: <linux-kernel+bounces-768163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30287B25DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:42:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711CBB25DA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3F78815B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:38:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 018515C253B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA5B269811;
-	Thu, 14 Aug 2025 07:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA06526B97E;
+	Thu, 14 Aug 2025 07:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aLm00YNT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="YTxjIOa+"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E923267B7F;
-	Thu, 14 Aug 2025 07:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755157060; cv=none; b=p+8gQRjsQ9yV43GE7H8oIBlK9HWxUFqR0TUEZ8laSJxuUsbMn2kzpgX2v+kYdLuwdHykduJCl4BQrWS2XD4TrllvMv7skrUitCHys/2amrdAuacYO874X5Q77TtuI7uv+7sTKo2FRo6OqHFTsPByaDFpcFqVHfAmYRQYWnjIVQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755157060; c=relaxed/simple;
-	bh=DzD+0sx/bk7o02jG3gQmg3grzfbjeRejtCSSGMbpWTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ceKxGPIocow2Qiwt2l9d1rYrRvj+dE8RxVZyUKZEtltwbyy1Tl0/6gX+7rBN+8sEPpkTe8HmwV+lw4IO876462PWQ/Tt+IcvXRwg6TTKKE2rK5m3ZtKZx349BBHYR2BNmXCx2x0AJyvrYBTwtOYktIaNXdg0n2JIbC+COb7yhl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aLm00YNT; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755157059; x=1786693059;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=DzD+0sx/bk7o02jG3gQmg3grzfbjeRejtCSSGMbpWTI=;
-  b=aLm00YNTnCouKtFxJw7IBA6lFxRqVjGQgGQMDrnR1a620zYjiGOcUbfd
-   ITHHcbcrQRFVL0A3pQW9uXW/Z/r+3yU/7OokfhMasjog/ZS361mCsm4mF
-   54dzZaSWC+7U9nyEWKHmDuQGqowOPS0q+4L1IJfoxA3fqTznE3H4ei9CJ
-   /Ep2+2dPJJQvavR3Ia2nUJVBiQPJ9VkT4iQvpAXW2T0aIKy+70gPkhm9u
-   41C15XeKVPwuTXztqs8bQ+7kOD3vupGttDbhkqJnAjmkngqV8BjrvdQPH
-   V+w3JDLHcKuvw+FU17WORiQ9NoWMTgYR/CWN49At1PC4FiqO73X1thGOB
-   A==;
-X-CSE-ConnectionGUID: D+OsAT7rRX688lSMOqbqlw==
-X-CSE-MsgGUID: 8A/PV2RoTZuKqrJOiV9B7w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="82899415"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="82899415"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 00:37:35 -0700
-X-CSE-ConnectionGUID: uUCQ2EeHQFiWp8V8/58gKw==
-X-CSE-MsgGUID: uBDfFsdWSf6ASUdJylz+cQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="171927400"
-Received: from foboril-desk.ger.corp.intel.com (HELO eresheto-mobl3.ger.corp.intel.com) ([10.245.244.138])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 00:37:22 -0700
-From: Elena Reshetova <elena.reshetova@intel.com>
-To: dave.hansen@intel.com
-Cc: jarkko@kernel.org,
-	seanjc@google.com,
-	kai.huang@intel.com,
-	mingo@kernel.org,
-	linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	asit.k.mallick@intel.com,
-	vincent.r.scarlata@intel.com,
-	chongc@google.com,
-	erdemaktas@google.com,
-	vannapurve@google.com,
-	bondarn@google.com,
-	scott.raynor@intel.com,
-	Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH v14 5/5] x86/sgx: Enable automatic SVN updates for SGX enclaves
-Date: Thu, 14 Aug 2025 10:34:25 +0300
-Message-ID: <20250814073640.1507050-6-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250814073640.1507050-1-elena.reshetova@intel.com>
-References: <20250814073640.1507050-1-elena.reshetova@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D3626657D;
+	Thu, 14 Aug 2025 07:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755156893; cv=pass; b=NX87n2a64W1u7sWupke77cPQJhCzioc2jMkRsbVePcjQC4yodR99KSN0jNooZXjEEMj6helPQzV+uLkXXGAh/Q1ullRnkb7PPhs5nhVeNDkb19WWCUpBvioJe6tPr5mG13YiiNip7LaPA2zBPur2YBj1R0V/tjUtG3LnMW+GAl8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755156893; c=relaxed/simple;
+	bh=BBF/fNwTWPQoevoSy9/Xsh9Ab/dF/DwKsfo7bfTF9mU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Jf0rpWys1wmC21Ek81X32KzQmMLJOdt0nD59VB1KkqE7FSKu5q6cxVIfSYcNGOm7g4KDKdlGm902Xxge3UYk2ggCDEzLuzvXEwsW8Z2iIRQ4gqRmKsXS/zsQqjTCWP3/vC+RejjcjnL3WawUzDGGHNfO2WDZIjkM4KgzqSC/DIY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=YTxjIOa+; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1755156877; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=fKqYYQjPovJHaLKPzS6aMLD1+kLkh9LIlox2AxoGF+MspddWxAPB0sAqBg6+y9FHbbczmpy47ifq+t4B0UdjI+u9pKAmIHYlbYQtJ20v7dEuhV2GmFsO36ATd7iYZdctvkLLWPWJc1zb79JmsgBJnqT+s1t4uph234Y8iAFWpAQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1755156877; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BBF/fNwTWPQoevoSy9/Xsh9Ab/dF/DwKsfo7bfTF9mU=; 
+	b=AOl2zvh1w18fLxq83nvbektAwoScb4vXjm9uWrk7IKRtLC57IA3COQtrddRWoiHtd52Y/f9FcHRZAfkW3YCW0MB4mrlj4krrFH8J6L7Q+M+AlVgftSuY6g6yKwGGiNIj5OvzfAl6LiBzeG6J66JuV6a5/Q1l+sUN8qkpqAaG/5I=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1755156876;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=BBF/fNwTWPQoevoSy9/Xsh9Ab/dF/DwKsfo7bfTF9mU=;
+	b=YTxjIOa+R/ZWEyP2av7wGiuW/wSunABQJi955V39p/OKSQs6bPe5qjgNquE3GaU5
+	djJPaCxYVnEFtN8bb50ak0yj5fElxPZZLCfY/CMqncU4dQX0/HAN3n9J3FG8PAJrt5F
+	DQu1Uspq4QS8tzY1g++DGrnCBS7tHJgRB4WAsrkmcl7//GqeTR+3mnO3LfPINlmbgKV
+	A8dHTNvBoiHUpMG1B0TVMwTu4hWdjc/xDmTeGrb/0QbY0QbRwKM3fA7+JzI4aDrIIVq
+	McwmRDS3ebam/qvXtyvsepJVibbsINGSiZZ1vZlhyLsCqmcR1o6ERhzeFNJP3jC9OHF
+	0NwAJ47fAw==
+Received: by mx.zohomail.com with SMTPS id 175515687356673.10959618963886;
+	Thu, 14 Aug 2025 00:34:33 -0700 (PDT)
+Message-ID: <b4216bc75530702e9e0bb951f566c04e959ac7a6.camel@icenowy.me>
+Subject: Re: [RFC PATCH 1/4] dt-bindings: mailbox: thead,th1520-mbox:
+ retrofit for other mailboxes
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Drew Fustini
+ <fustini@kernel.org>,  Guo Ren <guoren@kernel.org>, Fu Wei
+ <wefu@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jassi Brar
+ <jassisinghbrar@gmail.com>, Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Han Gao <rabenda.cn@gmail.com>, Inochi Amaoto <inochiama@gmail.com>, Yao
+ Zi <ziyao@disroot.org>, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 14 Aug 2025 15:34:27 +0800
+In-Reply-To: <d7278d14-2c7e-4414-9ae6-7639d8f69c94@kernel.org>
+References: <20250814070757.2267325-1-uwu@icenowy.me>
+	 <20250814070757.2267325-2-uwu@icenowy.me>
+	 <d7278d14-2c7e-4414-9ae6-7639d8f69c94@kernel.org>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-== Background ==
+=E5=9C=A8 2025-08-14=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 09:18 +0200=EF=BC=
+=8CKrzysztof Kozlowski=E5=86=99=E9=81=93=EF=BC=9A
+> On 14/08/2025 09:07, Icenowy Zheng wrote:
+> > The current binding of thead,th1520-mbox can only apply to the
+> > C910T
+> > mailbox (which has an ID of 0).
+> >=20
+> > Because of the weird mailbox register mapping practice for world
+> > seperation on TH1520, the binding needs some reword, in addition to
+> > add
+> > a property for mailbox ID, to describe other mailboxes.
+> >=20
+> > Update the binding, in order to make it suitable to describe other
+>=20
+> But I do not see any new device being added.
 
-ENCLS[EUPDATESVN] is a new SGX instruction [1] which allows enclave
-attestation to include information about updated microcode SVN without a
-reboot. Before an EUPDATESVN operation can be successful, all SGX memory
-(aka. EPC) must be marked as “unused” in the SGX hardware metadata
-(aka.EPCM). This requirement ensures that no compromised enclave can
-survive the EUPDATESVN procedure and provides an opportunity to generate
-new cryptographic assets.
+See PATCH 3/4 in this patchset.
 
-== Solution ==
+Or do you mean I need to add new compatibles as I said below?
 
-Attempt to execute ENCLS[EUPDATESVN] every time the first file descriptor
-is obtained via sgx_(vepc_)open(). In the most common case the microcode
-SVN is already up-to-date, and the operation succeeds without updating SVN.
+>=20
+> > mailboxes. The example is also updated, with an addition of
+> > mbox_c910t
+> > label to show that the example describes this specfiic mailbox,
+> > mailbox
+> > ID added and the register window sizes updated to the values from
+> > the
+> > manual (previously the remote-icu0 register windows is declared to
+> > be
+> > overly small that it would never work).
+> >=20
+> > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> > ---
+> > =C2=A0.../bindings/mailbox/thead,th1520-mbox.yaml=C2=A0=C2=A0 | 49 ++++=
+++++++++++-
+> > ----
+> > =C2=A01 file changed, 36 insertions(+), 13 deletions(-)
+> >=20
+> > diff --git
+> > a/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
+> > b/Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
+> > index 0971fb97896ef..5a24d2e8a6a8c 100644
+> > --- a/Documentation/devicetree/bindings/mailbox/thead,th1520-
+> > mbox.yaml
+> > +++ b/Documentation/devicetree/bindings/mailbox/thead,th1520-
+> > mbox.yaml
+> > @@ -12,6 +12,17 @@ description:
+> > =C2=A0=C2=A0 through mailbox channels. It also allows one core to signa=
+l
+> > another processor
+> > =C2=A0=C2=A0 using interrupts via the Interrupt Controller Unit (ICU).
+> > =C2=A0
+> > +=C2=A0 The SoC is divided to two worlds, REE and TEE, although it's
+> > currently unknown
+> > +=C2=A0 how to enable the seperation between worlds so the seperation
+> > does not exist
+> > +=C2=A0 yet. However each mailbox is assigned to a certain world, and
+> > register windows
+> > +=C2=A0 for mailboxes are assigned to different worlds too. In a certai=
+n
+> > world's
+> > +=C2=A0 register windows for mailboxes, only mailboxes assigned to this
+> > world will
+> > +=C2=A0 have the local ICU part mapped (in addition to the remote ICU
+> > part of the
+> > +=C2=A0 other same-world mailbox), and mailboxes assigned to the other
+> > world have
+> > +=C2=A0 only the coressponding remote ICU part mapped to this world. Tw=
+o
+> > mailboxes
+> > +=C2=A0 (C910T and E902) are assigned to the TEE world and two mailboxe=
+s
+> > (C906 and
+> > +=C2=A0 C910R) are assigned to the REE world.
+> > +
+> > =C2=A0maintainers:
+> > =C2=A0=C2=A0 - Michal Wilczynski <m.wilczynski@samsung.com>
+> > =C2=A0
+> > @@ -22,9 +33,9 @@ properties:
+> > =C2=A0=C2=A0 clocks:
+> > =C2=A0=C2=A0=C2=A0=C2=A0 items:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Clock for the local=
+ mailbox
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Clock for remote ICU 0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Clock for remote ICU 1
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Clock for remote ICU 2
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Clock for the other mail=
+box in the same world
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Clock for the first mail=
+box in the other
+> > world
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Clock for the second mai=
+lbox in the other
+> > world
+> > =C2=A0
+> > =C2=A0=C2=A0 clock-names:
+> > =C2=A0=C2=A0=C2=A0=C2=A0 items:
+> > @@ -35,10 +46,14 @@ properties:
+> > =C2=A0
+> > =C2=A0=C2=A0 reg:
+> > =C2=A0=C2=A0=C2=A0=C2=A0 items:
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Mailbox local base addre=
+ss
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Remote ICU 0 base addres=
+s
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Remote ICU 1 base addres=
+s
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Remote ICU 2 base addres=
+s
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Base address of this spe=
+cific mailbox
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description: Base address of the othe=
+r mailbox in the same
+> > world
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Base address of=
+ the register window in this world
+> > corresponding to the
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 first other-wor=
+ld mailbox.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Base address of=
+ the register window in this world
+> > corresponding to the
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 second other-wo=
+rld mailbox.
+>=20
+> This feels like ABI change.
+>=20
+> > =C2=A0
+> > =C2=A0=C2=A0 reg-names:
+> > =C2=A0=C2=A0=C2=A0=C2=A0 items:
+> > @@ -50,10 +65,17 @@ properties:
+> > =C2=A0=C2=A0 interrupts:
+> > =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> > =C2=A0
+> > +=C2=A0 thead,mbox-id:
+> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
+> > +=C2=A0=C2=A0=C2=A0 description:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The ID of this specific mailbox that th=
+is device tree node
+> > describes. For
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatibility with old device trees, if=
+ missing, the ID is
+> > default to 0,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the C910T mailbox.
+>=20
+> No, you cannot have instance IDs. It's even explicitly documented in
+> writing bindings.
 
-Note: while in such cases the underlying crypto assets are regenerated, it
-does not affect enclaves' visible keys obtained via EGETKEY instruction.
+The problem is that the mailbox cannot send to itself, so the "sending
+to self" slot is redefined to other meaning.
 
-If it fails with any other error code than SGX_INSUFFICIENT_ENTROPY, this
-is considered unexpected and the *open() returns an error. This should not
-happen in practice.
+Or should I assign different compatible strings to all 4 mailboxes
+because they have different registers in the "sending to self" slot,
+which have different offset because of instance ID?
 
-On contrary, SGX_INSUFFICIENT_ENTROPY might happen due to a pressure on the
-system's DRNG (RDSEED) and therefore the *open() can be safely retried to
-allow normal enclave operation.
+>=20
+> > +
+> > =C2=A0=C2=A0 '#mbox-cells':
+> > =C2=A0=C2=A0=C2=A0=C2=A0 const: 1
+> > =C2=A0=C2=A0=C2=A0=C2=A0 description:
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The one and only cell describes destina=
+tion CPU ID.
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 The one and only cell describes destina=
+tion mailbox ID.
+> > =C2=A0
+> > =C2=A0required:
+> > =C2=A0=C2=A0 - compatible
+> > @@ -72,12 +94,12 @@ examples:
+> > =C2=A0=C2=A0=C2=A0=C2=A0 soc {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #address-cells =3D <2>;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 #size-cells =3D <2>;
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mailbox@ffffc38000 {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mbox_c910t: mailbox@ffffc38000 {
+>=20
+> No, don't add unused labels. This is not improving the binding.
 
-[1] Runtime Microcode Updates with Intel Software Guard Extensions,
-https://cdrdv2.intel.com/v1/dl/getContent/648682
+Sorry.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- arch/x86/kernel/cpu/sgx/main.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 69ab28641e20..cff5c4d22ac2 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -934,7 +934,7 @@ static int sgx_usage_count;
-  * *			entropy in RNG
-  * * %-EIO:		- Unexpected error, retries are not advisable
-  */
--static int __maybe_unused sgx_update_svn(void)
-+static int sgx_update_svn(void)
- {
- 	int ret;
- 
-@@ -992,14 +992,29 @@ static int __maybe_unused sgx_update_svn(void)
- 	return -EIO;
- }
- 
-+/* Mutex to ensure no concurrent EPC accesses during EUPDATESVN */
-+static DEFINE_MUTEX(sgx_svn_lock);
-+
- int sgx_inc_usage_count(void)
- {
-+	int ret;
-+
-+	guard(mutex)(&sgx_svn_lock);
-+
-+	if (!sgx_usage_count) {
-+		ret = sgx_update_svn();
-+		if (ret)
-+			return ret;
-+	}
-+
-+	sgx_usage_count++;
-+
- 	return 0;
- }
- 
- void sgx_dec_usage_count(void)
- {
--	return;
-+	sgx_usage_count--;
- }
- 
- static int __init sgx_init(void)
--- 
-2.45.2
+>=20
+>=20
+> Best regards,
+> Krzysztof
 
 
