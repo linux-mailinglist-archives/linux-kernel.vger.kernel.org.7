@@ -1,192 +1,91 @@
-Return-Path: <linux-kernel+bounces-768145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32B6B25D8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:36:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060CBB25D87
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD8AA00093
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BD99E7464
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6335225E44E;
-	Thu, 14 Aug 2025 07:29:33 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3836626C3A6;
+	Thu, 14 Aug 2025 07:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twxsBirt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E9926E14C;
-	Thu, 14 Aug 2025 07:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7CB2690F9;
+	Thu, 14 Aug 2025 07:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755156572; cv=none; b=u+paWCAG2ce+GmiFtTSsBskjnEdBGCgmU3asjoXqGvCd17FCbvYV9tAwbvs6Kohdjxl8/Ty03ov5y0aR89TeI83yNcjqoSDm5bi3Si2IROdj4Rlax0K7ZJpciZ20oqerthzP5kseavbSf5b2zX/JeaEoZMCpSxz77AsWF7qeHdk=
+	t=1755156547; cv=none; b=e2X1ru7xuRjAOznt5E//L7CCJtMmHVDQanQwuoAGVt7htmNCnq0WOvrNFwGiTtsDnML1wqGCX0diDY85MYKX+6Rqqe4GIQ7K11ol9cYEIy5+xTC2OjslG95uLyA0UyKfB3G1T9YwQyQP0JzOXL6kKUZTgM2HKHYqHKcWPGW8/pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755156572; c=relaxed/simple;
-	bh=MdGDFOp63pOxhwYv/QqVxRQ/ITwQrV9I93hd7KuGVNs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lpOcW3he/cMYEZAnDRoWCNjjU9ge5rlwqEdr9Bm8gLS3DdxkYqZ0ZKhIO1elY7kfZysGL5qWCybrZyfizWQOqoWsJ+WjErtKikyUjJHTlzycK3p/zp6aYyHv+RE3KoxglmggFfPLQxXWzuU1bXiKa2O3dqr1dT/4JdG8k4tEbVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4c2cGs732Jz13N9w;
-	Thu, 14 Aug 2025 15:25:57 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id 583AE1800B1;
-	Thu, 14 Aug 2025 15:29:23 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Aug 2025 15:29:22 +0800
-From: Lifeng Zheng <zhenglifeng1@huawei.com>
-To: <catalin.marinas@arm.com>, <will@kernel.org>, <rafael@kernel.org>,
-	<viresh.kumar@linaro.org>, <beata.michalska@arm.com>, <sudeep.holla@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<jonathan.cameron@huawei.com>, <vincent.guittot@linaro.org>,
-	<yangyicong@hisilicon.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>,
-	<yubowen8@huawei.com>, <linhongye@h-partners.com>, <zhenglifeng1@huawei.com>
-Subject: [PATCH v4 3/3] arm64: topology: Setup AMU FIE for online CPUs only
-Date: Thu, 14 Aug 2025 15:28:53 +0800
-Message-ID: <20250814072853.3426386-4-zhenglifeng1@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250814072853.3426386-1-zhenglifeng1@huawei.com>
-References: <20250814072853.3426386-1-zhenglifeng1@huawei.com>
+	s=arc-20240116; t=1755156547; c=relaxed/simple;
+	bh=yFHZE0Fem6LY03lyJJsU+PZNFRS6Y/kss8PySXhjW9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4EoZ0AnXOMUt5BWcpw/r+JK2FlJQGBWoqWzjeKQ7N4uDdYS0otRhSxmuf1bzY4nuGp8BQFQKM8CK1bHZn2zvQgJRprOxa2Rah96pUxhcugY56glZ0wE0LlAurSQS+0GEW23NAt3gpv3LdFpvXsTahmlXijsrMcoOCLknoV5dQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twxsBirt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69186C4CEEF;
+	Thu, 14 Aug 2025 07:29:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755156547;
+	bh=yFHZE0Fem6LY03lyJJsU+PZNFRS6Y/kss8PySXhjW9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=twxsBirtdf1/fqUMGnjnp4W+W2EyaHiytp95UB5RLLzIBSMCZ+bU0ph8qSJcjOZk5
+	 6+OZ1TC0mrpErUesb+58RtFxWpnrAsHEtLksdYn+oLVkjEe4q3I0koe+Lz2D2npIPU
+	 ATtrdMR0/b/ljxnABqi/xE/mLsdVbWvJ1ASvsSHZQWlDJXopOo3PToPl1DMtXk09UE
+	 tqBq2VoLmbv2HkAMM/XTgpmV1Ygiabsyn3hehtyTqpzFctcFFPbVrseZ/nF9XjzjaH
+	 LavCdWPcnC3OpNneRPS5rAMFRL0TAm0TTHecn+aNZpwnbpSw8wlsKgPBlisvXTM+MB
+	 qtSlCSmlMpWeQ==
+Date: Thu, 14 Aug 2025 09:29:04 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 09/11] dt-bindings: iio: adc: ad7476: Add ROHM bd79105
+Message-ID: <20250814-hilarious-nonchalant-bat-b205cf@kuoka>
+References: <cover.1754901948.git.mazziesaccount@gmail.com>
+ <3f70f68665225be3091f8a0412e74037b6a2a88e.1754901948.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3f70f68665225be3091f8a0412e74037b6a2a88e.1754901948.git.mazziesaccount@gmail.com>
 
-When boot with maxcpu=1 restrict, and LPI(Low Power Idle States) is on,
-only CPU0 will go online. The support AMU flag of CPU0 will be set but the
-flags of other CPUs will not. This will cause AMU FIE set up fail for CPU0
-when it shares a cpufreq policy with other CPU(s). After that, when other
-CPUs are finally online and the support AMU flags of them are set, they'll
-never have a chance to set up AMU FIE, even though they're eligible.
+On Mon, Aug 11, 2025 at 11:52:04AM +0300, Matti Vaittinen wrote:
+> The ROHM BD79105 is a simple, 16-bit, 1-channel ADC with a 'CONVSTART'
+> pin used to start the ADC conversion. Other than the 'CONVSTART', there
+> are 3 supply pins (one used as a reference), analog inputs, ground and
+> communication pins. It's worth noting that the pin somewhat confusingly
+> labeled as 'DIN', is a pin which should be used as a chip-select. The IC
+> does not have any writable registers.
+> 
+> The device is designed so that the output pin can, in addition to
+> outputting the data, be used as a 'data-ready'-IRQ. There are cases
+> where the IRQ can't be used (because it is delivered via SPI data-line).
+> Hence, some systems may use a GPIO for polling the data readiness.
+> 
+> Add a compatible for the bd79105 and add the data-ready GPIO to the
+> binding.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> 
 
-To solve this problem, the process of setting up AMU FIE needs to be
-modified as follows:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-1. Set up AMU FIE only for the online CPUs.
-
-2. Try to set up AMU FIE each time a CPU goes online and do the
-freq_counters_valid() check. If this check fails, clear scale freq source
-of all the CPUs related to the same policy, in case they use different
-source of the freq scale.
-
-At the same time, this change also be applied to cpufreq when calling
-arch_set_freq_scale.
-
-Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
----
- arch/arm64/kernel/topology.c | 54 ++++++++++++++++++++++++++++++++++--
- drivers/cpufreq/cpufreq.c    |  4 +--
- 2 files changed, 54 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-index 9317a618bb87..a9d9e9969cea 100644
---- a/arch/arm64/kernel/topology.c
-+++ b/arch/arm64/kernel/topology.c
-@@ -385,7 +385,7 @@ static int init_amu_fie_callback(struct notifier_block *nb, unsigned long val,
- 	struct cpufreq_policy *policy = data;
- 
- 	if (val == CPUFREQ_CREATE_POLICY)
--		amu_fie_setup(policy->related_cpus);
-+		amu_fie_setup(policy->cpus);
- 
- 	/*
- 	 * We don't need to handle CPUFREQ_REMOVE_POLICY event as the AMU
-@@ -404,10 +404,60 @@ static struct notifier_block init_amu_fie_notifier = {
- 	.notifier_call = init_amu_fie_callback,
- };
- 
-+static int cpuhp_topology_online(unsigned int cpu)
-+{
-+	struct cpufreq_policy *policy = cpufreq_cpu_policy(cpu);
-+
-+	/*
-+	 * If the online CPUs are not all AMU FIE CPUs or the new one is already
-+	 * an AMU FIE one, no need to set it.
-+	 */
-+	if (!policy || !cpumask_available(amu_fie_cpus) ||
-+	    !cpumask_subset(policy->cpus, amu_fie_cpus) ||
-+	    cpumask_test_cpu(cpu, amu_fie_cpus))
-+		return 0;
-+
-+	/*
-+	 * If the new online CPU cannot pass this check, all the CPUs related to
-+	 * the same policy should be clear from amu_fie_cpus mask, otherwise they
-+	 * may use different source of the freq scale.
-+	 */
-+	if (WARN_ON(!freq_counters_valid(cpu))) {
-+		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_ARCH,
-+						 policy->related_cpus);
-+		cpumask_andnot(amu_fie_cpus, amu_fie_cpus, policy->related_cpus);
-+		return 0;
-+	}
-+
-+	cpumask_set_cpu(cpu, amu_fie_cpus);
-+
-+	topology_set_scale_freq_source(&amu_sfd, cpumask_of(cpu));
-+
-+	pr_debug("CPU[%u]: counter will be used for FIE.", cpu);
-+
-+	return 0;
-+}
-+
- static int __init init_amu_fie(void)
- {
--	return cpufreq_register_notifier(&init_amu_fie_notifier,
-+	int ret;
-+
-+	ret = cpufreq_register_notifier(&init_amu_fie_notifier,
- 					CPUFREQ_POLICY_NOTIFIER);
-+	if (ret)
-+		return ret;
-+
-+	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
-+					"arm64/topology:online",
-+					cpuhp_topology_online,
-+					NULL);
-+	if (ret < 0) {
-+		cpufreq_unregister_notifier(&init_amu_fie_notifier,
-+					    CPUFREQ_POLICY_NOTIFIER);
-+		return ret;
-+	}
-+
-+	return 0;
- }
- core_initcall(init_amu_fie);
- 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 78ca68ea754d..d1890a2af1af 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -417,7 +417,7 @@ void cpufreq_freq_transition_end(struct cpufreq_policy *policy,
- 
- 	cpufreq_notify_post_transition(policy, freqs, transition_failed);
- 
--	arch_set_freq_scale(policy->related_cpus,
-+	arch_set_freq_scale(policy->cpus,
- 			    policy->cur,
- 			    arch_scale_freq_ref(policy->cpu));
- 
-@@ -2219,7 +2219,7 @@ unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
- 		return 0;
- 
- 	policy->cur = freq;
--	arch_set_freq_scale(policy->related_cpus, freq,
-+	arch_set_freq_scale(policy->cpus, freq,
- 			    arch_scale_freq_ref(policy->cpu));
- 	cpufreq_stats_record_transition(policy, freq);
- 
--- 
-2.33.0
+Best regards,
+Krzysztof
 
 
