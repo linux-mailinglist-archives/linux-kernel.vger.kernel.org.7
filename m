@@ -1,150 +1,133 @@
-Return-Path: <linux-kernel+bounces-768250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598F5B25EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:31:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306B4B25E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37771CC02D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904A7581DD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AF22E7BAF;
-	Thu, 14 Aug 2025 08:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q9RYd+3P"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E092E7BBC;
+	Thu, 14 Aug 2025 08:22:36 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DDD2580D7
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075352749D9;
+	Thu, 14 Aug 2025 08:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160172; cv=none; b=oG8/SyKkWXRSvEsod5vfkL6S0vSVUzIyTU+/cEa4qN63NYLMC2AvSlD9wqwE8cExeccyDQG2duB4DOYv2k8GchsDu0k/i5ytB/xVhkqVARmZMaH/Q1VC6x5Y1y/HsRI5F7PFKfwjZfpIz3We9VFz1O/WUbd4qyL/GPzOrKcn2v8=
+	t=1755159756; cv=none; b=b0M7LbbNAV90IGwjJcp9PVfzNb3b913KwROn8h9SEoXUPqJbkj81lrrjo8Azbx7oHR7Fke56HbqBpr+B/YLHEWiR0jMTMXXIm7Iwi27uYxdMqorUfH+m5fF8m1i4KydXxak1QIuXMR+lBRJk0qn8JjHlHDoOydCa6BVEj4FHk0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160172; c=relaxed/simple;
-	bh=DXoZWllPvSAlTn6cKguWUx5XsVI696Dlfnu+ADK3Vug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M38ZQ/iur7FDXDhvHbnQkzP6G5eA1y2vur7cYVBJpkLfp5WnKgWGiqAj3c+q+fU7DX8qIP1yZoYKJAw0ibnbasqBjXh4auvg+KRAZ/JHJvrYwZEe3loSyau3iN8kRAPxdAIvDOBHRJVYcJq3zo0SU1ffAb5lin0YlIvZNjLQ6Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q9RYd+3P; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-74381e0a227so513587a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755160170; x=1755764970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DXoZWllPvSAlTn6cKguWUx5XsVI696Dlfnu+ADK3Vug=;
-        b=Q9RYd+3P2sO9P3u00p4EMb4DwZyoz5JHLIo5LaM39aA4zQjH2WGk5H520Kps7x4syI
-         1iaz0J9ispXNnnIn6/rewskM3hVNGFz/soPMK7xtQYwHo9qW8b+fKZ2Fx3pCH6fdyrSW
-         8ndTwPnoZTKdaH+s+rh2uyOYiMufAMcQXH6ns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755160170; x=1755764970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DXoZWllPvSAlTn6cKguWUx5XsVI696Dlfnu+ADK3Vug=;
-        b=H+CW6p0W1R6p99poGY3qCCmgp352Pwo+IZZSx1hjlIGjnAXwYw9vTGQgQiaT7TwiVp
-         cadDfIjSErWPs1iDVOdT+haDbZPSvmDSnr6zn+OAnoabLK4QG4Y5K5nuYc5isbTtul2L
-         S+Pc4tg1TnmbCkRz4Pgd8fw4g5kDEjGnS1TFFG2btpLZh7UP9iPM5ep/a6AT4fa2W/o6
-         5qjiOO9MJSmrNV5XUORp6EvlWtsS0LNEunDi/e+mi3av93LqC3dDJ6P3FHkXzAeIa63F
-         HbvVSdPyjhXUBt+6mFUHPxLl1Dh6ZrmUCpo3lZkPz67D6QL6xwEWnRCDnRxACnfNYXJl
-         mNFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7pa27yrnT7PIeA0FhmKJdWVyOWckm757e0iT8ek/0D4K1Zfy7XMyZZ1SBhiOktIUPbB89m5B2txKdf60=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP0eml9tlAx7RpBUap52H9PyM84JviRTMGcQYNkVrgc+SO+I44
-	Q03zZj3vC03BBH4zO++iP1yYPrewi+Nled9qBM2f3KIET60+MlFX38/LDDjyhma4CfyBFTb75wX
-	05Yx3ybRjsyAOPipsff4+eGqy+gVdRRNFYgXcMuc/XEOLcEepY8Au3g==
-X-Gm-Gg: ASbGncuMhW5p8MuSD4sNPqXEe9A9h+c6LCoB6ZCPj73fE/GEbqFA7q01m85jxXeSkSP
-	yGrhTnJON/BWPdi8S70DPVDcVmvln7du21gLJ1w2/z36g7HxIp3AZTr9e1wC9idNxQdW/KTidt7
-	fZjgKC+nxEQizOVX0udgjjhPXdccV9M+C04wGSTTv8hj9jCl/9tQ2OJj39yJCSA4/TvRej7NIZE
-	Zxue+yijjjy0OzwXMbiuKlIDeJm7VZZYw==
-X-Google-Smtp-Source: AGHT+IFzeNU7id7rlH8AtFJTm1cePeOA784ZDto12yMUCjCqT2q+uwgR13V7z+m3dpw+DNaYtWcHDCtnfdbNOZZRXJk=
-X-Received: by 2002:a17:90b:35d0:b0:321:27d5:eaf1 with SMTP id
- 98e67ed59e1d1-32327b48f77mr3326450a91.25.1755159739419; Thu, 14 Aug 2025
- 01:22:19 -0700 (PDT)
+	s=arc-20240116; t=1755159756; c=relaxed/simple;
+	bh=QptsBHffm0KH6p7+g8nJS4gOiQnquTBf7oewFglHkds=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=QxntmQSi8C3ZTnARQ8wZ5Ktlht0iSyObWd1rVTdQiX6IIWOspnhoJN8BUUS3YEbyF2+LaiRgEM/9GPH1IwSgG+ld6SrtNpq+Pdshsf0e6spnKXqNDZ45fMbxDyfcCfu4bW841zaUJSh51RWKSJUImSuy76LkIw/iQYCVhfvO0v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2dX72kGnzYQv9Z;
+	Thu, 14 Aug 2025 16:22:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id F29F41A0E39;
+	Thu, 14 Aug 2025 16:22:29 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBXIBHEnJ1oFBmODg--.42407S3;
+	Thu, 14 Aug 2025 16:22:29 +0800 (CST)
+Subject: Re: [PATCH 00/16] blk-mq: introduce new queue attribute asyc_dpeth
+To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, bvanassche@acm.org, nilay@linux.ibm.com, hare@suse.de,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250814033522.770575-1-yukuai1@huaweicloud.com>
+ <aJ2WH_RAMPQ9sd6r@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <b6587204-9798-fcb0-c4b7-f00d5979d243@huaweicloud.com>
+Date: Thu, 14 Aug 2025 16:22:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250804090340.3062182-1-akuchynski@chromium.org>
- <20250804090340.3062182-5-akuchynski@chromium.org> <aJn9ZSy3w4zW4Xvq@kuha.fi.intel.com>
- <CANFp7mVUFZyF8z0dN-Mo7ntPOXh06ZD0RH5GyvJJymOXrhSD1g@mail.gmail.com>
- <aJsoS3EXgoLP-f-E@kuha.fi.intel.com> <CANFp7mW92PgjSWyJq7Bz6ZLJ8ZgnsCRw2kAYAjKX3yymKW9hBA@mail.gmail.com>
-In-Reply-To: <CANFp7mW92PgjSWyJq7Bz6ZLJ8ZgnsCRw2kAYAjKX3yymKW9hBA@mail.gmail.com>
-From: Andrei Kuchynski <akuchynski@chromium.org>
-Date: Thu, 14 Aug 2025 10:22:07 +0200
-X-Gm-Features: Ac12FXz1UN0w6EPEh01uDLgnpov_q6H22DAPFIMRA5Ihvr9O148EKDmKL8f4WE8
-Message-ID: <CAMMMRMfo4n_xZPZG++OXoXJTeHuzzSBL0Bossn7+DMZMoRbqjQ@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] usb: typec: Expose mode priorities via sysfs
-To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Benson Leung <bleung@chromium.org>, Jameson Thies <jthies@google.com>, 
-	Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, "Christian A. Ehrhardt" <lk@c--e.de>, 
-	Venkat Jayaraman <venkat.jayaraman@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aJ2WH_RAMPQ9sd6r@fedora>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXIBHEnJ1oFBmODg--.42407S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF1DuFy8XFWfGr48WrWkCrg_yoW8Xw4Up3
+	y3t3WSkw4DGry8Cw4xt3yrXry8C3ZYgrZ8JrW5Kr47GF98X3WjvFnagF1ruas7Wr15Gr4a
+	gF1qq3s3Xw4qyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, Aug 12, 2025 at 10:34=E2=80=AFPM Abhishek Pandit-Subedi
-<abhishekpandit@chromium.org> wrote:
->
->
-> We interpreted this a bit differently (as just rename it):
-> https://patchwork.kernel.org/project/linux-usb/patch/20250616133147.18359=
-39-5-akuchynski@chromium.org/#26431992
->
-> Thanks for the clarification here. In that case, we'll get rid of
-> `usb_priorities` and `usb_results` and just add a new alternate mode
-> for USB4. The vendor ids list on usb.org
-> (https://www.usb.org/sites/default/files/vendor_ids072325_1.pdf) shows
-> 0xff00 for USB4 so that's what we'll use. So the attributes should be:
-> .active (similar to other modes), .mode =3D 1 (unused really), .svid =3D
-> 0xff00, .vdo =3D <usb eudo> (if supported).
->
-> >
-> > > As such, our current API recommendation looks like the following:
-> > >
-> > > * On each port, we lay out priorities for all supported alternate mod=
-es + USB4.
-> >
-> > This first part I understand.
-> >
-> > > * We expose a file to trigger the mode selection task. Reading from i=
-t
-> > > gives you the current status of mode selection (single value).
-> > > * Detailed results from mode entry are pushed to the mode sysfs group
-> > > (via entry_results). Converting these to UEVENT is fine but a more
-> > > persistent value in debugfs would be useful for debugging.
-> >
-> > This second part I would really like to handle separately, after we
-> > have a solution for the first part.
->
-> Ack. We'll reduce the series so it's easier to review for mode_priorities=
- first.
->
+Hi,
 
-Hi Heikki, Abhishek,
+ÔÚ 2025/08/14 15:54, Ming Lei Ð´µÀ:
+> On Thu, Aug 14, 2025 at 11:35:06AM +0800, Yu Kuai wrote:
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Backgroud and motivation:
+>>
+>> At first, we test a performance regression from 5.10 to 6.6 in
+>> downstream kernel(described in patch 13), the regression is related to
+>> async_depth in mq-dealine.
+>>
+>> While trying to fix this regression, Bart suggests add a new attribute
+>> to request_queue, and I think this is a good idea because all elevators
+>> have similar logical, however only mq-deadline allow user to configure
+>> async_depth. And this is patch 9-16, where the performance problem is
+>> fixed in patch 13;
+>>
+>> Because async_depth is related to nr_requests, while reviewing related
+>> code, patch 2-7 are cleanups and fixes to nr_reqeusts.
+>>
+>> I was planning to send this set for the next merge window, however,
+>> during test I found the last block pr(6.17-rc1) introduce a regression
+>> if nr_reqeusts grows, exit elevator will panic, and I fix this by
+>> patch 1,8.
+> 
+> Please split the patchset into two:
+> 
+> - one is for fixing recent regression on updating 'nr_requests', so this
+>    can be merged to v6.17, and be backport easily for stable & downstream
 
-Thank you for your review. I have addressed the feedback and plan to
-resubmit the series.
+There are actually two regressions, as fixed by patch 5 and patch 8, how
+about the first patchset for patch 1-8? Are you good with those minor
+prep cleanup patches?
 
-Here are the changes I will make:
-- The `typec_mode_selection_init` function and the `name` member
-from the mode_selection_state struct will be removed.
-- Patch 4 will be split into API and ABI parts.
-- The entire series will be divided into `mode priority` (patches 1-4)
-and then `mode selection`.
-- The mode selection logic will be standardized to function
-identically for all modes, including USB4.
+> 
+> - another one is for improving IO performance related with async_depth.
 
-Thanks again for your guidance.
+Sure, although patch 9-16 is still a performance regression :)
 
-Andrei
+Thanks,
+Kuai
+
+> 
+> 
+> Thanks,
+> Ming
+> 
+> 
+> .
+> 
+
 
