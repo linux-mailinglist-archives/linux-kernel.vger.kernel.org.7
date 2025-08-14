@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-769036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDA9B26959
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:30:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B868B26991
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8CFB5E7691
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:17:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEFFF1CE6B4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE4E19D8AC;
-	Thu, 14 Aug 2025 14:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8391F8AC8;
+	Thu, 14 Aug 2025 14:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dm2g8BH9"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C02321429;
-	Thu, 14 Aug 2025 14:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Mzo6F6co"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72F51D6188;
+	Thu, 14 Aug 2025 14:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181043; cv=none; b=mS2sQgAUs2tqEEXbg/MGGujmxWgzD1ZmhEi8lI48qjcbdpaokwabasOaLiJNyZZvioi2iWZqhgtJoN43edIjKDB17gqry993dbImEIfmarCM8FCzMGRcSvAlwLSTrCYImTK7jCqii35FArkcKAhn8VcFq9BhogWdFoFG4pDU31o=
+	t=1755181100; cv=none; b=aKYR7zyr4yqgvZ7kf9hasOvOJ7qfdveWb8B0is8gwS6Bq023tjSTiJIcHJkzmvqRbniDks3X3j2HGT9nN07uQQ4q+YjRy+eNd+uI7LwFEYoTXd3nhPMq24zzZJHNhlO8DbxhMBDPZGb3hY30xF6AJrFk5Lm52GrRo6GR1FPX82k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181043; c=relaxed/simple;
-	bh=a5LvrdOjd61BgcujBkjsB9RX4jF3+FOqLq8LJGv2MEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GysKpjO0bchaZ9uO2je0gU00j5Vp0XDvAfjDCu5PhaYizi1n37Icj9Yjt/nOvawudD7s7EKAawfr0xwtRFENPnt39IFkP3yjQNPIU+ZvSD6Wn8Nr+G/I2MJwgC4qJbn4tJXBCEChkis0dSihii2PCctPs0XEpP1WWjaD4fcX/8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dm2g8BH9; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EC9eai015942;
-	Thu, 14 Aug 2025 14:17:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=xitHk/pMp/QQRbnoNBeobWtSukHr3B
-	tvqIQXx8tyGSI=; b=dm2g8BH9X+VPUpX0ORW4FXmBPSt0q4HQNVvtqScKT/Y7lR
-	x+ZvZBs4brlmfLxw3tfSolDHU/3qInCOIubRjpFyL59VhiT986Iau4XUhfg/vSJh
-	dogiHlUowgPQl83IVumxbBflYIw0b1fYcHnEcOoE06B7GpESh//GQPxohclOx85S
-	o6KgeEOdZfcBzaq71w+3iNJer4oLZnnR57inLrSu7U5y/YCl4lIRfS6ip3qcA/4C
-	KF5lTrlvO+q9j0XJ4Qe6kXEZz15poLgKGciNc4fGz8OKZH3//ybm10fsMQJSNj+g
-	6SVOmaTI0ur5a1ZPzwHBvSZ9SdLcCqAPmRaU5Gtw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx14tges-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 14:17:07 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57EE4nZt021961;
-	Thu, 14 Aug 2025 14:17:06 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx14tgep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 14:17:06 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57EAGHus025623;
-	Thu, 14 Aug 2025 14:17:05 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ejvmm91c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 14:17:05 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57EEH19N49414634
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Aug 2025 14:17:02 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E12AE20043;
-	Thu, 14 Aug 2025 14:17:01 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A245720040;
-	Thu, 14 Aug 2025 14:17:01 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.133])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 14 Aug 2025 14:17:01 +0000 (GMT)
-Date: Thu, 14 Aug 2025 16:16:58 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Alexey Gladkov <legion@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-        Nicolas Schier <nicolas.schier@linux.dev>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
-        linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
-        kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v6 9/9] s390: vmlinux.lds.S: Reorder sections
-Message-ID: <20250814141658.7684Fd6-hca@linux.ibm.com>
-References: <cover.1755170493.git.legion@kernel.org>
- <919570dc048786c4d07affaec4b761811c6c21c5.1755170493.git.legion@kernel.org>
+	s=arc-20240116; t=1755181100; c=relaxed/simple;
+	bh=fkB8DkoZb1oZNbrYSSwnjyBm03Xw/im88bG42r7TEkU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X4foZsTh2IotsZYHBcxlPNUr7ZUr1A3iuu5mX4RT5ybGPo6HFNVsLdNYJm30a8tqJgNkq50mdKizyzQrmH3TfziLyGJcFplBjuUufU3cJ+QDi7Obl+GuEaJ+yxcU216ej0xg93ecOwA34t7pf08yhPbC5z9eZWt5yssawxU6qeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Mzo6F6co; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=0O
+	BOvNjE4rQN4ZWaV0+VTg3QRrUL9Y9ebRZMVvXEMMI=; b=Mzo6F6coua6wBtKhDi
+	YgBghu9a/s8UbTedn382ewkp2uoFgSo5o2exy7iZlsi4RastDZVeSFytbqgLnJf6
+	F0jE4NnXuM3qzG1Nd5HYkr8s7qP/8WgKErUHk2Pzg0tbSGdGK6hZmiYQ+tXOc1Ee
+	18f7Q8EdTcTF1laF7O3Ar57Q0=
+Received: from phoenix.. (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wAXt8QG8J1otxnOBw--.45910S2;
+	Thu, 14 Aug 2025 22:17:44 +0800 (CST)
+From: Jiawei Zhao <phoenix500526@163.com>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	andrii@kernel.org,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v9 0/3] libbpf: fix USDT SIB argument handling causing unrecognized register error
+Date: Thu, 14 Aug 2025 14:17:37 +0000
+Message-ID: <20250814141741.77698-1-phoenix500526@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <919570dc048786c4d07affaec4b761811c6c21c5.1755170493.git.legion@kernel.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZUHBlsY6Q0Jh5y8HGhdRNiGKb4yCQavS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX9xH1VxH7a5Cr
- j7aQo8bnSTLGXMtUWVHu3eWBdPNq3vy8W1uvZKFn0bTkrMUJ+YG7b/dR9HCAWvAkMJwTmkKVBKM
- aEc9V5XagKrDGaD0MMKL8vfSVAk/dVUYbK/LoZ6L/PtlFgkG0rVwj5A3XoTVJx1OIyvgkFmdxZ3
- uT/2sbj4bLRuti4UGbxAu2AY39AKq8ffgpwsetpHnL6ogjNqC/joDWghtFRes7g+nQoHiqltkkt
- huuePs6oP5NLyN/4xJ/+5zyqyTRXdoGuKybPlqVjU13w7R0WY91XRDh1U90wK0tALhuI2JKgP+S
- 4KHK7PAEy8FKzKDxL9frcSAlWo9Z3Y4IKayoQgZxmb+kHwWG/7EdlVhcrqJmldfXr4KD482iiqy
- xspW36pw
-X-Proofpoint-GUID: jO10P_AygBVVuX9ezUhXEJ3Vyix7YA86
-X-Authority-Analysis: v=2.4 cv=fLg53Yae c=1 sm=1 tr=0 ts=689defe3 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
- a=QIhr-27iAAAA:8 a=tkzU3b79AAAA:8 a=VnNF1IyMAAAA:8 a=MT9g-S0Fkuafz34HD30A:9
- a=CjuIK1q_8ugA:10 a=cgaYBWEFosGJW4rWv5Lf:22 a=uCXMw2ptROQ0LevMJYzM:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 spamscore=0 priorityscore=1501 impostorscore=0
- phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508120224
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAXt8QG8J1otxnOBw--.45910S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWw4ktFy5Zr1xJr4UGF1UGFg_yoW5Jw45pa
+	yrK3s8tryjya47JFsxXr47tw4fGan3GrWUGF1Iqw1Yvr4rGFyxJr4xKr15JrnxGa95Xa4Y
+	vF1DtF43Gas5A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jrZ2fUUUUU=
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBgB2piGid6YUzlgABsB
 
-On Thu, Aug 14, 2025 at 03:07:17PM +0200, Alexey Gladkov wrote:
-> Reorder the sections to be placed in the default segment. The
-> .vmlinux.info use :NONE to override the default segment and tell the
-> linker to not put the section in any segment at all.
-> 
-> >> s390x-linux-ld: .tmp_vmlinux1: warning: allocated section `.modinfo' not in segment
-> >> s390x-linux-ld: .tmp_vmlinux2: warning: allocated section `.modinfo' not in segment
-> >> s390x-linux-ld: vmlinux.unstripped: warning: allocated section `.modinfo' not in segment
-> 
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: linux-s390@vger.kernel.org
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506062053.zbkFBEnJ-lkp@intel.com/
-> Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> Acked-by: Heiko Carstens <hca@linux.ibm.com>
-> ---
->  arch/s390/kernel/vmlinux.lds.S | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
+When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+optimization, the compiler will generate SIB addressing mode for global
+array and PC-relative addressing mode for global variable,
+e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
 
-Is there any reason why you didn't reorder the patches?
-https://lore.kernel.org/all/aIeUq0qYXoNIePwd@example.org/
+The current USDT implementation in libbpf cannot parse these two formats,
+causing `bpf_program__attach_usdt()` to fail with -ENOENT
+(unrecognized register).
+
+This patch series adds support for SIB addressing mode in USDT probes.
+The main changes include:
+- add correct handling logic for SIB-addressed arguments in
+  `parse_usdt_arg`.
+- add an usdt_o2 test case to cover SIB addressing mode.
+
+Testing shows that the SIB probe correctly generates 8@(%rcx,%rax,8) 
+argument spec and passes all validation checks.
+
+The modification history of this patch series:
+Change since v1:
+- refactor the code to make it more readable
+- modify the commit message to explain why and how
+
+Change since v2:
+- fix the `scale` uninitialized error
+
+Change since v3:
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  and pass all test cases.
+
+Change since v4:
+- split the patch into two parts, one for the fix and the other for the
+  test
+
+Change since v5:
+- Only enable optimization for x86 architecture to generate SIB addressing
+  usdt argument spec.
+
+Change since v6:
+- Add an usdt_o2 test case to cover SIB addressing mode.
+- Reinstate the usdt.c test case.
+
+Change since v7:
+- Refactor modifications to __bpf_usdt_arg_spec to avoid increasing its size,
+  achieving better compatibility
+- Fix some minor code style issues
+- Refactor the usdt_o2 test case, removing semaphore and adding GCC attribute
+  to force -O2 optimization
+
+Change since v8:
+- Refactor the usdt_o2 test case, using assembly to force SIB addressing mode.
+
+Jiawei Zhao (3):
+  libbpf: fix USDT SIB argument handling causing unrecognized register
+    error
+  selftests/bpf: Add an usdt_o2 test case in selftests to cover SIB
+    handling logic
+  selftests/bpf: make usdt_o2 reliably generate SIB USDT arg spec
+
+ tools/lib/bpf/usdt.bpf.h                      | 54 +++++++++++++-
+ tools/lib/bpf/usdt.c                          | 61 ++++++++++++++--
+ tools/testing/selftests/bpf/Makefile          |  1 +
+ .../selftests/bpf/prog_tests/usdt_o2.c        | 73 +++++++++++++++++++
+ .../selftests/bpf/progs/test_usdt_o2.c        | 37 ++++++++++
+ 5 files changed, 219 insertions(+), 7 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/usdt_o2.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_usdt_o2.c
+
+-- 
+2.43.0
+
 
