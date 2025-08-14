@@ -1,147 +1,194 @@
-Return-Path: <linux-kernel+bounces-768016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E351B25BE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:37:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0C6B25BE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55B731C8326F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:38:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2DEA1C837BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D52825487A;
-	Thu, 14 Aug 2025 06:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ED4252917;
+	Thu, 14 Aug 2025 06:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="liK/K+Vs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O7Am7xHG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBB024EAA7;
-	Thu, 14 Aug 2025 06:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635E52550D8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755153448; cv=none; b=WQgfidOZpXBvGxgwY5kZYZPEkkC8jSR4+NCN3OFkMklqxiPp1i3o2FeqPdryDw8TEmoJnB4Ab5ckmWSDjgaDSR70/lIz+C4apvBhFJV/NwpvHzUE/MPsvDs1TM/ZdYAfZMV9ZBNB6qTPy6MO5QBCCrjoRkqxZBxDvO3watx4Hpk=
+	t=1755153452; cv=none; b=WvenHxCWm8S2ehRFc1s9tgCIRRyv0lmWfTHXuMTLJR2N9z563GJku/wdW9o/RIxHyTx1fXtVt5g773TaMwnHwUV2b2bmQ6+cEdf7FxxZJAIU4d6nvVJYsj281O7AyRyIWzlKlhrEP+7+JnMzk7i2fmiWAszaY1qTrRLAKTv0gpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755153448; c=relaxed/simple;
-	bh=EvdQ6Bg8OnlITVamBcloGQkXv3LWJan23b0GY22b9ZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nXNCOXjACPjYaCN62jMA7Hg6ms7KqiWfR3tDeDfnKMmxhNwsKScM3sib3gyajzmqtt3iDwf3X3iTMOoz6a74r8Rhcw/SZ0f78DdmJG2UHQ+6+vhZvTqdyoZxuFCh850rM1lp+OqFRdOjb2MCYS6lPVcN50Tmw9EV9fbyUir5xtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=liK/K+Vs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DM8Erw011435;
-	Thu, 14 Aug 2025 06:37:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=yYUb25VbWnegftuQMWLMgm
-	Nh1P2XLmEoohNyE4+Czww=; b=liK/K+VsHR4iAEkXsqzxG2bArLZQn9r8cjWNSg
-	6WjsEMU3MqmaMpDGQEEIwjIF4+a+807GdBaLygHEARCQA49u/7psYmIDIMKcaOrL
-	ikqVqyyKwkp2fFveysOT3P0UNW9sALgS8s/k5gwNlofO8g2REVt2kYc3xtbx7nHR
-	b/gzEGC7NPYp5D3Q+Hj30/Ph8KYKkm8SGooXVNqdECC2mv0L6K16crfgrb/64ThW
-	ipKuikfZqRinkbtYo3Siv6o+c5Rk28TMXhFKoysetVXgiuJVnSBfA4Z8/aByY9za
-	Tykycol2XzbWfVOc2ZC+bpJK6FVHvvVLsep02F20mzH3ylvg==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48g9q9wpem-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 06:37:20 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57E6bGVO015595;
-	Thu, 14 Aug 2025 06:37:16 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 48dydm4gex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 06:37:16 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57E6bGHT015590;
-	Thu, 14 Aug 2025 06:37:16 GMT
-Received: from hu-devc-blr-u20-c-new.qualcomm.com (hu-hardshar-blr.qualcomm.com [10.190.104.221])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 57E6bGvd015589
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 06:37:16 +0000
-Received: by hu-devc-blr-u20-c-new.qualcomm.com (Postfix, from userid 3848816)
-	id AAC1420A07; Thu, 14 Aug 2025 12:07:14 +0530 (+0530)
-From: Hardeep Sharma <quic_hardshar@quicinc.com>
-To: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Hardeep Sharma <quic_hardshar@quicinc.com>
-Subject: [PATCH 6.6.y v2 1/1] block: Fix bounce check logic in blk_queue_may_bounce()
-Date: Thu, 14 Aug 2025 12:06:55 +0530
-Message-Id: <20250814063655.1902688-1-quic_hardshar@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1755153452; c=relaxed/simple;
+	bh=nrqwDzxcIkD3ejQh6YfVPxcLZik5Dyh3XVG3HXFpYzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bWXUO3r/jRNw4dB3j2qMnenMnziRpLsi4yAUmN8+ZBkX1GKOdn5emdXgybjHWS6M4dAc2X/1pc13S5Sb7Pv9yRyP2LdKHyMjEqAqfnZcO4Cq3prIeMMBVem1WfuFaAwQMIl5gliUEcnhmDeQHv6y/BQ+AEPBVGxZG8b20jszrJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O7Am7xHG; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755153451; x=1786689451;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nrqwDzxcIkD3ejQh6YfVPxcLZik5Dyh3XVG3HXFpYzo=;
+  b=O7Am7xHG2RbznA26YTfhvHV3XLLFZFpKYM8Rd276zonADFs7K73+4WBS
+   QyeMI5jQqKyUXcNJxg62hi6/z0oxvLDCbRI7TXnPa7XiPXiz3L7OAcSFY
+   FS3hceY4qRgtPSZAYAfnB2SKRaDzrLn+9adHqRbiLnseaXCJoyPmRyfEB
+   IJNH/3JPLE/JzoflTodSTdDsqnYdm0veOJU+nEFHfMu0Mk0eq+A+vjemg
+   P2ffjIgEe4mMwT65XgxEYcjtqhqlrx8EtBeDyBfzNsLauPZpCtdRaBH7z
+   qKcEbboLGPakoUFreC/K7in1YbJKqc+cWz68EnjkAm3K12UWhXZMiPBQg
+   g==;
+X-CSE-ConnectionGUID: ycqVS/AgR4y3hLIDmXlZag==
+X-CSE-MsgGUID: O1ZL9A/9TtyUQ05M4sKhkQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57329135"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="57329135"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 23:37:30 -0700
+X-CSE-ConnectionGUID: 4MG2ptl6QhGg+ECJckr8vw==
+X-CSE-MsgGUID: GKT132VxThKNG1WqwMZt5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="167487347"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 13 Aug 2025 23:37:27 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umRaX-000Aem-1A;
+	Thu, 14 Aug 2025 06:37:25 +0000
+Date: Thu, 14 Aug 2025 14:36:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stephen Horvath <s.horvath@outlook.com.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Stephen Horvath <s.horvath@outlook.com.au>
+Subject: Re: [PATCH] x86/tsc: Read AMD CPU frequency from
+ Core::X86::Msr::PStateDef
+Message-ID: <202508141439.JO8YA6fq-lkp@intel.com>
+References: <20250813112020.345622-1-s.horvath@outlook.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=CNMqXQrD c=1 sm=1 tr=0 ts=689d8420 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
- a=aRHBprkQ1X53iwqQ5hAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: -aOy7J7bLtS5wTFA6AJRsMHqcXjgTXKm
-X-Proofpoint-ORIG-GUID: -aOy7J7bLtS5wTFA6AJRsMHqcXjgTXKm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDE2NCBTYWx0ZWRfXw/7ZR4OgbAko
- 4RzDSzoX+n17nLV7RUakqOfSpcgzdkmCy/v5/0ssEjpZT82aKjMY8ggXB2SpMudFt5TkE2Lt9a9
- chWWGdTeaYilrEkfBYbLIjxmtXnd/S3aAx951QfkwNYCzjKxfV49b2HFmhDG1aH2bG10ys1crs/
- /z6hq3K2jLRquuwVaP66pyH6TR6sZRBHM6d9eXf66uHzYP5yc4kxlGowr9If0OqPyujl/YTslNP
- PMdp7sbud2uG2ABzvIbJ3V9GMArA2/Pgz3FlJODnRcpICqfojfJRWUlQnsZ96UWAYAhC/jeu3uz
- R7EyhJ3w7yr64Wmm9pSLKjnGHjiu6c+wFB5uMnFc+fel7w7P8G4nyF6Hw0FB5pNXBJGKHT4K78c
- UqOgo2S5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 phishscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120164
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813112020.345622-1-s.horvath@outlook.com.au>
 
-Buffer bouncing is needed only when memory exists above the lowmem region,
-i.e., when max_low_pfn < max_pfn. The previous check (max_low_pfn >=
-max_pfn) was inverted and prevented bouncing when it could actually be
-required.
+Hi Stephen,
 
-Note that bouncing depends on CONFIG_HIGHMEM, which is typically enabled
-on 32-bit ARM where not all memory is permanently mapped into the kernel’s
-lowmem region.
+kernel test robot noticed the following build errors:
 
-Branch-Specific Note:
+[auto build test ERROR on tip/x86/core]
+[also build test ERROR on tip/master linus/master v6.17-rc1 next-20250814]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This fix is specific to this branch (6.6.y) only.
-In the upstream “tip” kernel, bounce buffer support for highmem pages
-was completely removed after kernel version 6.12. Therefore, this
-modification is not possible or relevant in the tip branch.
+url:    https://github.com/intel-lab-lkp/linux/commits/Stephen-Horvath/x86-tsc-Read-AMD-CPU-frequency-from-Core-X86-Msr-PStateDef/20250813-192644
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20250813112020.345622-1-s.horvath%40outlook.com.au
+patch subject: [PATCH] x86/tsc: Read AMD CPU frequency from Core::X86::Msr::PStateDef
+config: i386-randconfig-007-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141439.JO8YA6fq-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508141439.JO8YA6fq-lkp@intel.com/reproduce)
 
-Fixes: 9bb33f24abbd0 ("block: refactor the bounce buffering code")
-Cc: stable@vger.kernel.org
-Signed-off-by: Hardeep Sharma <quic_hardshar@quicinc.com>
----
- block/blk.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508141439.JO8YA6fq-lkp@intel.com/
 
-diff --git a/block/blk.h b/block/blk.h
-index 67915b04b3c1..f8a1d64be5a2 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -383,7 +383,7 @@ static inline bool blk_queue_may_bounce(struct request_queue *q)
- {
- 	return IS_ENABLED(CONFIG_BOUNCE) &&
- 		q->limits.bounce == BLK_BOUNCE_HIGH &&
--		max_low_pfn >= max_pfn;
-+		max_low_pfn < max_pfn;
- }
- 
- static inline struct bio *blk_queue_bounce(struct bio *bio,
+All errors (new ones prefixed by >>):
+
+   ld: arch/x86/kernel/tsc_msr.o: in function `cpu_khz_from_msr_amd':
+>> arch/x86/kernel/tsc_msr.c:307: undefined reference to `__udivdi3'
+
+
+vim +307 arch/x86/kernel/tsc_msr.c
+
+   237	
+   238	/*
+   239	 * MSR-based CPU/TSC frequency discovery for AMD Zen CPUs.
+   240	 *
+   241	 * Return processor base frequency in KHz, or 0 on failure.
+   242	 */
+   243	unsigned long cpu_khz_from_msr_amd(void)
+   244	{
+   245		u64 hwcr, pstatedef;
+   246		unsigned long cpufid, cpudfsid, p0_freq;
+   247	
+   248		if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
+   249			return 0;
+   250	
+   251		/*
+   252		 * This register mapping is only valid for Zen and later CPUs.
+   253		 * X86_FEATURE_ZEN is not set yet, so we just check the cpuid.
+   254		 */
+   255		if (boot_cpu_data.x86 < 0x17)
+   256			return 0;
+   257	
+   258		/*
+   259		 * PPR states for MSR0000_0010:
+   260		 * The TSC increments at the P0 frequency. The TSC counts at the
+   261		 * same rate in all P-states, all C states, S0, or S1.
+   262		 */
+   263	
+   264		/* Read the Hardware Configuration MSR (MSRC001_0015) */
+   265		if (rdmsrq_safe(MSR_K7_HWCR, &hwcr))
+   266			return 0;
+   267	
+   268		/*
+   269		 * Check TscFreqSel (bit 24) is set.
+   270		 * This verifies the TSC does actually increment at P0 frequency.
+   271		 * E.g. VMs may be configured to increment at a different rate.
+   272		 */
+   273		if (!(hwcr & BIT_64(24)))
+   274			return 0;
+   275	
+   276		/* Read the zeroth PStateDef MSR (MSRC001_0064) */
+   277		if (rdmsrq_safe(MSR_AMD_PSTATE_DEF_BASE, &pstatedef))
+   278			return 0;
+   279	
+   280		/* Check PstateEn is set (bit 63) */
+   281		if (!(pstatedef & BIT_64(63)))
+   282			return 0;
+   283	
+   284		/* CpuFid is the first 8 bits (7:0) */
+   285		cpufid = pstatedef & 0xff;
+   286	
+   287		/* Values between 0Fh-00h are reserved */
+   288		if (cpufid < 0x0F)
+   289			return 0;
+   290	
+   291		/* The PPR defines the core multiplier as CpuFid * 25MHz */
+   292		p0_freq = cpufid * 25;
+   293	
+   294		/* Convert from MHz to KHz before dividing */
+   295		p0_freq *= 1000;
+   296	
+   297		/* CpuDfsId is the next 6 bits (13:8) */
+   298		cpudfsid = (pstatedef >> 8) & 0x3f;
+   299	
+   300		/* Calculate the core divisor */
+   301		switch (cpudfsid) {
+   302		case 0x08:
+   303			/* VCO/1 */
+   304			break;
+   305		case 0x09:
+   306			/* VCO/1.125 */
+ > 307			p0_freq = (unsigned long)(p0_freq * 1125ull / 1000);
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
