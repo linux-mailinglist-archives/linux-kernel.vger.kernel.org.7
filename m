@@ -1,82 +1,96 @@
-Return-Path: <linux-kernel+bounces-768221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6EFB25E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:07:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 000E0B25E70
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BE977AA3BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:06:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D66517D37A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF5C2E717F;
-	Thu, 14 Aug 2025 08:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271112E7199;
+	Thu, 14 Aug 2025 08:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMbSvPVC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBeMTkpN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089BF27A12B;
-	Thu, 14 Aug 2025 08:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B41A27587D;
+	Thu, 14 Aug 2025 08:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755158868; cv=none; b=Togle0F3RUDUBf3L9FkVuyUtGfHjRUSejWLQ6lTojhkr+skG6pzAKQ5+HncZgklUI/TLGW7+KOz8gLX68IP6+PLG8pNTZBFVpahm2NpjFhmPFPUES5DKNQpkhS+NrSJETUS/OX9p/M6Ol/Jxn+br+z6iKIEkDCZ1KAXPRARDofg=
+	t=1755158998; cv=none; b=LfaOFGv75NPMkTVb5tdBnHBShjHWoi0dyLF486W6UE8uTurJC4rRuEunCB7zl5FtzL9TfYLumBzBEPawgWS9HDjCdusGcrN6cEI55qwYoX0BK9ActBuUhyjAcKRIk+ZiIIgHav7MBv1p2tByLPKjuyEVYLY4/6ogdZn/ybGZdsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755158868; c=relaxed/simple;
-	bh=dfyZkSlhfRb8C+mRal/9hfwP4qe/7qNX1aM5rmGNAms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=md3adNuPyH6ZN0hT/+evISSFmJM9MMhkcK+OQrtaDBNukFopwTKLqxZcxF1E9dAVd16nDP7bNTDGfZ7SscXnfT5wqW37SolA3nz/cdVSrDKrZdP7ghKxS6E3WuyZpZRX8UQuozDY7CAlYJEMKEw3GC3INY0S/bliZOkIWR+dRqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMbSvPVC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 245D3C4CEEF;
-	Thu, 14 Aug 2025 08:07:46 +0000 (UTC)
+	s=arc-20240116; t=1755158998; c=relaxed/simple;
+	bh=kRPvWk3+oRUyAKWoxWpoP6qQ6GBUxFbJ97WPacEf5u0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bv7lkE0awBZ8qbpGneErpQkErjUwNa9IRBFlWPfG6WlsItM6C3fFQG7Ls31FedHIpNf8SVwj69d8necf7zxFj2tQG8G9K2hyKLH+Eungk2S06UEJRh/E7e2ZBFBhC86EC2/6ZATOuDyt2jbeDM5bQUMy+nsW8aW9HbsPmkPDltk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBeMTkpN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F35B7C4CEEF;
+	Thu, 14 Aug 2025 08:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755158867;
-	bh=dfyZkSlhfRb8C+mRal/9hfwP4qe/7qNX1aM5rmGNAms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AMbSvPVCsrm1o+ZQ72m27MmwPONtPgbJGl5/sxesiw6pUBrGHBWUND1H+NchXqsNt
-	 4q9+bGDANwK8dz2QSs04Bj3tmfp64+DeIXAfbcQ9FxQm5BW4NGcX/PHZ0EPLiSOIxd
-	 a+MWDa5kgTzvSID98x1sUKDn3iQY+X8z9LBhniBsV4w8gr3HwmbeaWBtm39dUXggKT
-	 YG8Tj+xTtvxC7CnUprOuCpxWhc4oQon9A1FkaqapiLjkt+kNyk6meOEASlAsuvlMkd
-	 wTBoy7DiHKYm69yTLPOxFNOokrZkoxAu++IkGWXj4ol8aj3YGdak/uuC2Es6stlPqM
-	 /73ecvVZ2TjEQ==
-Date: Thu, 14 Aug 2025 10:07:45 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/7] dt-bindings: clock: qcom: Document the Glymur SoC
- TCSR Clock Controller
-Message-ID: <20250814-warping-hawk-of-brotherhood-0a34be@kuoka>
-References: <20250813-glymur-clock-controller-v4-v4-0-a408b390b22c@oss.qualcomm.com>
- <20250813-glymur-clock-controller-v4-v4-2-a408b390b22c@oss.qualcomm.com>
+	s=k20201202; t=1755158998;
+	bh=kRPvWk3+oRUyAKWoxWpoP6qQ6GBUxFbJ97WPacEf5u0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=sBeMTkpNRQ5SMWT7ZAp2DlQx+p1b5GxjQ90xd+qujp2z88tZSe1o1w66tYD0np7E6
+	 xxgEHQ8N7dm0c6d+68JcHimSbYXP0rKMj+ijzqWbiCZDMHMQ28Uh2TdmDM+enwXKX2
+	 ZtNzViLBtn4w3fKFgYXQ6zdEg0oCxvDSDM6dQZnrKJAKKc160kIvMNkQXFcD2iEUkr
+	 8P4kbIf5GMil5bQAmtAfLNEp7pkxuyp51dLxlo3Awq1ylfOd/4I7lyXhEyRzdBj7+S
+	 VA893SUFzYMiC7IZfc9r6HvKfLpmPemjVQ3PldDqIUN9LZJZ8+Im90gb2QgJ6cDI68
+	 M3D5ZMBhGDymQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCC239D0C3A;
+	Thu, 14 Aug 2025 08:10:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250813-glymur-clock-controller-v4-v4-2-a408b390b22c@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: cadence: macb: convert from round_rate() to
+ determine_rate()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175515900950.181378.1619500424714699903.git-patchwork-notify@kernel.org>
+Date: Thu, 14 Aug 2025 08:10:09 +0000
+References: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
+In-Reply-To: <20250810-net-round-rate-v1-1-dbb237c9fe5c@redhat.com>
+To: Brian Masney <bmasney@redhat.com>
+Cc: nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, paul.walmsley@sifive.com,
+ samuel.holland@sifive.com, mripard@kernel.org, sboyd@kernel.org,
+ linux-clk@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
 
-On Wed, Aug 13, 2025 at 01:25:18PM +0530, Taniya Das wrote:
-> The Glymur SoC TCSR block provides CLKREF clocks for EDP, PCIe, and USB. Add
-> this to the TCSR clock controller binding together with identifiers for
-> the clocks.
+Hello:
 
-If there is going to be resend:
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+On Sun, 10 Aug 2025 18:24:14 -0400 you wrote:
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate().
+> 
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
+> ---
+>  drivers/net/ethernet/cadence/macb_main.c | 61 ++++++++++++++++++--------------
+>  1 file changed, 35 insertions(+), 26 deletions(-)
+> 
+> [...]
 
-Best regards,
-Krzysztof
+Here is the summary with links:
+  - net: cadence: macb: convert from round_rate() to determine_rate()
+    https://git.kernel.org/netdev/net-next/c/40e819747b45
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
