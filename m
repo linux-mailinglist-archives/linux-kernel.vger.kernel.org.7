@@ -1,161 +1,765 @@
-Return-Path: <linux-kernel+bounces-768025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B14B25C00
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:42:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D1CB25C0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2AF96805ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:41:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B3265C55EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD76C255F31;
-	Thu, 14 Aug 2025 06:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4707B254855;
+	Thu, 14 Aug 2025 06:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IgDPikPp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTSckHRS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C517C1E519
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F78D1C84B2;
+	Thu, 14 Aug 2025 06:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755153707; cv=none; b=jHUpaFYPNdSGkbxGv/CVV7HspsfE1w6eThcZV6SpI7BMWu/7f36MK5UG22+8ODFaVH6Ts9Ig2TcRHyv3pWk1jEqjQ/CXYhOAMGT7U0fXBp9LKBU4uAA6COp5mUzMTE4gOqNIXenOcNBhFjBFaduisAPsmpUWpXFEQ4d6IRRn/js=
+	t=1755153737; cv=none; b=bTqf2Z2s36/kluCRnPGLcgKxJqq1GPa+l5X/rsSzUrZHtr3J+8VavmAG94EHIqVBspWPywDxvYkyps5MUwiROEZunGz28iDPf0YffVs22efqJSEzxRz69WlZ4m6HrN3elkQLM5nQOsL4Msq6f+DY33uQAcQ7jZ2yu4RJuhYjHMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755153707; c=relaxed/simple;
-	bh=GCbPMefnp9LdOOPenXhGV0oJ7QE490/uj4sFARHm2Qo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kkg9a7JtWn1sxOVHkENL0dEX5FVA6CZ3FYMRTiAs40AWHh4Tt4TLq7QWr5HtpNKa1+WbZKKfnR4wk2QbaGMGFfgP5nz1TYRTYfA0RALb1DryzVNm54RCxFRR64iaeyzATUrbh0+EADL91BLXVUcEEBaQcVw7Hna7P5zwrlwKMw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IgDPikPp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755153703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S9gfDC3XT5JH5+UXZeFk4ANri2tI0Wf8QHIFMwTkbME=;
-	b=IgDPikPpiRiy1kHDuQpPKStVkJIQUTuZ7XbK8lD7y08wsWCARvK49+MQ9YZP+62mOIvXRV
-	5xTiQCRQLhXsLaM8h2sJL+neUNv2l/+CC29M3gLqo90EKv5exmPyPPhfkCwMyCRHagc/lX
-	62QxhqLcTo4V3u10qfeTEujG4XKcocY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-443-jNvw-FoINNmYnbi99Ef8eQ-1; Thu, 14 Aug 2025 02:41:42 -0400
-X-MC-Unique: jNvw-FoINNmYnbi99Ef8eQ-1
-X-Mimecast-MFC-AGG-ID: jNvw-FoINNmYnbi99Ef8eQ_1755153701
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b9edf5b346so266943f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:41:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755153701; x=1755758501;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S9gfDC3XT5JH5+UXZeFk4ANri2tI0Wf8QHIFMwTkbME=;
-        b=C2KwH/oshaYlXWNvQU8e6sd8460WTc0jP1Nh5fNGrtYFd7uiRoRlyRkLc+b6taFdaZ
-         A5GysP8z4uzDykuowYK6XJDlIntyS8zL4qGMSMkSvitbUtrPJiDoXN70gPCWoyTt1MFo
-         jxvNbaVuApSfR9kt2FL+2+NhN6+csgjpUCdxrwIdNkX5iIS04ykHFGiN+907TF6l84HO
-         LzFCZyNtYKVlW0fOD/gQhL8Z5MkA8wr7qzkLOZUKt810pJ0v97x6scqC/4C/XMKrjxbR
-         uk90G7niXGcc3xv6ekAR7IzxMb3XcuYFLmjWWYSxs8CDMRAcyMJpiwK09LlD3cQfeznt
-         wqFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsetW+6nsL5RA2l0RandRaWB70bCH1wgGc19advb5qSCZDasydV2Ksg+Ew+sfa7114uNwiSbHGTmE3TfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7sdPIaqeHIINPVeRl9CDDBztqTYCbnw5uWGNmC3xjOWSrlcr8
-	/5tIVCzb3p9xm+A/FmGF5VmHPCFYcaCuMl2CEPM6O+5LVK5+52jtjrwaYTYxsPbQ2k6RTueseme
-	mVO4gtkFjHkvxNo9T+GMZlDMFLYGiFkto7ee21ZDDFZBZ5l05A0nA3tC7vAYin/AYoQ==
-X-Gm-Gg: ASbGncuEtviwj2sdUIdulAYM9wMm4wW+TVv8Jb72TA+47sB5F7Bkji2F6tpw3FUT4MM
-	GLcEByg2YJv8R2ABt4vuIvxOHmmkFqEYrZ4EmQCiYkk0gGcc/QR4Roesecr4/To9YWqctBolGij
-	AFvy4jbbj1rERlojaQO9aDJ4WQ15pMI7RcW9cpJPPBmnoJHb31zO29lXkeo0JxKry+jDEiiSAln
-	LUiMUsoyysIzxc0ijMwOuAy8tSoF1sZkbSRjsORgrsdw9BS7w2i+zBXp5NuQshzProSyQIwPlLI
-	nXSkAHPPATnC1lJ92JkDt+JF6oKIsqHhRwlXaVZDsT48c8T8k0FQseDakt3gZeja/F0j/P1o04H
-	NvBA=
-X-Received: by 2002:a05:6000:40c7:b0:3b7:8a49:eed0 with SMTP id ffacd0b85a97d-3b9f1a13965mr1378451f8f.22.1755153701032;
-        Wed, 13 Aug 2025 23:41:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpLaxNWs2oFsAZSrN9kqR+39ayEAZmpXcMUMLGDC+7HLlsr/ah//p96eCfa0Qd8T4sw00vYQ==
-X-Received: by 2002:a05:6000:40c7:b0:3b7:8a49:eed0 with SMTP id ffacd0b85a97d-3b9f1a13965mr1378416f8f.22.1755153700568;
-        Wed, 13 Aug 2025 23:41:40 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:8998:e0cf:68cc:1b62? ([2a01:e0a:c:37e0:8998:e0cf:68cc:1b62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6bc932sm9252735e9.3.2025.08.13.23.41.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 23:41:39 -0700 (PDT)
-Message-ID: <0f3a72c0-f52f-4ccc-acd8-861824fb762d@redhat.com>
-Date: Thu, 14 Aug 2025 08:41:36 +0200
+	s=arc-20240116; t=1755153737; c=relaxed/simple;
+	bh=srccaM0xn3t/fcg+NAsz3AtwgTXZQHjfPbX82/7n5W8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NNpZuaANXyd+W6iEpoKm1/w7/e+6J3s+kVecFlviLa7AwaA5K4wjljkWVwzWU1O0tJsyhvBPjylejAZAy+FQEN/o/eL9rlU8in1Qxy01Y8rQNhWSDHvtAIeYTZGKYQRYdc2ot6CXo/97xyWrUsAfNaUp6K4HJeRbfG/ZMGgyHGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTSckHRS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 001ACC4AF0C;
+	Thu, 14 Aug 2025 06:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755153737;
+	bh=srccaM0xn3t/fcg+NAsz3AtwgTXZQHjfPbX82/7n5W8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CTSckHRSsouodefGoxFgnl/1dlfBvpezUTrz98MEyXGJ7PM4g83rUV2If9c43KuXP
+	 RcW/QnxtvBX/GmJv3PZ5bpjhAKdriqJTA3jo3fiejiqckEioIH3LxDpQNc/EWKfnWH
+	 dKjlrWux9Orq0TPRgZY0/q9Zn33WBZit1sLAZCTOKdpIlI9n07Jep6oFwSxQJLl+4T
+	 eN3123wapAjxpNE+JotECT1eCO4D6SE/0JGeTR86oqzNo2S3GSm7M6pb3S/KpBuvV/
+	 rFvLCDUtylO/+ygwucqEFa+KjzhuHbAtSOncLbkakuTWm0/zLzeqoQUiPKu5aLyFf8
+	 0yoA26312t2zA==
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9dc56ff66so231269f8f.1;
+        Wed, 13 Aug 2025 23:42:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtFpzPcM7C3+QmwHczFamAiq4ukzHzKHErg31mHHs/P16uvmAOTFzmHn/VpD0L3twPZ11api7ZgTcTToWK@vger.kernel.org, AJvYcCW02JKct2ZeSPJWm9ehvAAqG7qH4ihMf7IGxAcezdxPwdYPMlY1OWatn3wdKuAskEALmEsGmHdLKig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqvqhiPbngaxNOssOCwe3bfPGe8+heSE+dRTPAtOEr/cmaiHtE
+	lyQ3QrXDczFDhGGoVal9uCBtA8JyCRJ7rgmQa7pEG5iC+GXQ3YTJK/I290v3qn+WjQRly13sj20
+	IRIjO4KsoMKTSOKFbuNKg3+cUso15QGM=
+X-Google-Smtp-Source: AGHT+IF3AwQ0rRn2365WTjTy7M5hz5hvR20AHYyHXmLWvx6Zpvid9wInmxIRTyWFRgqN7YTO+yTZTwAsFxHKYO0JO5A=
+X-Received: by 2002:a5d:64e8:0:b0:3b6:cf8:64b3 with SMTP id
+ ffacd0b85a97d-3b9fc359660mr1397463f8f.34.1755153735220; Wed, 13 Aug 2025
+ 23:42:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 01/11] drm/panic: use `core::ffi::CStr` method names
-To: Tamir Duberstein <tamird@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Leon Romanovsky <leon@kernel.org>, Breno Leitao <leitao@debian.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Luis Chamberlain
- <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>,
- Javier Martinez Canillas <javierm@redhat.com>, Arnd Bergmann
- <arnd@arndb.de>, Len Brown <lenb@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-acpi@vger.kernel.org
-References: <20250813-core-cstr-fanout-1-v3-0-545c14bc44ff@gmail.com>
- <20250813-core-cstr-fanout-1-v3-1-545c14bc44ff@gmail.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <20250813-core-cstr-fanout-1-v3-1-545c14bc44ff@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250813171136.2213309-1-uwu@icenowy.me> <20250813171136.2213309-2-uwu@icenowy.me>
+ <CAJF2gTRpK20cEYepx57q93u-qWRG88WeRnkvQOvBu=U_EfpQhw@mail.gmail.com> <f841cf69a0e355bccab02edc1714747032dd6020.camel@icenowy.me>
+In-Reply-To: <f841cf69a0e355bccab02edc1714747032dd6020.camel@icenowy.me>
+From: Guo Ren <guoren@kernel.org>
+Date: Thu, 14 Aug 2025 14:41:57 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQa93OC3CQOYnBPFPascgguG2P2E9W63gtbQEsjMb5e1g@mail.gmail.com>
+X-Gm-Features: Ac12FXzwcev7oaRKoMVLbvHYiDK9BCMRTnxaSeDlQR-zGNi1blxWQ-b__2zV9GI
+Message-ID: <CAJF2gTQa93OC3CQOYnBPFPascgguG2P2E9W63gtbQEsjMb5e1g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: thead: th1520-ap: describe gate clocks with clk_gate
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Drew Fustini <fustini@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Michal Wilczynski <m.wilczynski@samsung.com>, Yao Zi <ziyao@disroot.org>, 
+	Han Gao <rabenda.cn@gmail.com>, linux-riscv@lists.infradead.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13/08/2025 17:41, Tamir Duberstein wrote:
-> Prepare for `core::ffi::CStr` taking the place of `kernel::str::CStr` by
-> avoid methods that only exist on the latter.
+On Thu, Aug 14, 2025 at 1:02=E2=80=AFPM Icenowy Zheng <uwu@icenowy.me> wrot=
+e:
+>
+> =E5=9C=A8 2025-08-14=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 11:12 +0800=EF=
+=BC=8CGuo Ren=E5=86=99=E9=81=93=EF=BC=9A
+> > On Thu, Aug 14, 2025 at 1:12=E2=80=AFAM Icenowy Zheng <uwu@icenowy.me> =
+wrote:
+> > >
+> > > Similar to previous situation of mux clocks, the gate clocks of
+> > > clk-th1520-ap drivers are also using a helper that creates a
+> > > temporary
+> > > struct clk_hw and abandons the struct clk_hw in struct ccu_common,
+> > > which
+> > > prevents clock gates to be clock parents.
+> > >
+> > > Do the similar refactor of dropping struct ccu_common and directly
+> > > use
+> > > struct clk_gate here.
+> > >
+> > > This patch mimics the refactor done on struct ccu_mux at [1].
+> > Is this a fix for something? Or just for refactoring?
+>
+> From the perspective of current kernel, it's just a refactoring,
+> because no gate clocks are used as clock parents yet.
+>
+> However this is a prequisite for the PATCH 2/2's fix.
+The fix should not depend on refactoring.
 
-Thanks, it looks good to me.
+>
+> >
+> > >
+> > > [1]
+> > > https://lore.kernel.org/all/20250722080535.60027-2-ziyao@disroot.org/
+> > >
+> > > Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> > > ---
+> > >  drivers/clk/thead/clk-th1520-ap.c | 382 +++++++++++++++-----------
+> > > ----
+> > >  1 file changed, 185 insertions(+), 197 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/thead/clk-th1520-ap.c
+> > > b/drivers/clk/thead/clk-th1520-ap.c
+> > > index 0224f2dde0f63..d08e7fb387e50 100644
+> > > --- a/drivers/clk/thead/clk-th1520-ap.c
+> > > +++ b/drivers/clk/thead/clk-th1520-ap.c
+> > > @@ -49,8 +49,9 @@ struct ccu_mux {
+> > >  };
+> > >
+> > >  struct ccu_gate {
+> > > -       u32                     enable;
+> > > -       struct ccu_common       common;
+> > > +       int                     clkid;
+> > > +       u32                     reg;
+> > > +       struct clk_gate         gate;
+> > >  };
+> > >
+> > >  struct ccu_div {
+> > > @@ -89,12 +90,12 @@ struct ccu_pll {
+> > >
+> > > 0),                             \
+> > >         }
+> > >
+> > > -#define CCU_GATE(_clkid, _struct, _name, _parent, _reg, _gate,
+> > > _flags) \
+> > > +#define CCU_GATE(_clkid, _struct, _name, _parent, _reg, _bit,
+> > > _flags)  \
+> > >         struct ccu_gate _struct =3D
+> > > {                                     \
+> > > -               .enable =3D
+> > > _gate,                                        \
+> > > -               .common =3D
+> > > {                                             \
+> > > -                       .clkid          =3D
+> > > _clkid,                       \
+> > > -                       .cfg0           =3D
+> > > _reg,                         \
+> > > +               .clkid  =3D
+> > > _clkid,                                       \
+> > > +               .reg    =3D
+> > > _reg,                                         \
+> > > +               .gate   =3D
+> > > {                                             \
+> > > +                       .bit_idx        =3D
+> > > _bit,                         \
+> > >                         .hw.init        =3D
+> > > CLK_HW_INIT_PARENTS_DATA(     \
+> > >
+> > > _name,                  \
+> > >
+> > > _parent,                \
+> > > @@ -122,13 +123,6 @@ static inline struct ccu_div
+> > > *hw_to_ccu_div(struct clk_hw *hw)
+> > >         return container_of(common, struct ccu_div, common);
+> > >  }
+> > >
+> > > -static inline struct ccu_gate *hw_to_ccu_gate(struct clk_hw *hw)
+> > > -{
+> > > -       struct ccu_common *common =3D hw_to_ccu_common(hw);
+> > > -
+> > > -       return container_of(common, struct ccu_gate, common);
+> > > -}
+> > > -
+> > >  static u8 ccu_get_parent_helper(struct ccu_common *common,
+> > >                                 struct ccu_internal *mux)
+> > >  {
+> > > @@ -876,128 +870,128 @@ static const struct clk_parent_data
+> > > emmc_sdio_ref_clk_pd[] =3D {
+> > >         { .hw =3D &emmc_sdio_ref_clk.hw },
+> > >  };
+> > >
+> > > -static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd,
+> > > 0x100, BIT(4), 0);
+> > > -static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd,
+> > > 0x100, BIT(5), 0);
+> > > +static CCU_GATE(CLK_BROM, brom_clk, "brom", ahb2_cpusys_hclk_pd,
+> > > 0x100, 4, 0);
+> > > +static CCU_GATE(CLK_BMU, bmu_clk, "bmu", axi4_cpusys2_aclk_pd,
+> > > 0x100, 5, 0);
+> > >  static CCU_GATE(CLK_AON2CPU_A2X, aon2cpu_a2x_clk, "aon2cpu-a2x",
+> > > axi4_cpusys2_aclk_pd,
+> > > -               0x134, BIT(8), CLK_IS_CRITICAL);
+> > > +               0x134, 8, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_X2X_CPUSYS, x2x_cpusys_clk, "x2x-cpusys",
+> > > axi4_cpusys2_aclk_pd,
+> > > -               0x134, BIT(7), CLK_IS_CRITICAL);
+> > > +               0x134, 7, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_CPU2AON_X2H, cpu2aon_x2h_clk, "cpu2aon-x2h",
+> > > axi_aclk_pd,
+> > > -               0x138, BIT(8), CLK_IS_CRITICAL);
+> > > +               0x138, 8, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_CPU2PERI_X2H, cpu2peri_x2h_clk, "cpu2peri-
+> > > x2h", axi4_cpusys2_aclk_pd,
+> > > -               0x140, BIT(9), CLK_IS_CRITICAL);
+> > > +               0x140, 9, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_PERISYS_APB1_HCLK, perisys_apb1_hclk,
+> > > "perisys-apb1-hclk", perisys_ahb_hclk_pd,
+> > > -               0x150, BIT(9), CLK_IS_CRITICAL);
+> > > +               0x150, 9, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_PERISYS_APB2_HCLK, perisys_apb2_hclk,
+> > > "perisys-apb2-hclk", perisys_ahb_hclk_pd,
+> > > -               0x150, BIT(10), CLK_IS_CRITICAL);
+> > > +               0x150, 10, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk,
+> > > "perisys-apb3-hclk", perisys_ahb_hclk_pd,
+> > > -               0x150, BIT(11), CLK_IS_CRITICAL);
+> > > +               0x150, 11, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk,
+> > > "perisys-apb4-hclk", perisys_ahb_hclk_pd,
+> > > -               0x150, BIT(12), 0);
+> > > -static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd,
+> > > 0x1c8, BIT(5), CLK_IS_CRITICAL);
+> > > -static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd,
+> > > 0x1e0, BIT(13), CLK_IS_CRITICAL);
+> > > -static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio",
+> > > emmc_sdio_ref_clk_pd, 0x204, BIT(30), 0);
+> > > -static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd,
+> > > 0x204, BIT(26), 0);
+> > > -static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1",
+> > > perisys_apb_pclk_pd, 0x204, BIT(24), 0);
+> > > -static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart",
+> > > perisys_apb_pclk_pd, 0x204, BIT(23), 0);
+> > > -static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
+> > > perisys_apb_pclk_pd, 0x204, BIT(22), 0);
+> > > -static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi",
+> > > axi4_cpusys2_aclk_pd, 0x204, BIT(21), 0);
+> > > -static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk",
+> > > peri2sys_apb_pclk_pd, 0x204, BIT(20), 0);
+> > > -static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd,
+> > > 0x204, BIT(19), 0);
+> > > -static CCU_GATE(CLK_PWM, pwm_clk, "pwm", perisys_apb_pclk_pd,
+> > > 0x204, BIT(18), 0);
+> > > -static CCU_GATE(CLK_QSPI0, qspi0_clk, "qspi0", video_pll_clk_pd,
+> > > 0x204, BIT(17), 0);
+> > > -static CCU_GATE(CLK_QSPI1, qspi1_clk, "qspi1", video_pll_clk_pd,
+> > > 0x204, BIT(16), 0);
+> > > -static CCU_GATE(CLK_SPI, spi_clk, "spi", video_pll_clk_pd, 0x204,
+> > > BIT(15), 0);
+> > > -static CCU_GATE(CLK_UART0_PCLK, uart0_pclk, "uart0-pclk",
+> > > perisys_apb_pclk_pd, 0x204, BIT(14), 0);
+> > > -static CCU_GATE(CLK_UART1_PCLK, uart1_pclk, "uart1-pclk",
+> > > perisys_apb_pclk_pd, 0x204, BIT(13), 0);
+> > > -static CCU_GATE(CLK_UART2_PCLK, uart2_pclk, "uart2-pclk",
+> > > perisys_apb_pclk_pd, 0x204, BIT(12), 0);
+> > > -static CCU_GATE(CLK_UART3_PCLK, uart3_pclk, "uart3-pclk",
+> > > perisys_apb_pclk_pd, 0x204, BIT(11), 0);
+> > > -static CCU_GATE(CLK_UART4_PCLK, uart4_pclk, "uart4-pclk",
+> > > perisys_apb_pclk_pd, 0x204, BIT(10), 0);
+> > > -static CCU_GATE(CLK_UART5_PCLK, uart5_pclk, "uart5-pclk",
+> > > perisys_apb_pclk_pd, 0x204, BIT(9), 0);
+> > > -static CCU_GATE(CLK_GPIO0, gpio0_clk, "gpio0-clk",
+> > > perisys_apb_pclk_pd, 0x204, BIT(8), 0);
+> > > -static CCU_GATE(CLK_GPIO1, gpio1_clk, "gpio1-clk",
+> > > perisys_apb_pclk_pd, 0x204, BIT(7), 0);
+> > > -static CCU_GATE(CLK_GPIO2, gpio2_clk, "gpio2-clk",
+> > > peri2sys_apb_pclk_pd, 0x204, BIT(6), 0);
+> > > -static CCU_GATE(CLK_I2C0, i2c0_clk, "i2c0", perisys_apb_pclk_pd,
+> > > 0x204, BIT(5), 0);
+> > > -static CCU_GATE(CLK_I2C1, i2c1_clk, "i2c1", perisys_apb_pclk_pd,
+> > > 0x204, BIT(4), 0);
+> > > -static CCU_GATE(CLK_I2C2, i2c2_clk, "i2c2", perisys_apb_pclk_pd,
+> > > 0x204, BIT(3), 0);
+> > > -static CCU_GATE(CLK_I2C3, i2c3_clk, "i2c3", perisys_apb_pclk_pd,
+> > > 0x204, BIT(2), 0);
+> > > -static CCU_GATE(CLK_I2C4, i2c4_clk, "i2c4", perisys_apb_pclk_pd,
+> > > 0x204, BIT(1), 0);
+> > > -static CCU_GATE(CLK_I2C5, i2c5_clk, "i2c5", perisys_apb_pclk_pd,
+> > > 0x204, BIT(0), 0);
+> > > -static CCU_GATE(CLK_SPINLOCK, spinlock_clk, "spinlock",
+> > > ahb2_cpusys_hclk_pd, 0x208, BIT(10), 0);
+> > > -static CCU_GATE(CLK_DMA, dma_clk, "dma", axi4_cpusys2_aclk_pd,
+> > > 0x208, BIT(8), 0);
+> > > -static CCU_GATE(CLK_MBOX0, mbox0_clk, "mbox0",
+> > > apb3_cpusys_pclk_pd, 0x208, BIT(7), 0);
+> > > -static CCU_GATE(CLK_MBOX1, mbox1_clk, "mbox1",
+> > > apb3_cpusys_pclk_pd, 0x208, BIT(6), 0);
+> > > -static CCU_GATE(CLK_MBOX2, mbox2_clk, "mbox2",
+> > > apb3_cpusys_pclk_pd, 0x208, BIT(5), 0);
+> > > -static CCU_GATE(CLK_MBOX3, mbox3_clk, "mbox3",
+> > > apb3_cpusys_pclk_pd, 0x208, BIT(4), 0);
+> > > -static CCU_GATE(CLK_WDT0, wdt0_clk, "wdt0", apb3_cpusys_pclk_pd,
+> > > 0x208, BIT(3), 0);
+> > > -static CCU_GATE(CLK_WDT1, wdt1_clk, "wdt1", apb3_cpusys_pclk_pd,
+> > > 0x208, BIT(2), 0);
+> > > -static CCU_GATE(CLK_TIMER0, timer0_clk, "timer0",
+> > > apb3_cpusys_pclk_pd, 0x208, BIT(1), 0);
+> > > -static CCU_GATE(CLK_TIMER1, timer1_clk, "timer1",
+> > > apb3_cpusys_pclk_pd, 0x208, BIT(0), 0);
+> > > -static CCU_GATE(CLK_SRAM0, sram0_clk, "sram0", axi_aclk_pd, 0x20c,
+> > > BIT(4), 0);
+> > > -static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_aclk_pd, 0x20c,
+> > > BIT(3), 0);
+> > > -static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c,
+> > > BIT(2), 0);
+> > > -static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c,
+> > > BIT(1), 0);
+> > > +               0x150, 12, 0);
+> > > +static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd,
+> > > 0x1c8, 5, CLK_IS_CRITICAL);
+> > > +static CCU_GATE(CLK_CPU2VP, cpu2vp_clk, "cpu2vp", axi_aclk_pd,
+> > > 0x1e0, 13, CLK_IS_CRITICAL);
+> > > +static CCU_GATE(CLK_EMMC_SDIO, emmc_sdio_clk, "emmc-sdio",
+> > > emmc_sdio_ref_clk_pd, 0x204, 30, 0);
+> > > +static CCU_GATE(CLK_GMAC1, gmac1_clk, "gmac1", gmac_pll_clk_pd,
+> > > 0x204, 26, 0);
+> > > +static CCU_GATE(CLK_PADCTRL1, padctrl1_clk, "padctrl1",
+> > > perisys_apb_pclk_pd, 0x204, 24, 0);
+> > > +static CCU_GATE(CLK_DSMART, dsmart_clk, "dsmart",
+> > > perisys_apb_pclk_pd, 0x204, 23, 0);
+> > > +static CCU_GATE(CLK_PADCTRL0, padctrl0_clk, "padctrl0",
+> > > perisys_apb_pclk_pd, 0x204, 22, 0);
+> > > +static CCU_GATE(CLK_GMAC_AXI, gmac_axi_clk, "gmac-axi",
+> > > axi4_cpusys2_aclk_pd, 0x204, 21, 0);
+> > > +static CCU_GATE(CLK_GPIO3, gpio3_clk, "gpio3-clk",
+> > > peri2sys_apb_pclk_pd, 0x204, 20, 0);
+> > > +static CCU_GATE(CLK_GMAC0, gmac0_clk, "gmac0", gmac_pll_clk_pd,
+> > > 0x204, 19, 0);
+> > > +static CCU_GATE(CLK_PWM, pwm_clk, "pwm", perisys_apb_pclk_pd,
+> > > 0x204, 18, 0);
+> > > +static CCU_GATE(CLK_QSPI0, qspi0_clk, "qspi0", video_pll_clk_pd,
+> > > 0x204, 17, 0);
+> > > +static CCU_GATE(CLK_QSPI1, qspi1_clk, "qspi1", video_pll_clk_pd,
+> > > 0x204, 16, 0);
+> > > +static CCU_GATE(CLK_SPI, spi_clk, "spi", video_pll_clk_pd, 0x204,
+> > > 15, 0);
+> > > +static CCU_GATE(CLK_UART0_PCLK, uart0_pclk, "uart0-pclk",
+> > > perisys_apb_pclk_pd, 0x204, 14, 0);
+> > > +static CCU_GATE(CLK_UART1_PCLK, uart1_pclk, "uart1-pclk",
+> > > perisys_apb_pclk_pd, 0x204, 13, 0);
+> > > +static CCU_GATE(CLK_UART2_PCLK, uart2_pclk, "uart2-pclk",
+> > > perisys_apb_pclk_pd, 0x204, 12, 0);
+> > > +static CCU_GATE(CLK_UART3_PCLK, uart3_pclk, "uart3-pclk",
+> > > perisys_apb_pclk_pd, 0x204, 11, 0);
+> > > +static CCU_GATE(CLK_UART4_PCLK, uart4_pclk, "uart4-pclk",
+> > > perisys_apb_pclk_pd, 0x204, 10, 0);
+> > > +static CCU_GATE(CLK_UART5_PCLK, uart5_pclk, "uart5-pclk",
+> > > perisys_apb_pclk_pd, 0x204, 9, 0);
+> > > +static CCU_GATE(CLK_GPIO0, gpio0_clk, "gpio0-clk",
+> > > perisys_apb_pclk_pd, 0x204, 8, 0);
+> > > +static CCU_GATE(CLK_GPIO1, gpio1_clk, "gpio1-clk",
+> > > perisys_apb_pclk_pd, 0x204, 7, 0);
+> > > +static CCU_GATE(CLK_GPIO2, gpio2_clk, "gpio2-clk",
+> > > peri2sys_apb_pclk_pd, 0x204, 6, 0);
+> > > +static CCU_GATE(CLK_I2C0, i2c0_clk, "i2c0", perisys_apb_pclk_pd,
+> > > 0x204, 5, 0);
+> > > +static CCU_GATE(CLK_I2C1, i2c1_clk, "i2c1", perisys_apb_pclk_pd,
+> > > 0x204, 4, 0);
+> > > +static CCU_GATE(CLK_I2C2, i2c2_clk, "i2c2", perisys_apb_pclk_pd,
+> > > 0x204, 3, 0);
+> > > +static CCU_GATE(CLK_I2C3, i2c3_clk, "i2c3", perisys_apb_pclk_pd,
+> > > 0x204, 2, 0);
+> > > +static CCU_GATE(CLK_I2C4, i2c4_clk, "i2c4", perisys_apb_pclk_pd,
+> > > 0x204, 1, 0);
+> > > +static CCU_GATE(CLK_I2C5, i2c5_clk, "i2c5", perisys_apb_pclk_pd,
+> > > 0x204, 0, 0);
+> > > +static CCU_GATE(CLK_SPINLOCK, spinlock_clk, "spinlock",
+> > > ahb2_cpusys_hclk_pd, 0x208, 10, 0);
+> > > +static CCU_GATE(CLK_DMA, dma_clk, "dma", axi4_cpusys2_aclk_pd,
+> > > 0x208, 8, 0);
+> > > +static CCU_GATE(CLK_MBOX0, mbox0_clk, "mbox0",
+> > > apb3_cpusys_pclk_pd, 0x208, 7, 0);
+> > > +static CCU_GATE(CLK_MBOX1, mbox1_clk, "mbox1",
+> > > apb3_cpusys_pclk_pd, 0x208, 6, 0);
+> > > +static CCU_GATE(CLK_MBOX2, mbox2_clk, "mbox2",
+> > > apb3_cpusys_pclk_pd, 0x208, 5, 0);
+> > > +static CCU_GATE(CLK_MBOX3, mbox3_clk, "mbox3",
+> > > apb3_cpusys_pclk_pd, 0x208, 4, 0);
+> > > +static CCU_GATE(CLK_WDT0, wdt0_clk, "wdt0", apb3_cpusys_pclk_pd,
+> > > 0x208, 3, 0);
+> > > +static CCU_GATE(CLK_WDT1, wdt1_clk, "wdt1", apb3_cpusys_pclk_pd,
+> > > 0x208, 2, 0);
+> > > +static CCU_GATE(CLK_TIMER0, timer0_clk, "timer0",
+> > > apb3_cpusys_pclk_pd, 0x208, 1, 0);
+> > > +static CCU_GATE(CLK_TIMER1, timer1_clk, "timer1",
+> > > apb3_cpusys_pclk_pd, 0x208, 0, 0);
+> > > +static CCU_GATE(CLK_SRAM0, sram0_clk, "sram0", axi_aclk_pd, 0x20c,
+> > > 4, 0);
+> > > +static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_aclk_pd, 0x20c,
+> > > 3, 0);
+> > > +static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c,
+> > > 2, 0);
+> > > +static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c,
+> > > 1, 0);
+> > >
+> > >  static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(0), CLK_IS_CRITICAL);
+> > > +               video_pll_clk_pd, 0x0, 0, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk",
+> > > video_pll_clk_pd,
+> > > -               0x0, BIT(3), 0);
+> > > +               0x0, 3, 0);
+> > >  static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(4), CLK_IS_CRITICAL);
+> > > +               video_pll_clk_pd, 0x0, 4, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
+> > > -               dpu0_clk_pd, 0x0, BIT(5), CLK_SET_RATE_PARENT);
+> > > +               dpu0_clk_pd, 0x0, 5, CLK_SET_RATE_PARENT);
+> > >  static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
+> > > -               dpu1_clk_pd, 0x0, BIT(6), CLK_SET_RATE_PARENT);
+> > > +               dpu1_clk_pd, 0x0, 6, CLK_SET_RATE_PARENT);
+> > >  static CCU_GATE(CLK_DPU_HCLK, dpu_hclk, "dpu-hclk",
+> > > video_pll_clk_pd, 0x0,
+> > > -               BIT(7), 0);
+> > > +               7, 0);
+> > >  static CCU_GATE(CLK_DPU_ACLK, dpu_aclk, "dpu-aclk",
+> > > video_pll_clk_pd, 0x0,
+> > > -               BIT(8), 0);
+> > > +               8, 0);
+> > >  static CCU_GATE(CLK_DPU_CCLK, dpu_cclk, "dpu-cclk",
+> > > video_pll_clk_pd, 0x0,
+> > > -               BIT(9), 0);
+> > > +               9, 0);
+> > >  static CCU_GATE(CLK_HDMI_SFR, hdmi_sfr_clk, "hdmi-sfr-clk",
+> > > video_pll_clk_pd,
+> > > -               0x0, BIT(10), 0);
+> > > +               0x0, 10, 0);
+> > >  static CCU_GATE(CLK_HDMI_PCLK, hdmi_pclk, "hdmi-pclk",
+> > > video_pll_clk_pd, 0x0,
+> > > -               BIT(11), 0);
+> > > +               11, 0);
+> > >  static CCU_GATE(CLK_HDMI_CEC, hdmi_cec_clk, "hdmi-cec-clk",
+> > > video_pll_clk_pd,
+> > > -               0x0, BIT(12), 0);
+> > > +               0x0, 12, 0);
+> > >  static CCU_GATE(CLK_MIPI_DSI0_PCLK, mipi_dsi0_pclk, "mipi-dsi0-
+> > > pclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(13), 0);
+> > > +               video_pll_clk_pd, 0x0, 13, 0);
+> > >  static CCU_GATE(CLK_MIPI_DSI1_PCLK, mipi_dsi1_pclk, "mipi-dsi1-
+> > > pclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(14), 0);
+> > > +               video_pll_clk_pd, 0x0, 14, 0);
+> > >  static CCU_GATE(CLK_MIPI_DSI0_CFG, mipi_dsi0_cfg_clk, "mipi-dsi0-
+> > > cfg-clk",
+> > > -               video_pll_clk_pd, 0x0, BIT(15), 0);
+> > > +               video_pll_clk_pd, 0x0, 15, 0);
+> > >  static CCU_GATE(CLK_MIPI_DSI1_CFG, mipi_dsi1_cfg_clk, "mipi-dsi1-
+> > > cfg-clk",
+> > > -               video_pll_clk_pd, 0x0, BIT(16), 0);
+> > > +               video_pll_clk_pd, 0x0, 16, 0);
+> > >  static CCU_GATE(CLK_MIPI_DSI0_REFCLK, mipi_dsi0_refclk, "mipi-
+> > > dsi0-refclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(17), 0);
+> > > +               video_pll_clk_pd, 0x0, 17, 0);
+> > >  static CCU_GATE(CLK_MIPI_DSI1_REFCLK, mipi_dsi1_refclk, "mipi-
+> > > dsi1-refclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(18), 0);
+> > > +               video_pll_clk_pd, 0x0, 18, 0);
+> > >  static CCU_GATE(CLK_HDMI_I2S, hdmi_i2s_clk, "hdmi-i2s-clk",
+> > > video_pll_clk_pd,
+> > > -               0x0, BIT(19), 0);
+> > > +               0x0, 19, 0);
+> > >  static CCU_GATE(CLK_X2H_DPU1_ACLK, x2h_dpu1_aclk, "x2h-dpu1-aclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(20), CLK_IS_CRITICAL);
+> > > +               video_pll_clk_pd, 0x0, 20, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_X2H_DPU_ACLK, x2h_dpu_aclk, "x2h-dpu-aclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(21), CLK_IS_CRITICAL);
+> > > +               video_pll_clk_pd, 0x0, 21, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_AXI4_VO_PCLK, axi4_vo_pclk, "axi4-vo-pclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(22), 0);
+> > > +               video_pll_clk_pd, 0x0, 22, 0);
+> > >  static CCU_GATE(CLK_IOPMP_VOSYS_DPU_PCLK, iopmp_vosys_dpu_pclk,
+> > > -               "iopmp-vosys-dpu-pclk", video_pll_clk_pd, 0x0,
+> > > BIT(23), 0);
+> > > +               "iopmp-vosys-dpu-pclk", video_pll_clk_pd, 0x0, 23,
+> > > 0);
+> > >  static CCU_GATE(CLK_IOPMP_VOSYS_DPU1_PCLK, iopmp_vosys_dpu1_pclk,
+> > > -               "iopmp-vosys-dpu1-pclk", video_pll_clk_pd, 0x0,
+> > > BIT(24), 0);
+> > > +               "iopmp-vosys-dpu1-pclk", video_pll_clk_pd, 0x0, 24,
+> > > 0);
+> > >  static CCU_GATE(CLK_IOPMP_VOSYS_GPU_PCLK, iopmp_vosys_gpu_pclk,
+> > > -               "iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0,
+> > > BIT(25), 0);
+> > > +               "iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0, 25,
+> > > 0);
+> > >  static CCU_GATE(CLK_IOPMP_DPU1_ACLK, iopmp_dpu1_aclk, "iopmp-dpu1-
+> > > aclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(27), CLK_IS_CRITICAL);
+> > > +               video_pll_clk_pd, 0x0, 27, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_IOPMP_DPU_ACLK, iopmp_dpu_aclk, "iopmp-dpu-
+> > > aclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(28), CLK_IS_CRITICAL);
+> > > +               video_pll_clk_pd, 0x0, 28, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_IOPMP_GPU_ACLK, iopmp_gpu_aclk, "iopmp-gpu-
+> > > aclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(29), CLK_IS_CRITICAL);
+> > > +               video_pll_clk_pd, 0x0, 29, CLK_IS_CRITICAL);
+> > >  static CCU_GATE(CLK_MIPIDSI0_PIXCLK, mipi_dsi0_pixclk, "mipi-dsi0-
+> > > pixclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(30), 0);
+> > > +               video_pll_clk_pd, 0x0, 30, 0);
+> > >  static CCU_GATE(CLK_MIPIDSI1_PIXCLK, mipi_dsi1_pixclk, "mipi-dsi1-
+> > > pixclk",
+> > > -               video_pll_clk_pd, 0x0, BIT(31), 0);
+> > > +               video_pll_clk_pd, 0x0, 31, 0);
+> > >  static CCU_GATE(CLK_HDMI_PIXCLK, hdmi_pixclk, "hdmi-pixclk",
+> > > video_pll_clk_pd,
+> > > -               0x4, BIT(0), 0);
+> > > +               0x4, 0, 0);
+> > >
+> > >  static CLK_FIXED_FACTOR_HW(gmac_pll_clk_100m, "gmac-pll-clk-100m",
+> > >                            &gmac_pll_clk.common.hw, 10, 1, 0);
+> > > @@ -1053,93 +1047,93 @@ static struct ccu_mux *th1520_mux_clks[] =3D
+> > > {
+> > >         &uart_sclk,
+> > >  };
+> > >
+> > > -static struct ccu_common *th1520_gate_clks[] =3D {
+> > > -       &emmc_sdio_clk.common,
+> > > -       &aon2cpu_a2x_clk.common,
+> > > -       &x2x_cpusys_clk.common,
+> > > -       &brom_clk.common,
+> > > -       &bmu_clk.common,
+> > > -       &cpu2aon_x2h_clk.common,
+> > > -       &cpu2peri_x2h_clk.common,
+> > > -       &cpu2vp_clk.common,
+> > > -       &perisys_apb1_hclk.common,
+> > > -       &perisys_apb2_hclk.common,
+> > > -       &perisys_apb3_hclk.common,
+> > > -       &perisys_apb4_hclk.common,
+> > > -       &npu_axi_clk.common,
+> > > -       &gmac1_clk.common,
+> > > -       &padctrl1_clk.common,
+> > > -       &dsmart_clk.common,
+> > > -       &padctrl0_clk.common,
+> > > -       &gmac_axi_clk.common,
+> > > -       &gpio3_clk.common,
+> > > -       &gmac0_clk.common,
+> > > -       &pwm_clk.common,
+> > > -       &qspi0_clk.common,
+> > > -       &qspi1_clk.common,
+> > > -       &spi_clk.common,
+> > > -       &uart0_pclk.common,
+> > > -       &uart1_pclk.common,
+> > > -       &uart2_pclk.common,
+> > > -       &uart3_pclk.common,
+> > > -       &uart4_pclk.common,
+> > > -       &uart5_pclk.common,
+> > > -       &gpio0_clk.common,
+> > > -       &gpio1_clk.common,
+> > > -       &gpio2_clk.common,
+> > > -       &i2c0_clk.common,
+> > > -       &i2c1_clk.common,
+> > > -       &i2c2_clk.common,
+> > > -       &i2c3_clk.common,
+> > > -       &i2c4_clk.common,
+> > > -       &i2c5_clk.common,
+> > > -       &spinlock_clk.common,
+> > > -       &dma_clk.common,
+> > > -       &mbox0_clk.common,
+> > > -       &mbox1_clk.common,
+> > > -       &mbox2_clk.common,
+> > > -       &mbox3_clk.common,
+> > > -       &wdt0_clk.common,
+> > > -       &wdt1_clk.common,
+> > > -       &timer0_clk.common,
+> > > -       &timer1_clk.common,
+> > > -       &sram0_clk.common,
+> > > -       &sram1_clk.common,
+> > > -       &sram2_clk.common,
+> > > -       &sram3_clk.common,
+> > > -};
+> > > -
+> > > -static struct ccu_common *th1520_vo_gate_clks[] =3D {
+> > > -       &axi4_vo_aclk.common,
+> > > -       &gpu_core_clk.common,
+> > > -       &gpu_cfg_aclk.common,
+> > > -       &dpu0_pixelclk.common,
+> > > -       &dpu1_pixelclk.common,
+> > > -       &dpu_hclk.common,
+> > > -       &dpu_aclk.common,
+> > > -       &dpu_cclk.common,
+> > > -       &hdmi_sfr_clk.common,
+> > > -       &hdmi_pclk.common,
+> > > -       &hdmi_cec_clk.common,
+> > > -       &mipi_dsi0_pclk.common,
+> > > -       &mipi_dsi1_pclk.common,
+> > > -       &mipi_dsi0_cfg_clk.common,
+> > > -       &mipi_dsi1_cfg_clk.common,
+> > > -       &mipi_dsi0_refclk.common,
+> > > -       &mipi_dsi1_refclk.common,
+> > > -       &hdmi_i2s_clk.common,
+> > > -       &x2h_dpu1_aclk.common,
+> > > -       &x2h_dpu_aclk.common,
+> > > -       &axi4_vo_pclk.common,
+> > > -       &iopmp_vosys_dpu_pclk.common,
+> > > -       &iopmp_vosys_dpu1_pclk.common,
+> > > -       &iopmp_vosys_gpu_pclk.common,
+> > > -       &iopmp_dpu1_aclk.common,
+> > > -       &iopmp_dpu_aclk.common,
+> > > -       &iopmp_gpu_aclk.common,
+> > > -       &mipi_dsi0_pixclk.common,
+> > > -       &mipi_dsi1_pixclk.common,
+> > > -       &hdmi_pixclk.common
+> > > +static struct ccu_gate *th1520_gate_clks[] =3D {
+> > > +       &emmc_sdio_clk,
+> > > +       &aon2cpu_a2x_clk,
+> > > +       &x2x_cpusys_clk,
+> > > +       &brom_clk,
+> > > +       &bmu_clk,
+> > > +       &cpu2aon_x2h_clk,
+> > > +       &cpu2peri_x2h_clk,
+> > > +       &cpu2vp_clk,
+> > > +       &perisys_apb1_hclk,
+> > > +       &perisys_apb2_hclk,
+> > > +       &perisys_apb3_hclk,
+> > > +       &perisys_apb4_hclk,
+> > > +       &npu_axi_clk,
+> > > +       &gmac1_clk,
+> > > +       &padctrl1_clk,
+> > > +       &dsmart_clk,
+> > > +       &padctrl0_clk,
+> > > +       &gmac_axi_clk,
+> > > +       &gpio3_clk,
+> > > +       &gmac0_clk,
+> > > +       &pwm_clk,
+> > > +       &qspi0_clk,
+> > > +       &qspi1_clk,
+> > > +       &spi_clk,
+> > > +       &uart0_pclk,
+> > > +       &uart1_pclk,
+> > > +       &uart2_pclk,
+> > > +       &uart3_pclk,
+> > > +       &uart4_pclk,
+> > > +       &uart5_pclk,
+> > > +       &gpio0_clk,
+> > > +       &gpio1_clk,
+> > > +       &gpio2_clk,
+> > > +       &i2c0_clk,
+> > > +       &i2c1_clk,
+> > > +       &i2c2_clk,
+> > > +       &i2c3_clk,
+> > > +       &i2c4_clk,
+> > > +       &i2c5_clk,
+> > > +       &spinlock_clk,
+> > > +       &dma_clk,
+> > > +       &mbox0_clk,
+> > > +       &mbox1_clk,
+> > > +       &mbox2_clk,
+> > > +       &mbox3_clk,
+> > > +       &wdt0_clk,
+> > > +       &wdt1_clk,
+> > > +       &timer0_clk,
+> > > +       &timer1_clk,
+> > > +       &sram0_clk,
+> > > +       &sram1_clk,
+> > > +       &sram2_clk,
+> > > +       &sram3_clk,
+> > > +};
+> > > +
+> > > +static struct ccu_gate *th1520_vo_gate_clks[] =3D {
+> > > +       &axi4_vo_aclk,
+> > > +       &gpu_core_clk,
+> > > +       &gpu_cfg_aclk,
+> > > +       &dpu0_pixelclk,
+> > > +       &dpu1_pixelclk,
+> > > +       &dpu_hclk,
+> > > +       &dpu_aclk,
+> > > +       &dpu_cclk,
+> > > +       &hdmi_sfr_clk,
+> > > +       &hdmi_pclk,
+> > > +       &hdmi_cec_clk,
+> > > +       &mipi_dsi0_pclk,
+> > > +       &mipi_dsi1_pclk,
+> > > +       &mipi_dsi0_cfg_clk,
+> > > +       &mipi_dsi1_cfg_clk,
+> > > +       &mipi_dsi0_refclk,
+> > > +       &mipi_dsi1_refclk,
+> > > +       &hdmi_i2s_clk,
+> > > +       &x2h_dpu1_aclk,
+> > > +       &x2h_dpu_aclk,
+> > > +       &axi4_vo_pclk,
+> > > +       &iopmp_vosys_dpu_pclk,
+> > > +       &iopmp_vosys_dpu1_pclk,
+> > > +       &iopmp_vosys_gpu_pclk,
+> > > +       &iopmp_dpu1_aclk,
+> > > +       &iopmp_dpu_aclk,
+> > > +       &iopmp_gpu_aclk,
+> > > +       &mipi_dsi0_pixclk,
+> > > +       &mipi_dsi1_pixclk,
+> > > +       &hdmi_pixclk
+> > >  };
+> > >
+> > >  static const struct regmap_config th1520_clk_regmap_config =3D {
+> > > @@ -1153,7 +1147,7 @@ struct th1520_plat_data {
+> > >         struct ccu_common **th1520_pll_clks;
+> > >         struct ccu_common **th1520_div_clks;
+> > >         struct ccu_mux    **th1520_mux_clks;
+> > > -       struct ccu_common **th1520_gate_clks;
+> > > +       struct ccu_gate   **th1520_gate_clks;
+> > >
+> > >         int nr_clks;
+> > >         int nr_pll_clks;
+> > > @@ -1192,7 +1186,6 @@ static int th1520_clk_probe(struct
+> > > platform_device *pdev)
+> > >
+> > >         struct regmap *map;
+> > >         void __iomem *base;
+> > > -       struct clk_hw *hw;
+> > >         int ret, i;
+> > >
+> > >         plat_data =3D device_get_match_data(&pdev->dev);
+> > > @@ -1251,20 +1244,15 @@ static int th1520_clk_probe(struct
+> > > platform_device *pdev)
+> > >         }
+> > >
+> > >         for (i =3D 0; i < plat_data->nr_gate_clks; i++) {
+> > > -               struct ccu_gate *cg =3D hw_to_ccu_gate(&plat_data-
+> > > >th1520_gate_clks[i]->hw);
+> > > +               struct ccu_gate *cg =3D plat_data-
+> > > >th1520_gate_clks[i];
+> > >
+> > > -               plat_data->th1520_gate_clks[i]->map =3D map;
+> > > +               cg->gate.reg =3D base + cg->reg;
+> > >
+> > > -               hw =3D devm_clk_hw_register_gate_parent_data(dev,
+> > > -                                                          cg-
+> > > >common.hw.init->name,
+> > > -                                                          cg-
+> > > >common.hw.init->parent_data,
+> > > -                                                          cg-
+> > > >common.hw.init->flags,
+> > > -                                                          base +
+> > > cg->common.cfg0,
+> > > -                                                          ffs(cg-
+> > > >enable) - 1, 0, NULL);
+> > > -               if (IS_ERR(hw))
+> > > -                       return PTR_ERR(hw);
+> > > +               ret =3D devm_clk_hw_register(dev, &cg->gate.hw);
+> > > +               if (ret)
+> > > +                       return ret;
+> > >
+> > > -               priv->hws[cg->common.clkid] =3D hw;
+> > > +               priv->hws[cg->clkid] =3D &cg->gate.hw;
+> > >         }
+> > >
+> > >         if (plat_data =3D=3D &th1520_ap_platdata) {
+> > > --
+> > > 2.50.1
+> > >
+> >
+> >
+>
 
-Acked-by: Jocelyn Falempe <jfalempe@redhat.com>
 
-> 
-> Link: https://github.com/Rust-for-Linux/linux/issues/1075
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <lossin@kernel.org>
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->   drivers/gpu/drm/drm_panic_qr.rs | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-> index 09a9b452e8b7..10bc5bb16992 100644
-> --- a/drivers/gpu/drm/drm_panic_qr.rs
-> +++ b/drivers/gpu/drm/drm_panic_qr.rs
-> @@ -948,7 +948,7 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
->           // nul-terminated string.
->           let url_cstr: &CStr = unsafe { CStr::from_char_ptr(url) };
->           let segments = &[
-> -            &Segment::Binary(url_cstr.as_bytes()),
-> +            &Segment::Binary(url_cstr.to_bytes()),
->               &Segment::Numeric(&data_slice[0..data_len]),
->           ];
->           match EncodedMsg::new(segments, tmp_slice) {
-> 
-
+--=20
+Best Regards
+ Guo Ren
 
