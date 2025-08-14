@@ -1,102 +1,118 @@
-Return-Path: <linux-kernel+bounces-769603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C403B270E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF2AB270E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3481CC727B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:35:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4371CC8400
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDA627466C;
-	Thu, 14 Aug 2025 21:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E43027978C;
+	Thu, 14 Aug 2025 21:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Fr6mFjpj"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blhHXW/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02B81F1302
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F65273D66;
+	Thu, 14 Aug 2025 21:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755207278; cv=none; b=VjeHp3WtxdGTdSXUd1ZlU+W/R+KAiLLOr66YVha0490+3VcXhskR62tKZdprL8eYlm1UO4fBgp8ERMlOiNWAmiFR4H29cmvn/of9ehJcSoZ+xzWvzxQYbtA5mnZvgIujSCoobK/UWZpjcAbgr+T1VfJJZ5zUkSkfM1pfrgUUGWU=
+	t=1755207302; cv=none; b=B23xMxIyVJi4N6Miv3DfI5ZAvjhKzTxF5/k/sKUL2x7aWZVjOs2Wt0Cvs+781JQTIqr9m4Oi7Gox6Yv2H/A+vnF2SFSKgqsb6DEpoSuQ4lxWUBNHqt/Kl3uEHy+z7jWvtZwQct+PDbYhnO8bELIy3nD6UQlRG5cmtxO7AAS67jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755207278; c=relaxed/simple;
-	bh=tgBYTFxojyYhsq3L2znxGzpSLso4z44wOo0YEEteNIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XValxyNf1M5wyUGJ8493IqCkmFyy1/hEiQjjlF6ceCvAOXYSQk49aocwTjUeZbR6PT8EJi3mrKHJEx/c2ax/PGokXua3YorBzsO8dRVVoVxXfxqOehjIsSlzwfE4TmZ1IYCjmLzR0jAt1zrFXUB50EJxiOCNrVPZs+Jz/Tw7oSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Fr6mFjpj; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <7f5982e9-6f62-4bc8-87d3-a2d18a6d6aba@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755207264;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/KWT4TAq5U72A4q56Qgy9kGseEvaQixIPL2uXHQI/oM=;
-	b=Fr6mFjpj0KV+uh3aiH9HAqKAlSPZOlwXishJpVVd1cTQXNyOQa67Twq0S2ulAar7E2O44V
-	gQtzamKyEOoO8bqY0BedT+nEUvA9F5gRiSbvwZG7Dj09q2yXcBHa7I4SUG1qU6yJoCSd8Y
-	AGOahdt81af1c/MSHglx468niDM+Uuc=
-Date: Thu, 14 Aug 2025 17:34:15 -0400
+	s=arc-20240116; t=1755207302; c=relaxed/simple;
+	bh=GvoyGKqpqnHQJSALXhthHHrNNHtaAxyrM6RIwsD7nxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JpEvKf7ZAVdj7FDL+uaxZQXzPA8HHR/uS2rZ/OLReRuyX29p7j0/n91844B7pRCwQD7mbmiYrOWh/qhfdDpKTK33uslTtZQ518nOaHNCI6BDXNjTfOdfQTf8NvA/G2NrD7S+x/LbVLNKRQmIkBizHbD6bMz2zlNhF1hKDQKz4Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blhHXW/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1042AC4CEED;
+	Thu, 14 Aug 2025 21:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755207302;
+	bh=GvoyGKqpqnHQJSALXhthHHrNNHtaAxyrM6RIwsD7nxg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=blhHXW/tcU8US0K9ykVQNg6im++CWMJR1dMKKDcy0JOCG+vTNxnwVThv6Z6zAGOLO
+	 VxgkarhYEhel4wJ75IdNKvxCCdQaubroTRJ+UwFdNibe0MK8/PrutvlvjfHpSMNOvj
+	 37bBbWz9JhQSOIXmj9pD/GiZb+hwcqQGMDiC7Dt0mWTU8BoHwrJT7oU5VTd5XWM80A
+	 tykcWTq1Ake8DE/Mwwi49INT6USI80Rs3o/c8TyLF6/0WL0x9TedXTlgcmS4GrGNTi
+	 MYnOuUhD1TEVSWfHGVteilmlYCaPHT0F00puIBsYNUuroRmpUTzH+piXFRgx7vhWIO
+	 iRxr4LWF6CDxw==
+Date: Thu, 14 Aug 2025 16:35:00 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mpillai@cadence.com,
+	fugang.duan@cixtech.com, guoyin.chen@cixtech.com,
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 03/13] PCI: cadence: Add register definitions for
+ HPA(High Perf Architecture)
+Message-ID: <20250814213500.GA350257@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 1/9] dt-bindings: spi: Add spi-buses property
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>,
- Michal Simek <michal.simek@amd.com>, linux-spi@vger.kernel.org
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-References: <20250616220054.3968946-1-sean.anderson@linux.dev>
- <20250616220054.3968946-2-sean.anderson@linux.dev>
- <1a87f436-317b-40e0-a655-cd82f969f22e@baylibre.com>
- <5b02293b-9c86-441b-9344-2d0263eb1659@linux.dev>
- <5bbdddaf-4ff1-4cff-a933-143160896717@baylibre.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <5bbdddaf-4ff1-4cff-a933-143160896717@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813042331.1258272-4-hans.zhang@cixtech.com>
 
-On 8/14/25 17:17, David Lechner wrote:
-> On 8/14/25 4:15 PM, Sean Anderson wrote:
->> On 8/14/25 16:55, David Lechner wrote:
->>> On 6/16/25 5:00 PM, Sean Anderson wrote:
->>>> From: David Lechner <dlechner@baylibre.com>
->>>>
->>>> Add a spi-buses property to the spi-peripheral-props binding to allow
->>>> specifying the SPI bus or buses that a peripheral is connected to in
->>>> cases where the SPI controller has more than one physical SPI bus.
->>>>
->>>> Signed-off-by: David Lechner <dlechner@baylibre.com>
->>>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->>>> ---
->>>>
->>> FYI, Mark's filters won't pick up `dt-bindings: spi:`, we need to change
->>> the subject line to `spi: dt-bindings:` on the next revision.
->>>
->> 
->> Sounds like he should fix his filter then.
->> 
->> --Sean
+On Wed, Aug 13, 2025 at 12:23:21PM +0800, hans.zhang@cixtech.com wrote:
+> From: Manikandan K Pillai <mpillai@cadence.com>
 > 
-> No, this is a documented expectation for contributors. [1] says that SPI and
-> a few other subsystems want the subsystem first in the subject.
-> 
-> [1]: https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html
+> Add the register offsets and register definitions for HPA(High
+> Performance architecture) PCIe controllers from Cadence.
 
-Hm, this is new to me...
+Add space in "HPA(High Performance architecture)"; also in subject.
 
---Sean
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-hpa-regs.h
 
+> +/*
+> + * HPA (High Performance Architecture) PCIe controller register
+> + */
+
+Typical style would be:
+
+  /* HPA (High Performance Architecture) PCIe controller register */
+
+> +#define CDNS_PCIE_HPA_IP_AXI_MASTER_COMMON	0x01020000
+> +/*
+> + * Address Translation Registers(HPA)
+> + */
+
+Use a one-line comment and add a blank line before it.  Apply below
+too.
+
+> + * Root port register base address
+
+s/Root port/Root Port/ to match spec and usage below.
+
+> + * Endpoint Function BARs(HPA) Configuration Registers
+
+Add space.
+
+> + * Root Port Registers PCI config space(HPA) for root port function
+
+Add space.
+
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> @@ -22,10 +22,6 @@ struct cdns_plat_pcie {
+>  	struct cdns_pcie        *pcie;
+>  };
+>  
+> -struct cdns_plat_pcie_of_data {
+> -	bool is_rc;
+> -};
+
+Everything from here down is (as Krzysztof pointed out) much different
+than the above and should be in a separate patch so the commit log can
+be more specific.
+
+Bjorn
 
