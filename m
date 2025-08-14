@@ -1,64 +1,56 @@
-Return-Path: <linux-kernel+bounces-768969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC281B2687A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:05:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40765B2683C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79F3F1CE436B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:58:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21D1A4E5AFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0E0301029;
-	Thu, 14 Aug 2025 13:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21816301470;
+	Thu, 14 Aug 2025 13:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="imZmxmTd"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="a1S3lmav"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BEF3002CA;
-	Thu, 14 Aug 2025 13:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EB22FCBF1;
+	Thu, 14 Aug 2025 13:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179860; cv=none; b=PC/8/bXWwcp8hcT1kRkMptRmC6eVwh+UFVQeSuJ6fU3iDO8xCEUpTDVUavRKZHtZYYl/2adCLPtt5UOSKQm8Owxti2nOBINtAxfyXG7x2sIxKomd3s11C2xvYZEls4znA+I57EabshnzoNM+Npk630GsQHBPf4jTySVU70VNFYA=
+	t=1755179879; cv=none; b=uA2iLeqi1j1dHwUPoVQ8A9hlmsWm0pDz29o0qUpmntv3+RgUhXehtMGRtLx9eG8WuxjmhxAgLhDV9gXB8x7k64HDqlJ6wymG5dvGo5nrQE8zDHLr+ZBV60pdvfwpu8E/qD30Lkmv+PKwqPuXRPhgkBxT5z24nW+1CD5AJ6TITbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179860; c=relaxed/simple;
-	bh=HDp76a4HRw4RvUGfcdrg8MD9/AGTIv3ub3NY3or0h6o=;
+	s=arc-20240116; t=1755179879; c=relaxed/simple;
+	bh=00L8Plgo1muOZEE6yX/bScl7169HxigOb92OdTXvj6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mzAw6lp8pywjPAbjpqyyJSWpb2x8kIuCatIw/LTRlXD4+s4I2+WuCmMNHmHxtFi8JYFzV/UVDNhZRV7PThtWTme9KCzCeWT7VgJLCy8NkfZFR8f6GCOk89zDKDa/b32OVXJ4hGlkY9cvfo3oFdZEgqXlll0Hq0+xQEde8vtPbIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=imZmxmTd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED100C4CEEF;
-	Thu, 14 Aug 2025 13:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755179859;
-	bh=HDp76a4HRw4RvUGfcdrg8MD9/AGTIv3ub3NY3or0h6o=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6XUKk20mP730bi1OnMzMmGXTJX6a7OXpYA6/4+4iJ14WGEj24FinjcV75I4ooE2/sDyTESvrDum0Av4RripQi0LVJ/POJvJIWyk4rUs4T9Egb3kWDJrYLf/a1tRs6V5PILCtAnwo8MokXptIQF4zn9sRz98Z3msK2b+RVy+O6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=a1S3lmav; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 196A2C4CEED;
+	Thu, 14 Aug 2025 13:57:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755179878;
+	bh=00L8Plgo1muOZEE6yX/bScl7169HxigOb92OdTXvj6A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=imZmxmTdpe1DpQe2hutFLPJnz6FQ+NtHcttxRVtIWRW1vjq6Cz5z+4MRI3Qcdv0hp
-	 0iwGzCyH4QvEh27XhRp9eROPm3kXdLBTUNId1qvLK7Y3Vhd0OXSJm+kHW45xQyVck8
-	 GplxT5bs5/vAEjtXe3UhrJZXe9XQdvFgFd5prum3QO4z93uT+FRnRMyG9+bG5hAtI+
-	 HSXxH/2hMcuv6Zsa+q3583JvcYa+DvwKHLGwGVnAImA+/IAWueIoFFAuikuxGa6HRE
-	 3I/kNxoP7WT19h6GnMRJ2/CGFFD2uhEIZfBM8DCrztMzDvFCcPGvATyFPD7NoAjmTv
-	 NHRvFICWhyOsw==
-Date: Thu, 14 Aug 2025 08:57:31 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Harrison Vanderbyl <harrison.vanderbyl@gmail.com>, 
-	marcus@nazgul.ch, kirill@korins.ky, vkoul@kernel.org, kishon@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mani@kernel.org, 
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org, agross@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH 3/3] dts: describe x1e80100 ufs
-Message-ID: <r52n5wfjsfrdotrawjes5pscrcyd5jwnsxkue7v5x55gq3ad3o@egwactada25n>
-References: <20250814005904.39173-1-harrison.vanderbyl@gmail.com>
- <20250814005904.39173-4-harrison.vanderbyl@gmail.com>
- <tlkv63ccpnti367am47ymhaw3agjnyuonqstgtfaazhhptvgsp@q4wzuzdph323>
- <57ce520f-a562-471f-b6b4-44f0766a7556@kernel.org>
- <aa0ed59a-4eb6-4f7f-b430-4976ee9724d8@oss.qualcomm.com>
- <433e1189-e2b6-4299-9fa7-13e7994ec89c@kernel.org>
- <25c5vwdgrfar6rz657nyijan7ozo5nzyyxb2w26wf5rvxftkvm@wy2fbsi77prj>
+	b=a1S3lmavTCmHq0GuVZEGqSDcHNBd1421699LqSu1KFIhCZ74Wi7CiX1c8+vYB5s4t
+	 NRxg7Kjxc9//LG6eKfDzCB4nmwT9bsRVyX9pvf3Y2XvkxAXC3YM8msbKJ7lx5W/GZR
+	 fDt20911pdG30fQfPQ79NtdZNSf8jlTbzFLkd6SU=
+Date: Thu, 14 Aug 2025 15:57:55 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Julian Taylor <julian.taylor@1und1.de>
+Cc: patchwork-bot+netdevbpf@kernel.org, Fedor Pchelkin <pchelkin@ispras.ru>,
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+	kuniyu@google.com, edumazet@google.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org, stable@vger.kernel.org
+Subject: Re: [PATCH net] netlink: avoid infinite retry looping in
+ netlink_unicast()
+Message-ID: <2025081422-monetize-ferocity-fe28@gregkh>
+References: <20250728080727.255138-1-pchelkin@ispras.ru>
+ <175392900576.2584771.4406793154439387342.git-patchwork-notify@kernel.org>
+ <9fa0c0ea-9c5d-4039-856f-222486283a3c@1und1.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,42 +59,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <25c5vwdgrfar6rz657nyijan7ozo5nzyyxb2w26wf5rvxftkvm@wy2fbsi77prj>
+In-Reply-To: <9fa0c0ea-9c5d-4039-856f-222486283a3c@1und1.de>
 
-On Thu, Aug 14, 2025 at 02:26:07PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Aug 14, 2025 at 01:18:46PM +0200, Krzysztof Kozlowski wrote:
-> > On 14/08/2025 11:46, Konrad Dybcio wrote:
-> > > On 8/14/25 8:59 AM, Krzysztof Kozlowski wrote:
-> > >> On 14/08/2025 04:42, Bjorn Andersson wrote:
-> > >>> On Thu, Aug 14, 2025 at 10:59:04AM +1000, Harrison Vanderbyl wrote:
-> > >>>
-> > >>> Welcome to LKML, Harrison. Some small things to improve.
-> > >>>
-> > >>> Please extend the subject prefix to match other changes in the files of
-> > >>> each patch, e.g. this one would be "arm64: dts: qcom: x1e80100: ".
-> > >>>
-> > >>> "git log --oneline -- file" is your friend here.
-> > >>>
-> > >>>> Describe device tree entry for x1e80100 ufs device
-> > >>
-> > >> This is duplicating earlier patches:
-> > >> https://lore.kernel.org/all/szudb2teaacchrp4kn4swkqkoplgi5lbw7vbqtu5vhds4qat62@2tciswvelbmu/
-> > > 
-> > > (that submitter clearly expressed lack of interest in proceeding)
-> > > 
+On Thu, Aug 14, 2025 at 02:51:27PM +0200, Julian Taylor wrote:
+> 
+> On 31.07.25 04:30, patchwork-bot+netdevbpf@kernel.org wrote:
+> > Hello:
 > > 
-> > Sure, would be good though to reflect that - provide summary of previous
-> > discussions, changelogs or at least give links.
+> > This patch was applied to netdev/net.git (main)
+> > by Jakub Kicinski <kuba@kernel.org>:
+> > 
+> > On Mon, 28 Jul 2025 11:06:47 +0300 you wrote:
+> > > netlink_attachskb() checks for the socket's read memory allocation
+> > > constraints. Firstly, it has:
+> > > 
+> > >    rmem < READ_ONCE(sk->sk_rcvbuf)
+> > > 
+> > > to check if the just increased rmem value fits into the socket's receive
+> > > buffer. If not, it proceeds and tries to wait for the memory under:
+> > > 
+> > > [...]
+> > 
+> > Here is the summary with links:
+> >    - [net] netlink: avoid infinite retry looping in netlink_unicast()
+> >      https://git.kernel.org/netdev/net/c/759dfc7d04ba
+> > 
+> > You are awesome, thank you!
 > 
-> ... Also keep authorship and SoB chain.
+> hello,
+> as far as I can tell this patch has not made it to the 6.1 stable tree yet in the 6.1.148 review yet:
+> https://www.spinics.net/lists/stable/msg866199.html
+
+Please use lore.kernel.org links.
+
+> As this seems to be causing issues in distributions releasing 6.1.147 can this still be added to the next possible stable release?
+> See following issues in relation to loading audit rules which seems to trigger the fixed bug:
+> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1111017
+> https://github.com/amazonlinux/amazon-linux-2023/issues/988
 > 
+> I have tested this patch solves the problem in the Debian bookworm using 6.1.x
 
-If it's based on those patches yes, otherwise no.
+What is the git commit id of this patch in Linus's tree?
 
-Regards,
-Bjorn
+thanks,
 
-> -- 
-> With best wishes
-> Dmitry
+greg k-h
 
