@@ -1,106 +1,96 @@
-Return-Path: <linux-kernel+bounces-769078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7107FB269F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A66F7B269F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC5D5602CA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:38:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3CB7603F5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFAD1DF247;
-	Thu, 14 Aug 2025 14:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1311DDA09;
+	Thu, 14 Aug 2025 14:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SyUENzi3"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b24WctMM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C7B321428;
-	Thu, 14 Aug 2025 14:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6361A1C8604;
+	Thu, 14 Aug 2025 14:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755182273; cv=none; b=WQvxLaMzg0MNpyYenvhKpQ4cabB+jTIpYm5LA5VYeTrq1WTCSmplslGR6xkb03mCYj7r1kAigKEm3h8MMAzxc7YSn+8SXHSrDb6vqaGDL36j5qyYJus/4G/Y+bonDqVHNHX+g8JCxket/H/T62trK0oUxmFI6uO8zcM10EWQOk8=
+	t=1755182287; cv=none; b=AnnpLU36VbXZBv4XXo50RHEt8UDureVftodMM7ddgfxz1YPUkE4UQle4SYsaKq62AmIcj85JduWZS/4zaz7ROsMiQkRtnKtS7Ob3FVg5JbuJJq1bI+QF8FlWZsLYOEdBFdur9rJxYm9QvHny9WuflTcoXfSQbwKj2P6/5rY1h9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755182273; c=relaxed/simple;
-	bh=V9N00Nz47F+r23uiQqjpLoPEPkgzHhQb2JmjTGvHkOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6K8RWSzaVTiWNwHaVa0Yxqx2TxxfrU9GRwa7BmFLJbyo92SnyiZRoRRo1VP6jHZw+0I6MZBPr5CyKPMhPPj9NL3rfeHJh3j9FGoUFldli4/n5mfBlTQZLLBNpWepjEWV3eStKNFKnBLwTn3WvUy2LeXK51QUyZNl2jGNE29gso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SyUENzi3; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=eDgRnsuLo8vubpJ2VjlcjumR5pIerCmW/K+TXJ575Pg=; b=SyUENzi3LjRgnMVxZh9rxyPzEb
-	pvjQGv+BzBjZNJOoDdH1M5wIrmhjf8BYuSm0iS4vljrHEukpEaSYTVBLTtdm7Cu6vwB8npzhj2AWW
-	pVxFXgxAZ8I5z3fWWo0KGJSvZ69RB5OrUqwhnfWUWdirkyxkhnSNV30tLX2DIPVkFi3PQ7mmyXg8+
-	sBV6ANNZjFCzy0gjxtBAMoB5CVQ9ZZYGtE/c7snxaNtYteGpWDA9AuL4hA93TA4MpDfacuYwY+EQX
-	K7o3nvZPdYInwTfBUSKDNTySR0FsnxrOOTDy7Gsu7pWFuERAFxKnYHtMvtZbJwMfjqAuaRAWB2E+y
-	nbFygHyg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umZ4w-0000000GS8T-0A08;
-	Thu, 14 Aug 2025 14:37:18 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 550C7302DA9; Thu, 14 Aug 2025 16:37:17 +0200 (CEST)
-Date: Thu, 14 Aug 2025 16:37:17 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	Michal Hocko <mhocko@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	len brown <len.brown@intel.com>, pavel machek <pavel@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Nico Pache <npache@redhat.com>, xu xin <xu.xin16@zte.com.cn>,
-	wangfushuai <wangfushuai@baidu.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>, linux-pm@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/9] freezer: Introduce freeze priority model to
- address process dependency issues
-Message-ID: <20250814143717.GY4067720@noisy.programming.kicks-ass.net>
-References: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1755182287; c=relaxed/simple;
+	bh=i1ya4O+2sgXRQ0m2vn05huEoTs/xcbYP6DzOFb5bANw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=R7R21cvriqs7ZRuebtlfZXwe8yPdZPXRuv2HTX0eD+Zpw4LOywfxqEkPm8b7uwDWAsu3efmGOamr659ipZUUS8LnEC6goLA71KEfwf4eddGObOpgE3y0ZP4Aax7teCezzoiURGwghW2pJ3neev61OktbNay390iHH44k8r0Gic8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b24WctMM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B47AC4CEED;
+	Thu, 14 Aug 2025 14:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755182286;
+	bh=i1ya4O+2sgXRQ0m2vn05huEoTs/xcbYP6DzOFb5bANw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=b24WctMMtww4etyiwdlBi6HiUrE7kblwcncUDrp+e1cdswaaw8rJQoA7NvMM6lf19
+	 KKSQlb+JmPUnSAXffGLbBXu70yoyt5OPKzIAxNAStZWYsTchR6R8OJfqxLUoPZ5Vk+
+	 zMOYVry1hUCrLveh+Z+XRU3YdQtFa5kmFAb5vb6m0yDBAZMnpVlBydRORl+eAet4l8
+	 y3Zvjj02eQizg9ZNJTQIDvhccm31lDsBNefG2SqPCS/9BNZr3ogMjMl5wORglSxHye
+	 zWVGjMIzmS1uHmYCyWVsv0l5rVAEk0F9BybpRBkb4dsYkfj6WiL9Q0AYn0T+HsdQpg
+	 R4oEC3JQobgKw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: achill@achill.org,
+	akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.1 000/253] 6.1.148-rc1 review
+Date: Thu, 14 Aug 2025 16:37:44 +0200
+Message-ID: <20250814143744.2340961-1-ojeda@kernel.org>
+In-Reply-To: <20250812172948.675299901@linuxfoundation.org>
+References: <20250812172948.675299901@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250807121418.139765-1-zhangzihuan@kylinos.cn>
 
-On Thu, Aug 07, 2025 at 08:14:09PM +0800, Zihuan Zhang wrote:
+On Tue, 12 Aug 2025 19:26:28 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.148 release.
+> There are 253 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Aug 2025 17:27:05 +0000.
+> Anything received after that time might be too late.
 
-> Freeze Window Begins
-> 
->     [process A] - epoll_wait()
->         │
->         ▼
->     [process B] - event source (already frozen)
-> 
+Boot-tested under QEMU for Rust x86_64:
 
-Can we make epoll_wait() TASK_FREEZABLE? AFAICT it doesn't hold any
-resources, it just sits there waiting for stuff.
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
+
+Thanks!
+
+Cheers,
+Miguel
 
