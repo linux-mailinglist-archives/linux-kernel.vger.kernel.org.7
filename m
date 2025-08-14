@@ -1,158 +1,96 @@
-Return-Path: <linux-kernel+bounces-768375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C37B2607B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:16:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE61B26060
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65E0E881F61
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:09:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A2393AC182
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBC12F28E8;
-	Thu, 14 Aug 2025 09:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5196F2F3C08;
+	Thu, 14 Aug 2025 09:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="goePpoV4"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SQ0N564n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A86D2E92C9;
-	Thu, 14 Aug 2025 09:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7022E7659;
+	Thu, 14 Aug 2025 09:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755162429; cv=none; b=J58uezCqM4aKiGV2Q1/81KZxpjJ57x/PgVmTJIUmscv756r1bYxN53m5qNaAmWvoCMt+fqIehpnZemEdfxyg+6dEM1IRE66gULrFPDL1UPGfn0Zo75A4QBOPRtnrS/H8FxPt9tVMeur3iJMdvmr8Ub/bJwvbQSRW+vU7CHC2SKk=
+	t=1755162235; cv=none; b=Vs1MEJTHAcx5mjGhBqCH/+YYe6pdXQQofXI/9w57A89Aycv7lH27vL887zWU1sVIrVJhpp3GCIHgA6/xfYGNoN2JCNiohah8ZZVd7Sebce0qfG2hQh3gUB1TDmuRbS63xZBE5w+FeR0wcrX7X3mErdU/tjVNyB2UIOUsddXGf1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755162429; c=relaxed/simple;
-	bh=Oz25PrJT73NTSuDI+0EIdhpAxjaJMOCBOM65v5PEcuw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmO9E5HzMf6HaMclTn2XTbUlIPjj4k3hA8RibbL3Z3dl4txS0gEM80ZmSPRQbvwBJCrLv8CQu1EofUcnkW22HZDqBGFesru9pbklw48CAzFHDIjLRYe8Rc8F/fwOfWNeGHPa4TJeStgvBnzD+kX05flGK2iM+skWjm68TArEx9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=goePpoV4; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1755162427; x=1786698427;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Oz25PrJT73NTSuDI+0EIdhpAxjaJMOCBOM65v5PEcuw=;
-  b=goePpoV4EP8cc33JOmw0Cpwv6vUwzX1aP0R0T19uAtDnl5BFFm2yAFNg
-   W93NXY2OO/K087IdHqpurcepmhbDUs3TF7upDDX19QKHLXRxD8S4rAy5+
-   QqD0Ba/JpILAPvDb42XJtOSjy71z0mrfNy3oHqRCf9skfjbkKIAty/+KN
-   nDkm1ctnTz8QXhz0MozBLnrlp2oNePlQZWFRDGBqRFRURiJ5v2JNCreFi
-   QDAeMvGat3o/85kAcnliAKH9qRScUSctljiDltGL3Q5cxoRh/YZ/F/p2r
-   bi2+QcH2K1C4dFrK6KNFIGFJqAtrRtOwX8JVRHN+NoYXG+o9xnLnbh1Dn
-   Q==;
-X-CSE-ConnectionGUID: yj3lUMp6SW2eGwJyvl0idQ==
-X-CSE-MsgGUID: Dyac/4emT1Kx5ST6zmZa2w==
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="50710161"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2025 02:07:05 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 14 Aug 2025 02:06:05 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Thu, 14 Aug 2025 02:06:05 -0700
-Date: Thu, 14 Aug 2025 11:02:48 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>, <viro@zeniv.linux.org.uk>,
-	<atenart@kernel.org>, <quentin.schulz@bootlin.com>, <olteanv@gmail.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net v2] phy: mscc: Fix timestamping for vsc8584
-Message-ID: <20250814090248.e7o6rzfr7vfcgfsc@DEN-DL-M31836.microchip.com>
-References: <20250806054605.3230782-1-horatiu.vultur@microchip.com>
- <b25635ec-0ab3-4c90-9fb9-b9c5c1748590@linux.dev>
+	s=arc-20240116; t=1755162235; c=relaxed/simple;
+	bh=e2qQbRBaFDNvV40/R1RQd1nVKyDREqVwNZLAVjRA3ps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FNbIc4tIzc6iNtRmq8uIqG/4M4ekqcdSrJkaqNUdPMcsGAkPKt9bKvZ1MxqdaApETQF91N8vqh1s7e30oAER32yQnmun/crOwgO0XQ9SSnhXDAfs6xBnNlWcmYNSUVWMZLzmwtSlv6Wb5dkupSADyYmvYfw1YDs2KbmhcAQRGqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SQ0N564n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 933EAC4CEED;
+	Thu, 14 Aug 2025 09:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755162235;
+	bh=e2qQbRBaFDNvV40/R1RQd1nVKyDREqVwNZLAVjRA3ps=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SQ0N564ncfEBKq80YfoU6NDnrtlP+g+lazVUhMhY3X83HbKptYK5/EXo3Z9SJPJyE
+	 cDZwLGlIZqpDdVtI9kwpX9Gu+YIJ44Y+drzuIReWAEXVH0XTrprIOdwbQ2zgFR/y/K
+	 3uO6vy63iD2fF1jt6KeL0FeCHj/t5VIVQhB7k69A=
+Date: Thu, 14 Aug 2025 11:03:51 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Hardeep Sharma <quic_hardshar@quicinc.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Hannes Reinecke <hare@suse.de>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 6.6.y v2 1/1] block: Fix bounce check logic in
+ blk_queue_may_bounce()
+Message-ID: <2025081450-pacifist-laxative-bb4c@gregkh>
+References: <20250814063655.1902688-1-quic_hardshar@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b25635ec-0ab3-4c90-9fb9-b9c5c1748590@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250814063655.1902688-1-quic_hardshar@quicinc.com>
 
-The 08/13/2025 22:51, Vadim Fedorenko wrote:
+On Thu, Aug 14, 2025 at 12:06:55PM +0530, Hardeep Sharma wrote:
+> Buffer bouncing is needed only when memory exists above the lowmem region,
+> i.e., when max_low_pfn < max_pfn. The previous check (max_low_pfn >=
+> max_pfn) was inverted and prevented bouncing when it could actually be
+> required.
+> 
+> Note that bouncing depends on CONFIG_HIGHMEM, which is typically enabled
+> on 32-bit ARM where not all memory is permanently mapped into the kernel’s
+> lowmem region.
+> 
+> Branch-Specific Note:
+> 
+> This fix is specific to this branch (6.6.y) only.
+> In the upstream “tip” kernel, bounce buffer support for highmem pages
+> was completely removed after kernel version 6.12. Therefore, this
+> modification is not possible or relevant in the tip branch.
+> 
+> Fixes: 9bb33f24abbd0 ("block: refactor the bounce buffering code")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Hardeep Sharma <quic_hardshar@quicinc.com>
 
-Hi Vadim,
+Why do you say this is only for 6.6.y, yet your Fixes: line is older
+than that?
 
-> 
-> On 06/08/2025 06:46, Horatiu Vultur wrote:
-> > There was a problem when we received frames and the frames were
-> > timestamped. The driver is configured to store the nanosecond part of
-> > the timestmap in the ptp reserved bits and it would take the second part
-> > by reading the LTC. The problem is that when reading the LTC we are in
-> > atomic context and to read the second part will go over mdio bus which
-> > might sleep, so we get an error.
-> > The fix consists in actually put all the frames in a queue and start the
-> > aux work and in that work to read the LTC and then calculate the full
-> > received time.
-> 
-> The expectation here is that aux worker will kick in immediately and the
-> processing will happen within 1 second of the first stamped skb in the
-> list. Why cannot you keep cached value of PHC, which is updated roughly
-> every 500ms and use it to extend timestamp? Your aux worker will be much
-> simpler, and packet processing will be faster...
+And why wasn't this ever found or noticed before?
 
-Thanks for the suggestion but I don't think it would work in this case.
-(if I understood correctly).
-The problem is that I don't know if the cache value happened after or
-before the timestamp. Let me give you an example: If the ns part in the
-received frame is 900ms and the cached value is 2 sec and 400ms. Now I
-don't know if the final timestamp should be 1 sec and 400ms or should be
-2 sec and 900ms.
-I am doing something similar for lan8841 in micrel.c but in that case in
-the PTP header I get also the 2 LS bits of the second and then it is
-easier to see if the timestamp happen before or after the cached was
-updated.
+Also, why can't we just remove all of the bounce buffering code in this
+older kernel tree?  What is wrong with doing that instead?
 
-> 
-> > 
-> > Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
-> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
-> > 
-> > ---
-> > v1->v2:
-> > - use sk_buff_head instead of a list_head and spinlock_t
-> > - stop allocating vsc8431_skb but put the timestamp in skb->cb
-> > ---
-> >   drivers/net/phy/mscc/mscc.h     | 12 ++++++++
-> >   drivers/net/phy/mscc/mscc_ptp.c | 50 +++++++++++++++++++++++++--------
-> >   2 files changed, 50 insertions(+), 12 deletions(-)
-> > 
-> 
-> 
-> [...]
-> 
-> >   /* Shared structure between the PHYs of the same package.
-> > diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
-> > index 275706de5847c..d368d4fd82e17 100644
-> > --- a/drivers/net/phy/mscc/mscc_ptp.c
-> > +++ b/drivers/net/phy/mscc/mscc_ptp.c
-> > @@ -1194,9 +1194,8 @@ static bool vsc85xx_rxtstamp(struct mii_timestamper *mii_ts,
-> >   {
-> >       struct vsc8531_private *vsc8531 =
-> >               container_of(mii_ts, struct vsc8531_private, mii_ts);
-> > -     struct skb_shared_hwtstamps *shhwtstamps = NULL;
-> > +
-> >       struct vsc85xx_ptphdr *ptphdr;
-> 
-> No empty line needed.
+And finally, how was this tested?
 
-Good catch, I will update this in the next version.
+thanks,
 
-> 
-> > -     struct timespec64 ts;
-> >       unsigned long ns;
-> > 
-
--- 
-/Horatiu
+greg k-h
 
