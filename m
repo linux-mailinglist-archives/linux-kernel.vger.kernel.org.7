@@ -1,100 +1,107 @@
-Return-Path: <linux-kernel+bounces-769526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0223CB26FD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:49:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FEDAB26FD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B78CEA02D18
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78DF51BC7805
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288E2246BB3;
-	Thu, 14 Aug 2025 19:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC38247293;
+	Thu, 14 Aug 2025 19:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snY8DzlG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d89+KTlM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ED41FDA94;
-	Thu, 14 Aug 2025 19:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19061246333;
+	Thu, 14 Aug 2025 19:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755200970; cv=none; b=bTEdxPYU97FRJ4Nj50xe/PRHyy4GIi2VolcD3u5RrbhTdZD4icskL1lZFuNcdmrl+1qJHh+3AtbakiZtfJtxdxaDUCYKGPyCqSd9b3rQrNIoDUZ0wNIPAjfX88kN9C07R7IKFphGbR7rEmTRCEx9bZZprGsZbCdxy65mzC8O+nc=
+	t=1755201132; cv=none; b=lQzqrYSlmwDOwTaD9hxofIWoPfmizbNC9n9JjxcYAHECnG/HNy+2ooLLPHW6wUX+u+pjsbe2N4+TzqSYPrQ7TsUNC36KioTytQzfdZ/dnXeXY1N2rLn4q6FZtdYpF4CUSB5m3frYDBJpPc+HOGKdgMRVmaJGlQe8swe5ze63MFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755200970; c=relaxed/simple;
-	bh=FDZFQC0aLlMCsIRJIiDYmFrxp1l6sILU+HNXJsM5qQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ry7JtpG3I7TydS87ZR+HUh08A+TedFKBS6d9BX1R6TUtKQjW2XIrkJbZ6+TEt9c47D37m8sXtgD55pzWoxRbMi4tmtyyu80E6yuEARXxoQqanwZudtp9DH6ozfOO2mH0kjuCEaYJuukMVH25iJLVrVK0qedWdIqsMRmd4ZSJ6/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snY8DzlG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4EA4C4CEED;
-	Thu, 14 Aug 2025 19:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755200969;
-	bh=FDZFQC0aLlMCsIRJIiDYmFrxp1l6sILU+HNXJsM5qQw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=snY8DzlGq82nc4Ja2q23JAy1iXFU9FyOEhT6NkRparTGnSKde838KDBMHolIE2M4i
-	 lyoC1/7jigkjUc5A3LqXutWd7ClVZeUYxLIIDbEvtonryqonrwf4yB3Pr5Pa2067lc
-	 3DjNUvpcDi/bDcQydscUImb0ApGeeA2E4ChKpo0KVrcwUuovzOLh8PF8EQkVUyGAzr
-	 WmV6bLeeQ/7X75pW6JCXWWNaANclMCo1slzO94hw6AIIi8gT5NPeAbt08eRWUbubTy
-	 WGNQO9OS82ukPQVKnBWzxvuVqMtFhDrvdkT/K5vvOjJk2mX/40sqiirY1g01exifDF
-	 hSE6XTysWrvRQ==
-Date: Thu, 14 Aug 2025 20:49:24 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Biju <biju.das.au@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/4] dt-bindings: clock: renesas,r9a09g047-cpg: Add GPT
- core clocks
-Message-ID: <20250814-rehydrate-pamperer-6844756aa66f@spud>
-References: <20250814124832.76266-1-biju.das.jz@bp.renesas.com>
- <20250814124832.76266-4-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1755201132; c=relaxed/simple;
+	bh=e1kx8I4goW+FE7U2pIi+3XcbDQGU5mWZJu8IWiQByck=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=WU+5QczGsQyCMZEvT7rCISJU2CZLSwFvdw9fnlN8U1Mql6UFcm1GIZWmkU698Uamn1IQ1Vu4CffQTpwOm4ZVqNNyjzjnb7X82bEO8kscpoS2y3QTC++X1lCLM8hwCZYMMO9qIx57ekua/sAGeU8jCdUbTOhLz9cctiyzTX7VU8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d89+KTlM; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755201131; x=1786737131;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=e1kx8I4goW+FE7U2pIi+3XcbDQGU5mWZJu8IWiQByck=;
+  b=d89+KTlMZakYD9yeD0WRYtgJeWFKf97UxP4WT99IWESqeT1ZYrJ028+/
+   xpi17z/IXJ/tvVf6I15xGNN2WAkAbQP0LqwPeCgzRHPL99ump1WEGzRf7
+   uzwl8sWldbhxXDGKzsb+EEiEvx/+hMrQpVSQ2O29XDz0iq07f1hYg2V2D
+   jFfRhRe+KLBzzh8v20sYuHs23+TDeA5fo9CHJrnLVU0TueR/O0IkYnnz1
+   /BvhiNVZigT7byBzr7J+wwT60EwLKFekNMOi2JGxo9U2uLmJVsB4Q7lvb
+   mglfEQCZK/jUtLOJlfxIVdkB09cBlaXacz+/TzvmZ4nc/A/qjkv3QeGtT
+   Q==;
+X-CSE-ConnectionGUID: +hjcA+W+ShqR5xP6k5kfmA==
+X-CSE-MsgGUID: fdh+KWaXTH6I/boKzXQPOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="56734453"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="56734453"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 12:52:09 -0700
+X-CSE-ConnectionGUID: JzYJ0BXVTniCPgje69JnmA==
+X-CSE-MsgGUID: Sk2Lw+A+TNKbDQjFbJbs1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="171082797"
+Received: from jjgreens-desk20.amr.corp.intel.com (HELO xpardee-desk.lan) ([10.124.223.90])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 12:52:07 -0700
+From: Xi Pardee <xi.pardee@linux.intel.com>
+To: xi.pardee@linux.intel.com,
+	irenic.rajneesh@gmail.com,
+	david.e.box@linux.intel.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	mpearson@lenovo.com
+Subject: [PATCH] platform/x86:intel/pmc: Update Arrow Lake telemetry GUID
+Date: Thu, 14 Aug 2025 12:51:35 -0700
+Message-ID: <20250814195156.628714-1-xi.pardee@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u1t7YverpT1duXok"
-Content-Disposition: inline
-In-Reply-To: <20250814124832.76266-4-biju.das.jz@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 
+Updated ARL_PMT_DMU_GUID value. Arrow Lake PMT DMU GUID has
+been updated after it was released. This updates ensures that
+the die c6 value is available in the debug filesystem.
 
---u1t7YverpT1duXok
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 83f168a1a437 ("platform/x86/intel/pmc: Add Arrow Lake S support to intel_pmc_core driver")
+Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+---
+ drivers/platform/x86/intel/pmc/core.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Aug 14, 2025 at 01:48:26PM +0100, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->=20
-> Add definitions for GPT core clocks in the R9A09G047 CPG DT bindings
-> header file.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+index 4a94a4ee031e6..24139617eef61 100644
+--- a/drivers/platform/x86/intel/pmc/core.h
++++ b/drivers/platform/x86/intel/pmc/core.h
+@@ -282,7 +282,7 @@ enum ppfear_regs {
+ /* Die C6 from PUNIT telemetry */
+ #define MTL_PMT_DMU_DIE_C6_OFFSET		15
+ #define MTL_PMT_DMU_GUID			0x1A067102
+-#define ARL_PMT_DMU_GUID			0x1A06A000
++#define ARL_PMT_DMU_GUID			0x1A06A102
+ 
+ #define LNL_PMC_MMIO_REG_LEN			0x2708
+ #define LNL_PMC_LTR_OSSE			0x1B88
+-- 
+2.43.0
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---u1t7YverpT1duXok
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ49xAAKCRB4tDGHoIJi
-0rdUAQCyYiH1QQZND0PtUekndQ5DZs0IBFb7DYR8oJXraerWBgD7BCuc+6qLGwoJ
-fmWWzXvxD8TTQrsQgTAVLBfPkyTMkw8=
-=i2eG
------END PGP SIGNATURE-----
-
---u1t7YverpT1duXok--
 
