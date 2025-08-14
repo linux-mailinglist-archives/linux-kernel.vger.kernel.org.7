@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-769117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3A7B26A59
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:02:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0328BB26A74
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773211894B68
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F389E1A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AE71E1DEC;
-	Thu, 14 Aug 2025 14:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651DC207A08;
+	Thu, 14 Aug 2025 14:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtTsyw19"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FsQcS5Qb"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4658415A87C;
-	Thu, 14 Aug 2025 14:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF391F9F7A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183445; cv=none; b=nbG1N9NdtE+5ei8PeKSx9h3KMT49Kw+T6YnmMtiZMD40C/ZdpI73IbCOmKGZW0AWJFBCKuvaTlryh/bQO2Q+TnR8nut97xA1r2Gx3jGYoykvKrYfGxsri3pCTiHxHg1HRyijAPpMFJVC6PgC/UURBefG0OPSjaK6Z9WwaqaxKt0=
+	t=1755183505; cv=none; b=HpxVmyDHA/ga993SjawAFn5AGmX28kC2jn/0TOlFPxHof8JY1EacDOClN9o+jTI54nm5exzHzj3oXY8HFADb95f9xvJhhJLDUcMCigS1PKg90znNORctFjCgK522wwCgzmO7v4IgyIaUuFyVSJxAsYj0s56RLwg0FQmSIy0zK20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183445; c=relaxed/simple;
-	bh=bLAHQLb9+poQkaztCxX9pjVXTn82TD+7a4KBsnS89N8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ShLLpQpwSsBmHp3FnqxrYQG+8kqURCbC0ZInLnkVb+FdJIsIUR9sayL+EczjS2GQIWJQxDQTLIlj2tiEtP33u3iBGqiXcRVbFPL+kZSRIEhW1yf+JSUh7jdaj4tPUQxcl3rU2p4H+aVPAw6YTvStCIvhmU+JGv22teq++czpWVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtTsyw19; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E54AC4CEED;
-	Thu, 14 Aug 2025 14:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755183444;
-	bh=bLAHQLb9+poQkaztCxX9pjVXTn82TD+7a4KBsnS89N8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NtTsyw197VcNICyYl7Yhu5nJnVUlGMti8m9256ByjsHpCwJcxgcqf0bJpHVxiNEZK
-	 PCZIX95P/iRsU7bQPW2HJV10SO3PQk3o+jx0B5b1sHfpEegUjirJeO3BEGP+zLmYAf
-	 S9LbNqEHArezN3T5F7JssQf5sRqmSOErRCxNitr4xc2BOahqS86T2ndCAeQv0IInEl
-	 c+DE42BMCpRHEd9fjdQ8OQUulhwpLU6CObjXu3rnJ4X4S2FM1o6qOQa+qjDjBI0FnY
-	 6rnZ3gojC5Jc+2/tBbPXtAzvDewBvnCf13ZZKRytz9WYOwDMjIyVplkr/iMy9U1JmS
-	 nHdncdmpPloVw==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: achill@achill.org,
-	akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-Date: Thu, 14 Aug 2025 16:57:17 +0200
-Message-ID: <20250814145717.2343377-1-ojeda@kernel.org>
-In-Reply-To: <20250812173419.303046420@linuxfoundation.org>
-References: <20250812173419.303046420@linuxfoundation.org>
+	s=arc-20240116; t=1755183505; c=relaxed/simple;
+	bh=MU3gYDGK17uqY3N6k7XJpgqHs7YiCVPOQMg82gPF2no=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CFaRhtoxDyn7MhcObzUlKcdVm7B1WrHpwr3VgOMFCoocm4co2PqA34dc4z1zFnAA+GVGF4I83jEyeEVvIAriwVTSD2NZXpwoHmqUOeCfVUSpEKikbbC6/HNy+fy6hQF3zZoj7N2BhfCb4URwY+S31ysYIcujFi6j/MYLYsSHD/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=FsQcS5Qb; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4b109a95f09so7338761cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1755183503; x=1755788303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0sgUd9YdBOZy0kVdBoXU78NUeqQMRVWLT5DC2WvX4NE=;
+        b=FsQcS5Qbo/1jLYAnxFQZ+qc1uAZjN5JiK3pDaliLv+x51YmAJkeLWfMbkEXP3JpbD4
+         YvtN37O7qJIp7KrBSBGVlhefE4jp1yXkpyNK3shMVVpsFtgB2f1Et7qxIv9orFu5N+uY
+         X3h2PrwVx26bZmuCuQIMoy6ZSJR2kXyLIxm8wOYNotAFCQXtJ7S+ArJ6KZyAu1Mv55aV
+         rl3b6FCbmO4T1/+OgvcmDo3NOLsFOsUZWrEZwwFjQEAmcok1vy8IaL+1xFN7eobJ/7RO
+         yRsHK1CSHRqocl070dM0b9lpEYsY6LloPKfg4RfOV41YcseqpC9Gq2ZhL7Beojijx4iN
+         jcUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755183503; x=1755788303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0sgUd9YdBOZy0kVdBoXU78NUeqQMRVWLT5DC2WvX4NE=;
+        b=c9erl5xyysi9R0hGRTmbXfOGB1MqD3AvgiTL2Qfk/Rpx7M+tHRYXy6YT/NVhUNitPo
+         od6XRntFj80Hx1ZjNCOz0gONWArl2DmtP1ZA2ZGPM4mi5VLYCq0VrLoifGxYQcfyq3XA
+         DdOIfCXDFDX3j0hDmftHAovYIHVwt4efkTvOd7dxnAzlSQ2JxblZmyJBGw9DFZZ+2JSc
+         YvmmkyrHRaPoEPVpj+vhatbvEIA9rlGjzXY98N5AnXIyl5kg/75Qs9op3Ge8gewGf9ot
+         tUVbcL6AW02ZnrpGrJA08KdjFpC8OUYrJt1ffCJRA/1rxW9VlMjdfnSM/AuDxVvkh453
+         VSmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMzsu4mmLgxpKfz3vZ3CJ3AS5M7ZbdwIArx8AKZboWjl5St7dNmf8q+aIn6r/NB3Iro1tT1c0+el+4xn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHzUjzODmo1zNkpmEoFn5OP52+fIoo7paMZLg9v12b0X8dxacK
+	RXeklG1DNOz24kgXnIPSU93CrXIW7oukUJMPfPMdiPUdPs3LkIkYuSvwIJXQeiMhEugAkNqBF1G
+	md2O/xwUOhyShHickKiWc4fWRiUJwG6OJ2XjQRqrf4g==
+X-Gm-Gg: ASbGncvrWNd1+KrazhY3A8BTbxUsOaVj+OTKXEMuxTi0G5VKzvZliRmXN/t6lI1fQ2N
+	U0Om5zH1XTdjE0hOuru9CK/JHD9rF1z2TcDQayjnsMn+pZJlIn9x6zCaBQW0IMoHBXlyJ/1k1Rm
+	6zTUOgFhs7XEk6ZuGL8pSd+hDBoe5Y8Yewbsz1bIbxJNjt7EhVKLyu4du/Ua60/MGpcc+tjZyp3
+	4Gl
+X-Google-Smtp-Source: AGHT+IFHaAxoYBbg9LXBtGJVpwf11YGEdCLkE88L9yAIytLzKSm9bsg1ZUT6QEZSsty4xseoM6W0eewH0Y9mwveJD34=
+X-Received: by 2002:ac8:7fd6:0:b0:4b0:695d:9ad0 with SMTP id
+ d75a77b69052e-4b10a915ec4mr58260861cf.3.1755183502991; Thu, 14 Aug 2025
+ 07:58:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-2-pasha.tatashin@soleen.com> <20250814131153.GA802098@nvidia.com>
+In-Reply-To: <20250814131153.GA802098@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 14 Aug 2025 14:57:45 +0000
+X-Gm-Features: Ac12FXzhuAauSUYd9gdMUr4m-BLBsxxrJtaDxuhGuUwdJZFXccXBv2CW6TsGSmI
+Message-ID: <CA+CK2bBWEFUU728aQ++7Yp5qXApsHzOTjy=nLMyd7WE27RfQbg@mail.gmail.com>
+Subject: Re: [PATCH v3 01/30] kho: init new_physxa->phys_bits to fix lockdep
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 12 Aug 2025 19:24:55 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Thu, Aug 14, 2025 at 1:11=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
 >
-> This is the start of the stable review cycle for the 6.16.1 release.
-> There are 627 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Thu, Aug 07, 2025 at 01:44:07AM +0000, Pasha Tatashin wrote:
+> > -     physxa =3D xa_load_or_alloc(&track->orders, order, sizeof(*physxa=
+));
+> > -     if (IS_ERR(physxa))
+> > -             return PTR_ERR(physxa);
 >
-> Responses should be made by Thu, 14 Aug 2025 17:32:40 +0000.
-> Anything received after that time might be too late.
+> It is probably better to introduce a function pointer argument to this
+> xa_load_or_alloc() to do the alloc and init operation than to open
+> code the thing.
 
-Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
-for loongarch64:
+Agreed, but this should be a separate clean-up, this particular patch
+is a hotfix that should land soon (it was separated from this this
+series). Once it lands, we are going to do this clean-up.
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
-
-Thanks!
-
-Cheers,
-Miguel
+Pasha
 
