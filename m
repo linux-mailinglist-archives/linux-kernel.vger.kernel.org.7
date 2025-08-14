@@ -1,129 +1,158 @@
-Return-Path: <linux-kernel+bounces-769325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9685B26CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0916B26CF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7EEA25EB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:51:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC095E2DFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3ECE1FE444;
-	Thu, 14 Aug 2025 16:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F257200BAE;
+	Thu, 14 Aug 2025 16:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEXhpExP"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jh4ccz5G"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7988F49
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 16:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8BD1E522;
+	Thu, 14 Aug 2025 16:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755190305; cv=none; b=hVTcdLWSSYlDgQJ/j/1tzhrWIgWwJ1NpQNxV3Ade8jctABRnfSV02W4c/3w5YEP7WLnzoukfQAKNiPuAi1Vm5yXQwjpan0rQuj0oo4pLLFKwGyYg/fcH9cG2PjA48eu48LU6U/uC3nOrr+TEI/sQmOWwyvgvHwT0vcbEhs4CPNo=
+	t=1755190261; cv=none; b=ZMTObD4TWgFziKNtoYP8pt9eyIW/X5RoSx83NUrc6HJQEm2ToFezFt5af7k2CmOcUAClSU+Ye6yviRjsuc/j4sdlXgQ0Wrr3ElUXlSp3UUsJmSWzDUPaCNG2HFcBCe8ZsMj5AuCHk5+JhJi9CIu41pfMTSFTwmmrOuUgYa9983s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755190305; c=relaxed/simple;
-	bh=546+oPUnHFnZfa6yi5axZ3GmMVDm8GXEXOx1Wrgr4Nk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BVTT/BNaSONZu9DZO+5jKu38zqPHUE0wyIgsVVhfVBjZyepoZOthVLnVFzzGFt4pj8YGGxuXgg37VFxUplC/CdR6CLrEnwqWHOv0b/m3iYdioHtarvL8emAP+VoC1rfJmj+Imzk8TRVLm+pzMBQYnlCUuugbU+p0y4C+YS/ZIYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEXhpExP; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-32326de9cb4so1087862a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:51:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755190303; x=1755795103; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RYjGIGZKNjSwwMMePRBYpKkbHMPvIH+4uqVdBTFlwQA=;
-        b=KEXhpExPbiqaT2O78ETvQbeBfK0r5cU0GieM0M84MwQ9RY875a6JSw8cmsLR9TxfWe
-         zph1TI8D6bNfLaAygXs+RZuyHCktEZ0HxYIvhsyCDQoq0ID0kBvRYrRFLXLRN0uYZl2k
-         chiy0MEcHaP+wUbnqw+zqm89jmaOoCjurGGCkodLtb8RJxmYwi4yJbf0RwJYM4b3xhSz
-         nRrG3CeEfMA8tmDZ4n5CAaaOW+3NdvJrpudckg4Gsv7hlrmevjheknoMavNJZ1VUqtwo
-         dy8M773ksZ4qqRWqqzLo0KE5lXy00KBoKjasFK/eh5aXde/ih07So+0VOblPnxyRYqSb
-         oKRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755190303; x=1755795103;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RYjGIGZKNjSwwMMePRBYpKkbHMPvIH+4uqVdBTFlwQA=;
-        b=LgeScC/RS4KiVhvYiY5qDvh3KFREcBYBlx9sF+3YmK57HosxGlK4IynDmrbWUKiNun
-         pFdl5sPvR7vPMds5XoeCMy2LpINyhec+6Bhqm2qlfoZkMSls3MuZkJVJJ/bm1OuHbk0U
-         zcPhxZDQHuskvhID2ZcAICoz1yZdXZQCQm6SiM+X22PtJMjnjsUrM4/EGlJwwhr3vhld
-         jBtMKt2MxIC/i2HHoqO9DNEZgwgSDU37uDFE3WN9udU72CeMdnMSOAQLTDZ2rtKLtJi3
-         fQg0UJS65eYtSe6bZoW7UmhURLrRtKlQxF61FDYbWpUN5mjkDKP7hYxQfBb9e1b59ybL
-         0K+g==
-X-Forwarded-Encrypted: i=1; AJvYcCURe6YOw0oMgZaqwafORO6y+j1/KJuckQPCN+NBiJEEqzjAa4nfmSShhKBLkrtSJ8Df7TD+TX/1jMsG6TI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztQpgr+f/fTqQE3DWyUDontuhGzo+9m7HQJ2pHblMyFXO6DlPJ
-	hkOPrRYLDraxyoDoZ8/nJQG+DvHLcxQygpmfKUTo3RQA7SQf0dGWbInZ
-X-Gm-Gg: ASbGncuoyUOLH/dRABOS1ws5ZEnWEGkjabNXCkZYoildgZgVXEx7WVpx8QP84RXH8bt
-	8OZzOJez1dwDJUO7WWhrba3zmCqBlbztEBYXCJ0KJI7bMawQ6vyy5lJfxThb59NddwOqXAwu7YV
-	ppd51dBLMoYtfg+CsUkrW97UyHVuaQsc1Ru/EFjm/I5PGhQw5W0Z0YZ5ScqoZvpXPvufHSr1vNh
-	vfvRLTJsypwnbtHv7IhyU1jwa+v8Bifm/fShXdt21SbMc1bGPm2b99BlZUsd6RPlMaNO2qXvkQL
-	XCGD2jR36T0h/HpJLjUz/t9XHLQBsduzYSv3kMr95aQS3PwMJyd419OxKS/Y/kSHVGF2mAlDC18
-	5AXGWzaDLIGsXQwAMNmvyR/TKOuS4Z/K5uBisu9EbMGCIJi8O/G0n7SA+3YACo0fjXOpEQqzo57
-	c=
-X-Google-Smtp-Source: AGHT+IH0MiMwWgviaw/mGxe0R76GtgG7LKjx1+p4CKRkJ7nnW7Xepyw7mwzYq4K+Ze8wJkhejlul8A==
-X-Received: by 2002:a17:90b:4b03:b0:2f8:34df:5652 with SMTP id 98e67ed59e1d1-3232b2c6659mr5225771a91.21.1755190303196;
-        Thu, 14 Aug 2025 09:51:43 -0700 (PDT)
-Received: from chandra-mohan-sundar.aristanetworks.com ([2401:4900:1cb8:7b85:37eb:c20:7321:181])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32330f9297fsm2375904a91.4.2025.08.14.09.51.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 09:51:42 -0700 (PDT)
-From: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
-To: jyri.sarha@iki.fi,
-	tomi.valkeinen@ideasonboard.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org
-Cc: Chandra Mohan Sundar <chandramohan.explore@gmail.com>,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH v2] drm/tidss: Remove unused value
-Date: Thu, 14 Aug 2025 22:20:56 +0530
-Message-ID: <20250814165058.615884-1-chandramohan.explore@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755190261; c=relaxed/simple;
+	bh=Z0Hd0q4mIANA5zgAdJJJkUB53rHdaKmW4qxFMtkOs2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RT3JQxL9D3Na/LnkjEC3wA+ePUjDjo5wyKHCPVgv5X2pkt6sf6s9wlWpjYKGuCgHieBttl2fJD5SDdikKLC+SHsF2tUdSTeegnD4Hb/JC1SmCSwKKGfkIA52XmbX64DBDht+g2xlvT7vOoI2meyIYiUi7M5Or+hKyL7gapmKbew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jh4ccz5G; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755190260; x=1786726260;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Z0Hd0q4mIANA5zgAdJJJkUB53rHdaKmW4qxFMtkOs2Y=;
+  b=jh4ccz5GwcKiGp5hbGo35qTV6sfVb7XIZyT5FMokZRdGFS8EWfKlJUY1
+   zEHWT6/Dju7+yBRMCO/hVSUy67Vq0ZfUdpo5yPnWfyYv7Mjkg8z0UcK6c
+   C+5h5adyV4kKlYHtaf1UXpxj6e3R86UGBnvng44bhPaTYLR6+67zoVGFZ
+   9hJW0nJeqgXGjro5tKNc3z4Ksj62WYwcOhSKjfyLWJsvErxurYq9TyqMY
+   QKXiCFsMMPsguL49XSFVXIDhpO83aXxGDc5RGBWVpBcBdkZSjNIgQDTaj
+   j9JHEynkBBPO5piDmNgqXHSPnC6Apw2Y3aJp3v5wQAETOaYMDuD4ft+iw
+   g==;
+X-CSE-ConnectionGUID: kIH8CuB1Rl2aNfEDpg8ecA==
+X-CSE-MsgGUID: 2gfO/CVURheqDuae6Zpevw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="75084332"
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="75084332"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 09:51:00 -0700
+X-CSE-ConnectionGUID: kaWlNiynQxCcexXB6m0b8Q==
+X-CSE-MsgGUID: +eda7AMZQVaytc07TtrRKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
+   d="scan'208";a="171043051"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.111.169]) ([10.125.111.169])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 09:51:00 -0700
+Message-ID: <4baa3bd4-cbc3-49b3-b8e6-09a2079c8363@intel.com>
+Date: Thu, 14 Aug 2025 09:50:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 5/5] x86/sgx: Enable automatic SVN updates for SGX
+ enclaves
+To: Elena Reshetova <elena.reshetova@intel.com>
+Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
+ mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
+ chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
+ bondarn@google.com, scott.raynor@intel.com
+References: <20250814073640.1507050-1-elena.reshetova@intel.com>
+ <20250814073640.1507050-6-elena.reshetova@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250814073640.1507050-6-elena.reshetova@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The value "ret" is being assigned to zero but that statement does not have
-effect since "ret" is being overwritten before being read.
+On 8/14/25 00:34, Elena Reshetova wrote:
+> +/* Mutex to ensure no concurrent EPC accesses during EUPDATESVN */
+> +static DEFINE_MUTEX(sgx_svn_lock);
+> +
+>  int sgx_inc_usage_count(void)
+>  {
+> +	int ret;
+> +
+> +	guard(mutex)(&sgx_svn_lock);
+> +
+> +	if (!sgx_usage_count) {
+> +		ret = sgx_update_svn();
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	sgx_usage_count++;
+> +
+>  	return 0;
+>  }
+>  
+>  void sgx_dec_usage_count(void)
+>  {
+> -	return;
+> +	sgx_usage_count--;
+>  }
 
-Remove the unused value. This issue was reported by the coverity static
-analyzer.
+How is a plain int-- safe?
 
-Fixes: 7246e09299455 ("drm/tidss: Add OLDI bridge support")
-Signed-off-by: Chandra Mohan Sundar <chandramohan.explore@gmail.com>
----
-Changes since v1:
-    Fixed the commit message and Fixes tag message formatting.
-
- drivers/gpu/drm/tidss/tidss_oldi.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
-index 8f25159d0666..7688251beba2 100644
---- a/drivers/gpu/drm/tidss/tidss_oldi.c
-+++ b/drivers/gpu/drm/tidss/tidss_oldi.c
-@@ -464,7 +464,6 @@ int tidss_oldi_init(struct tidss_device *tidss)
- 				 * which may still be connected.
- 				 * Continue to search for that.
- 				 */
--				ret = 0;
- 				continue;
- 			}
- 			goto err_put_node;
--- 
-2.43.0
-
+Where's the locking?
 
