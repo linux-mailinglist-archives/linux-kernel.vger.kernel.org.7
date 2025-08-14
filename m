@@ -1,279 +1,354 @@
-Return-Path: <linux-kernel+bounces-769228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38EE9B26B9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:55:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECAE3B26BA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E70986054B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B49360579D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3CC23AE9B;
-	Thu, 14 Aug 2025 15:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8FB23F43C;
+	Thu, 14 Aug 2025 15:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PeABPxhb"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2082.outbound.protection.outlook.com [40.107.101.82])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="djO+CIAS"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2064.outbound.protection.outlook.com [40.107.244.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFCA18DB02;
-	Thu, 14 Aug 2025 15:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D007E18DB02;
+	Thu, 14 Aug 2025 15:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186459; cv=fail; b=hgYCTINDvndy1EZYBOD5iZ5LAgDm3yb5P95Ii4lz2iJ1CL/jNM7LcNIsPfv4y+bc8fbWNktGjzt8iV0jIuBAxlaA8X+f96QixVAH8bjALKfMcfKLDv5UK1lmq6YK/AZjnwK5phd3zeoDrD6W7IQBjQnGl9Xjf6NrroQeRozJ4Xo=
+	t=1755186505; cv=fail; b=fQdi98WEkJI+TNFLnxh31EWitx6RXOTCdkUU9eKSCqhYAnXmNqHBB0xrxJT4lQjKGDkFWs0F8DItrigWm8n4cutFRyGJPJg5WYePiwS/9F3vOCldRLSWX2lSC/PeRylKWCSRnyjcn7YItpDbKH6Z9uVW44V9SzwS/bWIHOMwoxY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186459; c=relaxed/simple;
-	bh=9ZjtsOuHZMkHIiS5cxlaRVpCwUf11KqdximyhmID1gA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mqcvA9qZc1aH9f1Ojcu+n2hbh+Jtn3aRbUpA4KO9d6KBXWrUqxB7/g4bNZiOsPe3lWdV/MfXR/cBzTmzxiU7y4YqwrbjWywFlix14Vx8czyLxozuGOeqdzQJ8hm7QWCIBPB00AYo9kQ8YPrPws2ikaQ4gqtFuyalZUPppaSLZVo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PeABPxhb; arc=fail smtp.client-ip=40.107.101.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1755186505; c=relaxed/simple;
+	bh=bms/u4QcmAQ7/KWxwk0CGk+L8cQIXaxoot7UqxybF3o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SzWxnmG97nikiYnPjAh2hFcGbxBLZbPg37gZOdgFqoWAauLHCJDjChcs1yVEJVHUaHe0UOOGVAXw1zjITzRTmpQAY6wnyNEPM7FuTf75Ab3XU5Ec8MSN8kDcsF1p0r5div6bO2DbaVagzTA7bui5MIU53gQJJMpWS88QDHUPFg8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=djO+CIAS; arc=fail smtp.client-ip=40.107.244.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xVrZlDc+GDhuo//2azGHSXqvmDYbNdArkn08lQUSRY5mex0gdruy2IyuhvwJo4Bb7yXngdeUHfH3p9ElhAN5+3O4od80RC026pyF4QiG1/m0kRWfDdOohUYZwafqX5gewRyOWTrRTPGOxk0wRjCoK106Z7CRsp0n5rUNRiCIQGgmvL6FU+3ozcZ4wauIreL+MmJZwC0ZPmlz62cQPdzirh23ZCM35MlFkeyD9ghttk5o/ExOCfbui5zsaBTXrJBV2lzjFBLBSVgrNMiqO/X8JQxOJfte4e5pdsR0Xo5nrKCjUOQ+zne+9DdYUKfIJKGAJwk3kr+pWVBt6s4CYfOK+Q==
+ b=LbEbAVQP0X73BKtcl1EfoxT0ipTxdY3Pa7jTck1OwOeSv3BZo7cMVM84HIA++l04FfOAIZW45/lcrNRPWIRJfa+uWBND4SggbOt5yromrL4u2hfY+CWvTP8KQNxhJMp/iRsDFcxIgJTmkRDmPMyyalTe6Ik1Gl59gY2xYlZ9aVxc7jooMCIMQoXsnZArhfOD5e+RhSXNN7csRHrT4qhv79GL1/ydGpq79c9zxQltuR1+nKu9tNQS0y9wV0MogWnTN1TRdYS4WhAEgW52g0gyNPxZVe+C5HF9KMqnreQJOhI1cIsA+/iAl3dYtTW7JNecW6Ky0cgqkSuZ7AFmbC52oQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jgn7eU/VZvXcwPXX2b0pkEHAfwD86UlC78I2BnhOTuk=;
- b=Fzvk1bN4kBUYLa07TxYdiWUXsAwUSm/dMst5cQKewW6h6zTH8Y56BDeI0KUzTtt5QKQpEaHS/BEA3Kkxn7PAkV2Bs89tv/enP6XgUpoAJSk1c5OGFZ6bAOTt4KXSRWnLH4T7fS/EdPch4sh5IRLdtRKL6JBNEmmOy3cEQ5ATiJd9fJKBHgBe2RSgCGSINroRRBK1Ttas3XV1YPHEIcI3npklLWztGS+J5j1DylzRwtLfp0hNvqMhkB96nlDWRnMk+o/UfxUX3+qJFivOIUgQK/G3dDdCfWGjd9bh34ew0k55BQi9h47wc3j9jHBs4swCmenMfZD87Ts7PdpYFIzZbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=ZARIGkqtFpitQFDmylssaQ8B5N+4sZaSY209MECpjxk=;
+ b=e8B+TT3H5RQfY3fRiGhVZUsy8VizNboy5DPP2SgcL37MoSliHAKB6QcgAaDG61lfdPhi3Yb737yTFcObzY4Di1FujYv+l95nLjOGl2lWAX+abACK12IHjjWF3aSGA1fzidxdG46SwCF90KpBQneei5CWomBLdhRFaGqPRnSDRFN2E4beItL+KSuaEY5di7A37pw/QAhhhPKgpfkxqTJf/2KSJI5aBX5VQShmBMan/oh8+idsMuMDUeSxZUzIAYz0nG2J3VpzmD9J/hHBnfRlGkotfTn4tvqC322n5yznzkiz3BEFiwsrwLHdx2jNo9BzxJB4NtqthwVJP5Ut+01+GQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jgn7eU/VZvXcwPXX2b0pkEHAfwD86UlC78I2BnhOTuk=;
- b=PeABPxhbcSVSObWXzwLoPsYmVKQtWkQmsNk2CPr0vxitZKCDsmtREJ0HBxDTLSBiCO2A6oxbbLGZjaoVvX99cnQETKDcmASCvH4d5MK13CmsKTI1KfUZCZ9BTJpHD89gvnnVCOYOO+RMHcesCGMSabzl9wvfDDgJfiUqPmtrSQ+o77aTLATdZVBkoqSpbZ1pqD58c+0Llr7xNS5etpy8g7nArK2KvAjTkoRIMGWfm/+fINQC8jtewycA6JkgMD7SLuLX7XW2YBJQJ0mP3/7IXBF7hum24y6tdEBnlmwvDeBSx5gNsGO7WcN6vt8VCj3hkNuytpeCNxf13gwoa4/buQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS7PR12MB6120.namprd12.prod.outlook.com (2603:10b6:8:98::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.14; Thu, 14 Aug 2025 15:47:32 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 15:47:32 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
- baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v4 4/7] docs: transhuge: document process level THP
- controls
-Date: Thu, 14 Aug 2025 11:47:29 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <608379FD-DCBA-414A-A0A1-58E0CAECBDEB@nvidia.com>
-In-Reply-To: <20250813135642.1986480-5-usamaarif642@gmail.com>
-References: <20250813135642.1986480-1-usamaarif642@gmail.com>
- <20250813135642.1986480-5-usamaarif642@gmail.com>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MN0P220CA0026.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:52e::19) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+ bh=ZARIGkqtFpitQFDmylssaQ8B5N+4sZaSY209MECpjxk=;
+ b=djO+CIASrbDqNjvDs6llLTc2/9689xOed0V0aV7NEk1HwV7F2ewO/3ZcAz9Qk2ZFMxMjIC0FQ+lMwf/I5gLI2J90Xl3QlF5ULuG2r0FL9c2pwIzXxXNdnPq2gShz5B9eBjF/o6d76ZoyuGxwabvvSNYK3I7i6Xrhmz4IXsl4jYg=
+Received: from BN9PR03CA0229.namprd03.prod.outlook.com (2603:10b6:408:f8::24)
+ by SA0PR12MB7002.namprd12.prod.outlook.com (2603:10b6:806:2c0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
+ 2025 15:48:21 +0000
+Received: from BN3PEPF0000B36F.namprd21.prod.outlook.com
+ (2603:10b6:408:f8:cafe::d5) by BN9PR03CA0229.outlook.office365.com
+ (2603:10b6:408:f8::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.18 via Frontend Transport; Thu,
+ 14 Aug 2025 15:48:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B36F.mail.protection.outlook.com (10.167.243.166) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9052.0 via Frontend Transport; Thu, 14 Aug 2025 15:48:21 +0000
+Received: from yaz-khff2.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Aug
+ 2025 10:48:20 -0500
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: <linux-edac@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <tony.luck@intel.com>, <x86@kernel.org>,
+	<avadhut.naik@amd.com>, <john.allen@amd.com>, Yazen Ghannam
+	<yazen.ghannam@amd.com>
+Subject: [PATCH v2] x86/mce: Do away with unnecessary context quirks
+Date: Thu, 14 Aug 2025 11:48:09 -0400
+Message-ID: <20250814154809.165916-1-yazen.ghannam@amd.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS7PR12MB6120:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ccdd8ec-6a57-43fc-5665-08dddb49e1c0
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36F:EE_|SA0PR12MB7002:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4f33dc2-5c18-4073-8f27-08dddb49ff0e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|7053199007;
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5YQVpbi9xn3C/+DJKwSHuW7vV+d9G9VovFN1iTAyIz67e8H/wt7zZj+WSj2J?=
- =?us-ascii?Q?HqinddyzjHmxP7N1bUPKGn47jGCDISpEKaguw+jnJ30rRiPA6U7VLfmpaQDE?=
- =?us-ascii?Q?YTFJ0gHD1I0KpxgTB7YTIFHeqc9C/yx3gwIf1A+2T5dql3WR/KYz0Z1bg1AO?=
- =?us-ascii?Q?GItBqDEN1p8vXdVr18rD9EDcUAgWKhOZKTtPWNhg++e8asIoAn/dEKxns4KG?=
- =?us-ascii?Q?c/t5cVqm1FxXP2HPCNSSVPiyERGD2aHRpslDiLQs8UxWZHW9Q7B5POCyB9Nq?=
- =?us-ascii?Q?yq3lH2wkGdprQjL9NXH4bHbhj/1Z4hqP68vGjLDZNHaCbPZHeoKITF2pDCDa?=
- =?us-ascii?Q?eq11Gzow09LX7PU6mVqjFShgZFWcWGZIkEU8XwuHxuj0iOR1ld8lEH0on8lx?=
- =?us-ascii?Q?OrC4MrHbS5BZeghleQoUE8PbYFSDEsOXXukrZxM/Zib3ztUyhxrMQ63nPZCr?=
- =?us-ascii?Q?omoqPTdW8yneH+s/ZvYZuxL8UV6nPDfJkYGikskOMgK2OPiztgYZdhCW4ory?=
- =?us-ascii?Q?Gr75CK4ICRM0sbgeEx/HRSfhlNm6SBr6q1EdC3oo0+Ebl4TzcAuDbuolrpDb?=
- =?us-ascii?Q?PUTW3B8sDRS0g2Vd9A5Qt4XoEhHZBP916FdGaFF16HeWiOcNTRZKh5vm1fx1?=
- =?us-ascii?Q?b6YwblvUWC4NxIeruhGaZmEKRRE3z7Dzy2pqDCeHaEn3+KAH6ODPUsXi7gol?=
- =?us-ascii?Q?9nhmpqSKLqW0wuRbn4sbGmNfU3EziPJrWkGo1HWrUuhhNQN/UI7RG/Ig4Jbz?=
- =?us-ascii?Q?btzzj/6VkjYouaHme3SwckMbgbwTm2kagJ9MV9peLDWXHR6PCsu3YQq89q3S?=
- =?us-ascii?Q?98Val+qVX0kYI/JHSOSLRgvOCa5LOqh7d4z6wPG1/PHyJfPOLj5m81GDvD1r?=
- =?us-ascii?Q?Ej1YNJIa/r91jNmd0QzDtqjJH571dqI46PdO9ZNM/c975zZyR502F4D+iOlO?=
- =?us-ascii?Q?KDv64LORqLaUdtYr6vadT38Bi0xLigiobRjmhRtwE5PZA9yGREjLBGYPNZaq?=
- =?us-ascii?Q?Z9PqAMYpbo6VDQr4AqxfDpkrnmrQsZTQgdpKJ//5vmHJ+0HOz6GLixrc3l05?=
- =?us-ascii?Q?HnvOThUu6aHo8KBEyvCnWq7/l8ILZ3O++ALRHkcMSA2Rx5bP4REbQOUaIAP6?=
- =?us-ascii?Q?VSKGnewp3KiL6OQ4kBv9NHc9hqgiH3zEziX2VZbDggyCLhxR+IGwt6lmIFzJ?=
- =?us-ascii?Q?1aObOnsGvQ0QWIPpO2+D/NnujRdTZ6GpYTLiK1a1Y4d0k9AMVBoIcd4ImjX4?=
- =?us-ascii?Q?CCsmsemuTJIR4R/ORMU6LpNb5e82tXzofD9g7h6r9SGDIBvaz9HfaNhiOHbp?=
- =?us-ascii?Q?vTCqdfvnaCIImqfWWKIt80ZH/qFOgt0bsQsrsu+kNL7CwApjfdWBbxccjtHF?=
- =?us-ascii?Q?nLEGsPdQ23MfOt5XVWTzut++aOvaX2JqnZ5bhk3tJmFeVWz6FXg0ju62hgjX?=
- =?us-ascii?Q?NnLSVkRM+EM=3D?=
+	=?us-ascii?Q?dZj6SkubcVqLT7KjaPpSKh6DEYzSm0Dm84HTFltJS1s3B3HDlBFBZK32N2A+?=
+ =?us-ascii?Q?AGG0YPfY5wY6A6Uk+LO1JUmZEaNJ6gV08/7saUiw1CZklabhcOszy15WVGSD?=
+ =?us-ascii?Q?34k7gISvqVhSEfYXn06c01b4qgbBOqzfziwQMXlqJjRyh/jGw1cfMM3W1znk?=
+ =?us-ascii?Q?jIJy9Oa3IBVzGeROt5WD9ugoO75UUDWwt5FFKQDcjrRvAmVqAzzGqxEiN3bk?=
+ =?us-ascii?Q?d77pZoLop/36ODb1BYHjxdp2ACxnGIdb75inLcPa6TG+gItqia7WKdVhFTPH?=
+ =?us-ascii?Q?Zqvqw5hx7oeVey7JqB+XxgbpX8gx4lH7HpVdV4WB8HVbTHxSy/7uXXv+awMb?=
+ =?us-ascii?Q?+jWpwQHxnMSeBB2tq+UgFFwgvlQtSGHaOfFaYAxKk0FNQ3g6FXfAjH0XYOs3?=
+ =?us-ascii?Q?7eYqMJJhmUyN/2b2wm0ee8erNygZ492fpaxpfo7l3NCIFvh/VF6V626W6OXx?=
+ =?us-ascii?Q?gUVeEy+t6HWtAsiQmeEaYRxCexULc6B0OLFSqv2K1Lp2SlYWhqLKHURaAKti?=
+ =?us-ascii?Q?Sr3UF7CazpCpXkgoYHutQxc8MD3btaIqcMJOOlU7TOP0qF6dKIvjvOhgyUN6?=
+ =?us-ascii?Q?0dpNHSfMHQ+llfbqYiNt1Cdws3UK4pmilR0Uv/030XMeozJBI3dSL7/0KGQP?=
+ =?us-ascii?Q?clAElLEWWutU5ERFfO2nSDJj85mFhjNW0/jGtT0yWgu9ITcoRgj9vg1WRg4v?=
+ =?us-ascii?Q?oPmFnFSJkwakq7CBjCm+s2mzJzlWkUK4pGTIr51Ls4Dbhg3mYNimB2VVYAj+?=
+ =?us-ascii?Q?tExmeoMkU8z0Lk5kLUqhq5U5Jl0n93ONzlp+p0j5xMVZNHrBZRtVt71yeeLA?=
+ =?us-ascii?Q?DnV5J0AXo7ipUp1qAPxbT6+YP9zGlqgSjVaClfFVTrJuAaw0zo6Ciap0KqOH?=
+ =?us-ascii?Q?+jn8glaIRbDZ9yQpjLrAaMSSpdG7cfn4XJYgN91m7D9jOQzPUCOk1PXRqMMT?=
+ =?us-ascii?Q?z0nUf4zLydQP1glGRCBbB0T3a6OpDPkOuVxS0XcfueDsaddmoHSI6+IPaGWE?=
+ =?us-ascii?Q?1zydoWu2dpopQfQtHG31DBgpxrlVMQTC6rT0rFjA0vC0Ng5L3NhotwpU9gBm?=
+ =?us-ascii?Q?m6rxSAAfviFF1+htTxFxRwpp+rZzEAn9cx9LuWA56Tj1G2ONXtxo1tinRrIq?=
+ =?us-ascii?Q?e+g1QKJaViGBzxpEDCAYNdSCMEYGAOXf7meZIkoyq4kLXUr9z/gqrN+b5nUw?=
+ =?us-ascii?Q?VXsjrTIj3kRPhI8D4vvQIOOj54k3+F43wN8M/Bk9z9DYq92+hjcebOZEUG2n?=
+ =?us-ascii?Q?A1dIgAPzrY6IhSJeXjjKKyBmSFWv+eReDH88/YPLl+X4OZF1SaUvoIpRhp3Y?=
+ =?us-ascii?Q?EAqvzLe3UIP4b/twVcH4x8b+pVznd+Hru6Jr7pGmvqtweHrybf5TjV0yIHc1?=
+ =?us-ascii?Q?UCQLOzT0CGiD2aydNdVM53jqP3x0ZQBpQbY+K/bhOXhuuhbwPtuwfWIO35PI?=
+ =?us-ascii?Q?x56FfjcLqLfRTqnH1EzjfBEQLMzssfBxw+0p6LsqBmeoTOJ4BFbMd3Hw1VRj?=
+ =?us-ascii?Q?DLGz5KGwLCdH9tw=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HpFGUNjQEUNR7qIA36tyDJdfbeEHD3sT7SJwV7J0CkUAKouUbIvaxVp709F6?=
- =?us-ascii?Q?ZkEqU790ua3v/aRJ+7UjU4tlyGU9dkQY/gmbKicwmJJeBCxPsYSC7hR/l+vE?=
- =?us-ascii?Q?qeMuY/h3bDMSB0PsxVjUfJHWEXS4zxqsTXmT6NEVW2KLPA/fOVNDGnV1PCsJ?=
- =?us-ascii?Q?Zbccu75XSGoV/BVYGYXTW9XEQlRTiO29lep+vVA1cjc5WCUlZqlggiJaPeEG?=
- =?us-ascii?Q?i4vd+HskkTTHqGbGwwW+AUqxX4Rrvj5RyL834GBxo+QeZQmtH6/kbT07ctud?=
- =?us-ascii?Q?HiK8zcARIbPkd2MNm2oacM9AfBXZIxUg+flhPn4T7uf1Qvtm6+DKdORaPdwU?=
- =?us-ascii?Q?k2EZSOnTB0QIxuNLNoy9P7f56G5EpDhOKAfyV5d69ti5U8rMtqB/pOkpCflq?=
- =?us-ascii?Q?8RIejK5A/vzSsPkYywGsDQePMajGjcRAKRnhgN/0ljJ6pSyyFXU1y70Akn+Z?=
- =?us-ascii?Q?Rdz88EOqY4uECUt2oxvXk7Wq3xteQhYAgo2zWbRXBe1hYP2GhXPFZD5tI6bn?=
- =?us-ascii?Q?RB9B6rctO+VMf6VYJt2ckv/qUSRKD056dzgfyipcEP+0e1HMfPSSEegZSCCm?=
- =?us-ascii?Q?Hq3nbsrie1ZHYV7lO5scMHjZYx5/g4mpYVi1iuTG/MXX+pYIWzazouPPdkrx?=
- =?us-ascii?Q?b5VI4EhGKnSivJnVzohuum9E0BXSHIBEWnmFN1qH0y8uT/hRRbyqStgFqGeO?=
- =?us-ascii?Q?GjSr/L6LxP79zFgle+UbrvLf9lE+5atxDdG5coxfRnF20nrAvuyxJ36J4UUP?=
- =?us-ascii?Q?36wTAYmRIhuIeMoZRiTL8Sq7SfeBXgX7AG/cUD6rDfXlq8oyMwH5MOXRuuiR?=
- =?us-ascii?Q?ShocEqeDdbtN/PPP+T+Qz/hjU3bm4yIbanYjT0wRO5B4oMxTxgQbIE/bqXHH?=
- =?us-ascii?Q?hPq6Drdff0MYrHGgtfqtFi83XuIn5BdaYBIsGOKPbjOUbLrwPzCN/RzHL51T?=
- =?us-ascii?Q?fF/cRwOIQtftMX+YS9nQ+rU9+wek4MF39+QjtcBjV4UW5yZQ7tCb8W/rOLpB?=
- =?us-ascii?Q?AoNQqLE7a6SIKXnsgrEbx7j66mex55c+DCavJ2YfZg37rh9wDJOS7nJ3irEM?=
- =?us-ascii?Q?MHySMPOEPKo69JW5Jwj7vv/+6Lz7/QTLzs/R8vZMmbK9EmZaI3L95JBBmcWI?=
- =?us-ascii?Q?n3FNotjzVz/t0IdciNu/ofjvPiiLjzWjCRMKZ3t8Xdi1YjFgyAHtwInwpsDk?=
- =?us-ascii?Q?jKI9JB/dmg2d9KXxHm09W9CFIxxpppgMowPcXIZ4bJPyIURBbp7FZxpD7iYO?=
- =?us-ascii?Q?ZCN/xKV26TaEVxAD5M6Y7xAU1sUFjIezHP0SiNKAGO7DHT0NANzGWZJ4AEfl?=
- =?us-ascii?Q?88noXXzm9e1XH229YyINckrF1XG24EiX6TtDSxlnCZDpB71DDq6JgjkagdqV?=
- =?us-ascii?Q?SdJ4OyxtJYreSHKu0nkwztVAayUErOCzaxampXFqhdv4Qg+4fdUqi3Y2aCc9?=
- =?us-ascii?Q?CBsJo7efzrg3U8a/gYLgJWZYlwBQXd6TLv0O787UmJouUhA45Fyz+OKq+ICs?=
- =?us-ascii?Q?c3/p3GYippksowvKkDTbyVKJ3h8yawk0CiNCAYwWx3VFBXySD2bDkmv30bw3?=
- =?us-ascii?Q?FEN4OpG8ZR00GHHxMANJyeJgnhbBscozwV5CMdLC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ccdd8ec-6a57-43fc-5665-08dddb49e1c0
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 15:47:32.4524
+	CIP:165.204.84.17;CTRY:;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 15:48:21.4275
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mxXFoTdQ4gyc1UXGxSkVPlfHSGM9hoeMMjrkYAu+qiAmpT6eVJGeKC+tx2LfhDxS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6120
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4f33dc2-5c18-4073-8f27-08dddb49ff0e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B36F.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7002
 
-On 13 Aug 2025, at 9:55, Usama Arif wrote:
+Both Intel and AMD have quirks related to recovery in the Instruction
+Fetch Units. The common issue is that MCG_STATUS[RIPV] and
+MCG_STATUS[EIPV] are set to '0', so Linux will not save the CS and IP
+registers. The severity grading functions will later see that CS=0, so it
+is assumed that the #MC was taken in kernel context. This leads to a
+kernel panic even if the #MC was recoverable and in user context.
 
-> This includes the PR_SET_THP_DISABLE/PR_GET_THP_DISABLE pair of
-> prctl calls as well the newly introduced PR_THP_DISABLE_EXCEPT_ADVISED
-> flag for the PR_SET_THP_DISABLE prctl call.
->
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> ---
->  Documentation/admin-guide/mm/transhuge.rst | 37 ++++++++++++++++++++++=
+RIPV is "restart IP valid" which means program execution can restart at
+the IP on the stack. This is a general indicator on whether system
+software should try to return to the executing process or not. The exact
+value is not needed by MCE handling.
 
->  1 file changed, 37 insertions(+)
->
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
-/admin-guide/mm/transhuge.rst
-> index 370fba1134606..fa8242766e430 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -225,6 +225,43 @@ to "always" or "madvise"), and it'll be automatica=
-lly shutdown when
->  PMD-sized THP is disabled (when both the per-size anon control and the=
+EIPV is "error IP valid" which means the IP on the stack is directly
+associated with the error. This is a specific indicator that the saved
+IP is exactly where the #MC was taken. System software can share this
+for debugging and/or try to take further recovery actions based on the
+nature of the code represented by the IP.
 
->  top-level control are "never")
->
-> +process THP controls
-> +--------------------
-> +
-> +A process can control its own THP behaviour using the ``PR_SET_THP_DIS=
-ABLE``
-> +and ``PR_GET_THP_DISABLE`` pair of prctl(2) calls. The THP behaviour s=
-et using
-> +``PR_SET_THP_DISABLE`` is inherited across fork(2) and execve(2). Thes=
-e calls
-> +support the following arguments::
-> +
-> +	prctl(PR_SET_THP_DISABLE, 1, 0, 0, 0):
-> +		This will disable THPs completely for the process, irrespective
-> +		of global THP controls or MADV_COLLAPSE.
-> +
-> +	prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, 0, 0):
-> +		This will disable THPs for the process except when the usage of THPs=
- is
-> +		advised. Consequently, THPs will only be used when:
-> +		- Global THP controls are set to "always" or "madvise" and
+Neither of these refer to the CS register which is used to determine
+the execution context privilege level.
 
-> +		  the area either has VM_HUGEPAGE set (e.g., due do MADV_HUGEPAGE) o=
-r
-> +		  MADV_COLLAPSE is used.
+It is not clear why CS and IP are tied together in the Linux handling.
+This could be a carryover from 32-bit execution where "IP" is the
+combination of "CS:IP". But it not apparent if this "IP=CS:IP"
+association, as applies to MCE handling, is a Linux assumption or
+explicitly noted in x86 documentation when describing RIPV/EIPV.
 
-It is better to change the above sentence to:
+It is clear that in the affected use cases, the processor context is
+valid in general. And the only variable is the IP validity which is
+explicitly based on RIPV/EIPV. An invalid CPU context is represented by
+the MCA_STATUS[PCC] "Processor Context Corrupt" bit.
 
-madvise(..., MADV_HUGEPAGE) or madvise(..., MADV_COLLAPSE) is used.
+Avoid the need for these context quirks by refactoring the Linux MCE
+handling code to treat the CS and IP registers independently.
 
-Since this document is for sysadmin, who does not need to know the implem=
-entation
-details like VM_HUGEPAGE. And I do not see any kernel internal is mention=
-ed
-in the rest of the document.
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+---
+Link:
+https://lore.kernel.org/r/20250813154455.162489-1-yazen.ghannam@amd.com
 
-> +		- Global THP controls are set to "never" and MADV_COLLAPSE is used. =
-This
-> +		  is the same behavior as if THPs would not be disabled on a process=
+v1->v2:
+* Minimize changes to only code related to context quirks.
 
-> +		  level.
+ arch/x86/kernel/cpu/mce/core.c     | 83 +++++-------------------------
+ arch/x86/kernel/cpu/mce/internal.h |  8 +--
+ 2 files changed, 13 insertions(+), 78 deletions(-)
 
-> +		Note that MADV_COLLAPSE is currently always rejected if VM_NOHUGEPAG=
-E is
-> +		set on an area.
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 4da4eab56c81..a26534a914ec 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -470,22 +470,23 @@ static noinstr void mce_gather_info(struct mce_hw_err *err, struct pt_regs *regs
+ 	m = &err->m;
+ 	m->mcgstatus = mce_rdmsrq(MSR_IA32_MCG_STATUS);
+ 	if (regs) {
++		m->cs = regs->cs;
++
++		/*
++		 * When in VM86 mode make the cs look like ring 3
++		 * always. This is a lie, but it's better than passing
++		 * the additional vm86 bit around everywhere.
++		 */
++		if (v8086_mode(regs))
++			m->cs |= 3;
++
+ 		/*
+ 		 * Get the address of the instruction at the time of
+ 		 * the machine check error.
+ 		 */
+-		if (m->mcgstatus & (MCG_STATUS_RIPV|MCG_STATUS_EIPV)) {
++		if (m->mcgstatus & (MCG_STATUS_RIPV | MCG_STATUS_EIPV))
+ 			m->ip = regs->ip;
+-			m->cs = regs->cs;
+-
+-			/*
+-			 * When in VM86 mode make the cs look like ring 3
+-			 * always. This is a lie, but it's better than passing
+-			 * the additional vm86 bit around everywhere.
+-			 */
+-			if (v8086_mode(regs))
+-				m->cs |= 3;
+-		}
++
+ 		/* Use accurate RIP reporting if available. */
+ 		if (mca_cfg.rip_msr)
+ 			m->ip = mce_rdmsrq(mca_cfg.rip_msr);
+@@ -841,35 +842,6 @@ void machine_check_poll(enum mcp_flags flags, mce_banks_t *b)
+ }
+ EXPORT_SYMBOL_GPL(machine_check_poll);
+ 
+-/*
+- * During IFU recovery Sandy Bridge -EP4S processors set the RIPV and
+- * EIPV bits in MCG_STATUS to zero on the affected logical processor (SDM
+- * Vol 3B Table 15-20). But this confuses both the code that determines
+- * whether the machine check occurred in kernel or user mode, and also
+- * the severity assessment code. Pretend that EIPV was set, and take the
+- * ip/cs values from the pt_regs that mce_gather_info() ignored earlier.
+- */
+-static __always_inline void
+-quirk_sandybridge_ifu(int bank, struct mce *m, struct pt_regs *regs)
+-{
+-	if (bank != 0)
+-		return;
+-	if ((m->mcgstatus & (MCG_STATUS_EIPV|MCG_STATUS_RIPV)) != 0)
+-		return;
+-	if ((m->status & (MCI_STATUS_OVER|MCI_STATUS_UC|
+-		          MCI_STATUS_EN|MCI_STATUS_MISCV|MCI_STATUS_ADDRV|
+-			  MCI_STATUS_PCC|MCI_STATUS_S|MCI_STATUS_AR|
+-			  MCACOD)) !=
+-			 (MCI_STATUS_UC|MCI_STATUS_EN|
+-			  MCI_STATUS_MISCV|MCI_STATUS_ADDRV|MCI_STATUS_S|
+-			  MCI_STATUS_AR|MCACOD_INSTR))
+-		return;
+-
+-	m->mcgstatus |= MCG_STATUS_EIPV;
+-	m->ip = regs->ip;
+-	m->cs = regs->cs;
+-}
+-
+ /*
+  * Disable fast string copy and return from the MCE handler upon the first SRAR
+  * MCE on bank 1 due to a CPU erratum on Intel Skylake/Cascade Lake/Cooper Lake
+@@ -923,26 +895,6 @@ static noinstr bool quirk_skylake_repmov(void)
+ 	return false;
+ }
+ 
+-/*
+- * Some Zen-based Instruction Fetch Units set EIPV=RIPV=0 on poison consumption
+- * errors. This means mce_gather_info() will not save the "ip" and "cs" registers.
+- *
+- * However, the context is still valid, so save the "cs" register for later use.
+- *
+- * The "ip" register is truly unknown, so don't save it or fixup EIPV/RIPV.
+- *
+- * The Instruction Fetch Unit is at MCA bank 1 for all affected systems.
+- */
+-static __always_inline void quirk_zen_ifu(int bank, struct mce *m, struct pt_regs *regs)
+-{
+-	if (bank != 1)
+-		return;
+-	if (!(m->status & MCI_STATUS_POISON))
+-		return;
+-
+-	m->cs = regs->cs;
+-}
+-
+ /*
+  * Do a quick check if any of the events requires a panic.
+  * This decides if we keep the events around or clear them.
+@@ -960,11 +912,6 @@ static __always_inline int mce_no_way_out(struct mce_hw_err *err, char **msg, un
+ 			continue;
+ 
+ 		arch___set_bit(i, validp);
+-		if (mce_flags.snb_ifu_quirk)
+-			quirk_sandybridge_ifu(i, m, regs);
+-
+-		if (mce_flags.zen_ifu_quirk)
+-			quirk_zen_ifu(i, m, regs);
+ 
+ 		m->bank = i;
+ 		if (mce_severity(m, regs, &tmp, true) >= MCE_PANIC_SEVERITY) {
+@@ -1950,9 +1897,6 @@ static void apply_quirks_amd(struct cpuinfo_x86 *c)
+ 	 */
+ 	if (c->x86 == 0x15 && c->x86_model <= 0xf)
+ 		mce_flags.overflow_recov = 1;
+-
+-	if (c->x86 >= 0x17 && c->x86 <= 0x1A)
+-		mce_flags.zen_ifu_quirk = 1;
+ }
+ 
+ static void apply_quirks_intel(struct cpuinfo_x86 *c)
+@@ -1988,9 +1932,6 @@ static void apply_quirks_intel(struct cpuinfo_x86 *c)
+ 	if (c->x86_vfm < INTEL_CORE_YONAH && mca_cfg.bootlog < 0)
+ 		mca_cfg.bootlog = 0;
+ 
+-	if (c->x86_vfm == INTEL_SANDYBRIDGE_X)
+-		mce_flags.snb_ifu_quirk = 1;
+-
+ 	/*
+ 	 * Skylake, Cascacde Lake and Cooper Lake require a quirk on
+ 	 * rep movs.
+diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
+index b5ba598e54cb..59a94daa31ad 100644
+--- a/arch/x86/kernel/cpu/mce/internal.h
++++ b/arch/x86/kernel/cpu/mce/internal.h
+@@ -211,9 +211,6 @@ struct mce_vendor_flags {
+ 	 */
+ 	smca			: 1,
+ 
+-	/* Zen IFU quirk */
+-	zen_ifu_quirk		: 1,
+-
+ 	/* AMD-style error thresholding banks present. */
+ 	amd_threshold		: 1,
+ 
+@@ -223,13 +220,10 @@ struct mce_vendor_flags {
+ 	/* Centaur Winchip C6-style MCA */
+ 	winchip			: 1,
+ 
+-	/* SandyBridge IFU quirk */
+-	snb_ifu_quirk		: 1,
+-
+ 	/* Skylake, Cascade Lake, Cooper Lake REP;MOVS* quirk */
+ 	skx_repmov_quirk	: 1,
+ 
+-	__reserved_0		: 55;
++	__reserved_0		: 57;
+ };
+ 
+ extern struct mce_vendor_flags mce_flags;
 
-The same for the above sentence.
+base-commit: 0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
+-- 
+2.50.1
 
-Something like:
-
-Note that MADV_COLLAPSE is always rejected if madvise(..., MADV_NOHUGEPAG=
-E) is
-used.
-
-
-
-> +
-> +	prctl(PR_SET_THP_DISABLE, 0, 0, 0, 0):
-> +		This will re-enabled THPs for the process, as if they would never ha=
-ve
-
-s/re-enabled/re-enable/
-
-> +		been disabled. Whether THPs will actually be used depends on global =
-THP
-> +		controls.
-
-and madvise() calls.
-
-> +
-> +	prctl(PR_GET_THP_DISABLE, 0, 0, 0, 0):
-> +		This returns a value whose bit indicate how THP-disable is configure=
-d:
-
-s/bit/bits
-
-> +		Bits
-> +		 1 0  Value  Description
-> +		|0|0|   0    No THP-disable behaviour specified.
-> +		|0|1|   1    THP is entirely disabled for this process.
-> +		|1|1|   3    THP-except-advised mode is set for this process.
-> +
->  Khugepaged controls
->  -------------------
->
-> -- =
-
-> 2.47.3
-
-Otherwise, LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
-
-Best Regards,
-Yan, Zi
 
