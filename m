@@ -1,93 +1,109 @@
-Return-Path: <linux-kernel+bounces-767978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7A3B25B75
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B801EB25B7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F7E77ABDDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602CA3AE38E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57459236430;
-	Thu, 14 Aug 2025 06:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A74023183C;
+	Thu, 14 Aug 2025 06:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ChL7xFU6"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCQ7iZsU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E3D230BD2;
-	Thu, 14 Aug 2025 06:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CB91EDA0E;
+	Thu, 14 Aug 2025 06:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755151251; cv=none; b=W/J9KDI/bTwvzkx9u5RJq0GCgdeeBw6fH+N+UGG+mmg2xoUmw/Z6dTc3ggwTT+ul75qdHJuip/L7EBvvwJjJnxK7LaJ6b9E5zDRly/Py5HWcfUM02y9ef2NvMRoOfphTO4/zdii/hUNUMEwgsnn9/4hlT99o2U8uI76c/Uj9rIQ=
+	t=1755151273; cv=none; b=oUADXOxR+RStjgUPIwtnOBg0jxOhdbW9jK+2t6jwq2UZUONJCt2Ckb5/DP44lybe8bHzTAElbEZOYJyCDDPl143B2litzWEoH4t3CIZKUh9YRLyRHwb78qTGP9q1YAvSh7+b5QoIcdeKs6V25et6R55cjdAN+RSVkJwr1Tq3wLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755151251; c=relaxed/simple;
-	bh=JC/RWVioF1QV3ACGfJLGvNWucnG7XrmTqAIPB21t45Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uX6o0/1x4TObQo65UHaopFqoZJHU/1T8Ue1VOqtHF4iDYcx5Uk43Q8bcSO4GCUHH2TgAcwj6TStA4l1IBuT4NDNwWv0oIAPzbzpenPFEpDl6v+c5W8y2109RlHU0ERCoBvtQFd8cgO4guTqngn5ZX6S3PxbzD8c/JDmKbx/qjG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ChL7xFU6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=VHwBCELpy483gJxb6QuMvzNBeU1vQC2waNJoabTWiKU=; b=ChL7xFU61wQj98+eRVxbj6+nOp
-	dRLr8ewfvO5xwGwenuItHN5CApsc1a/oaJOChoROm7p4/7x3gCPjrz7igCSU0UIelKnKTZ1mB9ZAE
-	73wxUu/fBbxaLQzS6qMiGlmKNKbhmixdMClnCmUSdxzbTef6ekagcTN8gkm5L/DbRkmneeXh2Pf30
-	PCRDxEwhAz5Xebdm0wpYP9+Rwc+uuMb7/o6ZQRgEqocZSohu/aZRiwQah2115FdZhjZjpUI8QerM3
-	yy9QoyUFNSh7mL/n1MTN/24hb+dNT6u+RW2OPwmfPXP4cv2hysWPJHHyE9ur1FmCdqrkdFnA+zTfh
-	oj3wgJvQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umR14-0000000Fszj-1NYZ;
-	Thu, 14 Aug 2025 06:00:46 +0000
-Message-ID: <4c51b440-03c2-43cf-b9c9-67c0be3c3c25@infradead.org>
-Date: Wed, 13 Aug 2025 23:00:44 -0700
+	s=arc-20240116; t=1755151273; c=relaxed/simple;
+	bh=7vPHh6uzcmYyhzSxVfwn2NBujgPJ544BwypiXhxBzzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GcOlrfLXjF9mApxibxWB0yWaJq6R9n5vPfXw3FhAhIExx/qbKQw8+OyJ5dIGSOBwObnIKcDXOnoXql+ORv1xoQn+/1YSX/PpGNo56HgHH2EvsWbC3SwFy/6eq+ZWihFaadah+3U2cJNj3GZAeZ6aAjFHISrWk33ypy0/7AiP2AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCQ7iZsU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE3EBC4CEEF;
+	Thu, 14 Aug 2025 06:01:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755151273;
+	bh=7vPHh6uzcmYyhzSxVfwn2NBujgPJ544BwypiXhxBzzU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lCQ7iZsU4vTCi/Qtl/lBCWUVPeGi2GVqLbuwU1FMAsX4xiLF49sU2owGOwyfUQisz
+	 CGjLeni5abt+oFdrKw5fS00eMpa4LrQm8T8HxG8t1/2p010Q/w7AlNoKSR8rAhluy7
+	 MAYOL4t7Zo8pS/6cBpkdqKo/ivgM2uBe3JUDyKy5Mu54dnC33uo7CmHU3tzfqFuZGt
+	 Gvsx1CsiWq602MCK7d7cnv5eYjO0miU/5cbgPbgvWkneISuiUb9FlFUJnx/LSx6Uiq
+	 8YKmseoc5Avp7XKAF4xLmMzCRLeYVIt0U9e7KUQ/HJwDcKq6wpVTiC9H7Mr2i53nnQ
+	 hERtcjQJgMMjA==
+Date: Thu, 14 Aug 2025 15:01:07 +0900
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v3][next] drm/nouveau: fifo: Avoid
+ -Wflex-array-member-not-at-end warning
+Message-ID: <aJ17oxJYcqqr3946@kspp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/14] net: ionic: Create an auxiliary device for rdma
- driver
-To: Abhijit Gangurde <abhijit.gangurde@amd.com>, brett.creeley@amd.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, corbet@lwn.net, jgg@ziepe.ca, leon@kernel.org,
- andrew+netdev@lunn.ch
-Cc: sln@onemain.com, allen.hubbe@amd.com, nikhil.agarwal@amd.com,
- linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shannon Nelson <shannon.nelson@amd.com>
-References: <20250814053900.1452408-1-abhijit.gangurde@amd.com>
- <20250814053900.1452408-2-abhijit.gangurde@amd.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250814053900.1452408-2-abhijit.gangurde@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
+Use the new TRAILING_OVERLAP() helper to fix the following warning:
 
-On 8/13/25 10:38 PM, Abhijit Gangurde wrote:
-> +RDMA Support via Auxiliary Device
-> +=================================
-> +
-> +The ionic driver supports RDMA (Remote Direct Memory Access) functionality
-> +through the Linux auxiliary device framework when advertised by the firmware.
-> +RDMA capability is detected during device initialization, and if supported,
-> +the ethernet driver will create an auxiliary device that allows the rdma
+drivers/gpu/drm/nouveau/nvif/fifo.c:29:42: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-s/rdma/RDMA/ as is used elsewhere. (?)
+This helper creates a union between a flexible-array member (FAM)
+and a set of members that would otherwise follow it. This overlays
+the trailing members onto the FAM while preserving the original
+memory layout.
 
-> +driver to bind and provide InfiniBand/RoCE functionality.
-> +
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+Changes in v3:
+ - Use the new TRAILING_OVERLAP() helper.
 
+Changes in v2:
+ - Adjust heap allocation.
+
+ drivers/gpu/drm/nouveau/nvif/fifo.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvif/fifo.c b/drivers/gpu/drm/nouveau/nvif/fifo.c
+index a463289962b2..b0ab80995d98 100644
+--- a/drivers/gpu/drm/nouveau/nvif/fifo.c
++++ b/drivers/gpu/drm/nouveau/nvif/fifo.c
+@@ -25,13 +25,12 @@ static int
+ nvif_fifo_runlists(struct nvif_device *device)
+ {
+ 	struct nvif_object *object = &device->object;
+-	struct {
+-		struct nv_device_info_v1 m;
++	TRAILING_OVERLAP(struct nv_device_info_v1, m, data,
+ 		struct {
+ 			struct nv_device_info_v1_data runlists;
+ 			struct nv_device_info_v1_data runlist[64];
+ 		} v;
+-	} *a;
++	) *a;
+ 	int ret, i;
+ 
+ 	if (device->runlist)
 -- 
-~Randy
+2.43.0
 
 
