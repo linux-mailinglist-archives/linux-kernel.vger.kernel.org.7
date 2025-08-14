@@ -1,129 +1,157 @@
-Return-Path: <linux-kernel+bounces-768959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6AFB26859
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:01:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C59BB2686B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6B4584EBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:55:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B19A1CC782C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACAE301019;
-	Thu, 14 Aug 2025 13:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53994301470;
+	Thu, 14 Aug 2025 13:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="oyS707iJ"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BtkcfJ3P"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F053019A1
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074162FFDF8;
+	Thu, 14 Aug 2025 13:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179709; cv=none; b=AO0jF0x/IADA/prjrewG5V3Gc6j0k/Mkk4pnLRHa/9dEy0qPQyHnCC1gObW0Dr8Kwp/a1Suq3nn26EGQgQNLeMbttdVVs0GwqiqpBm4b8l5iZgzUdjTZeF0CSeASdB4el3BqSkb9L0TopyydG0ZdKG1UUqgRa6C02VPbu4CGAxQ=
+	t=1755179741; cv=none; b=pyqNTLi7Ukq7fXOyoxlAfu1m4n79EIDxstiBXbd6qoe26sco1Wevy+8Rq+zO7YzxKuzhKftJrJXTS3aBQTkwmFFn1tUjyc0ezeN2d37UFAJygZQOVLzbZAXVEXBKkywALgNQgEMEQ3CRrk4WLTpzSS7CbG+VRD+0psBLUsHc50g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179709; c=relaxed/simple;
-	bh=7GlNJhry7TThYwVtorBJU7ypkucLCF+YWV8hYGJ/q2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C99jPYCIRBz1N/AcHoYoE2AOJM+XS8dZ46O2YNj/YfGstD072p08WuuH/QpQUw4Z6Hm47V/DsRAqZie+j342bmETbiYzNWxaPOEeXStZ6NNzUvehMkpJJIjHngFaLGKBIwDSJHl7IAU3oSp9bZi/fPVfURu7YgFRs3JWwTlsjA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=oyS707iJ; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70a88db0416so9868706d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:55:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1755179706; x=1755784506; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MlALy2xhseF+yQTX6QJcUoYBFvoxQUQwSPoAaHJPRr8=;
-        b=oyS707iJRfzFAambHeVKgYCiTzl8mlaTZxUTbsH4jTXqgmG6WUDBo3AXCd8HEquT8A
-         sdMbK1rC2uqeICnQ8yfdJI0VTQt0xmp6ra7IKjd9c+siVXEVhhX/so2j+xeI4lpTRBHz
-         ZuC+Wu8TeP1l7g5LnKF0UplstztZXGyLqpUQCTZC5RDpRvBghlF08sTr9g4Iugp+b9Lq
-         Z2gb61x0aeEtVGAK+7ysTcT3BVwjoamoKnDQnyZYNRswRtMiwzyxsdKxZeNy20V82KME
-         oQp8iuN+LCgyGkVVWVUPDBiBp5PnX850tQ3VQhqGd7Z60jwxpf8blJpB+W498/Jlwp0S
-         vw4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755179706; x=1755784506;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MlALy2xhseF+yQTX6QJcUoYBFvoxQUQwSPoAaHJPRr8=;
-        b=U7Qp8ycHnk6GFiz0QCFuEHIxSs798XgPTtlav+altdugAXyCngTHxfKCKlwHjrgFZ/
-         WQPSexBCEfQrZ0z9hH1Pp5QikrvlREikELMjmJ4prNLKAAB1/lVQKrt7oBcfIQ+RoDb5
-         FR8Hfj8u/WRW+nw7ZXVYqBKqzD/EmP5yeMef1L17vs36Af5T2PyXFhmsjVpeb2pSkpRz
-         6zP1e8dp3JgDfoUy9Vws79DqIV2YieAv1jVdO3eZ24tGarxhO0pRbqfokpoVkqynde/u
-         3fuXPI0XskqmyMFJhtDPIRDTI/rR5f9TnQYaDPJP6XUSlzk5TgZ0VUuUbHDePqihfZ7p
-         6VoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3NjgrzNHYgtlANYDoxrNpHuUs1pQYrGGZwYyfrBaJKgN38Pw4kSaqNBRaqk8Uam7r9odi9DH+O3HHyy8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3sOlnmOsGsawqEJmysSaA/fMoH9xfvpbXX2YrSJgvUbBj33dU
-	AAv38bicnlAKbmz4AnqZB2mApgX1nEcBxMwt8c+JtERVGO/oYHFkGoVHaBP2I1uFRRc=
-X-Gm-Gg: ASbGncsORWxh2+cDWgOn2fGugSlwStjvwSohnOc2bhMuJ/aO8VopKGaD0fyV4O5vyli
-	L5tV+G33u7p72CyFe65CKetFTkYfPsePAvtY1PpCNvyH0otEs7CNnMWbER8IB7b2kcZjYEiYp9/
-	JijlCdssljprqtMcqJ6YebHP0ux1qFUQgXu6+iNGqjx0TC22BjAilM0vHYLKyG3O1DdncbdwjgK
-	Yn3uc6JGNWN5IPwxho3kmgvZ0//BgYT7Af+L4PPM3zaZUK+NkqYBlQljNBjVPcW05WwDX9JFPR7
-	GrsW523o0pRQHY7TW0k5wf5mZGYEnOqgrtvCqCWYlBfQVIM300Y3aEatpN6n/pgDGgUJ9AbGlIm
-	1+DnsjA8yqtLPSixsp6XIcQ==
-X-Google-Smtp-Source: AGHT+IFL9mfmhIOtoP3f48wEW/B6LYJ+F/aJttG1hYQa0kKnXgEyKk/hQne+aXocVTXmvmyjVO0Ehw==
-X-Received: by 2002:a05:6214:c24:b0:709:e095:128f with SMTP id 6a1803df08f44-70af5d0539emr51369616d6.25.1755179706213;
-        Thu, 14 Aug 2025 06:55:06 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:929a:4aff:fe16:c778])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70af5c0d80fsm12601116d6.80.2025.08.14.06.55.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 06:55:05 -0700 (PDT)
-Date: Thu, 14 Aug 2025 09:55:01 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Xuewen Yan <xuewen.yan@unisoc.com>
-Cc: rostedt@goodmis.org, surenb@google.com, peterz@infradead.org,
-	mingo@redhat.com, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, andrii@kernel.org, vschneid@redhat.com,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	yuming.han@unisoc.com, ke.wang@unisoc.com, xuewen.yan94@gmail.com
-Subject: Re: [RFC PATCH] sched: psi: Add psi events trace point
-Message-ID: <20250814135501.GD115258@cmpxchg.org>
-References: <20250814070719.865-1-xuewen.yan@unisoc.com>
+	s=arc-20240116; t=1755179741; c=relaxed/simple;
+	bh=lNeZTqXkfqfM9HA3zRXANVYLc3uMzQ9PQBVTYVgCdis=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y6ERf6spishXoUJhId9gi8Mn937f3+0kdjACNaX8/rd/6Khlkqk6g/3xiAZ0tILfg90Xhepk7SLcA0AIsKQjD9Zb4Rj9gRjTW0vcdo4dlCEyiJQNtYehZ5xtbJmw/wV1YNRl34jBn4PQLNKuCEaCC2KsyCg0F7MrMV4uAd/B1k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BtkcfJ3P; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EDtYoG1891693;
+	Thu, 14 Aug 2025 08:55:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1755179734;
+	bh=gFYJ62qZ6u4sy+YYowtu8KgzFCONBw4gNh3rfgYNC1k=;
+	h=From:To:CC:Subject:Date;
+	b=BtkcfJ3P7pecduvN6FoAOm26vAX+9SbZ1NWwC9SGvNO0IXznLZrAtKolQSMBCTj7Z
+	 FT64EHH7Z82ziM4PGMtudFUEzNct8UrA5YJVk0a02+eo9y6Yd+smNE1HEqbe+jaycL
+	 sS3mvOnWAxwWF9xY0qIrMc9f/4dl3zzTsykiKqdU=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EDtYq3879338
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 14 Aug 2025 08:55:34 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
+ Aug 2025 08:55:33 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 14 Aug 2025 08:55:33 -0500
+Received: from lelvem-mr05.itg.ti.com ([10.249.42.149])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EDtX4C4004753;
+	Thu, 14 Aug 2025 08:55:33 -0500
+From: Andrew Davis <afd@ti.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Hari Nagalla <hnagalla@ti.com>, Beleswar Padhi
+	<b-padhi@ti.com>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>
+Subject: [PATCH 1/3] remoteproc: da8xx: Use devm_rproc_alloc() helper
+Date: Thu, 14 Aug 2025 08:55:30 -0500
+Message-ID: <20250814135532.638040-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814070719.865-1-xuewen.yan@unisoc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Aug 14, 2025 at 03:07:19PM +0800, Xuewen Yan wrote:
-> Add trace point to psi triggers. This is useful to
-> observe the psi events in the kernel space.
-> 
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+Use the device lifecycle managed allocation function. This helps prevent
+mistakes like freeing out of order in cleanup functions and forgetting to
+free on error paths.
 
-Can you elaborate on a situation in which you would use this?
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/remoteproc/da8xx_remoteproc.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-> ---
->  include/trace/events/sched.h | 5 +++++
->  kernel/sched/psi.c           | 2 ++
->  2 files changed, 7 insertions(+)
-> 
-> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-> index 7b2645b50e78..c23cb2bc76fd 100644
-> --- a/include/trace/events/sched.h
-> +++ b/include/trace/events/sched.h
-> @@ -896,6 +896,11 @@ DECLARE_TRACE(sched_set_need_resched,
->  	TP_PROTO(struct task_struct *tsk, int cpu, int tif),
->  	TP_ARGS(tsk, cpu, tif));
->  
-> +struct psi_trigger *t
+diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
+index 93031f0867d10..47df21bea5254 100644
+--- a/drivers/remoteproc/da8xx_remoteproc.c
++++ b/drivers/remoteproc/da8xx_remoteproc.c
+@@ -276,8 +276,8 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 			return dev_err_probe(dev, ret, "device does not have specific CMA pool\n");
+ 	}
+ 
+-	rproc = rproc_alloc(dev, "dsp", &da8xx_rproc_ops, da8xx_fw_name,
+-		sizeof(*drproc));
++	rproc = devm_rproc_alloc(dev, "dsp", &da8xx_rproc_ops, da8xx_fw_name,
++				 sizeof(*drproc));
+ 	if (!rproc) {
+ 		ret = -ENOMEM;
+ 		goto free_mem;
+@@ -294,7 +294,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 
+ 	ret = da8xx_rproc_get_internal_memories(pdev, drproc);
+ 	if (ret)
+-		goto free_rproc;
++		goto free_mem;
+ 
+ 	platform_set_drvdata(pdev, rproc);
+ 
+@@ -304,7 +304,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 					rproc);
+ 	if (ret) {
+ 		dev_err(dev, "devm_request_threaded_irq error: %d\n", ret);
+-		goto free_rproc;
++		goto free_mem;
+ 	}
+ 
+ 	/*
+@@ -314,7 +314,7 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	 */
+ 	ret = reset_control_assert(dsp_reset);
+ 	if (ret)
+-		goto free_rproc;
++		goto free_mem;
+ 
+ 	drproc->chipsig = chipsig;
+ 	drproc->bootreg = bootreg;
+@@ -325,13 +325,11 @@ static int da8xx_rproc_probe(struct platform_device *pdev)
+ 	ret = rproc_add(rproc);
+ 	if (ret) {
+ 		dev_err(dev, "rproc_add failed: %d\n", ret);
+-		goto free_rproc;
++		goto free_mem;
+ 	}
+ 
+ 	return 0;
+ 
+-free_rproc:
+-	rproc_free(rproc);
+ free_mem:
+ 	if (dev->of_node)
+ 		of_reserved_mem_device_release(dev);
+@@ -352,7 +350,6 @@ static void da8xx_rproc_remove(struct platform_device *pdev)
+ 	disable_irq(drproc->irq);
+ 
+ 	rproc_del(rproc);
+-	rproc_free(rproc);
+ 	if (dev->of_node)
+ 		of_reserved_mem_device_release(dev);
+ }
+-- 
+2.39.2
 
-Missing ;
-
-> +DECLARE_TRACE(psi_event,
-> +	TP_PROTO(struct psi_trigger *t),
-> +	TP_ARGS(t));
-> +
->  #endif /* _TRACE_SCHED_H */
->  
->  /* This part must be outside protection */
 
