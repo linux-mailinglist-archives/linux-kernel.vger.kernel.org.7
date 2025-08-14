@@ -1,277 +1,412 @@
-Return-Path: <linux-kernel+bounces-769570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677A4B27076
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:58:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30256B27079
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4E0AA4286
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:58:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 932DBAA3204
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED75627466C;
-	Thu, 14 Aug 2025 20:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CC5272E42;
+	Thu, 14 Aug 2025 20:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qy0BMIOn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgGQKZgZ"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9E9272E67
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 20:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557CE244662;
+	Thu, 14 Aug 2025 20:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755205074; cv=none; b=uxjxsGKN0A4vce+Mm4YBViVbIOw7Uo24A0f6dXeTQL/d2Vplkd6m0WBzQW4QY+AV1gMNblAJ2qhIysM/QyezUZJeiFcOOfThl5p/kJiStvFUaCIIdRQ4wvjSd2lfdmfOA2Dm563Jddq8R0NvpVBop8wRbHSelakHP075dXvSHKo=
+	t=1755205114; cv=none; b=fsxSA9kBe44cU3xNmmAhORG04cPTvCkJ4qMFYOOTdlTZbelOwY+zzmhCpJLvIydzcv/s+LmOvFdP5bhGZY+4D/So6UB8tADVxXjoYav+ODowG8d5oRS7M1ZX5uzqsJtFA4F67g8ufdqKBnk4vnGGeYySVYV3FO8o8ZL8eftScKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755205074; c=relaxed/simple;
-	bh=h3hOMQuTjT1pzbRT7BoWHNwcLd2epQhf+JDhueUBbjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lNjUcND7pdHVqKXHxBbwLWpV8u3XfCS3xHn7Vm3j1yOhAHaLzvdgT1FXla2jPkG5tE4dc4w70+vDggFhsGPOscLpBFYVg1wwTns2TlZyVxF9v6yAlxfELVEuW5GmX+nWbkVkCD3FRYI116dw6nx4w0XG5ymFyCFokQqEAGuOOTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qy0BMIOn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755205071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fQ9W2UsTOcf4jWAFntUYepOTTgQSCF68b+8Vxa15s+g=;
-	b=Qy0BMIOnLbo81PTTt/NCL3X0ZvOJ8YM6Ab/2h7B473fZQhrxfVjJqhZ66/VwBVMVro9rxU
-	tEfju0j1ke1NJdWoY4ecGqrwiEXFoj7Kf9d8NxvII+8x2nu2fKW+4JFj55Irk6J5yPRTBY
-	dGSZKlGR3UbURUqRHogx+ylYMah+4KU=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-261-bEdc8Ea5NTaSibBypL1jpw-1; Thu, 14 Aug 2025 16:57:48 -0400
-X-MC-Unique: bEdc8Ea5NTaSibBypL1jpw-1
-X-Mimecast-MFC-AGG-ID: bEdc8Ea5NTaSibBypL1jpw_1755205068
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e56ffd00ccso3564235ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:57:48 -0700 (PDT)
+	s=arc-20240116; t=1755205114; c=relaxed/simple;
+	bh=k1OBbRSMU8xXelrytHGhkT8sGA1CqLRuo1xDC/AdDtY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hHkBadSyLCmzA96mFoY/aiknaoxC0lu88b1as1Ed3pxw+02oweD6OkOpSWAPMO/ZWcP30bz8WPlqfBmUdQwSyYgm06sCCuHixs1kHiWGzDqptAeBlIfS2w2XiI+0SDnAaRnB1O9/uv3QCAMbLLZLStsYiuo+fpInBdhaPozCmXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgGQKZgZ; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3e57003ee3fso6680655ab.2;
+        Thu, 14 Aug 2025 13:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755205111; x=1755809911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B/DvcecNfaCyZ/2dBsbFRg7Z15sklMK4MZS2CFAwCmU=;
+        b=dgGQKZgZUpqEUtk7GgjfU3i0u6eVXY7iigFZ2tkknZ9hGZVpFQ4GAtyz/Ppu8Vgf9h
+         YUgRARdmiWgUnoQ54ULWPZLCqWmE4CVTBcwjVrFu+06im0RwKhEAMiSBjAsxRVLHxFe3
+         UmclwTU5SctTDiwmOgB/wOunNUO1BCd3E2bhkL60W9UtXO11S/L2smhMWsSNJwYSk9Pz
+         jf2C/HHkaV3wTXY+XPSuFnmHeo6M/z8j3Fhh11FVSXGE9mlYXxW11vtwLOs0PoXvAkBG
+         Kcdp7l8/QqAW5f0CvEQyq1FCEJ6sxc0nFgkaDLL28CA2lPqG9eWMePHh8Vdj0i6O9IvY
+         /xag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755205068; x=1755809868;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1755205111; x=1755809911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fQ9W2UsTOcf4jWAFntUYepOTTgQSCF68b+8Vxa15s+g=;
-        b=rY4a2pUhpxulvTepIY5PTDN/UzFTDSn6J2LEnOTNDY63E96uUM8FaZmHA3hZoi5If3
-         NSylBHwLy1QKonATtp8tgLeLJqfTFF5PZviXX3O8r0u2HNvbo0un7GihBamjjivDHxm3
-         B0vxYxXPRG5UB6Rdxe1vDhdcPS41elnzECfECm1BOXpgsaVCB/16csMIZESvQZEf9n+B
-         ZUCJfI6UBGA2G9zI0/jBH0iSiei7exNXetf+UKwIuAqqiEtiwehMbBc7axIh4CTmdxPg
-         sL3Af8q5713m3mDkkS2jxq/9Nl0UjCO7mjvMYJOcgvvwXojZRBgJrTkJT1fPuONWf7Bt
-         HFXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFZvHUHlx9s17TJq0Gqxkf7B6cubcNSD5JAqXpW09Uk4JtW5C+vTxypN2MWjiOTfMNv/8EkL2DFL9Z1Rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIwX8n3kc+NqBvLMqup6Wspmc9N3STjRe2YSDBI7DZgs052ej9
-	XjL1vfNrgyhtFFbRpjR5Xvvsk/hqbAJvgyV2SWYROTYBOPkoAKYdTAzlWrvAOFOKAOoK5cgwm/R
-	c7EjaDe5X/JfFtcdJxwsnvNALZ3iA/DFGPVcBLey/z+aH8ZNmx8zOLL7OdoJq91lZ/w==
-X-Gm-Gg: ASbGncuPLnRUXSVnwG4Ef41rjfN3LUR65Ste14bRqQlKlVw1wjFpJ2NqugxWu6zD7SY
-	A1no4Sa97pWgWrliFLjSUziGtiu6bT8Rw4NM/u+9ytDY6XsLFOZI8Or5RVpw8ITHjKdOZIbyysf
-	hObS4jRghmeYnsrec0R9sQLBeEf+jJYnT0Of8PXkXOWyvs3HKX81UVUzHdwRty6Mfz5T89xC3TP
-	BfA+SEBcR6AvIIn963defGwtHk7F9CsXMU+cauhxP/YPZYRJi27Tw78YdQFIqMUiiyJLxNpFTfX
-	DVv/DZ+n+zc0zJL1WLWfCmWo+8OJttyfESDenhomJY0=
-X-Received: by 2002:a05:6602:1656:b0:881:87de:a332 with SMTP id ca18e2360f4ac-884296b9cf8mr513333839f.4.1755205067547;
-        Thu, 14 Aug 2025 13:57:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEeKejHpvsGmlpVI/X3yeDsu+UEU6gOL+uJN/zroDTAqxWdDg05KrgjOz0Kj21AjySc0aikqg==
-X-Received: by 2002:a05:6602:1656:b0:881:87de:a332 with SMTP id ca18e2360f4ac-884296b9cf8mr513331739f.4.1755205067007;
-        Thu, 14 Aug 2025 13:57:47 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-883f19ab690sm523077939f.24.2025.08.14.13.57.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 13:57:44 -0700 (PDT)
-Date: Thu, 14 Aug 2025 14:57:43 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Farhan Ali <alifm@linux.ibm.com>
-Cc: Niklas Schnelle <schnelle@linux.ibm.com>, Bjorn Helgaas
- <helgaas@kernel.org>, linux-s390@vger.kernel.org, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
-Subject: Re: [PATCH v1 5/6] vfio-pci/zdev: Perform platform specific
- function reset for zPCI
-Message-ID: <20250814145743.204ca19a.alex.williamson@redhat.com>
-In-Reply-To: <350a9bd5-c2a9-4206-98fd-8a7913d36112@linux.ibm.com>
-References: <20250813170821.1115-1-alifm@linux.ibm.com>
-	<20250813170821.1115-6-alifm@linux.ibm.com>
-	<20250813143034.36f8c3a4.alex.williamson@redhat.com>
-	<7059025f-f337-493d-a50c-ccce8fb4beee@linux.ibm.com>
-	<20250813165631.7c22ef0f.alex.williamson@redhat.com>
-	<5c76f6cfb535828f6586a67bd3409981663d14d8.camel@linux.ibm.com>
-	<350a9bd5-c2a9-4206-98fd-8a7913d36112@linux.ibm.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        bh=B/DvcecNfaCyZ/2dBsbFRg7Z15sklMK4MZS2CFAwCmU=;
+        b=JoWm/LEiJlMzo1bnyNUK1UwHTDE76J1k9kO7E83vkZZW37oHtRADLtAI2QquYYJSgj
+         iYXF+L42uVtI/743Qk/j/LajQVF4+yirmzyylIxP7Q038BsALHCoK6wxlqN9zhnKWOUs
+         duGM+Be1JEYqlmWuYNNEj3K5w1eAq0NY/LaQ+cQKQLy804Q4+ynrcZXMDrVfxCFjCvG+
+         HOhMcvTFqStNKviA77BXbng7+9t9uK+ViQiT7huXw6hjebDiKZnWTPglCfDe2kvcb9U0
+         WG26sYcF0ZFgFzvz+it8TWhlM4OOwpxHh9rh4cEZQ2MhG2Z0xELrkBjvj6It7EIyQArt
+         71yA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDGDU/C6LnFJRaLZLZNoAn4t5AjcqRd0t0uaZ6YeB/gtPOo/edk7e4DzpBdLbCqimJQYQ2A9m6cUWRHE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz4NpYtxt6NBRyySduqYnbcpINUAcN57lvsTRMTcm0Bana0Sqz
+	xejzTi+0yaA2TojUuVydFKh4UvSldyJbGHE97NkV6AeZDQWL7heNAboe2ZBeJlrLtvTGphBUD6j
+	ZLlsuIH6mYBZyNRd+mpZJiBAcJx/llV0=
+X-Gm-Gg: ASbGnctWpLD9Tr4bYPjjQCuEaNkh8hfTwnvWUw4FmMyn5nUHCuzs/px2qOHeCHlginO
+	rFMOizq6kqwW6/RDsFb7OYLu7hYq+PPwZn3NMFIz/lU5BcmE6FtkkX1MRxq1wQZO8d8qY8SFSFD
+	ERCqCbFCo6YE/oyK96GSC1XqyNIBacku2ECioMsaD83mclt6PpMq1FplBPKbVZewVX3J4iVa69+
+	k15XIIGLMeJc8HFfzSKJ6Q=
+X-Google-Smtp-Source: AGHT+IFgFZhJs9UqzM/o4QK5/KKQVO4RuxrGKNaiXRMHhQRYN59D+ji06hiSpUfPH25P/9nSatfEHqOb68pCzsUmkQA=
+X-Received: by 2002:a05:6e02:278a:b0:3e5:3a15:93b6 with SMTP id
+ e9e14a558f8ab-3e57b9d0151mr10609915ab.8.1755205111077; Thu, 14 Aug 2025
+ 13:58:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com> <20250801043642.8103-23-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20250801043642.8103-23-kanchana.p.sridhar@intel.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 14 Aug 2025 13:58:19 -0700
+X-Gm-Features: Ac12FXyONKGeDobAX5KFBeSfqGfnUrGztv8b4uIaiXScw_41fTc1M5FIYAMcooo
+Message-ID: <CAKEwX=PV9-QhQaSBGd67s=CVMVJne=fzajRn3=Vf+7OXVuNFmA@mail.gmail.com>
+Subject: Re: [PATCH v11 22/24] mm: zswap: Allocate pool batching resources if
+ the compressor supports batching.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosry.ahmed@linux.dev, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	ryan.roberts@arm.com, 21cnbao@gmail.com, ying.huang@linux.alibaba.com, 
+	akpm@linux-foundation.org, senozhatsky@chromium.org, 
+	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org, 
+	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com, 
+	vinicius.gomes@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 14 Aug 2025 09:33:47 -0700
-Farhan Ali <alifm@linux.ibm.com> wrote:
+On Thu, Jul 31, 2025 at 9:36=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> This patch sets up zswap for allocating per-CPU resources optimally for
+> non-batching and batching compressors.
+>
+> A new ZSWAP_MAX_BATCH_SIZE constant is defined as 8U, to set an upper
+> limit on the number of pages in large folios that will be batch
+> compressed.
+>
+> As per Herbert's comments in [2] in response to the
+> crypto_acomp_batch_compress() and crypto_acomp_batch_decompress() API
+> proposed in [1], this series does not create new crypto_acomp batching
+> API. Instead, zswap compression batching uses the existing
+> crypto_acomp_compress() API in combination with the "void *kernel_data"
+> member added to "struct acomp_req" earlier in this series.
+>
+> It is up to the compressor to manage multiple requests, as needed, to
+> accomplish batch parallelism. zswap only needs to allocate the per-CPU
+> dst buffers according to the batch size supported by the compressor.
+>
+> A "u8 compr_batch_size" member is added to "struct zswap_pool", as per
+> Yosry's suggestion. pool->compr_batch_size is set as the minimum of the
+> compressor's max batch-size and ZSWAP_MAX_BATCH_SIZE. Accordingly, it
+> proceeds to allocate the necessary compression dst buffers in the
+> per-CPU acomp_ctx.
+>
+> Another "u8 batch_size" member is added to "struct zswap_pool" to store
+> the unit for batching large folio stores: for batching compressors, this
+> is the pool->compr_batch_size. For non-batching compressors, this is
+> ZSWAP_MAX_BATCH_SIZE.
+>
+> zswap does not use more than one dst buffer yet. Follow-up patches will
+> actually utilize the multiple acomp_ctx buffers for batch
+> compression/decompression of multiple pages.
+>
+> Thus, ZSWAP_MAX_BATCH_SIZE limits the amount of extra memory used for
+> batching. There is a small extra memory overhead of allocating
+> the acomp_ctx->buffers array for compressors that do not support
+> batching: On x86_64, the overhead is 1 pointer per-CPU (i.e. 8 bytes).
+>
+> [1]: https://patchwork.kernel.org/project/linux-mm/patch/20250508194134.2=
+8392-11-kanchana.p.sridhar@intel.com/
+> [2]: https://patchwork.kernel.org/comment/26382610
+>
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 
-> On 8/14/2025 6:12 AM, Niklas Schnelle wrote:
-> > On Wed, 2025-08-13 at 16:56 -0600, Alex Williamson wrote:  
-> >> On Wed, 13 Aug 2025 14:52:24 -0700
-> >> Farhan Ali <alifm@linux.ibm.com> wrote:
-> >>  
-> >>> On 8/13/2025 1:30 PM, Alex Williamson wrote:  
-> >>>> On Wed, 13 Aug 2025 10:08:19 -0700
-> >>>> Farhan Ali <alifm@linux.ibm.com> wrote:
-> >>>>     
-> >>>>> For zPCI devices we should drive a platform specific function reset
-> >>>>> as part of VFIO_DEVICE_RESET. This reset is needed recover a zPCI device
-> >>>>> in error state.
-> >>>>>
-> >>>>> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-> >>>>> ---
-> >>>>>    arch/s390/pci/pci.c              |  1 +
-> >>>>>    drivers/vfio/pci/vfio_pci_core.c |  4 ++++
-> >>>>>    drivers/vfio/pci/vfio_pci_priv.h |  5 ++++
-> >>>>>    drivers/vfio/pci/vfio_pci_zdev.c | 39 ++++++++++++++++++++++++++++++++
-> >>>>>    4 files changed, 49 insertions(+)  
-> > --- snip ---  
-> >>>>>    
-> >>>>> +int vfio_pci_zdev_reset(struct vfio_pci_core_device *vdev)
-> >>>>> +{
-> >>>>> +	struct zpci_dev *zdev = to_zpci(vdev->pdev);
-> >>>>> +	int rc = -EIO;
-> >>>>> +
-> >>>>> +	if (!zdev)
-> >>>>> +		return -ENODEV;
-> >>>>> +
-> >>>>> +	/*
-> >>>>> +	 * If we can't get the zdev->state_lock the device state is
-> >>>>> +	 * currently undergoing a transition and we bail out - just
-> >>>>> +	 * the same as if the device's state is not configured at all.
-> >>>>> +	 */
-> >>>>> +	if (!mutex_trylock(&zdev->state_lock))
-> >>>>> +		return rc;
-> >>>>> +
-> >>>>> +	/* We can reset only if the function is configured */
-> >>>>> +	if (zdev->state != ZPCI_FN_STATE_CONFIGURED)
-> >>>>> +		goto out;
-> >>>>> +
-> >>>>> +	rc = zpci_hot_reset_device(zdev);
-> >>>>> +	if (rc != 0)
-> >>>>> +		goto out;
-> >>>>> +
-> >>>>> +	if (!vdev->pci_saved_state) {
-> >>>>> +		pci_err(vdev->pdev, "No saved available for the device");
-> >>>>> +		rc = -EIO;
-> >>>>> +		goto out;
-> >>>>> +	}
-> >>>>> +
-> >>>>> +	pci_dev_lock(vdev->pdev);
-> >>>>> +	pci_load_saved_state(vdev->pdev, vdev->pci_saved_state);
-> >>>>> +	pci_restore_state(vdev->pdev);
-> >>>>> +	pci_dev_unlock(vdev->pdev);
-> >>>>> +out:
-> >>>>> +	mutex_unlock(&zdev->state_lock);
-> >>>>> +	return rc;
-> >>>>> +}  
-> >>>> This looks like it should be a device or arch specific reset
-> >>>> implemented in drivers/pci, not vfio.  Thanks,
-> >>>>
-> >>>> Alex  
-> >>> Are you suggesting to move this to an arch specific function? One thing
-> >>> we need to do after the zpci_hot_reset_device, is to correctly restore
-> >>> the config space of the device. And for vfio-pci bound devices we want
-> >>> to restore the state of the device to when it was initially opened.  
-> >> We generally rely on the abstraction of pci_reset_function() to select
-> >> the correct type of reset for a function scope reset.  We've gone to
-> >> quite a bit of effort to implement all device specific resets and
-> >> quirks in the PCI core to be re-used across the kernel.
-> >>
-> >> Calling zpci_hot_reset_device() directly seems contradictory to those
-> >> efforts.  Should pci_reset_function() call this universally on s390x
-> >> rather than providing access to FLR/PM/SBR reset?
-> >>  
-> > I agree with you Alex. Still trying to figure out what's needed for
-> > this. We already do zpci_hot_reset_device() in reset_slot() from the
-> > s390_pci_hpc.c hotplug slot driver and that does get called via
-> > pci_reset_hotplug_slot() and pci_reset_function(). There are a few
-> > problems though that meant it didn't work for Farhan but I agree maybe
-> > we can fix them for the general case. For one pci_reset_function()
-> > via DEVICE_RESET first tries FLR but that won't work with the device in
-> > the error state and MMIO blocked. Sadly __pci_reset_function_locked()
-> > then concludes that other resets also won't work. So that's something
-> > we might want to improve in general, for example maybe we need
-> > something more like pci_dev_acpi_reset() with higher priority than FLR.  
-> 
-> Yeah I did think of adding something like s390x CLP reset as part of the 
-> reset methods. AFAIU the s390x CLP reset is similar to ACPI _RST. But 
-> that would introduce s390x specific code in pci core common code.
-> 
-> >
-> > Now for pci_reset_hotplug_slot() via VFIO_DEVICE_PCI_HOT_RESET I'm not
-> > sure why that won't work as is. @Farhan do you know?  
-> 
-> VFIO_DEVICE_PCI_HOT_RESET would have been sufficient interface for 
-> majority of PCI devices on s390x as that would drive a bus reset. It was 
-> sufficient as most devices were single bus devices. But in the latest 
-> generation of machines (z17) we expose true SR-IOV and an OS can have 
-> access to both PF and VFs and so these are on the same bus and can have 
-> different ownership based on what is bound to vfio-pci.
-> 
-> My thinking for extending VFIO_DEVICE_RESET is because AFAIU its a per 
-> function reset mechanism, which maps well with what our architecture 
-> provides. On s390x we can drive a per function reset (via firmware) 
-> through the CLP instruction driven by the zpci_hot_reset_device(). And 
-> doing it as vfio zpci specific function would confine the s390x logic.
-> 
-> >>   Why is it
-> >> universally correct here given the ioctl previously made use of
-> >> standard reset mechanisms?
-> >>
-> >> The DEVICE_RESET ioctl is simply an in-place reset of the device,
-> >> without restoring the original device state.  So we're also subtly
-> >> changing that behavior here, presumably because we're targeting the
-> >> specific error recovery case.  Have you considered how this might
-> >> break non-error-recovery use cases?
-> >>
-> >> I wonder if we want a different reset mechanism for this use case
-> >> rather than these subtle semantic changes.  
-> > I think an alternative to that, which Farhan actually had in the
-> > previous internal version, is to implement
-> > pci_error_handlers::reset_done() and do the pci_load_saved_state()
-> > there. That would only affect the error recovery case leaving other
-> > cases alone.
-> >
-> >
-> > Thanks,
-> > Niklas  
-> 
-> The reason I abandoned reset_done() callback idea is because its not 
-> sufficient to recover the device correctly. Today before driving a reset 
-> we save the state of the device. When a device is in error state, any 
-> pci load/store (on s390x they are actual instructions :)) to config 
-> space would return an error value (0xffffffff). We don't have any checks 
-> in pci_save_state to prevent storing error values. And after a reset 
-> when we try to restore the config space (pci_dev_restore) we try to 
-> write the error value and this can be problematic. By the time the 
-> reset_done() callback is invoked, its already too late.
+Mostly LGTM. Just a couple of questions below:
 
-It's too late because we've re-written the error value back to config
-space and as a result the device is broken?  What if
-pci_restore_state() were a little smarter to detect that it has bad
-read data from pci_save_state() and only restores state based on kernel
-data?  Would that leave the device in a functional state that
-reset_done() could restore the original saved state and push it out to
-the device?
+> ---
+>  mm/zswap.c | 82 +++++++++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 63 insertions(+), 19 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index efd501a7fe294..63a997b999537 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -80,6 +80,9 @@ static bool zswap_pool_reached_full;
+>
+>  #define ZSWAP_PARAM_UNSET ""
+>
+> +/* Limit the batch size to limit per-CPU memory usage for dst buffers. *=
+/
+> +#define ZSWAP_MAX_BATCH_SIZE 8U
+> +
+>  static int zswap_setup(void);
+>
+>  /* Enable/disable zswap */
+> @@ -147,7 +150,7 @@ struct crypto_acomp_ctx {
+>         struct crypto_acomp *acomp;
+>         struct acomp_req *req;
+>         struct crypto_wait wait;
+> -       u8 *buffer;
+> +       u8 **buffers;
+>         struct mutex mutex;
+>         bool is_sleepable;
+>  };
+> @@ -166,6 +169,8 @@ struct zswap_pool {
+>         struct work_struct release_work;
+>         struct hlist_node node;
+>         char tfm_name[CRYPTO_MAX_ALG_NAME];
+> +       u8 compr_batch_size;
+> +       u8 batch_size;
 
-> @Alex,
-> I am open to ideas/suggestions on this. Do we think we need a separate 
-> VFIO ioctl to drive this or a new reset mechanism as Niklas suggested?
+Apologies if this is explained elsewhere, but I'm very confused - why
+do we need both of these two fields?
 
-Unfortunately I was short sighted on VFIO_DEVICE_RESET and it's the one
-ioctl that doesn't have any flags, so it's not very extensible.
+Seems like batch_size is defined below, and never changed:
 
-Can we do more of the above, ie. enlighten the FLR/PM reset callbacks to
-return -ENOTTY if the device is in an error state and config space is
-returning -1 such that we fall through to a slot reset that doesn't
-care how broken the device is and you auto-magically get the zpci
-function you want?  Follow-up with pushing the original state in
-reset_done()?  Thanks,
+      pool->batch_size =3D (pool->compr_batch_size > 1) ?
+                            pool->compr_batch_size : ZSWAP_MAX_BATCH_SIZE;
 
-Alex
+Can we just determine this in zswap_store() as a local variable?
 
+
+>  };
+>
+>  /* Global LRU lists shared by all zswap pools. */
+> @@ -258,8 +263,10 @@ static void __zswap_pool_empty(struct percpu_ref *re=
+f);
+>   *   zswap_cpu_comp_prepare(), not others.
+>   * - Cleanup acomp_ctx resources on all cores in zswap_pool_destroy().
+>   */
+> -static void acomp_ctx_dealloc(struct crypto_acomp_ctx *acomp_ctx)
+> +static void acomp_ctx_dealloc(struct crypto_acomp_ctx *acomp_ctx, u8 nr_=
+buffers)
+>  {
+> +       u8 i;
+> +
+>         if (IS_ERR_OR_NULL(acomp_ctx))
+>                 return;
+>
+> @@ -269,7 +276,11 @@ static void acomp_ctx_dealloc(struct crypto_acomp_ct=
+x *acomp_ctx)
+>         if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
+>                 crypto_free_acomp(acomp_ctx->acomp);
+>
+> -       kfree(acomp_ctx->buffer);
+> +       if (acomp_ctx->buffers) {
+> +               for (i =3D 0; i < nr_buffers; ++i)
+> +                       kfree(acomp_ctx->buffers[i]);
+> +               kfree(acomp_ctx->buffers);
+> +       }
+>  }
+>
+>  static struct zswap_pool *zswap_pool_create(char *type, char *compressor=
+)
+> @@ -290,6 +301,7 @@ static struct zswap_pool *zswap_pool_create(char *typ=
+e, char *compressor)
+>                         return NULL;
+>         }
+>
+> +       /* Many things rely on the zero-initialization. */
+>         pool =3D kzalloc(sizeof(*pool), GFP_KERNEL);
+>         if (!pool)
+>                 return NULL;
+> @@ -352,13 +364,28 @@ static struct zswap_pool *zswap_pool_create(char *t=
+ype, char *compressor)
+>                 goto ref_fail;
+>         INIT_LIST_HEAD(&pool->list);
+>
+> +       /*
+> +        * Set the unit of compress batching for large folios, for quick
+> +        * retrieval in the zswap_compress() fast path:
+> +        * If the compressor is sequential (@pool->compr_batch_size is 1)=
+,
+> +        * large folios will be compressed in batches of ZSWAP_MAX_BATCH_=
+SIZE
+> +        * pages, where each page in the batch is compressed sequentially=
+.
+> +        * We see better performance by processing the folio in batches o=
+f
+> +        * ZSWAP_MAX_BATCH_SIZE, due to cache locality of working set
+> +        * structures.
+> +        */
+> +       pool->batch_size =3D (pool->compr_batch_size > 1) ?
+> +                               pool->compr_batch_size : ZSWAP_MAX_BATCH_=
+SIZE;
+> +
+>         zswap_pool_debug("created", pool);
+>
+>         return pool;
+>
+>  ref_fail:
+>         for_each_possible_cpu(cpu)
+> -               acomp_ctx_dealloc(per_cpu_ptr(pool->acomp_ctx, cpu));
+> +               acomp_ctx_dealloc(per_cpu_ptr(pool->acomp_ctx, cpu),
+> +                                 pool->compr_batch_size);
+> +
+>  error:
+>         if (pool->acomp_ctx)
+>                 free_percpu(pool->acomp_ctx);
+> @@ -417,7 +444,8 @@ static void zswap_pool_destroy(struct zswap_pool *poo=
+l)
+>         zswap_pool_debug("destroying", pool);
+>
+>         for_each_possible_cpu(cpu)
+> -               acomp_ctx_dealloc(per_cpu_ptr(pool->acomp_ctx, cpu));
+> +               acomp_ctx_dealloc(per_cpu_ptr(pool->acomp_ctx, cpu),
+> +                                 pool->compr_batch_size);
+>
+>         free_percpu(pool->acomp_ctx);
+>
+> @@ -876,6 +904,7 @@ static int zswap_cpu_comp_prepare(unsigned int cpu, s=
+truct hlist_node *node)
+>         struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool, =
+node);
+>         struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool->acomp_ct=
+x, cpu);
+>         int ret =3D -ENOMEM;
+> +       u8 i;
+>
+>         /*
+>          * The per-CPU pool->acomp_ctx is zero-initialized on allocation.
+> @@ -888,10 +917,6 @@ static int zswap_cpu_comp_prepare(unsigned int cpu, =
+struct hlist_node *node)
+>         if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
+>                 return 0;
+>
+> -       acomp_ctx->buffer =3D kmalloc_node(PAGE_SIZE * 2, GFP_KERNEL, cpu=
+_to_node(cpu));
+> -       if (!acomp_ctx->buffer)
+> -               return ret;
+> -
+>         acomp_ctx->acomp =3D crypto_alloc_acomp_node(pool->tfm_name, 0, 0=
+, cpu_to_node(cpu));
+>         if (IS_ERR_OR_NULL(acomp_ctx->acomp)) {
+>                 pr_err("could not alloc crypto acomp %s : %ld\n",
+> @@ -904,17 +929,36 @@ static int zswap_cpu_comp_prepare(unsigned int cpu,=
+ struct hlist_node *node)
+>         acomp_ctx->req =3D acomp_request_alloc(acomp_ctx->acomp);
+>         if (IS_ERR_OR_NULL(acomp_ctx->req)) {
+>                 pr_err("could not alloc crypto acomp_request %s\n",
+> -                      pool->tfm_name);
+> +                       pool->tfm_name);
+
+Is this intentional? :)
+
+>                 goto fail;
+>         }
+>
+> -       crypto_init_wait(&acomp_ctx->wait);
+> +       /*
+> +        * Allocate up to ZSWAP_MAX_BATCH_SIZE dst buffers if the
+> +        * compressor supports batching.
+> +        */
+> +       pool->compr_batch_size =3D min(ZSWAP_MAX_BATCH_SIZE,
+> +                                    crypto_acomp_batch_size(acomp_ctx->a=
+comp));
+> +
+> +       acomp_ctx->buffers =3D kcalloc_node(pool->compr_batch_size, sizeo=
+f(u8 *),
+> +                                         GFP_KERNEL, cpu_to_node(cpu));
+> +       if (!acomp_ctx->buffers)
+> +               goto fail;
+> +
+> +       for (i =3D 0; i < pool->compr_batch_size; ++i) {
+> +               acomp_ctx->buffers[i] =3D kmalloc_node(PAGE_SIZE * 2, GFP=
+_KERNEL,
+> +                                                    cpu_to_node(cpu));
+> +               if (!acomp_ctx->buffers[i])
+> +                       goto fail;
+> +       }
+>
+>         /*
+>          * if the backend of acomp is async zip, crypto_req_done() will w=
+akeup
+>          * crypto_wait_req(); if the backend of acomp is scomp, the callb=
+ack
+>          * won't be called, crypto_wait_req() will return without blockin=
+g.
+>          */
+> +       crypto_init_wait(&acomp_ctx->wait);
+> +
+>         acomp_request_set_callback(acomp_ctx->req, CRYPTO_TFM_REQ_MAY_BAC=
+KLOG,
+>                                    crypto_req_done, &acomp_ctx->wait);
+>
+> @@ -922,7 +966,7 @@ static int zswap_cpu_comp_prepare(unsigned int cpu, s=
+truct hlist_node *node)
+>         return 0;
+>
+>  fail:
+> -       acomp_ctx_dealloc(acomp_ctx);
+> +       acomp_ctx_dealloc(acomp_ctx, pool->compr_batch_size);
+>         return ret;
+>  }
+>
+> @@ -942,7 +986,7 @@ static bool zswap_compress(struct page *page, struct =
+zswap_entry *entry,
+>
+>         mutex_lock(&acomp_ctx->mutex);
+>
+> -       dst =3D acomp_ctx->buffer;
+> +       dst =3D acomp_ctx->buffers[0];
+>         sg_init_table(&input, 1);
+>         sg_set_page(&input, page, PAGE_SIZE, 0);
+>
+> @@ -1003,19 +1047,19 @@ static bool zswap_decompress(struct zswap_entry *=
+entry, struct folio *folio)
+>
+>         acomp_ctx =3D raw_cpu_ptr(entry->pool->acomp_ctx);
+>         mutex_lock(&acomp_ctx->mutex);
+> -       obj =3D zpool_obj_read_begin(zpool, entry->handle, acomp_ctx->buf=
+fer);
+> +       obj =3D zpool_obj_read_begin(zpool, entry->handle, acomp_ctx->buf=
+fers[0]);
+>
+>         /*
+>          * zpool_obj_read_begin() might return a kmap address of highmem =
+when
+> -        * acomp_ctx->buffer is not used.  However, sg_init_one() does no=
+t
+> -        * handle highmem addresses, so copy the object to acomp_ctx->buf=
+fer.
+> +        * acomp_ctx->buffers[0] is not used.  However, sg_init_one() doe=
+s not
+> +        * handle highmem addresses, so copy the object to acomp_ctx->buf=
+fers[0].
+>          */
+>         if (virt_addr_valid(obj)) {
+>                 src =3D obj;
+>         } else {
+> -               WARN_ON_ONCE(obj =3D=3D acomp_ctx->buffer);
+> -               memcpy(acomp_ctx->buffer, obj, entry->length);
+> -               src =3D acomp_ctx->buffer;
+> +               WARN_ON_ONCE(obj =3D=3D acomp_ctx->buffers[0]);
+> +               memcpy(acomp_ctx->buffers[0], obj, entry->length);
+> +               src =3D acomp_ctx->buffers[0];
+>         }
+>
+>         sg_init_one(&input, src, entry->length);
+> --
+> 2.27.0
+>
 
