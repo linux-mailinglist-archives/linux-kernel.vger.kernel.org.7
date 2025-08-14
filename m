@@ -1,216 +1,221 @@
-Return-Path: <linux-kernel+bounces-768267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA15FB25F0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:38:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABA5FB25F0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B53FBB6088B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:34:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BB317BE7AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22072E7637;
-	Thu, 14 Aug 2025 08:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1F32E2DD0;
+	Thu, 14 Aug 2025 08:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TH3QWULM"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CXRPoDu3"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACA2580D7;
-	Thu, 14 Aug 2025 08:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4BC1D63EF;
+	Thu, 14 Aug 2025 08:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160546; cv=none; b=kyJxr+vEneqVM0pvcxLft9fTvASTwOyao02TftHWJD7Mb3E2jv8yTNg6KK6OErYxr0jgmujC6ck4xCYat44EPrjzYzB+zZ8IOzrALGwDqVwxbGmcIE0g2sHXTiwGahNWZALPLPmymvqoAF+JL+Jm/XfsAxfKfcTgK42UTczwtR4=
+	t=1755160566; cv=none; b=JroUfFN722UwIrzLmI3RWZO7+km/8/tbUPSgfFTyNkV1oNDqwz0/mk5yqwPk98SIvoqE002S7HU1euEiquCNQCfaqiPwGFrjSQJ7i7eY+qhiH+bAFtDggBkU7aUvp+n+8BnEjTRt/sy/Skq7XPthVp1vH2RMjFotrnkyqvm2hxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160546; c=relaxed/simple;
-	bh=WaOHZZiP2R3EwHbR/iA9SjuRqyg+X3URHBMmj281Ryg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lDMFd9CEabDVemU7LBgQEEi4LWdvKUWiUXxXEpg0qaTpJt5XOuaeTOioI6WnYhFP2StRvji3ut/vEnZ5Rpn9kLD3mH3xU1Cs3jJqEk+KXlOWP+/JY9OXEU8xYWlFSLoMmTlGbF5PxjITUHZwSvKzvU6emR22qCfQhi8JYgn0MGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TH3QWULM; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1755160566; c=relaxed/simple;
+	bh=3XYTDHvq2LcjmNTW0zfO8hXKhU53mqovkhniMJZUCHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZRZF0FN77gNA+Ev+Njt1sV3nvPuwv0fbL015Ta9j+cVyEAq3HG/SIMgaU5c1omiEoMmD7zoOyk8gSiyQxJAuWRjhRYcln/Nj8Fo2jamL/rED7aDToez+4s0qRjUSMZ2D/j1bHPd5Gbe23IN/WScdolrzN3HsQQtDsBqjzGxnfzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CXRPoDu3; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55ce509127bso529666e87.0;
-        Thu, 14 Aug 2025 01:35:44 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb61f6044so133007766b.0;
+        Thu, 14 Aug 2025 01:36:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755160542; x=1755765342; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ht4+WuCclIjF62P/XUWWfv84cD1c1L3az5bzoDE1sSQ=;
-        b=TH3QWULMb9/YnJVO0uUes49sjhm9sAF6Zc0Qpk4t9U+xpANzzOF3vi9T6+BH5bsEUQ
-         e6b+Op9mhBFUoFiKhDXiDGQKdfbe5Kz1zk/2dCHBilHCUUwb0LK0pcunM4e4KOvHRj0+
-         Np2ScB0X8XhsV/jhnEmFCCvXScwNTj8I1qZfyOJlH+sQtcO2UDyHZTBEroyos0+avVl+
-         DylvWZXVpbKP19VBSK8p9ylV6hnS+8kyTRXqEgf0yVz0eoV5AqLy4odk8XGodEsmQ6rU
-         YjCe3sJYKJLw4mzRBvdO9s6eANWH1EA3q8mgMFcBQb5jtX+jDvpju+0ptf66Hztt3zUB
-         f0Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755160542; x=1755765342;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1755160563; x=1755765363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ht4+WuCclIjF62P/XUWWfv84cD1c1L3az5bzoDE1sSQ=;
-        b=UNkB1eJDlVUgKe95fz6yfjBztpSe+KOgKpJCdH0Ox4W/9iItFI2JaRXkt1rQ2Xqsws
-         TbBGR8hKTgqlDNfZ2sdEevB4PaRC1d0E+wutPw5zDq4NchnOT4KBcKY6XxZVTGf1T/9I
-         ExXZIQmnjGXsc9IjkFUvOYeATkifnALoo2/lryOKPvu/FaBTbDWoAflmaFS+X4lW+jKP
-         +31T4b2jaj8rM8ELLVTIlMuFeJdhnXLcJ6EPz+p3bfXK9Frmwm1wmXahP9eZ0WVX9ySS
-         GUXIFo9cXozmiFUP5s4yfTLI9yCGUdXsJIOgza2DE6cEdp3zYIvlcJXNROzPK26mOZHD
-         clqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVj+5372a/Vn1FXU2DAb2ScpD3e59p3hON/9x8jhIY5UzFiShWsHQC2MfNlPClNjnzQBm2B8ZuDQWSz@vger.kernel.org, AJvYcCWM4dFGc+N51iNHRtgG+HTZz57NrKTUryRzt3kIOaPG9XD0P5dPFxArfr/zWaWmx6Aku3RHVujiFENWVq2q@vger.kernel.org, AJvYcCWvieeMaOo4UJXyC2ZEL3Sf2hASAKY4HlJpRjb+CYBzqrJRUUgIURx1UW6b3lOymVUdzrMieh9yCAL9@vger.kernel.org
-X-Gm-Message-State: AOJu0YydRGJDoiODtTD3a7ZbWwdsk+vx3eqcyJxLogTlMnIoE6T96qDk
-	Q1B/OkHFg4YbmGwCbfA/YS7Im2k6aS5YeABbUHslCjW2OdWQ+jKpKF/I9Wtmqw==
-X-Gm-Gg: ASbGncuU0mCubIjhmchG8hYQ0jGscKvdMhJtZrQr7BnoqQLWJnSE6E268RbigruvtJX
-	JdsChkALYtJyYbVKhTtQ09jt9CYbQ9FLLzKIyZQ4i5Qx7ppOM7nVFvLxjiBMODqS8BoevROxJQt
-	xW+GdD2F9QKMCJEpy2hIQsF6V4JU2EoybgWq/OpmlhsDLtAomukcZYW2AFypKKsZBw8uGVJdpqC
-	TgqxYaUYV23bGrlotsT56jp0jsDlxInjm7QpJzRaGRL9roFZayNZQGrAC1wD9TTE9axujWZYdjz
-	FglM/ECQIGZgZO2tao5xT3oWahiQZRRQCtnSPezlht6qowtP1jbfGXlxAfZ9WIj6bpvgqFr1hQH
-	qxFbxut75AtwwMahLXvFNF4yM
-X-Google-Smtp-Source: AGHT+IFx5zwb/Nodxv8hOdTbdKr/qi9nYS9WK66oxmazbUzRaJePPvUXSXJSUnrthUlk4i5mLboKhg==
-X-Received: by 2002:a05:6512:1302:b0:55b:885b:390d with SMTP id 2adb3069b0e04-55ce4fd6963mr852944e87.0.1755160542169;
-        Thu, 14 Aug 2025 01:35:42 -0700 (PDT)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c99057sm5572085e87.91.2025.08.14.01.35.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 01:35:41 -0700 (PDT)
-Date: Thu, 14 Aug 2025 11:35:37 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sukrut Bellary <sbellary@baylibre.com>,
-	Lothar Rubusch <l.rubusch@gmail.com>
-Subject: [PATCH 3/3] iio: adc: adc128s052: Support ROHM BD7910[0,1,2,3]
-Message-ID: <e43c184fc6aa5c768045fc772b64d812fdb06254.1755159847.git.mazziesaccount@gmail.com>
-References: <cover.1755159847.git.mazziesaccount@gmail.com>
+        bh=tOTX1FGjH4RiOoeNqx7UjWESbbgSSspa6JjPrJyJ8Ks=;
+        b=CXRPoDu3Niej7OfnA2rji7kzuuum/DreJDVYpeA7ymoepjokZGjRPOGw6Ppjg7IqmT
+         pY0M4tu6xYQ+9xRmMLScxJoOTJYLcRlYi446mUt56lfiQEKYYPGPCfNXD80fEA/0YAJ6
+         qCTXubrvObl7GfixpAeOj9qbNNWbchiaGJY9Hfj+WDMq9vU8PqZ1zslmwIxOBXF5E84X
+         qEC0FIW+Y5aqYckSGBs7J/nS2wJalS+DExTmCNqmr5DuPv7LLllseIFfcCj9jhYYyOLM
+         LD54ocC6KrSmxoe+frN8n2/lurKQQOSs4PiSwSth1cjRxY/j0jCfOpBxxfP3xht8Whr4
+         quow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755160563; x=1755765363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tOTX1FGjH4RiOoeNqx7UjWESbbgSSspa6JjPrJyJ8Ks=;
+        b=H+7tM3KsR9W65ifsnruaOyuYt5kuoZhZvNTZt3p6+mDGKs/69HwL0xdL9L06PkyUsK
+         86I4oCreO2UxEOph/uRB4xQsvMhDNNHINHDDSxQ4dBSYop9Zhjgab0LMziF7SYyk9G7m
+         lSHjzNN/3w4Nifw/HFwVHJCCXfCupeO/rX5pUEEeP8RiEugAm5hIdUql+UF9Bjd7yQMN
+         YoTD+Wx/R+ROncFC2dNhtaV24isVrE6mxSpXkvrmjB0S9tWpr1+i5L7Yvfb/UkEFJ1ol
+         uq33ECAN5hIB44ojl+rb3bmKNdmag7u8b3drX8K48YGsfUg99oFQWNmZJEUZDphAa9Hw
+         N6Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVccpXlD+U2wPNTGGKv6DlLJNH/K5Dx1b27j7oD0LsBKzhdxPijsHzZiWwSToPtxYLTWC69fzHO1EtZUHbFQ==@vger.kernel.org, AJvYcCUZooJaFEUlD1mMkZ8Wf4oNdbFeHb5cHzPLG+8bviVPqZaH2UeoP5oBoiXLnSBJkDz5er0LP89Iluq/mFAg@vger.kernel.org, AJvYcCXeJD8ryHjQ1ZtYZb9cJqn9wAMm47fdQ2QMwUaV/THbXFSBimQzi0BZpT6hCRwxEpss7Lwp1qWBfFEi/TAr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiZnz15/WjWyxt/ZThmTRqQL7JnTYaqNHcPGgCSXaDzWHMRwZS
+	zl5sl3Eyx/HbKS/pEs2q/N/85I2jheWIi+MKGohmAv0EtImhe5hjTu5VfWOAYT0NClzHWUgK6Zm
+	hqfV7jJa/roRXgpTZwLhMK933ongXWCIdqAKE7xM=
+X-Gm-Gg: ASbGncvkus6G5P6TNudacncn883dqrUN1KnE2RYh488o45qtjufCvlXOxtFU3oLpjfe
+	V+l7mHKm6b5lvxB/HhqAr3GXSlu48ryzEhEBL7XaOiVjSBu7KqDwbL4aM9Mudf/kyUHOIaLiD6L
+	+PlEjZR/cCIFT2MAljIcZCbW9+HxqFw3WqUldogAWftdIXyPM/rHgmQO0BZH4s5fb+RocXjn26x
+	PwGgc0=
+X-Google-Smtp-Source: AGHT+IGKKcOvuN1xDm8xMO/A263wHFSD+iuYL8w56j7NOwzuXtzyteYNUT8Uf2GHIeb7FSp0j9xzMB/PIYYKHbd/ZdY=
+X-Received: by 2002:a17:906:7310:b0:af8:fded:6b7a with SMTP id
+ a640c23a62f3a-afcbd80b8bemr187546166b.17.1755160562402; Thu, 14 Aug 2025
+ 01:36:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RBe/8Sbrp2Y9Vhm6"
-Content-Disposition: inline
-In-Reply-To: <cover.1755159847.git.mazziesaccount@gmail.com>
-
-
---RBe/8Sbrp2Y9Vhm6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com> <20250813-tonyk-overlayfs-v4-1-357ccf2e12ad@igalia.com>
+In-Reply-To: <20250813-tonyk-overlayfs-v4-1-357ccf2e12ad@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 14 Aug 2025 10:35:50 +0200
+X-Gm-Features: Ac12FXyQFKZFtMXoO1ZIyMwxUcr7ZUnQIr-Bnp2f50ZUtWYRV8pIETgB3OmS4Es
+Message-ID: <CAOQ4uxiENaCd7RcAS8j+UUNmtmOzKZ3BwBWst=fKN6zWLZyvuQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/9] ovl: Support mounting case-insensitive enabled filesystems
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
-ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
-the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
-and, based on the data sheets, they seem identical from the software
-point-of-view.
+Hi Andre,
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+As a methodology in patch series, although they are often merged together
+we want to abide by the concept of bisectability of the series, so it is no=
+t
+good practice to "Support mounting case-insensitive enabled filesystems"
+before this support is fully implemented.
 
----
-Tested only using the BD79104. The ROHM hardware colleagues swore this
-testing should be sufficient...
----
- drivers/iio/adc/ti-adc128s052.c | 36 +++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Suggest to change the title of this patch to:
+"ovl: Prepare for mounting case-insensitive enabled filesystems"
+which implements the logic of enforcing "uniform casefolded layers"
+but do not change ovl_dentry_weird() yet - do that in patch 9, so that
+both lookup and mount of casefolded dirs are allowed together.
 
-diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s05=
-2.c
-index 81153253529e..2f2ed438cf4e 100644
---- a/drivers/iio/adc/ti-adc128s052.c
-+++ b/drivers/iio/adc/ti-adc128s052.c
-@@ -122,6 +122,10 @@ static const struct iio_chan_spec adc124s021_channels[=
-] =3D {
- 	ADC128_VOLTAGE_CHANNEL(3),
- };
-=20
-+static const struct iio_chan_spec bd79100_channels[] =3D {
-+	ADC128_VOLTAGE_CHANNEL(0),
-+};
-+
- static const char * const bd79104_regulators[] =3D { "iovdd" };
-=20
- static const struct adc128_configuration adc122s_config =3D {
-@@ -142,6 +146,30 @@ static const struct adc128_configuration adc128s_confi=
-g =3D {
- 	.refname =3D "vref",
- };
-=20
-+static const struct adc128_configuration bd79100_config =3D {
-+	.channels =3D bd79100_channels,
-+	.num_channels =3D ARRAY_SIZE(bd79100_channels),
-+	.refname =3D "vdd",
-+	.other_regulators =3D &bd79104_regulators,
-+	.num_other_regulators =3D 1,
-+};
-+
-+static const struct adc128_configuration bd79101_config =3D {
-+	.channels =3D adc122s021_channels,
-+	.num_channels =3D ARRAY_SIZE(adc122s021_channels),
-+	.refname =3D "vdd",
-+	.other_regulators =3D &bd79104_regulators,
-+	.num_other_regulators =3D 1,
-+};
-+
-+static const struct adc128_configuration bd79102_config =3D {
-+	.channels =3D adc124s021_channels,
-+	.num_channels =3D ARRAY_SIZE(adc124s021_channels),
-+	.refname =3D "vdd",
-+	.other_regulators =3D &bd79104_regulators,
-+	.num_other_regulators =3D 1,
-+};
-+
- static const struct adc128_configuration bd79104_config =3D {
- 	.channels =3D adc128s052_channels,
- 	.num_channels =3D ARRAY_SIZE(adc128s052_channels),
-@@ -210,6 +238,10 @@ static const struct of_device_id adc128_of_match[] =3D=
- {
- 	{ .compatible =3D "ti,adc124s021", .data =3D &adc124s_config },
- 	{ .compatible =3D "ti,adc124s051", .data =3D &adc124s_config },
- 	{ .compatible =3D "ti,adc124s101", .data =3D &adc124s_config },
-+	{ .compatible =3D "rohm,bd79100", .data =3D &bd79100_config },
-+	{ .compatible =3D "rohm,bd79101", .data =3D &bd79101_config },
-+	{ .compatible =3D "rohm,bd79102", .data =3D &bd79102_config },
-+	{ .compatible =3D "rohm,bd79103", .data =3D &bd79104_config },
- 	{ .compatible =3D "rohm,bd79104", .data =3D &bd79104_config },
- 	{ }
- };
-@@ -223,6 +255,10 @@ static const struct spi_device_id adc128_id[] =3D {
- 	{ "adc124s021", (kernel_ulong_t)&adc124s_config },
- 	{ "adc124s051", (kernel_ulong_t)&adc124s_config },
- 	{ "adc124s101", (kernel_ulong_t)&adc124s_config },
-+	{ "bd79100", (kernel_ulong_t)&bd79100_config },
-+	{ "bd79101", (kernel_ulong_t)&bd79101_config },
-+	{ "bd79102", (kernel_ulong_t)&bd79102_config },
-+	{ "bd79103", (kernel_ulong_t)&bd79104_config },
- 	{ "bd79104", (kernel_ulong_t)&bd79104_config },
- 	{ }
- };
---=20
-2.50.1
+commit message need to be changed of course.
 
+On Thu, Aug 14, 2025 at 12:37=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid@ig=
+alia.com> wrote:
+>
+> Enable mounting filesystems with case-insensitive dentries in order to
+> support such filesystems in overlayfs.
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+> Changes from v3:
+> - Move this patch to be ealier in the series
+> - Split this patch with the ovl_lookup_single() restriction patch
+> ---
+>  fs/overlayfs/ovl_entry.h |  1 +
+>  fs/overlayfs/params.c    | 15 ++++++++++++---
+>  fs/overlayfs/params.h    |  1 +
+>  fs/overlayfs/util.c      |  8 ++++----
+>  4 files changed, 18 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
+> index 4c1bae935ced274f93a0d23fe10d34455e226ec4..1d4828dbcf7ac4ba9657221e6=
+01bbf79d970d225 100644
+> --- a/fs/overlayfs/ovl_entry.h
+> +++ b/fs/overlayfs/ovl_entry.h
+> @@ -91,6 +91,7 @@ struct ovl_fs {
+>         struct mutex whiteout_lock;
+>         /* r/o snapshot of upperdir sb's only taken on volatile mounts */
+>         errseq_t errseq;
+> +       bool casefold;
+>  };
+>
+>  /* Number of lower layers, not including data-only layers */
+> diff --git a/fs/overlayfs/params.c b/fs/overlayfs/params.c
+> index f4e7fff909ac49e2f8c58a76273426c1158a7472..17d2354ba88d92e1d9653e8cb=
+1382d860a7329c5 100644
+> --- a/fs/overlayfs/params.c
+> +++ b/fs/overlayfs/params.c
+> @@ -277,16 +277,25 @@ static int ovl_mount_dir_check(struct fs_context *f=
+c, const struct path *path,
+>                                enum ovl_opt layer, const char *name, bool=
+ upper)
+>  {
+>         struct ovl_fs_context *ctx =3D fc->fs_private;
+> +       struct ovl_fs *ofs =3D fc->s_fs_info;
+> +       bool is_casefolded =3D ovl_dentry_casefolded(path->dentry);
+>
+>         if (!d_is_dir(path->dentry))
+>                 return invalfc(fc, "%s is not a directory", name);
+>
+>         /*
+>          * Allow filesystems that are case-folding capable but deny compo=
+sing
+> -        * ovl stack from case-folded directories.
+> +        * ovl stack from inconsistent case-folded directories.
+>          */
+> -       if (ovl_dentry_casefolded(path->dentry))
+> -               return invalfc(fc, "case-insensitive directory on %s not =
+supported", name);
+> +       if (!ctx->casefold_set) {
+> +               ofs->casefold =3D is_casefolded;
+> +               ctx->casefold_set =3D true;
+> +       }
+> +
+> +       if (ofs->casefold !=3D is_casefolded) {
+> +               return invalfc(fc, "case-%ssensitive directory on %s is i=
+nconsistent",
+> +                              is_casefolded ? "in" : "", name);
+> +       }
+>
+>         if (ovl_dentry_weird(path->dentry))
+>                 return invalfc(fc, "filesystem on %s not supported", name=
+);
+> diff --git a/fs/overlayfs/params.h b/fs/overlayfs/params.h
+> index c96d939820211ddc63e265670a2aff60d95eec49..ffd53cdd84827cce827e8852f=
+2de545f966ce60d 100644
+> --- a/fs/overlayfs/params.h
+> +++ b/fs/overlayfs/params.h
+> @@ -33,6 +33,7 @@ struct ovl_fs_context {
+>         struct ovl_opt_set set;
+>         struct ovl_fs_context_layer *lower;
+>         char *lowerdir_all; /* user provided lowerdir string */
+> +       bool casefold_set;
+>  };
+>
+>  int ovl_init_fs_context(struct fs_context *fc);
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index a33115e7384c129c543746326642813add63f060..7a6ee058568283453350153c1=
+720c35e11ad4d1b 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -210,11 +210,11 @@ bool ovl_dentry_weird(struct dentry *dentry)
+>                 return true;
+>
+>         /*
+> -        * Allow filesystems that are case-folding capable but deny compo=
+sing
+> -        * ovl stack from case-folded directories.
+> +        * Exceptionally for casefold dentries, we accept that they have =
+their
+> +        * own hash and compare operations
+>          */
+> -       if (sb_has_encoding(dentry->d_sb))
+> -               return IS_CASEFOLDED(d_inode(dentry));
+> +       if (ovl_dentry_casefolded(dentry))
+> +               return false;
+>
+>         return dentry->d_flags & (DCACHE_OP_HASH | DCACHE_OP_COMPARE);
+>  }
 
---RBe/8Sbrp2Y9Vhm6
-Content-Type: application/pgp-signature; name=signature.asc
+Move relaxing of ovl_dentry_weird() to patch 9 please.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmidn9kACgkQeFA3/03a
-ocUznwgAvCP4xHU3F2/KzfDwqTy7VJckfUH9qjtfncnPla8SWorSvSeEIBCiCQB/
-z/L1l11/heB2OlnaheXWfhRQv06+vaq14/fDePG4qvgf4MgiLrkwVEtg6z5EYd+a
-rCfQw7dr3cfuyknLS/Um5GKtEq1vvMXF04Xh16JhVVANGQZEeKNNl/ck7z/Edtls
-aFoQWyLxYjAB8OrICcvjJDqMiY1B2twKROzoUJH37toOd8EfgJDUQyoCdU5dWeos
-UJ+rAc4Jy8URpb5FUi/TMmtHvIVVDunj+hfJOuaP+3hDC9Iw4uKTlU+Q3+9sFJq8
-Zr95OOhqnCqzvs1HQJXb6prGjIldCA==
-=pioM
------END PGP SIGNATURE-----
-
---RBe/8Sbrp2Y9Vhm6--
+Thanks,
+Amir.
 
