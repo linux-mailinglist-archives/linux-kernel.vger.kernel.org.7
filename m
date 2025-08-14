@@ -1,148 +1,159 @@
-Return-Path: <linux-kernel+bounces-768711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C17B9B2646D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:37:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80799B26475
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E55377B93D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:36:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5640C16EBBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2B22F2913;
-	Thu, 14 Aug 2025 11:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185E12F39C3;
+	Thu, 14 Aug 2025 11:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dVlUAFmH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pt6RWMi3"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998D62BE020
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9847D2E092F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171463; cv=none; b=dZ0+rhfGG8x0rZUCasGRfomEFCh2E8WwwfF/HDVzwpYva0wVMST3cfDnHirdFOazIewGCvMFMtmAjvcdG608cOeYFEv2Y0TmFanVboYiZr78tHUG2VehcYxtzLcjAqypxqLqqNOvYlXnXtNdIsmP4i+8GnNXW/lx5wS/m05wGgM=
+	t=1755171539; cv=none; b=npG9i7FXyRDut3iQHbXocODjYWbeX6S10FUmU2YqgCCiou9ACWoyZmLs9UZCulYLf6myemaIZdUwvKy7eWh/f2vvRcv/MZb7IrHloPtPFBvKOK33CWAQjv5irCVWOw4zJnwBHWO4QfFav9WIVGli9Xn9pJnqGeWKykXmZMJsUwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171463; c=relaxed/simple;
-	bh=MvGkXuSZizdSAeen5J/IQpL/vIRSBfXfiCCe/dOr7jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CjJpi8RGrqmenwu45sQ/9EQSfct0iWcT+3kZsXGxdLTHKPenxHHOkNTIC6qM9tugWMFv5ebRjVv8t5UX8eDj9oSg5kC1BEFZNQzlxUFDItEP1PczH3apcGVrS9kZP1TooB1MYAOvb3mPVaeYLEDsglOEG8OafQnueK9UjztM6MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dVlUAFmH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D36C4CEED;
-	Thu, 14 Aug 2025 11:37:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1755171462;
-	bh=MvGkXuSZizdSAeen5J/IQpL/vIRSBfXfiCCe/dOr7jo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dVlUAFmHJhJJMvEtb2lyovQ4H4POdKk14L0+sUSAiOoS8Q/oFtEM6GZXU2ahfcsc8
-	 ICDhqRxfDxQtdFNBzGbknOlrsiVe0iLUTC81KcRUxlpqFruiXvHCET/Far0w57Yqeo
-	 sSZi4nvPz48BMx/sKRPkobl+cQJNqpzAsMW3Fi84=
-Date: Thu, 14 Aug 2025 13:37:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Wang Wensheng <wangwensheng4@huawei.com>
-Cc: rafael@kernel.org, dakr@kernel.org, tglx@linutronix.de,
-	saravanak@google.com, robh@kernel.org, broonie@kernel.org,
-	linux-kernel@vger.kernel.org, chenjun102@huawei.com
-Subject: Re: [PATCH 1/3] driver core: Fix concurrent problem of
- deferred_probe_extend_timeout()
-Message-ID: <2025081431-puzzling-mumble-9570@gregkh>
-References: <20250814111023.2693-1-wangwensheng4@huawei.com>
- <20250814111023.2693-2-wangwensheng4@huawei.com>
+	s=arc-20240116; t=1755171539; c=relaxed/simple;
+	bh=Mr4tVN0NcVDlKr0kpHP5uGJ0iQRfFOAnePwQuZH9ihM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gp/yrOgPL8PFSwKxRnA4CBBYvI2trLdzemCD2tLnaAgtM+9clOonXIk1Vp2P6Rjd7zaD41qU/JTp4nEcGaD0c2D2JIk6npdsHuAUFG6Nyvl9HEADiisIh4oSrjgOSevGGkdaOvdUXPLeEs84gsL0W0w0fabu5g5w3mqILxXc2RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pt6RWMi3; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755171535;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MrCcF57qFjn9NHu+NzVSJv+zbOcFcaKcUD/N25VmBiA=;
+	b=pt6RWMi3gNMFZZG0cFcXJFFwVNrMBxdCg+9nkAULfKgIMWY6lTdZdZPU4jwK40sHrZdVxQ
+	W/PmCqHgCa8FTUw17jd5SDwSrnhSsSD82X6gzYIJb6I3TOU0YshoEbim6pNg0m7lc1YlaX
+	gMHSHsWTFgXEEEQUTvaUSZHtZXxidNY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	=?UTF-8?q?Ahelenia=20Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+Cc: Mark Tinguely <mark.tinguely@oracle.com>,
+	ocfs2-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ocfs2: Remove commented out mlog() statements
+Date: Thu, 14 Aug 2025 13:38:10 +0200
+Message-ID: <20250814113815.219064-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814111023.2693-2-wangwensheng4@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Aug 14, 2025 at 07:10:21PM +0800, Wang Wensheng wrote:
-> The deferred_probe_timeout_work may be canceled forever unexpected when
-> deferred_probe_extend_timeout() executes concurrently. Start with
-> deferred_probe_timeout_work pending, and the problem would
-> occur after the following sequence.
-> 
->          CPU0                                 CPU1
-> deferred_probe_extend_timeout
->   -> cancel_delayed_work => true
->                                      deferred_probe_extend_timeout
->                                        -> cancel_delayed_wrok
->                                          -> __cancel_work
->                                            -> try_grab_pending
->   -> schedule_delayed_work
->    -> queue_delayed_work_on
-> since pending bit is grabbed,
-> just return without doing anything
->                                         -> set_work_pool_and_clear_pending
->                                      this __cancel_work return false and
->                                      the work would never be queued again
-> 
-> The root cause is that the PENDING_BIT of the work_struct would be set
-> temporaily in __cancel_work and this bit could prevent the work_struct
-> to be queued in another CPU.
-> 
-> Use deferred_probe_mutex to protect the cancel and queue operations for
-> the deferred_probe_timeout_work to fix this problem.
-> 
-> Fixes: 2b28a1a84a0e ("driver core: Extend deferred probe timeout on driver registration")
-> Signed-off-by: Wang Wensheng <wangwensheng4@huawei.com>
-> ---
->  drivers/base/dd.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index 13ab98e033ea..1983919917e0 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -323,6 +323,7 @@ static DECLARE_DELAYED_WORK(deferred_probe_timeout_work, deferred_probe_timeout_
->  
->  void deferred_probe_extend_timeout(void)
->  {
-> +	mutex_lock(&deferred_probe_mutex);
->  	/*
->  	 * If the work hasn't been queued yet or if the work expired, don't
->  	 * start a new one.
-> @@ -333,6 +334,7 @@ void deferred_probe_extend_timeout(void)
->  		pr_debug("Extended deferred probe timeout by %d secs\n",
->  					driver_deferred_probe_timeout);
->  	}
-> +	mutex_unlock(&deferred_probe_mutex);
->  }
->  
->  /**
-> -- 
-> 2.22.0
-> 
+The mlog() statements have been commented out ever since commit
+6714d8e86bf44 ("[PATCH] OCFS2: The Second Oracle Cluster Filesystem") -
+remove them.
 
-Hi,
+Reviewed-by: Mark Tinguely <mark.tinguely@oracle.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+Changes in v2:
+- Remove commented out mlog() from dlmrecovery.c as suggested by Mark
+- Link to v1: https://lore.kernel.org/lkml/20250813180622.209305-3-thorsten.blum@linux.dev/
+---
+ fs/ocfs2/dlm/dlmmaster.c   | 11 -----------
+ fs/ocfs2/dlm/dlmrecovery.c |  1 -
+ 2 files changed, 12 deletions(-)
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 86bb1a03bcc1..4145e06d2c08 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -1477,7 +1477,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 			goto send_response;
+ 		} else if (res->owner != DLM_LOCK_RES_OWNER_UNKNOWN) {
+ 			spin_unlock(&res->spinlock);
+-			// mlog(0, "node %u is the master\n", res->owner);
+ 			response = DLM_MASTER_RESP_NO;
+ 			if (mle)
+ 				kmem_cache_free(dlm_mle_cache, mle);
+@@ -1493,7 +1492,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 			BUG();
+ 		}
+ 
+-		// mlog(0, "lockres is in progress...\n");
+ 		spin_lock(&dlm->master_lock);
+ 		found = dlm_find_mle(dlm, &tmpmle, name, namelen);
+ 		if (!found) {
+@@ -1503,8 +1501,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 		set_maybe = 1;
+ 		spin_lock(&tmpmle->spinlock);
+ 		if (tmpmle->type == DLM_MLE_BLOCK) {
+-			// mlog(0, "this node is waiting for "
+-			// "lockres to be mastered\n");
+ 			response = DLM_MASTER_RESP_NO;
+ 		} else if (tmpmle->type == DLM_MLE_MIGRATION) {
+ 			mlog(0, "node %u is master, but trying to migrate to "
+@@ -1531,8 +1527,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 			} else
+ 				response = DLM_MASTER_RESP_NO;
+ 		} else {
+-			// mlog(0, "this node is attempting to "
+-			// "master lockres\n");
+ 			response = DLM_MASTER_RESP_MAYBE;
+ 		}
+ 		if (set_maybe)
+@@ -1559,7 +1553,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 	found = dlm_find_mle(dlm, &tmpmle, name, namelen);
+ 	if (!found) {
+ 		/* this lockid has never been seen on this node yet */
+-		// mlog(0, "no mle found\n");
+ 		if (!mle) {
+ 			spin_unlock(&dlm->master_lock);
+ 			spin_unlock(&dlm->spinlock);
+@@ -1573,8 +1566,6 @@ int dlm_master_request_handler(struct o2net_msg *msg, u32 len, void *data,
+ 			goto way_up_top;
+ 		}
+ 
+-		// mlog(0, "this is second time thru, already allocated, "
+-		// "add the block.\n");
+ 		dlm_init_mle(mle, DLM_MLE_BLOCK, dlm, NULL, name, namelen);
+ 		set_bit(request->node_idx, mle->maybe_map);
+ 		__dlm_insert_mle(dlm, mle);
+@@ -1897,8 +1888,6 @@ int dlm_assert_master_handler(struct o2net_msg *msg, u32 len, void *data,
+ 		spin_unlock(&res->spinlock);
+ 	}
+ 
+-	// mlog(0, "woo!  got an assert_master from node %u!\n",
+-	// 	     assert->node_idx);
+ 	if (mle) {
+ 		int extra_ref = 0;
+ 		int nn = -1;
+diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
+index 00f52812dbb0..843ee02bd85f 100644
+--- a/fs/ocfs2/dlm/dlmrecovery.c
++++ b/fs/ocfs2/dlm/dlmrecovery.c
+@@ -464,7 +464,6 @@ static int dlm_do_recovery(struct dlm_ctxt *dlm)
+ 	}
+ 
+ 	if (dlm->reco.dead_node == O2NM_INVALID_NODE_NUM) {
+-		// mlog(0, "nothing to recover!  sleeping now!\n");
+ 		spin_unlock(&dlm->spinlock);
+ 		/* return to main thread loop and sleep. */
+ 		return 0;
+-- 
+2.50.1
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
