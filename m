@@ -1,995 +1,114 @@
-Return-Path: <linux-kernel+bounces-769158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDC9B26ACD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:24:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384E4B26AD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D27EE189D69B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8F13B3E6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1553721FF30;
-	Thu, 14 Aug 2025 15:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E661022425B;
+	Thu, 14 Aug 2025 15:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dlL3WPdG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="nLbSPa6w"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73AC621C9F1
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD2A22331C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755184766; cv=none; b=XCUmPPM6EygvBcw9iVwtWGWwVi61F6BtrKTjt2/3SUkM5QhsA28BoV1tEjef4HFQgKk31UEA6mQggJFm3wq7+GVlpH9GVEG7vBJbN5BGtYGwjD0yJA8cgxS8BoUjtLuX5UhLZectyvKItOCcmd5u01JckS7CA6NR24+xfj0lm7k=
+	t=1755184775; cv=none; b=ZnoEMboUIyHzM+gJaPUTI+7XewDZSbwVyhgrh0KSp0D6hR7Y9L3VfqDqTFIxa9FcDHesKfOkZzBxXDxlygTVvCKm2xb2C/tyh8AYjrhSwYm8i4wAQSFUsppUhN9inM6I7zDhvuYhEngxDVft7AZ0uRinq1oATHkhlcEvKCeUeMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755184766; c=relaxed/simple;
-	bh=A4L5LKSAhRLDGyZYEay6l3Fn1TSA3Qi0RL9K5k8w9HU=;
+	s=arc-20240116; t=1755184775; c=relaxed/simple;
+	bh=w0w0dvsu6k/K6PwFlV7vPpkTwV9o99ZgnYkwYYG/8s4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OBNjDc3uRqrd6FRkPJ3XJJ1ChV9QrbcP1k8pLhThPB+P93XTAc0j2H/6RSFXSZpGZD7WD0F0J3HC+Zd2hjKYVxRNvd4ROADDc9YlXF4KIb9U0pYeT5uMt/lw8/BIioETSjU17K+mxgMHXxpoXHAIbOtOheIK2Y6/hnhObYyzLqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dlL3WPdG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755184762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ASxjRZzkrnKyteo9ARLnfMBcQhIG0eiE8ICwIx4pb8A=;
-	b=dlL3WPdGSOugJ4pamwxQN4FMAG0jGub/Psy066v6k3vyxtDZsRf6RmHM0kV3ABHa4bAiMl
-	qGsNwlX4G2jt1cq9sMuJguKZf2qePsiv/9ATHMEDDTz2N95a0QqbvwDeoPMjcDkghQvkNm
-	JkJ4J0jd/ZCVjLPphie52GsUTK17EKs=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-692-QpzIPWxuPAuJerN6onoLbw-1; Thu, 14 Aug 2025 11:19:20 -0400
-X-MC-Unique: QpzIPWxuPAuJerN6onoLbw-1
-X-Mimecast-MFC-AGG-ID: QpzIPWxuPAuJerN6onoLbw_1755184759
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-55ce52539daso782240e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:19:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=dlAfRquq0DlAYkhM23GJ2j4BGpdbVLG+VeuxoDU0rs74xW5VQuhFpIA5KRwFQm+Jd8qmv691OzQHPlvZxjVqYBSMAq8ffhAb5ZG8Z3FDWwtXcd6w5LSUAYS0qcm7LTLfO/M9Oy4ugqZ7S923Ajjxeo8Lw4PQ5CUO4WEfD2yXJMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=nLbSPa6w; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4b109c6532fso9579681cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:19:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1755184772; x=1755789572; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EA1ZvFf+qWrndIFVkpDd7IpLWJx6+2D8DPmrDSfzpF0=;
+        b=nLbSPa6wSfW6iCCBQoxh4+p9jCDfOizqypU73rXtCjn1BgXV957iRTFTtfAR3X1aK2
+         ojqSsWGo4QLxAJmi5KwRfXOo3wvWLyp6gyMHoktgawOgtvte0P8E5OPp68kiup5CY1uV
+         ENnEaxbmpkhRj84GdnITQXTFiwiooHB35Gat0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755184759; x=1755789559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ASxjRZzkrnKyteo9ARLnfMBcQhIG0eiE8ICwIx4pb8A=;
-        b=blESFc2UHbZGh8s/Mdk5Kqlq0usFdRpMtRWinDTAjylHMsqanqWZSRwg3+EQNgMTeN
-         jWIdaWVVdpIdERKuCS8Klm5say2ox1T3vgY/S8gx/8LHnglm9G3zM/kmG5zup8sDAnH/
-         Yod9bG7CrcCn1jrvEjPLPlBxW7cMrA5s6eOmNSDgU389Azx8CKerADi3H7DM8EpEuKbH
-         ++OUTDDDDewVQ+m85+VHCnd469PpfNAe+g4S8U8RTxQSr5NynDIapfdkxUKTcCcFNPTw
-         BbdkHkMAjaKH7EuPxyawiR9m9IhSflLs5GGdcB20/TZUj8KVLNQzQXIJBKBwXirkreTC
-         +/qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkqVEt1B4K4/haRT85DTJ3mtji7wEuDN6g5Ep/3HW29g50lyMTHbe20wa39wAkiijyabXBjQpkfxxDCGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYeGrNQXxe3RUs+YKDJ/JWZ/OTjTbaMxrL4Al0Ned210mg4tpr
-	7MmH6aKnyuHK0SVCwwIgsJ3b1gxAVA0tiSgkQAZZLGbmtMTjPbzynurfgGx0Zighn74zK5/FSO9
-	FX1D1dMEOiac/zuqsp7VFjkAegbRamx5xurJD8fsH8+lLpU23jPGP6n6Ftj4eW29QAyIPeIYyza
-	YlgWTne164E9wBSRLqNejVxLsmQMlabsMqxmAGFf/d
-X-Gm-Gg: ASbGnctEvSAmPgfwU0FSemmL6EuF4j8zoxA9GfRcdVl7HAEd+B70Tk1+P07zMSipg+a
-	+zE8MtpSm3uUVGkyV6Syuwp44GwydABCFb/S9MigccUaEWj6JBsySEIbII8Iej/p+bqhiB5lRY6
-	VaJAlGaBIPDt+x2inStjX5Mw==
-X-Received: by 2002:a05:6512:4406:b0:55b:8aa7:4c1e with SMTP id 2adb3069b0e04-55ce5057ce6mr1034906e87.53.1755184758548;
-        Thu, 14 Aug 2025 08:19:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpjD4L9yGnt3Y8LK/vUqs2N4V9CeLkdpHNoORm8lSuTg5A3krqAMSN8n2lZEw8OB9cKOiq9iDoektuq47f0Ik=
-X-Received: by 2002:a05:6512:4406:b0:55b:8aa7:4c1e with SMTP id
- 2adb3069b0e04-55ce5057ce6mr1034897e87.53.1755184757723; Thu, 14 Aug 2025
- 08:19:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755184772; x=1755789572;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EA1ZvFf+qWrndIFVkpDd7IpLWJx6+2D8DPmrDSfzpF0=;
+        b=c7W8DsVp8jXi+zJ5ehtmKBJBWo+tGatc3nMGp5SoI5KNeVMUAh2q8pFmgHT/wPeMjU
+         XmaMt9xdTmELZ/tKa46JIv+hJDWqNpwrwB2XY4mcuqn48gDqqfUizspJOUl+6U5y7Zms
+         YojMOnTZaShrcR+uyd3s3Ys+VRAdU8ADp8N0vvhO3bJomxP42n9U/HC40dWUWtWwWo+5
+         TAACpf0O5TdaeQikwdDT/9G+gRuv88ApKNCUCf7SxbDlgSykd6hw5n7KTx4q7lr/fi5E
+         PrdIHNAwrkudTl4hkHsLj2VUbFgYzneSgSSjdQ4sJj7BM1/bcTwetfXkLMWCoHhiOlU7
+         huIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqcoRPM/XQMVxI3FDvXgiOvPbONE8DMl3dDnsXeBZMRMxd2h/EKZEBBZW6gITZnqJ1Xk6IRUm1gUmQs24=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKRuuoR7xEscCZ4gRulNGsIpaASFafxKGpxvMjPhIrP5T3VRo/
+	Xrdp4fX5JJoZQJCN5zk4p/jNu/+ILSe92tZ2w9OrdbGqWMwzNG+NusKOSapKlWCTxTEjjynF08J
+	xyf1s9GEFkjRsNEI6M0o7g/Nr5zSs0H29LzaaaNpDWw==
+X-Gm-Gg: ASbGncsf78sZd2jcBuCIz41bHWXDdT2f5jqu4O4mzXVdgXJcHwdbYmEAuBYT/1IVt/D
+	19e0MVyKv+AYbw04671CFxMHuHS23kZWOISnDtvkcsLvrjPoG5cBHye0kyThzPw8KhgGixyNATr
+	/pQ/zN9nCBY3LIS878INKixyMNNbA5jOVVq74tDHgnsBJbJNrz7Jac5DfmbJeDfvWOSTy5872Jz
+	Q5+p9EV
+X-Google-Smtp-Source: AGHT+IG2qa/e3q/lS7fdE17E/mieIqz9XZskfeQdm0xkHvlzBuR85dHk6whip69ESAWWHza3LlnZuCoCgfbTex8i3Ho=
+X-Received: by 2002:a05:622a:5c9a:b0:4b0:7327:1bf5 with SMTP id
+ d75a77b69052e-4b10a958412mr55498911cf.6.1755184772275; Thu, 14 Aug 2025
+ 08:19:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722033340.1933388-1-linan666@huaweicloud.com>
-In-Reply-To: <20250722033340.1933388-1-linan666@huaweicloud.com>
-From: Xiao Ni <xni@redhat.com>
-Date: Thu, 14 Aug 2025 23:19:05 +0800
-X-Gm-Features: Ac12FXxiaI3onummDzWYpebymRi5yru3Q173Px_b3hfNsvGPcbJdxkMAfyRURRE
-Message-ID: <CALTww2-kHxa5FsPWXURwvv0q_kps875Bmecs6OjtO0AdY_V8Fg@mail.gmail.com>
-Subject: Re: [PATCH v2 md-6.17] md: rename recovery_cp to resync_offset
-To: linan666@huaweicloud.com
-Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org, 
-	yukuai3@huawei.com, dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-12-john@groves.net>
+ <20250709035911.GE2672029@frogsfrogsfrogs> <ttjh3gqk3fmykwrb7dg6xaqhkpxk7g773fkvuzvbdlefimpseg@l5ermgxixeen>
+ <20250712055405.GK2672029@frogsfrogsfrogs> <CAJfpegspQYVbWVztU5_XFwbGaTQKe2NCm2mcui6J3qv1VDxdSQ@mail.gmail.com>
+ <z56yzi6y4hbbvcwpqzysbmztdhgsuqavjbnhsjxp3iumzvvywv@ymudodg3mb5x>
+In-Reply-To: <z56yzi6y4hbbvcwpqzysbmztdhgsuqavjbnhsjxp3iumzvvywv@ymudodg3mb5x>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 14 Aug 2025 17:19:20 +0200
+X-Gm-Features: Ac12FXw8eO26MUJ86ncWZmuTB9wijlUFGNEwkcMvFc2CD_KfkHGAKLg17yDdXIs
+Message-ID: <CAJfpegsQxSv+x5=u1-ikR_Pk7L+h_AqNBW1XxM-b1G2TLPP4LA@mail.gmail.com>
+Subject: Re: [RFC V2 11/18] famfs_fuse: Basic famfs mount opts
+To: John Groves <John@groves.net>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Dan Williams <dan.j.williams@intel.com>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi all
+On Thu, 14 Aug 2025 at 16:39, John Groves <John@groves.net> wrote:
 
-mdadm build fails because of this change.
+> Having a generic approach rather than a '-o' option would be fine with me.
+> Also happy to entertain other ideas...
 
-super0.c: In function =E2=80=98update_super0=E2=80=99:
-super0.c:672:19: error: =E2=80=98mdp_super_t=E2=80=99 {aka =E2=80=98struct =
-mdp_superblock_s=E2=80=99}
-has no member named =E2=80=98recovery_cp=E2=80=99
-  672 |                 sb->recovery_cp =3D 0;
-      |                   ^~
+We could just allow arbitrary options to be set by the server.  It
+might break cases where the server just passes unknown options down
+into the kernel, which currently are rejected.  I don't think this is
+common practice, but still it sounds a bit risky.
 
-Because we recently handled a similar thing that the kernel change
-breaks userspace. It looks like it needs to modify mdadm too. But if
-users don't update mdadm, it can't build successfully. What's your
-suggestion? Now fedora can't update because of this failure.
-https://kojipkgs.fedoraproject.org//work/tasks/9192/136039192/build.log
+Alternatively allow INIT_REPLY to set up misc options, which can only
+be done explicitly, so no risk there.
 
-Regards
-Xiao
-
-On Tue, Jul 22, 2025 at 11:40=E2=80=AFAM <linan666@huaweicloud.com> wrote:
->
-> From: Li Nan <linan122@huawei.com>
->
-> 'recovery_cp' was used to represent the progress of sync, but its name
-> contains recovery, which can cause confusion. Replaces 'recovery_cp'
-> with 'resync_offset' for clarity.
->
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
-> v2: cook on md-6.17
->
->  drivers/md/md.h                |  2 +-
->  include/uapi/linux/raid/md_p.h |  2 +-
->  drivers/md/dm-raid.c           | 42 ++++++++++++++--------------
->  drivers/md/md-bitmap.c         |  8 +++---
->  drivers/md/md-cluster.c        | 16 +++++------
->  drivers/md/md.c                | 50 +++++++++++++++++-----------------
->  drivers/md/raid0.c             |  6 ++--
->  drivers/md/raid1-10.c          |  2 +-
->  drivers/md/raid1.c             | 10 +++----
->  drivers/md/raid10.c            | 16 +++++------
->  drivers/md/raid5-ppl.c         |  6 ++--
->  drivers/md/raid5.c             | 30 ++++++++++----------
->  12 files changed, 95 insertions(+), 95 deletions(-)
->
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index b8ff70841fbe..edea7df579c8 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -524,7 +524,7 @@ struct mddev {
->         unsigned long                   normal_io_events; /* IO event tim=
-estamp */
->         atomic_t                        recovery_active; /* blocks schedu=
-led, but not written */
->         wait_queue_head_t               recovery_wait;
-> -       sector_t                        recovery_cp;
-> +       sector_t                        resync_offset;
->         sector_t                        resync_min;     /* user requested=
- sync
->                                                          * starts here */
->         sector_t                        resync_max;     /* resync should =
-pause
-> diff --git a/include/uapi/linux/raid/md_p.h b/include/uapi/linux/raid/md_=
-p.h
-> index ad1c84e772ba..2963c3dab57e 100644
-> --- a/include/uapi/linux/raid/md_p.h
-> +++ b/include/uapi/linux/raid/md_p.h
-> @@ -173,7 +173,7 @@ typedef struct mdp_superblock_s {
->  #else
->  #error unspecified endianness
->  #endif
-> -       __u32 recovery_cp;      /* 11 recovery checkpoint sector count   =
-     */
-> +       __u32 resync_offset;    /* 11 resync checkpoint sector count     =
-     */
->         /* There are only valid for minor_version > 90 */
->         __u64 reshape_position; /* 12,13 next address in array-space for =
-reshape */
->         __u32 new_level;        /* 14 new level we are reshaping to      =
-     */
-> diff --git a/drivers/md/dm-raid.c b/drivers/md/dm-raid.c
-> index e8c0a8c6fb51..9835f2fe26e9 100644
-> --- a/drivers/md/dm-raid.c
-> +++ b/drivers/md/dm-raid.c
-> @@ -439,7 +439,7 @@ static bool rs_is_reshapable(struct raid_set *rs)
->  /* Return true, if raid set in @rs is recovering */
->  static bool rs_is_recovering(struct raid_set *rs)
->  {
-> -       return rs->md.recovery_cp < rs->md.dev_sectors;
-> +       return rs->md.resync_offset < rs->md.dev_sectors;
->  }
->
->  /* Return true, if raid set in @rs is reshaping */
-> @@ -769,7 +769,7 @@ static struct raid_set *raid_set_alloc(struct dm_targ=
-et *ti, struct raid_type *r
->         rs->md.layout =3D raid_type->algorithm;
->         rs->md.new_layout =3D rs->md.layout;
->         rs->md.delta_disks =3D 0;
-> -       rs->md.recovery_cp =3D MaxSector;
-> +       rs->md.resync_offset =3D MaxSector;
->
->         for (i =3D 0; i < raid_devs; i++)
->                 md_rdev_init(&rs->dev[i].rdev);
-> @@ -913,7 +913,7 @@ static int parse_dev_params(struct raid_set *rs, stru=
-ct dm_arg_set *as)
->                 rs->md.external =3D 0;
->                 rs->md.persistent =3D 1;
->                 rs->md.major_version =3D 2;
-> -       } else if (rebuild && !rs->md.recovery_cp) {
-> +       } else if (rebuild && !rs->md.resync_offset) {
->                 /*
->                  * Without metadata, we will not be able to tell if the a=
-rray
->                  * is in-sync or not - we must assume it is not.  Therefo=
-re,
-> @@ -1696,20 +1696,20 @@ static void rs_setup_recovery(struct raid_set *rs=
-, sector_t dev_sectors)
->  {
->         /* raid0 does not recover */
->         if (rs_is_raid0(rs))
-> -               rs->md.recovery_cp =3D MaxSector;
-> +               rs->md.resync_offset =3D MaxSector;
->         /*
->          * A raid6 set has to be recovered either
->          * completely or for the grown part to
->          * ensure proper parity and Q-Syndrome
->          */
->         else if (rs_is_raid6(rs))
-> -               rs->md.recovery_cp =3D dev_sectors;
-> +               rs->md.resync_offset =3D dev_sectors;
->         /*
->          * Other raid set types may skip recovery
->          * depending on the 'nosync' flag.
->          */
->         else
-> -               rs->md.recovery_cp =3D test_bit(__CTR_FLAG_NOSYNC, &rs->c=
-tr_flags)
-> +               rs->md.resync_offset =3D test_bit(__CTR_FLAG_NOSYNC, &rs-=
->ctr_flags)
->                                      ? MaxSector : dev_sectors;
->  }
->
-> @@ -2144,7 +2144,7 @@ static void super_sync(struct mddev *mddev, struct =
-md_rdev *rdev)
->         sb->events =3D cpu_to_le64(mddev->events);
->
->         sb->disk_recovery_offset =3D cpu_to_le64(rdev->recovery_offset);
-> -       sb->array_resync_offset =3D cpu_to_le64(mddev->recovery_cp);
-> +       sb->array_resync_offset =3D cpu_to_le64(mddev->resync_offset);
->
->         sb->level =3D cpu_to_le32(mddev->level);
->         sb->layout =3D cpu_to_le32(mddev->layout);
-> @@ -2335,18 +2335,18 @@ static int super_init_validation(struct raid_set =
-*rs, struct md_rdev *rdev)
->         }
->
->         if (!test_bit(__CTR_FLAG_NOSYNC, &rs->ctr_flags))
-> -               mddev->recovery_cp =3D le64_to_cpu(sb->array_resync_offse=
-t);
-> +               mddev->resync_offset =3D le64_to_cpu(sb->array_resync_off=
-set);
->
->         /*
->          * During load, we set FirstUse if a new superblock was written.
->          * There are two reasons we might not have a superblock:
->          * 1) The raid set is brand new - in which case, all of the
->          *    devices must have their In_sync bit set.  Also,
-> -        *    recovery_cp must be 0, unless forced.
-> +        *    resync_offset must be 0, unless forced.
->          * 2) This is a new device being added to an old raid set
->          *    and the new device needs to be rebuilt - in which
->          *    case the In_sync bit will /not/ be set and
-> -        *    recovery_cp must be MaxSector.
-> +        *    resync_offset must be MaxSector.
->          * 3) This is/are a new device(s) being added to an old
->          *    raid set during takeover to a higher raid level
->          *    to provide capacity for redundancy or during reshape
-> @@ -2391,8 +2391,8 @@ static int super_init_validation(struct raid_set *r=
-s, struct md_rdev *rdev)
->                               new_devs > 1 ? "s" : "");
->                         return -EINVAL;
->                 } else if (!test_bit(__CTR_FLAG_REBUILD, &rs->ctr_flags) =
-&& rs_is_recovering(rs)) {
-> -                       DMERR("'rebuild' specified while raid set is not =
-in-sync (recovery_cp=3D%llu)",
-> -                             (unsigned long long) mddev->recovery_cp);
-> +                       DMERR("'rebuild' specified while raid set is not =
-in-sync (resync_offset=3D%llu)",
-> +                             (unsigned long long) mddev->resync_offset);
->                         return -EINVAL;
->                 } else if (rs_is_reshaping(rs)) {
->                         DMERR("'rebuild' specified while raid set is bein=
-g reshaped (reshape_position=3D%llu)",
-> @@ -2697,11 +2697,11 @@ static int rs_adjust_data_offsets(struct raid_set=
- *rs)
->         }
->  out:
->         /*
-> -        * Raise recovery_cp in case data_offset !=3D 0 to
-> +        * Raise resync_offset in case data_offset !=3D 0 to
->          * avoid false recovery positives in the constructor.
->          */
-> -       if (rs->md.recovery_cp < rs->md.dev_sectors)
-> -               rs->md.recovery_cp +=3D rs->dev[0].rdev.data_offset;
-> +       if (rs->md.resync_offset < rs->md.dev_sectors)
-> +               rs->md.resync_offset +=3D rs->dev[0].rdev.data_offset;
->
->         /* Adjust data offsets on all rdevs but on any raid4/5/6 journal =
-device */
->         rdev_for_each(rdev, &rs->md) {
-> @@ -2756,7 +2756,7 @@ static int rs_setup_takeover(struct raid_set *rs)
->         }
->
->         clear_bit(MD_ARRAY_FIRST_USE, &mddev->flags);
-> -       mddev->recovery_cp =3D MaxSector;
-> +       mddev->resync_offset =3D MaxSector;
->
->         while (d--) {
->                 rdev =3D &rs->dev[d].rdev;
-> @@ -2764,7 +2764,7 @@ static int rs_setup_takeover(struct raid_set *rs)
->                 if (test_bit(d, (void *) rs->rebuild_disks)) {
->                         clear_bit(In_sync, &rdev->flags);
->                         clear_bit(Faulty, &rdev->flags);
-> -                       mddev->recovery_cp =3D rdev->recovery_offset =3D =
-0;
-> +                       mddev->resync_offset =3D rdev->recovery_offset =
-=3D 0;
->                         /* Bitmap has to be created when we do an "up" ta=
-keover */
->                         set_bit(MD_ARRAY_FIRST_USE, &mddev->flags);
->                 }
-> @@ -3222,7 +3222,7 @@ static int raid_ctr(struct dm_target *ti, unsigned =
-int argc, char **argv)
->                         if (r)
->                                 goto bad;
->
-> -                       rs_setup_recovery(rs, rs->md.recovery_cp < rs->md=
-.dev_sectors ? rs->md.recovery_cp : rs->md.dev_sectors);
-> +                       rs_setup_recovery(rs, rs->md.resync_offset < rs->=
-md.dev_sectors ? rs->md.resync_offset : rs->md.dev_sectors);
->                 } else {
->                         /* This is no size change or it is shrinking, upd=
-ate size and record in superblocks */
->                         r =3D rs_set_dev_and_array_sectors(rs, rs->ti->le=
-n, false);
-> @@ -3446,7 +3446,7 @@ static sector_t rs_get_progress(struct raid_set *rs=
-, unsigned long recovery,
->
->         } else {
->                 if (state =3D=3D st_idle && !test_bit(MD_RECOVERY_INTR, &=
-recovery))
-> -                       r =3D mddev->recovery_cp;
-> +                       r =3D mddev->resync_offset;
->                 else
->                         r =3D mddev->curr_resync_completed;
->
-> @@ -4074,9 +4074,9 @@ static int raid_preresume(struct dm_target *ti)
->         }
->
->         /* Check for any resize/reshape on @rs and adjust/initiate */
-> -       if (mddev->recovery_cp && mddev->recovery_cp < MaxSector) {
-> +       if (mddev->resync_offset && mddev->resync_offset < MaxSector) {
->                 set_bit(MD_RECOVERY_REQUESTED, &mddev->recovery);
-> -               mddev->resync_min =3D mddev->recovery_cp;
-> +               mddev->resync_min =3D mddev->resync_offset;
->                 if (test_bit(RT_FLAG_RS_GROW, &rs->runtime_flags))
->                         mddev->resync_max_sectors =3D mddev->dev_sectors;
->         }
-> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-> index bd694910b01b..c74fe9c18658 100644
-> --- a/drivers/md/md-bitmap.c
-> +++ b/drivers/md/md-bitmap.c
-> @@ -1987,12 +1987,12 @@ static void bitmap_dirty_bits(struct mddev *mddev=
-, unsigned long s,
->
->                 md_bitmap_set_memory_bits(bitmap, sec, 1);
->                 md_bitmap_file_set_bit(bitmap, sec);
-> -               if (sec < bitmap->mddev->recovery_cp)
-> +               if (sec < bitmap->mddev->resync_offset)
->                         /* We are asserting that the array is dirty,
-> -                        * so move the recovery_cp address back so
-> +                        * so move the resync_offset address back so
->                          * that it is obvious that it is dirty
->                          */
-> -                       bitmap->mddev->recovery_cp =3D sec;
-> +                       bitmap->mddev->resync_offset =3D sec;
->         }
->  }
->
-> @@ -2258,7 +2258,7 @@ static int bitmap_load(struct mddev *mddev)
->             || bitmap->events_cleared =3D=3D mddev->events)
->                 /* no need to keep dirty bits to optimise a
->                  * re-add of a missing device */
-> -               start =3D mddev->recovery_cp;
-> +               start =3D mddev->resync_offset;
->
->         mutex_lock(&mddev->bitmap_info.mutex);
->         err =3D md_bitmap_init_from_disk(bitmap, start);
-> diff --git a/drivers/md/md-cluster.c b/drivers/md/md-cluster.c
-> index 94221d964d4f..5497eaee96e7 100644
-> --- a/drivers/md/md-cluster.c
-> +++ b/drivers/md/md-cluster.c
-> @@ -337,11 +337,11 @@ static void recover_bitmaps(struct md_thread *threa=
-d)
->                         md_wakeup_thread(mddev->sync_thread);
->
->                 if (hi > 0) {
-> -                       if (lo < mddev->recovery_cp)
-> -                               mddev->recovery_cp =3D lo;
-> +                       if (lo < mddev->resync_offset)
-> +                               mddev->resync_offset =3D lo;
->                         /* wake up thread to continue resync in case resy=
-nc
->                          * is not finished */
-> -                       if (mddev->recovery_cp !=3D MaxSector) {
-> +                       if (mddev->resync_offset !=3D MaxSector) {
->                                 /*
->                                  * clear the REMOTE flag since we will la=
-unch
->                                  * resync thread in current node.
-> @@ -863,9 +863,9 @@ static int gather_all_resync_info(struct mddev *mddev=
-, int total_slots)
->                         lockres_free(bm_lockres);
->                         continue;
->                 }
-> -               if ((hi > 0) && (lo < mddev->recovery_cp)) {
-> +               if ((hi > 0) && (lo < mddev->resync_offset)) {
->                         set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
-> -                       mddev->recovery_cp =3D lo;
-> +                       mddev->resync_offset =3D lo;
->                         md_check_recovery(mddev);
->                 }
->
-> @@ -1027,7 +1027,7 @@ static int leave(struct mddev *mddev)
->          * Also, we should send BITMAP_NEEDS_SYNC message in
->          * case reshaping is interrupted.
->          */
-> -       if ((cinfo->slot_number > 0 && mddev->recovery_cp !=3D MaxSector)=
- ||
-> +       if ((cinfo->slot_number > 0 && mddev->resync_offset !=3D MaxSecto=
-r) ||
->             (mddev->reshape_position !=3D MaxSector &&
->              test_bit(MD_CLOSING, &mddev->flags)))
->                 resync_bitmap(mddev);
-> @@ -1605,8 +1605,8 @@ static int gather_bitmaps(struct md_rdev *rdev)
->                         pr_warn("md-cluster: Could not gather bitmaps fro=
-m slot %d", sn);
->                         goto out;
->                 }
-> -               if ((hi > 0) && (lo < mddev->recovery_cp))
-> -                       mddev->recovery_cp =3D lo;
-> +               if ((hi > 0) && (lo < mddev->resync_offset))
-> +                       mddev->resync_offset =3D lo;
->         }
->  out:
->         return err;
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 9a704ddc107a..c3723ac57775 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -1410,13 +1410,13 @@ static int super_90_validate(struct mddev *mddev,=
- struct md_rdev *freshest, stru
->                         mddev->layout =3D -1;
->
->                 if (sb->state & (1<<MD_SB_CLEAN))
-> -                       mddev->recovery_cp =3D MaxSector;
-> +                       mddev->resync_offset =3D MaxSector;
->                 else {
->                         if (sb->events_hi =3D=3D sb->cp_events_hi &&
->                                 sb->events_lo =3D=3D sb->cp_events_lo) {
-> -                               mddev->recovery_cp =3D sb->recovery_cp;
-> +                               mddev->resync_offset =3D sb->resync_offse=
-t;
->                         } else
-> -                               mddev->recovery_cp =3D 0;
-> +                               mddev->resync_offset =3D 0;
->                 }
->
->                 memcpy(mddev->uuid+0, &sb->set_uuid0, 4);
-> @@ -1542,13 +1542,13 @@ static void super_90_sync(struct mddev *mddev, st=
-ruct md_rdev *rdev)
->         mddev->minor_version =3D sb->minor_version;
->         if (mddev->in_sync)
->         {
-> -               sb->recovery_cp =3D mddev->recovery_cp;
-> +               sb->resync_offset =3D mddev->resync_offset;
->                 sb->cp_events_hi =3D (mddev->events>>32);
->                 sb->cp_events_lo =3D (u32)mddev->events;
-> -               if (mddev->recovery_cp =3D=3D MaxSector)
-> +               if (mddev->resync_offset =3D=3D MaxSector)
->                         sb->state =3D (1<< MD_SB_CLEAN);
->         } else
-> -               sb->recovery_cp =3D 0;
-> +               sb->resync_offset =3D 0;
->
->         sb->layout =3D mddev->layout;
->         sb->chunk_size =3D mddev->chunk_sectors << 9;
-> @@ -1898,7 +1898,7 @@ static int super_1_validate(struct mddev *mddev, st=
-ruct md_rdev *freshest, struc
->                 mddev->bitmap_info.default_space =3D (4096-1024) >> 9;
->                 mddev->reshape_backwards =3D 0;
->
-> -               mddev->recovery_cp =3D le64_to_cpu(sb->resync_offset);
-> +               mddev->resync_offset =3D le64_to_cpu(sb->resync_offset);
->                 memcpy(mddev->uuid, sb->set_uuid, 16);
->
->                 mddev->max_disks =3D  (4096-256)/2;
-> @@ -2084,7 +2084,7 @@ static void super_1_sync(struct mddev *mddev, struc=
-t md_rdev *rdev)
->         sb->utime =3D cpu_to_le64((__u64)mddev->utime);
->         sb->events =3D cpu_to_le64(mddev->events);
->         if (mddev->in_sync)
-> -               sb->resync_offset =3D cpu_to_le64(mddev->recovery_cp);
-> +               sb->resync_offset =3D cpu_to_le64(mddev->resync_offset);
->         else if (test_bit(MD_JOURNAL_CLEAN, &mddev->flags))
->                 sb->resync_offset =3D cpu_to_le64(MaxSector);
->         else
-> @@ -2765,7 +2765,7 @@ void md_update_sb(struct mddev *mddev, int force_ch=
-ange)
->         /* If this is just a dirty<->clean transition, and the array is c=
-lean
->          * and 'events' is odd, we can roll back to the previous clean st=
-ate */
->         if (nospares
-> -           && (mddev->in_sync && mddev->recovery_cp =3D=3D MaxSector)
-> +           && (mddev->in_sync && mddev->resync_offset =3D=3D MaxSector)
->             && mddev->can_decrease_events
->             && mddev->events !=3D 1) {
->                 mddev->events--;
-> @@ -4301,9 +4301,9 @@ __ATTR(chunk_size, S_IRUGO|S_IWUSR, chunk_size_show=
-, chunk_size_store);
->  static ssize_t
->  resync_start_show(struct mddev *mddev, char *page)
->  {
-> -       if (mddev->recovery_cp =3D=3D MaxSector)
-> +       if (mddev->resync_offset =3D=3D MaxSector)
->                 return sprintf(page, "none\n");
-> -       return sprintf(page, "%llu\n", (unsigned long long)mddev->recover=
-y_cp);
-> +       return sprintf(page, "%llu\n", (unsigned long long)mddev->resync_=
-offset);
->  }
->
->  static ssize_t
-> @@ -4329,7 +4329,7 @@ resync_start_store(struct mddev *mddev, const char =
-*buf, size_t len)
->                 err =3D -EBUSY;
->
->         if (!err) {
-> -               mddev->recovery_cp =3D n;
-> +               mddev->resync_offset =3D n;
->                 if (mddev->pers)
->                         set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
->         }
-> @@ -6488,7 +6488,7 @@ static void md_clean(struct mddev *mddev)
->         mddev->external_size =3D 0;
->         mddev->dev_sectors =3D 0;
->         mddev->raid_disks =3D 0;
-> -       mddev->recovery_cp =3D 0;
-> +       mddev->resync_offset =3D 0;
->         mddev->resync_min =3D 0;
->         mddev->resync_max =3D MaxSector;
->         mddev->reshape_position =3D MaxSector;
-> @@ -7434,9 +7434,9 @@ int md_set_array_info(struct mddev *mddev, struct m=
-du_array_info_s *info)
->          * openned
->          */
->         if (info->state & (1<<MD_SB_CLEAN))
-> -               mddev->recovery_cp =3D MaxSector;
-> +               mddev->resync_offset =3D MaxSector;
->         else
-> -               mddev->recovery_cp =3D 0;
-> +               mddev->resync_offset =3D 0;
->         mddev->persistent    =3D ! info->not_persistent;
->         mddev->external      =3D 0;
->
-> @@ -8375,7 +8375,7 @@ static int status_resync(struct seq_file *seq, stru=
-ct mddev *mddev)
->                                 seq_printf(seq, "\tresync=3DREMOTE");
->                         return 1;
->                 }
-> -               if (mddev->recovery_cp < MaxSector) {
-> +               if (mddev->resync_offset < MaxSector) {
->                         seq_printf(seq, "\tresync=3DPENDING");
->                         return 1;
->                 }
-> @@ -9018,7 +9018,7 @@ static sector_t md_sync_position(struct mddev *mdde=
-v, enum sync_action action)
->                 return mddev->resync_min;
->         case ACTION_RESYNC:
->                 if (!mddev->bitmap)
-> -                       return mddev->recovery_cp;
-> +                       return mddev->resync_offset;
->                 return 0;
->         case ACTION_RESHAPE:
->                 /*
-> @@ -9256,8 +9256,8 @@ void md_do_sync(struct md_thread *thread)
->                                    atomic_read(&mddev->recovery_active) =
-=3D=3D 0);
->                         mddev->curr_resync_completed =3D j;
->                         if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery) =
-&&
-> -                           j > mddev->recovery_cp)
-> -                               mddev->recovery_cp =3D j;
-> +                           j > mddev->resync_offset)
-> +                               mddev->resync_offset =3D j;
->                         update_time =3D jiffies;
->                         set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
->                         sysfs_notify_dirent_safe(mddev->sysfs_completed);
-> @@ -9377,19 +9377,19 @@ void md_do_sync(struct md_thread *thread)
->             mddev->curr_resync > MD_RESYNC_ACTIVE) {
->                 if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
->                         if (test_bit(MD_RECOVERY_INTR, &mddev->recovery))=
- {
-> -                               if (mddev->curr_resync >=3D mddev->recove=
-ry_cp) {
-> +                               if (mddev->curr_resync >=3D mddev->resync=
-_offset) {
->                                         pr_debug("md: checkpointing %s of=
- %s.\n",
->                                                  desc, mdname(mddev));
->                                         if (test_bit(MD_RECOVERY_ERROR,
->                                                 &mddev->recovery))
-> -                                               mddev->recovery_cp =3D
-> +                                               mddev->resync_offset =3D
->                                                         mddev->curr_resyn=
-c_completed;
->                                         else
-> -                                               mddev->recovery_cp =3D
-> +                                               mddev->resync_offset =3D
->                                                         mddev->curr_resyn=
-c;
->                                 }
->                         } else
-> -                               mddev->recovery_cp =3D MaxSector;
-> +                               mddev->resync_offset =3D MaxSector;
->                 } else {
->                         if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)=
-)
->                                 mddev->curr_resync =3D MaxSector;
-> @@ -9605,7 +9605,7 @@ static bool md_choose_sync_action(struct mddev *mdd=
-ev, int *spares)
->         }
->
->         /* Check if resync is in progress. */
-> -       if (mddev->recovery_cp < MaxSector) {
-> +       if (mddev->resync_offset < MaxSector) {
->                 remove_spares(mddev, NULL);
->                 set_bit(MD_RECOVERY_SYNC, &mddev->recovery);
->                 clear_bit(MD_RECOVERY_RECOVER, &mddev->recovery);
-> @@ -9786,7 +9786,7 @@ void md_check_recovery(struct mddev *mddev)
->                 test_bit(MD_RECOVERY_DONE, &mddev->recovery) ||
->                 (mddev->external =3D=3D 0 && mddev->safemode =3D=3D 1) ||
->                 (mddev->safemode =3D=3D 2
-> -                && !mddev->in_sync && mddev->recovery_cp =3D=3D MaxSecto=
-r)
-> +                && !mddev->in_sync && mddev->resync_offset =3D=3D MaxSec=
-tor)
->                 ))
->                 return;
->
-> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-> index c65732b330eb..d08d71e1fb41 100644
-> --- a/drivers/md/raid0.c
-> +++ b/drivers/md/raid0.c
-> @@ -674,7 +674,7 @@ static void *raid0_takeover_raid45(struct mddev *mdde=
-v)
->         mddev->raid_disks--;
->         mddev->delta_disks =3D -1;
->         /* make sure it will be not marked as dirty */
-> -       mddev->recovery_cp =3D MaxSector;
-> +       mddev->resync_offset =3D MaxSector;
->         mddev_clear_unsupported_flags(mddev, UNSUPPORTED_MDDEV_FLAGS);
->
->         create_strip_zones(mddev, &priv_conf);
-> @@ -717,7 +717,7 @@ static void *raid0_takeover_raid10(struct mddev *mdde=
-v)
->         mddev->raid_disks +=3D mddev->delta_disks;
->         mddev->degraded =3D 0;
->         /* make sure it will be not marked as dirty */
-> -       mddev->recovery_cp =3D MaxSector;
-> +       mddev->resync_offset =3D MaxSector;
->         mddev_clear_unsupported_flags(mddev, UNSUPPORTED_MDDEV_FLAGS);
->
->         create_strip_zones(mddev, &priv_conf);
-> @@ -760,7 +760,7 @@ static void *raid0_takeover_raid1(struct mddev *mddev=
-)
->         mddev->delta_disks =3D 1 - mddev->raid_disks;
->         mddev->raid_disks =3D 1;
->         /* make sure it will be not marked as dirty */
-> -       mddev->recovery_cp =3D MaxSector;
-> +       mddev->resync_offset =3D MaxSector;
->         mddev_clear_unsupported_flags(mddev, UNSUPPORTED_MDDEV_FLAGS);
->
->         create_strip_zones(mddev, &priv_conf);
-> diff --git a/drivers/md/raid1-10.c b/drivers/md/raid1-10.c
-> index b8b3a9069701..52881e6032da 100644
-> --- a/drivers/md/raid1-10.c
-> +++ b/drivers/md/raid1-10.c
-> @@ -283,7 +283,7 @@ static inline int raid1_check_read_range(struct md_rd=
-ev *rdev,
->  static inline bool raid1_should_read_first(struct mddev *mddev,
->                                            sector_t this_sector, int len)
->  {
-> -       if ((mddev->recovery_cp < this_sector + len))
-> +       if ((mddev->resync_offset < this_sector + len))
->                 return true;
->
->         if (mddev_is_clustered(mddev) &&
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 7e37f1015646..0a0668fa148e 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -2821,7 +2821,7 @@ static sector_t raid1_sync_request(struct mddev *md=
-dev, sector_t sector_nr,
->         }
->
->         if (mddev->bitmap =3D=3D NULL &&
-> -           mddev->recovery_cp =3D=3D MaxSector &&
-> +           mddev->resync_offset =3D=3D MaxSector &&
->             !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery) &&
->             conf->fullsync =3D=3D 0) {
->                 *skipped =3D 1;
-> @@ -3282,9 +3282,9 @@ static int raid1_run(struct mddev *mddev)
->         }
->
->         if (conf->raid_disks - mddev->degraded =3D=3D 1)
-> -               mddev->recovery_cp =3D MaxSector;
-> +               mddev->resync_offset =3D MaxSector;
->
-> -       if (mddev->recovery_cp !=3D MaxSector)
-> +       if (mddev->resync_offset !=3D MaxSector)
->                 pr_info("md/raid1:%s: not clean -- starting background re=
-construction\n",
->                         mdname(mddev));
->         pr_info("md/raid1:%s: active with %d out of %d mirrors\n",
-> @@ -3345,8 +3345,8 @@ static int raid1_resize(struct mddev *mddev, sector=
-_t sectors)
->
->         md_set_array_sectors(mddev, newsize);
->         if (sectors > mddev->dev_sectors &&
-> -           mddev->recovery_cp > mddev->dev_sectors) {
-> -               mddev->recovery_cp =3D mddev->dev_sectors;
-> +           mddev->resync_offset > mddev->dev_sectors) {
-> +               mddev->resync_offset =3D mddev->dev_sectors;
->                 set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
->         }
->         mddev->dev_sectors =3D sectors;
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index 375543f8153f..169bc5fe2d4f 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -2109,7 +2109,7 @@ static int raid10_add_disk(struct mddev *mddev, str=
-uct md_rdev *rdev)
->         int last =3D conf->geo.raid_disks - 1;
->         struct raid10_info *p;
->
-> -       if (mddev->recovery_cp < MaxSector)
-> +       if (mddev->resync_offset < MaxSector)
->                 /* only hot-add to in-sync arrays, as recovery is
->                  * very different from resync
->                  */
-> @@ -3177,7 +3177,7 @@ static sector_t raid10_sync_request(struct mddev *m=
-ddev, sector_t sector_nr,
->          * of a clean array, like RAID1 does.
->          */
->         if (mddev->bitmap =3D=3D NULL &&
-> -           mddev->recovery_cp =3D=3D MaxSector &&
-> +           mddev->resync_offset =3D=3D MaxSector &&
->             mddev->reshape_position =3D=3D MaxSector &&
->             !test_bit(MD_RECOVERY_SYNC, &mddev->recovery) &&
->             !test_bit(MD_RECOVERY_REQUESTED, &mddev->recovery) &&
-> @@ -4137,7 +4137,7 @@ static int raid10_run(struct mddev *mddev)
->                 disk->recovery_disabled =3D mddev->recovery_disabled - 1;
->         }
->
-> -       if (mddev->recovery_cp !=3D MaxSector)
-> +       if (mddev->resync_offset !=3D MaxSector)
->                 pr_notice("md/raid10:%s: not clean -- starting background=
- reconstruction\n",
->                           mdname(mddev));
->         pr_info("md/raid10:%s: active with %d out of %d devices\n",
-> @@ -4237,8 +4237,8 @@ static int raid10_resize(struct mddev *mddev, secto=
-r_t sectors)
->
->         md_set_array_sectors(mddev, size);
->         if (sectors > mddev->dev_sectors &&
-> -           mddev->recovery_cp > oldsize) {
-> -               mddev->recovery_cp =3D oldsize;
-> +           mddev->resync_offset > oldsize) {
-> +               mddev->resync_offset =3D oldsize;
->                 set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
->         }
->         calc_sectors(conf, sectors);
-> @@ -4267,7 +4267,7 @@ static void *raid10_takeover_raid0(struct mddev *md=
-dev, sector_t size, int devs)
->         mddev->delta_disks =3D mddev->raid_disks;
->         mddev->raid_disks *=3D 2;
->         /* make sure it will be not marked as dirty */
-> -       mddev->recovery_cp =3D MaxSector;
-> +       mddev->resync_offset =3D MaxSector;
->         mddev->dev_sectors =3D size;
->
->         conf =3D setup_conf(mddev);
-> @@ -5079,8 +5079,8 @@ static void raid10_finish_reshape(struct mddev *mdd=
-ev)
->                 return;
->
->         if (mddev->delta_disks > 0) {
-> -               if (mddev->recovery_cp > mddev->resync_max_sectors) {
-> -                       mddev->recovery_cp =3D mddev->resync_max_sectors;
-> +               if (mddev->resync_offset > mddev->resync_max_sectors) {
-> +                       mddev->resync_offset =3D mddev->resync_max_sector=
-s;
->                         set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
->                 }
->                 mddev->resync_max_sectors =3D mddev->array_sectors;
-> diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
-> index c0fb335311aa..56b234683ee6 100644
-> --- a/drivers/md/raid5-ppl.c
-> +++ b/drivers/md/raid5-ppl.c
-> @@ -1163,7 +1163,7 @@ static int ppl_load_distributed(struct ppl_log *log=
-)
->                     le64_to_cpu(pplhdr->generation));
->
->         /* attempt to recover from log if we are starting a dirty array *=
-/
-> -       if (pplhdr && !mddev->pers && mddev->recovery_cp !=3D MaxSector)
-> +       if (pplhdr && !mddev->pers && mddev->resync_offset !=3D MaxSector=
-)
->                 ret =3D ppl_recover(log, pplhdr, pplhdr_offset);
->
->         /* write empty header if we are starting the array */
-> @@ -1422,14 +1422,14 @@ int ppl_init_log(struct r5conf *conf)
->
->         if (ret) {
->                 goto err;
-> -       } else if (!mddev->pers && mddev->recovery_cp =3D=3D 0 &&
-> +       } else if (!mddev->pers && mddev->resync_offset =3D=3D 0 &&
->                    ppl_conf->recovered_entries > 0 &&
->                    ppl_conf->mismatch_count =3D=3D 0) {
->                 /*
->                  * If we are starting a dirty array and the recovery succ=
-eeds
->                  * without any issues, set the array as clean.
->                  */
-> -               mddev->recovery_cp =3D MaxSector;
-> +               mddev->resync_offset =3D MaxSector;
->                 set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
->         } else if (mddev->pers && ppl_conf->mismatch_count > 0) {
->                 /* no mismatch allowed when enabling PPL for a running ar=
-ray */
-> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-> index 11307878a982..8e74cee3fb8e 100644
-> --- a/drivers/md/raid5.c
-> +++ b/drivers/md/raid5.c
-> @@ -3740,7 +3740,7 @@ static int want_replace(struct stripe_head *sh, int=
- disk_idx)
->             && !test_bit(Faulty, &rdev->flags)
->             && !test_bit(In_sync, &rdev->flags)
->             && (rdev->recovery_offset <=3D sh->sector
-> -               || rdev->mddev->recovery_cp <=3D sh->sector))
-> +               || rdev->mddev->resync_offset <=3D sh->sector))
->                 rv =3D 1;
->         return rv;
->  }
-> @@ -3832,7 +3832,7 @@ static int need_this_block(struct stripe_head *sh, =
-struct stripe_head_state *s,
->          * is missing/faulty, then we need to read everything we can.
->          */
->         if (!force_rcw &&
-> -           sh->sector < sh->raid_conf->mddev->recovery_cp)
-> +           sh->sector < sh->raid_conf->mddev->resync_offset)
->                 /* reconstruct-write isn't being forced */
->                 return 0;
->         for (i =3D 0; i < s->failed && i < 2; i++) {
-> @@ -4097,7 +4097,7 @@ static int handle_stripe_dirtying(struct r5conf *co=
-nf,
->                                   int disks)
->  {
->         int rmw =3D 0, rcw =3D 0, i;
-> -       sector_t recovery_cp =3D conf->mddev->recovery_cp;
-> +       sector_t resync_offset =3D conf->mddev->resync_offset;
->
->         /* Check whether resync is now happening or should start.
->          * If yes, then the array is dirty (after unclean shutdown or
-> @@ -4107,14 +4107,14 @@ static int handle_stripe_dirtying(struct r5conf *=
-conf,
->          * generate correct data from the parity.
->          */
->         if (conf->rmw_level =3D=3D PARITY_DISABLE_RMW ||
-> -           (recovery_cp < MaxSector && sh->sector >=3D recovery_cp &&
-> +           (resync_offset < MaxSector && sh->sector >=3D resync_offset &=
-&
->              s->failed =3D=3D 0)) {
->                 /* Calculate the real rcw later - for now make it
->                  * look like rcw is cheaper
->                  */
->                 rcw =3D 1; rmw =3D 2;
-> -               pr_debug("force RCW rmw_level=3D%u, recovery_cp=3D%llu sh=
-->sector=3D%llu\n",
-> -                        conf->rmw_level, (unsigned long long)recovery_cp=
-,
-> +               pr_debug("force RCW rmw_level=3D%u, resync_offset=3D%llu =
-sh->sector=3D%llu\n",
-> +                        conf->rmw_level, (unsigned long long)resync_offs=
-et,
->                          (unsigned long long)sh->sector);
->         } else for (i =3D disks; i--; ) {
->                 /* would I have to read this buffer for read_modify_write=
- */
-> @@ -4770,14 +4770,14 @@ static void analyse_stripe(struct stripe_head *sh=
-, struct stripe_head_state *s)
->         if (test_bit(STRIPE_SYNCING, &sh->state)) {
->                 /* If there is a failed device being replaced,
->                  *     we must be recovering.
-> -                * else if we are after recovery_cp, we must be syncing
-> +                * else if we are after resync_offset, we must be syncing
->                  * else if MD_RECOVERY_REQUESTED is set, we also are sync=
-ing.
->                  * else we can only be replacing
->                  * sync and recovery both need to read all devices, and s=
-o
->                  * use the same flag.
->                  */
->                 if (do_recovery ||
-> -                   sh->sector >=3D conf->mddev->recovery_cp ||
-> +                   sh->sector >=3D conf->mddev->resync_offset ||
->                     test_bit(MD_RECOVERY_REQUESTED, &(conf->mddev->recove=
-ry)))
->                         s->syncing =3D 1;
->                 else
-> @@ -7781,7 +7781,7 @@ static int raid5_run(struct mddev *mddev)
->         int first =3D 1;
->         int ret =3D -EIO;
->
-> -       if (mddev->recovery_cp !=3D MaxSector)
-> +       if (mddev->resync_offset !=3D MaxSector)
->                 pr_notice("md/raid:%s: not clean -- starting background r=
-econstruction\n",
->                           mdname(mddev));
->
-> @@ -7922,7 +7922,7 @@ static int raid5_run(struct mddev *mddev)
->                                 mdname(mddev));
->                         mddev->ro =3D 1;
->                         set_disk_ro(mddev->gendisk, 1);
-> -               } else if (mddev->recovery_cp =3D=3D MaxSector)
-> +               } else if (mddev->resync_offset =3D=3D MaxSector)
->                         set_bit(MD_JOURNAL_CLEAN, &mddev->flags);
->         }
->
-> @@ -7989,7 +7989,7 @@ static int raid5_run(struct mddev *mddev)
->         mddev->resync_max_sectors =3D mddev->dev_sectors;
->
->         if (mddev->degraded > dirty_parity_disks &&
-> -           mddev->recovery_cp !=3D MaxSector) {
-> +           mddev->resync_offset !=3D MaxSector) {
->                 if (test_bit(MD_HAS_PPL, &mddev->flags))
->                         pr_crit("md/raid:%s: starting dirty degraded arra=
-y with PPL.\n",
->                                 mdname(mddev));
-> @@ -8329,8 +8329,8 @@ static int raid5_resize(struct mddev *mddev, sector=
-_t sectors)
->
->         md_set_array_sectors(mddev, newsize);
->         if (sectors > mddev->dev_sectors &&
-> -           mddev->recovery_cp > mddev->dev_sectors) {
-> -               mddev->recovery_cp =3D mddev->dev_sectors;
-> +           mddev->resync_offset > mddev->dev_sectors) {
-> +               mddev->resync_offset =3D mddev->dev_sectors;
->                 set_bit(MD_RECOVERY_NEEDED, &mddev->recovery);
->         }
->         mddev->dev_sectors =3D sectors;
-> @@ -8424,7 +8424,7 @@ static int raid5_start_reshape(struct mddev *mddev)
->                 return -EINVAL;
->
->         /* raid5 can't handle concurrent reshape and recovery */
-> -       if (mddev->recovery_cp < MaxSector)
-> +       if (mddev->resync_offset < MaxSector)
->                 return -EBUSY;
->         for (i =3D 0; i < conf->raid_disks; i++)
->                 if (conf->disks[i].replacement)
-> @@ -8649,7 +8649,7 @@ static void *raid45_takeover_raid0(struct mddev *md=
-dev, int level)
->         mddev->raid_disks +=3D 1;
->         mddev->delta_disks =3D 1;
->         /* make sure it will be not marked as dirty */
-> -       mddev->recovery_cp =3D MaxSector;
-> +       mddev->resync_offset =3D MaxSector;
->
->         return setup_conf(mddev);
->  }
-> --
-> 2.39.2
->
->
-
+Thanks,
+Miklos
 
