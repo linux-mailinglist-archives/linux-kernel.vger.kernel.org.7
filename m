@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-767996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE987B25BAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:15:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ADCDB25BB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:18:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A83DF9E2480
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C211681C06
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AFE23ABA9;
-	Thu, 14 Aug 2025 06:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FB723D2A3;
+	Thu, 14 Aug 2025 06:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aP7f8F4E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocClVtY7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7D3225779;
-	Thu, 14 Aug 2025 06:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C02B665;
+	Thu, 14 Aug 2025 06:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755152028; cv=none; b=FIb6E2vLD3NFuukP3uJ5PzMV9f6drVdvPfhxsyvQHI6EPG2tU4yX2WVkjlyrealiCDHNV9sbKpoD0GyN5H14mVR0/ujkFbmUfimyLekl+p0oJLxtsd+NaTsR+WhW1hgZPLu8R+WUS7vNRfH5D7U/3PFC6VaOz8Wj/02kRpPr0QI=
+	t=1755152258; cv=none; b=Vv4fZvQLFEeiiUWvi8rlYW5jUpvIRiCWOq15SKaJ/KEhrRrmZvj850eVW5lL+pqel03nx3l8TGMdorfZ/p3jNiD7494YZIvQz9ASZkZ+2Mg4ihEChILsLRI6diKecCpy/wAEsQ9GWmcFI1CVDRFcrH7Rj8WztQmKUw3RCzMf3ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755152028; c=relaxed/simple;
-	bh=yIp2L+cajNQG68HjJIF0uvyqNqDRxuvwiaue2yFMxWA=;
+	s=arc-20240116; t=1755152258; c=relaxed/simple;
+	bh=zNG9Nu3Wh8t0MKtdRA10J2MqMnwX4xIXhtIIrfXTNa0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PNUx7cqdgPrgY20Ae8dovhmrIJ2Aj6PF5elVyNmciCoiiNc6kXkigX7DGrThc3HwbRt20im2saDm6s3NDdhVWzWJCAtHSOHm/4Tcf54XEgdvxh7PEzgMG4cpflnxH3XyI1CJUweBxQOG+cwVILIKcPZHH9QRgp8fufjhFbTMqDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aP7f8F4E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CAC0C4CEEF;
-	Thu, 14 Aug 2025 06:13:44 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=gmfWWQDP+Vmk/gKDzwus19bKl6AlncTfBKa/TuR7zC1jviCPLUONFSbwO13owmhR3YBFPFz2rAijY1wp8gsLdcv03sZbG6gYq/mIQYKFK+9pkZJLNFhOKN9yDGszClCp0zv9953a5PLshkyWxNdxjtNCLcN/dxefHPT3wzu8qp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocClVtY7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FA53C4CEEF;
+	Thu, 14 Aug 2025 06:17:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755152027;
-	bh=yIp2L+cajNQG68HjJIF0uvyqNqDRxuvwiaue2yFMxWA=;
+	s=k20201202; t=1755152256;
+	bh=zNG9Nu3Wh8t0MKtdRA10J2MqMnwX4xIXhtIIrfXTNa0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aP7f8F4EENywxhhq8AdsEfGcx2cJ/Rli0gFNrMvwh/wMarZ6SmCiH32WxQy2tMdke
-	 z0sHjYhgE8CtrkHA/glzoM23iC9vIusiCzQPjxIQsYzMXncsNlstk+UlYyD20X5cJj
-	 p6mGCr6TkX013zk5eexLWNyqkeTQV3hJDseYKkC3riru1ZN9znZiMGkQ+fxEhpsGjf
-	 P4+4PBmw29Wyf1c60sB5zriX6l6Ubuk0ADvgrTGa8qoS5aAsPIAvLe9AquTOklLYBT
-	 L+rn7IDwaHC/Ybs8eTLcayrSaU7s6ZlLMCyQVXpYyjyUz8Weg7QWxiE6eF7ncbj8Jp
-	 KYjYxPNNDZ5ig==
-Message-ID: <11acb8fd-9d81-460e-ac2c-38f370324ea5@kernel.org>
-Date: Thu, 14 Aug 2025 08:13:42 +0200
+	b=ocClVtY7tl5nu1Ssc93Ga/baNkQ3LtLSkkb4JdLo2Nm5h8LQZmUYtpivjLB6LOGQ7
+	 yNrY1ELToFhkAS/dC+h46ks0c8hj6bLMXT0VrOy0SB94DmxvlpQLk78VzIuimsIl2m
+	 fIDNsRT0WqxwwIQpVURA9NzDdMFhKjvvHM51BeQlEINaKpKkqguSbPnPHaVNU5cKD+
+	 790ewLK+UGq4UMwRYxQhsOgFVBPhMtZetTHhhbxJAjCq1oOBg9YxVWfMq3gwgflEki
+	 FrzZMUVWfORzmxw2jABPZPJAmswLurI8Ly3vFKZpdh8iUYzDqAYYv/o10KcLHUnrN8
+	 m3SKXMIAw6bvQ==
+Message-ID: <ab151314-c504-4a26-9ca2-685ab57b8fe9@kernel.org>
+Date: Thu, 14 Aug 2025 08:17:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/24] media: iris: Allow substate transition to load
- resources during output streaming
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bryan O'Donoghue <bod.linux@nxsw.ie>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Stefan Schmidt <stefan.schmidt@linaro.org>,
- Vedang Nagar <quic_vnagar@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Renjiang Han <quic_renjiang@quicinc.com>,
- Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
- <20250813-iris-video-encoder-v2-5-c725ff673078@quicinc.com>
- <24714b00-cc15-4c9b-b0d4-8c76d702fcc2@nxsw.ie>
- <cd2ded3a-ab91-4199-9edf-8acc8d6d11ba@oss.qualcomm.com>
+Subject: Re: [PATCH 2/6] dt-bindings: phy: spacemit: introduce PCIe PHY
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+ mani@kernel.org, bhelgaas@google.com, vkoul@kernel.org, kishon@kernel.org
+Cc: dlan@gentoo.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+ tglx@linutronix.de, johan+linaro@kernel.org, thippeswamy.havalige@amd.com,
+ namcao@linutronix.de, mayank.rana@oss.qualcomm.com, shradha.t@samsung.com,
+ inochiama@gmail.com, quic_schintav@quicinc.com, fan.ni@samsung.com,
+ devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250813184701.2444372-1-elder@riscstar.com>
+ <20250813184701.2444372-3-elder@riscstar.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,34 +108,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <cd2ded3a-ab91-4199-9edf-8acc8d6d11ba@oss.qualcomm.com>
+In-Reply-To: <20250813184701.2444372-3-elder@riscstar.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/08/2025 00:55, Konrad Dybcio wrote:
-> On 8/13/25 11:51 PM, Bryan O'Donoghue wrote:
->> On 13/08/2025 10:37, Dikshita Agarwal wrote:
->>> However, now after removing that restriction, the instance state can be
->>> OUTPUT_STREAMING when firmware start is triggered and substate needs to
->>> be moved to LOAD_RESOURCES.
->>>
->>> Fixes: 547f7b8c5090 ("media: iris: add check to allow sub states transitions")
->>
->> If a restriction has been removed, has that restriction been marked as a 
->> Fixes: ?
->>
->> If not then we can't actually backport this fix as the dependency - the 
->> restriction removal has not been marked for backport.
-> 
-> Please stop confusing fixes and backports..
-> 
-> If you're really paranoid about this commit getting autoselected, see
-> 'noautosel' under this section:
-> 
-> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html#option-1
-
-Commit still needs to explain what is the bug, what is observable issue
-being fixed here. Lack of feature is not a bug.
+On 13/08/2025 20:46, Alex Elder wrote:
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#phy-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/spacemit,k1-syscon.h>
+> +    pcie1_phy: phy@c0c10000 {
+> +        compatible = "spacemit,k1-pcie-phy";
+> +        reg = <0xc0c10000 0x1000>;
+> +        #phy-cells = <0>;
+> +        status = "disabled";
+Same problem here.
 
 Best regards,
 Krzysztof
