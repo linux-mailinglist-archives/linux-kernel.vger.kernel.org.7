@@ -1,200 +1,121 @@
-Return-Path: <linux-kernel+bounces-768292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BB3B25F68
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:46:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9441B25F57
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F14EE5A25BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96D3B88362D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 766412F1FFD;
-	Thu, 14 Aug 2025 08:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BA52ECD3A;
+	Thu, 14 Aug 2025 08:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N9V8L5Lv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHv377WT"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EE62E92BE;
-	Thu, 14 Aug 2025 08:42:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4753F2E975E;
+	Thu, 14 Aug 2025 08:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160957; cv=none; b=PMJB5akE0QyqLxfLWhs74KbRJYt/5WgIYxNORvSwefAQF9JhKwmrI+S1RuDXm+Hn29pEigp+MD71ky8jBydAzNAPIRhZwrzBiITFhb4nYzLH5PdA+WWI09nvgg1jmhI3LdcPT/24aNa8jDWqo+alPxNcb7Zo5yt5zAkYDcN2SAg=
+	t=1755160946; cv=none; b=r6Xc1O8BNIRmP+4jTKuYUR0m/+dhedJxAEzOj/f/GCh8DdP7pNpEjBiuaqOsdBBKdN8JzqnJ9gIEw736sw23SQlwvChhdcPJSQRYqIFK/+fV1g2GjvyuYaE+knAwixQxDhCMMIUszySMIwpyVDfXId1oLgV2yAMxFU8sZ4bArQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160957; c=relaxed/simple;
-	bh=SUBXHVjiIpc5FK6CF6DFvCj6KZQzp4Joo5u+EpVZoMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jgQDKa79IPla6gFj71L2pduheNcuU3NPVz0GDx93mI6EYo7TwAf5E60P0jKuQNnk7syjgkYfKi/DsbNlCvXd8VO2k1ME4I5cWw2uyhYmhzuMyVdtNhGhTF4p8MYpY1jycJqZ/z1cdL/6Tbl7lIGWFTOeYiOoPK9hdC7uuMtqEP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N9V8L5Lv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 210FEC4CEEF;
-	Thu, 14 Aug 2025 08:42:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755160955;
-	bh=SUBXHVjiIpc5FK6CF6DFvCj6KZQzp4Joo5u+EpVZoMI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N9V8L5LvpCRYDZdnvjdkWNnyF5ilnojdxYc4xR+1jf6USGswyy05H/dqneQYcqivI
-	 gtp73vcs9LYpcfm1CcyfJiZoQwm/beqGU14bCsUmSe5pgghsvWXe6VbDZUcWw9XAo5
-	 kY+367T2oc3xqTdlDUBzZlXFMP8exkL3rJ9lRlOAliHsBVllf3aHksUgE0xZHDFda2
-	 +vQ+rGSh9gS4COKgE6dNKbUjbLkD95PYty5iSv5A4gWzKrMERDRP062Hw+ci/yY92H
-	 0IzfPbHGuYVoXyIfOq89jBHH2U88/SHWfZwfukmOCq0i8qM9O5eCNW3peh3aZeoPBu
-	 3W1AMRWMsh3Gw==
-Date: Thu, 14 Aug 2025 11:42:10 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 09/10] mm: convert remaining users to mm_flags_*()
- accessors
-Message-ID: <aJ2hYlUGnAPxPFox@kernel.org>
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <cc67a56f9a8746a8ec7d9791853dc892c1c33e0b.1755012943.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1755160946; c=relaxed/simple;
+	bh=6cfI3DwLE9E9SAfgkTqlf+6mrBEBP+O6XCNBkhssvfU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X9Xyl9Ue83q762tguqlPGNBBxDnRiHBhTH/N+89PxRsgHKO90pFE8TpFzYBPLxJtCEdK0557SB2jLP1zzPPYJmoRhZk2nige7qEqeg1d6R/UgVWnEzt5c1uf4ARvEzZjtoI/Oxp3yUX2p4WL99Xze1H7d2ikjMRG8X/CmVvW6MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YHv377WT; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b00797dso4537185e9.0;
+        Thu, 14 Aug 2025 01:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755160943; x=1755765743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3MIDNnIwbSHuzGfQVuyM2agKWSWdZtsoAJRl1Qc3beg=;
+        b=YHv377WTLOnv0i7qCniJNb3qoW9uHSABI/wsyKQaCV/29ng1uLvVfRdkuYLApBUXCJ
+         DjFKmHjC9xpFoEf7VV4W5As7hZmAAPj++b812wpDDQ/ptZOyD9fKDUzHBM9TC+owXd9C
+         2MunA13MFL4hR5A+t3MSPrQ7//j2lEJ16nFvUuFzOBvztVSd2LKtkhOHovOna33TR5m4
+         4y+bSCgnns6o9xOz4jHP3waTnFNCQlI4a12OvX2srY7ercukrRmBpSoPixOlO3ah3H//
+         7iVQoWkIwDMMumt+E1JXywjrvphB4BoCOE6LcQT0sN27tTPTaI8ef1ycAZT2iQkAoy/1
+         PX3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755160943; x=1755765743;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3MIDNnIwbSHuzGfQVuyM2agKWSWdZtsoAJRl1Qc3beg=;
+        b=UpKqjFKGTGjBHLu+NzenwroyFHdFBmWIwmG+/fkRoHnk+vhMT/wkXNrnT6UWpwOIDy
+         4sa8yRsmjjVLl8Oz0iPY8KP+3U7RhxHqZ4HTCy+KPsWuVVUqIn4mz2GxIFSYhxlqcit4
+         Sh93qYUj8qBJRrmkrIyOVPNw1auNVAGmQETTrNA/6Y9EPCfbEbRh14XYnpQQazFtxpwB
+         sSMod/nvkE7wrIhFjfQKS8eA4zRwpe22cs0CabnjgQUNONg9i/F0CJqUaKmiAbj6nors
+         g/IlLjo2ZRVIl3+TfcrcaJRcKdEeNqnLryrnZEa0B+7f2O/9QkGUjdwXvTXynvn8Ihbk
+         Y5Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUh7jIF3ibISMGeXiyZllorAz4guKYxRKiAluIy4JySVyjRdLJr74xwDVe+iF/DvBF/JaNEb/f/yLXjJnUs@vger.kernel.org, AJvYcCVT2NVMyIkf1Kwrg6g/W5JD3O+Jf8krTaqSs7Woc0ugPexi79MFVDkRC1zUWN1yKstmqh6bmf6lgaDV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz40+HlSEvJ+i5QziVKQZf3SqBjDL2kE67eJ6gMu5eXKH6eo6J/
+	j5wFvEXwOVpdUPhIYRQfKbHVQePdQTLg61G4pENV0C1PdgwT6lOhfTB2
+X-Gm-Gg: ASbGncscARWNA1khN1rX/bcm74Pinq2awtO1FGSqnGj1jH3IQj2TKnaOsnnmcGirNPh
+	Bc4n3SW2RzNhtp8sA/vcrKhrGK8Zdfsiqu0iU/EfTpTS906DtORKJFNO5r7IHv2H1NyfS+1rXqF
+	FwbHPP6shi/9TwyXvhwBER48+eMLp9hRg5ZerK/C1W4SvLXvRw4ytbIK09PWkj5sVCuja63j1Eu
+	G8fVj1PxjvWdSbG2JFaoQxQvLDiNEqyantA4A5FjOq4X04/nXio/+qPLBOtJTtN/UEkWeZI+PMc
+	XpwtD8GJcFsyscvYo5YU6+XJSJONTQK1hm8ZhqbGVlbCkerMsocn3ZKsJrd+Qd9X3gZbPkp8+32
+	wD5s+ikfOYUwbm1Ez1BXcyl0/PdvBGVrDhQ==
+X-Google-Smtp-Source: AGHT+IEgtdyxJulbukB6J1T/XYYBOj7Oz9S7GIuzZlCe2tyon9JMR3MeOA8LItQkTqLR1PTkqWrZDQ==
+X-Received: by 2002:a05:600c:3b1e:b0:456:1d93:4365 with SMTP id 5b1f17b1804b1-45a1b611565mr15680395e9.5.1755160943207;
+        Thu, 14 Aug 2025 01:42:23 -0700 (PDT)
+Received: from taln60.nuvoton.co.il ([212.199.177.18])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6e336csm13114565e9.16.2025.08.14.01.42.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 01:42:22 -0700 (PDT)
+From: Tomer Maimon <tmaimon77@gmail.com>
+To: robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	avifishman70@gmail.com,
+	tali.perry1@gmail.com,
+	joel@jms.id.au,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com
+Cc: openbmc@lists.ozlabs.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v2 0/2] NPCM845 reset and clock device tree updates
+Date: Thu, 14 Aug 2025 11:42:16 +0300
+Message-Id: <20250814084218.1171386-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc67a56f9a8746a8ec7d9791853dc892c1c33e0b.1755012943.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 12, 2025 at 04:44:18PM +0100, Lorenzo Stoakes wrote:
-> As part of the effort to move to mm->flags becoming a bitmap field, convert
-> existing users to making use of the mm_flags_*() accessors which will, when
-> the conversion is complete, be the only means of accessing mm_struct flags.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+This series updates the NPCM845 device tree for the integrated reset and
+clock controller using the auxiliary device framework.
+Patch 1 combines the reset and clock nodes into nuvoton,npcm845-reset.
+Patch 2 adds a 25 MHz refclk and updates peripherals to use it.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Tested on NPCM845 evaluation board.
 
-> ---
->  fs/proc/array.c    | 2 +-
->  fs/proc/base.c     | 4 ++--
->  fs/proc/task_mmu.c | 2 +-
->  kernel/fork.c      | 2 +-
->  4 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/proc/array.c b/fs/proc/array.c
-> index d6a0369caa93..c286dc12325e 100644
-> --- a/fs/proc/array.c
-> +++ b/fs/proc/array.c
-> @@ -422,7 +422,7 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
->  	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
->  
->  	if (thp_enabled)
-> -		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
-> +		thp_enabled = !mm_flags_test(MMF_DISABLE_THP, mm);
->  	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
->  }
->  
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index f0c093c58aaf..b997ceef9135 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1163,7 +1163,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->  		struct task_struct *p = find_lock_task_mm(task);
->  
->  		if (p) {
-> -			if (test_bit(MMF_MULTIPROCESS, &p->mm->flags)) {
-> +			if (mm_flags_test(MMF_MULTIPROCESS, p->mm)) {
->  				mm = p->mm;
->  				mmgrab(mm);
->  			}
-> @@ -3276,7 +3276,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
->  		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
->  		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
->  		seq_printf(m, "ksm_merge_any: %s\n",
-> -				test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
-> +				mm_flags_test(MMF_VM_MERGE_ANY, mm) ? "yes" : "no");
->  		ret = mmap_read_lock_killable(mm);
->  		if (ret) {
->  			mmput(mm);
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index e64cf40ce9c4..e8e7bef34531 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1592,7 +1592,7 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
->  		return false;
->  	if (!is_cow_mapping(vma->vm_flags))
->  		return false;
-> -	if (likely(!test_bit(MMF_HAS_PINNED, &vma->vm_mm->flags)))
-> +	if (likely(!mm_flags_test(MMF_HAS_PINNED, vma->vm_mm)))
->  		return false;
->  	folio = vm_normal_folio(vma, addr, pte);
->  	if (!folio)
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index b311caec6419..68c81539193d 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1887,7 +1887,7 @@ static void copy_oom_score_adj(u64 clone_flags, struct task_struct *tsk)
->  
->  	/* We need to synchronize with __set_oom_adj */
->  	mutex_lock(&oom_adj_mutex);
-> -	set_bit(MMF_MULTIPROCESS, &tsk->mm->flags);
-> +	mm_flags_set(MMF_MULTIPROCESS, tsk->mm);
->  	/* Update the values in case they were changed after copy_signal */
->  	tsk->signal->oom_score_adj = current->signal->oom_score_adj;
->  	tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
-> -- 
-> 2.50.1
-> 
+Changes since version 1:
+	- Tested in version 6.17.rc1.
+
+Tomer Maimon (2):
+  arm64: dts: nuvoton: combine NPCM845 reset and clk nodes
+  arm64: dts: nuvoton: add refclk and update peripheral clocks for
+    NPCM845
+
+ .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 20 ++++++++-----------
+ .../boot/dts/nuvoton/nuvoton-npcm845-evb.dts  |  6 ++++++
+ 2 files changed, 14 insertions(+), 12 deletions(-)
 
 -- 
-Sincerely yours,
-Mike.
+2.34.1
+
 
