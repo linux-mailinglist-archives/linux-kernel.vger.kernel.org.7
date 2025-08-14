@@ -1,99 +1,122 @@
-Return-Path: <linux-kernel+bounces-769736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1FCB272EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:15:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E375B272F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47D214E5FF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:15:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D41AE7BC451
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F2F2877C0;
-	Thu, 14 Aug 2025 23:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E2E2877C1;
+	Thu, 14 Aug 2025 23:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="pONeTZiZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dA7tjBdY"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC23B248F4E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 23:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2BC1A08AF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 23:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755213227; cv=none; b=MzG10Gk2+h6P/GDONdKYCitMICycrCG0sMFA20tOh0v4TkETVVgz+cEOjCi69B8y6K4qCvNq2Ydyc1Ab1xOq2ATiE6YKbW3Tzp3zQlLhtx1/Fw12j35juwLOIoKSazPU1lVJJPUpZGzRugRc07h6DkbdhFFf9yFsmnZUIeTov2s=
+	t=1755213779; cv=none; b=HVmDOUy22urHC4PJzvIn6OD0CbEFfVyeQUkqPysMrese59IgqikitBtx0Zo9IH1nivSJ9Zv4aSi+8JD0+ihKKHINkH1kYYDjUd28hewF/YI07wX/YbZ1gVvn8QHrTUtIZQc9KhEwq3bUBn07qnF1Y0WQ3ue9lueNw+hlmVKzI/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755213227; c=relaxed/simple;
-	bh=QDuybNx730xQBT3wod57laf9u9iTM7rHjUvW1T2v/A8=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=DyjRVJ6cC7xG2F9bqe48EmROSGyCwQUh+5TzSJWIqVctJUyvVnNLoiPfIRBfyyleAwRAcfcuS2s/bqHs20618NFYxbrotEPDi8kJrhvIYouuSCrJwYGl2O3daQvIMrHRlhcnPoe/4iXXoJlDAZyX4SygEU8moOl73pk6ss+v5kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=pONeTZiZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 602FEC4CEED;
-	Thu, 14 Aug 2025 23:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1755213227;
-	bh=QDuybNx730xQBT3wod57laf9u9iTM7rHjUvW1T2v/A8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pONeTZiZjNbzBFiiZPEIM2iR6kPyC71xQPFcDNY7Xl5VTFDYMMwzfV6aeXw6EYmIg
-	 QN8UhlLAm6z2zfYK+Y8bSzg1m19jWmKEVpgCJlyQdJvsXzxoziN2aShH1YGhk+Az5v
-	 YwJI3SQFXeUZEUmPp3C4zuamATd1QhSAuH7/1bvc=
-Date: Thu, 14 Aug 2025 16:13:45 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: <zhongjinji@honor.com>
-Cc: <linux-mm@kvack.org>, <mhocko@suse.com>, <rientjes@google.com>,
- <shakeel.butt@linux.dev>, <npache@redhat.com>,
- <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
- <peterz@infradead.org>, <dvhart@infradead.org>, <dave@stgolabs.net>,
- <andrealmeid@igalia.com>, <liam.howlett@oracle.com>, <liulu.liu@honor.com>,
- <feng.han@honor.com>, Joel Savitz <jsavitz@redhat.com>, Thomas Gleixner
- <tglx@linutronix.de>
-Subject: Re: [PATCH v4 0/3] mm/oom_kill: Only delay OOM reaper for processes
- using robust futexes
-Message-Id: <20250814161345.b2ddf7120dfcc420c3199e67@linux-foundation.org>
-In-Reply-To: <20250814135555.17493-1-zhongjinji@honor.com>
-References: <20250814135555.17493-1-zhongjinji@honor.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755213779; c=relaxed/simple;
+	bh=tcEkdB9lYA+g3s6rbDyV0+neEJSjT70pW4GVfIJE0pU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mxA7vOqDQK8qle7zitG/bI4q6cLlKtTRNc4VcihfBJBcDWDwJNxt6nVtb9HJ0w7i1wMEw2sAc13Jqjga7s/wTAkcoiIz8eNC2jZAlz5OGFyE17HpIo0JCd4a8/OZlaR/9fGegLSK0nKeSZe0Gmyle9ZKW9/QCWE6LqtKGwkdGPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dA7tjBdY; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76e2e614e73so1418769b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 16:22:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755213777; x=1755818577; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=krfW9MJI3EjbHe3Dh5mCsfvuw0C/n3sj2jbdyYaxcO4=;
+        b=dA7tjBdYGw4EQqVPWAXZ5hDBT9wkdciIIcdww80sC+GvLXMxkOSvkAnw1Gsw7U+ScZ
+         KzygEcTHu/3NdmnV+UNatcaVXQTT8UIf1+TrM9qukdXTi59XmuebXKJvAmWRp8U28hDS
+         uW3WHhqAzz9A7/hE6XNzYQAu14Z1eF3sleTEMKUQcekV+jsE8ObIRY3tRzRCbeMvAjUG
+         VKFAtyR32HhbgCDoA5KnmFAnbyG1B3UBNmZYvswxlw6RisPHPVfXNCfvqd+Zq5jGDoqM
+         MYBc8LW2HYjIwrNEzdvBO3H2EmCdOfDHuM7qCFiWzkfn0FltWu91dC1Irro5pH8lApgX
+         kkig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755213777; x=1755818577;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=krfW9MJI3EjbHe3Dh5mCsfvuw0C/n3sj2jbdyYaxcO4=;
+        b=uEi66Pr5KQcy2guupHnUqkaclFcQ2lOXORifEZOfxfvzOV0M06lahC0nli6+oCgiUS
+         4Bpp7vQXuYBpXWpVMxyWCN6uOIpBBzqVkNBEDHJRlaInjAI/jwSrRXcy7khrThtdUEDQ
+         YpyTDYPQ4fPlxPA17zppcDCiTfAzDMYMmH8wXx37I08KlpBRsggwM1Ef0TWY3ZmYwzBR
+         tj5f/L9Rylq0LRBO6H2G5KueahNNIhWvgk2nxoBuzy1CyLS2kjgoikrOdp1bYfGNvnBJ
+         dXbRNluK9IbKaeqyHks1DaaRQBkUJi1oPID/TWV/aRsectSniCEEYyqCIqgAhTdkOdE8
+         PteA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/Uj1GnA0oETPQotK9UGz3Kzp0OMhnkHtIZwx29Gg+NG5TDiCOh3XTGlIS5OlWyhggxmoDtGt2vY1p3XA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgXRm3jhouh7jczKnoBzhWafO1sfA1uNm/1wklgyiKYWq09nYk
+	qNXp7hJNgzc0v+5gGibYPRxSdjqYaMjpwo2+EyWqGlnMkcAdnRNAMDpKeFkt6jHytyTl2hjDuPK
+	bcdz4lg==
+X-Google-Smtp-Source: AGHT+IFb3Ekwhg0EesX0KNw6ePrMATVTtWrtr5mRDMYNrtZOSTfBiWV7x68SI8ZBLWJhMegWadJI1d/1X64=
+X-Received: from pgcv17.prod.google.com ([2002:a05:6a02:5311:b0:b2c:4548:13d0])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:748c:b0:23f:fc18:779c
+ with SMTP id adf61e73a8af0-240d31a4908mr42980637.31.1755213777172; Thu, 14
+ Aug 2025 16:22:57 -0700 (PDT)
+Date: Thu, 14 Aug 2025 16:22:55 -0700
+In-Reply-To: <d2e33db367b503dde2f342de3cedb3b8fa29cc42.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1755126788.git.kai.huang@intel.com> <d8993692714829a2b1671412cdd684781c43d54a.1755126788.git.kai.huang@intel.com>
+ <aJ3qhtzwHIRPrLK7@google.com> <ebd8132d5c0d4b1994802028a2bef01bd45e62a2.camel@intel.com>
+ <aJ4kWcuyNIpCnaXE@google.com> <d2e33db367b503dde2f342de3cedb3b8fa29cc42.camel@intel.com>
+Message-ID: <aJ5vz33PCCqtScJa@google.com>
+Subject: Re: [PATCH v6 7/7] KVM: TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, Dave Hansen <dave.hansen@intel.com>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "kas@kernel.org" <kas@kernel.org>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, Reinette Chatre <reinette.chatre@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "sagis@google.com" <sagis@google.com>, 
+	Farrah Chen <farrah.chen@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Dan J Williams <dan.j.williams@intel.com>, "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 14 Aug 2025 21:55:52 +0800 <zhongjinji@honor.com> wrote:
+On Thu, Aug 14, 2025, Kai Huang wrote:
+> On Thu, 2025-08-14 at 11:00 -0700, Sean Christopherson wrote:
+> > > > > +	 */
+> > > > > +	tdx_cpu_flush_cache();
+> > > > 
+> > > > IIUC, this can be:
+> > > > 
+> > > > 	if (IS_ENABLED(CONFIG_KEXEC))
+> > > > 		tdx_cpu_flush_cache();
+> > > > 
+> > > 
+> > > No strong objection, just 2 cents. I bet !CONFIG_KEXEC && CONFIG_INTEL_TDX_HOST
+> > > kernels will be the minority. Seems like an opportunity to simplify the code.
+> > 
+> > Reducing the number of lines of code is not always a simplification.  IMO, not
+> > checking CONFIG_KEXEC adds "complexity" because anyone that reads the comment
+> > (and/or the massive changelog) will be left wondering why there's a bunch of
+> > documentation that talks about kexec, but no hint of kexec considerations in the
+> > code.
+> 
+> I think we can use 'kexec_in_progress', which is even better than
+> IS_ENABLED(CONFIG_KEXEC) IMHO.
 
-> The OOM reaper quickly reclaims a process's memory when the system hits OOM,
-> helping the system recover. Without the OOM reaper, if a process frozen by
-> cgroup v1 is OOM killed, the victim's memory cannot be freed, leaving the
-> system in a poor state. Even if the process is not frozen by cgroup v1,
-> reclaiming victims' memory remains important, as having one more process
-> working speeds up memory release.
-> 
-> When processes holding robust futexes are OOM killed but waiters on those
-> futexes remain alive, the robust futexes might be reaped before
-> futex_cleanup() runs. This can cause the waiters to block indefinitely [1].
-> 
-> To prevent this issue, the OOM reaper's work is delayed by 2 seconds [1]. Since
-> many killed processes exit within 2 seconds, the OOM reaper rarely runs after
-> this delay. However, robust futex users are few, so delaying OOM reap for all
-> victims is unnecessary.
-> 
-> If each thread's robust_list in a process is NULL, the process holds no robust
-> futexes. For such processes, the OOM reaper should not be delayed. For
-> processes holding robust futexes, to avoid issue [1], the OOM reaper must
-> still be delayed.
-> 
-> Patch 1 introduces process_has_robust_futex() to detect whether a process uses
-> robust futexes. Patch 2 delays the OOM reaper only for processes holding robust
-> futexes, improving OOM reaper performance. Patch 3 makes the OOM reaper and
-> exit_mmap() traverse the maple tree in opposite orders to reduce PTE lock
-> contention caused by unmapping the same vma.
-
-This all sounds sensible, given that we appear to be stuck with the
-2-second hack.
-
-What prevents one of the process's threads from creating a robust mutex
-after we've inspected it with process_has_robust_futex()?
+I don't think that will accomplish what you want.  E.g. kvm-intel.ko is unloaded
+after doing TDX things, while kexec_in_progress=false, and then some time later
+a kexec is triggered.  In that case, stop_this_cpu() will still get stuck doing
+WBINVD.
 
