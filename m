@@ -1,187 +1,293 @@
-Return-Path: <linux-kernel+bounces-767761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AACB258C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:12:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD71B258D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DCA61B64639
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A4A8723950
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E3018CC1D;
-	Thu, 14 Aug 2025 01:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gWOO/qE/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655701922DD;
+	Thu, 14 Aug 2025 01:13:33 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5502FF653
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EA2FF653;
+	Thu, 14 Aug 2025 01:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755133920; cv=none; b=SIWaLOk0OwZvbTvoaAlUHaTjimgT5u2G8RFq4Yu9Bf3xDWs5eI+lZenyHONNBsv2nIRyn5JtZysJnb83lg5pQL5q4iYHMd987Ye7QeAFnszzRmRqHx+WZ1eXzpsqkTYv2t+bfD0Iq783DMTmIwaruUljZW3AjWx/6T98MCoYIP0=
+	t=1755134012; cv=none; b=Q9T7IXMFGVX9J6zQG/CyI9FQZRg6UJqItCK0mvLLnJwVe8EG0n2rRL4BJEFplrj7uFt01lhBSY8lUAyccaLkS++hMzTe/0YffMV2Gt16Zrh9fPDaNuysHqlR9MXKzfGr1LqCkSwEboHF3kRRQ1cAnivTcVOqYLG45xvpVjdEgOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755133920; c=relaxed/simple;
-	bh=2rc7wuzHPJCfENd7v3BrtX9JE7TWC5vlo7EYgP7vtiU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=C7Ft1H8taXsiOcUaGlMxMEhqKW3QuLo2MJF/O5x0L4UYH2VzyIzJT3Uedv0yJ76kFxI+93B2YpF9KM52AyXb7Ru1X/NZ0RIez4Hehnc05W+tWo2Q1flG8+071tXv4t+gyELXaLY9Dp7nqXQeOjVxThpMlQYDaBq6VD4eurujPd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gWOO/qE/; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755133919; x=1786669919;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=2rc7wuzHPJCfENd7v3BrtX9JE7TWC5vlo7EYgP7vtiU=;
-  b=gWOO/qE/vaHHHauPSHUIl+f0ruczQQ4BeiieFYzDfcszzrF0ZJlgDj4y
-   UJUaCYb8hLijz2B9YK5yVkT5YTAKl8XBLuLXb4B2OvNUOunnVJUbpJ+CJ
-   M+3VCeZoQjxQXV7fCMiZBuvuiwPhVxu5VXkrJrgCHNnqojlqaHpFKuXmy
-   WRqit6lgx7u2G9QDl5naSH1uOpznnsJp2aRPUFh7h5B7gCyymyl+X1Llm
-   MkT+DTuKdU87N5UyA4goaiNAOQuRtnCcd2AcdHrApb2cjzeTUrjbnL5s9
-   CKbwUsITUGK83b2boBRv4tz2QlMFJTpM7F7IxPSpIRmukLNbOf1wXPDzR
-   A==;
-X-CSE-ConnectionGUID: 0Nk3QIG/RgOmP0DELx06QQ==
-X-CSE-MsgGUID: R5PQTU6aRlCGrXfdLOqaFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="82876759"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="82876759"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 18:11:58 -0700
-X-CSE-ConnectionGUID: s+qjmyDhTZaxrVuE3PVecw==
-X-CSE-MsgGUID: qmH3Jh6XS5+zTVYZrll27A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="197475861"
-Received: from igk-lkp-server01.igk.intel.com (HELO ca260db0ef79) ([10.91.175.65])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Aug 2025 18:11:56 -0700
-Received: from kbuild by ca260db0ef79 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umMVW-00009v-05;
-	Thu, 14 Aug 2025 01:11:54 +0000
-Date: Thu, 14 Aug 2025 03:11:47 +0200
-From: kernel test robot <lkp@intel.com>
-To: Justin Lai <justinlai0215@realtek.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>, Joe Damato <jdamato@fastly.com>
-Subject: drivers/net/ethernet/realtek/rtase/rtase_main.c:1117:52: warning:
- '%u' directive output may be truncated writing between 1 and 10 bytes into a
- region of size between 7 and 22
-Message-ID: <202508140329.jDo2ASlz-lkp@intel.com>
+	s=arc-20240116; t=1755134012; c=relaxed/simple;
+	bh=5v9NdgrIL68h/Zn/HscHqxUBL3WZYUGNHlkxFV453ds=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=L4OEL91qFARV1xNSMyJGK0PDdaeCAKv0PySSFtajWrnaNQtaDqZLGlndkvqiG7JBI3TJUCPNUw1sfAdrNyYEsJGBaBdb7M1q/UFAidCS+AEXRtWu/I2sNKc+rXAq+x1ej1tjc4+uoApL7tgBVZMdpCaHIbutFRD3gBTh0t9trco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1umMWx-005h4S-F7;
+	Thu, 14 Aug 2025 01:13:25 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: "NeilBrown" <neil@brown.name>
+To: "Amir Goldstein" <amir73il@gmail.com>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "David Howells" <dhowells@redhat.com>,
+ "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Steve French" <sfrench@samba.org>, "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Carlos Maiolino" <cem@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-afs@lists.infradead.org, netfs@lists.linux.dev,
+ ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/11] VFS: Change vfs_mkdir() to unlock on failure.
+In-reply-to:
+ <CAOQ4uxhU12U8g_EYkUyc4Jdpzjy3hT1hZYB0L1THwvTsti8mTw@mail.gmail.com>
+References:
+ <>, <CAOQ4uxhU12U8g_EYkUyc4Jdpzjy3hT1hZYB0L1THwvTsti8mTw@mail.gmail.com>
+Date: Thu, 14 Aug 2025 11:13:24 +1000
+Message-id: <175513400457.2234665.11514455496974675927@noble.neil.brown.name>
 
-Hi Justin,
+On Wed, 13 Aug 2025, Amir Goldstein wrote:
+> On Wed, Aug 13, 2025 at 1:53=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+> >
+> > Proposed changes to directory-op locking will lock the dentry rather
+> > than the whole directory.  So the dentry will need to be unlocked.
+> >
+> > vfs_mkdir() consumes the dentry on error, so there will be no dentry to
+> > be unlocked.
+>=20
+> Why does it need to consume the dentry on error?
 
-FYI, the error/warning still remains.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   dfc0f6373094dd88e1eaf76c44f2ff01b65db851
-commit: ef7d33e174564d6294edd00ca797e2b0aac76259 rtase: Modify the format specifier in snprintf to %u
-date:   4 months ago
-config: sparc-randconfig-2006-20250814 (https://download.01.org/0day-ci/archive/20250814/202508140329.jDo2ASlz-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508140329.jDo2ASlz-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508140329.jDo2ASlz-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/net/ethernet/realtek/rtase/rtase_main.c: In function 'rtase_open':
->> drivers/net/ethernet/realtek/rtase/rtase_main.c:1117:52: warning: '%u' directive output may be truncated writing between 1 and 10 bytes into a region of size between 7 and 22 [-Wformat-truncation=]
-       snprintf(ivec->name, sizeof(ivec->name), "%s_int%u",
-                                                       ^~
-   drivers/net/ethernet/realtek/rtase/rtase_main.c:1117:45: note: directive argument in the range [0, 2147483647]
-       snprintf(ivec->name, sizeof(ivec->name), "%s_int%u",
-                                                ^~~~~~~~~~
-   drivers/net/ethernet/realtek/rtase/rtase_main.c:1117:4: note: 'snprintf' output between 6 and 30 bytes into a destination of size 26
-       snprintf(ivec->name, sizeof(ivec->name), "%s_int%u",
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         tp->dev->name, i);
-         ~~~~~~~~~~~~~~~~~
+Because when the recent change was made to have vfs_mkdir() and ->mkdir
+handling the fact that the passed-in denty might not be used, that was
+the interface that was deemed to be best of all that were considered.
 
 
-vim +1117 drivers/net/ethernet/realtek/rtase/rtase_main.c
+> Why can't it leave the state as is on error and let the caller handle
+> its own cleanup?
 
-  1086	
-  1087	static int rtase_open(struct net_device *dev)
-  1088	{
-  1089		struct rtase_private *tp = netdev_priv(dev);
-  1090		const struct pci_dev *pdev = tp->pdev;
-  1091		struct rtase_int_vector *ivec;
-  1092		u16 i = 0, j;
-  1093		int ret;
-  1094	
-  1095		ivec = &tp->int_vector[0];
-  1096		tp->rx_buf_sz = RTASE_RX_BUF_SIZE;
-  1097	
-  1098		ret = rtase_alloc_desc(tp);
-  1099		if (ret)
-  1100			return ret;
-  1101	
-  1102		ret = rtase_init_ring(dev);
-  1103		if (ret)
-  1104			goto err_free_all_allocated_mem;
-  1105	
-  1106		rtase_hw_config(dev);
-  1107	
-  1108		if (tp->sw_flag & RTASE_SWF_MSIX_ENABLED) {
-  1109			ret = request_irq(ivec->irq, rtase_interrupt, 0,
-  1110					  dev->name, ivec);
-  1111			if (ret)
-  1112				goto err_free_all_allocated_irq;
-  1113	
-  1114			/* request other interrupts to handle multiqueue */
-  1115			for (i = 1; i < tp->int_nums; i++) {
-  1116				ivec = &tp->int_vector[i];
-> 1117				snprintf(ivec->name, sizeof(ivec->name), "%s_int%u",
-  1118					 tp->dev->name, i);
-  1119				ret = request_irq(ivec->irq, rtase_q_interrupt, 0,
-  1120						  ivec->name, ivec);
-  1121				if (ret)
-  1122					goto err_free_all_allocated_irq;
-  1123			}
-  1124		} else {
-  1125			ret = request_irq(pdev->irq, rtase_interrupt, 0, dev->name,
-  1126					  ivec);
-  1127			if (ret)
-  1128				goto err_free_all_allocated_mem;
-  1129		}
-  1130	
-  1131		rtase_hw_start(dev);
-  1132	
-  1133		for (i = 0; i < tp->int_nums; i++) {
-  1134			ivec = &tp->int_vector[i];
-  1135			napi_enable(&ivec->napi);
-  1136		}
-  1137	
-  1138		netif_carrier_on(dev);
-  1139		netif_wake_queue(dev);
-  1140	
-  1141		return 0;
-  1142	
-  1143	err_free_all_allocated_irq:
-  1144		for (j = 0; j < i; j++)
-  1145			free_irq(tp->int_vector[j].irq, &tp->int_vector[j]);
-  1146	
-  1147	err_free_all_allocated_mem:
-  1148		rtase_free_desc(tp);
-  1149	
-  1150		return ret;
-  1151	}
-  1152	
+There are three possible results from vfs_mkdir()
+ - the dentry that was passed in has been instantiated
+ - a different dentry was already attached to the inode, and it has been
+   splice in to the given name
+ - there was an error.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In the second case it seems easiest to dput() the original dentry as it
+is no longer interesting and that saves the caller from having the test
+and maybe dput() - all callers would need identical handling.
+It seemed most consistent to always dput() the passed-in dentry if it
+wasn't returned.
+>=20
+> >
+> > So this patch changes vfs_mkdir() to unlock on error as well as
+> > releasing the dentry.  This requires various other functions in various
+> > callers to also unlock on error - particularly in nfsd and overlayfs.
+> >
+> > At present this results in some clumsy code.  Once the transition to
+> > dentry locking is complete the clumsiness will be gone.
+> >
+> > Callers of vfs_mkdir() in ecrypytfs, nfsd, xfs, cachefiles, and
+> > overlayfs are changed to make the new behaviour.
+>=20
+> I will let Al do the vfs review of this and will speak up on behalf of
+> the vfs users of the API
+>=20
+> One problem with a change like this - subtle change to semantics
+> with no function prototype change is that it is a "backporting land mine"
+> both AUTOSEL and human can easily not be aware of the subtle
+> semantic change in a future time when a fix is being backported
+> across this semantic change.
+>=20
+> Now there was a prototype change in c54b386969a5 ("VFS: Change
+> vfs_mkdir() to return the dentry.") in v6.15 not long ago, so (big) if this
+> semantic change (or the one that follows it) both get into the 2025 LTS
+> kernel, we are in less of a problem, but if they don't, it's kind of a big
+> problem for the stability of those subsystems in LTS kernels IMO -
+> not being able to use "cleanly applies and build" as an indication to
+> "likelihood of a correct backport".
+
+Renaming to vfs_mkdir2() might be justified.  I think we have to change
+the interface somehow to enable per-dentry locking, and I don't think a
+signature change would be justified.  So maybe a name change is needed.
+
+>=20
+> and now onto review of ovl code...
+>=20
+> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+> > index 70b8687dc45e..24f7e28b9a4f 100644
+> > --- a/fs/overlayfs/dir.c
+> > +++ b/fs/overlayfs/dir.c
+> > @@ -162,14 +162,18 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
+ruct dentry *dir,
+> >         goto out;
+> >  }
+> >
+> > +/* dir will be unlocked on return */
+> >  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *parent,
+> > -                              struct dentry *newdentry, struct ovl_cattr=
+ *attr)
+> > +                              struct dentry *newdentry_arg, struct ovl_c=
+attr *attr)
+> >  {
+> >         struct inode *dir =3D parent->d_inode;
+> > +       struct dentry *newdentry __free(dentry_lookup) =3D newdentry_arg;
+> >         int err;
+> >
+> > -       if (IS_ERR(newdentry))
+> > +       if (IS_ERR(newdentry)) {
+> > +               inode_unlock(dir);
+> >                 return newdentry;
+> > +       }
+> >
+> >         err =3D -ESTALE;
+> >         if (newdentry->d_inode)
+> > @@ -213,12 +217,9 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, s=
+truct dentry *parent,
+> >                 err =3D -EIO;
+> >         }
+> >  out:
+> > -       if (err) {
+> > -               if (!IS_ERR(newdentry))
+> > -                       dput(newdentry);
+> > +       if (err)
+> >                 return ERR_PTR(err);
+> > -       }
+> > -       return newdentry;
+> > +       return dget(newdentry);
+> >  }
+> >
+> >  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdi=
+r,
+> > @@ -228,7 +229,6 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, st=
+ruct dentry *workdir,
+> >         inode_lock(workdir->d_inode);
+> >         ret =3D ovl_create_real(ofs, workdir,
+> >                               ovl_lookup_temp(ofs, workdir), attr);
+> > -       inode_unlock(workdir->d_inode);
+>=20
+> Things like that putting local code out of balance make my life as
+> maintainer very hard.
+
+I understand.  By the end of the change this is no longer unbalanced.
+Keeping the code perfect at each step while making each step coherent
+enough to be reviewed is a challenge.
+
+
+>=20
+> I prefer that you leave the explicit dir unlock in the callers until the ti=
+me
+> that you change the create() API not require holding the dir lock.
+>=20
+> I don't even understand how you changed the call semantics to an ovl
+> function that creates a directory or non-directory when your patch only
+> changes mkdir semantics, but I don't want to know, because even if this
+> works and I cannot easily understand how, then I do not want the confusing
+> semantics in ovl code.
+>=20
+> I think you should be able to scope ovl_lookup_temp() with
+> dentry_lookup*() { } done_dentry_lookup() and use whichever semantics
+> you like about dir lock inside the helpers, as long as ovl code looks and f=
+eels
+> balanced.
+>=20
+> >         return ret;
+> >  }
+> >
+> > @@ -336,7 +336,6 @@ static int ovl_create_upper(struct dentry *dentry, st=
+ruct inode *inode,
+> >                                     ovl_lookup_upper(ofs, dentry->d_name.=
+name,
+> >                                                      upperdir, dentry->d_=
+name.len),
+> >                                     attr);
+> > -       inode_unlock(udir);
+> >         if (IS_ERR(newdentry))
+> >                 return PTR_ERR(newdentry);
+> >
+> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+> > index 4f84abaa0d68..238c26142318 100644
+> > --- a/fs/overlayfs/overlayfs.h
+> > +++ b/fs/overlayfs/overlayfs.h
+> > @@ -250,6 +250,7 @@ static inline struct dentry *ovl_do_mkdir(struct ovl_=
+fs *ofs,
+> >
+> >         ret =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
+> >         pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, PTR_ERR_OR_ZE=
+RO(ret));
+> > +       /* Note: dir will have been unlocked on failure */
+> >         return ret;
+> >  }
+> >
+> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> > index df85a76597e9..5a4b0a05139c 100644
+> > --- a/fs/overlayfs/super.c
+> > +++ b/fs/overlayfs/super.c
+> > @@ -328,11 +328,13 @@ static struct dentry *ovl_workdir_create(struct ovl=
+_fs *ofs,
+> >                 }
+> >
+> >                 work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
+> > -               inode_unlock(dir);
+> >                 err =3D PTR_ERR(work);
+> >                 if (IS_ERR(work))
+> >                         goto out_err;
+> >
+> > +               dget(work); /* Need to return this */
+> > +
+> > +               done_dentry_lookup(work);
+>=20
+> Another weird example.
+> I would expect that dentry_lookup*()/done_dentry_lookup()
+> would be introduced to users in the same commit, so the code
+> always remains balanced.
+>=20
+> All in all, I think you should drop this patch from the series altogether
+> and drop dir unlock from callers only later after they have been
+> converted to use the new API.
+>=20
+> Am I misunderstanding something that prevents you from doing that?
+
+I think I tried delaying the vfs_mkdir() change and stumbled.
+The problem involved done_path_create(). e.g. dev_mkdir() calls=20
+  kern_path_create()
+  vfs_mkdir()
+  done_path_create()
+
+Changing semantics of vfs_mkdir() necessitated a corresponding change in
+done_path_create() and doing that necessitated prep elsewhere.
+init_mkdir and ksmbd_vfs_mkdir follow the same pattern.
+
+Maybe I could temporarily introduce a done_path_create_mkdir() for
+those.
+
+Thanks,
+NeilBrown
+
+
+>=20
+> Thanks,
+> Amir.
+>=20
+
 
