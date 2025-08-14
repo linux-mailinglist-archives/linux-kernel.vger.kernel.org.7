@@ -1,67 +1,60 @@
-Return-Path: <linux-kernel+bounces-768850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D382B26645
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:08:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D888B26663
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 647371CC64F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:08:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641109E3C0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2B73009FC;
-	Thu, 14 Aug 2025 13:07:11 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90932FE582;
+	Thu, 14 Aug 2025 13:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kp932hix"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDD52FF64A
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9A02FD7B1;
+	Thu, 14 Aug 2025 13:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755176831; cv=none; b=gjdSpt4XeLp0od+vXkvmKfIKNAZuY6cV3sNe1EOqn/KwMQ8Z+KUliZlQ++fcWspFBKH+wAngnPe2n2dMMMf360E1+jbmtaKRe5Wirq4pA55S6jMNiWxpNWMvZLjrRbbRnESLNI6ZRM9YtgXI7bDdS3TjsKtwI34y8C1zmF80nwM=
+	t=1755176876; cv=none; b=u8Lg/phRH7F4/d6WGWyF666EkhwoACrplsolSTln5eNe3H++RmpJbx0Cou62ZDjR5dtDtDDFjzggu3HZgPgOmGT2M1rvBkUqVaDGIE8wqUM5rBcr3mWqpdkk3tHKzYvqg9kbF/1vTVe9VEXl/HY6VJJ+m4y/djpEe+MVjVVSvC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755176831; c=relaxed/simple;
-	bh=IycRZzbtPjcoBJRiQajt7RaNrbxPeE1qygAH2mM/dr0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OAfQyP2BW7ujOl+dbu+xrraJVnG8xtE84c+yJYUgFphtdccpiDxGOlFEpQr9JNnT6ZgyA/ExubsfwHANFuLXDREL2FA3Y0F/9WDZWoeoZI4VC81tEYY09JcbKuhKKn63opyMeKLuwgBEalp+BJRr1rrAoK2vOASeG7sLDoUSc6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umXff-0006JE-0T; Thu, 14 Aug 2025 15:07:07 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umXfe-000GHR-0G;
-	Thu, 14 Aug 2025 15:07:06 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1umXfe-001Mpw-01;
-	Thu, 14 Aug 2025 15:07:06 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Avri Altman <Avri.Altman@sandisk.com>
-Subject: [PATCH v8 2/2] mmc: core: add undervoltage handler for MMC/eMMC devices
-Date: Thu, 14 Aug 2025 15:07:05 +0200
-Message-Id: <20250814130705.326073-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250814130705.326073-1-o.rempel@pengutronix.de>
-References: <20250814130705.326073-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1755176876; c=relaxed/simple;
+	bh=i/ET7s7Tj1J84FEGP9UbodHwBPcPrdFt5gh6RmuE2DU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hpBQYsxo7kYm4L1jPONsaCjxk2pnWfPKOtCIjyMKAWYrtyZ5yIZgF/u4WHkxJaw+65CqO5pyXxlwHy8olN+y5ecqrXlftffXj9h1bAx2nrCWkiiR/0W+nPb6rU2iKPbl+N2gTcVff4sEGyThKoIeElfbGR3UbHnD4k9D8uLhi3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kp932hix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 694D1C4CEED;
+	Thu, 14 Aug 2025 13:07:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755176875;
+	bh=i/ET7s7Tj1J84FEGP9UbodHwBPcPrdFt5gh6RmuE2DU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kp932hixuF3y2+woIsJTmdXBF1aSyCxYiRTq6XZA4/d+56vvUBb56i1B4b/jfcHEJ
+	 PiDtciLfO1Xi96U8SbYP8GNR2z34JsKDano7vJXqtGVtuM0BWZAu0UG/y5kJKWVw8W
+	 LZ9LoL49F8lD4wTGo98ZcsnXMQGbdq0Vi143jWMjKSV55kfeMWp3PD7fSLSVGs/4rp
+	 dENEiaoQkP51fIIKRFMnjTvjRkrtyPGAMHFYdhNZKoz7njX4QNH1gwsBA6S6UtS5Ya
+	 b8SQXnWIDdeWT4w6o5MVzlJyo6dfuC70t16wjoJaiJrd2yqEfpP9Iwq2RYV3FAWvCt
+	 xsVJ9wvUH9Tag==
+From: Alexey Gladkov <legion@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	Alexey Gladkov <legion@kernel.org>
+Subject: [PATCH v6 0/9] Add generated modalias to modules.builtin.modinfo
+Date: Thu, 14 Aug 2025 15:07:08 +0200
+Message-ID: <cover.1755170493.git.legion@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,165 +62,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Add infrastructure to handle regulator undervoltage events for MMC/eMMC
-cards. When an undervoltage is detected, the new handler performs a
-controlled emergency suspend using a short power-off notification,
-skipping the cache flush to maximize the chance of a safe shutdown.
-After the operation, the card is marked as removed to prevent further
-I/O and possible data corruption.
+The modules.builtin.modinfo file is used by userspace (kmod to be specific) to
+get information about builtin modules. Among other information about the module,
+information about module aliases is stored. This is very important to determine
+that a particular modalias will be handled by a module that is inside the
+kernel.
 
-This is implemented by introducing MMC_POWEROFF_UNDERVOLTAGE to the
-mmc_poweroff_type enum and refactoring the suspend logic into an
-internal __mmc_suspend() helper that allows the caller to skip the cache
-flush if required. The undervoltage handler is registered as a bus
-operation and invoked from the core undervoltage path.
+There are several mechanisms for creating modalias for modules:
 
-If power-off notification is not supported by the card, the handler
-falls back to sleep or deselecting the card.
+The first is to explicitly specify the MODULE_ALIAS of the macro. In this case,
+the aliases go into the '.modinfo' section of the module if it is compiled
+separately or into vmlinux.o if it is builtin into the kernel.
 
-Additionally, update the shutdown path to avoid redundant shutdown
-steps if the card is already removed
+The second is the use of MODULE_DEVICE_TABLE followed by the use of the
+modpost utility. In this case, vmlinux.o no longer has this information and
+does not get it into modules.builtin.modinfo.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+For example:
+
+$ modinfo pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30
+modinfo: ERROR: Module pci:v00008086d0000A36Dsv00001043sd00008694bc0Csc03i30 not found.
+
+$ modinfo xhci_pci
+name:           xhci_pci
+filename:       (builtin)
+license:        GPL
+file:           drivers/usb/host/xhci-pci
+description:    xHCI PCI Host Controller Driver
+
+The builtin module is missing alias "pci:v*d*sv*sd*bc0Csc03i30*" which will be
+generated by modpost if the module is built separately.
+
+To fix this it is necessary to add the generated by modpost modalias to
+modules.builtin.modinfo. Fortunately modpost already generates .vmlinux.export.c
+for exported symbols. It is possible to add `.modinfo` for builtin modules and
+modify the build system so that `.modinfo` section is extracted from the
+intermediate vmlinux after modpost is executed.
+
 ---
-changes v7:
-- Squash undervoltage suspend preparation and handler into one patch.
-- Use mmc_card_removed() in shutdown path instead of host->undervoltage.
-- Remove redundant card presence check in undervoltage handler.
-changes v6:
-- Refactor suspend logic: move cache flush skipping during undervoltage
-  to a separate, preceding commit.
-- update commit message
-changes v5:
-- Rebased on top of patch introducing enum mmc_poweroff_type
-- Updated call to __mmc_suspend() to use MMC_POWEROFF_UNDERVOLTAGE
-- Dropped __mmc_resume() helper, as it is no longer needed
-- Updated commit message to reflect API change and code removal
-changes v4:
-- Drop HPI step.
-changes v3:
-- reword commit message.
-- add comments in the code
-- do not try to resume sleeping device
----
- drivers/mmc/core/mmc.c | 70 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 67 insertions(+), 3 deletions(-)
+Notes:
+- v6:
+  * Rebase to v6.17-rc1-16-g8742b2d8935f to pick up the fixes made by Masahiro Yamada.
+  * Fix an issue on i386 configs caused by the use of string_32.h.
+  * v5: https://lore.kernel.org/all/cover.1753354215.git.legion@kernel.org/
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 7dc0a9339c5e..03b9a5acafd1 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -36,6 +36,7 @@
- enum mmc_poweroff_type {
- 	MMC_POWEROFF_SUSPEND,
- 	MMC_POWEROFF_SHUTDOWN,
-+	MMC_POWEROFF_UNDERVOLTAGE,
- 	MMC_POWEROFF_UNBIND,
- };
- 
-@@ -2132,9 +2133,15 @@ static int _mmc_suspend(struct mmc_host *host, enum mmc_poweroff_type pm_type)
- 	if (mmc_card_suspended(host->card))
- 		goto out;
- 
--	err = _mmc_flush_cache(host);
--	if (err)
--		goto out;
-+	/*
-+	 * For the undervoltage case, we care more about device integrity.
-+	 * Avoid cache flush and notify the device to power off quickly.
-+	 */
-+	if (pm_type != MMC_POWEROFF_UNDERVOLTAGE) {
-+		err = _mmc_flush_cache(host);
-+		if (err)
-+			goto out;
-+	}
- 
- 	if (mmc_card_can_poweroff_notify(host->card) &&
- 	    mmc_host_can_poweroff_notify(host, pm_type))
-@@ -2212,6 +2219,13 @@ static int mmc_shutdown(struct mmc_host *host)
- {
- 	int err = 0;
- 
-+	/*
-+	 * In case of undervoltage, the card will be powered off (removed) by
-+	 * _mmc_handle_undervoltage()
-+	 */
-+	if (!host->card || mmc_card_removed(host->card))
-+		return 0;
-+
- 	/*
- 	 * If the card remains suspended at this point and it was done by using
- 	 * the sleep-cmd (CMD5), we may need to re-initialize it first, to allow
-@@ -2302,6 +2316,55 @@ static int _mmc_hw_reset(struct mmc_host *host)
- 	return mmc_init_card(host, card->ocr, card);
- }
- 
-+/**
-+ * _mmc_handle_undervoltage - Handle an undervoltage event for MMC/eMMC devices
-+ * @host: MMC host structure
-+ *
-+ * This function is triggered when an undervoltage condition is detected.
-+ * It attempts to transition the device into a low-power or safe state to
-+ * prevent data corruption.
-+ *
-+ * Steps performed:
-+ * - Perform an emergency suspend using EXT_CSD_POWER_OFF_SHORT if possible.
-+ *    - If power-off notify is not supported, fallback mechanisms like sleep or
-+ *      deselecting the card are attempted.
-+ *    - Cache flushing is skipped to reduce execution time.
-+ * - Mark the card as removed to prevent further interactions after
-+ *    undervoltage.
-+ *
-+ * Note: This function does not handle host claiming or releasing. The caller
-+ *	 must ensure that the host is properly claimed before calling this
-+ *	 function and released afterward.
-+ *
-+ * Returns: 0 on success, or a negative error code if any step fails.
-+ */
-+static int _mmc_handle_undervoltage(struct mmc_host *host)
-+{
-+	struct mmc_card *card = host->card;
-+	int err;
-+
-+	/*
-+	 * Perform an emergency suspend to power off the eMMC quickly.
-+	 * This ensures the device enters a safe state before power is lost.
-+	 * We first attempt EXT_CSD_POWER_OFF_SHORT, but if power-off notify
-+	 * is not supported, we fall back to sleep mode or deselecting the card.
-+	 * Cache flushing is skipped to minimize delay.
-+	 */
-+	err = _mmc_suspend(host, MMC_POWEROFF_UNDERVOLTAGE);
-+	if (err)
-+		pr_err("%s: undervoltage suspend failed: %pe\n",
-+		       mmc_hostname(host), ERR_PTR(err));
-+
-+	/*
-+	 * Mark the card as removed to prevent further operations.
-+	 * This ensures the system does not attempt to access the device
-+	 * after an undervoltage event, avoiding potential corruption.
-+	 */
-+	mmc_card_set_removed(card);
-+
-+	return err;
-+}
-+
- static const struct mmc_bus_ops mmc_ops = {
- 	.remove = mmc_remove,
- 	.detect = mmc_detect,
-@@ -2314,6 +2377,7 @@ static const struct mmc_bus_ops mmc_ops = {
- 	.hw_reset = _mmc_hw_reset,
- 	.cache_enabled = _mmc_cache_enabled,
- 	.flush_cache = _mmc_flush_cache,
-+	.handle_undervoltage = _mmc_handle_undervoltage,
- };
- 
- /*
+- v5:
+  * Rebase to v6.16-rc6-281-gf4a40a4282f4 to pick up the fixes made by Masahiro Yamada.
+  * Attempt to fix linker warning on s390.
+  * Fix typo in pinctrl/meson found by the kernel test robot.
+  * v4: https://lore.kernel.org/all/cover.1750511018.git.legion@kernel.org/
+
+- v4:
+  * Rework the patchset based on top of Masahiro Yamada's patches.
+  * Add removal of unnecessary __mod_device_table__* symbols to avoid symbol
+    table growth in vmlinux.
+  * rust code takes into account changes in __mod_device_table__*.
+  * v3: https://lore.kernel.org/all/cover.1748335606.git.legion@kernel.org/
+
+- v3:
+  * Add `Reviewed-by` tag to patches from Petr Pavlu.
+  * Rebase to v6.15.
+  * v2: https://lore.kernel.org/all/20250509164237.2886508-1-legion@kernel.org/
+
+- v2:
+  * Drop patch for mfd because it was already applied and is in linux-next.
+  * The generation of aliases for builtin modules has been redone as
+    suggested by Masahiro Yamada.
+  * Rebase to v6.15-rc5-136-g9c69f8884904
+  * v1: https://lore.kernel.org/all/cover.1745591072.git.legion@kernel.org/
+
+
+Alexey Gladkov (6):
+  scsi: Always define blogic_pci_tbl structure
+  pinctrl: meson: Fix typo in device table macro
+  modpost: Add modname to mod_device_table alias
+  modpost: Create modalias for builtin modules
+  kbuild: vmlinux.unstripped should always depend on .vmlinux.export.o
+  s390: vmlinux.lds.S: Reorder sections
+
+Masahiro Yamada (3):
+  kbuild: always create intermediate vmlinux.unstripped
+  kbuild: keep .modinfo section in vmlinux.unstripped
+  kbuild: extract modules.builtin.modinfo from vmlinux.unstripped
+
+ arch/s390/kernel/vmlinux.lds.S             | 10 +--
+ drivers/pinctrl/meson/pinctrl-amlogic-a4.c |  2 +-
+ drivers/scsi/BusLogic.c                    |  4 +-
+ include/asm-generic/vmlinux.lds.h          |  2 +-
+ include/linux/module.h                     | 18 +++--
+ rust/kernel/device_id.rs                   |  8 +--
+ scripts/Makefile.vmlinux                   | 77 ++++++++++++++--------
+ scripts/Makefile.vmlinux_o                 | 26 +-------
+ scripts/link-vmlinux.sh                    |  5 +-
+ scripts/mksysmap                           |  6 ++
+ scripts/mod/file2alias.c                   | 34 ++++++++--
+ scripts/mod/modpost.c                      | 15 +++++
+ scripts/mod/modpost.h                      |  2 +
+ 13 files changed, 130 insertions(+), 79 deletions(-)
+
 -- 
-2.39.5
+2.50.1
 
 
