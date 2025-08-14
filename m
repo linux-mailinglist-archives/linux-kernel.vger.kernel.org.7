@@ -1,216 +1,223 @@
-Return-Path: <linux-kernel+bounces-768678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4342B26409
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:19:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A82B26401
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D7F188BF31
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:18:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5457F1788BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02B029BDA9;
-	Thu, 14 Aug 2025 11:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C6C2D4B52;
+	Thu, 14 Aug 2025 11:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LhIyxLw3"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74030318132;
-	Thu, 14 Aug 2025 11:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J6mr9Ymj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623071474CC;
+	Thu, 14 Aug 2025 11:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755170297; cv=none; b=k/HB/jY+fSmtykdzlZww2k1vB6eA4iUA3bvNTUW4cpQvgG6PcPa8AHi/A7SQAXt2V49p5MrM170UQLK7AB+ux8TD1bNDPzc4DKtn5FuK7xsuXLDwZuuCjuoK9gh0jrnUjqo9ITtsicBzfA366RNOaEOITRxGl4CzSVkvNS0xZrY=
+	t=1755170235; cv=none; b=AGqXFQCfrWtw+r4TCPGz4+M8GMXa7tthgPneofWfwZ7DwrRTgnNfv5rIl8hNcawyUwcbtifyLtwqYU0q5lKXXIMTvjthD2o6t+qin1QaiTFVtks3l2P9E2URpEiaYIsfleoURZ8XUfQXWFNRCcq3uYZe1M2lYBr6SZPKdWzdtXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755170297; c=relaxed/simple;
-	bh=eFYWsp08n6SVVedh4zbV4bDxYJdUahuYEnIagp/WlB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V0tLRw38qPTIpce/sLOZ8W1eqT2+GVEIU64cdq0XHUfcfeAgJShDhqvYQwMKnq6Dptr/4K7q8G3fBzmmfbdifkHZYN283rG0rfONKYbimyjYHAfytWXWhhg98fwTjzNaxd4ED8ze7LfMD6kCQmEvIsOKDqszDYhAODhFCyU1VXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LhIyxLw3; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=E0
-	2voVBQAU1rJD41PTsszXfus1cHekX350eLoFLGHrY=; b=LhIyxLw3gMDvP7o+qj
-	XhM+eOjzEBncHGNWm1AsBj1VRIW/TTvyjIL/2fVEWorzr3XrVES85ckEnp9FjG6D
-	YPGbw/nW34SQ9uKxI5Nw14/tCvPRKMCnEop03kYYkX4GAKTwuzEhGzR1QJWRv7QM
-	1sJ9DdNyj86j/NryHBVaHa6sw=
-Received: from mi-work.mioffice.cn (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wA3sla6xZ1ofjt8Bw--.11362S4;
-	Thu, 14 Aug 2025 19:17:15 +0800 (CST)
-From: yangshiguang1011@163.com
-To: harry.yoo@oracle.com
-Cc: vbabka@suse.cz,
-	akpm@linux-foundation.org,
-	cl@gentwo.org,
-	rientjes@google.com,
-	roman.gushchin@linux.dev,
-	glittao@gmail.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	yangshiguang <yangshiguang@xiaomi.com>
-Subject: [PATCH v2] mm: slub: avoid wake up kswapd in set_track_prepare
-Date: Thu, 14 Aug 2025 19:16:42 +0800
-Message-ID: <20250814111641.380629-2-yangshiguang1011@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755170235; c=relaxed/simple;
+	bh=TL2DIflxlb+3IICNHLU8/yPYEmvqO6pplGEDMmxOSnk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fdVKh1y2Mb76xszzAVdhqqVKp5SfwziQxpdqniuIxO2adWG2TIUKiYaH926nxw2d/XmWPdMRr8RQdBVfyw68P0OsYUnw9ymBLGxy0LipcubeNerPGTKfbSudh63jY7H2GXRaDze6L0KwvnJsC5AUVmL9Zz0P+NpNkP2HpV8W/B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J6mr9Ymj; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755170233; x=1786706233;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=TL2DIflxlb+3IICNHLU8/yPYEmvqO6pplGEDMmxOSnk=;
+  b=J6mr9YmjRpl1r1xxrdoD33tLOaTRViFnf7JKV1/VwJ3X17lb0vqy6o33
+   cBFC13jNkSlnY5JldALqydhBvFUpshIpy3d1sX9uWmOja7oqF0e3sWQjL
+   1QXXiKS2zfPB9TmjGMoDKVJgAz7C/RZ3vVdWGTrw59rz7jGczk6EoAJbE
+   X/EdSmuCLpv329o3aV/YJg7pEQdkC+5XrhcNihr4UEWLXhEU7EtC5Y1fI
+   ofXpOxpOJfD2qhNi1su/wqoMFqIA/Qc9b56d9cD+xhK13KwHrHeVzWalC
+   ApTW0xiY8sY7P1rZQ+njPOHveIZpe+SbWk2Ns4kbAhap2Y+E02REBxXgf
+   g==;
+X-CSE-ConnectionGUID: ITh7pIRpTnOTV8MLzkmCOA==
+X-CSE-MsgGUID: QNMSZgNWQOCdzVM3TOaHnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57404831"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="57404831"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 04:17:12 -0700
+X-CSE-ConnectionGUID: NW122BnVRuOjHQPb4R6/EA==
+X-CSE-MsgGUID: pefCXJucQIKTQSomNpdWEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166228833"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 04:17:09 -0700
+Message-ID: <fa61f808-ffd0-46cd-9e59-1a4e743bea24@linux.intel.com>
+Date: Thu, 14 Aug 2025 19:17:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wA3sla6xZ1ofjt8Bw--.11362S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Jr43XFWkKF1UCFWkWryUWrg_yoW7XFyrpF
-	W7GFy3JF48JryjqFWUAw4Uur1SvrZ3CrW8CF43Wa4ruFyYqr48GFW7tFyjvFWrArykuanF
-	ka1UuFn3Ww4UZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jZTmDUUUUU=
-X-CM-SenderInfo: 51dqw25klj3ttqjriiqr6rljoofrz/1tbiSAWp5WidxSUN3gAAsH
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 21/30] KVM: selftests: TDX: Verify the behavior when
+ host consumes a TD private memory
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-22-sagis@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250807201628.1185915-22-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: yangshiguang <yangshiguang@xiaomi.com>
 
-From: yangshiguang <yangshiguang@xiaomi.com>
 
-set_track_prepare() can incur lock recursion.
-The issue is that it is called from hrtimer_start_range_ns
-holding the per_cpu(hrtimer_bases)[n].lock, but when enabled
-CONFIG_DEBUG_OBJECTS_TIMERS, may wake up kswapd in set_track_prepare,
-and try to hold the per_cpu(hrtimer_bases)[n].lock.
+On 8/8/2025 4:16 AM, Sagi Shahar wrote:
+> From: Ryan Afranji <afranji@google.com>
+>
+> The test checks that host can only read fixed values when trying to
+> access the guest's private memory.
+>
+> Signed-off-by: Ryan Afranji <afranji@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
+> ---
+>   tools/testing/selftests/kvm/x86/tdx_vm_test.c | 83 ++++++++++++++++++-
+>   1 file changed, 82 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> index 2f75f12d2a44..b6ef0348746c 100644
+> --- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> +++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
+> @@ -959,6 +959,85 @@ void verify_td_cpuid_tdcall(void)
+>   	printf("\t ... PASSED\n");
+>   }
+>   
+> +/*
+> + * Shared variables between guest and host for host reading private mem test
+> + */
+> +static uint64_t tdx_test_host_read_private_mem_addr;
+> +#define TDX_HOST_READ_PRIVATE_MEM_PORT_TEST 0x53
+> +
+> +void guest_host_read_priv_mem(void)
+> +{
+> +	uint64_t placeholder = 0;
+> +	uint64_t ret;
+> +
+> +	/* Set value */
+> +	*((uint32_t *)tdx_test_host_read_private_mem_addr) = 0xABCD;
+> +
+> +	/* Exit so host can read value */
+> +	ret = tdg_vp_vmcall_instruction_io(TDX_HOST_READ_PRIVATE_MEM_PORT_TEST,
+> +					   4, PORT_WRITE, &placeholder);
+> +	tdx_assert_error(ret);
+> +
+> +	/* Update guest_var's value and have host reread it. */
+> +	*((uint32_t *)tdx_test_host_read_private_mem_addr) = 0xFEDC;
+> +
+> +	tdx_test_success();
+> +}
+> +
+> +void verify_host_reading_private_mem(void)
+> +{
+> +	uint64_t second_host_read;
+> +	uint64_t first_host_read;
+> +	struct kvm_vcpu *vcpu;
+> +	vm_vaddr_t test_page;
+> +	uint64_t *host_virt;
+> +	struct kvm_vm *vm;
+> +
+> +	vm = td_create();
+> +	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
+> +	vcpu = td_vcpu_add(vm, 0, guest_host_read_priv_mem);
+> +
+> +	test_page = vm_vaddr_alloc_page(vm);
+> +	TEST_ASSERT(test_page < BIT_ULL(32),
+> +		    "Test address should fit in 32 bits so it can be sent to the guest");
 
-So avoid waking up kswapd.The oops looks something like:
+I didn't understand it.
+Could you elaborate a bit?
 
-BUG: spinlock recursion on CPU#3, swapper/3/0
- lock: 0xffffff8a4bf29c80, .magic: dead4ead, .owner: swapper/3/0, .owner_cpu: 3
-Hardware name: Qualcomm Technologies, Inc. Popsicle based on SM8850 (DT)
-Call trace:
-spin_bug+0x0
-_raw_spin_lock_irqsave+0x80
-hrtimer_try_to_cancel+0x94
-task_contending+0x10c
-enqueue_dl_entity+0x2a4
-dl_server_start+0x74
-enqueue_task_fair+0x568
-enqueue_task+0xac
-do_activate_task+0x14c
-ttwu_do_activate+0xcc
-try_to_wake_up+0x6c8
-default_wake_function+0x20
-autoremove_wake_function+0x1c
-__wake_up+0xac
-wakeup_kswapd+0x19c
-wake_all_kswapds+0x78
-__alloc_pages_slowpath+0x1ac
-__alloc_pages_noprof+0x298
-stack_depot_save_flags+0x6b0
-stack_depot_save+0x14
-set_track_prepare+0x5c
-___slab_alloc+0xccc
-__kmalloc_cache_noprof+0x470
-__set_page_owner+0x2bc
-post_alloc_hook[jt]+0x1b8
-prep_new_page+0x28
-get_page_from_freelist+0x1edc
-__alloc_pages_noprof+0x13c
-alloc_slab_page+0x244
-allocate_slab+0x7c
-___slab_alloc+0x8e8
-kmem_cache_alloc_noprof+0x450
-debug_objects_fill_pool+0x22c
-debug_object_activate+0x40
-enqueue_hrtimer[jt]+0xdc
-hrtimer_start_range_ns+0x5f8
-...
+> +
+> +	host_virt = addr_gva2hva(vm, test_page);
+> +	TEST_ASSERT(host_virt,
+> +		    "Guest address not found in guest memory regions\n");
+> +
+> +	tdx_test_host_read_private_mem_addr = test_page;
+> +	sync_global_to_guest(vm, tdx_test_host_read_private_mem_addr);
+> +
+> +	td_finalize(vm);
+> +
+> +	printf("Verifying host's behavior when reading TD private memory:\n");
 
-Signed-off-by: yangshiguang <yangshiguang@xiaomi.com>
-Fixes: 5cf909c553e9 ("mm/slub: use stackdepot to save stack trace in objects")
----
-v1 -> v2:
-    propagate gfp flags to set_track_prepare()
+When the host accesses host_virt, it's not accessing the same page of the
+private page of the TD, so it's not accurate to say the host is reading or
+consuming TD private memory.
 
-[1]https://lore.kernel.org/all/20250801065121.876793-1-yangshiguang1011@163.com/
----
- mm/slub.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 30003763d224..dba905bf1e03 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -962,19 +962,20 @@ static struct track *get_track(struct kmem_cache *s, void *object,
- }
- 
- #ifdef CONFIG_STACKDEPOT
--static noinline depot_stack_handle_t set_track_prepare(void)
-+static noinline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
- {
- 	depot_stack_handle_t handle;
- 	unsigned long entries[TRACK_ADDRS_COUNT];
- 	unsigned int nr_entries;
-+	gfp_flags &= GFP_NOWAIT;
- 
- 	nr_entries = stack_trace_save(entries, ARRAY_SIZE(entries), 3);
--	handle = stack_depot_save(entries, nr_entries, GFP_NOWAIT);
-+	handle = stack_depot_save(entries, nr_entries, gfp_flags);
- 
- 	return handle;
- }
- #else
--static inline depot_stack_handle_t set_track_prepare(void)
-+static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags)
- {
- 	return 0;
- }
-@@ -996,9 +997,9 @@ static void set_track_update(struct kmem_cache *s, void *object,
- }
- 
- static __always_inline void set_track(struct kmem_cache *s, void *object,
--				      enum track_item alloc, unsigned long addr)
-+				      enum track_item alloc, unsigned long addr, gfp_t gfp_flags)
- {
--	depot_stack_handle_t handle = set_track_prepare();
-+	depot_stack_handle_t handle = set_track_prepare(gfp_flags);
- 
- 	set_track_update(s, object, alloc, addr, handle);
- }
-@@ -1921,9 +1922,9 @@ static inline bool free_debug_processing(struct kmem_cache *s,
- static inline void slab_pad_check(struct kmem_cache *s, struct slab *slab) {}
- static inline int check_object(struct kmem_cache *s, struct slab *slab,
- 			void *object, u8 val) { return 1; }
--static inline depot_stack_handle_t set_track_prepare(void) { return 0; }
-+static inline depot_stack_handle_t set_track_prepare(gfp_t gfp_flags) { return 0; }
- static inline void set_track(struct kmem_cache *s, void *object,
--			     enum track_item alloc, unsigned long addr) {}
-+			     enum track_item alloc, unsigned long addr, gfp_t gfp_flags) {}
- static inline void add_full(struct kmem_cache *s, struct kmem_cache_node *n,
- 					struct slab *slab) {}
- static inline void remove_full(struct kmem_cache *s, struct kmem_cache_node *n,
-@@ -3878,7 +3879,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
- 			 * tracking info and return the object.
- 			 */
- 			if (s->flags & SLAB_STORE_USER)
--				set_track(s, freelist, TRACK_ALLOC, addr);
-+				set_track(s, freelist, TRACK_ALLOC, addr, gfpflags);
- 
- 			return freelist;
- 		}
-@@ -3910,7 +3911,7 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
- 			goto new_objects;
- 
- 		if (s->flags & SLAB_STORE_USER)
--			set_track(s, freelist, TRACK_ALLOC, addr);
-+			set_track(s, freelist, TRACK_ALLOC, addr, gfpflags);
- 
- 		return freelist;
- 	}
-@@ -4422,7 +4423,7 @@ static noinline void free_to_partial_list(
- 	depot_stack_handle_t handle = 0;
- 
- 	if (s->flags & SLAB_STORE_USER)
--		handle = set_track_prepare();
-+		handle = set_track_prepare(GFP_NOWAIT);
- 
- 	spin_lock_irqsave(&n->list_lock, flags);
- 
--- 
-2.43.0
+> +
+> +	tdx_run(vcpu);
+> +	tdx_test_assert_io(vcpu, TDX_HOST_READ_PRIVATE_MEM_PORT_TEST,
+> +			   4, PORT_WRITE);
+> +	printf("\t ... Guest's variable contains 0xABCD\n");
+> +
+> +	/* Host reads guest's variable. */
+> +	first_host_read = *host_virt;
+> +	printf("\t ... Host's read attempt value: %lu\n", first_host_read);
+> +
+> +	/* Guest updates variable and host rereads it. */
+> +	tdx_run(vcpu);
+> +	printf("\t ... Guest's variable updated to 0xFEDC\n");
+> +
+> +	second_host_read = *host_virt;
+> +	printf("\t ... Host's second read attempt value: %lu\n",
+> +	       second_host_read);
+> +
+> +	TEST_ASSERT(first_host_read == second_host_read,
+> +		    "Host did not read a fixed pattern\n");
+> +
+> +	printf("\t ... Fixed pattern was returned to the host\n");
+> +
+> +	kvm_vm_free(vm);
+> +	printf("\t ... PASSED\n");
+> +}
+> +
+>   int main(int argc, char **argv)
+>   {
+>   	ksft_print_header();
+> @@ -966,7 +1045,7 @@ int main(int argc, char **argv)
+>   	if (!is_tdx_enabled())
+>   		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
+>   
+> -	ksft_set_plan(13);
+> +	ksft_set_plan(14);
+>   	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
+>   			 "verify_td_lifecycle\n");
+>   	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
+> @@ -993,6 +1072,8 @@ int main(int argc, char **argv)
+>   			 "verify_mmio_writes\n");
+>   	ksft_test_result(!run_in_new_process(&verify_td_cpuid_tdcall),
+>   			 "verify_td_cpuid_tdcall\n");
+> +	ksft_test_result(!run_in_new_process(&verify_host_reading_private_mem),
+> +			 "verify_host_reading_private_mem\n");
+>   
+>   	ksft_finished();
+>   	return 0;
 
 
