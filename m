@@ -1,169 +1,114 @@
-Return-Path: <linux-kernel+bounces-769567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E755B2706A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:53:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8890DB2706E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:55:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A67B179B4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 845DF5A3F14
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06059273D6D;
-	Thu, 14 Aug 2025 20:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2095D273810;
+	Thu, 14 Aug 2025 20:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xd8F/Vqp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="svHurz2P"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF5C26FA46;
-	Thu, 14 Aug 2025 20:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4497244662
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 20:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755204800; cv=none; b=iTFVPS3M8XoGAZfdRw4vF4DiuDvcuZijSSI4LwXLo8nKMoVcRxVv3LYFBv0AlXOrei4qzQ9IXrGYeD+wgzCDI5CqPKeSPXgnCefe/4pnOgb5KFfqZb6QRVxOjmYxoAfyDI3WaplS3jD8sRvpFpsorn1ytuiMKTrZMwmZoca/ekc=
+	t=1755204916; cv=none; b=jrbN9a0syAa4y7Z3iizkaowXx4AT2yGRKS3GB+FjJEAzXjv1hHNU9Glu3RVLhRolBiy1o+Gzbvt/fpuxrBTpcf8MdNPmDxF92dn2AWW9uIHWxtrQozWv+wwvmTzB41VR5OFu1f7Wn1VWJ9+I+zA9teQAxmw9ch6cnlTKrNVDqto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755204800; c=relaxed/simple;
-	bh=2LkRFzEQQLz4AsmD3GeNQ+csq6dZRddW53dxc2tua8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tt4fSw0GPWYZ0mYRLu2rjgSsh1wJljQNXxeiNAzXKv9iKdggyT5HgJdbN/6KMD7TZW9NUJjtmJxug/W3Z6BzdheW+xIM55icwa6d9Y5G4O7cOGAclvx4y1HiYNKRxsABoK9x8FUEA9A16tk5qz0bdDEKhSbX6BVQ+tb69s3P3mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xd8F/Vqp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040DDC4CEED;
-	Thu, 14 Aug 2025 20:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755204798;
-	bh=2LkRFzEQQLz4AsmD3GeNQ+csq6dZRddW53dxc2tua8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xd8F/VqpOJKht5NslLkVfnLi7Vhs+djTmWL+AGaKqNfW+hlk1SizvwwK514eJaIX9
-	 sJ6E+SnEPGgiX5AuS0qktX7na+YkgJ7dXTxuwASdjM2JkkdO6NvdwnMOVFNwsQfaXH
-	 zdmK+WaRGzP1YjxZ7pn1eU6batw2NzSL8HJXkZdqWmUzUaPQ1Q1kc/rYMphoG5wCAk
-	 0XBESRPPPGRacMW7e3jBNDliebXM7jMdFMR/pDxsYrB0DFRNgyMtCIrQf6Czu6Zas5
-	 6qZj+R5W6Zx9n8b1hwaNLMzf0C4e1hwDXGy9I8VS3W7QvF00ZXIa+9+psPR9DmpNWe
-	 RLt+FXQrtFPdA==
-Date: Thu, 14 Aug 2025 21:53:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Aleksander Jan Bajkowski <olek2@wp.pl>
-Cc: tsbogend@alpha.franken.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mips: lantiq: Document Lantiq Xway VMMC
-Message-ID: <20250814-extended-collector-8335abee820d@spud>
-References: <20250814161748.3230278-1-olek2@wp.pl>
+	s=arc-20240116; t=1755204916; c=relaxed/simple;
+	bh=c15i7N/nHlctlKIhfbueGZzSOzwJXM0VEKrLTLzVMFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X1xAupOLR2PuxjaqINTdYIyOiLORbUNa0T2dF/J5cD/5nU4fwMLIqCDwHx7NvX6nRgX9g5I/RBwDLVnBHFR0LpmSmKU56sJMnyhUO7qlQXAjPa3w7ZzMObGTYMvlWxPrT65WFUYykc2k7LEbBp/oot2oHRqGwSpA6JOk6nc+HB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=svHurz2P; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-30ccea8a199so1414149fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755204913; x=1755809713; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0Lw1CQk3OPOq0zllcKBx/nVguWCpRXrFP9xKbQEaC04=;
+        b=svHurz2PGwVSp14Zl00YZ+PBw6vB+3kYKsQMDFPjR/g32lCuxgDpG0Zk4q4y3wvO4s
+         eESBMa53EmsaEpVQL4zbV2wzwdzsWSvT1/BVP6PF3G+a9G22wbYCFpKAboxwEpGZ/WYI
+         vKKlfHIXDYnTlU1ximIDhnSpvMwlXlxycP5Am4N96E2kKF+piCS2IeN7vfTQ2QKN0FSb
+         EyaIvyVHZKXVIiAjLLcF0Fb+g/5Yp9NBdsfB02kOLSPoXcap5rqdWgOFDReTMeYFPzXR
+         ASF8Z0Pewqc6pemEXU1Bl48j/tRR58+hYoUF1BsoOsw97DyxQX8cv0nEMLf5l1S2fj/9
+         Fddg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755204913; x=1755809713;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Lw1CQk3OPOq0zllcKBx/nVguWCpRXrFP9xKbQEaC04=;
+        b=ioTwnZlefjeqTxJ2zLKhtyAhDc9g25IVEj5GpsIYOaIRSU4/TN0LmbkspzeNJew3P6
+         jB/apxeu6UrFHlSKgGryOViWgrSxv7n1DL6tqBgWG0t7hlq2BMxYm+a+K3NwVur2+5UY
+         0iCt4dTEr7YT8YGeIx3jFxW1oVlKSEd2m36wO7s7AbOsXs1BSVKtiTEkBJJ1UsSAIGzM
+         orJyGW9uQOUOitgzWwdKOblfh96hqWMtBzNX2OPdG+GNHKBWoR/STZBMJVWg15NnB+Tb
+         kSt8VOEvsXGNIpvcc/YFur7sq6g92nI3ZOFIimH1K0zf/5RBrlrkIRFqJyY4/FlDMeyQ
+         +w0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWCJnIWqhhMjcYGuTmy6+KYHxOmfutAjZx59/PE57H4jdR1/Ej8QFrHqGDYPXh7DwuHZnMmzyF2lyliDSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmaP4yTmJTxIt1abnazXWmQOdqckwqE+3VWaMsNblEhcwfdjTa
+	5VI8F18ILK8uRI4kqF1mjaR7UkHNHrfvaqUySWQTXR3o/SjIydOK7guXNhZ33UCX3vQ=
+X-Gm-Gg: ASbGnculD9bnaTWTY40n5iWWnuYTdfeGCrXf/EwlhngBCmjJaKIDLAFcO8qenTD4y4d
+	6VRP0UEjgyxPkVhLkzCFzYCaTPFqZHwQt85Xlf/wA2/p2LhJYGJfb1hipi+/czJfKGOqpIOvfAc
+	6LYQAU1LBk0JKaJQOXTnvfjpQ8QX136gmddPsaU4H6j43cMUBM4nYXUEu+NX9/fasGk2N1JjL7k
+	ypmQURo4NiFq1xynTiYhtbstpWiiv2YUHCp9ba2ovzmwZmGHGHPQNEpiLPLGP14AOU4QfVOWaG8
+	d5Cg3X1wy22D0EtvnF9LpBNzda57J4QCMIjMWXOj6G4aWEozBKfvsUT8bCyrZsvXpw9G+tX4jSx
+	dxLYziWAjoXNtNdPoj9qAuBme864Ey630C2K7E9DnjrUzuyktdhoi8OY0VKtByluGvdOrcU+UdY
+	EpqW+/kcR/Hw==
+X-Google-Smtp-Source: AGHT+IE5YbjZs2djBXKIUErUo7BXp2zMu/SzcdDO7ZnF6dPRtxmnztErim872SLpP49Q3QZx++e6ng==
+X-Received: by 2002:a05:6870:548e:b0:2ff:94d7:b006 with SMTP id 586e51a60fabf-30cd0e61eb4mr3135219fac.13.1755204912792;
+        Thu, 14 Aug 2025 13:55:12 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:2d9b:959c:3c59:5831? ([2600:8803:e7e4:1d00:2d9b:959c:3c59:5831])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30cd018da90sm905636fac.32.2025.08.14.13.55.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 13:55:12 -0700 (PDT)
+Message-ID: <1a87f436-317b-40e0-a655-cd82f969f22e@baylibre.com>
+Date: Thu, 14 Aug 2025 15:55:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ari62n+PILi2eRwl"
-Content-Disposition: inline
-In-Reply-To: <20250814161748.3230278-1-olek2@wp.pl>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/9] dt-bindings: spi: Add spi-buses property
+To: Sean Anderson <sean.anderson@linux.dev>, Mark Brown <broonie@kernel.org>,
+ Michal Simek <michal.simek@amd.com>, linux-spi@vger.kernel.org
+Cc: Jinjie Ruan <ruanjinjie@huawei.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+References: <20250616220054.3968946-1-sean.anderson@linux.dev>
+ <20250616220054.3968946-2-sean.anderson@linux.dev>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250616220054.3968946-2-sean.anderson@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
---ari62n+PILi2eRwl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Aug 14, 2025 at 06:17:45PM +0200, Aleksander Jan Bajkowski wrote:
-> The Lantiq SoCs have a 2nd mips core called "voice mips macro core (vmmc)"
-> which is used to run the voice firmware.
->=20
-> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+On 6/16/25 5:00 PM, Sean Anderson wrote:
+> From: David Lechner <dlechner@baylibre.com>
+> 
+> Add a spi-buses property to the spi-peripheral-props binding to allow
+> specifying the SPI bus or buses that a peripheral is connected to in
+> cases where the SPI controller has more than one physical SPI bus.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 > ---
->  .../mips/lantiq/lantiq,vmmc-xway.yaml         | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mips/lantiq/lantiq,=
-vmmc-xway.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/mips/lantiq/lantiq,vmmc-xw=
-ay.yaml b/Documentation/devicetree/bindings/mips/lantiq/lantiq,vmmc-xway.ya=
-ml
-> new file mode 100644
-> index 000000000000..bee64f6d0e97
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mips/lantiq/lantiq,vmmc-xway.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mips/lantiq/lantiq,vmmc-xway.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Lantiq VMMC (Voice MIPS Macro Core)
-> +
-> +maintainers:
-> +  - Aleksander Jan Bajkowski <olek2@wp.pl>
-> +
-> +description:
-> +  The Lantiq SoCs have a 2nd mips core called "Voice MIPS Macro Core (VM=
-MC)"
-> +  which is used to run the voice firmware. The firmware handles analog
-> +  telephone lines.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - lantiq,vmmc-xway
+> 
+FYI, Mark's filters won't pick up `dt-bindings: spi:`, we need to change
+the subject line to `spi: dt-bindings:` on the next revision.
 
-Same comment here as elsewhere, the commit message seems to suggest that
-you're trying to use one compatible for multiple devices. Not using
-soc-specific compatibles requires justification if that's what you're
-doing as they are the norm.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 6
-> +    maxItems: 6
-
-Same comment here as elsewhere re: items list explaining each item.
-
-> +
-> +  gpios: true
-
-What are these gpios? You've got 3 below, what portion of those three
-are required? How many mix/max?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    vmmc@107000 {
-> +        compatible =3D "lantiq,vmmc-xway";
-> +        reg =3D <0x107000 0x300>;
-> +        interrupt-parent =3D <&icu0>;
-> +        interrupts =3D <150>, <151>, <152>, <153>, <154>, <155>;
-> +        gpios =3D <&gpio 30 GPIO_ACTIVE_HIGH
-> +                 &gpio 31 GPIO_ACTIVE_HIGH
-> +                 &gpio 3  GPIO_ACTIVE_HIGH>;
-> +
-> +    };
-> --=20
-> 2.47.2
->=20
-
---ari62n+PILi2eRwl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ5MugAKCRB4tDGHoIJi
-0hEuAQChrMm3aIadGdB/jPZg4DG5RglwxgVK72EEf0NTp+WVDwEAm7/j5Wqo6L3m
-QFpE8NvEPCIGmZLM6O1xgVsex/pW0Aw=
-=KLOh
------END PGP SIGNATURE-----
-
---ari62n+PILi2eRwl--
 
