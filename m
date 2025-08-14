@@ -1,195 +1,173 @@
-Return-Path: <linux-kernel+bounces-768593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825DDB262F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:39:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EF8B262ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DDE27AE6BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:38:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAF17172CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912CD2EA15E;
-	Thu, 14 Aug 2025 10:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h2LXt2og"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207CF2F39A0;
+	Thu, 14 Aug 2025 10:37:09 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5F331815E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224D92BDC2B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755167960; cv=none; b=tEB+ggkxV7w08339IqyY2+Vcr+pZNn3cOJa7PtKWcvd89vmD+sxjBCo01qpLVmkhAIEw5Khr9z8fgoKZpuRFNqn6qb2KGB7tATN9dMDAKmCEfC42uyCQgJSp8bVP89GMlq63pbZn4dxCrdXlzfNTYA1zdu+AUqm+1UMNKytPz9g=
+	t=1755167828; cv=none; b=S3uxL558Vamoa5Ax4TqtzmRjox9RQVDZq27mSRRj8psHBnAIMrRPY4yOtMfvpz7H4mCYZLblJ9kzC4FhhiK3dTrQXNRmiPHLSaizkiUpxgBPj1pQYZMzEBuRmJHOPtgSbWcL3ZPfmY7i/nfSWMqoq1yO4izRRFB/tz8VHpXgTXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755167960; c=relaxed/simple;
-	bh=vy/kbyBLqEKNnDXX9JSY4JStM3dRhA0LlMTcKbNGUDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UtiNaICli6J0fi28OKZIshI3sl1lurAzPkeWCnrbTz1gMAIDjwzgk2Q6h7+K8s9CYE1MrXogYXQ2vzbFdWczGEfOgU3G42evmPVavs0Ht2fGxMcn8RIG3yUyNLVast1zJHaAMpuiY7EHp4slLmWPGudV5ybsIfFrTUYra0GEi2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h2LXt2og; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755167958;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=CEmT42RQmaz79iSpEMVnY8SNb8kz15ad1uYq26SL5aw=;
-	b=h2LXt2ogwT+r32Npyoy3tw4PnCCuX1EhkMpTpbgydS1cOw6kXyKnLLfHbuvny2WQbbvNvx
-	fdKBG316TUiUoMGTfod/MjNCk7MuCaDh1hAmtKCPrd0hUwkrH0d7/dDzDsYy8IVpeqhV9x
-	g0UEv+hXRLL9x7ifbigm+JGl4bNMAfs=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596--QdWilXQPSCmerlNfC9Cug-1; Thu, 14 Aug 2025 06:39:17 -0400
-X-MC-Unique: -QdWilXQPSCmerlNfC9Cug-1
-X-Mimecast-MFC-AGG-ID: -QdWilXQPSCmerlNfC9Cug_1755167956
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b471737a7baso549693a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:39:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755167956; x=1755772756;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CEmT42RQmaz79iSpEMVnY8SNb8kz15ad1uYq26SL5aw=;
-        b=IRGjEr5AW8Uhx2YgeIgplLuL/xkiyJlDOtLrv9gzejxLQciNnIWvb4yFkPWQ9vc6P1
-         vIN6RRQFdnI+sjzaiqlpn1ppP72wDpmzrquoouigbkomzdHbTsUOwQM1ZBIuLAvFjAk6
-         GlerjXCI3a3fP4oiTqttVtjTzBF3HRSMX+UuBR7wc8kQtmeLV1cTHWMmDsBDFsz7PZrL
-         S9AfvModO+fmBpY3OsZmCeKZ9Qr2U/Q1hFEWjDu02XweRZ57GHGHKkA3/WZXigrqcI8i
-         4R25n1CzlN1vFvbKlqtuNUr1VzDyWZd9XG8ruOB7VNyEH9kAKhJTPiK8wjACze+sD/SZ
-         HvMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXy/8p26Ib/xT4ILxvquF/PFjkK1DchhnDpwt8uZd38gVjMlymExBTjN5J5RSdX5aBXychTFXm6sX49QqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyovpKHdruh9p6jiae6WIEpHVmLGyK/22emEUvW+N5ZR5ZNnohQ
-	npL5mToEplWQP0zplkpkFftyYj+znAoXmiQvjUCDOG4sGRF6w5Ir1r42hvon9tWScO7S122uxXN
-	bgZ8VMzi9pyZSUinrYPkHqoqRRBBQ0Th2rJwPRo8szL7C/gifQw1Ue8hoX2cYAc73mQ==
-X-Gm-Gg: ASbGncurJLKXCVYRGsg4hqP+byg3WxFQafXdVn+uQrhyn9l1vfuHDR9kdK+JKlR6W8Y
-	q5HyeRXZ9uDDJmGJoTSkXc093ijE2bhQSVHP5tnTFfceQSHiD/IV+DNAZ9crsMmWrimw+Atkuld
-	9KoQYI0EIM69dh12GI+Z0cr5DncvxnHvH4xBjmOit80EqNicCsAb/Dvkn3x3UiCL2W5VqsW3gsJ
-	dNQcA73JTPYZ7ZG4xNCOBfdWV66DHCPCSFWuLITeuh8gY9h5ghOcaMXDho3chLL3oLl3Bx844bX
-	zavPm7FX9cZofRf/YCBRwBKpRsi4M3fo4Lm/kddOAr3aBMndjw==
-X-Received: by 2002:a05:6a20:3943:b0:23f:fc18:77b0 with SMTP id adf61e73a8af0-240bcfcc4famr3875757637.17.1755167956035;
-        Thu, 14 Aug 2025 03:39:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0qcRzLZjEIlriBSOpvCVTTIlZIky5VrZnbpwFkW4qbY9gLvkwJS1z02pXRiF8AX+jnTsQoQ==
-X-Received: by 2002:a05:6a20:3943:b0:23f:fc18:77b0 with SMTP id adf61e73a8af0-240bcfcc4famr3875724637.17.1755167955635;
-        Thu, 14 Aug 2025 03:39:15 -0700 (PDT)
-Received: from f37.llcblog.cn.com ([2408:8212:9001:a40:5c04:f864:9735:818c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f6eesm34424189b3a.22.2025.08.14.03.39.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 03:39:15 -0700 (PDT)
-From: Lichen Liu <lichliu@redhat.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	safinaskar@zohomail.com,
-	kexec@lists.infradead.org,
-	rob@landley.net,
-	weilongchen@huawei.com,
-	cyphar@cyphar.com,
-	linux-api@vger.kernel.org,
-	zohar@linux.ibm.com,
-	stefanb@linux.ibm.com,
-	initramfs@vger.kernel.org,
-	Lichen Liu <lichliu@redhat.com>
-Subject: [PATCH RESEND] fs: Add 'rootfsflags' to set rootfs mount options
-Date: Thu, 14 Aug 2025 18:34:25 +0800
-Message-ID: <20250814103424.3287358-2-lichliu@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1755167828; c=relaxed/simple;
+	bh=mtixfoi6sLuILNyQgWNCBpAeEhBntAaVb96j6pq/4d8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SRgHpWWmHqAavDARgm0rWOTZ/VgYGJsHY31MX3vy6lhYapW6SWF0Y6WuNVJicuqcLPKVKzHpws361O6+jzDmKWE1uWu8J6uBCZ9kSrjlFlPs7Z2uE8qADk9cBRehoVb1Kqnaq5G6Uv8Mp8oUr38TozghQLBNJwPXGZj+T1fl27k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1umVKB-0007cz-7f; Thu, 14 Aug 2025 12:36:47 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1umVK9-000Evw-1z;
+	Thu, 14 Aug 2025 12:36:45 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1umVK9-000Gbg-1f;
+	Thu, 14 Aug 2025 12:36:45 +0200
+Message-ID: <851f1c3d96988920a28412a26d5cd951b684c020.camel@pengutronix.de>
+Subject: Re: [PATCH 2/2] ASoC: spacemit: i2s: add support for K1 SoC
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>, Liam Girdwood
+	 <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring
+	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	 <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>, Jaroslav Kysela
+	 <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Jinmei Wei <weijinmei@linux.spacemit.com>
+Date: Thu, 14 Aug 2025 12:36:45 +0200
+In-Reply-To: <20250814-k1-i2s-v1-2-c31149b29041@linux.spacemit.com>
+References: <20250814-k1-i2s-v1-0-c31149b29041@linux.spacemit.com>
+	 <20250814-k1-i2s-v1-2-c31149b29041@linux.spacemit.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
-By default, a tmpfs mount is limited to using 50% of the available RAM
-for its content. This can be problematic in memory-constrained
-environments, particularly during a kdump capture.
+On Do, 2025-08-14 at 16:54 +0800, Troy Mitchell wrote:
+> Add ASoC platform driver for the SpacemiT K1 SoC full-duplex I2S
+> controller.
+>=20
+> Co-developer: Jinmei Wei <weijinmei@linux.spacemit.com>
+> Signed-off-by: Jinmei Wei <weijinmei@linux.spacemit.com>
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> ---
+>  sound/soc/Kconfig           |   1 +
+>  sound/soc/Makefile          |   1 +
+>  sound/soc/spacemit/Kconfig  |  14 ++
+>  sound/soc/spacemit/Makefile |   5 +
+>  sound/soc/spacemit/k1_i2s.c | 444 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  5 files changed, 465 insertions(+)
+>=20
+[...]
+> diff --git a/sound/soc/spacemit/k1_i2s.c b/sound/soc/spacemit/k1_i2s.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..9e41525afbf3f08ab9a26b562=
+772861d86f39cd7
+> --- /dev/null
+> +++ b/sound/soc/spacemit/k1_i2s.c
+> @@ -0,0 +1,444 @@
+[...]
 
-In a kdump scenario, the capture kernel boots with a limited amount of
-memory specified by the 'crashkernel' parameter. If the initramfs is
-large, it may fail to unpack into the tmpfs rootfs due to insufficient
-space. This is because to get X MB of usable space in tmpfs, 2*X MB of
-memory must be available for the mount. This leads to an OOM failure
-during the early boot process, preventing a successful crash dump.
+> +static int spacemit_i2s_probe(struct platform_device *pdev)
+> +{
+> +	struct snd_soc_dai_driver *dai;
+> +	struct spacemit_i2s_dev *i2s;
+> +	struct resource *res;
+> +	struct clk *clk;
+> +	int ret;
+> +
+> +	i2s =3D devm_kzalloc(&pdev->dev, sizeof(*i2s), GFP_KERNEL);
+> +	if (!i2s)
+> +		return -ENOMEM;
+> +
+> +	i2s->dev =3D &pdev->dev;
+> +
+> +	i2s->sysclk =3D devm_clk_get_enabled(i2s->dev, "sysclk");
+> +	if (IS_ERR(i2s->sysclk))
+> +		return dev_err_probe(i2s->dev, PTR_ERR(i2s->sysclk),
+> +				     "failed to enable sysbase clock\n");
+> +
+> +	i2s->bclk =3D devm_clk_get_enabled(i2s->dev, "bclk");
+> +	if (IS_ERR(i2s->bclk))
+> +		return dev_err_probe(i2s->dev, PTR_ERR(i2s->bclk), "failed to enable b=
+it clock\n");
+> +
+> +	clk =3D devm_clk_get_enabled(i2s->dev, "sspa_bus");
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(i2s->dev, PTR_ERR(clk), "failed to enable sspa_bu=
+s clock\n");
+> +
+> +	i2s->sspa_clk =3D devm_clk_get_enabled(i2s->dev, "sspa");
+> +	if (IS_ERR(clk))
+> +		return dev_err_probe(i2s->dev, PTR_ERR(clk), "failed to enable sspa cl=
+ock\n");
+> +
+> +	i2s->base =3D devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+> +	if (IS_ERR(i2s->base))
+> +		return dev_err_probe(i2s->dev, PTR_ERR(i2s->base), "failed to map regi=
+sters\n");
+> +
+> +	i2s->reset =3D  devm_reset_control_get(&pdev->dev, NULL);
 
-This patch introduces a new kernel command-line parameter, rootfsflags,
-which allows passing specific mount options directly to the rootfs when
-it is first mounted. This gives users control over the rootfs behavior.
+Please use devm_reset_control_get_exclusive() directly.
 
-For example, a user can now specify rootfsflags=size=75% to allow the
-tmpfs to use up to 75% of the available memory. This can significantly
-reduce the memory pressure for kdump.
+> +	if (IS_ERR(i2s->reset))
+> +		return dev_err_probe(i2s->dev, PTR_ERR(i2s->reset),
+> +				     "failed to get reset control");
+> +
+> +	dev_set_drvdata(i2s->dev, i2s);
+> +
+> +	spacemit_i2s_init_dai(i2s, &dai, res->start + SSDATR);
+> +
+> +	ret =3D devm_snd_soc_register_component(i2s->dev,
+> +					      &spacemit_i2s_component,
+> +					      dai, 1);
+> +	if (ret)
+> +		return dev_err_probe(i2s->dev, ret, "failed to register component");
+> +
+> +	return devm_snd_dmaengine_pcm_register(&pdev->dev, &spacemit_dmaengine_=
+pcm_config, 0);
+> +}
+> +
+> +static void spacemit_i2s_remove(struct platform_device *pdev)
+> +{
+> +	struct spacemit_i2s_dev *i2s =3D dev_get_drvdata(&pdev->dev);
+> +
+> +	reset_control_assert(i2s->reset);
 
-Consider a practical example:
+I'd move the reset_control_assert() be moved to snd_soc_dai_ops::remove
+for symmetry.
 
-To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
-the default 50% limit, this requires a memory pool of 96MB to be
-available for the tmpfs mount. The total memory requirement is therefore
-approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacked
-kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) ≈ 220MB.
-
-By using rootfsflags=size=75%, the memory pool required for the 48MB
-tmpfs is reduced to 48MB / 0.75 = 64MB. This reduces the total memory
-requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
-smaller crashkernel size, such as 192MB.
-
-An alternative approach of reusing the existing rootflags parameter was
-considered. However, a new, dedicated rootfsflags parameter was chosen
-to avoid altering the current behavior of rootflags (which applies to
-the final root filesystem) and to prevent any potential regressions.
-
-This approach is inspired by prior discussions and patches on the topic.
-Ref: https://www.lightofdawn.org/blog/?viewDetailed=00128
-Ref: https://landley.net/notes-2015.html#01-01-2015
-Ref: https://lkml.org/lkml/2021/6/29/783
-Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-initramfs.html#what-is-rootfs
-
-Signed-off-by: Lichen Liu <lichliu@redhat.com>
-Tested-by: Rob Landley <rob@landley.net>
----
-Hi VFS maintainers,
-
-Resending this patch as it did not get picked up.
-This patch is intended for the VFS tree.
-
- fs/namespace.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 8f1000f9f3df..e484c26d5e3f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
- }
- __setup("mphash_entries=", set_mphash_entries);
- 
-+static char * __initdata rootfs_flags;
-+static int __init rootfs_flags_setup(char *str)
-+{
-+	rootfs_flags = str;
-+	return 1;
-+}
-+
-+__setup("rootfsflags=", rootfs_flags_setup);
-+
- static u64 event;
- static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
- static DEFINE_IDA(mnt_group_ida);
-@@ -5677,7 +5686,7 @@ static void __init init_mount_tree(void)
- 	struct mnt_namespace *ns;
- 	struct path root;
- 
--	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
-+	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags);
- 	if (IS_ERR(mnt))
- 		panic("Can't create rootfs");
- 
--- 
-2.47.0
-
+regards
+Philipp
 
