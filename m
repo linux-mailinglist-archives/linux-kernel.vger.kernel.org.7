@@ -1,154 +1,110 @@
-Return-Path: <linux-kernel+bounces-768712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB083B26470
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:38:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C2CCB2646C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57C681C8554B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:39:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3A41C84F2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68BC2F39D8;
-	Thu, 14 Aug 2025 11:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79882EE29B;
+	Thu, 14 Aug 2025 11:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DcZYdkyJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NZrLUswu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4412E92D5;
-	Thu, 14 Aug 2025 11:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295B82BCF6C
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171516; cv=none; b=G4LQn1eAr9+OBAx4MtVlrGVVrjRMrW2xRJutcoROwORi0pbSsvlUbTuc8lHp5SZ+orZRc178F/cEmOa11V4O0cwTfoRqDxyUlz2ktJkRALS3FpwNW2VKjCpDdZHw44kuBqcQoBGvUi8xdNsfR7l7pANfMfb6bmExTGnfqquL92o=
+	t=1755171455; cv=none; b=ZJpgMwLimwaiiNqbdIIrtal3YR6UNROzIcEVyDMnUyhiyfT7CBCEZ3Mhy1i6hSeTmiI+/AGC+h0C/GO5jC7EbP54LmD96atktlknSjmY/SqTYHTmmrHGc9jqgersu8es4nb0rfgXjPheVWGi1XyC6ruqjxft4rmQi24Ye4lUOWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171516; c=relaxed/simple;
-	bh=0/kcF88SImS98m2EJ/3g0BxMqg048eR3mnkGCn/omCw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KE+wKrOl0D34Dj4fXshZ3iGz6tSje9QFAXxjG68YnchNNGRSbsuDcTt+NgSwMRRaQwAOVwJfXMd2ZoUHU3KAqLYA0FV1t9pDzvvVRt2zGn1RPUkFoqx2J+kKUL5zr5hJEolnBSzJbDVo0uiJmR5wEuYFS8Q8QOuWLIDIBB7Dy+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DcZYdkyJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from isaac-ThinkPad-T16-Gen-2.lan (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9620656D;
-	Thu, 14 Aug 2025 13:37:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1755171458;
-	bh=0/kcF88SImS98m2EJ/3g0BxMqg048eR3mnkGCn/omCw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DcZYdkyJtE7iKxlaazF5aqwf7ef1TLMB/qs+dLqzuAZa3jgIp/Z6xe897brQpiNcl
-	 EkuEOt/v/4yoW5I5FRAN2LikH7Qtz+hmf/lJWoGJxxbKSHrxIMgElYiiBNYn50djeE
-	 E+ZQhHj41JcoFWgQWcd9dRWL9vtGfVOSRBtdTYcM=
-From: Isaac Scott <isaac.scott@ideasonboard.com>
-To: linux-media@vger.kernel.org
-Cc: rmfrfs@gmail.com,
-	laurent.pinchart@ideasonboard.com,
-	martink@posteo.de,
-	kernel@puri.sm,
-	mchehab@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Isaac Scott <isaac.scott@ideasonboard.com>
-Subject: [PATCH] imx-mipi-csis: Get the number of active lanes from mbus_config
-Date: Thu, 14 Aug 2025 12:37:01 +0100
-Message-ID: <20250814113701.165644-1-isaac.scott@ideasonboard.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1755171455; c=relaxed/simple;
+	bh=m92ZkHYBwGSR/MWGeeE7TM23PRZOOX3uclgnrUE8vxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iBWPAs9tlI+U0S6X0fJWoM1TnWYr58fJHKRxAqKrfKmS4dlxTK9cSTFRaAeB5oOz+uy+xe5jSwsInrWBbccuWYev8U4fxnElQAnZbCqFq9jVupUE7E6x/rkJtbx0ZRY5Ntn2wL8ldTW/xMsseoEghLugSAZSE6cl4tKg9JQDu3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NZrLUswu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19ECFC4CEED;
+	Thu, 14 Aug 2025 11:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755171453;
+	bh=m92ZkHYBwGSR/MWGeeE7TM23PRZOOX3uclgnrUE8vxI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NZrLUswurNZ3RhMLS0zNJ69M/Bmo8dzo3XdiNkD0YpAgqaqdZTt8QOoTaAW13EtWM
+	 qOGneKYMg/BNf4zDcsnKmHURHXfxx/wm6QYgqouAD+nxSDCNvl5NNN8/7w+7l5VFLL
+	 d2fEgNGRXN3b714NxZWbeBIUH4z8qI6r35HNrNug=
+Date: Thu, 14 Aug 2025 13:37:29 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Wang Wensheng <wangwensheng4@huawei.com>
+Cc: rafael@kernel.org, dakr@kernel.org, tglx@linutronix.de,
+	saravanak@google.com, robh@kernel.org, broonie@kernel.org,
+	linux-kernel@vger.kernel.org, chenjun102@huawei.com
+Subject: Re: [PATCH 1/3] driver core: Fix concurrent problem of
+ deferred_probe_extend_timeout()
+Message-ID: <2025081416-reverb-unaired-1de9@gregkh>
+References: <20250814111023.2693-1-wangwensheng4@huawei.com>
+ <20250814111023.2693-2-wangwensheng4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814111023.2693-2-wangwensheng4@huawei.com>
 
-Although 4 lanes may be physically available, we may not be using all of
-them. Get the number of configured lanes in the case a driver has
-implemented the get_mbus_config op.
+On Thu, Aug 14, 2025 at 07:10:21PM +0800, Wang Wensheng wrote:
+> The deferred_probe_timeout_work may be canceled forever unexpected when
+> deferred_probe_extend_timeout() executes concurrently. Start with
+> deferred_probe_timeout_work pending, and the problem would
+> occur after the following sequence.
+> 
+>          CPU0                                 CPU1
+> deferred_probe_extend_timeout
+>   -> cancel_delayed_work => true
+>                                      deferred_probe_extend_timeout
+>                                        -> cancel_delayed_wrok
+>                                          -> __cancel_work
+>                                            -> try_grab_pending
+>   -> schedule_delayed_work
+>    -> queue_delayed_work_on
+> since pending bit is grabbed,
+> just return without doing anything
+>                                         -> set_work_pool_and_clear_pending
+>                                      this __cancel_work return false and
+>                                      the work would never be queued again
+> 
+> The root cause is that the PENDING_BIT of the work_struct would be set
+> temporaily in __cancel_work and this bit could prevent the work_struct
+> to be queued in another CPU.
+> 
+> Use deferred_probe_mutex to protect the cancel and queue operations for
+> the deferred_probe_timeout_work to fix this problem.
+> 
+> Fixes: 2b28a1a84a0e ("driver core: Extend deferred probe timeout on driver registration")
+> Signed-off-by: Wang Wensheng <wangwensheng4@huawei.com>
+> ---
+>  drivers/base/dd.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 13ab98e033ea..1983919917e0 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -323,6 +323,7 @@ static DECLARE_DELAYED_WORK(deferred_probe_timeout_work, deferred_probe_timeout_
+>  
+>  void deferred_probe_extend_timeout(void)
+>  {
+> +	mutex_lock(&deferred_probe_mutex);
 
-Signed-off-by: Isaac Scott <isaac.scott@ideasonboard.com>
+Perhaps use a guard() instead?
 
----
+thanks,
 
-Currently, the imx-mipi-csis driver parses the device tree to determine
-the number of configured lanes for the CSI receiver. This may be
-incorrect in the case that the connected device only uses a subset of
-lanes, for example. Allow the drivers for these cameras to create a
-mbus_config to configure the number of lanes that are actually being
-used.
-
-If the driver does not support the get_mbus_config op, this patch will
-have no functional change.
-
-Compile tested against media-master (v6.17-rc1)
----
- drivers/media/platform/nxp/imx-mipi-csis.c | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
-index 2beb5f43c2c0..efe4e2ad0382 100644
---- a/drivers/media/platform/nxp/imx-mipi-csis.c
-+++ b/drivers/media/platform/nxp/imx-mipi-csis.c
-@@ -939,6 +939,43 @@ static struct mipi_csis_device *sd_to_mipi_csis_device(struct v4l2_subdev *sdev)
- 	return container_of(sdev, struct mipi_csis_device, sd);
- }
- 
-+static int mipi_csis_get_active_lanes(struct v4l2_subdev *sd)
-+{
-+	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
-+	struct v4l2_mbus_config mbus_config = { 0 };
-+	int ret;
-+
-+	ret = v4l2_subdev_call(csis->source.sd, pad, get_mbus_config,
-+			       0, &mbus_config);
-+	if (ret == -ENOIOCTLCMD) {
-+		dev_dbg(csis->dev, "No remote mbus configuration available\n");
-+		return 0;
-+	}
-+
-+	if (ret) {
-+		dev_err(csis->dev, "Failed to get remote mbus configuration\n");
-+		return ret;
-+	}
-+
-+	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
-+		dev_err(csis->dev, "Unsupported media bus type %u\n",
-+			mbus_config.type);
-+		return -EINVAL;
-+	}
-+
-+	if (mbus_config.bus.mipi_csi2.num_data_lanes > csis->bus.num_data_lanes) {
-+		dev_err(csis->dev,
-+			"Unsupported mbus config: too many data lanes %u\n",
-+			mbus_config.bus.mipi_csi2.num_data_lanes);
-+		return -EINVAL;
-+	}
-+
-+	csis->bus.num_data_lanes = mbus_config.bus.mipi_csi2.num_data_lanes;
-+	dev_dbg(csis->dev, "Number of lanes: %d\n", csis->bus.num_data_lanes);
-+
-+	return 0;
-+}
-+
- static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
- {
- 	struct mipi_csis_device *csis = sd_to_mipi_csis_device(sd);
-@@ -965,6 +1002,10 @@ static int mipi_csis_s_stream(struct v4l2_subdev *sd, int enable)
- 	format = v4l2_subdev_state_get_format(state, CSIS_PAD_SINK);
- 	csis_fmt = find_csis_format(format->code);
- 
-+	ret = mipi_csis_get_active_lanes(sd);
-+	if (ret < 0)
-+		dev_dbg(csis->dev, "Failed to get active lanes: %d", ret);
-+
- 	ret = mipi_csis_calculate_params(csis, csis_fmt);
- 	if (ret < 0)
- 		goto err_unlock;
--- 
-2.43.0
-
+greg k-h
 
