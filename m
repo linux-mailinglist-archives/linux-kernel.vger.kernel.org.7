@@ -1,132 +1,94 @@
-Return-Path: <linux-kernel+bounces-769572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C551B2707A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:58:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294B8B27055
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A0325E0D4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8E603AD9B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FCB2741DA;
-	Thu, 14 Aug 2025 20:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9985C272E42;
+	Thu, 14 Aug 2025 20:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="T7RFPNCs";
-	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="AT0IcAYB"
-Received: from e3i331.smtp2go.com (e3i331.smtp2go.com [158.120.85.75])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6FBNlZ8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CF4273D8B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 20:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F20192D97;
+	Thu, 14 Aug 2025 20:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755205123; cv=none; b=ObvMnilqxvhYiEk0+FLFDnXkyAUiaLQoI7K/Injrwk3LPH13nGnr0IxYx/zDOyUitPbotC7bLNOGQfgFcQArkDmcYh6BcNVXdS+KAZXp9PZOAyQILxCV7awPI2lZqNPndwP9GVr54u0/HD3YRb6cu0eZpk8giFsAqos/y9l2G10=
+	t=1755204415; cv=none; b=dw6zv83PBDErfYMCrF6q6Dpq/ZwldMLAhd86jhCiJz/CnbOaQmJKyLYCNP+L5pQUuDn0FvOhV0CmDwonL2GtoD1OHuBW3+NLDOHgQPS3AmQ++E72ABew5VEtJqhCUbIPFnfmPxCa0hODI4BbwC33M8VUU5P3TMQ1tGacJv42jCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755205123; c=relaxed/simple;
-	bh=j4AA4nQmJFlRP0/NnrzhPFhnYH+laj8mwQr9FuaC+Hs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EwXOOYACbZQgmCItNU8ebECfQG2BqZRJGC2vk6nSxzdqVH4Te+/wZLutifcD0c7tRvkCrzcDmV9vB2SVYcfjBq54Io9LSthaEor1DUALpWxdBg6uzm9kk2h+P42KYAK1PDEq6npHeEA0BpENLeTzXHPqZko/tdtIqavDt4a+7nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=T7RFPNCs; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=AT0IcAYB; arc=none smtp.client-ip=158.120.85.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
- i=@smtpservice.net; q=dns/txt; s=a1-4; t=1755205112; h=feedback-id :
- x-smtpcorp-track : date : message-id : to : subject : from : reply-to
- : sender : list-unsubscribe : list-unsubscribe-post;
- bh=OKTSY4z8mDWV1jZSFIOngnqYhOU+OVtxrQywDa1UHlk=;
- b=T7RFPNCswxfG+Px0wUfRTkTnDWTYTV4SIN07Sxmuc8oX86DzbFj/5VMqeQ2nS06inrBXN
- Yg0mORuaXHQHeW2IykJZwh3WjQfLYf3DSCPpaMSvn1IXhdNgj0XFi3o5cjNUz0coDDLyhnK
- CxL70Tq1Cu6apCtL9T5noiyE/neShR7TzDw4xP5thBOaedAH9tjof0TCsfXwr9YEeIhtMI+
- DCQBb3zwMNbeS3iX2SIIlXhkNThGQ9p7QQ/UEmkpU6kLnmRGPef80H30so0t0qctQSpOPOD
- Y5ecFT30UiWSVL9DUt3fCr7HSs9aiIyoTJO3PcOzzgSlmSgd5hR9KEP4lMrw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
- i=@medip.dev; q=dns/txt; s=s1255854; t=1755205112; h=from : subject :
- to : message-id : date;
- bh=OKTSY4z8mDWV1jZSFIOngnqYhOU+OVtxrQywDa1UHlk=;
- b=AT0IcAYBasWRGX4kqriR/wjje3eaPse40u3ghLr5fgS8UvpL6xCwQomC6W7o6iZVNzMrL
- qRQfJvkrlQdooyA8ijUReGGKj4tnW1h4vpfDw9LgqShyzEtTyO19Zr3q9l7fmZsjDls+3le
- MOLetYCjF3iycYCNQYNthGznCTpFjLH1qHBpxVfiOnSMOpAx05KzobIaPn8vFxNYA4/PB/I
- 8xGo2wP1Yrjh9aXTuGgrmrWgF7s0OiOGorQBLUbKN66PpaHZDbxP6K/Yj9F3Sr1JzDCkNZM
- TGWteDlTULZrMF6Z6IRK5P3jITS1qIFjs7+7+fdHQ0DRGwltrD8Rmpzm3++w==
-Received: from [10.152.250.198] (helo=vilez)
-	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.1-S2G)
-	(envelope-from <edip@medip.dev>)
-	id 1umf1i-FnQW0hPzmup-Oj4z;
-	Thu, 14 Aug 2025 20:58:23 +0000
-From: edip@medip.dev
-To: ilpo.jarvinen@linux.intel.com,
-	hansg@kernel.org,
-	kuba@kernel.org
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Edip Hazuri <edip@medip.dev>
-Subject: [PATCH v2] platform/x86: hp-wmi: Add support for Fn+P hotkey
-Date: Thu, 14 Aug 2025 23:45:32 +0300
-Message-ID: <20250814204529.18467-4-edip@medip.dev>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755204415; c=relaxed/simple;
+	bh=neGWU7vECFARydWtFvZZfMZV4xCQwz1K7pRfXsgrrok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSaMkgLQWigdPKc8WBPfleSBRfXUsSGvrw/OY9dS69E+15YR7O8yf6C4u0wUZs1CdvB4XVV/3hPx2mei0j3UbcX5A8PvnF0LHjBIIiCw5oZS9f0MdAhtERLVma1p1MfUri+mdyzOM6apBGxPlSO5pfULBcDjqPlNMtOQgB7ZQug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6FBNlZ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34ED3C4CEED;
+	Thu, 14 Aug 2025 20:46:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755204414;
+	bh=neGWU7vECFARydWtFvZZfMZV4xCQwz1K7pRfXsgrrok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P6FBNlZ81uQctGynrhYmjQLIIqw0Xw+00fZB5IrMaeXhhrSRqBtRle4jgRm+/fV2R
+	 0KK7v6WJfox3KHjJdVINsGnXLaxXW7AVpyYEe2LIwsZr/DYIcHChmKS+nBMMTT0ioM
+	 L8HAVfNlBjZMsL37ZBMU/GMJ0dd7HUrrqu76LNKcZmocl6SYk4RX2OUuOSkxSJg0yS
+	 NuKNrX4A+pQ2oqHv0xysbifcm8zJQYvtD9tTzLZF6RKqe2J2mO5onBsFSnuaZVvc6i
+	 GvFYicjNzzignsSI5FdJujy6Ix93ridsjRkwbkUt09QnpTbHtFXNaXHojc5pBd27Rj
+	 Fx1GmF/uPxLHw==
+Date: Thu, 14 Aug 2025 21:46:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Anshul Dalal <anshuld@ti.com>
+Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] dt-bindings: arm: ti: Add binding for AM625 SiP
+Message-ID: <20250814-cozily-detoxify-2af8ad2f6aa4@spud>
+References: <20250814134531.2743874-1-anshuld@ti.com>
+ <20250814134531.2743874-3-anshuld@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
-Feedback-ID: 1255854m:1255854ay30w_v:1255854sCbqN4Q8xq
-X-smtpcorp-track: XvbZjI3C9xIN.PbFzad5z-c1n.nMFIQACT6yN
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1u2YrZR9/qfG23tg"
+Content-Disposition: inline
+In-Reply-To: <20250814134531.2743874-3-anshuld@ti.com>
 
-From: Edip Hazuri <edip@medip.dev>
 
-Add support for the Fn+P hotkey found on newer HP Victus (and probably
-newer Omen) laptops. This hotkey is intended for use with Omen Gaming Hub
-to change the performance profile (see [1]).
+--1u2YrZR9/qfG23tg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Pressing Fn+P under linux produced the following warning in dmesg:
+On Thu, Aug 14, 2025 at 07:15:28PM +0530, Anshul Dalal wrote:
+> The AM6254atl SiP belongs to the K3 Multicore SoC architecture platform,
+> providing AM625 SoC with 512MiB of integrated DDR in the package.
+>=20
+> For further information about the package check:
+> https://www.ti.com/lit/ds/symlink/am625sip.pdf
+>=20
+> Signed-off-by: Anshul Dalal <anshuld@ti.com>
 
-> hp_wmi: Unknown event_id - 27 - 0x7
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Implemented a handling for this event so that the hotkey cycles between the
-platform profiles when triggered.
+--1u2YrZR9/qfG23tg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tested on Victus 16-s1011nt (9Z791EA, MB 8C9C).
+-----BEGIN PGP SIGNATURE-----
 
-Changes in v2:
-- Make the key just switches between platform profiles instead of
-  assigning a key event code. 
-- v1: https://lore.kernel.org/all/20250802213541.18791-2-edip@medip.dev/
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ5LOQAKCRB4tDGHoIJi
+0jRTAQDG007EXoqZ3YAvhQMuwDFk0hZscgreLteavw7D5mHFDwEAqG5AXct6syKf
+dcR5etysIhVtAL2OcqL4xUXkzpyUrgk=
+=LZZv
+-----END PGP SIGNATURE-----
 
-[1]: https://jpcdn.it/img/adadf6c927ffeb75afd8038f95db400a.png
-
-Signed-off-by: Edip Hazuri <edip@medip.dev>
----
- drivers/platform/x86/hp/hp-wmi.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
-index db5fdee2109..c712d5bdaa1 100644
---- a/drivers/platform/x86/hp/hp-wmi.c
-+++ b/drivers/platform/x86/hp/hp-wmi.c
-@@ -122,6 +122,7 @@ enum hp_wmi_event_ids {
- 	HPWMI_BATTERY_CHARGE_PERIOD	= 0x10,
- 	HPWMI_SANITIZATION_MODE		= 0x17,
- 	HPWMI_CAMERA_TOGGLE		= 0x1A,
-+	HPWMI_FN_P_HOTKEY		= 0x1B,
- 	HPWMI_OMEN_KEY			= 0x1D,
- 	HPWMI_SMART_EXPERIENCE_APP	= 0x21,
- };
-@@ -981,6 +982,9 @@ static void hp_wmi_notify(union acpi_object *obj, void *context)
- 						key_code, 1, true))
- 			pr_info("Unknown key code - 0x%x\n", key_code);
- 		break;
-+	case HPWMI_FN_P_HOTKEY:
-+		platform_profile_cycle();
-+		break;
- 	case HPWMI_OMEN_KEY:
- 		if (event_data) /* Only should be true for HP Omen */
- 			key_code = event_data;
--- 
-2.50.1
-
+--1u2YrZR9/qfG23tg--
 
