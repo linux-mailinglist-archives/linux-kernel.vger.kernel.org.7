@@ -1,279 +1,97 @@
-Return-Path: <linux-kernel+bounces-769116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81AE0B26A64
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:03:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3A7B26A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09D435E68D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 773211894B68
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71E720CCCA;
-	Thu, 14 Aug 2025 14:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AE71E1DEC;
+	Thu, 14 Aug 2025 14:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k9kGeDTd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtTsyw19"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4BD2040A8;
-	Thu, 14 Aug 2025 14:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4658415A87C;
+	Thu, 14 Aug 2025 14:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183291; cv=none; b=ukipaxrEi+caFQLOFwLR4CNFSvxFctb63H1T2m4UnTaE80ruZ+gkfNhf4jQVYNEvSs11/1w7VCqaPqkcYTvAYb3gPRu4fUqh9CPJv4uK+X8Emnhqq56OgJ9rySy2nvN5NmH+xdME64sJVrbx+jVr92/y54JPzcJ9s79M/S9GCgI=
+	t=1755183445; cv=none; b=nbG1N9NdtE+5ei8PeKSx9h3KMT49Kw+T6YnmMtiZMD40C/ZdpI73IbCOmKGZW0AWJFBCKuvaTlryh/bQO2Q+TnR8nut97xA1r2Gx3jGYoykvKrYfGxsri3pCTiHxHg1HRyijAPpMFJVC6PgC/UURBefG0OPSjaK6Z9WwaqaxKt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183291; c=relaxed/simple;
-	bh=T1MIb+QFNfrqBlkuPi1ds1bFf8B8Yu6cDArngytnzYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RgSTK5tuKh1xg1MD3kTiuzLm3cT/ab3hraELD20be2chOrjid8gNHrr+hbq00a+LWSHJL7iLVU9o18IBEzj8NJY9YOY63LDKQs9lJaskEFbjcPAW726Nk1gn44aI2k/ZSRmv4SykWlnpG8d99Ui9tssfvaXT1kMvYSa+eoep+UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k9kGeDTd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E9RBHd011072;
-	Thu, 14 Aug 2025 14:54:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Zaix1i0VdpwvKc2SzWpdkY+gpspd6gDqgtySPVUXzxE=; b=k9kGeDTdJ7VUHo9M
-	RMoMkAw/rsaauOd/svtvuayLnDLepp17DmF1zubCc61Ya3iVSMLxUaG9nbGjiMpk
-	KsmInAvJi810XsbKmMr4rdFTSFmX5XHooAXPVjUWAxXiBKNd0JYk0uTvx4T1cEQC
-	fz3Fc8m9Zcv0jaF43Q8tjin5s7yWJ4on/X9pxE5t5iTGF4Ue45VzZsHeAa8F4wcV
-	7Pjv/gWmy91JMfRWKnrOlnbRZWwCn9QH2+q6GYARh93nUnoOQf3GCRbIuZwKup5a
-	Q2ALP25cicql7EunTX84FHEA298JWLB7dXoVbit7agWE3+zHQFKdfy2c0uMVUnZo
-	tZ3TGg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fjxbk87a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 14:54:43 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57EEsg31003033
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 14:54:42 GMT
-Received: from [10.216.25.245] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
- 2025 07:54:38 -0700
-Message-ID: <35023387-c0f3-8c55-c6e5-8e3faad31c34@quicinc.com>
-Date: Thu, 14 Aug 2025 20:24:34 +0530
+	s=arc-20240116; t=1755183445; c=relaxed/simple;
+	bh=bLAHQLb9+poQkaztCxX9pjVXTn82TD+7a4KBsnS89N8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ShLLpQpwSsBmHp3FnqxrYQG+8kqURCbC0ZInLnkVb+FdJIsIUR9sayL+EczjS2GQIWJQxDQTLIlj2tiEtP33u3iBGqiXcRVbFPL+kZSRIEhW1yf+JSUh7jdaj4tPUQxcl3rU2p4H+aVPAw6YTvStCIvhmU+JGv22teq++czpWVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NtTsyw19; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E54AC4CEED;
+	Thu, 14 Aug 2025 14:57:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755183444;
+	bh=bLAHQLb9+poQkaztCxX9pjVXTn82TD+7a4KBsnS89N8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=NtTsyw197VcNICyYl7Yhu5nJnVUlGMti8m9256ByjsHpCwJcxgcqf0bJpHVxiNEZK
+	 PCZIX95P/iRsU7bQPW2HJV10SO3PQk3o+jx0B5b1sHfpEegUjirJeO3BEGP+zLmYAf
+	 S9LbNqEHArezN3T5F7JssQf5sRqmSOErRCxNitr4xc2BOahqS86T2ndCAeQv0IInEl
+	 c+DE42BMCpRHEd9fjdQ8OQUulhwpLU6CObjXu3rnJ4X4S2FM1o6qOQa+qjDjBI0FnY
+	 6rnZ3gojC5Jc+2/tBbPXtAzvDewBvnCf13ZZKRytz9WYOwDMjIyVplkr/iMy9U1JmS
+	 nHdncdmpPloVw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: achill@achill.org,
+	akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
+Date: Thu, 14 Aug 2025 16:57:17 +0200
+Message-ID: <20250814145717.2343377-1-ojeda@kernel.org>
+In-Reply-To: <20250812173419.303046420@linuxfoundation.org>
+References: <20250812173419.303046420@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 17/24] media: iris: Add support for G/S_SELECTION for
- encoder video device
-Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Renjiang Han <quic_renjiang@quicinc.com>,
-        Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
- <20250813-iris-video-encoder-v2-17-c725ff673078@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20250813-iris-video-encoder-v2-17-c725ff673078@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=G6EcE8k5 c=1 sm=1 tr=0 ts=689df8b3 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=_y5WQDK20XwvR4L1WIkA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA5NyBTYWx0ZWRfXx4MEok46U6YZ
- IqcdXVi3L60nCjzPcionYv1TW6svaWDmbTwbrqgIdhyvElVUlxFItLo4cpxrHzfbjbmvXOvMUkS
- wdcdEsLaRpdDDU1Emn08QSXyFlPUIeTYc2WPxHvWR5k5aiITjQsUt8O7fGzs2O1IXAVXw779AKB
- 5gzrzhEEY+tCAq1N9vmAl/Acvdz6tSfsV2p5LEkjS33R8o3bsHdmoqiq/vcsR0hCmXmP7hHyYfx
- Rf0VV519tuzUGbFxd2yN2keBSkflJJhaMnth085n3C4YK4bCIl8ClD5eMQuQQo1X3t/gsyfMI7r
- Fx8mNXlM+pKRQ6C7Lx9Vi4LobP1OCSMUXXKzIw7VqftUkTZg1SdQte9VAwlE7eYPif/bWdWhdPZ
- bit60tRF
-X-Proofpoint-ORIG-GUID: sXh5zGDFbsmqp3BYb_6bqj2lZQwKmqno
-X-Proofpoint-GUID: sXh5zGDFbsmqp3BYb_6bqj2lZQwKmqno
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110097
+Content-Transfer-Encoding: 8bit
 
+On Tue, 12 Aug 2025 19:24:55 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.1 release.
+> There are 627 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 14 Aug 2025 17:32:40 +0000.
+> Anything received after that time might be too late.
 
+Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
+for loongarch64:
 
-On 8/13/2025 3:08 PM, Dikshita Agarwal wrote:
-> Add support for G/S_SELECTION V4L2 ioctls for the encoder video
-> device with necessary hooks. This allows userspace to query and
-> configure rectangular selection areas such as crop.
-> 
-> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->  drivers/media/platform/qcom/iris/iris_venc.c | 28 ++++++++++++
->  drivers/media/platform/qcom/iris/iris_venc.h |  1 +
->  drivers/media/platform/qcom/iris/iris_vidc.c | 65 ++++++++++++++++++++++------
->  3 files changed, 80 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
-> index 3dbcce23cbe94cf0edc4421694a3ba11faa5eb96..930f5afe9489d01be193f1dbe429d33f5401b468 100644
-> --- a/drivers/media/platform/qcom/iris/iris_venc.c
-> +++ b/drivers/media/platform/qcom/iris/iris_venc.c
-> @@ -297,3 +297,31 @@ int iris_venc_subscribe_event(struct iris_inst *inst,
->  		return -EINVAL;
->  	}
->  }
-> +
-> +int iris_venc_s_selection(struct iris_inst *inst, struct v4l2_selection *s)
-> +{
-> +	if (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> +		return -EINVAL;
-> +
-> +	switch (s->target) {
-> +	case V4L2_SEL_TGT_CROP:
-> +		s->r.left = 0;
-> +		s->r.top = 0;
-> +
-> +		if (s->r.width > inst->fmt_src->fmt.pix_mp.width ||
-> +		    s->r.height > inst->fmt_src->fmt.pix_mp.height)
-> +			return -EINVAL;
-> +
-> +		inst->crop.left = s->r.left;
-> +		inst->crop.top = s->r.top;
-> +		inst->crop.width = s->r.width;
-> +		inst->crop.height = s->r.height;
-> +		inst->fmt_dst->fmt.pix_mp.width = inst->crop.width;
-> +		inst->fmt_dst->fmt.pix_mp.height = inst->crop.height;
-> +		return iris_venc_s_fmt_output(inst, inst->fmt_dst);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-Why do you need a return here ?
+Thanks!
 
-> +}
-> diff --git a/drivers/media/platform/qcom/iris/iris_venc.h b/drivers/media/platform/qcom/iris/iris_venc.h
-> index 2d9614ae18e8a2318df6673fbeae5ee33c99b596..72c6e25d87113baa6d2219ae478b7d7df1aed7bf 100644
-> --- a/drivers/media/platform/qcom/iris/iris_venc.h
-> +++ b/drivers/media/platform/qcom/iris/iris_venc.h
-> @@ -15,5 +15,6 @@ int iris_venc_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
->  int iris_venc_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
->  int iris_venc_validate_format(struct iris_inst *inst, u32 pixelformat);
->  int iris_venc_subscribe_event(struct iris_inst *inst, const struct v4l2_event_subscription *sub);
-> +int iris_venc_s_selection(struct iris_inst *inst, struct v4l2_selection *s);
->  
->  #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
-> index d8c94074153e9b1ceac4f911210ddbf89bbe3533..2074682a35fd1c4c9f5d29fdaee3392d98bf8923 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
-> @@ -462,29 +462,64 @@ static int iris_g_selection(struct file *filp, void *fh, struct v4l2_selection *
->  {
->  	struct iris_inst *inst = iris_get_inst(filp, NULL);
->  
-> -	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-> +	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE &&
-> +	    inst->domain == DECODER)
->  		return -EINVAL;
->  
-> -	switch (s->target) {
-> -	case V4L2_SEL_TGT_CROP_BOUNDS:
-> -	case V4L2_SEL_TGT_CROP_DEFAULT:
-> -	case V4L2_SEL_TGT_CROP:
-> -	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
-> -	case V4L2_SEL_TGT_COMPOSE_PADDED:
-> -	case V4L2_SEL_TGT_COMPOSE_DEFAULT:
-> -	case V4L2_SEL_TGT_COMPOSE:
-> +	if (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT &&
-> +	    inst->domain == ENCODER)
-> +		return -EINVAL;
-> +
-> +	if (inst->domain == DECODER) {
-> +		switch (s->target) {
-> +		case V4L2_SEL_TGT_CROP_BOUNDS:
-> +		case V4L2_SEL_TGT_CROP_DEFAULT:
-> +		case V4L2_SEL_TGT_CROP:
-> +		case V4L2_SEL_TGT_COMPOSE_BOUNDS:
-> +		case V4L2_SEL_TGT_COMPOSE_PADDED:
-> +		case V4L2_SEL_TGT_COMPOSE_DEFAULT:
-> +		case V4L2_SEL_TGT_COMPOSE:
-> +			s->r.left = inst->crop.left;
-> +			s->r.top = inst->crop.top;
-> +			s->r.width = inst->crop.width;
-> +			s->r.height = inst->crop.height;
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	} else if (inst->domain == ENCODER) {
-> +		switch (s->target) {
-> +		case V4L2_SEL_TGT_CROP_BOUNDS:
-> +		case V4L2_SEL_TGT_CROP_DEFAULT:
-> +			s->r.width = inst->fmt_src->fmt.pix_mp.width;
-> +			s->r.height = inst->fmt_src->fmt.pix_mp.height;
-> +			break;
-> +		case V4L2_SEL_TGT_CROP:
-> +			s->r.width = inst->crop.width;
-> +			s->r.height = inst->crop.height;
-> +			break;
-> +		default:
-> +			return -EINVAL;
-> +		}
->  		s->r.left = inst->crop.left;
->  		s->r.top = inst->crop.top;
-> -		s->r.width = inst->crop.width;
-> -		s->r.height = inst->crop.height;
-> -		break;
-> -	default:
-> -		return -EINVAL;
->  	}
->  
->  	return 0;
->  }
->  
-> +static int iris_s_selection(struct file *filp, void *fh, struct v4l2_selection *s)
-> +{
-> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
-
-s->r.left and s->r.top are signed and can be negative. Need to range bound
-within 0 to src dimension ?
-
-> +
-> +	if (inst->domain == DECODER)
-> +		return -EINVAL;
-> +	else if (inst->domain == ENCODER)
-> +		return iris_venc_s_selection(inst, s);
-> +
-> +	return -EINVAL;
-> +}
-> +
->  static int iris_subscribe_event(struct v4l2_fh *fh, const struct v4l2_event_subscription *sub)
->  {
->  	struct iris_inst *inst = container_of(fh, struct iris_inst, fh);
-> @@ -591,6 +626,8 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops_enc = {
->  	.vidioc_querycap                = iris_querycap,
->  	.vidioc_subscribe_event         = iris_subscribe_event,
->  	.vidioc_unsubscribe_event       = v4l2_event_unsubscribe,
-> +	.vidioc_g_selection             = iris_g_selection,
-> +	.vidioc_s_selection             = iris_s_selection,
->  };
->  
->  void iris_init_ops(struct iris_core *core)
-> 
+Cheers,
+Miguel
 
