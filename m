@@ -1,160 +1,221 @@
-Return-Path: <linux-kernel+bounces-768068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30943B25C96
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:05:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18F7DB25C9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8534958186B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:04:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60071C27055
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32EE526A08A;
-	Thu, 14 Aug 2025 07:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3A02641C6;
+	Thu, 14 Aug 2025 07:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Gmx9gsIr"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOlEDaW5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B2E263F43;
-	Thu, 14 Aug 2025 07:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B553325A326;
+	Thu, 14 Aug 2025 07:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755155065; cv=none; b=Uy+QbQXrB2xSo38JTZKlbp1s48E3ZwZ6aQaKP/g98F0WBRsnxg2ai6lLmJ6FNaeJyys/7x3mVq6mXCHt8/Ldtw+bK0R/bMp3xGf0DgssSOJq1AHMlu1JVaUa7vOkxnEcNyLrPI9tlcbB/dblOtF0Vyp1jmEMo//EG3EkiVLdmzg=
+	t=1755155052; cv=none; b=qVaOdipGv9V4BWAN0FCQg8A+6nDna5chfEeA9BI9BoH6uG5o7/9zK8bXwUfw29fg0diSJlQfCIajiFvRngoPAhym6Pfet5yaPU9ny/XqeqBbmMmCSKez4AdIQ7uWGMExJ6YzRg07jiuurDqP7tTrxVbHqKDkgRUAnbrQj7eT0TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755155065; c=relaxed/simple;
-	bh=e1sgwx8KRJWlbhltQvSaPfHyJiGCS4/cY8PihFhlS5Y=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l7FRzF4P1V+QKMnBP/f1/8OGT2X5K1vw0UM/cmlgexBAM6ve4EkVx7Phr1vAqh1bKXFa5lacP2QEL/u4pM+8TsjMkE+qIgnZu32aOwFhLEbES1tjwGHzlpCiDpe8RlTXkOkUr2F4k+NiwxnJBCOER1Bh3Ye+JoR6AOFQuEintVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Gmx9gsIr; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: e2438ee078dc11f08729452bf625a8b4-20250814
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=5Mv8o+CLdc0s+Yis2yYmhEh9yXB8UEN1ytQldmXuX9Q=;
-	b=Gmx9gsIr6s/K16cRT04K54MrEGwA43He2tzcll6vSyUdlHbyoDtxynLjf1thAt97/5TqADwsn4SK6/TjI9HmCgAXrFe1idZBBGNn/OlWAQuvuJu3aleiMIp8fr3a5HcQ3TNkUxZw1xAK9r8GYFtkOuuCGKa1CUxdWoV7JR2bRpY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.3,REQID:dd46fea3-4876-420b-96c8-4b70cf643c7a,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:f1326cf,CLOUDID:c2407844-18c5-4075-a135-4c0afe29f9d6,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: e2438ee078dc11f08729452bf625a8b4-20250814
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <xiandong.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1528078012; Thu, 14 Aug 2025 15:04:13 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Thu, 14 Aug 2025 15:04:11 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Thu, 14 Aug 2025 15:04:11 +0800
-From: Xiandong Wang <xiandong.wang@mediatek.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Houlong Wei
-	<houlong.wei@mediatek.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<sirius.wang@mediatek.com>, <vince-wl.liu@mediatek.com>,
-	<jh.hsu@mediatek.com>, <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Xiandong Wang <xiandong.wang@mediatek.com>
-Subject: [PATCH v1 4/4] [v1,04/04]mailbox: mtk-cmdq: modify clk api for suspend/resume
-Date: Thu, 14 Aug 2025 15:03:56 +0800
-Message-ID: <20250814070401.13432-4-xiandong.wang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250814070401.13432-1-xiandong.wang@mediatek.com>
-References: <20250814070401.13432-1-xiandong.wang@mediatek.com>
+	s=arc-20240116; t=1755155052; c=relaxed/simple;
+	bh=7pJ0Fl261mW06QcqNKqe/+yuvQAesZpRiKlzp/hYupk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jvp6WGAr32t5Kc8yXYPe0H98KJ2NJzhPxhUzQzgD9MvpLef5LKtDRKL5NAuip1EfWYHtEnZWKiTgEn9lbCpsD3biq6bmoLnRgXTZTpoyEZrcIAk8MEdXCAWgqAKfDsBsB9aSp2dOjeh0Qyfx+9ifkO7ZUKSMuQDuKM2UrRUeWuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOlEDaW5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFBB6C4CEEF;
+	Thu, 14 Aug 2025 07:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755155052;
+	bh=7pJ0Fl261mW06QcqNKqe/+yuvQAesZpRiKlzp/hYupk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cOlEDaW5ECeXrzN6DPKXy+8yDJuFotlq5GGenZw4h+YwpzB27POapMjDf3zI2vNjr
+	 7NGamYhZSAESN4SQsIT14gGugSgp+qc5VyanSZjUgRXYx0EiQ5hlNzuM82YktHn1SC
+	 meXT1qphP5QpMiGzFMoBZHOkw6J7eCAHNu3buCi2dNwSVn4dR25j1/jqFCj5ZEzSzE
+	 BcbDoXXDkkfc3RYyRXcaUemNEndurNv9zZQrDzBFkaHHZPSJXDXNMTj/W9zW3U4vu1
+	 6OWOvaUk7zcckhKDF/u2VgIFRSlRKylp3gRiHycSNwAJK1zKdQlfobKZYwwDHXyE76
+	 DBbgISTw3I/0w==
+Message-ID: <ef95652d-eafd-45e1-9603-16c4edcb8e9e@kernel.org>
+Date: Thu, 14 Aug 2025 09:04:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC net-next 1/3] dt-bindings: net: dsa: yt921x: Add Motorcomm
+ YT921x switch support
+To: David Yang <mmyangfl@gmail.com>, netdev@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+ Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250814065032.3766988-1-mmyangfl@gmail.com>
+ <20250814065032.3766988-2-mmyangfl@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250814065032.3766988-2-mmyangfl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-modify the clk api for suspend and resume, modify the api for
-suspend and resume to disable/enable clk, so it can disable/enable
-module clk and parent clk successfully.
+On 14/08/2025 08:50, David Yang wrote:
+> The Motorcomm YT921x series is a family of Ethernet switches with up to
+> 8 internal GbE PHYs and up to 2 GMACs.
+> 
+> Signed-off-by: David Yang <mmyangfl@gmail.com>
+> ---
+>  .../bindings/net/dsa/motorcomm,yt921x.yaml    | 121 ++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml b/Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+> new file mode 100644
+> index 000000000000..2f0e4532e73e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/dsa/motorcomm,yt921x.yaml
+> @@ -0,0 +1,121 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/dsa/motorcomm,yt921x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Motorcomm YT921x Ethernet switch family
+> +
+> +maintainers:
+> +  - David Yang <mmyangfl@gmail.com>
+> +
+> +description: |
+> +  The Motorcomm YT921x series is a family of Ethernet switches with up to 8
+> +  internal GbE PHYs and up to 2 GMACs, including YT9213NB, YT9214NB, YT9215RB,
+> +  YT9215S, YT9215SC, YT9218N, YT9218MB.
+> +
+> +  For now, only YT9215 is supported.
 
-Signed-off-by: Xiandong Wang <xiandong.wang@mediatek.com>
----
- drivers/mailbox/mtk-cmdq-mailbox.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+Please describe complete hardware. Drivers are not relevant here and
+binding cannot support anything, thus this feels like comment about drivers.
 
-diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 92756f5793fa..aa004bcc2dea 100644
---- a/drivers/mailbox/mtk-cmdq-mailbox.c
-+++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -142,14 +142,14 @@ static void cmdq_init(struct cmdq *cmdq)
- {
- 	int i;
- 
--	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
-+	WARN_ON(clk_bulk_prepare_enable(cmdq->pdata->gce_num, cmdq->clocks));
- 
- 	cmdq_gctl_value_toggle(cmdq, true);
- 
- 	writel(CMDQ_THR_ACTIVE_SLOT_CYCLES, cmdq->base + CMDQ_THR_SLOT_CYCLES);
- 	for (i = 0; i <= CMDQ_MAX_EVENT; i++)
- 		writel(i, cmdq->base + CMDQ_SYNC_TOKEN_UPDATE);
--	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
-+	clk_bulk_disable_unprepare(cmdq->pdata->gce_num, cmdq->clocks);
- }
- 
- static int cmdq_thread_reset(struct cmdq *cmdq, struct cmdq_thread *thread)
-@@ -312,7 +312,7 @@ static int cmdq_runtime_resume(struct device *dev)
- 	struct cmdq *cmdq = dev_get_drvdata(dev);
- 	int ret;
- 
--	ret = clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
-+	ret = clk_bulk_prepare_enable(cmdq->pdata->gce_num, cmdq->clocks);
- 	if (ret)
- 		return ret;
- 
-@@ -325,7 +325,7 @@ static int cmdq_runtime_suspend(struct device *dev)
- 	struct cmdq *cmdq = dev_get_drvdata(dev);
- 
- 	cmdq_gctl_value_toggle(cmdq, false);
--	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
-+	clk_bulk_disable_unprepare(cmdq->pdata->gce_num, cmdq->clocks);
- 	return 0;
- }
- 
-@@ -364,12 +364,8 @@ static int cmdq_resume(struct device *dev)
- 
- static void cmdq_remove(struct platform_device *pdev)
- {
--	struct cmdq *cmdq = platform_get_drvdata(pdev);
--
- 	if (!IS_ENABLED(CONFIG_PM))
- 		cmdq_runtime_suspend(&pdev->dev);
--
--	clk_bulk_unprepare(cmdq->pdata->gce_num, cmdq->clocks);
- }
- 
- static int cmdq_mbox_send_data(struct mbox_chan *chan, void *data)
-@@ -684,8 +680,6 @@ static int cmdq_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, cmdq);
- 
--	WARN_ON(clk_bulk_prepare(cmdq->pdata->gce_num, cmdq->clocks));
--
- 	cmdq_init(cmdq);
- 
- 	err = devm_request_irq(dev, cmdq->irq, cmdq_irq_handler, IRQF_SHARED,
--- 
-2.45.2
+> +
+> +properties:
+> +  compatible:
+> +    const: motorcomm,yt9215
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    description: Optional gpio specifier for a reset line
 
+Drop comment, 100% redundant.
+
+> +    maxItems: 1
+> +
+> +  motorcomm,switch-id:
+> +    description: |
+> +      When managed via mdio, hard-configured switch id to distinguish between
+> +      multiple devices.
+
+IDs are not allowed.
+
+> +    enum: [0, 1, 2, 3]
+> +    default: 0
+> +
+> +  mdio:
+> +    $ref: /schemas/net/mdio.yaml#
+> +    unevaluatedProperties: false
+> +    description: MDIO bus for the internal GbE PHYs.
+> +
+> +  mdio-external:
+> +    $ref: /schemas/net/mdio.yaml#
+> +    unevaluatedProperties: false
+> +    description: External MDIO bus.
+> +
+> +    properties:
+> +      compatible:
+> +        const: motorcomm,yt921x-mdio-external
+
+Incomplete compatible... but also not needed in the first place.
+
+> +
+> +    required:
+> +      - compatible
+> +
+> +allOf:
+> +  - $ref: dsa.yaml#/$defs/ethernet-ports
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    mdio {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        switch@1d {
+> +            compatible = "motorcomm,yt9215";
+> +            reg = <0x1d>;
+> +
+
+Incomplete example. Where are all other properties?
+
+
+
+Best regards,
+Krzysztof
 
