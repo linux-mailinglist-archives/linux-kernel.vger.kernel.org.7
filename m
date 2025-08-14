@@ -1,169 +1,365 @@
-Return-Path: <linux-kernel+bounces-769062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AEC1B2699A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:38:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD2AB269DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3939268614C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:30:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECD276009D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A921C5486;
-	Thu, 14 Aug 2025 14:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06E71ADC93;
+	Thu, 14 Aug 2025 14:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y3gMih6V"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdjPo9IH"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A561C6FE9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED09C13BC3F;
+	Thu, 14 Aug 2025 14:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181805; cv=none; b=IoNsPIz9cP9ogk6v+HOU38Zm4xEXtlr32gsWXhtKyJUvmsCN9ehAI49K2IN737NQ9ZHh9GflPQF5+YJeKpZWop7GAOyfubn/RAgbydvaWbARA2v+OCfvjRAPHUWBr+R5mysYkAYxZli1DC3u7a5sYHv8Kdb7+kK6yRtxnhp2xJY=
+	t=1755181830; cv=none; b=TXejvrW0poICrHfV14rE1P/fJFvzCJQFc13LQNkKupKt+ZmOtfdDuKTJUBYtabEqQACH3b8zSLvxJ8wztjLzHOAcYpbbwDs7OR6ZXRFG2s7YpJPVBBv9rE3H1FlbIU1Okp21nueSa1O+Qtzb4B8lziXISPhyh6u6Tq3Lmx4ITGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181805; c=relaxed/simple;
-	bh=63Cw0XLiiKlCxqoz5QK1YjZONnB4ZwnZ/XbMj5jYIu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6l9Umk0D8S5vw+TJee0BYfVZMI3zZBIpoHi7VikNJTVMjr/yDP/k0dJ4wy8rC+NLruUZSk0mhm66gf0mBWzsempfNPzoFolmdC9EtlBPeuG9AwaRAZQ37FTWY+Fg9SlaUCoLCoLSQLXBfSomvKRQWC+uq5okmAO7rYpbmrw5JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y3gMih6V; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755181802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jS1cBufXR7O+XIh1qhOs8Yxdm44aMSMGnsrOgstYpyk=;
-	b=Y3gMih6VZ8oCKsme1pUrDh7Md2ZDjKWwkrLyp9FvwHGHFmdprZD1Mmo9H86/9s7XbRcWD8
-	sKCQvIQYSE+UK7rY/Wsaa8us2FmZxUdKLpugZStt0kNs1qHnhA1QnCpD9/nKBEZRTE+eFl
-	uVFDis7iSQ+dkitQXiEQGnf+wyPHXkQ=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-buVocEYeOFSOYuXCuFKh_w-1; Thu, 14 Aug 2025 10:30:01 -0400
-X-MC-Unique: buVocEYeOFSOYuXCuFKh_w-1
-X-Mimecast-MFC-AGG-ID: buVocEYeOFSOYuXCuFKh_w_1755181801
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-70a927f570eso21764066d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:30:01 -0700 (PDT)
+	s=arc-20240116; t=1755181830; c=relaxed/simple;
+	bh=LsXWAgytQViZTIZEaWmt0uVAM3ROWt00H+RjYm8GNsE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s0N3e7QO3DotEcRW94IxP9pgYJm55ZY7iAHUWN+WLSXP0M1zNtE06Fih0ZhrGZWk/CjJshuHkIbBEZQQdGy6hds7lXEyB97zDmqkeBOe5pfzkDQyqvMbP2PgebY/XLEVgHe9gI7ayPGtyWNOKwMRus99YYZCSdNW+0TRsvMQrWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdjPo9IH; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9e4193083so864998f8f.3;
+        Thu, 14 Aug 2025 07:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755181827; x=1755786627; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R4VZ4dhb8lx/T0ENCC0MClm4qNtbOJe+rhidjzoHI/g=;
+        b=YdjPo9IHPEzbFZ8A/IxyoZA499wxlGVes9wyWMebN2xmX6XDjLpurKKbCPeJshtJsD
+         qGBYNwCny5gLWkEuJ1+NSfBTe/NixFOfL4Ix/O65wVYxgasMEfsE+ODQq9hjRPZNXzY6
+         kkv4musmMCiT4VJ7IirvEKH+7XkVXeUsGrXEEku+9Y1FhYsHLdZdg9bjK1+nKfZiHwVu
+         szwyqY8Pd5CjufsKS/55Fd9fC5FaUnoOuO1Rv5LMouvsWgxZoSgPrf3zCDLjtq90RvXe
+         PTfFqgEN7JGTex3vfUTp1VHgAuh/mAcbrA/DDHuwhC6/cCPkF1Kxavb94xGxnuJfsiSN
+         +ikA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755181801; x=1755786601;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jS1cBufXR7O+XIh1qhOs8Yxdm44aMSMGnsrOgstYpyk=;
-        b=PXaYTUtAt/ng2yq/6ETOShNtLTfK4PaZgWRhIID0jqPpN+RyEPIN/AZpyID6Bd9vWB
-         Hf9WfS/N+dUprd70Kv/Jr6EgH/azM+/DjHGR2hKcRcGy/mQXlr/0BYQ5UphTjYh7cZCE
-         +OqB/XI01PhLqDfWukPMksaZC5XsSXQkXGqJAB77MaMXnG9cK2+pvGRGmCC11FWh55pZ
-         VJOhvTV6EMe80Jt3Uvy67Y02RgYcc1eD9LC2y5MRM7kKStJnN5TPOmxkoU83CjfPYo+u
-         0K4TJhkjAsGg8y9LpowHxAcmxCE5Ag+sf0uytQYsx8ZTWwBJcG6AXrK2Au2LI3URpMrX
-         Mwpw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0qpPRIiHaMHdGEC+Rga5P1qrFTnSsBO2oTN7+HFOGs3mGPBag0gHcnkh9W4ye/koViEiI9IrISpeV38Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEqmOJ6En63HyNb625EuZBbrEx64E39oKo0fNs2jLToCjs6W67
-	HXeQ+/pWH3U2w+VBv1S05tgEirDiDOCHhM3Cc3BJlqQGW3azJKrTiGY1Xpa4EAB3dssYYaeqCni
-	+jlnc8JPQLKfzArQ+7uyg3wEaRGHzQExawdU4RIjity2a00YbLkqLfLVbObl+CQaukw==
-X-Gm-Gg: ASbGncuhQ2etl5daHgM3qkSmwQX/MQOHNC5RneaJyMDh/awkkb2w0eNY3Dyqe7UzflT
-	mmg3rePxFfTUGG274nropkyBJ7BEW7HZPjnn1z3ZrJIs3/83GsV68z5VjmpagWbjc8lpm6PmJJI
-	SfFUuoCnPb8iQlcjV/UbX8//PGRGkqqMZP5pIf2usIqzblRkmf2y6tG5l7EaBijzHOUGbz2cNT7
-	wt4TBzkqitUYV85mqzn/PUKTrXDQJyh0VHn1va4ci0ye/uENVCOkzG9I+SVSCkrCzftuMeW/9wQ
-	aubyvvzEyIOFogZ0dxWyCQirv7bbp1HDRwB0qRtbMY+nMebJUd1edhz8Z17hDJAgwPhGkQ==
-X-Received: by 2002:a05:6214:240a:b0:709:22f1:d657 with SMTP id 6a1803df08f44-70af5e70e4bmr43264256d6.40.1755181800731;
-        Thu, 14 Aug 2025 07:30:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZW3Ke1rLyQz83YmDEoCCHcdXsqwaWLf8ag8VvALc+zUyyJP1FIUDJhqqCdZw8pCnAcv2uqg==
-X-Received: by 2002:a05:6214:240a:b0:709:22f1:d657 with SMTP id 6a1803df08f44-70af5e70e4bmr43263556d6.40.1755181800013;
-        Thu, 14 Aug 2025 07:30:00 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.57.62.225])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70af5b10152sm13597696d6.41.2025.08.14.07.29.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 07:29:59 -0700 (PDT)
-Date: Thu, 14 Aug 2025 16:29:53 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Yuri Andriaccio <yurand2000@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: Re: [RFC PATCH v2 19/25] sched/deadline: Allow deeper hierarchies of
- RT cgroups
-Message-ID: <aJ3y4YfcVQ-qVrxF@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250731105543.40832-1-yurand2000@gmail.com>
- <20250731105543.40832-20-yurand2000@gmail.com>
+        d=1e100.net; s=20230601; t=1755181827; x=1755786627;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=R4VZ4dhb8lx/T0ENCC0MClm4qNtbOJe+rhidjzoHI/g=;
+        b=efLTX9jl4jNjg4E5zyKIxQKA2kmO5ITic9UwuySWwETPrilEv4BzV/DtgW7OkZs0kC
+         20mCTTOo8PnA1tBqUAnVKxj4RhzaePJwYuvXKQovyRnUW5wrA3GQQvVhZFmM6mZzHA3G
+         xwba3iGaQilfWpjbYkfk8HLaSJXotSZGkqzSwev+lW8JaUJysdGv2oAx2l91sDIkTnmd
+         Au7jnB+2+/446deS2GvY54unSOhvE4UFgEA6lOPnJjFWhhWtz8myU8BHYftbq8s9gl7U
+         w6oJwKcbSclLJB8yez4b5A8PiScqhs1PDUOmZ7jRKX/fk8pj6g1o4inbLuSAPmgK0h6c
+         rBHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoRkG7CzCqaxKGSAVhDxVxFjXkm1aUytCwFMqq16Ti8XCzqFn376YLEUXNxbgm6/hcsq1A0as=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkqkvhsOY182BbT7e2mZbbITForj330jYZJVSkH6jurMWUCOk3
+	BX0B0OS3VEXK4LJhoQsyQkdTXGxN8wvELSvSldRAKUhahNvUTqk1I1M2
+X-Gm-Gg: ASbGncsdqEsrQgMvqxxHbXz7vbzln30iUB04RZKhj0F+nA+AMeRN1jc0EMsUrBrqNG7
+	qsAtdBAFdJYhaVcPCRYmZBP2ENdrTU/RenSyzMmDt+nHmQCCwkZkb57gPZh2BHkfWAvypCCo2em
+	7O+ol8BPQgcnqkgY2eC7ku/t5roND1VghegbRIdjNv+/NFiITdk5i11mq3Xuenoyuz9xNZ7DliG
+	oRd7dsibMSyR9qMWd3g2si0BESXv76OqjXSVvpMQCjJhPUiGJlXLcJ/LtCJSDTsKDQFlhG70M50
+	ggM2aLX5oG71SSvJ5anWaAFVWRS8zP2H/NEs2PaSJW5n0eq9QdXp9ZMSMVrzCxu3EyeV3rUET9Y
+	79sNCVnUSrMLGc9xiMkibho3px6x30YeEGQ==
+X-Google-Smtp-Source: AGHT+IHoO9EO0ro/faSxOM4wufMudvxB5C949yEnELjO1isa28kX84aJzKexM/+WqEHrFOVKc/qO6g==
+X-Received: by 2002:a5d:64c3:0:b0:3b7:8b1b:a9d5 with SMTP id ffacd0b85a97d-3b9edf6f1c6mr2849436f8f.51.1755181826958;
+        Thu, 14 Aug 2025 07:30:26 -0700 (PDT)
+Received: from localhost ([45.10.155.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6cc902sm22933885e9.7.2025.08.14.07.30.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 07:30:26 -0700 (PDT)
+Message-ID: <68be885c-f3ea-48aa-91c9-673f9c67fe28@gmail.com>
+Date: Thu, 14 Aug 2025 16:30:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731105543.40832-20-yurand2000@gmail.com>
+Subject: Re: [PATCH net-next v3] net: pppoe: implement GRO/GSO support
+To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
+ Michal Ostrowski <mostrows@earthlink.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+References: <20250811095734.71019-1-nbd@nbd.name>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <20250811095734.71019-1-nbd@nbd.name>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi!
-
-On 31/07/25 12:55, Yuri Andriaccio wrote:
-
-...
-
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 7b131630743..e263abcdc04 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -406,11 +406,42 @@ int dl_check_tg(unsigned long total)
->  	return 1;
->  }
+Felix Fietkau wrote:
+> Only handles packets where the pppoe header length field matches the exact
+> packet length. Significantly improves rx throughput.
+> 
+> When running NAT traffic through a MediaTek MT7621 devices from a host
+> behind PPPoE to a host directly connected via ethernet, the TCP throughput
+> that the device is able to handle improves from ~130 Mbit/s to ~630 Mbit/s,
+> using fraglist GRO.
+> 
+> Signed-off-by: Felix Fietkau <nbd@nbd.name>
+> ---
+> v2: fix compile error
+> v3:
+>   - increase priority value
+>   - implement GSO support
+>   - use INDIRECT_CALL_INET
+>   - update pppoe length field
+>   - remove unnecessary network_offsets update
+> 
+>  drivers/net/ppp/pppoe.c | 160 +++++++++++++++++++++++++++++++++++++++-
+>  net/ipv4/af_inet.c      |   2 +
+>  net/ipv6/ip6_offload.c  |   2 +
+>  3 files changed, 163 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
+> index 410effa42ade..a8d8eb870bce 100644
+> --- a/drivers/net/ppp/pppoe.c
+> +++ b/drivers/net/ppp/pppoe.c
+> @@ -77,6 +77,7 @@
+>  #include <net/net_namespace.h>
+>  #include <net/netns/generic.h>
+>  #include <net/sock.h>
+> +#include <net/gro.h>
 >  
-> -void dl_init_tg(struct sched_dl_entity *dl_se, u64 rt_runtime, u64 rt_period)
-> +static inline bool is_active_sched_group(struct task_group *tg)
->  {
-> +	struct task_group *child;
-> +	bool is_active = 1;
-> +
-> +	// if there are no children, this is a leaf group, thus it is active
-> +	list_for_each_entry_rcu(child, &tg->children, siblings) {
-> +		if (child->dl_bandwidth.dl_runtime > 0) {
-> +			is_active = 0;
-> +		}
-> +	}
-> +	return is_active;
-> +}
-> +
-> +static inline bool sched_group_has_active_siblings(struct task_group *tg)
+>  #include <linux/uaccess.h>
+>  
+> @@ -435,7 +436,7 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
+>  	if (skb->len < len)
+>  		goto drop;
+>  
+> -	if (pskb_trim_rcsum(skb, len))
+> +	if (!skb_is_gso(skb) && pskb_trim_rcsum(skb, len))
+>  		goto drop;
+>  
+>  	ph = pppoe_hdr(skb);
+> @@ -1173,6 +1174,161 @@ static struct pernet_operations pppoe_net_ops = {
+>  	.size = sizeof(struct pppoe_net),
+>  };
+>  
+> +static u16
+> +compare_pppoe_header(struct pppoe_hdr *phdr, struct pppoe_hdr *phdr2)
 > +{
-> +	struct task_group *child;
-> +	bool has_active_siblings = 0;
-> +
-> +	// if there are no children, this is a leaf group, thus it is active
-> +	list_for_each_entry_rcu(child, &tg->parent->children, siblings) {
-> +		if (child != tg && child->dl_bandwidth.dl_runtime > 0) {
-> +			has_active_siblings = 1;
-> +		}
-> +	}
-> +	return has_active_siblings;
+> +	return (__force __u16)((phdr->sid ^ phdr2->sid) |
+> +			       (phdr->tag[0].tag_type ^ phdr2->tag[0].tag_type));
 > +}
-
-...
-
-> @@ -2216,7 +2228,14 @@ int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk)
->  	if (rt_group_sched_enabled() && tg->dl_bandwidth.dl_runtime == 0)
->  		return 0;
->  
-> -	return 1;
-> +	/* If one of the children has runtime > 0, cannot attach RT tasks! */
-> +	list_for_each_entry_rcu(child, &tg->children, siblings) {
-> +		if (child->dl_bandwidth.dl_runtime) {
-> +			can_attach = 0;
-> +		}
+> +
+> +static __be16 pppoe_hdr_proto(struct pppoe_hdr *phdr)
+> +{
+> +	switch (phdr->tag[0].tag_type) {
+> +	case cpu_to_be16(PPP_IP):
+> +		return cpu_to_be16(ETH_P_IP);
+> +	case cpu_to_be16(PPP_IPV6):
+> +		return cpu_to_be16(ETH_P_IPV6);
+> +	default:
+> +		return 0;
 > +	}
+> +
+> +}
+> +
+> +static struct sk_buff *pppoe_gro_receive(struct list_head *head,
+> +					 struct sk_buff *skb)
+> +{
+> +	const struct packet_offload *ptype;
+> +	unsigned int hlen, off_pppoe;
+> +	struct sk_buff *pp = NULL;
+> +	struct pppoe_hdr *phdr;
+> +	struct sk_buff *p;
+> +	int flush = 1;
+> +	__be16 type;
+> +
+> +	off_pppoe = skb_gro_offset(skb);
+> +	hlen = off_pppoe + sizeof(*phdr);
+> +	phdr = skb_gro_header(skb, hlen + 2, off_pppoe);
+> +	if (unlikely(!phdr))
+> +		goto out;
+> +
+> +	/* ignore packets with padding or invalid length */
+> +	if (skb_gro_len(skb) != be16_to_cpu(phdr->length) + hlen)
+> +		goto out;
+> +
+> +	type = pppoe_hdr_proto(phdr);
+> +	if (!type)
+> +		goto out;
+> +
+> +	ptype = gro_find_receive_by_type(type);
+> +	if (!ptype)
+> +		goto out;
+> +
+> +	flush = 0;
+> +
+> +	list_for_each_entry(p, head, list) {
+> +		struct pppoe_hdr *phdr2;
+> +
+> +		if (!NAPI_GRO_CB(p)->same_flow)
+> +			continue;
+> +
+> +		phdr2 = (struct pppoe_hdr *)(p->data + off_pppoe);
+> +		if (compare_pppoe_header(phdr, phdr2))
+> +			NAPI_GRO_CB(p)->same_flow = 0;
+> +	}
+> +
+> +	skb_gro_pull(skb, sizeof(*phdr) + 2);
+> +	skb_gro_postpull_rcsum(skb, phdr, sizeof(*phdr) + 2);
+> +
+> +	pp = indirect_call_gro_receive_inet(ptype->callbacks.gro_receive,
+> +					    ipv6_gro_receive, inet_gro_receive,
+> +					    head, skb);
+> +
+> +out:
+> +	skb_gro_flush_final(skb, pp, flush);
+> +
+> +	return pp;
+> +}
+> +
+> +static int pppoe_gro_complete(struct sk_buff *skb, int nhoff)
+> +{
+> +	struct pppoe_hdr *phdr = (struct pppoe_hdr *)(skb->data + nhoff);
+> +	__be16 type = pppoe_hdr_proto(phdr);
+> +	struct packet_offload *ptype;
+> +	int len, err;
+> +
+> +	ptype = gro_find_complete_by_type(type);
+> +	if (!ptype)
+> +		return -ENOENT;
+> +
+> +	err = INDIRECT_CALL_INET(ptype->callbacks.gro_complete,
+> +				 ipv6_gro_complete, inet_gro_complete,
+> +				 skb, nhoff + sizeof(*phdr) + 2);
+> +	if (err)
+> +		return err;
+> +
+> +	len = skb->len - (nhoff + sizeof(*phdr));
+> +	phdr->length = cpu_to_be16(len);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct sk_buff *pppoe_gso_segment(struct sk_buff *skb,
+> +					 netdev_features_t features)
+> +{
 
-Can we maybe reuse some of the methods above?
+I don't think this will be called for PPPoE over GRE packets,
+since gre_gso_segment skips everything up to the network header.
 
-Thanks,
-Juri
+> +	unsigned int pppoe_hlen = sizeof(struct pppoe_hdr) + 2;
+> +	struct sk_buff *segs = ERR_PTR(-EINVAL);
+> +	u16 mac_offset = skb->mac_header;
+> +	struct packet_offload *ptype;
+> +	u16 mac_len = skb->mac_len;
+> +	struct pppoe_hdr *phdr;
+> +	__be16 orig_type, type;
+> +	int len, nhoff;
+> +
+> +	skb_reset_network_header(skb);
+> +	nhoff = skb_network_header(skb) - skb_mac_header(skb);
+> +
+> +	if (unlikely(!pskb_may_pull(skb, pppoe_hlen)))
+> +		goto out;
+> +
+> +	phdr = (struct pppoe_hdr *)skb_network_header(skb);
+> +	type = pppoe_hdr_proto(phdr);
+> +	ptype = gro_find_complete_by_type(type);
+> +	if (!ptype)
+> +		goto out;
+> +
+> +	orig_type = skb->protocol;
+> +	__skb_pull(skb, pppoe_hlen);
+> +	segs = ptype->callbacks.gso_segment(skb, features);
+> +	if (IS_ERR_OR_NULL(segs)) {
+> +		skb_gso_error_unwind(skb, orig_type, pppoe_hlen, mac_offset,
+> +				     mac_len);
+> +		goto out;
+> +	}
+> +
+> +	skb = segs;
+> +	do {
+> +		phdr = (struct pppoe_hdr *)(skb_mac_header(skb) + nhoff);
+> +		len = skb->len - (nhoff + sizeof(*phdr));
+> +		phdr->length = cpu_to_be16(len);
+> +		skb->network_header = (u8 *)phdr - skb->head;
+> +		skb->protocol = orig_type;
+> +		skb_reset_mac_len(skb);
+> +	} while ((skb = skb->next));
+> +
+> +out:
+> +	return segs;
+> +}
+> +
+> +static struct packet_offload pppoe_packet_offload __read_mostly = {
+> +	.type = cpu_to_be16(ETH_P_PPP_SES),
+> +	.priority = 20,
+> +	.callbacks = {
+> +		.gro_receive = pppoe_gro_receive,
+> +		.gro_complete = pppoe_gro_complete,
+> +		.gso_segment = pppoe_gso_segment,
+> +	},
+> +};
+> +
+>  static int __init pppoe_init(void)
+>  {
+>  	int err;
+> @@ -1189,6 +1345,7 @@ static int __init pppoe_init(void)
+>  	if (err)
+>  		goto out_unregister_pppoe_proto;
+>  
+> +	dev_add_offload(&pppoe_packet_offload);
+>  	dev_add_pack(&pppoes_ptype);
+>  	dev_add_pack(&pppoed_ptype);
+>  	register_netdevice_notifier(&pppoe_notifier);
+> @@ -1208,6 +1365,7 @@ static void __exit pppoe_exit(void)
+>  	unregister_netdevice_notifier(&pppoe_notifier);
+>  	dev_remove_pack(&pppoed_ptype);
+>  	dev_remove_pack(&pppoes_ptype);
+> +	dev_remove_offload(&pppoe_packet_offload);
+>  	unregister_pppox_proto(PX_PROTO_OE);
+>  	proto_unregister(&pppoe_sk_proto);
+>  	unregister_pernet_device(&pppoe_net_ops);
+> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
+> index 76e38092cd8a..0480a6d4f203 100644
+> --- a/net/ipv4/af_inet.c
+> +++ b/net/ipv4/af_inet.c
+> @@ -1533,6 +1533,7 @@ struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
+>  
+>  	return pp;
+>  }
+> +EXPORT_INDIRECT_CALLABLE(inet_gro_receive);
+>  
+>  static struct sk_buff *ipip_gro_receive(struct list_head *head,
+>  					struct sk_buff *skb)
+> @@ -1618,6 +1619,7 @@ int inet_gro_complete(struct sk_buff *skb, int nhoff)
+>  out:
+>  	return err;
+>  }
+> +EXPORT_INDIRECT_CALLABLE(inet_gro_complete);
+>  
+>  static int ipip_gro_complete(struct sk_buff *skb, int nhoff)
+>  {
+> diff --git a/net/ipv6/ip6_offload.c b/net/ipv6/ip6_offload.c
+> index fce91183797a..9e3640b018a4 100644
+> --- a/net/ipv6/ip6_offload.c
+> +++ b/net/ipv6/ip6_offload.c
+> @@ -306,6 +306,7 @@ INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
+>  
+>  	return pp;
+>  }
+> +EXPORT_INDIRECT_CALLABLE(ipv6_gro_receive);
+>  
+>  static struct sk_buff *sit_ip6ip6_gro_receive(struct list_head *head,
+>  					      struct sk_buff *skb)
+> @@ -388,6 +389,7 @@ INDIRECT_CALLABLE_SCOPE int ipv6_gro_complete(struct sk_buff *skb, int nhoff)
+>  out:
+>  	return err;
+>  }
+> +EXPORT_INDIRECT_CALLABLE(ipv6_gro_complete);
+>  
+>  static int sit_gro_complete(struct sk_buff *skb, int nhoff)
+>  {
 
 
