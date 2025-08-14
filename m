@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-768814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917B8B265C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:49:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A357BB265C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7F381CC6F2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:47:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F30A04567
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1047C2FE064;
-	Thu, 14 Aug 2025 12:45:46 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507152FFDDE;
+	Thu, 14 Aug 2025 12:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="em8DHCZL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595242F99B5
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F171381AF;
+	Thu, 14 Aug 2025 12:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755175545; cv=none; b=BZBBr4bu7xVv7DPJjw1bgo3f0vjkfHe56AFLB0DvtP4Bobmj+ptowfWhbf+MkKxxyceW+BSH/Iyi+ukNUKvyqfoi0hLfpPgsrFUoG3kSSBwbekeRn8lKuMo02LEWTTaBKWfArOnpuUiXl0vNr95tV8oTF+YwI4u6cgzjgjlPLKo=
+	t=1755175632; cv=none; b=PE2rV0vPggTmJNeQWcuFNFRNI8wgPSoMZMcQOU5B0OsCNECuCNXMrwAK8XuSK26W94MbjIEKZRXvkALsxlcOC14v9cttW8YxvgeuFbdIW3NqhEZYe3ToPIxjPZzIEieBnjBWWeS3Lh3O1JnOsy0kct3MNQFfKgnJLP7ZRgIbKOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755175545; c=relaxed/simple;
-	bh=7hWjOw3PVybmFj2tHxI8p3DC8sedPFBr4PwhWeRUE8k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=polfAwnK2PAlMzK9oxQipJtJLWacBqwWEaS/mxOrk23eDS/Ys7vH9Nupltrztpxp98xK8Ummccg0Ox9Zv95WZd84YyZNQE9ckYKb5bDCGzGjOK7TWVtQKJFXlW7Ruw/I2zv/dU2s/bK3NByoCBbyNeA3cDegsrFLWyf9US/K2zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4c2lGk4P8yzdcNY;
-	Thu, 14 Aug 2025 20:41:18 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id F3636180491;
-	Thu, 14 Aug 2025 20:45:38 +0800 (CST)
-Received: from kwepemq200012.china.huawei.com (7.202.194.183) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Aug 2025 20:45:38 +0800
-Received: from [10.174.178.57] (10.174.178.57) by
- kwepemq200012.china.huawei.com (7.202.194.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 14 Aug 2025 20:45:38 +0800
-Message-ID: <d81a264c-4b43-4bfd-a4ab-5a8bcdb1f584@huawei.com>
-Date: Thu, 14 Aug 2025 20:45:37 +0800
+	s=arc-20240116; t=1755175632; c=relaxed/simple;
+	bh=YYlNZanvxgPBpAFZZouGRj/ghSNVvNTe1basTd5g2Rs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MzXNvvIuJBuJcydY5y1d74IbtB7yw7UX79V93t9t8bAf+sXFlgwYQ88xTbP9zxCoWTY+lNZP6pFe8RfMlx3lI/1QH//hniCFOGPIcGa1FvR+z+o89tp8CEGjLaTsnaqNl2ZYlCjKrB9ZhaiaDqE1jXM/ND4gySzuou5FM+OrO3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=em8DHCZL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E9hU9a021243;
+	Thu, 14 Aug 2025 12:47:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=OjQwE0PV+FzhXDFLlctubdexTbu7eQlPHrU
+	15HjcS90=; b=em8DHCZLeVssW2HDyALGkyxBDYD7kfx4k8lU2Gnd1neCJ0qFoEy
+	cFBexCH0akv5ejj9mhXVVE1ldxerHDvXu5pD7Y6jJ6Ij6HG8XRt13wwlI9t8oIiK
+	YUG4liJGx3re8jedGtqdmaIW75LGkzy+gVIA1BjPpe55HGULyGKtnbk7q7n78j/E
+	+y6NptmtnfosLXIOdMZE+X75ixiPlh7kgjQ7/hyHIBILnFgJGlUfhzC3/avAeOxd
+	/HEhso/DaSVaEmFagxFxa1RXO97GxFt5eoA612t/qGa40CPqfPnRgZerpKQGppS7
+	XKQYKYwvttArqFoPDqXhKFuG92QbqyC2z3w==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9sywyg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 12:47:10 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 57ECl8FH028101;
+	Thu, 14 Aug 2025 12:47:08 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 48dydmgwqp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 12:47:08 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 57ECl8Dh028090;
+	Thu, 14 Aug 2025 12:47:08 GMT
+Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 57ECl7B4028086
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 12:47:08 +0000
+Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
+	id 029F222BDD; Thu, 14 Aug 2025 20:47:06 +0800 (CST)
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+To: linux-bluetooth@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Cc: quic_bt@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] Fix SSR(SubSystem Restart) issues caused by BT_EN being pulled up by hardware
+Date: Thu, 14 Aug 2025 20:47:00 +0800
+Message-Id: <20250814124704.2531811-1-quic_shuaz@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] driver core: Fix concurrent problem of
- deferred_probe_extend_timeout()
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <rafael@kernel.org>, <dakr@kernel.org>, <tglx@linutronix.de>,
-	<saravanak@google.com>, <robh@kernel.org>, <broonie@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <chenjun102@huawei.com>
-References: <20250814111023.2693-1-wangwensheng4@huawei.com>
- <20250814111023.2693-2-wangwensheng4@huawei.com>
- <2025081416-reverb-unaired-1de9@gregkh>
-From: "wangwensheng (C)" <wangwensheng4@huawei.com>
-In-Reply-To: <2025081416-reverb-unaired-1de9@gregkh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq200012.china.huawei.com (7.202.194.183)
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689ddace cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=Dei6p5SHAAAA:8
+ a=pGLkceISAAAA:8 a=CVKY41Y29sSDTK7O-P4A:9 a=TjNXssC_j7lpFel5tvFf:22
+ a=M-Yerj1wOn-OpK7r_3ei:22
+X-Proofpoint-ORIG-GUID: IrhH-b2LliyRMT7tdwLTMhmw4xPl6qsm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfX0raSV9ud6uSn
+ smiyaNFbEgGMLQdxvaKv12wqWwzH4/hwEhv+hGObwU7pdvUT1PiBk5/NaV/3TgemHq/uUtHH/Xq
+ 1Kka/0EYlYUW0PjQK7vbnnrGUy5bwOVP9zoOXfrgC4/pZN/M/6O3+GMxXn+QvMzHYoCZzV/Y/Yt
+ wwOGzFDc/UwyH3vT4LwVAVFfLLvPW7bKkqdvpSJjOU6kI/VAmitCFlh6hQKVIPZYndnXFdyAYNf
+ Ip4/9E6wvSLx6O0WBa2YjBsLgV8zS1R1vTcTJ7YRUvAr6bIncLiRFO7BVFLNpN4nBbsbwcFbBaG
+ eTtYB2aKdvKzI8BUptVKUfPzNfsRUhu+NweBAn5a6/YM2Vmq/p07x+UrllLD/GlcK1aNTKRYaoA
+ P7o8Rdq3
+X-Proofpoint-GUID: IrhH-b2LliyRMT7tdwLTMhmw4xPl6qsm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 spamscore=0 clxscore=1015 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090015
 
+This patch series addresses issues encountered during SSR when
+the BT_EN pin is pulled up by hardware. The main issues fixed are:
 
+1. Timeout when sending reset command.
+2. IBS state of host and controller not being synchronized.
+3. Multiple triggers of SSR generating only one coredump file.
+4. SSR process failed due to tx_idle_timer timeout
 
-在 2025/8/14 19:37, Greg KH 写道:
-> On Thu, Aug 14, 2025 at 07:10:21PM +0800, Wang Wensheng wrote:
->> The deferred_probe_timeout_work may be canceled forever unexpected when
->> deferred_probe_extend_timeout() executes concurrently. Start with
->> deferred_probe_timeout_work pending, and the problem would
->> occur after the following sequence.
->>
->>           CPU0                                 CPU1
->> deferred_probe_extend_timeout
->>    -> cancel_delayed_work => true
->>                                       deferred_probe_extend_timeout
->>                                         -> cancel_delayed_wrok
->>                                           -> __cancel_work
->>                                             -> try_grab_pending
->>    -> schedule_delayed_work
->>     -> queue_delayed_work_on
->> since pending bit is grabbed,
->> just return without doing anything
->>                                          -> set_work_pool_and_clear_pending
->>                                       this __cancel_work return false and
->>                                       the work would never be queued again
->>
->> The root cause is that the PENDING_BIT of the work_struct would be set
->> temporaily in __cancel_work and this bit could prevent the work_struct
->> to be queued in another CPU.
->>
->> Use deferred_probe_mutex to protect the cancel and queue operations for
->> the deferred_probe_timeout_work to fix this problem.
->>
->> Fixes: 2b28a1a84a0e ("driver core: Extend deferred probe timeout on driver registration")
->> Signed-off-by: Wang Wensheng <wangwensheng4@huawei.com>
->> ---
->>   drivers/base/dd.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
->> index 13ab98e033ea..1983919917e0 100644
->> --- a/drivers/base/dd.c
->> +++ b/drivers/base/dd.c
->> @@ -323,6 +323,7 @@ static DECLARE_DELAYED_WORK(deferred_probe_timeout_work, deferred_probe_timeout_
->>   
->>   void deferred_probe_extend_timeout(void)
->>   {
->> +	mutex_lock(&deferred_probe_mutex);
-> 
-> Perhaps use a guard() instead?
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+---
+To: Marcel Holtmann <marcel@holtmann.org>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: quic_bt@quicinc.com
 
-Thanks for your suggestion. I have sent a v2 for this signle patch, 
-because the other issue is not strongly related to this and need
-more discussion.
+---
+Changes in v4:
+- Update commit messages.
+- Link to v3: https://lore.kernel.org/all/20250813033505.3868781-1-quic_shuaz@quicinc.com/
+---
+
+Shuai Zhang (4):
+  driver: bluetooth: hci_qca: fix ssr fail when BT_EN is pulled up by hw
+  driver: bluetooth: hci_qca: fix host IBS state after SSR
+  driver: bluetooth: hci_qca: Multiple triggers of SSR only generate one
+    coredump file
+  driver: bluetooth: hci_qca: SSR(SubSystem Restart)process failed due
+    to tx_idle_timer timeout
+
+ drivers/bluetooth/hci_qca.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+-- 
+2.34.1
+
 
