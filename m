@@ -1,258 +1,328 @@
-Return-Path: <linux-kernel+bounces-769292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39966B26C79
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:24:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F2C4B26C84
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:27:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297CD1C26954
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D47CF1C22F59
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1ABD2F0C4D;
-	Thu, 14 Aug 2025 16:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166C52566E7;
+	Thu, 14 Aug 2025 16:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b="mnS/ZOOr"
-Received: from unimail.uni-dortmund.de (mx1.hrz.uni-dortmund.de [129.217.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l+PfsvwS"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7262E718B;
-	Thu, 14 Aug 2025 16:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.217.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E113225761
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 16:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755188646; cv=none; b=sxO4FpFbov69eEAZd6Na8loJn59fo7TSHh9yif6t73hjYk9boABTjoc3QuiROBpUNAwkENjw8nfvxfohti75ffDf/3DsEVv/Rlp0b3VzNcmsDmm/Xg/qyDqBC51ey/wEmVcOyQBUAO+t5PsK6duFK78nUeAZIUOmm118EBceVo4=
+	t=1755188819; cv=none; b=Pr+f6vBRpMEgWtu9F/Jfn3xtZ2pvxF/vI22D+MkmgChsT9O0I+ccp3XRYCW5MOQ4KDA4fzygvsVs88dFyH+nWkvY+dH5ffaATeOiM9IVQbR/DrjKg3l1+N8qx96thYKjUNJ86ptO8P3Myw/IsSff4D4YopQlrUqxvBrkBj07ng4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755188646; c=relaxed/simple;
-	bh=fX1ATbxdejOvQXo0hSRFuVGoykiEUL0jPzLZyhO30go=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q7Z5Ai05P+1E+8oMGUgFsgyfD/T1ApbtfqwV/U4FCgrVRCrUmJk3Fu6rSlYbrUuEkygCyDefU1t8xi6Ts7iRn5OMjn9Znn4qDtjTaQsS9VETA1nqFmllyCvRJwBhyXj90wzT5eZqUB9AmZwe9mubxHyvdylCJg2Eg+g7dDtdrXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de; spf=pass smtp.mailfrom=tu-dortmund.de; dkim=pass (2048-bit key) header.d=tu-dortmund.de header.i=@tu-dortmund.de header.b=mnS/ZOOr; arc=none smtp.client-ip=129.217.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tu-dortmund.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-dortmund.de
-Received: from tu-ex02.tu-dortmund.de (tu-ex02.tu-dortmund.de [129.217.131.228])
-	by unimail.uni-dortmund.de (8.18.1.10/8.18.1.10) with ESMTPS id 57EGNwsi025442
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 18:23:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; d=tu-dortmund.de; s=1; c=relaxed/relaxed;
-	t=1755188638; h=from:subject:to:date:message-id;
-	bh=fX1ATbxdejOvQXo0hSRFuVGoykiEUL0jPzLZyhO30go=;
-	b=mnS/ZOOrdy/OJHmDcy5OsHzn07eXqh6cAgYpMoMX1GXpSKGdLg43lRb5LU/no6aFTiwun9jegyr
-	QiRcrcLl26D6hl4VX5B6B9NZDtJlEGk2y7ykS3oGv9mVaZgJr1WVqmWRND6GK5M5v3xsKt5k8STcN
-	buVFslzaVDz/Nf+ZP7hL7dC4tU/5pMrj8vtFLVDpViV9rz+uyzQvJ5iTRxdQU64/hppDmkBy/plCX
-	WTc2iv25JTKq0NYSqrGbNzmByyi1vBbZVwhFjwv3RofBLl4zlBLefyxLpv73kCJhminuURZ7TKCMK
-	5EY3jaNAcf8VXPtBVb/D0LklPSBjbNnWQLUA==
-Received: from [IPV6:2a01:599:428:1102:83fd:984f:a177:2788] (129.217.131.221)
- by tu-ex02.tu-dortmund.de (2001:638:50d:2000::228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.58; Thu, 14 Aug 2025 18:23:57 +0200
-Message-ID: <f16b67e6-8279-4e52-82ca-f2ea68753f70@tu-dortmund.de>
-Date: Thu, 14 Aug 2025 18:23:56 +0200
+	s=arc-20240116; t=1755188819; c=relaxed/simple;
+	bh=9D8jNE+Xpo3zWiNPyvO4nZbQmriyK7SuBVCu8u21lTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XOqcBeV+29yFoWQiZVfnB5Xuy1n3UfPdEOI/MJn42K4eEnCiGeMJS1prbonCbXWm2GvlCYih3NwoqqigNBWTrxrMRL/2GjBjCitOMg7SDM8scRuSpzxA3KpXowEcsIjfkn+/vKVZwZt7jI5NC7+g5y9gBpkQMAxFMLU3CwHbz20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l+PfsvwS; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-242d3be5bdfso158855ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:26:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755188817; x=1755793617; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h2K7kLOi1msFu8PrhhDfHKdkFOSC2kCXyrMtF2tQZYY=;
+        b=l+PfsvwS2iOX2ik/3QFcK+byPnFAgqK2x5wpj0JjkQw3cjoPmNuX+rjG4CIihL8ZK1
+         Kzrv+ynayaQU4+KZxjqxg1Zs8/eo/SPab0tXLfDwPM0OQC8EcHQXb1iNXp97xjFovQLl
+         XXA42OUZPwPuWQSJtOnvbiyTdQDyYbeO1iJNNK37vlqXLwC9IdMW0F/HjmSczkZzCcw9
+         r+oyolZh+PupCAFzvKuF0qDchgjg2/DR2A4JtyQfmcoR1GE9eIu3J3iG8yiH5goDsVPj
+         nd2eyMn1R8wyGTBH8pf0YC1/ewWAn/zEQ4nCd2IOZIOVuR1LVlUq66bCGQrtyakdCW9m
+         vNWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755188817; x=1755793617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h2K7kLOi1msFu8PrhhDfHKdkFOSC2kCXyrMtF2tQZYY=;
+        b=Pk7hl3FKp5p5MBL6Eu7l+MJmBHJG61OcyEmjGuPiKRQ6sr70NbGU0OyJ43n4q1uaVN
+         D99PF0W3JX1Q2evLGr6Ifa5S8CmG79fFTHyVlDnKgfJ1ogkAIchHR5IWERnSOwkMSgzb
+         AuebUDR+LqFA3kgsI28rC1kAbTRfxyBFNskvHoP8WdmMZVncxhMnVdHfvglodj9+hLWR
+         rFaDh7gD1QRj8EYjTXNgK6eshNiWnAe0hcM8ajl0qUMnfiycNT3a71kcbkqIa+1V+KkM
+         QI6CC3bmAUnlcK5DBpmfjVbEXnonhCL1t0kPn0/+Mxn0IBE8G/TXnmYwPIfniB8QL8/K
+         Fq5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWxr59h5BYmA2k9fuTQ3DQfb6gEU6zz/as6yd3tY/ZUqbodCfzt9l7bob9fQQRuYOfhe+btGathyKWJaXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd3VPnoFj7KnxNadxqpP7kDbjlVN2/d+NhFqNQu+uXQF0wrLT2
+	FXwwglD4buIoTUfZcpNXd0Xpf3DMqdUguP1Z012D7LhIfsIYZMViskHUmTZBSlv3gTHOBoxuDfc
+	VvaEGbJslb+ep4BJ+kO/igakb9l0nOXpXxgabt/fZ
+X-Gm-Gg: ASbGncv110VMWbU0jsu1ly8EpoPc8lkuSsQvc0YnQYzS6Qtit7+/rf9fKX9TD27FMwh
+	fnlxJjUk5lValy2DzjGKettbDSUP5+dSmp+/mUvRHzK9JksFMd4jH+cFuCP6u33FWrA+g0YOpF1
+	2APf/IXvyw357YNX8lqVGK6QFHERBtjJUc9KoOmPNL+wPrVENT0+cB/PykGNJGZ2fitmJ2UBl7c
+	Rd6pY/hLTV7WCgI0UYpF2Qc+bXbvg7kWbuEIFUK+5g+/JA=
+X-Google-Smtp-Source: AGHT+IE1Xi8qyYhndEVvODlo5R4bNQvMviK2kuxs/l6Wlpkk77oP0VdMn3+ugh6zOobZUqKHcqQ2GO1F6nzXrcqgJ8E=
+X-Received: by 2002:a17:902:f691:b0:234:b2bf:e67f with SMTP id
+ d9443c01a7336-2445a7927d9mr3506845ad.9.1755188816277; Thu, 14 Aug 2025
+ 09:26:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH net v2] TUN/TAP: Improving throughput and latency by avoiding
- SKB drops
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        Stephen Hemminger
-	<stephen@networkplumber.org>
-CC: <jasowang@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tim Gebauer <tim.gebauer@tu-dortmund.de>
-References: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
- <20250813080128.5c024489@hermes.local>
- <4fca87fe-f56a-419d-84ba-6897ee9f48f5@tu-dortmund.de>
- <689dfc02cf665_18aa6c29427@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-From: Simon Schippers <simon.schippers@tu-dortmund.de>
-In-Reply-To: <689dfc02cf665_18aa6c29427@willemb.c.googlers.com.notmuch>
+References: <20250611104844.245235-1-steven.price@arm.com> <20250611104844.245235-20-steven.price@arm.com>
+ <CAGtprH-on3JdsHx-DyjN_z_5Z6HJoSQjJpA5o5_V6=rygMSbtQ@mail.gmail.com> <80c46a5c-7559-4763-bbf2-6c755a4b067c@arm.com>
+In-Reply-To: <80c46a5c-7559-4763-bbf2-6c755a4b067c@arm.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 14 Aug 2025 09:26:43 -0700
+X-Gm-Features: Ac12FXwAKtZ6w1m0fqmJfRbeB6BA7Boirvfy5XvFb88cYjZ1Wb1fbiPX78gZerA
+Message-ID: <CAGtprH_6DYk8POPy+sLc3RL0-5gcrTdPNcDWFTssOK5_U4B3Nw@mail.gmail.com>
+Subject: Re: [PATCH v9 19/43] arm64: RME: Allow populating initial contents
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
+	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei <alexandru.elisei@arm.com>, 
+	Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev, 
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>, Gavin Shan <gshan@redhat.com>, 
+	Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>, 
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: tu-ex06.tu-dortmund.de (2001:638:50d:2000::232) To
- tu-ex02.tu-dortmund.de (2001:638:50d:2000::228)
 
-Willem de Bruijn wrote:
-> Simon Schippers wrote:
->> Stephen Hemminger wrote:
->>> On Tue, 12 Aug 2025 00:03:48 +0200
->>> Simon Schippers <simon.schippers@tu-dortmund.de> wrote:
->>>
->>>> This patch is the result of our paper with the title "The NODROP Patch=
-:
->>>> Hardening Secure Networking for Real-time Teleoperation by Preventing
->>>> Packet Drops in the Linux TUN Driver" [1].
->>>> It deals with the tun_net_xmit function which drops SKB's with the rea=
-son
->>>> SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
->>>> resulting in reduced TCP performance and packet loss for bursty video
->>>> streams when used over VPN's.
->>>>
->>>> The abstract reads as follows:
->>>> "Throughput-critical teleoperation requires robust and low-latency
->>>> communication to ensure safety and performance. Often, these kinds of
->>>> applications are implemented in Linux-based operating systems and tran=
-smit
->>>> over virtual private networks, which ensure encryption and ease of use=
- by
->>>> providing a dedicated tunneling interface (TUN) to user space
->>>> applications. In this work, we identified a specific behavior in the L=
-inux
->>>> TUN driver, which results in significant performance degradation due t=
-o
->>>> the sender stack silently dropping packets. This design issue drastica=
-lly
->>>> impacts real-time video streaming, inducing up to 29 % packet loss wit=
-h
->>>> noticeable video artifacts when the internal queue of the TUN driver i=
-s
->>>> reduced to 25 packets to minimize latency. Furthermore, a small queue
->>>> length also drastically reduces the throughput of TCP traffic due to m=
-any
->>>> retransmissions. Instead, with our open-source NODROP Patch, we propos=
-e
->>>> generating backpressure in case of burst traffic or network congestion=
-.
->>>> The patch effectively addresses the packet-dropping behavior, hardenin=
-g
->>>> real-time video streaming and improving TCP throughput by 36 % in high
->>>> latency scenarios."
->>>>
->>>> In addition to the mentioned performance and latency improvements for =
-VPN
->>>> applications, this patch also allows the proper usage of qdisc's. For
->>>> example a fq_codel can not control the queuing delay when packets are
->>>> already dropped in the TUN driver. This issue is also described in [2]=
-.
->>>>
->>>> The performance evaluation of the paper (see Fig. 4) showed a 4%
->>>> performance hit for a single queue TUN with the default TUN queue size=
- of
->>>> 500 packets. However it is important to notice that with the proposed
->>>> patch no packet drop ever occurred even with a TUN queue size of 1 pac=
-ket.
->>>> The utilized validation pipeline is available under [3].
->>>>
->>>> As the reduction of the TUN queue to a size of down to 5 packets showe=
-d no
->>>> further performance hit in the paper, a reduction of the default TUN q=
-ueue
->>>> size might be desirable accompanying this patch. A reduction would
->>>> obviously reduce buffer bloat and memory requirements.
->>>>
->>>> Implementation details:
->>>> - The netdev queue start/stop flow control is utilized.
->>>> - Compatible with multi-queue by only stopping/waking the specific
->>>> netdevice subqueue.
->>>> - No additional locking is used.
->>>>
->>>> In the tun_net_xmit function:
->>>> - Stopping the subqueue is done when the tx_ring gets full after inser=
-ting
->>>> the SKB into the tx_ring.
->>>> - In the unlikely case when the insertion with ptr_ring_produce fails,=
- the
->>>> old dropping behavior is used for this SKB.
->>>>
->>>> In the tun_ring_recv function:
->>>> - Waking the subqueue is done after consuming a SKB from the tx_ring w=
-hen
->>>> the tx_ring is empty. Waking the subqueue when the tx_ring has any
->>>> available space, so when it is not full, showed crashes in our testing=
-. We
->>>> are open to suggestions.
->>>> - When the tx_ring is configured to be small (for example to hold 1 SK=
-B),
->>>> queuing might be stopped in the tun_net_xmit function while at the sam=
-e
->>>> time, ptr_ring_consume is not able to grab a SKB. This prevents
->>>> tun_net_xmit from being called again and causes tun_ring_recv to wait
->>>> indefinitely for a SKB in the blocking wait queue. Therefore, the netd=
-ev
->>>> queue is woken in the wait queue if it has stopped.
->>>> - Because the tun_struct is required to get the tx_queue into the new =
-txq
->>>> pointer, the tun_struct is passed in tun_do_read aswell. This is likel=
-y
->>>> faster then trying to get it via the tun_file tfile because it utilize=
-s a
->>>> rcu lock.
->>>>
->>>> We are open to suggestions regarding the implementation :)
->>>> Thank you for your work!
->>>>
->>>> [1] Link:
->>>> https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publicati=
-ons/2025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
->>>> [2] Link:
->>>> https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffe=
-ctive-on-tun-device
->>>> [3] Link: https://github.com/tudo-cni/nodrop
->>>>
->>>> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
->>>> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
->>>> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
->>>
->>> I wonder if it would be possible to implement BQL in TUN/TAP?
->>>
->>> https://lwn.net/Articles/454390/
->>>
->>> BQL provides a feedback mechanism to application when queue fills.
->>
->> Thank you very much for your reply,
->> I also thought about BQL before and like the idea!
+On Wed, Aug 13, 2025 at 2:30=E2=80=AFAM Steven Price <steven.price@arm.com>=
+ wrote:
 >
-> I would start with this patch series to convert TUN to a driver that
-> pauses the stack rather than drops.
+> On 01/08/2025 02:56, Vishal Annapurve wrote:
+> > On Wed, Jun 11, 2025 at 3:59=E2=80=AFAM Steven Price <steven.price@arm.=
+com> wrote:
+> >>
+> >> +static int realm_create_protected_data_page(struct realm *realm,
+> >> +                                           unsigned long ipa,
+> >> +                                           kvm_pfn_t dst_pfn,
+> >> +                                           kvm_pfn_t src_pfn,
+> >> +                                           unsigned long flags)
+> >> +{
+> >> +       unsigned long rd =3D virt_to_phys(realm->rd);
+> >> +       phys_addr_t dst_phys, src_phys;
+> >> +       bool undelegate_failed =3D false;
+> >> +       int ret, offset;
+> >> +
+> >> +       dst_phys =3D __pfn_to_phys(dst_pfn);
+> >> +       src_phys =3D __pfn_to_phys(src_pfn);
+> >> +
+> >> +       for (offset =3D 0; offset < PAGE_SIZE; offset +=3D RMM_PAGE_SI=
+ZE) {
+> >> +               ret =3D realm_create_protected_data_granule(realm,
+> >> +                                                         ipa,
+> >> +                                                         dst_phys,
+> >> +                                                         src_phys,
+> >> +                                                         flags);
+> >> +               if (ret)
+> >> +                       goto err;
+> >> +
+> >> +               ipa +=3D RMM_PAGE_SIZE;
+> >> +               dst_phys +=3D RMM_PAGE_SIZE;
+> >> +               src_phys +=3D RMM_PAGE_SIZE;
+> >> +       }
+> >> +
+> >> +       return 0;
+> >> +
+> >> +err:
+> >> +       if (ret =3D=3D -EIO) {
+> >> +               /* current offset needs undelegating */
+> >> +               if (WARN_ON(rmi_granule_undelegate(dst_phys)))
+> >> +                       undelegate_failed =3D true;
+> >> +       }
+> >> +       while (offset > 0) {
+> >> +               ipa -=3D RMM_PAGE_SIZE;
+> >> +               offset -=3D RMM_PAGE_SIZE;
+> >> +               dst_phys -=3D RMM_PAGE_SIZE;
+> >> +
+> >> +               rmi_data_destroy(rd, ipa, NULL, NULL);
+> >> +
+> >> +               if (WARN_ON(rmi_granule_undelegate(dst_phys)))
+> >> +                       undelegate_failed =3D true;
+> >> +       }
+> >> +
+> >> +       if (undelegate_failed) {
+> >> +               /*
+> >> +                * A granule could not be undelegated,
+> >> +                * so the page has to be leaked
+> >> +                */
+> >> +               get_page(pfn_to_page(dst_pfn));
+> >
+> > I would like to point out that the support for in-place conversion
+> > with guest_memfd using hugetlb pages [1] is under discussion.
+> >
+> > As part of the in-place conversion, the policy we are routing for is
+> > to avoid any "refcounts" from KVM on folios supplied by guest_memfd as
+> > in-place conversion works by splitting and merging folios during
+> > memory conversion as per discussion at LPC [2].
 >
-> Please reword the commit to describe the functional change concisely.
-> In general the effect of drops on TCP are well understood. You can
-> link to your paper for specific details.
+> CCA doesn't really support "in-place" conversions (see more detail
+> below). But here the issue is that something has gone wrong and the RMM
+> is refusing to give us a page back.
+
+I think I overloaded the term "in-place" conversion in this context. I
+was talking about supporting "in-place" conversion without data
+preservation. i.e. Host will use the same GPA->HPA range mapping even
+after conversions, ensuring single backing for guest memory. This is
+achieved by guest_memfd keeping track of private/shared ranges based
+on userspace IOCTLs to change the tracking metadata.
+
+>
+> >
+> > The best way to avoid further use of this page with huge page support
+> > around would be either:
+> > 1) Explicitly Inform guest_memfd of a particular pfn being in use by
+> > KVM without relying on page refcounts or
+>
+> This might work, but note that the page is unavailable even after user
+> space has freed the guest_memfd. So at some point the page needs to be
+> marked so that it cannot be reallocated by the kernel. Holding a
+> refcount isn't ideal but I haven't come up with a better idea.
+>
+> Note that this is a "should never happen" situation - the code will have
+> WARN()ed already - so this is just a best effort to allow the system to
+> limp on.
+>
+> > 2) Set the page as hwpoisoned. (Needs further discussion)
+>
+> This certainly sounds like a closer fit - but I'm not very familiar with
+> hwpoison so I don't know how easy it would be to integrate with this.
 >
 
-I will remove the paper abstract for the v3 to have a more concise
-description.
-Also I will clarify why no packets are dropped anymore.
+We had similar discussions with Intel specific SEPT management and the
+conclusion there was to just not hold refcounts and give a warning on
+such failures [1].
 
-> I still suggest stopping the ring before a packet has to be dropped.
-> Note also that there is a mechanism to requeue an skb rather than
-> drop, see dev_requeue_skb and NETDEV_TX_BUSY. But simply pausing
-> before empty likely suffices.
+[1] https://lore.kernel.org/kvm/20250807094241.4523-1-yan.y.zhao@intel.com/
+
+> > This page refcounting strategy will have to be revisited depending on
+> > which series lands first. That being said, it would be great if ARM
+> > could review/verify if the series [1] works for backing CCA VMs with
+> > huge pages.
+> >
+> > [1] https://lore.kernel.org/kvm/cover.1747264138.git.ackerleytng@google=
+.com/
+> > [2] https://lpc.events/event/18/contributions/1764/
+> >
+> >> +       }
+> >> +
+> >> +       return -ENXIO;
+> >> +}
+> >> +
+> >> +static int populate_region(struct kvm *kvm,
+> >> +                          phys_addr_t ipa_base,
+> >> +                          phys_addr_t ipa_end,
+> >> +                          unsigned long data_flags)
+> >> +{
+> >> +       struct realm *realm =3D &kvm->arch.realm;
+> >> +       struct kvm_memory_slot *memslot;
+> >> +       gfn_t base_gfn, end_gfn;
+> >> +       int idx;
+> >> +       phys_addr_t ipa =3D ipa_base;
+> >> +       int ret =3D 0;
+> >> +
+> >> +       base_gfn =3D gpa_to_gfn(ipa_base);
+> >> +       end_gfn =3D gpa_to_gfn(ipa_end);
+> >> +
+> >> +       idx =3D srcu_read_lock(&kvm->srcu);
+> >> +       memslot =3D gfn_to_memslot(kvm, base_gfn);
+> >> +       if (!memslot) {
+> >> +               ret =3D -EFAULT;
+> >> +               goto out;
+> >> +       }
+> >> +
+> >> +       /* We require the region to be contained within a single memsl=
+ot */
+> >> +       if (memslot->base_gfn + memslot->npages < end_gfn) {
+> >> +               ret =3D -EINVAL;
+> >> +               goto out;
+> >> +       }
+> >> +
+> >> +       if (!kvm_slot_can_be_private(memslot)) {
+> >> +               ret =3D -EPERM;
+> >> +               goto out;
+> >> +       }
+> >> +
+> >> +       while (ipa < ipa_end) {
+> >> +               struct vm_area_struct *vma;
+> >> +               unsigned long hva;
+> >> +               struct page *page;
+> >> +               bool writeable;
+> >> +               kvm_pfn_t pfn;
+> >> +               kvm_pfn_t priv_pfn;
+> >> +               struct page *gmem_page;
+> >> +
+> >> +               hva =3D gfn_to_hva_memslot(memslot, gpa_to_gfn(ipa));
+> >> +               vma =3D vma_lookup(current->mm, hva);
+> >> +               if (!vma) {
+> >> +                       ret =3D -EFAULT;
+> >> +                       break;
+> >> +               }
+> >> +
+> >> +               pfn =3D __kvm_faultin_pfn(memslot, gpa_to_gfn(ipa), FO=
+LL_WRITE,
+> >> +                                       &writeable, &page);
+> >
+> > Is this assuming double backing of guest memory ranges? Is this logic
+> > trying to simulate a shared fault?
 >
-
-As explained before in my reply to Jason, this patch does stop the netdev
-queue before a packet has to be dropped. It uses a very similar approach
-to the suggested virtio_net.
-
-> Relevant to BQL: did your workload include particularly large packets,
-> e.g., TSO? Only then does byte limits vs packet limits matter.
+> Yes and yes...
 >
+> > Does memory population work with CCA if priv_pfn and pfn are the same?
+> > I am curious how the memory population will work with in-place
+> > conversion support available for guest_memfd files.
+>
+> The RMM interface doesn't support an in-place conversion. The
+> RMI_DATA_CREATE operation takes the PA of the already delegated
+> granule[1] along with the PA of a non-delegated granule with the data.
 
-No, in my workload I did not use TSO/GSO. However I think the most
-important aspect is that the BQL algorithm utilizes a dynamic queue limit.
-This will in most cases reduce the TUN queue size and reduce buffer bloat.
+Ok, I think this will need a source buffer from userspace that is
+outside guest_memfd once guest_memfd will support a single backing for
+guest memory. You might want to simulate private access fault for
+destination GPAs backed by guest_memfd ranges for this initial data
+population -> similar to how memory population works today with TDX
+VMs.
 
-I now have a idea how to include BQL, but first I will add TAP support in
-a v3. BQL could then be added in a v4.
+Note that with single backing around, at least for x86, KVM
+shared/private stage2 faults will always be served using guest_memfd
+as the source of truth (i.e. not via userspace pagetables for shared
+faults).
 
-Thank you :)
-
-Wichtiger Hinweis: Die Information in dieser E-Mail ist vertraulich. Sie is=
-t ausschlie=C3=9Flich f=C3=BCr den Adressaten bestimmt. Sollten Sie nicht d=
-er f=C3=BCr diese E-Mail bestimmte Adressat sein, unterrichten Sie bitte de=
-n Absender und vernichten Sie diese Mail. Vielen Dank.
-Unbeschadet der Korrespondenz per E-Mail, sind unsere Erkl=C3=A4rungen auss=
-chlie=C3=9Flich final rechtsverbindlich, wenn sie in herk=C3=B6mmlicher Sch=
-riftform (mit eigenh=C3=A4ndiger Unterschrift) oder durch =C3=9Cbermittlung=
- eines solchen Schriftst=C3=BCcks per Telefax erfolgen.
-
-Important note: The information included in this e-mail is confidential. It=
- is solely intended for the recipient. If you are not the intended recipien=
-t of this e-mail please contact the sender and delete this message. Thank y=
-ou. Without prejudice of e-mail correspondence, our statements are only leg=
-ally binding when they are made in the conventional written form (with pers=
-onal signature) or when such documents are sent by fax.
+>
+> So to mimic an in-place conversion requires copying the data from the
+> page, delegating the (original) page and then using RMI_DATA_CREATE
+> which copies the data back. Fundamentally because there may be memory
+> encryption involved there is going to be a requirement for this double
+> memcpy() approach. Note that this is only relevant during the initial
+> setup phase - CCA doesn't (at least currently) permit populated pages to
+> be provided to the guest when it is running.
+>
+> The approach this series takes pre-dates the guest_memfd discussions and
+> so is assuming that the shared memory is not (directly) provided by the
+> guest_memfd but is using the user space pointer provided in the memslot.
+> It would be possible (with the patches proposed) for the VMM to mmap()
+> the guest_memfd when the memory is being shared so as to reuse the
+> physical pages.
+>
+> I do also plan to look at supporting the use of the guest_memfd for the
+> shared memory directly. But I've been waiting for the discussions to
+> conclude before attempting to implement that.
+>
+> [1] A 'granule' is the RMM's idea of a page size (RMM_PAGE_SIZE), which
+> is currently (RMM v1.0) always 4k. So may be different when Linux is
+> running with a larger page size.
+>
+> Thanks,
+> Steve
+>
 
