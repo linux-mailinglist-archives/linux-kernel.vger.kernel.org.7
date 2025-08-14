@@ -1,166 +1,139 @@
-Return-Path: <linux-kernel+bounces-768633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A405B26388
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:57:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF745B2636F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED579E72AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:53:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AED71CC487A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC872FAC13;
-	Thu, 14 Aug 2025 10:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F8430277A;
+	Thu, 14 Aug 2025 10:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="LEwAwmld"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJ1g/ViX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BB2318138
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082A42FC89B;
+	Thu, 14 Aug 2025 10:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755168718; cv=none; b=eBj2WKE+HSu+ATNUz8MDu2AFkr/9Dews8wTPbhnYwc3U1pTlx6LH19U+f46dwomUcCgS9KljX+VFTgFjnhGfYGSa954auEo8QGbmSX7MP6m2RY2oFjDuQp3tWGAlvP7StcZx9seQvHKaQQJjr1I8DoUIPA1cD5cE4o5lH/MJ/ec=
+	t=1755168734; cv=none; b=jFiFkz6N1y0MWX+m+GZf1Kp7Mg7JgWMP7MCDpBVhih1ZwS1RhrYDuwkfmtk2dIQKs1XsfeS9qATtAnO6wG3SWT57MRGsI333mzlRATIIfIyOkBOjcwAtAW8JOcWG6mOSKVAcxoYu5Ln7vEnZYHWB0CZNhAtbZs5ZODd3AfcwGaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755168718; c=relaxed/simple;
-	bh=PNTx4CmRkSdUd0ZEOTO9fu2xfKKN1RKXSc8Ys7kT/1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kZjcGG76qDcAiPb3ZpqUw7T5C8JIC+LcXIm3EWQZ+zNgirC7Yf7w3kQOB1xWBwAke+kyddshxe3E5dqTcjP0VQpO4fhbY5vYuu26lLwvulGeNChLZTkrXc9pErNahjQRLHR8U3bGuG7jUpcdyiV642ny2sH6UkMyjKRKv72r8oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=LEwAwmld; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7e87068760bso88396685a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:51:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1755168716; x=1755773516; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EyUvbzeFbhuIBv4W0x0po1vS1DTZvcEEYsQW7Y4FHOk=;
-        b=LEwAwmldPCTdR5S8wSeAK7U+tCZfASH6MVtSkQwrRn5/GaDjz1XZu6MYD3NCghr7km
-         Uzlx/j5eFeLGMowQYG9WvcsVAj+RHXY9hEdVgXONZ/jXqQdhcjvJaEgiuas6mpWZNBQl
-         RSlOQKsQXQ3cZPVoxj2lMEtMtBgH6xSTbbsyqVJBGrQ+rURAFciNE2wsjQKWAKtgi7W1
-         u9XfT3aCGmetPRPgM3MMkRcHnmUAnxoHd59mJDYkRCzX2lNr6CXC05X9mLvNJvaAxoPJ
-         0Zo3QnGsgCRIHKQ8nOgASSG4YDGl3569d3xdVuJZfHvKHQQiPfwjMA5DaGfBC8IRVR7m
-         tuSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755168716; x=1755773516;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EyUvbzeFbhuIBv4W0x0po1vS1DTZvcEEYsQW7Y4FHOk=;
-        b=tBe2jqLo8bpS/o8qV3576MGO366Wg7tkJIHBbpaG1/OjdcemEsKO1VMs6e2CUEJqUK
-         anyzAVmM6vv67zv8yIx6DZjPtyylPwnHeq8wmtbCL5iwzIY87qRE5nRezzsyB8Z8b++0
-         0R5hRht6MgPMLeDwuWDPio0d/VI8yVExMBmC2IcYQSGonvaP+stfvlSG0HgOvlxMWn7u
-         VIGsc+K/IVDvj7BPg1aSE5JlJeSILi3Os2y3c7MRgX83Ko50TWFNMKdX9NxJk/OxGlZa
-         7p9xareHEOHpOkekPJHOXUuIuQbX1Fha5Ng6LB4yFam2w+0hhpodYGxhIxhH4Sh72bin
-         Zc/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3EGhICis7eQ4aIVTFJ6bqF3B1SQkh+L3zPE8q7iwibTaMeGu7dAeGs5H3/jAtnqQo5hqHXwjeCkSwT6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxti3/VghcdgD3QPH4O5QVSeIEfFlxyN4MjUf5P0rIRyYmIeRmX
-	jaJokya49j5LnLSKq5dXAl9b4eYqERs8zRnfQ8iPmntAy7+geqb+Hw3uiX/ISTnpct0AIO/sK/W
-	LRzbIzZ1mlFG97/r7CtsnPiLZLAjcTMa0reR7bcQ4Gw==
-X-Gm-Gg: ASbGncvXMFJJJOL35qQq7dFnhx3ulHYJOywfhTELBdZaEO1wdhDzCjVUkDdKC3ORoI4
-	p0opg0wIkauxkdE48qaAWmXBT4GBReLDoFwk/88uoy5eooGp3CIgDwsQgS2DK5+VJZj1dOWl83f
-	vSfqNGBr8NgBHtGp3Q72KUssko0PzEOw3juMYSuwj17QDr+acZIbsL9WQbGwG8BrgTa6/ao/dST
-	Hj6zms2CXhhNL+PhNPId+ppqqFVIhUvK8slmVNNvQ==
-X-Google-Smtp-Source: AGHT+IFU90m48TZvu7emDeXfQb++9pXmCA/ExMi3L8cHu3e/h3aMjPcuvjlvwAbLWla/D0jCK64yfVaPIBbatOC3QzI=
-X-Received: by 2002:a05:620a:7088:b0:7e8:4693:4cf0 with SMTP id
- af79cd13be357-7e8705d8895mr317330585a.54.1755168715779; Thu, 14 Aug 2025
- 03:51:55 -0700 (PDT)
+	s=arc-20240116; t=1755168734; c=relaxed/simple;
+	bh=LS7UVXZq5BcWKHTjEz4xF0C5gnYu/PomYCrf0wF8d4E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HHQxU+p2QlZgcqCe9fgqIL86Siww5dqVk+4FiEwdaXbJN8PYRLnUSeUb9cdK1TtGKw15Bp1DaLL7Gxpv8fO13r6Yvf4WvSOv1rJx0DpAvkyr1NuS6+P+MFnASwFJs/rDhUd+B/8jyFj8OHDC+0bthzGlYqp2Gc3ykgZinNrMZC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJ1g/ViX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9614AC4CEED;
+	Thu, 14 Aug 2025 10:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755168733;
+	bh=LS7UVXZq5BcWKHTjEz4xF0C5gnYu/PomYCrf0wF8d4E=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=aJ1g/ViXBXs2iruF7oQkCtU1HxWGhnC09lXi6kvjc8adbYelCRMgpNgXZkAG9tu9B
+	 Vg7oVvPl23Bog5EbB+q2Xtslou7c6shQ5gMp5jxpRQYWYrRF8IAnWLhVJKz+gLL11B
+	 jqI0eRLIaF/gWgLPoHmMV46tSvE2HYHJ7v0MSb48VcgppRV6HVDabGWy+5kYi9XlZ4
+	 88oGmOSH1iCeLP0yEtvaNpvRRSJbKN1xkPytNZMLeEAXnm2S1R/HzcbZvEozuQcmG9
+	 pFe/uQMc9HQmsfikV//L7AZ9+5pPuSc/0N7i7+NZPn7IvBcUlBQ6zSHGsYmY/NHltb
+	 koVaLhMkaRcCA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85884CA0EE4;
+	Thu, 14 Aug 2025 10:52:13 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Subject: [PATCH 0/6] mfd: Add support for the LTC4283 Hot Swap Controller
+Date: Thu, 14 Aug 2025 11:52:22 +0100
+Message-Id: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-ethos-v2-0-a219fc52a95b@kernel.org> <20250811-ethos-v2-2-a219fc52a95b@kernel.org>
- <CAPj87rNG8gT-Wk+rQnFMsbCBqX6pL=qZY--_5=Z4XchLNsM5Ng@mail.gmail.com>
-In-Reply-To: <CAPj87rNG8gT-Wk+rQnFMsbCBqX6pL=qZY--_5=Z4XchLNsM5Ng@mail.gmail.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Thu, 14 Aug 2025 11:51:44 +0100
-X-Gm-Features: Ac12FXwC6fsbGm2wMI2VtffK314czO8RhVctNAh3tnx01lPB-4vBApOS_6ocfcM
-Message-ID: <CAPj87rNDPQqTqj1LAdFYmd4Y12UHXWi5+65i0RepkcOX3wvEyA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] accel: Add Arm Ethos-U NPU driver
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Tomeu Vizoso <tomeu@tomeuvizoso.net>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Oded Gabbay <ogabbay@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Steven Price <steven.price@arm.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOe/nWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0Mj3ZySZBMjC2Pd4tKCgvyiEl0j82SLZJNUM8tksyQloK6CotS0zAq
+ widGxtbUAb10EdGEAAAA=
+X-Change-ID: 20250812-ltc4283-support-27c8c4e69c6b
+To: linux-hwmon@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>, Jonathan Corbet <corbet@lwn.net>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755168752; l=2545;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=LS7UVXZq5BcWKHTjEz4xF0C5gnYu/PomYCrf0wF8d4E=;
+ b=MYo3wIvH+i4xncYor+OvLaAiEb1eJDXKd170JjyFYsTrHb/1XGEBmjy7wA+RsfpOVF9yBBaDf
+ xLciOBqry6+CDhImzd4dU9U25eN8kmw/N78xJAXiS+eJWxTHiAId65b
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-Hi Rob,
+The LTC4283 device features programmable current limit with foldback and
+independently adjustable inrush current to optimize the MOSFET safe
+operating area (SOA). The SOA timer limits MOSFET temperature rise for
+reliable protection against overstresses.
 
-On Tue, 12 Aug 2025 at 13:53, Daniel Stone <daniel@fooishbar.org> wrote:
-> On Mon, 11 Aug 2025 at 22:05, Rob Herring (Arm) <robh@kernel.org> wrote:
-> > +static int ethos_ioctl_submit_job(struct drm_device *dev, struct drm_file *file,
-> > +                                  struct drm_ethos_job *job)
-> > +{
-> > +       [...]
-> > +       ejob->cmd_bo = drm_gem_object_lookup(file, job->cmd_bo);
-> > +       cmd_info = to_ethos_bo(ejob->cmd_bo)->info;
-> > +       if (!ejob->cmd_bo)
-> > +               goto out_cleanup_job;
->
-> NULL deref here if this points to a non-command BO. Which is better
-> than wild DMA, but hey.
+An I2C interface and onboard ADC allow monitoring of board current, voltage,
+power, energy, and fault status.
 
-Sorry this wasn't more clear. There are two NULL derefs here. If you
-pass an invalid BO, ejob->cmd_bo is dereferenced before the NULL
-check, effectively neutering it and winning you a mail from the other
-Dan when he runs sparse on it. Secondly you pass a BO which is valid
-but not a command BO, cmd_info gets unconditionally dereferenced so it
-will fall apart there too.
+It also features 8 pins that can be configured as GPIO devices. But since
+the main usage for this device is monitoring, the GPIO part is optional
+while the HWMON is being made as required.
 
-> > +       for (int i = 0; i < NPU_BASEP_REGION_MAX; i++) {
-> > +               struct drm_gem_object *gem;
-> > +
-> > +               if (job->region_bo_handles[i] == 0)
-> > +                       continue;
-> > +
-> > +               /* Don't allow a region to point to the cmd BO */
-> > +               if (job->region_bo_handles[i] == job->cmd_bo) {
-> > +                       ret = -EINVAL;
-> > +                       goto out_cleanup_job;
-> > +               }
->
-> And here I suppose you want to check if the BO's info pointer is
-> non-NULL, i.e. disallow use of _any_ command BO instead of only
-> disallowing this job's own command BO.
+Also to note that the device has some similarities with the already
+supported ltc4282 hwmon driver but it is different enough to be in it's own
+driver (apart from being added as MFD). The register map is also fairly
+different.
 
-This is the main security issue, since it would allow writes a
-cmdstream BO which has been created but is not _the_ cmdstream BO for
-this job. Fixing that is pretty straightforward, but given that
-someone will almost certainly try to add dmabuf support to this
-driver, it's also probably worth a comment in the driver flags telling
-anyone who tries to add DRIVER_PRIME that they need to disallow export
-of cmdbuf BOs.
+Last time (for the ltc4282) I tried to add the gpio bits directly in the
+hwmon driver but Guenter did not really liked it and so this time I'm doing
+it as MFD.
+ 
 
-Relatedly, I think there's missing validity checks around the regions.
-AFAICT it would be possible to do wild memory access:
-* create a cmdstream BO which accesses one region
-* submit a job using that cmdstream with one data BO correctly
-attached to the region, execute the job and wait for completion
-* free the data BO
-* resubmit that job but declare zero BO handles
+---
+Nuno Sá (6):
+      dt-binbings: mfd: Add bindings for the LTC4283 Swap Controller
+      mfd: ltc4283: Add support for the LTC4283 Swap Controller
+      dt-binbings: hwmon: Add bindings for the LTC4283 Swap Controller
+      hwmon: ltc4283-hwmon: Add support for the LTC4283 Swap Controller
+      dt-binbings: gpio: Add bindings for the LTC4283 Swap Controller
+      gpio: gpio-ltc4283: Add support for the LTC4283 Swap Controller
 
-The first issue is that the job will be accepted by the processing
-ioctl, because it doesn't check that all the regions specified by the
-cmdstream are properly filled in by the job, which is definitely one
-to fix for validation. The second issue is that region registers are
-not cleared in any way, so in the above example, the second job will
-reuse the region configuration from the first. I'm not sure if
-clearing out unused job fields would be helpful defence in depth or
-not; your call.
+ .../devicetree/bindings/gpio/adi,ltc4283.yaml      |   33 +
+ .../devicetree/bindings/hwmon/adi,ltc4283.yaml     |  159 ++
+ .../devicetree/bindings/mfd/adi,ltc4283.yaml       |   85 +
+ Documentation/hwmon/ltc4283.rst                    |  266 ++++
+ MAINTAINERS                                        |   13 +
+ drivers/gpio/Kconfig                               |   10 +
+ drivers/gpio/Makefile                              |    1 +
+ drivers/gpio/gpio-ltc4283.c                        |  233 +++
+ drivers/hwmon/Kconfig                              |   10 +
+ drivers/hwmon/Makefile                             |    1 +
+ drivers/hwmon/ltc4283-hwmon.c                      | 1658 ++++++++++++++++++++
+ drivers/mfd/Kconfig                                |   11 +
+ drivers/mfd/Makefile                               |    1 +
+ drivers/mfd/ltc4283.c                              |  140 ++
+ include/linux/mfd/ltc4283.h                        |   33 +
+ 15 files changed, 2654 insertions(+)
+---
+base-commit: 9703c672af8dd3573c76ce509dfff26bf6c4768d
+change-id: 20250812-ltc4283-support-27c8c4e69c6b
+--
 
-> (There's also a NULL deref if an invalid GEM handle is specified.)
+Thanks!
+- Nuno Sá
 
-This one is similar to the first; drm_gem_object_lookup() return isn't
-checked so it gets dereferenced unconditionally.
 
-Cheers,
-Daniel
 
