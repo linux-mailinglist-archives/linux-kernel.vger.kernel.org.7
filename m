@@ -1,138 +1,119 @@
-Return-Path: <linux-kernel+bounces-767767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C8FB258DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:17:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4AD5B258E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740EA1C2164E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:17:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4A01C21C8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB4D17A2FA;
-	Thu, 14 Aug 2025 01:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4701922DD;
+	Thu, 14 Aug 2025 01:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M+wq6Apv"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hl7vn7j1"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484F1163;
-	Thu, 14 Aug 2025 01:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA70E111AD;
+	Thu, 14 Aug 2025 01:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755134233; cv=none; b=jbUAAenJbHkQi8l/nuDzCN0NTNQYZrvcOcFQDDBnhM4+z3gTQQyuraHmIaUPoFZxhuMvOV3og/y3Eq0fu+NKOtyppYSVE5jVZBLC5LdKLu4N2KZ0mRuGtfPJYSsN1YqHTdkFawhLdk9MEGa3c2DabREP+qgUoUuXD1NHdZFUZVw=
+	t=1755134456; cv=none; b=QJeGOip6m9u+28TMR/fLt3dpewt2PBpbjO33Xywy9iHl+kqiYPdEEFqg4M5CpUyfiQxR4SbeAQrnKuxrDYH/9XlyUFg6/l+g/MYuk6V78BHP8jY7RaCSLku8U+Wdf3IDaKTSgx3ojtY7XLmsoUZO/KMdsuNFX/UCcPK1qa7N4kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755134233; c=relaxed/simple;
-	bh=zwCXeunyU8bKt3ROR7W1CsDnrNwSg2sEDZ+EO5XVu8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TDMkGTgsF3cNJQY/SVpjCCalaHYVTXMWMTUT+7g1VEg32bZrUsw628aR/Us5+vgwUiWfEdMvfkjuGFkB96M0GgJ1Ci0B3yG4XwBQC0WyJOi+7gTOHwUKKXgeOkvoP5y6+STkbfN07vTWnA93cATj32ytQHroxXX8QVR1xYOi1PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=M+wq6Apv; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755134219;
-	bh=k+K1zwUewEgQ96unfGotQ7+9QaAZj9kIzNJmBcvl7bU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=M+wq6ApvQ+2eMxIFtXRgUDxdVfxiaixhyFogS3VzO52dKLE1DNz+uwwOeH8ObUkuK
-	 HAB5F+mnDl7uvSyisoR7766gFFo+OIDE1BF2+7nFSLHCf5fnmUxWeZy+jlWF28dbY1
-	 YCJOjEloC7EEZRgZCb8FukboNDP0eETBe5bd/yYPWt3Xk6Y0t9ErbFGGi0Ct5qFExs
-	 13H6fSIWb0Lx2c6J2/Q5rT+NrgwtBdtN9coFe99AlRzYGL2KCR+Sm9epMpZfkLRTYf
-	 /FB6u9B9vYzPBvMEqqzlvyvJYirJvpBVcg27Rwf1R4R3tnR+zXKN403U4pX6bJ3ugc
-	 6eEGkPR+1lt5Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c2S5675L9z4wcg;
-	Thu, 14 Aug 2025 11:16:58 +1000 (AEST)
-Date: Thu, 14 Aug 2025 11:16:57 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Marc Zyngier <maz@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the clockevents tree
-Message-ID: <20250814111657.7debc9f1@canb.auug.org.au>
+	s=arc-20240116; t=1755134456; c=relaxed/simple;
+	bh=0hizZhAEgUkCHkGOmt6PI/Filc2TsmOiDTjNc0CIcww=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BeOxWkCr3FJ2pYnV/vp9eoDezCik9nhhNRVR+L82QUIBts8Hyjk0FSDdHm61wWe/jq8/MiTYzWEvZBgC33T8hLs9g7LzoJnaS0bhDPJA9lUD3jAscZBjHV3KBRDX+9JDXYtpvQD/ICHVf5PMOXK5JR+cgR+GmscDv2fNT5I6JcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hl7vn7j1; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2e89e89fso641610b3a.1;
+        Wed, 13 Aug 2025 18:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755134454; x=1755739254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Guw3wwCgargT0Nlmks06vykBxwY5jk9d4/oR9B6cl/8=;
+        b=Hl7vn7j16+W0XPCAhHodGe2qQvxMf2cr6vuv0g5C6D6ZRo5J8pD66udzHAKoTbMc27
+         H4KsekyIkpgC2hjU625j5IiPT82a8YoqSb/AbCmc8sTexrjA2pntDIBaEHzenhI+0PIN
+         KgQpILFBjPBUU26YS11OsdVGcnGgLff36ksOSVdHR78XFXdUJbz0f4qPhN1CaC8/paDt
+         QMJ4GC7WOdpbPARKRlrQtQtdaShaQz0B+e/Dnt7CU+GTm0Dyl4ADUwtnamhwLSyhJmQN
+         jVqN1xo/rkO5ih8VbOHkeLcbgM4Y9h7QrILTDpobVg4FjNrRaHB+qMFQUtfH9tlHNP2S
+         6axQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755134454; x=1755739254;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Guw3wwCgargT0Nlmks06vykBxwY5jk9d4/oR9B6cl/8=;
+        b=hmGRpyepYyaA+hbjKvK2VZGQcqh6G9aWbRi0RmRTccmsmxQ+vhDwUt9FXp7zIoaalW
+         dXOr0Nh8EQHMfyeI0ostnHItD9J8lGb5w+/n4zkNC3jZk8UzeHQpN65pTAHVlmP+4Tcq
+         gD9woXB/ehxTi7xTpkQAZsLF+7d09h7DbBnDD0qgok/nqsrhqG8Fb6y/ISLrsDA2WIHM
+         a5060XqQUDbjLGgO4TDiUZSXR/6h3gO4oBcXA732jC2e0F9NJX0FDsTetHddjK/qjusD
+         RhT1T+qHdt3tOAqZ9PV3xaA14rk1d/ENjMYaXUUd3H+HFz9HyaMxBhevE/K88Adqmj+z
+         m8Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtsuhRbSbb/LjPliqOaUXlZM9/eqIUwvfZX3BMU0xYu0Z8eM0KZRdFcJftpht7G/qPUqcvzgVp2744@vger.kernel.org, AJvYcCV4wR5zx++wjcZzNBF7Ww/dz5bBDz8u/g+njjIClGy6/5UA6Mj6UqLC/kPTR3pp1Bgb5ln+nD+8dMA=@vger.kernel.org, AJvYcCXlBYLcifzt1o0Loq9goKcfzweFHSGiWfFFzWbVXxamPbLS9fS8ZdE0z2a3R+KdYwh2gQZB32KsQjfX4oBorUKB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdO1NgXD4SVq/JzpsBvUgjhnQUv/Fk+cqldvT83/Dikx7hV7Rl
+	pkh2/HR9Ju/5ZPqR0nzJKNeVVhl6iFragrv4ry3ImA2z5MJ5GEs+TEuL
+X-Gm-Gg: ASbGnctjasOP65biZNjrS2HdYY/jSXhPTSlLUXUAriU4zFtP25CAAKlkZAfb0lFutPK
+	NUWkTw/HEddA4+uMk4UzeLjWOzv9xU8En6IaYVfU2Bg9tK/uH8Fdn1tUnjdZhn1OJRnQ2tJFNC5
+	L7+P7RLCKXwN7quNglLDEY1AHD8sMsHN5KbPNxFdKd20W8F267boqJnFShM0JZLUJ6c4xlegde7
+	FxXJ6YQSmBtRQihLZl+/mXVJyN+SZ6LlkX8Uo+W02i/w9XwvgEzlBvJNltTKd4lpYDDpyaZdX0/
+	365KmnBoS80rXw4+MT7x8AJigG7MrPNv0A1ZFd2NqLAy+bXzgERrfspgLT4gB1OcdhugOLAUYLP
+	6cXD8fi3DqYe1sKszQzOFRg==
+X-Google-Smtp-Source: AGHT+IEJ3OessLxNNIAojqEOkzN9L1bfGH5fpmiEEOiNt0quJcn4UMyAeV3e738guUq+hPTrMY6f2w==
+X-Received: by 2002:a05:6a00:3988:b0:736:31cf:2590 with SMTP id d2e1a72fcca58-76e2fd6aff8mr1774263b3a.16.1755134453727;
+        Wed, 13 Aug 2025 18:20:53 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8f911sm33244227b3a.47.2025.08.13.18.20.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 18:20:52 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id ECACE4207D09; Thu, 14 Aug 2025 08:20:49 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Workflows <workflows@vger.kernel.org>,
+	Linux Kernel Selftests <linux-kselftest@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	David Gow <davidgow@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Tim Bird <Tim.Bird@sony.com>,
+	Rae Moar <rmoar@google.com>
+Subject: [PATCH 0/2] Documentation: ktap: formatting cleanup
+Date: Thu, 14 Aug 2025 08:20:44 +0700
+Message-ID: <20250814012046.21235-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uqCTQJ3i+cB50wE=C_m.pr_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Developer-Signature: v=1; a=openpgp-sha256; l=496; i=bagasdotme@gmail.com; h=from:subject; bh=0hizZhAEgUkCHkGOmt6PI/Filc2TsmOiDTjNc0CIcww=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBlzLY7otHJ0nJvMxbFGU2Dj2yPfm1+3/j70Xu+Omwvzn EkXEuL/dJSyMIhxMciKKbJMSuRrOr3LSORC+1pHmDmsTCBDGLg4BWAivacY/tnznZ3n9a//+LQV afVF+zMlT7BZ69j9NuBbMN9/Mk+r6A9GhtkcEgei+jvj+vZ/9NG4wDu1mSGB/33Tz+M5N16Y5Sy M5gYA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
---Sig_/uqCTQJ3i+cB50wE=C_m.pr_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+Just a little formatting cleanup for ktap docs (actually only bullet list
+items fix in [2/2]; the first patch is trivial spelling fix).
 
-After merging the clockevents tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Enjoy!
 
-In file included from include/linux/bitops.h:6,
-                 from include/linux/log2.h:12,
-                 from include/asm-generic/div64.h:55,
-                 from arch/arm/include/asm/div64.h:114,
-                 from include/linux/math.h:6,
-                 from include/linux/math64.h:6,
-                 from include/linux/time.h:6,
-                 from include/uapi/linux/timex.h:56,
-                 from include/linux/timex.h:56,
-                 from include/linux/clocksource.h:13,
-                 from include/linux/clockchips.h:14,
-                 from drivers/clocksource/arm_arch_timer_mmio.c:13:
-drivers/clocksource/arm_arch_timer_mmio.c: In function 'arch_timer_mmio_set=
-up':
-include/linux/bits.h:47:9: warning: conversion from 'long long unsigned int=
-' to 'long unsigned int' changes value from '72057594037927935' to '4294967=
-295' [-Woverflow]
-   47 |         ((t)(GENMASK_INPUT_CHECK(h, l) +                        \
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   48 |              (type_max(t) << (l) &                              \
-      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   49 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
-      |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-include/linux/bits.h:52:33: note: in expansion of macro 'GENMASK_TYPE'
-   52 | #define GENMASK_ULL(h, l)       GENMASK_TYPE(unsigned long long, h,=
- l)
-      |                                 ^~~~~~~~~~~~
-include/linux/clocksource.h:153:32: note: in expansion of macro 'GENMASK_UL=
-L'
-  153 | #define CLOCKSOURCE_MASK(bits) GENMASK_ULL((bits) - 1, 0)
-      |                                ^~~~~~~~~~~
-drivers/clocksource/arm_arch_timer_mmio.c:264:66: note: in expansion of mac=
-ro 'CLOCKSOURCE_MASK'
-  264 |         clockevents_config_and_register(&at->evt, at->rate, 0xf, CL=
-OCKSOURCE_MASK(56));
-      |                                                                  ^~=
-~~~~~~~~~~~~~~
+Bagas Sanjaya (2):
+  Documentation: ktap: Correct "its" spelling
+  Documentation: ktap: Separate first bullet list items
 
-Introduced by commit
+ Documentation/dev-tools/ktap.rst | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-  fbdd82d7f782 ("clocksource/drivers/arm_arch_timer: Add standalone MMIO dr=
-iver")
 
---=20
-Cheers,
-Stephen Rothwell
+base-commit: 0bbc2548ea85e6bda835a08c6d47d46435945cda
+-- 
+An old man doll... just what I always wanted! - Clara
 
---Sig_/uqCTQJ3i+cB50wE=C_m.pr_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmidOQkACgkQAVBC80lX
-0Gz1bwf/aGeZe5rfSh10K6Xtmw599aF3echfAiXW74uKtduQbplNjQ1xzuzYWA2F
-C9NUjoBuEKFUmCRlNNoPEFPd7TcIsqF0W47eibaoRgyeBUMxdwBt9HYqcZVvFD3y
-8zSUfQyI+Yqtm0e4xTFxa0DK9ClRNb89VTbDwvxKfqxS3GDTLS7efPW72qc5BLQu
-hyn/YdqROQXakQrf0ygtNntCVKNbScoVeAGwaj2Oo1ctAFr/trda8bzYnHE9Kr7T
-nLjsC1OJoVCLntfBYiHTvF6ewc66eZBCVS138wylg+EncbynwdD4LJwfEccYagt6
-ip8ez8yuh5e98sPd3dajZrKSsmx/Iw==
-=0k0T
------END PGP SIGNATURE-----
-
---Sig_/uqCTQJ3i+cB50wE=C_m.pr_--
 
