@@ -1,155 +1,196 @@
-Return-Path: <linux-kernel+bounces-769157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37524B26ACC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:24:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34769B26AAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A06E189AEA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:19:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA6541CC1206
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA15C221571;
-	Thu, 14 Aug 2025 15:19:16 +0000 (UTC)
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C26F218EA8;
+	Thu, 14 Aug 2025 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tuRv7zpD"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDF2215766;
-	Thu, 14 Aug 2025 15:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E1D15E5C2
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755184756; cv=none; b=aMT4ysYnKn9CFHH6XHZHogIXyW/Ov0rIv64i1dOyOyJn2J/NGHa9xynSoRJIT9w+Y6VSBZpa5T+1F/nXIv861JOzS33ZpRepTKj6touCO8fHzRMvuS3lWuFkJdyM0VMiCqBjxJxoma0TbBGEaSz6Bs2dTDgODu98iUmru+ZU+o0=
+	t=1755184288; cv=none; b=mPGT4iFbolsNlh2GyjTAQ7zpEQk+WicKxt0fjU5Hy17Z73xsELgRAQnJtNptXcrk9eQc0heC3k7781zibJaFOrlie0chkxXbLExn2PhgTQTFAA9X0WFosnmxxZb6O0uA5Zg8vkE4VRj7aRyyGTSKci/qkoOl0g+Bxwsrv25Mh2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755184756; c=relaxed/simple;
-	bh=cL7dYIlmSlciFuIopinblc3YB80GsYEt7bRotIwo9B4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AfBIxbBeMxFotcODwinTcSu/DBI6i+n43Jd4shBVwnfQ0lRN0VsW1pIpztA72GL00BRKA1EWljkAsFIqrcCy2AstcmTpp5mMaKoKsZeXsku6RbiSOx6SxSuYu4m1VFRl8kJ5vcZ9I+BSCVaRzIvG9nr1aM/y8NXsSwPm33slctE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-30cce872d9cso1096204fac.1;
-        Thu, 14 Aug 2025 08:19:13 -0700 (PDT)
+	s=arc-20240116; t=1755184288; c=relaxed/simple;
+	bh=1jDJoKW+0uL8pCUw24xwM3FK0vdRrfgga7GPmYtrP6Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=maRB6aORlWg6klUKSwY/TVaJXaCk1X1IY/al5lnCuVh3HE4oY1SAFCqyT/csL441TgPNfHP6r/J3+Gqe6TsQkIifQCK0/6rjJlbKXyIRzF1y0RJcrMiZpyQAvzA75vAOETbLzrbxjmNsCwcim9r8ar8R/Mg1MW0oYdUke7SJZ/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tuRv7zpD; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-459fbc92e69so77735e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755184285; x=1755789085; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SskdpEkHcdWpBQfUP2UXfkwhjkYyC/FVECNBfHZs9y8=;
+        b=tuRv7zpDfZuZUllQUthn4cINMQouhuenRAJbZiCglNS6CLd9sBOXolOt5qCzxti86A
+         drgDgOdBtGXZ7xkBmnWLJEif2Yksl43vXWOCUHbqFpgfqydDCwt0XOSHJVZJhBlYELv3
+         2UBm3i8k+vhnOU/wBRYn8aY9eYK6Zm2iri2dSXPEMh2L61C1o4OMXfodj3RGUj2mFj5e
+         y8cem+mHbuF/I5rWbHRZtKHlJmPkabJrk2olJt5yFs3ywYuaaECWUsR72nIE8sj8p9pL
+         6yl7dqSuCzK41c8Thadv7ZRnHV7j4UkmeU2hzChwFkgnCDa2VQEyvdnkQXwF0X9v3slw
+         pMNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755184752; x=1755789552;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1755184285; x=1755789085;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=umiR4j7DjLNlMEowdV58E6T5tLX87kYcXiEtAZnwsfI=;
-        b=CqZN/7q9558xE+Oqcna/Dug9g05vTK2uxHOZoDWb7J7m3uwJZUYyoGsbOklIOK9PqQ
-         /YW1Ex1ban44vDv/wlu7IUFw8bzSDeXRHdpO+nikHAsPy9d1UTJ3lR6HwFGSUncO+/6U
-         2NzofV9Ux13ARqkof1icQKN7QlwQCB0GTUMv6VzOclWq7yxU9n/uKJp/pljJ6Xr6MuYr
-         FGsmuOQ0PqUHI0yw+Xm/mVSidSMy3EZaSClB809AA+aKK4GekI+HH+7UPYnFfISosJyV
-         ZMMihXiSPVy46zsxlK1IXCVCR6vHbA3XWMyTpA9nkfxsN4wnZ+md1cK0iCG4OAGAG9cM
-         k37w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFw3NUbVNYtLqvV73UJMjQTeZc6xUx1WkwGV1LmBWLC/jOHzGCdkYfvwEGLyg3zA2VpUmZ4kUyCOuhzLCE@vger.kernel.org, AJvYcCUOFfJZiSbCZeZ+qajNS1MLCPQFRGj3RvtftP2O9rrPfcLov88uZC2MlGUDEBiqAwq5RIdQ+un3WOV4Kd+mBmlrRZw=@vger.kernel.org, AJvYcCVygz/OhzI2L/wnyC0tNlGGb19k7QxdsC9V6fIQksMj4b5dA9db559TZ+RPD5+U3Xad430LisObVKrjZ15G1g==@vger.kernel.org, AJvYcCWfhYQtsh+1xJdkIUORblua9PnLdfVw/eV90bgwziKZlQLaYu09ddgNS2kWsFqbkAlRMPImKIxPhNIu0wEl5rUwSt0=@vger.kernel.org, AJvYcCXBSgt3TSiapsi/ezERWeorvCswp+yqjCoLo3RT0eCBwAi32NNC8ZEEwA6n7f0iswNIFk+noOwmjA==@vger.kernel.org, AJvYcCXI3TFH+3D95Sp+JQXUHdDmB/0frL9ittVy6/j3tRiaLPqJaF8G/iYZ8QVizYyqw2Ykoi7GuRlHK6by@vger.kernel.org, AJvYcCXRHvQYqVKplIBEicNx6JpH0poPiR/t0eLpGjuFA6YeFanCdtHbYr07LjMMOKJUQEYRyFfTHDWulh61dQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8HnhY3QWzcvsybV8/C4pdGSz7wP3yRVPej+3Ub90bphh5ZEky
-	Pn4L3hnQ2xCikeHSgnofLZxxv6sH0CykHHVPcpej3C9Bgy4NyuJWl6h1h5xfchR+
-X-Gm-Gg: ASbGncusEcJ9x8ADQBo2lx9zJ/shnvhKxPzjligGHyO/6qopcl6NfNATBC4LXF8lwTh
-	7h/f6lz0EJ2oxP34t+GrVG304jwCv+ykoCJspi6j39J2BFVbqlXOQWQQ1OELrNU94FHUkQx+zDW
-	BOY6HCmT9Sai8QvTGI8UPHxdQROaljKDjZ+6CZymuLlKbjrYabI0ypdSMkpwAZv3WoJ0Jj8aC8X
-	aRxPpsEO6lXZsnixQJIHySEsfzBP7s6oIIABfU4X+Z5ZA2UgQzf7DujcBPDpBQGeO/8g6+Piq3o
-	HHf6aAjyEPskLzB8nv+htA59EdebP6oMF6pKVQdwBpHgga+VwMkj6TjWq0fU7ButTBlbGkrUjnU
-	5EwzctM4+lMQ0oJsIMvKIJ6a7gnvEC7Y2Qf7vaOq/DGpc+S/051Yk7jBk0NhTt3VmOjeAzhY=
-X-Google-Smtp-Source: AGHT+IE4pV+ULk6KODTO+lPVxDx8ECfT0Y8UM2EXil7mEkrceQtHD+b+lhnMsEr4EaoT1XAsMXpDXg==
-X-Received: by 2002:a05:6871:8917:b0:30b:75a2:a45e with SMTP id 586e51a60fabf-30cd1383599mr2304125fac.33.1755184752355;
-        Thu, 14 Aug 2025 08:19:12 -0700 (PDT)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7436f9821d8sm1488227a34.39.2025.08.14.08.19.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 08:19:12 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-74382027898so586633a34.3;
-        Thu, 14 Aug 2025 08:19:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1eLXBNZzpneyt9Yr/Qa9uvOK+MFq8Wa1BMRQ/FmWpTwBzIEitqQi7fOS0wb01zqQXcSsR373Yyw==@vger.kernel.org, AJvYcCUz7XU3+RNnca+PKBmUy2BlJSobUKnJ5AlbMnUt+TdG1tlEepuYogYLOQNtcK1LFLZPS13jdduLOCjNQrxPiAOH7Ds=@vger.kernel.org, AJvYcCVQUpZmXo69/VlJa1AAuIiBqTQDK8eOiZiFjLiG+n2A6EbU1Rp5ih2k+DiP6EH83Mh/RHDBkjK1WkGxbw==@vger.kernel.org, AJvYcCVlQipVdy+z+oLlM43JkvW1lfhhbkUpukiyDKUGJzuPx1eFASwfaQNzk+qc2KRWLYDzony41EyBts8NrmK7WHhzSyQ=@vger.kernel.org, AJvYcCW2BOHrZc3hN6iFwqAtTs/F7Zj7VsXMIN/4th+2oAZHF2f99IE9AZkEPZMMgTEMWX40X/zbXKb9lD1Y9OLf@vger.kernel.org, AJvYcCWCbfy8BeT4PumMA8Eezi4nQ37ZwMWX8QQGiETRLFIzSIU2FxHfaPCymwzYZifwJhxrGsOCDaY2u3a1@vger.kernel.org, AJvYcCWK/g4Y+eVP54VnLIlYWzIDIMWaBs2JiQYd5rTZ2ccnr2jND6pbYmO87jgzCtqHFHNVFjCJ8KvpxFakM8OSxQ==@vger.kernel.org
-X-Received: by 2002:a05:6102:4192:b0:4fc:1484:5500 with SMTP id
- ada2fe7eead31-50feb4013d9mr1289391137.21.1755184278470; Thu, 14 Aug 2025
- 08:11:18 -0700 (PDT)
+        bh=SskdpEkHcdWpBQfUP2UXfkwhjkYyC/FVECNBfHZs9y8=;
+        b=L4EV/XXAgIo7y9/pWwpsmo2O/3lZqG6gwvtnAq5P8hsyyxGQLshHYuCTHqi+eMVx1j
+         CJP3xDTcdbYIDhTX5UW/+wEOwNs96/UID3Vuy3kXTKVxLbFgFIZxmSa3AW5+m2UVWKPE
+         dfEhsdiag9C1fNv/wZKn3cYBk1udGSYIZvuHn57mkX4+tlGME3N9vebJfqFKUH9Nmyb7
+         ewzwHJLzDGtbB/WOXCCp3/8oMeU3zul8g42N9dL4NawNJyIgzY/E5c6iNBtToMvlO+OL
+         ZXzdtO83qD/A5X00GhB7zMbiAlyucp10QFjoXNMv+iV6l2eUf4SkXwvxu+DRE74OPhm5
+         L+HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV67cAQagdWSuuSYrGTxL2w8LVzT/T9dJ+eHsw7LhsT2qRtSHtIjXIFoao5hWm0wt6fMZe+0s8/rQItF1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCSOTu4J8mI97dyWdXCzc7oIyTs+G5/xLTpgA+yb8Jm2bRvNlL
+	SU9tnmdy+brjgG+8/034qT0xhsyREa8cB/lz1AjhIK6KrK2TVTM4Itbak9Ufvao6YA==
+X-Gm-Gg: ASbGnctOzLo6UoG9SQa5H4NYg82GDYCzUs6ZY6LMsKGonTaY+r4ycyccnaj6KpmA6XF
+	Xjfz8iaKnqlI+Pak09FbcxzRJRd8hCT4eQo1MKzO63Qov5edXmFTMUl65n0Zxs/tN/nqsFKT5o+
+	1s/ggotjIs+3dmiS5c/c1H9rXuoR94ze5nBSTpLBJqXVU7v0XFTVCDrWMwgtXiwOwC/si2bb79y
+	lGN0xMT8vVB/qJqJi1kQP8W+akZKi9toUDTJjm2soY9BW2fu4F5UucvZC31Xtth+IzqPebmC05/
+	C1tYfXCgi0jLApIHWJrO9RUT9ILf3NafGHN9U1svWS+p1qv3pdkcvevQO7KDI9BogPaEMlEy6fy
+	+WZZxKrYsf2W+21St
+X-Google-Smtp-Source: AGHT+IHFuKzvFCHbuJcOA23BDSSsr0lmibgl/giYWdRmsmNyG65kEdnqrR+zs/DzX5Vpr3zDoXAx/w==
+X-Received: by 2002:a05:600c:c4a6:b0:439:8f59:2c56 with SMTP id 5b1f17b1804b1-45a1b177b3amr2085275e9.2.1755184284501;
+        Thu, 14 Aug 2025 08:11:24 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:3dd3:b636:a51b:d0a4])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3ba54b6c93fsm1524246f8f.12.2025.08.14.08.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 08:11:23 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Thu, 14 Aug 2025 17:11:10 +0200
+Subject: [PATCH v3] kasan: add test for SLAB_TYPESAFE_BY_RCU quarantine
+ skipping
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.com> <20250811-clk-for-stephen-round-rate-v1-93-b3bf97b038dc@redhat.com>
-In-Reply-To: <20250811-clk-for-stephen-round-rate-v1-93-b3bf97b038dc@redhat.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 14 Aug 2025 17:11:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUpmdSzNcUOgjWLJhH6+5FkPEF9uruqGqbk-u0SC5z5wg@mail.gmail.com>
-X-Gm-Features: Ac12FXzyDBZHsviTnjmg5miZS8Vof98mQ5mu_iqWAq-BW-zvBlKCQTg0qFd90xs
-Message-ID: <CAMuHMdUpmdSzNcUOgjWLJhH6+5FkPEF9uruqGqbk-u0SC5z5wg@mail.gmail.com>
-Subject: Re: [PATCH 093/114] clk: renesas: rzv2h-cpg: remove round_rate() in
- favor of determine_rate()
-To: bmasney@redhat.com
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Paul Cercueil <paul@crapouillou.net>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Taichi Sugaya <sugaya.taichi@socionext.com>, Takao Orito <orito.takao@socionext.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Yixun Lan <dlan@gentoo.org>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Michal Simek <michal.simek@amd.com>, 
-	Maxime Ripard <mripard@kernel.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Daniel Palmer <daniel@thingy.jp>, 
-	Romain Perier <romain.perier@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Andrea della Porta <andrea.porta@suse.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Qin Jian <qinjian@cqplus1.com>, Viresh Kumar <vireshk@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Alex Helms <alexander.helms.jy@renesas.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, sophgo@lists.linux.dev, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com, 
-	linux-actions@lists.infradead.org, asahi@lists.linux.dev, 
-	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, soc@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250814-kasan-tsbrcu-noquarantine-test-v3-1-9e9110009b4e@google.com>
+X-B4-Tracking: v=1; b=H4sIAI38nWgC/4WPwRKCIBRFf8VhHQ1CarjqPxoXgC9lKkhApsbx3
+ yN1pl0tz1ucc9+EPDgNHtXZhBxE7bU1CdguQ6oXpgOs28SIElqQih7xVXhhcPDSqREbO4zCCRO
+ 0ARzAB1yoijJWVkCKEiXJw8FFP5fAuVnZwTCmTliP30ydbRH2IwKUVFJyToAe6pijj7PXPlj3W
+ n6IdJFuJv5vbqQ4x21eypZzRrjip87a7gZ7Ze+omef5DVQWozEhAQAA
+X-Change-ID: 20250728-kasan-tsbrcu-noquarantine-test-5c723367e056
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+ Alexander Potapenko <glider@google.com>, 
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, kasan-dev@googlegroups.com, 
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755184280; l=2857;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=1jDJoKW+0uL8pCUw24xwM3FK0vdRrfgga7GPmYtrP6Q=;
+ b=7eqsCi6f+oUTHibo06jMfimP7X6uftqxmyns3NemnHriDHDs4/42buGL0Ep6842p7TLguABrF
+ 82V650jX80EB7QQQKwD0jNYibeGS0nG/peuF5xjkz/gf8dq6hlxxyc7
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-On Mon, 11 Aug 2025 at 17:18, Brian Masney via B4 Relay
-<devnull+bmasney.redhat.com@kernel.org> wrote:
-> From: Brian Masney <bmasney@redhat.com>
->
-> This driver implements both the determine_rate() and round_rate() clk
-> ops, and the round_rate() clk ops is deprecated. When both are defined,
-> clk_core_determine_round_nolock() from the clk core will only use the
-> determine_rate() clk ops, so let's remove the round_rate() clk ops since
-> it's unused.
->
-> Signed-off-by: Brian Masney <bmasney@redhat.com>
+Verify that KASAN does not quarantine objects in SLAB_TYPESAFE_BY_RCU slabs
+if CONFIG_SLUB_RCU_DEBUG is off.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.18.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Changes in v3:
+ - add vbabka's ack
+ - make comment more verbose (andreyknvl)
+ - Link to v2: https://lore.kernel.org/r/20250729-kasan-tsbrcu-noquarantine-test-v2-1-d16bd99309c9@google.com
+Changes in v2:
+ - disable migration to ensure that all SLUB operations use the same
+   percpu state (vbabka)
+ - use EXPECT instead of ASSERT for pointer equality check so that
+   expectation failure doesn't terminate the test with migration still
+   disabled
+---
+ mm/kasan/kasan_test_c.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-Gr{oetje,eeting}s,
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index 5f922dd38ffa..0affadb201c2 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1073,6 +1073,45 @@ static void kmem_cache_rcu_uaf(struct kunit *test)
+ 	kmem_cache_destroy(cache);
+ }
+ 
++/*
++ * Check that SLAB_TYPESAFE_BY_RCU objects are immediately reused when
++ * CONFIG_SLUB_RCU_DEBUG is off, and stay at the same address.
++ * Without this, KASAN builds would be unable to trigger bugs caused by
++ * SLAB_TYPESAFE_BY_RCU users handling reycled objects improperly.
++ */
++static void kmem_cache_rcu_reuse(struct kunit *test)
++{
++	char *p, *p2;
++	struct kmem_cache *cache;
++
++	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_SLUB_RCU_DEBUG);
++
++	cache = kmem_cache_create("test_cache", 16, 0, SLAB_TYPESAFE_BY_RCU,
++				  NULL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
++
++	migrate_disable();
++	p = kmem_cache_alloc(cache, GFP_KERNEL);
++	if (!p) {
++		kunit_err(test, "Allocation failed: %s\n", __func__);
++		goto out;
++	}
++
++	kmem_cache_free(cache, p);
++	p2 = kmem_cache_alloc(cache, GFP_KERNEL);
++	if (!p2) {
++		kunit_err(test, "Allocation failed: %s\n", __func__);
++		goto out;
++	}
++	KUNIT_EXPECT_PTR_EQ(test, p, p2);
++
++	kmem_cache_free(cache, p2);
++
++out:
++	migrate_enable();
++	kmem_cache_destroy(cache);
++}
++
+ static void kmem_cache_double_destroy(struct kunit *test)
+ {
+ 	struct kmem_cache *cache;
+@@ -2098,6 +2137,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(kmem_cache_double_free),
+ 	KUNIT_CASE(kmem_cache_invalid_free),
+ 	KUNIT_CASE(kmem_cache_rcu_uaf),
++	KUNIT_CASE(kmem_cache_rcu_reuse),
+ 	KUNIT_CASE(kmem_cache_double_destroy),
+ 	KUNIT_CASE(kmem_cache_accounted),
+ 	KUNIT_CASE(kmem_cache_bulk),
 
-                        Geert
+---
+base-commit: 0df7d6c9705b283d5b71ee0ae86ead05bd3a55a9
+change-id: 20250728-kasan-tsbrcu-noquarantine-test-5c723367e056
+prerequisite-change-id: 20250723-kasan-tsbrcu-noquarantine-e207bb990e24:v1
+prerequisite-patch-id: 4fab9d3a121bfcaacc32a40f606b7c04e0c6fdd0
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Jann Horn <jannh@google.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
