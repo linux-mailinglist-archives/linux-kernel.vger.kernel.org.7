@@ -1,263 +1,156 @@
-Return-Path: <linux-kernel+bounces-768609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DBAB2632F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:48:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F88DB26325
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 154C79E4B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:46:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D920886D8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F6D2F83BE;
-	Thu, 14 Aug 2025 10:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC7B2F8BE8;
+	Thu, 14 Aug 2025 10:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNcIJ8DN"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GmkJK7hj"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFFD28724D;
-	Thu, 14 Aug 2025 10:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735EA3EA8D;
+	Thu, 14 Aug 2025 10:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755168393; cv=none; b=H6G9aDlNcOuF0fJVn0wHAXBUgQN5VPxu345IGtyYQBm+5c9wxNSld3TjB4HhtVY0PB93bYZ+JBV2QOOAUOIATN27OefYPaIlJ8j45bLRT8JtPXNXIi6o8LAQHjBBp3Cri7UvqB77JjeiqDKpFA8BycX78mtiFWOpRBlQ3nRMPYk=
+	t=1755168322; cv=none; b=kwQlM047wrg6Hvoetzo+YeQ6VZ2zfl6Ex/YibLZLUj4PfhYwaD7vwVsNwEKEA2FcK+d1YxRU7wl8oNpfp+OnnZWhMm5ajJEeivX4ftXALRYbXcTcjyqX+lRuL/fgfwlCB2MhS/bEoy0YtcYvT4HkzaOO11FCejqUfqt+MLW64/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755168393; c=relaxed/simple;
-	bh=9VjPhpkG31XsNvAy3oEQ6ai0rrumEGX6BoJKRDxARgI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oqNeiR/6c0/MJKf3Dy+AUcnDYzoZtt+BTEw+mvQ7MBa7o8lskuiUvUqlQ3akWObUav0zzsut2GdGmyOUH3ZILCqpDNgWc4EQh32TjTeIdZwzHCEZ39eO1PwwtkjqYFgDcO1QXaYcbCyqBBAQ257v4odGmcuIDsqv3xR5IrahkzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CNcIJ8DN; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1755168322; c=relaxed/simple;
+	bh=5wla+SYFygHPOOYK3bdjMmq9BL4rphveYhWwS3j9Qho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gyBXGGbsP5o/vBZK/JNyMIKyzmAh79NdJ8GhrchE3vNqjtODbhuH40BUk3az0xNF3npBiNNJMXaQz2zZ/AmzMkxeAsNslodPVbSa0iNyZ+bV8/hWhWMNS9c0cvTcEC51CtZAZ3uAjYA56bGfmdods+Za6ji1S0z2UABhmu3P2SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GmkJK7hj; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e2ea94c7dso1215195b3a.2;
-        Thu, 14 Aug 2025 03:46:31 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b04f8b5so3857355e9.1;
+        Thu, 14 Aug 2025 03:45:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755168391; x=1755773191; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y21EAJKk09TeTY4oNrlpb8XfLwThF6yfFAYybJQLDII=;
-        b=CNcIJ8DN7BcuR+IvT4F4aD675tIktuaE18y7V/A4oZVd6TYsHvV0hhxZ3kKsjQ5MRt
-         +HlAzuoGxMOhCyAJF51/eUi/JPfyjHCOnJCVdCJ1Q6ZP024oB8SKWYTd4YoN4OXgpg7v
-         hcd4RNRNoI6xftHpt8jCEYWAXZBh2gIYua8ii7rxCNiRxBrn8HnZfxAo8lvNJvbD8p/v
-         iHILs3g1JWlXkuksW+sF8Datwg8BACDBG4BPdw//yM8imfEG1FcTt9ruKFKm1/Lf0Mg3
-         OiD/s023C0wjpfuhX445nCgOg3RU8Xb0/16spnXLdhXXPHlRZieBwyI19nF2xlf6v/NA
-         OCRQ==
+        d=gmail.com; s=20230601; t=1755168319; x=1755773119; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZLrSf+CT0upHixlS7L05hc7uD7Qlt7IiIEETpPbNwQs=;
+        b=GmkJK7hjtaJjbA7GbNBev1YL4NHFnzLBsGydLWzt4PsooV2UF74NxR9mS6RZSN6l33
+         ELJ+r7dEQ2kLTYuEte1qLkUOWv5M8e/ea26Fs+9612ZcpVGYn1bnTNm3krS9MOd0DbuK
+         UBGxh3tcGn7P/9n24MXt7g+gsYRmXQlCTPlG5Tm4YnjHv0rvRGKnqVzzzT29hJVNi/b4
+         WoPAQAOtgjbGMXusCFPRCmdZ+u6WunAAjjrveVQhgzmlPouRoJjuuLN3TFyF1shOWBrN
+         aHEctSdXn1ypKucZs5CFVXFWrM9B6DWj3QWEUPvc+CGbZ1NTZ0mZnAS+v1XsatxYh6u5
+         qjyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755168391; x=1755773191;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y21EAJKk09TeTY4oNrlpb8XfLwThF6yfFAYybJQLDII=;
-        b=o4bSWCcm0L4UX0wgBq11c10YFHQgR4OMqH97XlYdtutIhT/uGgxG5Tt/RtwWkW0DfH
-         opLv87A3D0L249mq0qAkNwoyid7MR+V72NvxoY5GU1f//k0HmeWgVfV3w9mPJVawS7aK
-         O2FhSpqMBYLEnth6rA63FMyJ/nW+51T+WpkPZ45XR+I4IS1BuR6eV6aouIJ38xqXCM/7
-         X7vT4ZZX6K1LlN5xpIj4U/HR0l9WO9MU0yqwgM8YcJyjY92ccuqXdMPCoJaqaNi2VV0K
-         uEGVeQVQQwkI1KAuW2SZUdoi4pVL2zp7z2MtAmS7Ub6s8AU1HphfA4vRPD/50yoaIjxS
-         Hr9g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8FHLJq78qw1xZE20dModO7zr5ACI5voh1ASaDivKTBwKDH3J4FOVyIPD82K5BpSG4sIiTaUV8qRhEYsQ=@vger.kernel.org, AJvYcCXQrVOeyo16Wsvc/c6hsomIugaQF+DP349YQwYO7v+QLa0TO5IUAprh8WOEOzSgiprtmXMTN+VrVTTmU4GUPus=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwidfUarL5iovrIAAXhSXBwuVWYHv5H+cGI2tVP8WwxLQxNCILq
-	dCXHFevR1SE3neN3OncJRoO7z1ZEB9lL/Hd/Pn3xrDpMc3Gi27RBINDLZclEi+DSA4s=
-X-Gm-Gg: ASbGnct6Ox/ZXKweG9h0CMWMQlubG7nkPNvwv5LTcTQiYNbJnQmSYHZxF/CiN6yddYd
-	+5kt8xmbUDoofMOgiwmILFp9o8mu4mNQac5a+2bP3ur2mtGR/lRLqYLD6IEvjA5HulnAtIN+bSZ
-	MdJ1pRhXClOSsgmUdjnz+3XxIXJM4yZfk9KxsMDgZlkewL0mH3xHv0Z0sLkJjGx2QUVjQD09NtH
-	C/NKatIMQ5BuKkO9kQplETVSF4cJ5sQhbDAgM9da2ijGt5VkWNZTxAJEwfHuGEW21IHJpA673Kv
-	u/d5DXazo5/KTBj+CNox2AJ9GXi86OWFKOrWGqsgO4E3vbpe7gJwY9xvLhvXTKKlXGXV4/SuSvx
-	S+tgiJLtNtxwRh86pDwsI5vhqAOGzpgPjTcNm
-X-Google-Smtp-Source: AGHT+IGQsx+0VKtIsXrcwIrlDVaIvLwJ4FShg9+W65gJti3oWQfttxGPubd6v0RwCnSOD2VMgGMY+w==
-X-Received: by 2002:a05:6a00:2d9d:b0:76b:ca98:faae with SMTP id d2e1a72fcca58-76e2fc290b2mr4487901b3a.8.1755168390809;
-        Thu, 14 Aug 2025 03:46:30 -0700 (PDT)
-Received: from shankari-IdeaPad.. ([103.24.60.31])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcdd40f63sm34331201b3a.87.2025.08.14.03.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 03:46:30 -0700 (PDT)
-From: Shankari Anand <shankari.ak0208@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shankari Anand <shankari.ak0208@gmail.com>
-Subject: [PATCH] rust: driver-core: Update ARef and AlwaysRefCounted imports from sync::aref
-Date: Thu, 14 Aug 2025 16:16:15 +0530
-Message-Id: <20250814104615.355106-1-shankari.ak0208@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1755168319; x=1755773119;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZLrSf+CT0upHixlS7L05hc7uD7Qlt7IiIEETpPbNwQs=;
+        b=Oj3sOLwfIDtNH+Ibq799JdUJOaxf28IMMwo1O9NKCSznnaw4h7C4sOQPGdYH1stZ09
+         78+HBacdlmqvnsBjTuxQurIrU2e5kaVyrTTE7Dvb8UHxH3i6KmYoC6NVt3OqKOPO0J9q
+         YZWp+iLPseyek9vBOCO7DSVSS1mf2zIp2PHFRJQ28uLU0s9PV0iHCCTngiNg4i6tPV0R
+         hzQalJJliGLzDlIN7IIJtK0lcOu9Rp5PF/A/3B8Bdytgn5Yfv5wbRvOh6RMEu6fAnSVm
+         Ckkio0R7DxAf0VnZMfis2D/aAYK8fZqNDs+7lzBFiCcfyG7QaBWxldbLLH2a0NlIxBYk
+         8hdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnvzpiIb2e0JmuPaen1Qeomhr8IuFxkDgFLNTUMaJ8JXgiLMqsTjcg8CfRK6+P6BX+b37HtQew4hPTYCI=@vger.kernel.org, AJvYcCWpiC1JZx6SiuDmmvCoWHAddg/eiqPXqhj3d6eDspIlxb6Ei8SR24i4RYSV3ug+oBz0nm+Q8Bj3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRetKXqNSnoaV8pbxctQROx4Zixfuc7tyhQKy8vvslDpZPd4eG
+	EOE+thlyGlywMXLghZcVOblWRPT6enWANOeALgCRbOfwITFCXMU4eQCf
+X-Gm-Gg: ASbGncvcSId/78ZmCd7sEzl2nJSCJ2TGD0bvTGz4IP1rP0OJr1Ptk9Ik0FoRLME2sqg
+	dswerH7vD56qD7pEcExnovnoylwQGlu+tCCUeL5sNuva114PobML9hVojTKzqiC4OclIfNSuMeA
+	QzYGYdc5ZMih3I5SlyThnXJ4Kx5vmSlYu5WRC9o1TF5jgP90kX0LUVn78s/sZgxnYzunVIgP15T
+	ouFZxWchBIYHGNsEwh2VR5uKAM7o1K57nIdlKJnLulcNKbiAFSwN/Rb8zRK/sdRDF5gKGeI+i6y
+	9sRhOGaGMTvPt88j0iPyfsQ8Hk2PXmER9+YHwS3qWLZJEsnDl+CeUMhfUUcfB9SdiU3tx+4ekRx
+	Wq4XifRnBCTjhi2NsCQ2ndJx5ExoJC+8X03I=
+X-Google-Smtp-Source: AGHT+IHta1ZRCtyy/Gl5SkktRxkJK9c4Syn1ByRkfjS8qUsOoJaYOhSRhD7R8MiZOZWg8lysYHn2Vw==
+X-Received: by 2002:a05:600c:1386:b0:456:43c:dcdc with SMTP id 5b1f17b1804b1-45a1b668fd8mr15606655e9.33.1755168318500;
+        Thu, 14 Aug 2025 03:45:18 -0700 (PDT)
+Received: from ?IPV6:2620:10d:c096:325::26f? ([2620:10d:c092:600::1:64dc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c76f055sm16859545e9.22.2025.08.14.03.45.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 03:45:17 -0700 (PDT)
+Message-ID: <dbd3784b-2704-4628-9e48-43b17b4980b1@gmail.com>
+Date: Thu, 14 Aug 2025 11:46:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 00/24] Per queue configs and large rx buffer support for
+ zcrx
+To: Dragos Tatulea <dtatulea@nvidia.com>, Jakub Kicinski <kuba@kernel.org>,
+ netdev@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>, Willem de Bruijn
+ <willemb@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ andrew+netdev@lunn.ch, horms@kernel.org, davem@davemloft.net,
+ sdf@fomichev.me, almasrymina@google.com, dw@davidwei.uk,
+ michael.chan@broadcom.com, ap420073@gmail.com, linux-kernel@vger.kernel.org
+References: <cover.1754657711.git.asml.silence@gmail.com>
+ <ul2vfq7upoqwoyop7mhznjmsjau7e4ei2t643gx7t7egoez3vn@lhnf5h2dpeb5>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <ul2vfq7upoqwoyop7mhznjmsjau7e4ei2t643gx7t7egoez3vn@lhnf5h2dpeb5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Update call sites in the driver-core files and its related samples
-to import `ARef` and `AlwaysRefCounted` from `sync::aref`
-instead of `types`.
+On 8/13/25 16:39, Dragos Tatulea wrote:
+> Hi Pavel,
+> 
+> On Fri, Aug 08, 2025 at 03:54:23PM +0100, Pavel Begunkov wrote:
+>> [...]
+>> For example, for 200Gbit broadcom NIC, 4K vs 32K buffers, and napi and
+>> userspace pinned to the same CPU:
+>>
+>> packets=23987040 (MB=2745098), rps=199559 (MB/s=22837)
+>> CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
+>>    0    1.53    0.00   27.78    2.72    1.31   66.45    0.22
+>> packets=24078368 (MB=2755550), rps=200319 (MB/s=22924)
+>> CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
+>>    0    0.69    0.00    8.26   31.65    1.83   57.00    0.57
+>>
+>> And for napi and userspace on different CPUs:
+>>
+>> packets=10725082 (MB=1227388), rps=198285 (MB/s=22692)
+>> CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
+>>    0    0.10    0.00    0.50    0.00    0.50   74.50    24.40
+>>    1    4.51    0.00   44.33   47.22    2.08    1.85    0.00
+>> packets=14026235 (MB=1605175), rps=198388 (MB/s=22703)
+>> CPU    %usr   %nice    %sys %iowait    %irq   %soft   %idle
+>>    0    0.10    0.00    0.70    0.00    1.00   43.78   54.42
+>>    1    1.09    0.00   31.95   62.91    1.42    2.63    0.00
+>>
+> What did you use for this benchmark, send-zerocopy? Could you share a
+> branch and how you ran it please?
+> 
+> I have added some initial support to mlx5 for rx-buf-len and would like
+> to benchmark it and compare it to what you posted.
 
-This aligns with the ongoing effort to move `ARef` and
-`AlwaysRefCounted` to sync.
+You can use this branch:
+https://github.com/isilence/liburing.git zcrx/rx-buf-len
 
-Suggested-by: Benno Lossin <lossin@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1173
-Signed-off-by: Shankari Anand <shankari.ak0208@gmail.com>
----
-It part of a subsystem-wise split series, as suggested in:
-https://lore.kernel.org/rust-for-linux/CANiq72=NSRMV_6UxXVgkebmWmbgN4i=sfRszr-G+x3W5A4DYOg@mail.gmail.com/T/#u
-This split series is intended to ease review and subsystem-level maintenance.
+# server
+examples/zcrx -p <port> -q <queue_idx> -i <interface_name> -A1 \
+              -B <rx_buf_len> -S <area size / memory provided>
 
-The original moving patch is here: (commit 07dad44aa9a93)
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=07dad44aa9a93b16af19e8609a10b241c352b440
+"-A1" here is for using huge pages, so don't forget to configure
+/proc/sys/vm/nr_hugepages.
 
-Gradually the re-export from types.rs will be eliminated in the
-future cycle.
----
- rust/kernel/auxiliary.rs             | 2 +-
- rust/kernel/device.rs                | 7 ++++---
- rust/kernel/devres.rs                | 4 ++--
- rust/kernel/pci.rs                   | 5 +++--
- rust/kernel/platform.rs              | 2 +-
- samples/rust/rust_driver_pci.rs      | 2 +-
- samples/rust/rust_driver_platform.rs | 2 +-
- 7 files changed, 13 insertions(+), 11 deletions(-)
+# client
+examples/send-zerocopy -6 tcp -D <ip addr> -p <port>
+                        -t <runtime secs>
+                        -l -b1 -n1 -z1 -d -s<send size>
 
-diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
-index 4749fb6bffef..0cefe36ca4b5 100644
---- a/rust/kernel/auxiliary.rs
-+++ b/rust/kernel/auxiliary.rs
-@@ -245,7 +245,7 @@ extern "C" fn release(dev: *mut bindings::device) {
- kernel::impl_device_context_into_aref!(Device);
- 
- // SAFETY: Instances of `Device` are always reference-counted.
--unsafe impl crate::types::AlwaysRefCounted for Device {
-+unsafe impl crate::sync::aref::AlwaysRefCounted for Device {
-     fn inc_ref(&self) {
-         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-         unsafe { bindings::get_device(self.as_ref().as_raw()) };
-diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-index b8613289de8e..b860ab389f18 100644
---- a/rust/kernel/device.rs
-+++ b/rust/kernel/device.rs
-@@ -6,7 +6,8 @@
- 
- use crate::{
-     bindings,
--    types::{ARef, ForeignOwnable, Opaque},
-+    sync::aref::ARef,
-+    types::{ForeignOwnable, Opaque},
- };
- use core::{fmt, marker::PhantomData, ptr};
- 
-@@ -292,7 +293,7 @@ pub fn fwnode(&self) -> Option<&property::FwNode> {
- kernel::impl_device_context_into_aref!(Device);
- 
- // SAFETY: Instances of `Device` are always reference-counted.
--unsafe impl crate::types::AlwaysRefCounted for Device {
-+unsafe impl crate::sync::aref::AlwaysRefCounted for Device {
-     fn inc_ref(&self) {
-         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-         unsafe { bindings::get_device(self.as_raw()) };
-@@ -411,7 +412,7 @@ macro_rules! impl_device_context_deref {
- #[macro_export]
- macro_rules! __impl_device_context_into_aref {
-     ($src:ty, $device:tt) => {
--        impl ::core::convert::From<&$device<$src>> for $crate::types::ARef<$device> {
-+        impl ::core::convert::From<&$device<$src>> for $crate::sync::aref::ARef<$device> {
-             fn from(dev: &$device<$src>) -> Self {
-                 (&**dev).into()
-             }
-diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
-index da18091143a6..99b7520019f0 100644
---- a/rust/kernel/devres.rs
-+++ b/rust/kernel/devres.rs
-@@ -13,8 +13,8 @@
-     ffi::c_void,
-     prelude::*,
-     revocable::{Revocable, RevocableGuard},
--    sync::{rcu, Completion},
--    types::{ARef, ForeignOwnable, Opaque, ScopeGuard},
-+    sync::{aref::ARef, rcu, Completion},
-+    types::{ForeignOwnable, Opaque, ScopeGuard},
- };
- 
- use pin_init::Wrapper;
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 887ee611b553..cfd00d4f0cfc 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -13,7 +13,8 @@
-     io::Io,
-     io::IoRaw,
-     str::CStr,
--    types::{ARef, Opaque},
-+    sync::aref::ARef,
-+    types::Opaque,
-     ThisModule,
- };
- use core::{
-@@ -455,7 +456,7 @@ pub fn set_master(&self) {
- impl crate::dma::Device for Device<device::Core> {}
- 
- // SAFETY: Instances of `Device` are always reference-counted.
--unsafe impl crate::types::AlwaysRefCounted for Device {
-+unsafe impl crate::sync::aref::AlwaysRefCounted for Device {
-     fn inc_ref(&self) {
-         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-         unsafe { bindings::pci_dev_get(self.as_raw()) };
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index 8f028c76f9fa..032fd455b838 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -292,7 +292,7 @@ pub fn io_request_by_name(&self, name: &CStr) -> Option<IoRequest<'_>> {
- impl crate::dma::Device for Device<device::Core> {}
- 
- // SAFETY: Instances of `Device` are always reference-counted.
--unsafe impl crate::types::AlwaysRefCounted for Device {
-+unsafe impl crate::sync::aref::AlwaysRefCounted for Device {
-     fn inc_ref(&self) {
-         // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-         unsafe { bindings::get_device(self.as_ref().as_raw()) };
-diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-index 606946ff4d7f..0798019014cd 100644
---- a/samples/rust/rust_driver_pci.rs
-+++ b/samples/rust/rust_driver_pci.rs
-@@ -4,7 +4,7 @@
- //!
- //! To make this driver probe, QEMU must be run with `-device pci-testdev`.
- 
--use kernel::{bindings, c_str, device::Core, devres::Devres, pci, prelude::*, types::ARef};
-+use kernel::{bindings, c_str, device::Core, devres::Devres, pci, prelude::*, sync::aref::ARef};
- 
- struct Regs;
- 
-diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-index 69ed55b7b0fa..6473baf4f120 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -72,7 +72,7 @@
-     of, platform,
-     prelude::*,
-     str::CString,
--    types::ARef,
-+    sync::aref::ARef,
- };
- 
- struct SampleDriver {
+I had to play with the client a bit for it to keep up with
+the server. "-l" enables huge pages, and had to bump up the
+send size. You can also add -v to both for a basic payload
+verification.
 
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
 -- 
-2.34.1
+Pavel Begunkov
 
 
