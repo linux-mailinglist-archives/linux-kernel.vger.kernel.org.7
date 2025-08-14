@@ -1,94 +1,58 @@
-Return-Path: <linux-kernel+bounces-769377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD80B26D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F8AB26DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 176D1B60DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:23:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED4D9B61C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875FA3074A7;
-	Thu, 14 Aug 2025 17:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6033002DC;
+	Thu, 14 Aug 2025 17:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hf1ashFG"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VkCYUApB"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA17306D3B;
-	Thu, 14 Aug 2025 17:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDA6221F11
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755192164; cv=none; b=Xsjtbj69lbJF2DVmAltYHfwjniohl59hlxlKxMdhVZGm+372Vnb9vEJJfmDFgkoxlxaJsNgoOKXsE66k7Xq1toSpaqvZGiVBut4mIqY+8Tt4VlDavGVlltnpJKashIqykZTxJBM8kXW3Ef15zbbOP0Q1+bz8YlPLrRG5Z8UyzHU=
+	t=1755192219; cv=none; b=cZox6e6mEQbVDPeR8VlhbT+RddSR5sbyuNvgJANLUenmHeWW8JrzvaL0VaD/0e+y3dOXub87MLJNwXzye0oR2Vz80lWLxDhdgmUFi6HrYvZSzhgPpEsia/isEa7mCiDi8lXWRjWBXAUUDy2Qhxo5ts7CFdGIULLNk7VjXszqj4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755192164; c=relaxed/simple;
-	bh=sqH9JkhU+X+akRNXh3sPhfcwCULCNtSZbkrYTgfbwdE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NB8Ls8CRFSVqxa9guHmS9cb31O7RFxx1xuFAZ8cZB4aOZjKMT0qb6pPVLxW/2fOh7F9GCCmMM6+g+6GUp+TTMybdq7TSgMttOaOe4GTmcHEOH8QeahjbDq56NpnhhK6YiA2QvXFH4ci0Y4GACP/tBGulS0it2dYApEmypBL6l04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hf1ashFG; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e1fc69f86so1775951b3a.0;
-        Thu, 14 Aug 2025 10:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755192163; x=1755796963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sqH9JkhU+X+akRNXh3sPhfcwCULCNtSZbkrYTgfbwdE=;
-        b=Hf1ashFGf8PQh5RsxXYBhaxMZDh570eM00p+/7LOoou65tSlwKa+FFbWLEPUc5ozyF
-         HpVhi/mGKCbYO2HOOQ2UlCZbB0fdOxht/MXMwV7iHoXf5TIbjNGxU84Byg4N+nYWwwQk
-         9ztDOQFWjISeX+awP9LMAVLkO550922PZTrd8wn/WegS0Zo3QD+OBOguJHQoSqgrFUF3
-         2pODqYGgCLtbKBP6620tj3I5nD7bLODjU1PUAhJtabN13At9OveWDvpaMFVaABxdK3aH
-         CFPz5QRNZiCNSfZ5rbWqexBAQ9bEpeKFT2YcLsh7AwbwgqnfLPHvTy5/pSZaFmhh1oLU
-         QDCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755192163; x=1755796963;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sqH9JkhU+X+akRNXh3sPhfcwCULCNtSZbkrYTgfbwdE=;
-        b=KdHQtNqBjVzA8HfYl+IuQMLKO7j57jie2H7iWp04QZmF+E0S3BwFHpr77RX8LXMpny
-         b/oF317Vn05rSySpsCLXt5P3I7MqQLExeWMJH17ePvVuIk+TvHQ1P48X0lRa3/iVM/Ik
-         4GmWNiPb4yJp4muHq8U0lzNXY0ga9TYpbfMwmUK7hrLG2jCOBN1bhikz4yZ/QXD+4kEG
-         0jeHV5WwAygCwxPSjQRUOrpTS4cqiY1vSdtfNWUiNPiatwrEQ73ju08lky8rHy1ww7/R
-         utunB2dYybZb3RJgWcm6o98d9rQgiMqpqSwukMC2OCiYBT6HfDXqFlX0sTTpGOALzcn9
-         EMbg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVRUbAnBBbAO+pX/fl/WtbC5RbCalfx3IeevwGrPnlbl7PANkcMWSJ5LRqz7vM1ncvZNma3lOKvos=@vger.kernel.org, AJvYcCXYd3mmW3t3+rByW+0ZVXZFortDlGJWOlbzBjCBWCQp09NSlsP2sTo7Kq/hgG03fyxX/RTTK/Mx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/hm892J7z1SQUX0UOUDmmy4LARtJ+tsxDb65Wi9nQQwFFuElZ
-	a2upsSUbT4YW6zXVSryuSywp/yx/nf9Y2S+4ZQhbkmH4pzcmPvdrLnAbg/0vUZC/
-X-Gm-Gg: ASbGncuRXoUAxl3RX/XKsBbi2JvtPvg27Ki+34jEhRBJEzVuAW/HLncoHQvhvZjwDdT
-	Be/6/eXUfLPD+UObJb6hIG+utH7fTwrjB2otu25EXf6KFHAEqQFGHt6Y/72QzLRpsflOBPX35GD
-	O7ldSDlbx/ujG0KOsQyap6lKVnwvqP73p/7pm7yon6Hj3HHmrhnmCeLigqDvYKve9jFwdU2+kW4
-	wxou1aE6fhKCkRP1HPJcjhqNnqKuHJMGrhZfdPvKlrgywYtOne9ZBGNgIFY8FB9NTXCYcyT0i4t
-	rGElYHj2yAd+1VPXc9USE+xcfcO/ZysaQmu984vlaezmcXakWs+GTsPGvHGC1ypSHl/pthSh1LU
-	MbPmwN5xI04BkB0M0IpozUa4QPHlDQFnISE5AcExdafNj+U//QIEQ
-X-Google-Smtp-Source: AGHT+IHRX3+eLs8dwV3i7rR3nA85v65wdOU7CuP/9wFaucMkRWaf3WNrjZkCecvrg44u1LI1Bf1hnA==
-X-Received: by 2002:a17:902:e751:b0:242:5f6c:6b4e with SMTP id d9443c01a7336-2445c38afd8mr51210775ad.7.1755192162458;
-        Thu, 14 Aug 2025 10:22:42 -0700 (PDT)
-Received: from BM5220 (118-232-8-190.dynamic.kbronet.com.tw. [118.232.8.190])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-244590608dbsm23779715ad.66.2025.08.14.10.22.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 10:22:42 -0700 (PDT)
-From: Zenm Chen <zenmchen@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	pkshih@realtek.com,
-	rtl8821cerfe2@gmail.com,
-	stable@vger.kernel.org,
-	stern@rowland.harvard.edu,
-	usb-storage@lists.one-eyed-alien.net,
-	usbwifi2024@gmail.com,
-	zenmchen@gmail.com
-Subject: Re: [usb-storage] Re: [PATCH] USB: storage: Ignore driver CD mode for Realtek multi-mode Wi-Fi dongles
-Date: Fri, 15 Aug 2025 01:22:35 +0800
-Message-ID: <20250814172235.4353-1-zenmchen@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <2025081428-unfold-shakily-6278@gregkh>
-References: <2025081428-unfold-shakily-6278@gregkh>
+	s=arc-20240116; t=1755192219; c=relaxed/simple;
+	bh=8T9hXYsslvnQ0x+M49u1H8Bp3TC/T9xUU6KTqJNKmMs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oFM92vh/J+/p6WEqMWIMrRSHwvn+v0zBhx3B1VKBJ9d/P8pquG28v6XSE90eYn0bYPXILQUzy2lTm5KMaSPyYXRoveGG8HK14yHhC1tC/mTgeIsMj75UTwWzy3Fd69wPCUkyPSvOB4Ux4oxNJ7gdc1mkpf5+K6n6vqauWihWLBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VkCYUApB; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755192214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wUIpu2gykwNNadNywpAPLikctcfGHY/K7iBfQRFKykc=;
+	b=VkCYUApBXox3XdPftctuM2j4AL2QFxde0Cd0Ntp2U+hTVTt8l+cU/nkdyjICuqIGEvzJ6q
+	TI3BLyCZZIvJJ8TbW5FEHCfjf7Jotj+KdQY1az4XEZ85fUOUvKqZSoLNGy+TQdEIAWHIBq
+	BUviOXFRck8isunloIoclP87+yqOE0o=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Peter Seiderer <ps.report@gmx.net>,
+	=?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: pktgen: Use min() to simplify pktgen_finalize_skb()
+Date: Thu, 14 Aug 2025 19:22:40 +0200
+Message-ID: <20250814172242.231633-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,8 +60,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-@Alan @Greg
+Use min() to simplify pktgen_finalize_skb() and improve its readability.
 
-Thank you so much, you saved us!!! T_T
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ net/core/pktgen.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 0ebe5461d4d9..29ff079c0c36 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -114,6 +114,7 @@
+ 
+ #include <linux/sys.h>
+ #include <linux/types.h>
++#include <linux/minmax.h>
+ #include <linux/module.h>
+ #include <linux/moduleparam.h>
+ #include <linux/kernel.h>
+@@ -2841,8 +2842,7 @@ static void pktgen_finalize_skb(struct pktgen_dev *pkt_dev, struct sk_buff *skb,
+ 		}
+ 
+ 		i = 0;
+-		frag_len = (datalen/frags) < PAGE_SIZE ?
+-			   (datalen/frags) : PAGE_SIZE;
++		frag_len = min(datalen / frags, PAGE_SIZE);
+ 		while (datalen > 0) {
+ 			if (unlikely(!pkt_dev->page)) {
+ 				int node = numa_node_id();
+@@ -2859,8 +2859,7 @@ static void pktgen_finalize_skb(struct pktgen_dev *pkt_dev, struct sk_buff *skb,
+ 			if (i == (frags - 1))
+ 				skb_frag_fill_page_desc(&skb_shinfo(skb)->frags[i],
+ 							pkt_dev->page, 0,
+-							(datalen < PAGE_SIZE ?
+-							 datalen : PAGE_SIZE));
++							min(datalen, PAGE_SIZE));
+ 			else
+ 				skb_frag_fill_page_desc(&skb_shinfo(skb)->frags[i],
+ 							pkt_dev->page, 0, frag_len);
+-- 
+2.50.1
+
 
