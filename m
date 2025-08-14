@@ -1,133 +1,102 @@
-Return-Path: <linux-kernel+bounces-769384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465D4B26DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B9FB26DAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6DCD1892F2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:27:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9EA8628908
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C4030BF41;
-	Thu, 14 Aug 2025 17:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2FD301004;
+	Thu, 14 Aug 2025 17:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwTp7nYJ"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLhOoIr2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3263530102D
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1AB3002C3;
+	Thu, 14 Aug 2025 17:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755192229; cv=none; b=WmjdWDseH6Lwumj1lz1magw6x71NfKdys0yHoDv/kEzFwtq7N511MIauzel/NFo8tsioJCXT5+TjBEXgYriu1b6bUVGkCSy5jhKy0ulZVWjb1gI2pPO5Q5ys39J6gHepAc4lOuRJur+ujldJ42nI7cy8UUQzhcBHne3eeN4nzAI=
+	t=1755192521; cv=none; b=BcpXQ/P4J8yssfs/CnoqWUAP10w5Ue8mScaFnw2qZiTzox9rVmjtA1FYfLiOsUsENp+hcraH5kYBFOXekLffh9yyhaKG552fAyiMqIScUxKscEYfBdoLSuQueRMu0SMtb+lfNBlXljlQZ5TEwgScgsILUBqMFXEw1oTlo+93Lck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755192229; c=relaxed/simple;
-	bh=U6WsfbV8ePMllaRZ+Smh/4X6uCfRaZQpb9Y2ISJylwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qav/fdHEPp9Q/yB92uDlxQsE/TthlqtbhEkw5Vu5JY5XYFuayKFVIXWHUlF1O01HWccMIL5FslCtTDqjyr9nKg1r2Zf0X4vGZr0jDyfdYLBcWTVyHZKxp5fj0Zv3Mge3el43mAHcdQ+qwLZUAL62rKP5L8dcsOjEslQQ/4KuHt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwTp7nYJ; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e38a6b92aso495674b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755192227; x=1755797027; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kUuwnMr5cJFdw3kMTCufuIrt59uK2KJmVhi6WoAhRaU=;
-        b=fwTp7nYJAxUmO5/PAAMDuQ6Cn+20qKUWQVlB1NSk+jWDnlwIdHlqF2UylZZY3s18D7
-         5qZvBCJklQ0PofG0PDZLfPm5ovium0rzg5A5fmgkLJKPbJPtXF4Yfucz78hXYQjBu7DB
-         DeyzESkyLn0KxBpjvUAB8lwUGTFfwO4rg/d3wgV0QGXcDs+DmdqpX5QbpBqpj2emdHRb
-         PgANIH47ouwCg4mN2QRsOEmaKQsuBEffzGUbWK06/ulcSOShtxPV8iZb1EdG0FtOPiWG
-         6UH+2HzfKpCY7OYFfez/uj8NQp40Pe8az38A1NRo9yEfuwKkfQCuu5u/rgq6cpZsT65Y
-         NZLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755192227; x=1755797027;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kUuwnMr5cJFdw3kMTCufuIrt59uK2KJmVhi6WoAhRaU=;
-        b=KS/8GncZrH0W3pbXpCilMDEkovBf4GFWcWIJJyx2b18jLbkB6qJ9IWW9CrGRpMf/IU
-         VfQnX3tD9nDxRrFArHlVT44LeaomviPtyoFBrbwbfPM3fEqe0OcS7aN04yvRAjRWC1ub
-         b6+333hs7E1UpuzlQsuDlZZx3Rcvml3jmB/Acs6E1BeHTOf2zOi3nXjFATtY6wtZ8h+s
-         JOqYeW48avPof8weF6GAcjR7ZPJQervz4CRhk18/VpYj6qR51SuUfS+ooKIrqw/LybRY
-         ql+4SMLdxXEKl8+1IuhdW4B7psoYqFremGk7GqophK0hXdjJB4gwZpb+f5HfrB6wp2Vk
-         eePw==
-X-Forwarded-Encrypted: i=1; AJvYcCVciBb979OK7N+u6XAjVQeUFb6keBxvrOGYfGviPNQ5LUuDNx4I1EYeHk1EDBalukHLWb/Qwe9T0lrmawQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0osEmdnO41enspO6FRvAnlLrLUB5y2SjI6fGK6gaNiyOUV+wn
-	7yuiEYNJ1iAx+URWSaYXtH1A9DBfCs81sNFtOqMGz3V17LAaWgmz+yOUZ9O1QPvKamA=
-X-Gm-Gg: ASbGncuwRZlrYaOkztvucgL6Yo0tNUxa9yF2Suo6mkl1tN1DcONl02P4nc18N57z6N8
-	27CuzciqP0QvlmXTfR9DHSKK5PPjQxgAFh+KvD07PhJq6m4GTpMwZWrSoBfc1stV4FRtQ0v/MlU
-	V9AGv7bTqiIXLPY9w4sR+gd3HNKiBt8eEODsnPv5QYkAylvnDAPUJyGDR/n3xvNnjqrlGUmBG4u
-	053CuFw2OVux6L+8YEhxchJLBNPhEDmjBDv2GEOgFUxppybjOXbyQItXJ1+Ur6vze3aDFFxszgh
-	6JQV8EPd/bIgh2yXKNCiiXdQweHef0Um4tHbTC6+1Z+EQE9QfBlBNoy6R25dlNBZTu4BcgQagFT
-	5gs7RKoLPhuW3kNUE+Yx0z2Hoyud10pmyrU5utzcxPpE2NDvkb2A4xCh71wZdCw==
-X-Google-Smtp-Source: AGHT+IGpe2mqIirqe/7OBFih53vw0yZWYFPlVdAHH7MK/NVq5p3Qz6zelUDEaxyhRQRCyJOqO9Ebdg==
-X-Received: by 2002:a05:6a20:7347:b0:235:7452:5859 with SMTP id adf61e73a8af0-240bd2523b4mr5611675637.30.1755192227344;
-        Thu, 14 Aug 2025 10:23:47 -0700 (PDT)
-Received: from localhost.localdomain (66-175-223-235.ip.linodeusercontent.com. [66.175.223.235])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4289c5e123sm17825759a12.3.2025.08.14.10.23.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 10:23:47 -0700 (PDT)
-From: Zhang Tengfei <zhtfdev@gmail.com>
-To: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>,
-	ason Wang <jasowang@redhat.com>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	"Andrew Lunn --cc=netdev @ vger . kernel . org" <andrew+netdev@lunn.ch>,
-	linux-kernel@vger.kernel.org,
-	Zhang Tengfei <zhtfdev@gmail.com>
-Subject: [PATCH] net: tun: fix strscpy call with missing size argument
-Date: Fri, 15 Aug 2025 01:23:00 +0800
-Message-ID: <20250814172300.57458-1-zhtfdev@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1755192521; c=relaxed/simple;
+	bh=K9Fz3Tth55oSSqbiAqsMup4T6Q6LSvXB5ma6wbSQSgc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Nnb+FtDJrACzTbAgGH6igr8lCp1H7FFwAPlh9DZKqa4YFqBzcxCC1IRjzboGYFObtfvoPp86ZXgNBUU0SB8a2Bjyd+qzkxOllFphOwky01wiPa+AvHspC7CUj8/P61SZu0rf7Q1uvFBITL7gE2mLrth2TMnk3s4CgIGapu2LdQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLhOoIr2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38CEEC4CEED;
+	Thu, 14 Aug 2025 17:28:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755192521;
+	bh=K9Fz3Tth55oSSqbiAqsMup4T6Q6LSvXB5ma6wbSQSgc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=cLhOoIr2l8NexPjtcgbrjw/7MnuAYz5wNom/HwtFo/D4JlY/f7RLNozjGQ02cb7Ij
+	 RWPgRsiCq+/c9bmln4BPErVW83L3Wih2wkAaLrkNgbIH6On0qFovvXwrSLGOh7DuVH
+	 qlCtCmreZojwrdAEpyLHQ1tewEWjljootVbgUMeZ1ivq+yCmNUZEtnTGoqT6rjYKtL
+	 5J/RTGZgNJcmtpP0QcWZSAfOtYPYS8I5wFHIMBVXR5+8NGDT0XtNsFn+qpCmlZwovK
+	 1vjAAh05GPWzf5pFCdLyAMye8zfNfrdHB1uQHs+V/e8AK70uxVubt07iObzoykvmrd
+	 Y5PQyJ6UH8uoA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 14 Aug 2025 19:28:36 +0200
+Message-Id: <DC2BTIG40SRU.16QBMDH0PP01Q@kernel.org>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Fiona Behrens" <me@kloenk.dev>, "Jocelyn Falempe" <jfalempe@redhat.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 07/11] rust: security: replace `core::mem::zeroed`
+ with `pin_init::zeroed`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Paul Moore" <paul@paul-moore.com>, "Miguel Ojeda"
+ <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250814093046.2071971-1-lossin@kernel.org>
+ <20250814093046.2071971-8-lossin@kernel.org>
+ <CAHC9VhQXOezJ2=B1BQOqLgfuzDJEVS5G_r9+_bQ+OUNTpjZCKw@mail.gmail.com>
+ <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
+ <CAHC9VhQNi31KSpB-MtvZO9e5fzuM_87VWb6rrMtxcqOGSPTiNg@mail.gmail.com>
+In-Reply-To: <CAHC9VhQNi31KSpB-MtvZO9e5fzuM_87VWb6rrMtxcqOGSPTiNg@mail.gmail.com>
 
-The tun_set_iff() and tun_get_iff() functions call strscpy()
-with only two arguments, omitting the destination buffer size.
+On Thu Aug 14, 2025 at 5:54 PM CEST, Paul Moore wrote:
+> On Thu, Aug 14, 2025 at 11:31=E2=80=AFAM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+>> On Thu, Aug 14, 2025 at 5:19=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+>> >
+>> > I'm happy to take this via the LSM tree, but it would be nice to see a
+>> > Reviewed-by/Acked-by from someone with a better understanding of Rust
+>> > :)
+>>
+>> I think the idea is to take all these through the Rust one with
+>> Acked-bys from the maintainers (or we can skip this one and do it in a
+>> future cycle when the first patches get in).
+>
+> [CC'd the LSM list, as I just realized it wasn't on the original patch
+> posting; in the future please include the LSM list on LSM related Rust
+> patchsets/patches]
 
-This patch corrects these calls by providing the required size
-argument using the IFNAMSIZ macro. This ensures the code adheres
-to the function's documented contract and improves its overall
-robustness and clarity.
+I checked and I didn't find a maintainers entry for that this file & the
+LSM list. I'm using scripts/get_maintainer.pl to get the people I send
+patches to and that also checks git commits, so I guess it added you
+through that (which is very good :). So can we add a maintainers entry
+for `rust/kernel/security.rs` so people don't miss this in the future?
+Thanks!
 
-Fixes: a57384110dc6 ("tun: replace strcpy with strscpy for ifr_name")
-Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
 ---
- drivers/net/tun.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 86a9e927d0ff..88c440c99542 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -2823,13 +2823,13 @@ static int tun_set_iff(struct net *net, struct file *file, struct ifreq *ifr)
- 	if (netif_running(tun->dev))
- 		netif_tx_wake_all_queues(tun->dev);
- 
--	strscpy(ifr->ifr_name, tun->dev->name);
-+	strscpy(ifr->ifr_name, tun->dev->name, IFNAMSIZ);
- 	return 0;
- }
- 
- static void tun_get_iff(struct tun_struct *tun, struct ifreq *ifr)
- {
--	strscpy(ifr->ifr_name, tun->dev->name);
-+	strscpy(ifr->ifr_name, tun->dev->name, IFNAMSIZ);
- 
- 	ifr->ifr_flags = tun_flags(tun);
- 
--- 
-2.47.3
-
+Cheers,
+Benno
 
