@@ -1,205 +1,125 @@
-Return-Path: <linux-kernel+bounces-768603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51535B26320
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:47:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A96B26303
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 908085E0DD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:43:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A9E1C867EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2452E9EC1;
-	Thu, 14 Aug 2025 10:43:16 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915BD23AB95;
+	Thu, 14 Aug 2025 10:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WM6SMPss"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426212264CF
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689FE25A2D8;
+	Thu, 14 Aug 2025 10:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755168195; cv=none; b=AOAiU+z6iLDi/yOUopJyY5NDKuC5SsJJ5mihZKnfGTYksGTJKkTNxt4Ta6vpwp173rllkptUgtMGl2aouvU0D8EHqd1wXmMiObzOmzLfbrS+Ljxqto/bN6cDst5BDKJOXYLQX0EY8eDyEDGFR60nEad+OLB877LRJkl43hOchQg=
+	t=1755168189; cv=none; b=ms70h43To8j2RgURcNEuYEFMW9Ud/NP8YoqzFGecJOlbZrRPVJZUQT3bTtJxV22I4PWbrjI4AJpTzFCXUOEaiRGxRbeGiitzQpR4Ab2pC8hURtvwSsLSOWEvZ8rIVw8Wek1K15EA77xzFOCoGfj34EgFFeojVjJEs3em7bn4L3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755168195; c=relaxed/simple;
-	bh=x2ApPy1qF/YIfHHw1JmVw7RXJiwWvxw7Xr6gXJ4k/1Y=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GKkeCRJRetz8gAyBhFkrQ3M/zvA4rHi9xXkc9E7t2C6w6y7Dpuz+uBZkVTCPVKKyVugkuU8AZjK7nCX8E4KorOh0Cb9DnUwVU+P0xw60L7LMiwo3h984E4WF2AHaYnFYsT0qHxshn2s3s068WxnMTPKFbMsSl11J2g4qNshkVbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVPp-0008Iy-NQ; Thu, 14 Aug 2025 12:42:37 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVPl-000EwX-2f;
-	Thu, 14 Aug 2025 12:42:33 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1umVPl-000GxG-2N;
-	Thu, 14 Aug 2025 12:42:33 +0200
-Message-ID: <bf5a4aa0fc1a324a17c25e8ed5acbfd94d240251.camel@pengutronix.de>
-Subject: Re: [PATCH v17 2/3] i2c: ast2600: Add controller driver for new
- register layout
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, benh@kernel.crashing.org, 
- joel@jms.id.au, andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-  conor+dt@kernel.org, andrew@codeconstruct.com.au, 
- andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, 
- linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
-Date: Thu, 14 Aug 2025 12:42:33 +0200
-In-Reply-To: <20250814084156.1650432-3-ryan_chen@aspeedtech.com>
-References: <20250814084156.1650432-1-ryan_chen@aspeedtech.com>
-	 <20250814084156.1650432-3-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1755168189; c=relaxed/simple;
+	bh=9xh2Nft5Qxdo2gHxv00QeRiNf5440z4bTPZ674GGC18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBX0ehMU1wEtG4UmgCCXnstpDNALjlurVHXRsRqM0Wo0IAEN5xbtcU8yg6XypbFLq5p64tU+cDV7W3+8Qrj6v9dxCIauOTTbSwSiFbFVjnoLOMcsPVA3AhtVQc+vWqhVYltNDr8NW4qtUyklx1VzBrCryfxfGQjbEbZrs4y/DcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WM6SMPss; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45a1b0bde14so3769775e9.2;
+        Thu, 14 Aug 2025 03:43:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755168186; x=1755772986; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jMgZVJV8GbdzEDE5ofwso5AKnFy8hsBf9wu7z3fU3lo=;
+        b=WM6SMPssixKzfGFoKs1teDySWZVTAqDXE1M6KwE06q3J9RPVXHabECJgyvvq8UQhbZ
+         xg4DbvDBlBzUpvaH/+xcpj+3M9uZWQgs8b9Nyg+p94a8baaqcRQyGXlRKekQ81x1smQ0
+         nzTc2JRjY1s4FuMFQY6hQtmLQ7vfYABII+kk9sOFMsS3A/HieE4Mqqm+LTtd4QaMORUm
+         mWz5FiPw/6+jvhPKPYYzY0Sc2oQky6ggNitQCvkxuRRARYNQtPmrSk0URscmujb7yg3h
+         HNxqSuVZ4t8e7hnYHHaZn0nOsckjrTR61dAqoKRw/hv1sFrO3LU3D75eWUavvOCnTVse
+         bHEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755168186; x=1755772986;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jMgZVJV8GbdzEDE5ofwso5AKnFy8hsBf9wu7z3fU3lo=;
+        b=A3GGsxtKM2M23WfUyq8Od97DIBldEin0gsMcynlnD3S98ACKnztPu1G1P8YCajIlVb
+         aQRLo/etD6QSBP3Atrt8AJtJnr6Go+TzQex1Gz5tXlplZ0HW0KMW+o050wlx7aj4yEze
+         B3rPveFu6qzq7miR4XkMqSavuXOJA5C7hXAkbzJNr+OoFg2GUs6begN28sJwDMhgvGUs
+         U+hd7AP1v2ND7lIMhWXn5tn8311xalIAYSiXg6F+6shn6Oo8nhtVh0r7/yEiroi3gzp9
+         ah+yNGNazO2SHVTe1g4GBLC6ajA2PVmuy5wN4j6cTe9S8ldKzQZmv+iIIMlpGdj/Mc1w
+         aZ6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVlcL/7tCIC1Q8nYiMyyoneysC82OUQXLJ6xrTYbv+A0XeFHnLUHljpP/ENWZO5kEKbWSVkAfwmw+7Xefyw@vger.kernel.org, AJvYcCWmyY3cZxYOZxssTZfTOkyObGAvIQ9NC8Ss1dAsNszUFhNOx4Ym/TiV3+BzhsSvXLzEnbS3u4Je97cRMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YywTfnK5yfI7jEHsaxNrbfq+YJyPSXhSIhaXgg8gJ13si4RHeNr
+	QaUStxqP7EIaZYm6BSp21tCuUcKyn5IbBEKNtLhm+rh6Z4yc6d0eEEwR
+X-Gm-Gg: ASbGncsJyIbW5F/R6im9RJIAqzJ6rqW0rOqbAF8TVSxxfP/fkwDobn+QA5m2VYiuv3e
+	l9aWb+yO8sa6uDnz/ycCErVVSIGJEe8H/lj02BOsvY2smVAA1+zEQON/wNht1mc6M2a78SZBqYo
+	kPs2uPSBvJLTrthCZvM3tw8Pd2rVRx7BLAspzTThHKY/s36R2388RcF/QU38SpzJ8PTZqaZ6inG
+	OMSuZq2Sen78HW2fRWQg6hYvaUZXaHXfvSuKsYPjQrexzO5k1On+R4fWOc1n37y+MRK4eXQo6O/
+	o2ncwhPjWZNTt33EHzmkizOloogef1h77RDL7iAiSRaNlzWq9SQ0pLu5i9/B96RY6+nmqjdiVNQ
+	JpQ6Np+aR1NHvR+4nyVz5Zj7NJEVXUg==
+X-Google-Smtp-Source: AGHT+IE8U7YEJr/vjLhJ1eyFnFBHbO16i39TNttYrnx/WJArcafNfbz6A0kvScoL9qfUBS2aW1vLFA==
+X-Received: by 2002:a05:600c:35d3:b0:456:1514:5b04 with SMTP id 5b1f17b1804b1-45a1b6554f3mr16357915e9.21.1755168185550;
+        Thu, 14 Aug 2025 03:43:05 -0700 (PDT)
+Received: from fedora ([94.73.32.0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c76f055sm16789975e9.22.2025.08.14.03.43.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 03:43:04 -0700 (PDT)
+Date: Thu, 14 Aug 2025 12:43:02 +0200
+From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: bentiss@kernel.org, luguohong@xiaomi.com, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] HID: input: report battery status changes
+ immediately
+Message-ID: <aJ29tlqoQYFa-WYt@fedora>
+References: <20250806073944.5310-1-jose.exposito89@gmail.com>
+ <20250806073944.5310-2-jose.exposito89@gmail.com>
+ <4q4qn3p8-6s3s-289n-44s2-43s76qrs2oo4@xreary.bet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4q4qn3p8-6s3s-289n-44s2-43s76qrs2oo4@xreary.bet>
 
-On Do, 2025-08-14 at 16:41 +0800, Ryan Chen wrote:
-> Add i2c-ast2600 new register mode driver to support AST2600
-> i2c new register mode. This i2c-ast2600 new driver and the
-> legacy i2c-aspeed driver both match the same compatible string
-> "aspeed,ast2600-i2c-bus" because they target the same I2C
-> controller IP on AST2600. However, AST2600 SoCs may configure
-> the controller instances to operate either in the legacy
-> register layout or the new layout (via global register).
-> The new register mode support following.
->=20
-> - Add new clock divider option for more flexible and accurate
->  clock rate generation
-> - Add tCKHighMin timing to guarantee SCL high pulse width.
-> - Add support dual pool buffer mode, split 32 bytes pool buffer
->  of each device into 2 x 16 bytes for Tx and Rx individually.
-> - Increase DMA buffer size to 4096 bytes and support byte alignment.
-> - Re-define the base address of BUS1 ~ BUS16 and Pool buffer.
-> - Re-define registers for separating controller and target
->  mode control.
-> - Support 4 individual DMA buffers for controller Tx and Rx,
->  target Tx and Rx.
->=20
-> And following is new register set for package transfer sequence.
-> - New Master operation mode:
->   S -> Aw -> P
->   S -> Aw -> TxD -> P
->   S -> Ar -> RxD -> P
->   S -> Aw -> TxD -> Sr -> Ar -> RxD -> P
-> - Bus SDA lock auto-release capability for new controller DMA
->  command mode.
-> - Bus auto timeout for new controller/target DMA mode.
->=20
-> Since the register layout is selected via a global register at
-> runtime and both drivers bind to the same compatible string,
-> this patch defines the driver selection at build-time using
-> Kconfig, ensuring that only one driver is compiled into the
-> kernel. This approach avoids ambiguity and ensures consistent
-> behavior for each platform configuration.
->=20
-> The following is two versus register layout.
-> Old register mode:
-> {I2CD00}: Function Control Register
-> {I2CD04}: Clock and AC Timing Control Register
-> {I2CD08}: Clock and AC Timing Control Register
-> {I2CD0C}: Interrupt Control Register
-> {I2CD10}: Interrupt Status Register
-> {I2CD14}: Command/Status Register
-> {I2CD18}: Slave Device Address Register
-> {I2CD1C}: Pool Buffer Control Register
-> {I2CD20}: Transmit/Receive Byte Buffer Register
-> {I2CD24}: DMA Mode Buffer Address Register
-> {I2CD28}: DMA Transfer Length Register
-> {I2CD2C}: Original DMA Mode Buffer Address Setting
-> {I2CD30}: Original DMA Transfer Length Setting and Final Status
->=20
-> New Register mode
-> {I2CC00}: Master/Slave Function Control Register
-> {I2CC04}: Master/Slave Clock and AC Timing Control Register
-> {I2CC08}: Master/Slave Transmit/Receive Byte Buffer Register
-> {I2CC0C}: Master/Slave Pool Buffer Control Register
-> {I2CM10}: Master Interrupt Control Register
-> {I2CM14}: Master Interrupt Status Register
-> {I2CM18}: Master Command/Status Register
-> {I2CM1C}: Master DMA Buffer Length Register
-> {I2CS20}: Slave~ Interrupt Control Register
-> {I2CS24}: Slave~ Interrupt Status Register
-> {I2CS28}: Slave~ Command/Status Register
-> {I2CS2C}: Slave~ DMA Buffer Length Register
-> {I2CM30}: Master DMA Mode Tx Buffer Base Address
-> {I2CM34}: Master DMA Mode Rx Buffer Base Address
-> {I2CS38}: Slave~ DMA Mode Tx Buffer Base Address
-> {I2CS3C}: Slave~ DMA Mode Rx Buffer Base Address
-> {I2CS40}: Slave Device Address Register
-> {I2CM48}: Master DMA Length Status Register
-> {I2CS4C}: Slave  DMA Length Status Register
-> {I2CC50}: Current DMA Operating Address Status
-> {I2CC54}: Current DMA Operating Length  Status
->=20
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  drivers/i2c/busses/Kconfig       |   23 +-
->  drivers/i2c/busses/Makefile      |    1 +
->  drivers/i2c/busses/i2c-ast2600.c | 1038 ++++++++++++++++++++++++++++++
->  3 files changed, 1054 insertions(+), 8 deletions(-)
->  create mode 100644 drivers/i2c/busses/i2c-ast2600.c
->=20
-[...]
-> diff --git a/drivers/i2c/busses/i2c-ast2600.c b/drivers/i2c/busses/i2c-as=
-t2600.c
-> new file mode 100644
-> index 000000000000..15e600ff50ec
-> --- /dev/null
-> +++ b/drivers/i2c/busses/i2c-ast2600.c
-> @@ -0,0 +1,1038 @@
-[...]
-> +static int ast2600_i2c_probe(struct platform_device *pdev)
-> +{
->=20
-[...]
-> +	i2c_bus->rst =3D devm_reset_control_get_shared(dev, NULL);
-> +	if (IS_ERR(i2c_bus->rst))
-> +		return dev_err_probe(dev, PTR_ERR(i2c_bus->rst), "Missing reset ctrl\n=
-");
+Hi Jiri,
 
-What ...
+On Mon, Aug 11, 2025 at 01:48:22PM +0200, Jiri Kosina wrote:
+> On Wed, 6 Aug 2025, José Expósito wrote:
+> 
+> > When the battery status changes, report the change immediately to user
+> > space.
+> 
+> Could you please make the changelog a little bit more elaborative, i.e. 
+> why is it needed, what user-visible behavior change/improvement it brings, 
+> etc.
+> 
+> I know it's in the e-mail thread, but at least some summary should go also 
+> to the commit itself.
 
-> +	i2c_bus->rst =3D devm_reset_control_get_shared_deasserted(dev, NULL);
-> +	if (IS_ERR(i2c_bus->rst))
-> +		return dev_err_probe(dev, PTR_ERR(i2c_bus->rst), "Missing reset ctrl\n=
-");
+Thanks a lot for reviewing these patches.
 
-... is this?
+I sent v3 with a more detailed description of the fix:
+https://lore.kernel.org/linux-input/20250814103947.116139-1-jose.exposito89@gmail.com/
 
-Choose one. If you use 1), call reset_control_deassert() somewhere. If
-you use 2), remove reset_control_assert() below.
+Jose
 
-[...]
-> +static void ast2600_i2c_remove(struct platform_device *pdev)
-> +{
-> +	struct ast2600_i2c_bus *i2c_bus =3D platform_get_drvdata(pdev);
-> +
-> +	/* Disable everything. */
-> +	writel(0, i2c_bus->reg_base + AST2600_I2CC_FUN_CTRL);
-> +	writel(0, i2c_bus->reg_base + AST2600_I2CM_IER);
-> +	reset_control_assert(i2c_bus->rst);
-
-Drop if using devm_reset_control_get_shared_deasserted()
-
-regards
-Philipp
+> Thanks,
+> 
+> -- 
+> Jiri Kosina
+> SUSE Labs
+> 
 
