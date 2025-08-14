@@ -1,202 +1,176 @@
-Return-Path: <linux-kernel+bounces-769546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5B9B27025
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:25:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66456B2702A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68F127BF894
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:23:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B139A1BC545F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970BB259CBF;
-	Thu, 14 Aug 2025 20:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054B1259CBF;
+	Thu, 14 Aug 2025 20:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OD9Bx9iM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b="aw4tTbAC"
+Received: from iguana.tulip.relay.mailchannels.net (iguana.tulip.relay.mailchannels.net [23.83.218.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAB3258CF7;
-	Thu, 14 Aug 2025 20:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755203122; cv=none; b=iVMp3ddptsa4DN+rZ+QTtg/fvWHgCsBcCWpeSJ0IJJQ/eCxS0Zk0hYOAanKBG8nmysY8FHPVDIZTXje7iWUUOQ6LlMVyjLXYZy7fd777coaRzuAgVvhY6cA4zPeqRHIO6UUiIcPb6URmhu+uIv7FZKfnmvvYPJ/IGGZcYCsiTkc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755203122; c=relaxed/simple;
-	bh=UZ5iOE/FwivBm/rIFSOlAgOmXTo+j4bV2ld3eUuQQsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=WSX3P+kHix7y6yW9Fm05k3vMwkmOCYPHyG7YOWZ5iRc96BKo1A+aN94JNggMs7gBFad6wqbe3EbbjwGb0uvrqN/kXR2BQZ4uKGqi04yX0T0Y7KNWWHCb+ZPV4Enqya1lcrEU23dLJlMfR3GZVO/JQHD+q2ttGOvBn+JBCG84cXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OD9Bx9iM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E01BC4CEED;
-	Thu, 14 Aug 2025 20:25:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755203121;
-	bh=UZ5iOE/FwivBm/rIFSOlAgOmXTo+j4bV2ld3eUuQQsw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OD9Bx9iM9M/reeKNAm+jKAfDbKgkmLbMQ4cE6d4UZlzzF3B2UlhTIK8DyinVRIlmG
-	 mBNq/I16fGciXq+pCKpVvoeuyXvmUSdZU1paAHA3pUcS9Nmd5BtQdem8MqmyBQ24Vn
-	 k6dRo7qOCv5U1ibGGNNiK4Scy1iEGkfmdBBGql3FJUHIa+slCUW6y0LvJSFQfbhRh6
-	 69JJ8wt9/iGLYY8SpYY1TNc8/HYRb3XEUs8w9S11XOVNsqjL2key5xXQX1eDLmTLNq
-	 xSNkt1IPSCp8YrFbQZBASvQVnD14uEZvDE7lP4B6t3HqQAc7tIzCebnmuBP2V+tG7T
-	 SdTl20E4N3q/w==
-Date: Thu, 14 Aug 2025 15:25:19 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
-	jingoohan1@gmail.com, mani@kernel.org, robh@kernel.org,
-	ilpo.jarvinen@linux.intel.com, schnelle@linux.ibm.com,
-	gbayer@linux.ibm.com, lukas@wunner.de, arnd@kernel.org,
-	geert@linux-m68k.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v15 0/6] Refactor capability search into common macros
-Message-ID: <20250814202519.GA344690@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4188B1FF60A;
+	Thu, 14 Aug 2025 20:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.253
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755203241; cv=pass; b=YE0bHgcOGu4UtJxz9XFWJnFDtKVyaRFuIrSJAKCWLu92ih6CdI4NSUec61aruGmpmINAghFSitmK2xNUVr6GRL/0h0V/0Z6E1f33BbQ+vuoHe+NnnyyzgcsltOkZ6rFU+USBnJEpr11nVlI12fljjFAw34x9LFmcVAudA45ANN8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755203241; c=relaxed/simple;
+	bh=nRlGCCJCEYe988/EJMXA2bn8aYuuWN/aly6RkZI8q7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uKsrnRjv8y5ZS9lUDc9tLXY3Mfp/7zcry7CbYYrw2+R3D+JAsslzUopXrowUL7lZwtEO1gTon7ewl30cSuCCdxYESTb6rEYVTltv9ddx4CdM4YsxIOkYea0AX2HXUkzqC7VDmdvAGDS7ikxtaJ9CfCwOzjeQg1zUvwlreAFOF0E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org; spf=pass smtp.mailfrom=ewhac.org; dkim=pass (2048-bit key) header.d=ewhac.org header.i=@ewhac.org header.b=aw4tTbAC; arc=pass smtp.client-ip=23.83.218.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ewhac.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ewhac.org
+X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 02314162C4E;
+	Thu, 14 Aug 2025 20:27:09 +0000 (UTC)
+Received: from pdx1-sub0-mail-a258.dreamhost.com (trex-blue-8.trex.outbound.svc.cluster.local [100.96.56.14])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 8C3B4163971;
+	Thu, 14 Aug 2025 20:27:08 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1755203228; a=rsa-sha256;
+	cv=none;
+	b=ZEWp4FLqZD5whrpn9IcswqasGEptv/7+S2eJml45Ld1w98Vmt0Ohy0FKGPa8+/Cotyjg4N
+	LVNOpjRBUSHmirLnNU/eAhYNb+eAZNpGac1m8YIIIOXqoR0L//RN7CXpLPyCku3m9I4GYi
+	ZhnSBFldy8KUgKlQYM/XaJpGNCp8mcO7tJln/C0604SeSm5CTkwxHr7umYTBjBViMgbiWg
+	EXT6KB2C063GmwAltzVVnxpNc/8w9of9E/dDVWlgkGxtydjai1ZT/+AzXK66jpmHw2GmG6
+	AOtD6foJUblyICLhL0B4qFlUiJ5BcbmyHD2VVwlEqLLc6BinbT10a9IYsVtxTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1755203228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=Ht4Yilg24DjWd+8Xf45zZ9kAMEuvotKdSx04jUYmF38=;
+	b=HUJpOLXWr6M/G/foUNx/8FXHBHXWRriQ4feLTvG06WQCdqYHYuV5Zf1Ykgz9/UvA4KcRgU
+	HIsrsNqtdUrMlucqqWFjAQ50uSIKoqx9CcVbESmQnGSGaIHI6bQUhTxCxvCaD1CdY7Xa55
+	DkTEN97+erpaTUR2UHwurXyUxhEH8Ce1R8S/P/+qH5GNGzPTgrLb408PTgvdmFPpWRl8pB
+	fiKsENtMfh3E3NX7m9k7/cNva5Fz9PhzGZFvO3Ui6aJShv+6YwG78gOLF9w6kTVD9Jsdmx
+	9YSskhyVsfwBGMVe7gvYFsaM+qZJd8sQb8oTtUTPfZiaHH9h5AhdyHcUdkdb+Q==
+ARC-Authentication-Results: i=1;
+	rspamd-865b9ccc6c-jwf8c;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=ewhac@ewhac.org
+X-Sender-Id: dreamhost|x-authsender|ewhac@ewhac.org
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|ewhac@ewhac.org
+X-MailChannels-Auth-Id: dreamhost
+X-Industry-Trade: 3605f0b77398cca0_1755203228839_1202641544
+X-MC-Loop-Signature: 1755203228839:294781078
+X-MC-Ingress-Time: 1755203228838
+Received: from pdx1-sub0-mail-a258.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.96.56.14 (trex/7.1.3);
+	Thu, 14 Aug 2025 20:27:08 +0000
+Received: from ewhac.org (unknown [135.180.175.143])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ewhac@ewhac.org)
+	by pdx1-sub0-mail-a258.dreamhost.com (Postfix) with ESMTPSA id 4c2xcD2dqNzCW;
+	Thu, 14 Aug 2025 13:27:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ewhac.org;
+	s=dreamhost; t=1755203228;
+	bh=Ht4Yilg24DjWd+8Xf45zZ9kAMEuvotKdSx04jUYmF38=;
+	h=Date:From:To:Cc:Subject:Content-Type:Content-Transfer-Encoding;
+	b=aw4tTbACC9BkZEuADf+iedQBY3MrT+dr56yGWpcJ8TdIvCKYm5RvYBT/oEvqtsUYz
+	 vD9xci53Gv6bI7wRDX/YK3bPF+6S7fa0goGbbB0Y6FMXXpZZPQhQTYuDAoICSNCnfl
+	 rNKbyxqUCYx1b2q5OMTxw1g9llOiok4/NNR/95rkcKPP/VAKBOsLn5umS6VQzoItdG
+	 oQ0uk15tIgrenLmzrBd64hr+C21Y0eoBtWtdraKyD7A2CfkCr392t9fajVGum4LGvF
+	 PbsGOrz4A8tjMPPtGMZJ8LkDBgoHsS/z5ANQY5Vjqwl0LuJu265xS9E1xh6WTFfXas
+	 uBadEnOYHiuRg==
+Received: from ewhac by walkies with local (Exim 4.98.2)
+	(envelope-from <ewhac@ewhac.org>)
+	id 1umeXT-00000004yYX-1G7z;
+	Thu, 14 Aug 2025 13:27:07 -0700
+Date: Thu, 14 Aug 2025 13:27:07 -0700
+From: "Leo L. Schwab" <ewhac@ewhac.org>
+To: Kate Hsuan <hpa@redhat.com>
+Cc: Hans de Goede <hansg@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] HID: lg-g15 - Add support for Logitech G13.
+Message-ID: <aJ5Gm5AaLI6iJ4le@ewhac.org>
+References: <20250812065327.515098-2-ewhac@ewhac.org>
+ <CAEth8oEf3c9quzL2boHo=dJg6+p8scSsq5hL7j2LLjdtREsQxw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250813144529.303548-1-18255117159@163.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEth8oEf3c9quzL2boHo=dJg6+p8scSsq5hL7j2LLjdtREsQxw@mail.gmail.com>
 
-On Wed, Aug 13, 2025 at 10:45:23PM +0800, Hans Zhang wrote:
-> Dear Maintainers,
-> 
-> This patch series addresses long-standing code duplication in PCI
-> capability discovery logic across the PCI core and controller drivers.
-> The existing implementation ties capability search to fully initialized
-> PCI device structures, limiting its usability during early controller
-> initialization phases where device/bus structures may not yet be
-> available.
-> 
-> The primary goal is to decouple capability discovery from PCI device
-> dependencies by introducing a unified framework using config space
-> accessor-based macros. This enables:
-> 
-> 1. Early Capability Discovery: Host controllers (e.g., Cadence, DWC)
-> can now perform capability searches during pre-initialization stages
-> using their native config accessors.
-> 
-> 2. Code Consolidation: Common logic for standard and extended capability
-> searches is refactored into shared macros (`PCI_FIND_NEXT_CAP` and
-> `PCI_FIND_NEXT_EXT_CAP`), eliminating redundant implementations.
-> 
-> 3. Safety and Maintainability: TTL checks are centralized within the
-> macros to prevent infinite loops, while hardcoded offsets in drivers
-> are replaced with dynamic discovery, reducing fragility.
-> 
-> Key improvements include:  
-> - Driver Conversions: DesignWare and Cadence drivers are migrated to
->   use the new macros, removing device-specific assumptions and ensuring
->   consistent error handling.
-> 
-> - Enhanced Readability: Magic numbers are replaced with symbolic
->   constants, and config space accessors are standardized for clarity.
-> 
-> - Backward Compatibility: Existing PCI core behavior remains unchanged.
-> 
-> ---
-> Dear Niklas and Gerd,
-> 
-> Can you test this series of patches on the s390?
-> 
-> Thank you very much.
-> ---
-> 
-> ---
-> Changes since v14:
-> - Delete the first patch in the v14 series.
-> - The functions that can obtain the values of the registers u8/u16/u32 are
->   directly called in PCI_FIND_NEXT_CAP() and PCI_FIND_NEXT_EXT_CAP().
->   Use the pci_bus_read_config_byte/word/dword function directly.
-> - Delete dw_pcie_read_cfg and redefine three functions: dw_pcie_read_cfg_byte/word/dword.
-> - Delete cdns_pcie_read_cfg and redefine three functions: cdns_pcie_read_cfg_byte/word/dword.
-> 
-> Changes since v13:
-> - Split patch 3/6 into two patches for searching standard and extended capability. (Bjorn)
-> - Optimize the code based on the review comments from Bjorn.
-> - Patch 5/7 and 6/7 use simplified macro definitions: PCI_FIND_NEXT_CAP(), PCI_FIND_NEXT_EXT_CAP().
-> - The other patches have not been modified.
-> 
-> Changes since v12:
-> - Modify some commit messages, code format issues, and optimize the function return values.
-> 
-> Changes since v11:
-> - Resolved some compilation warning.
-> - Add some include.
-> - Add the *** BLURB HERE *** description(Corrected by Mani and Krzysztof).
-> 
-> Changes since v10:
-> - The patch [v10 2/6] remove #include <uapi/linux/pci_regs.h> and add macro definition comments.
-> - The patch [v10 3/6] remove #include <uapi/linux/pci_regs.h> and commit message were modified.
-> - The other patches have not been modified.
-> 
-> Changes since v9:
-> - Resolved [v9 4/6] compilation error.
->   The latest 6.15 rc1 merge __dw_pcie_find_vsec_capability, which uses 
->   dw_pcie_find_next_ext_capability.
-> - The other patches have not been modified.
-> 
-> Changes since v8:
-> - Split patch.
-> - The patch commit message were modified.
-> - Other patches(4/6, 5/6, 6/6) are unchanged.
-> 
-> Changes since v7:
-> - Patch 2/5 and 3/5 compilation error resolved.
-> - Other patches are unchanged.
-> 
-> Changes since v6:
-> - Refactor capability search into common macros.
-> - Delete pci-host-helpers.c and MAINTAINERS.
-> 
-> Changes since v5:
-> - If you put the helpers in drivers/pci/pci.c, they unnecessarily enlarge
->   the kernel's .text section even if it's known already at compile time
->   that they're never going to be used (e.g. on x86).
-> - Move the API for find capabilitys to a new file called
->   pci-host-helpers.c.
-> - Add new patch for MAINTAINERS.
-> 
-> Changes since v4:
-> - Resolved [v4 1/4] compilation warning.
-> - The patch subject and commit message were modified.
-> 
-> Changes since v3:
-> - Resolved [v3 1/4] compilation error.
-> - Other patches are not modified.
-> 
-> Changes since v2:
-> - Add and split into a series of patches.
-> ---
-> 
-> Hans Zhang (6):
->   PCI: Clean up __pci_find_next_cap_ttl() readability
->   PCI: Refactor capability search into PCI_FIND_NEXT_CAP()
->   PCI: Refactor extended capability search into PCI_FIND_NEXT_EXT_CAP()
->   PCI: dwc: Use PCI core APIs to find capabilities
->   PCI: cadence: Use PCI core APIs to find capabilities
->   PCI: cadence: Use cdns_pcie_find_*capability() to avoid hardcoding
->     offsets
-> 
->  .../pci/controller/cadence/pcie-cadence-ep.c  | 38 +++++----
->  drivers/pci/controller/cadence/pcie-cadence.c | 14 +++
->  drivers/pci/controller/cadence/pcie-cadence.h | 39 +++++++--
->  drivers/pci/controller/dwc/pcie-designware.c  | 77 ++---------------
->  drivers/pci/controller/dwc/pcie-designware.h  | 21 +++++
->  drivers/pci/pci.c                             | 76 +++--------------
->  drivers/pci/pci.h                             | 85 +++++++++++++++++++
->  include/uapi/linux/pci_regs.h                 |  3 +
->  8 files changed, 194 insertions(+), 159 deletions(-)
+On Thu, Aug 14, 2025 at 05:09:09PM +0800, Kate Hsuan wrote:
+> Thank you for your work.
+>
+	Thank you for your feedback.  And thank you for collecting all your
+comments into one post.
 
-I applied this on pci/capability-search for v6.18, thanks!
+> On Tue, Aug 12, 2025 at 2:57 PM Leo L. Schwab <ewhac@ewhac.org> wrote:
+> The comment should in C comments, for example
+>  struct input_dev *input_js;  /*joystick device for G13*/
+>
+	Will sweep all those up.
 
-Niklas, I added your Tested-by, omitting the dwc and cadence patches
-because I think you tested s390 and probably didn't exercise dwc or
-cadence.  Thanks very much to you and Gerd for finding the issue and
-testing the resolution!
+> > +static int lg_g13_kbd_led_set(struct led_classdev *led_cdev, enum led_brightness brightness)
+> > +{
+> > +       struct led_classdev_mc *mc = lcdev_to_mccdev(led_cdev);
+> > +       struct lg_g15_led *g15_led =
+> > +               container_of(mc, struct lg_g15_led, mcdev);
+> > +       struct lg_g15_data *g15 = dev_get_drvdata(led_cdev->dev->parent);
+> > +
+> > +       /* Ignore LED off on unregister / keyboard unplug */
+> > +       if (led_cdev->flags & LED_UNREGISTERING)
+> > +               return 0;
+> > +
+> > +       guard(mutex)(&g15->mutex);
+> guard() can be moved to lg_g13_kbd_led_write() to ensure the code is
+> protected by a mutex lock when lg_g13_kbd_led_write() is called.
+>
+	I was mimicking the existing structure of the G15 and G510 code,
+which I assumed was set up that way for a reason.  Will move this.
 
-Bjorn
+> > +static int lg_g13_event(struct lg_g15_data *g15, u8 const *data)
+> > +{
+> > +       struct g13_input_report const * const rep = (struct g13_input_report *) data;
+> > +       int i, val;
+> > +       bool hw_brightness_changed;
+> Remove unused variable.
+>
+	I will be slightly restructuring this.
+
+> >         switch (g15->model) {
+> > +       case LG_G13:
+> > +               /*
+> > +                * Some usermode libraries tend to ignore devices that don't
+> > +                * "look like" a joystick.  Create additional input device
+> > +                * dedicated as joystick.
+> > +                */
+> Nit.
+> Improve the comment and describe the hardware and the variable
+> settings below in brief.
+
+	I'll wordsmith this.  It'll get a bit wordier, though...
+
+> Some style and comment style issues are pointed out, and I'll start to
+> test this work after I receive my G13.
+>
+	If anything explodes, please let me know right away.
+
+					Schwab
 
