@@ -1,62 +1,74 @@
-Return-Path: <linux-kernel+bounces-768764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB320B26530
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:16:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16253B2652E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7CCAA070B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C7B1BC0239
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD592FE054;
-	Thu, 14 Aug 2025 12:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8986D2FD7A2;
+	Thu, 14 Aug 2025 12:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dbLo7fO4"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TvB/ErAX"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82E62E7BBC;
-	Thu, 14 Aug 2025 12:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387DF2E1C64;
+	Thu, 14 Aug 2025 12:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173750; cv=none; b=PbAqpkYvyb5/n5zUlGcU2itNuqvJrW4Z2P3Bz7f2St0YDPsUqP4r7YliH9e0f011TFclhHBBzQ/PYWWvY3lR0YLa/L4zjkuMzUUlZqUoCTW6mle+BlHdWI1NT9wDGabCYXtWpqu6xr6G4ypUfUbtI8x8LKS6dlDtxDCgyJthnFI=
+	t=1755173748; cv=none; b=faYPY7CzJoYdcEtFnUB8AN1WsvwYYfjMMvJ8LJ8qfGc3ijrL+WPKwFb8ltnrKZAGs705G8RYieZC+Du7XgQmGmyrcC+ga0nNVZlTx6nfV2gKjhHnN5bbZVNOCdsGC+eq2sjpKolOqcrC03ByckHDhSKq1R7cKmIUjgBugokmv+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173750; c=relaxed/simple;
-	bh=zsj/r4+qg+RibQeEvHxn2GkGt2ubYJ+iN86QAKdU1/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kDMjliO0nVgdoTneZuAKnt4S3wHTyVTU7MIFBcZXIuPpeHe3DMKhK7muCmV3gZgM5cpkjs+H+XbVhg9hnpoPsrVYWz4x+5zlZBnEfZg3auYGGxhz/UVrITSAxEZNTy5U5iGaTEuvQ2zyD5gZ9NDfBiOzdwiJ6CvWX4xeiL/YSRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dbLo7fO4; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57ECExwS1875851;
-	Thu, 14 Aug 2025 07:14:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755173699;
-	bh=3bkB4ImlGUHuqngaDsC8bS0n8FZ4dBNcDo4Y1EMKjpE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=dbLo7fO40YX7UWvYJmhodrSTTzlEIOLeOw35d4UR+YPJE1fj4ourbiGEy1rYfkDPC
-	 UWPGYNHmbEf1ZZzLDEw6H4MdUY3YKILbftMREbHBMams0wqz4AeHDrxD+57kPfR0x1
-	 7b56lgQBaD/wXECzbSoPTgKGr8Yy8WhDHq5TzZPQ=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57ECEx9L1821238
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 07:14:59 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 07:14:58 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 07:14:58 -0500
-Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57ECEqac3583824;
-	Thu, 14 Aug 2025 07:14:52 -0500
-Message-ID: <dd6ece66-ae4b-424a-aa09-872ac15e1549@ti.com>
-Date: Thu, 14 Aug 2025 17:44:51 +0530
+	s=arc-20240116; t=1755173748; c=relaxed/simple;
+	bh=Pd/b4svV5M05SKBeMyvfPAwsdplBC77zGbTanRckWJg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fhcs3iNT25qYcJEe3Yac5FLFfxQC8gC4QK9mw9HgcqkCpLvoDxtHxJQLjKENVIwxsXtS6fk7cJd5i7yjISmXcgTxkBnGQ4As/UAy7xEj3mxCfYi9xCKCPb8F+cE3QaBY+YHmNybPuk3g/sh/g6IKQFc7UHfoj6A39I2571ukBiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TvB/ErAX; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EBj2fm025118;
+	Thu, 14 Aug 2025 12:15:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=FGy2Uj
+	ZnXbHAZAaF2f8XajEOLc/UCQwd8IuaLN0+3w8=; b=TvB/ErAXbwP89TAjP7KdV2
+	4cPflp18MBwXXp4Zs6J3fwTO2EKS9/uJF2k+tvPyN2ULtcaKPU62mK6XFftSFfdC
+	Jwz+CstxqlYO/a7DF5KS5f1WJ05go+eUs3Q+uj5Dm6wviVsDXCqcJB6IOKDpmsWL
+	SrxVACPSGqplmJ5dbt7zdCpgU8VipSNk4J1UMbNfr+kR5BVdq9pbaqQMZrQw76WU
+	eXdo+v85BRnjS4hL9DMwgHEEm5c4Fr17GYk8bPXuarEryxRODJFyx7bWmrjgtNyy
+	6j6Nx4LoRb1dkbalG2QZBT6cG/oCas5R5RbPhCpaU1uHsCELOrGmCZu62zf6xxmA
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48ehaae589-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 12:15:17 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57E8KAMg026279;
+	Thu, 14 Aug 2025 12:15:17 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48eh21c7ts-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 12:15:17 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57ECFG9G28508712
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Aug 2025 12:15:16 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7808058061;
+	Thu, 14 Aug 2025 12:15:16 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 41A1558057;
+	Thu, 14 Aug 2025 12:15:13 +0000 (GMT)
+Received: from [9.109.198.214] (unknown [9.109.198.214])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 14 Aug 2025 12:15:12 +0000 (GMT)
+Message-ID: <822e6a29-7340-4c79-a23e-ff9221cac74f@linux.ibm.com>
+Date: Thu, 14 Aug 2025 17:45:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,144 +76,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/5] net: rnpgbe: Add register_netdev
-To: Dong Yibo <dong100@mucse.com>, <andrew+netdev@lunn.ch>,
-        <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <horms@kernel.org>, <corbet@lwn.net>,
-        <gur.stavi@huawei.com>, <maddy@linux.ibm.com>, <mpe@ellerman.id.au>,
-        <lee@trager.us>, <gongfan1@huawei.com>, <lorenzo@kernel.org>,
-        <geert+renesas@glider.be>, <Parthiban.Veerasooran@microchip.com>,
-        <lukas.bulwahn@redhat.com>, <alexanderduyck@fb.com>,
-        <richardcochran@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250814073855.1060601-1-dong100@mucse.com>
- <20250814073855.1060601-6-dong100@mucse.com>
+Subject: Re: [PATCH 08/16] blk-mq: fix blk_mq_tags double free while
+ nr_requests grown
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, yukuai3@huawei.com,
+        bvanassche@acm.org, hare@suse.de, ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250814033522.770575-1-yukuai1@huaweicloud.com>
+ <20250814033522.770575-9-yukuai1@huaweicloud.com>
 Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <20250814073855.1060601-6-dong100@mucse.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250814033522.770575-9-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=KPRaDEFo c=1 sm=1 tr=0 ts=689dd355 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=i0EeH86SAAAA:8 a=6NI6H_c-a1oXmsWDywsA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: A1GXg7jICdt-jyK7CSn5JCBsfetQrQ2B
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX3IYXDjq7EDq5
+ DR+vUkvti/ILwuNXpFOJA78NGJzhutd8UEbWJo1bA6iN9ZL4115+zql2kIiayx+TsQwftlAX/66
+ Nn67cmGdjyGjUbPbV/X0MLxfSLxXOw0rlRUUazgmh9GCBj32OE9taKbBgxn9U9p0eQCAMUJP3ky
+ qIflWNmcL+qalJW/u6kAZJDSqPgQ7agFhkH2lTHJHMabXIZkuWEp2iNPhQGbpbuDbEFuS8d+ryD
+ q0v1LxPMA1mOTiI/F3vrV+1tUHZQYnpDQpigwV4jgB3NccWQedXWXfDI8C7ior6oqbdkNClHtos
+ nQx90kypgK0p0zyeaDPSlBOoBIZ9iT4wXgJUK5QZ3AlAX46Xe2B5iXG6CKlLlXOtHQ1sAC5PU5E
+ p35U57h9
+X-Proofpoint-GUID: A1GXg7jICdt-jyK7CSn5JCBsfetQrQ2B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 clxscore=1015 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120224
 
 
 
-On 14/08/25 1:08 pm, Dong Yibo wrote:
-> Initialize get mac from hw, register the netdev.
+On 8/14/25 9:05 AM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Signed-off-by: Dong Yibo <dong100@mucse.com>
+> In the case user trigger tags grow by queue sysfs attribute nr_requests,
+> hctx->sched_tags will be freed directly and replaced with a new
+> allocated tags, see blk_mq_tag_update_depth().
+> 
+> The problem is that hctx->sched_tags is from elevator->et->tags, while
+> et->tags is still the freed tags, hence later elevator exist will try to
+> free the tags again, causing kernel panic.
+> 
+> Fix this problem by using new halper blk_mq_alloc_sched_tags() to
+> allocate a new sched_tags. Meanwhile, there is a longterm problem can be
+> fixed as well:
+> 
+> If blk_mq_tag_update_depth() succeed for previous hctx, then bitmap depth
+> is updated, however, if following hctx failed, q->nr_requests is not
+> updated and the previous hctx->sched_tags endup bigger than q->nr_requests.
+> 
+> Fixes: f5a6604f7a44 ("block: fix lockdep warning caused by lock dependency in elv_iosched_store")
+> Fixes: e3a2b3f931f5 ("blk-mq: allow changing of queue depth through sysfs")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > ---
->  drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h    | 18 +++++
->  .../net/ethernet/mucse/rnpgbe/rnpgbe_chip.c   | 73 ++++++++++++++++++
->  drivers/net/ethernet/mucse/rnpgbe/rnpgbe_hw.h |  1 +
->  .../net/ethernet/mucse/rnpgbe/rnpgbe_main.c   | 75 +++++++++++++++++++
->  4 files changed, 167 insertions(+)
+>  block/blk-mq.c | 31 ++++++++++++++++++++-----------
+>  1 file changed, 20 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> index 7ab1cbb432f6..7e51a8871b71 100644
-> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe.h
-> @@ -6,6 +6,7 @@
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index a7d6a20c1524..f1c11f591c27 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -4917,6 +4917,23 @@ void blk_mq_free_tag_set(struct blk_mq_tag_set *set)
+>  }
+>  EXPORT_SYMBOL(blk_mq_free_tag_set);
 >  
->  #include <linux/types.h>
->  #include <linux/mutex.h>
-> +#include <linux/netdevice.h>
->  
->  extern const struct rnpgbe_info rnpgbe_n500_info;
->  extern const struct rnpgbe_info rnpgbe_n210_info;
-> @@ -82,6 +83,15 @@ struct mucse_mbx_info {
->  	u32 fw2pf_mbox_vec;
->  };
->  
-> +struct mucse_hw_operations {
-> +	int (*reset_hw)(struct mucse_hw *hw);
-> +	void (*driver_status)(struct mucse_hw *hw, bool enable, int mode);
-> +};
-> +
-> +enum {
-> +	mucse_driver_insmod,
-> +};
-> +
->  struct mucse_hw {
->  	u8 pfvfnum;
->  	void __iomem *hw_addr;
-> @@ -91,12 +101,17 @@ struct mucse_hw {
->  	u32 axi_mhz;
->  	u32 bd_uid;
->  	enum rnpgbe_hw_type hw_type;
-> +	const struct mucse_hw_operations *ops;
->  	struct mucse_dma_info dma;
->  	struct mucse_eth_info eth;
->  	struct mucse_mac_info mac;
->  	struct mucse_mbx_info mbx;
-> +	u32 flags;
-> +#define M_FLAGS_INIT_MAC_ADDRESS BIT(0)
->  	u32 driver_version;
->  	u16 usecstocount;
-> +	int lane;
-> +	u8 perm_addr[ETH_ALEN];
->  };
->  
->  struct mucse {
-> @@ -117,4 +132,7 @@ struct rnpgbe_info {
->  #define PCI_DEVICE_ID_N500_DUAL_PORT 0x8318
->  #define PCI_DEVICE_ID_N210 0x8208
->  #define PCI_DEVICE_ID_N210L 0x820a
-> +
-> +#define dma_wr32(dma, reg, val) writel((val), (dma)->dma_base_addr + (reg))
-> +#define dma_rd32(dma, reg) readl((dma)->dma_base_addr + (reg))
-
-These macros could collide with other definitions. Consider prefixing
-them with the driver name (rnpgbe_dma_wr32).
-
-I don't see these macros getting used anywhere in this series. They
-should be introduced when they are used.
-
->  #endif /* _RNPGBE_H */
-> diff --git a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> index e0c6f47efd4c..aba44b31eae3 100644
-> --- a/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> +++ b/drivers/net/ethernet/mucse/rnpgbe/rnpgbe_chip.c
-> @@ -1,11 +1,83 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /* Copyright(c) 2020 - 2025 Mucse Corporation. */
->  
-> +#include <linux/pci.h>
->  #include <linux/string.h>
-> +#include <linux/etherdevice.h>
->  
->  #include "rnpgbe.h"
->  #include "rnpgbe_hw.h"
->  #include "rnpgbe_mbx.h"
-> +#include "rnpgbe_mbx_fw.h"
-
-> +/**
-> + * rnpgbe_xmit_frame - Send a skb to driver
-> + * @skb: skb structure to be sent
-> + * @netdev: network interface device structure
-> + *
-> + * @return: NETDEV_TX_OK or NETDEV_TX_BUSY
-> + **/
-> +static netdev_tx_t rnpgbe_xmit_frame(struct sk_buff *skb,
-> +				     struct net_device *netdev)
+> +static int blk_mq_sched_grow_tags(struct request_queue *q, unsigned int nr)
 > +{
-> +		dev_kfree_skb_any(skb);
-> +		netdev->stats.tx_dropped++;
-> +		return NETDEV_TX_OK;
-> +}
-
-You didn't fix this extra indentation. This was present in v3 as well
-
-https://lore.kernel.org/all/94eeae65-0e4b-45ef-a9c0-6bc8d37ae789@ti.com/#:~:text=skb)%3B%0A%3E%20%2B%09%09return%20NETDEV_TX_OK%3B%0A%3E%20%2B-,%7D,-Extra%20indentation%20on
-
+> +	struct elevator_tags *et =
+> +		blk_mq_alloc_sched_tags(q->tag_set, q->nr_hw_queues, nr);
+> +	struct blk_mq_hw_ctx *hctx;
+> +	unsigned long i;
 > +
-> +static const struct net_device_ops rnpgbe_netdev_ops = {
-> +	.ndo_open = rnpgbe_open,
-> +	.ndo_stop = rnpgbe_close,
+> +	if (!et)
+> +		return -ENOMEM;
+> +
+> +	blk_mq_free_sched_tags(q->elevator->et, q->tag_set);
+> +	queue_for_each_hw_ctx(q, hctx, i)
+> +		hctx->sched_tags = et->tags[i];
+> +	q->elevator->et = et;
+> +	return 0;
+> +}
+> +
+I see that we're allocating/freeing sched tags here after we freeze the 
+queue and acquire ->elevator_lock. And so this shall cause the lockdep 
+splat we saw earlier[1]. I'm not saying that your proposed change would
+cause it, but I think this is one of the code path which we missed to
+handle. So when you're at it, please ensure that we don't get into this
+splat again. We've already fixed this splat from another code paths 
+(elevator change and nr_hw_queue update) but it seems we also need to
+handle that case here as well.
 
+[1] https://lore.kernel.org/all/0659ea8d-a463-47c8-9180-43c719e106eb@linux.ibm.com/
 
--- 
-Thanks and Regards,
-Danish
-
+Thanks,
+--Nilay
 
