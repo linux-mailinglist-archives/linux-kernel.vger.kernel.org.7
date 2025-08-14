@@ -1,383 +1,131 @@
-Return-Path: <linux-kernel+bounces-769465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC89CB26F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:39:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 945C2B26F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76B45AA6266
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45A9117F603
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7831B230BD2;
-	Thu, 14 Aug 2025 18:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2700B23506A;
+	Thu, 14 Aug 2025 18:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BChA44yp"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="difLrOJh"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C1731984B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 18:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755196781; cv=fail; b=hjrX1GUV0adfhTf2AtX9pElgbY5XbQ8MqiGinwchHL8wnG3E+0HxiT9p41RNEzMPEu/htbhWp+UC1JK0wXdb3bcls98KmDk2MCBAF+doWJZiQvUQHH5eVcdYQKWwmmFsKpHw/yWPwrn3AUXTxAeF2AIKtpLGFCx/p0vyltbS5Mk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755196781; c=relaxed/simple;
-	bh=4JL3118Kgi1Jl+4R0TzFUnGdv7wm6+5DmOyRyeWQWLM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=u5xRfHpaA/yu3Mx9JLiiTTLLOm4FZT+udD5RS6WYmhGV6RVOBOB0s5YAUYXK5S0pWKfIpBZhQk4SNFd1yO9yxp2IpONwcU05iWrUjLY1jhQM5iH7tYYTlyIDtSYiCZYHU5mt3TpzeGuygWhJycnvk1FSsOwHPvumpc1j7H/ZqOg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BChA44yp; arc=fail smtp.client-ip=40.107.92.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WX/95k81xgEtkLzCOBzyOIVg8+A4qpPmljNDdxdFVm7Yz2iv+9RI9UGWmv/5AkdANNsT3nfffTRG3Ek6ZkLaTWfo1cFpYC7IU80rU2vvgs96KcaqUinBxeNfsb1IxusOABU6giNhaobVwrsFMPEoNO5ccTQ9DFUYxt6xHHdry2F/13ALCH8l+aHerwgu8h3DvCSB2kLjkh8oQ9pTlPYu9bQGgi7lqWjbGAvpJCzjAuQePdvL7wGNS7lTCq+PFYSNN5OlP6FfFLG/JW/+/3yfgDaQyWFQLppmbJ3aWm5pKaMkEJ6C2VUZF/24ZkhCJmJLBpQYyCpLQFH47rmG/FnxXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YnMPRiCX1m2VOgTKE5N5PTR7cGZgIx7XI8guHXSKlbg=;
- b=GWZ9k+pBpROENcyLI0jsupOn1XwQKQB1p+9lParTqXTox2+EmFBvTB/G41y8B7u9+sEaj+SrDqfmVmP1h4Rv+p+vOZs6n6VJdwasbNBOgdROECCMT4KpGg4MT64t6Z5cs2E4wusnhi7UL+wTuhWqsVft9c+aMCwc12JzIt2p4ZiblbPrKQlAvArgkDgmkbiuX95AVNsomRb4dA6q/hfs2C7spbE1qvwftO7Y+BNmOekm01PwxjBcR1EJBvIgpcWLJhdQxLtZdbKx0bMdxG3yz2KgPNmdUa3vnEoM+spWvn2nSlLJl6Z6lqBiG9/08bv3eT3ZV5YO/qIgYnrWuSXiVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YnMPRiCX1m2VOgTKE5N5PTR7cGZgIx7XI8guHXSKlbg=;
- b=BChA44yp7sqKma1aj3vyhmqxIdJJRgZ1P4lSTOkfn0U4mvioj60lUz5KPmo6Y4qwGgU279ARV4I3AwGyfO0tK0vPsfKsW1I+L6mYVVmLu1ToKhJnEpxntwj8np3FXCR8FAPepcKMsH9PevdM08gcrAlwuqO8ebNEYPjHrFzE3pw=
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com (2603:10b6:408:215::14)
- by MW4PR12MB6708.namprd12.prod.outlook.com (2603:10b6:303:1ed::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Thu, 14 Aug
- 2025 18:39:34 +0000
-Received: from LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427]) by LV3PR12MB9265.namprd12.prod.outlook.com
- ([fe80::cf78:fbc:4475:b427%5]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 18:39:34 +0000
-From: "Kaplan, David" <David.Kaplan@amd.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/3] x86/bugs: Use early_param for spectre_v2
-Thread-Topic: [PATCH 2/3] x86/bugs: Use early_param for spectre_v2
-Thread-Index: AQHcDTw2POk1cqJVAU2l53Dj4/QspbRieubw
-Date: Thu, 14 Aug 2025 18:39:34 +0000
-Message-ID:
- <LV3PR12MB926534BA78B6888767E446CC9435A@LV3PR12MB9265.namprd12.prod.outlook.com>
-References: <20250811142659.152248-1-david.kaplan@amd.com>
- <20250811142659.152248-3-david.kaplan@amd.com>
- <20250814165459.uhrxpcybihzddbgt@desk>
-In-Reply-To: <20250814165459.uhrxpcybihzddbgt@desk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-08-14T18:38:53.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9265:EE_|MW4PR12MB6708:EE_
-x-ms-office365-filtering-correlation-id: 5af86877-5995-4cbf-f496-08dddb61ea61
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|366016|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?gvgoC+8h8AiOGT22gBEk254BmNeDDBI0+4mo0qHZYpipPEqImk7/gdTU86/Q?=
- =?us-ascii?Q?0P8r5vALdpchms84AIXK/AMUGhV2EegNcvVIipU3fEctn4a5OT1dzd5d/CPn?=
- =?us-ascii?Q?5DH7g/9g/+M7pHwXuoZYbcfMa9+M6KLx3HtdsfKew7/ayj3eDPaqiosGet8Z?=
- =?us-ascii?Q?d/mr1rnEoJl0V+ygna7UHExhIUs8ZLDZrpL34C+vOSIOqeqUwD8PfB/OuVyI?=
- =?us-ascii?Q?ME+ATNpSuYUIa1gEwPOGFNVeBykDHpGszNUWitdv1vet4AYIQilLhMLmrujU?=
- =?us-ascii?Q?YLDmp0cSOqnL4qQa7qCfhPtnWj5fsnHCHibaM4EMitutYOSQ8QkS1aYfp+7H?=
- =?us-ascii?Q?5pN5VqIfmQbyl3cNfanGFYggl2DdehOqPiWbxxwCcgDpVCVdpw45ff7Y1Cce?=
- =?us-ascii?Q?SlL8IAxxnp5gCmsXSYROB/u4NC7rLtJ72O4hs2+skJvgyK5lTGbmcvBIkk0t?=
- =?us-ascii?Q?Rqv5J0en9+huv6ubCvC9+GOQ9hnQo+UId0qTHvPAqyKalaHl1ve1IrNaycU5?=
- =?us-ascii?Q?u+yQAycjrjk/P88Y7LEQ9VZtk/sUP6/JlV2O/kaSMAnPP7tvXFc2J9mMSm7C?=
- =?us-ascii?Q?de5nFkbVWHc3zyacBjq7QZP7Izn8y8gvzlPhMBFOoPlXIATnE9z90V/np2MV?=
- =?us-ascii?Q?L4XMgOQHgG0TkXm74URDfBLa7+lgWLEwQNwHmoSMVBM7Pahay3szfPl38tLp?=
- =?us-ascii?Q?2AQZ3RP9ynPfCvpymM9Q57GyzDKlQVHjwN4ggPnFXkd2094NGQ/ZjeLmO8tG?=
- =?us-ascii?Q?BJ14NmVHsw/W9MoU+HiGAaNrOGLVgqV670gIS+vX1OSwa5DoEePSzeA0SLAP?=
- =?us-ascii?Q?3lDLXywTh6VidIKd0Xhgzei05EJFzQgG6xfnZBFoTqm08zVeRWEED0kToOtA?=
- =?us-ascii?Q?KzyzSPoBaYcUwmj2OaKw6laEKIBaUw6aLnhs0R1k2sv+/1IWezB4RbaxKb1f?=
- =?us-ascii?Q?GsFjqyOxE2qtM4F4ChP2NKIBk4YgPCjlS+lg5nBC210vnOchXtSPDSNULzAJ?=
- =?us-ascii?Q?zqBc5BaS4bIhJIT5RM3avVBkMuNONtOCEZxace1bzpp460dvY8vGgqF6yduR?=
- =?us-ascii?Q?P1d7iM2v4lVavoXgHtUeqb3bfZLv/54hLWtrqs0HoS7bnCaGcFYjVcjz5d6P?=
- =?us-ascii?Q?hx6SNScE4WLYhWL7uUYYqzK5cOMy2dBxSTArbl1L6wV+8xArfIGtbh7T5MZN?=
- =?us-ascii?Q?h/eMHkO5ydV2HdNdcyr5v/WcR6hFmWnCKt9RSTmyTkOeffth0lkEG9ZDQxkK?=
- =?us-ascii?Q?ofXVdSszpt961qQKDlXKXWDn2nyeS+rcwhC2Ysvxz11krw5Rugg5K/oI+MaU?=
- =?us-ascii?Q?BWw2yrXrWHY6dHki5pZKmQGXMSyIcwdStgirWlngq3VVq/RjXqckHdf3KO+w?=
- =?us-ascii?Q?0E8LJ0MsvyieYhh38ppDXCMTXgw+/K/LCKKrdcS/QNEwAWIpGrfqEsqcsuSi?=
- =?us-ascii?Q?biMIFSw0Ixm41tTE33Fb2g5A4H0BahD95Fn3RwATaWCKcbURTd4cMCqnXcJg?=
- =?us-ascii?Q?RYbrv+ZhaZFNuy8=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9265.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?bWPn1ORLCVj87IkFT4q5U8hrFrsjzHadtB/huvapah9GUxcxxnnHkpTKeZbR?=
- =?us-ascii?Q?uK4HsKIGF7KrYnckkbx1eaprPxTtnwif4R0l5Ty5zvFhyigq8AoKphLL5TYf?=
- =?us-ascii?Q?LHcnpaxe9pHp6iaE36CGVq4pEQTNUX3lDZs8vQLHSicGl7YGaz+XlIQaojlb?=
- =?us-ascii?Q?gTpUGw+1U/xeM7ujfeQlAuiyCVe/nKogSMTSZul7FRaq3WAezaYBetcT+kYk?=
- =?us-ascii?Q?OZ9jYbLM+bWDd2HbB1cFRgGU1lpt6f7YqDObBseWpaNE5KncC2gYjsKrZ21j?=
- =?us-ascii?Q?3D53qV7K8O1E9OE9VOtfI2w2AHAI0rrW+sv/eJo114B2RSYOQqCpbHpCFQ91?=
- =?us-ascii?Q?sMi5UnwuexZ6zKVysdaBesa1ylZ+36ix/uxtCGMROO5KTBBTXAgHjLTazAdX?=
- =?us-ascii?Q?ogHAYoslZtz/+GmVI4tkyX4Nk3TFql3IGQ2fYe1/iFOaaR6USsEqnREahbIX?=
- =?us-ascii?Q?O1kKTbfvCEVIBI23CFTzQZjEpNq7rVQcxWTclF5l/okm+lts+PjKlAiALdOp?=
- =?us-ascii?Q?P7hmwLlAmP4Ag1nCO7cCDzdCIt3YGecioJ75IlHJodGSGM4pVaeJKyAM3YYV?=
- =?us-ascii?Q?4H5unZjf1RtZWDAInYjSjagit8N11yhFhKyYSH6CO4w6vHc0CSPuMpvAkh1s?=
- =?us-ascii?Q?DpGm8Pgf7wbCDJsowpnmfcRljllz9Ny6alcUpS+tYn0NWXtDAFVg5uMYSlTd?=
- =?us-ascii?Q?D4+j24WtYOM+QDhPXNgK8M6JmQGS2DESSYHBCGuI4sHIhF8/n+AXYvD0Z9VL?=
- =?us-ascii?Q?Q1jqEZLazcWTH/LCloIxApKQLFaoLqqyip4vPWD/M9I+14ucHtLPWtQGyHmm?=
- =?us-ascii?Q?N/Bv+hiZGb/z7XBlNuzVOovRrRwzX+fOvq67qGbXebOIBpR11EPbATlkLTD1?=
- =?us-ascii?Q?CcTeP6fAybtCslm3vjpZXlSP0caO066Hx3qmwPznMT5QgzFi4Iuu0ZDymKxZ?=
- =?us-ascii?Q?pcZlTUwc8wEUvciZubd8UEh08LFaNY2657uvFpyWFCkqMjB4Qc1hD8AtyvdB?=
- =?us-ascii?Q?rMw5/muKQsJBkZhALQ61VILiY/fx7Rj1EBF0Nq2Gp8baryZIBKxz+r1db33f?=
- =?us-ascii?Q?aDpB3CCV/0jjy9QSHLCdtcuCQTj0zHtZ6nEVRN93pVXdnyXFo/RY3I9koNLa?=
- =?us-ascii?Q?HGsRBolhIcNpLEqgBZAb4FtkxiLHpi8/aNlG4pZSvITlMCYZlGzlZIUtdTyO?=
- =?us-ascii?Q?ksSnHIjF3RZ780d412pR6lgCJRNrNc1xIJH3zgFSkcJHJupm/IubEyvoSdbt?=
- =?us-ascii?Q?qVOE2m4czlsChMzriFTG9CWafvFY4sy8BNN3i4GqGV3bt40+MqcZuazJVv6Z?=
- =?us-ascii?Q?/GLlywYyOcE/xEtSs32RAd+tp/WDIDsREVysLdSXdvlMN83BnIOYeLPT6dVX?=
- =?us-ascii?Q?/CVioc+oRZGrz0TYWcs2Z+ySMYI2bebtGd01j6Y7OOW98yZwWtzsUGSp86om?=
- =?us-ascii?Q?knKHzyrNJLoIHUUICo3yQdp4VopeGXg9LCML5LJSJCTkwEb0HgtgHegT3usx?=
- =?us-ascii?Q?rw4yoNkYb1j/G3kZYUWZrHD+b/WO4BgHpHiZGMEdDkG5yoDswpYaiArnB447?=
- =?us-ascii?Q?mfsgtd7TgJcfdLtukGE=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF72731984B;
+	Thu, 14 Aug 2025 18:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755196881; cv=none; b=vA5PKFC2LRMDKhQ6i0yAQInqbHgCWwut8+2owV6WABsKQN+qnImoblZZuVIGt7MBCEsK4GHPBofLW4Dls+9nMP/ipDF9Y+ehKAEbqqisWo5qJDhz50iqc2cz0SDVHGrLBLozRsO9Q1XlEUpRIH33EFvVTNJju8koanrw3iKxUZA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755196881; c=relaxed/simple;
+	bh=20WPmpdoG8uG/s63QY9KzYtV0P+L1dCwey8MxztMAfQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mlZViCjI/b8Dje5N8rgvPLrd71PRVYkGGsY9PUAz7XjlVf/gbPjpZUoDoB7R9b/T9S0eb0E3K67vP3TErkT5l4JIvyxBJe0+sIaLpgX0e0A5T8Hvdj5DVhaDSv+Spxvm0GkUSWI607vTMv/YpCtuzbDBWaAhTExRPRD0DgorC+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=difLrOJh; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a1b00a65fso6603075e9.0;
+        Thu, 14 Aug 2025 11:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755196878; x=1755801678; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vRvjVv+xI3Crcmlz30dpeemlJT1MQZGfPOfm9qE9Vfo=;
+        b=difLrOJhd8QFwh0S5VcDdHYivJnVWDhq7CJTWnbcQ+nELbYOoxjK/WNNpEv4ros0eC
+         Dc1laT2AmHl88e6kK8rhZYAN5+pAKmh9eD/+yaWG0J6JJlj/6csXBSKDm0xgAtTCT6Ra
+         4TMsvMsyn/sRhtySxeBbIMr+Fgu832vxe1H2T7IniM+IO5PJ1+K0Pz9CUCf+OFz+KSLa
+         BYrwcfuXx9LfYdtNvYMe+glYhOxMJ1CcC1XyUOJJO7DhsurFdQymp6XeynSkSwzfMH9s
+         uXdCrbjVhP3tBjhOa0NeuKrfTw3yLhsSLbQB5NvI1RR7hf7JfbJ8jtqu6lX+fWPazl4K
+         O5YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755196878; x=1755801678;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vRvjVv+xI3Crcmlz30dpeemlJT1MQZGfPOfm9qE9Vfo=;
+        b=fKIdBTjqvGLXvsyXkFYdY2ny9OyecmNIunpg4gewE3SJPZTEx8g500mjhTsSPikE2J
+         UPcVzEWZcRqjhwo9FgksXVl7afQsCu7qK+MNPsZX2EgtXmL9RlouAIDWLIZ11JAp6MqF
+         NY0CYxdBuHz96Bmqd7mzj362XYfYmUKLKHArckd6e9ZSXqOMlRoLxKZA2EaSKZ6iFd0C
+         16d7lZh3RTpfZG7uNknqlrzkkiQ2PX00XKhvdHzXuvxnUN2BQSeZZ19AycpOKT+Dxc/K
+         fCHGtxtd2St1ihGE5J8mgDdGUGteqLgfZc87fwoYavRpBddW1g9SQigl1EAZ1uksOlmA
+         EvMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV59D+Um7h1BsAkyFQGFYme4IP/s5ugTciRIjAWSB/WZc6CN8a4rODltxDsRzPnApqx2Uzuvn8+r6A9/8tn@vger.kernel.org, AJvYcCVhx/E0S2mZ8V2toxHrnIabbj8WmcWdPo+XOLKfL1BhZFrFTaUT0xNPAQweGvZCzmuoQOg1sxYr+ain4UGaUxAuYFo=@vger.kernel.org, AJvYcCVoX96bi7yayUgLbcuARpTevQ1p/mnmToLDnblcORqbjKtgmeO0LyVGajX2EnKsK0xyhBW+Gr8QNhej@vger.kernel.org, AJvYcCXE8rUsSUgKi5LMN2ObPvOWalS87trwijF4tyamFYjF1nHJYudt4Vubq9DhLr0lyZPbeoA420HRKnPF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvE4pgPYnEmqrCT6QXGYh9VlaqJszSRYwhX1hH3rItHOS8FnDi
+	7GynU2g3s7+qrIa3hSazt3boUzMNGotzHZUITw2YFZMqtgzDRCdnCP/N
+X-Gm-Gg: ASbGncuAJe3kE3h+FBZoQpsVQvwoPVOGlNoq87Vz1pm/UIgzVFFksHvGLwAH6J2WOEM
+	vCJlSDHlCc0tvXtI2M87IatUg5h7waoSk81DhbVq3kKc3FiT50Q32SstawnP5bt7XSNNqwM9bo3
+	m6DkbFLP8EOxyNufTJR4gApf/88FXN7fcr8B+9PtGQxw6uyyMIKBTnpQGxdAi/STfEpLd3VGq6D
+	hJpqnDeIp9Okl0CSYZ+Yb2jfDec2IjtIrum8bgUja+XYLtwNmLPZBPuFuRQm4DJCt0saSbz/pEC
+	GZWYG1RASaZHq7NZ+zTUjYeghyOD8qemRx4507rkPNGa9vNwREGiAmQXShk8UhjjFlNq/tOyWPy
+	YY5qZbKArryyiQCSE/EiNcBVwaAXAiQ0Y8qnK1Q0JCbyP6ZmTGcXFc+p2vvQWIrvJ72K32A0xHQ
+	==
+X-Google-Smtp-Source: AGHT+IGoWdhed5137Rxqqim3wIlG+P7n0VC9bMq+ooSXK7U4H7rnbQxmvbsbWYARQhbuVe6RR+mLkg==
+X-Received: by 2002:a05:600c:45cd:b0:456:161c:3d77 with SMTP id 5b1f17b1804b1-45a1b649a73mr45325085e9.16.1755196877972;
+        Thu, 14 Aug 2025 11:41:17 -0700 (PDT)
+Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453aeasm53744383f8f.40.2025.08.14.11.41.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 11:41:17 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 0/7] Add RZ/G3E support
+Date: Thu, 14 Aug 2025 19:41:04 +0100
+Message-ID: <20250814184115.192930-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9265.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5af86877-5995-4cbf-f496-08dddb61ea61
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2025 18:39:34.6988
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DknSZ6tK3wI/JhmhPBDeoqLIU+9UXtyhjOwPIPHWVzYI11uLJRxb64/0VyhTbQ5D
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6708
+Content-Transfer-Encoding: 8bit
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-> -----Original Message-----
-> From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Sent: Thursday, August 14, 2025 11:55 AM
-> To: Kaplan, David <David.Kaplan@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>; Borislav Petkov <bp@alien8.de>;=
- Peter
-> Zijlstra <peterz@infradead.org>; Josh Poimboeuf <jpoimboe@kernel.org>; In=
-go
-> Molnar <mingo@redhat.com>; Dave Hansen <dave.hansen@linux.intel.com>;
-> x86@kernel.org; H . Peter Anvin <hpa@zytor.com>; linux-kernel@vger.kernel=
-.org
-> Subject: Re: [PATCH 2/3] x86/bugs: Use early_param for spectre_v2
->
-> Caution: This message originated from an External Source. Use proper caut=
-ion
-> when opening attachments, clicking links, or responding.
->
->
-> On Mon, Aug 11, 2025 at 09:26:58AM -0500, David Kaplan wrote:
-> > Most of the mitigations in bugs.c use early_param for command line pars=
-ing.
-> > Rework the spectre_v2 and nospectre_v2 command line options to be
-> > consistent with the others.
-> >
-> > Signed-off-by: David Kaplan <david.kaplan@amd.com>
-> > ---
-> >  arch/x86/kernel/cpu/bugs.c | 151 +++++++++++++++++++------------------
-> >  1 file changed, 78 insertions(+), 73 deletions(-)
-> >
-> > diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> > index 6bfe199b9f3e..19a3891953c3 100644
-> > --- a/arch/x86/kernel/cpu/bugs.c
-> > +++ b/arch/x86/kernel/cpu/bugs.c
-> > @@ -1827,7 +1827,8 @@ enum spectre_v2_mitigation_cmd {
-> >       SPECTRE_V2_CMD_IBRS,
-> >  };
-> >
-> > -static enum spectre_v2_mitigation_cmd spectre_v2_cmd __ro_after_init =
-=3D
-> SPECTRE_V2_CMD_AUTO;
-> > +static enum spectre_v2_mitigation_cmd spectre_v2_cmd __ro_after_init =
-=3D
-> > +     IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?
-> SPECTRE_V2_CMD_AUTO : SPECTRE_V2_CMD_NONE;
-> >
-> >  enum spectre_v2_user_mitigation_cmd {
-> >       SPECTRE_V2_USER_CMD_NONE,
-> > @@ -2035,112 +2036,118 @@ static const char * const spectre_v2_strings[=
-] =3D {
-> >       [SPECTRE_V2_IBRS]                       =3D "Mitigation: IBRS",
-> >  };
-> >
-> > -static const struct {
-> > -     const char *option;
-> > -     enum spectre_v2_mitigation_cmd cmd;
-> > -     bool secure;
-> > -} mitigation_options[] __initconst =3D {
-> > -     { "off",                SPECTRE_V2_CMD_NONE,              false }=
-,
-> > -     { "on",                 SPECTRE_V2_CMD_FORCE,             true  }=
-,
-> > -     { "retpoline",          SPECTRE_V2_CMD_RETPOLINE,         false }=
-,
-> > -     { "retpoline,amd",      SPECTRE_V2_CMD_RETPOLINE_LFENCE,  false }=
-,
-> > -     { "retpoline,lfence",   SPECTRE_V2_CMD_RETPOLINE_LFENCE,  false }=
-,
-> > -     { "retpoline,generic",  SPECTRE_V2_CMD_RETPOLINE_GENERIC, false }=
-,
-> > -     { "eibrs",              SPECTRE_V2_CMD_EIBRS,             false }=
-,
-> > -     { "eibrs,lfence",       SPECTRE_V2_CMD_EIBRS_LFENCE,      false }=
-,
-> > -     { "eibrs,retpoline",    SPECTRE_V2_CMD_EIBRS_RETPOLINE,   false }=
-,
-> > -     { "auto",               SPECTRE_V2_CMD_AUTO,              false }=
-,
-> > -     { "ibrs",               SPECTRE_V2_CMD_IBRS,              false }=
-,
-> > -};
-> > -
-> >  static void __init spec_v2_print_cond(const char *reason, bool secure)
-> >  {
-> >       if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) !=3D secure)
-> >               pr_info("%s selected on command line.\n", reason);
-> >  }
-> >
-> > -static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(=
-void)
-> > -{
-> > -     enum spectre_v2_mitigation_cmd cmd;
-> > -     char arg[20];
-> > -     int ret, i;
-> > +static bool nospectre_v2 __ro_after_init;
-> >
-> > -     cmd =3D IS_ENABLED(CONFIG_MITIGATION_SPECTRE_V2) ?
-> SPECTRE_V2_CMD_AUTO : SPECTRE_V2_CMD_NONE;
-> > -     if (cmdline_find_option_bool(boot_command_line, "nospectre_v2"))
-> > -             return SPECTRE_V2_CMD_NONE;
-> > +static int __init nospectre_v2_parse_cmdline(char *str)
-> > +{
-> > +     nospectre_v2 =3D true;
-> > +     spectre_v2_cmd =3D SPECTRE_V2_CMD_NONE;
-> > +     return 0;
-> > +}
-> > +early_param("nospectre_v2", nospectre_v2_parse_cmdline);
-> >
-> > -     ret =3D cmdline_find_option(boot_command_line, "spectre_v2", arg,=
- sizeof(arg));
-> > -     if (ret < 0)
-> > -             return cmd;
-> > +static int __init spectre_v2_parse_cmdline(char *str)
-> > +{
-> > +     if (!str)
-> > +             return -EINVAL;
-> >
-> > -     for (i =3D 0; i < ARRAY_SIZE(mitigation_options); i++) {
-> > -             if (!match_option(arg, ret, mitigation_options[i].option)=
-)
-> > -                     continue;
-> > -             cmd =3D mitigation_options[i].cmd;
-> > -             break;
-> > -     }
-> > +     if (nospectre_v2)
-> > +             return 0;
-> >
-> > -     if (i >=3D ARRAY_SIZE(mitigation_options)) {
-> > -             pr_err("unknown option (%s). Switching to default mode\n"=
-, arg);
-> > -             return cmd;
-> > -     }
-> > +     if (!strcmp(str, "off"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_NONE;
-> > +     else if (!strcmp(str, "on"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_FORCE;
-> > +     else if (!strcmp(str, "retpoline"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_RETPOLINE;
-> > +     else if (!strcmp(str, "retpoline,amd") ||
-> > +              !strcmp(str, "retpoline,lfence"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_RETPOLINE_LFENCE;
-> > +     else if (!strcmp(str, "retpoline,generic"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_RETPOLINE_GENERIC;
-> > +     else if (!strcmp(str, "eibrs"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_EIBRS;
-> > +     else if (!strcmp(str, "eibrs,lfence"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_EIBRS_LFENCE;
-> > +     else if (!strcmp(str, "eibrs,retpoline"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_EIBRS_RETPOLINE;
-> > +     else if (!strcmp(str, "auto"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_AUTO;
-> > +     else if (!strcmp(str, "ibrs"))
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_IBRS;
-> > +     else
-> > +             pr_err("Ignoring unknown spectre_v2 option (%s).", str);
->
-> All of the below should go in spectre_v2_select_mitigation() after all
-> features are detected because ...
->
-> > -     if ((cmd =3D=3D SPECTRE_V2_CMD_RETPOLINE ||
-> > -          cmd =3D=3D SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
-> > -          cmd =3D=3D SPECTRE_V2_CMD_RETPOLINE_GENERIC ||
-> > -          cmd =3D=3D SPECTRE_V2_CMD_EIBRS_LFENCE ||
-> > -          cmd =3D=3D SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
-> > +     if ((spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_RETPOLINE ||
-> > +          spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
-> > +          spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_RETPOLINE_GENERIC ||
-> > +          spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_EIBRS_LFENCE ||
-> > +          spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
-> >           !IS_ENABLED(CONFIG_MITIGATION_RETPOLINE)) {
-> >               pr_err("%s selected but not compiled in. Switching to AUT=
-O select\n",
-> > -                    mitigation_options[i].option);
-> > -             return SPECTRE_V2_CMD_AUTO;
-> > +                     str);
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_AUTO;
-> >       }
-> >
-> > -     if ((cmd =3D=3D SPECTRE_V2_CMD_EIBRS ||
-> > -          cmd =3D=3D SPECTRE_V2_CMD_EIBRS_LFENCE ||
-> > -          cmd =3D=3D SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
-> > +     if ((spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_EIBRS ||
-> > +          spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_EIBRS_LFENCE ||
-> > +          spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_EIBRS_RETPOLINE) &&
-> >           !boot_cpu_has(X86_FEATURE_IBRS_ENHANCED)) {
->
-> ... X86_FEATURE_IBRS_ENHANCED is not enumerated yet in early_param
-> processing.
+Add RZ/G3E GPT support. It has multiple clocks and resets compared to
+RZ/G2L. Also prescale field width and factor for calculating prescale
+are different.
 
-Ah, thanks for catching that.
+This patch has dependency on [1]
 
->
-> >               pr_err("%s selected but CPU doesn't have Enhanced or Auto=
-matic IBRS.
-> Switching to AUTO select\n",
-> > -                    mitigation_options[i].option);
-> > -             return SPECTRE_V2_CMD_AUTO;
-> > +                    str);
-> > +             spectre_v2_cmd =3D SPECTRE_V2_CMD_AUTO;
-> >       }
-> >
-> > -     if ((cmd =3D=3D SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
-> > -          cmd =3D=3D SPECTRE_V2_CMD_EIBRS_LFENCE) &&
-> > +     if ((spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_RETPOLINE_LFENCE ||
-> > +          spectre_v2_cmd =3D=3D SPECTRE_V2_CMD_EIBRS_LFENCE) &&
-> >           !boot_cpu_has(X86_FEATURE_LFENCE_RDTSC)) {
->
-> and this. So in essence, spectre_v2_parse_cmdline() should only record wh=
-at
-> user wanted.
+[1] https://lore.kernel.org/all/20250814115022.73732-1-biju.das.jz@bp.renesas.com/
 
-Yeah makes sense, I'll work on fixing that.
+Biju Das (7):
+  dt-bindings: pwm: renesas,rzg2l-gpt: Document RZ/G3E support
+  pwm: rzg2l-gpt: Add info variable to struct rzg2l_gpt_chip
+  pwm: rzg2l-gpt: Add prescale_pow_of_two_mult_factor variable to struct
+    rzg2l_gpt_info
+  pwm: rzg2l-gpt: Add calculate_prescale() callback to struct
+    rzg2l_gpt_info
+  pwm: rzg2l-gpt: Add RZ/G3E support
+  arm64: dts: renesas: r9a09g047: Add GPT nodes
+  arm64: dts: renesas: r9a09g047e57-smarc: Enable GPT on carrier board
 
---David Kaplan
+ .../bindings/pwm/renesas,rzg2l-gpt.yaml       | 525 ++++++++++++------
+ arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 184 ++++++
+ .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  13 +
+ drivers/pwm/pwm-rzg2l-gpt.c                   |  93 +++-
+ 4 files changed, 633 insertions(+), 182 deletions(-)
+
+-- 
+2.43.0
+
 
