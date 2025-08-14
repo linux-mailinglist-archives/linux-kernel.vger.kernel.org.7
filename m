@@ -1,104 +1,202 @@
-Return-Path: <linux-kernel+bounces-767738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25283B25869
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6932B2586B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7BEC7B0094
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:37:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44E01C05D8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D6878F2F;
-	Thu, 14 Aug 2025 00:38:50 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8247683CD1;
+	Thu, 14 Aug 2025 00:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="e1zTqshc"
+Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1FB2FF64E;
-	Thu, 14 Aug 2025 00:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E6882FF64E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755131929; cv=none; b=Ein57r0us/RarOUX9m3hM+sT/jBBu8QApmUZellS1HhxarJGX7R1mpZVcSjkDIIzP/l7cDbPz/jmiNM2nxTS0tiK4x8TvLBcqo7E3C1olyXtHhYodmRUMubihNxbOPy0qZ2ZgBnKEYaybpyEBQooYAgVHYnRqWdP0GL+kRP4mwM=
+	t=1755131968; cv=none; b=R8NPheiJzoftQr4ma51b5NYgEw2+5pN0GAF9HfuBrjXwArYvpGnK9J1preHAsXILli1y7Q0izpMoVomuYbuhnfRxIwbXZn96RJzEdMt+m0iCeEJsstCJoq8GJOT+m1b7jzZnplps/LDtVc0pM6KOm6fTs2br5s72KDdKW2XW3sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755131929; c=relaxed/simple;
-	bh=J1YWxWusXg5U0+RsTNFDpeJdZvI/anQ05zWjTDl9yjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FOlwxved0eMBFK2iO4mtE+s5TX6lSJnyYi+xt1XYfV9ohW+/agnYqz4vdxpk2Q5gCJhYRIxKlGG9VUNKdASs1TgTzM5PH/Dfat2w1/b0w42H8TSGXGYDHcmqdVBUoko0xuE4PdSkWKeQ5gA8HSZXgBZbSS8DR3XvsWse6Xnh7vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2RF01yCKzYQv90;
-	Thu, 14 Aug 2025 08:38:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DD3451A07BD;
-	Thu, 14 Aug 2025 08:38:42 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgCXExQRMJ1oO0NpDg--.49280S2;
-	Thu, 14 Aug 2025 08:38:42 +0800 (CST)
-Message-ID: <628e9bb8-380b-4731-8518-b6e58eb04ee5@huaweicloud.com>
-Date: Thu, 14 Aug 2025 08:38:40 +0800
+	s=arc-20240116; t=1755131968; c=relaxed/simple;
+	bh=O7IE+ejSOePPSQi6gDfIDMTuvi1ufCtY/CJl7wpk1io=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XJrJ2o2DZjeEgvQaxkbjCU1AzQMgqeyzhsLOjzdLOketwO7K0K8bvHQJ6/ls/XW4SZTOYq+5qdN7QpBYu8A0unDLx+e/mTF3JzDOwf81R21D7JgsixEIo5w5icsahysUXBgHMFHjl8udS446rmQSEGqsKBEmsfHmqKtUjMFv2Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=e1zTqshc; arc=none smtp.client-ip=148.163.135.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
+Received: from pps.filterd (m0167070.ppops.net [127.0.0.1])
+	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DNgj9K029198
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:39:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pps01; bh=1lSOihfzUGPab8epdskmq6Brzg
+	pTQgrtOKkOcbHMA0I=; b=e1zTqshcfmmIetIxYgIvE1s2fiMRTNDUhkcp2ZzdQk
+	9Yx43lMqmITq5b7DKwKClw8E/h3zWdrMMQIyrC1Z+5SVPCOfa0FlIUqp11HTacbv
+	b0ekAscil2+1D3frkLHcPzNBCzYtXtrJjwsQ+H5zJBTCgCGuAxPEPGZN+GfWDwp4
+	8N2Zg//Jj447JUcbeLp9CdcyrXaHrXs8NQmUiIX88Emvw1fMZZzItR6N7zTCrKXJ
+	p9k8cQB6a5fvK95SBff5qgF8OtJSj1YH2ysXKC1hP4p8h6Wadu5EXPTWwPJCLR6S
+	J0YYNdNdknUKZKn+pt4BwBrZSpmDoB4ZouH3LfiFgsRA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 48gw544yp4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:39:20 -0400 (EDT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b109be525eso11641151cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:39:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755131959; x=1755736759;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1lSOihfzUGPab8epdskmq6BrzgpTQgrtOKkOcbHMA0I=;
+        b=AGHNCoWZ8MlhQQSJkElXV+mH8SZfFmnOhB3MtXLS0Zx3W9l6bF1TVhf+Y2j8ixEofo
+         MmQXE9wLRcLQbbizy/78MAPx4thmLeQvqMoDIlMg0D+5ct3cQElHjbFzQWhsQ+lRXVYa
+         gEL4J++m5DlgH0HLvUKmgnV7S4LOqFzXfZ0lYiXfflnrJ3fIiK2ni3/tujouR8sszETf
+         /PHvDpIcfGhM8t/sMHOigZQROmnhFrqCLFyxdEKTVI14MEkEkgop3ugRV4ulLuWrTEt9
+         SBzj16K+Cd4s5subKbHBQ+b81I1b/ty8JvzM0xcFY+y9rts4QYdOOmWLhdV3tbvbfAvc
+         Bh6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUfs3Wdj8haW8VeDSHaGY0DxMDfJuuhnQ8bGqC0OwqYbKX37UXLPnkp0TtiQvs/LrtokbClG6GMs1ZHXuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNLoslSkcWqVpEC+CsGgO1SHQCLg4QZmV6oNlEadA3tK/KiqxW
+	FZb8YJo3ISxyGGEddEUVTLKVe1jNEbog1rVqumETEuao83dZibHhXhr0HSTjisquFm0sVZSY69l
+	juHmzjE2si3ppEegXIE/zjjYLKNbTmAdlLRICaCxGacJHDcnd5x9tqFLVoNU60g==
+X-Gm-Gg: ASbGncvDURzM9iTBLouEOYg7syXqt0SNhObTOZmVthiD7yGA0jhahw4rtRli6HopvCG
+	qPOrRhrHw6o4B899zmmD7LU+4Eqqjj9w4SM1FJYHM0Pz6d8oLxNkmO0b514T1WRbWMDDaBIieyN
+	10YT+XN9PCAPhlO0v3EQcccJ1Hk6Ux5WXE9yWFAPcknsabc821YNHpIHYBYFq2TD8pOuSHvFeAl
+	mgvsD6xllzHvkYQOh6gmW4nqCZn74cvPPAyRphAlXmNXXUkB4yQkU8DGLfSqTkoZ7ZbW1Hg9xFC
+	Y/cnfbSlsq5qGalrqeyxeTofcuNgHKwhZuyyAq9Ohbhr0kICza3wV8cQVNjzXADNjxhDiOoKfR4
+	om6n1ciuUxA==
+X-Received: by 2002:a05:622a:5599:b0:4b0:cf35:fd5c with SMTP id d75a77b69052e-4b10a956060mr20519371cf.3.1755131959057;
+        Wed, 13 Aug 2025 17:39:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEfpfGWrobse0BwUQapUxjeAw1tQ03aWFjrB+6vcenXXQtMBhnSB7KOlKmpNdE2Bb+RvzZWEQ==
+X-Received: by 2002:a05:622a:5599:b0:4b0:cf35:fd5c with SMTP id d75a77b69052e-4b10a956060mr20518991cf.3.1755131958543;
+        Wed, 13 Aug 2025 17:39:18 -0700 (PDT)
+Received: from [127.0.1.1] (bzq-79-183-206-55.red.bezeqint.net. [79.183.206.55])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c71068csm357825e9.29.2025.08.13.17.39.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 17:39:17 -0700 (PDT)
+From: Tal Zussman <tz2294@columbia.edu>
+Date: Wed, 13 Aug 2025 20:38:47 -0400
+Subject: [PATCH] lib/crypto: ensure generated *.S files are removed on make
+ clean
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [-next v2 2/4] cpuset: decouple tmpmaks and cpumaks of cs free
-To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
- mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com, christophe.jaillet@wanadoo.fr
-References: <20250813082904.1091651-1-chenridong@huaweicloud.com>
- <20250813082904.1091651-3-chenridong@huaweicloud.com>
- <d50ccb6d-a26c-4ab8-b213-161622e25c7c@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <d50ccb6d-a26c-4ab8-b213-161622e25c7c@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXExQRMJ1oO0NpDg--.49280S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw4DGFy7XryftF17ur45KFg_yoWxurc_ur
-	nY9r929wn5uFs7tw4a9ayqvrWq9a4qyw1vq3s8JrWUZa4rXrykCFs7Zr90vr18Aa1xWFyD
-	Zr93Ga1vqryUJjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250813-crypto_clean-v1-1-11971b8bf56a@columbia.edu>
+X-B4-Tracking: v=1; b=H4sIABYwnWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDC0Nj3eSiyoKS/PjknNTEPF2zJJMUEwvjVBODtCQloJaCotS0zAqwcdG
+ xtbUA0b/gnV4AAAA=
+X-Change-ID: 20250813-crypto_clean-6b4d483e40fb
+To: Eric Biggers <ebiggers@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tal Zussman <tz2294@columbia.edu>
+X-Mailer: b4 0.14.3-dev-d7477
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1755131956; l=2701;
+ i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
+ bh=O7IE+ejSOePPSQi6gDfIDMTuvi1ufCtY/CJl7wpk1io=;
+ b=1ZKUlxBymgujUOGOAaAxqgW7+GP++NlcYPABLpIEGJhUQQFl4G9h5w+3oVmTlY2QzQHD7QZGL
+ Q0JSzwJoopdAydmNpPkaYv7+So36WbPxmc7wRrEBa/364BE39K5V6w+
+X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
+ pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
+X-Proofpoint-GUID: 2aIZtEnCm_SDyhUBO7WHThd-OHC4QuLT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDAwMSBTYWx0ZWRfX/V6yVFRBtW/H
+ BySsNTdu7NlavmOhxaMYf02ZusWGWqj+cvKbGXtltuYNHfKoOf2crsWaRMEeAwNL/ima7xT1Dd1
+ etfcRe/ayYAm89kB/2YmBoBkzynepyTdOiVs9EguegALX7R9bAa0/21qONhesx/phdHTDvz4RvT
+ fwfDAUxM6HV/dcQVwj6jKaUPpBwHgi4iXdC9/PqiC9n2xXXp6VhfwxZpFA66oHqgKgGt9TMseE5
+ lhQkB2p4LefsrEgU6bRho3WboYyCa9YlIjvWlesQgftRhm85wiccOJOusMzNsRVjFc/KyTCyYp0
+ Wanp/EMLwY3d5e9DvRhYrwlpv9nq1/zKNqfW3LoX+E9Qx2L9YUOILw3/H5MvUTFGxBDhVYwQsYm
+ GFaRTbEA
+X-Proofpoint-ORIG-GUID: 2aIZtEnCm_SDyhUBO7WHThd-OHC4QuLT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 mlxscore=0 lowpriorityscore=10 suspectscore=0
+ priorityscore=1501 spamscore=0 bulkscore=10 mlxlogscore=235 malwarescore=0
+ clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508140001
 
+make clean does not check the kernel config when removing files. As
+such, additions to clean-files under CONFIG_ARM or CONFIG_ARM64 are not
+evaluated. For example, when building on arm64, this means that
+lib/crypto/arm64/sha{256,512}-core.S are left over after make clean.
 
+Set clean-files unconditionally to ensure that make clean removes these
+files.
 
-On 2025/8/14 3:50, Waiman Long wrote:
-> On 8/13/25 4:29 AM, Chen Ridong wrote:
->> From: Chen Ridong <chenridong@huawei.com>
->>
->> Currently, free_cpumasks can free tmpmasks of cpumask of cs. However, it
->> doesn't have couple these 2 options. To make the function more clearer,
->> move the freeing of cpumask in cs to the free_cpuset. And rename the
->> free_cpumasks to the free_tmpmasks. which is Single responsibility.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> 
-> Other than typos in the patch title, the code change looks good to me.
-> 
-> Cheers,
-> Longman
+Fixes: e96cb9507f2d ("lib/crypto: sha256: Consolidate into single module")
+Fixes: 24c91b62ac50 ("lib/crypto: arm/sha512: Migrate optimized SHA-512 code to library")
+Fixes: 60e3f1e9b7a5 ("lib/crypto: arm64/sha512: Migrate optimized SHA-512 code to library")
+Signed-off-by: Tal Zussman <tz2294@columbia.edu>
+---
+An alternative approach is to rename the generated files to *.s and
+remove the clean-files lines, as make clean removes *.s files
+automatically. However, this would require explicitly defining the
+corresponding *.o rules.
+---
+ lib/crypto/Makefile | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thank you for your feedback.
-I apologize for the typos—I will correct them promptly.
+diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
+index e4151be2ebd4..44f6a1fdc808 100644
+--- a/lib/crypto/Makefile
++++ b/lib/crypto/Makefile
+@@ -100,7 +100,6 @@ ifeq ($(CONFIG_ARM),y)
+ libsha256-y += arm/sha256-ce.o arm/sha256-core.o
+ $(obj)/arm/sha256-core.S: $(src)/arm/sha256-armv4.pl
+ 	$(call cmd,perlasm)
+-clean-files += arm/sha256-core.S
+ AFLAGS_arm/sha256-core.o += $(aflags-thumb2-y)
+ endif
+ 
+@@ -108,7 +107,6 @@ ifeq ($(CONFIG_ARM64),y)
+ libsha256-y += arm64/sha256-core.o
+ $(obj)/arm64/sha256-core.S: $(src)/arm64/sha2-armv8.pl
+ 	$(call cmd,perlasm_with_args)
+-clean-files += arm64/sha256-core.S
+ libsha256-$(CONFIG_KERNEL_MODE_NEON) += arm64/sha256-ce.o
+ endif
+ 
+@@ -132,7 +130,6 @@ ifeq ($(CONFIG_ARM),y)
+ libsha512-y += arm/sha512-core.o
+ $(obj)/arm/sha512-core.S: $(src)/arm/sha512-armv4.pl
+ 	$(call cmd,perlasm)
+-clean-files += arm/sha512-core.S
+ AFLAGS_arm/sha512-core.o += $(aflags-thumb2-y)
+ endif
+ 
+@@ -140,7 +137,6 @@ ifeq ($(CONFIG_ARM64),y)
+ libsha512-y += arm64/sha512-core.o
+ $(obj)/arm64/sha512-core.S: $(src)/arm64/sha2-armv8.pl
+ 	$(call cmd,perlasm_with_args)
+-clean-files += arm64/sha512-core.S
+ libsha512-$(CONFIG_KERNEL_MODE_NEON) += arm64/sha512-ce-core.o
+ endif
+ 
+@@ -167,3 +163,7 @@ obj-$(CONFIG_PPC) += powerpc/
+ obj-$(CONFIG_RISCV) += riscv/
+ obj-$(CONFIG_S390) += s390/
+ obj-$(CONFIG_X86) += x86/
++
++# clean-files must be defined unconditionally
++clean-files += arm/sha256-core.S arm/sha256-core.S
++clean-files += arm64/sha512-core.S arm64/sha512-core.S
+
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250813-crypto_clean-6b4d483e40fb
 
 Best regards,
-Ridong
+-- 
+Tal Zussman <tz2294@columbia.edu>
 
 
