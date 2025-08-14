@@ -1,293 +1,178 @@
-Return-Path: <linux-kernel+bounces-768869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD51B266A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:14:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE75FB266CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:19:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16B23887275
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:13:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29765E2C90
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A541E3002A1;
-	Thu, 14 Aug 2025 13:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588D72FD7B1;
+	Thu, 14 Aug 2025 13:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XEyzx4cF"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="j0PdJI2+"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013034.outbound.protection.outlook.com [52.101.127.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECDF2ECE9E;
-	Thu, 14 Aug 2025 13:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755177168; cv=none; b=Wb8s0TSDuRWwMvzoQGJmkJJGG2ngOY4PswxHmConkqsjzmBMrjUs9YjhV8Fq/b75ojtfVY1efQ3/DjSLGRAI4y6fu4DoGeKqLTtTnXllv4ZvEKHxNxACka89S277I9iYUjAw+ZxlPZDgCpTb/Pr6l0/PIRrTYQDiA7S3J8RK0IU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755177168; c=relaxed/simple;
-	bh=q3iOg8uWBAI+HNqAr+Co/DVEaNTWz4/LvQSW0aF3MnA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=peUE807RTwpYmEP6qYDcHfU/lFyJKjHc7ZUhiQLKRA9ZvG9zx64FmyBALRc2mPYNQWJmuwHtJ37k1f0I34yw3cKQMasyZV/dGN6Ly/NxI/82aMC62YB6jmgZU3123sISkrIAqcnbc9IDmliLm5Y2ga+utAYlkyr0PJsc4UY62Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XEyzx4cF; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EAKVHd009662;
-	Thu, 14 Aug 2025 13:12:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7Cmn9m
-	mtIgwWgcz0jEd3uU2qxXvvkBpTtvhCNP6Je80=; b=XEyzx4cFk+hP3BU71J4WKo
-	rzUaDO7NT2wZpqXeQM9NMSgrZCDgfASYTbFHy58UiId7MywHcIocKOndsKLYA/q5
-	a/Z7+zWwP9nVLP66PTs7PbYEOEgm19peKpw4ptEGGcb+7JEOgyKd7bk+4sTxRMmQ
-	KVYIWvEvDur2d6pCjZiJ/no28HsEBtA1yo8ImL2mLyAZ49JKRDbxOjADKCqNmplt
-	U2baO83fvLfmzs6uwQWUDul2Ys6enQeSUu3UzX2WW4Soi6GhvPB4cXbNXAGDJUab
-	Mkb7iLTUk0v5W3Fvmv7byL+Jf3y/AP6ZM7EabI5bRktRZuyXGr0mSUBjO2Iul0Ig
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48duruj675-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 13:12:40 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57EBRjW8017617;
-	Thu, 14 Aug 2025 13:12:39 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ekc3ux11-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 13:12:39 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57EDCbYL32243990
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Aug 2025 13:12:37 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CC6C858058;
-	Thu, 14 Aug 2025 13:12:37 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 52DAF58059;
-	Thu, 14 Aug 2025 13:12:36 +0000 (GMT)
-Received: from [9.87.142.31] (unknown [9.87.142.31])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 14 Aug 2025 13:12:36 +0000 (GMT)
-Message-ID: <5c76f6cfb535828f6586a67bd3409981663d14d8.camel@linux.ibm.com>
-Subject: Re: [PATCH v1 5/6] vfio-pci/zdev: Perform platform specific
- function reset for zPCI
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Farhan Ali
-	 <alifm@linux.ibm.com>, Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
-Date: Thu, 14 Aug 2025 15:12:35 +0200
-In-Reply-To: <20250813165631.7c22ef0f.alex.williamson@redhat.com>
-References: <20250813170821.1115-1-alifm@linux.ibm.com>
-		<20250813170821.1115-6-alifm@linux.ibm.com>
-		<20250813143034.36f8c3a4.alex.williamson@redhat.com>
-		<7059025f-f337-493d-a50c-ccce8fb4beee@linux.ibm.com>
-	 <20250813165631.7c22ef0f.alex.williamson@redhat.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3492FD7CB;
+	Thu, 14 Aug 2025 13:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755177210; cv=fail; b=HL6A2KunG7WAxf9/uieJVAtEgyUGEs40LVxiPy+N4/k2hxxjHXPy73GXi4K1S1dQvlEf8x/IP8IN1TSmvEDvC0hpoeT20J/pnvs1G+A5cXKd6VDX9Ir9QLrlfkuQHezWpAXY3ygbp3ADF5PH5jpbSo19VV9iMK9zCximqzTrSvQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755177210; c=relaxed/simple;
+	bh=PzhXhJYGoiPq0uD9qnx0PysnUpfyQdyGUr6UYr7YfTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=QqhLQJq+21Fea0WDhoCLlLiBJJVy3kZHpf2LY8jflZ1uJohZ+Kzhk4tUDiXtEJoOp28kpt98RGhnmgE+/qrxKOwPcXKftbTqu2qMvo+p7SKWsTlVxYawRc1vZBzAzqI+miIslIsri4JmypDJ8zeYAIESThs2JLDjihQWLwmnRtg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=j0PdJI2+; arc=fail smtp.client-ip=52.101.127.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d0uWgwh5DuEa3EHjgQNJQtKoSAHXmCfnWs6eInNQ80iNqPw+21GQdwt/s9fzrha46nhU9pvvyr0HhehxITRoxfTkUCXwgw7Isd0tmBIWKfoOOmjSch3O4A2ou2j5aiYsVcDDO2sd6PeiUjHIUP9kCCXSz86LmkC5W0Y8sc8WGHpDKTWHtpJAtKw07Wv+Qj4/ei06USj53zdf3cQd+3RoRl491XF9r3QQsbxFP8/wwYYUrZCCp3BsZY9PcBVKQTepX7OfSlhw5NffRdd3vj9FiCo7qytRH8pxTiA8N4sTwv8io2YwKJCyhgHX9C2gXTfOlqd5NItOqEwGW6rJGnA+9w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FLct3Q/BfqrbfUAJADptBc2OzOU4g2/WKkDc8GY3waQ=;
+ b=JIiZyOio7SfxCmx/ldxPwkx82xwQb8LXqnvLTx3GJ8HTMGEEGDymMJshQP1a4F6bDQNiICFSAsNrKWVSss4pwjjkOqrt21sf7T91nSdi9Zp7JmRJ7goQk4LTr+oegpcvyq7Ebfd0bdo7HLYEufiPKnxzvBM/yf0WOZiG1eOxQDxIRiVeLaWDF2jDPduRrJoSskmQWZA5ZEmus7C4r5T4dXdeqO2hFTb+n8BNb8LDydBfbYcAhwEJaOOZMgIWoL5E/N2hxUbHlAi4PQtllinkd9QvBxzJbPeCAB1PvPHwk0QTtg2hY8Uw+sb9rstm1XWcNlRnXYiyXPvorw4F1QlKFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FLct3Q/BfqrbfUAJADptBc2OzOU4g2/WKkDc8GY3waQ=;
+ b=j0PdJI2+G0sBi3/q1uu/GZpnyzVN/f/qds83fIs4wjYWrFMTci2lHWt7yDYHhrqt729bO2gSdvaJ5nwIb8c9hMZn/cEV0EVepFUqJOCrsEumDAJW72fx4ezUd7DmdxDTWROSqZhHqiljiWC921tG2dhzjms9UjoYfu5ERBxQcN2PDY0FE1n23XWpYbMzMS0QUHTyUDE+1yRGdkZfhTKRjpykTuRF6ZNOO7G8I0jWXXAuM9kbiMtwnqR+0CP7VhVxCJtVky+u+fnyRUU3g/EKbAaTgOy8jvP8GRSBD2KCqTdHgA4aCVBCX6WYCYnuZ7Zbrz6hWceZ7O54WtUygd2U1A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by SE2PPFDCBF4279B.apcprd06.prod.outlook.com (2603:1096:108:1::7f0) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.18; Thu, 14 Aug
+ 2025 13:13:23 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
+ 13:13:23 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-scsi@vger.kernel.org (open list:SCSI TARGET SUBSYSTEM),
+	target-devel@vger.kernel.org (open list:SCSI TARGET SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] scsi: target: core: Use IS_ERR_OR_NULL() to simplify code
+Date: Thu, 14 Aug 2025 21:13:12 +0800
+Message-Id: <20250814131312.231097-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR06CA0004.apcprd06.prod.outlook.com
+ (2603:1096:404:42::16) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: BH4VjtBXSN30zjNWgFJZzxyeU8golyrA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX9vqZFH4vdki0
- y5e3ELNccXmIZ4sgv2KtXKR634G9I1Gp7lpBMeXNtyt7pZ8hsJSOnE3mIEuWD6W60w/LfqgFUvP
- qUfP3Xe54fSRYNZT0SvA38yIBK92MqKGpy0p0uwGl0f2Jbk57JVvlXgz31oPRux8gz2l/dVnrZY
- 3VIaza0aKSzEporNMWOQ8ipfbvGnHrNBPSUcBO7z4eMvabt/5CHtckIH6Kuqa0ADK65cIkYAgNj
- lnjaEAx146CX6Xu5gL8i0MyJwnPlHzHL4J75yGE/Qaqxb0uY5fzCaz2lLvvKrWpl722oExJ0GpO
- uMgTT7bfI59gMmFoYr6YMR/rfdT2fsT+a/J7ahFab2ZiIFVzM+jeluI9iLP4E+g7L2TcmzMn7nE
- 5oKbEiH5
-X-Authority-Analysis: v=2.4 cv=QtNe3Uyd c=1 sm=1 tr=0 ts=689de0c8 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=MB7ycCNmAEwgrl9QjFcA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: BH4VjtBXSN30zjNWgFJZzxyeU8golyrA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 phishscore=0 clxscore=1015 malwarescore=0
- spamscore=0 suspectscore=0 impostorscore=0 bulkscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508120224
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|SE2PPFDCBF4279B:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0eb58170-542a-4ca4-867d-08dddb3458ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ANcF/ISBRTsvpvtBAV+rqo9XnDjhwrJ7R4975TT1ToJ5t53tJIUzF4q1lsLY?=
+ =?us-ascii?Q?wKEJ4RheWZsiGukrdLq8vz/Yhsz8H+eQVILUM3cAg/C74q1vathjYKkNZm4f?=
+ =?us-ascii?Q?TiLNE+Lou94+vA1a9iIv57zcayB0hxexQu9MOrf0muwB8PCdeDHGyPHnTRRn?=
+ =?us-ascii?Q?JbQXD/DkP9cW/aVkwsZ13w876S48N6hM1d7+R+GW8c5295oFBJDMx7mqO5C3?=
+ =?us-ascii?Q?dkAfCn9WUTJOkH8xNZfyDvoNz0QGaUa8S1evhN9TDXzLHaLks51Djfhz3lNP?=
+ =?us-ascii?Q?Lbj5BqZWDMWHPDqp3xfultF6SwG70ytUuatdyMPlcuZCLq/XGbZPvB0pyytt?=
+ =?us-ascii?Q?eGuALcWbfO+xNFqsV8DBfhMtjvPTR7mSzWhctXqGo4173hYMmu5M9gAm1D1K?=
+ =?us-ascii?Q?84AjaHFUXvy94ynG4ca1TdO9WmV0QHRdZ64/vuCwZG3e2m/V+XJmLqtqFtVJ?=
+ =?us-ascii?Q?IUPjNAudrYZhCjQ/Ie1rznUxRDpIaJjJDSzg+c/ByWoHIu1M+4kM6D5letnU?=
+ =?us-ascii?Q?9DJz+FlXr1d4kZEhUEHPhkd8tBu+O3l6t2il6QqJpNbRAPNPrqcItQ+bScKy?=
+ =?us-ascii?Q?uzDNAh1g8AxpKnPJiz5d4gJxY97tGPbqUj+1Sd7O4h1KNGky6KJTCORyJtiT?=
+ =?us-ascii?Q?5DJBZS1LcfumW0SNh8Uwi4nzPsqsZrd2dOdqJ9sLyH/uAAuQRLA8UHZzouxb?=
+ =?us-ascii?Q?3d6LfXOP/yfmsH75NsAO9GcvV5s0Xhu13apYKllhS0XFUl6oWIZ+cTAzXhHv?=
+ =?us-ascii?Q?GShzbVMO1V7e3Cgb0rijDL0N/PIGdI1/j6xihB5PpuM++PBW6IN77oMUCKCU?=
+ =?us-ascii?Q?ztcVJfnzDYe/ExSvi33KexSgHIsQiR9z1L5TQ9szYSqWSKxbrjLuETRLLMrq?=
+ =?us-ascii?Q?vu72SRmk4hTCgcpviP/qQhydoowZ8R477gtgMxPIw0zYXwZ+WBzKgQCDJCJZ?=
+ =?us-ascii?Q?eqav4PewflQHYp1bF3J7oMrpSMC7/KnjHONSCS9L4IRd0skWpAAcRdQqoe0v?=
+ =?us-ascii?Q?pDZcQBGdr8Dxo6wetlyQI262eCI0KRDHYUOSy9aZz/D5Lbq/JWWZORJHSzhz?=
+ =?us-ascii?Q?TpP1tXBlOUQtv2NEsWwCK02z5OZN5Ld4ZOKhwyME+6ATPYBteCVbyhhpge5H?=
+ =?us-ascii?Q?fh1fU8kBOiP5TiFn/1u0kJisW2GxOHfKy09PIbt3kMcoOX/kYupt4k4k0wJH?=
+ =?us-ascii?Q?BsLavkz+C5t6tY7SAuitaWMu96gKtSPvIbfRbabg3aERI3XpLQjhyW9NGNKz?=
+ =?us-ascii?Q?02vom17uv0+St8LAg+pztaYRRUfblgAe+IJu2dMv/OvKm78EDaetQnwONLnh?=
+ =?us-ascii?Q?W8VvDtrgqY3v8k7TLmHTpOG/hq60yRAEPRj743ZNtgHYlEqHtA90zp27NQDt?=
+ =?us-ascii?Q?6BPBFETXmzTV/6Xuwez9hM7dg0z6yGTSwCVRkFlXBiPEvHAGGbL7qbOWQUvl?=
+ =?us-ascii?Q?ul8CX4G56FQo8hOjfeL1IonCW6sIgCPUJtCzarTUXJ32S8l4vTiXgQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hjHPsuDsdRPmWcI7fV7yeGVs24d1dUHmP26DzQLexmQAZS9Xm7J+iSP/f1LC?=
+ =?us-ascii?Q?DIqv8L/hJMOUPzRVUvpUQVS7pTxs6KBHvNPf6VlAzJLZHxfecl0zFji2q6qo?=
+ =?us-ascii?Q?y3u3RBoJYvMOIyC6JZ8WVdt/FQ7msYpA1SDIk2cBsSG8dJqCecCvRnU9Q/fs?=
+ =?us-ascii?Q?MoiU4jJzw8kvdR0ZDbISPZUJq5iiLa8kN7wKHexopCcPN03QrLguOHIVOsY7?=
+ =?us-ascii?Q?u6Dq+L44pxY5K5Xl/kX9NqhZTQ82t2+tnFrpngaxyco9WxRnmkTQb6WEctgF?=
+ =?us-ascii?Q?SFd/pMyA/B8CRF4vCHw8cYNUZPRTttRtQKUtF4+mP8wd+uPdcMvnMoKEIdPl?=
+ =?us-ascii?Q?qmEanWDO2R2jwBmIllD2lob48NXvjoCEzsRgpTLfeeyrxdml0WhrnGXQ+JPo?=
+ =?us-ascii?Q?5RLnCBGSGvj0UnDGyc2IekAYLWPI5lO01nf8dRQkKcBVVhNZnp2+XEAzv6w/?=
+ =?us-ascii?Q?y6Jretw+3zTBPwuyPGafdk4Ly5Ef2QYNky0Uq/TDnsQtgaE+ELInSyILqyCd?=
+ =?us-ascii?Q?ldJ7aTTyypYxDioLpaKudHoRjfZMUvC6AvBqczOGvAyVOm/SVihbd6V+nP3V?=
+ =?us-ascii?Q?TFTUkZDS9CJvN9OGHgd5TFTY01tD9OmG/RsabORsl29DzdDyKJ63nNdMMOtG?=
+ =?us-ascii?Q?iqt7BDWz+as8lJfO35sFtmp6kGRMGGGdpIfKD5AZDUfldfMybvKxlCOcncy3?=
+ =?us-ascii?Q?ftSd0BdEqdczEonlkTGLgEsVpaLB0X0I4iQeqYKpYSzT8pmCM5v4CDfJteo+?=
+ =?us-ascii?Q?Pow8/Gl5Q1KdlSzUxPinv+iNXwMbswVfdCecBbA9Bz34nisHv5+YQgLKmG5E?=
+ =?us-ascii?Q?KeiLhS5RAVtGzDBSNBjZ6njJ58s6SNCRrVQ2G+oa0P6aTa7tur7aMhrlU82R?=
+ =?us-ascii?Q?KvrVJQcO82BcRmx90zfgEubxCNp/YRndPCJTyX3Cx248fGUAu97UT0e666Xf?=
+ =?us-ascii?Q?XqX35VH6gQeysr8DTLYV3U6M6YSMdrbLVkyVsGqmjgwmsbafzSICzWhobqbs?=
+ =?us-ascii?Q?f09HPRPAUVzJAFAjz9JpTMD7qNkAGOoaE0ea2CcJ0g4BZXCNVxHrPBqMP+P/?=
+ =?us-ascii?Q?kFlAIA7zcYTqr/pAkLMY+lhvUtznBDgXcd+/0Auy+c0FXLedJ0QjGoR38RZL?=
+ =?us-ascii?Q?OThfGvuSWiVtNqd40DJj0nac0m37lrwpCsIWvt0fAnT2LJMG3f9BUVYilIQd?=
+ =?us-ascii?Q?OYduaJpNdIeuEBbqv70wuhb+Zr8G9xPuEI/fi6OC0Dp2jBeuEwXjNfgr+lwI?=
+ =?us-ascii?Q?EzWFnvwuNO92IOWcEaQq22FXRRncd6HHslLgawD1xJaDiQMnTawSknqiY7xi?=
+ =?us-ascii?Q?+axRBW+fbcuvKEPJUWY7LUWJOOh3BWRQQSpP+YubJBm9wcT5PU9mbOacKdjs?=
+ =?us-ascii?Q?hXYjHpVSOhcFdAtc5i78NEZQQEW2KcwEj8rVrLw9eBqokMJdWFVBGKO9Q0ZF?=
+ =?us-ascii?Q?532BIuUUaY23iKQqR8fsEzuZOscR9eQ60oGin6fus2mnJ5Yyhqr4cOCTq8p4?=
+ =?us-ascii?Q?KSEzz1SJ1doI1yX6ceCYD8CHtdioMWgeOnXQKjv6fsMLa/32p8IKatjkc5D8?=
+ =?us-ascii?Q?9uMY2HnLqS4eE4siJP5ATZKf7hGB48Aayq0l1dEN?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0eb58170-542a-4ca4-867d-08dddb3458ab
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 13:13:23.1630
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eiwDUvCWTCHRTjgIABoJDC/vpd4sk9hGdo8oyPiMiN561zZuCEf9DzXM83IAFfBINPSXaXW4bGlSJbsksULaGA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE2PPFDCBF4279B
 
-On Wed, 2025-08-13 at 16:56 -0600, Alex Williamson wrote:
-> On Wed, 13 Aug 2025 14:52:24 -0700
-> Farhan Ali <alifm@linux.ibm.com> wrote:
->=20
-> > On 8/13/2025 1:30 PM, Alex Williamson wrote:
-> > > On Wed, 13 Aug 2025 10:08:19 -0700
-> > > Farhan Ali <alifm@linux.ibm.com> wrote:
-> > > =20
-> > > > For zPCI devices we should drive a platform specific function reset
-> > > > as part of VFIO_DEVICE_RESET. This reset is needed recover a zPCI d=
-evice
-> > > > in error state.
-> > > >=20
-> > > > Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-> > > > ---
-> > > >   arch/s390/pci/pci.c              |  1 +
-> > > >   drivers/vfio/pci/vfio_pci_core.c |  4 ++++
-> > > >   drivers/vfio/pci/vfio_pci_priv.h |  5 ++++
-> > > >   drivers/vfio/pci/vfio_pci_zdev.c | 39 +++++++++++++++++++++++++++=
-+++++
-> > > >   4 files changed, 49 insertions(+)
---- snip ---
-> > > >  =20
-> > > > +int vfio_pci_zdev_reset(struct vfio_pci_core_device *vdev)
-> > > > +{
-> > > > +	struct zpci_dev *zdev =3D to_zpci(vdev->pdev);
-> > > > +	int rc =3D -EIO;
-> > > > +
-> > > > +	if (!zdev)
-> > > > +		return -ENODEV;
-> > > > +
-> > > > +	/*
-> > > > +	 * If we can't get the zdev->state_lock the device state is
-> > > > +	 * currently undergoing a transition and we bail out - just
-> > > > +	 * the same as if the device's state is not configured at all.
-> > > > +	 */
-> > > > +	if (!mutex_trylock(&zdev->state_lock))
-> > > > +		return rc;
-> > > > +
-> > > > +	/* We can reset only if the function is configured */
-> > > > +	if (zdev->state !=3D ZPCI_FN_STATE_CONFIGURED)
-> > > > +		goto out;
-> > > > +
-> > > > +	rc =3D zpci_hot_reset_device(zdev);
-> > > > +	if (rc !=3D 0)
-> > > > +		goto out;
-> > > > +
-> > > > +	if (!vdev->pci_saved_state) {
-> > > > +		pci_err(vdev->pdev, "No saved available for the device");
-> > > > +		rc =3D -EIO;
-> > > > +		goto out;
-> > > > +	}
-> > > > +
-> > > > +	pci_dev_lock(vdev->pdev);
-> > > > +	pci_load_saved_state(vdev->pdev, vdev->pci_saved_state);
-> > > > +	pci_restore_state(vdev->pdev);
-> > > > +	pci_dev_unlock(vdev->pdev);
-> > > > +out:
-> > > > +	mutex_unlock(&zdev->state_lock);
-> > > > +	return rc;
-> > > > +} =20
-> > > This looks like it should be a device or arch specific reset
-> > > implemented in drivers/pci, not vfio.  Thanks,
-> > >=20
-> > > Alex =20
-> >=20
-> > Are you suggesting to move this to an arch specific function? One thing=
-=20
-> > we need to do after the zpci_hot_reset_device, is to correctly restore=
-=20
-> > the config space of the device. And for vfio-pci bound devices we want=
-=20
-> > to restore the state of the device to when it was initially opened.
->=20
-> We generally rely on the abstraction of pci_reset_function() to select
-> the correct type of reset for a function scope reset.  We've gone to
-> quite a bit of effort to implement all device specific resets and
-> quirks in the PCI core to be re-used across the kernel.
->=20
-> Calling zpci_hot_reset_device() directly seems contradictory to those
-> efforts.  Should pci_reset_function() call this universally on s390x
-> rather than providing access to FLR/PM/SBR reset?=C2=A0
->=20
+Use IS_ERR_OR_NULL() instead of the original !xxx || IS_ERR(xxx) logic.
+This will simplify the code and enhance readability.
 
-I agree with you Alex. Still trying to figure out what's needed for
-this. We already do zpci_hot_reset_device() in reset_slot() from the
-s390_pci_hpc.c hotplug slot driver and that does get called via
-pci_reset_hotplug_slot() and pci_reset_function(). There are a few
-problems though that meant it didn't work for Farhan but I agree maybe
-we can fix them for the general case. For one pci_reset_function()
-via DEVICE_RESET first tries FLR but that won't work with the device in
-the error state and MMIO blocked. Sadly __pci_reset_function_locked()
-then concludes that other resets also won't work. So that's something
-we might want to improve in general, for example maybe we need
-something more like pci_dev_acpi_reset() with higher priority than FLR.
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+---
+ drivers/target/target_core_fabric_configfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Now for pci_reset_hotplug_slot() via VFIO_DEVICE_PCI_HOT_RESET I'm not
-sure why that won't work as is. @Farhan do you know?
+diff --git a/drivers/target/target_core_fabric_configfs.c b/drivers/target/target_core_fabric_configfs.c
+index 7156a4dc1ca7..4b0c71fbe57f 100644
+--- a/drivers/target/target_core_fabric_configfs.c
++++ b/drivers/target/target_core_fabric_configfs.c
+@@ -479,7 +479,7 @@ static struct config_group *target_fabric_make_np(
+ 	}
+ 
+ 	se_tpg_np = tf->tf_ops->fabric_make_np(se_tpg, group, name);
+-	if (!se_tpg_np || IS_ERR(se_tpg_np))
++	if (IS_ERR_OR_NULL(se_tpg_np))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	se_tpg_np->tpg_np_parent = se_tpg;
+-- 
+2.34.1
 
->  Why is it
-> universally correct here given the ioctl previously made use of
-> standard reset mechanisms?
->=20
-> The DEVICE_RESET ioctl is simply an in-place reset of the device,
-> without restoring the original device state.  So we're also subtly
-> changing that behavior here, presumably because we're targeting the
-> specific error recovery case.  Have you considered how this might
-> break non-error-recovery use cases?
->=20
-> I wonder if we want a different reset mechanism for this use case
-> rather than these subtle semantic changes.=20
-
-I think an alternative to that, which Farhan actually had in the
-previous internal version, is to implement
-pci_error_handlers::reset_done() and do the pci_load_saved_state()
-there. That would only affect the error recovery case leaving other
-cases alone.
-
-Thanks,
-Niklas
 
