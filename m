@@ -1,101 +1,79 @@
-Return-Path: <linux-kernel+bounces-769741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D773CB27307
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:32:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DB0B27309
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91C625C65FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:32:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A015C5060
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59D0286D45;
-	Thu, 14 Aug 2025 23:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A652877D9;
+	Thu, 14 Aug 2025 23:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LyHBL5eJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KT1v0HFP"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E3C13A244;
-	Thu, 14 Aug 2025 23:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D06F4FA;
+	Thu, 14 Aug 2025 23:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755214352; cv=none; b=CA9pphK6b32U5YzqjNSJVnW7PUMST0X9mmf/oKBq2/wxwBJRYdPVn3ZCrQ7scgnly3WgNVknlENecAKHEhjSROPchty6pOlIFlGx6cN3yeI856UDjhC70+MOVZAg52PjoT05YQH5Z37UqadDuUsY/cRtjC9fU/ofsO3frkhNkhg=
+	t=1755214445; cv=none; b=AXaAbbNva+KxYQrw7/6XeSUot2tqEnq8pkgHUGpPtPcavW/bvU65lcNCV47Zr0+3zzLhO5XpAV26gndohzIrM/tGXR+TMY48s3iXXpMXDnSmZ5m3/IGNz2RpHXplpkamCsS//LJwHO5HxrQZZdnQ3zWY9K4IFMIEJ07/yCrd5lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755214352; c=relaxed/simple;
-	bh=dWP4+uv99xLQMayYuPPKsY4+QZ4LpjcB+cQoINWJnkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Io5AYLCtQp/iUTGafu9XYNH3dTXZREq0d/Ejk0mnVsErtULVmJAvvpm3GeXWAY8XhA6tNM1p8pNLyZOdn+fWlRqFvhc5MHNNC6u6CF+bdSCPHaJ79KRLrSywt+Y00RbO30AjZYmc8zlnyBOOfmvAJXYKE6yaJTEiUjmWAmktugY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LyHBL5eJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1755214344;
-	bh=ys28pH/y82uYyk38gZ/1RkVV4Ftw3J9DsI2yIX36ghs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LyHBL5eJx+r4yy1180DVGG5rRXzowlOxp+KFgVBE5bd46algDDPgoqBC00crHesV1
-	 gHhjcb1Imc0x52vmexchQq+w1GUChvuqlsivmOY8+Ife0O+CFZ6pT3l3LaorrSL7c2
-	 hrrcHTtSRPP+OXqALXfCmGqWhjafxC/44SVzbOWeYmhg/4FpTxXeAatyGH2WHOz5Sg
-	 Xb/m5KHb79jMv/l48UajFALxi2P4RKba/OXDtd9oz2zDAXojirmLloBq6+EewaSXtz
-	 tIRFwHvcS5UbtRoQLL/VQPIZBGZceYMydrENcEdQg35pgNB+AU0vxelrDFSVH9ZcYv
-	 I9WC26L2YtzWQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4c31k03BT7z4wbR;
-	Fri, 15 Aug 2025 09:32:24 +1000 (AEST)
-Date: Fri, 15 Aug 2025 09:32:23 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steve French <smfrench@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the ksmbd tree
-Message-ID: <20250815093223.0ad56629@canb.auug.org.au>
+	s=arc-20240116; t=1755214445; c=relaxed/simple;
+	bh=2aSVEHz1DtpnMUNkeOSnZlCwQNl0fDdqRS25zB6EREM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QChxVmR14lf3Hbws5Xmxw5vwauOkTXC3Uw7M9vn6CjIgpTbFQ10ZeGg4Fx2LQWnp7l8OL0l5pPDNjppYQc9PZf3ZfOu5O8re/W83gPJXyQR6dCzn3WNSQOOyvLXFSsC+WBtPhCyObeaC0oc594TyW267EGQwkgRDJXvktkkdOdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=KT1v0HFP; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=TILj3DGNsj7SgnyaUWIrvVUlsSuKDsdTIb9FI2joqaM=; b=KT1v0HFPXPldcjwX6y7IjX4jEj
+	ZlnreOH9A6oqrs0n9DQVkokjryY/wof0hQINFUrrwXCnRt1Q2TlohM+JOHrQlUemXvdiSMwA01cO7
+	RKqzBsXnX62jTWFf3VxdEc5jbnvFiP4WdGMPyRGkqWKoOxcPXPVnpLf/dlp5wvvAO6oI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1umhS2-004lBE-R3; Fri, 15 Aug 2025 01:33:42 +0200
+Date: Fri, 15 Aug 2025 01:33:42 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+	Frank.Sae@motor-comm.com, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, shenjian15@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, heiko@sntech.de, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 net-next] net: phy: motorcomm: Add support for PHY
+ LEDs on YT8521
+Message-ID: <f6ed3ea6-eba2-40a8-a8d2-9c8ee6dc9337@lunn.ch>
+References: <20250813124542.3450447-1-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TYCw+O6BEPAUQ50Kl9uZzGI";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813124542.3450447-1-shaojijie@huawei.com>
 
---Sig_/TYCw+O6BEPAUQ50Kl9uZzGI
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 13, 2025 at 08:45:42PM +0800, Jijie Shao wrote:
+> Add minimal LED controller driver supporting
+> the most common uses with the 'netdev' trigger.
+> 
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-Hi all,
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Commit
-
-  862d28dc8b48 ("smb: server: split ksmbd_rdma_stop_listening() out of ksmb=
-d_rdma_destroy()")
-
-is missing a Signed-off-by from its author.
-
-Actually this is another case of a mailing list replacing the sender's
-address. :-(
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/TYCw+O6BEPAUQ50Kl9uZzGI
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiecgcACgkQAVBC80lX
-0GxnhAgAkOw2ynEO/sGaSwwIKJhtmTeZxDTo2eJqkF0NTQ0nE6HGVo/HKkxS1gml
-39bGxkSNHUs52kJd/ran6thl3uQwL1YzrYJRy/YYAeSEpzaQVzGLYkYsJ+XGi4tB
-6DBqbPmrrMHoTbj0EbusnDX7v9D0kh4vmmPvJQ0RBp5irTnBEC0Z/chNcVuPW2Dl
-SkeGttkSY39Ga/vV5BmSQWEPz/mTklOtTYvID/fWaM3Cawq/Ba6A2K0IEJAIp1aU
-tbs4B/oHYZabGCuOR5ClYhQIXg7/NwoFcOnhIshZ3Cb6WJm0UyULkHzjY6z1eQS6
-78Kc7nJtTLNtlDBWw9bxNMszr22+Fw==
-=jazA
------END PGP SIGNATURE-----
-
---Sig_/TYCw+O6BEPAUQ50Kl9uZzGI--
+    Andrew
 
