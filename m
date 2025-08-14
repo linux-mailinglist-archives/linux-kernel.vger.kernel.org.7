@@ -1,102 +1,112 @@
-Return-Path: <linux-kernel+bounces-767823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53498B2598A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:37:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7148AB2598B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4809F5A0B82
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4997C1C85770
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6D1256C6F;
-	Thu, 14 Aug 2025 02:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bnSyl4Qa"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7939585C4A
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A69F2494F0;
+	Thu, 14 Aug 2025 02:38:14 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E8F19F11E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755139012; cv=none; b=Y+PiZ4qkefDb81K0pUZ3AK612+Ug0JGdxyksU1pSr7ZEsD3E5SJB/1zEw+J7msVvdyTY7RT51XY76015mesk70gtMzB+qg6+eTvid8H11HykhZk2274WldWwhRFFFOJa/6+sPhOm3CjvikeXVUnUdti7R4DFdS2Qidpx6cFkSts=
+	t=1755139093; cv=none; b=QXikh3mKjadcstk9liBS/TUg44lUV/dL3lwR6+73gHnkgWa/F22YtyYdcD9Fz2BZI373P1ryAn2uAnWKvsvqbftxRINHdlh+19igED8XfCcjmbORzyiK9FdrUflKtmcIroCA3Y0n5pfaOb1MAYOqX5KNBxNR9lkaGdo+VHERSMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755139012; c=relaxed/simple;
-	bh=ZUKjgyy0btOB0JEvG/0aTzv8AXdnUlUTp8QHtmFnrh8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=HWIgSTV01yyX+cBRAWdpxfdOtqc0VfD8R2BmcOdUG1cDwLgFY24YezELLKFmXCO10EwdPSkeqB5gzU/HN0qM6zJz5Gq+XevNdMqIfTBCP5atma07OffqDLmtMnv9+2P/dfPpsSvqtK8Gk78zGvH9xJAURkg1BBDvodeDp4C/9jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bnSyl4Qa; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250814023648epoutp0490b07159d11fd0a570076d0447df91f8~bgaD3Z9c82740227402epoutp04R
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:36:48 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250814023648epoutp0490b07159d11fd0a570076d0447df91f8~bgaD3Z9c82740227402epoutp04R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755139008;
-	bh=44C6bRh5qYy8AvG4h59yKMY2QM+osiZPYVbTKoGgO1w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bnSyl4Qa/Y76HjejSdeSYBIe4L4fSvARz1y8n8E7hPXWemNczkWITFanmz8fSGxgu
-	 2H8VE5Ydyf6v/SLGvhA3eSwkID9KKZQXgoyiOXl2cmp9m5PtYqL5+3zXeW0weIHrhi
-	 BJ7LtgnvTcZgDf5BuorAk34+3WNtAIlO6VTF9uhU=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250814023647epcas5p4df13272ea95eaa15c0573df6d09bb9fd~bgaC_jSqy0260502605epcas5p4m;
-	Thu, 14 Aug 2025 02:36:47 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4c2TsB1D4Rz2SSKf; Thu, 14 Aug
-	2025 02:36:46 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250814023554epcas5p4b3dcab50835e2da4749be1be135def20~bgZR_ftYe2756427564epcas5p4K;
-	Thu, 14 Aug 2025 02:35:54 +0000 (GMT)
-Received: from asg29.. (unknown [109.105.129.29]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250814023552epsmtip1d326f6f872887b30b03960a9a0fb04b2~bgZQVvLG62143121431epsmtip1n;
-	Thu, 14 Aug 2025 02:35:52 +0000 (GMT)
-From: Junnan Wu <junnan01.wu@samsung.com>
-To: kuba@kernel.org
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	eperezma@redhat.com, jasowang@redhat.com, junnan01.wu@samsung.com,
-	lei19.wang@samsung.com, linux-kernel@vger.kernel.org, mst@redhat.com,
-	netdev@vger.kernel.org, pabeni@redhat.com, q1.huang@samsung.com,
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com,
-	ying123.xu@samsung.com
-Subject: Re: [PATCH net] virtio_net: adjust the execution order of function
- `virtnet_close` during freeze
-Date: Thu, 14 Aug 2025 10:36:07 +0800
-Message-Id: <20250814023607.3888932-1-junnan01.wu@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250813172307.7d5603e0@kernel.org>
+	s=arc-20240116; t=1755139093; c=relaxed/simple;
+	bh=orXKxVt//leHOyaInDmaarxqvL9O/ii9pjhaz28t+EM=;
+	h=From:To:Cc:Subject:Message-ID:Date:MIME-Version:Content-Type; b=E/uILiZk7ckuo7TZt/bcb30mxCEK5cvoAhE/aJeb0fP8p+ETvB0kE+rDoXmDlZURhlLgsXrLeskzIO2QHjeGdk7da9j9EwCD6EpCfnGU38Hi7ETx6sthMu67uN2s/9OD9HiOIJU1La2JveIS4saAAEPDoyK430UarQkYjzh8OEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxnnMQTJ1oD5Y_AQ--.19478S3;
+	Thu, 14 Aug 2025 10:38:08 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJAxT+YPTJ1o_GdKAA--.20216S3;
+	Thu, 14 Aug 2025 10:38:08 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [QUESTION] How to silence objtool warnings of vmlinux.o
+Message-ID: <8737f2ed-3f4a-3cab-1dd1-55ad50f951e6@loongson.cn>
+Date: Thu, 14 Aug 2025 10:38:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250814023554epcas5p4b3dcab50835e2da4749be1be135def20
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-505,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814023554epcas5p4b3dcab50835e2da4749be1be135def20
-References: <20250813172307.7d5603e0@kernel.org>
-	<CGME20250814023554epcas5p4b3dcab50835e2da4749be1be135def20@epcas5p4.samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowJAxT+YPTJ1o_GdKAA--.20216S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7AryrKr1fGw43XFWrJFW8GrX_yoW8KFy3pF
+	47C34Yyan8uFWq9w4UCr4ag3ySva15Xr4DtFyUJa43J3yjvas2q3ZYyr4xAFyqgr4a9F43
+	Wr47KryUCa4jy3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU2nYFDUUU
+	U
 
-On Wed, 13 Aug 2025 17:23:07 -0700 Jakub Kicinski wrote:
-> Sounds like a fix people may want to backport. Could you repost with 
-> an appropriate Fixes tag added, pointing to the earliest commit where
-> the problem can be observed?
+When compiling with LLVM and CONFIG_LTO_CLANG is set, there exist the
+following objtool warnings after silencing all of the other warnings:
 
-This issue is caused by commit "7b0411ef4aa69c9256d6a2c289d0a2b320414633"
-After this patch, during `virtnet_poll`, function `virtnet_poll_cleantx`
-will be invoked, which will wakeup tx queue and clear queue state.
-If you agree with it, I will repost with this Fixes tag later.
+   LD      vmlinux.o
+vmlinux.o: warning: objtool: .head.text+0x0: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x18: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x38: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x3c: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x40: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x44: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x54: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x58: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x6c: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x84: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x94: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x9c: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0xc4: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0xf8: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0xfc: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x104: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x10c: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x11c: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x120: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x124: unreachable instruction
+vmlinux.o: warning: objtool: .head.text+0x144: unreachable instruction
+vmlinux.o: warning: objtool: kernel_entry+0x0: unreachable instruction
+vmlinux.o: warning: objtool: smpboot_entry+0x0: unreachable instruction
 
-Fixes: 7b0411ef4aa6 ("virtio-net: clean tx descriptors from rx napi")
+All of the above instructions are in arch/loongarch/kernel/head.S,
+and there is "OBJECT_FILES_NON_STANDARD_head.o := y" in Makefile
+to skip objtool checking for head.o, but OBJECT_FILES_NON_STANDARD
+does not work for link time validation of vmlinux.o according to
+tools/objtool/Documentation/objtool.txt.
+
+How to silence this kind of objtool warnings?
+I appreciate any guidance here.
+
+Thanks,
+Tiezhu
+
 
