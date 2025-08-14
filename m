@@ -1,86 +1,62 @@
-Return-Path: <linux-kernel+bounces-767886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915A3B25A1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:53:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545A6B25A1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6AA1C03F55
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:53:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D31E5C1092
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F71B18786A;
-	Thu, 14 Aug 2025 03:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557141A5B9D;
+	Thu, 14 Aug 2025 03:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cE1OH47Y"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hL3R8q5f"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3496D2836F
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B4C2836F;
+	Thu, 14 Aug 2025 03:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755143605; cv=none; b=i6d+FQN3Ms9pO8SEdL68khHO8HtEl2cuiGwhHl67cLLPRP1VPiy75A2Y2BFJ8CTvk6a4ai9cDymM0NJLB6JGyYZRszJhqApEqetF2fHvMHFLU6pwZu0j8XNwR/nYYLqlP489kHn9tLpqhs6hRgqR8ZEbEjhphdHY/Zb628wicbY=
+	t=1755143659; cv=none; b=DKWoIGpTnXhkvmFjP+vh8p7sBEjaZVysA7T7OrcP+agwT4/ZiFbJWfygTvUDQ/oqc8+nOw4F81YaTUGIw6WfFTMW3ZjMcvHw4tNcPLo6APLir8XANz7uXo5q1tgqdg3mgE++0jwcyN7Aid23CdcA6pcfdZ0m2rFp0tmbdZ6wA4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755143605; c=relaxed/simple;
-	bh=YjZjxan+726tMVfjFRoet5oSBGRbOVT0WR2k5lcKq/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QdFNbzKZtIbzb53EkFW+rSa6FHK9Dha8DJh2dZvX1kLZHGcGujrIJFsBlMduWichf6dM/Xv3t2XgJNSB+ZxJumyQeHs/fqO0RHXDesYXR8vji6xHYZLUnIG+zf4aMYE7jHYumct/agm+DbosNnlmL9rhgV4EV1aeg7dxawehy1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cE1OH47Y; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-244581cc971so8428065ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:53:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755143603; x=1755748403; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MOFtgXblvXLvQMiqNX/nSaOt0iX24nILKNRle7lgCw0=;
-        b=cE1OH47YDgQZrun008sPxQZHokUGnGc9uyjp8p7YIH9u9RkauTbTuhMCcf1SCt95IP
-         D3erB6hPBGf54gfU73zGSvRGS1yZep+EeIxoc9YZijKE/aUAWEUySI+IBCJ1FFNYBi/2
-         mQ5zXxs0yiQ+G1wms/jUSu3nCFquJGkEKEs9o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755143603; x=1755748403;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MOFtgXblvXLvQMiqNX/nSaOt0iX24nILKNRle7lgCw0=;
-        b=Gl2+rTIgt2ZYM8cH+SCMT3lLVSsKUaicDUAaHtpWRWwEPvSwZLMUEpM3LgYJQxhE5Z
-         3fNz9TYn/BI/YeV3tylRuMouh1t/JcFWjzbiuWBMJd7+maQ6ZLVgjgua63JFk5gVH9np
-         wnFtbo/OZl+U7plhRaRDv5uI3EIpC4fErKMBuL8kCfFHxq3H3Je5XK0boZe4HD4mt1dY
-         kPBZLf0tq390VjGEbk6O7SJKKhKzgYg42hiXUYc7ijVTG1veQu8VyzRpweK23KFgQdnQ
-         2af5Bi6NTfjVFvNPoBuKWdZJ0RYoNpjNwMoTbVDY+IC+5XCTAQavTxhun9JmUICrQSua
-         wp1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWN9fYa6RddkDfzBcHG8hff7yNtMG+bi4JpkYBhoD4qSAK9ficAOXs8jNr9vWRI0bxU4QQ0DwbHVRc1wSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyROVGa0fmzCKWX0fh5jJTWlR1Vm/wMOJHNzEjd1nrUULPqgEVl
-	UNnBQOqbrPPmQF0441dsvQ5iATVZBSiFkH7lmrzkD9UYFL2CjzEMyGAKeQYvbFt3lg==
-X-Gm-Gg: ASbGncvcGpmPnSHh6txTpGjEGcV7XAqw0F++ICkL1+salLC4Yo6lF2G/epmcFkqnE+v
-	1Y3U5QVzzOJIdyz2485+c1L7TX/O6WAsCdhwEMmmufTl29NDM6cHOztIT/DoeJCR8+FPz7Vcqat
-	d/BrV9KbDN15u4Au4Zw1wELkhHfsSXQgLWC/Qbe9ql0GmrfSs4k8h3IH9k16LklSyzH4zjlJ/W0
-	V5LzJU9zL0mAPhGkHNOyKueWyQfU6c8yU1dJ5hXlx5IeC093j3EAF+KukPkVZN3Q2OkCERUzrSz
-	oTHr+qp1RrPnVRImrA+zaq9QQnhnNSSMbNj6SWhCs+ALVihyVlgYXyGkeb3pF858Uy5BNRKP3LV
-	ylDM67yZ2SlUVy+/buV9ep3dn7hC3jfPUBUx5xsIuLtSK1tXHREY=
-X-Google-Smtp-Source: AGHT+IEHqqgL7gnJ9ZHmq6s9ZQxtBH50CdmeXYydDEbOFKWhOpTUig9K37M/wEt9/Gb9Pz9QeiLeew==
-X-Received: by 2002:a17:903:2acc:b0:240:52c8:2556 with SMTP id d9443c01a7336-244586da603mr22577075ad.39.1755143603414;
-        Wed, 13 Aug 2025 20:53:23 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:c44f:5805:6bc2:66d4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f21c65sm342150205ad.73.2025.08.13.20.53.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 20:53:23 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: Use hashtable for global clk lookups
-Date: Thu, 14 Aug 2025 11:53:16 +0800
-Message-ID: <20250814035317.4112336-2-wenst@chromium.org>
-X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
-In-Reply-To: <20250814035317.4112336-1-wenst@chromium.org>
-References: <20250814035317.4112336-1-wenst@chromium.org>
+	s=arc-20240116; t=1755143659; c=relaxed/simple;
+	bh=wDK0eX+KK2+SpbwmEPed0XoHN6lDNAQFA8XExzq50lQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gsmGXGoSJfAI/7ZTlKcg7Ku9LKMzaEMQouPoZdPCRUzkyXPyAye2d2hw3M1ghz0/LYrxAWahGIwwt0oJhbUuTdNyofqQlWY5iuhw6A2/TnOhRrXZMp0mvViK9PDePjGCe2auA0hngKpqFc1qbF4xshChArTnF9anLeOcPTXLd5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hL3R8q5f; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755143654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T+Ym3fZ+AnHT9AvQuTJapbVedXNyrAy6w7aioM5SVPQ=;
+	b=hL3R8q5fyaVCwRv4/J/7aidX4LXVJPL979TL+ylHcsN/Ybo/MMMFQ+VyGGTLvRPS3xR7z2
+	b/nz976ZzX4MrN3BpVyxbrL7fQ0e3Wga2aVkeLga4Xp7W3T9jhfDuP+WGDJhcoFTt/BMV2
+	p1KykZjtwIc0Y82cuHimwtiHYiik1Q8=
+From: David Dai <david.dai@linux.dev>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org
+Cc: dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	tj@kernel.org,
+	david.dai@linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: [RFC PATCH] cputime, proc/stat: Fix cputime reporting in /proc/stat
+Date: Wed, 13 Aug 2025 20:54:00 -0700
+Message-ID: <20250814035400.4104403-1-david.dai@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,163 +64,289 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-A clk lookup using clk_core_lookup() is currently somewhat expensive
-since it has to walk the whole clk tree to find a match. This is
-extremely bad in the clk_core_init() function where it is used to look
-for clk name conflicts, which is always the worst case of walking the
-whole tree. Moreover, the number of clks checked increases as more
-clks are registered, causing each subsequent clk registration becoming
-slower.
+Due to the tick based time accounting found in cputime where it
+attributes an entire tick's worth of time to a cpustat bucket everytime
+it samples based on the current CPU state, significant artifacts can
+occur on system wide cpustats which can cascade into large accounting
+errors.
 
-Add a hashtable for doing clk lookups to replace the tree walk method.
-On arm64 this increases kernel memory usage by 4 KB for the hashtable,
-and 16 bytes (2 pointers) for |struct hlist_node| in each clk. On a
-platform with around 800 clks, this reduces the time spent in
-clk_core_lookup() significantly:
+In workloads running erlang, we observed that userspace threads such as
+"erts_sched" wake up every 1ms to do ~50us of work that can line up with
+the scheduler's tick(1000HZ) boundary. This resulted in a much larger
+amount of time being attributed to the user bucket, and in CPUs
+appearing to be ~30% busy while the task itself only took up ~5% of CPU
+time.
 
-          |      PID 0      |     kworker     |
-          | before |  after | before |  after |
-    -------------------------------------------
-    avg   | 203 us | 2.7 us | 123 us | 1.5 us |
-    -------------------------------------------
-    min   | 4.7 us | 2.3 us | 102 us | 0.9 us |
-    -------------------------------------------
-    max   | 867 us | 4.8 us | 237 us | 3.5 us |
-    -------------------------------------------
-    culm  | 109 ms | 1.5 ms |  21 ms | 0.3 ms |
+In addition to the inaccuracies from tick-based accounting, /proc/stat
+reports using a combination of tick-based for some buckets and more
+precise time accounting methods such as get_cpu_sleep_time_us() for idle
+which results in further discrepancies. As an example, this can be
+easily reproduced by spinning up a periodic workload with a 50% duty
+cycle that wakes every 1ms and then reading out /proc/stat every 1
+second to compare the delta.
 
-This in turn reduces the time spent in clk_hw_register(), and
-ultimately, boot time. On a different system with close to 700 clks,
-This reduces boot time by around 110 ms. While this doesn't seem like
-a lot, this helps in cases where minimizing boot time is important.
+On a 1000HZ system, time delta per sec read out (converted to ms):
+user: 990 nice: 0 system: 0 idle: 480 irq: 0 softirq: 0 ...
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+When more accurate time accounting is available for tracking idle time,
+we can determine non-idle time to split between the various buckets
+using ratios from tick based accounting. This is a similar technique
+used in cputime_adjust for cgroup and per task cputime accounting.
+
+Suggested-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: David Dai <david.dai@linux.dev>
 ---
-Changes since v1:
-- marked hash table as static
----
- drivers/clk/clk.c | 50 +++++++++++++++++------------------------------
- 1 file changed, 18 insertions(+), 32 deletions(-)
+ fs/proc/stat.c              |  19 ++++++
+ include/linux/kernel_stat.h |  34 +++++++++++
+ kernel/sched/cputime.c      | 119 +++++++++++++++++++++++++++++++++++-
+ 3 files changed, 171 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2eb63d610cbb..85d2f2481acf 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
+diff --git a/fs/proc/stat.c b/fs/proc/stat.c
+index 8b444e862319..6ecef606b07f 100644
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
 @@ -12,6 +12,7 @@
- #include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/err.h>
-+#include <linux/hashtable.h>
- #include <linux/init.h>
- #include <linux/list.h>
- #include <linux/module.h>
-@@ -21,6 +22,8 @@
- #include <linux/sched.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-+#include <linux/string.h>
-+#include <linux/stringhash.h>
+ #include <linux/time.h>
+ #include <linux/time_namespace.h>
+ #include <linux/irqnr.h>
++#include <linux/sched/clock.h>
+ #include <linux/sched/cputime.h>
+ #include <linux/tick.h>
  
- #include "clk.h"
+@@ -22,6 +23,10 @@
+ #define arch_irq_stat() 0
+ #endif
  
-@@ -33,6 +36,9 @@ static struct task_struct *enable_owner;
- static int prepare_refcnt;
- static int enable_refcnt;
- 
-+#define CLK_HASH_BITS 9
-+static DEFINE_HASHTABLE(clk_hashtable, CLK_HASH_BITS);
++#ifdef CONFIG_NO_HZ_COMMON
++DEFINE_PER_CPU(struct prev_kcpustat, prev_cpustat);
++#endif
 +
- static HLIST_HEAD(clk_root_list);
- static HLIST_HEAD(clk_orphan_list);
- static LIST_HEAD(clk_notifier_list);
-@@ -87,6 +93,7 @@ struct clk_core {
- 	struct clk_duty		duty;
- 	struct hlist_head	children;
- 	struct hlist_node	child_node;
-+	struct hlist_node	hashtable_node;
- 	struct hlist_head	clks;
- 	unsigned int		notifier_count;
- #ifdef CONFIG_DEBUG_FS
-@@ -395,45 +402,20 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_parent);
- 
--static struct clk_core *__clk_lookup_subtree(const char *name,
--					     struct clk_core *core)
--{
--	struct clk_core *child;
--	struct clk_core *ret;
--
--	if (!strcmp(core->name, name))
--		return core;
--
--	hlist_for_each_entry(child, &core->children, child_node) {
--		ret = __clk_lookup_subtree(name, child);
--		if (ret)
--			return ret;
--	}
--
--	return NULL;
--}
--
- static struct clk_core *clk_core_lookup(const char *name)
+ u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
  {
--	struct clk_core *root_clk;
--	struct clk_core *ret;
-+	struct clk_core *core;
-+	u32 hash;
+ 	u64 idle, idle_usecs = -1ULL;
+@@ -102,6 +107,10 @@ static int show_stat(struct seq_file *p, void *v)
  
- 	if (!name)
- 		return NULL;
+ 		kcpustat_cpu_fetch(&kcpustat, i);
  
--	/* search the 'proper' clk tree first */
--	hlist_for_each_entry(root_clk, &clk_root_list, child_node) {
--		ret = __clk_lookup_subtree(name, root_clk);
--		if (ret)
--			return ret;
--	}
-+	hash = full_name_hash(NULL, name, strlen(name));
++#ifdef CONFIG_NO_HZ_COMMON
++		split_cputime_using_ticks(cpustat, &per_cpu(prev_cpustat, i),
++					  sched_clock_cpu(i), i);
++#endif
+ 		user		+= cpustat[CPUTIME_USER];
+ 		nice		+= cpustat[CPUTIME_NICE];
+ 		system		+= cpustat[CPUTIME_SYSTEM];
+@@ -142,6 +151,10 @@ static int show_stat(struct seq_file *p, void *v)
  
--	/* if not found, then search the orphan tree */
--	hlist_for_each_entry(root_clk, &clk_orphan_list, child_node) {
--		ret = __clk_lookup_subtree(name, root_clk);
--		if (ret)
--			return ret;
--	}
-+	/* search the hashtable */
-+	hash_for_each_possible(clk_hashtable, core, hashtable_node, hash)
-+		if (!strcmp(core->name, name))
-+			return core;
+ 		kcpustat_cpu_fetch(&kcpustat, i);
  
- 	return NULL;
++#ifdef CONFIG_NO_HZ_COMMON
++		split_cputime_using_ticks(cpustat, &per_cpu(prev_cpustat, i),
++					  sched_clock_cpu(i), i);
++#endif
+ 		/* Copy values here to work around gcc-2.95.3, gcc-2.96 */
+ 		user		= cpustat[CPUTIME_USER];
+ 		nice		= cpustat[CPUTIME_NICE];
+@@ -210,6 +223,12 @@ static const struct proc_ops stat_proc_ops = {
+ 
+ static int __init proc_stat_init(void)
+ {
++#ifdef CONFIG_NO_HZ_COMMON
++	int cpu;
++
++	for_each_possible_cpu(cpu)
++		prev_kcpustat_init(&per_cpu(prev_cpustat, cpu));
++#endif
+ 	proc_create("stat", 0, NULL, &stat_proc_ops);
+ 	return 0;
  }
-@@ -4013,6 +3995,8 @@ static int __clk_core_init(struct clk_core *core)
- 		hlist_add_head(&core->child_node, &clk_orphan_list);
- 		core->orphan = true;
+diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
+index b97ce2df376f..d649bbd3635d 100644
+--- a/include/linux/kernel_stat.h
++++ b/include/linux/kernel_stat.h
+@@ -42,6 +42,11 @@ struct kernel_stat {
+ 	unsigned int softirqs[NR_SOFTIRQS];
+ };
+ 
++struct prev_kcpustat {
++	u64 cpustat[NR_STATS];
++	raw_spinlock_t lock;
++};
++
+ DECLARE_PER_CPU(struct kernel_stat, kstat);
+ DECLARE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
+ 
+@@ -51,6 +56,9 @@ DECLARE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
+ #define kstat_cpu(cpu) per_cpu(kstat, cpu)
+ #define kcpustat_cpu(cpu) per_cpu(kernel_cpustat, cpu)
+ 
++#define for_each_cpustat(cpustat)	\
++	for ((cpustat) = 0; (cpustat) < NR_STATS; (cpustat)++)
++
+ extern unsigned long long nr_context_switches_cpu(int cpu);
+ extern unsigned long long nr_context_switches(void);
+ 
+@@ -141,4 +149,30 @@ extern void account_idle_ticks(unsigned long ticks);
+ extern void __account_forceidle_time(struct task_struct *tsk, u64 delta);
+ #endif
+ 
++extern void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat,
++				      u64 now, int cpu);
++static inline void prev_kcpustat_init(struct prev_kcpustat *prev)
++{
++#ifdef CONFIG_NO_HZ_COMMON
++	int i;
++
++	for_each_cpustat(i)
++		prev->cpustat[i] = 0;
++	raw_spin_lock_init(&prev->lock);
++#endif
++}
++
++static inline bool exec_cputime(int idx)
++{
++	switch (idx) {
++	case CPUTIME_USER:
++	case CPUTIME_NICE:
++	case CPUTIME_SYSTEM:
++	case CPUTIME_GUEST:
++	case CPUTIME_GUEST_NICE:
++		return true;
++	default:
++		return false;
++	}
++}
+ #endif /* _LINUX_KERNEL_STAT_H */
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 7097de2c8cda..50c710f81df7 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -1092,5 +1092,122 @@ void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
  	}
-+	hash_add(clk_hashtable, &core->hashtable_node,
-+		 full_name_hash(NULL, core->name, strlen(core->name)));
- 
- 	/*
- 	 * Set clk's accuracy.  The preferred method is to use
-@@ -4089,6 +4073,7 @@ static int __clk_core_init(struct clk_core *core)
- 	clk_pm_runtime_put(core);
- unlock:
- 	if (ret) {
-+		hash_del(&core->hashtable_node);
- 		hlist_del_init(&core->child_node);
- 		core->hw->core = NULL;
- 	}
-@@ -4610,6 +4595,7 @@ void clk_unregister(struct clk *clk)
- 
- 	clk_core_evict_parent_cache(clk->core);
- 
-+	hash_del(&clk->core->hashtable_node);
- 	hlist_del_init(&clk->core->child_node);
- 
- 	if (clk->core->prepare_count)
+ }
+ EXPORT_SYMBOL_GPL(kcpustat_cpu_fetch);
+-
+ #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
++
++#ifdef CONFIG_NO_HZ_COMMON
++/*
++ * Split precisely tracked exec wall time using tick based buckets
++ *
++ * Use a similar technique to cputime_adjust to split the total exec wall time
++ * used by the CPU to its respective buckets by scaling these tick based values
++ * against the total wall time accounted. Similar to cputime_adjust, this
++ * function guarantees monotonicity for the various buckets and total time
++ * delta distributed does not exceed exec time passed.
++ *
++ * This is only useful when idle time can be accounted for accurately.
++ *
++ * Due to various imprecisions in tick accounting/other time accounting and
++ * rounding errors, this is a best effort at distributing time to their
++ * respective buckets.
++ *
++ */
++void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat, u64 now, int cpu)
++{
++	u64 exec_ticks, exec_time, prev_exec_time, deficit, idle = -1ULL, iowait = -1ULL;
++	u64 *prev_cpustat;
++	unsigned long flags;
++	int i;
++
++	raw_spin_lock_irqsave(&prev_kcpustat->lock, flags);
++	prev_cpustat = prev_kcpustat->cpustat;
++
++	if (cpu_online(cpu)) {
++		idle = get_cpu_idle_time_us(cpu, NULL);
++		iowait = get_cpu_iowait_time_us(cpu, NULL);
++	}
++
++	/*
++	 * If the cpu is offline, we still need to update prev_kcpustat as the
++	 * accounting changes between non-ticked vs tick based to ensure
++	 * monotonicity for future adjustments.
++	 */
++	if (idle == -1ULL || iowait == -1ULL)
++		goto update;
++
++	prev_exec_time = 0;
++	for_each_cpustat(i) {
++		if (!exec_cputime(i))
++			continue;
++		prev_exec_time += prev_cpustat[i];
++	}
++
++	exec_time = now - (idle + iowait) * NSEC_PER_USEC -
++		cpustat[CPUTIME_IRQ] - cpustat[CPUTIME_SOFTIRQ] -
++		cpustat[CPUTIME_STEAL];
++
++	if (prev_exec_time >= exec_time) {
++		for_each_cpustat(i) {
++			if (!exec_cputime(i))
++				continue;
++			cpustat[i] = prev_cpustat[i];
++		}
++		goto out;
++	}
++
++	exec_ticks = 0;
++	for_each_cpustat(i) {
++		if (!exec_cputime(i))
++			continue;
++		 exec_ticks += cpustat[i];
++	}
++
++	/*
++	 * To guarantee monotonicity for all buckets and to ensure we don't
++	 * over allocate time, we keep track of deficits in the first pass to
++	 * subtract from surpluses in the second.
++	 */
++	deficit = 0;
++	for_each_cpustat(i) {
++		if (!exec_cputime(i))
++			continue;
++
++		cpustat[i] = mul_u64_u64_div_u64(cpustat[i], exec_time, exec_ticks);
++		if (cpustat[i] < prev_cpustat[i]) {
++			deficit += prev_cpustat[i] - cpustat[i];
++			cpustat[i] = prev_cpustat[i];
++		}
++	}
++
++	/*
++	 * Subtract from the time buckets that have a surplus. The way this is
++	 * distributed isn't fair, but for simplicity's sake just go down the
++	 * list of buckets and take time away until we balance the deficit.
++	 */
++	for_each_cpustat(i) {
++		if (!exec_cputime(i))
++			continue;
++		if (!deficit)
++			break;
++		if (cpustat[i] > prev_cpustat[i]) {
++			u64 delta = min_t(u64, cpustat[i] - prev_cpustat[i], deficit);
++
++			cpustat[i] -= delta;
++			deficit -= delta;
++		}
++	}
++
++update:
++	for_each_cpustat(i) {
++		if (!exec_cputime(i))
++			continue;
++		prev_cpustat[i] = cpustat[i];
++	}
++out:
++	raw_spin_unlock_irqrestore(&prev_kcpustat->lock, flags);
++}
++#else
++void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat, u64 now, int cpu)
++{
++	/* Do nothing since accurate idle time accounting isn't available. */
++}
++#endif
 -- 
-2.51.0.rc1.163.g2494970778-goog
+2.47.3
 
 
