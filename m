@@ -1,196 +1,258 @@
-Return-Path: <linux-kernel+bounces-768936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BD1B26822
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:54:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8920B2682A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F4060176828
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D889E25FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7355E3019CE;
-	Thu, 14 Aug 2025 13:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4B22FCBE1;
+	Thu, 14 Aug 2025 13:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVmMjtHj"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3lsvFmnn"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2043.outbound.protection.outlook.com [40.107.237.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF48301498;
-	Thu, 14 Aug 2025 13:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179289; cv=none; b=rTb5V07GBWZngK/qCP0C9WgsTwe6o0sQmZsLzHszyi+XWUaRUt3iZrgDNx5CDbWEyYGpjizCyhYyzmh17lvpa8AgUAPiC6IxsbGiXtKa6b7hOK01QjUWE9fOs0VQc73g3sbBocreBgxU1QeergeEYDIlxQXNJl2g3wB0Rjlj+A4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179289; c=relaxed/simple;
-	bh=3nDch1TwnwnOFxnyGs00pASm7HAHD3urGrnQFPRpJis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ISiDJqpCuCcWbMBThjKavPdFwKr82cnx7yVtYf27l4lUPZqj5bg4C7uErbDQXVNuutY9xYUK2c8GFdj95JfX0k8tEcmEm5SiM18fI2mq2z8H2nyH5rKqGTyF3+Bf+VTqVw0It7uUMRrbpe1gdApk2JeyuvLKaPjcku1MlO8+oaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SVmMjtHj; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6188b5b11b2so1238311a12.0;
-        Thu, 14 Aug 2025 06:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755179285; x=1755784085; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kknE7rDUjEpODcHDSlY2nJGg21LqzdjsCFp42JS4Ico=;
-        b=SVmMjtHjyDWUAv8RYC77foqLZ64FkzLAVO+E5YBxcj8zgauvxcJk6RQKFlux1yLNP3
-         3f8HP4YvicdbqH91iKsn5YwEc/Faeoq8bMx9a4nQVr0R1TqBvK7ixdfK8UNiQB1YXv99
-         +24TYdIYlFoamRmOz44EZEBIq3rMS3LRQ1PlqRzBUR2ekMDCG5M7X3VoCvLejlYC8xDF
-         xLlHn1ESboMXuSUZsbpJOYP7eu65BRT5rJdCXn5jCNPAOao3AaXUUFlojJcc12OxvV7H
-         Bdj8/FiIZdn17RsylTeCamTst6WBS6+HDdp6dfOIiRGoRv7plTGlO4lNY/ooVDbO94uy
-         rtNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755179285; x=1755784085;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kknE7rDUjEpODcHDSlY2nJGg21LqzdjsCFp42JS4Ico=;
-        b=SPVIOlOPdCjDSEM/Ppi851QV7x6H7Rrdcj9Z7+nxnfwRi5lrriGZ10ply2ppexLA9E
-         OJutZ01AUg87uKyVwSNzf9VmQAQGewuj4zGHcSylYbqtJ9RC6Gw6H9yYxnDyHpghRhSx
-         /yuAdPfLZdTThdE7iBDtXdryOHumP7zHnUMwZ1dV61uKaK4/CpCQKZys9ocjZLu2HA5p
-         WBCPLdADBFCPSbNQwpqMfk/9sunTZCSpAu5T08gMWjjtWi7M3QJMgDKxhWfmEW974aLn
-         YFlFc8jzZjEPOd4qK7KKxUcglNOBL/4bs6gkfWELJoTewbYtpAanVi5ZbaWO5kfLSguT
-         a6Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPPd1yk+8bkQrdGZayvR3aO78+O39btGP4Hg/Vu1+zg9fvek6R30uUMbHgI0Xzm/maRVLIFTbJA44FiBCJhg==@vger.kernel.org, AJvYcCVGOth4jlR3SQK+ZjfZSmXur7Z0B7o+yLMBEt8s7LC5RBhboqwWeU8iZesqAm9zEnU3/t3VOXJc0962@vger.kernel.org, AJvYcCVjuTGjcKpOuYDJ+gJwWPVw1c5ceo70617t82C6UtPyiwjyz9FpDUMnVPtWkrdFSXeSQt2sQ63QfetI@vger.kernel.org, AJvYcCVw87kqUXv8fkx7nEoilm+uwX5s2QVqNhQwS+FOdRA0nS2w2X6R3vRsL5dHarFu6Key81Uq7HjJgiP4+LM2bA==@vger.kernel.org, AJvYcCW4YVL5ezYSSVLmHS7BA9ubQHEnKVVdNceS8VycGNlj4W8XNSygxfo+BTnmFlC4kSM9DD/vPYcdcdVfXNpW@vger.kernel.org, AJvYcCWK+onlHzVxCAewGSF1hJjxiow87uTEGD0HfXpY41jEkD295G0NE6+y/fckuTvoYh4cMgnFjJ6EIOM=@vger.kernel.org, AJvYcCWrlqX8T5H4KCYH05jz+USPJ/2B6g6X+3LKDD8Wgpl5HPtX0FqJyZer/JW286eHzJkIY30GLGqeA7aM@vger.kernel.org, AJvYcCXD0cTu8rngZ1WDlNbtJjQe7YY7IYOl4P9e6IV5cK9E+jORsKjKH0DpkI07YMSJwA9xnDSIwPRiW41PIA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOjWpIxv9ccUFwMoKZLhoC0Wrop8ActjLNQpy8P6UM47aYKfLK
-	ZX3rLpUvYlfSrO0yECTO1djyptq42TM9UEHWhiwT5EDzrlVXzB7UCMFSAipPGnhR0p9KMsCvT0n
-	Xx76BT5aGZhJ/gcvO8cdwDrnfYle1pdU=
-X-Gm-Gg: ASbGncsJF2IVjEnva+sKKHYhcBv4pR0ab5eZJxUvkm6Cg+LoHAcOh39ibttib2NILjZ
-	oKWxN4AR1fbjptTI2L2ZCrdYHavCnuhgbH6eoWrdJ/TPgIjkKGZVHp9yK07lW0hlMJCkSYstbOl
-	7A8VrOP6a1OFohWsFoHGJ5upHMu9Zawow2AgoKx424V5ZfqiMnf9hNzwsvxUO5KXzgTzIgsgF/w
-	Ev3Ceo=
-X-Google-Smtp-Source: AGHT+IEyNlWqeAhk/LpScYt9w4g0zV4KI7o0RDFgyEsYgfPOIWzZIEz6LWnNRfl0s84eTTaO2QcDUYXHT6IzkeoX6zs=
-X-Received: by 2002:a05:6402:348e:b0:617:b2ab:fba2 with SMTP id
- 4fb4d7f45d1cf-6188c1f81c9mr2881340a12.34.1755179284840; Thu, 14 Aug 2025
- 06:48:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848161E9B2A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755179343; cv=fail; b=BO1RjJWeU1PyN/umZZa/k0wL9IpLQUBXY+S/7hw97J24zHUmJ2Smjl8G4PIqYRRm1OCzXGvqDV1sZwDuq4u1Om0jJH4eJ69KjRjzCGmhYAyPHpRUiYzrHw/2301B5Ozowu7lDF3oRbS6YVGURhXfNR81733/Na5yxLPN+vYmPFA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755179343; c=relaxed/simple;
+	bh=bMpQbTi+9StIkZx39hjudQ2Bckm2Weta3P+gRfHnKm0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tZSA4/1pAjkGw1DqgWi1ByBaOS9GNTzJPUKTMR4nh7pEyv73FM1HrTasS6F4KmcH+cdzywSJyWKXUM+GthtbQSB45fLPGBtJ2Dvtba+2aWiLLvuRZaOpkvWzNkeNKZSgro73g9gPDpAG414mRVCA6rTv62hU+RZzmsJIao0FZGg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3lsvFmnn; arc=fail smtp.client-ip=40.107.237.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T1bSukaxSLdCmmDpzKdFRJsgwEVtJPDuhPXh/Mn6XGni/yB3ekh8vXxrAiwXEV9LwmLL/xBSR5tMUGpVGMkcd1uIB1VKOIOe1TUQEkHqDb/zvVQ4dj1vKsOsz18a+FivC9U5vwWMcPpIjIv+v5MqjoDlkXcmKyvXcHmbo7P/nmm8BYNCsNiwHgl76itQuhfx0BYWdBJ1emnvumiKinWWqjNdlddUNgKwk7YjaKHcnLajs/caxRaxd/vhWqzf14UwYZsloEjNL0IAwHT7owqsQDtSMy568qIlPt41NTi8s3BfggzJEQ6hGJ1nwA2NbU2r8WEI00Oy0J5hwOyNH824eg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2y+ej3IBFomyuby1AfuDvl/ss35A5/PG/qzlYZMlZ5I=;
+ b=QXlsRtw7VOjuRTHmpiJ289PPT2dJTFzsrlAcwZdamQNErY1nBQP0yAX46cx4I67edbmQ9DSi22LTRkr/be5QTS8TVTOnwjTbam0rWIQfGJnN81qilLoWYkxPEPrV50IjkU8/w7PRvDf8SbsLAw9qDqbVcilTeVji37NbrcXdhy1k2iO2QzwMfWba96GUm65uKktv1IuQFOfLIWF/Aq+9bjuwBQcRSZyIT7Z9uAapTG+CeY8NAy/31DdLy8rDLxagG9LZLWGC8jgC7oSM3VAUI+0pYe71j1yr5YDFekT+7EB9T7gsvjn6w5uCwu+BifjsySWZoo5K7YTml1D5+oitPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2y+ej3IBFomyuby1AfuDvl/ss35A5/PG/qzlYZMlZ5I=;
+ b=3lsvFmnnUnOnXx1VUiKCP6BhkQM18l6r/fF2Lb3x5Fi8ADfTigLQS1JzwG8YTsho/uHGqjTyNPl/n1Tei5qS63Zt+akPq0iG21gjvskBkW5DHe6u8rD6tLeKKX55/jzHMn06XSQpv0XbV8iLk1AdFYbxJm67292llh8ed8xiDvw=
+Received: from BY3PR05CA0022.namprd05.prod.outlook.com (2603:10b6:a03:254::27)
+ by SN7PR12MB7883.namprd12.prod.outlook.com (2603:10b6:806:32b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9009.16; Thu, 14 Aug
+ 2025 13:48:59 +0000
+Received: from SN1PEPF00036F3F.namprd05.prod.outlook.com
+ (2603:10b6:a03:254:cafe::a) by BY3PR05CA0022.outlook.office365.com
+ (2603:10b6:a03:254::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9052.5 via Frontend Transport; Thu,
+ 14 Aug 2025 13:48:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF00036F3F.mail.protection.outlook.com (10.167.248.23) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 13:48:58 +0000
+Received: from BLR-L-BHARARAO.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Aug
+ 2025 08:48:50 -0500
+From: Bharata B Rao <bharata@amd.com>
+To: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
+CC: <Jonathan.Cameron@huawei.com>, <dave.hansen@intel.com>,
+	<gourry@gourry.net>, <hannes@cmpxchg.org>, <mgorman@techsingularity.net>,
+	<mingo@redhat.com>, <peterz@infradead.org>, <raghavendra.kt@amd.com>,
+	<riel@surriel.com>, <rientjes@google.com>, <sj@kernel.org>,
+	<weixugc@google.com>, <willy@infradead.org>, <ying.huang@linux.alibaba.com>,
+	<ziy@nvidia.com>, <dave@stgolabs.net>, <nifan.cxl@gmail.com>,
+	<xuezhengchu@huawei.com>, <yiannis@zptcorp.com>, <akpm@linux-foundation.org>,
+	<david@redhat.com>, <byungchul@sk.com>, <kinseyho@google.com>,
+	<joshua.hahnjy@gmail.com>, <yuanchu@google.com>, <balbirs@nvidia.com>,
+	Bharata B Rao <bharata@amd.com>
+Subject: [RFC PATCH v1 0/7] A subsystem for hot page detection and promotion
+Date: Thu, 14 Aug 2025 19:18:19 +0530
+Message-ID: <20250814134826.154003-1-bharata@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813065333.GG222315@ZenIV> <175513726277.2234665.5395852687971371437@noble.neil.brown.name>
-In-Reply-To: <175513726277.2234665.5395852687971371437@noble.neil.brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 14 Aug 2025 15:47:53 +0200
-X-Gm-Features: Ac12FXwtQAorrE4W3bWM28WxLsn_dOcgt6iMm2QuEDqDEmfUynv58IGzMVEJihs
-Message-ID: <CAOQ4uxjOvsfV7o5Mnn_VBKYCR15FkmQBDASvwq0UQKPwxh1H2g@mail.gmail.com>
-Subject: Re: [PATCH 11/11] VFS: introduce d_alloc_noblock() and d_alloc_locked()
-To: NeilBrown <neil@brown.name>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Steve French <sfrench@samba.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev, 
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F3F:EE_|SN7PR12MB7883:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2445c812-e6ec-4b81-4e20-08dddb3951bf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JiuJB6w+bk9yL1NOymCra9E2B7O3hsIT9CafZdsSXDJ/ob67hd/2WFcGoWG6?=
+ =?us-ascii?Q?dxWe7ay2PLYaEMwGzNqS/ooOcYFMnaBi0gNd6jaUAH9IUyC/QJI7KC7l+riF?=
+ =?us-ascii?Q?Ihdh5EcUv1Pz4KsYhvNlnP21uYAh0qFK1qNWj295Uz/gZCUwHVwPFfbCTjsD?=
+ =?us-ascii?Q?0kGnEl9DGQHSLgLc1krQEAXR2XPAJ1+oNPxnIQ+kb8XHmZ743lGuCHuKT9/H?=
+ =?us-ascii?Q?e59oyw4AsJRPHoz+gl0uYLufBv8cTPWKg5HbDQAEHDpZ3ShzmvBtJ6HZeobx?=
+ =?us-ascii?Q?ElBMjm7fas8XwQ3nJdVi/EnnQdiuhoKlvQ8iVYdX0hh4gsCLWVs3P29JVOfR?=
+ =?us-ascii?Q?bFA+KXHnl3OuqXnZiK0yjnHYlbLnpnDu8IBR3AKlfIpnsuDAaNH0xxPzu4Kh?=
+ =?us-ascii?Q?vswUCTElIVvkEAKqh8BOGm8IZ1dG5rZjX1BPXyRiuJruyqZ0OAMMANXZnGhm?=
+ =?us-ascii?Q?aWGHZVlkBZTWBotauq7ZUBlcubORdQVzEEW6v2Ibw1slUOD3E2CtBIh8d9TR?=
+ =?us-ascii?Q?GkUXTE1Fyo+KjoeoAvzg6tdlVxp287Hm3vDeYZxxNdgFMTUycH2iw10CHcgZ?=
+ =?us-ascii?Q?5rUHVGklkCix54q75m28F9a5CAZlWKeBQpWJK4zO6Xqu2+eYivOGcoFPFauZ?=
+ =?us-ascii?Q?JOPpMJz+6JYM6yPRj0LYwDKfHE1/FEBymT1j6umVFC5MbJFQmuub395Zc1aQ?=
+ =?us-ascii?Q?qPBUgqFlWabVFzCn4UIXZKK+l6oO3xeUXb1HUnprNqQe4173pbBCZgPRvW9x?=
+ =?us-ascii?Q?vSzM9/83uRLYyR7hs+4jCEHLiTrgHnsHMmT8hAB8pG57vHpkg34UjItjq7Mm?=
+ =?us-ascii?Q?EDe4avZ4B7z2c5fd29/KFjw1fmko5o08pleM9onLfD1+Z6rEiVCXUBD6NJfO?=
+ =?us-ascii?Q?bpTJoPZ8ozPlAjHyvpCYTmBCJKiGXCUui4ZLl6iAhUt2Ku4YBQ6Vc91nv0Fx?=
+ =?us-ascii?Q?GA3Vw4412u5EhhqEHpkcUCIvpwsY27CGRKGMHSP57khhRk2iUbKoSbjtgeL4?=
+ =?us-ascii?Q?tjrBr9oCaGJTw/Y2gIGaOviX/aqjYOY0QH3R+XU9cVm8b/D3k1GB+KpZM9BE?=
+ =?us-ascii?Q?dW1NV4aMIN7TExuQ/aOofnKKeAPdR5JrkrJd0lPKlsWGqvgWZJN2+2wa2eQg?=
+ =?us-ascii?Q?8cQWJQ2OhNkz1dwKog2qedUiuVqWkZQt7L/F1qqFWv1Hqhjeqb3qtok7SfjZ?=
+ =?us-ascii?Q?X0lPz8e8qWp9T99C/EoaWfCr65pMPZGKosv9SryBaz0gKpRTTKVrXTUNy9AP?=
+ =?us-ascii?Q?E5sYNrU9aqX/aXwCd6Pi5Dis59JkXOyuaPTUaY79mqjh4bqsqWHqFzJt7QIa?=
+ =?us-ascii?Q?yvtQcbNehNykFT1W7PKR2F9mFrpqDriVScDYIPmpQ58mFC5UhaCvH+zV8tEG?=
+ =?us-ascii?Q?SnrBsoggvewdAGeB4OLW3OGuzzuac4s2yq+MoU4wGPOmZSCulc6Zx+gTHF++?=
+ =?us-ascii?Q?WWJ+RVcK7zJS/Lz8RWoRqQ2RiGgJPJJbMh3Mn7bx6MpztMfmL7ciy6QVlg1t?=
+ =?us-ascii?Q?03a/ZEfP+wGujd0Ql2EndYfg8/uDtvvyi/63nvmhdLlaUWy2K4kXl2gb5A?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 13:48:58.6842
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2445c812-e6ec-4b81-4e20-08dddb3951bf
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F3F.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7883
 
-On Thu, Aug 14, 2025 at 4:08=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
->
-> On Wed, 13 Aug 2025, Al Viro wrote:
-> > On Tue, Aug 12, 2025 at 12:25:14PM +1000, NeilBrown wrote:
-> > > Several filesystems use the results of readdir to prime the dcache.
-> > > These filesystems use d_alloc_parallel() which can block if there is =
-a
-> > > concurrent lookup.  Blocking in that case is pointless as the lookup
-> > > will add info to the dcache and there is no value in the readdir wait=
-ing
-> > > to see if it should add the info too.
-> > >
-> > > Also these calls to d_alloc_parallel() are made while the parent
-> > > directory is locked.  A proposed change to locking will lock the pare=
-nt
-> > > later, after d_alloc_parallel().  This means it won't be safe to wait=
- in
-> > > d_alloc_parallel() while holding the directory lock.
-> > >
-> > > So this patch introduces d_alloc_noblock() which doesn't block
-> > > but instead returns ERR_PTR(-EWOULDBLOCK).  Filesystems that prime th=
-e
-> > > dcache now use that and ignore -EWOULDBLOCK errors as harmless.
-> > >
-> > > A few filesystems need more than -EWOULDBLOCK - they need to be able =
-to
-> > > create the missing dentry within the readdir.  procfs is a good examp=
-le
-> > > as the inode number is not known until the lookup completes, so readd=
-ir
-> > > must perform a full lookup.
-> > >
-> > > For these filesystems d_alloc_locked() is provided.  It will return a
-> > > dentry which is already d_in_lookup() but will also lock it against
-> > > concurrent lookup.  The filesystem's ->lookup function must co-operat=
-e
-> > > by calling lock_lookup() before proceeding with the lookup.  This way=
- we
-> > > can ensure exclusion between a lookup performed in ->iterate_shared a=
-nd
-> > > a lookup performed in ->lookup.  Currently this exclusion is provided=
- by
-> > > waiting in d_wait_lookup().  The proposed changed to dir locking will
-> > > mean that calling d_wait_lookup() (in readdir) while already holding
-> > > i_rwsem could deadlock.
-> >
-> > The last one is playing fast and loose with one assertion that is used
-> > in quite a few places in correctness proofs - that the only thing other
-> > threads do to in-lookup dentries is waiting on them (and that - only
-> > in d_wait_lookup()).  I can't tell whether it will be a problem without
-> > seeing what you do in the users of that thing, but that creates an
-> > unpleasant areas to watch out for in the future ;-/
->
-> Yeah, it's not my favourite part of the series.
->
-> >
-> > Which filesystems are those, aside of procfs?
-> >
->
-> afs in afs_lookup_atsys().  While looking up a name that ends "@sys" it
-> need to look up the prefix with various alternate suffixes appended.
-> So this isn't readdir related, but is a lookup-within-a-lookup.
->
-> The use of d_add_ci() in xfs is the same basic pattern.
->
-> overlayfs does something in ovl_lookup_real_one() that I don't
-> understand yet but it seems to need a lookup while the directory is
-> locked.
+Hi,
 
-We decoded a connected real directory path (from file handle) and we
-are trying to lookup in overlay a directory that is referencing the
-underlying real dir that we decoded.
+This patchset is about adding a dedicated sub-system for maintaining
+hot pages information from the lower tiers and promoting the hot pages
+to the top tiers. It exposes an API that other sub-systems which detect
+accesses, can use to report the accesses for further processing. Further
+processing includes system-wide accumulation of memory access info at
+PFN granularity, classification the PFNs as hot and promotion of hot
+pages using per-node kernel threads. This is a continuation of the
+earlier kpromoted work [1] that I posted a while back.
 
-This is the context. Not sure what problem exactly this code gives you.
+Kernel thread based async batch migration [2] was an off-shoot of
+this effort that attempted to batch the migrations from NUMA
+balancing by creating a separate kernel thread for migration.
+Per-page hotness information was stored as part of extended page
+flags. The kernel thread then scanned the entire PFN space to pick
+the PFNs that are classified as hot.
 
->
-> ovl_cache_update is in the ovl iterate_shared code (which in fact holds
-> an exclusive lock).  I think this is the same pattern as procfs in that
-> an inode number needs to be allocated at lookup time, but there might be
-> more too it.
->
+The observed challenges from the previous approaches were these:
 
-It's kind of a hack I guess.
-ovl has those rules (see xino) to compose a consistent inode number
-from real inode number and layer number.
-lookup of children during readdir composes the child stack to realize
-the consistent xino.
+1. Too many PFNs need to be scanned to identify the hot PFNs in
+   approach [2].
+2. Hot page records stored in hash lists become unwieldy for
+   extracting the required hot pages in approach [1].
+3. Dynamic allocation vs static availability of space to store
+   per-page hotness information.
 
-We could do this internally in ovl by doing lookups on the real layers
-and composing the xino, but calling lookup on ovl during readdir was
-so much easier :/
+This series tries to address challenges 1 and 2 by maintaining
+the hot page records in hash lists for quick lookup and maintaining
+a separate per-target-node max heap for storing ready-to-migrate
+hot page records. The records in heap are priority-ordered based
+on "hotness" of the page.
 
-Thanks,
-Amir.
+The API for reporting the page access remains unchanged from [1].
+When the page access gets recorded, the hotness data of the page
+is updated and if it crosses a threshold, it gets tracked in the
+heap as well. These heaps are per-target-node and corresponding
+migrate threads will periodically extract the top records from
+them and do batch migration. 
+
+In the current series, two page temperature sources are included
+as examples.
+
+1. IBS based memory access profiler.
+2. PTE-A bit based access profiler for MGLRU. (from Kinsey Ho)
+
+TODOs:
+
+- Currently only access frequency is used to calculate the hotness.
+  We could have a scalar hotness indicator based on both frequency
+  of access and time of access.
+- There could be millions of allocation and freeing of records
+  and from atomic contexts too. Need to understand how problematic
+  this could be. Approach [2] mitigated this by having pre-allocated
+  hotness records for each page as part of extended page flags.
+- The amount of data needed for tracking hotness is also a concern.
+  There is scope for packing the three parameters (nid, time, frequency)
+  in a more compact manner which I will attempt in next iterations.
+- Migration rate-limiting needs to be added.
+- Very very lightly tested atm as the current focus is to get the
+  hot data arragement right.
+
+Regards,
+Bharata.
+
+[1] Kpromoted - https://lore.kernel.org/linux-mm/20250306054532.221138-1-bharata@amd.com/
+[2] Kmigrated - https://lore.kernel.org/linux-mm/20250616133931.206626-1-bharata@amd.com/
+
+Bharata B Rao (4):
+  mm: migrate: Allow misplaced migration without VMA too
+  mm: Hot page tracking and promotion
+  x86: ibs: In-kernel IBS driver for memory access profiling
+  x86: ibs: Enable IBS profiling for memory accesses
+
+Gregory Price (1):
+  migrate: implement migrate_misplaced_folios_batch
+
+Kinsey Ho (2):
+  mm: mglru: generalize page table walk
+  mm: klruscand: use mglru scanning for page promotion
+
+ arch/x86/events/amd/ibs.c           |  11 +
+ arch/x86/include/asm/entry-common.h |   3 +
+ arch/x86/include/asm/hardirq.h      |   2 +
+ arch/x86/include/asm/ibs.h          |   9 +
+ arch/x86/include/asm/msr-index.h    |  16 +
+ arch/x86/mm/Makefile                |   3 +-
+ arch/x86/mm/ibs.c                   | 343 +++++++++++++++++++
+ include/linux/migrate.h             |   6 +
+ include/linux/mmzone.h              |  16 +
+ include/linux/pghot.h               |  87 +++++
+ include/linux/vm_event_item.h       |  26 ++
+ mm/Kconfig                          |  19 ++
+ mm/Makefile                         |   2 +
+ mm/internal.h                       |   4 +
+ mm/klruscand.c                      | 118 +++++++
+ mm/migrate.c                        |  36 +-
+ mm/mm_init.c                        |  10 +
+ mm/pghot.c                          | 501 ++++++++++++++++++++++++++++
+ mm/vmscan.c                         | 176 +++++++---
+ mm/vmstat.c                         |  26 ++
+ 20 files changed, 1365 insertions(+), 49 deletions(-)
+ create mode 100644 arch/x86/include/asm/ibs.h
+ create mode 100644 arch/x86/mm/ibs.c
+ create mode 100644 include/linux/pghot.h
+ create mode 100644 mm/klruscand.c
+ create mode 100644 mm/pghot.c
+
+-- 
+2.34.1
+
 
