@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-769663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF1BB271B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94D7B271B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C160B1CC1421
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A6CA2037A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20240283130;
-	Thu, 14 Aug 2025 22:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C1D283CB0;
+	Thu, 14 Aug 2025 22:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mKQUeQFD"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FyDM8ek0"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9DD1F9F7A;
-	Thu, 14 Aug 2025 22:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DC828314A;
+	Thu, 14 Aug 2025 22:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755211167; cv=none; b=FI5lu9bdDRtGEAcPMBLPjPcYRkvF6952ylFMCduRuiPWSXMNyrvy0/6dm/jcqjejflns62ZcKbzpVOb3wj+mdMC1uzgT00PZvR8s1wD4W7My5oM/P8jQZN0x9Oi+W1QCzUnpHZPZ19Oy1b0DQyOQsmNtQTZdh0vf8fECxJh9dbM=
+	t=1755211170; cv=none; b=pZbqkphBh+CH3Zax19D7VLR8dfTsPf46sp/gDN8m2CPPiWm0wThq03Xy3pyRbtktS5g0jcGCyTy/7TyDd2KtAVssHi0tkkeqQP4k5j5ZFBy50NBG8xfDUrCzxbUxx+xihCG8XlE2yJd8xARQlDK9ZF5It5t9dPEnbEmr531LcTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755211167; c=relaxed/simple;
-	bh=/wEWHXoHa/qzzH2DR+RZyMubfRLLC06wvIOwGE/6YmE=;
+	s=arc-20240116; t=1755211170; c=relaxed/simple;
+	bh=52HUKjk/GO6AhjRiPFXK/Gg70bGSSfqbNfV7upwva5c=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SVc687QXJmG+b1JX3M1r41gzIBttC52E4Cv2AAXN5khbE5Miy1LRdc0bK9UADxJURl1Wtzy9c8i9ovqqSae0zi4BXk3VwBZPqIFxk5BHyUdqnin1iq+HBoLYo/r3A5xwbNAp7Vu/pSSyzSlQXfhiHPJWNyDH7EnqjKygHxJyMYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mKQUeQFD; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=KxAAFgNIzeLE2CytSZ7ackk2Ort+yA0268Z5CnWmrv4mY6gAnOrbYQOjZhslm7HI9s7O21z7rZ5UyeFWaWv4zaXMrvRHI01MA15OpSuE8B5+zwbGRNaOMhzBiiy0PuUqjmVvBPsoERbyHT1h0Lm0kovdkZqkeyV5i6VHUDUNvC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FyDM8ek0; arc=none smtp.client-ip=198.47.23.234
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EMdKpW2478865;
-	Thu, 14 Aug 2025 17:39:20 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EMdOFC2027438;
+	Thu, 14 Aug 2025 17:39:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755211160;
-	bh=psWBlSyyw4DdpBB8/QiNlEKW7KQ4LaMIx3LmqaR26/Y=;
+	s=ti-com-17Q1; t=1755211164;
+	bh=bniBPJk4StiAeVO6R3OJD92Bo3U3qAOLTgjCEzwYWcw=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=mKQUeQFDScfr9SJSFmfGGsRJEFNrXWIAdP7b1f9iOihRaz7Qb2W6VZSeerRc6Pbaf
-	 5H4pWlKaLf37+nDI7RzfEN0wC4Ml9CtPAYNET/rQ1M4AM8Ppo68AAGhNFo/sJkXHZL
-	 h3zTVGOY4V4dRczpXNjNf/YS9vNn9NS+E9y2cPe0=
+	b=FyDM8ek01b7mbLZHz5POzKEAQkSwN0Zmt0QCBOOmV1ibmMYNX6LjCucDdxK75uZC3
+	 t6a/3bp1AlcZZFE718f+SGgYFylyeEvaLiCV4cGPNIxhDON3msjTuYiWuQEOEBRq3R
+	 CAAnWe8xwfhrOtpvUKEXbXQQOfe2+8S/H6qhFirM=
 Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EMdKEb1158695
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EMdOF22015563
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 17:39:20 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
+	Thu, 14 Aug 2025 17:39:24 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
  (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 17:39:19 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2025 17:39:23 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 17:39:19 -0500
+ Frontend Transport; Thu, 14 Aug 2025 17:39:23 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EMcw4c096792;
-	Thu, 14 Aug 2025 17:39:15 -0500
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EMcw4d096792;
+	Thu, 14 Aug 2025 17:39:20 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>
 CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
         <b-padhi@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 03/33] Revert "arm64: dts: ti: k3-j721e-sk: Fix reversed C6x carveout locations"
-Date: Fri, 15 Aug 2025 04:08:09 +0530
-Message-ID: <20250814223839.3256046-4-b-padhi@ti.com>
+Subject: [PATCH 04/33] Revert "arm64: dts: ti: k3-j721e-beagleboneai64: Fix reversed C6x carveout locations"
+Date: Fri, 15 Aug 2025 04:08:10 +0530
+Message-ID: <20250814223839.3256046-5-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250814223839.3256046-1-b-padhi@ti.com>
 References: <20250814223839.3256046-1-b-padhi@ti.com>
@@ -77,7 +77,7 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This reverts commit 9f3814a7c06b7c7296cf8c1622078ad71820454b.
+This reverts commit 1a314099b7559690fe23cdf3300dfff6e830ecb1.
 
 The C6x carveouts are reversed intentionally. This is due to the
 requirement to keep the DMA memory region as non-cached, however the
@@ -87,23 +87,23 @@ memory region of C66x_1 as its own, and vice-versa.
 
 This was also called out in the original commit which introduced these
 reversed carveouts:
-	"The minimum granularity on the Cache settings on C66x DSP cores
-	is 16MB, so the DMA memory regions are chosen such that they are
-	in separate 16MB regions for each DSP, while reserving a total
-	of 16 MB for each DSP and not changing the overall DSP
-	remoteproc carveouts."
+	"The minimum granularity on the Cache settings on C66x DSP
+	cores is 16MB, so the DMA memory regions are chosen such that
+	they are in separate 16MB regions for each DSP, while reserving
+	a total of 16 MB for each DSP and not changing the overall DSP
+        remoteproc carveouts."
 
-Fixes: 9f3814a7c06b ("arm64: dts: ti: k3-j721e-sk: Fix reversed C6x carveout locations")
+Fixes: 1a314099b755 ("arm64: dts: ti: k3-j721e-beagleboneai64: Fix reversed C6x carveout locations")
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-j721e-sk.dts | 6 ++++--
+ arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts | 6 ++++--
  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-index ffef3d1cfd55..9882bb1e8097 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
-@@ -120,7 +120,8 @@ main_r5fss1_core1_memory_region: r5f-memory@a5100000 {
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts b/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
+index fb899c99753e..6e7f321f3e8a 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
++++ b/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
+@@ -123,7 +123,8 @@ main_r5fss1_core1_memory_region: r5f-memory@a5100000 {
  			no-map;
  		};
  
@@ -113,7 +113,7 @@ index ffef3d1cfd55..9882bb1e8097 100644
  			compatible = "shared-dma-pool";
  			reg = <0x00 0xa6000000 0x00 0x100000>;
  			no-map;
-@@ -132,7 +133,8 @@ c66_0_memory_region: c66-memory@a6100000 {
+@@ -135,7 +136,8 @@ c66_0_memory_region: c66-memory@a6100000 {
  			no-map;
  		};
  
