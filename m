@@ -1,217 +1,463 @@
-Return-Path: <linux-kernel+bounces-769007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDCC3B26900
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8471BB26931
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37586AA1474
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:10:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADFC6605588
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D2722CBF1;
-	Thu, 14 Aug 2025 14:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD2A3009FC;
+	Thu, 14 Aug 2025 14:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eP0iJqwA"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3942226173
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="o4EUZp7e"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ADF2FE068;
+	Thu, 14 Aug 2025 14:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180236; cv=none; b=pcb4dHjfbRwO1giRvt6KN6mIvreOsEvBD6H5WkRIoHxFjpwl18+6FTN7VyWRtNX7pX6FQ3ckwV0VFg20apL1wN29FMKdKM5XrMhE82RDOx2eIz9E/dX4xkL7Now0vNpICD3gzt9e8f1MAfW/DWmzjVlsH0TxTIcg0KLjgtesLF4=
+	t=1755180253; cv=none; b=Ft1crqGz3YEM9RTWLuN2H8XXlW/MUjRU6Ny1THIs067WWXciiSWsK2XHPgLnvG9AEuhwC5Bh+9Db0lE6DOOMvKYAn1/maJQzbrjEwXLhfoMdP9rZAuhrjBK59gdTuEewjovWZk5yPLDDA2mgo6Kay+zHXdlz/76e9qDFJvFdS24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180236; c=relaxed/simple;
-	bh=kUvFkcwSLbLCzsw6hNYErVoVnOChgljOxpotCjsrSz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWOkyJRNDM0PmRK2txFb3dGRNhsrqyBBDSS7cVjZ1PsaZFlhzo0tQPX7eug8PVFVF+/0TcGHNXp7aMAfYKWwbA2WhUhNW+g2axZJpQATO0Ura9dBlj5lvUg3d1P7Ed036Gg1fJMd38/pMO2EkQu5j7UCMs4QRACt5TgAJFedTNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eP0iJqwA; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9dc52c430so496240f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1755180233; x=1755785033; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lC65XYVp3GguS5ZtQw5kqmm56yzuVcq1hmEZc/3UkP8=;
-        b=eP0iJqwAbzqP66MxQ2VnB41oHNDlPSnNN7Xob9qQXOKKpGoTj0fBPThMMzKWuKCsjr
-         ItmNhjnkPuU/uaU1eYf7WJyV3IZhlODc+BiHjTGantbF2LBT3Edx2tux6XezKltPhomS
-         4h/wSRQwZfMknlAPx7LXmZ15QXAsqHDhqs3rMqDSgy8rp4Ju02LpgpXRu/Xcq3rkl9No
-         qhjf+tlQSQbfpfbBCf0McoqhSmqy9HIcyKG/Z4rkSwtiaaQ+qrKhTgCnbCp/NEoBYRR7
-         /5170eY4OkoUivysasZcGul3QxzCEJiYnbzvRO0kns1Ed87S+SzD/O9IHpnRYJxYtmLx
-         g0Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755180233; x=1755785033;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lC65XYVp3GguS5ZtQw5kqmm56yzuVcq1hmEZc/3UkP8=;
-        b=wnyBrSgD9EXdxfFRwK8b4MF7obl3JA2MSNRa2jhVCcUhej/dpxXmoaclWgrCzBlsy7
-         HQVCM5E2+pcSV+90IPG2IlfNPCE8XI/8EtflTYaMvZbpyn2X0MFKE8d4Ci+9IDvyWW1g
-         QEQ+VOlM6q8JH9O3BSH/lExE4SS35aC9Lp06Ko3XcfIGXpJIrjFj6DZhIboWeZO6oCRr
-         yAEcxqY/sCkprrJnFH+ZdfH8IAsxfPdATSxFvOy86lEuTVKRZB3JMuPW1zVlZt4B1F9+
-         iJjJtrqn9NYN9LW4BSQ7FVTmSOY85/BR6qOUOHhs9CBdryDqdjTk+7xeScXPOI5ALTq6
-         to3w==
-X-Forwarded-Encrypted: i=1; AJvYcCW/zgBeitRMpqL7HTyZvNWMcqi9dnoBRxeceGyQqK8xMXNZP0thTaQVEwDw+4m0BvL4gF2ixozRzEjMYPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKmDE2bZaofLxpSrNPpGWJ8v9dM8yXFLgmmmUoo56czetMDHYC
-	iOsFUzXOvXhPdG+T857FCvbMGw3cocFQWklhYZEGIyAEtQW99qh5NICpOt4VWbnUZi4=
-X-Gm-Gg: ASbGnctfI7kiOGN15cFDHKO8BDgk2VZYV059/ucL5QdrCVXNw9Ht73DznTU5CTnO7mb
-	BKE0NJOgdet7vEEoXyYuYy2r14Dt4+eT/vL/rS2PzdcYKhPc5Kt+scE1jaKZySYLNPFIjCNHZiJ
-	STJhqY/PAo3+bE7QAh5EGqHE5bXmPAt+zfzlFiCPxVKeLqWgRkt5enUCmSPuJsHZmGA8DcfmK65
-	QrLflxXCKD1rYgrRLtgHvvHjHTUooesdr5BfH4iBzTmGKtWtBd/BtHzOMcb5+fKZ3rR/7ucr3+W
-	s21bkCtoDhsJgspNQHRqHAP2PisjjzcVOrkyCniO2jcK1pIwUjiA5XDBsmm865HfgZDEq51aIGJ
-	6cqbL7ZRqvKm8xahz9h2SHq+mSK+C1UEx9fJ6p1NNiw==
-X-Google-Smtp-Source: AGHT+IFepIfEgCQYh8ddmvzxRHyhlH/Icj4lFNZlo25smTmLumPxpWK7npvv59MNJPG2u//aqGvssA==
-X-Received: by 2002:a05:6000:3108:b0:3b9:16e5:bd36 with SMTP id ffacd0b85a97d-3ba50cc8b0bmr2180594f8f.15.1755180232712;
-        Thu, 14 Aug 2025 07:03:52 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bac12d4sm29684671a12.32.2025.08.14.07.03.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 07:03:51 -0700 (PDT)
-Date: Thu, 14 Aug 2025 16:03:36 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: YoungJun Park <youngjun.park@lge.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev, muchun.song@linux.dev, 
-	shikemeng@huaweicloud.com, kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com, 
-	baohua@kernel.org, chrisl@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, gunho.lee@lge.com, iamjoonsoo.kim@lge.com, taejoon.song@lge.com
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-Message-ID: <uyxkdmnmvjipxuf7gagu2okw7afvzlclomfmc6wb6tygc3mhv6@736m7xs6gn5q>
-References: <20250716202006.3640584-1-youngjun.park@lge.com>
- <20250716202006.3640584-2-youngjun.park@lge.com>
- <jrkh2jy2pkoxgsxgsstpmijyhbzzyige6ubltvmvwl6fwkp3s7@kzc24pj2tcko>
- <aH+apAbBCmkMGPlO@yjaykim-PowerEdge-T330>
- <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
+	s=arc-20240116; t=1755180253; c=relaxed/simple;
+	bh=As9vrC7IC2q8iJ9LHFF2keqpU5lN5U6mE2zKrc71Y2o=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JH8c9JzCWny5W3/0pyNovUAWrVtEh6DCimvilnOpAyJWT5kaBdje3yxhoGu2vc4m0SlNbCdXuH65k6BO8b3CRYB2w8cvjB7vB955kI/UUrdvfabRW2xocxl5G+7RZn1NatcfTfz7ypcEpmR0X9qbcM1M+TAMSs9p/m1ndbGKbGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=o4EUZp7e; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1204)
+	id 79CEC2015E7F; Thu, 14 Aug 2025 07:04:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 79CEC2015E7F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1755180250;
+	bh=zYCT6Jet8CDRw5oxMXtwIXVigIas5OE8tAujKD9wZN0=;
+	h=Date:From:To:Subject:From;
+	b=o4EUZp7e7RocA31ZJR2CUP1IKEUe8S+wnOZzntoAXEPMN6WC0ra24wk60RgJ64h09
+	 w7iZbcqIMLiG/BVJs9brX0ObEhE7JuTGJAC8KJHFAwu8lRPS2dFNzH1BtLoJJUXYdQ
+	 NK49+fhBOiPoTWGp03kVZ9y68y01cETmuAcjRRZM=
+Date: Thu, 14 Aug 2025 07:04:10 -0700
+From: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+To: horms@kernel.org, kuba@kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, longli@microsoft.com, kotaranov@microsoft.com,
+	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+	john.fastabend@gmail.com, sdf@fomichev.me, lorenzo@kernel.org,
+	michal.kubiak@intel.com, ernis@linux.microsoft.com,
+	shradhagupta@linux.microsoft.com, shirazsaleem@microsoft.com,
+	rosenp@gmail.com, netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ssengar@linux.microsoft.com, dipayanroy@microsoft.com
+Subject: [PATCH net-next v5] net: mana: Use page pool fragments for RX
+ buffers instead of full pages to improve memory efficiency.
+Message-ID: <20250814140410.GA22089@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6rfjwiky6sklgybr"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aH/baxIgrBI3Z1Hl@yjaykim-PowerEdge-T330>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
+This patch enhances RX buffer handling in the mana driver by allocating
+pages from a page pool and slicing them into MTU-sized fragments, rather
+than dedicating a full page per packet. This approach is especially
+beneficial on systems with large base page sizes like 64KB.
 
---6rfjwiky6sklgybr
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
- cgroup-based swap priority
-MIME-Version: 1.0
+Key improvements:
 
-On Wed, Jul 23, 2025 at 03:41:47AM +0900, YoungJun Park <youngjun.park@lge.=
-com> wrote:
-> This leaves us with a few design options:
->=20
-> 1. Treat negative values as valid priorities. Once any device is
->    assigned via `memory.swap.priority`, the NUMA autobind logic is
->    entirely disabled.
->    - Pros: Simplifies implementation; avoids exposing NUMA autobind via
->      cgroup interface.
->    - Cons: Overrides autobind for all devices even if only one is set.
->=20
-> 2. Continue to treat negative values as NUMA autobind weights, without
->    implicit shifting. If a user assigns `-3`, it is stored and used
->    exactly as `-3`, and does not affect other devices.
->    - Pros: Simple and intuitive; matches current implementation
->      semantics.
->    - Cons: Autobind semantics still need to be reasoned about when
->      using the interface.
->=20
-> 3. Disallow setting negative values via `memory.swap.priority`.
->    Existing NUMA autobind config is preserved, but no new autobind
->    configuration is possible from cgroup interface.
->    - Pros: Keeps cgroup interface simple; no autobind manipulation.
->    - Cons: Autobind infra remains partially active, increasing code
->      complexity.
->=20
-> 4. Keep the current design: allow setting negative values to express
->    NUMA autobind weights explicitly. Devices without overridden values
->    continue to follow NUMA-based dynamic selection.
->    - Pros: Preserves current flexibility; gives users control per device.
->    - Cons: Slightly more complex semantics; NUMA autobind remains a
->      visible part of the interface.
->=20
-> After thinking through these tradeoffs, I'm inclined to think that
-> preserving the NUMA autobind option might be the better path forward.
-> What are your thoughts on this?
->=20
-> Thank you again for your helpful feedback.
+- Proper integration of page pool for RX buffer allocations.
+- MTU-sized buffer slicing to improve memory utilization.
+- Reduce overall per Rx queue memory footprint.
+- Automatic fallback to full-page buffers when:
+   * Jumbo frames are enabled (MTU > PAGE_SIZE / 2).
+   * The XDP path is active, to avoid complexities with fragment reuse.
 
-Let me share my mental model in order to help forming the design.
+Testing on VMs with 64KB pages shows around 200% throughput improvement.
+Memory efficiency is significantly improved due to reduced wastage in page
+allocations. Example: We are now able to fit 35 rx buffers in a single 64kb
+page for MTU size of 1500, instead of 1 rx buffer per page previously.
 
-I find these per-cgroup swap priorities similar to cpuset -- instead of
-having a configured cpumask (bitmask) for each cgroup, you have
-weight-mask for individual swap devices (or distribution over the
-devices, I hope it's not too big deviation from priority ranking).
-Then you have the hierarchy, so you need a method how to combine
-child+parent masks (or global/root) to obtain effective weight-mask (and
-effective ranking) for each cgroup.
+Tested:
 
-Furthermore, there's the NUMA autobinding which adds another weight-mask
-to the game but this time it's not configured but it depends on "who is
-asking". (Tasks running on node N would have autobind shifted towards
-devices associated to node N. Is that how autobinding works?)
+- iperf3, iperf2, and nttcp benchmarks.
+- Jumbo frames with MTU 9000.
+- Native XDP programs (XDP_PASS, XDP_DROP, XDP_TX, XDP_REDIRECT) for
+  testing the XDP path in driver.
+- Memory leak detection (kmemleak).
+- Driver load/unload, reboot, and stress scenarios.
 
-=46rom the hierarchy point of view, you have to compound weight-masks in
-top-down preference (so that higher cgroups can override lower) and
-autobind weight-mask that is only conceivable at the very bottom
-(not a cgroup but depending on the task's NUMA placement).
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+---
+Changes in v5:
+  - Switch to old_prog on allocation/reconfig failure in mana_xdp_set.
+Changes in v4:
+  - Better error handling in mana_xdp_set.
+Changes in v3:
+  - Retained the pre-alloc rxbuf for driver reconfig paths
+    to better handle low memory scenario during reconfig.
+Changes in v2:
+  - Fixed mana_xdp_set() to return error code on failure instead of
+    always returning 0.
+  - Moved all local variable declarations to the start of functions
+    in mana_get_rxbuf_cfg.
+  - Removed unnecessary parentheses and wrapped lines to <= 80 chars.
+  - Use mana_xdp_get() for checking bpf_prog.
+  - Factored repeated page put/free logic into a static helper function.
+---
+ .../net/ethernet/microsoft/mana/mana_bpf.c    |  46 +++++-
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 151 ++++++++++++------
+ include/net/mana/mana.h                       |   4 +
+ 3 files changed, 150 insertions(+), 51 deletions(-)
 
-There I see conflict between the ends a tad. I think the attempted
-reconciliation was to allow emptiness of a single slot in the
-weight-mask but it may not be practical for the compounding (that's why
-you came up with the four variants). So another option would be to allow
-whole weight-mask being empty (or uniform) so that it'd be identity in
-the compounding operation.
-The conflict exists also in the current non-percg priorities -- there
-are the global priorities and autobind priorities. IIUC, the global
-level either defines a weight (user prio) or it is empty (defer to NUMA
-autobinding).
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_bpf.c b/drivers/net/ethernet/microsoft/mana/mana_bpf.c
+index d30721d4516f..7697c9b52ed3 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_bpf.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_bpf.c
+@@ -174,6 +174,7 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
+ 	struct mana_port_context *apc = netdev_priv(ndev);
+ 	struct bpf_prog *old_prog;
+ 	struct gdma_context *gc;
++	int err;
+ 
+ 	gc = apc->ac->gdma_dev->gdma_context;
+ 
+@@ -195,11 +196,45 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
+ 	 */
+ 	apc->bpf_prog = prog;
+ 
+-	if (old_prog)
+-		bpf_prog_put(old_prog);
++	if (apc->port_is_up) {
++		/* Re-create rxq's after xdp prog was loaded or unloaded.
++		 * Ex: re create rxq's to switch from full pages to smaller
++		 * size page fragments when xdp prog is unloaded and
++		 * vice-versa.
++		 */
++
++		/* Pre-allocate buffers to prevent failure in mana_attach */
++		err = mana_pre_alloc_rxbufs(apc, ndev->mtu, apc->num_queues);
++		if (err) {
++			NL_SET_ERR_MSG_MOD(extack,
++					   "XDP: Insufficient memory for tx/rx re-config");
++			return err;
++		}
++
++		err = mana_detach(ndev, false);
++		if (err) {
++			netdev_err(ndev,
++				   "mana_detach failed at xdp set: %d\n", err);
++			NL_SET_ERR_MSG_MOD(extack,
++					   "XDP: Re-config failed at detach");
++			goto err_dealloc_rxbuffs;
++		}
++
++		err = mana_attach(ndev);
++		if (err) {
++			netdev_err(ndev,
++				   "mana_attach failed at xdp set: %d\n", err);
++			NL_SET_ERR_MSG_MOD(extack,
++					   "XDP: Re-config failed at attach");
++			goto err_dealloc_rxbuffs;
++		}
+ 
+-	if (apc->port_is_up)
+ 		mana_chn_setxdp(apc, prog);
++		mana_pre_dealloc_rxbufs(apc);
++	}
++
++	if (old_prog)
++		bpf_prog_put(old_prog);
+ 
+ 	if (prog)
+ 		ndev->max_mtu = MANA_XDP_MTU_MAX;
+@@ -207,6 +242,11 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
+ 		ndev->max_mtu = gc->adapter_mtu - ETH_HLEN;
+ 
+ 	return 0;
++
++err_dealloc_rxbuffs:
++	apc->bpf_prog = old_prog;
++	mana_pre_dealloc_rxbufs(apc);
++	return err;
+ }
+ 
+ int mana_bpf(struct net_device *ndev, struct netdev_bpf *bpf)
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index a7973651ae51..3efe2e696589 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -56,6 +56,15 @@ static bool mana_en_need_log(struct mana_port_context *apc, int err)
+ 		return true;
+ }
+ 
++static void mana_put_rx_page(struct mana_rxq *rxq, struct page *page,
++			     bool from_pool)
++{
++	if (from_pool)
++		page_pool_put_full_page(rxq->page_pool, page, false);
++	else
++		put_page(page);
++}
++
+ /* Microsoft Azure Network Adapter (MANA) functions */
+ 
+ static int mana_open(struct net_device *ndev)
+@@ -629,21 +638,40 @@ static void *mana_get_rxbuf_pre(struct mana_rxq *rxq, dma_addr_t *da)
+ }
+ 
+ /* Get RX buffer's data size, alloc size, XDP headroom based on MTU */
+-static void mana_get_rxbuf_cfg(int mtu, u32 *datasize, u32 *alloc_size,
+-			       u32 *headroom)
++static void mana_get_rxbuf_cfg(struct mana_port_context *apc,
++			       int mtu, u32 *datasize, u32 *alloc_size,
++			       u32 *headroom, u32 *frag_count)
+ {
+-	if (mtu > MANA_XDP_MTU_MAX)
+-		*headroom = 0; /* no support for XDP */
+-	else
+-		*headroom = XDP_PACKET_HEADROOM;
++	u32 len, buf_size;
+ 
+-	*alloc_size = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD + *headroom);
++	/* Calculate datasize first (consistent across all cases) */
++	*datasize = mtu + ETH_HLEN;
+ 
+-	/* Using page pool in this case, so alloc_size is PAGE_SIZE */
+-	if (*alloc_size < PAGE_SIZE)
+-		*alloc_size = PAGE_SIZE;
++	/* For xdp and jumbo frames make sure only one packet fits per page */
++	if (mtu + MANA_RXBUF_PAD > PAGE_SIZE / 2 || mana_xdp_get(apc)) {
++		if (mana_xdp_get(apc)) {
++			*headroom = XDP_PACKET_HEADROOM;
++			*alloc_size = PAGE_SIZE;
++		} else {
++			*headroom = 0; /* no support for XDP */
++			*alloc_size = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD +
++						     *headroom);
++		}
+ 
+-	*datasize = mtu + ETH_HLEN;
++		*frag_count = 1;
++		return;
++	}
++
++	/* Standard MTU case - optimize for multiple packets per page */
++	*headroom = 0;
++
++	/* Calculate base buffer size needed */
++	len = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD + *headroom);
++	buf_size = ALIGN(len, MANA_RX_FRAG_ALIGNMENT);
++
++	/* Calculate how many packets can fit in a page */
++	*frag_count = PAGE_SIZE / buf_size;
++	*alloc_size = buf_size;
+ }
+ 
+ int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_queues)
+@@ -655,8 +683,9 @@ int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_qu
+ 	void *va;
+ 	int i;
+ 
+-	mana_get_rxbuf_cfg(new_mtu, &mpc->rxbpre_datasize,
+-			   &mpc->rxbpre_alloc_size, &mpc->rxbpre_headroom);
++	mana_get_rxbuf_cfg(mpc, new_mtu, &mpc->rxbpre_datasize,
++			   &mpc->rxbpre_alloc_size, &mpc->rxbpre_headroom,
++			   &mpc->rxbpre_frag_count);
+ 
+ 	dev = mpc->ac->gdma_dev->gdma_context->dev;
+ 
+@@ -1841,8 +1870,11 @@ static void mana_rx_skb(void *buf_va, bool from_pool,
+ 
+ drop:
+ 	if (from_pool) {
+-		page_pool_recycle_direct(rxq->page_pool,
+-					 virt_to_head_page(buf_va));
++		if (rxq->frag_count == 1)
++			page_pool_recycle_direct(rxq->page_pool,
++						 virt_to_head_page(buf_va));
++		else
++			page_pool_free_va(rxq->page_pool, buf_va, true);
+ 	} else {
+ 		WARN_ON_ONCE(rxq->xdp_save_va);
+ 		/* Save for reuse */
+@@ -1858,33 +1890,46 @@ static void *mana_get_rxfrag(struct mana_rxq *rxq, struct device *dev,
+ 			     dma_addr_t *da, bool *from_pool)
+ {
+ 	struct page *page;
++	u32 offset;
+ 	void *va;
+-
+ 	*from_pool = false;
+ 
+-	/* Reuse XDP dropped page if available */
+-	if (rxq->xdp_save_va) {
+-		va = rxq->xdp_save_va;
+-		rxq->xdp_save_va = NULL;
+-	} else {
+-		page = page_pool_dev_alloc_pages(rxq->page_pool);
+-		if (!page)
++	/* Don't use fragments for jumbo frames or XDP where it's 1 fragment
++	 * per page.
++	 */
++	if (rxq->frag_count == 1) {
++		/* Reuse XDP dropped page if available */
++		if (rxq->xdp_save_va) {
++			va = rxq->xdp_save_va;
++			page = virt_to_head_page(va);
++			rxq->xdp_save_va = NULL;
++		} else {
++			page = page_pool_dev_alloc_pages(rxq->page_pool);
++			if (!page)
++				return NULL;
++
++			*from_pool = true;
++			va = page_to_virt(page);
++		}
++
++		*da = dma_map_single(dev, va + rxq->headroom, rxq->datasize,
++				     DMA_FROM_DEVICE);
++		if (dma_mapping_error(dev, *da)) {
++			mana_put_rx_page(rxq, page, *from_pool);
+ 			return NULL;
++		}
+ 
+-		*from_pool = true;
+-		va = page_to_virt(page);
++		return va;
+ 	}
+ 
+-	*da = dma_map_single(dev, va + rxq->headroom, rxq->datasize,
+-			     DMA_FROM_DEVICE);
+-	if (dma_mapping_error(dev, *da)) {
+-		if (*from_pool)
+-			page_pool_put_full_page(rxq->page_pool, page, false);
+-		else
+-			put_page(virt_to_head_page(va));
+-
++	page =  page_pool_dev_alloc_frag(rxq->page_pool, &offset,
++					 rxq->alloc_size);
++	if (!page)
+ 		return NULL;
+-	}
++
++	va  = page_to_virt(page) + offset;
++	*da = page_pool_get_dma_addr(page) + offset + rxq->headroom;
++	*from_pool = true;
+ 
+ 	return va;
+ }
+@@ -1901,9 +1946,9 @@ static void mana_refill_rx_oob(struct device *dev, struct mana_rxq *rxq,
+ 	va = mana_get_rxfrag(rxq, dev, &da, &from_pool);
+ 	if (!va)
+ 		return;
+-
+-	dma_unmap_single(dev, rxoob->sgl[0].address, rxq->datasize,
+-			 DMA_FROM_DEVICE);
++	if (!rxoob->from_pool || rxq->frag_count == 1)
++		dma_unmap_single(dev, rxoob->sgl[0].address, rxq->datasize,
++				 DMA_FROM_DEVICE);
+ 	*old_buf = rxoob->buf_va;
+ 	*old_fp = rxoob->from_pool;
+ 
+@@ -2314,15 +2359,15 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
+ 		if (!rx_oob->buf_va)
+ 			continue;
+ 
+-		dma_unmap_single(dev, rx_oob->sgl[0].address,
+-				 rx_oob->sgl[0].size, DMA_FROM_DEVICE);
+-
+ 		page = virt_to_head_page(rx_oob->buf_va);
+ 
+-		if (rx_oob->from_pool)
+-			page_pool_put_full_page(rxq->page_pool, page, false);
+-		else
+-			put_page(page);
++		if (rxq->frag_count == 1 || !rx_oob->from_pool) {
++			dma_unmap_single(dev, rx_oob->sgl[0].address,
++					 rx_oob->sgl[0].size, DMA_FROM_DEVICE);
++			mana_put_rx_page(rxq, page, rx_oob->from_pool);
++		} else {
++			page_pool_free_va(rxq->page_pool, rx_oob->buf_va, true);
++		}
+ 
+ 		rx_oob->buf_va = NULL;
+ 	}
+@@ -2428,11 +2473,22 @@ static int mana_create_page_pool(struct mana_rxq *rxq, struct gdma_context *gc)
+ 	struct page_pool_params pprm = {};
+ 	int ret;
+ 
+-	pprm.pool_size = mpc->rx_queue_size;
++	pprm.pool_size = mpc->rx_queue_size / rxq->frag_count + 1;
+ 	pprm.nid = gc->numa_node;
+ 	pprm.napi = &rxq->rx_cq.napi;
+ 	pprm.netdev = rxq->ndev;
+ 	pprm.order = get_order(rxq->alloc_size);
++	pprm.queue_idx = rxq->rxq_idx;
++	pprm.dev = gc->dev;
++
++	/* Let the page pool do the dma map when page sharing with multiple
++	 * fragments enabled for rx buffers.
++	 */
++	if (rxq->frag_count > 1) {
++		pprm.flags =  PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
++		pprm.max_len = PAGE_SIZE;
++		pprm.dma_dir = DMA_FROM_DEVICE;
++	}
+ 
+ 	rxq->page_pool = page_pool_create(&pprm);
+ 
+@@ -2471,9 +2527,8 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
+ 	rxq->rxq_idx = rxq_idx;
+ 	rxq->rxobj = INVALID_MANA_HANDLE;
+ 
+-	mana_get_rxbuf_cfg(ndev->mtu, &rxq->datasize, &rxq->alloc_size,
+-			   &rxq->headroom);
+-
++	mana_get_rxbuf_cfg(apc, ndev->mtu, &rxq->datasize, &rxq->alloc_size,
++			   &rxq->headroom, &rxq->frag_count);
+ 	/* Create page pool for RX queue */
+ 	err = mana_create_page_pool(rxq, gc);
+ 	if (err) {
+diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+index e1030a7d2daa..0921485565c0 100644
+--- a/include/net/mana/mana.h
++++ b/include/net/mana/mana.h
+@@ -65,6 +65,8 @@ enum TRI_STATE {
+ #define MANA_STATS_RX_COUNT 5
+ #define MANA_STATS_TX_COUNT 11
+ 
++#define MANA_RX_FRAG_ALIGNMENT 64
++
+ struct mana_stats_rx {
+ 	u64 packets;
+ 	u64 bytes;
+@@ -328,6 +330,7 @@ struct mana_rxq {
+ 	u32 datasize;
+ 	u32 alloc_size;
+ 	u32 headroom;
++	u32 frag_count;
+ 
+ 	mana_handle_t rxobj;
+ 
+@@ -510,6 +513,7 @@ struct mana_port_context {
+ 	u32 rxbpre_datasize;
+ 	u32 rxbpre_alloc_size;
+ 	u32 rxbpre_headroom;
++	u32 rxbpre_frag_count;
+ 
+ 	struct bpf_prog *bpf_prog;
+ 
+-- 
+2.43.0
 
-[I leveled rankings and weight-masks of devices but I left a loophole of
-how the empty slots in the latter would be converted to (and from)
-rankings. This e-mail is already too long.]
-
-
-An very different alternative that comes to my mind together with
-autobinding and leveraging that to your use case:
-- define virtual NUMA nodes [1],
-- associate separate swap devices to those nodes,
-- utilize task (or actual (mem)cpuset) affinity to those virtual NUMA
-  nodes based on each process's swap requirements,
-- NUMA autobinding would then yield the device constraints you sought.
-
-
-HTH,
-Michal
-
-
-[1] Not sure how close this is to the linked series [2] which is AFAIU
-    a different kind of virtualization that isn't supposed to be exposed
-    to userspace(?).
-[2] https://lore.kernel.org/linux-mm/20250429233848.3093350-1-nphamcs@gmail=
-=2Ecom/
-
-
---6rfjwiky6sklgybr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaJ3stQAKCRB+PQLnlNv4
-CFBgAP0YLsIMSEwHcqH0D9nz6CywkXUaQ5+rGzpsZ9ThrHtU1wEApCgAfBGTFDNp
-6bjzuw0DnamTil8xVsgM0FRkjUunhg0=
-=bJ1Z
------END PGP SIGNATURE-----
-
---6rfjwiky6sklgybr--
 
