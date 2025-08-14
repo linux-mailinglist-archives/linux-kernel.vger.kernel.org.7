@@ -1,114 +1,127 @@
-Return-Path: <linux-kernel+bounces-767743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19E0B25883
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:43:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1669B25886
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F6D5A5EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:43:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6ACE3AFF77
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6721872623;
-	Thu, 14 Aug 2025 00:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AuVY+NOM"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A0E158538;
+	Thu, 14 Aug 2025 00:45:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881BB54774
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC862FF64E;
+	Thu, 14 Aug 2025 00:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755132201; cv=none; b=oYqYCj0xC+qR9OW77rCsA4m1pBjfv64uAc9FtnrycbGSMAbGSnUFCcS3kKKdYc0XaETLJKeFjKPaDg/orhcSVOJxgm7/aoybpInMGf8MQ2GSTLe06Dcn1UxjtnjfI3VnhK5Oqj3wBJfOtn7YLdvq9T6coIqYrn0dV8RlofFzF3M=
+	t=1755132302; cv=none; b=GPGtCiFbaOC9duvws0Hd9k+ch7ttc8KrdkfL54kKV00hhsaa2eP4lJQ3AX5KEvvB9z9cpuQgTLGUmAm07UMzQO2CACcmcvizlV7lCvBV44MAW8IGzkS39VEcN08XPQSICHEE8RuTcayhOZuA4w+sRVeAFBXZI5IINaDAxYPxRFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755132201; c=relaxed/simple;
-	bh=JzYwdH3GDLM/8j8Pp0EevyE2d7KXYa2T377xArI3f2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWgs21KzejQMjTpX06Uolf7wHnHi+dwlslvrn/D04Ym2+1lXvErD79UmLBpfUrDcbP3ypraJGEu0uOlmKI9UrTsoA4COaxTiQhK8A3V3093dfCY4WodRO3N4Cs9uGxJpMAAdboUSXS7v5zGUhVhZTWG3wK6OduF0YQC8ZXxsQ5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AuVY+NOM; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24457f47000so3023835ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 17:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755132200; x=1755737000; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u+C5FMfkso7Ehl3CDtEbjqMlL+jBCATLbsthyMiqNTA=;
-        b=AuVY+NOM+NpHxRu9WvjVRyOHuwHSJQkJZbwYtPkK2QTAo+to8khtuVktVu82ENkpiv
-         DaMjfnxmqWb8EqCuNkohLj3/+nr61SFxuWCu9wipEaL3kntFmvqalrKOZG5gU287SW2L
-         voUNcb+sHWnWZ4R3AG+2mZxH/wfYvyQiA0PxWc2dJBeXdFm+vBDwgi9pjn0cDHTrps0k
-         BMKKYVFp7KD40Li6wyY7lidMh2XLUyAkxYnNLEsvjelHjUTCNPO4U9jHzNPRJzy2uuW8
-         gnU2ofE77GrH6fJItFZD8egwVlzsbf+AcB+NYMx+DzeKjEW9jYhwAVa+LdUhrmKxxyh+
-         sTpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755132200; x=1755737000;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u+C5FMfkso7Ehl3CDtEbjqMlL+jBCATLbsthyMiqNTA=;
-        b=Cy8cnMtxpj7UadgwycFU+/sIfURENLNvPaSZtVQ1zxQ06uNZGPgAycNrO3b44su8qx
-         9rQwj6GLPCHbnePxB/F7zaoJXdK3EWIdNGbO1Ub7cp+CxqcowyKCo/fu1kCUjKhvlcBE
-         iG8tnp+BckB8jAdFmh+GBx8Ed/wz+TM094OGMB9e+TmfL6WcX7YsrMJiYZN+avuHvqHP
-         ulcuvAnuiPUdGpe4dnE9c/mlbgrUHFh5h9Hr62bknAAS0v3saBuyW88rHgsOTqZ+xCjf
-         CddadG5NsjIDzfyObAdoyJiaFEgvQ0CXcrzcLaSxt2EaQLPKhoFekfD+o+Y2zP8ffH59
-         etvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwZBFtjrA4I6noAQlYzIElklkNFnBhyOkr5HukheDL9safiD1vy64+gk3bduMZcptwmWgKEZeyL7y9Lb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeHuucLrPPTmDPYk1RvZ7nsyGFoUvCeA1evumGEbrsC2WC+7Wj
-	VpQ2jDHzT229hyb6CFqwRHH9gf++hGnWPBCT9+kbYcVpynWs3HERuAUl
-X-Gm-Gg: ASbGncvu6bKtpux4crnodo8/NhEaYXy9zdPmwEJUdhBguq5j5OdpJYSIm7Q2DjkvOcI
-	WyNb8YtblGJY0KcImS2BofWtskzB7hoVSqk2MJ9PFj816RYup5AeYm31Zn1vI7tnXwjqSPy8+Ta
-	589QYjQPHS5+CUXb60s580OJEoWwzFj+V0DUqDbUhygOpthgTqbhF1rPrOEOs+I9T4vHY1qFdV3
-	bDgyJStnrrsS4aGBeFxtMFD2eDawkNjgs+SmdPU7br1I9UTOnhSN4CnbqJKnjtpZsICxJifJDI6
-	ITSgpeSjux9ZqwEyQrDaELNc/xYLf4hxAP8EDcKjhvcEBLtQc5AwfU/R+R+345KTQcIDSAviOij
-	pGUte/3TaAmHBN67T9Xd2Lw==
-X-Google-Smtp-Source: AGHT+IEiVLFQ5wPPcPeCPkCFJiPIhTF+L2wnLKcVZ8kQ7OVLRd1oTgrhJtB0ONkLIOLfiAtQofJh5Q==
-X-Received: by 2002:a17:902:f602:b0:23f:d903:d867 with SMTP id d9443c01a7336-2445868b44amr13421015ad.35.1755132199683;
-        Wed, 13 Aug 2025 17:43:19 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2438de0a660sm22394765ad.164.2025.08.13.17.43.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 17:43:19 -0700 (PDT)
-Date: Wed, 13 Aug 2025 20:43:17 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Andrew Donnellan <ajd@linux.ibm.com>
-Cc: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] powerpc: pci-ioda: use bitmap_alloc() in
- pnv_ioda_pick_m64_pe()
-Message-ID: <aJ0xJenyDJcZILt-@yury>
-References: <20250811165130.37552-1-yury.norov@gmail.com>
- <20250811165130.37552-2-yury.norov@gmail.com>
- <b1fe7008d2f230dd89be6d2541b7cf07ed2514e3.camel@linux.ibm.com>
+	s=arc-20240116; t=1755132302; c=relaxed/simple;
+	bh=Wt6hmav3wLkFt0xc9QToGleOM54+T5q9i5hftisO7g8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XDAJT+PxoSIRJ/1n3VCP9g7QGaQT5MPYCf12Of1zZOXuc8Ano52hEZRN/9FUjQDyQSGyV8Yf6S+8DRjxdubIV4l4wbgZXqnvUiJulIbx4xiyTO1x17ERUgZf4QyEGUWNOScuL1GgcKnvb5RbMG46QTq09y7cAWxk/PSticvGJ+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2RNC5mxGzYQtxg;
+	Thu, 14 Aug 2025 08:44:59 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 69A151A07BB;
+	Thu, 14 Aug 2025 08:44:58 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP3 (Coremail) with SMTP id _Ch0CgDnrNeJMZ1ocyMmDg--.27924S2;
+	Thu, 14 Aug 2025 08:44:58 +0800 (CST)
+Message-ID: <750ac0bd-42f9-47fa-8274-0ff4e4a7fa3d@huaweicloud.com>
+Date: Thu, 14 Aug 2025 08:44:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b1fe7008d2f230dd89be6d2541b7cf07ed2514e3.camel@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [-next v2 4/4] cpuset: add helpers for cpus read and cpuset_mutex
+ locks
+To: Waiman Long <llong@redhat.com>, tj@kernel.org, hannes@cmpxchg.org,
+ mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com, christophe.jaillet@wanadoo.fr
+References: <20250813082904.1091651-1-chenridong@huaweicloud.com>
+ <20250813082904.1091651-5-chenridong@huaweicloud.com>
+ <e0ac3594-deab-455c-9c2f-495b4e4422e2@redhat.com>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <e0ac3594-deab-455c-9c2f-495b4e4422e2@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDnrNeJMZ1ocyMmDg--.27924S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF4Utw15Cw4xGr17CF15urg_yoW8CrWDpF
+	n5GFW3JFWjkFn7uw13u3W5WFyrKw4rKa1UGrnxJFy8ZFy2yF12vF1DWasIgryYyrWxCr1j
+	vFnF9a1a9FyDJrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbmii3UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Tue, Aug 12, 2025 at 11:07:08AM +1000, Andrew Donnellan wrote:
-> On Mon, 2025-08-11 at 12:51 -0400, Yury Norov wrote:
-> 
-> > -	/* Allocate bitmap */
-> > -	size = ALIGN(phb->ioda.total_pe_num / 8, sizeof(unsigned long));
-> > -	pe_alloc = kzalloc(size, GFP_KERNEL);
-> > +	pe_alloc = bitmap_alloc(phb->ioda.total_pe_num, GFP_KERNEL);
-> 
-> I haven't checked whether or not this has practical impact given what we later
-> do with the bitmap - does this need to be bitmap_zalloc() to match the existing
-> use of kzalloc()?
 
-That's fair. I'll send v3 with bitmap_zalloc().
+
+On 2025/8/14 4:09, Waiman Long wrote:
+> On 8/13/25 4:29 AM, Chen Ridong wrote:
+>> From: Chen Ridong <chenridong@huawei.com>
+>>
+>> cpuset: add helpers for cpus_read_lock and cpuset_mutex
+>>
+>> Replace repetitive locking patterns with new helpers:
+>> - cpus_read_cpuset_lock()
+>> - cpus_read_cpuset_unlock()
+>>
+>> This makes the code cleaner and ensures consistent lock ordering.
+>>
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/cgroup/cpuset-internal.h |  2 ++
+>>   kernel/cgroup/cpuset-v1.c       | 12 +++------
+>>   kernel/cgroup/cpuset.c          | 48 +++++++++++++++------------------
+>>   3 files changed, 28 insertions(+), 34 deletions(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset-internal.h b/kernel/cgroup/cpuset-internal.h
+>> index 75b3aef39231..6fb00c96044d 100644
+>> --- a/kernel/cgroup/cpuset-internal.h
+>> +++ b/kernel/cgroup/cpuset-internal.h
+>> @@ -276,6 +276,8 @@ int cpuset_update_flag(cpuset_flagbits_t bit, struct cpuset *cs, int turning_on)
+>>   ssize_t cpuset_write_resmask(struct kernfs_open_file *of,
+>>                       char *buf, size_t nbytes, loff_t off);
+>>   int cpuset_common_seq_show(struct seq_file *sf, void *v);
+>> +void cpus_read_cpuset_lock(void);
+>> +void cpus_read_cpuset_unlock(void);
+> 
+> The names are not intuitive. I would prefer just extend the cpuset_lock/unlock to include
+> cpus_read_lock/unlock and we use cpuset_lock/unlock consistently in the cpuset code. Also, there is
+> now no external user of cpuset_lock/unlock, we may as well remove them from include/linux/cpuset.h.
+> 
+> Cheers,
+> Longman
+
+I like the idea and have considered it.
+However, I noticed that cpuset_locked is being used in __sched_setscheduler.
+
+-- 
+Best regards,
+Ridong
+
 
