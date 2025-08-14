@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-769719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FDDB272CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:10:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F48B272D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 01:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 762F54E5F32
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:10:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D614A628BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE552877F3;
-	Thu, 14 Aug 2025 23:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8552882C7;
+	Thu, 14 Aug 2025 23:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aW1MsRk4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qb75p/oo"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F9928751A;
-	Thu, 14 Aug 2025 23:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9012882BC;
+	Thu, 14 Aug 2025 23:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755212980; cv=none; b=UzkAGCwTHLlm+vJXvVhGvSt8umjrUyVp9tZzIVBsfhF8FKtalcdn8Z1fbmFtjjC2jLd6StnksyQwThtAqtPdH4pdusodqM/PTRESxrFXb0Bd8mJzWyhC2VDOWccgAppCyREjCGZ1ncKOYqFo+56xjA05/wmSrDlqFhwgjDRXhPk=
+	t=1755212987; cv=none; b=j+prE7K+JdDcoV+s00R0GKRTIdcF3o8AlwxLCM+rTJ/DghU+Q8f7PHypqdJz0/eW24lNxB9Onpqn/Mgbi2x24OW9XXBKp9sn6f8cT5d2wScZKWKzbtroXLy/dFTUjkKFpGNnUMdAT9DZN5z69pLIf4WKQ1+lrKi+s0ckP8SqIws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755212980; c=relaxed/simple;
-	bh=aokRSJi83wn6MuP5avdXHnJYDdO8hONUlIGhy+Jz2lk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KBg7SyhIGgOIZNfT5PjClnXG2efRpgomJQJEFWLOnRNh8fS7VqkMmSUIZD9g5NvzMf6iSazr+dBcqagwvQjm2r2Cf6zi98OtX2x3iEYI2+KYxFs0kzFC2e8gd/G9b0qFXWfAkulAZXLE6IhFO2zT9bO6Rqg8ctW4yhbG4ux8n6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aW1MsRk4; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755212979; x=1786748979;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=aokRSJi83wn6MuP5avdXHnJYDdO8hONUlIGhy+Jz2lk=;
-  b=aW1MsRk4pZeDd3wKWGmHJi9Z3wpPY0FH7uUvJYydyxyUwQCrw11t4sVf
-   oK14fTr0rYrA4mJ/iPGFXBpDSHXbLvvOd51JvTWUtPIiZNAvip8lX/hOA
-   QHYtQPmCd+cXwocalm5B/FYX4As2YY7kWub/boIEOgDn2llnvjQU6OfC2
-   xx5uu4MSDBcN9PtRV6rK2R7hMcGHjkIARaDuy3oEgReAbpPD2N3vyogWW
-   rzhcVP4tzJ2+ykJqfv8YuRD3sw2xgKQKeDOJTgddNdf91obijwTfZi+6Y
-   fgZK2XJi1gH2s8fkDkPyu5oga7v2mRP5rIraEI3N9PtqFJEUlP8AANh7v
-   Q==;
-X-CSE-ConnectionGUID: XIU1dhJFSYaaKwhmB/Q56A==
-X-CSE-MsgGUID: ODAebk55Q5mxX/hPMKAxEw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="56564066"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="56564066"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 16:09:38 -0700
-X-CSE-ConnectionGUID: 9pYHM7jBSvm2T8aKsJe9fA==
-X-CSE-MsgGUID: zRPrrsF/S/yTZaTPfcsl8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="197870279"
-Received: from c02x38vbjhd2mac.jf.intel.com (HELO [10.54.75.17]) ([10.54.75.17])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 16:09:38 -0700
-Message-ID: <3d0945ca-eb6b-430d-a6d2-a4396596170c@linux.intel.com>
-Date: Thu, 14 Aug 2025 16:09:29 -0700
+	s=arc-20240116; t=1755212987; c=relaxed/simple;
+	bh=mKoae9MecbXNFCvFS646eLVMVdadneD5NIJTRY7VQzA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RxPoZu7+vlUpXuYDhi9aJo2o93DRAeePGnbjXlryjQONb3xzUaJmCwRkpt40GtjFC1Q73bTMIzlZHXkdxOKFf2Lmos5vQR9Q0fXxxWuoBe3LRRnS8JspWoXnE/X6sMUFKxianQm8Oqmc1W523/pEXibdCW+LAo/19TDFiZX9Hz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qb75p/oo; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=DTCz0hGBofhdVx2iiYQG59mbPXFd0G/0V1YI5EH/HnY=; b=qb75p/ooganBGScylMakCyEKE3
+	UJqcQFio0tRaQn9LEgPbPgZdgLngcJ12CfXXLFyr1dmXvzEH6H/VvWgOfFBlz7ASKQnIcyzjO60u0
+	s0MeUYqyEK8eWBCP28GtCgTBnMo4V/nROYOJ1xkVO9FPCI5Yg0NDEbjV40wB+mPl0Os8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1umh4j-004l3a-GY; Fri, 15 Aug 2025 01:09:37 +0200
+Date: Fri, 15 Aug 2025 01:09:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: David Yang <mmyangfl@gmail.com>, netdev@vger.kernel.org,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC net-next 1/3] dt-bindings: net: dsa: yt921x: Add Motorcomm
+ YT921x switch support
+Message-ID: <0c94e763-8963-4a04-8157-87725e80075c@lunn.ch>
+References: <20250814065032.3766988-1-mmyangfl@gmail.com>
+ <20250814065032.3766988-2-mmyangfl@gmail.com>
+ <ef95652d-eafd-45e1-9603-16c4edcb8e9e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] cxl, acpi/hmat: Update CXL access coordinates
- directly instead of through HMAT
-Content-Language: en-GB
-To: dan.j.williams@intel.com, Dave Jiang <dave.jiang@intel.com>,
- linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org,
- dave@stgolabs.net, jonathan.cameron@huawei.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, akpm@linux-foundation.org,
- david@redhat.com
-References: <20250814171650.3002930-1-dave.jiang@intel.com>
- <20250814171650.3002930-4-dave.jiang@intel.com>
- <689e64229859f_50ce10082@dwillia2-xfh.jf.intel.com.notmuch>
-From: Marc Herbert <marc.herbert@linux.intel.com>
-In-Reply-To: <689e64229859f_50ce10082@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef95652d-eafd-45e1-9603-16c4edcb8e9e@kernel.org>
 
-
-
-On 2025-08-14 15:33, dan.j.williams@intel.com wrote:
-
->> Fixes: debdce20c4f2 ("cxl/region: Deal with numa nodes not enumerated by SRAT")
+> > +  motorcomm,switch-id:
+> > +    description: |
+> > +      When managed via mdio, hard-configured switch id to distinguish between
+> > +      multiple devices.
 > 
-> Why that one and not?
-> 
-> 067353a46d8c cxl/region: Add memory hotplug notifier for cxl region
-> 
-> It is the ext_updated machinery that is the main problem that messes up
-> sysfs, right?
-> 
+> IDs are not allowed.
 
-For sure 067353a46d8c is where my git bisect unambiguously landed.
+Please describe in more detail what this is used for.
 
-Tested-by: Marc Herbert <marc.herbert@linux.intel.com>
-(the series as a whole)
+When the switch is hanging off an MDIO bus, there is a reg
+property. Maybe that is what you mean here? Take a look at mv88e6xxx,
+and other DSA devices which are on MDIO busses.
 
+> > +    enum: [0, 1, 2, 3]
+> > +    default: 0
+> > +
+> > +  mdio:
+> > +    $ref: /schemas/net/mdio.yaml#
+> > +    unevaluatedProperties: false
+> > +    description: MDIO bus for the internal GbE PHYs.
+> > +
+> > +  mdio-external:
+> > +    $ref: /schemas/net/mdio.yaml#
+> > +    unevaluatedProperties: false
+> > +    description: External MDIO bus.
+> > +
+> > +    properties:
+> > +      compatible:
+> > +        const: motorcomm,yt921x-mdio-external
+> 
+> Incomplete compatible... but also not needed in the first place.
+
+So this device has two MDIO busses. You need to somehow describe each
+in DT, so you can PHYs off them. And you need to know which is
+which. For mv88e6xxx, which i know is maybe not the best example
+because a lot of best practices have changed since then, some variants
+also have two MDIO busses, and we give the second one a compatible so
+we can tell it part from the other which is common to all mv88e6xxx
+devices.
+
+	Andrew
 
