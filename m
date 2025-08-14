@@ -1,343 +1,97 @@
-Return-Path: <linux-kernel+bounces-768738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA44B264CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:56:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCAA6B264CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A22B77AF537
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:55:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0A41CC316D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4685B2FB971;
-	Thu, 14 Aug 2025 11:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED49C2FB980;
+	Thu, 14 Aug 2025 11:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="qc8YGxrx"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013016.outbound.protection.outlook.com [40.107.44.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEk+0JJB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AA82E9EDB
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755172593; cv=fail; b=LhRoGKlwSHVuu7xwDZth6TkgBsY9whUb4691Dg5wMlTU6Qz+6TselZ7umKmoim0sPPu8K4UZEQT4lU0PDBjL05PJ35RTrktwD1TukxwKjqRQKFeysrS/8AHGNqyTQ11UuNF+upz6jpvcewrR4GaNzuAVx6iupxJeKKDUwDjClWM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755172593; c=relaxed/simple;
-	bh=LTNlcDGSMjw1ueUM/k3C905Nuv4c0HrbTXL4rI9vhP4=;
-	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NuPT0sMEq1P6tdAv/5TkweivN3tX2GFHmWH10ac25xBVUCbzC5MQEiCZ4jBQ+o9+b+PlWsKLzaY8U6mCoXjWyKuVZRnasl8JIvspoP5u4yxv+ZNlrr19yT526PyoZXjkV4R8hgsUE3qGlhw2L7taeZ4cGvclr9EcSUPG5kZnBK4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=qc8YGxrx; arc=fail smtp.client-ip=40.107.44.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YzvYPNrS5y0SlueMxFt4jGPfszoQtMep+Pt3IxwbCPMVYKGCAi4e04bfIsp09HbrQqQA48ylHxPQH7gmAd8apI19GkFQImo7nkfT+M2qFbTU/VHr82Z/VaFRCj0+8b/K0DrMpxlWLcVuVaJVRYdTmDybrl8z/uQCmhP4jsxuxvbRHnoThNofrQpo4Rxc2JsbMTKfzV9f1dMpNYk/8uiRiRV9KZOchtoLPcJbuGmGqWxFs8IZsJty61SCGmUQOpU4rWGqCbGFaByBuiFCumJIlvM3nh+BP+gq9dFUbzwy2YlM/5AJonZeWlFHXB28a+zbWBUsXdWrHfeDlra5A/dE0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qm7j9WjCP6Mkeq3rLr30tsIHCqZzhgB75btllES1k/8=;
- b=a9JWxwdyLYWwKV3WR4yMhQ1vf8eJFRAKYnPcdEIH/dZY8as2eiqjzjEWlQbNs39WWxcHf95SRP9pfOKtsecNN9Ejy0iHLo0S+D9pnnP7heUdq5+0ciI3gLxId9J+lLKukCvXamyqQrbVNzKWsWkYPLoVUupuoD8l3XQQW8OXlChaQZROpgP32Ekw2mEZlglQy+02I6peC9HBbCoUPrY4obRlMytIP4DslFEx+Ousk/Tn4/kRHa/copPh1vY8AuQjCDWl4f0s/j3Rc2n6kjOK2LjoUlMogc/dkiNdXyiWdvY2oHPuBKkWLwQKGZHz1zSuKu2O22iUHkkr5FLIm2pOfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qm7j9WjCP6Mkeq3rLr30tsIHCqZzhgB75btllES1k/8=;
- b=qc8YGxrxs/lYiUA5L83YTvYoSoEOZ6EEv0NRqseXEEBprsPccfk3DRkZsXXH0UhhWpxH1vS+cNnYfSl1d50VOp/L5FQ6AjNbb7RpCk4xFPXTH/xpwvhtGgnDbudsa6s1+MJmdqu+SL3cxkbBgMuU2ZtxZh/MEBgFjZvCGfylmzJ27ciQtcPmcopfezEMaYOlNHz29nGPDXG3Q5Nps48EtAz471pZIr26YsYBlSQ2i9CAMWbUsd5n4kronSOVl/nuX23zyLy9PKXYakeTRs5mUWosrhEuFXP9p8eueyioXeOopzBYh9yLyD9rz2SBjv4Ue9ay6jETvhCLNGlu80qK+w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
- by TYZPR06MB5734.apcprd06.prod.outlook.com (2603:1096:400:281::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Thu, 14 Aug
- 2025 11:56:29 +0000
-Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
- ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 11:56:28 +0000
-Message-ID: <6ef5e1e8-3868-46c0-a31b-505f8a91d37a@vivo.com>
-Date: Thu, 14 Aug 2025 19:56:23 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/radeon: Move the memset() function call after the
- return statement
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-References: <20250814093957.137397-1-liaoyuanhong@vivo.com>
- <d77e242e-af6c-4693-b207-576b823a0c0f@amd.com>
- <14ed323d-de4c-4f98-a16c-8bdb1b92c34d@ursulin.net>
-Content-Language: en-US
-Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- "open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>
-From: Liao Yuanhong <liaoyuanhong@vivo.com>
-In-Reply-To: <14ed323d-de4c-4f98-a16c-8bdb1b92c34d@ursulin.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0021.apcprd02.prod.outlook.com
- (2603:1096:3:17::33) To SEZPR06MB5576.apcprd06.prod.outlook.com
- (2603:1096:101:c9::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22E542B9B7;
+	Thu, 14 Aug 2025 11:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755172796; cv=none; b=QGSkupdHuVPo0l0VMRWIM++dyxiDFbXLgUo/EbMSK7dq4A8XnMqCOiWYG7mp0IcwC3ZYP7YwFE4u1C9XvEeiXHKW3pN2PSvCkdLdmsZWzJyIpiz35+mSGFuWtpFOwnsUcSLtrumwQATz52cNjZXngU9lXWC/oUPa2//uikHaXgg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755172796; c=relaxed/simple;
+	bh=r4iDt//s+QBSbwLuaWGxeAZrhZlpm2M61+oczK1Xlf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NcHZD/990ey/MvskWNcbZ20og1ml2Gd6Ic8tP38RRhmNcxkNT9rHhgjvZLZuAb4E7c6K8yuTsF8UPEGqESmB/IpFFosZwHdUDxEifWhhCSBZDW2u0Q6u6oIe8KY3M9f3YuoP5KW+Vx5hc0rKgIib3wMfAC37WAdoV83ZejGiK+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEk+0JJB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F175C4CEED;
+	Thu, 14 Aug 2025 11:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755172795;
+	bh=r4iDt//s+QBSbwLuaWGxeAZrhZlpm2M61+oczK1Xlf4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FEk+0JJB7f0TfshASByUYjwXUthEJL4ZX+69x8uoPXg8hkPPiAVZgZcEhTvzgTc/O
+	 naAmjf/ZWkJR/AAUEQalp/smsSgWpQTGAvhP81oFI0p9piRJU09IQC1MEG1N8qzx90
+	 Z85aPWl2FHEePrL0Of78671z1cDZSKundm5f57CU4hVvnND4PAWcmFWxb4uPfVrpVp
+	 7YauZVFXaLHI6m73zoAgyOeTo0SaCN25el+zur0ESrWQnj1250ldh0Max52Fsviptz
+	 mT+XlX0yb4gfa3OiWilE1xLjhkntV+CE5v6+2JvinjmZnwSXNvK3v0cYEJaLveHxRu
+	 3ZN2zDcZT2dKg==
+Date: Thu, 14 Aug 2025 12:59:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, achill@achill.org
+Subject: Re: [PATCH 6.6 000/262] 6.6.102-rc1 review
+Message-ID: <9de6ded5-003f-41c3-b876-a7a24c8822ac@sirena.org.uk>
+References: <20250812172952.959106058@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|TYZPR06MB5734:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7d3a713b-95cc-49ca-a468-08dddb299a04
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WG5uY0hBZVlhS1FtckJ3Ync5RCtzU2U0K1FjL3dtOFhXVS9MYTZBRGNjamhi?=
- =?utf-8?B?MjR3ZVptenA1WkpxL1hFTnBEMGZMREdOZkNHN3AwQ3FacjhvdEw3WjJyWUxB?=
- =?utf-8?B?bi9iVGd0eXFlTWVhaTFuZm1HeXlMdWNBVWVKNFBjaVdrNzJVMnhRQzh3cTNu?=
- =?utf-8?B?RFYwQ2pqRStOSG0yN294d2NUTjdFQ29WbldnUjh1OEd1aHh1L2lNdUlDajM2?=
- =?utf-8?B?c0J6cllRQ2M3Y29ySEppMTd4QzdEMmwrWFNoRUZCeE5tTHhXYzNNa2w3R0hP?=
- =?utf-8?B?VDBkWjcyRXBLb2laOFMzTGJzZjkzYkhWRDUydE5UMzN4ZGJJQjE3Q05WNElv?=
- =?utf-8?B?ZkxkcjRMcGhsbFBiSk9laGlKT0tCb20zQzg4NTByVTdPOGVzRS9YUXJiWVJl?=
- =?utf-8?B?TE9YMDJQUzJON1M2SktiVTg5WU01a3BQem9hc0xhK096SkpVdHhuSFJFRkQ5?=
- =?utf-8?B?dDNKMHJPZUJXL05VSXhMenZFOXdBS3NvYUg3a3lMRWxKNDBaMlVJaDcxQjAz?=
- =?utf-8?B?QTdvRXcrRWtqZnlMelVrWW9sK1hnOHhjMDd0dUhEOFpISjVSSXJrcFMrTDky?=
- =?utf-8?B?TzRGZlQrNXozWTNJQm1pTWtiQUtFUEh5dlVKaWRYeHVackoyMDFPdllmVEFI?=
- =?utf-8?B?MWlNcXhENTd3ZHA1L2hsUVdEVnNGRnc4K1ZVOXRSZ3l5c3NEcDhQWGxIdi9w?=
- =?utf-8?B?OTlpejVWYnV0WnQ4YVlySmpET3lGZ2ZrcitVZGF6Y1AyTDFNdGh0NGs2bnh5?=
- =?utf-8?B?dXBxa2FjQ1pwZWV4Y2FPOWNTWjgrZjdkS05xNnZuSzdQR1hZejdLNnJXdDhW?=
- =?utf-8?B?cEdYQ1lxNUNsNm5LaGVGSUY2ZW92SFZUYVJOajJPcXFBR3VzSGFOeEFkWU4y?=
- =?utf-8?B?SmxvWmY2VDhiVEJIaUcwR2RKQU5SSXlFYWVJMUtGNG5PQW5kNUF4WHZ0Zndy?=
- =?utf-8?B?eW5UN1M4RE91NDVzWjJUbTBvcGRxd2F5aHRYL0FmNnJHSksxRC8vYXNWTlFn?=
- =?utf-8?B?YXpJOTNaeVZzMDVPTzkyVTV1WVBjdXBxdjFCYmNpNFFMV21LSjN4aFZLMlJT?=
- =?utf-8?B?cDNvdTg5OS9zR2c5T1E4RG1DUVZjU0ZydDdNalh1WFNndjBlWmkvNE1FRmo1?=
- =?utf-8?B?MFFTTG45eS9FekM5ZXpTQlJjOXA4MW16U1F0ZEhvdXhGWHhKby9FdDUzQkJG?=
- =?utf-8?B?VDNGbjZYQXFwc0RHcTVqU1RSL01BZXRMVk0yMkpRdTVqZ1RMWHRqRUlXa3Vr?=
- =?utf-8?B?L2F1aGp0UEVBMXR1TVFXWTc1T1VlWXpBRGFSMHU4UlFvY3RwZUxEZ0pJamJK?=
- =?utf-8?B?WG1aMnlpWGE3OVpXS2wwcTdvMjlzVXEvVU9wRXVVdjFFb1d3czhEVmZSODdZ?=
- =?utf-8?B?bnpKeC9YTWIwSlJWNjNPTmdVdmE5Y1dLbVFUbXRIMzV4bEFrNUxZQm82Ykgw?=
- =?utf-8?B?YmxQYldyWWZnMlhzak5lZHRTdW1IbjdoSzRtUFYzVTNIUUF2eDhqS1hUdDJ4?=
- =?utf-8?B?emxsVC9aYmpFWnlyNjByOStPU3phYjRzcjY5QzhOa2lla2RTS2FUOW5hR0xl?=
- =?utf-8?B?ZXJBQ0VYRTRXNTVWd1FCdjFLNW9vNk8rMWtiT3JZand2MWJPQ0IxdVNQVzZB?=
- =?utf-8?B?ck42TEFLbVI0ZlJQMFBKZHF1bXdraEx4OTRYQ3NUUWE2Ulk1NUZZYTFhZWQv?=
- =?utf-8?B?bDcwWjdETkJyN2ttSnhUcGJhRm5kZzVpbVpHTFd2Yys2L0xYbk1JZDlVMDVF?=
- =?utf-8?B?YjZCdm5YRUZqYi80aTN0WmMwNjBEYStUS0pVdzk2M2E5bnZQSWdmNmNvYjBP?=
- =?utf-8?B?N3NRdy9uYWZ5Z0puZlgrakpnWXh0bVZsblNEWHVhTm9tSi9qdk1sckl3YlJU?=
- =?utf-8?B?eG5qRmVjUzhDYUtMWHViMFdaN1d6T1N5WDdEV1V1ZENLOXpPUkhIbW5FZTEy?=
- =?utf-8?Q?Z2yY2zoo5rA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d25GR01UNCs1c1loUll6SXFJaG5oZ3dkc3o5NzBoM3RIZjlqRHBPYStvbTVR?=
- =?utf-8?B?RGxJYnNPVDVKOGo0L3ZQWm9wY0U2QTRlZ1hpWW10RVUvTmNObkM2UmpPV0Rl?=
- =?utf-8?B?Q3VXeGxtaStMbE4vQlpHRFN3QWlXeUxKa2NzdTR2MUlvclF0bWV0M09Bcm9r?=
- =?utf-8?B?RGdRMzAwcnoxOGlVY09sNDg4RnJ2akJHK3dob2tCeEVzZmFBcDNIbUVTVjRP?=
- =?utf-8?B?QkViWHpTeDRMcHdFY2RzMmtvRld0a21PNFRtK1BDTVZRK3R3RXN6ampxSmxs?=
- =?utf-8?B?aGI3WklPUkY4TE5sL1RLU2Y1VndLNy9wWGR3b1doeStvdU5oOGIrSStIYzBO?=
- =?utf-8?B?a21VaW5GUUE0bFB5REpXRzlZSytycjZUaTZMTHQwK0ZrdHNzVkFMWC9vbFFq?=
- =?utf-8?B?Q3IvN1VFNXV3bTVpcjNjMk4rYXNvNCtZODNrcXF1MTc2d3NnY1dYd1pBdGFH?=
- =?utf-8?B?VDVPbERuS3cvWmNZSUgxNFdtWFlPQ0N6a2NwY2gwUDN1RHZsaDdmVnRtOXUx?=
- =?utf-8?B?MzFlZ2k2czRZZ3Vla2pWRExhbFRXcmErYks1QUxNNitoelhtUWVWWEFGQjNi?=
- =?utf-8?B?YTM1OXlzUU5DSXl2ZVpOMDk3dG9MTHB4azE5QUtPdnZqZmUyUEVsQTFINnZB?=
- =?utf-8?B?L25NMmNLdlFOc2w4OFRLVzNxRWdkRU9rZ2p1RTBNbmNTWm12WlJETithRE9q?=
- =?utf-8?B?bTh0MW5NQzJWTWtud3ZFbzEwc3pEQUF0UW1TYllZc1UwMk53eFE3TGIyaEFR?=
- =?utf-8?B?QWdmbDFjNXlLZ3V3enBEaEZHaytJUnVxSE5GZm02UzNiQVlMR0pFMW1FNnBj?=
- =?utf-8?B?VUF4SVh1eWZJeGxMQlV3alp3bHBGMTBYRnJVaFdvOVQ5aXNpTmhBa3ErSi85?=
- =?utf-8?B?RmYreHJDWk9ldmdnZE1qSjBFTXlJTytlK2VoVUdqT0RuUjNqZ2RPRWw4dXl5?=
- =?utf-8?B?bDZvOHk3TFN5OUV5UlAxMEpZdExLeExFaXJabWdvR04vQTNLeFhQZnFTcXFI?=
- =?utf-8?B?LzNNNllYNm51NXZmMXFOK1AxVGVZanNFMkhianhCaldiZ2lESU0xbDNxK2c3?=
- =?utf-8?B?YmJwQ2VsT29aM043d0V3MGN0cmRzZFRvcHVqMEF1eTBDRGJaa2c2R3AxbVFz?=
- =?utf-8?B?aHZLS3B1Mnk5NnZYaDV1bm9oQjlIMit3UjNEOUFkNjNOUHEySFdEaitBalo3?=
- =?utf-8?B?aFRETzZObjFsQytBWnljS1BmSis5eDB0S2wzbXgwdk5KdWdoZ0ExY2tET09q?=
- =?utf-8?B?QnIrOGw3Zm9MUlErL0g4b1BOMjlEeWJkQlRvdWg1dUVzeE91SEVqQWtnZVNW?=
- =?utf-8?B?dU1KaFVrQk4yN1NCSkMrUEkwNE5PTW8wNEtPbXp1VXNpS1BRQUJIQ3RqT3Yy?=
- =?utf-8?B?NjVNWXlsR0Ywd240ck9aVTZsV1ZjOTNOZUQvc2FCWFRiZ2JFajduV2svczh3?=
- =?utf-8?B?VFRITFR5Q3lobTgxbUl3cWxKbmZFL1ptSDIwaUlDRDRCb1Rlbk1RaXhvM1BQ?=
- =?utf-8?B?amVDK2Rta3lzYldkZEdiRDY3N1dSeHh3SEdpUkd3MFJKSUJ4WXlheUx2NFRi?=
- =?utf-8?B?N2xVTjQyK1p2YzVWczlpRWRISisxVFY2YkRLVWw2ZDRjR2F1ZElNNEphMHkv?=
- =?utf-8?B?ZjZveURyUlBOYmlGTHZkMTQ2MHJiNWFhYlorMzVyalg0by9uTHZrSEtEak1M?=
- =?utf-8?B?TWl0eFdBVmRNaCtZQnNXOUlwQW5LbHFEVEVjMmpVZUtDQXFHUlViUUlLZUJz?=
- =?utf-8?B?ak1wL3hhZnRJa0lYWjJHZERWZDZFKzRRZDlnZHRWYWQ5WU9KbnUrdXd3aDVF?=
- =?utf-8?B?eU9CcUhhYTFyQUhSOWhjaDZraXc5NktGMnM1c1BrczdtNzVtUVJjOHh6MGRp?=
- =?utf-8?B?bCtPL3Y0WURqb1Q1bkpRRGlISkptaENPNmtDWFFLdUs5Vyt3d2huSzNMZjlR?=
- =?utf-8?B?T0ZWRDNmV043aUR6cFdQNjBYbE9ybWREVTNJNmVLM1Qvbis1YmVHemhRNDhH?=
- =?utf-8?B?dkxaR0poZWhwV2JvSHlmMzZmRkRkQlcraVphbXhXaGZMODNaNXpzS2UvQkJH?=
- =?utf-8?B?NzdSVFEveTArbVRsNkllZ0ZjcksxMHZGWDNqdVl5c28zSHNFc1YxMWlyQ215?=
- =?utf-8?Q?0YewM9kHw/aTorYdGGGGb5Mcb?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7d3a713b-95cc-49ca-a468-08dddb299a04
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 11:56:28.3029
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RN2BPfG8ydrjkZbhC4g/gBhRDARg1wU1UH03NM8haIPfb2jYTmIDnZOT4dJPoSDtyB8HJikASvqb1Ct3CmUY8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB5734
-
-On 8/14/2025 7:07 PM, Tvrtko Ursulin wrote:
-
->
-> On 14/08/2025 11:11, Christian König wrote:
->> On 14.08.25 11:39, Liao Yuanhong wrote:
->>> Adjust the position of the memset() call to avoid unnecessary 
->>> invocations.
->>
->> Hui? That doesn't seem to make much sense to me.
->>
->> We memset the local variable because we need to make sure that 
->> everything (including padding bytes) is zeroed out.
->>
->> Even if that isn't sometimes necessary because of error handling we 
->> clearly shouldn't try to optimize this.
->
-> To interject with a curiousity, it is even worse to move the memset 
-> away from the declaration block when the often enabled 
-> CONFIG_INIT_STACK_ALL_ZERO is on. At least when they are close 
-> compiler can figure out it only needs to memset it once. Move them 
-> further apart and sometimes memset happens twice, yay.
->
-> Main point when CONFIG_INIT_STACK_ALL_ZERO is on, and it often is, 
-> there is no way to avoid the sometimes pointless init. I have some 
-> local branches which try to address the worst offenders but it is so 
-> much in the noise that I don't think I ever sent them out.
->
-> Regards,
->
-> Tvrtko
->
-If we converts memset() to = { },can it alleviate the problem?
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="26Ts1a7RHFR28Ciy"
+Content-Disposition: inline
+In-Reply-To: <20250812172952.959106058@linuxfoundation.org>
+X-Cookie: This sentence no verb.
 
 
-Thanks,
+--26Ts1a7RHFR28Ciy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Liao
+On Tue, Aug 12, 2025 at 07:26:28PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.102 release.
+> There are 262 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
->>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
->>> ---
->>>   drivers/gpu/drm/radeon/atombios_crtc.c     |  8 ++++----
->>>   drivers/gpu/drm/radeon/atombios_encoders.c | 20 ++++++++++----------
->>>   2 files changed, 14 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/radeon/atombios_crtc.c 
->>> b/drivers/gpu/drm/radeon/atombios_crtc.c
->>> index 9b3a3a9d60e2..0aae84f5e27c 100644
->>> --- a/drivers/gpu/drm/radeon/atombios_crtc.c
->>> +++ b/drivers/gpu/drm/radeon/atombios_crtc.c
->>> @@ -770,13 +770,13 @@ static void 
->>> atombios_crtc_set_disp_eng_pll(struct radeon_device *rdev,
->>>       int index;
->>>       union set_pixel_clock args;
->>>   -    memset(&args, 0, sizeof(args));
->>> -
->>>       index = GetIndexIntoMasterTable(COMMAND, SetPixelClock);
->>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, 
->>> index, &frev,
->>>                      &crev))
->>>           return;
->>>   +    memset(&args, 0, sizeof(args));
->>> +
->>>       switch (frev) {
->>>       case 1:
->>>           switch (crev) {
->>> @@ -832,12 +832,12 @@ static void atombios_crtc_program_pll(struct 
->>> drm_crtc *crtc,
->>>       int index = GetIndexIntoMasterTable(COMMAND, SetPixelClock);
->>>       union set_pixel_clock args;
->>>   -    memset(&args, 0, sizeof(args));
->>> -
->>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, 
->>> index, &frev,
->>>                      &crev))
->>>           return;
->>>   +    memset(&args, 0, sizeof(args));
->>> +
->>>       switch (frev) {
->>>       case 1:
->>>           switch (crev) {
->>> diff --git a/drivers/gpu/drm/radeon/atombios_encoders.c 
->>> b/drivers/gpu/drm/radeon/atombios_encoders.c
->>> index d1c5e471bdca..f706e21a3509 100644
->>> --- a/drivers/gpu/drm/radeon/atombios_encoders.c
->>> +++ b/drivers/gpu/drm/radeon/atombios_encoders.c
->>> @@ -492,11 +492,11 @@ atombios_dvo_setup(struct drm_encoder 
->>> *encoder, int action)
->>>       int index = GetIndexIntoMasterTable(COMMAND, DVOEncoderControl);
->>>       uint8_t frev, crev;
->>>   -    memset(&args, 0, sizeof(args));
->>> -
->>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, 
->>> index, &frev, &crev))
->>>           return;
->>>   +    memset(&args, 0, sizeof(args));
->>> +
->>>       /* some R4xx chips have the wrong frev */
->>>       if (rdev->family <= CHIP_RV410)
->>>           frev = 1;
->>> @@ -856,8 +856,6 @@ atombios_dig_encoder_setup2(struct drm_encoder 
->>> *encoder, int action, int panel_m
->>>       if (dig->dig_encoder == -1)
->>>           return;
->>>   -    memset(&args, 0, sizeof(args));
->>> -
->>>       if (ASIC_IS_DCE4(rdev))
->>>           index = GetIndexIntoMasterTable(COMMAND, DIGxEncoderControl);
->>>       else {
->>> @@ -870,6 +868,8 @@ atombios_dig_encoder_setup2(struct drm_encoder 
->>> *encoder, int action, int panel_m
->>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, 
->>> index, &frev, &crev))
->>>           return;
->>>   +    memset(&args, 0, sizeof(args));
->>> +
->>>       switch (frev) {
->>>       case 1:
->>>           switch (crev) {
->>> @@ -1453,11 +1453,11 @@ atombios_external_encoder_setup(struct 
->>> drm_encoder *encoder,
->>>               (radeon_connector->connector_object_id & 
->>> OBJECT_ID_MASK) >> OBJECT_ID_SHIFT;
->>>       }
->>>   -    memset(&args, 0, sizeof(args));
->>> -
->>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, 
->>> index, &frev, &crev))
->>>           return;
->>>   +    memset(&args, 0, sizeof(args));
->>> +
->>>       switch (frev) {
->>>       case 1:
->>>           /* no params on frev 1 */
->>> @@ -1853,11 +1853,11 @@ atombios_set_encoder_crtc_source(struct 
->>> drm_encoder *encoder)
->>>       uint8_t frev, crev;
->>>       struct radeon_encoder_atom_dig *dig;
->>>   -    memset(&args, 0, sizeof(args));
->>> -
->>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, 
->>> index, &frev, &crev))
->>>           return;
->>>   +    memset(&args, 0, sizeof(args));
->>> +
->>>       switch (frev) {
->>>       case 1:
->>>           switch (crev) {
->>> @@ -2284,11 +2284,11 @@ atombios_dac_load_detect(struct drm_encoder 
->>> *encoder, struct drm_connector *conn
->>>           int index = GetIndexIntoMasterTable(COMMAND, 
->>> DAC_LoadDetection);
->>>           uint8_t frev, crev;
->>>   -        memset(&args, 0, sizeof(args));
->>> -
->>>           if (!atom_parse_cmd_header(rdev->mode_info.atom_context, 
->>> index, &frev, &crev))
->>>               return false;
->>>   +        memset(&args, 0, sizeof(args));
->>> +
->>>           args.sDacload.ucMisc = 0;
->>>             if ((radeon_encoder->encoder_id == 
->>> ENCODER_OBJECT_ID_INTERNAL_DAC1) ||
->>
->
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--26Ts1a7RHFR28Ciy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmidz7QACgkQJNaLcl1U
+h9APVQf/YnqKllwDRDiIIGWMVHtBkfho9cnPBwueuQ1V9ZFiNm7FEukey7RhCnZC
+fTROTjTYkfdUi04Jn+aEKXRVlPQj2rJ7CEPSYChYcnSj41ryV5qbYnnVMwUIw2oq
+BzHvbn9/Us4kdwkFJgnWJU7hrTz6dDwbskbxSzdK3UbIY1oHZcK5amfbcXWaUtsw
+ROBg4iHi7GPujPWOcQZ3fqfu9XBZJnyud6lzQWbYbTYdO9RSdhwysOz52+pEokT/
+hytAS5tIBoKa7fM4x4YRX9O8yAbe6FkaxpmxTEz+lM0Q1+dBr80WfFoAhTzUESrY
+BiU9y2resJUA90FuCCnIXaeMpWozaw==
+=uI9m
+-----END PGP SIGNATURE-----
+
+--26Ts1a7RHFR28Ciy--
 
