@@ -1,369 +1,420 @@
-Return-Path: <linux-kernel+bounces-769375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC13B26D8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:24:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D68EB26D80
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADD8F5E64B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:24:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9B0C5E50BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263AF305E23;
-	Thu, 14 Aug 2025 17:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74733259C92;
+	Thu, 14 Aug 2025 17:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HcJp8o/Y"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ld/rX9Wx"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C000F30149E;
-	Thu, 14 Aug 2025 17:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAAA1FFC5E;
+	Thu, 14 Aug 2025 17:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755192160; cv=none; b=hURI6jJgLoIEH1tsePdGAsgxmYLKXKdgczkDPOD6NK5f3ir1JmiPR3TI+gwh4Tmuq6pkM0Gid6jtzhiZjXIYPwpiWm7e1RCHivPQ74ZNY5phzIn/Ea/6lKR6Ei4M08/IhIDQMFjb6NYZPIuZYZUwDXDowY0QAIlkwKQVubYWy1o=
+	t=1755192151; cv=none; b=ufzD26LTXtm5Yw0Q9/KKdMBd6unPkwNslmJmx1z5q41CcUFARlp8jNuXls+E+fnZb7llI3h5tFGLGssheywkYi2PE6LfJst9emtZDYxAswmLRiKepTCYafpOgZ3y/AcujhOgLf7VRkwIK8iEQZ1XZG0dsFwTHTJUR+ag82yDW9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755192160; c=relaxed/simple;
-	bh=M4TPYzZp4OdVlLGt/hFzuO36iWBf3nEMvUFomb7pdcs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bJssi8t/e1nZd05QzWMqMZK/pRtzSKg6KYSWmHsBP6ARWlBn3W5TnwgFvPsl6FJwGKO29RRZkQqw9RwLzASBH/4NmSqTvoSuXKTFypgyYegDxyYmjL5ixh3nTFzhzIxZ2bK3xFA4DnwvfBULJ1c7z7rGfMZ5j6RxehtjiIclx9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HcJp8o/Y; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0TSM6wiN7+0xaf/TZVXiizqDgESUpJS6CI+RSwry49o=; b=HcJp8o/YbCUw0CdWC09kAiTC9e
-	i5PvwTp5l3qGbvC4kthp7K0crSZ7FFJFe3xsyj7slHbj8DH3vgEfA5BZpV28DWZT4COuVFvUs1zAm
-	uvP2gZ8sgMq6eJjickHAtQZthf6AZeHU4FHRkFN4SAK/1BVfm/3Icn5PQLHrlf7CFuRYdQ2nGtfzK
-	ewkWK0XtjQlKue7LTmXjzKO9oGpejgiIXTjg2l3Sx3Uyn3kYtofkbJnxLdjOUzeOi9QLB2X3SLULc
-	hIng7+kfhTWqpXBgiuZQyGhvafmsZ+wT5HruqJi9gPzdFsUgfuE4qB4gDpwjYo9pDsezuRmVTT5Po
-	9znPsM6A==;
-Received: from [152.250.7.37] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1umbeq-00EDyT-UG; Thu, 14 Aug 2025 19:22:33 +0200
-From: =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-Date: Thu, 14 Aug 2025 14:22:15 -0300
-Subject: [PATCH v5 4/9] ovl: Create ovl_casefold() to support casefolded
- strncmp()
+	s=arc-20240116; t=1755192151; c=relaxed/simple;
+	bh=G5P4+me26sPNHknZkYibN01hgCTYowPoaAXZp8FJp6k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rddCN56qApH42RtLswz1hIMCdYGdZk2YWYxr5w156xnSAVNxSBBNu7uc/JP+AXFzJbfESJQ/jmuLgrNJHk17Nali5CtW0t1DZ5Gbu1dKQX8JL7jnkQj5YL7Xs3VLUrS6DVN4l/W1pRg7H9f2voHrkAivLpYhC5lLRewhz7x/FL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ld/rX9Wx; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6188b690517so1793080a12.1;
+        Thu, 14 Aug 2025 10:22:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755192148; x=1755796948; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=10xMxh3sX4gZhqE8zSq87DBH/08EuImp6mj0IxtcZoE=;
+        b=ld/rX9WxjXEQ0Ef810ubU/gftLVgO+OKVOTd5Q6qNW6EMXlyRqdBa/9hzmNWkZslUV
+         /CO6k3UqrRDv8RBJMMc77eQesRE7ID1jBHO3hcJ25NLES10iABlJH7zYbfhOK6uHulso
+         /XG8qAx5KBQ6cMW6ktW9PvMp4cjhn5JdDac3AfquNShBnB6F2tzZPZs5s2kWHiZWx9/a
+         Vwmyk4IRq5rdNGK3do73LEyQA7TaUc98aCnHn9JOosguDyx0tMwp9sCIJWFCl3wDQqb9
+         61saecZkbseVmFL7g9bZ33ht5v3wCdoUkpnOyaihVBj86SnxNY+iiMQXpZ1t4gmEl7hu
+         yreQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755192148; x=1755796948;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=10xMxh3sX4gZhqE8zSq87DBH/08EuImp6mj0IxtcZoE=;
+        b=HyMEdCBtaO+DrRL30CNXvzzCoBZRDnBTrG7D7iRRy/AGneTE8PBOfXTMvH/wOei+kl
+         S/ONScrz19wIGJjwXvkh002v1LLk9hDeHxxaUf59bfl4YA167tGmtNMf4Od+u54hKypP
+         +rf+GgUAk6o1JWfXVUtbmu/j6cvA2QNrQiGU7FySt8x0LPqPHuVXyptwH/CVMX5LeQym
+         ul6BHw4eu4vn/wzdZb0GHSrkwhUsfn+M09C0ZMQoUsAu7QbWRN4MenpPZdaR4iWxOMRt
+         rpZl7C5DxcqM3rZoYQW7AwyQzWrlslWDrHsLuwkyOpiIVP0RPcrc+LgsV/mMp821Pc/a
+         lB1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVAAt1FmkZ0BJrdKphhsSMZsCNFtIxss7G9+CaCtz0ZyyogGiQOaz4sDJnozLFcPLDa0R4krLtYchVdxQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmM3QoM7R9aToDg2QrngQjUDSQHK4hztYDuZmCf7Jty8nH8QR7
+	+MKLwnJ5ze7xUKPd+C31w4SZBpnNzf4E1LNESMQeCqunCefwbM8Gya+LoHsY13ekDZo=
+X-Gm-Gg: ASbGncuUmmYB6PrgJ0WsTTZF2RE9DjdUhRMYX2PPwpiz6KlsFRXB/u8kySj75ku8WIQ
+	NZUm7pPlLVIeElhsrDQyuWNwpTsGHbdyCfdKycz8CY+2JlKLkTAaa78RsOdYpmqh2yy2p6rhMip
+	C1b4gOM0ME7QPhb2n73fQGJerWEo+VhZIwQlZ92/gxxkY3Bl/0zh1w75LFQl00s9xzgIu0wf4os
+	zdGCUtSBXjznmUAByA0WGvQ91lzDn+s6ge1n/d5CxQdJmht+kP4t5Q59zEZCmnmKVnTV/lU5ZrH
+	qgPlq/Pd2ZzZ8oYQTOg5qWfQ1c03NbcbXh7YhcppLpYI0+z6cEe7Mqlxnu5hFcXE+XNVhbQYHYC
+	a/mgVgdm838sBiuHinmNsy+/7b2Js8SI5YKlOuxHEY5EN9fFNo2BzL91C9NQOnMN9giiVzm4Khx
+	ykyPeaJA==
+X-Google-Smtp-Source: AGHT+IHhMOw4IUsuHlLzRi8DdU+Fd0jgaZEa7UnTvvgiR+SIG77bGAOigkPScYJCIvDPyKrS0pXV8Q==
+X-Received: by 2002:a05:6402:5106:b0:617:b662:22aa with SMTP id 4fb4d7f45d1cf-6188bb2f7f2mr3086316a12.30.1755192147418;
+        Thu, 14 Aug 2025 10:22:27 -0700 (PDT)
+Received: from localhost.localdomain (93-87-121-223.dynamic.isp.telekom.rs. [93.87.121.223])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f2c265sm23774115a12.26.2025.08.14.10.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 10:22:27 -0700 (PDT)
+From: =?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	=?UTF-8?q?=C5=A0erif=20Rami?= <ramiserifpersia@gmail.com>
+Subject: [PATCH v6 1/7] ALSA: usb-audio: Add initial driver for TASCAM US-144MKII
+Date: Thu, 14 Aug 2025 19:22:16 +0200
+Message-Id: <20250814172222.9448-2-ramiserifpersia@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250814172222.9448-1-ramiserifpersia@gmail.com>
+References: <20250814172222.9448-1-ramiserifpersia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250814-tonyk-overlayfs-v5-4-c5b80a909cbd@igalia.com>
-References: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
-In-Reply-To: <20250814-tonyk-overlayfs-v5-0-c5b80a909cbd@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
- Theodore Tso <tytso@mit.edu>, Gabriel Krisman Bertazi <krisman@kernel.org>
-Cc: linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- kernel-dev@igalia.com, 
- =?utf-8?q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-X-Mailer: b4 0.14.2
 
-To add overlayfs support casefold layers, create a new function
-ovl_casefold(), to be able to do case-insensitive strncmp().
+This patch introduces a new driver for the TASCAM US-144MKII USB
+audio/MIDI interface.
 
-ovl_casefold() allocates a new buffer and stores the casefolded version
-of the string on it. If the allocation or the casefold operation fails,
-fallback to use the original string.
+It includes the basic driver structure for probing and disconnecting from
+the USB device. It correctly identifies the device using its VID/PID,
+performs the necessary initial handshake, and sets the required USB
+interface alternate settings to prepare the device for operation.
 
-The case-insentive name is then used in the rb-tree search/insertion
-operation. If the name is found in the rb-tree, the name can be
-discarded and the buffer is freed. If the name isn't found, it's then
-stored at struct ovl_cache_entry to be used later.
+At this point, no ALSA devices (PCM or MIDI) are created. This commit
+forms the foundational skeleton upon which audio and MIDI functionality
+will be built.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
+Signed-off-by: Šerif Rami <ramiserifpersia@gmail.com>
 ---
-Changes from v4:
- - Move the consumer/free buffer logic out to the caller
- - s/aux/c_name
+ sound/usb/usx2y/us144mkii.c | 250 ++++++++++++++++++++++++++++++++++++
+ sound/usb/usx2y/us144mkii.h |  38 ++++++
+ 2 files changed, 288 insertions(+)
+ create mode 100644 sound/usb/usx2y/us144mkii.c
+ create mode 100644 sound/usb/usx2y/us144mkii.h
 
-Changes from v3:
- - Improve commit message text
- - s/OVL_NAME_LEN/NAME_MAX
- - drop #ifdef in favor of if(IS_ENABLED)
- - use new helper sb_encoding
- - merged patch "Store casefold name..." and "Create ovl_casefold()..."
- - Guard all the casefolding inside of IS_ENABLED(UNICODE)
-
-Changes from v2:
-- Refactor the patch to do a single kmalloc() per rb_tree operation
-- Instead of casefolding the cache entry name everytime per strncmp(),
-  casefold it once and reuse it for every strncmp().
----
- fs/overlayfs/readdir.c | 115 +++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 97 insertions(+), 18 deletions(-)
-
-diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
-index b65cdfce31ce27172d28d879559f1008b9c87320..803ac6a7516d0156ae7793ee1ff884dbbf2e20b0 100644
---- a/fs/overlayfs/readdir.c
-+++ b/fs/overlayfs/readdir.c
-@@ -27,6 +27,8 @@ struct ovl_cache_entry {
- 	bool is_upper;
- 	bool is_whiteout;
- 	bool check_xwhiteout;
-+	const char *cf_name;
-+	int cf_len;
- 	char name[];
- };
- 
-@@ -45,6 +47,7 @@ struct ovl_readdir_data {
- 	struct list_head *list;
- 	struct list_head middle;
- 	struct ovl_cache_entry *first_maybe_whiteout;
-+	struct unicode_map *map;
- 	int count;
- 	int err;
- 	bool is_upper;
-@@ -66,6 +69,27 @@ static struct ovl_cache_entry *ovl_cache_entry_from_node(struct rb_node *n)
- 	return rb_entry(n, struct ovl_cache_entry, node);
- }
- 
-+static int ovl_casefold(struct unicode_map *map, const char *str, int len, char **dst)
+diff --git a/sound/usb/usx2y/us144mkii.c b/sound/usb/usx2y/us144mkii.c
+new file mode 100644
+index 000000000000..00d13b039589
+--- /dev/null
++++ b/sound/usb/usx2y/us144mkii.c
+@@ -0,0 +1,250 @@
++// SPDX-License-Identifier: GPL-2.0-only
++// Copyright (c) 2025 Šerif Rami <ramiserifpersia@gmail.com>
++/*
++ * ALSA Driver for TASCAM US-144MKII Audio Interface
++ */
++
++#include "us144mkii.h"
++
++MODULE_AUTHOR("Šerif Rami <ramiserifpersia@gmail.com>");
++MODULE_DESCRIPTION("ALSA Driver for TASCAM US-144MKII");
++MODULE_LICENSE("GPL");
++
++/**
++ * @brief Module parameters for ALSA card instantiation.
++ *
++ * These parameters allow users to configure how the ALSA sound card
++ * for the TASCAM US-144MKII is instantiated.
++ *
++ * @param index: Array of integers specifying the ALSA card index for each
++ * device. Defaults to -1 (automatic).
++ * @param id: Array of strings specifying the ALSA card ID for each device.
++ *            Defaults to "US144MKII".
++ * @param enable: Array of booleans to enable or disable each device.
++ *                Defaults to {1, 0, ..., 0} (first device enabled).
++ * @param dev_idx: Internal counter for probed TASCAM devices.
++ */
++static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;
++static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;
++static bool enable[SNDRV_CARDS] = { 1, [1 ...(SNDRV_CARDS - 1)] = 0 };
++static int dev_idx;
++
++static int tascam_probe(struct usb_interface *intf,
++			const struct usb_device_id *usb_id);
++static void tascam_disconnect(struct usb_interface *intf);
++static int tascam_suspend(struct usb_interface *intf, pm_message_t message);
++static int tascam_resume(struct usb_interface *intf);
++
++/**
++ * tascam_card_private_free() - Frees private data for the sound card.
++ * card.
++ * @card: Pointer to the ALSA sound card instance.
++ *
++ * This function is called when the sound card is being freed. It releases
++ * the reference to the USB device.
++ */
++static void tascam_card_private_free(struct snd_card *card)
 +{
-+	const struct qstr qstr = { .name = str, .len = len };
-+	int cf_len;
++	struct tascam_card *tascam = card->private_data;
 +
-+	if (!IS_ENABLED(CONFIG_UNICODE) || !map || is_dot_dotdot(str, len))
-+		return 0;
++	if (tascam && tascam->dev) {
++		usb_put_dev(tascam->dev);
++		tascam->dev = NULL;
++	}
++}
 +
-+	*dst = kmalloc(NAME_MAX, GFP_KERNEL);
++/**
++ * tascam_probe() - Probes for the TASCAM US-144MKII device.
++ * @intf: The USB interface being probed.
++ * @usb_id: The USB device ID.
++ *
++ * This function is the entry point for the USB driver on device match.
++ * is found. It performs initial device setup, including:
++ * - Checking for the second interface (MIDI) and associating it.
++ * - Performing a vendor-specific handshake with the device.
++ * - Setting alternate settings for USB interfaces.
++ * - Creating and registering the ALSA sound card.
++ *
++ * Return: 0 on success, or a negative error code on failure.
++ */
++static int tascam_probe(struct usb_interface *intf,
++			const struct usb_device_id *usb_id)
++{
++	struct usb_device *dev = interface_to_usbdev(intf);
++	struct snd_card *card;
++	struct tascam_card *tascam;
++	int err;
++	char *handshake_buf __free(kfree) = NULL;
 +
-+	if (dst) {
-+		cf_len = utf8_casefold(map, &qstr, *dst, NAME_MAX);
++	if (dev->speed != USB_SPEED_HIGH)
++		dev_info(
++			&dev->dev,
++			"Device is connected to a USB 1.1 port, this is not supported.\n");
 +
-+		if (cf_len > 0)
-+			return cf_len;
++	/* The device has two interfaces; we drive both from this driver. */
++	if (intf->cur_altsetting->desc.bInterfaceNumber == 1) {
++		tascam = usb_get_intfdata(usb_ifnum_to_if(dev, 0));
++		if (tascam) {
++			usb_set_intfdata(intf, tascam);
++			tascam->iface1 = intf;
++		}
++		return 0; /* Let the core handle this interface */
 +	}
 +
-+	kfree(*dst);
++	if (dev_idx >= SNDRV_CARDS) {
++		dev_err(&dev->dev, "Too many TASCAM devices present");
++		return -ENODEV;
++	}
++
++	if (!enable[dev_idx]) {
++		dev_info(&dev->dev, "TASCAM US-144MKII device disabled");
++		return -ENOENT;
++	}
++
++	handshake_buf = kmalloc(1, GFP_KERNEL);
++	if (!handshake_buf)
++		return -ENOMEM;
++
++	/* Perform vendor-specific handshake */
++	err = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0),
++			      VENDOR_REQ_MODE_CONTROL, RT_D2H_VENDOR_DEV,
++			      MODE_VAL_HANDSHAKE_READ, 0x0000, handshake_buf, 1,
++			      USB_CTRL_TIMEOUT_MS);
++	if (err < 0) {
++		dev_err(&dev->dev, "Handshake read failed with %d\n", err);
++		return err;
++	}
++
++	if (handshake_buf[0] != 0x12 && handshake_buf[0] != 0x16 &&
++	    handshake_buf[0] != 0x30) {
++		dev_err(&dev->dev, "Unexpected handshake value: 0x%x\n",
++			handshake_buf[0]);
++		return -ENODEV;
++	}
++
++	/* Set alternate settings to enable audio/MIDI endpoints */
++	err = usb_set_interface(dev, 0, 1);
++	if (err < 0) {
++		dev_err(&dev->dev,
++			"Failed to set alt setting 1 on interface 0: %d\n",
++			err);
++		return err;
++	}
++
++	err = usb_set_interface(dev, 1, 1);
++	if (err < 0) {
++		dev_err(&dev->dev,
++			"Failed to set alt setting 1 on interface 1: %d\n",
++			err);
++		return err;
++	}
++
++	err = snd_card_new(&dev->dev, index[dev_idx], id[dev_idx], THIS_MODULE,
++			   sizeof(struct tascam_card), &card);
++	if (err < 0) {
++		dev_err(&dev->dev, "Failed to create sound card instance\n");
++		return err;
++	}
++
++	tascam = card->private_data;
++	card->private_free = tascam_card_private_free;
++	tascam->dev = usb_get_dev(dev);
++	tascam->card = card;
++	tascam->iface0 = intf;
++	tascam->digital_out_source = 1;
++	tascam->capture_34_source = 1;
++
++	strscpy(card->driver, DRIVER_NAME, sizeof(card->driver));
++	if (dev->descriptor.idProduct == USB_PID_TASCAM_US144) {
++		strscpy(card->shortname, "TASCAM US-144",
++			sizeof(card->shortname));
++	} else if (dev->descriptor.idProduct == USB_PID_TASCAM_US144MKII) {
++		strscpy(card->shortname, "TASCAM US-144MKII",
++			sizeof(card->shortname));
++	} else {
++		strscpy(card->shortname, "TASCAM Unknown",
++			sizeof(card->shortname));
++	}
++	snprintf(card->longname, sizeof(card->longname), "%s (%04x:%04x) at %s",
++		 card->shortname, USB_VID_TASCAM, dev->descriptor.idProduct,
++		 dev_name(&dev->dev));
++
++	err = snd_card_register(card);
++	if (err < 0)
++		goto free_card;
++
++	usb_set_intfdata(intf, tascam);
++
++	dev_idx++;
++	return 0;
++
++free_card:
++	snd_card_free(card);
++	return err;
++}
++
++/**
++ * tascam_disconnect() - Disconnects the TASCAM US-144MKII device.
++ * @intf: The USB interface being disconnected.
++ *
++ * This function is called when the device is disconnected from the system.
++ * It cleans up all allocated resources by freeing the sound card.
++ */
++static void tascam_disconnect(struct usb_interface *intf)
++{
++	struct tascam_card *tascam = usb_get_intfdata(intf);
++
++	if (!tascam)
++		return;
++
++	if (intf->cur_altsetting->desc.bInterfaceNumber == 0) {
++		snd_card_disconnect(tascam->card);
++		snd_card_free(tascam->card);
++		dev_idx--;
++	}
++}
++
++/**
++ * tascam_suspend() - Handles device suspension.
++ * @intf: The USB interface being suspended.
++ * @message: Power management message.
++ *
++ * This function is a stub for handling device suspension.
++ *
++ * Return: 0 on success.
++ */
++static int tascam_suspend(struct usb_interface *intf, pm_message_t message)
++{
 +	return 0;
 +}
 +
- static bool ovl_cache_entry_find_link(const char *name, int len,
- 				      struct rb_node ***link,
- 				      struct rb_node **parent)
-@@ -79,7 +103,7 @@ static bool ovl_cache_entry_find_link(const char *name, int len,
- 
- 		*parent = *newp;
- 		tmp = ovl_cache_entry_from_node(*newp);
--		cmp = strncmp(name, tmp->name, len);
-+		cmp = strncmp(name, tmp->cf_name, tmp->cf_len);
- 		if (cmp > 0)
- 			newp = &tmp->node.rb_right;
- 		else if (cmp < 0 || len < tmp->len)
-@@ -101,7 +125,7 @@ static struct ovl_cache_entry *ovl_cache_entry_find(struct rb_root *root,
- 	while (node) {
- 		struct ovl_cache_entry *p = ovl_cache_entry_from_node(node);
- 
--		cmp = strncmp(name, p->name, len);
-+		cmp = strncmp(name, p->cf_name, p->cf_len);
- 		if (cmp > 0)
- 			node = p->node.rb_right;
- 		else if (cmp < 0 || len < p->len)
-@@ -145,13 +169,16 @@ static bool ovl_calc_d_ino(struct ovl_readdir_data *rdd,
- 
- static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_data *rdd,
- 						   const char *name, int len,
-+						   const char *cf_name, int cf_len,
- 						   u64 ino, unsigned int d_type)
- {
- 	struct ovl_cache_entry *p;
- 
- 	p = kmalloc(struct_size(p, name, len + 1), GFP_KERNEL);
--	if (!p)
-+	if (!p) {
-+		kfree(cf_name);
- 		return NULL;
-+	}
- 
- 	memcpy(p->name, name, len);
- 	p->name[len] = '\0';
-@@ -167,6 +194,14 @@ static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_data *rdd,
- 	/* Defer check for overlay.whiteout to ovl_iterate() */
- 	p->check_xwhiteout = rdd->in_xwhiteouts_dir && d_type == DT_REG;
- 
-+	if (cf_name && cf_name != name) {
-+		p->cf_name = cf_name;
-+		p->cf_len = cf_len;
-+	} else {
-+		p->cf_name = p->name;
-+		p->cf_len = len;
-+	}
++/**
++ * tascam_resume() - Handles device resumption from suspend.
++ * @intf: The USB interface being resumed.
++ *
++ * This function is a stub for handling device resumption.
++ *
++ * Return: 0 on success.
++ */
++static int tascam_resume(struct usb_interface *intf)
++{
++	return 0;
++}
 +
- 	if (d_type == DT_CHR) {
- 		p->next_maybe_whiteout = rdd->first_maybe_whiteout;
- 		rdd->first_maybe_whiteout = p;
-@@ -174,48 +209,55 @@ static struct ovl_cache_entry *ovl_cache_entry_new(struct ovl_readdir_data *rdd,
- 	return p;
- }
- 
--static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
--				  const char *name, int len, u64 ino,
-+/* Return 0 for found, 1 for added, <0 for error */
-+static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
-+				  const char *name, int len,
-+				  const char *cf_name, int cf_len,
-+				  u64 ino,
- 				  unsigned int d_type)
- {
- 	struct rb_node **newp = &rdd->root->rb_node;
- 	struct rb_node *parent = NULL;
- 	struct ovl_cache_entry *p;
- 
--	if (ovl_cache_entry_find_link(name, len, &newp, &parent))
--		return true;
-+	if (ovl_cache_entry_find_link(cf_name, cf_len, &newp, &parent))
-+		return 0;
- 
--	p = ovl_cache_entry_new(rdd, name, len, ino, d_type);
-+	p = ovl_cache_entry_new(rdd, name, len, cf_name, cf_len, ino, d_type);
- 	if (p == NULL) {
- 		rdd->err = -ENOMEM;
--		return false;
-+		return -ENOMEM;
- 	}
- 
- 	list_add_tail(&p->l_node, rdd->list);
- 	rb_link_node(&p->node, parent, newp);
- 	rb_insert_color(&p->node, rdd->root);
- 
--	return true;
-+	return 1;
- }
- 
--static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
-+/* Return 0 for found, 1 for added, <0 for error */
-+static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
- 			   const char *name, int namelen,
-+			   const char *cf_name, int cf_len,
- 			   loff_t offset, u64 ino, unsigned int d_type)
- {
- 	struct ovl_cache_entry *p;
- 
--	p = ovl_cache_entry_find(rdd->root, name, namelen);
-+	p = ovl_cache_entry_find(rdd->root, cf_name, cf_len);
- 	if (p) {
- 		list_move_tail(&p->l_node, &rdd->middle);
-+		return 0;
- 	} else {
--		p = ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
-+		p = ovl_cache_entry_new(rdd, name, namelen, cf_name, cf_len,
-+					ino, d_type);
- 		if (p == NULL)
- 			rdd->err = -ENOMEM;
- 		else
- 			list_add_tail(&p->l_node, &rdd->middle);
- 	}
- 
--	return rdd->err == 0;
-+	return rdd->err ?: 1;
- }
- 
- void ovl_cache_free(struct list_head *list)
-@@ -223,8 +265,11 @@ void ovl_cache_free(struct list_head *list)
- 	struct ovl_cache_entry *p;
- 	struct ovl_cache_entry *n;
- 
--	list_for_each_entry_safe(p, n, list, l_node)
-+	list_for_each_entry_safe(p, n, list, l_node) {
-+		if (p->cf_name != p->name)
-+			kfree(p->cf_name);
- 		kfree(p);
-+	}
- 
- 	INIT_LIST_HEAD(list);
- }
-@@ -260,12 +305,38 @@ static bool ovl_fill_merge(struct dir_context *ctx, const char *name,
- {
- 	struct ovl_readdir_data *rdd =
- 		container_of(ctx, struct ovl_readdir_data, ctx);
-+	struct ovl_fs *ofs = OVL_FS(rdd->dentry->d_sb);
-+	char *cf_name = NULL;
-+	int c_len = 0;
-+	int ret;
++static const struct usb_device_id tascam_usb_ids[] = {
++	{ USB_DEVICE(USB_VID_TASCAM, USB_PID_TASCAM_US144) },
++	{ USB_DEVICE(USB_VID_TASCAM, USB_PID_TASCAM_US144MKII) },
++	{ /* Terminating entry */ }
++};
++MODULE_DEVICE_TABLE(usb, tascam_usb_ids);
 +
-+	const char *c_name = NULL;
++static struct usb_driver tascam_alsa_driver = {
++	.name = DRIVER_NAME,
++	.probe = tascam_probe,
++	.disconnect = tascam_disconnect,
++	.suspend = tascam_suspend,
++	.resume = tascam_resume,
++	.id_table = tascam_usb_ids,
++};
 +
-+	if (ofs->casefold)
-+		c_len = ovl_casefold(rdd->map, name, namelen, &cf_name);
++module_usb_driver(tascam_alsa_driver);
+diff --git a/sound/usb/usx2y/us144mkii.h b/sound/usb/usx2y/us144mkii.h
+new file mode 100644
+index 000000000000..9f59863fab57
+--- /dev/null
++++ b/sound/usb/usx2y/us144mkii.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++// Copyright (c) 2025 Šerif Rami <ramiserifpersia@gmail.com>
 +
-+	if (c_len <= 0) {
-+		c_name = name;
-+		c_len = namelen;
-+	} else {
-+		c_name = cf_name;
-+	}
- 
- 	rdd->count++;
- 	if (!rdd->is_lowest)
--		return ovl_cache_entry_add_rb(rdd, name, namelen, ino, d_type);
-+		ret = ovl_cache_entry_add_rb(rdd, name, namelen, c_name, c_len, ino, d_type);
- 	else
--		return ovl_fill_lowest(rdd, name, namelen, offset, ino, d_type);
-+		ret = ovl_fill_lowest(rdd, name, namelen, c_name, c_len, offset, ino, d_type);
++#ifndef __US144MKII_H
++#define __US144MKII_H
 +
-+	/*
-+	 * If ret == 1, that means that c_name is being used as part of struct
-+	 * ovl_cache_entry and will be freed at ovl_cache_free(). Otherwise,
-+	 * c_name was found in the rb-tree so we can free it here.
-+	 */
-+	if (ret != 1 && c_name != name)
-+		kfree(c_name);
++#include <linux/usb.h>
++#include <sound/core.h>
++#include <sound/initval.h>
 +
-+	return ret >= 0;
- }
- 
- static int ovl_check_whiteouts(const struct path *path, struct ovl_readdir_data *rdd)
-@@ -357,12 +428,18 @@ static int ovl_dir_read_merged(struct dentry *dentry, struct list_head *list,
- 		.list = list,
- 		.root = root,
- 		.is_lowest = false,
-+		.map = NULL,
- 	};
- 	int idx, next;
- 	const struct ovl_layer *layer;
-+	struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
- 
- 	for (idx = 0; idx != -1; idx = next) {
- 		next = ovl_path_next(idx, dentry, &realpath, &layer);
++#define DRIVER_NAME "us144mkii"
 +
-+		if (ofs->casefold)
-+			rdd.map = sb_encoding(realpath.dentry->d_sb);
++/* --- USB Device Identification --- */
++#define USB_VID_TASCAM 0x0644
++#define USB_PID_TASCAM_US144 0x800f
++#define USB_PID_TASCAM_US144MKII 0x8020
 +
- 		rdd.is_upper = ovl_dentry_upper(dentry) == realpath.dentry;
- 		rdd.in_xwhiteouts_dir = layer->has_xwhiteouts &&
- 					ovl_dentry_has_xwhiteouts(dentry);
-@@ -555,7 +632,7 @@ static bool ovl_fill_plain(struct dir_context *ctx, const char *name,
- 		container_of(ctx, struct ovl_readdir_data, ctx);
- 
- 	rdd->count++;
--	p = ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
-+	p = ovl_cache_entry_new(rdd, name, namelen, NULL, 0, ino, d_type);
- 	if (p == NULL) {
- 		rdd->err = -ENOMEM;
- 		return false;
-@@ -1023,6 +1100,8 @@ int ovl_check_empty_dir(struct dentry *dentry, struct list_head *list)
- 
- del_entry:
- 		list_del(&p->l_node);
-+		if (p->cf_name != p->name)
-+			kfree(p->cf_name);
- 		kfree(p);
- 	}
- 
-
++/* --- USB Control Message Protocol --- */
++#define RT_D2H_VENDOR_DEV (USB_DIR_IN|USB_TYPE_VENDOR|USB_RECIP_DEVICE)
++#define VENDOR_REQ_MODE_CONTROL 0x49
++#define MODE_VAL_HANDSHAKE_READ 0x0000
++#define USB_CTRL_TIMEOUT_MS 1000
++
++/**
++ * struct tascam_card - Driver data structure for TASCAM US-144MKII.
++ * @dev: Pointer to the USB device.
++ * @iface0: Pointer to USB interface 0 (audio).
++ * @iface1: Pointer to USB interface 1 (MIDI).
++ * @card: Pointer to the ALSA sound card instance.
++ */
++struct tascam_card {
++	struct usb_device *dev;
++	struct usb_interface *iface0;
++	struct usb_interface *iface1;
++	struct snd_card *card;
++};
++
++ #endif /* __US144MKII_H */
 -- 
-2.50.1
+2.39.5
 
 
