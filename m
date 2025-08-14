@@ -1,56 +1,61 @@
-Return-Path: <linux-kernel+bounces-769559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294B8B27055
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:47:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF76B27057
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8E603AD9B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:46:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444BA5C0A5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9985C272E42;
-	Thu, 14 Aug 2025 20:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BC4272E5D;
+	Thu, 14 Aug 2025 20:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P6FBNlZ8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyljDCIn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F20192D97;
-	Thu, 14 Aug 2025 20:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5DA26FA46;
+	Thu, 14 Aug 2025 20:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755204415; cv=none; b=dw6zv83PBDErfYMCrF6q6Dpq/ZwldMLAhd86jhCiJz/CnbOaQmJKyLYCNP+L5pQUuDn0FvOhV0CmDwonL2GtoD1OHuBW3+NLDOHgQPS3AmQ++E72ABew5VEtJqhCUbIPFnfmPxCa0hODI4BbwC33M8VUU5P3TMQ1tGacJv42jCI=
+	t=1755204476; cv=none; b=YqYbZEeJ839OvBWtlIiJA40bSnA4M1yJzX7SzR2wSxst6yds8RT+7AO7QlP+sTfvG2ggJ3EqGD2qfNIxIjWH9c4O0vP+YVue0kA8+oaWZv/kleQdlHAOfNZFSGk8Fjnw5/+Xr/eN1gDeese35r/UgRevnRFnIr5Ihjvo0iTMZJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755204415; c=relaxed/simple;
-	bh=neGWU7vECFARydWtFvZZfMZV4xCQwz1K7pRfXsgrrok=;
+	s=arc-20240116; t=1755204476; c=relaxed/simple;
+	bh=dW2X3K+YNEEybIjB/hvQn0QPs5bkqXpod+RF3HGN1Ww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CSaMkgLQWigdPKc8WBPfleSBRfXUsSGvrw/OY9dS69E+15YR7O8yf6C4u0wUZs1CdvB4XVV/3hPx2mei0j3UbcX5A8PvnF0LHjBIIiCw5oZS9f0MdAhtERLVma1p1MfUri+mdyzOM6apBGxPlSO5pfULBcDjqPlNMtOQgB7ZQug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P6FBNlZ8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34ED3C4CEED;
-	Thu, 14 Aug 2025 20:46:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TNo+ceVhaxlRrLwbhU5aUWnpNUT8kWnCdlcCsJykzLNV0ac42QYBVNmFGal4aQXIHXmtQ+HGl0ngAdL3Vtrwd6p4lvxpYagyEAt44gwz9ew/jewJkmA4BAPr8bFJDY7L39KZ521QFbHDuMpLCw7dm127oVrfl1ujap3yl6Vp7ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyljDCIn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96ACCC4CEED;
+	Thu, 14 Aug 2025 20:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755204414;
-	bh=neGWU7vECFARydWtFvZZfMZV4xCQwz1K7pRfXsgrrok=;
+	s=k20201202; t=1755204476;
+	bh=dW2X3K+YNEEybIjB/hvQn0QPs5bkqXpod+RF3HGN1Ww=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P6FBNlZ81uQctGynrhYmjQLIIqw0Xw+00fZB5IrMaeXhhrSRqBtRle4jgRm+/fV2R
-	 0KK7v6WJfox3KHjJdVINsGnXLaxXW7AVpyYEe2LIwsZr/DYIcHChmKS+nBMMTT0ioM
-	 L8HAVfNlBjZMsL37ZBMU/GMJ0dd7HUrrqu76LNKcZmocl6SYk4RX2OUuOSkxSJg0yS
-	 NuKNrX4A+pQ2oqHv0xysbifcm8zJQYvtD9tTzLZF6RKqe2J2mO5onBsFSnuaZVvc6i
-	 GvFYicjNzzignsSI5FdJujy6Ix93ridsjRkwbkUt09QnpTbHtFXNaXHojc5pBd27Rj
-	 Fx1GmF/uPxLHw==
-Date: Thu, 14 Aug 2025 21:46:49 +0100
+	b=hyljDCInxy4DZe5+LqOU5BtQaF5XM9gDosYxRaa9juQwUuvcrW1FvamJ6xPGg91DD
+	 fUXRlTttT3XiiH9eSF4b10REomGxBctST+vQl/x/jXBHI5hWswt2LY+nAp+Ik82kRx
+	 acWzZcsFBNLk6/krrevxXoKhaz3je3+uqoNuqT3eB6iUyUANeU2XLgytpA53nl8ofM
+	 744IpUoHWzklkEkIxDQopORQmjQ7MYWLp7Joh58cLQ5n/9GvAMSVh+eMzSOwJLgxwh
+	 2f3A30uAwiyXH7koz6bjOMpq47yhcxWqS7lcSmHdS1ZoCp2//pnxNfolysQfhT6z2o
+	 x2pH/NAwuISgA==
+Date: Thu, 14 Aug 2025 21:47:51 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Anshul Dalal <anshuld@ti.com>
-Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/4] dt-bindings: arm: ti: Add binding for AM625 SiP
-Message-ID: <20250814-cozily-detoxify-2af8ad2f6aa4@spud>
-References: <20250814134531.2743874-1-anshuld@ti.com>
- <20250814134531.2743874-3-anshuld@ti.com>
+To: Markus Heidelberg <m.heidelberg@cab.de>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Eggers <ceggers@arri.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Jiri Prchal <jiri.prchal@aksignal.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: eeprom: at25: use "size" for FRAMs
+ without device ID
+Message-ID: <20250814-platinum-imminent-43a126e82871@spud>
+References: <20250814111546.617131-1-m.heidelberg@cab.de>
+ <20250814111546.617131-2-m.heidelberg@cab.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,37 +63,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1u2YrZR9/qfG23tg"
+	protocol="application/pgp-signature"; boundary="t2bYXlAxP2do4p8E"
 Content-Disposition: inline
-In-Reply-To: <20250814134531.2743874-3-anshuld@ti.com>
+In-Reply-To: <20250814111546.617131-2-m.heidelberg@cab.de>
 
 
---1u2YrZR9/qfG23tg
+--t2bYXlAxP2do4p8E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 07:15:28PM +0530, Anshul Dalal wrote:
-> The AM6254atl SiP belongs to the K3 Multicore SoC architecture platform,
-> providing AM625 SoC with 512MiB of integrated DDR in the package.
->=20
-> For further information about the package check:
-> https://www.ti.com/lit/ds/symlink/am625sip.pdf
->=20
-> Signed-off-by: Anshul Dalal <anshuld@ti.com>
+On Thu, Aug 14, 2025 at 01:15:30PM +0200, Markus Heidelberg wrote:
+> Link: https://lore.kernel.org/all/20250401133148.38330-1-m.heidelberg@cab=
+=2Ede/
+> Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Missing commit message body explaining why this change is needed.
 
---1u2YrZR9/qfG23tg
+> ---
+>  Documentation/devicetree/bindings/eeprom/at25.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/eeprom/at25.yaml b/Documen=
+tation/devicetree/bindings/eeprom/at25.yaml
+> index c31e5e719525..d6fe84091ad4 100644
+> --- a/Documentation/devicetree/bindings/eeprom/at25.yaml
+> +++ b/Documentation/devicetree/bindings/eeprom/at25.yaml
+> @@ -56,6 +56,7 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      description:
+>        Total eeprom size in bytes.
+> +      Also used for FRAMs without device ID where the size cannot be det=
+ected.
+> =20
+>    address-width:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> --=20
+> 2.43.0
+>=20
+
+--t2bYXlAxP2do4p8E
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ5LOQAKCRB4tDGHoIJi
-0jRTAQDG007EXoqZ3YAvhQMuwDFk0hZscgreLteavw7D5mHFDwEAqG5AXct6syKf
-dcR5etysIhVtAL2OcqL4xUXkzpyUrgk=
-=LZZv
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ5LdwAKCRB4tDGHoIJi
+0jQSAP426ncFjNObVwHIFLzAYrq15xnNP9fneSFS5jCBOx/spwD+JhnOgosXTbLH
+2sybJAZUGxRtdwDVPEZpf1tg3JKzVgw=
+=bsl9
 -----END PGP SIGNATURE-----
 
---1u2YrZR9/qfG23tg--
+--t2bYXlAxP2do4p8E--
 
