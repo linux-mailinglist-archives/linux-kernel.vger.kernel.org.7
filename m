@@ -1,160 +1,114 @@
-Return-Path: <linux-kernel+bounces-768659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89ADB263BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:01:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFE1B263D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABA617AE553
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE218888534
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5599E2D375B;
-	Thu, 14 Aug 2025 11:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041EC2F0C66;
+	Thu, 14 Aug 2025 11:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7qTVoxT"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Hlm4Wi1T"
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67642EAB9F;
-	Thu, 14 Aug 2025 11:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57272E7F25;
+	Thu, 14 Aug 2025 11:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755169236; cv=none; b=bBmZ2zXt8i/5eVHZZ0/o9+0xJk1hZ4g/EKu4H4iRO8W76E0WqFoUgXM0UNK6NFuHxqh7rrEwbPuZvv3CTAbUFsjkdiE7JTKT8dxjy2IXCQCyCPldBvNUNU1i98TFmvAalsOZluqPqyjB06/wbPsSr8qPHFMp+L6pJL+fW+l3d9c=
+	t=1755169513; cv=none; b=igRBJWcVNbjiZLVtqU7y4YIj6IM4Ynagk2r72ujlrVc7gz6ZXuO05P4BQ2l2Cd86qT0s93iKOPNhKvxN4dWiKRK/82wFY/dFwiswoprN57CncKiaT+aNMxB805JEO8nu7pjqD1HEqIzKU90TjienBl5NTU6DsIKYYQjdz48btUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755169236; c=relaxed/simple;
-	bh=ha3TYWbV+huAwQsCRTUDSrSg0nq7+oWMtWJZ76ApaJI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Qvj867XdxlqDpOdD6XLBdvqtQktKV4l7mZhWN+k/tX9HnicYr+YVeBRQLisscQJTxrza+u2X+an6drqYWaYu3NVluG/EeeQCx6Sv6Ut2fYw1GcLx1LdCszOUlaaprgHtbgvV36Ir75o87hq2FvoczMh0jVcC4xv6fcy/+asFtm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7qTVoxT; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb73621fcso116010166b.0;
-        Thu, 14 Aug 2025 04:00:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755169233; x=1755774033; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IVqngp6d0YHayShjN7NcmU4rtRaIIuqWkl5dT+TPW6Y=;
-        b=X7qTVoxTrnD5iZ4vLXQhCv7dg8n/5otgdhrv3ZjXzQodLLWUW2/x8+l2sM7CwgmZiD
-         12QbHgyD3i9MC38NkJ0U6PThONi68zGw6UDdn5yN/mFiLJ+OGpACdmTrbIqTn0T4oAU0
-         xd16gyaHZYo0HiDIsKFswUYOa9bQvJcNh37G7mdEe2+bejhqQdgEobeYkaIxCSHi7koa
-         ovKuRwayjigJtzve78zkcHpJOaVNjc7dDI3YNfE7Bs9bkwTMdlTyJeVGk8e7Nee26nyR
-         7hlAHLwEdmf0A1+e7GMe1drdS9bowgXNpP0E2L1mNuTxcR+MKk9LUVc5CNRlOzPnhrKd
-         1aRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755169233; x=1755774033;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IVqngp6d0YHayShjN7NcmU4rtRaIIuqWkl5dT+TPW6Y=;
-        b=eZ25GEjgdyQz7UQnUiryuzPwQW3QlvxBdWMyL166RRihMd6oVcMXPTNKVbXqOARgGd
-         WlGsnb3MNnT/+SWt1ckjrBK1tBH7dJ6CEADuxJ74unyXW0ETVq11DUn7rjaDgLjYk9DN
-         6SGp7Eu/DLxa8SILcG5XCL6XUC5MwdXy+ySyaEHDNgnqoyY/MGvHcUJTp1yNyq2hBzKB
-         5E++8H59I0P53kt5Foa9FHPWwi83dWPfjsupwkmCMDLdGPvljmrXUgoX17F/pU32SWll
-         lWxmKsv1scIaKelptJ/3XyK9SVZ52HsEqzVW4/VY7+HH8qu8DGC7zyz3gHUrm8X7B8yM
-         mnRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5qmbSk0BXExHSCWygFfRUPWKVURAGc94aI68tBup28PSlPTT7V1hdSeBxru1nzy/7iGMwBC2HADWvXxmA@vger.kernel.org, AJvYcCUdkoZ5+dAvzSiE9SHXxgPwzjPq8+aMkO/AgZd5j1o3+jRQn5BY5lwsRje1bdXotQSGGgY9uT+hYJs0@vger.kernel.org, AJvYcCWBdWgk4y/n+GALc8SrzCR7lkdPcKkxpHL1PmHrcONwaXDZOM3BWMoXH8lQfsoasKkdxCKQpZONz4ir@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaaAnDM7X2Mhwy4NM2iQKcyVLQIRqkH6rBOdY8bohrHIAuoQeg
-	CbOXu3XFWhe2Wn2SaH9TV/LL7muD+5clgDkHvAT4Yl1Q0gb11EpPMKJ2
-X-Gm-Gg: ASbGncuORQ6va4e0VKODOmENhE3CIXSVCEd8lcAk6z/9neHdwEDcdVfQOeRfYvdNyY9
-	S2fBLBrfZ2jiPWF2cqkU+9aZj44HmgykV/nNCVOrfd86J/m7Fc93S78gR574Z+8YHFX6AaYQjY2
-	P3nLQHMlGskcZJ1mzJy4SVbd54q4vOZw3htZG4MLaWS0k/O/cHYsoTWwaIOv4kuTvw7mhYRnihX
-	wHQ5TIlAFa0kzJzt3CC8MXWGdvZklA4/gx5EfuoOR8FlzC7FAkomuPQOKwuheHlmOqRoMoDkc7d
-	ZFZeU5evtKDHqBCmFYm4TmAqLCI33oCA0w+B9DilZrJcnr/O7/Fq0Ic5CMwt7nXKcP9nMzkuOQE
-	CYAcTGD1VBA5RWyn4AZAYHtwMuSJd
-X-Google-Smtp-Source: AGHT+IFb4uqgKytb6JRIALaC3r7ae///g9Z/qOGjhuJ/hLXr/TVNVTsIfJAGTCy8LbQPDjrIaOnPKA==
-X-Received: by 2002:a17:907:9487:b0:ae0:ab3f:36b5 with SMTP id a640c23a62f3a-afcb981ee79mr254524466b.4.1755169233178;
-        Thu, 14 Aug 2025 04:00:33 -0700 (PDT)
-Received: from [127.0.1.1] ([185.177.137.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91dfd4b31sm2542980066b.85.2025.08.14.04.00.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 04:00:32 -0700 (PDT)
-From: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-Date: Thu, 14 Aug 2025 13:00:20 +0200
-Subject: [PATCH v3 4/4] iio: adc: ltc2497: reorder struct members to fix
- memory holes
+	s=arc-20240116; t=1755169513; c=relaxed/simple;
+	bh=GSWcwEbNvmvsPY+8tKlt/oMe4kUzsodicDKaoFAdrrQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q1RK3wKXsTm4jo95+WCrWujVVuEePMxVVa6xCWapcXcOuzkvncYC8lsZg8GT/ruULWzKfnnRHueLrM9wFh3VGTjqiYh36xB67tbdEFbqSriztztTrwNnLvHLELSRHovvJI6xkGXtmaZJvhW4sJN7Ne35ZAq9VJ3+Yhuda76VQLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Hlm4Wi1T; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1755169476;
+	bh=aFTcQ24VHBGhl7fxjJCrNseNtZvnYiuVulfETZ2Yz0s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Hlm4Wi1TdpKpbIsxdXc3FMOkXhwg0sUgDtvQznsw4KJxREOOfgo2VPCvEswnGxCnf
+	 WrrvX5XLVeVwmmuDy7AtaFyh/vp39ZCTXRo9Q2S4wej0RELs6Xt/kOM/zMsa7EMx/u
+	 8ei0CFqrygzieOI93J1M1b5Wb8VYzls1Jo1N1kt4=
+X-QQ-mid: zesmtpip3t1755169449tc5358744
+X-QQ-Originating-IP: XgWlJ2Jtuu7U1q7qZPBfqfAwbMmzZIuBeepPBsvAt7o=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 14 Aug 2025 19:04:08 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10535000667885771257
+EX-QQ-RecipientCnt: 9
+From: Morduan Zang <zhangdandan@uniontech.com>
+To: ankita@nvidia.com,
+	jgg@ziepe.ca,
+	yishaih@nvidia.com,
+	shameerali.kolothum.thodi@huawei.com,
+	kevin.tian@intel.com
+Cc: wangyuli@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	Morduan Zang <zhangdandan@uniontech.com>
+Subject: [PATCH] vfio/nvgrace-gpu: fix grammatical error
+Date: Thu, 14 Aug 2025 19:03:58 +0800
+Message-ID: <54E1ED6C5A2682C8+20250814110358.285412-1-zhangdandan@uniontech.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250814-ltc2495-v3-4-c2a6cecd6b99@gmail.com>
-References: <20250814-ltc2495-v3-0-c2a6cecd6b99@gmail.com>
-In-Reply-To: <20250814-ltc2495-v3-0-c2a6cecd6b99@gmail.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Beguin <liambeguin@gmail.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755169221; l=1743;
- i=y.alperbilgin@gmail.com; s=20250811; h=from:subject:message-id;
- bh=ha3TYWbV+huAwQsCRTUDSrSg0nq7+oWMtWJZ76ApaJI=;
- b=AAUFkHhsavrGE02LDakST86q8xbNc5p47qQxtm45rVCCHo0N+t1JNejhdY+/4DuJPXDJbui/D
- OW2xs1Rczi/BgFqc/a2zKjM//RR2j8u2LNCKtz9VkkydLJO3bfEwWY3
-X-Developer-Key: i=y.alperbilgin@gmail.com; a=ed25519;
- pk=FtW2oyQ0+xlYU0XmhYiJYC3lNPtPrgeE6i4WXPwaFnY=
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz6b-0
+X-QQ-XMAILINFO: Ocu70LrMHRlZS66ZhRzFUHrxCCDSWPiIotiDkYCdjZA9g0/VckZ3SUiO
+	qEkxdrjfZAjHWq8XadpLP8P6O+etzTnMQl9BMalCvpaK8qg3h+f7ruZEoalc4A+ksAuLuk4
+	O0KpOZVXBxOFy1Sfj3id07ioa0v3BJ7iXO5Tsvt7N3dDVA1U5+aS2ICf7UCNZnQq1k67xwN
+	PJyuO7JF3It07g4RNzOb4MhImFSPhzcBTdQW6sObUVSqvMZocjWOQ4+5f+8RtaS/HMQQ/SW
+	T/0BctcRVo1doiQI75/Vl/rwt67frAIsO2465mvwEDTmaeFbit0iE0YrvzZAj71iVbOKxMO
+	saHnnRmOBs4oMT2OgRReiojEjXPCngGUc7KeJsKW8Em6LEksdPCZQbRn8rmDeygHKPYQqoN
+	PJmPPmYBfmyYVtAxf6vmvXvhYjcmG5gK7w1EWuCC2WnH4H3DssmLLe6Bse2c6ukC03JZTRe
+	uC1XE6rtbEivpXZCnboAXo5JSzgCUy09jZ2HoVDllr/rUhYguXox/pQbCbiLIQB5V6CoK9A
+	Fi6YKVrVIUH9lrZa/d0XgwkOtcfO07iimqLahfcg/OFqxCxSV+PAltsaTx3+XHkQeEMIUEO
+	c3W+SSwoFUdoEkRsyCN9tcva9POJ996vt31zwjIdKhtf/ExD7pO3lhdFK/g6l+OoB8IFehA
+	rm5xwta8HFFqgzVCN/HdDrMPR3GEZpw2JBHo5d65U5tvwYy+4nj92fdIspZzrqKLT/INwHI
+	inuGLg9MuWpMSARvE9OnEwXFFoZEsPqqq0YM5QRBfBZr9SO/6ibKDNasS4Kn9WrJ6vP1PSr
+	+k1m3PysKWBweSXiDsclZ+dYvo7ZzxidPqQb+wAUap1mJFKT9yiUdDH8QdaezWGfHJPIovr
+	P209YWrXeudQohaEPZeab4kSWgIrvrJwNMwAvy1rNNIUEKUt6D15m1vVw2W68hvCp0SIsHB
+	b/bv/ydmNAeP+paRyIQSOa4s25vF1npNicn+mu7m7Kglym7l+RRlueNeCJzl/z758A7v3Qq
+	hCdjmCRxQjKCmi1CDK
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-Reorder members in the `ltc2497_chip_info` and `ltc2497core_driverdata`
-structs to eliminate memory holes identified by the `pahole` tool.
+The word "as" in the comment should be replaced with "is",
+and there is an extra space in the comment.
 
-Confirm via the `bloat-o-meter` that this change has no significant
-impact on the final code size:
-
-| Object File     | Total Size Change |
-|-----------------|-------------------|
-| ltc2497-core.o  | 0 (0.00%)         |
-| ltc2497.o       | +2 (+0.10%)       |
-| ltc2496.o       | 0 (0.00%)         |
-
-Signed-off-by: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
+Signed-off-by: Morduan Zang <zhangdandan@uniontech.com>
 ---
- drivers/iio/adc/ltc2497.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/vfio/pci/nvgrace-gpu/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/adc/ltc2497.h b/drivers/iio/adc/ltc2497.h
-index 65f406bc61c24b912de4beed604a074b3ea9df91..578f55efc5c400980fe8bbd2b220aafb222d6f33 100644
---- a/drivers/iio/adc/ltc2497.h
-+++ b/drivers/iio/adc/ltc2497.h
-@@ -10,8 +10,8 @@
- #define LTC2497_ENABLE_TEMPERATURE_CONV	(LTC2497_EN2 | LTC2497_IM)
- 
- struct ltc2497_chip_info {
--	u32 resolution;
- 	const char *name;
-+	u32 resolution;
+diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
+index d95761dcdd58..0adaa6150252 100644
+--- a/drivers/vfio/pci/nvgrace-gpu/main.c
++++ b/drivers/vfio/pci/nvgrace-gpu/main.c
+@@ -260,7 +260,7 @@ nvgrace_gpu_ioctl_get_region_info(struct vfio_device *core_vdev,
+ 	info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
  	/*
- 	 * Represents the datasheet constant from the temperature formula:
- 	 * T_Kelvin = (DATAOUT * Vref) / temp_scale, where Vref is in Volts.
-@@ -27,12 +27,12 @@ struct ltc2497_chip_info {
- struct ltc2497core_driverdata {
- 	struct regulator *ref;
- 	ktime_t	time_prev;
--	/* lock to protect against multiple access to the device */
--	struct mutex lock;
- 	const struct ltc2497_chip_info	*chip_info;
--	u8 addr_prev;
- 	int (*result_and_measure)(struct ltc2497core_driverdata *ddata,
- 				  u8 address, int *val);
-+	/* lock to protect against multiple access to the device */
-+	struct mutex lock;
-+	u8 addr_prev;
- };
- 
- int ltc2497core_probe(struct device *dev, struct iio_dev *indio_dev);
-
+ 	 * The region memory size may not be power-of-2 aligned.
+-	 * Given that the memory  as a BAR and may not be
++	 * Given that the memory is a BAR and may not be
+ 	 * aligned, roundup to the next power-of-2.
+ 	 */
+ 	info.size = memregion->bar_size;
 -- 
-2.43.0
+2.50.1
 
 
