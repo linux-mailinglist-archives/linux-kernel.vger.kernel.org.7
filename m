@@ -1,261 +1,167 @@
-Return-Path: <linux-kernel+bounces-769028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447D6B26961
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:31:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E89B26937
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279AE606F68
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:15:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210E71CE2118
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0CA1DD525;
-	Thu, 14 Aug 2025 14:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC6E321446;
+	Thu, 14 Aug 2025 14:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HoS019Li"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3H2CCDt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771A717A318;
-	Thu, 14 Aug 2025 14:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E00132143F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180727; cv=none; b=IoL+yaJlZRsDUwFCSQrPX8Bxz8BJzp9B8pOkaehRIwZ1meFEJIuGvIVCjQUYCIpNTxScVEEe3LpukU+S95xWZsGkVmnspTMKtlmLWzXGXQuAquul6tqt1dff8bUo1ThlxMJmkNvVsPvjYmmyv04VhID+gSzcDIhbPIN0X/wxgF4=
+	t=1755180681; cv=none; b=j/Sc7m7WBmSP+bxhtvmyzjW7NC8DVLz6xFruhhHSY9Fu9R6tfo78TFePM7HOZXxWmMKZqJEoTvRZxGWoHE/59Kf0HWPhlel5Ojs8+2B0meMiZ8wi4qBsCAVdnkTeNys6lqz/eU4L2wkYQiaKVvw7iYnh3uhxYgYFJkxzKDwa9Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180727; c=relaxed/simple;
-	bh=hnOCw/+sLGB5wbEBQXIBlA0WUXTcjEIr6cpmGX5WCrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KFGtiF67MchXX57b1lje2no3Dy853jMGSMosXkYUOJxp8CZB7zReawkSvYfxJEbld6typS7VrRUea8+n+LQZsJiT+5K67Q7oPe4a0PNNHb3psoZPEbn+/nVl15DaANxqzO2UOY8lJUkij5xpv3wTXpDbik3WvHz1wIV+ewbkpV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HoS019Li; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E9SCFS012279;
-	Thu, 14 Aug 2025 14:11:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JldBxj2+wJa1y97kNC71rG/NvsnEwFtSSknagQM/Mrk=; b=HoS019Lix+ZzaMp2
-	sKgsxpAnaq9fICHLKWkAU7RvwWgJi352Ds43v+Qev7JfeprBjyct5nT7DJatypzk
-	r29sW+xZxowIUaCCQmfOVmRqT3oBqHdivmUiYwZ7h/bloH3KwxdIU+U2FzkN4+2i
-	khRCuPH+iWR0xYkai77fbLQr0OPtIhgzgqT4PPuDWvp/4SI8QlVz1sfJD1wnZ3oA
-	BPyDP2XRcKw70gJ18DmYS1yT7Ovnv7EbrfeGsw5Xe3ULXFcVSI+g+JOcdQgpT4j6
-	ZVgB6yLHFVPQ/uYW5Z1RMFOe8Oft1UjhWsDjBWyF3lHbafBZWyUCGK6+hAc2XTke
-	tCIs+g==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48eqhxe4dd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 14:11:57 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57EEBuSL008825
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 14:11:56 GMT
-Received: from [10.216.25.245] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
- 2025 07:11:52 -0700
-Message-ID: <d8e64561-f2bf-0486-f607-7c1203e4df43@quicinc.com>
-Date: Thu, 14 Aug 2025 19:41:49 +0530
+	s=arc-20240116; t=1755180681; c=relaxed/simple;
+	bh=EtreIo4RmDvEX0MIutMMZJFN4Qc14MzIRQ/PqGEOA/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bbQ8LRoEonpPodwEMJisvuJCR1O+VM4qMN11AZfxLltSMaX9JXzl6B5DnQk+KQH7tRaya4liQdTHbCIo3DyArmZVVIuQejGIlcbCSe4u+a8/VgnWk5vxl4LHjmkyOdk31R3dfPRCslY2zuGkK75gys+jTs2FCRrrWPUvf6GzLSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3H2CCDt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DE0C4CEF9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:11:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755180681;
+	bh=EtreIo4RmDvEX0MIutMMZJFN4Qc14MzIRQ/PqGEOA/E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=U3H2CCDtkpLaPL+zNGYLLGYIklZKJL1dXQcCoCHkKwS8EkjwiM6yL8dyT/fOTQPqV
+	 3IKHctSv9MmKxK6SqTNHv2pDze74oOtJILIAdSYaCGTC8ZjHECM9KTIXAtbY4dSxxQ
+	 ihTBAwSeQdeXZgsPT5p3eSoV7GNYvmobSrayrgUlVQz+dX/jPFJndlB+Op/4j0thNh
+	 U0OzxwUIDcKYogrEQmaNyvyfhL66ORNB3mo555QgtZYQd0aMUI0kICDj+k+5VnH5Rk
+	 r4aBmq+i6Ii57oNKhTgSZsoqm7YHreWD7yrb53U23z/VBkb5kejrIcWkHEk4CUhBN3
+	 SNGp7To7iBL1Q==
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-244581caca6so7092885ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:11:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWdR2cKs/m9U7mR0Q094vDfkTv6i29CQZbQfF4/o7DbDOJBwoNJxZoSYQivOV5cJkc7uzecL2ZFrr9vAHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhYj8PHJED4QmbdtspKBdizFDq9xINLO/nkuOgZi3R+ryvmajm
+	Te0gQK79/lW6CCGK9e+PG3hPvVI0uvREKqwAjJnnuBNtwQvW77TobQ8kdTZHy3UtpYLd/YXlInb
+	p+W6eu+DD5cLItQJ+aHyyeQdQMziTFA==
+X-Google-Smtp-Source: AGHT+IEv9bl0mTCA5QeP2B9Sxyl/+418cvcY/Da5c3dtb2moz6zUZWAO3T1U7DLbuoeYmCLdV4cIQSoAiWVpGPO+VXs=
+X-Received: by 2002:a17:902:d2c1:b0:240:a430:91d with SMTP id
+ d9443c01a7336-244584ed485mr48360715ad.10.1755180680384; Thu, 14 Aug 2025
+ 07:11:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v2 11/24] media: iris: Add support for video encoder
- device
-Content-Language: en-US
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
-        Abhinav Kumar
-	<abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil
-	<hverkuil@xs4all.nl>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>,
-        "Vedang
- Nagar" <quic_vnagar@quicinc.com>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Renjiang Han <quic_renjiang@quicinc.com>,
-        Wangao Wang <quic_wangaow@quicinc.com>
-References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
- <20250813-iris-video-encoder-v2-11-c725ff673078@quicinc.com>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <20250813-iris-video-encoder-v2-11-c725ff673078@quicinc.com>
+References: <20250701-mediatek-drm-fix-dsi-panel-init-v1-1-7af4adb9fdeb@collabora.com>
+In-Reply-To: <20250701-mediatek-drm-fix-dsi-panel-init-v1-1-7af4adb9fdeb@collabora.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Thu, 14 Aug 2025 22:12:28 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_9u2R3k5BORM2pwJnE9XOVfFBE_5gDfs8-PD9fBgTtmgQ@mail.gmail.com>
+X-Gm-Features: Ac12FXz7hoERrgUkkr3SijSA29p_W0qoePN2uF4iKzdoy_Nb5WblBq2K-Bi3CRU
+Message-ID: <CAAOTY_9u2R3k5BORM2pwJnE9XOVfFBE_5gDfs8-PD9fBgTtmgQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: dsi: Fix DSI host and panel bridge
+ pre-enable order
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Aradhya Bhatia <a-bhatia1@ti.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+	kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEwMDA1NyBTYWx0ZWRfX8dGJFX6Ardgv
- nipvxTA6aJNYpulJB5tMLOkoxsVzxKHvSiSHdbvitHhxpqQOsIjy0dTHiZTZDPnve91HQN9OUSZ
- +Q7vC8N3rZpViCChfv77NwdqcSD+PIz0iLvdsNo4VPZLTYYNDmjYVbOm3oKJtgxM2/ATW75hM9G
- Gw0bv0hh7ZsEdBOlTvi/PBnDb/DXkHjv0CNAVp3jMRDdlGmJuw65CS6UaxuAVkmzl+6DilOGE+J
- 2UPkanlNegqA7f+ugFeOQVjqdPCVEPv8PR6rOjlFQf3lRbl7d0nhDvZnrVFdJ4Hoe/LKYbKoRD2
- 4HcrbEA8EIaEUIJcj5MpS89hJz5E6RGL89WLxVjNcXnLKxLIU8WBilTYpb4hCYMmKE0XVpEikMj
- qAHvc1wN
-X-Proofpoint-GUID: j3482zxOC9v0TSa5G7h00Q1-5t8XAWhd
-X-Authority-Analysis: v=2.4 cv=aYNhnQot c=1 sm=1 tr=0 ts=689deead cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
- a=LasaYAtji7dtrbWHEqcA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: j3482zxOC9v0TSa5G7h00Q1-5t8XAWhd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 suspectscore=0 phishscore=0
- impostorscore=0 bulkscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508100057
+Content-Transfer-Encoding: quoted-printable
 
+Hi, Louis:
 
-On 8/13/2025 3:08 PM, Dikshita Agarwal wrote:
-> Add support for registering a V4L2 encoder video device to the iris
-> driver. The encoder device is registered with the name
-> "qcom-iris-encoder".
-> 
-> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> =E6=96=BC 2025=E5=B9=
+=B47=E6=9C=881=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=883:31=E5=AF=AB=
+=E9=81=93=EF=BC=9A
+>
+> Since commit c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain
+> pre-enable and post-disable"), the bridge pre_enable callbacks are now
+> called before crtc enable, and the bridge post_disable callbacks after
+> the crtc disable.
+> In the mediatek-drm driver, this change leads to transfer errors on
+> mtk_dsi_host_transfer callback processing during the panel bridge
+> pre-enable sequence because the DSI host bridge pre_enable and CRTC
+> enable sequences, that are enabling the required clocks and PHY using
+> mtk_dsi_poweron function, are called after.
+>
+> So, in order to fix this call order issue, request the DSI host bridge
+> be pre-enabled before panel bridge by setting pre_enable_prev_first
+> flag on DSI device bridge in the mtk_dsi_host_attach function.
+
+Applied to mediatek-drm-fixes [1], thanks.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-fixes
+
+Regards,
+Chun-Kuang.
+
+>
+> Fixes: c9b1150a68d9 ("drm/atomic-helper: Re-order bridge chain pre-enable=
+ and post-disable")
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 > ---
->  drivers/media/platform/qcom/iris/iris_core.h  |  7 ++++++
->  drivers/media/platform/qcom/iris/iris_probe.c | 36 ++++++++++++++++++++-------
->  2 files changed, 34 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_core.h b/drivers/media/platform/qcom/iris/iris_core.h
-> index aeeac32a1f6d9a9fa7027e8e3db4d95f021c552e..09e83be4e00efb456b7098a499b6cce850134a06 100644
-> --- a/drivers/media/platform/qcom/iris/iris_core.h
-> +++ b/drivers/media/platform/qcom/iris/iris_core.h
-> @@ -25,6 +25,11 @@ struct icc_info {
->  #define IRIS_FW_VERSION_LENGTH		128
->  #define IFACEQ_CORE_PKT_SIZE		(1024 * 4)
->  
-> +enum domain_type {
-> +	ENCODER	= BIT(0),
-> +	DECODER	= BIT(1),
-> +};
+> This patch fixes an issue that can be observed on boards such as
+> MediatekGenio 1200-EVK or 350-EVK with a kernel based on linux-next
+> (tag: next-20250635) since commit c9b1150a68d9 ("drm/atomic-helper:
+> Re-order bridge chain pre-enable and post-disable").
+> In boot logs, there are multiples errors such as IRQ timeouts and
+> panel init errors, leading the DSI panel not being enabled:
+>
+> Example on Genio 1200-EVK:
+> ```
+> [drm] Wait DSI IRQ(0x00000002) Timeout
+> panel-himax-hx8279 1c008000.dsi.0: sending generic data b0 05 failed:
+>   -62
+> [drm] Wait DSI IRQ(0x00000008) Timeout
+> [drm:mtk_dsi_host_transfer [mediatek_drm]] *ERROR* failed to switch cmd
+>  mode
+> panel-himax-hx8279 1c008000.dsi.0: sending DCS SET_DISPLAY_ON failed:
+>   -62
+> ```
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dsi.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediate=
+k/mtk_dsi.c
+> index d7726091819c4762698b41060b3d4d8d27940238..0e2bcd5f67b767d92f2697a5b=
+8183f67ee178a38 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> @@ -1002,6 +1002,12 @@ static int mtk_dsi_host_attach(struct mipi_dsi_hos=
+t *host,
+>                         return PTR_ERR(dsi->next_bridge);
+>         }
+>
+> +       /*
+> +        * set flag to request the DSI host bridge be pre-enabled before =
+device bridge
+> +        * in the chain, so the DSI host is ready when the device bridge =
+is pre-enabled
+> +        */
+> +       dsi->next_bridge->pre_enable_prev_first =3D true;
 > +
->  /**
->   * struct iris_core - holds core parameters valid for all instances
->   *
-> @@ -33,6 +38,7 @@ struct icc_info {
->   * @irq: iris irq
->   * @v4l2_dev: a holder for v4l2 device structure
->   * @vdev_dec: iris video device structure for decoder
-> + * @vdev_enc: iris video device structure for encoder
->   * @iris_v4l2_file_ops: iris v4l2 file ops
->   * @iris_v4l2_ioctl_ops: iris v4l2 ioctl ops
->   * @iris_vb2_ops: iris vb2 ops
-> @@ -73,6 +79,7 @@ struct iris_core {
->  	int					irq;
->  	struct v4l2_device			v4l2_dev;
->  	struct video_device			*vdev_dec;
-> +	struct video_device			*vdev_enc;
->  	const struct v4l2_file_operations	*iris_v4l2_file_ops;
->  	const struct v4l2_ioctl_ops		*iris_v4l2_ioctl_ops;
->  	const struct vb2_ops			*iris_vb2_ops;
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index 4e6e92357968d7419f114cc0ffa9b571bad19e46..c3be9deb0a57cc2cf25d69784d54be5e4a5fe06c 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -146,7 +146,7 @@ static int iris_init_resources(struct iris_core *core)
->  	return iris_init_resets(core);
->  }
->  
-> -static int iris_register_video_device(struct iris_core *core)
-> +static int iris_register_video_device(struct iris_core *core, enum domain_type type)
->  {
->  	struct video_device *vdev;
->  	int ret;
-> @@ -155,7 +155,6 @@ static int iris_register_video_device(struct iris_core *core)
->  	if (!vdev)
->  		return -ENOMEM;
->  
-> -	strscpy(vdev->name, "qcom-iris-decoder", sizeof(vdev->name));
->  	vdev->release = video_device_release;
->  	vdev->fops = core->iris_v4l2_file_ops;
->  	vdev->ioctl_ops = core->iris_v4l2_ioctl_ops;
-> @@ -163,11 +162,23 @@ static int iris_register_video_device(struct iris_core *core)
->  	vdev->v4l2_dev = &core->v4l2_dev;
->  	vdev->device_caps = V4L2_CAP_VIDEO_M2M_MPLANE | V4L2_CAP_STREAMING;
->  
-> -	ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-> -	if (ret)
-> +	if (type == DECODER) {
-> +		strscpy(vdev->name, "qcom-iris-decoder", sizeof(vdev->name));
-> +		ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-> +		if (ret)
-> +			goto err_vdev_release;
-> +		core->vdev_dec = vdev;
-> +	} else if (type == ENCODER) {
-> +		strscpy(vdev->name, "qcom-iris-encoder", sizeof(vdev->name));
-> +		ret = video_register_device(vdev, VFL_TYPE_VIDEO, -1);
-> +		if (ret)
-> +			goto err_vdev_release;
-> +		core->vdev_enc = vdev;
-> +	} else {
-> +		ret = -EINVAL;
->  		goto err_vdev_release;
-> +	}
->  
-> -	core->vdev_dec = vdev;
->  	video_set_drvdata(vdev, core);
->  
->  	return 0;
-> @@ -189,6 +200,7 @@ static void iris_remove(struct platform_device *pdev)
->  	iris_core_deinit(core);
->  
->  	video_unregister_device(core->vdev_dec);
-> +	video_unregister_device(core->vdev_enc);
->  
->  	v4l2_device_unregister(&core->v4l2_dev);
->  
-> @@ -258,17 +270,21 @@ static int iris_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> -	ret = iris_register_video_device(core);
-> +	ret = iris_register_video_device(core, DECODER);
->  	if (ret)
->  		goto err_v4l2_unreg;
->  
-> +	ret = iris_register_video_device(core, ENCODER);
-> +	if (ret)
-> +		goto err_vdev_unreg_dec;
-> +
->  	platform_set_drvdata(pdev, core);
->  
->  	dma_mask = core->iris_platform_data->dma_mask;
->  
->  	ret = dma_set_mask_and_coherent(dev, dma_mask);
->  	if (ret)
-> -		goto err_vdev_unreg;
-> +		goto err_vdev_unreg_enc;
->  
->  	dma_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
->  	dma_set_seg_boundary(&pdev->dev, DMA_BIT_MASK(32));
-> @@ -277,11 +293,13 @@ static int iris_probe(struct platform_device *pdev)
->  	pm_runtime_use_autosuspend(core->dev);
->  	ret = devm_pm_runtime_enable(core->dev);
->  	if (ret)
-> -		goto err_vdev_unreg;
-> +		goto err_vdev_unreg_enc;
->  
->  	return 0;
->  
-> -err_vdev_unreg:
-> +err_vdev_unreg_enc:
-> +	video_unregister_device(core->vdev_enc);
-> +err_vdev_unreg_dec:
->  	video_unregister_device(core->vdev_dec);
->  err_v4l2_unreg:
->  	v4l2_device_unregister(&core->v4l2_dev);
-> 
-
-Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
+>         drm_bridge_add(&dsi->bridge);
+>
+>         ret =3D component_add(host->dev, &mtk_dsi_component_ops);
+>
+> ---
+> base-commit: c6a68d8f7b81a6ce8962885408cc2d0c1f8b9470
+> change-id: 20250630-mediatek-drm-fix-dsi-panel-init-1a4b534c40a6
+>
+> Best regards,
+> --
+> Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+>
 
