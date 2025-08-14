@@ -1,202 +1,123 @@
-Return-Path: <linux-kernel+bounces-769247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45010B26BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:06:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 678F4B26BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7989A04603
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:58:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3567C3B5EF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27232FCC14;
-	Thu, 14 Aug 2025 15:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7D8248176;
+	Thu, 14 Aug 2025 16:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="pjBFEwC2"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="q9wUU9/A"
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9056A248869
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3D2244690;
+	Thu, 14 Aug 2025 16:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755186997; cv=none; b=LvFpX9EM0yaJ2odbtvXeyTeIAxrQurIE2jiuCPC1Cndug9T262TABfsTGCrUbwt5YcEp0mYsVFRTab+kdGcNhRwUHzBB3NQTl4RzPVtBLHn4PqHl+mgYvn19kx0VKoxmHwipKV6Z4I6fd8PioS+RsK+5baUMUeB9ZIkRL+xPHrI=
+	t=1755187411; cv=none; b=GkuDZlkif4EWR6FMxEJtLhB5z2Xew8eIcYX4GHnG9ksSFLlB6MnprwL7I8YDQwB77XWAuCC38wEPxxZJHl2GJUBEcG0sVlFciIdjZWXsYcLQ+woMAHbHtObK8s+85Ct16eOviNtIi/grEwGb7C1q6zX24BtvBOeWhSPJoJ/rz7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755186997; c=relaxed/simple;
-	bh=G9gBXgS5ZP2+2D3CVqP+3wrJpRXlPa7RbLzeqdLAE8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Mg8OVf+YQhvXNYE4AKj+sI+9HQfCyc1inJPjiJiK6slvb1xVkPtwWGHNPjUeo2gGuCQTZE9jYYI7d2OUoJNUaiwflTzclcmGCj++PIibq92sUT86w2IPp6ZJfN4yBO77RUdDq+VkdhvveHUU7Opa+mmdJaHMdmv+IBo8iZv3GtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=pjBFEwC2; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b47174c8e45so938821a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1755186995; x=1755791795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cSJAzpJrB/+0Vhq3Jx8mxwwAXiXUMS9lCBbypwhOCgE=;
-        b=pjBFEwC2Xzb2hGf2VxS0T80g4QoDHHd9ZXXmjfPgYSNAQolkmzgp77YEcR3uoS6mUV
-         q8hgKr1T4c0Rhu4bpW5prEK3iHhzLHpG9GtRkgWaet5HPdhVV6GrH78PSrbNdPwbPnJh
-         9+yjMMJWTbxVYQzHT2SQyll5H2UbPXtIfe5pR9aNS3zNxQ71M2jbFIITGzMzZKyj4T6h
-         /idDtf734hsXxbIdiF/o+uFWutKSE5nsFuM3F/koTAPeU2eS5iLbtTLtdEw8FUqqlyB1
-         vBlbg45fkfY3BbA+VepInS9y9lQsUbEjXXNdDDvsOr9g78rnIlxnKnZCcCDp63Xm4zpK
-         aFxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755186995; x=1755791795;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cSJAzpJrB/+0Vhq3Jx8mxwwAXiXUMS9lCBbypwhOCgE=;
-        b=X9x5lam0tbjY49IN2jNaqQSi1NKFw5ipEWOgRQtGtqsRu9OeKssLn7YfOT9TWTX25s
-         96uFmUl9ScyfELGpCFdxwt5tWbm6WL3qd4ZrXXbvQHQ7ECCfN7aMG6qxOX2Td9Y8SQTo
-         zdtAmWWqOPzL6QP7wvLZSRhO8eAU9VCfefVH/Hd9TkLorFBjqt8t0DxyKtxkof3ekjwg
-         5HAA0ZtoTHfVpeiJooWKCGW2u2gUz10yYyOhbYqy6Tt7FRT10m8OtuFTAGh/bMLiaFh2
-         KzToZrS4ZfieyWH1zzJiQUHSfpGfQsJ+rGluzv6Ayipj2XQUjFye6eQRykSjcnV9YcKe
-         zQug==
-X-Forwarded-Encrypted: i=1; AJvYcCXGqYi76g/0Fl929EMDtvmD5KVGTHga1+frUo3RTO7D+xzzyjisXPHK1W0U8B4EpwSkILuQq9SCKLjv57E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGGHBIx3jDAQyApoaivurDLNMiMw97mjFKyXBSMFBFnp9hrMb4
-	bRv+V/H1t1L6vXCCoEt0YB/tTf1DkwwFteh/qbwbKfas3uD12DEp5pvqrujyRQzaltc=
-X-Gm-Gg: ASbGncvu/kZnsFp8qC4i84UPaX1Ww49CYoZFYXPrhEm4oXi0gCh2+C/7cCOCNBH7ZET
-	ULfcByHnhK7euEzD65sU0pNF4gv7Dfl58bUtxbbzGc8QmtXsGFkqpJe/UD/I/H6RrOprgpvXaH6
-	nbxaNe23WlycUhBMKaGtk/Jmf4oESPousYhte2Mu8/hFp4lzMuX6yaY+3CCXys+X6U4ilkk1J5W
-	i3/FelXfsAGK0rwcunhISgHTs++U6zsW73336GaHAstlIsUaUDguVkMGUsoeCZ99ADUFeDHHzN7
-	/7PwU4bCRSvbXcp1ZrhVldU+hdsclkp2NHMwikyNTnH1bx3hTFMYu9zz64NprvRWQ/YT0i5Lroz
-	EeUhTFb+e/UdfZSziWYDnQwtRgEWu3qIp8goAAl1zr9An0VRk89pjNYq9rrLFOw==
-X-Google-Smtp-Source: AGHT+IGJVdqHFLQAppNcJd7AUqhrBmK4Q+zaiql1Y8W6JMc1bdxvvOyGCokaiILV9/xyDSM5iDy5Dw==
-X-Received: by 2002:a17:903:984:b0:224:23be:c569 with SMTP id d9443c01a7336-2445853c0ecmr58111655ad.22.1755186994714;
-        Thu, 14 Aug 2025 08:56:34 -0700 (PDT)
-Received: from anup-ubuntu-vm.localdomain ([103.97.166.196])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3233108e1d9sm2225500a91.29.2025.08.14.08.56.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 08:56:34 -0700 (PDT)
-From: Anup Patel <apatel@ventanamicro.com>
-To: Atish Patra <atish.patra@linux.dev>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH 6/6] KVM: riscv: selftests: Add SBI FWFT to get-reg-list test
-Date: Thu, 14 Aug 2025 21:25:48 +0530
-Message-ID: <20250814155548.457172-7-apatel@ventanamicro.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250814155548.457172-1-apatel@ventanamicro.com>
-References: <20250814155548.457172-1-apatel@ventanamicro.com>
+	s=arc-20240116; t=1755187411; c=relaxed/simple;
+	bh=g1WA8Ej03Sf9dhAAuIrvWiYJhQRp0RMxdlmdjVG+MZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t1aom3F+wueM+/F1vpZaoeOZ2542sYpQ1FRgXG+a0vGeTHQljB7g2L30QiQBawrXiOIMgbBQJ0KTECVvJUfe+Dp0oct/K1yL2CfVX5PZwbBz+pS4dqVaaPqCppw/KtPYJW3pWqjL7CD8isvi5zDVCgDW6I/enVb3AQ5dwkrAUuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=q9wUU9/A; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0f:5c92:0:640:d905:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 749C081780;
+	Thu, 14 Aug 2025 18:56:29 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id NuOJc8CMeqM0-Yb9JvFND;
+	Thu, 14 Aug 2025 18:56:28 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1755186988;
+	bh=QTy62BW8oSOSc+qcq9pzWoofEE0H7QDkiOpZD2U0w9M=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=q9wUU9/Al17TwHApLWwhmyk1OJ2o/toHvDrDDgVT5xMd3Xj9sh6mmkPJAvS224Ozi
+	 Lckhpxdsll/mzMoT0xFykdXkf5iF9Xue3VYMQvChIzKDI6+1yMt/pfkJ0FtmAI8p0U
+	 3L2PrP+EEV7lBALev2XM97oumXSobT7EJ18kQvwY=
+Authentication-Results: mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Thu, 14 Aug 2025 18:56:22 +0300
+From: Onur <work@onurozkan.dev>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Benno Lossin <lossin@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+ gary@garyguo.net, a.hindborg@kernel.org, aliceryhl@google.com,
+ tmgross@umich.edu, dakr@kernel.org, peterz@infradead.org, mingo@redhat.com,
+ will@kernel.org, longman@redhat.com, felipe_life@live.com,
+ daniel@sedlak.dev, bjorn3_gh@protonmail.com
+Subject: Re: [PATCH v5 0/3] rust: add `ww_mutex` support
+Message-ID: <20250814185622.468aad30@nimda.home>
+In-Reply-To: <76D4D052-79B6-4D3F-AAA1-164FF7A41284@collabora.com>
+References: <20250621184454.8354-1-work@onurozkan.dev>
+	<20250724165351.509cff53@nimda.home>
+	<ec32fc5f5a8658c084f96540bd41f5462fa5c182.camel@gmail.com>
+	<20250806085702.5bf600a3@nimda.home>
+	<539d3e0da773c32a42b4ab5c9d4aa90383481ff6.camel@redhat.com>
+	<DBVLEGFYBWKE.2RW8J853CJHTY@kernel.org>
+	<20250814141302.1eabda12@nimda.home>
+	<76D4D052-79B6-4D3F-AAA1-164FF7A41284@collabora.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-KVM RISC-V now supports SBI FWFT, so add it to the get-reg-list test.
+On Thu, 14 Aug 2025 09:38:38 -0300
+Daniel Almeida <daniel.almeida@collabora.com> wrote:
 
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
----
- .../selftests/kvm/riscv/get-reg-list.c        | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+> Hi Onur,
+>=20
+> > On 14 Aug 2025, at 08:13, Onur =C3=96zkan <work@onurozkan.dev> wrote:
+> >=20
+> > Hi all,
+> >=20
+> > I have been brainstorming on the auto-unlocking (on dynamic number
+> > of mutexes) idea we have been discussing for some time.
+> >=20
+> > There is a challange with how we handle lock guards and my current
+> > thought is to remove direct data dereferencing from guards. Instead,
+> > data access would only be possible through a fallible method (e.g.,
+> > `try_get`). If the guard is no longer valid, this method would fail
+> > to not allow data-accessing after auto-unlock.
+> >=20
+> > In practice, it would work like this:
+> >=20
+> > let a_guard =3D ctx.lock(mutex_a)?;
+> > let b_guard =3D ctx.lock(mutex_b)?;
+> >=20
+> > // Suppose user tries to lock `mutex_c` without aborting the
+> > // entire function (for some reason). This means that even on
+> > // failure, `a_guard` and `b_guard` will still be accessible.
+> > if let Ok(c_guard) =3D ctx.lock(mutex_c) {
+> >     // ...some logic
+> > }
+> >=20
+> > let a_data =3D a_guard.try_get()?;
+> > let b_data =3D b_guard.try_get()?;
+>=20
+> Can you add more code here? How is this going to look like with the
+> two closures we=E2=80=99ve been discussing?
 
-diff --git a/tools/testing/selftests/kvm/riscv/get-reg-list.c b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-index a0b7dabb5040..1bc84f09b4ee 100644
---- a/tools/testing/selftests/kvm/riscv/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/riscv/get-reg-list.c
-@@ -128,6 +128,7 @@ bool filter_reg(__u64 reg)
- 	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_DBCN:
- 	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_SUSP:
- 	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_STA:
-+	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_FWFT:
- 	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_EXPERIMENTAL:
- 	case KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_VENDOR:
- 		return true;
-@@ -627,6 +628,7 @@ static const char *sbi_ext_single_id_to_str(__u64 reg_off)
- 		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_DBCN),
- 		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_SUSP),
- 		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_STA),
-+		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_FWFT),
- 		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_EXPERIMENTAL),
- 		KVM_SBI_EXT_ARR(KVM_RISCV_SBI_EXT_VENDOR),
- 	};
-@@ -683,6 +685,17 @@ static const char *sbi_sta_id_to_str(__u64 reg_off)
- 	return strdup_printf("KVM_REG_RISCV_SBI_STA | %lld /* UNKNOWN */", reg_off);
- }
- 
-+static const char *sbi_fwft_id_to_str(__u64 reg_off)
-+{
-+	switch (reg_off) {
-+	case 0: return "KVM_REG_RISCV_SBI_FWFT | KVM_REG_RISCV_SBI_FWFT_REG(misaligned_deleg.flags)";
-+	case 1: return "KVM_REG_RISCV_SBI_FWFT | KVM_REG_RISCV_SBI_FWFT_REG(misaligned_deleg.value)";
-+	case 2: return "KVM_REG_RISCV_SBI_FWFT | KVM_REG_RISCV_SBI_FWFT_REG(pointer_masking.flags)";
-+	case 3: return "KVM_REG_RISCV_SBI_FWFT | KVM_REG_RISCV_SBI_FWFT_REG(pointer_masking.value)";
-+	}
-+	return strdup_printf("KVM_REG_RISCV_SBI_STA | %lld /* UNKNOWN */", reg_off);
-+}
-+
- static const char *sbi_id_to_str(const char *prefix, __u64 id)
- {
- 	__u64 reg_off = id & ~(REG_MASK | KVM_REG_RISCV_SBI_STATE);
-@@ -695,6 +708,8 @@ static const char *sbi_id_to_str(const char *prefix, __u64 id)
- 	switch (reg_subtype) {
- 	case KVM_REG_RISCV_SBI_STA:
- 		return sbi_sta_id_to_str(reg_off);
-+	case KVM_REG_RISCV_SBI_FWFT:
-+		return sbi_fwft_id_to_str(reg_off);
- 	}
- 
- 	return strdup_printf("%lld | %lld /* UNKNOWN */", reg_subtype, reg_off);
-@@ -859,6 +874,14 @@ static __u64 sbi_sta_regs[] = {
- 	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_SBI_STATE | KVM_REG_RISCV_SBI_STA | KVM_REG_RISCV_SBI_STA_REG(shmem_hi),
- };
- 
-+static __u64 sbi_fwft_regs[] = {
-+	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_SBI_EXT | KVM_REG_RISCV_SBI_SINGLE | KVM_RISCV_SBI_EXT_FWFT,
-+	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_SBI_STATE | KVM_REG_RISCV_SBI_FWFT | KVM_REG_RISCV_SBI_FWFT_REG(misaligned_deleg.flags),
-+	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_SBI_STATE | KVM_REG_RISCV_SBI_FWFT | KVM_REG_RISCV_SBI_FWFT_REG(misaligned_deleg.value),
-+	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_SBI_STATE | KVM_REG_RISCV_SBI_FWFT | KVM_REG_RISCV_SBI_FWFT_REG(pointer_masking.flags),
-+	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_SBI_STATE | KVM_REG_RISCV_SBI_FWFT | KVM_REG_RISCV_SBI_FWFT_REG(pointer_masking.value),
-+};
-+
- static __u64 zicbom_regs[] = {
- 	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_CONFIG | KVM_REG_RISCV_CONFIG_REG(zicbom_block_size),
- 	KVM_REG_RISCV | KVM_REG_SIZE_ULONG | KVM_REG_RISCV_ISA_EXT | KVM_REG_RISCV_ISA_SINGLE | KVM_RISCV_ISA_EXT_ZICBOM,
-@@ -1010,6 +1033,9 @@ static __u64 vector_regs[] = {
- #define SUBLIST_SBI_STA \
- 	{"sbi-sta", .feature_type = VCPU_FEATURE_SBI_EXT, .feature = KVM_RISCV_SBI_EXT_STA, \
- 	 .regs = sbi_sta_regs, .regs_n = ARRAY_SIZE(sbi_sta_regs),}
-+#define SUBLIST_SBI_FWFT \
-+	{"sbi-fwft", .feature_type = VCPU_FEATURE_SBI_EXT, .feature = KVM_RISCV_SBI_EXT_FWFT, \
-+	 .regs = sbi_fwft_regs, .regs_n = ARRAY_SIZE(sbi_fwft_regs),}
- #define SUBLIST_ZICBOM \
- 	{"zicbom", .feature = KVM_RISCV_ISA_EXT_ZICBOM, .regs = zicbom_regs, .regs_n = ARRAY_SIZE(zicbom_regs),}
- #define SUBLIST_ZICBOZ \
-@@ -1092,6 +1118,7 @@ KVM_SBI_EXT_SUBLIST_CONFIG(sta, STA);
- KVM_SBI_EXT_SIMPLE_CONFIG(pmu, PMU);
- KVM_SBI_EXT_SIMPLE_CONFIG(dbcn, DBCN);
- KVM_SBI_EXT_SIMPLE_CONFIG(susp, SUSP);
-+KVM_SBI_EXT_SUBLIST_CONFIG(fwft, FWFT);
- 
- KVM_ISA_EXT_SUBLIST_CONFIG(aia, AIA);
- KVM_ISA_EXT_SUBLIST_CONFIG(fp_f, FP_F);
-@@ -1167,6 +1194,7 @@ struct vcpu_reg_list *vcpu_configs[] = {
- 	&config_sbi_pmu,
- 	&config_sbi_dbcn,
- 	&config_sbi_susp,
-+	&config_sbi_fwft,
- 	&config_aia,
- 	&config_fp_f,
- 	&config_fp_d,
--- 
-2.43.0
+Didn't we said that tuple-based closures are not sufficient when
+dealing with a dynamic number of locks (ref [1]) and ww_mutex is mostly
+used with dynamic locks? I thought implementing that approach is not
+worth it (at least for now) because of that.
 
+[1]: https://lore.kernel.org/all/DBS8REY5E82S.3937FAHS25ANA@kernel.org
+
+Regards,
+Onur
 
