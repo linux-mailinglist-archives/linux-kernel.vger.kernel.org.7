@@ -1,132 +1,204 @@
-Return-Path: <linux-kernel+bounces-768201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BC0B25E2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:58:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E530B25E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B3B51888639
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:55:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 010AD7B000E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B502E2DC8;
-	Thu, 14 Aug 2025 07:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946602E336E;
+	Thu, 14 Aug 2025 07:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bMWUXmaL"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aBEysE5O";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NnaMvJwf";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aBEysE5O";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NnaMvJwf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ABE2E2844
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA2E26FA46
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755158120; cv=none; b=m1+WYVOK4NXBV2KHTyI2hDDIk2NUZJ8wWG40l4CooC6PAH+pynNXSeOvfo0SXsZdsgQvG077RiAYzGAPtAa1JpybcwTEb4mLbZwGfh/9cfbQGF93IcVytp2dJKnSlZT4XAuO/zYjCPqvkJ+vZyAe7i9IxJ9vbN0JYi78RxK3C5I=
+	t=1755158120; cv=none; b=pQ8J49N5LBpTCDZdC2WKB0r4Wbc/7bYSe5wQtKvKIzaXM4eLlo+bu3gwq3tSf9Ih26LzCUOM8l46/KN3CBKev4TH7wbu/2swW/iaY6L3JHGeM0E/kL/LPLVCfKgFuJ24avhTWemPUg+kQLjbWxV4m+VaicicLdwwjw13UASM62E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755158120; c=relaxed/simple;
-	bh=VMoY9uH+QCsljh5aA/42PVLV0HoLhQc+LEs/AXP4pXo=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZMApKwQTFt0oic8EoNAPwBtxRswty/qWVQblm3Ea2JfJ9FcBsxZBE3pl/5t8zJY4nPMr03PZ6vhiI+Vakh/ndrXxe6QVqlamIj4TXDV5F5YgXmWsyZvzAEKWy8GAGH3mIlmGVBoXSAx6AAmY4SxFTJsQfOl/ixGqL6XBnSdMtdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bMWUXmaL; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45a1b00352eso2527485e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:55:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755158117; x=1755762917; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pkt9ozF4HjNo8N7YGJsDJbGhL2IzfusvyUWTBzPyf7M=;
-        b=bMWUXmaLJ2VY9BrnPhBdWDTNKgaidBDAgDHtqzX1xwruasy3p2zdPeVofPOOCy+H6F
-         ur6rlycSX3XzkRE3Y7/N0JNC+VNWp0GkarcvAubefHc02phibGLuLnbSatCoGXNFef7l
-         EAeswCuZ6NK8kZ07G5F0cOMGzixl5ayQSKIx/ZrZi+TLTwpNotOoeKJNJWZssh/coEO8
-         VfV9QIkhwn2HXjQ5EtWQzcTKF2HBED148ZAJ2gKWfgpjadfy6zWCzaya/RuUSZR63wHR
-         Oo17x60f+W873WOaEIRcqx3VWMw9XAiAr4CmNK5Pjf2OvsHS5Dt2uYPIs2HTxxsWWvTM
-         wWhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755158117; x=1755762917;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pkt9ozF4HjNo8N7YGJsDJbGhL2IzfusvyUWTBzPyf7M=;
-        b=hQQVxKQ4F9Xk0hCCPRcXkePZ2UoP7sGJXuKzmLg4f437JFXbe22q81+Fqu4cQLVwLF
-         qo4A42cFjwMVYVi+KwQrSts0D6Gbv+2DlFCP0WmUuh9WXzDXQD0pAR9yx19i8EBpubrV
-         l54iDm8leG+30IEtXRgOGCck1QPrUIywOOaKgnR2XUvVc98K7IqthzZgpWuyZ5KRkF9L
-         NE+j4dSUuAFM6+ErtMACd+uTmPMbsrEgB/HHwY8bx0mbxNO9DynLXByMcFnQ3CReInS7
-         bDOS9JI3hqygOgHRh4yu9PZySDjTDRtg2TJ56eOv614jRoWKj6Af0+sw2mCJvhO51sP+
-         Ws9A==
-X-Forwarded-Encrypted: i=1; AJvYcCX/SQQZ6n5Y10205rOyGiTHEylMeq8onuBkrI6+gyD8ZPDBkOrmOXWfrDayDKKWrN4hJhfFl8Yo5+y4mn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZNMFmR9kqKE3Sd5KkbtTMcZUo6ahSDE8wREl76qDmgAHfQ8Wb
-	O+LUYY6bnzMnznG0pDPRSDDKvEmq/Qyawfl1XL++SoOFj2DZhj/a2zAaYgHxjv+qw1LYVChtQwS
-	jWbAukTcYWTVBFrfDuQ==
-X-Google-Smtp-Source: AGHT+IEwXLvyCAoWDtNfNW5WIiz6Y+KDZTy2eN5q6Eu1bB6BXaaznui8SXDAth8yHInJovhcWZQN9Sn9q2E2DRU=
-X-Received: from wmbem15.prod.google.com ([2002:a05:600c:820f:b0:451:d768:b11d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1d16:b0:459:94a7:220f with SMTP id 5b1f17b1804b1-45a1b6577f9mr12470205e9.26.1755158116883;
- Thu, 14 Aug 2025 00:55:16 -0700 (PDT)
-Date: Thu, 14 Aug 2025 07:54:54 +0000
+	bh=fefpR7HIQVC5nyOFx5Rqw6lX1qR/ixNKElZIWkcATeg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cehYYSd/p+jkPkQK8kOjbvw5sO0xyQg0B/ssyWAtibG3DSjP4lKcZFljwdzS61Y17MI5NIheoCAnTugzYmjjCH6XH+oNiLH9thrF3xIQLS2yz2PggL9M5FQibhMLj9HA9NF+IybPkJOTQJhZzQ1OarheGqcklCN54FDD+zeKVSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aBEysE5O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NnaMvJwf; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aBEysE5O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NnaMvJwf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1EB761F7CD;
+	Thu, 14 Aug 2025 07:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755158117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zXP3BY0pXsZwFnoczLxeiGYVjQi1ieFC1ZhuiD+4f8Q=;
+	b=aBEysE5OkOkLoA6LePzeD+uv9ONyuFzfT/UzKo9e51KgpYOTclGTwZ+TXG3DQYZ821rX3f
+	kjgM8Y97u/YzQQJNcPUQ/dTiiwq2T/15umptwd9Pu54hQbnLq3lb9qActEHq4IBRMkYSC8
+	/uPm3YYl3JL7f3rOypYxNgd2maKrrJk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755158117;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zXP3BY0pXsZwFnoczLxeiGYVjQi1ieFC1ZhuiD+4f8Q=;
+	b=NnaMvJwfSgmTCuUl6N1nWCMmIxrFeuyBZtyRiarKp5sSML3fdDZ0ko31fRA6uJA03llepL
+	i0X3fusdbnS0YzBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=aBEysE5O;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=NnaMvJwf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1755158117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zXP3BY0pXsZwFnoczLxeiGYVjQi1ieFC1ZhuiD+4f8Q=;
+	b=aBEysE5OkOkLoA6LePzeD+uv9ONyuFzfT/UzKo9e51KgpYOTclGTwZ+TXG3DQYZ821rX3f
+	kjgM8Y97u/YzQQJNcPUQ/dTiiwq2T/15umptwd9Pu54hQbnLq3lb9qActEHq4IBRMkYSC8
+	/uPm3YYl3JL7f3rOypYxNgd2maKrrJk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1755158117;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zXP3BY0pXsZwFnoczLxeiGYVjQi1ieFC1ZhuiD+4f8Q=;
+	b=NnaMvJwfSgmTCuUl6N1nWCMmIxrFeuyBZtyRiarKp5sSML3fdDZ0ko31fRA6uJA03llepL
+	i0X3fusdbnS0YzBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E70B3136AE;
+	Thu, 14 Aug 2025 07:55:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YHE/NWSWnWh7BgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 14 Aug 2025 07:55:16 +0000
+Date: Thu, 14 Aug 2025 09:55:16 +0200
+Message-ID: <87o6siuyl7.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: =?ISO-8859-2?Q?=A9erif?= Rami <ramiserifpersia@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] ALSA: usb-audio: us144mkii: Add PCM core infrastructure
+In-Reply-To: <20250813131518.18985-3-ramiserifpersia@gmail.com>
+References: <20250813131518.18985-1-ramiserifpersia@gmail.com>
+	<20250813131518.18985-3-ramiserifpersia@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1090; i=aliceryhl@google.com;
- h=from:subject; bh=VMoY9uH+QCsljh5aA/42PVLV0HoLhQc+LEs/AXP4pXo=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBonZXTyaGB12UQz+He5R88gG56onLNWGp1jIqZ1
- vmC6SORLquJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJ2V0wAKCRAEWL7uWMY5
- RmxKD/9XTAtpkY0tqkvQ/KI118GdnayeBzkBm3Ju8ZviwzKu1pt+Tj6C1oq7NXbmw4VPt2/JwEr
- +R97IGMF5xudWN38Ee9hYouRwVKyE4412lVzr9KrDd0L59UpOvfYViUFV2Jt8pZynbJUUdDeVu4
- NJ7AQJguuboQVezTI72dlooiVSoEqQgjqlTI5695l8FS31ddO7IBRt1gd3402n3emVpGjNUq7FD
- QJz4++Wa2QsJ2SK8w9beudiWP1zXoFtJFQqQJp7eYVbFCtYi044prekxwkOpZayKSOa6YU6WfCq
- dtSPrqA9zQESg+HbayhaPci7lGtJyGIqO70/gLuGesr5Ql440rigeOD8lO9OXkVLGw7+q5tAZWi
- M1PQffntwdm6EQBR+fS437Z6Fu+wD6hXnDjJDpv/r/0DN22z0WH2Vd4+VP5qnsM3GQcl+GitSXo
- gvbx3C/SuktLE7U1OMFFY9X9fzmV+lwi9ToMuL6OkwGpHYyX41TuoftVpF+qhDcqfoSXKAA2SI4
- O54FedWn8jTp8GeasAV/pVgFAC/aklaQ5CBrmWyaZ4GH7kBSBzC9EEMz41LXZK/0jCJ4DamiqAh
- guRlN8WW7goErG1vaOvwNELh0WlekDFeb8MoU4WRMBtLwLYLaqie52aaITPoleWWXJoept+Lbc7 83Xlpn3nO+wY5Hg==
-X-Mailer: git-send-email 2.51.0.rc0.215.g125493bb4a-goog
-Message-ID: <20250814075454.1596482-1-aliceryhl@google.com>
-Subject: [PATCH] mm: rust: add page.rs to MEMORY MANAGEMENT - RUST
-From: Alice Ryhl <aliceryhl@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>
-Cc: rust-for-linux@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 1EB761F7CD
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.51
 
-The page.rs file currently isn't included anywhere, and I think it's a
-good fit for the MEMORY MANAGEMENT - RUST entry. The file was originally
-added for use by Rust Binder, but I believe there is also work to use it
-in the upcoming scatterlist abstractions.
+On Wed, 13 Aug 2025 15:15:13 +0200,
+©erif Rami wrote:
+> 
+> +static snd_pcm_uframes_t
+> +tascam_capture_pointer(struct snd_pcm_substream *substream)
+> +{
+> +	struct tascam_card *tascam = snd_pcm_substream_chip(substream);
+> +	struct snd_pcm_runtime *runtime = substream->runtime;
+> +	u64 pos;
+> +
+> +	if (!atomic_read(&tascam->capture_active))
+> +		return 0;
+> +
+> +	guard(spinlock_irqsave)(&tascam->lock);
+> +	pos = tascam->capture_frames_processed;
+> +
+> +	if (runtime->buffer_size == 0)
+> +		return 0;
+> +
+> +	u64 remainder = do_div(pos, runtime->buffer_size);
+> +
+> +	return runtime ? remainder : 0;
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+If runtime is NULL, it already hits Oops, so this NULL check makes
+little sense.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fe168477caa4..45f7a21dafd4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16244,15 +16244,17 @@ S:	Maintained
- MEMORY MANAGEMENT - RUST
- M:	Alice Ryhl <aliceryhl@google.com>
- R:	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
- R:	Liam R. Howlett <Liam.Howlett@oracle.com>
- L:	linux-mm@kvack.org
- L:	rust-for-linux@vger.kernel.org
- S:	Maintained
- W:	http://www.linux-mm.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
- F:	rust/helpers/mm.c
-+F:	rust/helpers/page.c
- F:	rust/kernel/mm.rs
- F:	rust/kernel/mm/
-+F:	rust/kernel/page.rs
- 
- MEMORY MAPPING
- M:	Andrew Morton <akpm@linux-foundation.org>
--- 
-2.51.0.rc0.215.g125493bb4a-goog
+Also, the "u64 remainder" declaration should be put at the beginning
+of the function (although nowadays allowed in the middle).
+But, judging the code, you don't have to assign but just return
+do_div().
 
+
+> +static snd_pcm_uframes_t
+> +tascam_playback_pointer(struct snd_pcm_substream *substream)
+> +{
+> +	struct tascam_card *tascam = snd_pcm_substream_chip(substream);
+> +	struct snd_pcm_runtime *runtime = substream->runtime;
+> +	u64 pos;
+> +
+> +	if (!atomic_read(&tascam->playback_active))
+> +		return 0;
+> +
+> +	guard(spinlock_irqsave)(&tascam->lock);
+> +	pos = tascam->playback_frames_consumed;
+> +
+> +	if (runtime->buffer_size == 0)
+> +		return 0;
+> +
+> +	u64 remainder = do_div(pos, runtime->buffer_size);
+> +
+> +	return runtime ? remainder : 0;
+
+Ditto.
+	
+
+thanks,
+
+Takashi
 
