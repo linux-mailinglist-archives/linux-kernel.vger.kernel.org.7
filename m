@@ -1,112 +1,185 @@
-Return-Path: <linux-kernel+bounces-768096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30DDB25CF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:20:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 951CCB25CF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 590B39E5B8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE605858D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB94826AA93;
-	Thu, 14 Aug 2025 07:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C895244692;
+	Thu, 14 Aug 2025 07:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1fO8XuI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Elut8q4g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2309B26E16F;
-	Thu, 14 Aug 2025 07:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7905C24468A;
+	Thu, 14 Aug 2025 07:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755155879; cv=none; b=GKcYU9+bIfMH7MVGiP6G6lij82etxka7kzGKi57JgDroceHb4EpZGIxxksJsackZ4nyWp6Mls7XIOZpuehKS6iseN0veJXWyL7N9oAMO1IuLohi626MqSR1aC9yKBHVtKSEFEl8gmzvxGNktwlqKqjwGZ+zZKwllh+xwAsiFgs8=
+	t=1755155906; cv=none; b=BA/dLWCuLxY8prQ5HD8KgNRWRhenReEJaXROD5GOfzcOhoV4W2cxGX2AMUtAb5CsjzjksKJ1xq8AAadXFXOG13t/vD3j+1TuYrPifD0+NntgvNlqtxTd8sqX7BiEntIjpZa8AAIIQMlOK6Vee50OcYytmU8OnpApuR6lcEigyRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755155879; c=relaxed/simple;
-	bh=yfHuajUoMYm+ze2VB15y2TKSP2Ni3Z1+r9n+XCyy0AA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E6ZV5UYHjKEP2xh6I1rq8YnrJ8gDbd37wB2Og1CG8N+SsEhxzc8P+sl+83BgtcaXVtRPok69wenyJz8NWzLLYxUXuZxfWexBjrswPVWghdzISJ/p5hc7Ds5IB9u6eeaVg3HlxJvJW+IFdk7N9s0IbTmX4h++1oRWlLzZcho/NCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1fO8XuI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC17C4CEF9;
-	Thu, 14 Aug 2025 07:17:58 +0000 (UTC)
+	s=arc-20240116; t=1755155906; c=relaxed/simple;
+	bh=dimKx23huTNq7ndUo5JXI5Ve5ilX+nFkk6o+pI2E0Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OA/SmkJvtfnQq71Va5LP86mq6YZEashYVdMD/FJ0xEpsgy7Bgwju8/zYTWcXXUZgqucfWsY1qzWfcRkmsXT9ldUAUserl+vpGbPg21U24JmLjhwQNJBGg8YOUv+KY87g4nJBwGITBZYIi6eIUhClR6OgLa8JqPcwga2Di0cWN9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Elut8q4g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539AFC4CEEF;
+	Thu, 14 Aug 2025 07:18:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755155878;
-	bh=yfHuajUoMYm+ze2VB15y2TKSP2Ni3Z1+r9n+XCyy0AA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e1fO8XuI+3Wsd4kdRrnqoDASgVS6chLeIizcvp9lDpsck408VcePXYfyvHQSxKabU
-	 013/PzOl1HnK3Xr8VpI5VbW1p9GKYF9BehgqhkYs41yEqSjEv+yUbmz5iD6h6OvmpQ
-	 fRsOLdYtBohF+CIl+2bDS/V8J8rMSKaUt2l3x7g3joSW5UrLwKsw9WJYllK7G+DRPq
-	 g+9oz8I41CdmiDj84TuFXlg24d4Kyjcg2OMBkpW8fjAxp8VKCP21q/z06vS4MVMfAV
-	 BQmvNYN0v2j49331ccR4SuoFzo6JEuiDT27760Epw0DlzgsnSRlAV4y7naWRCILL4H
-	 6hM9YE/bdlLeg==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Song Liu <song@kernel.org>,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH 5/5] perf test: Remove exclusive tag from perf trace tests
-Date: Thu, 14 Aug 2025 00:17:54 -0700
-Message-ID: <20250814071754.193265-6-namhyung@kernel.org>
-X-Mailer: git-send-email 2.51.0.rc1.167.g924127e9c0-goog
-In-Reply-To: <20250814071754.193265-1-namhyung@kernel.org>
-References: <20250814071754.193265-1-namhyung@kernel.org>
+	s=k20201202; t=1755155906;
+	bh=dimKx23huTNq7ndUo5JXI5Ve5ilX+nFkk6o+pI2E0Ic=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Elut8q4gK/DQnVF2FTu3JSUuMHfdp5tASCwvQDMXk+I2sjuMCH2k7HKXw1uymxgoh
+	 CtiucKFzY/s70niahonbQtlc1w67bqX70HaADHkFK4TnWSR1Y0dQS7YVJuNvbwEPsK
+	 bbuk3AE1PyL1bXAbZM1zytiELb923yQ8yxCKaobfwwPkLiADA76QggCYGYT/k13550
+	 WrvfK2I9Gc3VUDUazB5PfRpyeBI0S2uJZgJ4CkMm/a7i56408y0+1Kl0nLxCYzRk+C
+	 quycfUywHu25bGb9PiuGkRbwSs4dMoZZ8p9t4nMEvD7zQdJl4zCGf49ZXn00IumOcc
+	 0BsCbvN4Cdkcw==
+Date: Thu, 14 Aug 2025 12:47:58 +0530
+From: Sumit Garg <sumit.garg@kernel.org>
+To: Abdellatif El Khlifi <abdellatif.elkhlifi@arm.com>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org,
+	Srinivas Kalaga <Srinivas.Kalaga2@arm.com>
+Subject: Re: [PATCH v19 2/6] remoteproc: Add TEE support
+Message-ID: <aJ2Npmru9RLPTj7c@sumit-X1>
+References: <20250625094028.758016-1-arnaud.pouliquen@foss.st.com>
+ <20250625094028.758016-3-arnaud.pouliquen@foss.st.com>
+ <aJzAkk-k4nfXY7Ux@e130802.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJzAkk-k4nfXY7Ux@e130802.arm.com>
 
-Now it's safe to run multiple perf trace commands at the same time.
-Let's make them non-exclusive so that they can run in parallel.
+Hi Abdellatif,
 
-  $ sudo perf test 'perf trace'
-  113: Check open filename arg using perf trace + vfs_getname          : Skip
-  114: perf trace enum augmentation tests                              : Ok
-  115: perf trace BTF general tests                                    : Ok
-  116: perf trace exit race                                            : Ok
-  117: perf trace record and replay                                    : Ok
-  118: perf trace summary                                              : Ok
+On Wed, Aug 13, 2025 at 05:42:58PM +0100, Abdellatif El Khlifi wrote:
+> Hi Arnaud,
+> 
+> > Add a remoteproc TEE (Trusted Execution Environment) driver that will be
+> > probed by the TEE bus. If the associated Trusted application is supported
+> > on the secure part, this driver offers a client interface to load firmware
+> > by the secure part.
+> > This firmware could be authenticated by the secure trusted application.
+> > 
+> > A specificity of the implementation is that the firmware has to be
+> > authenticated and optionally decrypted to access the resource table.
+> > 
+> > Consequently, the boot sequence is:
+> > 
+> > 1) rproc_parse_fw --> rproc_tee_parse_fw
+> >    remoteproc TEE:
+> >    - Requests the TEE application to authenticate and load the firmware
+> >      in the remote processor memories.
+> >    - Requests the TEE application for the address of the resource table.
+> >    - Creates a copy of the resource table stored in rproc->cached_table.
+> > 
+> > 2) rproc_load_segments --> rproc_tee_load_fw
+> >    remoteproc TEE:
+> >    - Requests the TEE application to load the firmware. Nothing is done
+> >      at the TEE application as the firmware is already loaded.
+> >    - In case of recovery, the TEE application has to reload the firmware.
+> > 
+> > 3) rproc_tee_get_loaded_rsc_table
+> >    remoteproc TEE requests the TEE application for the address of the
+> >    resource table.
+> > 
+> > 4) rproc_start --> rproc_tee_start
+> >    - Requests the TEE application to start the remote processor.
+> > 
+> > The shutdown sequence is:
+> > 
+> > 5) rproc_stop --> rproc_tee_stop
+> >    - Requests the TEE application to stop the remote processor.
+> > 
+> > 6) rproc_tee_release_fw
+> >    This function is used to request the TEE application to perform actions
+> >    to return to the initial state on stop or on error during the boot
+> >    sequence.
+> > 
+> > Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ...
+> > +
+> > +static const struct tee_client_device_id rproc_tee_id_table[] = {
+> > +	{UUID_INIT(0x80a4c275, 0x0a47, 0x4905, 0x82, 0x85, 0x14, 0x86, 0xa9, 0x77, 0x1a, 0x08)},
+> > +	{}
+> > +};
+> 
+> Other implementations may use different UUIDs.
+> What about adding a kernel configuration option which, when enabled, allows
+> alternative implementations to override this table?
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/shell/trace+probe_vfs_getname.sh | 2 +-
- tools/perf/tests/shell/trace_summary.sh           | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+You don't need any other kernel configuration option for table override
+but rather you extend this table with UUID for service provided by
+TS-TEE.
 
-diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-index 7a0b1145d0cd744b..ff7c2f8d41db5802 100755
---- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-@@ -1,5 +1,5 @@
- #!/bin/bash
--# Check open filename arg using perf trace + vfs_getname (exclusive)
-+# Check open filename arg using perf trace + vfs_getname
- 
- # Uses the 'perf test shell' library to add probe:vfs_getname to the system
- # then use it with 'perf trace' using 'touch' to write to a temp file, then
-diff --git a/tools/perf/tests/shell/trace_summary.sh b/tools/perf/tests/shell/trace_summary.sh
-index 22e2651d59191676..1a99a125492955ad 100755
---- a/tools/perf/tests/shell/trace_summary.sh
-+++ b/tools/perf/tests/shell/trace_summary.sh
-@@ -1,5 +1,5 @@
- #!/bin/bash
--# perf trace summary (exclusive)
-+# perf trace summary
- # SPDX-License-Identifier: GPL-2.0
- 
- # Check that perf trace works with various summary mode
--- 
-2.51.0.rc1.167.g924127e9c0-goog
+> 
+> > +/**
+> > + * rproc_tee_register() - Register a remote processor controlled by the TEE application.
+> ...
+> > +
+> > +static int rproc_tee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+> > +{
+> > +	/* Today we support only the OP-TEE, could be extend to other tees */
+> > +	return (ver->impl_id == TEE_IMPL_ID_OPTEE);
+> > +}
+> 
+> Could we make ver->impl_id user-configurable please ? for example, by reading
+> it from the device tree since it isn’t discoverable at runtime? In our setup, we’d set
+> it to TEE_IMPL_ID_TSTEE.
 
+In case the TS-TEE service gets enumerated on TEE bus then the
+ver->impl_id will get automatically configured to TEE_IMPL_ID_TSTEE. It
+is how the driver will get to know if it is communicating with an OP-TEE
+based service of TS-TEE based service.
+
+> 
+> > +
+> > +static int rproc_tee_probe(struct device *dev)
+> > +{
+> > +	struct tee_context *tee_ctx;
+> > +	int ret;
+> > +
+> > +	/* Open context with TEE driver */
+> > +	tee_ctx = tee_client_open_context(NULL, rproc_tee_ctx_match, NULL, NULL);
+> > +	if (IS_ERR(tee_ctx))
+> > +		return PTR_ERR(tee_ctx);
+> > +
+> > +	ret = mutex_lock_interruptible(&ctx_lock);
+> > +	if (ret)
+> > +		return ret;
+> 
+> In some TEEs, the client driver might need to perform extra work during probing.
+> For example, when using TS TEE, calling tee_shm_alloc_kernel_buf() is required.
+> Could we introduce an rproc_tee_ops and add a TEE probe operation called by the
+> remoteproc driver for performing custom TEE setup ?
+
+Sure, as I mentioned above the driver will be able to know if it's
+communicating with TS-TEE then the additional functionality needed can
+be conditionally implemented during probe.
+
+I think it is really the next step after this patch-set lands where we
+have to support the remoteproc service hosted under different TEE
+implementations like OP-TEE, TS-TEE or QTEE etc.
+
+-Sumit
 
