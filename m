@@ -1,125 +1,195 @@
-Return-Path: <linux-kernel+bounces-768589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDDE6B262E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:36:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825DDB262F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8845C3B6ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:33:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DDE27AE6BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952192F83BF;
-	Thu, 14 Aug 2025 10:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912CD2EA15E;
+	Thu, 14 Aug 2025 10:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2Qo/JnH"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h2LXt2og"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1A62F39A0;
-	Thu, 14 Aug 2025 10:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5F331815E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755167568; cv=none; b=L7PrcjFeltAtiI+o9VOzCOmI66caRevVc2H8Hc6iJXO6NUIO7XPXpcKxkHHgNt+uvwukE7EN6h/ef5yyGaj/Oy3CT1jws/iDx7VQRi1+TO4k7GFWpVaQ1DKFvfz964giQCW7hGi0yoLb+wPrrIPUk7Cda3+OSY7VTbA7+wUNQJg=
+	t=1755167960; cv=none; b=tEB+ggkxV7w08339IqyY2+Vcr+pZNn3cOJa7PtKWcvd89vmD+sxjBCo01qpLVmkhAIEw5Khr9z8fgoKZpuRFNqn6qb2KGB7tATN9dMDAKmCEfC42uyCQgJSp8bVP89GMlq63pbZn4dxCrdXlzfNTYA1zdu+AUqm+1UMNKytPz9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755167568; c=relaxed/simple;
-	bh=CYzbKVOF/TPdEmZ8s/gMlGCZBSnCGBFSN85mnNON29o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jRX6X6jzZZgAhPaau5dEYQ2y/Yyi2kqFcGwu9rd2VM0VF/iy/pbZ1aIGBSIuSuoUXp+VKaONVBJkTFfGPbsAEY/MvtnX6Uu0R89Y0N3RDAuvJ5WAMrTt6xHyyh89n/nRL2R3bfS5SObXQwywhuKF7UkFyg6uWTVi6ItfZvOw/Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2Qo/JnH; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4b109bedc38so150231cf.2;
-        Thu, 14 Aug 2025 03:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755167565; x=1755772365; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uidag5GH3rbfp6RvsevZJFZiGLSa9EyuN+ZmrX0Ohk0=;
-        b=a2Qo/JnHFNH/HV2PqscLXujDOgzNWzNA+xghTMSzmc8xSFL9dozAsok3LsTQGGCpt+
-         ZMUIqNQj2zsqXzs8bm1Edr7bKW3LGsy6G2dhgIydUqIbjpGhj2VbvvT8UU5jM6PMKs/W
-         PZgmwpVYfzbCLfYUh+JhyAor9G7VwAubY3UzIK0Rfh5Zs5ZqNOJRJB8jbBjLQ5tuyzOW
-         kz/UjFCLFN5XAAo95AGgOQYF2bqn3axF3dBhYvJOw8plwqzhUh1xkCs3ho8KzoitHEiZ
-         FYXi3NBZLon68PbaThYRETcwZ5VaP9QmLXh0EQJjyvTvUVlf1DxLEq9J/nV1LsMDeB3C
-         GUDA==
+	s=arc-20240116; t=1755167960; c=relaxed/simple;
+	bh=vy/kbyBLqEKNnDXX9JSY4JStM3dRhA0LlMTcKbNGUDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UtiNaICli6J0fi28OKZIshI3sl1lurAzPkeWCnrbTz1gMAIDjwzgk2Q6h7+K8s9CYE1MrXogYXQ2vzbFdWczGEfOgU3G42evmPVavs0Ht2fGxMcn8RIG3yUyNLVast1zJHaAMpuiY7EHp4slLmWPGudV5ybsIfFrTUYra0GEi2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h2LXt2og; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755167958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CEmT42RQmaz79iSpEMVnY8SNb8kz15ad1uYq26SL5aw=;
+	b=h2LXt2ogwT+r32Npyoy3tw4PnCCuX1EhkMpTpbgydS1cOw6kXyKnLLfHbuvny2WQbbvNvx
+	fdKBG316TUiUoMGTfod/MjNCk7MuCaDh1hAmtKCPrd0hUwkrH0d7/dDzDsYy8IVpeqhV9x
+	g0UEv+hXRLL9x7ifbigm+JGl4bNMAfs=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-596--QdWilXQPSCmerlNfC9Cug-1; Thu, 14 Aug 2025 06:39:17 -0400
+X-MC-Unique: -QdWilXQPSCmerlNfC9Cug-1
+X-Mimecast-MFC-AGG-ID: -QdWilXQPSCmerlNfC9Cug_1755167956
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b471737a7baso549693a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:39:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755167565; x=1755772365;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uidag5GH3rbfp6RvsevZJFZiGLSa9EyuN+ZmrX0Ohk0=;
-        b=pjQiP+tiOfVFnOJJlgE0yiu6M/PXi7C/gbeLWzGHZ0sMpMbvI/+SqLjmjIFlajMnWH
-         pfKA4EK+EM1EHPY1XTqTL7Ux7sAxVo4DGKg8noJZxjAGL/B6d9sU+TfYbaPXT2JJkKdC
-         mApMCKmpRNS600an2ZEpfm7it+jES6CpRpSvPYJkxaopr83PLxylFGWZnNAp15vs3BXm
-         +dH7pe65amBQfAMKsYzHUxOxB3UmLp0td1Lr3G7VcRaCGB9B5vUopAj3EtJLgAzZm180
-         7x+VAGKleRASqEMNjrZFEHwAg7GGjFom46QvRyIaPsODd3ewDf73PmOXO2gGpcik+OE2
-         SU3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWeRWfsNBeqGtxVKYRoAvbhwwCz/gwql5kzrkE9vN5aI+K35+OE2GFGDrFOrkxfONtrCywV5s4fLsZ0+ZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg4cbbT3Pba+j0b8w6lu4axG3qfVP1uvrppfIF9TKysxGF2YS1
-	48Oul4QH5SvlJQB2B9sYprDsK28XUTmU/T70z/43JBl+P+AUfEnPaqJLl5Fjw6rZsYABByIb5sj
-	v+bjhIsAJ5ahH9cmuaOckHikb4TZxYNA=
-X-Gm-Gg: ASbGnctLKUAPE7v3kQm3EJpZPH/gkPPYy41j7AJi2OJWcrUGKoaSrK3mpCvx+tHVLn5
-	Pwjy1MAGpX7JQUwCNwpDeLjE57TAAZRLG5KGhMgnOKYd+VowYDoT8HzkwPhXFy1bGZ5K3QCN2ko
-	bVnwDvtdzOhkGDLHfVkjggH5XfoG72e2nXdEojrJiTIYl/R3nGTfrnflFBSw54Z6QrgLsMxTkM+
-	bvkyA==
-X-Google-Smtp-Source: AGHT+IFu31MRahXeNRGXB5OCH9nzb1U/olRrBgEEv0rdSL8Stn8Hl/kczWWsDd0HZkH7R447MArgv+9zbTEYHlkXCT4=
-X-Received: by 2002:ac8:5885:0:b0:4ab:6b8c:1a41 with SMTP id
- d75a77b69052e-4b10aa84523mr16219091cf.7.1755167565307; Thu, 14 Aug 2025
- 03:32:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755167956; x=1755772756;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CEmT42RQmaz79iSpEMVnY8SNb8kz15ad1uYq26SL5aw=;
+        b=IRGjEr5AW8Uhx2YgeIgplLuL/xkiyJlDOtLrv9gzejxLQciNnIWvb4yFkPWQ9vc6P1
+         vIN6RRQFdnI+sjzaiqlpn1ppP72wDpmzrquoouigbkomzdHbTsUOwQM1ZBIuLAvFjAk6
+         GlerjXCI3a3fP4oiTqttVtjTzBF3HRSMX+UuBR7wc8kQtmeLV1cTHWMmDsBDFsz7PZrL
+         S9AfvModO+fmBpY3OsZmCeKZ9Qr2U/Q1hFEWjDu02XweRZ57GHGHKkA3/WZXigrqcI8i
+         4R25n1CzlN1vFvbKlqtuNUr1VzDyWZd9XG8ruOB7VNyEH9kAKhJTPiK8wjACze+sD/SZ
+         HvMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXy/8p26Ib/xT4ILxvquF/PFjkK1DchhnDpwt8uZd38gVjMlymExBTjN5J5RSdX5aBXychTFXm6sX49QqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyovpKHdruh9p6jiae6WIEpHVmLGyK/22emEUvW+N5ZR5ZNnohQ
+	npL5mToEplWQP0zplkpkFftyYj+znAoXmiQvjUCDOG4sGRF6w5Ir1r42hvon9tWScO7S122uxXN
+	bgZ8VMzi9pyZSUinrYPkHqoqRRBBQ0Th2rJwPRo8szL7C/gifQw1Ue8hoX2cYAc73mQ==
+X-Gm-Gg: ASbGncurJLKXCVYRGsg4hqP+byg3WxFQafXdVn+uQrhyn9l1vfuHDR9kdK+JKlR6W8Y
+	q5HyeRXZ9uDDJmGJoTSkXc093ijE2bhQSVHP5tnTFfceQSHiD/IV+DNAZ9crsMmWrimw+Atkuld
+	9KoQYI0EIM69dh12GI+Z0cr5DncvxnHvH4xBjmOit80EqNicCsAb/Dvkn3x3UiCL2W5VqsW3gsJ
+	dNQcA73JTPYZ7ZG4xNCOBfdWV66DHCPCSFWuLITeuh8gY9h5ghOcaMXDho3chLL3oLl3Bx844bX
+	zavPm7FX9cZofRf/YCBRwBKpRsi4M3fo4Lm/kddOAr3aBMndjw==
+X-Received: by 2002:a05:6a20:3943:b0:23f:fc18:77b0 with SMTP id adf61e73a8af0-240bcfcc4famr3875757637.17.1755167956035;
+        Thu, 14 Aug 2025 03:39:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0qcRzLZjEIlriBSOpvCVTTIlZIky5VrZnbpwFkW4qbY9gLvkwJS1z02pXRiF8AX+jnTsQoQ==
+X-Received: by 2002:a05:6a20:3943:b0:23f:fc18:77b0 with SMTP id adf61e73a8af0-240bcfcc4famr3875724637.17.1755167955635;
+        Thu, 14 Aug 2025 03:39:15 -0700 (PDT)
+Received: from f37.llcblog.cn.com ([2408:8212:9001:a40:5c04:f864:9735:818c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce6f6eesm34424189b3a.22.2025.08.14.03.39.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 03:39:15 -0700 (PDT)
+From: Lichen Liu <lichliu@redhat.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	safinaskar@zohomail.com,
+	kexec@lists.infradead.org,
+	rob@landley.net,
+	weilongchen@huawei.com,
+	cyphar@cyphar.com,
+	linux-api@vger.kernel.org,
+	zohar@linux.ibm.com,
+	stefanb@linux.ibm.com,
+	initramfs@vger.kernel.org,
+	Lichen Liu <lichliu@redhat.com>
+Subject: [PATCH RESEND] fs: Add 'rootfsflags' to set rootfs mount options
+Date: Thu, 14 Aug 2025 18:34:25 +0800
+Message-ID: <20250814103424.3287358-2-lichliu@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812082244.60240-1-miguelgarciaroman8@gmail.com> <175513140725.3830230.6064788817690151758.git-patchwork-notify@kernel.org>
-In-Reply-To: <175513140725.3830230.6064788817690151758.git-patchwork-notify@kernel.org>
-From: =?UTF-8?B?TWlndWVsIEdhcmPDrWEgUm9tw6Fu?= <miguelgarciaroman8@gmail.com>
-Date: Thu, 14 Aug 2025 12:32:34 +0200
-X-Gm-Features: Ac12FXySgBOEXQm53QMc0vwZNeEvULA1MusZ7LbWpESUt9ICaStDDiAZ1RsJJy8
-Message-ID: <CABKbRoJDogS-uzy-vott1LHxEPB3tVU4SrBwaagmrhreXxuX9A@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] tun: replace strcpy with strscpy for ifr_name
-To: patchwork-bot+netdevbpf@kernel.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	willemdebruijn.kernel@gmail.com, jasowang@redhat.com, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-El jue, 14 ago 2025 a las 2:29, <patchwork-bot+netdevbpf@kernel.org> escrib=
-i=C3=B3:
->
-> Hello:
->
-> This patch was applied to netdev/net-next.git (main)
-> by Jakub Kicinski <kuba@kernel.org>:
-Perfect, thanks!
->
-> On Tue, 12 Aug 2025 10:22:44 +0200 you wrote:
-> > Replace the strcpy() calls that copy the device name into ifr->ifr_name
-> > with strscpy() to avoid potential overflows and guarantee NULL terminat=
-ion.
-> >
-> > Destination is ifr->ifr_name (size IFNAMSIZ).
-> >
-> > Tested in QEMU (BusyBox rootfs):
-> >  - Created TUN devices via TUNSETIFF helper
-> >  - Set addresses and brought links up
-> >  - Verified long interface names are safely truncated (IFNAMSIZ-1)
-> >
-> > [...]
->
-> Here is the summary with links:
->   - [net-next,v2] tun: replace strcpy with strscpy for ifr_name
->     https://git.kernel.org/netdev/net-next/c/a57384110dc6
->
-> You are awesome, thank you!
-> --
-> Deet-doot-dot, I am a bot.
-> https://korg.docs.kernel.org/patchwork/pwbot.html
->
->
+When CONFIG_TMPFS is enabled, the initial root filesystem is a tmpfs.
+By default, a tmpfs mount is limited to using 50% of the available RAM
+for its content. This can be problematic in memory-constrained
+environments, particularly during a kdump capture.
+
+In a kdump scenario, the capture kernel boots with a limited amount of
+memory specified by the 'crashkernel' parameter. If the initramfs is
+large, it may fail to unpack into the tmpfs rootfs due to insufficient
+space. This is because to get X MB of usable space in tmpfs, 2*X MB of
+memory must be available for the mount. This leads to an OOM failure
+during the early boot process, preventing a successful crash dump.
+
+This patch introduces a new kernel command-line parameter, rootfsflags,
+which allows passing specific mount options directly to the rootfs when
+it is first mounted. This gives users control over the rootfs behavior.
+
+For example, a user can now specify rootfsflags=size=75% to allow the
+tmpfs to use up to 75% of the available memory. This can significantly
+reduce the memory pressure for kdump.
+
+Consider a practical example:
+
+To unpack a 48MB initramfs, the tmpfs needs 48MB of usable space. With
+the default 50% limit, this requires a memory pool of 96MB to be
+available for the tmpfs mount. The total memory requirement is therefore
+approximately: 16MB (vmlinuz) + 48MB (loaded initramfs) + 48MB (unpacked
+kernel) + 96MB (for tmpfs) + 12MB (runtime overhead) ≈ 220MB.
+
+By using rootfsflags=size=75%, the memory pool required for the 48MB
+tmpfs is reduced to 48MB / 0.75 = 64MB. This reduces the total memory
+requirement by 32MB (96MB - 64MB), allowing the kdump to succeed with a
+smaller crashkernel size, such as 192MB.
+
+An alternative approach of reusing the existing rootflags parameter was
+considered. However, a new, dedicated rootfsflags parameter was chosen
+to avoid altering the current behavior of rootflags (which applies to
+the final root filesystem) and to prevent any potential regressions.
+
+This approach is inspired by prior discussions and patches on the topic.
+Ref: https://www.lightofdawn.org/blog/?viewDetailed=00128
+Ref: https://landley.net/notes-2015.html#01-01-2015
+Ref: https://lkml.org/lkml/2021/6/29/783
+Ref: https://www.kernel.org/doc/html/latest/filesystems/ramfs-rootfs-initramfs.html#what-is-rootfs
+
+Signed-off-by: Lichen Liu <lichliu@redhat.com>
+Tested-by: Rob Landley <rob@landley.net>
+---
+Hi VFS maintainers,
+
+Resending this patch as it did not get picked up.
+This patch is intended for the VFS tree.
+
+ fs/namespace.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 8f1000f9f3df..e484c26d5e3f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -65,6 +65,15 @@ static int __init set_mphash_entries(char *str)
+ }
+ __setup("mphash_entries=", set_mphash_entries);
+ 
++static char * __initdata rootfs_flags;
++static int __init rootfs_flags_setup(char *str)
++{
++	rootfs_flags = str;
++	return 1;
++}
++
++__setup("rootfsflags=", rootfs_flags_setup);
++
+ static u64 event;
+ static DEFINE_XARRAY_FLAGS(mnt_id_xa, XA_FLAGS_ALLOC);
+ static DEFINE_IDA(mnt_group_ida);
+@@ -5677,7 +5686,7 @@ static void __init init_mount_tree(void)
+ 	struct mnt_namespace *ns;
+ 	struct path root;
+ 
+-	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", NULL);
++	mnt = vfs_kern_mount(&rootfs_fs_type, 0, "rootfs", rootfs_flags);
+ 	if (IS_ERR(mnt))
+ 		panic("Can't create rootfs");
+ 
+-- 
+2.47.0
+
 
