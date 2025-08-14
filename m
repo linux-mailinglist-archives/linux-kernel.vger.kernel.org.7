@@ -1,214 +1,125 @@
-Return-Path: <linux-kernel+bounces-768759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BD7B26524
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:14:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE322B26527
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7784F2A5AA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:13:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87E147BDCFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477992FD1DD;
-	Thu, 14 Aug 2025 12:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42FF2FD1DD;
+	Thu, 14 Aug 2025 12:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aalz1iI3"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2053.outbound.protection.outlook.com [40.107.101.53])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uye1wauo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87D7295D91;
-	Thu, 14 Aug 2025 12:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173602; cv=fail; b=JZs9zISy6Co8t1PanCIkdr6GkNhv7nR/H+gcwYYGpb07gctpTeypsg5WPEv3tp/yrwjAScrORqOm7WmjrH+pDd0/OEPNrc0ZtEMwCEUgfBUAAS94DGuJhmjv9Thzv7qI6i9TxWs9OLKo60R7EpRMPHs4KTOSL3411IL8P6XytFE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173602; c=relaxed/simple;
-	bh=kWSr//m++MJ+ojP5cvJQBn2fJwvSzoqE1Ld3zFObOjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=pHTKhgBQEhrDSj11xd/GqxthxZt+F1Z4TQVJagCpwkiTQMIhmOh+ohPwr+3c/grMMzMAsaBppvlOvKlOyKBE9DgURO3dYHH1iEOZGK4styenUbRCCD/VBoItt3crPEokbWEWCeeofLTeNI8BCBtPs2lAt78cDQFu8gonoU0mb/o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aalz1iI3; arc=fail smtp.client-ip=40.107.101.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MAKEtyQy7PB+A1PDOHUokV1jcIj9UfR7JconjD+A5MEjcxtLJBHt7s1JSxpYDJeFKoc5sWJx4wW1shd8ql7I3qTJZcwz3MctE3NEmzWRsFPG2VFGU/MQiHZt9mUOme+EpBzAUiW7zaIwY7YDkZFaExex9NoCDX/m0nLiwm9zNYLNU+BODSee0P9uELiE5PwlEQD/soOAHFhzYATz9xTjESL8svTEPoeC5DuOPX9bYqvMZYb+OoAzG2VHKWVdhyXsEgDV8Z0Qqufg32ZOxkdb/2HBXee0yJDeGv8czLQhiGocnSgLjZMoNm5lsrsvq1x6bKm0ie3aRRgobp4BmlVDUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FlwP94jh94JMwUUIxviGkpnalg6FRzIqI7Hx8eS43Sc=;
- b=Oehq8j6FUcLM94fx6qjmCt32BwKlHbdp/R9Cjr714mCkxOFOAYezhgWw1Q2FVMVZ+JJ+HscSy5OhEI9vRAX2dtazgHx9KZFCmNPWygY8/961iJnx72iSUzP9z2AsCmsP0EX45wdQQRSDK8GBHO8J0HPRZSQvFJDxcY1xhR4+lPA5RcU8lu4gZHELDVT83ywGL7TzCV6dQnstmMO8/YPO3zYwfbdRtxahESmvjE7aOVFxrBgBa9NEPVPGcxpWyn3kALOf0OHCjLn10VDCdiinbzoWPhbmUTis1/9qljuRUIvOr8AD6e38KHG0cNPjTmI0kkz68wZyAXg5ueZiOs/CAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FlwP94jh94JMwUUIxviGkpnalg6FRzIqI7Hx8eS43Sc=;
- b=aalz1iI3xvR52yHRC59vX93/JGLpTP/avlPpDPOBN5EawU4oI+lnI50GHsCR3Q2iiepbhmaqUidgBuT8veY629SGFeS+M/vBZX9kV5h1oD9tC2GV9ZgKR+FNpGbMdhDyJ7UZo6wxdbeShHKK7iVVESeU9XDeyfA7IVQBuXRGhMnLvd7MzUS5R0o9Jxt+gUO8AixHn7t15r+Hv0c6HUYR6n2oh/5+Jm3WZ3fvJli1TuV7NlqdJiSo5bqmxF+5w7DFfT7cRiPdwTx76BqukzEqq1jbyVjpCjZtUeqlxBGEeRavYfdlYC3VWZjRbNA2Ubq4k4Gm9QGx1zOJlK+QzbAHIQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS2PR12MB9637.namprd12.prod.outlook.com (2603:10b6:8:27b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
- 2025 12:13:18 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9031.012; Thu, 14 Aug 2025
- 12:13:18 +0000
-Date: Thu, 14 Aug 2025 09:13:16 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v1 08/16] kmsan: convert kmsan_handle_dma to use physical
- addresses
-Message-ID: <20250814121316.GC699432@nvidia.com>
-References: <cover.1754292567.git.leon@kernel.org>
- <5b40377b621e49ff4107fa10646c828ccc94e53e.1754292567.git.leon@kernel.org>
- <20250807122115.GH184255@nvidia.com>
- <20250813150718.GB310013@unreal>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813150718.GB310013@unreal>
-X-ClientProxiedBy: YT4PR01CA0328.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10a::18) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8093A295D91;
+	Thu, 14 Aug 2025 12:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755173644; cv=none; b=maB3cSXRCcyYD9V3937veeXKg7cHUV+R+8UPvxh3tKRb5GaaesVo6qtZa633Ubsj7Dhm0nPv84kIcikDfcWxvg8mY0yioVGqyXqX116RogZSxsJUYv/U5ZllkgEijl83lhBYbrWVGVwUhvXjrluQ9kzMGZH+82wtjQR5Dcxunw8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755173644; c=relaxed/simple;
+	bh=M/IUS4lgTZ6YXgbn1Q91Y9cZrMJeVX6pFsHRNGCQNh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bMeImVFT5ufUImq01+mUbhWi09aA+HdhvN2yQ4jem2biVpSXWHz6Z25VNubNJzl96kwDCMbdDC4SkyxTUZNCzH+MFRkyLdtb+eP7864CItXZ42cDRHCPU1czoKuoX7jQmTD7iurX6yODZEIqIOomCH3ZvK6RH3vMqscXWr5ik7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uye1wauo; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755173643; x=1786709643;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=M/IUS4lgTZ6YXgbn1Q91Y9cZrMJeVX6pFsHRNGCQNh8=;
+  b=Uye1wauoGDSi9KCqtZTWPnephZMuEOr8yUvgbX53EBKKnvUzD2v8tckV
+   n8N4lMWT4d3T5yuZ5IOPSp5XpMapQ0WFy5FzS3MbuBB2ojd7u0Uz5+Wf/
+   QvZrswSn9FOFCf2uSBc46TyUS7AYOqjp2/9ELQldPkcQe72YOrcDfhsdg
+   uXhqtwLwUgdb1eh9OZMzQCurN8b0J5CSXR0vyYRrjwXSgkhKQYHvRJT3a
+   dpCjVLHgGamsy1Kbfv3wVXeiIaGFT58kcz0aaGSs+DzZBaB9jwsbCMYOk
+   yjVLxL8yeRDsFI3dmv/oNjjnXhSE6LOdGwMCLU+n4jKWLNPdfUQ0HF8Yg
+   A==;
+X-CSE-ConnectionGUID: 2wd0BeVjQNmx03rP0eHa2Q==
+X-CSE-MsgGUID: eE0S7XnNQvuBR+fKzVugYQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="82921612"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="82921612"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 05:14:02 -0700
+X-CSE-ConnectionGUID: 1YW4nW7dREW+hSuOVIh7hw==
+X-CSE-MsgGUID: W+WtmqtKRuSU26VIer0jCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="165925245"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 14 Aug 2025 05:14:00 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umWqD-000AwG-1r;
+	Thu, 14 Aug 2025 12:13:57 +0000
+Date: Thu, 14 Aug 2025 20:13:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 10/13] docs: move kernel-doc to tools/doc
+Message-ID: <202508141909.XegB3Vla-lkp@intel.com>
+References: <20250813213218.198582-11-corbet@lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS2PR12MB9637:EE_
-X-MS-Office365-Filtering-Correlation-Id: 279f1ed8-ca25-4aa5-3a88-08dddb2bf3e9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Zfap5jlwHnvm4haUSb1I1u4N0AYZZ2KLHtDBCoIrE4Gi2C9ESB1fzLeClr8g?=
- =?us-ascii?Q?Po0B5nsl30HuAPa7u5AiQbwsghkebjwNH8mOhHR0bD4z54R42Dzx8MEcayL2?=
- =?us-ascii?Q?Ny0Fuzk+NA/QVp+GCNfuQM6yO7dmKlD+x509Tbm/U92QcimKEgduCBtoUCh2?=
- =?us-ascii?Q?qx58uTeOTNBo1wPcG9lhUnBpqF0xpkNheC8VuAQIqjEMwNqpiySBlhGr4flj?=
- =?us-ascii?Q?7XIZQ46DaGxrfWz4CMgv7DAIOeAGrvvX9NZzZXVPpPRrnGs7Db14yMfMqZE7?=
- =?us-ascii?Q?T69Rx6ny10FmsbRYBGO2aaa8IvokaM7v1Zjske36whStXuywywpEB9Czq+7s?=
- =?us-ascii?Q?FttnsFxOcFYbuDA6WZFYhl2g/vclMnkQ63sDFB+2WLXWT9rOheuT/GI4x271?=
- =?us-ascii?Q?z0eSBD/9lZoIxBeMLj7pfSmrU3fsm+O0E08mNAfLpKMJv+3gSTjUTiFQyhTk?=
- =?us-ascii?Q?W+oiLlIQclE3NlxPNspv4F88wcuqhdRLm4tcRjRM9pFT56tKMMI3HV832X5s?=
- =?us-ascii?Q?Y62rNuRSEpZwLr8Fpxg/JuT3vt6fo5tvy7LDuFIpkNwEq+JfgXJCgNjq514n?=
- =?us-ascii?Q?pScnXQjJaLr9jV8lGDySR3Jh/yKwl+mTeHqQForkE52YdyLpIGFGz/VX7kFL?=
- =?us-ascii?Q?V21qqQX9+VeHR0basX4y5i84UeUgTC+LxOSHB6WLHRwXEUQub0N9a0uJLRjG?=
- =?us-ascii?Q?cti3fA1ySfhsSXuDRJrIfRATiiOzVtpc16n8espmFLRtnFKL5vGG7zIhzaQu?=
- =?us-ascii?Q?CzhIvbDMD8AzsmdSPeg0orsDr7NfL1q2jwdBsVZfn37vV4F7AywW7+Mx8Rjx?=
- =?us-ascii?Q?BQjFlFeq9TPp4qQR2XorfJ75ZzhAHpLZqmHawCuyfZlLwWX75Kj70SYl/u2p?=
- =?us-ascii?Q?0ldem62ZgcWwo3zLIkmQ7KhHxBOYkKRse1co2TrSvO9FH6p4jnpnedZXLUz0?=
- =?us-ascii?Q?IUaA/2CEX9/vZ3g+BqTpPANqKOqvsmsRHbmUcuNJXZ5+Scu4GhZzukho+YTX?=
- =?us-ascii?Q?5vpxynA+1/KbrrgWTrcibewjEbWqlg+gMbREVojMfishVHlo7REm6+aMHO7C?=
- =?us-ascii?Q?CorP5S+BwtK0kiI3YAAjNaTnLfH4WF0utrdFEgG2fsbKZsRuXvcGU+o/adTe?=
- =?us-ascii?Q?eIh+75cMgL2EJG5TroOvL7+AM+biLp2JqQBhKXXfQcKXOGkVc6137VU+U39X?=
- =?us-ascii?Q?xAy6IYzi0mWr2A4PPoRvC4+VGkbh26GP+0aXTknZGjlPythxxj2yNxy575R0?=
- =?us-ascii?Q?GIss8Cu2ZR7TZpJCDh6yfzFzT30Q+U3KAS+JjVc05wfkZ6dg7aPNON/nCTyt?=
- =?us-ascii?Q?QkEvvW8E9SMgrr7irEyuWMtIaP0HkP4vYKVS26P/evOAtCxllRL/Eo2b5fZr?=
- =?us-ascii?Q?7Vw3Uo23TQWiw4aCeHMHakcJEPlF98oVO1bTl2Lf9oMooLCfjnxs7ZfMgIfG?=
- =?us-ascii?Q?A7Bq3mIdDFo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BJ6T8GYc9fCjO8k3crpC+I79EjWVbBmkej3GbVh6YO6TbL0OqbQrSUJOiqtz?=
- =?us-ascii?Q?kuwDzaSS2iAjqPqT6/xMXY1GxeKEE+SGRLExKwcm7U2RpRXbwjVkB1JjOP0g?=
- =?us-ascii?Q?mwWo5OeALd6PWDJWzSiQKXtSY8zE/OcNfUUnT4g7Tsc5BXPMNDe4J06Quxmx?=
- =?us-ascii?Q?CvSmEhksCQk7d6KmXts2cfzzQh402x6dxkETCWcjMUl2Mrh21HAPUUDD5YRp?=
- =?us-ascii?Q?qNdcITj0HPgy5o95cYNcKbb0P8IBjnYyqDK02UpSFYw4igQkazOFIjwWzPs/?=
- =?us-ascii?Q?bC0/w4Pfp0gUELgmtawEEWFFsqoA5bK5bQifg6TZjJ6gYklEA5/LiBxw3aEn?=
- =?us-ascii?Q?zsgbeJ7LBzkZbMvg+/PaPupYNbEX2F922ePnw/s5eK7nmSXcm3dEtPXwieNj?=
- =?us-ascii?Q?fDMufX0aQbP9pnCwDJAKC+lBu2f/7FKhL/4LdxvxXBD+sUbRB0kEGN4RORsV?=
- =?us-ascii?Q?ChFyMl1znz+uZFWGpIQCwueEKFNKgLpy57H1INxbwVNw+jeWPSQiLvgVF9Uk?=
- =?us-ascii?Q?wh0O35bGr5HSDXXniiEIalB4SJv6pSr50admQOytjtJkpE+aWjs0MLfCNtio?=
- =?us-ascii?Q?KzTfHpWNpfXUCby2U9ZHN3D8JO1ztQwuR3X0+F0wwVp/d3QR1HX98mzKC98F?=
- =?us-ascii?Q?5JXpLim3n1FxPtlLM0/OQik1kqw9VUwDv2K+cbYBSvCgR96AKS3Wmbg3kTMJ?=
- =?us-ascii?Q?vEEhBJG1++MWhrj9P0SKJy0tNoxyHxzeVqSfTjdJ1l/bpbRZ5LhUY3p5PiK4?=
- =?us-ascii?Q?SjDwyBPHNr90u102+omowP7/nR2roCWOMqZta8pQfMqlluHQXPYn5TEeUlwk?=
- =?us-ascii?Q?ob00tBMKS5K5RIAgrR6ZeSyjSYBx/fLM+dnXhWHHrTKufif2JK5igttmCB+W?=
- =?us-ascii?Q?bkjOTEFA1LYnVPRomGTsP0VWx5nte49f1bHfctZc/4BYtFxYt+xFdce1IxKJ?=
- =?us-ascii?Q?gnIzFmcFLaFBkTQI7TcKoFh2WeFu3/xccHO/AJkgHN/rmjboLrjYHTDhGCYe?=
- =?us-ascii?Q?JpmxzpBSj9u8iR8/W/qEN7+McztTUM7DWt4dG3PErl/RDeEJM2guMS+CNz3Y?=
- =?us-ascii?Q?9iOxztCm/JEDfnkOUgO3bd7kJDZ5Lg2uXLgx2+OAXxrHUr5E4ragJJ8pa+Qp?=
- =?us-ascii?Q?lij2fAU2z35Dr0CjLYjHpWEx01aBPHc2CM1XxRU1jWNsEX1eIqsnb34FbQLZ?=
- =?us-ascii?Q?AF1O0CDtpRMJ16FJ6/p4hCc+pBu1ibtufywPbc70bnWZnUbbtRIQYoh9H7Xl?=
- =?us-ascii?Q?em5I9GSdD4yP15MVzBpq2pJqpyIhPQSOQqzEx4oBy9S3A8CH9sV9n6a1qpbf?=
- =?us-ascii?Q?4EdeE/SjxzChdO+TtmJl4Be1ROtrLqIDaCzAmRFignpIe2N718tntI5gOcRh?=
- =?us-ascii?Q?HCAoFuKgut4tVLRD602YB7SHOvNR/mDVkd57XbT8IvAbsIooDrHuxUWHJbvF?=
- =?us-ascii?Q?WjQgfLKyVzl7BKQK34JZjT/sVLU3z8ZjICf1bMhDCNoHPKktQeBXlQScoyVm?=
- =?us-ascii?Q?8aJ3stlS4kxTOc4c9otFns4k1a4ow5ogbGKdMO7CEY05BtmN3UAGMqjMGDhR?=
- =?us-ascii?Q?bKpaIm2Lv4LRdtFqghA=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 279f1ed8-ca25-4aa5-3a88-08dddb2bf3e9
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 12:13:18.0697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YIeclwU55ZGGwEG0nH+auFyY17BxFLO5LtNAZAlU2ZH6n+eMbun0/BrHAtl/v+8d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9637
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813213218.198582-11-corbet@lwn.net>
 
-On Wed, Aug 13, 2025 at 06:07:18PM +0300, Leon Romanovsky wrote:
-> > >  /* Helper function to handle DMA data transfers. */
-> > > -void kmsan_handle_dma(struct page *page, size_t offset, size_t size,
-> > > +void kmsan_handle_dma(phys_addr_t phys, size_t size,
-> > >  		      enum dma_data_direction dir)
-> > >  {
-> > >  	u64 page_offset, to_go, addr;
-> > > +	struct page *page;
-> > > +	void *kaddr;
-> > >  
-> > > -	if (PageHighMem(page))
-> > > +	if (!pfn_valid(PHYS_PFN(phys)))
-> > >  		return;
-> > 
-> > Not needed, the caller must pass in a phys that is kmap
-> > compatible. Maybe just leave a comment. FWIW today this is also not
-> > checking for P2P or DEVICE non-kmap struct pages either, so it should
-> > be fine without checks.
-> 
-> It is not true as we will call to kmsan_handle_dma() unconditionally in
-> dma_map_phys(). The reason to it is that kmsan_handle_dma() is guarded
-> with debug kconfig options and cost of pfn_valid() can be accommodated
-> in that case. It gives more clean DMA code.
+Hi Jonathan,
 
-Then check attrs here, not pfn_valid.
+kernel test robot noticed the following build errors:
 
-> So let's keep this patch as is.
+[auto build test ERROR on lwn/docs-next]
+[also build test ERROR on next-20250814]
+[cannot apply to drm-i915/for-linux-next drm-i915/for-linux-next-fixes linus/master v6.17-rc1]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Still need to fix the remarks you clipped, do not check PageHighMem
-just call kmap_local_pfn(). All thie PageHighMem stuff is new to this
-patch and should not be here, it is the wrong way to use highmem.
+url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Corbet/docs-Move-the-features-tools-to-tools-doc/20250814-053915
+base:   git://git.lwn.net/linux.git docs-next
+patch link:    https://lore.kernel.org/r/20250813213218.198582-11-corbet%40lwn.net
+patch subject: [PATCH 10/13] docs: move kernel-doc to tools/doc
+config: i386-randconfig-011-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141909.XegB3Vla-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508141909.XegB3Vla-lkp@intel.com/reproduce)
 
-Jason
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508141909.XegB3Vla-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> /bin/sh: 1: tools/doc/kernel-doc.py: not found
+   make[3]: *** [scripts/Makefile.build:287: scripts/mod/empty.o] Error 127 shuffle=1730989061
+   make[3]: *** Deleting file 'scripts/mod/empty.o'
+   make[3]: Target 'scripts/mod/' not remade because of errors.
+   make[2]: *** [Makefile:1281: prepare0] Error 2 shuffle=1730989061
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=1730989061
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=1730989061
+   make: Target 'prepare' not remade because of errors.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
