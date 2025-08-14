@@ -1,105 +1,155 @@
-Return-Path: <linux-kernel+bounces-767883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FB74B25A15
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:50:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF931B25A17
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0DF5C04F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:50:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B03A726AA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C7219F11E;
-	Thu, 14 Aug 2025 03:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB9A192B75;
+	Thu, 14 Aug 2025 03:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DwfPBscA"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZkSiKz8+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA91C147
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83453D6D;
+	Thu, 14 Aug 2025 03:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755143401; cv=none; b=hb3Eammmzy5kQEn1OTLDoe9xLaBSTRV/zyV7kqMM0kGu9Ks6d74a5Wfdx9zWsFqKLnXGcw2LaZ5PFys9hqf95AUxhta5Tvd/4fNKZAiM7ES/Jvo5cvrraSIgdZRPjs5UZGcWsT6KqSXIiGOTEC0DyTGpaN0PtZRIJwRuquO5rYM=
+	t=1755143448; cv=none; b=qOLMW1gFWOIQDvb97PLIGwhm2TL7urPktBKkNH2UiWMbBgDru92+mbooeosjWbblRfoZsaGYBwGy9c5JmM1M0vxfobDK6NYuj4oAPBpk19/6G4ujGEmvz32P2qwTapVBgUtwKQQkhipWr8gOjM+OBEAlmtbINWoTmE+hRgMms+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755143401; c=relaxed/simple;
-	bh=lPqVj0G2DyYaPAyDFCY0tiqWUW0qi8F2eqgmFFWHkGg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IItmhsykNNzGpcqrXHe5VjhsaPw/RNPlm1nNQzITPD5bR2cXuw0aIV1UxOdf7AzxYjGF4HZGAJuNNmE6MojE92AQc1kzmUL0E/V0TLrkTrD0xgahmPsplCJcXWu7b7nlhIRaax7jKzQ5+6vI/GyQnf5JZiRUusrJGBF+m3jaaaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--inseob.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DwfPBscA; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--inseob.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47174b1ae5so345266a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:49:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755143399; x=1755748199; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Hty7WDnaEU1uIGqarmiq9SVgicWc3FSueIb95VGagqo=;
-        b=DwfPBscANp4qL+xpUo1q2VHbGKwm+VxX9vvw86LN0fiwPWZQ74zct6zU2k7ut7BJP3
-         JwM9lzGPIRAYNFupf7WQ4L+uTEZ8Oy9RiozzQ2Nq3xQMkx+/hID8QThbFMK2hKT7xux1
-         yy/g2B38bpKMzoIxq8cW7KyhfDusABFp668A4sgW/uJAuamTInywMJwWpZIFs0uKItgX
-         uW1pzQOb7/Bg8OIutWjJiIwkh0xf55EfuifDA3+gTxUf1zun9FgX112yGv9QZvre7/ET
-         nGndstmSxr72IrwXAMTKWE+1Ivmb/TAZjn/d/1hP4IjmrBzvW6y5aMze7JfaEu6gJcP8
-         iPGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755143399; x=1755748199;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hty7WDnaEU1uIGqarmiq9SVgicWc3FSueIb95VGagqo=;
-        b=D0fKZmyxEUpPaxDWWqZcNV5uhblMEhuaCbRyJZWddXn5x+E23tXpxUjbuItVmavMr5
-         OYsT2UiqxC7j98HuSx/ZmNyn5EeOR6S5DLNDZVtfXc+PAw3bN7RDBdhOoDD5Xf5idSX7
-         eU8g0GIilGDHG4O+qa7G1NdU5MbahygLGwY47gC8w8/WEwsw+wrQGuL0/xKADEvlikl8
-         zcb5eu5PEXA1cQDuLGzquyJWALwlOVEYF6j2259V1A4p4kit11fYdFMBU/T3ZMgvF/Bg
-         m0hAweTxGl0aIznn0+Xi+VTJposeZC1Ig/sjILF2svWUeyJjDWdT2rQj1KafdSsUvRHc
-         MiGw==
-X-Gm-Message-State: AOJu0YwmG/EtMvGzpuJ2630cFEXo+ozpsoBotbo6ReOF60JSTR+zguz9
-	PhD5cPLTcYZJnBLDmWY+1cbpDB3+exEW6NaLOcbd9xvZ7Fw1ZnRGKRfHhkHrR30fkw9kRXjhxoz
-	5OF3cWlzGiErJaWmYmhRzKBC42SU/Ll0iUFGnpc/qqRJ2dSLXqYXR4R4db71Edbf1C354bbAmVu
-	ePv09aAmr0wNAqklDyfGHe2ZLKHKcN/jQ4uTmjsQEjtkhY
-X-Google-Smtp-Source: AGHT+IGP5l6poYO1hNSVO0axML0Qny4BQvfhvBjEuphbMon5a4DVHWpJScEWvwJsXpAb320jG1BdEDNKsug=
-X-Received: from plbp6.prod.google.com ([2002:a17:903:1746:b0:23c:7695:dcc5])
- (user=inseob job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4c7:b0:240:48f4:40f7
- with SMTP id d9443c01a7336-244586c27demr23010895ad.39.1755143399315; Wed, 13
- Aug 2025 20:49:59 -0700 (PDT)
-Date: Thu, 14 Aug 2025 12:49:53 +0900
+	s=arc-20240116; t=1755143448; c=relaxed/simple;
+	bh=ism4DX/0tvtC7UUo4wckL9jSeiXUZ1Nq7Lv7Sj8l4Rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XA3Poc04yy90zpbOnMVLFETeSzuWx54kifBGaow5+eKYy9kxN4r0I9GBcf/eAlOMrQdOdQ0LAvq9d1Yk+lEW52uq38nOD/qVvkDveWMcO05g8Xoxf43df2OZMjjFkaGQEGNWxsrwfFFFXGRS9voYGJRf11/TlTZZGBjsHCrt5DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZkSiKz8+; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755143445; x=1786679445;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ism4DX/0tvtC7UUo4wckL9jSeiXUZ1Nq7Lv7Sj8l4Rg=;
+  b=ZkSiKz8+oZAGOI7NNqt6eELpGCyuE1X2irtEKGhQhtJGdMg1x0fyJmPh
+   4dvW3Ks50x7ejWAGpbOSW0GkpD92TLkL4j51ySmbPawjqK7IwOhrlW8Y1
+   BD02HR0a2fnraL3YZzvHrsP9YBsjQ/yv2ayorwQP9Sw/BaRp2ZTUJ8FqI
+   uYmhv3sAhy8mlGzB1ciZtzq7A30vw125to55YZDccLYsVC4fRm76hnrlm
+   XKcdwZJijXTIbmf78W9yHWiQGrTiCjNn8GH38Xu+FQse97O5c8nf9mSiK
+   fXUOFo2GLe3Z9uRTp75dIj8v825OaDaRFX9CD9AgRQuJnCWfz6birik/V
+   g==;
+X-CSE-ConnectionGUID: ipstxmj/T4uhicUv9qhq6A==
+X-CSE-MsgGUID: OBIcgM+jS0Oao+XGFduHaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="68056393"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="68056393"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 20:50:44 -0700
+X-CSE-ConnectionGUID: lLI0kl0bRriL7Ccik4xtbQ==
+X-CSE-MsgGUID: v4wETOxZQ2yzmtln7ND2fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="165871159"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 13 Aug 2025 20:50:41 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umOz8-000AYe-0X;
+	Thu, 14 Aug 2025 03:50:38 +0000
+Date: Thu, 14 Aug 2025 11:49:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Oleksij Rempel <o.rempel@pengutronix.de>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Avri Altman <Avri.Altman@sandisk.com>
+Subject: Re: [PATCH v7 1/2] mmc: core: Add infrastructure for undervoltage
+ handling
+Message-ID: <202508141139.psCBtuQz-lkp@intel.com>
+References: <20250813103309.3810728-2-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.rc0.215.g125493bb4a-goog
-Message-ID: <20250814034953.3980271-1-inseob@google.com>
-Subject: [PATCH] lib: parser: Fix match_wildcard to correctly handle trailing stars
-From: Inseob Kim <inseob@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Inseob Kim <inseob@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813103309.3810728-2-o.rempel@pengutronix.de>
 
-This fixes a bug of match_wildcard that incorrectly handles trailing
-asterisks. For example, `match_wildcard("abc**", "abc")` must return
-true, but it returns false.
+Hi Oleksij,
 
-Signed-off-by: Inseob Kim <inseob@google.com>
----
- lib/parser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/lib/parser.c b/lib/parser.c
-index 73e8f8e5be73..62da0ac0d438 100644
---- a/lib/parser.c
-+++ b/lib/parser.c
-@@ -315,7 +315,7 @@ bool match_wildcard(const char *pattern, const char *str)
- 		}
- 	}
- 
--	if (*p == '*')
-+	while (*p == '*')
- 		++p;
- 	return !*p;
- }
+[auto build test WARNING on linus/master]
+[also build test WARNING on ulf-hansson-mmc-mirror/next v6.17-rc1 next-20250813]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/mmc-core-add-undervoltage-handler-for-MMC-eMMC-devices/20250813-193625
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250813103309.3810728-2-o.rempel%40pengutronix.de
+patch subject: [PATCH v7 1/2] mmc: core: Add infrastructure for undervoltage handling
+config: x86_64-buildonly-randconfig-002-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141139.psCBtuQz-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508141139.psCBtuQz-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508141139.psCBtuQz-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/mmc/core/core.c:1412:6: warning: unused variable 'ret' [-Wunused-variable]
+    1412 |         int ret;
+         |             ^~~
+   1 warning generated.
+
+
+vim +/ret +1412 drivers/mmc/core/core.c
+
+  1400	
+  1401	/**
+  1402	 * mmc_handle_undervoltage - Handle an undervoltage event on the MMC bus
+  1403	 * @host: The MMC host that detected the undervoltage condition
+  1404	 *
+  1405	 * This function is called when an undervoltage event is detected on one of
+  1406	 * the MMC regulators.
+  1407	 *
+  1408	 * Returns: 0 on success or a negative error code on failure.
+  1409	 */
+  1410	int mmc_handle_undervoltage(struct mmc_host *host)
+  1411	{
+> 1412		int ret;
+  1413	
+  1414		/* Stop the host to prevent races with card removal */
+  1415		__mmc_stop_host(host);
+  1416	
+  1417		if (!host->bus_ops || !host->bus_ops->handle_undervoltage)
+  1418			return 0;
+  1419	
+  1420		dev_warn(mmc_dev(host), "%s: Undervoltage detected, initiating emergency stop\n",
+  1421			 mmc_hostname(host));
+  1422	
+  1423		return host->bus_ops->handle_undervoltage(host);
+  1424	}
+  1425	
+
 -- 
-2.51.0.rc0.215.g125493bb4a-goog
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
