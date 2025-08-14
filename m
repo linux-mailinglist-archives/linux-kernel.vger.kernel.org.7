@@ -1,95 +1,66 @@
-Return-Path: <linux-kernel+bounces-769503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D010B26F84
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99437B26F8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044E01CE0B0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:10:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3CB75E595F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7743723BF9F;
-	Thu, 14 Aug 2025 19:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE62A23ABA8;
+	Thu, 14 Aug 2025 19:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nctA3LNH"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="CfHa/pCg"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA3B23D7D9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 19:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8211E7C1C;
+	Thu, 14 Aug 2025 19:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755198588; cv=none; b=K5iEWLB1upzB+YPqiznr8E3kcu1SDAWj4Dh9q0gJPejZb26U6codmH/1KJR33G1JPe75cgIbQe79MY/TU08k4D9ul5qyO5f/cnZLhLLtk0+W/90xAqT9rzRzQ4AIGHZaQHF8Lo9KEjwIR7J23Wz4ONxWFwZW53S7FuTq4nIqKN8=
+	t=1755198685; cv=none; b=KxkDmqxvpyKJ5Y+QlC3SYihKQofsc3J1MxeVPmDiOCnp7r3xByX2U1CjVxmgLj1fD+IOJPudelq1rZ+0UpvmgKL5neGf2lDhcwy0ZU8E+ZOkMGf1gLOCjuux0m++LCTPU1JfARZd1k9UBejk8x/XnFrTxn8b/9Dy0J5GO6e43uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755198588; c=relaxed/simple;
-	bh=cn8UvPsPJD/j/9nIZcPS6rcqmeIlHdPR+kakUIbdYLI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lVWeo+0E+/x2U+panLEqE2UQ9djsQ3fLSswGSq+rQT8/HAVE37JxwPF2DD04D1U9X/C3TyfJnSjKZhyJfgSAkAJJ+0Fl8NS/VD6Jjsw+K2HBN7ZPfWC9dfqqVh+xIsYqVmJgs/10TP9ZNzNCHrp3q/6c4g2dodKRvr3ROnYh9DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nctA3LNH; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e2e89e89fso1770529b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:09:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755198586; x=1755803386; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IF8qj3lRR6EFkcmgoXgDdUEvoMakOzSl+hSokVwaKUI=;
-        b=nctA3LNHtxKxc1torIE6n+BuhpiXsecc4+rnik6Ldu1Ced5wWz30xAe7wN0dryZwG4
-         v9gakz5G+9BLa470AEspTQa+6eNeaqG/XszHZzpluj2rBmlbDTcIDNxroFshg3QSh9Cv
-         XFgt9kZ4WA66CvRda6UicHnRpYBhJYU8MNZ555s9ArqwY7tfTST4+UXp4QkXo/MOLS5O
-         9wZabiFTY6qkqryeQHVZXjAygfsdkstBiwC8/JUwuHhYyXGXw/H2zJxc3nZIr7HfPUzS
-         i1V8BB8CrGcrsEYI52iBBVowPHb1W7YEjRUIDxKQiN56ogx1I+wQUhbxcN3jDW6mWA4M
-         j0ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755198586; x=1755803386;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IF8qj3lRR6EFkcmgoXgDdUEvoMakOzSl+hSokVwaKUI=;
-        b=PqGRpuNSllKmQhNS28rk/IuSf/dLdAgoeGo/oHwOoxlqMPmPyUyrxX/7Oa9GKlivPe
-         fwZPpCnbJaupEs/5aGGMhKKGoEiP9BkmoaU3+0WpNelvVA9WYThhqM1AIUqig1itIFlD
-         +v8R4OJTLM3meAxF6DoI38U1fZaxwN+5T5JXc7/mZj+K63dThRxNVxZchxCy5PlDvxoI
-         qfQ7LvMOW2onRt4DanRXQkz9NXxpTeHBVhyywh3nhBkoADou8rXs5FYJV0L2MD+1ZbEt
-         ZF0unCupYXWJLRhmojmAr34CEp5h9VoAwF4ViXgXs+T8Til08wFZnV7JQVgariOd7Arz
-         VCpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl4imbO5RnQgnFUrRWZ1kH7d8NLG8OfCrIXWZ9anqh4jbd38fbDHhBI/wHIyHf5zlH7SRtuQliKyZ+X28=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrQVsp07pBphEBbJhKEv+MZ7wQ6RfQiJyw6/MuRsGJck4oyhVo
-	Mcg737QuW9ELW8b3ZDaCMixy/fGznyL1voDTKttGLhoXsNPP6vsJZRoB
-X-Gm-Gg: ASbGncvNfG6nNAYVHeec7/nfC6ImYknO08Vf65IDsfoWEDe8ADrAkvC+KFT/WM2j9es
-	KMmO5zhrK/8UUCKhPVP4WaP4BOcgncZDVuShgKdh6UBK86PgdiekqCDlbGUWjGhgDh2ya3W66Du
-	1JIINp3YhjDUQEvFsakvo3aL9IeUYHgaW7VbpoQnpOf3XRQlK/djDxPlCTi1Duj7YvDhC3RVAdU
-	e6s6lwpKNVnj+L5g2mWjqJShXnQM8z7gap1s2iO6yjpw9Onuv/dDk5eKVsnUhtxHBl/OfY0coQj
-	yk2kURn4JYB4fif+Kkwl/7OjXkPxde/bjBjgYApIZFaq1ueA7WMxqwHKGRFICZ4oYj34ULP9VeV
-	xmwgX+h2enrRp3B4S/pawTA==
-X-Google-Smtp-Source: AGHT+IHO9E6Ju6YUC/4W76OL34pJ6YJlwPdxgruOXLM17Ydpcq6OMMHw8A2vXRvcEHPm1CQnzcq1PQ==
-X-Received: by 2002:a05:6a20:5491:b0:240:104c:8e14 with SMTP id adf61e73a8af0-240bd285526mr7187108637.38.1755198586198;
-        Thu, 14 Aug 2025 12:09:46 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd8ebbsm35345257b3a.102.2025.08.14.12.09.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 12:09:45 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>,
-	Yury Norov <yury.norov@gmail.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] powerpc: pci-ioda: Optimize pnv_ioda_pick_m64_pe()
-Date: Thu, 14 Aug 2025 15:09:36 -0400
-Message-ID: <20250814190936.381346-3-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250814190936.381346-1-yury.norov@gmail.com>
-References: <20250814190936.381346-1-yury.norov@gmail.com>
+	s=arc-20240116; t=1755198685; c=relaxed/simple;
+	bh=9XE4ZobYI/NqVdvC0uo3n87qyaQTaZUkjPKyqlP5wQM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QGRM2SF0W4S/11SpXWwCKI/molGQYQ/4ZlwrvjtcROXIl8XyjyDlkbW6VqN1CBOSibtZRnVdSoM8SqcZb06q7Rs2KtbEmSKm19OCC0dGSF5wTasLcSKHXarUM3uVwaSlJBwee2VWeg7EsIrrLluel+QnBEEm0Sh1diz9r5NseWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=CfHa/pCg; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0148663.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EFWJER009338;
+	Thu, 14 Aug 2025 19:11:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pps0720; bh=XpGChlmrL4BcuJE2a2uUcO04sPQ2c1KFgPgTD
+	gpXhlk=; b=CfHa/pCgb5lE6AP0utkwsezycQDQ7q67r1mpBLT5K+eqmoqkI8t7I
+	7CphZgaCJzaNzYqykGQKnv5P4RtoA3gP7kPJrdrQJTewaiZTdL1+2sDTFWPxMmre
+	duDM1Z0DQtXm8LS5OAhARIZ9i29AWsjSUqVP6I0szAiuKrpy57PEu/jgEmZ3xWWs
+	5LKlvqK2M6Ctaoum6edjhYHdIQWm7NaEMpD6HJAXJ0OJejfun4UKRGLqrYhD6ADQ
+	Pfsu/fuLU76W3IRsXkOV8hAznYVRxo2dNvhH5o5Pg36hbMftjyuR5N2Zw7PP7/Fj
+	XkN5kPGJ57C/MPsF209giRFwkE6G9beWQ==
+Received: from p1lg14880.it.hpe.com ([16.230.97.201])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 48gxjk4phq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 19:11:10 +0000 (GMT)
+Received: from test-build-fcntl.hpe.com (unknown [192.58.206.38])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id 4E7F1800265;
+	Thu, 14 Aug 2025 19:10:11 +0000 (UTC)
+Received: by test-build-fcntl.hpe.com (Postfix, from userid 1000)
+	id B2A768800123; Thu, 14 Aug 2025 19:10:06 +0000 (UTC)
+From: Rajeev Mishra <rajeevm@hpe.com>
+To: axboe@kernel.dk, yukuai1@huaweicloud.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rajeev Mishra <rajeevm@hpe.com>
+Subject: [PATCH v4 1/2] loop: Rename and merge get_size/get_loop_size to lo_calculate_size
+Date: Thu, 14 Aug 2025 19:10:03 +0000
+Message-ID: <20250814191004.60340-1-rajeevm@hpe.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,64 +68,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDE2MyBTYWx0ZWRfX15Rt5aVdb3uB
+ XXcpVWuuTw7VTLbQxzVIVVYCWyKuNpj/nnlRkGG5pvTNLMznkztLVprMOsU3cdUXhRcQ5tlL89b
+ Ywk60+8rKpe4Nz1J7NHX/rPb0xQ60AcSaEqyGoNb+R8Lms87b4MnPsb4PJkMnJNxC0HjCnXCBcR
+ FnRMJqGwQdFw4AxSOcEu3uS1gPiQhyHWc+Lf2CyHABOZKcU6bZInb/22FNAUVQguvflXqfe729o
+ pWYPJT+Qq99/qyKzJ+ZdhzIbJqZDB+JP+Ix0wu/zNU5CEkv96ZBE10mRqc7/Ji3DJL7Wz17xcmU
+ 9/uxYyF76acsEBasjxeM6dIP/ZQtufAc1yOtLevN6CrbpLj2lnZASkAkHhTNHLpPAVi/cP/B41L
+ cS7Il07AnnBEY1hZZX7qmvfPs0bO0rL3drm1XPiBuLfI40KjEY1bWNB8ZtqsC/H7dg6ADhiv
+X-Proofpoint-GUID: jVRynczNfY227vW2V0LqXoOLDcyzchjs
+X-Proofpoint-ORIG-GUID: jVRynczNfY227vW2V0LqXoOLDcyzchjs
+X-Authority-Analysis: v=2.4 cv=cJvgskeN c=1 sm=1 tr=0 ts=689e34ce cx=c_pps
+ a=A+SOMQ4XYIH4HgQ50p3F5Q==:117 a=A+SOMQ4XYIH4HgQ50p3F5Q==:17
+ a=2OwXVqhp2XgA:10 a=MvuuwTCpAAAA:8 a=SlmTxP4Kr1pQ6mi-SkUA:9
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0
+ mlxscore=0 adultscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
+ phishscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2507300000
+ definitions=main-2508140163
 
-From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+- Renamed get_size to lo_calculate_size.
+- Merged get_size and get_loop_size logic into lo_calculate_size.
+- Updated all callers to use lo_calculate_size.
+- Added header to lo_calculate_size.
 
-bitmap_empty() in pnv_ioda_pick_m64_pe() is O(N) and useless because
-the following find_next_bit() does the same work.
-
-Drop it, and while there replace a while() loop with the dedicated
-for_each_set_bit().
-
-Reviewed-by: Andrew Donnellan <ajd@linux.ibm.com>
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+Signed-off-by: Rajeev Mishra <rajeevm@hpe.com>
 ---
- arch/powerpc/platforms/powernv/pci-ioda.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+ drivers/block/loop.c | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda.c b/arch/powerpc/platforms/powernv/pci-ioda.c
-index 2a4b916205c1..23b1db3f15a9 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda.c
-@@ -295,7 +295,7 @@ static struct pnv_ioda_pe *pnv_ioda_pick_m64_pe(struct pci_bus *bus, bool all)
- 	unsigned long *pe_alloc __free(bitmap) = NULL;
- 	struct pnv_phb *phb = pci_bus_to_pnvhb(bus);
- 	struct pnv_ioda_pe *master_pe, *pe;
--	int i;
-+	unsigned int i;
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 1b6ee91f8eb9..0e1b9eb9db10 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -137,20 +137,18 @@ static void loop_global_unlock(struct loop_device *lo, bool global)
+ static int max_part;
+ static int part_shift;
  
- 	/* Root bus shouldn't use M64 */
- 	if (pci_is_root_bus(bus))
-@@ -311,23 +311,16 @@ static struct pnv_ioda_pe *pnv_ioda_pick_m64_pe(struct pci_bus *bus, bool all)
- 	/* Figure out reserved PE numbers by the PE */
- 	pnv_ioda_reserve_m64_pe(bus, pe_alloc, all);
- 
--	/*
--	 * the current bus might not own M64 window and that's all
--	 * contributed by its child buses. For the case, we needn't
--	 * pick M64 dependent PE#.
--	 */
--	if (bitmap_empty(pe_alloc, phb->ioda.total_pe_num)) {
--		return NULL;
--	}
+-static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
++static loff_t lo_calculate_size(struct loop_device *lo, struct file *file)
+ {
+ 	loff_t loopsize;
 -
+ 	/* Compute loopsize in bytes */
+ 	loopsize = i_size_read(file->f_mapping->host);
+-	if (offset > 0)
+-		loopsize -= offset;
++	if (lo->lo_offset > 0)
++		loopsize -= lo->lo_offset;
+ 	/* offset is beyond i_size, weird but possible */
+ 	if (loopsize < 0)
+ 		return 0;
+-
+-	if (sizelimit > 0 && sizelimit < loopsize)
+-		loopsize = sizelimit;
++	if (lo->lo_sizelimit > 0 && lo->lo_sizelimit < loopsize)
++		loopsize = lo->lo_sizelimit;
  	/*
- 	 * Figure out the master PE and put all slave PEs to master
- 	 * PE's list to form compound PE.
-+	 *
-+	 * The current bus might not own M64 window and that's all
-+	 * contributed by its child buses. For the case, we needn't
-+	 * pick M64 dependent PE#.
- 	 */
- 	master_pe = NULL;
--	i = -1;
--	while ((i = find_next_bit(pe_alloc, phb->ioda.total_pe_num, i + 1)) <
--		phb->ioda.total_pe_num) {
-+	for_each_set_bit(i, pe_alloc, phb->ioda.total_pe_num) {
- 		pe = &phb->ioda.pe_array[i];
+ 	 * Unfortunately, if we want to do I/O on the device,
+ 	 * the number of 512-byte sectors has to fit into a sector_t.
+@@ -158,11 +156,6 @@ static loff_t get_size(loff_t offset, loff_t sizelimit, struct file *file)
+ 	return loopsize >> 9;
+ }
  
- 		phb->ioda.m64_segmap[pe->pe_number] = pe->pe_number;
+-static loff_t get_loop_size(struct loop_device *lo, struct file *file)
+-{
+-	return get_size(lo->lo_offset, lo->lo_sizelimit, file);
+-}
+-
+ /*
+  * We support direct I/O only if lo_offset is aligned with the logical I/O size
+  * of backing device, and the logical block size of loop is bigger than that of
+@@ -569,7 +562,7 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+ 	error = -EINVAL;
+ 
+ 	/* size of the new backing store needs to be the same */
+-	if (get_loop_size(lo, file) != get_loop_size(lo, old_file))
++	if (lo_calculate_size(lo, file) != lo_calculate_size(lo, old_file))
+ 		goto out_err;
+ 
+ 	/*
+@@ -1063,7 +1056,7 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
+ 	loop_update_dio(lo);
+ 	loop_sysfs_init(lo);
+ 
+-	size = get_loop_size(lo, file);
++	size = lo_calculate_size(lo, file);
+ 	loop_set_size(lo, size);
+ 
+ 	/* Order wrt reading lo_state in loop_validate_file(). */
+@@ -1255,8 +1248,7 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+ 	if (partscan)
+ 		clear_bit(GD_SUPPRESS_PART_SCAN, &lo->lo_disk->state);
+ 	if (!err && size_changed) {
+-		loff_t new_size = get_size(lo->lo_offset, lo->lo_sizelimit,
+-					   lo->lo_backing_file);
++		loff_t new_size = lo_calculate_size(lo, lo->lo_backing_file);
+ 		loop_set_size(lo, new_size);
+ 	}
+ out_unlock:
+@@ -1399,7 +1391,7 @@ static int loop_set_capacity(struct loop_device *lo)
+ 	if (unlikely(lo->lo_state != Lo_bound))
+ 		return -ENXIO;
+ 
+-	size = get_loop_size(lo, lo->lo_backing_file);
++	size = lo_calculate_size(lo, lo->lo_backing_file);
+ 	loop_set_size(lo, size);
+ 
+ 	return 0;
 -- 
-2.43.0
+2.43.7
 
 
