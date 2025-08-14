@@ -1,130 +1,169 @@
-Return-Path: <linux-kernel+bounces-768205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9503BB25E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:00:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DAEB25E37
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECFD81CC17CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:58:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2B918874AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3812E2DD0;
-	Thu, 14 Aug 2025 07:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F4D2E2DC8;
+	Thu, 14 Aug 2025 07:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NVjK8kSu"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mz1/mLef"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EAC2D63E0
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA05253920;
+	Thu, 14 Aug 2025 07:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755158246; cv=none; b=NfkBfJE31chTAis77P2hv02hTpTpm/9CWQd17ErGhJ8ycXVA6qhYuBvYR7tsrIQ22ah4SLnuTQJhD3LPhndHk/L8u0g8mZF3wHDaZYJqZgxvqIUAylVwS0OpmtvchkFh8DTu8cEj7EztoLpQlBUgo7gz2doxKVsa5Dt2WcPhHUk=
+	t=1755158349; cv=none; b=cMZ+5C/7lb5kZWnymjpabPUQyK6emD0nGyx/SDvss7buuNEicWEjRtCbIxw1CAv5LgfCz9MoiLtUyYZYOgt0RLk4t+bgAQKtUG7FEOp5RWq4cA2MdThIjNoCK4By2EAmnyXJQC16fnlkh+TiKlVT0CkW1iyU+w7nnJkKjELiTKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755158246; c=relaxed/simple;
-	bh=W6MtOrDogN544oWxAZb3pFnY2Fo2+9FpOpoTzPtH90E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ab76ElsD5EW7M/7ok1mUTZP4tPDzt3k5zuIFkZrQnGT5zDYYcjxx1aGbiw1uxRsnVFThVfM+kG7BsQ/Gi1Jerl2uwCVsQAfQz8/4lTHGbpVXX+6lt8h6iz4JEC6NmA5eehrjOp13gafzIOh66VqBEF0CGw8o8IpoVQV5zfROXM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NVjK8kSu; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3b9d41b88ffso287577f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 00:57:24 -0700 (PDT)
+	s=arc-20240116; t=1755158349; c=relaxed/simple;
+	bh=zoZ7WUquG8cMMyU1NBK2nNB+7xnTYVek1voJ48AoqJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vsk4mwWbQPoetLtkaA2yGh7J9LRcXr1czd0UajHJZcR00y24SNkolOX3X3Kl3grLg6VgiWw71oJDWCurenapm3n0BLfCcTYxytpVwe8P9xCpsr21au85EuBaAz1eg9nH8C0BfGBxGyodeA3fruUKkvUcloT0AfJTgPC+X0crfeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mz1/mLef; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b4716f46a2eso414057a12.0;
+        Thu, 14 Aug 2025 00:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755158243; x=1755763043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iPHqnQ8xAazI/ywfiKc7DTnC7ionAOpO2TaL8wZxk98=;
-        b=NVjK8kSu+B/fRF55yfnQoX6COqn6mjzaLoQWWKk27/+c2QRc8BV1Af+UsMjFhXjSkv
-         rddfcTgiVIUThG2Dowboubu+jf7YSPhSwFxiNA00l7TokFM0URVgwgZDJj1XfqDWBpND
-         5SeTzZPgG+eEyH/f04JrSuik2WbvekxRkUeUzrMelIrGElJf9pdyVyG3zV1m6gs85WAo
-         cmT8dh5wGd0f34E/1reQhO6g8Pvd8uLv0M4xpt2nFEZhhOSW8CfyKS0PqhqzxnYyNfcS
-         TCjZtPPwdlCysQNIO+CJl5ujyHj2eezveSaLwiRvmTWVfmeaU/CcyVH3OYhCKSbTF3NU
-         D/fQ==
+        d=gmail.com; s=20230601; t=1755158346; x=1755763146; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zoZ7WUquG8cMMyU1NBK2nNB+7xnTYVek1voJ48AoqJ8=;
+        b=mz1/mLef7yphnGaDGhRRk6mxUsc5fbrNWTCmlPf/mq9RJjj16mmrsIcXwBLBhzbHdJ
+         ixcxH/awi2SnJkCp6kaoeJLFBn5/qf27wiugnJdzFgABCfqTWk4Fn/BjlrO8ow4jcBqf
+         J2Yqd6yYN6W3/rccMCHCypeESxtzdQSfXsMx92cR3PWOAmpciqjIAjAtwSO8Jj9/QcM0
+         +jffiz2ff0AQ0yHLnw4EhZT9V4C4KWMZggFRdgjb+diibCrtkIyRa67P+LcAqBPVerZG
+         HF3fciBe1MIg9wkTtjppDb2gtFqxcUHpFWHEm/VZMrj5s4n3z7DLM8SbmZlUArRFjhUX
+         MjbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755158243; x=1755763043;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iPHqnQ8xAazI/ywfiKc7DTnC7ionAOpO2TaL8wZxk98=;
-        b=TBc7tW49TJIMP4OWa3cfICfQgl+RWDxmpFq/mjvehcOT6ldoxUaIawAuDiETMdB/vq
-         gYgQzYpoyIobg9fs6z/aoYPw7RmJok7IYiMBzPOb9glQfLjKgqdtFxXqVoNhVwWlWdnQ
-         iuPvDkSl2ULYaXgsVqEoVKrVdEUt+myB2Gro1WbAmDMmFN6IfqQsz+lLe90qnHgeoctX
-         bMvajy6Q2upHvAG/tQgFgaq7mFKgmNj9W3LXqKzGiuCBRwmXNF2IeMukHSbmijsvTXOY
-         E+VkwUd9Hyjt5XIjGTvvOzEz46bhM5tlcL1/an5teFFDKWv9WV9Uf3DVpU2Xh3+bv7ek
-         NPvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqYwoSFhwci1IagAX3Y1V4aKfCj/YDGLhzT0ahfJErA9baw62EiOlm2p0hYBpnoOoPy8RyDr3mUCNsSWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx28x8njW0XzJYYcscSBwomitxO96IaRr35Dg5Niz8re8XEg6yq
-	eT02XI89JNH/Bmaz+KjgGKzwD78W88J5rZTWH8wQZdHs9wAB/oeqjVGPcj3awRBvunOtn3ycwKo
-	t0YQPQQKk1goQMHXk1Q==
-X-Google-Smtp-Source: AGHT+IF8RLKUaVnA0eLlocCvsSggHMlTflVsZLjcx9Tqx3h5icjUoOZkCLvDvCHGu7338kKfEuuoa0VKz/yQfgc=
-X-Received: from wmbea8.prod.google.com ([2002:a05:600c:6748:b0:459:ddb6:d66c])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2410:b0:3b9:48f:1960 with SMTP id ffacd0b85a97d-3b9fc34d96amr1517515f8f.49.1755158243251;
- Thu, 14 Aug 2025 00:57:23 -0700 (PDT)
-Date: Thu, 14 Aug 2025 07:57:22 +0000
-In-Reply-To: <20250813133343.7877-1-benoit@dugarreau.fr>
+        d=1e100.net; s=20230601; t=1755158346; x=1755763146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zoZ7WUquG8cMMyU1NBK2nNB+7xnTYVek1voJ48AoqJ8=;
+        b=VMmentwGGnafqSFpiq17tayQEzEHOCQKHk2P6Kna1jGqPh93BZH8phqrYfaDhnucCj
+         B7aF5/Oc+JjiyGA31sh2hMpt7B1FmXNbTnEA+97Qj22UT7Fcr57jtDw2i4x58nwaMJZt
+         Y+FWS2D/6FoVM4Sb6Ea2GuoXBrjH3XW9DQoLjhLM8Bbg1w7IbpSMemmKuTBus2t6PLG9
+         sSg9yjtoTIHft77pRFxRELI+JvGqr6Qao2Zqa06d0lpg1opXjIs4CmVSKNNMNoM3zUS+
+         JARxGwXjvmivPWAx8QqspAJZTW/QrIuEO5myiEjMYl2rBvqh7GmTK8JYQGLfmVNyE2OK
+         J2BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7TzxjO3ITZtCFoEREPpRMZ+P+QdaWMAhOOyYlTIQtpBAYoOvWPoawqU8u7OCEkD2vdRkwUZk9pUl2c9le@vger.kernel.org, AJvYcCUjk/PDKBCEvdUAgwthMrK5xDAxXsuKXruF2nH/2M/BTthDgt5Rqz0QrshGMwluhlCSnAblsdpldfkqrLWj@vger.kernel.org, AJvYcCUn3yxj1S29RzvU/WY3raTpyJwxymcYIZsiX2R48MOudaZ927EJzm60DOGmNTxd3F8gzW+zvXeCwF8V@vger.kernel.org, AJvYcCWxfFTBzIm5OM1BRoOVWMpjL6HSqT6MD8bGw79biC4r4ZWbl/QCNGskLyRCLDyk/LLiK5/Dezvjk9Ml@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgpOHnXK6gLNpc9+OR/0UowkIaLnqpZRcwb+Ph+OYwEHw1QhRE
+	399+zHPyloIazQwxEtV6bpHvhj3NL96OP9y8eOB8XF4UbWxzWGfPomnrRV1CiZC1XES8G8dIW5E
+	OziBDcAlQASHZPzLYYW/z1Tysl2nnmjhHHPW1GaM=
+X-Gm-Gg: ASbGncvO7jVa8CINOzNTEYTfa+m3Ep75FHWJhwyBIHzhT7d8g7gtJ+m9luVOnl8zcLR
+	nSjva6qXVqUHCRKs1BTfj9MrbaaJ+sT0bHmHNpRDrrWN9rMP97UikSDGi4L/k4fWVM1YMOMC7Pr
+	laXso61EKLyUi0UJSywJsfKwt7pKITiTufRciAQnLJZHX+wh48iAg8NtvM1n8G13tgG0YRgHxaY
+	3fbcIpFGw==
+X-Google-Smtp-Source: AGHT+IEQbGhvLjbk/PZuRzmUAAbKmg5zyek9g1zSctsavo1Plx+EvyZnlkXlE79ToNcU1q9KIzOPCpQOjM4oqgmqIUc=
+X-Received: by 2002:a17:903:288:b0:23f:b112:2eaa with SMTP id
+ d9443c01a7336-244586d1e0emr29323375ad.41.1755158345945; Thu, 14 Aug 2025
+ 00:59:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250813-iov-iter-v4-2-c4f1932b05ef@google.com> <20250813133343.7877-1-benoit@dugarreau.fr>
-Message-ID: <aJ2W4kgJGJPItC9F@google.com>
-Subject: Re: [PATCH v4 2/4] rust: iov: add iov_iter abstractions for ITER_DEST
-From: Alice Ryhl <aliceryhl@google.com>
-To: "=?utf-8?Q?Beno=C3=AEt?= du Garreau" <benoit@dugarreau.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
-	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Benno Lossin <lossin@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250718045545.517620-1-mhklinux@outlook.com> <20250718045545.517620-2-mhklinux@outlook.com>
+In-Reply-To: <20250718045545.517620-2-mhklinux@outlook.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Thu, 14 Aug 2025 15:58:28 +0800
+X-Gm-Features: Ac12FXwvr78CteVVQOMblTNIWydAz9zx3iAXMtyYSKDeoJxC3p3jC9XRhyn1SE4
+Message-ID: <CAMvTesCFzy_Yt01Xz-GrG68_JGWf+yJzn2Nx7UJo2hLMarYJrQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] Drivers: hv: Introduce hv_setup_*() functions for
+ hypercall arguments
+To: mhklinux@outlook.com
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, lpieralisi@kernel.org, 
+	kw@linux.com, mani@kernel.org, robh@kernel.org, bhelgaas@google.com, 
+	arnd@arndb.de, x86@kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 03:33:39PM +0200, Beno=C3=AEt du Garreau wrote:
-> On Wed, 13 Aug 2025 08:27:18 +0000 Alice Ryhl <aliceryhl@google.com> wrot=
-e:
->=20
-> > +    /// Utility for implementing `read_iter` given the full contents o=
-f the file.
-> > +    ///
-> > +    /// The full contents of the file being read from is represented b=
-y `contents`. This call will
-> > +    /// write the appropriate sub-slice of `contents` and update the f=
-ile position in `ppos` so
-> > +    /// that the file will appear to contain `contents` even if takes =
-multiple reads to read the
-> > +    /// entire file.
-> > +    #[inline]
-> > +    pub fn simple_read_from_buffer(&mut self, ppos: &mut i64, contents=
-: &[u8]) -> Result<usize> {
-> > +        if *ppos < 0 {
-> > +            return Err(EINVAL);
-> > +        }
-> > +        let Ok(pos) =3D usize::try_from(*ppos) else {
-> > +            return Ok(0);
-> > +        };
-> > +        if pos >=3D contents.len() {
-> > +            return Ok(0);
-> > +        }
-> > +
-> > +        // BOUNDS: We just checked that `pos < contents.len()` above.
-> > +        let num_written =3D self.copy_to_iter(&contents[pos..]);
->=20
-> This should use `contents.get(..pos)` instead of doing the bound check ma=
-nually.
+On Fri, Jul 18, 2025 at 12:56=E2=80=AFPM <mhkelley58@gmail.com> wrote:
+>
+> From: Michael Kelley <mhklinux@outlook.com>
+>
+> Current code allocates the "hyperv_pcpu_input_arg", and in
+> some configurations, the "hyperv_pcpu_output_arg". Each is a 4 KiB
+> page of memory allocated per-vCPU. A hypercall call site disables
+> interrupts, then uses this memory to set up the input parameters for
+> the hypercall, read the output results after hypercall execution, and
+> re-enable interrupts. The open coding of these steps leads to
+> inconsistencies, and in some cases, violation of the generic
+> requirements for the hypercall input and output as described in the
+> Hyper-V Top Level Functional Spec (TLFS)[1].
+>
+> To reduce these kinds of problems, introduce a family of inline
+> functions to replace the open coding. The functions provide a new way
+> to manage the use of this per-vCPU memory that is usually the input and
+> output arguments to Hyper-V hypercalls. The functions encapsulate
+> key aspects of the usage and ensure that the TLFS requirements are
+> met (max size of 1 page each for input and output, no overlap of
+> input and output, aligned to 8 bytes, etc.). Conceptually, there
+> is no longer a difference between the "per-vCPU input page" and
+> "per-vCPU output page". Only a single per-vCPU page is allocated, and
+> it provides both hypercall input and output memory. All current
+> hypercalls can fit their input and output within that single page,
+> though the new code allows easy changing to two pages should a future
+> hypercall require a full page for each of the input and output.
+>
+> The new functions always zero the fixed-size portion of the hypercall
+> input area so that uninitialized memory is not inadvertently passed
+> to the hypercall. Current open-coded hypercall call sites are
+> inconsistent on this point, and use of the new functions addresses
+> that inconsistency. The output area is not zero'ed by the new code
+> as it is Hyper-V's responsibility to provide legal output.
+>
+> When the input or output (or both) contain an array, the new functions
+> calculate and return how many array entries fit within the per-vCPU
+> memory page, which is effectively the "batch size" for the hypercall
+> processing multiple entries. This batch size can then be used in the
+> hypercall control word to specify the repetition count. This
+> calculation of the batch size replaces current open coding of the
+> batch size, which is prone to errors. Note that the array portion of
+> the input area is *not* zero'ed. The arrays are almost always 64-bit
+> GPAs or something similar, and zero'ing that much memory seems
+> wasteful at runtime when it will all be overwritten. The hypercall
+> call site is responsible for ensuring that no part of the array is
+> left uninitialized (just as with current code).
+>
+> The new functions are realized as a single inline function that
+> handles the most complex case, which is a hypercall with input
+> and output, both of which contain arrays. Simpler cases are mapped to
+> this most complex case with #define wrappers that provide zero or NULL
+> for some arguments. Several of the arguments to this new function
+> must be compile-time constants generated by "sizeof()"
+> expressions. As such, most of the code in the new function can be
+> evaluated by the compiler, with the result that the code paths are
+> no longer than with the current open coding. The one exception is
+> new code generated to zero the fixed-size portion of the input area
+> in cases where it is not currently done.
+>
+> [1] https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/t=
+lfs/tlfs
+>
+> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>
 
-Using contents.get(pos..) does not have the same behavior as the bounds
-check, because the bounds check exits early with Ok(0) if pos is equal
-to contents.len(), whereas the proposed change would pass an empty array
-to copy_to_iter.
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
 
-Alice
+--=20
+Thanks
+Tianyu Lan
 
