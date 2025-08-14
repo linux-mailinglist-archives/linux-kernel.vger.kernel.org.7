@@ -1,124 +1,147 @@
-Return-Path: <linux-kernel+bounces-768082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD6F1B25CD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:14:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3915FB25CBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68FBF1BC1EE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:10:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A535847CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368D526561D;
-	Thu, 14 Aug 2025 07:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qhfBT4H0"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1CE52641D8;
+	Thu, 14 Aug 2025 07:09:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DDE6263C8E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DB8263C8E;
+	Thu, 14 Aug 2025 07:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755155420; cv=none; b=qKZTOyRtC9ozBBPcBdDMDj2YV3A3vAk1gT3GJffHmzbb1xrU20J0Q8b/qzwmsOf6dO/G7WEcZkvTktQ2YAmDf8ShL/66VifD+KQEQ1FZMxFlys8w5RFL4C06juQ8+f1M/sEh+bfXCUuqSzVpw/7OBfhMhkppUYAXVdXAZt+irKg=
+	t=1755155392; cv=none; b=SHNFxDvDuBHClzLplOtiUV9GYtIIuumbqpJuaeuy4YSxAJeeYRwFZkOeS/sMjn9NnAk9Id2EEZX7FqZOTJWyoa51KD6lzpPg1ZkuGPNdXD4kvhe13te6ewiNrCReh2lJwdS+6dP94DUqYSbMamhFuCfATWHBSipltiFfknt/KTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755155420; c=relaxed/simple;
-	bh=lch8aVeg2M0Un/tBpZiaeFcnAJXX6vJNLe9Y5YUF7QU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=X09reb0x5D7raUVZfeuyx66MjdLD+JhsSA3W0woS5Pw6+5/itELBQQynsL6xyIIM8n+MLbAAXb4ARiicwDI8rHXxQ0PYRAjQJgf5cBYAGTfoC7Nk1pM/iTngddMQNEkHBAo1HgPqz/QZMkTBlBLFyesCyoXLNqAHN6lId7nwWAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qhfBT4H0; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250814071016epoutp01732664d22e1d6e7dd8f5bef6737ef00a~bkI1B21zT3010930109epoutp01z
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:10:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250814071016epoutp01732664d22e1d6e7dd8f5bef6737ef00a~bkI1B21zT3010930109epoutp01z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1755155416;
-	bh=MPvvXGlKnavvQz2YJEvA9alXVq22vI+juGIh/Eeqync=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qhfBT4H05xhWw8CDTNdQ2uLh4QOZcaCoVWBqbKag0KMlhPVgkOw2f2iBN0V2wnaqd
-	 nJPNl+PQvuUgW6VR8CsB35AUmqhIjmiJeuHH/nIjIAecCoyKsOlzNZTLTDGnmgr35B
-	 e92AoE8tsb0D+NKeC5LUC01b/x++icKyU6neCJLk=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250814071015epcas5p48b23e6cec4e265c03a1e54a4e4ea21c6~bkI0csvFj1096610966epcas5p42;
-	Thu, 14 Aug 2025 07:10:15 +0000 (GMT)
-Received: from epcas5p1.samsung.com (unknown [182.195.38.90]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4c2bwk3cvTz6B9m9; Thu, 14 Aug
-	2025 07:10:14 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250814070809epcas5p46bc5a5fe62fd5bedc8a858ae4d28a92a~bkG-hESx00412404124epcas5p4X;
-	Thu, 14 Aug 2025 07:08:09 +0000 (GMT)
-Received: from asg29.. (unknown [109.105.129.29]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250814070807epsmtip1de0a9e8777b9474a04c8c2fd05aa43d2~bkG9RiAJs2811428114epsmtip1R;
-	Thu, 14 Aug 2025 07:08:07 +0000 (GMT)
-From: Junnan Wu <junnan01.wu@samsung.com>
-To: jasowang@redhat.com
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	eperezma@redhat.com, junnan01.wu@samsung.com, kuba@kernel.org,
-	lei19.wang@samsung.com, linux-kernel@vger.kernel.org, mst@redhat.com,
-	netdev@vger.kernel.org, pabeni@redhat.com, q1.huang@samsung.com,
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com,
-	ying123.xu@samsung.com
-Subject: Re: [PATCH net] virtio_net: adjust the execution order of function
- `virtnet_close` during freeze
-Date: Thu, 14 Aug 2025 15:08:21 +0800
-Message-Id: <20250814070821.1792157-1-junnan01.wu@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CACGkMEuCaOs_towX_CGUdnpDJBPrN9vZ3=s84RKJ3PsRX5s7OQ@mail.gmail.com>
+	s=arc-20240116; t=1755155392; c=relaxed/simple;
+	bh=2Lk5BSkpkJF6QE40B8XjsHaMYPOlGnnnWrCRtmcpeuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qtuvF2gsYotV0oiwpAApZ9Eaf1nSY24P5CzOW8aUn4UPPivyUCzPyt7+9oljLvO3bmwPjgsDn2KfEz1TwYdjFpG2SPRLSPhQJbuHE5ah99wXR0W/6ub8/VbUrnWP9RR2/o3JhRaKHcBL4ZrkOEjaOZY+cyd3FqAUNtixp2z+7xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2bwC59CkzYQv69;
+	Thu, 14 Aug 2025 15:09:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 548921A0BC1;
+	Thu, 14 Aug 2025 15:09:46 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgD3chO4i51oBUaIDg--.12039S3;
+	Thu, 14 Aug 2025 15:09:46 +0800 (CST)
+Message-ID: <0e94be00-769c-dab0-a14c-a49c137e054c@huaweicloud.com>
+Date: Thu, 14 Aug 2025 15:09:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3 1/2] md: add helper rdev_needs_recovery()
+To: Zheng Qixing <zhengqixing@huaweicloud.com>, song@kernel.org,
+ yukuai3@huawei.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pmenzel@molgen.mpg.de, yi.zhang@huawei.com, yangerkun@huawei.com,
+ houtao1@huawei.com, zhengqixing@huawei.com
+References: <20250814015721.3764005-1-zhengqixing@huaweicloud.com>
+ <20250814015721.3764005-2-zhengqixing@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250814015721.3764005-2-zhengqixing@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250814070809epcas5p46bc5a5fe62fd5bedc8a858ae4d28a92a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-505,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250814070809epcas5p46bc5a5fe62fd5bedc8a858ae4d28a92a
-References: <CACGkMEuCaOs_towX_CGUdnpDJBPrN9vZ3=s84RKJ3PsRX5s7OQ@mail.gmail.com>
-	<CGME20250814070809epcas5p46bc5a5fe62fd5bedc8a858ae4d28a92a@epcas5p4.samsung.com>
+X-CM-TRANSID:gCh0CgD3chO4i51oBUaIDg--.12039S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ary8Ar48XrWkXr18Kr15Jwb_yoW8tF15pa
+	yIqFy3WryDZry7W3WDXFn8GFyFga18Kr4Ikry7Ga47Xa9xKr1qgay8Ca45X34DAFWFva1Y
+	va45Xa1fuF1UWw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E
+	8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Thu, 14 Aug 2025 14:49:06 +0800 Jason Wang wrote:
-> On Thu, Aug 14, 2025 at 2:44 PM Junnan Wu <junnan01.wu@samsung.com> wrote:
-> >
-> > On Thu, 14 Aug 2025 12:01:18 +0800 Jason Wang wrote:
-> > > On Thu, Aug 14, 2025 at 10:36 AM Junnan Wu <junnan01.wu@samsung.com> wrote:
-> > > >
-> > > > On Wed, 13 Aug 2025 17:23:07 -0700 Jakub Kicinski wrote:
-> > > > > Sounds like a fix people may want to backport. Could you repost with
-> > > > > an appropriate Fixes tag added, pointing to the earliest commit where
-> > > > > the problem can be observed?
-> > > >
-> > > > This issue is caused by commit "7b0411ef4aa69c9256d6a2c289d0a2b320414633"
-> > > > After this patch, during `virtnet_poll`, function `virtnet_poll_cleantx`
-> > > > will be invoked, which will wakeup tx queue and clear queue state.
-> > > > If you agree with it, I will repost with this Fixes tag later.
-> > > >
-> > > > Fixes: 7b0411ef4aa6 ("virtio-net: clean tx descriptors from rx napi")
-> > >
-> > > Could you please explain why it is specific to RX NAPI but not TX?
-> > >
-> > > Thanks
-> >
-> > This issue appears in suspend flow, if a TCP connection in host VM is still
-> > sending packet before driver suspend is completed, it will tigger RX napi schedule,
-> > Finally "use after free" happens when tcp ack timer is up.
-> >
-> > And in suspend flow, the action to send packet is already stopped in guest VM,
+
+
+在 2025/8/14 9:57, Zheng Qixing 写道:
+> From: Zheng Qixing <zhengqixing@huawei.com>
 > 
-> The TX interrupt and NAPI is not disabled yet. Or anything I miss here?
+> Add a helper for checking if an rdev needs recovery.
+> 
+> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
+> Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   drivers/md/md.c | 18 ++++++++++--------
+>   1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index ac85ec73a409..4663e172864e 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -4835,6 +4835,14 @@ metadata_store(struct mddev *mddev, const char *buf, size_t len)
+>   static struct md_sysfs_entry md_metadata =
+>   __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
+>   
+> +static bool rdev_needs_recovery(struct md_rdev *rdev, sector_t sectors)
+> +{
+> +	return !test_bit(Journal, &rdev->flags) &&
+> +	       !test_bit(Faulty, &rdev->flags) &&
+> +	       !test_bit(In_sync, &rdev->flags) &&
+> +	       rdev->recovery_offset < sectors;
+> +}
+> +
 
-When system suspends, the userspace progress which based on virtio_net
-will be freezed firstly, and then driver suspend callback executes.
-so though TX interrupt and NAPI is not disabled at that time, it will also not be scheduled.
+Every caller is already checking 'rdev->raid_disk >= 0'. Should we move it
+into rdev_needs_recovery()?
+
+>   enum sync_action md_sync_action(struct mddev *mddev)
+>   {
+>   	unsigned long recovery = mddev->recovery;
+> @@ -8969,10 +8977,7 @@ static sector_t md_sync_position(struct mddev *mddev, enum sync_action action)
+>   		rcu_read_lock();
+>   		rdev_for_each_rcu(rdev, mddev)
+>   			if (rdev->raid_disk >= 0 &&
+> -			    !test_bit(Journal, &rdev->flags) &&
+> -			    !test_bit(Faulty, &rdev->flags) &&
+> -			    !test_bit(In_sync, &rdev->flags) &&
+> -			    rdev->recovery_offset < start)
+> +			    rdev_needs_recovery(rdev, start))
+>   				start = rdev->recovery_offset;
+>   		rcu_read_unlock();
+>   
+> @@ -9333,10 +9338,7 @@ void md_do_sync(struct md_thread *thread)
+>   				rdev_for_each_rcu(rdev, mddev)
+>   					if (rdev->raid_disk >= 0 &&
+>   					    mddev->delta_disks >= 0 &&
+> -					    !test_bit(Journal, &rdev->flags) &&
+> -					    !test_bit(Faulty, &rdev->flags) &&
+> -					    !test_bit(In_sync, &rdev->flags) &&
+> -					    rdev->recovery_offset < mddev->curr_resync)
+> +					    rdev_needs_recovery(rdev, mddev->curr_resync))
+>   						rdev->recovery_offset = mddev->curr_resync;
+>   				rcu_read_unlock();
+>   			}
+
+-- 
+Thanks,
+Nan
+
 
