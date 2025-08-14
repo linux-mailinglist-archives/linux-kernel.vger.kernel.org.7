@@ -1,74 +1,83 @@
-Return-Path: <linux-kernel+bounces-769575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE6DB2708B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:04:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925F3B27088
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28CBF6881D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:02:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A53C565F4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57862273D8B;
-	Thu, 14 Aug 2025 21:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA8C273810;
+	Thu, 14 Aug 2025 21:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dqPEtk6t"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WhIQMHqU"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2085.outbound.protection.outlook.com [40.107.94.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CB9247287;
-	Thu, 14 Aug 2025 21:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755205336; cv=none; b=YP9SabzfML671b1L0JWMq6ke3Iqgjab5NmxhNPWKY9AiaN6WnNLWEG0i9cubgdV/yal+gYCMYOBmZYytZabcRghFvGBDeE2Y9Fw09G72GouoNF/yqLDiTD3JXKAdSq9rowl5Cvuj3ZNu17sV+rkW445eCHf0xQo6X7lMvuDP2WU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755205336; c=relaxed/simple;
-	bh=+j3KbxhIaA0ZH7cjICsJlGmmwNiVxxLhYjCvVfa/ckQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hQaCgHx93BtjyF4tw2u24C4Vw2FKx53Q0DVIdzM3YvPhj6W4/ewxUNnQdesTm5tjPCXY+Y76aKPzzAXjEXcHZB/AhRsKfEO/mRhYmiYrmP087FP8uUDc476QQRw46SYHl9ifwRotJxxnS/ueQ9gou6uP/qGOoqe17VtNxUQwEZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dqPEtk6t; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EEVRje009755;
-	Thu, 14 Aug 2025 21:02:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=xzTKJS
-	w+5NSfhYSifQkvy6p6Bc0axDUXRlLgVx2ggNo=; b=dqPEtk6tUaSrQhhNkNY9Cz
-	r6PzNHwVmcXtKobjvIbw2jx+i7qmbdhyT4VFerNf/YyLiuPXV0r8+tPHdHUHwbZJ
-	eRtJp12+EDOlWdZSKQ8+skx2OluE4ysZigpztD5rxaDnmRCwashRDW/AwlBUsl37
-	jSoLW/9vot4L7daApqZ0geuXBRLF6YdFIyQkyR7F0XKZQTsQEz+i10U9uvfIPv+L
-	h/4NP9VFmXwRO/U/howyhd0vrhYHHr+u31PBwifCAf4+g/Lmhpz5LlAj/Qkkid9G
-	YDKsbLYMrfxJ81wIYUtj8wv367CBNE29XTXFlOCsmLBknljpysSo8/tVGcukr0+A
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dwudmkj2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 21:02:10 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57EHq9SC020623;
-	Thu, 14 Aug 2025 21:02:09 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ehnq60t9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 21:02:09 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57EL27OE27460202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Aug 2025 21:02:07 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8C13E58059;
-	Thu, 14 Aug 2025 21:02:07 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CB71558043;
-	Thu, 14 Aug 2025 21:02:06 +0000 (GMT)
-Received: from [9.61.244.230] (unknown [9.61.244.230])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 14 Aug 2025 21:02:06 +0000 (GMT)
-Message-ID: <60855b41-a1ad-4966-aa5e-325256692279@linux.ibm.com>
-Date: Thu, 14 Aug 2025 14:02:05 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE51B481DD;
+	Thu, 14 Aug 2025 21:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755205462; cv=fail; b=uuR/gPNx9q11rQWSJoHWX9tlEkNl1ENMnMjN/KSmMrSP5PLIVwvGZ1H+MW/TI1XHTM9cfQ+hjEPSsP/DMabx0IxnYNJfLyXBVDFIdawyh2ONpAIdp8utDuQOG0MM4xDz2lLhySIQJzXVUvh0cMZCsJgwR/gQyAxTyYMn2GJZ5E4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755205462; c=relaxed/simple;
+	bh=y+yuR53Q0TIyTccGqz7zou0QX9L3RfIldIK6kyKmH20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hlvxtHvzuUezSLQzJUcT6isHfaZE3gKXSpEAoMBUxuEapJXZ5E14sHcG4sn417GdJsepr0SWXtHtYa8r//vqUGwkqN6zb3ABTpOazqOtteq/g8K+vBjWNgjJL36RhI/4y/aBJl10ja3TnZZ8lj1rx7ssxWKuvB0pmZIBspjZMyo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WhIQMHqU; arc=fail smtp.client-ip=40.107.94.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UDn/t46y+ZVtzCNIpXucLoPvYKh/FYG0s3rG2F1vV6QSwWYl9OrGA807PBVsnWbEpGArXVAKUlUTUF/KTfEJGRQqrRtHaBOv4IVtjB9fo8MSv6BchxEK85DUbL70I+D3GyQzsJsS06KQUTo08LNgfnFY3Xj8ZZgaCth/m6PWRbdHuUrL4/dt5athabVDju5NQtbfVy85yGZF4ND90+DtFvCph4f56J0aO87uIMUO3AZgMJZwjXhaAzgMmRPQAnR3Uq/Sc3uWofAELnpPQjpTXrm4e0H7CO+8ODDHvo+r7by3l9YcgsQjGwMVrvKKkLZhIsdSHTBiEmYqC8GB/PCTkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L+fefGiP643bWbhlH0h/mgMGbq0UrkurRyvb+dSujKU=;
+ b=kCFH52R635273MA2tVTiyOsvVXWdkwanUOHB9h86gPi89Q+X4/WcZ+/vC0V2zovpAr/CqmUH2Zhpc7w9ePL1bxnz1sKQU1FLuF1KUPgDxIFrjOVPrGKvQnhEHsElbd6uaE55/56KTpwuyINjust0Wo+BWIiyDs7Rk4ZMsA3NCAgUst0RAQEgXB67fUhg37eflySnNGFK7yAzJ0YHcHyJcLR132/MwhZLH0kfc5V98PjCW7DWafsDa4dYMutM3rHL4t/V/hW3zHN7x6RArdEK5Y5vfv5mnTpdtz2u518288o12Zhk3vpFg/wRrluDSIQmgR3BMxm4sYPVnjpunWt8Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L+fefGiP643bWbhlH0h/mgMGbq0UrkurRyvb+dSujKU=;
+ b=WhIQMHqUGphP2w31pXoht841ajm0851SjZXQ6zoCOimdBwlSgeWDDCwB1FwoD01e+SNQxYOgWxAEgr1xHkNSytCKN1xXCF49DpHt0jFvJ/4LuiHsfCrtDbtsqhw1hYNVWLTy7BBrYNhlw4hMH8MEQwVC0QajDQf3mkHAHu2BywY=
+Received: from MN2PR06CA0005.namprd06.prod.outlook.com (2603:10b6:208:23d::10)
+ by SA5PPF9BB0D8619.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8d8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
+ 2025 21:04:14 +0000
+Received: from BL02EPF00029929.namprd02.prod.outlook.com
+ (2603:10b6:208:23d:cafe::f) by MN2PR06CA0005.outlook.office365.com
+ (2603:10b6:208:23d::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.18 via Frontend Transport; Thu,
+ 14 Aug 2025 21:04:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF00029929.mail.protection.outlook.com (10.167.249.54) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 21:04:14 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Aug
+ 2025 16:04:13 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 14 Aug
+ 2025 16:04:13 -0500
+Received: from [172.23.255.54] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 14 Aug 2025 16:04:12 -0500
+Message-ID: <238b2fd0-33ab-4279-9205-de58332fa944@amd.com>
+Date: Thu, 14 Aug 2025 17:04:15 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,153 +85,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 6/6] vfio: Allow error notification and recovery for
- ISM device
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, schnelle@linux.ibm.com,
-        mjrosato@linux.ibm.com, alex.williamson@redhat.com
-References: <20250814204850.GA346571@bhelgaas>
+Subject: Re: [PATCH] xen/events: Fix Global and Domain VIRQ tracking
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>, Stefano Stabellini
+	<sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>, Chris Wright <chrisw@sous-sol.org>, "Jeremy
+ Fitzhardinge" <jeremy@xensource.com>
+CC: <stable@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250812190041.23276-1-jason.andryuk@amd.com>
+ <a4b5fd6b-80db-4b58-b3e8-5832e542d64c@amd.com>
+ <6bf9bac0-a394-4064-bb5d-924f5a920e7e@suse.com>
 Content-Language: en-US
-From: Farhan Ali <alifm@linux.ibm.com>
-In-Reply-To: <20250814204850.GA346571@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jason Andryuk <jason.andryuk@amd.com>
+In-Reply-To: <6bf9bac0-a394-4064-bb5d-924f5a920e7e@suse.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfXy6AJH8waoyaD
- Z6jvlIW0gaN8a8Ar1GfnEH5bWz7t/vX00PK2lLDYGXfKx8kFb7AGwGMpQHzGtW5nkAlzP0ND5d2
- JbagKhgFMlFeb5cep3m6jlUFrgW4dWUX9wHZZfYsKU3VMbKP9KAwRG4IoRkzFh2V7w5JG0uj3Xo
- xvdfQaGmD24qktzNSpjXSwiPiHWt0qCPcllsBQqRFcs4j0EM86fQI/n+ramBIvDwB7Zi/oDp/u+
- Ofxntciq7LpqnySStR3avePOHZ80OPtwTfCOClm2lhmmSPCnUO81UWPL1kJYeAuzJwfksre5CjQ
- +lqGjEKtBFDxCj32KrIVlAqjcMIgVkOU4DW2uZU3betYGp8izn4ucD4nP+10Bk54FJleDZidQlk
- RaAsEvhM
-X-Authority-Analysis: v=2.4 cv=d/31yQjE c=1 sm=1 tr=0 ts=689e4ed2 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=c3_NMMW06mFj85baJVsA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: MjgQMatlesc9X1y3s6KrtvLeat5wO813
-X-Proofpoint-ORIG-GUID: MjgQMatlesc9X1y3s6KrtvLeat5wO813
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 suspectscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- spamscore=0 adultscore=0 bulkscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508120224
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00029929:EE_|SA5PPF9BB0D8619:EE_
+X-MS-Office365-Filtering-Correlation-Id: e08dfef4-71bc-4bf3-cb8e-08dddb761fc9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b0JFdG9MUFIrNXhEZE5MUkxCU2hIWGYrb2kwZ3QvYndVWnlxM2pPd08wUSsw?=
+ =?utf-8?B?MVovN0ZMQjYvZjJBcGF1cSt5aHRGT0tMQXoyM2twQmJYV01YTTJoQndYUVdN?=
+ =?utf-8?B?a3pYMDVzRXd5R3R6TjlTaVhYUGpkTWhtRFBqR1praXlPN0xWTGZXanllR1Nt?=
+ =?utf-8?B?dWxwTGJ5dlpwRXEzakRKMDMxdnptNVRYRzlacC9lckphUjI0blpjRFFDTUow?=
+ =?utf-8?B?NDlRekl0d0NlMUJ0L3B4U3ptKy9wK2V1NHdrSUZseE5PY0o1c1NYWVkwYW8y?=
+ =?utf-8?B?UHE1QjNYaEFRS29Sckl5NWY2WCs3MUh5c3BObHA1aHZQQ2k0dFhGdFBDd0lN?=
+ =?utf-8?B?a29CeUszdysvWU5UVVZoanp1WEJ6ZG1SUGc1cUJiTW44WHM2YXhJSGhxeTQx?=
+ =?utf-8?B?Q1EwNXNFcmljemtqSGhhK3F6WDVuUzlrei9PQlRBUHRQNEFGK01XYms1eVFx?=
+ =?utf-8?B?eElsVEpFZ0pYemJjL0pucDZtVzBBeTNTcVNCSzIzcGdRUUx1elhaVS94eUZY?=
+ =?utf-8?B?aVFvREo3bEVmWG9BNVpyVUxJS0hsd0hhcy9CWkNoVytzYkl6OHo1Q0pDOXlp?=
+ =?utf-8?B?eXhMVGZFUkZZbS85a21xV2tSWnRxTnZPV2hnc3dybm9QLzR0TXIrb05OT3pi?=
+ =?utf-8?B?UlJxVXNTY2o3Umo5UFN5dFVmaU9nN1N6NUw0emZTZFlrcmErQmdlTktWZ2FW?=
+ =?utf-8?B?emZpUjRGYmQ1clQ2U2VnaE9ybmJlWHdRbEF4RE0rMW1XOXczMTJweXVISG9q?=
+ =?utf-8?B?T0pDK1lQTTkrVlh0K3k0aDdaYkhVNEVIZG5Ga0xsWStBcXl0NHN1U09GM2xa?=
+ =?utf-8?B?VjJ6YU5GdXhJdllnSkI0Q1p1dDRlcHNCRVAzZ0wya0tLR2dOalFZUHJROVNn?=
+ =?utf-8?B?a3p5VGdYampTODNiaEN2WlFqZjU1cCtyRnhFYU00RDVjanRyWVpZLytpV3J0?=
+ =?utf-8?B?aXVPeHR1SXZmY3VDUU1MbUwzVDBLYitieEYzYWNST3JrTllCSitVRmcrK1ZL?=
+ =?utf-8?B?ckM4UnRENFQ0MnBkMnlqTitra25kWEhXTXp3MzEwWUJUS3dhdzFSUXVmNFZq?=
+ =?utf-8?B?Y0NRd3R2bnRkbXljRjE1NkFWZVBMR3c0VWxTVjdaSnUxUytUTFR4RG00dUE2?=
+ =?utf-8?B?cW90VWNwOHFTN2J1enJFd2w2TWxDb01wT2hDc3ZMbXJsQTF2OGd3cENJY2Za?=
+ =?utf-8?B?SzVsMHRZU2dWcENYVm1BQ25EVGEzSmUwYTVoaFlnSVFaTjh6NDAydWZBOTBH?=
+ =?utf-8?B?a201OFQ2L1JaOWpJOTZBTk1reEdoZWRGV2FPNG5EMzZPZEJRVHQ5WXlXMnVV?=
+ =?utf-8?B?aFdNUnh2cFFMM0IvNVNnSVF6RGdJbksyN2xORm8xZUZpR3oxZk91RXhNNmxL?=
+ =?utf-8?B?TmhwOExpVDQ4R0lUcDVRZ2YzQ3dtNVl3U3VPR0lpN0pCYjRLRWFpSXA0Q3V6?=
+ =?utf-8?B?eXJoTnluVGJoYkQ4VUhKd1lXb3NuelhoMU5DcFNIbEM0dVlHQVpseWlJYUla?=
+ =?utf-8?B?V0VhcCs2Y1UzOUpPek9HUHJIeGVWT0srMVl4d0lqa3RGU25wd0Rpc3VCMEQ5?=
+ =?utf-8?B?elU2blRlb2tuZEZkR3NIQ2hoU0ZxekU5N2NnQXpydGdBZFZlOWovSTBQMUxx?=
+ =?utf-8?B?WmhERnVmTVFGbXRQOWo1VE9oQ1VoVGQyK2EzQllUTHRHZVVDQkVPR2k3a08x?=
+ =?utf-8?B?ZThyajBjc09VQ3JWMUJGdWxibTJuaGo4WFpTdkNaaDhBV2JoOFdFVXorYisw?=
+ =?utf-8?B?Zk9tVGRGajR2QjZEd0hBTDBqVEV4YXgrUHVoUjVsb0dSVDRRNCtHZUo2OVJV?=
+ =?utf-8?B?cFMwOG1kRTgycDZEM3haODZoMUFFdzdaald0RGM4UDZZS252TDZPL3VkQ3p5?=
+ =?utf-8?B?b2RwRk9XNWdaZ213WGtLQ2hhSW8xeDhMQU1QMHhwMHRkMllldW1EYlZQbXZ2?=
+ =?utf-8?B?SHpVMVJQdXptMEFVSnJub1I1N0x2Q0xZdUJJYVBJbzVxVkZGUnhUMXUwR01I?=
+ =?utf-8?B?SEhtczRUTGVUNERXeFN1QjJFOWozNDdyYlQ4K3RSSHBKN1Q0TklWa2lORVc5?=
+ =?utf-8?Q?TDvjyD?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 21:04:14.1988
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e08dfef4-71bc-4bf3-cb8e-08dddb761fc9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00029929.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF9BB0D8619
 
+On 2025-08-14 03:05, Jürgen Groß wrote:
+> On 13.08.25 17:03, Jason Andryuk wrote:
+>> On 2025-08-12 15:00, Jason Andryuk wrote:
+>>> VIRQs come in 3 flavors, per-VPU, per-domain, and global.  The existing
+>>> tracking of VIRQs is handled by per-cpu variables virq_to_irq.
+>>>
+>>> The issue is that bind_virq_to_irq() sets the per_cpu virq_to_irq at
+>>> registration time - typically CPU 0.  Later, the interrupt can migrate,
+>>> and info->cpu is updated.  When calling unbind_from_irq(), the per-cpu
+>>> virq_to_irq is cleared for a different cpu.  If bind_virq_to_irq() is
+> 
+> This is what needs to be fixed. At migration the per_cpu virq_to_irq of the
+> source and the target cpu need to be updated to reflect that migration.
 
-On 8/14/2025 1:48 PM, Bjorn Helgaas wrote:
-> On Wed, Aug 13, 2025 at 10:08:20AM -0700, Farhan Ali wrote:
->> VFIO allows error recovery and notification for devices that
->> are PCIe (and thus AER) capable. But for PCI devices on IBM
->> s390 error recovery involves platform firmware and
->> notification to operating system is done by architecture
->> specific way. The Internal Shared Memory(ISM) device is a legacy
->> PCI device (so not PCIe capable), but can still be recovered
->> when notified of an error.
-> "PCIe (and thus AER) capable" reads as though AER is required for all
-> PCIe devices, but AER is optional.
->
-> I don't know the details of VFIO and why it tests for PCIe instead of
-> AER.  Maybe AER is not relevant here and you don't need to mention
-> AER above at all?
+I considered this, and even implemented it, before changing my approach. 
+  My concern was that the single VIRQ is now in one of the N per_cpu 
+virq_to_irq arrays.  A second attempt to register on CPU 0 will probably 
+find -1 and continue and issue the hypercall.
 
-The original change that introduced this commit dad9f89 "VFIO-AER: 
-Vfio-pci driver changes for supporting AER" was adding the support for 
-AER for vfio. My assumption is the author thought if the device is AER 
-capable the pcie check should be sufficient? I can remove the AER 
-references in commit message. Thanks Farhan
+It looks like Xen tracks virq on the bind_virq vcpu, so 
+per-domain/global stays on vcpu0.  Binding again would return -EEXISTS. 
+find_virq() would not match the virq if it was re-bound to a different vcpu.
 
+If we don't care about handling duplicate registration, then updating 
+the virq_to_irq tables should be is fine.
 
-
->
->> Relax the PCIe only requirement for ISM devices, so passthrough
->> ISM devices can be notified and recovered on error.
-> Nit: it looks like all your commit logs could be rewrapped to fill
-> about 75 columns (to leave space for "git log" to indent them and
-> still fit in 80 columns).  IMHO not much value in using a smaller
-> width than that.
->
-Sure, will fix this.
->> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
->> ---
->>   drivers/vfio/pci/vfio_pci_core.c  | 18 ++++++++++++++++--
->>   drivers/vfio/pci/vfio_pci_intrs.c |  2 +-
->>   drivers/vfio/pci/vfio_pci_priv.h  |  3 +++
->>   3 files changed, 20 insertions(+), 3 deletions(-)
+>>> called again with CPU 0, the stale irq is returned.
+>>>
+>>> Change the virq_to_irq tracking to use CPU 0 for per-domain and global
+>>> VIRQs.  As there can be at most one of each, there is no need for
+>>> per-vcpu tracking.  Also, per-domain and global VIRQs need to be
+>>> registered on CPU 0 and can later move, so this matches the expectation.
+>>>
+>>> Fixes: e46cdb66c8fc ("xen: event channels")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Jason Andryuk <jason.andryuk@amd.com>
+>>> ---
+>>> Fixes is the introduction of the virq_to_irq per-cpu array.
+>>>
+>>> This was found with the out-of-tree argo driver during suspend/resume.
+>>> On suspend, the per-domain VIRQ_ARGO is unbound.  On resume, the driver
+>>> attempts to bind VIRQ_ARGO.  The stale irq is returned, but the
+>>> WARN_ON(info == NULL || info->type != IRQT_VIRQ) in bind_virq_to_irq()
+>>> triggers for NULL info.  The bind fails and execution continues with the
+>>> driver trying to clean up by unbinding.  This eventually faults over the
+>>> NULL info.
+>>> ---
+>>>   drivers/xen/events/events_base.c | 17 ++++++++++++++++-
+>>>   1 file changed, 16 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/xen/events/events_base.c b/drivers/xen/events/ 
+>>> events_base.c
+>>> index 41309d38f78c..a27e4d7f061e 100644
+>>> --- a/drivers/xen/events/events_base.c
+>>> +++ b/drivers/xen/events/events_base.c
+>>> @@ -159,7 +159,19 @@ static DEFINE_MUTEX(irq_mapping_update_lock);
+>>>   static LIST_HEAD(xen_irq_list_head);
+>>> -/* IRQ <-> VIRQ mapping. */
+>>> +static bool is_per_vcpu_virq(int virq) {
+>>> +    switch (virq) {
+>>> +    case VIRQ_TIMER:
+>>> +    case VIRQ_DEBUG:
+>>> +    case VIRQ_XENOPROF:
+>>> +    case VIRQ_XENPMU:
+>>> +        return true;
+>>> +    default:
+>>> +        return false;
+>>> +    }
+>>> +}
+>>> +
+>>> +/* IRQ <-> VIRQ mapping.  Global/Domain virqs are tracked in cpu 0.  */
+>>>   static DEFINE_PER_CPU(int [NR_VIRQS], virq_to_irq) = {[0 ... 
+>>> NR_VIRQS-1] = -1};
+>>>   /* IRQ <-> IPI mapping */
+>>> @@ -974,6 +986,9 @@ static void __unbind_from_irq(struct irq_info 
+>>> *info, unsigned int irq)
+>>>           switch (info->type) {
+>>>           case IRQT_VIRQ:
+>>> +            if (!is_per_vcpu_virq(virq_from_irq(info)))
+>>> +                cpu = 0;
+>>> +
+>>>               per_cpu(virq_to_irq, cpu)[virq_from_irq(info)] = -1;
+>>>               break;
+>>>           case IRQT_IPI:
 >>
->> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
->> index 7220a22135a9..1faab80139c6 100644
->> --- a/drivers/vfio/pci/vfio_pci_core.c
->> +++ b/drivers/vfio/pci/vfio_pci_core.c
->> @@ -723,6 +723,20 @@ void vfio_pci_core_finish_enable(struct vfio_pci_core_device *vdev)
->>   }
->>   EXPORT_SYMBOL_GPL(vfio_pci_core_finish_enable);
->>   
->> +bool vfio_pci_device_can_recover(struct vfio_pci_core_device *vdev)
->> +{
->> +	struct pci_dev *pdev = vdev->pdev;
->> +
->> +	if (pci_is_pcie(pdev))
->> +		return true;
->> +
->> +	if (pdev->vendor == PCI_VENDOR_ID_IBM &&
->> +			pdev->device == PCI_DEVICE_ID_IBM_ISM)
->> +		return true;
->> +
->> +	return false;
->> +}
->> +
->>   static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_type)
->>   {
->>   	if (irq_type == VFIO_PCI_INTX_IRQ_INDEX) {
->> @@ -749,7 +763,7 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
->>   			return (flags & PCI_MSIX_FLAGS_QSIZE) + 1;
->>   		}
->>   	} else if (irq_type == VFIO_PCI_ERR_IRQ_INDEX) {
->> -		if (pci_is_pcie(vdev->pdev))
->> +		if (vfio_pci_device_can_recover(vdev))
->>   			return 1;
->>   	} else if (irq_type == VFIO_PCI_REQ_IRQ_INDEX) {
->>   		return 1;
->> @@ -1150,7 +1164,7 @@ static int vfio_pci_ioctl_get_irq_info(struct vfio_pci_core_device *vdev,
->>   	case VFIO_PCI_REQ_IRQ_INDEX:
->>   		break;
->>   	case VFIO_PCI_ERR_IRQ_INDEX:
->> -		if (pci_is_pcie(vdev->pdev))
->> +		if (vfio_pci_device_can_recover(vdev))
->>   			break;
->>   		fallthrough;
->>   	default:
->> diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
->> index 123298a4dc8f..f5384086ac45 100644
->> --- a/drivers/vfio/pci/vfio_pci_intrs.c
->> +++ b/drivers/vfio/pci/vfio_pci_intrs.c
->> @@ -838,7 +838,7 @@ int vfio_pci_set_irqs_ioctl(struct vfio_pci_core_device *vdev, uint32_t flags,
->>   	case VFIO_PCI_ERR_IRQ_INDEX:
->>   		switch (flags & VFIO_IRQ_SET_ACTION_TYPE_MASK) {
->>   		case VFIO_IRQ_SET_ACTION_TRIGGER:
->> -			if (pci_is_pcie(vdev->pdev))
->> +			if (vfio_pci_device_can_recover(vdev))
->>   				func = vfio_pci_set_err_trigger;
->>   			break;
->>   		}
->> diff --git a/drivers/vfio/pci/vfio_pci_priv.h b/drivers/vfio/pci/vfio_pci_priv.h
->> index 5288577b3170..93c1e29fbbbb 100644
->> --- a/drivers/vfio/pci/vfio_pci_priv.h
->> +++ b/drivers/vfio/pci/vfio_pci_priv.h
->> @@ -36,6 +36,9 @@ ssize_t vfio_pci_config_rw(struct vfio_pci_core_device *vdev, char __user *buf,
->>   ssize_t vfio_pci_bar_rw(struct vfio_pci_core_device *vdev, char __user *buf,
->>   			size_t count, loff_t *ppos, bool iswrite);
->>   
->> +bool vfio_pci_device_can_recover(struct vfio_pci_core_device *vdev);
->> +
->> +
->>   #ifdef CONFIG_VFIO_PCI_VGA
->>   ssize_t vfio_pci_vga_rw(struct vfio_pci_core_device *vdev, char __user *buf,
->>   			size_t count, loff_t *ppos, bool iswrite);
->> -- 
->> 2.43.0
->>
+>> Thinking about it a little more, bind_virq_to_irq() should ensure cpu 
+>> == 0 for per-domain and global VIRQs to ensure the property holds.  
+>> Also virq_to_irq 
+> 
+> In Xen's evtchn_bind_virq() there is:
+> 
+>      if ( type != VIRQ_VCPU && vcpu != 0 )
+>          return -EINVAL;
+> 
+> Making sure in Linux that there is never a violation of that restriction 
+> would
+> require to always have an up-to-date table of all possible VIRQs and their
+> type, which I'd like to avoid.
+
+Yes, I agree with this.
+
+> I think it is the user of the VIRQ who is responsible to ensure cpu 0 is 
+> passed
+> to bind_virq_to_irq(), as this user knows that such a restriction 
+> applies to
+> the VIRQ in question (at least he should know that).
+> 
+> Special handling for really used VIRQs in the kernel can have some special
+> handling, of course, as they are known already and should be used 
+> correctly.
+
+Thanks,
+Jason
 
