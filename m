@@ -1,134 +1,152 @@
-Return-Path: <linux-kernel+bounces-769104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDDFB26A4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:01:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C967DB26A0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D46FAA2FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:52:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1FF7A5160
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8ED81FDE01;
-	Thu, 14 Aug 2025 14:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DF632142C;
+	Thu, 14 Aug 2025 14:51:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WPbVbgvx"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BppAGEUt"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544141FDE39
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754CF192580
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183044; cv=none; b=BZ04HOkrrKLPd7vASuj0hk2iWDJUyypw1Ku/cJOcyELQkWpxQ6TqgwBBFGWJeJANoEQzcas5WwSxwiHlG4ln1f9R3vdTKY7xbKYB1VBBgzZVQ2rIZJPLY8WdQRN/IlQvSvgl7dNeW8b44VjrVbZAIu6wzUdoesk/IrlB6FSfoSw=
+	t=1755183079; cv=none; b=YFfG7N9gCgR28dhpfpBogx4ok/BMq4tF0beAab+35pKgqXmffVFfjvum5M5mdvPUeQxTR6K55z+SWuQdv5KUrOlpONasRLtgQJ2hcKmv12gkqh0Qeke+rQhDiDWwJK1v0VfxCFl0afZpFbvsd0mOCTw2dgsGUFYGijH+XJBn7PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183044; c=relaxed/simple;
-	bh=zMKLfvYxyHlXKU2+2xgv7Jd1haLqSPUF1RejGOjP6zI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z3OZ8jxihZfaY9ElShxoeWwanV/JSBghhJnbvWDxZ3fsRmADUvogZ7o9klmHApilZEkS6NnlS91PApuEPs+YkSnkjm6vEKzFfuU7CuiIrxpa4nCVZ9SwKlysLRa3g/HKibaHGk9X/gzScohQ1aKJyI0pqGFXwCSOmLM94TrWsFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WPbVbgvx; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9e415a68eso554903f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:50:42 -0700 (PDT)
+	s=arc-20240116; t=1755183079; c=relaxed/simple;
+	bh=fyP/OLr3beYwssW4o3anr5GsJIQEhtOVd8ngVUetdSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jYpLsTsIkuK7wVH3WvgLSz2luHdLeJZjm4grkxlkc4Qt6EwNeuVJhElflEqvmXv2y4GXjGsWc8D/hb6RFfSKm0RU/Aa0ss/6UWdGY4zKxYnia3T5XF1cFLUmsNitx21q9nbo0AwfDav0558BjON/EH5w2qosyvu5xwReC1S+7iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BppAGEUt; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-30ccea6239bso907276fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:51:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755183041; x=1755787841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vGIESpwE6sjQpjPwI0fN8WHW6LSr9CktyCHEaHrsyg=;
-        b=WPbVbgvx1xhELTZHmnwkJCRlOuRV6h8r96yaxiBpdmDM4UZjwVovjsWGEK692DkXsw
-         F/xyIs10St9AOB21NhiV9zAupBkslF5htHIpavw3KyDb8JhEp6t7cjORWay4as/1JSAP
-         aX9lNLgB7UDK7gWLQgyze2CSpxBZtN/sCIF9zU2cvYFfodqJXiygAX81UfQ/MVuXmsWm
-         VBzDHuqejkJOF2shbxXmfV3s8CgBZO3e/LhnQh5sx28Ke/m0cjzMv+m5I/mHUgqx2Tru
-         GNveNx2ei1LQfmuBbU/Hpb7wzMMyl8z3c5Nv2B0ByXb+lK11utsBWUFUF41xEF7tX4T1
-         Azqw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755183075; x=1755787875; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NhLbtz2pbCynkwC1z2ilVubEr1pcqPcdknoxUGu5RA0=;
+        b=BppAGEUtHHtmsexkVgMOslgdxIUReQ8vAOm59cKPcjPnjmIxbidYBt0Q+MCtzFIw2g
+         OPWMj1DaHSHkHPEMlALAA+QCUKxu+iroLsvOY6hiBJQl0+Oesrvspmcj7lSBRWIAwGeW
+         J13NeImus4GIgqybGU+oVoC2AeOKP4T7W/73m8TTsN99Ug9ESQWmWHlVbyVfDQsQ9h68
+         pzizqRKMLmdX4SNIWW0guvzFHnsClC2irrsD9L/yDRMM8MY7p+uNj6OJtQn+IInf5h5j
+         7H2qw/K8S6NNhqdDXpzqN5TG9JgbyUmWoKSQ7AVBKZtr1c48QotX5nXyK9EWNv0lvHZV
+         M+CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755183041; x=1755787841;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0vGIESpwE6sjQpjPwI0fN8WHW6LSr9CktyCHEaHrsyg=;
-        b=YFeIV/nXQx7S3QRKnDGKMcNgYvJ4ICaOCb2Hv72uB4zbjEwNsrU+a7CE0ho/9MywBY
-         J5RuHevCw2+AqQ2jiJl5cvr2EyWajWroppM1/gQ9IMzpOhjlYvluz3XjVJrOqhE6A1tm
-         0bR5kBNApWg3tDANZ6tr5Pysl2mSLJB6uvw67Md9QUsEsaCeh9H0C8BJ6tjw/AYHvnCr
-         9T/rXEyVpS0kf8L2cof6bI0IbSf2C48iIOR8DLfQ3FUyI1HYV57yUtWJWtUaw4aF5tRr
-         aXb/Hw9i7Mt3qTB4vIloeBovZEFLnTaD2GGSZH1ziPP5PxHa0FCSUtu3LNscmKneFAQt
-         /DhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTzw00T7zZL+nsdmbTsWxH7jKZ/XUJigNmXD5R7CBzcUTwk+ze+gkqO9+hd3okEKRL8ZbirC4Xyp1HWnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpiLPa7rNY8P0YmJs27QnFsmQoWjAc6VTJEjIYTUbSlWtqbz8d
-	5fvTDKUiaGbxAnMytkxdr9a760y2is7ePT+bHO9udOaN+Vmntb6GnTaOBXEOQI2VsJM=
-X-Gm-Gg: ASbGncu8sMdCNjVLLZVLlVyV1HEWgAOGNrqdULUIb4N0DRk3B0UULXlZMP43IUGWQAe
-	DeaMf9yIcTO5mD3fw0eJA6oOUQ3BI8AHHKpDuo//A322TUmE3yoHLpuu3VUo3muTkf76ZCn45+4
-	g9wQxiC1DeznpyAoLHc8VcwawhD+Frh7MxvABSnnOUVlW0U/4fZiTJfnmR0dwawFi67hRep5oNd
-	gFHD5P4Qi7bxOeFfD7I4UNHoDtPjS7437CjlI77jgtEQXcxj05EY35bDvT4ZAqpZjlt4HWZQ407
-	1VVwnXLggL0KgHurtuct3mlh0x7B1GLJqn1GTzg0+lknAUGKsKha2AJia5bKTZMmX2WVuaxEQ/q
-	v1o8LQVY8WdaXg/PyNWv+4pU8auw=
-X-Google-Smtp-Source: AGHT+IHh3EzdCyG/NhBNbMq/qJ6rj0vlsxozGvF3nkk+UdR4z/kGz0s6cc9K0QXKutX0yGrJTiEEog==
-X-Received: by 2002:a05:6000:230a:b0:3b9:10af:59f2 with SMTP id ffacd0b85a97d-3b9edf34a5bmr2739927f8f.28.1755183040605;
-        Thu, 14 Aug 2025 07:50:40 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b9132f00ecsm8850096f8f.24.2025.08.14.07.50.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 07:50:40 -0700 (PDT)
-Date: Thu, 14 Aug 2025 17:50:36 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Qianfeng Rong <rongqianfeng@vivo.com>
-Cc: Brian Norris <briannorris@chromium.org>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Kalle Valo <kvalo@kernel.org>,
-	Aditya Kumar Singh <quic_adisi@quicinc.com>,
-	Roopni Devanathan <quic_rdevanat@quicinc.com>,
-	Rameshkumar Sundaram <quic_ramess@quicinc.com>,
-	Jason Xing <kerneljasonxing@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jeff Chen <jeff.chen_1@nxp.con>, Bert Karwatzki <spasswolf@web.de>,
-	Jinjie Ruan <ruanjinjie@huawei.com>,
-	"John W. Linville" <linville@tuxdriver.com>,
-	Cathy Luo <cluo@marvell.com>, Xinmin Hu <huxm@marvell.com>,
-	Avinash Patil <patila@marvell.com>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] wifi: mwifiex: use kcalloc to apply for chan_stats
-Message-ID: <aJ33vFdOfMRDbpls@stanley.mountain>
-References: <20250814131536.231945-1-rongqianfeng@vivo.com>
+        d=1e100.net; s=20230601; t=1755183075; x=1755787875;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NhLbtz2pbCynkwC1z2ilVubEr1pcqPcdknoxUGu5RA0=;
+        b=YRcYI3GydallLdBMhZ6hntX562AxQIGu0IqlETrGwnUBA3eE+hDtbrEOpEhJnaoXJh
+         88JUNxxgqVoLfcUhyiZUiC+rHJT9iA8WlzKZrs+t27VzRGe1aYiSCDNoGLu7rpX/azci
+         no8s4vyPdJ+zMo34rTYi2qE3sbqfqUKfs2/h7vnebTH6kVVF3fteD2IwHdYb8cp59FOS
+         VLg1101gTumQvVENFhN3KwLoFJy2GYmXoRiFDvwMKVsb6eoRyfLdtoAGOS8tT9J7jfJu
+         dSmB3b1hEtJ/WIUXf0OcJl8qv9Tsxwptd8IUzb9Xz9ugIMcnogTmiIjgH+01pwXiI0Oe
+         OIGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGnDaD8qUnRZOFIcCgtG4kz2S1dZvDIZpdVBD906cP84LN9lHz6CrhEmQh8Bci/E7M6+SBBz3JedL+I6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2bU7abwb8VSTWNvL4pk6A+a2dKdOA6zqsG6/MALJQC/7qHMPm
+	mID/tHzQnWUMtaNIy5lnntujcMPxS39OYrdFyHkvPVjfXqJjxKCExGGBSnw5WVHs47E=
+X-Gm-Gg: ASbGncu5745QPZEptwC4rnryuubp3AE/+/+ta6tP2hMRc+Fu6FFm+0OwzrRny+WrvrZ
+	e0mteY0vYt3qO42RBOWqtGXWGxheCsLfhVScZEqjrxVyKTaTy6c0XdP02vfOHkQTR+G23+Sasdq
+	Dfc25pt3w/Ta5AX4tj/jKZseFnkQOLe1vBfA+C4w5eIGD9mq60tRk0AjoBX/LtTQv2+rpWtJ9qy
+	P7/Wq3CF61tQ7YpnYQxIgbKwjyFsscwOfO1lsa/HHAmfmsRHqo7S5J1YsvM5LVqxQMT4vbpcs3o
+	GfYqwgbh0MpJqXmrA1x8lfc7ZKRBVsVYd+tisrqbLNDefVhxo6WPr9XwOLcK5Y9TtxeryH4IDRK
+	BlvZsDCKRyrlROjqjKSVE8WFLVnR0UxhF+MpZwXiud/0OmIEjAoWDF3cmp8EUpKKIyPmzQt3oUe
+	s=
+X-Google-Smtp-Source: AGHT+IGBSpWFh7v66sa0tHjx26XHgGotdF9DhOCF3YJvgTAZk5dQT2EANWxR0b3KAVLYLKWGk2J75w==
+X-Received: by 2002:a05:6871:6a5:b0:30b:582d:8eed with SMTP id 586e51a60fabf-30cd1399dbamr2002074fac.39.1755183075184;
+        Thu, 14 Aug 2025 07:51:15 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:2d9b:959c:3c59:5831? ([2600:8803:e7e4:1d00:2d9b:959c:3c59:5831])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7436f879fabsm1436841a34.13.2025.08.14.07.51.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 07:51:14 -0700 (PDT)
+Message-ID: <b1cc499b-403e-4dcf-9e6a-10d4d43a8b30@baylibre.com>
+Date: Thu, 14 Aug 2025 09:51:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814131536.231945-1-rongqianfeng@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: iio: adc: Add BD7910[0,1,2,3]
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1755159847.git.mazziesaccount@gmail.com>
+ <8ef78e3cffcfdf99153a3fcf57860771890f1632.1755159847.git.mazziesaccount@gmail.com>
+ <175ce750-7f5d-477c-8d18-dd418ba749be@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <175ce750-7f5d-477c-8d18-dd418ba749be@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 09:15:31PM +0800, Qianfeng Rong wrote:
-> Use kcalloc to allocate 'adapter->chan_stats' memory (max 900 bytes)
-> instead of vmalloc for efficiency and zero-initialize it for security
-> per Dan Carpenter's suggestion.
+On 8/14/25 4:57 AM, Matti Vaittinen wrote:
+> On 14/08/2025 11:35, Matti Vaittinen wrote:
+>> The ROHM BD79100, BD79101, BD79102, BD79103 are very similar ADCs as the
+>> ROHM BD79104. The BD79100 has only 1 channel. BD79101 has 2 channels and
+>> the BD79102 has 4 channels. Both BD79103 and BD79104 have 4 channels,
+
+Is it just a difference in max sample rate? or pinout?
+
+>> and, based on the data sheets, they seem identical from the software
+>> point-of-view.
+>>
+>> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+>> ---
+>>   .../devicetree/bindings/iio/adc/rohm,bd79104.yaml     | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+>> index f0a1347ba4db..6a6e6ab4aca3 100644
+>> --- a/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+>> +++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79104.yaml
+>> @@ -14,7 +14,16 @@ description: |
+>>     properties:
+>>     compatible:
+>> -    const: rohm,bd79104
+>> +    oneOf:
+>> +      - items:
+
+You can drop the items: here since there is only one item.
+
+>> +          - enum:
+>> +              - rohm,bd79100
+>> +              - rohm,bd79101
+>> +              - rohm,bd79102
+>> +              - rohm,bd79104
+>> +      - items:
+>> +          - const: rohm,bd79104
+>> +          - const: rohm,bd79103
 > 
+> Oops. I believe the order of the compatibles is wrong for the fallback.
 
-This patch is okay, but lets re-write the commit message:
+Indeed.
 
-Subject: wifi: mwifiex: Initialize the chan_stats array to zero
-
-The adapter->chan_stats[] array is initialized in
-mwifiex_init_channel_scan_gap() with vmalloc(), which doesn't zero out
-memory.  The array is filled in mwifiex_update_chan_statistics()
-and then the user can query the data in mwifiex_cfg80211_dump_survey().
-
-There are two potential issues here.  What if the user calls
-mwifiex_cfg80211_dump_survey() before the data has been filled in.
-Also the mwifiex_update_chan_statistics() function doesn't necessarily
-initialize the whole array.  Since the array was not initialized at
-the start that could result in an information leak.
-
-Also this array is pretty small.  It's a maximum of 900 bytes so it's
-more appropriate to use kcalloc() instead vmalloc().
-
-regards,
-dan carpenter
+> 
+>>       reg:
+>>       maxItems: 1
+> 
+> Yours,
+>     -- Matti
 
 
