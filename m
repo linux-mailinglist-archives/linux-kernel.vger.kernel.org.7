@@ -1,199 +1,228 @@
-Return-Path: <linux-kernel+bounces-769522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B7EB26FBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABE99B26FCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13D16AA5D61
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:34:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDB6AA3C52
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9844D242D9E;
-	Thu, 14 Aug 2025 19:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33EBE243946;
+	Thu, 14 Aug 2025 19:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7zzPeVw"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ryG4sJdb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7641423D7CB;
-	Thu, 14 Aug 2025 19:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D28B1D7984
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 19:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755200052; cv=none; b=a40dCST6QqEp4ZY8P5gQ97mtdrN8dUDLBICFq1JTxnUTjDyt9mgp6GkiLMCRoJowR9LLQBmBTWFYpACGRv+yybIbBdR8iL1gRTnUucC93Sxy+zG0NpejQf57IhMt9eZcMNk9jQAvj/LgC/eY1ZTxTdDDLBeNP0RtYtclHnSFHpI=
+	t=1755200435; cv=none; b=M3+CtY9A+FPpkoMpvDY1RrmCVjifFVQpg+e1lJUl013KMrxPA6GXleFKWHrxjTl+BiPl5Q+fmN1qbtiPB3gZ5fVuFYsZejE2o5w/AFuYBjE3t5Mw/cN2cYQZbD5k5Rp6ipU5Zn9VyS4Amc7GVn4nk1nYM89wS8Ir95E/uMbHT94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755200052; c=relaxed/simple;
-	bh=Qk3LJxvLrLeL7w90cyKhd7zyf79hwEGsLTIGa7j9CFM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NM6vraLxzq30nmsTrKujDl5SNOFpHb6GQAiJySy5jNJrJC24j196WnFMKUMd0cRf31/AqUhixupOa4yzTjuzqZpzSClNibExiR//DhSHpCJ3/MCN9quroQvXdRuPvdz/3osH0EEhGeazeiuCV/nXpwk2PF115RL1dTXtrd7lisQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7zzPeVw; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76e2e88c6a6so1334985b3a.1;
-        Thu, 14 Aug 2025 12:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755200051; x=1755804851; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ph3lMnf/naqx4kIu+sBrXc4AAuPsDaAu/FwSldVU/DM=;
-        b=c7zzPeVwsIW+Za7TxB3Ay2eB+OP8QjqjkCIQy6KuCqQKFX5/5XDL5FG0/WXlewzYKT
-         GY2HOrcVngoBe4VKcFz6Lp0V9bL16/R8ERknfXTYr7qYvfQWI1Nm7/HIDlcjUwJDGYDX
-         lpbWt2W8q7rEBZZs2j+3q8ZMGTr/lMu+OCxQphcwLy2Q8PgiyllWr5bqbbIpbRiegXHi
-         Y2EcxuusvIXuSkiWi7SAou/adKEiQK4w+a9DAy+npYa8rRDTXX00k23jDcFgnqezU9jq
-         rthfCurcK1cg0Q8e3iOSvaz1zTJdBPmXwjIfb+NYNUM21JoxfrXm1TLvA4dVhtpnaa4I
-         /xxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755200051; x=1755804851;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ph3lMnf/naqx4kIu+sBrXc4AAuPsDaAu/FwSldVU/DM=;
-        b=F/lQFfPO35wg7+yb13wmPjApl/tC4DoyoSZxHtvkTNLpfAv0WBNRT2u0O+UbK6oynC
-         APluG5nQ/ixhduD5FQEO8CHIwE2pp7Ght9KOeQbZdfMWnq5XHyA9qIGSvdyEklt3tPVN
-         SEJaSOU80RngTuh4o/lrhqCdPaMzNbVTXnS/PqbiKv/T1PWWzr+UCx/m8+P09fIFgmDZ
-         Ci0WzXl7qJr1Ddjq3SftGjPLNUBKZ4EfzW/nccWYj7I47oaZ2PAC4r+l0HJSTnD3XlSu
-         Ez9DtyUHq4ZRAF+s/ENfCZySe1l8wCIGGeygLEeK0286vusfwdiIQtLvVNgS3movWeoU
-         Rviw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN0RO3IGca2+xAzMy0iss8Ph4xdP8S6wt8l54mNpmOiJrbVhqDO/MUh1VMaocDPwCcz0rj8PPDCSP1H8Bdd2QN@vger.kernel.org, AJvYcCWrpPKPgJw6AyzwSKoXXpj/2E+lgYa53GtSOHn5QRZOZu0jABWMJ6LBmVM1OnRa+RzUupsbTAfZjuSPzYDk@vger.kernel.org, AJvYcCWv2jP1AAqDmSRAr7pXt0aRp178QM1DEp7pnFpwBs077YdoCNqOGv7gEgR4Z4F8phJJ3Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRJU1NGC5nLsr28M6tWlqN9l+gHrDD0dD95VjBdVdV54OIOPAU
-	eGp0laYHtwp4rGKW/Ach1h1RnSFmM7bBgtiR9AcB+5l6lW9behMvgDsA
-X-Gm-Gg: ASbGncv/jxB6Jn6VizeVWUSIwwwKOdRTfD04Jk/gRQVDA6EyuX1xiOEKKV7jPyqrAor
-	Fyqi/i3HxQt57Jvc8C2rnWjp2NJoN/ubCbHQtisfQZ3JewHgBTIYIuuPFZzyuDS0HP3u7JyMScr
-	Elq4vKIe6OGVyGWY5XMsMVrE2O2JoPN7bF8SP60ysgbP6bIMqoydJTQhENWhMKQpAtQmToIsiOV
-	zeZSqHFOv10dJFn5FH9WyjPxvw1/yo4OcSrho7XO2PzzvSMfnsXsmwODrqL+ShSiMG2/O5jBdiq
-	G+25yV08YYiHF1UmQowZRM8vCPdA4VGGNPtP2TjjjUXbawWKkGMtF1+B0zv7IUTf7LgqRmajESz
-	Y1ls0C40Cb+v8NkFVy2c=
-X-Google-Smtp-Source: AGHT+IFUEIY9vORrpt4ExifIxwW7E2UMP0tvZ0JoTmokdM7c0a4ZOgc7aGTVAzSPq1YqpkBgsbMT0g==
-X-Received: by 2002:a05:6a00:4650:b0:76b:ef69:1543 with SMTP id d2e1a72fcca58-76e2fc0c9b8mr7490600b3a.8.1755200050754;
-        Thu, 14 Aug 2025 12:34:10 -0700 (PDT)
-Received: from [192.168.0.226] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76e16df3a2dsm7038314b3a.33.2025.08.14.12.34.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 12:34:10 -0700 (PDT)
-Message-ID: <8d9cdce252162519c7679132a5e3235d03ac97c0.camel@gmail.com>
-Subject: Re: [PATCH bpf-next 2/4] libbpf: ringbuf: Add overwrite ring buffer
- process
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Xu Kuohai <xukuohai@huaweicloud.com>, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Yonghong Song <yhs@fb.com>, Song Liu	
- <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>, KP Singh	
- <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>, Hao Luo	
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko
- <mykolal@fb.com>,  Shuah Khan <shuah@kernel.org>, Stanislav Fomichev
- <sdf@fomichev.me>, Willem de Bruijn <willemb@google.com>,  Jason Xing
- <kerneljasonxing@gmail.com>, Paul Chaignon <paul.chaignon@gmail.com>, Tao
- Chen	 <chen.dylane@linux.dev>, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
- Martin Kelly <martin.kelly@crowdstrike.com>
-Date: Thu, 14 Aug 2025 12:34:05 -0700
-In-Reply-To: <20250804022101.2171981-3-xukuohai@huaweicloud.com>
-References: <20250804022101.2171981-1-xukuohai@huaweicloud.com>
-	 <20250804022101.2171981-3-xukuohai@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1755200435; c=relaxed/simple;
+	bh=9IVVNg0D6cN7qoCyhNlCAb/IqIr6ARbRYyRGiFTdT90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tt4eS5BLfgMMPAOjbBEPGF4efULjs93YO0ZRiAljD8uJQk0TzuF/TG+OgjFPmRORkQOwjt5Tlr+UTHqDjoBJUI86QiwkHW0pn1GBHfy9kcTz+WYx09b4SCji38at/NG8i/J0kpgitrwRVdAAk6e81yItZ193bGEFZ+LZBc00xCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ryG4sJdb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35554C4CEED;
+	Thu, 14 Aug 2025 19:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755200434;
+	bh=9IVVNg0D6cN7qoCyhNlCAb/IqIr6ARbRYyRGiFTdT90=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ryG4sJdbKpbWY3kY9ou4AeuX13BHq8yynRG7H4ZuO/Js4I9gfUCcf5s6e/C4clI9S
+	 t10FRBLePFrKKRobXtFnShzyAQeUTW/7fruZDDVA3Ma3azg1SqYESHmCZir2anxq5v
+	 3ooccyu8Yy7exlElp20bBsWo09RSQYUuSafJnChvB/2RfgZ3nXF3OVbZJRzEEAgX3N
+	 Hm3hVqibNTZwoqt51HuYSSZsnmpMTTzA5V9qrC03Ape0r6oQ/+frnj4rMmRYqa+0+2
+	 NkzTQbBeCa/JLgVkczPG5mTbZE5AV/yv+RNGlsKLYd2vBut4msZUAt3lRML3w3ydrl
+	 71Y8JsSPfTijg==
+Date: Thu, 14 Aug 2025 12:40:29 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, kees@kernel.org,
+	alyssa.milburn@intel.com, scott.d.constable@intel.com,
+	joao@overdrivepizza.com, andrew.cooper3@citrix.com,
+	samitolvanen@google.com, alexei.starovoitov@gmail.com,
+	mhiramat@kernel.org, ojeda@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH] x86,ibt: Use UDB instead of 0xEA
+Message-ID: <20250814194029.GA2179272@ax162>
+References: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814111732.GW4067720@noisy.programming.kicks-ass.net>
 
-On Mon, 2025-08-04 at 10:20 +0800, Xu Kuohai wrote:
+On Thu, Aug 14, 2025 at 01:17:32PM +0200, Peter Zijlstra wrote:
+> Hi!
+> 
+> A while ago FineIBT started using the instruction 0xEA to generate #UD.
+> All existing parts will generate #UD in 64bit mode on that instruction.
+> 
+> However; Intel/AMD have not blessed using this instruction, it is on
+> their 'reserved' list for future use.
+> 
+> Peter Anvin worked the committees and got use of 0xD6 blessed, and it
+> will be called UDB (per the next SDM or so).
+> 
+> Reworking the FineIBT code to use UDB wasn't entirely trivial, and I've
+> had to switch the hash register to EAX in order to free up some bytes.
+> 
+> Per the x86_64 ABI, EAX is used to pass the number of vector registers
+> for varargs -- something that should not happen in the kernel. More so,
+> we build with -mskip-rax-setup, which should leave EAX completely unused
+> in the calling convention.
+> 
+> The code boots and passes the LKDTM CFI_FORWARD_PROTO test for various
+> combinations (non exhaustive so far).
 
-[...]
+Must be perfect :P on my hardware:
 
-> @@ -278,6 +293,92 @@ static int64_t ringbuf_process_ring(struct ring *r, =
-size_t n)
->  	return cnt;
->  }
-> =20
-> +static int64_t ringbuf_process_overwrite_ring(struct ring *r, size_t n)
-> +{
-> +
-> +	int err;
-> +	uint32_t *len_ptr, len;
-> +	/* 64-bit to avoid overflow in case of extreme application behavior */
-> +	int64_t cnt =3D 0;
-> +	size_t size, offset;
-> +	unsigned long cons_pos, prod_pos, over_pos, tmp_pos;
-> +	bool got_new_data;
-> +	void *sample;
-> +	bool copied;
-> +
-> +	size =3D r->mask + 1;
-> +
-> +	cons_pos =3D smp_load_acquire(r->consumer_pos);
-> +	do {
-> +		got_new_data =3D false;
-> +
-> +		/* grab a copy of data */
-> +		prod_pos =3D smp_load_acquire(r->producer_pos);
-> +		do {
-> +			over_pos =3D READ_ONCE(*r->overwrite_pos);
-> +			/* prod_pos may be outdated now */
-> +			if (over_pos < prod_pos) {
-> +				tmp_pos =3D max(cons_pos, over_pos);
-> +				/* smp_load_acquire(r->producer_pos) before
-> +				 * READ_ONCE(*r->overwrite_pos) ensures that
-> +				 * over_pos + r->mask < prod_pos never occurs,
-> +				 * so size is never larger than r->mask
-> +				 */
-> +				size =3D prod_pos - tmp_pos;
-> +				if (!size)
-> +					goto done;
-> +				memcpy(r->read_buffer,
-> +				       r->data + (tmp_pos & r->mask), size);
-> +				copied =3D true;
-> +			} else {
-> +				copied =3D false;
-> +			}
-> +			prod_pos =3D smp_load_acquire(r->producer_pos);
-> +		/* retry if data is overwritten by producer */
-> +		} while (!copied || prod_pos - tmp_pos > r->mask);
+cfi=auto (i.e. cfi=fineibt,paranoid):
 
-Could you please elaborate a bit, why this condition is sufficient to
-guarantee that r->overwrite_pos had not changed while memcpy() was
-executing?
+```
+[  +0.000861] SMP alternatives: Using paranoid FineIBT CFI
+...
+[Aug14 11:33] lkdtm: Performing direct entry CFI_FORWARD_PROTO
+[  +0.000005] lkdtm: Calling matched prototype ...
+[  +0.000000] lkdtm: Calling mismatched prototype ...
+[  +0.000014] CFI failure at lkdtm_indirect_call+0x1c/0x30 [lkdtm] (target: lkdtm_increment_int+0x0/0x30 [lkdtm]; expected type: 0x4d3fe584)
+[  +0.000027] Oops: invalid opcode: 0000 [#1] SMP NOPTI
+[  +0.000004] CPU: 0 UID: 0 PID: 3232 Comm: cat Not tainted 6.17.0-rc1-debug-next-20250814-02528-g3aebcf0edb14 #1 PREEMPT(full)  724b1db7f580ddb34e14b43820ff16d9fd75d36c
+[  +0.000004] Hardware name: AZW MINI S/MINI S, BIOS ADLNV106 05/12/2024
+[  +0.000002] RIP: 0010:lkdtm_indirect_call+0x1c/0x30 [lkdtm]
+[  +0.000008] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 49 89 fb 48 c7 c7 30 49 fd c1 b8 84 e5 3f 4d 41 3b 43 f5 2e 4d 8d 5b <f0> 75 fd 41 ff e3 90 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 f3 0f
+[  +0.000002] RSP: 0018:ffffceb847387d38 EFLAGS: 00010216
+[  +0.000002] RAX: 000000004d3fe584 RBX: 0000000000000001 RCX: 332c9ba94c7b7c00
+[  +0.000002] RDX: 0000000000000002 RSI: 00000000ffffefff RDI: ffffffffc1fd4930
+[  +0.000002] RBP: 0000000000000002 R08: 0000000000000fff R09: ffffffffb025b2a0
+[  +0.000001] R10: 0000000000002ffd R11: ffffffffc218e0d0 R12: 0000000000000000
+[  +0.000002] R13: 0000000000000006 R14: ffff8bc3c3d3b000 R15: ffffffffc1fd47c0
+[  +0.000001] FS:  00007f025f833740(0000) GS:ffff8bc6febb8000(0000) knlGS:0000000000000000
+[  +0.000002] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  +0.000001] CR2: 00007f025f5bf000 CR3: 000000017036a002 CR4: 0000000000f72ef0
+[  +0.000002] PKRU: 55555554
+[  +0.000001] Call Trace:
+[  +0.000002]  <TASK>
+[  +0.000002]  lkdtm_CFI_FORWARD_PROTO+0x39/0x60 [lkdtm 57ec71482c5cb110c2f23373ae7338671243d293]
+[  +0.000008]  lkdtm_do_action+0x26/0x40 [lkdtm 57ec71482c5cb110c2f23373ae7338671243d293]
+[  +0.000009]  direct_entry+0x147/0x160 [lkdtm 57ec71482c5cb110c2f23373ae7338671243d293]
+[  +0.000009]  full_proxy_write+0x9e/0x140
+[  +0.000005]  vfs_write+0x11b/0x3f0
+[  +0.000004]  ksys_write+0x79/0x100
+[  +0.000002]  do_syscall_64+0x85/0x920
+[  +0.000003]  ? do_user_addr_fault+0x271/0x680
+[  +0.000003]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  +0.000002] RIP: 0033:0x7f025f6931ce
+[  +0.000036] Code: 4d 89 d8 e8 64 be 00 00 4c 8b 5d f8 41 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 11 c9 c3 0f 1f 80 00 00 00 00 48 8b 45 10 0f 05 <c9> c3 83 e2 39 83 fa 08 75 e7 e8 13 ff ff ff 0f 1f 00 f3 0f 1e fa
+[  +0.000001] RSP: 002b:00007ffd001e8930 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+[  +0.000003] RAX: ffffffffffffffda RBX: 0000000000000012 RCX: 00007f025f6931ce
+[  +0.000001] RDX: 0000000000000012 RSI: 00007f025f5bf000 RDI: 0000000000000001
+[  +0.000001] RBP: 00007ffd001e8940 R08: 0000000000000000 R09: 0000000000000000
+[  +0.000002] R10: 0000000000000000 R11: 0000000000000202 R12: 00007f025f5bf000
+[  +0.000001] R13: 0000000000000012 R14: 0000000000000000 R15: 0000000000000000
+[  +0.000002]  </TASK>
+[  +0.000001] Modules linked in: lkdtm ...
+[  +0.000047]  hid_logitech_dj hid_razer nvme nvme_core nvme_keyring spi_intel_pci nvme_auth spi_intel
+[  +0.000006] ---[ end trace 0000000000000000 ]---
+[  +0.000002] RIP: 0010:lkdtm_indirect_call+0x1c/0x30 [lkdtm]
+[  +0.000008] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 49 89 fb 48 c7 c7 30 49 fd c1 b8 84 e5 3f 4d 41 3b 43 f5 2e 4d 8d 5b <f0> 75 fd 41 ff e3 90 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 f3 0f
+[  +0.000002] RSP: 0018:ffffceb847387d38 EFLAGS: 00010216
+[  +0.000002] RAX: 000000004d3fe584 RBX: 0000000000000001 RCX: 332c9ba94c7b7c00
+[  +0.000001] RDX: 0000000000000002 RSI: 00000000ffffefff RDI: ffffffffc1fd4930
+[  +0.000001] RBP: 0000000000000002 R08: 0000000000000fff R09: ffffffffb025b2a0
+[  +0.000001] R10: 0000000000002ffd R11: ffffffffc218e0d0 R12: 0000000000000000
+[  +0.000001] R13: 0000000000000006 R14: ffff8bc3c3d3b000 R15: ffffffffc1fd47c0
+[  +0.000001] FS:  00007f025f833740(0000) GS:ffff8bc6febb8000(0000) knlGS:0000000000000000
+[  +0.000002] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  +0.000001] CR2: 00007f025f5bf000 CR3: 000000017036a002 CR4: 0000000000f72ef0
+[  +0.000001] PKRU: 55555554
+```
 
-> +
-> +		cons_pos =3D tmp_pos;
-> +
-> +		for (offset =3D 0; offset < size; offset +=3D roundup_len(len)) {
-> +			len_ptr =3D r->read_buffer + (offset & r->mask);
-> +			len =3D *len_ptr;
-> +
-> +			if (len & BPF_RINGBUF_BUSY_BIT)
-> +				goto done;
-> +
-> +			got_new_data =3D true;
-> +			cons_pos +=3D roundup_len(len);
-> +
-> +			if ((len & BPF_RINGBUF_DISCARD_BIT) =3D=3D 0) {
-> +				sample =3D (void *)len_ptr + BPF_RINGBUF_HDR_SZ;
-> +				err =3D r->sample_cb(r->ctx, sample, len);
-> +				if (err < 0) {
-> +					/* update consumer pos and bail out */
-> +					smp_store_release(r->consumer_pos,
-> +							  cons_pos);
-> +					return err;
-> +				}
-> +				cnt++;
-> +			}
-> +
-> +			if (cnt >=3D n)
-> +				goto done;
-> +		}
-> +	} while (got_new_data);
-> +
-> +done:
-> +	smp_store_release(r->consumer_pos, cons_pos);
-> +	return cnt;
-> +}
+cfi=fineibt,paranoid,bhi
 
-[...]
+```
+[Aug14 12:27] Linux version 6.17.0-rc1-debug-next-20250814-02528-g3aebcf0edb14 (nathan@ax162) (ClangBuiltLinux clang version 22.0.0git (https://github.com/llvm/llvm-project.git 9f96e3f80f5d25e50ca8423d4eb9063989b85f0b), ClangBuiltLinux LLD 22.0.0 (https://github.com/llvm/llvm-project.git 9f96e3f80f5d25e50ca8423d4eb9063989b85f0b)) #1 SMP PREEMPT_DYNAMIC Thu Aug 14 11:11:44 MST 2025
+...
+[  +0.000860] SMP alternatives: Using paranoid FineIBT+BHI CFI
+...
+[  +1.406475] lkdtm: Performing direct entry CFI_FORWARD_PROTO
+[  +0.000005] lkdtm: Calling matched prototype ...
+[  +0.000001] lkdtm: Calling mismatched prototype ...
+[  +0.000012] CFI failure at lkdtm_indirect_call+0x1c/0x30 [lkdtm] (target: lkdtm_increment_int+0x0/0x30 [lkdtm]; expected type: 0x0b71a5dc)
+[  +0.000027] Oops: invalid opcode: 0000 [#1] SMP NOPTI
+[  +0.000004] CPU: 3 UID: 0 PID: 2100 Comm: cat Tainted: G        W           6.17.0-rc1-debug-next-20250814-02528-g3aebcf0edb14 #1 PREEMPT(full)  724b1db7f580ddb34e14b43820ff16d9fd75d36c
+[  +0.000004] Tainted: [W]=WARN
+[  +0.000001] Hardware name: AZW MINI S/MINI S, BIOS ADLNV106 05/12/2024
+[  +0.000002] RIP: 0010:lkdtm_indirect_call+0x1c/0x30 [lkdtm]
+[  +0.000008] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 49 89 fb 48 c7 c7 30 89 46 c2 b8 dc a5 71 0b 41 3b 43 f5 2e 4d 8d 5b <f0> 75 fd 41 ff e3 90 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 f3 0f
+[  +0.000002] RSP: 0018:ffffcf77c4507c68 EFLAGS: 00010283
+[  +0.000002] RAX: 000000000b71a5dc RBX: 0000000000000001 RCX: f242256082c3a100
+[  +0.000002] RDX: 0000000000000002 RSI: 00000000ffffefff RDI: ffffffffc2468930
+[  +0.000002] RBP: 0000000000000002 R08: 0000000000000fff R09: ffffffff9a85b2a0
+[  +0.000001] R10: 0000000000002ffd R11: ffffffffc19e40d0 R12: 0000000000000000
+[  +0.000001] R13: 0000000000000006 R14: ffff8ed41e1e6000 R15: ffffffffc24687c0
+[  +0.000002] FS:  00007fda4f785740(0000) GS:ffff8ed7d4738000(0000) knlGS:0000000000000000
+[  +0.000002] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  +0.000001] CR2: 00007fda4f744000 CR3: 000000016856f005 CR4: 0000000000f72ef0
+[  +0.000002] PKRU: 55555554
+[  +0.000001] Call Trace:
+[  +0.000003]  <TASK>
+[  +0.000001]  lkdtm_CFI_FORWARD_PROTO+0x39/0x60 [lkdtm 57ec71482c5cb110c2f23373ae7338671243d293]
+[  +0.000009]  lkdtm_do_action+0x26/0x40 [lkdtm 57ec71482c5cb110c2f23373ae7338671243d293]
+[  +0.000008]  direct_entry+0x147/0x160 [lkdtm 57ec71482c5cb110c2f23373ae7338671243d293]
+[  +0.000009]  full_proxy_write+0x9e/0x140
+[  +0.000004]  vfs_write+0x11b/0x3f0
+[  +0.000004]  ? __lruvec_stat_mod_folio+0x7c/0xc0
+[  +0.000002]  ? set_ptes+0x12/0xa0
+[  +0.000008]  ? do_pte_missing+0xb8c/0xf00
+[  +0.000002]  ksys_write+0x79/0x100
+[  +0.000003]  do_syscall_64+0x85/0x920
+[  +0.000004]  ? do_user_addr_fault+0x271/0x680
+[  +0.000002]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  +0.000002] RIP: 0033:0x7fda4f4931ce
+[  +0.000027] Code: 4d 89 d8 e8 64 be 00 00 4c 8b 5d f8 41 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 11 c9 c3 0f 1f 80 00 00 00 00 48 8b 45 10 0f 05 <c9> c3 83 e2 39 83 fa 08 75 e7 e8 13 ff ff ff 0f 1f 00 f3 0f 1e fa
+[  +0.000001] RSP: 002b:00007fffe1b7c780 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+[  +0.000002] RAX: ffffffffffffffda RBX: 0000000000000012 RCX: 00007fda4f4931ce
+[  +0.000002] RDX: 0000000000000012 RSI: 00007fda4f744000 RDI: 0000000000000001
+[  +0.000001] RBP: 00007fffe1b7c790 R08: 0000000000000000 R09: 0000000000000000
+[  +0.000001] R10: 0000000000000000 R11: 0000000000000202 R12: 00007fda4f744000
+[  +0.000001] R13: 0000000000000012 R14: 0000000000000000 R15: 0000000000000000
+[  +0.000002]  </TASK>
+[  +0.000000] Modules linked in: lkdtm ...
+[  +0.000044]  hid_logitech_dj hid_razer nvme nvme_core nvme_keyring spi_intel_pci nvme_auth spi_intel
+[  +0.000016] ---[ end trace 0000000000000000 ]---
+[  +0.000002] RIP: 0010:lkdtm_indirect_call+0x1c/0x30 [lkdtm]
+[  +0.000009] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 49 89 fb 48 c7 c7 30 89 46 c2 b8 dc a5 71 0b 41 3b 43 f5 2e 4d 8d 5b <f0> 75 fd 41 ff e3 90 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 f3 0f
+[  +0.000001] RSP: 0018:ffffcf77c4507c68 EFLAGS: 00010283
+[  +0.000002] RAX: 000000000b71a5dc RBX: 0000000000000001 RCX: f242256082c3a100
+[  +0.000001] RDX: 0000000000000002 RSI: 00000000ffffefff RDI: ffffffffc2468930
+[  +0.000001] RBP: 0000000000000002 R08: 0000000000000fff R09: ffffffff9a85b2a0
+[  +0.000001] R10: 0000000000002ffd R11: ffffffffc19e40d0 R12: 0000000000000000
+[  +0.000001] R13: 0000000000000006 R14: ffff8ed41e1e6000 R15: ffffffffc24687c0
+[  +0.000001] FS:  00007fda4f785740(0000) GS:ffff8ed7d4738000(0000) knlGS:0000000000000000
+[  +0.000002] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  +0.000001] CR2: 00007fda4f744000 CR3: 000000016856f005 CR4: 0000000000f72ef0
+[  +0.000001] PKRU: 55555554
+```
+
+I also tested
+
+    cfi=fineibt,bhi
+    cfi=fineibt,bhi,warn
+    cfi=fineibt
+    cfi=kcfi
+
+which showed no additional errors.
+
+Cheers,
+Nathan
 
