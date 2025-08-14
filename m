@@ -1,223 +1,186 @@
-Return-Path: <linux-kernel+bounces-768294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD82B25F63
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:45:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85200B25F6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BB99E6FAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:44:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B201EB63B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D7C2E9EDD;
-	Thu, 14 Aug 2025 08:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C466D28D859;
+	Thu, 14 Aug 2025 08:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G6IDlHkf"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xeh0Mgod"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B631A317D;
-	Thu, 14 Aug 2025 08:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73748289376;
+	Thu, 14 Aug 2025 08:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755161065; cv=none; b=VnTK9e2HHikrbbk6vtQy+omDm3wVn04812979PAH0XOXzofinYpf6p+JXTGaRdhwUIE5YcrcYf6qwQSNz+/REpJpO3nSBGJ47CvysvdEMQpdV3QtPmGM8wzRRfG4RDCQyIFU9HO3VGXrRMUEPvmV4M+lngWpWsIsabDoEpsS7qY=
+	t=1755161107; cv=none; b=Jl3Y7h8HIZkqU1Z2hez86zo4icrwtpnUNgzAfbodzY34QPfwjSOLlnqlp1MUlPnh+fYU32VC8NvZMkuxX32BVt94I+fIC3z8J4JTcS0HT5RJkOyZdLQBSTV6vMADy7FVnZnbAOY38y6RV/o1l1gK7uRP2T3kb6fAg79sxaIq6mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755161065; c=relaxed/simple;
-	bh=T9KgQgoXxc/qzmgJl8c7Zy/bIg4ZAk+Kv3uqGnOvTMo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TpZAjf8YmWdEbezP/8FYl64suWbYa3TQU5323Not00KDkPPXY0Czce4pPvo0bHS4+h+D9sGreK23XETpqkq7J/xDpQmLMaqvq0e5+0KkHcQEhnXcQRBqprYeb4fpw20Hh4D3pewDzHY2Ihdeye0GBh1pTlrtJ93W/PNtI5ZnlBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G6IDlHkf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E7rgpV015981;
-	Thu, 14 Aug 2025 08:44:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=T9KgQg
-	oXxc/qzmgJl8c7Zy/bIg4ZAk+Kv3uqGnOvTMo=; b=G6IDlHkfnl2wQxC8WFcXD5
-	D04EvIuZjyiDutIpSz9Z8YKLKYVwJmDqY9Z3u3Ykv76Igd0VFA8NLoTOjFENbsYt
-	tLTEwIOrrLefGnsDIwFCmYlGL637+r6oFQUu2CB6+0Nj5PPOkcHHmQDUhjDygob4
-	j6bEZbwjvlBn0+nKyEdrzWb8VD/MyDyO0jgXmReZ4bV6LnC6gqWoCGoaJOc1+GLv
-	3dhnvBKJKMmvUB7jyfviYTW6yHqbbGL/Mu9T5sI05WDp8Zvk/YC8wVMvxRbXUBI5
-	7R8n6lcdjtdWWfRZ2zHhCCXCVUGsu9H5+ScJEIzRce/kUlFt0MfV54Ie9lCf97JA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx14s2ey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:44:15 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57E846Kc004938;
-	Thu, 14 Aug 2025 08:44:14 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx14s2ex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:44:14 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57E5Kra5028585;
-	Thu, 14 Aug 2025 08:44:13 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 48ej5nb9k1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:44:13 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57E8iBQ133555028
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Aug 2025 08:44:11 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 788C058059;
-	Thu, 14 Aug 2025 08:44:11 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A10EA58043;
-	Thu, 14 Aug 2025 08:44:07 +0000 (GMT)
-Received: from [9.87.142.31] (unknown [9.87.142.31])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 14 Aug 2025 08:44:07 +0000 (GMT)
-Message-ID: <ba0ecfe5df379f6e14c4df655b90695041a616f4.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/3] PCI/ERR: s390/pci: Use pci_uevent_ers() in PCI
- recovery
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>,
-        Mahesh J Salgaonkar
-	 <mahesh@linux.ibm.com>
-Cc: Linas Vepstas <linasvepstas@gmail.com>,
-        Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
-	 <ilpo.jarvinen@linux.intel.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens
- <hca@linux.ibm.com>,
-        Vasily Gorbik	 <gor@linux.ibm.com>,
-        Alexander Gordeev
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Peter
- Oberparleiter	 <oberpar@linux.ibm.com>,
-        Matthew Rosato
- <mjrosato@linux.ibm.com>,
-        "Oliver O'Halloran" <oohall@gmail.com>, Sinan Kaya
- <okaya@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>
-Date: Thu, 14 Aug 2025 10:44:06 +0200
-In-Reply-To: <20250807-add_err_uevents-v5-0-adf85b0620b0@linux.ibm.com>
-References: <20250807-add_err_uevents-v5-0-adf85b0620b0@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1755161107; c=relaxed/simple;
+	bh=10IwBC/WvFs9XL+JDSUaSxNjsB4hNPa15Nw1/P4iZBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BbUCoNBg1IkeR4mOhLBxBFEpL8DZQ7dZ7jY6UfIzZJlbAqkfJ5k5vrvW7geCdvhJ7ULvsLlf9vt7aDbvqoPDcPGoSoXDtv+quEY2vQvEjEuctckk3+HhYekY/FJvCd1ATfOE++WaOTm1VBGMBrypaAC43xACWrYWQ2IpKRxZHcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xeh0Mgod; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6188b7949f6so1380026a12.3;
+        Thu, 14 Aug 2025 01:45:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755161103; x=1755765903; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZYJNHNsyuuYBBv1uPrAiNz0Qv3N2mB6wq1CNl2jnaSw=;
+        b=Xeh0MgodIBMEm2hE08a8r2cbp4IzzuRCWEdFKGe2TEO4aSjQCjW6ai0NcctjxBFUkl
+         vJJVBsaOwwE56wFgs+0rnOL8L1p9cbKUNfcZbR82zeZ/iGmDyr50rh7oIXKCbUq7VxKG
+         3qUBq6waMUgTXXAMvKz8hylLcHse5wjkrzkwFan1Dq5P+IVL+bXmextF22FwdLkXkJKE
+         6hPhxxIis4Mywk0YAFgf7iImD8SGw82EMXea5Nw7fIMlg9GcC1/GSt7A3oT1owkwUrPp
+         pitN4keeceQm2W9a/bGK45SMHVJahxaq5nAbA6g60WfRE0+SKzMLA+Omzqcprigs34Ir
+         miXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755161103; x=1755765903;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZYJNHNsyuuYBBv1uPrAiNz0Qv3N2mB6wq1CNl2jnaSw=;
+        b=LaD3e3l55kBUsN1C/8lItMvrDpgc2oBSKxU9uo/ofm35yJYQQOIY1Fu6/vELoRUsuC
+         EMl4d8uyWPnBqacKD5qE9dBY4TPoJLiLWst56RZBjkhDBiZeZzFeoKYLpSl5E/zct2Uf
+         moiVz02yMi4Q5sypUpEDQTJdfvgLqigN4m6jsk7o1jWyaBB8MY7Tn69JNtLgaAj4StgH
+         +M5n5MbeZwRXQzondwN/AQtwywaAPb3AERr3tJwiuazwkoRAjGdD7gRS2pgB0e8+Rtki
+         YMsId11igYQnd4nwnAx4gysAWx9VLq0BVI0EhW1VZzAlS/u9TQUAyy0jthtMJnXnzcuk
+         P64Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUCxqJuwJwu84mCOs+m371G6eQlG+8gEDvy4D1hFNrYNbHy+i2R49bR3VqEH1xZ5VoZT+Gzx1grtZbL4NlC@vger.kernel.org, AJvYcCVRBTvdpX2tW35sL9Xjnj/dHoBulb4KD/yMd3SiK9p1XRLvvhVxykmZ6AGueOdbsezLu1nPwQZ63jok8gr2hQ==@vger.kernel.org, AJvYcCXdwNNIVR1kVngdN+O+D0LIxYnfLzp4xIUMYONixk584X6ejHGABrf/1S6F3HZA2wHZTF0LbIravmHrh7gR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9jPtPalItbqgXSMgTWJD5di2BGMwcuEpTxzqjYl1jYo1IiBdc
+	nTTY1wtYFiL5THNCDK7EKJ5tHq8G9XbtEtjpKT8fI79xqMnHllJMPW2kjU1qD366fJX7CMhujyf
+	NLHank1rw9AvNBL1p8zgDfXCYigW9z4U=
+X-Gm-Gg: ASbGnctgE7o5ycylT3/VICsXnwSPBFrPUwe+dJfSXl8g/wDqZGLygLpr3VmLupzgL9N
+	e2PO7DtjT9ol2BcGaBtNzFsekh6Z0c39jiwOhL1kvQaE3qCwzzLn3xyYNd67aE6Tep8uhCePzUJ
+	E1h6OikMSxuBLg5UkiXEpqZujk+D72lgucmMkj4EGQ27Jjo2+oryF8ZrCup91v2+Q8XiC90A0Zz
+	74tMcc=
+X-Google-Smtp-Source: AGHT+IED8T4lGIr3XBwn+rDYu37L+rQPjk8mJsBqCCcbjUvIdGd0rYEOqkLoxX/tb73gyEtV4gXB9RscYwa/XOI8xMQ=
+X-Received: by 2002:a50:cc81:0:b0:618:150e:7f3e with SMTP id
+ 4fb4d7f45d1cf-618919b584amr1201591a12.22.1755161102471; Thu, 14 Aug 2025
+ 01:45:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: XfD33j5vxQrXWyRVjtJJvqxHMuEGAtkJ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX1KUFzCVRppKk
- NmVvvF0LShF+sgkJMp8+HIr52z3BR8Zux5zbDHsvEwFAQcY2UhMLjXFJrjhml2IZ90TJqEcopcN
- v0kNG26giWQVdf54FELjFIfr06xNnoxk0xXcYfON3gG3T/q7EvXdYwaYMkrEcLAUyMvV8qkbtEX
- OxVbeemfx59r9FbhHGgHceZeYLRUqrVr2/LoQETNIf3Aw5QgKVhvN+1Z2B9WJ5JmyXBivm9d5mW
- bC1XjdfsjY1wqTVdd1mi64r4PfwbFqUubEAm86dKEN7zoLlIoG6sGDmSRd1FSsSlDisw1TEYdbh
- hX/sPeV/4T6XxwWpnNCB9ya79MsBcWuAFDbyC3/c4OtfriFXvqxFC32VXeq2GuZv+zN8c8NPJbH
- 476rI6Hd
-X-Proofpoint-GUID: s5iVgtwjJFBeAGD1Uou8os76O7-FPLNX
-X-Authority-Analysis: v=2.4 cv=fLg53Yae c=1 sm=1 tr=0 ts=689da1e0 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=99k3b_FDGDTT4Z58m1sA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 spamscore=0 priorityscore=1501 impostorscore=0
- phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508120224
+References: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com> <20250813-tonyk-overlayfs-v4-9-357ccf2e12ad@igalia.com>
+In-Reply-To: <20250813-tonyk-overlayfs-v4-9-357ccf2e12ad@igalia.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 14 Aug 2025 10:44:51 +0200
+X-Gm-Features: Ac12FXznxloeoD2GxuVcDCMTO71nnDt0KiG-wsDggqz_qDIkKbDcUL54QuPhn2E
+Message-ID: <CAOQ4uxjbCN6NGmDECFRKK_1Auq7RTfT+ZmVfVxgatMVav1EfAA@mail.gmail.com>
+Subject: Re: [PATCH v4 9/9] ovl: Allow case-insensitive lookup
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>, 
+	Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	kernel-dev@igalia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-08-07 at 15:55 +0200, Niklas Schnelle wrote:
-> Hi Bjorn, Lukas, Mahesh,
->=20
-> This series adds issuing of uevents during PCI recovery on s390. In
-> developing this I noticed that pci_uevent_ers() ignores
-> PCI_ERS_RESULT_NEED_RESET. I think this will result in AER not generating=
- a uevent
-> at the beginning of recovery if drivers request a reset via the voting
-> on error_detected() returns. This is fixed in the first patch and relied
-> upon by the s390 recovery code as it also uses the result of
-> error_detected() though with one device/driver at a time.
->=20
-> Thanks,
-> Niklas
->=20
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
+This last commit title should be like the title you gave patch 1:
 
-Hi Bjorn,
+ovl: Support mounting case-insensitive enabled layers
 
-as you just picked up Lukas' "PCI: Reduce AER / EEH deviations" series
-for pci/aer, I think it would make sense to take this via that tree
-also. If you prefer and provide an ack for the first patch this could
-also go via s390 of course.
+Because this is the commit that de-facto enabled the feature,
+which is why I also asked to move the ovl_dentry_weird() change to this com=
+mit.
+
+On Thu, Aug 14, 2025 at 12:37=E2=80=AFAM Andr=C3=A9 Almeida <andrealmeid@ig=
+alia.com> wrote:
+>
+> Drop the restriction for casefold dentries lookup to enable support for
+> case-insensitive filesystems in overlayfs.
+>
+> Support case-insensitive filesystems
+
+This is a problematic terminology
+Please use the word "layers" instead of "filesystems" because casefolding i=
+s
+not enabled at  the filesystem level. Could also say "subtrees"
+
+Same for the rest of the commit messages, e.g.
+
+"ovl: Prepare for mounting case-insensitive enabled layers"
+
 
 Thanks,
-Niklas
+Amir.
+
+
+> with the condition that they should
+> be uniformly enabled across the stack and the layers (i.e. if the root
+> mount dir has casefold enabled, so should all the dirs bellow for every
+> layer).
+>
+> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+> ---
+> Changes from v3:
+> - New patch, splited from the patch that creates ofs->casefold
+> ---
+>  fs/overlayfs/namei.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
+> index 76d6248b625e7c58e09685e421aef616aadea40a..e93bcc5727bcafdc18a499b47=
+a7609fd41ecaec8 100644
+> --- a/fs/overlayfs/namei.c
+> +++ b/fs/overlayfs/namei.c
+> @@ -239,13 +239,14 @@ static int ovl_lookup_single(struct dentry *base, s=
+truct ovl_lookup_data *d,
+>         char val;
+>
+>         /*
+> -        * We allow filesystems that are case-folding capable but deny co=
+mposing
+> -        * ovl stack from case-folded directories. If someone has enabled=
+ case
+> -        * folding on a directory on underlying layer, the warranty of th=
+e ovl
+> -        * stack is voided.
+> +        * We allow filesystems that are case-folding capable as long as =
+the
+> +        * layers are consistently enabled in the stack, enabled for ever=
+y dir
+> +        * or disabled in all dirs. If someone has modified case folding =
+on a
+> +        * directory on underlying layer, the warranty of the ovl stack i=
+s
+> +        * voided.
+>          */
+> -       if (ovl_dentry_casefolded(base)) {
+> -               warn =3D "case folded parent";
+> +       if (ofs->casefold !=3D ovl_dentry_casefolded(base)) {
+> +               warn =3D "parent wrong casefold";
+>                 err =3D -ESTALE;
+>                 goto out_warn;
+>         }
+> @@ -259,8 +260,8 @@ static int ovl_lookup_single(struct dentry *base, str=
+uct ovl_lookup_data *d,
+>                 goto out_err;
+>         }
+>
+> -       if (ovl_dentry_casefolded(this)) {
+> -               warn =3D "case folded child";
+> +       if (ofs->casefold !=3D ovl_dentry_casefolded(this)) {
+> +               warn =3D "child wrong casefold";
+>                 err =3D -EREMOTE;
+>                 goto out_warn;
+>         }
+>
+> --
+> 2.50.1
+>
 
