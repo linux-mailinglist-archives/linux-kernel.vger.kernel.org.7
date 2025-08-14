@@ -1,168 +1,186 @@
-Return-Path: <linux-kernel+bounces-769520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23773B26FB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:32:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27CB7B26FBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CFB1CC7332
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:32:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBAB5170E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754B324467F;
-	Thu, 14 Aug 2025 19:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AFCF2405FD;
+	Thu, 14 Aug 2025 19:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MN+dWmVw"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IJ7EsMH3"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2079.outbound.protection.outlook.com [40.107.243.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD6C241139;
-	Thu, 14 Aug 2025 19:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755199946; cv=none; b=RymdTBJnpHxSF0DWtIQwzBDDfI14I1X3QDvksuAE5mbxhRWr1TcEO6wj0w56r6LBdjHG1qpb/u1Pktx9Csb5/+qmfAY4CM7g5rjoj60Zbr6ARs9QiQmRSdKCcC/MN5gxv1UErMRhVS3/7fpWfupNmWm3iJQNG/ksoOuzuuezMy8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755199946; c=relaxed/simple;
-	bh=Gzhj7YwkhnbNmqe5w9L0B4nmUN+mEwwJmuX/gu0/Szc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=it4bSu7uAVgk8LGCl0bxmu7lcb8yz3IGMnYzoz3z1JMWaquiKdgTYQPZKMpwVlbQ7Y1/Q82JHWQTcEnmLNLlKUuC95oYpV+ygubUfGOEB0VSXXm1tcYcSxQukDJyR804ol4JPWvJCXtWLpVOqoi0M6xneWCMieGHnwYDFEzk+co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MN+dWmVw; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9d41c3a44so198523f8f.0;
-        Thu, 14 Aug 2025 12:32:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755199943; x=1755804743; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hhUB1NFTF7xUTayhYlJEfsBBpcak+eRcTlvoGoZNx8k=;
-        b=MN+dWmVw9ROaABHXYc7HT5kTT7fTCoLjOnbR7Yw88pb0BKhNgrNAX32sK1oEjnu3w6
-         bJuba/O3qDTq9VaNYsjbFd+0m3wxo3s2tS8pTiUsgm6Sks1fvBdoZ2JCAff93l37/jPC
-         XNDhXaMbTl7S4lv2Z14FZPPhmp82myPhkgx1ueUam868lRFB6PwLhQR0+jd3op0a0AFf
-         6YphEEdvADYcLbau8VdH4aJoX/2yA1XMM9Y9OUYlUPaORjKr+f1HQDvECnILeIdCCo78
-         YXdqRrfwUh6lM3SOYHGF0o1JwUdo27Nt12JKFES+9kx4hqOHlDl+SK+9YTKTlCJFiS2D
-         zSJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755199943; x=1755804743;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hhUB1NFTF7xUTayhYlJEfsBBpcak+eRcTlvoGoZNx8k=;
-        b=R7vLJIMGP7mL/O0MrZGNq/nm0cEKLc2d8MKIvkxHPO6rV2RZuVK2dR33N/hNQXBcrA
-         rjt8BD4cV/QQHtiaf5FlKyofc9/2XCzD8wc7nieWdTZBMd9w/A/Ic2MsNcnm+2YvHX4l
-         mwxEc5UMLqYDS0pmoNhjW4KSRdkdevo4eolGh8EEQpDs+NEq7TqwxTYFd1Ga4qZHHIMI
-         cphQmg9akeexxXJLbVnnc9IugbUT9MrDS01DLHUyK0roG5dd/RL72H8B94htC1zkRqBu
-         SyZyuD/xwxgR6V1qmzhACyZVagaRB3CNFmnn/qeDCDK0K4/zy3J3PwRd0WQYa3/OZQ7g
-         gKvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVteckP/HknvftQxWOzFi43qnhZdxLwyuj6uLS8cbANwBmMkRQpdGsMmUJ+vsMp9NaUuqaXWYid36oGjSo=@vger.kernel.org, AJvYcCWKdhQ3Q9qbwsVLoTFc6YFL90lwEC01LDsSgs+IeInbam9WTeRNcdhMNA3dON8RwNyiEQkWwlEM@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF8emykWcjcSapS922oOxzDcAeHzHcGPD6s9YMTUVX2rFIRMr0
-	XuXZ8GhEg69FCOC5cq5JKWzBVS5T+/8mutXTXLcgMG1Ux/2Gu1DWdEWx
-X-Gm-Gg: ASbGnctPQBUYjGjsectRAzlddyU/Uo7AGQUVhhX2nwTtvj6siigPVPF5Ec2mRMj13uL
-	qj0p29WmXex9QH3LMV+pr1RYn6JssOd5IL/lnZJ6yxloVNkyjvFEH/uDNzLQRmnDEKlrmChAyb8
-	Pmbz9NsMkfeJFFhMEZ5EDd33cqULUPWM9QxFW9vhcJP1+mgIPxQwy1zqYwxOcZDgmjEXdi1a+0I
-	elyrspzqb86vakEpONA2q+fdoV1MN/78reGlRGrusVusRlxhx5h83wXF73vBfUUyuDZsaeOVlNR
-	wX8iheOmG7B98vgWh0aaimLoS7Hzy8o7mfRXjV7JVcxrDb+pRbvht/8FUJaXAvdGdWqQwxO8QuY
-	qbsakfLmtB+6SpTvk+x9+76qMh/wK78qU7zWUBvxEW5Xof678vL04U3ZX98DPwGUi3Ym2J0+kZQ
-	==
-X-Google-Smtp-Source: AGHT+IFNE8lNReUvGQQAr1wHb9H+pyZXKODmatPlpuNTM9BJb2sYGnBPEr8AhsKDjoNrxl354yMmPA==
-X-Received: by 2002:a05:6000:220b:b0:3a4:d4a0:1315 with SMTP id ffacd0b85a97d-3b9edfa294bmr1515009f8f.6.1755199943011;
-        Thu, 14 Aug 2025 12:32:23 -0700 (PDT)
-Received: from pop-os.localdomain (208.77.11.37.dynamic.jazztel.es. [37.11.77.208])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9386sm51910902f8f.18.2025.08.14.12.32.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 12:32:22 -0700 (PDT)
-From: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
-To: steffen.klassert@secunet.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	=?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
-Subject: [PATCH net-next] xfrm: xfrm_user: use strscpy() for alg_name
-Date: Thu, 14 Aug 2025 21:32:17 +0200
-Message-Id: <20250814193217.819835-1-miguelgarciaroman8@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37B71FDA94
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 19:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755200032; cv=fail; b=p3rY8v2HOuEwPrjZXqYtgPNXqiCh1qe105eXChYAvThNkZsXYqy4vfxeQH3NB8gEe//f3B+nsIU3RCv7FOx89TipFqS8qZE4EhytZFfjs/jkGptNYErADPLpy8SdvZKwnq/Q9Bhxw8arXoFLtcEehO3sMIRM55LqshtZK4mjfY8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755200032; c=relaxed/simple;
+	bh=C///VMGL+OvGGY0W1jxYKYAY4uP6kivnHyAEvtAARGU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biNHgP1+/UGgJfsJs5YgKg77EtSGm9CVJxTuNaPmsVPeJuX1hj8K4sPMNvnA5MsoqK7Il6nj6MMIboYLjjl6tSfIQjgql3t+lLS32XwzDmyRxnO6jvLgTop/UXc0jb1Br08XsVp/A/0kdYsQYkGJnmQJZJZvpVwh8GFHjsxvaVw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IJ7EsMH3; arc=fail smtp.client-ip=40.107.243.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Dd5vYvfhcS19qAVarVlaZIOCu4HVzaCvsJg0FAFl9q/z9NjjNZO/zMReCs6g0X4BUOVioxY8b8OaOhZ3QXoulzPg0E5itOyMVqDWphnzOtiknNIR3z2FAMO29/mHjMucU1hvMs29+Q8IgmdICu3NFfRBI+IKKAwTZ7QqOGUF3qVnrzkfr2ojoLJXk8Iv6obIXIHNogVafktdas9lkx4eQ3hfdTa1aUdJysAUdjmOQmFVPaD2vknrVbj9R5LWig4WB6RiFbxqaY+l3hYEQLC/lXtda4JBO0b5NV7Ofw7ekBGWv0vtayyVnDFEf22Dq6gesnB9PJXf8KLgDQ8IkjqR6Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DWaVugKrYm+5un4zhoeWtiYbTwawlrIIBqF5NcU+BBU=;
+ b=QRoPoaMGIDNAvOdqBODkrn3ZUzI2wWq8eOpG8LLkr77OFj3tXsErlyvSct8dKU7mw7LC81+1OuJsfoU6Z7Q1fB+iiV/Kpn7yF2Uv9U6k1Wr6yX0EcI5xqnl6tRqpkB/2rMJlWexGeyzW8W947xFBYYE85IBfvuj729FoKATGzIQ8JILnPOf2sGGHddx0WuIXCiDs++8xEOTFlx8Gbu7IWS02bNGnZBdDfWYeRgayPfBNTGt1oX0Q8pPkB1cWRhS/lPcxJpKbR1Y6YlVmMdloL2v+OAIZmTkConlbF4nUW/KECIj4O3xudw141frIIpUw1sppbkbVvW5wlLPcqm65tA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DWaVugKrYm+5un4zhoeWtiYbTwawlrIIBqF5NcU+BBU=;
+ b=IJ7EsMH3xOM8gAuIPe07Hpik99HVafEZ+Vp2deQqfeEpjV7ALhxtIBE0fe1TvLTxRq9kddXngy4G1mSINvSHUGkGvIQJC8HnjKfHP5K4hbFpa20pAerO2OFAsCF3T8S1xnSj572KF8GLBRdkxdKAgFgp3aoGfBqru6dYzezxfHzP0RRic4z+taofXV596SifMo4pvLesi9ALjwnRuVGxQh/TAaJMxrWNdQB3SGRm4Ybg+PbpiqzHdx8WZ0QYeamOUshdvOJwmeo5q+actRpM7gbzyvsao3v6ii6ccbuyQ8TWoLtQSbg6TtkRZ1H1Rr98elNo0bVz1hX9zAUeQ35y6w==
+Received: from DS7PR05CA0094.namprd05.prod.outlook.com (2603:10b6:8:56::11) by
+ DS0PR12MB8453.namprd12.prod.outlook.com (2603:10b6:8:157::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.15; Thu, 14 Aug 2025 19:33:48 +0000
+Received: from DS3PEPF000099DB.namprd04.prod.outlook.com
+ (2603:10b6:8:56:cafe::2e) by DS7PR05CA0094.outlook.office365.com
+ (2603:10b6:8:56::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.11 via Frontend Transport; Thu,
+ 14 Aug 2025 19:33:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DS3PEPF000099DB.mail.protection.outlook.com (10.167.17.197) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9031.11 via Frontend Transport; Thu, 14 Aug 2025 19:33:48 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 14 Aug
+ 2025 12:33:41 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 14 Aug 2025 12:33:40 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.181)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Thu, 14 Aug 2025 12:33:40 -0700
+Date: Thu, 14 Aug 2025 12:33:39 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Pranjal Shrivastava <praan@google.com>
+CC: kernel test robot <lkp@intel.com>, <oe-kbuild-all@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Alok Tiwari
+	<alok.a.tiwari@oracle.com>
+Subject: Re: drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse:
+ sparse: incorrect type in assignment (different base types)
+Message-ID: <aJ46E6IFcMGXITDt@Asurada-Nvidia>
+References: <202508142105.Jb5Smjsg-lkp@intel.com>
+ <aJ3l0Te5Q1d4g3u-@google.com>
+ <CAN6iL-SXvgRGSmUQ2-M115_y_k=cVCH3M3UATO7SzC8vMV3T9A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAN6iL-SXvgRGSmUQ2-M115_y_k=cVCH3M3UATO7SzC8vMV3T9A@mail.gmail.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099DB:EE_|DS0PR12MB8453:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb12b67f-1b59-4e41-dfd6-08dddb697ddb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZndEUU1kYXAzRnJlNng0c3k5OVRvNGpkaVlpbzIwMStzUldFNEZ6aUdzSFc5?=
+ =?utf-8?B?R0hGNVltVnJMWllubE53MHREcFd5dWppcXkzdlNya2RvbTdwWElPQWVoVW04?=
+ =?utf-8?B?OEtoblR6dFpIajVGeGxoYjdtSlJFSXRaOGpJM2hUSTF3Y3F5SnhoRVpSUHI2?=
+ =?utf-8?B?ZktVanViT281K2s1NC9ROGVmSXhPUDBmNW96SWxxMTNFaVJiUGlWdktZbnRv?=
+ =?utf-8?B?QU5JNklTZU1QTnVxQlArVWhyMWtJYUlyWEVlWjh6bXhtdjgxQmRwYlFuOW1T?=
+ =?utf-8?B?QXN6b1ZwU3p2QkFxaEFWUnZvRGQxbFNrRkI5UHQvelBiTmpjb3EvRFFMenN3?=
+ =?utf-8?B?NDlqbU03TWErMTdvOWR4RnF6cXgwaUxsMFg1b201eDlIVHZQUFhaZFRqUEEw?=
+ =?utf-8?B?a2tEZUJkTnQvbXRiRmdQcVBiZTBCVjRvWStvcXVJM0d0RkV4b2dVMm5QUWdJ?=
+ =?utf-8?B?N2p0M2lad0JpQmlOS2RJSktNU1o1VUlaMU11ZDBxK0tqZzhGZ1hPVFErVTg2?=
+ =?utf-8?B?LzJHbFBiWkg4WFd4M3oyWHZhbHppaUlvWnJGT2xsd3dXbnBmSUdMZzNFM0ZG?=
+ =?utf-8?B?Q010cFJVM2tubGdWZDNkVGU4UWJlVjIzdEc3cjRRellxRWVXSi80QTJOY21N?=
+ =?utf-8?B?UGhrZmRvdFBodk9EeHA3SENyRGJBNno4UWdpeVZrMzRiR29SeFhmVU5wNVRW?=
+ =?utf-8?B?UjRyVG9hQWFrUk92QmxTakJqeFNiTWpEUmd6enBaSHRSY3JTemt1dlB4S3dU?=
+ =?utf-8?B?NXgxeTkwcnExZll0MWpXY1F0elRES0xNTENHR1VpUXMxTHZpeFlmL2xISDJq?=
+ =?utf-8?B?Y283bS84dU9TUWFTby9vNWlCRlpxSXZqTktia3FDOTMvN3BoNTFacEx0Zlc1?=
+ =?utf-8?B?R0s0aWN2UHlXOUNod0ZCTDFZWVZiOFY5Y2dzUWJMN3gwdEVrRWsrQTBaL0Rn?=
+ =?utf-8?B?dEpmZUFQVzNnSTFqSjgzKzZsQkp2TnZsTjZGNFNVTFhvVWJhT1VUaEJEa1lL?=
+ =?utf-8?B?N1pZQWk5QTFUMDRwM2Q2d2VPR0hCZWEwRnF1bWVXMyt4WVFqYWk3UTNxU3l5?=
+ =?utf-8?B?dzBVbDVXZE83aXRqWU9xVXVhOHovVytCbGZKQTBQa3VzdGtscWxOY2xNSVl4?=
+ =?utf-8?B?SG9RYUI4NFNHalZRUFF2OC9Ud09lOGEzc3hDdmdtYUhRS1FZQmtyWlJmMmZL?=
+ =?utf-8?B?QjdTY24zcU50U3B1Z1llL3p6UnFlTUhPdTg4cmxTK2lwVll2U3luRmNMRXBV?=
+ =?utf-8?B?YVVDZ1Y1clhrWFJpK21LZTk4eHZzL2lWUGQ0aitiUE9jSU9DcTg1K3A2ODk5?=
+ =?utf-8?B?NGVTQzJjTGd3YkY0Q25qYWM0UjVEbkJPbE5tcXlEVVRxSXNvU0pJVWpxcjNr?=
+ =?utf-8?B?UHFJQWtsOHJZcnN1bU1rbCtPTEZDOVBnK0dsVzRVV3NCbElkOGN2WG02QXFn?=
+ =?utf-8?B?azFWb1d2MHdiOUVaZm5KeHgzN3Ivc044b2hIaHk3TWhIcVJTNlU2dGYzZDNn?=
+ =?utf-8?B?WXYxSVVMa3VXVU05QVdvY0h0ZnVTM1pBcVpKaDVlUkdnVnBEZXJLTVNubUxT?=
+ =?utf-8?B?OE50amFuUHQ4T3RyZTYwY2F3S1hxY1c4L2VWR05rMFRITFVzSVV3aFRpWVMz?=
+ =?utf-8?B?VW5UcUxhc0pOLzdPT2hDZGR0VUZac1d5Z1RyMCsyOUhTdEVIRHB1Z2xTNi8y?=
+ =?utf-8?B?T0txOEZwQUZUVHh3U0lLajRpZXNTRGpXUmg1U1g4UGFoOUNFQ0o4VjZKUXlk?=
+ =?utf-8?B?eUUzZFZMTTl5RUQxWXpUeWxjTVBtZ2RSM2JOdTNaS2Noakc5SjVBWG5YK1NG?=
+ =?utf-8?B?SldiWE9BM2UxakU2K1ZWaVFLZ3BnWXVEVzhTeVN5S2tlcldpckQxUEdzRXBV?=
+ =?utf-8?B?SFl3RVMwQWhIeGJnQU1EUFkzUDlLRXZlWEZuWlJoMzc0b1FpK0tMVWhscXhs?=
+ =?utf-8?B?bWxndldTMGRKVXdwM0Vsay9XVmY4K1M4MzlZenFnN2diZFJDbXd6OFZrTXlX?=
+ =?utf-8?B?UjgxakhtZ3pwZDZEQkRGaHcyNnBITVl3TU9tQXRINUp6TEE2WHYzUmVJVEZs?=
+ =?utf-8?Q?fP5UYI?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 19:33:48.4691
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb12b67f-1b59-4e41-dfd6-08dddb697ddb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099DB.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8453
 
-Replace the strcpy() calls that copy the canonical algorithm name into
-alg_name with strscpy() to avoid potential overflows and guarantee NULL
-termination.
+On Thu, Aug 14, 2025 at 07:22:15PM +0530, Pranjal Shrivastava wrote:
+> On Thu, Aug 14, 2025 at 7:04 PM Pranjal Shrivastava <praan@google.com> wrote:
+> > I assume we'd need something like the following (untested) for this:
+> >
+> > --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> > +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> > @@ -303,8 +303,8 @@
+> >
+> >         for (i = 0; i < LVCMDQ_ERR_MAP_NUM_64; i++)
+> >                 vevent_data.lvcmdq_err_map[i] =
+> > -                       readq_relaxed(REG_VINTF(vintf, LVCMDQ_ERR_MAP_64(i)));
+> > +                       cpu_to_le64(readq_relaxed(REG_VINTF(vintf, LVCMDQ_ERR_MAP_64(i))));
+> >
+> >         iommufd_viommu_report_event(viommu, IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV,
+> >                                       &vevent_data, sizeof(vevent_data));
+> >
+> 
+> Running `make C=2 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.o`
+> seems to remove the warning, I haven't tested this on HW, though.
+> LMK, if this needs to be sent as a separate patch?
 
-Destination is alg_name in xfrm_algo/xfrm_algo_auth/xfrm_algo_aead
-(size CRYPTO_MAX_ALG_NAME).
+I tested and sent a version with your Suggested-by.
 
-Tested in QEMU (BusyBox/Alpine rootfs):
- - Added ESP AEAD (rfc4106(gcm(aes))) and classic ESP (sha256 + cbc(aes))
- - Verified canonical names via ip -d xfrm state
- - Checked IPComp negative (unknown algo) and deflate path
-
-Signed-off-by: Miguel García <miguelgarciaroman8@gmail.com>
----
- net/xfrm/xfrm_user.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index 59f258daf830..d65def556b6b 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -593,7 +593,7 @@ static int attach_one_algo(struct xfrm_algo **algpp, u8 *props,
- 	if (!p)
- 		return -ENOMEM;
- 
--	strcpy(p->alg_name, algo->name);
-+	strscpy(p->alg_name, algo->name);
- 	*algpp = p;
- 	return 0;
- }
-@@ -620,7 +620,7 @@ static int attach_crypt(struct xfrm_state *x, struct nlattr *rta,
- 	if (!p)
- 		return -ENOMEM;
- 
--	strcpy(p->alg_name, algo->name);
-+	strscpy(p->alg_name, algo->name);
- 	x->ealg = p;
- 	x->geniv = algo->uinfo.encr.geniv;
- 	return 0;
-@@ -649,7 +649,7 @@ static int attach_auth(struct xfrm_algo_auth **algpp, u8 *props,
- 	if (!p)
- 		return -ENOMEM;
- 
--	strcpy(p->alg_name, algo->name);
-+	strscpy(p->alg_name, algo->name);
- 	p->alg_key_len = ualg->alg_key_len;
- 	p->alg_trunc_len = algo->uinfo.auth.icv_truncbits;
- 	memcpy(p->alg_key, ualg->alg_key, (ualg->alg_key_len + 7) / 8);
-@@ -684,7 +684,7 @@ static int attach_auth_trunc(struct xfrm_algo_auth **algpp, u8 *props,
- 	if (!p)
- 		return -ENOMEM;
- 
--	strcpy(p->alg_name, algo->name);
-+	strscpy(p->alg_name, algo->name);
- 	if (!p->alg_trunc_len)
- 		p->alg_trunc_len = algo->uinfo.auth.icv_truncbits;
- 
-@@ -714,7 +714,7 @@ static int attach_aead(struct xfrm_state *x, struct nlattr *rta,
- 	if (!p)
- 		return -ENOMEM;
- 
--	strcpy(p->alg_name, algo->name);
-+	strscpy(p->alg_name, algo->name);
- 	x->aead = p;
- 	x->geniv = algo->uinfo.aead.geniv;
- 	return 0;
--- 
-2.34.1
-
+Thanks
+Nicolin
 
