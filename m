@@ -1,130 +1,158 @@
-Return-Path: <linux-kernel+bounces-769073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E960B269F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 393A2B269CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46AF5E8335
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:34:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADF2F5E646F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:35:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0262208CA;
-	Thu, 14 Aug 2025 14:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBD61DB34B;
+	Thu, 14 Aug 2025 14:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQuL1dcf"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VpKlledi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF3613635E
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F387E1AAE28;
+	Thu, 14 Aug 2025 14:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755182073; cv=none; b=o+ayNojMZ9i2BCc2GOZWhChkeJ0CEBtH9oe3aY64yExKlzGAU2zw51wwz+YGD5TtzuzUfi+TpQ4BWiV8dvPasZ7ulEMn3UiQfyyDw67xRb+gaGz5a5N8Gzl+CHg1pO0yVHdgrOTJqcNovVWSEDmVdi8qMF0Qj4SYteQNmXMeM+w=
+	t=1755182152; cv=none; b=EsIGYfvW3fKsb7aXu/ZBJ9efnqyIIJmDEKI176RqIgqEak4vz9Lc9fUPpZsLdpCekAOtsdTPUVKUeSpArz9hLd7/PEJui6JP3mKFUl7lthIw15oNK7oClWlrQjh2ct/ECO7cqOSYx4oXqCiZkhvxwUAUlTCVOsqnOt2Z44zuZ98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755182073; c=relaxed/simple;
-	bh=v5M0Qos1gNG9BhySlvlZJoHLGeHj6L3mYrNuRgeHmNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KlbCVqYngiMd6O+TJGjm0nMGh68e9YmI3mv+tK/lFQztHoVgFU9UneYlapUt8DMbzQ3Uy5/sZIqC3iZTB2zyt8G2BynIEB/4VvZZ2HBEXxib1MxMKHxPVzze6bQWWsLZU4KEmGNpk9pQahtO0/twz8cqRQOZJTKEh7ak6Z/g6vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQuL1dcf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC7D5C4CEED
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:34:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755182072;
-	bh=v5M0Qos1gNG9BhySlvlZJoHLGeHj6L3mYrNuRgeHmNM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lQuL1dcfA9Mh6kS+gpg/fIYiacslravvCVw6R20RG0t2oFKNFR8Nl622gdyMn6wmJ
-	 knWfr+Ohdof410k4MScHUh2oM+RCxxvJFYcCG9cV4q1zE7pdO4w++3gOEcvBytXuWF
-	 yuIF+9ELzArxsSVTyDi4wgrb37Bn+eq5SMH0fRZLDKLlFKKyEmqSwSgruCptRptaZm
-	 KF2v42p6XWvW8BUyH1HrqzuVkmtphWs5FzzX7GbB0usgPipI0PGnwR62+U66hMRNDW
-	 ExQQ4KhIZON93Vv2DqFAfTU8grgfHdZIPiolbgN8AfxyIPsYXyhR66BnepgDrpzeSH
-	 /hDeXieIhlwwg==
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-32326e5f0bfso1025369a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 07:34:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWEJC+kTRaNPqSleiQQFJgGjzoQmWJ9cZOonfJyN5/ILEVqkBZZzsVS676a3Mr1HegPx/2B2E59tgo6Lkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww+yIUJYO5cSnSLxLEvtGoBm4dRzM7+KOKbYgsq53yulXzywpP
-	pG0+q5EfsorLG3ZQvrjtY06YUen6HvROP5m9EQne9T2+Wi4fzNT679G37vZfKnjJUHpJ4u/Gv8L
-	/XpC/6qchq/V2AQF6hWMWNubaykn/UQ==
-X-Google-Smtp-Source: AGHT+IFZBGHiyx4R8I0ZtPt03HyzJ/h+SHoNTrWb26RWZtlcu/LuBo3basMRoZchAXRPaCN5XUhmJgnvc08y4GlhQHw=
-X-Received: by 2002:a17:903:1ae4:b0:23d:f986:6472 with SMTP id
- d9443c01a7336-24458a65075mr40000145ad.25.1755182072478; Thu, 14 Aug 2025
- 07:34:32 -0700 (PDT)
+	s=arc-20240116; t=1755182152; c=relaxed/simple;
+	bh=5r1ZfIYGt/SxED81e4SqxHAoPVYmkOk9pNZTa4DTRio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hngq0tUu7XIRk7JsnBnk70HMv56vu69g40ocMyZn5xh4VM1BZ8m6vtM/x4y6WIxgv6f25XWExbC6ceuy7x52VOY13fyAiBgTs0k4pkpioovGnkgdnQ8Mf+e0z/6T9V/ucBF5SmfIvh04GUWFlzrYnad6450O7JYxzDzMbbCnuBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VpKlledi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1BE8C4CEED;
+	Thu, 14 Aug 2025 14:35:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1755182151;
+	bh=5r1ZfIYGt/SxED81e4SqxHAoPVYmkOk9pNZTa4DTRio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VpKlledij6N1ObIMYIvXSGcwhoDFYArU1cCfJrKecfygL3SEf2/Zk9IFYFibNf8cy
+	 ZWlpDduYUsGUuhMoOFrTfYB75f8B/qfBVKR7ExKtHROyl5P6ZBl0ztw16nN/bNC5CJ
+	 rvmL8iV/zRE8CoUWj846Td8k+RBX4GHwU1LfCOos=
+Date: Thu, 14 Aug 2025 16:35:48 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Nir Lichtman <nir@lichtman.org>,
+	Yuran Pereira <yuran.pereira@hotmail.com>,
+	linux-hardening@vger.kernel.org,
+	Daniel Thompson <daniel@riscstar.com>,
+	kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kdb: Replace deprecated strcpy() with strscpy()
+Message-ID: <2025081456-reflected-revolver-9f5b@gregkh>
+References: <20250814120338.219585-2-thorsten.blum@linux.dev>
+ <2025081408-swinging-endorphin-abe2@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c8a64686-f1a2-44f1-9d13-fd5b4f923e0f@molgen.mpg.de>
-In-Reply-To: <c8a64686-f1a2-44f1-9d13-fd5b4f923e0f@molgen.mpg.de>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Thu, 14 Aug 2025 22:35:41 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_8vLqU30L3+ijYJPLrioRsUwVwJAeumtVYfRJ9e5tjp4A@mail.gmail.com>
-X-Gm-Features: Ac12FXy0NDb8BGMAM7k-PNcb_9DgKIcM0T0DGazslGHWEE6YexmPG9CoPZcHXNE
-Message-ID: <CAAOTY_8vLqU30L3+ijYJPLrioRsUwVwJAeumtVYfRJ9e5tjp4A@mail.gmail.com>
-Subject: Re: MT8183: Only maximum resolution 1280x720?
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
-	linux-mediatek@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025081408-swinging-endorphin-abe2@gregkh>
 
-Paul Menzel <pmenzel@molgen.mpg.de> =E6=96=BC 2025=E5=B9=B45=E6=9C=8825=E6=
-=97=A5 =E9=80=B1=E6=97=A5 =E4=B8=8B=E5=8D=882:01=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Dear Linux folks,
->
->
-> On the older MT8183 device Lenovo IdeaPad Duet Chromebook, running
-> ChromeOS with their Linux 5.10.x, connecting a 1920x1080 Dell monitor to
-> a USB-C adapter using HDMI, only the resolution of 1280x720 is
-> configured, although the adapter also support 1920x1080. It happens with
-> all adapters, for example, LMP USB-C mini Dock [1].
->
-> I reported it to the Chromium OS issue tracker [1], and the last comment =
-is:
->
-> > It seems the display pipeline for the internal display (DSI) has
-> > higher clock rate. Also, the resolution support depends on the
-> > refresh rate as well, so the claimed 2400x1080 might only work on
-> > lower refresh rate.
-> >
-> > For the external display, the display modes are mostly rejected by
-> > the pre-defined max_clock_khz in mtk_dpi.c:
-> > https://elixir.bootlin.com/linux/v6.11.4/source/drivers/gpu/drm/mediate=
-k/mtk_dpi.c#L940
->
-> Can you confirm this? The font rendering seems not so good in the lower
-> resolution, and strangely, playing movies these seem to be rendered in
-> higher resolution (or the monitor or hardware does a good job in
-> up-scaling).
+On Thu, Aug 14, 2025 at 02:35:56PM +0200, Greg Kroah-Hartman wrote:
+> On Thu, Aug 14, 2025 at 02:03:37PM +0200, Thorsten Blum wrote:
+> > strcpy() is deprecated; use strscpy() instead and remove several manual
+> > NUL-terminations.
+> 
+> Manual NULL terminations are good, why get rid of that?
+> 
+> > Since the destination buffers 'cmd_cur' and 'cmd_hist[cmd_head]' have
+> > the fixed length CMD_BUFLEN, strscpy() automatically determines their
+> > size using sizeof() when the size argument is omitted. This makes the
+> > explicit size arguments for the existing strscpy() calls unnecessary,
+> > remove them.
+> 
+> But now you are dynamically calculating this?
+> 
+> > No functional changes intended.
+> 
+> How did you test this?  Many of these types of changes are wrong, so you
+> really really need to prove it is correct.
+> 
+> > 
+> > Link: https://github.com/KSPP/linux/issues/88
+> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> > ---
+> >  kernel/debug/kdb/kdb_main.c | 32 ++++++++++++++------------------
+> >  1 file changed, 14 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
+> > index 7a4d2d4689a5..ea7dc2540e40 100644
+> > --- a/kernel/debug/kdb/kdb_main.c
+> > +++ b/kernel/debug/kdb/kdb_main.c
+> > @@ -727,14 +727,10 @@ static int kdb_defcmd(int argc, const char **argv)
+> >  	mp->help = kdb_strdup(argv[3], GFP_KDB);
+> >  	if (!mp->help)
+> >  		goto fail_help;
+> > -	if (mp->usage[0] == '"') {
+> > -		strcpy(mp->usage, argv[2]+1);
+> > -		mp->usage[strlen(mp->usage)-1] = '\0';
+> > -	}
+> > -	if (mp->help[0] == '"') {
+> > -		strcpy(mp->help, argv[3]+1);
+> > -		mp->help[strlen(mp->help)-1] = '\0';
+> > -	}
+> > +	if (mp->usage[0] == '"')
+> > +		strscpy(mp->usage, argv[2] + 1, strlen(argv[2]) - 1);
+> 
+> Now you are manually testing the length of argv[2], are you sure that's
+> ok?
+> 
+> > +	if (mp->help[0] == '"')
+> > +		strscpy(mp->help, argv[3] + 1, strlen(argv[3]) - 1);
+> >  
+> >  	INIT_LIST_HEAD(&kdb_macro->statements);
+> >  	defcmd_in_progress = true;
+> > @@ -860,7 +856,7 @@ static void parse_grep(const char *str)
+> >  		kdb_printf("search string too long\n");
+> >  		return;
+> >  	}
+> > -	strcpy(kdb_grep_string, cp);
+> > +	strscpy(kdb_grep_string, cp);
+> 
+> If this was just a search/replace, it would have been done already, so
+> why is this ok?
 
-8183 max_clock_khz is defined in patch [3] by Rex, but this is a
-prepare patch for mt8192 [4].
-I'm not sure that Rex has test it for mt8183.
-Maybe you could try to enlarge 8183 max_clock_khz and see.
+I missed that strscpy() can now handle 2 arguments like this, so yes,
+this should be ok.
 
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
-it/drivers/gpu/drm/mediatek/mtk_dpi.c?h=3Dv6.17-rc1&id=3D44b07120291c4b7a67=
-22ccb7149f6b9d938cf5a2
-[4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
-it/drivers/gpu/drm/mediatek/mtk_dpi.c?h=3Dv6.17-rc1&id=3D38eaef2dca4ec8dfb9=
-ea84d9dde0f76da5c8caaa
+BUT, you just checked the length above this line, which now isn't
+needed, right?  So this function can get simpler?
 
-Regards,
-CK
 
->
->
-> Kind regards,
->
-> Paul
->
->
-> [1]: https://lmp-adapter.com/product/lmp-usb-c-mini-dock/
-> [2]: https://issuetracker.google.com/issues/295666708
+> 
+> 
+> >  	kdb_grepping_flag++;
+> >  	return;
+> >  }
+> > @@ -1076,12 +1072,12 @@ static int handle_ctrl_cmd(char *cmd)
+> >  		if (cmdptr != cmd_tail)
+> >  			cmdptr = (cmdptr + KDB_CMD_HISTORY_COUNT - 1) %
+> >  				 KDB_CMD_HISTORY_COUNT;
+> > -		strscpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
+> > +		strscpy(cmd_cur, cmd_hist[cmdptr]);
+> 
+> Same here.  And other places...
+
+Sorry, this should also be ok, BUT it's really just doing the same exact
+thing, right?  And, it's a different thing, so it should be a different
+patch (i.e. do not mix different logical things in the same patch, it
+confuses everyone.  Well, me at least...)
+
+thanks,
+
+greg k-h
 
