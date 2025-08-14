@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-767938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AA7DB25AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:23:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66437B25AC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE65624506
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C90A21B661E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C410220F5D;
-	Thu, 14 Aug 2025 05:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A39121FF4D;
+	Thu, 14 Aug 2025 05:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PTX6FDuZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b5cHtRuP"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A7D2165F3;
-	Thu, 14 Aug 2025 05:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6A31C3F36
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 05:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755148975; cv=none; b=Q1NzCc5Tm442xPq5GXB/c9sUknm9NLiahhLZyzoRJFYoagfBV/Hx0DGwYHFLvrdDcvuQrqLAIwVj+xgOKDmA7ER1Pzv+SC38R8LSEZ/ZvXnJwHEGoRMLeCHW5tUl/qFXfGe/JXirylJJcJBWl8AJ/tNjVRbDThUZD6ED9n3nYaw=
+	t=1755148995; cv=none; b=eM1EuMMgCmFlx1Uu31xFUxU9hfevBtqlm7UR08TZw7ZGHB2qg5wFkHYYZuwcbOeaqkeHRKOh4hSzoaEWrxwhBkZIutnEGkujLT7keV/0aaDmIMG80VtoVRuWERPxBaRohl7oRUQtv8atGIw/q67zN/RmlqDWpJxDma/dhBSZJj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755148975; c=relaxed/simple;
-	bh=AZhFvfAsgfnk60hqg/m2YLJo/VHTNiBHUmkW/MGd2Ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qjPCQl557ZNsowq7va/kQf/GnN3GlZ4CY8Ke6j+ZqX03r7MiM9UyyaXmvOdcl0FpZsJKr3z0dBKxZZb42qw7tAm8a9dkEPNW26S6D1lNILxM8tya+5AlqOEyMJROwRwbaahp5wxjpy+zRBSWFnm/yNetqUsGQYvYMQ6mmwoTYW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PTX6FDuZ; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755148974; x=1786684974;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AZhFvfAsgfnk60hqg/m2YLJo/VHTNiBHUmkW/MGd2Ww=;
-  b=PTX6FDuZL2Aq2eRj6XpiZ+KWxB9ZjkXtTsqt0uWiroMlHjSN8TNdzcn7
-   M6ddKcx5LN4Prvtjnc8wPCJmWMVPeH3yQH8LfNDeJrDXLdgaVW6BDmJCv
-   oZZTJ2VHqoXN+YRkTcMhrKkxjPMqnEODLei81IoRV3Qce5azmOwbKHLC6
-   x4UKTmrIdHGJtdHLEXXd3GuMgHZf0Gyl4LxG1mT7Yu1grxsEwxVrx9lm3
-   2RgsWtcZc9trDQ8kZmJFTE0JQ2mndpaml7gNumAgej9NtyTu1h+Wv5VmD
-   7cgC1ezqRiO2eUJAfIxH/CxoZnspT2/SPImI24erL4IsmUQOSKaM8jmPf
-   g==;
-X-CSE-ConnectionGUID: f387LcVoTT+lob3hm33SrA==
-X-CSE-MsgGUID: 8JfAhBj3R76SlAMWk9BmlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="57410558"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="57410558"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 22:22:53 -0700
-X-CSE-ConnectionGUID: phLfqAzSQjSj1O4tTwJmcQ==
-X-CSE-MsgGUID: ZkuBPprRRTKuzkTRFePUQA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="197521485"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Aug 2025 22:22:50 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umQQK-000Abc-2C;
-	Thu, 14 Aug 2025 05:22:48 +0000
-Date: Thu, 14 Aug 2025 13:22:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Farhan Ali <alifm@linux.ibm.com>, linux-s390@vger.kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	schnelle@linux.ibm.com, mjrosato@linux.ibm.com, alifm@linux.ibm.com,
-	alex.williamson@redhat.com
-Subject: Re: [PATCH v1 5/6] vfio-pci/zdev: Perform platform specific function
- reset for zPCI
-Message-ID: <202508141314.OUnmuib7-lkp@intel.com>
-References: <20250813170821.1115-6-alifm@linux.ibm.com>
+	s=arc-20240116; t=1755148995; c=relaxed/simple;
+	bh=3LSoCl56fyWME0v8PiSkctUuL3gtGDTjl3bz0icHfT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jdgJTVcFBjfCVkBsfORO647KMZdHXLAMYKugx27v9Qm/AgMz1qK7NajVaE1g/ccKB/I+zyFE77/pjiiC8UNMgEXQGr+mntUmUJ+/BAApLAS7gqONNd4XQItwFniipH9gkVQFM6T7yLWxcx/HiZk6lsoRq4wplKlCMKyeK+WAQB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b5cHtRuP; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b0d0bc0so3566285e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 22:23:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755148992; x=1755753792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3LSoCl56fyWME0v8PiSkctUuL3gtGDTjl3bz0icHfT8=;
+        b=b5cHtRuPG/9E9p2llnY0xQjT2uR4Y9NWqZzBQxQUdg/qcmikQ5cKTVBIphbrfzSycV
+         nJ7Q/g9LedV2eYd1t5zT+S49X+e1C+1Y9550/jRWmU4x1FlYHlf6+2kyQQ/agS4IqeTJ
+         imYbbCVu5XewGWM1kP8+mr/fjFaVL/UTbk5RHQwo9F0ArzL1ADHbMicIl+mHdiJExorS
+         Nkri6v5SD4SCWhSIHbBatzWKa7xez3oSK5TKscIjCu+m/LhyQTYUbCOUdXCdCA8vokJS
+         9pM88O+BaM8UkCKf+1qTRJo7jq+I9RM/+dsGb0QObqhNbgzHPKicdr6d/Qa1Gn1wCdIG
+         GXiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755148992; x=1755753792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3LSoCl56fyWME0v8PiSkctUuL3gtGDTjl3bz0icHfT8=;
+        b=P3oXnel/sx7oG0eru9kizQ15kr8+ZBnIePa2MDOBWu3iEL4roYVIAVz83yVuXqQICG
+         YooOOcB25+C7Dzx+rJL7F0VZhluy9tFYfCS/QuaR9wAQYr1xvuOEYpAiXwQ1T3uyULPW
+         bUALBHhHrdAo4FOSTmf1vA34J9H6rKeLTNP9l7bOiMYZng6d+SJo+MUAzYWDIcakhNU7
+         9Ek7IUunur3RNuA2tEuqRd03w7lTZ8rzBxEDl2ZkeuWaScgX/+cXnRFr9cWoEv/0V9WT
+         fwSkBU3lyg3T6soizUCvkcC5jLYKNIJ81OvL6b6No+st+BT5AKKwmweLLjf0yowwBUAb
+         nfmw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0fKE9sGEvy36xMhDVmyHy5cENzeXJOCTPLY3rErpGSwYQeHVAXF1EhFQsYx/X6uDCHlevaqUhIwFWkaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDrLylF6tzxURDSt4FAJJO/jzhjpiGGw3X4Mgr70PEgu0dBVc3
+	Hw8jDQP1/u4ZOTxsL5sGahM9kMjjzXf29fqiN3FJAUjh8DsgvgZ6A8d+ydfyQJH0e7P7zKG149N
+	PnakVxLOJvIyqOTUNOTr4tuqmqzxA0UA=
+X-Gm-Gg: ASbGnctLcRBr/k/gilyjH8BnxD4t5Zqm5GAsW3GNsjVYYsxgT5Usr1b2WTBwxer6KE6
+	XZiD5wComSPYo6QRZhvpzZLynUCY3cUvC8gRSJm/Q3WNDtQPR0I7/7xDxa1yNwRctdWqZdH0rwH
+	i5U643D+y2SKF40dRHAdwwyx4os6hqvegje60Y3unplxjjOD6dDi9lFsraOuqHbxpqU+zYNhnfq
+	0fMtVXk7w==
+X-Google-Smtp-Source: AGHT+IG3JLfHafFtVhrpyJJQVLI+yi2yjJjHCa2aqw39VKsfuinwVVPCl+kdFo32hMLPEgR8b1e3VmqLD+4/eg8BBs4=
+X-Received: by 2002:a5d:5d88:0:b0:3b6:8acb:a9d2 with SMTP id
+ ffacd0b85a97d-3b9edfcd141mr1235453f8f.7.1755148992352; Wed, 13 Aug 2025
+ 22:23:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250813170821.1115-6-alifm@linux.ibm.com>
+References: <20250812124941.69508-1-bhe@redhat.com> <CA+fCnZcAa62uXqnUwxFmDYh1xPqKBOQqOT55kU8iY_pgQg2+NA@mail.gmail.com>
+ <CA+fCnZdKy-AQr+L3w=gfaw9EnFvKd0Gz4LtAZciYDP_SiWrL2A@mail.gmail.com> <aJxzehJYKez5Q1v2@MiWiFi-R3L-srv>
+In-Reply-To: <aJxzehJYKez5Q1v2@MiWiFi-R3L-srv>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Thu, 14 Aug 2025 07:23:01 +0200
+X-Gm-Features: Ac12FXxjjLGYLRyCaqd7TSTNKQmFZtITu9sph-q46cifbE2W4uXByRYl8-gsmGA
+Message-ID: <CA+fCnZfv9sbHuRVy8G9QdbKaaeO-Vguf7b2Atc5WXEs+uJx0YQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] mm/kasan: make kasan=on|off work for all three modes
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-mm@kvack.org, ryabinin.a.a@gmail.com, glider@google.com, 
+	dvyukov@google.com, vincenzo.frascino@arm.com, akpm@linux-foundation.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	kexec@lists.infradead.org, sj@kernel.org, lorenzo.stoakes@oracle.com, 
+	elver@google.com, snovitoll@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Farhan,
+On Wed, Aug 13, 2025 at 1:14=E2=80=AFPM 'Baoquan He' via kasan-dev
+<kasan-dev@googlegroups.com> wrote:
+>
+> > I'm not familiar with the internals of kdump, but would it be
+> > possible/reasonable to teach kdump to ignore the KASAN shadow region?
+>
+> Yes, we can teach kdump to do that. Then people may hate those conditiona=
+l
+> check "if (is_kdump_kernel())" being added in kasan code. E.g even
+> though we skip kasan_init(), we still need to check is_kdump_kernel()
+> in kasan_populate_vmalloc(), right?
+>
+> Combined with the existing kasan_arch_is_ready(), it will make kasan code
+> ugly. I planned to add kasan_enabled() via static key
+> kasan_flag_enabled, then it can also easily remove kasan_arch_is_ready()
+> cleanly.
 
-kernel test robot noticed the following build warnings:
+What I had in mind was something different: into the kdump code, we
+add a check whether the region of memory it's trying to dump is the
+KASAN shadow, and make kdump not to dump this region.
 
-[auto build test WARNING on awilliam-vfio/next]
-[also build test WARNING on s390/features linus/master v6.17-rc1 next-20250813]
-[cannot apply to kvms390/next awilliam-vfio/for-linus]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Would this work? Would this help with the issue you have?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Farhan-Ali/s390-pci-Restore-airq-unconditionally-for-the-zPCI-device/20250814-012243
-base:   https://github.com/awilliam/linux-vfio.git next
-patch link:    https://lore.kernel.org/r/20250813170821.1115-6-alifm%40linux.ibm.com
-patch subject: [PATCH v1 5/6] vfio-pci/zdev: Perform platform specific function reset for zPCI
-config: i386-randconfig-005-20250814 (https://download.01.org/0day-ci/archive/20250814/202508141314.OUnmuib7-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250814/202508141314.OUnmuib7-lkp@intel.com/reproduce)
+(I assume the problem is with the virtual region that is the shadow
+memory, as kdump would dump all RAM either way? If not, please clarify
+what how does the "heavy burden" that the shadow memory causes
+manifests.)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508141314.OUnmuib7-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/vfio/pci/vfio_pci_intrs.c:23:
->> drivers/vfio/pci/vfio_pci_priv.h:104:5: warning: no previous prototype for function 'vfio_pci_zdev_reset' [-Wmissing-prototypes]
-     104 | int vfio_pci_zdev_reset(struct vfio_pci_core_device *vdev)
-         |     ^
-   drivers/vfio/pci/vfio_pci_priv.h:104:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     104 | int vfio_pci_zdev_reset(struct vfio_pci_core_device *vdev)
-         | ^
-         | static 
-   1 warning generated.
-
-
-vim +/vfio_pci_zdev_reset +104 drivers/vfio/pci/vfio_pci_priv.h
-
-   101	
-   102	static inline void vfio_pci_zdev_close_device(struct vfio_pci_core_device *vdev)
-   103	{}
- > 104	int vfio_pci_zdev_reset(struct vfio_pci_core_device *vdev)
-   105	{
-   106		return -ENODEV;
-   107	}
-   108	#endif
-   109	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thank you!
 
