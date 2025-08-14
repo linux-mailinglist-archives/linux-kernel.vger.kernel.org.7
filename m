@@ -1,225 +1,169 @@
-Return-Path: <linux-kernel+bounces-769566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A7CB27067
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:51:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E755B2706A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4AC1CC2405
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:51:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A67B179B4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ECB274641;
-	Thu, 14 Aug 2025 20:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06059273D6D;
+	Thu, 14 Aug 2025 20:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVn6XjXk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xd8F/Vqp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E31272E5E;
-	Thu, 14 Aug 2025 20:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF5C26FA46;
+	Thu, 14 Aug 2025 20:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755204689; cv=none; b=HqY4lDNgWdqDualnWsO6jgPRAr+0+lzUktzUclxDymL7RXl3KAJ4/AZxSZqLTo7nW/QI3vufY8WNwySmWXqsjf9+I0FIGjKxTkLk2l7aDuEIB3alUxCtNOevg1wxQbFUfmSZvAlM9BbbQgtz96DACYluXt9A8xi/OTO6cdcJulo=
+	t=1755204800; cv=none; b=iTFVPS3M8XoGAZfdRw4vF4DiuDvcuZijSSI4LwXLo8nKMoVcRxVv3LYFBv0AlXOrei4qzQ9IXrGYeD+wgzCDI5CqPKeSPXgnCefe/4pnOgb5KFfqZb6QRVxOjmYxoAfyDI3WaplS3jD8sRvpFpsorn1ytuiMKTrZMwmZoca/ekc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755204689; c=relaxed/simple;
-	bh=/M4EE7DFqLJynRJpaxxdZKYC5XpUZmPw2hnoERrqOp8=;
+	s=arc-20240116; t=1755204800; c=relaxed/simple;
+	bh=2LkRFzEQQLz4AsmD3GeNQ+csq6dZRddW53dxc2tua8w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=trxHumNqpy+5TsUC7MpgI7bcbTC8iaahL2ylnXGGXLC8aCM5hDqk6gOeykn/ISCpYcTRpxOHOeUgIrESjcAam7lLCTjSzLYERjMZyN3w9kp1Vn6Ixo6X8syyn3mxjSYIdvCzsm1pwKShGXWcCR4ZiFnQLwqZr27MUY8TkQZU+uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVn6XjXk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DC8DC4CEED;
-	Thu, 14 Aug 2025 20:51:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tt4fSw0GPWYZ0mYRLu2rjgSsh1wJljQNXxeiNAzXKv9iKdggyT5HgJdbN/6KMD7TZW9NUJjtmJxug/W3Z6BzdheW+xIM55icwa6d9Y5G4O7cOGAclvx4y1HiYNKRxsABoK9x8FUEA9A16tk5qz0bdDEKhSbX6BVQ+tb69s3P3mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xd8F/Vqp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 040DDC4CEED;
+	Thu, 14 Aug 2025 20:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755204689;
-	bh=/M4EE7DFqLJynRJpaxxdZKYC5XpUZmPw2hnoERrqOp8=;
+	s=k20201202; t=1755204798;
+	bh=2LkRFzEQQLz4AsmD3GeNQ+csq6dZRddW53dxc2tua8w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OVn6XjXkVgHKX31q8ZfXo7rw69ZgSzBWspUWLyQB3kVd5itiTtfuFBvXWGnEPnlNH
-	 cVN536Wy1xooiv/AYneWTv9Q1ftQuxJwOsji2f0HR8OBJ3knOX5kA2oPTBPIlfuEiY
-	 hoLmiMQT02eO2M5fA8wpc51tUbPMp3nhwTv5nNrrU8nlyOnwzE07HQw/oFHowNr1Ce
-	 LsaGcLzhbszy3+41SAnLDDpj8Fg+yqCAOstZmhjsz8TZbcXoBGmQut9q9oBGGQvpMa
-	 J8tXi/RpjBlBTOcbcf2W7NwGGej/V0cUSamfgSLYgWWks1TgKjA3eNht+rxAJPSdFv
-	 iGooIKvdVXTvg==
-Date: Thu, 14 Aug 2025 15:51:28 -0500
-From: Rob Herring <robh@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, mani@kernel.org, bhelgaas@google.com,
-	vkoul@kernel.org, kishon@kernel.org, dlan@gentoo.org,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, p.zabel@pengutronix.de, tglx@linutronix.de,
-	johan+linaro@kernel.org, thippeswamy.havalige@amd.com,
-	namcao@linutronix.de, mayank.rana@oss.qualcomm.com,
-	shradha.t@samsung.com, inochiama@gmail.com,
-	quic_schintav@quicinc.com, fan.ni@samsung.com,
-	devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: phy: spacemit: add SpacemiT PCIe/combo
- PHY
-Message-ID: <20250814205128.GA3873683-robh@kernel.org>
-References: <20250813184701.2444372-1-elder@riscstar.com>
- <20250813184701.2444372-2-elder@riscstar.com>
+	b=Xd8F/VqpOJKht5NslLkVfnLi7Vhs+djTmWL+AGaKqNfW+hlk1SizvwwK514eJaIX9
+	 sJ6E+SnEPGgiX5AuS0qktX7na+YkgJ7dXTxuwASdjM2JkkdO6NvdwnMOVFNwsQfaXH
+	 zdmK+WaRGzP1YjxZ7pn1eU6batw2NzSL8HJXkZdqWmUzUaPQ1Q1kc/rYMphoG5wCAk
+	 0XBESRPPPGRacMW7e3jBNDliebXM7jMdFMR/pDxsYrB0DFRNgyMtCIrQf6Czu6Zas5
+	 6qZj+R5W6Zx9n8b1hwaNLMzf0C4e1hwDXGy9I8VS3W7QvF00ZXIa+9+psPR9DmpNWe
+	 RLt+FXQrtFPdA==
+Date: Thu, 14 Aug 2025 21:53:14 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: tsbogend@alpha.franken.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: mips: lantiq: Document Lantiq Xway VMMC
+Message-ID: <20250814-extended-collector-8335abee820d@spud>
+References: <20250814161748.3230278-1-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ari62n+PILi2eRwl"
+Content-Disposition: inline
+In-Reply-To: <20250814161748.3230278-1-olek2@wp.pl>
+
+
+--ari62n+PILi2eRwl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250813184701.2444372-2-elder@riscstar.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 01:46:55PM -0500, Alex Elder wrote:
-> Add the Device Tree binding for the PCIe/USB 3.0 combo PHY found in
-> the SpacemiT K1 SoC.  This is one of three PCIe PHYs, and is unusual
-> in that only the combo PHY can perform a calibration step needed to
-> determine settings used by the other two PCIe PHYs.
-> 
-> Calibration must be done with the combo PHY in PCIe mode, and to allow
-> this to occur independent of the eventual use for the PHY (PCIe or USB)
-> some PCIe-related properties must be supplied: clocks; resets; and a
-> syscon phandle.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
+On Thu, Aug 14, 2025 at 06:17:45PM +0200, Aleksander Jan Bajkowski wrote:
+> The Lantiq SoCs have a 2nd mips core called "voice mips macro core (vmmc)"
+> which is used to run the voice firmware.
+>=20
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
 > ---
->  .../bindings/phy/spacemit,k1-combo-phy.yaml   | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml b/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
+>  .../mips/lantiq/lantiq,vmmc-xway.yaml         | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mips/lantiq/lantiq,=
+vmmc-xway.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/mips/lantiq/lantiq,vmmc-xw=
+ay.yaml b/Documentation/devicetree/bindings/mips/lantiq/lantiq,vmmc-xway.ya=
+ml
 > new file mode 100644
-> index 0000000000000..ed78083a53231
+> index 000000000000..bee64f6d0e97
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/spacemit,k1-combo-phy.yaml
-> @@ -0,0 +1,110 @@
+> +++ b/Documentation/devicetree/bindings/mips/lantiq/lantiq,vmmc-xway.yaml
+> @@ -0,0 +1,51 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/phy/spacemit,k1-combo-phy.yaml#
+> +$id: http://devicetree.org/schemas/mips/lantiq/lantiq,vmmc-xway.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: SpacemiT K1 PCIe/USB3 Combo PHY
+> +title: Lantiq VMMC (Voice MIPS Macro Core)
 > +
 > +maintainers:
-> +  - Alex Elder <elder@riscstar.com>
+> +  - Aleksander Jan Bajkowski <olek2@wp.pl>
 > +
 > +description:
-
-You need a '>' or the paragraphs formatting will not be maintained 
-(should we ever render docs from this).
-
-> +  Of the three PHYs on the SpacemiT K1 SoC capable of being used for
-> +  PCIe, one is a combo PHY that can also be configured for use by a
-> +  USB 3 controller.  Using PCIe or USB 3 is a board design decision.
-> +
-> +  The combo PHY is also the only PCIe PHY that is able to determine
-> +  PCIe calibration values to use, and this must be determined before
-> +  the other two PCIe PHYs can be used.  This calibration must be
-> +  performed with the combo PHY in PCIe mode, and is this is done
-> +  when the combo PHY is probed.
-> +
-> +  During normal operation, the PCIe or USB port driver is responsible
-> +  for ensuring all clocks needed by a PHY are enabled, and all resets
-> +  affecting the PHY are deasserted.  However, for the combo PHY to
-> +  perform calibration independent of whether it's later used for
-> +  PCIe or USB, all PCIe mode clocks and resets must be defined.
+> +  The Lantiq SoCs have a 2nd mips core called "Voice MIPS Macro Core (VM=
+MC)"
+> +  which is used to run the voice firmware. The firmware handles analog
+> +  telephone lines.
 > +
 > +properties:
 > +  compatible:
-> +    const: spacemit,k1-combo-phy
+> +    items:
+> +      - enum:
+> +          - lantiq,vmmc-xway
+
+Same comment here as elsewhere, the commit message seems to suggest that
+you're trying to use one compatible for multiple devices. Not using
+soc-specific compatibles requires justification if that's what you're
+doing as they are the norm.
+
 > +
 > +  reg:
-> +    items:
-> +      - description: PHY control registers
+> +    maxItems: 1
 > +
-> +  clocks:
-> +    items:
-> +      - description: DWC PCIe Data Bus Interface (DBI) clock
-> +      - description: DWC PCIe application AXI-bus Master interface clock
-> +      - description: DWC PCIe application AXI-bus Slave interface clock.
+> +  interrupts:
+> +    minItems: 6
+> +    maxItems: 6
 
-End with a period or don't. Just be consistent.
-
-You need DWC PCIe clocks for your PHY? A ref clock would make sense, but 
-these? I've never seen a PHY with a AXI master interface.
+Same comment here as elsewhere re: items list explaining each item.
 
 > +
-> +  clock-names:
-> +    items:
-> +      - const: dbi
-> +      - const: mstr
-> +      - const: slv
-> +
-> +  resets:
-> +    items:
-> +      - description: DWC PCIe Data Bus Interface (DBI) reset
-> +      - description: DWC PCIe application AXI-bus Master interface reset
-> +      - description: DWC PCIe application AXI-bus Slave interface reset.
+> +  gpios: true
 
-Same here (on both points).
+What are these gpios? You've got 3 below, what portion of those three
+are required? How many mix/max?
 
-> +      - description: Global reset; must be deasserted for PHY to function
-> +
-> +  reset-names:
-> +    items:
-> +      - const: dbi
-> +      - const: mstr
-> +      - const: slv
-> +      - const: global
-> +
-> +  spacemit,syscon-pmu:
-> +    description:
-> +      PHandle that refers to the APMU system controller, whose
-> +      regmap is used in setting the mode
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +    description:
-> +      The argument value (PHY_TYPE_PCIE or PHY_TYPE_USB3) determines
-> +      whether the PHY operates in PCIe or USB3 mode.
 > +
 > +required:
 > +  - compatible
 > +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +  - spacemit,syscon-pmu
-> +  - "#phy-cells"
+> +  - interrupts
 > +
 > +additionalProperties: false
 > +
 > +examples:
 > +  - |
-> +    #include <dt-bindings/clock/spacemit,k1-syscon.h>
-> +    combo_phy: phy@c0b10000 {
-
-Drop unused labels.
-
-> +        compatible = "spacemit,k1-combo-phy";
-> +        reg = <0xc0b10000 0x1000>;
-> +        clocks = <&syscon_apmu CLK_PCIE0_DBI>,
-> +                 <&syscon_apmu CLK_PCIE0_MASTER>,
-> +                 <&syscon_apmu CLK_PCIE0_SLAVE>;
-> +        clock-names = "dbi",
-> +                      "mstr",
-> +                      "slv";
-> +        resets = <&syscon_apmu RESET_PCIE0_DBI>,
-> +                 <&syscon_apmu RESET_PCIE0_MASTER>,
-> +                 <&syscon_apmu RESET_PCIE0_SLAVE>,
-> +                 <&syscon_apmu RESET_PCIE0_GLOBAL>;
-> +        reset-names = "dbi",
-> +                      "mstr",
-> +                      "slv",
-> +                      "global";
-> +        spacemit,syscon-pmu = <&syscon_apmu>;
-> +        #phy-cells = <1>;
-> +        status = "disabled";
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    vmmc@107000 {
+> +        compatible =3D "lantiq,vmmc-xway";
+> +        reg =3D <0x107000 0x300>;
+> +        interrupt-parent =3D <&icu0>;
+> +        interrupts =3D <150>, <151>, <152>, <153>, <154>, <155>;
+> +        gpios =3D <&gpio 30 GPIO_ACTIVE_HIGH
+> +                 &gpio 31 GPIO_ACTIVE_HIGH
+> +                 &gpio 3  GPIO_ACTIVE_HIGH>;
+> +
 > +    };
-> -- 
-> 2.48.1
-> 
+> --=20
+> 2.47.2
+>=20
+
+--ari62n+PILi2eRwl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ5MugAKCRB4tDGHoIJi
+0hEuAQChrMm3aIadGdB/jPZg4DG5RglwxgVK72EEf0NTp+WVDwEAm7/j5Wqo6L3m
+QFpE8NvEPCIGmZLM6O1xgVsex/pW0Aw=
+=KLOh
+-----END PGP SIGNATURE-----
+
+--ari62n+PILi2eRwl--
 
