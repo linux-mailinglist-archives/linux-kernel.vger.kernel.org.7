@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-768029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A213B25C16
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:44:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A1FB25C1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 274F25C562A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:44:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2831C864C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26D025487A;
-	Thu, 14 Aug 2025 06:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433EF257440;
+	Thu, 14 Aug 2025 06:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="MWFkXmyZ"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC18254855
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Hx0l1JLy"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D161A8F6D;
+	Thu, 14 Aug 2025 06:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755153885; cv=none; b=P9xECxirTqTXCDkdTMNxOCXRC0u4L86lA7pwG4QSV3u+/otXMf1HJQ2uGPLRlJgZTqoxt1EspJ7BSLMNzndAFZ3+A+hN4i23QUmBqlUCbad/ZIqsaAoW88Ronig1Y9TBEjHl/cUeP6CIQGbYGYsDN+OUgd3iCVBquERoffo9gw0=
+	t=1755153935; cv=none; b=jP84zm24JjGl3Te6KqpogfJ+GrP4pftgYuEeAwhbPQ1jqsZQ9G4pLn++w7k4iq7XELxsL5bGZKPkZ9Oo9qtAOXmqfjjVs4tJ4FrW4l4rDl0NhjzHXkiI9APQlJF8OTKvMcx6nyEk9k0oS7X61JeY0MEuFnr50WQwMJOjoIRRXLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755153885; c=relaxed/simple;
-	bh=K/qWVgfG9jQvY5YYR1eSycEvGJzaF0PPd6KpbLz+oKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lXz2nX3AmJ31GCBsMkzmf5nvKtPU/NilNtC8mWLqqS7uHsXFe21hCiRNQQowZz/g1w8qAivVCLE73j56M3JYAPEsEvapVAvHYZQSA1WrGYOujZq0mFo4SJP9p5lA6jGDdfIDVnbrsf6gFmcEERbO29494qlNrlyykiLHKwI0Ahc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=MWFkXmyZ; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b9e41669d6so403531f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1755153882; x=1755758682; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cc498I+j1YOWceGut+z2RkLYjN1WkXnttkUY56LCj5U=;
-        b=MWFkXmyZ6FzADei34HuRnnSjNYKhwkZpmiHfiEx1GzRTXZluc0C7Z84eyyxUiiV3Is
-         6jh5CG0UxKHBeT/xNTQ7iapJOD4u5ysNZeKEi/ct/mlYXs96NTIzdN/4s/dTWMKzjdrb
-         ys7CeAkHhSKs8PGSvfAnCPgq7umPgT2HGjHANzI0uyEj0oYTR6Aw7MVBHFyuc35W3SVv
-         LveCqy1POY1whwdc1G9g294DpcmoacOQ8SpnTs1T+vBE2ndRG6LogB2CssE8t2lPj9+w
-         Dk8ZTYXbBCsgr6B8Yw7Zs178D7aZ1MhMT9X8UD3g3xzc1ERR8lfNEG3TaGRnx6j1k6Nx
-         yg1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755153882; x=1755758682;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cc498I+j1YOWceGut+z2RkLYjN1WkXnttkUY56LCj5U=;
-        b=hywKCSD4Jg38efj0WZ/1pyqBbtIrB6lXslQAAecCB0ZXw/g29uqdtGKYfj86Us4neD
-         jwE0vHtOMmmK9haqYUMkDTCNh9UqeeBR88M/mRmk7qBRTBZlbohgcE5aPxerj4GvCtuC
-         FdLLL+DiFMbCIEISYHXMo11n+f7W1t8C55V11TiSbRCDk1MW67uPYuh0mFsYqYOZ3rD8
-         qR09eyniFSD8z1ODCli5bCyrNyat7TK453KqpsZwZGNP5IPnUwfxasv/M8QAow7gjdB3
-         MMkB5E+Tux2IeSc6eYrsQYQs0q+cpVtlI/KHb/KbW3MLJ44glQt4AUT3xsMUp0e8pdfo
-         xZHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlVK5BqoSs4ErHAfl6tPKd59CtCiXFbLuiOksXSmWomdpjeZSmbowLq2w/L7L5l39KuBTG+er3UEEyakE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqYKZgMm33jDeUQIZVxt/aPo1oSgEkmOJ1gpfyA7mxfoAt37UX
-	Px9c3Ju3Wu5U/RMrhVKtRah1a1KjD/cJ/FACJS1TRM9yr5ZJ1h6w+0elIHmVaKhbnW8=
-X-Gm-Gg: ASbGncuTggdx4we+vEy3dX0sSxh7L20eHCjpYNpto8ywk1e52CPD5EXMe+eZkub4CiN
-	fgwD9IW1Z19Nlf22o/uFThRTuyGHz5shOwmrPiIOGsV8yvKxfhRSvQPUou8FfcsA6giJ8bPBMXD
-	TJVcb6S9bE29LcqadraNST2GWxrVY3FhskSt6c6AlaEMiIwNm0ipha+0fCdcu78NhDRydCRbIpv
-	kqr62SIVRqg3fzCQ8JnoUSOcu1v/gLqwVa/m7WXt6q0Y6HvPNIJNwHL1LwG+wjYOg0+dGLmYgpH
-	8EKP0LgRdc6qjPklOB+8rW/Qv9ZRChRmdT8cv7MtMvPROOQLNocAR86HR0sUsPEW0nrHauqK8RD
-	ulnWZ7jvCgw6CqrjZLezpm5RpN1HfkORILL7VUtqYE78oVA==
-X-Google-Smtp-Source: AGHT+IF8l0U9o5tnd3mzmSDQchRPhxwSlrS3PKFKAywoFUAe6DOgztRr7W+afUTUWc9q0QSWOk3RFg==
-X-Received: by 2002:a05:6000:22c5:b0:3b6:b020:9956 with SMTP id ffacd0b85a97d-3b9edfe35dcmr1327501f8f.43.1755153881336;
-        Wed, 13 Aug 2025 23:44:41 -0700 (PDT)
-Received: from [192.168.0.101] ([84.66.36.92])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8ff860acbsm23593149f8f.51.2025.08.13.23.44.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Aug 2025 23:44:40 -0700 (PDT)
-Message-ID: <ceb80fde-dae5-478e-840c-9b949396d904@ursulin.net>
-Date: Thu, 14 Aug 2025 07:44:40 +0100
+	s=arc-20240116; t=1755153935; c=relaxed/simple;
+	bh=YNja6IVSOY6sdmIEGLejUQMYR8hr8Qkd8soi9Q7EB60=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uLDnGreZ80SMi1HV61eLSqvuCZp+sWauhn1rTa2CTofb8R1SjQDusV5ILptc3Wb88Sug7n4+Yvspxikr3bJhQmrrX5wT7WzsyHYSi3rzsqHAb+ACnTaehatAlIS74Y/pLOMV4D+f6oOqr8/PmTfBlHcrG0wJsul+Bbi8V/QL3fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Hx0l1JLy; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Xj
+	br36XZUwrrEazXviwGyEwfOeujlfh38MalOHv4Awg=; b=Hx0l1JLy3dRQNxeAoq
+	YS1XrQSRNBG2Y67W8hQ5YB1OpBPtTt++DnToXTskG98IUG6J6cSzA2WeuP4kJB8b
+	5RuS50BJWfaMA5YY4LvmJvUQbYQSn5RcRkYEzWju1YstvbeRbOMsD3QGFhWNH5zz
+	frnZhqSAMAde79ROeWyBrdFws=
+Received: from phoenix.. (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCHVEjxhZ1oTQ2nBQ--.36242S2;
+	Thu, 14 Aug 2025 14:45:07 +0800 (CST)
+From: Jiawei Zhao <phoenix500526@163.com>
+To: andrii@kernel.org
+Cc: eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	shuah@kernel.org,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next v8 0/2] libbpf: fix USDT SIB argument handling causing unrecognized register error
+Date: Thu, 14 Aug 2025 06:45:02 +0000
+Message-ID: <20250814064504.103401-1-phoenix500526@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/i915/active: Use try_cmpxchg64() in __active_lookup()
-To: Uros Bizjak <ubizjak@gmail.com>, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-References: <20250725072727.68486-1-ubizjak@gmail.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20250725072727.68486-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHVEjxhZ1oTQ2nBQ--.36242S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJrWxGr13ZF17Cw18Gry5CFg_yoW8KF4Dpa
+	yrK3s8tryUta43JFsxXr47tr43Gan3Gr4UGFn2qw1Yvr4rGFyxJr4xKr15JrnxGa95Xa4Y
+	vF1DtFs8Ga4rAwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjtC7UUUUU=
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFAapiGidgJR9xwAAso
+
+When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+optimization, the compiler will generate SIB addressing mode for global
+array and PC-relative addressing mode for global variable,
+e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
+
+The current USDT implementation in libbpf cannot parse these two formats,
+causing `bpf_program__attach_usdt()` to fail with -ENOENT
+(unrecognized register).
+
+This patch series adds support for SIB addressing mode in USDT probes.
+The main changes include:
+- add correct handling logic for SIB-addressed arguments in
+  `parse_usdt_arg`.
+- add an usdt_o2 test case to cover SIB addressing mode.
+
+Testing shows that the SIB probe correctly generates 8@(%rcx,%rax,8) 
+argument spec and passes all validation checks.
+
+The modification history of this patch series:
+Change since v1:
+- refactor the code to make it more readable
+- modify the commit message to explain why and how
+
+Change since v2:
+- fix the `scale` uninitialized error
+
+Change since v3:
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  and pass all test cases.
+
+Change since v4:
+- split the patch into two parts, one for the fix and the other for the
+  test
+
+Change since v5:
+- Only enable optimization for x86 architecture to generate SIB addressing
+  usdt argument spec.
+
+Change since v6:
+- Add an usdt_o2 test case to cover SIB addressing mode.
+- Reinstate the usdt.c test case.
+
+Change since v7:
+- Refactor modifications to __bpf_usdt_arg_spec to avoid increasing its size,
+  achieving better compatibility
+- Fix some minor code style issues
+- Refactor the usdt_o2 test case, removing semaphore and adding GCC attribute
+  to force -O2 optimization
 
 
-Hi,
+Jiawei Zhao (2):
+  libbpf: fix USDT SIB argument handling causing unrecognized register
+    error
+  selftests/bpf: Add an usdt_o2 test case in selftests to cover SIB
+    handling logic
 
-On 25/07/2025 08:26, Uros Bizjak wrote:
-> Replace this pattern in __active_lookup():
-> 
->      cmpxchg64(*ptr, old, new) == old
-> 
-> ... with the simpler and faster:
-> 
->      try_cmpxchg64(*ptr, &old, new)
-> 
-> The x86 CMPXCHG instruction returns success in the ZF flag,
-> so this change saves a compare after the CMPXCHG.
-> 
-> The patch also improves the explanation of what the code really
-> does. cmpxchg64() will *succeed* for the winner of the race and
-> try_cmpxchg64() nicely documents this fact.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> ---
->   drivers/gpu/drm/i915/i915_active.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_active.c b/drivers/gpu/drm/i915/i915_active.c
-> index 0dbc4e289300..6b0c1162505a 100644
-> --- a/drivers/gpu/drm/i915/i915_active.c
-> +++ b/drivers/gpu/drm/i915/i915_active.c
-> @@ -257,10 +257,9 @@ static struct active_node *__active_lookup(struct i915_active *ref, u64 idx)
->   		 * claimed the cache and we know that is does not match our
->   		 * idx. If, and only if, the timeline is currently zero is it
->   		 * worth competing to claim it atomically for ourselves (for
-> -		 * only the winner of that race will cmpxchg return the old
-> -		 * value of 0).
-> +		 * only the winner of that race will cmpxchg succeed).
->   		 */
-> -		if (!cached && !cmpxchg64(&it->timeline, 0, idx))
-> +		if (!cached && try_cmpxchg64(&it->timeline, &cached, idx))
->   			return it;
->   	}
->   
+ tools/lib/bpf/usdt.bpf.h                      | 55 ++++++++++++++-
+ tools/lib/bpf/usdt.c                          | 61 ++++++++++++++--
+ tools/testing/selftests/bpf/Makefile          |  1 +
+ .../selftests/bpf/prog_tests/usdt_o2.c        | 69 +++++++++++++++++++
+ .../selftests/bpf/progs/test_usdt_o2.c        | 37 ++++++++++
+ 5 files changed, 216 insertions(+), 7 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/usdt_o2.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_usdt_o2.c
 
-Patch looks fine, thank you!
-
-I've sent it for a CI pass (see 
-https://patchwork.freedesktop.org/series/152185/) before merging.
-
-Regards,
-
-Tvrtko
+-- 
+2.43.0
 
 
