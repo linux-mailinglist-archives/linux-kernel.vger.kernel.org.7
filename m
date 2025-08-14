@@ -1,91 +1,115 @@
-Return-Path: <linux-kernel+bounces-768141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060CBB25D87
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:36:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236ECB25D97
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BD99E7464
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7932A010CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3836626C3A6;
-	Thu, 14 Aug 2025 07:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twxsBirt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0F626FA70;
+	Thu, 14 Aug 2025 07:29:49 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7CB2690F9;
-	Thu, 14 Aug 2025 07:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BC3259C83;
+	Thu, 14 Aug 2025 07:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755156547; cv=none; b=e2X1ru7xuRjAOznt5E//L7CCJtMmHVDQanQwuoAGVt7htmNCnq0WOvrNFwGiTtsDnML1wqGCX0diDY85MYKX+6Rqqe4GIQ7K11ol9cYEIy5+xTC2OjslG95uLyA0UyKfB3G1T9YwQyQP0JzOXL6kKUZTgM2HKHYqHKcWPGW8/pQ=
+	t=1755156588; cv=none; b=HIhq0KvvIqtAaBavw8/mXI+vk+U4aQ07+J5kBSyqZl+5oRgDX337Hj1d6lncxvG5bIpq9qrHVe6Kjzr20CN4Lz3iei/IpCNGRXI3kzOuhPK/FqRuPyclIelE89jqac8ezSqhFoQBZzustqPD9PAxXxoeHpcB/ChBSn5dZSAXi1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755156547; c=relaxed/simple;
-	bh=yFHZE0Fem6LY03lyJJsU+PZNFRS6Y/kss8PySXhjW9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4EoZ0AnXOMUt5BWcpw/r+JK2FlJQGBWoqWzjeKQ7N4uDdYS0otRhSxmuf1bzY4nuGp8BQFQKM8CK1bHZn2zvQgJRprOxa2Rah96pUxhcugY56glZ0wE0LlAurSQS+0GEW23NAt3gpv3LdFpvXsTahmlXijsrMcoOCLknoV5dQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twxsBirt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69186C4CEEF;
-	Thu, 14 Aug 2025 07:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755156547;
-	bh=yFHZE0Fem6LY03lyJJsU+PZNFRS6Y/kss8PySXhjW9k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=twxsBirtdf1/fqUMGnjnp4W+W2EyaHiytp95UB5RLLzIBSMCZ+bU0ph8qSJcjOZk5
-	 6+OZ1TC0mrpErUesb+58RtFxWpnrAsHEtLksdYn+oLVkjEe4q3I0koe+Lz2D2npIPU
-	 ATtrdMR0/b/ljxnABqi/xE/mLsdVbWvJ1ASvsSHZQWlDJXopOo3PToPl1DMtXk09UE
-	 tqBq2VoLmbv2HkAMM/XTgpmV1Ygiabsyn3hehtyTqpzFctcFFPbVrseZ/nF9XjzjaH
-	 LavCdWPcnC3OpNneRPS5rAMFRL0TAm0TTHecn+aNZpwnbpSw8wlsKgPBlisvXTM+MB
-	 qtSlCSmlMpWeQ==
-Date: Thu, 14 Aug 2025 09:29:04 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 09/11] dt-bindings: iio: adc: ad7476: Add ROHM bd79105
-Message-ID: <20250814-hilarious-nonchalant-bat-b205cf@kuoka>
-References: <cover.1754901948.git.mazziesaccount@gmail.com>
- <3f70f68665225be3091f8a0412e74037b6a2a88e.1754901948.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1755156588; c=relaxed/simple;
+	bh=6NDjjCsQASG5ZZOQnM0m9/VFP2301fUlMsPXAXbht4g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dBTJIVSziNx1ROB+sL0LbkjMrah9LTLlcnDvk83dqgT2ul0MpaDy+GdgVRalRSpE0eaPVeJJpuUKH7r05IKYbewk52M1Pw74zypanCEI3w549o53OCrpZidF8E73zIcF0GF2DZlbaZniWo6LOb8AQL3Tirsj7brrR9YBiqBBEco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6fcc959c78e011f0b29709d653e92f7d-20250814
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
+	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
+	CIE_UNKNOWN, GTI_FG_BS, GTI_C_CI, GTI_RG_INFO, GTI_C_BU
+	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:265ac78d-44e1-410e-a988-49924ad70b26,IP:10,
+	URL:0,TC:0,Content:-25,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:15
+X-CID-INFO: VERSION:1.1.45,REQID:265ac78d-44e1-410e-a988-49924ad70b26,IP:10,UR
+	L:0,TC:0,Content:-25,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:15
+X-CID-META: VersionHash:6493067,CLOUDID:afcbee8ec8a41c6e65ebd45262442616,BulkI
+	D:2508141529406YEDDMS0,BulkQuantity:0,Recheck:0,SF:19|23|38|43|66|72|74|78
+	|102,TC:nil,Content:0|50,EDM:5,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil
+	,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
+X-UUID: 6fcc959c78e011f0b29709d653e92f7d-20250814
+X-User: tianyaxiong@kylinos.cn
+Received: from localhost.localdomain [(175.2.165.11)] by mailgw.kylinos.cn
+	(envelope-from <tianyaxiong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 755108821; Thu, 14 Aug 2025 15:29:39 +0800
+From: Yaxiong Tian <tianyaxiong@kylinos.cn>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	lenb@kernel.org,
+	robert.moore@intel.com
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	Yaxiong Tian <tianyaxiong@kylinos.cn>
+Subject: [PATCH v2 0/2] ACPI: processor: idle: Per-CPU idle driver for hybrid CPUs
+Date: Thu, 14 Aug 2025 15:29:34 +0800
+Message-Id: <20250814072934.1016694-1-tianyaxiong@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3f70f68665225be3091f8a0412e74037b6a2a88e.1754901948.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 11, 2025 at 11:52:04AM +0300, Matti Vaittinen wrote:
-> The ROHM BD79105 is a simple, 16-bit, 1-channel ADC with a 'CONVSTART'
-> pin used to start the ADC conversion. Other than the 'CONVSTART', there
-> are 3 supply pins (one used as a reference), analog inputs, ground and
-> communication pins. It's worth noting that the pin somewhat confusingly
-> labeled as 'DIN', is a pin which should be used as a chip-select. The IC
-> does not have any writable registers.
-> 
-> The device is designed so that the output pin can, in addition to
-> outputting the data, be used as a 'data-ready'-IRQ. There are cases
-> where the IRQ can't be used (because it is delivered via SPI data-line).
-> Hence, some systems may use a GPIO for polling the data readiness.
-> 
-> Add a compatible for the bd79105 and add the data-ready GPIO to the
-> binding.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> 
+This series addresses limitations in the current ACPI idle driver model
+for hybrid CPU architectures (e.g., ARM big.LITTLE, Intel Alder Lake),
+where different core types have distinct _LPI-state characteristics.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This series introduces:
 
-Best regards,
-Krzysztof
+1. A per-CPU idle driver model to accurately represent idle-state per core type.
+2. A new interface to fetch cpuidle_driver by CPU ID, required for early
+   registration scenarios.
+
+This issue was initially discussed at:
+https://lore.kernel.org/linux-pm/97e8bc72-e44b-487a-91ba-206732094955@arm.com/T/#t
+
+Changes since V2:
+- Fix "using smp_processor_id() in preemptible" BUG in patch 0002.
+
+Yaxiong Tian (2):
+  cpuidle: Add interface to get cpuidle_driver by CPU ID
+  ACPI: processor: idle: Replace single idle driver with per-CPU model
+    for better hybrid CPU support
+
+ drivers/acpi/Kconfig            |  1 +
+ drivers/acpi/processor_driver.c |  3 +-
+ drivers/acpi/processor_idle.c   | 66 +++++++++++++++++----------------
+ drivers/cpuidle/driver.c        | 16 ++++++++
+ include/acpi/processor.h        |  2 +-
+ include/linux/cpuidle.h         |  4 ++
+ 6 files changed, 59 insertions(+), 33 deletions(-)
+
+-- 
+2.25.1
 
 
