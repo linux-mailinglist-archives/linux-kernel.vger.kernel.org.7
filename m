@@ -1,125 +1,204 @@
-Return-Path: <linux-kernel+bounces-768893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E2AB26731
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:26:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D694EB26767
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249D01CC42CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:25:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 477B37A6EA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0C03009E6;
-	Thu, 14 Aug 2025 13:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF48301474;
+	Thu, 14 Aug 2025 13:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dwkmqEeu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dC/GQYvH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZzRxVVY5"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210292FE07B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3903AC22
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755177890; cv=none; b=HkgRNIUUN+FwuA/ia3KZIAt0F5OXuyBZOFw18SSVx3SUCtKy97n/dynpX+Vjeoy+xHyxZVbBYbOQ9rNhzpbYhymYRttc0lYFB1Ht4QBA502Ofgv6uypcJjOrz9HJN7DvmS06UZzBr9OYSZ4ePYPXH5NUrM3xeaxniD2KmcUuC20=
+	t=1755178125; cv=none; b=kxnn+9uoYvQYoT43qIB/+oVUi+BNzYKa4MxLGIlG3M9ZzpmccfOPTLfaKIqKbk/S/004jqfNrLxxKls6/KT4ls0S/2Kt6L6zZgrYdxVUcN1HjhR1PtemcHZghrOrox+jJSPWz1NsyeoxooCrkZMJ4hBBwEO0JvAlMH0r3y1i5nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755177890; c=relaxed/simple;
-	bh=P9A9uYDpB5v7dcNyjAnX+vyoi4yhEaRpvaOKne6e/Tk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gnpHGGPSbu8aqbtvVRNI3A84FoWCCr6vkCCCryIiqbCJYsXcTe9voQpLaB3rXBgRy+evXlKrGmALTYjvwBzEwvg44UhP3VMpBIG8Fb3cgXKH7a/08B0luMrlJMurikWWf+FIyqVjPnPcJznzEGOgEN0GdY9KnpilBHH/WiiYeRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dwkmqEeu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dC/GQYvH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1755177883;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=npD+lzjG4bTzN9c7tET1zW6okR7Ccty4vJT2zShelPE=;
-	b=dwkmqEeunRQna5yQHtdYZnaXo69rs/VZwcCYcCDHVLjIrjYAUHt/3vD2mikgwHVoU8VV+A
-	qJ4dCIawfeHuaUmmQj+0NDioHOv6SUshP+KgEwWojzF9P5pGE7pM45m8rK2IyuyTWVxDkr
-	ztyIURdlSLLdR5tQyclByAyelblGFkuvWFgTvIlZZi1UE15ohAalwyGTl6M9oro2TgTUnK
-	G3ZZmBIAMUQhXAsobwkb1c5e9IUj2eHVmMeBXTl0XwEqeRQs2cVr8bpz62wUznSxEW0vWP
-	vofVLtKIeRrilbAnv4bkj5kFGesFOumBv+Jy6quzYqfU9qkoA/r1tmUZhR0BQg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1755177883;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=npD+lzjG4bTzN9c7tET1zW6okR7Ccty4vJT2zShelPE=;
-	b=dC/GQYvHR4A6IafVw88aMy/AY2Z/jl4LdppqpAtHmpUldUqmHrA/LkB2dn6+QF9tTV+Bej
-	kGSJqMsIwxl7xVBQ==
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson
- <mjeanson@efficios.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Wei Liu <wei.liu@kernel.org>, Jens
- Axboe <axboe@kernel.dk>
-Subject: Re: [patch 10/11] rseq: Skip fixup when returning from a syscall
-In-Reply-To: <20250814085426.GS4067720@noisy.programming.kicks-ass.net>
-References: <20250813155941.014821755@linutronix.de>
- <20250813162824.420583910@linutronix.de>
- <20250814085426.GS4067720@noisy.programming.kicks-ass.net>
-Date: Thu, 14 Aug 2025 15:24:41 +0200
-Message-ID: <874iua6nom.ffs@tglx>
+	s=arc-20240116; t=1755178125; c=relaxed/simple;
+	bh=6PnAZe4A85kl6H3wMAfpDBn82Vzw+tysBiyt8VAF8vg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=LesPOfABuVsAUBCdDnaexKxZhnMjW9yej0zc0JRm8ydjwYc8pvWuMl7JefaCPG+1MsxqsYFlHtcDy8M0KMDjow1I8lbzJfn95cC+AfAhL+CIq5G7SCv5+2hOXM6bqyj/3G8hfQ7nzcZTPiksksyPKW/iydicYbmgdfOvFlf0JxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZzRxVVY5; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250814132839epoutp018bb5fead09cf53f05369c4b718b34cd5~bpTNAKJEM2432024320epoutp01V
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:28:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250814132839epoutp018bb5fead09cf53f05369c4b718b34cd5~bpTNAKJEM2432024320epoutp01V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755178119;
+	bh=L3ufGPnyrW0N3UVpr3/riCJH1PQGRtTjLIlg9Lbrstg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=ZzRxVVY5/wPdoVLxiMHEU5kpHumoK0S66oxLoNIMT+d4vhRsTLFh2Z+Ce+MWHDkOG
+	 LfhHE3VzzpQXqt+UWdVLNcSatvUVQVOcNZ4Qp7RPX1fWDait/49tMsZ/J7ivfIBZFf
+	 UNYY6UXvJ8rL0Fkt/Zonw5Ue59gdHqCKjTkPjq/I=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250814132838epcas5p3c3693b0f5672407d67efe160b31fcc0c~bpTMXiWWT1937819378epcas5p3c;
+	Thu, 14 Aug 2025 13:28:38 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.92]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4c2mKK6nlKz6B9m7; Thu, 14 Aug
+	2025 13:28:37 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250814132606epcas5p1cdf8e1a97f5abe9d71dcd1b425a07648~bpQ_QWk6L2554225542epcas5p1n;
+	Thu, 14 Aug 2025 13:26:06 +0000 (GMT)
+Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250814132602epsmtip1c22abee846ffe43383ffacb28125aafe~bpQ7V3wRg3173831738epsmtip1Y;
+	Thu, 14 Aug 2025 13:26:02 +0000 (GMT)
+From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
+To: "'Vinod Koul'" <vkoul@kernel.org>
+Cc: <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
+	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
+	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
+	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
+	<s.nawrocki@samsung.com>, <linux-phy@lists.infradead.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>,
+	<rosa.pila@samsung.com>, <dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
+	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
+In-Reply-To: <aJtMdHcidETZyiIp@vaman>
+Subject: RE: [PATCH v5 2/6] phy: exynos5-usbdrd: support HS phy for
+ ExynosAutov920
+Date: Thu, 14 Aug 2025 18:56:01 +0530
+Message-ID: <02f101dc0d1e$fd018ef0$f704acd0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ+ZgWj3OwstM5ZbwFL0KmcSzrOlQIGOcp3ARbD4UABdmTpTbL41iug
+Content-Language: en-in
+X-CMS-MailID: 20250814132606epcas5p1cdf8e1a97f5abe9d71dcd1b425a07648
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250805114310epcas5p459aa232884d22501f5fefe42f239fecc
+References: <20250805115216.3798121-1-pritam.sutar@samsung.com>
+	<CGME20250805114310epcas5p459aa232884d22501f5fefe42f239fecc@epcas5p4.samsung.com>
+	<20250805115216.3798121-3-pritam.sutar@samsung.com> <aJtMdHcidETZyiIp@vaman>
 
-On Thu, Aug 14 2025 at 10:54, Peter Zijlstra wrote:
-> On Wed, Aug 13, 2025 at 06:29:37PM +0200, Thomas Gleixner wrote:
->
->> --- a/kernel/rseq.c
->> +++ b/kernel/rseq.c
->> @@ -408,6 +408,22 @@ static int rseq_ip_fixup(struct pt_regs
->>  	return 0;
->>  }
->>  
->> +static inline bool rseq_ignore_event(bool from_irq, bool ksig)
->> +{
->> +	/*
->> +	 * On architectures which do not select_GENERIC_ENTRY
->> +	 * @from_irq is not usable.
->> +	 */
->> +	if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || !IS_ENABLED(CONFIG_GENERIC_ENTRY))
->> +		return false;
->> +
->> +	/*
->> +	 * Avoid the heavy lifting when this is a return from syscall,
->> +	 * i.e. not from interrupt and not from signal delivery.
->> +	 */
->> +	return !from_irq && !ksig;
->> +}
->> +
->>  /*
->>   * This resume handler must always be executed between any of:
->>   * - preemption,
->
->> @@ -467,6 +484,9 @@ void __rseq_handle_notify_resume(struct
->>  			t->rseq_event_pending = false;
->>  		}
->>  
->> +		if (rseq_ignore_event(from_irq, !!ksig))
->> +			event = false;
->> +
->>  		if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event) {
->>  			ret = rseq_ip_fixup(regs, event);
->>  			if (unlikely(ret < 0))
->> 
->
-> You now have a double check for CONFIG_DEBUG_RSEQ.
->
-> Since the value of @event is immaterial when DEBUG_RSEQ, might as well
-> remove it from rseq_ignore_event(), right?
+Hi Vinod, 
 
-Not really. debug wants the event preserved even if it's !from_irq
+> -----Original Message-----
+> From: Vinod Koul <vkoul@kernel.org>
+> Sent: 12 August 2025 07:45 PM
+> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> Cc: kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
+> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
+> peter.griffin@linaro.org; kauschluss@disroot.org;
+> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
+> m.szyprowski@samsung.com; s.nawrocki@samsung.com; linux-
+> phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> samsung-soc@vger.kernel.org; rosa.pila@samsung.com;
+> dev.tailor@samsung.com; faraz.ata@samsung.com;
+> muhammed.ali@samsung.com; selvarasu.g@samsung.com
+> Subject: Re: [PATCH v5 2/6] phy: exynos5-usbdrd: support HS phy for
+> ExynosAutov920
+> 
+> On 05-08-25, 17:22, Pritam Manohar Sutar wrote:
+> > Enable UTMI+ phy support for this SoC which is very similar to what
+> > the existing Exynos850 supports.
+> >
+> > Add required change in phy driver to support HS phy for this SoC.
+> >
+> > Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+> > ---
+> >  drivers/phy/samsung/phy-exynos5-usbdrd.c    | 123
+> ++++++++++++++++++++
+> >  include/linux/soc/samsung/exynos-regs-pmu.h |   2 +
+> >  2 files changed, 125 insertions(+)
+> >
+> > diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> > b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> > index dd660ebe8045..5400dd23e500 100644
+> > --- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> > +++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
+> > @@ -2054,6 +2054,126 @@ static const struct
+> exynos5_usbdrd_phy_drvdata exynos990_usbdrd_phy = {
+> >  	.n_regulators		= ARRAY_SIZE(exynos5_regulator_names),
+> >  };
+> >
+> > +static int exynosautov920_usbdrd_phy_init(struct phy *phy) {
+> > +	struct phy_usb_instance *inst = phy_get_drvdata(phy);
+> > +	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+> > +	int ret;
+> > +
+> > +	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks,
+> phy_drd->clks);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/* Bypass PHY isol */
+> > +	inst->phy_cfg->phy_isol(inst, false);
+> > +
+> > +	/* UTMI or PIPE3 specific init */
+> > +	inst->phy_cfg->phy_init(phy_drd);
+> > +
+> > +	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks,
+> > +phy_drd->clks);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int exynosautov920_usbdrd_phy_exit(struct phy *phy) {
+> > +	struct phy_usb_instance *inst = phy_get_drvdata(phy);
+> > +	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+> > +	int ret = 0;
+> 
+> Superfluous init..
+> 
+> > +
+> > +	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks,
+> phy_drd->clks);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	exynos850_usbdrd_phy_exit(phy);
+> > +
+> > +	/* enable PHY isol */
+> > +	inst->phy_cfg->phy_isol(inst, true);
+> > +
+> > +	clk_bulk_disable_unprepare(phy_drd->drv_data->n_clks,
+> > +phy_drd->clks);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int exynosautov920_usbdrd_phy_power_on(struct phy *phy) {
+> > +	int ret;
+> > +	struct phy_usb_instance *inst = phy_get_drvdata(phy);
+> > +	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
+> 
+> Reverse chrsitmas tree pls
+> 
+> --
+> ~Vinod
 
-Yes, it's not pretty, but I wanted to preserve the debug behaviour as
-much as it goes.
+Will address these comments in next version of the patch-set (v6).
+
+Thank you.
+
+Regards,
+Pritam
+
+
 
