@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-769686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E270B271E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:45:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284FDB271FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 886751CE13C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250A0AA19EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EA2292B47;
-	Thu, 14 Aug 2025 22:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74473298CA1;
+	Thu, 14 Aug 2025 22:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZMRFQiWc"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TdFUoGLp"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E909C283CBF;
-	Thu, 14 Aug 2025 22:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431DD29344F;
+	Thu, 14 Aug 2025 22:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755211252; cv=none; b=tXxzLK0NTovToBVuWhBjoy2yc1jdao9BGyUQ3yhnAdEyrnQ3+JSVpwcUxLdYi9Lv0hlhCZXhl6Jx1RBJlrWtQUqfImecaLjsd44P+dBd9F8UbFg/68GtdTrt0W9HwHBxaY6I4FV+a3rxQd4Phc2NmrJr9eJWY2ImdZ6IPO+hV2o=
+	t=1755211256; cv=none; b=uhzrDjfpvdaazRbOp0ndl0+pNLeF5wEyIF5EQXY/G5UkVeBMhzF1h0mPu5PtW+c+4lBpGXhLuvSFf5LIw5aq13Uasp7LVhutS+FmERjMp+Zjyafkd8jEeNR98lOLCt4wMosCbaEQPUsxx9udsvc0d5Hy1EKjOmkSKlccXEBl6zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755211252; c=relaxed/simple;
-	bh=SOLigrP0Kvr4B06rYcn087ZUWQV5INJxCj8qe6tCy5I=;
+	s=arc-20240116; t=1755211256; c=relaxed/simple;
+	bh=UXHllwbbd6BIOwvFb2ctQbB8/5a5SP2AXF6Sfzot2fM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rePqYtHe5nPtaG/f31AqWluGTQ7OntOEIohy5J/rqrTiDM7yfbtpDAn0RGi43oZLj+MrvASA+SkrfsHGgq4hRT+msZd5Ffes7AWNIwjWSkrwT9lusGGm9tXGFanHqHG/kXOAreUG4EGrIDo3IQxE2k6tbpTEJQHKz4JM3PsT/vM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZMRFQiWc; arc=none smtp.client-ip=198.47.23.234
+	 MIME-Version:Content-Type; b=Va3SqlRSfHSxom1OKUCSy4jw30WT2g53R6VApI67FabnyKx+Jm3V7pGR7jf57aYKF/1L60LzpeukEPqfMwyt5izdflA5pSIUqFLLUPqG2cO+lm9/HptezRg9l1KtJU28F502E2HfENnG2H4QcxS/fdwqRGQmGRuK4p9n2MU4vgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TdFUoGLp; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EMekox2027539;
-	Thu, 14 Aug 2025 17:40:46 -0500
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EMepYa2398917;
+	Thu, 14 Aug 2025 17:40:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755211246;
-	bh=K+KkPvt+5YqitIjyXKFONKPwzzQwwlSib9d9RCFbJ+k=;
+	s=ti-com-17Q1; t=1755211251;
+	bh=j82CinVRxafDu5LuPyRRUIOs60GOOCYs++avFWSLYlo=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ZMRFQiWchUKprKIJWhOsxxPFgQ1LB5422zf7wlnpAz9LQgyN7azP1HlGhpBBVUjLl
-	 r6oWvyPP8poWDkxI4UMI88twpAShnPfF0O6tKxhdiU1aWBkc8sVDA89M6SIS8vbbM5
-	 1Al/IVXdEbhH5VlQRzGOzxRZCCzXFmgVJQm59zzY=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EMekO32016350
+	b=TdFUoGLpVNV9CHXyMht3OrJNmqps0+0hZWcPv4r8WtIzxk+33tnkvTGcISZFOlpl7
+	 A1s3cZ1QSB2M6Ur5bk2wLtjkBnH5y0b4pcpQek8GfPUPJTW9pSVsOJjWbyCtxGfzez
+	 Q1I/dczRdswqUU8SOXvzvWevUVuYGXpLlAl4vCQ8=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EMepg11462182
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 17:40:46 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 14 Aug 2025 17:40:51 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 17:40:46 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2025 17:40:50 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 17:40:46 -0500
+ Frontend Transport; Thu, 14 Aug 2025 17:40:50 -0500
 Received: from uda0510294.dhcp.ti.com (uda0510294.dhcp.ti.com [172.24.234.212])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EMcw4w096792;
-	Thu, 14 Aug 2025 17:40:42 -0500
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EMcw4x096792;
+	Thu, 14 Aug 2025 17:40:46 -0500
 From: Beleswar Padhi <b-padhi@ti.com>
 To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
         <krzk+dt@kernel.org>, <conor+dt@kernel.org>
 CC: <afd@ti.com>, <u-kumar1@ti.com>, <hnagalla@ti.com>, <jm@ti.com>,
         <b-padhi@ti.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 23/33] arm64: dts: ti: k3-am62a: Enable Mailbox nodes at the board level
-Date: Fri, 15 Aug 2025 04:08:29 +0530
-Message-ID: <20250814223839.3256046-24-b-padhi@ti.com>
+Subject: [PATCH 24/33] arm64: dts: ti: k3-am62a: Enable remote processors at board level
+Date: Fri, 15 Aug 2025 04:08:30 +0530
+Message-ID: <20250814223839.3256046-25-b-padhi@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250814223839.3256046-1-b-padhi@ti.com>
 References: <20250814223839.3256046-1-b-padhi@ti.com>
@@ -77,58 +77,96 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Mailbox nodes defined in the top-level AM62A SoC dtsi files are
-incomplete and may not be functional unless they are extended with a
-chosen interrupt and connection to a remote processor.
+Remote Processors defined in top-level AM62A SoC dtsi files are
+incomplete without the memory carveouts and mailbox assignments which
+are only known at board integration level.
 
-As the remote processors depend on memory nodes which are only known at
-the board integration level, these nodes should only be enabled when
-provided with the above information.
-
-Disable the Mailbox nodes in the dtsi files and only enable the ones
-that are actually used on a given board.
+Therefore, disable the remote processors at SoC level and enable them at
+board level where above information is available.
 
 Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62a-main.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi         | 1 +
+ arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi | 2 ++
+ arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi      | 1 +
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts          | 2 ++
+ arch/arm64/boot/dts/ti/k3-am62d2-evm.dts         | 1 +
+ 5 files changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-index 9cad79d7bbc1..d5f018768981 100644
---- a/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62a-main.dtsi
-@@ -804,6 +804,7 @@ mailbox0_cluster0: mailbox@29000000 {
- 		#mbox-cells = <1>;
- 		ti,mbox-num-users = <4>;
- 		ti,mbox-num-fifos = <16>;
-+		status = "disabled";
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
+index ee961ced7208..d22caa7c346b 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi
+@@ -197,6 +197,7 @@ mcu_r5fss0_core0: r5f@79000000 {
+ 			ti,sci = <&dmsc>;
+ 			ti,sci-dev-id = <9>;
+ 			ti,sci-proc-ids = <0x03 0xff>;
++			status = "disabled";
+ 		};
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
+index 57a499759910..3108e9b0c804 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-phycore-som.dtsi
+@@ -406,6 +406,7 @@ &mcu_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster2 &mbox_mcu_r5_0>;
+ 	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+ 			<&mcu_r5fss0_core0_memory_region>;
++	status = "okay";
+ };
+ 
+ &ospi0 {
+@@ -444,4 +445,5 @@ &wkup_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster0  &mbox_r5_0>;
+ 	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+ 			<&wkup_r5fss0_core0_memory_region>;
++	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+index 9ef1c829a9df..23877dadc98d 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62a-wakeup.dtsi
+@@ -127,6 +127,7 @@ wkup_r5fss0_core0: r5f@78000000 {
+ 			ti,sci = <&dmsc>;
+ 			ti,sci-dev-id = <121>;
+ 			ti,sci-proc-ids = <0x01 0xff>;
++			status = "disabled";
+ 		};
  	};
  
- 	mailbox0_cluster1: mailbox@29010000 {
-@@ -813,6 +814,7 @@ mailbox0_cluster1: mailbox@29010000 {
- 		#mbox-cells = <1>;
- 		ti,mbox-num-users = <4>;
- 		ti,mbox-num-fifos = <16>;
-+		status = "disabled";
- 	};
+diff --git a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+index 3f4c6fe2999b..7ebcfe8edfe1 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62a7-sk.dts
+@@ -870,6 +870,7 @@ &wkup_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster0>, <&mbox_r5_0>;
+ 	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+ 			<&wkup_r5fss0_core0_memory_region>;
++	status = "okay";
+ };
  
- 	mailbox0_cluster2: mailbox@29020000 {
-@@ -822,6 +824,7 @@ mailbox0_cluster2: mailbox@29020000 {
- 		#mbox-cells = <1>;
- 		ti,mbox-num-users = <4>;
- 		ti,mbox-num-fifos = <16>;
-+		status = "disabled";
- 	};
+ &mcu_r5fss0 {
+@@ -880,6 +881,7 @@ &mcu_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster2>, <&mbox_mcu_r5_0>;
+ 	memory-region = <&mcu_r5fss0_core0_dma_memory_region>,
+ 			<&mcu_r5fss0_core0_memory_region>;
++	status = "okay";
+ };
  
- 	mailbox0_cluster3: mailbox@29030000 {
-@@ -831,6 +834,7 @@ mailbox0_cluster3: mailbox@29030000 {
- 		#mbox-cells = <1>;
- 		ti,mbox-num-users = <4>;
- 		ti,mbox-num-fifos = <16>;
-+		status = "disabled";
- 	};
+ &c7x_0 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+index dbee37f38b7b..41860ac42f3c 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62d2-evm.dts
+@@ -586,6 +586,7 @@ &wkup_r5fss0_core0 {
+ 	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
+ 	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
+ 			<&wkup_r5fss0_core0_memory_region>;
++	status = "okay";
+ 	bootph-pre-ram;
+ };
  
- 	main_mcan0: can@20701000 {
 -- 
 2.34.1
 
