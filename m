@@ -1,792 +1,419 @@
-Return-Path: <linux-kernel+bounces-768784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE34B2656E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:33:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D48FB26571
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F06D31BC1FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:31:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10EF65A0E4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F3D2FC87F;
-	Thu, 14 Aug 2025 12:31:06 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF062E7BBC;
+	Thu, 14 Aug 2025 12:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="4Bd/7ZVz"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2053.outbound.protection.outlook.com [40.107.223.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2F12FCC1E;
-	Thu, 14 Aug 2025 12:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755174664; cv=none; b=dtBsLgHc0i+AUGu9dxk8Yy4coBAU7MutNN1OQKk9bQ67V2xvZ9Y6VLv7jaE3AZrDrVRVi8FRJ1PAfq4iFj+BVGZlPjeSlBqvYxKOtzD/arXBD1EZf5+a/OSjRduR+3tyP5o0k0KOfWRtEJoSLbreBg9uZch1Epbm95lrB/i+ilE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755174664; c=relaxed/simple;
-	bh=3UxixzAJHkdA3Gz3a0DeucOy5hruY/lhZ5/3xBgCvXU=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=l9Eqw3TMRoam9RPsK5k2S2y2aj69sZNNjQdnQd8yimvKvwvHVaJMCxIzdAeLvl0FLrpkB2gDQzU6jf/hVWmDA8pTNxkIN15THZHmInevi+ThgeAD5qNDLMUkY9IQsvMKfFEv2C65s/Omiib4OcisMx8nn3p/q4NxoZtat8bCXFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4c2l2k6bVWz7rZsJ;
-	Thu, 14 Aug 2025 20:30:54 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 57ECUnqH021621;
-	Thu, 14 Aug 2025 20:30:50 +0800 (+08)
-	(envelope-from wang.yaxin@zte.com.cn)
-Received: from mapi (xaxapp05[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 14 Aug 2025 20:30:52 +0800 (CST)
-Date: Thu, 14 Aug 2025 20:30:52 +0800 (CST)
-X-Zmail-TransId: 2afc689dd6fc482-57890
-X-Mailer: Zmail v1.0
-Message-ID: <20250814203052841vWATRXU4pnku526u5TwPn@zte.com.cn>
-In-Reply-To: <20250814201129510XielEwRpr4QXPx_XBtkhv@zte.com.cn>
-References: 20250814201129510XielEwRpr4QXPx_XBtkhv@zte.com.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E5772635
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755174786; cv=fail; b=hLRmQZSos+swXH9a2FdkG8rc0dEDACL4nRiqJ5man1bMZMW5xelDAZ8u4sIAXEKWr5klh8dcjGyYOUvnmh6Z9kS+VUkcfxF8nEr8ehjiuV8QAjsQf3N+UaMr15oPuVwj3UeBVbBXG50Z8U2mf8CtVfdMk8nsrqoxC6HLRjlUD2k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755174786; c=relaxed/simple;
+	bh=QWF/Z8YjirFFkrtNsw4CLtD2tqN/LS8gclPoamvqWks=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QIjc2wuIvL5NcNzZykT4WWxW6fx2z+pbZQ6y8DHvDw4bUcn/1P3xMDrBBL0nivxelUkhxcdfaA7R+hmavvtoHu39YxjzdmNN6bEg77pc8fJbfK9lTLQK6rIn/Ltb8MIX3wc9rG7+2KA4rLj1TUlvAR4Mk7l/VDCexQ2a5HH8/nA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=4Bd/7ZVz; arc=fail smtp.client-ip=40.107.223.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=APMvVv62XF6Z2iVnK/wkiUzfn21ZWblB+hmMYmAQEa/4NsSPOWfg153bg4hS99rskZfK7H+KtA5VkV/kcMG8cVA2Y9neDE6aoPU0GHN2mtk9mmuYC8pa3fDKExWx7h5RBi1fcigaS1I9u9QELk3nx4ZFbdi1PyR3+eS3CK7NEkD6mN9uiBPcxi6LOCkV3Z0EqaBRbqF2kXYFynwJOBqPbtB4/V3sPoqvifaCga1pFqD2qtI0tin7MbhZuhUEkPHN2kT02N7xN0oaAYMPtDLYOIPHol/vXWjtAzR6Tqc4m+loOsS88t4UhZwA7leEzloUDKiDbOaiU2skWrcJ5uJ1dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CU+lfAJF7VMtJa57232jC2MWKLha8wutzi4etVY2mMI=;
+ b=Ml44ATKAhTvoYr6uZddK9BFxuWvNS+weCjB2HgrEuekIbL7It9N6D8KEQmBeJPvuIKg1ky01H5O434GqFytgqIQWAQQs45ZNl0pYuO5+5jA15UM32Devh5LQN0WweBBZIWQ2tTNqHudNlbK/mF5eMfY8q9f2dk4fG/QphLC57MlbHNmzfa5fSRoHt/GSAxm354sPofhp1ppViqEDXGHydCOQ+wB0Oid+ZMTkLRO129XJBowAGboIH5/9E7yv3KS/7V9N3GPzLCs8ElBsMepjv7dLAuccicnWQkXJ4FW1KPOL9h3XRJxvi7uPeoVrk0k6Ygd8RirPJavzSzeDri+Amg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CU+lfAJF7VMtJa57232jC2MWKLha8wutzi4etVY2mMI=;
+ b=4Bd/7ZVzHGfvDkiSoRhVCR7bsWh7RXPZrWmgtZLiyCJuvG2WyxkWolWlOP2scjowa8W5Ck9P97v9A2tQDUsu90frRXz/ak2t+GQQFkm8u+2tugQdrdvlAtjMpuzIL1Cg6jYfVTCWHTsSJ3xCQAtcfp3TSupMvh1mYxS+tpov9dA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by IA1PR12MB7688.namprd12.prod.outlook.com (2603:10b6:208:420::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
+ 2025 12:33:01 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
+ 12:33:01 +0000
+Message-ID: <615089b1-7a47-4262-b6c2-a90cf7812d0f@amd.com>
+Date: Thu, 14 Aug 2025 14:32:56 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/radeon: Move the memset() function call after the
+ return statement
+To: Tvrtko Ursulin <tursulin@ursulin.net>,
+ Liao Yuanhong <liaoyuanhong@vivo.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ "open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250814093957.137397-1-liaoyuanhong@vivo.com>
+ <d77e242e-af6c-4693-b207-576b823a0c0f@amd.com>
+ <14ed323d-de4c-4f98-a16c-8bdb1b92c34d@ursulin.net>
+ <6ef5e1e8-3868-46c0-a31b-505f8a91d37a@vivo.com>
+ <f1b5499f-1c7c-4a40-b986-74a014897148@ursulin.net>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <f1b5499f-1c7c-4a40-b986-74a014897148@ursulin.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BL1PR13CA0127.namprd13.prod.outlook.com
+ (2603:10b6:208:2bb::12) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <wang.yaxin@zte.com.cn>
-To: <wang.yaxin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <fan.yu9@zte.com.cn>,
-        <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIDQvNCB2Ml0gRG9jcy96aF9DTjogVHJhbnNsYXRlIHRpbWVzdGFtcGluZy5yc3QgdG8gU2ltcGxpZmllZCBDaGluZXNl?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 57ECUnqH021621
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Thu, 14 Aug 2025 20:30:54 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 689DD6FE.001/4c2l2k6bVWz7rZsJ
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|IA1PR12MB7688:EE_
+X-MS-Office365-Filtering-Correlation-Id: 452f7ca2-257e-48de-d36c-08dddb2eb538
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cFkvcXc4SlJNbFZmd0tjYk9RSnE4TWFHYVNVTURBVGRRNVNrM3Z5QjR0N09F?=
+ =?utf-8?B?Z0cyYzMyUnIraFFPWW5wSldpOTJuVzlQSlQwa1N4RGpjViszOGNudlYrbzVa?=
+ =?utf-8?B?c0sxN1NNTU55UldsYktTcVFRTUgzUEJvWVVWNWdGQzVldlJXMVpESHBTVlM0?=
+ =?utf-8?B?STJkNTJvcHpqTE4ybk05V20rYzNsM1VIVE9YUXc5NGtlUVBRajRkUW1ENVpG?=
+ =?utf-8?B?cWRoSi9Xc3pmN3l6b1hXZHh6cFZYa1lJQjNBREZsRG9TNExXTDdzc24yZUJB?=
+ =?utf-8?B?MjZzamFJV2hDbHRXdy96SzFuQWlnWTIxdmkvbEtweGJ4TlNSVlZxYjIvNVhq?=
+ =?utf-8?B?SXlsUGVEdWxFcU5RVFJDa1U1MkUrSWZJZkd5dlU5Y1J2TjQ4S2Eyc255bDNa?=
+ =?utf-8?B?N3k3MW9OVnF1MXRPbWVzclNHbHRzRE5xT3BURE5KK1BCOUVzL25Qc2h6UUpt?=
+ =?utf-8?B?WE9mRXZwN1QvZFhid0d4bXYrL0pwL0pSVU5kUnJPeVBQMVpnWUpCZEVpMGxq?=
+ =?utf-8?B?RHRoY1FRMkdYSkxUVHQ3T0hKc28zRjJOY0FPSFZ6bTlDclN6T29NZTBpQjFk?=
+ =?utf-8?B?ckZuazhJVDNiZURYbnJBSWE0NllvM1VYTk1rb09VdktjOHhEN2xXK2czUDZL?=
+ =?utf-8?B?ek40THJoNXg2MEZmQ253SzVsSUlXa2hTc3VXYm9LTHdmclF1VXRnVTRvMGFu?=
+ =?utf-8?B?Rm1GYmdHYkxaL1kwSmdRVnZiRVpOVFdjM2lzMi8xM1UxQUgxUWFwZDdxbG9D?=
+ =?utf-8?B?dDdCV3Q4Y2hIZVc3a3RZa0twRitkYXIxMVFiSG9tYi9HQkFxVWF5aU9wdGIz?=
+ =?utf-8?B?UVZzelZlQXFBQ2FaR2l5d24zM2lNZ0FxbHRDSTY4OEVSY20zSUpHSUVuM2xm?=
+ =?utf-8?B?UWtzTnpsYktDYmpJeHpSS2ROVG9SOTRRUEttamlBYmZPY1d4WjhOTHBwRFRI?=
+ =?utf-8?B?UDQxanNPaW1ITkF2V2FVMi9BWHhVQ0crMFhFWXRKZG95RVRscis0QWhEeVds?=
+ =?utf-8?B?L0hjKzZTUkJpK3ZVYXBDbm10dWhLbHpRVmRBQnlqOEg3ajZNOWVLRmJsSUYx?=
+ =?utf-8?B?SGJtbHZuU29JaU0xRlBNUjA1dGhBelQ5MHNTSE9MOERqRlpGclQ5NENLSjZJ?=
+ =?utf-8?B?MEJyN1BRUjRLN3hpVWNlcldrQzZTRFVtaXk4YU1CNzVzSW0zU3E3cmtNY2hC?=
+ =?utf-8?B?UjdHUC96d3pvaHZlWk8wYUttSzN4QW1HVVpUYm15ZmRNZUlIblR6L3lLcUpt?=
+ =?utf-8?B?VXQrWG5oM1JCc3RYRG1HeEpkaDIrZy96SzB0UHYwQUhmRWhsZUFZekNudEJM?=
+ =?utf-8?B?Ry9WWWdIMFlxUHBhbTRBcmNRdk9XbmJnNloxQUcwaWg0TE5MRUlIZU5KRGlS?=
+ =?utf-8?B?bzZnbzlMcGpFMkcyaThNcDJuN0xLc1dPc3FZR2ZTTndpTG1pQWZ1L2d1K2ZY?=
+ =?utf-8?B?NDh1U2ttem1ZSFViV3llSkNUNjhuUEtUWjdGMWRYZXRkYldITnVkK2JwWnMv?=
+ =?utf-8?B?NXJUYWJUVm16anN5ZDkxR2dNZTdDcDF2b0VMcnpsZW0vZmdVaW1ud1ZZeVMr?=
+ =?utf-8?B?ckRGanRqVjMrTit6NEYzWHhndlNUL29ZbHh3QzVZbzhobmsvMG1IOE1sYW84?=
+ =?utf-8?B?UjhBRnU0dldLcE5YZUpXVTdMd2M4eURaZDdMdjZUanJCMXFONlg4ejFZT0Vt?=
+ =?utf-8?B?dUxySnF2QU5nMVlDUk1MSDdJaFF3M1F4eElUa0RJRTdzWVp4MU1FblFFMFZT?=
+ =?utf-8?B?WVV6a3dnOFBaTVY2T285REFIKzFlWkl2RklGbE1vNm0rR1JWaDNVM0J2cmVN?=
+ =?utf-8?B?VEg2Y1lXT0toK0ZyOG91SmJSdWJ1YUFnUytjOTdyK0JtaXhvZG5VRmFVS1Ex?=
+ =?utf-8?B?SVBPd0oxQVBNeHZZUEtrS2kyOWM4TGtlOWVlazZLekd5QnpDaDdFM2gvMVdN?=
+ =?utf-8?Q?3vbEwqO1gr4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bC81akxmZms2L0hZNGxoTDVtOEZ2bEpseGV4VkhyYzRDaW9QeElMaHBjVmN2?=
+ =?utf-8?B?ZlRXclAyY2JsVUN0SE5ldkZ1L1lDNytHWW9xNlNLdG5qbkVKTzBCdUR5cGFy?=
+ =?utf-8?B?TVNoK0dxeDR4Y0xpZ3p3WTlPTkhreXRhNHJxT3VKQXQvK2RGaDhmaXE1K0RT?=
+ =?utf-8?B?eFBOaFpUMC90OUNxeE9GQWtHdjkzMVlsZ2VRR3k1M2pPWTBCYXBUajRiWlNL?=
+ =?utf-8?B?UU5Pcit2Y3lLVkhXczNtMkRzVW5LTldyckdabytOMzJLTTIwUXIyS0NkeXJR?=
+ =?utf-8?B?RmdDeTM3aXNnTDNkUDdNbjR2L0tEVWxjMitDejNWc1E1THAwVHdCMEZ3aTVC?=
+ =?utf-8?B?eE1jMnk4N3RCSEZZZisvQ1VQMi9qZEZaSDFCQW9za1hjMHBvZzVXYmdPRVVy?=
+ =?utf-8?B?dnhvM0llNFhBT2orZmIreTByUGdTRzZLNkFmYzk2c3daU3lQeW9odVZJT1Zw?=
+ =?utf-8?B?ZlE1NW5TcXpuRTFNNWY0UXYxeVB0a1dWMm1IclBUQjRyU2N6cHR5VUZ0Mnpm?=
+ =?utf-8?B?akdETk44LzNyNHMxSW9XZ2FhemZ5YklVdlh4RDlYcmlFTkJ5YlFGMmNIeTVl?=
+ =?utf-8?B?UHNIM2VyWU8vdklrdkZ3cnZQeVZHV2k4V3NhQ3lmUzhuTGNWdzFORW9ZRUdV?=
+ =?utf-8?B?SUVMeTllZkpmY2dTWTJubUw0aUg4T1J3OFMwdXZVNW1ZcXAzQndGalZPdTAz?=
+ =?utf-8?B?bXc1YXN0TUFCZElPNEpDNndiaU0xWUZYZVVqb3VvTllmeUI3OE5GQUxvdFdl?=
+ =?utf-8?B?bW5HdVpvdWd3RE9RN0dwWjRPdXR0TGIxZ3BVMUtBaDFGaVJ5RUoyTCtRY2x6?=
+ =?utf-8?B?V2ovVXR5cjA4UmlkNC9CWnh4SnNCNzRlWXRwaTRwckovUmEwYWVPL1I5aHJO?=
+ =?utf-8?B?eS9ReXlibURRejlENXJaL256VUJZRXE3eWxxYzlVTVdvdDNUMmpERUNwTXNi?=
+ =?utf-8?B?VVNVYU10R2gwTkFQMGtSTkVTWk4yY2FsR2EyWW5rRjh6b0l5WTZUTHFpQU1J?=
+ =?utf-8?B?MDhxblNCZG5lcEh1MjBlOXhVaGdaaGFWdjg3QUhFT2I3OGtjOVpBcGFnNjJq?=
+ =?utf-8?B?dlpBUndSd3V1RlJzUXRyUmJ1cEUxc1hkaHhIK3RoR29Zc0pSZkM2cE9KUEVT?=
+ =?utf-8?B?d2ZvNzBoT2R4R3NyNWxCZnpvZzZTcWRwdXpmOTliMDRyM3hKakpPN3hUMkF0?=
+ =?utf-8?B?Vk1xdldhbVhiclUvSmRDMStrZzhqNFJ4OXlNSUF0L2NNOUZSRlhGTHNRQS9C?=
+ =?utf-8?B?ZVI5ZW54RGRvZFlOcWJKeFlXNkZYZWNLQUhLWXNDZGpJeWQwaUF0ajlsa0lN?=
+ =?utf-8?B?Y25iS0ZSYjlRK0tLZHZnaDBYSFpVcHJWcmtRTEViNG1yVDA1bGZ1ckt1UEls?=
+ =?utf-8?B?SnltREVPUUV0MkxwNXk2c2VGMEFreGdCYTlESUMzQ0NHSlptemlsSmRBS2lN?=
+ =?utf-8?B?WE9SQzdGMURPTHJ0WjU2YlFaOTFmWVZ0ZHFmSW5JWncwUHYwUldZQVJsV0dn?=
+ =?utf-8?B?WFpwc3V5ZDlvTTQ1QkVLdmdaVmRWR3FCMnduZkQydm9tWndzdjhjUXB0MUdn?=
+ =?utf-8?B?ZEZxOUd5V0djQkNLTmYxY21YQU9TTGNUdG5aOVpKK3dsRkNGRUx3OGRnaFB3?=
+ =?utf-8?B?R01LdmNsdS8zc3hmdWYrMGo0R2Q2ZE9jVE5jMTl6TVQzR2xvckNVVlZnUUVu?=
+ =?utf-8?B?Z3FDY05xVHZ1R202OWgyTnNLempyY1ZtU1RnL093U3N3RERTVEkra3RnaGdB?=
+ =?utf-8?B?QVp1NE1iSHUxdGRtZHBpSGNaUklSai9zQTNtck50WDNLc21Vbjdaam9venJD?=
+ =?utf-8?B?WEtxZ25mOHJnaUxobFd4Z0tnMGRHblJ5OHE4dnVCY2xUT3pXTTFxR2RjbjQ0?=
+ =?utf-8?B?M1BKTUEvSExBVGtLRmkzVGZOd2V1K1U0Y090eVNZcVkwNjViWElkT2ptWE1H?=
+ =?utf-8?B?eTZVQUVKK1l0VXhKUHo5Tzh4RFJPTkhaankzdUVrVllKWXhCRERMYm1HQ0Ny?=
+ =?utf-8?B?K1BMZmsxaWNna1VYK1BrVGlQVjcvZ2lQYmFyNE1NbGZyZGNNdG5mUnJtNG00?=
+ =?utf-8?B?a0ltcGFZUk1qQ3I1MUVqb29MZXNpYUx3SHlNbXhYSlBYZVgyaEMwSUx5OU9z?=
+ =?utf-8?Q?QUej956ABlMifHYt9Dv2WqNo+?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 452f7ca2-257e-48de-d36c-08dddb2eb538
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 12:33:01.4532
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QtvdpI8hf13dG1U0kDGfKfKp6VMW6ZlbDHZTbjxPCQtM+6aQ0wOtyqM1rvkPLM63
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7688
 
-From: Wang Yaxin <wang.yaxin@zte.com.cn>
+On 14.08.25 14:10, Tvrtko Ursulin wrote:
+> 
+> 
+> On 14/08/2025 12:56, Liao Yuanhong wrote:
+>> On 8/14/2025 7:07 PM, Tvrtko Ursulin wrote:
+>>
+>>>
+>>> On 14/08/2025 11:11, Christian König wrote:
+>>>> On 14.08.25 11:39, Liao Yuanhong wrote:
+>>>>> Adjust the position of the memset() call to avoid unnecessary invocations.
+>>>>
+>>>> Hui? That doesn't seem to make much sense to me.
+>>>>
+>>>> We memset the local variable because we need to make sure that everything (including padding bytes) is zeroed out.
+>>>>
+>>>> Even if that isn't sometimes necessary because of error handling we clearly shouldn't try to optimize this.
+>>>
+>>> To interject with a curiousity, it is even worse to move the memset away from the declaration block when the often enabled CONFIG_INIT_STACK_ALL_ZERO is on. At least when they are close compiler can figure out it only needs to memset it once. Move them further apart and sometimes memset happens twice, yay.
+>>>
+>>> Main point when CONFIG_INIT_STACK_ALL_ZERO is on, and it often is, there is no way to avoid the sometimes pointless init. I have some local branches which try to address the worst offenders but it is so much in the noise that I don't think I ever sent them out.
+>>>
+>>> Regards,
+>>>
+>>> Tvrtko
+>>>
+>> If we converts memset() to = { },can it alleviate the problem?
+> 
+> Yes, for example I have this patch:
 
-translate the "timestamping.rst" into Simplified Chinese.
 
-Update the translation through commit d5c17e36549c
-("docs: networking: timestamping: improve stacked PHC sentence")
+For those two cases it will work, but replacing memset() with {} is really dangerous.
 
-Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
-Signed-off-by: Sun yuxi <sun.yuxi@zte.com.cn>
----
- .../translations/zh_CN/networking/index.rst   |   2 +-
- .../zh_CN/networking/timestamping.rst         | 674 ++++++++++++++++++
- 2 files changed, 675 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/translations/zh_CN/networking/timestamping.rst
+memset() makes sure that all bytes are zeroed while {} leaves out padding bytes the compiler might have inserted.
 
-diff --git a/Documentation/translations/zh_CN/networking/index.rst b/Documentation/translations/zh_CN/networking/index.rst
-index e0494346fa8c..9e2520a5e35e 100644
---- a/Documentation/translations/zh_CN/networking/index.rst
-+++ b/Documentation/translations/zh_CN/networking/index.rst
-@@ -30,6 +30,7 @@
-    mptcp-sysctl
-    skbuff
-    generic-hdlc
-+   timestamping
+We already had tons of problems with that randing from unspace memcmp() and finger printing results (CRC) for structures all the way to information leaks in UAPI.
 
- Todolist:
+And yeah, I'm still massively in favour to fix compilers / C spec to make {} initialize all bytes.
 
-@@ -138,7 +139,6 @@ Todolist:
- *   tcp_ao
- *   tcp-thin
- *   team
--*   timestamping
- *   tipc
- *   tproxy
- *   tuntap
-diff --git a/Documentation/translations/zh_CN/networking/timestamping.rst b/Documentation/translations/zh_CN/networking/timestamping.rst
-new file mode 100644
-index 000000000000..a9e9e752b7c0
---- /dev/null
-+++ b/Documentation/translations/zh_CN/networking/timestamping.rst
-@@ -0,0 +1,674 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/networking/timestamping.rst
-+
-+:翻译:
-+
-+   王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
-+
-+======
-+时间戳
-+======
-+
-+
-+1. 控制接口
-+==========
-+
-+接收网络数据包时间戳的接口包括：
-+
-+SO_TIMESTAMP
-+  为每个传入数据包生成（不一定是单调的）系统时间时间戳。通过 recvmsg()
-+  在控制消息中以微秒分辨率报告时间戳。
-+  SO_TIMESTAMP 根据架构类型和 libc 的 lib 中的 time_t 表示方式定义为
-+  SO_TIMESTAMP_NEW 或 SO_TIMESTAMP_OLD。
-+  SO_TIMESTAMP_OLD 和 SO_TIMESTAMP_NEW 的控制消息格式分别为
-+  struct __kernel_old_timeval 和 struct __kernel_sock_timeval。
-+
-+SO_TIMESTAMPNS
-+  与 SO_TIMESTAMP 相同的时间戳机制，但以 struct timespec 格式报告时间戳，
-+  纳秒分辨率。
-+  SO_TIMESTAMPNS 根据架构类型和 libc 的 time_t 表示方式定义为
-+  SO_TIMESTAMPNS_NEW 或 SO_TIMESTAMPNS_OLD。
-+  控制消息格式对于 SO_TIMESTAMPNS_OLD 为 struct timespec，
-+  对于 SO_TIMESTAMPNS_NEW 为 struct __kernel_timespec。
-+
-+IP_MULTICAST_LOOP + SO_TIMESTAMP[NS]
-+  仅用于多播：通过读取回环数据包接收时间戳，获得近似的传输时间戳。
-+
-+SO_TIMESTAMPING
-+  在接收、传输或两者时生成时间戳。支持多个时间戳源，包括硬件。
-+  支持为流套接字生成时间戳。
-+
-+
-+1.1 SO_TIMESTAMP（也包括 SO_TIMESTAMP_OLD 和 SO_TIMESTAMP_NEW）
-+-------------------------------------------------------------
-+
-+此套接字选项在接收路径上启用数据报的时间戳。由于目标套接字（如果有）
-+在网络栈早期未知，因此必须为所有数据包启用此功能。所有早期接收的时间
-+戳选项也是如此。
-+
-+有关接口详细信息，请参阅 `man 7 socket`。
-+
-+始终使用 SO_TIMESTAMP_NEW 时间戳以获得 struct __kernel_sock_timeval
-+格式的时间戳。
-+
-+如果时间在 2038 年后，SO_TIMESTAMP_OLD 在 32 位机器上将返回错误的时间戳。
-+
-+1.2 SO_TIMESTAMPNS（也包括 SO_TIMESTAMPNS_OLD 和 SO_TIMESTAMPNS_NEW）
-+-------------------------------------------------------------------
-+
-+此选项与 SO_TIMESTAMP 相同，但返回数据类型有所不同。其 struct timespec
-+能达到比 SO_TIMESTAMP 的 timeval（毫秒）更高的分辨率（纳秒）时间戳。
-+
-+始终使用 SO_TIMESTAMPNS_NEW 时间戳获得 struct __kernel_timespec 格式
-+的时间戳。
-+
-+如果时间在 2038 年后，SO_TIMESTAMPNS_OLD 在 32 位机器上将返回错误的时间戳。
-+
-+1.3 SO_TIMESTAMPING（也包括 SO_TIMESTAMPING_OLD 和 SO_TIMESTAMPING_NEW）
-+----------------------------------------------------------------------
-+
-+支持多种类型的时间戳请求。因此，此套接字选项接受标志位图，而不是布尔值。在::
-+
-+  err = setsockopt(fd, SOL_SOCKET, SO_TIMESTAMPING, &val, sizeof(val));
-+
-+val 是一个整数，设置了以下任何位。设置其他位将返回 EINVAL 且不更改当前状态。
-+
-+这个套接字选项配置以下几个方面的时间戳生成：
-+为单个 sk_buff 结构体生成时间戳（1.3.1）；
-+将时间戳报告到套接字的错误队列（1.3.2）；
-+配置相关选项（1.3.3）；
-+也可以通过 cmsg 为单个 sendmsg 调用启用时间戳生成（1.3.4）。
-+
-+1.3.1 时间戳生成
-+^^^^^^^^^^^^^^^^
-+
-+某些位是向协议栈请求尝试生成时间戳。它们的任何组合都是有效的。对这些位的更改适
-+用于新创建的数据包，而不是已经在协议栈中的数据包。因此，可以通过在两个 setsockopt
-+调用之间嵌入 send() 调用来选择性地为数据包子集请求时间戳（例如，用于采样），
-+一个用于启用时间戳生成，一个用于禁用它。时间戳也可能由于特定套接字请求之外的原
-+因而生成，例如在当系统范围内启用接收时间戳时，如前所述。
-+
-+SOF_TIMESTAMPING_RX_HARDWARE:
-+  请求由网络适配器生成的接收时间戳。
-+
-+SOF_TIMESTAMPING_RX_SOFTWARE:
-+  当数据进入内核时请求接收时间戳。这些时间戳在设备驱动程序将数据包交给内核接收
-+  协议栈后生成。
-+
-+SOF_TIMESTAMPING_TX_HARDWARE:
-+  请求由网络适配器生成的传输时间戳。此标志可以通过套接字选项和控制消息启用。
-+
-+SOF_TIMESTAMPING_TX_SOFTWARE:
-+  当数据离开内核时请求传输（TX）时间戳。这些时间戳由设备驱动程序生成，并且尽
-+  可能贴近网络接口发送点，但始终在内核将数据包传递给网络接口之前生成。因此，
-+  它们需要驱动程序支持，且可能并非所有设备都可用。此标志可通过套接字选项和
-+  控制消息两种方式启用。
-+
-+SOF_TIMESTAMPING_TX_SCHED:
-+  在进入数据包调度器之前请求传输时间戳。内核传输延迟（如果很长）通常由排队
-+  延迟主导。此时间戳与在 SOF_TIMESTAMPING_TX_SOFTWARE 处获取的时间戳之
-+  间的差异将暴露此延迟，并且与协议处理无关。协议处理中产生的延迟（如果有）
-+  可以通过从 send() 之前立即获取的用户空间时间戳中减去此时间戳来计算。在
-+  具有虚拟设备的机器上，传输的数据包通过多个设备和多个数据包调度器，在每层
-+  生成时间戳。这允许对排队延迟进行细粒度测量。此标志可以通过套接字选项和控
-+  制消息启用。
-+
-+SOF_TIMESTAMPING_TX_ACK:
-+  请求在发送缓冲区中的所有数据都已得到确认时生成传输（TX）时间戳。此选项
-+  仅适用于可靠协议，目前仅在TCP协议中实现。对于该协议，它可能会过度报告
-+  测量结果，因为时间戳是在send()调用时缓冲区中的所有数据（包括该缓冲区）
-+  都被确认时生成的，即累积确认。该机制会忽略选择确认（SACK）和前向确认
-+  （FACK）。此标志可通过套接字选项和控制消息两种方式启用。
-+
-+SOF_TIMESTAMPING_TX_COMPLETION:
-+  在数据包传输完成时请求传输时间戳。完成时间戳由内核在从硬件接收数据包完成
-+  报告时生成。硬件可能一次报告多个数据包，完成时间戳反映报告的时序而不是实
-+  际传输时间。此标志可以通过套接字选项和控制消息启用。
-+
-+
-+1.3.2 时间戳报告
-+^^^^^^^^^^^^^^^^
-+
-+其他三个位控制将在生成的控制消息中报告哪些时间戳。对这些位的更改在协议栈中
-+的时间戳报告位置立即生效。仅当数据包设置了相关的时间戳生成请求时，才会报告
-+其时间戳。
-+
-+SOF_TIMESTAMPING_SOFTWARE:
-+  在可用时报告任何软件时间戳。
-+
-+SOF_TIMESTAMPING_SYS_HARDWARE:
-+  此选项已被弃用和忽略。
-+
-+SOF_TIMESTAMPING_RAW_HARDWARE:
-+  在可用时报告由 SOF_TIMESTAMPING_TX_HARDWARE 或 SOF_TIMESTAMPING_RX_HARDWARE
-+  生成的硬件时间戳。
-+
-+
-+1.3.3 时间戳选项
-+^^^^^^^^^^^^^^^^
-+
-+接口支持以下选项
-+
-+SOF_TIMESTAMPING_OPT_ID:
-+  每个数据包生成一个唯一标识符。一个进程可以同时存在多个未完成的时间戳请求。
-+  数据包在传输路径中可能会发生重排序（例如在数据包调度器中）。在这种情况下，
-+  时间戳会以与原始send()调用不同的顺序排队到错误队列中。如此一来，仅根据
-+  时间戳顺序或 payload（有效载荷）检查，并不总能将时间戳与原始send()调用
-+  唯一匹配。
-+
-+  此选项在 send() 时将每个数据包与唯一标识符关联，并与时间戳一起返回。
-+  标识符源自每个套接字的 u32 计数器（会回绕）。对于数据报套接字，计数器
-+  随每个发送的数据包递增。对于流套接字，它随每个字节递增。对于流套接字，
-+  还要设置 SOF_TIMESTAMPING_OPT_ID_TCP，请参阅下面的部分。
-+
-+  计数器从零开始。在首次启用套接字选项时初始化。在禁用后再重新启用选项时
-+  重置。重置计数器不会更改系统中现有数据包的标识符。
-+
-+  此选项仅针对传输时间戳实现。在这种情况下，时间戳总是与sock_extended_err
-+  结构体一起回环。该选项会修改ee_data字段，以传递一个在该套接字所有同时
-+  存在的未完成时间戳请求中唯一的 ID。
-+
-+  进程可以通过控制消息SCM_TS_OPT_ID（TCP 套接字不支持）传递特定 ID，
-+  从而选择性地覆盖默认生成的 ID，示例如下::
-+
-+    struct msghdr *msg;
-+    ...
-+    cmsg			 = CMSG_FIRSTHDR(msg);
-+    cmsg->cmsg_level		 = SOL_SOCKET;
-+    cmsg->cmsg_type		 = SCM_TS_OPT_ID;
-+    cmsg->cmsg_len		 = CMSG_LEN(sizeof(__u32));
-+    *((__u32 *) CMSG_DATA(cmsg)) = opt_id;
-+    err = sendmsg(fd, msg, 0);
-+
-+
-+SOF_TIMESTAMPING_OPT_ID_TCP:
-+  与 SOF_TIMESTAMPING_OPT_ID 一起传递给新的 TCP 时间戳应用程序。
-+  SOF_TIMESTAMPING_OPT_ID 定义了流套接字计数器的增量，但其起始点
-+  并不完全显而易见。此选项修复了这一点。
-+
-+  对于流套接字，如果设置了 SOF_TIMESTAMPING_OPT_ID，则此选项应始终
-+  设置。在数据报套接字上，选项没有效果。
-+
-+  一个合理的期望是系统调用后计数器重置为零，因此后续写入 N 字节将生成
-+  计数器为 N-1 的时间戳。SOF_TIMESTAMPING_OPT_ID_TCP 在所有条件下
-+  都实现了此行为。
-+
-+  SOF_TIMESTAMPING_OPT_ID 不带修饰符时通常报告相同，特别是在套接字选项
-+  在无数据传输时设置时。如果正在传输数据，它可能与输出队列的长度（SIOCOUTQ）
-+  偏差。
-+
-+  差异是由于基于 snd_una 与 write_seq 的。snd_una 是 peer 确认的 stream
-+  的偏移量。这取决于外部因素，例如网络 RTT。write_seq 是进程写入的最后一个
-+  字节。此偏移量不受外部输入影响。
-+
-+  差异细微，在套接字选项初始化时配置时不易察觉，但 SOF_TIMESTAMPING_OPT_ID_TCP
-+  行为在任何时候都更稳健。
-+
-+SOF_TIMESTAMPING_OPT_CMSG:
-+  支持所有时间戳数据包的 recv() cmsg。控制消息已无条件地在所有接收时间戳数据包
-+  和 IPv6 数据包上支持，以及在发送时间戳数据包的 IPv4 数据包上支持。此选项扩展
-+  了它们以在发送时间戳数据包的 IPv4 数据包上支持。一个用例是启用 socket 选项
-+  IP_PKTINFO 以关联数据包与其出口设备，通过启用 socket 选项 IP_PKTINFO 同时。
-+
-+
-+SOF_TIMESTAMPING_OPT_TSONLY:
-+  仅适用于传输时间戳。使内核返回一个 cmsg 与一个空数据包一起，而不是与原
-+  始数据包一起。这减少了套接字接收预算（SO_RCVBUF）中收取的内存量，并即使
-+  在 sysctl net.core.tstamp_allow_data 为 0 时也提供时间戳。此选项禁用
-+  SOF_TIMESTAMPING_OPT_CMSG。
-+
-+SOF_TIMESTAMPING_OPT_STATS:
-+  与传输时间戳一起获取的选项性统计信息。它必须与 SOF_TIMESTAMPING_OPT_TSONLY
-+  一起使用。当传输时间戳可用时，统计信息可在类型为 SCM_TIMESTAMPING_OPT_STATS
-+  的单独控制消息中获取，作为 TLV（struct nlattr）类型的列表。这些统计信息允许应
-+  用程序将各种传输层统计信息与传输时间戳关联，例如某个数据块被 peer 的接收窗口限
-+  制了多长时间。
-+
-+SOF_TIMESTAMPING_OPT_PKTINFO:
-+  启用 SCM_TIMESTAMPING_PKTINFO 控制消息以接收带有硬件时间戳的数据包。
-+  消息包含 struct scm_ts_pktinfo，它提供接收数据包的实际接口索引和层 2 长度。
-+  只有在 CONFIG_NET_RX_BUSY_POLL 启用且驱动程序使用 NAPI 时，才会返回非零的
-+  有效接口索引。该结构还包含另外两个字段，但它们是保留字段且未定义。
-+
-+SOF_TIMESTAMPING_OPT_TX_SWHW:
-+  请求在 SOF_TIMESTAMPING_TX_HARDWARE 和 SOF_TIMESTAMPING_TX_SOFTWARE
-+  同时启用时，为传出数据包生成硬件和软件时间戳。如果同时生成两个时间戳，两个单
-+  独的消息将回环到套接字的错误队列，每个消息仅包含一个时间戳。
-+
-+SOF_TIMESTAMPING_OPT_RX_FILTER:
-+  过滤掉虚假接收时间戳：仅当匹配的时间戳生成标志已启用时才报告接收时间戳。
-+
-+  接收时间戳在入口路径中生成较早，在数据包的目的套接字确定之前。如果任何套接
-+  字启用接收时间戳，所有套接字的数据包将接收时间戳数据包。包括那些请求时间戳
-+  报告与 SOF_TIMESTAMPING_SOFTWARE 和/或 SOF_TIMESTAMPING_RAW_HARDWARE，
-+  但未请求接收时间戳生成。这可能发生在仅请求发送时间戳时。
-+
-+  接收虚假时间戳通常是无害的。进程可以忽略意外的非零值。但它使行为在其他套接
-+  字上微妙地依赖。此标志隔离套接字以获得更确定的行为。
-+
-+新应用程序鼓励传递 SOF_TIMESTAMPING_OPT_ID 以区分时间戳并传递
-+SOF_TIMESTAMPING_OPT_TSONLY 以操作，而不管 sysctl net.core.tstamp_allow_data
-+的设置。
-+
-+例外情况是当进程需要额外的 cmsg 数据时，例如 SOL_IP/IP_PKTINFO 以检测出
-+口网络接口。然后传递选项 SOF_TIMESTAMPING_OPT_CMSG。此选项依赖于访问原
-+始数据包的内容，因此不能与 SOF_TIMESTAMPING_OPT_TSONLY 组合。
-+
-+
-+1.3.4. 通过控制消息启用时间戳
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+除了套接字选项外，时间戳生成还可以通过 cmsg 按写入请求，仅适用于
-+SOF_TIMESTAMPING_TX_*（见第 1.3.1 节）。使用此功能，应用程序可以无需启用和
-+禁用时间戳即可采样每个 sendmsg() 的时间戳::
-+
-+  struct msghdr *msg;
-+  ...
-+  cmsg			       = CMSG_FIRSTHDR(msg);
-+  cmsg->cmsg_level	       = SOL_SOCKET;
-+  cmsg->cmsg_type	       = SO_TIMESTAMPING;
-+  cmsg->cmsg_len	       = CMSG_LEN(sizeof(__u32));
-+  *((__u32 *) CMSG_DATA(cmsg)) = SOF_TIMESTAMPING_TX_SCHED |
-+				 SOF_TIMESTAMPING_TX_SOFTWARE |
-+				 SOF_TIMESTAMPING_TX_ACK;
-+  err = sendmsg(fd, msg, 0);
-+
-+通过 cmsg 设置的 SOF_TIMESTAMPING_TX_* 标志将覆盖通过 setsockopt 设置的
-+SOF_TIMESTAMPING_TX_* 标志。
-+
-+此外，应用程序仍然需要通过 setsockopt 启用时间戳报告以接收时间戳::
-+
-+  __u32 val = SOF_TIMESTAMPING_SOFTWARE |
-+	      SOF_TIMESTAMPING_OPT_ID /* 或任何其他标志 */;
-+  err = setsockopt(fd, SOL_SOCKET, SO_TIMESTAMPING, &val, sizeof(val));
-+
-+
-+1.4 字节流时间戳
-+-------------------------
-+
-+SO_TIMESTAMPING 接口支持字节流的时间戳。每个请求解释为请求当整个缓冲区内容
-+通过时间戳点时。也就是说，对于流选项 SOF_TIMESTAMPING_TX_SOFTWARE 将记录
-+当所有字节都到达设备驱动程序时，无论数据被转换成多少个数据包。
-+
-+一般来说，字节流没有自然分隔符，因此将时间戳与数据相关联是非平凡的。字节范围
-+可能跨段，任何段可能合并（可能合并先前分段缓冲区关联的独立 send() 调用）。段
-+可以重新排序，同一字节范围可以在多个段中并存，对于实现重传的协议。
-+
-+所有时间戳必须实现相同的语义，否则它们是不可比较的。以不同于简单情况（缓冲区
-+到 skb 的 1:1 映射）的方式处理“罕见”角落情况是不够的，因为性能调试通常需要
-+关注这些异常。
-+
-+在实践中，时间戳可以与字节流段一致地关联，如果时间戳语义和测量时序的选择正确。
-+此挑战与决定 IP 分片策略没有不同。在那里，定义是仅对第一个分片进行时间戳。对
-+于字节流，我们选择仅在所有字节通过某个点时生成时间戳。SOF_TIMESTAMPING_TX_ACK
-+定义的实现和推理是容易的。一个需要考虑 SACK 的实现会更复杂，因为可能存在传输
-+空洞和乱序到达。
-+
-+在主机上，TCP 也可以通过 Nagle、cork、autocork、分段和 GSO 打破简单的 1:1
-+缓冲区到 skbuff 映射。实现确保在所有情况下都正确，通过跟踪每个 send() 传递
-+给send() 的最后一个字节，即使它在 skbuff 扩展或合并操作后不再是最后一个字
-+节。它存储相关的序列号在 skb_shinfo(skb)->tskey。因为一个 skbuff 只有一
-+个这样的字段，所以只能生成一个时间戳。
-+
-+在罕见情况下，如果两个请求折叠到同一个 skb，则时间戳请求可能会被错过。进程可
-+以通过始终在请求之间刷新 TCP 栈来检测此情况，例如启用 TCP_NODELAY 和禁用
-+TCP_CORK和 autocork。在 linux-4.7 之后，更好的预防合并方法是使用 MSG_EOR
-+标志在sendmsg()时。
-+
-+这些预防措施确保时间戳仅在所有字节通过时间戳点时生成，假设网络栈本身不会重新
-+排序段。栈确实试图避免重新排序。唯一的例外是管理员控制：可以构造一个数据包调
-+度器配置，将来自同一流的不同段延迟不同。这种设置通常不常见。
-+
-+
-+2 数据接口
-+==========
-+
-+时间戳通过 recvmsg() 的辅助数据功能读取。请参阅 `man 3 cmsg` 了解此接口的
-+详细信息。套接字手册页面 (`man 7 socket`) 描述了如何检索SO_TIMESTAMP 和
-+SO_TIMESTAMPNS 生成的数据包时间戳。
-+
-+
-+2.1 SCM_TIMESTAMPING 记录
-+--------------------------
-+
-+这些时间戳在 cmsg_level SOL_SOCKET、cmsg_type SCM_TIMESTAMPING 和类型为
-+
-+对于 SO_TIMESTAMPING_OLD::
-+
-+	struct scm_timestamping {
-+		struct timespec ts[3];
-+	};
-+
-+对于 SO_TIMESTAMPING_NEW::
-+
-+	struct scm_timestamping64 {
-+		struct __kernel_timespec ts[3];
-+
-+始终使用 SO_TIMESTAMPING_NEW 时间戳以始终获得 struct scm_timestamping64
-+格式的时间戳。
-+
-+SO_TIMESTAMPING_OLD 在 32 位机器上 2038 年后返回错误的时间戳。
-+
-+该结构可以返回最多三个时间戳。这是一个遗留功能。任何时候至少有一个字
-+段不为零。大多数时间戳都通过 ts[0] 传递。硬件时间戳通过 ts[2] 传递。
-+
-+ts[1] 以前用于存储硬件时间戳转换为系统时间。相反，将硬件时钟设备直接
-+暴露为HW PTP时钟源，以允许用户空间进行时间转换，并可选地与用户空间
-+PTP 堆栈（如linuxptp）同步系统时间。对于 PTP 时钟 API，请参阅
-+Documentation/driver-api/ptp.rst。
-+
-+注意，如果同时启用了 SO_TIMESTAMP 或 SO_TIMESTAMPNS 与
-+SO_TIMESTAMPING 使用 SOF_TIMESTAMPING_SOFTWARE，在 recvmsg()
-+调用时会生成一个虚假的软件时间戳，并传递给 ts[0] 当真实软件时间戳缺
-+失时。这也发生在硬件传输时间戳上。
-+
-+2.1.1 传输时间戳与 MSG_ERRQUEUE
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+对于传输时间戳，传出数据包回环到套接字的错误队列，并附加发送时间戳（s）。
-+进程通过调用带有 MSG_ERRQUEUE 标志的 recvmsg() 接收时间戳，并传递
-+一个足够大的 msg_control缓冲区以接收相关的元数据结构。recvmsg 调用
-+返回原始传出数据包，并附加两个辅助消息。
-+
-+一个 cm_level SOL_IP(V6) 和 cm_type IP(V6)_RECVERR 嵌入一个
-+struct sock_extended_err这定义了错误类型。对于时间戳，ee_errno
-+字段是 ENOMSG。另一个辅助消息将具有 cm_level SOL_SOCKET 和 cm_type
-+SCM_TIMESTAMPING。这嵌入了 struct scm_timestamping。
-+
-+
-+2.1.1.2 时间戳类型
-+~~~~~~~~~~~~~~~~~~
-+
-+三个 struct timespec 的语义由 struct sock_extended_err 中的
-+ee_info 字段定义。它包含一个类型 SCM_TSTAMP_* 来定义实际传递给
-+scm_timestamping 的时间戳。
-+
-+SCM_TSTAMP_* 类型与之前讨论的 SOF_TIMESTAMPING_* 控制字段完全
-+匹配，只有一个例外对于遗留原因，SCM_TSTAMP_SND 等于零，可以设置为
-+SOF_TIMESTAMPING_TX_HARDWARE 和 SOF_TIMESTAMPING_TX_SOFTWARE。
-+它是第一个，如果 ts[2] 不为零，否则是第二个，在这种情况下，时间戳存
-+储在ts[0] 中。
-+
-+
-+2.1.1.3 分片
-+~~~~~~~~~~~~
-+
-+传出数据报分片很少见，但可能发生，例如通过显式禁用 PMTU 发现。如果
-+传出数据包被分片，则仅对第一个分片进行时间戳，并返回给发送套接字。
-+
-+
-+2.1.1.4 数据包负载
-+~~~~~~~~~~~~~~~~~~
-+
-+调用应用程序通常不关心接收它传递给堆栈的整个数据包负载：套接字错误队
-+列机制仅是一种将时间戳附加到其上的方法。在这种情况下，应用程序可以选
-+择读取较小的数据报，甚至长度为 0。负载相应地被截断。直到进程调用
-+recvmsg() 到错误队列，然而，整个数据包仍在队列中，占用 SO_RCVBUF 预算。
-+
-+
-+2.1.1.5 阻塞读取
-+~~~~~~~~~~~~~~~~
-+
-+从错误队列读取始终是非阻塞操作。要阻塞等待时间戳，请使用 poll 或
-+select。poll() 将在 pollfd.revents 中返回 POLLERR，如果错误队列
-+中有数据。没有必要在 pollfd.events中传递此标志。此标志在请求时被忽
-+略。另请参阅 `man 2 poll`。
-+
-+
-+2.1.2 接收时间戳
-+^^^^^^^^^^^^^^^^
-+
-+在接收时，没有理由从套接字错误队列读取。SCM_TIMESTAMPING 辅助数据与
-+数据包数据一起通过正常 recvmsg() 发送。由于这不是套接字错误，它不伴
-+随消息 SOL_IP(V6)/IP(V6)_RECVERROR。在这种情况下，struct
-+scm_timestamping 中的三个字段含义隐式定义。ts[0] 在设置时包含软件
-+时间戳，ts[1] 再次被弃用，ts[2] 在设置时包含硬件时间戳。
-+
-+
-+3. 硬件时间戳配置：ETHTOOL_MSG_TSCONFIG_SET/GET
-+==============================================
-+
-+硬件时间戳也必须为每个设备驱动程序初始化，该驱动程序预期执行硬件时间戳。
-+参数在 include/uapi/linux/net_tstamp.h 中定义为::
-+
-+	struct hwtstamp_config {
-+		int flags;	/* 目前没有定义的标志，必须为零 */
-+		int tx_type;	/* HWTSTAMP_TX_* */
-+		int rx_filter;	/* HWTSTAMP_FILTER_* */
-+	};
-+
-+期望的行为通过 tsconfig netlink 套接字 ``ETHTOOL_MSG_TSCONFIG_SET``
-+传递到内核，并通过 ``ETHTOOL_A_TSCONFIG_TX_TYPES``、
-+``ETHTOOL_A_TSCONFIG_RX_FILTERS`` 和 ``ETHTOOL_A_TSCONFIG_HWTSTAMP_FLAGS``
-+netlink 属性设置 struct hwtstamp_config 相应地。
-+
-+``ETHTOOL_A_TSCONFIG_HWTSTAMP_PROVIDER`` netlink 嵌套属性用于选择
-+硬件时间戳的来源。它由设备源的索引和时间戳类型限定符组成。
-+
-+驱动程序可以自由使用比请求更宽松的配置。预期驱动程序应仅实现可以直接支持的
-+最通用模式。例如，如果硬件可以支持 HWTSTAMP_FILTER_PTP_V2_EVENT，则它
-+通常应始终升级HWTSTAMP_FILTER_PTP_V2_L2_SYNC，依此类推，因为
-+HWTSTAMP_FILTER_PTP_V2_EVENT 更通用（更实用）。
-+
-+支持硬件时间戳的驱动程序应更新 struct，并可能返回更宽松的实际配置。如果
-+请求的数据包无法进行时间戳，则不应更改任何内容，并返回 ERANGE（与 EINVAL
-+相反，这表明 SIOCSHWTSTAMP 根本不支持）。
-+
-+只有具有管理权限的进程才能更改配置。用户空间负责确保多个进程不会相互干扰，
-+并确保设置被重置。
-+
-+任何进程都可以通过请求 tsconfig netlink 套接字 ``ETHTOOL_MSG_TSCONFIG_GET``
-+读取实际配置。
-+
-+遗留配置是使用 ioctl(SIOCSHWTSTAMP) 与指向 struct ifreq 的指针，其
-+ifr_data指向 struct hwtstamp_config。tx_type 和 rx_filter 是驱动
-+程序期望执行的提示。如果请求的细粒度过滤对传入数据包不支持，驱动程序可能
-+会对请求的数据包进行时间戳。ioctl(SIOCGHWTSTAMP) 以与
-+ioctl(SIOCSHWTSTAMP) 相同的方式使用。然而,并非所有驱动程序都实现了这一点。
-+
-+::
-+
-+    /* 可能的 hwtstamp_config->tx_type 值 */
-+    enum {
-+	    /*
-+	    * 不会需要硬件时间戳的传出数据包；
-+	    * 如果数据包到达并请求它，则不会进行硬件时间戳
-+	    */
-+	    HWTSTAMP_TX_OFF,
-+
-+	    /*
-+	    * 启用传出数据包的硬件时间戳；
-+	    * 数据包的发送者决定哪些数据包需要时间戳，
-+	    * 在发送数据包之前设置 SOF_TIMESTAMPING_TX_SOFTWARE
-+	    */
-+	    HWTSTAMP_TX_ON,
-+    };
-+
-+    /* 可能的 hwtstamp_config->rx_filter 值 */
-+    enum {
-+	    /* 时间戳不传入任何数据包 */
-+	    HWTSTAMP_FILTER_NONE,
-+
-+	    /* 时间戳任何传入数据包 */
-+	    HWTSTAMP_FILTER_ALL,
-+
-+	    /* 返回值：时间戳所有请求的数据包加上一些其他数据包 */
-+	    HWTSTAMP_FILTER_SOME,
-+
-+	    /* PTP v1，UDP，任何事件数据包 */
-+	    HWTSTAMP_FILTER_PTP_V1_L4_EVENT,
-+
-+	    /* 有关完整值列表，请检查
-+	    * 文件 include/uapi/linux/net_tstamp.h
-+	    */
-+    };
-+
-+3.1 硬件时间戳实现：设备驱动程序
-+--------------------------------
-+
-+支持硬件时间戳的驱动程序必须支持 ndo_hwtstamp_set NDO 或遗留 SIOCSHWTSTAMP
-+ioctl 并更新提供的 struct hwtstamp_config 与实际值，如 SIOCSHWTSTAMP 部分
-+所述。它还应支持 ndo_hwtstamp_get 或遗留 SIOCGHWTSTAMP。
-+
-+接收数据包的时间戳必须存储在 skb 中。要获取 skb 的共享时间戳结构，请调用
-+skb_hwtstamps()。然后设置结构中的时间戳::
-+
-+    struct skb_shared_hwtstamps {
-+	    /* 硬件时间戳转换为自任意时间点的持续时间
-+	    * 自定义点
-+	    */
-+	    ktime_t	hwtstamp;
-+    };
-+
-+传出数据包的时间戳应按如下方式生成：
-+
-+- 在 hard_start_xmit() 中，检查 (skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP)
-+  是否不为零。如果是，则驱动程序期望执行硬件时间戳。
-+- 如果此 skb 和请求都可能，则声明驱动程序正在执行时间戳，通过设置 skb_shinfo(skb)->tx_flags
-+  中的标志SKBTX_IN_PROGRESS，例如::
-+
-+      skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-+
-+  您可能希望保留与 skb 关联的指针，而不是释放 skb。不支持硬件时间戳的驱
-+  动程序不会这样做。驱动程序绝不能触及 sk_buff::tstamp！它用于存储网络
-+  子系统生成的软件时间戳。
-+- 驱动程序应在尽可能接近将 sk_buff 传递给硬件时调用 skb_tx_timestamp()。
-+  skb_tx_timestamp()提供软件时间戳（如果请求），并且硬件时间戳不可用
-+  （SKBTX_IN_PROGRESS 未设置）。
-+- 一旦驱动程序发送数据包并/或获取硬件时间戳，它就会通过 skb_tstamp_tx()
-+  传递时间戳，原始 skb，原始硬件时间戳。skb_tstamp_tx() 克隆原始 skb 并
-+  添加时间戳，因此原始 skb 现在必须释放。如果获取硬件时间戳失败，则驱动程序
-+  不应回退到软件时间戳。理由是，这会在处理管道中的稍后时间发生，而不是其他软
-+  件时间戳，因此可能导致时间戳之间的差异。
-+
-+3.2 堆叠 PTP 硬件时钟的特殊考虑
-+------------------------------
-+
-+在数据包的路径中可能存在多个 PHC（PTP 硬件时钟）。内核没有明确的机制允许用
-+户选择用于时间戳以太网帧的 PHC。相反，假设最外层的 PHC 始终是最优的，并且
-+内核驱动程序协作以实现这一目标。目前有 3 种堆叠 PHC 的情况，如下所示：
-+
-+3.2.1 DSA（分布式交换架构）交换机
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+这些是具有一个端口连接到（完全不知情的）主机以太网接口的以太网交换机，并且
-+执行端口多路复用或可选转发加速功能。每个 DSA 交换机端口在用户看来都是独立的
-+（虚拟）网络接口，其网络 I/O 在底层通过主机接口（在 TX 上重定向到主机端口，
-+在 RX 上拦截帧）执行。
-+
-+当 DSA 交换机连接到主机端口时，PTP 同步必须受到限制，因为交换机的可变排队
-+延迟引入了主机端口与其 PTP 伙伴之间的路径延迟抖动。因此，一些 DSA 交换机
-+包含自己的时间戳时钟，并具有在自身 MAC上执行网络时间戳的能力，因此路径延迟
-+仅测量线缆和 PHY 传播延迟。支持 Linux 的 DSA 交换机暴露了与任何其他网络
-+接口相同的 ABI（除了 DSA 接口在网络 I/O 方面实际上是虚拟的，它们确实有自
-+己的PHC）。典型地，但不是强制性地，所有DSA 交换机接口共享相同的 PHC。
-+
-+通过设计，DSA 交换机对连接到其主机端口的 PTP 时间戳不需要任何特殊的驱动程
-+序处理。然而，当主机端口也支持 PTP 时间戳时，DSA 将负责拦截
-+``.ndo_eth_ioctl`` 调用，并阻止尝试在主机端口上启用硬件时间戳。这是因为
-+SO_TIMESTAMPING API 不允许为同一数据包传递多个硬件时间戳，因此除了 DSA
-+交换机端口之外的任何人都不应阻止这样做。
-+
-+在通用层，DSA 提供了以下基础设施用于 PTP 时间戳：
-+
-+- ``.port_txtstamp()``：在用户空间从用户空间请求带有硬件 TX 时间戳请求
-+  的数据包之前调用的钩子。这是必需的，因为硬件时间戳在实际 MAC 传输后才可
-+  用，因此驱动程序必须准备将时间戳与原始数据包相关联，以便它可以重新入队数
-+  据包到套接字的错误队列。为了保存可能在时间戳可用时需要的数据包，驱动程序
-+  可以调用 ``skb_clone_sk``，在 skb->cb 中保存克隆指针，并入队一个 tx
-+  skb 队列。通常，交换机会有一个PTP TX 时间戳寄存器（或有时是一个 FIFO），
-+  其中时间戳可用。在 FIFO 的情况下，硬件可能会存储PTP 序列 ID/消息类型/
-+  域号和实际时间戳的键值对。为了在等待时间戳的数据包队列和实际时间戳之间正
-+  确关联，驱动程序可以使用 BPF 分类器(``ptp_classify_raw``) 来识别 PTP
-+  传输类型，并使用 ``ptp_parse_header`` 解释 PTP 头字段。可能存在一个 IRQ，
-+  当此时间戳可用时触发，或者驱动程序可能需要轮询，在调用 ``dev_queue_xmit()``
-+  到主机接口之后。单步 TX 时间戳不需要数据包克隆，因为 PTP 协议不需要后续消
-+  息（因为TX 时间戳已嵌入到数据包中），因此用户空间不期望数据包带有 TX 时间戳
-+  被重新入队到其套接字的错误队列。
-+
-+- ``.port_rxtstamp()``：在 RX 上，DSA 运行 BPF 分类器以识别 PTP 事件消息
-+  （任何其他数据包，包括 PTP 通用消息，不进行时间戳）。驱动程序提供原始（也是唯一）
-+  时间戳数据包，以便它可以标记它，如果它是立即可用的，或者延迟。在接收时，时间
-+  戳可能要么在频带内（通过DSA 头中的元数据，或以其他方式附加到数据包），要么在频
-+  带外（通过另一个 RX 时间戳FIFO）。在 RX 上延迟通常是必要的，当检索时间戳需要
-+  可睡眠上下文时。在这种情况下，DSA驱动程序有责任调用 ``netif_rx()`` 在新鲜时
-+  间戳的 skb 上。
-+
-+3.2.2 以太网 PHYs
-+^^^^^^^^^^^^^^^^^
-+
-+这些是通常在网络栈中履行第 1 层角色的设备，因此它们在 DSA 交换机中没有网络接
-+口的表示。然而，PHY可能能够检测和时间戳 PTP 数据包，出于性能原因：在尽可能接
-+近导线的地方获取的时间戳具有更稳定的同步性和更精确的精度。
-+
-+支持 PTP 时间戳的 PHY 驱动程序必须创建 ``struct mii_timestamper`` 并添加
-+指向它的指针在 ``phydev->mii_ts`` 中。 ``phydev->mii_ts`` 的存在将由网络
-+堆栈检查。
-+
-+由于 PHY 没有网络接口表示，PHY 的时间戳和 ethtool ioctl 操作需要通过其各自
-+的 MAC驱动程序进行中介。因此，与 DSA 交换机不同，需要对每个单独的 MAC 驱动
-+程序进行 PHY时间戳支持的修改。这包括：
-+
-+- 在 ``.ndo_eth_ioctl`` 中检查，是否 ``phy_has_hwtstamp(netdev->phydev)``
-+  为真或假。如果是，则 MAC 驱动程序不应处理此请求，而应将其传递给 PHY 使用
-+  ``phy_mii_ioctl()``。
-+
-+- 在 RX 上，特殊干预可能或可能不需要，具体取决于将 skb 传递到网络堆栈的函数。
-+  在 plain ``netif_rx()`` 和类似情况下，MAC 驱动程序必须检查是否
-+  ``skb_defer_rx_timestamp(skb)`` 是必要的，如果是，则不调用 ``netif_rx()``。
-+  如果 ``CONFIG_NETWORK_PHY_TIMESTAMPING`` 启用，并且
-+  ``skb->dev->phydev->mii_ts`` 存在，它的 ``.rxtstamp()`` 钩子现在将被调
-+  用，以使用与 DSA 类似的逻辑确定 RX 时间戳延迟是否必要。同样像 DSA，它成为
-+  PHY 驱动程序的责任，在时间戳可用时发送数据包到堆栈。
-+
-+  对于其他 skb 接收函数，例如 ``napi_gro_receive`` 和 ``netif_receive_skb``，
-+  堆栈会自动检查是否 ``skb_defer_rx_timestamp()`` 是必要的，因此此检查不
-+  需要在驱动程序内部。
-+
-+- 在 TX 上，同样，特殊干预可能或可能不需要。调用 ``mii_ts->txtstamp()``钩
-+  子的函数名为``skb_clone_tx_timestamp()``。此函数可以直接调用（在这种情
-+  况下，确实需要显式 MAC 驱动程序支持），但函数也 piggybacks 从
-+  ``skb_tx_timestamp()`` 调用，许多 MAC 驱动程序已经为软件时间戳目的执行。
-+  因此，如果 MAC 支持软件时间戳，则它不需要在此阶段执行任何其他操作。
-+
-+3.2.3 MII 总线嗅探设备
-+^^^^^^^^^^^^^^^^^^^^^^
-+
-+这些执行与时间戳以太网 PHY 相同的角色，除了它们是离散设备，因此可以与任何 PHY
-+组合，即使它不支持时间戳。在 Linux 中，它们是可发现的，可以通过 Device Tree
-+附加到 ``struct phy_device``，对于其余部分，它们使用与那些相同的 mii_ts 基
-+础设施。请参阅 Documentation/devicetree/bindings/ptp/timestamper.txt 了
-+解更多详细信息。
-+
-+3.2.4 MAC 驱动程序的其他注意事项
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+堆叠 PHC 可能会暴露 MAC 驱动程序的错误，这些错误在未堆叠 PHC 时无法触发。一个
-+例子涉及此行代码，已经在前面的部分中介绍过::
-+
-+      skb_shinfo(skb)->tx_flags |= SKBTX_IN_PROGRESS;
-+
-+任何 TX 时间戳逻辑，无论是普通的 MAC 驱动程序、DSA 交换机驱动程序、PHY 驱动程
-+序还是 MII 总线嗅探设备驱动程序，都应该设置此标志。但一个未意识到 PHC 堆叠的
-+MAC 驱动程序可能会被其他不是它自己的实体设置此标志，并传递一个重复的时间戳。例
-+如，典型的 TX 时间戳逻辑可能是将传输部分分为 2 个部分：
-+
-+1. "TX"：检查是否通过 ``.ndo_eth_ioctl``（"``priv->hwtstamp_tx_enabled
-+   == true``"）和当前 skb 是否需要 TX 时间戳（"``skb_shinfo(skb)->tx_flags
-+   & SKBTX_HW_TSTAMP``"）。如果为真，则设置 "``skb_shinfo(skb)->tx_flags
-+   |= SKBTX_IN_PROGRESS``" 标志。注意：如上所述，在堆叠 PHC 系统中，此条件
-+   不应触发，因为此 MAC 肯定不是最外层的 PHC。但这是典型的错误所在。传输继续
-+   使用此数据包。
-+
-+2. "TX 确认"：传输完成。驱动程序检查是否需要收集任何 TX 时间戳。这里通常是典
-+   型的错误所在：驱动程序采取捷径，只检查 "``skb_shinfo(skb)->tx_flags &
-+   SKBTX_IN_PROGRESS``" 是否设置。在堆叠 PHC 系统中，这是错误的，因为此 MAC
-+   驱动程序不是唯一在 TX 数据路径中启用 SKBTX_IN_PROGRESS 的实体。
-+
-+此问题的正确解决方案是 MAC 驱动程序在其 "TX 确认" 部分中有一个复合检查，不仅
-+针对 "``skb_shinfo(skb)->tx_flags & SKBTX_IN_PROGRESS``"，还针对
-+"``priv->hwtstamp_tx_enabled == true``"。因为系统确保 PTP 时间戳仅对最
-+外层 PHC 启用，此增强检查将避免向用户空间传递重复的 TX 时间戳。
--- 
-2.25.1
+Regards,
+Christian.
+
+
+> 
+> commit c780f63e20cb0fd66d31f3c1a37b37983a30f318 (240813-amd-csmemst)
+> Author: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> Date:   Wed Jul 17 08:28:56 2024 +0100
+> 
+>     drm/amdgpu: Remove hidden double memset from amdgpu_vm_pt_clear()
+> 
+>     When CONFIG_INIT_STACK_ALL_ZERO is set and so -ftrivial-auto-var-init=zero
+>     compiler option active, compiler fails to notice that later in
+>     amdgpu_vm_pt_clear() there  is a second memset to clear the same on stack
+>     struct amdgpu_vm_update_params.
+> 
+>     If we replace this memset with an explicit automatic variable initializer,
+>     compiler can then see it and avoid clearing this struct twice.
+> 
+>     Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm_pt.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm_pt.c
+> index e39d6e7643bf..ecdc8fffe941 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm_pt.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm_pt.c
+> @@ -361,7 +361,7 @@ int amdgpu_vm_pt_clear(struct amdgpu_device *adev, struct amdgpu_vm *vm,
+>  {
+>         unsigned int level = adev->vm_manager.root_level;
+>         struct ttm_operation_ctx ctx = { true, false };
+> -       struct amdgpu_vm_update_params params;
+> +       struct amdgpu_vm_update_params params = { };
+>         struct amdgpu_bo *ancestor = &vmbo->bo;
+>         unsigned int entries;
+>         struct amdgpu_bo *bo = &vmbo->bo;
+> @@ -398,7 +398,6 @@ int amdgpu_vm_pt_clear(struct amdgpu_device *adev, struct amdgpu_vm *vm,
+>         if (r)
+>                 goto exit;
+> 
+> -       memset(&params, 0, sizeof(params));
+>         params.adev = adev;
+>         params.vm = vm;
+>         params.immediate = immediate;
+> 
+> Or a bit uglier, different approach, but more on fast path:
+> 
+> commit 31c9f97d69dcc455fe45eb297bcb06c2b87d8204
+> Author: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> Date:   Wed Jul 17 08:28:45 2024 +0100
+> 
+>     drm/amdgpu: Remove hidden double memset from amdgpu_cs_ioctl()
+> 
+>     When CONFIG_INIT_STACK_ALL_ZERO is set and so -ftrivial-auto-var-init=zero
+>     compiler option active, compiler fails to notice that inside
+>     amdgpu_cs_parser_init() there is a second memset to clear the same on
+>     stack struct amdgpu_cs_parser.
+> 
+>     If we pull this memset one level out, into the amdgpu_cs_ioctl(), compiler
+>     can then see it and avoid clearing this struct twice.
+> 
+>     Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+> index 9aa952f258cf..554289eb1913 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+> @@ -51,7 +51,6 @@ static int amdgpu_cs_parser_init(struct amdgpu_cs_parser *p,
+>         if (cs->in.num_chunks == 0)
+>                 return -EINVAL;
+> 
+> -       memset(p, 0, sizeof(*p));
+>         p->adev = adev;
+>         p->filp = filp;
+> 
+> @@ -1411,6 +1410,7 @@ int amdgpu_cs_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
+>         if (!adev->accel_working)
+>                 return -EBUSY;
+> 
+> +       memset(&parser, 0, sizeof(parser));
+>         r = amdgpu_cs_parser_init(&parser, adev, filp, data);
+>         if (r) {
+>                 DRM_ERROR_RATELIMITED("Failed to initialize parser %d!\n", r);
+> 
+> Regards,
+> 
+> Tvrtko
+> 
+>>
+>>
+>> Thanks,
+>>
+>> Liao
+>>
+>>>>> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
+>>>>> ---
+>>>>>   drivers/gpu/drm/radeon/atombios_crtc.c     |  8 ++++----
+>>>>>   drivers/gpu/drm/radeon/atombios_encoders.c | 20 ++++++++++----------
+>>>>>   2 files changed, 14 insertions(+), 14 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/radeon/atombios_crtc.c b/drivers/gpu/ drm/radeon/atombios_crtc.c
+>>>>> index 9b3a3a9d60e2..0aae84f5e27c 100644
+>>>>> --- a/drivers/gpu/drm/radeon/atombios_crtc.c
+>>>>> +++ b/drivers/gpu/drm/radeon/atombios_crtc.c
+>>>>> @@ -770,13 +770,13 @@ static void atombios_crtc_set_disp_eng_pll(struct radeon_device *rdev,
+>>>>>       int index;
+>>>>>       union set_pixel_clock args;
+>>>>>   -    memset(&args, 0, sizeof(args));
+>>>>> -
+>>>>>       index = GetIndexIntoMasterTable(COMMAND, SetPixelClock);
+>>>>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev,
+>>>>>                      &crev))
+>>>>>           return;
+>>>>>   +    memset(&args, 0, sizeof(args));
+>>>>> +
+>>>>>       switch (frev) {
+>>>>>       case 1:
+>>>>>           switch (crev) {
+>>>>> @@ -832,12 +832,12 @@ static void atombios_crtc_program_pll(struct drm_crtc *crtc,
+>>>>>       int index = GetIndexIntoMasterTable(COMMAND, SetPixelClock);
+>>>>>       union set_pixel_clock args;
+>>>>>   -    memset(&args, 0, sizeof(args));
+>>>>> -
+>>>>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev,
+>>>>>                      &crev))
+>>>>>           return;
+>>>>>   +    memset(&args, 0, sizeof(args));
+>>>>> +
+>>>>>       switch (frev) {
+>>>>>       case 1:
+>>>>>           switch (crev) {
+>>>>> diff --git a/drivers/gpu/drm/radeon/atombios_encoders.c b/drivers/ gpu/drm/radeon/atombios_encoders.c
+>>>>> index d1c5e471bdca..f706e21a3509 100644
+>>>>> --- a/drivers/gpu/drm/radeon/atombios_encoders.c
+>>>>> +++ b/drivers/gpu/drm/radeon/atombios_encoders.c
+>>>>> @@ -492,11 +492,11 @@ atombios_dvo_setup(struct drm_encoder *encoder, int action)
+>>>>>       int index = GetIndexIntoMasterTable(COMMAND, DVOEncoderControl);
+>>>>>       uint8_t frev, crev;
+>>>>>   -    memset(&args, 0, sizeof(args));
+>>>>> -
+>>>>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+>>>>>           return;
+>>>>>   +    memset(&args, 0, sizeof(args));
+>>>>> +
+>>>>>       /* some R4xx chips have the wrong frev */
+>>>>>       if (rdev->family <= CHIP_RV410)
+>>>>>           frev = 1;
+>>>>> @@ -856,8 +856,6 @@ atombios_dig_encoder_setup2(struct drm_encoder *encoder, int action, int panel_m
+>>>>>       if (dig->dig_encoder == -1)
+>>>>>           return;
+>>>>>   -    memset(&args, 0, sizeof(args));
+>>>>> -
+>>>>>       if (ASIC_IS_DCE4(rdev))
+>>>>>           index = GetIndexIntoMasterTable(COMMAND, DIGxEncoderControl);
+>>>>>       else {
+>>>>> @@ -870,6 +868,8 @@ atombios_dig_encoder_setup2(struct drm_encoder *encoder, int action, int panel_m
+>>>>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+>>>>>           return;
+>>>>>   +    memset(&args, 0, sizeof(args));
+>>>>> +
+>>>>>       switch (frev) {
+>>>>>       case 1:
+>>>>>           switch (crev) {
+>>>>> @@ -1453,11 +1453,11 @@ atombios_external_encoder_setup(struct drm_encoder *encoder,
+>>>>>               (radeon_connector->connector_object_id & OBJECT_ID_MASK) >> OBJECT_ID_SHIFT;
+>>>>>       }
+>>>>>   -    memset(&args, 0, sizeof(args));
+>>>>> -
+>>>>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+>>>>>           return;
+>>>>>   +    memset(&args, 0, sizeof(args));
+>>>>> +
+>>>>>       switch (frev) {
+>>>>>       case 1:
+>>>>>           /* no params on frev 1 */
+>>>>> @@ -1853,11 +1853,11 @@ atombios_set_encoder_crtc_source(struct drm_encoder *encoder)
+>>>>>       uint8_t frev, crev;
+>>>>>       struct radeon_encoder_atom_dig *dig;
+>>>>>   -    memset(&args, 0, sizeof(args));
+>>>>> -
+>>>>>       if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+>>>>>           return;
+>>>>>   +    memset(&args, 0, sizeof(args));
+>>>>> +
+>>>>>       switch (frev) {
+>>>>>       case 1:
+>>>>>           switch (crev) {
+>>>>> @@ -2284,11 +2284,11 @@ atombios_dac_load_detect(struct drm_encoder *encoder, struct drm_connector *conn
+>>>>>           int index = GetIndexIntoMasterTable(COMMAND, DAC_LoadDetection);
+>>>>>           uint8_t frev, crev;
+>>>>>   -        memset(&args, 0, sizeof(args));
+>>>>> -
+>>>>>           if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+>>>>>               return false;
+>>>>>   +        memset(&args, 0, sizeof(args));
+>>>>> +
+>>>>>           args.sDacload.ucMisc = 0;
+>>>>>             if ((radeon_encoder->encoder_id == ENCODER_OBJECT_ID_INTERNAL_DAC1) ||
+>>>>
+>>>
+> 
+
 
