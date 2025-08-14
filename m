@@ -1,128 +1,120 @@
-Return-Path: <linux-kernel+bounces-769083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA891B269F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:49:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50BABB269DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39DFD5E7F10
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:40:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F59D9E0628
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594E21DF248;
-	Thu, 14 Aug 2025 14:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADBA1F30AD;
+	Thu, 14 Aug 2025 14:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LC0ibIjg"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAvEDr+U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2332A32143C;
-	Thu, 14 Aug 2025 14:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75DF1DE3DC;
+	Thu, 14 Aug 2025 14:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755182445; cv=none; b=JPTAEXT3Zpb1C1e33di5y3FwOiVyDUl9x6iA5p5OvOnxKLudmQtdwk5ZMjil43YtNOmlyhjjEoFSqHENcleXE9NI7bgItAveHJ3BSkgrm+kjEj0wrPQABPU4ESkzTeqS+Zm5CTz8rU8ChtvEbIP46xI1jzsyCFpUf7NCXfsZ/3Q=
+	t=1755182454; cv=none; b=IqaOI41y7I1qXkQM67D+Ln+OZCUxoCR+xx8DIe17vuDpOWcwl64klksrI/lT7KgdbYjYf0V2US+TGuynWQrf0q4JKGTm2PPZIIchVFZe2X5uftKM6WtcqTuEKuDNWz5WIUbouuAOm1ikFy4qiTsSPQsb63qOC+mQ/bCUY+Xs7DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755182445; c=relaxed/simple;
-	bh=3QtS0ERTKMX5YBda6xA5ASwtd6hVEodKEmGIdvNvVHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XlDI50YovJ4Byo4WOhVYGxRC2LmJUf8ad3HUSk85MhRbhDZXpRtT51BphwDlHPen4bOyzZvnuI4g+QsQPjTc5uSepqBfIA8I4399mgx1OB6l0BFdUS6v3yMSKmLQIbDk1Nzthc5SbJofD0zfcfigX1yt6XZhMvUoEvmwci0aqRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LC0ibIjg; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9edf504e6so513668f8f.3;
-        Thu, 14 Aug 2025 07:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755182441; x=1755787241; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8eKDxpRJVTIzyGI66oWlYnjcg0q+lXbGUZBFK9SZ3r8=;
-        b=LC0ibIjguiRP7RmixeoSbXfdFf8scP3qgpHaUxq1qI5m6UtwASCVexwe5nqQR7Eolz
-         64yO2GXCqRrP5Kyx1k42XyI2BsJmKXioHpQGs7FleG1Q8v2OGYpp70s+JqHaiWvqgYVv
-         RqnH5hCI+qv2fnJWEjhzAhlb1VLO38yJnpc+aYWObwFzuPjO+0CDRIndtNRDHqPviDZu
-         UNQxzZwqstoBmG/gwdjEnNw3AYH0CHJEivKTxecXfdZEVV7KKku1hFQVlMmqP73g/8Wa
-         PFDVNdcU0zNJVbETcFMItdKjbOiFRz/n0iTPNZh1IfdBnzBQ1D1xIHVEddGYWr0T3LjU
-         4Jgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755182441; x=1755787241;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8eKDxpRJVTIzyGI66oWlYnjcg0q+lXbGUZBFK9SZ3r8=;
-        b=AKQCr3mIYKRNyQ2TLFVLccopHaXHGr1ZvSw9qVY15uxvwC633HoBKtDqlR87sUbpUN
-         kays6WDaCX85eCdaJY8HlVfkIuAp/Gy3gho8ui/kH+UbT3n6WeG5RgwLYMY6YHJVtjOx
-         ll2Enbft71o7FkVbgdzyoLkdHDN7bmyRXqUzxNOLDfuAKwpDMYLHVhO3mqZUzbJUwi5r
-         TizC7FVjRrrwNUc7FF8QkTgjoylKFo4xRKFBHoLq/PdAP12Nj/m0aIBLs3mtMDaZ2s7/
-         vjxQA+wuZ1OgOG0tGFjjIZkhaTZnqgI7GB1IeVT9cRI9UUDXgHR5rPLWI4mAKI8EZUbz
-         5z+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUcyGfSL9bPlZZbQ/KygBvEBuOYSj213PASns9o1My8InUNcoziiUYhvXXTtsblmlWk7JayeQoXs49S@vger.kernel.org, AJvYcCWBLI2hJJGSBlXDX4dZldY8+jDib1UD+AcjjrbDNXu9GDfQLSyDPg0rW5swNRiHf0scaKPn0vfJZfNPUNTFowhz2w==@vger.kernel.org, AJvYcCWF9bUyJOY3dFD68JEoMjampGZ7e9QTy5rwGoIuJhMiV43m7xW7HSxxY/tUoxM0bLbZUDT2A3L+gcLc@vger.kernel.org, AJvYcCWIZVQf8hD2j9CDiVMMDOUSbntx0xfJs8DkwJ/tPg61pv/0T7XjbfOD8A/9G278wDP5j9atX4ksiQv5vXSV@vger.kernel.org, AJvYcCWy1dhhRfGjsjWOIxI+IMjVmG1QQhdxcYvuDERviwPradB02AWm1qTeOdYUcs/gSq+hJL+wiaBNfcJF@vger.kernel.org
-X-Gm-Message-State: AOJu0YwirYdsqalld9ksuZW2p2DB5a088qjAyKbpvccxy5WU1CYBbPsk
-	Q4EqtGdk84Sbi2a5/AlGANmSDidz5/sfLgHL9TcpPmwjW1z8IZOENp4Z
-X-Gm-Gg: ASbGnctbLkAeREDvaebCsSIrnbjePcqq2QflB19wZ+os6Gf4TwhktvS5XgViTpYT8Kt
-	I9P+Gmjrxb+CJWgZ2FtA18dloFNGrpITCvg7AWmLNFqXtIMgSsxURv4xjsqjEItEsHxz3EzNyQ0
-	g7QvEzT2pDYte7RPKAH32eBV03TMAUlaRra94m9POJ49kx2N/i17rSobC9TX4+u+riQerur/9pY
-	n9WPpADONxx257f7YP+zx6/m1bSf3FjjvQVmKf2wuxPkA7o4zZhy7hkfNodZtL1dpKd851KvdCU
-	4ZVDwxtJAIDCVM2Uu/BP85NA/YV/lCOXrHTSTZNwvifH3owC6bW5nYCR6oZlklCCbk44RPrdoR/
-	UUh1RsxfmH+fxir0ABmOidVzZgWOInY9oFeCZwL6CE8cFNt/jRwVEfNsYQCOyANYtpf986f1fGz
-	i1sD3lEjTJP9ear3dN9hO6eh1EkSDilTZxZin57Ird/fKmnKswNUNvRvFTJYwi708H
-X-Google-Smtp-Source: AGHT+IGIl6W6nr22Y4YoVoUfpGIRuQbb/HUttEupcp6PwkaGiEDhgt7ofHOiURySJSgcpN1jAaaG6Q==
-X-Received: by 2002:a05:6000:4006:b0:3b7:98bc:b856 with SMTP id ffacd0b85a97d-3b9edf5b3bemr3100715f8f.41.1755182441060;
-        Thu, 14 Aug 2025 07:40:41 -0700 (PDT)
-Received: from ?IPV6:2a01:cb08:941b:4c00:f383:4db2:82a:81e9? (2a01cb08941b4c00f3834db2082a81e9.ipv6.abo.wanadoo.fr. [2a01:cb08:941b:4c00:f383:4db2:82a:81e9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b1d4220sm17216425e9.0.2025.08.14.07.40.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 07:40:40 -0700 (PDT)
-Message-ID: <05cc39e7-9ec1-4ac1-903d-873f77c3c79d@gmail.com>
-Date: Thu, 14 Aug 2025 16:40:38 +0200
+	s=arc-20240116; t=1755182454; c=relaxed/simple;
+	bh=PU8UA+I5WgTOlBY9VPUqNqmWYyXfIpJmXJCYLjXok58=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=fUYUO6UNa3LMSwTIO2fwODoRfjeyFX83yiEB+3cL7m/ceRbEEqkdzjiEgHCkbyOSHV/qLHOVvOrThwx51Q+TbwWU6aeNQwHvkR0uylwMntVljdR2eazcO66X3K41ib886fLIZvSLAttWNIEk4j/QK4rEB60BYwjmGQyJ3JCSSqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAvEDr+U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55734C4CEED;
+	Thu, 14 Aug 2025 14:40:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755182453;
+	bh=PU8UA+I5WgTOlBY9VPUqNqmWYyXfIpJmXJCYLjXok58=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=LAvEDr+U95m00kjZmTrLNp8VuVL+XYtIEG2s0CzSAfyG9ZJ7nIPN34wZGDGtK7k+R
+	 rymKq3ypcPqobxYczNFF7TiI4nzADaGo8befS8+Vnd8uotBkVf5F3gfR/KIsBnzx+s
+	 1or3x87vwQHkyc/eRPjwCZPos+v8Vswv0yBhcf44DBw3YBACU+wnqy9/g3JrwpRd0N
+	 5oK5uXI+oTEjCveSwi2bB8cIOBQVT9eHULzCnyiHcPr70ncbNRSYTe1tu9J/DRHXAR
+	 3AjyaVGKzi7iNQBylr0cTJp3E0/oCD4T5SL4uob8XCHn7uMfIEQz3p/Q6NHUXjGQLJ
+	 2/mXpjoGPZ14Q==
+Date: Thu, 14 Aug 2025 09:40:52 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/20] dt-bindings: memory: introduce DDR4
-To: Julius Werner <jwerner@chromium.org>,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
- <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
- <CAODwPW8ZXfMdFL2=6ht+BvQq5_LQkwHhQJT5j9DcseEx9naXxg@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>
-In-Reply-To: <CAODwPW8ZXfMdFL2=6ht+BvQq5_LQkwHhQJT5j9DcseEx9naXxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, 
+ Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org
+To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+In-Reply-To: <20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com>
+References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
+ <20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com>
+Message-Id: <175518245252.2989785.16386519641633311403.robh@kernel.org>
+Subject: Re: [PATCH 1/6] dt-binbings: mfd: Add bindings for the LTC4283
+ Swap Controller
 
-Hi Julius,
 
-On 30/07/2025 20:29, Julius Werner wrote:
->> +title: DDR3 SDRAM compliant to JEDEC JESD79-4D
+On Thu, 14 Aug 2025 11:52:23 +0100, Nuno Sá wrote:
+> The LTC4283 is a negative voltage hot swap controller that drives an
+> external N-channel MOSFET to allow a board to be safely inserted and
+> removed from a live backplane.
 > 
-> Should this say DDR4?
-Yes, absolutely.
+> Main usage is as an Hardware Monitoring device. However, it has up to 8
+> pins that can be configured and used as GPIOs and hence, the device can
+> also be a GPIO controller.
 > 
->> +examples:
->> +  - |
->> +    ddr {
->> +        compatible = "ddr4-ff,f", "jedec,ddr4";
+> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+> ---
+>  .../devicetree/bindings/mfd/adi,ltc4283.yaml       | 85 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  7 ++
+>  2 files changed, 92 insertions(+)
 > 
-> This is not a valid example for the way you're defining it now anymore.
-Yes will fix it.
 
-Best regards,
-Clément
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml:
+	Error in referenced schema matching $id: http://devicetree.org/schemas/gpio/adi,ltc4283.yaml
+	Tried these paths (check schema $id if path is wrong):
+	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/adi,ltc4283.yaml
+	/usr/local/lib/python3.13/dist-packages/dtschema/schemas/gpio/adi,ltc4283.yaml
+
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/adi,ltc4283.example.dtb: swap-controller@15 (adi,ltc4283): gpio: {'compatible': ['adi,ltc4283-gpio'], 'gpio-controller': True, '#gpio-cells': 2} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/gpio/adi,ltc4283.yaml#"}
+	from schema $id: http://devicetree.org/schemas/mfd/adi,ltc4283.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/adi,ltc4283.example.dtb: swap-controller@15 (adi,ltc4283): hwmon: {'compatible': ['adi,ltc4283-hwmon'], 'adi,rsense-nano-ohms': [500], 'adi,current-limit-sense-microvolt': [[25000]], 'adi,current-limit-foldback-factor': [10], 'adi,cooling-delay-ms': [8190], 'adi,fet-bad-timer-delay-ms': [512]} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/hwmon/adi,ltc4283.yaml#"}
+	from schema $id: http://devicetree.org/schemas/mfd/adi,ltc4283.yaml#
+Documentation/devicetree/bindings/mfd/adi,ltc4283.example.dtb: /example-0/i2c/swap-controller@15/gpio: failed to match any schema with compatible: ['adi,ltc4283-gpio']
+Documentation/devicetree/bindings/mfd/adi,ltc4283.example.dtb: /example-0/i2c/swap-controller@15/hwmon: failed to match any schema with compatible: ['adi,ltc4283-hwmon']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
