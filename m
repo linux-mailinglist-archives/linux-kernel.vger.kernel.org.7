@@ -1,509 +1,1763 @@
-Return-Path: <linux-kernel+bounces-769645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D782CB27177
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2C5B2717C
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A40521BC64C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDA55E56D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7FA28030E;
-	Thu, 14 Aug 2025 22:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89EE27FD46;
+	Thu, 14 Aug 2025 22:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ECQoQyL/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxhKRkhq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDDD23BCEE;
-	Thu, 14 Aug 2025 22:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755209426; cv=fail; b=V/VKijeVVfwlH77FxNqtKYd4CEPS+teZ9s68Y12Gnh0xn/x1CvKE3vIUmcq8QlEWriOdrWKDnPrfyDiihcWwXWMjRxU92N4aootZpmbMk78JEeapESMUuVwtA/8ePJgzM7lNR4SkR8fsgbrCGUDT5HaIID3/x0d1XAAl+BCQpc0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755209426; c=relaxed/simple;
-	bh=e6XDhXqAR58fHaTIhQ/E+tk/SOHK/RpAWp+h6Ey1WIE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BvPcYU6opdxR+zkxpPCzWboqnUmXI55mxDTv0S8tJgzalT6ZU02qe2EGEMmh5dfNgtnbSmO0KAcrpN8fsrnMsX5xPjUr3qx+SEWKEfmMPBcLTYnaD/fslmO0h3+rn5JZpq2Jdr3O5orXD5922/IVOun3rUsGU1bhKhdddeRehTE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ECQoQyL/; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755209424; x=1786745424;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=e6XDhXqAR58fHaTIhQ/E+tk/SOHK/RpAWp+h6Ey1WIE=;
-  b=ECQoQyL/uPGXJJvDpLndc5/2BSTfidDDsclhtcE9iE3vKi0zw146JeI5
-   1gnvW+MafEJhPbcaLcq9uT50emcWWWBQDaPErhy3e+1G8lL0gaRcIRPMA
-   uTqMdRIfklPouGjjBFhTGM5Zdbi6zcTrz1LMvMAmpBEHge/agOpJM2hjJ
-   +WWcSsqJY1rdmJZ/fA4vD47R9PQHUmlue+1KHc29lBFcGhC85t01rymSG
-   ZsGJSvA+EIqjUOxmC5PfF5V2Lp/K9KdBmE0pQGCYJ1OulHbQNoNNkc/qN
-   ocnixrNr2HqLQc0Z4SDrtKNapkz3YHjZyX8mYXiyYlDihrVSdK2X/DzKl
-   g==;
-X-CSE-ConnectionGUID: bGcEHbQISeGri5ZlLvEgZA==
-X-CSE-MsgGUID: wjOtktBhR8CaTSv2Iy3r/Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57492167"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="57492167"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 15:10:23 -0700
-X-CSE-ConnectionGUID: 5kxsgT+8SC6++zRxBJ/b9w==
-X-CSE-MsgGUID: 1AyX54g9Q52YDhk3DVsVyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="166047660"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 15:10:23 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 15:10:22 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 14 Aug 2025 15:10:22 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.84)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 15:10:22 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ab2hDadT6X1PtBmIl9agO4OZL6q54L8baHOghs5J0XqgvFrGZ1q852lCmAGZ/iVT7eC3GDYPS1equ+cCPaNZaFk1dkEYp/ur+V+LbDJO+LsKkDanYUs8gnl8yoCcDlAGxFP24hAbXm9vDvraUx75AhHbdBzQaDcZSMBczSsQsHCCKoUvGnHHy2I95gcpeQLZvxjqwNS5RtbP3O8P4Mo1q90p76Q9wblj1G2Z8ic0OvEaqLj08F43hZH+EfB+tsPxSqHB8vNR9lLZSOUjhPRJkE5V+Me2Rgky5MAT1FZ9dIZbKzZrwryecYPqNc1EOzKjCmR24qI7jHZxCvnxd0/X4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e6XDhXqAR58fHaTIhQ/E+tk/SOHK/RpAWp+h6Ey1WIE=;
- b=xdO57vrGKUzUISDKHu38VygimA6dV2c5xrmQ/WCfx9x/NUmz/4Qp694y7P0hoB+MqyduUGoKpDN0TW2asOp2bvOQUm8l4JSuFszWaahyN/JTMUnH6TOHBNvYl2x/qT4AwEmBNieblIqQz0NiyO9BdnLWci2iQmS1jDa0VWF52MdGp2tTb9yZjdjTuYmKP07tHQzZY7K15ts2ewBP3A9kK1IZbISROUebEmROvW8TjGdu7YbLnz/eknvOouJ77Wl0thBqXwTN53EKsAmKMHAOM4MYMiJe9KnYEUi5lFrHqceAbePaVcE5Df3uZu+uA5qCVwGjJmVJerF9iIrOuqKUXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from PH7PR11MB8121.namprd11.prod.outlook.com (2603:10b6:510:234::14)
- by CYXPR11MB8711.namprd11.prod.outlook.com (2603:10b6:930:d7::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.16; Thu, 14 Aug
- 2025 22:10:21 +0000
-Received: from PH7PR11MB8121.namprd11.prod.outlook.com
- ([fe80::ec4e:64cf:cf1f:daab]) by PH7PR11MB8121.namprd11.prod.outlook.com
- ([fe80::ec4e:64cf:cf1f:daab%7]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 22:10:21 +0000
-From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-To: Nhat Pham <nphamcs@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
-	<hannes@cmpxchg.org>, "yosry.ahmed@linux.dev" <yosry.ahmed@linux.dev>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"davem@davemloft.net" <davem@davemloft.net>, "clabbe@baylibre.com"
-	<clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com"
-	<surenb@google.com>, "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Gomes, Vinicius" <vinicius.gomes@intel.com>, "Feghali, Wajdi K"
-	<wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Subject: RE: [PATCH v11 23/24] mm: zswap: zswap_store() will process a large
- folio in batches.
-Thread-Topic: [PATCH v11 23/24] mm: zswap: zswap_store() will process a large
- folio in batches.
-Thread-Index: AQHcAp3s2yhoOlvg0ke7aLYIJiYnCrRiuPoAgAARL5A=
-Date: Thu, 14 Aug 2025 22:10:21 +0000
-Message-ID: <PH7PR11MB812170EAD58202D9EA0422A8C935A@PH7PR11MB8121.namprd11.prod.outlook.com>
-References: <20250801043642.8103-1-kanchana.p.sridhar@intel.com>
- <20250801043642.8103-24-kanchana.p.sridhar@intel.com>
- <CAKEwX=Ov2X-0EnmWDCf=mahnR57si_QUuXF7F=Eb5P2cKYZEvg@mail.gmail.com>
-In-Reply-To: <CAKEwX=Ov2X-0EnmWDCf=mahnR57si_QUuXF7F=Eb5P2cKYZEvg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR11MB8121:EE_|CYXPR11MB8711:EE_
-x-ms-office365-filtering-correlation-id: 7a124eeb-d806-41f1-1233-08dddb7f5c42
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?R1lGT2ZwS0c3QWtYM2w1NklpNUYvb2drclpRWXVBVGpucmNjREptNm14SEp5?=
- =?utf-8?B?eS9UODJMaDE4bERmb0FBWDF6R2FBOFhiWFlCaUZpM2hQM1I4Vmh5MW0xbk5q?=
- =?utf-8?B?VXlmMHAvYzJsRXlCeFZjMnlwa0x5TFhVOUlmYTVHcGNpMGpDS2pUMDRSdmVh?=
- =?utf-8?B?TXNJRmRIODhmNS80OTRXT3NOdllHNlQzSnRFdjFKelg5cTZaSVdpcXVIZlZp?=
- =?utf-8?B?RmVlcm1GMUt2SURlckVyM0JLREMvL05hQWRWa0NYVkRrTW93U2ljZHhQaUs3?=
- =?utf-8?B?WUJwUnYzSXNzWVhTVmZZRG96WmxLYm9qYUV2d2UzTlB6U3VyVE1oTTAyZnU2?=
- =?utf-8?B?VGl5MStFZmJ0U0F0b2NlQTBEbWZoN3piUzZZMngxRE9lcG42YlNUSUNCTFE3?=
- =?utf-8?B?SU5mOXM3d3BtYnU0aEs0ZVF4YUtHbmNoK2wzZ1FNQ1NQNHBhUFJac29tYWI1?=
- =?utf-8?B?eW5HZ21KeHB6MzdkV0FJTUVYQVlNR3RtTzAyem5Mc1g3elZXc1d1UnBUZDd4?=
- =?utf-8?B?ZHovbyt5Y0oyUEkyTTF3S0J4WVNJN1g1eVdjWGdYdW9xajNtZjlLYzVQYkpa?=
- =?utf-8?B?SnFQODFMaWk5ZXhTVXVETUxLeGcrNTh4WVJaOWZwK2hkdnp4dHlGbGRvWlpv?=
- =?utf-8?B?cllWM0lPK3kwQU81T1RnN1h3WTExV1Rta1FRaVpPWVVnNFZOTWI5NFB3MVlX?=
- =?utf-8?B?WDZOSWI5LzZSMWdFZVdMbmZONnFMN09nbHNNa3hCOTZxNCtxQTlEdktNeG1V?=
- =?utf-8?B?SUtNS1RSK1hteVd1Y2JsWHFTZVdxMXR1VzVpMXV2SU92NWVvbTdvVURIWDZD?=
- =?utf-8?B?ODRIeWE5YjVuczlETkNNeGpJRTZOa016U2R4ZWZvVnF5L0JxZGw2MlludVpG?=
- =?utf-8?B?OEhPb1hSRCtHNXFPK3A0Sm1BTDY2amdmMmdKWnFQUkNQYjhxYnlBQUh5blow?=
- =?utf-8?B?cnZ0eVYxdWtraFdsZCs1alIvN1R4K05MN1BOc3lCUmRmOXZzaWdnV2dTdkx0?=
- =?utf-8?B?ZUt6MDBXKzlhSUQ0clphSlk4NHZjVy84L0s3dlV0ejNvZ3JCUEhta1ZLU1hT?=
- =?utf-8?B?UmZZWmxtVWEzdXp4c0tRaFkwQUlsWlRYTEpiUG50ZmFHQ0dHRk90UStUNElr?=
- =?utf-8?B?MnQ4TSswbUFHQk8waFBPdTRsUndUTGtXNW5lb1dQTEg0T3RTTHVMZkhiRm44?=
- =?utf-8?B?RzdMeUlpanlEZkdONFIrT0xVZjl6Q3gwdXJodnNHcmYyQUY3a01ielRNeHNl?=
- =?utf-8?B?QjN1UDZwRVo4VjYzZmM4K3RTdElwU3dRMS9MZXNmVEJpY3p0RjBwSGZhNHB6?=
- =?utf-8?B?eUcrVVVYMERvMkNwNklzSXFaenM5d1BORFNsWGhwUUZGSzM1V3hzZmZ4UlBv?=
- =?utf-8?B?cWdhV0M2eHdpMXhvbis2bVMwbno1TDhvMG5GQ3dlRldxblhUSnpxNTdub1BE?=
- =?utf-8?B?NUZqVlYxQWNwUW92NUcxV2dCUWc1dU1YMTA4cEt5ZENtQjhoT1dBVUQzTGx0?=
- =?utf-8?B?c3Uvb0E1R1ZlazcxYyt2ZUJ1aUc0S3ZQTjAxSER1TDZTZmxnV083M09yeUVZ?=
- =?utf-8?B?SjZhVUU4SjBUNVQxU1o0RHhGbldGdDBEaFVEbVNqLzhUTEpEU1AwVkRlWXY0?=
- =?utf-8?B?a2swRS9iN0NESmRCdkJ1RkVPVDFHb3BqbGlHWDVpeVNiMWcrZkVQMmdiSmdy?=
- =?utf-8?B?MlRUUGxVNUNWQUdKQjg3cUJZK0gwS3M4dFdhQkg1bjZhKzBaTXlxQUt1d2xp?=
- =?utf-8?B?ays4YWdEdHZKQ0J4NVJqbGRNOG1rYnkzckozQ1FiY2orMjA1OVRRMy9WdExq?=
- =?utf-8?B?WWNBZ0FlQlJMYUFDWklBM3l6V3U2a2NSV1VZZHEzZzdzekR6aXJObk55cm85?=
- =?utf-8?B?TGEvVFJFT09aWXhRT09DWXBDWXRJcEk1OVk3bDkwbk4reVRmK09nVmFFSDdH?=
- =?utf-8?B?K2YydE1YejlaWVR5VEtLU1pZOFJyYURac1VHZ1BsaHlKYWJHZ3ZYVGpDUFhs?=
- =?utf-8?B?NGF0dnp2SU53PT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB8121.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OEc3M2xOY1R4RzdBVk1CTHhGU09rak9WV2JFc00wRUdLMzZFSUxseDVFbkxv?=
- =?utf-8?B?OC8xVUI4Qi9CaUorRCtWY2NzZE0zcVUrNG0rL3JTUGJHay84THMyOTVKTHgx?=
- =?utf-8?B?TlNoK2ptSE5lcG41NzhSSGZOS1JRaVFkc1d4UFEyTUNMU3d4VE4rRTE1ejBz?=
- =?utf-8?B?QW5YbW1yY2JUZWZhdWNHOVRha3JyV2todmUrVDNRTUlBTlRqR0lKd0lFSEEv?=
- =?utf-8?B?Q3c1WEdRL0JqSnlTcnh0WUNHZ2kwbDUwVldNSmUwWXJuMEk5WEFablBNc3Y0?=
- =?utf-8?B?S3E4UnRpNFNaTkFOT0dyVzFIZk52dGlOZkJVL1M1L0xzQnhpT3ZRSE02aXFF?=
- =?utf-8?B?a01SL0VVdWJUZ3hnVmF4YUw5aGlaWVdKdXRyWVNxTXhSalZ1bS82TGc2UXBp?=
- =?utf-8?B?aEI3dklGTEZ5OGxQSFFwTEx3MTJwRmdSVlEvYU5LQkYwM3dZcG1rU3JQN3B2?=
- =?utf-8?B?WEZ1QkhTSGJpUlQrbWxHYkhiRzBZTVFXZXRCSWxtbUJESUpZQmVLRUwyM1hY?=
- =?utf-8?B?QjVxYXZIMk42eHlIbWI5akx1Z2N1V251SGozYk83eU1ramtsZkxnLzhSMTV1?=
- =?utf-8?B?VW1HZkdaWUFjekZFSGpycEhjSGlmaitTaVBuMzNwby93ekRZQ2xoTFBNdzVn?=
- =?utf-8?B?NUdNM1M2SVRIQW83bFA2TWFHVXBYa1dFR01yYVpERmhLejBVcEV0cEJadDh0?=
- =?utf-8?B?YW9XL2lGUTRjWEkyODNlaWxjSnBFa3BPdkpXcUdpTkQzWG43UlNsMG1xODhy?=
- =?utf-8?B?UWxTQWlwVVQ4MnY1T0VQRHRwNXd6MmlGZ1dzM3BiVmZUbXc5ZXlPOVJualJI?=
- =?utf-8?B?RHcvVmRGdFZiUW1VYXo4TjNmZTIxZENqSUhLakUwblZoaTZFWUFqQ3JYSGZS?=
- =?utf-8?B?TjNBL1ViRHNTMUVsRzhJVk1vbU5sckFndlNwZlVNU0E5SUNKK3RGQ1ovTWZa?=
- =?utf-8?B?NE9BZjRYY2pLSzVtRTZaK00yZnJPOVJNRDR6ZUpNTitWN21SWmJ0ZmVKSjE2?=
- =?utf-8?B?VHRodWE1dkhpTUNHZDNEbjVJbGhHYU1TSHBTVXdpN01BQlQwSzR0V0F0Qnd0?=
- =?utf-8?B?c011YVVKaS85YllsMStsbndPN1pxWHZabTVIcUJCN0FjWmwzcXpKdHJYOVJE?=
- =?utf-8?B?aituNWs4VUtZMnNhWDBxTWNIRUZDcUplWWovY3JYbjhEZll1aUdYUVpxQVRJ?=
- =?utf-8?B?S0YwemxWQ1M3V0pHMmhFODNvdnVoc0hSQ1ExK3VKcXNYK21jQlpEY2NWa2VY?=
- =?utf-8?B?SmhKT3NUTDZjWEFyRTJrc255TVJLU0dFam51N0ZtRkVONFRlWmUyUjh0UXJU?=
- =?utf-8?B?WUZCL0o4bzd4UE9INW9POCs3Z1FIT2xVVVZFQTlYR0ZoVVFoTHYzTDVYVERn?=
- =?utf-8?B?eVFkcjFRQUZCbEJBZzFXYnVSSklQazJEVTFuaFFnZGhmYjVCbE4rRlZiVEtv?=
- =?utf-8?B?bXVYNGRBZ1BNU0NvVi96ajJUNmlneEZBNjZjcS9PRGRRN2Q1anpDV0x3WW4x?=
- =?utf-8?B?aEFHMzc1bmsyVnZ5R05iSjIwRkd0eUpFNWJwUG5UbE9WV1pOUHZPNlM5bVNM?=
- =?utf-8?B?amVrV1J5SC9WeS9yeUkzbC9VdEJoZld2T2FTMyt3YVd3WWRiYUgzZ1NNZDYx?=
- =?utf-8?B?dG16U1NlMUVjMnZEclN6dHJ5R0gxY1RhSU94UTF6Z3lvWklVR0dDRGxaVDJo?=
- =?utf-8?B?aWlvaFEzNHFkcFpRNzJvbDJxUDNXRXlLZlhGWmxFMzB5S0s3SmkzSERMSnRw?=
- =?utf-8?B?SWhmSHZ4WEdPT1B0MlJ0akYxeEFtUGE1S0o5dis1NjVXZS9VUWdGN2J1UFRr?=
- =?utf-8?B?bXRlQ3hVYlRjaEFKb3dQT1dHdG8zNDdza05OMXgvb0RLcWpaQXNtNGhXdEx2?=
- =?utf-8?B?L21DOEFQcVBLK21BK1g5V2pPTnAxOXJIT3I5VjJ5NDh3QUpSNW1oWUMwSnJI?=
- =?utf-8?B?YjAvM2ZvcjlHREZTZlc0TUxuc05nSEs0ZHRkRk5iME1rbTRDTGtMMEVsTDh3?=
- =?utf-8?B?STY2Y3RaN0w4UmNlN1YySnpTbVlpNndBSmUvd3dHL0FML3JqSG1idXE5R0xi?=
- =?utf-8?B?NWNWNGxuUFhnL0ZvUHBqNURKQ0pEZC9NdE9DZ2E2UG1EOC9IVG1YNjhPdG5M?=
- =?utf-8?B?QXJOWFBkRGR6Ky9sbW16YTBYOFRwLytyaXM3ODJ6Nk15RXNqb0ZVYitJR1E0?=
- =?utf-8?B?VXc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF3F20A5EA;
+	Thu, 14 Aug 2025 22:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755209650; cv=none; b=fF5q/uOnmEy8Nj8UpnnA/PKndpj6KQKlDoSZGYQzy6TJ0/YhWNheolXcmskT4ZgG6S8K9JBPGUkLaNoFIkF0RTs53v9WuO5UhA5Zhc2R89oEZwtSFW26Q25d1Dfo/8vC6bqZwP6tTdNxlumEa+hLCdT+Cv+tmFbu+YtHaRXnIKw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755209650; c=relaxed/simple;
+	bh=6/rlewOiBeTPhjQmM7oYwv847lQRfbTbrNacTTl2YvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eMaUTHVxwrkYXmbX3lIennnfNl6NleAOFdl44v3JLSZw9RpxeE7bNaVdgdp7o+bOX/B9zMbpMTKoPculVj03WOHwFqmEDotD/6R3oUdXHTf+MyEPLuEsOvdnJHmUgDIjGURy0AuIs+R6kb4Q2bQ4tTrTmQijUF52sn71716PNO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxhKRkhq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34AE2C4CEED;
+	Thu, 14 Aug 2025 22:14:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755209649;
+	bh=6/rlewOiBeTPhjQmM7oYwv847lQRfbTbrNacTTl2YvE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KxhKRkhqe4vlbqzJCTfUHp0XRRDTJ8e6/Uhyw2D0MmH8qSpo/wveTnovEbr5r0Wgd
+	 9Q+L2ucIc6MAm/s8Ytb/OziW0xPNje0QRb4sabXeXyWRo1BUF0tlf4T1yzppq11vsd
+	 RxgX32eWTJMEu0mUuHIoRiQFoo2jvQpS5C7ZId2DC1ubHhyrtCiYNu0L1noU5UwLmK
+	 bCT2c54x7Lx9r7zU/Vn6AzeC0VTGfSnW2ZgG3S8KmB0p5B779NKyplOxLF/Rj/C9uv
+	 ZNq5UoOVZp312a+bCYAJUYJorz5VJGnl/d6RQVhiBDthpvLofqUJxDLlY7BcGOqX98
+	 eYIPYtE/2xyVQ==
+Date: Thu, 14 Aug 2025 17:14:07 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mpillai@cadence.com,
+	fugang.duan@cixtech.com, guoyin.chen@cixtech.com,
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 07/13] PCI: cadence: Add support for High Performance
+ Arch(HPA) controller
+Message-ID: <20250814221407.GA351079@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB8121.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a124eeb-d806-41f1-1233-08dddb7f5c42
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2025 22:10:21.1396
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: y03D7G/J44U4yxwg6QtBh6I7EFTYg/UYkTJ6xjnsvJOeVtrXImfI65+TL78tNTR5JcXfjwwonpvVQyxqXHK0R0r72ed6SFF5QvCSvfzpDO0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR11MB8711
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813042331.1258272-8-hans.zhang@cixtech.com>
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE5oYXQgUGhhbSA8bnBoYW1j
-c0BnbWFpbC5jb20+DQo+IFNlbnQ6IFRodXJzZGF5LCBBdWd1c3QgMTQsIDIwMjUgMjowNSBQTQ0K
-PiBUbzogU3JpZGhhciwgS2FuY2hhbmEgUCA8a2FuY2hhbmEucC5zcmlkaGFyQGludGVsLmNvbT4N
-Cj4gQ2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LW1tQGt2YWNrLm9yZzsN
-Cj4gaGFubmVzQGNtcHhjaGcub3JnOyB5b3NyeS5haG1lZEBsaW51eC5kZXY7IGNoZW5nbWluZy56
-aG91QGxpbnV4LmRldjsNCj4gdXNhbWFhcmlmNjQyQGdtYWlsLmNvbTsgcnlhbi5yb2JlcnRzQGFy
-bS5jb207IDIxY25iYW9AZ21haWwuY29tOw0KPiB5aW5nLmh1YW5nQGxpbnV4LmFsaWJhYmEuY29t
-OyBha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnOw0KPiBzZW5vemhhdHNreUBjaHJvbWl1bS5vcmc7
-IGxpbnV4LWNyeXB0b0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGhlcmJlcnRAZ29uZG9yLmFwYW5hLm9y
-Zy5hdTsgZGF2ZW1AZGF2ZW1sb2Z0Lm5ldDsNCj4gY2xhYmJlQGJheWxpYnJlLmNvbTsgYXJkYkBr
-ZXJuZWwub3JnOyBlYmlnZ2Vyc0Bnb29nbGUuY29tOw0KPiBzdXJlbmJAZ29vZ2xlLmNvbTsgQWNj
-YXJkaSwgS3Jpc3RlbiBDIDxrcmlzdGVuLmMuYWNjYXJkaUBpbnRlbC5jb20+Ow0KPiBHb21lcywg
-VmluaWNpdXMgPHZpbmljaXVzLmdvbWVzQGludGVsLmNvbT47IEZlZ2hhbGksIFdhamRpIEsNCj4g
-PHdhamRpLmsuZmVnaGFsaUBpbnRlbC5jb20+OyBHb3BhbCwgVmlub2RoIDx2aW5vZGguZ29wYWxA
-aW50ZWwuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYxMSAyMy8yNF0gbW06IHpzd2FwOiB6
-c3dhcF9zdG9yZSgpIHdpbGwgcHJvY2VzcyBhDQo+IGxhcmdlIGZvbGlvIGluIGJhdGNoZXMuDQo+
-IA0KPiBPbiBUaHUsIEp1bCAzMSwgMjAyNSBhdCA5OjM24oCvUE0gS2FuY2hhbmEgUCBTcmlkaGFy
-DQo+IDxrYW5jaGFuYS5wLnNyaWRoYXJAaW50ZWwuY29tPiB3cm90ZToNCj4gPg0KPiA+IFRoaXMg
-cGF0Y2ggbW9kaWZpZXMgenN3YXBfc3RvcmUoKSB0byBzdG9yZSBhIGJhdGNoIG9mIHBhZ2VzIGlu
-IGxhcmdlDQo+ID4gZm9saW9zIGF0IGEgdGltZSwgaW5zdGVhZCBvZiBzdG9yaW5nIG9uZSBwYWdl
-IGF0IGEgdGltZS4gSXQgZG9lcyB0aGlzIGJ5DQo+ID4gY2FsbGluZyBhIG5ldyBwcm9jZWR1cmUg
-enN3YXBfc3RvcmVfcGFnZXMoKSB3aXRoIGEgcmFuZ2Ugb2YNCj4gPiAicG9vbC0+YmF0Y2hfc2l6
-ZSIgaW5kaWNlcyBpbiB0aGUgZm9saW8uDQo+ID4NCj4gPiB6c3dhcF9zdG9yZV9wYWdlcygpIGlt
-cGxlbWVudHMgYWxsIHRoZSBjb21wdXRlcyBkb25lIGVhcmxpZXIgaW4NCj4gPiB6c3dhcF9zdG9y
-ZV9wYWdlKCkgZm9yIGEgc2luZ2xlLXBhZ2UsIGZvciBtdWx0aXBsZSBwYWdlcyBpbiBhIGZvbGlv
-LA0KPiA+IG5hbWVseSB0aGUgImJhdGNoIjoNCj4gPg0KPiA+IDEpIEl0IHN0YXJ0cyBieSBhbGxv
-Y2F0aW5nIGFsbCB6c3dhcCBlbnRyaWVzIHJlcXVpcmVkIHRvIHN0b3JlIHRoZQ0KPiA+ICAgIGJh
-dGNoLiBOZXcgcHJvY2VkdXJlcywgenN3YXBfZW50cmllc19jYWNoZV9hbGxvY19iYXRjaCgpIGFu
-ZA0KPiA+ICAgIHpzd2FwX2VudHJpZXNfY2FjaGVfZnJlZV9iYXRjaCgpIGNhbGwga21lbV9jYWNo
-ZV9bZnJlZV1hbGxvY19idWxrKCkNCj4gPiAgICB0byBvcHRpbWl6ZSB0aGUgcGVyZm9ybWFuY2Ug
-b2YgdGhpcyBzdGVwLg0KPiA+DQo+ID4gMikgTmV4dCwgdGhlIGVudHJpZXMgZmllbGRzIGFyZSB3
-cml0dGVuLCBjb21wdXRlcyB0aGF0IG5lZWQgdG8gYmUgaGFwcGVuDQo+ID4gICAgYW55d2F5LCB3
-aXRob3V0IG1vZGlmeWluZyB0aGUgenN3YXAgeGFycmF5L0xSVSBwdWJsaXNoaW5nIG9yZGVyLiBU
-aGlzDQo+ID4gICAgaW1wcm92ZXMgbGF0ZW5jeSBieSBhdm9pZGluZyBoYXZpbmcgdGhlIGJyaW5n
-IHRoZSBlbnRyaWVzIGludG8gdGhlDQo+ID4gICAgY2FjaGUgZm9yIHdyaXRpbmcgaW4gZGlmZmVy
-ZW50IGNvZGUgYmxvY2tzIHdpdGhpbiB0aGlzIHByb2NlZHVyZS4NCj4gPg0KPiA+IDMpIE5leHQs
-IGl0IGNhbGxzIHpzd2FwX2NvbXByZXNzKCkgdG8gc2VxdWVudGlhbGx5IGNvbXByZXNzIGVhY2gg
-cGFnZSBpbg0KPiA+ICAgIHRoZSBiYXRjaC4NCj4gPg0KPiA+IDQpIEZpbmFsbHksIGl0IGFkZHMg
-dGhlIGJhdGNoJ3MgenN3YXAgZW50cmllcyB0byB0aGUgeGFycmF5IGFuZCBMUlUsDQo+ID4gICAg
-Y2hhcmdlcyB6c3dhcCBtZW1vcnkgYW5kIGluY3JlbWVudHMgenN3YXAgc3RhdHMuDQo+ID4NCj4g
-PiA1KSBUaGUgZXJyb3IgaGFuZGxpbmcgYW5kIGNsZWFudXAgcmVxdWlyZWQgZm9yIGFsbCBmYWls
-dXJlIHNjZW5hcmlvcw0KPiA+ICAgIHRoYXQgY2FuIG9jY3VyIHdoaWxlIHN0b3JpbmcgYSBiYXRj
-aCBpbiB6c3dhcCBhcmUgY29uc29saWRhdGVkIHRvIGENCj4gPiAgICBzaW5nbGUgInN0b3JlX3Bh
-Z2VzX2ZhaWxlZCIgbGFiZWwgaW4genN3YXBfc3RvcmVfcGFnZXMoKS4gSGVyZSBhZ2FpbiwNCj4g
-PiAgICB3ZSBvcHRpbWl6ZSBwZXJmb3JtYW5jZSBieSBjYWxsaW5nIGttZW1fY2FjaGVfZnJlZV9i
-dWxrKCkuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBLYW5jaGFuYSBQIFNyaWRoYXIgPGthbmNo
-YW5hLnAuc3JpZGhhckBpbnRlbC5jb20+DQo+ID4gLS0tDQo+ID4gIG1tL3pzd2FwLmMgfCAyMTgg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQ0KPiAtLS0t
-DQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxNDkgaW5zZXJ0aW9ucygrKSwgNjkgZGVsZXRpb25zKC0p
-DQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvbW0venN3YXAuYyBiL21tL3pzd2FwLmMNCj4gPiBpbmRl
-eCA2M2E5OTdiOTk5NTM3Li44Y2E2OWMzZjMwZGYyIDEwMDY0NA0KPiA+IC0tLSBhL21tL3pzd2Fw
-LmMNCj4gPiArKysgYi9tbS96c3dhcC5jDQo+ID4gQEAgLTg3OSw2ICs4NzksMjQgQEAgc3RhdGlj
-IHZvaWQgenN3YXBfZW50cnlfY2FjaGVfZnJlZShzdHJ1Y3QNCj4genN3YXBfZW50cnkgKmVudHJ5
-KQ0KPiA+ICAgICAgICAga21lbV9jYWNoZV9mcmVlKHpzd2FwX2VudHJ5X2NhY2hlLCBlbnRyeSk7
-DQo+ID4gIH0NCj4gPg0KPiA+ICsvKg0KPiA+ICsgKiBSZXR1cm5zIDAgaWYga21lbV9jYWNoZV9h
-bGxvY19idWxrKCkgZmFpbGVkIGFuZCBhIHBvc2l0aXZlIG51bWJlcg0KPiBvdGhlcndpc2UuDQo+
-ID4gKyAqIFRoZSBjb2RlIGZvciBfX2ttZW1fY2FjaGVfYWxsb2NfYnVsaygpIGluZGljYXRlcyB0
-aGF0IHRoaXMgcG9zaXRpdmUNCj4gbnVtYmVyDQo+ID4gKyAqIHdpbGwgYmUgdGhlIEBzaXplIHJl
-cXVlc3RlZCwgaS5lLiwgQG5yX2VudHJpZXMuDQo+ID4gKyAqLw0KPiA+ICtzdGF0aWMgX19hbHdh
-eXNfaW5saW5lIGludCB6c3dhcF9lbnRyaWVzX2NhY2hlX2FsbG9jX2JhdGNoKHZvaWQNCj4gKipl
-bnRyaWVzLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IG5yX2VudHJpZXMsDQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBnZnBfdCBnZnAp
-DQo+ID4gK3sNCj4gPiArICAgICAgIHJldHVybiBrbWVtX2NhY2hlX2FsbG9jX2J1bGsoenN3YXBf
-ZW50cnlfY2FjaGUsIGdmcCwgbnJfZW50cmllcywNCj4gZW50cmllcyk7DQo+ID4gK30NCj4gPiAr
-DQo+ID4gK3N0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCB6c3dhcF9lbnRyaWVzX2NhY2hlX2Zy
-ZWVfYmF0Y2godm9pZA0KPiAqKmVudHJpZXMsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBpbnQgbnJfZW50cmll
-cykNCj4gPiArew0KPiA+ICsgICAgICAga21lbV9jYWNoZV9mcmVlX2J1bGsoenN3YXBfZW50cnlf
-Y2FjaGUsIG5yX2VudHJpZXMsIGVudHJpZXMpOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICAvKg0KPiA+
-ICAgKiBDYXJyaWVzIG91dCB0aGUgY29tbW9uIHBhdHRlcm4gb2YgZnJlZWluZyBhbmQgZW50cnkn
-cyB6cG9vbCBhbGxvY2F0aW9uLA0KPiA+ICAgKiBmcmVlaW5nIHRoZSBlbnRyeSBpdHNlbGYsIGFu
-ZCBkZWNyZW1lbnRpbmcgdGhlIG51bWJlciBvZiBzdG9yZWQgcGFnZXMuDQo+ID4gQEAgLTE1MTIs
-OTMgKzE1MzAsMTU0IEBAIHN0YXRpYyB2b2lkIHNocmlua193b3JrZXIoc3RydWN0IHdvcmtfc3Ry
-dWN0DQo+ICp3KQ0KPiA+ICAqIG1haW4gQVBJDQo+ID4gICoqKioqKioqKioqKioqKioqKioqKioq
-KioqKioqKioqKiovDQo+ID4NCj4gPiAtc3RhdGljIGJvb2wgenN3YXBfc3RvcmVfcGFnZShzdHJ1
-Y3QgcGFnZSAqcGFnZSwNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBv
-YmpfY2dyb3VwICpvYmpjZywNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVj
-dCB6c3dhcF9wb29sICpwb29sKQ0KPiA+ICsvKg0KPiA+ICsgKiBTdG9yZSBtdWx0aXBsZSBwYWdl
-cyBpbiBAZm9saW8sIHN0YXJ0aW5nIGZyb20gdGhlIHBhZ2UgYXQgaW5kZXggQHN0YXJ0IHVwDQo+
-IHRvDQo+ID4gKyAqIHRoZSBwYWdlIGF0IGluZGV4IEBlbmQtMS4NCj4gPiArICovDQo+ID4gK3N0
-YXRpYyBib29sIHpzd2FwX3N0b3JlX3BhZ2VzKHN0cnVjdCBmb2xpbyAqZm9saW8sDQo+ID4gKyAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgbG9uZyBzdGFydCwNCj4gPiArICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICBsb25nIGVuZCwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICBzdHJ1Y3Qgb2JqX2Nncm91cCAqb2JqY2csDQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgc3RydWN0IHpzd2FwX3Bvb2wgKnBvb2wsDQo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgaW50IG5vZGVfaWQpDQo+ID4gIHsNCj4gPiAtICAgICAgIHN3cF9lbnRyeV90
-IHBhZ2Vfc3dwZW50cnkgPSBwYWdlX3N3YXBfZW50cnkocGFnZSk7DQo+ID4gLSAgICAgICBzdHJ1
-Y3QgenN3YXBfZW50cnkgKmVudHJ5LCAqb2xkOw0KPiA+IC0NCj4gPiAtICAgICAgIC8qIGFsbG9j
-YXRlIGVudHJ5ICovDQo+ID4gLSAgICAgICBlbnRyeSA9IHpzd2FwX2VudHJ5X2NhY2hlX2FsbG9j
-KEdGUF9LRVJORUwsIHBhZ2VfdG9fbmlkKHBhZ2UpKTsNCj4gPiAtICAgICAgIGlmICghZW50cnkp
-IHsNCj4gPiAtICAgICAgICAgICAgICAgenN3YXBfcmVqZWN0X2ttZW1jYWNoZV9mYWlsKys7DQo+
-ID4gLSAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCj4gPiArICAgICAgIHN0cnVjdCB6c3dh
-cF9lbnRyeSAqZW50cmllc1taU1dBUF9NQVhfQkFUQ0hfU0laRV07DQo+ID4gKyAgICAgICB1OCBp
-LCBzdG9yZV9mYWlsX2lkeCA9IDAsIG5yX3BhZ2VzID0gZW5kIC0gc3RhcnQ7DQo+ID4gKw0KPiA+
-ICsgICAgICAgaWYgKHVubGlrZWx5KCF6c3dhcF9lbnRyaWVzX2NhY2hlX2FsbG9jX2JhdGNoKCh2
-b2lkICoqKSZlbnRyaWVzWzBdLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIG5yX3BhZ2VzLCBHRlBfS0VSTkVMKSkpIHsNCj4gPiArICAg
-ICAgICAgICAgICAgZm9yIChpID0gMDsgaSA8IG5yX3BhZ2VzOyArK2kpIHsNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICBlbnRyaWVzW2ldID0genN3YXBfZW50cnlfY2FjaGVfYWxsb2MoR0ZQ
-X0tFUk5FTCwgbm9kZV9pZCk7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGlm
-ICh1bmxpa2VseSghZW50cmllc1tpXSkpIHsNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIHpzd2FwX3JlamVjdF9rbWVtY2FjaGVfZmFpbCsrOw0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgLyoNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAqIFdoaWxlIGhhbmRsaW5nIHRoaXMgZXJyb3IsIHdlIG9ubHkgbmVlZCB0bw0KPiA+ICsgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICogY2FsbCB6c3dhcF9lbnRyaWVzX2NhY2hlX2Zy
-ZWVfYmF0Y2goKSBmb3INCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAqIGVu
-dHJpZXNbMCAuLiBpLTFdLg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICov
-DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBucl9wYWdlcyA9IGk7DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBnb3RvIHN0b3JlX3BhZ2VzX2ZhaWxlZDsN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICB9DQo+ID4gKyAgICAgICAgICAgICAgIH0NCj4g
-PiAgICAgICAgIH0NCj4gPg0KPiA+IC0gICAgICAgaWYgKCF6c3dhcF9jb21wcmVzcyhwYWdlLCBl
-bnRyeSwgcG9vbCkpDQo+ID4gLSAgICAgICAgICAgICAgIGdvdG8gY29tcHJlc3NfZmFpbGVkOw0K
-PiA+ICsgICAgICAgLyoNCj4gPiArICAgICAgICAqIFRocmVlIHNldHMgb2YgaW5pdGlhbGl6YXRp
-b25zIGFyZSBkb25lIHRvIG1pbmltaXplIGJyaW5naW5nDQo+ID4gKyAgICAgICAgKiBAZW50cmll
-cyBpbnRvIHRoZSBjYWNoZSBmb3Igd3JpdGluZyBhdCBkaWZmZXJlbnQgcGFydHMgb2YgdGhpcw0K
-PiA+ICsgICAgICAgICogcHJvY2VkdXJlLCBzaW5jZSBkb2luZyBzbyByZWdyZXNzZXMgcGVyZm9y
-bWFuY2U6DQo+ID4gKyAgICAgICAgKg0KPiA+ICsgICAgICAgICogMSkgRG8gYWxsIHRoZSB3cml0
-ZXMgdG8gZWFjaCBlbnRyeSBpbiBvbmUgY29kZSBibG9jay4gVGhlc2UNCj4gPiArICAgICAgICAq
-ICAgIHdyaXRlcyBuZWVkIHRvIGJlIGRvbmUgYW55d2F5IHVwb24gc3VjY2VzcyB3aGljaCBpcyBt
-b3JlIGxpa2VseQ0KPiA+ICsgICAgICAgICogICAgdGhhbiBub3QuDQo+ID4gKyAgICAgICAgKg0K
-PiA+ICsgICAgICAgICogMikgSW5pdGlhbGl6ZSB0aGUgaGFuZGxlIHRvIGFuIGVycm9yIHZhbHVl
-LiBUaGlzIGZhY2lsaXRhdGVzDQo+ID4gKyAgICAgICAgKiAgICBoYXZpbmcgYSBjb25zb2xpZGF0
-ZWQgZmFpbHVyZSBoYW5kbGluZw0KPiA+ICsgICAgICAgICogICAgJ2dvdG8gc3RvcmVfcGFnZXNf
-ZmFpbGVkJyB0aGF0IGNhbiBpbnNwZWN0IHRoZSB2YWx1ZSBvZiB0aGUNCj4gPiArICAgICAgICAq
-ICAgIGhhbmRsZSB0byBkZXRlcm1pbmUgd2hldGhlciB6cG9vbCBtZW1vcnkgbmVlZHMgdG8gYmUN
-Cj4gPiArICAgICAgICAqICAgIGRlLWFsbG9jYXRlZC4NCj4gPiArICAgICAgICAqDQo+ID4gKyAg
-ICAgICAgKiAzKSBUaGUgcGFnZV9zd2FwX2VudHJ5KCkgaXMgb2J0YWluZWQgb25jZSBhbmQgc3Rv
-cmVkIGluIHRoZSBlbnRyeS4NCj4gPiArICAgICAgICAqICAgIFN1YnNlcXVlbnQgc3RvcmUgaW4g
-eGFycmF5IGdldHMgdGhlIGVudHJ5LT5zd3BlbnRyeSBpbnN0ZWFkIG9mDQo+ID4gKyAgICAgICAg
-KiAgICBjYWxsaW5nIHBhZ2Vfc3dhcF9lbnRyeSgpLCBtaW5pbWl6aW5nIGNvbXB1dGVzLg0KPiA+
-ICsgICAgICAgICovDQo+ID4gKyAgICAgICBmb3IgKGkgPSAwOyBpIDwgbnJfcGFnZXM7ICsraSkg
-ew0KPiA+ICsgICAgICAgICAgICAgICBlbnRyaWVzW2ldLT5oYW5kbGUgPSAodW5zaWduZWQgbG9u
-ZylFUlJfUFRSKC1FSU5WQUwpOw0KPiA+ICsgICAgICAgICAgICAgICBlbnRyaWVzW2ldLT5wb29s
-ID0gcG9vbDsNCj4gPiArICAgICAgICAgICAgICAgZW50cmllc1tpXS0+c3dwZW50cnkgPSBwYWdl
-X3N3YXBfZW50cnkoZm9saW9fcGFnZShmb2xpbywgc3RhcnQgKw0KPiBpKSk7DQo+ID4gKyAgICAg
-ICAgICAgICAgIGVudHJpZXNbaV0tPm9iamNnID0gb2JqY2c7DQo+ID4gKyAgICAgICAgICAgICAg
-IGVudHJpZXNbaV0tPnJlZmVyZW5jZWQgPSB0cnVlOw0KPiA+ICsgICAgICAgICAgICAgICBJTklU
-X0xJU1RfSEVBRCgmZW50cmllc1tpXS0+bHJ1KTsNCj4gPiArICAgICAgIH0NCj4gPg0KPiA+IC0g
-ICAgICAgb2xkID0geGFfc3RvcmUoc3dhcF96c3dhcF90cmVlKHBhZ2Vfc3dwZW50cnkpLA0KPiA+
-IC0gICAgICAgICAgICAgICAgICAgICAgc3dwX29mZnNldChwYWdlX3N3cGVudHJ5KSwNCj4gPiAt
-ICAgICAgICAgICAgICAgICAgICAgIGVudHJ5LCBHRlBfS0VSTkVMKTsNCj4gPiAtICAgICAgIGlm
-ICh4YV9pc19lcnIob2xkKSkgew0KPiA+IC0gICAgICAgICAgICAgICBpbnQgZXJyID0geGFfZXJy
-KG9sZCk7DQo+ID4gKyAgICAgICBmb3IgKGkgPSAwOyBpIDwgbnJfcGFnZXM7ICsraSkgew0KPiA+
-ICsgICAgICAgICAgICAgICBzdHJ1Y3QgcGFnZSAqcGFnZSA9IGZvbGlvX3BhZ2UoZm9saW8sIHN0
-YXJ0ICsgaSk7DQo+ID4NCj4gPiAtICAgICAgICAgICAgICAgV0FSTl9PTkNFKGVyciAhPSAtRU5P
-TUVNLCAidW5leHBlY3RlZCB4YXJyYXkgZXJyb3I6ICVkXG4iLA0KPiBlcnIpOw0KPiA+IC0gICAg
-ICAgICAgICAgICB6c3dhcF9yZWplY3RfYWxsb2NfZmFpbCsrOw0KPiA+IC0gICAgICAgICAgICAg
-ICBnb3RvIHN0b3JlX2ZhaWxlZDsNCj4gPiArICAgICAgICAgICAgICAgaWYgKCF6c3dhcF9jb21w
-cmVzcyhwYWdlLCBlbnRyaWVzW2ldLCBwb29sKSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAg
-ICBnb3RvIHN0b3JlX3BhZ2VzX2ZhaWxlZDsNCj4gPiAgICAgICAgIH0NCj4gPg0KPiA+IC0gICAg
-ICAgLyoNCj4gPiAtICAgICAgICAqIFdlIG1heSBoYXZlIGhhZCBhbiBleGlzdGluZyBlbnRyeSB0
-aGF0IGJlY2FtZSBzdGFsZSB3aGVuDQo+ID4gLSAgICAgICAgKiB0aGUgZm9saW8gd2FzIHJlZGly
-dGllZCBhbmQgbm93IHRoZSBuZXcgdmVyc2lvbiBpcyBiZWluZw0KPiA+IC0gICAgICAgICogc3dh
-cHBlZCBvdXQuIEdldCByaWQgb2YgdGhlIG9sZC4NCj4gPiAtICAgICAgICAqLw0KPiA+IC0gICAg
-ICAgaWYgKG9sZCkNCj4gPiAtICAgICAgICAgICAgICAgenN3YXBfZW50cnlfZnJlZShvbGQpOw0K
-PiA+ICsgICAgICAgZm9yIChpID0gMDsgaSA8IG5yX3BhZ2VzOyArK2kpIHsNCj4gPiArICAgICAg
-ICAgICAgICAgc3RydWN0IHpzd2FwX2VudHJ5ICpvbGQsICplbnRyeSA9IGVudHJpZXNbaV07DQo+
-ID4NCj4gPiAtICAgICAgIC8qDQo+ID4gLSAgICAgICAgKiBUaGUgZW50cnkgaXMgc3VjY2Vzc2Z1
-bGx5IGNvbXByZXNzZWQgYW5kIHN0b3JlZCBpbiB0aGUgdHJlZSwgdGhlcmUgaXMNCj4gPiAtICAg
-ICAgICAqIG5vIGZ1cnRoZXIgcG9zc2liaWxpdHkgb2YgZmFpbHVyZS4gR3JhYiByZWZzIHRvIHRo
-ZSBwb29sIGFuZCBvYmpjZywNCj4gPiAtICAgICAgICAqIGNoYXJnZSB6c3dhcCBtZW1vcnksIGFu
-ZCBpbmNyZW1lbnQgenN3YXBfc3RvcmVkX3BhZ2VzLg0KPiA+IC0gICAgICAgICogVGhlIG9wcG9z
-aXRlIGFjdGlvbnMgd2lsbCBiZSBwZXJmb3JtZWQgYnkgenN3YXBfZW50cnlfZnJlZSgpDQo+ID4g
-LSAgICAgICAgKiB3aGVuIHRoZSBlbnRyeSBpcyByZW1vdmVkIGZyb20gdGhlIHRyZWUuDQo+ID4g
-LSAgICAgICAgKi8NCj4gPiAtICAgICAgIHpzd2FwX3Bvb2xfZ2V0KHBvb2wpOw0KPiA+IC0gICAg
-ICAgaWYgKG9iamNnKSB7DQo+ID4gLSAgICAgICAgICAgICAgIG9ial9jZ3JvdXBfZ2V0KG9iamNn
-KTsNCj4gPiAtICAgICAgICAgICAgICAgb2JqX2Nncm91cF9jaGFyZ2VfenN3YXAob2JqY2csIGVu
-dHJ5LT5sZW5ndGgpOw0KPiA+IC0gICAgICAgfQ0KPiA+IC0gICAgICAgYXRvbWljX2xvbmdfaW5j
-KCZ6c3dhcF9zdG9yZWRfcGFnZXMpOw0KPiA+ICsgICAgICAgICAgICAgICBvbGQgPSB4YV9zdG9y
-ZShzd2FwX3pzd2FwX3RyZWUoZW50cnktPnN3cGVudHJ5KSwNCj4gPiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgc3dwX29mZnNldChlbnRyeS0+c3dwZW50cnkpLA0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBlbnRyeSwgR0ZQX0tFUk5FTCk7DQo+ID4gKyAgICAgICAg
-ICAgICAgIGlmICh1bmxpa2VseSh4YV9pc19lcnIob2xkKSkpIHsNCj4gPiArICAgICAgICAgICAg
-ICAgICAgICAgICBpbnQgZXJyID0geGFfZXJyKG9sZCk7DQo+ID4NCj4gPiAtICAgICAgIC8qDQo+
-ID4gLSAgICAgICAgKiBXZSBmaW5pc2ggaW5pdGlhbGl6aW5nIHRoZSBlbnRyeSB3aGlsZSBpdCdz
-IGFscmVhZHkgaW4geGFycmF5Lg0KPiA+IC0gICAgICAgICogVGhpcyBpcyBzYWZlIGJlY2F1c2U6
-DQo+ID4gLSAgICAgICAgKg0KPiA+IC0gICAgICAgICogMS4gQ29uY3VycmVudCBzdG9yZXMgYW5k
-IGludmFsaWRhdGlvbnMgYXJlIGV4Y2x1ZGVkIGJ5IGZvbGlvIGxvY2suDQo+ID4gLSAgICAgICAg
-Kg0KPiA+IC0gICAgICAgICogMi4gV3JpdGViYWNrIGlzIGV4Y2x1ZGVkIGJ5IHRoZSBlbnRyeSBu
-b3QgYmVpbmcgb24gdGhlIExSVSB5ZXQuDQo+ID4gLSAgICAgICAgKiAgICBUaGUgcHVibGlzaGlu
-ZyBvcmRlciBtYXR0ZXJzIHRvIHByZXZlbnQgd3JpdGViYWNrIGZyb20gc2VlaW5nDQo+ID4gLSAg
-ICAgICAgKiAgICBhbiBpbmNvaGVyZW50IGVudHJ5Lg0KPiA+IC0gICAgICAgICovDQo+ID4gLSAg
-ICAgICBlbnRyeS0+cG9vbCA9IHBvb2w7DQo+ID4gLSAgICAgICBlbnRyeS0+c3dwZW50cnkgPSBw
-YWdlX3N3cGVudHJ5Ow0KPiA+IC0gICAgICAgZW50cnktPm9iamNnID0gb2JqY2c7DQo+ID4gLSAg
-ICAgICBlbnRyeS0+cmVmZXJlbmNlZCA9IHRydWU7DQo+ID4gLSAgICAgICBpZiAoZW50cnktPmxl
-bmd0aCkgew0KPiA+IC0gICAgICAgICAgICAgICBJTklUX0xJU1RfSEVBRCgmZW50cnktPmxydSk7
-DQo+ID4gLSAgICAgICAgICAgICAgIHpzd2FwX2xydV9hZGQoJnpzd2FwX2xpc3RfbHJ1LCBlbnRy
-eSk7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgV0FSTl9PTkNFKGVyciAhPSAtRU5PTUVN
-LCAidW5leHBlY3RlZCB4YXJyYXkgZXJyb3I6DQo+ICVkXG4iLCBlcnIpOw0KPiA+ICsgICAgICAg
-ICAgICAgICAgICAgICAgIHpzd2FwX3JlamVjdF9hbGxvY19mYWlsKys7DQo+ID4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgLyoNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKiBFbnRyaWVz
-IHVwIHRvIHRoaXMgcG9pbnQgaGF2ZSBiZWVuIHN0b3JlZCBpbiB0aGUNCj4gPiArICAgICAgICAg
-ICAgICAgICAgICAgICAgKiB4YXJyYXkuIHpzd2FwX3N0b3JlKCkgd2lsbCBlcmFzZSB0aGVtIGZy
-b20gdGhlIHhhcnJheQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAqIGFuZCBjYWxsIHpz
-d2FwX2VudHJ5X2ZyZWUoKS4gTG9jYWwgY2xlYW51cCBpbg0KPiA+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAqICdzdG9yZV9wYWdlc19mYWlsZWQnIG9ubHkgbmVlZHMgdG8gaGFwcGVuIGZvcg0K
-PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAqIGVudHJpZXMgZnJvbSBbQGkgdG8gQG5yX3Bh
-Z2VzKS4NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgKi8NCj4gPiArICAgICAgICAgICAg
-ICAgICAgICAgICBzdG9yZV9mYWlsX2lkeCA9IGk7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
-ICAgZ290byBzdG9yZV9wYWdlc19mYWlsZWQ7DQo+ID4gKyAgICAgICAgICAgICAgIH0NCj4gPiAr
-DQo+ID4gKyAgICAgICAgICAgICAgIC8qDQo+ID4gKyAgICAgICAgICAgICAgICAqIFdlIG1heSBo
-YXZlIGhhZCBhbiBleGlzdGluZyBlbnRyeSB0aGF0IGJlY2FtZSBzdGFsZSB3aGVuDQo+ID4gKyAg
-ICAgICAgICAgICAgICAqIHRoZSBmb2xpbyB3YXMgcmVkaXJ0aWVkIGFuZCBub3cgdGhlIG5ldyB2
-ZXJzaW9uIGlzIGJlaW5nDQo+ID4gKyAgICAgICAgICAgICAgICAqIHN3YXBwZWQgb3V0LiBHZXQg
-cmlkIG9mIHRoZSBvbGQuDQo+ID4gKyAgICAgICAgICAgICAgICAqLw0KPiA+ICsgICAgICAgICAg
-ICAgICBpZiAodW5saWtlbHkob2xkKSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICB6c3dh
-cF9lbnRyeV9mcmVlKG9sZCk7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAgICAvKg0KPiA+ICsg
-ICAgICAgICAgICAgICAgKiBUaGUgZW50cnkgaXMgc3VjY2Vzc2Z1bGx5IGNvbXByZXNzZWQgYW5k
-IHN0b3JlZCBpbiB0aGUgdHJlZSwNCj4gdGhlcmUgaXMNCj4gPiArICAgICAgICAgICAgICAgICog
-bm8gZnVydGhlciBwb3NzaWJpbGl0eSBvZiBmYWlsdXJlLiBHcmFiIHJlZnMgdG8gdGhlIHBvb2wg
-YW5kIG9iamNnLA0KPiA+ICsgICAgICAgICAgICAgICAgKiBjaGFyZ2UgenN3YXAgbWVtb3J5LCBh
-bmQgaW5jcmVtZW50IHpzd2FwX3N0b3JlZF9wYWdlcy4NCj4gPiArICAgICAgICAgICAgICAgICog
-VGhlIG9wcG9zaXRlIGFjdGlvbnMgd2lsbCBiZSBwZXJmb3JtZWQgYnkgenN3YXBfZW50cnlfZnJl
-ZSgpDQo+ID4gKyAgICAgICAgICAgICAgICAqIHdoZW4gdGhlIGVudHJ5IGlzIHJlbW92ZWQgZnJv
-bSB0aGUgdHJlZS4NCj4gPiArICAgICAgICAgICAgICAgICovDQo+ID4gKyAgICAgICAgICAgICAg
-IHpzd2FwX3Bvb2xfZ2V0KHBvb2wpOw0KPiA+ICsgICAgICAgICAgICAgICBpZiAob2JqY2cpIHsN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICBvYmpfY2dyb3VwX2dldChvYmpjZyk7DQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgb2JqX2Nncm91cF9jaGFyZ2VfenN3YXAob2JqY2csIGVu
-dHJ5LT5sZW5ndGgpOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKyAgICAgICAgICAgICAg
-IGF0b21pY19sb25nX2luYygmenN3YXBfc3RvcmVkX3BhZ2VzKTsNCj4gPiArDQo+ID4gKyAgICAg
-ICAgICAgICAgIC8qDQo+ID4gKyAgICAgICAgICAgICAgICAqIFdlIGZpbmlzaCBieSBhZGRpbmcg
-dGhlIGVudHJ5IHRvIHRoZSBMUlUgd2hpbGUgaXQncyBhbHJlYWR5DQo+ID4gKyAgICAgICAgICAg
-ICAgICAqIGluIHhhcnJheS4gVGhpcyBpcyBzYWZlIGJlY2F1c2U6DQo+ID4gKyAgICAgICAgICAg
-ICAgICAqDQo+ID4gKyAgICAgICAgICAgICAgICAqIDEuIENvbmN1cnJlbnQgc3RvcmVzIGFuZCBp
-bnZhbGlkYXRpb25zIGFyZSBleGNsdWRlZCBieSBmb2xpbw0KPiBsb2NrLg0KPiA+ICsgICAgICAg
-ICAgICAgICAgKg0KPiA+ICsgICAgICAgICAgICAgICAgKiAyLiBXcml0ZWJhY2sgaXMgZXhjbHVk
-ZWQgYnkgdGhlIGVudHJ5IG5vdCBiZWluZyBvbiB0aGUgTFJVIHlldC4NCj4gPiArICAgICAgICAg
-ICAgICAgICogICAgVGhlIHB1Ymxpc2hpbmcgb3JkZXIgbWF0dGVycyB0byBwcmV2ZW50IHdyaXRl
-YmFjayBmcm9tIHNlZWluZw0KPiA+ICsgICAgICAgICAgICAgICAgKiAgICBhbiBpbmNvaGVyZW50
-IGVudHJ5Lg0KPiA+ICsgICAgICAgICAgICAgICAgKi8NCj4gPiArICAgICAgICAgICAgICAgaWYg
-KGxpa2VseShlbnRyeS0+bGVuZ3RoKSkNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICB6c3dh
-cF9scnVfYWRkKCZ6c3dhcF9saXN0X2xydSwgZW50cnkpOw0KPiA+ICAgICAgICAgfQ0KPiA+DQo+
-ID4gICAgICAgICByZXR1cm4gdHJ1ZTsNCj4gPg0KPiA+IC1zdG9yZV9mYWlsZWQ6DQo+ID4gLSAg
-ICAgICB6cG9vbF9mcmVlKHBvb2wtPnpwb29sLCBlbnRyeS0+aGFuZGxlKTsNCj4gPiAtY29tcHJl
-c3NfZmFpbGVkOg0KPiA+IC0gICAgICAgenN3YXBfZW50cnlfY2FjaGVfZnJlZShlbnRyeSk7DQo+
-ID4gK3N0b3JlX3BhZ2VzX2ZhaWxlZDoNCj4gPiArICAgICAgIGZvciAoaSA9IHN0b3JlX2ZhaWxf
-aWR4OyBpIDwgbnJfcGFnZXM7ICsraSkgew0KPiA+ICsgICAgICAgICAgICAgICBpZiAoIUlTX0VS
-Ul9WQUxVRShlbnRyaWVzW2ldLT5oYW5kbGUpKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
-IHpwb29sX2ZyZWUocG9vbC0+enBvb2wsIGVudHJpZXNbaV0tPmhhbmRsZSk7DQo+ID4gKyAgICAg
-ICB9DQo+ID4gKyAgICAgICB6c3dhcF9lbnRyaWVzX2NhY2hlX2ZyZWVfYmF0Y2goKHZvaWQgKiop
-JmVudHJpZXNbc3RvcmVfZmFpbF9pZHhdLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIG5yX3BhZ2VzIC0gc3RvcmVfZmFpbF9pZHgpOw0KPiA+ICsNCj4gPiAgICAg
-ICAgIHJldHVybiBmYWxzZTsNCj4gPiAgfQ0KPiA+DQo+ID4gIGJvb2wgenN3YXBfc3RvcmUoc3Ry
-dWN0IGZvbGlvICpmb2xpbykNCj4gPiAgew0KPiA+ICAgICAgICAgbG9uZyBucl9wYWdlcyA9IGZv
-bGlvX25yX3BhZ2VzKGZvbGlvKTsNCj4gPiArICAgICAgIGludCBub2RlX2lkID0gZm9saW9fbmlk
-KGZvbGlvKTsNCj4gPiAgICAgICAgIHN3cF9lbnRyeV90IHN3cCA9IGZvbGlvLT5zd2FwOw0KPiA+
-ICAgICAgICAgc3RydWN0IG9ial9jZ3JvdXAgKm9iamNnID0gTlVMTDsNCj4gPiAgICAgICAgIHN0
-cnVjdCBtZW1fY2dyb3VwICptZW1jZyA9IE5VTEw7DQo+ID4gICAgICAgICBzdHJ1Y3QgenN3YXBf
-cG9vbCAqcG9vbDsNCj4gPiAgICAgICAgIGJvb2wgcmV0ID0gZmFsc2U7DQo+ID4gLSAgICAgICBs
-b25nIGluZGV4Ow0KPiA+ICsgICAgICAgbG9uZyBzdGFydCwgZW5kOw0KPiA+DQo+ID4gICAgICAg
-ICBWTV9XQVJOX09OX09OQ0UoIWZvbGlvX3Rlc3RfbG9ja2VkKGZvbGlvKSk7DQo+ID4gICAgICAg
-ICBWTV9XQVJOX09OX09OQ0UoIWZvbGlvX3Rlc3Rfc3dhcGNhY2hlKGZvbGlvKSk7DQo+ID4gQEAg
-LTE2MzIsMTAgKzE3MTEsMTEgQEAgYm9vbCB6c3dhcF9zdG9yZShzdHJ1Y3QgZm9saW8gKmZvbGlv
-KQ0KPiA+ICAgICAgICAgICAgICAgICBtZW1fY2dyb3VwX3B1dChtZW1jZyk7DQo+ID4gICAgICAg
-ICB9DQo+ID4NCj4gPiAtICAgICAgIGZvciAoaW5kZXggPSAwOyBpbmRleCA8IG5yX3BhZ2VzOyAr
-K2luZGV4KSB7DQo+ID4gLSAgICAgICAgICAgICAgIHN0cnVjdCBwYWdlICpwYWdlID0gZm9saW9f
-cGFnZShmb2xpbywgaW5kZXgpOw0KPiA+ICsgICAgICAgLyogU3RvcmUgdGhlIGZvbGlvIGluIGJh
-dGNoZXMgb2YgQHBvb2wtPmJhdGNoX3NpemUgcGFnZXMuICovDQo+ID4gKyAgICAgICBmb3IgKHN0
-YXJ0ID0gMDsgc3RhcnQgPCBucl9wYWdlczsgc3RhcnQgKz0gcG9vbC0+YmF0Y2hfc2l6ZSkgew0K
-PiA+ICsgICAgICAgICAgICAgICBlbmQgPSBtaW4oc3RhcnQgKyBwb29sLT5iYXRjaF9zaXplLCBu
-cl9wYWdlcyk7DQo+ID4NCj4gPiAtICAgICAgICAgICAgICAgaWYgKCF6c3dhcF9zdG9yZV9wYWdl
-KHBhZ2UsIG9iamNnLCBwb29sKSkNCj4gPiArICAgICAgICAgICAgICAgaWYgKCF6c3dhcF9zdG9y
-ZV9wYWdlcyhmb2xpbywgc3RhcnQsIGVuZCwgb2JqY2csIHBvb2wsIG5vZGVfaWQpKQ0KPiA+ICAg
-ICAgICAgICAgICAgICAgICAgICAgIGdvdG8gcHV0X3Bvb2w7DQo+ID4gICAgICAgICB9DQo+ID4N
-Cj4gPiBAQCAtMTY2NSw5ICsxNzQ1LDkgQEAgYm9vbCB6c3dhcF9zdG9yZShzdHJ1Y3QgZm9saW8g
-KmZvbGlvKQ0KPiA+ICAgICAgICAgICAgICAgICBzdHJ1Y3QgenN3YXBfZW50cnkgKmVudHJ5Ow0K
-PiA+ICAgICAgICAgICAgICAgICBzdHJ1Y3QgeGFycmF5ICp0cmVlOw0KPiA+DQo+ID4gLSAgICAg
-ICAgICAgICAgIGZvciAoaW5kZXggPSAwOyBpbmRleCA8IG5yX3BhZ2VzOyArK2luZGV4KSB7DQo+
-ID4gLSAgICAgICAgICAgICAgICAgICAgICAgdHJlZSA9IHN3YXBfenN3YXBfdHJlZShzd3BfZW50
-cnkodHlwZSwgb2Zmc2V0ICsgaW5kZXgpKTsNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBl
-bnRyeSA9IHhhX2VyYXNlKHRyZWUsIG9mZnNldCArIGluZGV4KTsNCj4gPiArICAgICAgICAgICAg
-ICAgZm9yIChzdGFydCA9IDA7IHN0YXJ0IDwgbnJfcGFnZXM7ICsrc3RhcnQpIHsNCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICB0cmVlID0gc3dhcF96c3dhcF90cmVlKHN3cF9lbnRyeSh0eXBl
-LCBvZmZzZXQgKyBzdGFydCkpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGVudHJ5ID0g
-eGFfZXJhc2UodHJlZSwgb2Zmc2V0ICsgc3RhcnQpOw0KPiA+ICAgICAgICAgICAgICAgICAgICAg
-ICAgIGlmIChlbnRyeSkNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHpzd2Fw
-X2VudHJ5X2ZyZWUoZW50cnkpOw0KPiA+ICAgICAgICAgICAgICAgICB9DQo+ID4gLS0NCj4gPiAy
-LjI3LjANCj4gPg0KPiANCj4gVGhpcyBwYXRjaCBMR1RNIGZvciB0aGUgbW9zdCBwYXJ0LiBMZW1t
-ZSB0ZXN0IHRoZSBzZXJpZXMgYWdhaW4gKEkNCj4gdGVzdGVkIGFuIG9sZCB2ZXJzaW9uIG9mIHRo
-aXMgcGF0Y2ggc2VyaWVzKSwgYW5kIEkgd2lsbCBnaXZlIG15IEFjay4NCg0KU291bmRzIGdyZWF0
-Li4gVGhhbmsgeW91IE5oYXQhDQoNCkJlc3QgcmVnYXJkcywNCkthbmNoYW5hDQo=
+On Wed, Aug 13, 2025 at 12:23:25PM +0800, hans.zhang@cixtech.com wrote:
+> From: Manikandan K Pillai <mpillai@cadence.com>
+> 
+> Add support for Cadence PCIe RP and EP configuration for High
+> Performance Architecture(HPA) controllers
+
+Add space (also in subject).
+
+> Signed-off-by: Manikandan K Pillai <mpillai@cadence.com>
+> Co-developed-by: Hans Zhang <hans.zhang@cixtech.com>
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> ---
+>  drivers/pci/controller/cadence/Makefile       |  10 +-
+>  .../controller/cadence/pcie-cadence-ep-hpa.c  | 528 ++++++++++++++++
+>  .../cadence/pcie-cadence-host-hpa.c           | 586 ++++++++++++++++++
+>  .../pci/controller/cadence/pcie-cadence-hpa.c | 207 +++++++
+>  .../controller/cadence/pcie-cadence-plat.c    |  20 +-
+>  drivers/pci/controller/cadence/pcie-cadence.c |  11 +
+>  drivers/pci/controller/cadence/pcie-cadence.h |  91 ++-
+>  7 files changed, 1438 insertions(+), 15 deletions(-)
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-ep-hpa.c
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
+>  create mode 100644 drivers/pci/controller/cadence/pcie-cadence-hpa.c
+> 
+> diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
+> index b104562fb86a..de4ddae7aca4 100644
+> --- a/drivers/pci/controller/cadence/Makefile
+> +++ b/drivers/pci/controller/cadence/Makefile
+> @@ -1,6 +1,10 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -obj-$(CONFIG_PCIE_CADENCE) += pcie-cadence-common.o pcie-cadence.o
+> -obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host-common.o pcie-cadence-host.o
+> -obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep-common.o pcie-cadence-ep.o
+> +pcie-cadence-mod-y := pcie-cadence-hpa.o pcie-cadence-common.o pcie-cadence.o
+> +pcie-cadence-host-mod-y := pcie-cadence-host-common.o pcie-cadence-host.o pcie-cadence-host-hpa.o
+> +pcie-cadence-ep-mod-y := pcie-cadence-ep-common.o pcie-cadence-ep.o pcie-cadence-ep-hpa.o
+> +
+> +obj-$(CONFIG_PCIE_CADENCE) = pcie-cadence-mod.o
+> +obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host-mod.o
+> +obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep-mod.o
+>  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+>  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep-hpa.c b/drivers/pci/controller/cadence/pcie-cadence-ep-hpa.c
+> new file mode 100644
+> index 000000000000..36f757820f61
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep-hpa.c
+> @@ -0,0 +1,528 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2017 Cadence
+> +// Cadence PCIe endpoint controller driver.
+> +// Author: Manikandan K Pillai  <mpillai@cadence.com>
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/kernel.h>
+> +#include <linux/of.h>
+> +#include <linux/pci-epc.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/sizes.h>
+> +
+> +#include "pcie-cadence.h"
+> +#include "pcie-cadence-ep-common.h"
+> +
+> +static int cdns_pcie_hpa_ep_map_addr(struct pci_epc *epc, u8 fn, u8 vfn,
+> +				     phys_addr_t addr, u64 pci_addr, size_t size)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	u32 r;
+> +
+> +	r = find_first_zero_bit(&ep->ob_region_map, BITS_PER_LONG);
+> +	if (r >= ep->max_regions - 1) {
+> +		dev_err(&epc->dev, "no free outbound region\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+> +	cdns_pcie_hpa_set_outbound_region(pcie, 0, fn, r, false, addr, pci_addr, size);
+> +
+> +	set_bit(r, &ep->ob_region_map);
+> +	ep->ob_addr[r] = addr;
+> +
+> +	return 0;
+> +}
+> +
+> +static void cdns_pcie_hpa_ep_unmap_addr(struct pci_epc *epc, u8 fn, u8 vfn,
+> +					phys_addr_t addr)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	u32 r;
+> +
+> +	for (r = 0; r < ep->max_regions - 1; r++)
+> +		if (ep->ob_addr[r] == addr)
+> +			break;
+> +
+> +	if (r == ep->max_regions - 1)
+> +		return;
+> +
+> +	cdns_pcie_hpa_reset_outbound_region(pcie, r);
+> +
+> +	ep->ob_addr[r] = 0;
+> +	clear_bit(r, &ep->ob_region_map);
+> +}
+> +
+> +static void cdns_pcie_hpa_ep_assert_intx(struct cdns_pcie_ep *ep, u8 fn, u8 intx,
+> +					 bool is_asserted)
+
+"is_asserted" sounds like a statement about whether INTx is already
+asserted.  But IIUC "is_asserted" tells this function *whether* to
+assert INTx.  If you call it "assert" it will be clearer.
+
+> +{
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	unsigned long flags;
+> +	u32 offset;
+> +	u16 status;
+> +	u8 msg_code;
+> +
+> +	intx &= 3;
+> +
+> +	/* Set the outbound region if needed. */
+
+One sentence comments like this typically omit the period.
+
+> +	if (unlikely(ep->irq_pci_addr != CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY ||
+> +		     ep->irq_pci_fn != fn)) {
+> +		/* First region was reserved for IRQ writes. */
+
+And this.
+
+> +		cdns_pcie_hpa_set_outbound_region_for_normal_msg(pcie, 0, fn, 0, ep->irq_phys_addr);
+> +		ep->irq_pci_addr = CDNS_PCIE_EP_IRQ_PCI_ADDR_LEGACY;
+> +		ep->irq_pci_fn = fn;
+> +	}
+> +
+> +	if (is_asserted) {
+> +		ep->irq_pending |= BIT(intx);
+> +		msg_code = PCIE_MSG_CODE_ASSERT_INTA + intx;
+> +	} else {
+> +		ep->irq_pending &= ~BIT(intx);
+> +		msg_code = PCIE_MSG_CODE_DEASSERT_INTA + intx;
+> +	}
+> +
+> +	spin_lock_irqsave(&ep->lock, flags);
+> +	status = cdns_pcie_ep_fn_readw(pcie, fn, PCI_STATUS);
+> +	if (((status & PCI_STATUS_INTERRUPT) != 0) ^ (ep->irq_pending != 0)) {
+> +		status ^= PCI_STATUS_INTERRUPT;
+> +		cdns_pcie_ep_fn_writew(pcie, fn, PCI_STATUS, status);
+> +	}
+> +	spin_unlock_irqrestore(&ep->lock, flags);
+> +
+> +	offset = CDNS_PCIE_NORMAL_MSG_ROUTING(MSG_ROUTING_LOCAL) |
+> +		 CDNS_PCIE_NORMAL_MSG_CODE(msg_code);
+> +	writel(0, ep->irq_cpu_addr + offset);
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_send_intx_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
+> +					  u8 intx)
+> +{
+> +	u16 cmd;
+> +
+> +	cmd = cdns_pcie_ep_fn_readw(&ep->pcie, fn, PCI_COMMAND);
+> +	if (cmd & PCI_COMMAND_INTX_DISABLE)
+> +		return -EINVAL;
+> +
+> +	cdns_pcie_hpa_ep_assert_intx(ep, fn, intx, true);
+> +
+> +	/* The mdelay() value was taken from dra7xx_pcie_raise_intx_irq() */
+
+Why is this function named "cdns_pcie_hpa_ep_send_intx_irq()" instead
+of something like "cdns_pcie_raise_intx_irq()"?
+
+If using a different name adds some value, fine.  If it's pointless
+difference, not so great.
+
+> +	mdelay(1);
+> +	cdns_pcie_hpa_ep_assert_intx(ep, fn, intx, false);
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_send_msi_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
+> +					 u8 interrupt_num)
+
+I see dw_pcie_ep_raise_msi_irq() and dra7xx_pcie_raise_msi_irq()
+elsewhere.  If there's a pattern we can copy, please copy it.
+
+> +{
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+> +	u16 flags, mme, data, data_mask;
+> +	u8 msi_count;
+> +	u64 pci_addr, pci_addr_mask = 0xff;
+> +
+> +	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+> +
+> +	/* Check whether the MSI feature has been enabled by the PCI host. */
+> +	flags = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSI_FLAGS);
+> +	if (!(flags & PCI_MSI_FLAGS_ENABLE))
+> +		return -EINVAL;
+> +
+> +	/* Get the number of enabled MSIs */
+> +	mme = FIELD_GET(PCI_MSI_FLAGS_QSIZE, flags);
+> +	msi_count = 1 << mme;
+> +	if (!interrupt_num || interrupt_num > msi_count)
+> +		return -EINVAL;
+> +
+> +	/* Compute the data value to be written. */
+> +	data_mask = msi_count - 1;
+> +	data = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSI_DATA_64);
+> +	data = (data & ~data_mask) | ((interrupt_num - 1) & data_mask);
+> +
+> +	/* Get the PCI address where to write the data into. */
+> +	pci_addr = cdns_pcie_ep_fn_readl(pcie, fn, cap + PCI_MSI_ADDRESS_HI);
+> +	pci_addr <<= 32;
+> +	pci_addr |= cdns_pcie_ep_fn_readl(pcie, fn, cap + PCI_MSI_ADDRESS_LO);
+> +	pci_addr &= GENMASK_ULL(63, 2);
+> +
+> +	/* Set the outbound region if needed. */
+> +	if (unlikely(ep->irq_pci_addr != (pci_addr & ~pci_addr_mask) ||
+> +		     ep->irq_pci_fn != fn)) {
+> +		/* First region was reserved for IRQ writes. */
+> +		cdns_pcie_hpa_set_outbound_region(pcie, 0, fn, 0,
+> +						  false,
+> +						  ep->irq_phys_addr,
+> +						  pci_addr & ~pci_addr_mask,
+> +						  pci_addr_mask + 1);
+> +		ep->irq_pci_addr = (pci_addr & ~pci_addr_mask);
+> +		ep->irq_pci_fn = fn;
+> +	}
+> +	writel(data, ep->irq_cpu_addr + (pci_addr & pci_addr_mask));
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_send_msix_irq(struct cdns_pcie_ep *ep, u8 fn, u8 vfn,
+> +					  u16 interrupt_num)
+> +{
+> +	u32 cap = CDNS_PCIE_EP_FUNC_MSIX_CAP_OFFSET;
+> +	u32 tbl_offset, msg_data, reg;
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	struct pci_epf_msix_tbl *msix_tbl;
+> +	struct cdns_pcie_epf *epf;
+> +	u64 pci_addr_mask = 0xff;
+> +	u64 msg_addr;
+> +	u16 flags;
+> +	u8 bir;
+> +
+> +	epf = &ep->epf[fn];
+> +	if (vfn > 0)
+> +		epf = &epf->epf[vfn - 1];
+> +
+> +	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+> +
+> +	/* Check whether the MSI-X feature has been enabled by the PCI host. */
+> +	flags = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSIX_FLAGS);
+> +	if (!(flags & PCI_MSIX_FLAGS_ENABLE))
+> +		return -EINVAL;
+> +
+> +	reg = cap + PCI_MSIX_TABLE;
+> +	tbl_offset = cdns_pcie_ep_fn_readl(pcie, fn, reg);
+> +	bir = FIELD_GET(PCI_MSIX_TABLE_BIR, tbl_offset);
+> +	tbl_offset &= PCI_MSIX_TABLE_OFFSET;
+> +
+> +	msix_tbl = epf->epf_bar[bir]->addr + tbl_offset;
+> +	msg_addr = msix_tbl[(interrupt_num - 1)].msg_addr;
+> +	msg_data = msix_tbl[(interrupt_num - 1)].msg_data;
+> +
+> +	/* Set the outbound region if needed. */
+> +	if (ep->irq_pci_addr != (msg_addr & ~pci_addr_mask) ||
+> +	    ep->irq_pci_fn != fn) {
+> +		/* First region was reserved for IRQ writes. */
+> +		cdns_pcie_hpa_set_outbound_region(pcie, 0, fn, 0,
+> +						  false,
+> +						  ep->irq_phys_addr,
+> +						  msg_addr & ~pci_addr_mask,
+> +						  pci_addr_mask + 1);
+> +		ep->irq_pci_addr = (msg_addr & ~pci_addr_mask);
+> +		ep->irq_pci_fn = fn;
+> +	}
+> +	writel(msg_data, ep->irq_cpu_addr + (msg_addr & pci_addr_mask));
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_raise_irq(struct pci_epc *epc, u8 fn, u8 vfn,
+> +				      unsigned int type, u16 interrupt_num)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	struct device *dev = pcie->dev;
+> +
+> +	switch (type) {
+> +	case PCI_IRQ_INTX:
+> +		if (vfn > 0) {
+> +			dev_err(dev, "Cannot raise INTX interrupts for VF\n");
+> +			return -EINVAL;
+> +		}
+> +		return cdns_pcie_hpa_ep_send_intx_irq(ep, fn, vfn, 0);
+> +
+> +	case PCI_IRQ_MSI:
+> +		return cdns_pcie_hpa_ep_send_msi_irq(ep, fn, vfn, interrupt_num);
+> +
+> +	case PCI_IRQ_MSIX:
+> +		return cdns_pcie_hpa_ep_send_msix_irq(ep, fn, vfn, interrupt_num);
+> +
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_start(struct pci_epc *epc)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	struct device *dev = pcie->dev;
+> +	int max_epfs = sizeof(epc->function_num_map) * 8;
+> +	int ret, epf, last_fn;
+> +	u32 reg, value;
+> +
+> +	/*
+> +	 * BIT(0) is hardwired to 1, hence function 0 is always enabled
+> +	 * and can't be disabled anyway.
+> +	 */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG,
+> +			     CDNS_PCIE_HPA_LM_EP_FUNC_CFG, epc->function_num_map);
+> +
+> +	/*
+> +	 * Next function field in ARI_CAP_AND_CTR register for last function
+> +	 * should be 0.  Clear Next Function Number field for the last
+> +	 * function used.
+> +	 */
+> +	last_fn = find_last_bit(&epc->function_num_map, BITS_PER_LONG);
+> +	reg = CDNS_PCIE_CORE_PF_I_ARI_CAP_AND_CTRL(last_fn);
+> +	value = cdns_pcie_readl(pcie, reg);
+> +	value &= ~CDNS_PCIE_ARI_CAP_NFN_MASK;
+> +	cdns_pcie_writel(pcie, reg, value);
+> +
+> +	if (ep->quirk_disable_flr) {
+> +		for (epf = 0; epf < max_epfs; epf++) {
+> +			if (!(epc->function_num_map & BIT(epf)))
+> +				continue;
+> +
+> +			value = cdns_pcie_ep_fn_readl(pcie, epf,
+> +						      CDNS_PCIE_EP_FUNC_DEV_CAP_OFFSET +
+> +						      PCI_EXP_DEVCAP);
+> +			value &= ~PCI_EXP_DEVCAP_FLR;
+> +			cdns_pcie_ep_fn_writel(pcie, epf,
+> +					       CDNS_PCIE_EP_FUNC_DEV_CAP_OFFSET +
+> +					       PCI_EXP_DEVCAP, value);
+> +		}
+> +	}
+> +
+> +	ret = cdns_pcie_start_link(pcie);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to start link\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_ep_set_bar(struct pci_epc *epc, u8 fn, u8 vfn,
+> +				    struct pci_epf_bar *epf_bar)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie_epf *epf = &ep->epf[fn];
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	dma_addr_t bar_phys = epf_bar->phys_addr;
+> +	enum pci_barno bar = epf_bar->barno;
+> +	int flags = epf_bar->flags;
+> +	u32 addr0, addr1, reg, cfg, b, aperture, ctrl;
+> +	u64 sz;
+> +
+> +	/* BAR size is 2^(aperture + 7) */
+> +	sz = max_t(size_t, epf_bar->size, CDNS_PCIE_EP_MIN_APERTURE);
+> +
+> +	/*
+> +	 * roundup_pow_of_two() returns an unsigned long, which is not suited
+> +	 * for 64bit values.
+> +	 */
+> +	sz = 1ULL << fls64(sz - 1);
+> +
+> +	/* 128B -> 0, 256B -> 1, 512B -> 2, ... */
+> +	aperture = ilog2(sz) - 7;
+> +
+> +	if ((flags & PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO) {
+> +		ctrl = CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_IO_32BITS;
+> +	} else {
+> +		bool is_prefetch = !!(flags & PCI_BASE_ADDRESS_MEM_PREFETCH);
+> +		bool is_64bits = !!(flags & PCI_BASE_ADDRESS_MEM_TYPE_64);
+> +
+> +		if (is_64bits && (bar & 1))
+> +			return -EINVAL;
+> +
+> +		if (is_64bits && is_prefetch)
+> +			ctrl = CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_PREFETCH_MEM_64BITS;
+> +		else if (is_prefetch)
+> +			ctrl = CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_PREFETCH_MEM_32BITS;
+> +		else if (is_64bits)
+> +			ctrl = CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_MEM_64BITS;
+> +		else
+> +			ctrl = CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_MEM_32BITS;
+> +	}
+> +
+> +	addr0 = lower_32_bits(bar_phys);
+> +	addr1 = upper_32_bits(bar_phys);
+> +
+> +	if (vfn == 1)
+> +		reg = CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG(bar, fn);
+> +	else
+> +		reg = CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG(bar, fn);
+> +	b = (bar < BAR_4) ? bar : bar - BAR_4;
+> +
+> +	if (vfn == 0 || vfn == 1) {
+> +		cfg = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_CFG_CTRL_REG, reg);
+> +		cfg &= ~(CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE_MASK(b) |
+> +			CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(b));
+> +		cfg |= (CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE(b, aperture) |
+> +			CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL(b, ctrl));
+> +		cdns_pcie_hpa_writel(pcie, REG_BANK_IP_CFG_CTRL_REG, reg, cfg);
+> +	}
+> +
+> +	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_MASTER_COMMON,
+> +			     CDNS_PCIE_HPA_AT_IB_EP_FUNC_BAR_ADDR0(fn, bar), addr0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_MASTER_COMMON,
+> +			     CDNS_PCIE_HPA_AT_IB_EP_FUNC_BAR_ADDR1(fn, bar), addr1);
+> +
+> +	if (vfn > 0)
+> +		epf = &epf->epf[vfn - 1];
+> +	epf->epf_bar[bar] = epf_bar;
+> +
+> +	return 0;
+> +}
+> +
+> +static void cdns_pcie_hpa_ep_clear_bar(struct pci_epc *epc, u8 fn, u8 vfn,
+> +				       struct pci_epf_bar *epf_bar)
+> +{
+> +	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct cdns_pcie_epf *epf = &ep->epf[fn];
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	enum pci_barno bar = epf_bar->barno;
+> +	u32 reg, cfg, b, ctrl;
+> +
+> +	if (vfn == 1)
+> +		reg = CDNS_PCIE_HPA_LM_EP_VFUNC_BAR_CFG(bar, fn);
+> +	else
+> +		reg = CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG(bar, fn);
+> +	b = (bar < BAR_4) ? bar : bar - BAR_4;
+> +
+> +	if (vfn == 0 || vfn == 1) {
+> +		ctrl = CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_DISABLED;
+> +		cfg = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_CFG_CTRL_REG, reg);
+> +		cfg &= ~(CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_APERTURE_MASK(b) |
+> +			CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL_MASK(b));
+> +		cfg |= CDNS_PCIE_HPA_LM_EP_FUNC_BAR_CFG_BAR_CTRL(b, ctrl);
+> +		cdns_pcie_hpa_writel(pcie, REG_BANK_IP_CFG_CTRL_REG, reg, cfg);
+> +	}
+> +
+> +	fn = cdns_pcie_get_fn_from_vfn(pcie, fn, vfn);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_MASTER_COMMON,
+> +			     CDNS_PCIE_HPA_AT_IB_EP_FUNC_BAR_ADDR0(fn, bar), 0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_MASTER_COMMON,
+> +			     CDNS_PCIE_HPA_AT_IB_EP_FUNC_BAR_ADDR1(fn, bar), 0);
+> +
+> +	if (vfn > 0)
+> +		epf = &epf->epf[vfn - 1];
+> +	epf->epf_bar[bar] = NULL;
+> +}
+> +
+> +static const struct pci_epc_ops cdns_pcie_hpa_epc_ops = {
+> +	.write_header	= cdns_pcie_ep_write_header,
+> +	.set_bar	= cdns_pcie_hpa_ep_set_bar,
+> +	.clear_bar	= cdns_pcie_hpa_ep_clear_bar,
+> +	.map_addr	= cdns_pcie_hpa_ep_map_addr,
+> +	.unmap_addr	= cdns_pcie_hpa_ep_unmap_addr,
+> +	.set_msi	= cdns_pcie_ep_set_msi,
+> +	.get_msi	= cdns_pcie_ep_get_msi,
+> +	.set_msix	= cdns_pcie_ep_set_msix,
+> +	.get_msix	= cdns_pcie_ep_get_msix,
+> +	.raise_irq	= cdns_pcie_hpa_ep_raise_irq,
+> +	.map_msi_irq	= cdns_pcie_ep_map_msi_irq,
+> +	.start		= cdns_pcie_hpa_ep_start,
+> +	.get_features	= cdns_pcie_ep_get_features,
+> +};
+> +
+> +int cdns_pcie_hpa_ep_setup(struct cdns_pcie_ep *ep)
+> +{
+> +	struct device *dev = ep->pcie.dev;
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct device_node *np = dev->of_node;
+> +	struct cdns_pcie *pcie = &ep->pcie;
+> +	struct cdns_pcie_epf *epf;
+> +	struct resource *res;
+> +	struct pci_epc *epc;
+> +	int ret;
+> +	int i;
+> +
+> +	pcie->is_rc = false;
+> +
+> +	pcie->reg_base = devm_platform_ioremap_resource_byname(pdev, "reg");
+> +	if (IS_ERR(pcie->reg_base)) {
+> +		dev_err(dev, "missing \"reg\"\n");
+> +		return PTR_ERR(pcie->reg_base);
+> +	}
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mem");
+> +	if (!res) {
+> +		dev_err(dev, "missing \"mem\"\n");
+> +		return -EINVAL;
+> +	}
+> +	pcie->mem_res = res;
+> +
+> +	ep->max_regions = CDNS_PCIE_MAX_OB;
+> +	of_property_read_u32(np, "cdns,max-outbound-regions", &ep->max_regions);
+> +
+> +	ep->ob_addr = devm_kcalloc(dev,
+> +				   ep->max_regions, sizeof(*ep->ob_addr),
+> +				   GFP_KERNEL);
+> +	if (!ep->ob_addr)
+> +		return -ENOMEM;
+> +
+> +	epc = devm_pci_epc_create(dev, &cdns_pcie_hpa_epc_ops);
+> +	if (IS_ERR(epc)) {
+> +		dev_err(dev, "failed to create epc device\n");
+> +		return PTR_ERR(epc);
+> +	}
+> +
+> +	epc_set_drvdata(epc, ep);
+> +
+> +	if (of_property_read_u8(np, "max-functions", &epc->max_functions) < 0)
+> +		epc->max_functions = 1;
+> +
+> +	ep->epf = devm_kcalloc(dev, epc->max_functions, sizeof(*ep->epf),
+> +			       GFP_KERNEL);
+> +	if (!ep->epf)
+> +		return -ENOMEM;
+> +
+> +	epc->max_vfs = devm_kcalloc(dev, epc->max_functions,
+> +				    sizeof(*epc->max_vfs), GFP_KERNEL);
+> +	if (!epc->max_vfs)
+> +		return -ENOMEM;
+> +
+> +	ret = of_property_read_u8_array(np, "max-virtual-functions",
+> +					epc->max_vfs, epc->max_functions);
+> +	if (ret == 0) {
+> +		for (i = 0; i < epc->max_functions; i++) {
+> +			epf = &ep->epf[i];
+> +			if (epc->max_vfs[i] == 0)
+> +				continue;
+> +			epf->epf = devm_kcalloc(dev, epc->max_vfs[i],
+> +						sizeof(*ep->epf), GFP_KERNEL);
+> +			if (!epf->epf)
+> +				return -ENOMEM;
+> +		}
+> +	}
+> +
+> +	ret = pci_epc_mem_init(epc, pcie->mem_res->start,
+> +			       resource_size(pcie->mem_res), PAGE_SIZE);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to initialize the memory space\n");
+> +		return ret;
+> +	}
+> +
+> +	ep->irq_cpu_addr = pci_epc_mem_alloc_addr(epc, &ep->irq_phys_addr,
+> +						  SZ_128K);
+> +	if (!ep->irq_cpu_addr) {
+> +		dev_err(dev, "failed to reserve memory space for MSI\n");
+> +		ret = -ENOMEM;
+> +		goto free_epc_mem;
+> +	}
+> +	ep->irq_pci_addr = CDNS_PCIE_EP_IRQ_PCI_ADDR_NONE;
+> +	/* Reserve region 0 for IRQs */
+> +	set_bit(0, &ep->ob_region_map);
+> +
+> +	if (ep->quirk_detect_quiet_flag)
+> +		cdns_pcie_hpa_detect_quiet_min_delay_set(&ep->pcie);
+> +
+> +	spin_lock_init(&ep->lock);
+> +
+> +	pci_epc_init_notify(epc);
+> +
+> +	return 0;
+> +
+> + free_epc_mem:
+> +	pci_epc_mem_exit(epc);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_ep_setup);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Cadence PCIe controller driver");
+> +MODULE_AUTHOR("Manikandan K Pillai <mpillai@cadence.com>");
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host-hpa.c b/drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
+> new file mode 100644
+> index 000000000000..f930b745bc33
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-host-hpa.c
+> @@ -0,0 +1,586 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2017 Cadence
+> +// Cadence PCIe host controller driver.
+> +// Author: Manikandan K Pillai <mpillai@cadence.com>
+> +
+> +#include <linux/delay.h>
+> +#include <linux/kernel.h>
+> +#include <linux/list_sort.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_pci.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "pcie-cadence.h"
+> +#include "pcie-cadence-host-common.h"
+> +
+> +static u8 bar_aperture_mask[] = {
+> +	[RP_BAR0] = 0x1F,
+> +	[RP_BAR1] = 0xF,
+> +};
+> +
+> +void __iomem *cdns_pci_hpa_map_bus(struct pci_bus *bus, unsigned int devfn,
+> +				   int where)
+> +{
+> +	struct pci_host_bridge *bridge = pci_find_host_bridge(bus);
+> +	struct cdns_pcie_rc *rc = pci_host_bridge_priv(bridge);
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	unsigned int busn = bus->number;
+> +	u32 addr0, desc0, desc1, ctrl0;
+> +	u32 regval;
+> +
+> +	if (pci_is_root_bus(bus)) {
+> +		/*
+> +		 * Only the root port (devfn == 0) is connected to this bus.
+> +		 * All other PCI devices are behind some bridge hence on another
+> +		 * bus.
+> +		 */
+> +		if (devfn)
+> +			return NULL;
+> +
+> +		return pcie->reg_base + (where & 0xfff);
+> +	}
+> +
+> +	/* Clear AXI link-down status */
+> +	regval = cdns_pcie_hpa_readl(pcie, REG_BANK_AXI_SLAVE, CDNS_PCIE_HPA_AT_LINKDOWN);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE, CDNS_PCIE_HPA_AT_LINKDOWN,
+> +			     (regval & ~GENMASK(0, 0)));
+> +
+> +	desc0 = 0;
+> +	desc1 = 0;
+> +	ctrl0 = 0;
+> +
+> +	/* Update Output registers for AXI region 0. */
+> +	addr0 = CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_NBITS(12) |
+> +		CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_DEVFN(devfn) |
+> +		CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_BUS(busn);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0(0), addr0);
+> +
+> +	desc1 = cdns_pcie_hpa_readl(pcie, REG_BANK_AXI_SLAVE,
+> +				    CDNS_PCIE_HPA_AT_OB_REGION_DESC1(0));
+> +	desc1 &= ~CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN_MASK;
+> +	desc1 |= CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN(0);
+> +	ctrl0 = CDNS_PCIE_HPA_AT_OB_REGION_CTRL0_SUPPLY_BUS |
+> +		CDNS_PCIE_HPA_AT_OB_REGION_CTRL0_SUPPLY_DEV_FN;
+> +
+> +	if (busn == bridge->busnr + 1)
+> +		desc0 |= CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_CONF_TYPE0;
+> +	else
+> +		desc0 |= CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_CONF_TYPE1;
+> +
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC0(0), desc0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC1(0), desc1);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CTRL0(0), ctrl0);
+> +
+> +	return rc->cfg_base + (where & 0xfff);
+> +}
+> +
+> +int cdns_pcie_hpa_host_wait_for_link(struct cdns_pcie *pcie)
+> +{
+> +	struct device *dev = pcie->dev;
+> +	int retries;
+> +
+> +	/* Check if the link is up or not */
+> +	for (retries = 0; retries < LINK_WAIT_MAX_RETRIES; retries++) {
+> +		if (cdns_pcie_link_up(pcie)) {
+> +			dev_info(dev, "Link up\n");
+> +			return 0;
+> +		}
+> +		usleep_range(LINK_WAIT_USLEEP_MIN, LINK_WAIT_USLEEP_MAX);
+> +	}
+> +	return -ETIMEDOUT;
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_host_wait_for_link);
+> +
+> +int cdns_pcie_hpa_host_start_link(struct cdns_pcie_rc *rc)
+> +{
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	int ret;
+> +
+> +	ret = cdns_pcie_host_wait_for_link(pcie);
+> +
+> +	/*
+> +	 * Retrain link for Gen2 training defect
+> +	 * if quirk flag is set.
+
+Wrap to fill 78 columns like other comments here.
+
+> +	 */
+> +	if (!ret && rc->quirk_retrain_flag)
+> +		ret = cdns_pcie_retrain(pcie);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_host_start_link);
+> +
+> +static struct pci_ops cdns_pcie_hpa_host_ops = {
+> +	.map_bus	= cdns_pci_hpa_map_bus,
+> +	.read		= pci_generic_config_read,
+> +	.write		= pci_generic_config_write,
+> +};
+> +
+> +static void cdns_pcie_hpa_host_enable_ptm_response(struct cdns_pcie *pcie)
+> +{
+> +	u32 val;
+> +
+> +	val = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_REG, CDNS_PCIE_HPA_LM_PTM_CTRL);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, CDNS_PCIE_HPA_LM_PTM_CTRL,
+> +			     val | CDNS_PCIE_HPA_LM_TPM_CTRL_PTMRSEN);
+> +}
+> +
+> +static int cdns_pcie_hpa_host_bar_ib_config(struct cdns_pcie_rc *rc,
+> +					    enum cdns_pcie_rp_bar bar,
+> +					    u64 cpu_addr, u64 size,
+> +					    unsigned long flags)
+> +{
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	u32 addr0, addr1, aperture, value;
+> +
+> +	if (!rc->avail_ib_bar[bar])
+> +		return -EBUSY;
+> +
+> +	rc->avail_ib_bar[bar] = false;
+> +
+> +	aperture = ilog2(size);
+> +	addr0 = CDNS_PCIE_HPA_AT_IB_RP_BAR_ADDR0_NBITS(aperture) |
+> +		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
+> +	addr1 = upper_32_bits(cpu_addr);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_MASTER,
+> +			     CDNS_PCIE_HPA_AT_IB_RP_BAR_ADDR0(bar), addr0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_MASTER,
+> +			     CDNS_PCIE_HPA_AT_IB_RP_BAR_ADDR1(bar), addr1);
+> +
+> +	if (bar == RP_NO_BAR)
+> +		return 0;
+> +
+> +	value = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_CFG_CTRL_REG, CDNS_PCIE_HPA_LM_RC_BAR_CFG);
+> +	value &= ~(HPA_LM_RC_BAR_CFG_CTRL_MEM_64BITS(bar) |
+> +		   HPA_LM_RC_BAR_CFG_CTRL_PREF_MEM_64BITS(bar) |
+> +		   HPA_LM_RC_BAR_CFG_CTRL_MEM_32BITS(bar) |
+> +		   HPA_LM_RC_BAR_CFG_CTRL_PREF_MEM_32BITS(bar) |
+> +		   HPA_LM_RC_BAR_CFG_APERTURE(bar, bar_aperture_mask[bar] + 2));
+> +	if (size + cpu_addr >= SZ_4G) {
+> +		if (!(flags & IORESOURCE_PREFETCH))
+> +			value |= HPA_LM_RC_BAR_CFG_CTRL_MEM_64BITS(bar);
+> +		value |= HPA_LM_RC_BAR_CFG_CTRL_PREF_MEM_64BITS(bar);
+> +	} else {
+> +		if (!(flags & IORESOURCE_PREFETCH))
+> +			value |= HPA_LM_RC_BAR_CFG_CTRL_MEM_32BITS(bar);
+> +		value |= HPA_LM_RC_BAR_CFG_CTRL_PREF_MEM_32BITS(bar);
+> +	}
+> +
+> +	value |= HPA_LM_RC_BAR_CFG_APERTURE(bar, aperture);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_CFG_CTRL_REG, CDNS_PCIE_HPA_LM_RC_BAR_CFG, value);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_host_bar_config(struct cdns_pcie_rc *rc,
+> +					 struct resource_entry *entry)
+> +{
+> +	u64 cpu_addr, pci_addr, size, winsize;
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	struct device *dev = pcie->dev;
+> +	enum cdns_pcie_rp_bar bar;
+> +	unsigned long flags;
+> +	int ret;
+> +
+> +	cpu_addr = entry->res->start;
+> +	pci_addr = entry->res->start - entry->offset;
+> +	flags = entry->res->flags;
+> +	size = resource_size(entry->res);
+> +
+> +	if (entry->offset) {
+> +		dev_err(dev, "PCI addr: %llx must be equal to CPU addr: %llx\n",
+> +			pci_addr, cpu_addr);
+> +		return -EINVAL;
+> +	}
+> +
+> +	while (size > 0) {
+> +		/*
+> +		 * Try to find a minimum BAR whose size is greater than
+> +		 * or equal to the remaining resource_entry size. This will
+> +		 * fail if the size of each of the available BARs is less than
+> +		 * the remaining resource_entry size.
+> +		 * If a minimum BAR is found, IB ATU will be configured and
+> +		 * exited.
+
+Add blank lines between paragraphs.  Also below.
+
+> +		 */
+> +		bar = cdns_pcie_host_find_min_bar(rc, size);
+> +		if (bar != RP_BAR_UNDEFINED) {
+> +			ret = cdns_pcie_hpa_host_bar_ib_config(rc, bar, cpu_addr,
+> +							       size, flags);
+> +			if (ret)
+> +				dev_err(dev, "IB BAR: %d config failed\n", bar);
+> +			return ret;
+> +		}
+> +
+> +		/*
+> +		 * If the control reaches here, it would mean the remaining
+> +		 * resource_entry size cannot be fitted in a single BAR. So we
+> +		 * find a maximum BAR whose size is less than or equal to the
+> +		 * remaining resource_entry size and split the resource entry
+> +		 * so that part of resource entry is fitted inside the maximum
+> +		 * BAR. The remaining size would be fitted during the next
+> +		 * iteration of the loop.
+> +		 * If a maximum BAR is not found, there is no way we can fit
+> +		 * this resource_entry, so we error out.
+> +		 */
+> +		bar = cdns_pcie_host_find_max_bar(rc, size);
+> +		if (bar == RP_BAR_UNDEFINED) {
+> +			dev_err(dev, "No free BAR to map cpu_addr %llx\n",
+> +				cpu_addr);
+> +			return -EINVAL;
+> +		}
+> +
+> +		winsize = bar_max_size[bar];
+> +		ret = cdns_pcie_hpa_host_bar_ib_config(rc, bar, cpu_addr, winsize, flags);
+> +		if (ret) {
+> +			dev_err(dev, "IB BAR: %d config failed\n", bar);
+> +			return ret;
+> +		}
+> +
+> +		size -= winsize;
+> +		cpu_addr += winsize;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_host_map_dma_ranges(struct cdns_pcie_rc *rc)
+> +{
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	struct device *dev = pcie->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct pci_host_bridge *bridge;
+> +	struct resource_entry *entry;
+> +	u32 no_bar_nbits = 32;
+> +	int err;
+> +
+> +	bridge = pci_host_bridge_from_priv(rc);
+> +	if (!bridge)
+> +		return -ENOMEM;
+> +
+> +	if (list_empty(&bridge->dma_ranges)) {
+> +		of_property_read_u32(np, "cdns,no-bar-match-nbits",
+> +				     &no_bar_nbits);
+> +		err = cdns_pcie_hpa_host_bar_ib_config(rc, RP_NO_BAR, 0x0,
+> +						       (u64)1 << no_bar_nbits, 0);
+> +		if (err)
+> +			dev_err(dev, "IB BAR: %d config failed\n", RP_NO_BAR);
+> +		return err;
+> +	}
+> +
+> +	list_sort(NULL, &bridge->dma_ranges, cdns_pcie_host_dma_ranges_cmp);
+> +
+> +	resource_list_for_each_entry(entry, &bridge->dma_ranges) {
+> +		err = cdns_pcie_hpa_host_bar_config(rc, entry);
+> +		if (err) {
+> +			dev_err(dev, "Fail to configure IB using dma-ranges\n");
+> +			return err;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_pcie_hpa_host_init_root_port(struct cdns_pcie_rc *rc)
+> +{
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	u32 value, ctrl;
+> +
+> +	/*
+> +	 * Set the root complex BAR configuration register:
+> +	 * - disable both BAR0 and BAR1.
+> +	 * - enable Prefetchable Memory Base and Limit registers in type 1
+> +	 *   config space (64 bits).
+> +	 * - enable IO Base and Limit registers in type 1 config
+> +	 *   space (32 bits).
+> +	 */
+> +
+> +	ctrl = CDNS_PCIE_HPA_LM_BAR_CFG_CTRL_DISABLED;
+> +	value = CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR0_CTRL(ctrl) |
+> +		CDNS_PCIE_HPA_LM_RC_BAR_CFG_BAR1_CTRL(ctrl) |
+> +		CDNS_PCIE_HPA_LM_RC_BAR_CFG_PREFETCH_MEM_ENABLE |
+> +		CDNS_PCIE_HPA_LM_RC_BAR_CFG_PREFETCH_MEM_64BITS |
+> +		CDNS_PCIE_HPA_LM_RC_BAR_CFG_IO_ENABLE |
+> +		CDNS_PCIE_HPA_LM_RC_BAR_CFG_IO_32BITS;
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_CFG_CTRL_REG,
+> +			     CDNS_PCIE_HPA_LM_RC_BAR_CFG, value);
+> +
+> +	if (rc->vendor_id != 0xffff)
+> +		cdns_pcie_hpa_rp_writew(pcie, PCI_VENDOR_ID, rc->vendor_id);
+> +
+> +	if (rc->device_id != 0xffff)
+> +		cdns_pcie_hpa_rp_writew(pcie, PCI_DEVICE_ID, rc->device_id);
+> +
+> +	cdns_pcie_hpa_rp_writeb(pcie, PCI_CLASS_REVISION, 0);
+> +	cdns_pcie_hpa_rp_writeb(pcie, PCI_CLASS_PROG, 0);
+> +	cdns_pcie_hpa_rp_writew(pcie, PCI_CLASS_DEVICE, PCI_CLASS_BRIDGE_PCI);
+> +
+> +	return 0;
+> +}
+> +
+> +static void cdns_pcie_hpa_create_region_for_ecam(struct cdns_pcie_rc *rc)
+> +{
+> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(rc);
+> +	struct resource *cfg_res = rc->cfg_res;
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	u32 value, root_port_req_id_reg, pcie_bus_number_reg;
+> +	u32 ecam_addr_0, region_size_0, request_id_0;
+> +	int busnr = 0, secbus = 0, subbus = 0;
+> +	struct resource_entry *entry;
+> +	resource_size_t size;
+> +	u32 axi_address_low;
+> +	int nbits;
+> +	u64 sz;
+> +
+> +	entry = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
+> +	if (entry) {
+> +		busnr = entry->res->start;
+> +		secbus = (busnr < 0xff) ? (busnr + 1) : 0xff;
+> +		subbus = entry->res->end;
+> +	}
+> +	size = resource_size(cfg_res);
+> +	sz = 1ULL << fls64(size - 1);
+> +	nbits = ilog2(sz);
+> +	if (nbits < 8)
+> +		nbits = 8;
+> +
+> +	root_port_req_id_reg = ((busnr & 0xff) << 8);
+> +	pcie_bus_number_reg = ((subbus & 0xff) << 16) | ((secbus & 0xff) << 8) |
+> +			      (busnr & 0xff);
+> +	ecam_addr_0 = cfg_res->start;
+> +	region_size_0 = nbits - 1;
+> +	request_id_0 = ((busnr & 0xff) << 8);
+> +
+> +#define CDNS_PCIE_HPA_TAG_MANAGEMENT (0x0)
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_TAG_MANAGEMENT, 0x200000);
+> +
+> +	/* Taking slave err as OKAY */
+> +#define CDNS_PCIE_HPA_SLAVE_RESP (0x100)
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE, CDNS_PCIE_HPA_SLAVE_RESP,
+> +			     0x0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_SLAVE_RESP + 0x4, 0x0);
+> +
+> +	/* Program the register "i_root_port_req_id_reg" with RP's BDF */
+> +#define I_ROOT_PORT_REQ_ID_REG (0x141c)
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, I_ROOT_PORT_REQ_ID_REG,
+> +			     root_port_req_id_reg);
+> +
+> +	/**
+> +	 * Program the register "i_pcie_bus_numbers" with Primary(RP's bus number),
+> +	 * secondary and subordinate bus numbers
+> +	 */
+> +#define I_PCIE_BUS_NUMBERS (CDNS_PCIE_HPA_RP_BASE + 0x18)
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_RP, I_PCIE_BUS_NUMBERS,
+> +			     pcie_bus_number_reg);
+> +
+> +	/* Program the register "lm_hal_sbsa_ctrl[0]" to enable the sbsa */
+> +#define LM_HAL_SBSA_CTRL (0x1170)
+> +	value = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_REG, LM_HAL_SBSA_CTRL);
+> +	value |= BIT(0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, LM_HAL_SBSA_CTRL, value);
+> +
+> +	/* Program region[0] for ECAM */
+> +	axi_address_low = (ecam_addr_0 & 0xfff00000) | region_size_0;
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0(0),
+> +			     axi_address_low);
+> +
+> +	/* rc0-high-axi-address */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR1(0), 0x0);
+> +	/* Type-1 CFG */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC0(0), 0x05000000);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC1(0),
+> +			     (request_id_0 << 16));
+> +
+> +	/* All AXI bits pass through PCIe */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0(0), 0x1b);
+> +	/* PCIe address-high */
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR1(0), 0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CTRL0(0), 0x06000000);
+> +}
+> +
+> +static void cdns_pcie_hpa_create_region_for_cfg(struct cdns_pcie_rc *rc)
+> +{
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(rc);
+> +	struct resource *cfg_res = rc->cfg_res;
+> +	struct resource_entry *entry;
+> +	u64 cpu_addr = cfg_res->start;
+> +	u32 addr0, addr1, desc1;
+> +	int busnr = 0;
+> +
+> +	entry = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
+> +	if (entry)
+> +		busnr = entry->res->start;
+> +
+> +	/*
+> +	 * Reserve region 0 for PCI configure space accesses:
+> +	 * OB_REGION_PCI_ADDR0 and OB_REGION_DESC0 are updated dynamically by
+> +	 * cdns_pci_map_bus(), other region registers are set here once for all.
+> +	 */
+> +	addr1 = 0;
+> +	desc1 = CDNS_PCIE_HPA_AT_OB_REGION_DESC1_BUS(busnr);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR1(0), addr1);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC1(0), desc1);
+> +
+> +	addr0 = CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
+> +		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
+> +	addr1 = upper_32_bits(cpu_addr);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0(0), addr0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR1(0), addr1);
+> +}
+> +
+> +static int cdns_pcie_hpa_host_init_address_translation(struct cdns_pcie_rc *rc)
+> +{
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	struct pci_host_bridge *bridge = pci_host_bridge_from_priv(rc);
+> +	struct resource_entry *entry;
+> +	int r = 0, busnr = 0;
+> +
+> +	if (rc->ecam_support_flag)
+> +		cdns_pcie_hpa_create_region_for_ecam(rc);
+> +	else
+> +		cdns_pcie_hpa_create_region_for_cfg(rc);
+> +
+> +	entry = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
+> +	if (entry)
+> +		busnr = entry->res->start;
+> +
+> +	r++;
+> +	if (pcie->msg_res)
+> +		cdns_pcie_hpa_set_outbound_region_for_normal_msg(pcie, busnr, 0, r,
+> +								 pcie->msg_res->start);
+> +
+> +	r++;
+> +	resource_list_for_each_entry(entry, &bridge->windows) {
+> +		struct resource *res = entry->res;
+> +		u64 pci_addr = res->start - entry->offset;
+> +
+> +		if (resource_type(res) == IORESOURCE_IO)
+> +			cdns_pcie_hpa_set_outbound_region(pcie, busnr, 0, r,
+> +							  true,
+> +							  pci_pio_to_address(res->start),
+> +							  pci_addr,
+> +							  resource_size(res));
+> +		else
+> +			cdns_pcie_hpa_set_outbound_region(pcie, busnr, 0, r,
+> +							  false,
+> +							  res->start,
+> +							  pci_addr,
+> +							  resource_size(res));
+> +
+> +		r++;
+> +	}
+> +
+> +	if (rc->no_inbound_flag)
+> +		return 0;
+> +	else
+> +		return cdns_pcie_hpa_host_map_dma_ranges(rc);
+> +}
+> +
+> +int cdns_pcie_hpa_host_init(struct cdns_pcie_rc *rc)
+> +{
+> +	int err;
+> +
+> +	err = cdns_pcie_hpa_host_init_root_port(rc);
+> +	if (err)
+> +		return err;
+> +
+> +	return cdns_pcie_hpa_host_init_address_translation(rc);
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_host_init);
+> +
+> +int cdns_pcie_hpa_host_link_setup(struct cdns_pcie_rc *rc)
+> +{
+> +	struct cdns_pcie *pcie = &rc->pcie;
+> +	struct device *dev = rc->pcie.dev;
+> +	int ret;
+> +
+> +	if (rc->quirk_detect_quiet_flag)
+> +		cdns_pcie_hpa_detect_quiet_min_delay_set(&rc->pcie);
+> +
+> +	cdns_pcie_hpa_host_enable_ptm_response(pcie);
+> +
+> +	ret = cdns_pcie_start_link(pcie);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to start link\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = cdns_pcie_hpa_host_start_link(rc);
+> +	if (ret)
+> +		dev_dbg(dev, "PCIe link never came up\n");
+
+I see this whole function is cloned from cdns_pcie_host_link_setup(),
+but I can't remember why we need two _start_link() functions here.
+Seems confusing.
+
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_host_link_setup);
+> +
+> +int cdns_pcie_hpa_host_setup(struct cdns_pcie_rc *rc)
+> +{
+> +	struct device *dev = rc->pcie.dev;
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct pci_host_bridge *bridge;
+> +	enum cdns_pcie_rp_bar bar;
+> +	struct cdns_pcie *pcie;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	bridge = pci_host_bridge_from_priv(rc);
+> +	if (!bridge)
+> +		return -ENOMEM;
+> +
+> +	pcie = &rc->pcie;
+> +	pcie->is_rc = true;
+> +
+> +	if (!pcie->reg_base) {
+> +		pcie->reg_base = devm_platform_ioremap_resource_byname(pdev, "reg");
+> +		if (IS_ERR(pcie->reg_base)) {
+> +			dev_err(dev, "missing \"reg\"\n");
+> +			return PTR_ERR(pcie->reg_base);
+> +		}
+> +	}
+> +
+> +	/* ECAM config space is remapped at glue layer */
+> +	if (!rc->cfg_base) {
+> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "cfg");
+> +		rc->cfg_base = devm_pci_remap_cfg_resource(dev, res);
+> +		if (IS_ERR(rc->cfg_base))
+> +			return PTR_ERR(rc->cfg_base);
+> +		rc->cfg_res = res;
+> +	}
+> +
+> +	ret = cdns_pcie_hpa_host_link_setup(rc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	for (bar = RP_BAR0; bar <= RP_NO_BAR; bar++)
+> +		rc->avail_ib_bar[bar] = true;
+> +
+> +	ret = cdns_pcie_hpa_host_init(rc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!bridge->ops)
+> +		bridge->ops = &cdns_pcie_hpa_host_ops;
+> +
+> +	return pci_host_probe(bridge);
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_host_setup);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Cadence PCIe controller driver");
+> +MODULE_AUTHOR("Manikandan K Pillai <mpillai@cadence.com>");
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-hpa.c b/drivers/pci/controller/cadence/pcie-cadence-hpa.c
+> new file mode 100644
+> index 000000000000..1152d2dcae77
+> --- /dev/null
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-hpa.c
+> @@ -0,0 +1,207 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2017 Cadence
+> +// Cadence PCIe controller driver
+> +// Author: Manikandan K Pillai <mpillai@cadence.com>
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/of.h>
+> +
+> +#include "pcie-cadence.h"
+> +
+> +bool cdns_pcie_hpa_link_up(struct cdns_pcie *pcie)
+> +{
+> +	u32 pl_reg_val;
+> +
+> +	pl_reg_val = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_REG, CDNS_PCIE_HPA_PHY_DBG_STS_REG0);
+> +	if (pl_reg_val & GENMASK(0, 0))
+> +		return true;
+> +	return false;
+> +}
+> +
+> +int cdns_pcie_hpa_start_link(struct cdns_pcie *pcie)
+> +{
+> +	u32 pl_reg_val;
+> +
+> +	pl_reg_val = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_REG, CDNS_PCIE_HPA_PHY_LAYER_CFG0);
+> +	pl_reg_val |= CDNS_PCIE_HPA_LINK_TRNG_EN_MASK;
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, CDNS_PCIE_HPA_PHY_LAYER_CFG0, pl_reg_val);
+> +	return 0;
+> +}
+> +
+> +void cdns_pcie_hpa_stop_link(struct cdns_pcie *pcie)
+> +{
+> +	u32 pl_reg_val;
+> +
+> +	pl_reg_val = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_REG, CDNS_PCIE_HPA_PHY_LAYER_CFG0);
+> +	pl_reg_val &= ~CDNS_PCIE_HPA_LINK_TRNG_EN_MASK;
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG, CDNS_PCIE_HPA_PHY_LAYER_CFG0, pl_reg_val);
+> +}
+> +
+> +void cdns_pcie_hpa_detect_quiet_min_delay_set(struct cdns_pcie *pcie)
+> +{
+> +	u32 delay = 0x3;
+> +	u32 ltssm_control_cap;
+> +
+> +	/*
+> +	 * Set the LTSSM Detect Quiet state min. delay to 2ms.
+> +	 */
+> +	ltssm_control_cap = cdns_pcie_hpa_readl(pcie, REG_BANK_IP_REG,
+> +						CDNS_PCIE_HPA_PHY_LAYER_CFG0);
+> +	ltssm_control_cap = ((ltssm_control_cap &
+> +			    ~CDNS_PCIE_HPA_DETECT_QUIET_MIN_DELAY_MASK) |
+> +			    CDNS_PCIE_HPA_DETECT_QUIET_MIN_DELAY(delay));
+> +
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_REG,
+> +			     CDNS_PCIE_HPA_PHY_LAYER_CFG0, ltssm_control_cap);
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_detect_quiet_min_delay_set);
+> +
+> +void cdns_pcie_hpa_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
+> +				       u32 r, bool is_io,
+> +				       u64 cpu_addr, u64 pci_addr, size_t size)
+> +{
+> +	/*
+> +	 * roundup_pow_of_two() returns an unsigned long, which is not suited
+> +	 * for 64bit values.
+> +	 */
+> +	u64 sz = 1ULL << fls64(size - 1);
+> +	int nbits = ilog2(sz);
+> +	u32 addr0, addr1, desc0, desc1, ctrl0;
+> +
+> +	if (nbits < 8)
+> +		nbits = 8;
+> +
+> +	/* Set the PCI address */
+> +	addr0 = CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0_NBITS(nbits) |
+> +		(lower_32_bits(pci_addr) & GENMASK(31, 8));
+> +	addr1 = upper_32_bits(pci_addr);
+> +
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0(r), addr0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR1(r), addr1);
+> +
+> +	/* Set the PCIe header descriptor */
+> +	if (is_io)
+> +		desc0 = CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_IO;
+> +	else
+> +		desc0 = CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_MEM;
+> +	desc1 = 0;
+> +	ctrl0 = 0;
+> +
+> +	/*
+> +	 * Whether Bit [26] is set or not inside DESC0 register of the outbound
+> +	 * PCIe descriptor, the PCI function number must be set into
+> +	 * Bits [31:24] of DESC1 anyway.
+> +	 *
+> +	 * In Root Complex mode, the function number is always 0 but in Endpoint
+> +	 * mode, the PCIe controller may support more than one function. This
+> +	 * function number needs to be set properly into the outbound PCIe
+> +	 * descriptor.
+> +	 *
+> +	 * Besides, setting Bit [26] is mandatory when in Root Complex mode:
+> +	 * then the driver must provide the bus, resp. device, number in
+> +	 * Bits [31:24] of DESC1, resp. Bits[23:16] of DESC0. Like the function
+> +	 * number, the device number is always 0 in Root Complex mode.
+> +	 *
+> +	 * However when in Endpoint mode, we can clear Bit [26] of DESC0, hence
+> +	 * the PCIe controller will use the captured values for the bus and
+> +	 * device numbers.
+> +	 */
+> +	if (pcie->is_rc) {
+> +		/* The device and function numbers are always 0. */
+> +		desc1 = CDNS_PCIE_HPA_AT_OB_REGION_DESC1_BUS(busnr) |
+> +			CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN(0);
+> +		ctrl0 = CDNS_PCIE_HPA_AT_OB_REGION_CTRL0_SUPPLY_BUS |
+> +			CDNS_PCIE_HPA_AT_OB_REGION_CTRL0_SUPPLY_DEV_FN;
+> +	} else {
+> +		/*
+> +		 * Use captured values for bus and device numbers but still
+> +		 * need to set the function number.
+> +		 */
+> +		desc1 |= CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN(fn);
+> +	}
+> +
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC0(r), desc0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC1(r), desc1);
+> +
+> +	addr0 = CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
+> +		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
+> +	addr1 = upper_32_bits(cpu_addr);
+> +
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0(r), addr0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR1(r), addr1);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CTRL0(r), ctrl0);
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_set_outbound_region);
+> +
+> +void cdns_pcie_hpa_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie,
+> +						      u8 busnr, u8 fn,
+> +						      u32 r, u64 cpu_addr)
+> +{
+> +	u32 addr0, addr1, desc0, desc1, ctrl0;
+> +
+> +	desc0 = CDNS_PCIE_HPA_AT_OB_REGION_DESC0_TYPE_NORMAL_MSG;
+> +	desc1 = 0;
+> +	ctrl0 = 0;
+> +
+> +	/*
+> +	 * See cdns_pcie_set_outbound_region() comments above.
+> +	 */
+> +	if (pcie->is_rc) {
+> +		desc1 = CDNS_PCIE_HPA_AT_OB_REGION_DESC1_BUS(busnr) |
+> +			CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN(0);
+> +		ctrl0 = CDNS_PCIE_HPA_AT_OB_REGION_CTRL0_SUPPLY_BUS |
+> +			CDNS_PCIE_HPA_AT_OB_REGION_CTRL0_SUPPLY_DEV_FN;
+> +	} else {
+> +		desc1 |= CDNS_PCIE_HPA_AT_OB_REGION_DESC1_DEVFN(fn);
+> +	}
+> +
+> +	addr0 = CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
+> +		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
+> +	addr1 = upper_32_bits(cpu_addr);
+> +
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0(r), 0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR1(r), 0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC0(r), desc0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC1(r), desc1);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0(r), addr0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR1(r), addr1);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CTRL0(r), ctrl0);
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_set_outbound_region_for_normal_msg);
+> +
+> +void cdns_pcie_hpa_reset_outbound_region(struct cdns_pcie *pcie, u32 r)
+> +{
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR0(r), 0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_PCI_ADDR1(r), 0);
+> +
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC0(r), 0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_DESC1(r), 0);
+> +
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR0(r), 0);
+> +	cdns_pcie_hpa_writel(pcie, REG_BANK_AXI_SLAVE,
+> +			     CDNS_PCIE_HPA_AT_OB_REGION_CPU_ADDR1(r), 0);
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_hpa_reset_outbound_region);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Cadence PCIe controller driver");
+> +MODULE_AUTHOR("Manikandan K Pillai <mpillai@cadence.com>");
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-plat.c b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> index ced030cc0fda..6ce18a0cf564 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-plat.c
+> @@ -12,8 +12,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include "pcie-cadence.h"
+>  
+> -#define CDNS_PLAT_CPU_TO_BUS_ADDR	0x0FFFFFFF
+> -
+> +void cdns_pcie_disable_phy(struct cdns_pcie *pcie);
+>  /**
+>   * struct cdns_plat_pcie - private data for this PCIe platform driver
+>   * @pcie: Cadence PCIe controller
+> @@ -24,13 +23,8 @@ struct cdns_plat_pcie {
+>  
+>  static const struct of_device_id cdns_plat_pcie_of_match[];
+>  
+> -static u64 cdns_plat_cpu_addr_fixup(struct cdns_pcie *pcie, u64 cpu_addr)
+> -{
+> -	return cpu_addr & CDNS_PLAT_CPU_TO_BUS_ADDR;
+> -}
+> -
+>  static const struct cdns_pcie_ops cdns_plat_ops = {
+> -	.cpu_addr_fixup = cdns_plat_cpu_addr_fixup,
+
+This stuff doesn't look HPA related.  This looks cpu_addr_fixup stuff
+that should be in a separate patch.
+
+Most of the stuff below isn't HPA related either.  I'm confused.
+
+> +	.link_up = cdns_pcie_linkup,
+>  };
+>  
+>  static int cdns_plat_pcie_probe(struct platform_device *pdev)
+> @@ -68,6 +62,11 @@ static int cdns_plat_pcie_probe(struct platform_device *pdev)
+>  		rc = pci_host_bridge_priv(bridge);
+>  		rc->pcie.dev = dev;
+>  		rc->pcie.ops = &cdns_plat_ops;
+> +		rc->pcie.is_rc = data->is_rc;
+> +
+> +		/* Store the register bank offsets pointer */
+> +		rc->pcie.cdns_pcie_reg_offsets = data;
+> +
+>  		cdns_plat_pcie->pcie = &rc->pcie;
+>  
+>  		ret = cdns_pcie_init_phy(dev, cdns_plat_pcie->pcie);
+> @@ -95,6 +94,11 @@ static int cdns_plat_pcie_probe(struct platform_device *pdev)
+>  
+>  		ep->pcie.dev = dev;
+>  		ep->pcie.ops = &cdns_plat_ops;
+> +		ep->pcie.is_rc = data->is_rc;
+> +
+> +		/* Store the register bank offset pointer */
+> +		ep->pcie.cdns_pcie_reg_offsets = data;
+> +
+>  		cdns_plat_pcie->pcie = &ep->pcie;
+>  
+>  		ret = cdns_pcie_init_phy(dev, cdns_plat_pcie->pcie);
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+> index 51c9bc4eb174..aaf921ea70e0 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
+> @@ -9,6 +9,17 @@
+>  
+>  #include "pcie-cadence.h"
+>  
+> +bool cdns_pcie_linkup(struct cdns_pcie *pcie)
+> +{
+> +	u32 pl_reg_val;
+> +
+> +	pl_reg_val = cdns_pcie_readl(pcie, CDNS_PCIE_LM_BASE);
+> +	if (pl_reg_val & GENMASK(0, 0))
+> +		return true;
+> +	return false;
+> +}
+> +EXPORT_SYMBOL_GPL(cdns_pcie_linkup);
+> +
+>  void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie)
+>  {
+>  	u32 delay = 0x3;
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> index 8048bef215d0..3e0fd6bb21b1 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> @@ -7,10 +7,12 @@
+>  #define _PCIE_CADENCE_H
+>  
+>  #include <linux/kernel.h>
+> +#include <linux/module.h>
+>  #include <linux/pci.h>
+>  #include <linux/pci-epf.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/bitfield.h>
+> +
+
+Spurious whitespace change.  Should have been done when the #includes
+below were added.
+
+>  #include "pcie-cadence-lga-regs.h"
+>  #include "pcie-cadence-hpa-regs.h"
+>  
+> @@ -29,6 +31,26 @@ struct cdns_pcie_rp_ib_bar {
+>  struct cdns_pcie;
+>  struct cdns_pcie_rc;
+>  
+> +enum cdns_pcie_msg_routing {
+> +	/* Route to Root Complex */
+> +	MSG_ROUTING_TO_RC,
+> +
+> +	/* Use Address Routing */
+> +	MSG_ROUTING_BY_ADDR,
+> +
+> +	/* Use ID Routing */
+> +	MSG_ROUTING_BY_ID,
+> +
+> +	/* Route as Broadcast Message from Root Complex */
+> +	MSG_ROUTING_BCAST,
+> +
+> +	/* Local message; terminate at receiver (INTx messages) */
+> +	MSG_ROUTING_LOCAL,
+> +
+> +	/* Gather & route to Root Complex (PME_TO_Ack message) */
+> +	MSG_ROUTING_GATHER,
+> +};
+
+Looks like duplicates of PCIE_MSG_TYPE_R_RC, etc from
+drivers/pci/pci.h
+
+>  enum cdns_pcie_reg_bank {
+>  	REG_BANK_RP,
+>  	REG_BANK_IP_REG,
+> @@ -43,9 +65,9 @@ enum cdns_pcie_reg_bank {
+>  };
+>  
+>  struct cdns_pcie_ops {
+> -	int	(*start_link)(struct cdns_pcie *pcie);
+> -	void	(*stop_link)(struct cdns_pcie *pcie);
+> -	bool	(*link_up)(struct cdns_pcie *pcie);
+> +	int     (*start_link)(struct cdns_pcie *pcie);
+> +	void    (*stop_link)(struct cdns_pcie *pcie);
+> +	bool    (*link_up)(struct cdns_pcie *pcie);
+>  	u64     (*cpu_addr_fixup)(struct cdns_pcie *pcie, u64 cpu_addr);
+>  };
+>  
+> @@ -77,6 +99,7 @@ struct cdns_plat_pcie_of_data {
+>   * struct cdns_pcie - private data for Cadence PCIe controller drivers
+>   * @reg_base: IO mapped register base
+>   * @mem_res: start/end offsets in the physical system memory to map PCI accesses
+> + * @msg_res: Region for send message to map PCI accesses
+>   * @dev: PCIe controller
+>   * @is_rc: tell whether the PCIe controller mode is Root Complex or Endpoint.
+>   * @phy_count: number of supported PHY devices
+> @@ -89,6 +112,7 @@ struct cdns_plat_pcie_of_data {
+>  struct cdns_pcie {
+>  	void __iomem		             *reg_base;
+>  	struct resource		             *mem_res;
+> +	struct resource                      *msg_res;
+>  	struct device		             *dev;
+>  	bool			             is_rc;
+>  	int			             phy_count;
+> @@ -111,6 +135,7 @@ struct cdns_pcie {
+>   *                available
+>   * @quirk_retrain_flag: Retrain link as quirk for PCIe Gen2
+>   * @quirk_detect_quiet_flag: LTSSM Detect Quiet min delay set as quirk
+> + * @ecam_support_flag: Whether the ECAM flag is supported
+>   */
+>  struct cdns_pcie_rc {
+>  	struct cdns_pcie	pcie;
+> @@ -121,6 +146,8 @@ struct cdns_pcie_rc {
+>  	bool			avail_ib_bar[CDNS_PCIE_RP_MAX_IB];
+>  	unsigned int		quirk_retrain_flag:1;
+>  	unsigned int		quirk_detect_quiet_flag:1;
+> +	unsigned int            ecam_support_flag:1;
+> +	unsigned int		no_inbound_flag:1;
+>  };
+>  
+>  /**
+> @@ -304,6 +331,29 @@ static inline u16 cdns_pcie_rp_readw(struct cdns_pcie *pcie, u32 reg)
+>  	return cdns_pcie_read_sz(addr, 0x2);
+>  }
+>  
+> +static inline void cdns_pcie_hpa_rp_writeb(struct cdns_pcie *pcie,
+> +					   u32 reg, u8 value)
+> +{
+> +	void __iomem *addr = pcie->reg_base + CDNS_PCIE_HPA_RP_BASE + reg;
+> +
+> +	cdns_pcie_write_sz(addr, 0x1, value);
+> +}
+> +
+> +static inline void cdns_pcie_hpa_rp_writew(struct cdns_pcie *pcie,
+> +					   u32 reg, u16 value)
+> +{
+> +	void __iomem *addr = pcie->reg_base + CDNS_PCIE_HPA_RP_BASE + reg;
+> +
+> +	cdns_pcie_write_sz(addr, 0x2, value);
+> +}
+> +
+> +static inline u16 cdns_pcie_hpa_rp_readw(struct cdns_pcie *pcie, u32 reg)
+> +{
+> +	void __iomem *addr = pcie->reg_base + CDNS_PCIE_HPA_RP_BASE + reg;
+> +
+> +	return cdns_pcie_read_sz(addr, 0x2);
+> +}
+> +
+>  /* Endpoint Function register access */
+>  static inline void cdns_pcie_ep_fn_writeb(struct cdns_pcie *pcie, u8 fn,
+>  					  u32 reg, u8 value)
+> @@ -368,6 +418,7 @@ int cdns_pcie_host_setup(struct cdns_pcie_rc *rc);
+>  void cdns_pcie_host_disable(struct cdns_pcie_rc *rc);
+>  void __iomem *cdns_pci_map_bus(struct pci_bus *bus, unsigned int devfn,
+>  			       int where);
+> +int cdns_pcie_hpa_host_setup(struct cdns_pcie_rc *rc);
+>  #else
+>  static inline int cdns_pcie_host_link_setup(struct cdns_pcie_rc *rc)
+>  {
+> @@ -384,6 +435,11 @@ static inline int cdns_pcie_host_setup(struct cdns_pcie_rc *rc)
+>  	return 0;
+>  }
+>  
+> +static inline int cdns_pcie_hpa_host_setup(struct cdns_pcie_rc *rc)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline void cdns_pcie_host_disable(struct cdns_pcie_rc *rc)
+>  {
+>  }
+> @@ -398,17 +454,25 @@ static inline void __iomem *cdns_pci_map_bus(struct pci_bus *bus, unsigned int d
+>  #if IS_ENABLED(CONFIG_PCIE_CADENCE_EP)
+>  int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep);
+>  void cdns_pcie_ep_disable(struct cdns_pcie_ep *ep);
+> +int cdns_pcie_hpa_ep_setup(struct cdns_pcie_ep *ep);
+>  #else
+>  static inline int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
+>  {
+>  	return 0;
+>  }
+>  
+> +static inline int cdns_pcie_hpa_ep_setup(struct cdns_pcie_ep *ep)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline void cdns_pcie_ep_disable(struct cdns_pcie_ep *ep)
+>  {
+>  }
+>  #endif
+> -
+> +bool cdns_pcie_linkup(struct cdns_pcie *pcie);
+> +int  cdns_pcie_host_wait_for_link(struct cdns_pcie *pcie);
+> +int  cdns_pcie_host_start_link(struct cdns_pcie_rc *rc);
+>  void cdns_pcie_detect_quiet_min_delay_set(struct cdns_pcie *pcie);
+>  void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
+>  				   u32 r, bool is_io,
+> @@ -421,6 +485,25 @@ void cdns_pcie_disable_phy(struct cdns_pcie *pcie);
+>  int  cdns_pcie_enable_phy(struct cdns_pcie *pcie);
+>  int  cdns_pcie_init_phy(struct device *dev, struct cdns_pcie *pcie);
+>  
+> +void cdns_pcie_hpa_detect_quiet_min_delay_set(struct cdns_pcie *pcie);
+> +void cdns_pcie_hpa_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
+> +				       u32 r, bool is_io,
+> +				       u64 cpu_addr, u64 pci_addr, size_t size);
+> +void cdns_pcie_hpa_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie,
+> +						      u8 busnr, u8 fn,
+> +						      u32 r, u64 cpu_addr);
+> +void cdns_pcie_hpa_reset_outbound_region(struct cdns_pcie *pcie, u32 r);
+> +int  cdns_pcie_hpa_host_link_setup(struct cdns_pcie_rc *rc);
+> +int  cdns_pcie_hpa_host_init(struct cdns_pcie_rc *rc);
+> +void __iomem *cdns_pci_hpa_map_bus(struct pci_bus *bus, unsigned int devfn,
+> +				   int where);
+> +int  cdns_pcie_hpa_host_wait_for_link(struct cdns_pcie *pcie);
+> +int  cdns_pcie_hpa_host_start_link(struct cdns_pcie_rc *rc);
+> +
+> +int  cdns_pcie_hpa_start_link(struct cdns_pcie *pcie);
+> +void cdns_pcie_hpa_stop_link(struct cdns_pcie *pcie);
+> +bool cdns_pcie_hpa_link_up(struct cdns_pcie *pcie);
+> +
+>  extern const struct dev_pm_ops cdns_pcie_pm_ops;
+>  
+>  #endif /* _PCIE_CADENCE_H */
+> -- 
+> 2.49.0
+> 
 
