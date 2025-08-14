@@ -1,103 +1,207 @@
-Return-Path: <linux-kernel+bounces-768756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A4AB26517
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:12:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C9BB26518
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 951DD7BCBC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CF7D1CC5B09
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC772FCC16;
-	Thu, 14 Aug 2025 12:11:49 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3712FD7B1;
+	Thu, 14 Aug 2025 12:11:53 +0000 (UTC)
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA46428504B;
-	Thu, 14 Aug 2025 12:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B872FD1AF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173509; cv=none; b=TsIivcikQHnqMRbFoi7pILxV2qrOIZH3zZfWAhcXBSJu+CluMzeMwQ0qMOKmHTuUMJFjJtshs1+9KYeW5buA3jEoEBxUWMcp75D0Jarb6KKUsqgYIQhYAnCG10CoHLFSsh+tJxqDz8mdx1QxhlJjNzJQ21RYG6wwbzWg2sY4Dv0=
+	t=1755173512; cv=none; b=GB/D0xeSQvl2+nHzVSj2HDtxaxmC5xyEcldCQOJ5aQo9dj5z8HntLXQZNzDri98zX0xu9YXJJMO4xA6+cQTz7X1LoKoT6bXiJKWhCJJvAZ/b/zfz1W5ON7+rsccmDdoYojF5up+zK48S5c/jtwJM4B5DkxL51aIBtm8WHrU/gz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173509; c=relaxed/simple;
-	bh=8u9RP2xh/1X5QpQ/eJnsBhp/8hmSeMReZKli+xcbNVY=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=RKM6j+IV3IFTDinjWHMtthikifmLd9wDUltcGPKphj2e6zjK34Wovk8eUiPi1PjukMG5Ox7kE8aYy/jdUaFy9fZ9SkvjSUJaJEfM7eFvEODBcTwnttPFgGoivq2IEPlBYR+30aFHgM+nqPg8+Y+QC1e+NdUcSaauYsz3Nzgd1jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4c2kcY3dDjz5H1s9;
-	Thu, 14 Aug 2025 20:11:41 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl1.zte.com.cn with SMTP id 57ECBQvP076334;
-	Thu, 14 Aug 2025 20:11:26 +0800 (+08)
-	(envelope-from wang.yaxin@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 14 Aug 2025 20:11:29 +0800 (CST)
-Date: Thu, 14 Aug 2025 20:11:29 +0800 (CST)
-X-Zmail-TransId: 2afb689dd271ffffffffc4a-3b075
-X-Mailer: Zmail v1.0
-Message-ID: <20250814201129510XielEwRpr4QXPx_XBtkhv@zte.com.cn>
+	s=arc-20240116; t=1755173512; c=relaxed/simple;
+	bh=oacW6elFEt7q132ppNYkPmW40DNQ7eO/3WbfdJF29Ow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M9ly6YcyE/C5p2itkZUTtZXYups3DsNc58Ebq5rI4BykldkzlhCRAy2jrB7Mzo8xwwUPJky1OGmtDiaiwFe6EmSVUGKw4gJ8eNi51gDVUGT823M3TKLc2EvolDQGYT3V8cCo0gDH4wTHu+iPASO4vQTRPRn9ZxktVs2c10+s/Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E68F2059F;
+	Thu, 14 Aug 2025 12:11:45 +0000 (UTC)
+Message-ID: <5aa057d0-dc76-4723-80d1-82065320a428@ghiti.fr>
+Date: Thu, 14 Aug 2025 14:11:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <wang.yaxin@zte.com.cn>
-To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>
-Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>,
-        <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>,
-        <tu.qiang35@zte.com.cn>, <qiu.yutan@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIDAvNCBsaW51eCBuZXh0IHYyXSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgbmV0d29ya2luZyBkb2NzIHRvIFNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 57ECBQvP076334
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: wang.yaxin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Thu, 14 Aug 2025 20:11:41 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 689DD27D.000/4c2kcY3dDjz5H1s9
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 06/13] mm/page_table_check: Reinstate address
+ parameter in [__]page_table_check_pud_clear()
+To: Andrew Donnellan <ajd@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-mm@kvack.org
+Cc: akpm@linux-foundation.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
+ sweettea-kernel@dorminy.me, nicholas@linux.ibm.com,
+ christophe.leroy@csgroup.eu, Rohan McLure <rmclure@linux.ibm.com>,
+ Ingo Molnar <mingo@kernel.org>
+References: <20250813062614.51759-1-ajd@linux.ibm.com>
+ <20250813062614.51759-7-ajd@linux.ibm.com>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20250813062614.51759-7-ajd@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedutdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomheptehlvgigrghnughrvgcuifhhihhtihcuoegrlhgvgiesghhhihhtihdrfhhrqeenucggtffrrghtthgvrhhnpefhhfdutdevgeelgeegfeeltdduhfduledvteduhfegffffiefggfektefhjedujeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleefrdeffedrheejrdduleelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelfedrfeefrdehjedrudelledphhgvlhhopegludelvddrudeikedrvddvrddutddungdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegrjhgusehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtoheplhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrt
+ ghpthhtoheplhhinhhugidqrhhishgtvheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alex@ghiti.fr
 
-From: Wang Yaxin <wang.yaxin@zte.com.cn>
+On 8/13/25 08:26, Andrew Donnellan wrote:
+> From: Rohan McLure <rmclure@linux.ibm.com>
+>
+> This reverts commit 931c38e16499 ("mm/page_table_check: remove unused
+> parameter in [__]page_table_check_pud_clear").
+>
+> Reinstate previously unused parameters for the purpose of supporting
+> powerpc platforms, as many do not encode user/kernel ownership of the
+> page in the pte, but instead in the address of the access.
+>
+> [ajd@linux.ibm.com: rebase on arm64 changes]
+> Signed-off-by: Rohan McLure <rmclure@linux.ibm.com>
+> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Acked-by: Ingo Molnar <mingo@kernel.org>  # x86
+> Signed-off-by: Andrew Donnellan <ajd@linux.ibm.com>
+> ---
+> v15: rebase
+> ---
+>   arch/arm64/include/asm/pgtable.h |  2 +-
+>   arch/x86/include/asm/pgtable.h   |  2 +-
+>   include/linux/page_table_check.h | 11 +++++++----
+>   include/linux/pgtable.h          |  2 +-
+>   mm/page_table_check.c            |  5 +++--
+>   5 files changed, 13 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 06ea6a4f300b..81f06e5e32b2 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1374,7 +1374,7 @@ static inline pte_t __ptep_get_and_clear_anysz(struct mm_struct *mm,
+>   		break;
+>   #ifndef __PAGETABLE_PMD_FOLDED
+>   	case PUD_SIZE:
+> -		page_table_check_pud_clear(mm, pte_pud(pte));
+> +		page_table_check_pud_clear(mm, address, pte_pud(pte));
+>   		break;
+>   #endif
+>   	default:
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index 8ee301b16b50..8b45e0c41923 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -1329,7 +1329,7 @@ static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
+>   {
+>   	pud_t pud = native_pudp_get_and_clear(pudp);
+>   
+> -	page_table_check_pud_clear(mm, pud);
+> +	page_table_check_pud_clear(mm, addr, pud);
+>   
+>   	return pud;
+>   }
+> diff --git a/include/linux/page_table_check.h b/include/linux/page_table_check.h
+> index 66e109238416..808cc3a48c28 100644
+> --- a/include/linux/page_table_check.h
+> +++ b/include/linux/page_table_check.h
+> @@ -16,7 +16,8 @@ extern struct page_ext_operations page_table_check_ops;
+>   void __page_table_check_zero(struct page *page, unsigned int order);
+>   void __page_table_check_pte_clear(struct mm_struct *mm, pte_t pte);
+>   void __page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd);
+> -void __page_table_check_pud_clear(struct mm_struct *mm, pud_t pud);
+> +void __page_table_check_pud_clear(struct mm_struct *mm, unsigned long addr,
+> +				  pud_t pud);
+>   void __page_table_check_ptes_set(struct mm_struct *mm, unsigned long addr,
+>   		pte_t *ptep, pte_t pte, unsigned int nr);
+>   void __page_table_check_pmds_set(struct mm_struct *mm, unsigned long addr,
+> @@ -59,12 +60,13 @@ static inline void page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
+>   	__page_table_check_pmd_clear(mm, pmd);
+>   }
+>   
+> -static inline void page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
+> +static inline void page_table_check_pud_clear(struct mm_struct *mm,
+> +					      unsigned long addr, pud_t pud)
+>   {
+>   	if (static_branch_likely(&page_table_check_disabled))
+>   		return;
+>   
+> -	__page_table_check_pud_clear(mm, pud);
+> +	__page_table_check_pud_clear(mm, addr, pud);
+>   }
+>   
+>   static inline void page_table_check_ptes_set(struct mm_struct *mm,
+> @@ -123,7 +125,8 @@ static inline void page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
+>   {
+>   }
+>   
+> -static inline void page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
+> +static inline void page_table_check_pud_clear(struct mm_struct *mm,
+> +					      unsigned long addr, pud_t pud)
+>   {
+>   }
+>   
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 8aab3fa19c85..28fcff844b63 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -661,7 +661,7 @@ static inline pud_t pudp_huge_get_and_clear(struct mm_struct *mm,
+>   	pud_t pud = *pudp;
+>   
+>   	pud_clear(pudp);
+> -	page_table_check_pud_clear(mm, pud);
+> +	page_table_check_pud_clear(mm, address, pud);
+>   
+>   	return pud;
+>   }
+> diff --git a/mm/page_table_check.c b/mm/page_table_check.c
+> index 0957767a2940..bd1242087a35 100644
+> --- a/mm/page_table_check.c
+> +++ b/mm/page_table_check.c
+> @@ -167,7 +167,8 @@ void __page_table_check_pmd_clear(struct mm_struct *mm, pmd_t pmd)
+>   }
+>   EXPORT_SYMBOL(__page_table_check_pmd_clear);
+>   
+> -void __page_table_check_pud_clear(struct mm_struct *mm, pud_t pud)
+> +void __page_table_check_pud_clear(struct mm_struct *mm, unsigned long addr,
+> +				  pud_t pud)
+>   {
+>   	if (&init_mm == mm)
+>   		return;
+> @@ -246,7 +247,7 @@ void __page_table_check_puds_set(struct mm_struct *mm, unsigned long addr,
+>   		return;
+>   
+>   	for (i = 0; i < nr; i++)
+> -		__page_table_check_pud_clear(mm, *(pudp + i));
+> +		__page_table_check_pud_clear(mm, addr + PUD_SIZE * i, *(pudp + i));
+>   	if (pud_user_accessible_page(pud))
+>   		page_table_check_set(pud_pfn(pud), stride * nr, pud_write(pud));
+>   }
 
-translate networking docs to Simplified Chinese
 
-v1->v2:
-https://lore.kernel.org/all/20250728153954564ePWG4rm0QdFoq2QGWUGlt@zte.com.cn/
-https://lore.kernel.org/all/CAD-N9QW7=frNYSJDhaUiggSF9p_v33R8BQ0t8vypWUCXO+pyZQ@mail.gmail.com/
-1. resend by plain text.
-2. remove unneccessary empty line in subject.
+So this made me realize we (riscv) did not implement 
+pudp_huge_get_and_clear(), which was a mistake since we support THP PUD. 
+I have implemented this function in this patch 
+https://lore.kernel.org/all/20250814-dev-alex-thp_pud_xchg-v1-1-b4704dfae206@rivosinc.com/T/#u
 
-Sun yuxi (2):
-  Docs/zh_CN: Translate mptcp-sysctl.rst to Simplified Chinese
-  Docs/zh_CN: Translate generic-hdlc.rst to Simplified Chinese
+That's a fix so I'll merge it in 6.17 (at least I'll try) so your 
+patchset will break the build on riscv, I'll keep you posted when it 
+gets merged!
 
-Wang Yaxin (2):
-  Docs/zh_CN: Translate skbuff.rst to Simplified Chinese
-  Docs/zh_CN: Translate timestamping.rst to Simplified Chinese
+Thanks,
 
- .../zh_CN/networking/generic-hdlc.rst         | 176 +++++
- .../translations/zh_CN/networking/index.rst   |   8 +-
- .../zh_CN/networking/mptcp-sysctl.rst         | 139 ++++
- .../translations/zh_CN/networking/skbuff.rst  |  44 ++
- .../zh_CN/networking/timestamping.rst         | 674 ++++++++++++++++++
- 5 files changed, 1037 insertions(+), 4 deletions(-)
- create mode 100644 Documentation/translations/zh_CN/networking/generic-hdlc.rst
- create mode 100644 Documentation/translations/zh_CN/networking/mptcp-sysctl.rst
- create mode 100644 Documentation/translations/zh_CN/networking/skbuff.rst
- create mode 100644 Documentation/translations/zh_CN/networking/timestamping.rst
+Alex
 
--- 
-2.25.1
 
