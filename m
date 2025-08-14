@@ -1,242 +1,364 @@
-Return-Path: <linux-kernel+bounces-768669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13539B263EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:14:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EBAB263F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 113F85C3117
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:13:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7476E5A6241
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB212F39C4;
-	Thu, 14 Aug 2025 11:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3652F83C0;
+	Thu, 14 Aug 2025 11:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hmdkQ1ZH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="haa/r3Lr";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="haa/r3Lr"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013047.outbound.protection.outlook.com [52.101.72.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330FD2F39A4
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755170027; cv=none; b=O1IzVTbM7W80JOoG7FkwCGMZzd98xE7LaKCWpmJrGKnb40n4l46V+GhMaBcEI86ZE4WiiDawvjZOEUZxcbpLT7QnB0fTF3FrhAeJrs7MoDn4K3foBORTG7OZZLo/oqVAuv54iQE1rc986Sl6/zt5tqH+bJBg9aTUj96EkARQ/rg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755170027; c=relaxed/simple;
-	bh=tLpDvDVgXdPEc6SwMlz0ZBMJYiA7a4FcbbW1eEDi10A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A1ax6YdP/t/kDaGUrNA7nUQbZ/Z1NRs9PxFoC2QfkCNGp8qEny1HzKNWZqUkHQL0IfYA/CPLOUZTRwBAXnJfnlYAHrF3Xe+pbnqrMLUQ2kjhiMCxAEvypSXpBHHDazt2JH4CwXJe5cr5cmszuk05/agyGtFjhsyFiXzwEE7vPdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hmdkQ1ZH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=e2r0VCNKuNYxiHYSasDblFSPwDT5e+ny0g/eN+goIJ4=; b=hmdkQ1ZHWJD2PMDbjgPX8LwUMz
-	sK/A/r5D1SWOyA4vicIc3ZbJK79pzLUT/yZ4oAZgLEIzsbP+ssmyd42vFewvRLoGzYmgRAFb2t+nZ
-	XkBiEsP14WmjrOBLWGGS46u3dv3xmlzgjLKaOwATExBSyVsWQVm+qCjFTM7zXetcMOUm7wfNHC6CV
-	Y1bUZjZNs/gYRUvKjgAh5H8gSi2eHymyXn6acuPRrh1EVv8/Ets9EAYqUJzZA2Ponu2nksx1laikN
-	vKUg6GKhwTdowv1FlIuA3Z2mD31jmWrJe9DfBxbqdb+l2NqFnK+8GtH/ZWvUmG+g16ObcpalQKbA2
-	vnOFSZGA==;
-Received: from [54.239.6.185] (helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umVtl-0000000HWTh-2Ets;
-	Thu, 14 Aug 2025 11:13:34 +0000
-Message-ID: <8ff6b4cad51167c6226304483544a6828d3f7e0c.camel@infradead.org>
-Subject: Re: [RFC PATCH] x86/bhyve: Detect FreeBSD Bhyve hypervisor
-From: David Woodhouse <dwmw2@infradead.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, "Ahmed S. Darwish" <darwi@linutronix.de>,
- linux-kernel@vger.kernel.org, Konstantin Belousov <kib@kib.kiev.ua>,  John
- Baldwin <jhb@freebsd.org>
-Date: Thu, 14 Aug 2025 13:13:32 +0200
-In-Reply-To: <20250814101552.GAaJ23WBZ-O3Yuu64t@fat_crate.local>
-References: <98dd43553b2d63edd3d994816f378985d1a19d72.camel@infradead.org>
-	 <20250814101552.GAaJ23WBZ-O3Yuu64t@fat_crate.local>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-c6TdGd66B+gRpX6Cg54w"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C02A2F39C3;
+	Thu, 14 Aug 2025 11:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.47
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755170074; cv=fail; b=IevbXIm0Qx+uPNGMZeLTfxedNZnQb3yL9jSkbQrCOdfTNYdejDlNYqht2p7Uujwi5LpGfWrAAkowmAWw6ra8WV32LWICY79qRZuLy6GEFLq3I4MOvi6RjU8OZSHCeDugNph7TJCQ1yRZv7AAcDH2nwvCFMpgR8p0Yqq3TIgYFjo=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755170074; c=relaxed/simple;
+	bh=hxrlnrRB+XbxEapS5yj6nZtDqKuwSMeLBMDjFlPpSu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Qf7b8ZYZkP25bdc+vkeixh0iF+c4pusMv218WOQBf0xqqZ0hi69vofjz74ZJz/a5X01aRZvpDNFBkr0L2+iMTiZE29Uu3PfYUaifrzj6dEl9Y2n4xvQkaHG9UJvqsGNvzNi/nT7zMkIXSST8sqGL7CPWNjwLmLH97o6TStiYTJc=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=haa/r3Lr; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=haa/r3Lr; arc=fail smtp.client-ip=52.101.72.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=D8YWKMgO8wfpoRUuas2vVGS7rR61aiynLZIi7h6fb4g5XEaCU3kLZQ+/Rj165fcX9bPrnvzONrDsF+hvPbpy/ua+j/6BeBDbvkN7vAj0/Moaq0oSc2bFn4kp4IGL9HLzknOmzYm/h7+Idpqh6TfgwcfYvm2PlMIxkSvAPqAtNad2wN1rm0qJlXPPHelDuexdQclyxcFjV3SQZQn3bLSohDYUYwA9fRyfLCU9YwWCzRSBpj3aXHr+Ki86phYUfTRXEu2MXjC/+OzB51ZfqkOMwKQz/xPBYSmmFDdG3zHHuWiDZ4b81zJggIgWaVZ08ypPjIo+60SywgeLjlb2iTS+5g==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C9J3eVZGDKOeoY9cbAY3Hjhn3XatreutjqL/MSPVjR0=;
+ b=exKmEVIKmnf8rDFqWmH148q3Hy0yh5K2OmVUKBZjufihlca9FkUFcIr5459ufeDnX29xKu8AuLqFntfd0WWWTN3xX0JX2nN8LaJ5Lb04pvK5TSF6QxX8irzhTkFTROij/fkN40br22X1UsRY9OvYQhitTg4GlI38x1qPScJluPkVsbK2e9OwOMsDpCzf6ihXadM3Xg89CP6rB5QlOAKXDXJ9dEGCGZbmpHyXp7n99NnpZDod5N4cMvnX06Ge8n+woPUbQZhLcm8jyFwmxNOxfXlyHkncoGxwbSP9HYo2UiHlmyQ+igcfj5WPqN8Iknf9Ban9YI74hYZpiZOaQrd6lA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=gmail.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C9J3eVZGDKOeoY9cbAY3Hjhn3XatreutjqL/MSPVjR0=;
+ b=haa/r3LrXK4blMcJTzrqGuIUe6VUl66I+/huraU1AxgnhK/7/OWPsRBJQWIYSc1MFbe/faRiZLGrBAKF15g0c5GcKll0sbYSJgOxg888DpSkyLgakHgDAJUQnqGkfdtGhmYxeilLlWBuSroYcufJ3g/rWdsVV/9ryavJ597DPXs=
+Received: from DUZP191CA0021.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:4f9::25)
+ by DB5PR08MB10235.eurprd08.prod.outlook.com (2603:10a6:10:4a9::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
+ 2025 11:14:27 +0000
+Received: from DB1PEPF000509FF.eurprd03.prod.outlook.com
+ (2603:10a6:10:4f9:cafe::79) by DUZP191CA0021.outlook.office365.com
+ (2603:10a6:10:4f9::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.17 via Frontend Transport; Thu,
+ 14 Aug 2025 11:14:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB1PEPF000509FF.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9031.11
+ via Frontend Transport; Thu, 14 Aug 2025 11:14:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PDTb+GVJl1QrICW0L6dcf/4Rq7w2VrBN5/sOOqobV/4r4nhGQYUhi+iSf6l5a/YObJ9PvNGBAduOHxZot9VQNSScXmzsEyggHAOF76aKwUw9ltr3mtyfz+YZJK+K7IrKKHUo+YnGSLr0kf3EhCOP5g2Y6Srt6wdtc9AJ4P3sIxtde5hndzFCPwSPm8iuMLoy/6Vbl1UmzmfawcWXhcY1RZw05gqO5hnpnd2Fd/f6lNqsd1wxt7tmtvuc9nSd6K6vQ2aGUgdJAPgDvKpOIrOydGi+fSlXLZDtHSykFcNtoc76Y+kJ0DMf1eRJLblEh4ltEFG9iaMAYEixPo4YaqP0CQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C9J3eVZGDKOeoY9cbAY3Hjhn3XatreutjqL/MSPVjR0=;
+ b=K8B5h26EK2Ay9883jJvGBm1f1Vag1dT4xa8JEPkRtLxtMA08/4VWu2t/vIN0isGignyGyvrxuX5FHho5yHFPA65K3+emY+uh0He23vGz7lKkqulPgP6qODmdcfeoa2gP76cHCe+/ycAWUC+r3Sb3K6VXqAULjb3Xw5cFGFAEyJy1cxsR9LAc6hga7jM+/lsywzof+g1RtC5PS+dmg1npdUnyaVhM449cnMjW0dag7UakIDnZIOQLXtcoe2drWmBD8A2hf9E4DpNmaRyNhIDe6AryU6OscxeUcQWK4KoNpB4dON6+L+JW7UuPgQXBq54FzEddjzKsGYlX/BqsoONFXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C9J3eVZGDKOeoY9cbAY3Hjhn3XatreutjqL/MSPVjR0=;
+ b=haa/r3LrXK4blMcJTzrqGuIUe6VUl66I+/huraU1AxgnhK/7/OWPsRBJQWIYSc1MFbe/faRiZLGrBAKF15g0c5GcKll0sbYSJgOxg888DpSkyLgakHgDAJUQnqGkfdtGhmYxeilLlWBuSroYcufJ3g/rWdsVV/9ryavJ597DPXs=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by AM8PR08MB5617.eurprd08.prod.outlook.com
+ (2603:10a6:20b:1dc::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Thu, 14 Aug
+ 2025 11:13:54 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.9031.012; Thu, 14 Aug 2025
+ 11:13:54 +0000
+Date: Thu, 14 Aug 2025 12:13:50 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: ryabinin.a.a@gmail.com, glider@google.com, dvyukov@google.com,
+	vincenzo.frascino@arm.com, corbet@lwn.net, catalin.marinas@arm.com,
+	will@kernel.org, akpm@linux-foundation.org,
+	scott@os.amperecomputing.com, jhubbard@nvidia.com,
+	pankaj.gupta@amd.com, leitao@debian.org, kaleshsingh@google.com,
+	maz@kernel.org, broonie@kernel.org, oliver.upton@linux.dev,
+	james.morse@arm.com, ardb@kernel.org,
+	hardevsinh.palaniya@siliconsignals.io, david@redhat.com,
+	yang@os.amperecomputing.com, kasan-dev@googlegroups.com,
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/2] kasan: apply store-only mode in kasan kunit
+ testcases
+Message-ID: <aJ3E7u5ENWTjC4ZM@e129823.arm.com>
+References: <20250813175335.3980268-1-yeoreum.yun@arm.com>
+ <20250813175335.3980268-3-yeoreum.yun@arm.com>
+ <CA+fCnZeT2J7W62Ydv0AuDLC13wO-VrH1Q_uqhkZbGLqc4Ktf5g@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+fCnZeT2J7W62Ydv0AuDLC13wO-VrH1Q_uqhkZbGLqc4Ktf5g@mail.gmail.com>
+X-ClientProxiedBy: LO4P123CA0231.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a6::20) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|AM8PR08MB5617:EE_|DB1PEPF000509FF:EE_|DB5PR08MB10235:EE_
+X-MS-Office365-Filtering-Correlation-Id: 078dfe8b-2b48-41e5-b47b-08dddb23bb15
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?kJG2+MUZJRx2SZoO81LPwWgRl44Q6RdAQ5vy5nqFzcG7WGNi+gngocoW+Aij?=
+ =?us-ascii?Q?pAc1VLRs/YBBeLFcx09FB800BgtVVoApLJBBKPABSHWHbuYpaQE4M3SApoFi?=
+ =?us-ascii?Q?At6qyG01gsYpGLXSC8/C4khSaVMIJRL6uIF+gtmQX9VHZJ31r8O/sEMdJEfi?=
+ =?us-ascii?Q?ir/JkWeuIRgtJfh5NboauNGRMpZgxs0JhYS9YnHce/G3RR8SVzYhbyaVVdEe?=
+ =?us-ascii?Q?5Y5WXyXbGJa13oVevOX3GWR5WFSy9lVVTxvxBvBPm/2hrCBh4/dDiMIZBAdR?=
+ =?us-ascii?Q?zRoncIhOJcau/gipeQ2hf/sPnfRUgmCLRyKT3/WY5CKnW8b87lclmKYVAEFw?=
+ =?us-ascii?Q?BrKYG/zF3bnrgSDp0mmPNzEWaiWyL2pbwBpD6Zsmca9RaEjM/3W3/dm0PxFO?=
+ =?us-ascii?Q?TGy4dH70XuqcdVxlgFzYtbSuhUjVmsaaw4B/4lkJITIXDyOxrr+gcJMM1fSG?=
+ =?us-ascii?Q?ZWXTTONVgqUoHnB+j/sp1KMoJf0zK9RJo9bAMVHtst75Kry6JzivHPpJ50xZ?=
+ =?us-ascii?Q?WA2kgxArm9RVGfS4bxXH+BmjBRsaazNu1QLMbrmCuUbCMG58chqE3eEYX1Wm?=
+ =?us-ascii?Q?ndv4fnAGQDGMoU4tcCYqSKbaYsxm3/PyRemsIJ7omPFysczvgYV+xEkna0kV?=
+ =?us-ascii?Q?aDZYQZVov34l+kVSQB3gTQIl1W7DosL+sBfulMbraE8xcMdh+2yuZo5P8OaX?=
+ =?us-ascii?Q?/R6FaIx+MxMkQAiczYtyoT83CRHsIBLcXHTrwQiRJNx9+KsdutXPRwxXMcXr?=
+ =?us-ascii?Q?wrMkJFiWuBgAjtk90ppgMBeT21x5HTxoTA+4CRapOR/xipOi6v4CIRoT5ZgO?=
+ =?us-ascii?Q?CBi5Iapbc6Ln3jipOOw76XNd3NOJJGL2s/oZ7CsGewQJ9S2B2qulLRp7WlVm?=
+ =?us-ascii?Q?TCyXt05HvAZ8RcXp3IXJ+19gsWRNlV1oKfqNBuGWJzk1kZvVkb/LXM4EWHUn?=
+ =?us-ascii?Q?ZPxn78lKtlzRJo0IJggwILcoWImI1A8On09eDeC3RkrA13rSFX3ji+6AgaoW?=
+ =?us-ascii?Q?2nuHntzWLuckEjv1GfPpsdAMbLXGruawQ25gn7+JypLRqVVIHY1RJquGfnTj?=
+ =?us-ascii?Q?LP0Q1BSNQq1CeAVOI9SqDsU/mk+garJUBgsEyoeuYo3iYlYnttnBUJqyNRRx?=
+ =?us-ascii?Q?z96wFgvpdQ/mt4UYfpFSON/dlxxIR9RkMt6Oii218ZWZI+ZiWy/YbIJWE2qe?=
+ =?us-ascii?Q?ndNSZ8e8vYwTJBmFmyBPMPvEQHB6dT2N9/llfQiHl66XzAUPt3pJ5iLCjrNX?=
+ =?us-ascii?Q?w+e0LmhcJZKjvwmW7E2WP5ffavrSN33acrEf9JLgZN9k8MZsUqfTn7dT8Qn9?=
+ =?us-ascii?Q?5jaKPFoyCCFKqxtlkP6WoyAFCeqN+MHCSd6+M+NWjRQUOIqluGiNCEWtYoBj?=
+ =?us-ascii?Q?z36n93Riy5hP6DilPpHQihEmn1Gw4zl7CZgYCPPiZ8tvIkv9nmGHJnBv2yt/?=
+ =?us-ascii?Q?Sd8BZmFsdXo=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR08MB5617
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB1PEPF000509FF.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	a13f3b03-860d-41c5-b37b-08dddb23a79c
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|14060799003|82310400026|36860700013|35042699022;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5TjXR7/3jTJyQYgPmsEayn9j8kX+KKLeAF7po6SdT3xscQHIke1tQnMq5qVe?=
+ =?us-ascii?Q?E2n+V2woXK1mgMwT+uGp7zk0IPRTsY8mnm230QgKDGTee+qWqpackOYCV4iN?=
+ =?us-ascii?Q?08I4acph5c8Ddp7dQ2dlfqyQkPi9EAYRd5ZLLDTl3GmemtBfKqXKsEtAb3+k?=
+ =?us-ascii?Q?9Tsto6OVU3hdzoCDSjwBVMOYppDmMx0Ez6r45dzkydgbpHzbFN9yP7S1ewa8?=
+ =?us-ascii?Q?dqtm9sebD5mix0ICHb5U1av2Q7/+IC6xoC9XgKnipzS1MHVA77hUp3mlTmZv?=
+ =?us-ascii?Q?TcTDrYiz6X8I6WWHCieaIxAqdwKKqrhrEnee8Ctoy+KCjMyE/0DiCRfXcBeD?=
+ =?us-ascii?Q?jtdjeT9v0GF6GfY9ekc6jhfegalWgYH1Pao+5FOjmEcj4Y7rZuj3GfmtnqMW?=
+ =?us-ascii?Q?GpmLHCUvRP8yV2lk3aJn2uwarMhqdh/fyY4LiWemeFbG0B2hUMEBFoZaLAg9?=
+ =?us-ascii?Q?YGOpHXhFxXbrfP4Go7Yq55cog2A5BN8qFDDMCWlgPoHXmQuLcgM1M7cQA7bf?=
+ =?us-ascii?Q?KJ6DrcstEuXQpmZG3+oMtb82kUN/2zt/GCEl+P5zMJKFRX8DfF0d7zBqS/tR?=
+ =?us-ascii?Q?XbppKIkbS3Io6QA7XBJpOL7Y3LcHM9g9Db/+Fp72PHEn9hEIUxSIRqcc3bwW?=
+ =?us-ascii?Q?NLTPr2JQMoHeSQisR3PIM3ZKRUxMJB/1qPXddA+csiv3Irslp1zrUgBGCfC2?=
+ =?us-ascii?Q?PVz8kiMgnmMj3yj+JidSIeWjfnS6mSZnMVGxezNozmCo10hhScciH41kFK50?=
+ =?us-ascii?Q?dtlrWggM+w0wQlizNRC9P7vr8dkwkhFjVbvKpod9zUYeMFUqxI/qSj82qgrT?=
+ =?us-ascii?Q?a0lFRoih/PPSfO+whFrYtPfuOH2FY3iSu1W0J3MqSYufm0/XKXz/z0WtfC5I?=
+ =?us-ascii?Q?jLCk+itYJuct93zs7+3lHksxAIDr8MPXMZD/CQCzHOWDghfMaereFxiXUwfU?=
+ =?us-ascii?Q?cDJeT+dAbXMNDih3gOavYJ4q96oeB8mrtRJfGx/37IWpnTgDexXXnjitlaKX?=
+ =?us-ascii?Q?aHmbVUR0UHJOaSrjLOhNl1jCSrugZTXiWFtLY5YZ2YNW7ep9NuFVFozkdov6?=
+ =?us-ascii?Q?cTdhgyVa9vzVHIyEnyUBk2++P1jKOpV+fRqHi0sUPFxE40Avt1Sat5rKtx08?=
+ =?us-ascii?Q?fYWDf+2afENFy1CdkkJ8DEXVhV9HWgWdi8XLDLp2jpb4TsH89zjB0aJhMV0H?=
+ =?us-ascii?Q?1hbvky6zRoDMAHR6OYJb1OJV6wir5VaNl2gtlDnJNDTpAokuxP/E56LURYHa?=
+ =?us-ascii?Q?O9IEAA439OJPsrMqRmZ2RftZUEi5cIDBemHK7/CL0MoyvPFGiQlxeNc6PArB?=
+ =?us-ascii?Q?B36pkwHe4tafVrSlOOLUjySygQO4YICvfLf+B3pDlVedJdz06vHFsHpz6EWK?=
+ =?us-ascii?Q?9ZgLODT4Y4fBFDSDGyd19GgQxT2ggO56ZqZt15vVKv2cvPyN5RzECButY/VU?=
+ =?us-ascii?Q?G5YCzjMLC1STF7ZF7s57iH/XDXB1A0JgQGCsF430IlOOgLOGBuXegF4RcyHW?=
+ =?us-ascii?Q?9X3g9MlxTiI9DzNB4YgfIyD/2OYkipV8atDJ?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(14060799003)(82310400026)(36860700013)(35042699022);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 11:14:26.4490
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 078dfe8b-2b48-41e5-b47b-08dddb23bb15
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF000509FF.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR08MB10235
 
+Hi Andrey,
 
---=-c6TdGd66B+gRpX6Cg54w
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, 2025-08-14 at 12:15 +0200, Borislav Petkov wrote:
-> On Mon, Aug 11, 2025 at 01:16:42PM +0200, David Woodhouse wrote:
-> > From: David Woodhouse <dwmw@amazon.co.uk>
-> >=20
-> > This detects the Bhyve hypervisor
->=20
-> Users of this are?
-
-FreeBSD and Illumos (and some other *BSD) users, presumably?
-
-> Wikipedia says it already supports Linux :-P
-
-It does, but Linux doesn't support *it*. Which mostly didn't matter
-because all that's missing was a cosmetic 'Hypervisor detected: Bhyve'
-in the kernel log. But now it's no longer just cosmetic because...
-
-> > and enables 15-bit MSI support if available.
-
-I have finally written up some proper documentation for that 15-bit MSI
-enlightenment, btw: http://david.woodhou.se/ExtDestId.pdf
-
-> > Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> >
+> > When KASAN is configured in store-only mode,
+> > fetch/load operations do not trigger tag check faults.
+> >
+> > As a result, the outcome of some test cases may differ
+> > compared to when KASAN is configured without store-only mode.
+> >
+> > Therefore, by modifying pre-exist testcases
+> > check the store only makes tag check fault (TCF) where
+> > writing is perform in "allocated memory" but tag is invalid
+> > (i.e) redzone write in atomic_set() testcases.
+> > Otherwise check the invalid fetch/read doesn't generate TCF.
+> >
+> > Also, skip some testcases affected by initial value
+> > (i.e) atomic_cmpxchg() testcase maybe successd if
+> > it passes valid atomic_t address and invalid oldaval address.
+> > In this case, if invalid atomic_t doesn't have the same oldval,
+> > it won't trigger store operation so the test will pass.
+> >
+> > Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 > > ---
-> > RFC because the CPUID_BHYVE_FEATURES leaf is submitted to FreeBSD in
->=20
-> Which makes it, what, 0x4000_0001?
->=20
-> I presume there's an agreement among all the hypervisors...?
-
-There is no such agreement about CPUID; by *coincidence* most of them
-seem to use 0x4000_0?01 as their feature leaf, but the feature bits in
-each such leaf are completely different and the guest doesn't look at a
-given leaf unless it knows that specific hypervisor. Which is why the
-15-bit enlightenment is advertised differently by each hypervisor
-despite being precisely the same enlightenment across them all.
-
-(Digressing a little... the slight exception is the 0x4000_0010 leaf
-which by coincidence I have *also* been looking at this week. VMware
-proposed a common convention in https://lkml.org/lkml/2008/10/1/246 but
-it was shot down in flames. However, the 'timing info' leaf didn't
-quite die, and both XNU and FreeBSD guests actually look for it at
-0x4000_0010 under *all* hypervisors. And it even got added in the EC2
-Nitro hypervisor. I have patches pending to make KVM support it on both
-host and guest side, which I'll post shortly.)
-
-> > https://github.com/freebsd/freebsd-src/pull/1797=C2=A0and not yet merge=
-d.
-> > And because I haven't tested this patch at all other than building it.
-> >=20
-> > It's tiny so I didn't put it behind a separate CONFIG_BHYVE_GUEST.
-> > Should I?
->=20
-> Yeah, please do.
->=20
-> > +/* Features advertised in CPUID_BHYVE_FEATURES %eax */
-> > +#define CPUID_BHYVE_FEAT_EXT_DEST_ID	(1UL << 0) /* MSI Extended Dest I=
-D */
+> >  mm/kasan/kasan_test_c.c | 366 +++++++++++++++++++++++++++++++---------
+> >  1 file changed, 286 insertions(+), 80 deletions(-)
+> >
+> > diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+> > index 2aa12dfa427a..e5d08a6ee3a2 100644
+> > --- a/mm/kasan/kasan_test_c.c
+> > +++ b/mm/kasan/kasan_test_c.c
+> > @@ -94,11 +94,13 @@ static void kasan_test_exit(struct kunit *test)
+> >  }
+> >
+> >  /**
+> > - * KUNIT_EXPECT_KASAN_FAIL - check that the executed expression produces a
+> > - * KASAN report; causes a KUnit test failure otherwise.
+> > + * _KUNIT_EXPECT_KASAN_TEMPLATE - check that the executed expression produces
+> > + * a KASAN report or not; a KUnit test failure when it's different from @produce.
+> >   *
+> >   * @test: Currently executing KUnit test.
+> > - * @expression: Expression that must produce a KASAN report.
+> > + * @expr: Expression produce a KASAN report or not.
+> > + * @expr_str: Expression string
+> > + * @produce: expression should produce a KASAN report.
+> >   *
+> >   * For hardware tag-based KASAN, when a synchronous tag fault happens, tag
+> >   * checking is auto-disabled. When this happens, this test handler reenables
+> > @@ -110,25 +112,29 @@ static void kasan_test_exit(struct kunit *test)
+> >   * Use READ/WRITE_ONCE() for the accesses and compiler barriers around the
+> >   * expression to prevent that.
+> >   *
+> > - * In between KUNIT_EXPECT_KASAN_FAIL checks, test_status.report_found is kept
+> > + * In between _KUNIT_EXPECT_KASAN_TEMPLATE checks, test_status.report_found is kept
+> >   * as false. This allows detecting KASAN reports that happen outside of the
+> >   * checks by asserting !test_status.report_found at the start of
+> > - * KUNIT_EXPECT_KASAN_FAIL and in kasan_test_exit.
+> > + * _KUNIT_EXPECT_KASAN_TEMPLATE and in kasan_test_exit.
+> >   */
+> > -#define KUNIT_EXPECT_KASAN_FAIL(test, expression) do {                 \
+> > +#define _KUNIT_EXPECT_KASAN_TEMPLATE(test, expr, expr_str, produce)    \
+> > +do {                                                                   \
+> >         if (IS_ENABLED(CONFIG_KASAN_HW_TAGS) &&                         \
+> >             kasan_sync_fault_possible())                                \
+> >                 migrate_disable();                                      \
+> >         KUNIT_EXPECT_FALSE(test, READ_ONCE(test_status.report_found));  \
+> >         barrier();                                                      \
+> > -       expression;                                                     \
+> > +       expr;                                                           \
+> >         barrier();                                                      \
+> >         if (kasan_async_fault_possible())                               \
+> >                 kasan_force_async_fault();                              \
+> > -       if (!READ_ONCE(test_status.report_found)) {                     \
+> > -               KUNIT_FAIL(test, KUNIT_SUBTEST_INDENT "KASAN failure "  \
+> > -                               "expected in \"" #expression            \
+> > -                                "\", but none occurred");              \
+> > +       if (READ_ONCE(test_status.report_found) != produce) {           \
+> > +               KUNIT_FAIL(test, KUNIT_SUBTEST_INDENT "KASAN %s "       \
+> > +                               "expected in \"" expr_str               \
+> > +                                "\", but %soccurred",                  \
+> > +                               (produce ? "failure" : "success"),      \
+> > +                               (test_status.report_found ?             \
+> > +                                "" : "none "));                        \
+> >         }                                                               \
+> >         if (IS_ENABLED(CONFIG_KASAN_HW_TAGS) &&                         \
+> >             kasan_sync_fault_possible()) {                              \
+> > @@ -141,6 +147,26 @@ static void kasan_test_exit(struct kunit *test)
+> >         WRITE_ONCE(test_status.async_fault, false);                     \
+> >  } while (0)
+> >
+> > +/*
+> > + * KUNIT_EXPECT_KASAN_FAIL - check that the executed expression produces a
+> > + * KASAN report; causes a KUnit test failure otherwise.
+> > + *
+> > + * @test: Currently executing KUnit test.
+> > + * @expr: Expression produce a KASAN report.
+> > + */
+> > +#define KUNIT_EXPECT_KASAN_FAIL(test, expr)                    \
+> > +       _KUNIT_EXPECT_KASAN_TEMPLATE(test, expr, #expr, true)
 > > +
-> > +static uint32_t __init bhyve_detect(void)
-> > +{
-> > +	if (boot_cpu_data.cpuid_level < 0 ||
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 !bo=
-ot_cpu_has(X86_FEATURE_HYPERVISOR))
->=20
-> cpu_feature_enabled()
->=20
+> > +/*
+> > + * KUNIT_EXPECT_KASAN_SUCCESS - check that the executed expression doesn't
+> > + * produces a KASAN report; causes a KUnit test failure otherwise.
+>
+> Should be no need for this, the existing functionality already checks
+> that there are no reports outside of KUNIT_EXPECT_KASAN_FAIL().
 
-Ack, v2 coming up shortly. Thanks.
+This is function's purpose is to print failure situtations:
+  - KASAN should reports but no report is found.
+  - KASAN shouldn't report but there report is found.
 
---=-c6TdGd66B+gRpX6Cg54w
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+To print the second error, the "TEMPLATE" macro is added.
+not just checking the no report but to check whether report was
+generated as expected.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgxNDExMTMz
-MlowLwYJKoZIhvcNAQkEMSIEILKJW+jNASnlT4yE9tyUOL2XiuFGMQf0tDNUzzxhVm10MGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAQ2XoL+0c0uY0
-gHHGiMA7k1yRyqEHDpogIBabqYlf48v9XNSbJ8qK9rAGWoECwD/Ia8mZdtYbGgW74e7bgrIPCiOo
-AQJ9RIvf2pa3e/ddagvIpCI3ZmcNEs62dpQqIAairZVw74A/kkZwTgn2nH7bWrBFovMUw2lwzmA6
-Z5JWJZVCEW8rah/e0bziep123bm64u8BmUNzpABuMlpI+/hm9U8eC1/T4UmK6aQMTom3XkYENiUZ
-uHW70feDhtwv9k+DqUMpnfHPs2AyDNLKvhhbE5dNefPitU+N0305IYVRRc3bB1mtsLvUwzcxXn5R
-4SR6NZJZkFOZXRlYJdhU5gMsJkp5T1EdIMKoQcLm/wMiQAiUQbR9alCQkQmEnOxRN9YMBll7imXV
-EiR98Kdi30H5JrDqXX6BG/HpPLJKeHChZ1WfjOe4aVL4YXtnEULKhs8cpQyTnXyGp5UGU/MYsWa7
-d1/zE+lvO3AWpJX3HBGyY+tiBOvpW+SVm//n2u+bmbY16L9DGljCrAFrgKfFTKas27+1rlsSilfO
-q+NycA3nVBCTfQ1jLPEKVfEuYkY/1DAJUbX9BwGX1RqsN5RFXXhMMEQFGCGIPbe36byt23Sg3lTE
-/jfc7FZhjP/xLqKRzCevmGa2vSB2nSRQZojcahrq3jDyXA2y2dsCniHkSKESj0QAAAAAAAA=
+>
+> > + *
+> > + * @test: Currently executing KUnit test.
+> > + * @expr: Expression doesn't produce a KASAN report.
+> > + */
+> > +#define KUNIT_EXPECT_KASAN_SUCCESS(test, expr)                 \
+> > +       _KUNIT_EXPECT_KASAN_TEMPLATE(test, expr, #expr, false)
+> > +
+> >  #define KASAN_TEST_NEEDS_CONFIG_ON(test, config) do {                  \
+> >         if (!IS_ENABLED(config))                                        \
+> >                 kunit_skip((test), "Test requires " #config "=y");      \
+> > @@ -183,8 +209,12 @@ static void kmalloc_oob_right(struct kunit *test)
+> >         KUNIT_EXPECT_KASAN_FAIL(test, ptr[size + 5] = 'y');
+> >
+> >         /* Out-of-bounds access past the aligned kmalloc object. */
+> > -       KUNIT_EXPECT_KASAN_FAIL(test, ptr[0] =
+> > -                                       ptr[size + KASAN_GRANULE_SIZE + 5]);
+> > +       if (kasan_store_only_enabled())
+> > +               KUNIT_EXPECT_KASAN_SUCCESS(test, ptr[0] =
+> > +                                               ptr[size + KASAN_GRANULE_SIZE + 5]);
+> > +       else
+> > +               KUNIT_EXPECT_KASAN_FAIL(test, ptr[0] =
+> > +                                               ptr[size + KASAN_GRANULE_SIZE + 5]);
+>
+> Let's instead add KUNIT_EXPECT_KASAN_FAIL_READ() that only expects a
+> KASAN report when the store-only mode is not enabled. And use that for
+> the bad read accesses done in tests.
 
+Okay. I rename the KUNIT_EXPECT_KASAN_SUCCESS and integrate it
+in the macro. Thanks!
 
---=-c6TdGd66B+gRpX6Cg54w--
+--
+Sincerely,
+Yeoreum Yun
 
