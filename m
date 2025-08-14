@@ -1,375 +1,265 @@
-Return-Path: <linux-kernel+bounces-767862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2023B259EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:42:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A109CB25A10
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 323DE883CD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:42:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E5F65C01CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862371AC43A;
-	Thu, 14 Aug 2025 03:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A201E1E00;
+	Thu, 14 Aug 2025 03:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HtybrrZI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JYfFWPb5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE94014A62B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A1511CA0
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755142945; cv=none; b=H1G6WCYKgzTjPpHO7ez89OJELz/lcKbSYcyZ3mYW+JrshxIijghuKIHwZT9rseznyGtMZa3F5f7fJ3rqQ6tToXOFpOHMy2lfuraYhmJhqgoi8S7tMGeu1IhqBcdyoWKffeK29CCd2WxwBTQHVagP7Bn34otpiXwV+7Y0WFpjHgA=
+	t=1755143122; cv=none; b=ISTQc6Mgcn3JmOMEW46QbC/VafMRsBRL56OlrePEwMMw9h2+1sxWGRO+pK+bBIzKMLK8r0EaFoJmLJjgYziAnHdJRQkh/fUixdnBmQkBMGAkjTXWY+5HJjWXoDJvX9NNwPVMe3diznrQYySfono3C0WAK6J11Jqs6P3lIINeeug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755142945; c=relaxed/simple;
-	bh=GDOuQ8e7rvpZZLraol9f9m6nY0aGOhLFU9xUo6o3hB4=;
+	s=arc-20240116; t=1755143122; c=relaxed/simple;
+	bh=HEFxZCdmPNUTtFK9GLyl4nh27t1IANja+kEPJSSZWSo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RhTO9DWQTQ1lBXjs2UzQrDoLx1Szi0byaMpgS3KHdfrjVbOHpX638quYeBEEkM+p3Fnn5fqFzfQzVfuirixNq+jXBdla2FuPY5uXQa88FtkltWKglnDxx1xEsHHqNbj8oj4bAZRU5+Di+sg5XaOr+0M/p9PB6iOvEzUlUu6vYtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HtybrrZI; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=umeNlftIBgcsqkZ5CREcxnnCe9SOYYe9072PwFppJpar0NUw76W/uX6C6Yi0FcO/oAAGyoRyIZyy5lARw60q/467cWUaOPWxQZ53hMhyATiZOrPLbgHP7+4nPVgEmniyvFXQuxAHDBsB5qbMyjRuwR3lw/lxcyH19IVvFjKpA9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JYfFWPb5; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755142942;
+	s=mimecast20190719; t=1755143117;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=w97hjv5i+uwmkU+KfwU9kkYWprz91mHI8ezeUK8Eabo=;
-	b=HtybrrZItstrp5qsbF0fM3rE2LrApKIWYlGjjUmPrqgPRFYK9++uuZpy01OoHUkkMOjg38
-	j69VIoFfaswE96/LZMWra8P8E5KZ0cZcrfwi6pteybOSxgiLdvi7Wyv3cb/CSc2qzdYmBr
-	yiU+ytqX/S8Ylgp1VRGpvoztcFlItSI=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=HEFxZCdmPNUTtFK9GLyl4nh27t1IANja+kEPJSSZWSo=;
+	b=JYfFWPb5AF9nc5BBHv3+FRqo20gJPrcYTDTQDGePiNXwBISXynItz91gHLmIEyMxT4KS+G
+	kbJzbdW+w+doBB8OORoYhMqmMzcC8GVi5/C57I1BkJ5KzlclwLVzHq8gEBsUCs0UZqVlRT
+	ElQbmE0yajcbLKrWxf9Y2SaKr0B6gKg=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-610-pJbYay58MSCxZqSRT9zEbQ-1; Wed, 13 Aug 2025 23:42:21 -0400
-X-MC-Unique: pJbYay58MSCxZqSRT9zEbQ-1
-X-Mimecast-MFC-AGG-ID: pJbYay58MSCxZqSRT9zEbQ_1755142940
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b47175d5a90so331287a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:42:21 -0700 (PDT)
+ us-mta-135-922Gy826NfGF9xSbPrfNDQ-1; Wed, 13 Aug 2025 23:45:15 -0400
+X-MC-Unique: 922Gy826NfGF9xSbPrfNDQ-1
+X-Mimecast-MFC-AGG-ID: 922Gy826NfGF9xSbPrfNDQ_1755143115
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-323266c83f6so578381a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:45:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755142940; x=1755747740;
+        d=1e100.net; s=20230601; t=1755143115; x=1755747915;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w97hjv5i+uwmkU+KfwU9kkYWprz91mHI8ezeUK8Eabo=;
-        b=W7zkR/AhRolatnA7LWbnJ+QizKnmSacWcWuEq2SxBrr25Idpjda7070cpGolzLjou2
-         ZatX6IM8mWsHvnldrBzVwqtFqLt3hLoew975Oy7JfWya+Wj3ZzkA7Z97uq8Us/4L6nz5
-         eqVL9htEBTUI7fiq6M2ckcc65S7m4k3m1KOvO+/mfVwMcaaJTDAcTQ1m0nYlK3Ni7s4R
-         +zFqGmPgIhmoN8+tP/QkE1IB5S1L1wg+qx6fmjmYtmNQdxXd908EVKbYN+9Kucomm+1L
-         A1sAv4OpUq/PH4y1JpT2Kqs4ivZioWA2HM2BVhrIPo9COc+4r3x7UkhHdCJrOWIk8Hj0
-         8IOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBp16HgsdZ9UKerTZ9cacRwnB8k4Bzr8KDaD5hrd/2/N1nU8nEu2eNXdoIxBG/ss9RUpNj6WTxQ2FLGgI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBNrVxB5VI4K92b83WwlXbxtc6CvAcOZFAVso3k0GUYCZ268qK
-	uq0ocOnCUJx12Y8tTqoLoEM8qpQodiyyBsGAQxxKJcLGBPkmiK5HLLibVQvIgkYQUNkbqLj3N55
-	K8MZEMmvr9RFsIL6GxgZC9sg36THStnkyaQS5rqUDNQ/CRinrTzGSHBr/o4911VRYh2TkH76vbA
-	C8gMn+5GSBsBsTjbsbIuayhd4wKsdW1m9PXu5xY0fs
-X-Gm-Gg: ASbGncsP2dvRuNXxF1lhWi8llD54IM+Vl0mlqq/2nT+tTOQYCrruGI4Rwv8AODJ4Abs
-	p6q7eBlLWcau2GQachrvklB0lJgi4Ntr3u4ZPr2Ye6umEhq7soCnG/qdzSWU1cs8jof00WC3ehw
-	RzCN2kiUoyDFtyf5dzYWQROA==
-X-Received: by 2002:a17:90b:390f:b0:31e:ff94:3fba with SMTP id 98e67ed59e1d1-32327b58070mr2569934a91.24.1755142940029;
-        Wed, 13 Aug 2025 20:42:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFSvA6j4t0b5QEgBDxuYCwcd5Oei9P0Low20mXXvsuHEvsnzUysQd5NWOj+uF+Cn9ZIvD6ke761fuj+QMqLtN0=
-X-Received: by 2002:a17:90b:390f:b0:31e:ff94:3fba with SMTP id
- 98e67ed59e1d1-32327b58070mr2569889a91.24.1755142939498; Wed, 13 Aug 2025
- 20:42:19 -0700 (PDT)
+        bh=HEFxZCdmPNUTtFK9GLyl4nh27t1IANja+kEPJSSZWSo=;
+        b=VEBSz5boEU+sldr1r4ZlqhYUHI4WiMxb59L4AMqVF/wHyyqoKYPhHln9UgG+uzeQsa
+         wEPaccPByFZeXAMBtEICItPCJ3s+WR7fV1dQ7CGtoskU82tlnzAanjdM/P0kt/OhlzRp
+         Sqe78NxJhExxkpq4pMYAFNApae2IrrsNklmOhGqsK7AvKe0Rl7l2kL22cv/ZjyzzHM0x
+         +qoglt30oOHBHFBlx+XTZA1r7nOyLXYz0lKHoWagzFj7sbgG0wmuHBbtVx4KcjfyXLc1
+         Qh8IiQo7K+kIayl05PvuS0j1ll0R94A9YYZ+eVjYQSFuAL8ihJ2+AtAdu1trAjYtzS/+
+         bYgg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ3aP7awVb73MWAA0LQ3dolp1Z6Hxv+JuRak3LIuKiloIT4DOYFbnsXDXxT4McDR2SsGOobv8PqygRhuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOYZsOQrZIuP2hWx47iv7ruqQZ/Qmh/CYyXBNTxmoKSDcXc+i7
+	nCa/uRpddrC6LJa+gvs6YkScBqN9gWFbD1iihrVJrxqwXU1dsgKQvWBXEHKQN8yloDN2oG6I0Bp
+	PBa060OMsCvj8tvbqCS0O17Nl8g6nzkQYmLYkOAkdU/5XRzdvoz7rX61nQ9BZp/hA930pouidXa
+	/klNlMc61EDSfWwSTsDOXNUAog+96/EB7cU+YNU5Cb
+X-Gm-Gg: ASbGnct1WTwnDGwur6meiaCLmpbg4Z+zisu8KH3f6qle/rosY/W7IDVXOeaMM5UcdVX
+	cHVCYIXsWbYME4XPxKdMVPm1Ko/6p+Yp8Rn6MVOQ9LoAVaxjtZo7Tq3JQpjcqyYvaBr5/opMl2Z
+	hO+VXDn/1ePnndbUreVZdpUQ==
+X-Received: by 2002:a17:90b:28c7:b0:314:2cd2:595d with SMTP id 98e67ed59e1d1-32329a93c47mr1698783a91.8.1755143114531;
+        Wed, 13 Aug 2025 20:45:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHMwt839N3z6leC/l1YzMWGrwQTGofoHM0NhKS6XdAKNfDOijgt2m/36OWbFhBvWmDfOOtBuLc3dGPCcmvE8E=
+X-Received: by 2002:a17:90b:28c7:b0:314:2cd2:595d with SMTP id
+ 98e67ed59e1d1-32329a93c47mr1698731a91.8.1755143113855; Wed, 13 Aug 2025
+ 20:45:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250807115752.1663383-1-eperezma@redhat.com> <20250807115752.1663383-3-eperezma@redhat.com>
- <CACGkMEsMcnBnVPMWD7fxrnXzT+rsUppAxNkoSC4Zy=HiodOvZw@mail.gmail.com>
- <CAJaqyWfDVioqnprsER2r3yCpgdK4cTO8cxEMndf+-HLUxQtSOA@mail.gmail.com>
- <CACGkMEuZq2NaS9icynhrgZtXQ26fDFFpFrP3bUwDXLCR6uN4qw@mail.gmail.com> <CAJaqyWfB-nxpdtv+HRPB=7oc-MmquZ=7-mDqdVi42Mwf28CX7A@mail.gmail.com>
-In-Reply-To: <CAJaqyWfB-nxpdtv+HRPB=7oc-MmquZ=7-mDqdVi42Mwf28CX7A@mail.gmail.com>
+References: <20250811220430.14063-1-simon.schippers@tu-dortmund.de>
+ <20250813080128.5c024489@hermes.local> <4fca87fe-f56a-419d-84ba-6897ee9f48f5@tu-dortmund.de>
+In-Reply-To: <4fca87fe-f56a-419d-84ba-6897ee9f48f5@tu-dortmund.de>
 From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 14 Aug 2025 11:42:07 +0800
-X-Gm-Features: Ac12FXy1uiD6tKU5aMf7QAGhLniCOlqEn8-Wqgzk-g3rBHK3mItWz4VQoUaEPmY
-Message-ID: <CACGkMEuVngGjgPZXnajiPC+pcbt+dr6jqKRQr8OcX7HK1W3WNQ@mail.gmail.com>
-Subject: Re: [RFC v2 2/7] vduse: add vq group support
-To: Eugenio Perez Martin <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Yongji Xie <xieyongji@bytedance.com>, Stefano Garzarella <sgarzare@redhat.com>, 
-	virtualization@lists.linux.dev, Laurent Vivier <lvivier@redhat.com>, 
-	linux-kernel@vger.kernel.org, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>
+Date: Thu, 14 Aug 2025 11:45:02 +0800
+X-Gm-Features: Ac12FXxwzYuMWGY2PNwM-4hrjDiitx1WQVz6IkwY8Ovb-WwtEEuCFnm4hgULEVs
+Message-ID: <CACGkMEss33CcmYvBRa7kyfWEYwnm6xn6_tBo81y9X20yyrPKoQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] TUN/TAP: Improving throughput and latency by
+ avoiding SKB drops
+To: Simon Schippers <simon.schippers@tu-dortmund.de>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, willemdebruijn.kernel@gmail.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tim Gebauer <tim.gebauer@tu-dortmund.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 6:12=E2=80=AFPM Eugenio Perez Martin
-<eperezma@redhat.com> wrote:
+On Thu, Aug 14, 2025 at 2:34=E2=80=AFAM Simon Schippers
+<simon.schippers@tu-dortmund.de> wrote:
 >
-> On Tue, Aug 12, 2025 at 5:01=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
-wrote:
+> Stephen Hemminger wrote:
+> > On Tue, 12 Aug 2025 00:03:48 +0200
+> > Simon Schippers <simon.schippers@tu-dortmund.de> wrote:
 > >
-> > On Mon, Aug 11, 2025 at 5:52=E2=80=AFPM Eugenio Perez Martin
-> > <eperezma@redhat.com> wrote:
-> > >
-> > > On Mon, Aug 11, 2025 at 5:10=E2=80=AFAM Jason Wang <jasowang@redhat.c=
-om> wrote:
-> > > >
-> > > > On Thu, Aug 7, 2025 at 7:58=E2=80=AFPM Eugenio P=C3=A9rez <eperezma=
-@redhat.com> wrote:
-> > > > >
-> > > > > This allows sepparate the different virtqueues in groups that sha=
-res the
-> > > > > same address space.  Asking the VDUSE device for the groups of th=
-e vq at
-> > > > > the beginning as they're needed for the DMA API.
-> > > > >
-> > > > > Allocating 3 vq groups as net is the device that need the most gr=
-oups:
-> > > > > * Dataplane (guest passthrough)
-> > > > > * CVQ
-> > > > > * Shadowed vrings.
-> > > > >
-> > > > > Future versions of the series can include dynamic allocation of t=
-he
-> > > > > groups array so VDUSE can declare more groups.
-> > > > >
-> > > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > > > > ---
-> > > > > v2:
-> > > > > * Cache group information in kernel, as we need to provide the vq=
- map
-> > > > >   tokens properly.
-> > > > > * Add descs vq group to optimize SVQ forwarding and support indir=
-ect
-> > > > >   descriptors out of the box.
-> > > > > ---
-> > > > >  drivers/vdpa/vdpa_user/vduse_dev.c | 71 ++++++++++++++++++++++++=
-+++++-
-> > > > >  include/uapi/linux/vduse.h         | 19 +++++++-
-> > > > >  2 files changed, 88 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vd=
-pa_user/vduse_dev.c
-> > > > > index d858c4389cc1..d1f6d00a9c71 100644
-> > > > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > > > > @@ -46,6 +46,11 @@
-> > > > >  #define VDUSE_IOVA_SIZE (VDUSE_MAX_BOUNCE_SIZE + 128 * 1024 * 10=
-24)
-> > > > >  #define VDUSE_MSG_DEFAULT_TIMEOUT 30
-> > > > >
-> > > > > +/*
-> > > > > + * Let's make it 3 for simplicity.
-> > > > > + */
-> > > > > +#define VDUSE_MAX_VQ_GROUPS 3
-> > > >
-> > > > I think we can release this to something like 64. Otherwise we migh=
-t
-> > > > bump the version again just to increase the limitation? Or having a
-> > > > sysfs entry like bounce_size?
-> > > >
-> > >
-> > > I think it should not be linked to the version, but it is true there
-> > > is no way for VDUSE devices to check the maximum VQ groups / ASID tha=
-t
-> > > the kernel supports.
-> > >
-> > > To handle as bounce_size seems the best option, good point. I'll send
-> > > a new version with that!
-> > >
-> > > > > +
-> > > > >  #define IRQ_UNBOUND -1
-> > > > >
-> > > > >  struct vduse_virtqueue {
-> > > > > @@ -58,6 +63,8 @@ struct vduse_virtqueue {
-> > > > >         struct vdpa_vq_state state;
-> > > > >         bool ready;
-> > > > >         bool kicked;
-> > > > > +       u32 vq_group;
-> > > > > +       u32 vq_desc_group;
-> > > > >         spinlock_t kick_lock;
-> > > > >         spinlock_t irq_lock;
-> > > > >         struct eventfd_ctx *kickfd;
-> > > > > @@ -114,6 +121,7 @@ struct vduse_dev {
-> > > > >         u8 status;
-> > > > >         u32 vq_num;
-> > > > >         u32 vq_align;
-> > > > > +       u32 ngroups;
-> > > > >         struct vduse_umem *umem;
-> > > > >         struct mutex mem_lock;
-> > > > >         unsigned int bounce_size;
-> > > > > @@ -592,6 +600,20 @@ static int vduse_vdpa_set_vq_state(struct vd=
-pa_device *vdpa, u16 idx,
-> > > > >         return 0;
-> > > > >  }
-> > > > >
-> > > > > +static u32 vduse_get_vq_group(struct vdpa_device *vdpa, u16 idx)
-> > > > > +{
-> > > > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > > > > +
-> > > > > +       return dev->vqs[idx]->vq_group;
-> > > > > +}
-> > > > > +
-> > > > > +static u32 vduse_get_vq_desc_group(struct vdpa_device *vdpa, u16=
- idx)
-> > > > > +{
-> > > > > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > > > > +
-> > > > > +       return dev->vqs[idx]->vq_desc_group;
-> > > > > +}
-> > > > > +
-> > > > >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16=
- idx,
-> > > > >                                 struct vdpa_vq_state *state)
-> > > > >  {
-> > > > > @@ -678,13 +700,48 @@ static u8 vduse_vdpa_get_status(struct vdpa=
-_device *vdpa)
-> > > > >         return dev->status;
-> > > > >  }
-> > > > >
-> > > > > +static int vduse_fill_vq_groups(struct vduse_dev *dev)
-> > > > > +{
-> > > > > +       if (dev->api_version < VDUSE_API_VERSION_1)
-> > > > > +               return 0;
-> > > > > +
-> > > > > +       for (int i =3D 0; i < dev->vdev->vdpa.nvqs; ++i) {
-> > > > > +               struct vduse_dev_msg msg =3D { 0 };
-> > > > > +               int ret;
-> > > > > +
-> > > > > +               msg.req.type =3D VDUSE_GET_VQ_GROUP;
-> > > > > +               msg.req.vq_group.index =3D i;
-> > > > > +               ret =3D vduse_dev_msg_sync(dev, &msg);
-> > > >
-> > > > I fail to understand why the default group mapping is not done duri=
-ng
-> > > > device creation.
-> > > >
-> > >
-> > > Because it changes depending on the features.
-> > >
-> > > If a new device has 5 virtqueues and the device wants to isolate the
-> > > CVQ, the CVQ position depends on the features that the guest's acks:
-> > > * If MQ is acked the isolated vq is #5
-> > > * If MQ is not acked the isolated vq is #3.
+> >> This patch is the result of our paper with the title "The NODROP Patch=
+:
+> >> Hardening Secure Networking for Real-time Teleoperation by Preventing
+> >> Packet Drops in the Linux TUN Driver" [1].
+> >> It deals with the tun_net_xmit function which drops SKB's with the rea=
+son
+> >> SKB_DROP_REASON_FULL_RING whenever the tx_ring (TUN queue) is full,
+> >> resulting in reduced TCP performance and packet loss for bursty video
+> >> streams when used over VPN's.
+> >>
+> >> The abstract reads as follows:
+> >> "Throughput-critical teleoperation requires robust and low-latency
+> >> communication to ensure safety and performance. Often, these kinds of
+> >> applications are implemented in Linux-based operating systems and tran=
+smit
+> >> over virtual private networks, which ensure encryption and ease of use=
+ by
+> >> providing a dedicated tunneling interface (TUN) to user space
+> >> applications. In this work, we identified a specific behavior in the L=
+inux
+> >> TUN driver, which results in significant performance degradation due t=
+o
+> >> the sender stack silently dropping packets. This design issue drastica=
+lly
+> >> impacts real-time video streaming, inducing up to 29 % packet loss wit=
+h
+> >> noticeable video artifacts when the internal queue of the TUN driver i=
+s
+> >> reduced to 25 packets to minimize latency. Furthermore, a small queue
+> >> length also drastically reduces the throughput of TCP traffic due to m=
+any
+> >> retransmissions. Instead, with our open-source NODROP Patch, we propos=
+e
+> >> generating backpressure in case of burst traffic or network congestion=
+.
+> >> The patch effectively addresses the packet-dropping behavior, hardenin=
+g
+> >> real-time video streaming and improving TCP throughput by 36 % in high
+> >> latency scenarios."
+> >>
+> >> In addition to the mentioned performance and latency improvements for =
+VPN
+> >> applications, this patch also allows the proper usage of qdisc's. For
+> >> example a fq_codel can not control the queuing delay when packets are
+> >> already dropped in the TUN driver. This issue is also described in [2]=
+.
+> >>
+> >> The performance evaluation of the paper (see Fig. 4) showed a 4%
+> >> performance hit for a single queue TUN with the default TUN queue size=
+ of
+> >> 500 packets. However it is important to notice that with the proposed
+> >> patch no packet drop ever occurred even with a TUN queue size of 1 pac=
+ket.
+> >> The utilized validation pipeline is available under [3].
+> >>
+> >> As the reduction of the TUN queue to a size of down to 5 packets showe=
+d no
+> >> further performance hit in the paper, a reduction of the default TUN q=
+ueue
+> >> size might be desirable accompanying this patch. A reduction would
+> >> obviously reduce buffer bloat and memory requirements.
+> >>
+> >> Implementation details:
+> >> - The netdev queue start/stop flow control is utilized.
+> >> - Compatible with multi-queue by only stopping/waking the specific
+> >> netdevice subqueue.
+> >> - No additional locking is used.
+> >>
+> >> In the tun_net_xmit function:
+> >> - Stopping the subqueue is done when the tx_ring gets full after inser=
+ting
+> >> the SKB into the tx_ring.
+> >> - In the unlikely case when the insertion with ptr_ring_produce fails,=
+ the
+> >> old dropping behavior is used for this SKB.
+> >>
+> >> In the tun_ring_recv function:
+> >> - Waking the subqueue is done after consuming a SKB from the tx_ring w=
+hen
+> >> the tx_ring is empty. Waking the subqueue when the tx_ring has any
+> >> available space, so when it is not full, showed crashes in our testing=
+. We
+> >> are open to suggestions.
+> >> - When the tx_ring is configured to be small (for example to hold 1 SK=
+B),
+> >> queuing might be stopped in the tun_net_xmit function while at the sam=
+e
+> >> time, ptr_ring_consume is not able to grab a SKB. This prevents
+> >> tun_net_xmit from being called again and causes tun_ring_recv to wait
+> >> indefinitely for a SKB in the blocking wait queue. Therefore, the netd=
+ev
+> >> queue is woken in the wait queue if it has stopped.
+> >> - Because the tun_struct is required to get the tx_queue into the new =
+txq
+> >> pointer, the tun_struct is passed in tun_do_read aswell. This is likel=
+y
+> >> faster then trying to get it via the tun_file tfile because it utilize=
+s a
+> >> rcu lock.
+> >>
+> >> We are open to suggestions regarding the implementation :)
+> >> Thank you for your work!
+> >>
+> >> [1] Link:
+> >> https://cni.etit.tu-dortmund.de/storages/cni-etit/r/Research/Publicati=
+ons/2025/Gebauer_2025_VTCFall/Gebauer_VTCFall2025_AuthorsVersion.pdf
+> >> [2] Link:
+> >> https://unix.stackexchange.com/questions/762935/traffic-shaping-ineffe=
+ctive-on-tun-device
+> >> [3] Link: https://github.com/tudo-cni/nodrop
+> >>
+> >> Co-developed-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> >> Signed-off-by: Tim Gebauer <tim.gebauer@tu-dortmund.de>
+> >> Signed-off-by: Simon Schippers <simon.schippers@tu-dortmund.de>
 > >
-> > I see we are still damaged by the design of the cvq index. But this is
-> > just a static branch not a dynamic one. If we can find ways to make it
-> > static it would be better.
+> > I wonder if it would be possible to implement BQL in TUN/TAP?
 > >
-> > >
-> > > > > +               if (ret)
-> > > > > +                       return ret;
-> > > > > +
-> > > > > +               dev->vqs[i]->vq_group =3D msg.resp.vq_group.num;
-> > > > > +
-> > > > > +               msg.req.type =3D VDUSE_GET_VRING_DESC_GROUP;
-> > > > > +               ret =3D vduse_dev_msg_sync(dev, &msg);
-> > > > > +               if (ret)
-> > > > > +                       return ret;
-> > > > > +
-> > > > > +               dev->vqs[i]->vq_desc_group =3D msg.resp.vq_group.=
-num;
-> > > > > +       }
-> > > > > +
-> > > > > +       return 0;
-> > > > > +}
-> > > > > +
-> > > > >  static void vduse_vdpa_set_status(struct vdpa_device *vdpa, u8 s=
-tatus)
-> > > > >  {
-> > > > >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > > > > +       u8 previous_status =3D dev->status;
-> > > > >
-> > > > >         if (vduse_dev_set_status(dev, status))
-> > > > >                 return;
-> > > > >
-> > > > > +       if ((dev->status ^ previous_status) &
-> > > > > +            BIT_ULL(VIRTIO_CONFIG_S_FEATURES_OK) &&
-> > > > > +           status & (1ULL << VIRTIO_CONFIG_S_FEATURES_OK))
-> > > > > +               if (vduse_fill_vq_groups(dev))
-> > > >
-> > > > Can we merge the two messages into a single one? Or can we use a
-> > > > shared memory for storing such mapping?
-> > > >
-> > > > For example, if we have 256 queues it would be very slow.
-> > > >
-> > >
-> > > To merge it in the same message is good to me, sure.
+> > https://lwn.net/Articles/454390/
 > >
-> > We can start from this if we can't find a way to provision vq to group
-> > mapping during device creation.
-> >
+> > BQL provides a feedback mechanism to application when queue fills.
 >
-> Note that I don't think it is worth implementing these in this series,
-> but to add them on top in another one. Because I don't think we will
-> find devices with a lot of virtqueues for now. But here are some ideas
-> to mitigate the startup time cost:
+> Thank you very much for your reply,
+> I also thought about BQL before and like the idea!
 >
-> 1) Support more than one virtqueue in the same vduse request / reply
-> Something like:
-> vduse_dev_response{
->   u32 req_id;
->   u32 result;
->   union {
->     ...
->     struct vduse_vq_group {
->       u32 num_vqs_requested;
->       struct {
->         u32 vq_idx;
->         u32 vq_group;
->       } vqs[15];
->     }
->     u32 padding[32];
->   }
-> }
->
-> Choosing 15 to fill the current size of vduse_dev_response struct.
->
-> 2) Pointer chasing in the struct written
->
-> Same as previous, but the vqs struct is actually a pointer in
-> userspace. This way it can be arbitrarily big.
->
-> vduse_dev_response{
->   u32 req_id;
->   u32 result;
->   union {
->     ...
->     struct vduse_vq_group {
->       u32 num_vqs_requested;
->       struct {
->         u32 vq_idx;
->         u32 vq_group;
->       } *vqs;
->     }
->     u32 padding[32];
->   }
-> }
->
-> I cannot locate any use of this in write() data, but it is more or
-> less common in ioctl.
->
-> 3) Allow VQ_GROUP_BATCH_BEGIN and _END, similar to how memory map
-> works in vhost_vdpa. As many vq_group response as needed in between.
->
-> +) Assume that any vq not mentioned in the reply is vq group 0.
+> However I see the following challenges in the implementation:
+> - netdev_tx_sent_queue is no problem, it would just be called in
+> tun_net_xmit function.
+> - netdev_tx_completed_queue is challenging, because there is no completio=
+n
+> routine like in a "normal" network driver. tun_ring_recv reads one SKB at
+> a time and therefore I am not sure when and with what parameters to call
+> the function.
 
-Or make VDUSE io_uring compatible.  (Anyhow it looks like another topic).
-
-I'm fine if Michael and others are fine with starting with merging the
-message. It's worth trying to reduce the userspace/kernel interaction
-as much as possible.
+Right, this is similar to virtio_net without TX NAPI. It would be
+tricky to implement BQL on top (and TUN also did skb_orphan during
+xmit).
 
 Thanks
 
+> - What to do with the existing TUN queue packet limit (500 packets
+> default)? Use it as an upper limit?
 >
+> Wichtiger Hinweis: Die Information in dieser E-Mail ist vertraulich. Sie =
+ist ausschlie=C3=9Flich f=C3=BCr den Adressaten bestimmt. Sollten Sie nicht=
+ der f=C3=BCr diese E-Mail bestimmte Adressat sein, unterrichten Sie bitte =
+den Absender und vernichten Sie diese Mail. Vielen Dank.
+> Unbeschadet der Korrespondenz per E-Mail, sind unsere Erkl=C3=A4rungen au=
+sschlie=C3=9Flich final rechtsverbindlich, wenn sie in herk=C3=B6mmlicher S=
+chriftform (mit eigenh=C3=A4ndiger Unterschrift) oder durch =C3=9Cbermittlu=
+ng eines solchen Schriftst=C3=BCcks per Telefax erfolgen.
 >
-> > > To make it a
-> > > table in shm seems more complicated, unless we accept a void * in the
-> > > reply and VDUSE uses copy_from_user. If that is ok here, then sure.
-> > >
-> >
-> > This looks tricky indeed.
-> >
-> > Thanks
-> >
+> Important note: The information included in this e-mail is confidential. =
+It is solely intended for the recipient. If you are not the intended recipi=
+ent of this e-mail please contact the sender and delete this message. Thank=
+ you. Without prejudice of e-mail correspondence, our statements are only l=
+egally binding when they are made in the conventional written form (with pe=
+rsonal signature) or when such documents are sent by fax.
 >
 
 
