@@ -1,232 +1,259 @@
-Return-Path: <linux-kernel+bounces-769618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D2EB27100
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:43:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1517CB2710A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB4BA5E6619
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:43:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117005E6D64
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADF8279DB4;
-	Thu, 14 Aug 2025 21:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB93279DCC;
+	Thu, 14 Aug 2025 21:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SQs+se7i"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aTzaRelh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9219279907
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755207806; cv=fail; b=BKk+DFBRioUiiDTq9MVqOjQ2D1artoUqNc6F7X6NRiy0u1LTX4i21q9hcBh++YQqkRlkjBZ9EP7lbetx2vb3kIJwbzIQtT7aE9xX4r4XnHwPZ6pCfd2tZQfRbzWco7M2S+5a3RMh4JOK/E37la7b39WZgThGmucdPI5XYQwTCHA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755207806; c=relaxed/simple;
-	bh=X7sq8q4/b9oSpDhhTdxhecWpA4xWIaaVpqDcIzcbB5A=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XnWuSbgJlTnKM4OPyvWU0n4RVr3m8ivtRHA5yKylV6yRcWDji9vKP+k0RDdzsH2lT7DJNBQHRWq3udiFqAAgh6JvSm/Ag/yzl83rsvFi6M9saFE3tfjV73zlH4hHXkctVtD8bTdGec01kDxqWn6DXgiBoObP6TUpleVkfPfncxI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SQs+se7i; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755207805; x=1786743805;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=X7sq8q4/b9oSpDhhTdxhecWpA4xWIaaVpqDcIzcbB5A=;
-  b=SQs+se7iPuc4anHmqG/YGc9Mzm6VvjTmpKCjMd4JoTTRbuz1XSb81fg1
-   NgZMc541z5kauL3K0m9IBdTFUhdXAYV9hxbLlg94Ji8sI4qdc4ljLQeCW
-   +ZQb3OI3n3OFNQ7vcx5GNZhp5PGEEyCEhmkQPueyiEU6+8LBEYxhEu6/n
-   qq8G93btjAxcPSz2wnS5V+ZX7cAw9Jnz9eRloyBgAIZb548XLNo3m/bZ6
-   bxZI99Yd41SP0T5p6AyvpOiH+n5uLQbIh/SRsPG7BvrWwRu2AtwH2WqPY
-   oxnPukZWDOKCNAFNMyA5/XgudbJH+WDpPjKEySZgZtsjnSd4zkTl0aU8N
-   Q==;
-X-CSE-ConnectionGUID: Dw83H4sRSVS5cl0qYvHrYw==
-X-CSE-MsgGUID: iqSed8cqQPiolYaMl9tNzQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="68990582"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="68990582"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 14:43:24 -0700
-X-CSE-ConnectionGUID: PxzfK3L3Q+u2TpAzXUaCjA==
-X-CSE-MsgGUID: YcD700+XTdCQ2nWV61U63g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="172195754"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 14:43:24 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 14:43:23 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Thu, 14 Aug 2025 14:43:23 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.86) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Thu, 14 Aug 2025 14:43:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XLX6d7Q2IaWY/AehgTFQeIWvWMLEYpo/05vkByElcz+ipy34DRR36lhkuFVoXYHptKZvwJv7S3D5e7QPTUTDzJTry0tvZucDa6HKoUwUT428yB4/BXQAdn0gwREuWggymkGqUjX6yF610pgxVOObkdwFh7uPGcSIOp0UKpYG1hxkmjb5PCM0y8cVXRv5NtLOFeQb7oJ428aej0DOXLxkaMt92laR3wYFmnUtMA+UQZCF3pdaBJfuxE3M/nNvRBwpEgeK8WpE7RfCa6qyXu399sBEFe8tvz5DRiyrlE3deOQfBwyStpjbozFnmCuHEPpc0HZAIqvMQauSWO2NfanjuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pj9VTrGDReTVFBwzHE2qbwL8eulKJ7PdLy+rsnZlpxE=;
- b=X6I/OXmMHkVKTmiJ23zZoZ0JBmmEEW3Gj5Dwj6WmGpU5Xq9BLx8DIG3cK0EteLmqM2CsiOTJfhXvXzGnowl6gUuyygVYRPfEf3QFONNJ6XfcVvojYFdp6fhnB/bWBrMXegTmJPaqzXdCQ/7MCP2AYo3EeFOByUTpRWDVqmGPt0So2tILkCI2f1L9sm/8kV6fOriTH7VydA9+Ykr6ss774xZqgIrca6gV+TZdK8gC94bSDN+K/stwzR1b+NsdJhtG7VQhpAlURDzs1nGSylBwrB9Wm96itiDrCO9Ia5S08PRAcuu0UOfbAkAspnd7YtK6P+cVhBwRYp0cG5Yp1nZKuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by DM4PR11MB6552.namprd11.prod.outlook.com (2603:10b6:8:8f::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9031.18; Thu, 14 Aug 2025 21:43:21 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
- 21:43:21 +0000
-Message-ID: <c3a1f8e4-d226-4ab5-91c9-d018d43c77e9@intel.com>
-Date: Thu, 14 Aug 2025 14:43:19 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 21/32] x86,fs/resctrl: Add architectural event pointer
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
- Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20250811181709.6241-1-tony.luck@intel.com>
- <20250811181709.6241-22-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250811181709.6241-22-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0293.namprd03.prod.outlook.com
- (2603:10b6:303:b5::28) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B0B319878
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755208084; cv=none; b=Fm30sLw3JYvpnEyOPKbu/qJCgaz650oRghH7IrHBNRjgOX5Gr1K4ahqQX/ul3KdVbT/lEKqMCM1ODF78TmTIB+LP+2Z9y59GuIdqkr5yhKRt74Oq2RSppo488SFHEdO5SPyHhXir4gkWhm2YDNZOdjue8GGfvqrRTftD772jbo8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755208084; c=relaxed/simple;
+	bh=V6wXdJLrBZ8RcJqkcHRG6ySv0M1Vq3mIHeW4kuR3MGc=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Db8ZMyZh+TaSa+AYXqkvDdnlE8yfjE/scS95w7DyW+snXqTZ8H3wsuSzRlfnM+kjokx+/qzU33RZai0jBwelWNfzDJZRq4f/rcFV5L9snn1zJM4sVy/ANll654UEW/E1n6HZDwp4VqL6xRxZw0l3Q8rJ2enGZOQRA2kj8cqYjlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aTzaRelh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755208081;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hMrmnnaTuE7E24vkMuvtxjjxa9pOJBVXm+5edbNayAI=;
+	b=aTzaRelhWEShCtjtK+UlRtgWqwsgY8IuRK8BV8nDpEkf6Kex5wJk3OkrLnblhad6OJymE6
+	/ZBoBubXUMOXIXWU6fKsIGR25T1KL0uAytBkgFyFVrUn77Cm7Ces8WFT55rkQCUYcnxmUJ
+	DoFRkzMPMo5/kjN5XKXUHm2DrCt71Fw=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-487-HEFzikZhPcqMN1yOvb2dkA-1; Thu,
+ 14 Aug 2025 17:45:56 -0400
+X-MC-Unique: HEFzikZhPcqMN1yOvb2dkA-1
+X-Mimecast-MFC-AGG-ID: HEFzikZhPcqMN1yOvb2dkA_1755207955
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7F63318004A7;
+	Thu, 14 Aug 2025 21:45:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.21])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 61E0730001A2;
+	Thu, 14 Aug 2025 21:45:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>,
+    Paulo Alcantara <pc@manguebit.org>, Steve French <sfrench@samba.org>
+cc: dhowells@redhat.com, Xiaoli Feng <fengxiaoli0714@gmail.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, netfs@lists.linux.dev,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix unbuffered write error handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DM4PR11MB6552:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0705e445-1795-4b51-36c8-08dddb7b96b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?eTlXdXJlaXpjci9FY2NDWmdBTjh5Yk4yRk52VVkzMGJ5M1VkTXlLK0RTNWoy?=
- =?utf-8?B?NE9RVGNJU3lSL1hDb2FIMDhnSm9ub1ZKUElOR3RGUG5YTnYwb0NLaVdLK3RU?=
- =?utf-8?B?S0dqSHZmazV2ZER2d1pOeldScy8yWW5VcTRnemdiYldPM0wxN3I5UWJ2NkFL?=
- =?utf-8?B?TlBKMEZHdzc0QndJb2RzTHVtampBSHNCSkgzVWhtS3pHRllwcXB6Z2NmQVYz?=
- =?utf-8?B?VXZGZVU5cGpVVXRQUjdKZ0o3TjR3SUhKYzJnYVhPSGpZMTlPZ2VHWjJKZmR1?=
- =?utf-8?B?alMxdXhnTDdqcEVkbmV4V2J0WFczdzAzeTJSNzIva21DT3R3NlpYZTV2OUZu?=
- =?utf-8?B?MEcvaGRHUzA2UkhuanlsbExPUk5KbjNuSjhWTXBTODlkTC9sVW1Gbm95UTBH?=
- =?utf-8?B?eEFvU3VPZU1KNEtyZEV1TU5RR3BBazM2SFRad2J6VGp3bVJBbmZjSWErUmsz?=
- =?utf-8?B?WDc0VHpHcTAxNEhtdGlzeTlBOWc5Ly90NmIxNjhpQXUrNVBaU2p3MnhCZUw4?=
- =?utf-8?B?VmMvK3pPRVZmRlpwSlpYcEU3RzM4VENvY28rc1NsRDFtTktxelpJMnJUTzJV?=
- =?utf-8?B?VXJVYzg1bkkybGFuOE9McG9teHJXZS9ZaUpBSUZzaHQwcFVtc3QyNlBPR0J5?=
- =?utf-8?B?ci9jUDYvUzhqeHFZaUVhTEZqVmpkUCt6ZXhGcU1iZjVKM0x4NGRQazI3TU1u?=
- =?utf-8?B?ZmdYRXp5cjJQQmUxeldXdUl2Vm1zT3kyLzhuVUVTTW5FMmQyZTlNVmtTUHJW?=
- =?utf-8?B?QmRFL1B1YUhwOU5GMWYzU3crRzN2cmVOR01nQW5OSGthOEg3bFdtc1RUY2hS?=
- =?utf-8?B?WmpjSzlvbDZ5SmloOTF2NFFlcjQvTWQxbkk0UGUyTVVtRjBMVmtsalVzb1dV?=
- =?utf-8?B?NmYvMmRJTnByTVlJbmVId08vUm5sTmU1UFhGNFVOQVJac3lSam81NWVSdHZp?=
- =?utf-8?B?Ny9XSDEwenpYdUd4VExVOUprYyt6NFV1c2RKVWdpR09qdEQrSXl6SHdKaS9l?=
- =?utf-8?B?VjA3VXFhS1p3MzlDNU1EczBpRm9IMWM3dXhxQ3QyR1VweG5DY3NpUytQWGNv?=
- =?utf-8?B?RmRTbnlVK2xkQWJSbzlYL2dPZG5rRUp6cThqS3ZOeVA1MW54eW9NQVVTbFBI?=
- =?utf-8?B?bENCR1FLRFZaQllUVWdsRk1GeUZUMitEQ3BqL01nZmJ6alYxMHFZM1JLQlNh?=
- =?utf-8?B?L201QXBjRGZPRDk3aHQ1bG5qT3VuS1RCN1BIZ0dCUGNFZjd0dHdVdXZBV2RX?=
- =?utf-8?B?MTV4c2tnclZ3V0JrMk41cmM0U1NWOXNmL013SG5NYVgwb0c1QnRFZTQvbUJC?=
- =?utf-8?B?ZXFjRWxVVkFWczF3bFJEMGwrajZMRGhHUXAwR0huRkY5cS9id2pqMTJwRzBy?=
- =?utf-8?B?elBvUDlTNTV3RHdTY2dUTVhCM012cW1ydWQ0YnZTUS81UVB2ME9Hei9XS1lh?=
- =?utf-8?B?YTlaQ0QzM1BwQXJtT0N3VFVHNEV4cjlTOWhWSDViQzJDd0RIeWxUUU5vSm9H?=
- =?utf-8?B?VWhNOW1IVVdHMlJwd3ZTOGhQS2x5ZktpRWJvcE5RNUtOMnVpcXFKN3RFM0pv?=
- =?utf-8?B?R3dzcXFrelNiY25RWDhsY210M0pkeWVTOXFYdG5WY2dXZzVYOXBETDdzTkl0?=
- =?utf-8?B?WnhIWmJKaWpPRVNVbDA3Z2JBbWR3NUU3WnRGRGEzOEZ6OW92Z1JSMTVOaTdH?=
- =?utf-8?B?U2VLNEV0b1FhUjBSdW5DNlRFUWJlRldQL1BmMWVwUHhncWFTK3ByblgvUHgr?=
- =?utf-8?B?djV5ZlBqZmw1MTdka3pmV2M1aHFCOEd5bm9VbDd1bVBSUm9Db25qWXM4djZx?=
- =?utf-8?B?dStTenlVN0oreUc2VUJpOHo4N3NLY2h3L0RYSzFybmVlTjB6YlVXekZBVXJT?=
- =?utf-8?B?VUZuU2xOSXhUU2d1Wno2c3E5TWxkTGtqMDBRd2xzdElMbmd3S1lPSnJRTis1?=
- =?utf-8?Q?MvfYkJe2htc=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TFlzcjFYb0hpYTh3RXAxL2pTbHFLaDNRNjBXc2RyYTNGWGlhTDA2ZFV3ZGJt?=
- =?utf-8?B?VDVmakQwQ0NuUFI0eWd4UzlrSkRnNTNqYUJtL2JjZUZQTGJCQlU2R0FydFdB?=
- =?utf-8?B?OFczeEhwa2RraTFTSkVDK204aVNuenVuOHVvR0FVRE40VE9UalVoMWx2aXho?=
- =?utf-8?B?VmJPMEJ5ZjVsQTdZUjNGQ3hKdGh0ekp5VVJucm1FN1ZqZWlycTI4THlrWFlm?=
- =?utf-8?B?YlpOZW5ZaHdNQlp5M2owcEJnUWpXSzZxMkNxUm1Bb0l3dXRuK05IM1YrMThi?=
- =?utf-8?B?VkpVSU9sWDkwblR2Q0pvU1NNMGlGOUhRdEp6Q0tkK0g4UUFMMDFhTUlJNmxl?=
- =?utf-8?B?blFPZTFRNnJDQk5kNVp4KzV4TFlYTkNtSXgxV3R3cEh0Rzhnb2IrN3hENS9o?=
- =?utf-8?B?ZTE5Y0RjekNxbFNkS0c3anRDREFLVmVpU1JoOXc3OVFCSkVPdGhnTk1jbzl6?=
- =?utf-8?B?bTlGNml3NmRkQkt2MDY0blRPcjRDcXBJSHlBSm92dThsZHZ6Z1d6cnBOSGdR?=
- =?utf-8?B?aXN4b1k2WklPa3Vka0IwVm10UEdRZlZTR3NwOFFXMlNORlB5MDdRZWREZ0RB?=
- =?utf-8?B?SndsNUkxR0l4eVVyaG9YZXFKbUtmSmJlanFHeHZ3RFlTSW9YQlN2UGJ6K3VI?=
- =?utf-8?B?UWN0akQvV1UwOE93RXBHdVdmUU1qR044eVJJK0Y0cG1VVFZVWmsyVFhtdkVL?=
- =?utf-8?B?ZERnWjFlMFZQQk84U3RGRHIyYUJnNHZvS3NUMk1mWEFDMEZ0YzFCRXAwLzMr?=
- =?utf-8?B?ZFNTWDc2VHlCeVJwbmtIaHFCYjh1SzV5MVRWcmVCeGhCQXBXT0JSajl4aGg2?=
- =?utf-8?B?dU9oR0xLaE00MFIwS050dXFuV0xGTGN2UERWcHlXeUhjK3I0czhMNFBYTVp2?=
- =?utf-8?B?cmxXVUYwR2RhTUJHaytSN0xoNWVtekU3bkJ3c3g1M1FxSkh4UFJKOWIrKzNq?=
- =?utf-8?B?VkpKcjhtcjRKNlhVUDg2c2M1WTNldTdCT2Y2Nk82NCtNUU1kRUkxLzJGNnRm?=
- =?utf-8?B?VEMwYURQTU12bmxBRnBLZ2VxRXVtU2xHeTBQSExSMHF4TVRLRUpqYU9USWly?=
- =?utf-8?B?WVJUWVRCTC9MZkluT1ZuVjV4RFBBeTVoVzJJUlFFbU5US3hBcnUydSsxZmxI?=
- =?utf-8?B?QXBsN3R0clQrNHpYSUZMLy8wQzF4MGt5MW5LWTNkT3U3dWFxME1aLy9ISHhT?=
- =?utf-8?B?TDgrQmMySHZNQko2dFNsWXIwWkVtSjdpT0FxaFdTT3hJc3FObWRMSDVmRDJx?=
- =?utf-8?B?ajFKbTNoRUVQNy9lV2FvVkZLTmZGWFRTWnA5clNLZGdZMWxMMTZjdDlsc2Ez?=
- =?utf-8?B?WXUxMkZTNFNaWmFKZGdUTW16RC9UbThEVERNdVJHZ0pORjQydGo3QVJHWlZx?=
- =?utf-8?B?ZExSM05QTVNMY1JhNTl4aU5HaUFmZUdTWU5mUm9HUk5GVG83Z1NOankweTBE?=
- =?utf-8?B?QWg1NXFNWU9NT0lqZFVYMFJXR2JXcnJhU003QVloazZ1QWtvVmJqRkFqd2J3?=
- =?utf-8?B?UzBvWm1JQkZWZWRVSFlsVnZGWjJRSURndVdGNmI2Q0tmWW1KUzluVkpOZjM2?=
- =?utf-8?B?YVIyeDFjbW5HN1NJd1BaRk9DNGU1azdGbCtmN3lqczMwakp1TW8yLytFNWRo?=
- =?utf-8?B?a1gvN1FIU3pFbzlvOUs3dGhYUzgraUZrWVhNam9lbldvZVhxb0dUQkppZ3JQ?=
- =?utf-8?B?b0V5VTN5ZWJRT1BvYWpka2RwMlQwRUJ5UDBETEJackJubGU4NW1nM1Y4Zlpl?=
- =?utf-8?B?VG9YUmtEZFZXbjZVOGppaG90WTR2TnVodC9kZTRka21WRGxKOXR6L1lQTVJO?=
- =?utf-8?B?V1hlSDByVE5oSXFqaUc1OGJWd0FlOVNFSnplT2poWTRQdmJLRzhZYjZGUDB6?=
- =?utf-8?B?Ti8ra1pnVjVOYk85akNXZ0Z6alF0V01XRGxKZVJiZ1k0YW9SRFZtTnUvZkNM?=
- =?utf-8?B?bVJvNkFqc0NzZnpjYXNtWndlcU03VTRkelUxbllaZ0N5UkFkMzB1Sk0rZEJv?=
- =?utf-8?B?ZHBTODd0VWI2Rml6SGI0bjFONGQ2MWdVOVVaM2xhK1BHbTQ2aVhRZDVaeERO?=
- =?utf-8?B?RjZIdUkycjVZb2xRd2FEZDk0NkRvYjhUWmFPZXFwbzhVV2pGMjBRZDVORlNU?=
- =?utf-8?B?MWxOTVRrQ2VCZFJLY1VoVWxmcUE3MnFwQXgvcHkyWnRlZVMxbUkzNEhDSEVh?=
- =?utf-8?B?MHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0705e445-1795-4b51-36c8-08dddb7b96b5
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 21:43:21.3634
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6Z8GP5IV7UvgkWNn8sCGY+pJ/+NvNL2k6qWbEIfootlEDi0S55UCEA+JRRW5BITZI4CSVWJHrZQrjO4nkhymauzr9KDX8UshZUohVJ519C0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6552
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <915442.1755207950.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 14 Aug 2025 22:45:50 +0100
+Message-ID: <915443.1755207950@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Tony,
+If all the subrequests in an unbuffered write stream fail, the subrequest
+collector doesn't update the stream->transferred value and it retains its
+initial LONG_MAX value.  Unfortunately, if all active streams fail, then w=
+e
+take the smallest value of { LONG_MAX, LONG_MAX, ... } as the value to set
+in wreq->transferred - which is then returned from ->write_iter().
 
-On 8/11/25 11:16 AM, Tony Luck wrote:
-> The resctrl file system layer passes the domain, RMID, and event id to
-> resctrl_arch_rmid_read() to fetch an event counter.
-> 
-> For some resources this is not enough information to efficiently access
-> the counter. Fetching a telemetry event counter requires additional
+LONG_MAX was chosen as the initial value so that all the streams can be
+quickly assessed by taking the smallest value of all stream->transferred -
+but this only works if we've set any of them.
 
-The vague first sentence can now be dropped.
+Fix this by adding a flag to indicate whether the value in
+stream->transferred is valid and checking that when we integrate the
+values.  stream->transferred can then be initialised to zero.
 
-> information that is private to the architecture, for example, the offset
-> into MMIO space from where counter should be read.
-> 
-> Add mon_evt::arch_priv void pointer. Architecture code can initialize
-> this when marking each event enabled.
-> 
-> File system code passes this pointer to resctrl_arch_rmid_read().
-> 
-> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
-Reinette
+This was found by running the generic/750 xfstest against cifs with
+cache=3Dnone.  It splices data to the target file.  Once (if) it has used =
+up
+all the available scratch space, the writes start failing with ENOSPC.
+This causes ->write_iter() to fail.  However, it was returning
+wreq->transferred, i.e. LONG_MAX, rather than an error (because it thought
+the amount transferred was non-zero) and iter_file_splice_write() would
+then try to clean up that amount of pipe bufferage - leading to an oops
+when it overran.  The kernel log showed:
+
+    CIFS: VFS: Send error in write =3D -28
+
+followed by:
+
+    BUG: kernel NULL pointer dereference, address: 0000000000000008
+
+with:
+
+    RIP: 0010:iter_file_splice_write+0x3a4/0x520
+    do_splice+0x197/0x4e0
+
+or:
+
+    RIP: 0010:pipe_buf_release (include/linux/pipe_fs_i.h:282)
+    iter_file_splice_write (fs/splice.c:755)
+
+Also put a warning check into splice to announce if ->write_iter() returne=
+d
+that it had written more than it was asked to.
+
+Fixes: 288ace2f57c9 ("netfs: New writeback implementation")
+Reported-by: Xiaoli Feng <fengxiaoli0714@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D220445
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <sprasad@microsoft.com>
+cc: netfs@lists.linux.dev
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: stable@vger.kernel.org
+---
+ fs/netfs/read_collect.c  |    4 +++-
+ fs/netfs/write_collect.c |   10 ++++++++--
+ fs/netfs/write_issue.c   |    4 ++--
+ fs/splice.c              |    3 +++
+ include/linux/netfs.h    |    1 +
+ 5 files changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
+index 3e804da1e1eb..a95e7aadafd0 100644
+--- a/fs/netfs/read_collect.c
++++ b/fs/netfs/read_collect.c
+@@ -281,8 +281,10 @@ static void netfs_collect_read_results(struct netfs_i=
+o_request *rreq)
+ 		} else if (test_bit(NETFS_RREQ_SHORT_TRANSFER, &rreq->flags)) {
+ 			notes |=3D MADE_PROGRESS;
+ 		} else {
+-			if (!stream->failed)
++			if (!stream->failed) {
+ 				stream->transferred +=3D transferred;
++				stream->transferred_valid =3D true;
++			}
+ 			if (front->transferred < front->len)
+ 				set_bit(NETFS_RREQ_SHORT_TRANSFER, &rreq->flags);
+ 			notes |=3D MADE_PROGRESS;
+diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
+index 0f3a36852a4d..cbf3d9194c7b 100644
+--- a/fs/netfs/write_collect.c
++++ b/fs/netfs/write_collect.c
+@@ -254,6 +254,7 @@ static void netfs_collect_write_results(struct netfs_i=
+o_request *wreq)
+ 			if (front->start + front->transferred > stream->collected_to) {
+ 				stream->collected_to =3D front->start + front->transferred;
+ 				stream->transferred =3D stream->collected_to - wreq->start;
++				stream->transferred_valid =3D true;
+ 				notes |=3D MADE_PROGRESS;
+ 			}
+ 			if (test_bit(NETFS_SREQ_FAILED, &front->flags)) {
+@@ -356,6 +357,7 @@ bool netfs_write_collection(struct netfs_io_request *w=
+req)
+ {
+ 	struct netfs_inode *ictx =3D netfs_inode(wreq->inode);
+ 	size_t transferred;
++	bool transferred_valid =3D false;
+ 	int s;
+ =
+
+ 	_enter("R=3D%x", wreq->debug_id);
+@@ -376,12 +378,16 @@ bool netfs_write_collection(struct netfs_io_request =
+*wreq)
+ 			continue;
+ 		if (!list_empty(&stream->subrequests))
+ 			return false;
+-		if (stream->transferred < transferred)
++		if (stream->transferred_valid &&
++		    stream->transferred < transferred) {
+ 			transferred =3D stream->transferred;
++			transferred_valid =3D true;
++		}
+ 	}
+ =
+
+ 	/* Okay, declare that all I/O is complete. */
+-	wreq->transferred =3D transferred;
++	if (transferred_valid)
++		wreq->transferred =3D transferred;
+ 	trace_netfs_rreq(wreq, netfs_rreq_trace_write_done);
+ =
+
+ 	if (wreq->io_streams[1].active &&
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 50bee2c4130d..0584cba1a043 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -118,12 +118,12 @@ struct netfs_io_request *netfs_create_write_req(stru=
+ct address_space *mapping,
+ 	wreq->io_streams[0].prepare_write	=3D ictx->ops->prepare_write;
+ 	wreq->io_streams[0].issue_write		=3D ictx->ops->issue_write;
+ 	wreq->io_streams[0].collected_to	=3D start;
+-	wreq->io_streams[0].transferred		=3D LONG_MAX;
++	wreq->io_streams[0].transferred		=3D 0;
+ =
+
+ 	wreq->io_streams[1].stream_nr		=3D 1;
+ 	wreq->io_streams[1].source		=3D NETFS_WRITE_TO_CACHE;
+ 	wreq->io_streams[1].collected_to	=3D start;
+-	wreq->io_streams[1].transferred		=3D LONG_MAX;
++	wreq->io_streams[1].transferred		=3D 0;
+ 	if (fscache_resources_valid(&wreq->cache_resources)) {
+ 		wreq->io_streams[1].avail	=3D true;
+ 		wreq->io_streams[1].active	=3D true;
+diff --git a/fs/splice.c b/fs/splice.c
+index 4d6df083e0c0..f5094b6d00a0 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -739,6 +739,9 @@ iter_file_splice_write(struct pipe_inode_info *pipe, s=
+truct file *out,
+ 		sd.pos =3D kiocb.ki_pos;
+ 		if (ret <=3D 0)
+ 			break;
++		WARN_ONCE(ret > sd.total_len - left,
++			  "Splice Exceeded! ret=3D%zd tot=3D%zu left=3D%zu\n",
++			  ret, sd.total_len, left);
+ =
+
+ 		sd.num_spliced +=3D ret;
+ 		sd.total_len -=3D ret;
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 185bd8196503..98c96d649bf9 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -150,6 +150,7 @@ struct netfs_io_stream {
+ 	bool			active;		/* T if stream is active */
+ 	bool			need_retry;	/* T if this stream needs retrying */
+ 	bool			failed;		/* T if this stream failed */
++	bool			transferred_valid; /* T is ->transferred is valid */
+ };
+ =
+
+ /*
+
 
