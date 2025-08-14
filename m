@@ -1,117 +1,166 @@
-Return-Path: <linux-kernel+bounces-769560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF76B27057
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:48:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451FEB2705B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 444BA5C0A5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CCDAA3365
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BC4272E5D;
-	Thu, 14 Aug 2025 20:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381B2272E63;
+	Thu, 14 Aug 2025 20:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyljDCIn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QGC+jnuk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5DA26FA46;
-	Thu, 14 Aug 2025 20:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDA7192D97;
+	Thu, 14 Aug 2025 20:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755204476; cv=none; b=YqYbZEeJ839OvBWtlIiJA40bSnA4M1yJzX7SzR2wSxst6yds8RT+7AO7QlP+sTfvG2ggJ3EqGD2qfNIxIjWH9c4O0vP+YVue0kA8+oaWZv/kleQdlHAOfNZFSGk8Fjnw5/+Xr/eN1gDeese35r/UgRevnRFnIr5Ihjvo0iTMZJ0=
+	t=1755204532; cv=none; b=NsKWo10y2PcLdEmjes5CWDtfoqwbIAFeO1W0x+eDXcDkX9X5QLqcXBGNBZ82jVKlVK7mhWlkldSI9Gr0LrqPsquCsJVU6tGlL3I+m8nq1AMxYWqcwAzkgO0reyWSXuPg94laWFh6+K/JKzLQozmZMQQLd7kLwKtZZB7e1Zrji+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755204476; c=relaxed/simple;
-	bh=dW2X3K+YNEEybIjB/hvQn0QPs5bkqXpod+RF3HGN1Ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TNo+ceVhaxlRrLwbhU5aUWnpNUT8kWnCdlcCsJykzLNV0ac42QYBVNmFGal4aQXIHXmtQ+HGl0ngAdL3Vtrwd6p4lvxpYagyEAt44gwz9ew/jewJkmA4BAPr8bFJDY7L39KZ521QFbHDuMpLCw7dm127oVrfl1ujap3yl6Vp7ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyljDCIn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96ACCC4CEED;
-	Thu, 14 Aug 2025 20:47:53 +0000 (UTC)
+	s=arc-20240116; t=1755204532; c=relaxed/simple;
+	bh=3XDu9rqcQti7BDstShCM5LqYWLf7ryGkfCAXwU5pojc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=Gpz4mJCS8U3qEDj9aNkZlKdeW0YXT7RUfOW2WE5poDwcMcZMjbw/kdeM4ROKu+WhuhJiMfXRQRyrL0hwvWJwfrhPCLSQ7+uD4nIymtksV4ZyjevcHXQEt2iEWV4FemMKQY+pspGHcBV8Wb3BnSh3Lu0bYCADyDKFLzqYDLQ3IG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QGC+jnuk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0671AC4CEED;
+	Thu, 14 Aug 2025 20:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755204476;
-	bh=dW2X3K+YNEEybIjB/hvQn0QPs5bkqXpod+RF3HGN1Ww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hyljDCInxy4DZe5+LqOU5BtQaF5XM9gDosYxRaa9juQwUuvcrW1FvamJ6xPGg91DD
-	 fUXRlTttT3XiiH9eSF4b10REomGxBctST+vQl/x/jXBHI5hWswt2LY+nAp+Ik82kRx
-	 acWzZcsFBNLk6/krrevxXoKhaz3je3+uqoNuqT3eB6iUyUANeU2XLgytpA53nl8ofM
-	 744IpUoHWzklkEkIxDQopORQmjQ7MYWLp7Joh58cLQ5n/9GvAMSVh+eMzSOwJLgxwh
-	 2f3A30uAwiyXH7koz6bjOMpq47yhcxWqS7lcSmHdS1ZoCp2//pnxNfolysQfhT6z2o
-	 x2pH/NAwuISgA==
-Date: Thu, 14 Aug 2025 21:47:51 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Markus Heidelberg <m.heidelberg@cab.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Eggers <ceggers@arri.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Jiri Prchal <jiri.prchal@aksignal.cz>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: eeprom: at25: use "size" for FRAMs
- without device ID
-Message-ID: <20250814-platinum-imminent-43a126e82871@spud>
-References: <20250814111546.617131-1-m.heidelberg@cab.de>
- <20250814111546.617131-2-m.heidelberg@cab.de>
+	s=k20201202; t=1755204532;
+	bh=3XDu9rqcQti7BDstShCM5LqYWLf7ryGkfCAXwU5pojc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=QGC+jnukHksRu2J6/IqOJVQkz+j8XnrY2YEqZpCFN/jPLaCdKdXQZcCSdBhJPLmsH
+	 /qJ35hK1sBF8VGTj9lXgvp6RVggSb5BZ+YNrSsJjTiaayphADW8KIalkwZw00DtC4e
+	 idVYJzchqke5iG9nZHlZXCfxDl8CbWfSwDROgogSisAUPv/MXdXNvx0lbpUsr+CrXT
+	 FkdUOheqfWW4/4e9aPKrToEuJbofGlJQSLvW7UmVj8LD+5Aii1zRySPfwgr6L/+BlT
+	 xqUyjLvgt+/fI07yNpb5uOIcK2+AylHFCTbITSyyPpipu08POpdQRUO8r0KWzr8MzF
+	 Vsx4Wac3ReflA==
+Date: Thu, 14 Aug 2025 15:48:50 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Farhan Ali <alifm@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, schnelle@linux.ibm.com,
+	mjrosato@linux.ibm.com, alex.williamson@redhat.com
+Subject: Re: [PATCH v1 6/6] vfio: Allow error notification and recovery for
+ ISM device
+Message-ID: <20250814204850.GA346571@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="t2bYXlAxP2do4p8E"
-Content-Disposition: inline
-In-Reply-To: <20250814111546.617131-2-m.heidelberg@cab.de>
-
-
---t2bYXlAxP2do4p8E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250813170821.1115-7-alifm@linux.ibm.com>
 
-On Thu, Aug 14, 2025 at 01:15:30PM +0200, Markus Heidelberg wrote:
-> Link: https://lore.kernel.org/all/20250401133148.38330-1-m.heidelberg@cab=
-=2Ede/
-> Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
+On Wed, Aug 13, 2025 at 10:08:20AM -0700, Farhan Ali wrote:
+> VFIO allows error recovery and notification for devices that
+> are PCIe (and thus AER) capable. But for PCI devices on IBM
+> s390 error recovery involves platform firmware and
+> notification to operating system is done by architecture
+> specific way. The Internal Shared Memory(ISM) device is a legacy
+> PCI device (so not PCIe capable), but can still be recovered
+> when notified of an error.
 
-Missing commit message body explaining why this change is needed.
+"PCIe (and thus AER) capable" reads as though AER is required for all
+PCIe devices, but AER is optional.
 
+I don't know the details of VFIO and why it tests for PCIe instead of
+AER.  Maybe AER is not relevant here and you don't need to mention
+AER above at all?
+
+> Relax the PCIe only requirement for ISM devices, so passthrough
+> ISM devices can be notified and recovered on error.
+
+Nit: it looks like all your commit logs could be rewrapped to fill
+about 75 columns (to leave space for "git log" to indent them and
+still fit in 80 columns).  IMHO not much value in using a smaller
+width than that.
+
+> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
 > ---
->  Documentation/devicetree/bindings/eeprom/at25.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/eeprom/at25.yaml b/Documen=
-tation/devicetree/bindings/eeprom/at25.yaml
-> index c31e5e719525..d6fe84091ad4 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at25.yaml
-> +++ b/Documentation/devicetree/bindings/eeprom/at25.yaml
-> @@ -56,6 +56,7 @@ properties:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description:
->        Total eeprom size in bytes.
-> +      Also used for FRAMs without device ID where the size cannot be det=
-ected.
-> =20
->    address-width:
->      $ref: /schemas/types.yaml#/definitions/uint32
-> --=20
+>  drivers/vfio/pci/vfio_pci_core.c  | 18 ++++++++++++++++--
+>  drivers/vfio/pci/vfio_pci_intrs.c |  2 +-
+>  drivers/vfio/pci/vfio_pci_priv.h  |  3 +++
+>  3 files changed, 20 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+> index 7220a22135a9..1faab80139c6 100644
+> --- a/drivers/vfio/pci/vfio_pci_core.c
+> +++ b/drivers/vfio/pci/vfio_pci_core.c
+> @@ -723,6 +723,20 @@ void vfio_pci_core_finish_enable(struct vfio_pci_core_device *vdev)
+>  }
+>  EXPORT_SYMBOL_GPL(vfio_pci_core_finish_enable);
+>  
+> +bool vfio_pci_device_can_recover(struct vfio_pci_core_device *vdev)
+> +{
+> +	struct pci_dev *pdev = vdev->pdev;
+> +
+> +	if (pci_is_pcie(pdev))
+> +		return true;
+> +
+> +	if (pdev->vendor == PCI_VENDOR_ID_IBM &&
+> +			pdev->device == PCI_DEVICE_ID_IBM_ISM)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+>  static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_type)
+>  {
+>  	if (irq_type == VFIO_PCI_INTX_IRQ_INDEX) {
+> @@ -749,7 +763,7 @@ static int vfio_pci_get_irq_count(struct vfio_pci_core_device *vdev, int irq_typ
+>  			return (flags & PCI_MSIX_FLAGS_QSIZE) + 1;
+>  		}
+>  	} else if (irq_type == VFIO_PCI_ERR_IRQ_INDEX) {
+> -		if (pci_is_pcie(vdev->pdev))
+> +		if (vfio_pci_device_can_recover(vdev))
+>  			return 1;
+>  	} else if (irq_type == VFIO_PCI_REQ_IRQ_INDEX) {
+>  		return 1;
+> @@ -1150,7 +1164,7 @@ static int vfio_pci_ioctl_get_irq_info(struct vfio_pci_core_device *vdev,
+>  	case VFIO_PCI_REQ_IRQ_INDEX:
+>  		break;
+>  	case VFIO_PCI_ERR_IRQ_INDEX:
+> -		if (pci_is_pcie(vdev->pdev))
+> +		if (vfio_pci_device_can_recover(vdev))
+>  			break;
+>  		fallthrough;
+>  	default:
+> diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+> index 123298a4dc8f..f5384086ac45 100644
+> --- a/drivers/vfio/pci/vfio_pci_intrs.c
+> +++ b/drivers/vfio/pci/vfio_pci_intrs.c
+> @@ -838,7 +838,7 @@ int vfio_pci_set_irqs_ioctl(struct vfio_pci_core_device *vdev, uint32_t flags,
+>  	case VFIO_PCI_ERR_IRQ_INDEX:
+>  		switch (flags & VFIO_IRQ_SET_ACTION_TYPE_MASK) {
+>  		case VFIO_IRQ_SET_ACTION_TRIGGER:
+> -			if (pci_is_pcie(vdev->pdev))
+> +			if (vfio_pci_device_can_recover(vdev))
+>  				func = vfio_pci_set_err_trigger;
+>  			break;
+>  		}
+> diff --git a/drivers/vfio/pci/vfio_pci_priv.h b/drivers/vfio/pci/vfio_pci_priv.h
+> index 5288577b3170..93c1e29fbbbb 100644
+> --- a/drivers/vfio/pci/vfio_pci_priv.h
+> +++ b/drivers/vfio/pci/vfio_pci_priv.h
+> @@ -36,6 +36,9 @@ ssize_t vfio_pci_config_rw(struct vfio_pci_core_device *vdev, char __user *buf,
+>  ssize_t vfio_pci_bar_rw(struct vfio_pci_core_device *vdev, char __user *buf,
+>  			size_t count, loff_t *ppos, bool iswrite);
+>  
+> +bool vfio_pci_device_can_recover(struct vfio_pci_core_device *vdev);
+> +
+> +
+>  #ifdef CONFIG_VFIO_PCI_VGA
+>  ssize_t vfio_pci_vga_rw(struct vfio_pci_core_device *vdev, char __user *buf,
+>  			size_t count, loff_t *ppos, bool iswrite);
+> -- 
 > 2.43.0
->=20
-
---t2bYXlAxP2do4p8E
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaJ5LdwAKCRB4tDGHoIJi
-0jQSAP426ncFjNObVwHIFLzAYrq15xnNP9fneSFS5jCBOx/spwD+JhnOgosXTbLH
-2sybJAZUGxRtdwDVPEZpf1tg3JKzVgw=
-=bsl9
------END PGP SIGNATURE-----
-
---t2bYXlAxP2do4p8E--
+> 
 
