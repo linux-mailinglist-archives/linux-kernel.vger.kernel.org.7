@@ -1,87 +1,52 @@
-Return-Path: <linux-kernel+bounces-768835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA9BB2660E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:00:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE837B26644
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE87A17E885
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28856188D83F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FCC2FE06C;
-	Thu, 14 Aug 2025 12:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D662FFDDE;
+	Thu, 14 Aug 2025 13:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RHN4yE0Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=grenoble.cnrs.fr header.i=@grenoble.cnrs.fr header.b="OHSAOBbV"
+Received: from mailgw-out1.grenoble.cnrs.fr (mailgw-out1.grenoble.cnrs.fr [147.173.1.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7942FCBF9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD4A2FF166
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.173.1.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755176360; cv=none; b=MyD/d5E3qLHgctaX9uC6SVv36GKrL8MDs//tkZEq9cERqqOpql4D376cZqb6iyzgORSXhvZQQHkWmVVxY2yY9ktmr2Z2NxfL9bUdt+nuPMtPpZs9H8Rf/TbbORCkMMu9sdA+uAbIcRkdlG7b6C4l3AhHCMYIS3jo6U3TtKZFiDk=
+	t=1755176829; cv=none; b=jbzGXdlw+PxzKRbdHMuxO3vfdtWBbxDZUzZ7lLKWK2bjfiT2QFjM4Jkwxs0ef9n1gxeLjie9TX/uVn0FeWLbEXNw/zzFuzKaCRwvNwHU64iCx4uNPj2jvTirGe89CkJpzN910lFNgf1vFi2LOcBjrPNWOwRWlJtL90rQtiL3MY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755176360; c=relaxed/simple;
-	bh=lpcy5pD+EwYOeWX4XiJByNE9Zu6T8tfIZy/8aoPzZWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ds7bbsP0bdkGXb5+EVb5SpboCpaI6ca29/82YJw8Jyz+lp6/Eu+dX1KKIenqWfCL0hYcTkg2/fcswCWAOigEHpnue6ranx5jW9aFH/Rc0bbo9p+vTkv/jwILDseGNsd6snCvhGsB0JAVOnmbORIlKjQQMbjEcd4kWwe4fWfVK50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RHN4yE0Q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1755176358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3t0CR39RiS9bo6V+bAaM9oWX90Si1UImEXsrmk0A3lE=;
-	b=RHN4yE0QfKFsJG6aYupck5ZvYzKBKLpvGWq9O1nZ1GnZrl7wupONhz0w4BWzvnhWpJNfpd
-	vnVVS1oU5I7qoPptQDikclbLREQnhmFexxhWDD0Ml5z+YTaCpKQHICo6PEOHWmque66a2M
-	7PKcQrdut2y26pixmaR/7TV3OfrNbWA=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-150-Ib_0bJsPOvy8PyURt_Kwog-1; Thu, 14 Aug 2025 08:59:17 -0400
-X-MC-Unique: Ib_0bJsPOvy8PyURt_Kwog-1
-X-Mimecast-MFC-AGG-ID: Ib_0bJsPOvy8PyURt_Kwog_1755176356
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45a1b1015f8so4384075e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 05:59:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755176356; x=1755781156;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3t0CR39RiS9bo6V+bAaM9oWX90Si1UImEXsrmk0A3lE=;
-        b=DwIP2jvZ0UT/jCpwl5lswu82girfCp5sG3e/VTZ3Ua1Kx+A81drljnbDL71bqbIF/i
-         g3YdAhXOXB4RCKgJgG9cdpx7yZQeMokJWnTefkcvxjddivkHrpfGRjYO3v/eWp4lSI39
-         sumYD6TsX0ro1uwvWGgYmfqXQvQkVKBlonIREsxR3EnaDomWx/PYTk95GTp0LiOhzbZC
-         6rVKENh6AyK4uRoCt40hYdnrop7xGgJ8TAyxkHtPSHbqDuUjReaw0dXyivqjeKR7kuze
-         ymspFv4Ped1DpRmd6RJVIuHXEbeiY/EyQrBz7QR1becxkNUj4Q+dWXqBT5Cjf5YptK4J
-         JaFA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsK7JNo2ogl5aNdMVjd0LvZzDqeYunxB/ukuZhKQGQ1uNDLcD7AjssWVwKOik+vGRcdWFeDxGzz8x90fc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLhIMrXe5WL/U33BCly1Us15gyxl4Giob2qO5UwAKf2d3cZg1m
-	M5nksYIddTEhGJH1AEIw0J3WO3RYJjJsk6PeSYcUx5usd3deni2FTQgngKgcR271FizJKzsIgiL
-	2WF/eBV9M5V6RWcPWGQtuQfTPSsG8fj+M69CncwDEVN9Zp3q6WcL24TblAKPKgGMXcg==
-X-Gm-Gg: ASbGncvJ6tJ6wvpV59CnM6c0PkzXtvEW22Km+mFrPh63tluHmEkyAIRASk4FdF0HTuM
-	q2fwis7pJ2TAEv2SlpxbNz7i2v917x+OvMrhrC1em+BJhrNWIGk7fNFIDI0Hmx5DRtsjbgGIMwM
-	POOHoF3w1nllQwt7uTHB01cSQdk1Sz3hhNYOF0Os7+sgnKGOWa13CZxbropShDpFgGy7btLiCuT
-	fsMVinD55S1F0uehpPG0tdB51DeEGAJzDlrubF36mX7tWqYHr/OiLSzUwD9UmVyY7sCmKUP/8wW
-	YbB1TrhIzVdlw/DKe1q0We8BH9re11NGCjPacDjoLAark5HSxV6Xhj+lFHE7JZ7u/fT4tiLrImi
-	NjWiyKJJLEP4Hyis5/uqMLfWZUQdOX/Oi7sEbjiuNzeD99DKwD53JnYjwc7Gx5sLvc+Q=
-X-Received: by 2002:a05:600c:5491:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-45a1faf691bmr4202295e9.4.1755176355899;
-        Thu, 14 Aug 2025 05:59:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGCXUPq3MF/2LcfaRa34zIT915GKLnG74JH+H3ePtWgYmrBLGllfjQvCJgjkywipvIy1ObAlA==
-X-Received: by 2002:a05:600c:5491:b0:43c:fc04:6d35 with SMTP id 5b1f17b1804b1-45a1faf691bmr4201945e9.4.1755176355455;
-        Thu, 14 Aug 2025 05:59:15 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f44:3e00:9fca:7d89:a265:56f3? (p200300d82f443e009fca7d89a26556f3.dip0.t-ipconnect.de. [2003:d8:2f44:3e00:9fca:7d89:a265:56f3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6cfed5sm19815875e9.7.2025.08.14.05.59.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 05:59:14 -0700 (PDT)
-Message-ID: <1387eeb8-fc61-4894-b12f-6cae3ad920bd@redhat.com>
-Date: Thu, 14 Aug 2025 14:59:13 +0200
+	s=arc-20240116; t=1755176829; c=relaxed/simple;
+	bh=XgZFEH3yaImi2UrMjD4zgYLQoh+lKcDz1l0ZvcFSgDA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=NIBDaJVwqqY/tOmehpOs946kbG6BwDFXU4tSqhrqSi+cRxmhGuBX2og6OrcLSYpPgR5X1Ux87BxP1k0To2I0yOIUCmQS+alDQkPiPjRe3xn4iq0d4cOddtZZV865oV3/j9A+LUr6yeeoRmzGUA09jRZCC1K5Yhuk4v3n0hSvh/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=grenoble.cnrs.fr; spf=pass smtp.mailfrom=grenoble.cnrs.fr; dkim=pass (2048-bit key) header.d=grenoble.cnrs.fr header.i=@grenoble.cnrs.fr header.b=OHSAOBbV; arc=none smtp.client-ip=147.173.1.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=grenoble.cnrs.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grenoble.cnrs.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grenoble.cnrs.fr;
+	s=202106-grenoble.cnrs.fr; t=1755176428;
+	bh=osOkASH2uy5+Xht2uGsc3FDUJvnEGVsKz69nZDUqpfY=;
+	h=Date:To:Cc:From:Subject:From;
+	b=OHSAOBbVbqQRlcBWxr1OswaOeQK4GS4DgZ9otuRjpHJ7woULJKH8bZpIjhR2BgmeH
+	 J+mUUJkQZv7/eNbuBYZlepvzbXgUs6bJ1/0FV8M2qYSFRucoQLghejhbKc7XDSeEk8
+	 BZ5Wru6d7nhQCgBBAU9pVg+N5Sqf7bo651Db62KjekScj7tNYQw65a4T4l/FymRlsQ
+	 XiaNzhQJJeNe4GoG5hKmsc86SmcR9Mg5HvYOmglwaNeindJnb5ZEGdoCrYKNSqV6PC
+	 /6p/0qdhQBWLVwL1Aru7PbKXDyN+PLdFfJ5NJpTYvRU06Vdb/3q/IxEe8ha41n6VgI
+	 F5PSGJU88ahYQ==
+Received: from [147.173.65.159] (unknown [147.173.65.159])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mailgw-out1.grenoble.cnrs.fr (Postfix) with ESMTPSA id D2EB3C0A2A;
+	Thu, 14 Aug 2025 15:00:25 +0200 (CEST)
+Message-ID: <280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenoble.cnrs.fr>
+Date: Thu, 14 Aug 2025 14:59:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,101 +54,189 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] selftests: prctl: introduce tests for disabling
- THPs except for madvise
-To: Mark Brown <broonie@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Usama Arif <usamaarif642@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-References: <20250813135642.1986480-1-usamaarif642@gmail.com>
- <20250813135642.1986480-8-usamaarif642@gmail.com>
- <13220ee2-d767-4133-9ef8-780fa165bbeb@lucifer.local>
- <bac33bcc-8a01-445d-bc42-29dabbdd1d3f@redhat.com>
- <5b341172-5082-4df4-8264-e38a01f7c7d7@lucifer.local>
- <0b7543dd-4621-432c-9185-874963e8a6af@redhat.com>
- <5dce29cc-3fad-416f-844d-d40c9a089a5f@lucifer.local>
- <b433c998-0f7b-4ca4-a867-5d1235149843@sirena.org.uk>
- <eb90eff6-ded8-40a3-818f-fce3331df464@redhat.com>
- <47e98636-aace-4a42-b6a4-3c63880f394b@sirena.org.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <47e98636-aace-4a42-b6a4-3c63880f394b@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Language: en-US, fr
+To: Thomas Gleixner <tglx@linutronix.de>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+From: Edgar Bonet <bonet@grenoble.cnrs.fr>
+Subject: [ISSUE + PATCH] Interrupts were enabled early by spinlock guard
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 14.08.25 14:09, Mark Brown wrote:
-> On Thu, Aug 14, 2025 at 02:00:27PM +0200, David Hildenbrand wrote:
-> 
->> Some people (hello :) ) run tests against distro kernels ... shame that
->> prctl just knows one sort of "EINVAL" so we cannot distinguish :(
-> 
->> But yeah, maybe one has to be more careful of filtering these failures out
->> then.
-> 
-> Perhaps this is something that needs considering in the ABI, so
-> userspace can reasonably figure out if it failed to configure whatever
-> is being configured due to a missing feature (in which case it should
-> fall back to not using that feature somehow) or due to it messing
-> something else up?  We might be happy with the tests being version
-> specific but general userspace should be able to be a bit more robust.
+Hello everybody!
 
-Yeah, the whole prctl() ship has sailed, unfortunately :(
+I am facing an "Interrupts were enabled early" kernel warning which, as
+far as I can tell, is caused by a spinlock guard in an ARM/Microchip
+IRQCHIP driver. I think I solved the issue, and I am proposing a patch
+below, after the scissor. But I must first disclose that:
 
+  * I am completely new to Linux internals and its development process.
+    This is why I chose to err on the side of providing too much
+    information on my issue. It is not unlikely that I am doing
+    something very wrong.
+
+  * I am not subscribed to either of the linux-{,arm-}kernel mailing
+    lists
+
+  * I will be far from the Internet in the few days to come. I should be
+    connected an responsive starting from 2025-08-24.
+
+
+## Context
+
+I am playing with an Acmesystems Acqua[1] system on module, which is
+based on a SAMA5D31 SoC (single core Cortex-A5). I maintain the
+Buildroot defconfig for this board,[2] which is currently based on a
+vanilla Linux kernel v6.12.41.
+
+As I wanted to check that the board runs fine on newer kernels, I built
+a v6.16 for it using gcc 14, binutils 2.43, the in-tree sama5_defconfig
+merged with this fragment:
+
+    # CONFIG_BRIDGE is not set
+    # CONFIG_MODULES is not set
+    # CONFIG_NET_DSA is not set
+    # CONFIG_WIRELESS is not set
+    # CONFIG_USB_NET_DRIVERS is not set
+    # CONFIG_WLAN is not set
+    # CONFIG_MEDIA_SUPPORT is not set
+    # CONFIG_SOUND is not set
+    # CONFIG_AUTOFS_FS is not set
+
+and the Buildroot-provided device tree, patched for compatibility with
+Linux commit 510a6190cf5e ("ARM: dts: microchip: fix faulty ohci/ehci
+node names").
+
+The defconfig fragment above is meant to remove module support (with
+some unused drivers along the way), which makes testing easier for me.
+
+
+## Issue
+
+While booting, Linux v6.16 printed this message on the serial console:
+
+    ------------[ cut here ]------------
+    WARNING: CPU: 0 PID: 0 at init/main.c:1024 start_kernel+0x4d0/0x5dc
+    Interrupts were enabled early
+    CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.16.0 #1 NONE 
+    Hardware name: Atmel SAMA5
+    Call trace: 
+     unwind_backtrace from show_stack+0x10/0x14
+     show_stack from dump_stack_lvl+0x38/0x48
+     dump_stack_lvl from __warn+0x78/0xd4
+     __warn from warn_slowpath_fmt+0x98/0xc8
+     warn_slowpath_fmt from start_kernel+0x4d0/0x5dc
+     start_kernel from 0x0
+    ---[ end trace 0000000000000000 ]---
+
+The board seemed to work fine, so maybe this warning is completely
+harmless. It looked, however, scary enough to deserve some
+investigation.
+
+
+## Bug hunting
+
+I could not reproduce the issue on a qemu virtual machine. All tests
+were then done on the real hardware.
+
+I looked for the Linux commit that introduced the issue. ‘git bisect’
+told me this was 195298c3b116 ("genirq/generic-chip: Convert core code
+to lock guards"). I then checked out a recent mainline kernel, namely
+v6.17-rc1, and tried to revert that commit. For this, I first had to
+revert two follow-up commits, namely 7ae844a6650c ("genirq/generic-chip:
+Remove unused lock wrappers") and 771487050f83 ("genirq/generic-chip:
+Fix incorrect lock guard conversions"). This was unsuccessful: I still
+had the warning.
+
+I went back to a clean v6.17-rc1 and tried to find the thing that was
+enabling interrupts early. After lots of printk() debugging, I
+discovered it was a guard(raw_spinlock_irq) destructor. The call chain
+is this (line numbers are for v6.17-rc1):
+
+    start_kernel (init/main.c:1011)
+    -> time_init (arch/arm/kernel/time.c:96)
+    -> timer_probe (drivers/clocksource/timer-probe.c:30)
+    => tcb_clksrc_init (drivers/clocksource/timer-atmel-tcb.c:413)
+    -> of_irq_get (drivers/of/irq.c:474)
+    -> irq_create_of_mapping (kernel/irq/irqdomain.c:980)
+    -> irq_create_fwspec_mapping (kernel/irq/irqdomain.c:848)
+    => aic5_irq_domain_xlate (drivers/irqchip/irq-atmel-aic5.c:287)
+    -> guard destructor (raw_spin_unlock_irq?)
+
+where (=>) is an indirect call through a function pointer.
+
+
+## Tentative fix
+
+Commit 771487050f83 gave me the inspiration. The guard in question was
+introduced by b00bee8afaca ("irqchip: Convert generic irqchip locking to
+guards"), which replaced calls to irq_gc_lock_irq{save,restore}() by
+guard(raw_spinlock_irq) (with no “save” in the name). The commit log
+states that this is “intended and correct”, but I could not make sense
+of the explanation. My (possibly faulty) understanding is that the guard
+constructor disables interrupts, and the destructor either
+unconditionally enables them (raw_spinlock_irq), or restores the
+previous interrupt state (raw_spinlock_irqsave).
+
+I then replaced guard(raw_spinlock_irq) with guard(raw_spinlock_irqsave)
+and that seemed to do the job: the warning is gone. See the patch below
+the scissors.
+
+Best regards, and thank-you for reading so far.
+
+Edgar Bonet.
+
+[1] https://www.acmesystems.it/acqua
+[2] https://gitlab.com/buildroot.org/buildroot/-/blob/2025.08-rc1/configs/acmesystems_acqua_a5_512mb_defconfig
+
+------------------------------------------------------------------ >8 --
+Subject: [PATCH] irqchip/atmel-aic5: Fix incorrect lock guard conversion
+
+Commit b00bee8afaca ("irqchip: Convert generic irqchip locking to guards")
+replaced calls to irq_gc_lock_irq{save,restore}() with
+guard(raw_spinlock_irq). However, in irq-atmel-aic5.c, one such guard is
+created early in the boot process, before interrupts are initially enabled.
+As its destructor enables interrupts, this results in the following warning
+on a SAMA5D31-based system:
+
+    ------------[ cut here ]------------
+    WARNING: CPU: 0 PID: 0 at init/main.c:1024 start_kernel+0x4d0/0x5dc
+    Interrupts were enabled early
+    CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.16.0 #1 NONE
+    Hardware name: Atmel SAMA5
+    Call trace:
+     unwind_backtrace from show_stack+0x10/0x14
+     show_stack from dump_stack_lvl+0x38/0x48
+     dump_stack_lvl from __warn+0x78/0xd4
+     __warn from warn_slowpath_fmt+0x98/0xc8
+     warn_slowpath_fmt from start_kernel+0x4d0/0x5dc
+     start_kernel from 0x0
+    ---[ end trace 0000000000000000 ]---
+
+Fix this by using guard(raw_spinlock_irqsave) instead.
+
+Fixes: b00bee8afaca ("irqchip: Convert generic irqchip locking to guards")
+Signed-off-by: Edgar Bonet <bonet@grenoble.cnrs.fr>
+---
+ drivers/irqchip/irq-atmel-aic5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-atmel-aic5.c b/drivers/irqchip/irq-atmel-aic5.c
+index 60b00d2c3d7a..1f14b401f71d 100644
+--- a/drivers/irqchip/irq-atmel-aic5.c
++++ b/drivers/irqchip/irq-atmel-aic5.c
+@@ -279,7 +279,7 @@ static int aic5_irq_domain_xlate(struct irq_domain *d,
+ 	if (ret)
+ 		return ret;
+ 
+-	guard(raw_spinlock_irq)(&bgc->lock);
++	guard(raw_spinlock_irqsave)(&bgc->lock);
+ 	irq_reg_writel(bgc, *out_hwirq, AT91_AIC5_SSR);
+ 	smr = irq_reg_readl(bgc, AT91_AIC5_SMR);
+ 	aic_common_set_priority(intspec[2], &smr);
 -- 
-Cheers
-
-David / dhildenb
-
+2.43.0
 
