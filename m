@@ -1,173 +1,302 @@
-Return-Path: <linux-kernel+bounces-768955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 271F3B2684C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EB8B26856
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74AC1C80E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2C915804EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED591E9B2A;
-	Thu, 14 Aug 2025 13:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AF830148C;
+	Thu, 14 Aug 2025 13:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="daEOp3lt"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nNda9r2q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC7A2FE064
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBBD3009E0;
+	Thu, 14 Aug 2025 13:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179661; cv=none; b=um+n6//9rZZSwaFxtEJjA+bK8iRsvz+cA5ybrun2g1d/F3neI32iYdrbWW6u+uKwfpa22Ze1EaMS4+Oof/RTOkXXUk5JBa31Pli07LFhBOoCiSIUcGE7K6XS98A/9nx86VfpzQhhoumRmO87P7tZ3ngjmYJ8LZU0f4FeLEyvnmo=
+	t=1755179693; cv=none; b=b1P0cRFnOtm9Ij7FTewwrlw5e/Hpx6in5Qw/F7fhRyK4gHRAqblCPDgKj9wU3zGRlxxnPpB9QDWUT6rwP8Jy5gjybeBscAcou+utG+wsUAE7uARwlh+qwri8MTxGBdKuNAn4rFdtK3FkDPEUeLrvtbkTqVZ6i2hQF7smlPU/0ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179661; c=relaxed/simple;
-	bh=KWKFgqrMEJy2qGnil2Tx3WqFtti1rmJ94E5W+NOYgfQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bjXqh4e1H2/TBeJA8P5FEEKfhdlfJ+W2Lv73o5+TiU23Ocqn+jjIAJNgDcNzdEuNvHO6tMgdiVW+0IJAbZuJA3BZYGfpLeiMoGp28ubo2rXvlv/UxAfvt5Njfm+iCdhvx4pkiVGqFMPX/xljOprglh/Oww7ZvhR94GiveCiaPP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=daEOp3lt; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24457f42254so21634335ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755179657; x=1755784457; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fyJbJM7IcaPznn76owPMykg8NkcmrFg15/R109Uu1ck=;
-        b=daEOp3ltqygQImLZYCZquqGbiwlptr3iwtVy3qeFQ4At3ZBnNZ14HVgdDyEG0MmmDS
-         q0DJRRkeJ03xjRA4HwXq5CBLdF4EqR9gW1GFm++70fPNwfXIsh38Z4dKdxlQLHk46Gfx
-         BpKEN7PaZgMxlYvoL1y73wdXLBNe/UkjuT1NEmsas6yeFDnX2YHeFtfvWwaylRp9AcWN
-         QqXMvHKemnRL5E1MsFhq8/XHV0NIIS36+koHlI75fbf0USbItXn0sHQGgtXXadpdSsxZ
-         JjrEX5YKf4/+LKU8W1F278Jz9l/iRp5glDvg/65p1ZxTUGKK5INspbnHDS18quqqptJ+
-         fJsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755179657; x=1755784457;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fyJbJM7IcaPznn76owPMykg8NkcmrFg15/R109Uu1ck=;
-        b=DvXHBZ9qiLVeEcfOJF5kb+87wliujusLTQXbz0XHZwHlvtKaWNDjry/duH9j/KoxqV
-         5otN9NkrKPvba2SpBM2Bbo+XKuLETAZm5ax0B4sqZ+2G2A9KC+Xa5vNltGNxELpK7q6M
-         iJcD5KZtnOGDtiCi79E+3tti3yII1bdmliDDQdfxlqI0GkotgWIyv7jWI85Ba3cCLGx9
-         Kkroo3yyCkCunbdPYRRbjD4pSaZUhei2pOD+KQWP+fa24UiuGinCQVlQmJ4qb/QhKhy5
-         fqy/WMv6NqqPJzder0V0RcVQHQ+M3ynEMj5omuJKxivvry31AYmjwP/7I7XxgZJ190mg
-         74Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjFIGg8sCmkcsqjwN1LMwGFTSWDXT5u76FHjVNqjevUmZ/4E6OwSH5iOKc1hMef3C9XYmw80z22WQdUBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFkXVWmAKrlkOGN3Rj5Htlj3DJCak6BrJOYo/WYe0LXpDxRzH1
-	f584ykBNUxBfECyYwpjQMUnqWRCRl70W20/ldVaOW6iYBvYB8s8L8W/LcYBVOzGc10E8scvfDxA
-	7Jop7SA==
-X-Google-Smtp-Source: AGHT+IFc8rQwzFNm90sVJBEONFTj6biaSgb+iwPmQbSfN/V2e/NQZ+17pol+42jKlhGZTUb4jbGQNph1iaE=
-X-Received: from plry14.prod.google.com ([2002:a17:902:b48e:b0:240:72c0:cc89])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ced0:b0:23f:e869:9a25
- with SMTP id d9443c01a7336-244586dc38bmr53125045ad.44.1755179657224; Thu, 14
- Aug 2025 06:54:17 -0700 (PDT)
-Date: Thu, 14 Aug 2025 06:54:14 -0700
-In-Reply-To: <d8993692714829a2b1671412cdd684781c43d54a.1755126788.git.kai.huang@intel.com>
+	s=arc-20240116; t=1755179693; c=relaxed/simple;
+	bh=UBMDjSl7ummaNgM0HnILEzprysQwd6tD6QDipGAZJQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwWjP0RQWbl5llLaXN9SyBmu1qRxT8uU3shYvw2Tff5TWA/raBL08cetglTm0pdcIA+2LzwcezXjHThD/ft0f8ZaXu5FN8YWyxuNEMcCcsjXkd4MoyOvBo/uNQHPdJX1XDjdjasBnSVAEQQq6yEQorzl5intcoW18flS+veqVU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nNda9r2q; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755179692; x=1786715692;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UBMDjSl7ummaNgM0HnILEzprysQwd6tD6QDipGAZJQI=;
+  b=nNda9r2qtESaUSv7fS/JffsxEAQpU1Uy6IxwP2qaZFWWSCmVVj2Bg3jp
+   eW1za50x5flsisvv4twuvCtBXS0rn9RiylfW3beScmqpeqTqpityXSC5+
+   1ZRiwXowc0caFb/9SQ6R53eXP9EHMOW09BePlVzoEUL6dDnSWnL7MfciU
+   vtWP8lAkKxUg31sUHpkgUrVGRysJDuX6gd+iIjjDBa0UWwRYaneWwkA+B
+   n85vM8pYqUEpMysUdl984iIxVwysVplRkwaM6QQNZkKOKMD+/Kd0h3yfg
+   e8ZrkAme27nW2v9VR3dGa06V4xcMtCk+XCfNKXhFI7opk1Cx0ARsWXhny
+   A==;
+X-CSE-ConnectionGUID: q2ySU4g8TYWaOv58JsmyLg==
+X-CSE-MsgGUID: y7YzLHOcQ5Ol3ZgLjo8y/w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="82929213"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="82929213"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 06:54:51 -0700
+X-CSE-ConnectionGUID: 9rdFQwKYT1Cgnxd6y+D2GA==
+X-CSE-MsgGUID: Aje6Omf5QDWGKVTR3HWdPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="203943615"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 14 Aug 2025 06:54:46 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umYPW-000B0O-1H;
+	Thu, 14 Aug 2025 13:54:34 +0000
+Date: Thu, 14 Aug 2025 21:54:17 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, sudeep.holla@arm.com,
+	james.quinlan@broadcom.com, f.fainelli@gmail.com,
+	vincent.guittot@linaro.org, etienne.carriere@st.com,
+	peng.fan@oss.nxp.com, michal.simek@amd.com, quic_sibis@quicinc.com,
+	dan.carpenter@linaro.org, d-gole@ti.com, souvik.chakravarty@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: Re: [PATCH 4/8] firmware: arm_scmi: Add SCMIv4.0 Powercap basic
+ support
+Message-ID: <202508142109.z6QIwr0w-lkp@intel.com>
+References: <20250813114609.1305571-5-cristian.marussi@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1755126788.git.kai.huang@intel.com> <d8993692714829a2b1671412cdd684781c43d54a.1755126788.git.kai.huang@intel.com>
-Message-ID: <aJ3qhtzwHIRPrLK7@google.com>
-Subject: Re: [PATCH v6 7/7] KVM: TDX: Explicitly do WBINVD when no more TDX SEAMCALLs
-From: Sean Christopherson <seanjc@google.com>
-To: Kai Huang <kai.huang@intel.com>
-Cc: dave.hansen@intel.com, bp@alien8.de, tglx@linutronix.de, 
-	peterz@infradead.org, mingo@redhat.com, hpa@zytor.com, 
-	thomas.lendacky@amd.com, x86@kernel.org, kas@kernel.org, 
-	rick.p.edgecombe@intel.com, dwmw@amazon.co.uk, linux-kernel@vger.kernel.org, 
-	pbonzini@redhat.com, kvm@vger.kernel.org, reinette.chatre@intel.com, 
-	isaku.yamahata@intel.com, dan.j.williams@intel.com, ashish.kalra@amd.com, 
-	nik.borisov@suse.com, chao.gao@intel.com, sagis@google.com, 
-	farrah.chen@intel.com, Binbin Wu <binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813114609.1305571-5-cristian.marussi@arm.com>
 
-On Thu, Aug 14, 2025, Kai Huang wrote:
->  arch/x86/include/asm/tdx.h  |  2 ++
->  arch/x86/kvm/vmx/tdx.c      | 12 ++++++++++++
->  arch/x86/virt/vmx/tdx/tdx.c | 12 ++++++++++++
->  3 files changed, 26 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-> index 0922265c6bdc..e9a213582f03 100644
-> --- a/arch/x86/include/asm/tdx.h
-> +++ b/arch/x86/include/asm/tdx.h
-> @@ -217,6 +217,7 @@ u64 tdh_mem_page_remove(struct tdx_td *td, u64 gpa, u64 level, u64 *ext_err1, u6
->  u64 tdh_phymem_cache_wb(bool resume);
->  u64 tdh_phymem_page_wbinvd_tdr(struct tdx_td *td);
->  u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page *page);
-> +void tdx_cpu_flush_cache(void);
->  #else
->  static inline void tdx_init(void) { }
->  static inline int tdx_cpu_enable(void) { return -ENODEV; }
-> @@ -224,6 +225,7 @@ static inline int tdx_enable(void)  { return -ENODEV; }
->  static inline u32 tdx_get_nr_guest_keyids(void) { return 0; }
->  static inline const char *tdx_dump_mce_info(struct mce *m) { return NULL; }
->  static inline const struct tdx_sys_info *tdx_get_sysinfo(void) { return NULL; }
-> +static inline void tdx_cpu_flush_cache(void) { }
+Hi Cristian,
 
-Stub is unnecessary.  tdx.c is built iff KVM_INTEL_TDX=y, and that depends on
-INTEL_TDX_HOST.
+kernel test robot noticed the following build warnings:
 
-At a glance, some of the existing stubs are useless as well.
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge soc/for-next trace/for-next linus/master v6.17-rc1 next-20250814]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->  #endif	/* CONFIG_INTEL_TDX_HOST */
->  
->  #endif /* !__ASSEMBLER__ */
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 66744f5768c8..1bc6f52e0cd7 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -442,6 +442,18 @@ void tdx_disable_virtualization_cpu(void)
->  		tdx_flush_vp(&arg);
->  	}
->  	local_irq_restore(flags);
-> +
-> +	/*
-> +	 * No more TDX activity on this CPU from here.  Flush cache to
-> +	 * avoid having to do WBINVD in stop_this_cpu() during kexec.
-> +	 *
-> +	 * Kexec calls native_stop_other_cpus() to stop remote CPUs
-> +	 * before booting to new kernel, but that code has a "race"
-> +	 * when the normal REBOOT IPI times out and NMIs are sent to
-> +	 * remote CPUs to stop them.  Doing WBINVD in stop_this_cpu()
-> +	 * could potentially increase the possibility of the "race".
-> +	 */
-> +	tdx_cpu_flush_cache();
+url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Marussi/firmware-arm_scmi-Add-an-optional-custom-parameter-to-fastchannel-helpers/20250813-195150
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20250813114609.1305571-5-cristian.marussi%40arm.com
+patch subject: [PATCH 4/8] firmware: arm_scmi: Add SCMIv4.0 Powercap basic support
+config: arm64-randconfig-r111-20250814 (https://download.01.org/0day-ci/archive/20250814/202508142109.z6QIwr0w-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.3.0
+reproduce: (https://download.01.org/0day-ci/archive/20250814/202508142109.z6QIwr0w-lkp@intel.com/reproduce)
 
-IIUC, this can be:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508142109.z6QIwr0w-lkp@intel.com/
 
-	if (IS_ENABLED(CONFIG_KEXEC))
-		tdx_cpu_flush_cache();
+sparse warnings: (new ones prefixed by >>)
+>> drivers/firmware/arm_scmi/powercap.c:302:48: sparse: sparse: restricted __le32 degrades to integer
+>> drivers/firmware/arm_scmi/powercap.c:353:25: sparse: sparse: incorrect type in initializer (different base types) @@     expected unsigned int [usertype] flags @@     got restricted __le32 [usertype] attributes @@
+   drivers/firmware/arm_scmi/powercap.c:353:25: sparse:     expected unsigned int [usertype] flags
+   drivers/firmware/arm_scmi/powercap.c:353:25: sparse:     got restricted __le32 [usertype] attributes
 
->  }
->  
->  #define TDX_SEAMCALL_RETRIES 10000
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index 3ea6f587c81a..c26e2e07ff6b 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -1870,3 +1870,15 @@ u64 tdh_phymem_page_wbinvd_hkid(u64 hkid, struct page *page)
->  	return seamcall(TDH_PHYMEM_PAGE_WBINVD, &args);
->  }
->  EXPORT_SYMBOL_GPL(tdh_phymem_page_wbinvd_hkid);
-> +
-> +void tdx_cpu_flush_cache(void)
-> +{
-> +	lockdep_assert_preemption_disabled();
-> +
-> +	if (!this_cpu_read(cache_state_incoherent))
-> +		return;
-> +
-> +	wbinvd();
-> +	this_cpu_write(cache_state_incoherent, false);
-> +}
-> +EXPORT_SYMBOL_GPL(tdx_cpu_flush_cache);
-> -- 
-> 2.50.1
-> 
+vim +302 drivers/firmware/arm_scmi/powercap.c
+
+   289	
+   290	static int
+   291	iter_powercap_cpls_process_response(const struct scmi_protocol_handle *ph,
+   292					    const void *response,
+   293					    struct scmi_iterator_state *st, void *priv)
+   294	{
+   295		const struct scmi_msg_resp_powercap_cpc *r = response;
+   296		struct scmi_cpls_priv *p = priv;
+   297		struct scmi_powercap_cpl_info *cpl;
+   298	
+   299		cpl = &p->cpli[st->desc_index + st->loop_idx];
+   300	
+   301		cpl->id = le32_to_cpu(r->desc[st->loop_idx].cpli);
+ > 302		cpl->cap_config = r->desc[st->loop_idx].flags & BIT(0);
+   303	
+   304		cpl->min_power_cap = le32_to_cpu(r->desc[st->loop_idx].min_power_cap);
+   305		cpl->max_power_cap = le32_to_cpu(r->desc[st->loop_idx].max_power_cap);
+   306		cpl->power_cap_step = le32_to_cpu(r->desc[st->loop_idx].power_cap_step);
+   307		if (!cpl->power_cap_step && cpl->min_power_cap != cpl->max_power_cap)
+   308			return -EINVAL;
+   309	
+   310		cpl->min_avg_ivl = le32_to_cpu(r->desc[st->loop_idx].min_cai);
+   311		cpl->max_avg_ivl = le32_to_cpu(r->desc[st->loop_idx].max_cai);
+   312		cpl->avg_ivl_step = le32_to_cpu(r->desc[st->loop_idx].cai_step);
+   313		if (!cpl->avg_ivl_step && cpl->min_avg_ivl != cpl->max_avg_ivl)
+   314			return -EINVAL;
+   315	
+   316		cpl->avg_ivl_config = cpl->min_avg_ivl != cpl->max_avg_ivl;
+   317	
+   318		strscpy(cpl->name, r->desc[st->loop_idx].name, SCMI_SHORT_NAME_MAX_SIZE);
+   319	
+   320		return 0;
+   321	}
+   322	
+   323	static int scmi_powercap_cpls_enumerate(const struct scmi_protocol_handle *ph,
+   324						struct scmi_powercap_info *dom_info)
+   325	{
+   326		void *iter;
+   327		struct scmi_iterator_ops ops = {
+   328			.prepare_message = iter_powercap_cpls_prepare_message,
+   329			.update_state = iter_powercap_cpls_update_state,
+   330			.process_response = iter_powercap_cpls_process_response,
+   331		};
+   332		struct scmi_cpls_priv cpriv = {
+   333			.domain_id = dom_info->id,
+   334			.cpli = dom_info->cpli,
+   335		};
+   336	
+   337		iter = ph->hops->iter_response_init(ph, &ops, dom_info->num_cpli,
+   338						    POWERCAP_CPC_ATTRIBUTES,
+   339						    sizeof(struct scmi_msg_powercap_cpc),
+   340						    &cpriv);
+   341		if (IS_ERR(iter))
+   342			return PTR_ERR(iter);
+   343	
+   344		return ph->hops->iter_response_run(iter);
+   345	}
+   346	
+   347	static int
+   348	scmi_powercap_domain_attrs_process(const struct scmi_protocol_handle *ph,
+   349					   struct powercap_info *pinfo,
+   350					   struct scmi_powercap_info *dom_info, void *r)
+   351	{
+   352		struct scmi_msg_resp_powercap_domain_attributes *resp = r;
+ > 353		u32 flags = resp->attributes;
+   354		bool cap_config;
+   355		int ret;
+   356	
+   357		cap_config = SUPPORTS_POWERCAP_CAP_CONFIGURATION(flags);
+   358		if (PROTOCOL_REV_MAJOR(pinfo->version) < 0x3) {
+   359			dom_info->num_cpli = 1;
+   360		} else {
+   361			dom_info->num_cpli = le32_get_bits(resp->attributes,
+   362							   GENMASK(18, 15));
+   363			if (cap_config && !dom_info->num_cpli)
+   364				return -EINVAL;
+   365		}
+   366	
+   367		dom_info->cpli = devm_kcalloc(ph->dev, dom_info->num_cpli,
+   368					      sizeof(*dom_info->cpli), GFP_KERNEL);
+   369		if (!dom_info->cpli)
+   370			return -ENOMEM;
+   371	
+   372		if (pinfo->notify_cap_cmd) {
+   373			if (PROTOCOL_REV_MAJOR(pinfo->version) < 0x3)
+   374				dom_info->notify_powercap_cap_change =
+   375					SUPPORTS_POWERCAP_CAP_CHANGE_NOTIFY(flags);
+   376			else
+   377				dom_info->notify_powercap_cap_change =
+   378					SUPPORTS_POWERCAP_CAP_CHANGE_NOTIFY_V3(flags);
+   379		}
+   380	
+   381		if (pinfo->notify_measurements_cmd)
+   382			dom_info->notify_powercap_measurement_change =
+   383				SUPPORTS_POWERCAP_MEASUREMENTS_CHANGE_NOTIFY(flags);
+   384	
+   385	
+   386		dom_info->extended_names = SUPPORTS_EXTENDED_NAMES(flags);
+   387	
+   388		dom_info->async_powercap_cap_set =
+   389			SUPPORTS_ASYNC_POWERCAP_CAP_SET(flags);
+   390	
+   391		dom_info->powercap_monitoring =
+   392			SUPPORTS_POWERCAP_MONITORING(flags);
+   393		dom_info->powercap_scale_mw =
+   394			SUPPORTS_POWER_UNITS_MW(flags);
+   395		dom_info->powercap_scale_uw =
+   396			SUPPORTS_POWER_UNITS_UW(flags);
+   397		dom_info->fastchannels =
+   398			SUPPORTS_POWERCAP_FASTCHANNELS(flags);
+   399	
+   400		strscpy(dom_info->name, resp->name, SCMI_SHORT_NAME_MAX_SIZE);
+   401	
+   402		dom_info->sustainable_power =
+   403			le32_to_cpu(resp->sustainable_power);
+   404		dom_info->accuracy = le32_to_cpu(resp->accuracy);
+   405	
+   406		dom_info->parent_id = le32_to_cpu(resp->parent_id);
+   407		if (dom_info->parent_id != SCMI_POWERCAP_ROOT_ZONE_ID &&
+   408		    (dom_info->parent_id >= pinfo->num_domains ||
+   409		     dom_info->parent_id == dom_info->id)) {
+   410			dev_err(ph->dev,
+   411				"Platform reported inconsistent parent ID for domain %d - %s\n",
+   412				dom_info->id, dom_info->name);
+   413			return -ENODEV;
+   414		}
+   415	
+   416		dom_info->cpli[0].id = CPL0;
+   417		if (PROTOCOL_REV_MAJOR(pinfo->version) < 0x3)
+   418			dom_info->cpli[0].avg_ivl_config =
+   419				SUPPORTS_POWERCAP_PAI_CONFIGURATION(flags);
+   420		else
+   421			dom_info->cpli[0].avg_ivl_config =
+   422				SUPPORTS_POWERCAP_CAI_CONFIGURATION(flags);
+   423	
+   424		if (PROTOCOL_REV_MAJOR(pinfo->version) < 0x3) {
+   425			dom_info->cpli[0].min_avg_ivl = le32_to_cpu(resp->min_pai);
+   426			dom_info->cpli[0].max_avg_ivl = le32_to_cpu(resp->max_pai);
+   427			dom_info->cpli[0].avg_ivl_step = le32_to_cpu(resp->pai_step);
+   428		} else {
+   429			struct scmi_msg_resp_powercap_domain_attributes_v3 *resp = r;
+   430	
+   431			dom_info->cpli[0].min_avg_ivl = le32_to_cpu(resp->min_cai);
+   432			dom_info->cpli[0].max_avg_ivl = le32_to_cpu(resp->max_cai);
+   433			dom_info->cpli[0].avg_ivl_step = le32_to_cpu(resp->cai_step);
+   434		}
+   435	
+   436		ret = scmi_powercap_validate(dom_info->cpli[0].min_avg_ivl,
+   437					     dom_info->cpli[0].max_avg_ivl,
+   438					     dom_info->cpli[0].avg_ivl_step,
+   439					     dom_info->cpli[0].avg_ivl_config);
+   440		if (ret) {
+   441			dev_err(ph->dev,
+   442				"Platform reported inconsistent PAI config for domain %d - %s\n",
+   443				dom_info->id, dom_info->name);
+   444			return ret;
+   445		}
+   446	
+   447		dom_info->cpli[0].cap_config = cap_config;
+   448		dom_info->cpli[0].min_power_cap = le32_to_cpu(resp->min_power_cap);
+   449		dom_info->cpli[0].max_power_cap = le32_to_cpu(resp->max_power_cap);
+   450		dom_info->cpli[0].power_cap_step = le32_to_cpu(resp->power_cap_step);
+   451		ret = scmi_powercap_validate(dom_info->cpli[0].min_power_cap,
+   452					     dom_info->cpli[0].max_power_cap,
+   453					     dom_info->cpli[0].power_cap_step,
+   454					     dom_info->cpli[0].cap_config);
+   455		if (ret) {
+   456			dev_err(ph->dev,
+   457				"Platform reported inconsistent CAP config for domain %d - %s\n",
+   458				dom_info->id, dom_info->name);
+   459			return ret;
+   460		}
+   461		/* Just using same short name */
+   462		strscpy(dom_info->cpli[0].name, dom_info->name, SCMI_SHORT_NAME_MAX_SIZE);
+   463	
+   464		return 0;
+   465	}
+   466	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
