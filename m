@@ -1,141 +1,334 @@
-Return-Path: <linux-kernel+bounces-768679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE45EB26416
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:21:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 278C0B2641E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 185BA9E1F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:19:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D87EC4E573B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D032EA742;
-	Thu, 14 Aug 2025 11:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733C82F4A00;
+	Thu, 14 Aug 2025 11:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBt56d8M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yll0ibOl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0C5318137;
-	Thu, 14 Aug 2025 11:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0492EB5DA
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755170333; cv=none; b=VSd5REu6GgI0/S/KqPrsv6EHRnECH+xtOHgCdCMyeFKtKnrO6gv124tkp9ewg+cWc3+U24dngK1uYubku8kXg4wv6fmNstfPv8WNAoXtB9d96FrCkovcg9DGLa+xLF1G8+rc3z0IOeNs0+WI/yvHKHGl+2ZE9r5xxDdiOqxigb0=
+	t=1755170509; cv=none; b=sTsnuIcwaFXBT0D7KqwAUD+hG9FDCKZdlKwBnGzIZZx3l09+o+m3psAZgFGBi1hwRbqyp6UVAlAh5JR9YtpMNVPWIV+osummYeCN5HRGtxISy5NdEXWhGLo83nHewutlkfADj7B3LIzQKcKhXBMOqYxhwsClE9Y9IpqiLF5OsEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755170333; c=relaxed/simple;
-	bh=l6W3GNNa2WAwUtViy1k/tQbt3+KiN3frOKCKets69Mc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qDyeec/14ddqwbiJL0AeCHl+zvKuFAoTQgYhnf7CEIKDOhQ7xWaXJCUv6SW+3X8jSlPxIZnOaikuGr+Axuk/praM9dpYkGb5/GNTjQGXTiZG0PgF/Q2EaDEhT99S1KdgZg+BKq2Tlt/J1ZtQcxyodtlrPSBFw9FT+V30749f5Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBt56d8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04EA6C4CEED;
-	Thu, 14 Aug 2025 11:18:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755170332;
-	bh=l6W3GNNa2WAwUtViy1k/tQbt3+KiN3frOKCKets69Mc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XBt56d8M0YRw8L1B1n8ASjHtP46fn9GZZfiXo5KehZHLG1X9gPus7AGNO9zSqR+Le
-	 M7+zPUkvyA1a49/WL+NgjlFGZbT94twVQrEv7etZlXVwhdRuVVWed25+B9Rjo9copS
-	 L6l7ZuBno/yqvx2GTSxpCUvIwaJtgzTgkSVMHIrGvJHXlyvIyjT4vHpQ003jDQ+QY0
-	 Xvp7yJo2Yi9HsTbIfgFqBL9nEnS8Vje76fQhhhoST3+3r2Zp/FtIBhUrsn3Kpg1szz
-	 SOg8aJlAvKFaGIcw34liyd/SS/PMWje/5xlKYr2+qLCfoG8uiibB6t+CL0fsf6OZUX
-	 yTVSxWf+935QQ==
-Message-ID: <433e1189-e2b6-4299-9fa7-13e7994ec89c@kernel.org>
-Date: Thu, 14 Aug 2025 13:18:46 +0200
+	s=arc-20240116; t=1755170509; c=relaxed/simple;
+	bh=n+c54q/JIitz3ZcglzykxPKObG0OyoAyZeiO108zw6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A8SdInMBO+LwZZl+wKgiI/An/lDgar+4HnlIdQmzOGrtBOxg9EVHFdFjGRMznI87TdxJhzXfzi84EiTA3zdYS4nqP3UajPd4wgfHjSvUU3Mn+Yw0Sq4LvTZljLznnAHJusWbtjTb9A6Ct+B4POgj1PdX4BkNJGpbA4zNvojBAng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yll0ibOl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755170506;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zfaxiYyd5Dr5mQ5lKs2Zw3QQyzDjjlKEaB38MzjfWHM=;
+	b=Yll0ibOlbYtNQc9D7QkrnLZOMUTF2UCphYoK0xkv2xogYAomkc4jEfioZ0w2xfxp9isAf7
+	orNgXCPV527L3Dn086D1ZBOvkiI4YYNVX909T7bZipkGjHvoFclfaM7oMo7+kjhPPGW+9G
+	rDzpxkCb1Y3leHJd38Db8uPXNFnEKds=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-hfjVm0_QMDWueHjvpwrIvA-1; Thu,
+ 14 Aug 2025 07:21:43 -0400
+X-MC-Unique: hfjVm0_QMDWueHjvpwrIvA-1
+X-Mimecast-MFC-AGG-ID: hfjVm0_QMDWueHjvpwrIvA_1755170502
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90CFA1955BD9;
+	Thu, 14 Aug 2025 11:21:42 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.44.32.79])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 87B4D18003FC;
+	Thu, 14 Aug 2025 11:21:40 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.17-rc2
+Date: Thu, 14 Aug 2025 13:21:01 +0200
+Message-ID: <20250814112101.35891-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dts: describe x1e80100 ufs
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Harrison Vanderbyl <harrison.vanderbyl@gmail.com>
-Cc: marcus@nazgul.ch, kirill@korins.ky, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mani@kernel.org,
- alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
- agross@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-References: <20250814005904.39173-1-harrison.vanderbyl@gmail.com>
- <20250814005904.39173-4-harrison.vanderbyl@gmail.com>
- <tlkv63ccpnti367am47ymhaw3agjnyuonqstgtfaazhhptvgsp@q4wzuzdph323>
- <57ce520f-a562-471f-b6b4-44f0766a7556@kernel.org>
- <aa0ed59a-4eb6-4f7f-b430-4976ee9724d8@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aa0ed59a-4eb6-4f7f-b430-4976ee9724d8@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 14/08/2025 11:46, Konrad Dybcio wrote:
-> On 8/14/25 8:59 AM, Krzysztof Kozlowski wrote:
->> On 14/08/2025 04:42, Bjorn Andersson wrote:
->>> On Thu, Aug 14, 2025 at 10:59:04AM +1000, Harrison Vanderbyl wrote:
->>>
->>> Welcome to LKML, Harrison. Some small things to improve.
->>>
->>> Please extend the subject prefix to match other changes in the files of
->>> each patch, e.g. this one would be "arm64: dts: qcom: x1e80100: ".
->>>
->>> "git log --oneline -- file" is your friend here.
->>>
->>>> Describe device tree entry for x1e80100 ufs device
->>
->> This is duplicating earlier patches:
->> https://lore.kernel.org/all/szudb2teaacchrp4kn4swkqkoplgi5lbw7vbqtu5vhds4qat62@2tciswvelbmu/
-> 
-> (that submitter clearly expressed lack of interest in proceeding)
-> 
+Hi Linus!
 
-Sure, would be good though to reflect that - provide summary of previous
-discussions, changelogs or at least give links.
+The following changes since commit 37816488247ddddbc3de113c78c83572274b1e2e:
 
-Best regards,
-Krzysztof
+  Merge tag 'net-6.17-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-08-08 07:03:25 +0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc2
+
+for you to fetch changes up to 4faff70959d51078f9ee8372f8cff0d7045e4114:
+
+  net: usb: asix_devices: add phy_mask for ax88772 mdio bus (2025-08-14 10:09:28 +0200)
+
+----------------------------------------------------------------
+Including fixes from Netfilter and IPsec.
+
+Current release - regressions:
+
+  - netfilter: nft_set_pipapo:
+    - don't return bogus extension pointer
+    - fix null deref for empty set
+
+Current release - new code bugs:
+
+  - core: prevent deadlocks when enabling NAPIs with mixed kthread config
+
+  - eth: netdevsim: Fix wild pointer access in nsim_queue_free().
+
+Previous releases - regressions:
+
+  - page_pool: allow enabling recycling late, fix false positive warning
+
+  - sched: ets: use old 'nbands' while purging unused classes
+
+  - xfrm:
+    - restore GSO for SW crypto
+    - bring back device check in validate_xmit_xfrm
+
+  - tls: handle data disappearing from under the TLS ULP
+
+  - ptp: prevent possible ABBA deadlock in ptp_clock_freerun()
+
+  - eth: bnxt: fill data page pool with frags if PAGE_SIZE > BNXT_RX_PAGE_SIZE
+
+  - eth: hv_netvsc: fix panic during namespace deletion with VF
+
+Previous releases - always broken:
+
+  - netfilter: fix refcount leak on table dump
+
+  - vsock: do not allow binding to VMADDR_PORT_ANY
+
+  - sctp: linearize cloned gso packets in sctp_rcv
+
+  - eth: hibmcge: fix the division by zero issue
+
+  - eth: microchip: fix KSZ8863 reset problem
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+
+----------------------------------------------------------------
+Alok Tiwari (1):
+      net: ti: icss-iep: Fix incorrect type for return value in extts_enable()
+
+Arnd Bergmann (1):
+      netfilter: add back NETFILTER_XTABLES dependencies
+
+Buday Csaba (1):
+      net: mdiobus: release reset_gpio in mdiobus_unregister_device()
+
+Budimir Markovic (1):
+      vsock: Do not allow binding to VMADDR_PORT_ANY
+
+Clark Wang (1):
+      net: phy: nxp-c45-tja11xx: fix the PHY ID mismatch issue when using C45
+
+Dan Carpenter (1):
+      netfilter: conntrack: clean up returns in nf_conntrack_log_invalid_sysctl()
+
+Dave Hansen (3):
+      MAINTAINERS: Mark Intel WWAN IOSM driver as orphaned
+      MAINTAINERS: Mark Intel PTP DFL ToD as orphaned
+      MAINTAINERS: Remove bouncing T7XX reviewer
+
+David Wei (1):
+      bnxt: fill data page pool with frags if PAGE_SIZE > BNXT_RX_PAGE_SIZE
+
+Davide Caratti (2):
+      net/sched: ets: use old 'nbands' while purging unused classes
+      selftests: net/forwarding: test purge of active DWRR classes
+
+Fabio Porcedda (1):
+      net: usb: qmi_wwan: add Telit Cinterion FN990A w/audio composition
+
+Florian Westphal (5):
+      MAINTAINERS: resurrect my netfilter maintainer entry
+      netfilter: ctnetlink: fix refcount leak on table dump
+      netfilter: ctnetlink: remove refcounting in expectation dumpers
+      netfilter: nft_set_pipapo: don't return bogus extension pointer
+      netfilter: nft_set_pipapo: fix null deref for empty set
+
+Frederic Weisbecker (1):
+      ipvs: Fix estimator kthreads preferred affinity
+
+Haiyang Zhang (1):
+      hv_netvsc: Fix panic during namespace deletion with VF
+
+Jakub Kicinski (11):
+      Merge tag 'nf-25-08-07' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
+      Merge branch 'there-are-some-bugfix-for-hibmcge-ethernet-driver'
+      net: page_pool: allow enabling recycling late, fix false positive warning
+      selftests: drv-net: don't assume device has only 2 queues
+      net: update NAPI threaded config even for disabled NAPIs
+      net: prevent deadlocks when enabling NAPIs with mixed kthread config
+      tls: handle data disappearing from under the TLS ULP
+      selftests: tls: test TCP stealing data from under the TLS socket
+      Merge tag 'nf-25-08-13' of https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
+      Merge branch '10GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
+      Merge branch 'ets-use-old-nbands-while-purging-unused-classes'
+
+Jedrzej Jagielski (2):
+      devlink: let driver opt out of automatic phys_port_name generation
+      ixgbe: prevent from unwanted interface name changes
+
+Jeff Layton (1):
+      ref_tracker: use %p instead of %px in debugfs dentry name
+
+Jeongjun Park (1):
+      ptp: prevent possible ABBA deadlock in ptp_clock_freerun()
+
+Jijie Shao (3):
+      net: hibmcge: fix rtnl deadlock issue
+      net: hibmcge: fix the division by zero issue
+      net: hibmcge: fix the np_link_fail error reporting issue
+
+Jordan Rife (1):
+      docs: Fix name for net.ipv4.udp_child_hash_entries
+
+Kuniyuki Iwashima (1):
+      netdevsim: Fix wild pointer access in nsim_queue_free().
+
+MD Danish Anwar (1):
+      net: ti: icssg-prueth: Fix emac link speed handling
+
+Matt Johnston (1):
+      net: mctp: Fix bad kfree_skb in bind lookup test
+
+Pablo Neira Ayuso (2):
+      netfilter: nft_socket: remove WARN_ON_ONCE with huge level value
+      netfilter: nf_tables: reject duplicate device on updates
+
+Paolo Abeni (3):
+      Merge branch 'fix-broken-link-with-th1520-gmac-when-linkspeed-changes'
+      Merge branch 'net-prevent-deadlocks-and-mis-configuration-with-per-napi-threaded-config'
+      Merge tag 'ipsec-2025-08-11' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec
+
+Russell King (Oracle) (2):
+      net: stmmac: rk: put the PHY clock on remove
+      net: stmmac: dwc-qos: fix clk prepare/enable leak on probe failure
+
+Sabrina Dubroca (4):
+      xfrm: flush all states in xfrm_state_fini
+      xfrm: restore GSO for SW crypto
+      xfrm: bring back device check in validate_xmit_xfrm
+      udp: also consider secpath when evaluating ipsec use for checksumming
+
+Stanislav Fomichev (2):
+      net: lapbether: ignore ops-locked netdevs
+      hamradio: ignore ops-locked netdevs
+
+Steffen Klassert (1):
+      Merge branch 'xfrm: some fixes for GSO with SW crypto'
+
+Sven Stegemann (1):
+      net: kcm: Fix race condition in kcm_unattach()
+
+Tristram Ha (1):
+      net: dsa: microchip: Fix KSZ8863 reset problem
+
+Xin Long (1):
+      sctp: linearize cloned gso packets in sctp_rcv
+
+Xu Yang (1):
+      net: usb: asix_devices: add phy_mask for ax88772 mdio bus
+
+Yao Zi (3):
+      dt-bindings: net: thead,th1520-gmac: Describe APB interface clock
+      net: stmmac: thead: Get and enable APB clock on initialization
+      riscv: dts: thead: Add APB clocks for TH1520 GMACs
+
+ .../devicetree/bindings/net/thead,th1520-gmac.yaml |  6 +-
+ Documentation/networking/ip-sysctl.rst             |  2 +-
+ MAINTAINERS                                        |  8 +--
+ arch/riscv/boot/dts/thead/th1520.dtsi              | 10 ++--
+ drivers/net/dsa/microchip/ksz8.c                   | 20 ++++---
+ drivers/net/dsa/microchip/ksz_common.c             |  1 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c          | 21 +++++--
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c   | 14 ++---
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c    | 15 ++++-
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.h  |  7 ++-
+ drivers/net/ethernet/intel/ixgbe/devlink/devlink.c |  1 +
+ .../ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c    | 13 +----
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     |  6 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c  | 14 +++++
+ drivers/net/ethernet/ti/icssg/icss_iep.c           |  3 +-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c       |  6 ++
+ drivers/net/hamradio/bpqether.c                    |  2 +-
+ drivers/net/hyperv/hyperv_net.h                    |  3 +
+ drivers/net/hyperv/netvsc_drv.c                    | 29 +++++++++-
+ drivers/net/netdevsim/netdev.c                     | 10 +++-
+ drivers/net/phy/mdio_bus.c                         |  1 +
+ drivers/net/phy/mdio_bus_provider.c                |  3 -
+ drivers/net/phy/nxp-c45-tja11xx.c                  | 23 ++++----
+ drivers/net/usb/asix_devices.c                     |  1 +
+ drivers/net/usb/qmi_wwan.c                         |  1 +
+ drivers/net/wan/lapbether.c                        |  2 +-
+ drivers/ptp/ptp_private.h                          |  5 ++
+ drivers/ptp/ptp_vclock.c                           |  7 +++
+ include/linux/netdevice.h                          |  5 +-
+ include/net/devlink.h                              |  6 +-
+ include/net/ip_vs.h                                | 13 +++++
+ include/net/kcm.h                                  |  1 -
+ include/net/page_pool/types.h                      |  2 +
+ kernel/kthread.c                                   |  1 +
+ lib/ref_tracker.c                                  |  2 +-
+ net/bridge/netfilter/Kconfig                       |  1 +
+ net/core/dev.c                                     | 12 +++-
+ net/core/dev.h                                     |  8 +++
+ net/core/page_pool.c                               | 29 ++++++++++
+ net/devlink/port.c                                 |  2 +-
+ net/ipv4/netfilter/Kconfig                         |  3 +
+ net/ipv4/udp_offload.c                             |  2 +-
+ net/ipv6/netfilter/Kconfig                         |  1 +
+ net/ipv6/xfrm6_tunnel.c                            |  2 +-
+ net/kcm/kcmsock.c                                  | 10 +---
+ net/mctp/test/route-test.c                         |  1 -
+ net/netfilter/ipvs/ip_vs_est.c                     |  3 +-
+ net/netfilter/nf_conntrack_netlink.c               | 65 ++++++++++------------
+ net/netfilter/nf_conntrack_standalone.c            |  6 +-
+ net/netfilter/nf_tables_api.c                      | 30 ++++++++++
+ net/netfilter/nft_set_pipapo.c                     |  5 +-
+ net/netfilter/nft_set_pipapo_avx2.c                | 12 ++--
+ net/netfilter/nft_socket.c                         |  2 +-
+ net/sched/sch_ets.c                                | 11 ++--
+ net/sctp/input.c                                   |  2 +-
+ net/tls/tls.h                                      |  2 +-
+ net/tls/tls_strp.c                                 | 11 +++-
+ net/tls/tls_sw.c                                   |  3 +-
+ net/vmw_vsock/af_vsock.c                           |  3 +-
+ net/xfrm/xfrm_device.c                             | 12 +++-
+ net/xfrm/xfrm_state.c                              |  2 +-
+ .../testing/selftests/drivers/net/napi_threaded.py | 10 ++--
+ tools/testing/selftests/net/forwarding/sch_ets.sh  |  1 +
+ .../selftests/net/forwarding/sch_ets_tests.sh      |  8 +++
+ tools/testing/selftests/net/tls.c                  | 63 +++++++++++++++++++++
+ 65 files changed, 429 insertions(+), 157 deletions(-)
+
 
