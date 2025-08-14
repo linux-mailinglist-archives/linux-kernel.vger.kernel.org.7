@@ -1,120 +1,281 @@
-Return-Path: <linux-kernel+bounces-768471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15559B26152
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:46:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63364B26155
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B5C1CC3EF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A794A268C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581C12EBDCF;
-	Thu, 14 Aug 2025 09:39:45 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0792A291864;
+	Thu, 14 Aug 2025 09:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="eIXOf0Eg"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013059.outbound.protection.outlook.com [52.101.127.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690BF2EACE7;
-	Thu, 14 Aug 2025 09:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755164385; cv=none; b=VEA6OtG9dyywdR4IVDsniD3p8dpcnmGf8pv+HCDuOuDOTPdVCfSi5istG0TIqkexL/T3PPHlAztoX+8XiEgr5neZPXPSp7su8dBrmyfxAakqS34lWQ3BRi+t5a9VfubFCg7PVlqTIqJ9mBHxGMncqapztmrnuFoWyWsIrhAR1sE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755164385; c=relaxed/simple;
-	bh=PphOKgCVg1ij/u5zEePdGoeIcFXzNrvWI/xh76qw4Ec=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C0lpd5M2j/MHsjH4dAjL1zd6wLG8h/dlLmwWGt7N4W1/pKyF+++pjRf5bzEYIWNqoNHPiDpW4a/UtNceVtRAn7xu9qfxAK0RcAfsDh/ELXaa53oLqkkUTvvUvtBiaYZXk42aV98JrYJ4bkncO6dsKnq2un0AZ0It6E9EEnAghME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 57E5bOD21474607;
-	Thu, 14 Aug 2025 02:39:41 -0700
-Received: from ala-exchng02.corp.ad.wrs.com ([128.224.246.37])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 48fvk22wrk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 14 Aug 2025 02:39:41 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (10.11.224.121) by
- ALA-EXCHNG02.corp.ad.wrs.com (10.11.224.122) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.57; Thu, 14 Aug 2025 02:39:35 -0700
-Received: from pek-lpd-ccm6.wrs.com (10.11.232.110) by
- ala-exchng01.corp.ad.wrs.com (10.11.224.121) with Microsoft SMTP Server id
- 15.1.2507.57 via Frontend Transport; Thu, 14 Aug 2025 02:39:33 -0700
-From: Rui He <rui.he@windriver.com>
-To: Bjorn Helgaas <bhelgaas@google.com>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <Prashant.Chikhalkar@windriver.com>, <Jiguang.Xiao@windriver.com>,
-        <Rui.He@windriver.com>
-Subject: [PATCH 1/1] pci: Add subordinate check before pci_add_new_bus()
-Date: Thu, 14 Aug 2025 17:39:37 +0800
-Message-ID: <20250814093937.2372441-1-rui.he@windriver.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41582E7BB8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755164417; cv=fail; b=d0VvZVLCIO6/kAe2BfMhjnsT0zRFIDuUkpWm1Ng2WIwoGbzJrPQT1E441M0zBQ/iyVu0Ebu+2KVKGUKcHQsOOlteleSWOg19XIZJrcuEMC9q7HFvTeYnbsRaVaVbNbtT/7lFdIfewEg1kNGJK8e366Ia7K9otnhD5wpZoJayqvI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755164417; c=relaxed/simple;
+	bh=ePPRJ6PmmZP9R/Uvw5oLGQ14/C2Z0oYXrfJ/VuBOL+g=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dWy0nv+Jq+sjWGpk4NouVKMKKRZLFgzAHSodeoHfpyqXlkgtIM1UcpNSDFTtlkwuBJluyhlMSRW29hJoiXlwVzGHqvAWQZBl46puk053503VwihrnbzhOPFPJ0is/HVQmkrVNlnEmpbtDZcszvoj/iV+iw2Yczg0ixx5o9D3Zn4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=eIXOf0Eg; arc=fail smtp.client-ip=52.101.127.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=F028z8MSCyq6zppT17SDIumMVI0i8oSGlYbkVWoyh08ZAv1lkClDuojziDP9DKw6lilWmLvRBAoeULRY/FmFpFLI+rJUn8EAim+DbO92nCGp8pNYAV53cPvqleXco8jISskxhsbEh4T2qlEdPLYZaJbzzsMpKU+uBOp4xWUBsS+TzowaNu1QP+TV13ncBMnhI5/bB0aRrpwh1J/e1yPaHswQzumGFKMgCbU7W2mrWrkF3qRcfuQe/2PxaqnpD8xJz08Si0CPtAVrhSG3GbLJuF3gPW+KxLMPUTsk7Es8ED8ib5mBIRVKkmVApqabgsjww3dfdaMSWZ1pea1GlSNl0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bZ0iokmu5lBZ0EaxPfjUOx/O5TtLYkbVrTf2FZuTfKg=;
+ b=JA5SDjEx1Zs9IUkZitMrPq7KlmVZkN2IsufOxs0gjsb9q0bYt2h1ir8bn/3vWBY5OUfXSui8Kyh/sF6rLbV5cy24DbqUSdR9lO2m3ohFjVFvkXATZwzl0Qo6KppfAnNUrBw2Rfj+J/B+H8nhhO+8luTkhhvMZvxRVJRxj4l4HEgTdp8F/BuNGcsPxM+E8MeDmPhHOyIMTefsP2p2xynwRjhliki+4KiuhdCcDkeb8YG0u54p1CaZ5b7YVsIguDXFnYhPxZiMLYyzfol9dmf1pA1ljjGL78iYpuxvOp0qiJTyraoaSRkIn4mJ4l85luNt8Lht+3Up6XDXYwB16gFmlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bZ0iokmu5lBZ0EaxPfjUOx/O5TtLYkbVrTf2FZuTfKg=;
+ b=eIXOf0EgIUUzbYbf5WR0p1i9D24hKtmCnkZ8thRoeTmC0pHJIYSo2bRPz6+P827OMKY75viSjx+3ZBdjX6E+s3cjqaYYcDKtdJ13n/0ihYXBqHMsmlm1J6S+pugtxRziWvVUiWE4Z3wsN64BlWfxijcL3V6KsaOuOFMLg6Gaxvdu5tqYSu8kr0Yq7TJOm88azm3r6ZDwe1uRZgTfHlD9JANK7hBhUPrOPGX7OntWi0kl9O/jVn6XUrnlBCawn0Kxo7xo/pxbU6NliMSBgV3mDy6lNnLjw83lbTdQ4y1fUupFbt7RlaUCcncfJmcvchb7vEt0/OzBOEEUo4Vedij0yA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com (2603:1096:101:c9::14)
+ by JH0PR06MB6368.apcprd06.prod.outlook.com (2603:1096:990:13::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
+ 2025 09:40:10 +0000
+Received: from SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6]) by SEZPR06MB5576.apcprd06.prod.outlook.com
+ ([fe80::5c0a:2748:6a72:99b6%5]) with mapi id 15.20.9031.014; Thu, 14 Aug 2025
+ 09:40:09 +0000
+From: Liao Yuanhong <liaoyuanhong@vivo.com>
+To: Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org (open list:RADEON and AMDGPU DRM DRIVERS),
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
+Subject: [PATCH] drm/radeon: Move the memset() function call after the return statement
+Date: Thu, 14 Aug 2025 17:39:57 +0800
+Message-Id: <20250814093957.137397-1-liaoyuanhong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYAPR01CA0213.jpnprd01.prod.outlook.com
+ (2603:1096:404:29::33) To SEZPR06MB5576.apcprd06.prod.outlook.com
+ (2603:1096:101:c9::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDA3OSBTYWx0ZWRfXz245HfK7SlOY
- DDeqLuZe8aAzP2/LDucucVEYobtdYhMd3ZdYyz7oCjkruHC/3PtZDm1XRjMlWbVxldIT8uxyy4R
- 6eSIZp92YhXiK6VR4/3YTa2ITbplLyoRWudHi6RqRu6sEaWyi16V6y8VlKHCOP9bftyMBzyNBYC
- eju1Cd+4PaZ6OC0SU1LqPdvVMh5/YBH0NsyDQkuiZDxPzMfSCJ0ENUD5xYxB4pCdvubnlGIXa9q
- HbwIBT48wGCRqlbTy6UiDzONwOVrQSp9f4hDcpzA6YKt08DhQTbT9nCeDFv6+juZAp7jf0RRQW1
- YccoViS/EB3nkO1CnYkV/Ye+4ntLR5aEweR+Zk637X48cHAGVd00fw6YWIBuHs=
-X-Proofpoint-ORIG-GUID: opu1I4NEu_CSml5-GNIvxABnQ7SlxkyM
-X-Proofpoint-GUID: opu1I4NEu_CSml5-GNIvxABnQ7SlxkyM
-X-Authority-Analysis: v=2.4 cv=PsOTbxM3 c=1 sm=1 tr=0 ts=689daedd cx=c_pps
- a=Lg6ja3A245NiLSnFpY5YKQ==:117 a=Lg6ja3A245NiLSnFpY5YKQ==:17
- a=2OwXVqhp2XgA:10 a=t7CeM3EgAAAA:8 a=KwTOwRFcXMM_fQDvAMoA:9
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1011 spamscore=0 bulkscore=0 adultscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2507300000 definitions=firstrun
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5576:EE_|JH0PR06MB6368:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1db95df1-ac26-4e23-fd3a-08dddb168f24
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6arAEt8Eoyz+EY+QpXpwxUzPe5wEPWNNeZq44mJ7j+7aPvT8K8NrAYGcokFW?=
+ =?us-ascii?Q?kdw6YNZc9LYuU4NcSBPUYRx/HnmHuWZJs7iPnZ/TFMOsIpQ2FDrP/UuEevZ7?=
+ =?us-ascii?Q?t0X+np1gmfkHZRwHoDJK8iRbqgPbrb1a7581C5Z0isUmXgtQTsTyVbdB2+qI?=
+ =?us-ascii?Q?6X8uHIxJl6ZySGWYzqOPiHHf9paLVLz0fKYw7dyLEiZ4HS2g4GMYSTLVCQzG?=
+ =?us-ascii?Q?VoVjILaRRFfyLtwQOiuaIlHtcSQlYcaCoQWAmvJcTOEK7c71MKMenJkZUiJe?=
+ =?us-ascii?Q?quWSmNlH4nUIBKOojXFSV7RQzyvCBX2f071R7UkEII63tgGkOKEnGDbBFcRo?=
+ =?us-ascii?Q?DdWQG9yeh//b3Vka8VB/lARESC4eRTLaIBohugQTcglQFQXDv8Xg5+q9BHAV?=
+ =?us-ascii?Q?mAyLDSg3TMj0SyHM/FwTj7qBX1yJpE16Bu+pckHalNdyyNw+lsr6Tb8reK8Y?=
+ =?us-ascii?Q?/5j++B+jPj/usuhjXh1WL7cYH/Oym1Lh4BLlvJ8YpLJ0NiKF7vOimKqhHzt0?=
+ =?us-ascii?Q?f7cAzptMwO9kvtoCFhlBomj7Xw77NcfBPP0z69UwaG5NNJMr5hLTggXsc6lR?=
+ =?us-ascii?Q?oBn3oFm8szyuNxEWwBthwO6NRM34KHyY26UPfSSktoGU7LPia8LBv+v78l7p?=
+ =?us-ascii?Q?aTEpPZBzg/vSTWYytA+lfPZl0slGDNFpJ4zf8LouTo5OoaLcfBwHPO0/7CW6?=
+ =?us-ascii?Q?ALgv5DemIJyvCq+vSZPzfnuKBc3aTPieQ2ImgZ7lt8go9Cr2nwU0ac7kjBap?=
+ =?us-ascii?Q?rQdXdNtQ9nnAauXB/hClveTjjuxFzaavelFylRGLvjnQ2WG+bqTQUVTpoYkW?=
+ =?us-ascii?Q?TirN+RJKLDLus0YLGL48obWyu4UdjZVUPaHgUImhIDnQ3IA/t62l6KpfEHpd?=
+ =?us-ascii?Q?vJ/PphCe9UEVrgvCFWF6/PQX2lbOydjfM/oxCUHklDySPrq+90//vdlmWTFe?=
+ =?us-ascii?Q?GtCRq2z3+2gwHU2WN2TwXEu76h2spa+L5LbZm7SkDGayKN+toWclGS+LaNBp?=
+ =?us-ascii?Q?t5tkLKjcPGB6MiB7i5uGO23Pd1+Pq4RyTr3fcpB/dn2rFOoUn13Tj3FMv9P/?=
+ =?us-ascii?Q?qy1UWFQjSwoOgcDzLXUWtpRRz9v4dWxEw7Ddqfgst7LielfzfYHfCqP1BFfg?=
+ =?us-ascii?Q?su4WiXJRp38FFWplPnLEMhaU12Fpz1yft8AOaewdZhBy9B+pC8vo/hwwQzcN?=
+ =?us-ascii?Q?lo4w03ylhwwgUjbq2b0sqCqHUMOyor534RiT3amB7zqZ0YsPNSwTfBMuTTNa?=
+ =?us-ascii?Q?R2tuhJeNDNIpW6viwNMaoQ2x13/CJjJ3Pqwn/44AZnSHU6ax198df5UzcP2E?=
+ =?us-ascii?Q?jECDEnifGCkpO5u2ZCaftuDAEawlMHKqOx3xvdew1mpHFwcAjkFeZpOMznTz?=
+ =?us-ascii?Q?AdP8zG6Gp24/nVgKtu/yUJ4IEUzrph1kWU50vhWQnOypS0VDn49H9XmubiLZ?=
+ =?us-ascii?Q?B5A8nHC+TilHWqs2L8G0burYjFgd2dvYKr709jnXUOZLCaZRoqcybg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5576.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FPsvGbRwYRfFe+8xX2JcHsytyRPR3a2tBlpBo5rDASe4gVfNeqBbKd5p5o0Y?=
+ =?us-ascii?Q?tiCdrU0E/RidVhL3eaDY8+866WYtubj8jRElR+nIam74eOjYt9gGaiym+STA?=
+ =?us-ascii?Q?vC+OQ52BJkGS5JXhQJk8xumCakPStaxDGMyuPfh1tA2jIp6gA4OvltBj9KP6?=
+ =?us-ascii?Q?gMteRGumKfbZ7fzgM4gSpkAyaRdPqIAwWY3ei3W37fnkYIiFrcVOlpgWYs2z?=
+ =?us-ascii?Q?Z4ZQLMy6Exy/80+B6vL+TQgiewUWmDOE76vH2TnX/7GWEWYW5fJwXsC3MGM2?=
+ =?us-ascii?Q?Ph4kEkuu3Q+Fy77bQ56WTV7ozoXh+SqCGQczz3UHf9/VBzU96rtJ1yRePerd?=
+ =?us-ascii?Q?mKkzAQecn+pjOyPaxLb9NdiMhqEvYDmaB+/kORoYieCgE2OSlXFz9/W/X4Hh?=
+ =?us-ascii?Q?1O+lL2/xOuSxBDIPJDepa86c4p4N0lP3vLRemxsRRvQmY379VusukF9mckPe?=
+ =?us-ascii?Q?4x8m9icc/dP3v8xFr2y/oDSfy4jyQHk256JJzBlHwwgsb1v4o0TjaQiwc3Ot?=
+ =?us-ascii?Q?+wuEkI/RDKziRWAfUz10lyRJA3Ez6Moa5DGcCEgZqgYtA6GexrSSgYQkjQ4A?=
+ =?us-ascii?Q?L2Zygg3z7bPZBKYWbQ7Wr0kAnNABbsp4/0UaInAzA/lbX7D4ErLt83b0PO9Y?=
+ =?us-ascii?Q?qiitIBQkMZsVVEraa6P0V3VxV42bpeJGmnHCz2sm0oMjm/UNSXb37wNWS/7E?=
+ =?us-ascii?Q?UG9VGhQiBkOQMDl2/46d8PyBvVyNnV2xn1QFZ3t5CeTU6/Jq75kfsWxwsktE?=
+ =?us-ascii?Q?ifjmpOX/LaQNhmIeeX69v5sj9NHrcCZTWlFgmFHEz+MmIYCTGkTGpTWKxgkH?=
+ =?us-ascii?Q?nhlcMoyJxwRya/ZI3tGOLrHNeHMOnhCHgF8AVWIMKLoDytVejfT+vALo4zwM?=
+ =?us-ascii?Q?S4NNPIFMIQX5cS5iZfKIcrfh0/hjbHh/gSGGVfhHqX87NaoH10lK6P4w0340?=
+ =?us-ascii?Q?XYvk3tPPGDeuDJy//TC0PMucjV91s/QWQNCMwwPNvb4AU6gJ+OLLWxIARKFR?=
+ =?us-ascii?Q?POAtlruj0OAF9iyIctyyS31eKCJagEtAvH6m+rzsIu98NU/XtTQJY0+LFiRL?=
+ =?us-ascii?Q?JsKncBoEYqZFkcJDBpUWCY+ugKDH/grD6Ro0nS0xY0KbKHFq1LX5GD6e5ayV?=
+ =?us-ascii?Q?2ZAMvGPFW0YTtvJLjObPEz/b14y0vJdIRLQJc4L3KJ8TM2kJTRL7+eMt2AAQ?=
+ =?us-ascii?Q?u5xVm2Nh28Y2MME//AHgtLI8lzccYyskfiN3XB79HCvDPbF/khpVfbyKHjE5?=
+ =?us-ascii?Q?LYI3ln8lGWQ11dVLrxZqOsrpszU5XfgSq3saH3s7Ay+/+qF01tT/Bq9G9zom?=
+ =?us-ascii?Q?EU07X45b99vUcXYlLhUGbAksAGeQzilIZZG+hSac/sQZ/AvwPHjlAKZa6Wq0?=
+ =?us-ascii?Q?WASLnuqolbaQff+VRIGFFGjVvI2zYPQReQaNFQlNv+4Ei2XCH0P49/vsRqjY?=
+ =?us-ascii?Q?LNAxtoz9mGkHkKE1MxfYpxs/b91p157sRHy/q9wX1ZE2aoQZyeeCjsSngJoG?=
+ =?us-ascii?Q?TT+gHAt9iPn3ECOEC2HLoPxwF5SCy1V5GDL3nxZVtewkLAZHqClA56DknXpl?=
+ =?us-ascii?Q?5bQhcEcpDAtFNkQewo/6GF4opOzXFyIOVcWK/4rj?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1db95df1-ac26-4e23-fd3a-08dddb168f24
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5576.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 09:40:09.6173
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FO2XmSG/rQjWB7vHdmWvOA+NwFXPM2iODUOo2hOWXcYgncPIqGWJY9L7zTWSrldqPK22ccgiFbYoOjW0l0um5A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6368
 
-For preconfigured PCI bridge, child bus created on the first scan.
-While for some reasons(e.g register mutation), the secondary, and subordiante
-register reset to 0 on the second scan, which caused to create
-PCI bus twice for the same PCI device.
+Adjust the position of the memset() call to avoid unnecessary invocations.
 
-Following is the related log:
-[Wed May 28 20:38:36 CST 2025] pci 0000:0b:01.0: PCI bridge to [bus 0d]
-[Wed May 28 20:38:36 CST 2025] pci 0000:0b:05.0: bridge configuration invalid ([bus 00-00]), reconfiguring
-[Wed May 28 20:38:36 CST 2025] pci 0000:0b:01.0: PCI bridge to [bus 0e-10]
-[Wed May 28 20:38:36 CST 2025] pci 0000:0b:05.0: PCI bridge to [bus 0f-10]
-
-Here PCI device 000:0b:01.0 assigend to bus 0d and 0e.
-
-This patch checks if child PCI bus has been created on the second scan
-of bridge. If yes, return directly instead of create a new one.
-
-Signed-off-by: Rui He <rui.he@windriver.com>
+Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
 ---
- drivers/pci/probe.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/radeon/atombios_crtc.c     |  8 ++++----
+ drivers/gpu/drm/radeon/atombios_encoders.c | 20 ++++++++++----------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index f41128f91ca76..ec67adbf31738 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1444,6 +1444,9 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
- 			goto out;
- 		}
+diff --git a/drivers/gpu/drm/radeon/atombios_crtc.c b/drivers/gpu/drm/radeon/atombios_crtc.c
+index 9b3a3a9d60e2..0aae84f5e27c 100644
+--- a/drivers/gpu/drm/radeon/atombios_crtc.c
++++ b/drivers/gpu/drm/radeon/atombios_crtc.c
+@@ -770,13 +770,13 @@ static void atombios_crtc_set_disp_eng_pll(struct radeon_device *rdev,
+ 	int index;
+ 	union set_pixel_clock args;
  
-+		if(pci_has_subordinate(dev))
-+			goto out;
+-	memset(&args, 0, sizeof(args));
+-
+ 	index = GetIndexIntoMasterTable(COMMAND, SetPixelClock);
+ 	if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev,
+ 				   &crev))
+ 		return;
+ 
++	memset(&args, 0, sizeof(args));
 +
- 		/* Clear errors */
- 		pci_write_config_word(dev, PCI_STATUS, 0xffff);
+ 	switch (frev) {
+ 	case 1:
+ 		switch (crev) {
+@@ -832,12 +832,12 @@ static void atombios_crtc_program_pll(struct drm_crtc *crtc,
+ 	int index = GetIndexIntoMasterTable(COMMAND, SetPixelClock);
+ 	union set_pixel_clock args;
  
+-	memset(&args, 0, sizeof(args));
+-
+ 	if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev,
+ 				   &crev))
+ 		return;
+ 
++	memset(&args, 0, sizeof(args));
++
+ 	switch (frev) {
+ 	case 1:
+ 		switch (crev) {
+diff --git a/drivers/gpu/drm/radeon/atombios_encoders.c b/drivers/gpu/drm/radeon/atombios_encoders.c
+index d1c5e471bdca..f706e21a3509 100644
+--- a/drivers/gpu/drm/radeon/atombios_encoders.c
++++ b/drivers/gpu/drm/radeon/atombios_encoders.c
+@@ -492,11 +492,11 @@ atombios_dvo_setup(struct drm_encoder *encoder, int action)
+ 	int index = GetIndexIntoMasterTable(COMMAND, DVOEncoderControl);
+ 	uint8_t frev, crev;
+ 
+-	memset(&args, 0, sizeof(args));
+-
+ 	if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+ 		return;
+ 
++	memset(&args, 0, sizeof(args));
++
+ 	/* some R4xx chips have the wrong frev */
+ 	if (rdev->family <= CHIP_RV410)
+ 		frev = 1;
+@@ -856,8 +856,6 @@ atombios_dig_encoder_setup2(struct drm_encoder *encoder, int action, int panel_m
+ 	if (dig->dig_encoder == -1)
+ 		return;
+ 
+-	memset(&args, 0, sizeof(args));
+-
+ 	if (ASIC_IS_DCE4(rdev))
+ 		index = GetIndexIntoMasterTable(COMMAND, DIGxEncoderControl);
+ 	else {
+@@ -870,6 +868,8 @@ atombios_dig_encoder_setup2(struct drm_encoder *encoder, int action, int panel_m
+ 	if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+ 		return;
+ 
++	memset(&args, 0, sizeof(args));
++
+ 	switch (frev) {
+ 	case 1:
+ 		switch (crev) {
+@@ -1453,11 +1453,11 @@ atombios_external_encoder_setup(struct drm_encoder *encoder,
+ 			(radeon_connector->connector_object_id & OBJECT_ID_MASK) >> OBJECT_ID_SHIFT;
+ 	}
+ 
+-	memset(&args, 0, sizeof(args));
+-
+ 	if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+ 		return;
+ 
++	memset(&args, 0, sizeof(args));
++
+ 	switch (frev) {
+ 	case 1:
+ 		/* no params on frev 1 */
+@@ -1853,11 +1853,11 @@ atombios_set_encoder_crtc_source(struct drm_encoder *encoder)
+ 	uint8_t frev, crev;
+ 	struct radeon_encoder_atom_dig *dig;
+ 
+-	memset(&args, 0, sizeof(args));
+-
+ 	if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+ 		return;
+ 
++	memset(&args, 0, sizeof(args));
++
+ 	switch (frev) {
+ 	case 1:
+ 		switch (crev) {
+@@ -2284,11 +2284,11 @@ atombios_dac_load_detect(struct drm_encoder *encoder, struct drm_connector *conn
+ 		int index = GetIndexIntoMasterTable(COMMAND, DAC_LoadDetection);
+ 		uint8_t frev, crev;
+ 
+-		memset(&args, 0, sizeof(args));
+-
+ 		if (!atom_parse_cmd_header(rdev->mode_info.atom_context, index, &frev, &crev))
+ 			return false;
+ 
++		memset(&args, 0, sizeof(args));
++
+ 		args.sDacload.ucMisc = 0;
+ 
+ 		if ((radeon_encoder->encoder_id == ENCODER_OBJECT_ID_INTERNAL_DAC1) ||
 -- 
-2.43.0
+2.34.1
 
 
