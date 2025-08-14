@@ -1,121 +1,155 @@
-Return-Path: <linux-kernel+bounces-767830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D9DB25997
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:46:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6553BB25998
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D806F1C85C20
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B743C1C85BB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBD7230BD2;
-	Thu, 14 Aug 2025 02:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB042580CC;
+	Thu, 14 Aug 2025 02:49:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jf3VAhtj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YaOz01j6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24B91494DB
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B24F2FF64F;
+	Thu, 14 Aug 2025 02:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755139546; cv=none; b=WwG/rAVgPje/fvnoJXeO7EACeBQpXkJiWhC9KrO2eRpwA8VgNEaruI0HCFeND0pPPX1cz0hBrxEYUpgqDKST5zPkdLWRQ3CMTS8vI3zZoxUTQZaHHXbLXw6e+bf1GP8KiUUQkUA13tgOMfaHtEjiq6o21fh7NxozvyXG68FTIj8=
+	t=1755139755; cv=none; b=u6sPlL4DtHYBbz0ZJ27/2esaaISd28RfEtg0sX+ZIVutO+1acg9Wbi830pCI3CX0bcKJVi9PK/oXquCugv9F0A78LGCTqUhOwyiL3cWUSPIi5eTVQ0mBSjNratw048mgLCQfvZnLAcf1sFlGkt7kLCgs7MQ/duGIB3FaIBAFUb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755139546; c=relaxed/simple;
-	bh=v6gtkvXreyqOqot4vkurerVhlYiyKQACGbn8bOCtH/0=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=Nb9WL9UKuPezzrt5FMZ/QU421rWsYtMeTnEk/ChzZ6Yv1ySED962FRThyO3PWgJN3WYGXscwBsV7vGpEra/i+HLvCLW6lgV31NJokc41Wp0LwJzC1T87tXYec4LvQJPkOic7j16eK2BiQUR9UaV0U7pz1jdnUP+pO6atpMbZacU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jf3VAhtj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D3BC4CEEB;
-	Thu, 14 Aug 2025 02:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755139545;
-	bh=v6gtkvXreyqOqot4vkurerVhlYiyKQACGbn8bOCtH/0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jf3VAhtjMpl5qCNIDTYJCo6KsPnnm2bZ0Tt+V+4V3TZREvqG63HPF+B7zst8gUM5v
-	 fVGeKsuLbcP7E2YUhJRACq2BXm4Ua846XfK0hyWRcyT0YlAD+++0MnfLGSjGTlNwM/
-	 rl7Bhdwgq4fc9b5eFkHh5RxwfWSy08OfEVHfbmS344dR2O2yDR4Q2kZURB0o1hy23D
-	 9BNcr1//wexcEVEvq3/mkzZiBDlKwWp74L4knttu+ESb2CvuB83j8+EFH/Gw1U0krq
-	 l590Oa4mow1RVbSyznZ6iXaEqkM8BIU6Y1hLmQp9zGiypi1Nz1v1aiJF0ZJCE2YIID
-	 lx4RJ62JgCL4Q==
-Date: Thu, 14 Aug 2025 11:45:41 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] probes: Fixes for v6.17-rc1
-Message-Id: <20250814114541.681999bfa828ca159b7bb32d@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1755139755; c=relaxed/simple;
+	bh=NpHssSYhn2CrKHZjneLbrsKgTdd7DLyCmHtf4o7Q5rQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LIR3xfAGhtiGT70TyAJeNwRra1mqoxJPWDsk4YHeZM5sKwZkQyJBmvU5/Pxn9LlxCZYC5ja7mxxTBTbaCZyMz3OMkK3yqYVFb2CUvX52VB4zjoNm1OK6Dir1JAtmzNTo5BDmJBlPROQIPk3YYuDt3CnT23EZp/as0+fW4nLFRCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YaOz01j6; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755139754; x=1786675754;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NpHssSYhn2CrKHZjneLbrsKgTdd7DLyCmHtf4o7Q5rQ=;
+  b=YaOz01j6kGHY6x2+z/eQSu+fg12T1L2PissdDkuIAR9TnXWTZMhv8UT5
+   kWXkBvbEpesNoQCQVugb7flFrARMH/Ndqk2P0Tw8TCqSni9vg2AuYspZA
+   HdTD0Q/UrEjinVrruslV0KLrUWErx2FsWV4yW40ceWdTDVjD95Iv7vCvp
+   gKT6pu4tCTOb3vchl5U0B45wov5ao9nhPHWUTzwOaMXcu6149PDSQ6Gyq
+   HLI9uITCvlgGJ/WE5hMuwVbRbXKv12IdpvezosrLTCYHhbscRdQ0kpZHx
+   Xi72nUQsVfjeQM4mV2oMINrkFr/fzU6bCN1JvyTpQ2RR0IfYp/vKJ/Dy5
+   w==;
+X-CSE-ConnectionGUID: BCWlbJRsTweg9FAWXitocw==
+X-CSE-MsgGUID: yMHyqI4eQTWBxHJJWTbgKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="61067348"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="61067348"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 19:49:11 -0700
+X-CSE-ConnectionGUID: PvsRFcA1Qz+YhDZhaV9yIw==
+X-CSE-MsgGUID: K+dR4kxIQvyOIl0PurNKPA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="171977867"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 19:49:07 -0700
+Message-ID: <4b7e7099-79da-4178-8f16-6780d8137ae1@linux.intel.com>
+Date: Thu, 14 Aug 2025 10:49:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-Hi Linus,
-
-Probes fixes for v6.17-rc1:
-
- - MAINTAINERS: Remove bouncing kprobes maintainer.
-     Since anil.s.keshavamurthy@intel.com causes bouncing, remove it.
-
-
-Please pull the latest probes-fixes-v6.17-rc1 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-probes-fixes-v6.17-rc1
-
-Tag SHA1: 1bc9e46d17a3246b34b1030dcf8be0a4f61930f6
-Head SHA1: e2f9ae91619add9884428d095c3c630b6b120a61
-
-
-Dave Hansen (1):
-      MAINTAINERS: Remove bouncing kprobes maintainer
-
-----
- MAINTAINERS | 1 -
- 1 file changed, 1 deletion(-)
----------------------------
-commit e2f9ae91619add9884428d095c3c630b6b120a61
-Author: Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Thu Aug 14 11:38:58 2025 +0900
-
-    MAINTAINERS: Remove bouncing kprobes maintainer
-    
-    The kprobes MAINTAINERS entry includes anil.s.keshavamurthy@intel.com.
-    That address is bouncing. Remove it.
-    
-    This still leaves three other listed maintainers.
-    
-    Link: https://lore.kernel.org/all/20250808180124.7DDE2ECD@davehans-spike.ostc.intel.com/
-    
-    Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-    Cc: Naveen N Rao <naveen@kernel.org>
-    Cc: "David S. Miller" <davem@davemloft.net>
-    Cc: Masami Hiramatsu <mhiramat@kernel.org>
-    Cc: linux-trace-kernel@vger.kernel.org
-    Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fe168477caa4..a2bc2bb91970 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13686,7 +13686,6 @@ F:	scripts/Makefile.kmsan
- 
- KPROBES
- M:	Naveen N Rao <naveen@kernel.org>
--M:	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
- M:	"David S. Miller" <davem@davemloft.net>
- M:	Masami Hiramatsu <mhiramat@kernel.org>
- L:	linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 08/30] KVM: selftests: TDX: Update
+ load_td_memory_region() for VM memory backed by guest memfd
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Sean Christopherson <seanjc@google.com>, Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Ackerley Tng <ackerleytng@google.com>,
+ Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20250807201628.1185915-1-sagis@google.com>
+ <20250807201628.1185915-9-sagis@google.com> <aJpTMVV-F0z8iyb4@google.com>
+ <4b938a0a-a4ef-42c9-aef5-c931f2ad8aa0@linux.intel.com>
+ <bec79c4a-499d-4f82-bfea-05746d4085e9@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <bec79c4a-499d-4f82-bfea-05746d4085e9@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+On 8/13/2025 10:42 PM, Reinette Chatre wrote:
+> Hi Binbin,
+>
+> On 8/13/25 2:23 AM, Binbin Wu wrote:
+>>
+>> On 8/12/2025 4:31 AM, Sean Christopherson wrote:
+>>> On Thu, Aug 07, 2025, Sagi Shahar wrote:
+>> [...]
+>>>> +
+>>>>    /*
+>>>>     * TD creation/setup/finalization
+>>>>     */
+>>>> @@ -459,28 +474,35 @@ static void load_td_memory_region(struct kvm_vm *vm,
+>>>>        if (!sparsebit_any_set(pages))
+>>>>            return;
+>>>>    +    if (region->region.guest_memfd != -1)
+>>>> +        register_encrypted_memory_region(vm, region);
+>>>> +
+>>>>        sparsebit_for_each_set_range(pages, i, j) {
+>>>>            const uint64_t size_to_load = (j - i + 1) * vm->page_size;
+>>>>            const uint64_t offset =
+>>>>                (i - lowest_page_in_region) * vm->page_size;
+>>>>            const uint64_t hva = hva_base + offset;
+>>>>            const uint64_t gpa = gpa_base + offset;
+>>>> -        void *source_addr;
+>>>> +        void *source_addr = (void *)hva;
+>>>>              /*
+>>>>             * KVM_TDX_INIT_MEM_REGION ioctl cannot encrypt memory in place.
+>>>>             * Make a copy if there's only one backing memory source.
+>>>>             */
+>>>> -        source_addr = mmap(NULL, size_to_load, PROT_READ | PROT_WRITE,
+>>>> -                   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+>>>> -        TEST_ASSERT(source_addr,
+>>>> -                "Could not allocate memory for loading memory region");
+>>>> -
+>>>> -        memcpy(source_addr, (void *)hva, size_to_load);
+>>>> +        if (region->region.guest_memfd == -1) {
+>>> Oh, here's the "if".
+>> Is it still possible for "region->region.guest_memfd == -1" case?
+>> KVM_TDX_INIT_MEM_REGION can only work with guest memfd, right?
+>>
+> This is still used and supports test "KVM: selftests: TDX: Test
+> LOG_DIRTY_PAGES flag to a non-GUEST_MEMFD memslot" found in patch #30 that
+> was created to support the issue encountered when QEMU attaches an emulated
+> VGA device to a TD. More details available in the fix:
+> fbb4adadea55 ("KVM: x86: Make cpu_dirty_log_size a per-VM value")
+
+I think load_td_memory_region() should return directly for non-guest_memfd
+region.
+In current upstream version, KVM_TDX_INIT_MEM_REGION doesn't support
+non-guest_memfd region.
+
+The mmap/memcpy/munmap sequence should be removed because it does nothing but
+zero out the original content.
+
+
+
+>
+> Reinette
+
 
