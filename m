@@ -1,243 +1,155 @@
-Return-Path: <linux-kernel+bounces-768263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF19B25EEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7995AB25EF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8497B5A238A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:34:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC92C5A2DC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A0A2E7BB7;
-	Thu, 14 Aug 2025 08:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C9D2E2DF8;
+	Thu, 14 Aug 2025 08:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYJMiC+A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIYycoX5"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1F2264A76;
-	Thu, 14 Aug 2025 08:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE20239581;
+	Thu, 14 Aug 2025 08:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160461; cv=none; b=HwDx64GKDkJ+xcfTp75vcZYl0eAYpS2ItdrcRZLvZz7Bc2+d6U+8enLFrn5qWZUcr6bJC2Dpp53moI8BlJo0GkHg8RbTPYlNHTd0ZcqmRecMOZkraOOxqoIUw0xNtQUr/GTZzGoWLb6zyCDEJxSsXybTlzcEvVyZyUhNunIuqMw=
+	t=1755160506; cv=none; b=FZhoIjsiF5q/QpMkr2mRywhErs2OqeAAERPwF9NjFimjh3S+onMtI5BivdmEfGXXxHqAa50AGf1BNzrdSJvcizYNkVlS18NPPO6Tg5V06iP5SVvU6DwKs41L8mYBZV2c2SY5/14h/wk8a4jwhM4OD9oDbPSNoBxij6EVaRRoBes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160461; c=relaxed/simple;
-	bh=JJZTzu+RAz4/lXyoF8hhed0E/+6KW4y3Lc2HDHprM3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8arL3X/cSiR7Z+dtZ4F/9RJ6eycj0WrVvc/4L2Uj9xGKVwFnJDKgurLFlWEJ+NWJ+iTmKZ5MrlaJSmq1N55S0MAbc+Q7WXrWXy83GGudtLjS4CX22lOZfj5TaXvIiU2VbYlcLUxnr6Vse/gx7+sFYngi7hyqE3/VZ+ZQAWcifM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYJMiC+A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83461C4CEEF;
-	Thu, 14 Aug 2025 08:34:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755160460;
-	bh=JJZTzu+RAz4/lXyoF8hhed0E/+6KW4y3Lc2HDHprM3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sYJMiC+A6ZsYL/xcMfF5gXE5Tqd2ONGCHOWgXGdfoS679A/WsvWY4v/yNnAdOGJ+l
-	 jTR2ZQjW5ocrjLWjjrbnOIQaPGP72w5wLeWhPEeNMh/kwb4iF3HCdoGM4lS27vlnlE
-	 C06vKS2l/dvw+L7KYiTEAmNBniJOG5U2Dg3Z8Oqi41JdMD+dOS2ox8Yt3JVFMK4Ko8
-	 yPGdi7p5vKJqhIUOiCUOT01Fp1IeSJzEyef+iKY1gvCG+p8H824C5wj+OzG16e87LX
-	 PfIthLVHmXIqBCLYKsRoqDM9o16zhFcmVnIDLFE4O9kfBbO8ZR3C0vmiLs8ODwrqV+
-	 DOhyHiLRa8bQA==
-Date: Thu, 14 Aug 2025 11:33:59 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 05/10] mm: convert uprobes to mm_flags_*() accessors
-Message-ID: <aJ2fd3iD6GqZ_LWw@kernel.org>
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <1d4fe5963904cc0c707da1f53fbfe6471d3eff10.1755012943.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1755160506; c=relaxed/simple;
+	bh=btMaktMsMFdvjb/8kiNjF7N+VOtWOxJQuOFY4wPqgbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PMQXABACZh3W1iVeWD9XIvgDXtPSCRWpu+Pw5y6Ggk/tVedj1oTDlRAAQHIhKirFUfCThmb+R+xa8W67EgxSw9lyHHoDM8bvfGjHXghfAzQyZv9hUxyxlWsKN72dS9cKGTbTrmmAoW/03yjcPtGk+7CoBjI6UjlHevP0xHfmwUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIYycoX5; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-333f92a69d4so5069301fa.2;
+        Thu, 14 Aug 2025 01:35:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755160503; x=1755765303; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=R7aR8S9FRLta1axStaNt4O0Wb6l880Eq2jEsm/C+nIM=;
+        b=hIYycoX51mM186Jjc3Dyi6QOsiichlPNvaGGn6AgkjYcjrxuAQJXg0iS5U3jMRUZbU
+         Om9hgcy+5+IqqQ7GHlJb2WPBz01ihEV5L//l4SA1lwKi5qH28+o7IZe4Wp5IGTvPRDc3
+         zKiQdiCNeBgW2IMbfuuiq2YGda+OeWRzjrbtIBFlFZtNQMfXFSJemrvnwIDF1gbaPsIE
+         76PONA4kniwYiGuC8JpBDiOtOSalYVfjI5DbyPlVwQDm6JiNZM6htbBUyzgCHH37Ody6
+         1FxZGyYdd+Dp4B7n5stQ7YT4sgLsp14vhiq/4PuMKDfClD+JYinW5cQGTino/SufrDVB
+         DyUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755160503; x=1755765303;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R7aR8S9FRLta1axStaNt4O0Wb6l880Eq2jEsm/C+nIM=;
+        b=UXTyaBFaXe26zYy+HPPvafjl6NtsIy940mKJAMcNDc0msaxj0ISHnVIOlk/NfeLR7X
+         cqKYALKdma9+xxnMDmtsNaCXp4kEVB5jK0w89NdCyfc9fgA12ADF80FyIU65GVCRSyZA
+         JYfSsRc36+pKT1d8EKVUljmWDwZjXqKW9ThGOYCtNqMC4C8Fl9izhE4rNR0QbtkMR2Bg
+         KwWJvjxwI+fVZL/FUZP8fCrNaYW42rneTxfFpajYDsfOWW/RoDOjjWwezyytDvY+qqhh
+         qWqIDmRm2NrWQLgxzHt3ABoVjKSYkWR14nwQOCsVK+KiM+phCCCsjiXyZN/Yg3YQdgJr
+         bCwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEBYyFEyRvoM5s5aIpxRaoJn8NBdh57zHk+Wwl21THcGZKZjAvBnzZQFN8Ta73v+tBAZVrFmZmK3MO@vger.kernel.org, AJvYcCV0Vgj7FoOzghyDnJa3bgAuzLuj4oVAXJ+YTygiMJOA0Qa3O3Tnf6D1SHR9RVpQz7yqKDAcGvPDFbbn2Paj@vger.kernel.org, AJvYcCX0lzLOeoqm78bruuhSPQ3h/ffhzCT/zx1mpeHCnE+mdceZoYpatxieZTb+mn58NvYKe7GLJqXTRmaY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl8OdsfcoALTosqv4aIxDGzda7pQsMuasjInNrEsHTYoiNDvt8
+	KRY3hpHo1KC+rt9stlqWyseo4gY1WcdqeQvSKwFObSVf6obi1cYmJeX6
+X-Gm-Gg: ASbGnct1YMG+f/yB/ajJXVI5jw6k5S63wVqE07LE3PUQ5l22q789MFRQMD3uAHs9WBi
+	UyzYO/GBkDcK1buFcnN3AFzCJSnjt/9rJR6LWjTlsMeG5EW8ZPgfOCF9IdK0uEXyR8u14Oq/tKk
+	CKhECQ4frNzjiXwy5qtbi581wDNXhEKu7FiD3daBka9OlZplr5+nsZnKsZUyErJpqqoqCAa5DpI
+	5agGbs3OyM5bFFLaYY/onC3gWY2rrF1XciwHpCS6+VEGAJFXTQYHOfnDyIU9tenHdpsgXFM3kyJ
+	RLZh7MD6b3uRVm65N7/4zCs1sZkw3TMPGeLRe74Il/RkyDAWa7ASS9ukNWl91mmY4/XSSUtFt1V
+	mxOYYwapQvMpfrOrEgE9A7cP2
+X-Google-Smtp-Source: AGHT+IEZeHzlXMMVE4kRk5QCaLTyFIuAx0jVdWQvsbTeSj+GjEtfhbgXIYu9OpDKv1NCBoqSdv8c2Q==
+X-Received: by 2002:a2e:2e1a:0:b0:333:f952:e3da with SMTP id 38308e7fff4ca-333fa824acdmr3588921fa.31.1755160502712;
+        Thu, 14 Aug 2025 01:35:02 -0700 (PDT)
+Received: from mva-rohm ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-333f8cbbfd3sm1920661fa.3.2025.08.14.01.35.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 01:35:01 -0700 (PDT)
+Date: Thu, 14 Aug 2025 11:34:50 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sukrut Bellary <sbellary@baylibre.com>,
+	Lothar Rubusch <l.rubusch@gmail.com>
+Subject: [PATCH 0/3] Support ROHM BD7910[0,1,2,3]
+Message-ID: <cover.1755159847.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Bf1rqEWCO5/UOXc+"
+Content-Disposition: inline
+
+
+--Bf1rqEWCO5/UOXc+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1d4fe5963904cc0c707da1f53fbfe6471d3eff10.1755012943.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 12, 2025 at 04:44:14PM +0100, Lorenzo Stoakes wrote:
-> As part of the effort to move to mm->flags becoming a bitmap field, convert
-> existing users to making use of the mm_flags_*() accessors which will, when
-> the conversion is complete, be the only means of accessing mm_struct flags.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Add support for ROHM BD7910[0,1,2,3] ADCs.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+The ROHM BD79100, BD79101, BD79102 and BD79103 are ADCs derived from the
+BD79104. According to the data-sheets, the BD79103 is compatible with the
+BD79104. Rest of the ICs have different number of analog input channels.
 
-> ---
->  kernel/events/uprobes.c | 32 ++++++++++++++++----------------
->  1 file changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 7ca1940607bd..31a12b60055f 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1153,15 +1153,15 @@ static int install_breakpoint(struct uprobe *uprobe, struct vm_area_struct *vma,
->  	 * set MMF_HAS_UPROBES in advance for uprobe_pre_sstep_notifier(),
->  	 * the task can hit this breakpoint right after __replace_page().
->  	 */
-> -	first_uprobe = !test_bit(MMF_HAS_UPROBES, &mm->flags);
-> +	first_uprobe = !mm_flags_test(MMF_HAS_UPROBES, mm);
->  	if (first_uprobe)
-> -		set_bit(MMF_HAS_UPROBES, &mm->flags);
-> +		mm_flags_set(MMF_HAS_UPROBES, mm);
->  
->  	ret = set_swbp(&uprobe->arch, vma, vaddr);
->  	if (!ret)
-> -		clear_bit(MMF_RECALC_UPROBES, &mm->flags);
-> +		mm_flags_clear(MMF_RECALC_UPROBES, mm);
->  	else if (first_uprobe)
-> -		clear_bit(MMF_HAS_UPROBES, &mm->flags);
-> +		mm_flags_clear(MMF_HAS_UPROBES, mm);
->  
->  	return ret;
->  }
-> @@ -1171,7 +1171,7 @@ static int remove_breakpoint(struct uprobe *uprobe, struct vm_area_struct *vma,
->  {
->  	struct mm_struct *mm = vma->vm_mm;
->  
-> -	set_bit(MMF_RECALC_UPROBES, &mm->flags);
-> +	mm_flags_set(MMF_RECALC_UPROBES, mm);
->  	return set_orig_insn(&uprobe->arch, vma, vaddr);
->  }
->  
-> @@ -1303,7 +1303,7 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
->  			/* consult only the "caller", new consumer. */
->  			if (consumer_filter(new, mm))
->  				err = install_breakpoint(uprobe, vma, info->vaddr);
-> -		} else if (test_bit(MMF_HAS_UPROBES, &mm->flags)) {
-> +		} else if (mm_flags_test(MMF_HAS_UPROBES, mm)) {
->  			if (!filter_chain(uprobe, mm))
->  				err |= remove_breakpoint(uprobe, vma, info->vaddr);
->  		}
-> @@ -1595,7 +1595,7 @@ int uprobe_mmap(struct vm_area_struct *vma)
->  
->  	if (vma->vm_file &&
->  	    (vma->vm_flags & (VM_WRITE|VM_SHARED)) == VM_WRITE &&
-> -	    test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags))
-> +	    mm_flags_test(MMF_HAS_UPROBES, vma->vm_mm))
->  		delayed_ref_ctr_inc(vma);
->  
->  	if (!valid_vma(vma, true))
-> @@ -1655,12 +1655,12 @@ void uprobe_munmap(struct vm_area_struct *vma, unsigned long start, unsigned lon
->  	if (!atomic_read(&vma->vm_mm->mm_users)) /* called by mmput() ? */
->  		return;
->  
-> -	if (!test_bit(MMF_HAS_UPROBES, &vma->vm_mm->flags) ||
-> -	     test_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags))
-> +	if (!mm_flags_test(MMF_HAS_UPROBES, vma->vm_mm) ||
-> +	     mm_flags_test(MMF_RECALC_UPROBES, vma->vm_mm))
->  		return;
->  
->  	if (vma_has_uprobes(vma, start, end))
-> -		set_bit(MMF_RECALC_UPROBES, &vma->vm_mm->flags);
-> +		mm_flags_set(MMF_RECALC_UPROBES, vma->vm_mm);
->  }
->  
->  static vm_fault_t xol_fault(const struct vm_special_mapping *sm,
-> @@ -1823,10 +1823,10 @@ void uprobe_end_dup_mmap(void)
->  
->  void uprobe_dup_mmap(struct mm_struct *oldmm, struct mm_struct *newmm)
->  {
-> -	if (test_bit(MMF_HAS_UPROBES, &oldmm->flags)) {
-> -		set_bit(MMF_HAS_UPROBES, &newmm->flags);
-> +	if (mm_flags_test(MMF_HAS_UPROBES, oldmm)) {
-> +		mm_flags_set(MMF_HAS_UPROBES, newmm);
->  		/* unconditionally, dup_mmap() skips VM_DONTCOPY vmas */
-> -		set_bit(MMF_RECALC_UPROBES, &newmm->flags);
-> +		mm_flags_set(MMF_RECALC_UPROBES, newmm);
->  	}
->  }
->  
-> @@ -2370,7 +2370,7 @@ static void mmf_recalc_uprobes(struct mm_struct *mm)
->  			return;
->  	}
->  
-> -	clear_bit(MMF_HAS_UPROBES, &mm->flags);
-> +	mm_flags_clear(MMF_HAS_UPROBES, mm);
->  }
->  
->  static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
-> @@ -2468,7 +2468,7 @@ static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
->  		*is_swbp = -EFAULT;
->  	}
->  
-> -	if (!uprobe && test_and_clear_bit(MMF_RECALC_UPROBES, &mm->flags))
-> +	if (!uprobe && mm_flags_test_and_clear(MMF_RECALC_UPROBES, mm))
->  		mmf_recalc_uprobes(mm);
->  	mmap_read_unlock(mm);
->  
-> @@ -2818,7 +2818,7 @@ int uprobe_pre_sstep_notifier(struct pt_regs *regs)
->  	if (!current->mm)
->  		return 0;
->  
-> -	if (!test_bit(MMF_HAS_UPROBES, &current->mm->flags) &&
-> +	if (!mm_flags_test(MMF_HAS_UPROBES, current->mm) &&
->  	    (!current->utask || !current->utask->return_instances))
->  		return 0;
->  
-> -- 
-> 2.50.1
-> 
+This series adds support for these ICs using the ti-adc128s052.c.
 
--- 
-Sincerely yours,
-Mike.
+NOTE: There has been work on couple of other patch series [1][2] touching
+this same driver. I haven't considered those changes because, AFAICS,
+there has been no new revisions of these series since mid June.
+
+[1]: https://lore.kernel.org/all/20250614091504.575685-1-sbellary@baylibre.=
+com/
+[2]: https://lore.kernel.org/all/20250625170218.545654-2-l.rubusch@gmail.co=
+m/
+
+
+Matti Vaittinen (3):
+  dt-bindings: iio: adc: Add BD7910[0,1,2,3]
+  iio: adc: adc128s052: Simplify matching chip_data
+  iio: adc: adc128s052: Support ROHM BD7910[0,1,2,3]
+
+ .../bindings/iio/adc/rohm,bd79104.yaml        |  11 +-
+ drivers/iio/adc/ti-adc128s052.c               | 114 ++++++++++++------
+ 2 files changed, 87 insertions(+), 38 deletions(-)
+
+
+base-commit: 856d7be7f3c459a6d646b1f8432c6f616ade0d10
+--=20
+2.50.1
+
+
+--Bf1rqEWCO5/UOXc+
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmidn6MACgkQeFA3/03a
+ocX1Jgf/cmjpNbrghOnqLYHfkVAYA/QfNxEgLBQQFPptiQuWTYO+Ya8b0QQjwEHx
+s0lscWStFTwd8hVNsgcmxX2DSrG3+eUizMm9rUexpEkiB+//QC3WeHKPblNOx/Iy
+FpHD1KR7uvXUADiGl//9WMPil7P7KThQKYJJLtbCHGo7rt9aY5HBk76HM6XtlgV8
+k/VKdXIamyQt8GdTOh5xRtqni4/S95LNqy1Kvajyxpt9G1naMZjT1FCvBwBy5HFg
+A44vNP84pUfgc3ll8ipOxzi3z/rbfZ/XFN5ZA2Ci7Kr0QN+5CI1ASqmGJ+BTkKsW
+reC9pt5YQeGuGfB83VbtUTtIylIOrQ==
+=cw0a
+-----END PGP SIGNATURE-----
+
+--Bf1rqEWCO5/UOXc+--
 
