@@ -1,169 +1,105 @@
-Return-Path: <linux-kernel+bounces-768911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E33B267E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:45:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5D4B267E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EB5B5E7C08
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:36:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0E21CE2635
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA163093B8;
-	Thu, 14 Aug 2025 13:31:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9143093B0;
+	Thu, 14 Aug 2025 13:31:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqHxW8YW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hpiq85jB"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9966E30102A;
-	Thu, 14 Aug 2025 13:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5969E3002DA;
+	Thu, 14 Aug 2025 13:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755178272; cv=none; b=g8zFdVo48f/97Me72M75iKVgRdlI5WWOh5DR5ymKe3DeBdBp2ynk53GX3b6e///v8GD/5VxfI4ZaAm/vkw3y6MJww7gd0ng/Nc20ExYsk4fCESnAaY4zCfF5u3TmELC7rNHB5EbJ+nuBfmEo8CYac7NYPcgl0hqtrSyOHrMatPA=
+	t=1755178303; cv=none; b=h44Pr7yZhGbiCjiscVBxz9J+jPnNnpEKQ85DxnHeccFUPyGp9xxpGAeKp7lEGk7RHsKk7fWmnLyA6jjxZ4BN7zU/VOIFHZRMPhstjqU3jzuDDavYqLnom3kt9MX6NSRoqODNH0NdRLyjAygB20JgXw4OQMvLokf5xy7xRU69CZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755178272; c=relaxed/simple;
-	bh=WW0xB1u8XI1L1gGsXl6wpt3WDXrr4yCiJlHi7BUNlCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lfTHyC6OQOJEZXS6SAD9hh7yr+1ioL+EpNjkick9LIJdmdPF0pri4gAv8r6f/XfFPFFO0x8wt1d5+zSJSb+mHsKE5uz8sXW7uD6v9zS4O34Ptp9Cu7TakTbW7mZiV/goXUgA+xgQbtlB83dH+g99MMzxaQmkv1slMKqhE4yvAiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqHxW8YW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02E81C4CEF1;
-	Thu, 14 Aug 2025 13:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755178272;
-	bh=WW0xB1u8XI1L1gGsXl6wpt3WDXrr4yCiJlHi7BUNlCY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XqHxW8YW58Ln/tIjnGi73wY9qD5/Iqkzwyv6qop3T0s5v319Ftg/c1ujK3/+Pmp3O
-	 3SJY9d+x4hq26C9R4ldz3ap27JZ3CK6dbddTXlBk+z2z09uVrOYjtUFTpeGlFvgNjV
-	 L1huyBWZL3RmFzTXcCZe8HHfxLc3AApxz5Ss7QLL+ussS/TR5qi1rfohz3kzvuYQXA
-	 z9fOR+m/fazEworlcK45UcqDrJLI+rHyeuLbz0YS0ZizqgTQFWAKE1JSOTRnlpXZlF
-	 3y7wTMxm2dgJYYjVCyrbQbIxiWn20GP+y7nUAEOT4RU14M4Kgk2W8/qCK/ckcjXpyq
-	 NVGeZpIDI1XVQ==
-Date: Thu, 14 Aug 2025 16:31:06 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev, Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>, Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com, Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v1 08/16] kmsan: convert kmsan_handle_dma to use physical
- addresses
-Message-ID: <20250814133106.GE310013@unreal>
-References: <cover.1754292567.git.leon@kernel.org>
- <5b40377b621e49ff4107fa10646c828ccc94e53e.1754292567.git.leon@kernel.org>
- <20250807122115.GH184255@nvidia.com>
- <20250813150718.GB310013@unreal>
- <20250814121316.GC699432@nvidia.com>
- <20250814123506.GD310013@unreal>
- <20250814124448.GE699432@nvidia.com>
+	s=arc-20240116; t=1755178303; c=relaxed/simple;
+	bh=j/CcsfHRI2aria9TYxpiLWaiu8mt9dV8erunuwbsx8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NtFSCET9vgstoTzTyMlGDqEjQfinx116XgEaK7UH1H9zmdDTLTJehOtYPFhClToMvYAbk6TfUezHFDq8GvmZnVkTabF9oWbg5RW8Jy6oVSYdcc+KjMuCKUrtPN6dbZxB4rwVKqmia2Iqjvq/AOnmHPw8jI+zpAam1ymiBvRrz9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hpiq85jB; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45a1b05ac1eso4176385e9.1;
+        Thu, 14 Aug 2025 06:31:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755178300; x=1755783100; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SnTc/H7K2rn8Q1SAAT9lTXD6ocPixuR5mNjT5ytBa2c=;
+        b=Hpiq85jBGS7xRI6fGQpD1uyyCxerzQx6pnjb5YDNEhSrppCFmHKfTlxbTscq/CU/wR
+         Wzgby72RNZoUY1f7v52201iWlxDJkbk5sogQwh5/Q8c5bgGVTbY5X/ow5XaJqZD8HfFn
+         M8KKbs0NB0GWK+73Fcl0GZ/EpwUx31H5lKIDtQsUO1pBcG3GiszKBUGzAlVFERC1byix
+         qP/keeAaZW8HoOFi6tSmEgU3i3lMZ0y/AWWkoa3WNxnri9b1gVNigwd07o7sTdmoRMn4
+         jA+3MokOUZSY7DZjPvfLPxFg8vunKssN0M9apqVW1XVLumKRVwl0f8u5D1ze3H9ELeke
+         YX4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755178300; x=1755783100;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SnTc/H7K2rn8Q1SAAT9lTXD6ocPixuR5mNjT5ytBa2c=;
+        b=g9mkfHVsQU67Wj5nTGq28dTw0OgkMw3bVoDIpRTaf6DeScL5GsY+X3UVtonThbolTM
+         dzyUKe8T2xGmhXpLnBeTBfY7Usw5RScDJzYMly6tdS+NkbLpaxEZz4pgB48lYxaLc/aQ
+         YxuTIwQHehIMehOci7sObrHljv3ERfl9P+VDbGvQlm5DEGPm0cas3pqD1zfbrscRYEx5
+         U/utTVGl3jlwAGeckmT3eQ5jdj/+EZrNp5Ijo7r3WFpuYAH9LFfV7ZG6vhQ15kSYALGC
+         lxg9BxQMvykTTKnkvz6mC+DrODrXTLQfhOP+y5WoxWbV2b7ZP2ebwrUCt+7uS5KwtY/z
+         i8jA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyPwHfssr4UEIZoOwbewJXGGodg8/8Ck8cXaMzdF1UYUN42pPx165Y475yB3TvCJhIlMzv3zuJi8BXzc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn6JKM3pytxgsVpwFUNVLB1d3cry/xS16LUY31ZGk/5rTCULov
+	t8AXekZ3A1bI+ivaZeMxoecpukJbrw05AL+Rc8Trike4jDimRyqpkUsk
+X-Gm-Gg: ASbGncvbCZgUqSJ5IRCJvUxcfS+5CCcADaTMO2Q8S8chWPCNaug2W7W20z987A40QgJ
+	fzps00JwR2k7ZEEmhRuB4//RLV/Z8kCCXDEtz9EMcWB0PcF7QvXcGTj9HEQ+kqO9UuRFQ0FFpUq
+	sXtB78oznkN1dnBlHPSdq2SKD8123fSOzpKGYgAgpIFLlgyx5bV8huh1jI4G5YMGk+usbDH9oMZ
+	vSw4rbNuTIIgTER9WcB6/K4bsN24B05OnZrGSKylW7SVxmD/roUYz8jiqxs5/aPgWUEpcyt3iez
+	dscNFjZXLCwuoz+uwBanRvZcaUKHUWiceXss++Ts1wWE79RoatblqBVkuL4GZltYGSspwSWI0HA
+	dxtgbllw3h/tQH74oaeMvc2rJnEXxeEwHaPSH83/y6ZqKhWrVD1SDrbdOxUXsbBkWs6Ob/MOz9b
+	vO2PJTWtzteYAErYZWVkyO
+X-Google-Smtp-Source: AGHT+IGT1v6PsSiGOBKyeYo5lfqQ2AyWMRlSCO8xLfX8P0Bp+0sQ7LVMZtIR24IrqNYB743nLfqWgQ==
+X-Received: by 2002:a05:600c:4f45:b0:43c:ea1a:720a with SMTP id 5b1f17b1804b1-45a1b5ffabdmr21538895e9.1.1755178298857;
+        Thu, 14 Aug 2025 06:31:38 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b910180aebsm11287984f8f.59.2025.08.14.06.31.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 06:31:38 -0700 (PDT)
+Message-ID: <15275726-396a-49d3-af41-f9f2bede0f2a@gmail.com>
+Date: Thu, 14 Aug 2025 14:31:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814124448.GE699432@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sfc: replace min/max nesting with clamp()
+To: Xichao Zhao <zhao.xichao@vivo.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-net-drivers@amd.com,
+ linux-kernel@vger.kernel.org
+References: <20250812065026.620115-1-zhao.xichao@vivo.com>
+Content-Language: en-GB
+From: Edward Cree <ecree.xilinx@gmail.com>
+In-Reply-To: <20250812065026.620115-1-zhao.xichao@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 14, 2025 at 09:44:48AM -0300, Jason Gunthorpe wrote:
-> On Thu, Aug 14, 2025 at 03:35:06PM +0300, Leon Romanovsky wrote:
-> > > Then check attrs here, not pfn_valid.
-> > 
-> > attrs are not available in kmsan_handle_dma(). I can add it if you prefer.
+On 12/08/2025 07:50, Xichao Zhao wrote:
+> The clamp() macro explicitly expresses the intent of constraining
+> a value within bounds.Therefore, replacing min(max(a, b), c) with
+> clamp(val, lo, hi) can improve code readability.
 > 
-> That makes more sense to the overall design. The comments I gave
-> before were driving at a promise to never try to touch a struct page
-> for ATTR_MMIO and think this should be comphrensive to never touching
-> a struct page even if pfnvalid.
-> 
-> > > > So let's keep this patch as is.
-> > > 
-> > > Still need to fix the remarks you clipped, do not check PageHighMem
-> > > just call kmap_local_pfn(). All thie PageHighMem stuff is new to this
-> > > patch and should not be here, it is the wrong way to use highmem.
-> > 
-> > Sure, thanks
-> 
-> I am wondering if there is some reason it was written like this in the
-> first place. Maybe we can't even do kmap here.. So perhaps if there is
-> not a strong reason to change it just continue to check pagehighmem
-> and fail.
-> 
-> if (!(attrs & ATTR_MMIO) && PageHighMem(phys_to_page(phys)))
->    return;
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
 
-Does this version good enough? There is no need to call to
-kmap_local_pfn() if we prevent PageHighMem pages.
-
-diff --git a/mm/kmsan/hooks.c b/mm/kmsan/hooks.c
-index eab7912a3bf0..d9cf70f4159c 100644
---- a/mm/kmsan/hooks.c
-+++ b/mm/kmsan/hooks.c
-@@ -337,13 +337,13 @@ static void kmsan_handle_dma_page(const void *addr, size_t size,
-
- /* Helper function to handle DMA data transfers. */
- void kmsan_handle_dma(phys_addr_t phys, size_t size,
--                     enum dma_data_direction dir)
-+                     enum dma_data_direction dir, unsigned long attrs)
- {
-        u64 page_offset, to_go, addr;
-        struct page *page;
-        void *kaddr;
-
--       if (!pfn_valid(PHYS_PFN(phys)))
-+       if ((attrs & ATTR_MMIO) || PageHighMem(phys_to_page(phys)))
-                return;
-
-        page = phys_to_page(phys);
-@@ -357,19 +357,12 @@ void kmsan_handle_dma(phys_addr_t phys, size_t size,
-        while (size > 0) {
-                to_go = min(PAGE_SIZE - page_offset, (u64)size);
-
--               if (PageHighMem(page))
--                       /* Handle highmem pages using kmap */
--                       kaddr = kmap_local_page(page);
--               else
--                       /* Lowmem pages can be accessed directly */
--                       kaddr = page_address(page);
-+               /* Lowmem pages can be accessed directly */
-+               kaddr = page_address(page);
-
-                addr = (u64)kaddr + page_offset;
-                kmsan_handle_dma_page((void *)addr, to_go, dir);
-
--               if (PageHighMem(page))
--                       kunmap_local(page);
--
-                phys += to_go;
-                size -= to_go;
-
-(END)
-
-
-> 
-> Jason
-> 
+Reviewed-by: Edward Cree <ecree.xilinx@gmail.com>
 
