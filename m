@@ -1,289 +1,202 @@
-Return-Path: <linux-kernel+bounces-768351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C50D3B26038
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:09:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E48B26040
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606601C2246F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11BA11C821FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D8E2F60C2;
-	Thu, 14 Aug 2025 08:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2387C2F83BC;
+	Thu, 14 Aug 2025 08:59:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aJiP6LHg"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ik6EipQO"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638B02E9EB3;
-	Thu, 14 Aug 2025 08:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6AB2E975B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755161916; cv=none; b=eXmLNSv9j54qXFoJVCj1oPJ2WhxGMm4LjAUXL/xH8ZyGVu1m5hu1CeSOOhhi+F8fyZmPvg2DfmlweB/WlFv65okbYRSdWSBkGsDWMMrt4BhC70p9UrAoFEYfW13zYYOw9rkutR1mTGhByTg1ag1cPy3126rGIwt18FukF8FI4oU=
+	t=1755161942; cv=none; b=hmSkaZmC8caD6MJa9LNmsL1J/8L06CuiPac/XHFjCX+0UjY5o7Gmbfnxa3TRimWmT3BKfrtwz7vLLCejCNjzQ6bMQHNn7QcKk67ySpU1G1puMGQrinsJMmQUehEAVBrsmVZOVYeX14V2ZJCkqs+NP0PJcaTjiTndd9zrxhz9Qg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755161916; c=relaxed/simple;
-	bh=vDE0E1yjqY0f3HYkpoHZtIgg9O221SAmsRn5vbMsxL8=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mv3ZltAwDvwiVf3CwQEGiU15ZXsAv46drUsH2nEw5ISukY1BNecEuCY59OIfv750bXeT8VHKHChrdApho1nns1tYV7Se4Re/etLg+1K7kglwKMnC8NsehqrwnnU6jSCCj0GUQn3y3tlvupwH/aA21IdkX+bbwTqvCKpeRZwSYSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aJiP6LHg; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DLLlpK015987;
-	Thu, 14 Aug 2025 08:58:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=lcCq/XnqkIW2A53JNZQeehAP0zinHF
-	hevLkE5cHGNns=; b=aJiP6LHgGSuJ9h8GDC6c6NGZfUBv/48XTnYZ8GV3qDgEsD
-	Z077rWzqH810j4Bz2oZYRmWLOx5lUqbBXQNloLCwmfWA10hdiO/L67t0KEqYpFpN
-	vPx0V3l72xWNs+6hWRMbVKuozPgVK6JYBMQeGKIZOEQnrv7VyeXHU8+wznTNzjBR
-	Rrmz5WAIjR1CFh9mlPnwFASgpi/WxdACkhgU3v0PCcSPx8iWQgHZ8wStPFVwSXsN
-	zGyOI4rClzGqIkcd6ix857DtBv+LY0hAjoF5qFh7Cz1JdcsqNpgF8+bav+fnCTlf
-	JYOryBwOsjKqL0YoQ3D8MttwJl7G6uPLeWQtyXuQ==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dvrp8vyv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:58:26 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57E6JJFd017637;
-	Thu, 14 Aug 2025 08:58:23 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ekc3u366-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 14 Aug 2025 08:58:22 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57E8wLMv32702992
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 14 Aug 2025 08:58:21 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4F04B2004E;
-	Thu, 14 Aug 2025 08:58:21 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2BA9320040;
-	Thu, 14 Aug 2025 08:58:19 +0000 (GMT)
-Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com (unknown [9.124.218.79])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 14 Aug 2025 08:58:18 +0000 (GMT)
-Date: Thu, 14 Aug 2025 14:28:16 +0530
-From: Amit Machhiwal <amachhiw@linux.ibm.com>
-To: Alex Mastro <amastro@fb.com>, Alex Williamson <alex.williamson@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH v4] vfio/pci: print vfio-device syspath to fdinfo
-Message-ID: <20250814141153.8294c6d3-83-amachhiw@linux.ibm.com>
-Mail-Followup-To: Alex Mastro <amastro@fb.com>, 
-	Alex Williamson <alex.williamson@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Keith Busch <kbusch@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org
-References: <20250804-show-fdinfo-v4-1-96b14c5691b3@fb.com>
- <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
+	s=arc-20240116; t=1755161942; c=relaxed/simple;
+	bh=QTIXtveDTMoEdRMxbTNvNq78eOmhb3+4Ay3C4Fd4UmY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CT3S6nLz1c4EBFAxx5X9ohT+wTeGLthY8yjESnc5SRV2/3wCq6L+Id0YCaylJ9UD+eT/h4QTfSHOTTo1WdqH78wGzQINyW8gUqwOOksqcNirZq/yuobKM2UkLQXdAjFuiAqxBl9n0Fwe/mHCL7okPqdeeE8c1mEoDA7/YYsuInA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ik6EipQO; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-890184a05a0so451265241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:59:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755161939; x=1755766739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q7uH31UN91+fljH+roDUJZnayXqB6OvkipUsIFV6Wzs=;
+        b=Ik6EipQOM0NLDPPMxn4PP9DPO7k235PFnJxMG3tq3c3PxNbXTHOicsbq9Xa3Sm4Dtd
+         cF/Q3CXuOaFzCPiZ+gIK3pwNq0x7gqHd+kJPxPxGpWBSnhX+fhWr5gZOiXDafQBC/i+r
+         lMuVH5MdnOfanJFIxmxd/7jZnYkRup4ZGEfJg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755161939; x=1755766739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q7uH31UN91+fljH+roDUJZnayXqB6OvkipUsIFV6Wzs=;
+        b=j64Tnru7Gil0qq2IJK2Pb5avwNsoRPEhU1YV2M1uWCHJsG+c0LIIkDpv6qhpa00XAf
+         2vSVf2szJbASfjZDQpHTPvEfkWDCK/Xdfzr3ZamTOTwJh4XB9Rqksl/s7hrTjO3v/zGN
+         hFcRXdnqnMhL426tPaNR9+jgBBeKGmR8LmyUq6pItCWRpEwVo35HCVVQ+pGuywKUk8bn
+         7zzMq+MJHBmWtdCXg5N0Sg/bTYLViUyTUahfGTcEJ32zCTpo0/m5HfroA6iByfhH+E9d
+         Xe4KSUSmq6MgI58JusfVxr5cRw2xMY7s9gBnYvvVZZogLcGuYKSv7n6ZB6V/yynRFifv
+         wT9w==
+X-Forwarded-Encrypted: i=1; AJvYcCX4TcQBbOgTihW3Flz1FvVkbR34FokHOz2w2OlIgkzd6icuLtB87j6bPjda7zQKHM2kPeCpk0fzQ5tYhV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR1f9Wgeb0ladPAeJ19TK9YYdTTcT7pc3p1zt+eI4+uRW6nVsw
+	JciS8UYb/H3EhILwB68OnxgIj6q85FUXqjK9blg87dfgHprBWQ0mCY7ESWwJGU92483JQErCfwR
+	63nI=
+X-Gm-Gg: ASbGncvPlR1D8zrkmkqeTjgUKU9qy7u/mYCTZf210y9KobylFhp3lz5N2wfWoA7tkdi
+	MrRjNs8AjbsIdvQK3keZ7osgo1KgSI6rbIR74INGOuIylnVO9kMbh8ft3zSLH/lN0Fi+mAFWX1m
+	RngwDHLVVFbrvoxEVWlUoqM37icX5QX19FSGb++rH/2ZwfvAUGB1iKkBJD55OSJoxedba+LaU2y
+	UhOyMLtdfoTjBev9Cm0OrDPlSBZDe6djtEIhK4Up0E+NZtQDXclImfVKcRhukY/yPHUlWc1GQdp
+	vHVZk7HhiGPtEYwEdrpHEPuxwHgqbQbqhvD1ME1/ncjoWlkHTr+Ld6fR+Cntx+EY0Y2+NHP/AX3
+	JoqK2qO023Ij7yqnl1VHOAG736sALLMsw9LnTbtSXytDd+PK2YbxkwLtZXLGjqK11BoXn
+X-Google-Smtp-Source: AGHT+IEXqjeWkOydqsKuzFydyfJ3uaWhcOztnnJ03YwaPedAnubZbjwKLs+OQSqGKTZw6CtwkwygLg==
+X-Received: by 2002:a05:6102:5d7:b0:4e9:963a:a42b with SMTP id ada2fe7eead31-5104c1ddc16mr432184137.8.1755161939124;
+        Thu, 14 Aug 2025 01:58:59 -0700 (PDT)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88e0247160esm3020963241.0.2025.08.14.01.58.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 01:58:58 -0700 (PDT)
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-50e29b4fd2cso780204137.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:58:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgScHjeqy6RoENP1/9FdKUtQxXT0+UuG6JWlksXeDJzGPIbbN5LpZ+fTgvrM/mVwle6s64hmiN8Bwp1QY=@vger.kernel.org
+X-Received: by 2002:a05:6102:8083:b0:4e5:5c14:5937 with SMTP id
+ ada2fe7eead31-51058a87196mr673671137.1.1755161937736; Thu, 14 Aug 2025
+ 01:58:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250807144938.e0abc7bb-a4-amachhiw@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIxOSBTYWx0ZWRfX+7pGaXeFCS82
- iUug+sfuqRUNtHWdb6JNLVlR3LpZ8+kmqKnfWFhvXm9HbjJrRLJhBVwTrh7V98qRBXNxBsXqRId
- y8Hxj/mv3h9DeXDJ5iejH2DiQ2K4MMXqYiDkFZjTABYzS60CRQrQraz/SNfsDLXEuET1MPtuy9L
- fUx2CJYwVirs8Vxg325FM2jzx710QXwrYWJ7e4mR29wqU4ZqNwOg8Qd4UOq2MGtGjcEDlb9ETxx
- g29D/5ujVVN0NLO1LT2TetJ8+ltiUnk3MvhlbjWIW8WZbiWw7PKxjZEhX5saHxy5ybSVEhWmpK+
- 7a1iIieYyRvq/PjQyw9OSHcEBoZg3KsOnxMp+jQHlU2L8Ed00ZvusRGgslYzG891bS9Lq2EQTsp
- 4qDCEEbI
-X-Authority-Analysis: v=2.4 cv=GrpC+l1C c=1 sm=1 tr=0 ts=689da532 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=FOH2dFAWAAAA:8
- a=VnNF1IyMAAAA:8 a=znEx-w3LAaTq8doKefoA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: YD4Sb_c9EQrVEZ1hJvtDxWT_0T1C4fmf
-X-Proofpoint-ORIG-GUID: YD4Sb_c9EQrVEZ1hJvtDxWT_0T1C4fmf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 spamscore=0 impostorscore=0 suspectscore=0
- phishscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508120219
+References: <20250814083144.191554-1-wenst@chromium.org>
+In-Reply-To: <20250814083144.191554-1-wenst@chromium.org>
+From: Fei Shao <fshao@chromium.org>
+Date: Thu, 14 Aug 2025 16:58:21 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nhz_ESY4VrgWs=dVinLtdOamh6to3EgD1w1Kx=4YBOD9A@mail.gmail.com>
+X-Gm-Features: Ac12FXyjQIDoUSwiVtyIticCvke0x3M57lwGIL10ez0LU-OLgFrmxrQr_qqqlnA
+Message-ID: <CAC=S1nhz_ESY4VrgWs=dVinLtdOamh6to3EgD1w1Kx=4YBOD9A@mail.gmail.com>
+Subject: Re: [PATCH] media: mediatek: vcodec: Use spinlock for context list
+ protection lock
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/08/07 03:04 PM, Amit Machhiwal wrote:
-> Hello,
-> 
-> On 2025/08/04 12:44 PM, Alex Mastro wrote:
-> > Print the PCI device syspath to a vfio device's fdinfo. This enables tools
-> > to query which device is associated with a given vfio device fd.
-> > 
-> > This results in output like below:
-> > 
-> > $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
-> > vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-> > 
-> > Signed-off-by: Alex Mastro <amastro@fb.com>
-> 
-> I tested this patch on a POWER9 bare metal system with a VFIO PCI device and
-> could see the VFIO device syspath in fdinfo.
-> 
->  Without this patch:
->  -------------------
-> 
->     [root@localhost ~]# cat /proc/7059/fdinfo/188
->     pos:    0
->     flags:  02000002
->     mnt_id: 17
->     ino:    1113
-> 
->  With this patch:
->  ----------------
->     [root@localhost ~]# cat /proc/7722/fdinfo/188
->     pos:    0
->     flags:  02000002
->     mnt_id: 17
->     ino:    2145
->     vfio-device-syspath: /sys/devices/pci0031:00/0031:00:00.0/0031:01:00.0
-> 
-> ..., and the code changes LGTM. Hence,
+On Thu, Aug 14, 2025 at 4:38=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
+rote:
+>
+> Previously a mutex was added to protect the encoder and decoder context
+> lists from unexpected changes originating from the SCP IP block, causing
+> the context pointer to go invalid, resulting in a NULL pointer
+> dereference in the IPI handler.
+>
+> Turns out on the MT8173, the VPU IPI handler is called from hard IRQ
+> context. This causes a big warning from the scheduler. This was first
+> reported downstream on the ChromeOS kernels, but is also reproducible
+> on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even though
+> the actual capture format is not supported, the affected code paths
+> are triggered.
+>
+> Since this lock just protects the context list and operations on it are
+> very fast, it should be OK to switch to a spinlock.
+>
+> Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to protect dec=
+oder context list")
+> Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to protect enc=
+oder context list")
+> Cc: Yunfei Dong <yunfei.dong@mediatek.com>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+>  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++----
+>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++-----
+>  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
+>  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  4 ++--
+>  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++-----
+>  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
+>  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  4 ++--
+>  7 files changed, 26 insertions(+), 20 deletions(-)
+>
 
-Additionally, I got a chance to test this patch on a pSeries POWER10 logical
-partition (L1) running a KVM guest (L2) with a PCI device passthrough and I see
-the expected results:
+[...]
 
-  [root@guest ~]# lscpu
-  Architecture:             ppc64le
-    Byte Order:             Little Endian
-  CPU(s):                   20
-    On-line CPU(s) list:    0-19
-  Model name:               POWER10 (architected), altivec supported
-    Model:                  2.0 (pvr 0080 0200)
-  [...]
+> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c=
+ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
+> index 145958206e38..e9b5cac9c63b 100644
+> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
+> @@ -77,14 +77,14 @@ static bool vpu_dec_check_ap_inst(struct mtk_vcodec_d=
+ec_dev *dec_dev, struct vde
+>         struct mtk_vcodec_dec_ctx *ctx;
+>         int ret =3D false;
+>
+> -       mutex_lock(&dec_dev->dev_ctx_lock);
+> +       spin_lock(&dec_dev->dev_ctx_lock);
 
-  [root@guest ~]# lspci
-  [...]
-  0001:00:01.0 Non-Volatile memory controller: Samsung Electronics Co Ltd NVMe SSD Controller PM9A1/PM9A3/980PRO
+Do you mean spin_lock_irqsave()?
 
-  root@host:~ # cat /proc/2116/fdinfo/68
-  pos:    0
-  flags:  02000002
-  mnt_id: 17
-  ino:    160
-  vfio-device-syspath: /sys/devices/pci0182:70/0182:70:00.0
+>         list_for_each_entry(ctx, &dec_dev->ctx_list, list) {
+>                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vpu) {
+>                         ret =3D true;
+>                         break;
+>                 }
+>         }
+> -       mutex_unlock(&dec_dev->dev_ctx_lock);
+> +       spin_unlock(&dec_dev->dev_ctx_lock);
+>
+>         return ret;
+>  }
 
-The L1 was booted with latest upstream kernel (HEAD: 53e760d89498) with the
-patch applied and the L2 was booted on distro QEMU (version 10.0.2) and as well
-as on latest upstream QEMU (HEAD: 5836af078321, version 10.0.93).
+[...]
 
-Thanks,
-Amit
+> diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c=
+ b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
+> index 51bb7ee141b9..79a91283da78 100644
+> --- a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
+> +++ b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
+> @@ -47,14 +47,14 @@ static bool vpu_enc_check_ap_inst(struct mtk_vcodec_e=
+nc_dev *enc_dev, struct ven
+>         struct mtk_vcodec_enc_ctx *ctx;
+>         int ret =3D false;
+>
+> -       mutex_lock(&enc_dev->dev_ctx_lock);
+> +       spin_lock(&enc_dev->dev_ctx_lock);
 
-> 
-> Reviewed-by: Amit Machhiwal <amachhiw@linux.ibm.com>
-> Tested-by: Amit Machhiwal <amachhiw@linux.ibm.com>
-> 
-> Thanks,
-> Amit
-> 
-> > ---
-> > Changes in v4:
-> > - Remove changes to vfio.h
-> > - Link to v3: https://lore.kernel.org/r/20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com
-> > Changes in v3:
-> > - Remove changes to vfio_pci.c
-> > - Add section to Documentation/filesystems/proc.rst
-> > - Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
-> > Changes in v2:
-> > - Instead of PCI bdf, print the fully-qualified syspath (prefixed by
-> >   /sys) to fdinfo.
-> > - Rename the field to "vfio-device-syspath". The term "syspath" was
-> >   chosen for consistency e.g. libudev's usage of the term.
-> > - Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
-> > ---
-> >  Documentation/filesystems/proc.rst | 14 ++++++++++++++
-> >  drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
-> >  2 files changed, 34 insertions(+)
-> > 
-> > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> > index 2a17865dfe39..fc5ed3117834 100644
-> > --- a/Documentation/filesystems/proc.rst
-> > +++ b/Documentation/filesystems/proc.rst
-> > @@ -2162,6 +2162,20 @@ DMA Buffer files
-> >  where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
-> >  the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
-> >  
-> > +VFIO Device files
-> > +~~~~~~~~~~~~~~~~
-> > +
-> > +::
-> > +
-> > +	pos:    0
-> > +	flags:  02000002
-> > +	mnt_id: 17
-> > +	ino:    5122
-> > +	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-> > +
-> > +where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
-> > +file.
-> > +
-> >  3.9	/proc/<pid>/map_files - Information about memory mapped files
-> >  ---------------------------------------------------------------------
-> >  This directory contains symbolic links which represent memory mapped files
-> > diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> > index 1fd261efc582..37a39cee10ed 100644
-> > --- a/drivers/vfio/vfio_main.c
-> > +++ b/drivers/vfio/vfio_main.c
-> > @@ -28,6 +28,7 @@
-> >  #include <linux/pseudo_fs.h>
-> >  #include <linux/rwsem.h>
-> >  #include <linux/sched.h>
-> > +#include <linux/seq_file.h>
-> >  #include <linux/slab.h>
-> >  #include <linux/stat.h>
-> >  #include <linux/string.h>
-> > @@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
-> >  	return device->ops->mmap(device, vma);
-> >  }
-> >  
-> > +#ifdef CONFIG_PROC_FS
-> > +static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
-> > +{
-> > +	char *path;
-> > +	struct vfio_device_file *df = filep->private_data;
-> > +	struct vfio_device *device = df->device;
-> > +
-> > +	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
-> > +	if (!path)
-> > +		return;
-> > +
-> > +	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
-> > +	kfree(path);
-> > +}
-> > +#endif
-> > +
-> >  const struct file_operations vfio_device_fops = {
-> >  	.owner		= THIS_MODULE,
-> >  	.open		= vfio_device_fops_cdev_open,
-> > @@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
-> >  	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
-> >  	.compat_ioctl	= compat_ptr_ioctl,
-> >  	.mmap		= vfio_device_fops_mmap,
-> > +#ifdef CONFIG_PROC_FS
-> > +	.show_fdinfo	= vfio_device_show_fdinfo,
-> > +#endif
-> >  };
-> >  
-> >  static struct vfio_device *vfio_device_from_file(struct file *file)
-> > 
-> > ---
-> > base-commit: 4518e5a60c7fbf0cdff393c2681db39d77b4f87e
-> > change-id: 20250801-show-fdinfo-ef109ca738cf
-> > 
-> > Best regards,
-> > -- 
-> > Alex Mastro <amastro@fb.com>
-> > 
+Also here.
+
+Regards,
+Fei
+
+>         list_for_each_entry(ctx, &enc_dev->ctx_list, list) {
+>                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vpu) {
+>                         ret =3D true;
+>                         break;
+>                 }
+>         }
+> -       mutex_unlock(&enc_dev->dev_ctx_lock);
+> +       spin_unlock(&enc_dev->dev_ctx_lock);
+>
+>         return ret;
+>  }
+> --
+> 2.51.0.rc1.163.g2494970778-goog
+>
+>
 
