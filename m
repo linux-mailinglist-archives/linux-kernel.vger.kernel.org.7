@@ -1,365 +1,205 @@
-Return-Path: <linux-kernel+bounces-769063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD2AB269DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2280AB269D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:44:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECD276009D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:30:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 554B2603829
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06E71ADC93;
-	Thu, 14 Aug 2025 14:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7EE212B31;
+	Thu, 14 Aug 2025 14:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YdjPo9IH"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="criA7+fh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED09C13BC3F;
-	Thu, 14 Aug 2025 14:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537401DE3A7
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181830; cv=none; b=TXejvrW0poICrHfV14rE1P/fJFvzCJQFc13LQNkKupKt+ZmOtfdDuKTJUBYtabEqQACH3b8zSLvxJ8wztjLzHOAcYpbbwDs7OR6ZXRFG2s7YpJPVBBv9rE3H1FlbIU1Okp21nueSa1O+Qtzb4B8lziXISPhyh6u6Tq3Lmx4ITGk=
+	t=1755181925; cv=none; b=OXGLHyq8isqOowhpusEpEHWNkgSpCFUXuBuZVbiAuSTLGepW7qraojYYNZxC3itZJ7icsP5Fx4uZcwrpo0whc9g/YV2V2q2iXxidoNAbs6THUHFWW4CEcrkVl1waV1z4DovbG8BJpYiQxRo9nJC3+y3YakrmkPiT8wYddjsM4k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181830; c=relaxed/simple;
-	bh=LsXWAgytQViZTIZEaWmt0uVAM3ROWt00H+RjYm8GNsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s0N3e7QO3DotEcRW94IxP9pgYJm55ZY7iAHUWN+WLSXP0M1zNtE06Fih0ZhrGZWk/CjJshuHkIbBEZQQdGy6hds7lXEyB97zDmqkeBOe5pfzkDQyqvMbP2PgebY/XLEVgHe9gI7ayPGtyWNOKwMRus99YYZCSdNW+0TRsvMQrWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YdjPo9IH; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9e4193083so864998f8f.3;
-        Thu, 14 Aug 2025 07:30:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755181827; x=1755786627; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R4VZ4dhb8lx/T0ENCC0MClm4qNtbOJe+rhidjzoHI/g=;
-        b=YdjPo9IHPEzbFZ8A/IxyoZA499wxlGVes9wyWMebN2xmX6XDjLpurKKbCPeJshtJsD
-         qGBYNwCny5gLWkEuJ1+NSfBTe/NixFOfL4Ix/O65wVYxgasMEfsE+ODQq9hjRPZNXzY6
-         kkv4musmMCiT4VJ7IirvEKH+7XkVXeUsGrXEEku+9Y1FhYsHLdZdg9bjK1+nKfZiHwVu
-         szwyqY8Pd5CjufsKS/55Fd9fC5FaUnoOuO1Rv5LMouvsWgxZoSgPrf3zCDLjtq90RvXe
-         PTfFqgEN7JGTex3vfUTp1VHgAuh/mAcbrA/DDHuwhC6/cCPkF1Kxavb94xGxnuJfsiSN
-         +ikA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755181827; x=1755786627;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=R4VZ4dhb8lx/T0ENCC0MClm4qNtbOJe+rhidjzoHI/g=;
-        b=efLTX9jl4jNjg4E5zyKIxQKA2kmO5ITic9UwuySWwETPrilEv4BzV/DtgW7OkZs0kC
-         20mCTTOo8PnA1tBqUAnVKxj4RhzaePJwYuvXKQovyRnUW5wrA3GQQvVhZFmM6mZzHA3G
-         xwba3iGaQilfWpjbYkfk8HLaSJXotSZGkqzSwev+lW8JaUJysdGv2oAx2l91sDIkTnmd
-         Au7jnB+2+/446deS2GvY54unSOhvE4UFgEA6lOPnJjFWhhWtz8myU8BHYftbq8s9gl7U
-         w6oJwKcbSclLJB8yez4b5A8PiScqhs1PDUOmZ7jRKX/fk8pj6g1o4inbLuSAPmgK0h6c
-         rBHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoRkG7CzCqaxKGSAVhDxVxFjXkm1aUytCwFMqq16Ti8XCzqFn376YLEUXNxbgm6/hcsq1A0as=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkqkvhsOY182BbT7e2mZbbITForj330jYZJVSkH6jurMWUCOk3
-	BX0B0OS3VEXK4LJhoQsyQkdTXGxN8wvELSvSldRAKUhahNvUTqk1I1M2
-X-Gm-Gg: ASbGncsdqEsrQgMvqxxHbXz7vbzln30iUB04RZKhj0F+nA+AMeRN1jc0EMsUrBrqNG7
-	qsAtdBAFdJYhaVcPCRYmZBP2ENdrTU/RenSyzMmDt+nHmQCCwkZkb57gPZh2BHkfWAvypCCo2em
-	7O+ol8BPQgcnqkgY2eC7ku/t5roND1VghegbRIdjNv+/NFiITdk5i11mq3Xuenoyuz9xNZ7DliG
-	oRd7dsibMSyR9qMWd3g2si0BESXv76OqjXSVvpMQCjJhPUiGJlXLcJ/LtCJSDTsKDQFlhG70M50
-	ggM2aLX5oG71SSvJ5anWaAFVWRS8zP2H/NEs2PaSJW5n0eq9QdXp9ZMSMVrzCxu3EyeV3rUET9Y
-	79sNCVnUSrMLGc9xiMkibho3px6x30YeEGQ==
-X-Google-Smtp-Source: AGHT+IHoO9EO0ro/faSxOM4wufMudvxB5C949yEnELjO1isa28kX84aJzKexM/+WqEHrFOVKc/qO6g==
-X-Received: by 2002:a5d:64c3:0:b0:3b7:8b1b:a9d5 with SMTP id ffacd0b85a97d-3b9edf6f1c6mr2849436f8f.51.1755181826958;
-        Thu, 14 Aug 2025 07:30:26 -0700 (PDT)
-Received: from localhost ([45.10.155.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1c6cc902sm22933885e9.7.2025.08.14.07.30.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 07:30:26 -0700 (PDT)
-Message-ID: <68be885c-f3ea-48aa-91c9-673f9c67fe28@gmail.com>
-Date: Thu, 14 Aug 2025 16:30:16 +0200
+	s=arc-20240116; t=1755181925; c=relaxed/simple;
+	bh=bRxQEGQritKo6hvebzuEHHPhSGevunmErjAdGHTJibI=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=o4h2uqS77KYvKBn9DiqGwM+dzI1FgwUBcRDKHYvIqwXDN739dn07kkdPZ/WfXW4oU3lpU3T5fnmoEBlGCFFGxM/J1roipm/f4mWA2/gweIP3crcIz1MUDdovdOhIFFRtUStbCt1EqbTzqMb7my0L4W5CSRhtzi1DLsgfPnHIHJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=criA7+fh; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755181923; x=1786717923;
+  h=date:from:to:cc:subject:message-id;
+  bh=bRxQEGQritKo6hvebzuEHHPhSGevunmErjAdGHTJibI=;
+  b=criA7+fhnP30NmzW4gTcVyQj5tzidf8h+7bbjxrIMKxb0ZvUDBrNaWbK
+   pyx+yEtAfG02nXdyGtV2zDtui3I4AXZu2Wna2mR4wgUowe8H1XrGtK+t+
+   QCRULvLatu4YevaOCXApZy3TmcrjST2ynMQkE4NqQfe6to2rZGMRA2jnV
+   L1cKmyDc0rAXt0RhKX0oRyIOVYLeo3OqOYgTHR2jytlU7MMgjbzZ3nDTT
+   QNXb0V6nwS8irYSJdeewvPep5zyDYDdnlJGQuZpRIsJJUAUd6KBTENi6F
+   vKucgcJ535qAowHO6W/0M/NzHeb/Tn+oGqjJtmAQfEv7CQVRHp6r1QndS
+   g==;
+X-CSE-ConnectionGUID: W5D20fjqTN2DDXwigV/Kyw==
+X-CSE-MsgGUID: ISClBmUIRQq5STWTkFQaQA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="68103882"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="68103882"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 07:32:02 -0700
+X-CSE-ConnectionGUID: lTF9n0iuRKWUSaMmjI73PA==
+X-CSE-MsgGUID: s/9900L6Tf6fBIFy2ZM4FQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="166684537"
+Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 14 Aug 2025 07:32:02 -0700
+Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1umYzn-000B2S-2E;
+	Thu, 14 Aug 2025 14:31:59 +0000
+Date: Thu, 14 Aug 2025 22:31:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:locking/urgent] BUILD SUCCESS
+ 21924af67d69d7c9fdaf845be69043cfe75196a1
+Message-ID: <202508142204.Aw6oYUoM-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH net-next v3] net: pppoe: implement GRO/GSO support
-To: Felix Fietkau <nbd@nbd.name>, netdev@vger.kernel.org,
- Michal Ostrowski <mostrows@earthlink.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-References: <20250811095734.71019-1-nbd@nbd.name>
-From: Richard Gobert <richardbgobert@gmail.com>
-In-Reply-To: <20250811095734.71019-1-nbd@nbd.name>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Felix Fietkau wrote:
-> Only handles packets where the pppoe header length field matches the exact
-> packet length. Significantly improves rx throughput.
-> 
-> When running NAT traffic through a MediaTek MT7621 devices from a host
-> behind PPPoE to a host directly connected via ethernet, the TCP throughput
-> that the device is able to handle improves from ~130 Mbit/s to ~630 Mbit/s,
-> using fraglist GRO.
-> 
-> Signed-off-by: Felix Fietkau <nbd@nbd.name>
-> ---
-> v2: fix compile error
-> v3:
->   - increase priority value
->   - implement GSO support
->   - use INDIRECT_CALL_INET
->   - update pppoe length field
->   - remove unnecessary network_offsets update
-> 
->  drivers/net/ppp/pppoe.c | 160 +++++++++++++++++++++++++++++++++++++++-
->  net/ipv4/af_inet.c      |   2 +
->  net/ipv6/ip6_offload.c  |   2 +
->  3 files changed, 163 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ppp/pppoe.c b/drivers/net/ppp/pppoe.c
-> index 410effa42ade..a8d8eb870bce 100644
-> --- a/drivers/net/ppp/pppoe.c
-> +++ b/drivers/net/ppp/pppoe.c
-> @@ -77,6 +77,7 @@
->  #include <net/net_namespace.h>
->  #include <net/netns/generic.h>
->  #include <net/sock.h>
-> +#include <net/gro.h>
->  
->  #include <linux/uaccess.h>
->  
-> @@ -435,7 +436,7 @@ static int pppoe_rcv(struct sk_buff *skb, struct net_device *dev,
->  	if (skb->len < len)
->  		goto drop;
->  
-> -	if (pskb_trim_rcsum(skb, len))
-> +	if (!skb_is_gso(skb) && pskb_trim_rcsum(skb, len))
->  		goto drop;
->  
->  	ph = pppoe_hdr(skb);
-> @@ -1173,6 +1174,161 @@ static struct pernet_operations pppoe_net_ops = {
->  	.size = sizeof(struct pppoe_net),
->  };
->  
-> +static u16
-> +compare_pppoe_header(struct pppoe_hdr *phdr, struct pppoe_hdr *phdr2)
-> +{
-> +	return (__force __u16)((phdr->sid ^ phdr2->sid) |
-> +			       (phdr->tag[0].tag_type ^ phdr2->tag[0].tag_type));
-> +}
-> +
-> +static __be16 pppoe_hdr_proto(struct pppoe_hdr *phdr)
-> +{
-> +	switch (phdr->tag[0].tag_type) {
-> +	case cpu_to_be16(PPP_IP):
-> +		return cpu_to_be16(ETH_P_IP);
-> +	case cpu_to_be16(PPP_IPV6):
-> +		return cpu_to_be16(ETH_P_IPV6);
-> +	default:
-> +		return 0;
-> +	}
-> +
-> +}
-> +
-> +static struct sk_buff *pppoe_gro_receive(struct list_head *head,
-> +					 struct sk_buff *skb)
-> +{
-> +	const struct packet_offload *ptype;
-> +	unsigned int hlen, off_pppoe;
-> +	struct sk_buff *pp = NULL;
-> +	struct pppoe_hdr *phdr;
-> +	struct sk_buff *p;
-> +	int flush = 1;
-> +	__be16 type;
-> +
-> +	off_pppoe = skb_gro_offset(skb);
-> +	hlen = off_pppoe + sizeof(*phdr);
-> +	phdr = skb_gro_header(skb, hlen + 2, off_pppoe);
-> +	if (unlikely(!phdr))
-> +		goto out;
-> +
-> +	/* ignore packets with padding or invalid length */
-> +	if (skb_gro_len(skb) != be16_to_cpu(phdr->length) + hlen)
-> +		goto out;
-> +
-> +	type = pppoe_hdr_proto(phdr);
-> +	if (!type)
-> +		goto out;
-> +
-> +	ptype = gro_find_receive_by_type(type);
-> +	if (!ptype)
-> +		goto out;
-> +
-> +	flush = 0;
-> +
-> +	list_for_each_entry(p, head, list) {
-> +		struct pppoe_hdr *phdr2;
-> +
-> +		if (!NAPI_GRO_CB(p)->same_flow)
-> +			continue;
-> +
-> +		phdr2 = (struct pppoe_hdr *)(p->data + off_pppoe);
-> +		if (compare_pppoe_header(phdr, phdr2))
-> +			NAPI_GRO_CB(p)->same_flow = 0;
-> +	}
-> +
-> +	skb_gro_pull(skb, sizeof(*phdr) + 2);
-> +	skb_gro_postpull_rcsum(skb, phdr, sizeof(*phdr) + 2);
-> +
-> +	pp = indirect_call_gro_receive_inet(ptype->callbacks.gro_receive,
-> +					    ipv6_gro_receive, inet_gro_receive,
-> +					    head, skb);
-> +
-> +out:
-> +	skb_gro_flush_final(skb, pp, flush);
-> +
-> +	return pp;
-> +}
-> +
-> +static int pppoe_gro_complete(struct sk_buff *skb, int nhoff)
-> +{
-> +	struct pppoe_hdr *phdr = (struct pppoe_hdr *)(skb->data + nhoff);
-> +	__be16 type = pppoe_hdr_proto(phdr);
-> +	struct packet_offload *ptype;
-> +	int len, err;
-> +
-> +	ptype = gro_find_complete_by_type(type);
-> +	if (!ptype)
-> +		return -ENOENT;
-> +
-> +	err = INDIRECT_CALL_INET(ptype->callbacks.gro_complete,
-> +				 ipv6_gro_complete, inet_gro_complete,
-> +				 skb, nhoff + sizeof(*phdr) + 2);
-> +	if (err)
-> +		return err;
-> +
-> +	len = skb->len - (nhoff + sizeof(*phdr));
-> +	phdr->length = cpu_to_be16(len);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct sk_buff *pppoe_gso_segment(struct sk_buff *skb,
-> +					 netdev_features_t features)
-> +{
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/urgent
+branch HEAD: 21924af67d69d7c9fdaf845be69043cfe75196a1  locking: Fix __clear_task_blocked_on() warning from __ww_mutex_wound() path
 
-I don't think this will be called for PPPoE over GRE packets,
-since gre_gso_segment skips everything up to the network header.
+elapsed time: 1448m
 
-> +	unsigned int pppoe_hlen = sizeof(struct pppoe_hdr) + 2;
-> +	struct sk_buff *segs = ERR_PTR(-EINVAL);
-> +	u16 mac_offset = skb->mac_header;
-> +	struct packet_offload *ptype;
-> +	u16 mac_len = skb->mac_len;
-> +	struct pppoe_hdr *phdr;
-> +	__be16 orig_type, type;
-> +	int len, nhoff;
-> +
-> +	skb_reset_network_header(skb);
-> +	nhoff = skb_network_header(skb) - skb_mac_header(skb);
-> +
-> +	if (unlikely(!pskb_may_pull(skb, pppoe_hlen)))
-> +		goto out;
-> +
-> +	phdr = (struct pppoe_hdr *)skb_network_header(skb);
-> +	type = pppoe_hdr_proto(phdr);
-> +	ptype = gro_find_complete_by_type(type);
-> +	if (!ptype)
-> +		goto out;
-> +
-> +	orig_type = skb->protocol;
-> +	__skb_pull(skb, pppoe_hlen);
-> +	segs = ptype->callbacks.gso_segment(skb, features);
-> +	if (IS_ERR_OR_NULL(segs)) {
-> +		skb_gso_error_unwind(skb, orig_type, pppoe_hlen, mac_offset,
-> +				     mac_len);
-> +		goto out;
-> +	}
-> +
-> +	skb = segs;
-> +	do {
-> +		phdr = (struct pppoe_hdr *)(skb_mac_header(skb) + nhoff);
-> +		len = skb->len - (nhoff + sizeof(*phdr));
-> +		phdr->length = cpu_to_be16(len);
-> +		skb->network_header = (u8 *)phdr - skb->head;
-> +		skb->protocol = orig_type;
-> +		skb_reset_mac_len(skb);
-> +	} while ((skb = skb->next));
-> +
-> +out:
-> +	return segs;
-> +}
-> +
-> +static struct packet_offload pppoe_packet_offload __read_mostly = {
-> +	.type = cpu_to_be16(ETH_P_PPP_SES),
-> +	.priority = 20,
-> +	.callbacks = {
-> +		.gro_receive = pppoe_gro_receive,
-> +		.gro_complete = pppoe_gro_complete,
-> +		.gso_segment = pppoe_gso_segment,
-> +	},
-> +};
-> +
->  static int __init pppoe_init(void)
->  {
->  	int err;
-> @@ -1189,6 +1345,7 @@ static int __init pppoe_init(void)
->  	if (err)
->  		goto out_unregister_pppoe_proto;
->  
-> +	dev_add_offload(&pppoe_packet_offload);
->  	dev_add_pack(&pppoes_ptype);
->  	dev_add_pack(&pppoed_ptype);
->  	register_netdevice_notifier(&pppoe_notifier);
-> @@ -1208,6 +1365,7 @@ static void __exit pppoe_exit(void)
->  	unregister_netdevice_notifier(&pppoe_notifier);
->  	dev_remove_pack(&pppoed_ptype);
->  	dev_remove_pack(&pppoes_ptype);
-> +	dev_remove_offload(&pppoe_packet_offload);
->  	unregister_pppox_proto(PX_PROTO_OE);
->  	proto_unregister(&pppoe_sk_proto);
->  	unregister_pernet_device(&pppoe_net_ops);
-> diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-> index 76e38092cd8a..0480a6d4f203 100644
-> --- a/net/ipv4/af_inet.c
-> +++ b/net/ipv4/af_inet.c
-> @@ -1533,6 +1533,7 @@ struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
->  
->  	return pp;
->  }
-> +EXPORT_INDIRECT_CALLABLE(inet_gro_receive);
->  
->  static struct sk_buff *ipip_gro_receive(struct list_head *head,
->  					struct sk_buff *skb)
-> @@ -1618,6 +1619,7 @@ int inet_gro_complete(struct sk_buff *skb, int nhoff)
->  out:
->  	return err;
->  }
-> +EXPORT_INDIRECT_CALLABLE(inet_gro_complete);
->  
->  static int ipip_gro_complete(struct sk_buff *skb, int nhoff)
->  {
-> diff --git a/net/ipv6/ip6_offload.c b/net/ipv6/ip6_offload.c
-> index fce91183797a..9e3640b018a4 100644
-> --- a/net/ipv6/ip6_offload.c
-> +++ b/net/ipv6/ip6_offload.c
-> @@ -306,6 +306,7 @@ INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
->  
->  	return pp;
->  }
-> +EXPORT_INDIRECT_CALLABLE(ipv6_gro_receive);
->  
->  static struct sk_buff *sit_ip6ip6_gro_receive(struct list_head *head,
->  					      struct sk_buff *skb)
-> @@ -388,6 +389,7 @@ INDIRECT_CALLABLE_SCOPE int ipv6_gro_complete(struct sk_buff *skb, int nhoff)
->  out:
->  	return err;
->  }
-> +EXPORT_INDIRECT_CALLABLE(ipv6_gro_complete);
->  
->  static int sit_gro_complete(struct sk_buff *skb, int nhoff)
->  {
+configs tested: 113
+configs skipped: 3
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+alpha                            allyesconfig    gcc-15.1.0
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                              allyesconfig    gcc-15.1.0
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20250813    gcc-11.5.0
+arc                   randconfig-002-20250813    gcc-8.5.0
+arc                    vdk_hs38_smp_defconfig    gcc-15.1.0
+arm                               allnoconfig    clang-22
+arm                              allyesconfig    gcc-15.1.0
+arm                   randconfig-001-20250813    clang-22
+arm                   randconfig-002-20250813    gcc-8.5.0
+arm                   randconfig-003-20250813    clang-22
+arm                   randconfig-004-20250813    gcc-8.5.0
+arm64                            allmodconfig    clang-19
+arm64                             allnoconfig    gcc-15.1.0
+arm64                 randconfig-001-20250813    clang-22
+arm64                 randconfig-002-20250813    gcc-12.5.0
+arm64                 randconfig-003-20250813    clang-22
+arm64                 randconfig-004-20250813    clang-22
+csky                              allnoconfig    gcc-15.1.0
+csky                  randconfig-001-20250813    gcc-14.3.0
+csky                  randconfig-002-20250813    gcc-13.4.0
+hexagon                          allmodconfig    clang-17
+hexagon                           allnoconfig    clang-22
+hexagon                          allyesconfig    clang-22
+hexagon               randconfig-001-20250813    clang-22
+hexagon               randconfig-002-20250813    clang-22
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250813    gcc-11
+i386        buildonly-randconfig-002-20250813    clang-20
+i386        buildonly-randconfig-003-20250813    gcc-11
+i386        buildonly-randconfig-004-20250813    clang-20
+i386        buildonly-randconfig-005-20250813    gcc-12
+i386        buildonly-randconfig-006-20250813    gcc-12
+i386                                defconfig    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                         allnoconfig    clang-22
+loongarch             randconfig-001-20250813    clang-19
+loongarch             randconfig-002-20250813    gcc-15.1.0
+m68k                             allmodconfig    gcc-15.1.0
+m68k                              allnoconfig    gcc-15.1.0
+m68k                             allyesconfig    gcc-15.1.0
+m68k                       m5249evb_defconfig    gcc-15.1.0
+microblaze                       allmodconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                       allyesconfig    gcc-15.1.0
+microblaze                          defconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                               defconfig    gcc-11.5.0
+nios2                 randconfig-001-20250813    gcc-11.5.0
+nios2                 randconfig-002-20250813    gcc-8.5.0
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20250813    gcc-14.3.0
+parisc                randconfig-002-20250813    gcc-8.5.0
+parisc64                            defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc               randconfig-001-20250813    clang-18
+powerpc               randconfig-002-20250813    clang-22
+powerpc               randconfig-003-20250813    clang-20
+powerpc64             randconfig-001-20250813    clang-22
+powerpc64             randconfig-002-20250813    gcc-8.5.0
+powerpc64             randconfig-003-20250813    clang-17
+riscv                             allnoconfig    gcc-15.1.0
+riscv                 randconfig-001-20250813    clang-22
+riscv                 randconfig-002-20250813    gcc-14.3.0
+s390                             allmodconfig    clang-18
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                  randconfig-001-20250813    clang-22
+s390                  randconfig-002-20250813    clang-18
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                    randconfig-001-20250813    gcc-9.5.0
+sh                    randconfig-002-20250813    gcc-9.5.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20250813    gcc-8.5.0
+sparc                 randconfig-002-20250813    gcc-15.1.0
+sparc64               randconfig-001-20250813    gcc-8.5.0
+sparc64               randconfig-002-20250813    clang-20
+um                               allmodconfig    clang-19
+um                                allnoconfig    clang-22
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250813    gcc-12
+um                    randconfig-002-20250813    gcc-11
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20250813    gcc-12
+x86_64      buildonly-randconfig-002-20250813    clang-20
+x86_64      buildonly-randconfig-003-20250813    gcc-12
+x86_64      buildonly-randconfig-004-20250813    clang-20
+x86_64      buildonly-randconfig-005-20250813    clang-20
+x86_64      buildonly-randconfig-006-20250813    gcc-12
+x86_64                              defconfig    gcc-11
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                randconfig-001-20250813    gcc-10.5.0
+xtensa                randconfig-002-20250813    gcc-12.5.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
