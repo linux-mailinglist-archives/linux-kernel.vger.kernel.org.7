@@ -1,47 +1,51 @@
-Return-Path: <linux-kernel+bounces-767997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADCDB25BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D251AB25BB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C211681C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:17:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6355C3D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FB723D2A3;
-	Thu, 14 Aug 2025 06:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378D823B611;
+	Thu, 14 Aug 2025 06:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocClVtY7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZwHvZHET"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C02B665;
-	Thu, 14 Aug 2025 06:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DD3199FBA;
+	Thu, 14 Aug 2025 06:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755152258; cv=none; b=Vv4fZvQLFEeiiUWvi8rlYW5jUpvIRiCWOq15SKaJ/KEhrRrmZvj850eVW5lL+pqel03nx3l8TGMdorfZ/p3jNiD7494YZIvQz9ASZkZ+2Mg4ihEChILsLRI6diKecCpy/wAEsQ9GWmcFI1CVDRFcrH7Rj8WztQmKUw3RCzMf3ck=
+	t=1755152271; cv=none; b=SbmqGW0iT0uVHTK9nNLJYQpdWDeFmCq/enxj437mzHZ84xPtSofBn/pK8vgPiqv10wojN+gNTA+un04esNQz6II/Zwn+b2k+5/cSnDK2VSek8t29zwrJaZ+7chRiZtkuVoXng0bBjB3U4+wyamqQMgz52Uanz9p53qo+r49kXn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755152258; c=relaxed/simple;
-	bh=zNG9Nu3Wh8t0MKtdRA10J2MqMnwX4xIXhtIIrfXTNa0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gmfWWQDP+Vmk/gKDzwus19bKl6AlncTfBKa/TuR7zC1jviCPLUONFSbwO13owmhR3YBFPFz2rAijY1wp8gsLdcv03sZbG6gYq/mIQYKFK+9pkZJLNFhOKN9yDGszClCp0zv9953a5PLshkyWxNdxjtNCLcN/dxefHPT3wzu8qp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocClVtY7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FA53C4CEEF;
-	Thu, 14 Aug 2025 06:17:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755152256;
-	bh=zNG9Nu3Wh8t0MKtdRA10J2MqMnwX4xIXhtIIrfXTNa0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ocClVtY7tl5nu1Ssc93Ga/baNkQ3LtLSkkb4JdLo2Nm5h8LQZmUYtpivjLB6LOGQ7
-	 yNrY1ELToFhkAS/dC+h46ks0c8hj6bLMXT0VrOy0SB94DmxvlpQLk78VzIuimsIl2m
-	 fIDNsRT0WqxwwIQpVURA9NzDdMFhKjvvHM51BeQlEINaKpKkqguSbPnPHaVNU5cKD+
-	 790ewLK+UGq4UMwRYxQhsOgFVBPhMtZetTHhhbxJAjCq1oOBg9YxVWfMq3gwgflEki
-	 FrzZMUVWfORzmxw2jABPZPJAmswLurI8Ly3vFKZpdh8iUYzDqAYYv/o10KcLHUnrN8
-	 m3SKXMIAw6bvQ==
-Message-ID: <ab151314-c504-4a26-9ca2-685ab57b8fe9@kernel.org>
-Date: Thu, 14 Aug 2025 08:17:28 +0200
+	s=arc-20240116; t=1755152271; c=relaxed/simple;
+	bh=JUlGXDoDU3h8VdYmd71GV9rx3NSd1zaFVwUlBMhfP84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=txdlp6NWdKjhbwNUpvhtGKrnx04dzmXwhe9j6tNDUcXbrmnAGUYCgeTZkPj9HIiVJXMYpnXSpXlQWTL7PudHRDXvSgSMGAGSRsgIQspOkzMJae4N8UabZuJdsVB7HostjS4G9npDEtkxGXq3suhjcdUf8Ro7tUE/E/J5CrO288E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZwHvZHET; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+	bh=uyhswAR8zAjm8saDsw6xts31EBzXU2xYMGuJPzUBHv8=; b=ZwHvZHETZM5U7jKaA0CiTInLQd
+	LzsVv7SRuTVGhQFfEGwjIzpYgPyYwqyvzUfWEKWrSUA6qaY+agtffT25uMjKtH8jp6RXEklMRRapB
+	khShInvsnnDXXyYizOA4DHasWNlbiRFrUBDn6ywc9X4RsinSKqnGNNP7q4+QNKUQmKuAm1V81Xi5k
+	PY8CfLKfl9xK3G6/7ZfgS4RqHAeZcw77R7w5/0uBnjueXntmkuf9RpKslnGCGcW/3pdm47696VRtW
+	+Q/wD3JuOTygh1Fi2tiUJGXu6yBs4C+NIHrxiTQdt7/rvfBu2IkMe8PVWZek6hIiY4b/JuKXTixsB
+	HIJvchDg==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1umRHZ-0000000FvAN-46BE;
+	Thu, 14 Aug 2025 06:17:50 +0000
+Message-ID: <29ecd4d8-2af5-4854-b4fa-2a1d6b312e9b@infradead.org>
+Date: Wed, 13 Aug 2025 23:17:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,88 +53,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: phy: spacemit: introduce PCIe PHY
-To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
- mani@kernel.org, bhelgaas@google.com, vkoul@kernel.org, kishon@kernel.org
-Cc: dlan@gentoo.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
- tglx@linutronix.de, johan+linaro@kernel.org, thippeswamy.havalige@amd.com,
- namcao@linutronix.de, mayank.rana@oss.qualcomm.com, shradha.t@samsung.com,
- inochiama@gmail.com, quic_schintav@quicinc.com, fan.ni@samsung.com,
- devicetree@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250813184701.2444372-1-elder@riscstar.com>
- <20250813184701.2444372-3-elder@riscstar.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] kernel-parameters: fix kernel-doc warning
+To: vivekyadav1207731111@gmail.com, skhan@linuxfoundation.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250814041610.28171-1-vivekyadav1207731111@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250813184701.2444372-3-elder@riscstar.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250814041610.28171-1-vivekyadav1207731111@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/08/2025 20:46, Alex Elder wrote:
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#phy-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/spacemit,k1-syscon.h>
-> +    pcie1_phy: phy@c0c10000 {
-> +        compatible = "spacemit,k1-pcie-phy";
-> +        reg = <0xc0c10000 0x1000>;
-> +        #phy-cells = <0>;
-> +        status = "disabled";
-Same problem here.
 
-Best regards,
-Krzysztof
+
+On 8/13/25 9:16 PM, vivekyadav1207731111@gmail.com wrote:
+> From: Vivek Yadav <vivekyadav1207731111@gmail.com>
+> 
+> Fix kernel-doc warning in kernel-parameters.txt
+> 
+> WARNING: Possible repeated word: 'is'
+> 
+> ```
+> [command]
+> ./scripts/checkpatch.pl --strict -f Documentation/admin-guide/kernel-parameters.txt
+
+Thanks for that.
+
+> [output]
+> WARNING: Possible repeated word: 'is'
+> +            The format is is "trace_trigger=<event>.<trigger>[ if <filter>],..."
+> 
+> total: 0 errors, 1 warnings, 0 checks, 8339 lines checked
+> ```
+> 
+> Signed-off-by: Vivek Yadav <vivekyadav1207731111@gmail.com>
+
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+
+
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 747a55abf..302145870 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -7506,7 +7506,7 @@
+>  			Set a trigger on top of a specific event, with an optional
+>  			filter.
+>  
+> -			The format is is "trace_trigger=<event>.<trigger>[ if <filter>],..."
+> +			The format is "trace_trigger=<event>.<trigger>[ if <filter>],..."
+>  			Where more than one trigger may be specified that are comma deliminated.
+>  
+>  			For example:
+
+-- 
+~Randy
 
