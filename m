@@ -1,432 +1,244 @@
-Return-Path: <linux-kernel+bounces-767848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2D2B259C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:20:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA54B259E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 119E7628E2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:20:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 508A7189BCD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED56259C92;
-	Thu, 14 Aug 2025 03:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A919E230BD2;
+	Thu, 14 Aug 2025 03:29:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pbg8gvsE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="LKJggS/W"
+Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC372FF65E;
-	Thu, 14 Aug 2025 03:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755141632; cv=fail; b=NVg0Vm6a13i6Ct1ikFaJOnazhhsXV03wgMOQHjXTnVkCXWpNPzGM/RxUNYMSGeAALDmtLeqHPd8Ebdcde2yz4BSpn9ymOdJLVyku59++6l/D/lgMhag8lPQbpQYHBdGfHbOR/MbhpF3UlNLrRbOlnWfy0m3bpLH/9Qg8NjPedAQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755141632; c=relaxed/simple;
-	bh=yvWULiMM3nT+upz6MqjBaJD9lxVbOaFURW9Odw4T/vk=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=M7+igky8v8Mqmcin6W54QO7fp0bJNakTE5CDNKL8m7WWVKmJRR+WrDdtOllkpnkSY8XbCcqJbiknrup1DafjoNtr4gB7x/UxR8EaiDwuZdFQ9f2ijLg2EAu6jVU47h57+g2gQQHWMF8JMw5GklYU9KEPp8qZFC/RTYVCBhebRec=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pbg8gvsE; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755141630; x=1786677630;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=yvWULiMM3nT+upz6MqjBaJD9lxVbOaFURW9Odw4T/vk=;
-  b=Pbg8gvsEvg1sgt7sTmXdNkdVaV8pI3N0dl61Z/vS+Bo7y12TkKT2iZk+
-   +eUT9Vh05FCrDzK4KZsckDiuBrgF5H9BYf5zhEdTknK+JWgn/O/zafCE+
-   3Kkh5UNe3m7TqcPQLGoinpx5YXiBpsq/0y6WM4VdFPYZYTawyDatIOylf
-   vpz6R5iuI4n+51VGXbeFVg4InGPa+J3o7YNjYcnJGu+pbomc7trmCiVSj
-   lUwxTsIG0vibRSHk4soA6ge5RC1IuQOnWDs2zjcCiPb6/mofTpL3T2baD
-   iH+KUwDZipeUm0KBz9CjfVSdVzOQg/tdw9UEk44ABcpJ0kIDN3sx22NXC
-   A==;
-X-CSE-ConnectionGUID: goBT2jHJRoSyPCwBWSGxVA==
-X-CSE-MsgGUID: TkyxZwFTTsmlrkT6CNUARw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="75021359"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="75021359"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 20:20:29 -0700
-X-CSE-ConnectionGUID: zpzObA0bRdyRJbEkhkjBbw==
-X-CSE-MsgGUID: y8HmO/h5QP+Jp37XPXv0Fw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="165827518"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2025 20:20:29 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Wed, 13 Aug 2025 20:20:28 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Wed, 13 Aug 2025 20:20:28 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.89)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 13 Aug 2025 20:20:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IR42FzA/ZohG1MvR47mF8MZcKkmfIpeLx6p0yMMq9Ew8bZy35XUF9YKpsDOQuFSh/xejsA0j48sgk9F2PWr1kepoTewUhy932lHU37KNcHreIiqhWJDByt9Jiz6gVL1s6vUjL/HouaBFT2nfNvAi7LUqyyVkWwg/WnZpSnOXltcAZ3NLm1E17d28AVYKla5w1UB/16cGpUV8pMh0Ym9VPo5ThDWU4qgiFZpdtbgGbvy9QHs/euTJ8MpPPds2L91q2V08ovMKsV2wJR+tyFRsDRKQhXBMEUSTf1jLCUPJaW4VyHFbTUm2Lw+Y9tyWaiouhIARb38W1ngWiU5aye75UQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=svivPCqguUzZ3u8jdWs67BZP823otBt92w3JYAjwJeQ=;
- b=vZ901tJFo8ph+HYJlqV4fioWQQlx382fru/iEa1BBqCE5Ad5IVEzJLI1SdjWy9QMvnYM/JH/oU+SEwOiGS/8dSvYnxl7HI3onnkZkXjl52n7bBA7wQe7s4QxSkrvZDhXMC7pLnIZIM//yErLnUdQBues3sYilyax9QV2RYUS3VGzVk+IdCvkulVJCIq83OFWu1Uawzwfl9MDpnVzPeFZ5CPMxEoIaSbS1ju76JvzEpbXsn++6MD+pS2WCJJFNh0gi2JuSKNVJnZaAGMSNBxHiolHEoVljONAmJCKik0LzlxfnSwXNv42qfR8C+LWEgp1yCtee+JGIUSr8gWNNRi9bg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM3PR11MB8735.namprd11.prod.outlook.com (2603:10b6:0:4b::20) by
- SJ2PR11MB8298.namprd11.prod.outlook.com (2603:10b6:a03:545::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
- 2025 03:20:26 +0000
-Received: from DM3PR11MB8735.namprd11.prod.outlook.com
- ([fe80::3225:d39b:ca64:ab95]) by DM3PR11MB8735.namprd11.prod.outlook.com
- ([fe80::3225:d39b:ca64:ab95%4]) with mapi id 15.20.9031.012; Thu, 14 Aug 2025
- 03:20:25 +0000
-Message-ID: <4fa12f71-74df-4d62-9844-60125b85f677@intel.com>
-Date: Thu, 14 Aug 2025 11:20:13 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 12/30] KVM: selftests: TDX: Add basic TDX CPUID test
-To: Sagi Shahar <sagis@google.com>, <linux-kselftest@vger.kernel.org>, "Paolo
- Bonzini" <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, "Sean
- Christopherson" <seanjc@google.com>, Ackerley Tng <ackerleytng@google.com>,
-	Ryan Afranji <afranji@google.com>, Andrew Jones <ajones@ventanamicro.com>,
-	Isaku Yamahata <isaku.yamahata@intel.com>, Erdem Aktas
-	<erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, "Roger
- Wang" <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, "Oliver
- Upton" <oliver.upton@linux.dev>, "Pratik R. Sampat"
-	<pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-References: <20250807201628.1185915-1-sagis@google.com>
- <20250807201628.1185915-13-sagis@google.com>
-Content-Language: en-US
-From: Chenyi Qiang <chenyi.qiang@intel.com>
-In-Reply-To: <20250807201628.1185915-13-sagis@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR02CA0038.apcprd02.prod.outlook.com
- (2603:1096:4:196::22) To DM3PR11MB8735.namprd11.prod.outlook.com
- (2603:10b6:0:4b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F8C3C33
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755142179; cv=none; b=KUU3VeMPkJ6D89a5ICQ3VFhTfDPtoxSIBtJlmT6Tj6XfmV2tQJaqBYddSnx9fYEn79Jr1iknMjy4W+IFQhftnHh1RAbF21xcUItytkIrncP1dPjFupbuFQP220kfioz2vEOY8eZeFS2r89c/EaKOpc/tzfMcTRaxxdmzx1CU7Pw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755142179; c=relaxed/simple;
+	bh=Euf7RGfdcRTByFbTluvA/RIw6+MZ44J8dHtq9uOZQdI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=noW2oqBtQk4V8UM/1sgKH1JYXB6efNymmvHBHMVvsMrPd0gnx/mDI/RyxwzwZCM/Wa+ASDP1QomTtY+SYpGjujrX4DToKxys364oImitcip9IXHraJJkBxnYMux+9T/OOfVlZUd/GnrhBxj1tb1F29lIDOQRUxTNL0wxGBlTtc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=LKJggS/W; arc=none smtp.client-ip=51.81.35.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
+	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id 5C8BE223BF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:22:26 +0000 (UTC)
+Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [151.80.165.199])
+	by relay5.mymailcheap.com (Postfix) with ESMTPS id 8F4DA200AF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:22:17 +0000 (UTC)
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay2.mymailcheap.com (Postfix) with ESMTPS id E06F03E891;
+	Thu, 14 Aug 2025 03:22:09 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id A006240086;
+	Thu, 14 Aug 2025 03:22:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1755141728; bh=Euf7RGfdcRTByFbTluvA/RIw6+MZ44J8dHtq9uOZQdI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LKJggS/WzySivrjP27Hzljd0PMhw8AlnDl04Vq+4nCkQ/e85ipxJFnQeVDppiGw8R
+	 m547Mh1ywTjS29poQpJpjbE/jBzTjX1pUFrYAyNDTQRP0XjkYwuRcJodA0qBBN7NeM
+	 WY6qEbAztAXET33Cf/JCHgBiZ9ZeQa30/hhm6BB4=
+Received: from JellyZhongke (unknown [223.76.243.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 1BB034069D;
+	Thu, 14 Aug 2025 03:22:02 +0000 (UTC)
+From: Mingcong Bai <jeffbai@aosc.io>
+To: linux-kernel@vger.kernel.org
+Cc: Wentao Guan <guanwentao@uniontech.com>,
+	WangYuli <wangyuli@uniontech.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Kexy Biscuit <kexybiscuit@aosc.io>,
+	Mingcong Bai <jeffbai@aosc.io>,
+	Zhang Yuhao <xinmu@xinmu.moe>,
+	Felix Kuehling <Felix.Kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [RFC PATCH] drm/amdkfd: disable HSA_AMD_SVM on LoongArch and AArch64
+Date: Thu, 14 Aug 2025 11:21:36 +0800
+Message-ID: <20250814032153.227285-1-jeffbai@aosc.io>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM3PR11MB8735:EE_|SJ2PR11MB8298:EE_
-X-MS-Office365-Filtering-Correlation-Id: aceacd59-e244-4c20-ceae-08dddae182c3
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SXh4VE1lYWNRNEVSSzAyVUMvclQ0cklKWFpWVWhHaXBaQzA2ZHR6eXhwQVdw?=
- =?utf-8?B?UDVQakQzN083TXRyZ3orOUUyeFBiemdLT1l2VGx6bjV4SkhiZ2NEYVdycXlC?=
- =?utf-8?B?cW1PZE8vU2lTUFMweXc5d2tCTmZYcGdVOGNFclc2ek5XeGF4dVNJbFB0bHVs?=
- =?utf-8?B?Q1Jiek5zekZGREZUWDBBN1pmbEZwQnBMR2hYQlg3Rkt3VnpEVC9GcDIrNjh2?=
- =?utf-8?B?ajBkK2pPT3cxV3laL1d0TU5mQ0Y4ZjBib3k2eXlPTmxkbU9nRGU3NGNLWVZ0?=
- =?utf-8?B?RUpyWWNKRStEN016ME9SdEFFa2ZSOWxkbjhFcGxRODlpdUFwaUl0aWhveE81?=
- =?utf-8?B?YnJnNzlnU2RXQWM4UDN5bW43Q1ZUSG5GclZlbzdweGhNR3hJWStOMktLWEdz?=
- =?utf-8?B?Y3dheEZZV01pRDZrdXNYQkdNRGJkTzlsYTREMmpxYjY5cXhiRG5mZEh4K0wr?=
- =?utf-8?B?N3pDaGU4dzNsTGt6b3h6SnRpYXNnbFI4MWUyR21Ra1BKaHNvRCtVbEg1UjM1?=
- =?utf-8?B?cjNYRjJaZURHbmdGYlBnRHEzUG5XNXpGUDdpeERiZlc2NlFTaTdJLzFsNWxv?=
- =?utf-8?B?UWx1c1JNM1RsYmN0Vk1LVU1QaWhrZllvTmY1ZFpXTFZldmE1N09IbmkzQnZW?=
- =?utf-8?B?bHpDdVBSWDlrTEJlMkxQdTd4Y0dsaUtYOEI4VWVHS0poSUFWOUdPWDk5SzF6?=
- =?utf-8?B?ekovd1BvVkFkK2NQYnB2L29ML0ZjdVNwcEl0MldsTDJ6bmFYRHBRbzBPQ2NI?=
- =?utf-8?B?VVhsc016YXRqS09rdlpicUVsL2ladTlxdWYyZ0RUdE51cFhIMUhDVmZUYnVk?=
- =?utf-8?B?bnBaYjN3RGhieEhWN2tDUlRjcTd1TzRmZGp4d0IrU0kyaWtUVHJxQlcwMGk4?=
- =?utf-8?B?WWJiUUxhaWxrcGN3YnlLUy90M1FtZTBidVJ2cXFXSFl2by9xeEpVN2k0UlpN?=
- =?utf-8?B?RFg1eHNjT3A2M3NWVldvVjFWc3JKdkxTc3hBMWtFYVExMFJ5N2RwTEZ4R1Z3?=
- =?utf-8?B?b2hMbTBSTmVOZWFJMy9kK3VCVXgwcEY5aklsQk0vcCs5SlJ1cmdUamt6TnVm?=
- =?utf-8?B?Vk13cElwUGpkdE5KbW9BdnQ3WVh3RllTSWZKajNaaTlpZHA2T0U3WnlLcWQ5?=
- =?utf-8?B?ODFOc0c5L2xETkUxbkdWV0NqdnRkZkJUcFpkdGxMcDlsQlY1RDFUMzQvK3J1?=
- =?utf-8?B?VjFMNTY3eWpRcngyNzJyald6QWV4YkViQ012Vmwzd1VJME4zS09lTmw3ak9Q?=
- =?utf-8?B?MDlzd21UZStiL1Q5RTNRcU14SGRNZkM4eW5pK2F6TmN3K3hHR2hhWjAyR1hl?=
- =?utf-8?B?RWl3UEhybldBWmxMNnY4aEdIZG95SnNSZFIrcmFZVFZWYmZSRThIWEdGVzk3?=
- =?utf-8?B?NktoZU9ldGY1RTRrUjlRblREeGx1SWVlV1NoMHVFVHVTVXdLZDlVcWc1bkdG?=
- =?utf-8?B?M2E1RXZGN1VvYlVUanEwdGVNR2JoTEpLZnltZVdoOThzMWJyelZSTlRFdTVC?=
- =?utf-8?B?L1hyOGNrRDJOT2JvR2FCZ3hOdnhpTWJuTWtZc2QvM3BVVnhFc1JoSEtXSDZv?=
- =?utf-8?B?N1ZSOUxrdWllK0c2NlJXTURYMzk4TTY5NjMwWmdSTUt0OHI4cEJzamhUQVVG?=
- =?utf-8?B?MkRzNDQwZG1mejhUVlU2QlArcVBhRVdSeEtHbkRReXZZZ2tJdjhjYnpyenJI?=
- =?utf-8?B?R3Y0eko3SUFZWmI3NTdHL2VySFBTaUhOamQvL2FUYnVtZGI1UGkyMmJsYTVU?=
- =?utf-8?B?ZHhOYjgxQURmYUY4L0puVXVpVXlCdFNiWEpXZmlQUW13Y1lOSVk0OTlURzVa?=
- =?utf-8?B?NFdqdVJJZHVySUYzRFpJOC9xZGNPMm1CSWJPOG02UW91V01FejFjWk5iZ0ds?=
- =?utf-8?B?cDRwazVUbjIrMVYwbFFEajUwODR5NU0rYk50TFdobk10dDhiZWZqNGNLR1dD?=
- =?utf-8?B?QkpIUHd6OVJpTnp2MGRJYXpLWGlReEYyM3JSdFRuenVpR2RNQ2hVWE9zNjJj?=
- =?utf-8?B?cElndjE1NC9RPT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PR11MB8735.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TEZJVGFMNG1UWCt6c0packdUZko5ajE3NGVlcE5mdVEzQW9iZXFxRERSazlF?=
- =?utf-8?B?Yzd5VXdHdW9lRFpydmRqZ1BBbThzV2lKalhERHdJNWE5T0dJSzR0d3hNV3Bo?=
- =?utf-8?B?WThnYVZNeFBIazhSQlpOZ29rMWpUUldBRGlRWnA1SjFTaDh5Z2YzOFNvd3dp?=
- =?utf-8?B?UGVKemtiQ1BGN3dxbGNYWC9oRWEyVnNkaFdDUHlBS0d4blQ3cjdmZVdrbkdk?=
- =?utf-8?B?Qy9HcVVaYmV3b0NMSUN1cGE5aGliK3hyN1VTQjllZ2IxclZjQkgzeTVySk1t?=
- =?utf-8?B?Uk92dmtUdHVvcElUMnR3SERtVG1nc3ppSU5TamJYNVErQzNZMkpGVEtEM2w4?=
- =?utf-8?B?N2ZWQVJYck0wT0ExTFNCcndNQkcvSkpKOGtCV29ETS9JaGJ0dmVOYVVGVzJp?=
- =?utf-8?B?djkzdTBGN2FweENtUWtkS3MyNUc0d1BMbW9nWTBSYnlCLzRVSkF3aU1kT3lX?=
- =?utf-8?B?c3Q4UkoxbktXWmtVYXhTUzZDR1oxMkpzSWZJRXJGWEt0YjFmYklvK2tPWnAr?=
- =?utf-8?B?ZWpXdU5aTWtVR1RlL0htb1lxWXkzTjNBeGw5dm9IQ0hYS3pPMHpTaDNDdzM0?=
- =?utf-8?B?OElIQVFnQ3RNNmRpZlFNMnhTQjBGczJpNGZESGhvcnZ1bU9NcWRtb004K3Mz?=
- =?utf-8?B?ZHdQZzFrMkFIbG05eFE5UlRYQUdoVm5HQ1ZPSXo4bHlyYW9wTWpzdzdWVVo3?=
- =?utf-8?B?WTVTN3RzNVVXTE85MFdmK2VVWlV1b216WFZiTXJ4WUVUNVdIbkRNY2NtUy9a?=
- =?utf-8?B?RmFKcHpNd0NQNFZpbHBzMlpCVjZ2RS9OaG9weFQyN2ZCeHNPM3NhSzI5MXNW?=
- =?utf-8?B?anBhcVQydE0rS0d0MUlJQ1J1T3UvQXZuUUtvZncyRVE0V1VhSUlBMTdEN0Uz?=
- =?utf-8?B?Umg0YmdqNWFsZTFobEJNSVRaRjVSZGYzaDNSRnVVUEpSNzJDZDFPUnpxbkhk?=
- =?utf-8?B?QmlJWlluMWRzVkpUeFJZalhvd2drOXRYcmdyRUFncEI3L3gxbityMzVrMTBZ?=
- =?utf-8?B?SWNFME4xREV5YnpYa1RvWmZoaUt2Z1RXYjlGaHcraWhFMnIvR1I0UnVaUkFn?=
- =?utf-8?B?OHJDREJIbEUzVGlBNEVUbWtoOGRxQnkxZzdLZFNZbmlTRDIveXVLK3NvbU12?=
- =?utf-8?B?cjljTkVMaWR2UTNGK2p5NmF5WmlhUmVNeUVQQVJHQUkyOHh2OFcwdmF1R0Vz?=
- =?utf-8?B?TkdsdWdZcnVoYVpna29NNDNGUlFwWDBDRVMyQW1IdmQwYnd5TTJNT0tSTTRj?=
- =?utf-8?B?cUlmSExiWjJwdDc4NG9MeWtZOWlXc3NGd0xnNzljcC9NaHFPd2U0bExkaGxz?=
- =?utf-8?B?NGFVWDY4VWxKMWVSekhHbEl2MUNxTmErQ3VjYzYwRlFFeW16ek84bXdDNUpq?=
- =?utf-8?B?aDAwdk0rTXFvT2J0L21CRnBmOUFXRWtOMmczUmNoMzFPZ0hXcW9XbldFQ2po?=
- =?utf-8?B?QW1xdU1iRVdnZjBFMTZzLzZWSG01MnBGeEs0bWRqNDZEeWFJdXRDTi96MDg3?=
- =?utf-8?B?aExOYVg2SUF1bjBMLytyYUd0QTBaVjg4ai9LYUFwU1EvM3htc01jeDY2c1JD?=
- =?utf-8?B?Q0NTdlQ1ZnB3THYrUXhacVV0bk5YTGhQVWJ6T0RWUGxZbXJBaVkvVEU5cUdl?=
- =?utf-8?B?NFp6UUVpNG0rSG1XZXVFc0NhNHJQbjE1c1Y5aXNlVDVYSEQzZ1RxMU0xUlI4?=
- =?utf-8?B?N0YzVjBKWWlrQ3dVTTlaUUJnbVpZOHRCeGZKRHpSMXlHKzluamtKY3JmQ0VL?=
- =?utf-8?B?MFdvREVWU0Q5OEtReGlLTHVLRnJIQ2lIeUVtOU5yOXZaMUJCNzZBY1YxTEgx?=
- =?utf-8?B?eVlPRXFpR1lwcjZJZVZ6TjNtTldhTG5QbndoRUV3L1NldTd2T0FqZEtUSkVw?=
- =?utf-8?B?NjFUNVZsWkl2V3V4MVVDdzJ6NHd1cDAzYzcxQlVjUHZheG0zeGlTb0ZTY1VO?=
- =?utf-8?B?eDhRNFFRV2ZqMnZTenpLNG5DOW5MQSt3a05mcEVwZXI4OXFMQUNmTVY4b1FX?=
- =?utf-8?B?amZIT1VrU3RkWmdHOVY3V1ljVCtjVmg5bWlIYVVlRHB3QXNSM2I3RHVYQlpU?=
- =?utf-8?B?b0l3eS8veUIzeTZoSFpwUk9HSHF2MVFlOW5aTm5QKzZWeUtyT1JwRWhWcVEv?=
- =?utf-8?B?S1hzRjEzUnpVa1NOTHVTZUNwcHcxdDljT2l4TU0yTlJkQng3VG9ic3dFN3Vv?=
- =?utf-8?B?U0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: aceacd59-e244-4c20-ceae-08dddae182c3
-X-MS-Exchange-CrossTenant-AuthSource: DM3PR11MB8735.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 03:20:25.8018
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kvT6H2904ZUFer9C3QTfyR9nCjkRHOcgymAsRwSG6C4/FZ8JQnVrZByfxkkKvNTha8sUXYe/nC68Bic8bHoc8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8298
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [1.40 / 10.00];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	RCVD_COUNT_ONE(0.00)[1];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[jeffbai.aosc.io:server fail,xinmu.xinmu.moe:server fail];
+	FREEMAIL_CC(0.00)[uniontech.com,kernel.org,aosc.io,xinmu.moe,amd.com,gmail.com,ffwll.ch,lists.freedesktop.org];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: A006240086
 
+While testing my ROCm port for LoongArch and AArch64 (patches pending) on
+the following platforms:
 
+- LoongArch ...
+  - Loongson AC612A0_V1.1 (Loongson 3C6000/S) + AMD Radeon RX 6800
+- AArch64 ...
+  - FD30M51 (Phytium FT-D3000) + AMD Radeon RX 7600
+  - Huawei D920S10 (Huawei Kunpeng 920) + AMD Radeon RX 7600
 
-On 8/8/2025 4:16 AM, Sagi Shahar wrote:
-> The test reads CPUID values from inside a TD VM and compare them
-> to expected values.
-> 
-> The test targets CPUID values which are virtualized as "As Configured",
-> "As Configured (if Native)", "Calculated", "Fixed" and "Native"
-> according to the TDX spec.
-> 
-> Co-developed-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Signed-off-by: Sagi Shahar <sagis@google.com>
-> ---
->  .../selftests/kvm/include/x86/tdx/test_util.h | 15 +++
->  .../selftests/kvm/lib/x86/tdx/test_util.c     | 20 ++++
->  tools/testing/selftests/kvm/x86/tdx_vm_test.c | 98 ++++++++++++++++++-
->  3 files changed, 132 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-> index cf11955d56d6..2af6e810ef78 100644
-> --- a/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-> +++ b/tools/testing/selftests/kvm/include/x86/tdx/test_util.h
-> @@ -9,6 +9,9 @@
->  #define TDX_TEST_SUCCESS_PORT 0x30
->  #define TDX_TEST_SUCCESS_SIZE 4
->  
-> +#define TDX_TEST_REPORT_PORT 0x31
-> +#define TDX_TEST_REPORT_SIZE 4
-> +
->  /* Port I/O direction */
->  #define PORT_READ	0
->  #define PORT_WRITE	1
-> @@ -77,4 +80,16 @@ void tdx_test_fatal_with_data(uint64_t error_code, uint64_t data_gpa);
->   */
->  void tdx_assert_error(uint64_t error);
->  
-> +/*
-> + * Report a 32 bit value from the guest to user space using TDG.VP.VMCALL
-> + * <Instruction.IO> call. Data is reported on port TDX_TEST_REPORT_PORT.
-> + */
-> +uint64_t tdx_test_report_to_user_space(uint32_t data);
-> +
-> +/*
-> + * Read a 32 bit value from the guest in user space, sent using
-> + * tdx_test_report_to_user_space().
-> + */
-> +uint32_t tdx_test_read_report_from_guest(struct kvm_vcpu *vcpu);
-> +
->  #endif // SELFTEST_TDX_TEST_UTIL_H
-> diff --git a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> index 4ccc5298ba25..f9bde114a8bc 100644
-> --- a/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> +++ b/tools/testing/selftests/kvm/lib/x86/tdx/test_util.c
-> @@ -104,3 +104,23 @@ void tdx_assert_error(uint64_t error)
->  	if (error)
->  		tdx_test_fatal(error);
->  }
-> +
-> +uint64_t tdx_test_report_to_user_space(uint32_t data)
-> +{
-> +	/* Upcast data to match tdg_vp_vmcall_instruction_io() signature */
-> +	uint64_t data_64 = data;
-> +
-> +	return tdg_vp_vmcall_instruction_io(TDX_TEST_REPORT_PORT,
-> +					    TDX_TEST_REPORT_SIZE, PORT_WRITE,
-> +					    &data_64);
-> +}
-> +
-> +uint32_t tdx_test_read_report_from_guest(struct kvm_vcpu *vcpu)
-> +{
-> +	uint32_t res;
-> +
-> +	tdx_test_assert_io(vcpu, TDX_TEST_REPORT_PORT, 4, PORT_WRITE);
-> +	res = *(uint32_t *)((void *)vcpu->run + vcpu->run->io.data_offset);
-> +
-> +	return res;
-> +}
-> diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> index 97330e28f236..bbdcca358d71 100644
-> --- a/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> +++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-> @@ -3,6 +3,7 @@
->  #include <signal.h>
->  
->  #include "kvm_util.h"
-> +#include "processor.h"
->  #include "tdx/tdcall.h"
->  #include "tdx/tdx.h"
->  #include "tdx/tdx_util.h"
-> @@ -146,6 +147,99 @@ void verify_td_ioexit(void)
->  	printf("\t ... PASSED\n");
->  }
->  
-> +/*
-> + * Verifies CPUID functionality by reading CPUID values in guest. The guest
-> + * will then send the values to userspace using an IO write to be checked
-> + * against the expected values.
-> + */
-> +void guest_code_cpuid(void)
-> +{
-> +	uint32_t ebx, ecx;
-> +	uint64_t err;
-> +
-> +	/* Read CPUID leaf 0x1 */
-> +	asm volatile ("cpuid"
-> +		      : "=b" (ebx), "=c" (ecx)
-> +		      : "a" (0x1)
-> +		      : "edx");
-> +
-> +	err = tdx_test_report_to_user_space(ebx);
-> +	tdx_assert_error(err);
-> +
-> +	err = tdx_test_report_to_user_space(ecx);
-> +	tdx_assert_error(err);
-> +
-> +	tdx_test_success();
-> +}
-> +
-> +void verify_td_cpuid(void)
-> +{
-> +	uint32_t guest_max_addressable_ids, host_max_addressable_ids;
-> +	const struct kvm_cpuid_entry2 *cpuid_entry;
-> +	uint32_t guest_clflush_line_size;
-> +	uint32_t guest_initial_apic_id;
-> +	uint32_t guest_sse3_enabled;
-> +	uint32_t guest_fma_enabled;
-> +	struct kvm_vcpu *vcpu;
-> +	struct kvm_vm *vm;
-> +	uint32_t ebx, ecx;
-> +
-> +	vm = td_create();
-> +	td_initialize(vm, VM_MEM_SRC_ANONYMOUS, 0);
-> +	vcpu = td_vcpu_add(vm, 0, guest_code_cpuid);
-> +	td_finalize(vm);
-> +
-> +	printf("Verifying TD CPUID:\n");
-> +
-> +	/* Wait for guest to report ebx value */
-> +	tdx_run(vcpu);
-> +	ebx = tdx_test_read_report_from_guest(vcpu);
-> +
-> +	/* Wait for guest to report either ecx value or error */
-> +	tdx_run(vcpu);
-> +	ecx = tdx_test_read_report_from_guest(vcpu);
-> +
-> +	/* Wait for guest to complete execution */
-> +	tdx_run(vcpu);
-> +	tdx_test_assert_success(vcpu);
-> +
-> +	/* Verify the CPUID values received from the guest. */
-> +	printf("\t ... Verifying CPUID values from guest\n");
-> +
-> +	/* Get KVM CPUIDs for reference */
-> +	cpuid_entry = vcpu_get_cpuid_entry(vcpu, 1);
-> +	TEST_ASSERT(cpuid_entry, "CPUID entry missing\n");
-> +
-> +	host_max_addressable_ids = (cpuid_entry->ebx >> 16) & 0xFF;
-> +
-> +	guest_sse3_enabled = ecx & 0x1;  // Native
+When HSA_AMD_SVM is enabled, amdgpu would fail to initialise at all on
+LoongArch (no output):
 
-It seems the CPUID virtualization types in this series are based on some old
-TDX module spec. The SSE3 has become fixed1 in current public 1.5 base spec.
+  amdgpu 0000:0d:00.0: amdgpu: kiq ring mec 2 pipe 1 q 0
+  CPU 0 Unable to handle kernel paging request at virtual address ffffffffff800034, era == 9000000001058044, ra == 9000000001058660
+  Oops[#1]:
+  CPU: 0 UID: 0 PID: 202 Comm: kworker/0:3 Not tainted 6.16.0+ #103 PREEMPT(full)
+  Hardware name: To be filled by O.E.M.To be fill To be filled by O.E.M.To be fill/To be filled by O.E.M.To be fill, BIOS Loongson-UDK2018-V4.0.
+  Workqueue: events work_for_cpu_fn
+  pc 9000000001058044 ra 9000000001058660 tp 9000000101500000 sp 9000000101503aa0
+  a0 ffffffffff800000 a1 0000000ffffe0000 a2 0000000000000000 a3 90000001207c58e0
+  a4 9000000001a4c310 a5 0000000000000001 a6 0000000000000000 a7 0000000000000001
+  t0 000003ffff800000 t1 0000000000000001 t2 0000040000000000 t3 03ffff0000002000
+  t4 0000000000000000 t5 0001010101010101 t6 ffff800000000000 t7 0001000000000000
+  t8 000000000000002f u0 0000000000800000 s9 9000000002026000 s0 90000001207c58e0
+  s1 0000000000000001 s2 9000000001935c40 s3 0000001000000000 s4 0000000000000001
+  s5 0000000ffffe0000 s6 0000000000000040 s7 0001000000000001 s8 0001000000000000
+     ra: 9000000001058660 memmap_init_zone_device+0x120/0x1b0
+    ERA: 9000000001058044 __init_zone_device_page.constprop.0+0x4/0x1a0
+   CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
+   PRMD: 00000004 (PPLV0 +PIE -PWE)
+   EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
+   ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
+  ESTAT: 00020000 [PIS] (IS= ECode=2 EsubCode=0)
+   BADV: ffffffffff800034
+   PRID: 0014d010 (Loongson-64bit, Loongson-3C6000/S)
+  Modules linked in: amdgpu(+) vfat fat cfg80211 rfkill 8021q garp stp mrp llc snd_hda_codec_atihdmi snd_hda_codec_hdmi snd_hda_codec_conexant snd_hda_codec_generic drm_client_lib drm_ttm_helper syscopyarea ttm sysfillrect sysimgblt fb_sys_fops drm_panel_backlight_quirks video drm_exec drm_suballoc_helper amdxcp mfd_core drm_buddy gpu_sched drm_display_helper drm_kms_helper cec snd_hda_intel ipmi_ssif snd_intel_dspcfg snd_hda_codec snd_hda_core acpi_ipmi snd_hwdep snd_pcm fb loongson3_cpufreq lcd igc snd_timer ipmi_si spi_loongson_pci spi_loongson_core snd ipmi_devintf soundcore ipmi_msghandler binfmt_misc fuse drm drm_panel_orientation_quirks backlight dm_mod dax nfnetlink
+  Process kworker/0:3 (pid: 202, threadinfo=00000000eb7cd5d6, task=000000004ca22b1b)
+  Stack : 0000000000001440 0000000000000000 ffffffffff800000 0000000000000001
+          90000000020b5978 9000000101503b38 0000000000000001 0000000000000001
+          0000000000000000 90000000020b5978 90000000020b3f48 0000000000001440
+          0000000000000000 90000001207c58e0 90000001207c5970 9000000000575e20
+          90000000010e2e00 90000000020b3f48 900000000205c238 0000000000000000
+          00000000000001d3 90000001207c58e0 9000000001958f28 9000000120790848
+          90000001207b3510 0000000000000000 9000000120780000 9000000120780010
+          90000001207d6000 90000001207c58e0 90000001015660c8 9000000120780000
+          0000000000000000 90000000005763a8 90000001207c58e0 00000003ff000000
+          9000000120780000 ffff80000296b820 900000012078f968 90000001207c6000
+          ...
+  Call Trace:
+  [<9000000001058044>] __init_zone_device_page.constprop.0+0x4/0x1a0
+  [<900000000105865c>] memmap_init_zone_device+0x11c/0x1b0
+  [<9000000000575e1c>] memremap_pages+0x24c/0x7b0
+  [<90000000005763a4>] devm_memremap_pages+0x24/0x80
+  [<ffff80000296b81c>] kgd2kfd_init_zone_device+0x11c/0x220 [amdgpu]
+  [<ffff80000265d09c>] amdgpu_device_init+0x27dc/0x2bf0 [amdgpu]
+  [<ffff80000265ece8>] amdgpu_driver_load_kms+0x18/0x90 [amdgpu]
+  [<ffff800002651fbc>] amdgpu_pci_probe+0x22c/0x890 [amdgpu]
+  [<9000000000916adc>] local_pci_probe+0x3c/0xb0
+  [<90000000002976c8>] work_for_cpu_fn+0x18/0x30
+  [<900000000029aeb4>] process_one_work+0x164/0x320
+  [<900000000029b96c>] worker_thread+0x37c/0x4a0
+  [<90000000002a695c>] kthread+0x12c/0x220
+  [<9000000001055b64>] ret_from_kernel_thread+0x24/0xc0
+  [<9000000000237524>] ret_from_kernel_thread_asm+0xc/0x88
 
-> +	guest_clflush_line_size = (ebx >> 8) & 0xFF;  // Fixed
-> +	guest_max_addressable_ids = (ebx >> 16) & 0xFF;  // As Configured
-> +	guest_fma_enabled = (ecx >> 12) & 0x1;  // As Configured (if Native)
-> +	guest_initial_apic_id = (ebx >> 24) & 0xFF;  // Calculated
-> +
-> +	TEST_ASSERT_EQ(guest_sse3_enabled, 1);
-> +	TEST_ASSERT_EQ(guest_clflush_line_size, 8);
-> +	TEST_ASSERT_EQ(guest_max_addressable_ids, host_max_addressable_ids);
-> +
-> +	/* TODO: This only tests the native value. To properly test
-> +	 * "As Configured (if Native)" this value needs override in the
-> +	 * TD params.
-> +	 */
-> +	TEST_ASSERT_EQ(guest_fma_enabled, (cpuid_entry->ecx >> 12) & 0x1);
+  Code: 00000000  00000000  0280040d <2980d08d> 02bffc0e  2980c08e  02c0208d  29c0208d  1400004f
 
-FMA is configured by XFAM[2]. If we choose this feature, need to set init_vm->xfam
-which has not been used to configure features in this series yet.
+  ---[ end trace 0000000000000000 ]---
 
-> +
-> +	/* TODO: guest_initial_apic_id is calculated based on the number of
-> +	 * vCPUs in the TD. From the spec: "Virtual CPU index, starting from 0
-> +	 * and allocated sequentially on each successful TDH.VP.INIT"
-> +	 * To test non-trivial values either use a TD with multiple vCPUs
-> +	 * or pick a different calculated value.
-> +	 */
-> +	TEST_ASSERT_EQ(guest_initial_apic_id, 0);
-> +
-> +	kvm_vm_free(vm);
-> +	printf("\t ... PASSED\n");
-> +}
-> +
->  int main(int argc, char **argv)
->  {
->  	ksft_print_header();
-> @@ -153,13 +247,15 @@ int main(int argc, char **argv)
->  	if (!is_tdx_enabled())
->  		ksft_exit_skip("TDX is not supported by the KVM. Exiting.\n");
->  
-> -	ksft_set_plan(3);
-> +	ksft_set_plan(4);
->  	ksft_test_result(!run_in_new_process(&verify_td_lifecycle),
->  			 "verify_td_lifecycle\n");
->  	ksft_test_result(!run_in_new_process(&verify_report_fatal_error),
->  			 "verify_report_fatal_error\n");
->  	ksft_test_result(!run_in_new_process(&verify_td_ioexit),
->  			 "verify_td_ioexit\n");
-> +	ksft_test_result(!run_in_new_process(&verify_td_cpuid),
-> +			 "verify_td_cpuid\n");
->  
->  	ksft_finished();
->  	return 0;
+Or lock up and/or driver reset during computate tasks, such as when
+running llama.cpp over ROCm, at which point the compute process must be
+killed before the reset could complete:
+
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  amdgpu 0000:0a:00.0: amdgpu: failed to remove hardware queue from MES, doorbell=0x1202
+  amdgpu 0000:0a:00.0: amdgpu: MES might be in unrecoverable state, issue a GPU reset
+  amdgpu 0000:0a:00.0: amdgpu: Failed to evict queue 3
+  amdgpu 0000:0a:00.0: amdgpu: GPU reset begin!
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  amdgpu 0000:0a:00.0: amdgpu: failed to remove hardware queue from MES, doorbell=0x1004
+  amdgpu 0000:0a:00.0: amdgpu: MES might be in unrecoverable state, issue a GPU reset
+  amdgpu 0000:0a:00.0: amdgpu: Failed to evict queue 2
+  amdgpu 0000:0a:00.0: amdgpu: Failed to evict queue 1
+  amdgpu 0000:0a:00.0: amdgpu: Failed to evict queue 0
+  amdgpu: Failed to quiesce KFD
+  amdgpu 0000:0a:00.0: amdgpu: Dumping IP State
+  amdgpu 0000:0a:00.0: amdgpu: Dumping IP State Completed
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MES failed to respond to msg=REMOVE_QUEUE
+  [drm:amdgpu_mes_unmap_legacy_queue [amdgpu]] *ERROR* failed to unmap legacy queue
+  amdgpu 0000:0a:00.0: amdgpu: MODE1 reset
+  amdgpu 0000:0a:00.0: amdgpu: GPU mode1 reset
+  amdgpu 0000:0a:00.0: amdgpu: GPU smu mode1 reset
+  amdgpu 0000:0a:00.0: amdgpu: GPU reset succeeded, trying to resume
+
+Disabling the aforementioned option makes the issue go away, though it is
+unclear whether this is a platform-specific issue or one that lies within
+the amdkfd code.
+
+This patch has been tested on all the aforementioned platform
+combinations, and sent as an RFC to encourage discussion.
+
+Signed-off-by: Zhang Yuhao <xinmu@xinmu.moe>
+Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+Tested-by: Mingcong Bai <jeffbai@aosc.io>
+---
+ drivers/gpu/drm/amd/amdkfd/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/amd/amdkfd/Kconfig b/drivers/gpu/drm/amd/amdkfd/Kconfig
+index 16e12c9913f94..5d2fa86f60bf8 100644
+--- a/drivers/gpu/drm/amd/amdkfd/Kconfig
++++ b/drivers/gpu/drm/amd/amdkfd/Kconfig
+@@ -14,7 +14,7 @@ config HSA_AMD
+ 
+ config HSA_AMD_SVM
+ 	bool "Enable HMM-based shared virtual memory manager"
+-	depends on HSA_AMD && DEVICE_PRIVATE
++	depends on HSA_AMD && DEVICE_PRIVATE && !LOONGARCH && !ARM64
+ 	default y
+ 	select HMM_MIRROR
+ 	select MMU_NOTIFIER
+-- 
+2.50.1
 
 
