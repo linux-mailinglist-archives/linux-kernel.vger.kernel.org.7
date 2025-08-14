@@ -1,406 +1,109 @@
-Return-Path: <linux-kernel+bounces-769510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2237CB26F98
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:19:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3A0B26F9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F4F91CE0BC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:19:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E2265E7E53
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0097C230270;
-	Thu, 14 Aug 2025 19:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA2C23D7CF;
+	Thu, 14 Aug 2025 19:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MyHhOdAo"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Sk+EMZw3"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B251B1E3DFE
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 19:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA7C22A4F8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 19:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755199157; cv=none; b=RUQwUla5XbC+KohUL5E42pgOBlFOAZeebxeHQl08kj3zqIw7Orzr+DbbtkKlpfGy/dPo09KCVMuNVbau9S8XYyeJe/fpJEAhXiEAc5t7+VY+hUgLPwav5U+Fb07lyvERzRiPHc1f+VE+hm6fOKKxiM9hcxFkdfG46ueXM5f16+o=
+	t=1755199169; cv=none; b=bCk6KDWFdFL0gi2u76uL1/EbpUGDEec+BhFqUN1LnZjxP59df26plC6Tai5snWs6CtnZjxi2Uu3aIFaeYmCOKx2DDKZbJLwMaeYMTk4f8weFdpcr+XZ42MvpcE7FU+7nev96zYYnnLJmam/GXBi7gGDaQfAch9oIEqnXzx9WGMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755199157; c=relaxed/simple;
-	bh=/3Oi3VazqyGm0PeORCVjsiqkf6UkknyKmJJsa4Pofvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bUOnWCsNlUbhHtmXrVfQUDA5GLll6I32xOocMg9t52ZzOVrtZ7JCaZTjw+4IND+1m2qYNTds3tEEzKXucUZ7dRKmYjNwnoZM79KSvxAzKrxRsiyHSyq/pHjX4j1eaVfdYj+T1k6wgbExQVbeOiTpHPxAm8GAlgN76PYKTjvTomA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MyHhOdAo; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-435de6d0f5aso809248b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:19:14 -0700 (PDT)
+	s=arc-20240116; t=1755199169; c=relaxed/simple;
+	bh=GZrMOqecm9CAXjRBdYJgjbJgjQE37LwuoMcleOFOzN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cD8LGi/C8mZxZEVaMBjvuIzXj04MkWyn1d1zTcJXTUprcR1GcMsnKO12uA/2oSa+qNLfsIqIvIQ/XzWLDU7saxMfurjUfCa9hhfvX/vNqrqDPAY9UxcNDV7zziXgHqPsFg2QH7IMUHDL3N4P8KSQZAVtNk55iNpTUEfZcPnuobM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Sk+EMZw3; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4b109bbea05so18907681cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:19:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1755199154; x=1755803954; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lKpvExu7aXzMVLXuKaV0X/F1bQZBD6Xg+Sr7F0G9AWM=;
-        b=MyHhOdAoB+eaDGl6rvDLn7KG8fVcXIAXlPjpGbAifNBsWORNx0/eJcU3J47uO444Ui
-         3tHTAz0Zs9oDB5LfbrJ3hjjx1h11db9FxGyKJ047Zu8FsLDsUdqxPXhbpHk3J+mNxshR
-         mZeR2f6cG1kT4rPTGb0kJjs9I+CLkPwLJTQ+rBlTlwEOA9tX9pSKzW1rTDmqYCiFZqbK
-         mX1dTQ2qHINM/OTii5N9PqQognM5PtFsmrR7Q6/27+a28stz7BbXUMjGaROjnnK3jjIl
-         l/iaFrCOU+DnQ5q0ylhH/arkLjYQ3KFmJKF+nwOVocztICuBXQCpK4glsM8BEG3Mw5HB
-         7YrA==
+        d=szeredi.hu; s=google; t=1755199167; x=1755803967; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZrMOqecm9CAXjRBdYJgjbJgjQE37LwuoMcleOFOzN0=;
+        b=Sk+EMZw3gtt1Kc+KQUk0IjMhmiwSweTjX3U0sQuDlp01ImsScESjG7DfPaSp7gQ0xB
+         jnSDNwCcV+5rVjAkep/QGQNNXtX619jD9ntUjcq3Vgq3o/gwXuciuUtwSTUJ+yCGU+d+
+         650qXU+NziDKW25fY+3FsI4l3NEXHsD6y8rtY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755199154; x=1755803954;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lKpvExu7aXzMVLXuKaV0X/F1bQZBD6Xg+Sr7F0G9AWM=;
-        b=G1nnoJiKKHN5J9UauRPN+RMJY/3ytYS596q1o0ThpxbC5rrt4xqfK7itYB8T3iFhyv
-         QLzLbiTKalUrbaZ/NeGfUOlZKHGNDDBM8ONkZZaFmhuvivr5XP/XbZRyKRCuptRKUuXo
-         m0rDs3NB8ncjSHfwKjEcsOy+GUsprpteG8eofMX5EGKckniAZOxpeVjPCX37aNhzg6JX
-         k5e4/kfVsoHj082nL6qHtOqB2l7viiRtxWcjNkm+Cdhi+uL74WDh8wNIlr/sp2C9ByP0
-         Fpgzz6xu/qAL+rTZxcB2FlV8EpN+DNkro/4tQxZ03W2xdJABiE0b1iR6NRCiFZVnNCx+
-         FcUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1sBa5Ooj/qmSxFcSwvVIAHvqG0s/NsNtonwkLUPebGE3qlSF7ZdEjry4aKZxQED+v9SQHgJsC2Ly2WKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziIFyDYItzIeV4BBFCv3PUIxkA76uGQGBlVoVcYefi4juvbEs5
-	EUUD+V0f3SFRGx6f66oMV4Cl6GItrTe+hL+m0PwssZuDqIlvu4OU24rz4Vo8UcyhkM4=
-X-Gm-Gg: ASbGncsxSkhf1yM5lX7kbWtIzkIoSndt4hC5sYrW+KX880bh2ifE5nE1iTOlt7QUdC7
-	CuYR1vdZ5+E+C4Mdgh5rKMYElT/P1ib+pi4N63B/JAnaOyfar46F5m+p989MiVRCSHyR1URwSlZ
-	1JK/56XijOaQNBLAdKeiayUKMjdZJhQWOFfSJfIsu9RIjNQ8vJugOjZlT2PcdqTtbVpkoGf0Di1
-	FJLwcN/iW5DiNd7sAnD5Yuk6rqXmbKid0TswUpcxX+ewnp1i8eLuJkhPOxXwgJILtxGkwg+O1ti
-	TmrHhde/2XB9SVL0Vo6iNDvQafThEhzOYCaOGrAUTgO3wjyVeFbT54frWmAl7FGi7nsGxrlv3jP
-	8bXOlgRO+Qx7fe+qMa2oqrXAO4KJQVyh4b/ao23hHmh7oUFPpqdJ+uV4GtkaDBT0ufY1Es/kC6g
-	U=
-X-Google-Smtp-Source: AGHT+IHxBlU8JZPfMMJtvM979h02jPySYJMewnbLlNqo4fjxMOlippIrgeq9IW091eL4W/Zoa+r99A==
-X-Received: by 2002:a05:6808:2197:b0:433:fa92:69e9 with SMTP id 5614622812f47-435e051f643mr2916773b6e.34.1755199153544;
-        Thu, 14 Aug 2025 12:19:13 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:2d9b:959c:3c59:5831? ([2600:8803:e7e4:1d00:2d9b:959c:3c59:5831])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-435ce856832sm1237911b6e.23.2025.08.14.12.19.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 12:19:13 -0700 (PDT)
-Message-ID: <31dea455-f5c4-47a9-9ba8-6a284b12ccfe@baylibre.com>
-Date: Thu, 14 Aug 2025 14:19:12 -0500
+        d=1e100.net; s=20230601; t=1755199167; x=1755803967;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GZrMOqecm9CAXjRBdYJgjbJgjQE37LwuoMcleOFOzN0=;
+        b=DAob99PLR2CFVPwxNOkxr4gSNeLelMLKBhhkMMo76HJIGjKjUNphMNW1WlPJjY3Q+V
+         5ONfjpLFUOEH1go4kTqzYM+BmRPciR6rdLpPVJVwgbFjmPbtuL/4kSuexFWjOoGpUdw/
+         7apuV0UvubcykuogMS+8QXA38EDRpmRATtteftBZzCF7rt3YL4qkynwTpZpHiPMhQRkG
+         Vcyn0DxRvxn4hEDWzs7q/IBNJ1OmEOrj8+hT4p1xG4DcbjhXFK7dnPCga5XrheK+WUZx
+         MGEEgOtHl5eA38c6MvXJkk3t1caSxUaMjIcV7Qwt6HMbPLFuUbUy9zN1O7ng7m8VnvKz
+         owVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV62m+APvOvLBiT6lYba55rqBdT94lq7sLDhiwk7KDVg7Tz4b8lg/mNd9GtATdW9ECoBMpCihwgyU0sawg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoS4DbddUX9BqcRiPr2IpFSvG3x9jkwnQSlFlM9tVqDVYlO0rt
+	DczYofCscqHGLmMYkcQ0buQOwji9IFtvmLypeaJ4JOfxn+WiD6ve50nKaHoE04q1Tx3E4aORUor
+	aLxMrN7VxlUEwV78J2kIWiFZbV2PbSvvk9QCJPdC0LA==
+X-Gm-Gg: ASbGncu9EKDKDzuNvMORqGLODrWP5+OPtuvINIvPYnICa4hqLEbuX1vP5C6fRvZkVM7
+	jG0+mnwu82fWywqCgfJ4kgobllkwcZeQ67gdsWDbKaJ5tpHJDPAIGR6OIUrTFVYwyMm5jeG43Hi
+	kev6vD9fv/9EISFFJ+aLFTbSRewB9Q9CxeVw7QbovUdebJj/3vAdyz40Eoptvi3VFObkUCdsINa
+	KkoMkI2if0+WsU=
+X-Google-Smtp-Source: AGHT+IFYsASkbgj8LKOURL/sQT2BfijqH2fGAl8jogtfvvYUVEiGcWyswxRpTwKUf9rW7ApmSBhJ6Ltm7fsi8IzNXrY=
+X-Received: by 2002:ac8:7d43:0:b0:4af:157e:3823 with SMTP id
+ d75a77b69052e-4b10ab61354mr68262251cf.42.1755199166768; Thu, 14 Aug 2025
+ 12:19:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] iio: adc: ltc2497: add temperature sensor support
-To: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Liam Beguin <liambeguin@gmail.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250814-ltc2495-v3-0-c2a6cecd6b99@gmail.com>
- <20250814-ltc2495-v3-3-c2a6cecd6b99@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250814-ltc2495-v3-3-c2a6cecd6b99@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250703185032.46568-1-john@groves.net> <20250703185032.46568-15-john@groves.net>
+ <CAJfpegv19wFrT0QFkwFrKbc6KXmktt0Ba2Lq9fZoihA=eb8muA@mail.gmail.com>
+ <20250814171941.GU7942@frogsfrogsfrogs> <CAJfpegv8Ta+w4CTb7gvYUTx3kka1-pxcWX_ik=17wteU9XBT1g@mail.gmail.com>
+ <20250814185503.GZ7942@frogsfrogsfrogs>
+In-Reply-To: <20250814185503.GZ7942@frogsfrogsfrogs>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 14 Aug 2025 21:19:15 +0200
+X-Gm-Features: Ac12FXwFvJoOQXfTVyVQkORoWxApgAqsvX9WIX8VNMR4nJ4kVqHzj7yLc5euRJ4
+Message-ID: <CAJfpeguxZVVddGQsMtM35tVo0dD118hKBf9KJcuhSBznzqUzSg@mail.gmail.com>
+Subject: Re: [RFC V2 14/18] famfs_fuse: GET_DAXDEV message and daxdev_table
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/14/25 6:00 AM, Yusuf Alper Bilgin wrote:
-> Support for reading the internal temperature sensor on LTC2495 and
-> LTC2499 via a standard IIO temperature channel.
-> 
-> Signed-off-by: Yusuf Alper Bilgin <y.alperbilgin@gmail.com>
-> ---
->  drivers/iio/adc/ltc2497-core.c | 141 ++++++++++++++++++++++++++++++-----------
->  drivers/iio/adc/ltc2497.c      |  28 +++++++-
->  drivers/iio/adc/ltc2497.h      |  15 +++++
->  3 files changed, 145 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ltc2497-core.c b/drivers/iio/adc/ltc2497-core.c
-> index 2dc5c704426949a4ec62c42591d6c2c40ffb79cc..bbb7948f81933ee35103e37cb2ba94354f61b32e 100644
-> --- a/drivers/iio/adc/ltc2497-core.c
-> +++ b/drivers/iio/adc/ltc2497-core.c
-> @@ -12,6 +12,7 @@
->  #include <linux/module.h>
->  #include <linux/mutex.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/units.h>
->  
->  #include "ltc2497.h"
->  
-> @@ -95,10 +96,53 @@ static int ltc2497core_read_raw(struct iio_dev *indio_dev,
->  		if (ret < 0)
->  			return ret;
->  
-> -		*val = ret / 1000;
-> -		*val2 = ddata->chip_info->resolution + 1;
-> +		switch (chan->type) {
-> +		case IIO_VOLTAGE:
-> +			*val = ret / 1000;
-> +			*val2 = ddata->chip_info->resolution + 1;
-> +
-> +			return IIO_VAL_FRACTIONAL_LOG2;
-> +
-> +		case IIO_TEMP:
-> +			if (!ddata->chip_info->has_temp_channel)
-> +				return -EINVAL;
-> +
-> +			/*
-> +			 * The datasheet formula to get Temperature in Celsius is:
-> +			 * Temp_C = (DATAOUT * Vref_V / temp_scale) - 273
-> +			 *
-> +			 * To match the IIO framework's model of (raw + offset) * scale,
-> +			 * and to get the final result in millidegrees Celsius:
-> +			 *
-> +			 * Temp_mC = ((DATAOUT * Vref_mV / temp_scale_mV) - 273) * 1000
-> +			 * Temp_mC = (DATAOUT - (273 * temp_scale_mV / Vref_mv)) * 1000 *
-> +			 *           Vref_mV / temp_scale_mV
-> +			 *
-> +			 * This gives us:
-> +			 * scale  = Vref_mV * 1000 / temp_scale_mV
-> +			 * offset = -273 * temp_scale / Vref_mV
-> +			 */
+On Thu, 14 Aug 2025 at 20:55, Darrick J. Wong <djwong@kernel.org> wrote:
 
-Probably don't need quite so much comments here. TBH, I though just the
-comment in struct ltc2497_chip_info was enough.
+> Or do we move the backing_files_map out of CONFIG_FUSE_PASSTHROUGH and
+> then let fuse-iomap/famfs extract the block/dax device from that?
+> Then the backing_id/device cookie would be the same across a fuse mount.
 
-> +			*val = ret;
-> +			*val2 = ddata->chip_info->temp_scale_mV;
-> +
-> +			return IIO_VAL_FRACTIONAL;
-> +
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	case IIO_CHAN_INFO_OFFSET:
-> +		if (chan->type != IIO_TEMP)
-> +			return -EINVAL;
-> +
-> +		/* see the calculation above. Offset with (-273 * temp_scale / Vref) */
-> +		ret = regulator_get_voltage(ddata->ref);
-> +		if (ret < 0)
-> +			return ret;
->  
-> -		return IIO_VAL_FRACTIONAL_LOG2;
-> +		*val = kelvin_to_celsius(0) * ddata->chip_info->temp_scale_mV;
-> +		*val2 = ret / 1000;
-> +
-> +		return IIO_VAL_FRACTIONAL;
->  
->  	default:
->  		return -EINVAL;
-> @@ -126,39 +170,56 @@ static int ltc2497core_read_raw(struct iio_dev *indio_dev,
->  	.differential = 1, \
->  }
->  
-> +#define LTC2497_TEMPERATURE_CHAN \
-> +{												\
-> +	.type = IIO_TEMP,									\
-> +	.channel = 0,										\
+Yes.
 
-No need for channel if indexed == 0.
-
-> +	.address = (LTC2497_ENABLE_TEMPERATURE_CONV),						\
-
-Since this can't be used the same was as the voltage address
-field, not sure it makes sense to set this. Later, we can
-just check the channel.type instead.
-
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),						\
-> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) | BIT(IIO_CHAN_INFO_OFFSET),	\
-> +}
-> +
-> +#define LTC2497_VOLTAGE_CHANNEL_LIST \
-> +	LTC2497_CHAN(0, LTC2497_SGL, "CH0"),			\
-> +	LTC2497_CHAN(1, LTC2497_SGL, "CH1"),			\
-> +	LTC2497_CHAN(2, LTC2497_SGL, "CH2"),			\
-> +	LTC2497_CHAN(3, LTC2497_SGL, "CH3"),			\
-> +	LTC2497_CHAN(4, LTC2497_SGL, "CH4"),			\
-> +	LTC2497_CHAN(5, LTC2497_SGL, "CH5"),			\
-> +	LTC2497_CHAN(6, LTC2497_SGL, "CH6"),			\
-> +	LTC2497_CHAN(7, LTC2497_SGL, "CH7"),			\
-> +	LTC2497_CHAN(8, LTC2497_SGL, "CH8"),			\
-> +	LTC2497_CHAN(9, LTC2497_SGL, "CH9"),			\
-> +	LTC2497_CHAN(10, LTC2497_SGL, "CH10"),			\
-> +	LTC2497_CHAN(11, LTC2497_SGL, "CH11"),			\
-> +	LTC2497_CHAN(12, LTC2497_SGL, "CH12"),			\
-> +	LTC2497_CHAN(13, LTC2497_SGL, "CH13"),			\
-> +	LTC2497_CHAN(14, LTC2497_SGL, "CH14"),			\
-> +	LTC2497_CHAN(15, LTC2497_SGL, "CH15"),			\
-> +	LTC2497_CHAN_DIFF(0, LTC2497_DIFF),			\
-> +	LTC2497_CHAN_DIFF(1, LTC2497_DIFF),			\
-> +	LTC2497_CHAN_DIFF(2, LTC2497_DIFF),			\
-> +	LTC2497_CHAN_DIFF(3, LTC2497_DIFF),			\
-> +	LTC2497_CHAN_DIFF(4, LTC2497_DIFF),			\
-> +	LTC2497_CHAN_DIFF(5, LTC2497_DIFF),			\
-> +	LTC2497_CHAN_DIFF(6, LTC2497_DIFF),			\
-> +	LTC2497_CHAN_DIFF(7, LTC2497_DIFF),			\
-> +	LTC2497_CHAN_DIFF(0, LTC2497_DIFF | LTC2497_SIGN),	\
-> +	LTC2497_CHAN_DIFF(1, LTC2497_DIFF | LTC2497_SIGN),	\
-> +	LTC2497_CHAN_DIFF(2, LTC2497_DIFF | LTC2497_SIGN),	\
-> +	LTC2497_CHAN_DIFF(3, LTC2497_DIFF | LTC2497_SIGN),	\
-> +	LTC2497_CHAN_DIFF(4, LTC2497_DIFF | LTC2497_SIGN),	\
-> +	LTC2497_CHAN_DIFF(5, LTC2497_DIFF | LTC2497_SIGN),	\
-> +	LTC2497_CHAN_DIFF(6, LTC2497_DIFF | LTC2497_SIGN),	\
-> +	LTC2497_CHAN_DIFF(7, LTC2497_DIFF | LTC2497_SIGN)
-> +
->  static const struct iio_chan_spec ltc2497core_channel[] = {
-> -	LTC2497_CHAN(0, LTC2497_SGL, "CH0"),
-> -	LTC2497_CHAN(1, LTC2497_SGL, "CH1"),
-> -	LTC2497_CHAN(2, LTC2497_SGL, "CH2"),
-> -	LTC2497_CHAN(3, LTC2497_SGL, "CH3"),
-> -	LTC2497_CHAN(4, LTC2497_SGL, "CH4"),
-> -	LTC2497_CHAN(5, LTC2497_SGL, "CH5"),
-> -	LTC2497_CHAN(6, LTC2497_SGL, "CH6"),
-> -	LTC2497_CHAN(7, LTC2497_SGL, "CH7"),
-> -	LTC2497_CHAN(8, LTC2497_SGL, "CH8"),
-> -	LTC2497_CHAN(9, LTC2497_SGL, "CH9"),
-> -	LTC2497_CHAN(10, LTC2497_SGL, "CH10"),
-> -	LTC2497_CHAN(11, LTC2497_SGL, "CH11"),
-> -	LTC2497_CHAN(12, LTC2497_SGL, "CH12"),
-> -	LTC2497_CHAN(13, LTC2497_SGL, "CH13"),
-> -	LTC2497_CHAN(14, LTC2497_SGL, "CH14"),
-> -	LTC2497_CHAN(15, LTC2497_SGL, "CH15"),
-> -	LTC2497_CHAN_DIFF(0, LTC2497_DIFF),
-> -	LTC2497_CHAN_DIFF(1, LTC2497_DIFF),
-> -	LTC2497_CHAN_DIFF(2, LTC2497_DIFF),
-> -	LTC2497_CHAN_DIFF(3, LTC2497_DIFF),
-> -	LTC2497_CHAN_DIFF(4, LTC2497_DIFF),
-> -	LTC2497_CHAN_DIFF(5, LTC2497_DIFF),
-> -	LTC2497_CHAN_DIFF(6, LTC2497_DIFF),
-> -	LTC2497_CHAN_DIFF(7, LTC2497_DIFF),
-> -	LTC2497_CHAN_DIFF(0, LTC2497_DIFF | LTC2497_SIGN),
-> -	LTC2497_CHAN_DIFF(1, LTC2497_DIFF | LTC2497_SIGN),
-> -	LTC2497_CHAN_DIFF(2, LTC2497_DIFF | LTC2497_SIGN),
-> -	LTC2497_CHAN_DIFF(3, LTC2497_DIFF | LTC2497_SIGN),
-> -	LTC2497_CHAN_DIFF(4, LTC2497_DIFF | LTC2497_SIGN),
-> -	LTC2497_CHAN_DIFF(5, LTC2497_DIFF | LTC2497_SIGN),
-> -	LTC2497_CHAN_DIFF(6, LTC2497_DIFF | LTC2497_SIGN),
-> -	LTC2497_CHAN_DIFF(7, LTC2497_DIFF | LTC2497_SIGN),
-> +	LTC2497_VOLTAGE_CHANNEL_LIST,
-> +};
-> +
-> +static const struct iio_chan_spec ltc2497core_channel_with_temperature[] = {
-> +	LTC2497_VOLTAGE_CHANNEL_LIST,
-> +	LTC2497_TEMPERATURE_CHAN,
->  };
->  
->  static const struct iio_info ltc2497core_info = {
-> @@ -182,8 +243,14 @@ int ltc2497core_probe(struct device *dev, struct iio_dev *indio_dev)
->  
->  	indio_dev->info = &ltc2497core_info;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
-> -	indio_dev->channels = ltc2497core_channel;
-> -	indio_dev->num_channels = ARRAY_SIZE(ltc2497core_channel);
-> +
-> +	if (ddata->chip_info->has_temp_channel) {
-> +		indio_dev->channels = ltc2497core_channel_with_temperature;
-> +		indio_dev->num_channels = ARRAY_SIZE(ltc2497core_channel_with_temperature);
-> +	} else {
-> +		indio_dev->channels = ltc2497core_channel;
-> +		indio_dev->num_channels = ARRAY_SIZE(ltc2497core_channel);
-> +	}
->  
->  	ret = ddata->result_and_measure(ddata, LTC2497_CONFIG_DEFAULT, NULL);
->  	if (ret < 0)
-> diff --git a/drivers/iio/adc/ltc2497.c b/drivers/iio/adc/ltc2497.c
-> index 8f4665547b5b0d32084599f8557c40102c37a4ce..07fced79aeead3778964b114d479fdcb643c16df 100644
-> --- a/drivers/iio/adc/ltc2497.c
-> +++ b/drivers/iio/adc/ltc2497.c
-> @@ -86,8 +86,28 @@ static int ltc2497_result_and_measure(struct ltc2497core_driverdata *ddata,
->  			return 0;
->  	}
->  
-> -	ret = i2c_smbus_write_byte(st->client,
-> -				   LTC2497_ENABLE | address);
-> +	/*
-> +	 * Chips with temperature sensor support (e.g., LTC2495/LTC2499)
-> +	 * require a two-byte command format to select any channel.
-> +	 *
-> +	 * To read the internal temperature, LTC2497_ENABLE_TEMPERATURE_CONV
-> +	 * is sent as the second byte. To read a voltage channel, LTC2497_EN2
-> +	 * is sent, which sets the default configuration: simultaneous 50/60Hz
-> +	 * rejection, 1x speed, and gain=1.
-> +	 *
-> +	 * Chips without this feature use a standard single-byte command.
-> +	 */
-> +	if (ddata->chip_info->has_temp_channel) {
-> +		if (address == LTC2497_ENABLE_TEMPERATURE_CONV)
-
-Here we can just check the channel type.
-
-> +			ret = i2c_smbus_write_byte_data(st->client, LTC2497_ENABLE,
-> +							LTC2497_ENABLE_TEMPERATURE_CONV);
-
-And use LTC2497_EN2 | LTC2497_IM here.
-
-> +		else
-> +			ret = i2c_smbus_write_byte_data(st->client, LTC2497_ENABLE | address,
-> +							LTC2497_EN2);
-> +	} else {
-> +		ret = i2c_smbus_write_byte(st->client, LTC2497_ENABLE | address);
-> +	}
-> +
->  	if (ret)
->  		dev_err(&st->client->dev, "i2c transfer failed: %pe\n",
->  			ERR_PTR(ret));
-> @@ -135,6 +155,8 @@ static const struct ltc2497_chip_info ltc2497_info[] = {
->  	[TYPE_LTC2495] = {
->  		.resolution = 16,
->  		.name = "ltc2495",
-> +		.has_temp_channel = true,
-> +		.temp_scale_mV = 12250,
->  	},
->  	[TYPE_LTC2497] = {
->  		.resolution = 16,
-> @@ -143,6 +165,8 @@ static const struct ltc2497_chip_info ltc2497_info[] = {
->  	[TYPE_LTC2499] = {
->  		.resolution = 24,
->  		.name = "ltc2499",
-> +		.has_temp_channel = true,
-> +		.temp_scale_mV = 1570000,
->  	},
->  };
->  
-> diff --git a/drivers/iio/adc/ltc2497.h b/drivers/iio/adc/ltc2497.h
-> index 64e81c95a3dd05911b6717c09ac0560c9f47f304..65f406bc61c24b912de4beed604a074b3ea9df91 100644
-> --- a/drivers/iio/adc/ltc2497.h
-> +++ b/drivers/iio/adc/ltc2497.h
-> @@ -3,10 +3,25 @@
->  #define LTC2497_ENABLE			0xA0
->  #define LTC2497_CONFIG_DEFAULT		LTC2497_ENABLE
->  #define LTC2497_CONVERSION_TIME_MS	150ULL
-> +#define LTC2497_EN2			BIT(7)
-> +/* Enable the internal temperature sensor */
-> +#define LTC2497_IM                      BIT(6)
-
-These should go directly above:
-
-#define LTC2497_SGL			BIT(4)
-
-in the .c file. No need to have them in the header.
-
-
-> +/* Second command byte value to initiate a temperature conversion */
-> +#define LTC2497_ENABLE_TEMPERATURE_CONV	(LTC2497_EN2 | LTC2497_IM)
-
-This macro seems odd. We usually don't make macros for combined bits
-like this. And the way it is being used in the code feels a bit odd
-as well. We can probably rework the code to not need it as suggested
-in some of the comments above.
-
->  
->  struct ltc2497_chip_info {
->  	u32 resolution;
->  	const char *name;
-> +	/*
-> +	 * Represents the datasheet constant from the temperature formula:
-> +	 * T_Kelvin = (DATAOUT * Vref) / temp_scale, where Vref is in Volts.
-> +	 *
-> +	 * To allow the driver to use Vref in millivolts for the calculation
-> +	 * and also to avoid floating points, this stored value represents the
-> +	 * datasheet constant scaled by 1000.
-> +	 */
-> +	u32 temp_scale_mV;
-> +	bool has_temp_channel;
->  };
->  
->  struct ltc2497core_driverdata {
-> 
-
+Thanks,
+Miklos
 
