@@ -1,118 +1,105 @@
-Return-Path: <linux-kernel+bounces-767882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD91B25A16
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:50:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB74B25A15
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FAD47B3514
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:48:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0DF5C04F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32570188A3A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C7219F11E;
 	Thu, 14 Aug 2025 03:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPgj8sO1"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DwfPBscA"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168303D6D;
-	Thu, 14 Aug 2025 03:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA91C147
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755143401; cv=none; b=Yjr/v0hFsbt4unjZW5cl/bgOnOtNrjdPk3RoSiP3u4PZ+7wYCRz5giyuvF7/NeM2Pt4V61D3t+xYZRj0X9q7OwAMrukPvcFUtoEQDRxmuNbYss0naa4wm5fNwT/Nt24YMkyjHYF+VaixuE9Res82G/DA7fh/VM1BmsOcFu023l8=
+	t=1755143401; cv=none; b=hb3Eammmzy5kQEn1OTLDoe9xLaBSTRV/zyV7kqMM0kGu9Ks6d74a5Wfdx9zWsFqKLnXGcw2LaZ5PFys9hqf95AUxhta5Tvd/4fNKZAiM7ES/Jvo5cvrraSIgdZRPjs5UZGcWsT6KqSXIiGOTEC0DyTGpaN0PtZRIJwRuquO5rYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755143401; c=relaxed/simple;
-	bh=HA6PI6QVTTTOhrD40NxnFG89l0OdxrCLf7J4HkVH0cM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oyhGLojfrJYYoAGKKvtyoQ+Ztm1NymgDIFQde5dJZ3eSO4RVACECvPB2/bZQEnzQ7RsjJAsxnoWXHNLaXJllYb12cdRYN5uI80PmBrl6JZy1WnKpqkEGSyVI3QH3/LUCQvlA/6pX/VljAul7bFvppricf8pLHfpggZLQn7c2WKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPgj8sO1; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-333f8f02afaso4220961fa.1;
-        Wed, 13 Aug 2025 20:49:59 -0700 (PDT)
+	bh=lPqVj0G2DyYaPAyDFCY0tiqWUW0qi8F2eqgmFFWHkGg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IItmhsykNNzGpcqrXHe5VjhsaPw/RNPlm1nNQzITPD5bR2cXuw0aIV1UxOdf7AzxYjGF4HZGAJuNNmE6MojE92AQc1kzmUL0E/V0TLrkTrD0xgahmPsplCJcXWu7b7nlhIRaax7jKzQ5+6vI/GyQnf5JZiRUusrJGBF+m3jaaaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--inseob.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DwfPBscA; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--inseob.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b47174b1ae5so345266a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 20:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755143398; x=1755748198; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HA6PI6QVTTTOhrD40NxnFG89l0OdxrCLf7J4HkVH0cM=;
-        b=dPgj8sO1g+qhjv9MOxYks2MMFiQm+EvwO3OxCmX+QpBf6MtT/X0ZWolImtVX56TD65
-         JewiETgEB6CiXT3abIs4lfP/+0wENgk/XnUOC90D/vq0RWgPTKg471kSc5EbZCbqfH6y
-         BodPkUV4Wl2cu+IsXbop4jfX8Fcy2Rcrh4lx4ZSH5YgQlYQmtzWgd9OTYhUPa3kqK5zL
-         iAXGmAtceGAbqByIthzfjbe//SP30OA88UuAlg29ygE5Fh/jvVJixoJsIe61rzF1cHhA
-         rvaYyrZtEsV5pEyF+y9n85N3q/j8LbM5V0gR0xBMJYq6StCn+PUWloJcDHqmldOvSUnx
-         27YQ==
+        d=google.com; s=20230601; t=1755143399; x=1755748199; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Hty7WDnaEU1uIGqarmiq9SVgicWc3FSueIb95VGagqo=;
+        b=DwfPBscANp4qL+xpUo1q2VHbGKwm+VxX9vvw86LN0fiwPWZQ74zct6zU2k7ut7BJP3
+         JwM9lzGPIRAYNFupf7WQ4L+uTEZ8Oy9RiozzQ2Nq3xQMkx+/hID8QThbFMK2hKT7xux1
+         yy/g2B38bpKMzoIxq8cW7KyhfDusABFp668A4sgW/uJAuamTInywMJwWpZIFs0uKItgX
+         uW1pzQOb7/Bg8OIutWjJiIwkh0xf55EfuifDA3+gTxUf1zun9FgX112yGv9QZvre7/ET
+         nGndstmSxr72IrwXAMTKWE+1Ivmb/TAZjn/d/1hP4IjmrBzvW6y5aMze7JfaEu6gJcP8
+         iPGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755143398; x=1755748198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HA6PI6QVTTTOhrD40NxnFG89l0OdxrCLf7J4HkVH0cM=;
-        b=jWaSfw+mQE79Nizee8DeaIteyIpaRY5IRYxDhFgWoQhUlRA507KFP7cfGzFxE2j1Hy
-         AtMZzIzqWW45BZ9PCXkReiQute0teAoGy9DKJi37vqrXX8nHx/5gKLStbWStM8guyGSD
-         49YB7xKCvpA4u4Jlh9yhNUIxoKE8m3eQvfm8bTWIT18M+87aQ4ote3a8y8rSkzLa+kZL
-         60v1/x3Uca6TIN2TGB/O6+Ndw0X5NsjpC019EJKElrbK54RsurfL+CFPkG80FSJsjgX8
-         8aTm360TYXn0SvK5FaRSRjT8Ko9axagxJuc/BDQCh2OKYldpf2MzyNwMHDsajT8OX6lR
-         K6sA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1jlh9jnpD+baIcDaHxzdyGfS4j+X9FA5Q+0sJm3JoU3pPf1oHTo3b8Lwroo6l2FWxaM3ubXa1XBGDFdK1@vger.kernel.org, AJvYcCVeUrt5LHVF9cAVMw9IGPsjtIDGCzEZLRc1Akb5ojmL8OUad1Z6cZMnUcvizHKjZ2JyvTeVfBNZVrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXait86zPiqVOQRGR4Mh9qGSy/AHc3WeRXqUof121eUDuwJmdd
-	yBC6BnhBai9U9dMGzCPAVEuqHgOHr2vVP1LSHUiFiZvRCuQsRLLnADw1PscimnriXO523KKmndi
-	re8yzU6tk0eEM+CQYrlWWjxVBaeT8gHg=
-X-Gm-Gg: ASbGnctHYiCuMwJoqomCIp7eSeaxRVqry791L1g+Hr1XAdWiszxlrVhqf/B7wYk3uPS
-	aSXuJHC/i5zXmOPR+VtzgCnFhvCr6YlGWz5Y8y9vzCWS4Q+bCzhAbhR4zemoowqs9g1WaL9BcRM
-	/0jufEU/B5PkqWh8GWtwf/2zC52FXQmDIZvsykTYjaEh34P9o3wlrNhr61IHXyWD6EkQeoWQ5vt
-	w042OBS
-X-Google-Smtp-Source: AGHT+IF8ciJjxEGJQBuEWTAG6hzvZvUV99a1zpZ0jumYrtsIOBX1feJpvESEO5bW3T3cwxfleqv/r8RXTybO7GSWUss=
-X-Received: by 2002:a05:651c:41c3:b0:32f:41a4:5584 with SMTP id
- 38308e7fff4ca-333fa88a597mr2717711fa.27.1755143397604; Wed, 13 Aug 2025
- 20:49:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755143399; x=1755748199;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Hty7WDnaEU1uIGqarmiq9SVgicWc3FSueIb95VGagqo=;
+        b=D0fKZmyxEUpPaxDWWqZcNV5uhblMEhuaCbRyJZWddXn5x+E23tXpxUjbuItVmavMr5
+         OYsT2UiqxC7j98HuSx/ZmNyn5EeOR6S5DLNDZVtfXc+PAw3bN7RDBdhOoDD5Xf5idSX7
+         eU8g0GIilGDHG4O+qa7G1NdU5MbahygLGwY47gC8w8/WEwsw+wrQGuL0/xKADEvlikl8
+         zcb5eu5PEXA1cQDuLGzquyJWALwlOVEYF6j2259V1A4p4kit11fYdFMBU/T3ZMgvF/Bg
+         m0hAweTxGl0aIznn0+Xi+VTJposeZC1Ig/sjILF2svWUeyJjDWdT2rQj1KafdSsUvRHc
+         MiGw==
+X-Gm-Message-State: AOJu0YwmG/EtMvGzpuJ2630cFEXo+ozpsoBotbo6ReOF60JSTR+zguz9
+	PhD5cPLTcYZJnBLDmWY+1cbpDB3+exEW6NaLOcbd9xvZ7Fw1ZnRGKRfHhkHrR30fkw9kRXjhxoz
+	5OF3cWlzGiErJaWmYmhRzKBC42SU/Ll0iUFGnpc/qqRJ2dSLXqYXR4R4db71Edbf1C354bbAmVu
+	ePv09aAmr0wNAqklDyfGHe2ZLKHKcN/jQ4uTmjsQEjtkhY
+X-Google-Smtp-Source: AGHT+IGP5l6poYO1hNSVO0axML0Qny4BQvfhvBjEuphbMon5a4DVHWpJScEWvwJsXpAb320jG1BdEDNKsug=
+X-Received: from plbp6.prod.google.com ([2002:a17:903:1746:b0:23c:7695:dcc5])
+ (user=inseob job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4c7:b0:240:48f4:40f7
+ with SMTP id d9443c01a7336-244586c27demr23010895ad.39.1755143399315; Wed, 13
+ Aug 2025 20:49:59 -0700 (PDT)
+Date: Thu, 14 Aug 2025 12:49:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250813133017.72476-1-akshayaj.lkd@gmail.com>
- <aJyYJLMUYAm_uqUx@smile.fi.intel.com> <CAE3SzaSNV4DMUQB5rQQSV+QsCS6Z2BjFkFD3eaXO9J=TjUbNYw@mail.gmail.com>
- <aJ0G542k3K4jGrrw@smile.fi.intel.com>
-In-Reply-To: <aJ0G542k3K4jGrrw@smile.fi.intel.com>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Thu, 14 Aug 2025 09:19:46 +0530
-X-Gm-Features: Ac12FXz6Qxm8YfcTyJfLUdqF81gpHau-ZpVqNBuvz8IFOyVnoUQu4yOHXPtKGlo
-Message-ID: <CAE3SzaSvhSY2V3rVbO3T-qso-uoo01YeMR0=H-PHwBDj8ZsbBQ@mail.gmail.com>
-Subject: Re: [PATCH v3] iio: light: ltr390: Add device powerdown functionality
- via devm api
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: anshulusr@gmail.com, jic23@kernel.org, dlechner@baylibre.com, 
-	nuno.sa@analog.com, andy@kernel.org, shuah@kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.rc0.215.g125493bb4a-goog
+Message-ID: <20250814034953.3980271-1-inseob@google.com>
+Subject: [PATCH] lib: parser: Fix match_wildcard to correctly handle trailing stars
+From: Inseob Kim <inseob@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Inseob Kim <inseob@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 3:13=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> On Wed, Aug 13, 2025 at 07:27:09PM +0530, Akshay Jindal wrote:
-> > I thought so, but removing i2c_set_clientdata would mean that
-> > dev->driver_data will NOT contain a pointer to indio_dev.
-> > Irrespective of usage, ideally dev->driver_data should contain legit va=
-lue.
->
-> NULL is legit value for driver_data. The rule of thumb is that we don't a=
-ssign
-> something that we know will never be used. Also think about debugging iss=
-ues,
-> with the "legit" value in some pointer it may lead to not noticing a real
-> problem or to a problem that never exists if driver_data left untouched.
->
-> > Hence I kept it.
-> > If you feel otherwise, I can remove it, but I feel this should be kept.
->
-> I feel definitely otherwise.
-Removed. Floated a v4.
+This fixes a bug of match_wildcard that incorrectly handles trailing
+asterisks. For example, `match_wildcard("abc**", "abc")` must return
+true, but it returns false.
 
-Thanks,
-Akshay
+Signed-off-by: Inseob Kim <inseob@google.com>
+---
+ lib/parser.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/parser.c b/lib/parser.c
+index 73e8f8e5be73..62da0ac0d438 100644
+--- a/lib/parser.c
++++ b/lib/parser.c
+@@ -315,7 +315,7 @@ bool match_wildcard(const char *pattern, const char *str)
+ 		}
+ 	}
+ 
+-	if (*p == '*')
++	while (*p == '*')
+ 		++p;
+ 	return !*p;
+ }
+-- 
+2.51.0.rc0.215.g125493bb4a-goog
+
 
