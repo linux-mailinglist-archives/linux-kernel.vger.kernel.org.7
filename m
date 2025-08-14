@@ -1,174 +1,159 @@
-Return-Path: <linux-kernel+bounces-769089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B838B26A12
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:53:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB19B269DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D4A3BDB75
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:46:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC0BA4E5D2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AB11FDE01;
-	Thu, 14 Aug 2025 14:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C00D202C46;
+	Thu, 14 Aug 2025 14:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="W8xB+TnM"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19A31DE3DC;
-	Thu, 14 Aug 2025 14:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JSPKVamS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616F31E7C34;
+	Thu, 14 Aug 2025 14:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755182791; cv=none; b=AEd5HpA6FWiKEuo3bXFxfzV2NnzwXthfrUXU41GfY9D/cQuHjEBn8L3idCEhDFU+ekcjuWm86smz07Tl4v+S7G+01mC5boDmfq3yYdsZEBAyElkl/D2UEAcsBH4YXXW7EAy1NVRS18xjUJn6adosxlhDbXNksE8Jo+Fb3eHeS5g=
+	t=1755182801; cv=none; b=exjP4h3m7SwAZAJZAzyLu7zstRaJvNjO6dM6u4Ewlz27BSIRme96SNEUtrORDaWueYwn7FsYOUtGuF4a0wZF2cZlXY1ySQZQPirMGeokoXVN76gjHrJjWUgMgrPWw4tUPEXCtcdiLolaKFdpCvdmNIc50f7UB/gpLHwuUMtWcE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755182791; c=relaxed/simple;
-	bh=8hPHzUAgyGwhy43MMAgAV7dpiZxePD5SBMyFrvCu1eE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=hR+vrnBgVI3ameigIxjOceewDZS2ypCmOFLqtY8r551yNV4QW/s7HwqXvzEFh9klfX+GMYxLCdF66xl6dEo+FEHpO7WQu/UsdfHwxo5gV0Ytp4/o7c94QTS6lvrJDuU01VU1aFYlHTZbSK6XF1zZVjWt7Uk6QresEeh7xlyelRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=W8xB+TnM reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=RseyEhVTZIct83afWcpg19/RHjuLXDuLnFTss+tar0k=; b=W
-	8xB+TnM2aCUZNdCO2CVupd3HmBQFFri6rSUhVmrpejPznMoYmP1cecdeW4pDnO/y
-	Fo1mjnKR8HGIenbOmkpHV2EMj7MEnh/M2fSxXwI3heh8ykkZPHVJdPiFzPJsU1KS
-	jEo7mg+VXQch/ukjWEXJ+M+hU6C2Bb1uP0H7X1n9GM=
-Received: from phoenix500526$163.com ( [120.230.124.83] ) by
- ajax-webmail-wmsvr-40-102 (Coremail) ; Thu, 14 Aug 2025 22:45:40 +0800
- (CST)
-Date: Thu, 14 Aug 2025 22:45:40 +0800 (CST)
-From: =?GBK?B?1dS80ey/?= <phoenix500526@163.com>
-To: "Jiri Olsa" <olsajiri@gmail.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
-	daniel@iogearbox.net, shuah@kernel.org, yonghong.song@linux.dev,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re:Re: [PATCH bpf-next v8 2/2] selftests/bpf: Add an usdt_o2 test
- case in selftests to cover SIB handling logic
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <aJ2lxyUYfQkfQW2-@krava>
-References: <20250814064504.103401-1-phoenix500526@163.com>
- <20250814064504.103401-3-phoenix500526@163.com> <aJ2lxyUYfQkfQW2-@krava>
-X-NTES-SC: AL_Qu2eB/2TvU8v5ieaYukfmUsVh+o9X8K1vfsk3oZfPJp+jCzp6CUNclhTBEr81tCDEh+0kAiHdzxR+P1Xbahacr8MuTAFFW1cj6E5+hJmZdBiYw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1755182801; c=relaxed/simple;
+	bh=MItsxOZkBc4Mg4/BsR8EwS7YoP7JHMjVkoHc3xHnjGE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EsrdHh8yPLLfhcwuvK07Za22xLJrbb4Xzoxv7FukpI+qdN3SI0E58PHFMJVxLgFeV8rRfVh/4WDwt0KeLqwqC8Kq5Nkba2hWqacXqPXfG3DkGX8A+BuOhyvdvO3sy1I44peuz1pwkxHiN9t0a9AITeQnd9for9OAuKaWfueIkUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JSPKVamS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E8rMWu031371;
+	Thu, 14 Aug 2025 14:46:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WUE9emBSfD2Eo0Ilbd5YqiBLkogqSMNHU8RSdJa3aHw=; b=JSPKVamSWKL6mGc3
+	+xAWnIXq1uXZRzt8/AMnTAZJ9NrI8td8Ud5jevBxCdncGMV9SCRsT5WZ+9uM0Gvd
+	lCq8EcQisA5sAWZyn6lY3oAUT27s2J8p55GXcEcvCbOw8MOyZZP6kDTQVczeqUsX
+	ftVOHX/wwTFlWjwXxyXfwxF6kCWu5xIsdRpRcw72M+YdRDBeTkNKBtbTt7XHaWki
+	ORpuDs2rTXyLpGoMYvEcUudS+xgvDVOviqX+Ioj8Nfz1uLnYqxsBt+FU22Gmnuu4
+	T8S0yyBrVWSguO7rJYyYhEvtLbRB+SI33WUGLx2tW5a2bJ7xoJmGLBEgLmj0Yjtg
+	qKX2DA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48fm3vtxme-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 14:46:19 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57EEkIgI007893
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 14:46:18 GMT
+Received: from [10.216.25.245] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
+ 2025 07:46:14 -0700
+Message-ID: <a54af278-6c99-9420-72ed-f4abab519216@quicinc.com>
+Date: Thu, 14 Aug 2025 20:16:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <56f988c1.9066.198a90b34fd.Coremail.phoenix500526@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZigvCgD3v7GV9p1oMlUaAA--.2524W
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFAOpiGid7mspcQACsc
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2 15/24] media: iris: Add support for VIDIOC_QUERYCAP for
+ encoder video device
+Content-Language: en-US
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil
+	<hverkuil@xs4all.nl>,
+        Stefan Schmidt <stefan.schmidt@linaro.org>,
+        "Vedang
+ Nagar" <quic_vnagar@quicinc.com>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Renjiang Han <quic_renjiang@quicinc.com>,
+        Wangao Wang <quic_wangaow@quicinc.com>
+References: <20250813-iris-video-encoder-v2-0-c725ff673078@quicinc.com>
+ <20250813-iris-video-encoder-v2-15-c725ff673078@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250813-iris-video-encoder-v2-15-c725ff673078@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDEwNyBTYWx0ZWRfX1RsGbbfsAfco
+ XFy1kE1bgG+yRWvyx0KZ82E4u8uACm8sLMjMzCMHp54h7Lm9+Yf6kTPK/U5Nk/uhK2NwH8b454/
+ V7HGe/xyIG68rrL6ZSJc/2EXLQnwxuheWFciTmDlLEX8dCfW1Ly8xrMbGJ80tQes/46JLsZZzbk
+ rRaZhbLN6dsRfmvaizegBhDMnMajnycyzKlWejkjkcu9/Qqdslk5fwxptplhmKgMTBsDO8xoQ/Y
+ eyCUItBdK63+6PZ1G4m9F+GteVe4vb5d0Si5K1WKre31TfuzgL2rAYX4qTiLcLcKHTwiq9Q97JM
+ EJy6qQ/LbcrQxGBMV6wnYC9G7rxCsoYmqahv78Kylm9SAZgAWxyDegyAaoYZrohX08w7f2md0oP
+ oEZWzj8G
+X-Proofpoint-GUID: g4xDhT7oYRpZeetOpq6Y_8-uHsYGi0VG
+X-Authority-Analysis: v=2.4 cv=A+1sP7WG c=1 sm=1 tr=0 ts=689df6bb cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=fGGGzhI3d3vBg4KMZH8A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: g4xDhT7oYRpZeetOpq6Y_8-uHsYGi0VG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 malwarescore=0 spamscore=0
+ phishscore=0 clxscore=1015 adultscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508110107
 
-CgoKCgoKCkhpo6xKaXJpLiBJJ3ZlIGFscmVhZHkgbW9kaWZ5IHVzZHRfbzIuYyB0byBnZW5lcmF0
-ZSBpdHMgdXNkdCBhcmd1bWVudCBzcGVjIGluCmFzc2VtYmx5LiBCdXQgSSBjYW5ub3QgcmVwcm9k
-dWNlIHRoaXMgaXNzdWUgb24gbXkgbWFjaGluZS4gQ291bGQgeW91IGhlbHAKbWUgdmVyaWZ5IHRo
-aXMgbW9kaWZpY2F0aW9uPyAKClRoZSBtb2RpZmljYXRpb24gaXMgaW4gdGhlIFtQQVRDSCBicGYt
-bmV4dCB2OSAzLzNdIHNlbGZ0ZXN0cy9icGY6IG1ha2UgdXNkdF9vMiByZWxpYWJseSBnZW5lcmF0
-ZQogU0lCIFVTRFQgYXJnIHNwZWMKClRoYW5rcwoKCgoKCkF0IDIwMjUtMDgtMTQgMTc6MDA6NTUs
-ICJKaXJpIE9sc2EiIDxvbHNhamlyaUBnbWFpbC5jb20+IHdyb3RlOgo+T24gVGh1LCBBdWcgMTQs
-IDIwMjUgYXQgMDY6NDU6MDRBTSArMDAwMCwgSmlhd2VpIFpoYW8gd3JvdGU6Cj4+IFdoZW4gdXNp
-bmcgR0NDIG9uIHg4Ni02NCB0byBjb21waWxlIGFuIHVzZHQgcHJvZyB3aXRoIC1PMSBvciBoaWdo
-ZXIKPj4gb3B0aW1pemF0aW9uLCB0aGUgY29tcGlsZXIgd2lsbCBnZW5lcmF0ZSBTSUIgYWRkcmVz
-c2luZyBtb2RlIGZvciBnbG9iYWwKPj4gYXJyYXkgYW5kIFBDLXJlbGF0aXZlIGFkZHJlc3Npbmcg
-bW9kZSBmb3IgZ2xvYmFsIHZhcmlhYmxlLAo+PiBlLmcuICIxQC05NiglcmJwLCVyYXgsOCkiIGFu
-ZCAiLTFANCt0MSglcmlwKSIuCj4+IAo+PiBJbiB0aGlzIHBhdGNoOgo+PiAtIGFkZCB1c2R0X28y
-IHRlc3QgY2FzZSB0byBjb3ZlciBTSUIgYWRkcmVzc2luZyB1c2R0IGFyZ3VtZW50IHNwZWMKPj4g
-ICBoYW5kbGluZyBsb2dpYwo+Cj5oaSwKPm9uIG15IHNldHVwIChnY2MxNSkgdGhlIHRlc3QgZ2Vu
-ZXJhdGVzIHVzdCByZWdpc3RlciBhcmd1bWVudDoKPgo+ICBzdGFwc2R0ICAgICAgICAgICAgICAw
-eDAwMDAwMDJhICAgICAgIE5UX1NUQVBTRFQgKFN5c3RlbVRhcCBwcm9iZSBkZXNjcmlwdG9ycykK
-PiAgICBQcm92aWRlcjogdGVzdAo+ICAgIE5hbWU6IHVzZHQxCj4gICAgTG9jYXRpb246IDB4MDAw
-MDAwMDAwMDc2NzdjZSwgQmFzZTogMHgwMDAwMDAwMDAzNWJjNzI4LCBTZW1hcGhvcmU6IDB4MDAw
-MDAwMDAwMDAwMDAwMAo+ICAgIEFyZ3VtZW50czogOEAlcmF4Cj4KPgo+ICA3Njc3YzY6ICAgICAg
-IDQ4IDhiIDA0IGM1IDIwIDQ5IDljICAgIG1vdiAgICAweDM5YzQ5MjAoLCVyYXgsOCksJXJheAo+
-ICA3Njc3Y2Q6ICAgICAgIDAzCj4gIDc2NzdjZTogICAgICAgOTAgICAgICAgICAgICAgICAgICAg
-ICAgbm9wCj4KPgo+SSdtIG5vdCBzdXJlIGlmIHRoZXJlJ3MgcmVsaWFibGUgc29sdXRpb24gdG8g
-Z2VuZXJhdGUgU0lCIGFyZ3VtZW50IGZyb20gZ2NjLAo+bWF5YmUgd2UgY291bGQgZ2VuZXJhdGUg
-YWxsIGluIGFzc2VtYmx5LCBidXQgdGhhdCBtaWdodCBnZXQgY29tcGxpY2F0ZWQKPgo+amlya2EK
-Pgo+Cj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBKaWF3ZWkgWmhhbyA8cGhvZW5peDUwMDUyNkAxNjMu
-Y29tPgo+PiAtLS0KPj4gIHRvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2JwZi9NYWtlZmlsZSAgICAg
-ICAgICB8ICAxICsKPj4gIC4uLi9zZWxmdGVzdHMvYnBmL3Byb2dfdGVzdHMvdXNkdF9vMi5jICAg
-ICAgICB8IDY5ICsrKysrKysrKysrKysrKysrKysKPj4gIC4uLi9zZWxmdGVzdHMvYnBmL3Byb2dz
-L3Rlc3RfdXNkdF9vMi5jICAgICAgICB8IDM3ICsrKysrKysrKysKPj4gIDMgZmlsZXMgY2hhbmdl
-ZCwgMTA3IGluc2VydGlvbnMoKykKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCB0b29scy90ZXN0aW5n
-L3NlbGZ0ZXN0cy9icGYvcHJvZ190ZXN0cy91c2R0X28yLmMKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0
-NCB0b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvcHJvZ3MvdGVzdF91c2R0X28yLmMKPj4gCj4+
-IGRpZmYgLS1naXQgYS90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvTWFrZWZpbGUgYi90b29s
-cy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvTWFrZWZpbGUKPj4gaW5kZXggNDg2MzEwNjAzNGRmLi4y
-NGZmMWEzMjk2MjUgMTAwNjQ0Cj4+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2JwZi9N
-YWtlZmlsZQo+PiArKysgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9icGYvTWFrZWZpbGUKPj4g
-QEAgLTc2MCw2ICs3NjAsNyBAQCBUUlVOTkVSX0JQRl9CVUlMRF9SVUxFIDo9ICQkKGVycm9yIG5v
-IEJQRiBvYmplY3RzIHNob3VsZCBiZSBidWlsdCkKPj4gIFRSVU5ORVJfQlBGX0NGTEFHUyA6PQo+
-PiAgJChldmFsICQoY2FsbCBERUZJTkVfVEVTVF9SVU5ORVIsdGVzdF9tYXBzKSkKPj4gIAo+PiAr
-Cj4+ICAjIERlZmluZSB0ZXN0X3ZlcmlmaWVyIHRlc3QgcnVubmVyLgo+PiAgIyBJdCBpcyBtdWNo
-IHNpbXBsZXIgdGhhbiB0ZXN0X21hcHMvdGVzdF9wcm9ncyBhbmQgc3VmZmljaWVudGx5IGRpZmZl
-cmVudCBmcm9tCj4+ICAjIHRoZW0gKGUuZy4sIHRlc3QuaCBpcyB1c2luZyBjb21wbGV0ZWx5IHBh
-dHRlcm4pLCB0aGF0IGl0J3Mgd29ydGgganVzdAo+PiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGlu
-Zy9zZWxmdGVzdHMvYnBmL3Byb2dfdGVzdHMvdXNkdF9vMi5jIGIvdG9vbHMvdGVzdGluZy9zZWxm
-dGVzdHMvYnBmL3Byb2dfdGVzdHMvdXNkdF9vMi5jCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+
-IGluZGV4IDAwMDAwMDAwMDAwMC4uZjAyZGNmNTE4OGFiCj4+IC0tLSAvZGV2L251bGwKPj4gKysr
-IGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dfdGVzdHMvdXNkdF9vMi5jCj4+IEBA
-IC0wLDAgKzEsNjkgQEAKPj4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wCj4+
-ICsvKiBDb3B5cmlnaHQgKGMpIDIwMjUgSmlhd2VpIFpoYW8gPHBob2VuaXg1MDA1MjZAMTYzLmNv
-bT4uICovCj4+ICsjaW5jbHVkZSA8dGVzdF9wcm9ncy5oPgo+PiArCj4+ICsjaW5jbHVkZSAiLi4v
-c2R0LmgiCj4+ICsjaW5jbHVkZSAidGVzdF91c2R0X28yLnNrZWwuaCIKPj4gKwo+PiArI2lmIGRl
-ZmluZWQoX19HTlVDX18pICYmICFkZWZpbmVkKF9fY2xhbmdfXykKPj4gK19fYXR0cmlidXRlX18o
-KG9wdGltaXplKCJPMiIpKSkKPj4gKyNlbmRpZgo+PiArCj4+ICsjZGVmaW5lIHRlc3RfdmFsdWUg
-MHhGRURDQkE5ODc2NTQzMjEwVUxMCj4+ICsjZGVmaW5lIFNFQyhuYW1lKSBfX2F0dHJpYnV0ZV9f
-KChzZWN0aW9uKG5hbWUpLCB1c2VkKSkKPj4gKwo+PiAraW50IGxldHNfdGVzdF90aGlzKGludCk7
-Cj4+ICtzdGF0aWMgdm9sYXRpbGUgX191NjQgYXJyYXlbMV0gPSB7dGVzdF92YWx1ZX07Cj4+ICsK
-Pj4gK3N0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCB0cmlnZ2VyX2Z1bmModm9pZCkKPj4gK3sK
-Pj4gKwkvKiBCYXNlIGFkZHJlc3MgKyBvZmZzZXQgKyAoaW5kZXggKiBzY2FsZSkgKi8KPj4gKwlm
-b3IgKHZvbGF0aWxlIGludCBpID0gMDsgaSA8PSAwOyBpKyspCj4+ICsJCVNUQVBfUFJPQkUxKHRl
-c3QsIHVzZHQxLCBhcnJheVtpXSk7Cj4+ICt9Cj4+ICsKPj4gK3N0YXRpYyB2b2lkIGJhc2ljX3Np
-Yl91c2R0KHZvaWQpCj4+ICt7Cj4+ICsJTElCQlBGX09QVFMoYnBmX3VzZHRfb3B0cywgb3B0cyk7
-Cj4+ICsJc3RydWN0IHRlc3RfdXNkdF9vMiAqc2tlbDsKPj4gKwlzdHJ1Y3QgdGVzdF91c2R0X28y
-X19ic3MgKmJzczsKPj4gKwlpbnQgZXJyOwo+PiArCj4+ICsJc2tlbCA9IHRlc3RfdXNkdF9vMl9f
-b3Blbl9hbmRfbG9hZCgpOwo+PiArCWlmICghQVNTRVJUX09LX1BUUihza2VsLCAic2tlbF9vcGVu
-IikpCj4+ICsJCXJldHVybjsKPj4gKwo+PiArCWJzcyA9IHNrZWwtPmJzczsKPj4gKwlic3MtPm15
-X3BpZCA9IGdldHBpZCgpOwo+PiArCj4+ICsJZXJyID0gdGVzdF91c2R0X28yX19hdHRhY2goc2tl
-bCk7Cj4+ICsJaWYgKCFBU1NFUlRfT0soZXJyLCAic2tlbF9hdHRhY2giKSkKPj4gKwkJZ290byBj
-bGVhbnVwOwo+PiArCj4+ICsJLyogdXNkdDEgd29uJ3QgYmUgYXV0by1hdHRhY2hlZCAqLwo+PiAr
-CW9wdHMudXNkdF9jb29raWUgPSAweGNhZmVkZWFkYmVlZmZlZWQ7Cj4+ICsJc2tlbC0+bGlua3Mu
-dXNkdDEgPSBicGZfcHJvZ3JhbV9fYXR0YWNoX3VzZHQoc2tlbC0+cHJvZ3MudXNkdDEsCj4+ICsJ
-CQkJCQkgICAgIDAgLypzZWxmKi8sICIvcHJvYy9zZWxmL2V4ZSIsCj4+ICsJCQkJCQkgICAgICJ0
-ZXN0IiwgInVzZHQxIiwgJm9wdHMpOwo+PiArCWlmICghQVNTRVJUX09LX1BUUihza2VsLT5saW5r
-cy51c2R0MSwgInVzZHQxX2xpbmsiKSkKPj4gKwkJZ290byBjbGVhbnVwOwo+PiArCj4+ICsJdHJp
-Z2dlcl9mdW5jKCk7Cj4+ICsKPj4gKwlBU1NFUlRfRVEoYnNzLT51c2R0MV9jYWxsZWQsIDEsICJ1
-c2R0MV9jYWxsZWQiKTsKPj4gKwlBU1NFUlRfRVEoYnNzLT51c2R0MV9jb29raWUsIDB4Y2FmZWRl
-YWRiZWVmZmVlZCwgInVzZHQxX2Nvb2tpZSIpOwo+PiArCUFTU0VSVF9FUShic3MtPnVzZHQxX2Fy
-Z19jbnQsIDEsICJ1c2R0MV9hcmdfY250Iik7Cj4+ICsJQVNTRVJUX0VRKGJzcy0+dXNkdDFfYXJn
-LCB0ZXN0X3ZhbHVlLCAidXNkdDFfYXJnIik7Cj4+ICsJQVNTRVJUX0VRKGJzcy0+dXNkdDFfYXJn
-X3JldCwgMCwgInVzZHQxX2FyZ19yZXQiKTsKPj4gKwlBU1NFUlRfRVEoYnNzLT51c2R0MV9hcmdf
-c2l6ZSwgc2l6ZW9mKGFycmF5WzBdKSwgInVzZHQxX2FyZ19zaXplIik7Cj4+ICsKPj4gK2NsZWFu
-dXA6Cj4+ICsJdGVzdF91c2R0X28yX19kZXN0cm95KHNrZWwpOwo+PiArfQo+PiArCj4+ICsKPj4g
-Kwo+PiArdm9pZCB0ZXN0X3VzZHRfbzIodm9pZCkKPj4gK3sKPj4gKwliYXNpY19zaWJfdXNkdCgp
-Owo+PiArfQo+PiBkaWZmIC0tZ2l0IGEvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dz
-L3Rlc3RfdXNkdF9vMi5jIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMvYnBmL3Byb2dzL3Rlc3Rf
-dXNkdF9vMi5jCj4+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj4+IGluZGV4IDAwMDAwMDAwMDAwMC4u
-MTQ2MDJhYTU0NTc4Cj4+IC0tLSAvZGV2L251bGwKPj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxm
-dGVzdHMvYnBmL3Byb2dzL3Rlc3RfdXNkdF9vMi5jCj4+IEBAIC0wLDAgKzEsMzcgQEAKPj4gKy8v
-IFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wCj4+ICsvKiBDb3B5cmlnaHQgKGMpIDIw
-MjIgTWV0YSBQbGF0Zm9ybXMsIEluYy4gYW5kIGFmZmlsaWF0ZXMuICovCj4+ICsKPj4gKyNpbmNs
-dWRlICJ2bWxpbnV4LmgiCj4+ICsjaW5jbHVkZSA8YnBmL2JwZl9oZWxwZXJzLmg+Cj4+ICsjaW5j
-bHVkZSA8YnBmL3VzZHQuYnBmLmg+Cj4+ICsKPj4gK2ludCBteV9waWQ7Cj4+ICsKPj4gK2ludCB1
-c2R0MV9jYWxsZWQ7Cj4+ICt1NjQgdXNkdDFfY29va2llOwo+PiAraW50IHVzZHQxX2FyZ19jbnQ7
-Cj4+ICtpbnQgdXNkdDFfYXJnX3JldDsKPj4gK3U2NCB1c2R0MV9hcmc7Cj4+ICtpbnQgdXNkdDFf
-YXJnX3NpemU7Cj4+ICsKPj4gK1NFQygidXNkdCIpCj4+ICtpbnQgdXNkdDEoc3RydWN0IHB0X3Jl
-Z3MgKmN0eCkKPj4gK3sKPj4gKwlsb25nIHRtcDsKPj4gKwo+PiArCWlmIChteV9waWQgIT0gKGJw
-Zl9nZXRfY3VycmVudF9waWRfdGdpZCgpID4+IDMyKSkKPj4gKwkJcmV0dXJuIDA7Cj4+ICsKPj4g
-KwlfX3N5bmNfZmV0Y2hfYW5kX2FkZCgmdXNkdDFfY2FsbGVkLCAxKTsKPj4gKwo+PiArCXVzZHQx
-X2Nvb2tpZSA9IGJwZl91c2R0X2Nvb2tpZShjdHgpOwo+PiArCXVzZHQxX2FyZ19jbnQgPSBicGZf
-dXNkdF9hcmdfY250KGN0eCk7Cj4+ICsKPj4gKwl1c2R0MV9hcmdfcmV0ID0gYnBmX3VzZHRfYXJn
-KGN0eCwgMCwgJnRtcCk7Cj4+ICsJdXNkdDFfYXJnID0gKHU2NCl0bXA7Cj4+ICsJdXNkdDFfYXJn
-X3NpemUgPSBicGZfdXNkdF9hcmdfc2l6ZShjdHgsIDApOwo+PiArCj4+ICsJcmV0dXJuIDA7Cj4+
-ICt9Cj4+ICsKPj4gK2NoYXIgX2xpY2Vuc2VbXSBTRUMoImxpY2Vuc2UiKSA9ICJHUEwiOwo+PiAt
-LSAKPj4gMi40My4wCj4+IAo+PiAK
+
+On 8/13/2025 3:08 PM, Dikshita Agarwal wrote:
+> Add support for the VIDIOC_QUERYCAP V4L2 iocts for the encoder video
+> device to report core driver capabilities.
+> 
+> Tested-by: Vikash Garodia <quic_vgarodia@quicinc.com> # X1E80100
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_vidc.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index cb1280c0c6c82187243f0bda4d98e42370ee787c..458773a2ed7f5e16d5bd5e79dba2f5c029036505 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -446,8 +446,14 @@ static int iris_enum_frameintervals(struct file *filp, void *fh,
+>  
+>  static int iris_querycap(struct file *filp, void *fh, struct v4l2_capability *cap)
+>  {
+> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> +
+>  	strscpy(cap->driver, IRIS_DRV_NAME, sizeof(cap->driver));
+> -	strscpy(cap->card, "Iris Decoder", sizeof(cap->card));
+> +
+> +	if (inst->domain == DECODER)
+> +		strscpy(cap->card, "Iris Decoder", sizeof(cap->card));
+> +	else
+> +		strscpy(cap->card, "Iris Encoder", sizeof(cap->card));
+>  
+>  	return 0;
+>  }
+> @@ -577,6 +583,7 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops_enc = {
+>  	.vidioc_g_fmt_vid_out_mplane    = iris_g_fmt_vid_mplane,
+>  	.vidioc_enum_framesizes         = iris_enum_framesizes,
+>  	.vidioc_enum_frameintervals     = iris_enum_frameintervals,
+> +	.vidioc_querycap                = iris_querycap,
+>  };
+>  
+>  void iris_init_ops(struct iris_core *core)
+> 
+
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
 
