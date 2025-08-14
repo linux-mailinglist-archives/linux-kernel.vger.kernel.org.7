@@ -1,196 +1,148 @@
-Return-Path: <linux-kernel+bounces-768276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A913FB25F34
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:42:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11355B25F29
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E863A188BC30
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 007A95A7B7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E992D46DA;
-	Thu, 14 Aug 2025 08:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B3E2E7BBE;
+	Thu, 14 Aug 2025 08:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZ5tqXiS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="jamsIrHa";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MUwzqnsp"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6061204090;
-	Thu, 14 Aug 2025 08:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC022DE709
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160822; cv=none; b=fHUvCa4/6Cazr9F82DNwLXuRvBGyR9LbUOj0gkMIq+timmD1O+0JyligeWcRi9KS4KXyrYYUFdOsw1zwPvn4WFWIVbpze6Bc8JOcPr/K7DmIiyn0wC4nrXh1bxSpqMWE5604zR/Dz2q7er7w0qeXSlujSRMTk5k2Isk3cMfIPgs=
+	t=1755160853; cv=none; b=TDZjvfLl9cSbzh0QyKGm0VkcvTNnrcE6U9KtrMd9gwe30Zy6EBbHQvVlFWJObU/FDXmsFmADuU9XGAMjYO9fqjeekbuCe+i4SbthQ2wlzCcj1M59BDHSHgG7RUl1wdlhaz91ajN/odDundRKfXLdBWRmpdryDIzYAygUbfu48W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160822; c=relaxed/simple;
-	bh=zqmt4Jj8Tl4AG5pUIufRcdzVJq4JYdl8O/zAhI2YC70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WuUhJSMwnl3IBTgWFspiPiloXCo2EqLLsFjLy2y4aZze6IUGsFMjcYRMHLxOs9lzirP+S9xrwN0YyZO2bVSYUp5CcZlY/LQLRAY1FZz31PsejDGbsi++/GziZZ3nt/1y63b5o8TxCBA6n1sNOvMBcc6VdBOW8pVPGPVvF6uxDJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZ5tqXiS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC94C4AF09;
-	Thu, 14 Aug 2025 08:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755160821;
-	bh=zqmt4Jj8Tl4AG5pUIufRcdzVJq4JYdl8O/zAhI2YC70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZZ5tqXiSOEwYFaq79WS5EhkFn8Z5imGYNmIePfhjJTAhyZJEgDA7Bwly8nCqYBrRu
-	 d5UBO0ASyeI4lggmFmZP5Ii3320gaokMa2FN+oxetsh12TTGQ+8oWdtIFgLAmFwDa8
-	 JmyiIhU5NvRChb93aRk4sfsoi6H8QvZGvsj0WePGnaiA2KQ0/+8V6zFvTPRMYPKrqn
-	 1S4BU4qOOBW810STnQ9C/RqF+W8yGtXS38JRPzp9ypmj54uCmkS4f0kA57Jmi573iT
-	 nQhBwXuhJUpx99j/CnWWG20Qpb4JWWkPn9hA8ESGXnWKA625fvfdzX3MjXix2LjKhh
-	 b4YJ1g7zPit1g==
-Date: Thu, 14 Aug 2025 11:39:57 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Kees Cook <kees@kernel.org>, David Hildenbrand <david@redhat.com>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-	Xu Xin <xu.xin16@zte.com.cn>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	David Rientjes <rientjes@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>,
-	Matthew Wilcox <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 08/10] mm: update fork mm->flags initialisation to use
- bitmap
-Message-ID: <aJ2g3VODv5Fp9aQL@kernel.org>
-References: <cover.1755012943.git.lorenzo.stoakes@oracle.com>
- <9fb8954a7a0f0184f012a8e66f8565bcbab014ba.1755012943.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1755160853; c=relaxed/simple;
+	bh=ZV9g15yATwUQ4KRLeEZL4tJS6hLbRv80h5AbIBbK0Wc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bAZ1D+9XSppNd33x/rtG36/HMMoKB9NABFVHUVLp8vDmz1M8Z4sH83Jk9yXb0SE7p+DQ3EXWv4HDbEybe45K6pGZLjwHPLSK+I+KIM3rDc5W74NUPzCRaann6nQUuJyPfOvByHBHUSvlkHa5Z4PstPWtN+U0+MnL+bqiQm7yj1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=jamsIrHa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MUwzqnsp; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3B59F14001B4;
+	Thu, 14 Aug 2025 04:40:50 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 14 Aug 2025 04:40:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1755160850; x=1755247250; bh=vV
+	TgLcT5IoFf0DgDdDv2GD6JnpUqRszQ9RbVmywYabk=; b=jamsIrHaBsps8Yw1bx
+	raYGHW7I75SD7qsxWM4SSRyiWhqhvweu8rxP1BIrqmdP0DBMF2Gy2vXdZ4PowCzi
+	GLajaXAtUhaJ2WgAm6oAyKEBm+XJ4ggbajTrI3/d9WknT8uO/bkfEYrc7AtvBKRU
+	ho9K97dkK+fWLtUc0vu8f3h8ZoHNn4+4/tCnugLPczqk+kE4zixkmD7/wJneV7XZ
+	mexPxQasxSQJOxU9pKucATy67ge0b4hGhO6A698MJeUPK4vPC2dbfCHSALpO/1C9
+	1MnbToxyABzjFnShEzEUzgVnjLGuzCRoF5SQX4oyOvBhu9s2/8fTLmAc8MEPp6n7
+	1Kdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1755160850; x=1755247250; bh=vVTgLcT5IoFf0DgDdDv2GD6JnpUq
+	RszQ9RbVmywYabk=; b=MUwzqnspf82PC87Yp5R0aovZj7msskrjaIeASNmGF1sn
+	9i/QcLeEi1LgzadCFD33tDXToj8ZebKdELT5/gCo1Meq+6kqad2RFjGip2s6IA+g
+	nTiC6csLAgYTINq0cmRAiQTFsrykRsuraBvt8L5LInHDzc4ZQr9+wZ1R9Q12qP/D
+	opIO5yfOj2WqMJP7wRMelUCTWK/+Ez73x0HtQG8a7hsUszG/4K96ULGiYa+N6EIy
+	S7T9wXgeIcaQHUfjRk+zk87qNOQXfheoRqsiJsL92oO2Ks4npsctfokv+3u1rGSg
+	7BNE94ZD/+gSJrRWX5kSWcDnx+BYuQ/RN0MMrCnFbA==
+X-ME-Sender: <xms:EKGdaPkhlJQh62dE6OodIez8UJeXp33Dgjic4ZTrgfTRXQu3S4L4uA>
+    <xme:EKGdaIxOFBaW2URHtdczN8iBIlorqL7DNLFTDr4Ltg0YZBJX74toCLWpLRCiKhas2
+    Px0P4VKC6Dtj_JbU4Y>
+X-ME-Received: <xmr:EKGdaCzZtNulyg04eaIGQ5ueAhdGYymJ4QMmNwTfJiQ8gVxeEJ50h2Qf1Uwth5UevBdL5AEeCD7HsU_6eytegT63K8baltdbmkd9tQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtieefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffufffkgggtgffvvefosehtjeertdertdejnecuhfhrohhmpeflrghnnhgvucfi
+    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhephfdtue
+    duleejffduvdehkeeutdefhfdtvdeiieegheffleefvedvhfeggeegffefnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhesjhgrnhhnrghurd
+    hnvghtpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    ohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohhmmhhusehlihhsth
+    hsrdhlihhnuhigrdguvghvpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshht
+    pdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhmpdhrtghpthhtoh
+    epjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhs
+    rdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlse
+    hlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepnhgvrghlsehgohhm
+    phgrrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhg
+X-ME-Proxy: <xmx:EKGdaIUKmPxTuOIURS0yoVF5PSqYJ1R_zOe_Sng_hLqB5W3Jn-hcOg>
+    <xmx:EKGdaJREdjzSYfD5xoDZ1C9UMNk8ADbLHWsuqIKbsepoP54gWCsCrA>
+    <xmx:EKGdaAQOVgpBMUP839qnZVrV-u9QNJMCYcf4viXjthJUODE4HaQLvw>
+    <xmx:EKGdaBeDsbgdTpG6P3KZFW1wDVj_eDzL8kdLqx8-OOy-qYbD1q2xyw>
+    <xmx:EqGdaC2EAjQZsslXUinEzZDPPAa4TbUIM0wnFZqCEG-a1sqJskyq2lOJ>
+Feedback-ID: i47b949f6:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 14 Aug 2025 04:40:48 -0400 (EDT)
+From: Janne Grunau <j@jannau.net>
+Subject: [PATCH 0/3] iommu: apple-dart: Four level page table support
+Date: Thu, 14 Aug 2025 10:40:23 +0200
+Message-Id: <20250814-apple-dart-4levels-v1-0-db2214a78c08@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fb8954a7a0f0184f012a8e66f8565bcbab014ba.1755012943.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPegnWgC/x3MSwqAMAxF0a1IxgasH6xuRRwEfWqgaGlFBHHvF
+ odncO9DEUERqc8eCrg06rEnmDyjaZN9BeucTGVRNoU1hsV7B54lnFw7XHCR7dIJrEymqltKoQ9
+ Y9P6nw/i+H3C0rOJkAAAA
+X-Change-ID: 20250811-apple-dart-4levels-8f9ae8ac1347
+To: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Neal Gompa <neal@gompa.dev>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Janne Grunau <j@jannau.net>, Hector Martin <marcan@marcan.st>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1010; i=j@jannau.net;
+ s=yk2024; h=from:subject:message-id;
+ bh=ZV9g15yATwUQ4KRLeEZL4tJS6hLbRv80h5AbIBbK0Wc=;
+ b=owGbwMvMwCW2UNrmdq9+ahrjabUkhoy5C/m8XQ59ip4p/j33DvepbJ3ftzPmHdcRW39g++EuB
+ q2bDDemdZSyMIhxMciKKbIkab/sYFhdoxhT+yAMZg4rE8gQBi5OAZjIZBVGhnMvtWu2vn/ruinq
+ /fqnrtNXCFe2X/qy3GtV1/8C1nWZC9sYGfpMuJWFKzQ3FMRxmbJGJgWbqHNemSe2VM3gddA0V8N
+ XHAA=
+X-Developer-Key: i=j@jannau.net; a=openpgp;
+ fpr=8B336A6BE4E5695E89B8532B81E806F586338419
 
-On Tue, Aug 12, 2025 at 04:44:17PM +0100, Lorenzo Stoakes wrote:
-> We now need to account for flag initialisation on fork. We retain the
-> existing logic as much as we can, but dub the existing flag mask legacy.
-> 
-> These flags are therefore required to fit in the first 32-bits of the flags
-> field.
-> 
-> However, further flag propagation upon fork can be implemented in mm_init()
-> on a per-flag basis.
-> 
-> We ensure we clear the entire bitmap prior to setting it, and use
-> __mm_flags_get_word() and __mm_flags_set_word() to manipulate these legacy
-> fields efficiently.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+The DART instances found in T602x based SoCs (Apple's M2 Pro/Max/Ultra)
+indicate an IAS of 42 bit. This results in alloc_io_pgtable_ops()
+failing as io-pgtable-dart supports at most 36-bit IAS.
+The t8110 DART design supports 4-level page tables. Implement support
+for this in io-pgtable-dart and mark DART stream with more than 36-bit
+IAS as 4-level page tables.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Signed-off-by: Janne Grunau <j@jannau.net>
+---
+Hector Martin (3):
+      iommu: apple-dart: Make the hw register fields u32s
+      iommu: io-pgtable: Add 4-level page table support
+      iommu: apple-dart: Add 4-level page table support
 
-> ---
->  include/linux/mm_types.h | 13 ++++++++++---
->  kernel/fork.c            |  7 +++++--
->  2 files changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 38b3fa927997..25577ab39094 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -1820,16 +1820,23 @@ enum {
->  #define MMF_TOPDOWN		31	/* mm searches top down by default */
->  #define MMF_TOPDOWN_MASK	_BITUL(MMF_TOPDOWN)
->  
-> -#define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
-> +#define MMF_INIT_LEGACY_MASK	(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
->  				 MMF_DISABLE_THP_MASK | MMF_HAS_MDWE_MASK |\
->  				 MMF_VM_MERGE_ANY_MASK | MMF_TOPDOWN_MASK)
->  
-> -static inline unsigned long mmf_init_flags(unsigned long flags)
-> +/* Legacy flags must fit within 32 bits. */
-> +static_assert((u64)MMF_INIT_LEGACY_MASK <= (u64)UINT_MAX);
-> +
-> +/*
-> + * Initialise legacy flags according to masks, propagating selected flags on
-> + * fork. Further flag manipulation can be performed by the caller.
-> + */
-> +static inline unsigned long mmf_init_legacy_flags(unsigned long flags)
->  {
->  	if (flags & (1UL << MMF_HAS_MDWE_NO_INHERIT))
->  		flags &= ~((1UL << MMF_HAS_MDWE) |
->  			   (1UL << MMF_HAS_MDWE_NO_INHERIT));
-> -	return flags & MMF_INIT_MASK;
-> +	return flags & MMF_INIT_LEGACY_MASK;
->  }
->  
->  #endif /* _LINUX_MM_TYPES_H */
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index c4ada32598bd..b311caec6419 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1056,11 +1056,14 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
->  	mm_init_uprobes_state(mm);
->  	hugetlb_count_init(mm);
->  
-> +	mm_flags_clear_all(mm);
->  	if (current->mm) {
-> -		mm->flags = mmf_init_flags(current->mm->flags);
-> +		unsigned long flags = __mm_flags_get_word(current->mm);
-> +
-> +		__mm_flags_set_word(mm, mmf_init_legacy_flags(flags));
->  		mm->def_flags = current->mm->def_flags & VM_INIT_DEF_MASK;
->  	} else {
-> -		mm->flags = default_dump_filter;
-> +		__mm_flags_set_word(mm, default_dump_filter);
->  		mm->def_flags = 0;
->  	}
->  
-> -- 
-> 2.50.1
-> 
+ drivers/iommu/apple-dart.c      |  47 ++++++++-----
+ drivers/iommu/io-pgtable-dart.c | 143 ++++++++++++++++++++++++----------------
+ include/linux/io-pgtable.h      |   1 +
+ 3 files changed, 118 insertions(+), 73 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250811-apple-dart-4levels-8f9ae8ac1347
 
+Best regards,
 -- 
-Sincerely yours,
-Mike.
+Janne Grunau <j@jannau.net>
+
 
