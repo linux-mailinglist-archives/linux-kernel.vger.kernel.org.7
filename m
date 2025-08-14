@@ -1,191 +1,109 @@
-Return-Path: <linux-kernel+bounces-767835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31BCB259A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:54:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7EC7B259A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64B8B9A195F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:54:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 060DB1C23507
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D8925E451;
-	Thu, 14 Aug 2025 02:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bR6tajBe"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452C3259C87;
+	Thu, 14 Aug 2025 02:56:06 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A928725A2A7;
-	Thu, 14 Aug 2025 02:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4092FF64F;
+	Thu, 14 Aug 2025 02:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755140062; cv=none; b=GURvsMibw9CB3MPwyJfatAXkOQu3TaB/LpW13ubdAUAnH75QfvaCAQwqfeJx5AMdh62MoXfPSzzNgetHChbXwjh23J76nQuIF28ixYyfq85pPJakyzWxbkXJzkAPsng9KsU/OHvlsfPm3Qj11sIhstalfapMGcwBygGLI0Qy54s=
+	t=1755140165; cv=none; b=RMWzaxeXN2eKcN6EmLQC+D0Ne6aszuqWCxD9cUxi/Rl0Z4PfeGNYgEPhhktzG7/HuxtTlLQnpCuLvpJUI95TMB5eQS4S3Y5rQe9VcDrYD/J5T8JBNB5rKAIXOICAjVy6iTb2KYvXB3V+WJwZ3IwuL1DwKLcUxp/TpiCgJnsgGaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755140062; c=relaxed/simple;
-	bh=DUD+i5GUorzmyFBIbvOlFraLYTZ2PMn7XBjxYVx4gNA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ffnzng3vIe42OjwS1ircvbjTcZmvP5sxW6xfGSCatU3peK46HCb2EOrLRAwP6L19U7iPxkrEShZ+J1R3NmJXQd9g1/S7vMwr+J5WLLqJQYqcCAhI5C7GW225v0H9eAjVWpWwp48dOuqGZww2nw8v0E9kOJKM/937lKqE0H8G4Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bR6tajBe; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-76e2e614b84so542559b3a.0;
-        Wed, 13 Aug 2025 19:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755140060; x=1755744860; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QcSr48CYfkXX8nf/xlhKJbn2nmydypNX8xOgSCNkXgQ=;
-        b=bR6tajBehw+q5/lVVjX9Ge+9B+ZrP/dMW/TqQxvMOY72BO4SSckYFOT4wZwMi4nOzX
-         kiSR8BvhnEsbPgE/bnem4Y3hEM9PU95nXVBJXHfG8Xef2ltUzd0Pjt5rPjhk4s0OaDBl
-         LBXv0zFRH6LBT6jegV4dGM+ODz2kKTL/qAwWTFWR/NF4AjMmyrvw9QXP17MLjafFt4r8
-         1TluBBaPv1qyk+AT1T0xHj8gwocAiMz88Oxp9bDh5iFFIe0au+YKXaPPC3QAIsfm0gjw
-         e/WVeyus7HTg0o/wnfQgc/NdB3uH0/ybaFSmENML8aFFrNY8TTumJHb2Tojt9g+kVrdQ
-         wqow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755140060; x=1755744860;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QcSr48CYfkXX8nf/xlhKJbn2nmydypNX8xOgSCNkXgQ=;
-        b=V5wzDG7tAbz9sz+4p64xZNVx+XNYfECJaciIIiwv/sSIEegivsssdRJjUJji5/u851
-         UcflXGdmOnTkycIPbNVwSHgU6HTqN+yqAxXP1dEmpn09o7C0mc+7d2ed/zxTUinjGScG
-         0OY39GrLmWueRabRuTg1Fy3yuKdZm84fbTGUwSGIa+uu2uQjLdm9sMIwKprgbrzLfT7G
-         lEJIhWnx0nMLee9gK6TnAN4VAFpLsEVUXB6n4A0ovlrOqi/cRZqm3lX/3aaFoquLn1aS
-         MBnAgazR1+zctWDYEBWBUjLF3Hh+vPG4Yc9GWWfOawxDpIpehEQMpO1Khdo31TgUs/6H
-         YUbg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/xQl3ifVVQ/fflJ2S+G2I9t6l0qf9gesHDdcNWkg1it4+GOrqFNVwnZKf0rrZ4B7ItHgoCdBYqPx+@vger.kernel.org, AJvYcCXaCle4ldoscoYg1B4fku1W5ld7RMvKFujViciOcawfLx/6dwVGKbfZsDQyzZIhq68Fo55eaQeejJ8v@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxhiu1GR091E6OgUt7MsRYuBSP/1CFt2b82EneKregVc3kLd5V
-	0IL8mjpvttPtV70Tajc0Hr065pHFZrSJq4/R1U13WvutZdxpTy7Wbfhv
-X-Gm-Gg: ASbGncuRGL6GWiu5kojPEjibXdamZzbUN2GwiS2ipINqRnEvRjXPUkKaxUGCxmzo/GJ
-	N5kzRTP70/+MOg8K/iIQcOpupp37zhPufReET50BK+4kwaBHoQWiDBmmBgxw/3K7Y+GH2u+FVM8
-	OaI0urjWBAt6uRjpPJGO669IOWsoFVoo+1KmDNGnCGTHgEXAfbwZkfqFOgXtmKTrsYGgRLHXiMs
-	zMAwKR7jqDhzJVOeaITkigXNgLciN8xh1QsoRiBOVcc1CzSslddDWy0kwh/v2LEPhcxAmInfr6M
-	BstvMkuh8v3PYqVAHk3gSTYu3C1fVahDNavXhIwMsHyFEZ1EDMxfg0i8XIPV3BEnx8tgRuVEAn3
-	f2slpZaxHEjjIanci+j8vxie2WqPm6A==
-X-Google-Smtp-Source: AGHT+IElBKzQsJtO7lQISS0E15pxdO9aXaHMpROIQ192oq/xulwkXmjJ3tYdIcSz+3pkY6DlmwYArg==
-X-Received: by 2002:a05:6a00:a29:b0:76b:f01c:ff08 with SMTP id d2e1a72fcca58-76e2fbe9206mr2083620b3a.2.1755140059842;
-        Wed, 13 Aug 2025 19:54:19 -0700 (PDT)
-Received: from [127.0.1.1] ([2401:4900:1c45:768d:a218:ee72:b12d:78b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76c09adf8efsm24716473b3a.68.2025.08.13.19.54.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 19:54:19 -0700 (PDT)
-From: Dixit Parmar <dixitparmar19@gmail.com>
-Date: Thu, 14 Aug 2025 08:23:44 +0530
-Subject: [PATCH v4 2/2] dt-bindings: iio: magnetometer: document Infineon
- TLV493D 3D Magnetic sensor
+	s=arc-20240116; t=1755140165; c=relaxed/simple;
+	bh=g4Mm7DoZYkyRP4ERKJM63h8BAI1UO4oPIAH1Z3P/Brk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LfP7qoSz8uChmwkqjd4vawTbWTiej/apjVGL5NLOiVJZvoFD+HQNh2WWCBUSP5mnDCj7oyG1jqX7oJDZUaaxtuTJdHEUnX9GZenAHfVoprA61YUMauSTfp5Y5MMbQYN13gKmy8Dj44Bq5OMSSDf7Jk86TQl1jF/fgFPHycC5+0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 32ccf1da78ba11f0b29709d653e92f7d-20250814
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:6ef037fe-ceee-4fa6-9078-e1f19d6aea0d,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:ce016305b6a4438f7a8aa3f682c462a4,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 32ccf1da78ba11f0b29709d653e92f7d-20250814
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <liujiajia@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 677045440; Thu, 14 Aug 2025 10:55:56 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id C5C03E008FA6;
+	Thu, 14 Aug 2025 10:55:55 +0800 (CST)
+X-ns-mid: postfix-689D503B-679043423
+Received: from nature.lan (unknown [172.25.120.81])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 2D646E008FA3;
+	Thu, 14 Aug 2025 10:55:54 +0800 (CST)
+From: Jiajia Liu <liujiajia@kylinos.cn>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiajia Liu <liujiajia@kylinos.cn>
+Subject: [PATCH] Bluetooth: btrtl: fix rtl_dump.fw_version for firmware v2
+Date: Thu, 14 Aug 2025 10:55:51 +0800
+Message-ID: <20250814025552.10627-1-liujiajia@kylinos.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250814-tlv493d-sensor-v6_16-rc5-v4-2-81b82805aae0@gmail.com>
-References: <20250814-tlv493d-sensor-v6_16-rc5-v4-0-81b82805aae0@gmail.com>
-In-Reply-To: <20250814-tlv493d-sensor-v6_16-rc5-v4-0-81b82805aae0@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, Dixit Parmar <dixitparmar19@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755140034; l=2793;
- i=dixitparmar19@gmail.com; s=20250726; h=from:subject:message-id;
- bh=DUD+i5GUorzmyFBIbvOlFraLYTZ2PMn7XBjxYVx4gNA=;
- b=fKg+LPMNgMuRk1CcfnY3/tDWxLXHdQ5qWhJcu9wUbiWhO7/eZI8pdTnvLcpg5mS1kUxdhMW9/
- rbWwEcVUvETC2CmZpQYfaUzqZRB60T/A9wNYR2pOcv2LP/oQd1k8uZS
-X-Developer-Key: i=dixitparmar19@gmail.com; a=ed25519;
- pk=TI6k8pjTuLFcYiHazsate3W8rZGU2lbOrSJ4IWNoQhI=
+Content-Transfer-Encoding: quoted-printable
 
-Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
-controlled by I2C interface. Main applications includes joysticks, control
-elements (white goods, multifunction knops), or electric meters (anti-
-tampering).
-Drop duplicate entry for infineon,tlv493d from trivial-devices.yaml as
-its documented in this separate dt-binding file now.
+rtl_dump.fw_version is not set for firmware v2. Since
+rtl_epatch_header_v2.fw_version seems to be different with the
+release version, set it to the fw version read after downloading
+firmware.
 
-Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+Signed-off-by: Jiajia Liu <liujiajia@kylinos.cn>
 ---
- .../iio/magnetometer/infineon,tlv493d-a1b6.yaml    | 45 ++++++++++++++++++++++
- .../devicetree/bindings/trivial-devices.yaml       |  2 -
- 2 files changed, 45 insertions(+), 2 deletions(-)
+ drivers/bluetooth/btrtl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d-a1b6.yaml b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d-a1b6.yaml
-new file mode 100644
-index 000000000000..dd23a9370a71
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d-a1b6.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/magnetometer/infineon,tlv493d-a1b6.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Infineon Technologies TLV493D Low-Power 3D Magnetic Sensor
-+
-+maintainers:
-+  - Dixit Parmar <dixitparmar19@gmail.com>
-+
-+properties:
-+  $nodename:
-+    pattern: '^magnetometer@[0-9a-f]+$'
-+
-+  compatible:
-+    const: infineon,tlv493d-a1b6
-+
-+  reg:
-+    maxItems: 1
-+
-+  vdd-supply:
-+    description: 2.8V to 3.5V VDD supply
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - vdd-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      magnetometer@5e {
-+        compatible = "infineon,tlv493d-a1b6";
-+        reg = <0x5e>;
-+        vdd-supply = <&hall_vcc>;
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 27930708ccd5..9e0eb5c873d2 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -125,8 +125,6 @@ properties:
-           - infineon,ir36021
-             # Infineon IRPS5401 Voltage Regulator (PMIC)
-           - infineon,irps5401
--            # Infineon TLV493D-A1B6 I2C 3D Magnetic Sensor
--          - infineon,tlv493d-a1b6
-             # Infineon Hot-swap controller xdp710
-           - infineon,xdp710
-             # Infineon Multi-phase Digital VR Controller xdpe11280
-
--- 
-2.43.0
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 6abd962502e3..6ad3ba7901e9 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -822,6 +822,7 @@ static int rtl_download_firmware(struct hci_dev *hdev=
+,
+ 	int j =3D 0;
+ 	struct sk_buff *skb;
+ 	struct hci_rp_read_local_version *rp;
++	struct btrealtek_data *coredump_info =3D hci_get_priv(hdev);
+=20
+ 	dl_cmd =3D kmalloc(sizeof(*dl_cmd), GFP_KERNEL);
+ 	if (!dl_cmd)
+@@ -873,6 +874,9 @@ static int rtl_download_firmware(struct hci_dev *hdev=
+,
+ 	rp =3D (struct hci_rp_read_local_version *)skb->data;
+ 	rtl_dev_info(hdev, "fw version 0x%04x%04x",
+ 		     __le16_to_cpu(rp->hci_rev), __le16_to_cpu(rp->lmp_subver));
++	if (coredump_info->rtl_dump.fw_version =3D=3D 0)
++		coredump_info->rtl_dump.fw_version =3D
++			__le16_to_cpu(rp->hci_rev) << 16 | __le16_to_cpu(rp->lmp_subver);
+ 	kfree_skb(skb);
+=20
+ out:
+--=20
+2.50.1
 
 
