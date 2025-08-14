@@ -1,71 +1,90 @@
-Return-Path: <linux-kernel+bounces-769382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DA3B26DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:27:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465D4B26DAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78481B61B07
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:25:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6DCD1892F2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 639E82FF66A;
-	Thu, 14 Aug 2025 17:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C4030BF41;
+	Thu, 14 Aug 2025 17:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bxxGfpy5"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwTp7nYJ"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208031DFE0B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3263530102D
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 17:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755192201; cv=none; b=a59rPMGFlFGBTp6ZcHQLpmA+qpvtSSgwBvp4iekDtH7zBE6l9EgwmLda5aEQhbaZnbS+v4gBaloWucCPLTo4mfSrQM1Z/t6xWid5nynj51VXC5QVLou8Gy13r/eyM+ng1RTeCtosOxc5HvxvQsQ8VrJP6Vlw2jZZVEymCZybh8I=
+	t=1755192229; cv=none; b=WmjdWDseH6Lwumj1lz1magw6x71NfKdys0yHoDv/kEzFwtq7N511MIauzel/NFo8tsioJCXT5+TjBEXgYriu1b6bUVGkCSy5jhKy0ulZVWjb1gI2pPO5Q5ys39J6gHepAc4lOuRJur+ujldJ42nI7cy8UUQzhcBHne3eeN4nzAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755192201; c=relaxed/simple;
-	bh=nWPPNahG8UUt2RpKVYAo8b/Jvnxh9TIdKSNwgP3fyoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cOiggLEQwefqgKKLE072yRP07h4M4HLma0N5vod9YBavDDh83hDOtvDPjhLZNTXQO15uEgerisN60tphBEYk3Uodk49pRt0M1fRc4IFx15/xfW5gIK0vxGUZADiAySfJNOOoyrlXjZen1Bg2TQDHJQmZB69IbPkQHYyOqrAz6DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bxxGfpy5; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=GTyMLaYR+1uOWFwYD45tbkK9cNmLVTJpFPWAovysPBI=; b=bxxGfpy5yUVHVOGHsBhdmDXF5M
-	/68DnQJcyvDIVWMp+e5nqsmrvpjwGAI/EUV9iVSnmSm5FrJkzySp3A6PshoRn9UszLRaFhq1ApDbi
-	jUHMMARVNVj2qTtG1N0W3uXYXp8nbJVqJtU1pLLQNrjwtMxh0olKZhB0HHEDbtbozrbb9QiFQiPA+
-	PWd3w7Bj+p+3OBi5D4V0DiMVXUetu5kbSrZAyfwoPfFD/V6wLVjNf3j664fw6HbDiICeDxbuIbCU0
-	cUzh8e7sY9SPltcgGco5m051KsbseA5m721ObLzx2UfRtIqBylXWI0Ukyx5fmhWKYRc45vc4NqOEB
-	wZwel/kg==;
-Received: from 179-125-71-254-dinamico.pombonet.net.br ([179.125.71.254] helo=quatroqueijos.lan)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1umbfU-00EE1W-3Q; Thu, 14 Aug 2025 19:23:12 +0200
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	kernel-dev@igalia.com,
-	Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
-	Helen Koike <koike@igalia.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	NeilBrown <neilb@suse.de>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] mm/page_alloc: only set ALLOC_HIGHATOMIC for __GPF_HIGH allocations
-Date: Thu, 14 Aug 2025 14:22:45 -0300
-Message-ID: <20250814172245.1259625-1-cascardo@igalia.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1755192229; c=relaxed/simple;
+	bh=U6WsfbV8ePMllaRZ+Smh/4X6uCfRaZQpb9Y2ISJylwo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qav/fdHEPp9Q/yB92uDlxQsE/TthlqtbhEkw5Vu5JY5XYFuayKFVIXWHUlF1O01HWccMIL5FslCtTDqjyr9nKg1r2Zf0X4vGZr0jDyfdYLBcWTVyHZKxp5fj0Zv3Mge3el43mAHcdQ+qwLZUAL62rKP5L8dcsOjEslQQ/4KuHt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwTp7nYJ; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e38a6b92aso495674b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755192227; x=1755797027; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kUuwnMr5cJFdw3kMTCufuIrt59uK2KJmVhi6WoAhRaU=;
+        b=fwTp7nYJAxUmO5/PAAMDuQ6Cn+20qKUWQVlB1NSk+jWDnlwIdHlqF2UylZZY3s18D7
+         5qZvBCJklQ0PofG0PDZLfPm5ovium0rzg5A5fmgkLJKPbJPtXF4Yfucz78hXYQjBu7DB
+         DeyzESkyLn0KxBpjvUAB8lwUGTFfwO4rg/d3wgV0QGXcDs+DmdqpX5QbpBqpj2emdHRb
+         PgANIH47ouwCg4mN2QRsOEmaKQsuBEffzGUbWK06/ulcSOShtxPV8iZb1EdG0FtOPiWG
+         6UH+2HzfKpCY7OYFfez/uj8NQp40Pe8az38A1NRo9yEfuwKkfQCuu5u/rgq6cpZsT65Y
+         NZLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755192227; x=1755797027;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kUuwnMr5cJFdw3kMTCufuIrt59uK2KJmVhi6WoAhRaU=;
+        b=KS/8GncZrH0W3pbXpCilMDEkovBf4GFWcWIJJyx2b18jLbkB6qJ9IWW9CrGRpMf/IU
+         VfQnX3tD9nDxRrFArHlVT44LeaomviPtyoFBrbwbfPM3fEqe0OcS7aN04yvRAjRWC1ub
+         b6+333hs7E1UpuzlQsuDlZZx3Rcvml3jmB/Acs6E1BeHTOf2zOi3nXjFATtY6wtZ8h+s
+         JOqYeW48avPof8weF6GAcjR7ZPJQervz4CRhk18/VpYj6qR51SuUfS+ooKIrqw/LybRY
+         ql+4SMLdxXEKl8+1IuhdW4B7psoYqFremGk7GqophK0hXdjJB4gwZpb+f5HfrB6wp2Vk
+         eePw==
+X-Forwarded-Encrypted: i=1; AJvYcCVciBb979OK7N+u6XAjVQeUFb6keBxvrOGYfGviPNQ5LUuDNx4I1EYeHk1EDBalukHLWb/Qwe9T0lrmawQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0osEmdnO41enspO6FRvAnlLrLUB5y2SjI6fGK6gaNiyOUV+wn
+	7yuiEYNJ1iAx+URWSaYXtH1A9DBfCs81sNFtOqMGz3V17LAaWgmz+yOUZ9O1QPvKamA=
+X-Gm-Gg: ASbGncuwRZlrYaOkztvucgL6Yo0tNUxa9yF2Suo6mkl1tN1DcONl02P4nc18N57z6N8
+	27CuzciqP0QvlmXTfR9DHSKK5PPjQxgAFh+KvD07PhJq6m4GTpMwZWrSoBfc1stV4FRtQ0v/MlU
+	V9AGv7bTqiIXLPY9w4sR+gd3HNKiBt8eEODsnPv5QYkAylvnDAPUJyGDR/n3xvNnjqrlGUmBG4u
+	053CuFw2OVux6L+8YEhxchJLBNPhEDmjBDv2GEOgFUxppybjOXbyQItXJ1+Ur6vze3aDFFxszgh
+	6JQV8EPd/bIgh2yXKNCiiXdQweHef0Um4tHbTC6+1Z+EQE9QfBlBNoy6R25dlNBZTu4BcgQagFT
+	5gs7RKoLPhuW3kNUE+Yx0z2Hoyud10pmyrU5utzcxPpE2NDvkb2A4xCh71wZdCw==
+X-Google-Smtp-Source: AGHT+IGpe2mqIirqe/7OBFih53vw0yZWYFPlVdAHH7MK/NVq5p3Qz6zelUDEaxyhRQRCyJOqO9Ebdg==
+X-Received: by 2002:a05:6a20:7347:b0:235:7452:5859 with SMTP id adf61e73a8af0-240bd2523b4mr5611675637.30.1755192227344;
+        Thu, 14 Aug 2025 10:23:47 -0700 (PDT)
+Received: from localhost.localdomain (66-175-223-235.ip.linodeusercontent.com. [66.175.223.235])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b4289c5e123sm17825759a12.3.2025.08.14.10.23.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 10:23:47 -0700 (PDT)
+From: Zhang Tengfei <zhtfdev@gmail.com>
+To: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>,
+	ason Wang <jasowang@redhat.com>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"Andrew Lunn --cc=netdev @ vger . kernel . org" <andrew+netdev@lunn.ch>,
+	linux-kernel@vger.kernel.org,
+	Zhang Tengfei <zhtfdev@gmail.com>
+Subject: [PATCH] net: tun: fix strscpy call with missing size argument
+Date: Fri, 15 Aug 2025 01:23:00 +0800
+Message-ID: <20250814172300.57458-1-zhtfdev@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,64 +93,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 524c48072e56 ("mm/page_alloc: rename ALLOC_HIGH to
-ALLOC_MIN_RESERVE") is the start of a series that explains how __GFP_HIGH,
-which implies ALLOC_MIN_RESERVE, is going to be used instead of
-__GFP_ATOMIC for high atomic reserves.
+The tun_set_iff() and tun_get_iff() functions call strscpy()
+with only two arguments, omitting the destination buffer size.
 
-Commit eb2e2b425c69 ("mm/page_alloc: explicitly record high-order atomic
-allocations in alloc_flags") introduced ALLOC_HIGHATOMIC for such
-allocations of order higher than 0. It still used __GFP_ATOMIC, though.
+This patch corrects these calls by providing the required size
+argument using the IFNAMSIZ macro. This ensures the code adheres
+to the function's documented contract and improves its overall
+robustness and clarity.
 
-Then, commit 1ebbb21811b7 ("mm/page_alloc: explicitly define how __GFP_HIGH
-non-blocking allocations accesses reserves") just turned that check for
-!__GFP_DIRECT_RECLAIM, ignoring that high atomic reserves were expected to
-test for __GFP_HIGH.
-
-This leads to high atomic reserves being added for high-order GFP_NOWAIT
-allocations and others that clear __GFP_DIRECT_RECLAIM, which is
-unexpected. Later, those reserves lead to 0-order allocations going to the
-slow path and starting reclaim.
-
-From /proc/pagetypeinfo, without the patch:
-
-Node    0, zone      DMA, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type   HighAtomic      1      8     10      9      7      3      0      0      0      0      0
-Node    0, zone   Normal, type   HighAtomic     64     20     12      5      0      0      0      0      0      0      0
-
-With the patch:
-
-Node    0, zone      DMA, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone    DMA32, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-
-Fixes: 1ebbb21811b7 ("mm/page_alloc: explicitly define how __GFP_HIGH non-blocking allocations accesses reserves")
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Tested-by: Helen Koike <koike@igalia.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: NeilBrown <neilb@suse.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
+Fixes: a57384110dc6 ("tun: replace strcpy with strscpy for ifr_name")
+Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
 ---
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/tun.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 2ef3c07266b3..bf52e3bef626 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4219,7 +4219,7 @@ gfp_to_alloc_flags(gfp_t gfp_mask, unsigned int order)
- 		if (!(gfp_mask & __GFP_NOMEMALLOC)) {
- 			alloc_flags |= ALLOC_NON_BLOCK;
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 86a9e927d0ff..88c440c99542 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -2823,13 +2823,13 @@ static int tun_set_iff(struct net *net, struct file *file, struct ifreq *ifr)
+ 	if (netif_running(tun->dev))
+ 		netif_tx_wake_all_queues(tun->dev);
  
--			if (order > 0)
-+			if (order > 0 && (alloc_flags & ALLOC_MIN_RESERVE))
- 				alloc_flags |= ALLOC_HIGHATOMIC;
- 		}
+-	strscpy(ifr->ifr_name, tun->dev->name);
++	strscpy(ifr->ifr_name, tun->dev->name, IFNAMSIZ);
+ 	return 0;
+ }
+ 
+ static void tun_get_iff(struct tun_struct *tun, struct ifreq *ifr)
+ {
+-	strscpy(ifr->ifr_name, tun->dev->name);
++	strscpy(ifr->ifr_name, tun->dev->name, IFNAMSIZ);
+ 
+ 	ifr->ifr_flags = tun_flags(tun);
  
 -- 
-2.47.2
+2.47.3
 
 
