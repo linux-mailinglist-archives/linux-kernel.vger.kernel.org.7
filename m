@@ -1,133 +1,160 @@
-Return-Path: <linux-kernel+bounces-768236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306B4B25E9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:22:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8E3B25EA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 904A7581DD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A09969E4EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E092E7BBC;
-	Thu, 14 Aug 2025 08:22:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28D3F2E7BB8;
+	Thu, 14 Aug 2025 08:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fzdUpndw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075352749D9;
-	Thu, 14 Aug 2025 08:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087D6134A8;
+	Thu, 14 Aug 2025 08:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755159756; cv=none; b=b0M7LbbNAV90IGwjJcp9PVfzNb3b913KwROn8h9SEoXUPqJbkj81lrrjo8Azbx7oHR7Fke56HbqBpr+B/YLHEWiR0jMTMXXIm7Iwi27uYxdMqorUfH+m5fF8m1i4KydXxak1QIuXMR+lBRJk0qn8JjHlHDoOydCa6BVEj4FHk0g=
+	t=1755159789; cv=none; b=IRtJSKDKaqG78+300hzpk7xjHakmXhy25k/vWIRvIAwOmTDofgNrQi42aI4JCbZbuMWtvM9UfPoEt7ozX2RVbqnmuRB3Ucy+hEecfO93cPIZ7Hw+mzRrewWV54P6HOn6wJRJbueUbWkWBGMlbGGjGq2qLFD15EZ5E84LG9q8iqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755159756; c=relaxed/simple;
-	bh=QptsBHffm0KH6p7+g8nJS4gOiQnquTBf7oewFglHkds=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=QxntmQSi8C3ZTnARQ8wZ5Ktlht0iSyObWd1rVTdQiX6IIWOspnhoJN8BUUS3YEbyF2+LaiRgEM/9GPH1IwSgG+ld6SrtNpq+Pdshsf0e6spnKXqNDZ45fMbxDyfcCfu4bW841zaUJSh51RWKSJUImSuy76LkIw/iQYCVhfvO0v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4c2dX72kGnzYQv9Z;
-	Thu, 14 Aug 2025 16:22:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id F29F41A0E39;
-	Thu, 14 Aug 2025 16:22:29 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBXIBHEnJ1oFBmODg--.42407S3;
-	Thu, 14 Aug 2025 16:22:29 +0800 (CST)
-Subject: Re: [PATCH 00/16] blk-mq: introduce new queue attribute asyc_dpeth
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, bvanassche@acm.org, nilay@linux.ibm.com, hare@suse.de,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250814033522.770575-1-yukuai1@huaweicloud.com>
- <aJ2WH_RAMPQ9sd6r@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <b6587204-9798-fcb0-c4b7-f00d5979d243@huaweicloud.com>
-Date: Thu, 14 Aug 2025 16:22:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1755159789; c=relaxed/simple;
+	bh=w/UM9ASAddRI5pPv9yJpB5/f2enM5/74LHgNueiNjoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VYbj32cmnmbX7c674g/jIn0qAHXUoMZcK6a28MXUSaNAifs0Xl9aIWHCTLqfHoM4vACqCdpH2GNW0EGqQzq/bMWf/dBEwM/4e/UgmR/3EFl/Zvxehxv/TI9s9tiRHRNcPeWia1oGrEOTmM4kaCAA7f2zcDdGNSgHugJE84+btPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fzdUpndw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DMxFWo023986;
+	Thu, 14 Aug 2025 08:22:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	21u6GHncD1qmZgE3QDHrS+U+JosoC2ENVBFuXbIqbs0=; b=fzdUpndwgPHJxNqw
+	/upag5MfItrA8otjChTYrHZmwvJt/AxU2sbrm+amrmWuTQsXxjoVWqQhWdoYWWCS
+	O0lbVZwEjkOSotkrsGIHdrmp8QwX08ajo2wgIHKPrl+b2Gq5UP2deb0G2wXYgm/w
+	okl66xRfIDBaqmSMFurG7kCeol2H9/hNotMHimrOq5PMJgHe7+yFW7v7X6/uFBPj
+	tZPP+l1/CJBxENC2enYo76ivf6PhBZe6mQLY28RdjoqFdcftM+BD3DtzqCXfsEKA
+	KfMncMlnaOYCxtaTbRjNSra8p2N5OkmA1/wmf1k3Xlfgbd1manvrlv87wB6Gw+v4
+	dtkxfg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48gr9ruk2r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 08:22:52 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 57E8Mqtv028839
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 08:22:52 GMT
+Received: from [10.133.33.43] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 14 Aug
+ 2025 01:22:47 -0700
+Message-ID: <e3b5721d-cf37-4b35-9851-5e822fa16c09@quicinc.com>
+Date: Thu, 14 Aug 2025 16:22:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <aJ2WH_RAMPQ9sd6r@fedora>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXIBHEnJ1oFBmODg--.42407S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF1DuFy8XFWfGr48WrWkCrg_yoW8Xw4Up3
-	y3t3WSkw4DGry8Cw4xt3yrXry8C3ZYgrZ8JrW5Kr47GF98X3WjvFnagF1ruas7Wr15Gr4a
-	gF1qq3s3Xw4qyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 26/38] drm/msm/dp: skip reading the EDID for MST cases
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar
+	<abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Abhinav
+ Kumar" <quic_abhinavk@quicinc.com>
+References: <20250609-msm-dp-mst-v2-0-a54d8902a23d@quicinc.com>
+ <20250609-msm-dp-mst-v2-26-a54d8902a23d@quicinc.com>
+ <lusd35wv2pj5sy6mdiw7axqxnei2wqo57pf6ju5ys2ibfrkidu@63lkbckuu2n6>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <lusd35wv2pj5sy6mdiw7axqxnei2wqo57pf6ju5ys2ibfrkidu@63lkbckuu2n6>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDA5NCBTYWx0ZWRfXz0R48Ozax+dY
+ YeUVoGep7qlHG84sm/Y+fX22S3bxTTpET41A3br5EZ+on/hF1dBKlsYxdXApN1AZ00T3qobecFN
+ Jb3BPp/XqRFlaaO6dKL23ljz6ye8YzLqCmFcdcksJtfjj8XSFuk8ZmwzCi2iIZ3nKQUe/8Yuwqo
+ pSLOEx+YP5IFjc/zIU3UPDCxJVH/fjI4zQhNvhX6T+m9Cht9ynUNM5bNtAPWiofuRuqZslw5FYJ
+ pRHbD10EjBmcK8JxQe22rNruwOj1nEFaKXcjyeFJ1DF0P10cS0ILmmTqoFV2W1H63h84vP39hhp
+ 4QrOqrEL+rjppMW6GwIlUaqUJ4cQqvkdtQTjpS3gkxVXGK3mJhc1B9Q7Yuxnp60RAJM3rg2/UD4
+ bK0peKeN
+X-Authority-Analysis: v=2.4 cv=NIrV+16g c=1 sm=1 tr=0 ts=689d9cdc cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8
+ a=iVGnFgL3FlcK6foRaNUA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: rzjTHFpEi3Ufbeh180Q_9_FpJu5CfPRI
+X-Proofpoint-GUID: rzjTHFpEi3Ufbeh180Q_9_FpJu5CfPRI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 clxscore=1015 impostorscore=0 adultscore=0 suspectscore=0
+ spamscore=0 malwarescore=0 phishscore=0 bulkscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508130094
 
-Hi,
 
-ÔÚ 2025/08/14 15:54, Ming Lei Ð´µÀ:
-> On Thu, Aug 14, 2025 at 11:35:06AM +0800, Yu Kuai wrote:
->> From: Yu Kuai <yukuai3@huawei.com>
+
+On 2025/6/9 23:58, Dmitry Baryshkov wrote:
+> On Mon, Jun 09, 2025 at 08:21:45PM +0800, Yongxing Mou wrote:
+>> From: Abhinav Kumar <quic_abhinavk@quicinc.com>
 >>
->> Backgroud and motivation:
+>> For MST cases, EDID is handled through AUX sideband messaging.
+>> Skip the EDID read during hotplug handle for MST cases.
+> 
+> Why? It makes sense to read it during the HPD processing, ping HDMI
+> codec, update CEC info, etc.
+> 
+For MST case to read EDID. we will use drm_dp_mst_edid_read when MST 
+connetors .get_modes() called.
 >>
->> At first, we test a performance regression from 5.10 to 6.6 in
->> downstream kernel(described in patch 13), the regression is related to
->> async_depth in mq-dealine.
+>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>> ---
+>>   drivers/gpu/drm/msm/dp/dp_display.c | 8 +++++---
+>>   1 file changed, 5 insertions(+), 3 deletions(-)
 >>
->> While trying to fix this regression, Bart suggests add a new attribute
->> to request_queue, and I think this is a good idea because all elevators
->> have similar logical, however only mq-deadline allow user to configure
->> async_depth. And this is patch 9-16, where the performance problem is
->> fixed in patch 13;
+>> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+>> index 88cae0ca66015377e59bee757462edeae5ae91bf..b1b025d1d356046f8f9e3d243fc774185df24318 100644
+>> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+>> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+>> @@ -438,9 +438,11 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+>>   	if (rc)
+>>   		goto end;
+>>   
+>> -	rc = msm_dp_panel_read_edid(dp->panel, connector);
+>> -	if (rc)
+>> -		goto end;
+>> +	if (!dp->mst_supported || !drm_dp_read_mst_cap(dp->aux, dp->panel->dpcd)) {
+>> +		rc = msm_dp_panel_read_edid(dp->panel, connector);
+>> +		if (rc)
+>> +			goto end;
+>> +	}
+>>   
+>>   	msm_dp_link_process_request(dp->link);
+>>   
 >>
->> Because async_depth is related to nr_requests, while reviewing related
->> code, patch 2-7 are cleanups and fixes to nr_reqeusts.
+>> -- 
+>> 2.34.1
 >>
->> I was planning to send this set for the next merge window, however,
->> during test I found the last block pr(6.17-rc1) introduce a regression
->> if nr_reqeusts grows, exit elevator will panic, and I fix this by
->> patch 1,8.
-> 
-> Please split the patchset into two:
-> 
-> - one is for fixing recent regression on updating 'nr_requests', so this
->    can be merged to v6.17, and be backport easily for stable & downstream
-
-There are actually two regressions, as fixed by patch 5 and patch 8, how
-about the first patchset for patch 1-8? Are you good with those minor
-prep cleanup patches?
-
-> 
-> - another one is for improving IO performance related with async_depth.
-
-Sure, although patch 9-16 is still a performance regression :)
-
-Thanks,
-Kuai
-
-> 
-> 
-> Thanks,
-> Ming
-> 
-> 
-> .
 > 
 
 
