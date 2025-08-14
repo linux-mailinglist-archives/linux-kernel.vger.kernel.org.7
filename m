@@ -1,221 +1,121 @@
-Return-Path: <linux-kernel+bounces-768632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E5BB2637A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:57:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1663BB26364
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6939E008A
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:52:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38CE21CC48C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB972FC899;
-	Thu, 14 Aug 2025 10:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3122FDC23;
+	Thu, 14 Aug 2025 10:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aIJnRyv2"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="WmCw/CWb"
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716B32ED876;
-	Thu, 14 Aug 2025 10:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281822F90C9;
+	Thu, 14 Aug 2025 10:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755168698; cv=none; b=ew41Uh5H5wQuOY3ukXCIjZjjIOtyUjkyXph7Xuq7gQMB+Svo1gHydkSN91K9Jb0SPvdrmUUVV6d2fsjRAGiIjUYRKD+mfCOEgdJN+wLDkRCbyJ9JF5pXbPa8ofgEtowXGNlG18o9IIRlcC5052jT4BdNGNL08VHg7SLRGsBpX3I=
+	t=1755168687; cv=none; b=fwJBzNym/eTH20HFM1CbfSDOwG0jzzKE6AhQQBWWCgi0UA6OVX+JntwsYh9llmqHWSWBm5yUhPlNlgW+UH4RoehpwaNIkpeDHsHKGzYEEatTDW1p+ERZpmD07rvlU+OW3Iv3hIbaWnHKZoT6+SB0ME639LPO8TskIXFpnkrh3DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755168698; c=relaxed/simple;
-	bh=fmWNGXJx5y/QRggMs4vupZ8C9C3DcvnqpAIuD9j2iQ4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VasUNEJgguosfoLA1YJ6JJV3Hlrj3W66t45Q/hYw6ZQbGNdUBAe5Ow42ELt0upNISU08QO+lHYNv0AfSjuIkmTwXhEl0EoGLQNuQJcGqnCGftRioJQ2bAB2Uxz9LUMt3vkgXxt1Vv8TVsptplzm57Lf3R3+7SO8Hy+yaizGn8OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aIJnRyv2; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EApAb91916358;
-	Thu, 14 Aug 2025 05:51:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755168670;
-	bh=Wf2DiOscjTwecEowFKMalhlENHRbNfB+Btro8SOfIE8=;
-	h=From:To:CC:Subject:Date;
-	b=aIJnRyv2TUEiX7xyia+B8qmT2awyAbCkiWOqB836m4S/XO5vuXZED7oSLe17EHcqz
-	 +BVVBP35bxSHob5vec6QRXpCoHmpstfwHNf5hWPCFrQQOJgrSxadJHyRzTer8HMkZV
-	 mzZYQN2OnAeq668E3ynk3/T2tpxMzYFXZPOpPnzs=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EApArw1661623
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 05:51:10 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 05:51:10 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 05:51:10 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EApAl53495350;
-	Thu, 14 Aug 2025 05:51:10 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [172.24.231.152])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 57EAp9VZ026297;
-	Thu, 14 Aug 2025 05:51:09 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Meghana Malladi
-	<m-malladi@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net] net: ti: icssg-prueth: Fix HSR and switch offload Enablement during firwmare reload.
-Date: Thu, 14 Aug 2025 16:21:06 +0530
-Message-ID: <20250814105106.1491871-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1755168687; c=relaxed/simple;
+	bh=iYBvCy0ozQyrxOTiIbPct9+4MVF/YM+Nm32ZVyUDg1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P+bZKlDay0AbGubhYJmgL9hKklHDpHKKkEdUFye5Zg/fNxwITlJHiPdpbjee9swZiXArUcdDBMerZkfBMDwqkIib1ueF4/HUdtgl7KxHUuaG3z2heb/qraJhmg6/iRebpYnsKbBWhDhwW1iv/FBgPyjo1ohih5Aj6TLFoCBPY1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=WmCw/CWb; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dK61LK7LOQ2eOe5xKdABoMGTs6KyqGMZWtWDbiV4RKs=; b=WmCw/CWbz7VPlb/vBOyHhC8MpD
+	f0Iu9F9dLls4DZEeOKdqAWvDPZLKszUO+UuzIp3whthWUhXIW1nRuks29QOrpoFzMhMWOGTILzH6Q
+	cin7FV6dsC9mZ6nQOwrokYxz/4Pkyyv3NGwTAH23Bjyx6uag+6gapGPjQgBbx84Ai1YRlTcSt9K5R
+	XEIO0jcINrGnmGmCyDD3x/VE36VdA1tIsJJB7zs+g8qzK//JccFLc7WWDooJjt62dq2QSNqx5xJ+x
+	cMT3TcAFASbox3AFTcvYrE+6+JsSnOfnwNqoYt/0qe2Rs2eVUyxnNwyFJUWD9ZAN5AtNNjyw4Zs7J
+	ftyRTTWA==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:33094 helo=archlinux)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1umVYJ-00000003xgR-3w2N;
+	Thu, 14 Aug 2025 12:51:23 +0200
+Date: Thu, 14 Aug 2025 12:51:20 +0200
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org, dan.j.williams@intel.com, 
+	Xiujianfeng <xiujianfeng@huawei.com>
+Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
+Message-ID: <7hmu5jbctmzdp75kipvjr3dzdmnkl4fpg3tkr4jcc5jcqzse6i@rpocehoxrjis>
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+ <9b6fd06e-5438-4539-821c-6f3d5fa6b7d1@suse.com>
+ <2vldrnqs6fbljqqp6vbwmkushx6dxcpephgb6svmu5i64lijpy@lg37aflddv3b>
+ <60f17362-af8e-46db-9bcf-be85b84a525d@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <60f17362-af8e-46db-9bcf-be85b84a525d@suse.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-To enable HSR / Switch offload, certain configurations are needed.
-Currently they are done inside icssg_change_mode(). This function only
-gets called if we move from one mode to another without bringing the
-links up / down.
+On Thu, Aug 14, 2025 at 01:02:36PM +0300, Nikolay Borisov wrote:
+> 
+> 
+> On 8/14/25 11:59, Nicolas Bouchinet wrote:
+> > Hi Nikolay,
+> > 
+> > After discussing with Xiu, we have decided not to accept this patchset.
+> > 
+> > The goal of Lockdown being to draw a clear line between ring-0 and uid-0,
+> > having a more granular way to activate Lockdown will break it. Primarily
+> > because most lockdown-reasons can be bypassed if used independently.
+> > 
+> > Even if the goal of Lockdown were to be redefined, we would need to ensure the
+> > security interdependence between different lockdown-reasons. This is highly
+> > tied to where people calls the `security_locked_down` hook and thus is out of
+> > our maintenance scope.
+> > 
+> > Having coarse-grained lockdown reasons and integrity/confidentiality levels
+> > allows us to ensure that all of the reasons are correctly locked down.
+> > 
+> > Best regards,
+> > 
+> > Nicolas
+> 
+> Thanks for the feedback, to try and not have all this code go to waste, what
+> about consdering patch 2 - kunits tests. Apart from
+> lockdown_test_individual_level() the other tests are applicable to the
+> existing lockdown implementation and can aid in future developments?
+> 
 
-Once in HSR / Switch mode, if we bring the links down and bring it back
-up again. The callback sequence is,
+Yes of course, thanks a lot for those tests. Can you adapt them and send
+them separately for review ?
 
-- emac_ndo_stop()
-	Firmwares are stopped
-- emac_ndo_open()
-	Firmwares are loaded
+i.e, the `lockdown_test_no_downgrade` should check for -EPERM.
 
-In this path icssg_change_mode() doesn't get called and as a result the
-configurations needed for HSR / Switch is not done.
-
-To fix this, put all these configurations in a separate function
-icssg_enable_fw_offload() and call this from both icssg_change_mode()
-and emac_ndo_open()
-
-Fixes: 56375086d093 ("net: ti: icssg-prueth: Enable HSR Tx duplication, Tx Tag and Rx Tag offload")
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 72 +++++++++++---------
- 1 file changed, 41 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 6c7d776ae4ee..dadce6009791 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -203,6 +203,44 @@ static void prueth_emac_stop(struct prueth *prueth)
- 	}
- }
- 
-+static void icssg_enable_fw_offload(struct prueth *prueth)
-+{
-+	struct prueth_emac *emac;
-+	int mac;
-+
-+	for (mac = PRUETH_MAC0; mac < PRUETH_NUM_MACS; mac++) {
-+		emac = prueth->emac[mac];
-+		if (prueth->is_hsr_offload_mode) {
-+			if (emac->ndev->features & NETIF_F_HW_HSR_TAG_RM)
-+				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE);
-+			else
-+				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE);
-+		}
-+
-+		if (prueth->is_switch_mode || prueth->is_hsr_offload_mode) {
-+			if (netif_running(emac->ndev)) {
-+				icssg_fdb_add_del(emac, eth_stp_addr, prueth->default_vlan,
-+						  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
-+						  ICSSG_FDB_ENTRY_P1_MEMBERSHIP |
-+						  ICSSG_FDB_ENTRY_P2_MEMBERSHIP |
-+						  ICSSG_FDB_ENTRY_BLOCK,
-+						  true);
-+				icssg_vtbl_modify(emac, emac->port_vlan | DEFAULT_VID,
-+						  BIT(emac->port_id) | DEFAULT_PORT_MASK,
-+						  BIT(emac->port_id) | DEFAULT_UNTAG_MASK,
-+						  true);
-+				if (prueth->is_hsr_offload_mode)
-+					icssg_vtbl_modify(emac, DEFAULT_VID,
-+							  DEFAULT_PORT_MASK,
-+							  DEFAULT_UNTAG_MASK, true);
-+				icssg_set_pvid(prueth, emac->port_vlan, emac->port_id);
-+				if (prueth->is_switch_mode)
-+					icssg_set_port_state(emac, ICSSG_EMAC_PORT_VLAN_AWARE_ENABLE);
-+			}
-+		}
-+	}
-+}
-+
- static int prueth_emac_common_start(struct prueth *prueth)
- {
- 	struct prueth_emac *emac;
-@@ -753,6 +791,7 @@ static int emac_ndo_open(struct net_device *ndev)
- 		ret = prueth_emac_common_start(prueth);
- 		if (ret)
- 			goto free_rx_irq;
-+		icssg_enable_fw_offload(prueth);
- 	}
- 
- 	flow_cfg = emac->dram.va + ICSSG_CONFIG_OFFSET + PSI_L_REGULAR_FLOW_ID_BASE_OFFSET;
-@@ -1360,8 +1399,7 @@ static int prueth_emac_restart(struct prueth *prueth)
- 
- static void icssg_change_mode(struct prueth *prueth)
- {
--	struct prueth_emac *emac;
--	int mac, ret;
-+	int ret;
- 
- 	ret = prueth_emac_restart(prueth);
- 	if (ret) {
-@@ -1369,35 +1407,7 @@ static void icssg_change_mode(struct prueth *prueth)
- 		return;
- 	}
- 
--	for (mac = PRUETH_MAC0; mac < PRUETH_NUM_MACS; mac++) {
--		emac = prueth->emac[mac];
--		if (prueth->is_hsr_offload_mode) {
--			if (emac->ndev->features & NETIF_F_HW_HSR_TAG_RM)
--				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_ENABLE);
--			else
--				icssg_set_port_state(emac, ICSSG_EMAC_HSR_RX_OFFLOAD_DISABLE);
--		}
--
--		if (netif_running(emac->ndev)) {
--			icssg_fdb_add_del(emac, eth_stp_addr, prueth->default_vlan,
--					  ICSSG_FDB_ENTRY_P0_MEMBERSHIP |
--					  ICSSG_FDB_ENTRY_P1_MEMBERSHIP |
--					  ICSSG_FDB_ENTRY_P2_MEMBERSHIP |
--					  ICSSG_FDB_ENTRY_BLOCK,
--					  true);
--			icssg_vtbl_modify(emac, emac->port_vlan | DEFAULT_VID,
--					  BIT(emac->port_id) | DEFAULT_PORT_MASK,
--					  BIT(emac->port_id) | DEFAULT_UNTAG_MASK,
--					  true);
--			if (prueth->is_hsr_offload_mode)
--				icssg_vtbl_modify(emac, DEFAULT_VID,
--						  DEFAULT_PORT_MASK,
--						  DEFAULT_UNTAG_MASK, true);
--			icssg_set_pvid(prueth, emac->port_vlan, emac->port_id);
--			if (prueth->is_switch_mode)
--				icssg_set_port_state(emac, ICSSG_EMAC_PORT_VLAN_AWARE_ENABLE);
--		}
--	}
-+	icssg_enable_fw_offload(prueth);
- }
- 
- static int prueth_netdevice_port_link(struct net_device *ndev,
-
-base-commit: 52565a935213cd6a8662ddb8efe5b4219343a25d
--- 
-2.34.1
-
+FYI, I have a three week holiday starting today. I'll return on
+Septembre the 8th. I let Xiu review those patches until then.
 
