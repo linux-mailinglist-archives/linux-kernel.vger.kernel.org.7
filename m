@@ -1,68 +1,94 @@
-Return-Path: <linux-kernel+bounces-769613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14140B270F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:42:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF370B270FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CA175E64FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:41:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533251CE0A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A2927AC4C;
-	Thu, 14 Aug 2025 21:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9475527D782;
+	Thu, 14 Aug 2025 21:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQy1QfcY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGVqUrRT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123822797BA;
-	Thu, 14 Aug 2025 21:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB976279DB4;
+	Thu, 14 Aug 2025 21:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755207697; cv=none; b=UGqV8qIisizdnuKsgLAX/MGO5TdfTQPyLmteNohrKy4feJ9AFHcYG0fgfgC/JEbbmPXphcxdnqO+TAfq+9kvqmXW+bBgxImn26ccQj3God7puFNulDJmt9ZMyRfV3KtAGIScC2DDgmZiqQjqUQEpYd6tASzOG18pHY+f7ZTVPNg=
+	t=1755207716; cv=none; b=Q/wVqfrGEwKWZrW67tFZ0I13rzmvdwKmojoF29M16YTfVreTfluQXtZ/wsHAEZLsvQj11HYwvAXb1zI4Mq3BTXPTnpLZMyWis0yNWgmTlphysWUVIrh9vyUT3QDgqiwWpx92rL83yLR46oxMf2RREDYAq4ZRWk27GdWi00h7lqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755207697; c=relaxed/simple;
-	bh=L0W28G9AstwMamKC1/QPTjtg2Chvse9UFYqxpJi5Ua0=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=p4hjq7TRC4o4Weq/+Gi4GOWM+k5l14ih+vz1qIQzHBdn8OopJSIbLwUKA42uYh8WM4DvE3sKuDazQuN21OD7MXPoEK91j1yMNRnqN2zEKfgaPpVnqWaFYfYo9ui4ff/uTYrQEYbID/s5ntIZVnPOnW4y0jwQzWqs7pEEPY6HTt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQy1QfcY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD6DC4CEED;
-	Thu, 14 Aug 2025 21:41:36 +0000 (UTC)
+	s=arc-20240116; t=1755207716; c=relaxed/simple;
+	bh=VpoePV0SvnpAqZTJ/bpqTsi9FHbgTr56J13rH7hPneY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=sV3XFMIVQtViBT+Z7v6j1bYN1p79BUuuWfGqy0ghYtXl1m5BHe1qbdm3DtVx+B4LbNz+J9rcx1NkmDZeX2zbUAw96T75gyqws1xqJdx0ld6me6SiyiRpnOkbnpY3aT2K5112ZjWVQyUJQMTLX6U0quQX8UgK6NZlYOj3mGXKZyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGVqUrRT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06B3BC4CEED;
+	Thu, 14 Aug 2025 21:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755207696;
-	bh=L0W28G9AstwMamKC1/QPTjtg2Chvse9UFYqxpJi5Ua0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fQy1QfcYi6G3NyoT6dV/uFuKhUVwGc/zgCUhIHB2O/gGhcZTYoiyBSRAJMoTtW6IH
-	 Mv8JRu4/L8/krgBguoxJiTDbfYh02bpG6YasNnvVaqEGUmr6eeWSq76Jnm7AC0yZDq
-	 /WBcdFDcqbPbvmfgkXscAksouv7UA++PYNWKCCVfwh98wMOa47Pt783bYrtexfMYX2
-	 Ly9jLXoCjQSquoOoAyH/yrUrkhpAgzN6e0myG8IkavImtvB6FzxkSgBnnYqcUTHWJ2
-	 MZDPcSs60Rrmyh1TFHy0DG8YFTg64dPkMI1EOs4v/lqgdBeB6xdiuRpt7kjDZ72e7f
-	 dGgF+Yoo3357g==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1755207716;
+	bh=VpoePV0SvnpAqZTJ/bpqTsi9FHbgTr56J13rH7hPneY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UGVqUrRTz3c5ThZbRTmp2+7/Pop/uSRyOPB3/De34Anabuk4YEgHBCWhMMymTERJv
+	 us2sTXt83bYpvtN8qfEnSaMpRWwtseasQLWtinWZhXDc9OSECyusWAgmxHbRxclSf+
+	 TaXp5hwowU/Aj10Jgp368wXszdB6ZPNSII93pQKHmhKGX4WV+bmyf05xWw/tcoBKzn
+	 LE+TnYEZP0ha6m1t7ISFZx9cScMac2u9DbwOB9wYEZhqUyGiJRdxMtSyJ6dvnapVxq
+	 R+Dg/Iac226SmmuS29nbvKuQTi5/SCQdPuquOsz/VEiNv3ZOf/RRkwqaLwLq/3WnzF
+	 1Rj8NbQztAZHg==
+Date: Thu, 14 Aug 2025 16:41:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	mani@kernel.org, robh@kernel.org, kwilczynski@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mpillai@cadence.com,
+	fugang.duan@cixtech.com, guoyin.chen@cixtech.com,
+	peter.chen@cixtech.com, cix-kernel-upstream@cixtech.com,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 04/13] PCI: cadence: Split PCIe EP support into common
+ and specific functions
+Message-ID: <20250814214154.GA350532@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250813094003.552308-1-liaoyuanhong@vivo.com>
-References: <20250813094003.552308-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] clk: tegra: Remove redundant semicolons
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Liao Yuanhong <liaoyuanhong@vivo.com>
-To: Jonathan Hunter <jonathanh@nvidia.com>, Liao Yuanhong <liaoyuanhong@vivo.com>, Michael Turquette <mturquette@baylibre.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Date: Thu, 14 Aug 2025 14:41:35 -0700
-Message-ID: <175520769592.11333.15146346000732948341@lazor>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813042331.1258272-5-hans.zhang@cixtech.com>
 
-Quoting Liao Yuanhong (2025-08-13 02:40:03)
-> Remove unnecessary semicolons.
->=20
-> Signed-off-by: Liao Yuanhong <liaoyuanhong@vivo.com>
-> ---
+On Wed, Aug 13, 2025 at 12:23:22PM +0800, hans.zhang@cixtech.com wrote:
+> From: Manikandan K Pillai <mpillai@cadence.com>
+> 
+> Split the Cadence PCIe controller EP functionality into common
+> ibrary functions and functions for legacy PCIe EP controller.
 
-Applied to clk-next
+s/ibrary/library/
+
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep-common.c
+> @@ -0,0 +1,252 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2017 Cadence
+> +// Cadence PCIe endpoint controller driver common
+> +// Author: Manikandan K Pillai <mpillai@cadence.com>
+
+This *looks* like mostly a code move from pcie-cadence-ep.c to
+pcie-cadence-ep-common.c.  If that's the case, make this patch *only*
+a move (no code changes or whitespace changes as in
+cdns_pcie_ep_start()).  And say in the commit log that you're only
+moving, not changing, the code.
+
+Also preserve the author from pcie-cadence-ep.c if that's the case.
+
+I do look a little sideways at the // comments since the pcie-cadence*
+files are basically the only users in drivers/pci/ (except for the
+ibmhp driver that is ancient and basically dead).
+
+Bjorn
 
