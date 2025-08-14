@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-768447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87245B2611E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:38:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62BBBB2611D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EFFE584FE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A5F8885800
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14FC2F39B9;
-	Thu, 14 Aug 2025 09:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBB82F531D;
+	Thu, 14 Aug 2025 09:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPXujJuS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWXt7W3y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029242E9EAD;
-	Thu, 14 Aug 2025 09:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE0C2FABFB;
+	Thu, 14 Aug 2025 09:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755163878; cv=none; b=A7XY/1OCsy3uPeJOxzHZ/8QzVO43neyXbDQdcsviLRZg9UmDwfG77r/6qDwjCFpeyUuf4+Wg/RJnEnRny9Pz5Ti74wO0kBYTp0nPIRFKM+7Z5Rc/m7BqC18R7Qr6DYMvivD5VGWPrHdC0o/4gees2PuiY+zPQ4xvffRGUuKZzK4=
+	t=1755163879; cv=none; b=Is0ZfdNM4DgIWfdzkmUs5Mzwsam3u4BhBUhaLP/V1Jjl8jVYrIyPn11GTg+k7AeiXvN9DNCFSWTl8bBYWCLKfBVK6IyPYprLW+1MEenG2Q8r3cT4iYSOimMTjsx9fOsRNNI0KQkihULojHEMkNHaNQiYcgYKN+kQzPJDzmSMI4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755163878; c=relaxed/simple;
-	bh=Y2LN4gp+cwJ2nX5J6gBtHp2+0MsQKkxDPHVHbH0DTIc=;
+	s=arc-20240116; t=1755163879; c=relaxed/simple;
+	bh=gVyxB1Di/2E8IPGLNeHV1iWeZXC/jQa+aBKyc3yL/O4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZgihBDehi53wAt+ncsKEgSw0WSTUUcdJL7/tVJIaKSEtxDthoHoXA6EUEJLPcd14Rh/aiOZINe/XpzgVSPDuW+Rvd8sWeh+L1amQpFjGT4OusV8zicKZKwVJZcup5v5Gx1jFBeaqvox2oR6m8FR+CZneC0VZoaBtyPOJu+6io/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPXujJuS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD23C4CEED;
-	Thu, 14 Aug 2025 09:31:12 +0000 (UTC)
+	 MIME-Version; b=sywOjobQRKqBADCuDzMwHdrTb+G6zZaFfILVcI8XXEkIFCREJ4acrIFSkSfvybhXBW4jiI1FhFA1KSFcGEJsQjF1JuLMHmNqdpBEQBowMDmHjOHLj0zlWolVm3xQztDguKuG9vMdswkQkeFX2Ya3LxokvhPXO8bhegcd8tZ5chs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWXt7W3y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BE7C4CEEF;
+	Thu, 14 Aug 2025 09:31:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755163875;
-	bh=Y2LN4gp+cwJ2nX5J6gBtHp2+0MsQKkxDPHVHbH0DTIc=;
+	s=k20201202; t=1755163879;
+	bh=gVyxB1Di/2E8IPGLNeHV1iWeZXC/jQa+aBKyc3yL/O4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DPXujJuSqNDIkQI5jEZm+oKYw56g5OxPFs5McsqphQQoymAILYlSLJdxvka7k/Jxi
-	 uQDwgIWdaRobN6lPAFr0D9qGJQug7/EL2io2nFMil6CCY9G0Gl2RMgSBy6iwgYQXKe
-	 2M1mjLzUGw1fzAMcxXG+0vO0qnX7KBjr2U/Zr3j+KG56PzXjhpazcVlktqTMhtzD14
-	 Cq1kGSiBQTgsbIxqOJ/D2ogkoBSZ6qjr7QsAfRXZf/JfjepGyIJySNeb5TiJPTPqht
-	 OpYvnKkSk3uOiPkg/YP0TLtYzymqIDv0EX+laMQ704zIKI6TPlJ1nknBpIMdD480Y8
-	 T2VAbcMYwPOvA==
+	b=nWXt7W3ykBE+CGCc/BwgDp+tcMOXo40jPetIeBoIf5YzrKWYXdLnCe1I91e1u9VXL
+	 TA/6rB9PHeO/C0GvHUTDWIAA3PqQ7YhdkLpXw1GAsBNj/B40CwPT+QjyoUH5A9ZQH6
+	 iAiW0gR/B54UDhbJT6LMhI8wLXC4m6awY8iVNqEoB3V7GvWLYWXFTP4ndLnHJib1oY
+	 YgloZiQaG/WXFl+Opc02Moi9Kd9G7LMYyR2vEYtIGYnXOK5W4MMfsrHF6DXV3VKGRC
+	 MTCzmSLiq0HmnMbgpcD7ak6Rc/bCBx3+FjGCqAdGVKTS5ddwqMsaEwBlrSVhHRzjb2
+	 ivFOpBJJsIIbg==
 From: Benno Lossin <lossin@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>,
 	Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>,
@@ -51,13 +51,13 @@ To: Arnd Bergmann <arnd@arndb.de>,
 	Benno Lossin <lossin@kernel.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
 	Danilo Krummrich <dakr@kernel.org>
-Cc: rust-for-linux@vger.kernel.org,
+Cc: netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 03/11] rust: miscdevice: replace `MaybeUninit::zeroed().assume_init()` with `pin_init::zeroed()`
-Date: Thu, 14 Aug 2025 11:30:30 +0200
-Message-ID: <20250814093046.2071971-4-lossin@kernel.org>
+Subject: [PATCH v3 04/11] rust: phy: replace `MaybeUninit::zeroed().assume_init()` with `pin_init::zeroed()`
+Date: Thu, 14 Aug 2025 11:30:31 +0200
+Message-ID: <20250814093046.2071971-5-lossin@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250814093046.2071971-1-lossin@kernel.org>
 References: <20250814093046.2071971-1-lossin@kernel.org>
@@ -77,42 +77,24 @@ the C side changed and is most likely incorrect.
 
 Signed-off-by: Benno Lossin <lossin@kernel.org>
 ---
- rust/kernel/miscdevice.rs | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ rust/kernel/net/phy.rs | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-index 6373fe183b27..cecd1f265324 100644
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@ -19,7 +19,7 @@
-     seq_file::SeqFile,
-     types::{ForeignOwnable, Opaque},
- };
--use core::{marker::PhantomData, mem::MaybeUninit, pin::Pin};
-+use core::{marker::PhantomData, pin::Pin};
- 
- /// Options for creating a misc device.
- #[derive(Copy, Clone)]
-@@ -31,8 +31,7 @@ pub struct MiscDeviceOptions {
- impl MiscDeviceOptions {
-     /// Create a raw `struct miscdev` ready for registration.
-     pub const fn into_raw<T: MiscDevice>(self) -> bindings::miscdevice {
--        // SAFETY: All zeros is valid for this C type.
--        let mut result: bindings::miscdevice = unsafe { MaybeUninit::zeroed().assume_init() };
-+        let mut result: bindings::miscdevice = pin_init::zeroed();
-         result.minor = bindings::MISC_DYNAMIC_MINOR as ffi::c_int;
-         result.name = self.name.as_char_ptr();
-         result.fops = MiscdeviceVTable::<T>::build();
-@@ -359,8 +358,7 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
+diff --git a/rust/kernel/net/phy.rs b/rust/kernel/net/phy.rs
+index 7de5cc7a0eee..3e5565a6a130 100644
+--- a/rust/kernel/net/phy.rs
++++ b/rust/kernel/net/phy.rs
+@@ -556,9 +556,7 @@ pub const fn create_phy_driver<T: Driver>() -> DriverVTable {
          } else {
              None
          },
--        // SAFETY: All zeros is a valid value for `bindings::file_operations`.
--        ..unsafe { MaybeUninit::zeroed().assume_init() }
+-        // SAFETY: The rest is zeroed out to initialize `struct phy_driver`,
+-        // sets `Option<&F>` to be `None`.
+-        ..unsafe { core::mem::MaybeUninit::<bindings::phy_driver>::zeroed().assume_init() }
 +        ..pin_init::zeroed()
-     };
+     }))
+ }
  
-     const fn build() -> &'static bindings::file_operations {
 -- 
 2.50.1
 
