@@ -1,300 +1,279 @@
-Return-Path: <linux-kernel+bounces-768482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80050B2617F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:52:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57CEB26185
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A596228C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:47:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB1C2189DED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE0E27FD76;
-	Thu, 14 Aug 2025 09:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E392ED157;
+	Thu, 14 Aug 2025 09:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iFMK5efK"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bU6z0b9E"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F502ED876
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755164869; cv=none; b=RBs1P05yT02j4qkJey05F0rffPpVT5a+M3mjzrVG5HTPNBm/IHAVMnar7YUDg21gr2sEjhcNHbLzlzMy64x+eJ1HiiKuVqK/VuRg8UFCrm7wui6HXz7HUknOS+r6eHfYodyD9FH98MbTmIy3AIlK/N8b7HQKUF3tSLOPQM5F9Po=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755164869; c=relaxed/simple;
-	bh=v9C2ecqKzEtjQd1RNjsgQNhdCAyuEymNZb/w43UXQ4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D2j1QvpRbIHiFi7f1viy4lxmLVdgRbn5E9FcOM9kDC3RZOjX389u7uZMhR8WVx7RtuLUtVth5hcd4OHTfhOKV4hKmecTPYKhTFZeRlTZAipAUvz0FrOGdcmiM/XgwvgdXQgAsWfNYyBZFpLGt6+fGQ01X93z1e8rlEoRYv4B+UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iFMK5efK; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-53b174ca9bdso569462e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:47:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755164866; x=1755769666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YiDCfbM3bTCVcLsZuPU1JDs4qEWT1BpZ2ztHAIDrKGI=;
-        b=iFMK5efKcF7HfhKZzhJKkPEVMGqEHMnNIqTAacT2L1KJWCN/fKWqRCoA0VPPKq3uh1
-         aqwQLjxUGlMiM3g85Kof//j5Xloxeq9Se+s+VoKGSOBBX+b8cAWml4b0TeBGSZU+TIEe
-         nfB/NOoc4O+rhO5WLJC726DqKhuh7hMtaFFns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755164866; x=1755769666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YiDCfbM3bTCVcLsZuPU1JDs4qEWT1BpZ2ztHAIDrKGI=;
-        b=aXNFifWft9iqqW5aZdyjsvlBkE/6zZVMyUxuDW1EWhLmv3HHjJkNE+u6RNbi615pGA
-         KmyljHXuKu9R7ZJDcj8yKwp9cbh/uSVmPOI88JIqk2aQmNEAZI4/oONHVDWd50leOoHq
-         5jLus1/Abvxs0et05CY+ZFyIGubkRm0U3GbJNhtTu0I7x3tMRPB9d1GbUFjpkSUy9RAP
-         V642FB5EtYYhWzqmoR8moHL1fuARdujzGmJXP/j6os91TpHcE0RdQSwT1ahDZSoQriq0
-         rOlLrIqQv/S9qet/EGkzXVO/LXKCPzmdd1/PyZGnF/+hq+HmHgCydPBzV0H7Q99ri9dZ
-         RCGw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6UFK0B9xfOWV9sOT77tIJWDe9NTP3bPcRyCd/BMhGkKzP+Gj7xSFhK0oV4OXQWqAsOJuK5+xQv1oExII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtnDnlt6mdBeIcMIRIC0JKkYOYxDdHRNWBadj4CfJRHRU36VlT
-	71m2gp2Sg5uSkwuDYjWn8vA1lIDvSDjZb41pDVb8h8MZLy5j/RenPJ/GsV1bECLR5G+BqdkzSoC
-	yG+4=
-X-Gm-Gg: ASbGnctVRk4FR2sWM/oRT1Y5lYPytAH4Ab75tom6BjyuydOaZj2z5KUDbexHQzsD+2M
-	ihLBLF4yNt5y9H0SvtNsAn+H7ExFzhOpbFILrOP6Ww0iX3NSkh/fzftf3+uzNYznepeTZbyClcA
-	EXXPr8pBRwFt3nQVM5s04WuFcMWBtx2/0GuCFzm4YeBF+CRNSh59aci+Y2ydNX149sIYaY5OQUx
-	MQYomsj6zy18yoqYYG52DKkMrcrqvANH4DTU3omM3cGiK6j/sgQ072hNCzvnheQG67ayaTJrg9O
-	h8mzHz267h/hSC1A0M6FxHoilxTHqX6KE+K9XfaU8lvAXLliivEQNe0HtlnCHtacgcCjJIpVN8Y
-	8rUbYqBDhWRGrrOcQAeG7KfaGldIk9Q2c5r95ccVQEFy0MkncioYHntjUj7rs9BaPieSHW4xY
-X-Google-Smtp-Source: AGHT+IGRbz+3bFnxNN4W6CQCxxX5wk+C3Vo20OdCCCFeRqrRnd/bEB9VkcS5r5fS7OfMDF2KfGQh9Q==
-X-Received: by 2002:a05:6122:8c10:b0:539:3bb5:e4d6 with SMTP id 71dfb90a1353d-53b189a8faemr822432e0c.1.1755164866049;
-        Thu, 14 Aug 2025 02:47:46 -0700 (PDT)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-539b01ae75fsm4385716e0c.10.2025.08.14.02.47.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 02:47:45 -0700 (PDT)
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-53b1738e8e3so605390e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:47:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX8TMNRwLyy8m+wb3hOM2KEgyEJO4piodFdk9irbg3DvoKSk4XgajmSWlKwX/rC/C8+rupSgpKBHMaRryA=@vger.kernel.org
-X-Received: by 2002:a05:6122:82a3:b0:538:dbc9:17a6 with SMTP id
- 71dfb90a1353d-53b189eb471mr820629e0c.4.1755164864462; Thu, 14 Aug 2025
- 02:47:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414A22EAB72;
+	Thu, 14 Aug 2025 09:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.168.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755164907; cv=fail; b=phcJ/3WWAhWTBqFfVzvrkOjomArRGIcE0i+lwTrkNoGD7ACt+DMpnhUNXZ70SWcQpWWAsPV1B9Uwo14PArEWf9ezzbq+uBFegfhOEHHvvab7uAF6uneNAQQBhmm4RXTffWPxC8QIaUok4KvTq3OEt+RF/YGI7lTVo986V1+0zqQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755164907; c=relaxed/simple;
+	bh=2sn+J14k/d0g2FyrGRVOWmuQMGv+Zr9tUqOXYEFRBqs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jNiOK9+iHeE1fLY0ISn36lF90pMOmUDZtUHItHrWNivYMJSHLvi8WRFlEymBLkuX3Xt0xe30/TxXwrGpDHwEe0OyUh6FKcG8VKH6HFE6VuNnnX3ctc+FIm3+AzB41gEoGuGqArGdS3OWlvcWBLjPfkEQm2a2DmzRdMdVG0oR004=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qti.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bU6z0b9E; arc=fail smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qti.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E9J5F3020811;
+	Thu, 14 Aug 2025 09:48:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2sn+J14k/d0g2FyrGRVOWmuQMGv+Zr9tUqOXYEFRBqs=; b=bU6z0b9EiYUt9rM2
+	j7ZWXW87qw8mIG49/xFgyh+BysRsbwno+no73x9++aZEqZMeEOopPX4QIfeRsy6j
+	3FSYBe8+vO0gD+075hkFsOXuCLo2UtCi96uwYlZJ7S0afaUpNFLe+If2N2LqjYTP
+	9dBy+JDFJRAn1bG7I9EMunXSz2ZXZgRlVXoiC/I0gIUbev9Ncm2GE2fDSiugNsdz
+	EiyAphgTX8CJCKL5PnkUGS0E0Glebe3lPaQPA2nuApRe7VpkmWkLPvagFKuZlDM+
+	KTnismOgw8bPeE0ZWVIbhLzVqvq/oJb4KHbI6ZYoEgUrmjEw3SCNxuIDrM8mAzdG
+	Jqa4jg==
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2175.outbound.protection.outlook.com [104.47.57.175])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48dw9syekp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 09:48:23 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AUPHspRO5hpSZXgvKvtSEo3naywSAkk8e+1ccJ5AaSzOUeCLP3kifeQLkI3teI1jkKcorewzP9f+uxhXyuQA8w+LE2MHyNDSmBju7iNTeK7zVYtzvi+6ehiJ37putl/zwu1D0XGXxwYN2xQdVbhS55eD4pX1Uou0PkI+WLERuAgcZTBnbob9ofxF3gmlSCHZRVLwkkM6I06ItcHsKLlKKvjQ2Qd5bZPKJ8880eiuxpoibOYbUMsvqGQvvQXdEu2A4HqM13cK7qX++ILJL6UGaY++jY6rNx251Whatcq0iswciJtHwoGBpd7uIpZ67VBvzCHVDGRJy/egrxV/eWkJTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2sn+J14k/d0g2FyrGRVOWmuQMGv+Zr9tUqOXYEFRBqs=;
+ b=FAjlpyHUvdjjdkY2PbB2o+4Docyv4/iVV4Yh1OqbgTSC9fonfxo1QapMYZbcRzG4aplu3pSQR+bRT7EHFFPd6GJJn2r7cxJ8umseN66fgVl+HCFX9p8Gfbn0zdpzQbA2mqCiQDHuUEhGkn9Hs/DJu0uKV8HjJ9BwtrCh/H2PckCrPHdQiIyX6H8feNxDTMyaNC+7zWMafGEAf/KMfwbvop9U+jyU8jWKZp55dMhbuUdMUwrfpqxWDyXnW4CF9ruDKA6se+jZvCCZLQmIRYun07QK2+7Q3gkq6bHLd4bMd+HdbTYkGpt3APbx+AX6FFnuKvGzTIEs19kqsd2mY9riJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=qti.qualcomm.com; dmarc=pass action=none
+ header.from=qti.qualcomm.com; dkim=pass header.d=qti.qualcomm.com; arc=none
+Received: from MN6PR02MB10629.namprd02.prod.outlook.com (2603:10b6:208:4f3::6)
+ by LV3PR02MB10666.namprd02.prod.outlook.com (2603:10b6:408:27f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
+ 2025 09:48:20 +0000
+Received: from MN6PR02MB10629.namprd02.prod.outlook.com
+ ([fe80::786b:71e9:584:fa3c]) by MN6PR02MB10629.namprd02.prod.outlook.com
+ ([fe80::786b:71e9:584:fa3c%7]) with mapi id 15.20.9031.012; Thu, 14 Aug 2025
+ 09:48:19 +0000
+From: Quill Qi <leqi@qti.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add initial audio support for
+ Hamoa-IOT-EVK
+Thread-Topic: [PATCH v2] arm64: dts: qcom: Add initial audio support for
+ Hamoa-IOT-EVK
+Thread-Index: AQHb/4+LLEN6JHBSw06gYWiH00Kh+rRHYOKAgBqOlYCAAA4iCg==
+Date: Thu, 14 Aug 2025 09:48:19 +0000
+Message-ID:
+ <MN6PR02MB1062943D66036348728930990E335A@MN6PR02MB10629.namprd02.prod.outlook.com>
+References:
+ <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
+ <172f1a38-d7a8-4799-ad44-f3eea69f297a@kernel.org>
+ <e6e06ab1-6744-4730-a2a7-be8c66bf74a3@kernel.org>
+In-Reply-To: <e6e06ab1-6744-4730-a2a7-be8c66bf74a3@kernel.org>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN6PR02MB10629:EE_|LV3PR02MB10666:EE_
+x-ms-office365-filtering-correlation-id: 14ed1381-2233-40a6-915b-08dddb17b37d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?L3mPyvfRZopx8zTlec8v/SKFl2pv+lpdrD1W2YnGgEyvD6s7cW0iDbfEFo?=
+ =?iso-8859-1?Q?zb/T0oGXAKJjm8rmsjKer9RNy8EZXwXB/fu3Wx0aZGMj+1tqqgSKi69hvR?=
+ =?iso-8859-1?Q?EYFzF75Cvvh9/Fzhc2NvF6JNnSJdAtuBA/SMGZYPirIJVwEaL7PvJ9ZQw4?=
+ =?iso-8859-1?Q?Zq+/QN9Y1nhwzH3WI6vYaDCffnqDeef/hzaaHCzEVaklhrsUdzs/R7tvc6?=
+ =?iso-8859-1?Q?1DolsiVYT/9BxT03fo9lZUj1DDuP1Gs4aPOCZINGhtlpWFGqH8X8UvSuaw?=
+ =?iso-8859-1?Q?lYPvfVS6Ky9A2kykJ5nORMQ0dKHh6sUL+M9gnttAViSFKc8IHu/j4/ekq9?=
+ =?iso-8859-1?Q?YHPQVA4lxqmMw9h9V3dZ4cXMCwz+WZJydEKvZrDH2oInCDZk/aPLDvR48F?=
+ =?iso-8859-1?Q?3GlmovvqAEuzeMbOoJmdAdKamS0K8ATQ6CIn0ab1V1UJTccv3G0Z0Mv7fn?=
+ =?iso-8859-1?Q?6cD5AW0vzLUdPr+l99fpkmYBzAh1VZc5UCjmiRtavNqzWggU1cZxApTpDV?=
+ =?iso-8859-1?Q?BJCZhYVI3u4oedOrCsYP2PILImQkdsehZNLoKsYiRSZZITSO6aDA2FMx6N?=
+ =?iso-8859-1?Q?/OmdAniP+lnIkatq+XRIlwjvfdaLVgDrC05Qx9kiLRd2DZD7eXpDN/lhlz?=
+ =?iso-8859-1?Q?7Eyb47dwciS+e+fAdV6XdR0ZF2rvT1f+xGs6U4ONdOAiHNQR2Gka/DknbJ?=
+ =?iso-8859-1?Q?R5e39jnGpaH8scO1rFdbdThp/F1nbF5BfLnLZVlt7nSUlvkSA1QcBEEXUp?=
+ =?iso-8859-1?Q?ozIfUOSGJGPv6aouj6L8hKJEvghCxgygMXHfBrb6TYe/96s2KEKbZMNLzO?=
+ =?iso-8859-1?Q?9mejVvMzNEuhOuSKHrdrMmz/KOcr+PhbD4OiWgan1GEfYxBrygurPU0VMo?=
+ =?iso-8859-1?Q?yPMODrazKISeTLFiTT/buixhqAr3HAopHiMwcqy7SPpaYTxWYUmMukSleJ?=
+ =?iso-8859-1?Q?S/QREufJRxr5C9KqXVld8BJ865Yd9FKwwKJDB8v3QUY3RzY7yBcSHmM5qO?=
+ =?iso-8859-1?Q?iMXfwK08btr5wH+aBFJKUBc4V29FoymAPH4lEM10skcrj+8nKwLULulZoc?=
+ =?iso-8859-1?Q?W1vgPAuSIGfL+M7LLl9SNXnCnbQair0hMqwZ3RK+fzZ5i+pVD4NeCPEkoE?=
+ =?iso-8859-1?Q?S2ZvbdX6yIIx7OtSJMFeJvX67xRntCSpuy2fI8ICKKB2cxJHpSctDFqJkc?=
+ =?iso-8859-1?Q?APWVioR9y+pBBOCAbLn7wGNA0fglKD7RWEM71OVAE2OKhcMSGWQY1Wp8iY?=
+ =?iso-8859-1?Q?u8pv2atDg3FRE53qzQPn5TeS7G5XY9yf7HGjvgJs6GAbYFC6/a24sCqCyh?=
+ =?iso-8859-1?Q?QFh/FvudL8qH1lUKaSO6GMvzatZQ4ZWjjN+alTsHFSLfmB/zbDXGaqStTn?=
+ =?iso-8859-1?Q?o+Fc+HnCj8RedZq5FRc+L3LGBWLdebZbYFYF/pSYAeW5JyBa5k5pkRhc8Y?=
+ =?iso-8859-1?Q?xBhIQ51ykn3q6V4JwjjDb0hhQbteaczNOwdZ3ftLB+hdI911WGWIZDrsTN?=
+ =?iso-8859-1?Q?sv3VtZA/TPTDdTLgwSuMC24jGqf8XfjBDJ8DBhQ2kcOrnwS7EppLEQldKU?=
+ =?iso-8859-1?Q?AnrDM5M=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR02MB10629.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?ELpvqmAHHvSJqKu4P81psrUsRkE/u8Zh5M9/IdH+aH4eHRHH0x10v2OSQn?=
+ =?iso-8859-1?Q?Vu+oQOi+uPuxhMckRFrl+ok9Z2zvQs62VkOted0BQkVaGFpCpWPWhAWucG?=
+ =?iso-8859-1?Q?jlYr3uVNRmcwv6qFMUMMEos/H86wHVwEfeBdp4mEUXGaqXYCz2z/Wexscf?=
+ =?iso-8859-1?Q?iHfhQL0J+fMs2y5cf0iXpochXM0Yd9+3PVoXRGp2vtHbR2ICWegVTn6s5K?=
+ =?iso-8859-1?Q?XLRPpbrmkBiBUS7AN76V+EaeiwbHwIZOFTYaqw9yU9B1vR9MSPvqXSFKfG?=
+ =?iso-8859-1?Q?IbXEbPuQly0RzWPAUoXaSp5KUhLS6NEgQWj1/TxPE4AA4tqTdUij/5iN+T?=
+ =?iso-8859-1?Q?tIqqpocl931hppsi6ljARcUq6p3043cP/fOOyI0jQoODukQ4TGpvGIxjqR?=
+ =?iso-8859-1?Q?oURxIM1sg+RLIiP1ZduTCHI/kEU7OhRHZwyZGHLzonLghZNvvPnOSlrdA6?=
+ =?iso-8859-1?Q?LVeyNLdqZENKP8VWL8Y/fJNJ1E7URXfdsqJ2pOiegRwtIGKQFCKXG7RxIV?=
+ =?iso-8859-1?Q?h2mz1NRjb+8XlH6vBZNYUmAL4Q/+DRI0+iVJQVh6cOXgkOzIAbllgt0POI?=
+ =?iso-8859-1?Q?Za9DCR5W2lQ0uVZ61fp4F/WxXOd6UJwG6zkmSNtWNf3Xvbqnvry7BvyRGD?=
+ =?iso-8859-1?Q?dCSy+otCxQN8Oms1UsNz8K0Ne1Omc6GfZtIiN7aY152qquB7ff36cQTMhJ?=
+ =?iso-8859-1?Q?JDVWkI4ZTyjuMkG7Cyy/QmBS4saHZkJYX8vejFzF0JAxrVFaD57wEIkOUN?=
+ =?iso-8859-1?Q?lbJ1dzlKJeHHNg3iZ1RaKZFjN1m3PVGFSWguPNzCpm6xlyoialNMedRZVS?=
+ =?iso-8859-1?Q?v71V/4tcUDFcm1g9Ba4meFMhy0SXJdTxhGcTcgObPdZHGwXm5UqeVmW9tA?=
+ =?iso-8859-1?Q?PlD8ZY8EN/Sw3LvwDB9vTObXSdgJ57K87II44T8439JC4nvUQAd5ZXshRO?=
+ =?iso-8859-1?Q?0/S+ZCliNXKnHdJ1fIzLnXgc22Obwk8VTECSJWxilfRsZ5Z4NwtrbVVC7U?=
+ =?iso-8859-1?Q?h6015sDXnHgbMYb+i8iMajcZqrmSWaEg/2r7oV0vYWy0Mu6yBqE0y6QN7c?=
+ =?iso-8859-1?Q?8RVWP/Y26lXNd77ktjc83H3xGq1ai0a/m28yhMq60EP72JAzPzaPnomdE5?=
+ =?iso-8859-1?Q?GVqTd5YUfvn+xTJEpjyC+o4RPsqcmXxZ5lgqkbgtzt00RDgwce4foKm8Fa?=
+ =?iso-8859-1?Q?29yYO7i5U138qKRmcUYa3vtYLXyk/dXi1M0vZe5UDHpv6SOW+WmCoGMZTh?=
+ =?iso-8859-1?Q?0G49PCxShijb8m3pRxCnZCnL/qAtJKgacgCovbNDYt0MDyZNMMpDW3iDzA?=
+ =?iso-8859-1?Q?Az5697glNSOG77lhU+AcxbY8mPd8PoyJ1vDcLdYMxCZ7xX6UVjweU+lAZ6?=
+ =?iso-8859-1?Q?8SG3VhfLGPiTVbCgdYN0JQ0L0K5JxWBFoChbGCIrxNXP8om7mn1qx7v+BG?=
+ =?iso-8859-1?Q?OB14ne+d0AuMJ1/tEV/WnRXF/kaqrT14Ij2LQ1ggQSC2SPkj7aAITuCpds?=
+ =?iso-8859-1?Q?fS8xKsC41DSBJeHAmYvlHdcftfD5LbIK46hO9gk4S2btH0Qznn+QnVuH/y?=
+ =?iso-8859-1?Q?yVEO9pnBnO0AjfFymdvLtg/OrWrW7BUAMYnt2PL9bRyO4hXqH9fCG3fUTL?=
+ =?iso-8859-1?Q?pbhFKq1t84L1wnVhI9yHejKKzQhI3gx4on?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814083144.191554-1-wenst@chromium.org> <CAC=S1nhz_ESY4VrgWs=dVinLtdOamh6to3EgD1w1Kx=4YBOD9A@mail.gmail.com>
- <CAGXv+5Hke6aEYdyc096_aeS9KHiOzcNqirB-rFT2odepaYhayQ@mail.gmail.com>
-In-Reply-To: <CAGXv+5Hke6aEYdyc096_aeS9KHiOzcNqirB-rFT2odepaYhayQ@mail.gmail.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Thu, 14 Aug 2025 17:47:08 +0800
-X-Gmail-Original-Message-ID: <CAC=S1nheT46K+jkmtq4EJxOVO=nwasan0LCJwv-HTEK6P6DgxA@mail.gmail.com>
-X-Gm-Features: Ac12FXzvFfMabP6kQ3r7qgde36ENXvfds4n3oOTocQXTQlh5-zck0_vwf1VSQ1c
-Message-ID: <CAC=S1nheT46K+jkmtq4EJxOVO=nwasan0LCJwv-HTEK6P6DgxA@mail.gmail.com>
-Subject: Re: [PATCH] media: mediatek: vcodec: Use spinlock for context list
- protection lock
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	AeM066ZYSXrwnylob0jEhmmSkx/yANCimdEKn1XZt/5iRfme59qyXezfN4XYW6GgWN9HQUi3TxNbqt6TWYHRpoKrKed4KiJkU1moMj+f0+rOX4r5mJ35x/UtditcCQVjXI+0i7MlpOjSzvGoqR1x6gb1c1oT02oJjKhWMME4FNUormgakl6SYiSwQLLmCo1EUq1DDfNPtZJPQcHPDSPxcc0ZCAsU4Oziq6yfe8+cYLyjwM+ddmoB/x+W7517p7N/OyMo7pPJ/KoA+Nj3eAt6raCrMgkDqZ9X4JarKQfXwE5UmckrOXAxcYFY5SYf4at0JDKy9iAJtycn4Ks9tSADbvBpGy0RhgdYVSpR0ZmjDmoUB/mk+gP+sbZhxTgd3fc7EJxkOSdC0Lr/TS+PuvRwuCe8iywv4Y1X4PcMVX7zKeWF9d7JoR8DmlmwamqOkX9IY1VlrPU50Dd8+EjJCpZUrG75avuste1qwzjEH7m4QAh4JbVs3VqENVe6Wl1+g3tIw1pKVVw5J/o//AhQykmJyZqWGNtDM8Y2NtCwacso0h0samJu3Y9xC2cC+rPNv598yxZZ7TwSGpRxzitVr+ww+OXbk/mOq0r0Aet3fhugPZgR0tZZTEyPmijID0w2o7Ev
+X-OriginatorOrg: qti.qualcomm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR02MB10629.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14ed1381-2233-40a6-915b-08dddb17b37d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Aug 2025 09:48:19.8365
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 98e9ba89-e1a1-4e38-9007-8bdabc25de1d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1UnWsXwru7pGuUr+GDJX78WQDYI0vq6HYeO7EuTOEh+qTpIV1sDVxOCt6P9aN/JM9MjmhNegB7B6J4ZQzEp0zg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR02MB10666
+X-Authority-Analysis: v=2.4 cv=J+Wq7BnS c=1 sm=1 tr=0 ts=689db0e7 cx=c_pps
+ a=p6j+uggflNHdUAyuNTtjyw==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=ldHsddx3bQhR2zsS9lUA:9 a=wPNLvfGTeEIA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 4qN2WAexRslsX4Cy2S6Ki1Y4px0gvb_Y
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA5MDAxNSBTYWx0ZWRfXyWf1yFHNbJki
+ RzqAXg1smk0aB2z5/VG6+cnLOnWmlEMMin0XiZcXXL+6UDBVnnExUcYZuv38dckcYLbOt6A9hjA
+ nJs3BwLyv6d3YLWIbpPxe+Enzo/z1HTMs8kTM4L55AqGC14PYou1Ye9vmUVWUxkiXzil4EQLDfi
+ EgZHVKvYbS3L91/XumRE1SZR6H5J6CeK9GkbFaHPYC4sdrF+T0OXz7g+XrP/wCmyp5EyHJ8F3TQ
+ 2yZhUqFBD+3vXfgFxbLcGp+ZlLAKKo9qguv8XBZ/v/5Nbwj1qEAySBpgV3l0lmbUzxLN3q7h5IC
+ u8vjEVQLIAHYSHHgGTaFSm4Lur5HO1RE41GPan0LXlU6LrXmCccPiYYnn7YssVH/0O15e9dq6jE
+ M3bai8Sa
+X-Proofpoint-GUID: 4qN2WAexRslsX4Cy2S6Ki1Y4px0gvb_Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 adultscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ phishscore=0 suspectscore=0 spamscore=0 clxscore=1011 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508090015
 
-On Thu, Aug 14, 2025 at 5:06=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
->
-> On Thu, Aug 14, 2025 at 4:59=E2=80=AFPM Fei Shao <fshao@chromium.org> wro=
-te:
-> >
-> > On Thu, Aug 14, 2025 at 4:38=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.or=
-g> wrote:
-> > >
-> > > Previously a mutex was added to protect the encoder and decoder conte=
-xt
-> > > lists from unexpected changes originating from the SCP IP block, caus=
-ing
-> > > the context pointer to go invalid, resulting in a NULL pointer
-> > > dereference in the IPI handler.
-> > >
-> > > Turns out on the MT8173, the VPU IPI handler is called from hard IRQ
-> > > context. This causes a big warning from the scheduler. This was first
-> > > reported downstream on the ChromeOS kernels, but is also reproducible
-> > > on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even thou=
-gh
-> > > the actual capture format is not supported, the affected code paths
-> > > are triggered.
-> > >
-> > > Since this lock just protects the context list and operations on it a=
-re
-> > > very fast, it should be OK to switch to a spinlock.
-> > >
-> > > Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to protect=
- decoder context list")
-> > > Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to protect=
- encoder context list")
-> > > Cc: Yunfei Dong <yunfei.dong@mediatek.com>
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > >  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++----
-> > >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++---=
---
-> > >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
-> > >  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  4 ++--
-> > >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++---=
---
-> > >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
-> > >  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  4 ++--
-> > >  7 files changed, 26 insertions(+), 20 deletions(-)
-> > >
-> >
-> > [...]
-> >
-> > > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_=
-if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > index 145958206e38..e9b5cac9c63b 100644
-> > > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > @@ -77,14 +77,14 @@ static bool vpu_dec_check_ap_inst(struct mtk_vcod=
-ec_dec_dev *dec_dev, struct vde
-> > >         struct mtk_vcodec_dec_ctx *ctx;
-> > >         int ret =3D false;
-> > >
-> > > -       mutex_lock(&dec_dev->dev_ctx_lock);
-> > > +       spin_lock(&dec_dev->dev_ctx_lock);
-> >
-> > Do you mean spin_lock_irqsave()?
->
-> This function is only called from the handler below (outside the diff
-> context), which itself is called from hard IRQ context. This is mentioned
-> in the comment above the handler.
-
-I see. I only searched here but didn't check the full source.
-Leaving a comment would be clearer if a revision is made, but it's not
-worth resending just for that alone.
-
-Reviewed-by: Fei Shao <fshao@chromium.org>
-
-
-On Thu, Aug 14, 2025 at 5:06=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
->
-> On Thu, Aug 14, 2025 at 4:59=E2=80=AFPM Fei Shao <fshao@chromium.org> wro=
-te:
-> >
-> > On Thu, Aug 14, 2025 at 4:38=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.or=
-g> wrote:
-> > >
-> > > Previously a mutex was added to protect the encoder and decoder conte=
-xt
-> > > lists from unexpected changes originating from the SCP IP block, caus=
-ing
-> > > the context pointer to go invalid, resulting in a NULL pointer
-> > > dereference in the IPI handler.
-> > >
-> > > Turns out on the MT8173, the VPU IPI handler is called from hard IRQ
-> > > context. This causes a big warning from the scheduler. This was first
-> > > reported downstream on the ChromeOS kernels, but is also reproducible
-> > > on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even thou=
-gh
-> > > the actual capture format is not supported, the affected code paths
-> > > are triggered.
-> > >
-> > > Since this lock just protects the context list and operations on it a=
-re
-> > > very fast, it should be OK to switch to a spinlock.
-> > >
-> > > Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to protect=
- decoder context list")
-> > > Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to protect=
- encoder context list")
-> > > Cc: Yunfei Dong <yunfei.dong@mediatek.com>
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > >  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++----
-> > >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++---=
---
-> > >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
-> > >  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  4 ++--
-> > >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++---=
---
-> > >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
-> > >  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  4 ++--
-> > >  7 files changed, 26 insertions(+), 20 deletions(-)
-> > >
-> >
-> > [...]
-> >
-> > > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_=
-if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > index 145958206e38..e9b5cac9c63b 100644
-> > > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > > @@ -77,14 +77,14 @@ static bool vpu_dec_check_ap_inst(struct mtk_vcod=
-ec_dec_dev *dec_dev, struct vde
-> > >         struct mtk_vcodec_dec_ctx *ctx;
-> > >         int ret =3D false;
-> > >
-> > > -       mutex_lock(&dec_dev->dev_ctx_lock);
-> > > +       spin_lock(&dec_dev->dev_ctx_lock);
-> >
-> > Do you mean spin_lock_irqsave()?
->
-> This function is only called from the handler below (outside the diff
-> context), which itself is called from hard IRQ context. This is mentioned
-> in the comment above the handler.
->
-> > >         list_for_each_entry(ctx, &dec_dev->ctx_list, list) {
-> > >                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vpu)=
- {
-> > >                         ret =3D true;
-> > >                         break;
-> > >                 }
-> > >         }
-> > > -       mutex_unlock(&dec_dev->dev_ctx_lock);
-> > > +       spin_unlock(&dec_dev->dev_ctx_lock);
-> > >
-> > >         return ret;
-> > >  }
-> >
-> > [...]
-> >
-> > > diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_=
-if.c b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > > index 51bb7ee141b9..79a91283da78 100644
-> > > --- a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > > +++ b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > > @@ -47,14 +47,14 @@ static bool vpu_enc_check_ap_inst(struct mtk_vcod=
-ec_enc_dev *enc_dev, struct ven
-> > >         struct mtk_vcodec_enc_ctx *ctx;
-> > >         int ret =3D false;
-> > >
-> > > -       mutex_lock(&enc_dev->dev_ctx_lock);
-> > > +       spin_lock(&enc_dev->dev_ctx_lock);
-> >
-> > Also here.
->
-> Same reasoning applies here as well.
->
-> ChenYu
->
-> > Regards,
-> > Fei
-> >
-> > >         list_for_each_entry(ctx, &enc_dev->ctx_list, list) {
-> > >                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vpu)=
- {
-> > >                         ret =3D true;
-> > >                         break;
-> > >                 }
-> > >         }
-> > > -       mutex_unlock(&enc_dev->dev_ctx_lock);
-> > > +       spin_unlock(&enc_dev->dev_ctx_lock);
-> > >
-> > >         return ret;
-> > >  }
-> > > --
-> > > 2.51.0.rc1.163.g2494970778-goog
-> > >
-> > >
+From: Krzysztof Kozlowski <krzk@kernel.org>=0A=
+Sent: Thursday, August 14, 2025 4:41 PM=0A=
+To: Quill Qi <leqi@qti.qualcomm.com>; Konrad Dybcio <konradybcio@kernel.org=
+>; Bjorn Andersson <andersson@kernel.org>; Rob Herring <robh@kernel.org>; K=
+rzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>=
+=0A=
+Cc: linux-arm-msm@vger.kernel.org <linux-arm-msm@vger.kernel.org>; devicetr=
+ee@vger.kernel.org <devicetree@vger.kernel.org>; linux-kernel@vger.kernel.o=
+rg <linux-kernel@vger.kernel.org>=0A=
+Subject: Re: [PATCH v2] arm64: dts: qcom: Add initial audio support for Ham=
+oa-IOT-EVK=0A=
+=0A=
+=0A=
+>On 28/07/2025 13:08, Krzysztof Kozlowski wrote:=0A=
+>>On 28/07/2025 09:16, leqi via B4 Relay wrote:=0A=
+>>>From: leqi <leqi@qti.qualcomm.com>=0A=
+>>>=0A=
+>>>This patch adds initial audio codec support for the Hamoa-IOT-EVK board,=
+=0A=
+>>>including WCD9385 configuration, micbias voltage settings, GPIO reset,=
+=0A=
+>>>and power supply bindings. It enables basic audio functionality for=0A=
+>>>further development. Basic test is good in Hamoa-IOT-EVK board.=0A=
+>>>=0A=
+>>>Signed-off-by: leqi <leqi@qti.qualcomm.com>=0A=
+>>>---=0A=
+>>>Changes in v2:=0A=
+>>>- Updated author email address to leqi@qti.qualcomm.com.=0A=
+>>>- Clarified that audio is validated with this change.=0A=
+>>>- Link to v1: https://lore.kernel.org/all/20250723-initial_audio_support=
+_for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com/=0A=
+>>>---=0A=
+>>> arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 232 ++++++++++++++++++++++=
++++++++=0A=
+>>> 1 file changed, 232 insertions(+)=0A=
+>>>=0A=
+>>>diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boo=
+t/dts/qcom/hamoa-iot-evk.dts=0A=
+>>>index 843f39c9d59286a9303a545411b2518d7649a059..91618e22e86c46c698b3639f=
+60bc19314705b391 100644=0A=
+>>>--- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts=0A=
+>>>+++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts=0A=
+>>>@@ -124,6 +124,94 @@ pmic_glink_ss2_con_sbu_in: endpoint {=0A=
+>>=0A=
+>>=0A=
+>>This was not merged, was it? Same comment as other patch, when you have=
+=0A=
+>>entire code ready send entire board. Not chunk by chunk.=0A=
+>>=0A=
+>>You are not following properly release early, release often.=0A=
+>=0A=
+>Why this is still not included in initial submission which happens now?=0A=
+>Either you work Linux style (release early) or, if you decide to wait=0A=
+>till everything is ready, you submit board as one patch, not everything=0A=
+>as 100 different patches.=0A=
+=0A=
+Hi Krzysztof, this audio change initial test is good with sound output and =
+record fine. But with further test in Ubuntu gui only=0A=
+2 speakers have sound output. I am still seeing why this issue is happening=
+. I thought to solve the issues before replying=0A=
+and merging this, thanks.=0A=
+=0A=
+>Best regards,=0A=
+>Krzysztof=0A=
+=0A=
+--=0A=
+BR=0A=
+Quill=0A=
 
