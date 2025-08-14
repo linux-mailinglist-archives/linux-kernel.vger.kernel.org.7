@@ -1,113 +1,183 @@
-Return-Path: <linux-kernel+bounces-768845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC22B26639
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:07:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1812AB2663C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:07:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072CE1CC23BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:07:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2B124E547E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28BB3002B9;
-	Thu, 14 Aug 2025 13:06:48 +0000 (UTC)
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C353002AC;
+	Thu, 14 Aug 2025 13:07:11 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C93E3002B0
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010472F99BF
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755176808; cv=none; b=AQGWDZ5KfVB1l0voF8WJ/hpDmUf1LjPwYLT5FeeSkQO4/C3F8nAZq889v/xnWii7QA3z3CqVNJUAsvg3vlnARjlIKU78RrVbyLR9T495I4RYhYEvKxLrJZT3N3jWoaqbHzgYJ+HSUTPXZ5zgjtJLDtJ83DQZMQFPFHpheyUETtY=
+	t=1755176830; cv=none; b=owCWTJMZ437+rK5eXxZY5darzlg5KBLCn0g4rMwHZxD/P5uirft+X0bihHmxYC4v+LA5Y1/ZsFaj/RjtYUZcp8vAP76oM1yDdtrmveOtvdsTxOt7ncYrzkxS43yIzO96q4kZ8umzFZL51L/SyOBBp3k93uz2wOrWNqMDQtCfQfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755176808; c=relaxed/simple;
-	bh=rBSOaaGlQrBIbubiWvvRgdcKsQgmkod6l6U7O0ehnTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DQVawo0KKtnSBKsHkJU6kCxaRr8zGO/HzIRl9sD/0yeWx8h6FKt786+cqwQ9ZyNkL0S/Vx+7v+QGZgg86djzyg0k3onJrnsBwEX6+0+0wC0u2e7yGvwVfw4hxeGztUjZlglgCb+nwF+kbr9ocvEtiN9Ua04IOEFEPW7Gq6pd+uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 14 Aug 2025 09:06:39 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Ben Collins <bcollins@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] iio: mcp9600: Add support for IIR filter
-Message-ID: <2025081408-umber-axolotl-e6c6dd@boujee-and-buff>
-Mail-Followup-To: David Lechner <dlechner@baylibre.com>, 
-	Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-References: <20250813151614.12098-1-bcollins@watter.com>
- <20250813151614.12098-6-bcollins@watter.com>
- <a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
+	s=arc-20240116; t=1755176830; c=relaxed/simple;
+	bh=e8pve1khCbrtl4a+E4u7i9uV7WIXh0A4/9sgMcU8z/Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V8j4oV9H/3nCrQSlgmo0lXFTZ6hACx6GSGtY1BRRb9A6Yt4qz6KktXvdf/PM31q3MyaHBipjEvtBYMf6E1dJpFXIptJI3OeVdZbEADu5gITx4DmVYgUoUtixucQXkspSlrbssqBKD5WAr9Ip0wK8Lr4KQjWH2kiKwYO8Dg/A7To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umXff-0006JC-0T; Thu, 14 Aug 2025 15:07:07 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umXfe-000GHP-05;
+	Thu, 14 Aug 2025 15:07:06 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1umXfd-001Mpc-33;
+	Thu, 14 Aug 2025 15:07:05 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Avri Altman <Avri.Altman@sandisk.com>
+Subject: [PATCH v8 0/2] mmc: handle undervoltage events and prevent eMMC corruption
+Date: Thu, 14 Aug 2025 15:07:03 +0200
+Message-Id: <20250814130705.326073-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Aug 13, 2025 at 05:52:04PM -0500, David Lechner wrote:
-> On 8/13/25 10:15 AM, Ben Collins wrote:
-> > MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
-... 
-> >  static int mcp9600_read(struct mcp9600_data *data,
-> > @@ -186,6 +189,9 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
-> >  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
-> >  		*val = mcp9600_tc_types[data->thermocouple_type];
-> >  		return IIO_VAL_CHAR;
-> > +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> > +		*val = data->filter_level;
-> 
-> We can't just pass the raw value through for this. The ABI is defined
-> in Documentation/ABI/testing/sysfs-bus-iio and states that the value
-> is the frequency in Hz.
-...
-> For example, for 3 Hz sample rate (18-bit samples), I got:
-> 
->   n  f_3dB (Hz)
->   1  0.58774
->   2  0.24939
->   3  0.12063
->   4  0.05984
->   5  0.02986
->   6  0.01492
->   7  0.00746
-> 
-> I had to skip n=0 though since that is undefined. Not sure how we
-> handle that since it means no filter. Maybe Jonathan can advise?
+changes v8:
+- fix compile warning
+changes v7:
+- Remove all usage of the redundant undervoltage_notify_registered flag
+- Register undervoltage notifier in mmc_add_card() after setting card as
+  present, for all supported cards.
+- Unregister undervoltage notifier in mmc_remove_card() based on card presence
+- Remove all unnecessary EXPORT_SYMBOL_GPL for functions only used within MMC
+  core.
+- Move all host claiming and releasing responsibility for undervoltage events
+  into the bus_ops callback;
+- add comment for host->undervoltage
+- Squash undervoltage suspend preparation and handler into one patch.
+- Use mmc_card_removed() in shutdown path instead of host->undervoltage.
+- Remove redundant card presence check in undervoltage handler.
+changes v6:
+- Rewrite commit message to be more technical per reviewer feedback.
+- Address race conditions by using __mmc_stop_host() instead of only
+  claiming the host in the undervoltage handler.
+- Move notifier registration from mmc_regulator_get_supply() to the end of
+  a successful card initialization in mmc_attach_mmc(), ensuring it only
+  runs for capable cards.
+- Centralize notifier unregistration in mmc_remove_card() to correctly
+  handle all card removal and error paths.
+- Add 'undervoltage_notify_registered' flag to struct mmc_host to
+  reliably track the notifier state.
+- Consolidate multiple notifier callbacks into a single, generic handler.
+- Remove premature notifier support for vqmmc and vqmmc2 regulators.
+- Move INIT_WORK() for the undervoltage workqueue to mmc_alloc_host().
+changes v5:
+- Rebased on top of mmc/next after introduction of enum mmc_poweroff_type
+- Replaced boolean undervoltage parameter with MMC_POWEROFF_UNDERVOLTAGE
+- Dropped unused __mmc_resume() helper
+- Updated commit messages accordingly
+changes v4:
+- drop HPI and SDHCI related patches
 
-Thanks for notes. If I'm reading for datasheet formula right,
+This patch set introduces a framework for handling undervoltage events
+in the MMC subsystem. The goal is to improve system reliability by
+ensuring graceful handling of power fluctuations that could otherwise
+lead to metadata corruption, potentially rendering the eMMC chip
+unusable or causing significant data loss.
 
-k = 2 / (2^n + 1)
+## Problem Statement
 
-So n=0 would be k=1. I did this formula for n=[0-7] and get:
+Power fluctuations and sudden losses can leave eMMC devices in an
+undefined state, leading to severe consequences. The worst case can
+result in metadata corruption, making the entire storage inaccessible.
+While some eMMC devices promise to handle such situations internally,
+experience shows that some chip variants are still affected. This has
+led vendors to take a more protective approach, implementing external
+undervoltage handling as a precautionary measure to avoid costly field
+failures and returns.
 
-n	k
-0	1.00000
-1	0.66667
-2	0.40000
-3	0.22222
-4	0.11765
-5	0.06061
-6	0.03077
-7	0.01550
+The existence of the "Power Off Notification" feature in the eMMC
+standard itself serves as indirect evidence that this is a real-world
+issue.  While some projects have already faced the consequences of
+ignoring this problem (often at significant cost), specific cases cannot
+be disclosed due to NDAs.
 
-I'm not versed in filter frequency, but would these be the correct
-values to use for the coefficients?
+## Challenges and Implementation Approach
 
--- 
- Ben Collins
- https://libjwt.io
- https://github.com/benmcollins
- --
- 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
+1. **Raising awareness of the problem**: While vendors have used
+   proprietary solutions for years, a unified approach is needed upstream.
+   This patch set is a first step in making that happen.
+
+2. **Finding an acceptable implementation path**: There are multiple
+   ways to handle undervoltage - either in the kernel or in user space,
+   through a global shutdown mechanism, or using the regulator framework.
+   This patch set takes the kernel-based approach but does not prevent
+   future extensions, such as allowing user-space handoff once available.
+
+3. **Preparing for vendor adoption and testing**: By providing a
+   structured solution upstream, this patch set lowers the barrier for
+   vendors to standardize their undervoltage handling instead of relying on
+   fragmented, out-of-tree implementations.
+
+## Current Limitations
+
+This patch set is an initial step and does not yet cover all possible
+design restrictions or edge cases. Future improvements may include
+better coordination with user space and enhancements based on broader
+testing.
+
+## Testing Details
+
+The implementation was tested on an iMX8MP-based system. The board had
+approximately 100ms of available power hold-up time. The Power Off
+Notification was sent ~4ms after the board was detached from the power
+supply, allowing sufficient time for the eMMC to handle the event
+properly.  Tests were conducted under both idle conditions and active
+read/write operations.
+
+Oleksij Rempel (2):
+  mmc: core: Add infrastructure for undervoltage handling
+  mmc: core: add undervoltage handler for MMC/eMMC devices
+
+ drivers/mmc/core/bus.c       | 12 ++++++
+ drivers/mmc/core/core.c      | 23 +++++++++++
+ drivers/mmc/core/core.h      |  2 +
+ drivers/mmc/core/host.c      |  2 +
+ drivers/mmc/core/mmc.c       | 71 +++++++++++++++++++++++++++++++--
+ drivers/mmc/core/regulator.c | 77 ++++++++++++++++++++++++++++++++++++
+ include/linux/mmc/host.h     | 14 +++++++
+ 7 files changed, 198 insertions(+), 3 deletions(-)
+
+--
+2.39.5
+
 
