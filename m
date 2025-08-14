@@ -1,135 +1,135 @@
-Return-Path: <linux-kernel+bounces-768728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA686B2649B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:48:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3957BB264AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E4CE1CC1D84
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:49:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83FDF3B6D79
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263752FABEB;
-	Thu, 14 Aug 2025 11:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954FB2FB977;
+	Thu, 14 Aug 2025 11:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="tPyjpAX3"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ER5ThlAT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABADC2F998C
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEC831814A;
+	Thu, 14 Aug 2025 11:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755172117; cv=none; b=aewbgvtpK/Ypkx4X/uh6zTdanyfaH1k3nQ0aiDZLmnbAMiEXm5lg2QfOs4hZWxs82YZJXaH0T58FgZzkBDVfuBVppEoWF1eW5fqrayXMmwH68zimPLLeQxEajuk1JoyD09SKAeioRxKthphlgX/qC8XInHmCsXsnM5fn4Vlr/rs=
+	t=1755172123; cv=none; b=o5urz62ZeeGEohYjG8Mo8dydeiPSumlmVxKe5mclBmfzxTpgvk5b5CPwG1k00io4PGL80WdnSkn344PMeCi5Pw6Id1GJ2813n8Dg4yFEbSxy+TDa4VHWclAK2rrBWiIjRq44sYOPctmNbNBNrnXtNMqXt/fSqrCKcaYqAdwYITY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755172117; c=relaxed/simple;
-	bh=2n58AnN8/7Sa58+iL/4wUwjaX1O7651vgF/GnzLpYUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EHYvHj9KoumfFL3OmFAgtNrtRHYgcxUQvWo23c3X9CvM++QuR4BFUG8LapfzqD53R/kt275mH50ClQPxYh910O+JPO4GTrUPH0yOdnlfJq9VMdmT4OrT3Pvgtw+v4zY/2YSaG4/vW+D1qeZmYFWBPThqRxKo/h8NpWcNsG2lw/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=tPyjpAX3; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
-	by cmsmtp with ESMTPS
-	id mVp0uoFoD1jt6mWReurO2J; Thu, 14 Aug 2025 11:48:34 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id mWRduQdijrnsYmWRduh4bQ; Thu, 14 Aug 2025 11:48:34 +0000
-X-Authority-Analysis: v=2.4 cv=OLkn3TaB c=1 sm=1 tr=0 ts=689dcd12
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=aBvOdYTnlRd+2LFm/58ENA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=7T7KSl7uo7wA:10
- a=ciplz7lBqJibEU-u5rUA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EbnZD1AMDuV7+S1NXEbn+nHpy6nqMny8DiTNPxWn18g=; b=tPyjpAX3i3y4qgRzjjAKYzgBHO
-	BGB2PaBSXDsfBXm8ZgZX9ICuWBjt1GJa49v0Ki3hMeIyWkZtbZgGxvMrYPPL1+3RpkimVlKoY9dEn
-	YtBOR85SwXYIRHc5Av4JcZFKvEf1nfV4qQERyhanJEHvMPKymsW0yIjHwpDfNg1QHwAWjnZxLPWF3
-	3mOj1/FKN3icVdXdoMlW9fvXT7Wby/9RI5jHirWT3SW/Pp0FIb0r38tNEzJL09LwLLNC7CbkgEwYd
-	oFAIWxRRXfg39FV2aECAF5jnXDK3+r+Rbjv6lIjGXMbvvam6jLa4sXd08yNXPDB4gzoUMZhR/q4+t
-	UNPgkVDg==;
-Received: from 172.117.7.202.megaegg.ne.jp ([202.7.117.172]:55560 helo=[192.168.241.228])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1umWRd-00000003h2r-0Aaz;
-	Thu, 14 Aug 2025 06:48:33 -0500
-Message-ID: <4b9eea66-f004-4b5f-bf48-4c32205cc8ee@embeddedor.com>
-Date: Thu, 14 Aug 2025 20:48:23 +0900
+	s=arc-20240116; t=1755172123; c=relaxed/simple;
+	bh=b61i+aTB/uzhwve5Fu3fATvHkZhBGTi/ygNX6v8CQNA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ATMuh35LIWE/j1lqLdnTS5N7lGAB+YijtJoO9fSVpOG0uKQ5dxidt9qdUQm1vqx6QIuehNQeYF9lCCpKlaPnTVrCuFdNSGoJljytYfheSx9foSB8l83pv2ZQdNPKaVNRD6fXRDzqvUIhKA0HNatQ0f52d1ilmyYZEolCHqmMxEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ER5ThlAT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E79BC4CEF9;
+	Thu, 14 Aug 2025 11:48:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1755172122;
+	bh=b61i+aTB/uzhwve5Fu3fATvHkZhBGTi/ygNX6v8CQNA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ER5ThlATnS3aZOnndJCBOXLbKrTls7BrUwiZnyQTRXVV/ZULjpdzRfPU1DV9n+Paj
+	 IvkkQ0XJWkOHrYZHIj7M4qBnzDa+UPzW63KOp4SZK/YRWn3y4Ndf+EAJPWv9Ezmrlh
+	 0uAYZgmwsUZi90+iqEjFd/9ErQewNlUHyH3QaJUwX7gPCsXiQxY84+kkzcCSh6QPFb
+	 SXZehoDA/K9Wgt0p19j4Lz711Ife0svhUMweI1vtaFhmdrkkqpgnVUnyyC7g9rnUn5
+	 4sZ+LMuQzPcqRbRjetHsgraUW5Jy3qTz14QwVvDy0stCVtn+kuxnid4a4+y3SI9zD3
+	 Jox5IJ8mN4ELw==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-61bd47429c1so560657eaf.1;
+        Thu, 14 Aug 2025 04:48:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVw239RS9ks9z5AYe6Kizt8hTha8TF9ahE/resTGN0PIzxChfdjrCzSKqDrQaSmXHwnSiWoDMGR4lokh34=@vger.kernel.org, AJvYcCWJ2vYHnbS3BB9hH7f5WvqcvR/FXWXvvypsTwlyd57NocGh9l6Ml4EhvSjWr6rWvcxtGGREAZVw9X4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzseRmlDTkb4V8EKx0YyscdzStddDjt1o5JCywxbS3GA4Xjra4
+	55CLqmOteXcZXNy/IpoQPggfNDfxSEn8Tp3YsvQ8ewUkjW0U/vxVv0/7ez/w+C9kMOipWDzxyfR
+	8XqhmMUCuWoaDt8deTYas6SatxoO+7UM=
+X-Google-Smtp-Source: AGHT+IGMYj2aqppLnXpbLv6kOmbtN3Vco3T0DqflMGMdOAnyAXzTk6xza19aJHUAolQIH2uE81GF2xB2e8CmMtXEGbQ=
+X-Received: by 2002:a05:6820:4b0b:b0:61b:9bfa:593c with SMTP id
+ 006d021491bc7-61bd69befaamr1270726eaf.3.1755172121823; Thu, 14 Aug 2025
+ 04:48:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] pwm: cros-ec: Avoid -Wflex-array-member-not-at-end
- warnings
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- linux-pwm@vger.kernel.org, chrome-platform@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <aJtRPZpc-Lv-C6zD@kspp>
- <2pgdxifg2zmyhvemm7a2qntprsz5nhh3ustrrlg2vvcqffwj6c@22enjpgycjbt>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <2pgdxifg2zmyhvemm7a2qntprsz5nhh3ustrrlg2vvcqffwj6c@22enjpgycjbt>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 202.7.117.172
-X-Source-L: No
-X-Exim-ID: 1umWRd-00000003h2r-0Aaz
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 172.117.7.202.megaegg.ne.jp ([192.168.241.228]) [202.7.117.172]:55560
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfPBTpKUqWUCnQaUPaayiFaQp8B+Hq4A1gQBxIM0tCzpMSyrBpxjj9oG5pdpFMHdGkAMeiRwCFvpELGMylGD6/e2cwryA7ok01p6udyCuYSCfoadpAs9Z
- 1bkP+k0YNIv+uuPvQkEkm+5agEZJBg/yJmAvBo0Omj3ZDlQF85bJzYQfsynFK+apbKNjyd/520Xr7ti9POVl5avt3wXlyvsEbgrnQ9/I2nLUXAQGd3jkUwnG
+References: <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
+ <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
+ <aIso4kLtChiQkBjH@arm.com> <20250731111324.vv6vsh35enk3gg4h@vireshk-i7>
+ <aIvQvLL34br6haQi@arm.com> <20250801044340.6ycskhhkzenkzt7a@vireshk-i7>
+ <CAFivqm+gBBSCoVUxmeatu8TjwunzBtfjeDMNBL0JCsPhkFEg5A@mail.gmail.com>
+ <20250811060551.ylc6uutni4x6jqtg@vireshk-i7> <aJo5vP_mfBn_vxSF@google.com>
+ <CAJZ5v0jvYBUPjSmXas+S8rOG2WAb5u7rk92Gbu1s7A=tJr4VPA@mail.gmail.com> <aJpMHkrWJIyHtHL5@google.com>
+In-Reply-To: <aJpMHkrWJIyHtHL5@google.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 14 Aug 2025 13:48:29 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hXUoqmxwjH0CN8gGDj=qnC3ZWrJc5VarkqRfh=0SCUWw@mail.gmail.com>
+X-Gm-Features: Ac12FXwMz-z9DAAonTPH4BpY5XQU-If2y11OogUEqhlEE82MFIeyMCFe4503Vpg
+Message-ID: <CAJZ5v0hXUoqmxwjH0CN8gGDj=qnC3ZWrJc5VarkqRfh=0SCUWw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+To: Prashant Malani <pmalani@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Beata Michalska <beata.michalska@arm.com>, Jie Zhan <zhanjie9@hisilicon.com>, 
+	Ionela Voinescu <ionela.voinescu@arm.com>, Ben Segall <bsegall@google.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 11, 2025 at 10:01=E2=80=AFPM Prashant Malani <pmalani@google.co=
+m> wrote:
+>
+> On Aug 11 21:19, Rafael J. Wysocki wrote:
+> > On Mon, Aug 11, 2025 at 8:43=E2=80=AFPM Prashant Malani <pmalani@google=
+.com> wrote:
+> > >
+> > > On Aug 11 11:35, Viresh Kumar wrote:
+> > > > On 06-08-25, 17:19, Prashant Malani wrote:
+> > > > > So, do we have consensus that the idle check is acceptable as pro=
+posed?
+> > > > > (Just want to make sure this thread doesn't get lost given anothe=
+r thread
+> > > > > has forked off in this conversation).
+> > > >
+> > > > I don't have any objections to this or a better solution to this.
+> > >
+> > > Thanks Viresh! Beata, can we kindly move ahead with the idle
+> > > optimization (which is this series), while we continue discussions fo=
+r
+> > > the "under load" scenarios on the other thread?
+> >
+> > I need some more time, please?
+> >
+> > This problem is similar (if not analogous) to what happens on x86 and
+> > that is not handled in the cpuidle core.
+>
+> My apologies! Didn't mean to rush.
 
-> diff --git a/include/linux/stddef.h b/include/linux/stddef.h
-> index dab49e2ec8c0..8ca9df87a523 100644
-> --- a/include/linux/stddef.h
-> +++ b/include/linux/stddef.h
-> @@ -108,7 +108,7 @@ enum {
->   	union {									\
->   		TYPE NAME;							\
->   		struct {							\
-> -			unsigned char __offset_to_##FAM[offsetof(TYPE, FAM)];	\
-> +			unsigned char __offset_to_##FAM[sizeof(TYPE)];		\
->   			MEMBERS							\
->   		};								\
->   	}
-> 
-> which only leaves one usage of FAM in the name of the padding struct
-> member. I'm sure someone is able to come up with something nice here to
-> get rid of FAM completely or point out what I'm missing.
+No worries.
 
-Flexible structures (structs that contain a FAM) may have trailing padding.
-Under that scenario sizeof(TYPE) causes the overlay between FAM and MEMBERS
-to be misaligned.
+> Will stand by for updates.
 
-On the other hand, offsetof(TYPE, FAM) precisely positions the trailing
-MEMBERS where the FAM begins, which is correct and safe.
+First off, AFAICS, using idle_cpu() for reliable detection of CPU
+idleness in a sysfs attribute code path would be at least
+questionable, if not outright invalid.  By the time you have got a
+result from it, there's nothing to prevent the CPU in question from
+going idle or waking up from idle.  Moreover, the fact that the given
+CPU is idle from the scheduler perspective doesn't actually mean that
+it is in an idle state and so it has no bearing on whether or not its
+performance counters can be accessed etc.
 
-Thanks
--Gustavo
-
-
+The way x86 deals with this problem is to snapshot the counters in
+question periodically (actually, in scheduler ticks) and fall back to
+cpu_khz if the interval between the two consecutive updates is too
+large (see https://elixir.bootlin.com/linux/v6.16/source/arch/x86/kernel/cp=
+u/aperfmperf.c#L502).
+I think that this is the only reliable way to handle it, but I may be
+mistaken.
 
