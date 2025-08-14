@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-768810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40790B265B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:46:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3E5B265BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4775C2BD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:45:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4517C7BF071
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE263009CD;
-	Thu, 14 Aug 2025 12:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D7630101C;
+	Thu, 14 Aug 2025 12:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpq/oQSq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6CzAMZ6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D892FF166;
-	Thu, 14 Aug 2025 12:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCC13009EE;
+	Thu, 14 Aug 2025 12:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755175491; cv=none; b=umEpO+hEnRkgExoUPqCbpJkSySs9wCErV0G4olR1z3voGGb4Pi3qEYeTd6V8SlLJPyRgn8ZV9UCtsbz+qMLUWgU8Clrb1ConKMbPwP3Q/El0mHO2drWi8WsZjG/xVb8TFmKhmfq8BRbUU5Hw1vY0xRJy2kTPBZHJ5mCQXI8KCPU=
+	t=1755175498; cv=none; b=eHUvGEiSILBIM6RLQknIp6B8n8m3ZsnEnVaIuRe10TSCsQYUIWh1nIqoKXDr3BsRqbImXpwhPZTX6ZaN8PWlq2/Se5FMFCyT4TCDfzOP9C0i7BbdiEG1UkNkCapX/6X0jGqMBRNLy+Rpm+AZOoCoDR8X+xW1FNyJpj+B1rTKe38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755175491; c=relaxed/simple;
-	bh=zm6AR4LdGo7kZKj41pqErGqx9PcmRmXgtjDSZe9VwcA=;
+	s=arc-20240116; t=1755175498; c=relaxed/simple;
+	bh=td7NIQwLEsJWWvyfEk7SpbcggxtmJJWPTM6VXmaOQvA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ai2t8xp3/DwOKXbKSjGqbDZjvH0Wx5HSxeBx3LpaYTVhWDscNX1aDLX5eECNRe0qPCJunb34G67QjBgMpAdJ2903lviIrLgpMxTHkuvPyIIYAJeBWnqWXWFIH45Mc16B2REX8VaFCumU890kTMl+t7+mUbAVnMxkGNWuPWDXngY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpq/oQSq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C4A6C4CEF9;
-	Thu, 14 Aug 2025 12:44:47 +0000 (UTC)
+	 MIME-Version; b=W2rR87pN2CFKmIGI3v9tb7VwXWDgXOhI2eGivb1dP+GShT1Ln9oIRzMfyTjQR13RpxFfVpOSyUXWZPuuIQ3R5qM15NYrvUxwqG7sPbaO0yn7P9hEcYE0Xil3dkpTJ0vhAhSXF95dr1LvQcllg01kdB0Y/laYdwIFsdUnULmit8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6CzAMZ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D0DEC4CEEF;
+	Thu, 14 Aug 2025 12:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755175491;
-	bh=zm6AR4LdGo7kZKj41pqErGqx9PcmRmXgtjDSZe9VwcA=;
+	s=k20201202; t=1755175497;
+	bh=td7NIQwLEsJWWvyfEk7SpbcggxtmJJWPTM6VXmaOQvA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bpq/oQSqPJ0AG9aH/E7YsHdrODMEutIuyRZs/sEORcREwsCi1VGpU2cXb9O3gVq/G
-	 C9Z0acNojy1kfrlatgR6g+t4J3xZ+/ouU8MBqCF2weuLSvRqHYwdnBCAZGryt7ghFT
-	 QexWg8xM1Qe26bJRYITn12079SYrwJvPXzZwQl1YCNPLVMDNqMUCEibX4vJRo4129F
-	 a3NC5jImY56PlG+z0qT6SsNBeDh81vt2MRe8p3GcNVXmmhj0UIR2LL7i+ZpKDnnKTm
-	 liWdx1uNcmfi14qBkYBT/FHq8T6/NzML+37SI9Cp7S21uIEIrh9V/ZFh5Pcy4b1vuw
-	 AViLfjiygKx4Q==
+	b=W6CzAMZ6U3mKsuP1FZI3JgzVqG99B+Jr0p40LQMioyLBbRhvBBAodeUcTpmDQ5mDY
+	 4u84Eez3jwOyf/HC40l16ourUnx9OpaDQoblNyXzMnrGTKM/UZPicBWKFKUgFQMLlH
+	 N7T4pW3RG0l0tNph2rdCO6waFJaoWTL72O63D1PkY2gq7s8VMs2En8zsnQu+L1+iwS
+	 vZBKOlKlZ6KorsBH93S8c2PaPlBaQfg7cR+ja5yjtOfi5yT22XeIb8YZ0ZQajfGq+J
+	 uAbftHwTqZYLFvxKgJAKnOPfsv9Y1K6E0Yt/2vVfU+SfMWP16jQ7p4ZR63XRpRou2A
+	 DWuaUkGNg2zCA==
 From: Benno Lossin <lossin@kernel.org>
 To: Greg KH <gregkh@linuxfoundation.org>,
 	Simona Vetter <simona.vetter@ffwll.ch>,
@@ -52,13 +52,14 @@ To: Greg KH <gregkh@linuxfoundation.org>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
+	Danilo Krummrich <dakr@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
 Cc: Benno Lossin <benno.lossin@proton.me>,
 	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v4 3/4] rust: validate: add `Validate` trait
-Date: Thu, 14 Aug 2025 14:44:15 +0200
-Message-ID: <20250814124424.516191-4-lossin@kernel.org>
+Subject: [RFC PATCH v4 4/4] rust: iov: use untrusted data API
+Date: Thu, 14 Aug 2025 14:44:16 +0200
+Message-ID: <20250814124424.516191-5-lossin@kernel.org>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250814124424.516191-1-lossin@kernel.org>
 References: <20250814124424.516191-1-lossin@kernel.org>
@@ -72,125 +73,127 @@ Content-Transfer-Encoding: 8bit
 
 From: Benno Lossin <benno.lossin@proton.me>
 
-Introduce the `Validate<Input>` trait and functions to validate
-`Untrusted<T>` using said trait. This allows one to access the inner
-value of `Untrusted<T>` via `validate{,_ref,_mut}` functions which
-subsequently delegate the validation to user-implemented `Validate`
-trait.
-
-The `Validate` trait is the only entry point for validation code, making
-it easy to spot where data is being validated.
-
-The reason for restricting the types that can be inputs to
-`Validate::validate` is to be able to have the `validate...` functions
-on `Untrusted`. This is also the reason for the suggestions in the
-`Usage in API Design` section in the commit that introduced
-`Untrusted<T>`.
-
 Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 ---
- rust/kernel/validate.rs | 70 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 69 insertions(+), 1 deletion(-)
+ rust/kernel/iov.rs               | 30 +++++++++++++++++++-----------
+ samples/rust/rust_misc_device.rs |  5 +++--
+ 2 files changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/rust/kernel/validate.rs b/rust/kernel/validate.rs
-index 1f75ccb79532..2a582a572aa5 100644
---- a/rust/kernel/validate.rs
-+++ b/rust/kernel/validate.rs
-@@ -11,6 +11,9 @@
- //! APIs that write back into userspace usually allow writing untrusted bytes directly, allowing
- //! direct copying of untrusted user data back into userspace without validation.
- //!
-+//! The only way to access untrusted data is to [`Validate::validate`] it. This is facilitated by
-+//! the [`Validate`] trait.
-+//!
- //! # Rationale
- //!
- //! When reading data from an untrusted source, it must be validated before it can be used for
-@@ -46,7 +49,7 @@
- /// untrusted, as it would otherwise violate normal Rust rules. For this reason, one can easily
- /// convert that reference to `&[Untrusted<u8>]`. Another such example is `Untrusted<KVec<T>>`, it
- /// derefs to `KVec<Untrusted<T>>`. Raw bytes however do not behave in this way, `Untrusted<u8>` is
--/// totally opaque.
-+/// totally opaque and one can only access its value by calling [`Untrusted::validate()`].
- ///
- /// # Usage in API Design
- ///
-@@ -101,6 +104,30 @@ pub fn new(value: T) -> Self
-     {
-         Self(value)
+diff --git a/rust/kernel/iov.rs b/rust/kernel/iov.rs
+index f55f8997ac2f..a53db5478e93 100644
+--- a/rust/kernel/iov.rs
++++ b/rust/kernel/iov.rs
+@@ -11,9 +11,11 @@
+     alloc::{Allocator, Flags},
+     bindings,
+     prelude::*,
++    transmute::cast_slice_mut,
+     types::Opaque,
++    validate::Untrusted,
+ };
+-use core::{marker::PhantomData, mem::MaybeUninit, ptr, slice};
++use core::{marker::PhantomData, mem::MaybeUninit, slice};
+ 
+ const ITER_SOURCE: bool = bindings::ITER_SOURCE != 0;
+ const ITER_DEST: bool = bindings::ITER_DEST != 0;
+@@ -126,11 +128,10 @@ pub unsafe fn revert(&mut self, bytes: usize) {
+     ///
+     /// Returns the number of bytes that have been copied.
+     #[inline]
+-    pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
+-        // SAFETY: `Self::copy_from_iter_raw` guarantees that it will not write any uninitialized
+-        // bytes in the provided buffer, so `out` is still a valid `u8` slice after this call.
+-        let out = unsafe { &mut *(ptr::from_mut(out) as *mut [MaybeUninit<u8>]) };
+-
++    pub fn copy_from_iter(&mut self, out: &mut [Untrusted<u8>]) -> usize {
++        // CAST: The call to `copy_from_iter_raw` below only writes initialized values.
++        // SAFETY: `Untrusted<T>` and `MaybeUninit<T>` transparently wrap a `T`.
++        let out: &mut [MaybeUninit<Untrusted<u8>>] = unsafe { cast_slice_mut(out) };
+         self.copy_from_iter_raw(out).len()
      }
-+
-+    /// Validate the underlying untrusted data.
-+    ///
-+    /// See the [`Validate`] trait for more information.
-+    pub fn validate<V: Validate<Self>>(self) -> Result<V, V::Err>
-+    where
-+        T: Sized,
-+    {
-+        V::validate(self.0)
-+    }
-+
-+    /// Validate the underlying untrusted data.
-+    ///
-+    /// See the [`Validate`] trait for more information.
-+    pub fn validate_ref<'a, V: Validate<&'a Self>>(&'a self) -> Result<V, V::Err> {
-+        V::validate(&self.0)
-+    }
-+
-+    /// Validate the underlying untrusted data.
-+    ///
-+    /// See the [`Validate`] trait for more information.
-+    pub fn validate_mut<'a, V: Validate<&'a mut Self>>(&'a mut self) -> Result<V, V::Err> {
-+        V::validate(&mut self.0)
-+    }
+ 
+@@ -140,7 +141,7 @@ pub fn copy_from_iter(&mut self, out: &mut [u8]) -> usize {
+     #[inline]
+     pub fn copy_from_iter_vec<A: Allocator>(
+         &mut self,
+-        out: &mut Vec<u8, A>,
++        out: &mut Vec<Untrusted<u8>, A>,
+         flags: Flags,
+     ) -> Result<usize> {
+         out.reserve(self.len(), flags)?;
+@@ -158,7 +159,10 @@ pub fn copy_from_iter_vec<A: Allocator>(
+     ///
+     /// This will never write uninitialized bytes to the provided buffer.
+     #[inline]
+-    pub fn copy_from_iter_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> &mut [u8] {
++    pub fn copy_from_iter_raw(
++        &mut self,
++        out: &mut [MaybeUninit<Untrusted<u8>>],
++    ) -> &mut [Untrusted<u8>] {
+         let capacity = out.len();
+         let out = out.as_mut_ptr().cast::<u8>();
+ 
+@@ -172,7 +176,7 @@ pub fn copy_from_iter_raw(&mut self, out: &mut [MaybeUninit<u8>]) -> &mut [u8] {
+ 
+         // SAFETY: The underlying C api guarantees that initialized bytes have been written to the
+         // first `len` bytes of the spare capacity.
+-        unsafe { slice::from_raw_parts_mut(out, len) }
++        unsafe { slice::from_raw_parts_mut(out.cast(), len) }
+     }
  }
  
- impl<T> Deref for Untrusted<[T]> {
-@@ -140,3 +167,44 @@ fn deref_mut(&mut self) -> &mut Self::Target {
-         unsafe { &mut *ptr }
-     }
+@@ -275,7 +279,7 @@ pub unsafe fn revert(&mut self, bytes: usize) {
+     /// Returns the number of bytes that were written. If this is shorter than the provided slice,
+     /// then no more bytes can be written.
+     #[inline]
+-    pub fn copy_to_iter(&mut self, input: &[u8]) -> usize {
++    pub fn copy_to_iter(&mut self, input: &[Untrusted<u8>]) -> usize {
+         // SAFETY:
+         // * By the struct invariants, it is still valid to write to this IO vector.
+         // * `input` is valid for `input.len()` bytes.
+@@ -289,7 +293,11 @@ pub fn copy_to_iter(&mut self, input: &[u8]) -> usize {
+     /// that the file will appear to contain `contents` even if takes multiple reads to read the
+     /// entire file.
+     #[inline]
+-    pub fn simple_read_from_buffer(&mut self, ppos: &mut i64, contents: &[u8]) -> Result<usize> {
++    pub fn simple_read_from_buffer(
++        &mut self,
++        ppos: &mut i64,
++        contents: &[Untrusted<u8>],
++    ) -> Result<usize> {
+         if *ppos < 0 {
+             return Err(EINVAL);
+         }
+diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
+index 9e4005e33796..6361c94da9a4 100644
+--- a/samples/rust/rust_misc_device.rs
++++ b/samples/rust/rust_misc_device.rs
+@@ -109,6 +109,7 @@
+     sync::Mutex,
+     types::ARef,
+     uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
++    validate::Untrusted,
+ };
+ 
+ const RUST_MISC_DEV_HELLO: u32 = _IO('|' as u32, 0x80);
+@@ -145,7 +146,7 @@ fn init(_module: &'static ThisModule) -> impl PinInit<Self, Error> {
+ 
+ struct Inner {
+     value: i32,
+-    buffer: KVVec<u8>,
++    buffer: Untrusted<KVec<u8>>,
  }
-+
-+/// Marks valid input for the [`Validate`] trait.
-+pub trait ValidateInput: private::Sealed {
-+    /// Type of the inner data.
-+    type Inner: ?Sized;
-+}
-+
-+impl<T: ?Sized> ValidateInput for Untrusted<T> {
-+    type Inner = T;
-+}
-+
-+impl<'a, T: ?Sized> ValidateInput for &'a Untrusted<T> {
-+    type Inner = &'a T;
-+}
-+
-+impl<'a, T: ?Sized> ValidateInput for &'a mut Untrusted<T> {
-+    type Inner = &'a mut T;
-+}
-+
-+mod private {
-+    use super::Untrusted;
-+
-+    pub trait Sealed {}
-+
-+    impl<T: ?Sized> Sealed for Untrusted<T> {}
-+    impl<'a, T: ?Sized> Sealed for &'a Untrusted<T> {}
-+    impl<'a, T: ?Sized> Sealed for &'a mut Untrusted<T> {}
-+}
-+
-+/// Validate [`Untrusted`] data.
-+///
-+/// Care must be taken when implementing this trait, as unprotected access to unvalidated data is
-+/// given to the [`Validate::validate`] function. The implementer must ensure that the data is only
-+/// used for logic after successful validation.
-+pub trait Validate<Input: ValidateInput>: Sized {
-+    /// Validation error.
-+    type Err;
-+
-+    /// Validate the raw input.
-+    fn validate(raw: Input::Inner) -> Result<Self, Self::Err>;
-+}
+ 
+ #[pin_data(PinnedDrop)]
+@@ -169,7 +170,7 @@ fn open(_file: &File, misc: &MiscDeviceRegistration<Self>) -> Result<Pin<KBox<Se
+                 RustMiscDevice {
+                     inner <- new_mutex!(Inner {
+                         value: 0_i32,
+-                        buffer: KVVec::new(),
++                        buffer: Untrusted::new(KVec::new()),
+                     }),
+                     dev: dev,
+                 }
 -- 
 2.50.1
 
