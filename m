@@ -1,201 +1,370 @@
-Return-Path: <linux-kernel+bounces-768041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A06B25C42
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:54:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80574B25C3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB80163ADD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:52:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36FA47BD4ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AFF25A327;
-	Thu, 14 Aug 2025 06:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E01257459;
+	Thu, 14 Aug 2025 06:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="n1p18cVn"
-Received: from mx0b-00364e01.pphosted.com (mx0b-00364e01.pphosted.com [148.163.139.74])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HWf9WJA4"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF11B258CF6
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F371C25A331
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755154335; cv=none; b=gu2L4Jp2BSKRDGRQFsOdjFTZuTYE3gZSjnMqLn6uepGeHaFdLICF1sL4LjKVTALQdIk6KF9Xnc00KgGyJ61Vb/+S4h92nMwhVKAF8xmOapvYwD4JqVDbuydTGpeKI8NBt/DJz9FXKPFggZPjAkMCMqVWCJlgxyECSW/dLeBmJI4=
+	t=1755154333; cv=none; b=n+GOhZZc1qYI48s/SE9mze/REmXizh4QM5z5/c9dXMaUi7GEUDLXIRMdvEnE8cj2c17xJAeI+1hl3Wr0qLW0FHlN7QMp8JRzapU/jOJaW2eu9zl+FsW42Baek+/3QErh4eJH1DkESJU9rMppQBeAhbBBOfptppfbbM3abNG5Vyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755154335; c=relaxed/simple;
-	bh=0SONc79+M4F5Fy8quIOdueQ4jkrHUL1smlCPEM8IKVs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YUHNWoZZCvZWoHatkTp/Xoancuvk3lPJgaMuAGhSm9orr3U/WIdGBBSPlRYYPzBKhAvzpNNKiUNSFo/kC6gZvp1mJBNmw/zYHHmZ18ulPI+CMXd7FfZeqETn1/i0znITXNvInbToGpTz9a9UdGrKj394Em8fK6lQcmiFe2os0sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=n1p18cVn; arc=none smtp.client-ip=148.163.139.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167076.ppops.net [127.0.0.1])
-	by mx0b-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E6DbnP010750
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:52:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pps01; bh=pPtIzBQ4qqBBxPwXppgvPl9H8B
-	j48UMU3Ie34Hi7Exo=; b=n1p18cVnviQwI+tkl0s/942e5ixuL3oHE6aDbHQXYo
-	Q7nsyy+ghUsxCpTx2ol/PVft76BVQjcz3hQAC9+AkNHbtEYYNCVlbW3lA1b3JRrt
-	NJLScgu5nrJVZ8uj5fenNz/ZhlSBbj1iQbj4ggCr0Ijqhs7vFzVuFsE6lPfC7nXc
-	OVh4UMrYI94jrLkE8aaHiIKyVqJER6Pf32z55AcpaNCrw2/KrN+rlQwVIKgybkTQ
-	d8Is0Lsst4CbzpN5AwmbNd1HfrvOI9it8sfOqGs7ke7rINywmlI++IZjjMDMkyhb
-	4Wc1QHs8s6Z4fBvu1Ln7MXeKFK/ZhuecTPrbSzg28BeQ==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 48gqh47y91-1
+	s=arc-20240116; t=1755154333; c=relaxed/simple;
+	bh=735zI8v6gCWPco16jb2nXsuda3pPS6+dALJsF6E93Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dHEJGJybJFuTE4oVAj4Mge5oz7ESWQEX5/Io4C43/7kFIBiJJHOVSqZikDDnXrKKi5cAt/i+rV/d1tE9/q7+pH/zAjSbWe/qHlrYPlXyLf3z8jCGbNCmdHwelPUeb/1S5S+sh2thh5QHYQJPc+ldb+2xJPbhXlAIdx2nyqo1j7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HWf9WJA4; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DMwiRg012964
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:52:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=owhi08C/M/NN6d0s604Ju+m1
+	uDGPJY3DmSHO26z2ljg=; b=HWf9WJA4YNEMkKYqHshBP/5z3OILqxFW/kix8dkM
+	vK7hhkcNIW6Z6wLB0qzaxVobXrjPpm0oHj/cf+9I8ekd/7n6sCapHX0xL+7OYFUO
+	tlphFb/YO+WjWPA77qQo9NyWmiIzZp///U1dSDaniiwTO6+HOLofNpXqS4UvXm21
+	Rrmxj9m4pUAlhrZTpRYAKGiZKP5U/t4mOcJbUA+Y079iS3GQtjJJKDeJEgvgH3vf
+	FlbrLIP2J2Cb6dW/swQDMycluZponh4VUfKH4zGf0g6i5KqdVxtVwF5ZQ048dOXu
+	mTkeCQF3aFCfHT8WLdIVG7NGqsmIaVT9u2ToswO/rwA4Jg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48ffq6th3a-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:52:06 -0400 (EDT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b109c4d944so15034121cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:52:06 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:52:10 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b109919a51so28553911cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Aug 2025 23:52:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755154326; x=1755759126;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pPtIzBQ4qqBBxPwXppgvPl9H8Bj48UMU3Ie34Hi7Exo=;
-        b=F8eb0GyXSQpOgfqlC2UP1jrTXoS18Lhz/VhghcvDtLqC00zkMCp4T+9kAz/zSMpxr1
-         xgvUPxlcrHhv6H5nf5TOdiaM/y7pzOFTXuS5ntBTIbFfz/8lMyDZLze9Zl5Z8vHKMfpl
-         1HNaViB3ebuQOQEzv5Rg72/TryI5D5I+PYGKrtER4v3fTU1uSvvyjkQaufo2H4IXjGkS
-         2TKNefLiucNHdFLiHM+1+MP06EZBeKn79qfwGKflQvAnDqviXG3Wt4kGfSbQDNh+x95a
-         Lw6Ufdybe8L4T33wSfRTFb6nIx9lPypHmi28IIQ1eTduRWbGHyzAlELzk0U604Gs4SNS
-         5yag==
-X-Forwarded-Encrypted: i=1; AJvYcCWIJ8/SL37wOlQq4S+IfMyXRZTUBKii0aYi6Ppmms7d46HqjJwPetk3wFtNHwSspXcAmuV/LFC9LBCCGGQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUrXHTEobLkaxhpn+t9DAEvBSa8gpjZSHp37trFhKYtmK9UmMR
-	zqNxw3Uo5DU0Pbt/2rFhgiz9VTlVp2M+2vAi0wKjNtP7XRX/8oVMlwyzsth1QgTHGl3uMlUp+TF
-	oL1TCOWjNQ990nh76mPjSuRUc+6xNxYz5+ezfyNCNqaLV61qlhqQn/UKpMtN19sdHKvpiwLcc
-X-Gm-Gg: ASbGnct05vKjIcu5l5eWNxgDYUv5Etr7XJoaiUcz+VeDtktEd+aDghnWnVe8Q7L4INL
-	Zb6jPvIUioJfcnYiO2avMWrjwO4bFhX71U4F7LNJKnIuENwzyRseLLEEva4gV02qLYXMlUjzcRS
-	KkW4juLN0W3SkFq0BtGBWrJT/PVg+amHjM87+VQ6GO0q8g4tAMtYaq+9r9Iet5LYTTg8aZZHZOm
-	TDkH/uEMztctnt451LysT5oAGPlVAlPLkeY3PY95tZn6XJDkyM+1dSl1pjG8s3UiKiBtENsWiiR
-	khuhaRSgD/mHu1rdVr1Ja/gERfFXpqHqiuntSZKciYI3MZDe2/NT180FbSep5aZStYrDSqXSCID
-	r8FY8yBXLIg==
-X-Received: by 2002:ac8:5fc6:0:b0:4b0:7439:4578 with SMTP id d75a77b69052e-4b10abca984mr30407151cf.33.1755154325674;
-        Wed, 13 Aug 2025 23:52:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGq3dv25BPBGO1UYoji2p0IQ0vub/2hHhl7EyabyDycDYiWSKHCHWs+yzKSpVyt3zuaUYEdcg==
-X-Received: by 2002:ac8:5fc6:0:b0:4b0:7439:4578 with SMTP id d75a77b69052e-4b10abca984mr30406941cf.33.1755154325184;
-        Wed, 13 Aug 2025 23:52:05 -0700 (PDT)
-Received: from [127.0.1.1] (bzq-79-183-206-55.red.bezeqint.net. [79.183.206.55])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45a1b7ed5edsm8484345e9.3.2025.08.13.23.52.03
+        d=1e100.net; s=20230601; t=1755154329; x=1755759129;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=owhi08C/M/NN6d0s604Ju+m1uDGPJY3DmSHO26z2ljg=;
+        b=mAAu6W1OaCtXPa7Y3n7cNdQQ5A7Ph8owUF5JZ45wHAZJQGBzy15m0fkAMQ3BYg0gjE
+         FEI+pGdQM0r2SxqLdQJZl3LVejguji0HFZAftH3PA3p8T7bIBJ7OPxxBzT3UsUAI4KV7
+         c1nkf8oSgQhqvD1mm2TFRH4jm3CiglXLJBYh7Qd97++wZ8WNGgbo2FY5KS2uTrGeW+9O
+         icsXX6nX04RiYXF6wTKDwguUlrNoMxnJtnp0vU2JplKftZBwFwFQTfV0Bd2MHkyJPwq3
+         LLl7WaPHKVWnVsEPjZWZ8JZHLVCJd2c3fOMRvEKrvUSitroRztEdpWIZ3X3ZXK25tna8
+         bMag==
+X-Forwarded-Encrypted: i=1; AJvYcCUldHt/Wy8O2hTv25wGNuliWxWO6woWBu7hlSAcG311ECvRoWSy6J780EOkAfFoXgTf3kh8Uo+73PYNkOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeDLmNb1S9gtaiLJfkZRWEgh20odFbmcgncXkxOlm5ww614dpz
+	qoWXhPjthBpFoxM6j1hFtY46SlP7fV0GW2i+gDYdjryFVQhYuSKnnIRcCXT/wajCL/YTOg48Udk
+	XEGDuDp3MOPn9vck6vw/OIf5C97ruJyX8Cm/5dpZDbECY6iG3h4GMEEHEshdNb8qfqrM=
+X-Gm-Gg: ASbGnctLKnAg6SZTyL4+jK0tEc0vXDStzd7665OTicgWn9hjH+Ieizkxic/u9fGoopM
+	prWdOsvBjMpLdgnH1bFo1F+xK8+EksHk6/AwgML2bdrSWnfZEjzqCySQKXUGZSf4aNw+Gyg6ck+
+	xyJPewXtlb4uAoKvPXPBrEQv2ZwZkty+bwwRIpxdCbBp9vdbB11s8rhDW5WndSRkuw2sGmzVnMo
+	KEz8Km4QsTwcKqF/GDSUhY7ThEVY2F+8MziX8QsJvQwOA6wpdXUuE9QADn+5d6kQWRUjAsfcWOC
+	OhhOJo6Qap0vwisDYpkixd0qhNsIHrA9TsdC+dqlZHGrcn6WFsh+QWX+opbKVxoeRdoGX3o9OJb
+	DbeQqucnYvPYipPgdr06si4gPwSx1mrFlAlqlPZJxHXZVn0nJuWqC
+X-Received: by 2002:ac8:5808:0:b0:4b0:7f93:3cdb with SMTP id d75a77b69052e-4b10ab647c5mr31567891cf.43.1755154328687;
+        Wed, 13 Aug 2025 23:52:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEM0qr1LVcYRMByeamQSKE14P39HiE+Ci5RWjhuXSylU1tRHSO3/y8Hd3syjoumZhxu28HzQw==
+X-Received: by 2002:ac8:5808:0:b0:4b0:7f93:3cdb with SMTP id d75a77b69052e-4b10ab647c5mr31567601cf.43.1755154328087;
+        Wed, 13 Aug 2025 23:52:08 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898bdcfsm5494037e87.32.2025.08.13.23.52.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Aug 2025 23:52:04 -0700 (PDT)
-From: Tal Zussman <tz2294@columbia.edu>
-Date: Thu, 14 Aug 2025 02:51:57 -0400
-Subject: [PATCH v2] lib/crypto: ensure generated *.S files are removed on
- make clean
+        Wed, 13 Aug 2025 23:52:07 -0700 (PDT)
+Date: Thu, 14 Aug 2025 09:52:05 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Patrice Chotard <patrice.chotard@foss.st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        Peng Fan <peng.fan@nxp.com>, linux-remoteproc@vger.kernel.org,
+        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v4] remoteproc: Use of_reserved_mem_region_* functions
+ for "memory-region"
+Message-ID: <te2o47dxihjsckaigfdhbrbyqxaeqmchmtx5xbx5y2smu6yaja@t7uccvfsxmay>
+References: <20250813214808.895654-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250814-crypto_clean-v2-1-659a2dc86302@columbia.edu>
-X-B4-Tracking: v=1; b=H4sIAIyHnWgC/3WMwQ6CMBAFf4Xs2RoKBdGT/2GIactWNsGWtNBIS
- P/dyt2807xkZoeAnjDArdjBY6RAzmaoTgXoUdoXMhoyQ1VWTdnxmmm/zYt76gmlZa0Sg+hqFKV
- RkJXZo6HPkXv0mUcKi/PbUY/89/4JRc7y+PXCVadM08q7dtP6ViTPOKzQp5S+MvHqsqsAAAA=
-X-Change-ID: 20250813-crypto_clean-6b4d483e40fb
-To: Eric Biggers <ebiggers@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tal Zussman <tz2294@columbia.edu>
-X-Mailer: b4 0.14.3-dev-d7477
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1755154323; l=2612;
- i=tz2294@columbia.edu; s=20250528; h=from:subject:message-id;
- bh=0SONc79+M4F5Fy8quIOdueQ4jkrHUL1smlCPEM8IKVs=;
- b=NHnqyN7w8qQyUx+t4c/nbbab14Qyty6Dm3TJiJ1XId9/KFWJbXKjMr3DyN//ekqiizOmcScVk
- JR2pxo//yZNBpl/uklLjefLU8iRe5CmTEJH/p0jpFzY0rb11pKCHflR
-X-Developer-Key: i=tz2294@columbia.edu; a=ed25519;
- pk=BIj5KdACscEOyAC0oIkeZqLB3L94fzBnDccEooxeM5Y=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDA1NCBTYWx0ZWRfX0Ve3gHdKFw3i
- jBQpIw4tlm6o0iBC9dgFt9Ol6ZKGbMnm0j+ZHOHgQOg2zRvPJRNsPubs136bfujC1NQgDB33U0a
- uPdOnYp1QC/AhO42W0QCCCpExEv2KuLOF+F2EzkmOJsi/ZodjRtZxl3rmCEcD8wJHea755hNThM
- s6c2RuspLftcQijsCUegoDVv7Kze8ezVHlB1rUYSE+RRO0yT1ZH+BSiSOQOTBujEWp5HW7XL4Ge
- twvHX33y1YGgEpebsL3I08SGnVkRB8vhXY4XM5T9r/Q87aPGgjBze7dq0vnAAaj0TCj9EZ0qBg/
- qshwZFNUcBCDJ479/I0d+OE+Nd5FCS96M3Cj7BhUgyzsWAGN0p6SILklTkMTbqaQNkpwOzvr5/p
- 4VedfdUi
-X-Proofpoint-ORIG-GUID: JXSLjUo5-mQQbh8NqwhZqfGuJ0WV0ADO
-X-Proofpoint-GUID: JXSLjUo5-mQQbh8NqwhZqfGuJ0WV0ADO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250813214808.895654-1-robh@kernel.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODExMDA3NSBTYWx0ZWRfX7JhMDTxI+vAr
+ 4v/rrQ6fde3c3lkuxaF7tPyQmZS19BZ+ynqUEaElrnBWVv94sHtRT+D373pt+qRiR4J87gYHjcV
+ 69JmYbN5romPd06cOPW+AZCNoEjtC6/KzW3LJNr1yFhqcGaw00BWgI5sIt+BCwBST6yIAPugfOg
+ 9bpZI/pm/B3fhYB0oXapVCb/TBm/3zCD1NMhe6PnxK2FNMJHKylK04rTaTeUyvTP2ORLPy02SXJ
+ d3y28xnZsVcrQSdkoP1c8W5b94x7yRAbsVQ2Zhtq5l7pgruBdaxqcl99OMsEE4N4fueEraOBfKe
+ HKaw6utfa0J9RAI3ke7ZpfRlriotNcbK+mhBhEiTunWhY3nDHv2s2qr8PNoe6aZIlM5wXB+k8wE
+ qFBg/zRN
+X-Authority-Analysis: v=2.4 cv=TLZFS0la c=1 sm=1 tr=0 ts=689d879a cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=8b9GpE9nAAAA:8 a=8AirrxEcAAAA:8 a=VwQbUJbxAAAA:8
+ a=3NaVR53663puj-g3OQgA:9 a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+ a=T3LWEMljR5ZiDmsYVIUa:22 a=ST-jHhOKWsTCqRlWije3:22
+X-Proofpoint-GUID: jg7oqn_qTtngli6tQMqnFyOmO1pSdRug
+X-Proofpoint-ORIG-GUID: jg7oqn_qTtngli6tQMqnFyOmO1pSdRug
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=1
- priorityscore=1501 phishscore=0 malwarescore=0 suspectscore=0 impostorscore=0
- lowpriorityscore=10 bulkscore=10 mlxscore=1 adultscore=0 spamscore=1
- mlxlogscore=216 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2508140054
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508110075
 
-make clean does not check the kernel config when removing files. As
-such, additions to clean-files under CONFIG_ARM or CONFIG_ARM64 are not
-evaluated. For example, when building on arm64, this means that
-lib/crypto/arm64/sha{256,512}-core.S are left over after make clean.
+On Wed, Aug 13, 2025 at 04:48:03PM -0500, Rob Herring (Arm) wrote:
+> Use the newly added of_reserved_mem_region_to_resource() and
+> of_reserved_mem_region_count() functions to handle "memory-region"
+> properties.
+> 
+> The error handling is a bit different in some cases. Often
+> "memory-region" is optional, so failed lookup is not an error. But then
+> an error in of_reserved_mem_lookup() is treated as an error. However,
+> that distinction is not really important. Either the region is available
+> and usable or it is not. So now, it is just
+> of_reserved_mem_region_to_resource() which is checked for an error.
+> 
+> Acked-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> Tested-by: Peng Fan <peng.fan@nxp.com> # i.MX93-11x11-EVK for imx_rproc.c
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> v4:
+>  - Rebase on v6.17-rc1. qcom_q6v5_pas.c conflicted needing s/adsp/pas/
+> 
+> v3:
+>  - Rebase on v6.16-rc1. Move TI K3 changes to new common file.
+>  - Fix double increment of "i" in xlnx_r5
+> 
+> v2:
+>  - Use strstarts instead of strcmp for resource names as they include
+>    the unit-address.
+>  - Drop the unit-address from resource name for imx and st drivers
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c        | 45 ++++++--------
+>  drivers/remoteproc/imx_rproc.c            | 68 ++++++++------------
+>  drivers/remoteproc/qcom_q6v5_adsp.c       | 24 +++-----
+>  drivers/remoteproc/qcom_q6v5_mss.c        | 60 ++++++------------
+>  drivers/remoteproc/qcom_q6v5_pas.c        | 75 +++++++++--------------
+>  drivers/remoteproc/qcom_q6v5_wcss.c       | 25 +++-----
+>  drivers/remoteproc/qcom_wcnss.c           | 23 +++----
+>  drivers/remoteproc/rcar_rproc.c           | 36 +++++------
+>  drivers/remoteproc/st_remoteproc.c        | 41 ++++++-------
+>  drivers/remoteproc/stm32_rproc.c          | 44 ++++++-------
+>  drivers/remoteproc/ti_k3_common.c         | 28 ++++-----
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c |  2 +-
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c  |  2 +-
+>  drivers/remoteproc/xlnx_r5_remoteproc.c   | 51 ++++++---------
+>  14 files changed, 204 insertions(+), 320 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c b/drivers/remoteproc/qcom_q6v5_adsp.c
+> index 94af77baa7a1..a5b7cbb8fe07 100644
+> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+> @@ -625,26 +625,20 @@ static int adsp_init_mmio(struct qcom_adsp *adsp,
+>  
+>  static int adsp_alloc_memory_region(struct qcom_adsp *adsp)
+>  {
+> -	struct reserved_mem *rmem = NULL;
+> -	struct device_node *node;
+> -
+> -	node = of_parse_phandle(adsp->dev->of_node, "memory-region", 0);
+> -	if (node)
+> -		rmem = of_reserved_mem_lookup(node);
+> -	of_node_put(node);
+> +	int ret;
+> +	struct resource res;
+>  
+> -	if (!rmem) {
+> +	ret = of_reserved_mem_region_to_resource(adsp->dev->of_node, 0, &res);
+> +	if (!ret) {
+>  		dev_err(adsp->dev, "unable to resolve memory-region\n");
+> -		return -EINVAL;
+> +		return ret;
 
-Set clean-files unconditionally to ensure that make clean removes these
-files.
+This looks strange. Shouldn't it be `if (ret) {` ?
 
-Fixes: e96cb9507f2d ("lib/crypto: sha256: Consolidate into single module")
-Fixes: 24c91b62ac50 ("lib/crypto: arm/sha512: Migrate optimized SHA-512 code to library")
-Fixes: 60e3f1e9b7a5 ("lib/crypto: arm64/sha512: Migrate optimized SHA-512 code to library")
-Signed-off-by: Tal Zussman <tz2294@columbia.edu>
----
-Changes in v2:
-- Fixed clean_files paths
-- Link to v1: https://lore.kernel.org/r/20250813-crypto_clean-v1-1-11971b8bf56a@columbia.edu
----
- lib/crypto/Makefile | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+>  	}
+>  
+> -	adsp->mem_phys = adsp->mem_reloc = rmem->base;
+> -	adsp->mem_size = rmem->size;
+> -	adsp->mem_region = devm_ioremap_wc(adsp->dev,
+> -				adsp->mem_phys, adsp->mem_size);
+> +	adsp->mem_phys = adsp->mem_reloc = res.start;
+> +	adsp->mem_size = resource_size(&res);
+> +	adsp->mem_region = devm_ioremap_resource_wc(adsp->dev, &res);
+>  	if (!adsp->mem_region) {
+> -		dev_err(adsp->dev, "unable to map memory region: %pa+%zx\n",
+> -			&rmem->base, adsp->mem_size);
+> +		dev_err(adsp->dev, "unable to map memory region: %pR\n", &res);
+>  		return -EBUSY;
+>  	}
+>  
+> diff --git a/drivers/remoteproc/qcom_q6v5_mss.c b/drivers/remoteproc/qcom_q6v5_mss.c
+> index 0c0199fb0e68..0fea5f91dd1c 100644
+> --- a/drivers/remoteproc/qcom_q6v5_mss.c
+> +++ b/drivers/remoteproc/qcom_q6v5_mss.c
+> @@ -1961,8 +1961,8 @@ static int q6v5_init_reset(struct q6v5 *qproc)
+>  static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+>  {
+>  	struct device_node *child;
+> -	struct reserved_mem *rmem;
+> -	struct device_node *node;
+> +	struct resource res;
+> +	int ret;
+>  
+>  	/*
+>  	 * In the absence of mba/mpss sub-child, extract the mba and mpss
+> @@ -1970,71 +1970,49 @@ static int q6v5_alloc_memory_region(struct q6v5 *qproc)
+>  	 */
+>  	child = of_get_child_by_name(qproc->dev->of_node, "mba");
+>  	if (!child) {
+> -		node = of_parse_phandle(qproc->dev->of_node,
+> -					"memory-region", 0);
+> +		ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 0, &res);
+>  	} else {
+> -		node = of_parse_phandle(child, "memory-region", 0);
+> +		ret = of_reserved_mem_region_to_resource(child, 0, &res);
+>  		of_node_put(child);
+>  	}
+>  
+> -	if (!node) {
+> -		dev_err(qproc->dev, "no mba memory-region specified\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	rmem = of_reserved_mem_lookup(node);
+> -	of_node_put(node);
+> -	if (!rmem) {
+> +	if (ret) {
+>  		dev_err(qproc->dev, "unable to resolve mba region\n");
+> -		return -EINVAL;
+> +		return ret;
+>  	}
+>  
+> -	qproc->mba_phys = rmem->base;
+> -	qproc->mba_size = rmem->size;
+> +	qproc->mba_phys = res.start;
+> +	qproc->mba_size = resource_size(&res);
+>  
+>  	if (!child) {
+> -		node = of_parse_phandle(qproc->dev->of_node,
+> -					"memory-region", 1);
+> +		ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 1, &res);
+>  	} else {
+>  		child = of_get_child_by_name(qproc->dev->of_node, "mpss");
+> -		node = of_parse_phandle(child, "memory-region", 0);
+> +		ret = of_reserved_mem_region_to_resource(child, 0, &res);
+>  		of_node_put(child);
+>  	}
+>  
+> -	if (!node) {
+> -		dev_err(qproc->dev, "no mpss memory-region specified\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	rmem = of_reserved_mem_lookup(node);
+> -	of_node_put(node);
+> -	if (!rmem) {
+> +	if (ret) {
+>  		dev_err(qproc->dev, "unable to resolve mpss region\n");
+> -		return -EINVAL;
+> +		return ret;
+>  	}
+>  
+> -	qproc->mpss_phys = qproc->mpss_reloc = rmem->base;
+> -	qproc->mpss_size = rmem->size;
+> +	qproc->mpss_phys = qproc->mpss_reloc = res.start;
+> +	qproc->mpss_size = resource_size(&res);
+>  
+>  	if (!child) {
+> -		node = of_parse_phandle(qproc->dev->of_node, "memory-region", 2);
+> +		ret = of_reserved_mem_region_to_resource(qproc->dev->of_node, 2, &res);
+>  	} else {
+>  		child = of_get_child_by_name(qproc->dev->of_node, "metadata");
+> -		node = of_parse_phandle(child, "memory-region", 0);
+> +		ret = of_reserved_mem_region_to_resource(child, 0, &res);
+>  		of_node_put(child);
+>  	}
+>  
+> -	if (!node)
+> +	if (ret)
+>  		return 0;
 
-diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
-index e4151be2ebd4..539d5d59a50e 100644
---- a/lib/crypto/Makefile
-+++ b/lib/crypto/Makefile
-@@ -100,7 +100,6 @@ ifeq ($(CONFIG_ARM),y)
- libsha256-y += arm/sha256-ce.o arm/sha256-core.o
- $(obj)/arm/sha256-core.S: $(src)/arm/sha256-armv4.pl
- 	$(call cmd,perlasm)
--clean-files += arm/sha256-core.S
- AFLAGS_arm/sha256-core.o += $(aflags-thumb2-y)
- endif
- 
-@@ -108,7 +107,6 @@ ifeq ($(CONFIG_ARM64),y)
- libsha256-y += arm64/sha256-core.o
- $(obj)/arm64/sha256-core.S: $(src)/arm64/sha2-armv8.pl
- 	$(call cmd,perlasm_with_args)
--clean-files += arm64/sha256-core.S
- libsha256-$(CONFIG_KERNEL_MODE_NEON) += arm64/sha256-ce.o
- endif
- 
-@@ -132,7 +130,6 @@ ifeq ($(CONFIG_ARM),y)
- libsha512-y += arm/sha512-core.o
- $(obj)/arm/sha512-core.S: $(src)/arm/sha512-armv4.pl
- 	$(call cmd,perlasm)
--clean-files += arm/sha512-core.S
- AFLAGS_arm/sha512-core.o += $(aflags-thumb2-y)
- endif
- 
-@@ -140,7 +137,6 @@ ifeq ($(CONFIG_ARM64),y)
- libsha512-y += arm64/sha512-core.o
- $(obj)/arm64/sha512-core.S: $(src)/arm64/sha2-armv8.pl
- 	$(call cmd,perlasm_with_args)
--clean-files += arm64/sha512-core.S
- libsha512-$(CONFIG_KERNEL_MODE_NEON) += arm64/sha512-ce-core.o
- endif
- 
-@@ -167,3 +163,7 @@ obj-$(CONFIG_PPC) += powerpc/
- obj-$(CONFIG_RISCV) += riscv/
- obj-$(CONFIG_S390) += s390/
- obj-$(CONFIG_X86) += x86/
-+
-+# clean-files must be defined unconditionally
-+clean-files += arm/sha256-core.S arm/sha512-core.S
-+clean-files += arm64/sha256-core.S arm64/sha512-core.S
+Shouldn't we differentiate between an absent region (OK) and an error
+during parse.
 
----
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-change-id: 20250813-crypto_clean-6b4d483e40fb
+>  
+> -	rmem = of_reserved_mem_lookup(node);
+> -	if (!rmem) {
+> -		dev_err(qproc->dev, "unable to resolve metadata region\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	qproc->mdata_phys = rmem->base;
+> -	qproc->mdata_size = rmem->size;
+> +	qproc->mdata_phys = res.start;
+> +	qproc->mdata_size = resource_size(&res);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 02e29171cbbe..b3f7209289a6 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -121,7 +121,7 @@ struct qcom_pas {
+>  
+>  static void qcom_pas_segment_dump(struct rproc *rproc,
+>  				  struct rproc_dump_segment *segment,
+> -				  void *dest, size_t offset, size_t size)
+> +		       void *dest, size_t offset, size_t size)
 
-Best regards,
+Irrelevant? (and two next chunks)
+
+>  {
+>  	struct qcom_pas *pas = rproc->priv;
+>  	int total_offset;
+> @@ -149,7 +149,7 @@ static void qcom_pas_minidump(struct rproc *rproc)
+>  }
+>  
+>  static int qcom_pas_pds_enable(struct qcom_pas *pas, struct device **pds,
+> -			       size_t pd_count)
+> +			   size_t pd_count)
+>  {
+>  	int ret;
+>  	int i;
+> @@ -176,7 +176,7 @@ static int qcom_pas_pds_enable(struct qcom_pas *pas, struct device **pds,
+>  };
+>  
+>  static void qcom_pas_pds_disable(struct qcom_pas *pas, struct device **pds,
+> -				 size_t pd_count)
+> +			     size_t pd_count)
+>  {
+>  	int i;
+>  
+
 -- 
-Tal Zussman <tz2294@columbia.edu>
-
+With best wishes
+Dmitry
 
