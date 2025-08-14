@@ -1,117 +1,147 @@
-Return-Path: <linux-kernel+bounces-768704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228A5B26461
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:35:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD39AB26468
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1D615A7833
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:35:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7BA5A7873
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDEF2EE5EC;
-	Thu, 14 Aug 2025 11:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7902F5460;
+	Thu, 14 Aug 2025 11:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iicrYriF"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ww+t6c8L"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF6A1A9F9D;
-	Thu, 14 Aug 2025 11:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365D12E092F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755171300; cv=none; b=YcxAWxEDLSKLxRjTLBU4BIjUdrJs8w9hKxEQtz+JZSHPebs/BT+uIIzczkr1GP/xlUyR9uvghaiTbrm0+YeXgt3x4G7+Zc985tdDXqv5XdTKh7KxekScWMdNk6XQ5viVa/0s9BtJAVbLVkY8AvIgkMISLDsh7XIcfD4HZyVGYhg=
+	t=1755171336; cv=none; b=VUzByG6ZInVCMLB1/E4fifr7B49OvAx8iD12z7LHhW0rMHpxwFvRBC1LdzO/LzeIPX8BnRyRVCGFp+vBk26ylw30xD+DOzwPr680gKbJs7xcFiti0kl45/Tn7URvuoH4zSgjezg13LstuU401w9+1hiD7Yuc68CzZqE/wr+WcUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755171300; c=relaxed/simple;
-	bh=+qIU5841RvYEt8uMguyqbcYHK9dBC2sIctCw+Y6F39Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FFSHEm9ukE6QE0K3ZmWC1IirpmC1R+v5FYmItMRQpxe5Eqs67KMG0YYmE3BV1erlvcLJVeZgGoBIj0QzL9vycpnSR29jG3ttX2pKtNo2/G3ErnLUgefHybm+8SivhGP8/jZHqyfTtEK1zoOD2IicORuQbNv/xDB8pYlPxC8PbtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iicrYriF; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 57EBYdtT1922781;
-	Thu, 14 Aug 2025 06:34:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1755171279;
-	bh=7LbU+yv2+Y6jnYq61nIb7SKpWsz0Z9nUrQStSnTQjvg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=iicrYriFr/xt9We9t8/o/L9I1Wxtp+0cnkPfNnoE9Jgh3U33Uhcu0k6a3pWYfE/Y4
-	 eiDza8w56ia5wKHqjjk4IeNZHmP8hhLjj9p9AXK0ew2EpB4/642IRTPkJz4mcIFvwZ
-	 X+K+6OaD17VSnvwbZDPu9MQ52FO8rfEuFQASjBv4=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 57EBYdEl1118411
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 14 Aug 2025 06:34:39 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 14
- Aug 2025 06:34:38 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Thu, 14 Aug 2025 06:34:38 -0500
-Received: from [172.24.233.254] (santhoshkumark.dhcp.ti.com [172.24.233.254])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 57EBYY1g3540111;
-	Thu, 14 Aug 2025 06:34:34 -0500
-Message-ID: <20487e7f-33dd-4b65-b1a8-5bb8a06ef859@ti.com>
-Date: Thu, 14 Aug 2025 17:04:33 +0530
+	s=arc-20240116; t=1755171336; c=relaxed/simple;
+	bh=nDspi5PIcAYWdxA/EU332nj4Texe0LRHlFxJOAQtBaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZO3Xdo5ywru3nZQ0NaoPFa5hXYhHwvU6TgucxMSaVqq89i0asMiN+SgS5f8b21PxVYRB6aQXxfi27Xc+reA9ySZSDqZHUv60KpI4cKbATUA4Peynpixj5bavXgqzfYIqXYH5lU67JF3ggDfiE1PvLrm4ByFi/mHkhuaUY2gfP5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ww+t6c8L; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <cfc4594a-7352-491a-b643-a87804f22322@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1755171321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mfMJrYIyAcG+mjlukJ3S8XF3yl49bz3YOmF0vqdDPhM=;
+	b=Ww+t6c8LO+cT2C6CCvMsZjak3sh3oIAIeEkKVef7v+gq9DGBLSyaDEa3MivONWBzrxrXGt
+	S9Tv3kp0hFKvfd3VczRd89j88yW1AuLwzK+DFXWd+DEVZ9EUOJLhBc26s22bt5x85n7Lhy
+	F3nQDRxY0QaiZjvPKwkALypGRgnAJl8=
+Date: Thu, 14 Aug 2025 19:35:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
- controller
-To: Mark Brown <broonie@kernel.org>
-CC: <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <tudor.ambarus@linaro.org>, <pratyush@kernel.org>, <mwalle@kernel.org>,
-        <p-mantena@ti.com>, <linux-spi@vger.kernel.org>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <a-dutta@ti.com>, <u-kumar1@ti.com>, <praneeth@ti.com>, <s-k6@ti.com>
-References: <20250811193219.731851-1-s-k6@ti.com>
- <20250811193219.731851-2-s-k6@ti.com>
- <6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk>
-Content-Language: en-US
-From: Santhosh Kumar K <s-k6@ti.com>
-In-Reply-To: <6c35baad-a332-4b0a-96ca-1cdb3840ad94@sirena.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Subject: Re: [PATCH bpf-next v2] bpf: Remove migrate_disable in
+ kprobe_multi_link_prog_run
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ mattbobrowski@google.com, rostedt@goodmis.org, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20250805162732.1896687-1-chen.dylane@linux.dev>
+ <CAEf4BzZduEdBCzm56zwgrHpzV=CsMbzfVi5oR9w3H4vUQL6FYw@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Tao Chen <chen.dylane@linux.dev>
+In-Reply-To: <CAEf4BzZduEdBCzm56zwgrHpzV=CsMbzfVi5oR9w3H4vUQL6FYw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello Mark,
-
-On 14/08/25 01:56, Mark Brown wrote:
-> On Tue, Aug 12, 2025 at 01:02:10AM +0530, Santhosh Kumar K wrote:
->> From: Pratyush Yadav <pratyush@kernel.org>
+在 2025/8/13 06:05, Andrii Nakryiko 写道:
+> On Tue, Aug 5, 2025 at 9:28 AM Tao Chen <chen.dylane@linux.dev> wrote:
 >>
->> Some controllers like the Cadence OSPI controller need to perform a
->> tuning sequence to operate at high data rates. Tuning is needs to happen
->> once the device is switched to appropriate mode (say 8S-8S-8S or
->> 8D-8D-8D). Add a hook that spi-mem client devices can call in order to tune
->> the controller to operate in a given mode and data rate.
+>> bpf program should run under migration disabled, kprobe_multi_link_prog_run
+>> called all the way from graph tracer, which disables preemption in
+>> function_graph_enter_regs, as Jiri and Yonghong suggested, there is no
+>> need to use migrate_disable. As a result, some overhead maybe will be
+>> reduced.
 >>
->> This is somewhat similar to eMMC/SD tuning for higher speed modes like
->> HS200, but there isn't a standard specification around the same though.
+>> Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
+>> Acked-by: Yonghong Song <yonghong.song@linux.dev>
+>> Acked-by: Jiri Olsa <jolsa@kernel.org>
+>> Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+>> ---
+>>   kernel/trace/bpf_trace.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> Change list:
+>>   v1 -> v2:
+>>    - s/called the way/called all the way/.(Jiri)
+>>   v1: https://lore.kernel.org/bpf/f7acfd22-bcf3-4dff-9a87-7c1e6f84ce9c@linux.dev
+>>
+>> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+>> index 3ae52978cae..5701791e3cb 100644
+>> --- a/kernel/trace/bpf_trace.c
+>> +++ b/kernel/trace/bpf_trace.c
+>> @@ -2734,14 +2734,19 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
 > 
-> Should we have something that blocks these tuning required modes without
-> the appropriate tuning, and/or allows discovery of which modes require
-> this tuning?  This all feels very landmineish - client drivers just have
-> to know when tuning is required.
+> even though bpf_prog_run() eventually calls cant_migrate(), we should
+> add it before that __this_cpu_inc_return() call as well, because that
+> one is relying on that non-migration independently from bpf_prog_run()
+> 
 
-The flash's maximum operating frequency determines whether PHY tuning is 
-required, as we need tuning in case of Cadence controller for 
-frequencies over 50 MHz.
+maybe cant_sleep() is better like trace_call_bpf, cant_sleep dose not 
+check migration_disabled again, which is done in 
+__this_cpu_preempt_check. I will add it in v3.
 
-And we do check for this condition - see Patch 07/10,
-cqspi_phy_op_eligible_sdr(), which currently verifies the flash 
-frequency against 166 MHz. This logic can be improved by implementing 
-both min and max frequency checks, will update in the following version.
+>>                  goto out;
+>>          }
+>>
+>> -       migrate_disable();
+>> +       /*
+>> +        * bpf program should run under migration disabled, kprobe_multi_link_prog_run
+>> +        * called all the way from graph tracer, which disables preemption in
+>> +        * function_graph_enter_regs, so there is no need to use migrate_disable.
+>> +        * Accessing the above percpu data bpf_prog_active is also safe for the same
+>> +        * reason.
+>> +        */
+> 
+> let's shorten this a bit to something like:
+> 
+> /* graph tracer framework ensures we won't migrate */
+> cant_migrate();
+> 
+> all the other stuff in the comment can become outdated way too easily
+> and/or is sort of general BPF implementation knowledge
+> 
+> pw-bot: cr
+> 
+> 
+>>          rcu_read_lock();
+>>          regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
+>>          old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
+>>          err = bpf_prog_run(link->link.prog, regs);
+>>          bpf_reset_run_ctx(old_run_ctx);
+>>          rcu_read_unlock();
+>> -       migrate_enable();
+>>
+>>    out:
+>>          __this_cpu_dec(bpf_prog_active);
+>> --
+>> 2.48.1
+>>
 
-Thanks,
-Santhosh.
-
+-- 
+Best Regards
+Tao Chen
 
