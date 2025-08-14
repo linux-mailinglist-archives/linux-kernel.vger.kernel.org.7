@@ -1,120 +1,123 @@
-Return-Path: <linux-kernel+bounces-769084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BABB269DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:46:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76B8B26A06
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:52:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F59D9E0628
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6175D563C9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADBA1F30AD;
-	Thu, 14 Aug 2025 14:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E021E1DEC;
+	Thu, 14 Aug 2025 14:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAvEDr+U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qw8Aj+sv"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75DF1DE3DC;
-	Thu, 14 Aug 2025 14:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9674D1DE3B5
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755182454; cv=none; b=IqaOI41y7I1qXkQM67D+Ln+OZCUxoCR+xx8DIe17vuDpOWcwl64klksrI/lT7KgdbYjYf0V2US+TGuynWQrf0q4JKGTm2PPZIIchVFZe2X5uftKM6WtcqTuEKuDNWz5WIUbouuAOm1ikFy4qiTsSPQsb63qOC+mQ/bCUY+Xs7DY=
+	t=1755182558; cv=none; b=o6x/qCUebU5EkkAUAY/D2UgU3PLRzgj/ZoLkdrOea5HgDO+ZDY9F+xno5n09GMk+qV1JVsDigWjM6wlPiYq6NTF2GJUVAOHKYD8kRnD1yHVJkL9KugkneHZ/Vjs2qYfqlUxKNUuBfM3oyf4T3jdV4eeebSTy5HmbCrN8lRWpuHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755182454; c=relaxed/simple;
-	bh=PU8UA+I5WgTOlBY9VPUqNqmWYyXfIpJmXJCYLjXok58=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=fUYUO6UNa3LMSwTIO2fwODoRfjeyFX83yiEB+3cL7m/ceRbEEqkdzjiEgHCkbyOSHV/qLHOVvOrThwx51Q+TbwWU6aeNQwHvkR0uylwMntVljdR2eazcO66X3K41ib886fLIZvSLAttWNIEk4j/QK4rEB60BYwjmGQyJ3JCSSqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAvEDr+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55734C4CEED;
-	Thu, 14 Aug 2025 14:40:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755182453;
-	bh=PU8UA+I5WgTOlBY9VPUqNqmWYyXfIpJmXJCYLjXok58=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=LAvEDr+U95m00kjZmTrLNp8VuVL+XYtIEG2s0CzSAfyG9ZJ7nIPN34wZGDGtK7k+R
-	 rymKq3ypcPqobxYczNFF7TiI4nzADaGo8befS8+Vnd8uotBkVf5F3gfR/KIsBnzx+s
-	 1or3x87vwQHkyc/eRPjwCZPos+v8Vswv0yBhcf44DBw3YBACU+wnqy9/g3JrwpRd0N
-	 5oK5uXI+oTEjCveSwi2bB8cIOBQVT9eHULzCnyiHcPr70ncbNRSYTe1tu9J/DRHXAR
-	 3AjyaVGKzi7iNQBylr0cTJp3E0/oCD4T5SL4uob8XCHn7uMfIEQz3p/Q6NHUXjGQLJ
-	 2/mXpjoGPZ14Q==
-Date: Thu, 14 Aug 2025 09:40:52 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1755182558; c=relaxed/simple;
+	bh=uYHe/HzCXFfJbiQWNsJ0rFiCB/7FEZwg5ucfrCWgZ5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gx+zhu5Nat3zsV5pI/qbfA/Ln+YXiolfT7QL/AxuwTppV1wyNc5PTJLmj9hsb2KjrghfWFl30Zf33jXeXVXsO9UFIjlaagxTg7nvdnBeiL6Mvsn/V1QK+VyGmkRsAVVV7ZTOVghZ75h4rKI6qZfD1tNk60wk2fagzeq5gVALT1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qw8Aj+sv; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=iLDnNN9Pm70ZNkeOhyVb33TdGWb4EGdlyorRGGW6X9g=; b=qw8Aj+svrydCbs9XnL1D7nn7ok
+	dEENQWfnbmGsmRx5UktinjSJ/eZ35h1nJBT2xHclbsVGSvUNf6B1E1fYbvi9KwsBM3VeOdMb660Qn
+	8UsBvKl+0jQ+TW/B3c7XO9AfucR0UcYLavDHJYO/Lq3MHSjtidk1l7NdjBIKrd4jRMx2YnlcHKKtH
+	eiolLTAPqufQabsGus2BeQR5ywjRWt/tBN0JQNBfAOrcAb8oTdLYyb/U6xd3BvCMPLENcd0siMgbG
+	BFo5a3Rmfwt+vGO4NngjuxR5JCYFm4EK/wBf3LHp/7zmRyad05JYH5RJ0cM2dxqNEV4ezHOdCXRV6
+	V0oIrTiQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1umZ9r-00000001Sjj-1qjP;
+	Thu, 14 Aug 2025 14:42:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id CDF953002C5; Thu, 14 Aug 2025 16:42:17 +0200 (CEST)
+Date: Thu, 14 Aug 2025 16:42:17 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Dan Snyder <dansnyder@google.com>
+Subject: Re: [PATCH 1/3] x86/umip: Check that the instruction opcode is at
+ least two bytes
+Message-ID: <20250814144217.GZ4067720@noisy.programming.kicks-ass.net>
+References: <20250808172358.1938974-1-seanjc@google.com>
+ <20250808172358.1938974-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, 
- Guenter Roeck <linux@roeck-us.net>, Lee Jones <lee@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, Jonathan Corbet <corbet@lwn.net>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-hwmon@vger.kernel.org
-To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-In-Reply-To: <20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com>
-References: <20250814-ltc4283-support-v1-0-88b2cef773f2@analog.com>
- <20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com>
-Message-Id: <175518245252.2989785.16386519641633311403.robh@kernel.org>
-Subject: Re: [PATCH 1/6] dt-binbings: mfd: Add bindings for the LTC4283
- Swap Controller
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250808172358.1938974-2-seanjc@google.com>
 
+On Fri, Aug 08, 2025 at 10:23:56AM -0700, Sean Christopherson wrote:
+> When checking for a potential UMIP violation on #GP, verify the decoder
+> found at least two opcode bytes to avoid false positives when the kernel
+> encounters an unknown instruction that starts with 0f.  Because the array
+> of opcode.bytes is zero-initialized by insn_init(), peeking at bytes[1]
+> will misinterpret garbage as a potential SLDT or STR instruction, and can
+> incorrectly trigger emulation.
+> 
+> E.g. if a vpalignr instruction
+> 
+>    62 83 c5 05 0f 08 ff     vpalignr xmm17{k5},xmm23,XMMWORD PTR [r8],0xff
+> 
+> hits a #GP, the kernel emulates it as STR and squashes the #GP (and
+> corrupts the userspace code stream).
+> 
+> Arguably the check should look for exactly two bytes, but no three byte
+> opcodes use '0f 00 xx' or '0f 01 xx' as an escape, i.e. it should be
+> impossible to get a false positive if the first two opcode bytes match
+> '0f 00' or '0f 01'.  Go with a more conservative check with respect to the
+> existing code to minimize the chances of breaking userspace, e.g. due to
+> decoder weirdness.
+> 
+> Fixes: 1e5db223696a ("x86/umip: Add emulation code for UMIP instructions")
+> Reported-by: Dan Snyder <dansnyder@google.com>
+> Analyzed-by; Nick Bray <ncbray@google.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-On Thu, 14 Aug 2025 11:52:23 +0100, Nuno Sá wrote:
-> The LTC4283 is a negative voltage hot swap controller that drives an
-> external N-channel MOSFET to allow a board to be safely inserted and
-> removed from a live backplane.
-> 
-> Main usage is as an Hardware Monitoring device. However, it has up to 8
-> pins that can be configured and used as GPIOs and hence, the device can
-> also be a GPIO controller.
-> 
-> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
 > ---
->  .../devicetree/bindings/mfd/adi,ltc4283.yaml       | 85 ++++++++++++++++++++++
->  MAINTAINERS                                        |  7 ++
->  2 files changed, 92 insertions(+)
+>  arch/x86/kernel/umip.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/adi,ltc4283.yaml:
-	Error in referenced schema matching $id: http://devicetree.org/schemas/gpio/adi,ltc4283.yaml
-	Tried these paths (check schema $id if path is wrong):
-	/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/gpio/adi,ltc4283.yaml
-	/usr/local/lib/python3.13/dist-packages/dtschema/schemas/gpio/adi,ltc4283.yaml
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/adi,ltc4283.example.dtb: swap-controller@15 (adi,ltc4283): gpio: {'compatible': ['adi,ltc4283-gpio'], 'gpio-controller': True, '#gpio-cells': 2} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/gpio/adi,ltc4283.yaml#"}
-	from schema $id: http://devicetree.org/schemas/mfd/adi,ltc4283.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/adi,ltc4283.example.dtb: swap-controller@15 (adi,ltc4283): hwmon: {'compatible': ['adi,ltc4283-hwmon'], 'adi,rsense-nano-ohms': [500], 'adi,current-limit-sense-microvolt': [[25000]], 'adi,current-limit-foldback-factor': [10], 'adi,cooling-delay-ms': [8190], 'adi,fet-bad-timer-delay-ms': [512]} should not be valid under {'description': "Can't find referenced schema: http://devicetree.org/schemas/hwmon/adi,ltc4283.yaml#"}
-	from schema $id: http://devicetree.org/schemas/mfd/adi,ltc4283.yaml#
-Documentation/devicetree/bindings/mfd/adi,ltc4283.example.dtb: /example-0/i2c/swap-controller@15/gpio: failed to match any schema with compatible: ['adi,ltc4283-gpio']
-Documentation/devicetree/bindings/mfd/adi,ltc4283.example.dtb: /example-0/i2c/swap-controller@15/hwmon: failed to match any schema with compatible: ['adi,ltc4283-hwmon']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250814-ltc4283-support-v1-1-88b2cef773f2@analog.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
+> index 5a4b21389b1d..406ac01ce16d 100644
+> --- a/arch/x86/kernel/umip.c
+> +++ b/arch/x86/kernel/umip.c
+> @@ -156,8 +156,8 @@ static int identify_insn(struct insn *insn)
+>  	if (!insn->modrm.nbytes)
+>  		return -EINVAL;
+>  
+> -	/* All the instructions of interest start with 0x0f. */
+> -	if (insn->opcode.bytes[0] != 0xf)
+> +	/* The instructions of interest have 2-byte opcodes: 0F 00 or 0F 01. */
+> +	if (insn->opcode.nbytes < 2 || insn->opcode.bytes[0] != 0xf)
+>  		return -EINVAL;
+>  
+>  	if (insn->opcode.bytes[1] == 0x1) {
+> -- 
+> 2.50.1.703.g449372360f-goog
+> 
 
