@@ -1,88 +1,194 @@
-Return-Path: <linux-kernel+bounces-768134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C29DB25D55
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:30:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C51B25D4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D15C4B60759
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E29631C82AAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10A4263F5F;
-	Thu, 14 Aug 2025 07:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FA426A0DB;
+	Thu, 14 Aug 2025 07:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzcT4JWH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6qffIlo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE9626CE36;
-	Thu, 14 Aug 2025 07:26:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924192594B4;
+	Thu, 14 Aug 2025 07:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755156362; cv=none; b=e0NP/0n5Npx5KVBoYEhRNiyIQVmYfaKGuRC4F1wC1JUiFSwSRp9n+Bu9dNzgD/thBnM7qTYCmhKShjon043NSSdLjxvUzhzJ6FyJ6TsSdvSAouWaKodAgzimN1TWsk1rXRWSb6BWb10lvdig5FCzN+6gw2ZJpF26sFb868eZipA=
+	t=1755156409; cv=none; b=i1/6cLkkjtKSNyEcJ4Tyft8sjBZ+GVMQheVKsOwG64uercgBQirTMZPxZFvNjZuNnQjbUSE7KwSLwvRUN6xfviaWAeZu7RHHcxJz2R/dbnOPYZoh8lnSQheikYQcNPlJsWR+5rHeipKlAhIkPxS0dlX8GkqcPoRYqay7iYBfbAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755156362; c=relaxed/simple;
-	bh=bCODuuaMFmNNXeW6jzV9cEYu0VFKOJKB7DKgj/ELYos=;
+	s=arc-20240116; t=1755156409; c=relaxed/simple;
+	bh=fNi6Y02rVH9GqePGaiKxiM3IrThq2pypq4fbfTCXcIE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TkcnN/6tUtHsGkASnufPOybqosXjdzoR4+AvrVj8fle2H33laCI+2wMcT/pdo/aKfoUnwIumiItPfeNZF8On/G7XvvxoqmXmtu1h0ETdhkrZHQgQ+w/le7nQX1MtvB4z7ISuQPXiQd4XIlNcuy4KP8WcSm6M7Ds+bQthiaZitsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzcT4JWH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182D1C4CEEF;
-	Thu, 14 Aug 2025 07:26:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+0P3LpDzf0mAYXyCMYQ2/j/o2bCxcYjEOhhZyneNPI3HLNdsQM75Qv1YlSyuPhEW5wdw8Yz4sfsg7qdCE5S+MyZBSUr0vyP2gGzHPs35+OffDAnb9UbP+5iSWvBtl6Ke+q9fWFeIYtGqjA7IDV0TdQkpL79xHcbpV9ya3g8gVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6qffIlo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3D17C4CEEF;
+	Thu, 14 Aug 2025 07:26:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755156361;
-	bh=bCODuuaMFmNNXeW6jzV9cEYu0VFKOJKB7DKgj/ELYos=;
+	s=k20201202; t=1755156409;
+	bh=fNi6Y02rVH9GqePGaiKxiM3IrThq2pypq4fbfTCXcIE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GzcT4JWHuGjOBbjQSAT1kvFbLihB9CHP4Pz6CKXlFQKshniRyUBIPb5xQ2/Ff2IKY
-	 05LQZ217yrCAKXlkEhEM4Y8v+GiBtiLGKuj/OsLjJFhjkTHFWIM8uJhXR1yTE43RiZ
-	 hZTKqFv3NlDZO+NeoJhz5w2MKll5M90pEnXe+C2a9Df5dFQohbk4b7Wl5R4/MBgJbj
-	 lbvyDROT8813rhPTEltxkHe8yvSkLCb9BqIYD7MnvNp3iew+UVrXsIzrqsNcTxUBgG
-	 hZ6VIDb5Ykn2uMun5+0FQazZRQgevqXd4jPtJvp6SUBJK5PuOlXVVD9nHYh7SA0Ng2
-	 tE4Xm1Qq07RBw==
-Date: Thu, 14 Aug 2025 09:25:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/11] dt-bindings: iio: adc: ad7476: Drop redundant
- prop: true
-Message-ID: <20250814-authentic-silky-lyrebird-05cbdd@kuoka>
-References: <cover.1754901948.git.mazziesaccount@gmail.com>
- <bee66444bf628ba9a34a02738a1842e2abc14290.1754901948.git.mazziesaccount@gmail.com>
+	b=R6qffIloCujxWq1ip65cWS3DUXGF0vDFCOVAKKUf8dUEKnZHbCtDzDN6Fh/Qzl1+q
+	 7OGbYD93LFNJPFpntW5RFnE8JywzXL5Ckz4lVfMZU6MxSPh05+YSdtNjDQm7glR+ok
+	 JOr0rMid4vgaJMdUkGNCQ8142UcJgMi28wZ3Os/ODI7B6GePUisO/y5I9E6foeXnv8
+	 p6oBgT5M3QILhEaKo3iPanGLegAZn2HLZ0xykFdtRNaWiKUGgoCwssM0F1jm2hGjQW
+	 N9zX0NHCwgVshW3h0rsCcOzl6kK17FwQ/KHlj2mQlzZGb5QfCHShBisy9DevjRWiwo
+	 I26/phH7ruVXQ==
+Date: Thu, 14 Aug 2025 10:26:19 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: nathan@kernel.org, arnd@arndb.de, broonie@kernel.org,
+	Liam.Howlett@oracle.com, urezki@gmail.com, will@kernel.org,
+	kaleshsingh@google.com, leitao@debian.org, coxu@redhat.com,
+	surenb@google.com, akpm@linux-foundation.org, luto@kernel.org,
+	jpoimboe@kernel.org, changyuanl@google.com, hpa@zytor.com,
+	dvyukov@google.com, kas@kernel.org, corbet@lwn.net,
+	vincenzo.frascino@arm.com, smostafa@google.com,
+	nick.desaulniers+lkml@gmail.com, morbo@google.com,
+	andreyknvl@gmail.com, alexander.shishkin@linux.intel.com,
+	thiago.bauermann@linaro.org, catalin.marinas@arm.com,
+	ryabinin.a.a@gmail.com, jan.kiszka@siemens.com, jbohac@suse.cz,
+	dan.j.williams@intel.com, joel.granados@kernel.org,
+	baohua@kernel.org, kevin.brodsky@arm.com, nicolas.schier@linux.dev,
+	pcc@google.com, andriy.shevchenko@linux.intel.com,
+	wei.liu@kernel.org, bp@alien8.de, ada.coupriediaz@arm.com,
+	xin@zytor.com, pankaj.gupta@amd.com, vbabka@suse.cz,
+	glider@google.com, jgross@suse.com, kees@kernel.org,
+	jhubbard@nvidia.com, joey.gouly@arm.com, ardb@kernel.org,
+	thuth@redhat.com, pasha.tatashin@soleen.com,
+	kristina.martsenko@arm.com, bigeasy@linutronix.de,
+	lorenzo.stoakes@oracle.com, jason.andryuk@amd.com, david@redhat.com,
+	graf@amazon.com, wangkefeng.wang@huawei.com, ziy@nvidia.com,
+	mark.rutland@arm.com, dave.hansen@linux.intel.com,
+	samuel.holland@sifive.com, kbingham@kernel.org,
+	trintaeoitogc@gmail.com, scott@os.amperecomputing.com,
+	justinstitt@google.com, kuan-ying.lee@canonical.com, maz@kernel.org,
+	tglx@linutronix.de, samitolvanen@google.com, mhocko@suse.com,
+	nunodasneves@linux.microsoft.com, brgerst@gmail.com,
+	willy@infradead.org, ubizjak@gmail.com, peterz@infradead.org,
+	mingo@redhat.com, sohil.mehta@intel.com, linux-mm@kvack.org,
+	linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	x86@kernel.org, llvm@lists.linux.dev, kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 07/18] mm: x86: Untag addresses in EXECMEM_ROX related
+ pointer arithmetic
+Message-ID: <aJ2Pm2XzcM3H4aTN@kernel.org>
+References: <cover.1755004923.git.maciej.wieczor-retman@intel.com>
+ <aa501a8133ee0f336dc9f905fdc3453d964109ed.1755004923.git.maciej.wieczor-retman@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bee66444bf628ba9a34a02738a1842e2abc14290.1754901948.git.mazziesaccount@gmail.com>
+In-Reply-To: <aa501a8133ee0f336dc9f905fdc3453d964109ed.1755004923.git.maciej.wieczor-retman@intel.com>
 
-On Mon, Aug 11, 2025 at 11:51:50AM +0300, Matti Vaittinen wrote:
-> The ad7476 supports a few variants with different power-supplies and
-> control GPIOs. The binding first unconditionally introduces all the
-> properties, and later sets them 'true' or 'false' based on the
-> combatible.
+On Tue, Aug 12, 2025 at 03:23:43PM +0200, Maciej Wieczor-Retman wrote:
+> ARCH_HAS_EXECMEM_ROX was re-enabled in x86 at Linux 6.14 release.
+> Related code has multiple spots where page virtual addresses end up used
+> as arguments in arithmetic operations. Combined with enabled tag-based
+> KASAN it can result in pointers that don't point where they should or
+> logical operations not giving expected results.
 > 
-> The 'true' seems to be implied by the initial property introduction so
-> the 'true' -branches in later conditional handling (based on the
-> compatible) can be omitted.
+> vm_reset_perms() calculates range's start and end addresses using min()
+> and max() functions. To do that it compares pointers but some are not
+> tagged - addr variable is, start and end variables aren't.
 > 
-> Drop the redundant true -branches.
+> within() and within_range() can receive tagged addresses which get
+> compared to untagged start and end variables.
 > 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Reset tags in addresses used as function arguments in min(), max(),
+> within() and within_range().
+> 
+> execmem_cache_add() adds tagged pointers to a maple tree structure,
+> which then are incorrectly compared when walking the tree. That results
+> in different pointers being returned later and page permission violation
+> errors panicking the kernel.
+> 
+> Reset tag of the address range inserted into the maple tree inside
+> execmem_cache_add().
+> 
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> ---
+> Changelog v4:
+> - Add patch to the series.
+> 
+>  arch/x86/mm/pat/set_memory.c | 1 +
+>  mm/execmem.c                 | 4 +++-
+>  mm/vmalloc.c                 | 4 ++--
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+> index 8834c76f91c9..1f14a1297db0 100644
+> --- a/arch/x86/mm/pat/set_memory.c
+> +++ b/arch/x86/mm/pat/set_memory.c
+> @@ -222,6 +222,7 @@ static inline void cpa_inc_lp_preserved(int level) { }
+>  static inline int
+>  within(unsigned long addr, unsigned long start, unsigned long end)
+>  {
+> +	addr = (unsigned long)kasan_reset_tag((void *)addr);
+>  	return addr >= start && addr < end;
+>  }
+>  
+> diff --git a/mm/execmem.c b/mm/execmem.c
+> index 0822305413ec..743fa4a8c069 100644
+> --- a/mm/execmem.c
+> +++ b/mm/execmem.c
+> @@ -191,6 +191,8 @@ static int execmem_cache_add_locked(void *ptr, size_t size, gfp_t gfp_mask)
+>  	unsigned long lower, upper;
+>  	void *area = NULL;
+>  
+> +	addr = arch_kasan_reset_tag(addr);
+
+Shouldn't this use kasan_reset_tag()?
+And the calls below as well?
+
+Also this can be done when addr is initialized 
+
+> +
+>  	lower = addr;
+>  	upper = addr + size - 1;
+>  
+> @@ -216,7 +218,7 @@ static int execmem_cache_add(void *ptr, size_t size, gfp_t gfp_mask)
+>  static bool within_range(struct execmem_range *range, struct ma_state *mas,
+>  			 size_t size)
+>  {
+> -	unsigned long addr = mas->index;
+> +	unsigned long addr = arch_kasan_reset_tag(mas->index);
+
+AFAIU, we use plain address without the tag as an index in
+execmem_cache_add(), so here mas->index will be a plain address as well
+  
+>  	if (addr >= range->start && addr + size < range->end)
+>  		return true;
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 6dbcdceecae1..83d666e4837a 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3328,8 +3328,8 @@ static void vm_reset_perms(struct vm_struct *area)
+>  			unsigned long page_size;
+>  
+>  			page_size = PAGE_SIZE << page_order;
+> -			start = min(addr, start);
+> -			end = max(addr + page_size, end);
+> +			start = min((unsigned long)arch_kasan_reset_tag(addr), start);
+> +			end = max((unsigned long)arch_kasan_reset_tag(addr) + page_size, end);
+>  			flush_dmap = 1;
+>  		}
+>  	}
+> -- 
+> 2.50.1
 > 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+-- 
+Sincerely yours,
+Mike.
 
