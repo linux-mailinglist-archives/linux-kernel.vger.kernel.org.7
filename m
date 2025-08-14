@@ -1,119 +1,126 @@
-Return-Path: <linux-kernel+bounces-768245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8847AB25EC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:27:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09780B25EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23D03620CB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:27:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E79582E3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F302E7BBC;
-	Thu, 14 Aug 2025 08:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11B02E7F02;
+	Thu, 14 Aug 2025 08:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="FTl6uR42"
-Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GinUgHX0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4036825B2E3
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861782E7BB8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:27:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755160039; cv=none; b=dOBoXxGMznTu72pUqPUcjZzJaL3vjT768UVcU2mswZiEwKUd7z8Rv0pqfZ0LHLibCk0QscxVtiB39fnnIC8NToR0FqSSyev4eA0WN91rwxniMMF0u7DW7IIG5EQQ97WUtRZymlKMO4b4Sb6KhNc7FuAgHfMmgo743pacmWdYPiU=
+	t=1755160058; cv=none; b=UzZIoJhOALT+ki1tc81wpqMNHFdj6IOJnZZp9swBHaom4Mb+W1DESOao3hVYv8ZZVtzTaNdz2xrQ5O6J4KKEJMAP+QOlemMla3kDMR9+1bvIsSRPdEDGWn3iExIB0pcy9L/0Te2B9Fw4LKI2p1Kwxq4GuUygIVkNE1CTt7tVFFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755160039; c=relaxed/simple;
-	bh=1KDDCtMP5rn2S+bWZv8aHe43udyp20+1Xfy9+tbLosc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=AR4oaeKwpUFeTAcIayRuZDSUdpV37AsAHEOy22HalIAgiIcaeBBEwk+pBAWO7b6MTB6YdM0AkcYRS0L5cvaLxHza0Pm5wyU5BLnSgyNqAsDyioQvHjNGfe1+sH+MYyHQP4Gpd+SopZ4mLO7/44AE7rHiJBJvtx5YhjNi9nE7FFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=FTl6uR42; arc=none smtp.client-ip=212.77.101.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
-Received: (wp-smtpd smtp.wp.pl 26832 invoked from network); 14 Aug 2025 10:27:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
-          t=1755160032; bh=WXs3BxbiT7j5x5jkHN7EEuuUOr7la7ajmzr15IXcVzI=;
-          h=From:To:Subject;
-          b=FTl6uR425f8Njkn8OmAXW1RdSSlBExWi6rsXhSy3cvrtk9xvPDP7/VKAI/t4o0Egf
-           LyjqcZJ4oQ8lzb9466kMDKWvIYbl/GAjhOOL+/tE6VhrYGw1w947khFlJ7JBnEiTO0
-           c7jlQhllkTHZyxv0uNNhC9mHHkbSKM8qqraP6g8YrQX+y1PCgrpFhfflTXOzHpriow
-           deYrYFwx7rOxqdAYpS5IYpSKyvEHqfoh+lq5FipWBmU099Q7RKz8b3OAXuUms+Yw9S
-           y1uyg7Pw0GGYYxxoxaKTMNeq92dfEoLIURAF2+vQfua/ZazmB4BAjshev/DK0XB97z
-           DO9XMi+pRI3/Q==
-Received: from 83.24.134.210.ipv4.supernova.orange.pl (HELO laptop-olek.lan) (olek2@wp.pl@[83.24.134.210])
-          (envelope-sender <olek2@wp.pl>)
-          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <tsbogend@alpha.franken.de>; 14 Aug 2025 10:27:12 +0200
-From: Aleksander Jan Bajkowski <olek2@wp.pl>
-To: tsbogend@alpha.franken.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	olek2@wp.pl,
-	linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: mips: lantiq: Document lantiq dcdc binding
-Date: Thu, 14 Aug 2025 10:26:56 +0200
-Message-ID: <20250814082705.3183231-1-olek2@wp.pl>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1755160058; c=relaxed/simple;
+	bh=wMcnPdUCFx40hqyageRaHybYN+Tt7ybSqt6EnoIQKLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LhTUytbBrGLYtNY5pPVnWE+MSVJDNx17k6r7Ys5wceNxrDHe6LiOWxypetLVIn7d5JmMZCcIPb/Te/+YgAKGNC9ez4Bzb9yOoXUA+f9eWBvihTCf58dAN0Ec9FDmw2IXbFM8PtMy2qbmGfrgT1GOGnMWcL9RUt5dVaibwzRPCp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GinUgHX0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755160055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VCtxsI2k9h9lYGDNgah1NdymPgILTjH6myt1fejzWfc=;
+	b=GinUgHX0xP0ivVrNTnRVENTEXuHfyNSiqNByFkktjJ26gdcCq0HV4HGisW2pHhMPpyaPgW
+	vNr25e13KsyKlDFZBLrrsvawIt4DkhJQ7r9oLWGJD9NpVvFDhdYMka5bz6BO9RpGt5eD46
+	m0p8IYhp7DwAH72dCcGcuh1t2mmIj/s=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-n5-3eCyoNMWweKpsJ1vVJw-1; Thu,
+ 14 Aug 2025 04:27:30 -0400
+X-MC-Unique: n5-3eCyoNMWweKpsJ1vVJw-1
+X-Mimecast-MFC-AGG-ID: n5-3eCyoNMWweKpsJ1vVJw_1755160048
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B9E218004D4;
+	Thu, 14 Aug 2025 08:27:28 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.148])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 06B4A1955E89;
+	Thu, 14 Aug 2025 08:27:16 +0000 (UTC)
+Date: Thu, 14 Aug 2025 16:27:10 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, bvanassche@acm.org, nilay@linux.ibm.com, hare@suse.de,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+	"yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH 00/16] blk-mq: introduce new queue attribute asyc_dpeth
+Message-ID: <aJ2d3gtfi0aEaeEc@fedora>
+References: <20250814033522.770575-1-yukuai1@huaweicloud.com>
+ <aJ2WH_RAMPQ9sd6r@fedora>
+ <b6587204-9798-fcb0-c4b7-f00d5979d243@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-WP-MailID: 71d407e100f7fde7e78cbb4499c72f21
-X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
-X-WP-SPAM: NO 000000A [USNU]                               
+In-Reply-To: <b6587204-9798-fcb0-c4b7-f00d5979d243@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Lantiq DCDC is a voltage converter with a voltage sensor.
+On Thu, Aug 14, 2025 at 04:22:27PM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/08/14 15:54, Ming Lei 写道:
+> > On Thu, Aug 14, 2025 at 11:35:06AM +0800, Yu Kuai wrote:
+> > > From: Yu Kuai <yukuai3@huawei.com>
+> > > 
+> > > Backgroud and motivation:
+> > > 
+> > > At first, we test a performance regression from 5.10 to 6.6 in
+> > > downstream kernel(described in patch 13), the regression is related to
+> > > async_depth in mq-dealine.
+> > > 
+> > > While trying to fix this regression, Bart suggests add a new attribute
+> > > to request_queue, and I think this is a good idea because all elevators
+> > > have similar logical, however only mq-deadline allow user to configure
+> > > async_depth. And this is patch 9-16, where the performance problem is
+> > > fixed in patch 13;
+> > > 
+> > > Because async_depth is related to nr_requests, while reviewing related
+> > > code, patch 2-7 are cleanups and fixes to nr_reqeusts.
+> > > 
+> > > I was planning to send this set for the next merge window, however,
+> > > during test I found the last block pr(6.17-rc1) introduce a regression
+> > > if nr_reqeusts grows, exit elevator will panic, and I fix this by
+> > > patch 1,8.
+> > 
+> > Please split the patchset into two:
+> > 
+> > - one is for fixing recent regression on updating 'nr_requests', so this
+> >    can be merged to v6.17, and be backport easily for stable & downstream
+> 
+> There are actually two regressions, as fixed by patch 5 and patch 8, how
+> about the first patchset for patch 1-8? Are you good with those minor
+> prep cleanup patches?
 
-Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
----
- .../mips/lantiq/lantiq,dcdc-xrx200.yaml       | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
+Then probably you need to make it into three by adding one extra bug fix for
+`fix elevator depth_updated method`, which follows the philosophy of
+"do one thing, do it better", also helps people to review.
 
-diff --git a/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
-new file mode 100644
-index 000000000000..5648b9676b3c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mips/lantiq/lantiq,dcdc-xrx200.yaml
-@@ -0,0 +1,32 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mips/lantiq/lantiq,dcdc-xrx200.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Lantiq DCDC (DC-DC converter with voltage sensor)
-+
-+maintainers:
-+  - Aleksander Jan Bajkowski <olek2@wp.pl>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - lantiq,dcdc-xrx200
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    dcdc@106a00 {
-+        compatible = "lantiq,dcdc-xrx200";
-+        reg = <0x106a00 0x200>;
-+    };
--- 
-2.47.2
+Thanks, 
+Ming
 
 
