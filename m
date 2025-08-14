@@ -1,201 +1,131 @@
-Return-Path: <linux-kernel+bounces-768373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70EFFB26076
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:15:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69573B26081
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9306A20ECD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:09:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A4BB188C58E
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462FF2F0673;
-	Thu, 14 Aug 2025 09:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1852F90F9;
+	Thu, 14 Aug 2025 09:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YLO/8KVW"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xf8P/+q7"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C4F2EE61B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0AC2EAD0D;
+	Thu, 14 Aug 2025 09:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755162376; cv=none; b=fTCANx4yzKXpy+FiK3h+eSCybYJ0gpS4s7GDGU0Tw60nYbJl2oin8009NtjrWyki+m1f2zklUbgGz6Ej8e9ZpM/9cM91Kx/lQp3aMpbHqWWyLIq3qJO3jkgMKurgECn31eypnCXp42JRJS2uD6gBg9lCxHHRNgJMRuDxAcMNtj0=
+	t=1755162458; cv=none; b=tas6mO3ZA3tLpnYP10BhaedqODzEiQejs49esWTvt7yrRcfYcYkeshENuljoHUfBqJ+KIg3ymyyE92+kHXH3/M5tn/18Axu3Rx6zJVQqL9nHPYmrNC/SrQe6ud143fKSLAtzMv0LImSFpJvwVjkPSbzawVGk9mFtPfTtA8qweeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755162376; c=relaxed/simple;
-	bh=gSNVIBdadQgcywxi9MYDP36qEK0ZNFmDF+sU8utwJG8=;
+	s=arc-20240116; t=1755162458; c=relaxed/simple;
+	bh=w8hCbPXfmihu7zR72JNGg3vbfSeuvBM7obhn0s4J7IU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b4jJzNbNH4DsPJv7mH+ENMm6Jozg5O0gX84rw6kbr26w94wonwDKkix2BcvYtOtRYRHa8hU1WfWp2XAHAfyaXLj/YtEJiDn9heT8BsXHBlX/eK+Z9I5rELUs1H4GYisywmDhCLI6ADEUW8Nfk4ereoUF7mKTejOuaP7ghvlayPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YLO/8KVW; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55cdfcc0ceaso1706391e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:06:14 -0700 (PDT)
+	 To:Cc:Content-Type; b=KsgTihtT+eq8SXnymtHhw9hHT8Zg25T9G7R97Isd5tUEygr5UF7zHki3daTGozDYLPyVZrhAwrkyU1jWPOO9hxC0SkLfzprSqpfhT+T8BOMPsYQ9JifkTOxS+79ez3JzQXqEL+BmKbm+9nakEtxGv/DCChmiOkUlxNxLazKw3hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xf8P/+q7; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b4717006ea9so75049a12.0;
+        Thu, 14 Aug 2025 02:07:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755162373; x=1755767173; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1755162455; x=1755767255; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YdQWt9Kme6F2JRMMWpXobiCrHf8Uzy/gSybqJMT791c=;
-        b=YLO/8KVWSlNQJtljtVq/icJVVPvIftEsVZBWMIhrLhNNXmrASww9TLn5L4D31QVE9m
-         t+FXjgCeZMiQx0slz0eJR0j4Bx4gZUxCdNSJaZKnECQ7IcnlZOm7nBZzfSuFpN6MzyJ2
-         dWvydv5gcZhElCyBvVZLdurBXmNqaLW8B6f+k=
+        bh=L58BGBn53CdEaQI/pHX66dG5GkpXtAAIQcYXknidNg4=;
+        b=Xf8P/+q7FP7Sj6wUfRijJLt6MHzwIgFGKK3Hy+/iaRBWNmJuKnEgp6Q4heqzKmy/ns
+         CbI6us6t0QerSP9xU4HCyBAnFO47uXNHXmDTEWFDE4aFl3F5tw1EMXrHhwaSP+Q94Yle
+         hUbYVGt33Rl4FUjof+vKYA3XEAGntJgIiKneoa6py0QbM1xesztFcO0PJlfLO/KPayfk
+         KbzFIZVWKytOYTo70RHDQFLmhTYeuaKaxxOkBZxC70kMplRE79PdCvYuqPa8Hq/oyrDP
+         ieTWI3j8jVmZRD9aRu9AZuZL+UhL997ePMlnNvAUIbatTYk+36efO+YO7O0aq6Vs8DaZ
+         7qxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755162373; x=1755767173;
+        d=1e100.net; s=20230601; t=1755162455; x=1755767255;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YdQWt9Kme6F2JRMMWpXobiCrHf8Uzy/gSybqJMT791c=;
-        b=SGbR0M8dZKHiZXsv5/BTKG2ydsn2ehJB9HZr1zChjkp/BSgtHjvWn3c/LrxO3MyhUA
-         fvxBK3dzVS4Gk9lGPU8Iy5csvqV5yRemurvAFmMa+qcznk9HOqaI0JjtGnjsSKCvt6vz
-         QGMfKV9O5R6FBG8vnyA1oYStb22A7mQU0A1YpLVN31xnbaK6fMcGWgmMQke7p5fRR5GN
-         NYoQDEOvqyU2Uab3lNhYqoWr9PWG9kYrNrPikn84AouGvTfX26cucO5JUUXMvhodmZq1
-         bAZlb7srDDRAIvgroIrjdLhkr2813iom8oZfNa669iwi2Ue7QC1KxGR89TId+gX79d1t
-         F9Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVipRFWzUuuEwAJp+IEFApH2mAvBERvgTCOg2lbX+xcmyAzb9f+wqOIqODBmmfpyrQwFZbrK0KLj76xjlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdDDZdLcuC3y7Tm3BKU12/7OqzX2tFvXu4mMfpKof3krt5/nbU
-	Qm0VpkBT0JYr+VqWSEj7yZmZJ94bEs6xlN5lcm4jpZ4Ee7UjcMR/fiIjIcAcx1It8EAYamTSLk/
-	Q0tHznFoYSsracDax/gMX2Jc7KvtZjZR2PyDklnSE
-X-Gm-Gg: ASbGncvjSF98X4KwQ5IHJpK95eGUOtAh0phZphSH0A9bGcJTmGhaMsFJxaQS76sL6Qt
-	nVrOIPHFqOpIOWm3vZVYRWYxNfGo1J4zahISThJxwMdLVbLTFNyb8D+QmmGfvkpPpDN1SGnDQXN
-	6GrAbKuRaukCyhITrS5ldule81+TWDYAyY/Nk4pNsC5UDWrU/rprITYhLzpdqMdnFDiAJF7KOoC
-	w1f21EA7Eeg5Rf65BgiikLtsa3357GSheE=
-X-Google-Smtp-Source: AGHT+IGU9GnphCG6HSBtyUKLlXUpoZ2Yg6vOrNiRQ7pS1lm8OOaCvT+3b+1fL4SVXK6wQQu9nnSh1xn95CGSvALWb8c=
-X-Received: by 2002:a05:6512:36c4:b0:550:e8b6:6996 with SMTP id
- 2adb3069b0e04-55ce62621ffmr411660e87.2.1755162372342; Thu, 14 Aug 2025
- 02:06:12 -0700 (PDT)
+        bh=L58BGBn53CdEaQI/pHX66dG5GkpXtAAIQcYXknidNg4=;
+        b=S1DHe7qi75DsfyW67moRz6bTP62osfv4ZupVGK66+/6oRl/PSBBrpxouOA3s0CK+/J
+         eVeuQ1mNW+ATUkgbrOub/RJu5cMNsZuFZI2O2s01GlVIudT15VlPvi31NoSysrV0I/os
+         aVYTDNLR8S3lb7pSeDeQD1Y4n5d82Sb6ASiJ8HH9C+AgCUMz/yZuOQyTSR2XsVIWAvkT
+         1tfHA2IIUyf7STmWmv5VCsH0unkXUZrLNgzaVI/RBKtSQ2XqptqYMHuv1EtcxLTj0nXV
+         Nr3ERjmLyxOCGWQ2sOEZaekqoFppCx2c1336nLoWSXz6WSP4N+InZTmzBoBl5l4qO17R
+         La1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2AkLqzX62Vycq+X6usAtf/cvgf3AuXGjPMkTI5weB5qRSez+BRbQPp0VwlXAi8l6t6j5XcN6i@vger.kernel.org, AJvYcCUwuph8ybeUT2N+0zvQDwO/H6dav7+g/3s7KdJDGD4tHT73X+tE+FVegC8zuKNl182WSqoaLbPtQjI=@vger.kernel.org, AJvYcCV10rheNuYpNIv9Osg6EBPwerim/bHVHpgLsdwESRLoMhXEXTYw3Io03QZozPaa+nRh+WYL+3hoX80D@vger.kernel.org, AJvYcCVwLNHl+ID6/Mk6+JKZ3yCFOn5nOsH7AfmBmJybSY1PXDzdUTPH/dVuvZ036iQnRjUFqnHiwu3BFaPpDFL6@vger.kernel.org, AJvYcCWU64E2Bp0aS+//LKch0vW1UXHMSEz6PgT8bo77hg7nGHusEgUdCYOp4WqjVpmDmrVSGSl9wQN6LXE8PTZzXhG+@vger.kernel.org, AJvYcCWdbDoZ13ifKjijbNra1QB+3WrB9S7KIM3u7yTRScbvEWDRq5R5A/ySrT9+wgKeLQMo1WtBVxdQAJJwyw==@vger.kernel.org, AJvYcCX445xNq7eU4zuJA/nSWvEm96C59lCZYfvEIUslFz8g4O8hivF2aQ0VWYkKENKl2/90MdduNfdC33C5@vger.kernel.org, AJvYcCXDrwJ8uyybzhIeAp2qlzh0mixgbHHjA9WAqkaFZmBkGgDrf0QyPf6JONV3+Y/HKmq4mupee4IslTmAYfGCXto=@vger.kernel.org, AJvYcCXfV82ubBzNsUdCdy60J2WTzXOtVfNtxdObhOckteiU0awOI7UNKhP/w/7Ds2KXNuiCEi5+9Jtya9bnx1W67A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YypINaXScbYWu7AGqasYGV8fdyR3+x9hPlk+3U2Vr5IEgIvclm8
+	TFzwmHPLFMzEx3AggrVZ99bzcKxt2fjFBRfTRbQewEezlSqj6NnVPkWqnjD/lUMDNgUmSe3GZSF
+	lykirKCdz7P7+z8jZZE+LKaVYuYSSCMf78Th3BwE=
+X-Gm-Gg: ASbGncvc/qynT4YZKqaP9Sy1oQaLptA0kKszFqn87yqjhQVN1bnzA5BpLAQtpKgyJxv
+	DNf6bsK2GhoDrE2MqVcHfNhoyX9mM9xiDFQLIJN6MYP4WIWtzgsaihTxUhWYtMpqW++OdzckXGL
+	arntGWRa5tL8xRO6g7m32YglmVjV7rPn7awFAh53Z28pQXssmWj0nmaGr8wApLqHwNurFUA/gkV
+	f6a
+X-Google-Smtp-Source: AGHT+IGz6bvQQDm0FDjw3b6Z4zK6LWUctdhJrkeBml6MEiQLxKVKVm/2E3KeNDssnbiZd1rTjK+/reiEgrFQf4jGtow=
+X-Received: by 2002:a17:902:ec8d:b0:240:5c13:979a with SMTP id
+ d9443c01a7336-2430d22a83dmr44771485ad.9.1755162454741; Thu, 14 Aug 2025
+ 02:07:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814083144.191554-1-wenst@chromium.org> <CAC=S1nhz_ESY4VrgWs=dVinLtdOamh6to3EgD1w1Kx=4YBOD9A@mail.gmail.com>
-In-Reply-To: <CAC=S1nhz_ESY4VrgWs=dVinLtdOamh6to3EgD1w1Kx=4YBOD9A@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 14 Aug 2025 17:06:01 +0800
-X-Gm-Features: Ac12FXy4zkwvr3Zx8Pq_FLpV4JVPqltCgSdUQmuTTkGxHam842ZxAUktUDXeYyQ
-Message-ID: <CAGXv+5Hke6aEYdyc096_aeS9KHiOzcNqirB-rFT2odepaYhayQ@mail.gmail.com>
-Subject: Re: [PATCH] media: mediatek: vcodec: Use spinlock for context list
- protection lock
-To: Fei Shao <fshao@chromium.org>
-Cc: Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20250813-core-cstr-cstrings-v2-0-00be80fc541b@gmail.com>
+ <34d384af-6123-4602-bde0-85ca3d14fe09@sirena.org.uk> <aJ2dST9C8QLUcftA@google.com>
+In-Reply-To: <aJ2dST9C8QLUcftA@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 14 Aug 2025 11:07:23 +0200
+X-Gm-Features: Ac12FXw9McZU8Dlo3fmof7Lor15J3uB_TM7gEYyMiiYtjURPvTaxggH_LYJAg0o
+Message-ID: <CANiq72nnXG8mzGD5ydu1pMpaBAHTWvfQWSo0w38xefu=1JSURA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/19] rust: replace `kernel::c_str!` with C-Strings
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Mark Brown <broonie@debian.org>, Tamir Duberstein <tamird@gmail.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 4:59=E2=80=AFPM Fei Shao <fshao@chromium.org> wrote=
-:
+On Thu, Aug 14, 2025 at 10:24=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
 >
-> On Thu, Aug 14, 2025 at 4:38=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org>=
- wrote:
-> >
-> > Previously a mutex was added to protect the encoder and decoder context
-> > lists from unexpected changes originating from the SCP IP block, causin=
-g
-> > the context pointer to go invalid, resulting in a NULL pointer
-> > dereference in the IPI handler.
-> >
-> > Turns out on the MT8173, the VPU IPI handler is called from hard IRQ
-> > context. This causes a big warning from the scheduler. This was first
-> > reported downstream on the ChromeOS kernels, but is also reproducible
-> > on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even though
-> > the actual capture format is not supported, the affected code paths
-> > are triggered.
-> >
-> > Since this lock just protects the context list and operations on it are
-> > very fast, it should be OK to switch to a spinlock.
-> >
-> > Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to protect d=
-ecoder context list")
-> > Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to protect e=
-ncoder context list")
-> > Cc: Yunfei Dong <yunfei.dong@mediatek.com>
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> >  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++----
-> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++-----
-> >  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
-> >  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  4 ++--
-> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++-----
-> >  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
-> >  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  4 ++--
-> >  7 files changed, 26 insertions(+), 20 deletions(-)
-> >
->
-> [...]
->
-> > diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if=
-.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > index 145958206e38..e9b5cac9c63b 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> > @@ -77,14 +77,14 @@ static bool vpu_dec_check_ap_inst(struct mtk_vcodec=
-_dec_dev *dec_dev, struct vde
-> >         struct mtk_vcodec_dec_ctx *ctx;
-> >         int ret =3D false;
-> >
-> > -       mutex_lock(&dec_dev->dev_ctx_lock);
-> > +       spin_lock(&dec_dev->dev_ctx_lock);
->
-> Do you mean spin_lock_irqsave()?
+> Tamir mentioned to me that he ran into a daily limit on the number of
+> emails he could send.
 
-This function is only called from the handler below (outside the diff
-context), which itself is called from hard IRQ context. This is mentioned
-in the comment above the handler.
+He is posting the updates around the migration in Zulip:
 
-> >         list_for_each_entry(ctx, &dec_dev->ctx_list, list) {
-> >                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vpu) {
-> >                         ret =3D true;
-> >                         break;
-> >                 }
-> >         }
-> > -       mutex_unlock(&dec_dev->dev_ctx_lock);
-> > +       spin_unlock(&dec_dev->dev_ctx_lock);
-> >
-> >         return ret;
-> >  }
->
-> [...]
->
-> > diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if=
-.c b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > index 51bb7ee141b9..79a91283da78 100644
-> > --- a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > +++ b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> > @@ -47,14 +47,14 @@ static bool vpu_enc_check_ap_inst(struct mtk_vcodec=
-_enc_dev *enc_dev, struct ven
-> >         struct mtk_vcodec_enc_ctx *ctx;
-> >         int ret =3D false;
-> >
-> > -       mutex_lock(&enc_dev->dev_ctx_lock);
-> > +       spin_lock(&enc_dev->dev_ctx_lock);
->
-> Also here.
+    https://rust-for-linux.zulipchat.com/#narrow/channel/288089-General/top=
+ic/CStr.20migration/near/527957336
 
-Same reasoning applies here as well.
-
-ChenYu
-
-> Regards,
-> Fei
->
-> >         list_for_each_entry(ctx, &enc_dev->ctx_list, list) {
-> >                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vpu) {
-> >                         ret =3D true;
-> >                         break;
-> >                 }
-> >         }
-> > -       mutex_unlock(&enc_dev->dev_ctx_lock);
-> > +       spin_unlock(&enc_dev->dev_ctx_lock);
-> >
-> >         return ret;
-> >  }
-> > --
-> > 2.51.0.rc1.163.g2494970778-goog
-> >
-> >
+Cheers,
+Miguel
 
