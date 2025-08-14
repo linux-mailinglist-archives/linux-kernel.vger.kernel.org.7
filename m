@@ -1,149 +1,113 @@
-Return-Path: <linux-kernel+bounces-768851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6DEB2665C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:10:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADC22B26639
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C925A727BAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:08:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072CE1CC23BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD2A3002CD;
-	Thu, 14 Aug 2025 13:07:21 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28BB3002B9;
+	Thu, 14 Aug 2025 13:06:48 +0000 (UTC)
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2EE2FD1D9;
-	Thu, 14 Aug 2025 13:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C93E3002B0
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755176841; cv=none; b=Nq1mdrfxA6lIeQCTjd0evrrCoGoCf4lqfLTC436OLy2SdEjg5nLsw/S5CttZDvrxHd/4w955TaENNp8sTcWDnv21zNAYNN/klUfj39d10eWK8jGrGLoch29ZbHIlPQrweZIFtxO2eu94EMBeWLJv19Rak4AgsZRdmX39YiOOxUY=
+	t=1755176808; cv=none; b=AQGWDZ5KfVB1l0voF8WJ/hpDmUf1LjPwYLT5FeeSkQO4/C3F8nAZq889v/xnWii7QA3z3CqVNJUAsvg3vlnARjlIKU78RrVbyLR9T495I4RYhYEvKxLrJZT3N3jWoaqbHzgYJ+HSUTPXZ5zgjtJLDtJ83DQZMQFPFHpheyUETtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755176841; c=relaxed/simple;
-	bh=PKcSZQ4ipFczTaWb2tQTT3R0z5gejcAuUKoB9Ktsqcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bi+d60KPLqrRstmXFFlUTXOFFekrEu12R0M4f027WjHlvTYnLF+5vvj8HhmdDK5J/DHGT9zyHNANcOOJB+ZEuwL8lwMXAEa240zXOy0VwVu5VGmUFlexcdUPy1lSHFetGqbzKwMlbtWphuCpLI6n3dKH+CL8b0mwjPq6xMbrjsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb61f6044so170094466b.0;
-        Thu, 14 Aug 2025 06:07:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755176835; x=1755781635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XFUrylcigol2hllrcza769/tLyOk1d4CmbqHA8zoLyw=;
-        b=QxGq0CcfJSHaSnGQJXbvwnJKX1ZRudptteEWtUg5M9EvvV3cy+rC6gs9sr5A7RNylS
-         Znnc8OcCLqxaK2xes/w2THUPkxdLG7+floyIRI0ox3TL4Azm07uhqJ1493C1Z18Gdw3L
-         NBiyQF175+pquzRNofT+G6pkDRnAr67YEgojycjVPjoYenIQwGD+fu3Wd4dFSeqAA4FZ
-         OB6kg6Hy34kDA/p9RyCo89OLIvTYa+7z+wJAGNAmlvjGZGMZ6yNXctLuGZn8GgVcWtjA
-         IdR+MEXio37uLpFXSTErXtkBnL12Q3BRS+hg3WvBZtyK8EROiaz2cnql8Zd6lqMFaRK6
-         kucg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjrNUingE8yocG/e1Xrc4VTd+IdkfS3IwU6aT5sElwzu5wcLJ+ZBTNQtjwZT1ZpApChWo9Yt+2Y5PR@vger.kernel.org, AJvYcCWzDoL4mcx2fj1vZkqhxw5AScK6uUZAl8iCYBKXUTSf649ShqU8zBrdrwzgqGAsw11/YSWr0VBZG+KTGWbt@vger.kernel.org, AJvYcCXnCV8RHn/LmsT/rOEHr5rg4GiPhO86nDsNDxyP657KIw1GH66T00gjqWB+NDac8M4oB3LxR9susNek@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5DnPNvYeNQyWd5AIwBQT0wksgpo+o4U+seZ/3VzZ5sszLVFPW
-	IOqa2Wt4P40GnqtEbb3D6wW0JTehpglUHkdIdPlSx5UEQX5o8+FU3tkLoJqLHMhIpaw=
-X-Gm-Gg: ASbGnctWIjbeHA3SUg9nEibh1NvQnUTUEyWp3cDntY/V+Atfu8X8FnX6nmO8TaqTEvD
-	u1ObJ5MW8r9tpSW5+hoL7e2HRRoeBS/V+8KEraA3EUyvQ5MkPGquARsMK4Wq59ZkqkqeEnXcRMO
-	gqVTRsQl+WOU/wMK/o8LF1Pj4wlSNARs+k52RCkpSi/MjGvagJ1tgrD+bg6COpos7Tpqr8zAoUj
-	eweVpWJZToGregWC9NBFDFCuzJGTHrpL7iBPQW5l+b1ATY6J1fn8hwre3BiSKu8dyodE8MniVGd
-	NvlBkihb4EVaXHFzd354nbKlGHoPhnnw8SUWSoTpie4QoEO0Am/XoCB4wOzzLXfy0Jd0X+nONRv
-	jtAsjF14WmiZ58zGhjTTfsZ9Ln/wdeLO3I6RoTvMZzbyTaKTETAYZ
-X-Google-Smtp-Source: AGHT+IEh8ewfHG9gciJUmmoUZBD9xaqv48Dvi07ch0G0vtVoWjSGhsm7LtgVe6btXF9drZMfB6XWnQ==
-X-Received: by 2002:a17:907:1b13:b0:af9:23b:9f9 with SMTP id a640c23a62f3a-afcbd89cfecmr230890366b.24.1755176835203;
-        Thu, 14 Aug 2025 06:07:15 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a38aasm2599402266b.37.2025.08.14.06.07.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 06:07:14 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6188945f471so1993942a12.0;
-        Thu, 14 Aug 2025 06:07:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVaU7PsUSQF2wElognPF4Q47253/igRgua98qRgZR32zQruTcqHO89Qyn4uRi1u6FVsUWWIFVpQBcIX@vger.kernel.org, AJvYcCWJ68HfEtELqBY9nnhi55z8DavHnsmBEsTxF2Vgy/O+AbsZFmKugxunD7LSxAZ2RwpJGY4g78bVBNb5TNWt@vger.kernel.org, AJvYcCXAWflTivH6IPYWg8cs2gFbRSf9R2ml5B6OiQYlzPhaYWXpLugX9IyekxZEphu+JHhT+q3NLEpxrKCZ@vger.kernel.org
-X-Received: by 2002:a05:6402:5206:b0:618:3521:6842 with SMTP id
- 4fb4d7f45d1cf-618921e9bfcmr2202592a12.16.1755176833833; Thu, 14 Aug 2025
- 06:07:13 -0700 (PDT)
+	s=arc-20240116; t=1755176808; c=relaxed/simple;
+	bh=rBSOaaGlQrBIbubiWvvRgdcKsQgmkod6l6U7O0ehnTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DQVawo0KKtnSBKsHkJU6kCxaRr8zGO/HzIRl9sD/0yeWx8h6FKt786+cqwQ9ZyNkL0S/Vx+7v+QGZgg86djzyg0k3onJrnsBwEX6+0+0wC0u2e7yGvwVfw4hxeGztUjZlglgCb+nwF+kbr9ocvEtiN9Ua04IOEFEPW7Gq6pd+uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=linux.dev; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 14 Aug 2025 09:06:39 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ben Collins <bcollins@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] iio: mcp9600: Add support for IIR filter
+Message-ID: <2025081408-umber-axolotl-e6c6dd@boujee-and-buff>
+Mail-Followup-To: David Lechner <dlechner@baylibre.com>, 
+	Ben Collins <bcollins@watter.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+References: <20250813151614.12098-1-bcollins@watter.com>
+ <20250813151614.12098-6-bcollins@watter.com>
+ <a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812-wip-smc-rtc-v1-0-66a8e96dad60@kernel.org>
-In-Reply-To: <20250812-wip-smc-rtc-v1-0-66a8e96dad60@kernel.org>
-From: Neal Gompa <neal@gompa.dev>
-Date: Thu, 14 Aug 2025 06:06:35 -0700
-X-Gmail-Original-Message-ID: <CAEg-Je84XxLWH7vznQmPRfjf6GxWOu75ZetwN7AdseAwfMLLrQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzLclnfzNMdgfWr5WLv-lJF3C441CLYE6NCa_SPc5-EdJWTW2hkFqFeYNQ
-Message-ID: <CAEg-Je84XxLWH7vznQmPRfjf6GxWOu75ZetwN7AdseAwfMLLrQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Apple Silicon SMC RTC driver
-To: Sven Peter <sven@kernel.org>
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	Hector Martin <marcan@marcan.st>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9c8457f-a364-46e2-9e31-ceab0e1c9894@baylibre.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Aug 12, 2025 at 11:25=E2=80=AFAM Sven Peter <sven@kernel.org> wrote=
-:
->
-> Hi,
->
-> Now that the core mfd device has been upstream I've prepared one of the
-> child drivers that is still missing: RTC support.
-> This driver is required to read and set the hardware clock and requires
-> a reference to an additional NVMEM cell to store the offset and thus
-> requires a device tree node.
->
-> The series applies cleanly to 6.17-rc1 but is based on a tree with three
-> additional commits to add the SMC nodes to the DTS which didn't make it
-> into 6.17. You can just ignore that and pretend this is based on
-> 6.17-rc1 since I'll take the dts update through my tree anyway.
->
-> Next to this SMC child driver we're still working on an input/misc HID
-> driver for the powerbutton, a hwmon driver for the various sensors and a
-> power-supply driver to manage the batteries.
->
-> Best,
->
-> Sven
->
-> Signed-off-by: Sven Peter <sven@kernel.org>
-> ---
-> Hector Martin (1):
->       rtc: Add new rtc-macsmc driver for Apple Silicon Macs
->
-> Sven Peter (2):
->       dt-bindings: rtc: Add Apple SMC RTC
->       arm64: dts: apple: t8103,t600x,t8112: Add SMC RTC node
->
->  .../devicetree/bindings/mfd/apple,smc.yaml         |   9 ++
->  .../devicetree/bindings/rtc/apple,smc-rtc.yaml     |  35 +++++
->  MAINTAINERS                                        |   2 +
->  arch/arm64/boot/dts/apple/t600x-die0.dtsi          |   6 +
->  arch/arm64/boot/dts/apple/t8103.dtsi               |   6 +
->  arch/arm64/boot/dts/apple/t8112.dtsi               |   6 +
->  drivers/mfd/macsmc.c                               |   1 +
->  drivers/rtc/Kconfig                                |  11 ++
->  drivers/rtc/Makefile                               |   1 +
->  drivers/rtc/rtc-macsmc.c                           | 141 +++++++++++++++=
-++++++
->  10 files changed, 218 insertions(+)
-> ---
-> base-commit: 772c260c9c7f916c9a2508839df4f03fc19f3773
-> change-id: 20250812-wip-smc-rtc-e856b6f24603
->
+On Wed, Aug 13, 2025 at 05:52:04PM -0500, David Lechner wrote:
+> On 8/13/25 10:15 AM, Ben Collins wrote:
+> > MCP9600 supports an IIR filter with 7 levels. Add IIR attribute
+... 
+> >  static int mcp9600_read(struct mcp9600_data *data,
+> > @@ -186,6 +189,9 @@ static int mcp9600_read_raw(struct iio_dev *indio_dev,
+> >  	case IIO_CHAN_INFO_THERMOCOUPLE_TYPE:
+> >  		*val = mcp9600_tc_types[data->thermocouple_type];
+> >  		return IIO_VAL_CHAR;
+> > +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+> > +		*val = data->filter_level;
+> 
+> We can't just pass the raw value through for this. The ABI is defined
+> in Documentation/ABI/testing/sysfs-bus-iio and states that the value
+> is the frequency in Hz.
+...
+> For example, for 3 Hz sample rate (18-bit samples), I got:
+> 
+>   n  f_3dB (Hz)
+>   1  0.58774
+>   2  0.24939
+>   3  0.12063
+>   4  0.05984
+>   5  0.02986
+>   6  0.01492
+>   7  0.00746
+> 
+> I had to skip n=0 though since that is undefined. Not sure how we
+> handle that since it means no filter. Maybe Jonathan can advise?
 
-Series looks good to me, thanks for submitting them!
+Thanks for notes. If I'm reading for datasheet formula right,
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
+k = 2 / (2^n + 1)
 
+So n=0 would be k=1. I did this formula for n=[0-7] and get:
 
---=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
+n	k
+0	1.00000
+1	0.66667
+2	0.40000
+3	0.22222
+4	0.11765
+5	0.06061
+6	0.03077
+7	0.01550
+
+I'm not versed in filter frequency, but would these be the correct
+values to use for the coefficients?
+
+-- 
+ Ben Collins
+ https://libjwt.io
+ https://github.com/benmcollins
+ --
+ 3EC9 7598 1672 961A 1139  173A 5D5A 57C7 242B 22CF
 
