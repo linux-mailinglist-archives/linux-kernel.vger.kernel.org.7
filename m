@@ -1,120 +1,116 @@
-Return-Path: <linux-kernel+bounces-769121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3961EB26A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBD8DB26A7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CEB5807B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 439A53A21F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048EB214814;
-	Thu, 14 Aug 2025 14:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7BD52144D2;
+	Thu, 14 Aug 2025 14:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1XenmWT"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yz5cvluJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A5D32142D;
-	Thu, 14 Aug 2025 14:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3171B043A;
+	Thu, 14 Aug 2025 14:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183576; cv=none; b=T497ZIl0JTKPzTaUjpObCTVvERYba76UPjbt8/jXqNS3goHx95aHKljnm6rYf/yKgRm9/4QFovxRyrKVJzTrlQZ1izWxASUTOTEs8oLYQC0GlvLVkmAfBWeIzfdXNdyNAZFqktrLGq3ibtSdMTJ/Bcq+JkR6+IlnW5lwXfKsUOs=
+	t=1755183576; cv=none; b=tU4irnyw+iMuV8hI36gT3VeqAejfyGTmgVmArviviepxdxPVk2gNqfyL3S0gIZuI1n9QF4w6dqG2rGawhuHeI/Oa7aWC7GJIe9tWFK+Z85qMTudtZMNsdIwcg6kMleKmxO22z8WCxjPg/GlFJ9m2nORq942QJ4ROwl/yO8X2f2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755183576; c=relaxed/simple;
-	bh=xik06j9J7NbriowQ9Jg7OPweDnDxx1OwDQ3G6EGce/U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ojqtFwXrehVxTzcwf6w230Fnl79WaJT45cArQz4qf6N1Yn7bC84/ChWm7RQdInCvOT/LvOQ3PMIdrIG83Way8jrQxr5FePMKMfCOMnD0ILAvMi3BM+kTBvhhJEKSB10svWUKJhegDwHJmmcmBoej7vjR28R2ZOhQn/Px4Q5tKxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1XenmWT; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e2eb3726cso660656b3a.3;
-        Thu, 14 Aug 2025 07:59:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755183574; x=1755788374; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WQt5BqMjb9nx7BmE6KGMd9a47fQxp1m276b+AFq/m20=;
-        b=O1XenmWT8GpuAnpAu+cPiE1Tyf0ApgNNxZS7xMw+2ra61GJ0A25nSSIXOCHTZg6v9q
-         Gh1jHX/Nn6KP/R8H1eN3/gYB1YmvzQ+K09r/06rh6j9ieFWg3kMmkOrE0vgtFqrfaG1l
-         OkxnzyQuAJ7PfZyPknlm8513R9akFatfF1yQ5vRSbXll3Pj87NiY/QumhGH6ohBlr05s
-         a2O3zh1CqW4KXqPzuFkspPKyoMSFexHqjBEdscv7OGdjyk679ny9XFSc7HpmTEXBHa2e
-         sO2IU+YhlhnwoBLSAk3VJc6RktqSRBHHgJZaol/DQksRaeIZ3vD4KPsby3TphMn4Gj0q
-         8/hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755183574; x=1755788374;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WQt5BqMjb9nx7BmE6KGMd9a47fQxp1m276b+AFq/m20=;
-        b=YLjFk61efnABH43aT6nbY8bK/FSaBibXK1HI0SyYaTsqbESKvC+65lPOBKd/G2x94g
-         6zi/VqhHLvG7SXtTkD/AfcWvwH+T8weQYScwCZiWSPg69ba2ierP8/rdvph/6iMUqZoM
-         VN/4pKDbGU+I1Q1mb9FULcWeTzUjCrWnkU0BOc0fxluvlj+F9FMDLYpD95c8LUGeFx1K
-         sKZ4qPmClQHYDgLD61/drKQ22DVuX9/qtJThdP9ON/wKz1IQcRg5qY/ByP6DLoIXMS+j
-         hXeDMa/0VZTLTxxzYXRJ3aKZiIWTtD+XHkK6sdjYPbHk2z5DngIxU1HXeI9hVnjwoPcM
-         tSvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAsKjfF78XXodcUXGaSLqmmOov/XkVy6NMtq4FM/I+4R4MU+bY7sr5Fbv64oUqoOftoxCTi739d2FmjeM=@vger.kernel.org, AJvYcCUyDnimxImy0zg6f1EwSHPM+dWaKPxSsKO57gVzDyBuHP6fbl5OtMf2iOD8g342EEQfiYoUGrpj@vger.kernel.org, AJvYcCXDC7jjyrdO3M7iioHPJ2Tm/V1IYtKkhjfVN3ruOvZRnYyIZv5U/sMBJIaxByzgpjJVGgJiuMMncTPa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv1qKK3bO5hTiqkfh3+PM83DLr/dV+w4sejMqkVT/KaqDlHvcn
-	TvVVVyddgpNEyDJ+fpjLquOyaQ9HcXXiYqat28wScCbtvdsi+M2rUTt3
-X-Gm-Gg: ASbGnct5l4DKMcp6jfabZ14rJoF12P3VcJO4wPzG15R8LXTI8UrPEkK+bPZIXiab5C3
-	PF+zbL9lFlw0fMRVQ1N4RD1c1iKk8GwEx4j9OB3OZZhZriHzchJVRSQW8rn4HDetKFQjLlAHzbf
-	L2+U1w9Zbr3NczpTNmIAjnb4CVQWgr0LLsVBVPlvS93SNQAPzHuNQ3/phn1XYkzpaFMk1UdKgMN
-	cRcjmblwHbGGOC21h8oryTjzDdfCk2MuX12vwByI0iqkRJaw2xJTx80hSHQCvDjdF4gaG9uU1Wl
-	6fjFutXWwwg/ccbU77Fs7AuBjlr4n0+IdBuql2Oj5x7IjrPMMnyhPjGJy6W3N8cskNFP1wQtnLa
-	GK1x0uYkpTbFMtieHSucm1xV/QMIWJyjBiXzf26COGJZKyeKONrG0
-X-Google-Smtp-Source: AGHT+IGRMPcf4GCPT1hT8R0Sqa5lVHS0BKPn1vKIJX5n1+A/XkyAqp+HbZf0i+LSOPW8MgiygRk/vw==
-X-Received: by 2002:a05:6a00:2d8f:b0:75f:8239:5c2b with SMTP id d2e1a72fcca58-76e2fdb134dmr4953990b3a.23.1755183574170;
-        Thu, 14 Aug 2025 07:59:34 -0700 (PDT)
-Received: from BM5220 (118-232-8-190.dynamic.kbronet.com.tw. [118.232.8.190])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-76bcce8e854sm34960878b3a.46.2025.08.14.07.59.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 07:59:33 -0700 (PDT)
-From: Zenm Chen <zenmchen@gmail.com>
-To: larsm17@gmail.com
-Cc: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	pkshih@realtek.com,
-	rtl8821cerfe2@gmail.com,
-	stable@vger.kernel.org,
-	stern@rowland.harvard.edu,
-	usb-storage@lists.one-eyed-alien.net,
-	usbwifi2024@gmail.com,
-	zenmchen@gmail.com
-Subject: Re: [PATCH] USB: storage: Ignore driver CD mode for Realtek multi-mode Wi-Fi dongles
-Date: Thu, 14 Aug 2025 22:59:26 +0800
-Message-ID: <20250814145926.3067-1-zenmchen@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <8e9066d4-1b04-4423-869d-2bac0a3385a2@gmail.com>
-References: <8e9066d4-1b04-4423-869d-2bac0a3385a2@gmail.com>
+	bh=d3KrOdEoT2zJZHZunSCY/weFGSUsN4QrN+Bx3hTSE44=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fcCWVoJjF6rzbRwtnG3xkpFgsczJZEM11TaRf0iDXKRD5QBbOmUbNEePmvZo0UDOoqCStP7IYoogK01CQ5g216I5hoPHNrO0mlrr8e2a76G5o/9nvXmsKfQBAr10lv+I3zO+u9/OhVrEoDZmEyjk5IVDSrO9FheJijxt4hGTYi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yz5cvluJ; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1755183574; x=1786719574;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=d3KrOdEoT2zJZHZunSCY/weFGSUsN4QrN+Bx3hTSE44=;
+  b=Yz5cvluJo6tm1NohYxOoJnu3SI4gfVpRWQzEVBaDp5pwJDI3NDX0CjkP
+   u/1HWTycPa1xO2e7o9w6+QmDG39zmBSIMhwOjbkRzOEC+PqXnyMOL3Nep
+   hq4jm/HlR+F3yKdD+QJm2cPy1X3Lx4i5hr/9bxek0i1herPmk8b/33v8x
+   fOfUytdWrltzwB4tYg3iV5pgyqDikPq+nmd0/aXe1AgR6AHbPmX+ybLUK
+   6snvbbwku4W8LTGuMYsckLTqtjL+KvMr6xPMQmIn3oPYgMbInrUQg9T3q
+   /I74AuSBI7P8cUks534uNaCL8a95r0PiNCOhaWXXKcBsSf/cRmG9PXYfk
+   Q==;
+X-CSE-ConnectionGUID: 3sFSbYkdStaX0ZcyqhkAnQ==
+X-CSE-MsgGUID: 0znHLrl7QOeePsjD009AHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="56709637"
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="56709637"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 07:59:32 -0700
+X-CSE-ConnectionGUID: CBQUz6+KSRyap+idAss4VQ==
+X-CSE-MsgGUID: p2QKORO8S/209ndVJ73Uow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="165999986"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO localhost) ([10.245.246.100])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 07:59:29 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, Akira Yokosawa <akiyks@gmail.com>, Randy
+ Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH RFC 00/13] Collect documention-related tools under
+ tools/doc
+In-Reply-To: <20250813213218.198582-1-corbet@lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250813213218.198582-1-corbet@lwn.net>
+Date: Thu, 14 Aug 2025 17:59:26 +0300
+Message-ID: <e84e288af0536cdc406c787301bc6b9b11c0be0a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-> Hi Lars,
-> 
-> If I apply this patch to my kernel, usb_modeswitch can switch both to
-> Wi-Fi mode smoothly and fastly, but I don't know why. @@
+On Wed, 13 Aug 2025, Jonathan Corbet <corbet@lwn.net> wrote:
+> Our documentation-related tools are spread out over various directories;
+> several are buried in the scripts/ dumping ground.  That makes them harder
+> to discover and harder to maintain.
+>
+> Recently, the idea of creating a dedicated directory for documentation tools
+> came up; I decided to see what it would look like.  This series creates a
+> new directory, tools/doc, and moves various utilities there, hopefully
+> fixing up all of the relevant references in the process.
+>
+> At the end, rather than move the old, Perl kernel-doc, I simply removed it.
 
-I forgot to say that I've added one more entry into /lib/udev/rules.d/40-usb_modeswitch.rules
-to let usb_modeswitch support the ID 0bda:a192.
+A wholehearted
 
-$ grep -E "1a2b|a192" -i /lib/udev/rules.d/40-usb_modeswitch.rules 
-ATTR{idVendor}=="0bda", ATTR{idProduct}=="1a2b", RUN+="usb_modeswitch '/%k'"
-ATTR{idVendor}=="0bda", ATTR{idProduct}=="a192", RUN+="usb_modeswitch '/%k'"
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
-A config file in /usr/share/usb_modeswitch for the ID 0bda:a192 was also created.
+on all of it.
 
-$ cat /usr/share/usb_modeswitch/0bda\:a192
-# RTL8192FU
-TargetVendor=0x0bda
-TargetProduct=0xf192
-StandardEject=1
+> The big elephant lurking in this small room is the home for Python modules;
+> I left them under scripts/lib, but that is an even less appropriate place
+> than it was before.  I would propose either tools/python or lib/python;
+> thoughts on that matter welcome.
+
+lib/ contains code that's built into the kernel, I think lib/python
+would be out of place.
+
+IMO tools/python (or tools/lib/python, no strong opinion) is more
+appropriate.
+
+
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel
 
