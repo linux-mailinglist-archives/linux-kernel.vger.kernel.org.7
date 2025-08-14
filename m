@@ -1,121 +1,218 @@
-Return-Path: <linux-kernel+bounces-768894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28383B26739
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:27:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766F3B2670D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3F7681525
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:25:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05D28B64D5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C73403002A3;
-	Thu, 14 Aug 2025 13:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077DE3009F4;
+	Thu, 14 Aug 2025 13:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MAXdwbqb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P/Pwgy1k"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94C6265284
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755177909; cv=none; b=eNoMqVH6hlafzToZvZPOPfOvGzrod22Rt+rJvRx5gp4DEshH0t3cYsZ7mI2ejjWfA2ZTwWzL1UFCg5gLLR5891GyAFB3l+MtTxqhgw4mvPr50FGJFWU/RQypvejMLev3MvG8jIW2k7qzDG1/DaLhGjtTQ8AW5I6Znu/8v5RbEhU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755177909; c=relaxed/simple;
-	bh=GYeszblfLXC9AxCoOxVYlC5jMxyPUQ/zm1wXlnd8Ir4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=cHpIjDiwJM3mFFsqsVT4U7VnX5s2QmYBk3P6Qkor21xYWQKwhNnlGf/XGrvydhRmhnVS8oSx59+59maEX9ueZrzj+W2t4+ZXB6p6PH1pwZb6+kfEtq8w2jMvksEKDhvcJznDmBoxhUIPx00fv5TcMA03NoxUVr/9jZk9cEhR7oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MAXdwbqb; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755177908; x=1786713908;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=GYeszblfLXC9AxCoOxVYlC5jMxyPUQ/zm1wXlnd8Ir4=;
-  b=MAXdwbqbc/nCkDnS6jUfsrAv78yc1KdcUdsoK1UzkwZhfJp+ZpaT8qvP
-   /5ZMqoCgK+2qo5rD+TGUe9gvDIUbvTSN1vWqLuHixjbvSmcEL6ZPbF4ed
-   SIkBBEzUKxBIgC5SAWHaa1bsREh6U3D0KGrmJ1RwaRemIU0obRbygZwHX
-   yaHEb9/6JS/6nPj4/MpUDa3s/HUvaR/dRGMRe4x2kkhFRab+88sdTmHLM
-   dMU4l13pTwM9z+/V3E0feYm3GwcTdlrzj3a2Imu61RfNmVXWjnLBay4dh
-   AeGYDQZ2ZzonWVni2kaIEwlEx6rdTzGk7svNKmlphxqAbt1m4YPLHtfCp
-   A==;
-X-CSE-ConnectionGUID: Q58QdYIZRemBbNaeXeTHqQ==
-X-CSE-MsgGUID: Q0Nhp6FMSQG5t3A0XKTfBg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="57414863"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="57414863"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 06:25:07 -0700
-X-CSE-ConnectionGUID: SSBRO4SjT3Wl32uwQZFDQw==
-X-CSE-MsgGUID: uPd1JJq9Rh+Gj/3SOLHiwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="167126683"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 14 Aug 2025 06:25:05 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umXx1-000Az8-1A;
-	Thu, 14 Aug 2025 13:25:03 +0000
-Date: Thu, 14 Aug 2025 21:21:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Alok Tiwari <alok.a.tiwari@oracle.com>,
-	Pranjal Shrivastava <praan@google.com>
-Subject: drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse:
- sparse: incorrect type in assignment (different base types)
-Message-ID: <202508142105.Jb5Smjsg-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70E72FE07B;
+	Thu, 14 Aug 2025 13:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1755177759; cv=fail; b=Glt8mNR5uuY5oZmzZqGcJhHAeMDfqCPuYx/zTBMkqyYmpsMPFVmKwyRCLGnXmIDGRPPXmAbAwSUgUGSnPEjLu8F3wtgZKoWiLpLIhaqF8HdoVoKq5jlPACGUyBmOjvTqq2tBrYJ+GYjiDlKThUwAVgBzdm+ZqxDz9w8zkJWugbo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1755177759; c=relaxed/simple;
+	bh=0lj76/+ShH7n+VIhmnye4KlD2dW3N5aMzI54yPEbBvs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Ek1uqnIYlJdXmaOQMSEgnsZAtNrele9HQqX80N+PicCOHNyOkWYqEnjXvbQZes4bo4CPCz6jMrj0tzPNw5k8MkL2g0mYd+m2hh64bJz9H/4EVC9UbZrV/1M2UZQkZNVnnu5xCXwc6kcYTdF9tOqRyfyqTkdhhn3lcemQh8dmWqw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P/Pwgy1k; arc=fail smtp.client-ip=40.107.244.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=APTrxvHYKv69wMVAGu5LwONwBGw8pjbUiNntzy6o10Szh/3vsSG/V3I4yGGKxuJY9uzTXJbsRCRQfEHNiPzP4dg7upeBQ3XF6A4tz78dwspvNbexwWMphHHe9D9R2Cnq/faAd7RclxGzK5jeP6DnUDMhmWMbbNZw59mLaTmv/PLbthHvZfYV0uqUR/KmoQ6F0eji2Y36cdXl2P1gs3ov916z6ulxzHcocydbxFxRwK5rSMCH8PcmaKMqXbhB0jcWkZWiurn+LjOWEg+42fT8xKHincUWVFkweeiv4dR4Nb82XBQsvK3WQh/j/qxqiEdH6IqQBPyL7s+vLqUcuAPMfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ONFAw+Ew8oIG1CXzz5SIebsF/MwG1iVVpRo8CHuo9Kw=;
+ b=AWsBpEtcjHOjCn0BRJblSytYy6kYbuB8sldmQRWmfZaZA/ried4+NfMCakoicWRMyj/l1kmbHxzL1oJke/FskUPu2JyYl8YokPa75JKEsebGV+onRmOhSwUn7sZCYocmNP4aTmEzlGkzt5BLfBThOLTSR80Bb67iVqOPXAuyuYuWqNH5KN3QN9/HEXCo++2T4nzIqFWeLVlcGtgg+dVM7LfW6ZWkixJkUH9c00DxJRCJ9JyElxpd8QrECnmMmNBlDYgtCVpaQzgFoNHOeeGl9Er4UxdJ9JbaLx+hpK+NEgr5b6tkHeAWx2CgqZPIgDebCTV9D0dh6A7QCySKutcnKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ONFAw+Ew8oIG1CXzz5SIebsF/MwG1iVVpRo8CHuo9Kw=;
+ b=P/Pwgy1k18fYPU6f9BUsTk1QqkRsggf1k6Vi6ZVs+gTm1k+YA1nVQ142svxdXZq3DJGXt4iZ/zZae1tr9gmG1tQADlll3WHM+gdqdzbwsBw6wPunLRMOL8Os+n1iCfv2yQaMlUoRmiakQReMH3TRokoD76nx/hD1exHcE6ia2L+KdkyRujWiKRSrnX/3m+ouqySVJioUiEFUxEsXHUiQ9D2yW6JgVxaOeh4zeM9AsZpOCq2W/XHNi7rkxw+x7nT6ay0mWmHtXpLKm+paqHmrrCJx/S4XrBI5vimtZQ/ry5RqOYq33IL8wCklkTNdQAuNIRS6HHzElUmnts0+7uiSig==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MN2PR12MB4223.namprd12.prod.outlook.com (2603:10b6:208:1d3::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9031.15; Thu, 14 Aug
+ 2025 13:22:35 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.9031.012; Thu, 14 Aug 2025
+ 13:22:34 +0000
+Date: Thu, 14 Aug 2025 10:22:33 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com,
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com,
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org,
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
+	vincent.guittot@linaro.org, hannes@cmpxchg.org,
+	dan.j.williams@intel.com, david@redhat.com,
+	joel.granados@kernel.org, rostedt@goodmis.org,
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+	linux@weissschuh.net, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+	aleksander.lobakin@intel.com, ira.weiny@intel.com,
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+	brauner@kernel.org, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
+	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
+	witu@nvidia.com
+Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
+ physical memory ranges
+Message-ID: <20250814132233.GB802098@nvidia.com>
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-8-pasha.tatashin@soleen.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250807014442.3829950-8-pasha.tatashin@soleen.com>
+X-ClientProxiedBy: MN0P222CA0007.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:208:531::15) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MN2PR12MB4223:EE_
+X-MS-Office365-Filtering-Correlation-Id: f438fe84-7be9-4ab7-37f7-08dddb35a17d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?N4xFyf8udXoRyvgmtRv1ofWmodmtJYGb8awhK1GMkR442Y9Julqn1KTXQ+jp?=
+ =?us-ascii?Q?7EpZrPsxoyldyw0u3dMFeIwaJCnbTQnbCF3OsAYWfNK+wesJg09rF1SBfJBU?=
+ =?us-ascii?Q?zCrpkuJ6YY2LDVyWbvRN72u2N78lNYgkkKLEa1PIj19v6YNRoOwj22got1Q0?=
+ =?us-ascii?Q?kEa4LK/5NZ9/Nj/eBZmXvsCjm2lxMLUjq4Skxz2g58BkfKlTP0n9RxrjKAlA?=
+ =?us-ascii?Q?9nvTkKgO/WgOYYnKsptH4jJXf8b124lHVrtmXaH759iVKl/yCM9+cxCDr+BA?=
+ =?us-ascii?Q?uPgmrUZA5pWW5DLecBjz+CigSAeA94lJUT6ZO+dyiY0GlkWXI0tKkyAflFal?=
+ =?us-ascii?Q?K0evhtVhGg7D9kjid4i6/blAjBu9z1+ukQJQjXiW6X/RFYtEMTWivV9rbmXD?=
+ =?us-ascii?Q?+nns/N/x4ZxfOOwYjP2ejyAhVfIgib2BXLQDdeijt8BZHkCVOjx48Te4auQu?=
+ =?us-ascii?Q?GFlYo7cpwC0EE/X72QPB9hp8HRSaao3gmEmGRCxtnrg2aRH9LFw80Q1mWEVV?=
+ =?us-ascii?Q?3cJO1D9XtkPKteA50M8IhXiD7aUVeVVktr/4yfdcBlJuWqMasrMxGmrBVnFk?=
+ =?us-ascii?Q?7KHpIXleYOj56CsUIEtRj5GEDDEilC5IfPrklbdK6q0gY9AS0EIVNQrV1Bnk?=
+ =?us-ascii?Q?2HcyC12rbvdSSYHUjANtoq7RaE8Lpv0XjttfRxiEHkwcM2fs84B3lkZzRATx?=
+ =?us-ascii?Q?OsPD9kRhiGXryMh3OBVC3TZ9gzfWFuTZztv4NUzHSdJwNvML6APygGTN1tTU?=
+ =?us-ascii?Q?Kh67tlVoaKw3Q/4JnKBMKhIwsJ5e74KR9ZxD/hBSAskNr207uB3heOqro58P?=
+ =?us-ascii?Q?fDMkzBqaDFmGS11UTKBZ/OS4u1r4FRcTPtUA3VE5sunTdwOTRlHmuwcwYXys?=
+ =?us-ascii?Q?rBhqREn/mUxmbuZ7iHeiYZMCu4DWEMJ0DKtnQxiBH4XR7oMVfO/z33pm2Zlk?=
+ =?us-ascii?Q?20bQnqmyhGQ1XL09u+DgmRg6hWR+xPaEcBC2e5+AHCsoaxBLcovyStpQzeD3?=
+ =?us-ascii?Q?WoeXrEgUvKbD9KkTygMRIKvOytMP47cr9OY4Nr8+5adyBrkGHp89uWUTL7+9?=
+ =?us-ascii?Q?HQV7ZFJnHNfGXAUaJ93nejj0iVIVyKhHQbMF13w8QXvDbYMareeHBkzy/60g?=
+ =?us-ascii?Q?vKWSaW9HvrG6DDamVpfvuqblpOHpvFLwgZ76JA8XR1DZRu46Xde/SP66SneH?=
+ =?us-ascii?Q?eGqqvdEwB4WpoWRfctKN/rAv8TK0NkjboFOsI5r9OIX11bcTCAqSfTbk6doQ?=
+ =?us-ascii?Q?odNacQd7s/gGO8C0L9Kf4lwFL71kKlLhjlyqMWyUUahjQZl9Ss49ZnBuEi/O?=
+ =?us-ascii?Q?piiGxDNLpenRq5vJ1p0Y8+dLYEfWnhcLDBkQuMkLs4hLptAC49l3YGBuh/ek?=
+ =?us-ascii?Q?FRrzQdXK5kTsOlOsF6jcKDX6C82nL7Wkh6px0nr2whKgS4pgSH8MqQDGKgCM?=
+ =?us-ascii?Q?tsx6BJurgbc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Zcse3LPGgQNrAqgkotP+Nc4HjPk7ZUr8Do4lvNImnerquOxyKiy6iS94JpNE?=
+ =?us-ascii?Q?F5d+yf9g4FgRZW0BMwIK7ZZ/XfZliTQo80hECxO346b3va2/zqw1KQivJUzN?=
+ =?us-ascii?Q?RN6H4RuG4naQnIwg9j33gscvmyo43CWCZ/lM+Fn7EC3KPE77mP2erTB1/JEW?=
+ =?us-ascii?Q?9AWCURljaDqbOagNLZ8i3NXHaTjxPJKd7eRBb+tVFzJss7GEsxJ7k1fAVkAE?=
+ =?us-ascii?Q?sI7lD5cgwGLdl37+R3zJ+amxGUvTkbKZycxJZPqRFTH62y9sTSKHAOyoM8Mz?=
+ =?us-ascii?Q?3+iOC3Yh50HVBkHO9nLRnFtKDBakPVmxwpNZE5y/OTzgldWLBpUJUbM2BMBh?=
+ =?us-ascii?Q?2qBotNwjgYlA65jJWYN4WtNYPtRDuFtd6Zwqqvc4dR7G5srtJJprUxXxivDm?=
+ =?us-ascii?Q?U0ee7ZUednuAm2vuiErLBn8eK2RnGInEeso8Ok+ZvRtftHwKILDi+u/iN3js?=
+ =?us-ascii?Q?+EUCqvEzow9v3cr8K0y2wIuxZctrLFgOv5lnN2X4nei8dPGNRGRZ+3ZJMfNp?=
+ =?us-ascii?Q?HJ7OvyNGQUyO6Ll0O/twQbwObkkLrOwtguB8wALGW2BMBoCCZgvMzSCiPFPx?=
+ =?us-ascii?Q?i4BL9zRhpR6BxzzA8bxET7Ne0lT+4+vCy7G6gGIZSPS6Vn1DYLlHoVamsRfz?=
+ =?us-ascii?Q?6dM1lBDCfYHxMrDcEhRZTPNYu8nyHsLJ4hD8wtBSlH3qvmxfSt+I2Eg348Fk?=
+ =?us-ascii?Q?9Cmgifx4TV3IdFq8+TliNtRrGGC2R2ZnF1T0NYQTYse0Vgu3DNYFRFRqEjnO?=
+ =?us-ascii?Q?lAeOO3JdlO8iGadvV7/dr2Z+1owSxV7YawKyBXC/R3tjeqLOJO2SbTLQiq0x?=
+ =?us-ascii?Q?qo+RyUciU/8iuWFtsI/MKMLR8K2BLYqhpl5XNmaqbc173dTu8QOs3LWp4ebR?=
+ =?us-ascii?Q?SD9rBu27+LWDUgB00GwoT6ZO8UoH0Ta0Wni4UGKs7VlJ1m1qKu9P3PV4V0b0?=
+ =?us-ascii?Q?86pbVQ2sopfasRxMtYt5EvWnqZT86v5vzvFhDAlU6hfJk6Q0HT9qDHXYSZqF?=
+ =?us-ascii?Q?D+2Wf1VuR7VYS8nbJpNvwU7Kov1BRwEi+hFEJHjtr/sULPhVTkAz6vcg9oYd?=
+ =?us-ascii?Q?UEbgKmTWoXhTM48iKMjSsnCvNpExPfdIZ1TE1cg64Oomn8Pl0cCbalS9pPlz?=
+ =?us-ascii?Q?mS2e3dl/h0ECiRMEP+Ie1DNjSidNZuer2tI7SnJ4v/Rc7oIJQbDRcVKgwrIK?=
+ =?us-ascii?Q?EJtjaxs9QgH/qQp91zxbTy9eUp6nkR6YAm3+EqjRPbX08zICo7KmEO4GBwbH?=
+ =?us-ascii?Q?4H/9PE1ziMhGN0QeIdjcwzVZ7Kaz3nAOybbdKYxjPiLsv6Rqktjw2zflD33H?=
+ =?us-ascii?Q?SocoE43OtG86xfmFcv+vAQPBv+TXRQ+NNsXPLwYA8S0r4Bwv/sAwRHEqqDYb?=
+ =?us-ascii?Q?CAzmgydGswZQ2O3uRedalQbvGrW8R8z4wlVex6GcJ8jn7js36wEP5SOb2rkY?=
+ =?us-ascii?Q?L843vUvZiQ2BhvExoICKptsuDIwAjgFzMnNflY32C27ge/9x2DUPZLutUoHb?=
+ =?us-ascii?Q?8MQJyDbsZLQcIj9x7u4fIJGncg6vwi82jUbxipcVXNZaYF82dswAgMEBIug0?=
+ =?us-ascii?Q?3FQafR1hKuGoJiXqFcI=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f438fe84-7be9-4ab7-37f7-08dddb35a17d
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2025 13:22:34.8071
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2By4MfPAcGjg9PnTkE/zfaNqlt+irEo9XRYgHW/TPuwIfR5m44/tFrl3t3ZXHLCq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4223
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   0cc53520e68bea7fb80fdc6bdf8d226d1b6a98d9
-commit: 32b2d3a57e26804ca96d82a222667ac0fa226cb7 iommu/tegra241-cmdqv: Add IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV support
-date:   5 weeks ago
-config: arm64-randconfig-r112-20250814 (https://download.01.org/0day-ci/archive/20250814/202508142105.Jb5Smjsg-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 3769ce013be2879bf0b329c14a16f5cb766f26ce)
-reproduce: (https://download.01.org/0day-ci/archive/20250814/202508142105.Jb5Smjsg-lkp@intel.com/reproduce)
+On Thu, Aug 07, 2025 at 01:44:13AM +0000, Pasha Tatashin wrote:
+> +int kho_unpreserve_phys(phys_addr_t phys, size_t size)
+> +{
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508142105.Jb5Smjsg-lkp@intel.com/
+Why are we adding phys apis? Didn't we talk about this before and
+agree not to expose these?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le64 @@     got unsigned long long @@
-   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse:     expected restricted __le64
-   drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:305:47: sparse:     got unsigned long long
+The places using it are goofy:
 
-vim +305 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++static int luo_fdt_setup(void)
++{
++       fdt_out = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
++                                          get_order(LUO_FDT_SIZE));
 
-   297	
-   298	static void tegra241_vintf_user_handle_error(struct tegra241_vintf *vintf)
-   299	{
-   300		struct iommufd_viommu *viommu = &vintf->vsmmu.core;
-   301		struct iommu_vevent_tegra241_cmdqv vevent_data;
-   302		int i;
-   303	
-   304		for (i = 0; i < LVCMDQ_ERR_MAP_NUM_64; i++)
- > 305			vevent_data.lvcmdq_err_map[i] =
-   306				readq_relaxed(REG_VINTF(vintf, LVCMDQ_ERR_MAP_64(i)));
-   307	
-   308		iommufd_viommu_report_event(viommu, IOMMU_VEVENTQ_TYPE_TEGRA241_CMDQV,
-   309					    &vevent_data, sizeof(vevent_data));
-   310	}
-   311	
++       ret = kho_preserve_phys(__pa(fdt_out), LUO_FDT_SIZE);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
++       WARN_ON_ONCE(kho_unpreserve_phys(__pa(fdt_out), LUO_FDT_SIZE));
+
+It literally allocated a page and then for some reason switches to
+phys with an open coded __pa??
+
+This is ugly, if you want a helper to match __get_free_pages() then
+make one that works on void * directly. You can get the order of the
+void * directly from the struct page IIRC when using GFP_COMP.
+
+Which is perhaps another comment, if this __get_free_pages() is going
+to be a common pattern (and I guess it will be) then the API should be
+streamlined alot more:
+
+ void *kho_alloc_preserved_memory(gfp, size);
+ void kho_free_preserved_memory(void *);
+
+Which can wrapper the get_free_pages and the preserve logic and gives
+a nice path to possibly someday supporting non-PAGE_SIZE allocations.
+
+Jason
 
