@@ -1,352 +1,152 @@
-Return-Path: <linux-kernel+bounces-767887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545A6B25A1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3B53B25A1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 05:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D31E5C1092
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2D9B5C1291
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557141A5B9D;
-	Thu, 14 Aug 2025 03:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE7718786A;
+	Thu, 14 Aug 2025 03:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hL3R8q5f"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="FlxAP9rR"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B4C2836F;
-	Thu, 14 Aug 2025 03:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E637F2836F
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755143659; cv=none; b=DKWoIGpTnXhkvmFjP+vh8p7sBEjaZVysA7T7OrcP+agwT4/ZiFbJWfygTvUDQ/oqc8+nOw4F81YaTUGIw6WfFTMW3ZjMcvHw4tNcPLo6APLir8XANz7uXo5q1tgqdg3mgE++0jwcyN7Aid23CdcA6pcfdZ0m2rFp0tmbdZ6wA4Y=
+	t=1755143738; cv=none; b=HAaXA83AtqP1HHXtMz84dpETJZysA6BaLfFwTEA/rdF40NTltixi7ZKA7VjjQjW1vqCUmIuFdHTUKFYNIEWzhkavgcgaPx3qOeUiu7DAyqOGPSgSBadoh8YqE6fv1l3GAx1Bnnxs11ghrWwl5YR7j49DoSZNuiPpVe9bSU/CUNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755143659; c=relaxed/simple;
-	bh=wDK0eX+KK2+SpbwmEPed0XoHN6lDNAQFA8XExzq50lQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gsmGXGoSJfAI/7ZTlKcg7Ku9LKMzaEMQouPoZdPCRUzkyXPyAye2d2hw3M1ghz0/LYrxAWahGIwwt0oJhbUuTdNyofqQlWY5iuhw6A2/TnOhRrXZMp0mvViK9PDePjGCe2auA0hngKpqFc1qbF4xshChArTnF9anLeOcPTXLd5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hL3R8q5f; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755143654;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=T+Ym3fZ+AnHT9AvQuTJapbVedXNyrAy6w7aioM5SVPQ=;
-	b=hL3R8q5fyaVCwRv4/J/7aidX4LXVJPL979TL+ylHcsN/Ybo/MMMFQ+VyGGTLvRPS3xR7z2
-	b/nz976ZzX4MrN3BpVyxbrL7fQ0e3Wga2aVkeLga4Xp7W3T9jhfDuP+WGDJhcoFTt/BMV2
-	p1KykZjtwIc0Y82cuHimwtiHYiik1Q8=
-From: David Dai <david.dai@linux.dev>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org
-Cc: dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	tj@kernel.org,
-	david.dai@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [RFC PATCH] cputime, proc/stat: Fix cputime reporting in /proc/stat
-Date: Wed, 13 Aug 2025 20:54:00 -0700
-Message-ID: <20250814035400.4104403-1-david.dai@linux.dev>
+	s=arc-20240116; t=1755143738; c=relaxed/simple;
+	bh=P0r6EE5TppvnZO59sJ2IINXIbG61ASfSfCOD4Zi30uo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZddrelsMNDuPJvvV9cT3RqDfF0H+WPRV4eo3M8aSw4dru4dQzfOtXdu9DJLZvI+wFPIfm/PM5C0smqDYxfaBZHowkR9Wm6NAO71bhwQk4ewifuQG5YkNSftmXh+0Bh4fflx3zymMdUVKKeE2IXU4llSZBH/2STjMmDPL/0UBbWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=FlxAP9rR; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57DL98BZ031826;
+	Wed, 13 Aug 2025 20:55:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=apbbqv91FA3h7FXFQHnXfhMvw
+	syZ1HXos2GmeXwGEU0=; b=FlxAP9rRk93uLRQxTcMSQ7egUm6idpHnO7QkQApHu
+	XUPQ7dB20FtsqQ8XG26rDlq1BYORNmeZNaEwtLX51u8mM18wC7anW5cb/r39HX6c
+	seY6IipqWUyK2oBfmkrzzpzQPhpuSd+xWJjCqkc8Sk3EAOsi/YeqrohpUOEqEAy2
+	54O7sc4EmG57kfX20dWKl/+PNfbNuh31XSF3/yWhsm61abL+9dU/iHpaH8lVKk1V
+	n0GPrFaCMN1q6+KbFriAV0+bK7Hm9GwN2EpkQmBwHS/VpR/U0baOSa3UxOhiitCr
+	K57D1mskJ0iDgyGMU8mqMuRGZMsbpmrgly3HJYL0ALZng==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 48gyb490ws-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Aug 2025 20:55:04 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 13 Aug 2025 20:55:07 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 13 Aug 2025 20:55:07 -0700
+Received: from opensource (unknown [10.29.8.22])
+	by maili.marvell.com (Postfix) with SMTP id C05723F706D;
+	Wed, 13 Aug 2025 20:54:59 -0700 (PDT)
+Date: Thu, 14 Aug 2025 03:54:58 +0000
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+To: Tejun Heo <tj@kernel.org>
+CC: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <jiangshanlai@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: Query regarding work scheduling
+Message-ID: <aJ1eElydTbZfBq5X@opensource>
+References: <aJsoMnkoYYpNzBNu@opensource>
+ <aJuNcM-BfznsVDWl@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aJuNcM-BfznsVDWl@slm.duckdns.org>
+X-Proofpoint-ORIG-GUID: CSvy_QKX8skjB4HJ8Xh6NFFhGgtMSSil
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODE0MDAyNyBTYWx0ZWRfX2tDBfF7kOdjT 6jTb9xgGYElmj6JP3J1+GXgTYiTlBbeZRg4cSJf7QYwIDr+Y6c8lF07ihbyc8DZTqGfbGg/NbsS oq97afj9o23OI5zCPEx6ZfvLR7k7hzfTSq9nwvT1O6vgJ7PB4yB27+VRVCvQiE6RIdllOlKbc4v
+ drVsx1NcI6XrOfKnZoFRlusWzwYMtIBNTdr6E0MQ4px+PQN6WaVD6qEuz+7qH4IzyIfU4q27xuS OQaCzQ7uNyMkvQWrHyCMtikwd8qOdJxD/qxSlGogjOWPPQ7F3g5aUi/DuLu4+MG+J0vbf0dWfpq 976yB1oq1jVk4IBAIYkMRcSXTOwLNYIiwL2YHWLjkHPyHPfe9cQI+e87WJNaogQXABvhX0gyqrv
+ 6HI8olXHr/oeY0hcMFCY3MDljPdfr1yKmMrZFFikPMlxk2rEOc0tN7WpXbQEA/Ggi1tpDRA6
+X-Proofpoint-GUID: CSvy_QKX8skjB4HJ8Xh6NFFhGgtMSSil
+X-Authority-Analysis: v=2.4 cv=CqW/cm4D c=1 sm=1 tr=0 ts=689d5e18 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=jNi_2Jb-k-ZJEw492vwA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-11_01,2025-03-28_01
 
-Due to the tick based time accounting found in cputime where it
-attributes an entire tick's worth of time to a cpustat bucket everytime
-it samples based on the current CPU state, significant artifacts can
-occur on system wide cpustats which can cascade into large accounting
-errors.
+Hi Tejun,
 
-In workloads running erlang, we observed that userspace threads such as
-"erts_sched" wake up every 1ms to do ~50us of work that can line up with
-the scheduler's tick(1000HZ) boundary. This resulted in a much larger
-amount of time being attributed to the user bucket, and in CPUs
-appearing to be ~30% busy while the task itself only took up ~5% of CPU
-time.
+On 2025-08-12 at 18:52:32, Tejun Heo (tj@kernel.org) wrote:
+> Hello,
+> 
+> On Tue, Aug 12, 2025 at 11:40:34AM +0000, Subbaraya Sundeep wrote:
+> > Hi,
+> > 
+> > One of our customers reported that when their kernel upgraded from 6.1 to 6.6 then they
+> > see more delay in their applications shutdown time.
+> > To put in simple terms, dataplane applications are run with SRIOV VFs attached to them and
+> > apps send number of mailbox messages to kernel PF driver (PF receives an mbox interrupt).
+> > During interrupt handler work is queued and messages are processed in work handler.
+> > I calculated the latencies (time between work queued and work execution start) of 6.1
+> > and 6.16 and below are the observations
+> > 
+> > 
+> > 6.1 mainline
+> > ------------
+> > Total samples: 4647
+> > Min latency: 0.001 ms
+> > Max latency: 0.195 ms
+> > Total latency: 7.797 ms
+> > 
+> > Latency Histogram (bucket size = 0.01 ms):
+> > 0.00 - 0.01 ms: 4644
+> > 0.01 - 0.02 ms: 1
+> > 0.03 - 0.04 ms: 1
+> > 0.19 - 0.20 ms: 1
+> > 
+> > ==================
+> > 
+> > 6.16 mainline
+> > -------------
+> > Total samples: 4647
+> > Min latency: 0.000 ms
+> > Max latency: 4.880 ms
+> > Total latency: 158.813 ms
+> 
+> Difficult to tell where the latencies are coming from. Maybe you can use
+> something like https://github.com/josefbacik/systing to look further into
+> it? All the scheduling events are tracked by default and you should be able
+> to add tracepoints and other events relatively easily. You can also set
+Thanks for the reply. I am using simple busybox to avoid overhead of any other apps
+or deamons running in background and taking CPU time in between.
+I will try building systing and running it. 6.16 histogram shows that it
+is not one high latency event causing overall latency but bunch of small
+latencies are adding up and causing big latency.
+I suspect this has something to do with EEVDF scheduling since this behavior is
+seen from 6.6 (please note I may be wrong completly).
+Are there any methods or options with which I can bring back CFS scheduling behavior
+maybe with the knobs in /sys/kernel/debug/sched/features as a quick check? 
 
-In addition to the inaccuracies from tick-based accounting, /proc/stat
-reports using a combination of tick-based for some buckets and more
-precise time accounting methods such as get_cpu_sleep_time_us() for idle
-which results in further discrepancies. As an example, this can be
-easily reproduced by spinning up a periodic workload with a 50% duty
-cycle that wakes every 1ms and then reading out /proc/stat every 1
-second to compare the delta.
-
-On a 1000HZ system, time delta per sec read out (converted to ms):
-user: 990 nice: 0 system: 0 idle: 480 irq: 0 softirq: 0 ...
-
-When more accurate time accounting is available for tracking idle time,
-we can determine non-idle time to split between the various buckets
-using ratios from tick based accounting. This is a similar technique
-used in cputime_adjust for cgroup and per task cputime accounting.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: David Dai <david.dai@linux.dev>
----
- fs/proc/stat.c              |  19 ++++++
- include/linux/kernel_stat.h |  34 +++++++++++
- kernel/sched/cputime.c      | 119 +++++++++++++++++++++++++++++++++++-
- 3 files changed, 171 insertions(+), 1 deletion(-)
-
-diff --git a/fs/proc/stat.c b/fs/proc/stat.c
-index 8b444e862319..6ecef606b07f 100644
---- a/fs/proc/stat.c
-+++ b/fs/proc/stat.c
-@@ -12,6 +12,7 @@
- #include <linux/time.h>
- #include <linux/time_namespace.h>
- #include <linux/irqnr.h>
-+#include <linux/sched/clock.h>
- #include <linux/sched/cputime.h>
- #include <linux/tick.h>
- 
-@@ -22,6 +23,10 @@
- #define arch_irq_stat() 0
- #endif
- 
-+#ifdef CONFIG_NO_HZ_COMMON
-+DEFINE_PER_CPU(struct prev_kcpustat, prev_cpustat);
-+#endif
-+
- u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
- {
- 	u64 idle, idle_usecs = -1ULL;
-@@ -102,6 +107,10 @@ static int show_stat(struct seq_file *p, void *v)
- 
- 		kcpustat_cpu_fetch(&kcpustat, i);
- 
-+#ifdef CONFIG_NO_HZ_COMMON
-+		split_cputime_using_ticks(cpustat, &per_cpu(prev_cpustat, i),
-+					  sched_clock_cpu(i), i);
-+#endif
- 		user		+= cpustat[CPUTIME_USER];
- 		nice		+= cpustat[CPUTIME_NICE];
- 		system		+= cpustat[CPUTIME_SYSTEM];
-@@ -142,6 +151,10 @@ static int show_stat(struct seq_file *p, void *v)
- 
- 		kcpustat_cpu_fetch(&kcpustat, i);
- 
-+#ifdef CONFIG_NO_HZ_COMMON
-+		split_cputime_using_ticks(cpustat, &per_cpu(prev_cpustat, i),
-+					  sched_clock_cpu(i), i);
-+#endif
- 		/* Copy values here to work around gcc-2.95.3, gcc-2.96 */
- 		user		= cpustat[CPUTIME_USER];
- 		nice		= cpustat[CPUTIME_NICE];
-@@ -210,6 +223,12 @@ static const struct proc_ops stat_proc_ops = {
- 
- static int __init proc_stat_init(void)
- {
-+#ifdef CONFIG_NO_HZ_COMMON
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu)
-+		prev_kcpustat_init(&per_cpu(prev_cpustat, cpu));
-+#endif
- 	proc_create("stat", 0, NULL, &stat_proc_ops);
- 	return 0;
- }
-diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
-index b97ce2df376f..d649bbd3635d 100644
---- a/include/linux/kernel_stat.h
-+++ b/include/linux/kernel_stat.h
-@@ -42,6 +42,11 @@ struct kernel_stat {
- 	unsigned int softirqs[NR_SOFTIRQS];
- };
- 
-+struct prev_kcpustat {
-+	u64 cpustat[NR_STATS];
-+	raw_spinlock_t lock;
-+};
-+
- DECLARE_PER_CPU(struct kernel_stat, kstat);
- DECLARE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
- 
-@@ -51,6 +56,9 @@ DECLARE_PER_CPU(struct kernel_cpustat, kernel_cpustat);
- #define kstat_cpu(cpu) per_cpu(kstat, cpu)
- #define kcpustat_cpu(cpu) per_cpu(kernel_cpustat, cpu)
- 
-+#define for_each_cpustat(cpustat)	\
-+	for ((cpustat) = 0; (cpustat) < NR_STATS; (cpustat)++)
-+
- extern unsigned long long nr_context_switches_cpu(int cpu);
- extern unsigned long long nr_context_switches(void);
- 
-@@ -141,4 +149,30 @@ extern void account_idle_ticks(unsigned long ticks);
- extern void __account_forceidle_time(struct task_struct *tsk, u64 delta);
- #endif
- 
-+extern void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat,
-+				      u64 now, int cpu);
-+static inline void prev_kcpustat_init(struct prev_kcpustat *prev)
-+{
-+#ifdef CONFIG_NO_HZ_COMMON
-+	int i;
-+
-+	for_each_cpustat(i)
-+		prev->cpustat[i] = 0;
-+	raw_spin_lock_init(&prev->lock);
-+#endif
-+}
-+
-+static inline bool exec_cputime(int idx)
-+{
-+	switch (idx) {
-+	case CPUTIME_USER:
-+	case CPUTIME_NICE:
-+	case CPUTIME_SYSTEM:
-+	case CPUTIME_GUEST:
-+	case CPUTIME_GUEST_NICE:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
- #endif /* _LINUX_KERNEL_STAT_H */
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 7097de2c8cda..50c710f81df7 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -1092,5 +1092,122 @@ void kcpustat_cpu_fetch(struct kernel_cpustat *dst, int cpu)
- 	}
- }
- EXPORT_SYMBOL_GPL(kcpustat_cpu_fetch);
--
- #endif /* CONFIG_VIRT_CPU_ACCOUNTING_GEN */
-+
-+#ifdef CONFIG_NO_HZ_COMMON
-+/*
-+ * Split precisely tracked exec wall time using tick based buckets
-+ *
-+ * Use a similar technique to cputime_adjust to split the total exec wall time
-+ * used by the CPU to its respective buckets by scaling these tick based values
-+ * against the total wall time accounted. Similar to cputime_adjust, this
-+ * function guarantees monotonicity for the various buckets and total time
-+ * delta distributed does not exceed exec time passed.
-+ *
-+ * This is only useful when idle time can be accounted for accurately.
-+ *
-+ * Due to various imprecisions in tick accounting/other time accounting and
-+ * rounding errors, this is a best effort at distributing time to their
-+ * respective buckets.
-+ *
-+ */
-+void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat, u64 now, int cpu)
-+{
-+	u64 exec_ticks, exec_time, prev_exec_time, deficit, idle = -1ULL, iowait = -1ULL;
-+	u64 *prev_cpustat;
-+	unsigned long flags;
-+	int i;
-+
-+	raw_spin_lock_irqsave(&prev_kcpustat->lock, flags);
-+	prev_cpustat = prev_kcpustat->cpustat;
-+
-+	if (cpu_online(cpu)) {
-+		idle = get_cpu_idle_time_us(cpu, NULL);
-+		iowait = get_cpu_iowait_time_us(cpu, NULL);
-+	}
-+
-+	/*
-+	 * If the cpu is offline, we still need to update prev_kcpustat as the
-+	 * accounting changes between non-ticked vs tick based to ensure
-+	 * monotonicity for future adjustments.
-+	 */
-+	if (idle == -1ULL || iowait == -1ULL)
-+		goto update;
-+
-+	prev_exec_time = 0;
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+		prev_exec_time += prev_cpustat[i];
-+	}
-+
-+	exec_time = now - (idle + iowait) * NSEC_PER_USEC -
-+		cpustat[CPUTIME_IRQ] - cpustat[CPUTIME_SOFTIRQ] -
-+		cpustat[CPUTIME_STEAL];
-+
-+	if (prev_exec_time >= exec_time) {
-+		for_each_cpustat(i) {
-+			if (!exec_cputime(i))
-+				continue;
-+			cpustat[i] = prev_cpustat[i];
-+		}
-+		goto out;
-+	}
-+
-+	exec_ticks = 0;
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+		 exec_ticks += cpustat[i];
-+	}
-+
-+	/*
-+	 * To guarantee monotonicity for all buckets and to ensure we don't
-+	 * over allocate time, we keep track of deficits in the first pass to
-+	 * subtract from surpluses in the second.
-+	 */
-+	deficit = 0;
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+
-+		cpustat[i] = mul_u64_u64_div_u64(cpustat[i], exec_time, exec_ticks);
-+		if (cpustat[i] < prev_cpustat[i]) {
-+			deficit += prev_cpustat[i] - cpustat[i];
-+			cpustat[i] = prev_cpustat[i];
-+		}
-+	}
-+
-+	/*
-+	 * Subtract from the time buckets that have a surplus. The way this is
-+	 * distributed isn't fair, but for simplicity's sake just go down the
-+	 * list of buckets and take time away until we balance the deficit.
-+	 */
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+		if (!deficit)
-+			break;
-+		if (cpustat[i] > prev_cpustat[i]) {
-+			u64 delta = min_t(u64, cpustat[i] - prev_cpustat[i], deficit);
-+
-+			cpustat[i] -= delta;
-+			deficit -= delta;
-+		}
-+	}
-+
-+update:
-+	for_each_cpustat(i) {
-+		if (!exec_cputime(i))
-+			continue;
-+		prev_cpustat[i] = cpustat[i];
-+	}
-+out:
-+	raw_spin_unlock_irqrestore(&prev_kcpustat->lock, flags);
-+}
-+#else
-+void split_cputime_using_ticks(u64 *cpustat, struct prev_kcpustat *prev_kcpustat, u64 now, int cpu)
-+{
-+	/* Do nothing since accurate idle time accounting isn't available. */
-+}
-+#endif
--- 
-2.47.3
-
+Thanks,
+Sundeep
+> trigger conditions so that trace around a high latency event can be captured
+> reliably.
+> 
+> Thanks.
+> 
+> -- 
+> tejun
 
