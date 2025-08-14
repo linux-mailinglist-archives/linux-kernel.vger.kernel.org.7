@@ -1,114 +1,153 @@
-Return-Path: <linux-kernel+bounces-769020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-772839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44D3BB2691B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA465B2983F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 06:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B383602D2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:13:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CDE17D4C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Aug 2025 04:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF502192E5;
-	Thu, 14 Aug 2025 14:09:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7BB1FF60A;
-	Thu, 14 Aug 2025 14:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985D3264627;
+	Mon, 18 Aug 2025 04:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hs6f1N5I"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236071C8604
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755180561; cv=none; b=s9bjm+CEkYUlNVjpAJclfoGqcQi2a2r7ckhgqF6tsGJKI2XbIQ6ZqvvyA5jUBi8LEB5GyFqF+Ru54MwUrLh0AhMRVOjOrbGR8kHh/3WxkIGKsDIvL1KoPjKmTKSwwmnBO/bZE7FMpSggD9jA+w2RZwYVgGI0qqBxlA5vl5lXrQ8=
+	t=1755491843; cv=none; b=sQwooVUk8E5YLOg3b8l5a38k+qWAJ8igiXrPhebpFqSQl/aYYnjA14nH079DJBZ7z8KyWXOlmXMKLxLwYu87HSIzabkjakbODsSHOw749nKYlh8maOS8tA0aSnCJbOS9ihz44Tiks6CbB39wG5fCIuket0eDmWS7IQeC9DITmAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755180561; c=relaxed/simple;
-	bh=u6UoCMTz7eI4baHzDu8yRdrQGijNFLhgrdCAkBIXgfU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dk/NlQ4KhhhNhEVFSFeOQEjv2Itsc9Sqp1/XDIguSSJIMjrirDLInSc40wIvg0VhtePpL761fP6JnMPu5Arxbye9BMreoNGIVJzKZaoViuIuyqEp5WFbebMSsh0wtJuxoXUWdBamb6Z5ZpX/DV5VMH2Y9Pech9/d5V8hvT/xkgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A909168F;
-	Thu, 14 Aug 2025 07:09:10 -0700 (PDT)
-Received: from [10.1.38.46] (e127648.arm.com [10.1.38.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A67B63F738;
-	Thu, 14 Aug 2025 07:09:17 -0700 (PDT)
-Message-ID: <9104c434-9025-4365-8127-28014ddddc8d@arm.com>
-Date: Thu, 14 Aug 2025 15:09:15 +0100
+	s=arc-20240116; t=1755491843; c=relaxed/simple;
+	bh=GGMEHVB0X2VGIc4wzUyfGmQwSg52QCIC5HEXNyGM8To=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=GnzRsOAfhJxz8nO41EnCxDwNF9I8VSEhncVpYJNK5L/+V6yGK34riGhCNBElDF9kpda8Cqi7mOab/qiJS9eQlNaynhvFFkl5azEer6XjYl4HFZF9hhdq+UdN/x67MBF5nrSVnI1mgczmnQnhj5/OGc+LENmOmJ4p2TKLPR3K/SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hs6f1N5I; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250818043719epoutp046e56ea6407dfe4e16254e5ec09c2e754~cwobTHw1p2557725577epoutp04W
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Aug 2025 04:37:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250818043719epoutp046e56ea6407dfe4e16254e5ec09c2e754~cwobTHw1p2557725577epoutp04W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1755491839;
+	bh=44MXY/Ntu9rAF0ovbjOJnvuaxkF7loC1JC6bTAe9rcc=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=hs6f1N5IFuWk+6F5dtOPgis0vajdlWb4bFzF6EZRtUBVaHfpqrLJBxqSBsHDZKBT5
+	 /+rsGn7ltJQhYRWmKrNxZBVrFXUCdRALJQY8zXdS4dWcoKrdxSRj7civ/mQSjEkLCz
+	 7WWIA4dGzeIvz5Ob5KdBV6bfzRa5QfZsBIzhMQ8I=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250818043718epcas5p3efbcae916de49e498b30a4a88463536a~cwoat_LHK0408004080epcas5p3U;
+	Mon, 18 Aug 2025 04:37:18 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.87]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4c50LG6cnmz6B9mL; Mon, 18 Aug
+	2025 04:37:10 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250814140956epcas5p480aa24441933523484da5c241a201d3c~bp3QEJitT1225312253epcas5p4t;
+	Thu, 14 Aug 2025 14:09:56 +0000 (GMT)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250814140952epsmtip2b069f926cc266c22788710b6b7b5e597~bp3MNOvQB1162411624epsmtip2h;
+	Thu, 14 Aug 2025 14:09:52 +0000 (GMT)
+From: Inbaraj E <inbaraj.e@samsung.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, krzk@kernel.org,
+	s.nawrocki@samsung.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
+	cw00.choi@samsung.com, rmfrfs@gmail.com, laurent.pinchart@ideasonboard.com,
+	martink@posteo.de, mchehab@kernel.org, linux-fsd@tesla.com, will@kernel.org,
+	catalin.marinas@arm.com, pankaj.dubey@samsung.com, shradha.t@samsung.com,
+	ravi.patel@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
+	linux-samsung-soc@vger.kernel.org, kernel@puri.sm, kernel@pengutronix.de,
+	festevam@gmail.com, linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, Inbaraj E <inbaraj.e@samsung.com>
+Subject: [PATCH v2 00/12] Add FSD CSI support
+Date: Thu, 14 Aug 2025 19:39:31 +0530
+Message-ID: <20250814140943.22531-1-inbaraj.e@samsung.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] cpuidle: governors: menu: Special-case nohz_full
- CPUs
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
-References: <2804546.mvXUDI8C0e@rafael.j.wysocki>
- <2244365.irdbgypaU6@rafael.j.wysocki>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <2244365.irdbgypaU6@rafael.j.wysocki>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250814140956epcas5p480aa24441933523484da5c241a201d3c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250814140956epcas5p480aa24441933523484da5c241a201d3c
+References: <CGME20250814140956epcas5p480aa24441933523484da5c241a201d3c@epcas5p4.samsung.com>
 
-On 8/13/25 11:29, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> When the menu governor runs on a nohz_full CPU and there are no user
-> space timers in the workload on that CPU, it ends up selecting idle
-> states with target residency values above TICK_NSEC all the time due to
-> a tick_nohz_tick_stopped() check designed for a different use case.
-> Namely, on nohz_full CPUs the fact that the tick has been stopped does
-> not actually mean anything in particular, whereas in the other case it
-> indicates that previously the CPU was expected to be idle sufficiently
-> long for the tick to be stopped, so it is not unreasonable to expect
-> it to be idle beyond the tick period length again.
->   
-> In some cases, this behavior causes latency in the workload to grow
-> undesirably.  It may also cause the workload to consume more energy
-> than necessary if the CPU does not spend enough time in the selected
-> deep idle states.
-> 
-> Address this by amending the tick_nohz_tick_stopped() check in question
-> with a tick_nohz_full_cpu() one to avoid using the time till the next
-> timer event as the predicted_ns value all the time on nohz_full CPUs.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/menu.c |   12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -293,8 +293,18 @@
->  	 * in a shallow idle state for a long time as a result of it.  In that
->  	 * case, say we might mispredict and use the known time till the closest
->  	 * timer event for the idle state selection.
-> +	 *
-> +	 * However, on nohz_full CPUs the tick does not run as a rule and the
-> +	 * time till the closest timer event may always be effectively infinite,
-> +	 * so using it as a replacement for the predicted idle duration would
-> +	 * effectively always cause the prediction results to be discarded and
-> +	 * deep idle states to be selected all the time.  That might introduce
-> +	 * unwanted latency into the workload and cause more energy than
-> +	 * necessary to be consumed if the discarded prediction results are
-> +	 * actually accurate, so skip nohz_full CPUs here.
->  	 */
-> -	if (tick_nohz_tick_stopped() && predicted_ns < TICK_NSEC)
-> +	if (tick_nohz_tick_stopped() && !tick_nohz_full_cpu(dev->cpu) &&
-> +	    predicted_ns < TICK_NSEC)
->  		predicted_ns = data->next_timer_ns;
->  
->  	/*
-> 
-> 
-> 
+FSD CSI(Camera Serial Interface) IP bundles Link controller and DMA
+controller for receiving frames. FSD SoC has 12 instances of CSI IP and
+3 D-PHY. 4 instances of CSI IP use 1 D-PHY.
 
-OTOH the behaviour with $SUBJECT possibly means that we use predicted_ns from
-get_typical_interval() (which may suggest picking a shallow state based on
-previous wakeup patterns) only then to never wake up again?
+This patch series does the following:
+1) Refactor the imx-mipi-csis driver to support platform specific
+clock names and interrupt handlers through device specific data
+(struct mipi_csis_info).
+2) Add FSD CSI link controller support in imx-mipi-csis driver.
+3) Introduce a new media driver for FSD CSI DMA providing support for
+video capture and streaming.
+ 
+These patches were tested on the FSD platform using the
+capture_raw_frames application.
+
+Changes since v1:
+1. Addressed review comments from Laurent Pinchart to integrate the
+with imx-mipi-csis.c to handle the CSIS and expose it as a subdev.
+
+Here is the link to v1 patch for reference:
+https://patchwork.kernel.org/project/linux-media/patch/7e7832c16925386b771ddb7e00e08661115aa0ea.1668963790.git.sathya@samsung.com/
+
+Inbaraj E (12):
+  dt-bindings: clock: Add CAM_CSI clock macro for FSD
+  clk: samsung: fsd: Add clk id for PCLK and PLL in CAM_CSI block
+  dt-bindings: media: nxp: Add support for FSD SoC
+  arm64: dts: fsd: Add CSI nodes
+  media: imx-mipi-csis: Move clk to mipi_csis_info structure
+  media: imx-mipi-csis: Move irq flag and handler to mipi_csis_info
+    structure
+  media: imx-mipi-csis: Add support to configure specific vc
+  media: imx-mipi-csis: Add support to dump all vc regs
+  media: imx-mipi-csis: Add support for FSD CSI Rx
+  dt-bindings: media: fsd: Document CSIS DMA controller
+  arm64: defconfig: Enable FSD CSIS DMA driver
+  media: fsd-csis: Add support for FSD CSIS DMA
+
+ .../bindings/media/nxp,imx-mipi-csi2.yaml     |   88 +-
+ .../bindings/media/tesla,fsd-csis-media.yaml  |   74 +
+ MAINTAINERS                                   |    8 +
+ arch/arm64/boot/dts/tesla/fsd-evb.dts         |   96 +
+ arch/arm64/boot/dts/tesla/fsd.dtsi            |  552 ++++++
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/samsung/clk-fsd.c                 |   28 +-
+ drivers/media/platform/nxp/imx-mipi-csis.c    |  354 +++-
+ drivers/media/platform/samsung/Kconfig        |    1 +
+ drivers/media/platform/samsung/Makefile       |    1 +
+ .../media/platform/samsung/fsd-csis/Kconfig   |   16 +
+ .../media/platform/samsung/fsd-csis/Makefile  |    3 +
+ .../platform/samsung/fsd-csis/fsd-csis.c      | 1730 +++++++++++++++++
+ include/dt-bindings/clock/fsd-clk.h           |   13 +
+ 14 files changed, 2890 insertions(+), 75 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/tesla,fsd-csis-media.yaml
+ create mode 100644 drivers/media/platform/samsung/fsd-csis/Kconfig
+ create mode 100644 drivers/media/platform/samsung/fsd-csis/Makefile
+ create mode 100644 drivers/media/platform/samsung/fsd-csis/fsd-csis.c
+
+-- 
+2.49.0
+
 
