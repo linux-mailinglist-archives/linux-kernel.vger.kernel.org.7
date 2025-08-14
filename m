@@ -1,253 +1,130 @@
-Return-Path: <linux-kernel+bounces-768489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5198FB26190
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:54:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C93B25E91
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 663B55C2D68
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F061C8512B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF422F6580;
-	Thu, 14 Aug 2025 09:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D23A2E765B;
+	Thu, 14 Aug 2025 08:16:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lzIDCjbd"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gBYbI3Vu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CB52F0C54;
-	Thu, 14 Aug 2025 09:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FC521255E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755164950; cv=none; b=EO7XyOGd+g7HGNEqM0Wbqai9lxaUtkwlcJvBI0bavzEYw9RqcG/zBO7e7j5O1m/NcBTsSfqnZlVnGxkPlirDkDxBYRDWA4fyCXMol4r7cYfSw91dcbigO8/HaZMU2Uglyfh+yq+TaXGLZ9PGq5urvx2CdhW47x8sLZXY72NG5U8=
+	t=1755159411; cv=none; b=lKbjIomyK/gwvXfg91DVaFX/Lvhm8/qhzG0N5xnpr5PREp5SGN4T0wH8D7ToBgliDJy3jsRdqNy6bOgWN06LNLhKznFeCWzQlBk7A6cBOvWyisaOn+kRKEmg9nylwz83LQNJGUUcKkEfG+XI7sUgi8IkFT6mtUUm4kavqSbssZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755164950; c=relaxed/simple;
-	bh=QkPxUdpuqr1DUVmmOcH04Inx+a3RZmbXnCVVRgnM76I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p3G9ABgJpiQKZcvZs8SVz1utTKrkk6Ltr3gy3QIEl/HuGsvSjQ48tZsznnggfyS6MxBYwfBVtZvL26CF9U5eBsrUsjnUqWPXrbsxuYBisKnHIS+UaXb/OCMnhisctsLZbDCI/9Kl/7hxVTpqxFoN5/J4NvhqO4elUZv3FbUBqso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lzIDCjbd; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755164949; x=1786700949;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=QkPxUdpuqr1DUVmmOcH04Inx+a3RZmbXnCVVRgnM76I=;
-  b=lzIDCjbdP+qGy95hJCWu/kZzb9EOXKNC4GS27FAowwm/unV4ai0OFV5/
-   KaCN+Dj4d82hN+r5Stv9Zx7HzS3W9XgrN+ugYJmkaU+yMRI9KBPWTrRYX
-   8CEneg9aRcau0jAxdcruQVd1R1iVRUN5YwzHkEMa7fYHM0+O2iu9o3y19
-   3+Y2Fo1+YEnR7brDc1nV3IQG/vrW7G89OW6+yyLBVtl/6kbkwePnhJS1i
-   nHZvkhpP9zutCKQgc1SwLsqqAY5aeKH8cQnm8/u08FbunI98a4sUcVchn
-   4n/IGNuswHQI9z1fFuYapjgHpOPIbhU0oV40KTRYfj8udPyU4udG2bz4H
-   Q==;
-X-CSE-ConnectionGUID: rGmNI3EzTUC3N5tEia6NlA==
-X-CSE-MsgGUID: 6z4rDNLXQ6utJWJe+GsRVQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11520"; a="67746987"
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="67746987"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 02:49:09 -0700
-X-CSE-ConnectionGUID: Rs2vrowXQQyB6UfU1Y+Jjw==
-X-CSE-MsgGUID: MVSGJjwDRbG3McwsLsRftw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
-   d="scan'208";a="166980981"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com ([10.245.244.150])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 02:49:05 -0700
-From: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
-To: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
-	Gustavo Padovan <gustavo@padovan.org>,
-	Chris Wilson <chris.p.wilson@linux.intel.com>,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
-Subject: [PATCH 4/4] dma-buf/fence-chain: Speed up processing of rearmed callbacks
-Date: Thu, 14 Aug 2025 10:16:15 +0200
-Message-ID: <20250814094824.217142-10-janusz.krzysztofik@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250814094824.217142-6-janusz.krzysztofik@linux.intel.com>
-References: <20250814094824.217142-6-janusz.krzysztofik@linux.intel.com>
+	s=arc-20240116; t=1755159411; c=relaxed/simple;
+	bh=JNk1WB0sM/c3AKnWnMw61vo+9cr+QpZkWlweEglazbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XaH9+/HvgJAPdeSZ1nsSivFJ9aF7MjbTiZV4TxuYf+PXEit1CGo7RSQY4uZg2MkzSqctl8evFumF2YZpiPM9IgF507Dj1Ja+Br/eSa+K3vJZJ+fclWc4oGSAKnz9ZfLBfRQ+ejezUsD1TSdT93jCYTAYEf7N3t5L/ZVW204A10I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gBYbI3Vu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755159408;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=prsh9FSOWNJa9cC/Rn26ki138ZPJL8uPSh1phs6eaBo=;
+	b=gBYbI3VuBQO8+4uVNdQ9WnrC2Jn29EyXIjaOYJpBNpWxX+nM2FvexsuajkFI06cQJUkRkP
+	bkdDNXrDqfDXPIiAt8cEqmclXh/4KUcbDK4D52HsZ2uLsFMK4b47TK91BEg32Jn5I3jyqQ
+	wgVP0sSFM7QOz/ZwdDDfTe48vZ7MY44=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-427-ssTVxsLWPUSt8FmxS_VULQ-1; Thu,
+ 14 Aug 2025 04:16:43 -0400
+X-MC-Unique: ssTVxsLWPUSt8FmxS_VULQ-1
+X-Mimecast-MFC-AGG-ID: ssTVxsLWPUSt8FmxS_VULQ_1755159402
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1DDE6195F165;
+	Thu, 14 Aug 2025 08:16:41 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.148])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E95C31800447;
+	Thu, 14 Aug 2025 08:16:31 +0000 (UTC)
+Date: Thu, 14 Aug 2025 16:16:26 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, yukuai3@huawei.com, bvanassche@acm.org,
+	nilay@linux.ibm.com, hare@suse.de, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH 01/16] blk-mq-sched: add new parameter nr_requests in
+ blk_mq_alloc_sched_tags()
+Message-ID: <aJ2bWqQCMtjT3NZh@fedora>
+References: <20250814033522.770575-1-yukuai1@huaweicloud.com>
+ <20250814033522.770575-2-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814033522.770575-2-yukuai1@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-When first user starts waiting on a not yet signaled fence of a chain
-link, a dma_fence_chain callback is added to a user fence of that link.
-When the user fence of that chain link is then signaled, the chain is
-traversed in search for a first not signaled link and the callback is
-rearmed on a user fence of that link.
+On Thu, Aug 14, 2025 at 11:35:07AM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> This helper only support to iallocate the default number of requests,
+> add a new parameter to support specific number of requests.
+> 
+> Prepare to fix tags double free problem if nr_requests is grown by
+> queue sysfs attribute nr_requests.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-mq-sched.c | 11 +++++++----
+>  block/blk-mq-sched.h |  2 +-
+>  block/elevator.c     |  2 +-
+>  3 files changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+> index e2ce4a28e6c9..9a8a0b5e04a9 100644
+> --- a/block/blk-mq-sched.c
+> +++ b/block/blk-mq-sched.c
+> @@ -454,7 +454,7 @@ void blk_mq_free_sched_tags_batch(struct xarray *et_table,
+>  }
+>  
+>  struct elevator_tags *blk_mq_alloc_sched_tags(struct blk_mq_tag_set *set,
+> -		unsigned int nr_hw_queues)
+> +		unsigned int nr_hw_queues, unsigned int nr_requests)
+>  {
+>  	unsigned int nr_tags;
+>  	int i;
+> @@ -475,8 +475,11 @@ struct elevator_tags *blk_mq_alloc_sched_tags(struct blk_mq_tag_set *set,
+>  	 * 128, since we don't split into sync/async like the old code
+>  	 * did. Additionally, this is a per-hw queue depth.
+>  	 */
+> -	et->nr_requests = 2 * min_t(unsigned int, set->queue_depth,
+> -			BLKDEV_DEFAULT_RQ);
+> +	if (nr_requests)
+> +		et->nr_requests = nr_requests;
+> +	else
+> +		et->nr_requests = 2 * min_t(unsigned int, set->queue_depth,
+> +				BLKDEV_DEFAULT_RQ);
 
-Since chain fences may be exposed to user space, e.g. over drm_syncobj
-IOCTLs, users may start waiting on any link of the chain, then many links
-of a chain may have signaling enabled and their callbacks added to their
-user fences.  Once an arbitrary user fence is signaled, all
-dma_fence_chain callbacks added to it so far must be rearmed to another
-user fence of the chain.  In extreme scenarios, when all N links of a
-chain are awaited and then signaled in reverse order, the dma_fence_chain
-callback may be called up to N * (N + 1) / 2 times (an arithmetic series).
+It looks more readable to add helper blk_mq_default_nr_requests(),
+and pass it from call sites directly, then people won't be confused
+with the passed zero `nr_requests`.
 
-To avoid that potential excessive accumulation of dma_fence_chain
-callbacks, rearm a trimmed-down, signal only callback version to the base
-fence of a previous link, if not yet signaled, otherwise just signal the
-base fence of the current link instead of traversing the chain in search
-for a first not signaled link and moving all callbacks collected so far to
-a user fence of that link.
 
-Closes: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/12904
-Suggested-by: Chris Wilson <chris.p.wilson@linux.intel.com>
-Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
----
- drivers/dma-buf/dma-fence-chain.c | 101 +++++++++++++++++++++++++-----
- 1 file changed, 84 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/dma-buf/dma-fence-chain.c b/drivers/dma-buf/dma-fence-chain.c
-index a8a90acf4f34d..90eff264ee05c 100644
---- a/drivers/dma-buf/dma-fence-chain.c
-+++ b/drivers/dma-buf/dma-fence-chain.c
-@@ -119,46 +119,113 @@ static const char *dma_fence_chain_get_timeline_name(struct dma_fence *fence)
-         return "unbound";
- }
- 
--static void dma_fence_chain_irq_work(struct irq_work *work)
-+static void signal_irq_work(struct irq_work *work)
- {
- 	struct dma_fence_chain *chain;
- 
- 	chain = container_of(work, typeof(*chain), work);
- 
--	/* Try to rearm the callback */
--	if (!dma_fence_chain_enable_signaling(&chain->base))
--		/* Ok, we are done. No more unsignaled fences left */
--		dma_fence_signal(&chain->base);
-+	dma_fence_signal(&chain->base);
- 	dma_fence_put(&chain->base);
- }
- 
--static void dma_fence_chain_cb(struct dma_fence *f, struct dma_fence_cb *cb)
-+static void signal_cb(struct dma_fence *f, struct dma_fence_cb *cb)
-+{
-+	struct dma_fence_chain *chain;
-+
-+	chain = container_of(cb, typeof(*chain), cb);
-+	init_irq_work(&chain->work, signal_irq_work);
-+	irq_work_queue(&chain->work);
-+}
-+
-+static void rearm_irq_work(struct irq_work *work)
-+{
-+	struct dma_fence_chain *chain;
-+	struct dma_fence *prev;
-+
-+	chain = container_of(work, typeof(*chain), work);
-+
-+	rcu_read_lock();
-+	prev = rcu_dereference(chain->prev);
-+	if (prev && dma_fence_add_callback(prev, &chain->cb, signal_cb))
-+		prev = NULL;
-+	rcu_read_unlock();
-+	if (prev)
-+		return;
-+
-+	/* Ok, we are done. No more unsignaled fences left */
-+	signal_irq_work(work);
-+}
-+
-+static inline bool fence_is_signaled__nested(struct dma_fence *fence)
-+{
-+	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
-+		return true;
-+
-+	if (fence->ops->signaled && fence->ops->signaled(fence)) {
-+		unsigned long flags;
-+
-+		spin_lock_irqsave_nested(fence->lock, flags, SINGLE_DEPTH_NESTING);
-+		dma_fence_signal_locked(fence);
-+		spin_unlock_irqrestore(fence->lock, flags);
-+
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static bool prev_is_signaled(struct dma_fence_chain *chain)
-+{
-+	struct dma_fence *prev;
-+	bool result;
-+
-+	rcu_read_lock();
-+	prev = rcu_dereference(chain->prev);
-+	result = !prev || fence_is_signaled__nested(prev);
-+	rcu_read_unlock();
-+
-+	return result;
-+}
-+
-+static void rearm_or_signal_cb(struct dma_fence *f, struct dma_fence_cb *cb)
- {
- 	struct dma_fence_chain *chain;
- 
- 	chain = container_of(cb, typeof(*chain), cb);
--	init_irq_work(&chain->work, dma_fence_chain_irq_work);
-+	if (prev_is_signaled(chain)) {
-+		/* Ok, we are done. No more unsignaled fences left */
-+		init_irq_work(&chain->work, signal_irq_work);
-+	} else {
-+		/* Try to rearm the callback */
-+		init_irq_work(&chain->work, rearm_irq_work);
-+	}
-+
- 	irq_work_queue(&chain->work);
--	dma_fence_put(f);
- }
- 
- static bool dma_fence_chain_enable_signaling(struct dma_fence *fence)
- {
- 	struct dma_fence_chain *head = to_dma_fence_chain(fence);
-+	int err = -ENOENT;
- 
--	dma_fence_get(&head->base);
--	dma_fence_chain_for_each(fence, &head->base) {
--		struct dma_fence *f = dma_fence_chain_contained(fence);
-+	if (WARN_ON(!head))
-+		return false;
- 
--		dma_fence_get(f);
--		if (!dma_fence_add_callback(f, &head->cb, dma_fence_chain_cb)) {
-+	dma_fence_get(fence);
-+	if (head->fence)
-+		err = dma_fence_add_callback(head->fence, &head->cb, rearm_or_signal_cb);
-+	if (err) {
-+		if (prev_is_signaled(head)) {
- 			dma_fence_put(fence);
--			return true;
-+		} else {
-+			init_irq_work(&head->work, rearm_irq_work);
-+			irq_work_queue(&head->work);
-+			err = 0;
- 		}
--		dma_fence_put(f);
- 	}
--	dma_fence_put(&head->base);
--	return false;
-+
-+	return !err;
- }
- 
- static bool dma_fence_chain_signaled(struct dma_fence *fence)
--- 
-2.50.1
+Thanks, 
+Ming
 
 
