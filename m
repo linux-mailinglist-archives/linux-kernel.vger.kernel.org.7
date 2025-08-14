@@ -1,150 +1,199 @@
-Return-Path: <linux-kernel+bounces-768584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D70B262D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:34:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73C5EB262CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC945E1953
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:29:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBEA85A0A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 10:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE79E306D33;
-	Thu, 14 Aug 2025 10:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605012E7F1F;
+	Thu, 14 Aug 2025 10:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="k3qygb7n"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="epl4/Mq9"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD5E305E3C;
-	Thu, 14 Aug 2025 10:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7042FC88E
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 10:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755167162; cv=none; b=IqXCdERFPVwzjq/rPkV0xLlLSooMTziIEPn616nz0iDjHGlPl4nOeGBdOwIdbNcWfZF5e2UmQdbqLxWlbdfSoTxY0NzAEEForxup1kYO03MlMjNhEjdCuzuSA5Wf3OQfD66bRGYJ9N3S4u/HyZKA8IQvJ8bwj+3lhkTG6cZQh3U=
+	t=1755167131; cv=none; b=jhK8IKc0i5HtBQvlzIXXXDVSsV6z/atZyBgaE0Tf/pqmhhubE48s0Bsv1tS2L3dZUHojj/N2rr0NR7jJlilKXezTIWxT47jC69cwDju7rRq2fUja7LzASVXUcM8iAyF/9bFYzrg8SRQYqsHxMmAoLBU8kAwWPMx+DVQ62JTAp2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755167162; c=relaxed/simple;
-	bh=a8nJWGrKgjaDQrULPZIHosDNKPSDFC4N/Axl41KsowY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+hSEk7oiftYU4wFCeEX+xAUIVr5ldhn3lkBUNkDyeeQ4Tr4bxT04ifPP53WjLsHR9FqeAWRikJpZmlAOnojJ62wklhiKvlO/RJ7SbK5atk2UiSjT1cEBeeUTvXJIOPHOPmASkarDa+vCKxSkB0yHm2YzyKdMoWtNYRFzLoVKys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=k3qygb7n; arc=none smtp.client-ip=212.227.126.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1755167119; x=1755771919; i=christian@heusel.eu;
-	bh=GoIHizLFJF6SJrp0Z0/G61o1a6vfrBG25gjN1/LQrZw=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=k3qygb7nkAB1bLqqiURFlvapBcCeAHoe6T9OGT3HO5fHQkqGsv6/F+QWWgqj5b28
-	 re64wp5XZUVd1WYpLOZ38D28qIIaLVUeSfvsgxUf6HLcBLNhXaN5rW19yIxeqpF/w
-	 QvWW3zoHKR5y0c0IF1NlXas7pr1q4K8eVfx+RK/ChN2M+bsEvbkHBUegoxojPpmMu
-	 2HNkk9PhwAqXjhPWZCTWBWvU2v4YrmhXhMDpHjNq/gJIa7CljcqU6g8IkgbDw8gdu
-	 9dxkxYlE8vfr6I1h0IcnuHX4F3kFs/Ns8ZIqhOsFlJyw5Y0psKzkDWzx2S1uay4aO
-	 6Ei7Q+Sbv89ArbBjHg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([147.142.166.140]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MryCb-1uG8sd3WU9-00gQio; Thu, 14 Aug 2025 12:25:18 +0200
-Date: Thu, 14 Aug 2025 12:25:16 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-Message-ID: <3641f985-9a0f-4cd2-8c0a-62c81f372b33@heusel.eu>
-References: <20250812173419.303046420@linuxfoundation.org>
+	s=arc-20240116; t=1755167131; c=relaxed/simple;
+	bh=Y3sXF5J2XtEmlT3U8RWsY3ND48ZnRlCE1LO+7eUaf60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FeI+nmMpCoiEpzoLrkpkBDNyPFiLQ20efqC/jnWeR/1xWszkQHxYC/1SQOw1rYjmdmEBx/qfmPFZ89FShyBpJc1q9hFXrblfByx6ix4g5S71pYIyx+cR9+NV4GD3n4KLuwThfPCnoefubQab3exsqxsxKtFhTGAZi0PQnRHB83k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=epl4/Mq9; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-323267b98a4so745761a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 03:25:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1755167129; x=1755771929; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpGkbSZTH0YknQyYJZMYGzUvtXXPiBXKw7DK+s5tWTc=;
+        b=epl4/Mq967uE0lydvHGABtEneUEbyyPVl7oGm6ffSSQxXSkdtVXhw8xfx8h8yyh/KU
+         kjmaGzRlGGX/6C7XZnFV+Ukg9iuKKIYqv55ro5pxt8wEZfuGJ7mgGbeNY2hI1ZQ5KYpV
+         Xu++tC3GCNm6mjXGevF6i2O3msUNP5m7574vWFpyyUE0KDCWJ1Ws9uCnR7YCxbusseaN
+         vK+GKgHp9xlHoMMzgU9f0UEw4Le1dVVxc2D04wlmwHZCFTRswW3jdAcnVl2Xkb+JSkwa
+         2gNwZ7vW8t+KfN45Cc03Y3sNA/jiceTgDz2aWmkk8sFlJarUAfloCqDyOyB2LpABn44p
+         5+YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755167129; x=1755771929;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FpGkbSZTH0YknQyYJZMYGzUvtXXPiBXKw7DK+s5tWTc=;
+        b=NgwdbTnQtnPgPkFi7neAJYBXiXUXSEdItfZ8z6Y7AmfvTWGUmew1mqxx3bCDeR4kLn
+         ADcM/+26z6Vpv/w3MQpXyPdHP+eZpa8BXyFjZYds+7EimHjHQRjKYAsZE5lgl7dtwS5e
+         Jlc7W37JpPYDNYsBTItH5+0TFBFln7NYwGxvzxF0hDr0ofgMO4+mY06MTcpPLfZGyWCE
+         aJIAj5LpmZguIEJ0lnRvm+e0HeJGz5lRpk1lgKQu0RFb8Yco+SNK51u8LSnikKtAbHmZ
+         wmrvFrL/WEpASGfO92DyMrBeVEFjNP4HnPtn4Oay8NBNWHFCpr7noQQyjwEGMUZwfudG
+         0P0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQgd51jtXRcSTkiWIuETnnJf/kpwMnD3E5ZtMieD1EIEYy9OQj4nnxkChitTNjR6rMNFJ8fJLj7YIQOgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIbqqCuHbbJX1cD57owSjpSJU5E3zbOBJVAA/4Fnese++KPpHD
+	PgFjl7b7dWwGdKCe1cBsk4ONmcOX/aIK+IxqdVC0Wu70aF2jt4BXkySCjee9DW4Tx3jkdhnP136
+	+AMEEuQyWPKeGkXIVF+1+lb4Mw9iOqwMSpQCgOHq8ag==
+X-Gm-Gg: ASbGnctOI4aZdlBqEVGdOZYYl+rd7ZKK2wD1o6vMogOrPOqKEVV7i3PeM27dCtECrk1
+	JycebfLoO+FwCJ1iZJNaVPfc4Th+k1MH4Wt/pwJLgLcBmilIYCqiw91cX1bL1BaEFqQVnb019+l
+	7gwDW8KSMcUUqHWSYb3bOAuIOq+eCWaRN7nvGBwImrGn7OUNjk++VifCrlf9EGUQ9UjcDGmt4po
+	p7Y1jGs
+X-Google-Smtp-Source: AGHT+IGz30+Hy3gFiTg1KnKcd85era+jIMkvNCETz576JOwHJ8XIWA/KFX2Wu3mbC41FRqHMX/pJpTpFJUrAJtDL5aM=
+X-Received: by 2002:a17:90a:d888:b0:323:284a:5c3f with SMTP id
+ 98e67ed59e1d1-323284a5ce1mr4106502a91.8.1755167129058; Thu, 14 Aug 2025
+ 03:25:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="psqisqcmbrlofjwt"
-Content-Disposition: inline
-In-Reply-To: <20250812173419.303046420@linuxfoundation.org>
-X-Provags-ID: V03:K1:5FKFck/tbvqqUq06Xdda52whjUXiDXIPAKvgy8Jlhs9lUtyF7dL
- sGEHMawhdOGnbvepSsSFX7zSsndP+GVTX4GjupmKnTT26q9e7uBufUq9DXu6wTGO+GGF7Y1
- BD1mDhZoj5Qw5z76/a4LIpD4CQuACxbKRlUptBxSQ3M7XgP1xOH556Ap7iq2L4nxTxaffT5
- pYXRfwAGL4Dm5OWBU0syg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zhjXs2MPWws=;eu+QXNauRJ06V9+zb1CMbEfGC3t
- 2+gxURnl8ybBsc+gYBv3kfXdYUAsDgv3dlEIQAx26TBHoR6WTUwK9UwE90zD+s/wevPoYYdvL
- RMYUKxEg+MRK+qv7pECEsrcj+KmU6wNq2ORUhg5o4lc/m1KRW9dQJgmQV+M+cxcLBGpL8mtkL
- SlgLmcmLSItk9EynCB/PJkGznq8EOsr0/T7/orJ49xl6wL1h7X9+tvxH4Tguh7Q6nculcGgjv
- 8d8EDST1eTrMKcBwkYxn3gWaZj3xjNFZG8WezmSpQ2+X7qlDa++++eEmI2hqQns/MNudT2Vle
- KYnvy95A2fFCexty9J/4Wkt/WzwVWfoCXbpitbBS58fxhJLaRqSJSK3RL7XlG2pwdm8jWybxw
- TJljozncxyqM1MlT1HyyTqj7tU5wJ+1fiu6T8ux+pInVPmQ+eniAdkByvrzYcZoj1uCrp5A5d
- oa/Y12k8qHjpBtNQ6uKUDn+FEnRagUa+0hVZbe9N9DleEXU5aF1XFEJIMl01udxaX/L3Dol9R
- +wlHXDb5OWQxpTwcu7Np+Q7ZZCN24kiwYk+Did/8qh7xEWnwc2tzVC/gwpg1WsvKdwNiHRMZV
- JrVP9q9wJdKV0FYjffYMp/lQPAIDKgQ1+2LwEvM1h531NapVDhQClJ9psSqKxM3HNma0jB3ff
- 2OsjEULt9Q1svIjQ7SD9K8lpyyu0ISayBz0eADI2ahWNwGpyZ6nKDG1KUOndfunR8Oo5Q9W/7
- HjMchKFgz6eWl52E1xtIMf/NvunLe3cgffIhqm+RYQ2oe0ZgYVznaOrQRbiTfonOklMfcDrXP
- pc7vlQtDZkaqN49kiDdG65i8kVinlLmfWab5R7tjlGfOENGFd9bb1Z/jUUvE6h5eaW2jUNDhO
- tOAfK3YhUkpci5F0YcARIrUf77jtpnVL6fxKmPkF6OdyovanH7fFsglaajW6CrNFz/qwUcXMx
- rhPP1MPSg9mUY5fwfqG/ZlQL8ROovmc3VGf2rRXwDpLT7rVRUgEvIDgQAIg8Z6jwfCQ6J5u8o
- DnElxgr2t+8cJFyO+jdm3YxLNiWiTOiVY8XSXi1VtZlpgOREmQnhChT9Jg9ImN6lRst+pWJ6t
- JDKPYu1IoL6OGKXfnGd1DJxu4TLytli30wJzjlOyupNi+42Gos+LjYEgybiLJ8d9STF/Rgy+k
- eQ9d2gtQ0LPsPWn6rxAem0gMkqnvfhikc/JReqWEKC1FQcOGyLXZ3fFPZkeFfPcDYwlRpXWVS
- dxLjn8w+oPAIz+LGTJqt6xtnkSb5V1FHUmFyoY4Jv/2Ajdblk/00gVAotSkHdFUJpdycTX2Xb
- yBUkDFvbViMtIBAZPCfvtyFjPY70whFs3jn6PlQ5Ot4a7l3nRcLZxMdbKsQXpRUFicDaRvG6I
- bPlDjuSH26AnSLMMeWF4uMv/Vjq699sUScbiFcvQgKPfGahEKvl8XgbZH3zDMy3oZlEK2t8CG
- eap1YUh/1Ho5ZkqpGAcRNNmqVzJj6ejKqXkuym3LfV5/FuXXkjLoFBqVBORpTkfG7NKX3gobw
- mrfLQRV4nSzxxzo1e+YVN6Zwolxgae40x0+8hweMY/p8X5yFP4UwDwpdxy1w/LfIZaTV8TXTJ
- K8yfVd3uS6x+jcq6v9/Y5BsjbrBL6KY1Tiyq///Ag8t6GFsvRobOWB4WgDexDCHJ1CI9PBE/e
- 32YoUxZoGLM07Xo4GObX0Y
+References: <20250812-trcextinselr_issue-v2-1-e6eb121dfcf4@oss.qualcomm.com> <272077d5-12b1-4922-b924-a96c34b3b1c9@linaro.org>
+In-Reply-To: <272077d5-12b1-4922-b924-a96c34b3b1c9@linaro.org>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Thu, 14 Aug 2025 11:25:17 +0100
+X-Gm-Features: Ac12FXxwDyviVwWfUtpF9l-HP2Uc7nKXb1Mzv3kyYVuoGcSStUR2CgS_3D4d4W4
+Message-ID: <CAJ9a7Vif9__iXasPWi0uUhXNJ63xQBtBksT17MvQ-+rDMVxuAQ@mail.gmail.com>
+Subject: Re: [PATCH v2] coresight-etm4x: Conditionally access register TRCEXTINSELR
+To: James Clark <james.clark@linaro.org>
+Cc: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>, kernel@oss.qualcomm.com, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+
+On Thu, 14 Aug 2025 at 10:51, James Clark <james.clark@linaro.org> wrote:
+>
+>
+>
+> On 12/08/2025 9:24 am, Yuanfang Zhang wrote:
+> > The TRCEXTINSELR is only implemented if TRCIDR5.NUMEXTINSEL > 0.
+> > To avoid invalid accesses, introduce a check on numextinsel
+> > (derived from TRCIDR5[11:9]) before reading or writing to this register.
+> >
+> > Fixes: f5bd523690d2 ("coresight: etm4x: Convert all register accesses")
+>
+> This tag isn't right. Although this is where the register accesses were
+> last touched, the root issue was present from the introduction of the
+> driver.
+>
+
+Memory mapped access to unimplemented registers are RES0 so won't fail
+- the issue is the system register access where an undefined exception
+can be triggered.
+
+Mike
+
+> > Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+> > ---
+> > Changes in v2:
+> > - Add fixes tag.
+> > - Replace "if (drvdata->nrseqstate)" with "if (drvdata->numextinsel)"
+> > - Link to v1: https://lore.kernel.org/r/20250811-trcextinselr_issue-v1-1-ed78f3215502@oss.qualcomm.com
+> > ---
+> >   drivers/hwtracing/coresight/coresight-etm4x-core.c | 11 ++++++++---
+> >   drivers/hwtracing/coresight/coresight-etm4x.h      |  2 ++
+> >   2 files changed, 10 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> > index 42e5d37403addc6ec81f2e3184522d67d1677c04..4e411427303981104d11720d3c73af91030f8df3 100644
+> > --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> > +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> > @@ -528,7 +528,8 @@ static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
+> >               etm4x_relaxed_write32(csa, config->seq_rst, TRCSEQRSTEVR);
+> >               etm4x_relaxed_write32(csa, config->seq_state, TRCSEQSTR);
+> >       }
+> > -     etm4x_relaxed_write32(csa, config->ext_inp, TRCEXTINSELR);
+> > +     if (drvdata->numextinsel)
+> > +             etm4x_relaxed_write32(csa, config->ext_inp, TRCEXTINSELR);
+> >       for (i = 0; i < drvdata->nr_cntr; i++) {
+> >               etm4x_relaxed_write32(csa, config->cntrldvr[i], TRCCNTRLDVRn(i));
+> >               etm4x_relaxed_write32(csa, config->cntr_ctrl[i], TRCCNTCTLRn(i));
+> > @@ -1423,6 +1424,7 @@ static void etm4_init_arch_data(void *info)
+> >       etmidr5 = etm4x_relaxed_read32(csa, TRCIDR5);
+> >       /* NUMEXTIN, bits[8:0] number of external inputs implemented */
+> >       drvdata->nr_ext_inp = FIELD_GET(TRCIDR5_NUMEXTIN_MASK, etmidr5);
+> > +     drvdata->numextinsel = FIELD_GET(TRCIDR5_NUMEXTINSEL_MASK, etmidr5);
+> >       /* TRACEIDSIZE, bits[21:16] indicates the trace ID width */
+> >       drvdata->trcid_size = FIELD_GET(TRCIDR5_TRACEIDSIZE_MASK, etmidr5);
+> >       /* ATBTRIG, bit[22] implementation can support ATB triggers? */
+> > @@ -1852,7 +1854,9 @@ static int __etm4_cpu_save(struct etmv4_drvdata *drvdata)
+> >               state->trcseqrstevr = etm4x_read32(csa, TRCSEQRSTEVR);
+> >               state->trcseqstr = etm4x_read32(csa, TRCSEQSTR);
+> >       }
+> > -     state->trcextinselr = etm4x_read32(csa, TRCEXTINSELR);
+> > +
+> > +     if (drvdata->numextinsel)
+> > +             state->trcextinselr = etm4x_read32(csa, TRCEXTINSELR);
+> >
+> >       for (i = 0; i < drvdata->nr_cntr; i++) {
+> >               state->trccntrldvr[i] = etm4x_read32(csa, TRCCNTRLDVRn(i));
+> > @@ -1984,7 +1988,8 @@ static void __etm4_cpu_restore(struct etmv4_drvdata *drvdata)
+> >               etm4x_relaxed_write32(csa, state->trcseqrstevr, TRCSEQRSTEVR);
+> >               etm4x_relaxed_write32(csa, state->trcseqstr, TRCSEQSTR);
+> >       }
+> > -     etm4x_relaxed_write32(csa, state->trcextinselr, TRCEXTINSELR);
+> > +     if (drvdata->numextinsel)
+> > +             etm4x_relaxed_write32(csa, state->trcextinselr, TRCEXTINSELR);
+> >
+> >       for (i = 0; i < drvdata->nr_cntr; i++) {
+> >               etm4x_relaxed_write32(csa, state->trccntrldvr[i], TRCCNTRLDVRn(i));
+> > diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
+> > index ac649515054d905fa365203bd35f1d839b03292f..823914fefa90a36a328b652b0dc3828b9bddd990 100644
+> > --- a/drivers/hwtracing/coresight/coresight-etm4x.h
+> > +++ b/drivers/hwtracing/coresight/coresight-etm4x.h
+> > @@ -162,6 +162,7 @@
+> >   #define TRCIDR4_NUMVMIDC_MASK                       GENMASK(31, 28)
+> >
+> >   #define TRCIDR5_NUMEXTIN_MASK                       GENMASK(8, 0)
+> > +#define TRCIDR5_NUMEXTINSEL_MASK               GENMASK(11, 9)
+> >   #define TRCIDR5_TRACEIDSIZE_MASK            GENMASK(21, 16)
+> >   #define TRCIDR5_ATBTRIG                             BIT(22)
+> >   #define TRCIDR5_LPOVERRIDE                  BIT(23)
+> > @@ -999,6 +1000,7 @@ struct etmv4_drvdata {
+> >       u8                              nr_cntr;
+> >       u8                              nr_ext_inp;
+> >       u8                              numcidc;
+> > +     u8                              numextinsel;
+> >       u8                              numvmidc;
+> >       u8                              nrseqstate;
+> >       u8                              nr_event;
+> >
+> > ---
+> > base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> > change-id: 20250811-trcextinselr_issue-f267afa0e5ed
+> >
+> > Best regards,
+>
 
 
---psqisqcmbrlofjwt
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 6.16 000/627] 6.16.1-rc1 review
-MIME-Version: 1.0
-
-On 25/08/12 07:24PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.16.1 release.
-> There are 627 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Thu, 14 Aug 2025 17:32:40 +0000.
-> Anything received after that time might be too late.
->=20
-
-Tested-by: Christian Heusel <christian@heusel.eu>
-
-Tested on the following hardware:
-
-* a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
-* a Framework Laptop with a Ryzen AI 5 340=20
-* a Framework Desktop
-
---psqisqcmbrlofjwt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmiduYwACgkQwEfU8yi1
-JYVL+BAA5WZ9NSOEFQSxZIxrV+iRxPDiRDZlg9xGG1KdVjm9sr+8yLcWwkjLv5m+
-Xh+/7Mi1pFA7TXpuwhRTqBRHwp00JJLPb9reA6objvItikrPud0N/NxF9zbbutvv
-6UuoUF1/jtVQ3aZH5bhvTfjj8GUrhvJtiT0zevrznM2WDoLGMxdNm6AAxqmYPsr7
-1e0UdW3/dKrPU1kn3NdKWp08phJEtlyzNuIpBAsoTfJDe8eEpQbKgfFF/8Kix7Ep
-sFMnjoA4FcS+EfA1rNhuFGWSuxUSVDRoJCBkjtBZDrwJwrTiTyKWIZxyhBJG3GF9
-Ec46wASsgep9voFreOZPmsn4WT2CmcAQtXJ5TBufcJOXP8JL0gcovLew3O1YRKAI
-+iEiuyqZSsq4ORVK/P3giqacKFy+bewZWkwuMWLxoTQkaOi6C1NzJrnj6EzdBbgx
-u7CJMb3VokIb6r4IXB0gBTxKTrqPIle+ENr5YDbC7CBmG9hCYkMNAPyNSWW3EXo/
-Dd4SqENXi8rtC9gDf4pTeuLJxFH15O+jqZEfp/C92Z1X6AThRFTCnD+jIYYO2WEY
-AwGTl07CuE+x6qyy+MEEEOq7c3t5v+IHqSzCW+Xi0ivvblakXwD3pDTKphS3q4jx
-cBcjc5R3f3VaGFjPeLcLaC/3HaXZJcG9CvL9W14HQ3f2cXi7CG4=
-=tthR
------END PGP SIGNATURE-----
-
---psqisqcmbrlofjwt--
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
