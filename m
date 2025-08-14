@@ -1,59 +1,95 @@
-Return-Path: <linux-kernel+bounces-769035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A92B2697C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:34:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDA9B26959
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:30:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 666AB1CC716B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8CFB5E7691
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7C51A9FB3;
-	Thu, 14 Aug 2025 14:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE4E19D8AC;
+	Thu, 14 Aug 2025 14:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SvihKLFO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dm2g8BH9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDA414A4F0;
-	Thu, 14 Aug 2025 14:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C02321429;
+	Thu, 14 Aug 2025 14:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755181006; cv=none; b=g0uaraKc6KnIODwKykB4u2fbggrw6yUTgk5F5mpeCiah++2mahefvT1Xcxv4kJEkv2tpZH0JASH5bfpCrq4dgwnWmkNmqcBZW+PFKd5UFgRToAYPydep+DD0xQh89eynqStIWLrhnf2/uMA0PiHkXShHdDV9plPnWHUPuhEC6Ac=
+	t=1755181043; cv=none; b=mS2sQgAUs2tqEEXbg/MGGujmxWgzD1ZmhEi8lI48qjcbdpaokwabasOaLiJNyZZvioi2iWZqhgtJoN43edIjKDB17gqry993dbImEIfmarCM8FCzMGRcSvAlwLSTrCYImTK7jCqii35FArkcKAhn8VcFq9BhogWdFoFG4pDU31o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755181006; c=relaxed/simple;
-	bh=S7GgsxcKNtoORFbwkhFg/o2U/CGUU4Ner6zZ/evpaAo=;
+	s=arc-20240116; t=1755181043; c=relaxed/simple;
+	bh=a5LvrdOjd61BgcujBkjsB9RX4jF3+FOqLq8LJGv2MEA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hkuZKA5yPnUkqLi4/oAtgH7CyN6WcFhdAxITkUYjTAz+sFsVbjWYixs8kjgMFJk86J40TlFtZZW5XSVW5jFPxXtz/6nGqkcimfLyUbWHjOrsPvyccoctunoY7K2SCIFo8f+9EVQ0PnySEmelb0kZTDyOjTe/8EMjSyYwVsy/SdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SvihKLFO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C30C4CEEF;
-	Thu, 14 Aug 2025 14:16:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755181005;
-	bh=S7GgsxcKNtoORFbwkhFg/o2U/CGUU4Ner6zZ/evpaAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SvihKLFO0reZ3355bGC3y/5Gq4H1ugK95PWcRDdlSxGJbhRdcR0O+V4/7Bh5WRptU
-	 GV7EcxnYeZTVcDYJnqTPYlEy7bkxB10kCMBzJ4Zr0VRwrCygXo0CN1FnUlRkavnM08
-	 jxldecqZWVvF95995uDgTIgI/IFXGl4RxGLnhyAFbFmyFWCa5BZQ+vBqOqD2vd4kTh
-	 oCmFaeOUwBZzBSu54nhoPeBBT1J/tNUezQYn7X4sZUJngN9SplYGnBd4rILKQUfvT5
-	 XTqU3y8pB4J+Tp7ze7yAftyrB5USXx4d2dZfaEmTs/CxVmFautbuxyfjjV5A9CTakd
-	 spnRZK5r318EQ==
-Date: Thu, 14 Aug 2025 09:16:43 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Document SC7280 PCIe0 phy
-Message-ID: <yncizuu6bhr3xvuzkb5xri4gh6mdjg4r4d4nkufgxxpquetyir@kiagpup6wqgx>
-References: <20250812-sc7280-v2-0-814e36121af0@oss.qualcomm.com>
- <20250812-sc7280-v2-1-814e36121af0@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GysKpjO0bchaZ9uO2je0gU00j5Vp0XDvAfjDCu5PhaYizi1n37Icj9Yjt/nOvawudD7s7EKAawfr0xwtRFENPnt39IFkP3yjQNPIU+ZvSD6Wn8Nr+G/I2MJwgC4qJbn4tJXBCEChkis0dSihii2PCctPs0XEpP1WWjaD4fcX/8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dm2g8BH9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57EC9eai015942;
+	Thu, 14 Aug 2025 14:17:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=xitHk/pMp/QQRbnoNBeobWtSukHr3B
+	tvqIQXx8tyGSI=; b=dm2g8BH9X+VPUpX0ORW4FXmBPSt0q4HQNVvtqScKT/Y7lR
+	x+ZvZBs4brlmfLxw3tfSolDHU/3qInCOIubRjpFyL59VhiT986Iau4XUhfg/vSJh
+	dogiHlUowgPQl83IVumxbBflYIw0b1fYcHnEcOoE06B7GpESh//GQPxohclOx85S
+	o6KgeEOdZfcBzaq71w+3iNJer4oLZnnR57inLrSu7U5y/YCl4lIRfS6ip3qcA/4C
+	KF5lTrlvO+q9j0XJ4Qe6kXEZz15poLgKGciNc4fGz8OKZH3//ybm10fsMQJSNj+g
+	6SVOmaTI0ur5a1ZPzwHBvSZ9SdLcCqAPmRaU5Gtw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx14tges-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 14:17:07 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 57EE4nZt021961;
+	Thu, 14 Aug 2025 14:17:06 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48dx14tgep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 14:17:06 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57EAGHus025623;
+	Thu, 14 Aug 2025 14:17:05 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ejvmm91c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 14:17:05 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57EEH19N49414634
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Aug 2025 14:17:02 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E12AE20043;
+	Thu, 14 Aug 2025 14:17:01 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A245720040;
+	Thu, 14 Aug 2025 14:17:01 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.133])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 14 Aug 2025 14:17:01 +0000 (GMT)
+Date: Thu, 14 Aug 2025 16:16:58 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Alexey Gladkov <legion@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+        Nicolas Schier <nicolas.schier@linux.dev>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Petr Pavlu <petr.pavlu@suse.com>, Luis Chamberlain <mcgrof@kernel.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
+        linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>, linux-s390@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v6 9/9] s390: vmlinux.lds.S: Reorder sections
+Message-ID: <20250814141658.7684Fd6-hca@linux.ibm.com>
+References: <cover.1755170493.git.legion@kernel.org>
+ <919570dc048786c4d07affaec4b761811c6c21c5.1755170493.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,116 +98,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250812-sc7280-v2-1-814e36121af0@oss.qualcomm.com>
+In-Reply-To: <919570dc048786c4d07affaec4b761811c6c21c5.1755170493.git.legion@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ZUHBlsY6Q0Jh5y8HGhdRNiGKb4yCQavS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEyMDIyNCBTYWx0ZWRfX9xH1VxH7a5Cr
+ j7aQo8bnSTLGXMtUWVHu3eWBdPNq3vy8W1uvZKFn0bTkrMUJ+YG7b/dR9HCAWvAkMJwTmkKVBKM
+ aEc9V5XagKrDGaD0MMKL8vfSVAk/dVUYbK/LoZ6L/PtlFgkG0rVwj5A3XoTVJx1OIyvgkFmdxZ3
+ uT/2sbj4bLRuti4UGbxAu2AY39AKq8ffgpwsetpHnL6ogjNqC/joDWghtFRes7g+nQoHiqltkkt
+ huuePs6oP5NLyN/4xJ/+5zyqyTRXdoGuKybPlqVjU13w7R0WY91XRDh1U90wK0tALhuI2JKgP+S
+ 4KHK7PAEy8FKzKDxL9frcSAlWo9Z3Y4IKayoQgZxmb+kHwWG/7EdlVhcrqJmldfXr4KD482iiqy
+ xspW36pw
+X-Proofpoint-GUID: jO10P_AygBVVuX9ezUhXEJ3Vyix7YA86
+X-Authority-Analysis: v=2.4 cv=fLg53Yae c=1 sm=1 tr=0 ts=689defe3 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+ a=QIhr-27iAAAA:8 a=tkzU3b79AAAA:8 a=VnNF1IyMAAAA:8 a=MT9g-S0Fkuafz34HD30A:9
+ a=CjuIK1q_8ugA:10 a=cgaYBWEFosGJW4rWv5Lf:22 a=uCXMw2ptROQ0LevMJYzM:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 spamscore=0 priorityscore=1501 impostorscore=0
+ phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2508120224
 
-On Tue, Aug 12, 2025 at 07:26:44PM +0530, Krishna Chaitanya Chundru wrote:
-> SC7280 PCIe0 PHY is functionally compatible with the SM8250 Gen3 x1 PCIe
-> PHY. To reflect this compatibility, update the binding schema to include
-      ^--- I think here would be a good place to break for a new
-           paragraph, to give separation between problem description and
-	   solution description.
-
-> qcom,sc7280-qmp-gen3x1-pcie-phy using enum within a oneOf block, while
-> retaining qcom,sm8250-qmp-gen3x1-pcie-phy as a const.
+On Thu, Aug 14, 2025 at 03:07:17PM +0200, Alexey Gladkov wrote:
+> Reorder the sections to be placed in the default segment. The
+> .vmlinux.info use :NONE to override the default segment and tell the
+> linker to not put the section in any segment at all.
 > 
-
-Isn't this the case for &pcie1 as well? If so, can you please fix both?
-
-
-Also, before we do that, the fact that they are "functionally
-compatible", can you confirm that these two platforms really has the
-same PHY settings?
-
-Regards,
-Bjorn
-
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> >> s390x-linux-ld: .tmp_vmlinux1: warning: allocated section `.modinfo' not in segment
+> >> s390x-linux-ld: .tmp_vmlinux2: warning: allocated section `.modinfo' not in segment
+> >> s390x-linux-ld: vmlinux.unstripped: warning: allocated section `.modinfo' not in segment
+> 
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Vasily Gorbik <gor@linux.ibm.com>
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202506062053.zbkFBEnJ-lkp@intel.com/
+> Signed-off-by: Alexey Gladkov <legion@kernel.org>
+> Acked-by: Heiko Carstens <hca@linux.ibm.com>
 > ---
->  .../bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml   | 69 ++++++++++++----------
->  1 file changed, 37 insertions(+), 32 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> index a1ae8c7988c891a11f6872e58d25e9d04abb41ce..1e08e26892f7b769b75bb905377d30a301e6631c 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> @@ -15,38 +15,43 @@ description:
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - qcom,qcs615-qmp-gen3x1-pcie-phy
-> -      - qcom,qcs8300-qmp-gen4x2-pcie-phy
-> -      - qcom,sa8775p-qmp-gen4x2-pcie-phy
-> -      - qcom,sa8775p-qmp-gen4x4-pcie-phy
-> -      - qcom,sar2130p-qmp-gen3x2-pcie-phy
-> -      - qcom,sc8180x-qmp-pcie-phy
-> -      - qcom,sc8280xp-qmp-gen3x1-pcie-phy
-> -      - qcom,sc8280xp-qmp-gen3x2-pcie-phy
-> -      - qcom,sc8280xp-qmp-gen3x4-pcie-phy
-> -      - qcom,sdm845-qhp-pcie-phy
-> -      - qcom,sdm845-qmp-pcie-phy
-> -      - qcom,sdx55-qmp-pcie-phy
-> -      - qcom,sdx65-qmp-gen4x2-pcie-phy
-> -      - qcom,sm8150-qmp-gen3x1-pcie-phy
-> -      - qcom,sm8150-qmp-gen3x2-pcie-phy
-> -      - qcom,sm8250-qmp-gen3x1-pcie-phy
-> -      - qcom,sm8250-qmp-gen3x2-pcie-phy
-> -      - qcom,sm8250-qmp-modem-pcie-phy
-> -      - qcom,sm8350-qmp-gen3x1-pcie-phy
-> -      - qcom,sm8350-qmp-gen3x2-pcie-phy
-> -      - qcom,sm8450-qmp-gen3x1-pcie-phy
-> -      - qcom,sm8450-qmp-gen4x2-pcie-phy
-> -      - qcom,sm8550-qmp-gen3x2-pcie-phy
-> -      - qcom,sm8550-qmp-gen4x2-pcie-phy
-> -      - qcom,sm8650-qmp-gen3x2-pcie-phy
-> -      - qcom,sm8650-qmp-gen4x2-pcie-phy
-> -      - qcom,x1e80100-qmp-gen3x2-pcie-phy
-> -      - qcom,x1e80100-qmp-gen4x2-pcie-phy
-> -      - qcom,x1e80100-qmp-gen4x4-pcie-phy
-> -      - qcom,x1e80100-qmp-gen4x8-pcie-phy
-> -      - qcom,x1p42100-qmp-gen4x4-pcie-phy
-> +    oneOf:
-> +      - items:
-> +          - const: qcom,sc7280-qmp-gen3x1-pcie-phy
-> +          - const: qcom,sm8250-qmp-gen3x1-pcie-phy
-> +      - items:
-> +          - enum:
-> +              - qcom,qcs615-qmp-gen3x1-pcie-phy
-> +              - qcom,qcs8300-qmp-gen4x2-pcie-phy
-> +              - qcom,sa8775p-qmp-gen4x2-pcie-phy
-> +              - qcom,sa8775p-qmp-gen4x4-pcie-phy
-> +              - qcom,sar2130p-qmp-gen3x2-pcie-phy
-> +              - qcom,sc8180x-qmp-pcie-phy
-> +              - qcom,sc8280xp-qmp-gen3x1-pcie-phy
-> +              - qcom,sc8280xp-qmp-gen3x2-pcie-phy
-> +              - qcom,sc8280xp-qmp-gen3x4-pcie-phy
-> +              - qcom,sdm845-qhp-pcie-phy
-> +              - qcom,sdm845-qmp-pcie-phy
-> +              - qcom,sdx55-qmp-pcie-phy
-> +              - qcom,sdx65-qmp-gen4x2-pcie-phy
-> +              - qcom,sm8150-qmp-gen3x1-pcie-phy
-> +              - qcom,sm8150-qmp-gen3x2-pcie-phy
-> +              - qcom,sm8250-qmp-gen3x1-pcie-phy
-> +              - qcom,sm8250-qmp-gen3x2-pcie-phy
-> +              - qcom,sm8250-qmp-modem-pcie-phy
-> +              - qcom,sm8350-qmp-gen3x1-pcie-phy
-> +              - qcom,sm8350-qmp-gen3x2-pcie-phy
-> +              - qcom,sm8450-qmp-gen3x1-pcie-phy
-> +              - qcom,sm8450-qmp-gen4x2-pcie-phy
-> +              - qcom,sm8550-qmp-gen3x2-pcie-phy
-> +              - qcom,sm8550-qmp-gen4x2-pcie-phy
-> +              - qcom,sm8650-qmp-gen3x2-pcie-phy
-> +              - qcom,sm8650-qmp-gen4x2-pcie-phy
-> +              - qcom,x1e80100-qmp-gen3x2-pcie-phy
-> +              - qcom,x1e80100-qmp-gen4x2-pcie-phy
-> +              - qcom,x1e80100-qmp-gen4x4-pcie-phy
-> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
-> +              - qcom,x1p42100-qmp-gen4x4-pcie-phy
->  
->    reg:
->      minItems: 1
-> 
-> -- 
-> 2.34.1
-> 
+>  arch/s390/kernel/vmlinux.lds.S | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+
+Is there any reason why you didn't reorder the patches?
+https://lore.kernel.org/all/aIeUq0qYXoNIePwd@example.org/
 
