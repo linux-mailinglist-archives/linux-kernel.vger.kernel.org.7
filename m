@@ -1,143 +1,99 @@
-Return-Path: <linux-kernel+bounces-769589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86792B270B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:19:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0901DB270B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 23:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DB1856344E
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:18:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739F11CE05AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B292E274B46;
-	Thu, 14 Aug 2025 21:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8675274FD1;
+	Thu, 14 Aug 2025 21:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ErQ4pAp+"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="yrijASuw"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FE7319876
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 21:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F76624DFE6;
+	Thu, 14 Aug 2025 21:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755206315; cv=none; b=gRCxOVfgqdu23lbsfo5jRY+K2TjV2ix+7JIIAUjg9KP9z5NiOnCzdbGFRysthk+m9uMN8/DvgUxA0Pgw4VTTLvF6qP5GScVdqe5vVb3USBoQlAH1ogT4M326GPB+McvmwhrT3SP+s0QhNMmiK1bA42AgNmsNo6Q6y41c+f4uiRQ=
+	t=1755206346; cv=none; b=YUni/hVyZewFBADBY6ZyW4t/tVx65aQ0Cw5y69C33U0WmKb81D5RbQBNGFvlvpp+3Gc/cfQERNEr38e/JuM5HgRuiwGoKoNe6ldarLKs3DKEv+jKu+dUtDuRjDPIP2ZUmvdzUImoeZ+FnpaDyfyZqQGFSd4KsYP9JBAJ4H8aV1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755206315; c=relaxed/simple;
-	bh=DGT/jWa8qfrlAoBv9pWpgQ5DVzDhdHztGsHRb9C0uD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p32fexP8xUMxz/QAgsJx/A29DyrZhprZrH9OREmLwdK3GFa9vvoWN+Zy4hpete/wV2NwSPoQ8v1OYbFOwkAlqcwBBUYG3+WECA2X7gQj4LAXfVKvyksV2s2lGPDaGRSz1i/NB3M+MSsrJ0M9Z0Fj+jaItsMPN2wWHD790G4Tb5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ErQ4pAp+; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109bd8b09so18497081cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 14:18:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1755206312; x=1755811112; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JAdg0B99nBx176JSa2IHf0Gqum3MIVsaAKCTeNllKPY=;
-        b=ErQ4pAp+Q2phEVPynngi6eZVkntSCSZDJyTU78/37UCwnUlkSeOkoiZrDlDZYuzfA3
-         ObKrN2/tAVfwjJYyA7cfgJUbM7feVzjsyu4cd1cWHvbkgY2aW+3rn+rSzUWamoP+pFmz
-         ZQfBiDbM7pTt0lZWqukielgQOaTfthDBXTMqE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755206312; x=1755811112;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JAdg0B99nBx176JSa2IHf0Gqum3MIVsaAKCTeNllKPY=;
-        b=OVG79NeXdhtZtOiyPnP+pbhjocGDYIloZDf8qsG8rRoP8mxmTjp8jfgFus5lEZROim
-         Z3AbBJx451xKRccLHmJIIIr6oDg+dqJbPnid7ystkhJSw2TshHrI5MtuHTNoyCbZWGJq
-         w6+q/uWc1I2AU0ncU0JLVEuqMhkLY3YmwR43Kwykxws29xwB8I4BDbj27RFSHM1SJ82U
-         mkI7IY2I3780CBQcAIpZTMPKsfKPPwLBHbEOiXqPCS+1S018H4QcHnB4Avf5NjCw6dDY
-         HED1QbrydGFGYXoY/MVLktVrRdiXCjo4kNCkMYwMrumXXxPp2AGIc7VlrTSwb4dY90Dp
-         S3vA==
-X-Forwarded-Encrypted: i=1; AJvYcCWefFP/e2zdf9X6i3hMal/sIyh5NtnurrdQQy9CAKA917m8CmkZ0slE6T14HnoLjjarWlXDhcgTFTJ9UMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw18KM+VkQ0qOrSApvNuzZkjbjheiKssLZv46VEEIj45G+ZUCPC
-	DkwvHWVpL9tuFbG5CKpF32l2jp2AHVUH9p25emt2Nr5/TBoCtSrI8qwwZsylywRzZw==
-X-Gm-Gg: ASbGnctM/HquTKVSHqdMeKl6/wba4MkXzgGJxH0zcYnvG/XaoQ2g20X316CdEG52epP
-	GijL0L2tlyVhxf6hAT44g/MEvE9y0Y6nZnceCwtqFX+DkY32NhR7Itxh+aRbCsJVc36dHqMvvb2
-	XxnfBx6C1M08Oe2F1p+wYyRmYWoqid6fn0EaRglo3W2maAtgxeIQHkQxayB8sKB1nMwx0XjWJJC
-	U/uSTESjws+OyTn3h+yZ60gJu90o6ct/HBIGdBk2qgdd0kN4Kc4T6g77p9bLybsEwA5RQUTs1xF
-	1VSSBrB2B7Kfd5VPtt62sJhKHxbAIrkD+r8W7ffrCwSf2i0ShSFN5ZO9Ti6W+KAJv+Ps5bOaiyW
-	yj4CnQvkUZCRJg7nIAVyrixkcbIzg68FqjWBladIXLc9PTgBOwz27WxM91aW10RCGVA==
-X-Google-Smtp-Source: AGHT+IEkyDNQAVKyJmRDAdsYevWYyNxbZ/vyLLcRBzDMVeiEDD92XcTmdKvPGNmmapwrDIe+yHQzFQ==
-X-Received: by 2002:a05:622a:5b0d:b0:4b0:89c2:68fe with SMTP id d75a77b69052e-4b10c5d9357mr58049511cf.52.1755206312164;
-        Thu, 14 Aug 2025 14:18:32 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4b11aa1216fsm1550341cf.37.2025.08.14.14.18.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 14:18:31 -0700 (PDT)
-Message-ID: <84811e34-05ca-4988-b5e5-64c31e2733e9@broadcom.com>
-Date: Thu, 14 Aug 2025 14:18:29 -0700
+	s=arc-20240116; t=1755206346; c=relaxed/simple;
+	bh=u0J0/YnPeGRJ3hclaLO4KYX3+QmnfN14rrUH4j85gEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YA6ix7TD9v0GwgvU4T7yiay4yA8NQAXlbRuBtKtvv7bpWsSEEeQ8dkmM9rcaOIgZcf/cAkghxsYxvqYn47lsvAyGGzKFj6ErgE+kurwRjJAm0mL0RZk571cLfn+rvjdIZkRtOP0/1Jplt7/veKiUb1HNRQfVUlwgj8IzscHGXkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=yrijASuw; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4c2ym429tKz9sdD;
+	Thu, 14 Aug 2025 23:19:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1755206340;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=232qte4tMCviyR8d5oDa9j6UWlzKhLlAuwX6y+U88Us=;
+	b=yrijASuwWj8sI6kdjAZ2ctYzAt6Jt4DAlJykv0dI9SRYCzEN5jTPH1tueE+p+Wg36jFvsY
+	lbm7jrP7snafljMqwzN1a69Jsk5nWDmrD6XAZe0nf8wZ7aL4ll5ELKOs02ECNy/JwgeoUf
+	hMEEeDHHESqgGbr/Lxpiw0NXBLJB3juogFjCYZWeGtnb2IXjB8C/jWeMBpUAnS54yhlDZT
+	QEQQq+TiKCk/kVUT3U/6TTVbn+GFKCJZlOa9AFIbpwO9xwcLIawMYjK6YYgQBvgezCox6Z
+	WH4VSE0m7V7U9mqZ1rp6i5m7+703hnMkujunQ655cddfIWnaxDNtfMeGFXUrqQ==
+Date: Thu, 14 Aug 2025 23:18:53 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com, 
+	linux-xfs@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH] iomap: use largest_zero_folio() in iomap_dio_zero()
+Message-ID: <ujw7gc4mg4oi5qpkjqrvvto7qewpqthuid63etsetzag5epyug@zmpq2g2btd5i>
+References: <20250814142137.45469-1-kernel@pankajraghav.com>
+ <20250814182713.GS7965@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: serial: brcm,bcm7271-uart: Constrain clocks
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Al Cooper <alcooperx@gmail.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-serial@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20250812121630.67072-2-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250812121630.67072-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814182713.GS7965@frogsfrogsfrogs>
 
-On 8/12/25 05:16, Krzysztof Kozlowski wrote:
-> Lists should have fixed constraints, because binding must be specific in
-> respect to hardware, thus add missing constraints to number of clocks.
+On Thu, Aug 14, 2025 at 11:27:13AM -0700, Darrick J. Wong wrote:
+> On Thu, Aug 14, 2025 at 04:21:37PM +0200, Pankaj Raghav (Samsung) wrote:
+> > From: Pankaj Raghav <p.raghav@samsung.com>
+> > 
+> > iomap_dio_zero() uses a custom allocated memory of zeroes for padding
+> > zeroes. This was a temporary solution until there was a way to request a
+> > zero folio that was greater than the PAGE_SIZE.
+> > 
+> > Use largest_zero_folio() function instead of using the custom allocated
+> > memory of zeroes. There is no guarantee from largest_zero_folio()
+> > function that it will always return a PMD sized folio. Adapt the code so
+> > that it can also work if largest_zero_folio() returns a ZERO_PAGE.
+> > 
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 88a499cd70d4 ("dt-bindings: Add support for the Broadcom UART driver")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Seems fine to me, though I wonder if this oughn't go along with the
+> rest of the largest_zero_folio changes?
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
---
-Florian
+I included them in one of the early versions but later removed as we had
+to rework the implementation multiple times. I just wanted to reduce the
+scope of the series and send out changes that uses the API separately :).
+
+> 
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+Thanks!
+
+-- 
+Pankaj Raghav
 
