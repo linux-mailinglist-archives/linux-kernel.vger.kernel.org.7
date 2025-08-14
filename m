@@ -1,39 +1,74 @@
-Return-Path: <linux-kernel+bounces-768773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADD6B2654C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:24:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0540B2654B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEB079E50F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:23:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4700B60C0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62E32FCC08;
-	Thu, 14 Aug 2025 12:23:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B571F582A;
-	Thu, 14 Aug 2025 12:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4964F2FD1DD;
+	Thu, 14 Aug 2025 12:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KW7v5jn+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02312FCC08;
+	Thu, 14 Aug 2025 12:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755174213; cv=none; b=GY5vkaurLyGv/F21gRBV6fuPcqJXK2LbxMhm4bJ7NA6v8LMXpm7OgXop3ikudQwQA2gV0ljBf33oS7DHeW7nym9Sp7hiBvN6wJgLRyd9YR6ZlOaRV3FfWjSLeCqVVp4Dm2x8jWIx1W3IJlzm4ZaUqb5ewkdBQM8sEY3zAbzu+y8=
+	t=1755174263; cv=none; b=NdV2O+S1wlkQCb0kUJulBpon2m/AQQMpvFKMemVyioxgALI+MbU0wCtXW2cIFUhIb/w8UcDK9dPN3Px8lvlO771YridbpEk+Hd1QDa3wTUFo1YoHVRxhJzGh4bBvotGZE4dWuJJRny4BHY+LBMxxFIXcHl2uu4ToULuHD1+76D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755174213; c=relaxed/simple;
-	bh=UyyepfLCOzmmFFPFe6HR3vRn+M39bRs4+vF+ORPios4=;
+	s=arc-20240116; t=1755174263; c=relaxed/simple;
+	bh=imRy9/rTS+jFrxLqrITG8ZbEaGjF1mQoJJavTC1P4Gc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EdVGHKeFYHrBm70Xg3oE3+/firW24woFwe437qZB9AJZUnIsQVKisZK1lIbi5+5ADyIZR59pyt404gmeYi/m7O1EtY0xMulOOjD722zSBO1Zy7LKJ9BSGDgtEvyKzmqND900+7saYgJj0/URSK3JLX66pVGbyVlFrrUZSZ6bie0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8BD41688;
-	Thu, 14 Aug 2025 05:23:21 -0700 (PDT)
-Received: from [10.1.32.48] (e122027.cambridge.arm.com [10.1.32.48])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D65203F738;
-	Thu, 14 Aug 2025 05:23:27 -0700 (PDT)
-Message-ID: <d3bd4234-2053-45ce-aad4-6fc577665d72@arm.com>
-Date: Thu, 14 Aug 2025 13:23:26 +0100
+	 In-Reply-To:Content-Type; b=l+Yck8kqxxSZk5IAxchzg19czUZaXl+r2JCNLeJWxaQIiIRl661nUxBar0IUaGOqdA30IC3OVImVJKZ1/zAE+AJA2VqrssRjxqeYpde7IrnVH5d6Dojs+eM+ocSNJAewRsc9S4OKa/l4cH0d6hTMzm0Z5YvIbBG3fHhNTyr88I4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KW7v5jn+; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57E76EOO015639;
+	Thu, 14 Aug 2025 12:23:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=M29KWk
+	ElsUhvyscwf2ThVWTlfAT94DbC0gnGyRczS8E=; b=KW7v5jn+uerMv5rhR9MYGQ
+	KOIqBl2Bp8MQ8U91UVP/sdRZAMQJh0OTgoNYYQMjCqrDFBsVUMegYVsfW/caYcLx
+	aXvzMbYuICzTGR/WKmqoo7yHuY6BgLuijOPgZrblFmnHF8legwnsenONpkQHWqRY
+	B3bAOJBFTOE5SU5fR18k2sSZxTAx5uu6fSNiEbVYUd+OPzAAI6VOE4eNSRgOkg06
+	4/Fnj6an6U301BQ5wllOh06bh3ZcCnYqbkAdg9OqjMW8UEMOVd8p0KxeGCE0Fzo8
+	Yb0k2ZoHNJ3w7MiwX2U93o1qxkRI0MBfJYMeLiyV/21LL6KTxUhWkGuuIoRAv8AQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48gypebxcu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 12:23:47 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 57EAx2KB017588;
+	Thu, 14 Aug 2025 12:23:46 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 48ekc3us93-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 14 Aug 2025 12:23:46 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 57ECNk1u23593624
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 14 Aug 2025 12:23:46 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 321AD58057;
+	Thu, 14 Aug 2025 12:23:46 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AEC1858059;
+	Thu, 14 Aug 2025 12:23:42 +0000 (GMT)
+Received: from [9.109.198.214] (unknown [9.109.198.214])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 14 Aug 2025 12:23:42 +0000 (GMT)
+Message-ID: <97b63163-a122-48f0-805a-a06cf792903f@linux.ibm.com>
+Date: Thu, 14 Aug 2025 17:53:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,102 +76,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] clocksource/drivers/arm_arch_timer: Add standalone
- MMIO driver
-To: Marc Zyngier <maz@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>
-References: <20250807160243.1970533-1-maz@kernel.org>
- <20250807160243.1970533-3-maz@kernel.org>
- <8e58b01b-772d-4ca7-a681-34f10baa07e6@arm.com> <86ldnmdvpl.wl-maz@kernel.org>
- <871ppetatg.wl-maz@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <871ppetatg.wl-maz@kernel.org>
+Subject: Re: [PATCH 03/16] blk-mq: remove useless checkings from
+ blk_mq_update_nr_requests()
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, yukuai3@huawei.com,
+        bvanassche@acm.org, hare@suse.de, ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250814033522.770575-1-yukuai1@huaweicloud.com>
+ <20250814033522.770575-4-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250814033522.770575-4-yukuai1@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=eaU9f6EH c=1 sm=1 tr=0 ts=689dd553 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=i0EeH86SAAAA:8 a=Ht_Kdwx_m2KS6Q0RhUUA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: q75vbzp6xud_QhqAQ7zzK0-OtmOiOY6E
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODEzMDE2NyBTYWx0ZWRfX2qm4Bcdv8gsh
+ 9hGWMhYBBJxrg2Pqz0Uzft1b3i3lXDrzJwTOne6AhRwAaddGNRssiPVnUmrLaDMAUPO9no64RSt
+ ZQNKBNuNGx2Hiw8r/anu2ARs+y+O21TUiyPcKr6I/ARJs+pLxBXIy3Zfgt5cC6PUCBQfn/1BgCz
+ XRyD/RjzcmoU1vqwGDNdBLTcI50tKLc4N/HFj8q/tDDqadjUC49vNec35xLInT66kbQZNv52mVz
+ iWh4X28kTGXCQ5qknGZzrp4S2NbFjLris1CI0vsowu4UmoeBcC6jSaNZE1fNBcnj2tsx2Zq+e1V
+ qR3jAZ1wLI0xAUdYP0B1l70+M5z/GhrbA7Gu3k/h4znFJv169GTXKuyXOCsO02X+oh7HGhlqlA0
+ 2RKIVF79
+X-Proofpoint-ORIG-GUID: q75vbzp6xud_QhqAQ7zzK0-OtmOiOY6E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-13_02,2025-08-14_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0
+ bulkscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2508130167
 
-On 14/08/2025 12:14, Marc Zyngier wrote:
-> On Thu, 14 Aug 2025 11:49:26 +0100,
-> Marc Zyngier <maz@kernel.org> wrote:
->>
->> On Thu, 14 Aug 2025 11:13:47 +0100,
->> Steven Price <steven.price@arm.com> wrote:
->>>
->>> On 07/08/2025 17:02, Marc Zyngier wrote:
->>>> Add a new driver for the MMIO side of the ARM architected timer.
->>>> Most of it has been lifted from the existing arch timer code,
->>>> massaged, and finally rewritten.
->>>>
->>>> It supports both DT and ACPI as firmware descriptions.
->>>>
->>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>>> ---
->>>>  MAINTAINERS                               |   1 +
->>>>  drivers/clocksource/arm_arch_timer_mmio.c | 420 ++++++++++++++++++++++
->>>>  2 files changed, 421 insertions(+)
->>>>  create mode 100644 drivers/clocksource/arm_arch_timer_mmio.c
->>>>
->>> [...]
->>>> +static void arch_timer_mmio_setup(struct arch_timer *at, int irq)
->>>> +{
->>>> +	at->evt = (struct clock_event_device) {
->>>> +		.features		   = (CLOCK_EVT_FEAT_ONESHOT |
->>>> +					      CLOCK_EVT_FEAT_DYNIRQ),
->>>> +		.name			   = "arch_mem_timer",
->>>> +		.rating			   = 400,
->>>> +		.cpumask		   = cpu_possible_mask,
->>>> +		.irq 			   = irq,
->>>> +		.set_next_event		   = arch_timer_mmio_set_next_event,
->>>> +		.set_state_oneshot_stopped = arch_timer_mmio_shutdown,
->>>> +		.set_state_shutdown	   = arch_timer_mmio_shutdown,
->>>> +	};
->>>> +
->>>> +	at->evt.set_state_shutdown(&at->evt);
->>>> +
->>>> +	clockevents_config_and_register(&at->evt, at->rate, 0xf, CLOCKSOURCE_MASK(56));
->>>
->>> This doesn't work on 32 bit - clockevents_config_and_register()'s final
->>> argument is an unsigned long, and a 56 bit mask doesn't fit. This
->>> triggers a compiler warning:
->>
->> Already reported, see 20250814111657.7debc9f1@canb.auug.org.au.
->>
->>> Possible this should really be min(CLOCKSOURCE_MASK(56), ULONG_MAX)? But
->>> I'm not familiar enough with this code. Most likely it's dead code on a
->>> 32 bit platform.
->>
->> No, this definitely exists on 32bit crap, since it has been part of
->> the architecture from the ARMv7+VE days.
->>
->> I think this is more of an impedance mismatch between the
->> CLOCKSOURCE_MASK() helper and the clockevents_config_and_register(),
->> and a (unsigned long) cast would do the trick.
+
+
+On 8/14/25 9:05 AM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Of course not. That would just result in a big fat zero.
-
-No - CLOCKSOURCE_MASK() turns into GENMASK_ULL so a simple truncation to
-unsigned long would be ULONG_MAX (all 1s). So an unsigned long cast
-should be fine. My suggestion of MIN(, ULONG_MAX) was just to make that
-more clear.
-
->> But it also means that the per-cpu timer also gets truncated the same
->> way, and that has interesting impacts on how often the timer is
->> reprogrammed.
+> 1) queue_requests_store() is the only caller of
+> blk_mq_update_nr_requests(), where queue is already freezed, no need to
+> check mq_freeze_depth;
+> 2) q->tag_set must be set for request_based device, and queue_is_mq() is
+> already checked in blk_mq_queue_attr_visible(), no need to check
+> q->tag_set.
+> 3) During initialization, hctx->tags in initialized before queue
+> kobject, and during del_gendisk, queue kobject is deleted before
+> exiting hctx, hence checking hctx->tags is useless.
 > 
-> That question still stand, and I wonder whether we have ugly bugs
-> lurking on 32bit platforms because of that... I'll try and have a
-> look.
-
-I don't know whether there are other bugs due to the capping to
-ULONG_MAX, but I don't think there's an (additional) bug here, it's
-"just" a ugly warning.
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-mq.c | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index b67d6c02eceb..3a219b7b3688 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -4921,24 +4921,15 @@ int blk_mq_update_nr_requests(struct request_queue *q, unsigned int nr)
+>  {
+>  	struct blk_mq_tag_set *set = q->tag_set;
+>  	struct blk_mq_hw_ctx *hctx;
+> -	int ret;
+> +	int ret = 0;
+>  	unsigned long i;
+>  
+> -	if (WARN_ON_ONCE(!q->mq_freeze_depth))
+> -		return -EINVAL;
+> -
+> -	if (!set)
+> -		return -EINVAL;
+> -
+>  	if (q->nr_requests == nr)
+>  		return 0;
+>  
+>  	blk_mq_quiesce_queue(q);
+>  
+> -	ret = 0;
+>  	queue_for_each_hw_ctx(q, hctx, i) {
+> -		if (!hctx->tags)
+> -			continue;
+It's possible that hctx->tags is set to NULL in case no software 
+queues are mapped to the hardware queue. So it seems that this
+check is valid. Please see blk_mq_map_swqueue().
 
 Thanks,
-Steve
+--Nilay
 
 
