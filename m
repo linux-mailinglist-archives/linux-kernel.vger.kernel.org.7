@@ -1,106 +1,143 @@
-Return-Path: <linux-kernel+bounces-767808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A84B25956
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 03:58:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AA6B2596A
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 04:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B3B87A2AE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 01:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A443BFA66
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7EA238C24;
-	Thu, 14 Aug 2025 01:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MBsIxElx"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC00D23DEB6;
+	Thu, 14 Aug 2025 02:07:57 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A242A231853;
-	Thu, 14 Aug 2025 01:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602BC42AB0;
+	Thu, 14 Aug 2025 02:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755136698; cv=none; b=udNDMMAG38yZhYQUiT/NFcd2GpMoDpX4tHXz9KwYV8J8Ad+rGUIvYsfzO54rE7lns5CeB9dcl8mFGZ6c6/zEKne/ecSXp1S1kg+YA++lUf50Iw3sKYamvSkcErD3yCH3wCn05Peh166Paly682oykySCVY62uTc1DVr2Gee2H8g=
+	t=1755137277; cv=none; b=tjRZ5u3My9PX7mkJBwI/0hyoUwfUY/OYNsyP96O2V/q5Eu05jB+KdgvNeLf78VPESDY36l7UvBFrRFfoHAheHFFoqoVS7YFVXEuAEPC+uHA5Nbj/iiZ/lgQRhU4R5sI7kYiTPdqZhtB+0vYGC5jEz25WP7wNwD5Ol2Edmq28UIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755136698; c=relaxed/simple;
-	bh=q2SGHb3APxGdMTmDmItq4Pu4zI6iiexqPHr9lgOY3DA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ej5YkK2itbnWaz+D0jLsJ9m6VGSg4JeKvQjIHtA44XTrpWXFDjftlpcMH5YgH8ukvf2r2sRMGPlZSoUiafRTJf3H4PK5OitYIeZLqgmv806dkibF0t31+3TKAZh8bldr5k2JQWsw5VZXsaYvBQJh93f5T4JtC10pa1Vvnj4FQDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MBsIxElx; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=OULRM4aV2FRJFBE1gYMM0RJzh8b5jot7eoMGHtiCmGA=; b=MBsIxElxqbQMTdHrM6BcYWZ0+4
-	xcO7DUvbQHekl9JU9h0eEA/acArYZO0/c65dzpp7XBIumGFJqNYBpC68WOoKvWn8IZIeSjwbcvBQ2
-	Bfaag3Z/VQZqmKIdoz8T7OV2W/PKYme6DAPAtt1HIM13lNWvbZlyTRIuKd/2SKxU4kh81c3L2Zo9P
-	ytGu8bkFzPSKdQik9vbNYDAyKncI1gQIZTZJZzS79qYzN8z0qPjP/j8tp/WRh5RcgeYOHEr6tvUsD
-	fEAyXRTq8T+QfnRyP/OFBEYNw00YCRTnHjkdrpGp0T3hcQRPDyabtEoq9K0FC8+lYi3DwHYZ+35aS
-	iRTcK5Xg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1umNEL-0000000FXu6-0gjV;
-	Thu, 14 Aug 2025 01:58:13 +0000
-Message-ID: <98ed6868-8030-4d10-b66d-c7e3d42886f8@infradead.org>
-Date: Wed, 13 Aug 2025 18:58:12 -0700
+	s=arc-20240116; t=1755137277; c=relaxed/simple;
+	bh=yrd/h+u4Kfr/C4JJ0SqjKhKAruC7MI/kP+cjkOteg9o=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=QfQycAQWxKJm1FeyIbFImiaG3EPRwitcqzNfeP+BCCJcfQybPoXnft12OAW8JhaAQfUPJrv+5D8VWmdThC+bbfHeFtEEjCn/a8bxXHmsBCsZsG2hAKxJDLA0Xc14uKWkRbmXH/lHlzmUqji35kLxgUkjfSqs286TwafbJ4SYx88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1umNNV-005hKm-MP;
+	Thu, 14 Aug 2025 02:07:43 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Documentation: ktap: formatting cleanup
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Kernel Workflows <workflows@vger.kernel.org>,
- Linux Kernel Selftests <linux-kselftest@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, David Gow <davidgow@google.com>,
- Shuah Khan <skhan@linuxfoundation.org>, Tim Bird <Tim.Bird@sony.com>,
- Rae Moar <rmoar@google.com>
-References: <20250814012046.21235-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250814012046.21235-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "NeilBrown" <neil@brown.name>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "David Howells" <dhowells@redhat.com>,
+ "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Tyler Hicks" <code@tyhicks.com>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Amir Goldstein" <amir73il@gmail.com>, "Steve French" <sfrench@samba.org>,
+ "Namjae Jeon" <linkinjeon@kernel.org>, "Carlos Maiolino" <cem@kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+ netfs@lists.linux.dev, ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-um@lists.infradead.org, linux-nfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+ linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 11/11] VFS: introduce d_alloc_noblock() and d_alloc_locked()
+In-reply-to: <20250813065333.GG222315@ZenIV>
+References: <>, <20250813065333.GG222315@ZenIV>
+Date: Thu, 14 Aug 2025 12:07:42 +1000
+Message-id: <175513726277.2234665.5395852687971371437@noble.neil.brown.name>
 
-Hi,
-
-For both patches:
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-but I have a process question, I suppose.
-Why send this patch series to the workflows mailing list?
-
-(This is not the first occasion of this happening [by other people]).
-
-Thanks.
-
-On 8/13/25 6:20 PM, Bagas Sanjaya wrote:
-> Hi,
+On Wed, 13 Aug 2025, Al Viro wrote:
+> On Tue, Aug 12, 2025 at 12:25:14PM +1000, NeilBrown wrote:
+> > Several filesystems use the results of readdir to prime the dcache.
+> > These filesystems use d_alloc_parallel() which can block if there is a
+> > concurrent lookup.  Blocking in that case is pointless as the lookup
+> > will add info to the dcache and there is no value in the readdir waiting
+> > to see if it should add the info too.
+> > 
+> > Also these calls to d_alloc_parallel() are made while the parent
+> > directory is locked.  A proposed change to locking will lock the parent
+> > later, after d_alloc_parallel().  This means it won't be safe to wait in
+> > d_alloc_parallel() while holding the directory lock.
+> > 
+> > So this patch introduces d_alloc_noblock() which doesn't block
+> > but instead returns ERR_PTR(-EWOULDBLOCK).  Filesystems that prime the
+> > dcache now use that and ignore -EWOULDBLOCK errors as harmless.
+> > 
+> > A few filesystems need more than -EWOULDBLOCK - they need to be able to
+> > create the missing dentry within the readdir.  procfs is a good example
+> > as the inode number is not known until the lookup completes, so readdir
+> > must perform a full lookup.
+> > 
+> > For these filesystems d_alloc_locked() is provided.  It will return a
+> > dentry which is already d_in_lookup() but will also lock it against
+> > concurrent lookup.  The filesystem's ->lookup function must co-operate
+> > by calling lock_lookup() before proceeding with the lookup.  This way we
+> > can ensure exclusion between a lookup performed in ->iterate_shared and
+> > a lookup performed in ->lookup.  Currently this exclusion is provided by
+> > waiting in d_wait_lookup().  The proposed changed to dir locking will
+> > mean that calling d_wait_lookup() (in readdir) while already holding
+> > i_rwsem could deadlock.
 > 
-> Just a little formatting cleanup for ktap docs (actually only bullet list
-> items fix in [2/2]; the first patch is trivial spelling fix).
-> 
-> Enjoy!
+> The last one is playing fast and loose with one assertion that is used
+> in quite a few places in correctness proofs - that the only thing other
+> threads do to in-lookup dentries is waiting on them (and that - only
+> in d_wait_lookup()).  I can't tell whether it will be a problem without
+> seeing what you do in the users of that thing, but that creates an
+> unpleasant areas to watch out for in the future ;-/
 
+Yeah, it's not my favourite part of the series.
 
 > 
-> Bagas Sanjaya (2):
->   Documentation: ktap: Correct "its" spelling
->   Documentation: ktap: Separate first bullet list items
+> Which filesystems are those, aside of procfs?
 > 
->  Documentation/dev-tools/ktap.rst | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> 
-> base-commit: 0bbc2548ea85e6bda835a08c6d47d46435945cda
 
--- 
-~Randy
+afs in afs_lookup_atsys().  While looking up a name that ends "@sys" it
+need to look up the prefix with various alternate suffixes appended.
+So this isn't readdir related, but is a lookup-within-a-lookup.
+
+The use of d_add_ci() in xfs is the same basic pattern.
+
+overlayfs does something in ovl_lookup_real_one() that I don't
+understand yet but it seems to need a lookup while the directory is
+locked. 
+
+ovl_cache_update is in the ovl iterate_shared code (which in fact holds
+an exclusive lock).  I think this is the same pattern as procfs in that
+an inode number needs to be allocated at lookup time, but there might be
+more too it.
+
+So it is:
+  procfs and overlayfs for lookup in readdir
+  xfs and afs for nested lookup.
+
+The only other approach I could come up with was to arrange some sort of
+proxy-execution. i.e. instead of d_alloc_locked() provide a
+  d_alloc_proxy()
+which, if it found a d_in_lookup() dentry, would perform the ->lookup
+itself with some sort of interlock with lookup_slow etc.
+That would prevent the DCACHE_PAR_LOOKUP dentry leaking out, but would
+be more intrusive and would affect the lookup path for filesystems which
+didn't need it.
+
+NeilBrown
 
