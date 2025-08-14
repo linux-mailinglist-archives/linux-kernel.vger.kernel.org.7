@@ -1,184 +1,112 @@
-Return-Path: <linux-kernel+bounces-768799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8F96B26596
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:42:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF6AB26599
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61F62B62B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:40:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1605AA221A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:42:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EF52FCC1B;
-	Thu, 14 Aug 2025 12:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qDtmmiXu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2W9qIQro";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qDtmmiXu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2W9qIQro"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92BB2FA0C9;
+	Thu, 14 Aug 2025 12:42:27 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61ED2FA0C9
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EC12FC879
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755175325; cv=none; b=MUeGLZF2QnbrlhroplSOOYJnnfGA1SCIKM5Eg5fI+QYsuRuo1FLDVpJ7iDLllMxTFj1KMhadUMvSTLiRp8MBM7S6gPSfX77eBZApieE8T8Sdp8rQ1Fb3TYN5DxvLdNfi655GLx25zlEVdrj/iPHWxYLOPoNAMVzHqdZKBYD/Hjo=
+	t=1755175347; cv=none; b=j7S1m0Ycve0lqvmTlq5tRinteBc+K6Xt02RKsgYQEe70//yPD95I2OawFY3z9uJZdYjtOpl5iNdDvoOOux7ifXn13LetnbBlxS3I50kt1Yp7elXi31gAFnTVEin8q8LmeMIkCAtx+5H2Er9Cv8G0H43EW1kN8GD72KP1bsA2urY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755175325; c=relaxed/simple;
-	bh=YyHpFO0KSTpBx5gfTBmuvK8Xc7WiwGl96/DqEfPKsWw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Virs6kJ2LXwVYB8+9gf21q6nz1vd4MtGfGB+JIIk1zgmaylDmX8cHkp+ZkREPwyHR8C7hancm+8hOOS45CA6UvC2gIRKPr2xkDBZmo4/VzkPCI1n8vDascFazEt3T1fGweL/Mu3Z7Znl6N+gqo2FIZXlVs50lbQ738emQ8/8pEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qDtmmiXu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2W9qIQro; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qDtmmiXu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2W9qIQro; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1024C21A4A;
-	Thu, 14 Aug 2025 12:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755175322; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vEcbyebqz1LZffVHMdXFysP+zfMDXOhQZOjdpfvS5sw=;
-	b=qDtmmiXuQpB40H8qChE4nCt352d2H6tPca2aiag82jDhQaxAogyhjKATOJNLwQQ2JAj1Pi
-	8yKUJf0/JotYuTnAKlmf1pfL/9K4G0lCgwfUzf013mlzUHFklWK/ZQNHjMgAtVM70U+giN
-	TbppjEsuTupbeD4EQ92RXJPfjCk7uY8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755175322;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vEcbyebqz1LZffVHMdXFysP+zfMDXOhQZOjdpfvS5sw=;
-	b=2W9qIQroT4k0H2+XSnLImvlvc+TyC7ocK0LG7omJ/g7pXNc7tSeW2LNQ3CCfOU8H6o6GAe
-	uXLDc4jLa4Kp7ECQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1755175322; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vEcbyebqz1LZffVHMdXFysP+zfMDXOhQZOjdpfvS5sw=;
-	b=qDtmmiXuQpB40H8qChE4nCt352d2H6tPca2aiag82jDhQaxAogyhjKATOJNLwQQ2JAj1Pi
-	8yKUJf0/JotYuTnAKlmf1pfL/9K4G0lCgwfUzf013mlzUHFklWK/ZQNHjMgAtVM70U+giN
-	TbppjEsuTupbeD4EQ92RXJPfjCk7uY8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1755175322;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vEcbyebqz1LZffVHMdXFysP+zfMDXOhQZOjdpfvS5sw=;
-	b=2W9qIQroT4k0H2+XSnLImvlvc+TyC7ocK0LG7omJ/g7pXNc7tSeW2LNQ3CCfOU8H6o6GAe
-	uXLDc4jLa4Kp7ECQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CD6F91368C;
-	Thu, 14 Aug 2025 12:42:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uZn6MJnZnWiRWgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 14 Aug 2025 12:42:01 +0000
-Date: Thu, 14 Aug 2025 14:42:01 +0200
-Message-ID: <87wm76t6qu.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Xu, Baojun" <baojun.xu@ti.com>
-Cc: "broonie@kernel.org" <broonie@kernel.org>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-	"Ding, Shenghao"
-	<shenghao-ding@ti.com>,
-	"13916275206@139.com" <13916275206@139.com>,
-	"linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXTERNAL] Re: [PATCH v1] ALSA: hda/tas2781: Normalize the volume kcontrol name
-In-Reply-To: <871ppewgzx.wl-tiwai@suse.de>
-References: <20250813100842.12224-1-baojun.xu@ti.com>
-	<417f8e1c8a314ae4a77070f313d8af2c@ti.com>
-	<871ppewgzx.wl-tiwai@suse.de>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1755175347; c=relaxed/simple;
+	bh=k3yPg1aAQpEg1eCIUY+jC9DpHpSaMpafiVcA2bYOd64=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=t6Jvf68+VVFIa3EnZpQN7H4UGocuH0TPCHIaMT8+dxEr3mX+sWK2/f6BLbqHBF6ixcM9Va4H4mHGCPaUR4mx1Vh78ferL0Ml7Uo66JTnzTbZ4rfNy9zDYDMUiU1VueGm4cO0f/9CUq+QlXEqPMgpFuRALGfMFw6wWFBRdA81FDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88432cebd70so211459039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 05:42:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755175345; x=1755780145;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rOEMLRawprqNsHkZ2jpgpNUe0GUGeALOt5V9z9tksoo=;
+        b=EberzQ1mW6+fUx5czXJ/6cmJwlDApadd/ZYjH3m38Yb5FdA+Lw2UKTFLRBO7kvaN3Q
+         ow8fBYoF8Ef9OIur76zOjjZgqkZ7LCJhSDQBPvTQhecXTkZvf1dBX4lZgccfcDKqsDZO
+         fu0Q8+V0kGRxysWx4tx411tWAixT2o8KWhW6cKKMlQtJq/OQ1O1HgTmzorOkpm8T0dV1
+         Su1dIJ/r+JDfO7D5V5EKLIekRn1xi1/X3nOI25sQJ1oHEFCqlyVFzdFCEw3iXFzrFSA3
+         nPK2unRs9ErcZRZtzpjVX7Tt7qlTJF3KSMlCvg/gdn2IUlis2nCyp1NmwqBFSqJcW456
+         wHGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBLfr+mkiyRohVM+EFwDmjlbEULYHA9wX6ZlKi0KczKsE8mybQWmDKPC4oo7AEGkQX/o9uZzxD/Aun86U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqHKqM8e7TK4UDWsXXrgvgYl3uTqtrsIjMbm/hfytrFzZZw/I+
+	8qYJwgg7cMjjqZKZ0ZHELKANgPr9rsYAkzjVheoAWZkLsBICT9TZdRLl0M4F4O71nSFFcCiYATU
+	UVUwIErIiR27RXeD6xwO4a5UwAp7aesJHhtXMiViu8YU0mSM+KdKhzQgY6X0=
+X-Google-Smtp-Source: AGHT+IESUCWjgOWranWO/9Wcv5CQpm+Eh0DhLC/rNCD2k49jxG4ZzIVxpbTlLs9aS+9zhnD1VXoLthwVFYrgzh3wihHYTFlYwUsE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,alsa-project.org,ti.com,139.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:6010:b0:881:8a58:3bc6 with SMTP id
+ ca18e2360f4ac-8843382a70emr547983239f.8.1755175344833; Thu, 14 Aug 2025
+ 05:42:24 -0700 (PDT)
+Date: Thu, 14 Aug 2025 05:42:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <689dd9b0.050a0220.17479b.0005.GAE@google.com>
+Subject: [syzbot] Monthly gfs2 report (Aug 2025)
+From: syzbot <syzbot+listf579ade1619e81d82873@syzkaller.appspotmail.com>
+To: gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 14 Aug 2025 08:32:18 +0200,
-Takashi Iwai wrote:
-> 
-> On Thu, 14 Aug 2025 04:29:10 +0200,
-> Xu, Baojun wrote:
-> > 
-> > Hi,
-> > 
-> > Answer in line.
-> > 
-> > > ________________________________________
-> > > From: Takashi Iwai <tiwai@suse.de>
-> > > Sent: 13 August 2025 23:44
-> > > To: Xu, Baojun
-> > > Cc: broonie@kernel.org; andriy.shevchenko@linux.intel.com; alsa-devel@alsa-project.org; Ding, Shenghao; 13916275206@139.com; linux-sound@vger.kernel.org; linux-kernel@vger.kernel.org
-> > > Subject: [EXTERNAL] Re: [PATCH v1] ALSA: hda/tas2781: Normalize the volume kcontrol name
-> > > 
-> > > On Wed, 13 Aug 2025 12:08:42 +0200,
-> > > Baojun Xu wrote:
-> > > >
-> > > > Change the name of the kcontrol from "Gain" to "Volume".
-> > > 
-> > > Could you describe "why this change is needed"?
-> > > 
-> > This name is in kcontrol, which is open to users.
-> > Volume is more normalized and common.
-> > Gain is a more professional term in smart amplifiers.
-> 
-> But did you realize that changing the control name may change the
-> user-space behavior completely?
-> e.g. alsa-lib implementation tries to group control elements per
-> prefix and suffix, and "Volume" is one of the standard suffix.
-> That is, with this change, it'll appear as "Speaker Analog" as a mixer
-> element name where the former name is "Speaker Analog Gain".
-> 
-> I'm not against the proposed rename.  But please remember that control
-> names aren't something you can change easily because you don't feel
-> good; it's a thing to be more or less "fixed" once after defined in
-> the release products.
+Hello gfs2 maintainers/developers,
 
-Nevertheless I applied the patch now, as Mark already took for ASoC
-side.
+This is a 31-day syzbot report for the gfs2 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/gfs2
 
+During the period, 2 new issues were detected and 2 were fixed.
+In total, 23 issues are still open and 39 have already been fixed.
 
-thanks,
+Some of the still happening issues:
 
-Takashi
+Ref  Crashes Repro Title
+<1>  1397    Yes   kernel BUG in gfs2_glock_nq (2)
+                   https://syzkaller.appspot.com/bug?extid=70f4e455dee59ab40c80
+<2>  367     Yes   KASAN: stack-out-of-bounds Read in gfs2_dump_glock
+                   https://syzkaller.appspot.com/bug?extid=7efd59a5a532c57037e6
+<3>  303     Yes   INFO: task hung in __gfs2_lookup
+                   https://syzkaller.appspot.com/bug?extid=8a86bdd8c524e46ff97a
+<4>  237     No    kernel BUG in __gfs2_glock_put (2)
+                   https://syzkaller.appspot.com/bug?extid=ef4ad020dc976d178975
+<5>  56      No    WARNING in gfs2_put_super
+                   https://syzkaller.appspot.com/bug?extid=56182be23469e01affbc
+<6>  55      Yes   KASAN: slab-use-after-free Read in folio_evictable (3)
+                   https://syzkaller.appspot.com/bug?extid=4c7590f1cee06597e43a
+<7>  44      Yes   KASAN: slab-use-after-free Read in gfs2_invalidate_folio
+                   https://syzkaller.appspot.com/bug?extid=3a36aeabd31497d63f6e
+<8>  33      Yes   WARNING in gfs2_ri_update (2)
+                   https://syzkaller.appspot.com/bug?extid=7567dc5c8aa8f68bde74
+<9>  29      Yes   INFO: task hung in gfs2_glock_nq
+                   https://syzkaller.appspot.com/bug?extid=dbb72d38131e90dc1f66
+<10> 27      Yes   kernel BUG in qd_put (3)
+                   https://syzkaller.appspot.com/bug?extid=0423714c06c369318794
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
