@@ -1,165 +1,168 @@
-Return-Path: <linux-kernel+bounces-769127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6209B26A91
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:13:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 461D0B26A95
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16EA25A0E15
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:05:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35B7562CAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0309620A5EA;
-	Thu, 14 Aug 2025 15:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29A921A445;
+	Thu, 14 Aug 2025 15:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AcN1g2tw"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="bZk5HtTP"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9E6199E94
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0EBE20B1E8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755183903; cv=none; b=C+kmN6WjrQsWliIx+qZe7IcIipjyAxRB/sgoNCsmd7m/jBMlAdmFnVyftWVJ00f/tlsLQ4CgOw0M2vXjKzDuL4cn7khszpuQLRkvksof45oJiIZDROg2CTlZA6ingfiH9hrpwYlIdRnp3dnAe5GPB6PwTTbgZy3Rj2CpyLNFN8k=
+	t=1755183946; cv=none; b=UXGXT6XEq2n64RAqFQEVPakjYt0q6Fg6nqwcDSM3Lpu6dFyuvsXxYyU9pjrGOwQs1s5JY1fGUFdrpsWUKL9oBAxaHIkg2IVNFwDKA9HRXxZ2xi5JH4Aip/dd6CZqFX3IWFxaqqCk/irLdiP5q7jSUfMyXnIO0+v9MFViDxYP8yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755183903; c=relaxed/simple;
-	bh=jRHKPd5JxpvNwhlJBPIxE21OnvjOL9nluG7LlRsah6Y=;
+	s=arc-20240116; t=1755183946; c=relaxed/simple;
+	bh=MYtHCpNH7rm/Grf+WS5Mwx7BfujxUdXEAVIXm4oRgeM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YfxSy/8AOIrSTkWkICLoQckC5C9UYjdSCDtqUY86RQKiA7f8a5WAZsmGKtLn9nfSsV8naRBi4hOPp0zkUIKYzHeSSxhhupVxaOvwmyL5ttW7WRD4gE0ymRBEkJgTRoSkzVnF0YaSjdgXoabpAXQDaGlMASvhiVqYcxum6rppELc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AcN1g2tw; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-618076f9545so9956a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:05:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=FKy7we1/enGeWcJqucrvM22t67EfHFKMn6iTfTQCcWtAg6x6lBVk/GVRHZqWauHX33MZNiggOEWv4ximveg+nnDVgVX/IF59/EibmqhdsCc0bI4XR9lbv64ImH2dNezHr5kpAIPsaok9YLzQDSsjD7+g3bqdeiYPcHqoK17iEy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=bZk5HtTP; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b0faa6601cso21451401cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:05:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1755183900; x=1755788700; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1755183943; x=1755788743; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DHTTqKKdq/5V0+v/JW5V+lqTYrF2enAJRrocEqjtuIQ=;
-        b=AcN1g2twlrtoQ8Y3jbvaz0Tke1BGz33Q5X2iv4yfvXGaeFnlP1lXuwVNHzqdVATooX
-         QUKnTMDhl5HU1MYGlNRwC+xHAhmIWQHJzN5M4gYOAtCfKGuip0mzD90OqSZpBNbkUTHd
-         9pOZ1sKRsgkH9sAIKPslqoEFWCQGG1k3ynIOjxYsD47A99wkJhMfw/oK45EAvUOuu91f
-         D2vKsBYGO9qFF+71s8FmypWbZF3OeKdmq/nCIsvZoFKsU+DrtukihJf6zcqVoFV6cO/R
-         MkmxcoP5YB/HzpD13Y5sslpEn9mIp8RrVeb3DHGORqWA4n23tOwX1jKra0Vf4I6V927B
-         GL3g==
+        bh=4zaTlP5pzo/qg9qINxtiKx2DfK943m3JT2OR6iyYMuY=;
+        b=bZk5HtTP3xdifzseYfqy3JsWZKqx2xgMaoYvXb9szp4i5kpLke+Yt8ifotwtltcyd0
+         /PJzV27vjC6pOU/v5rHOF66UH8gE3fpwZSCUBkQFRQBKHfZMRlOvsGHFlOPd1TUYKovu
+         1bzkN8JisNI8cral03BJDzCDUP65OiViBh/1cWd6Yk3X2thq6v68kq1Zp7kwdBjV8tqq
+         QlhqqKTC0VAWAksy3QLMqid6llYtFGrnZVJbh7NXhb2Ra0BgBPehaDzOx3UcsBi5SaJk
+         KLBr6VIShk0tjB9KXAW8M+80j+n9AgzHchRfxxmxL93fG3CKYgwX6hErgyyQf2LBSXLw
+         QRcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755183900; x=1755788700;
+        d=1e100.net; s=20230601; t=1755183943; x=1755788743;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DHTTqKKdq/5V0+v/JW5V+lqTYrF2enAJRrocEqjtuIQ=;
-        b=s2PrbraunY1nc7Ssm2AtlQzYDOBBNqsa4UN7tRjq30GCHt1EjnkJf7KSerQZ7QamY7
-         g7d1VXXGBbja6KvjC/r8I2jZIZ2p4g/q2ain+33cRc3w0wBdUBs5G8h58JX9jNQ0RjpK
-         umsoI486FRtzIsK52/VvkCl2o//CqbCFGHvNvDKQRf+Na+EvR6cU7ROj/trwoPd8Tdag
-         oGdtWq+Snu2F302hcpcrKpSjIMO0mpLLyPvJheDkmW8bRoe3TxtFW3zQWt0CnI244j8N
-         dMmazSA8v+iPDd8I8KhCwTa2a31jYR0heDclb84olA9JD5rt/N7+yXUWHltU0AXRzHdM
-         QE8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVpP5pSGl/5teZb0joUfsR6sWRO83sXTH2yQL9ttLIGwMYmG3lR4HAs6sG7Kv3GHQXE0b6AGsnSc10TxBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcdnjeOQf18SnGTgiQvN+Tf2BANlqFaTouEWF/xKXd96fTDfXX
-	H9ehbDkfYLKnGAyPJOH46g+zIRVI6EVnPxDKtoO4C1xHeyiSk3FCcplM0kiY2LabqO3UmZ13X8N
-	FCxVHt8cJu90LGFrt3/SUVhUvAUHBByoXyyUJCmgL
-X-Gm-Gg: ASbGncvAkZRao6/bJefKSvj/zW51JWkDBv4/TXwwkOmcapyfUhBoZ7EJjLORR26NolN
-	ixw2fTsbyNshBhUNLaF5oKEHZ3BZq8QXOrP61HtP6BOXk8ZkqcnqjcIBFoxEagE25erCbkiIEip
-	ndPsgTOrSpgahE2a5XT7OBx0ZCQw1kud/AIfe0n9vADIeE7zXQLk8JFgA32M2+DzJLuiQismN2l
-	48ONgHfS96Atmdayu6t9wQbCjMjyT8pPW8A1ng3oXBxH8DimA9L
-X-Google-Smtp-Source: AGHT+IFNlA66qRktjZlIhzbxSDgit4AZenfxz8oP467vA566LpdL7jF19DE2WZ1XUSPlup99EPs2+mDOQA3ziH554eQ=
-X-Received: by 2002:a05:6402:b66:b0:618:527d:633d with SMTP id
- 4fb4d7f45d1cf-618928d3d6amr59340a12.5.1755183899573; Thu, 14 Aug 2025
- 08:04:59 -0700 (PDT)
+        bh=4zaTlP5pzo/qg9qINxtiKx2DfK943m3JT2OR6iyYMuY=;
+        b=afqnnqkNAcmLSzv1VEgdjfwMW/umkl5atTl30AzCfQmxV5Oi3IhauGEAY16OK7ahNs
+         uO1kmVFJvGr/w0CSPokZ5jBziWv0fv+zjFA3a2OUAW8IV4imkyxTU+kczT2s0ZaaXJWr
+         ujliWfG/VQLL5DuFxqMp5RJOfqLmVWPIkwZlESeM61gOXjQ1Rno/4D0IVW5NJmcEsQNo
+         zrycLCB982y6azJkU0REhBkNiydklgScd8Vra0Otd/3jczvP2vyRPORTtpdCk/GORglp
+         1Jvcu8QP2l7lS5eV+WKmD9Xz28w+Ax3XnRJfX8OzQ6GIMlh0+Y2OBM/gvX6f42H7nw8R
+         eDgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3otoM3OnUwWeyzJpYHXCZS/kGWd3LKIjGmxtW5PA+i33XkoviHD6wipsxwQeDd+dhLLunJ6TmH2PktnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlUkeaXLf/fvyNgQpopZJFBZLHzJb1RKIY36RMnGAL41UZtQHx
+	s0gfKRx8HrRNWDf6o2sUtoDvGPbsbKvhEYRYtEnSGrN3yXLsABPAuyrCdTB/xGhNUM5yAcpSIw1
+	tOg7j0C1CCidD0UWQ0OERBiLqLOEOhMQ5I/hzyGxBwQ==
+X-Gm-Gg: ASbGncvmthA8uaXJZaCgHNhZmWt0AS7ixzcUWqMTid6Ba/PDAl3/GuBNpmaMzYY4ecV
+	o3NJeI/ocg+cTYlz1A6DDmE9Qj5XCZeyTn3dxpDL/3TQDIn4LbI3DrTEcZutfqjPGWwIrfVsq9Q
+	XP0L8JVxQQ4GrNg8ZC4RTbE6L3Llkumdp13+mFJvSpA2UpPoQj2BPkXz3dKX/P1jlLQkBNqJjbA
+	oEPT0xZmVYLJZ8=
+X-Google-Smtp-Source: AGHT+IGd/DJ84Imu5KYRHkgnpNm4NZ636lX1WUQFrgSI87aMZKq+0zSxGBg+110FdN/squBIYOywjRpAp8ettpbigko=
+X-Received: by 2002:a05:622a:5e09:b0:4b1:1109:6090 with SMTP id
+ d75a77b69052e-4b1110964camr21827551cf.4.1755183943358; Thu, 14 Aug 2025
+ 08:05:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729-kasan-tsbrcu-noquarantine-test-v2-1-d16bd99309c9@google.com>
- <CA+fCnZeuewqXSW0ZKCMkL-Cv-0vV6HthJ_sbUFR9ZDU6PmzT-g@mail.gmail.com>
-In-Reply-To: <CA+fCnZeuewqXSW0ZKCMkL-Cv-0vV6HthJ_sbUFR9ZDU6PmzT-g@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 14 Aug 2025 17:04:23 +0200
-X-Gm-Features: Ac12FXwcH9CZHsSNIO3sMGBaN83LZnV8U4fAqWyZL3Muxw72pDBQ5p_7Azu-P6E
-Message-ID: <CAG48ez0OnAPbnm73a+22mpBjvGHKFGqYAA8z+XocZEHXJCcQiQ@mail.gmail.com>
-Subject: Re: [PATCH v2] kasan: add test for SLAB_TYPESAFE_BY_RCU quarantine skipping
-To: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, kasan-dev@googlegroups.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+ <20250807014442.3829950-8-pasha.tatashin@soleen.com> <20250814132233.GB802098@nvidia.com>
+In-Reply-To: <20250814132233.GB802098@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 14 Aug 2025 15:05:04 +0000
+X-Gm-Features: Ac12FXy7hDZjxYMY4c9rpouOJZeOk5g8OwQ5wREtab5YlBDjZqQf27ADm8vAB8Y
+Message-ID: <CA+CK2bCbjmRKtVVAok7GH8xvh8JWrga5Oj-iK-p=1M79AqvhRA@mail.gmail.com>
+Subject: Re: [PATCH v3 07/30] kho: add interfaces to unpreserve folios and
+ physical memory ranges
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 7:10=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.=
-com> wrote:
-> On Tue, Jul 29, 2025 at 6:49=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
-e:
-> > Verify that KASAN does not quarantine objects in SLAB_TYPESAFE_BY_RCU s=
-labs
-> > if CONFIG_SLUB_RCU_DEBUG is off.
-> >
-> > Signed-off-by: Jann Horn <jannh@google.com>
-> > ---
-> > changes in v2:
-> >  - disable migration to ensure that all SLUB operations use the same
-> >    percpu state (vbabka)
-> >  - use EXPECT instead of ASSERT for pointer equality check so that
-> >    expectation failure doesn't terminate the test with migration still
-> >    disabled
-> > ---
-> >  mm/kasan/kasan_test_c.c | 38 ++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 38 insertions(+)
-> >
-> > diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> > index 5f922dd38ffa..0d50402d492c 100644
-> > --- a/mm/kasan/kasan_test_c.c
-> > +++ b/mm/kasan/kasan_test_c.c
-> > @@ -1073,6 +1073,43 @@ static void kmem_cache_rcu_uaf(struct kunit *tes=
-t)
-> >         kmem_cache_destroy(cache);
-> >  }
-> >
-> > +/*
-> > + * Check that SLAB_TYPESAFE_BY_RCU objects are immediately reused when
-> > + * CONFIG_SLUB_RCU_DEBUG is off, and stay at the same address.
+On Thu, Aug 14, 2025 at 1:22=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.com> wr=
+ote:
 >
-> Would be great to also add an explanation of why we want to test for
-> this (or a reference to the related fix commit?).
-
-Okay, I'll add a sentence here, will send v3 in a bit.
-
-> > + */
-> > +static void kmem_cache_rcu_reuse(struct kunit *test)
+> On Thu, Aug 07, 2025 at 01:44:13AM +0000, Pasha Tatashin wrote:
+> > +int kho_unpreserve_phys(phys_addr_t phys, size_t size)
 > > +{
-> > +       char *p, *p2;
-> > +       struct kmem_cache *cache;
-> > +
-> > +       KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_SLUB_RCU_DEBUG);
-> > +
-> > +       cache =3D kmem_cache_create("test_cache", 16, 0, SLAB_TYPESAFE_=
-BY_RCU,
-> > +                                 NULL);
-> > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
-> > +
-> > +       migrate_disable();
-> > +       p =3D kmem_cache_alloc(cache, GFP_KERNEL);
-> > +       if (!p) {
-> > +               kunit_err(test, "Allocation failed: %s\n", __func__);
-> > +               goto out;
-> > +       }
-> > +
-> > +       kmem_cache_free(cache, p);
-> > +       p2 =3D kmem_cache_alloc(cache, GFP_KERNEL);
-> > +       if (!p2) {
-> > +               kunit_err(test, "Allocation failed: %s\n", __func__);
-> > +               goto out;
-> > +       }
-> > +       KUNIT_EXPECT_PTR_EQ(test, p, p2);
 >
-> I think this might fail for the HW_TAGS mode? The location will be
-> reused, but the tag will be different.
+> Why are we adding phys apis? Didn't we talk about this before and
+> agree not to expose these?
 
-No, it's a SLAB_TYPESAFE_BY_RCU cache, so the tag can't really be
-different. poison_slab_object() will bail out, and assign_tag() will
-reuse the already-assigned tag.
+It is already there, this patch simply completes a lacking unpreserve part.
+
+We can talk about removing it in the future, but the phys interface
+provides a benefit of not having to preserve  power of two in length
+objects.
+
+>
+> The places using it are goofy:
+>
+> +static int luo_fdt_setup(void)
+> +{
+> +       fdt_out =3D (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+> +                                          get_order(LUO_FDT_SIZE));
+>
+> +       ret =3D kho_preserve_phys(__pa(fdt_out), LUO_FDT_SIZE);
+>
+> +       WARN_ON_ONCE(kho_unpreserve_phys(__pa(fdt_out), LUO_FDT_SIZE));
+>
+> It literally allocated a page and then for some reason switches to
+> phys with an open coded __pa??
+>
+> This is ugly, if you want a helper to match __get_free_pages() then
+> make one that works on void * directly. You can get the order of the
+> void * directly from the struct page IIRC when using GFP_COMP.
+
+I will make this changes.
+
+>
+> Which is perhaps another comment, if this __get_free_pages() is going
+> to be a common pattern (and I guess it will be) then the API should be
+> streamlined alot more:
+>
+>  void *kho_alloc_preserved_memory(gfp, size);
+>  void kho_free_preserved_memory(void *);
+
+Hm, not all GFP flags are compatible with KHO preserve, but we could
+add this or similar API, but first let's make KHO completely
+stateless: remove, finalize and abort parts from it.
+
+>
+> Which can wrapper the get_free_pages and the preserve logic and gives
+> a nice path to possibly someday supporting non-PAGE_SIZE allocations.
+>
+> Jason
 
