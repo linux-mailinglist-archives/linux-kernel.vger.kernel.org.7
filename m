@@ -1,39 +1,53 @@
-Return-Path: <linux-kernel+bounces-769166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B57DB26B03
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED290B26B11
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B713B2F22
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AABF684CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9B421B9D6;
-	Thu, 14 Aug 2025 15:28:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C481A5B8D;
-	Thu, 14 Aug 2025 15:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C234221F00;
+	Thu, 14 Aug 2025 15:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=grenoble.cnrs.fr header.i=@grenoble.cnrs.fr header.b="gwu70pnV"
+Received: from mailgw-out1.grenoble.cnrs.fr (mailgw-out1.grenoble.cnrs.fr [147.173.1.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD752040A8
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.173.1.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755185307; cv=none; b=HCCIn/1ESqPLKZt94D/sid5J16cVZNfrNP0l7WeaEAI1eLw+uQ1VyXXS+P8M9m0Z9QeqVYc75XqPPXnjTdEtvHGkVh3CNRj9q0p8ZYToke4uMeEsm0+P0QZNHAta8V3+BktYudBy7AWJPv9ljjvLUF1bqTRXeTTuYDj6PyIrSSE=
+	t=1755185388; cv=none; b=rSJP+SZld3EobQewlZpRpp+M8CTkPOP05S25YQf1aCvFu95dk+qXgj40cHctmbAIrk2/V3mh19fW9BdyXcfMgTmvy1GPH1eW1GS7kzxgO/EliQsCUf9gACx8lErbQ8RC1WTBZl11a9Lwb0TMXpQ8Ox0pG97kbT5nbb7SxNqbhZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755185307; c=relaxed/simple;
-	bh=OtX8NQC4WyCIC6HX5tnUsUk0WKM0GZbwEuVcQ1HlxAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rARQDOOY5XIwz4kLN5ZAW6qonb1b1FAv7FLoLGvaF+RqhMWTsy7xorS2djJRfjNCGJ1cZ8qBRDilDp/Dc+hy4ZaanZCtXcGbqfuKJRevWm01liDgHxa+caxHhetQYWoGdmsR7oj1WG0NTnBtlO4j+fNmluQIAUeYEQFWkTxzKZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A36441691;
-	Thu, 14 Aug 2025 08:28:16 -0700 (PDT)
-Received: from [10.1.196.50] (e121345-lin.cambridge.arm.com [10.1.196.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7DDC63F5A1;
-	Thu, 14 Aug 2025 08:28:23 -0700 (PDT)
-Message-ID: <6065d82b-0a07-4f82-8b4e-9c00374d2f71@arm.com>
-Date: Thu, 14 Aug 2025 16:28:17 +0100
+	s=arc-20240116; t=1755185388; c=relaxed/simple;
+	bh=mB6OKzKyG6cbfcvnrXnFLBKytUJ5OK9CtmAOs83Nfjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gNwnA0gF78jTrY3V2rYONqLkTllFvgLunR3kCBQHRaiAmAtOpSp0cukYcUKbkTef+1cGZJizYYivtT93htMHjkpeXfMJAhXmLmTj3qi1jkwHxXqXqbkjg6nll7o1QCH5ZCFvfFS5MfeVvSrvzB4OEAS+yUKPlbIfEbA+FbBhlK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=grenoble.cnrs.fr; spf=pass smtp.mailfrom=grenoble.cnrs.fr; dkim=pass (2048-bit key) header.d=grenoble.cnrs.fr header.i=@grenoble.cnrs.fr header.b=gwu70pnV; arc=none smtp.client-ip=147.173.1.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=grenoble.cnrs.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grenoble.cnrs.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grenoble.cnrs.fr;
+	s=202106-grenoble.cnrs.fr; t=1755185381;
+	bh=PnoRkmxCOsnpNNweD2fYCgajGFbsDIeSlUkdZHGlISs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gwu70pnVBHOmmdvpFPm3fohpywuDUu8SUQdH+LFyCc10KgnUyMf0C88TaUu34Qb67
+	 gx2oalm2Zh2oL85qhXe12Or+DdldZ8k8xdgUWRCu5Qqj3vMWtOT4bhIzY9K5v2Dj9J
+	 +dQFEO6JvMbycrmrzP0n2LbzU+tGO4cPMHHx4T6ll7QlbQtKdNY06CTqiWYZ+cCov9
+	 ifkuYByvMNyPvBNNZneu36Dq1OYSLYPSsti6XNfu8zbbuuWbMPfsqfpnbjCqa8lbtZ
+	 LnAuIsNbYkq57wI3V6Gx+N07SXaPZzlaVjvzH2fxXweAPyntF9ApwAYwthcWDHcTdz
+	 1YSa7/s42dVZQ==
+Received: from [147.173.65.159] (unknown [147.173.65.159])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mailgw-out1.grenoble.cnrs.fr (Postfix) with ESMTPSA id A128ABFBA8;
+	Thu, 14 Aug 2025 17:29:40 +0200 (CEST)
+Message-ID: <62be0896-6c90-4a27-81cb-7bd897d0e6f2@grenoble.cnrs.fr>
+Date: Thu, 14 Aug 2025 17:28:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,98 +55,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] iommu: Fix virtio-iommu probing
-To: eric.auger@redhat.com, eric.auger.pro@gmail.com, rafael@kernel.org,
- bhelgaas@google.com, jgg@ziepe.ca, lpieralisi@kernel.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, lenb@kernel.org,
- jean-philippe@linaro.org, jsnitsel@redhat.com
-References: <20250814141758.2140641-1-eric.auger@redhat.com>
- <e3935099-6e29-493d-8587-64ceca8a20e9@arm.com>
- <3fdbd23d-cd65-453b-aa8d-78f9ed1bc4c4@redhat.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <3fdbd23d-cd65-453b-aa8d-78f9ed1bc4c4@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [ISSUE + PATCH] Interrupts were enabled early by spinlock guard
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+References: <280dd506-e1fc-4d2e-bdc4-98dd9dca6138@grenoble.cnrs.fr>
+ <CAMuHMdWJ3im+k9uQgRhUh52Z_tJ+KQjAGY_Y8FjbEu6gB=0UKw@mail.gmail.com>
+Content-Language: en-US, fr
+From: Edgar Bonet <bonet@grenoble.cnrs.fr>
+In-Reply-To: <CAMuHMdWJ3im+k9uQgRhUh52Z_tJ+KQjAGY_Y8FjbEu6gB=0UKw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 14/08/2025 4:19 pm, Eric Auger wrote:
-> Hi Robin
-> 
-> On 8/14/25 4:53 PM, Robin Murphy wrote:
->> On 14/08/2025 3:17 pm, Eric Auger wrote:
->>> Commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
->>> probe path") broke virtio-iommu probing and no iommu group are
->>> produced anymore.
->>>
->>> When probe_iommu_group() gets called viommu_probe_device() fails
->>> because viommu_get_by_fwnode(fwspec->iommu_fwnode) returns NULL.
->>
->> ...which it's not supposed to. And *now* I remember, we never got this
->> finished, did we?
-> Seems we did not ;-)
->>
->> https://lore.kernel.org/linux-iommu/9beaed48da83a0882dba153e65e6cfd0a8e21482.1742484773.git.robin.murphy@arm.com/
->>
-> 
-> Unfortunately it does not fix my issue. Still no iommu group when
-> booting with ACPI.
+Hello Geert, and thanks for you prompt review!
 
-Indeed the evidence at the time suggested the patch isn't quite right 
-as-is, but that is definitely the place which needs fixing. Since 
-Jean-Philippe's occupied with more exciting things at the moment, do you 
-happen to have an easy recipe for testing virtio-iommu so I can try 
-debugging it myself?
+> I think the conversions in
+> drivers/irqchip/irq-atmel-aic.c:aic_irq_domain_xlate() and
+> drivers/irqchip/irq-loongson-liointc.c:liointc_set_type()
+> are also wrong, and need a similar change.
 
-Cheers,
-Robin.
+The one in irq-atmel-aic.c looks indeed strikingly similar. The one in
+irq-loongson-liointc.c is slightly different though. Instead of:
 
-> 
-> Thanks
-> 
-> Eric
->>
->> Thanks,
->> Robin.
->>
->>> So it seems we need to restore the original iommu_probe_device
->>> call site in acpi_iommu_configure_id() to get a chance to probe
->>> the device again.
->>>
->>> Maybe this defeats the whole purpose of the original commit but
->>> at least it fixes the virtio-iommu probing.
->>>
->>> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
->>> probe path")
->>> Cc: stable@vger.kernel.org # v6.15+
->>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>>
->>> ---
->>>
->>> I also tested smmu probing and this seems to work fine.
->>> ---
->>>    drivers/acpi/scan.c | 7 +++++++
->>>    1 file changed, 7 insertions(+)
->>>
->>> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
->>> index fb1fe9f3b1a3..9f4efa8f75a6 100644
->>> --- a/drivers/acpi/scan.c
->>> +++ b/drivers/acpi/scan.c
->>> @@ -1632,6 +1632,13 @@ static int acpi_iommu_configure_id(struct
->>> device *dev, const u32 *id_in)
->>>            err = viot_iommu_configure(dev);
->>>        mutex_unlock(&iommu_probe_device_lock);
->>>    +    /*
->>> +     * If we have reason to believe the IOMMU driver missed the initial
->>> +     * iommu_probe_device() call for dev, replay it to get things in
->>> order.
->>> +     */
->>> +    if (!err && dev->bus)
->>> +        err = iommu_probe_device(dev);
->>> +
->>>        return err;
->>>    }
->>>    
->>
-> 
+    irq_gc_lock_irqsave() -> guard(raw_spinlock_irq)
 
+it does:
+
+    irq_gc_lock_irqsave() -> guard(raw_spinlock)
+
+I don't know what the implications are though.
+
+> Unfortunately I have no hardware to verify.
+
+Neither do I.
+
+Regards,
+
+Edgar.
 
