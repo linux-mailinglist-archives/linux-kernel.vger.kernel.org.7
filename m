@@ -1,132 +1,87 @@
-Return-Path: <linux-kernel+bounces-768180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D543CB25DF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:49:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83ADDB25DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E5A720F1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB379E7A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 07:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C95728C036;
-	Thu, 14 Aug 2025 07:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87FF29ACED;
+	Thu, 14 Aug 2025 07:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g3rWnz9M"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Q1fQ7Rb6"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4CA28936D;
-	Thu, 14 Aug 2025 07:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D0129A9F3;
+	Thu, 14 Aug 2025 07:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755157508; cv=none; b=KV/M0gmSuQA5DiRJhu0agJwY5Hib7Eynaue+gMAruXc8ewn9kWt+uiZZRbfYEjk/u/K+UX8OfcYaKDxrJ3OGvp2KYsZdmVFGcqveU7bsy8VP8Ywai/9VcaiJTcVp4YUwbcgB8v8W5JvjVwpHo0wPL1RrtmJrT9gWfawWq9VN4Ls=
+	t=1755157544; cv=none; b=RYOIy6lWLQ+CCqpNRyi6CDGX7o6sCgV/MVOqF3Hv1qaLjKiXsk1Zl9vyD1y4+zm+77Fv+GBs/uYEMmhM9WSJvaWBo0FuV94vKDFG9F8Kco+wqB8Adp6GldkgWEjXSksJgTEeblQ7wwzhhoKGNIgJ1Crjq+nx4HzWJaw4R8VoYgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755157508; c=relaxed/simple;
-	bh=rE7zmqGq9FqnYDRl79SBxfnh0nVlVtU7Jbs1o8LeCMA=;
+	s=arc-20240116; t=1755157544; c=relaxed/simple;
+	bh=ncqHU0v1iEmUcJfIYKSHufZX6y2o2ZSRc2qysk2DdCA=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ONzJIv3Pfi1C5ZrOE4lwml8ukbwitGFWHAyPo914egPPAZa8gDg03oUdobC8YagtgjDZgEKGPNDRZMshXiEj19myiDFTcxpqQPtV928nB3wI4yJ8UZsIA3wQJc8WSBSjk7rCjNw4fm3p8VzxaSZejipLjGDgCKR3s8LBMiMVQFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g3rWnz9M; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E4F8B444FC;
-	Thu, 14 Aug 2025 07:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1755157503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oGaeaOyu7sZr1t9Yhldyp6k6MutpBTd2kLlHKclXjtQ=;
-	b=g3rWnz9M4v3IfdZKg8YsEppWQv3TXECF1TdJA3Q2JvW6gzqm6A6Gbk7Oy4QYK+SBuJ+4S4
-	tqjiE9YDPtgo2OzvXF5B0pTGPUmANjuiX6ouLiIQRrVmiNgCRfqX/ke4qDokQvxQEjiQT2
-	uu4PBmttQ6d7NWsnLt1W1jxdXXqE2j0bja30tG57RMpFw86BRGNdgBXSI9M4t0pS17eFeK
-	QQX0ZXFJ/Ni0E2m+f0QGq+SAqLBqm5NOuMYAOSz8fUf4WmppMkQF6TH2qCfJhAiuqLS3RF
-	TszOf8Z10x2fkH7IDWCMIb9ppwE4AybNJ/Y2JTfx4JNA82Tz5VUnQdIRCynzJg==
-Date: Thu, 14 Aug 2025 09:45:02 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Qiang Zhao <qiang.zhao@nxp.com>, Shengjiu Wang
- <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, Fabio Estevam
- <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] ASoc: fsl: fsl_qmc_audio: Ensure audio channels
- are ordered in TDM bus
-Message-ID: <20250814094502.4b350b3e@bootlin.com>
-In-Reply-To: <8d01cf4599664188c92a515922d68c9834263384.1754993232.git.christophe.leroy@csgroup.eu>
-References: <cover.1754993232.git.christophe.leroy@csgroup.eu>
-	<8d01cf4599664188c92a515922d68c9834263384.1754993232.git.christophe.leroy@csgroup.eu>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=K9E3mzG3lMgVWetugQ5+b9CG6A4o7vOA2UYPfuYJEgW4uaqSg/4R4bJNlrpHB0a4iBPwv8fU9187n232sEY0n1llquPM/D1cpVIaU0GRa80yWMjwEs6kvCZub8VJ1dfSKJNX87kMxl05smoFJ9pwAHwheJmNYkXL6wv/7tQya2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=Q1fQ7Rb6; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=qNvBeXZ+P8UApe0dbki/ordaapboF2t4cf+gcZmp5Kg=; b=Q1fQ7Rb6hwaJ4lXdpVjF9d13ga
+	HhkZcnGiQBM8IjIuGRHb7BjO7TFY8EdhvX5e7jWcnQSMUpZlWO4cMX8MdOJ9By2R+cP5/ixkpK6Sl
+	Y35Lc5kNF8+yoVsaNU0IV1fbRMBsRdKaMWA8RQh0rg2scUbTqvrFtQjB2prXjTln8Q6xFIY4oNvSz
+	Ai4UVs7tpNoD3GyaB+XGuGB3E8dlPCDXJ4mmpx9mejBil69Gg5zI4I4v2LZRkQx7CoB0oSsS+X1Lu
+	1J63IDSEOO+ZsNOPYgppR5ZFMNqf6vNDEtu9Kbn4zQpZZghOyUAw4rL8X95p0aQHwXFShbDtAB7st
+	Q/8ILBTA==;
+Date: Thu, 14 Aug 2025 09:45:27 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Brian Masney <bmasney@redhat.com>
+Cc: Tero Kristo <kristo@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Maxime Ripard
+ <mripard@kernel.org>, linux-omap@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] clk: ti: convert from clk round_rate() to
+ determine_rate()
+Message-ID: <20250814094527.29745592@akair>
+In-Reply-To: <20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com>
+References: <20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddugedtheduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemtggstdekmeelkeeltgemkedttddtmehfugekudemleehgegvmedvudehrgemfeeluddtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdtkeemleeklegtmeektddttdemfhgukedumeelheegvgemvdduhegrmeefledutddphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhrtghpthhtohepqhhirghnghdriihhrghosehngihprdgtohhmpdhrtghpthhtohepshhhvghnghhjihhurdifrghnghesghhmrghilhdrtghomhdprhgtphhtthhop
- egiihhusghordfnvggvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhhitgholhgvohhtshhukhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 12 Aug 2025 12:50:56 +0200
-Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+Am Mon, 11 Aug 2025 08:48:05 -0400
+schrieb Brian Masney <bmasney@redhat.com>:
 
-> To reduce complexity of interrupt handling in following patch, ensure
-> audio channels are configured in the same order as timeslots on the
-> TDM bus. If we need a given ordering of audio sources in the audio
-> frame, it is possible to re-order codecs on the TDM bus, no need to
-> mix up timeslots in channels.
+> The round_rate() clk ops is deprecated in the clk framework in favor
+> of the determine_rate() clk ops. The first two patches in this series
+> drops the round_rate() function since a determine_rate() function is
+> already implemented. The remaining patches convert the drivers using
+> the Coccinelle semantic patch posted below. I did a few minor cosmetic
+> cleanups of the code in a few cases.
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
-> v2: New
-> ---
->  sound/soc/fsl/fsl_qmc_audio.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+> I want to call out the changes to the dpll driver since a fair number
+> of changes had to be done outside of Coccinelle. I unfortunately don't
+> have this particular hardware on hand, so I was not able to test it.
+> I broke the changes to this driver up into smaller chunks to make it
+> easier to review.
 > 
-> diff --git a/sound/soc/fsl/fsl_qmc_audio.c b/sound/soc/fsl/fsl_qmc_audio.c
-> index 5614a8b909edf..0be29ccc1ff7b 100644
-> --- a/sound/soc/fsl/fsl_qmc_audio.c
-> +++ b/sound/soc/fsl/fsl_qmc_audio.c
-> @@ -791,12 +791,17 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
->  			       struct qmc_dai *qmc_dai,
->  			       struct snd_soc_dai_driver *qmc_soc_dai_driver)
->  {
-> +	struct qmc_chan_ts_info ts_info;
->  	struct qmc_chan_info info;
->  	unsigned long rx_fs_rate;
->  	unsigned long tx_fs_rate;
-> +	int prev_last_rx_ts = 0;
-> +	int prev_last_tx_ts = 0;
->  	unsigned int nb_tx_ts;
->  	unsigned int nb_rx_ts;
->  	unsigned int i;
-> +	int last_rx_ts;
-> +	int last_tx_ts;
->  	int count;
->  	u32 val;
->  	int ret;
-> @@ -879,6 +884,30 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
->  				return -EINVAL;
->  			}
->  		}
-> +
-> +		ret = qmc_chan_get_ts_info(qmc_dai->qmc_chans[i], &ts_info);
+Tested-by: Anddreas Kemnade <andreas@kemnade.info> # OMAP3 GTA04, OMAP4 Panda
 
-qmc_chan_get_ts_info() need a struct qmc_chan as first parameter
+No new scary things seen on boot. Can someone check this on AM3, too?
 
-qmc_dai->qmc_chans[i].qmc_chan instead of qmc_dai->qmc_chans[i].
-
-The use of qmc_dai->qmc_chans[i] without .qmc_chan have to be done on patch 4 (cleanup patch).
-
-Best regards,
-Hervé
+Regards,
+Andreas
 
