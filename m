@@ -1,107 +1,128 @@
-Return-Path: <linux-kernel+bounces-768948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB0FB26844
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:59:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8790B26842
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC378189FB66
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:52:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE3D9E08CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0789D2FE064;
-	Thu, 14 Aug 2025 13:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B178F3009E1;
+	Thu, 14 Aug 2025 13:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="kLEZfiw6"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1cNU5MI1"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D936D1E9B2A;
-	Thu, 14 Aug 2025 13:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA5E14A4CC
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179546; cv=none; b=r3efDmE0v17EopTdTurHbzw5ZIJO8t1EutntT6A1UPr2jAPrN57osBByPptvJ2N9+91NI7CFgPnn0E0v61iDNJxSI6ufjg72tik39JrvB3pE28lL0qVDxom4SpbrLETetmRLmZfZEaw7n05jgktJGcUu19inFSmVtdLBFZKeE3E=
+	t=1755179609; cv=none; b=qQFPdz4RTB0BbcioNRXLjiVLHTQAfsGMUIEZ5mQyl50mMH5pR9a6Jo7JTXKrlF5b4ASKaEi/0Pj4OQau4X3sjLQFkBITX0fqQeySyZdGlx2+iUzV23CbHytBUm1cbxdFrRKvbLrLvTmw485CQVAloOHBcaamZQ0XA0t5WYiAhVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179546; c=relaxed/simple;
-	bh=H/ucUNltvWA/WNQ7vYUrWuJ/a+PdsIb2eVUVXAtMNqA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OH2RJJMB8JUvSZlEMxPTASVGNrO01FEpJTznUTAyrhHvwjhNtBTqu71HEZbJBvsLFXJ6sHSWbEFrw4EUy+2hxOYeLGq8VlZpqJQOHaSPhLK95YBUckG96MDLW2E0LicR5ZlsadFpDkvBwpkkCroHnYnDmbLw0Ptbo7Was/wo7Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=kLEZfiw6; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D0D3B40AB4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1755179544; bh=dIIZeueswEIgOf/YgafKN0m66ZuMdvcw1i04wbyCAgk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=kLEZfiw668KanKXhgcHU9d/ETqcWCk9mKykyonNdemzyj7m+SPrCSFtIPyPun96Ok
-	 ybRWmBWFyJdcTUsRMXFGM2taALmdaJRoqf9MyXcMCGoK4epK4uRkG6bEKXZcxzVAWK
-	 G4Z5NgV8nJg+Qdep+qeqv8Ql81J75BN1JfesCo7tAEVJUizmoG5I5Md7xXEoLmx34w
-	 QUo6Uy4dibhp+Ai5pW48Cvtyhnox3kteAfSKCfpqYVTsVNEtT5hHHShjEf/8HgmfvR
-	 p+WAKcO2YKbgpUbmdvxRff7Y/9t4wXnB3OdJacXBLxRN+y/EtbHt99L33sjQdVKK1+
-	 44dHNXfenty8g==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id D0D3B40AB4;
-	Thu, 14 Aug 2025 13:52:23 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 07/13] docs: move sphinx-pre-install to tools/doc
-In-Reply-To: <20250814080539.2218eb4e@foz.lan>
-References: <20250813213218.198582-1-corbet@lwn.net>
- <20250813213218.198582-8-corbet@lwn.net> <20250814013600.5aec0521@foz.lan>
- <871ppehcod.fsf@trenco.lwn.net> <20250814080539.2218eb4e@foz.lan>
-Date: Thu, 14 Aug 2025 07:52:22 -0600
-Message-ID: <87wm76f1t5.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1755179609; c=relaxed/simple;
+	bh=abS007O1u+hwW9gFpKL4+LBBc2SxxpNq5FxcSBGjtYw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Y97JBHWNufhW/b7mKt6Si4pRXXeOW8tzJSzuVdrv5/nILVbngnhh57XmP9Z05kWUbUQkyRQT8Whjmkz1I6K/8WwwZbgXoH4eBIxYw9E8DAVIFkwKa+4fePtxSwLJNVkQNaqk9VSLdMbFS6tu4j033b0Gq2lIlLWI8mn43TXQ9+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1cNU5MI1; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-45a15f10f31so10657095e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:53:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755179606; x=1755784406; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VeEzkQgYmIMtzyp7xMy2bVRBv2zDb/Ov8v16nUBQdMU=;
+        b=1cNU5MI1R/+by5VJ8yndCz2SWtPODSg+ZaCDtCfs4yCSbqDbRopALotS4+xFRseq6X
+         YDMwMmTBOSXSdmnIWB2WeROWbOjqiK9W5ynEJsx/YYwUIUg7utilNUDXzRUNP/vsu4uJ
+         /zo1qbLVfl+5znd5BsVaHXrAYXGRwVCRe8p3QYFm/LYej24W7B1YpeaBVLq1ig58HLjF
+         N3SzAXV00nJ1wYb2XJcvFqKuJPw+ZC/4i1AJHPgi0q9KqFaOtAZ1KkDAoYDsKkzMrdNJ
+         GfU8uolHLA9s2HyNdj+F4XCPYxF3DrTXHrKODb81R1WyIrGqxHWA9efuiOUMRMfU/aZK
+         lu1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755179606; x=1755784406;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VeEzkQgYmIMtzyp7xMy2bVRBv2zDb/Ov8v16nUBQdMU=;
+        b=qdk6W3I2OswlCansvct6bAlu/PDcL48kD9hhzDwaPiWJ5d55rNJvc2xQGYfEvM3Xsa
+         7vLVsa9PyFs7b2sDSpJ7pmwKOO9DGk9JQGr9Pl8qcq4zotCxTPE9I19PNwGVIKyPelA+
+         hyMKUs5oPLYo3K3bNwx8O35CvD0JRbTNdb96Lmx2Mgms+/1j2akaeRlgNiD8qMEr+59U
+         fCeBLoN5BGrY3Fj6UB0S1vepYjyUAX6Y8MMzUS6g9UmRhWtYJ/JTeP6B3wYP2HpOVzfY
+         SVfkkgo0KlEflgA6wanDwh+u7Pn4+BsRq6JFJU98W1rOWIhHw0sCQjSVHMVDkdCOE5K3
+         vvMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXvWzoacpWskqbxhkX+Zd7ywyS6UuF6C8rbtP9xW9RRr4Qm6Ys1XfxaqZGlmrgDq2KM5RBemHVL8R9RmEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGlgLyZxK0hyytCrIWj3LO0n320fcnOW2+t6et2/YvLMBmS40K
+	EY6sj5MFBBF2vjlUWf/44emG0EnY3ZDxttLhmoQEHlt2TBceDtPz+kp8Zz4zjkqvthVb5JgxK1d
+	dgDL+zlRrUmC2Gx4QmA==
+X-Google-Smtp-Source: AGHT+IESfdeJeKr09jw5WbnVm2g2GYGGRoae20RO82NBmgfW5Xq4wFMtQ8ks4BUMu22uttfxn9AvnmK+x6a4z2c=
+X-Received: from wmqa18.prod.google.com ([2002:a05:600c:3492:b0:459:dc99:51e4])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:1907:b0:456:2139:456a with SMTP id 5b1f17b1804b1-45a1b7bf046mr24221705e9.15.1755179605642;
+ Thu, 14 Aug 2025 06:53:25 -0700 (PDT)
+Date: Thu, 14 Aug 2025 13:53:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAEnqnWgC/x3MQQqAIBBA0avErBvQrJCuEi2sJpuFFloiRHdPW
+ r7F/w9ECkwRhuqBQIkjH75A1hUsu/GWkNdiaETTCS1btOedDLr7oozs0ZJD0wttZqVa6iSU8Ay 0cf6n4/S+H59RtYRkAAAA
+X-Change-Id: 20250814-gpuva-mutex-in-gem-a608ab334e51
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=727; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=abS007O1u+hwW9gFpKL4+LBBc2SxxpNq5FxcSBGjtYw=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBonepM08eUWZmldgb0RLPzTFzkATvv5oCAc12Q/
+ f71nkR2gpKJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaJ3qTAAKCRAEWL7uWMY5
+ RnTAEACTN/BeQv66T5iOnfFiSziogfTb6vockzGSNafTl2E43jlEbAw5YvB1WPhAKmRJeF49A5X
+ 4v7d8lkN0XTbAWpyO0w3fP6Z1GKmPqcVMyGNXf6+/KnipfQ+lTpDgsqg/x4T9FKfUYt0y8MyJ/P
+ bUCDQA/A1Luu00AgK5xn2Q19D5EVrMUfYjtKCF8ZuQ9t7Czzk7A+c9ngKeurnOeOXmHHejDXfka
+ imnHWZLc3orir0I/UpeJWxAPbvocBj7zOY5VhuLQkST534a/9w0FcEzhQ15QGpoLo5VvVapclnb
+ V7MCIXSyVPHkQhchZ4LsMlOth333nUy6WOrHwZ0AlUfsKDlldf0gM7Kn/oF98EYo8OX5RiUayGz
+ osju1k6YX80i0+llYWrvOKBPwk2wYE8DBVKi3GGsNqrkmAA+2kWkCkvTCkSDp0q/NeKXpbUq49d
+ eUqhGpYT/VYFfcFpM52D3FAcXPJ4PeeJinrN1vOLnyoHqd3Rtr7l6ak81fHf9MJ/Yn5/JFWDBG3
+ BKN/fsRTCupANwL5AWQwIUO4m3ou9/Pp0PuwyXj0Wkk5rO3LYcWdZYTxwVTsKklD0xABeb9RmfF
+ 8kpRpBF2SvfItVhpng8d9n0EVInxqduT0KafbkArhdZOH8EvLvi0wBaQmgM3iH8eL1j6SJMQXQw zP6j5xbOkjx39vQ==
+X-Mailer: b4 0.14.2
+Message-ID: <20250814-gpuva-mutex-in-gem-v1-0-e202cbfe6d77@google.com>
+Subject: [PATCH 0/2] Add mutex to drm_gem_object.gpuva list
+From: Alice Ryhl <aliceryhl@google.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Danilo Krummrich <dakr@kernel.org>, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Rob Herring <robh@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+See the first patch for motivation.
 
-> This series is big (51 patches) because it needs to fix thousands of
-> broken cross references on media. I may end splitting it on two series
-> to make easier for review, one for the script and another for media doc
-> fixes.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Alice Ryhl (2):
+      drm_gem: add mutex to drm_gem_object.gpuva
+      panthor: use drm_gem_object.gpuva.lock instead of gpuva_list_lock
 
-That might help, yes.
+ drivers/gpu/drm/drm_gem.c             |  2 ++
+ drivers/gpu/drm/panthor/panthor_gem.c |  4 +---
+ drivers/gpu/drm/panthor/panthor_gem.h | 12 ------------
+ drivers/gpu/drm/panthor/panthor_mmu.c | 16 ++++++++--------
+ include/drm/drm_gem.h                 |  4 +++-
+ 5 files changed, 14 insertions(+), 24 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250814-gpuva-mutex-in-gem-a608ab334e51
 
-> Such series affect this RFC as it is creating a tools/docs and placing 
-> there the parse-headers.py code as:
->
-> 	 tools/docs/lib/parse_data_structs.py                                  |  230 +++++++++++++++--------------------
-> 	 tools/docs/parse-headers.py                                           |    5 
->
-> Now, if you prefer tools/doc instead and/or place the libs elsewhere,
-> we have a couple of options:
->
-> 1. rebase my series to do the changes. I suspect that there won't
->    be much conflicts, but this may delay a little bit sending you
->    what I have;
->
-> 2. add a patch at the end moving stuff elsewhere;
->
-> 3. on your series, move them elsewhere.
->
-> What do you prefer?
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
-Between "tools/doc" and "tools/docs" I don't really have overly strong
-feelings; if you work has the latter we can just stick with that.  If
-you propose "tools/Documentation", though, expect resistance :)
-
-As I said, my series was an RFC to see what it would look like; it did't
-take all that long the first time around, and will be even quicker to
-redo on top of a new base, whatever that turns out to be.
-
-Thanks,
-
-jon
 
