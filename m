@@ -1,109 +1,135 @@
-Return-Path: <linux-kernel+bounces-767751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD089B258A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:59:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1FAB258A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 02:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B3D9A2903
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:57:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8D975A70B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 00:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C059318DB37;
-	Thu, 14 Aug 2025 00:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D037B15B0EC;
+	Thu, 14 Aug 2025 00:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jHgwLrac"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWM6d4Em"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE5D29A2;
-	Thu, 14 Aug 2025 00:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87C01BC2A;
+	Thu, 14 Aug 2025 00:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755133062; cv=none; b=NxITwBxXdjHJZgIAyjGTCFbmcYHRlo3qpH0dGmmR4z9/MU2qSt+dQCP+nBbqT9A+sv2fH8sLqqn4Yp9vkuI00J6AmOS9leWwmbu608aVnDh4BVYZSEP5CxL9LBfZc8gt0/YIdtjPNst5ZmWxYE4OE6fkZcMCKorvFzWwS3oXDEo=
+	t=1755133189; cv=none; b=e+fLrnWebqzWkVaI+NpnZHKe1mVxFwRjdyD13O2h8RqW+xgVwNGPLNRNm/ZhziXCJ578GvWVgbd8+R+y+2Y/SfffJUwDcJJ1NVz/Eq511jUwa5SEKtDvRmkz3bZKkNCtUwGClo6N5n5BMVUAAwEu8lD1XoyBX9CyYayGA6JfDco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755133062; c=relaxed/simple;
-	bh=+IMn7C7Sq7bYpHjCzCPlaS5XdaZQiDEZ1iugmJAtHog=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J0PiAewlnW9yyaofWhQT6PzZ/H2+yzOyTKmQ/mTycmyS8aTaJVn+SKlusfvoYQCcvD6GJyjRDNJgX4C0dDKy4JSu0DbtUH+Ya2WRfmqssFq38kaLL/pq5vWU2o+G/5jH3Dwc+DGiqu6EEwcTUCkNNThOeg/G5UIOXRTPLaECDF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jHgwLrac; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22FA7C4CEEB;
-	Thu, 14 Aug 2025 00:57:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755133061;
-	bh=+IMn7C7Sq7bYpHjCzCPlaS5XdaZQiDEZ1iugmJAtHog=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jHgwLracLj2YbX6WDRy0A4VQVgtQT1qXrNFyJAt+GbhZB7mGmr3RiSjOojOjW5vO/
-	 oaL/zI8FfYZxdtJ1czykMF0XWbQGVzf5Vhzqi6s6UYgpA/JYxpbeBCTmni72XF37HT
-	 Bl09K7vU7fMF1vARG3t6qdh+a9pYA5A20d7/nYB4Ac2eszh/WuBKj4mlN2W4t4Qna1
-	 ABVfNLomGg1snZPFGrVZKychbQzfjXUvhJxvZRLk8ADWTRlTJM/EGlOJ2hku0RXVsR
-	 UB37HG7X9+YwYVjQOIGuwsRJ/zhJKYGDS9ndJOt6tthi8FWRQ01/9Mcr/Xa8OSNxNw
-	 nPZPna1zGI/BA==
-Date: Wed, 13 Aug 2025 17:57:40 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, ayush.sawal@chelsio.com, andrew+netdev@lunn.ch,
- gregkh@linuxfoundation.org, horms@kernel.org, dsahern@kernel.org,
- pablo@netfilter.org, kadlec@netfilter.org, steffen.klassert@secunet.com,
- mhal@rbox.co, abhishektamboli9@gmail.com, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, herbert@gondor.apana.org.au
-Subject: Re: [PATCH net-next 1/7] net: Add skb_dst_reset and skb_dst_restore
-Message-ID: <20250813175740.4c24e747@kernel.org>
-In-Reply-To: <20250812155245.507012-2-sdf@fomichev.me>
-References: <20250812155245.507012-1-sdf@fomichev.me>
-	<20250812155245.507012-2-sdf@fomichev.me>
+	s=arc-20240116; t=1755133189; c=relaxed/simple;
+	bh=sUJ1hwgm3BilO93f+COLaWq26QSMqiNh20olbxtH8wk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fls0L9KDrdcfUrG7iQhUfh3o1FKzgBL9+YqIQSJb6H/8R2sXj8OA/qU8BMgKxKlV78kSeTQzY/7OAalCt9/Rf4yyHeMvVo0IpwkCQcFCnb9ouj76Q4EFr4HC0BqcSsY1BRrddSjaAPDYQ/TyBOXVGM4VBMrOaJvBLZY2yrQeMAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWM6d4Em; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e34c4ce54so38443b3a.0;
+        Wed, 13 Aug 2025 17:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755133187; x=1755737987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rf/DLFSblEwpBIKMV7nOMC43XFgeeGPKDZbsy7aPkt4=;
+        b=YWM6d4EmCOugQ6VbPkR9UgF2FGcI4pseiE6nvtLNzDiUmWBBwigmzneIAc7YvLOZuV
+         amdZE5w7oqyBCGPW9Gz324vlNp9v3i0I5MAsHHhAjg33DIMXyHps6AhcEqJb/NUIYb6q
+         LEFN6fAGceYxzLOTxfI5PZGGrGwN6rcEtn/rt4zJ9LvMGRNJ9E71SmHzRF4EcUGY41nf
+         YU8GAoQY8Oyyfc+WX5rYNqKoDLSBLAXIVwoqmT1hJ0+bf5suhqhYxw2GIfLFhvC0vDK8
+         xkX5lUskyTa5ObcxLpW6WxWgFNue/bDFSk93pMme6INFb3U/xf+wXEpD/kTF/d1lgOB6
+         DReQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755133187; x=1755737987;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rf/DLFSblEwpBIKMV7nOMC43XFgeeGPKDZbsy7aPkt4=;
+        b=Me07EKvzcxXYGyuDwS2ynJ2pHpWygbAc1VMgdtIO5pPXVtMk4wy8mcxOm+fYq3hZbJ
+         /TTGDq8C4Ck7NFuMILcIJiPTRtShDvP2OdqNLG2i2e5P6V2BkEwJICSyPsPNluZqoQB6
+         HBg61bywUBhbb9f5x+5uVcRYYW+KC2WPD0qwbmVqtYFMTExOu8l6SPETXxOUFpo1NnOl
+         vpY9BuFejg7l7aD52xge3nGZQEX4fG4qJvmHaDn+7aquEKgX7vRwpNiQagCKUY97jCtd
+         XgXCe+thrcPqENTeji69h7lo3xF4mYyzZ7OcG0PyN1y4m+LQy9JXbuYTyowD51woU19H
+         xr4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVeOYreYRTpCQjW8nuRBFg/ArYl7s0SB+v0lOIQzwZBe8qXtUVQj1FyYORcbuhZghSJ+Cen7flwmSqqWA==@vger.kernel.org, AJvYcCWQQjeD+62a/3SdxGNVr0Gp7PDzFefzFBW0JefZSXkcIg8hIr0n5RiKFGwKpf9eQr+p6KtfHlH+8HIzl4vvWw==@vger.kernel.org, AJvYcCX/4cIwgtBADIWr/aWW7+vyTAjzQjxTe73bjsvX2H81MMnFPxFE5ygXWnuWCDAEfmvRpcH9/Tolr7pF@vger.kernel.org, AJvYcCXPcQ4/OoSeQVYO9+Yfk9relIX+6+xI32KwK+56yFWnLKIB0GhVN9G7te7ijwVno4U2ZeRvur9RoqZmIX2A@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkWjNetyGhbJi3U7PlecVJVB/X5qPM4Qw3oq3JSpsCtbSvf8E7
+	KnKvKJ5enxRKmq7IrSbk3sR2RJIbMNuLgkLqFa4AIVKYGu3Ze+baN/Bt
+X-Gm-Gg: ASbGnctzFliGTTK/Qnfnl6krsLVmPZ7aFJy8H2PVAY71EKSep/gZcJGdZi+5dmPPlJj
+	hnMpiXGIXcD1uLZazOmnDWFcSK32d0q8w3eikV05YabGBKQWxpwhExXdyzGJwS0R17emZZwxfPJ
+	pUnb0vYdm/fdiByxb7B7KqnvLbhO11y2xZ80O6w2J0cX4ZUY/1Ww7LMUQIqGUZ1Eb72b3g0H/ZB
+	sxXxwOBQaJG2B0ZPZc1nOpxYWZxLB5ZyC08ucRuMNXSxEdBaKjcTqwiKfixMU4wf/EONIriwCgT
+	K3jZ2zCO9BfEmRB/Obu/OKdA91FDl5PHMSocyEivm6N+nVYlKxrE4ekYBfI4TGcYOO20bjHA7Tg
+	s03jJJ/13f24Uhf3i+bcyDkQ5KxB3YJ1Lvgka0lU/kd/wGDjHk7UepaT9xWCYLr9Cuc8bWZ7AxY
+	3bh9p+YlhLmgxVsU2lumc+qQ==
+X-Google-Smtp-Source: AGHT+IFRkVLTCUcZUx+09+v3Wv/zc+P6dtPoSwg7WCBNLF8VkIc7dKXeFpMC8/XRheQQ4K8C/bprdA==
+X-Received: by 2002:a05:6a00:3e08:b0:748:e289:6bc with SMTP id d2e1a72fcca58-76e326c2c54mr949982b3a.1.1755133187112;
+        Wed, 13 Aug 2025 17:59:47 -0700 (PDT)
+Received: from harrison-Surface-Pro-12in-1st-Ed-with-Snapdragon.lan ([101.178.35.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76be9143983sm28875783b3a.1.2025.08.13.17.59.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 17:59:46 -0700 (PDT)
+From: Harrison Vanderbyl <harrison.vanderbyl@gmail.com>
+To: marcus@nazgul.ch,
+	kirill@korins.ky,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mani@kernel.org,
+	alim.akhtar@samsung.com,
+	avri.altman@wdc.com,
+	bvanassche@acm.org,
+	andersson@kernel.org,
+	agross@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-scsi@vger.kernel.org
+Cc: Harrison Vanderbyl <harrison.vanderbyl@gmail.com>
+Subject: [PATCH 0/3] Describe x1e80100 ufs
+Date: Thu, 14 Aug 2025 10:59:01 +1000
+Message-ID: <20250814005904.39173-1-harrison.vanderbyl@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 12 Aug 2025 08:52:39 -0700 Stanislav Fomichev wrote:
-> +/**
-> + * skb_dst_reset() - return current dst_entry value and clear it
-> + * @skb: buffer
-> + *
-> + * Resets skb dst_entry without adjusting its reference count. Useful in
-> + * cases where dst_entry needs to be temporarily reset and restored.
-> + * Note that the returned value cannot be used directly because it
-> + * might contain SKB_DST_NOREF bit.
-> + *
-> + * When in doubt, prefer skb_dst_drop() over skb_dst_reset() to correctly
-> + * handle dst_entry reference counting.
+Describes the UFS nodes for the x1e80100/x1p42100 chipset.
 
-thoughts on prefixing these two new helpers with __ to hint that
-they are low level and best avoided?
+This is relevant to the following devices/patches:
+Surface Pro 12 Inch 
+HONOR MagicBook Art 14 
+Link: https://lore.kernel.org/r/871px910m1.wl-kirill@korins.ky/
+Samsung Galaxy Book4 Edge 
+Link: https://lore.kernel.org/r/p3mhtj2rp6y2ezuwpd2gu7dwx5cbckfu4s4pazcudi4j2wogtr@4yecb2bkeyms/
 
-> + *
-> + * Returns: original skb dst_entry.
-> + */
-> +static inline unsigned long skb_dst_reset(struct sk_buff *skb)
-> +{
-> +	unsigned long refdst = skb->_skb_refdst;
-> +
-> +	skb->_skb_refdst = 0;
-> +	return refdst;
-> +}
-> +
-> +/**
-> + * skb_dst_restore() - restore skb dst_entry saved via skb_dst_reset
+Forthcoming work *not* included in this patch:
+Surface 12in display description
+Surface 12in Surface Aggregator Module description
+Surface 12in device tree
 
-saved -> removed ?
-Also I think for better kdoc linking it's good to add () after function
-names
+harrisonvanderbyl (3):
+  dt-bindings: describe x1e80100 ufs
+  ufs: ufs-qcom: describe x1e80100 quirks
+  dts: describe x1e80100 ufs
 
-> + * @skb: buffer
+ .../phy/qcom,sc8280xp-qmp-ufs-phy.yaml        |  2 +
+ .../devicetree/bindings/ufs/qcom,ufs.yaml     |  2 +
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 91 +++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-ufs.c       |  3 +
+ drivers/ufs/host/ufs-qcom.c                   |  1 +
+ 5 files changed, 99 insertions(+)
 
-kdoc missing for refdst
+-- 
+2.48.1
 
-> + */
-> +static inline void skb_dst_restore(struct sk_buff *skb, unsigned long refdst)
-> +{
-> +	skb->_skb_refdst = refdst;
 
