@@ -1,105 +1,202 @@
-Return-Path: <linux-kernel+bounces-769179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A07B26B2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5B3B26B2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 17:39:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 127E85A5E5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:34:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 942B1AA2D1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5072238C24;
-	Thu, 14 Aug 2025 15:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CB322FF37;
+	Thu, 14 Aug 2025 15:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hKtoWLOL"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C7pKTYJL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D333A2264B8;
-	Thu, 14 Aug 2025 15:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F1022D7B9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 15:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755185640; cv=none; b=Bba3bfArqTKPNpk0D1bzXiRTXN0sdT3eVZQVM3oqdpvZjqmYClWyf1+5VQcRKDqPuZWo9mNMSxbTa5d7056vL6WDCmwQamgs3h5k6hc8oD+m14j8e/U3pWd02lb9IQQdK9JD8h/8pjp4g2UhlQLmlhG+u5XDCqJw46W0lwPrgts=
+	t=1755185692; cv=none; b=VJObn4kuGU+DM2Ypz+Gep/rR7e9Ptz7Ds4IjLjbvnJVD4P3cJHBr+5HeuiEyxVzcYioPuwWkNwIKUGyhzcTBwdRe4o05Fx/ZMYyEtJ1WUXsfQWPH7hjpFHhLp6JF6NsmhW/wNdfODRisZI98Rw9rLI0zNR5SZjWAv/y3vp8bzrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755185640; c=relaxed/simple;
-	bh=Nq6aUc1/B4cTBa0sp/QpHeGcEL/dEYhBVIwVBFy+pqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YgqMiMoBLEYG7iFS9hLbBww8z+Se7YSEXCMJ7nHR84e1eiH4c998tYGnPVbZj+QJLnhiW7HgXwBv3jBOFNQxTdrghpp2qlr9NKz1ZiwPVbrNOn/4qP/y7/GHOuoGXpodD3fAIqJWiEj9tDJfo0jEKb3jSsZuYXGTzcMR5sqJDsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hKtoWLOL; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32326e25000so146270a91.2;
-        Thu, 14 Aug 2025 08:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755185638; x=1755790438; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nq6aUc1/B4cTBa0sp/QpHeGcEL/dEYhBVIwVBFy+pqg=;
-        b=hKtoWLOLs2kzVsLHTB1rNbT5u9g3GAZmj5e3UItkxm3vXVRXhY99PdazrLQtn1QiIl
-         voCa2dMAU/ovtU5teA725WLsZPXdZ3njQe8c8tJ6cOD0O9hiVBEmy33F7k9uIHM/XrKG
-         JlFTWzuk9KsbsCQ0haFKyUHWaL4CSN1WkYIgEQO9Rzzl0ywl6ov8x7wOazd3tzzgvzZ8
-         MY/vbcxrfQ7wFbm3HitcXq7jGFjWsQxWvBtTk8I3s3v6iEh4VkH6tXgRlRAOJz3F51FJ
-         wHs3LOt7tS5Q6Dj7z7OIR7+kNSwcN8H/Q81dIF+2YLdApLUvzp5rTdYkbACZbHibh+yA
-         qmlQ==
+	s=arc-20240116; t=1755185692; c=relaxed/simple;
+	bh=xvGL7DY8ZMo2Ei32WQZRQ6BKK5rxE+s60T1JZuZ1YB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mkMwrOASCDjQFALiRoFXt532mMNGW1+ODqjS5JEnQhf4GSTBHZ7QNgPGkyC2OOLeHGxTpa03PY6GtYRI3s7tRaw0KKCfhaEY6q0NRLCB8OnF5Tl+lsQd0FJpHWvk3ToxlR7RVukl4YWDyc9ZGZXxtpYOBbLjMWJgvtUCXGrtXU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C7pKTYJL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755185689;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FF21Vrb0E9HgLsPo9WR8fvObdoRI3So91Rz3YvTAOHs=;
+	b=C7pKTYJLxkD6YIksYuBYUWRvH63R82yq8bjLY9wFXqKVil1tStLEzoweh8NwPBUOO87Gg+
+	wpbpS7AUOiM9MxQBKwuTCI54+191vPrcY/CCmFq7cyW0xU6h88stG66ABIFrwfLPwVzumu
+	OydiEmUZDoawuYP6UZ8I6md3+B/Mf7A=
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
+ [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-605-uNQgqzOzO_akOk2GF8ffOA-1; Thu, 14 Aug 2025 11:34:47 -0400
+X-MC-Unique: uNQgqzOzO_akOk2GF8ffOA-1
+X-Mimecast-MFC-AGG-ID: uNQgqzOzO_akOk2GF8ffOA_1755185686
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-53b174f6477so573816e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:34:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755185638; x=1755790438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nq6aUc1/B4cTBa0sp/QpHeGcEL/dEYhBVIwVBFy+pqg=;
-        b=Fp8RDc9uouC5KyReRHh+gQarGI9SCEl+fQK+RSO0QpmWdLvUCLYG8dMFZ4WsIMJkCo
-         geljMMNaAhsDedyF8Z0q18Mv4y+L430s6BWf499Y/FUOI0y+QW+q/0lPQ034dzPrqLD2
-         VlS/6bw+R7BpV4L/N3WdNoIPsPiRVd7BOth7/yxFedqUjfOe+U/8CG3qXrEv4I4cXVcR
-         95UFCn4Fo40A53GKpOlcyFjZ7+ZI/Xthky7q/SvD/9IzzXYUVHr716GNA6ybenROAYcU
-         PEMXx0UH1M7iuofzCf92Xpicgcur/BXpIAJs47L9mBoop/Ww8eKiZDWBxRQnauYmyDw+
-         Uaiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBuKjxCz3GZ+2K8d9hGP9OFzZ4DngpDxNMJA/r8ahfV4bEdI5W81h1a+8t6iLyNkeyKyXsVcOGd1UFD9A=@vger.kernel.org, AJvYcCX0N9lnEA8qdDqPLuylDr9cipwyuYJPhtGNjdLazclr1cZsL/Bxcw2j/rp6UsYrMYPnHC+KI5QI4+/R4/9ILYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytTsA0JmSFHT75dc6eRoHa1BfCSKBrcjWO/wdX5uxmMxKQAKbk
-	QRPiTADfMzeVIGP0ynWDtTuwHxSt+6ataPCNU7sFZ6IfxPYr5Y7Ss9rJGPKg7UtD5kXIpC9ioWc
-	VHFE/V4lP5Ue/+eZ9J3sOe7vCjh7VgVU=
-X-Gm-Gg: ASbGncsS+Cy/N5zGVeU/W9zUsOSIb/DPMsIMZKOhpgIdXPPDRFD9HDUdUe52ttHjb9y
-	2w/SbQ+URD0c1LJyK0lM2w31altYqnRXULHb2C/Gek73GX9drw0lCxgr5jFrgBssiqzVbuWhHAm
-	lBuujdp1eWxaMTo31UwfKLSwP2NfUA4ZUluW+V0z75ELj8pht6sYDbUS16PJgN59ZkKLnqTwpdh
-	gkc9AX2nbqVvHj1pAw=
-X-Google-Smtp-Source: AGHT+IExebqpquUbhbP79oNaoqhWawZvxeYfYRRjXoj1XNHbnsxMKW1hibJDfr5mk2Qen8wXb//p7fJ9VAKFesJ/+1I=
-X-Received: by 2002:a17:902:dac6:b0:240:2bc6:8ac4 with SMTP id
- d9443c01a7336-2430d0d2218mr57153305ad.1.1755185638075; Thu, 14 Aug 2025
- 08:33:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1755185686; x=1755790486;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FF21Vrb0E9HgLsPo9WR8fvObdoRI3So91Rz3YvTAOHs=;
+        b=t1WaIrMmAFLfp9Thg2/1yyR1MJaz0DB1kw5hSjCl1EPsk7ptpnWg3tP82jtBZ/YtKY
+         hwkh+jRTQQrTzXzoGUO2YhuOh7TLSAjgcWMOuuaJr0fYDnFv+LA1C8Ckz5oJ165tlz+N
+         q7Sd0vgm5WlKI/6DMgIR8PdSbR21oFfpUZVY2tgyRBmbL54A04ReWydjl8YcxGbMIXqa
+         e5DLqpoKTHAoLe6Z6mFnSYXtwN1n/ClesmmkkQ51lEsPgw9G4aMkjhYC9KDpULNcV8Xe
+         ucm0AeT3S331LHsI06iXRZuHMcafBZPYqFHldZeBmrUxNwOSoOyzSpgJ5Gwd8LJXO7BE
+         26gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5y50fbeahBWqbbxXznFmrcBWAQ7n2+zhTnvYK52eqkPrZK/3BOpjckyCJz/TbTPjiPvFV/eud3RDsjl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPG+N/XsYgtF8ToUKxH05PXRm1iCFoSJDJ8M9xpUCCsJz7vouf
+	I2+sM0whuZ3opbw2TL7mmJzBgxSbmGz5HdP4u37VTU6vos18Uqv6w1nH5mldLKmVfm68Lc/yO3X
+	EtDcT8qChnBPtBWwLV0BG5IjMCUnXWvtmUPzACiVeotyIBnlnv4qgkTHXtHe4toVM2g==
+X-Gm-Gg: ASbGnctbVvivQ87lK4QQhTr+zjgnSBVqt2j85Ayxd6peBB8gzlOayENMNqj8Wu0IWtv
+	MOKeqAuEIOPqq07jPy+TqlapSRC70vLCYMfagTnsLUatijdDTgxwhwEDtVdy29jzDQgw8uMlLu+
+	Ahzyg+SgcApJodJfD5zCoGibCSSiGXVGWsrLWqxrL4cawkuOmD0VTu3MEhKT81z9rMvQsKapNip
+	rMU1fuDDK+ZsCMIkVUSnp47071NGVfJYLU/FVv7j2SvHRn8HeFoRXZL9Xs/tcX458UXjOTVhKaa
+	wMv+yiBwD4SmDFNdlWwbQ7afBTCNhFxFAIkU1R2hUMIpN0IBpl6CzQk399l3/Y+jlPkVtvW9k2R
+	7VDRp1atzrgo=
+X-Received: by 2002:a05:6102:d93:b0:4e7:5f31:7443 with SMTP id ada2fe7eead31-50fe0c158a1mr1427616137.9.1755185686476;
+        Thu, 14 Aug 2025 08:34:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+/6dKe1kJ911yQbOAzRDTDCXbofqZKWFiMIThFR3OOIAtFum7vkGGy+nnE5DHeftlrWrxEg==
+X-Received: by 2002:a05:6102:d93:b0:4e7:5f31:7443 with SMTP id ada2fe7eead31-50fe0c158a1mr1427588137.9.1755185686046;
+        Thu, 14 Aug 2025 08:34:46 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:f0e:9070:527b:9dff:feef:3874? ([2a01:e0a:f0e:9070:527b:9dff:feef:3874])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70af5b82985sm13963766d6.65.2025.08.14.08.34.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 Aug 2025 08:34:45 -0700 (PDT)
+Message-ID: <e9212299-d66c-4779-93f9-3bb5833e5c07@redhat.com>
+Date: Thu, 14 Aug 2025 17:34:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814093046.2071971-1-lossin@kernel.org> <20250814093046.2071971-8-lossin@kernel.org>
- <CAHC9VhQXOezJ2=B1BQOqLgfuzDJEVS5G_r9+_bQ+OUNTpjZCKw@mail.gmail.com> <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
-In-Reply-To: <CANiq72=vhPsGjSx9u0FvDa6uzMFkFQFP9qG+DhtZ_U5TyV=bJQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 14 Aug 2025 17:33:46 +0200
-X-Gm-Features: Ac12FXyvLo49VMmYiEU1CpyzrkHMikMWdnppn1qvjYsfqG-8BI26C6b0-0xA8JY
-Message-ID: <CANiq72k8kWHeBGLgHVE6vN36n6ashq-TVX3+h6WxLtc1jpUefQ@mail.gmail.com>
-Subject: Re: [PATCH v3 07/11] rust: security: replace `core::mem::zeroed` with `pin_init::zeroed`
-To: Paul Moore <paul@paul-moore.com>
-Cc: Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Fiona Behrens <me@kloenk.dev>, Jocelyn Falempe <jfalempe@redhat.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Reply-To: eric.auger@redhat.com
+Subject: Re: [RFC] iommu: Fix virtio-iommu probing
+Content-Language: en-US
+To: Robin Murphy <robin.murphy@arm.com>, eric.auger.pro@gmail.com,
+ rafael@kernel.org, bhelgaas@google.com, jgg@ziepe.ca, lpieralisi@kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, lenb@kernel.org,
+ jean-philippe@linaro.org, jsnitsel@redhat.com
+References: <20250814141758.2140641-1-eric.auger@redhat.com>
+ <e3935099-6e29-493d-8587-64ceca8a20e9@arm.com>
+ <3fdbd23d-cd65-453b-aa8d-78f9ed1bc4c4@redhat.com>
+ <6065d82b-0a07-4f82-8b4e-9c00374d2f71@arm.com>
+From: Eric Auger <eric.auger@redhat.com>
+In-Reply-To: <6065d82b-0a07-4f82-8b4e-9c00374d2f71@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 14, 2025 at 5:31=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+
+
+On 8/14/25 5:28 PM, Robin Murphy wrote:
+> On 14/08/2025 4:19 pm, Eric Auger wrote:
+>> Hi Robin
+>>
+>> On 8/14/25 4:53 PM, Robin Murphy wrote:
+>>> On 14/08/2025 3:17 pm, Eric Auger wrote:
+>>>> Commit bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
+>>>> probe path") broke virtio-iommu probing and no iommu group are
+>>>> produced anymore.
+>>>>
+>>>> When probe_iommu_group() gets called viommu_probe_device() fails
+>>>> because viommu_get_by_fwnode(fwspec->iommu_fwnode) returns NULL.
+>>>
+>>> ...which it's not supposed to. And *now* I remember, we never got this
+>>> finished, did we?
+>> Seems we did not ;-)
+>>>
+>>> https://lore.kernel.org/linux-iommu/9beaed48da83a0882dba153e65e6cfd0a8e21482.1742484773.git.robin.murphy@arm.com/
+>>>
+>>>
+>>
+>> Unfortunately it does not fix my issue. Still no iommu group when
+>> booting with ACPI.
 >
-> I think the idea is to take all these through the Rust one with
+> Indeed the evidence at the time suggested the patch isn't quite right
+> as-is, but that is definitely the place which needs fixing. Since
+> Jean-Philippe's occupied with more exciting things at the moment, do
+> you happen to have an easy recipe for testing virtio-iommu so I can
+> try debugging it myself?
+No easy recipe. on my end I am using qemu/kvm with a rhel guest and
+custom kernel. I guess it was integrated in kvmtool, wasn't it? I am
+just testing with protected virtio devices.
 
-Or through the pin-init one, which gets pulled into the Rust one.
+Thanks
 
-Cheers,
-Miguel
+Eric
+>
+> Cheers,
+> Robin.
+>
+>>
+>> Thanks
+>>
+>> Eric
+>>>
+>>> Thanks,
+>>> Robin.
+>>>
+>>>> So it seems we need to restore the original iommu_probe_device
+>>>> call site in acpi_iommu_configure_id() to get a chance to probe
+>>>> the device again.
+>>>>
+>>>> Maybe this defeats the whole purpose of the original commit but
+>>>> at least it fixes the virtio-iommu probing.
+>>>>
+>>>> Fixes: bcb81ac6ae3c ("iommu: Get DT/ACPI parsing into the proper
+>>>> probe path")
+>>>> Cc: stable@vger.kernel.org # v6.15+
+>>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>>>
+>>>> ---
+>>>>
+>>>> I also tested smmu probing and this seems to work fine.
+>>>> ---
+>>>>    drivers/acpi/scan.c | 7 +++++++
+>>>>    1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+>>>> index fb1fe9f3b1a3..9f4efa8f75a6 100644
+>>>> --- a/drivers/acpi/scan.c
+>>>> +++ b/drivers/acpi/scan.c
+>>>> @@ -1632,6 +1632,13 @@ static int acpi_iommu_configure_id(struct
+>>>> device *dev, const u32 *id_in)
+>>>>            err = viot_iommu_configure(dev);
+>>>>        mutex_unlock(&iommu_probe_device_lock);
+>>>>    +    /*
+>>>> +     * If we have reason to believe the IOMMU driver missed the
+>>>> initial
+>>>> +     * iommu_probe_device() call for dev, replay it to get things in
+>>>> order.
+>>>> +     */
+>>>> +    if (!err && dev->bus)
+>>>> +        err = iommu_probe_device(dev);
+>>>> +
+>>>>        return err;
+>>>>    }
+>>>>    
+>>>
+>>
+>
+
 
