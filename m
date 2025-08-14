@@ -1,138 +1,131 @@
-Return-Path: <linux-kernel+bounces-769474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA41B26F29
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:43:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3DAB26F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 20:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52AAA1C248BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:43:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B5B188CEAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 18:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25067234973;
-	Thu, 14 Aug 2025 18:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC82523957D;
+	Thu, 14 Aug 2025 18:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X+OwVj2O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kxGgJ7U4"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691D92309B0;
-	Thu, 14 Aug 2025 18:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7628C23506A
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 18:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755197012; cv=none; b=jjUh/hzwePT48Yhv/Cadk/UKgKhX6KE6MKtR/wGzcAPZoIoNiEKQn6wlZuxhYU93GbqVeUntgW1Gq/LGvCNxtUETHO64ZjIXoaT8K4+tcGdQC2tpIGgNRro88VeJNYA+1zUU+8WnmJWxU5F2rw/5/OmbZOWpUC2sGPGkycEIoko=
+	t=1755197104; cv=none; b=KLqE9lCfPitfX3f+rxn2SrzrTYlLi9q82LRPlCMZ4AaEZBoTzc7N5kRr7jgIGE1wRVnEZziWN1m/scHvG5YkWFQBiRw7DYnNHb4k+Rs/jI/E2gsxR9BhyYWyYaBqPxdvDbyWV2HLKGsfZI0hB2+kAHd7DJYrtH00NViXj/fFXMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755197012; c=relaxed/simple;
-	bh=+edEx8wP5sj6lIPPo4+9dTecgBzL9N0lb1TKODlviEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5o8m+bcEJ1M3+UdfvihLRdamgHnKblel5Dfpn0vzKAUrgkKPBePKPssP/XPCuWKWlbrES9ggX/bP4eF3iolsMNQyI2f5WoPsiq5rhzb4AehTNJSwfPZLvwo+7OOpvp0o4Ghwe5wGdGeIsje++F7+4JwpAUwXAR16sT6ZW156uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X+OwVj2O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC47DC4CEED;
-	Thu, 14 Aug 2025 18:43:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755197011;
-	bh=+edEx8wP5sj6lIPPo4+9dTecgBzL9N0lb1TKODlviEg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X+OwVj2OLlRjK6XZS/8srDIRauWKxHcA5a0JJhaqDHoM751EWi35LMp2Qe71x0vJI
-	 F3EJ42mzPbM5HV+kbrIw+hh1YmI3ExfnBXTCfklBDrnUbATkYqavQRwnzlA8+5Es4P
-	 0+ej6Zk10WhURXK1AJDCbBBAXRx0GmNAAYusuOELHieRqq67QzKPoAdJiF1E9AAV82
-	 axYbo7gzJ/2k223McejgeoQ1CdcFwGND6LcXLewKrTSJqwkWLyxwizNuzO3cAJYp3l
-	 /DuPYD3q9QH5fFlOheUTni3cZbMk0KIUxvxBoLChPc+8KhPSF8Pv+R2INB3sXR0lN8
-	 RYjoZvJjyUDsA==
-Date: Thu, 14 Aug 2025 19:43:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Shimrra Shai <shimrrashai@gmail.com>
-Cc: lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-	perex@perex.cz, tiwai@suse.com
-Subject: Re: Re: [PATCH 1/2] ASoC: es8323: enable right-hand DAC-mixer
- connection on ES8323
-Message-ID: <7d2529cb-7ecb-4616-af04-f65b1f309d89@sirena.org.uk>
-References: <b5a64166-c55f-4ca4-af92-52c954847af6@sirena.org.uk>
- <20250814183344.59453-1-shimrrashai@gmail.com>
+	s=arc-20240116; t=1755197104; c=relaxed/simple;
+	bh=9P7e+IQ8LG/P0atlVUdJXVTqMbr9yIy6QOCAwSCjxNM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lBU7ZP+WhK42DDM59XeVfeoqza8YpRHgIZdowYM8LlkMLLbrTTdlKvo4DmBnomWtXG9vxMsAvNjSBJgoENCKya+5ugrTLJHtO5r7RxMe//9cpe12ZlWRmKN/YE9cdCvPEUgcwSt8FzeU5ZGhBWNj+m5WHFSmEdUk91xhh/qKGPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kxGgJ7U4; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-afcb78e70c5so206276566b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 11:45:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1755197101; x=1755801901; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1qBBuA2TErOLVDapmymnO1MTH+fFI4U6eOj26qi4Hg4=;
+        b=kxGgJ7U4NZahHQtCS/xFQBx93AovK6nZv0nTBWdy77a/YaTJCTVHNzrh2l0yezIhVN
+         9tGaqBR0srImFJMn3HLp9u5VkmWEBExFJpcuboqXv69JzGq6zvyYgHATKTTFHPWQXBXc
+         Yc2Yx3IzKiec4Ca/WIEAi7HV0izvTdkSDhrp8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755197101; x=1755801901;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1qBBuA2TErOLVDapmymnO1MTH+fFI4U6eOj26qi4Hg4=;
+        b=KCn6p2O8sRllfEJfUMGH9YQXDfmBQ5sFRGwAL646aOyJcLckFPwxHvtbKzwZkFIRiw
+         M7Ekp1S08bSk0HTwfYM+YiOrLnNA6IKFcB1QhDkZqmGFea1hMqMqP+LDVxGgp178gsSU
+         WyeTS8Xq7JE48cM1TL+mDpeh1lFHshu8kq8sGTmGCHiJ0wJNGM4CE+mxn1POYpSJUHMN
+         n73RZTdZpsFr9xU2kBUrIFygp8rkc+gHwQvih/Mo2vgH3VqdlBTEO0fOTQFCaCVF+cD7
+         /N0kXudF6ufPpo1qQXCxrAMk1flfYSEsFkASNZg2YluXx5Bznj9jvTbuwxbVP3esagZX
+         VUtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaL+P6EASODl4YB3hgi4uEUdIa665GbrdYwiBDQN6TdOjaBY3+HMgrVK3ftcQH47HcY/5Nx8gh1oMcXL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlhvzpSyAUU6W3eZpkyI3W5zAANrq0qpmZl4RT4UxdWS0PLGoB
+	HKISEg7LfHofAr/hRFrTQxza3vnnUEANpKIDDCvOMpbfNYninAr3sXmy1DdA0N57fg==
+X-Gm-Gg: ASbGncuFWAsyQ9yMfUqdG0P92AoFkYXFOf9fGaxXegpCpiuVuws5bGxR2tPNhWwG0YX
+	0VrFcXj71nbdPcdT7c5l9QnciNlzP6MHDYypkfasRULSiN0zmo/o0dVHOA58kVDdtK+BrhnBu9t
+	5XRxhZycgQf1AEvX8cHUQ5p2DeE4P0+cLsHVlrk+jkL/YAOvxxTJRSHp7md4szFCHvgbG03PLjK
+	CbOYhMtTBBxpyxDP1wqSjCxINrYaC/e4ZApOZT9suOTB7+HGLEBj0NYQKe7gSI8qDF3MU2/yLO0
+	CKZgr9QByWPFa9JRVG7/h20RY4qkdAbqTJgDWahXzLvSjlI+zO4FRLKarASVEGJvzH+sluyyom1
+	4sRySs3N+4rgB3ftJAYoFxei60EzXn/VdMr7D+mVwb6MQei4MAuj7ZMdFnmmFn/fO+3z31TMNRu
+	mzw602jc4AeBAqewQWPzrMUcQ=
+X-Google-Smtp-Source: AGHT+IHefuGAAIAMEMqANOVYlKEH5+LAdTor4fxHNBiEz6a78unbBVFdrI8XeGRL3W3ATolBgKIenA==
+X-Received: by 2002:a17:907:1b0e:b0:af9:6f04:8dd0 with SMTP id a640c23a62f3a-afcb992ca27mr396658866b.55.1755197100634;
+        Thu, 14 Aug 2025 11:45:00 -0700 (PDT)
+Received: from akuchynski.c.googlers.com.com (37.247.91.34.bc.googleusercontent.com. [34.91.247.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0f4sm2614772466b.106.2025.08.14.11.44.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 11:45:00 -0700 (PDT)
+From: Andrei Kuchynski <akuchynski@chromium.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Benson Leung <bleung@chromium.org>,
+	Jameson Thies <jthies@google.com>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	linux-usb@vger.kernel.org,
+	chrome-platform@lists.linux.dev
+Cc: Guenter Roeck <groeck@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Andrei Kuchynski <akuchynski@chromium.org>
+Subject: [PATCH v1 0/5] USB Type-C alternate mode priorities
+Date: Thu, 14 Aug 2025 18:44:50 +0000
+Message-ID: <20250814184455.723170-1-akuchynski@chromium.org>
+X-Mailer: git-send-email 2.51.0.rc1.163.g2494970778-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="V6wTkxydwkAjWbTz"
-Content-Disposition: inline
-In-Reply-To: <20250814183344.59453-1-shimrrashai@gmail.com>
-X-Cookie: This sentence no verb.
+Content-Transfer-Encoding: 8bit
 
+This patch series introduces a mechanism for setting USB Type-C alternate
+mode priorities. It allows the user to specify their preferred order for
+mode selection, such as USB4, Thunderbolt, or DisplayPort.
 
---V6wTkxydwkAjWbTz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+A new sysfs attribute named 'priority' is exposed to provide user-space
+control over the mode selection process.
 
-On Thu, Aug 14, 2025 at 01:33:44PM -0500, Shimrra Shai wrote:
-> On Thu, Aug 14, 2025 at 01:11:59 PM +0100, Mark Brown wrote:
-> > On Wed, Aug 13, 2025 at 08:47:31PM -0500, Shimrra Shai wrote:
+This series was tested on a Android OS device running kernel 6.16.
 
-> > >  	snd_soc_component_write(component, ES8323_DACCONTROL17, 0xB8);
-> > > +	snd_soc_component_write(component, ES8323_DACCONTROL20, 0xB8);
+Andrei Kuchynski (5):
+  usb: typec: Add alt_mode_override field to port property
+  platform/chrome: cros_ec_typec: Set alt_mode_override flag
+  usb: typec: ucsi: Set alt_mode_override flag
+  usb: typec: Implement alternate mode priority handling
+  usb: typec: Expose alternate mode priority via sysfs
 
-> > Neither of these should be unconditional writes, these should be user
-> > visible controls.  We don't encode specific system's use cases into the
-> > driver.
+ Documentation/ABI/testing/sysfs-class-typec |  12 ++
+ drivers/platform/chrome/cros_ec_typec.c     |   1 +
+ drivers/usb/typec/Makefile                  |   2 +-
+ drivers/usb/typec/class.c                   |  61 +++++++++-
+ drivers/usb/typec/class.h                   |   3 +
+ drivers/usb/typec/mode_selection.c          | 127 ++++++++++++++++++++
+ drivers/usb/typec/mode_selection.h          |   8 ++
+ drivers/usb/typec/ucsi/ucsi.c               |   2 +
+ include/linux/usb/typec.h                   |   1 +
+ include/linux/usb/typec_altmode.h           |   9 ++
+ 10 files changed, 221 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/usb/typec/mode_selection.c
+ create mode 100644 drivers/usb/typec/mode_selection.h
 
-> I was just following the precedent from the driver's prior
-> author(s), in the manner of the line above it. Presumably, enabling
-> the left-hand DAC-mixer connection only was a solution that worked
+-- 
+2.51.0.rc0.215.g125493bb4a-goog
 
-Yes, as I say this is very bad practice on the part of the original
-authors which only escaped review due to the magic numbers.
-
-> instead of using a blanket for all devices as I thought. In that
-> case, that means the original author was also wrong, and so I need
-> to know exactly where it should be placed.
-
-Like I say these should be userspace controls, not just blind writes.
-Probably wired up in DAPM, SOC_DAPM_SINGLE().
-
-> which suggest it is in fact controllable already, but I wonder why it
-> is in the "bypass" switch only and not the "playback" switch, which
-> seems to do nothing (SND_SOC_NOPM). Would it perhaps be correct to
-> move these to the "playback" switch, or to have both switches
-> collapsed into a single switch?
-
-Those will be different audio paths, it's almost certainly a bug due to
-the hard coding of the enables.  Both DAC and bypass paths should be
-normal user controllable things, from the sound of it what's needed is
-to define the register for the DAC path.
-
-> In any case, if these are the correct places to enable this control
-> and it is already supported there, then it seems neither write command
-> in the setup is needed, viz. we should _delete_
-
-> snd_soc_component_write(component, ES8323_DACCONTROL17, 0xB8);
-
-> too. What do you say?
-
-Yes, ideally that shouldn't be there.  There's some risk that there
-might be some userspace relying on having the mono channel enabled by
-default though so perhaps it's safer to just leave that as is - the path
-can still be configured by userspace, even if we end up with a weird
-asymmetric default.  I guess there's also some other things in that
-register which most likely should also be controllable.
-
---V6wTkxydwkAjWbTz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmieLk4ACgkQJNaLcl1U
-h9Aujwf9H4/FrH0RsNY7gMqAmRWMuc3EYNLFbcnfpLD+rFs2X4sX3XiQCaPzY/S0
-XgDhpQP1+6+oLIJx8m9+mm5Tpcbr237cNLkYkktWT16vTC0Kb9mVmjMR5i1plscZ
-NbsFHXCZmmxYv6TFYYgjIq1vuYCssxzU7QBFJJSdXBzehOi4deYinNcN9lRti0jX
-TYcfWOxYT9xKhzaJuXWAoQLt1XFMNnzS1LBD5QfWUKgnmEV7RQ0o7io2flZVnqVA
-ZD4wQwRqGVlB7R9pQRuupNhoKJyruO5Cd7NmwmQFtuUSwXS8ca4UO9pU/52dJueh
-jrSJ+kSDmrF7fheV6q3yHrpBoYPuhQ==
-=x+Gy
------END PGP SIGNATURE-----
-
---V6wTkxydwkAjWbTz--
 
