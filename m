@@ -1,138 +1,260 @@
-Return-Path: <linux-kernel+bounces-768863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319B1B2669C
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:14:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F37CB26629
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 15:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B33118983B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:11:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BCBF58071B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13423002C5;
-	Thu, 14 Aug 2025 13:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CDB2D9EDC;
+	Thu, 14 Aug 2025 13:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="Aot98PMG"
-Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="DN5WKlk4"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02632FF652
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE64149C7B;
+	Thu, 14 Aug 2025 13:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755176999; cv=none; b=akTBHxfEBlBy22OzAAat68OhhiBtsUdP4d3HL7953wvVr2XZ+aYlrq3gQxcjEof5yB85pjtH7xhAhztGbEjPKcA42rbYb0dMV5mH44lJcIdoZh4VhV/IbGoWWKNLKQ92Xnm3riFI3CyikwjQ2Rq8e/bpTMdy2ztx0tzE8kdD6r4=
+	t=1755176555; cv=none; b=Cgp3LIkol/39ENk9kwQhiaE9je2s4p3PTMnenl1AuEzjG9OisKif4PQF0KCKP39RE3X2inwyAtHwooq+zRyoRizdG5hmcedKCiNjPSgPAYaLo+g/9Oc5/sMysu8tMlEaQiHNoFqdyindetmROxGph6msyKi+hJ+hDY0dW2ZUv7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755176999; c=relaxed/simple;
-	bh=XapmLNsynVBe0ZoJT8h7BjDRKlVkCJx+PngCC0ybMks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hJmvzRwdxxWwL1pZVXtHouYiJaygAddrtiTcOx4sCaLsEONgTRjHpKGvIYrlh2/CDAybSaeJGhsRt4XE3pB9eHnVSK1cF2uuczbNikxPmF2BdKEhNssQnHqlX2p4tMgef5TgfRbwwJ5tas3t+yDQt5TpI+3Tabsh9bIurmyOi1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=Aot98PMG; arc=none smtp.client-ip=78.46.171.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay11 (localhost.localdomain [127.0.0.1])
-	by relay11.grserver.gr (Proxmox) with ESMTP id A5EF5C6CAD;
-	Thu, 14 Aug 2025 16:02:17 +0300 (EEST)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay11.grserver.gr (Proxmox) with ESMTPS id 169DAC6CA3;
-	Thu, 14 Aug 2025 16:02:17 +0300 (EEST)
-Received: from antheas-z13 (unknown [IPv6:2a02:2149:8b54:2b00:4bbe:4554:f657:4bd5])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 0D8001FE3E1;
-	Thu, 14 Aug 2025 16:02:15 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1755176536;
-	bh=WiJI36ZxgIHG3IWjsv2puiYuNel6VEw/UCUbhtyUxvY=; h=From:To:Subject;
-	b=Aot98PMGcmlrTW+tPiFZbBruwJomXpWqoU5ckevyJAdK+HbpcmbwTqzrSDSo60A9X
-	 M3YqP8coE2fgxswW5Hk4nHqqioIRY47x2otHSMgdRHsNav5ZEKY8n5q8AABV1TO+8h
-	 C37j4SpL2dNoVWZ8bjtFAdhcMv5n9du1h8JbUwH7a7pMj8esuMYndmTMZc4GjUD72u
-	 ybDRszh7P3OoxhPZJVgY7syYZEr8OGpo7u5UW47mbuCsup3PgovbhTDDtiqSX30NpD
-	 3eiaCkeqhYGkZY75ZIM2ll+EUuMxBb95VcU0q1iUWEC5WqAOs7BDDBZizwZXOAKj/8
-	 xaT8KsyHZN6FA==
-Authentication-Results: linux3247.grserver.gr;
-	spf=pass (sender IP is 2a02:2149:8b54:2b00:4bbe:4554:f657:4bd5) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: inux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v1] HID: Asus: add Z13 folio to generic group for multitouch
- to work
-Date: Thu, 14 Aug 2025 15:01:51 +0200
-Message-ID: <20250814130151.8276-1-lkml@antheas.dev>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1755176555; c=relaxed/simple;
+	bh=wa8geRxqrSU0ClRxE5m1G0fYsxAKnYlzT7v5YAtCSBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RqOEDa00EYU2K1ov+qW6Hb1xEkk+xapd1rzQYaV3EZYA1bbKfum0hHW3cGAMQ0vdA/ogBncZa0ewb4r/RQF6yZIYdF+3OV8AGOEkz0d0kzij4Ow4d+13OpgjyLWDWlQ4O56blC3Z51xTG7a0jUnDsbTrfI2KLXDVgbIxx4AlkOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=DN5WKlk4; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Dgy0S83Cr9KrvoU/zU+CWqulo9fmNO5crSndIMyT4kU=; b=DN5WKlk44aV97zBO4CrcBLRtYM
+	wLyCsRBTIFTV2eXL3LTgkMwZ3ZkGbBcDELu3AYUh9j/0GEkav/26LpDg9oTVTotSP5jSuhEQ3NMeJ
+	pLthCDAWWIjiNjn0iCWNOc4q+0gyx4ylRQ4Ibs6YTb/TjirWSseCQvI229a7Yh8YKQhTpEsfSLFMj
+	yNqreFChfKxTQg3dHRd3tHf8CtuE/LRPMpM979CSL0hdOZS4supNz9Ixg2jWuj+qUfTsRQZeA4Ri1
+	cWBBXByUx8s0Je/TFICdJHDWO6HRfQ9v1CvzLPEAUBv54PjaBK4ZJX4241c61gfmypGvBnFoxH7dr
+	ntM+Japg==;
+Received: from [152.250.7.37] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1umXb4-00E7LX-CW; Thu, 14 Aug 2025 15:02:22 +0200
+Message-ID: <22a794e8-39c1-4f30-80c4-989a81c6b968@igalia.com>
+Date: Thu, 14 Aug 2025 10:02:17 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/9] ovl: Create ovl_casefold() to support casefolded
+ strncmp()
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Theodore Tso <tytso@mit.edu>,
+ Gabriel Krisman Bertazi <krisman@kernel.org>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ kernel-dev@igalia.com
+References: <20250813-tonyk-overlayfs-v4-0-357ccf2e12ad@igalia.com>
+ <20250813-tonyk-overlayfs-v4-3-357ccf2e12ad@igalia.com>
+ <CAOQ4uxgDw5SVaoSJNzt2ma4P+XkVcvaJZoKmd1AmrTuqDxHc6A@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxgDw5SVaoSJNzt2ma4P+XkVcvaJZoKmd1AmrTuqDxHc6A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <175517653679.1700557.4626801639225690136@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
 
-The Asus Z13 folio has a multitouch touchpad that needs to bind
-to the hid-multitouch driver in order to work properly. So bind
-it to the HID_GROUP_GENERIC group to release the touchpad and
-move it to the bottom so that the comment applies to it.
+Hi Amir,
 
-While at it, change the generic KEYBOARD3 name to Z13_FOLIO.
+Em 14/08/2025 09:53, Amir Goldstein escreveu:
+> On Thu, Aug 14, 2025 at 12:37 AM André Almeida <andrealmeid@igalia.com> wrote:
+>>
+>> To add overlayfs support casefold filesystems, create a new function
+>> ovl_casefold(), to be able to do case-insensitive strncmp().
+>>
+>> ovl_casefold() allocates a new buffer and stores the casefolded version
+>> of the string on it. If the allocation or the casefold operation fails,
+>> fallback to use the original string.
+>>
+>> The case-insentive name is then used in the rb-tree search/insertion
+>> operation. If the name is found in the rb-tree, the name can be
+>> discarded and the buffer is freed. If the name isn't found, it's then
+>> stored at struct ovl_cache_entry to be used later.
+>>
+>> Signed-off-by: André Almeida <andrealmeid@igalia.com>
+>> ---
 
-Reviewed-by: Luke D. Jones <luke@ljones.dev>
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- drivers/hid/hid-asus.c | 6 +++---
- drivers/hid/hid-ids.h  | 2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+[...]
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 4b45e31f0bab..10b2f9ff78a3 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -1378,9 +1378,6 @@ static const struct hid_device_id asus_devices[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2),
- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
--	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
--	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3),
--	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR),
- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-@@ -1410,6 +1407,9 @@ static const struct hid_device_id asus_devices[] = {
- 	 * Note bind to the HID_GROUP_GENERIC group, so that we only bind to the keyboard
- 	 * part, while letting hid-multitouch.c handle the touchpad.
- 	 */
-+	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
-+		USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO),
-+	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
- 	{ HID_DEVICE(BUS_USB, HID_GROUP_GENERIC,
- 		USB_VENDOR_ID_ASUSTEK, USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD) },
- 	{ }
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 5a1096283855..cff7d95c8d59 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -223,7 +223,7 @@
- #define USB_DEVICE_ID_ASUSTEK_ROG_KEYBOARD3 0x1822
- #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD	0x1866
- #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD2	0x19b6
--#define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_KEYBOARD3	0x1a30
-+#define USB_DEVICE_ID_ASUSTEK_ROG_Z13_FOLIO		0x1a30
- #define USB_DEVICE_ID_ASUSTEK_ROG_Z13_LIGHTBAR		0x18c6
- #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY		0x1abe
- #define USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X		0x1b4c
+>> +       }
+>>
+>>          INIT_LIST_HEAD(list);
+>>   }
+>> @@ -260,12 +311,28 @@ static bool ovl_fill_merge(struct dir_context *ctx, const char *name,
+>>   {
+>>          struct ovl_readdir_data *rdd =
+>>                  container_of(ctx, struct ovl_readdir_data, ctx);
+>> +       struct ovl_fs *ofs = OVL_FS(rdd->dentry->d_sb);
+>> +       const char *aux = NULL;
+> 
+> It looks strange to me that you need aux
+> and it looks strange to pair <aux, cf_len>
+> neither here or there...
+> 
 
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
--- 
-2.50.1
+The reason behind this `aux` var is because I need a `const char` 
+pointer to point to the `name` argument, and `cf_name` can't be const 
+because it goes through ovl_casefold(). I tried a couple approaches here 
+to get rid of the compiler warning regarding const, and the only way I 
+managed to was using a third variable like that.
 
+>> +       char *cf_name = NULL;
+>> +       int cf_len = 0;
+>> +
+>> +       if (ofs->casefold)
+>> +               cf_len = ovl_casefold(rdd->map, name, namelen, &cf_name);
+>> +
+>> +       if (cf_len <= 0) {
+>> +               aux = name;
+> 
+> why not:
+> cf_name = name;
+> 
+>> +               cf_len = namelen;
+>> +       } else {
+>> +               aux = cf_name;
+>> +       }
+> 
+> and no aux and no else needed at all?
+> 
+> If you don't like a var named cf_name to point at a non-casefolded
+> name buffer, then use other var names which are consistent such as
+> <c_name, c_len> (c for "canonical" or "compare" name).
+> 
+>>
+>>          rdd->count++;
+>>          if (!rdd->is_lowest)
+>> -               return ovl_cache_entry_add_rb(rdd, name, namelen, ino, d_type);
+>> +               return ovl_cache_entry_add_rb(rdd, name, namelen, aux, cf_len,
+>> +                                             ino, d_type);
+>>          else
+>> -               return ovl_fill_lowest(rdd, name, namelen, offset, ino, d_type);
+>> +               return ovl_fill_lowest(rdd, name, namelen, aux, cf_len,
+>> +                                      offset, ino, d_type);
+>>   }
+>>
+> 
+> What do you think about moving all the consume/free buffer logic out to caller:
+> 
+
+That looks way cleaner to me, thanks! I will apply this approach for v5.
+
+> diff --git a/fs/overlayfs/readdir.c b/fs/overlayfs/readdir.c
+> index b65cdfce31ce..e77530c63207 100644
+> --- a/fs/overlayfs/readdir.c
+> +++ b/fs/overlayfs/readdir.c
+> @@ -174,7 +174,8 @@ static struct ovl_cache_entry
+> *ovl_cache_entry_new(struct ovl_readdir_data *rdd,
+>          return p;
+>   }
+> 
+> -static bool ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+> +/* Return 0 for found, >0 for added, <0 for error */
+> +static int ovl_cache_entry_add_rb(struct ovl_readdir_data *rdd,
+>                                    const char *name, int len, u64 ino,
+>                                    unsigned int d_type)
+>   {
+> @@ -183,22 +184,23 @@ static bool ovl_cache_entry_add_rb(struct
+> ovl_readdir_data *rdd,
+>          struct ovl_cache_entry *p;
+> 
+>          if (ovl_cache_entry_find_link(name, len, &newp, &parent))
+> -               return true;
+> +               return 0;
+> 
+>          p = ovl_cache_entry_new(rdd, name, len, ino, d_type);
+>          if (p == NULL) {
+>                  rdd->err = -ENOMEM;
+> -               return false;
+> +               return -ENOMEM;
+>          }
+> 
+>          list_add_tail(&p->l_node, rdd->list);
+>          rb_link_node(&p->node, parent, newp);
+>          rb_insert_color(&p->node, rdd->root);
+> 
+> -       return true;
+> +       return 1;
+>   }
+> 
+> -static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
+> +/* Return 0 for found, >0 for added, <0 for error */
+> +static int ovl_fill_lowest(struct ovl_readdir_data *rdd,
+>                             const char *name, int namelen,
+>                             loff_t offset, u64 ino, unsigned int d_type)
+>   {
+> @@ -207,6 +209,7 @@ static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
+>          p = ovl_cache_entry_find(rdd->root, name, namelen);
+>          if (p) {
+>                  list_move_tail(&p->l_node, &rdd->middle);
+> +               return 0;
+>          } else {
+>                  p = ovl_cache_entry_new(rdd, name, namelen, ino, d_type);
+>                  if (p == NULL)
+> @@ -215,7 +218,7 @@ static bool ovl_fill_lowest(struct ovl_readdir_data *rdd,
+>                          list_add_tail(&p->l_node, &rdd->middle);
+>          }
+> 
+> -       return rdd->err == 0;
+> +       return rdd->err ?: 1;
+>   }
+> 
+> @@ -260,12 +263,31 @@ static bool ovl_fill_merge(struct dir_context
+> *ctx, const char *name,
+>   {
+>          struct ovl_readdir_data *rdd =
+>                  container_of(ctx, struct ovl_readdir_data, ctx);
+> +       struct ovl_fs *ofs = OVL_FS(rdd->dentry->d_sb);
+> +       char *c_name = NULL;
+> +       int c_len = 0;
+> +       int ret;
+> +
+> +       if (ofs->casefold)
+> +               c_len = ovl_casefold(rdd->map, name, namelen, &c_name);
+> +
+> +       if (c_len <= 0) {
+> +               c_name = name;
+> +               c_len = namelen;
+> +       }
+> 
+>          rdd->count++;
+> -       if (!rdd->is_lowest)
+> -               return ovl_cache_entry_add_rb(rdd, name, namelen, ino, d_type);
+> -       else
+> -               return ovl_fill_lowest(rdd, name, namelen, offset, ino, d_type);
+> +       if (!rdd->is_lowest) {
+> +               ret = ovl_cache_entry_add_rb(rdd, name, namelen, c_name, c_len,
+> +                                            ino, d_type);
+> +       } else {
+> +               ret = ovl_fill_lowest(rdd, name, namelen, c_name, c_len, offset,
+> +                                     ino, d_type);
+> +       }
+> +       // ret > 1 means c_name is consumed
+> +       if (ret <= 0 && c_len > 0)
+> +               kfree(c_name);
+> +       return ret >= 0;
+>   }
+> 
+> Thanks,
+> Amir.
 
 
