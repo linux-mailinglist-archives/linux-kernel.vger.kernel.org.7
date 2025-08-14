@@ -1,110 +1,158 @@
-Return-Path: <linux-kernel+bounces-768364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1DCAB26065
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:13:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C37B2607B
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:16:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6212E1CC42B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:07:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65E0E881F61
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFBE2F659C;
-	Thu, 14 Aug 2025 09:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBC12F28E8;
+	Thu, 14 Aug 2025 09:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ga0R+raU"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="goePpoV4"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7212FD1D6
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 09:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A86D2E92C9;
+	Thu, 14 Aug 2025 09:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755162127; cv=none; b=KaJ7EbiFeyfjPYllQ6aezG1E9TAsQdJ3kdCz7yiN+S7vpPuDC4Bwh0C+qSDH4oJONbexOkGbkchUXfGJmG1cnw+PkX+CDVXxsdxp1yQXQcBwB7PW5tta6c3FU+CQ+q/qMfAvyg/XiybHctV05SmixB56PmoDkjqTMuj7aRYz8Sg=
+	t=1755162429; cv=none; b=J58uezCqM4aKiGV2Q1/81KZxpjJ57x/PgVmTJIUmscv756r1bYxN53m5qNaAmWvoCMt+fqIehpnZemEdfxyg+6dEM1IRE66gULrFPDL1UPGfn0Zo75A4QBOPRtnrS/H8FxPt9tVMeur3iJMdvmr8Ub/bJwvbQSRW+vU7CHC2SKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755162127; c=relaxed/simple;
-	bh=VIgbe0+cTepm+GSjli9I/liq5c/PTGeriBLsEt/LdqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dAIJw+ywEojStGRSL4zgCcMPK+52+v6LWnWj1VX/+Z94b0Sayas36zMrt8pwdXXJy94jTeUAkLqzW/z/iPO430PS/SkDpuWzyQOQO+pwdWgPkeHtULlQTPoAyEdLcMs/EAzHtsErapzjiEudf061wZEh/By8QSMxzT5ECezu/xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ga0R+raU; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2e629fc4so838917b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 02:02:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1755162125; x=1755766925; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NmE7sMJ+PeGcKylBDWZA2ZrG6ibfGIlvX91c1+5XOpM=;
-        b=Ga0R+raUBTTsNApohCfDOCCWUfezgcO/PQ5UxptTU1TmqZNTXGsqHG4Oia1Y9QQaiB
-         Gs6IgmVVbl0bxPl4NW0D3pfXmbGmvubjCN8lp2OIjcsjPASZ63YrJN47vsx8gcduSvNJ
-         FkBeavNwr3Mq9Uq/OSNS7jboHs+IwMF38BulSMSgg9lKd5VEINo7/nlg4SUk3iHj31do
-         wXmtwMKPLqb/fH173vX7VcMGnVmqy1n3tc7WQfsOh88D4Byi6LkBGvsA3cJb37q3vUKI
-         82HXls4uXjV/F19WGXs/ZhmR+DevNx7rgMlAbLnggYhuuH+mGHfXiDrfoTPOfryTiBPN
-         XQhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755162125; x=1755766925;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NmE7sMJ+PeGcKylBDWZA2ZrG6ibfGIlvX91c1+5XOpM=;
-        b=IN8RPUd7w9V53XxaMsC20rJBWm5h7KWYCcbl0WrJBCtJrurByfgNm7q/zbc9g++SB3
-         58RYCoydBqfqwIhvijy+XjNkypgjx4nOGk3a/hOQczMM1/VkrKEnQ0l0/3Ph4kwrG0XU
-         MM2l4729LBHmCHdytD/xGzghpOhKafitn9iXQ7n2qWQIe7Yw0X5dalvsrVMTUZupt8l1
-         XNWNFRsFXVz4cXlh4DB7Rzx80Polyjk9ogvrcTXq9rW/h9liDlBBZ0qbUlrX3JMVr2HB
-         AGnww/tPLahvGxaic23R/DqAlus4oLRNYJUodIzW2sH3oNRpf69+bOH8f6CTknaqoXZD
-         jSEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWouJcXAM4agaK7mikw1j/BJ2vCbQd0MonjNQjch8YmM743BG3mMIt+EbJJ05anUn3WWx4+nhTAtQthxCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpBS72zmC72PoePGct03LuWUhJsv8NaC0ItGlY2yRCz97dozF5
-	TcbWvoMaoFmD7HOSRaT8Fchq+pE46c3jfOAGxE6E5Mg653+/RkuY4SidPXik8fpUQbM=
-X-Gm-Gg: ASbGncsmfRwt3fqGAPs/ewpOi9qTgnZ1QvSVR8/CYUnsUijdeLKW9Sn79W7EYyV/gF8
-	LMU9rFr88D6UZkyVBoyxBucIHQgUHLnahCJjqsESkw0Xk7OhML6NbnAo2xuaWQeSvjA2E6pjlWJ
-	ZLrCXnzNThHzuCIt3SWpLhx1nLGqNVPCKCR7EE7JDKfKziW3WhHsIzuwoe2u9eBGkxJ00YJJGZv
-	OzeTrfv8+FjtPpMVXbpFKaecXiQ8wipK2GLrGjK33jcSzJo8aDt8xKoqMjUosha9e/UQV+siXGT
-	3SslxmtYIvXMKwt6XKnECbJpRXWtUBMlI9EMkkEENrUl+wZqiqYTv6M0URkWLI7gtXjUDGgNWsg
-	U/+Y8HY+C4RuqilmfEo7/JYJcOW+r4SwEYX4=
-X-Google-Smtp-Source: AGHT+IEFfT6WjP2Xn7bRIAeP6rPkcMNitalN7pBUBi2AiqkDrDv7x4NjeKEEWrLKN8kwbYf06w6yRw==
-X-Received: by 2002:a17:903:2a86:b0:240:80f:228e with SMTP id d9443c01a7336-244586ff5b1mr32099585ad.52.1755162125651;
-        Thu, 14 Aug 2025 02:02:05 -0700 (PDT)
-Received: from localhost ([122.172.87.165])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaaf1bsm350103075ad.159.2025.08.14.02.02.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Aug 2025 02:02:03 -0700 (PDT)
-Date: Thu, 14 Aug 2025 14:32:01 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Zihuan Zhang <zhangzihuan@kylinos.cn>
-Cc: "rafael J . wysocki" <rafael@kernel.org>,
-	zhenglifeng <zhenglifeng1@huawei.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] cpufreq: Return current frequency when frequency
- table is unavailable
-Message-ID: <20250814090201.pdtvxqq3st65iooq@vireshk-i7>
-References: <20250814085216.358207-1-zhangzihuan@kylinos.cn>
+	s=arc-20240116; t=1755162429; c=relaxed/simple;
+	bh=Oz25PrJT73NTSuDI+0EIdhpAxjaJMOCBOM65v5PEcuw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TmO9E5HzMf6HaMclTn2XTbUlIPjj4k3hA8RibbL3Z3dl4txS0gEM80ZmSPRQbvwBJCrLv8CQu1EofUcnkW22HZDqBGFesru9pbklw48CAzFHDIjLRYe8Rc8F/fwOfWNeGHPa4TJeStgvBnzD+kX05flGK2iM+skWjm68TArEx9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=goePpoV4; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1755162427; x=1786698427;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Oz25PrJT73NTSuDI+0EIdhpAxjaJMOCBOM65v5PEcuw=;
+  b=goePpoV4EP8cc33JOmw0Cpwv6vUwzX1aP0R0T19uAtDnl5BFFm2yAFNg
+   W93NXY2OO/K087IdHqpurcepmhbDUs3TF7upDDX19QKHLXRxD8S4rAy5+
+   QqD0Ba/JpILAPvDb42XJtOSjy71z0mrfNy3oHqRCf9skfjbkKIAty/+KN
+   nDkm1ctnTz8QXhz0MozBLnrlp2oNePlQZWFRDGBqRFRURiJ5v2JNCreFi
+   QDAeMvGat3o/85kAcnliAKH9qRScUSctljiDltGL3Q5cxoRh/YZ/F/p2r
+   bi2+QcH2K1C4dFrK6KNFIGFJqAtrRtOwX8JVRHN+NoYXG+o9xnLnbh1Dn
+   Q==;
+X-CSE-ConnectionGUID: yj3lUMp6SW2eGwJyvl0idQ==
+X-CSE-MsgGUID: Dyac/4emT1Kx5ST6zmZa2w==
+X-IronPort-AV: E=Sophos;i="6.17,287,1747724400"; 
+   d="scan'208";a="50710161"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Aug 2025 02:07:05 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 14 Aug 2025 02:06:05 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 14 Aug 2025 02:06:05 -0700
+Date: Thu, 14 Aug 2025 11:02:48 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <viro@zeniv.linux.org.uk>,
+	<atenart@kernel.org>, <quentin.schulz@bootlin.com>, <olteanv@gmail.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net v2] phy: mscc: Fix timestamping for vsc8584
+Message-ID: <20250814090248.e7o6rzfr7vfcgfsc@DEN-DL-M31836.microchip.com>
+References: <20250806054605.3230782-1-horatiu.vultur@microchip.com>
+ <b25635ec-0ab3-4c90-9fb9-b9c5c1748590@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20250814085216.358207-1-zhangzihuan@kylinos.cn>
+In-Reply-To: <b25635ec-0ab3-4c90-9fb9-b9c5c1748590@linux.dev>
 
-On 14-08-25, 16:52, Zihuan Zhang wrote:
-> In cases where the CPU frequency table (freq_table) is not available,
-> the __resolve_freq() function will now return the current frequency
-> (policy->cur) instead of the requested target frequency. This ensures
-> that the system doesn't return an invalid or uninitialized frequency
-> value when frequency scaling is not supported or not initialized.
+The 08/13/2025 22:51, Vadim Fedorenko wrote:
+
+Hi Vadim,
+
 > 
-> This change improves the stability of the frequency scaling logic when
-> the CPU frequency table is not populated, preventing errors related
-> to unavailable frequency tables.
+> On 06/08/2025 06:46, Horatiu Vultur wrote:
+> > There was a problem when we received frames and the frames were
+> > timestamped. The driver is configured to store the nanosecond part of
+> > the timestmap in the ptp reserved bits and it would take the second part
+> > by reading the LTC. The problem is that when reading the LTC we are in
+> > atomic context and to read the second part will go over mdio bus which
+> > might sleep, so we get an error.
+> > The fix consists in actually put all the frames in a queue and start the
+> > aux work and in that work to read the LTC and then calculate the full
+> > received time.
+> 
+> The expectation here is that aux worker will kick in immediately and the
+> processing will happen within 1 second of the first stamped skb in the
+> list. Why cannot you keep cached value of PHC, which is updated roughly
+> every 500ms and use it to extend timestamp? Your aux worker will be much
+> simpler, and packet processing will be faster...
 
-Is there a real problem you are facing ? Or a code that path can do
-some harm ? I think this patch may end up breaking users.
+Thanks for the suggestion but I don't think it would work in this case.
+(if I understood correctly).
+The problem is that I don't know if the cache value happened after or
+before the timestamp. Let me give you an example: If the ns part in the
+received frame is 900ms and the cached value is 2 sec and 400ms. Now I
+don't know if the final timestamp should be 1 sec and 400ms or should be
+2 sec and 900ms.
+I am doing something similar for lan8841 in micrel.c but in that case in
+the PTP header I get also the 2 LS bits of the second and then it is
+easier to see if the timestamp happen before or after the cached was
+updated.
+
+> 
+> > 
+> > Fixes: 7d272e63e0979d ("net: phy: mscc: timestamping and PHC support")
+> > Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+> > 
+> > ---
+> > v1->v2:
+> > - use sk_buff_head instead of a list_head and spinlock_t
+> > - stop allocating vsc8431_skb but put the timestamp in skb->cb
+> > ---
+> >   drivers/net/phy/mscc/mscc.h     | 12 ++++++++
+> >   drivers/net/phy/mscc/mscc_ptp.c | 50 +++++++++++++++++++++++++--------
+> >   2 files changed, 50 insertions(+), 12 deletions(-)
+> > 
+> 
+> 
+> [...]
+> 
+> >   /* Shared structure between the PHYs of the same package.
+> > diff --git a/drivers/net/phy/mscc/mscc_ptp.c b/drivers/net/phy/mscc/mscc_ptp.c
+> > index 275706de5847c..d368d4fd82e17 100644
+> > --- a/drivers/net/phy/mscc/mscc_ptp.c
+> > +++ b/drivers/net/phy/mscc/mscc_ptp.c
+> > @@ -1194,9 +1194,8 @@ static bool vsc85xx_rxtstamp(struct mii_timestamper *mii_ts,
+> >   {
+> >       struct vsc8531_private *vsc8531 =
+> >               container_of(mii_ts, struct vsc8531_private, mii_ts);
+> > -     struct skb_shared_hwtstamps *shhwtstamps = NULL;
+> > +
+> >       struct vsc85xx_ptphdr *ptphdr;
+> 
+> No empty line needed.
+
+Good catch, I will update this in the next version.
+
+> 
+> > -     struct timespec64 ts;
+> >       unsigned long ns;
+> > 
 
 -- 
-viresh
+/Horatiu
 
