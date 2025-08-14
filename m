@@ -1,109 +1,120 @@
-Return-Path: <linux-kernel+bounces-767994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-767993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5D4FB25BA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:12:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E89B25BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 08:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B8447B1D6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:11:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92BF622370
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 06:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1594A23956A;
-	Thu, 14 Aug 2025 06:12:40 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252AE23957D;
+	Thu, 14 Aug 2025 06:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmkEgTJc"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3623A23236D;
-	Thu, 14 Aug 2025 06:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1922248BE;
+	Thu, 14 Aug 2025 06:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755151959; cv=none; b=JKogVMi8C9RUR6dWKGOfkJIOTAV37ethM0iuGRhXhuDgS4O7jp/1pfxk+cQGw0hLx3RyRo72h6hsi+RAcMYXSSa66t2+k2QXWHT3F8G4qgxebWMV0oEHXHW/yfPSWylF5IgHXgBEbzGv4UaDvPM3/U0WLI5k5QPWkjPV6L5J+b0=
+	t=1755151947; cv=none; b=HyarW7RlQ0XprQyGokrAwKjKsA9beCi2fwxB99gYJr0YEl1tFaEjQx8/oW5g/0KkRNk3V0LutQJ6wQzZ02qLfHPGNg3DmCnStemEJUf7/VXTWImk0E7w7jDZc9/U+Mp24TezkNs92H3IzEFsLIFStiOsJ8oLvd6CM9yU46YTXTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755151959; c=relaxed/simple;
-	bh=HhqdTqAQI61cMeGuephxSYD7Bpb9wxpphea/hzUc40s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HNznKCUMPM64w7cdk6cFtOp5swFk9tEuwjdFDs4YncP5glVBnExE+1xUsrYR0B6JWoXLk5i1XtXBPh4/Sysn02JYbHIEU/1em6AxKpxQ6K5lrZXL/IKoSQjJeehr39dx1wgXqwcHty+5/8dovrAxV3Cn8WyTuvL8uMPpA7z7A+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.192] (ip5f5af7f5.dynamic.kabel-deutschland.de [95.90.247.245])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 7344361E647BA;
-	Thu, 14 Aug 2025 08:12:05 +0200 (CEST)
-Message-ID: <3a75e696-d634-40d4-bd6d-1ee9e87cb5e2@molgen.mpg.de>
-Date: Thu, 14 Aug 2025 08:12:04 +0200
+	s=arc-20240116; t=1755151947; c=relaxed/simple;
+	bh=iGL79AcgKZ+3OCtFwhZSkEwokS/OW2q3vTKHlsWCCos=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=WDfwzjOyIB8XbdQMly78MzOBpzbKJvbYZocNjfE4Up6I0k4lLVFpgt37ywoYXt2aZ1VlQXIeoc6cQru5lp1gwboMt+MB+GkxVB/xu7hArwpu8FhJw8vfCBfDWXQoyd/8mDIPxm/pbZ2FecPGMuyQmt52/aesv8Xy4XxvP8q0sr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UmkEgTJc; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b47174b3429so319572a12.2;
+        Wed, 13 Aug 2025 23:12:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755151945; x=1755756745; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VH3Qz6pBSCYs9nFUWRiz7ia2R/3kDApTC8BTlenU+Ts=;
+        b=UmkEgTJc4P7/qyxnVzvoL/7s/xdaCellNpw26wdfyhAexUpBU0KJSdpeIt5hNW/iAi
+         QPUaA0nUlQrOJc8EBgsuBnbh0/Wn6qhaTuW/gLTQHHhSPOL+SN+bl18L2xJFYP7Mddf5
+         SGPjn/qwe3xleCvkvyY605EU0Ua2hJ80T41MC99hqPCEZc0Q+OKI/kaIlHbHUv2zhral
+         iJ/VvK2afGRRijl8lP+drjDxW9zyvqaF8S0ZIebo9zHtk0FNoKcAfRqufkA/lnL2lOwm
+         s4qfdci8/vH/yR0lvejt+ATWumieZQe9cn/g2S4CpBLUgZkClQYQb9KoDWukQDf+HP0S
+         Mbnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755151945; x=1755756745;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VH3Qz6pBSCYs9nFUWRiz7ia2R/3kDApTC8BTlenU+Ts=;
+        b=VsNhyemzTMc9O2vhN7AaTGfq1AT1PJ3lty5rA9bvjTre2RTewleBZLm+cPsnaNlNdD
+         o2Gfs6qyc2Ayshshv9N1SuKQ3478TRtO0LD0FVifJ4W0nmdfqFH4V3lEb7c5v0XER/gT
+         UUM+TxZF5hFTfIj/O12vGKxhIRjdurVynyriIMXRWuzl87vxG/CxPE0Kk0RlAEwgvv87
+         ODAXYZgTVjMzU94qTptLeRdvaoiXoJchLPW8wDWCxBDjEVVRtzY9PIhmrpYADQIzNAP/
+         qU9nCqS0ZZuWWKiJngAJJnbfXWORZQ7CbO6sz7yXd4XR+7m8pBGl1Z2kxB5WTqRe03pf
+         R+hA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeRoCY6ofB9UY9ea/l2FrdZez4eyXyTKNTdzm+q3Lkj0n5MGlry4QqlWtuD5QQuhk0msU7E0w02968PaY=@vger.kernel.org, AJvYcCVJVq/JAwe8I+aJuNr0DGy5lFNzfU5VJdddVnuTZ4qBKWGXyfEYc0dybCPw2uVqqfy2oH9/0hihCRjB2shwfX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCH+wpMSEsY7JhS0gGiliJn7OtOlyyYbEoaUKj7Hi+NfQ0MrOT
+	3/EfjrN6lri80VCDkDH/1cJxkqS/oE6Nt7OU4FZs9Aa2s6IOkBhJ6rPn
+X-Gm-Gg: ASbGncsegQbkBkKATX19ursWJsydIGEjB+WNGuuY22ah+VlT0vfnB/qXqsrf3V9Pldu
+	Kph7hlXJGaGbWhUV3SboMEfPL+vEULdSiwnDK5dX+MWj35OM0PwsV2wAxYqshOImmbMPe9tc5jf
+	7en+lRBe+66bl7yjjG/T7tv+tSm0WEWLx67FP7OOfpMykh7zJIBc/YsYSy0u1CHEKNh4njv85Rq
+	gQSA0U4bt28TlbIEAdqElIlt4G9g8Q0XWQRXd1W+xfx9NBeUtaV2k4uzXT4gaEb2CR7Rj6mDXME
+	MGs05hFTxPlfYcxNYTifKrbslRZWN8IFyLqWyoaxwswLEoCnyu2i2nV70/Vd/IqDC0749MgcElD
+	pRnFpYeBeZ4BbauT2YOs5xf6xFrZB3wKsRV6RxNgMO5QXRS4DmuLqfv3NoTJM7nwhVlFDL/l6MJ
+	z/
+X-Google-Smtp-Source: AGHT+IEnY851X2QozUOFgacXb/Ry/dJczS0e/iBR7e3DABSiXlltvYH+XMXqoSl1XibwCAQ9bJR+aQ==
+X-Received: by 2002:a17:902:e841:b0:240:5bde:532d with SMTP id d9443c01a7336-244586c6674mr26375155ad.38.1755151945241;
+        Wed, 13 Aug 2025 23:12:25 -0700 (PDT)
+Received: from localhost (p5332007-ipxg23901hodogaya.kanagawa.ocn.ne.jp. [180.34.120.7])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32330f9274asm670165a91.2.2025.08.13.23.12.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Aug 2025 23:12:24 -0700 (PDT)
+Date: Thu, 14 Aug 2025 15:12:19 +0900 (JST)
+Message-Id: <20250814.151219.1988266311964625112.fujita.tomonori@gmail.com>
+To: aliceryhl@google.com
+Cc: fujita.tomonori@gmail.com, a.hindborg@kernel.org,
+ alex.gaynor@gmail.com, ojeda@kernel.org, anna-maria@linutronix.de,
+ bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dakr@kernel.org,
+ frederic@kernel.org, gary@garyguo.net, jstultz@google.com,
+ linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com,
+ rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de,
+ tmgross@umich.edu, acourbot@nvidia.com, daniel.almeida@collabora.com
+Subject: Re: [PATCH v1 1/2] rust: Add cpu_relax() helper
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <aJm6WGaxITeIxtJc@google.com>
+References: <20250811041039.3231548-1-fujita.tomonori@gmail.com>
+	<20250811041039.3231548-2-fujita.tomonori@gmail.com>
+	<aJm6WGaxITeIxtJc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btrtl: fix rtl_dump.fw_version for firmware v2
-To: Jiajia Liu <liujiajia@kylinos.cn>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alex Lu <alex_lu@realsil.com.cn>, Hilda Wu <hildawu@realtek.com>
-References: <20250814025552.10627-1-liujiajia@kylinos.cn>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20250814025552.10627-1-liujiajia@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 
-[Cc: +Alex, +Hilda]
+On Mon, 11 Aug 2025 09:39:36 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Dear Jiajia,
-
-
-Thank you for the patch.
-
-Am 14.08.25 um 04:55 schrieb Jiajia Liu:
-> rtl_dump.fw_version is not set for firmware v2. Since
-> rtl_epatch_header_v2.fw_version seems to be different with the
-> release version, set it to the fw version read after downloading
-> firmware.
-
-What is the released version, and what value does it have?
-
-Please add, how your patch can be tested.
-
-> Signed-off-by: Jiajia Liu <liujiajia@kylinos.cn>
-> ---
->   drivers/bluetooth/btrtl.c | 4 ++++
->   1 file changed, 4 insertions(+)
+> On Mon, Aug 11, 2025 at 01:10:37PM +0900, FUJITA Tomonori wrote:
+>> Add cpu_relax() helper in preparation for supporting
+>> read_poll_timeout().
+>> 
+>> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
 > 
-> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-> index 6abd962502e3..6ad3ba7901e9 100644
-> --- a/drivers/bluetooth/btrtl.c
-> +++ b/drivers/bluetooth/btrtl.c
-> @@ -822,6 +822,7 @@ static int rtl_download_firmware(struct hci_dev *hdev,
->   	int j = 0;
->   	struct sk_buff *skb;
->   	struct hci_rp_read_local_version *rp;
-> +	struct btrealtek_data *coredump_info = hci_get_priv(hdev);
->   
->   	dl_cmd = kmalloc(sizeof(*dl_cmd), GFP_KERNEL);
->   	if (!dl_cmd)
-> @@ -873,6 +874,9 @@ static int rtl_download_firmware(struct hci_dev *hdev,
->   	rp = (struct hci_rp_read_local_version *)skb->data;
->   	rtl_dev_info(hdev, "fw version 0x%04x%04x",
->   		     __le16_to_cpu(rp->hci_rev), __le16_to_cpu(rp->lmp_subver));
-> +	if (coredump_info->rtl_dump.fw_version == 0)
-> +		coredump_info->rtl_dump.fw_version =
-> +			__le16_to_cpu(rp->hci_rev) << 16 | __le16_to_cpu(rp->lmp_subver);
->   	kfree_skb(skb);
->   
->   out:
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> 
+>> +pub fn cpu_relax() {
+>> +    // SAFETY: Always safe to call.
+>> +    unsafe { bindings::cpu_relax() }
+>> +}
+> 
+> Let's mark this #[inline].
 
-
-Kind regards,
-
-Paul
+Thanks, I'll do in the next version.
 
