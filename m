@@ -1,154 +1,168 @@
-Return-Path: <linux-kernel+bounces-769519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B002B26FBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:34:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23773B26FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 21:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9F15683B1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:32:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CFB1CC7332
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 19:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098941D5CFE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754B324467F;
 	Thu, 14 Aug 2025 19:32:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QM/qGgU8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MN+dWmVw"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EB51C84B2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD6C241139;
 	Thu, 14 Aug 2025 19:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755199946; cv=none; b=My8R4G1jhPSMu7k/uWIDRIcy2kHTe09b0s74TE1oRd8hdsV0pwRZ0xFhOVT4ID2roXG64SdyRoE4ZR79mIAeOXybBnAW/ex6jvMqBuR+PzR0ZZsIWGIEuds8uNJmEO4K72fKwmORZVXtIDr5kzTSygyLSNJ6hyXFmYyM2WG3K3o=
+	t=1755199946; cv=none; b=RymdTBJnpHxSF0DWtIQwzBDDfI14I1X3QDvksuAE5mbxhRWr1TcEO6wj0w56r6LBdjHG1qpb/u1Pktx9Csb5/+qmfAY4CM7g5rjoj60Zbr6ARs9QiQmRSdKCcC/MN5gxv1UErMRhVS3/7fpWfupNmWm3iJQNG/ksoOuzuuezMy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1755199946; c=relaxed/simple;
-	bh=sYNHy3au3eJJGLyMM/KY+GBcda4zdf0KZ+o9Rn0lDjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZi2ECAFOhZjWWezQr5kXRwyXhAW34v4+nRIRpcmAaNq8IXQ8Oal1dMFUGSFb2eC7Ga2ytDKMOjtXYtOTlTodXi4JtlcD+gZunAxVhYfXgJ0/6EwaJQsC6Hbr4pxiHZ4/FPgZ6m7RsFkKd9Hq/3VDOxV8z66cxnnucrx+1wp48c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QM/qGgU8; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1755199944; x=1786735944;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sYNHy3au3eJJGLyMM/KY+GBcda4zdf0KZ+o9Rn0lDjo=;
-  b=QM/qGgU80J7/supyHIAviDnguX7UcjoJEbL9q/PjAD1irmHMML4CGQAx
-   2h/ULz73Or52EI4i9udrUztbbrXCQXbLlrUIr2QnrTsv3V7y9cLUVdaIW
-   ZynKYkdgp/kLRCbaJLonRG6ZvEy8YV5DOrtTeYzoH11pZeDzAeQ5YPoK1
-   Hoa+CaIxIAGy6WVNAeDB8FyCprgMz3Li6wNpdvCynYWf9AxjMes7rZxD0
-   kn9315ud2Nc0wlt4dPIo2/5U3zAv50u9uGgdWzVRaHoOrx2G+C0a4qmLE
-   xfrPYuPX0BeKl8kEYAZRWDputYg73CkHv+/T5YqwxWKomIJlbAt1D1p+G
-   g==;
-X-CSE-ConnectionGUID: 4w2Qi4RCRTijK0UV0O1gBw==
-X-CSE-MsgGUID: uWe/8uy3Q5mTHssJ1EhdNg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11522"; a="68226981"
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="68226981"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2025 12:32:23 -0700
-X-CSE-ConnectionGUID: Zw1G2UnqTsuBfPLENwqAVA==
-X-CSE-MsgGUID: EWHfKfNOQs+XEJGaMZISwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,290,1747724400"; 
-   d="scan'208";a="166807007"
-Received: from lkp-server02.sh.intel.com (HELO 4ea60e6ab079) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 14 Aug 2025 12:32:19 -0700
-Received: from kbuild by 4ea60e6ab079 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1umdgP-000BGs-08;
-	Thu, 14 Aug 2025 19:32:17 +0000
-Date: Fri, 15 Aug 2025 03:31:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiandong Wang <xiandong.wang@mediatek.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Houlong Wei <houlong.wei@mediatek.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, sirius.wang@mediatek.com,
-	vince-wl.liu@mediatek.com, jh.hsu@mediatek.com,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	Xiandong Wang <xiandong.wang@mediatek.com>
-Subject: Re: [PATCH v1 2/4] [v1,02/04]mailbox: mtk-cmdq: Add cmdq driver for
- mt8189
-Message-ID: <202508150338.bTVJvFtV-lkp@intel.com>
-References: <20250814070401.13432-2-xiandong.wang@mediatek.com>
+	bh=Gzhj7YwkhnbNmqe5w9L0B4nmUN+mEwwJmuX/gu0/Szc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=it4bSu7uAVgk8LGCl0bxmu7lcb8yz3IGMnYzoz3z1JMWaquiKdgTYQPZKMpwVlbQ7Y1/Q82JHWQTcEnmLNLlKUuC95oYpV+ygubUfGOEB0VSXXm1tcYcSxQukDJyR804ol4JPWvJCXtWLpVOqoi0M6xneWCMieGHnwYDFEzk+co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MN+dWmVw; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b9d41c3a44so198523f8f.0;
+        Thu, 14 Aug 2025 12:32:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1755199943; x=1755804743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hhUB1NFTF7xUTayhYlJEfsBBpcak+eRcTlvoGoZNx8k=;
+        b=MN+dWmVw9ROaABHXYc7HT5kTT7fTCoLjOnbR7Yw88pb0BKhNgrNAX32sK1oEjnu3w6
+         bJuba/O3qDTq9VaNYsjbFd+0m3wxo3s2tS8pTiUsgm6Sks1fvBdoZ2JCAff93l37/jPC
+         XNDhXaMbTl7S4lv2Z14FZPPhmp82myPhkgx1ueUam868lRFB6PwLhQR0+jd3op0a0AFf
+         6YphEEdvADYcLbau8VdH4aJoX/2yA1XMM9Y9OUYlUPaORjKr+f1HQDvECnILeIdCCo78
+         YXdqRrfwUh6lM3SOYHGF0o1JwUdo27Nt12JKFES+9kx4hqOHlDl+SK+9YTKTlCJFiS2D
+         zSJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755199943; x=1755804743;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hhUB1NFTF7xUTayhYlJEfsBBpcak+eRcTlvoGoZNx8k=;
+        b=R7vLJIMGP7mL/O0MrZGNq/nm0cEKLc2d8MKIvkxHPO6rV2RZuVK2dR33N/hNQXBcrA
+         rjt8BD4cV/QQHtiaf5FlKyofc9/2XCzD8wc7nieWdTZBMd9w/A/Ic2MsNcnm+2YvHX4l
+         mwxEc5UMLqYDS0pmoNhjW4KSRdkdevo4eolGh8EEQpDs+NEq7TqwxTYFd1Ga4qZHHIMI
+         cphQmg9akeexxXJLbVnnc9IugbUT9MrDS01DLHUyK0roG5dd/RL72H8B94htC1zkRqBu
+         SyZyuD/xwxgR6V1qmzhACyZVagaRB3CNFmnn/qeDCDK0K4/zy3J3PwRd0WQYa3/OZQ7g
+         gKvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVteckP/HknvftQxWOzFi43qnhZdxLwyuj6uLS8cbANwBmMkRQpdGsMmUJ+vsMp9NaUuqaXWYid36oGjSo=@vger.kernel.org, AJvYcCWKdhQ3Q9qbwsVLoTFc6YFL90lwEC01LDsSgs+IeInbam9WTeRNcdhMNA3dON8RwNyiEQkWwlEM@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF8emykWcjcSapS922oOxzDcAeHzHcGPD6s9YMTUVX2rFIRMr0
+	XuXZ8GhEg69FCOC5cq5JKWzBVS5T+/8mutXTXLcgMG1Ux/2Gu1DWdEWx
+X-Gm-Gg: ASbGnctPQBUYjGjsectRAzlddyU/Uo7AGQUVhhX2nwTtvj6siigPVPF5Ec2mRMj13uL
+	qj0p29WmXex9QH3LMV+pr1RYn6JssOd5IL/lnZJ6yxloVNkyjvFEH/uDNzLQRmnDEKlrmChAyb8
+	Pmbz9NsMkfeJFFhMEZ5EDd33cqULUPWM9QxFW9vhcJP1+mgIPxQwy1zqYwxOcZDgmjEXdi1a+0I
+	elyrspzqb86vakEpONA2q+fdoV1MN/78reGlRGrusVusRlxhx5h83wXF73vBfUUyuDZsaeOVlNR
+	wX8iheOmG7B98vgWh0aaimLoS7Hzy8o7mfRXjV7JVcxrDb+pRbvht/8FUJaXAvdGdWqQwxO8QuY
+	qbsakfLmtB+6SpTvk+x9+76qMh/wK78qU7zWUBvxEW5Xof678vL04U3ZX98DPwGUi3Ym2J0+kZQ
+	==
+X-Google-Smtp-Source: AGHT+IFNE8lNReUvGQQAr1wHb9H+pyZXKODmatPlpuNTM9BJb2sYGnBPEr8AhsKDjoNrxl354yMmPA==
+X-Received: by 2002:a05:6000:220b:b0:3a4:d4a0:1315 with SMTP id ffacd0b85a97d-3b9edfa294bmr1515009f8f.6.1755199943011;
+        Thu, 14 Aug 2025 12:32:23 -0700 (PDT)
+Received: from pop-os.localdomain (208.77.11.37.dynamic.jazztel.es. [37.11.77.208])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9386sm51910902f8f.18.2025.08.14.12.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 12:32:22 -0700 (PDT)
+From: =?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
+To: steffen.klassert@secunet.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net
+Cc: edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	=?UTF-8?q?Miguel=20Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>
+Subject: [PATCH net-next] xfrm: xfrm_user: use strscpy() for alg_name
+Date: Thu, 14 Aug 2025 21:32:17 +0200
+Message-Id: <20250814193217.819835-1-miguelgarciaroman8@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250814070401.13432-2-xiandong.wang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Xiandong,
+Replace the strcpy() calls that copy the canonical algorithm name into
+alg_name with strscpy() to avoid potential overflows and guarantee NULL
+termination.
 
-kernel test robot noticed the following build errors:
+Destination is alg_name in xfrm_algo/xfrm_algo_auth/xfrm_algo_aead
+(size CRYPTO_MAX_ALG_NAME).
 
-[auto build test ERROR on jassibrar-mailbox/for-next]
-[also build test ERROR on linus/master v6.17-rc1 next-20250814]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Tested in QEMU (BusyBox/Alpine rootfs):
+ - Added ESP AEAD (rfc4106(gcm(aes))) and classic ESP (sha256 + cbc(aes))
+ - Verified canonical names via ip -d xfrm state
+ - Checked IPComp negative (unknown algo) and deflate path
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiandong-Wang/mailbox-mtk-cmdq-Add-cmdq-driver-for-mt8189/20250814-152237
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jassibrar/mailbox.git for-next
-patch link:    https://lore.kernel.org/r/20250814070401.13432-2-xiandong.wang%40mediatek.com
-patch subject: [PATCH v1 2/4] [v1,02/04]mailbox: mtk-cmdq: Add cmdq driver for mt8189
-config: x86_64-buildonly-randconfig-004-20250815 (https://download.01.org/0day-ci/archive/20250815/202508150338.bTVJvFtV-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250815/202508150338.bTVJvFtV-lkp@intel.com/reproduce)
+Signed-off-by: Miguel García <miguelgarciaroman8@gmail.com>
+---
+ net/xfrm/xfrm_user.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508150338.bTVJvFtV-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/mailbox/mtk-cmdq-mailbox.c:781:3: error: field designator 'mminfra_offset' does not refer to any field in type 'const struct gce_plat'
-     781 |         .mminfra_offset = 0x40000000, /* 1GB */
-         |         ~^~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/mailbox/mtk-cmdq-mailbox.c:784:3: error: field designator 'dma_mask_bit' does not refer to any field in type 'const struct gce_plat'
-     784 |         .dma_mask_bit = 35,
-         |         ~^~~~~~~~~~~~~~~~~
->> drivers/mailbox/mtk-cmdq-mailbox.c:785:3: error: field designator 'secure_thread_nr' does not refer to any field in type 'const struct gce_plat'
-     785 |         .secure_thread_nr = 2,
-         |         ~^~~~~~~~~~~~~~~~~~~~
->> drivers/mailbox/mtk-cmdq-mailbox.c:786:3: error: field designator 'secure_thread_min' does not refer to any field in type 'const struct gce_plat'
-     786 |         .secure_thread_min = 8,
-         |         ~^~~~~~~~~~~~~~~~~~~~~
-   4 errors generated.
-
-
-vim +781 drivers/mailbox/mtk-cmdq-mailbox.c
-
-   777	
-   778	static const struct gce_plat gce_plat_mt8189 = {
-   779		.thread_nr = 32,
-   780		.shift = 3,
- > 781		.mminfra_offset = 0x40000000, /* 1GB */
-   782		.control_by_sw = false,
-   783		.sw_ddr_en = true,
- > 784		.dma_mask_bit = 35,
- > 785		.secure_thread_nr = 2,
- > 786		.secure_thread_min = 8,
-   787		.gce_num = 2
-   788	};
-   789	
-
+diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+index 59f258daf830..d65def556b6b 100644
+--- a/net/xfrm/xfrm_user.c
++++ b/net/xfrm/xfrm_user.c
+@@ -593,7 +593,7 @@ static int attach_one_algo(struct xfrm_algo **algpp, u8 *props,
+ 	if (!p)
+ 		return -ENOMEM;
+ 
+-	strcpy(p->alg_name, algo->name);
++	strscpy(p->alg_name, algo->name);
+ 	*algpp = p;
+ 	return 0;
+ }
+@@ -620,7 +620,7 @@ static int attach_crypt(struct xfrm_state *x, struct nlattr *rta,
+ 	if (!p)
+ 		return -ENOMEM;
+ 
+-	strcpy(p->alg_name, algo->name);
++	strscpy(p->alg_name, algo->name);
+ 	x->ealg = p;
+ 	x->geniv = algo->uinfo.encr.geniv;
+ 	return 0;
+@@ -649,7 +649,7 @@ static int attach_auth(struct xfrm_algo_auth **algpp, u8 *props,
+ 	if (!p)
+ 		return -ENOMEM;
+ 
+-	strcpy(p->alg_name, algo->name);
++	strscpy(p->alg_name, algo->name);
+ 	p->alg_key_len = ualg->alg_key_len;
+ 	p->alg_trunc_len = algo->uinfo.auth.icv_truncbits;
+ 	memcpy(p->alg_key, ualg->alg_key, (ualg->alg_key_len + 7) / 8);
+@@ -684,7 +684,7 @@ static int attach_auth_trunc(struct xfrm_algo_auth **algpp, u8 *props,
+ 	if (!p)
+ 		return -ENOMEM;
+ 
+-	strcpy(p->alg_name, algo->name);
++	strscpy(p->alg_name, algo->name);
+ 	if (!p->alg_trunc_len)
+ 		p->alg_trunc_len = algo->uinfo.auth.icv_truncbits;
+ 
+@@ -714,7 +714,7 @@ static int attach_aead(struct xfrm_state *x, struct nlattr *rta,
+ 	if (!p)
+ 		return -ENOMEM;
+ 
+-	strcpy(p->alg_name, algo->name);
++	strscpy(p->alg_name, algo->name);
+ 	x->aead = p;
+ 	x->geniv = algo->uinfo.aead.geniv;
+ 	return 0;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
