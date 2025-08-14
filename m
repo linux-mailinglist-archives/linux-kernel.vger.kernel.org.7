@@ -1,64 +1,89 @@
-Return-Path: <linux-kernel+bounces-768958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96196B2685D
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:02:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6AFB26859
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 16:01:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8244A24677
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6B4584EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 13:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4442A301484;
-	Thu, 14 Aug 2025 13:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACAE301019;
+	Thu, 14 Aug 2025 13:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L96298qW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="oyS707iJ"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9FA3002CA;
-	Thu, 14 Aug 2025 13:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F053019A1
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 13:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755179705; cv=none; b=AjXFHxLHCv3SrDF3txm7yHHkj8YDDWDLwV3LumRvCBFUlZK+o9AB7a6YvBqXbONH1QZEocp4ciA6CqjExj4a3LOZWMtdb5IalQuF7lS9XhfWCeaKy8JennWZdaqdeay3+M3IzrLBvhJ3vL0SIrDodTWaVewriIR7UHKWrq8CDX8=
+	t=1755179709; cv=none; b=AO0jF0x/IADA/prjrewG5V3Gc6j0k/Mkk4pnLRHa/9dEy0qPQyHnCC1gObW0Dr8Kwp/a1Suq3nn26EGQgQNLeMbttdVVs0GwqiqpBm4b8l5iZgzUdjTZeF0CSeASdB4el3BqSkb9L0TopyydG0ZdKG1UUqgRa6C02VPbu4CGAxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755179705; c=relaxed/simple;
-	bh=wJBR/EaYTXwijxHpkgGn8AQZgr4/iDw3hs8xh7J5ZOg=;
+	s=arc-20240116; t=1755179709; c=relaxed/simple;
+	bh=7GlNJhry7TThYwVtorBJU7ypkucLCF+YWV8hYGJ/q2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqJzKnjDuTMj4cVkxHY+S1uqkZb3FTB4GQOvw7pgnlwm4X0kKufc4FHmxMGPDyCYzKRxEPtMn9qGhY0ED0aiUhHDDOmKhsMgJs4MEGTUhNiv4F6zHhwAkf6RSggBxVKg7Zxgek/dY1FY9lN0SeHq6468qfd/ZmwBf46QMJ+AgB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L96298qW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB0F7C4CEED;
-	Thu, 14 Aug 2025 13:55:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755179705;
-	bh=wJBR/EaYTXwijxHpkgGn8AQZgr4/iDw3hs8xh7J5ZOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L96298qWRIWg+8SUbaM70XESVPC+Xpc4g1RZ2nneeMQyASegwyXvqQxTLS1jcngOg
-	 ERQCsY0hMgLf9fPpvHE0ac74Iud2EkcdVrgiq8Iw7XackA/Hd0zj/QqG2T5Vux/wA2
-	 xefkHdt8P1YdHKtSRPHNcl4NjzePdZzKtG3sR0UIhGKSOTr9kUx6vUgCU+76ocLvRA
-	 zM3w+PRJYqMGGGhjBVTKi/wgatl33n8OiEl89fwUhFxIYiOa6LJ/TzKcsT058KawSo
-	 +Q0SWgD1+tshObZIzpVIkM5JQlR58CiJtq7RiGaCCFYWjXIww21FNZejN0rrOKG4ow
-	 kZ9aLOcO6d7fA==
-Date: Thu, 14 Aug 2025 15:54:58 +0200
-From: Alexey Gladkov <legion@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v6 6/9] modpost: Add modname to mod_device_table alias
-Message-ID: <aJ3qsonmvUUErQx9@example.org>
-References: <cover.1755170493.git.legion@kernel.org>
- <15724fb8669dae64e3c8d31ab620f977984b2177.1755170493.git.legion@kernel.org>
- <DC26OG2L7OMH.31RE7460D4DHU@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C99jPYCIRBz1N/AcHoYoE2AOJM+XS8dZ46O2YNj/YfGstD072p08WuuH/QpQUw4Z6Hm47V/DsRAqZie+j342bmETbiYzNWxaPOEeXStZ6NNzUvehMkpJJIjHngFaLGKBIwDSJHl7IAU3oSp9bZi/fPVfURu7YgFRs3JWwTlsjA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=oyS707iJ; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70a88db0416so9868706d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 06:55:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1755179706; x=1755784506; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MlALy2xhseF+yQTX6QJcUoYBFvoxQUQwSPoAaHJPRr8=;
+        b=oyS707iJRfzFAambHeVKgYCiTzl8mlaTZxUTbsH4jTXqgmG6WUDBo3AXCd8HEquT8A
+         sdMbK1rC2uqeICnQ8yfdJI0VTQt0xmp6ra7IKjd9c+siVXEVhhX/so2j+xeI4lpTRBHz
+         ZuC+Wu8TeP1l7g5LnKF0UplstztZXGyLqpUQCTZC5RDpRvBghlF08sTr9g4Iugp+b9Lq
+         Z2gb61x0aeEtVGAK+7ysTcT3BVwjoamoKnDQnyZYNRswRtMiwzyxsdKxZeNy20V82KME
+         oQp8iuN+LCgyGkVVWVUPDBiBp5PnX850tQ3VQhqGd7Z60jwxpf8blJpB+W498/Jlwp0S
+         vw4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755179706; x=1755784506;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MlALy2xhseF+yQTX6QJcUoYBFvoxQUQwSPoAaHJPRr8=;
+        b=U7Qp8ycHnk6GFiz0QCFuEHIxSs798XgPTtlav+altdugAXyCngTHxfKCKlwHjrgFZ/
+         WQPSexBCEfQrZ0z9hH1Pp5QikrvlREikELMjmJ4prNLKAAB1/lVQKrt7oBcfIQ+RoDb5
+         FR8Hfj8u/WRW+nw7ZXVYqBKqzD/EmP5yeMef1L17vs36Af5T2PyXFhmsjVpeb2pSkpRz
+         6zP1e8dp3JgDfoUy9Vws79DqIV2YieAv1jVdO3eZ24tGarxhO0pRbqfokpoVkqynde/u
+         3fuXPI0XskqmyMFJhtDPIRDTI/rR5f9TnQYaDPJP6XUSlzk5TgZ0VUuUbHDePqihfZ7p
+         6VoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3NjgrzNHYgtlANYDoxrNpHuUs1pQYrGGZwYyfrBaJKgN38Pw4kSaqNBRaqk8Uam7r9odi9DH+O3HHyy8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3sOlnmOsGsawqEJmysSaA/fMoH9xfvpbXX2YrSJgvUbBj33dU
+	AAv38bicnlAKbmz4AnqZB2mApgX1nEcBxMwt8c+JtERVGO/oYHFkGoVHaBP2I1uFRRc=
+X-Gm-Gg: ASbGncsORWxh2+cDWgOn2fGugSlwStjvwSohnOc2bhMuJ/aO8VopKGaD0fyV4O5vyli
+	L5tV+G33u7p72CyFe65CKetFTkYfPsePAvtY1PpCNvyH0otEs7CNnMWbER8IB7b2kcZjYEiYp9/
+	JijlCdssljprqtMcqJ6YebHP0ux1qFUQgXu6+iNGqjx0TC22BjAilM0vHYLKyG3O1DdncbdwjgK
+	Yn3uc6JGNWN5IPwxho3kmgvZ0//BgYT7Af+L4PPM3zaZUK+NkqYBlQljNBjVPcW05WwDX9JFPR7
+	GrsW523o0pRQHY7TW0k5wf5mZGYEnOqgrtvCqCWYlBfQVIM300Y3aEatpN6n/pgDGgUJ9AbGlIm
+	1+DnsjA8yqtLPSixsp6XIcQ==
+X-Google-Smtp-Source: AGHT+IFL9mfmhIOtoP3f48wEW/B6LYJ+F/aJttG1hYQa0kKnXgEyKk/hQne+aXocVTXmvmyjVO0Ehw==
+X-Received: by 2002:a05:6214:c24:b0:709:e095:128f with SMTP id 6a1803df08f44-70af5d0539emr51369616d6.25.1755179706213;
+        Thu, 14 Aug 2025 06:55:06 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:929a:4aff:fe16:c778])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-70af5c0d80fsm12601116d6.80.2025.08.14.06.55.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Aug 2025 06:55:05 -0700 (PDT)
+Date: Thu, 14 Aug 2025 09:55:01 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Xuewen Yan <xuewen.yan@unisoc.com>
+Cc: rostedt@goodmis.org, surenb@google.com, peterz@infradead.org,
+	mingo@redhat.com, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, andrii@kernel.org, vschneid@redhat.com,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	yuming.han@unisoc.com, ke.wang@unisoc.com, xuewen.yan94@gmail.com
+Subject: Re: [RFC PATCH] sched: psi: Add psi events trace point
+Message-ID: <20250814135501.GD115258@cmpxchg.org>
+References: <20250814070719.865-1-xuewen.yan@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,103 +92,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DC26OG2L7OMH.31RE7460D4DHU@kernel.org>
+In-Reply-To: <20250814070719.865-1-xuewen.yan@unisoc.com>
 
-On Thu, Aug 14, 2025 at 03:26:53PM +0200, Danilo Krummrich wrote:
-> On Thu Aug 14, 2025 at 3:07 PM CEST, Alexey Gladkov wrote:
-> > At this point, if a symbol is compiled as part of the kernel,
-> > information about which module the symbol belongs to is lost.
-> >
-> > To save this it is possible to add the module name to the alias name.
-> > It's not very pretty, but it's possible for now.
-> >
-> > Cc: Miguel Ojeda <ojeda@kernel.org>
-> > Cc: Andreas Hindborg <a.hindborg@kernel.org>
-> > Cc: Danilo Krummrich <dakr@kernel.org>
-> > Cc: Alex Gaynor <alex.gaynor@gmail.com>
-> > Cc: rust-for-linux@vger.kernel.org
-> > Signed-off-by: Alexey Gladkov <legion@kernel.org>
-> > ---
-> >  include/linux/module.h   | 14 +++++++++++++-
-> >  rust/kernel/device_id.rs |  8 ++++----
-> >  scripts/mod/file2alias.c | 18 ++++++++++++++----
-> >  3 files changed, 31 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/include/linux/module.h b/include/linux/module.h
-> > index 3319a5269d28..e31ee29fac6b 100644
-> > --- a/include/linux/module.h
-> > +++ b/include/linux/module.h
-> > @@ -244,10 +244,22 @@ struct module_kobject *lookup_or_create_module_kobject(const char *name);
-> >  /* What your module does. */
-> >  #define MODULE_DESCRIPTION(_description) MODULE_INFO(description, _description)
-> >  
-> > +/*
-> > + * Format: __mod_device_table__kmod_<modname>__<type>__<name>
-> > + * Parts of the string `__kmod_` and `__` are used as delimiters when parsing
-> > + * a symbol in file2alias.c
-> > + */
-> > +#define __mod_device_table(type, name)	\
-> > +	__PASTE(__mod_device_table__,	\
-> > +	__PASTE(__KBUILD_MODNAME,	\
-> > +	__PASTE(__,			\
-> > +	__PASTE(type,			\
-> > +	__PASTE(__, name)))))
-> > +
-> >  #ifdef MODULE
-> >  /* Creates an alias so file2alias.c can find device table. */
-> >  #define MODULE_DEVICE_TABLE(type, name)					\
-> > -static typeof(name) __mod_device_table__##type##__##name		\
-> > +static typeof(name) __mod_device_table(type, name)			\
-> >    __attribute__ ((used, alias(__stringify(name))))
-> >  #else  /* !MODULE */
-> >  #define MODULE_DEVICE_TABLE(type, name)
-> > diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
-> > index 70d57814ff79..62c42da12e9d 100644
-> > --- a/rust/kernel/device_id.rs
-> > +++ b/rust/kernel/device_id.rs
-> > @@ -195,10 +195,10 @@ macro_rules! module_device_table {
-> >      ($table_type: literal, $module_table_name:ident, $table_name:ident) => {
-> >          #[rustfmt::skip]
-> >          #[export_name =
-> > -            concat!("__mod_device_table__", $table_type,
-> > -                    "__", module_path!(),
-> > -                    "_", line!(),
-> > -                    "_", stringify!($table_name))
-> > +            concat!("__mod_device_table__", line!(),
+On Thu, Aug 14, 2025 at 03:07:19PM +0800, Xuewen Yan wrote:
+> Add trace point to psi triggers. This is useful to
+> observe the psi events in the kernel space.
 > 
-> Why do we have line!() between "__mod_device_table__" and "__kmod_", while the
-> format is defined as "__mod_device_table__kmod_<modname>__<type>__<name>" above?
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
 
-The "__mod_device_table__" is used to filter symbols.
-The meaning part starts after "__kmod_" part. After that, order becomes
-important.
+Can you elaborate on a situation in which you would use this?
 
-> The previous logic was to create a unique name with
-> using "<module_path>_<line>_<table_name>" as "<name>". So, I think this should
-> actually be:
+> ---
+>  include/trace/events/sched.h | 5 +++++
+>  kernel/sched/psi.c           | 2 ++
+>  2 files changed, 7 insertions(+)
 > 
-> 	concat!("__mod_device_table__kmod_",
-> 		module_path!(),
-> 		"__", $table_type,
-> 		"__", stringify!($table_name),
-> 		"_", line!())
-> 
-> rather than the below.
+> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> index 7b2645b50e78..c23cb2bc76fd 100644
+> --- a/include/trace/events/sched.h
+> +++ b/include/trace/events/sched.h
+> @@ -896,6 +896,11 @@ DECLARE_TRACE(sched_set_need_resched,
+>  	TP_PROTO(struct task_struct *tsk, int cpu, int tif),
+>  	TP_ARGS(tsk, cpu, tif));
+>  
+> +struct psi_trigger *t
 
-No. "stringify!($table_name)" should be the last thing in this string.
-This is the a symbol name that will be searched for in the elf to generate
-modalias.
+Missing ;
 
-> 
-> > +                    "__kmod_", module_path!(),
-> > +                    "__", $table_type,
-> > +                    "__", stringify!($table_name))
-> >          ]
-> >          static $module_table_name: [::core::mem::MaybeUninit<u8>; $table_name.raw_ids().size()] =
-> >              unsafe { ::core::mem::transmute_copy($table_name.raw_ids()) };
-> 
-
--- 
-Rgrds, legion
-
+> +DECLARE_TRACE(psi_event,
+> +	TP_PROTO(struct psi_trigger *t),
+> +	TP_ARGS(t));
+> +
+>  #endif /* _TRACE_SCHED_H */
+>  
+>  /* This part must be outside protection */
 
