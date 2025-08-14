@@ -1,160 +1,218 @@
-Return-Path: <linux-kernel+bounces-768749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E875DB264F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:05:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A3CB264F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 14:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E24571C27725
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:05:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC8CE7A40DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 12:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F412FD1C5;
-	Thu, 14 Aug 2025 12:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDC42FCC06;
+	Thu, 14 Aug 2025 12:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cu0SHYHJ"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WdfPffef"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4532FC891
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389962FC88B
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 12:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755173115; cv=none; b=tQgTw2EKy5AroqmshXLSqE70kvj0ngeIqazqf6ScqHTXiI+ZYF3ItSxdcOEDnF7HUqVs3fBo1N59SushkOGuq9bPQ3BwxWmDxB8GANF6u9BM8OTRjD4Tt8uooMPhTIhpuq7e8nZRYhLrs7xrZcAHp1aI6vAF4f+vJKfEroIrBrs=
+	t=1755173110; cv=none; b=aaPABThVOUm4Umq9CCkjLqPuKHWP2Rks8n9FwqXT2aZZud5Ie/JGKevXr9HBrVPpfMuBwFlLUvnuKiFQ5lnkTVs03C3SUcVwcB/Lpl7WrT4+HaXHy9atmPy0KVV7l2JCLB+hn6HlSMCNccnuKbNWjSK6+jac639CViFstpw25v4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755173115; c=relaxed/simple;
-	bh=ZUzZD9vc/qfpF+dRCR5SITztXA1r9JjOxRlbeJKLBDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d56GQyFJHZrcXQk90eXJ7xXQ9vvf6yBUc3ndzmHYhhHAzYddcad4SpnyaLe0rOk82jstHZGJoirHu5idPc3LY0VSpPXDDyjQWQgTudEF0rB54z8dnKnOKEItDgfRZSrzvkyux4m/o8x7vyTGAa4dsNO90XNyuHJkrIp4xQMtNDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cu0SHYHJ; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1755173099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RwwfVIkcE9AyO7mM/6kI4iyF3cvpAbFGcgfbwetU2M0=;
-	b=cu0SHYHJzdsvKrJnBYh0JEyIE75X14ZAspzB7sFwJS4T2P226zXlonYvTzgIrwiUX0TO0l
-	FqrPhwC846PghwqWAykyvP3GsbA6znNN58YHge3iYLU4lRjE+23JjW3oX0iOHtfOu238/J
-	q2spVj3pG9boSfJCWgoZezEpVvIXHKQ=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Nir Lichtman <nir@lichtman.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Yuran Pereira <yuran.pereira@hotmail.com>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Daniel Thompson <daniel@riscstar.com>,
-	kgdb-bugreport@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kdb: Replace deprecated strcpy() with strscpy()
-Date: Thu, 14 Aug 2025 14:03:37 +0200
-Message-ID: <20250814120338.219585-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1755173110; c=relaxed/simple;
+	bh=lk3jW0faW7OReYq7pDapWGe91fd5chxPJdTiD0YhjJc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AnIkZQi7E0ZMoaS3NpkrM7Y1wsWlt+Oe29ksEH1gSvUP9zi6/FZzRYdxTWSY/+16NSMLeZKZnBRQgEN2tEz6cZBMKnPYYVyj/vjRiAFLeDn9x+z5Os5CfiOyIsAuDLowSanAC2LUg4TnGu+jLExrN6wrZ/Xotw2heiDKhn10J80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WdfPffef; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-244580523a0so7408745ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 05:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1755173108; x=1755777908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YbxwOaTxt+VPxH7wGs43dhEneWCWtvKUM9346HZzhbc=;
+        b=WdfPffefxUPjalkPAjFUhdbgT5NxTUQoKkZQKBmPJR1lQ8VBsseXBTLbUnox6iXPHD
+         d3KbLjUVNa5OgOZdF02DjGtJYQ2gZa21i3gQgE/mk932vrfGA3GSIk+V2ei1pymuAvIC
+         zQgGZa/io/edTrZWAJFnxPRsK2/+ymKluW7XbQ5qR4wrlBtsNhXdtf/yZGyISkKGSxyQ
+         uN0Y6EyF3Zk8jXqwGGriivXTpMiTBDHaNTHuWE+p7HE9NJIqbr7iwpg7b6v8dxH0UUw2
+         K+0B+FpkaSrImzFmGnYS6CPaNhQEzEARwesVH0ctGh7b9xBTa1KXbqNmw4Ur4A+i9sqB
+         blkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1755173108; x=1755777908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YbxwOaTxt+VPxH7wGs43dhEneWCWtvKUM9346HZzhbc=;
+        b=bWSK9myn6L743i3Vc4WFw6VjWkGUu55C+dtqvOQHD+MBRqSWcm25kMWTiy6K85uEFL
+         L1HeeghRKxHhxJDhnoEc2TvJVajJ+u58OhM8dYwH6MycDmYSxBx1PNAl6l1MPsPEg2sp
+         W7M0n6qLiov6g77YAjREWdRYSIGhLH6rUB23ylS59YDfXmJRz355f4h9dXg1q8N/jAgl
+         nwBSRNxFRboYhd1YFPx4XYe0V2Q4JHLDjZaIiaujOuPxSbGGkIYbtWJj6oI5+BNVZGLk
+         oT+B5ZleA4usoi64M6/VfzZsxadhlcjK0N5wTlVLKYCwMQAY8weT6taIlclYpCB/dPUV
+         Gqdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbSLzCURdM+KuWEeP/mgomSH8vMu5WoOHzcmEBBGQOoGGynQfRrd1jP8mMMTPyL/yiHfsJxmcsC2OCeXo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5K6lxcHi1n0g4BmHo/rkWV8Nh8GimtQLqmC+U4zMvlZPPzun6
+	nz4OGyA/dVfyeWTkdUKMlrCjG+rBwwl+8v/fO4+9M6kQ8NJ3DnRgtWUIS+FI0xfcq67OBrUr3fw
+	9+uA+ZU9SFK9SO2RJGxGBT3PrpPOqOPgX/Hfurhrj
+X-Gm-Gg: ASbGnctJRzennur2UlYbD0/vd9CRCMbwJteREhV1Vx11YYRgsJrBrC5dreaCikCnY7y
+	LEFUoJszYsi6gABog7CT32j41BjRlMufvt9yddBtp3WZ8rXKhCJz7YdzA2CWFBxx84veDFISw+W
+	T9BnZL3rY64jeg62MJpEo+oTIORd22abPjxd+wt434HQZdwuWrADhoUa0nbLo5GqimONxUMhmAg
+	pmVa6+L5OheDLGIrRPgY87cvTWiqbUdPI/2slDYJFUFGZuzMU0Z0xU=
+X-Google-Smtp-Source: AGHT+IELWN7YR5k/Qexa61FDkbtcQO4u3bxP2v28zhnPFg2HZ8xCotv7o4JcAzeGXsKBzlDNPPoEv9ueklQHM3OWnkY=
+X-Received: by 2002:a17:903:1ae4:b0:23d:f986:6472 with SMTP id
+ d9443c01a7336-24458a65075mr33851945ad.25.1755173108111; Thu, 14 Aug 2025
+ 05:05:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <6880f54c.050a0220.248954.0000.GAE@google.com> <4a32f6c1-8d81-4a51-beed-caf8bc52fcc2@kernel.dk>
+In-Reply-To: <4a32f6c1-8d81-4a51-beed-caf8bc52fcc2@kernel.dk>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Thu, 14 Aug 2025 14:04:56 +0200
+X-Gm-Features: Ac12FXyjw24Ser7OqH_RG52sC2W_8XRTLvzA8fomNCOW3wS5--cm3OoRWMfM6Nk
+Message-ID: <CANp29Y56=ekm5UZyW6DgohHNFucYOwe_dYE09qw084wFOBiwzA@mail.gmail.com>
+Subject: Re: [syzbot] [input?] [usb?] [io-uring?] INFO: task hung in
+ io_wq_put_and_exit (5)
+To: Jens Axboe <axboe@kernel.dk>
+Cc: syzbot <syzbot+e328767eafd849df0a78@syzkaller.appspotmail.com>, 
+	io-uring@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-strcpy() is deprecated; use strscpy() instead and remove several manual
-NUL-terminations.
+Hi Jens,
 
-Since the destination buffers 'cmd_cur' and 'cmd_hist[cmd_head]' have
-the fixed length CMD_BUFLEN, strscpy() automatically determines their
-size using sizeof() when the size argument is omitted. This makes the
-explicit size arguments for the existing strscpy() calls unnecessary,
-remove them.
+On Wed, Aug 13, 2025 at 4:32=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On Wed, Jul 23, 2025 at 8:44?AM syzbot <syzbot+e328767eafd849df0a78@syzka=
+ller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    bf61759db409 Merge tag 'sched_ext-for-6.16-rc6-fixes' o=
+f g..
+> > git tree:       upstream
+> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D12b877d4580=
+000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D415e83411fe=
+fd73f
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=3De328767eafd84=
+9df0a78
+> > compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binu=
+tils for Debian) 2.40
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D110b938c5=
+80000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D1622a38c580=
+000
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/22c5f1286a72/d=
+isk-bf61759d.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/cc79af4d966c/vmli=
+nux-bf61759d.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/b2e6d621f424=
+/bzImage-bf61759d.xz
+> >
+> > The issue was bisected to:
+> >
+> > commit e5598d6ae62626d261b046a2f19347c38681ff51
+> > Author: Pavel Begunkov <asml.silence@gmail.com>
+> > Date:   Thu Aug 24 22:53:31 2023 +0000
+> >
+> >     io_uring: compact SQ/CQ heads/tails
+> >
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D12c92b82=
+580000
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D11c92b82=
+580000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D16c92b82580=
+000
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the co=
+mmit:
+> > Reported-by: syzbot+e328767eafd849df0a78@syzkaller.appspotmail.com
+> > Fixes: e5598d6ae626 ("io_uring: compact SQ/CQ heads/tails")
+> >
+> > INFO: task syz-executor971:5849 blocked for more than 143 seconds.
+> >       Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
+> >       Blocked by coredump.
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this messag=
+e.
+> > task:syz-executor971 state:D stack:26488 pid:5849  tgid:5849  ppid:5844=
+   task_flags:0x400148 flags:0x00024002
+> > Call Trace:
+> >  <TASK>
+> >  context_switch kernel/sched/core.c:5397 [inline]
+> >  __schedule+0x116a/0x5de0 kernel/sched/core.c:6786
+> >  __schedule_loop kernel/sched/core.c:6864 [inline]
+> >  schedule+0xe7/0x3a0 kernel/sched/core.c:6879
+> >  schedule_timeout+0x257/0x290 kernel/time/sleep_timeout.c:75
+> >  do_wait_for_common kernel/sched/completion.c:95 [inline]
+> >  __wait_for_common+0x2ff/0x4e0 kernel/sched/completion.c:116
+> >  io_wq_exit_workers io_uring/io-wq.c:1319 [inline]
+> >  io_wq_put_and_exit+0x271/0x8d0 io_uring/io-wq.c:1347
+> >  io_uring_clean_tctx+0x10d/0x190 io_uring/tctx.c:203
+> >  io_uring_cancel_generic+0x69c/0x9a0 io_uring/io_uring.c:3212
+> >  io_uring_files_cancel include/linux/io_uring.h:19 [inline]
+> >  do_exit+0x2ce/0x2bd0 kernel/exit.c:911
+> >  do_group_exit+0xd3/0x2a0 kernel/exit.c:1105
+> >  __do_sys_exit_group kernel/exit.c:1116 [inline]
+> >  __se_sys_exit_group kernel/exit.c:1114 [inline]
+> >  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1114
+> >  x64_sys_call+0x1530/0x1730 arch/x86/include/generated/asm/syscalls_64.=
+h:232
+> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+> >  do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > RIP: 0033:0x7f141ec08e39
+> > RSP: 002b:00007ffcd1b0b6e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f141ec08e39
+> > RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+> > RBP: 00007f141ec843b0 R08: ffffffffffffffb8 R09: 0000000000000000
+> > R10: 000000000000000e R11: 0000000000000246 R12: 00007f141ec843b0
+> > R13: 0000000000000000 R14: 00007f141ec880c0 R15: 00007f141ebd7020
+> >  </TASK>
+> > INFO: task syz-executor971:5850 blocked for more than 143 seconds.
+> >       Not tainted 6.16.0-rc6-syzkaller-00279-gbf61759db409 #0
+> >       Blocked by coredump.
+>
+> I took a look at this one, and it's simply waiting on nullb0 timeouts
+> that it's flooded the queue with. Since it's flooding the nullb0 device
+> which has been configured to time out IO, we'll have a lot of io-wq
+> workers that are sitting blocked waiting on making progress. That can
+> obviously take a long time, which then in turn triggers the io_uring
+> cancelation/exit warning because of that. It all seems to be working as
+> it should.
+>
+> I don't think there's a bug here because of that, the only thing that's
+> "stuck" is because each timeout takes 30s to trigger and there are tons
+> of them.
+>
+> #syz invalid
 
-No functional changes intended.
+FWIW: if the bug is weird, but syzbot keeps on observing the crashes,
+it's better to let it stay open than to close it with "syz invalid".
+In this case, syzbot will just reopen the bug as "INFO: task hung in
+io_wq_put_and_exit (6)", "INFO: task hung in io_wq_put_and_exit (7)",
+and so on.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- kernel/debug/kdb/kdb_main.c | 32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+--=20
+Aleksandr
 
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index 7a4d2d4689a5..ea7dc2540e40 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -727,14 +727,10 @@ static int kdb_defcmd(int argc, const char **argv)
- 	mp->help = kdb_strdup(argv[3], GFP_KDB);
- 	if (!mp->help)
- 		goto fail_help;
--	if (mp->usage[0] == '"') {
--		strcpy(mp->usage, argv[2]+1);
--		mp->usage[strlen(mp->usage)-1] = '\0';
--	}
--	if (mp->help[0] == '"') {
--		strcpy(mp->help, argv[3]+1);
--		mp->help[strlen(mp->help)-1] = '\0';
--	}
-+	if (mp->usage[0] == '"')
-+		strscpy(mp->usage, argv[2] + 1, strlen(argv[2]) - 1);
-+	if (mp->help[0] == '"')
-+		strscpy(mp->help, argv[3] + 1, strlen(argv[3]) - 1);
- 
- 	INIT_LIST_HEAD(&kdb_macro->statements);
- 	defcmd_in_progress = true;
-@@ -860,7 +856,7 @@ static void parse_grep(const char *str)
- 		kdb_printf("search string too long\n");
- 		return;
- 	}
--	strcpy(kdb_grep_string, cp);
-+	strscpy(kdb_grep_string, cp);
- 	kdb_grepping_flag++;
- 	return;
- }
-@@ -1076,12 +1072,12 @@ static int handle_ctrl_cmd(char *cmd)
- 		if (cmdptr != cmd_tail)
- 			cmdptr = (cmdptr + KDB_CMD_HISTORY_COUNT - 1) %
- 				 KDB_CMD_HISTORY_COUNT;
--		strscpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-+		strscpy(cmd_cur, cmd_hist[cmdptr]);
- 		return 1;
- 	case CTRL_N:
- 		if (cmdptr != cmd_head)
- 			cmdptr = (cmdptr+1) % KDB_CMD_HISTORY_COUNT;
--		strscpy(cmd_cur, cmd_hist[cmdptr], CMD_BUFLEN);
-+		strscpy(cmd_cur, cmd_hist[cmdptr]);
- 		return 1;
- 	}
- 	return 0;
-@@ -1285,19 +1281,19 @@ static int kdb_local(kdb_reason_t reason, int error, struct pt_regs *regs,
- 		cmdbuf = kdb_getstr(cmdbuf, CMD_BUFLEN, kdb_prompt_str);
- 		if (*cmdbuf != '\n') {
- 			if (*cmdbuf < 32) {
--				if (cmdptr == cmd_head) {
-+				if (cmdptr == cmd_head)
-+					/* Copy the current command to the
-+					 * history and let strscpy() replace the
-+					 * last character with a NUL terminator.
-+					 */
- 					strscpy(cmd_hist[cmd_head], cmd_cur,
--						CMD_BUFLEN);
--					*(cmd_hist[cmd_head] +
--					  strlen(cmd_hist[cmd_head])-1) = '\0';
--				}
-+						strlen(cmd_cur));
- 				if (!handle_ctrl_cmd(cmdbuf))
- 					*(cmd_cur+strlen(cmd_cur)-1) = '\0';
- 				cmdbuf = cmd_cur;
- 				goto do_full_getstr;
- 			} else {
--				strscpy(cmd_hist[cmd_head], cmd_cur,
--					CMD_BUFLEN);
-+				strscpy(cmd_hist[cmd_head], cmd_cur);
- 			}
- 
- 			cmd_head = (cmd_head+1) % KDB_CMD_HISTORY_COUNT;
--- 
-2.50.1
-
+>
+> --
+> Jens Axboe
+>
 
