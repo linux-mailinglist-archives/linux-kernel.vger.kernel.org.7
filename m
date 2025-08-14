@@ -1,202 +1,208 @@
-Return-Path: <linux-kernel+bounces-768353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-768354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E48B26040
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:10:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C523B26042
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 11:10:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11BA11C821FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:04:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA206188C470
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 09:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2387C2F83BC;
-	Thu, 14 Aug 2025 08:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173AD2F8BDF;
+	Thu, 14 Aug 2025 08:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ik6EipQO"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y0/dIBtK"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6AB2E975B
-	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C81C2E9ED9
+	for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 08:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755161942; cv=none; b=hmSkaZmC8caD6MJa9LNmsL1J/8L06CuiPac/XHFjCX+0UjY5o7Gmbfnxa3TRimWmT3BKfrtwz7vLLCejCNjzQ6bMQHNn7QcKk67ySpU1G1puMGQrinsJMmQUehEAVBrsmVZOVYeX14V2ZJCkqs+NP0PJcaTjiTndd9zrxhz9Qg8=
+	t=1755161943; cv=none; b=cfOOTHHZQxIrMyRwjqH3e0EOFHuZ29uqRBH3e5rnU1PDosP9h3gl0lTqtwMA53OnpQf3R2wPpBv2xoOnbSdWHKcjEd9Blg6MSGg676D/Ld3+uTxY/DSioSleFzvygJVoMp2IrzWGA1aEopNedfcayhIs4XjsBdEYrIrBoQX5JnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755161942; c=relaxed/simple;
-	bh=QTIXtveDTMoEdRMxbTNvNq78eOmhb3+4Ay3C4Fd4UmY=;
+	s=arc-20240116; t=1755161943; c=relaxed/simple;
+	bh=o1Szdoofusn4ja6J2Nq+EgTM/QeJljSbOzJBQYC5Xlc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CT3S6nLz1c4EBFAxx5X9ohT+wTeGLthY8yjESnc5SRV2/3wCq6L+Id0YCaylJ9UD+eT/h4QTfSHOTTo1WdqH78wGzQINyW8gUqwOOksqcNirZq/yuobKM2UkLQXdAjFuiAqxBl9n0Fwe/mHCL7okPqdeeE8c1mEoDA7/YYsuInA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ik6EipQO; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-890184a05a0so451265241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:59:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=dmZCp1oh9NxaHb5+LoRah/qklBlpbHUvqDQoLSD2OISwNfsn7xchixJh0f8AC2wPZVUSYTR/dtWLY/9GBidqPySPOKtECsx12LqW5aqxeluwPoGOnMWeishZWUCKrnLLU7N7hNATgI5Cv8POB8bCMUGtGh3nY/ig5/tUggJLFmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y0/dIBtK; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3b9e41669d6so500620f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:59:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1755161939; x=1755766739; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1755161940; x=1755766740; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q7uH31UN91+fljH+roDUJZnayXqB6OvkipUsIFV6Wzs=;
-        b=Ik6EipQOM0NLDPPMxn4PP9DPO7k235PFnJxMG3tq3c3PxNbXTHOicsbq9Xa3Sm4Dtd
-         cF/Q3CXuOaFzCPiZ+gIK3pwNq0x7gqHd+kJPxPxGpWBSnhX+fhWr5gZOiXDafQBC/i+r
-         lMuVH5MdnOfanJFIxmxd/7jZnYkRup4ZGEfJg=
+        bh=q2fToAB1Rcjn651wF/AF4BoAGXD5OP38Zu/DND4w8MA=;
+        b=Y0/dIBtKTmYifsnHoIBTCIVgap2xoV8Ns5E06zvmEzqpCNc+sDVKcsVIp4uBFr8cff
+         n1rJASrGfvqtB2frY7WhcqZqDgULq6pak42bw2Jjhns9euLdLg996QaqJF2RG9eQq1aE
+         I1gbeai0a7LihfaFeAuQop6eWYSI9Sd1rro8+EdV8t0ESw0WcEtgpJMYxenYtvelp9dT
+         b/P6bWjjvMR8rH1205dpExMfG/XbpLSCf1PxpmH1OpyRuoATVqKi94ZvUb5s/GI/IfDO
+         aYwfXzHuUzDGPYXCZXIr3h3NN+AkHF82AHmk1ckNRlFonj/25Jq7j3Hht2/Sfag5gpb5
+         T2KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755161939; x=1755766739;
+        d=1e100.net; s=20230601; t=1755161940; x=1755766740;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q7uH31UN91+fljH+roDUJZnayXqB6OvkipUsIFV6Wzs=;
-        b=j64Tnru7Gil0qq2IJK2Pb5avwNsoRPEhU1YV2M1uWCHJsG+c0LIIkDpv6qhpa00XAf
-         2vSVf2szJbASfjZDQpHTPvEfkWDCK/Xdfzr3ZamTOTwJh4XB9Rqksl/s7hrTjO3v/zGN
-         hFcRXdnqnMhL426tPaNR9+jgBBeKGmR8LmyUq6pItCWRpEwVo35HCVVQ+pGuywKUk8bn
-         7zzMq+MJHBmWtdCXg5N0Sg/bTYLViUyTUahfGTcEJ32zCTpo0/m5HfroA6iByfhH+E9d
-         Xe4KSUSmq6MgI58JusfVxr5cRw2xMY7s9gBnYvvVZZogLcGuYKSv7n6ZB6V/yynRFifv
-         wT9w==
-X-Forwarded-Encrypted: i=1; AJvYcCX4TcQBbOgTihW3Flz1FvVkbR34FokHOz2w2OlIgkzd6icuLtB87j6bPjda7zQKHM2kPeCpk0fzQ5tYhV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR1f9Wgeb0ladPAeJ19TK9YYdTTcT7pc3p1zt+eI4+uRW6nVsw
-	JciS8UYb/H3EhILwB68OnxgIj6q85FUXqjK9blg87dfgHprBWQ0mCY7ESWwJGU92483JQErCfwR
-	63nI=
-X-Gm-Gg: ASbGncvPlR1D8zrkmkqeTjgUKU9qy7u/mYCTZf210y9KobylFhp3lz5N2wfWoA7tkdi
-	MrRjNs8AjbsIdvQK3keZ7osgo1KgSI6rbIR74INGOuIylnVO9kMbh8ft3zSLH/lN0Fi+mAFWX1m
-	RngwDHLVVFbrvoxEVWlUoqM37icX5QX19FSGb++rH/2ZwfvAUGB1iKkBJD55OSJoxedba+LaU2y
-	UhOyMLtdfoTjBev9Cm0OrDPlSBZDe6djtEIhK4Up0E+NZtQDXclImfVKcRhukY/yPHUlWc1GQdp
-	vHVZk7HhiGPtEYwEdrpHEPuxwHgqbQbqhvD1ME1/ncjoWlkHTr+Ld6fR+Cntx+EY0Y2+NHP/AX3
-	JoqK2qO023Ij7yqnl1VHOAG736sALLMsw9LnTbtSXytDd+PK2YbxkwLtZXLGjqK11BoXn
-X-Google-Smtp-Source: AGHT+IEXqjeWkOydqsKuzFydyfJ3uaWhcOztnnJ03YwaPedAnubZbjwKLs+OQSqGKTZw6CtwkwygLg==
-X-Received: by 2002:a05:6102:5d7:b0:4e9:963a:a42b with SMTP id ada2fe7eead31-5104c1ddc16mr432184137.8.1755161939124;
-        Thu, 14 Aug 2025 01:58:59 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88e0247160esm3020963241.0.2025.08.14.01.58.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Aug 2025 01:58:58 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-50e29b4fd2cso780204137.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Aug 2025 01:58:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgScHjeqy6RoENP1/9FdKUtQxXT0+UuG6JWlksXeDJzGPIbbN5LpZ+fTgvrM/mVwle6s64hmiN8Bwp1QY=@vger.kernel.org
-X-Received: by 2002:a05:6102:8083:b0:4e5:5c14:5937 with SMTP id
- ada2fe7eead31-51058a87196mr673671137.1.1755161937736; Thu, 14 Aug 2025
- 01:58:57 -0700 (PDT)
+        bh=q2fToAB1Rcjn651wF/AF4BoAGXD5OP38Zu/DND4w8MA=;
+        b=UwN+vp97utoaXP1lSP/BponZwCUMXIN14aUvlmJNLgPJkzlG3RqzFAuo32XoLuLkrP
+         vXVS4pgg1HXUI2yoaUWcweAJPAXkll+UkmWeELUKew+CRttqypMYq39Z/iGRr0AF9l5X
+         2/zTYsIc58N7DILuHusUDxi0bVPK+2DvHY9u0RIJ3vpPgXzh6ZZ+EspXWhb9YjhaBp9Q
+         Xp12oMvW/MoKSSVzrMHO+4VpmZ92r5PU5r6+AMyt22rI3oY/4LZwWGFLV6HTCPWLJUYY
+         5k8C4fef/ncYpsNoyRBRo9Nyel9+RnHDFZA9O82CNHXRSn4kmMHi9DAHqeN2jb7MVmXr
+         kfsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUN9RRERoQZJrT5i3UPvLZR93tzPvgs7ERfG8ailIPjRnq1p4UA4D81fxF1c1SHtvhE2iUQBDhVUPZvP9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVcDE1l/KBLnDajdJrLpqXBPO88pkOjEzm1nW7jFzzQs1yEKIM
+	d8GKphWoC/WRb8TGV+5XGqYDpZpk5yf26k7++5qJqD3VWbGFpbk5Aj/t3/8RjatIIBrzjH7/OES
+	AA+Xpoiw/8oAP2LQqA/GIkDf/I/zHuZfVpF2hNYCG
+X-Gm-Gg: ASbGncuVe04mJhGICAIwkCXszUimQq0KbZAcwKBQg/vF6zP4dwkuLdXkoDIzEQDU/TS
+	UmX8fZZPUZA1b//cubHEDKY4+M9X9lckggf19Hs9GIZPPQpW1NtlMNJpJJdRuI43UjlULH/U34s
+	RuQCusGTCMSO5VW8U2dosQfNSReKH2ja36qEyZYDa+qyO4zk9WvGd20JUkmU0x/nQ3dpiQdx6NI
+	NFkpcG8m2dr6V7aCRwkXoZ79Q==
+X-Google-Smtp-Source: AGHT+IEnok90zWddm6EeCa9vOgl+9GHdTol46JTh/NRAVk1/tIT9B8eSdrtVYMiMwwhqV9azFUftNTxZaAYRyPY4DVY=
+X-Received: by 2002:a05:600c:64c7:b0:459:e398:ed89 with SMTP id
+ 5b1f17b1804b1-45a1b61538fmr14062525e9.1.1755161939436; Thu, 14 Aug 2025
+ 01:58:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250814083144.191554-1-wenst@chromium.org>
-In-Reply-To: <20250814083144.191554-1-wenst@chromium.org>
-From: Fei Shao <fshao@chromium.org>
-Date: Thu, 14 Aug 2025 16:58:21 +0800
-X-Gmail-Original-Message-ID: <CAC=S1nhz_ESY4VrgWs=dVinLtdOamh6to3EgD1w1Kx=4YBOD9A@mail.gmail.com>
-X-Gm-Features: Ac12FXyjQIDoUSwiVtyIticCvke0x3M57lwGIL10ez0LU-OLgFrmxrQr_qqqlnA
-Message-ID: <CAC=S1nhz_ESY4VrgWs=dVinLtdOamh6to3EgD1w1Kx=4YBOD9A@mail.gmail.com>
-Subject: Re: [PATCH] media: mediatek: vcodec: Use spinlock for context list
- protection lock
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Yunfei Dong <yunfei.dong@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20250812-rnull-up-v6-16-v4-0-ed801dd3ba5c@kernel.org>
+ <20250812-rnull-up-v6-16-v4-11-ed801dd3ba5c@kernel.org> <mACGre8-fNXj9Z2EpuE3yez_o2T-TtqrdB6HB-VkO0cuvhXsqzECKWMhsz_c43NJUxpsnVpO_U0oLbaaNhXqRQ==@protonmail.internalid>
+ <aJw-XWhDahVeejl3@google.com> <87cy8zfkw5.fsf@t14s.mail-host-address-is-not-set>
+ <WporCpRrDB_e8ocWi63px_bwtPWqRjDL4kVPNNXFNoI6H-4bgk5P_n4iO0E4m-ElwkiNTyBITwgdMXjREE8VXQ==@protonmail.internalid>
+ <CAH5fLggraEP7bwzJ+4ww8-7Ku-Z+d0Em3=NDUpa7r8oTLQy81A@mail.gmail.com>
+ <877bz7f7jg.fsf@t14s.mail-host-address-is-not-set> <wKjTynzVeXix56T1eCrpF4Y7zM7dJVumIB3DljSJeXkHx7Vyb4jKR5X5c5B2yV0DFKItLrncGLWxcTkVynD12g==@protonmail.internalid>
+ <CAH5fLgi+R=ZW2bFnZP2=231vV6JAHTZJ0UBYkdojG=HjBYR3MA@mail.gmail.com> <87zfc2e4gy.fsf@t14s.mail-host-address-is-not-set>
+In-Reply-To: <87zfc2e4gy.fsf@t14s.mail-host-address-is-not-set>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 14 Aug 2025 10:58:47 +0200
+X-Gm-Features: Ac12FXzvl-VOlMNOzmyRS7iEzUNls9Gq8WBcmNjnQTA3yaE2PQLweZJ0Y0vj2qk
+Message-ID: <CAH5fLgjnYiAo3jfbyjZeRu5siMgoqYi1fbFaxrixGdqXxtZXcA@mail.gmail.com>
+Subject: Re: [PATCH v4 11/15] rnull: enable configuration via `configfs`
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 4:38=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
+On Thu, Aug 14, 2025 at 9:40=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
 >
-> Previously a mutex was added to protect the encoder and decoder context
-> lists from unexpected changes originating from the SCP IP block, causing
-> the context pointer to go invalid, resulting in a NULL pointer
-> dereference in the IPI handler.
+> "Alice Ryhl" <aliceryhl@google.com> writes:
 >
-> Turns out on the MT8173, the VPU IPI handler is called from hard IRQ
-> context. This causes a big warning from the scheduler. This was first
-> reported downstream on the ChromeOS kernels, but is also reproducible
-> on mainline using Fluster with the FFmpeg v4l2m2m decoders. Even though
-> the actual capture format is not supported, the affected code paths
-> are triggered.
+> > On Wed, Aug 13, 2025 at 7:36=E2=80=AFPM Andreas Hindborg <a.hindborg@ke=
+rnel.org> wrote:
+> >>
+> >> "Alice Ryhl" <aliceryhl@google.com> writes:
+> >>
+> >> > For your convenience, I already wrote a safe wrapper of kstrtobool f=
+or
+> >> > an out-of-tree driver. You're welcome to copy-paste this:
+> >> >
+> >> > fn kstrtobool(kstr: &CStr) -> Result<bool> {
+> >> >     let mut res =3D false;
+> >> >     to_result(unsafe {
+> >> > kernel::bindings::kstrtobool(kstr.as_char_ptr(), &mut res) })?;
+> >> >     Ok(res)
+> >> > }
+> >>
+> >> Thanks, I did one as well today, accepting `&str` instead. The example=
+s
+> >> highlight why it is not great:
+> >
+> > Yeah, well, I think we should still use it for consistency.
+> >
+> >>   /// Convert common user inputs into boolean values using the kernel'=
+s `kstrtobool` function.
+> >>   ///
+> >>   /// This routine returns `Ok(bool)` if the first character is one of=
+ 'YyTt1NnFf0', or
+> >>   /// [oO][NnFf] for "on" and "off". Otherwise it will return `Err(EIN=
+VAL)`.
+> >>   ///
+> >>   /// # Examples
+> >>   ///
+> >>   /// ```
+> >>   /// # use kernel::str::kstrtobool;
+> >>   ///
+> >>   /// // Lowercase
+> >>   /// assert_eq!(kstrtobool("true"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("tr"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("t"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("twrong"), Ok(true)); // <-- =F0=9F=A4=B7
+> >>   /// assert_eq!(kstrtobool("false"), Ok(false));
+> >>   /// assert_eq!(kstrtobool("f"), Ok(false));
+> >>   /// assert_eq!(kstrtobool("yes"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("no"), Ok(false));
+> >>   /// assert_eq!(kstrtobool("on"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("off"), Ok(false));
+> >>   ///
+> >>   /// // Camel case
+> >>   /// assert_eq!(kstrtobool("True"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("False"), Ok(false));
+> >>   /// assert_eq!(kstrtobool("Yes"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("No"), Ok(false));
+> >>   /// assert_eq!(kstrtobool("On"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("Off"), Ok(false));
+> >>   ///
+> >>   /// // All caps
+> >>   /// assert_eq!(kstrtobool("TRUE"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("FALSE"), Ok(false));
+> >>   /// assert_eq!(kstrtobool("YES"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("NO"), Ok(false));
+> >>   /// assert_eq!(kstrtobool("ON"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("OFF"), Ok(false));
+> >>   ///
+> >>   /// // Numeric
+> >>   /// assert_eq!(kstrtobool("1"), Ok(true));
+> >>   /// assert_eq!(kstrtobool("0"), Ok(false));
+> >>   ///
+> >>   /// // Invalid input
+> >>   /// assert_eq!(kstrtobool("invalid"), Err(EINVAL));
+> >>   /// assert_eq!(kstrtobool("2"), Err(EINVAL));
+> >>   /// ```
+> >>   pub fn kstrtobool(input: &str) -> Result<bool> {
+> >>       let mut result: bool =3D false;
+> >>       let c_str =3D CString::try_from_fmt(fmt!("{input}"))?;
+> >>
+> >>       // SAFETY: `c_str` points to a valid null-terminated C string, a=
+nd `result` is a valid
+> >>       // pointer to a bool that we own.
+> >>       let ret =3D unsafe { bindings::kstrtobool(c_str.as_char_ptr(), &=
+mut result as *mut bool) };
+> >>
+> >>       kernel::error::to_result(ret).map(|_| result)
+> >>   }
+> >>
+> >> Not sure if we should take `CStr` or `str`, what do you think?
+> >
+> > Using CStr makes sense, since it avoids having the caller perform a
+> > useless utf-8 check.
 >
-> Since this lock just protects the context list and operations on it are
-> very fast, it should be OK to switch to a spinlock.
->
-> Fixes: 6467cda18c9f ("media: mediatek: vcodec: adding lock to protect dec=
-oder context list")
-> Fixes: afaaf3a0f647 ("media: mediatek: vcodec: adding lock to protect enc=
-oder context list")
-> Cc: Yunfei Dong <yunfei.dong@mediatek.com>
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->  .../mediatek/vcodec/common/mtk_vcodec_fw_vpu.c       | 10 ++++++----
->  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.c     | 12 +++++++-----
->  .../mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h     |  2 +-
->  .../platform/mediatek/vcodec/decoder/vdec_vpu_if.c   |  4 ++--
->  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.c     | 12 +++++++-----
->  .../mediatek/vcodec/encoder/mtk_vcodec_enc_drv.h     |  2 +-
->  .../platform/mediatek/vcodec/encoder/venc_vpu_if.c   |  4 ++--
->  7 files changed, 26 insertions(+), 20 deletions(-)
->
+> If we re-implement the entire function in rust, we can do the processing
+> on a `&str`. That way, we can skip the allocation to enforce null
+> termination. At least for this use case. I would rather do a utf8 check
+> than allocate and copy.
 
-[...]
+You can copy to an array on the stack, so allocations aren't necessary
+even if the string is not nul-terminated. I don't think we should
+duplicate this logic.
 
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c=
- b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> index 145958206e38..e9b5cac9c63b 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec_vpu_if.c
-> @@ -77,14 +77,14 @@ static bool vpu_dec_check_ap_inst(struct mtk_vcodec_d=
-ec_dev *dec_dev, struct vde
->         struct mtk_vcodec_dec_ctx *ctx;
->         int ret =3D false;
->
-> -       mutex_lock(&dec_dev->dev_ctx_lock);
-> +       spin_lock(&dec_dev->dev_ctx_lock);
+And if we do add a Rust method that does not enforce a nul-check, then
+I'd say it should use &[u8] as the argument rather than &str. (Or
+possibly &Bstr.)
 
-Do you mean spin_lock_irqsave()?
-
->         list_for_each_entry(ctx, &dec_dev->ctx_list, list) {
->                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vpu) {
->                         ret =3D true;
->                         break;
->                 }
->         }
-> -       mutex_unlock(&dec_dev->dev_ctx_lock);
-> +       spin_unlock(&dec_dev->dev_ctx_lock);
->
->         return ret;
->  }
-
-[...]
-
-> diff --git a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c=
- b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> index 51bb7ee141b9..79a91283da78 100644
-> --- a/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/encoder/venc_vpu_if.c
-> @@ -47,14 +47,14 @@ static bool vpu_enc_check_ap_inst(struct mtk_vcodec_e=
-nc_dev *enc_dev, struct ven
->         struct mtk_vcodec_enc_ctx *ctx;
->         int ret =3D false;
->
-> -       mutex_lock(&enc_dev->dev_ctx_lock);
-> +       spin_lock(&enc_dev->dev_ctx_lock);
-
-Also here.
-
-Regards,
-Fei
-
->         list_for_each_entry(ctx, &enc_dev->ctx_list, list) {
->                 if (!IS_ERR_OR_NULL(ctx) && ctx->vpu_inst =3D=3D vpu) {
->                         ret =3D true;
->                         break;
->                 }
->         }
-> -       mutex_unlock(&enc_dev->dev_ctx_lock);
-> +       spin_unlock(&enc_dev->dev_ctx_lock);
->
->         return ret;
->  }
-> --
-> 2.51.0.rc1.163.g2494970778-goog
->
->
+Alice
 
