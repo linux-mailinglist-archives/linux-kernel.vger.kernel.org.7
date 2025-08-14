@@ -1,119 +1,167 @@
-Return-Path: <linux-kernel+bounces-769656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-769657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D66B2719B
-	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:28:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977E1B271A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 15 Aug 2025 00:31:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B63FA5678B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6198A1B67F94
+	for <lists+linux-kernel@lfdr.de>; Thu, 14 Aug 2025 22:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E976728000F;
-	Thu, 14 Aug 2025 22:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3225327978C;
+	Thu, 14 Aug 2025 22:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0Q7jH13"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8NZu8Q2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507C81C9DE5;
-	Thu, 14 Aug 2025 22:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8229C277819;
+	Thu, 14 Aug 2025 22:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755210429; cv=none; b=uf5IuRFvxThI/ED3MI1WeMWX8psLTpiWUiNKtDNLiSlfB0CtYBebhpRZHUHQQY1NkuJX90JQgfCe3lWcEweETqbw7MZ+W58B3QBQ8bHEcckx/+uqOCS/wnUppWI2QNk7Wv0REctYPHrB5zu2PSi1Q9649+PpIDIeQj6QQ0DOdlo=
+	t=1755210653; cv=none; b=TVcuxR4AiKn4YniYA9LXxiY1PiRTHnhhmlqfKCL7eccK13e/Oy8+v5hdqVcC5WRAXoJXi1v2VkYe7PpG8+5QHhXSH3jPZzvd+3gfJuQ9pMDYvgjuCCrbcHHUGUQPodktAFfeDceaBhKirrc1aYPYU+q7trJ+ut8gzjfnWL6lqFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755210429; c=relaxed/simple;
-	bh=ihJiNbq3crEvohcQ6It1P3dL4Tr9QQCo2wRY/rSYaeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IvwN4yv9wCCbIdpXFgDZnJBn1ifL8qYgOhNrPXZ4Ht6pGahp1hIoBIuaYjz8lFZRRNk1rrrTV0PMUoFdQMlKgrYKFX4+FBJsVtNbn6yt0JxhnKeRUL3LkUgB0FMVU1dI7A3x+wN7fAurAk6H/GDq0ZsfKhkCT5lOHTUAoOLBV80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0Q7jH13; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE42C4CEED;
-	Thu, 14 Aug 2025 22:27:08 +0000 (UTC)
+	s=arc-20240116; t=1755210653; c=relaxed/simple;
+	bh=N5VWGitysz6JFmoe9n2FhghAKkO8HINQCHJY2U2kRIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ockeZoBVjiRR3/2rqs7Ksm2UgX64FVbx0fqIEUF7DF9ZshtIsmtyKoaYlW4hQ2A8+4BKuZLE/vaYY2AVYqjQ30KwsjvO6Jk0leyZXrWuSqE8ayxsDwHcfDWqGltHuVU8jbHsdxWkskZvjZXJXcAvsM0RIEkET8EzKJaKBUAqKRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8NZu8Q2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC6FBC4CEED;
+	Thu, 14 Aug 2025 22:30:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1755210428;
-	bh=ihJiNbq3crEvohcQ6It1P3dL4Tr9QQCo2wRY/rSYaeQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Q0Q7jH135MxbppYhKzub1ljudwF5pZ3mhYyRD712Xp/VREwHyd/Vj0ErUDLXb6St4
-	 gT20k6vFcAb0Brh8OhmhHj/wWFOs5nZiDr0tgJEf8UjxJ7HopK6yq5FsBFpzA1nYDH
-	 rCnCu4tMXWIePnjmjjV7LIT8vKFQTkArmRs8XWNhd0uAu73L6t6XAXCVDoCf7XCcrD
-	 g7h7WdqMH688SddqlgQ0tfToJFSrtnedDRx/d2qas9ZydvySW2Y7uX+nd53yYoqhoP
-	 jj54TuJkL6acXRriEMLWXAVVH3q53v57+j83IZ+CbqPLW6mBPO1Xwpw3Xd4eP6lgFW
-	 XstVjn8uGaTYA==
-Date: Thu, 14 Aug 2025 15:27:07 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, donald.hunter@gmail.com, horms@kernel.org,
- jstancek@redhat.com, jacob.e.keller@intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] tools: ynl: make ynl.c more c++ friendly
-Message-ID: <20250814152707.6d16c342@kernel.org>
-In-Reply-To: <20250814164413.1258893-1-sdf@fomichev.me>
-References: <20250814164413.1258893-1-sdf@fomichev.me>
+	s=k20201202; t=1755210653;
+	bh=N5VWGitysz6JFmoe9n2FhghAKkO8HINQCHJY2U2kRIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c8NZu8Q23AcSpDXYfCjfS+nijpycYbRazO8ud7muK7v/NQSmnieFRpVKZ9HpE+Se3
+	 ihK/DheTyy0oiRrb1M1422BzweCx9GFLH23gWJEy8hhRFRngUNMiGhj74MtotNPhtF
+	 yqrUOurUhDDUC58YxblyH88j6+KNNTcK/igm+HoklMSc/qyxQ5KQz0I5OYmUnqEyQb
+	 hSHC3P59PHrQpHRwdNhYBEJf+FY2XgcEMPuuTzqg6Z4f866bnKk9VJKWj+onG9pmFj
+	 gWnmU3joyDUmkrHXStOUAiu75Y3Os4fO4BMRMQVIFbAidL1DN8rkqKZOMOECpHF6et
+	 Ltq0O6AyGRRpQ==
+Date: Thu, 14 Aug 2025 17:30:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+	andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com,
+	linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v17 1/3] dt-bindings: i2c: aspeed,i2c.yaml: add
+ transfer-mode and global-regs properties and update example
+Message-ID: <20250814223052.GA4004307-robh@kernel.org>
+References: <20250814084156.1650432-1-ryan_chen@aspeedtech.com>
+ <20250814084156.1650432-2-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814084156.1650432-2-ryan_chen@aspeedtech.com>
 
-On Thu, 14 Aug 2025 09:44:13 -0700 Stanislav Fomichev wrote:
-> Compiling ynl.c in a C++ code base requires invoking C compiler and
-> using extern "C" for the headers. To make it easier, we can add
-> small changes to the ynl.c file to make it palatable to the native
-> C++ compiler. The changes are:
-> - avoid using void* pointer arithmetic, use char* instead
-> - avoid implicit void* type casts, add c-style explicit casts
-> - avoid implicit int->enum type casts, add c-style explicit casts
-> - avoid anonymous structs (for type casts)
-> - namespacify cpp version, this should let us compile both ynl.c
->   as c and ynl.c as cpp in the same binary (YNL_CPP can be used
->   to enable/disable namespacing)
+On Thu, Aug 14, 2025 at 04:41:54PM +0800, Ryan Chen wrote:
+> - Add property "aspeed,global-regs" to get phandle set global
+> register, for register mode selection and clock divider control.
+> - Add an optional property "aspeed,transfer-mode" to
+> allow device tree to specify the desired transfer method used
+> by each I2C controller instance.
+> - Update example to demonstrate usage of 'aspeed,global-regs' and
+> 'aspeed,transfer-mode' for AST2600 I2C controller.
+
+All of this is evident reading the patch. Explain here why you need this 
+change.
+
 > 
-> Also add test_cpp rule to make sure ynl.c won't break C++ in the future.
-
-As I mentioned in person, ynl-cpp is a separate thing, and you'd all
-benefit from making it more C++ than going the other way and massaging
-YNL C.
-
-With that said, commenting below on the few that I think would be okay.
-
-> @@ -224,7 +228,7 @@ static inline void *ynl_attr_data_end(const struct nlattr *attr)
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/i2c/aspeed,i2c.yaml   | 39 +++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> index 5b9bd2feda3b..2a9f7d1d2ea1 100644
+> --- a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> @@ -44,6 +44,34 @@ properties:
+>      description: frequency of the bus clock in Hz defaults to 100 kHz when not
+>        specified
 >  
->  #define ynl_attr_for_each_payload(start, len, attr)			\
->  	for ((attr) = ynl_attr_first(start, len, 0); attr;		\
-> -	     (attr) = ynl_attr_next(start + len, attr))
-> +	     (attr) = ynl_attr_next((char *)start + len, attr))
+> +  aspeed,transfer-mode:
+> +    description: |
+> +      ASPEED ast2600 platform equipped with 16 I2C controllers each i2c controller
+> +      have 1 byte transfer buffer(byte mode), 32 bytes buffer(buffer mode), and
+> +      share a DMA engine.
+> +      Select I2C transfer mode for this controller. Supported values are:
+> +        - "byte": Use 1 byte for i2c transmit (1-byte buffer).
+> +        - "buffer": Use buffer (32-byte buffer) for i2c transmit. (default)
+> +                    Better performance then byte mode.
 
-okay
+If no 'aspeed,transfer-mode' property defaults to buffer mode, you never 
+need 'aspeed,transfer-mode = "buffer"'.
 
-> @@ -149,7 +153,7 @@ ynl_err_walk(struct ynl_sock *ys, void *start, void *end, unsigned int off,
->  		return n;
->  	}
->  
-> -	data_len = end - start;
-> +	data_len = (char *)end - (char *)start;
+When would you ever use "byte" mode? Sometimes you want worse 
+performance? That makes no sense.
 
-can we make the arguments char * instead of the casts?
+I feel like we already discussed this, but I'm not going to dig thru 17 
+versions to see.
 
->  static void ynl_err_reset(struct ynl_sock *ys)
->  {
-> -	ys->err.code = 0;
-> +	ys->err.code = YNL_ERROR_NONE;
+> +        - "dma": Each controller DMA mode is shared DMA engine. The AST2600 SoC
+> +                 provides a single DMA engine shared for 16 I2C controllers,
+> +                 so only a limited number of controllers can use DMA simultaneously.
+> +                 Therefore, the DTS must explicitly assign which controllers are
+> +                 configured to use DMA.
+> +      Only one mode can be selected per controller.
 
-sure
+The only thing that really makes sense is dma, and you need 1 boolean 
+property for that. IOW, what you had on v10 which we gave reviewed-by 2+ 
+years ago.
 
-> @@ -56,6 +60,11 @@ struct ynl_family {
->  	unsigned int ntf_info_size;
->  };
->  
-> +struct ynl_sock_mcast {
+Do you have any actual test results or usecase that show DMA is useful 
+here? Typical I2C xfers are not streaming large amounts of data to 
+justify the setup costs of DMA. It wouldn't surprise me if DMA was 
+actually slower.
 
-struct ynl_mcast_grp
+> +      On AST2600, each controller supports all three modes.
+> +      If not specified, buffer mode is used by default.
+> +    enum:
+> +      - byte
+> +      - buffer
+> +      - dma
+> +
+> +  aspeed,global-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: |
 
-> +	unsigned int id;
-> +	char name[GENL_NAMSIZ];
-> +};
+Don't need '|'. Read the documentation about when it is needed or not 
+needed.
+
+> +      The phandle of i2c global register node, For control the i2c register
+> +      define selection, clock divider mode selection and clock divider control.
+> +
+>  required:
+>    - reg
+>    - compatible
+> @@ -66,3 +94,14 @@ examples:
+>        interrupts = <0>;
+>        interrupt-parent = <&i2c_ic>;
+>      };
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    i2c1: i2c@80 {
+> +      compatible = "aspeed,ast2600-i2c-bus";
+> +      reg = <0x80 0x80>, <0xc00 0x20>;
+> +      aspeed,global-regs = <&i2c_global>;
+> +      clocks = <&syscon ASPEED_CLK_APB>;
+> +      resets = <&syscon ASPEED_RESET_I2C>;
+> +      interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+> +      aspeed,transfer-mode = "buffer";
+> +    };
+> -- 
+> 2.34.1
+> 
 
